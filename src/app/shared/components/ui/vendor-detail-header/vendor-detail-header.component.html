@@ -1,0 +1,128 @@
+<div class="relative pt-4 sm:pt-6 pb-2 px-3 sm:px-6 md:px-8 overflow-hidden" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <!-- Decorative Header Background Glows -->
+  <div class="header-bg-glow absolute -top-10 -right-20 opacity-60"></div>
+  <div
+    class="header-bg-glow absolute -bottom-10 -left-20 opacity-40 bg-[radial-gradient(circle,rgba(249,115,22,0.05)_0%,transparent_70%)]">
+  </div>
+
+  <!-- Main Header Card -->
+  <div
+    class="glass-panel p-5 sm:p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] flex flex-col gap-6 sm:gap-8 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5 relative z-10 mx-auto w-full">
+
+    <!-- Top Row: Info & Stats -->
+    <div class="flex flex-col lg:flex-row justify-between items-center gap-6">
+
+      <!-- Vendor Info Cluster -->
+      <!-- MOBILE: flex-col, center-aligned. TABLET(sm): flex-row, start-aligned. -->
+      <div
+        class="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 sm:gap-6 w-full lg:w-auto text-center sm:text-start">
+
+        <!-- Icon Box with Premium Styling -->
+        <div
+          class="w-16 h-16 md:w-20 md:h-20 rounded-[1.25rem] sm:rounded-2xl premium-icon-box flex items-center justify-center border border-white/50 shadow-inner group shrink-0">
+          <span
+            class="material-symbols-outlined text-4xl md:text-5xl text-primary transform transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">shopping_bag</span>
+        </div>
+
+        <!-- Text Details -->
+        <div class="flex flex-col items-center sm:items-start gap-1.5 sm:gap-2 min-w-0 w-full">
+
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full justify-center sm:justify-start">
+            <h1 class="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight truncate max-w-full">{{
+              title }}</h1>
+
+            <div class="flex items-center justify-center gap-1.5 sm:gap-2 shrink-0">
+              <span class="meta-badge active py-0.5 px-2 text-[10px] sm:text-xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                {{ 'VENDOR_DETAIL.STATUS_ACTIVE' | translate }}
+              </span>
+              <span class="meta-badge verified py-0.5 px-2 text-[10px] sm:text-xs flex items-center gap-1">
+                <span class="material-symbols-outlined text-[12px] sm:text-[14px]">verified</span>
+                {{ 'VENDOR_DETAIL.STATUS_VERIFIED' | translate }}
+              </span>
+            </div>
+          </div>
+
+          <div
+            class="flex items-center justify-center sm:justify-start flex-wrap gap-x-2 sm:gap-x-6 gap-y-2 mt-1 sm:mt-1">
+            <div
+              class="flex items-center gap-1 sm:gap-2 text-slate-500 font-bold text-[11px] sm:text-sm bg-white/40 px-2 sm:px-3 py-1 rounded-lg sm:rounded-xl border border-white/50">
+              <span class="material-symbols-outlined text-[14px] sm:text-[18px] text-primary">tag</span>
+              <span class="font-mono tracking-wider">{{ vendorId }}</span>
+            </div>
+            <div class="flex items-center gap-1 sm:gap-2 text-slate-400 font-medium text-[11px] sm:text-sm">
+              <span class="material-symbols-outlined text-[14px] sm:text-[18px] text-slate-300">calendar_today</span>
+              <span>{{ registrationDate }}</span>
+            </div>
+            <div class="flex items-center gap-1 sm:gap-2 text-slate-400 font-medium text-[11px] sm:text-sm">
+              <span class="material-symbols-outlined text-[14px] sm:text-[18px] text-slate-300">location_on</span>
+              <span>{{ category }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quick Stats / Actions Cluster -->
+      <!-- MOBILE: center-aligned row. TABLET(sm): right-aligned row. -->
+      <div
+        class="flex items-center justify-center sm:justify-end gap-2 sm:gap-3 w-full lg:w-auto mt-2 sm:mt-0 shrink-0">
+        <div class="flex items-center gap-2">
+          <button
+            class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary transition-all duration-300 shadow-sm relative group">
+            <span class="material-symbols-outlined text-[18px] sm:text-[20px]">share</span>
+          </button>
+          <button
+            class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary transition-all duration-300 shadow-sm relative group">
+            <span class="material-symbols-outlined text-[18px] sm:text-[20px]">print</span>
+          </button>
+        </div>
+        <div class="h-6 sm:h-8 w-px bg-slate-200 mx-1 block"></div>
+        <button
+          class="bg-primary text-white h-10 sm:h-11 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm border border-primary/20 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 group">
+          <span class="material-symbols-outlined text-[18px] sm:text-[20px] group-hover:animate-bounce">chat</span>
+          <span class="whitespace-nowrap sm:inline hidden">تواصل السريع</span>
+          <span class="whitespace-nowrap sm:hidden inline">تواصل</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Multi-Tab Navigation (Pure Tailwind, Outer Scroll Wrapper, Drag to Scroll) -->
+    <div
+      #scrollContainer
+      (mousedown)="onMouseDown($event, scrollContainer)"
+      (mouseleave)="onMouseLeave(scrollContainer)"
+      (mouseup)="onMouseUp(scrollContainer)"
+      (mousemove)="onMouseMove($event, scrollContainer)"
+      class="w-full max-w-full relative mt-2 overflow-x-auto scroll-smooth [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-400 pb-2 cursor-grab active:cursor-grabbing select-none">
+      <div class="flex w-max items-center bg-slate-900/[0.04] p-[3px] rounded-xl border border-slate-900/5 gap-1">
+
+        <button *ngFor="let tab of tabs" (click)="onTabClick(tab.id)"
+          class="relative px-3 sm:px-6 py-1.5 sm:py-2.5 text-[10px] sm:text-xs md:text-sm font-black transition-all duration-300 rounded-lg sm:rounded-xl whitespace-nowrap z-10 shrink-0 flex items-center justify-center tracking-tight group/tab"
+          [ngClass]="{
+            'text-white shadow-md bg-gradient-to-br from-[#127c8c] to-[#0e5f6b]': tab.active,
+            'text-slate-500 hover:bg-white/60 hover:text-slate-800': !tab.active
+          }" [attr.aria-label]="tab.labelKey | translate">
+          <!-- Optional Shine Effect for Active state -->
+          <div *ngIf="tab.active"
+            class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shine_3s_infinite] rounded-lg sm:rounded-xl overflow-hidden pointer-events-none">
+          </div>
+
+          <div class="flex items-center gap-2 px-1 relative z-10 w-full h-full justify-center">
+            <span class="transition-transform duration-300 group-hover/tab:scale-105 whitespace-nowrap">{{ tab.labelKey
+              | translate }}</span>
+            <span *ngIf="tab.count"
+              class="text-[9px] sm:text-[10px] min-w-[20px] sm:min-w-[22px] h-[16px] sm:h-[18px] flex items-center justify-center rounded-full backdrop-blur-sm transition-all duration-300 font-bold px-1.5"
+              [class]="tab.active ? 'bg-white/20 text-white' : 'bg-slate-200/50 text-slate-500 group-hover/tab:bg-slate-200'">
+              {{ tab.count }}
+            </span>
+          </div>
+        </button>
+
+        <!-- Invisible spacer for padding at the end of scroll -->
+        <div class="w-1 h-1 shrink-0"></div>
+      </div>
+    </div>
+
+  </div>
+</div>

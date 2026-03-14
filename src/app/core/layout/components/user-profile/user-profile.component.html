@@ -1,0 +1,48 @@
+<!-- High-End Profile Module -->
+<div class="p-4 stagger-7">
+    <div
+        class="p-4 bg-white shadow-2xl shadow-zadna-bgDark/5 rounded-[1.5rem] border border-zadna-bgLight relative group/profile overflow-hidden">
+        <div
+            class="absolute inset-0 bg-gradient-to-br from-zadna-primary/5 to-zadna-accent/5 opacity-0 group-hover/profile:opacity-100 transition-opacity duration-500">
+        </div>
+
+        <div class="flex items-center gap-4 mb-5 relative z-10">
+            <div class="relative">
+                <div
+                    class="w-14 h-14 rounded-2xl bg-white/50 backdrop-blur-sm p-2 shadow-sm transition-transform group-hover/profile:rotate-3 overflow-hidden border border-white/50">
+                    <div class="w-full h-full flex items-center justify-center overflow-hidden">
+                        <img src="assets/images/شعار 2-20260305T104717Z-3-001/شعار 2/شفاف (1).png"
+                            class="w-full h-full object-contain filter drop-shadow-sm">
+                    </div>
+                </div>
+                <span
+                    class="absolute -bottom-0.5 -end-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-[11px] font-black text-zadna-bgDark tracking-tighter truncate leading-none mb-1.5">
+                    {{ userName }}</p>
+                <p class="text-[9px] font-black text-zadna-primary uppercase tracking-[0.1em] opacity-60">
+                    {{ 'SIDEBAR_EXTRA.USER_ROLE_ID' | translate }}</p>
+            </div>
+        </div>
+
+        <div class="flex gap-2 relative z-10">
+            <button (click)="onLogout()"
+                class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-50 text-red-500 rounded-xl text-[9px] font-black hover:bg-red-500 hover:text-white transition-all active:scale-95 group/logout">
+                <svg class="w-3.5 h-3.5 group-hover/logout:-translate-x-1 ltr:group-hover/logout:-translate-x-1 rtl:group-hover/logout:translate-x-1 rtl:rotate-180 transition-transform"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                </svg>
+                {{ 'SIDEBAR.LOGOUT' | translate }}
+            </button>
+            <button
+                class="w-14 flex items-center justify-center bg-zadna-bgLight/80 text-zadna-bgDark/40 rounded-2xl hover:bg-zadna-bgDark hover:text-white transition-all active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>

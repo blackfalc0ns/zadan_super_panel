@@ -1,0 +1,206 @@
+<div class="relative min-h-screen bg-zadna-bgLight overflow-hidden p-6 lg:p-10 font-display">
+    <!-- Ambient Glows -->
+    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-zadna-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-zadna-accent/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div *ngIf="isLoading" class="flex items-center justify-center min-h-[400px] relative z-20">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-zadna-primary/20"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-t-zadna-primary animate-spin"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <app-detail-header
+        [breadcrumbs]="breadcrumbs"
+        actionButtonLabel="تعديل"
+        actionButtonIcon="edit"
+        (backClick)="goBack()"
+        (actionClick)="editBrand()">
+    </app-detail-header>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading && brand" class="max-w-7xl mx-auto space-y-8 flex flex-col min-h-[calc(100vh-5rem)] relative z-10 transition-all">
+
+        <!-- Top Info Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            
+            <!-- Logo Card -->
+            <div class="lg:col-span-4">
+                <div class="bg-white rounded-[2rem] p-6 h-full flex items-center justify-center min-h-[220px] shadow-sm relative overflow-hidden group">
+                    <!-- Logo Placeholder if no logoUrl -->
+                    <div *ngIf="!brand.logoUrl" class="text-3xl font-black text-[#F40009] tracking-tighter rotate-[-5deg] drop-shadow-sm group-hover:scale-110 transition-transform">Coca-Cola</div>
+                    
+                    <!-- Real Brand Logo -->
+                    <img *ngIf="brand.logoUrl" [src]="brand.logoUrl" class="w-full h-full max-w-[180px] aspect-square object-contain relative z-10 group-hover:scale-105 transition-transform" [alt]="brand.nameEn">
+                </div>
+            </div>
+
+            <!-- Stats & Details Panel -->
+            <div class="lg:col-span-8">
+                <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2rem] p-8 h-full flex items-center shadow-sm relative overflow-hidden">
+                    <!-- Subtle Tech Glow -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-zadna-primary/5 rounded-full blur-[40px] -mr-16 -mt-16"></div>
+                    
+                    <div class="w-full grid grid-cols-2 lg:grid-cols-4 gap-8 items-center">
+                        <!-- Brand Name -->
+                        <div class="flex flex-col">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">اسم العلامة التجارية</p>
+                            <h2 class="text-2xl font-black text-slate-900 leading-tight">{{ brand.nameAr }}</h2>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{{ brand.nameEn }}</p>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="flex flex-col border-r border-slate-200/50 pr-8">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">الحالة</p>
+                            <div class="flex">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all"
+                                    [ngClass]="brand.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'">
+                                    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="brand.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></span>
+                                    {{ brand.isActive ? 'نشط' : 'غير نشط' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Creation Date -->
+                        <div class="flex flex-col border-r border-slate-200/50 pr-8">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">تاريخ الإنشاء</p>
+                            <p class="text-sm font-bold text-slate-700">{{ brand.createdAtUtc ? (brand.createdAtUtc | date:'dd/MM/yyyy') : '—' }}</p>
+                            <p *ngIf="brand.updatedAtUtc" class="text-[9px] font-medium text-slate-400 mt-0.5">آخر تعديل: {{ brand.updatedAtUtc | date:'dd/MM/yyyy' }}</p>
+                        </div>
+
+                        <!-- Products Count -->
+                        <div class="flex flex-col border-r border-slate-200/50 pr-8 text-center lg:text-right">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">عدد المنتجات</p>
+                            <p class="text-4xl font-black text-zadna-primary leading-none">{{ brand.masterProductsCount || 0 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Associated Products Section -->
+        <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2.5rem] p-8 shadow-sm flex-grow flex flex-col relative overflow-hidden">
+            <!-- Decorative Tech Accents -->
+            <div class="absolute top-0 right-0 w-8 h-[2px] bg-zadna-primary/40"></div>
+            <div class="absolute bottom-0 left-0 w-8 h-[2px] bg-zadna-accent/40"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-zadna-primary/5 border border-zadna-primary/10 flex items-center justify-center text-zadna-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 tracking-tight">المنتجات المرتبطة</h3>
+                </div>
+
+
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto flex-grow rounded-[1.5rem] border border-white/60 shadow-inner bg-white/20">
+                <table class="w-full text-sm text-right">
+                    <thead class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white/40 border-b border-white/60">
+                        <tr>
+                            <th class="px-8 py-5 font-bold" scope="col">المنتج</th>
+                            <th class="px-8 py-5 font-bold text-center" scope="col">رمز التخزين (SKU)</th>
+                            <th class="px-8 py-5 font-bold text-center" scope="col">المخزون</th>
+                            <th class="px-8 py-5 font-bold text-center" scope="col">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/40">
+                        <!-- Products Loop -->
+                        <tr *ngFor="let product of products" class="hover:bg-white/60 transition-all group">
+                            <td class="px-8 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-white shadow-sm border border-slate-100 p-1 group-hover:border-zadna-primary/20 transition-all overflow-hidden flex-shrink-0">
+                                        <!-- Primary Image -->
+                                        <div *ngIf="product.primaryImageUrl || (product.images && product.images.length > 0)" class="w-full h-full">
+                                            <img [src]="product.primaryImageUrl || product.images[0].url" class="w-full h-full object-cover rounded-lg" [alt]="activeLang === 'ar' ? product.nameAr : product.nameEn">
+                                        </div>
+                                        <!-- Placeholder Image -->
+                                        <div *ngIf="!product.primaryImageUrl && (!product.images || product.images.length === 0)" class="w-full h-full bg-slate-50 rounded-lg flex items-center justify-center text-slate-300">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="font-black text-slate-900 block group-hover:text-zadna-primary transition-all">{{ activeLang === 'ar' ? product.nameAr : product.nameEn }}</span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase">{{ activeLang === 'ar' ? product.categoryNameAr : product.categoryNameEn }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <span class="text-[10px] font-black bg-slate-100 px-3 py-1 rounded-md text-slate-600 tracking-wider font-mono">{{ product.sku || product.barcode || 'N/A' }}</span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <span *ngIf="product.status === 'Active'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100/50">
+                                    <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
+                                    نشط
+                                </span>
+                                <span *ngIf="product.status === 'Draft'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-100/50">
+                                    <span class="w-1 h-1 rounded-full bg-amber-500"></span>
+                                    مسودة
+                                </span>
+                                <span *ngIf="product.status === 'Inactive' || product.status === 'Discontinued'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/50">
+                                    <span class="w-1 h-1 rounded-full bg-rose-500"></span>
+                                    {{ product.status === 'Inactive' ? 'غير نشط' : 'متوقف' }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <button [routerLink]="['/catalog/products/edit', product.id]" class="w-8 h-8 rounded-full bg-white border border-slate-100 shadow-sm inline-flex items-center justify-center text-slate-400 hover:text-zadna-primary hover:border-zadna-primary transition-all active:scale-90">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Empty State -->
+                        <tr *ngIf="products.length === 0">
+                            <td colspan="4" class="px-8 py-10 text-center">
+                                <div class="flex flex-col items-center justify-center text-slate-400">
+                                    <svg class="w-10 h-10 mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                    <span class="text-sm font-bold uppercase tracking-widest">لا توجد منتجات مرتبطة بهذه العلامة التجارية.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Action -->
+            <div class="mt-8 flex justify-center">
+                <button class="text-[10px] font-black uppercase tracking-widest text-zadna-primary hover:text-zadna-primaryDark transition-all flex items-center gap-2 bg-white/60 backdrop-blur-xl px-6 py-2.5 rounded-full border border-zadna-primary/20 shadow-sm active:scale-95 group">
+                    عرض جميع المنتجات
+                    <svg class="w-4 h-4 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Error/Empty States -->
+    <div *ngIf="!isLoading && !brand" class="max-w-md mx-auto relative z-20 pt-20">
+        <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2rem] p-10 text-center shadow-xl">
+            <div class="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-400">
+                <span class="material-icons text-4xl">warning</span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 mb-2">العلامة التجارية غير موجودة</h3>
+            <p class="text-xs font-bold text-slate-500 mb-8 uppercase tracking-wider">نعتذر، لم نتمكن من العثور على البيانات المطلوبة</p>
+            <button (click)="goBack()" class="bg-zadna-primary text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-zadna-primaryDark transition-all shadow-lg shadow-zadna-primary/30">
+                العودة للعلامات التجارية
+            </button>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,12 @@
+:host {
+    display: inline-block;
+}
+
+button {
+    user-select: none;
+    cursor: pointer;
+    
+    &:disabled {
+        cursor: not-allowed;
+    }
+}

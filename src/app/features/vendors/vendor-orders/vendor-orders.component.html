@@ -1,0 +1,250 @@
+<!-- Vendor Orders Content -->
+<div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div *ngFor="let kpi of kpis" 
+         class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 border-l-4"
+         [ngClass]="kpi.borderColor">
+      <!-- Header: Icon, Title, Trend from right to left (exact order from image) -->
+      <div class="flex items-center justify-between mb-3">
+        <!-- Right side: Icon and Title -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-500">{{ kpi.titleKey | translate }}</span>
+          <span class="material-symbols-outlined text-2xl text-gray-400">{{ kpi.icon }}</span>
+        </div>
+        <!-- Left side: Trend -->
+        <div class="flex items-center gap-1 text-xs" [ngClass]="kpi.trendClass">
+          <span>{{ kpi.trend }}</span>
+          <span class="material-symbols-outlined text-sm">{{ kpi.trendIcon }}</span>
+        </div>
+      </div>
+      <!-- Value -->
+      <div>
+        <p class="text-xl font-bold text-gray-900">{{ kpi.value }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="flex flex-col lg:flex-row gap-6">
+    
+    <!-- Main Content: Orders Table -->
+    <div class="flex-1 flex flex-col gap-4">
+      
+      <!-- Toolbar -->
+      <div class="bg-white rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-center justify-between border border-gray-200 shadow-sm">
+        <!-- Search - Right Side -->
+        <div class="w-full sm:flex-1 relative">
+          <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-gray-400 text-sm inset-inline-start-2">search</span>
+          <input 
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            class="w-full bg-white border border-gray-200 rounded-lg py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all ps-8 pe-3"
+            placeholder="البحث برقم الطلب أو اسم العميل..."
+            type="text"/>
+        </div>
+        
+        <!-- Action Buttons - Left Side -->
+        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+          <button 
+            (click)="onFilter()"
+            class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2 text-xs font-medium">
+            <span class="material-symbols-outlined text-sm">filter_list</span>
+            <span>فلترة</span>
+          </button>
+          
+          <button 
+            (click)="onDateRange()"
+            class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2 text-xs font-medium">
+            <span class="material-symbols-outlined text-sm">calendar_today</span>
+            <span>النطاق الزمني</span>
+          </button>
+          
+          <button 
+            (click)="onBulkActions()"
+            class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2 text-xs font-medium">
+            <span class="material-symbols-outlined text-sm">checklist</span>
+            <span>إجراءات جماعية</span>
+          </button>
+          
+          <button 
+            (click)="onExport()"
+            class="px-3 py-2 border border-primary rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-2 text-xs font-medium">
+            <span class="material-symbols-outlined text-sm">download</span>
+            <span>تصدير</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="p-3 text-xs font-semibold text-gray-500">رقم الطلب</th>
+                <th class="p-3 text-xs font-semibold text-gray-500">العميل</th>
+                <th class="p-3 text-xs font-semibold text-gray-500">التاريخ</th>
+                <th class="p-3 text-xs font-semibold text-gray-500">المبلغ</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 text-center">حالة الدفع</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 text-center">حالة الشحن</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 text-center">الحالة العامة</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 w-24 text-start">
+                  إجراءات
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr *ngFor="let order of orders" 
+                  class="hover:bg-gray-50 transition-colors group">
+                <td class="p-3">
+                  <span class="text-sm font-mono font-medium text-primary">{{ order.orderNumber }}</span>
+                </td>
+                <td class="p-3">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-medium text-gray-900">{{ order.customer }}</span>
+                    <span class="text-xs text-gray-500 flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[14px]">location_on</span>
+                      <span>{{ order.customerLocation }}</span>
+                    </span>
+                  </div>
+                </td>
+                <td class="p-3">
+                  <div class="flex flex-col">
+                    <span class="text-sm text-gray-900">{{ order.date }}</span>
+                    <span class="text-xs text-gray-500">{{ order.time }}</span>
+                  </div>
+                </td>
+                <td class="p-3">
+                  <span class="text-sm font-semibold text-gray-900">{{ order.amount }} ر.س</span>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border"
+                        [ngClass]="order.paymentStatusClass">
+                    {{ order.paymentStatusKey | translate }}
+                  </span>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border"
+                        [ngClass]="order.shippingStatusClass">
+                    {{ order.shippingStatusKey | translate }}
+                  </span>
+                </td>
+                <td class="p-3 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border"
+                        [ngClass]="order.generalStatusClass">
+                    {{ order.generalStatusKey | translate }}
+                  </span>
+                </td>
+                <td class="p-3">
+                  <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-start">
+                    <button 
+                      (click)="onViewOrder(order.id)"
+                      class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
+                      title="عرض">
+                      <span class="material-symbols-outlined text-[18px]">visibility</span>
+                    </button>
+                    <button 
+                      (click)="onEditOrder(order.id)"
+                      class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
+                      title="تعديل">
+                      <span class="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
+          <span>عرض 1 إلى 4 من 15,420 طلب</span>
+          <div class="flex gap-1">
+            <button class="px-2 py-1 rounded border border-gray-200 bg-white disabled:opacity-50" disabled>
+              السابق
+            </button>
+            <button class="px-2 py-1 rounded border border-primary bg-primary text-white">1</button>
+            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">2</button>
+            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">3</button>
+            <span class="px-2 py-1">...</span>
+            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">
+              التالي
+            </button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6">
+      
+      <!-- Operations Summary -->
+      <div class="bg-white rounded-xl p-5 flex flex-col gap-4 border border-gray-200 shadow-sm">
+        <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-2 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-lg">summarize</span>
+          <span>ملخص العمليات</span>
+        </h3>
+        
+        <div class="flex flex-col gap-3">
+          <!-- Total Sales -->
+          <div class="flex justify-between items-center p-3 rounded-lg bg-green-50 border border-green-100">
+            <span class="text-xs text-gray-600 flex items-center gap-2">
+              <span class="material-symbols-outlined text-green-600 text-base">payments</span>
+              <span>إجمالي المبيعات</span>
+            </span>
+            <span class="text-sm font-bold text-gray-900">{{ totalSales }} ر.س</span>
+          </div>
+          
+          <!-- Delayed Orders -->
+          <div class="flex justify-between items-center p-3 rounded-lg bg-orange-50 border border-orange-100">
+            <span class="text-xs text-gray-600 flex items-center gap-2">
+              <span class="material-symbols-outlined text-orange-600 text-base">schedule</span>
+              <span>طلبات متأخرة</span>
+            </span>
+            <span class="text-sm font-bold text-gray-900">{{ delayedOrders }}</span>
+          </div>
+          
+          <!-- Open Disputes -->
+          <div class="flex justify-between items-center p-3 rounded-lg bg-red-50 border border-red-100">
+            <span class="text-xs text-gray-600 flex items-center gap-2">
+              <span class="material-symbols-outlined text-red-600 text-base">report_problem</span>
+              <span>نزاعات مفتوحة</span>
+            </span>
+            <span class="text-sm font-bold text-gray-900">{{ openDisputes }}</span>
+          </div>
+          
+          <!-- Cancellation Rate -->
+          <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50 border border-gray-200">
+            <span class="text-xs text-gray-600 flex items-center gap-2">
+              <span class="material-symbols-outlined text-gray-500 text-base">cancel</span>
+              <span>معدل الإلغاء</span>
+            </span>
+            <span class="text-sm font-bold text-gray-900">{{ cancellationRate }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Widget -->
+      <div class="bg-white rounded-xl p-5 flex flex-col gap-4 border-2 border-red-200 shadow-sm">
+        <div class="flex items-center gap-2 border-b border-gray-200 pb-2">
+          <span class="material-symbols-outlined text-red-600 text-lg">warning</span>
+          <h3 class="text-sm font-bold text-gray-800">تنبيهات</h3>
+        </div>
+        
+        <div class="flex flex-col gap-3">
+          <div *ngFor="let alert of alerts" 
+               class="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-100">
+            <span class="material-symbols-outlined text-red-500 text-base flex-shrink-0">error</span>
+            <p class="text-xs text-gray-700">
+              {{ alert }}
+            </p>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
