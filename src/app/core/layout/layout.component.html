@@ -1,0 +1,53 @@
+<div
+    class="min-h-screen bg-slate-50/50 relative overflow-x-hidden selection:bg-zadna-primary/10 selection:text-zadna-primary flex">
+    
+    <!-- Ambient Background Art - Design 2.0 -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <!-- Teal/Mint Glow top-left -->
+        <div class="absolute -top-[20%] -start-[10%] w-[60%] h-[60%] bg-[radial-gradient(circle_at_center,_rgba(18,124,140,0.08)_0%,_transparent_70%)] blur-[100px] animate-pulse-slow"></div>
+        <!-- Orange/Gold Glow bottom-right -->
+        <div class="absolute -bottom-[10%] -end-[5%] w-[50%] h-[50%] bg-[radial-gradient(circle_at_center,_rgba(228,130,21,0.04)_0%,_transparent_70%)] blur-[80px] animate-pulse-slow delay-700"></div>
+    </div>
+
+    <!-- Component-Based Layout Architecture -->
+    <div (click)="isSidebarOpen = false"
+        class="fixed inset-0 bg-zadna-bgDark/20 backdrop-blur-sm z-40 transition-opacity duration-500 lg:hidden"
+        [class.opacity-100]="isSidebarOpen" [class.pointer-events-auto]="isSidebarOpen"
+        [class.opacity-0]="!isSidebarOpen" [class.pointer-events-none]="!isSidebarOpen">
+    </div>
+
+    <!-- Sidebar with status sync -->
+    <app-sidebar [currentLang]="currentLang"
+        class="fixed inset-y-0 start-0 z-50 transform transition-transform duration-500 lg:translate-x-0"
+        [class.translate-x-0]="isSidebarOpen" [class.-translate-x-full]="!isSidebarOpen && currentLang === 'en'"
+        [class.translate-x-full]="!isSidebarOpen && currentLang === 'ar'">
+        <!-- User Profile Integrated in Sidebar -->
+        <app-user-profile [userName]="userName" (logout)="logout()">
+        </app-user-profile>
+    </app-sidebar>
+
+    <!-- Main Content Prism Arena -->
+    <main
+        class="flex-1 flex flex-col min-h-screen px-4 sm:px-6 ltr:lg:pl-[288px] rtl:lg:pr-[288px] ltr:lg:pr-4 rtl:lg:pl-4 py-4 sm:py-5 lg:py-3.5 transition-all duration-700 relative z-10 w-full overflow-x-hidden">
+
+        <app-header [currentLang]="currentLang" [isSidebarOpen]="isSidebarOpen" (languageSwitch)="switchLanguage()"
+            (toggleSidebar)="toggleSidebar()">
+        </app-header>
+
+        <!-- Dynamic Content Space -->
+        <section class="flex-1 w-full max-w-[100vw]">
+            <router-outlet></router-outlet>
+        </section>
+
+        <!-- Floating Assistance Hub (Hidden on small screens or refined) -->
+        <button
+            class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 w-14 h-14 sm:w-20 sm:h-20 bg-zadna-bgDark text-white rounded-2xl sm:rounded-[1.5rem] shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 group border-2 sm:border-4 border-white/50 backdrop-blur-xl">
+            <svg class="w-6 h-6 sm:w-8 sm:h-8 group-hover:rotate-12 transition-transform" fill="currentColor"
+                viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+            </svg>
+            <span
+                class="absolute -top-1 end-1 w-5 h-5 sm:w-6 sm:h-6 bg-zadna-accent rounded-full border-2 border-white flex items-center justify-center text-[8px] sm:text-[10px] font-black animate-bounce shadow-lg">!</span>
+        </button>
+    </main>
+</div>

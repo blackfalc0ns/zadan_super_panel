@@ -1,0 +1,361 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900;1000&display=swap');
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background-color: #f3f4f6;
+  /* light gray default background */
+}
+
+/* Stagger Delays for Sequential Entrance */
+@for $i from 1 through 10 {
+  .stagger-#{$i} {
+    animation-delay: #{$i * 0.05}s !important;
+  }
+}
+
+/* Global Animation is handled natively by tailwind's fill mode: both */
+
+/* Premium Sidebar Utilities */
+.nav-item {
+  @apply flex items-center gap-3 px-3.5 py-2 rounded-2xl text-zadna-bgDark/40 hover:bg-white hover:text-zadna-primary hover:shadow-xl hover:shadow-zadna-primary/5 transition-all duration-300;
+}
+
+.nav-icon-box {
+  @apply w-8 h-8 rounded-lg bg-zadna-bgLight/50 flex items-center justify-center shrink-0 transition-all duration-300;
+
+  svg {
+    @apply w-4 h-4;
+  }
+}
+
+.nav-item:hover .nav-icon-box {
+  @apply bg-zadna-primary/10 text-zadna-primary scale-110;
+}
+
+.active-link {
+  @apply bg-zadna-primary text-white shadow-2xl shadow-zadna-primary/40 scale-[1.02];
+  position: relative;
+
+  &::after {
+    content: '';
+    @apply absolute start-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-full opacity-40;
+  }
+
+  .nav-icon-box {
+    @apply bg-white/20 text-white shadow-inner;
+  }
+}
+
+.action-btn-red {
+  @apply flex items-center justify-center gap-2 py-3.5 bg-red-50 text-red-500 rounded-2xl text-[9px] font-black hover:bg-red-500 hover:text-white transition-all active:scale-95;
+}
+
+.action-btn-gray {
+  @apply flex items-center justify-center gap-2 py-3.5 bg-zadna-bgLight text-zadna-bgDark/40 rounded-2xl text-[9px] font-black hover:bg-zadna-bgDark hover:text-white transition-all active:scale-95;
+}
+
+/* Badge System */
+.badge {
+  @apply px-2 py-0.5 bg-zadna-bgLight text-zadna-bgDark/40 rounded-full text-[8px] font-black border border-white shadow-sm;
+}
+
+/* Scrollbar Refinement */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-zadna-bgDark/5 rounded-full hover:bg-zadna-bgDark/10 transition-colors;
+}
+
+@media (min-width: 1024px) {
+  app-sidebar {
+    display: block;
+  }
+}
+
+/* RTL Tweaks for the New Layout */
+[dir="rtl"] {
+  .ps-0 {
+    padding-inline-start: 0 !important;
+  }
+
+  @media (min-width: 1024px) {
+    .lg\:ps-\[342px\] {
+      padding-inline-start: 342px !important;
+    }
+  }
+
+  .pe-4,
+  .pe-6,
+  .pe-8 {
+    padding-inline-end: 1rem !important;
+  }
+
+  @media (min-width: 640px) {
+    .pe-6 {
+      padding-inline-end: 1.5rem !important;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .pe-8 {
+      padding-inline-end: 2rem !important;
+    }
+  }
+
+  .ml-1 {
+    margin-left: 0;
+    margin-right: 0.25rem;
+  }
+
+  .mr-3 {
+    margin-right: 0;
+    margin-left: 0.75rem;
+  }
+
+  .pl-10 {
+    padding-left: 1rem !important;
+    padding-right: 2.5rem !important;
+  }
+
+  .left-3 {
+    left: auto !important;
+    right: 0.75rem !important;
+  }
+
+  .right-3 {
+    right: auto !important;
+    left: 0.75rem !important;
+  }
+}
+
+/* Premium UI Utilities */
+.premium-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.premium-shadow {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.03), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
+}
+
+.premium-card-hover {
+  @apply transition-all duration-500 hover:shadow-2xl hover:shadow-zadna-primary/5 hover:border-zadna-primary/20 hover:-translate-y-1;
+}
+
+/* Button Base Styles */
+.btn-base {
+  @apply flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.btn-primary {
+  @apply btn-base bg-zadna-primary text-white shadow-lg shadow-zadna-primary/20 hover:brightness-110 hover:shadow-zadna-primary/30;
+}
+
+.btn-accent {
+  @apply btn-base bg-zadna-accent text-white shadow-lg shadow-zadna-accent/20 hover:brightness-110 hover:shadow-zadna-accent/30;
+}
+
+.btn-secondary {
+  @apply btn-base bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300;
+}
+
+.btn-outline {
+  @apply btn-base bg-transparent border-2 border-zadna-primary/20 text-zadna-primary hover:bg-zadna-primary hover:text-white hover:border-zadna-primary;
+}
+
+.btn-danger-ghost {
+  @apply btn-base bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100 opacity-60 hover:opacity-100;
+}
+
+.btn-ghost {
+  @apply btn-base bg-transparent text-slate-400 hover:bg-zadna-primary/5 hover:text-zadna-primary;
+}
+
+.btn-danger {
+  @apply btn-base bg-red-50 text-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20;
+}
+
+/* Input Base Styles */
+.form-input-base {
+  @apply w-full h-12 px-4 rounded-xl bg-slate-50 border-none ring-0 focus:ring-2 focus:ring-zadna-primary text-sm font-bold transition-all placeholder:text-slate-300;
+}
+
+.form-label-base {
+  @apply block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2;
+}
+
+.shimmer-effect {
+  animation: shimmer 2s infinite linear;
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Basic Utility Animations */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.duration-700 {
+  animation-duration: 700ms;
+}
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 10s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Premium Light Glass - Design 2.0 Specs (Refined)
+.premium-glass-light {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(25px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(200%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 
+        0 8px 32px -4px rgba(18, 124, 140, 0.04),
+        0 1px 2px 0 rgba(18, 124, 140, 0.02) !important;
+}
+
+/* Extraordinary Design System */
+.extraordinary-table-container {
+    @extend .premium-glass-light;
+    border-radius: 2.2rem;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    z-index: 1;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), transparent);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        th {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+
+            @media (min-width: 640px) {
+                padding: 16px 24px;
+            }
+            @media (min-width: 1024px) {
+                padding: 24px 32px;
+            }
+        }
+
+        tr.table-row-object {
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            
+            td {
+                background: transparent;
+                vertical-align: middle;
+                padding: 0;
+                border: none;
+
+                @media (min-width: 640px) {
+                    padding: 20px 24px;
+                    border-bottom: 1px solid rgba(0,0,0,0.02);
+                }
+                @media (min-width: 1024px) {
+                    padding: 20px 32px;
+                }
+            }
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.9);
+                transform: translateY(-1px);
+                box-shadow: 0 12px 25px rgba(18, 124, 140, 0.04);
+                z-index: 10;
+
+                .table-image-preview {
+                    transform: scale(1.02);
+                    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+                }
+            }
+
+            &:last-child td {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.table-image-preview {
+    @apply w-12 h-12 flex items-center justify-center shrink-0;
+    border-radius: 0.85rem;
+    background: white;
+    padding: 6px;
+    object-fit: contain;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.stagger-rows tr {
+    opacity: 0;
+    @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+            animation: fadeIn 0.5s cubic-bezier(0.23, 1, 0.32, 1) #{($i - 1) * 0.05}s forwards;
+        }
+    }
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+  @apply bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[2rem];
+}
+
+.glass-card-sm {
+  @apply bg-white border border-slate-100 shadow-sm rounded-2xl;
+}

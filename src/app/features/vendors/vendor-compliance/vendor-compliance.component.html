@@ -1,0 +1,253 @@
+<!-- Compliance Content Without Header -->
+<div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+
+  <!-- 3-Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Right Column: Verification Status -->
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.VERIFICATION_MATRIX' | translate }}</span>
+            </h3>
+            <span class="text-xs text-gray-500">٣ {{ 'COMMON.OF' | translate }} ٥ {{ 'COMPLIANCE.COMPLETED' | translate }}</span>
+          </div>
+          
+          <div class="divide-y divide-gray-100">
+            <div *ngFor="let item of verificationItems" 
+                 class="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" [ngClass]="item.iconBgClass">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm font-bold text-gray-900">{{ item.titleKey | translate }}</p>
+                  <p class="text-xs text-gray-500">{{ item.descriptionKey | translate }}</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded text-xs font-bold" [ngClass]="item.statusBgClass">
+                {{ item.statusLabelKey | translate }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Column: Risk & Comments -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        <!-- Risk Indicators -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.RISK_INDICATORS' | translate }}</span>
+            </h3>
+          </div>
+          
+          <div class="p-5 flex flex-col gap-3">
+            <!-- IBAN Changes (Low Risk) -->
+            <div class="flex items-center justify-between gap-3 p-4 rounded-lg border border-slate-200 bg-slate-50">
+              <div class="flex items-center gap-3 flex-1">
+                <div class="w-10 h-10 rounded-full bg-slate-500 flex items-center justify-center shrink-0">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <h4 class="text-base font-bold text-gray-900">{{ 'COMPLIANCE.RISK.IBAN_CHANGES' | translate }}</h4>
+                  <p class="text-sm text-gray-600">{{ 'COMPLIANCE.RISK.IBAN_CHANGES_DESC' | translate }}</p>
+                </div>
+              </div>
+              <span class="text-sm font-bold px-3 py-1.5 rounded-md bg-slate-200 text-slate-700 shrink-0">
+                {{ 'COMPLIANCE.SEVERITY.LOW' | translate }}
+              </span>
+            </div>
+
+            <!-- Address Mismatch (Medium Risk) -->
+            <div class="flex items-center justify-between gap-3 p-4 rounded-lg border border-orange-100 bg-orange-50/50">
+              <div class="flex items-center gap-3 flex-1">
+                <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center shrink-0">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <h4 class="text-base font-bold text-gray-900">{{ 'COMPLIANCE.RISK.ADDRESS_MISMATCH' | translate }}</h4>
+                  <p class="text-sm text-gray-600">{{ 'COMPLIANCE.RISK.ADDRESS_MISMATCH_DESC' | translate }}</p>
+                </div>
+              </div>
+              <span class="text-sm font-bold px-3 py-1.5 rounded-md bg-orange-100 text-orange-700 shrink-0">
+                {{ 'COMPLIANCE.SEVERITY.MEDIUM' | translate }}
+              </span>
+            </div>
+
+            <!-- High Cancellation (High Risk) -->
+            <div class="flex items-center justify-between gap-3 p-4 rounded-lg border border-red-100 bg-red-50/50">
+              <div class="flex items-center gap-3 flex-1">
+                <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center shrink-0">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <h4 class="text-base font-bold text-gray-900">{{ 'COMPLIANCE.RISK.HIGH_CANCELLATION' | translate }}</h4>
+                  <p class="text-sm text-gray-600">{{ 'COMPLIANCE.RISK.HIGH_CANCELLATION_DESC' | translate }}</p>
+                </div>
+              </div>
+              <span class="text-sm font-bold px-3 py-1.5 rounded-md bg-red-100 text-red-700 shrink-0">
+                {{ 'COMPLIANCE.SEVERITY.HIGH' | translate }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviewer Notes -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 flex flex-col">
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.COMPLIANCE_NOTES' | translate }}</span>
+            </h3>
+          </div>
+          
+          <div class="p-5 flex-1 overflow-y-auto flex flex-col gap-4 max-h-96">
+            <div *ngFor="let note of complianceNotes" class="flex gap-3">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-base font-bold" [ngClass]="note.avatarClass">
+                {{ note.authorInitials }}
+              </div>
+              <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-100 rounded-tr-none">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-bold text-gray-900">{{ note.author }} ({{ note.role }})</span>
+                  <span class="text-xs text-gray-500">{{ note.timestamp }}</span>
+                </div>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                  {{ note.message }}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-5 border-t border-gray-100 bg-white">
+            <div class="flex gap-3">
+              <input 
+                [(ngModel)]="newNote"
+                class="flex-1 border-gray-200 rounded-xl text-sm px-4 py-3 focus:ring-primary focus:border-primary" 
+                [placeholder]="'COMPLIANCE.ADD_NOTE_PLACEHOLDER' | translate"
+                type="text"
+                [dir]="isRTL ? 'rtl' : 'ltr'"
+              />
+              <button 
+                (click)="onAddNote()"
+                class="bg-primary text-gray-900 px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary/90 flex items-center gap-2 shrink-0">
+                <span>{{ 'COMPLIANCE.ADD' | translate }}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left Column: Decision Panel -->
+      <div class="lg:col-span-3 flex flex-col gap-6">
+        <!-- Decision Actions -->
+        <div class="bg-white rounded-xl border-2 border-primary/20 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 bg-primary/5 flex items-center justify-between">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.REVIEWER_ACTIONS' | translate }}</span>
+            </h3>
+          </div>
+          
+          <div class="p-5 flex flex-col gap-3">
+            <button 
+              (click)="onApproveVendor()"
+              class="w-full bg-teal-500 hover:bg-teal-600 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.ACTIONS.APPROVE_VENDOR' | translate }}</span>
+            </button>
+            
+            <button 
+              (click)="onRequestDocuments()"
+              class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.ACTIONS.REQUEST_DOCUMENTS' | translate }}</span>
+            </button>
+            
+            <div class="h-px bg-gray-100 my-1"></div>
+            
+            <button 
+              (click)="onSuspendAccount()"
+              class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.ACTIONS.SUSPEND_ACCOUNT' | translate }}</span>
+            </button>
+            
+            <button 
+              (click)="onRejectVendor()"
+              class="w-full bg-white hover:bg-red-50 text-red-600 border border-red-200 py-2.5 px-4 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.ACTIONS.REJECT_VENDOR' | translate }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Decision Summary -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 bg-gray-50">
+            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>{{ 'COMPLIANCE.DECISION_SUMMARY' | translate }}</span>
+            </h3>
+          </div>
+          
+          <div class="p-5 flex flex-col gap-4">
+            <div>
+              <span class="text-xs text-gray-500 block mb-1">{{ 'COMPLIANCE.CURRENT_REVIEW_STATUS' | translate }}</span>
+              <span class="font-bold text-sm text-gray-900">{{ 'COMPLIANCE.AWAITING_ACTION' | translate }}</span>
+            </div>
+            
+            <div>
+              <span class="text-xs text-gray-500 block mb-1">{{ 'COMPLIANCE.LAST_REVIEWER' | translate }}</span>
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">م.أ</span>
+                <span class="text-sm font-medium text-slate-800">{{ 'COMPLIANCE.INITIAL_REVIEW' | translate }}</span>
+              </div>
+            </div>
+            
+            <div class="bg-orange-50 p-3 rounded-lg border border-orange-100">
+              <span class="text-xs font-bold text-orange-800 block mb-1">{{ 'COMPLIANCE.BLOCKING_ITEMS' | translate }}:</span>
+              <ul class="text-xs text-orange-700 space-y-1 list-disc list-inside">
+                <li>{{ 'COMPLIANCE.VERIFICATION.TAX_CERT' | translate }} ({{ 'COMPLIANCE.STATUS.UNDER_REVIEW' | translate }})</li>
+                <li>{{ 'COMPLIANCE.VERIFICATION.MUNICIPAL_LICENSE' | translate }} ({{ 'COMPLIANCE.STATUS.MISSING' | translate }})</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>

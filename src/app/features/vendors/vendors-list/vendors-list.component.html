@@ -1,0 +1,239 @@
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-hidden">
+
+    <!-- Design 2.0 Artistic Header Row -->
+    <div class="px-4 md:px-10 pt-8 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
+        <!-- Page Identity (Right Aligned in RTL) -->
+        <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
+            <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
+                <span>{{ 'SIDEBAR.CATALOG' | translate }}</span>
+                <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
+                <span class="text-zadna-primary">{{ 'SIDEBAR.VENDORS.TITLE' | translate }}</span>
+            </nav>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                {{ 'SIDEBAR.VENDORS.TITLE' | translate }}
+            </h1>
+            <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
+                إدارة الموردين والشركاء التجاريين وتتبع العمولات والحالات
+            </p>
+        </div>
+
+        <!-- Primary Action (Left Aligned in RTL) -->
+        <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+            <app-button variant="primary" 
+                customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:rotate-90 transition-transform duration-500">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </div>
+                    <span class="font-black uppercase tracking-[0.1em] text-xs sm:text-sm">{{ 'COMMON.ADD' | translate }} مورد</span>
+                </div>
+            </app-button>
+        </div>
+    </div>
+
+    <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
+        <!-- Search Bar Mirror -->
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+            <div class="flex-1 w-full max-w-md">
+                <app-input [placeholder]="'SIDEBAR.VENDORS.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (input)="onSearch()"
+                    [dir]="translate.currentLang === 'ar' ? 'rtl' : 'ltr'" 
+                    [inputClass]="'!bg-transparent !border-0 !ring-0 !text-zadna-primary !placeholder-zadna-primary/40'"
+                    [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-[1.5rem] overflow-hidden'"
+                    [hasIcon]="true">
+                    <svg icon class="w-4 h-4 text-zadna-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </app-input>
+            </div>
+        </div>
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
+            <div class="relative w-24 h-24">
+                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
+                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div *ngIf="!isLoading && vendors.length > 0" 
+             class="hidden md:block extraordinary-table-container w-full overflow-x-auto animate-in fade-in slide-in-from-bottom-10 duration-1000">
+            <table class="w-full table-fixed border-separate border-spacing-y-0">
+                <thead class="border-b border-slate-100/50">
+                    <tr>
+                        <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
+                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الشعار</th>
+                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المورد والاسم</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">التواصل والعمولة</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let vendor of vendors; let i = index" 
+                        class="group bg-white/50 hover:bg-white transition-all duration-500 border-b border-slate-100/60">
+                        
+                        <!-- Col 1: Index -->
+                        <td class="text-center align-middle py-4 w-[5%]">
+                            <span class="text-[10px] sm:text-[11px] font-black text-slate-300">{{ (pageNumber - 1) * pageSize + i + 1 }}</span>
+                        </td>
+
+                        <!-- Col 2: Logo -->
+                        <td class="text-center align-middle py-4 w-[10%]">
+                            <div class="flex justify-center">
+                                <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-[1.2rem] border border-[#e0f2f4] flex items-center justify-center transition-all group-hover:scale-105 group-hover:rotate-2 shadow-sm">
+                                    <span class="text-2xl font-black text-zadna-primary">{{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn).charAt(0) | uppercase }}</span>
+                                    <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-white border-2 border-[#e0f2f4] rounded-full shadow-sm"></div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Col 3: Name & Translation -->
+                        <td class="align-middle py-4 w-[25%] px-2">
+                            <div class="flex flex-col text-start">
+                                <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
+                                    {{ activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn }}
+                                </span>
+                                <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
+                                    {{ activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Col 4: Contact & Commission -->
+                        <td class="text-center align-middle py-4 w-[20%]">
+                            <div class="flex flex-col items-center gap-1.5">
+                                <span class="text-[11px] font-bold text-slate-600 tracking-tight truncate max-w-[180px]">{{ vendor.contactEmail }}</span>
+                                <code class="text-[9px] font-bold text-zadna-primary bg-zadna-primary/5 px-2 py-0.5 rounded-md border border-zadna-primary/10 uppercase tracking-widest">
+                                    عمولة: {{ vendor.commissionRate }}%
+                                </code>
+                            </div>
+                        </td>
+
+                        <!-- Col 5: Status -->
+                        <td class="text-center align-middle py-4 w-[20%]">
+                            <div class="flex justify-center">
+                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
+                                     [class.text-emerald-500]="vendor.status === 'Active'" 
+                                     [class.text-amber-500]="vendor.status === 'Pending'"
+                                     [class.text-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'">
+                                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
+                                          [class.bg-emerald-500]="vendor.status === 'Active'" 
+                                          [class.bg-amber-500]="vendor.status === 'Pending'"
+                                          [class.bg-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"></span>
+                                    <span class="text-[10px] font-black tracking-tight uppercase">
+                                        {{ vendor.status }}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Col 6: Actions -->
+                        <td class="text-center align-middle py-4 w-[20%]">
+                            <div class="flex justify-center gap-1.5">
+                                <button [routerLink]="['/vendors', vendor.id]" class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-zadna-primary hover:text-white transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Cards View -->
+        <div *ngIf="!isLoading && vendors.length > 0" 
+             class="md:hidden space-y-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+            <div *ngFor="let vendor of vendors; let i = index" 
+                 class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all">
+                
+                <!-- Header with Logo and Status -->
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-xl border border-[#e0f2f4] flex items-center justify-center">
+                            <span class="text-xl font-black text-zadna-primary">{{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn).charAt(0) | uppercase }}</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-sm font-bold text-slate-900 truncate">
+                                {{ activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn }}
+                            </h3>
+                            <p class="text-xs text-slate-500 truncate">
+                                {{ activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold"
+                         [class.bg-emerald-50]="vendor.status === 'Active'"
+                         [class.text-emerald-600]="vendor.status === 'Active'"
+                         [class.bg-amber-50]="vendor.status === 'Pending'"
+                         [class.text-amber-600]="vendor.status === 'Pending'"
+                         [class.bg-red-50]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"
+                         [class.text-red-600]="vendor.status === 'Rejected' || vendor.status === 'Suspended'">
+                        <span class="w-1 h-1 rounded-full"
+                              [class.bg-emerald-500]="vendor.status === 'Active'"
+                              [class.bg-amber-500]="vendor.status === 'Pending'"
+                              [class.bg-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"></span>
+                        {{ vendor.status }}
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-500">البريد الإلكتروني</span>
+                        <span class="text-xs font-medium text-slate-700 truncate max-w-[200px]">
+                            {{ vendor.contactEmail }}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-500">العمولة</span>
+                        <code class="text-xs font-bold text-zadna-primary bg-zadna-primary/5 px-2 py-1 rounded">
+                            {{ vendor.commissionRate }}%
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-2 pt-3 border-t border-slate-100">
+                    <button [routerLink]="['/vendors', vendor.id]" class="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 text-slate-600 rounded-lg text-xs font-medium hover:bg-blue-500 hover:text-white transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        عرض التفاصيل
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && vendors.length === 0" 
+             class="relative p-20 text-center animate-in zoom-in duration-700">
+            <div class="max-w-md mx-auto space-y-6">
+                <div class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl flex items-center justify-center mx-auto text-slate-100 relative group">
+                    <div class="absolute inset-0 bg-zadna-primary/5 rounded-[3rem] group-hover:scale-110 transition-transform duration-500"></div>
+                    <svg class="w-16 h-16 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'COMMON.NO_RESULTS' | translate }}</h3>
+                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ (translate.currentLang === 'ar' ? 'لا يوجد موردين مسجلين حالياً' : 'No vendors joined the network yet.') }}</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="!isLoading && vendors.length > 0" class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+            <app-pagination
+                [currentPage]="pageNumber"
+                [pageSize]="pageSize"
+                [totalItems]="totalCount"
+                (pageChange)="changePage($event)">
+            </app-pagination>
+        </div>
+    </div>
+</div>

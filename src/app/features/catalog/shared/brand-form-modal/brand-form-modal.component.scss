@@ -1,0 +1,30 @@
+.custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #f1f5f9;
+        border-radius: 20px;
+    }
+    &:hover::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+    }
+}
+
+.animate-puzzle-up {
+    animation: puzzle-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes puzzle-up {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

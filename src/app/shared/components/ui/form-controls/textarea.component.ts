@@ -1,0 +1,62 @@
+import { Component, Input, forwardRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+
+@Component({
+  selector: 'app-textarea',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  templateUrl: './textarea.component.html',
+  styleUrl: './textarea.component.scss',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => AppTextareaComponent),
+      multi: true
+    }
+  ]
+})
+export class AppTextareaComponent implements ControlValueAccessor {
+  @Input() label = '';
+  @Input() placeholder = '';
+  @Input() rows = 4;
+  @Input() dir: 'rtl' | 'ltr' | 'auto' = 'auto';
+  @Input() error = '';
+  @Input() isTouched = false;
+  @Input() isRequired = false;
+  @Input() customClass = '';
+
+  value: any = '';
+  disabled = false;
+
+  onChange: any = () => {};
+  onTouched: any = () => {};
+
+  writeValue(value: any): void {
+    this.value = value;
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  onInput(event: Event): void {
+    const val = (event.target as HTMLTextAreaElement).value;
+    this.value = val;
+    this.onChange(val);
+  }
+
+  onBlur(): void {
+    this.isTouched = true;
+    this.onTouched();
+  }
+}

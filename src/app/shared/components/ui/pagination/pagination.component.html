@@ -1,0 +1,40 @@
+<div *ngIf="totalItems > 0" class="flex flex-col items-center gap-4 pt-6 border-t border-slate-100/50">
+    <!-- Page Navigator -->
+    <div class="flex items-center gap-3 p-2.5 bg-white border border-slate-100 rounded-[2rem] shadow-xl">
+        <!-- Previous Button -->
+        <app-button 
+            variant="ghost" 
+            size="sm" 
+            (btnClick)="changePage(currentPage - 1)" 
+            [disabled]="currentPage === 1" 
+            customClass="w-12 h-12 rounded-2xl">
+            <svg class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-width="3" d="M15 19l-7-7 7-7" />
+            </svg>
+        </app-button>
+
+        <!-- Page Count Display -->
+        <div class="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3 select-none">
+            <span class="text-sm font-black text-slate-900">{{ currentPage }}</span>
+            <div class="h-4 w-px bg-slate-200"></div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ totalPages }}</span>
+        </div>
+
+        <!-- Next Button -->
+        <app-button 
+            variant="ghost" 
+            size="sm" 
+            (btnClick)="changePage(currentPage + 1)" 
+            [disabled]="currentPage >= totalPages" 
+            customClass="w-12 h-12 rounded-2xl">
+            <svg class="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-width="3" d="M9 5l7 7-7 7" />
+            </svg>
+        </app-button>
+    </div>
+
+    <!-- Info Text -->
+    <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] opacity-50">
+        {{ 'COMMON.SHOWING' | translate }} {{ startItem }} {{ 'COMMON.TO' | translate }} {{ endItem }} {{ 'COMMON.OF' | translate }} {{ totalItems }} {{ 'COMMON.ENTRIES' | translate }}
+    </p>
+</div>

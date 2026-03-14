@@ -1,0 +1,276 @@
+// 1. Perspective Card Container
+:host {
+    display: block;
+    perspective: 2000px;
+}
+
+
+// 5. Sophisticated Pills
+.filter-pill {
+    padding: 10px 24px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+    color: #64748b;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+
+    &:hover {
+        border-color: rgba(18, 124, 140, 0.2);
+        color: #127c8c;
+        transform: translateY(-1px);
+    }
+
+    &.active {
+        background: #127c8c;
+        color: white;
+        border-color: #127c8c;
+        box-shadow: 0 10px 20px rgba(18, 124, 140, 0.2);
+    }
+}
+
+// 6. Custom Animations
+@keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.animate-scale-in {
+    animation: scale-in 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.stagger-items > * {
+    opacity: 0;
+    @for $i from 1 through 4 {
+        &:nth-child(#{$i}) {
+            animation: scale-in 0.6s cubic-bezier(0.23, 1, 0.32, 1) #{($i - 1) * 0.08}s forwards;
+        }
+    }
+}
+
+// 7. Extraordinary Table Design
+.extraordinary-table-container {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    border-radius: 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        th {
+            padding: 24px 32px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+            text-align: start;
+        }
+
+        tr.table-row-object {
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            
+            td {
+                padding: 20px 32px;
+                background: transparent;
+                border-bottom: 1px solid rgba(0,0,0,0.02);
+                vertical-align: middle;
+            }
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.8);
+                transform: scale(1.005);
+                box-shadow: 0 10px 30px rgba(18, 124, 140, 0.05);
+                z-index: 10;
+
+                .table-image-preview {
+                    transform: scale(1.1);
+                    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+                }
+            }
+
+            &:last-child td {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.table-image-preview {
+    width: 64px;
+    height: 64px;
+    border-radius: 1rem;
+    background: white;
+    padding: 8px;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+// 8. Staggered Row Animation
+.stagger-rows tr {
+    opacity: 0;
+    @for $i from 1 through 8 {
+        &:nth-child(#{$i}) {
+            animation: scale-in 0.5s cubic-bezier(0.23, 1, 0.32, 1) #{($i - 1) * 0.05}s forwards;
+        }
+    }
+}
+// 9. Quantum Superhero Gallery View
+.extraordinary-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+
+    @media (min-width: 640px) {
+        gap: 2.5rem;
+    }
+    perspective: 2000px;
+
+    .quantum-card {
+        position: relative;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(30px) saturate(180%);
+        border-radius: 3rem;
+        border: 1px solid rgba(255,255,255,0.4);
+        padding: 1.5rem;
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+        transform-style: preserve-3d;
+        box-shadow: 
+            0 10px 30px rgba(0,0,0,0.02),
+            inset 0 0 0 1px rgba(255,255,255,0.5);
+
+        // Holographic Sparkle
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(18, 124, 140, 0.1), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            border-radius: inherit;
+            z-index: 10;
+        }
+
+        &:hover {
+            transform: translateY(-15px) rotateX(4deg) scale(1.02);
+            box-shadow: 
+                0 40px 80px rgba(0,0,0,0.06),
+                0 0 0 1px rgba(18, 124, 140, 0.1);
+            background: white;
+
+            &::before { opacity: 1; }
+
+            .quantum-image-chamber {
+                transform: translateZ(40px);
+                background: white;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+                
+                img { transform: scale(1.1) rotate(2deg); }
+                .tech-badge { opacity: 1; transform: translateZ(20px); }
+            }
+
+            .quantum-info-slab {
+                transform: translateZ(20px);
+            }
+        }
+    }
+}
+
+.quantum-image-chamber {
+    width: 100%;
+    aspect-ratio: 1.2;
+    background: #fcfdfe;
+    border-radius: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0);
+
+    img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+    }
+
+    .tech-badge {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        opacity: 0.8;
+        transition: all 0.4s ease;
+        z-index: 20;
+    }
+}
+
+.quantum-info-slab {
+    padding: 2rem 1rem 0.5rem;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateZ(0);
+
+    .stamp-id {
+        font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+        font-size: 9px;
+        font-weight: 900;
+        color: #94a3b8;
+        letter-spacing: 0.3em;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .quantum-title {
+        font-size: 1.25rem;
+        font-weight: 950;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+    }
+}
+
+.action-nexus {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,0.03);
+    margin-top: 0.5rem;
+
+    .nexus-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        
+        .stat-label { font-size: 8px; font-weight: 900; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.1em; }
+        .stat-value { font-size: 11px; font-weight: 700; color: #64748b; }
+    }
+}
+
+// Optimized Animation
+.quantum-card {
+    opacity: 0;
+    @for $i from 1 through 12 {
+        &:nth-child(#{$i}) {
+            animation: scale-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) #{($i - 1) * 0.1}s forwards;
+        }
+    }
+}

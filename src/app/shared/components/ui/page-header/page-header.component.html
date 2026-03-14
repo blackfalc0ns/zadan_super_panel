@@ -1,0 +1,51 @@
+<header class="bg-white/80 backdrop-blur-xl border-b border-white shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] px-4 md:px-8 py-4 sm:py-5 flex flex-col lg:flex-row items-center gap-4 transition-all relative z-10 w-full overflow-hidden">
+    <!-- Subtle Background Elements -->
+    <div class="absolute inset-0 bg-gradient-to-r from-slate-50/50 via-transparent to-slate-50/50 pointer-events-none"></div>
+
+    <!-- Title & Breadcrumbs -->
+    <div class="flex items-center gap-3 relative z-10 w-full lg:w-auto shrink-0">
+        <!-- Back Button -->
+        <button *ngIf="showBack" type="button" 
+                [routerLink]="backUrl" 
+                (click)="onBack()"
+                class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-[1.25rem] bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-lg hover:shadow-zadna-primary/5 transition-all cursor-pointer active:scale-95 group"
+                title="Go Back">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 rtl:rotate-180 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+        </button>
+
+        <div class="min-w-0">
+
+            <div class="flex items-center gap-2">
+                <h1 *ngIf="title" class="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none whitespace-nowrap">
+                    {{ title | translate }}
+                </h1>
+                <ng-content select="[title-extra]"></ng-content>
+            </div>
+            <p *ngIf="subtitle" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ subtitle | translate }}</p>
+        </div>
+    </div>
+
+    <!-- Controls: Search (grows) → Filters → View Switcher → Add Button -->
+    <div class="flex flex-1 flex-wrap lg:flex-nowrap items-center gap-3 w-full lg:w-auto relative z-10">
+        
+        <!-- Search grows to fill available space -->
+        <div class="flex-1 min-w-[180px]">
+            <ng-content select="[search]"></ng-content>
+        </div>
+
+        <div class="shrink-0">
+            <ng-content select="[filters]"></ng-content>
+        </div>
+
+        <div class="shrink-0">
+            <ng-content select="[view-switcher]"></ng-content>
+        </div>
+
+        <div class="shrink-0">
+            <ng-content select="[actions]"></ng-content>
+        </div>
+        
+    </div>
+</header>

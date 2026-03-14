@@ -1,0 +1,238 @@
+<!-- Vendor Finance Content -->
+<div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div *ngFor="let kpi of kpis" 
+         class="flex flex-col gap-3 rounded-xl p-5 border border-gray-200 bg-white shadow-sm hover:border-primary/30 transition-colors">
+      <!-- Top: Icon and Title -->
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm p-1 rounded" [ngClass]="kpi.iconBgClass">{{ kpi.icon }}</span>
+        <p class="text-gray-500 text-xs font-semibold">{{ kpi.titleKey | translate }}</p>
+      </div>
+      
+      <!-- Middle: Value -->
+      <p class="text-xl font-bold" [ngClass]="kpi.id === 'available' ? 'text-green-600' : 'text-gray-900'">
+        {{ kpi.value }} <span class="text-sm font-normal text-gray-500">{{ kpi.unit }}</span>
+      </p>
+      
+      <!-- Bottom: Trend -->
+      <p class="text-xs font-medium flex items-center gap-1" [ngClass]="kpi.trendClass">
+        <span *ngIf="kpi.trendIcon" class="material-symbols-outlined text-[14px]">{{ kpi.trendIcon }}</span>
+        <span *ngIf="kpi.trend">{{ kpi.trend }}</span>
+        <span *ngIf="kpi.trendKey" class="text-gray-400 font-normal">{{ kpi.trendKey | translate }}</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Right Column: Financial Summary & Bank Info -->
+    <div class="lg:col-span-3 flex flex-col gap-6">
+      
+      <!-- Financial Summary -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h3 class="text-gray-900 font-bold mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">analytics</span>
+          <span>{{ 'VENDOR_FINANCE.FINANCIAL_SUMMARY' | translate }}</span>
+        </h3>
+        
+        <div class="flex flex-col gap-3">
+          <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+            <span class="text-gray-500 text-xs">{{ 'VENDOR_FINANCE.SALES' | translate }}</span>
+            <span class="text-gray-900 text-sm font-medium">{{ financialSummary.sales }} SAR</span>
+          </div>
+          
+          <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+            <span class="text-gray-500 text-xs">{{ 'VENDOR_FINANCE.RETURNS' | translate }}</span>
+            <span class="text-red-600 text-sm font-medium">{{ financialSummary.returns }} SAR</span>
+          </div>
+          
+          <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+            <span class="text-gray-500 text-xs">{{ 'VENDOR_FINANCE.DISCOUNTS' | translate }}</span>
+            <span class="text-orange-500 text-sm font-medium">{{ financialSummary.discounts }} SAR</span>
+          </div>
+          
+          <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+            <span class="text-gray-500 text-xs">{{ 'VENDOR_FINANCE.PLATFORM_COMMISSIONS' | translate }}</span>
+            <span class="text-red-600 text-sm font-medium">{{ financialSummary.commissions }} SAR</span>
+          </div>
+          
+          <div class="flex justify-between items-center pt-2 mt-1">
+            <span class="text-gray-700 text-sm font-bold">{{ 'VENDOR_FINANCE.NET_TOTAL' | translate }}</span>
+            <span class="text-base font-bold text-primary">{{ financialSummary.netTotal }} SAR</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bank Info -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h3 class="text-gray-900 font-bold mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">account_balance</span>
+          <span>{{ 'VENDOR_FINANCE.TRANSFER_INFO' | translate }}</span>
+        </h3>
+        
+        <div class="flex flex-col gap-4">
+          <div>
+            <p class="text-gray-500 text-xs mb-1">{{ 'VENDOR_FINANCE.BANK' | translate }}</p>
+            <p class="text-gray-900 text-sm font-medium">{{ bankInfo.bankName }}</p>
+          </div>
+          
+          <div>
+            <p class="text-gray-500 text-xs mb-1">{{ 'VENDOR_FINANCE.IBAN' | translate }}</p>
+            <p class="text-gray-900 text-sm font-medium font-mono" dir="ltr">{{ bankInfo.iban }}</p>
+          </div>
+          
+          <div>
+            <p class="text-gray-500 text-xs mb-1">{{ 'VENDOR_FINANCE.PAYMENT_CYCLE' | translate }}</p>
+            <span class="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded font-medium">
+              {{ bankInfo.paymentCycle }}
+            </span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Center Column: Settlements Table -->
+    <div class="lg:col-span-6 flex flex-col gap-6">
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+        
+        <!-- Header -->
+        <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+          <h3 class="text-gray-900 font-bold flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">list_alt</span>
+            <span>{{ 'VENDOR_FINANCE.SETTLEMENTS' | translate }}</span>
+          </h3>
+          <div class="flex gap-2">
+            <button 
+              (click)="onFilterSettlements()"
+              class="text-gray-500 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-sm">filter_list</span>
+            </button>
+            <button 
+              (click)="onSettlementOptions()"
+              class="text-gray-500 hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-sm">more_vert</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="bg-gray-50 border-b border-gray-200">
+                <th class="px-4 py-3 text-gray-500 text-xs font-semibold">
+                  {{ 'VENDOR_FINANCE.TABLE.SETTLEMENT_ID' | translate }}
+                </th>
+                <th class="px-4 py-3 text-gray-500 text-xs font-semibold">
+                  {{ 'VENDOR_FINANCE.TABLE.PERIOD' | translate }}
+                </th>
+                <th class="px-4 py-3 text-gray-500 text-xs font-semibold">
+                  {{ 'VENDOR_FINANCE.TABLE.TOTAL' | translate }}
+                </th>
+                <th class="px-4 py-3 text-gray-500 text-xs font-semibold">
+                  {{ 'VENDOR_FINANCE.TABLE.NET' | translate }}
+                </th>
+                <th class="px-4 py-3 text-gray-500 text-xs font-semibold">
+                  {{ 'VENDOR_FINANCE.TABLE.STATUS' | translate }}
+                </th>
+                <th class="px-4 py-3 text-gray-500 text-xs font-semibold">
+                  {{ 'VENDOR_FINANCE.TABLE.DATE' | translate }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="text-sm">
+              <tr *ngFor="let settlement of settlements" 
+                  class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 text-gray-900 font-medium">{{ settlement.settlementId }}</td>
+                <td class="px-4 py-3 text-gray-600 text-xs">{{ settlement.period }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ settlement.total }} SAR</td>
+                <td class="px-4 py-3 text-gray-900 font-medium">{{ settlement.net }} SAR</td>
+                <td class="px-4 py-3">
+                  <span class="inline-flex items-center justify-center px-2.5 py-1 rounded text-[11px] font-medium border"
+                        [ngClass]="settlement.statusClass">
+                    {{ settlement.statusKey | translate }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-gray-500 text-xs">{{ settlement.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-3 border-t border-gray-200 flex justify-center">
+          <button 
+            (click)="onViewMoreSettlements()"
+            class="text-primary text-sm font-medium hover:underline">
+            {{ 'VENDOR_FINANCE.VIEW_MORE' | translate }}
+          </button>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- Left Column: Actions, Alerts & Invoices -->
+    <div class="lg:col-span-3 flex flex-col gap-6">
+      
+      <!-- Financial Actions -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h3 class="text-gray-900 font-bold mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">touch_app</span>
+          <span>{{ 'VENDOR_FINANCE.FINANCIAL_ACTIONS' | translate }}</span>
+        </h3>
+        
+        <div class="flex flex-col gap-3">
+          <button 
+            (click)="onCreateSettlement()"
+            class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-gray-900 font-bold py-2.5 px-4 rounded-lg transition-colors text-sm">
+            <span class="material-symbols-outlined text-[18px]">add_circle</span>
+            <span>{{ 'VENDOR_FINANCE.ACTIONS.CREATE_SETTLEMENT' | translate }}</span>
+          </button>
+          
+          <button 
+            (click)="onDownloadStatement()"
+            class="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2.5 px-4 rounded-lg border border-gray-200 transition-colors text-sm">
+            <span class="material-symbols-outlined text-[18px]">download</span>
+            <span>{{ 'VENDOR_FINANCE.ACTIONS.DOWNLOAD_STATEMENT' | translate }}</span>
+          </button>
+          
+          <button 
+            (click)="onReviewPayments()"
+            class="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2.5 px-4 rounded-lg border border-gray-200 transition-colors text-sm">
+            <span class="material-symbols-outlined text-[18px]">fact_check</span>
+            <span>{{ 'VENDOR_FINANCE.ACTIONS.REVIEW_PAYMENTS' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Financial Alerts -->
+      <div class="bg-red-50 rounded-xl border border-red-200 p-5">
+        <h3 class="text-red-700 font-bold mb-3 flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined">warning</span>
+          <span>{{ 'VENDOR_FINANCE.FINANCIAL_ALERTS' | translate }}</span>
+        </h3>
+        
+        <div class="flex flex-col gap-2">
+          <div *ngFor="let alert of alerts" 
+               class="bg-white/60 p-3 rounded border border-red-100 flex gap-3 items-start">
+            <span class="material-symbols-outlined text-red-500 text-[18px] mt-0.5">error</span>
+            <div>
+              <p class="text-gray-800 text-xs font-bold">
+                {{ alert.titleKey | translate }} - {{ alert.settlementId }}
+              </p>
+              <p class="text-gray-600 text-[11px] mt-1">
+                {{ alert.descriptionKey | translate }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+    </div>
+  </div>
+</div>

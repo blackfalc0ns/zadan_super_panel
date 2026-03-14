@@ -1,0 +1,304 @@
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-hidden">
+
+    <!-- Design 2.0 Artistic Header Row -->
+    <div class="px-4 md:px-10 pt-8 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
+        <!-- Page Identity (Right Aligned in RTL) -->
+        <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
+            <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
+                <span>{{ 'SIDEBAR.CATALOG' | translate }}</span>
+                <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
+                <span class="text-zadna-primary">{{ 'PRODUCTS.TITLE' | translate }}</span>
+            </nav>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                {{ 'PRODUCTS.TITLE' | translate }} والسلع
+            </h1>
+            <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
+                إدارة دليل المنتجات وتصنيفات المخزون وتتبع الباركود والحالات
+            </p>
+        </div>
+
+        <!-- Primary Action (Left Aligned in RTL) -->
+        <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+            <!-- Category Filter Dropdown Mirror -->
+            <div class="relative">
+                <button (click)="isCategoryDropdownOpen = !isCategoryDropdownOpen"
+                    class="flex items-center justify-between gap-3 bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-xl px-4 py-2.5 min-w-[140px] text-[10px] font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-zadna-primary/20 outline-none transition-all shadow-sm cursor-pointer hover:border-zadna-primary/30 hover:bg-white/90">
+                    <span class="truncate max-w-[150px]">
+                        <ng-container *ngIf="!categoryId">{{ 'SIDEBAR.VENDORS.FILTER_ALL' | translate }}</ng-container>
+                        <ng-container *ngIf="categoryId">{{ getCategoryName(categoryId) }}</ng-container>
+                    </span>
+                    <svg class="w-4 h-4 text-slate-400 transition-transform duration-300" 
+                         [class.rotate-180]="isCategoryDropdownOpen" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div *ngIf="isCategoryDropdownOpen" (click)="isCategoryDropdownOpen = false" class="fixed inset-0 z-40"></div>
+                <!-- Dropdown Menu -->
+                <div *ngIf="isCategoryDropdownOpen"
+                    class="absolute top-12 ltr:right-0 rtl:left-0 z-50 w-56 bg-white/90 backdrop-blur-3xl border border-slate-100 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <button (click)="filterByCategory(null); isCategoryDropdownOpen = false" 
+                        class="flex items-center justify-between w-full px-4 py-3 text-start hover:bg-slate-50 transition-colors group">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-zadna-primary">{{ 'SIDEBAR.VENDORS.FILTER_ALL' | translate }}</span>
+                        <svg *ngIf="!categoryId" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                    </button>
+                    <div class="h-px bg-slate-100 w-full mx-auto"></div>
+                    <div class="max-h-64 overflow-y-auto custom-scrollbar">
+                        <button *ngFor="let cat of categories" 
+                            (click)="filterByCategory(cat.id); isCategoryDropdownOpen = false" 
+                            class="flex items-center justify-between w-full px-4 py-3 text-start hover:bg-slate-50 transition-colors group">
+                            <span class="text-[10px] font-black text-slate-600 truncate group-hover:text-zadna-primary">
+                                {{ translate.currentLang === 'ar' ? cat.nameAr : cat.nameEn }}
+                            </span>
+                            <svg *ngIf="categoryId === cat.id" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <app-button routerLink="/catalog/products/create" variant="primary" 
+                customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:rotate-90 transition-transform duration-500">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </div>
+                    <span class="font-black uppercase tracking-[0.1em] text-xs sm:text-sm">{{ 'PRODUCTS.ADD' | translate }} منتج</span>
+                </div>
+            </app-button>
+        </div>
+    </div>
+
+    <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
+        <!-- Search Bar Mirror -->
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+            <div class="flex-1 w-full max-w-md">
+                <app-input [placeholder]="'PRODUCTS.SEARCH_PLACEHOLDER' | translate" (input)="onSearch($event)"
+                    [dir]="translate.currentLang === 'ar' ? 'rtl' : 'ltr'" 
+                    [inputClass]="'!bg-transparent !border-0 !ring-0 !text-zadna-primary !placeholder-zadna-primary/40'"
+                    [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-[1.5rem] overflow-hidden'"
+                    [hasIcon]="true">
+                    <svg icon class="w-4 h-4 text-zadna-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </app-input>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
+            <div class="relative w-24 h-24">
+                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
+                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div *ngIf="!isLoading && products.length > 0" 
+             class="hidden md:block extraordinary-table-container w-full overflow-x-auto animate-in fade-in slide-in-from-bottom-10 duration-1000">
+            <table class="w-full table-fixed border-separate border-spacing-y-0">
+                <thead class="border-b border-slate-100/50">
+                    <tr>
+                        <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
+                        <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الصورة</th>
+                        <th class="text-start w-[27%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المنتج</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الباركود والتصنيف</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let product of products; let i = index" 
+                        class="group bg-white/50 hover:bg-white transition-all duration-500 border-b border-slate-100/60 cursor-pointer"
+                        [routerLink]="['/catalog/products/view', product.id]">
+                        
+                        <!-- Col 1: Index -->
+                        <td class="text-center align-middle py-4 w-[5%]">
+                            <span class="text-[10px] sm:text-[11px] font-black text-slate-300">{{ (page - 1) * pageSize + i + 1 }}</span>
+                        </td>
+
+                        <!-- Col 2: Image -->
+                        <td class="text-center align-middle py-4 w-[8%]">
+                            <div class="flex justify-center">
+                                <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-[1.2rem] border border-[#e0f2f4] flex items-center justify-center transition-all group-hover:scale-105 group-hover:rotate-2 shadow-sm overflow-hidden">
+                                    <img [src]="getPrimaryImage(product)" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                    <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-white border-2 border-[#e0f2f4] rounded-full shadow-sm"></div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Col 3: Name & Translation -->
+                        <td class="align-middle py-4 w-[27%] px-2">
+                            <div class="flex flex-col text-start">
+                                <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
+                                    {{ translate.currentLang === 'ar' ? product.nameAr : product.nameEn }}
+                                </span>
+                                <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
+                                    {{ translate.currentLang === 'ar' ? product.nameEn : product.nameAr }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Col 4: Barcode & Category -->
+                        <td class="text-center align-middle py-4 w-[20%]">
+                            <div class="flex flex-col items-center gap-1.5">
+                                <code class="text-[10px] font-bold text-indigo-500 bg-indigo-50/50 px-3 py-1 rounded-xl border border-indigo-100/50 uppercase tracking-wider">
+                                    {{ product.barcode || 'SEC-TRK-77X' }}
+                                </code>
+                                <span class="text-[9px] font-black text-zadna-primary uppercase px-1.5 py-0.5 rounded-md bg-zadna-primary/5 border border-zadna-primary/10">
+                                    {{ getCategoryName(product.categoryId) }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Col 5: Status -->
+                        <td class="text-center align-middle py-4 w-[15%]">
+                            <div class="flex justify-center">
+                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
+                                     [class.text-emerald-500]="product.status === 'Active'" 
+                                     [class.text-amber-500]="product.status === 'Draft'"
+                                     [class.text-red-500]="product.status === 'Inactive' || product.status === 'Discontinued'">
+                                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
+                                          [class.bg-emerald-500]="product.status === 'Active'" 
+                                          [class.bg-amber-500]="product.status === 'Draft'"
+                                          [class.bg-red-500]="product.status === 'Inactive' || product.status === 'Discontinued'"></span>
+                                    <span class="text-[10px] font-black tracking-tight uppercase">
+                                        {{ product.status }}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Col 6: Actions -->
+                        <td class="text-center align-middle py-4 w-[15%]">
+                            <div class="flex justify-center gap-1.5">
+                                <button (click)="$event.stopPropagation()" 
+                                        [routerLink]="['/catalog/products/edit', product.id]" 
+                                        class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-zadna-primary hover:text-white transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                </button>
+                                <button (click)="$event.stopPropagation()" 
+                                        [routerLink]="['/catalog/products/view', product.id]"
+                                        class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Cards View -->
+        <div *ngIf="!isLoading && products.length > 0" 
+             class="md:hidden space-y-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+            <div *ngFor="let product of products; let i = index" 
+                 class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                 [routerLink]="['/catalog/products/view', product.id]">
+                
+                <!-- Header with Image and Status -->
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-xl border border-[#e0f2f4] flex items-center justify-center overflow-hidden">
+                            <img [src]="getPrimaryImage(product)" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-sm font-bold text-slate-900 truncate">
+                                {{ translate.currentLang === 'ar' ? product.nameAr : product.nameEn }}
+                            </h3>
+                            <p class="text-xs text-slate-500 truncate">
+                                {{ translate.currentLang === 'ar' ? product.nameEn : product.nameAr }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold"
+                         [class.bg-emerald-50]="product.status === 'Active'"
+                         [class.text-emerald-600]="product.status === 'Active'"
+                         [class.bg-amber-50]="product.status === 'Draft'"
+                         [class.text-amber-600]="product.status === 'Draft'"
+                         [class.bg-red-50]="product.status === 'Inactive' || product.status === 'Discontinued'"
+                         [class.text-red-600]="product.status === 'Inactive' || product.status === 'Discontinued'">
+                        <span class="w-1 h-1 rounded-full"
+                              [class.bg-emerald-500]="product.status === 'Active'"
+                              [class.bg-amber-500]="product.status === 'Draft'"
+                              [class.bg-red-500]="product.status === 'Inactive' || product.status === 'Discontinued'"></span>
+                        {{ product.status }}
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-500">الباركود</span>
+                        <code class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">
+                            {{ product.barcode || 'SEC-TRK-77X' }}
+                        </code>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-500">التصنيف</span>
+                        <span class="text-xs font-bold text-zadna-primary">
+                            {{ getCategoryName(product.categoryId) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-2 pt-3 border-t border-slate-100">
+                    <button (click)="$event.stopPropagation()" 
+                            [routerLink]="['/catalog/products/edit', product.id]" 
+                            class="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 text-slate-600 rounded-lg text-xs font-medium hover:bg-zadna-primary hover:text-white transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        تعديل
+                    </button>
+                    <button (click)="$event.stopPropagation()" 
+                            [routerLink]="['/catalog/products/view', product.id]"
+                            class="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 text-slate-600 rounded-lg text-xs font-medium hover:bg-blue-500 hover:text-white transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        عرض
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination Mirror -->
+        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+            <app-pagination
+                *ngIf="!isLoading && products.length > 0"
+                [currentPage]="page"
+                [pageSize]="pageSize"
+                [totalItems]="totalItems"
+                (pageChange)="changePage($event)">
+            </app-pagination>
+        </div>
+
+        <!-- Extraordinary Empty State -->
+        <div *ngIf="!isLoading && products.length === 0" 
+             class="relative p-20 text-center animate-in zoom-in duration-700">
+            <div class="max-w-md mx-auto space-y-6">
+                <div class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl flex items-center justify-center mx-auto text-slate-100 relative group">
+                    <div class="absolute inset-0 bg-zadna-primary/5 rounded-[3rem] group-hover:scale-110 transition-transform duration-500"></div>
+                    <svg class="w-16 h-16 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'PRODUCTS.NO_PRODUCTS' | translate }}</h3>
+                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ (translate.currentLang === 'ar' ? 'لا توجد منتجات حالياً بناءً على تصفيتك' : 'The product bank is currently quiet. Try refining your filters or create a new masterpiece to begin.') }}</p>
+                <div class="pt-6">
+                    <app-button variant="ghost" (btnClick)="filterByCategory(null)" customClass="bg-slate-50 border border-slate-100 rounded-2xl px-8">Reset All Filters</app-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,144 @@
+:host {
+    display: contents;
+}
+
+.animate-puzzle-up {
+    animation: puzzleUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes puzzleUp {
+    from {
+        opacity: 0;
+        transform: translateY(60px) scale(0.92) rotateX(10deg);
+        filter: blur(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0);
+        filter: blur(0);
+    }
+}
+
+.stagger-item {
+    opacity: 0;
+    animation: fadeInSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+    @for $i from 1 through 10 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{0.1 + ($i * 0.08)}s;
+        }
+    }
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.premium-glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 40px 100px -20px rgba(0, 0, 0, 0.2),
+        inset 0 0 100px rgba(255, 255, 255, 0.4);
+}
+
+.input-glow:focus-within {
+    box-shadow: 0 0 0 4px rgba(var(--zadna-primary-rgb), 0.1);
+    border-color: var(--zadna-primary);
+}
+
+.shimmer-btn {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent);
+        transform: rotate(45deg);
+        animation: shimmer 4s infinite cubic-bezier(0.16, 1, 0.3, 1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translate(-100%, -100%) rotate(45deg);
+    }
+
+    100% {
+        transform: translate(100%, 100%) rotate(45deg);
+    }
+}
+
+@keyframes bounceX {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+}
+
+.animate-bounce-x {
+    animation: bounceX 1s infinite linear;
+}
+
+[dir="rtl"] .animate-bounce-x {
+    animation: bounceX-rtl 1s infinite linear;
+}
+
+@keyframes bounceX-rtl {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-5px);
+    }
+}
+
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
