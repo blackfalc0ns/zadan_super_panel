@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["vendors-list.component.ts"],
+  "sourcesContent": ["\n    table {\n      border-collapse: separate !important;\n      border-spacing: 0 !important;\n      table-layout: fixed !important;\n    }\n    \n    thead th {\n      position: sticky;\n      top: 0;\n      background: white;\n      z-index: 10;\n    }\n    \n    tbody tr {\n      background: rgba(255, 255, 255, 0.5);\n    }\n    \n    tbody tr:hover {\n      background: white;\n    }\n    \n    td, th {\n      vertical-align: middle !important;\n      text-align: center !important;\n    }\n    \n    td:first-child, th:first-child {\n      text-align: center !important;\n    }\n    \n    td:nth-child(3), th:nth-child(3) {\n      text-align: start !important;\n    }\n  "],
+  "mappings": ";AACI;AACE,mBAAA;AACA,kBAAA;AACA,gBAAA;;AAGF,MAAA;AACE,YAAA;AACA,OAAA;AACA,cAAA;AACA,WAAA;;AAGF,MAAA;AACE,cAAA,KAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA;;AAGF,MAAA,EAAA;AACE,cAAA;;AAGF;AAAA;AACE,kBAAA;AACA,cAAA;;AAGF,EAAA;AAAA,EAAA;AACE,cAAA;;AAGF,EAAA;AAAA,EAAA;AACE,cAAA;;",
+  "names": []
+}

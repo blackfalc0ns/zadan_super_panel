@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/catalog/shared/brand-form-modal/brand-form-modal.component.scss"],
+  "sourcesContent": [".custom-scrollbar {\n    &::-webkit-scrollbar {\n        width: 4px;\n    }\n    &::-webkit-scrollbar-track {\n        background: transparent;\n    }\n    &::-webkit-scrollbar-thumb {\n        background: #f1f5f9;\n        border-radius: 20px;\n    }\n    &:hover::-webkit-scrollbar-thumb {\n        background: #e2e8f0;\n    }\n}\n\n.animate-puzzle-up {\n    animation: puzzle-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;\n}\n\n@keyframes puzzle-up {\n    0% {\n        opacity: 0;\n        transform: translateY(30px) scale(0.95);\n    }\n    100% {\n        opacity: 1;\n        transform: translateY(0) scale(1);\n    }\n}\n"],
+  "mappings": ";AACI,CAAA,gBAAA;AACI,SAAA;;AAEJ,CAHA,gBAGA;AACI,cAAA;;AAEJ,CANA,gBAMA;AACI,cAAA;AACA,iBAAA;;AAEJ,CAVA,gBAUA,MAAA;AACI,cAAA;;AAIR,CAAA;AACI,aAAA,UAAA,KAAA,aAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA,GAAA;;AAGJ,WAHI;AAIA;AACI,aAAA;AACA,eAAA,WAAA,MAAA,MAAA;;AAEJ;AACI,aAAA;AACA,eAAA,WAAA,GAAA,MAAA;;;",
+  "names": []
+}

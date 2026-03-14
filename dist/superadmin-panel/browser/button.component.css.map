@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/components/ui/button/button.component.scss"],
+  "sourcesContent": [":host {\n    display: inline-block;\n}\n\nbutton {\n    user-select: none;\n    cursor: pointer;\n    \n    &:disabled {\n        cursor: not-allowed;\n    }\n}\n"],
+  "mappings": ";AAAA;AACI,WAAA;;AAGJ;AACI,uBAAA;AAAA,eAAA;AACA,UAAA;;AAEA,MAAA;AACI,UAAA;;",
+  "names": []
+}

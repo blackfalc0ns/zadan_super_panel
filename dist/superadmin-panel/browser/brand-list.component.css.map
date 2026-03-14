@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/catalog/brands/brand-list.component.scss"],
+  "sourcesContent": [".stagger-item {\n    animation: puzzle-up 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;\n}\n\n@keyframes puzzle-up {\n    0% {\n        opacity: 0;\n        transform: translateY(20px) scale(0.98);\n    }\n    100% {\n        opacity: 1;\n        transform: translateY(0) scale(1);\n    }\n}\n\n.custom-scrollbar {\n    &::-webkit-scrollbar {\n        width: 4px;\n    }\n    &::-webkit-scrollbar-track {\n        background: transparent;\n    }\n    &::-webkit-scrollbar-thumb {\n        background: #e2e8f0;\n        border-radius: 20px;\n    }\n    &:hover::-webkit-scrollbar-thumb {\n        background: #cbd5e1;\n    }\n}\n"],
+  "mappings": ";AAAA,CAAA;AACI,aAAA,UAAA,KAAA,aAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA,GAAA;;AAGJ,WAHI;AAIA;AACI,aAAA;AACA,eAAA,WAAA,MAAA,MAAA;;AAEJ;AACI,aAAA;AACA,eAAA,WAAA,GAAA,MAAA;;;AAKJ,CAAA,gBAAA;AACI,SAAA;;AAEJ,CAHA,gBAGA;AACI,cAAA;;AAEJ,CANA,gBAMA;AACI,cAAA;AACA,iBAAA;;AAEJ,CAVA,gBAUA,MAAA;AACI,cAAA;;",
+  "names": []
+}

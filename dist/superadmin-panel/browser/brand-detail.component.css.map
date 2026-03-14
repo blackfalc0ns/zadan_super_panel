@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/catalog/brand-detail/brand-detail.component.scss"],
+  "sourcesContent": ["/* Brand Detail Component Styles */\n/* Using Tailwind utility classes in HTML as much as possible */\n\n:host {\n    display: block;\n    width: 100%;\n}\n"],
+  "mappings": ";AAGA;AACI,WAAA;AACA,SAAA;;",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["delete-confirmation-modal.component.ts"],
+  "sourcesContent": ["\n    @keyframes puzzle-up {\n      from { opacity: 0; transform: scale(0.9) translateY(40px); }\n      to { opacity: 1; transform: scale(1) translateY(0); }\n    }\n    .animate-puzzle-up { animation: puzzle-up 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }\n\n    @keyframes shake {\n      0%, 100% { transform: rotate(0); }\n      20%, 60% { transform: rotate(-10deg); }\n      40%, 80% { transform: rotate(10deg); }\n    }\n    .animate-shake { animation: shake 1s infinite; }\n  "],
+  "mappings": ";AACI,WAAA;AACE;AAAO,aAAA;AAAY,eAAA,MAAA,KAAA,WAAA;;AACnB;AAAK,aAAA;AAAY,eAAA,MAAA,GAAA,WAAA;;;AAEnB,CAAA;AAAqB,aAAA,UAAA,KAAA,aAAA,IAAA,EAAA,IAAA,EAAA,IAAA,EAAA;;AAErB,WAAA;AACE;AAAW,eAAA,OAAA;;AACX;AAAW,eAAA,OAAA;;AACX;AAAW,eAAA,OAAA;;;AAEb,CAAA;AAAiB,aAAA,MAAA,GAAA;;",
+  "names": []
+}
