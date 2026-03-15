@@ -2,15 +2,19 @@
     class="min-h-screen py-24 lg:py-12 relative font-sans flex items-center justify-center bg-zadna-bgLight overflow-hidden selection:bg-zadna-primary selection:text-white">
 
     <!-- ================= BACKGROUND ARTEFACTS & GRAND FEEL ================= -->
-    <!-- Huge Abstract Geometric Shapes -->
+    <!-- Optimized Abstract Geometric Shapes - Production Safe -->
     <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <!-- Top Right Giant Blob -->
-        <div
-            class="absolute top-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-bl from-zadna-primaryLight/20 to-zadna-primary/5 blur-[120px] animate-slow-float">
+        <!-- Gradient Overlay - No Blur Artifacts -->
+        <div class="absolute inset-0 bg-gradient-to-br from-zadna-primaryLight/8 via-transparent to-zadna-accentLight/6"></div>
+        
+        <!-- Top Right Radial Gradient -->
+        <div class="absolute top-0 right-0 w-[50vw] h-[50vw] opacity-40"
+            style="background: radial-gradient(circle at center, rgba(18, 124, 140, 0.15) 0%, transparent 70%);">
         </div>
-        <!-- Bottom Left Accent Blob -->
-        <div class="absolute bottom-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-tr from-zadna-accentLight/10 to-zadna-accent/5 blur-[100px] animate-slow-float"
-            style="animation-delay: -5s;">
+        
+        <!-- Bottom Left Radial Gradient -->
+        <div class="absolute bottom-0 left-0 w-[45vw] h-[45vw] opacity-30"
+            style="background: radial-gradient(circle at center, rgba(245, 158, 11, 0.12) 0%, transparent 70%);">
         </div>
 
         <!-- Sophisticated Grid Lines -->
@@ -131,9 +135,9 @@
             class="w-full max-w-[560px] xl:w-[45%] shrink-0 relative flex justify-center xl:justify-end animate-puzzle-right stagger-2">
             <div class="w-full max-w-[560px] relative">
 
-                <!-- Decorative Elements behind form -->
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-zadna-accent/20 rounded-full blur-2xl"></div>
-                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-zadna-primary/20 rounded-full blur-2xl"></div>
+                <!-- Decorative Elements behind form - Optimized -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-zadna-accent/10 rounded-full blur-xl opacity-60"></div>
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-zadna-primary/10 rounded-full blur-xl opacity-60"></div>
 
                 <!-- The Core Form Card -->
                 <div
