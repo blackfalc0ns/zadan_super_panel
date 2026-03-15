@@ -1,5 +1,5 @@
 <!-- Header Component -->
-<app-vendor-detail-header (tabChanged)="onTabChange($event)"></app-vendor-detail-header>
+<app-vendor-detail-header [activeTab]="currentTab" (tabChanged)="onTabChange($event)"></app-vendor-detail-header>
 
 <!-- Ambient Background Glows -->
 <div class="ambient-glow glow-teal" *ngIf="currentTab === 'data'"></div>
@@ -276,6 +276,11 @@
       <!-- Products Tab -->
       <div *ngSwitchCase="'products'">
         <app-vendor-products></app-vendor-products>
+      </div>
+
+      <!-- Orders Tab -->
+      <div *ngSwitchCase="'orders'">
+        <app-vendor-orders></app-vendor-orders>
       </div>
       
       <!-- Finance Tab -->

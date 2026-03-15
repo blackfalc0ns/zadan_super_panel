@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface KPI {
   id: string;
@@ -194,7 +194,8 @@ export class VendorOrdersComponent {
 
   constructor(
     private translate: TranslateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -232,10 +233,14 @@ export class VendorOrdersComponent {
   }
 
   onViewOrder(orderId: string) {
-    console.log('View order:', orderId);
+    // Navigate to order detail page (to be created)
+    // For now, you can create the route: /orders/:id
+    this.router.navigate(['/orders', orderId]);
   }
 
   onEditOrder(orderId: string) {
-    console.log('Edit order:', orderId);
+    // Navigate to order edit page (to be created)
+    // For now, you can create the route: /orders/:id/edit
+    this.router.navigate(['/orders', orderId, 'edit']);
   }
 }

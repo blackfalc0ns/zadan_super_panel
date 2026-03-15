@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -16,8 +16,9 @@ interface Tab {
   templateUrl: './vendor-detail-header.component.html',
   styleUrls: ['./vendor-detail-header.component.scss']
 })
-export class VendorDetailHeaderComponent {
+export class VendorDetailHeaderComponent implements OnChanges {
   @Output() tabChanged = new EventEmitter<string>();
+  @Input() activeTab: string = 'overview';
 
   currentLang: string = 'ar';
   isRTL: boolean = true;
@@ -37,6 +38,7 @@ export class VendorDetailHeaderComponent {
     { id: 'data', labelKey: 'VENDOR_DETAIL.TAB_BASIC_DATA', active: false },
     { id: 'analytics', labelKey: 'VENDOR_DETAIL.TAB_ANALYTICS', active: false },
     { id: 'products', labelKey: 'VENDOR_DETAIL.TAB_PRODUCTS', count: 142, active: false },
+    { id: 'orders', labelKey: 'VENDOR_DETAIL.TAB_ORDERS', count: 1230, active: false },
     { id: 'finance', labelKey: 'VENDOR_DETAIL.TAB_FINANCE', active: false },
     { id: 'compliance', labelKey: 'VENDOR_DETAIL.TAB_COMPLIANCE', active: false },
     { id: 'logs', labelKey: 'VENDOR_DETAIL.TAB_LOGS', active: false },
@@ -51,6 +53,12 @@ export class VendorDetailHeaderComponent {
       this.currentLang = event.lang;
       this.isRTL = event.lang === 'ar';
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['activeTab'] && changes['activeTab'].currentValue) {
+      this.tabs.forEach(tab => tab.active = tab.id === changes['activeTab'].currentValue);
+    }
   }
 
   onTabClick(tabId: string) {

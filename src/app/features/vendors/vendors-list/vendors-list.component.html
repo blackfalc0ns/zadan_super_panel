@@ -63,11 +63,12 @@
                 <thead class="border-b border-slate-100/50">
                     <tr>
                         <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
-                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الشعار</th>
-                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المورد والاسم</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">التواصل والعمولة</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
+                        <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الشعار</th>
+                        <th class="text-start w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المورد والاسم</th>
+                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">التواصل</th>
+                        <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">العمولة</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
+                        <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,7 +81,7 @@
                         </td>
 
                         <!-- Col 2: Logo -->
-                        <td class="text-center align-middle py-4 w-[10%]">
+                        <td class="text-center align-middle py-4 w-[8%]">
                             <div class="flex justify-center">
                                 <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-[1.2rem] border border-[#e0f2f4] flex items-center justify-center transition-all group-hover:scale-105 group-hover:rotate-2 shadow-sm">
                                     <span class="text-2xl font-black text-zadna-primary">{{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn).charAt(0) | uppercase }}</span>
@@ -90,7 +91,7 @@
                         </td>
 
                         <!-- Col 3: Name & Translation -->
-                        <td class="align-middle py-4 w-[25%] px-2">
+                        <td class="align-middle py-4 w-[20%] px-2">
                             <div class="flex flex-col text-start">
                                 <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
                                     {{ activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn }}
@@ -101,36 +102,38 @@
                             </div>
                         </td>
 
-                        <!-- Col 4: Contact & Commission -->
-                        <td class="text-center align-middle py-4 w-[20%]">
-                            <div class="flex flex-col items-center gap-1.5">
-                                <span class="text-[11px] font-bold text-slate-600 tracking-tight truncate max-w-[180px]">{{ vendor.contactEmail }}</span>
-                                <code class="text-[9px] font-bold text-zadna-primary bg-zadna-primary/5 px-2 py-0.5 rounded-md border border-zadna-primary/10 uppercase tracking-widest">
-                                    عمولة: {{ getCommissionLabel(vendor) }}
-                                </code>
-                            </div>
+                        <!-- Col 4: Contact -->
+                        <td class="text-center align-middle py-4 w-[18%]">
+                            <span class="text-[11px] font-bold text-slate-600 tracking-tight truncate block px-2">{{ vendor.contactEmail }}</span>
                         </td>
 
-                        <!-- Col 5: Status -->
-                        <td class="text-center align-middle py-4 w-[20%]">
+                        <!-- Col 5: Commission -->
+                        <td class="text-center align-middle py-4 w-[12%]">
+                            <code class="text-[10px] font-bold text-zadna-primary bg-zadna-primary/5 px-2.5 py-1 rounded-lg border border-zadna-primary/10 uppercase tracking-widest inline-block">
+                                {{ getCommissionLabel(vendor) }}
+                            </code>
+                        </td>
+
+                        <!-- Col 6: Status -->
+                        <td class="text-center align-middle py-4 w-[15%]">
                             <div class="flex justify-center">
                                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
                                      [class.text-emerald-500]="vendor.status === 'Active'" 
-                                     [class.text-amber-500]="vendor.status === 'Pending'"
+                                     [class.text-amber-500]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
                                      [class.text-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'">
                                     <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
                                           [class.bg-emerald-500]="vendor.status === 'Active'" 
-                                          [class.bg-amber-500]="vendor.status === 'Pending'"
+                                          [class.bg-amber-500]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
                                           [class.bg-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"></span>
                                     <span class="text-[10px] font-black tracking-tight uppercase">
-                                        {{ vendor.status }}
+                                        {{ getStatusLabel(vendor.status) }}
                                     </span>
                                 </div>
                             </div>
                         </td>
 
-                        <!-- Col 6: Actions -->
-                        <td class="text-center align-middle py-4 w-[20%]">
+                        <!-- Col 7: Actions -->
+                        <td class="text-center align-middle py-4 w-[12%]">
                             <div class="flex justify-center gap-1.5">
                                 <button [routerLink]="['/vendors', vendor.id]" class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-zadna-primary hover:text-white transition-all">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,15 +173,15 @@
                     <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold"
                          [class.bg-emerald-50]="vendor.status === 'Active'"
                          [class.text-emerald-600]="vendor.status === 'Active'"
-                         [class.bg-amber-50]="vendor.status === 'Pending'"
-                         [class.text-amber-600]="vendor.status === 'Pending'"
+                         [class.bg-amber-50]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
+                         [class.text-amber-600]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
                          [class.bg-red-50]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"
                          [class.text-red-600]="vendor.status === 'Rejected' || vendor.status === 'Suspended'">
                         <span class="w-1 h-1 rounded-full"
                               [class.bg-emerald-500]="vendor.status === 'Active'"
-                              [class.bg-amber-500]="vendor.status === 'Pending'"
+                              [class.bg-amber-500]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
                               [class.bg-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"></span>
-                        {{ vendor.status }}
+                        {{ getStatusLabel(vendor.status) }}
                     </div>
                 </div>
 

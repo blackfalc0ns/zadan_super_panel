@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
 import { VendorDetailHeaderComponent } from '../../../shared/components/ui/vendor-detail-header/vendor-detail-header.component';
 import { VendorComplianceComponent } from '../vendor-compliance/vendor-compliance.component';
 import { VendorActivityLogComponent } from '../vendor-activity-log/vendor-activity-log.component';
@@ -17,7 +18,7 @@ import { VendorAnalyticsComponent } from '../vendor-analytics/vendor-analytics.c
   imports: [CommonModule, VendorDetailHeaderComponent, VendorComplianceComponent, VendorActivityLogComponent, VendorOverviewComponent, VendorProductsComponent, VendorOrdersComponent, VendorFinanceComponent, VendorSettingsComponent, VendorAnalyticsComponent, TranslateModule],
   templateUrl: './vendor-detail.component.html'
 })
-export class VendorDetailComponent {
+export class VendorDetailComponent implements OnInit {
   currentTab: string = 'overview';
   currentLang: string = 'ar';
   isRTL: boolean = true;
@@ -52,7 +53,10 @@ export class VendorDetailComponent {
 
   progressPercentage = 95;
 
-  constructor(private translate: TranslateService) {
+  constructor(
+    private translate: TranslateService,
+    private route: ActivatedRoute
+  ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
     
@@ -62,8 +66,24 @@ export class VendorDetailComponent {
     });
   }
 
+  ngOnInit() {
+    // Check for tab query parameter
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.currentTab = params['tab'];
+        // Update header tabs to reflect the active tab
+        this.updateHeaderTab(params['tab']);
+      }
+    });
+  }
+
   onTabChange(tabId: string) {
     this.currentTab = tabId;
+  }
+
+  updateHeaderTab(tabId: string) {
+    // This will be called by the header component through a service or direct method
+    // For now, we'll emit an event that the header can listen to
   }
 
   onEditClick(section: string) {

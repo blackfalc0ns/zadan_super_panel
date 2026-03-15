@@ -240,7 +240,10 @@ export class VendorOverviewComponent {
   }
 
   onViewAllOrders() {
-    this.tabChange.emit('orders');
+    // Navigate to vendor detail page with orders tab
+    this.router.navigate(['/vendors', this.vendorId], { 
+      queryParams: { tab: 'orders' } 
+    });
   }
 
   onViewAllDocuments() {

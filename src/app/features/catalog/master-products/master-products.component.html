@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-hidden">
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto">
 
     <!-- Design 2.0 Artistic Header Row -->
     <div class="px-4 md:px-10 pt-8 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
@@ -102,8 +102,9 @@
                     <tr>
                         <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
                         <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الصورة</th>
-                        <th class="text-start w-[27%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المنتج</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الباركود والتصنيف</th>
+                        <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المنتج</th>
+                        <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الباركود</th>
+                        <th class="text-center w-[13%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">التصنيف</th>
                         <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
                         <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
                     </tr>
@@ -129,7 +130,7 @@
                         </td>
 
                         <!-- Col 3: Name & Translation -->
-                        <td class="align-middle py-4 w-[27%] px-2">
+                        <td class="align-middle py-4 w-[22%] px-2">
                             <div class="flex flex-col text-start">
                                 <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
                                     {{ translate.currentLang === 'ar' ? product.nameAr : product.nameEn }}
@@ -140,19 +141,21 @@
                             </div>
                         </td>
 
-                        <!-- Col 4: Barcode & Category -->
-                        <td class="text-center align-middle py-4 w-[20%]">
-                            <div class="flex flex-col items-center gap-1.5">
-                                <code class="text-[10px] font-bold text-indigo-500 bg-indigo-50/50 px-3 py-1 rounded-xl border border-indigo-100/50 uppercase tracking-wider">
-                                    {{ product.barcode || 'SEC-TRK-77X' }}
-                                </code>
-                                <span class="text-[9px] font-black text-zadna-primary uppercase px-1.5 py-0.5 rounded-md bg-zadna-primary/5 border border-zadna-primary/10">
-                                    {{ getCategoryName(product.categoryId) }}
-                                </span>
-                            </div>
+                        <!-- Col 4: Barcode -->
+                        <td class="text-center align-middle py-4 w-[12%]">
+                            <code class="text-[10px] font-bold text-indigo-500 bg-indigo-50/50 px-3 py-1 rounded-xl border border-indigo-100/50 uppercase tracking-wider">
+                                {{ product.barcode || 'SEC-TRK-77X' }}
+                            </code>
                         </td>
 
-                        <!-- Col 5: Status -->
+                        <!-- Col 5: Category -->
+                        <td class="text-center align-middle py-4 w-[13%]">
+                            <span class="text-[9px] font-black text-zadna-primary uppercase px-2 py-1 rounded-md bg-zadna-primary/5 border border-zadna-primary/10">
+                                {{ getCategoryName(product.categoryId) }}
+                            </span>
+                        </td>
+
+                        <!-- Col 6: Status -->
                         <td class="text-center align-middle py-4 w-[15%]">
                             <div class="flex justify-center">
                                 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
@@ -170,7 +173,7 @@
                             </div>
                         </td>
 
-                        <!-- Col 6: Actions -->
+                        <!-- Col 7: Actions -->
                         <td class="text-center align-middle py-4 w-[15%]">
                             <div class="flex justify-center gap-1.5">
                                 <button (click)="$event.stopPropagation()" 

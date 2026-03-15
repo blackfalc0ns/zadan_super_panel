@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en">
-
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <title>Zadna | Super Admin Portal</title>
@@ -10,12 +9,366 @@
   <link rel="apple-touch-icon" sizes="180x180" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico">
-  <!-- Preload critical fonts for better performance -->
-  <link rel="preload" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  <style>
+    :root {
+      --primary: #127C8C;
+      --primary-light: #1BA3B8;
+      --accent: #E48215;
+      --bg-dark: #0F172A;
+      --bg-darker: #020617;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 50%, #1e293b 100%);
+      z-index: 99999;
+      overflow: hidden;
+    }
+
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(18, 124, 140, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 124, 140, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: grid-flow 20s linear infinite;
+      opacity: 0.4;
+    }
+
+    @keyframes grid-flow {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float-orb 15s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      top: -10%;
+      left: -10%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      bottom: -10%;
+      right: -10%;
+      animation-delay: -7s;
+    }
+
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+      top: 50%;
+      right: 10%;
+      animation-delay: -3s;
+    }
+
+    @keyframes float-orb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.1); }
+      66% { transform: translate(-20px, 30px) scale(0.9); }
+    }
+
+    .splash-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      perspective: 1000px;
+      animation: logo-appear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes logo-appear {
+      0% {
+        opacity: 0;
+        transform: scale(0.3) rotateY(180deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotateY(0deg);
+      }
+    }
+
+    .hex-frame {
+      position: absolute;
+      inset: -15px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      opacity: 0.15;
+      animation: hex-rotate 8s linear infinite;
+    }
+
+    @keyframes hex-rotate {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .glow-ring {
+      position: absolute;
+      inset: -20px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      border-right-color: var(--primary-light);
+      animation: ring-spin 3s linear infinite;
+    }
+
+    .glow-ring:nth-child(2) {
+      inset: -30px;
+      border-top-color: var(--accent);
+      animation-duration: 4s;
+      animation-direction: reverse;
+    }
+
+    @keyframes ring-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .logo-img {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 30px rgba(18, 124, 140, 0.6));
+      animation: logo-pulse 2s ease-in-out infinite;
+      z-index: 5;
+    }
+
+    @keyframes logo-pulse {
+      0%, 100% { 
+        transform: scale(1);
+        filter: drop-shadow(0 0 30px rgba(18, 124, 140, 0.6));
+      }
+      50% { 
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 40px rgba(18, 124, 140, 0.8));
+      }
+    }
+
+    .brand-text {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, #ffffff 0%, var(--primary-light) 50%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: text-reveal 1s 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      position: relative;
+    }
+
+    .brand-text::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      animation: underline-grow 1s 1s ease-out forwards;
+    }
+
+    @keyframes text-reveal {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+        letter-spacing: 0.5em;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        letter-spacing: 0.1em;
+      }
+    }
+
+    @keyframes underline-grow {
+      to { width: 100%; }
+    }
+
+    .tagline {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fade-in-up 0.8s 1s ease-out forwards;
+    }
+
+    @keyframes fade-in-up {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .progress-container {
+      width: 280px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      opacity: 0;
+      animation: fade-in 0.6s 1.3s ease-out forwards;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, 
+        var(--primary) 0%, 
+        var(--primary-light) 50%, 
+        var(--accent) 100%);
+      border-radius: 10px;
+      animation: progress-fill 2s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(18, 124, 140, 0.5);
+    }
+
+    @keyframes progress-fill {
+      0% { 
+        width: 0%; 
+        transform: translateX(0);
+      }
+      50% { 
+        width: 70%; 
+      }
+      100% { 
+        width: 0%; 
+        transform: translateX(280px);
+      }
+    }
+
+    @keyframes fade-in {
+      to { opacity: 1; }
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: particle-float 8s ease-in-out infinite;
+    }
+
+    .particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+    .particle:nth-child(2) { left: 80%; top: 30%; animation-delay: -2s; }
+    .particle:nth-child(3) { left: 20%; top: 70%; animation-delay: -4s; }
+    .particle:nth-child(4) { left: 90%; top: 60%; animation-delay: -6s; }
+    .particle:nth-child(5) { left: 50%; top: 10%; animation-delay: -1s; }
+
+    @keyframes particle-float {
+      0%, 100% { 
+        transform: translateY(0) translateX(0);
+        opacity: 0.3;
+      }
+      50% { 
+        transform: translateY(-100px) translateX(50px);
+        opacity: 0.6;
+      }
+    }
+
+    [dir="rtl"] .brand-text {
+      letter-spacing: 0;
+    }
+
+    @media (max-width: 640px) {
+      .logo-container {
+        width: 100px;
+        height: 100px;
+      }
+      .brand-text {
+        font-size: 2rem;
+      }
+      .tagline {
+        font-size: 0.75rem;
+      }
+      .progress-container {
+        width: 200px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <app-root></app-root>
+  <app-root>
+    <div class="splash-screen">
+      <div class="grid-bg"></div>
+      
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      
+      <div class="splash-content">
+        <div class="logo-container">
+          <div class="hex-frame"></div>
+          <div class="glow-ring"></div>
+          <div class="glow-ring"></div>
+          <img src="favicon.ico" alt="Zadna" class="logo-img">
+        </div>
+        
+        <div class="brand-text">ZADNA</div>
+        <div class="tagline">مركز القيادة الموحد</div>
+        
+        <div class="progress-container">
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </app-root>
 </body>
-
 </html>

@@ -147,4 +147,15 @@ export class VendorsListComponent implements OnInit {
   getCommissionLabel(vendor: Vendor): string {
     return vendor.commissionRate == null ? '-' : `${vendor.commissionRate}%`;
   }
+
+  getStatusLabel(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'Active': 'نشط',
+      'Pending': 'قيد المراجعة',
+      'PendingReview': 'قيد المراجعة',
+      'Rejected': 'مرفوض',
+      'Suspended': 'موقوف'
+    };
+    return statusMap[status] || status;
+  }
 }
