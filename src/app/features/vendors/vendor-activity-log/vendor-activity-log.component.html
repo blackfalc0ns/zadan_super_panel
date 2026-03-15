@@ -120,20 +120,20 @@
           <span class="material-symbols-outlined text-primary">insights</span>
           {{ 'ACTIVITY_LOG.COLLABORATION_SUMMARY' | translate }}
         </h2>
-        <div class="glass-panel p-4 rounded-xl grid grid-cols-2 gap-4">
-          <div class="flex flex-col">
-            <span class="text-slate-500 text-xs mb-1">{{ 'ACTIVITY_LOG.LAST_INTERACTION' | translate }}</span>
-            <span class="text-slate-900 font-black text-sm" dir="ltr">{{ lastInteraction }}</span>
+        <div class="glass-panel p-4 rounded-xl flex flex-col">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 text-sm font-medium">{{ 'ACTIVITY_LOG.LAST_INTERACTION' | translate }}</span>
+            <span class="text-slate-900 font-bold text-base" dir="ltr">{{ lastInteraction }}</span>
           </div>
-          <div class="flex flex-col">
-            <span class="text-slate-500 text-xs mb-1">{{ 'ACTIVITY_LOG.OPEN_NOTES' | translate }}</span>
-            <span class="text-accent-orange font-black text-xl">{{ openNotes }}</span>
+          <div class="flex items-center justify-between border-t border-slate-200/60">
+            <span class="text-slate-500 text-sm font-medium">{{ 'ACTIVITY_LOG.OPEN_NOTES' | translate }}</span>
+            <span class="text-accent-orange font-bold text-2xl">{{ openNotes }}</span>
           </div>
-          <div class="flex flex-col col-span-2 pt-2 border-t border-slate-200/60">
-            <span class="text-slate-500 text-xs mb-1">{{ 'ACTIVITY_LOG.WEEKLY_ACTIVITY' | translate }}</span>
-            <div class="flex items-end gap-2">
-              <span class="text-primary font-black text-2xl">{{ weeklyActivity }}</span>
-              <span class="text-green-500 text-xs font-black flex items-center mb-1">
+          <div class="flex items-center justify-between border-t border-slate-200/60">
+            <span class="text-slate-500 text-sm font-medium">{{ 'ACTIVITY_LOG.WEEKLY_ACTIVITY' | translate }}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-primary font-bold text-xl">{{ weeklyActivity }}</span>
+              <span class="text-green-500 text-xs font-bold flex items-center">
                 <span class="material-symbols-outlined text-[12px]">trending_up</span> {{ weeklyGrowth }}
               </span>
             </div>

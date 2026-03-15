@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/catalog/master-products/master-product-form/master-product-form.component.scss"],
-  "sourcesContent": ["// 1. Perspective Container\n:host {\n    display: block;\n    perspective: 2000px;\n}\n\n// All styling moved to Tailwind CSS classes in HTML for build purity.\n"],
-  "mappings": ";AACA;AACI,WAAA;AACA,eAAA;;",
-  "names": []
-}

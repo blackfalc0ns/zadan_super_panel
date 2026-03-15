@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface AdminUser {
     id: string;
     fullName: string;
-    email: string;
-    roles: string[];
+    email?: string | null;
+    phone?: string | null;
+    role: string;
 }
 
 export interface AuthResponse {
     tokens: {
         accessToken: string;
         refreshToken: string;
-        expiresAt: string;
     };
     user: AdminUser;
 }
@@ -41,8 +41,7 @@ export class AuthService {
         if (!token) return false;
 
         if (this.isTokenExpired(token)) {
-            // Token is expired, clear local storage
-            this.logout();
+            this.forceLogout();
             return false;
         }
 
@@ -56,20 +55,20 @@ export class AuthService {
             const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
-            
+
             const payload = JSON.parse(jsonPayload);
-            if (payload.exp) {
-                // payload.exp is in seconds, Date.now() is in milliseconds
-                return (payload.exp * 1000) <= Date.now();
-            }
-            return false;
-        } catch (e) {
-            return true; // If parsing fails, consider it invalid/expired
+            return payload.exp ? (payload.exp * 1000) <= Date.now() : false;
+        } catch {
+            return true;
         }
     }
 
     public getToken(): string | null {
         return localStorage.getItem('admin_token');
+    }
+
+    public getRefreshToken(): string | null {
+        return localStorage.getItem('admin_refresh_token');
     }
 
     login(credentials: any): Observable<AuthResponse> {
@@ -84,18 +83,40 @@ export class AuthService {
             );
     }
 
-    logout(): void {
+    logout(): Observable<void> {
+        const refreshToken = this.getRefreshToken();
+        if (!refreshToken) {
+            this.clearSession();
+            return of(void 0);
+        }
+
+        return this.http.post<void>(`${this.apiUrl}/logout`, { refreshToken }).pipe(
+            catchError(() => of(void 0)),
+            tap(() => this.clearSession())
+        );
+    }
+
+    forceLogout(): void {
+        this.clearSession();
+    }
+
+    private clearSession(): void {
         localStorage.removeItem('admin_token');
         localStorage.removeItem('admin_refresh_token');
         localStorage.removeItem('admin_user');
         this.currentUserSubject.next(null);
-        // Optionally call backend logout endpoint here
     }
 
     private loadUserFromStorage(): void {
         const userJson = localStorage.getItem('admin_user');
-        if (userJson) {
+        if (!userJson) {
+            return;
+        }
+
+        try {
             this.currentUserSubject.next(JSON.parse(userJson));
+        } catch {
+            this.clearSession();
         }
     }
 }

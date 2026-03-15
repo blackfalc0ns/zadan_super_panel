@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Category } from '../models/catalog.model';
 import { AuthService } from './auth.service';
@@ -17,21 +17,22 @@ export class CatalogService {
   private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`
     });
   }
 
-  // --- Categories (Industry -> Sub-Category Tree) ---
-
   getCategories(parentId?: string, includeInactive: boolean = false): Observable<Category[]> {
-    let params = new HttpParams().set('includeInactive', includeInactive.toString());
-    if (parentId) {
-      params = params.set('parentId', parentId);
-    }
+    const params = new HttpParams().set('includeInactive', includeInactive.toString());
+
     return this.http.get<Category[]>(`${this.apiUrl}/categories`, {
       headers: this.getHeaders(),
-      params: params
-    });
+      params
+    }).pipe(
+      map(categories => {
+        const normalized = Array.isArray(categories) ? categories : [];
+        return parentId ? this.getDirectChildren(normalized, parentId) : normalized;
+      })
+    );
   }
 
   createCategory(payload: any): Observable<Category> {
@@ -49,8 +50,6 @@ export class CatalogService {
   deleteCategory(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/categories/${id}`, { headers: this.getHeaders() });
   }
-
-  // --- Master Products ---
 
   getProducts(page: number = 1, pageSize: number = 10, searchTerm?: string, categoryId?: string, brandId?: string): Observable<any> {
     let params = new HttpParams()
@@ -82,8 +81,6 @@ export class CatalogService {
     return this.http.put<void>(`${this.apiUrl}/products/${id}`, payload, { headers: this.getHeaders() });
   }
 
-  // --- Brands ---
-
   getBrands(includeInactive: boolean = false): Observable<any[]> {
     const params = new HttpParams().set('includeInactive', includeInactive.toString());
     return this.http.get<any[]>(`${this.apiUrl}/brands`, { headers: this.getHeaders(), params });
@@ -101,20 +98,36 @@ export class CatalogService {
     return this.http.delete<void>(`${this.apiUrl}/brands/${id}`, { headers: this.getHeaders() });
   }
 
-  // --- Units ---
   getUnits(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/units`, { headers: this.getHeaders() });
   }
-
-
-  // --- File Upload ---
 
   uploadFile(file: File, directory: string = 'catalog'): Observable<{ url: string }> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('directory', directory);
-    return this.http.post<{ url: string }>(`${this.filesUrl}/upload`, formData, {
+
+    return this.http.post<{ url?: string; Url?: string }>(`${this.filesUrl}/upload`, formData, {
       headers: this.getHeaders()
-    });
+    }).pipe(
+      map(response => ({ url: response.url ?? response.Url ?? '' }))
+    );
+  }
+
+  private getDirectChildren(categories: Category[], parentId: string): Category[] {
+    for (const category of categories) {
+      if (category.id === parentId) {
+        return category.subCategories ?? [];
+      }
+
+      if (category.subCategories?.length) {
+        const nested = this.getDirectChildren(category.subCategories, parentId);
+        if (nested.length > 0) {
+          return nested;
+        }
+      }
+    }
+
+    return [];
   }
 }

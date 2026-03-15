@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -14,17 +14,18 @@ export class VendorService {
 
   getVendors(pageNumber: number = 1, pageSize: number = 10, search?: string, status?: VendorStatus): Observable<PaginatedVendors> {
     let params = new HttpParams()
-      .set('pageNumber', pageNumber.toString())
+      .set('page', pageNumber.toString())
       .set('pageSize', pageSize.toString());
 
-    if (search) {
-      params = params.set('search', search);
+    if (search && search.trim()) {
+      params = params.set('search', search.trim());
     }
 
     if (status) {
       params = params.set('status', status);
     }
 
+    console.log('Fetching vendors with params:', params.toString());
     return this.http.get<PaginatedVendors>(this.apiUrl, { params });
   }
 
@@ -32,7 +33,15 @@ export class VendorService {
     return this.http.get<VendorDetail>(`${this.apiUrl}/${id}`);
   }
 
-  updateVendorStatus(id: string, status: VendorStatus, isActive: boolean): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/status`, { status, isActive });
+  approveVendor(id: string, commissionRate: number): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${id}/approve`, { commissionRate });
+  }
+
+  rejectVendor(id: string, reason: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${id}/reject`, { reason });
+  }
+
+  suspendVendor(id: string, reason: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${id}/suspend`, { reason });
   }
 }

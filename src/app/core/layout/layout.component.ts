@@ -1,10 +1,8 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-
-import { TranslateModule, TranslateService, LangChangeEvent } from '@ngx-translate/core';
-
+import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
@@ -33,17 +31,15 @@ export class LayoutComponent {
     private translate: TranslateService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
+
     this.authService.currentUser$.subscribe(user => {
-      if (user) {
-        this.userName = user.fullName || 'Admin';
-      }
+      this.userName = user?.fullName || 'Admin';
     });
 
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.currentLang = event.lang;
     });
 
-    // Close sidebar on mobile after navigation
     this.router.events.subscribe(() => {
       this.isSidebarOpen = false;
     });
@@ -59,7 +55,8 @@ export class LayoutComponent {
   }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login'])
+    });
   }
 }

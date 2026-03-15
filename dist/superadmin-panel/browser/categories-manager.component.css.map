@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/catalog/categories-manager/categories-manager.component.scss"],
-  "sourcesContent": ["@use \"sass:math\";\n\n// Custom Scrollbar\n.custom-scrollbar {\n  &::-webkit-scrollbar { width: 5px; height: 5px; }\n  &::-webkit-scrollbar-track { background: transparent; }\n  &::-webkit-scrollbar-thumb { \n    background: #e2e8f0;\n    border-radius: 9999px;\n    &:hover { background: #cbd5e1; }\n  }\n}\n\n// Animations\n@keyframes scale-in {\n    from { opacity: 0; transform: scale(0.95); }\n    to { opacity: 1; transform: scale(1); }\n}\n\n.animate-scale-in {\n    animation: scale-in 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;\n}\n\n@keyframes rowEntrance {\n  from { opacity: 0; transform: translateY(4px); }\n  to { opacity: 1; transform: translateY(0); }\n}\n\n.animate-row {\n  animation: rowEntrance 0.3s ease-out forwards;\n}\n\n// Extraordinary Table Design and Row animations removed as they are now global in styles.scss\n\n"],
-  "mappings": ";AAIE,CAAA,gBAAA;AAAuB,SAAA;AAAY,UAAA;;AACnC,CADA,gBACA;AAA6B,cAAA;;AAC7B,CAFA,gBAEA;AACE,cAAA;AACA,iBAAA;;AACA,CALF,gBAKE,yBAAA;AAAU,cAAA;;AAKd,WAAA;AACI;AAAO,aAAA;AAAY,eAAA,MAAA;;AACnB;AAAK,aAAA;AAAY,eAAA,MAAA;;;AAGrB,CAAA;AACI,aAAA,SAAA,KAAA,aAAA,IAAA,EAAA,CAAA,EAAA,IAAA,EAAA,GAAA;;AAGJ,WAAA;AACE;AAAO,aAAA;AAAY,eAAA,WAAA;;AACnB;AAAK,aAAA;AAAY,eAAA,WAAA;;;AAGnB,CAAA;AACE,aAAA,YAAA,KAAA,SAAA;;",
-  "names": []
-}

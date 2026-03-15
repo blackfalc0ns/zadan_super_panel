@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-hidden">
+﻿<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-hidden">
 
     <!-- Design 2.0 Artistic Header Row -->
     <div class="px-4 md:px-10 pt-8 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
@@ -106,7 +106,7 @@
                             <div class="flex flex-col items-center gap-1.5">
                                 <span class="text-[11px] font-bold text-slate-600 tracking-tight truncate max-w-[180px]">{{ vendor.contactEmail }}</span>
                                 <code class="text-[9px] font-bold text-zadna-primary bg-zadna-primary/5 px-2 py-0.5 rounded-md border border-zadna-primary/10 uppercase tracking-widest">
-                                    عمولة: {{ vendor.commissionRate }}%
+                                    عمولة: {{ getCommissionLabel(vendor) }}
                                 </code>
                             </div>
                         </td>
@@ -193,7 +193,7 @@
                     <div class="flex items-center justify-between">
                         <span class="text-xs text-slate-500">العمولة</span>
                         <code class="text-xs font-bold text-zadna-primary bg-zadna-primary/5 px-2 py-1 rounded">
-                            {{ vendor.commissionRate }}%
+                            {{ getCommissionLabel(vendor) }}
                         </code>
                     </div>
                 </div>
@@ -205,7 +205,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                        عرض التفاصيل
+                        Ø¹Ø±Ø¶ Ø§Ù„ØªÙØ§ØµÙŠÙ„
                     </button>
                 </div>
             </div>
@@ -237,3 +237,4 @@
         </div>
     </div>
 </div>
+

@@ -1,17 +1,14 @@
-export interface Vendor {
+﻿export interface Vendor {
     id: string;
-    userId: string;
     businessNameAr: string;
     businessNameEn: string;
-    descriptionAr: string;
-    descriptionEn: string;
-    contactEmail: string;
+    businessType: string;
+    status: string;
+    ownerName: string;
     contactPhone: string;
-    commercialRecord: string | null;
-    taxNumber: string | null;
-    status: VendorStatus;
-    isActive: boolean;
-    commissionRate: number;
+    createdAtUtc: string;
+    contactEmail: string;
+    commissionRate: number | null;
 }
 
 export enum VendorStatus {
