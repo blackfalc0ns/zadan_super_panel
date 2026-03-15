@@ -58,7 +58,7 @@
         "SIGNING_IN": "Securing Connection...",
         "SIGN_IN": "Enter Dashboard",
         "FORGOT_PASSWORD": "Reset credentials?",
-        "ADMIN_PORTAL": "Zadana Central Command",
+        "ADMIN_PORTAL": "Zadna Central Command",
         "MANAGE_MARKETPLACE": "Master Administration of your",
         "MARKETPLACE_HIGHLIGHT": "Enterprise Network.",
         "MARKETPLACE_DESC": "Strategically monitor vendor performance, regulate supply chains, and steer the future of the multi-vendor marketplace from your unified admin hub.",
@@ -167,9 +167,9 @@
     "DASHBOARD": {
         "GREETING": "Morning, {{name}}!",
         "SYSTEM_LIVE": "Live Node",
-        "HUB_DESC": "Zadana Central Command",
+        "HUB_DESC": "Zadna Central Command",
         "SYSTEM_ONLINE": "System Online",
-        "ADMIN_HUB": "Zadana Admin Hub",
+        "ADMIN_HUB": "Zadna Admin Hub",
         "UPGRADE_TITLE": "Scale Your Business Faster",
         "UPGRADE_BANNER": "Upgrade your plan to unlock advanced features",
         "VIEW_PLANS": "View Plans ↗",
@@ -441,7 +441,7 @@
         "CONFIG": "Config",
         "NETWORK_HEALTH": "Network Health",
         "UPTIME_STAT": "99.8% Uptime",
-        "CLOUD_SERVICES": "Zadana Cloud Services",
+        "CLOUD_SERVICES": "Zadna Cloud Services",
         "USER_ROLE_ID": "Engineer • ID: 892",
         "WELCOME_USER": "Welcome",
         "LIVE_OPS": "Live Ops"
@@ -627,7 +627,7 @@
             "DOCUMENTS_UPLOAD": "Documents Upload",
             "DOCUMENTS_UPLOAD_DESC": "Commercial register, National ID, and Tax certificate received.",
             "ACCOUNT_CREATION": "Account Creation",
-            "ACCOUNT_CREATION_DESC": "Initial registration on Zadana vendor platform."
+            "ACCOUNT_CREATION_DESC": "Initial registration on Zadna vendor platform."
         }
     }
 }
