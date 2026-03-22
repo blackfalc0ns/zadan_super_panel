@@ -1,243 +1,355 @@
-﻿<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-hidden">
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
 
     <!-- Design 2.0 Artistic Header Row -->
-    <div class="px-4 md:px-10 pt-8 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
-        <!-- Page Identity (Right Aligned in RTL) -->
+    <div class="px-4 md:px-10 pt-4 pb-3 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
+        <!-- Page Identity -->
         <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
             <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
                 <span>{{ 'SIDEBAR.CATALOG' | translate }}</span>
                 <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
-                <span class="text-zadna-primary">{{ 'SIDEBAR.VENDORS.TITLE' | translate }}</span>
+                <span class="text-zadna-primary">{{ 'VENDORS.TITLE' | translate }}</span>
             </nav>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                {{ 'SIDEBAR.VENDORS.TITLE' | translate }}
+                {{ 'VENDORS.TITLE' | translate }}
             </h1>
             <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-                إدارة الموردين والشركاء التجاريين وتتبع العمولات والحالات
+                {{ 'VENDORS.DESC' | translate }}
             </p>
         </div>
 
-        <!-- Primary Action (Left Aligned in RTL) -->
+        <!-- Primary Action -->
         <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-            <app-button variant="primary" 
-                customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:rotate-90 transition-transform duration-500">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
-                        </svg>
-                    </div>
-                    <span class="font-black uppercase tracking-[0.1em] text-xs sm:text-sm">{{ 'COMMON.ADD' | translate }} مورد</span>
-                </div>
-            </app-button>
+            <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
+                <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
+                {{ 'VENDORS.ADD_VENDOR' | translate }}
+            </button>
         </div>
     </div>
 
-    <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
-        <!-- Search Bar Mirror -->
-        <div class="flex flex-col sm:flex-row items-center gap-4">
-            <div class="flex-1 w-full max-w-md">
-                <app-input [placeholder]="'SIDEBAR.VENDORS.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (input)="onSearch()"
-                    [dir]="translate.currentLang === 'ar' ? 'rtl' : 'ltr'" 
-                    [inputClass]="'!bg-transparent !border-0 !ring-0 !text-zadna-primary !placeholder-zadna-primary/40'"
-                    [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-[1.5rem] overflow-hidden'"
-                    [hasIcon]="true">
-                    <svg icon class="w-4 h-4 text-zadna-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </app-input>
+    <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
+        
+        <!-- 1. KPI Summary Cards -->
+        <app-kpi-cards 
+            [cards]="kpiCards" 
+            (cardClick)="onKPICardClick($event)">
+        </app-kpi-cards>
+
+        <!-- 2. Search & Filter Section (Grouped for smaller spacing) -->
+        <div class="flex flex-col gap-3">
+            <!-- Unified Search & Filter Bar -->
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
+            
+            <!-- RIGHT SIDE: Enhanced Search Input -->
+            <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
+                <div class="absolute inset-y-0 flex items-center pointer-events-none" [ngClass]="isRTL ? 'right-5' : 'left-5'">
+                    <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+                </div>
+                <input type="text" 
+                       [(ngModel)]="searchTerm" 
+                       (input)="onSearch()"
+                       [placeholder]="'VENDORS.SEARCH_PLACEHOLDER' | translate"
+                       class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
+                       [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
             </div>
-        </div>
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
-            <div class="relative w-24 h-24">
-                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
-                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
-            </div>
-        </div>
 
-        <!-- Desktop Table View -->
-        <div *ngIf="!isLoading && vendors.length > 0" 
-             class="hidden md:block extraordinary-table-container w-full overflow-x-auto animate-in fade-in slide-in-from-bottom-10 duration-1000">
-            <table class="w-full table-fixed border-separate border-spacing-y-0">
-                <thead class="border-b border-slate-100/50">
-                    <tr>
-                        <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
-                        <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الشعار</th>
-                        <th class="text-start w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المورد والاسم</th>
-                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">التواصل</th>
-                        <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">العمولة</th>
-                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
-                        <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let vendor of vendors; let i = index" 
-                        class="group bg-white/50 hover:bg-white transition-all duration-500 border-b border-slate-100/60">
-                        
-                        <!-- Col 1: Index -->
-                        <td class="text-center align-middle py-4 w-[5%]">
-                            <span class="text-[10px] sm:text-[11px] font-black text-slate-300">{{ (pageNumber - 1) * pageSize + i + 1 }}</span>
-                        </td>
-
-                        <!-- Col 2: Logo -->
-                        <td class="text-center align-middle py-4 w-[8%]">
-                            <div class="flex justify-center">
-                                <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-[1.2rem] border border-[#e0f2f4] flex items-center justify-center transition-all group-hover:scale-105 group-hover:rotate-2 shadow-sm">
-                                    <span class="text-2xl font-black text-zadna-primary">{{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn).charAt(0) | uppercase }}</span>
-                                    <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-white border-2 border-[#e0f2f4] rounded-full shadow-sm"></div>
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- Col 3: Name & Translation -->
-                        <td class="align-middle py-4 w-[20%] px-2">
-                            <div class="flex flex-col text-start">
-                                <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
-                                    {{ activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn }}
-                                </span>
-                                <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
-                                    {{ activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr }}
-                                </span>
-                            </div>
-                        </td>
-
-                        <!-- Col 4: Contact -->
-                        <td class="text-center align-middle py-4 w-[18%]">
-                            <span class="text-[11px] font-bold text-slate-600 tracking-tight truncate block px-2">{{ vendor.contactEmail }}</span>
-                        </td>
-
-                        <!-- Col 5: Commission -->
-                        <td class="text-center align-middle py-4 w-[12%]">
-                            <code class="text-[10px] font-bold text-zadna-primary bg-zadna-primary/5 px-2.5 py-1 rounded-lg border border-zadna-primary/10 uppercase tracking-widest inline-block">
-                                {{ getCommissionLabel(vendor) }}
-                            </code>
-                        </td>
-
-                        <!-- Col 6: Status -->
-                        <td class="text-center align-middle py-4 w-[15%]">
-                            <div class="flex justify-center">
-                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
-                                     [class.text-emerald-500]="vendor.status === 'Active'" 
-                                     [class.text-amber-500]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
-                                     [class.text-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'">
-                                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
-                                          [class.bg-emerald-500]="vendor.status === 'Active'" 
-                                          [class.bg-amber-500]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
-                                          [class.bg-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"></span>
-                                    <span class="text-[10px] font-black tracking-tight uppercase">
-                                        {{ getStatusLabel(vendor.status) }}
-                                    </span>
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- Col 7: Actions -->
-                        <td class="text-center align-middle py-4 w-[12%]">
-                            <div class="flex justify-center gap-1.5">
-                                <button [routerLink]="['/vendors', vendor.id]" class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-zadna-primary hover:text-white transition-all">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Mobile Cards View -->
-        <div *ngIf="!isLoading && vendors.length > 0" 
-             class="md:hidden space-y-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
-            <div *ngFor="let vendor of vendors; let i = index" 
-                 class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all">
-                
-                <!-- Header with Logo and Status -->
-                <div class="flex items-start justify-between mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-xl border border-[#e0f2f4] flex items-center justify-center">
-                            <span class="text-xl font-black text-zadna-primary">{{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn).charAt(0) | uppercase }}</span>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-sm font-bold text-slate-900 truncate">
-                                {{ activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn }}
-                            </h3>
-                            <p class="text-xs text-slate-500 truncate">
-                                {{ activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr }}
-                            </p>
-                        </div>
-                    </div>
+            <!-- LEFT SIDE: Final Compact Filter Toggle -->
+            <div class="flex items-center gap-4 order-2 lg:order-2">
+                <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
                     
-                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold"
-                         [class.bg-emerald-50]="vendor.status === 'Active'"
-                         [class.text-emerald-600]="vendor.status === 'Active'"
-                         [class.bg-amber-50]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
-                         [class.text-amber-600]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
-                         [class.bg-red-50]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"
-                         [class.text-red-600]="vendor.status === 'Rejected' || vendor.status === 'Suspended'">
-                        <span class="w-1 h-1 rounded-full"
-                              [class.bg-emerald-500]="vendor.status === 'Active'"
-                              [class.bg-amber-500]="vendor.status === 'Pending' || vendor.status === 'PendingReview'"
-                              [class.bg-red-500]="vendor.status === 'Rejected' || vendor.status === 'Suspended'"></span>
-                        {{ getStatusLabel(vendor.status) }}
+                    <!-- Unified Filter Toggle Button -->
+                    <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+                         (click)="toggleFilters()"
+                         [class.bg-teal-50]="isFiltersExpanded">
+                        <span class="material-symbols-outlined text-[24px] transition-transform duration-500" 
+                              [class.text-zadna-primary]="true"
+                              [class.rotate-180]="isFiltersExpanded">filter_list</span>
+                        <div class="flex flex-col">
+                            <span class="text-[13px] font-black text-slate-800">{{ 'VENDORS.FILTER_VENDORS' | translate }}</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'VENDORS.ADJUST_CRITERIA' | translate }}</span>
+                        </div>
+                        <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
+                              [ngClass]="isRTL ? 'mr-2' : 'ml-2'"
+                              [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
                     </div>
+
                 </div>
 
-                <!-- Details -->
-                <div class="space-y-2 mb-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-500">البريد الإلكتروني</span>
-                        <span class="text-xs font-medium text-slate-700 truncate max-w-[200px]">
-                            {{ vendor.contactEmail }}
+                <!-- Active Filter Count / Reset Pin -->
+                <button *ngIf="hasActiveFilters" (click)="resetFilters()" 
+                        class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+                    <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+                    <span class="text-[11px] font-black uppercase tracking-widest">{{ 'VENDORS.RESET' | translate }}</span>
+                </button>
+            </div>
+        </div>
+
+            <!-- 3. Advanced Filter Panel (Dropdown View) -->
+            <div *ngIf="isFiltersExpanded" class="animate-in slide-in-from-top-3 duration-500 overflow-hidden rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6">
+                <app-advanced-filter-panel 
+                    [isExpanded]="true"
+                    [fields]="filterFields"
+                    [filters]="filters"
+                    (filtersChange)="onFiltersChange($event)"
+                    (reset)="onFilterReset()"
+                    (save)="onFilterSave($event)">
+                </app-advanced-filter-panel>
+            </div>
+        </div>
+
+        <!-- 4. Data Table (Desktop) -->
+        <app-data-table
+            *ngIf="!isLoading && vendors.length > 0"
+            [data]="vendors"
+            [columns]="tableColumns"
+            [actions]="tableActions"
+            [bulkActions]="bulkActions"
+            [selectable]="true"
+            [clickableRows]="true"
+            [containerClass]="'extraordinary-table-container'"
+            (rowClick)="onTableRowClick($event)"
+            (actionClick)="onTableAction($event)"
+            (bulkActionClick)="onBulkAction($event)">
+            
+            <!-- Custom Cell Templates -->
+            <ng-template #customColumn let-vendor let-column="column">
+                
+                <!-- Logo Template -->
+                <ng-container *ngIf="column.key === 'logo'">
+                    <div class="flex justify-center">
+                        <div class="relative w-11 h-11 bg-gradient-to-br from-zadna-primary/10 to-zadna-primary/5 rounded-[1.1rem] border border-zadna-primary/10 flex items-center justify-center transition-all group-hover:scale-105 shadow-sm overflow-hidden">
+                            <span class="text-lg font-black text-zadna-primary">
+                                {{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn).charAt(0) | uppercase }}
+                            </span>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <!-- Business Name Template -->
+                <ng-container *ngIf="column.key === 'businessName'">
+                    <div class="flex flex-col text-start">
+                        <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
+                            {{ activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn }}
+                        </span>
+                        <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
+                            {{ activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr }}
                         </span>
                     </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-500">العمولة</span>
-                        <code class="text-xs font-bold text-zadna-primary bg-zadna-primary/5 px-2 py-1 rounded">
-                            {{ getCommissionLabel(vendor) }}
-                        </code>
+                </ng-container>
+
+                <!-- Risk Level Template -->
+                <ng-container *ngIf="column.key === 'riskLevel'">
+                    <span class="text-[10px] font-black uppercase px-2 py-1 rounded-lg bg-slate-50 border border-slate-100"
+                          [class]="getRiskLevelColor(vendor.riskLevel)">
+                        {{ getRiskLevelLabel(vendor.riskLevel) | translate }}
+                    </span>
+                </ng-container>
+
+                <!-- Status Template -->
+                <ng-container *ngIf="column.key === 'status'">
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm text-[10px] font-black uppercase tracking-tight"
+                              [ngClass]="{
+                                'text-emerald-500': vendor.status === 'Active',
+                                'text-amber-500': vendor.status === 'Pending' || vendor.status === 'PendingReview',
+                                'text-red-500': vendor.status === 'Suspended' || vendor.status === 'Rejected'
+                              }">
+                            <span class="w-1.5 h-1.5 rounded-full"
+                                  [ngClass]="{
+                                    'bg-emerald-500': vendor.status === 'Active',
+                                    'bg-amber-500': vendor.status === 'Pending' || vendor.status === 'PendingReview',
+                                    'bg-red-500': vendor.status === 'Suspended' || vendor.status === 'Rejected'
+                                  }"></span>
+                            {{ getStatusLabel(vendor.status) | translate }}
+                        </span>
                     </div>
-                </div>
+                </ng-container>
 
-                <!-- Actions -->
-                <div class="flex gap-2 pt-3 border-t border-slate-100">
-                    <button [routerLink]="['/vendors', vendor.id]" class="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 text-slate-600 rounded-lg text-xs font-medium hover:bg-blue-500 hover:text-white transition-all">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        Ø¹Ø±Ø¶ Ø§Ù„ØªÙØ§ØµÙŠÙ„
-                    </button>
-                </div>
-            </div>
-        </div>
+                <!-- Commission Template -->
+                <ng-container *ngIf="column.key === 'commissionRate'">
+                    <code class="text-[10px] font-bold text-zadna-primary bg-zadna-primary/5 px-2.5 py-1 rounded-xl border border-zadna-primary/5 uppercase tracking-wider">
+                        {{ getCommissionLabel(vendor) }}
+                    </code>
+                </ng-container>
+            </ng-template>
+        </app-data-table>
 
-        <!-- Empty State -->
-        <div *ngIf="!isLoading && vendors.length === 0" 
-             class="relative p-20 text-center animate-in zoom-in duration-700">
-            <div class="max-w-md mx-auto space-y-6">
-                <div class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl flex items-center justify-center mx-auto text-slate-100 relative group">
-                    <div class="absolute inset-0 bg-zadna-primary/5 rounded-[3rem] group-hover:scale-110 transition-transform duration-500"></div>
-                    <svg class="w-16 h-16 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'COMMON.NO_RESULTS' | translate }}</h3>
-                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ (translate.currentLang === 'ar' ? 'لا يوجد موردين مسجلين حالياً' : 'No vendors joined the network yet.') }}</p>
-            </div>
-        </div>
+        <!-- 5. Mobile Cards View -->
+        <app-mobile-vendor-cards
+            [vendors]="vendorCardsData"
+            [selectedVendorIds]="selectedVendorIdsArray"
+            [isLoading]="isLoading"
+            [activeLang]="activeLang"
+            (cardClick)="onMobileCardClick($event)"
+            (quickApprove)="onMobileQuickApprove($event)"
+            (requestDocuments)="onMobileRequestDocuments($event)"
+            (selectionChange)="onMobileSelectionChange($event)">
+        </app-mobile-vendor-cards>
 
-        <!-- Pagination -->
-        <div *ngIf="!isLoading && vendors.length > 0" class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+        <!-- 6. Pagination -->
+        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
             <app-pagination
+                *ngIf="!isLoading && vendors.length > 0"
                 [currentPage]="pageNumber"
                 [pageSize]="pageSize"
                 [totalItems]="totalCount"
                 (pageChange)="changePage($event)">
             </app-pagination>
         </div>
+
+        <!-- 7. Loading state (Skeleton) placeholder if needed -->
+        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
+            <div class="relative w-24 h-24">
+                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
+                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Quick Preview Drawer -->
+<app-quick-preview-drawer
+    [isOpen]="showPreviewDrawer"
+    [data]="previewVendor"
+    [title]="(translate.currentLang === 'ar' ? previewVendor?.businessNameAr : previewVendor?.businessNameEn) || ''"
+    [subtitle]="previewVendor?.contactEmail || ''"
+    [actions]="previewActions"
+    headerColor="#127c8c"
+    [headerIcon]="headerIconSvg"
+    (close)="closePreview()"
+    (actionClick)="onPreviewAction($event)">
+    
+    <ng-template #content let-vendor>
+        <div *ngIf="vendor" class="space-y-8 animate-in fade-in slide-in-from-right-10 duration-500">
+            <!-- 1. Operational Health Score -->
+            <div class="relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-8 text-white shadow-2xl">
+                <!-- Abstract Background Pattern -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-zadna-primary/20 blur-3xl rounded-full -mr-16 -mt-16"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 blur-2xl rounded-full -ml-12 -mb-12"></div>
+
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                                <svg class="w-5 h-5 text-zadna-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
+                            <span class="text-sm font-black uppercase tracking-widest text-slate-300">{{ 'VENDORS.PREVIEW.HEALTH_SCORE' | translate }}</span>
+                        </div>
+                        <div class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold text-slate-200">{{ 'VENDORS.PREVIEW.UPDATED_NOW' | translate }}</div>
+                    </div>
+
+                    <div class="flex items-end gap-3 mb-4">
+                        <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+                            {{ 100 - (vendor.riskLevel === 'Low' ? 10 : vendor.riskLevel === 'Medium' ? 30 : vendor.riskLevel === 'High' ? 60 : 85) }}
+                        </span>
+                        <span class="text-xl font-bold text-slate-400 mb-1.5">/ 100</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="w-full bg-white/10 rounded-full h-2.5 overflow-hidden backdrop-blur-sm border border-white/5">
+                            <div class="h-full rounded-full bg-gradient-to-r from-zadna-primary to-blue-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(18,124,140,0.5)]" 
+                                 [style.width.%]="100 - (vendor.riskLevel === 'Low' ? 10 : vendor.riskLevel === 'Medium' ? 30 : vendor.riskLevel === 'High' ? 60 : 85)"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                            <span>{{ 'VENDORS.PREVIEW.LOW_QUALITY' | translate }}</span>
+                            <span class="text-zadna-primary-light">{{ 'VENDORS.PREVIEW.IDEAL_PERFORMANCE' | translate }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Detailed Status Matrix -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-7 h-7 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.VERIFICATION_STATUS' | translate }}</p>
+                    </div>
+                    <p class="text-sm font-bold text-slate-700 pr-1">{{ getVerificationStatusLabel(vendor.verificationStatus) | translate }}</p>
+                </div>
+
+                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-7 h-7 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.ONBOARDING_STAGE' | translate }}</p>
+                    </div>
+                    <p class="text-sm font-bold text-slate-700 pr-1">{{ getOnboardingStageLabel(vendor.onboardingStage) | translate }}</p>
+                </div>
+
+                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-7 h-7 rounded-xl bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.RISK_LEVEL' | translate }}</p>
+                    </div>
+                    <p class="text-sm font-bold pr-1" [class]="getRiskLevelColor(vendor.riskLevel)">{{ getRiskLevelLabel(vendor.riskLevel) | translate }}</p>
+                </div>
+
+                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-7 h-7 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.PAYOUT_STATUS' | translate }}</p>
+                    </div>
+                    <p class="text-sm font-bold text-slate-700 pr-1">{{ getPayoutStatusLabel(vendor.payoutStatus) | translate }}</p>
+                </div>
+            </div>
+
+            <!-- 3. Missing Requirements Detail -->
+            <div *ngIf="vendor.documentsStatus !== 'Complete'" class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-amber-500]="true">{{ 'VENDORS.PREVIEW.PENDING_REQUIREMENTS' | translate }}</h4>
+                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-[10px] font-bold text-amber-600">{{ 'VENDORS.PREVIEW.IMPORTANT' | translate }}</span>
+                </div>
+                <div class="bg-amber-50/50 border border-amber-100/50 rounded-[2rem] p-6 space-y-3">
+                    <div class="flex items-start gap-4 p-3 bg-white/60 rounded-2xl border border-white/80">
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">{{ 'VENDORS.PREVIEW.UPDATE_CR' | translate }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">{{ 'VENDORS.PREVIEW.EXPIRY_DATE' | translate }}: 12-05-2026</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-3 bg-white/60 rounded-2xl border border-white/80">
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">{{ 'VENDORS.PREVIEW.VERIFY_BANK' | translate }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">{{ 'VENDORS.PREVIEW.PENDING_REVIEW' | translate }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Performance Insights (Minimalist) -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-zadna-primary]="true">{{ 'VENDORS.PREVIEW.PERFORMANCE_INSIGHTS' | translate }}</h4>
+                <div class="bg-slate-50 rounded-[2rem] p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="text-center space-y-1">
+                            <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDORS.PREVIEW.RETURN_RATE' | translate }}</p>
+                            <p class="text-sm font-black text-slate-700">2.4%</p>
+                        </div>
+                        <div class="w-px h-8 bg-slate-200"></div>
+                        <div class="text-center space-y-1">
+                            <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDORS.PREVIEW.PROCESSING_TIME' | translate }}</p>
+                            <p class="text-sm font-black text-slate-700">1.2 {{ 'VENDORS.PREVIEW.DAYS' | translate }}</p>
+                        </div>
+                        <div class="w-px h-8 bg-slate-200"></div>
+                        <div class="text-center space-y-1">
+                            <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDORS.PREVIEW.CUSTOMER_RATING' | translate }}</p>
+                            <p class="text-sm font-black text-amber-500 text-left">4.8 <span class="text-[10px]">★</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</app-quick-preview-drawer>

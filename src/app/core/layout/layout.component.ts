@@ -6,6 +6,7 @@ import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-transla
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { ToastContainerComponent } from '../../shared/components/ui/toast-container/toast-container.component';
 
 @Component({
   selector: 'app-layout',
@@ -16,7 +17,8 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
     TranslateModule,
     SidebarComponent,
     HeaderComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    ToastContainerComponent
   ],
   templateUrl: './layout.component.html'
 })

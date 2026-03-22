@@ -4,7 +4,7 @@
     <app-detail-header
         [title]="productForm.get('id')?.value ? (translate.instant('MASTER_PRODUCTS.EDIT_TITLE')) : (translate.instant('MASTER_PRODUCTS.ADD_TITLE'))"
         [breadcrumbs]="breadcrumbs"
-        [actionButtonLabel]="productForm.get('id')?.value ? 'حفظ التعديلات' : 'حفظ'"
+        [actionButtonLabel]="productForm.get('id')?.value ? ('COMMON.SAVE_EDIT' | translate) : ('COMMON.SAVE' | translate)"
         actionButtonIcon="save"
         [isActionDisabled]="isLoading"
         (backClick)="onCancel()"

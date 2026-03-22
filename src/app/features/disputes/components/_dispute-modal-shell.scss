@@ -1,0 +1,36 @@
+.dispute-modal-backdrop {
+  animation: fade-in 180ms ease-out;
+}
+
+.dispute-modal-panel {
+  animation: modal-in 220ms ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .dispute-modal-panel {
+    max-height: 100vh;
+    border-radius: 1.25rem;
+  }
+}

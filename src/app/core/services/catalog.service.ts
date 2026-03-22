@@ -81,6 +81,10 @@ export class CatalogService {
     return this.http.put<void>(`${this.apiUrl}/products/${id}`, payload, { headers: this.getHeaders() });
   }
 
+  deleteProduct(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/products/${id}`, { headers: this.getHeaders() });
+  }
+
   getBrands(includeInactive: boolean = false): Observable<any[]> {
     const params = new HttpParams().set('includeInactive', includeInactive.toString());
     return this.http.get<any[]>(`${this.apiUrl}/brands`, { headers: this.getHeaders(), params });

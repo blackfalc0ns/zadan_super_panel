@@ -7,13 +7,13 @@
             <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
                 <span>{{ 'SIDEBAR.CATALOG' | translate }}</span>
                 <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
-                <span class="text-zadna-primary">إدارة المحتوى</span>
+                <span class="text-zadna-primary">{{ 'CATEGORIES.CONTENT_MGMT' | translate }}</span>
             </nav>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                التصنيفات والنشاط
+                {{ 'CATEGORIES.TITLE' | translate }}
             </h1>
             <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-                تتبع وإدارة هيكلة التصنيفات الرئيسية في النظام بدقة واحترافية
+                {{ 'CATEGORIES.DESCRIPTION' | translate }}
             </p>
         </div>
 
@@ -27,7 +27,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
                         </svg>
                     </div>
-                    <span class="font-black uppercase tracking-[0.1em] text-xs sm:text-sm">إضافة تصنيف جديد</span>
+                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'CATEGORIES.ADD_NEW' | translate }}</span>
                 </div>
             </app-button>
         </div>
@@ -48,11 +48,11 @@
                 <thead class="hidden sm:table-header-group border-b border-slate-100/50">
                     <tr class="sm:table-row">
                         <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
-                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الصورة</th>
-                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">الاسم</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">عدد العناصر</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
+                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.IMAGE_LABEL' | translate }}</th>
+                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'COMMON.NAME' | translate }}</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.STATUS' | translate }}</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.ACTIONS' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody class="block sm:table-row-group stagger-rows w-full">
@@ -103,21 +103,21 @@
 
                         <!-- Col 4: Count -->
                         <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
-                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">عدد العناصر</span>
+                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</span>
                             <div class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 bg-slate-50/50 rounded-xl border border-slate-100 group-hover:border-zadna-primary/10 transition-all">
-                                <span class="text-[11px] sm:text-[10px] font-bold text-slate-500">{{ item.subCategories?.length || 0 }} منتج</span>
+                                <span class="text-[11px] sm:text-[10px] font-bold text-slate-500">{{ item.subCategories?.length || 0 }} {{ 'CATEGORIES.PRODUCT_UNIT' | translate }}</span>
                             </div>
                         </td>
 
                         <!-- Col 5: Status -->
                         <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
-                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">الحالة</span>
+                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'COMMON.STATUS' | translate }}</span>
                             <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
                                  [class.text-emerald-500]="item.isActive" [class.text-slate-400]="!item.isActive">
                                 <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
                                       [class.bg-emerald-500]="item.isActive" [class.bg-slate-300]="!item.isActive"></span>
                                 <span class="text-[10px] font-black tracking-tight uppercase">
-                                    {{ item.isActive ? 'نشط' : 'معطل' }}
+                                    {{ item.isActive ? ('CATEGORIES.STATUS_ACTIVE' | translate) : ('CATEGORIES.STATUS_DISABLED' | translate) }}
                                 </span>
                             </div>
                         </td>

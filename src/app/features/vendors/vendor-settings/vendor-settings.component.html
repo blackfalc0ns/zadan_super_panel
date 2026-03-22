@@ -7,26 +7,26 @@
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center gap-2 mb-8">
           <span class="material-symbols-outlined text-blue-500">manage_accounts</span>
-          <h3 class="text-base font-bold text-gray-900">إعدادات الحساب</h3>
+          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.ACCOUNT_SETTINGS' | translate }}</h3>
         </div>
         
         <div class="space-y-5">
           <div class="flex justify-between items-center border-b border-gray-50 pb-4">
-            <span class="text-sm text-gray-400 font-medium">حالة الحساب</span>
-            <span class="text-sm font-bold text-gray-700">مفعل</span>
+            <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_STATUS' | translate }}</span>
+            <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.ACTIVE' | translate }}</span>
           </div>
           <div class="flex justify-between items-center border-b border-gray-50 pb-4">
-            <span class="text-sm text-gray-400 font-medium">نوع الحساب</span>
-            <span class="text-sm font-bold text-gray-700">شركة (B2B/B2C)</span>
+            <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_TYPE' | translate }}</span>
+            <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.ACCOUNT_TYPE_VALUE' | translate }}</span>
           </div>
           <div class="flex justify-between items-center border-b border-gray-50 pb-4">
-            <span class="text-sm text-gray-400 font-medium">اللغة الافتراضية</span>
-            <span class="text-sm font-bold text-gray-700">العربية</span>
+            <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.DEFAULT_LANGUAGE' | translate }}</span>
+            <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.DEFAULT_LANGUAGE_VALUE' | translate }}</span>
           </div>
           
           <button (click)="onResetPassword()" class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors mt-4">
             <span class="material-symbols-outlined text-sm">lock_reset</span>
-            <span class="text-sm font-bold">إعادة تعيين كلمة المرور</span>
+            <span class="text-sm font-bold">{{ 'VENDOR_SETTINGS.RESET_PASSWORD' | translate }}</span>
           </button>
         </div>
       </div>
@@ -35,14 +35,14 @@
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center gap-2 mb-6">
           <span class="material-symbols-outlined text-primary">storefront</span>
-          <h3 class="text-base font-bold text-gray-900">الإعدادات التشغيلية</h3>
+          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.OPERATIONS_SETTINGS' | translate }}</h3>
         </div>
         
         <div class="space-y-6">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm font-bold text-gray-900 mb-1">استقبال الطلبات</p>
-              <p class="text-xs text-gray-400">السماح للعملاء بالطلب</p>
+              <p class="text-sm font-bold text-gray-900 mb-1">{{ 'VENDOR_SETTINGS.ORDER_RECEPTION' | translate }}</p>
+              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.ORDER_RECEPTION_DESC' | translate }}</p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" checked class="sr-only peer">
@@ -51,24 +51,24 @@
           </div>
 
           <div>
-            <p class="text-sm font-bold text-gray-900 mb-2">ساعات العمل</p>
+            <p class="text-sm font-bold text-gray-900 mb-2">{{ 'VENDOR_SETTINGS.WORKING_HOURS' | translate }}</p>
             <div class="p-3 bg-gray-50 rounded-xl text-sm font-medium text-gray-700 text-center">
-              24/7 (دائماً مفتوح)
+              {{ 'VENDOR_SETTINGS.WORKING_HOURS_VALUE' | translate }}
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <p class="text-[10px] text-gray-400 mb-1">الحد الأدنى للطلب</p>
+              <p class="text-[10px] text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.MIN_ORDER' | translate }}</p>
               <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                 <span class="text-sm font-bold text-gray-900">50</span>
-                <span class="text-[10px] text-gray-400">ر.س</span>
+                <span class="text-[10px] text-gray-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
             </div>
             <div>
-              <p class="text-[10px] text-gray-400 mb-1">وقت التجهيز تقريبي</p>
+              <p class="text-[10px] text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.PREPARATION_TIME' | translate }}</p>
               <div class="p-2 bg-gray-50 rounded-lg text-sm font-bold text-gray-900 text-center">
-                1-2 يوم
+                {{ 'VENDOR_SETTINGS.PREPARATION_TIME_VALUE' | translate }}
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
         <div class="flex items-center gap-2 mb-6">
           <span class="material-symbols-outlined text-teal-500">verified_user</span>
-          <h3 class="text-base font-bold text-gray-900">الصلاحيات والوصول</h3>
+          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.PERMISSIONS_ACCESS' | translate }}</h3>
         </div>
         
         <div class="space-y-6">
@@ -92,10 +92,10 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">إدارة المنتجات</span>
-                <span class="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">كاملة</span>
+                <span class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.PRODUCT_MANAGEMENT' | translate }}</span>
+                <span class="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">{{ 'VENDOR_SETTINGS.FULL_ACCESS' | translate }}</span>
               </div>
-              <p class="text-xs text-gray-400">إضافة وتعديل وحذف المنتجات</p>
+              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.PRODUCT_MANAGEMENT_DESC' | translate }}</p>
             </div>
           </div>
 
@@ -105,13 +105,13 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">الوصول المالي</span>
+                <span class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.FINANCIAL_ACCESS' | translate }}</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" checked class="sr-only peer">
                   <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
-              <p class="text-xs text-gray-400">عرض التقارير وسحب الرصيد</p>
+              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.FINANCIAL_ACCESS_DESC' | translate }}</p>
             </div>
           </div>
 
@@ -121,10 +121,10 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">المستخدمين الفرعيين</span>
+                <span class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.SUB_USERS' | translate }}</span>
                 <span class="text-xs font-bold text-gray-600">5 / 3</span>
               </div>
-              <p class="text-xs text-gray-400">إضافة موظفين للمتجر</p>
+              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.SUB_USERS_DESC' | translate }}</p>
             </div>
           </div>
         </div>
@@ -133,23 +133,23 @@
         <div class="mt-12 pt-8 border-t border-gray-100">
           <div class="flex items-center gap-2 mb-6">
             <span class="material-symbols-outlined text-blue-500">settings_input_component</span>
-            <h3 class="text-base font-bold text-gray-900">إعدادات الربط (API)</h3>
+            <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.API_SETTINGS' | translate }}</h3>
           </div>
           
           <div class="space-y-4">
             <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">حالة الربط</span>
+              <span class="text-gray-400">{{ 'VENDOR_SETTINGS.CONNECTION_STATUS' | translate }}</span>
               <span class="flex items-center gap-1.5 text-green-600 font-bold">
                 <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
-                متصل
+                {{ 'VENDOR_SETTINGS.CONNECTED' | translate }}
               </span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">بوابة الدفع</span>
+              <span class="text-gray-400">{{ 'VENDOR_SETTINGS.PAYMENT_GATEWAY' | translate }}</span>
               <span class="text-gray-900 font-bold">PayTabs</span>
             </div>
             <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">آخر مزامنة</span>
+              <span class="text-gray-400">{{ 'VENDOR_SETTINGS.LAST_SYNC' | translate }}</span>
               <span class="text-gray-900 font-medium">2023-10-25 14:30:00</span>
             </div>
           </div>
@@ -163,14 +163,14 @@
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center gap-2 mb-6">
           <span class="material-symbols-outlined text-red-500">warning</span>
-          <h3 class="text-base font-bold text-gray-900">إجراءات التحكم</h3>
+          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.CONTROL_ACTIONS' | translate }}</h3>
         </div>
         
         <div class="space-y-4">
           <button class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">pause_circle</span>
-              <span class="text-sm font-medium text-gray-700">تعليق الحساب مؤقتاً</span>
+              <span class="text-sm font-medium text-gray-700">{{ 'VENDOR_SETTINGS.SUSPEND_ACCOUNT' | translate }}</span>
             </div>
             <div class="w-2 h-2 rounded-full bg-gray-300"></div>
           </button>
@@ -178,14 +178,14 @@
           <button class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">lock_reset</span>
-              <span class="text-sm font-medium text-gray-700">قفل تسجيل الدخول</span>
+              <span class="text-sm font-medium text-gray-700">{{ 'VENDOR_SETTINGS.LOCK_LOGIN' | translate }}</span>
             </div>
             <div class="w-2 h-2 rounded-full bg-gray-300"></div>
           </button>
           
           <button (click)="onArchiveAccount()" class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors mt-4">
             <span class="material-symbols-outlined text-sm">delete_forever</span>
-            <span class="text-sm font-bold">أرشفة الحساب</span>
+            <span class="text-sm font-bold">{{ 'VENDOR_SETTINGS.ARCHIVE_ACCOUNT' | translate }}</span>
           </button>
         </div>
       </div>
@@ -194,26 +194,26 @@
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center gap-2 mb-6">
           <span class="material-symbols-outlined text-blue-500">notifications</span>
-          <h3 class="text-base font-bold text-gray-900">الإشعارات</h3>
+          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.NOTIFICATIONS' | translate }}</h3>
         </div>
         
         <div class="space-y-5">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">البريد الإلكتروني</span>
+            <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.EMAIL_NOTIFICATIONS' | translate }}</span>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" checked class="sr-only peer">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
           <div class="flex items-center justify-between opacity-50">
-            <span class="text-sm text-gray-600">رسائل SMS</span>
+            <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.SMS_NOTIFICATIONS' | translate }}</span>
             <label class="relative inline-flex items-center cursor-not-allowed">
               <input type="checkbox" disabled class="sr-only peer">
               <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
             </label>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">طلبات جديدة</span>
+            <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.NEW_ORDERS_NOTIFICATIONS' | translate }}</span>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" checked class="sr-only peer">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
@@ -227,8 +227,8 @@
         <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
           <span class="material-symbols-outlined text-gray-400">history</span>
         </div>
-        <p class="text-xs text-gray-400 mb-1">آخر تعديل بواسطة</p>
-        <p class="text-sm font-bold text-gray-900">أحمد محمد (Admin)</p>
+        <p class="text-xs text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.LAST_UPDATED_BY' | translate }}</p>
+        <p class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.LAST_UPDATED_BY_VALUE' | translate }}</p>
         <p class="text-[10px] text-gray-400 mt-1">2023-10-24 09:15 AM</p>
       </div>
     </div>

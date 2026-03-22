@@ -16,6 +16,8 @@ export const routes: Routes = [
             { path: 'vendors', loadComponent: () => import('./features/vendors/vendors-list/vendors-list.component').then(m => m.VendorsListComponent) },
             { path: 'vendors/:id', loadComponent: () => import('./features/vendors/vendor-detail/vendor-detail.component').then(m => m.VendorDetailComponent) },
             { path: 'catalog', loadChildren: () => import('./features/catalog/catalog.module').then(m => m.CatalogModule) },
+            { path: 'disputes', loadComponent: () => import('./features/disputes/disputes-dashboard/disputes-dashboard.component').then(m => m.DisputesDashboardComponent) },
+            { path: 'orders', loadChildren: () => import('./features/orders/orders.routes').then(m => m.ORDERS_ROUTES) },
         ]
     },
     { path: '**', redirectTo: '' }

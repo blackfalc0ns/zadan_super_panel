@@ -30,11 +30,12 @@ interface RiskIndicator {
 
 interface ComplianceNote {
   id: string;
-  author: string;
-  authorInitials: string;
-  role: string;
-  timestamp: string;
-  message: string;
+  authorKey: string;
+  authorInitialsAr: string;
+  authorInitialsEn: string;
+  roleKey: string;
+  timestampKey: string;
+  messageKey: string;
   avatarClass: string;
 }
 
@@ -144,20 +145,22 @@ export class VendorComplianceComponent {
   complianceNotes: ComplianceNote[] = [
     {
       id: '1',
-      author: 'عبدالله محمد',
-      authorInitials: 'ع.م',
-      role: 'فريق المراجعة',
-      timestamp: 'اليوم، ١٠:٣٠ ص',
-      message: 'الشهادة الضريبية المرفقة غير واضحة المعالم، أرجو طلب إعادة رفعها بجودة أعلى ليتم مطابقة الرقم الضريبي مع السجل.',
+      authorKey: 'COMPLIANCE.NOTES.AUTHORS.ABDULLAH_MOHAMMED',
+      authorInitialsAr: 'ع.م',
+      authorInitialsEn: 'A.M',
+      roleKey: 'COMPLIANCE.NOTES.ROLES.REVIEW_TEAM',
+      timestampKey: 'COMPLIANCE.NOTES.TIMESTAMPS.TODAY_1030',
+      messageKey: 'COMPLIANCE.NOTES.MESSAGES.TAX_CERTIFICATE_BLUR',
       avatarClass: 'bg-primary/20 text-primary'
     },
     {
       id: '2',
-      author: 'سارة فهد',
-      authorInitials: 'س.ف',
-      role: 'فريق المخاطر',
-      timestamp: 'أمس، ٠٢:١٥ م',
-      message: 'تم التواصل مع التاجر بخصوص ارتفاع معدل الإلغاء، وأفاد بوجود مشكلة تقنية في ربط المخزون تم حلها.',
+      authorKey: 'COMPLIANCE.NOTES.AUTHORS.SARAH_FAHAD',
+      authorInitialsAr: 'س.ف',
+      authorInitialsEn: 'S.F',
+      roleKey: 'COMPLIANCE.NOTES.ROLES.RISK_TEAM',
+      timestampKey: 'COMPLIANCE.NOTES.TIMESTAMPS.YESTERDAY_0215',
+      messageKey: 'COMPLIANCE.NOTES.MESSAGES.CANCELLATION_FOLLOWUP',
       avatarClass: 'bg-slate-200 text-slate-600'
     }
   ];
@@ -204,5 +207,13 @@ export class VendorComplianceComponent {
       console.log('Add note:', this.newNote);
       this.newNote = '';
     }
+  }
+
+  get verificationCompletedCount(): number {
+    return this.verificationItems.filter(item => item.status === 'completed').length;
+  }
+
+  get lastReviewerInitials(): string {
+    return this.isRTL ? 'م.أ' : 'M.A';
   }
 }

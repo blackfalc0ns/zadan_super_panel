@@ -1,0 +1,213 @@
+<div *ngIf="isOpen && paymentDetail" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50" (click)="onClose()">
+  <div class="glass-modal relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]" (click)="$event.stopPropagation()">
+    
+    <!-- Background Ambient Glows -->
+    <div class="ambient-glow-teal"></div>
+    <div class="ambient-glow-orange"></div>
+
+    <!-- Header -->
+    <div class="px-6 pt-6 pb-4 border-b border-slate-200/60 shrink-0">
+      <div class="flex justify-between items-start">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800 leading-tight">تفاصيل الدفعة</h2>
+          <p class="text-xs text-slate-500 mt-1">عرض البيانات التفصيلية لعملية التحويل المالي وحالتها التقنية</p>
+        </div>
+        <button (click)="onClose()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors group">
+          <span class="material-symbols-outlined text-slate-400 group-hover:text-slate-600">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
+      
+      <!-- Status Banner -->
+      <div [ngClass]="getStatusClass()" class="border rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div [ngClass]="getStatusIconClass()" class="w-10 h-10 rounded-full flex items-center justify-center">
+            <span *ngIf="paymentDetail.status === 'success'" class="material-symbols-outlined">check</span>
+            <span *ngIf="paymentDetail.status === 'failed'" class="material-symbols-outlined">close</span>
+            <span *ngIf="paymentDetail.status === 'pending'" class="material-symbols-outlined">schedule</span>
+            <span *ngIf="paymentDetail.status === 'reviewing'" class="material-symbols-outlined">pending</span>
+          </div>
+          <div>
+            <span class="text-sm font-bold block">{{ paymentDetail.statusLabel }}</span>
+            <span class="text-[10px] text-slate-500">تم التحديث في: {{ paymentDetail.lastUpdated }}</span>
+          </div>
+        </div>
+        <div class="text-left" *ngIf="paymentDetail.statusCode">
+          <span class="px-2 py-1 bg-white/50 border rounded text-[10px] font-bold">
+            الرمز: {{ paymentDetail.statusCode }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Failure Reason (if failed) -->
+      <div *ngIf="paymentDetail.status === 'failed' && paymentDetail.failureReason" class="bg-rose-50 border border-rose-200 rounded-xl p-4">
+        <p class="text-xs text-rose-800 font-bold mb-2 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">error</span>
+          سبب الفشل:
+        </p>
+        <p class="text-xs text-rose-600 leading-relaxed">{{ paymentDetail.failureReason }}</p>
+      </div>
+
+      <!-- Payment Info Card -->
+      <div class="inner-card p-4">
+        <h3 class="text-xs font-bold text-primary mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">description</span>
+          معلومات الدفعة
+        </h3>
+        <div class="grid grid-cols-2 gap-y-4 gap-x-6">
+          <div class="space-y-1">
+            <label class="text-[10px] text-slate-400">رقم العملية (Transaction ID)</label>
+            <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.transactionId }}</p>
+          </div>
+          <div class="space-y-1 text-left">
+            <label class="text-[10px] text-slate-400">المرجع البنكي</label>
+            <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.bankReference }}</p>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-slate-400">نوع العملية</label>
+            <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] rounded border border-blue-100 font-medium">
+              {{ paymentDetail.operationType }}
+            </span>
+          </div>
+          <div class="space-y-1 text-left">
+            <label class="text-[10px] text-slate-400">تاريخ العملية</label>
+            <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.operationDate }}</p>
+          </div>
+          <div class="col-span-2 pt-2 border-t border-slate-100 flex justify-between items-center">
+            <label class="text-xs font-bold text-slate-600">المبلغ الإجمالي</label>
+            <div class="text-lg font-bold text-primary">
+              {{ paymentDetail.amount | number:'1.2-2' }} <span class="text-xs font-normal text-slate-500">ر.س</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipient/Bank Info -->
+      <div class="inner-card p-4">
+        <h3 class="text-xs font-bold text-primary mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">account_balance</span>
+          بيانات المستفيد
+        </h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-[10px] text-slate-400">اسم التاجر</label>
+            <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.vendorName }}</p>
+          </div>
+          <div class="space-y-1 text-left">
+            <label class="text-[10px] text-slate-400">اسم البنك</label>
+            <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.bankName }}</p>
+          </div>
+          <div class="col-span-2 space-y-1">
+            <label class="text-[10px] text-slate-400">رقم الآيبان (IBAN)</label>
+            <div class="flex items-center gap-2 bg-slate-50/50 p-2 rounded border border-slate-100">
+              <p class="text-xs font-mono font-medium text-slate-700">{{ paymentDetail.iban }}</p>
+              <button (click)="copyToClipboard(paymentDetail.iban)" class="mr-auto text-primary hover:text-primary/80">
+                <span class="material-symbols-outlined text-sm">content_copy</span>
+              </button>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-slate-400">اسم المستفيد</label>
+            <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.beneficiaryName }}</p>
+          </div>
+          <div class="space-y-1 text-left">
+            <label class="text-[10px] text-slate-400">كود السويفت</label>
+            <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.swiftCode }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="inner-card p-4">
+        <h3 class="text-xs font-bold text-primary mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">schedule</span>
+          تتبع حالة العملية
+        </h3>
+        <div class="relative flex justify-between">
+          <!-- Progress Line Background -->
+          <div class="absolute top-4 left-0 right-0 h-0.5 bg-slate-100 z-0"></div>
+          <!-- Progress Line Active -->
+          <div [ngClass]="paymentDetail.status === 'success' ? 'w-full' : 'w-1/2'" class="absolute top-4 right-0 h-0.5 bg-emerald-500 z-0 transition-all"></div>
+          
+          <!-- Step 1 -->
+          <div class="relative z-10 flex flex-col items-center">
+            <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-lg shadow-emerald-500/20">
+              <span class="material-symbols-outlined text-sm">check</span>
+            </div>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">تم الإنشاء</span>
+            <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.created }}</span>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="relative z-10 flex flex-col items-center">
+            <div [ngClass]="paymentDetail.status !== 'pending' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-200 text-slate-400'" class="w-8 h-8 rounded-full flex items-center justify-center text-xs">
+              <span class="material-symbols-outlined text-sm">check</span>
+            </div>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">قيد المعالجة</span>
+            <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.processing }}</span>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="relative z-10 flex flex-col items-center">
+            <div [ngClass]="paymentDetail.status === 'success' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-200 text-slate-400'" class="w-8 h-8 rounded-full flex items-center justify-center text-xs">
+              <span class="material-symbols-outlined text-sm">check</span>
+            </div>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">تم التحويل</span>
+            <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.transferred }}</span>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="relative z-10 flex flex-col items-center">
+            <div [ngClass]="paymentDetail.status === 'success' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-200 text-slate-400'" class="w-8 h-8 rounded-full flex items-center justify-center text-xs">
+              <span class="material-symbols-outlined text-sm">check</span>
+            </div>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">تأكيد الاستلام</span>
+            <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.confirmed }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technical Logs -->
+      <div class="inner-card p-4 border-dashed border-slate-300">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-xs font-bold text-slate-600 flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">code</span>
+            السجلات التقنية
+          </h3>
+          <span class="text-[10px] text-slate-400">آخر محاولة: منذ ساعة</span>
+        </div>
+        <div class="bg-slate-900 rounded-lg p-3 font-mono text-[10px] text-slate-300 space-y-1 overflow-x-auto">
+          <div *ngFor="let log of paymentDetail.logs" class="flex gap-2">
+            <span [ngClass]="getLogTypeClass(log.type)">{{ getLogTypeLabel(log.type) }}</span>
+            <span>{{ log.message }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-6 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-3 shrink-0 bg-white/40">
+      <div class="flex gap-2">
+        <button (click)="onDownloadReceipt()" class="px-4 py-2 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary/90 transition-all flex items-center gap-2 shadow-lg shadow-primary/10">
+          <span class="material-symbols-outlined text-base">download</span>
+          تحميل الإيصال (PDF)
+        </button>
+        
+        <button *ngIf="paymentDetail.status === 'failed'" (click)="onRetryPayment()" class="px-4 py-2 bg-orange-500 text-white rounded-lg text-xs font-semibold hover:bg-orange-600 transition-all flex items-center gap-2 shadow-lg shadow-orange-500/10">
+          <span class="material-symbols-outlined text-base">refresh</span>
+          إعادة محاولة التحويل
+        </button>
+
+        <button (click)="onViewActivityLog()" class="px-4 py-2 text-slate-600 bg-white border border-slate-200 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-all">
+          عرض سجل النشاط
+        </button>
+      </div>
+      <button (click)="onClose()" class="px-4 py-2 text-slate-500 hover:text-slate-800 text-xs font-semibold transition-all">
+        إغلاق
+      </button>
+    </div>
+  </div>
+</div>

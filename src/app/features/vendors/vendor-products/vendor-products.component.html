@@ -9,7 +9,7 @@
       <div class="bg-white rounded-xl p-5 flex flex-col gap-4 border border-gray-200 shadow-sm">
         <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-2 flex items-center gap-2">
           <span class="material-symbols-outlined text-primary text-base">summarize</span>
-          <span>ملخص المنتجات</span>
+          <span>{{ 'VENDOR_PRODUCTS.SUMMARY_TITLE' | translate }}</span>
         </h3>
         
         <div class="flex flex-col gap-3">
@@ -17,7 +17,7 @@
           <div class="flex justify-between items-center p-3 rounded-lg bg-primary/5 border border-primary/10">
             <span class="text-xs text-gray-600 flex items-center gap-2">
               <span class="material-symbols-outlined text-primary text-base">inventory_2</span>
-              <span>إجمالي المنتجات</span>
+              <span>{{ 'VENDOR_PRODUCTS.TOTAL_PRODUCTS' | translate }}</span>
             </span>
             <span class="text-sm font-bold text-gray-900">1,245</span>
           </div>
@@ -26,7 +26,7 @@
           <div class="flex justify-between items-center p-3 rounded-lg bg-orange-50 border border-orange-100">
             <span class="text-xs text-gray-600 flex items-center gap-2">
               <span class="material-symbols-outlined text-orange-600 text-base">warning</span>
-              <span>نافذ من المخزون</span>
+              <span>{{ 'VENDOR_PRODUCTS.OUT_OF_STOCK' | translate }}</span>
             </span>
             <span class="text-sm font-bold text-gray-900">23</span>
           </div>
@@ -35,15 +35,15 @@
           <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50 border border-gray-200">
             <span class="text-xs text-gray-600 flex items-center gap-2">
               <span class="material-symbols-outlined text-gray-500 text-base">pending_actions</span>
-              <span>قيد المراجعة</span>
+              <span>{{ 'VENDOR_PRODUCTS.UNDER_REVIEW' | translate }}</span>
             </span>
             <span class="text-sm font-bold text-gray-900">5</span>
           </div>
           
           <!-- Total Inventory Value -->
           <div class="mt-2 pt-4 border-t border-gray-200">
-            <span class="text-xs text-gray-500 block mb-1">إجمالي قيمة المخزون</span>
-            <span class="text-lg font-bold text-primary">SAR 342,500</span>
+            <span class="text-xs text-gray-500 block mb-1">{{ 'VENDOR_PRODUCTS.TOTAL_INVENTORY_VALUE' | translate }}</span>
+            <span class="text-lg font-bold text-primary">{{ 'COMMON.CURRENCY_SAR' | translate }} 342,500</span>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@
           <input 
             [(ngModel)]="searchQuery"
             class="w-full bg-white border border-gray-200 rounded-lg py-2 ps-9 pe-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all"
-            placeholder="البحث برقم SKU أو اسم المنتج..."
+            [placeholder]="'VENDOR_PRODUCTS.SEARCH_PLACEHOLDER' | translate"
             type="text"/>
         </div>
         
@@ -70,18 +70,18 @@
             [(ngModel)]="selectedCategory"
             class="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 appearance-none relative bg-no-repeat bg-[length:1.2em_1.2em] pe-8 ps-3 bg-[position:right_0.5rem_center]"
             style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
-            <option value="">كل التصنيفات</option>
-            <option value="electronics">إلكترونيات</option>
-            <option value="accessories">اكسسوارات</option>
+            <option value="">{{ 'VENDOR_PRODUCTS.ALL_CATEGORIES' | translate }}</option>
+            <option value="electronics">{{ 'VENDOR_PRODUCTS.ELECTRONICS' | translate }}</option>
+            <option value="accessories">{{ 'VENDOR_PRODUCTS.ACCESSORIES' | translate }}</option>
           </select>
           
           <select 
             [(ngModel)]="selectedStatus"
             class="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 appearance-none relative bg-no-repeat bg-[length:1.2em_1.2em] pe-8 ps-3 bg-[position:right_0.5rem_center]"
             style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
-            <option value="">حالة المنتج</option>
-            <option value="active">نشط</option>
-            <option value="out_of_stock">نافذ</option>
+            <option value="">{{ 'VENDOR_PRODUCTS.PRODUCT_STATUS' | translate }}</option>
+            <option value="active">{{ 'VENDOR_PRODUCTS.STATUS.ACTIVE' | translate }}</option>
+            <option value="out_of_stock">{{ 'VENDOR_PRODUCTS.STATUS.OUT_OF_STOCK' | translate }}</option>
           </select>
           
           <button 
@@ -105,14 +105,14 @@
                     class="rounded border-gray-300 text-primary focus:ring-primary size-3.5" 
                     type="checkbox"/>
                 </th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-start">المنتج</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 text-start">{{ 'VENDOR_PRODUCTS.TABLE.PRODUCT' | translate }}</th>
                 <th class="p-3 text-xs font-semibold text-gray-500 text-start">SKU</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-start">التصنيف</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-start">السعر</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 w-32 text-start">المخزون</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-center">الحالة</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 text-start">{{ 'VENDOR_PRODUCTS.TABLE.CATEGORY' | translate }}</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 text-start">{{ 'VENDOR_PRODUCTS.TABLE.PRICE' | translate }}</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 w-32 text-start">{{ 'VENDOR_PRODUCTS.TABLE.STOCK' | translate }}</th>
+                <th class="p-3 text-xs font-semibold text-gray-500 text-center">{{ 'VENDOR_PRODUCTS.TABLE.STATUS' | translate }}</th>
                 <th class="p-3 text-xs font-semibold text-gray-500 w-24 text-start">
-                  إجراءات
+                  {{ 'VENDOR_PRODUCTS.TABLE.ACTIONS' | translate }}
                 </th>
               </tr>
             </thead>
@@ -145,15 +145,15 @@
                 </td>
                 <td class="p-3 text-sm font-mono text-gray-600">{{ product.sku }}</td>
                 <td class="p-3 text-sm text-gray-600">{{ product.category }}</td>
-                <td class="p-3 text-sm font-semibold text-gray-900">SAR {{ product.price }}</td>
+                <td class="p-3 text-sm font-semibold text-gray-900">{{ 'COMMON.CURRENCY_SAR' | translate }} {{ product.price }}</td>
                 <td class="p-3">
                   <div class="flex flex-col gap-1">
                     <div class="flex justify-between text-xs">
                       <span class="font-medium" [ngClass]="getStockColorClass(product.stockStatus)">
-                        {{ product.stock }} قطعة
+                        {{ product.stock }} {{ 'VENDOR_PRODUCTS.PIECES' | translate }}
                       </span>
                       <span *ngIf="product.stockStatus === 'low'" class="text-gray-400 text-[10px]">
-                        منخفض
+                        {{ 'VENDOR_PRODUCTS.LOW' | translate }}
                       </span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
@@ -174,19 +174,19 @@
                     <button 
                       (click)="onViewProduct(product.id)"
                       class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
-                      title="عرض">
+                      [title]="'COMMON.VIEW_DETAILS' | translate">
                       <span class="material-symbols-outlined text-[18px]">visibility</span>
                     </button>
                     <button 
                       (click)="onEditProduct(product.id)"
                       class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
-                      title="تعديل">
+                      [title]="'COMMON.EDIT' | translate">
                       <span class="material-symbols-outlined text-[18px]">edit</span>
                     </button>
                     <button 
                       (click)="onDeleteProduct(product.id)"
                       class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors" 
-                      title="حذف">
+                      [title]="'COMMON.DELETE' | translate">
                       <span class="material-symbols-outlined text-[18px]">delete</span>
                     </button>
                   </div>
@@ -198,17 +198,17 @@
         
         <!-- Pagination -->
         <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
-          <span>عرض 1 إلى 4 من 1,245 منتج</span>
+          <span>{{ 'VENDOR_PRODUCTS.SHOWING_ENTRIES' | translate }}</span>
           <div class="flex gap-1">
             <button class="px-2 py-1 rounded border border-gray-200 bg-white disabled:opacity-50" disabled>
-              السابق
+              {{ 'COMMON.PREVIOUS' | translate }}
             </button>
             <button class="px-2 py-1 rounded border border-primary bg-primary text-white">1</button>
             <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">2</button>
             <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">3</button>
             <span class="px-2 py-1">...</span>
             <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">
-              التالي
+              {{ 'COMMON.NEXT' | translate }}
             </button>
           </div>
         </div>

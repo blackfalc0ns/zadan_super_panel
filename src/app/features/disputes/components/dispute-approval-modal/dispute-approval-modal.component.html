@@ -1,0 +1,231 @@
+<div
+  *ngIf="isOpen && dispute as dispute"
+  class="dispute-modal-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+  (click)="onBackdropClick($event)">
+  <div
+    class="dispute-modal-panel relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.75rem] border border-white/60 bg-white/95 shadow-2xl"
+    (click)="$event.stopPropagation()">
+    <div class="sticky top-0 z-10 flex items-start justify-between border-b border-slate-200/60 bg-white/90 px-6 py-5 backdrop-blur md:px-8">
+      <div>
+        <h2 class="text-2xl font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.MODAL.TITLE' | translate }}</h2>
+        <p class="mt-1 text-sm font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.SUBTITLE' | translate }}</p>
+      </div>
+      <button class="rounded-full p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500" type="button" (click)="close.emit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-7">
+      <div class="space-y-8">
+        <section class="space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-zadna-primary">description</span>
+            <h3 class="text-lg font-bold text-slate-900">{{ 'DISPUTES_DASHBOARD.MODAL.CASE_SUMMARY' | translate }}</h3>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.CASE_ID' | translate }}</label>
+              <span class="font-['Inter'] text-sm font-bold">{{ dispute.id }}</span>
+            </div>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.TABLE.ID' | translate }}</label>
+              <span class="font-['Inter'] text-sm font-bold">{{ dispute.orderId }}</span>
+            </div>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</label>
+              <span class="text-sm font-bold">{{ dispute.customerName }}</span>
+            </div>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.SELLER_NAME' | translate }}</label>
+              <span class="text-sm font-bold">{{ dispute.merchantName }}</span>
+            </div>
+            <div class="rounded-2xl bg-slate-50 p-4 md:col-span-2">
+              <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_REASON' | translate }}</label>
+              <span class="text-sm font-medium">{{ dispute.reason }}</span>
+            </div>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</label>
+              <span class="font-['Inter'] text-sm font-bold text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </div>
+            <div class="rounded-2xl bg-slate-50 p-4">
+              <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.PAYMENT_STATUS' | translate }}</label>
+              <span class="inline-flex rounded-full bg-zadna-primary/10 px-2 py-1 text-[10px] font-bold text-zadna-primary">{{ 'DISPUTES_DASHBOARD.MODAL.PAYMENT_COMPLETE' | translate }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-5">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-600">gavel</span>
+            <h3 class="text-lg font-bold text-slate-900">{{ 'DISPUTES_DASHBOARD.MODAL.DECISION' | translate }}</h3>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE' | translate }}</label>
+              <select
+                class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                [(ngModel)]="form.refundType"
+                (ngModelChange)="onRefundTypeChange($event)">
+                <option value="full">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE_FULL' | translate }}</option>
+                <option value="partial">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE_PARTIAL' | translate }}</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_AMOUNT' | translate }}</label>
+              <div class="relative">
+                <input
+                  class="w-full rounded-xl border border-slate-200 bg-white p-3 pl-12 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [(ngModel)]="form.refundAmount" />
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD' | translate }}</label>
+              <select class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.refundMethod">
+                <option value="same_method">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_SAME' | translate }}</option>
+                <option value="wallet">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_WALLET' | translate }}</option>
+                <option value="manual">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_MANUAL' | translate }}</option>
+              </select>
+            </div>
+
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.APPROVAL_REASON' | translate }}</label>
+              <input
+                class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                type="text"
+                [placeholder]="'DISPUTES_DASHBOARD.MODAL.APPROVAL_REASON_PLACEHOLDER' | translate"
+                [(ngModel)]="form.approvalReason" />
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER' | translate }}</label>
+              <select class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.costBearer">
+                <option value="vendor">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_VENDOR' | translate }}</option>
+                <option value="platform">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_PLATFORM' | translate }}</option>
+                <option value="shared">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_SHARED' | translate }}</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div class="relative overflow-hidden rounded-[1.5rem] border border-zadna-primary/10 bg-slate-50 p-6">
+            <div class="absolute left-0 top-0 h-24 w-24 -translate-x-8 -translate-y-8 rounded-full bg-zadna-primary/10 blur-3xl"></div>
+            <div class="relative">
+              <div class="mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-zadna-primary">calculate</span>
+                <h4 class="text-sm font-bold text-slate-900">{{ 'DISPUTES_DASHBOARD.MODAL.FINANCIAL_PREVIEW' | translate }}</h4>
+              </div>
+
+              <div class="space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                  <span>{{ 'DISPUTES_DASHBOARD.MODAL.ORIGINAL_TOTAL' | translate }}</span>
+                  <span class="font-['Inter'] font-medium">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="flex items-center justify-between text-xs font-medium text-red-500">
+                  <span>{{ 'DISPUTES_DASHBOARD.MODAL.REQUESTED_REFUND' | translate }}</span>
+                  <span class="font-['Inter']">{{ refundAmountValue | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                  <span>{{ 'DISPUTES_DASHBOARD.MODAL.NON_REFUNDABLE_DELIVERY' | translate }}</span>
+                  <span class="font-['Inter'] font-medium">{{ nonRefundableDeliveryFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                  <span>{{ 'DISPUTES_DASHBOARD.MODAL.APPLIED_DISCOUNTS' | translate }}</span>
+                  <span class="font-['Inter'] font-medium">0.00 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="mt-3 flex items-center justify-between border-t border-slate-200 pt-3">
+                  <span class="text-sm font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.MODAL.NET_DECISION' | translate }}</span>
+                  <span class="font-['Inter'] text-lg font-black text-zadna-primary">{{ netDecisionValue | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col justify-center rounded-[1.5rem] border border-amber-200 bg-amber-50/70 p-6">
+            <div class="flex gap-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                <span class="material-symbols-outlined">warning</span>
+              </div>
+              <div class="space-y-2">
+                <h4 class="text-sm font-bold text-amber-700">{{ 'DISPUTES_DASHBOARD.MODAL.RISK_ALERTS' | translate }}</h4>
+                <p class="text-xs leading-relaxed text-amber-900/80">
+                  {{ (form.refundType === 'partial' ? 'DISPUTES_DASHBOARD.MODAL.RISK_TEXT_PARTIAL' : 'DISPUTES_DASHBOARD.MODAL.RISK_TEXT_FULL') | translate }}
+                </p>
+                <div class="flex items-center gap-2 pt-2 text-[10px] font-bold text-amber-700">
+                  <span class="material-symbols-outlined text-sm">info</span>
+                  {{ 'DISPUTES_DASHBOARD.MODAL.RISK_HINT' | translate }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-500">edit_note</span>
+            <h3 class="text-lg font-bold text-slate-900">{{ 'DISPUTES_DASHBOARD.MODAL.ADMIN_NOTES' | translate }}</h3>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.INTERNAL_NOTES' | translate }}</label>
+              <textarea
+                class="min-h-[120px] w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                [placeholder]="'DISPUTES_DASHBOARD.MODAL.INTERNAL_NOTES_PLACEHOLDER' | translate"
+                [(ngModel)]="form.internalNotes"></textarea>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.CUSTOMER_MESSAGE' | translate }}</label>
+              <textarea
+                class="min-h-[120px] w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                [placeholder]="'DISPUTES_DASHBOARD.MODAL.CUSTOMER_MESSAGE_PLACEHOLDER' | translate"
+                [(ngModel)]="form.customerMessage"></textarea>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-6 pt-2">
+            <label class="flex cursor-pointer items-center gap-3">
+              <input
+                class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                type="checkbox"
+                [(ngModel)]="form.notifyCustomer" />
+              <span class="text-xs font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.NOTIFY_CUSTOMER' | translate }}</span>
+            </label>
+            <label class="flex cursor-pointer items-center gap-3">
+              <input
+                class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                type="checkbox"
+                [(ngModel)]="form.notifyFinance" />
+              <span class="text-xs font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.NOTIFY_FINANCE' | translate }}</span>
+            </label>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="sticky bottom-0 flex items-center justify-between border-t border-slate-200/60 bg-slate-50/95 px-6 py-4 backdrop-blur md:px-8">
+      <button class="rounded-xl px-6 py-2.5 text-sm font-bold text-slate-500 transition-colors hover:bg-slate-100" type="button" (click)="close.emit()">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <button class="rounded-xl border border-zadna-primary/20 px-6 py-2.5 text-sm font-bold text-zadna-primary transition-all hover:bg-zadna-primary/5" type="button" (click)="onSaveDraft()">
+          {{ 'DISPUTES_DASHBOARD.MODAL.SAVE_REVIEW' | translate }}
+        </button>
+        <button class="flex items-center gap-2 rounded-xl bg-gradient-to-l from-zadna-primary to-teal-500 px-7 py-2.5 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition-all hover:shadow-xl hover:shadow-zadna-primary/30" type="button" (click)="onSubmit()">
+          <span>{{ 'DISPUTES_DASHBOARD.MODAL.APPROVE_REFUND' | translate }}</span>
+          <span class="material-symbols-outlined text-lg">check_circle</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

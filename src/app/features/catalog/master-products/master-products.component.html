@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto">
+<div class="h-full flex flex-col bg-slate-50/50 font-sans">
 
     <!-- Design 2.0 Artistic Header Row -->
     <div class="px-4 md:px-10 pt-8 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
@@ -10,10 +10,10 @@
                 <span class="text-zadna-primary">{{ 'PRODUCTS.TITLE' | translate }}</span>
             </nav>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                {{ 'PRODUCTS.TITLE' | translate }} والسلع
+                {{ 'PRODUCTS.TITLE' | translate }} {{ 'PRODUCTS.AND_GOODS' | translate }}
             </h1>
             <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-                إدارة دليل المنتجات وتصنيفات المخزون وتتبع الباركود والحالات
+                {{ 'PRODUCTS.DESCRIPTION' | translate }}
             </p>
         </div>
 
@@ -64,7 +64,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
                         </svg>
                     </div>
-                    <span class="font-black uppercase tracking-[0.1em] text-xs sm:text-sm">{{ 'PRODUCTS.ADD' | translate }} منتج</span>
+                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'PRODUCTS.ADD' | translate }}</span>
                 </div>
             </app-button>
         </div>
@@ -101,12 +101,12 @@
                 <thead class="border-b border-slate-100/50">
                     <tr>
                         <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
-                        <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الصورة</th>
-                        <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">المنتج</th>
-                        <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الباركود</th>
-                        <th class="text-center w-[13%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">التصنيف</th>
-                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
-                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
+                        <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.IMAGE' | translate }}</th>
+                        <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'PRODUCTS.PRODUCT' | translate }}</th>
+                        <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.BARCODE' | translate }}</th>
+                        <th class="text-center w-[13%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.CATEGORY' | translate }}</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.STATUS' | translate }}</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.ACTIONS' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -191,6 +191,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
                                 </button>
+                                <button (click)="deleteProduct(product.id, $event)"
+                                        class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -239,13 +245,13 @@
                 <!-- Details -->
                 <div class="space-y-2 mb-4">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-500">الباركود</span>
+                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.BARCODE' | translate }}</span>
                         <code class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">
                             {{ product.barcode || 'SEC-TRK-77X' }}
                         </code>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-500">التصنيف</span>
+                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.CATEGORY' | translate }}</span>
                         <span class="text-xs font-bold text-zadna-primary">
                             {{ getCategoryName(product.categoryId) }}
                         </span>
@@ -260,7 +266,7 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
-                        تعديل
+                        {{ 'COMMON.EDIT' | translate }}
                     </button>
                     <button (click)="$event.stopPropagation()" 
                             [routerLink]="['/catalog/products/view', product.id]"
@@ -269,7 +275,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                        عرض
+                        {{ 'COMMON.DETAILS' | translate }}
+                    </button>
+                    <button (click)="deleteProduct(product.id, $event)"
+                            class="flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 text-slate-600 rounded-lg text-xs font-medium hover:bg-red-500 hover:text-white transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -297,11 +309,22 @@
                     </svg>
                 </div>
                 <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'PRODUCTS.NO_PRODUCTS' | translate }}</h3>
-                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ (translate.currentLang === 'ar' ? 'لا توجد منتجات حالياً بناءً على تصفيتك' : 'The product bank is currently quiet. Try refining your filters or create a new masterpiece to begin.') }}</p>
+                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ 'PRODUCTS.NO_PRODUCTS_DESC' | translate }}</p>
                 <div class="pt-6">
-                    <app-button variant="ghost" (btnClick)="filterByCategory(null)" customClass="bg-slate-50 border border-slate-100 rounded-2xl px-8">Reset All Filters</app-button>
+                    <app-button variant="ghost" (btnClick)="filterByCategory(null)" customClass="bg-slate-50 border border-slate-100 rounded-2xl px-8">{{ 'PRODUCTS.RESET_ALL_FILTERS' | translate }}</app-button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<!-- Delete Confirmation Modal -->
+<app-delete-confirmation-modal
+    [isOpen]="isDeleteModalOpen"
+    [title]="'PRODUCTS.CONFIRM_DELETE_TITLE' | translate"
+    [message]="'PRODUCTS.CONFIRM_DELETE_MSG' | translate"
+    [isLoading]="isDeleting"
+    (confirm)="confirmDelete()"
+    (close)="closeDeleteModal()">
+</app-delete-confirmation-modal>

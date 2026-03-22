@@ -1,0 +1,256 @@
+<div
+  *ngIf="isOpen && dispute as dispute"
+  class="dispute-modal-backdrop fixed inset-0 z-[90] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+  (click)="onBackdropClick($event)">
+  <div
+    class="dispute-modal-panel relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.75rem] border border-white/60 bg-white/95 shadow-2xl"
+    (click)="$event.stopPropagation()">
+    <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-slate-200/60 bg-white/90 px-6 py-5 backdrop-blur md:px-8">
+      <div class="flex items-center gap-4">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-zadna-primary text-white shadow-sm shadow-zadna-primary/15">
+          <span class="material-symbols-outlined text-[22px]">feedback</span>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.TITLE' | translate }}</h2>
+          <p class="mt-1 text-sm font-medium text-slate-500">
+            {{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SUBTITLE' | translate:{ disputeId: dispute.id } }}
+          </p>
+        </div>
+      </div>
+
+      <button class="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600" type="button" (click)="close.emit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-7">
+      <div class="space-y-8">
+        <section>
+          <div class="mb-4 flex items-center gap-2">
+            <span class="h-4 w-1 rounded-full bg-amber-500"></span>
+            <h3 class="text-sm font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SUMMARY_TITLE' | translate }}</h3>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
+              <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.CASE_ID' | translate }}</p>
+              <p class="font-['Inter'] text-xs font-black text-zadna-primary">{{ dispute.id }}</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
+              <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.ORDER_ID' | translate }}</p>
+              <p class="font-['Inter'] text-xs font-black text-slate-800">{{ dispute.orderId }}</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
+              <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</p>
+              <p class="truncate text-xs font-black text-slate-800">{{ dispute.customerName }}</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
+              <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.MERCHANT' | translate }}</p>
+              <p class="truncate text-xs font-black text-slate-800">{{ dispute.merchantName }}</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
+              <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.TYPE' | translate }}</p>
+              <p class="text-xs font-black text-slate-800">{{ dispute.type }}</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
+              <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'COMMON.STATUS' | translate }}</p>
+              <span class="inline-flex rounded-full bg-amber-50 px-2 py-1 text-[10px] font-black text-amber-700">{{ getStatusLabel(dispute.status) }}</span>
+            </div>
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
+              <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.UPDATED_AT' | translate }}</p>
+              <p class="font-['Inter'] text-[11px] font-bold text-slate-500">{{ dispute.createdAt }}</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div class="space-y-8 lg:col-span-7">
+            <section>
+              <div class="mb-4 flex items-center gap-2">
+                <span class="h-4 w-1 rounded-full bg-zadna-primary"></span>
+                <h3 class="text-sm font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.TARGET_TITLE' | translate }}</h3>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="space-y-2">
+                  <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_LABEL' | translate }}</label>
+                  <select class="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.target">
+                    <option value="customer">{{ getRequestInfoTargetLabel('customer', dispute) }}</option>
+                    <option value="merchant">{{ getRequestInfoTargetLabel('merchant', dispute) }}</option>
+                    <option value="internal">{{ getRequestInfoTargetLabel('internal', dispute) }}</option>
+                  </select>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_LABEL' | translate }}</label>
+                  <select class="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.infoType">
+                    <option *ngFor="let option of requestInfoTypeOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <section class="space-y-4">
+              <div class="mb-2 flex items-center gap-2">
+                <span class="h-4 w-1 rounded-full bg-zadna-primary"></span>
+                <h3 class="text-sm font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.DETAILS_TITLE' | translate }}</h3>
+              </div>
+
+              <div class="space-y-4">
+                <div class="space-y-2">
+                  <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.REQUEST_TITLE_LABEL' | translate }}</label>
+                  <input
+                    class="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                    type="text"
+                    [placeholder]="'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.REQUEST_TITLE_PLACEHOLDER' | translate"
+                    [(ngModel)]="form.title" />
+                </div>
+
+                <div class="space-y-2">
+                  <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.REQUEST_DETAILS_LABEL' | translate }}</label>
+                  <textarea
+                    class="min-h-[130px] w-full rounded-xl border border-slate-200 bg-white p-4 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                    [placeholder]="'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.REQUEST_DETAILS_PLACEHOLDER' | translate"
+                    [(ngModel)]="form.details"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div class="space-y-2">
+                    <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.DUE_DATE_LABEL' | translate }}</label>
+                    <div class="relative">
+                      <input
+                        class="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                        type="date"
+                        [(ngModel)]="form.dueDate" />
+                      <span class="material-symbols-outlined pointer-events-none absolute text-slate-400" [ngClass]="isRtl ? 'left-3 top-1/2 -translate-y-1/2' : 'right-3 top-1/2 -translate-y-1/2'">calendar_today</span>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PRIORITY_LABEL' | translate }}</label>
+                    <div class="flex gap-2">
+                      <button
+                        class="h-11 flex-1 rounded-xl border text-xs font-black transition-all"
+                        type="button"
+                        [ngClass]="form.priority === 'normal' ? 'border-slate-300 bg-slate-900 text-white' : 'border-slate-200 text-slate-600 hover:bg-slate-50'"
+                        (click)="form.priority = 'normal'">
+                        {{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PRIORITY_NORMAL' | translate }}
+                      </button>
+                      <button
+                        class="flex h-11 flex-1 items-center justify-center gap-1 rounded-xl border text-xs font-black transition-all"
+                        type="button"
+                        [ngClass]="form.priority === 'urgent' ? 'border-red-200 bg-red-50 text-red-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'"
+                        (click)="form.priority = 'urgent'">
+                        <span class="material-symbols-outlined text-sm">priority_high</span>
+                        {{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PRIORITY_URGENT' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-6 pt-2">
+                  <label class="flex cursor-pointer items-center gap-3">
+                    <input
+                      class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                      type="checkbox"
+                      [(ngModel)]="form.pauseSla" />
+                    <span class="text-xs font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PAUSE_SLA' | translate }}</span>
+                  </label>
+
+                  <label class="flex cursor-pointer items-center gap-3">
+                    <input
+                      class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                      type="checkbox"
+                      [(ngModel)]="form.alertSupervisor" />
+                    <span class="text-xs font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.ALERT_SUPERVISOR' | translate }}</span>
+                  </label>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="space-y-8 lg:col-span-5">
+            <section>
+              <div class="mb-4 flex items-center gap-2">
+                <span class="h-4 w-1 rounded-full bg-teal-600"></span>
+                <h3 class="text-sm font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.REFERENCES_TITLE' | translate }}</h3>
+              </div>
+
+              <div class="rounded-[1.75rem] border border-slate-200/70 bg-slate-50 p-4">
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="flex aspect-square flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-100 text-slate-500 transition-all hover:bg-white">
+                    <span class="material-symbols-outlined mb-2 text-[22px]">image</span>
+                    <span class="text-[10px] font-black">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.REFERENCE_PRODUCT_IMAGE' | translate }}</span>
+                  </div>
+                  <div class="flex aspect-square flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-100 text-slate-500 transition-all hover:bg-white">
+                    <span class="material-symbols-outlined mb-2 text-[22px]">description</span>
+                    <span class="text-[10px] font-black">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.REFERENCE_SHIPPING_LOG' | translate }}</span>
+                  </div>
+                </div>
+
+                <div class="mt-4 space-y-2">
+                  <label class="block text-[11px] font-black uppercase tracking-[0.12em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SECRET_NOTES' | translate }}</label>
+                  <textarea
+                    class="min-h-[90px] w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                    [placeholder]="'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SECRET_NOTES_PLACEHOLDER' | translate"
+                    [(ngModel)]="form.internalNotes"></textarea>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <div class="mb-4 flex items-center gap-2">
+                <span class="h-4 w-1 rounded-full bg-amber-500"></span>
+                <h3 class="text-sm font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.COMMUNICATION_PREVIEW_TITLE' | translate }}</h3>
+              </div>
+
+              <div class="relative overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white p-5 shadow-sm">
+                <div class="absolute -right-12 -top-12 h-24 w-24 rounded-full bg-zadna-primary/5"></div>
+                <div class="relative space-y-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="rounded-full bg-zadna-primary/10 px-2 py-1 text-[10px] font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SYSTEM_NOTICE' | translate }}</span>
+                    <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.TEMPLATE_VERSION' | translate }}</span>
+                  </div>
+
+                  <div class="space-y-2">
+                    <p class="text-xs font-black text-slate-900">{{ previewGreeting }}</p>
+                    <p class="text-xs leading-6 text-slate-600">{{ previewBody }}</p>
+                  </div>
+
+                  <button class="inline-flex items-center gap-1 text-[10px] font-black text-zadna-primary hover:underline" type="button">
+                    <span class="material-symbols-outlined text-xs">edit</span>
+                    {{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.EDIT_TEMPLATE' | translate }}
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky bottom-0 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/60 bg-slate-50/95 px-6 py-4 backdrop-blur md:px-8">
+      <div class="flex flex-wrap items-center gap-3">
+        <button class="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-bold text-slate-500 transition-all hover:bg-slate-100" type="button" (click)="close.emit()">
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button class="flex items-center gap-2 rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100" type="button" (click)="onSaveDraft()">
+          <span class="material-symbols-outlined text-sm">save</span>
+          {{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SAVE_DRAFT' | translate }}
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <div class="hidden text-end md:flex md:flex-col">
+          <span class="text-[10px] font-black text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SEND_VIA' | translate }}</span>
+          <span class="text-[11px] font-black text-slate-700">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SEND_VIA_VALUE' | translate }}</span>
+        </div>
+
+        <button class="flex items-center gap-2 rounded-xl bg-zadna-primary px-8 py-3 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700" type="button" (click)="onSubmit()">
+          <span>{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SEND_NOW' | translate }}</span>
+          <span class="material-symbols-outlined text-lg">send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

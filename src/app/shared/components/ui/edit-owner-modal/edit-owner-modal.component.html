@@ -1,0 +1,189 @@
+<!-- Modal Backdrop -->
+<div *ngIf="isOpen" 
+     class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+     (click)="onBackdropClick($event)">
+  
+  <!-- Modal Container -->
+  <div class="bg-slate-50 dark:bg-slate-800 w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col relative z-50 animate-in zoom-in-95 slide-in-from-bottom-10 duration-500"
+       (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <header class="flex items-center justify-between px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md sticky top-0 z-10">
+      <div class="flex items-center gap-4">
+        <div class="bg-primary/10 text-primary p-2.5 rounded-2xl border border-primary/20">
+          <span class="material-symbols-outlined text-2xl">person</span>
+        </div>
+        <div>
+          <h2 class="text-slate-900 dark:text-slate-100 text-xl font-black tracking-tight">{{ 'MODALS.OWNER_EDIT.TITLE' | translate }}</h2>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ 'MODALS.OWNER_EDIT.SUBTITLE' | translate }}</p>
+        </div>
+        <span class="mr-4 px-3 py-1 text-[10px] font-black bg-emerald-50 text-emerald-600 rounded-full flex items-center gap-1.5 shadow-sm border border-emerald-100">
+          <span class="material-symbols-outlined text-[14px]">verified</span>
+          {{ 'MODALS.OWNER_EDIT.VERIFIED' | translate }}
+        </span>
+      </div>
+      <button (click)="onClose()" 
+              class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </header>
+
+    <!-- Modal Body -->
+    <div class="p-8 overflow-y-auto max-h-[70vh] space-y-8 custom-scrollbar">
+      <form class="space-y-8">
+        
+        <!-- Two Column Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <!-- Left Column -->
+          <div class="space-y-6">
+            <!-- Full Name -->
+            <div class="space-y-2.5">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+                {{ 'MODALS.OWNER_EDIT.FULL_NAME' | translate }}
+              </label>
+              <input type="text" 
+                     [(ngModel)]="ownerData.fullName"
+                     name="fullName"
+                     class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
+            </div>
+
+            <!-- Nationality -->
+            <div class="space-y-2.5">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+                {{ 'MODALS.OWNER_EDIT.NATIONALITY' | translate }}
+              </label>
+              <div class="relative group">
+                <select [(ngModel)]="ownerData.nationality"
+                        name="nationality"
+                        class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
+                  <option *ngFor="let nat of nationalityOptions" [value]="nat">{{ nat | translate }}</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform">expand_more</span>
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="space-y-2.5">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+                {{ 'MODALS.OWNER_EDIT.PHONE_NUMBER' | translate }}
+              </label>
+              <div class="flex gap-3">
+                <div class="relative w-32 group">
+                  <select [(ngModel)]="ownerData.phoneCode"
+                          name="phoneCode"
+                          class="w-full h-14 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-4 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-black text-sm"
+                          dir="ltr">
+                    <option *ngFor="let code of phoneCodeOptions" [value]="code">{{ code }}</option>
+                  </select>
+                  <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform">expand_more</span>
+                </div>
+                <div class="relative flex-1 group">
+                  <input type="tel" 
+                         [(ngModel)]="ownerData.phone"
+                         name="phone"
+                         dir="ltr"
+                         class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl pl-12 pr-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-mono font-bold text-lg shadow-sm tracking-widest">
+                  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors">call</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="space-y-6">
+            <!-- ID Number (Read-only) -->
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between ml-1">
+                <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest">
+                  {{ 'MODALS.OWNER_EDIT.ID_NUMBER' | translate }}
+                </label>
+                <span class="text-[9px] font-black text-amber-600 bg-amber-50 dark:bg-amber-900/10 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-amber-100/50">
+                  <span class="material-symbols-outlined text-[12px]">warning</span>
+                  {{ 'MODALS.OWNER_EDIT.SENSITIVE_FIELD' | translate }}
+                </span>
+              </div>
+              <input type="text" 
+                     [value]="ownerData.idNumber"
+                     readonly
+                     dir="ltr"
+                     class="w-full h-14 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 outline-none text-slate-500 font-mono font-bold tracking-[0.2em] cursor-not-allowed">
+            </div>
+
+            <!-- Email -->
+            <div class="space-y-2.5">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+                {{ 'MODALS.OWNER_EDIT.EMAIL' | translate }}
+              </label>
+              <div class="relative group">
+                <input type="email" 
+                       [(ngModel)]="ownerData.email"
+                       name="email"
+                       dir="ltr"
+                       class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl pl-12 pr-12 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-mono font-bold text-lg shadow-sm">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors">mail</span>
+                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[18px] text-emerald-500 pointer-events-none">check_circle</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Section -->
+        <div class="pt-8 border-t border-slate-200 dark:border-slate-700">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Edit Reason -->
+            <div class="space-y-2.5">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+                {{ 'MODALS.OWNER_EDIT.EDIT_REASON' | translate }}
+              </label>
+              <div class="relative group">
+                <select [(ngModel)]="editReason"
+                        name="editReason"
+                        class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
+                  <option value="" disabled selected>{{ 'MODALS.OWNER_EDIT.SELECT_REASON' | translate }}</option>
+                  <option *ngFor="let reason of reasonOptions" [value]="reason">{{ reason | translate }}</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform">expand_more</span>
+              </div>
+            </div>
+
+            <!-- Admin Notes -->
+            <div class="space-y-2.5">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+                {{ 'MODALS.OWNER_EDIT.ADMIN_NOTES' | translate }}
+              </label>
+              <textarea [(ngModel)]="adminNotes"
+                        name="adminNotes"
+                        rows="1"
+                        [placeholder]="'MODALS.OWNER_EDIT.NOTES_PLACEHOLDER' | translate"
+                        class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 py-4 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 resize-none font-bold shadow-sm"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <footer class="px-8 py-5 border-t border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/80 backdrop-blur-md flex items-center justify-end gap-3 sticky bottom-0 z-10">
+      <button (click)="onClose()"
+              type="button"
+              class="px-5 py-3 text-sm font-black text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl transition-all uppercase tracking-widest">
+        {{ 'MODALS.OWNER_EDIT.CANCEL' | translate }}
+      </button>
+      <button type="button"
+              class="px-5 py-3 text-sm font-black text-primary border-2 border-primary hover:bg-primary/5 rounded-2xl transition-all flex items-center gap-2 uppercase tracking-widest group">
+        <span class="material-symbols-outlined text-[18px] group-hover:-translate-y-1 transition-transform">send</span>
+        {{ 'MODALS.OWNER_EDIT.SAVE_AUDIT' | translate }}
+      </button>
+      <button (click)="onSave()"
+              type="button"
+              class="px-8 py-3 text-sm font-black text-white bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-95 rounded-2xl transition-all shadow-xl shadow-primary/20 flex items-center gap-2 uppercase tracking-widest group">
+        {{ 'MODALS.OWNER_EDIT.SAVE' | translate }}
+        <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform">save</span>
+      </button>
+    </footer>
+
+  </div>
+</div>

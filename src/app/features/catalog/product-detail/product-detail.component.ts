@@ -114,13 +114,13 @@ export class ProductDetailComponent implements OnInit {
 
   getMainImage(): string {
     if (!this.product?.images || this.product.images.length === 0) {
-      return 'assets/images/placeholder-product.png';
+      return this.buildPlaceholderImage(this.activeLang === 'ar' ? 'لا توجد صورة' : 'No Image');
     }
     const selectedImage = this.product.images[this.selectedImageIndex];
     if (selectedImage?.url) {
       return selectedImage.url;
     }
-    return this.product.images[0]?.url || 'assets/images/placeholder-product.png';
+    return this.product.images[0]?.url || this.buildPlaceholderImage(this.activeLang === 'ar' ? 'لا توجد صورة' : 'No Image');
   }
 
   goBack(): void {
@@ -131,5 +131,9 @@ export class ProductDetailComponent implements OnInit {
     if (this.product?.id) {
       this.router.navigate(['/catalog/products/edit', this.product.id]);
     }
+  }
+
+  private buildPlaceholderImage(label: string): string {
+    return `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="24" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3E${encodeURIComponent(label)}%3C/text%3E%3C/svg%3E`;
   }
 }

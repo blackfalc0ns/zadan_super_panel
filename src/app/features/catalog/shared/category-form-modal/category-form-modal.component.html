@@ -18,7 +18,7 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-black text-slate-900 tracking-tight">
-                        {{ (mode === 'create' ? 'CATEGORIES.MODAL.ADD_TITLE' : 'CATEGORIES.MODAL.EDIT_TITLE') | translate }}
+                        {{ (mode === 'create' ? 'CATEGORIES.MODAL.ADD_TITLE' : 'CATEGORIES.MODAL.EDIT_TITLE') | translate: {level: (levelNameKey | translate)} }}
                     </h2>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ levelNameKey | translate }}</p>
                 </div>

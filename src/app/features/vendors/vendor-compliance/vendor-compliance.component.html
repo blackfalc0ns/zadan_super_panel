@@ -14,7 +14,7 @@
               </svg>
               <span>{{ 'COMPLIANCE.VERIFICATION_MATRIX' | translate }}</span>
             </h3>
-            <span class="text-xs text-gray-500">٣ {{ 'COMMON.OF' | translate }} ٥ {{ 'COMPLIANCE.COMPLETED' | translate }}</span>
+            <span class="text-xs text-gray-500">{{ verificationCompletedCount }} {{ 'COMMON.OF' | translate }} {{ verificationItems.length }} {{ 'COMPLIANCE.COMPLETED' | translate }}</span>
           </div>
           
           <div class="divide-y divide-gray-100">
@@ -123,15 +123,15 @@
           <div class="p-5 flex-1 overflow-y-auto flex flex-col gap-4 max-h-96">
             <div *ngFor="let note of complianceNotes" class="flex gap-3">
               <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 text-base font-bold" [ngClass]="note.avatarClass">
-                {{ note.authorInitials }}
+                {{ isRTL ? note.authorInitialsAr : note.authorInitialsEn }}
               </div>
               <div class="flex-1 bg-gray-50 p-4 rounded-xl border border-gray-100 rounded-tr-none">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-sm font-bold text-gray-900">{{ note.author }} ({{ note.role }})</span>
-                  <span class="text-xs text-gray-500">{{ note.timestamp }}</span>
+                  <span class="text-sm font-bold text-gray-900">{{ note.authorKey | translate }} ({{ note.roleKey | translate }})</span>
+                  <span class="text-xs text-gray-500">{{ note.timestampKey | translate }}</span>
                 </div>
                 <p class="text-sm text-gray-700 leading-relaxed">
-                  {{ note.message }}
+                  {{ note.messageKey | translate }}
                 </p>
               </div>
             </div>
@@ -233,7 +233,7 @@
             <div>
               <span class="text-xs text-gray-500 block mb-1">{{ 'COMPLIANCE.LAST_REVIEWER' | translate }}</span>
               <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">م.أ</span>
+                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">{{ lastReviewerInitials }}</span>
                 <span class="text-sm font-medium text-slate-800">{{ 'COMPLIANCE.INITIAL_REVIEW' | translate }}</span>
               </div>
             </div>

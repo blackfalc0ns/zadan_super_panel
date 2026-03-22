@@ -2,6 +2,23 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+interface AnalyticsMetric {
+  titleKey: string;
+  value: string;
+  trend: string;
+  trendIcon: string;
+  trendColor: string;
+  valueSuffixKey?: string;
+  trendSuffixKey?: string;
+}
+
+interface BestSeller {
+  nameKey: string;
+  salesKey: string;
+  price: string;
+  image: string;
+}
+
 @Component({
   selector: 'app-vendor-analytics',
   standalone: true,
@@ -22,18 +39,18 @@ export class VendorAnalyticsComponent {
     });
   }
 
-  metrics = [
-    { title: 'معدل الإلغاء', value: '2.1%', trend: '-0.5%', trendIcon: 'trending_down', trendColor: 'text-red-500' },
-    { title: 'معدل الاسترجاع', value: '1.5%', trend: '-0.2%', trendIcon: 'trending_down', trendColor: 'text-red-500' },
-    { title: 'متوسط قيمة الطلب', value: 'SAR 150', trend: '+5%', trendIcon: 'trending_up', trendColor: 'text-green-500' },
-    { title: 'سرعة التجهيز', value: '1.2 يوم', trend: '+0.1 يوم', trendIcon: 'schedule', trendColor: 'text-blue-500' },
-    { title: 'التسليم في الوقت', value: '98%', trend: '+1%', trendIcon: 'trending_up', trendColor: 'text-green-500' },
-    { title: 'تقييم العملاء', value: '4.8', trend: '+0.1', trendIcon: 'star', trendColor: 'text-yellow-500' }
+  metrics: AnalyticsMetric[] = [
+    { titleKey: 'VENDOR_ANALYTICS.METRICS.CANCELLATION_RATE', value: '2.1%', trend: '-0.5%', trendIcon: 'trending_down', trendColor: 'text-red-500' },
+    { titleKey: 'VENDOR_ANALYTICS.METRICS.RETURN_RATE', value: '1.5%', trend: '-0.2%', trendIcon: 'trending_down', trendColor: 'text-red-500' },
+    { titleKey: 'VENDOR_ANALYTICS.METRICS.AVERAGE_ORDER_VALUE', value: 'SAR 150', trend: '+5%', trendIcon: 'trending_up', trendColor: 'text-green-500' },
+    { titleKey: 'VENDOR_ANALYTICS.METRICS.PREPARATION_SPEED', value: '1.2', trend: '+0.1', trendIcon: 'schedule', trendColor: 'text-blue-500', valueSuffixKey: 'VENDOR_ANALYTICS.DAY', trendSuffixKey: 'VENDOR_ANALYTICS.DAY' },
+    { titleKey: 'VENDOR_ANALYTICS.METRICS.ON_TIME_DELIVERY', value: '98%', trend: '+1%', trendIcon: 'trending_up', trendColor: 'text-green-500' },
+    { titleKey: 'VENDOR_ANALYTICS.METRICS.CUSTOMER_RATING', value: '4.8', trend: '+0.1', trendIcon: 'star', trendColor: 'text-yellow-500' }
   ];
 
-  bestSellers = [
-    { name: 'ساعة ذكية الإصدار الأخير', sales: '120 طلب', price: 'SAR 24,000', image: 'watch' },
-    { name: 'سماعات رأس لاسلكية', sales: '85 طلب', price: 'SAR 12,750', image: 'headphones' },
-    { name: 'شاحن لاسلكي سريع', sales: '60 طلب', price: 'SAR 5,400', image: 'charger' }
+  bestSellers: BestSeller[] = [
+    { nameKey: 'VENDOR_ANALYTICS.BEST_SELLERS.WATCH_NAME', salesKey: 'VENDOR_ANALYTICS.BEST_SELLERS.WATCH_SALES', price: 'SAR 24,000', image: 'watch' },
+    { nameKey: 'VENDOR_ANALYTICS.BEST_SELLERS.HEADPHONES_NAME', salesKey: 'VENDOR_ANALYTICS.BEST_SELLERS.HEADPHONES_SALES', price: 'SAR 12,750', image: 'headphones' },
+    { nameKey: 'VENDOR_ANALYTICS.BEST_SELLERS.CHARGER_NAME', salesKey: 'VENDOR_ANALYTICS.BEST_SELLERS.CHARGER_SALES', price: 'SAR 5,400', image: 'charger' }
   ];
 }

@@ -10,6 +10,7 @@ import { BrandFormModalComponent } from '../shared/brand-form-modal/brand-form-m
 import { AppButtonComponent } from '../../../shared/components/ui/button/button.component';
 import { AppCardComponent } from '../../../shared/components/ui/card/card.component';
 import { AppInputComponent } from '../../../shared/components/ui/form-controls/input.component';
+import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 
 @Component({
   selector: 'app-brand-list',
@@ -22,7 +23,8 @@ import { AppInputComponent } from '../../../shared/components/ui/form-controls/i
     BrandFormModalComponent,
     AppButtonComponent,
     AppCardComponent,
-    AppInputComponent
+    AppInputComponent,
+    AppPaginationComponent
   ],
   templateUrl: './brand-list.component.html',
   styleUrl: './brand-list.component.scss'
@@ -30,6 +32,7 @@ import { AppInputComponent } from '../../../shared/components/ui/form-controls/i
 export class BrandListComponent implements OnInit {
   isLoading = false;
   brands: Brand[] = [];
+  allBrands: Brand[] = [];
   isModalOpen = false;
   modalMode: 'create' | 'edit' = 'create';
   selectedBrand: Brand | null = null;
@@ -37,6 +40,11 @@ export class BrandListComponent implements OnInit {
   searchSubject = new Subject<string>();
   showInactive = false;
   viewMode: 'grid' | 'table' = 'grid';
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 10;
+  totalItems = 0;
 
   get activeLang(): string {
     return this.translate.currentLang || 'ar';
@@ -65,27 +73,51 @@ export class BrandListComponent implements OnInit {
       next: (data) => {
         const normalized = Array.isArray(data) ? data : [];
         const query = this.searchTerm.trim().toLowerCase();
-        this.brands = query
+        this.allBrands = query
           ? normalized.filter(brand =>
               brand.nameAr.toLowerCase().includes(query) ||
               brand.nameEn.toLowerCase().includes(query))
           : normalized;
+        
+        // Update total items
+        this.totalItems = this.allBrands.length;
+        
+        // Apply pagination
+        this.updatePaginatedBrands();
+        
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Failed to load brands', err);
+        this.allBrands = [];
         this.brands = [];
+        this.totalItems = 0;
         this.isLoading = false;
       }
     });
   }
 
+  updatePaginatedBrands(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.brands = this.allBrands.slice(startIndex, endIndex);
+  }
+
+  changePage(newPage: number): void {
+    this.currentPage = newPage;
+    this.updatePaginatedBrands();
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   onSearch(event: any): void {
+    this.currentPage = 1; // Reset to first page on search
     this.searchSubject.next(event.target.value);
   }
 
   toggleInactive(): void {
     this.showInactive = !this.showInactive;
+    this.currentPage = 1; // Reset to first page
     this.loadBrands();
   }
 

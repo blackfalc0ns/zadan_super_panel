@@ -1,0 +1,389 @@
+<!-- Modal Overlay -->
+<div *ngIf="isOpen" 
+     class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm animate-fade-in"
+     (click)="onClose()">
+  
+  <!-- Modal Container -->
+  <div class="glass-panel w-full max-w-7xl h-[921px] rounded-2xl shadow-2xl flex flex-col relative overflow-hidden"
+       (click)="$event.stopPropagation()">
+    
+    <!-- Ambient Glow -->
+    <div class="ambient-glow"></div>
+
+    <!-- Sticky Header -->
+    <header class="flex justify-between items-start px-6 py-4 border-b border-slate-200/50 bg-white/50 backdrop-blur-md sticky top-0 z-20">
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center gap-3">
+          <h1 class="text-xl font-bold text-slate-900">{{ 'MODALS.CR_VIEWER.TITLE' | translate }}</h1>
+          <div class="flex gap-1.5">
+            <span class="flex items-center gap-1 px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold border border-green-200">
+              <span class="w-1 h-1 rounded-full bg-green-500"></span>
+              {{ 'MODALS.CR_VIEWER.STATUS_VALID' | translate }}
+            </span>
+            <span class="flex items-center gap-1 px-2.5 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-semibold border border-primary/20">
+              <span class="material-symbols-outlined text-[14px]">verified</span>
+              {{ 'MODALS.CR_VIEWER.STATUS_VERIFIED' | translate }}
+            </span>
+          </div>
+        </div>
+        <p class="text-slate-500 text-xs">{{ 'MODALS.CR_VIEWER.SUBTITLE' | translate }}</p>
+      </div>
+      <button (click)="onClose()" 
+              class="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </header>
+
+    <!-- Main Content Scrollable Area -->
+    <div class="flex-1 overflow-y-auto p-5 bg-gradient-to-b from-transparent to-slate-50/50">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 h-full">
+        
+        <!-- Right Section: Data (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          
+          <!-- CR Data Card -->
+          <div class="bg-white/70 rounded-xl border border-slate-200/60 p-4 shadow-sm backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+              <div class="p-1.5 bg-primary/10 rounded-lg text-primary">
+                <span class="material-symbols-outlined text-[20px]">description</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-800">{{ 'MODALS.CR_VIEWER.SECTION_CR_DATA' | translate }}</h3>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-y-4 gap-x-6">
+              <div class="flex flex-col gap-0.5">
+                <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.CR_NUMBER' | translate }}</span>
+                <span class="text-slate-900 font-semibold text-base font-mono">{{ crData?.crNumber || '1010123456' }}</span>
+              </div>
+              
+              <div class="flex flex-col gap-0.5">
+                <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.ESTABLISHMENT_NAME' | translate }}</span>
+                <span class="text-slate-900 font-semibold text-base">{{ crData?.establishmentName || 'شركة زدانة التجارية' }}</span>
+              </div>
+              
+              <div class="flex flex-col gap-0.5">
+                <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.ENTITY_TYPE' | translate }}</span>
+                <span class="text-slate-900 font-semibold text-sm">{{ crData?.entityType || 'شركة ذات مسؤولية محدودة' }}</span>
+              </div>
+              
+              <div class="flex flex-col gap-0.5">
+                <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.EXPIRY_DATE' | translate }}</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-900 font-semibold text-sm font-mono">{{ crData?.expiryDate || '2024-12-31' }}</span>
+                  <span *ngIf="crData?.isExpiringSoon" 
+                        class="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded font-medium border border-red-200">
+                    {{ 'MODALS.CR_VIEWER.EXPIRING_SOON' | translate }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="flex flex-col gap-0.5 col-span-2">
+                <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.MAIN_ACTIVITY' | translate }}</span>
+                <span class="text-slate-900 font-semibold text-sm">{{ crData?.mainActivity || 'تجارة الجملة والتجزئة في المعدات والآلات' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Verification Data Card -->
+          <div class="bg-white/70 rounded-xl border border-slate-200/60 p-4 shadow-sm backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+              <div class="p-1.5 bg-primary/10 rounded-lg text-primary">
+                <span class="material-symbols-outlined text-[20px]">security</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-800">{{ 'MODALS.CR_VIEWER.SECTION_VERIFICATION' | translate }}</h3>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 items-center">
+              <div class="grid grid-cols-1 gap-y-4">
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.DATA_SOURCE' | translate }}</span>
+                  <span class="flex items-center gap-1.5 text-slate-900 font-semibold text-sm">
+                    <img alt="Wathq Logo" 
+                         class="w-5 h-5 rounded" 
+                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ3u-JZJxdC4AEGzNAWBnMW4HlCQ1pb-DhLg2rxl6Aasl2u9w7hHhnS-MHjlBYMzfsfEkafByIHlWbPF_p8JJS3WYS5dap-_2D-kchlUt1tj3L1-upwsQnt_4anff5AIt4NeZmAc9GIqJJYgY_HxxCGSkH-ywdQYPvQUL4_EJdq38gjsk57d8AVjWTcvNlQsdPd_Ca-s6OGDzwTkJDLJ0LAiC1q5qw-Z38IreH9JJN2zbbDhjQJbCReBSbPdJ7Pe4kukCNamJltzM"/>
+                    {{ crData?.dataSource || 'منصة واثق (API)' }}
+                  </span>
+                </div>
+                
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.VERIFIED_BY' | translate }}</span>
+                  <span class="text-slate-900 font-semibold text-sm">{{ crData?.verifiedBy || 'النظام الآلي (Zadana-Auto-Verify)' }}</span>
+                </div>
+                
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.INTERNAL_REF' | translate }}</span>
+                  <span class="text-slate-900 font-semibold font-mono text-xs">{{ crData?.internalReference || 'ZAD-CR-99823-2023' }}</span>
+                </div>
+              </div>
+
+              <!-- QR Code area -->
+              <div class="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <div class="p-1.5 bg-white rounded-lg shadow-sm mb-2">
+                  <img alt="QR Code" 
+                       class="w-20 h-20" 
+                       [src]="crData?.qrCodeUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5b5D2O2Ot1MZ276wE1ksfc39BOxbSm3hUROT6QiAQiJU7Ts0eZouhFQ8J6HhRvzMfpbW-VbOFHKDHBVsNzUGV1hC5yLHso42gRttEMbWufTR1H1hc7b1Vzy-_a_GxpOGvxugGwC3uWoUp0LCx7s7IRoTiY0R2AWZGRrboomV9CVIk1IWps9pa5tRY1vZjOfDQHb_BgIQJBovfoKqbcMnGbX8pC823nNFI3VjtRdxzHe78D3jiCTE7rq40-UJXe_63e9_gBQYP1_Y'"/>
+                </div>
+                <p class="text-[10px] text-slate-500 text-center leading-tight">{{ 'MODALS.CR_VIEWER.QR_HINT' | translate }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review Notes -->
+          <div *ngIf="crData?.isExpiringSoon" 
+               class="bg-red-50/50 rounded-xl border border-red-100 p-4 backdrop-blur-sm">
+            <div class="flex items-start gap-2">
+              <span class="material-symbols-outlined text-red-500 text-[20px] mt-0.5">warning</span>
+              <div>
+                <h4 class="text-red-800 font-bold text-sm mb-0.5">{{ 'MODALS.CR_VIEWER.REVIEW_NOTES_TITLE' | translate }}</h4>
+                <p class="text-red-600 text-xs leading-relaxed">
+                  {{ 'MODALS.CR_VIEWER.REVIEW_NOTES_TEXT' | translate }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Left Section: Document Preview (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col h-full min-h-[500px]">
+          <div class="bg-slate-100 rounded-xl border border-slate-200/60 overflow-hidden flex flex-col relative h-full">
+            
+            <!-- Doc Toolbar -->
+            <div class="bg-white/80 backdrop-blur border-b border-slate-200/60 p-2 flex justify-between items-center z-10">
+              <div class="flex items-center gap-0.5 bg-slate-100 rounded-lg p-0.5">
+                <button (click)="zoomOut()" 
+                        class="p-1 text-slate-600 hover:text-primary rounded hover:bg-white transition-all">
+                  <span class="material-symbols-outlined text-[18px]">zoom_out</span>
+                </button>
+                <span class="text-xs font-mono px-2 text-slate-600">{{ zoomLevel }}%</span>
+                <button (click)="zoomIn()" 
+                        class="p-1 text-slate-600 hover:text-primary rounded hover:bg-white transition-all">
+                  <span class="material-symbols-outlined text-[18px]">zoom_in</span>
+                </button>
+              </div>
+              <span class="text-xs font-medium text-slate-500">{{ 'MODALS.CR_VIEWER.PAGE_INFO' | translate:{current: 1, total: 1} }}</span>
+              <button (click)="onDownload()" 
+                      class="p-1.5 text-slate-600 hover:text-primary rounded-lg hover:bg-slate-100 transition-all" 
+                      [title]="'MODALS.CR_VIEWER.DOWNLOAD_DOC' | translate">
+                <span class="material-symbols-outlined text-[20px]">download</span>
+              </button>
+            </div>
+
+            <!-- Doc Viewer Area -->
+            <div class="flex-1 bg-slate-200/50 p-6 overflow-auto flex items-start justify-center">
+              <!-- CR Document Design -->
+              <div class="w-full max-w-sm bg-white rounded-lg shadow-2xl border-2 border-slate-300 relative overflow-hidden transition-transform origin-top"
+                   [style.transform]="'scale(' + (zoomLevel / 100) + ')'">
+                
+                <!-- Document Header with Saudi Emblem -->
+                <div class="bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white p-6 text-center relative overflow-hidden">
+                  <!-- Decorative Pattern -->
+                  <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);"></div>
+                  <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
+                  <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12"></div>
+                  
+                  <div class="relative z-10">
+                    <!-- Saudi Emblem -->
+                    <div class="w-20 h-20 mx-auto mb-3 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/40 shadow-lg">
+                      <div class="flex flex-col items-center">
+                        <span class="material-symbols-outlined text-3xl">account_balance</span>
+                        <div class="w-8 h-0.5 bg-white/60 mt-1"></div>
+                      </div>
+                    </div>
+                    
+                    <h2 class="text-xl font-black mb-1 tracking-wide">{{ 'MODALS.CR_VIEWER.SAUDI_ARABIA' | translate }}</h2>
+                    <p class="text-sm font-bold opacity-95">{{ 'MODALS.CR_VIEWER.MINISTRY' | translate }}</p>
+                    <div class="mt-4 pt-3 border-t border-white/30">
+                      <p class="text-lg font-black tracking-wider">{{ 'MODALS.CR_VIEWER.CR_LABEL' | translate }}</p>
+                      <p class="text-xs opacity-80 mt-1">Commercial Register</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Status Banner (if expiring soon) -->
+                <div *ngIf="crData?.isExpiringSoon" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-sm animate-pulse">warning</span>
+                    <p class="text-xs font-bold">{{ 'MODALS.CR_VIEWER.REVIEW_NOTES_TEXT' | translate }}</p>
+                  </div>
+                </div>
+
+                <!-- Document Body -->
+                <div class="p-6 space-y-5">
+                  
+                  <!-- CR Number Badge -->
+                  <div class="text-center py-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border-2 border-slate-300 shadow-inner relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mt-10"></div>
+                    <div class="relative z-10">
+                      <p class="text-xs text-slate-500 font-bold mb-2 flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-sm">tag</span>
+                        <span>{{ 'MODALS.CR_VIEWER.CR_NUMBER' | translate }}</span>
+                      </p>
+                      <p class="text-3xl font-black text-slate-900 font-mono tracking-widest">{{ crData?.crNumber || '1010123456' }}</p>
+                    </div>
+                  </div>
+
+                  <!-- Establishment Info -->
+                  <div class="space-y-4">
+                    <!-- Company Name -->
+                    <div class="bg-gradient-to-br from-primary/5 to-primary/10 p-4 rounded-xl border border-primary/20">
+                      <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center shrink-0">
+                          <span class="material-symbols-outlined text-primary text-xl">business</span>
+                        </div>
+                        <div class="flex-1">
+                          <p class="text-xs text-slate-600 font-bold mb-1">{{ 'MODALS.CR_VIEWER.ESTABLISHMENT_NAME' | translate }}</p>
+                          <p class="text-base font-black text-slate-900 leading-snug">{{ crData?.establishmentName || 'شركة زدانة التجارية' }}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Entity Type -->
+                    <div class="pb-3 border-b-2 border-slate-200">
+                      <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-slate-400 text-sm">corporate_fare</span>
+                        <p class="text-xs text-slate-500 font-bold">{{ 'MODALS.CR_VIEWER.ENTITY_TYPE' | translate }}</p>
+                      </div>
+                      <p class="text-sm font-bold text-slate-800 mr-6">{{ crData?.entityType || 'شركة ذات مسؤولية محدودة' }}</p>
+                    </div>
+                    
+                    <!-- Main Activity -->
+                    <div class="pb-3 border-b-2 border-slate-200">
+                      <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-slate-400 text-sm">work</span>
+                        <p class="text-xs text-slate-500 font-bold">{{ 'MODALS.CR_VIEWER.MAIN_ACTIVITY' | translate }}</p>
+                      </div>
+                      <p class="text-sm font-bold text-slate-800 leading-relaxed mr-6">{{ crData?.mainActivity || 'تجارة الجملة والتجزئة في المعدات والآلات' }}</p>
+                    </div>
+                    
+                    <!-- Dates Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <div class="flex items-center gap-1 mb-2">
+                          <span class="material-symbols-outlined text-green-600 text-sm">event_available</span>
+                          <p class="text-xs text-slate-600 font-bold">تاريخ الإصدار</p>
+                        </div>
+                        <p class="text-sm font-black text-slate-900 font-mono">2020-01-15</p>
+                      </div>
+                      <div class="p-3 rounded-lg border-2" 
+                           [class]="crData?.isExpiringSoon ? 'bg-red-50 border-red-300' : 'bg-slate-50 border-slate-200'">
+                        <div class="flex items-center gap-1 mb-2">
+                          <span class="material-symbols-outlined text-sm" 
+                                [class]="crData?.isExpiringSoon ? 'text-red-600' : 'text-slate-600'">event_busy</span>
+                          <p class="text-xs font-bold" 
+                             [class]="crData?.isExpiringSoon ? 'text-red-700' : 'text-slate-600'">{{ 'MODALS.CR_VIEWER.EXPIRY_DATE' | translate }}</p>
+                        </div>
+                        <p class="text-sm font-black font-mono" 
+                           [class]="crData?.isExpiringSoon ? 'text-red-700' : 'text-slate-900'">
+                          {{ crData?.expiryDate || '2024-12-31' }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                      <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-500 font-semibold">المدينة</span>
+                        <span class="text-slate-900 font-bold">الرياض</span>
+                      </div>
+                      <div class="h-px bg-slate-200"></div>
+                      <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-500 font-semibold">رأس المال</span>
+                        <span class="text-slate-900 font-bold">500,000 ريال</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Verification Section -->
+                  <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <span class="material-symbols-outlined text-green-600 text-lg">verified_user</span>
+                          <p class="text-xs font-black text-green-800">{{ 'MODALS.CR_VIEWER.ELECTRONIC_VERIFY' | translate }}</p>
+                        </div>
+                        <p class="text-[10px] text-green-700 leading-relaxed mb-2">
+                          {{ 'MODALS.CR_VIEWER.WATHQ_HINT' | translate }}
+                        </p>
+                        <div class="flex items-center gap-1 text-[10px] text-green-600">
+                          <span class="material-symbols-outlined text-xs">link</span>
+                          <span class="font-mono">{{ 'MODALS.CR_VIEWER.WATHQ_URL' | translate }}</span>
+                        </div>
+                      </div>
+                      <div class="w-24 h-24 bg-white rounded-lg border-2 border-green-300 flex items-center justify-center shrink-0 shadow-md">
+                        <img [src]="crData?.qrCodeUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5b5D2O2Ot1MZ276wE1ksfc39BOxbSm3hUROT6QiAQiJU7Ts0eZouhFQ8J6HhRvzMfpbW-VbOFHKDHBVsNzUGV1hC5yLHso42gRttEMbWufTR1H1hc7b1Vzy-_a_GxpOGvxugGwC3uWoUp0LCx7s7IRoTiY0R2AWZGRrboomV9CVIk1IWps9pa5tRY1vZjOfDQHb_BgIQJBovfoKqbcMnGbX8pC823nNFI3VjtRdxzHe78D3jiCTE7rq40-UJXe_63e9_gBQYP1_Y'"
+                             alt="QR Code" 
+                             class="w-full h-full object-contain p-1"/>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Reference Number -->
+                  <div class="text-center pt-2 pb-1">
+                    <p class="text-[9px] text-slate-400 font-mono tracking-wider">
+                      {{ 'MODALS.CR_VIEWER.REF_LABEL' | translate }}: {{ crData?.internalReference || 'ZAD-CR-99823-2023' }}
+                    </p>
+                  </div>
+
+                </div>
+
+                <!-- Document Footer -->
+                <div class="bg-gradient-to-r from-slate-100 to-slate-200 px-6 py-4 border-t-2 border-slate-300">
+                  <div class="flex items-center justify-between text-[10px] text-slate-600 mb-2">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-sm text-green-600">verified</span>
+                      <span class="font-bold">{{ 'MODALS.CR_VIEWER.ELECTRONICALLY_VERIFIED' | translate }}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-sm text-slate-500">print_disabled</span>
+                      <span class="font-bold">{{ 'MODALS.CR_VIEWER.VIEW_ONLY' | translate }}</span>
+                    </div>
+                  </div>
+                  <div class="text-center text-[9px] text-slate-500 pt-2 border-t border-slate-300">
+                    <p class="font-semibold">{{ 'MODALS.CR_VIEWER.ZADANA_WATHQ_SYNC' | translate }}</p>
+                  </div>
+                </div>
+
+                <!-- Watermark -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                  <p class="text-slate-200 font-black text-6xl transform -rotate-45 opacity-[0.03] select-none">
+                    زدانة
+                  </p>
+                </div>
+
+                <!-- Security Pattern -->
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-600 via-primary to-green-600"></div>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-green-600 via-primary to-green-600"></div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky Footer Actions -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-slate-200/50 p-6 sticky bottom-0 z-20 flex justify-between items-center rounded-b-2xl">
+      <button (click)="onClose()" 
+              class="px-6 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg font-semibold transition-colors">
+        {{ 'MODALS.CR_VIEWER.CLOSE' | translate }}
+      </button>
+      <div class="flex gap-3">
+        <button (click)="onDownload()" 
+                class="px-6 py-2.5 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold transition-colors flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">file_download</span>
+          {{ 'MODALS.CR_VIEWER.DOWNLOAD_DOC' | translate }}
+        </button>
+        <button (click)="onVerifySource()" 
+                class="px-6 py-2.5 text-primary border border-primary hover:bg-primary/5 rounded-lg font-semibold transition-colors flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">policy</span>
+          {{ 'MODALS.CR_VIEWER.VERIFY_SOURCE' | translate }}
+        </button>
+        <button (click)="onAccept()" 
+                class="px-8 py-2.5 bg-primary hover:bg-primary/90 text-slate-900 rounded-lg font-bold shadow-sm shadow-primary/20 transition-all flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">check_circle</span>
+          قبول المستند
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

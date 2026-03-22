@@ -21,7 +21,6 @@ import { Category } from '../../../../core/models/catalog.model';
     ReactiveFormsModule, 
     TranslateModule, 
     RouterModule,
-    AppPageHeaderComponent,
     AppButtonComponent,
     AppInputComponent,
     AppTextareaComponent,
@@ -82,7 +81,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.breadcrumbs = [
       { label: this.translate.instant('SIDEBAR.CATALOG'), action: () => this.onCancel() },
       { label: this.translate.instant('SIDEBAR.MASTER_PRODUCTS'), action: () => this.onCancel() },
-      { label: isEdit ? 'تعديل منتج' : 'إضافة منتج' }
+      { label: isEdit ? this.translate.instant('MASTER_PRODUCTS.EDIT_TITLE') : this.translate.instant('MASTER_PRODUCTS.ADD_TITLE') }
     ];
   }
 

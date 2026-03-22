@@ -1,6 +1,33 @@
 <!-- Vendor Finance Content -->
 <div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
 
+  <!-- Financial Statement Modal -->
+  <app-financial-statement-modal
+    [isOpen]="showFinancialStatementModal"
+    [vendorName]="'VENDOR_FINANCE.MOCK_VENDOR_NAME' | translate"
+    (close)="showFinancialStatementModal = false"
+    (download)="onStatementDownload($event)"
+    (preview)="onStatementPreview($event)">
+  </app-financial-statement-modal>
+
+  <!-- Payouts Review Modal -->
+  <app-payouts-review-modal
+    [isOpen]="showPayoutsReviewModal"
+    [availableBalance]="5000"
+    (close)="showPayoutsReviewModal = false"
+    (retryPayment)="onRetryPayment($event)"
+    (suspendPayment)="onSuspendPayment($event)"
+    (escalatePayment)="onEscalatePayment($event)">
+  </app-payouts-review-modal>
+
+  <!-- Create Settlement Modal -->
+  <app-create-settlement-modal
+    [isOpen]="showCreateSettlementModal"
+    (close)="showCreateSettlementModal = false"
+    (createSettlement)="onSettlementCreated($event)"
+    (saveDraft)="onSettlementDraftSaved($event)">
+  </app-create-settlement-modal>
+
   <!-- KPI Cards -->
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
     <div *ngFor="let kpi of kpis" 
@@ -87,7 +114,7 @@
           <div>
             <p class="text-gray-500 text-xs mb-1">{{ 'VENDOR_FINANCE.PAYMENT_CYCLE' | translate }}</p>
             <span class="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded font-medium">
-              {{ bankInfo.paymentCycle }}
+              {{ bankInfo.paymentCycle | translate }}
             </span>
           </div>
         </div>

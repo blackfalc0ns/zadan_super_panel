@@ -13,7 +13,7 @@
     <!-- Header -->
     <app-detail-header
         [breadcrumbs]="breadcrumbs"
-        actionButtonLabel="تعديل"
+        actionButtonLabel="{{ 'COMMON.EDIT' | translate }}"
         actionButtonIcon="edit"
         (backClick)="goBack()"
         (actionClick)="editBrand()">
@@ -45,33 +45,33 @@
                     <div class="w-full grid grid-cols-2 lg:grid-cols-4 gap-8 items-center">
                         <!-- Brand Name -->
                         <div class="flex flex-col">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">اسم العلامة التجارية</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{{ 'BRANDS.DETAIL.BRAND_NAME' | translate }}</p>
                             <h2 class="text-2xl font-black text-slate-900 leading-tight">{{ brand.nameAr }}</h2>
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{{ brand.nameEn }}</p>
                         </div>
 
                         <!-- Status -->
                         <div class="flex flex-col border-r border-slate-200/50 pr-8">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">الحالة</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ 'BRANDS.DETAIL.STATUS' | translate }}</p>
                             <div class="flex">
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all"
                                     [ngClass]="brand.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'">
                                     <span class="w-1.5 h-1.5 rounded-full" [ngClass]="brand.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></span>
-                                    {{ brand.isActive ? 'نشط' : 'غير نشط' }}
-                                </span>
+                                    {{ brand.isActive ? ('BRANDS.DETAIL.STATUS_ACTIVE' | translate) : ('BRANDS.DETAIL.STATUS_INACTIVE' | translate) }}
+                                 </span>
                             </div>
                         </div>
 
                         <!-- Creation Date -->
                         <div class="flex flex-col border-r border-slate-200/50 pr-8">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">تاريخ الإنشاء</p>
+                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ 'BRANDS.DETAIL.CREATED_DATE' | translate }}</p>
                             <p class="text-sm font-bold text-slate-700">{{ brand.createdAtUtc ? (brand.createdAtUtc | date:'dd/MM/yyyy') : '—' }}</p>
-                            <p *ngIf="brand.updatedAtUtc" class="text-[9px] font-medium text-slate-400 mt-0.5">آخر تعديل: {{ brand.updatedAtUtc | date:'dd/MM/yyyy' }}</p>
+                             <p *ngIf="brand.updatedAtUtc" class="text-[9px] font-medium text-slate-400 mt-0.5">{{ 'BRANDS.DETAIL.LAST_UPDATED_LABEL' | translate }}{{ brand.updatedAtUtc | date:'dd/MM/yyyy' }}</p>
                         </div>
 
                         <!-- Products Count -->
                         <div class="flex flex-col border-r border-slate-200/50 pr-8 text-center lg:text-right">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">عدد المنتجات</p>
+                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ 'BRANDS.DETAIL.PRODUCTS_COUNT' | translate }}</p>
                             <p class="text-4xl font-black text-zadna-primary leading-none">{{ brand.masterProductsCount || 0 }}</p>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-black text-slate-900 tracking-tight">المنتجات المرتبطة</h3>
+                     <h3 class="text-xl font-black text-slate-900 tracking-tight">{{ 'BRANDS.DETAIL.RELATED_PRODUCTS' | translate }}</h3>
                 </div>
 
 
@@ -104,10 +104,10 @@
                 <table class="w-full text-sm text-right">
                     <thead class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white/40 border-b border-white/60">
                         <tr>
-                            <th class="px-8 py-5 font-bold" scope="col">المنتج</th>
-                            <th class="px-8 py-5 font-bold text-center" scope="col">رمز التخزين (SKU)</th>
-                            <th class="px-8 py-5 font-bold text-center" scope="col">المخزون</th>
-                            <th class="px-8 py-5 font-bold text-center" scope="col">الإجراءات</th>
+                            <th class="px-8 py-5 font-bold" scope="col">{{ 'BRANDS.DETAIL.PRODUCT_NAME' | translate }}</th>
+                            <th class="px-8 py-5 font-bold text-center" scope="col">{{ 'BRANDS.DETAIL.SKU' | translate }}</th>
+                            <th class="px-8 py-5 font-bold text-center" scope="col">{{ 'BRANDS.DETAIL.INVENTORY' | translate }}</th>
+                            <th class="px-8 py-5 font-bold text-center" scope="col">{{ 'COMMON.ACTIONS' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/40">
@@ -139,15 +139,15 @@
                             <td class="px-8 py-5 text-center">
                                 <span *ngIf="product.status === 'Active'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100/50">
                                     <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
-                                    نشط
+                                     {{ 'BRANDS.DETAIL.STATUS_ACTIVE' | translate }}
                                 </span>
                                 <span *ngIf="product.status === 'Draft'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-100/50">
                                     <span class="w-1 h-1 rounded-full bg-amber-500"></span>
-                                    مسودة
+                                    {{ 'BRANDS.DETAIL.STATUS_DRAFT' | translate }}
                                 </span>
                                 <span *ngIf="product.status === 'Inactive' || product.status === 'Discontinued'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/50">
                                     <span class="w-1 h-1 rounded-full bg-rose-500"></span>
-                                    {{ product.status === 'Inactive' ? 'غير نشط' : 'متوقف' }}
+                                    {{ (product.status === 'Inactive' ? 'BRANDS.DETAIL.STATUS_INACTIVE' : 'BRANDS.DETAIL.STATUS_STOPPED') | translate }}
                                 </span>
                             </td>
                             <td class="px-8 py-5 text-center">
@@ -167,7 +167,7 @@
                                     <svg class="w-10 h-10 mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                     </svg>
-                                    <span class="text-sm font-bold uppercase tracking-widest">لا توجد منتجات مرتبطة بهذه العلامة التجارية.</span>
+                                    <span class="text-sm font-bold uppercase tracking-widest">{{ 'BRANDS.DETAIL.NO_PRODUCTS_MSG' | translate }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -178,7 +178,7 @@
             <!-- Footer Action -->
             <div class="mt-8 flex justify-center">
                 <button class="text-[10px] font-black uppercase tracking-widest text-zadna-primary hover:text-zadna-primaryDark transition-all flex items-center gap-2 bg-white/60 backdrop-blur-xl px-6 py-2.5 rounded-full border border-zadna-primary/20 shadow-sm active:scale-95 group">
-                    عرض جميع المنتجات
+                    {{ 'BRANDS.DETAIL.VIEW_ALL_PRODUCTS' | translate }}
                     <svg class="w-4 h-4 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                     </svg>
@@ -195,10 +195,10 @@
             <div class="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-400">
                 <span class="material-icons text-4xl">warning</span>
             </div>
-            <h3 class="text-xl font-black text-slate-900 mb-2">العلامة التجارية غير موجودة</h3>
-            <p class="text-xs font-bold text-slate-500 mb-8 uppercase tracking-wider">نعتذر، لم نتمكن من العثور على البيانات المطلوبة</p>
+            <h3 class="text-xl font-black text-slate-900 mb-2">{{ 'BRANDS.DETAIL.NOT_FOUND' | translate }}</h3>
+            <p class="text-xs font-bold text-slate-500 mb-8 uppercase tracking-wider">{{ 'BRANDS.DETAIL.NOT_FOUND_DESC' | translate }}</p>
             <button (click)="goBack()" class="bg-zadna-primary text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-zadna-primaryDark transition-all shadow-lg shadow-zadna-primary/30">
-                العودة للعلامات التجارية
+                {{ 'BRANDS.DETAIL.BACK_TO_BRANDS' | translate }}
             </button>
         </div>
     </div>

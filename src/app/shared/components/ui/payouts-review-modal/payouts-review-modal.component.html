@@ -1,0 +1,207 @@
+<div *ngIf="isOpen" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" (click)="onClose()">
+  <div class="relative w-full max-w-7xl bg-slate-50 rounded-2xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden" (click)="$event.stopPropagation()">
+    
+    <!-- Payment Detail Modal -->
+    <app-payment-detail-modal
+      [isOpen]="showPaymentDetailModal"
+      [paymentDetail]="selectedPaymentDetail"
+      (close)="showPaymentDetailModal = false"
+      (downloadReceipt)="onRetryPayment()"
+      (retryPayment)="onRetryPayment()"
+      (viewActivityLog)="onClose()">
+    </app-payment-detail-modal>
+    
+    <!-- Header -->
+    <header class="glass-effect p-6 border-b border-slate-200 flex justify-between items-center sticky top-0 z-20 backdrop-blur-md bg-white/85">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">مراجعة الدفعات</h1>
+        <p class="text-slate-500 text-sm mt-1">عرض حالة الدفعات والتحويلات المالية الخاصة بالتاجر</p>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="hidden md:flex flex-col items-end border-l border-slate-200 pl-6">
+          <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">الرصيد المتاح</span>
+          <span class="text-lg font-bold text-primary">{{ availableBalance | number:'1.0-0' }} <span class="text-xs font-normal">ر.س</span></span>
+        </div>
+        <button (click)="onClose()" aria-label="Close" class="p-2 hover:bg-slate-200 rounded-full transition-colors">
+          <span class="material-symbols-outlined text-slate-400">close</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
+      
+      <!-- Filter Bar -->
+      <section class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div class="flex flex-wrap items-end gap-4">
+          <div class="flex-1 min-w-[180px]">
+            <label class="block text-xs font-bold text-slate-600 mb-2 mr-1">رقم المرجع</label>
+            <input [(ngModel)]="filters.reference" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3" placeholder="مثلاً: REF-12345" type="text"/>
+          </div>
+          <div class="flex-1 min-w-[180px]">
+            <label class="block text-xs font-bold text-slate-600 mb-2 mr-1">الحالة</label>
+            <select [(ngModel)]="filters.status" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3">
+              <option value="all">الكل</option>
+              <option value="success">ناجحة</option>
+              <option value="pending">معلقة</option>
+              <option value="failed">فاشلة</option>
+              <option value="reviewing">قيد المراجعة</option>
+            </select>
+          </div>
+          <div class="flex-1 min-w-[180px]">
+            <label class="block text-xs font-bold text-slate-600 mb-2 mr-1">الفترة</label>
+            <input [(ngModel)]="filters.date" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3" type="date"/>
+          </div>
+          <div class="flex-1 min-w-[180px]">
+            <label class="block text-xs font-bold text-slate-600 mb-2 mr-1">البنك</label>
+            <select [(ngModel)]="filters.bank" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3">
+              <option value="all">جميع البنوك</option>
+              <option value="alrajhi">مصرف الراجحي</option>
+              <option value="alinma">بنك الإنماء</option>
+              <option value="alahli">البنك الأهلي</option>
+            </select>
+          </div>
+          <div class="w-full lg:w-auto">
+            <button (click)="resetFilters()" class="w-full lg:px-6 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-colors border border-slate-200">
+              إعادة تعيين
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Table and Detail View -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+        
+        <!-- Payments Table -->
+        <div class="lg:col-span-8 xl:col-span-9 flex flex-col overflow-hidden bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div class="overflow-x-auto flex-1">
+            <table class="w-full text-right border-collapse">
+              <thead>
+                <tr class="bg-slate-50/80 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0 z-10">
+                  <th class="p-4">رقم العملية</th>
+                  <th class="p-4">التاريخ</th>
+                  <th class="p-4">المبلغ</th>
+                  <th class="p-4">البنك/الوجهة</th>
+                  <th class="p-4">الحالة</th>
+                  <th class="p-4">المرجع</th>
+                  <th class="p-4 text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm divide-y divide-slate-100">
+                <tr *ngFor="let transaction of transactions" (click)="selectTransaction(transaction)" [ngClass]="getRowClass(transaction)" class="cursor-pointer">
+                  <td class="p-4 font-bold text-slate-700">{{ transaction.paymentNumber }}</td>
+                  <td class="p-4 text-slate-500">
+                    {{ transaction.date }}<br/>
+                    <span class="text-[10px] opacity-70">{{ transaction.time }}</span>
+                  </td>
+                  <td class="p-4 font-bold text-slate-900">{{ transaction.amount | number:'1.0-0' }} ر.س</td>
+                  <td class="p-4 text-slate-600">{{ transaction.bankDestination }}</td>
+                  <td class="p-4">
+                    <span [ngClass]="getStatusClass(transaction.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border">
+                      {{ transaction.statusLabel }}
+                    </span>
+                  </td>
+                  <td class="p-4 font-mono text-xs" [ngClass]="transaction.status === 'failed' ? 'text-rose-500' : 'text-slate-400'">
+                    {{ transaction.reference }}
+                  </td>
+                  <td class="p-4">
+                    <div class="flex items-center justify-center gap-2">
+                      <button *ngIf="transaction.status === 'failed'" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-md transition-colors">
+                        <span class="material-symbols-outlined text-base">refresh</span>
+                      </button>
+                      <button (click)="viewTransactionDetails(transaction)" class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded transition-colors">
+                        <span class="material-symbols-outlined text-base">visibility</span>
+                      </button>
+                      <button *ngIf="transaction.status === 'success'" class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded transition-colors">
+                        <span class="material-symbols-outlined text-base">content_copy</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Footer / Pagination -->
+          <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs text-slate-500">عرض 1-4 من 49 عملية</span>
+            <div class="flex gap-2">
+              <button class="p-1 text-slate-400 hover:text-primary disabled:opacity-30" disabled>
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <button class="p-1 text-slate-400 hover:text-primary">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail Panel -->
+        <aside *ngIf="selectedTransaction" class="lg:col-span-4 xl:col-span-3 flex flex-col">
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 h-full flex flex-col">
+            <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-4 mb-4 flex items-center gap-2">
+              <span *ngIf="selectedTransaction.status === 'failed'" class="material-symbols-outlined text-rose-500 text-base">warning</span>
+              <span *ngIf="selectedTransaction.status === 'pending'" class="material-symbols-outlined text-amber-500 text-base">schedule</span>
+              <span *ngIf="selectedTransaction.status === 'reviewing'" class="material-symbols-outlined text-blue-500 text-base">pending</span>
+              <span *ngIf="selectedTransaction.status === 'success'" class="material-symbols-outlined text-emerald-500 text-base">check_circle</span>
+              تفاصيل العملية {{ selectedTransaction.statusLabel }}
+            </h3>
+
+            <div class="flex-1 space-y-5">
+              <!-- Failure Reason (if failed) -->
+              <div *ngIf="selectedTransaction.status === 'failed' && selectedTransaction.failureReason" class="bg-rose-50 p-4 rounded-lg border border-rose-100/50">
+                <p class="text-xs text-rose-800 font-bold mb-1.5 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                  سبب الفشل:
+                </p>
+                <p class="text-xs text-rose-600 leading-relaxed">{{ selectedTransaction.failureReason }}</p>
+              </div>
+
+              <!-- Actions -->
+              <div class="space-y-3">
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-2">إجراءات المدير المقترحة</p>
+                
+                <button *ngIf="selectedTransaction.status === 'failed'" (click)="onRetryPayment()" class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-2.5 rounded-lg text-xs font-bold shadow-md shadow-primary/10 transition-all">
+                  <span class="material-symbols-outlined text-sm">refresh</span>
+                  إعادة محاولة التحويل
+                </button>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <button (click)="onSuspendPayment()" class="flex items-center justify-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 py-2.5 rounded-lg text-[11px] font-bold transition-all">
+                    <span class="material-symbols-outlined text-sm">pause_circle</span>
+                    تعليق
+                  </button>
+                  <button (click)="onEscalatePayment()" class="flex items-center justify-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 py-2.5 rounded-lg text-[11px] font-bold transition-all">
+                    <span class="material-symbols-outlined text-sm">mail</span>
+                    تصعيد
+                  </button>
+                </div>
+              </div>
+
+              <!-- Internal Notes -->
+              <div class="pt-4 border-t border-slate-100 mt-auto">
+                <label class="text-[10px] text-slate-400 font-bold mb-2 block uppercase">ملاحظات داخلية للفريق المالي</label>
+                <textarea [(ngModel)]="internalNotes" class="w-full text-xs border-slate-200 rounded-lg h-28 resize-none placeholder:text-slate-300 focus:ring-primary focus:border-primary p-3" placeholder="اكتب ملاحظة توضيحية هنا..."></textarea>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="p-6 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 z-20">
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <button (click)="onClose()" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-100 transition-all shadow-sm">
+          إغلاق
+        </button>
+        <button class="px-6 py-2.5 bg-white border border-primary/30 text-primary rounded-lg text-sm font-bold hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">download</span>
+          تصدير السجل
+        </button>
+      </div>
+      <button class="w-full sm:w-auto px-10 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/30">
+        حفظ وتحديث الحالة
+      </button>
+    </footer>
+  </div>
+</div>

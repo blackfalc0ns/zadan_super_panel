@@ -1,0 +1,289 @@
+<div *ngIf="isOpen" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" (click)="onClose()">
+  <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden border border-slate-200" (click)="$event.stopPropagation()" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-2xl">request_quote</span>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.TITLE' | translate }}</h2>
+          <p class="text-sm text-slate-500 mt-1">{{ 'MODALS.FINANCIAL_STATEMENT.SUBTITLE' | translate }}</p>
+        </div>
+      </div>
+      <button (click)="onClose()" class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto p-6 max-h-[calc(90vh-200px)] bg-slate-50/50">
+      <div class="flex flex-col lg:flex-row gap-8">
+        
+        <!-- Left Column: Settings -->
+        <div class="flex-1 flex flex-col gap-8">
+          
+          <!-- Statement Type -->
+          <section>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-xl">category</span>
+              {{ 'MODALS.FINANCIAL_STATEMENT.STATEMENT_TYPE' | translate }}
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
+              <label [ngClass]="{'border-primary shadow-lg shadow-primary/5': config.statementType === 'comprehensive', 'border-slate-200 hover:border-primary/50 hover:shadow-md': config.statementType !== 'comprehensive'}" class="group relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-white">
+                <input type="radio" name="statement_type" value="comprehensive" [(ngModel)]="config.statementType" class="sr-only"/>
+                <div class="flex items-start justify-between mb-3">
+                  <div [ngClass]="config.statementType === 'comprehensive' ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-500'" class="w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                  </div>
+                  <div [ngClass]="config.statementType === 'comprehensive' ? 'opacity-100' : 'opacity-0'" class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white shadow-sm transition-opacity">
+                    <span class="material-symbols-outlined text-sm font-bold">check</span>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.COMPREHENSIVE' | translate }}</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">تقرير مفصل يغطي كافة الأنشطة المالية والحسابات</span>
+                </div>
+              </label>
+
+              <label [ngClass]="{'border-primary shadow-lg shadow-primary/5': config.statementType === 'payments', 'border-slate-200 hover:border-primary/50 hover:shadow-md': config.statementType !== 'payments'}" class="group relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-white">
+                <input type="radio" name="statement_type" value="payments" [(ngModel)]="config.statementType" class="sr-only"/>
+                <div class="flex items-start justify-between mb-3">
+                  <div [ngClass]="config.statementType === 'payments' ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-500'" class="w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined">payments</span>
+                  </div>
+                  <div [ngClass]="config.statementType === 'payments' ? 'opacity-100' : 'opacity-0'" class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white shadow-sm transition-opacity">
+                    <span class="material-symbols-outlined text-sm font-bold">check</span>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.PAYMENTS_ONLY' | translate }}</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">تتبع المبالغ المحولة والمدفوعات البنكية</span>
+                </div>
+              </label>
+
+              <label [ngClass]="{'border-primary shadow-lg shadow-primary/5': config.statementType === 'deductions', 'border-slate-200 hover:border-primary/50 hover:shadow-md': config.statementType !== 'deductions'}" class="group relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-white">
+                <input type="radio" name="statement_type" value="deductions" [(ngModel)]="config.statementType" class="sr-only"/>
+                <div class="flex items-start justify-between mb-3">
+                  <div [ngClass]="config.statementType === 'deductions' ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-500'" class="w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined">percent</span>
+                  </div>
+                  <div [ngClass]="config.statementType === 'deductions' ? 'opacity-100' : 'opacity-0'" class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white shadow-sm transition-opacity">
+                    <span class="material-symbols-outlined text-sm font-bold">check</span>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.DEDUCTIONS_ONLY' | translate }}</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">تحليل الرسوم المقتطعة وعمولات البيع</span>
+                </div>
+              </label>
+
+              <label [ngClass]="{'border-primary shadow-lg shadow-primary/5': config.statementType === 'returns', 'border-slate-200 hover:border-primary/50 hover:shadow-md': config.statementType !== 'returns'}" class="group relative flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-white">
+                <input type="radio" name="statement_type" value="returns" [(ngModel)]="config.statementType" class="sr-only"/>
+                <div class="flex items-start justify-between mb-3">
+                  <div [ngClass]="config.statementType === 'returns' ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-500'" class="w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined">assignment_return</span>
+                  </div>
+                  <div [ngClass]="config.statementType === 'returns' ? 'opacity-100' : 'opacity-0'" class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white shadow-sm transition-opacity">
+                    <span class="material-symbols-outlined text-sm font-bold">check</span>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.RETURNS_ONLY' | translate }}</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">حصر الطلبات الملغاة والمبالغ المستردة</span>
+                </div>
+              </label>
+            </div>
+          </section>
+
+          <!-- Date Range -->
+          <section>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">date_range</span>
+                {{ 'MODALS.FINANCIAL_STATEMENT.DATE_RANGE' | translate }}
+              </h3>
+              <div class="flex gap-2">
+                <button *ngFor="let range of quickDateRanges" (click)="selectQuickRange(range.label, range.days)" [ngClass]="{'bg-primary/10 text-primary border border-primary/20': selectedQuickRange === range.label, 'bg-slate-100 text-slate-600 hover:bg-primary/10 hover:text-primary': selectedQuickRange !== range.label}" class="px-3 py-1 text-xs font-medium rounded-full transition-colors">
+                  {{ range.label }}
+                </button>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+              <!-- From Date -->
+              <div class="flex flex-col gap-4" [ngClass]="isRTL ? '' : 'border-l pl-6'">
+                <p class="text-sm font-bold text-slate-700 text-center">{{ 'MODALS.FINANCIAL_STATEMENT.FROM' | translate }}</p>
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between px-2">
+                    <button (click)="previousMonthFrom()" class="p-1 hover:bg-slate-100 rounded-lg text-slate-500">
+                      <span class="material-symbols-outlined text-sm">{{ isRTL ? 'chevron_right' : 'chevron_left' }}</span>
+                    </button>
+                    <span class="text-sm font-bold">{{ getMonthName(currentMonthFrom) }}</span>
+                    <button (click)="nextMonthFrom()" class="p-1 hover:bg-slate-100 rounded-lg text-slate-500">
+                      <span class="material-symbols-outlined text-sm">{{ isRTL ? 'chevron_left' : 'chevron_right' }}</span>
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-7 gap-1 text-center">
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ح</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ن</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ث</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ر</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">خ</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ج</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">س</div>
+                    
+                    <button *ngFor="let day of getDaysInMonth(currentMonthFrom)" (click)="selectDateFrom(day)" [ngClass]="isSelectedFrom(day) ? 'bg-primary text-white font-bold shadow-md shadow-primary/30' : 'hover:bg-slate-100 text-slate-600'" class="w-8 h-8 rounded-full text-xs flex items-center justify-center transition-colors">
+                      {{ day }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- To Date -->
+              <div class="flex flex-col gap-4" [ngClass]="isRTL ? 'border-r pr-6' : ''">
+                <p class="text-sm font-bold text-slate-700 text-center">{{ 'MODALS.FINANCIAL_STATEMENT.TO' | translate }}</p>
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between px-2">
+                    <button (click)="previousMonthTo()" class="p-1 hover:bg-slate-100 rounded-lg text-slate-500">
+                      <span class="material-symbols-outlined text-sm">{{ isRTL ? 'chevron_right' : 'chevron_left' }}</span>
+                    </button>
+                    <span class="text-sm font-bold">{{ getMonthName(currentMonthTo) }}</span>
+                    <button (click)="nextMonthTo()" class="p-1 hover:bg-slate-100 rounded-lg text-slate-500">
+                      <span class="material-symbols-outlined text-sm">{{ isRTL ? 'chevron_left' : 'chevron_right' }}</span>
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-7 gap-1 text-center">
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ح</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ن</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ث</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ر</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">خ</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">ج</div>
+                    <div class="text-[10px] font-bold text-slate-400 py-1">س</div>
+                    
+                    <button *ngFor="let day of getDaysInMonth(currentMonthTo)" (click)="selectDateTo(day)" [ngClass]="isSelectedTo(day) ? 'bg-primary text-white font-bold shadow-md shadow-primary/30' : 'hover:bg-slate-100 text-slate-600'" class="w-8 h-8 rounded-full text-xs flex items-center justify-center transition-colors">
+                      {{ day }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Included Data -->
+          <section>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-xl">dataset</span>
+              {{ 'MODALS.FINANCIAL_STATEMENT.INCLUDED_DATA' | translate }}
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
+                <input type="checkbox" [(ngModel)]="config.includedData.sales" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
+                <span class="text-sm font-medium">المبيعات</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
+                <input type="checkbox" [(ngModel)]="config.includedData.returns" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
+                <span class="text-sm font-medium">المرتجعات</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
+                <input type="checkbox" [(ngModel)]="config.includedData.discounts" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
+                <span class="text-sm font-medium">الخصومات</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
+                <input type="checkbox" [(ngModel)]="config.includedData.commissions" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
+                <span class="text-sm font-medium">عمولات المنصة</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
+                <input type="checkbox" [(ngModel)]="config.includedData.netAmount" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
+                <span class="text-sm font-medium">صافي المبلغ</span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Export Format -->
+          <section>
+            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-xl">file_download</span>
+              {{ 'MODALS.FINANCIAL_STATEMENT.EXPORT_FORMAT' | translate }}
+            </h3>
+            <div class="flex gap-4 p-1 bg-slate-200/50 rounded-xl w-max">
+              <label class="relative">
+                <input type="radio" name="export_format" value="pdf" [(ngModel)]="config.exportFormat" class="sr-only peer"/>
+                <div class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 cursor-pointer hover:text-slate-900 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">
+                  <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+                  {{ 'MODALS.FINANCIAL_STATEMENT.PDF' | translate }}
+                </div>
+              </label>
+              <label class="relative">
+                <input type="radio" name="export_format" value="excel" [(ngModel)]="config.exportFormat" class="sr-only peer"/>
+                <div class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 cursor-pointer hover:text-slate-900 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">
+                  <span class="material-symbols-outlined text-lg">table_view</span>
+                  {{ 'MODALS.FINANCIAL_STATEMENT.EXCEL' | translate }}
+                </div>
+              </label>
+              <label class="relative">
+                <input type="radio" name="export_format" value="csv" [(ngModel)]="config.exportFormat" class="sr-only peer"/>
+                <div class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 cursor-pointer hover:text-slate-900 peer-checked:bg-white peer-checked:text-slate-900 peer-checked:shadow-sm transition-all">
+                  <span class="material-symbols-outlined text-lg">csv</span>
+                  {{ 'MODALS.FINANCIAL_STATEMENT.CSV' | translate }}
+                </div>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Sidebar: Preview -->
+        <div class="w-full lg:w-80 flex-shrink-0">
+          <div class="bg-gradient-to-br from-primary/10 to-transparent p-6 rounded-2xl border border-primary/20 sticky top-0">
+            <h4 class="text-base font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">visibility</span>
+              {{ 'MODALS.FINANCIAL_STATEMENT.PREVIEW' | translate }}
+            </h4>
+            <div class="space-y-4">
+              <div class="flex flex-col gap-1 pb-4 border-b border-slate-200/50">
+                <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.VENDOR_NAME' | translate }}</span>
+                <span class="text-sm font-bold text-slate-900">{{ previewData.vendorName }}</span>
+              </div>
+              <div class="flex flex-col gap-1 pb-4 border-b border-slate-200/50">
+                <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.PERIOD' | translate }}</span>
+                <span class="text-sm font-bold text-slate-900">{{ previewData.dateRange }}</span>
+              </div>
+              <div class="flex flex-col gap-1 pb-4 border-b border-slate-200/50">
+                <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.ESTIMATED_RECORDS' | translate }}</span>
+                <span class="text-sm font-bold text-slate-900">~ {{ previewData.estimatedRecords }} سجل</span>
+              </div>
+              <div class="flex flex-col gap-1 pb-4 border-b border-slate-200/50">
+                <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.FILE_SIZE' | translate }}</span>
+                <span class="text-sm font-bold text-slate-900">~ {{ previewData.estimatedFileSize }}</span>
+              </div>
+              <div class="flex flex-col gap-1 pt-2">
+                <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.TOTAL_AMOUNT' | translate }}</span>
+                <span class="text-2xl font-bold text-teal-600">{{ previewData.totalAmount | number:'1.2-2' }} ر.س</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between p-6 border-t border-slate-200 bg-slate-50 backdrop-blur-md">
+      <button (click)="onClose()" class="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200 transition-colors">
+        {{ 'MODALS.FINANCIAL_STATEMENT.CANCEL' | translate }}
+      </button>
+      <div class="flex gap-4">
+        <button (click)="onPreview()" class="px-6 py-2.5 rounded-xl text-sm font-bold text-teal-600 border-2 border-teal-600 hover:bg-teal-50 transition-colors flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">preview</span>
+          {{ 'MODALS.FINANCIAL_STATEMENT.PREVIEW_BTN' | translate }}
+        </button>
+        <button (click)="onDownload()" class="px-8 py-2.5 rounded-xl text-sm font-bold text-white bg-teal-600 hover:bg-teal-600/90 shadow-lg shadow-teal-600/30 transition-colors flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">download</span>
+          {{ 'MODALS.FINANCIAL_STATEMENT.DOWNLOAD' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

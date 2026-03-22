@@ -187,9 +187,9 @@ export class VendorOrdersComponent {
 
   // Alerts
   alerts: string[] = [
-    '3 طلبات تجاوزت وقت الشحن المحدد (48 ساعة).',
-    'مخزون منخفض لـ 5 منتجات مبيعة بكثرة.',
-    'نزاع جديد يحتاج إلى مراجعة للطلب ORD-0988.'
+    'VENDOR_ORDERS.ALERTS.SHIPPING_DELAY',
+    'VENDOR_ORDERS.ALERTS.LOW_STOCK',
+    'VENDOR_ORDERS.ALERTS.NEW_DISPUTE'
   ];
 
   constructor(

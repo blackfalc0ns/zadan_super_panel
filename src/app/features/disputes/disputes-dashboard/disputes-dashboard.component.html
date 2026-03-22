@@ -1,0 +1,407 @@
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="isRtl ? 'rtl' : 'ltr'">
+  <div class="px-4 md:px-10 pt-5 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-5 md:gap-6">
+    <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
+      <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
+        <span>{{ 'SIDEBAR.HOME' | translate }}</span>
+        <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
+        <span class="text-zadna-primary">{{ 'SIDEBAR.DISPUTES' | translate }}</span>
+      </nav>
+      <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight flex items-center gap-3">
+        <span class="material-symbols-outlined text-[28px] text-zadna-primary">gavel</span>
+        {{ 'DISPUTES_DASHBOARD.TITLE' | translate }}
+      </h1>
+      <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
+        {{ 'DISPUTES_DASHBOARD.SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+      <button class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary">
+        <span class="material-symbols-outlined text-[20px]">download</span>
+        {{ 'DISPUTES_DASHBOARD.EXPORT_REPORT' | translate }}
+      </button>
+      <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
+        <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
+        {{ 'DISPUTES_DASHBOARD.CREATE_DISPUTE' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1 min-h-0 px-4 md:px-10 pt-3 pb-6 max-w-[120rem] mx-auto w-full space-y-5 md:space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <app-kpi-cards [cards]="kpiCards" (cardClick)="onKpiCardClick($event)"></app-kpi-cards>
+
+    <div class="flex flex-col gap-4 md:gap-5">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-5 md:gap-6">
+        <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
+          <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none">
+            <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+            [placeholder]="'DISPUTES_DASHBOARD.SEARCH_PLACEHOLDER' | translate"
+            class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pr-14 pl-6">
+        </div>
+
+        <div class="flex items-center gap-4 order-2 lg:order-2 flex-wrap">
+          <div
+            class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md cursor-pointer hover:bg-slate-50 group"
+            (click)="toggleActiveCases()">
+            <div class="flex items-center gap-3 px-6 h-full select-none">
+              <span class="material-symbols-outlined text-[24px] text-zadna-primary group-hover:scale-110 transition-transform duration-500">filter_list</span>
+              <div class="flex flex-col">
+                <span class="text-[13px] font-black text-slate-800">{{ 'DISPUTES_DASHBOARD.FILTER_PANEL.TITLE' | translate }}</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'DISPUTES_DASHBOARD.FILTER_PANEL.SUBTITLE' | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="px-5 py-3 rounded-full text-[11px] font-black transition-all shadow-sm"
+            [ngClass]="activeFilter === 'critical' ? 'bg-slate-900 text-white shadow-slate-900/10' : 'bg-white border border-slate-200 text-slate-700 hover:border-zadna-primary/20 hover:text-zadna-primary'"
+            (click)="toggleCriticalFilter()">
+            <span class="material-symbols-outlined text-[18px] align-middle ml-1">bolt</span>
+            {{ 'DISPUTES_DASHBOARD.CRITICAL_ONLY' | translate }}
+          </button>
+
+          <button
+            *ngIf="hasActiveFilters"
+            class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group"
+            (click)="clearFilters()">
+            <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+            <span class="text-[11px] font-black uppercase tracking-widest">{{ 'DISPUTES_DASHBOARD.CLEAR' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 pt-0.5" *ngIf="hasActiveFilters">
+        <span class="rounded-full bg-zadna-primary/10 px-3 py-1.5 text-[11px] font-black text-zadna-primary">
+          {{ 'COMMON.STATUS' | translate }}: {{ activeFilterLabel }}
+        </span>
+        <span *ngIf="searchTerm.trim()" class="rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-black text-slate-600">
+          {{ 'COMMON.SEARCH' | translate }}: {{ searchTerm.trim() }}
+        </span>
+      </div>
+
+      <div class="grid gap-3 md:gap-4 md:grid-cols-3">
+        <div class="rounded-[1.4rem] border border-slate-200/70 bg-white p-4 shadow-sm">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.INFO.OPERATIONAL_ALERT' | translate }}</p>
+          <p class="mt-2 text-sm font-black text-slate-900">{{ 'DISPUTES_DASHBOARD.INFO.OPERATIONAL_ALERT_DESC' | translate }}</p>
+        </div>
+        <div class="rounded-[1.4rem] border border-slate-200/70 bg-white p-4 shadow-sm">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR' | translate }}</p>
+          <p class="mt-2 text-sm font-black text-slate-900">{{ 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR_NAME' | translate }}</p>
+          <p class="mt-1 text-[11px] font-bold text-slate-400">{{ 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR_DESC' | translate }}</p>
+        </div>
+        <div class="rounded-[1.4rem] border border-slate-200/70 bg-white p-4 shadow-sm">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY' | translate }}</p>
+          <p class="mt-2 text-sm font-black text-slate-900">{{ 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY_DESC' | translate }}</p>
+          <p class="mt-1 text-[11px] font-bold text-slate-400">{{ 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY_META' | translate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-1 md:pt-2">
+      <app-data-table
+        [data]="paginatedDisputes"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [bulkActions]="bulkActions"
+        [selectable]="true"
+        [clickableRows]="true"
+        [containerClass]="'extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
+        [emptyStateTitle]="'DISPUTES_DASHBOARD.EMPTY.TITLE' | translate"
+        [emptyStateMessage]="'DISPUTES_DASHBOARD.EMPTY.MESSAGE' | translate"
+        (rowClick)="onTableRowClick($event)"
+        (actionClick)="onTableAction($event)"
+        (bulkActionClick)="onBulkAction($event)">
+
+        <ng-template #customColumn let-dispute let-column="column">
+          <ng-container *ngIf="column.key === 'id'">
+            <div class="flex flex-col text-start">
+              <span class="font-['Inter'] text-[13px] font-black text-zadna-primary">{{ dispute.id }}</span>
+              <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderId }}</span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'customer'">
+            <div class="flex items-center gap-3 text-start">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-[11px] font-black text-slate-600 shrink-0">
+                {{ dispute.customerInitials }}
+              </div>
+              <div class="min-w-0">
+                <p class="text-[12px] font-black text-slate-900 truncate">{{ dispute.customerName }}</p>
+                <p class="text-[10px] font-bold text-slate-400 truncate">{{ dispute.customerEmail }}</p>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'merchant'">
+            <div class="text-start">
+              <p class="text-[12px] font-black text-slate-900 truncate">{{ dispute.merchantName }}</p>
+              <span class="mt-1 inline-flex rounded-full px-2 py-1 text-[10px] font-black" [ngClass]="getRiskClass(dispute.risk)">
+                {{ getRiskLabel(dispute.risk) }}
+              </span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'type'">
+            <div class="max-w-[15rem] text-start">
+              <p class="text-[12px] font-black text-slate-800">{{ dispute.type }}</p>
+              <p class="mt-1 text-[10px] font-bold leading-relaxed text-slate-400">{{ dispute.reason }}</p>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'amount'">
+            <span class="font-['Inter'] text-[13px] font-black text-slate-900">
+              {{ dispute.amount | number:'1.0-0' }}
+              <span class="text-[10px] text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </span>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'status'">
+            <div class="flex justify-center">
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm" [ngClass]="getStatusClass(dispute.status)">
+                <span class="w-1.5 h-1.5 rounded-full animate-pulse" [ngClass]="{
+                  'bg-sky-600': dispute.status === 'open',
+                  'bg-amber-500': dispute.status === 'review',
+                  'bg-violet-500': dispute.status === 'merchant',
+                  'bg-emerald-500': dispute.status === 'resolved'
+                }"></span>
+                <span class="text-[10px] font-black tracking-tight">{{ getStatusLabel(dispute.status) }}</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'priority'">
+            <div class="flex justify-center">
+              <span class="inline-flex rounded-full border px-3 py-1.5 text-[10px] font-black" [ngClass]="getPriorityClass(dispute.priority)">
+                {{ getPriorityLabel(dispute.priority) }}
+              </span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'owner'">
+            <div class="text-start">
+              <p class="text-[11px] font-black text-slate-800">{{ dispute.owner }}</p>
+              <p class="mt-1 text-[10px] font-bold text-slate-400">{{ dispute.sla }}</p>
+            </div>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #mobileCard let-dispute>
+          <div class="space-y-4 text-start">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-['Inter'] text-[13px] font-black text-zadna-primary">{{ dispute.id }}</p>
+                <p class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderId }}</p>
+              </div>
+              <span class="inline-flex rounded-full border px-3 py-1.5 text-[10px] font-black" [ngClass]="getPriorityClass(dispute.priority)">
+                {{ getPriorityLabel(dispute.priority) }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-[11px] font-black text-slate-600 shrink-0">
+                {{ dispute.customerInitials }}
+              </div>
+              <div class="min-w-0">
+                <p class="text-[12px] font-black text-slate-900 truncate">{{ dispute.customerName }}</p>
+                <p class="text-[10px] font-bold text-slate-400 truncate">{{ dispute.customerEmail }}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-2xl bg-slate-50 p-3">
+                <p class="text-[9px] font-black uppercase tracking-tight text-slate-400">{{ 'DISPUTES_DASHBOARD.TABLE.MERCHANT' | translate }}</p>
+                <p class="mt-1 text-[11px] font-black text-slate-800">{{ dispute.merchantName }}</p>
+              </div>
+              <div class="rounded-2xl bg-slate-50 p-3">
+                <p class="text-[9px] font-black uppercase tracking-tight text-slate-400">{{ 'DISPUTES_DASHBOARD.TABLE.AMOUNT' | translate }}</p>
+                <p class="mt-1 font-['Inter'] text-[12px] font-black text-slate-900">{{ dispute.amount | number:'1.0-0' }} <span class="text-[10px] text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3">
+              <span class="inline-flex rounded-full border px-3 py-1.5 text-[10px] font-black" [ngClass]="getPriorityClass(dispute.priority)">
+                {{ getPriorityLabel(dispute.priority) }}
+              </span>
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm" [ngClass]="getStatusClass(dispute.status)">
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
+                  'bg-sky-600': dispute.status === 'open',
+                  'bg-amber-500': dispute.status === 'review',
+                  'bg-violet-500': dispute.status === 'merchant',
+                  'bg-emerald-500': dispute.status === 'resolved'
+                }"></span>
+                <span class="text-[10px] font-black tracking-tight">{{ getStatusLabel(dispute.status) }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </app-data-table>
+    </div>
+
+    <div class="pt-4 md:pt-5 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+      <app-pagination
+        *ngIf="totalFilteredItems > 0"
+        [currentPage]="page"
+        [pageSize]="pageSize"
+        [totalItems]="totalFilteredItems"
+        (pageChange)="changePage($event)">
+      </app-pagination>
+    </div>
+  </div>
+
+  <ng-container *ngIf="isDetailsDrawerOpen">
+    <button
+      type="button"
+      class="details-backdrop fixed inset-0 z-40 bg-slate-950/30 backdrop-blur-[2px]"
+      [attr.aria-label]="'DISPUTES_DASHBOARD.DRAWER.CLOSE_ARIA' | translate"
+      (click)="closeDetailsDrawer()"></button>
+
+    <aside
+      class="details-drawer fixed top-0 z-50 h-full w-full max-w-[26rem] overflow-y-auto border-slate-200/70 bg-slate-50/95 shadow-[0_28px_90px_rgba(15,23,42,0.18)]"
+      [ngClass]="isRtl ? 'left-0 border-r details-drawer--rtl' : 'right-0 border-l details-drawer--ltr'"
+      aria-modal="true"
+      role="dialog">
+      <div class="sticky top-0 z-10 border-b border-slate-200/70 bg-white/90 px-4 py-4 backdrop-blur md:px-6">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.DRAWER.TITLE' | translate }}</p>
+            <h2 class="mt-2 text-xl font-black text-slate-900">{{ selectedDispute.id }}</h2>
+            <p class="mt-1 text-[11px] font-bold text-slate-400">{{ selectedDispute.createdAt }} • {{ selectedDispute.sla }}</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button class="btn-ghost !rounded-2xl !px-3 !py-3">
+              <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+            </button>
+            <button class="btn-ghost !rounded-2xl !px-3 !py-3" type="button" (click)="closeDetailsDrawer()">
+              <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6 p-4 md:p-6">
+        <div class="premium-glass-light rounded-[2rem] border border-white/70 p-5">
+          <div class="rounded-[1.5rem] bg-slate-900 p-4 text-white shadow-xl shadow-slate-900/10">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-white/50">{{ 'DISPUTES_DASHBOARD.DRAWER.DISPUTE_VALUE' | translate }}</p>
+            <p class="mt-2 font-['Inter'] text-[2rem] font-black">{{ selectedDispute.amount | number:'1.0-0' }} <span class="text-base text-white/50">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+            <div class="mt-4 flex items-center justify-between text-[11px] font-bold text-white/70">
+              <span>{{ 'ORDERS.DETAIL.PAYMENT_METHOD' | translate }}</span>
+              <span>{{ selectedDispute.paymentMask }}</span>
+            </div>
+          </div>
+
+          <div class="mt-5 grid gap-3">
+            <div class="rounded-[1.4rem] border border-slate-200/60 bg-white p-4">
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.DRAWER.CUSTOMER_SUMMARY' | translate }}</p>
+              <p class="mt-2 text-sm font-black text-slate-900">{{ selectedDispute.customerName }}</p>
+              <p class="mt-1 text-[11px] font-bold leading-relaxed text-slate-500">{{ selectedDispute.customerSummary }}</p>
+            </div>
+            <div class="rounded-[1.4rem] border border-slate-200/60 bg-white p-4">
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.DRAWER.MERCHANT_SUMMARY' | translate }}</p>
+              <p class="mt-2 text-sm font-black text-slate-900">{{ selectedDispute.merchantName }}</p>
+              <p class="mt-1 text-[11px] font-bold leading-relaxed text-slate-500">{{ selectedDispute.merchantSummary }}</p>
+            </div>
+            <div class="rounded-[1.4rem] border border-slate-200/60 bg-white p-4">
+              <div class="flex items-center justify-between gap-3">
+                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.DRAWER.OPERATIONAL_NOTE' | translate }}</p>
+                <span class="rounded-full bg-zadna-primary/10 px-2 py-1 text-[10px] font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.DRAWER.LIVE' | translate }}</span>
+              </div>
+              <p class="mt-3 text-[12px] font-bold leading-6 text-slate-600">{{ selectedDispute.note }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="premium-glass-light rounded-[2rem] border border-white/70 p-5">
+          <div class="flex items-center justify-between">
+          <h3 class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.DRAWER.EVIDENCE' | translate }}</h3>
+          <button class="text-[11px] font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.DRAWER.DOWNLOAD_ALL' | translate }}</button>
+          </div>
+
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            <div
+              *ngFor="let file of selectedDispute.evidence"
+              class="overflow-hidden rounded-[1.3rem] border border-slate-200/60 bg-white shadow-sm">
+              <ng-container *ngIf="file.type === 'image' && file.preview; else pdfCard">
+                <div class="h-28 overflow-hidden">
+                  <img [src]="file.preview" [alt]="file.label" class="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                </div>
+                <div class="px-3 py-2">
+                  <p class="text-[10px] font-black text-slate-600">{{ file.label }}</p>
+                </div>
+              </ng-container>
+
+              <ng-template #pdfCard>
+                <div class="flex h-[9.5rem] flex-col items-center justify-center gap-2 px-4 text-slate-400">
+                  <span class="material-symbols-outlined text-[28px]">description</span>
+                  <p class="text-[10px] font-black uppercase tracking-[0.12em]">{{ file.label }}</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+        <div class="premium-glass-light rounded-[2rem] border border-white/70 p-5">
+          <h3 class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'ORDERS.DETAIL.TIMELINE' | translate }}</h3>
+          <div class="relative mt-5 space-y-5" [ngClass]="isRtl ? 'pr-5' : 'pl-5'">
+            <div class="absolute top-0 h-full w-px bg-slate-200" [ngClass]="isRtl ? 'right-[8px]' : 'left-[8px]'"></div>
+            <div *ngFor="let item of selectedDispute.timeline" class="relative">
+              <div
+                class="absolute top-1 h-4 w-4 rounded-full border-4 border-white shadow-sm"
+                [ngClass]="[getTimelineDotClass(item.tone), isRtl ? '-right-[2px]' : '-left-[2px]']"></div>
+              <div [ngClass]="isRtl ? 'pr-6' : 'pl-6'">
+                <p class="text-[12px] font-black" [ngClass]="getTimelineTextClass(item.tone)">{{ item.titleKey | translate }}</p>
+                <p class="mt-1 text-[10px] font-bold text-slate-400">{{ item.timeKey | translate }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 grid gap-3">
+            <button class="btn-primary !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openApprovalModal()">
+              <span class="material-symbols-outlined text-[18px]">check_circle</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.APPROVE' | translate }}
+            </button>
+            <button class="btn-danger !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openRejectionModal()">
+              <span class="material-symbols-outlined text-[18px]">cancel</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.REJECT' | translate }}
+            </button>
+            <button class="btn-secondary !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openRequestInfoModal()">
+              <span class="material-symbols-outlined text-[18px]">help_outline</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.REQUEST_INFO' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </ng-container>
+
+  <app-dispute-approval-modal
+    [isOpen]="isApprovalModalOpen"
+    [dispute]="selectedDispute"
+    (close)="closeApprovalModal()"
+    (saveDraft)="saveApprovalDraft()"
+    (submitDecision)="submitApproval()">
+  </app-dispute-approval-modal>
+
+  <app-dispute-rejection-modal
+    [isOpen]="isRejectionModalOpen"
+    [dispute]="selectedDispute"
+    [isRtl]="isRtl"
+    (close)="closeRejectionModal()"
+    (saveDraft)="saveRejectionDraft()"
+    (submitDecision)="submitRejection()">
+  </app-dispute-rejection-modal>
+
+  <app-dispute-request-info-modal
+    [isOpen]="isRequestInfoModalOpen"
+    [dispute]="selectedDispute"
+    [isRtl]="isRtl"
+    (close)="closeRequestInfoModal()"
+    (saveDraft)="saveRequestInfoDraft()"
+    (submitRequest)="submitRequestInfo()">
+  </app-dispute-request-info-modal>
+</div>

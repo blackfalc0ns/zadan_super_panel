@@ -28,17 +28,16 @@ export class VendorDetailHeaderComponent implements OnChanges {
   startX = 0;
   scrollLeft = 0;
 
-  title = 'تفاصيل التاجر - متجر التقنية الحديثة';
+  title = '';
   vendorId = 'VND-9928';
-  registrationDate = 'مسجل منذ ٢ مايو ٢٠٢٣';
-  category = 'إلكترونيات وتقنية';
+  registrationDate = '';
+  category = '';
 
   tabs: Tab[] = [
     { id: 'overview', labelKey: 'VENDOR_DETAIL.TAB_OVERVIEW', active: true },
     { id: 'data', labelKey: 'VENDOR_DETAIL.TAB_BASIC_DATA', active: false },
     { id: 'analytics', labelKey: 'VENDOR_DETAIL.TAB_ANALYTICS', active: false },
     { id: 'products', labelKey: 'VENDOR_DETAIL.TAB_PRODUCTS', count: 142, active: false },
-    { id: 'orders', labelKey: 'VENDOR_DETAIL.TAB_ORDERS', count: 1230, active: false },
     { id: 'finance', labelKey: 'VENDOR_DETAIL.TAB_FINANCE', active: false },
     { id: 'compliance', labelKey: 'VENDOR_DETAIL.TAB_COMPLIANCE', active: false },
     { id: 'logs', labelKey: 'VENDOR_DETAIL.TAB_LOGS', active: false },
@@ -48,10 +47,12 @@ export class VendorDetailHeaderComponent implements OnChanges {
   constructor(private translate: TranslateService) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
+    this.updateHeaderContent();
     
     this.translate.onLangChange.subscribe((event) => {
       this.currentLang = event.lang;
       this.isRTL = event.lang === 'ar';
+      this.updateHeaderContent();
     });
   }
 
@@ -91,5 +92,11 @@ export class VendorDetailHeaderComponent implements OnChanges {
     const x = event.pageX - container.offsetLeft;
     const walk = (x - this.startX) * 2; // Scroll speed multiplier
     container.scrollLeft = this.scrollLeft - walk;
+  }
+
+  private updateHeaderContent(): void {
+    this.title = this.translate.instant('VENDOR_DETAIL.HEADER_TITLE');
+    this.registrationDate = this.translate.instant('VENDOR_DETAIL.REGISTERED_SINCE');
+    this.category = this.translate.instant('VENDOR_DETAIL.CATEGORY_VALUE');
   }
 }

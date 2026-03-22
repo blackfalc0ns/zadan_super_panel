@@ -11,17 +11,25 @@ import { VendorOrdersComponent } from '../vendor-orders/vendor-orders.component'
 import { VendorFinanceComponent } from '../vendor-finance/vendor-finance.component';
 import { VendorSettingsComponent } from '../vendor-settings/vendor-settings.component';
 import { VendorAnalyticsComponent } from '../vendor-analytics/vendor-analytics.component';
+import { EditOwnerModalComponent, OwnerData } from '../../../shared/components/ui/edit-owner-modal/edit-owner-modal.component';
+import { EditLegalBankModalComponent, LegalBankData } from '../../../shared/components/ui/edit-legal-bank-modal/edit-legal-bank-modal.component';
+import { EditStoreModalComponent, StoreData } from '../../../shared/components/ui/edit-store-modal/edit-store-modal.component';
+import { CrViewerModalComponent, CommercialRegisterData } from '../../../shared/components/ui/cr-viewer-modal/cr-viewer-modal.component';
 
 @Component({
   selector: 'app-vendor-detail',
   standalone: true,
-  imports: [CommonModule, VendorDetailHeaderComponent, VendorComplianceComponent, VendorActivityLogComponent, VendorOverviewComponent, VendorProductsComponent, VendorOrdersComponent, VendorFinanceComponent, VendorSettingsComponent, VendorAnalyticsComponent, TranslateModule],
+  imports: [CommonModule, VendorDetailHeaderComponent, VendorComplianceComponent, VendorActivityLogComponent, VendorOverviewComponent, VendorProductsComponent, VendorOrdersComponent, VendorFinanceComponent, VendorSettingsComponent, VendorAnalyticsComponent, TranslateModule, EditOwnerModalComponent, EditLegalBankModalComponent, EditStoreModalComponent, CrViewerModalComponent],
   templateUrl: './vendor-detail.component.html'
 })
 export class VendorDetailComponent implements OnInit {
   currentTab: string = 'overview';
   currentLang: string = 'ar';
   isRTL: boolean = true;
+  showEditOwnerModal = false;
+  showEditLegalBankModal = false;
+  showEditStoreModal = false;
+  showCrViewerModal = false;
 
   storeData = {
     name: 'مؤسسة التقنية الحديثة التجارية',
@@ -52,6 +60,51 @@ export class VendorDetailComponent implements OnInit {
   };
 
   progressPercentage = 95;
+
+  ownerData: OwnerData = {
+    fullName: 'عبدالله بن خالد بن عبدالعزيز',
+    idNumber: '10****4321',
+    nationality: 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI',
+    email: 'info@moderntech.com',
+    phone: '50 123 4567',
+    phoneCode: '+966'
+  };
+
+  legalBankData: LegalBankData = {
+    commercialRegister: '1010123456',
+    taxNumber: '300123456700003',
+    expiryDate: '2024-05-15',
+    bankName: 'alrajhi',
+    paymentCycle: 'biweekly',
+    iban: '12 8000 0000 6080 1234 5678'
+  };
+
+  storeDataModal: StoreData = {
+    storeName: 'مؤسسة التقنية الحديثة التجارية',
+    activityType: 'electronics',
+    city: 'الرياض',
+    nationalAddress: '7293 طريق الملك فهد، حي الملقا، الرياض 13524',
+    crNumber: '1010123456',
+    registrationDate: '15 Jan 2022',
+    description: 'متجر متخصص في بيع الإلكترونيات والأجهزة الذكية'
+  };
+
+  crData: CommercialRegisterData = {
+    crNumber: '1010123456',
+    establishmentName: 'شركة زدانة التجارية',
+    entityType: 'شركة ذات مسؤولية محدودة',
+    expiryDate: '2024-12-31',
+    issueDate: '2020-01-15',
+    mainActivity: 'تجارة الجملة والتجزئة في المعدات والآلات',
+    dataSource: 'منصة واثق (API)',
+    verifiedBy: 'النظام الآلي (Zadana-Auto-Verify)',
+    internalReference: 'ZAD-CR-99823-2023',
+    isExpiringSoon: true,
+    capital: '500,000 ريال',
+    headquarters: 'الرياض - حي الملقا',
+    ownerName: 'عبدالله بن خالد بن عبدالعزيز',
+    ownerIdNumber: '10****4321'
+  };
 
   constructor(
     private translate: TranslateService,
@@ -88,6 +141,31 @@ export class VendorDetailComponent implements OnInit {
 
   onEditClick(section: string) {
     console.log('Edit clicked for:', section);
+    if (section === 'owner') {
+      this.showEditOwnerModal = true;
+    } else if (section === 'legal_bank') {
+      this.showEditLegalBankModal = true;
+    } else if (section === 'store') {
+      this.showEditStoreModal = true;
+    }
+  }
+
+  onSaveOwnerData(data: OwnerData) {
+    console.log('Saving owner data:', data);
+    this.ownerData = data;
+    this.showEditOwnerModal = false;
+  }
+
+  onSaveLegalBankData(data: LegalBankData) {
+    console.log('Saving legal bank data:', data);
+    this.legalBankData = data;
+    this.showEditLegalBankModal = false;
+  }
+
+  onSaveStoreData(data: StoreData) {
+    console.log('Saving store data:', data);
+    this.storeDataModal = data;
+    this.showEditStoreModal = false;
   }
 
   onViewDetailsClick() {
@@ -96,5 +174,43 @@ export class VendorDetailComponent implements OnInit {
 
   onGenerateReportClick() {
     console.log('Generate report clicked');
+  }
+
+  onViewCrClick() {
+    this.showCrViewerModal = true;
+  }
+
+  onCrAccept() {
+    console.log('CR document accepted');
+    this.showCrViewerModal = false;
+  }
+
+  onCrDownload() {
+    console.log('CR document download requested');
+  }
+
+  onCrVerifySource() {
+    console.log('CR source verification requested');
+  }
+
+  getBankNameLabel(bankName: string): string {
+    const bankKeys: Record<string, string> = {
+      alrajhi: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALRAJHI',
+      alahli: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALAHLI',
+      inma: 'MODALS.LEGAL_BANK_EDIT.BANKS.INMA',
+      alinma: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALINMA'
+    };
+
+    return bankKeys[bankName] ? this.translate.instant(bankKeys[bankName]) : bankName;
+  }
+
+  getPaymentCycleLabel(paymentCycle: string): string {
+    const cycleKeys: Record<string, string> = {
+      weekly: 'MODALS.LEGAL_BANK_EDIT.WEEKLY',
+      biweekly: 'MODALS.LEGAL_BANK_EDIT.BIWEEKLY',
+      monthly: 'MODALS.LEGAL_BANK_EDIT.MONTHLY'
+    };
+
+    return cycleKeys[paymentCycle] ? this.translate.instant(cycleKeys[paymentCycle]) : paymentCycle;
   }
 }

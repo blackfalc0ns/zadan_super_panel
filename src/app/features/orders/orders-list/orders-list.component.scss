@@ -1,0 +1,28 @@
+.orders-drawer-overlay {
+    backdrop-filter: blur(8px);
+}
+
+table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    table-layout: fixed !important;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+tbody tr {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+tbody tr:hover {
+    background: white;
+}
+
+td, th {
+    vertical-align: middle !important;
+}

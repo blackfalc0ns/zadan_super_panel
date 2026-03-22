@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -11,6 +11,7 @@ import { AppBadgeComponent } from '../../../shared/components/ui/badge/badge.com
 import { AppCardComponent } from '../../../shared/components/ui/card/card.component';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { AppInputComponent } from '../../../shared/components/ui/form-controls/input.component';
+import { DeleteConfirmationModalComponent } from '../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 
 @Component({
   selector: 'app-master-products',
@@ -24,7 +25,8 @@ import { AppInputComponent } from '../../../shared/components/ui/form-controls/i
     AppInputComponent,
     AppBadgeComponent,
     AppCardComponent,
-    AppPaginationComponent
+    AppPaginationComponent,
+    DeleteConfirmationModalComponent
   ],
   templateUrl: './master-products.component.html',
   styleUrl: './master-products.component.scss',
@@ -76,6 +78,11 @@ export class MasterProductsComponent implements OnInit {
   categories: Category[] = [];
   isCategoryDropdownOpen = false;
   viewMode: 'table' | 'bento' = 'bento';
+  
+  // Delete modal state
+  isDeleteModalOpen = false;
+  productToDelete: MasterProduct | null = null;
+  isDeleting = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -153,7 +160,7 @@ export class MasterProductsComponent implements OnInit {
   }
 
   getPrimaryImage(product: MasterProduct): string {
-    return product.images?.find(i => i.isPrimary)?.url || 'assets/images/placeholder-product.png';
+    return product.images?.find(i => i.isPrimary)?.url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="24" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
   }
 
   onSearch(event: any) {
@@ -200,5 +207,42 @@ export class MasterProductsComponent implements OnInit {
     }
 
     return null;
+  }
+
+  deleteProduct(productId: string, event: Event) {
+    event.stopPropagation();
+    
+    const product = this.products.find(p => p.id === productId);
+    if (!product) return;
+    
+    this.productToDelete = product;
+    this.isDeleteModalOpen = true;
+  }
+
+  confirmDelete() {
+    if (!this.productToDelete) return;
+    
+    this.isDeleting = true;
+    
+    this.catalogService.deleteProduct(this.productToDelete.id).subscribe({
+      next: () => {
+        this.isDeleting = false;
+        this.closeDeleteModal();
+        this.loadProducts();
+      },
+      error: (err) => {
+        console.error('Failed to delete product', err);
+        this.isDeleting = false;
+        alert(this.translate.currentLang === 'ar' 
+          ? 'فشل حذف المنتج' 
+          : 'Failed to delete product');
+      }
+    });
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.productToDelete = null;
+    this.isDeleting = false;
   }
 }

@@ -18,6 +18,9 @@ export class AppComponent {
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2
   ) {
+    // Hide Material Symbols text until font loads
+    this.loadMaterialSymbolsFont();
+
     // Determine language from localStorage or default to 'ar'
     const savedLang = localStorage.getItem('lang') || 'ar';
 
@@ -33,6 +36,23 @@ export class AppComponent {
       this.setDocumentDirection(event.lang);
       localStorage.setItem('lang', event.lang);
     });
+  }
+
+  private async loadMaterialSymbolsFont() {
+    try {
+      // Add class to hide icons initially
+      this.renderer.addClass(this.document.body, 'icons-loading');
+      
+      // Wait for Material Symbols font to load
+      await (document as any).fonts.load('400 24px "Material Symbols Outlined"');
+      
+      // Remove hiding class once loaded
+      this.renderer.removeClass(this.document.body, 'icons-loading');
+    } catch (error) {
+      console.warn('Material Symbols font loading failed:', error);
+      // Remove class anyway to show icons
+      this.renderer.removeClass(this.document.body, 'icons-loading');
+    }
   }
 
   private setDocumentDirection(lang: string) {

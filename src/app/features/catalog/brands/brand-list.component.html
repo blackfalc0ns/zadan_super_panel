@@ -7,13 +7,13 @@
             <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
                 <span>{{ 'SIDEBAR.CATALOG' | translate }}</span>
                 <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
-                <span class="text-zadna-primary">{{ 'SIDEBAR.BRANDS' | translate }}</span>
+                <span class="text-zadna-primary">{{ 'BRANDS.TITLE' | translate }}</span>
             </nav>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                {{ 'SIDEBAR.BRANDS' | translate }} والماركات
+                {{ 'BRANDS.TITLE' | translate }}
             </h1>
             <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-                إدارة العلامات التجارية وتتبع انتشار المنتجات المسجلة في النظام
+                {{ 'BRANDS.DESC' | translate }}
             </p>
         </div>
 
@@ -27,7 +27,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
                         </svg>
                     </div>
-                    <span class="font-black uppercase tracking-[0.1em] text-xs sm:text-sm">{{ 'COMMON.ADD' | translate }} ماركة</span>
+                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'COMMON.ADD' | translate }} {{ 'BRANDS.BRAND_UNIT' | translate }}</span>
                 </div>
             </app-button>
         </div>
@@ -64,11 +64,11 @@
                 <thead class="hidden sm:table-header-group border-b border-slate-100/50">
                     <tr class="sm:table-row">
                         <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
-                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">اللوجو</th>
-                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">العلامة التجارية</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الكود</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الحالة</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">الإجراءات</th>
+                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.LOGO' | translate }}</th>
+                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'BRANDS.BRAND' | translate }}</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.CODE' | translate }}</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.STATUS' | translate }}</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.ACTIONS' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody class="block sm:table-row-group stagger-rows w-full">
@@ -78,7 +78,7 @@
                         
                         <!-- Col 1: Index -->
                         <td class="hidden sm:table-cell text-center align-middle sm:w-[5%]">
-                            <span class="text-[10px] sm:text-[11px] font-black text-slate-300 transition-colors">{{ i + 1 }}</span>
+                            <span class="text-[10px] sm:text-[11px] font-black text-slate-300 transition-colors">{{ (currentPage - 1) * pageSize + i + 1 }}</span>
                         </td>
 
                         <!-- Col 2: Image & Name Mobile Fusion -->
@@ -119,7 +119,7 @@
 
                         <!-- Col 4: Code -->
                         <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
-                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">الكود</span>
+                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'BRANDS.CODE' | translate }}</span>
                             <code class="text-[10px] font-bold text-indigo-500 bg-indigo-50/50 px-3 py-1 rounded-xl border border-indigo-100/50 uppercase tracking-wider">
                                 {{ brand.id.toString().substring(0, 8) }}
                             </code>
@@ -127,13 +127,13 @@
 
                         <!-- Col 5: Status -->
                         <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
-                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">الحالة</span>
+                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'BRANDS.STATUS' | translate }}</span>
                             <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
                                  [class.text-emerald-500]="brand.isActive" [class.text-slate-400]="!brand.isActive">
                                 <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
                                       [class.bg-emerald-500]="brand.isActive" [class.bg-slate-300]="!brand.isActive"></span>
                                 <span class="text-[10px] font-black tracking-tight uppercase">
-                                    {{ brand.isActive ? 'نشط' : 'معطل' }}
+                                    {{ brand.isActive ? ('BRANDS.STATUS_ACTIVE' | translate) : ('BRANDS.STATUS_DISABLED' | translate) }}
                                 </span>
                             </div>
                         </td>
@@ -166,6 +166,17 @@
             </table>
         </div>
 
+        <!-- Pagination Mirror -->
+        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+            <app-pagination
+                *ngIf="!isLoading && brands.length > 0"
+                [currentPage]="currentPage"
+                [pageSize]="pageSize"
+                [totalItems]="totalItems"
+                (pageChange)="changePage($event)">
+            </app-pagination>
+        </div>
+
         <!-- Extraordinary Empty State -->
         <div *ngIf="!isLoading && brands.length === 0" 
              class="relative p-20 text-center animate-in zoom-in duration-700">
@@ -177,14 +188,14 @@
                     </svg>
                 </div>
                 <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'COMMON.NO_RESULTS' | translate }}</h3>
-                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ (translate.currentLang === 'ar' ? 'لا يوجد نتائج للبحث حالياً' : 'We searched all corners but couldn\'t find matches.') }}</p>
+                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ 'BRANDS.NO_RESULTS_DESC' | translate }}</p>
                 <div class="pt-6">
                     <app-button variant="primary" (btnClick)="openAddBrand()">
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <span>{{ 'COMMON.ADD' | translate }} ماركة</span>
+                            <span>{{ 'COMMON.ADD' | translate }} {{ 'BRANDS.BRAND_UNIT' | translate }}</span>
                         </div>
                     </app-button>
                 </div>

@@ -1,7 +1,5 @@
-// 1. Perspective Container
 :host {
     display: block;
-    perspective: 2000px;
 }
 
 // All styling moved to Tailwind CSS classes in HTML for build purity.

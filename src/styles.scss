@@ -17,7 +17,7 @@
   font-family: 'Material Symbols Outlined';
   font-style: normal;
   font-weight: 100 700;
-  font-display: block;
+  font-display: optional;
   src: url('../node_modules/material-symbols/material-symbols-outlined.woff2') format('woff2');
 }
 
@@ -42,6 +42,12 @@
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
+}
+
+/* Hide icon text until font is loaded - CRITICAL FIX */
+body.icons-loading .material-symbols-outlined {
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
 
 html,
@@ -400,4 +406,65 @@ body {
 
 .glass-card-sm {
   @apply bg-white border border-slate-100 shadow-sm rounded-2xl;
+}
+
+
+// Ensure delete modal backdrop covers everything including header and footer
+app-delete-confirmation-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  pointer-events: none;
+  
+  > div {
+    pointer-events: auto;
+  }
+}
+
+// Force modal overlay to be on top of everything
+.delete-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+}
+
+.delete-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999998 !important;
+}
+
+.delete-modal-card {
+  position: relative !important;
+  z-index: 999999 !important;
+}
+
+// Ensure header and other elements are below modal
+app-layout,
+.layout-header,
+header,
+nav {
+  position: relative;
+  z-index: auto !important;
+}
+
+// Chat button should be below modal
+.chat-button,
+[class*="chat"],
+[class*="float"] {
+  z-index: 50 !important;
+}
+
+// Nuclear option - force everything to be below modal when it's open
+body:has(.delete-modal-overlay) {
+  * {
+    isolation: auto !important;
+  }
+  
+  app-delete-confirmation-modal,
+  .delete-modal-overlay,
+  .delete-modal-backdrop,
+  .delete-modal-card {
+    isolation: isolate !important;
+  }
 }

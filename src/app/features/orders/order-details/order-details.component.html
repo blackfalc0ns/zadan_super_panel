@@ -1,0 +1,408 @@
+<div class="h-full flex flex-col font-sans pb-10 overflow-y-auto px-4 md:px-10 py-6 max-w-[1440px] mx-auto w-full" [dir]="'SIDEBAR.DIR' | translate">
+    
+    <!-- Top Nav / Breadcrumb -->
+    <nav class="flex items-center gap-2 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-slate-400 mb-6 animate-in slide-in-from-right-5 duration-700">
+        <a routerLink="/" class="hover:text-zadna-primary transition-colors">{{ 'SIDEBAR.HOME' | translate }}</a>
+        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+        <a routerLink="/orders" class="hover:text-zadna-primary transition-colors">{{ 'ORDERS.TITLE' | translate }}</a>
+        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+        <span class="text-zadna-primary">{{ 'ORDERS.DETAIL.TITLE' | translate }}</span>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 animate-in fade-in duration-700">
+        <div>
+            <div class="flex items-center gap-3 mb-2">
+                <h1 class="text-2xl font-black text-zadna-primary leading-tight">{{ 'ORDERS.DETAIL.TITLE' | translate }}</h1>
+                <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-bold font-mono text-slate-600">
+                    {{ order()?.id }}
+                </span>
+            </div>
+            <p class="text-sm text-slate-400 max-w-2xl">{{ 'ORDERS.DETAIL.TITLE_DESC' | translate }}</p>
+            
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1"
+                      [ngClass]="getStatusClass(order()?.status || '')">
+                    <span class="w-1.5 h-1.5 rounded-full animate-pulse"
+                          [ngClass]="{
+                            'bg-emerald-500': order()?.status === 'COMPLETED' || order()?.status === 'DELIVERED',
+                            'bg-amber-500': order()?.status === 'IN_PROGRESS',
+                            'bg-blue-500': order()?.status === 'OUT_FOR_DELIVERY' || order()?.status === 'NEW',
+                            'bg-red-500': order()?.status === 'CANCELLED'
+                          }"></span> 
+                    {{ 'ORDERS.STATUS.' + order()?.status | translate }}
+                </span>
+                <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">check_circle</span> {{ 'ORDERS.DETAIL.PAYMENT' | translate }}
+                </span>
+                <span class="px-3 py-1 rounded-full bg-teal-50 text-teal-700 text-[11px] font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">local_shipping</span> {{ 'ORDERS.DETAIL.PICKUP' | translate }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-2">
+            <button class="bg-zadna-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:scale-95 transition-transform">
+                <span class="material-symbols-outlined text-sm">edit</span> {{ 'ORDERS.DETAIL.UPDATE_STATUS' | translate }}
+            </button>
+            <button class="bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all">{{ 'ORDERS.DETAIL.OPEN_DISPUTE' | translate }}</button>
+            <button class="bg-white border border-slate-200 p-2 rounded-xl text-slate-600 hover:bg-slate-50 transition-all" [title]="'ORDERS.DETAIL.PRINT' | translate">
+                <span class="material-symbols-outlined text-lg">print</span>
+            </button>
+            <button class="bg-white border border-slate-200 p-2 rounded-xl text-slate-600 hover:bg-slate-50 transition-all" [title]="'ORDERS.DETAIL.COPY_LINK' | translate">
+                <span class="material-symbols-outlined text-lg">link</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Summary Strip -->
+    <div class="grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8 animate-in slide-in-from-bottom-5 duration-700">
+        <div class="bg-white/70 backdrop-blur-xl border border-slate-200/50 p-4 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-8 h-8 bg-zadna-primary/10 rounded-full -mr-4 -mt-4 blur-xl"></div>
+            <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
+            <span class="text-sm font-black font-mono text-zadna-primary">{{ order()?.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+        </div>
+        <div class="bg-white/70 backdrop-blur-xl border border-slate-200/50 p-3 rounded-2xl flex flex-col items-center justify-center text-center">
+            <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.QUANTITY' | translate }}</span>
+            <span class="text-sm font-bold text-slate-800">{{ order()?.items?.length }} {{ 'COMMON.ENTRIES' | translate }}</span>
+        </div>
+        <div class="bg-white/70 backdrop-blur-xl border border-slate-200/50 p-3 rounded-2xl flex flex-col items-center justify-center text-center">
+            <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.PAYMENT' | translate }}</span>
+            <span class="text-sm font-bold text-slate-800 flex items-center gap-1">{{ 'ORDERS.DETAIL.MADA' | translate }} <span class="w-2 h-2 rounded-full bg-blue-500"></span></span>
+        </div>
+        <div class="bg-white/70 backdrop-blur-xl border border-slate-200/50 p-3 rounded-2xl flex flex-col items-center justify-center text-center">
+            <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.PICKUP' | translate }}</span>
+            <span class="text-sm font-bold text-slate-800">{{ 'ORDERS.DETAIL.HOME_DELIVERY' | translate }}</span>
+        </div>
+        <div class="bg-white/70 backdrop-blur-xl border border-slate-200/50 p-3 rounded-2xl flex flex-col items-center justify-center text-center truncate px-2">
+            <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.DRIVER' | translate }}</span>
+            <span class="text-[11px] font-bold text-slate-800 truncate">{{ order()?.driverName || '--' }}</span>
+        </div>
+        <div class="bg-white/70 backdrop-blur-xl border border-slate-200/50 p-3 rounded-2xl flex flex-col items-center justify-center text-center">
+            <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.SLA' | translate }}</span>
+            <span class="text-sm font-black font-mono text-zadna-primary">100%</span>
+        </div>
+        <div class="bg-white/70 backdrop-blur-xl border border-emerald-500/20 p-3 rounded-2xl flex flex-col items-center justify-center text-center">
+            <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.ALERTS' | translate }}</span>
+            <span class="text-[11px] font-bold text-emerald-600">{{ 'ORDERS.DETAIL.NO_ALERTS' | translate }}</span>
+        </div>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-12 gap-6 animate-in slide-in-from-bottom-10 duration-1000">
+        
+        <!-- Left Column (Main Data) -->
+        <div class="col-span-12 xl:col-span-8 space-y-6">
+            
+            <!-- Ordered Items Card -->
+            <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] overflow-hidden shadow-sm">
+                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-sm font-black text-zadna-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined">shopping_basket</span>
+                        {{ 'ORDERS.DETAIL.ORDERED_ITEMS' | translate }}
+                    </h3>
+                    <span class="text-[10px] font-bold px-2 py-0.5 bg-slate-50 rounded-md text-slate-400 uppercase font-mono tracking-widest">{{ order()?.items?.length }} {{ 'COMMON.ENTRIES' | translate }}</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right">
+                        <thead>
+                            <tr class="bg-slate-50/50">
+                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.ITEM' | translate }}</th>
+                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.SKU' | translate }}</th>
+                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400 text-center">{{ 'ORDERS.DETAIL.QUANTITY' | translate }}</th>
+                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.PRICE' | translate }}</th>
+                                <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.SUBTOTAL' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100/50">
+                            <tr *ngFor="let item of order()?.items; let i = index" class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shadow-sm">
+                                            {{ item.icon }}
+                                        </div>
+                                        <div>
+                                            <p class="text-[13px] font-bold text-slate-800">{{ item.name }}</p>
+                                            <p class="text-[10px] text-slate-400">{{ item.brand }} - {{ item.quantity }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-[10px] font-mono text-slate-400">SKU-0{{ i + 1 }}</td>
+                                <td class="px-6 py-4 text-[12px] font-bold text-center font-mono text-slate-600">
+                                    {{ item.quantity }}
+                                </td>
+                                <td class="px-6 py-4 text-[12px] font-bold font-mono text-slate-600">{{ item.price | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</td>
+                                <td class="px-6 py-4 text-[12px] font-bold font-mono text-zadna-primary">{{ item.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Financial & Timeline Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Timeline Card -->
+                <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 relative">
+                    <h3 class="text-sm font-black text-zadna-primary mb-8 flex items-center gap-2">
+                        <span class="material-symbols-outlined">timeline</span>
+                        {{ 'ORDERS.DETAIL.TIMELINE' | translate }}
+                    </h3>
+                    
+                    <div class="space-y-6 relative mr-2">
+                        <!-- Vertical Line -->
+                        <div class="absolute right-[11px] top-2 bottom-2 w-0.5 bg-slate-200/50"></div>
+                        
+                        <div *ngFor="let step of order()?.timeline" class="relative pr-8" [class.opacity-40]="step.status === 'PENDING'">
+                            
+                            <!-- Indicator Completed -->
+                            <div *ngIf="step.status === 'COMPLETED'" class="absolute right-0 top-1 w-[22px] h-[22px] rounded-full bg-zadna-primary flex items-center justify-center z-10 shadow-sm border-2 border-white">
+                                <span class="material-symbols-outlined text-white text-[12px] font-black">check</span>
+                            </div>
+                            
+                            <!-- Indicator In Progress -->
+                            <div *ngIf="step.status === 'IN_PROGRESS'" class="absolute right-0 top-1 w-[22px] h-[22px] rounded-full bg-amber-500 ring-4 ring-amber-500/20 flex items-center justify-center z-10">
+                                <span class="material-symbols-outlined text-white text-[12px] animate-spin-slow">autorenew</span>
+                            </div>
+
+                            <!-- Indicator Pending -->
+                            <div *ngIf="step.status === 'PENDING'" class="absolute right-0 top-1 w-[22px] h-[22px] rounded-full bg-slate-200 flex items-center justify-center z-10 border-2 border-white shadow-sm">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                            </div>
+                            
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="text-[13px] font-bold" 
+                                    [ngClass]="{
+                                        'text-slate-800': step.status === 'COMPLETED' || step.status === 'PENDING',
+                                        'text-amber-500': step.status === 'IN_PROGRESS'
+                                    }">
+                                    {{ step.titleKey | translate }}
+                                </h4>
+                                <span class="text-[10px] font-mono text-slate-400">{{ step.time }}</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400">{{ step.subtitleKey | translate }}</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Payment & Totals Card -->
+                <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 flex flex-col">
+                    <h3 class="text-sm font-black text-zadna-primary mb-6 flex items-center gap-2">
+                        <span class="material-symbols-outlined">account_balance_wallet</span>
+                        {{ 'ORDERS.DETAIL.PAYMENT_DETAILS' | translate }}
+                    </h3>
+                    <div class="space-y-4 flex-1">
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.PAYMENT_METHOD' | translate }}</span>
+                            <span class="text-xs font-bold text-slate-800 flex items-center gap-1">{{ 'ORDERS.DETAIL.MADA' | translate }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.TRANSACTION_REF' | translate }}</span>
+                            <span class="text-[11px] font-bold font-mono text-slate-800">#TRX-8271039</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.ORDER_SUBTOTAL' | translate }}</span>
+                            <span class="text-xs font-bold font-mono text-slate-700">{{ order()?.subtotal | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.DELIVERY_FEE' | translate }}</span>
+                            <span class="text-xs font-bold font-mono text-slate-700">{{ order()?.deliveryFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.TAX' | translate }}</span>
+                            <span class="text-xs font-bold font-mono text-slate-700">{{ order()?.tax | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                        </div>
+                        
+                        <div class="mt-4 p-4 rounded-xl bg-zadna-primary/5 border border-zadna-primary/10 mt-auto">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-black text-zadna-primary uppercase tracking-wider">{{ 'ORDERS.DETAIL.FINAL_TOTAL' | translate }}</span>
+                                <span class="text-lg font-black font-mono text-zadna-primary">{{ order()?.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                            </div>
+                        </div>
+                        <button class="w-full mt-2 text-[11px] font-bold text-zadna-primary flex items-center justify-center gap-1 hover:underline">
+                            {{ 'ORDERS.DETAIL.VIEW_TRANSACTION' | translate }} <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Delivery Details & Map Placeholder -->
+            <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] overflow-hidden flex flex-col md:flex-row shadow-sm min-h-[300px]">
+                
+                <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center border-l border-slate-100">
+                    <h3 class="text-sm font-black text-zadna-primary flex items-center gap-2 mb-6">
+                        <span class="material-symbols-outlined">location_on</span>
+                        {{ 'ORDERS.DETAIL.LOCATION_DELIVERY' | translate }}
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 block mb-1">{{ 'ORDERS.DETAIL.DELIVERY_ADDRESS' | translate }}</label>
+                            <p class="text-[13px] font-semibold text-slate-800 leading-relaxed">{{ order()?.customerAddress }}</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 block mb-1">{{ 'ORDERS.DETAIL.EXPECTED_TIME' | translate }}</label>
+                                <p class="text-xs font-bold font-mono text-amber-600">{{ order()?.time }}</p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 block mb-1">{{ 'ORDERS.DETAIL.HOUSING_TYPE' | translate }}</label>
+                                <p class="text-xs font-bold text-slate-800">{{ 'ORDERS.DETAIL.APARTMENT' | translate }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-100/50 flex items-start gap-3">
+                            <span class="material-symbols-outlined text-amber-500 text-[18px] mt-0.5">info</span>
+                            <p class="text-[11px] text-slate-600 font-medium leading-relaxed">{{ 'ORDERS.DETAIL.CUSTOMER_NOTE' | translate }}: {{ 'ORDERS.DETAIL.CUSTOMER_NOTE_TEXT' | translate }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Map Area -->
+                <div class="w-full md:w-1/2 bg-slate-100 relative group cursor-pointer overflow-hidden min-h-[200px]">
+                    <!-- Map Placeholder Image (Stylized) -->
+                    <div class="absolute inset-0 bg-slate-200 flex items-center justify-center" style="background-image: radial-gradient(circle at center, #cbd5e1 1px, transparent 1px); background-size: 20px 20px;">
+                        <span class="material-symbols-outlined text-[64px] text-slate-300">map</span>
+                    </div>
+                    
+                    <div class="absolute inset-0 bg-zadna-primary/10 flex items-center justify-center group-hover:bg-zadna-primary/20 transition-all duration-500">
+                        <button class="bg-white/95 px-5 py-2.5 rounded-full shadow-xl flex items-center gap-2 transform group-hover:-translate-y-1 transition-transform">
+                            <span class="material-symbols-outlined text-zadna-primary text-[18px]">near_me</span>
+                            <span class="text-[11px] font-black text-slate-800">{{ 'ORDERS.DETAIL.LIVE_TRACKING' | translate }}</span>
+                        </button>
+                    </div>
+                </div>
+                
+            </section>
+        </div>
+
+        <!-- Right Column (Stakeholders & Sidebar) -->
+        <div class="col-span-12 xl:col-span-4 space-y-6">
+            
+            <!-- Customer Card -->
+            <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 shadow-sm">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200/60 relative">
+                            <span class="material-symbols-outlined text-zadna-primary text-xl">person</span>
+                            <span class="absolute -top-1 -right-1 bg-red-500 w-3 h-3 rounded-full border-2 border-white" title="High Risk"></span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-slate-800">{{ order()?.customerName }}</h4>
+                            <span class="text-[9px] px-2 py-0.5 mt-1 inline-block bg-red-50 text-red-600 border border-red-100 rounded font-black uppercase tracking-widest">{{ 'ORDERS.DETAIL.HIGH_RISK' | translate }}</span>
+                        </div>
+                    </div>
+                    <a class="text-slate-400 hover:text-zadna-primary hover:bg-slate-50 p-2 rounded-lg transition-colors" href="#">
+                        <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
+                    </a>
+                </div>
+                <div class="space-y-3 pt-2">
+                    <div class="flex items-center gap-3 text-[13px]">
+                        <span class="material-symbols-outlined text-slate-400 text-[18px]">call</span>
+                        <span class="font-mono text-slate-700 font-semibold" dir="ltr">{{ order()?.customerPhone }}</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-[13px]">
+                        <span class="material-symbols-outlined text-slate-400 text-[18px]">mail</span>
+                        <span class="font-mono text-slate-700 font-semibold" dir="ltr">sara.a&#64;example.com</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Vendor Card -->
+            <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 shadow-sm">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-5">{{ 'ORDERS.DETAIL.VENDOR_INFO' | translate }}</h3>
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-12 h-12 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500">
+                        <span class="material-symbols-outlined">storefront</span>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black text-slate-800">{{ order()?.merchantName }}</h4>
+                        <p class="text-[10px] font-bold text-slate-400 mt-1">{{ 'ORDERS.DETAIL.BRANCH' | translate }}: {{ order()?.merchantBranch }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl mb-4">
+                    <span class="text-[10px] font-bold text-slate-500">{{ 'ORDERS.DETAIL.PREPARATION_STATUS' | translate }}</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded">{{ 'ORDERS.STATUS.PENDING' | translate }}</span>
+                </div>
+                <button class="w-full py-2.5 border border-slate-200 hover:border-zadna-primary/30 rounded-xl text-[11px] font-black text-zadna-primary hover:bg-zadna-primary/5 transition-colors">
+                    {{ 'ORDERS.DETAIL.VIEW_VENDOR_UI' | translate }}
+                </button>
+            </section>
+
+            <!-- Driver Card -->
+            <section class="bg-white/80 backdrop-blur-xl border-t-4 border-b border-l border-r border-amber-500 border-x-slate-200/50 border-b-slate-200/50 rounded-[1.5rem] p-6 shadow-sm">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-5">{{ 'ORDERS.DETAIL.DRIVER_DETAILS' | translate }}</h3>
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-12 h-12 rounded-full border-2 border-amber-500/20 bg-slate-100 flex items-center justify-center">
+                        <span class="text-xl">👮‍♂️</span>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black text-slate-800">{{ order()?.driverName }}</h4>
+                        <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> {{ 'ORDERS.DETAIL.ACTIVE_NOW' | translate }}
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-3 text-[11px] mb-5 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-500 font-bold">{{ 'VENDORS.COL_CONTACT' | translate }}:</span>
+                        <span class="font-bold text-slate-800 font-mono" dir="ltr">{{ order()?.driverPhone }}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-slate-100 pt-2">
+                        <span class="text-slate-500 font-bold">{{ 'ORDERS.DETAIL.VEHICLE' | translate }}:</span>
+                        <span class="font-black text-slate-800">{{ 'ORDERS.DETAIL.VEHICLE_MOCK' | translate }}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-slate-100 pt-2">
+                        <span class="text-slate-500 font-bold">{{ 'ORDERS.DETAIL.PLATE' | translate }}:</span>
+                        <span class="font-black font-mono text-slate-800" dir="ltr">{{ 'ORDERS.DETAIL.PLATE_MOCK' | translate }}</span>
+                    </div>
+                </div>
+                <button class="w-full py-2.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl text-[11px] font-black hover:bg-amber-100 transition-colors">
+                    {{ 'ORDERS.DETAIL.CHANGE_DRIVER' | translate }}
+                </button>
+            </section>
+
+            <!-- Support & Issues Card -->
+            <section class="bg-red-50/50 backdrop-blur-xl border border-red-100 rounded-[1.5rem] p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="text-xs font-black text-red-600 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">report</span>
+                        {{ 'ORDERS.DETAIL.SUPPORT_DISPUTES' | translate }}
+                    </h3>
+                    <span class="text-[10px] font-bold text-emerald-600">{{ 'ORDERS.DETAIL.NO_DISPUTES' | translate }}</span>
+                </div>
+                <div class="flex gap-2">
+                    <button class="flex-1 py-2.5 bg-white rounded-xl text-[11px] font-black border border-red-100 text-slate-700 hover:shadow-md transition-shadow">{{ 'ORDERS.DETAIL.ADD_NOTE' | translate }}</button>
+                    <button class="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-[11px] font-black hover:bg-red-700 transition-colors">{{ 'ORDERS.DETAIL.ESCALATE' | translate }}</button>
+                </div>
+            </section>
+
+            <!-- Activity Log Card -->
+            <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 shadow-sm">
+                <h3 class="text-xs font-black text-zadna-primary mb-5 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">history</span>
+                    {{ 'ORDERS.DETAIL.ACTIVITY_LOG' | translate }}
+                </h3>
+                <div class="space-y-5 relative">
+                    <!-- Connective line -->
+                    <div class="absolute right-[3px] top-2 bottom-2 w-[1px] bg-slate-100"></div>
+                    
+                    <div *ngFor="let activity of order()?.activities" class="relative flex gap-3 z-10">
+                        <div class="w-2 h-2 mt-1.5 rounded-full ring-4 ring-white"
+                             [ngClass]="{'bg-zadna-primary': activity.titleKey.includes('STATUS'), 'bg-slate-300': !activity.titleKey.includes('STATUS')}"></div>
+                        <div class="flex-1">
+                            <p class="text-[11px] font-black text-slate-800">{{ activity.titleKey | translate }}</p>
+                            <div class="flex items-center justify-between w-full mt-1">
+                                <span class="text-[9px] font-bold text-slate-400">{{ activity.actorKey | translate }}</span>
+                                <span class="text-[9px] font-mono text-slate-400 bg-slate-50 px-1.5 rounded">{{ activity.time }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>

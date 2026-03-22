@@ -43,7 +43,7 @@
                              [class.border-slate-200]="selectedImageIndex !== i"
                              [class.opacity-50]="selectedImageIndex !== i">
                             <img [src]="image.url" 
-                                 [alt]="'صورة ' + (i + 1)"
+                                 [alt]="('PRODUCTS.DETAIL.IMAGE_ALT' | translate) + ' ' + (i + 1)"
                                  class="w-full h-full object-cover">
                         </div>
                     </div>
@@ -154,10 +154,10 @@
                                         </div>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">120 ريال</span>
+                                        <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">منذ ساعتين</span>
+                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TWO_HOURS_AGO' | translate }}</span>
                                     </td>
                                 </tr>
 
@@ -178,10 +178,10 @@
                                         </div>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">125 ريال</span>
+                                        <span class="text-sm font-semibold text-slate-900">125 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">أمس</span>
+                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_YESTERDAY' | translate }}</span>
                                     </td>
                                 </tr>
 
@@ -202,10 +202,10 @@
                                         </div>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">118 ريال</span>
+                                        <span class="text-sm font-semibold text-slate-900">118 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">منذ 3 أيام</span>
+                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_THREE_DAYS_AGO' | translate }}</span>
                                     </td>
                                 </tr>
 
@@ -226,10 +226,10 @@
                                         </div>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">122 ريال</span>
+                                        <span class="text-sm font-semibold text-slate-900">122 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">اليوم</span>
+                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TODAY' | translate }}</span>
                                     </td>
                                 </tr>
 
@@ -250,10 +250,10 @@
                                         </div>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">120 ريال</span>
+                                        <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                     </td>
                                     <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">منذ أسبوع</span>
+                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_WEEK_AGO' | translate }}</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -269,7 +269,7 @@
                                     <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
                                     <span class="text-sm font-medium text-slate-900">مؤسسة الأمين للتجارة</span>
                                 </div>
-                                <span class="text-xs text-slate-500">منذ ساعتين</span>
+                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TWO_HOURS_AGO' | translate }}</span>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
@@ -283,7 +283,7 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">120 ريال</span>
+                                    <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                 </div>
                             </div>
                         </div>
@@ -295,7 +295,7 @@
                                     <div class="w-2 h-2 rounded-full bg-red-500"></div>
                                     <span class="text-sm font-medium text-slate-900">تجارة الجود المريح</span>
                                 </div>
-                                <span class="text-xs text-slate-500">أمس</span>
+                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_YESTERDAY' | translate }}</span>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
@@ -309,7 +309,7 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">125 ريال</span>
+                                    <span class="text-sm font-semibold text-slate-900">125 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                 </div>
                             </div>
                         </div>
@@ -321,7 +321,7 @@
                                     <div class="w-2 h-2 rounded-full bg-blue-500"></div>
                                     <span class="text-sm font-medium text-slate-900">تجارة الجملة الحديثة</span>
                                 </div>
-                                <span class="text-xs text-slate-500">منذ 3 أيام</span>
+                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_THREE_DAYS_AGO' | translate }}</span>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
@@ -335,7 +335,7 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">118 ريال</span>
+                                    <span class="text-sm font-semibold text-slate-900">118 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                 </div>
                             </div>
                         </div>
@@ -347,7 +347,7 @@
                                     <div class="w-2 h-2 rounded-full bg-purple-500"></div>
                                     <span class="text-sm font-medium text-slate-900">مؤسسة الوداد</span>
                                 </div>
-                                <span class="text-xs text-slate-500">اليوم</span>
+                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TODAY' | translate }}</span>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
@@ -361,7 +361,7 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">122 ريال</span>
+                                    <span class="text-sm font-semibold text-slate-900">122 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                 </div>
                             </div>
                         </div>
@@ -373,7 +373,7 @@
                                     <div class="w-2 h-2 rounded-full bg-pink-500"></div>
                                     <span class="text-sm font-medium text-slate-900">تجارة الوحدة الحديثة</span>
                                 </div>
-                                <span class="text-xs text-slate-500">منذ أسبوع</span>
+                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_WEEK_AGO' | translate }}</span>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
@@ -387,7 +387,7 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">120 ريال</span>
+                                    <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                 </div>
                             </div>
                         </div>

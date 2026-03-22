@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
+import { FinancialStatementModalComponent, FinancialStatementConfig } from '../../../shared/components/ui/financial-statement-modal/financial-statement-modal.component';
+import { PayoutsReviewModalComponent } from '../../../shared/components/ui/payouts-review-modal/payouts-review-modal.component';
+import { CreateSettlementModalComponent, SettlementConfig } from '../../../shared/components/ui/create-settlement-modal/create-settlement-modal.component';
 
 interface KPI {
   id: string;
@@ -40,7 +43,7 @@ interface Invoice {
 @Component({
   selector: 'app-vendor-finance',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, FinancialStatementModalComponent, PayoutsReviewModalComponent, CreateSettlementModalComponent],
   templateUrl: './vendor-finance.component.html'
 })
 export class VendorFinanceComponent {
@@ -49,6 +52,9 @@ export class VendorFinanceComponent {
   vendorId: string = 'VND-9928';
   currentLang: string = 'ar';
   isRTL: boolean = true;
+  showFinancialStatementModal = false;
+  showPayoutsReviewModal = false;
+  showCreateSettlementModal = false;
 
   kpis: KPI[] = [
     {
@@ -136,7 +142,7 @@ export class VendorFinanceComponent {
   bankInfo = {
     bankName: 'Al Rajhi Bank',
     iban: 'SA** **** **** 1234',
-    paymentCycle: 'أسبوعية'
+    paymentCycle: 'VENDOR_FINANCE.WEEKLY_CYCLE'
   };
 
   settlements: Settlement[] = [
@@ -231,14 +237,55 @@ export class VendorFinanceComponent {
 
   onCreateSettlement() {
     console.log('Create settlement');
+    this.showCreateSettlementModal = true;
+  }
+
+  onSettlementCreated(config: SettlementConfig) {
+    console.log('Settlement created:', config);
+    this.showCreateSettlementModal = false;
+    // Here you would call your API to create the settlement
+  }
+
+  onSettlementDraftSaved(config: SettlementConfig) {
+    console.log('Settlement draft saved:', config);
+    this.showCreateSettlementModal = false;
+    // Here you would call your API to save the draft
   }
 
   onDownloadStatement() {
     console.log('Download financial statement');
+    this.showFinancialStatementModal = true;
+  }
+
+  onStatementDownload(config: FinancialStatementConfig) {
+    console.log('Downloading statement with config:', config);
+    // Here you would call your API to generate and download the statement
+    this.showFinancialStatementModal = false;
+  }
+
+  onStatementPreview(config: FinancialStatementConfig) {
+    console.log('Previewing statement with config:', config);
+    // Here you would call your API to preview the statement
   }
 
   onReviewPayments() {
     console.log('Review payments');
+    this.showPayoutsReviewModal = true;
+  }
+
+  onRetryPayment(transactionId: string) {
+    console.log('Retry payment:', transactionId);
+    // Here you would call your API to retry the payment
+  }
+
+  onSuspendPayment(transactionId: string) {
+    console.log('Suspend payment:', transactionId);
+    // Here you would call your API to suspend the payment
+  }
+
+  onEscalatePayment(transactionId: string) {
+    console.log('Escalate payment:', transactionId);
+    // Here you would call your API to escalate the payment
   }
 
   onViewMoreSettlements() {

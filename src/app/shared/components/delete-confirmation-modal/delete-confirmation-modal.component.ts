@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -9,16 +9,17 @@ import { AppCardComponent } from '../ui/card/card.component';
   selector: 'app-delete-confirmation-modal',
   standalone: true,
   imports: [CommonModule, TranslateModule, AppButtonComponent, AppCardComponent],
+  encapsulation: ViewEncapsulation.None,
   template: `
-    <div *ngIf="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12 overflow-hidden">
-      <!-- Sophisticated Backdrop -->
-      <div class="absolute inset-0 bg-zadna-bgDark/60 backdrop-blur-md animate-in fade-in duration-700" (click)="onClose()"></div>
+    <div *ngIf="isOpen" class="delete-modal-overlay">
+      <!-- Enhanced Backdrop with Stronger Blur - Covers Everything -->
+      <div class="delete-modal-backdrop" (click)="onClose()"></div>
 
       <!-- Modal Content -->
       <app-card 
         variant="default"
         padding="none"
-        customClass="w-[450px] max-w-full relative z-10 flex flex-col animate-in slide-in-bottom duration-500 rounded-[3rem] overflow-hidden shadow-2xl">
+        customClass="delete-modal-card">
         
         <div class="p-8 text-center bg-white">
             <!-- Warning Icon Area -->
@@ -62,18 +63,65 @@ import { AppCardComponent } from '../ui/card/card.component';
     </div>
   `,
   styles: [`
-    @keyframes puzzle-up {
-      from { opacity: 0; transform: scale(0.9) translateY(40px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
+    .delete-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease-out;
     }
-    .animate-puzzle-up { animation: puzzle-up 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    
+    .delete-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 1;
+    }
+    
+    .delete-modal-card {
+      width: 450px;
+      max-width: 100%;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      border-radius: 3rem;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { 
+        opacity: 0; 
+        transform: scale(0.9) translateY(40px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+      }
+    }
 
     @keyframes shake {
       0%, 100% { transform: rotate(0); }
       20%, 60% { transform: rotate(-10deg); }
       40%, 80% { transform: rotate(10deg); }
     }
-    .animate-shake { animation: shake 1s infinite; }
+    
+    .animate-shake { 
+      animation: shake 1s infinite; 
+    }
   `]
 })
 export class DeleteConfirmationModalComponent {
