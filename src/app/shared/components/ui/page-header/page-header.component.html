@@ -16,8 +16,20 @@
         </button>
 
         <div class="min-w-0">
+            <nav *ngIf="breadcrumbs.length" class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
+                <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
+                    <a *ngIf="breadcrumb.url && !last" [routerLink]="breadcrumb.url" class="transition-colors hover:text-zadna-primary">
+                        {{ breadcrumb.label | translate }}
+                    </a>
+                    <span *ngIf="!breadcrumb.url || last" [class.text-zadna-primary]="last">
+                        {{ breadcrumb.label | translate }}
+                    </span>
+                    <span *ngIf="!last" class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
+                </ng-container>
+            </nav>
 
             <div class="flex items-center gap-2">
+                <ng-content select="[title-prefix]"></ng-content>
                 <h1 *ngIf="title" class="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none whitespace-nowrap">
                     {{ title | translate }}
                 </h1>
@@ -28,7 +40,7 @@
     </div>
 
     <!-- Controls: Search (grows) → Filters → View Switcher → Add Button -->
-    <div class="flex flex-1 flex-wrap lg:flex-nowrap items-center gap-3 w-full lg:w-auto relative z-10">
+    <div *ngIf="showToolbar" class="flex flex-1 flex-wrap lg:flex-nowrap items-center gap-3 w-full lg:w-auto relative z-10">
         
         <!-- Search grows to fill available space -->
         <div class="flex-1 min-w-[180px]">

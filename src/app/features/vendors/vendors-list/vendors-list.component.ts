@@ -18,6 +18,8 @@ import {
 import { AppButtonComponent } from '../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../shared/components/ui/form-controls/input.component';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
+import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 // Import new components
 import { AdvancedFilterPanelComponent, FilterField } from '../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
@@ -38,7 +40,9 @@ import { MobileVendorCardsComponent, VendorCardData } from '../../../shared/comp
     KpiCardsComponent,
     DataTableComponent,
     QuickPreviewDrawerComponent,
-    MobileVendorCardsComponent
+    MobileVendorCardsComponent,
+    AppPageHeaderComponent,
+    StatusPillComponent
   ],
   templateUrl: './vendors-list.component.html',
   styles: [`
@@ -416,6 +420,20 @@ export class VendorsListComponent implements OnInit {
     if (!level) return 'text-slate-400';
     const map: any = { 'Low': 'text-emerald-500', 'Medium': 'text-amber-500', 'High': 'text-orange-500', 'Critical': 'text-red-500' };
     return map[level] || 'text-slate-400';
+  }
+
+  getVendorStatusVariant(status?: string): StatusPillVariant {
+    const variants: Record<string, StatusPillVariant> = {
+      Active: 'success',
+      Pending: 'warning',
+      PendingReview: 'warning',
+      Suspended: 'danger',
+      Rejected: 'danger',
+      Inactive: 'paused',
+      Blocked: 'high-risk'
+    };
+
+    return variants[status || ''] ?? 'neutral';
   }
 
   getDocumentsStatusLabel(status?: string): string {

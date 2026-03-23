@@ -1397,6 +1397,8 @@
       "REQUESTED_ACTION_PLACEHOLDER": "Example: partial refund, account closure...",
       "RESPONSE_DEADLINE": "Required Response Deadline",
       "EVIDENCE_TITLE": "Attached Evidence & Indicators",
+      "ATTACHMENTS_TITLE": "Attached Files",
+      "INDICATORS_TITLE": "Active Indicators",
       "TAG_HIGH_RISK": "High Risk",
       "TAG_REPEAT": "Repeated Dispute",
       "TAG_SLA": "SLA Breach",

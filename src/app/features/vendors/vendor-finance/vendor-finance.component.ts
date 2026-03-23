@@ -6,6 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { FinancialStatementModalComponent, FinancialStatementConfig } from '../../../shared/components/ui/financial-statement-modal/financial-statement-modal.component';
 import { PayoutsReviewModalComponent } from '../../../shared/components/ui/payouts-review-modal/payouts-review-modal.component';
 import { CreateSettlementModalComponent, SettlementConfig } from '../../../shared/components/ui/create-settlement-modal/create-settlement-modal.component';
+import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 interface KPI {
   id: string;
@@ -43,7 +46,17 @@ interface Invoice {
 @Component({
   selector: 'app-vendor-finance',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, FinancialStatementModalComponent, PayoutsReviewModalComponent, CreateSettlementModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    FinancialStatementModalComponent,
+    PayoutsReviewModalComponent,
+    CreateSettlementModalComponent,
+    InlineBannerComponent,
+    SectionHeaderComponent,
+    StatusPillComponent
+  ],
   templateUrl: './vendor-finance.component.html'
 })
 export class VendorFinanceComponent {
@@ -302,5 +315,17 @@ export class VendorFinanceComponent {
 
   onSettlementOptions() {
     console.log('Settlement options');
+  }
+
+  getSettlementStatusVariant(statusKey: string): StatusPillVariant {
+    if (statusKey.includes('COMPLETED')) {
+      return 'success';
+    }
+
+    if (statusKey.includes('PENDING')) {
+      return 'warning';
+    }
+
+    return 'neutral';
   }
 }

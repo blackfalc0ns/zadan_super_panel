@@ -5,6 +5,8 @@ import { RouterModule, Router } from '@angular/router';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { KpiCardsComponent, KPICard } from '../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/ui/data-table/data-table.component';
+import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 interface OrderItem {
   id: string;
@@ -21,7 +23,16 @@ interface OrderItem {
 @Component({
   selector: 'app-orders-list',
   standalone: true,
-  imports: [CommonModule, TranslateModule, RouterModule, AppPaginationComponent, KpiCardsComponent, DataTableComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    RouterModule,
+    AppPaginationComponent,
+    KpiCardsComponent,
+    DataTableComponent,
+    AppPageHeaderComponent,
+    StatusPillComponent
+  ],
   templateUrl: './orders-list.component.html',
   styleUrls: ['./orders-list.component.scss']
 })
@@ -93,5 +104,17 @@ export class OrdersListComponent implements OnInit {
   closeDrawer() {
     this.isDrawerOpen.set(false);
     this.selectedOrder.set(null);
+  }
+
+  getOrderStatusVariant(status: string): StatusPillVariant {
+    const variants: Record<string, StatusPillVariant> = {
+      NEW: 'info',
+      IN_PROGRESS: 'processing',
+      COMPLETED: 'success',
+      DELIVERED: 'success',
+      CANCELLED: 'danger'
+    };
+
+    return variants[status] ?? 'neutral';
   }
 }

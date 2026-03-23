@@ -24,7 +24,7 @@ export type StatusPillVariant =
 export class StatusPillComponent {
   @Input() label = '';
   @Input() icon = '';
-  @Input() translate = true;
+  @Input() shouldTranslate = true;
   @Input() showDot = true;
   @Input() size: 'sm' | 'md' = 'md';
   @Input() variant: StatusPillVariant = 'neutral';

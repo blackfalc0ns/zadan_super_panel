@@ -1,110 +1,113 @@
 <div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <!-- Main Grid Layout (3 Columns: 3-6-3) -->
-  <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    
-    <!-- Right Column: Internal Notes (col-span-3) -->
-    <div class="lg:col-span-3 flex flex-col gap-4">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">speaker_notes</span>
-          {{ 'ACTIVITY_LOG.INTERNAL_NOTES' | translate }}
-        </h2>
-        <span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">
+  <main class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+
+    <!-- Right Column: Internal Notes -->
+    <div class="flex flex-col gap-4 lg:col-span-3">
+      <app-section-header
+        [compact]="true"
+        icon="speaker_notes"
+        title="ACTIVITY_LOG.INTERNAL_NOTES">
+        <span meta class="rounded-full bg-primary/10 px-2 py-1 text-xs font-bold text-primary">
           {{ internalNotes.length }}
         </span>
-      </div>
-      
-      <button 
+      </app-section-header>
+
+      <button
         (click)="onAddNote()"
-        class="w-full flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-sm hover:opacity-90 transition-colors">
+        class="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-sm transition-colors hover:opacity-90"
+        type="button">
         <span class="material-symbols-outlined text-[20px]">add</span>
         {{ 'ACTIVITY_LOG.ADD_NEW_NOTE' | translate }}
       </button>
 
-      <!-- Note Cards -->
-      <div class="space-y-4 overflow-y-auto max-h-[600px] pr-1 hide-scrollbar">
-        <div *ngFor="let note of internalNotes" 
-             class="glass-panel p-4 rounded-xl relative border-l-4"
+      <div class="hide-scrollbar max-h-[600px] space-y-4 overflow-y-auto pr-1">
+        <div *ngFor="let note of internalNotes"
+             class="glass-panel relative rounded-xl border-l-4 p-4"
              [class]="note.borderColor">
-          <div class="flex justify-between items-start mb-2">
+          <div class="mb-2 flex items-start justify-between gap-3">
             <div class="flex items-center gap-2">
-              <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 border border-slate-200" 
-                   [style.background-image]="note.avatarUrl ? 'url(' + note.avatarUrl + ')' : ''"
-                   *ngIf="note.avatarUrl">
+              <div *ngIf="note.avatarUrl"
+                   class="h-8 w-8 rounded-full border border-slate-200 bg-cover bg-center bg-no-repeat"
+                   [style.background-image]="'url(' + note.avatarUrl + ')'">
               </div>
-              <div class="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border border-slate-200" 
-                   [ngClass]="note.avatarClass" *ngIf="!note.avatarUrl">
+              <div *ngIf="!note.avatarUrl"
+                   class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-[10px] font-bold"
+                   [ngClass]="note.avatarClass">
                 {{ note.authorInitials }}
               </div>
               <div>
-                <p class="text-slate-900 text-sm font-bold">{{ note.author }}</p>
-                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded" [ngClass]="note.departmentColor">
+                <p class="text-sm font-bold text-slate-900">{{ note.author }}</p>
+                <span class="rounded px-1.5 py-0.5 text-[10px] font-semibold" [ngClass]="note.departmentColor">
                   {{ note.department }}
                 </span>
               </div>
             </div>
-            <span class="text-slate-500 text-xs">{{ note.timestamp }}</span>
+            <span class="text-xs text-slate-500">{{ note.timestamp }}</span>
           </div>
-          <p class="text-slate-700 text-sm leading-relaxed mt-2">{{ note.message }}</p>
+          <p class="mt-2 text-sm leading-relaxed text-slate-700">{{ note.message }}</p>
         </div>
       </div>
     </div>
 
-    <!-- Center Column: Activity Log Table (col-span-6) -->
-    <div class="lg:col-span-6 flex flex-col gap-4">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">history</span>
-          {{ 'ACTIVITY_LOG.PAGE_TITLE' | translate }}
-        </h2>
-        <div class="flex gap-2">
-          <button (click)="onFilterLog()" class="p-1.5 rounded bg-white border border-slate-200 text-slate-600 hover:text-primary transition-colors">
+    <!-- Center Column: Activity Log Table -->
+    <div class="flex flex-col gap-4 lg:col-span-6">
+      <app-section-header
+        [compact]="true"
+        icon="history"
+        title="ACTIVITY_LOG.PAGE_TITLE">
+        <div actions class="flex gap-2">
+          <button
+            (click)="onFilterLog()"
+            class="rounded border border-slate-200 bg-white p-1.5 text-slate-600 transition-colors hover:text-primary"
+            type="button">
             <span class="material-symbols-outlined text-sm">filter_list</span>
           </button>
-          <button (click)="onExportLog()" class="p-1.5 rounded bg-white border border-slate-200 text-slate-600 hover:text-primary transition-colors">
+          <button
+            (click)="onExportLog()"
+            class="rounded border border-slate-200 bg-white p-1.5 text-slate-600 transition-colors hover:text-primary"
+            type="button">
             <span class="material-symbols-outlined text-sm">download</span>
           </button>
         </div>
-      </div>
+      </app-section-header>
 
-      <div class="glass-panel rounded-xl overflow-hidden border border-slate-200 flex-1">
+      <div class="glass-panel flex-1 overflow-hidden rounded-xl border border-slate-200">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm text-right">
-            <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-600">
+          <table class="w-full table-fixed text-right text-sm">
+            <thead class="border-b border-slate-200 bg-slate-50/80 text-slate-600">
               <tr>
-                <th class="px-4 py-3 font-semibold w-1/4">{{ 'ACTIVITY_LOG.COL_ACTION' | translate }}</th>
-                <th class="px-4 py-3 font-semibold w-1/4">{{ 'ACTIVITY_LOG.COL_EXECUTOR' | translate }}</th>
-                <th class="px-4 py-3 font-semibold w-1/4">{{ 'ACTIVITY_LOG.COL_DATETIME' | translate }}</th>
-                <th class="px-4 py-3 font-semibold w-1/4">{{ 'ACTIVITY_LOG.COL_DESCRIPTION' | translate }}</th>
+                <th class="w-1/4 px-4 py-3 font-semibold">{{ 'ACTIVITY_LOG.COL_ACTION' | translate }}</th>
+                <th class="w-1/4 px-4 py-3 font-semibold">{{ 'ACTIVITY_LOG.COL_EXECUTOR' | translate }}</th>
+                <th class="w-1/4 px-4 py-3 font-semibold">{{ 'ACTIVITY_LOG.COL_DATETIME' | translate }}</th>
+                <th class="w-1/4 px-4 py-3 font-semibold">{{ 'ACTIVITY_LOG.COL_DESCRIPTION' | translate }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr *ngFor="let entry of activityLog" class="hover:bg-white/50 transition-colors">
+              <tr *ngFor="let entry of activityLog" class="transition-colors hover:bg-white/50">
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-[16px]" [ngClass]="entry.iconColor">{{ entry.actionIcon }}</span>
                     <span class="font-medium text-slate-900">{{ entry.actionKey | translate }}</span>
                   </div>
                 </td>
-                <td class="px-4 py-3 text-slate-600 font-medium">{{ entry.executor }}</td>
-                <td class="px-4 py-3 text-slate-500 text-xs" dir="ltr">{{ entry.timestamp }}</td>
-                <td class="px-4 py-3 text-slate-600 truncate max-w-[150px] font-medium" [title]="entry.description">{{ entry.description }}</td>
+                <td class="px-4 py-3 font-medium text-slate-600">{{ entry.executor }}</td>
+                <td class="px-4 py-3 text-xs text-slate-500" dir="ltr">{{ entry.timestamp }}</td>
+                <td class="max-w-[150px] truncate px-4 py-3 font-medium text-slate-600" [title]="entry.description">{{ entry.description }}</td>
               </tr>
             </tbody>
           </table>
         </div>
-        
-        <!-- Pagination -->
-        <div class="border-t border-slate-200 p-3 flex justify-between items-center bg-slate-50/50">
+
+        <div class="flex items-center justify-between border-t border-slate-200 bg-slate-50/50 p-3">
           <span class="text-xs text-slate-500">{{ 'ACTIVITY_LOG.SHOWING_ENTRIES' | translate }}</span>
           <div class="flex gap-1">
-            <button class="px-2 py-1 text-xs border border-slate-200 rounded text-slate-400 cursor-not-allowed">
+            <button class="cursor-not-allowed rounded border border-slate-200 px-2 py-1 text-xs text-slate-400">
               {{ 'ACTIVITY_LOG.PREVIOUS' | translate }}
             </button>
-            <button class="px-2 py-1 text-xs border border-primary bg-primary/10 rounded text-primary font-medium">1</button>
-            <button class="px-2 py-1 text-xs border border-slate-200 rounded text-slate-600 hover:bg-slate-100">2</button>
-            <button class="px-2 py-1 text-xs border border-slate-200 rounded text-slate-600 hover:bg-slate-100">3</button>
-            <button class="px-2 py-1 text-xs border border-slate-200 rounded text-slate-600 hover:bg-slate-100">
+            <button class="rounded border border-primary bg-primary/10 px-2 py-1 text-xs font-medium text-primary">1</button>
+            <button class="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100">2</button>
+            <button class="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100">3</button>
+            <button class="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600 hover:bg-slate-100">
               {{ 'ACTIVITY_LOG.NEXT' | translate }}
             </button>
           </div>
@@ -112,28 +115,29 @@
       </div>
     </div>
 
-    <!-- Left Column: Timeline & Stats (col-span-3) -->
-    <div class="lg:col-span-3 flex flex-col gap-6">
-      <!-- Collaboration Widget -->
+    <!-- Left Column: Timeline & Stats -->
+    <div class="flex flex-col gap-6 lg:col-span-3">
       <div>
-        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">insights</span>
-          {{ 'ACTIVITY_LOG.COLLABORATION_SUMMARY' | translate }}
-        </h2>
-        <div class="glass-panel p-4 rounded-xl flex flex-col">
-          <div class="flex items-center justify-between">
-            <span class="text-slate-500 text-sm font-medium">{{ 'ACTIVITY_LOG.LAST_INTERACTION' | translate }}</span>
-            <span class="text-slate-900 font-bold text-base" dir="ltr">{{ lastInteraction }}</span>
+        <app-section-header
+          [compact]="true"
+          icon="insights"
+          title="ACTIVITY_LOG.COLLABORATION_SUMMARY">
+        </app-section-header>
+
+        <div class="glass-panel mt-3 flex flex-col rounded-xl p-4">
+          <div class="flex items-center justify-between py-2">
+            <span class="text-sm font-medium text-slate-500">{{ 'ACTIVITY_LOG.LAST_INTERACTION' | translate }}</span>
+            <span class="text-base font-bold text-slate-900" dir="ltr">{{ lastInteraction }}</span>
           </div>
-          <div class="flex items-center justify-between border-t border-slate-200/60">
-            <span class="text-slate-500 text-sm font-medium">{{ 'ACTIVITY_LOG.OPEN_NOTES' | translate }}</span>
-            <span class="text-accent-orange font-bold text-2xl">{{ openNotes }}</span>
+          <div class="flex items-center justify-between border-t border-slate-200/60 py-3">
+            <span class="text-sm font-medium text-slate-500">{{ 'ACTIVITY_LOG.OPEN_NOTES' | translate }}</span>
+            <span class="text-2xl font-bold text-accent-orange">{{ openNotes }}</span>
           </div>
-          <div class="flex items-center justify-between border-t border-slate-200/60">
-            <span class="text-slate-500 text-sm font-medium">{{ 'ACTIVITY_LOG.WEEKLY_ACTIVITY' | translate }}</span>
+          <div class="flex items-center justify-between border-t border-slate-200/60 py-3">
+            <span class="text-sm font-medium text-slate-500">{{ 'ACTIVITY_LOG.WEEKLY_ACTIVITY' | translate }}</span>
             <div class="flex items-center gap-2">
-              <span class="text-primary font-bold text-xl">{{ weeklyActivity }}</span>
-              <span class="text-green-500 text-xs font-bold flex items-center">
+              <span class="text-xl font-bold text-primary">{{ weeklyActivity }}</span>
+              <span class="flex items-center text-xs font-bold text-green-500">
                 <span class="material-symbols-outlined text-[12px]">trending_up</span> {{ weeklyGrowth }}
               </span>
             </div>
@@ -141,30 +145,29 @@
         </div>
       </div>
 
-      <!-- Timeline -->
-      <div class="flex-1 flex flex-col">
-        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">timeline</span>
-          {{ 'ACTIVITY_LOG.TIMELINE_TITLE' | translate }}
-        </h2>
-        <div class="glass-panel p-5 rounded-xl flex-1 relative">
+      <div class="flex flex-1 flex-col">
+        <app-section-header
+          [compact]="true"
+          icon="timeline"
+          title="ACTIVITY_LOG.TIMELINE_TITLE">
+        </app-section-header>
+
+        <div class="glass-panel relative mt-3 flex-1 rounded-xl p-5">
           <div class="relative pl-1">
-            <div *ngFor="let item of timeline; let last = last" 
-                 class="relative pr-10 pb-6 timeline-item timeline-line">
-              <!-- Timeline Dot/Icon -->
-              <div [class]="'absolute top-0 w-8 h-8 rounded-full border-4 border-white shadow-sm z-10 flex items-center justify-center ' + item.bgColor"
+            <div *ngFor="let item of timeline"
+                 class="timeline-item timeline-line relative pb-6 pr-10">
+              <div [class]="'absolute top-0 z-10 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white shadow-sm ' + item.bgColor"
                    [style.right]="isRTL ? '0' : 'auto'"
                    [style.left]="!isRTL ? '0' : 'auto'">
-                <span class="material-symbols-outlined text-white text-[16px]">{{ item.icon }}</span>
+                <span class="material-symbols-outlined text-[16px] text-white">{{ item.icon }}</span>
               </div>
-              
-              <!-- Event Content -->
-              <div [style.padding-right]="isRTL ? '2.5rem' : '0'"
-                   [style.padding-left]="!isRTL ? '2.5rem' : '0'"
-                   class="pt-1">
+
+              <div class="pt-1"
+                   [style.padding-right]="isRTL ? '2.5rem' : '0'"
+                   [style.padding-left]="!isRTL ? '2.5rem' : '0'">
                 <h3 class="text-sm font-bold text-slate-900">{{ item.titleKey | translate }}</h3>
-                <p class="text-xs text-slate-500 mt-1 leading-relaxed">{{ item.descriptionKey | translate }}</p>
-                <span class="text-[10px] text-slate-400 mt-1 block">{{ item.date }}</span>
+                <p class="mt-1 text-xs leading-relaxed text-slate-500">{{ item.descriptionKey | translate }}</p>
+                <span class="mt-1 block text-[10px] text-slate-400">{{ item.date }}</span>
               </div>
             </div>
           </div>

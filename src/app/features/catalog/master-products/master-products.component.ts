@@ -12,6 +12,8 @@ import { AppCardComponent } from '../../../shared/components/ui/card/card.compon
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { AppInputComponent } from '../../../shared/components/ui/form-controls/input.component';
 import { DeleteConfirmationModalComponent } from '../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
+import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-master-products',
@@ -26,7 +28,9 @@ import { DeleteConfirmationModalComponent } from '../../../shared/components/del
     AppBadgeComponent,
     AppCardComponent,
     AppPaginationComponent,
-    DeleteConfirmationModalComponent
+    DeleteConfirmationModalComponent,
+    AppPageHeaderComponent,
+    StatusPillComponent
   ],
   templateUrl: './master-products.component.html',
   styleUrl: './master-products.component.scss',
@@ -244,5 +248,27 @@ export class MasterProductsComponent implements OnInit {
     this.isDeleteModalOpen = false;
     this.productToDelete = null;
     this.isDeleting = false;
+  }
+
+  getProductStatusVariant(status?: string): StatusPillVariant {
+    const variants: Record<string, StatusPillVariant> = {
+      Active: 'success',
+      Draft: 'warning',
+      Inactive: 'paused',
+      Discontinued: 'danger'
+    };
+
+    return variants[status || ''] ?? 'neutral';
+  }
+
+  getProductStatusLabel(status?: string): string {
+    const labels: Record<string, string> = {
+      Active: 'MASTER_PRODUCTS.STATUS_ACTIVE',
+      Draft: 'MASTER_PRODUCTS.STATUS_DRAFT',
+      Inactive: 'MASTER_PRODUCTS.STATUS_INACTIVE',
+      Discontinued: 'MASTER_PRODUCTS.STATUS_INACTIVE'
+    };
+
+    return labels[status || ''] || status || '-';
   }
 }

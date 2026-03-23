@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 interface Product {
   id: string;
@@ -25,7 +27,7 @@ interface Product {
 @Component({
   selector: 'app-vendor-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SectionHeaderComponent, StatusPillComponent],
   templateUrl: './vendor-products.component.html'
 })
 export class VendorProductsComponent {
@@ -182,6 +184,19 @@ export class VendorProductsComponent {
       case 'low': return 'bg-orange-500';
       case 'out': return 'bg-red-500';
       default: return 'bg-primary';
+    }
+  }
+
+  getProductStatusVariant(status: Product['status']): StatusPillVariant {
+    switch (status) {
+      case 'active':
+        return 'success';
+      case 'under_review':
+        return 'warning';
+      case 'out_of_stock':
+        return 'danger';
+      default:
+        return 'neutral';
     }
   }
 }

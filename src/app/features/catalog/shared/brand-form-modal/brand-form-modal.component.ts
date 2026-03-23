@@ -6,7 +6,7 @@ import { CatalogService } from '../../../../core/services/catalog.service';
 import { Brand } from '../../../../core/models/catalog.model';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input.component';
-import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
+import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 
 @Component({
   selector: 'app-brand-form-modal',
@@ -17,7 +17,7 @@ import { AppCardComponent } from '../../../../shared/components/ui/card/card.com
     TranslateModule,
     AppButtonComponent,
     AppInputComponent,
-    AppCardComponent
+    ModalShellComponent
   ],
   templateUrl: './brand-form-modal.component.html',
   styleUrl: './brand-form-modal.component.scss'

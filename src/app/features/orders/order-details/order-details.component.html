@@ -21,17 +21,7 @@
             <p class="text-sm text-slate-400 max-w-2xl">{{ 'ORDERS.DETAIL.TITLE_DESC' | translate }}</p>
             
             <div class="flex flex-wrap gap-2 mt-4">
-                <span class="px-3 py-1 rounded-full text-[11px] font-bold flex items-center gap-1"
-                      [ngClass]="getStatusClass(order()?.status || '')">
-                    <span class="w-1.5 h-1.5 rounded-full animate-pulse"
-                          [ngClass]="{
-                            'bg-emerald-500': order()?.status === 'COMPLETED' || order()?.status === 'DELIVERED',
-                            'bg-amber-500': order()?.status === 'IN_PROGRESS',
-                            'bg-blue-500': order()?.status === 'OUT_FOR_DELIVERY' || order()?.status === 'NEW',
-                            'bg-red-500': order()?.status === 'CANCELLED'
-                          }"></span> 
-                    {{ 'ORDERS.STATUS.' + order()?.status | translate }}
-                </span>
+                <app-status-pill [label]="'ORDERS.STATUS.' + (order()?.status || '')" [variant]="orderStatusVariant"></app-status-pill>
                 <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">check_circle</span> {{ 'ORDERS.DETAIL.PAYMENT' | translate }}
                 </span>
@@ -106,14 +96,14 @@
             <!-- Ordered Items Card -->
             <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] overflow-hidden shadow-sm">
                 <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="text-sm font-black text-zadna-primary flex items-center gap-2">
-                        <span class="material-symbols-outlined">shopping_basket</span>
-                        {{ 'ORDERS.DETAIL.ORDERED_ITEMS' | translate }}
-                    </h3>
-                    <span class="text-[10px] font-bold px-2 py-0.5 bg-slate-50 rounded-md text-slate-400 uppercase font-mono tracking-widest">{{ order()?.items?.length }} {{ 'COMMON.ENTRIES' | translate }}</span>
+                    <app-section-header [compact]="true" icon="shopping_basket" title="ORDERS.DETAIL.ORDERED_ITEMS">
+                        <span meta class="rounded-md bg-slate-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            {{ order()?.items?.length }} {{ 'COMMON.ENTRIES' | translate }}
+                        </span>
+                    </app-section-header>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-right">
+                    <table class="w-full table-fixed text-right">
                         <thead>
                             <tr class="bg-slate-50/50">
                                 <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.ITEM' | translate }}</th>
@@ -153,10 +143,7 @@
                 
                 <!-- Timeline Card -->
                 <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 relative">
-                    <h3 class="text-sm font-black text-zadna-primary mb-8 flex items-center gap-2">
-                        <span class="material-symbols-outlined">timeline</span>
-                        {{ 'ORDERS.DETAIL.TIMELINE' | translate }}
-                    </h3>
+                    <app-section-header class="mb-8" [compact]="true" icon="timeline" title="ORDERS.DETAIL.TIMELINE"></app-section-header>
                     
                     <div class="space-y-6 relative mr-2">
                         <!-- Vertical Line -->
@@ -197,31 +184,9 @@
 
                 <!-- Payment & Totals Card -->
                 <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 flex flex-col">
-                    <h3 class="text-sm font-black text-zadna-primary mb-6 flex items-center gap-2">
-                        <span class="material-symbols-outlined">account_balance_wallet</span>
-                        {{ 'ORDERS.DETAIL.PAYMENT_DETAILS' | translate }}
-                    </h3>
+                    <app-section-header class="mb-6" [compact]="true" icon="account_balance_wallet" title="ORDERS.DETAIL.PAYMENT_DETAILS"></app-section-header>
                     <div class="space-y-4 flex-1">
-                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.PAYMENT_METHOD' | translate }}</span>
-                            <span class="text-xs font-bold text-slate-800 flex items-center gap-1">{{ 'ORDERS.DETAIL.MADA' | translate }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.TRANSACTION_REF' | translate }}</span>
-                            <span class="text-[11px] font-bold font-mono text-slate-800">#TRX-8271039</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.ORDER_SUBTOTAL' | translate }}</span>
-                            <span class="text-xs font-bold font-mono text-slate-700">{{ order()?.subtotal | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.DELIVERY_FEE' | translate }}</span>
-                            <span class="text-xs font-bold font-mono text-slate-700">{{ order()?.deliveryFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-xs text-slate-500">{{ 'ORDERS.DETAIL.TAX' | translate }}</span>
-                            <span class="text-xs font-bold font-mono text-slate-700">{{ order()?.tax | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                        </div>
+                        <app-key-value-grid [items]="paymentInfoItems" [columns]="1"></app-key-value-grid>
                         
                         <div class="mt-4 p-4 rounded-xl bg-zadna-primary/5 border border-zadna-primary/10 mt-auto">
                             <div class="flex justify-between items-center">
@@ -240,10 +205,7 @@
             <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] overflow-hidden flex flex-col md:flex-row shadow-sm min-h-[300px]">
                 
                 <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center border-l border-slate-100">
-                    <h3 class="text-sm font-black text-zadna-primary flex items-center gap-2 mb-6">
-                        <span class="material-symbols-outlined">location_on</span>
-                        {{ 'ORDERS.DETAIL.LOCATION_DELIVERY' | translate }}
-                    </h3>
+                    <app-section-header class="mb-6" [compact]="true" icon="location_on" title="ORDERS.DETAIL.LOCATION_DELIVERY"></app-section-header>
                     
                     <div class="space-y-6">
                         <div>
@@ -251,21 +213,9 @@
                             <p class="text-[13px] font-semibold text-slate-800 leading-relaxed">{{ order()?.customerAddress }}</p>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 block mb-1">{{ 'ORDERS.DETAIL.EXPECTED_TIME' | translate }}</label>
-                                <p class="text-xs font-bold font-mono text-amber-600">{{ order()?.time }}</p>
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 block mb-1">{{ 'ORDERS.DETAIL.HOUSING_TYPE' | translate }}</label>
-                                <p class="text-xs font-bold text-slate-800">{{ 'ORDERS.DETAIL.APARTMENT' | translate }}</p>
-                            </div>
-                        </div>
+                        <app-key-value-grid [items]="deliveryInfoItems" [columns]="2"></app-key-value-grid>
                         
-                        <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-100/50 flex items-start gap-3">
-                            <span class="material-symbols-outlined text-amber-500 text-[18px] mt-0.5">info</span>
-                            <p class="text-[11px] text-slate-600 font-medium leading-relaxed">{{ 'ORDERS.DETAIL.CUSTOMER_NOTE' | translate }}: {{ 'ORDERS.DETAIL.CUSTOMER_NOTE_TEXT' | translate }}</p>
-                        </div>
+                        <app-inline-banner variant="warning" title="ORDERS.DETAIL.CUSTOMER_NOTE" message="ORDERS.DETAIL.CUSTOMER_NOTE_TEXT"></app-inline-banner>
                     </div>
                 </div>
                 
@@ -376,11 +326,9 @@
             <!-- Support & Issues Card -->
             <section class="bg-red-50/50 backdrop-blur-xl border border-red-100 rounded-[1.5rem] p-6 shadow-sm">
                 <div class="flex items-center justify-between mb-5">
-                    <h3 class="text-xs font-black text-red-600 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">report</span>
-                        {{ 'ORDERS.DETAIL.SUPPORT_DISPUTES' | translate }}
-                    </h3>
-                    <span class="text-[10px] font-bold text-emerald-600">{{ 'ORDERS.DETAIL.NO_DISPUTES' | translate }}</span>
+                    <app-section-header [compact]="true" tone="danger" icon="report" title="ORDERS.DETAIL.SUPPORT_DISPUTES">
+                        <span meta class="text-[10px] font-bold text-emerald-600">{{ 'ORDERS.DETAIL.NO_DISPUTES' | translate }}</span>
+                    </app-section-header>
                 </div>
                 <div class="flex gap-2">
                     <button class="flex-1 py-2.5 bg-white rounded-xl text-[11px] font-black border border-red-100 text-slate-700 hover:shadow-md transition-shadow" type="button" (click)="openIssueFlagModal()">{{ 'ORDERS.DETAIL.FLAG_ISSUE' | translate }}</button>
@@ -390,10 +338,7 @@
 
             <!-- Activity Log Card -->
             <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 shadow-sm">
-                <h3 class="text-xs font-black text-zadna-primary mb-5 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">history</span>
-                    {{ 'ORDERS.DETAIL.ACTIVITY_LOG' | translate }}
-                </h3>
+                <app-section-header class="mb-5" [compact]="true" icon="history" title="ORDERS.DETAIL.ACTIVITY_LOG"></app-section-header>
                 <div class="space-y-5 relative">
                     <!-- Connective line -->
                     <div class="absolute right-[3px] top-2 bottom-2 w-[1px] bg-slate-100"></div>

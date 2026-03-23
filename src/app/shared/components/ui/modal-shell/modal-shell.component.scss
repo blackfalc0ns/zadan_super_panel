@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.modal-shell-backdrop {
+  animation: modal-shell-fade 180ms ease-out;
+}
+
+.modal-shell-panel {
+  position: relative;
+  isolation: isolate;
+  background: #fff;
+  animation: modal-shell-in 220ms ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: #fff;
+    pointer-events: none;
+  }
+}
+
+.modal-shell-header,
+.modal-shell-body,
+.modal-shell-footer {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+}
+
+@keyframes modal-shell-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-shell-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-shell-panel {
+    max-height: 100vh;
+    border-radius: 1.1rem;
+  }
+}

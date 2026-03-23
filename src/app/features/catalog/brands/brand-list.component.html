@@ -1,24 +1,15 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans">
+    <app-page-header
+        [title]="'BRANDS.TITLE'"
+        [subtitle]="'BRANDS.DESC'"
+        [showToolbar]="true"
+        [breadcrumbs]="[
+            { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
+            { label: 'BRANDS.TITLE' }
+        ]">
+        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">workspace_premium</span>
 
-    <!-- Design 2.0 Artistic Header Row -->
-    <div class="px-4 md:px-10 pt-8 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
-        <!-- Page Identity (Right Aligned in RTL) -->
-        <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
-            <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
-                <span>{{ 'SIDEBAR.CATALOG' | translate }}</span>
-                <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
-                <span class="text-zadna-primary">{{ 'BRANDS.TITLE' | translate }}</span>
-            </nav>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                {{ 'BRANDS.TITLE' | translate }}
-            </h1>
-            <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-                {{ 'BRANDS.DESC' | translate }}
-            </p>
-        </div>
-
-        <!-- Primary Action (Left Aligned in RTL) -->
-        <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
             <app-button variant="primary" (btnClick)="openAddBrand()" 
                 customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
                 <div class="flex items-center gap-3">
@@ -31,7 +22,7 @@
                 </div>
             </app-button>
         </div>
-    </div>
+    </app-page-header>
 
     <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
         <!-- Search Bar Mirror -->
@@ -128,14 +119,11 @@
                         <!-- Col 5: Status -->
                         <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
                             <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'BRANDS.STATUS' | translate }}</span>
-                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
-                                 [class.text-emerald-500]="brand.isActive" [class.text-slate-400]="!brand.isActive">
-                                <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
-                                      [class.bg-emerald-500]="brand.isActive" [class.bg-slate-300]="!brand.isActive"></span>
-                                <span class="text-[10px] font-black tracking-tight uppercase">
-                                    {{ brand.isActive ? ('BRANDS.STATUS_ACTIVE' | translate) : ('BRANDS.STATUS_DISABLED' | translate) }}
-                                </span>
-                            </div>
+                            <app-status-pill
+                                [label]="brand.isActive ? 'BRANDS.STATUS_ACTIVE' : 'BRANDS.STATUS_DISABLED'"
+                                [variant]="getBrandStatusVariant(brand.isActive)"
+                                size="sm">
+                            </app-status-pill>
                         </td>
 
                         <!-- Col 6: Actions -->

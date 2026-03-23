@@ -5,10 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DetailHeaderComponent } from '../../../shared/components/ui/detail-header/detail-header.component';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { Brand } from '../../../core/models/catalog.model';
-import { AppButtonComponent } from '../../../shared/components/ui/button/button.component';
-import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
-import { AppCardComponent } from '../../../shared/components/ui/card/card.component';
-import { AppBadgeComponent } from '../../../shared/components/ui/badge/badge.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-brand-detail',
@@ -17,7 +14,8 @@ import { AppBadgeComponent } from '../../../shared/components/ui/badge/badge.com
     CommonModule,
     RouterModule,
     TranslateModule,
-    DetailHeaderComponent
+    DetailHeaderComponent,
+    StatusPillComponent
   ],
   templateUrl: './brand-detail.component.html',
   styleUrl: './brand-detail.component.scss'
@@ -96,5 +94,31 @@ export class BrandDetailComponent implements OnInit {
     if (this.brand?.id) {
       this.router.navigate(['/catalog/brands/edit', this.brand.id]);
     }
+  }
+
+  getBrandStatusVariant(isActive: boolean): StatusPillVariant {
+    return isActive ? 'success' : 'paused';
+  }
+
+  getProductStatusVariant(status?: string): StatusPillVariant {
+    const variants: Record<string, StatusPillVariant> = {
+      Active: 'success',
+      Draft: 'warning',
+      Inactive: 'paused',
+      Discontinued: 'danger'
+    };
+
+    return variants[status || ''] ?? 'neutral';
+  }
+
+  getProductStatusLabel(status?: string): string {
+    const labels: Record<string, string> = {
+      Active: 'BRANDS.DETAIL.STATUS_ACTIVE',
+      Draft: 'BRANDS.DETAIL.STATUS_DRAFT',
+      Inactive: 'BRANDS.DETAIL.STATUS_INACTIVE',
+      Discontinued: 'BRANDS.DETAIL.STATUS_STOPPED'
+    };
+
+    return labels[status || ''] || status || '-';
   }
 }

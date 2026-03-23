@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 
 interface InternalNote {
   id: string;
@@ -39,7 +40,7 @@ interface TimelineEvent {
 @Component({
   selector: 'app-vendor-activity-log',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SectionHeaderComponent],
   templateUrl: './vendor-activity-log.component.html',
   styleUrls: ['./vendor-activity-log.component.scss']
 })

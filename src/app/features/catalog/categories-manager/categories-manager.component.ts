@@ -13,6 +13,7 @@ import { AppBadgeComponent } from '../../../shared/components/ui/badge/badge.com
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 import { AppInputComponent } from '../../../shared/components/ui/form-controls/input.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-categories-manager',
@@ -27,7 +28,8 @@ import { AppInputComponent } from '../../../shared/components/ui/form-controls/i
     AppBadgeComponent,
     AppPaginationComponent,
     AppPageHeaderComponent,
-    AppInputComponent
+    AppInputComponent,
+    StatusPillComponent
   ],
   templateUrl: './categories-manager.component.html',
   styleUrl: './categories-manager.component.scss'
@@ -260,5 +262,9 @@ export class CategoriesManagerComponent implements OnInit {
         this.isDeleting = false;
       }
     });
+  }
+
+  getCategoryStatusVariant(isActive: boolean): StatusPillVariant {
+    return isActive ? 'success' : 'paused';
   }
 }

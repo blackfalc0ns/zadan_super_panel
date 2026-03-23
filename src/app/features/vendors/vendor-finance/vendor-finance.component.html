@@ -60,12 +60,13 @@
       
       <!-- Financial Summary -->
       <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="text-gray-900 font-bold mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">analytics</span>
-          <span>{{ 'VENDOR_FINANCE.FINANCIAL_SUMMARY' | translate }}</span>
-        </h3>
+        <app-section-header
+          [compact]="true"
+          icon="analytics"
+          title="VENDOR_FINANCE.FINANCIAL_SUMMARY">
+        </app-section-header>
         
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-3 pt-5">
           <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
             <span class="text-gray-500 text-xs">{{ 'VENDOR_FINANCE.SALES' | translate }}</span>
             <span class="text-gray-900 text-sm font-medium">{{ financialSummary.sales }} SAR</span>
@@ -95,12 +96,13 @@
 
       <!-- Bank Info -->
       <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="text-gray-900 font-bold mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">account_balance</span>
-          <span>{{ 'VENDOR_FINANCE.TRANSFER_INFO' | translate }}</span>
-        </h3>
+        <app-section-header
+          [compact]="true"
+          icon="account_balance"
+          title="VENDOR_FINANCE.TRANSFER_INFO">
+        </app-section-header>
         
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4 pt-5">
           <div>
             <p class="text-gray-500 text-xs mb-1">{{ 'VENDOR_FINANCE.BANK' | translate }}</p>
             <p class="text-gray-900 text-sm font-medium">{{ bankInfo.bankName }}</p>
@@ -113,9 +115,12 @@
           
           <div>
             <p class="text-gray-500 text-xs mb-1">{{ 'VENDOR_FINANCE.PAYMENT_CYCLE' | translate }}</p>
-            <span class="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded font-medium">
-              {{ bankInfo.paymentCycle | translate }}
-            </span>
+            <app-status-pill
+              [label]="bankInfo.paymentCycle"
+              [showDot]="false"
+              [size]="'sm'"
+              variant="processing">
+            </app-status-pill>
           </div>
         </div>
       </div>
@@ -127,12 +132,12 @@
       <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
         
         <!-- Header -->
-        <div class="p-5 border-b border-gray-200 flex justify-between items-center">
-          <h3 class="text-gray-900 font-bold flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary">list_alt</span>
-            <span>{{ 'VENDOR_FINANCE.SETTLEMENTS' | translate }}</span>
-          </h3>
-          <div class="flex gap-2">
+        <div class="p-5 border-b border-gray-200">
+          <app-section-header
+            [compact]="true"
+            icon="list_alt"
+            title="VENDOR_FINANCE.SETTLEMENTS">
+            <div actions class="flex gap-2">
             <button 
               (click)="onFilterSettlements()"
               class="text-gray-500 hover:text-primary transition-colors">
@@ -143,12 +148,13 @@
               class="text-gray-500 hover:text-primary transition-colors">
               <span class="material-symbols-outlined text-sm">more_vert</span>
             </button>
-          </div>
+            </div>
+          </app-section-header>
         </div>
 
         <!-- Table -->
         <div class="overflow-x-auto">
-          <table class="w-full border-collapse">
+          <table class="w-full table-fixed border-collapse">
             <thead>
               <tr class="bg-gray-50 border-b border-gray-200">
                 <th class="px-4 py-3 text-gray-500 text-xs font-semibold">
@@ -179,10 +185,12 @@
                 <td class="px-4 py-3 text-gray-600">{{ settlement.total }} SAR</td>
                 <td class="px-4 py-3 text-gray-900 font-medium">{{ settlement.net }} SAR</td>
                 <td class="px-4 py-3">
-                  <span class="inline-flex items-center justify-center px-2.5 py-1 rounded text-[11px] font-medium border"
-                        [ngClass]="settlement.statusClass">
-                    {{ settlement.statusKey | translate }}
-                  </span>
+                  <app-status-pill
+                    [label]="settlement.statusKey"
+                    [showDot]="false"
+                    [size]="'sm'"
+                    [variant]="getSettlementStatusVariant(settlement.statusKey)">
+                  </app-status-pill>
                 </td>
                 <td class="px-4 py-3 text-gray-500 text-xs">{{ settlement.date }}</td>
               </tr>
@@ -207,12 +215,13 @@
       
       <!-- Financial Actions -->
       <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-        <h3 class="text-gray-900 font-bold mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">touch_app</span>
-          <span>{{ 'VENDOR_FINANCE.FINANCIAL_ACTIONS' | translate }}</span>
-        </h3>
+        <app-section-header
+          [compact]="true"
+          icon="touch_app"
+          title="VENDOR_FINANCE.FINANCIAL_ACTIONS">
+        </app-section-header>
         
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-3 pt-5">
           <button 
             (click)="onCreateSettlement()"
             class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-gray-900 font-bold py-2.5 px-4 rounded-lg transition-colors text-sm">
@@ -238,24 +247,25 @@
 
       <!-- Financial Alerts -->
       <div class="bg-red-50 rounded-xl border border-red-200 p-5">
-        <h3 class="text-red-700 font-bold mb-3 flex items-center gap-2 text-sm">
-          <span class="material-symbols-outlined">warning</span>
-          <span>{{ 'VENDOR_FINANCE.FINANCIAL_ALERTS' | translate }}</span>
-        </h3>
+        <app-section-header
+          [compact]="true"
+          icon="warning"
+          title="VENDOR_FINANCE.FINANCIAL_ALERTS"
+          tone="danger">
+        </app-section-header>
         
-        <div class="flex flex-col gap-2">
-          <div *ngFor="let alert of alerts" 
-               class="bg-white/60 p-3 rounded border border-red-100 flex gap-3 items-start">
-            <span class="material-symbols-outlined text-red-500 text-[18px] mt-0.5">error</span>
-            <div>
-              <p class="text-gray-800 text-xs font-bold">
-                {{ alert.titleKey | translate }} - {{ alert.settlementId }}
-              </p>
-              <p class="text-gray-600 text-[11px] mt-1">
-                {{ alert.descriptionKey | translate }}
-              </p>
-            </div>
-          </div>
+        <div class="flex flex-col gap-2 pt-4">
+          <app-inline-banner
+            *ngFor="let alert of alerts"
+            [title]="alert.titleKey"
+            [message]="alert.descriptionKey"
+            variant="error"
+            icon="error"
+            [compact]="true">
+            <span class="mt-1 inline-block text-[10px] font-black tracking-wide text-current/80">
+              {{ alert.settlementId }}
+            </span>
+          </app-inline-banner>
         </div>
       </div>
 

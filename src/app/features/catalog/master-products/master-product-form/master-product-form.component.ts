@@ -8,9 +8,10 @@ import { CatalogService } from '../../../../core/services/catalog.service';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input.component';
 import { AppTextareaComponent } from '../../../../shared/components/ui/form-controls/textarea.component';
-import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { DetailHeaderComponent } from '../../../../shared/components/ui/detail-header/detail-header.component';
+import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { Category } from '../../../../core/models/catalog.model';
 
 @Component({
@@ -25,7 +26,9 @@ import { Category } from '../../../../core/models/catalog.model';
     AppInputComponent,
     AppTextareaComponent,
     AppBadgeComponent,
-    DetailHeaderComponent
+    DetailHeaderComponent,
+    SectionHeaderComponent,
+    StatusPillComponent
   ],
 
   templateUrl: './master-product-form.component.html',
@@ -274,6 +277,16 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
 
   setStatus(status: string): void {
     this.productForm.patchValue({ status });
+  }
+
+  get publishingStatusVariant(): StatusPillVariant {
+    return this.productForm.get('status')?.value === 'Active' ? 'success' : 'warning';
+  }
+
+  get publishingStatusLabel(): string {
+    return this.productForm.get('status')?.value === 'Active'
+      ? 'MASTER_PRODUCTS.STATUS_ACTIVE'
+      : 'MASTER_PRODUCTS.STATUS_DRAFT';
   }
 
   onCancel(): void {

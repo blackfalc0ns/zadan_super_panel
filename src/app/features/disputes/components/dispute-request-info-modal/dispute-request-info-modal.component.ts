@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { DisputeRow, DisputeStatus, RequestInfoForm, RequestInfoTarget, RequestInfoType } from '../../disputes.models';
 
 @Component({
   selector: 'app-dispute-request-info-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
   templateUrl: './dispute-request-info-modal.component.html',
   styleUrl: './dispute-request-info-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

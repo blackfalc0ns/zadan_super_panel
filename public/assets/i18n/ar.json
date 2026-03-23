@@ -1396,6 +1396,8 @@
             "REQUESTED_ACTION_PLACEHOLDER": "مثال: استرداد جزئي، إغلاق الحساب...",
             "RESPONSE_DEADLINE": "موعد الاستجابة المطلوب",
             "EVIDENCE_TITLE": "الأدلة المرفقة والمؤشرات",
+            "ATTACHMENTS_TITLE": "الملفات المرفقة",
+            "INDICATORS_TITLE": "المؤشرات النشطة",
             "TAG_HIGH_RISK": "مخاطر عالية",
             "TAG_REPEAT": "نزاع متكرر",
             "TAG_SLA": "خرق SLA",

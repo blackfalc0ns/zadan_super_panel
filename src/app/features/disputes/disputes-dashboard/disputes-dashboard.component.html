@@ -1,21 +1,15 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="isRtl ? 'rtl' : 'ltr'">
-  <div class="px-4 md:px-10 pt-5 pb-4 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-5 md:gap-6">
-    <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
-      <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
-        <span>{{ 'SIDEBAR.HOME' | translate }}</span>
-        <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
-        <span class="text-zadna-primary">{{ 'SIDEBAR.DISPUTES' | translate }}</span>
-      </nav>
-      <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight flex items-center gap-3">
-        <span class="material-symbols-outlined text-[28px] text-zadna-primary">gavel</span>
-        {{ 'DISPUTES_DASHBOARD.TITLE' | translate }}
-      </h1>
-      <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-        {{ 'DISPUTES_DASHBOARD.SUBTITLE' | translate }}
-      </p>
-    </div>
+  <app-page-header
+    [title]="'DISPUTES_DASHBOARD.TITLE'"
+    [subtitle]="'DISPUTES_DASHBOARD.SUBTITLE'"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'SIDEBAR.DISPUTES' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">gavel</span>
 
-    <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+    <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
       <button class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary">
         <span class="material-symbols-outlined text-[20px]">download</span>
         {{ 'DISPUTES_DASHBOARD.EXPORT_REPORT' | translate }}
@@ -25,7 +19,7 @@
         {{ 'DISPUTES_DASHBOARD.CREATE_DISPUTE' | translate }}
       </button>
     </div>
-  </div>
+  </app-page-header>
 
   <div class="flex-1 min-h-0 px-4 md:px-10 pt-3 pb-6 max-w-[120rem] mx-auto w-full space-y-5 md:space-y-6 animate-in slide-in-from-bottom-10 duration-700">
     <app-kpi-cards [cards]="kpiCards" (cardClick)="onKpiCardClick($event)"></app-kpi-cards>
@@ -162,15 +156,12 @@
 
           <ng-container *ngIf="column.key === 'status'">
             <div class="flex justify-center">
-              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm" [ngClass]="getStatusClass(dispute.status)">
-                <span class="w-1.5 h-1.5 rounded-full animate-pulse" [ngClass]="{
-                  'bg-sky-600': dispute.status === 'open',
-                  'bg-amber-500': dispute.status === 'review',
-                  'bg-violet-500': dispute.status === 'merchant',
-                  'bg-emerald-500': dispute.status === 'resolved'
-                }"></span>
-                <span class="text-[10px] font-black tracking-tight">{{ getStatusLabel(dispute.status) }}</span>
-              </div>
+              <app-status-pill
+                [label]="getStatusLabel(dispute.status)"
+                [shouldTranslate]="false"
+                [variant]="getStatusVariant(dispute.status)"
+                size="sm">
+              </app-status-pill>
             </div>
           </ng-container>
 
@@ -227,15 +218,12 @@
               <span class="inline-flex rounded-full border px-3 py-1.5 text-[10px] font-black" [ngClass]="getPriorityClass(dispute.priority)">
                 {{ getPriorityLabel(dispute.priority) }}
               </span>
-              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm" [ngClass]="getStatusClass(dispute.status)">
-                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="{
-                  'bg-sky-600': dispute.status === 'open',
-                  'bg-amber-500': dispute.status === 'review',
-                  'bg-violet-500': dispute.status === 'merchant',
-                  'bg-emerald-500': dispute.status === 'resolved'
-                }"></span>
-                <span class="text-[10px] font-black tracking-tight">{{ getStatusLabel(dispute.status) }}</span>
-              </div>
+              <app-status-pill
+                [label]="getStatusLabel(dispute.status)"
+                [shouldTranslate]="false"
+                [variant]="getStatusVariant(dispute.status)"
+                size="sm">
+              </app-status-pill>
             </div>
           </div>
         </ng-template>

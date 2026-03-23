@@ -8,6 +8,10 @@ import { OrderDisputeModalComponent } from '../components/order-dispute-modal/or
 import { OrderIssueFlagModalComponent } from '../components/order-issue-flag-modal/order-issue-flag-modal.component';
 import { OrderRefundModalComponent } from '../components/order-refund-modal/order-refund-modal.component';
 import { OrderStatusUpdateModalComponent } from '../components/order-status-update-modal/order-status-update-modal.component';
+import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
+import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/components/ui/key-value-grid/key-value-grid.component';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 import { DriverAssignmentForm, DriverCandidate, OrderCancellationForm, OrderDetail, OrderDisputeForm, OrderIssueFlagForm, OrderRefundForm, OrderStatusUpdateForm } from '../orders.models';
 
 @Component({
@@ -22,7 +26,11 @@ import { DriverAssignmentForm, DriverCandidate, OrderCancellationForm, OrderDeta
     OrderCancellationModalComponent,
     OrderRefundModalComponent,
     OrderDisputeModalComponent,
-    OrderIssueFlagModalComponent
+    OrderIssueFlagModalComponent,
+    SectionHeaderComponent,
+    StatusPillComponent,
+    InlineBannerComponent,
+    KeyValueGridComponent
   ],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss']
@@ -153,6 +161,78 @@ export class OrderDetailsComponent implements OnInit {
     };
 
     return map[status] || 'text-slate-400 bg-slate-50 border-slate-100';
+  }
+
+  get orderStatusVariant(): StatusPillVariant {
+    const currentStatus = this.order()?.status;
+    const map: Record<string, StatusPillVariant> = {
+      COMPLETED: 'success',
+      DELIVERED: 'success',
+      IN_PROGRESS: 'warning',
+      OUT_FOR_DELIVERY: 'processing',
+      NEW: 'info',
+      CANCELLED: 'danger'
+    };
+
+    return map[currentStatus || ''] || 'neutral';
+  }
+
+  get paymentInfoItems(): KeyValueGridItem[] {
+    const currentOrder = this.order();
+
+    if (!currentOrder) {
+      return [];
+    }
+
+    return [
+      {
+        label: 'ORDERS.DETAIL.PAYMENT_METHOD',
+        value: 'ORDERS.DETAIL.MADA',
+        translateValue: true
+      },
+      {
+        label: 'ORDERS.DETAIL.TRANSACTION_REF',
+        value: '#TRX-8271039',
+        valueDir: 'ltr'
+      },
+      {
+        label: 'ORDERS.DETAIL.ORDER_SUBTOTAL',
+        value: this.formatCurrency(currentOrder.subtotal),
+        valueDir: 'ltr'
+      },
+      {
+        label: 'ORDERS.DETAIL.DELIVERY_FEE',
+        value: this.formatCurrency(currentOrder.deliveryFee),
+        valueDir: 'ltr'
+      },
+      {
+        label: 'ORDERS.DETAIL.TAX',
+        value: this.formatCurrency(currentOrder.tax),
+        valueDir: 'ltr'
+      }
+    ];
+  }
+
+  get deliveryInfoItems(): KeyValueGridItem[] {
+    const currentOrder = this.order();
+
+    if (!currentOrder) {
+      return [];
+    }
+
+    return [
+      {
+        label: 'ORDERS.DETAIL.EXPECTED_TIME',
+        value: currentOrder.time,
+        valueDir: 'ltr',
+        valueTone: 'warning'
+      },
+      {
+        label: 'ORDERS.DETAIL.HOUSING_TYPE',
+        value: 'ORDERS.DETAIL.APARTMENT',
+        translateValue: true
+      }
+    ];
   }
 
   openStatusModal(): void {
@@ -377,5 +457,12 @@ export class OrderDetailsComponent implements OnInit {
       minute: '2-digit',
       hour12: true
     }).format(date);
+  }
+
+  private formatCurrency(value: number): string {
+    return `${new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value)} SAR`;
   }
 }

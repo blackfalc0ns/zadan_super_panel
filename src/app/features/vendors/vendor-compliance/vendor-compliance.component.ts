@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 interface VerificationItem {
   id: string;
@@ -12,7 +15,6 @@ interface VerificationItem {
   status: 'completed' | 'pending' | 'missing';
   statusLabelKey: string;
   iconBgClass: string;
-  statusBgClass: string;
 }
 
 interface RiskIndicator {
@@ -24,8 +26,6 @@ interface RiskIndicator {
   icon: string;
   borderClass: string;
   bgClass: string;
-  iconClass: string;
-  badgeClass: string;
 }
 
 interface ComplianceNote {
@@ -42,13 +42,14 @@ interface ComplianceNote {
 @Component({
   selector: 'app-vendor-compliance',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent],
   templateUrl: './vendor-compliance.component.html'
 })
 export class VendorComplianceComponent {
-  vendorId: string = 'VND-9928';
-  currentLang: string = 'ar';
-  isRTL: boolean = true;
+  vendorId = 'VND-9928';
+  currentLang = 'ar';
+  isRTL = true;
+  newNote = '';
 
   verificationItems: VerificationItem[] = [
     {
@@ -58,8 +59,7 @@ export class VendorComplianceComponent {
       icon: 'badge',
       status: 'completed',
       statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
-      iconBgClass: 'bg-teal-50 text-teal-500',
-      statusBgClass: 'bg-teal-50 text-teal-600'
+      iconBgClass: 'bg-teal-50 text-teal-500'
     },
     {
       id: 'commercial',
@@ -68,8 +68,7 @@ export class VendorComplianceComponent {
       icon: 'storefront',
       status: 'completed',
       statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
-      iconBgClass: 'bg-teal-50 text-teal-500',
-      statusBgClass: 'bg-teal-50 text-teal-600'
+      iconBgClass: 'bg-teal-50 text-teal-500'
     },
     {
       id: 'tax',
@@ -78,8 +77,7 @@ export class VendorComplianceComponent {
       icon: 'receipt_long',
       status: 'pending',
       statusLabelKey: 'COMPLIANCE.STATUS.UNDER_REVIEW',
-      iconBgClass: 'bg-orange-50 text-orange-500',
-      statusBgClass: 'bg-orange-50 text-orange-600'
+      iconBgClass: 'bg-orange-50 text-orange-500'
     },
     {
       id: 'bank',
@@ -88,8 +86,7 @@ export class VendorComplianceComponent {
       icon: 'account_balance',
       status: 'completed',
       statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
-      iconBgClass: 'bg-teal-50 text-teal-500',
-      statusBgClass: 'bg-teal-50 text-teal-600'
+      iconBgClass: 'bg-teal-50 text-teal-500'
     },
     {
       id: 'license',
@@ -98,8 +95,7 @@ export class VendorComplianceComponent {
       icon: 'verified',
       status: 'missing',
       statusLabelKey: 'COMPLIANCE.STATUS.MISSING',
-      iconBgClass: 'bg-slate-100 text-slate-500',
-      statusBgClass: 'bg-slate-100 text-slate-600'
+      iconBgClass: 'bg-slate-100 text-slate-500'
     }
   ];
 
@@ -112,9 +108,7 @@ export class VendorComplianceComponent {
       severityLabelKey: 'COMPLIANCE.SEVERITY.HIGH',
       icon: 'error',
       borderClass: 'border-red-100',
-      bgClass: 'bg-red-50/50',
-      iconClass: 'text-red-500',
-      badgeClass: 'bg-red-100 text-red-700'
+      bgClass: 'bg-red-50/50'
     },
     {
       id: 'address',
@@ -124,9 +118,7 @@ export class VendorComplianceComponent {
       severityLabelKey: 'COMPLIANCE.SEVERITY.MEDIUM',
       icon: 'report_problem',
       borderClass: 'border-orange-100',
-      bgClass: 'bg-orange-50/50',
-      iconClass: 'text-orange-500',
-      badgeClass: 'bg-orange-100 text-orange-700'
+      bgClass: 'bg-orange-50/50'
     },
     {
       id: 'iban',
@@ -136,9 +128,7 @@ export class VendorComplianceComponent {
       severityLabelKey: 'COMPLIANCE.SEVERITY.LOW',
       icon: 'info',
       borderClass: 'border-slate-200',
-      bgClass: 'bg-slate-50',
-      iconClass: 'text-slate-500',
-      badgeClass: 'bg-slate-200 text-slate-700'
+      bgClass: 'bg-slate-50'
     }
   ];
 
@@ -165,21 +155,19 @@ export class VendorComplianceComponent {
     }
   ];
 
-  newNote: string = '';
-
   constructor(
     private translate: TranslateService,
     private route: ActivatedRoute
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
-    
+
     this.translate.onLangChange.subscribe((event) => {
       this.currentLang = event.lang;
       this.isRTL = event.lang === 'ar';
     });
 
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       if (params['id']) {
         this.vendorId = params['id'];
       }
@@ -210,10 +198,36 @@ export class VendorComplianceComponent {
   }
 
   get verificationCompletedCount(): number {
-    return this.verificationItems.filter(item => item.status === 'completed').length;
+    return this.verificationItems.filter((item) => item.status === 'completed').length;
   }
 
   get lastReviewerInitials(): string {
     return this.isRTL ? 'م.أ' : 'M.A';
+  }
+
+  getVerificationStatusVariant(status: VerificationItem['status']): StatusPillVariant {
+    switch (status) {
+      case 'completed':
+        return 'success';
+      case 'pending':
+        return 'warning';
+      case 'missing':
+        return 'neutral';
+      default:
+        return 'neutral';
+    }
+  }
+
+  getRiskSeverityVariant(severity: RiskIndicator['severity']): StatusPillVariant {
+    switch (severity) {
+      case 'high':
+        return 'danger';
+      case 'medium':
+        return 'warning';
+      case 'low':
+        return 'neutral';
+      default:
+        return 'neutral';
+    }
   }
 }

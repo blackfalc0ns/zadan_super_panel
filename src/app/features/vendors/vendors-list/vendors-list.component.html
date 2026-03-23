@@ -1,30 +1,21 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+    <app-page-header
+        [title]="'VENDORS.TITLE'"
+        [subtitle]="'VENDORS.DESC'"
+        [showToolbar]="true"
+        [breadcrumbs]="[
+            { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
+            { label: 'VENDORS.TITLE' }
+        ]">
+        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">storefront</span>
 
-    <!-- Design 2.0 Artistic Header Row -->
-    <div class="px-4 md:px-10 pt-4 pb-3 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
-        <!-- Page Identity -->
-        <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
-            <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
-                <span>{{ 'SIDEBAR.CATALOG' | translate }}</span>
-                <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
-                <span class="text-zadna-primary">{{ 'VENDORS.TITLE' | translate }}</span>
-            </nav>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                {{ 'VENDORS.TITLE' | translate }}
-            </h1>
-            <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-                {{ 'VENDORS.DESC' | translate }}
-            </p>
-        </div>
-
-        <!-- Primary Action -->
-        <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
             <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
                 <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
                 {{ 'VENDORS.ADD_VENDOR' | translate }}
             </button>
         </div>
-    </div>
+    </app-page-header>
 
     <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
         
@@ -147,20 +138,11 @@
                 <!-- Status Template -->
                 <ng-container *ngIf="column.key === 'status'">
                     <div class="flex justify-center">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm text-[10px] font-black uppercase tracking-tight"
-                              [ngClass]="{
-                                'text-emerald-500': vendor.status === 'Active',
-                                'text-amber-500': vendor.status === 'Pending' || vendor.status === 'PendingReview',
-                                'text-red-500': vendor.status === 'Suspended' || vendor.status === 'Rejected'
-                              }">
-                            <span class="w-1.5 h-1.5 rounded-full"
-                                  [ngClass]="{
-                                    'bg-emerald-500': vendor.status === 'Active',
-                                    'bg-amber-500': vendor.status === 'Pending' || vendor.status === 'PendingReview',
-                                    'bg-red-500': vendor.status === 'Suspended' || vendor.status === 'Rejected'
-                                  }"></span>
-                            {{ getStatusLabel(vendor.status) | translate }}
-                        </span>
+                        <app-status-pill
+                            [label]="getStatusLabel(vendor.status)"
+                            [variant]="getVendorStatusVariant(vendor.status)"
+                            size="sm">
+                        </app-status-pill>
                     </div>
                 </ng-container>
 

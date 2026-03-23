@@ -22,16 +22,13 @@
                     <!-- Background Soft Glow -->
                     <div class="absolute -top-12 -right-12 w-32 h-32 bg-blue-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
 
-                    <div class="flex items-center gap-4 mb-8 relative z-10">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-50 text-blue-600 shadow-sm border border-blue-100/50">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 11 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-black text-slate-900 tracking-tight">{{ 'MASTER_PRODUCTS.BASIC_INFO' | translate }}</h2>
-                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ 'MASTER_PRODUCTS.BASIC_INFO_DESC' | translate }}</p>
-                        </div>
+                    <div class="mb-8 relative z-10">
+                        <app-section-header
+                            [compact]="true"
+                            icon="info"
+                            title="MASTER_PRODUCTS.BASIC_INFO"
+                            description="MASTER_PRODUCTS.BASIC_INFO_DESC">
+                        </app-section-header>
                     </div>
 
                     <!-- Bilingual Split Layout -->
@@ -116,19 +113,16 @@
                 <div class="glass-card p-5 sm:p-6 lg:p-8 relative overflow-hidden group">
                     <div class="absolute -top-12 -right-12 w-32 h-32 bg-fuchsia-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
 
-                    <div class="flex items-center justify-between mb-8 relative z-10">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-fuchsia-50 text-fuchsia-600 shadow-sm border border-fuchsia-100/50">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 class="text-lg font-black text-slate-900 tracking-tight">{{ 'MASTER_PRODUCTS.MEDIA_ASSETS' | translate }}</h2>
-                                <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ 'MASTER_PRODUCTS.MEDIA_ASSETS_DESC' | translate }}</p>
-                            </div>
-                        </div>
-                        <app-badge variant="neutral" size="sm" class="px-2 py-0.5 font-black uppercase tracking-widest text-[8px]">{{ 'MASTER_PRODUCTS.OPTIONAL' | translate }}</app-badge>
+                    <div class="mb-8 relative z-10">
+                        <app-section-header
+                            [compact]="true"
+                            icon="image"
+                            title="MASTER_PRODUCTS.MEDIA_ASSETS"
+                            description="MASTER_PRODUCTS.MEDIA_ASSETS_DESC">
+                            <app-badge actions variant="neutral" size="sm" class="px-2 py-0.5 font-black uppercase tracking-widest text-[8px]">
+                                {{ 'MASTER_PRODUCTS.OPTIONAL' | translate }}
+                            </app-badge>
+                        </app-section-header>
                     </div>
 
                     <!-- Hidden File Input -->
@@ -175,16 +169,13 @@
                 <div class="glass-card p-5 sm:p-6 relative overflow-hidden group">
                     <div class="absolute -top-12 -right-12 w-32 h-32 bg-zadna-accent/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
 
-                    <div class="flex items-center gap-4 mb-8 relative z-10">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-zadna-accent/10 text-zadna-accent shadow-sm border border-zadna-accent/10">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-black text-slate-900 tracking-tight">{{ 'MASTER_PRODUCTS.CLASSIFICATION' | translate }}</h2>
-                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ 'MASTER_PRODUCTS.CLASSIFICATION_DESC' | translate }}</p>
-                        </div>
+                    <div class="mb-8 relative z-10">
+                        <app-section-header
+                            [compact]="true"
+                            icon="category"
+                            title="MASTER_PRODUCTS.CLASSIFICATION"
+                            description="MASTER_PRODUCTS.CLASSIFICATION_DESC">
+                        </app-section-header>
                     </div>
 
                     <div class="space-y-8 relative z-10">
@@ -248,16 +239,13 @@
                 <div class="glass-card p-5 sm:p-6 relative overflow-hidden group">
                     <div class="absolute -top-12 -right-12 w-32 h-32 bg-indigo-50/50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
 
-                    <div class="flex items-center gap-4 mb-8 relative z-10">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-indigo-50 text-indigo-600 shadow-sm border border-indigo-100/50">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 17h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-black text-slate-900 tracking-tight">{{ 'MASTER_PRODUCTS.INVENTORY_TRACKING' | translate }}</h2>
-                            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ 'MASTER_PRODUCTS.INVENTORY_DESC' | translate }}</p>
-                        </div>
+                    <div class="mb-8 relative z-10">
+                        <app-section-header
+                            [compact]="true"
+                            icon="qr_code_2"
+                            title="MASTER_PRODUCTS.INVENTORY_TRACKING"
+                            description="MASTER_PRODUCTS.INVENTORY_DESC">
+                        </app-section-header>
                     </div>
 
                     <div class="flex flex-col relative z-10">
@@ -286,13 +274,19 @@
                     <div class="absolute -top-12 -right-12 w-32 h-32 bg-white/20 rounded-full blur-[80px] group-hover:bg-white/30 transition-all duration-1000"></div>
 
                     <div class="p-5 sm:p-6 space-y-5 relative z-10">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-between gap-3">
                             <div class="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 11 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                             <h4 class="text-[10px] font-black text-white/90 uppercase tracking-[0.2em]">{{ 'MASTER_PRODUCTS.PUBLISHING_STATUS' | translate }}</h4>
+                            <app-status-pill
+                                [label]="publishingStatusLabel"
+                                [variant]="publishingStatusVariant"
+                                [showDot]="false"
+                                [size]="'sm'">
+                            </app-status-pill>
                         </div>
 
                         <div class="space-y-5">

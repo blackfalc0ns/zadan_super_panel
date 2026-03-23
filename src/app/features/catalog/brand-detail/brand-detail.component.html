@@ -54,11 +54,11 @@
                         <div class="flex flex-col border-r border-slate-200/50 pr-8">
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{{ 'BRANDS.DETAIL.STATUS' | translate }}</p>
                             <div class="flex">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all"
-                                    [ngClass]="brand.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'">
-                                    <span class="w-1.5 h-1.5 rounded-full" [ngClass]="brand.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></span>
-                                    {{ brand.isActive ? ('BRANDS.DETAIL.STATUS_ACTIVE' | translate) : ('BRANDS.DETAIL.STATUS_INACTIVE' | translate) }}
-                                 </span>
+                                <app-status-pill
+                                    [label]="brand.isActive ? 'BRANDS.DETAIL.STATUS_ACTIVE' : 'BRANDS.DETAIL.STATUS_INACTIVE'"
+                                    [variant]="getBrandStatusVariant(brand.isActive)"
+                                    size="sm">
+                                </app-status-pill>
                             </div>
                         </div>
 
@@ -101,7 +101,7 @@
 
             <!-- Table Container -->
             <div class="overflow-x-auto flex-grow rounded-[1.5rem] border border-white/60 shadow-inner bg-white/20">
-                <table class="w-full text-sm text-right">
+                <table class="w-full table-fixed text-sm text-right">
                     <thead class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-white/40 border-b border-white/60">
                         <tr>
                             <th class="px-8 py-5 font-bold" scope="col">{{ 'BRANDS.DETAIL.PRODUCT_NAME' | translate }}</th>
@@ -137,18 +137,11 @@
                                 <span class="text-[10px] font-black bg-slate-100 px-3 py-1 rounded-md text-slate-600 tracking-wider font-mono">{{ product.sku || product.barcode || 'N/A' }}</span>
                             </td>
                             <td class="px-8 py-5 text-center">
-                                <span *ngIf="product.status === 'Active'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100/50">
-                                    <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
-                                     {{ 'BRANDS.DETAIL.STATUS_ACTIVE' | translate }}
-                                </span>
-                                <span *ngIf="product.status === 'Draft'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-100/50">
-                                    <span class="w-1 h-1 rounded-full bg-amber-500"></span>
-                                    {{ 'BRANDS.DETAIL.STATUS_DRAFT' | translate }}
-                                </span>
-                                <span *ngIf="product.status === 'Inactive' || product.status === 'Discontinued'" class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-rose-600 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/50">
-                                    <span class="w-1 h-1 rounded-full bg-rose-500"></span>
-                                    {{ (product.status === 'Inactive' ? 'BRANDS.DETAIL.STATUS_INACTIVE' : 'BRANDS.DETAIL.STATUS_STOPPED') | translate }}
-                                </span>
+                                <app-status-pill
+                                    [label]="getProductStatusLabel(product.status)"
+                                    [variant]="getProductStatusVariant(product.status)"
+                                    size="sm">
+                                </app-status-pill>
                             </td>
                             <td class="px-8 py-5 text-center">
                                 <button [routerLink]="['/catalog/products/edit', product.id]" class="w-8 h-8 rounded-full bg-white border border-slate-100 shadow-sm inline-flex items-center justify-center text-slate-400 hover:text-zadna-primary hover:border-zadna-primary transition-all active:scale-90">

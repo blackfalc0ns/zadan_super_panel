@@ -15,11 +15,12 @@ import { EditOwnerModalComponent, OwnerData } from '../../../shared/components/u
 import { EditLegalBankModalComponent, LegalBankData } from '../../../shared/components/ui/edit-legal-bank-modal/edit-legal-bank-modal.component';
 import { EditStoreModalComponent, StoreData } from '../../../shared/components/ui/edit-store-modal/edit-store-modal.component';
 import { CrViewerModalComponent, CommercialRegisterData } from '../../../shared/components/ui/cr-viewer-modal/cr-viewer-modal.component';
+import { StatusPillComponent } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-vendor-detail',
   standalone: true,
-  imports: [CommonModule, VendorDetailHeaderComponent, VendorComplianceComponent, VendorActivityLogComponent, VendorOverviewComponent, VendorProductsComponent, VendorOrdersComponent, VendorFinanceComponent, VendorSettingsComponent, VendorAnalyticsComponent, TranslateModule, EditOwnerModalComponent, EditLegalBankModalComponent, EditStoreModalComponent, CrViewerModalComponent],
+  imports: [CommonModule, VendorDetailHeaderComponent, VendorComplianceComponent, VendorActivityLogComponent, VendorOverviewComponent, VendorProductsComponent, VendorOrdersComponent, VendorFinanceComponent, VendorSettingsComponent, VendorAnalyticsComponent, TranslateModule, EditOwnerModalComponent, EditLegalBankModalComponent, EditStoreModalComponent, CrViewerModalComponent, StatusPillComponent],
   templateUrl: './vendor-detail.component.html'
 })
 export class VendorDetailComponent implements OnInit {

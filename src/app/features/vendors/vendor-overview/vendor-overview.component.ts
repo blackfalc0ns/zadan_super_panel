@@ -2,6 +2,9 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 interface KPI {
   id: string;
@@ -48,7 +51,7 @@ interface Alert {
 @Component({
   selector: 'app-vendor-overview',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent],
   templateUrl: './vendor-overview.component.html'
 })
 export class VendorOverviewComponent {
@@ -260,5 +263,41 @@ export class VendorOverviewComponent {
 
   onNavigateToDetails() {
     this.router.navigate(['/vendors', this.vendorId]);
+  }
+
+  getDocumentStatusVariant(statusKey: string): StatusPillVariant {
+    if (statusKey.includes('VERIFIED')) {
+      return 'success';
+    }
+
+    if (statusKey.includes('UNDER_REVIEW')) {
+      return 'warning';
+    }
+
+    return 'neutral';
+  }
+
+  getOrderStatusVariant(statusKey: string): StatusPillVariant {
+    if (statusKey.includes('COMPLETED')) {
+      return 'success';
+    }
+
+    if (statusKey.includes('PROCESSING')) {
+      return 'processing';
+    }
+
+    if (statusKey.includes('PENDING')) {
+      return 'warning';
+    }
+
+    if (statusKey.includes('CANCELLED')) {
+      return 'danger';
+    }
+
+    return 'neutral';
+  }
+
+  getAlertVariant(alertId: string): 'warning' | 'error' {
+    return alertId === '1' ? 'error' : 'warning';
   }
 }

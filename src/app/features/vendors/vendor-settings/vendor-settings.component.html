@@ -5,15 +5,21 @@
     <div class="lg:col-span-1 space-y-6">
       <!-- Account Settings Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center gap-2 mb-8">
-          <span class="material-symbols-outlined text-blue-500">manage_accounts</span>
-          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.ACCOUNT_SETTINGS' | translate }}</h3>
-        </div>
+        <app-section-header
+          [compact]="true"
+          icon="manage_accounts"
+          title="VENDOR_SETTINGS.ACCOUNT_SETTINGS">
+        </app-section-header>
         
-        <div class="space-y-5">
+        <div class="space-y-5 pt-8">
           <div class="flex justify-between items-center border-b border-gray-50 pb-4">
             <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_STATUS' | translate }}</span>
-            <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.ACTIVE' | translate }}</span>
+            <app-status-pill
+              label="VENDOR_SETTINGS.ACTIVE"
+              variant="success"
+              [showDot]="false"
+              [size]="'sm'">
+            </app-status-pill>
           </div>
           <div class="flex justify-between items-center border-b border-gray-50 pb-4">
             <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_TYPE' | translate }}</span>
@@ -33,12 +39,13 @@
 
       <!-- Operational Settings Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center gap-2 mb-6">
-          <span class="material-symbols-outlined text-primary">storefront</span>
-          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.OPERATIONS_SETTINGS' | translate }}</h3>
-        </div>
+        <app-section-header
+          [compact]="true"
+          icon="storefront"
+          title="VENDOR_SETTINGS.OPERATIONS_SETTINGS">
+        </app-section-header>
         
-        <div class="space-y-6">
+        <div class="space-y-6 pt-6">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm font-bold text-gray-900 mb-1">{{ 'VENDOR_SETTINGS.ORDER_RECEPTION' | translate }}</p>
@@ -80,12 +87,13 @@
     <div class="lg:col-span-1 space-y-6">
       <!-- Permissions Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
-        <div class="flex items-center gap-2 mb-6">
-          <span class="material-symbols-outlined text-teal-500">verified_user</span>
-          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.PERMISSIONS_ACCESS' | translate }}</h3>
-        </div>
+        <app-section-header
+          [compact]="true"
+          icon="verified_user"
+          title="VENDOR_SETTINGS.PERMISSIONS_ACCESS">
+        </app-section-header>
         
-        <div class="space-y-6">
+        <div class="space-y-6 pt-6">
           <div class="flex items-start gap-4">
             <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0">
               <span class="material-symbols-outlined text-gray-400">inventory_2</span>
@@ -93,7 +101,12 @@
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
                 <span class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.PRODUCT_MANAGEMENT' | translate }}</span>
-                <span class="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">{{ 'VENDOR_SETTINGS.FULL_ACCESS' | translate }}</span>
+                <app-status-pill
+                  label="VENDOR_SETTINGS.FULL_ACCESS"
+                  variant="success"
+                  [showDot]="false"
+                  [size]="'sm'">
+                </app-status-pill>
               </div>
               <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.PRODUCT_MANAGEMENT_DESC' | translate }}</p>
             </div>
@@ -131,12 +144,13 @@
 
         <!-- Registry Settings -->
         <div class="mt-12 pt-8 border-t border-gray-100">
-          <div class="flex items-center gap-2 mb-6">
-            <span class="material-symbols-outlined text-blue-500">settings_input_component</span>
-            <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.API_SETTINGS' | translate }}</h3>
-          </div>
+          <app-section-header
+            [compact]="true"
+            icon="settings_input_component"
+            title="VENDOR_SETTINGS.API_SETTINGS">
+          </app-section-header>
           
-          <div class="space-y-4">
+          <div class="space-y-4 pt-6">
             <div class="flex justify-between items-center text-sm">
               <span class="text-gray-400">{{ 'VENDOR_SETTINGS.CONNECTION_STATUS' | translate }}</span>
               <span class="flex items-center gap-1.5 text-green-600 font-bold">
@@ -161,12 +175,14 @@
     <div class="lg:col-span-1 space-y-6">
       <!-- Control Actions Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center gap-2 mb-6">
-          <span class="material-symbols-outlined text-red-500">warning</span>
-          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.CONTROL_ACTIONS' | translate }}</h3>
-        </div>
+        <app-section-header
+          [compact]="true"
+          icon="warning"
+          title="VENDOR_SETTINGS.CONTROL_ACTIONS"
+          tone="danger">
+        </app-section-header>
         
-        <div class="space-y-4">
+        <div class="space-y-4 pt-6">
           <button class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">pause_circle</span>
@@ -192,12 +208,13 @@
 
       <!-- Notifications Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <div class="flex items-center gap-2 mb-6">
-          <span class="material-symbols-outlined text-blue-500">notifications</span>
-          <h3 class="text-base font-bold text-gray-900">{{ 'VENDOR_SETTINGS.NOTIFICATIONS' | translate }}</h3>
-        </div>
+        <app-section-header
+          [compact]="true"
+          icon="notifications"
+          title="VENDOR_SETTINGS.NOTIFICATIONS">
+        </app-section-header>
         
-        <div class="space-y-5">
+        <div class="space-y-5 pt-6">
           <div class="flex items-center justify-between">
             <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.EMAIL_NOTIFICATIONS' | translate }}</span>
             <label class="relative inline-flex items-center cursor-pointer">
@@ -224,7 +241,7 @@
 
       <!-- Last Edit Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center text-center">
-        <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+        <div class="mb-3 w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center">
           <span class="material-symbols-outlined text-gray-400">history</span>
         </div>
         <p class="text-xs text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.LAST_UPDATED_BY' | translate }}</p>

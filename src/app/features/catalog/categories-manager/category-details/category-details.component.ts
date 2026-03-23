@@ -9,8 +9,9 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
-import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { DetailHeaderComponent } from '../../../../shared/components/ui/detail-header/detail-header.component';
+import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { CategoryFormModalComponent } from '../../shared/category-form-modal/category-form-modal.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 
@@ -26,9 +27,10 @@ import { DeleteConfirmationModalComponent } from '../../../../shared/components/
     AppButtonComponent,
     AppBadgeComponent,
     AppCardComponent,
-    AppPageHeaderComponent,
     AppPaginationComponent,
-    DetailHeaderComponent
+    DetailHeaderComponent,
+    SectionHeaderComponent,
+    StatusPillComponent
   ],
 
   templateUrl: './category-details.component.html',
@@ -195,5 +197,9 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     if (this.category) {
       this.router.navigate(['/catalog/products/create'], { queryParams: { categoryId: this.category.id } });
     }
+  }
+
+  getCategoryStatusVariant(isActive?: boolean): StatusPillVariant {
+    return isActive ? 'success' : 'neutral';
   }
 }

@@ -2,10 +2,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import {
   DisputePriority,
   DisputeRow,
   DisputeStatus,
+  EvidenceItem,
   EscalationDecisionForm,
   EscalationPriority,
   EscalationReason,
@@ -15,7 +17,7 @@ import {
 @Component({
   selector: 'app-dispute-escalation-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
   templateUrl: './dispute-escalation-modal.component.html',
   styleUrl: './dispute-escalation-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -65,12 +67,14 @@ export class DisputeEscalationModalComponent implements OnChanges {
   ];
 
   form: EscalationDecisionForm = this.createEmptyForm();
+  private brokenEvidencePreviewKeys = new Set<string>();
 
   constructor(private readonly translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['isOpen']?.currentValue || changes['dispute']) && this.isOpen && this.dispute) {
       this.form = this.createDefaultForm(this.dispute);
+      this.brokenEvidencePreviewKeys = new Set<string>();
     }
   }
 
@@ -112,6 +116,29 @@ export class DisputeEscalationModalComponent implements OnChanges {
       medium: this.t('DISPUTES_DASHBOARD.PRIORITY.MEDIUM'),
       low: this.t('DISPUTES_DASHBOARD.PRIORITY.LOW')
     }[priority];
+  }
+
+  isEvidencePreviewAvailable(file: EvidenceItem, index: number): boolean {
+    return file.type === 'image' && !!file.preview && !this.brokenEvidencePreviewKeys.has(this.getEvidenceKey(file, index));
+  }
+
+  onEvidencePreviewError(file: EvidenceItem, index: number): void {
+    this.brokenEvidencePreviewKeys = new Set<string>([
+      ...this.brokenEvidencePreviewKeys,
+      this.getEvidenceKey(file, index)
+    ]);
+  }
+
+  getEvidenceIcon(file: EvidenceItem): string {
+    return file.type === 'image' ? 'image' : 'description';
+  }
+
+  getEvidenceTypeToken(file: EvidenceItem): string {
+    return file.type === 'image' ? 'IMG' : 'PDF';
+  }
+
+  trackEvidence(_: number, file: EvidenceItem): string {
+    return `${file.type}-${file.label}`;
   }
 
   private createDefaultForm(dispute: DisputeRow): EscalationDecisionForm {
@@ -201,5 +228,9 @@ export class DisputeEscalationModalComponent implements OnChanges {
 
   private t(key: string, params?: Record<string, unknown>): string {
     return this.translate.instant(key, params);
+  }
+
+  private getEvidenceKey(file: EvidenceItem, index: number): string {
+    return `${index}-${file.type}-${file.label}`;
   }
 }

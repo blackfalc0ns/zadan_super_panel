@@ -1,25 +1,15 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
-    
-    <!-- Design 2.0 Artistic Header Row -->
-    <div class="px-4 md:px-10 pt-4 pb-3 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
-        <!-- Page Identity -->
-        <div class="text-start w-full sm:w-auto space-y-1 animate-in slide-in-from-right-10 duration-700">
-            <nav class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
-                <span>{{ 'SIDEBAR.HOME' | translate }}</span>
-                <span class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
-                <span class="text-zadna-primary">{{ 'ORDERS.OPERATIONS_MANAGEMENT' | translate }}</span>
-            </nav>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight flex items-center gap-3">
-                <span class="material-symbols-outlined text-[28px] text-zadna-primary">shopping_cart</span>
-                {{ 'ORDERS.TITLE' | translate }}
-            </h1>
-            <p class="text-[10px] sm:text-[12px] font-medium text-slate-400 max-w-md">
-                {{ 'ORDERS.SUBTITLE' | translate }}
-            </p>
-        </div>
+    <app-page-header
+        [title]="'ORDERS.TITLE'"
+        [subtitle]="'ORDERS.SUBTITLE'"
+        [showToolbar]="true"
+        [breadcrumbs]="[
+            { label: 'SIDEBAR.HOME', url: '/dashboard' },
+            { label: 'ORDERS.OPERATIONS_MANAGEMENT' }
+        ]">
+        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">shopping_cart</span>
 
-        <!-- Primary Action -->
-        <div class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
             <button class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary transition-colors">
                 <span class="material-symbols-outlined text-[20px]">download</span>
                 {{ 'ORDERS.EXPORT_REPORT' | translate }}
@@ -29,7 +19,7 @@
                 {{ 'ORDERS.CREATE_MANUAL' | translate }}
             </button>
         </div>
-    </div>
+    </app-page-header>
 
     <!-- Main Content Area -->
     <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
@@ -99,24 +89,11 @@
 
                 <ng-container *ngIf="column.key === 'status'">
                     <div class="flex justify-center">
-                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-50 bg-white shadow-sm"
-                             [ngClass]="{
-                               'text-emerald-500': order.status === 'COMPLETED' || order.status === 'DELIVERED',
-                               'text-amber-500': order.status === 'IN_PROGRESS',
-                               'text-blue-500': order.status === 'NEW',
-                               'text-red-500': order.status === 'CANCELLED'
-                             }">
-                            <span class="w-1.5 h-1.5 rounded-full animate-pulse" 
-                                  [ngClass]="{
-                                    'bg-emerald-500': order.status === 'COMPLETED' || order.status === 'DELIVERED',
-                                    'bg-amber-500': order.status === 'IN_PROGRESS',
-                                    'bg-blue-500': order.status === 'NEW',
-                                    'bg-red-500': order.status === 'CANCELLED'
-                                  }"></span>
-                            <span class="text-[10px] font-black tracking-tight uppercase">
-                                {{ 'ORDERS.STATUS.' + order.status | translate }}
-                            </span>
-                        </div>
+                        <app-status-pill
+                            [label]="'ORDERS.STATUS.' + order.status"
+                            [variant]="getOrderStatusVariant(order.status)"
+                            size="sm">
+                        </app-status-pill>
                     </div>
                 </ng-container>
 

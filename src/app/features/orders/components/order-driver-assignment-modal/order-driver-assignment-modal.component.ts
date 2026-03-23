@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { DriverAssignmentForm, DriverCandidate, OrderDetail } from '../../orders.models';
 
 @Component({
   selector: 'app-order-driver-assignment-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
   templateUrl: './order-driver-assignment-modal.component.html',
   styleUrl: './order-driver-assignment-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

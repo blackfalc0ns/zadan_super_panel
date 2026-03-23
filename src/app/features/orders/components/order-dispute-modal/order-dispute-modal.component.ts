@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { OrderDetail, OrderDisputeForm } from '../../orders.models';
 
 type DisputeTypeOption = { value: OrderDisputeForm['disputeType']; icon: string };
@@ -9,7 +10,7 @@ type DisputeTypeOption = { value: OrderDisputeForm['disputeType']; icon: string 
 @Component({
   selector: 'app-order-dispute-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
   templateUrl: './order-dispute-modal.component.html',
   styleUrl: './order-dispute-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 
 interface AnalyticsMetric {
   titleKey: string;
@@ -22,7 +24,7 @@ interface BestSeller {
 @Component({
   selector: 'app-vendor-analytics',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent],
   templateUrl: './vendor-analytics.component.html'
 })
 export class VendorAnalyticsComponent {

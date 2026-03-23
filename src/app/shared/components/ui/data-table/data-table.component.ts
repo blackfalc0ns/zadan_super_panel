@@ -65,17 +65,21 @@ export interface BulkAction {
 
     <!-- Desktop Table -->
     <div [class]="'hidden md:block w-full overflow-x-auto animate-in fade-in slide-in-from-bottom-10 duration-1000 ' + containerClass">
-      <table class="w-full border-separate border-spacing-y-0">
+      <table class="w-full table-fixed border-separate border-spacing-y-0">
+        <colgroup>
+          <col *ngIf="selectable" [style.width]="selectionColumnWidth">
+          <col *ngFor="let col of columns" [style.width]="getColumnWidth(col)">
+        </colgroup>
         <thead class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 border-b border-slate-100/50">
           <tr>
-            <th *ngIf="selectable" class="text-center w-[3%] py-7">
+            <th *ngIf="selectable" class="w-12 px-3 py-7 text-center align-middle">
               <input type="checkbox" 
                      [checked]="allSelected" 
                      (change)="toggleSelectAll()"
                      class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20">
             </th>
             <th *ngFor="let col of columns" 
-                class="py-7 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter"
+                class="px-4 py-7 align-middle text-[10px] font-black uppercase text-slate-400/70 tracking-tighter"
                 [class.text-center]="col.align === 'center'"
                 [class.text-start]="col.align === 'left'"
                 [class.text-end]="col.align === 'right'"
@@ -90,7 +94,7 @@ export interface BulkAction {
               [class.cursor-pointer]="clickableRows"
               (click)="onRowClick(item)">
             
-            <td *ngIf="selectable" class="text-center align-middle py-6" (click)="$event.stopPropagation()">
+            <td *ngIf="selectable" class="w-12 px-3 py-6 text-center align-middle" (click)="$event.stopPropagation()">
               <input type="checkbox" 
                      [checked]="isSelected(item)" 
                      (change)="toggleSelectItem(item)"
@@ -98,14 +102,16 @@ export interface BulkAction {
             </td>
 
             <td *ngFor="let col of columns" 
-                class="align-middle py-6"
+                class="px-4 py-6 align-middle overflow-hidden"
                 [class.text-center]="col.align === 'center'"
                 [class.text-start]="col.align === 'left'"
                 [class.text-end]="col.align === 'right'">
               
               <!-- Text Column -->
               <ng-container *ngIf="col.type === 'text' || !col.type">
-                {{ getColumnValue(item, col.key) }}
+                <div class="min-w-0 truncate text-sm font-bold text-slate-700">
+                  {{ getColumnValue(item, col.key) }}
+                </div>
               </ng-container>
 
               <!-- Badge Column -->
@@ -211,6 +217,7 @@ export class DataTableComponent {
   @ContentChild('mobileCard') mobileCardTemplate!: TemplateRef<any>;
 
   selectedItems = new Set<any>();
+  readonly selectionColumnWidth = '3.5rem';
 
   get allSelected(): boolean {
     return this.data.length > 0 && this.data.every(item => this.selectedItems.has(item[this.idField]));
@@ -265,6 +272,10 @@ export class DataTableComponent {
 
   getItemActions(item: any): TableAction[] {
     return this.actions.filter(action => !action.condition || action.condition(item));
+  }
+
+  getColumnWidth(column: TableColumn): string | null {
+    return column.width ?? null;
   }
 
   private emitSelectionChange() {

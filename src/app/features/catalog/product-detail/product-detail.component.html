@@ -62,20 +62,10 @@
                                 {{ activeLang === 'ar' ? product.nameAr : product.nameEn }}
                             </h2>
                         </div>
-                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium"
-                             [ngClass]="{
-                                'bg-emerald-50 text-emerald-600': product.status === 'Active',
-                                'bg-amber-50 text-amber-600': product.status === 'Draft',
-                                'bg-red-50 text-red-600': product.status === 'Inactive' || product.status === 'Discontinued'
-                             }">
-                            <span class="w-1.5 h-1.5 rounded-full"
-                                  [ngClass]="{
-                                    'bg-emerald-500': product.status === 'Active',
-                                    'bg-amber-500': product.status === 'Draft',
-                                    'bg-red-500': product.status === 'Inactive' || product.status === 'Discontinued'
-                                  }"></span>
-                            <span>{{ 'PRODUCTS.DETAIL.STATUS_' + product.status.toUpperCase() | translate }}</span>
-                        </div>
+                        <app-status-pill
+                            [label]="getProductStatusLabel(product.status)"
+                            [variant]="getProductStatusVariant(product.status)">
+                        </app-status-pill>
                     </div>
 
                     <div *ngIf="product.descriptionAr || product.descriptionEn" class="mt-4 pt-4 border-t border-slate-100">
@@ -87,47 +77,35 @@
                 </div>
 
                 <!-- Details Grid -->
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- Barcode -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                        <p class="text-xs text-slate-500 mb-2">{{ 'PRODUCTS.DETAIL.BARCODE' | translate }}</p>
-                        <p class="text-sm font-semibold text-slate-900 font-mono bg-slate-50 px-3 py-2 rounded-lg inline-block">
-                            {{ product.barcode || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}
-                        </p>
-                    </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <app-section-header
+                        [compact]="true"
+                        icon="info"
+                        title="COMMON.DETAILS">
+                    </app-section-header>
 
-                    <!-- Unit -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                        <p class="text-xs text-slate-500 mb-2">{{ 'PRODUCTS.DETAIL.UNIT' | translate }}</p>
-                        <p class="text-sm font-semibold text-slate-900">
-                            {{ unitName || product.unitOfMeasureId || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}
-                        </p>
-                    </div>
-
-                    <!-- Category -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                        <p class="text-xs text-slate-500 mb-2">{{ 'PRODUCTS.DETAIL.CATEGORY' | translate }}</p>
-                        <p class="text-sm font-semibold text-slate-900">
-                            {{ categoryName || product.categoryId }}
-                        </p>
-                    </div>
-
-                    <!-- Brand -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                        <p class="text-xs text-slate-500 mb-2">{{ 'PRODUCTS.DETAIL.BRAND' | translate }}</p>
-                        <p class="text-sm font-semibold text-slate-900">
-                            {{ brandName || product.brandId || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}
-                        </p>
+                    <div class="mt-5">
+                        <app-key-value-grid
+                            [items]="detailItems"
+                            [columns]="2"
+                            [bordered]="true">
+                        </app-key-value-grid>
                     </div>
                 </div>
 
                 <!-- Vendors Table -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">{{ 'PRODUCTS.DETAIL.VENDORS_TABLE' | translate }}</h3>
+                    <div class="mb-4">
+                        <app-section-header
+                            [compact]="true"
+                            icon="storefront"
+                            title="PRODUCTS.DETAIL.VENDORS_TABLE">
+                        </app-section-header>
+                    </div>
                     
                     <!-- Desktop Table -->
                     <div class="hidden md:block overflow-x-auto">
-                        <table class="w-full">
+                        <table class="w-full table-fixed">
                             <thead>
                                 <tr class="border-b border-slate-200">
                                     <th class="text-right text-xs font-semibold text-slate-600 pb-3 px-2">{{ 'PRODUCTS.DETAIL.VENDOR_NAME' | translate }}</th>

@@ -6,18 +6,18 @@
 
     <div class="min-w-0">
       <p *ngIf="eyebrow" class="mb-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-        {{ translate ? (eyebrow | translate) : eyebrow }}
+        {{ shouldTranslate ? (eyebrow | translate) : eyebrow }}
       </p>
 
       <div class="flex min-w-0 items-center gap-2">
         <h3 [class]="titleClasses">
-          {{ translate ? (title | translate) : title }}
+          {{ shouldTranslate ? (title | translate) : title }}
         </h3>
         <ng-content select="[meta]"></ng-content>
       </div>
 
       <p *ngIf="description" class="mt-1 text-xs font-medium leading-5 text-slate-500">
-        {{ translate ? (description | translate) : description }}
+        {{ shouldTranslate ? (description | translate) : description }}
       </p>
 
       <ng-content select="[description]"></ng-content>

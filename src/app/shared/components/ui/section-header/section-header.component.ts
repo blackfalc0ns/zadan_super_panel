@@ -16,7 +16,7 @@ export class SectionHeaderComponent {
   @Input() description = '';
   @Input() eyebrow = '';
   @Input() icon = '';
-  @Input() translate = true;
+  @Input() shouldTranslate = true;
   @Input() compact = false;
   @Input() tone: SectionHeaderTone = 'primary';
 

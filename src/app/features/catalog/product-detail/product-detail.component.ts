@@ -7,6 +7,9 @@ import { MasterProduct } from '../../../core/models/catalog.model';
 import { AppButtonComponent } from '../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../shared/components/ui/badge/badge.component';
 import { DetailHeaderComponent } from '../../../shared/components/ui/detail-header/detail-header.component';
+import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/components/ui/key-value-grid/key-value-grid.component';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-product-detail',
@@ -17,7 +20,10 @@ import { DetailHeaderComponent } from '../../../shared/components/ui/detail-head
     TranslateModule,
     AppButtonComponent,
     AppBadgeComponent,
-    DetailHeaderComponent
+    DetailHeaderComponent,
+    KeyValueGridComponent,
+    SectionHeaderComponent,
+    StatusPillComponent
   ],
   templateUrl: './product-detail.component.html',
   styles: []
@@ -131,6 +137,60 @@ export class ProductDetailComponent implements OnInit {
     if (this.product?.id) {
       this.router.navigate(['/catalog/products/edit', this.product.id]);
     }
+  }
+
+  get detailItems(): KeyValueGridItem[] {
+    if (!this.product) {
+      return [];
+    }
+
+    const notSpecified = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+
+    return [
+      {
+        label: 'PRODUCTS.DETAIL.BARCODE',
+        value: this.product.barcode || notSpecified,
+        translateValue: false,
+        valueDir: this.product.barcode ? 'ltr' : 'auto'
+      },
+      {
+        label: 'PRODUCTS.DETAIL.UNIT',
+        value: this.unitName || this.product.unitOfMeasureId || notSpecified,
+        translateValue: false
+      },
+      {
+        label: 'PRODUCTS.DETAIL.CATEGORY',
+        value: this.categoryName || this.product.categoryId || notSpecified,
+        translateValue: false
+      },
+      {
+        label: 'PRODUCTS.DETAIL.BRAND',
+        value: this.brandName || this.product.brandId || notSpecified,
+        translateValue: false
+      }
+    ];
+  }
+
+  getProductStatusVariant(status?: string): StatusPillVariant {
+    const variants: Record<string, StatusPillVariant> = {
+      Active: 'success',
+      Draft: 'warning',
+      Inactive: 'paused',
+      Discontinued: 'danger'
+    };
+
+    return variants[status || ''] ?? 'neutral';
+  }
+
+  getProductStatusLabel(status?: string): string {
+    const labels: Record<string, string> = {
+      Active: 'PRODUCTS.DETAIL.STATUS_ACTIVE',
+      Draft: 'PRODUCTS.DETAIL.STATUS_DRAFT',
+      Inactive: 'PRODUCTS.DETAIL.STATUS_INACTIVE',
+      Discontinued: 'PRODUCTS.DETAIL.STATUS_INACTIVE'
+    };
+
+    return labels[status || ''] || status || '-';
   }
 
   private buildPlaceholderImage(label: string): string {

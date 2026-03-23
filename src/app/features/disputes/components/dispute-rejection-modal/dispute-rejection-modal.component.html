@@ -1,28 +1,22 @@
-<div
-  *ngIf="isOpen && dispute as dispute"
-  class="dispute-modal-backdrop fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
-  (click)="onBackdropClick($event)">
-  <div
-    class="dispute-modal-panel relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.75rem] border border-white/60 bg-white/95 shadow-2xl"
-    (click)="$event.stopPropagation()">
-    <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-slate-200/60 bg-white/90 px-6 py-5 backdrop-blur md:px-8">
-      <div class="flex items-center gap-4">
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
-          <span class="material-symbols-outlined text-[24px]">block</span>
-        </div>
-        <div>
-          <h2 class="text-2xl font-black text-slate-900">{{ 'DISPUTES_DASHBOARD.REJECTION_MODAL.TITLE' | translate }}</h2>
-          <p class="mt-1 text-sm font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.REJECTION_MODAL.SUBTITLE' | translate }}</p>
-        </div>
-      </div>
-
-      <button class="rounded-full p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500" type="button" (click)="close.emit()">
-        <span class="material-symbols-outlined">close</span>
-      </button>
+<div *ngIf="isOpen && dispute as dispute">
+  <app-modal-shell
+    [dir]="isRtl ? 'rtl' : 'ltr'"
+    [title]="'DISPUTES_DASHBOARD.REJECTION_MODAL.TITLE' | translate"
+    [subtitle]="'DISPUTES_DASHBOARD.REJECTION_MODAL.SUBTITLE' | translate"
+    [shouldTranslate]="false"
+    [maxWidthClass]="'max-w-5xl'"
+    [panelClass]="'rounded-[1.75rem]'"
+    [bodyClass]="'px-6 py-6 md:px-8 md:py-7'"
+    [footerClass]="'px-6 py-4 md:px-8'"
+    [titleClass]="'text-2xl font-black text-slate-900'"
+    [subtitleClass]="'text-sm font-medium text-slate-500'"
+    [closeButtonClass]="'rounded-full p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500'"
+    (close)="close.emit()">
+    <div header-prefix class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+      <span class="material-symbols-outlined text-[24px]">block</span>
     </div>
 
-    <div class="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-7">
-      <div class="space-y-6">
+    <div modal-body class="space-y-6">
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
           <section class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/70 bg-slate-50 p-6">
             <div class="absolute left-0 top-0 h-28 w-28 -translate-x-8 -translate-y-8 rounded-full bg-zadna-primary/5 blur-3xl"></div>
@@ -177,10 +171,9 @@
               [(ngModel)]="form.internalNotes"></textarea>
           </section>
         </div>
-      </div>
     </div>
 
-    <div class="sticky bottom-0 flex items-center justify-between border-t border-slate-200/60 bg-slate-50/95 px-6 py-4 backdrop-blur md:px-8">
+    <div modal-footer class="flex items-center justify-between">
       <button class="rounded-full border border-slate-200 px-6 py-2.5 text-sm font-bold text-slate-500 transition-colors hover:bg-slate-100" type="button" (click)="close.emit()">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
@@ -195,5 +188,5 @@
         </button>
       </div>
     </div>
-  </div>
+  </app-modal-shell>
 </div>

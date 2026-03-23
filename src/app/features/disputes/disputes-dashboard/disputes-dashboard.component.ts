@@ -10,6 +10,8 @@ import { DisputeEscalationModalComponent } from '../components/dispute-escalatio
 import { DisputeRejectionModalComponent } from '../components/dispute-rejection-modal/dispute-rejection-modal.component';
 import { DisputeRequestInfoModalComponent } from '../components/dispute-request-info-modal/dispute-request-info-modal.component';
 import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel, TimelineItem } from '../disputes.models';
+import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-disputes-dashboard',
@@ -21,6 +23,8 @@ import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel,
     KpiCardsComponent,
     DataTableComponent,
     AppPaginationComponent,
+    AppPageHeaderComponent,
+    StatusPillComponent,
     DisputeApprovalModalComponent,
     DisputeEscalationModalComponent,
     DisputeRejectionModalComponent,
@@ -438,6 +442,17 @@ export class DisputesDashboardComponent {
       merchant: 'text-violet-500',
       resolved: 'text-emerald-500'
     }[status];
+  }
+
+  getStatusVariant(status: DisputeStatus): StatusPillVariant {
+    const variants: Record<DisputeStatus, StatusPillVariant> = {
+      open: 'info',
+      review: 'warning',
+      merchant: 'processing',
+      resolved: 'success'
+    };
+
+    return variants[status];
   }
 
   getPriorityClass(priority: DisputePriority): string {

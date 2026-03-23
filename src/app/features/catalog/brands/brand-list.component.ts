@@ -11,6 +11,8 @@ import { AppButtonComponent } from '../../../shared/components/ui/button/button.
 import { AppCardComponent } from '../../../shared/components/ui/card/card.component';
 import { AppInputComponent } from '../../../shared/components/ui/form-controls/input.component';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
+import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-brand-list',
@@ -24,7 +26,9 @@ import { AppPaginationComponent } from '../../../shared/components/ui/pagination
     AppButtonComponent,
     AppCardComponent,
     AppInputComponent,
-    AppPaginationComponent
+    AppPaginationComponent,
+    AppPageHeaderComponent,
+    StatusPillComponent
   ],
   templateUrl: './brand-list.component.html',
   styleUrl: './brand-list.component.scss'
@@ -135,5 +139,9 @@ export class BrandListComponent implements OnInit {
 
   deleteBrand(brand: Brand): void {
     console.log('Delete brand requested:', brand.id);
+  }
+
+  getBrandStatusVariant(isActive: boolean): StatusPillVariant {
+    return isActive ? 'success' : 'paused';
   }
 }

@@ -7,7 +7,7 @@ import { Category } from '../../../../core/models/catalog.model';
 
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input.component';
-import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
+import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { AppTextareaComponent } from '../../../../shared/components/ui/form-controls/textarea.component';
 
 @Component({
@@ -19,8 +19,8 @@ import { AppTextareaComponent } from '../../../../shared/components/ui/form-cont
         TranslateModule,
         AppButtonComponent,
         AppInputComponent,
-        AppCardComponent,
-        AppTextareaComponent
+        AppTextareaComponent,
+        ModalShellComponent
     ],
     templateUrl: './category-form-modal.component.html',
     styleUrl: './category-form-modal.component.scss'

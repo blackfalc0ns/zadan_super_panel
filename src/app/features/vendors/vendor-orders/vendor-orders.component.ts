@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
+import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 interface KPI {
   id: string;
@@ -35,7 +38,7 @@ interface Order {
 @Component({
   selector: 'app-vendor-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent],
   templateUrl: './vendor-orders.component.html'
 })
 export class VendorOrdersComponent {
@@ -242,5 +245,73 @@ export class VendorOrdersComponent {
     // Navigate to order edit page (to be created)
     // For now, you can create the route: /orders/:id/edit
     this.router.navigate(['/orders', orderId, 'edit']);
+  }
+
+  getPaymentStatusVariant(statusKey: string): StatusPillVariant {
+    if (statusKey.includes('PAID')) {
+      return 'success';
+    }
+
+    if (statusKey.includes('PENDING')) {
+      return 'warning';
+    }
+
+    if (statusKey.includes('REFUNDED')) {
+      return 'info';
+    }
+
+    return 'neutral';
+  }
+
+  getShippingStatusVariant(statusKey: string): StatusPillVariant {
+    if (statusKey.includes('COMPLETED')) {
+      return 'success';
+    }
+
+    if (statusKey.includes('IN_PROGRESS')) {
+      return 'processing';
+    }
+
+    if (statusKey.includes('PENDING')) {
+      return 'warning';
+    }
+
+    if (statusKey.includes('CANCELLED')) {
+      return 'danger';
+    }
+
+    return 'neutral';
+  }
+
+  getGeneralStatusVariant(statusKey: string): StatusPillVariant {
+    if (statusKey.includes('COMPLETED')) {
+      return 'success';
+    }
+
+    if (statusKey.includes('IN_PROGRESS')) {
+      return 'processing';
+    }
+
+    if (statusKey.includes('NEW')) {
+      return 'info';
+    }
+
+    if (statusKey.includes('CANCELLED')) {
+      return 'danger';
+    }
+
+    return 'neutral';
+  }
+
+  getAlertVariant(alertKey: string): 'warning' | 'error' | 'info' {
+    if (alertKey.includes('NEW_DISPUTE')) {
+      return 'error';
+    }
+
+    if (alertKey.includes('SHIPPING_DELAY')) {
+      return 'warning';
+    }
+
+    return 'info';
   }
 }

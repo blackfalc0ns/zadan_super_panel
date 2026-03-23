@@ -1,24 +1,17 @@
-<div
-  *ngIf="isOpen && dispute as dispute"
-  class="dispute-modal-backdrop fixed inset-0 z-[85] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
-  (click)="onBackdropClick($event)">
-  <div
-    class="dispute-modal-panel relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/95 shadow-2xl"
+<div *ngIf="isOpen && dispute as dispute">
+  <app-modal-shell
     [dir]="isRtl ? 'rtl' : 'ltr'"
-    (click)="$event.stopPropagation()">
-    <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/70 bg-white/90 px-6 py-4 backdrop-blur">
-      <div class="space-y-1">
-        <h2 class="text-xl font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TITLE' | translate }}</h2>
-        <p class="text-[11px] font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.SUBTITLE' | translate }}</p>
-      </div>
-
-      <button class="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100" type="button" (click)="close.emit()">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-
-    <div class="flex-1 overflow-y-auto px-6 py-6">
-      <div class="space-y-6">
+    title="DISPUTES_DASHBOARD.ESCALATION_MODAL.TITLE"
+    subtitle="DISPUTES_DASHBOARD.ESCALATION_MODAL.SUBTITLE"
+    [maxWidthClass]="'max-w-4xl'"
+    [panelClass]="'rounded-[1.5rem]'"
+    [bodyClass]="'px-6 py-6'"
+    [footerClass]="'px-6 py-4'"
+    [titleClass]="'text-xl font-black text-zadna-primary'"
+    [subtitleClass]="'text-[11px] font-medium text-slate-500'"
+    [closeButtonClass]="'flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100'"
+    (close)="close.emit()">
+    <div modal-body class="space-y-6">
         <section class="relative overflow-hidden rounded-[1.2rem] border border-slate-200/60 bg-slate-50 p-5">
           <div class="absolute -left-16 -top-16 h-32 w-32 rounded-full bg-zadna-primary/5 blur-3xl"></div>
 
@@ -134,45 +127,93 @@
           </div>
         </section>
 
-        <section class="space-y-4">
-          <div class="flex items-center justify-between gap-4">
-            <h3 class="text-xs font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.EVIDENCE_TITLE' | translate }}</h3>
-            <span class="text-[11px] font-bold text-slate-400">{{ getCurrentPriorityLabel(dispute.priority) }}</span>
-          </div>
-
-          <div class="flex flex-wrap gap-4">
-            <div class="flex gap-2">
-              <ng-container *ngFor="let file of dispute.evidence | slice:0:2">
-                <div class="relative h-16 w-16 overflow-hidden rounded-lg border border-slate-200/70 bg-slate-100">
-                  <ng-container *ngIf="file.type === 'image' && file.preview; else escalationFilePlaceholder">
-                    <img [src]="file.preview" [alt]="file.label" class="h-full w-full object-cover" />
-                    <div class="absolute inset-0 flex items-center justify-center bg-black/35 opacity-0 transition-opacity hover:opacity-100">
-                      <span class="material-symbols-outlined text-sm text-white">visibility</span>
-                    </div>
-                  </ng-container>
-
-                  <ng-template #escalationFilePlaceholder>
-                    <div class="flex h-full w-full items-center justify-center text-slate-400">
-                      <span class="material-symbols-outlined">description</span>
-                    </div>
-                  </ng-template>
-                </div>
-              </ng-container>
+        <section class="space-y-4 rounded-[1.25rem] border border-slate-200/70 bg-slate-50/80 p-4 sm:p-5">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="text-right">
+              <div class="flex items-center justify-end gap-2">
+                <span class="material-symbols-outlined text-[18px] text-zadna-primary">attach_file</span>
+                <h3 class="text-xs font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.EVIDENCE_TITLE' | translate }}</h3>
+              </div>
+              <p class="mt-1 text-[11px] font-medium text-slate-400">{{ getCurrentPriorityLabel(dispute.priority) }}</p>
             </div>
 
-            <div class="flex flex-1 flex-wrap gap-2">
-              <span class="inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1.5 text-[10px] font-bold text-red-600">
-                <span class="material-symbols-outlined text-xs">warning</span>
-                {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_HIGH_RISK' | translate }}
-              </span>
-              <span class="inline-flex items-center gap-1.5 rounded-full border border-amber-100 bg-amber-50 px-3 py-1.5 text-[10px] font-bold text-amber-700">
-                <span class="material-symbols-outlined text-xs">repeat</span>
-                {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_REPEAT' | translate }}
-              </span>
-              <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-600">
-                <span class="material-symbols-outlined text-xs">timer_off</span>
-                {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_SLA' | translate }}
-              </span>
+            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-600 shadow-sm">
+              <span class="material-symbols-outlined text-sm text-slate-400">folder</span>
+              <span class="font-['Inter']">{{ dispute.evidence.length }}</span>
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div class="rounded-[1rem] border border-slate-200/70 bg-white p-4 shadow-sm">
+              <div class="flex items-center justify-between gap-2">
+                <h4 class="text-[11px] font-black text-slate-700">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.ATTACHMENTS_TITLE' | translate }}</h4>
+                <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderId }}</span>
+              </div>
+
+              <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <ng-container *ngFor="let file of dispute.evidence | slice:0:2; let index = index; trackBy: trackEvidence">
+                  <div class="group overflow-hidden rounded-[1rem] border border-slate-200/70 bg-slate-50 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                    <div class="relative flex h-24 items-center justify-center overflow-hidden border-b border-slate-200/60 bg-white">
+                      <ng-container *ngIf="isEvidencePreviewAvailable(file, index); else evidencePreviewFallback">
+                        <img
+                          [src]="file.preview"
+                          alt=""
+                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          (error)="onEvidencePreviewError(file, index)" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/15 to-transparent"></div>
+                      </ng-container>
+
+                      <ng-template #evidencePreviewFallback>
+                        <div class="flex h-full w-full flex-col items-center justify-center gap-1 bg-slate-50 text-slate-400">
+                          <span class="material-symbols-outlined text-[26px]">{{ getEvidenceIcon(file) }}</span>
+                          <span class="font-['Inter'] text-[10px] font-black tracking-[0.18em] text-slate-500">{{ getEvidenceTypeToken(file) }}</span>
+                        </div>
+                      </ng-template>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 px-3 py-2.5">
+                      <div class="min-w-0 text-right">
+                        <p class="truncate text-[11px] font-black text-slate-700">{{ file.label }}</p>
+                        <p class="mt-0.5 font-['Inter'] text-[10px] font-medium uppercase tracking-[0.14em] text-slate-400">{{ getEvidenceTypeToken(file) }}</p>
+                      </div>
+
+                      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-colors group-hover:border-zadna-primary/30 group-hover:text-zadna-primary">
+                        <span class="material-symbols-outlined text-[18px]">{{ getEvidenceIcon(file) }}</span>
+                      </span>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <div class="rounded-[1rem] border border-slate-200/70 bg-white p-4 shadow-sm">
+              <div class="flex items-center justify-between gap-2">
+                <h4 class="text-[11px] font-black text-slate-700">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.INDICATORS_TITLE' | translate }}</h4>
+                <span class="text-[10px] font-bold text-slate-400">{{ getCurrentPriorityLabel(dispute.priority) }}</span>
+              </div>
+
+              <div class="mt-4 flex flex-wrap gap-2">
+                <span class="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-red-100 bg-red-50 px-3 py-2 text-[11px] font-bold text-red-600">
+                  <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 text-red-500">
+                    <span class="material-symbols-outlined text-base">warning</span>
+                  </span>
+                  {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_HIGH_RISK' | translate }}
+                </span>
+
+                <span class="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2 text-[11px] font-bold text-amber-700">
+                  <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 text-amber-600">
+                    <span class="material-symbols-outlined text-base">repeat</span>
+                  </span>
+                  {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_REPEAT' | translate }}
+                </span>
+
+                <span class="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 text-[11px] font-bold text-slate-600">
+                  <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/80 text-slate-500">
+                    <span class="material-symbols-outlined text-base">timer_off</span>
+                  </span>
+                  {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_SLA' | translate }}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -210,10 +251,9 @@
             </label>
           </div>
         </section>
-      </div>
     </div>
 
-    <div class="sticky bottom-0 flex flex-wrap-reverse items-center gap-3 border-t border-slate-200/70 bg-white/90 px-6 py-4 backdrop-blur">
+    <div modal-footer class="flex flex-wrap-reverse items-center gap-3">
       <button class="rounded-lg bg-zadna-primary px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700" type="button" (click)="onSubmit()">
         {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.CONFIRM' | translate }}
       </button>
@@ -225,5 +265,5 @@
         {{ 'COMMON.CANCEL' | translate }}
       </button>
     </div>
-  </div>
+  </app-modal-shell>
 </div>
