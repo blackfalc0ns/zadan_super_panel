@@ -1,0 +1,264 @@
+<div
+  *ngIf="isOpen && order as order"
+  class="driver-assignment-modal-backdrop fixed inset-0 z-[85] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+  (click)="onBackdropClick($event)">
+  <div
+    class="driver-assignment-modal-panel glass-panel relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.75rem] border border-white/60 bg-white/85 shadow-2xl"
+    [dir]="'SIDEBAR.DIR' | translate"
+    (click)="$event.stopPropagation()">
+    <header class="flex items-start gap-4 border-b border-slate-200/70 bg-white/60 px-6 py-5 backdrop-blur-md md:px-8">
+      <div class="flex-1 space-y-1 text-right">
+        <h2 class="text-xl font-black tracking-tight text-zadna-primary">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TITLE' | translate }}</h2>
+        <p class="text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.DRIVER_MODAL.SUBTITLE' | translate }}</p>
+      </div>
+
+      <button class="shrink-0 rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600" type="button" (click)="close.emit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-7">
+      <div class="space-y-6">
+        <section class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-slate-50/90 p-5">
+          <div class="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-zadna-primary/8 blur-3xl"></div>
+
+          <div class="relative grid grid-cols-1 gap-5 md:grid-cols-4">
+            <div class="border-slate-200/70 md:border-l md:pl-4">
+              <span class="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_MODAL.ORDER_ID' | translate }}</span>
+              <span class="block font-['Inter'] text-lg font-black text-zadna-primary">{{ order.id }}</span>
+              <div class="mt-2 flex items-center gap-2 text-[11px] font-bold text-amber-600">
+                <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span>{{ 'ORDERS.STATUS.' + order.status | translate }}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 md:col-span-2">
+              <div>
+                <span class="mb-1 block text-[10px] font-black text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_MODAL.CITY' | translate }}</span>
+                <div class="flex items-center gap-1 text-sm font-bold text-slate-700">
+                  <span class="material-symbols-outlined text-sm text-zadna-primary">location_on</span>
+                  <span>{{ order.city }} - {{ order.district }}</span>
+                </div>
+              </div>
+
+              <div>
+                <span class="mb-1 block text-[10px] font-black text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_MODAL.SLA' | translate }}</span>
+                <div class="flex items-center gap-1 font-['Inter'] text-sm font-black text-zadna-primary">
+                  <span>{{ order.slaScore }}%</span>
+                  <span class="material-symbols-outlined text-sm">trending_up</span>
+                </div>
+              </div>
+
+              <div class="col-span-2">
+                <span class="mb-1 block text-[10px] font-black text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_MODAL.ROUTE' | translate }}</span>
+                <p class="text-xs font-semibold leading-6 text-slate-700">
+                  <span class="font-black text-zadna-primary">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FROM' | translate }}</span>
+                  {{ order.merchantName }} - {{ order.merchantBranch }}
+                  <span class="mx-2 text-slate-300">←</span>
+                  <span class="font-black text-zadna-primary">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TO' | translate }}</span>
+                  {{ order.district }} - {{ order.customerAddress }}
+                </p>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-sm">
+              <span class="mb-1 block text-[10px] font-black text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_MODAL.CURRENT_DRIVER' | translate }}</span>
+              <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                  <span class="material-symbols-outlined text-lg">{{ order.driverName ? 'local_shipping' : 'person_off' }}</span>
+                </div>
+                <div>
+                  <p class="text-sm font-black text-slate-800">{{ order.driverName || ('ORDERS.DETAIL.DRIVER_MODAL.NO_DRIVER' | translate) }}</p>
+                  <p class="text-[10px] font-bold text-slate-400" dir="ltr">{{ order.driverPhone || '--' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="flex flex-wrap items-center gap-3">
+          <div class="relative min-w-[260px] flex-1">
+            <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+            <input
+              class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-10 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+              type="text"
+              [placeholder]="'ORDERS.DETAIL.DRIVER_MODAL.SEARCH_PLACEHOLDER' | translate"
+              [(ngModel)]="form.searchQuery" />
+          </div>
+
+          <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.city">
+            <option value="all">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_CITY_ALL' | translate }}</option>
+            <option *ngFor="let city of cityOptions" [value]="city">{{ city }}</option>
+          </select>
+
+          <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.availability">
+            <option value="all">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_AVAILABILITY_ALL' | translate }}</option>
+            <option value="available">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_AVAILABILITY_AVAILABLE' | translate }}</option>
+            <option value="busy">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_AVAILABILITY_BUSY' | translate }}</option>
+          </select>
+
+          <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.verification">
+            <option value="all">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_VERIFICATION_ALL' | translate }}</option>
+            <option value="verified">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_VERIFICATION_VERIFIED' | translate }}</option>
+          </select>
+
+          <button class="flex items-center gap-1 rounded-xl px-4 py-2.5 text-xs font-black text-zadna-primary transition-colors hover:bg-zadna-primary/5" type="button" (click)="resetFilters()">
+            <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+            {{ 'ORDERS.DETAIL.DRIVER_MODAL.RESET_FILTERS' | translate }}
+          </button>
+        </section>
+
+        <section class="overflow-hidden rounded-[1.25rem] border border-slate-200/70">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[920px] text-right">
+              <thead>
+                <tr class="bg-slate-50/80 text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
+                  <th class="px-5 py-3">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TABLE_DRIVER' | translate }}</th>
+                  <th class="px-5 py-3">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TABLE_STATUS' | translate }}</th>
+                  <th class="px-5 py-3 text-center">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TABLE_DISTANCE' | translate }}</th>
+                  <th class="px-5 py-3 text-center">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TABLE_ORDERS' | translate }}</th>
+                  <th class="px-5 py-3 text-center">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TABLE_RATING' | translate }}</th>
+                  <th class="px-5 py-3 text-center">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TABLE_REJECTION' | translate }}</th>
+                  <th class="px-5 py-3">{{ 'ORDERS.DETAIL.DRIVER_MODAL.TABLE_LAST_ACTIVITY' | translate }}</th>
+                  <th class="px-5 py-3"></th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y divide-slate-100/80 bg-white">
+                <tr
+                  *ngFor="let driver of filteredDrivers; trackBy: trackByDriverId"
+                  class="cursor-pointer transition-colors hover:bg-zadna-primary/5"
+                  [ngClass]="{
+                    'bg-zadna-primary/5': form.selectedDriverId === driver.id,
+                    'bg-red-50/40': driver.lowPerformance && form.selectedDriverId !== driver.id
+                  }"
+                  (click)="selectDriver(driver.id)">
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br text-sm font-black text-white shadow-sm" [ngClass]="driver.avatarTone">
+                        {{ driver.initials }}
+                      </div>
+                      <div>
+                        <p class="text-sm font-black text-slate-800">{{ driver.name }}</p>
+                        <p class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ driver.code }}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="px-5 py-4">
+                    <div class="flex flex-col gap-1">
+                      <span class="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[10px] font-black" [ngClass]="getDriverStatusClasses(driver)">
+                        {{ getDriverStatusKey(driver) | translate }}
+                      </span>
+                      <span *ngIf="driver.lowPerformance" class="text-[10px] font-black text-red-500">{{ 'ORDERS.DETAIL.DRIVER_MODAL.LOW_PERFORMANCE' | translate }}</span>
+                    </div>
+                  </td>
+
+                  <td class="px-5 py-4 text-center font-['Inter'] text-xs font-bold text-slate-700">{{ driver.distanceKm | number:'1.1-1' }} {{ 'ORDERS.DETAIL.DRIVER_MODAL.UNIT_KM' | translate }}</td>
+                  <td class="px-5 py-4 text-center font-['Inter'] text-xs font-bold text-slate-700">{{ driver.activeOrders }}</td>
+                  <td class="px-5 py-4 text-center">
+                    <div class="flex items-center justify-center gap-1 font-['Inter'] text-xs font-black text-zadna-primary">
+                      <span>{{ driver.rating | number:'1.1-1' }}</span>
+                      <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    </div>
+                  </td>
+                  <td class="px-5 py-4 text-center font-['Inter'] text-xs font-black" [ngClass]="driver.lowPerformance ? 'text-red-500' : 'text-slate-700'">{{ driver.rejectionRate }}%</td>
+                  <td class="px-5 py-4 text-xs font-bold text-slate-500">{{ driver.lastActivity }}</td>
+                  <td class="px-5 py-4 text-left">
+                    <input
+                      class="h-4 w-4 border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                      name="driver-select"
+                      type="radio"
+                      [checked]="form.selectedDriverId === driver.id"
+                      (click)="$event.stopPropagation()"
+                      (change)="selectDriver(driver.id)" />
+                  </td>
+                </tr>
+
+                <tr *ngIf="!filteredDrivers.length">
+                  <td class="px-5 py-10 text-center text-sm font-bold text-slate-400" colspan="8">
+                    {{ 'ORDERS.DETAIL.DRIVER_MODAL.NO_RESULTS' | translate }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="grid grid-cols-1 gap-6 border-t border-slate-200/70 pt-2 md:grid-cols-2">
+          <div class="space-y-4">
+            <div>
+              <label class="mb-2 block text-xs font-black text-slate-700">{{ 'ORDERS.DETAIL.DRIVER_MODAL.REASON_LABEL' | translate }}</label>
+              <select class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.assignmentReason">
+                <option *ngFor="let reason of assignmentReasons" [value]="reason">{{ ('ORDERS.DETAIL.DRIVER_MODAL.REASONS.' + reason.toUpperCase()) | translate }}</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="mb-2 block text-xs font-black text-slate-700">{{ 'ORDERS.DETAIL.DRIVER_MODAL.INTERNAL_NOTES' | translate }}</label>
+              <textarea
+                class="min-h-[110px] w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+                [placeholder]="'ORDERS.DETAIL.DRIVER_MODAL.INTERNAL_NOTES_PLACEHOLDER' | translate"
+                [(ngModel)]="form.internalNotes"></textarea>
+            </div>
+          </div>
+
+          <div class="rounded-[1.5rem] border border-slate-200/70 bg-slate-50/70 p-6">
+            <label class="mb-4 flex items-center gap-2 text-xs font-black text-zadna-primary">
+              <span class="material-symbols-outlined text-sm">notifications_active</span>
+              {{ 'ORDERS.DETAIL.DRIVER_MODAL.NOTIFICATIONS_TITLE' | translate }}
+            </label>
+
+            <div class="space-y-4">
+              <label class="flex cursor-pointer items-center gap-3">
+                <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyDriver" />
+                <span class="text-xs font-medium text-slate-600">{{ 'ORDERS.DETAIL.DRIVER_MODAL.NOTIFY_DRIVER' | translate }}</span>
+              </label>
+
+              <label class="flex cursor-pointer items-center gap-3">
+                <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyMerchant" />
+                <span class="text-xs font-medium text-slate-600">{{ 'ORDERS.DETAIL.DRIVER_MODAL.NOTIFY_MERCHANT' | translate }}</span>
+              </label>
+
+              <label class="flex cursor-pointer items-center gap-3">
+                <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCustomer" />
+                <span class="text-xs font-medium text-slate-600">{{ 'ORDERS.DETAIL.DRIVER_MODAL.NOTIFY_CUSTOMER' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-[1.25rem] border p-4" [ngClass]="getRecommendationToneClasses()">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined mt-0.5 text-xl">{{ getRecommendationIcon() }}</span>
+            <div class="space-y-1">
+              <p class="text-sm font-black">{{ getRecommendationTitleKey() | translate }}</p>
+              <p class="text-[11px] leading-6 opacity-90">{{ getRecommendationBodyKey() | translate:{ driver: selectedDriver?.name } }}</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <footer class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/70 bg-white/70 px-6 py-4 backdrop-blur-md md:px-8">
+      <div class="flex items-center gap-2 text-[10px] font-black text-slate-400">
+        <span class="material-symbols-outlined text-sm">verified_user</span>
+        <span>{{ 'ORDERS.DETAIL.DRIVER_MODAL.AUDIT_TRAIL' | translate }}</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <button class="rounded-xl px-6 py-3 text-sm font-bold text-slate-500 transition-colors hover:bg-slate-100" type="button" (click)="close.emit()">
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button
+          class="flex items-center gap-2 rounded-xl bg-zadna-primary px-8 py-3 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+          type="button"
+          [disabled]="!form.selectedDriverId"
+          (click)="onSubmit()">
+          <span class="material-symbols-outlined text-lg">check_circle</span>
+          <span>{{ 'ORDERS.DETAIL.DRIVER_MODAL.CONFIRM' | translate }}</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,181 @@
+<div
+  *ngIf="isOpen && order as order"
+  class="order-dispute-modal-backdrop fixed inset-0 z-[88] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
+  (click)="onBackdropClick($event)">
+  <div
+    class="order-dispute-modal-panel glass-panel flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-[1rem] shadow-2xl"
+    [dir]="'SIDEBAR.DIR' | translate"
+    (click)="$event.stopPropagation()">
+    <div class="flex items-start justify-between border-b border-slate-200/70 p-6 pb-4">
+      <div class="space-y-1 text-right">
+        <h2 class="flex items-center gap-2 text-2xl font-black text-zadna-primary">
+          <span class="material-symbols-outlined">gavel</span>
+          {{ 'ORDERS.DETAIL.DISPUTE_MODAL.TITLE' | translate }}
+        </h2>
+        <p class="text-sm font-medium text-slate-500">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.SUBTITLE' | translate }}</p>
+      </div>
+
+      <button class="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600" type="button" (click)="close.emit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-6">
+      <div class="space-y-8">
+        <section>
+          <div class="grid grid-cols-2 gap-4 rounded-xl border border-slate-200/70 bg-slate-50/90 p-4 md:grid-cols-4">
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.ORDER_ID' | translate }}</span>
+              <p class="font-['Inter'] text-sm font-black text-zadna-primary">{{ order.id }}</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</span>
+              <p class="text-sm font-black text-slate-900">{{ order.customerName }}</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.MERCHANT' | translate }}</span>
+              <p class="text-sm font-black text-slate-900">{{ order.merchantName }}</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
+              <p class="font-['Inter'] text-sm font-black text-amber-600">{{ order.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.DRIVER' | translate }}</span>
+              <p class="text-sm font-black text-slate-900">{{ order.driverName }}</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'COMMON.STATUS' | translate }}</span>
+              <span class="inline-flex items-center rounded-full bg-zadna-primary/10 px-2 py-0.5 text-[10px] font-black text-zadna-primary">{{ 'ORDERS.STATUS.' + order.status | translate }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.PAYMENT' | translate }}</span>
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs text-zadna-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+                <p class="text-sm font-black text-slate-900">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.PAYMENT_VALUE' | translate }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <section class="space-y-4">
+            <label class="flex items-center gap-2 text-sm font-black text-slate-900">
+              <span class="material-symbols-outlined text-lg text-zadna-primary">category</span>
+              {{ 'ORDERS.DETAIL.DISPUTE_MODAL.TYPE_TITLE' | translate }}
+            </label>
+
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                *ngFor="let option of disputeTypeOptions"
+                class="flex items-center justify-center gap-2 rounded-lg border p-3 text-right text-xs font-black transition-all"
+                type="button"
+                [ngClass]="getTypeCardClasses(option.value)"
+                (click)="form.disputeType = option.value">
+                <span class="material-symbols-outlined text-lg" [ngClass]="getTypeIconClasses(option.value)">{{ option.icon }}</span>
+                {{ ('ORDERS.DETAIL.DISPUTE_MODAL.TYPES.' + option.value.toUpperCase()) | translate }}
+              </button>
+            </div>
+          </section>
+
+          <section class="space-y-6">
+            <div class="space-y-3">
+              <label class="flex items-center gap-2 text-sm font-black text-slate-900">
+                <span class="material-symbols-outlined text-lg text-zadna-primary">priority_high</span>
+                {{ 'ORDERS.DETAIL.DISPUTE_MODAL.PRIORITY_TITLE' | translate }}
+              </label>
+
+              <div class="flex flex-wrap gap-2">
+                <button
+                  *ngFor="let priority of priorityOptions"
+                  class="rounded-full border px-4 py-1.5 text-[11px] font-black transition-all"
+                  type="button"
+                  [ngClass]="getPriorityButtonClasses(priority)"
+                  (click)="form.priority = priority">
+                  {{ ('ORDERS.DETAIL.DISPUTE_MODAL.PRIORITIES.' + priority.toUpperCase()) | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <label class="flex items-center gap-2 text-sm font-black text-slate-900">
+                <span class="material-symbols-outlined text-lg text-zadna-primary">route</span>
+                {{ 'ORDERS.DETAIL.DISPUTE_MODAL.ROUTING_TITLE' | translate }}
+              </label>
+
+              <select class="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.routeTo">
+                <option *ngFor="let route of routeOptions" [value]="route">{{ ('ORDERS.DETAIL.DISPUTE_MODAL.ROUTES.' + route.toUpperCase()) | translate }}</option>
+              </select>
+            </div>
+          </section>
+        </div>
+
+        <section class="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div class="space-y-3">
+            <label class="text-sm font-black text-slate-900">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.DESCRIPTION' | translate }}</label>
+            <textarea
+              class="h-32 w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+              [placeholder]="'ORDERS.DETAIL.DISPUTE_MODAL.DESCRIPTION_PLACEHOLDER' | translate"
+              [(ngModel)]="form.description"></textarea>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-sm font-black text-slate-900">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE' | translate }}</label>
+            <div class="group flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-white transition-all hover:border-zadna-primary hover:bg-zadna-primary/5">
+              <span class="material-symbols-outlined text-3xl text-slate-400 transition-colors group-hover:text-zadna-primary">cloud_upload</span>
+              <span class="text-xs font-medium text-slate-400">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE_HINT' | translate }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-6">
+          <div class="space-y-3">
+            <label class="text-sm font-black text-slate-900">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.INTERNAL_NOTES' | translate }}</label>
+            <input
+              class="w-full rounded-lg border border-slate-200 bg-slate-50/70 p-2.5 text-sm outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/5"
+              type="text"
+              [placeholder]="'ORDERS.DETAIL.DISPUTE_MODAL.INTERNAL_NOTES_PLACEHOLDER' | translate"
+              [(ngModel)]="form.internalNotes" />
+          </div>
+
+          <div class="rounded-xl border border-slate-200/60 bg-white/60 p-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <label class="group flex cursor-pointer items-center gap-3">
+                <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyReviewer" />
+                <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.NOTIFY_REVIEWER' | translate }}</span>
+              </label>
+              <label class="group flex cursor-pointer items-center gap-3">
+                <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.addToLog" />
+                <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.ADD_TO_LOG' | translate }}</span>
+              </label>
+              <label class="group flex cursor-pointer items-center gap-3">
+                <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.markHighRisk" />
+                <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.MARK_HIGH_RISK' | translate }}</span>
+              </label>
+              <label class="group flex cursor-pointer items-center gap-3">
+                <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyStakeholders" />
+                <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.NOTIFY_STAKEHOLDERS' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between border-t border-slate-200/70 bg-slate-50/80 p-6 backdrop-blur-md">
+      <button class="px-6 py-2.5 text-sm font-black text-slate-500 transition-all hover:text-slate-800" type="button" (click)="close.emit()">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+
+      <div class="flex flex-row-reverse gap-3">
+        <button class="flex items-center gap-2 rounded-lg bg-zadna-primary px-6 py-2.5 text-sm font-black text-white transition-all hover:shadow-lg hover:shadow-zadna-primary/20" type="button" (click)="onSubmit()">
+          <span>{{ 'ORDERS.DETAIL.DISPUTE_MODAL.CREATE' | translate }}</span>
+          <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">send</span>
+        </button>
+        <button class="rounded-lg bg-slate-200 px-6 py-2.5 text-sm font-black text-slate-700 transition-all hover:bg-slate-300" type="button" (click)="onSaveDraft()">
+          {{ 'COMMON.SAVE_DRAFT' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

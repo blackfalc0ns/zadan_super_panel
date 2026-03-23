@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+}
+
+.order-refund-modal-backdrop {
+  animation: order-refund-fade 180ms ease-out;
+}
+
+.order-refund-modal-panel {
+  animation: order-refund-in 220ms ease-out;
+}
+
+@keyframes order-refund-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes order-refund-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .order-refund-modal-panel {
+    max-height: 100vh;
+    border-radius: 1.25rem;
+  }
+}

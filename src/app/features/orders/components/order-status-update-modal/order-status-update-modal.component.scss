@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.order-status-modal-backdrop {
+  animation: order-status-fade 180ms ease-out;
+}
+
+.order-status-modal-panel {
+  animation: order-status-in 220ms ease-out;
+}
+
+.modal-field-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+[dir='rtl'] .modal-select-control {
+  padding-right: 2.75rem;
+  padding-left: 1rem;
+  text-align: right;
+}
+
+[dir='rtl'] .modal-select-icon {
+  right: 0.75rem;
+  left: auto;
+}
+
+[dir='ltr'] .modal-select-control {
+  padding-right: 1rem;
+  padding-left: 2.75rem;
+  text-align: left;
+}
+
+[dir='ltr'] .modal-select-icon {
+  left: 0.75rem;
+  right: auto;
+}
+
+.modal-datetime-control {
+  direction: ltr;
+  text-align: left;
+}
+
+[dir='rtl'] .modal-datetime-control {
+  padding-right: 1rem;
+  padding-left: 2.75rem;
+}
+
+[dir='rtl'] .modal-datetime-icon {
+  left: 0.75rem;
+  right: auto;
+}
+
+[dir='ltr'] .modal-datetime-control {
+  padding-right: 2.75rem;
+  padding-left: 1rem;
+}
+
+[dir='ltr'] .modal-datetime-icon {
+  right: 0.75rem;
+  left: auto;
+}
+
+@keyframes order-status-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes order-status-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .order-status-modal-panel {
+    max-height: 100vh;
+    border-radius: 1rem;
+  }
+}

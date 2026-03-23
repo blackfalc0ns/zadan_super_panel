@@ -1,0 +1,165 @@
+<div
+  *ngIf="isOpen && order as order"
+  class="order-status-modal-backdrop fixed inset-0 z-[80] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+  (click)="onBackdropClick($event)">
+  <div
+    class="order-status-modal-panel relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-[1.25rem] border border-white/70 bg-white/95 shadow-2xl"
+    [dir]="'SIDEBAR.DIR' | translate"
+    (click)="$event.stopPropagation()">
+    <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/70 bg-white/90 px-6 py-5 backdrop-blur-md">
+      <div class="space-y-1">
+        <h2 class="text-xl font-black tracking-tight text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.TITLE' | translate }}</h2>
+        <p class="text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.SUBTITLE' | translate }}</p>
+      </div>
+
+      <button class="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100" type="button" (click)="close.emit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-6 py-6">
+      <div class="space-y-6">
+        <section class="space-y-3">
+          <div class="flex items-center gap-2 text-sm font-bold text-zadna-primary">
+            <span class="material-symbols-outlined text-lg">receipt_long</span>
+            <span>{{ 'ORDERS.DETAIL.STATUS_MODAL.ORDER_SUMMARY' | translate }}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
+            <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
+              <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.ORDER_ID' | translate }}</span>
+              <span class="block font-['Inter'] text-sm font-black text-zadna-primary">{{ order.id }}</span>
+            </div>
+            <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
+              <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</span>
+              <span class="block text-sm font-bold text-slate-800">{{ order.customerName }}</span>
+            </div>
+            <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
+              <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.MERCHANT' | translate }}</span>
+              <span class="block text-sm font-bold text-slate-800">{{ order.merchantName }}</span>
+            </div>
+            <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
+              <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
+              <span class="block font-['Inter'] text-sm font-black text-amber-600">{{ order.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </div>
+            <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
+              <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.PAYMENT_STATUS' | translate }}</span>
+              <div class="flex items-center gap-1">
+                <span class="h-1.5 w-1.5 rounded-full bg-zadna-primary"></span>
+                <span class="text-[11px] font-bold text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.PAYMENT_STATUS_VALUE' | translate }}</span>
+              </div>
+            </div>
+            <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
+              <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.DELIVERY_STATUS' | translate }}</span>
+              <div class="flex items-center gap-1">
+                <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+                <span class="text-[11px] font-bold text-amber-600">{{ 'ORDERS.STATUS.' + order.status | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="space-y-1.5">
+              <label class="px-1 text-[11px] font-black text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.CURRENT_STATUS' | translate }}</label>
+              <div class="flex w-full items-center gap-3 rounded-lg border border-slate-200 bg-slate-100/70 px-4 py-2.5 text-sm font-bold text-slate-600">
+                <span class="material-symbols-outlined text-lg">info</span>
+                <span>{{ 'ORDERS.STATUS.' + order.status | translate }}</span>
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="px-1 text-[11px] font-black text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.NEW_STATUS' | translate }}</label>
+              <div class="relative modal-select-field">
+                <select
+                  class="modal-field-control modal-select-control w-full appearance-none rounded-lg border-2 border-zadna-primary/20 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+                  [(ngModel)]="form.newStatus">
+                  <option *ngFor="let status of statusOptions" [value]="status">{{ 'ORDERS.STATUS.' + status | translate }}</option>
+                </select>
+                <span class="modal-field-icon modal-select-icon material-symbols-outlined pointer-events-none absolute top-1/2 -translate-y-1/2 text-zadna-primary/60">expand_more</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="px-1 text-[11px] font-black text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.ADMIN_NOTES' | translate }}</label>
+            <textarea
+              class="min-h-[100px] w-full resize-none rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5"
+              [placeholder]="'ORDERS.DETAIL.STATUS_MODAL.ADMIN_NOTES_PLACEHOLDER' | translate"
+              [(ngModel)]="form.adminNotes"></textarea>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="px-1 text-[11px] font-black text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.EXPECTED_DELIVERY' | translate }}</label>
+            <div class="relative modal-datetime-field">
+              <input
+                class="modal-field-control modal-datetime-control w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 font-['Inter'] text-sm font-bold outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+                type="datetime-local"
+                [(ngModel)]="form.expectedDeliveryTime" />
+              <span class="modal-field-icon modal-datetime-icon material-symbols-outlined pointer-events-none absolute top-1/2 -translate-y-1/2 text-zadna-primary/40">calendar_month</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="relative overflow-hidden rounded-xl border border-zadna-primary/10 bg-zadna-primary/5 p-4">
+          <div class="absolute -right-8 -top-8 h-16 w-16 rounded-full bg-zadna-primary/5 blur-2xl"></div>
+          <h4 class="mb-3 flex items-center gap-1 text-[11px] font-black text-zadna-primary">
+            <span class="material-symbols-outlined text-base">analytics</span>
+            {{ 'ORDERS.DETAIL.STATUS_MODAL.IMPACT_PREVIEW' | translate }}
+          </h4>
+
+          <div class="grid grid-cols-3 gap-2">
+            <div class="flex flex-col items-center justify-center gap-1 p-2 text-center">
+              <span class="text-[10px] font-bold leading-tight text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.IMPACT_PAYMENT' | translate }}</span>
+              <span class="text-[11px] font-black text-zadna-primary">{{ paymentImpactKey | translate }}</span>
+            </div>
+            <div class="flex flex-col items-center justify-center gap-1 border-x border-zadna-primary/10 p-2 text-center">
+              <span class="text-[10px] font-bold leading-tight text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.IMPACT_DRIVER' | translate }}</span>
+              <span class="text-[11px] font-black text-amber-600">{{ driverImpactKey | translate }}</span>
+            </div>
+            <div class="flex flex-col items-center justify-center gap-1 p-2 text-center">
+              <span class="text-[10px] font-bold leading-tight text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.IMPACT_NOTIFICATION' | translate }}</span>
+              <span class="text-[11px] font-black text-zadna-primary">{{ customerNotificationKey | translate }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-3">
+          <h4 class="px-1 text-[11px] font-black text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.NOTIFICATION_OPTIONS' | translate }}</h4>
+
+          <div class="grid grid-cols-2 gap-3">
+            <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200/60 p-3 transition-colors hover:bg-slate-50">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCustomer" />
+              <span class="text-xs font-bold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.NOTIFY_CUSTOMER' | translate }}</span>
+            </label>
+            <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200/60 p-3 transition-colors hover:bg-slate-50">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyMerchant" />
+              <span class="text-xs font-bold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.NOTIFY_MERCHANT' | translate }}</span>
+            </label>
+            <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200/60 p-3 transition-colors hover:bg-slate-50">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyDriver" />
+              <span class="text-xs font-bold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.NOTIFY_DRIVER' | translate }}</span>
+            </label>
+            <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200/60 p-3 transition-colors hover:bg-slate-50">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.addInternalLog" />
+              <span class="text-xs font-bold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.INTERNAL_LOG' | translate }}</span>
+            </label>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="sticky bottom-0 flex items-center justify-between gap-3 border-t border-slate-200/70 bg-white/90 px-6 py-4 backdrop-blur-md">
+      <button class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-zadna-primary py-3 text-sm font-bold text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700" type="button" (click)="onSubmit()">
+        <span class="material-symbols-outlined text-lg">check_circle</span>
+        <span>{{ 'ORDERS.DETAIL.STATUS_MODAL.CONFIRM' | translate }}</span>
+      </button>
+      <button class="flex-1 rounded-lg bg-slate-200 py-3 text-sm font-bold text-slate-700 transition-all hover:bg-slate-300" type="button" (click)="close.emit()">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

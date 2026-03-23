@@ -1,0 +1,229 @@
+<div
+  *ngIf="isOpen && dispute as dispute"
+  class="dispute-modal-backdrop fixed inset-0 z-[85] flex items-center justify-center bg-slate-900/45 backdrop-blur-sm p-4"
+  (click)="onBackdropClick($event)">
+  <div
+    class="dispute-modal-panel relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white/95 shadow-2xl"
+    [dir]="isRtl ? 'rtl' : 'ltr'"
+    (click)="$event.stopPropagation()">
+    <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/70 bg-white/90 px-6 py-4 backdrop-blur">
+      <div class="space-y-1">
+        <h2 class="text-xl font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TITLE' | translate }}</h2>
+        <p class="text-[11px] font-medium text-slate-500">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.SUBTITLE' | translate }}</p>
+      </div>
+
+      <button class="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100" type="button" (click)="close.emit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-6 py-6">
+      <div class="space-y-6">
+        <section class="relative overflow-hidden rounded-[1.2rem] border border-slate-200/60 bg-slate-50 p-5">
+          <div class="absolute -left-16 -top-16 h-32 w-32 rounded-full bg-zadna-primary/5 blur-3xl"></div>
+
+          <div class="relative grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-4">
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.CASE_ID' | translate }}</span>
+              <span class="font-['Inter'] text-sm font-semibold text-slate-900">{{ dispute.id }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.ORDER_ID' | translate }}</span>
+              <span class="font-['Inter'] text-sm font-semibold text-slate-900">{{ dispute.orderId }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</span>
+              <span class="text-sm font-semibold text-slate-900">{{ dispute.customerName }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.MERCHANT' | translate }}</span>
+              <span class="text-sm font-semibold text-slate-900">{{ dispute.merchantName }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TYPE' | translate }}</span>
+              <span class="text-sm font-semibold text-slate-900">{{ dispute.type }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.AMOUNT' | translate }}</span>
+              <span class="font-['Inter'] text-sm font-semibold text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.CURRENT_STATUS' | translate }}</span>
+              <span class="inline-flex items-center rounded bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">{{ getStatusLabel(dispute.status) }}</span>
+            </div>
+            <div class="space-y-1">
+              <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.CURRENT_REVIEWER' | translate }}</span>
+              <span class="text-sm font-semibold text-slate-900">{{ dispute.owner }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div class="space-y-2">
+            <label class="flex items-center gap-1 text-xs font-bold text-slate-600">
+              <span class="material-symbols-outlined text-sm">move_item</span>
+              {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_LABEL' | translate }}
+            </label>
+            <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.target">
+              <option *ngFor="let option of targetOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="flex items-center gap-1 text-xs font-bold text-slate-600">
+              <span class="material-symbols-outlined text-sm">priority_high</span>
+              {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.PRIORITY_LABEL' | translate }}
+            </label>
+            <div class="flex gap-2">
+              <button
+                *ngFor="let option of priorityOptions"
+                class="flex-1 rounded-lg border px-3 py-2 text-xs font-black transition-all"
+                type="button"
+                [ngClass]="getPriorityButtonClass(option.value)"
+                (click)="form.priority = option.value">
+                {{ option.labelKey | translate }}
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2 md:col-span-2">
+            <label class="flex items-center gap-1 text-xs font-bold text-slate-600">
+              <span class="material-symbols-outlined text-sm">help_outline</span>
+              {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.REASON_LABEL' | translate }}
+            </label>
+            <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.reason">
+              <option *ngFor="let option of reasonOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.DETAILED_EXPLANATION' | translate }}</label>
+              <textarea
+                class="min-h-[110px] w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                [placeholder]="'DISPUTES_DASHBOARD.ESCALATION_MODAL.DETAILED_EXPLANATION_PLACEHOLDER' | translate"
+                [(ngModel)]="form.detailedExplanation"></textarea>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.REVIEWED_SUMMARY' | translate }}</label>
+              <textarea
+                class="min-h-[110px] w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                [placeholder]="'DISPUTES_DASHBOARD.ESCALATION_MODAL.REVIEWED_SUMMARY_PLACEHOLDER' | translate"
+                [(ngModel)]="form.reviewedSummary"></textarea>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.REQUESTED_ACTION' | translate }}</label>
+              <input
+                class="w-full rounded-lg border border-slate-200 bg-white p-3 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                type="text"
+                [placeholder]="'DISPUTES_DASHBOARD.ESCALATION_MODAL.REQUESTED_ACTION_PLACEHOLDER' | translate"
+                [(ngModel)]="form.requestedAction" />
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-600">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.RESPONSE_DEADLINE' | translate }}</label>
+              <input
+                class="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
+                type="datetime-local"
+                [(ngModel)]="form.responseDeadline" />
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center justify-between gap-4">
+            <h3 class="text-xs font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.EVIDENCE_TITLE' | translate }}</h3>
+            <span class="text-[11px] font-bold text-slate-400">{{ getCurrentPriorityLabel(dispute.priority) }}</span>
+          </div>
+
+          <div class="flex flex-wrap gap-4">
+            <div class="flex gap-2">
+              <ng-container *ngFor="let file of dispute.evidence | slice:0:2">
+                <div class="relative h-16 w-16 overflow-hidden rounded-lg border border-slate-200/70 bg-slate-100">
+                  <ng-container *ngIf="file.type === 'image' && file.preview; else escalationFilePlaceholder">
+                    <img [src]="file.preview" [alt]="file.label" class="h-full w-full object-cover" />
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/35 opacity-0 transition-opacity hover:opacity-100">
+                      <span class="material-symbols-outlined text-sm text-white">visibility</span>
+                    </div>
+                  </ng-container>
+
+                  <ng-template #escalationFilePlaceholder>
+                    <div class="flex h-full w-full items-center justify-center text-slate-400">
+                      <span class="material-symbols-outlined">description</span>
+                    </div>
+                  </ng-template>
+                </div>
+              </ng-container>
+            </div>
+
+            <div class="flex flex-1 flex-wrap gap-2">
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1.5 text-[10px] font-bold text-red-600">
+                <span class="material-symbols-outlined text-xs">warning</span>
+                {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_HIGH_RISK' | translate }}
+              </span>
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-amber-100 bg-amber-50 px-3 py-1.5 text-[10px] font-bold text-amber-700">
+                <span class="material-symbols-outlined text-xs">repeat</span>
+                {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_REPEAT' | translate }}
+              </span>
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-600">
+                <span class="material-symbols-outlined text-xs">timer_off</span>
+                {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TAG_SLA' | translate }}
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50/60 p-4">
+            <span class="material-symbols-outlined mt-0.5 text-red-500">report</span>
+            <div class="flex-1">
+              <p class="text-xs font-bold text-red-600">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.ALERT_TITLE' | translate }}</p>
+              <p class="mt-1 text-[11px] leading-6 text-red-500/90">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.ALERT_BODY' | translate }}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="rounded-xl border border-slate-200/60 bg-slate-50/70 p-4">
+          <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.NOTIFICATIONS_TITLE' | translate }}</p>
+
+          <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label class="flex cursor-pointer items-center gap-3">
+              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyEscalatedTeam" />
+              <span class="text-xs font-medium text-slate-700">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.NOTIFY_ESCALATED_TEAM' | translate }}</span>
+            </label>
+
+            <label class="flex cursor-pointer items-center gap-3">
+              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCurrentReviewer" />
+              <span class="text-xs font-medium text-slate-700">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.NOTIFY_CURRENT_REVIEWER' | translate }}</span>
+            </label>
+
+            <label class="flex cursor-pointer items-center gap-3">
+              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.addTrackingNote" />
+              <span class="text-xs font-medium text-slate-700">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.ADD_TRACKING_NOTE' | translate }}</span>
+            </label>
+
+            <label class="flex cursor-pointer items-center gap-3">
+              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.markHighRisk" />
+              <span class="text-xs font-bold text-red-600">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.MARK_HIGH_RISK' | translate }}</span>
+            </label>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="sticky bottom-0 flex flex-wrap-reverse items-center gap-3 border-t border-slate-200/70 bg-white/90 px-6 py-4 backdrop-blur">
+      <button class="rounded-lg bg-zadna-primary px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700" type="button" (click)="onSubmit()">
+        {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.CONFIRM' | translate }}
+      </button>
+      <button class="rounded-lg border border-zadna-primary px-6 py-2.5 text-sm font-bold text-zadna-primary transition-all hover:bg-zadna-primary/5" type="button" (click)="onSaveDraft()">
+        {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.SAVE_REVIEW' | translate }}
+      </button>
+      <div class="flex-1"></div>
+      <button class="px-4 py-2 text-sm font-bold text-slate-500 transition-colors hover:text-slate-800" type="button" (click)="close.emit()">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

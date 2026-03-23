@@ -1,0 +1,15 @@
+<div [class]="wrapperClasses">
+  <span class="material-symbols-outlined mt-0.5 shrink-0 text-[18px]">{{ resolvedIcon }}</span>
+
+  <div class="min-w-0 flex-1">
+    <p *ngIf="title" class="text-xs font-black">{{ translate ? (title | translate) : title }}</p>
+    <p *ngIf="message" class="mt-1 text-[11px] font-medium leading-6 text-current/90">
+      {{ translate ? (message | translate) : message }}
+    </p>
+    <ng-content></ng-content>
+  </div>
+
+  <div class="shrink-0">
+    <ng-content select="[actions]"></ng-content>
+  </div>
+</div>

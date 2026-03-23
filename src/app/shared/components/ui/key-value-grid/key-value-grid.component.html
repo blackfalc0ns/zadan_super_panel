@@ -1,0 +1,16 @@
+<div [class]="gridClasses">
+  <div *ngFor="let item of items" [class]="getItemClasses()">
+    <div class="mb-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+      <span *ngIf="item.icon" class="material-symbols-outlined text-[14px]">{{ item.icon }}</span>
+      <span>{{ item.translateLabel !== false ? (item.label | translate) : item.label }}</span>
+    </div>
+
+    <p [class]="getValueClasses(item)" [dir]="item.valueDir || 'auto'">
+      {{ item.translateValue ? (item.value | translate) : item.value }}
+    </p>
+
+    <p *ngIf="item.helper" class="mt-1 text-[11px] font-medium leading-5 text-slate-500">
+      {{ item.translateHelper ? (item.helper | translate) : item.helper }}
+    </p>
+  </div>
+</div>

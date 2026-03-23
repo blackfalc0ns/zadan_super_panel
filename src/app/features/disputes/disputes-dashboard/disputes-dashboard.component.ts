@@ -6,6 +6,7 @@ import { BulkAction, DataTableComponent, TableAction, TableColumn } from '../../
 import { KPICard, KpiCardsComponent } from '../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { DisputeApprovalModalComponent } from '../components/dispute-approval-modal/dispute-approval-modal.component';
+import { DisputeEscalationModalComponent } from '../components/dispute-escalation-modal/dispute-escalation-modal.component';
 import { DisputeRejectionModalComponent } from '../components/dispute-rejection-modal/dispute-rejection-modal.component';
 import { DisputeRequestInfoModalComponent } from '../components/dispute-request-info-modal/dispute-request-info-modal.component';
 import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel, TimelineItem } from '../disputes.models';
@@ -21,6 +22,7 @@ import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel,
     DataTableComponent,
     AppPaginationComponent,
     DisputeApprovalModalComponent,
+    DisputeEscalationModalComponent,
     DisputeRejectionModalComponent,
     DisputeRequestInfoModalComponent
   ],
@@ -188,6 +190,7 @@ export class DisputesDashboardComponent {
   selectedDispute: DisputeRow = this.disputes[0];
   isDetailsDrawerOpen = false;
   isApprovalModalOpen = false;
+  isEscalationModalOpen = false;
   isRejectionModalOpen = false;
   isRequestInfoModalOpen = false;
 
@@ -257,6 +260,10 @@ export class DisputesDashboardComponent {
   onBulkAction(event: { action: BulkAction; items: DisputeRow[] }): void {
     if (event.items.length > 0) {
       this.selectDispute(event.items[0]);
+
+      if (event.action.id === 'escalate') {
+        this.openEscalationModal();
+      }
     }
   }
 
@@ -313,6 +320,7 @@ export class DisputesDashboardComponent {
   }
 
   openApprovalModal(): void {
+    this.isEscalationModalOpen = false;
     this.isRejectionModalOpen = false;
     this.isRequestInfoModalOpen = false;
     this.isApprovalModalOpen = true;
@@ -330,8 +338,28 @@ export class DisputesDashboardComponent {
     this.closeApprovalModal();
   }
 
+  openEscalationModal(): void {
+    this.isApprovalModalOpen = false;
+    this.isRejectionModalOpen = false;
+    this.isRequestInfoModalOpen = false;
+    this.isEscalationModalOpen = true;
+  }
+
+  closeEscalationModal(): void {
+    this.isEscalationModalOpen = false;
+  }
+
+  saveEscalationDraft(): void {
+    this.closeEscalationModal();
+  }
+
+  submitEscalation(): void {
+    this.closeEscalationModal();
+  }
+
   openRejectionModal(): void {
     this.isApprovalModalOpen = false;
+    this.isEscalationModalOpen = false;
     this.isRequestInfoModalOpen = false;
     this.isRejectionModalOpen = true;
   }
@@ -350,6 +378,7 @@ export class DisputesDashboardComponent {
 
   openRequestInfoModal(): void {
     this.isApprovalModalOpen = false;
+    this.isEscalationModalOpen = false;
     this.isRejectionModalOpen = false;
     this.isRequestInfoModalOpen = true;
   }
@@ -368,6 +397,11 @@ export class DisputesDashboardComponent {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (this.isEscalationModalOpen) {
+      this.closeEscalationModal();
+      return;
+    }
+
     if (this.isRequestInfoModalOpen) {
       this.closeRequestInfoModal();
       return;

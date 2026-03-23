@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(16px);
+}
+
+.order-issue-flag-modal-backdrop {
+  animation: order-issue-flag-fade 180ms ease-out;
+}
+
+.order-issue-flag-modal-panel {
+  animation: order-issue-flag-in 220ms ease-out;
+}
+
+@keyframes order-issue-flag-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes order-issue-flag-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .order-issue-flag-modal-panel {
+    max-height: 100vh;
+    border-radius: 1rem;
+  }
+}

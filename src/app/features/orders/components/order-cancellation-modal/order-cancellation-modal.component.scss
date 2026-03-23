@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+}
+
+.order-cancellation-modal-backdrop {
+  animation: order-cancellation-fade 180ms ease-out;
+}
+
+.order-cancellation-modal-panel {
+  animation: order-cancellation-in 220ms ease-out;
+}
+
+@keyframes order-cancellation-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes order-cancellation-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .order-cancellation-modal-panel {
+    max-height: 100vh;
+    border-radius: 1.25rem;
+  }
+}

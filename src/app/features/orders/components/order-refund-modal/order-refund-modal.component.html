@@ -1,0 +1,199 @@
+<div
+  *ngIf="isOpen && order as order"
+  class="order-refund-modal-backdrop fixed inset-0 z-[87] flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm"
+  (click)="onBackdropClick($event)">
+  <div
+    class="order-refund-modal-panel glass-panel relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-[1.5rem] border border-white/60 bg-white/85 shadow-[0_20px_50px_-12px_rgba(0,98,111,0.15)]"
+    [dir]="'SIDEBAR.DIR' | translate"
+    (click)="$event.stopPropagation()">
+    <header class="flex items-center gap-4 border-b border-slate-200/70 px-8 py-6">
+      <div class="flex-1 text-right">
+        <h2 class="text-2xl font-black leading-none text-zadna-primary">{{ 'ORDERS.DETAIL.REFUND_MODAL.TITLE' | translate }}</h2>
+        <p class="mt-1 text-sm font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.SUBTITLE' | translate }}</p>
+      </div>
+
+      <button class="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600" type="button" (click)="close.emit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-8 py-6">
+      <div class="space-y-6">
+        <section class="relative overflow-hidden rounded-xl border border-zadna-primary/10 bg-slate-50/90 p-5">
+          <div class="absolute -left-12 -top-12 h-24 w-24 rounded-full bg-zadna-primary/10 blur-3xl"></div>
+
+          <div class="relative">
+            <div class="mb-4 flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <span class="rounded-full bg-zadna-primary/10 px-3 py-1 font-['Inter'] text-xs font-black text-zadna-primary">{{ order.id }}</span>
+                <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">{{ 'ORDERS.DETAIL.REFUND_MODAL.PAID' | translate }}</span>
+              </div>
+
+              <div class="text-left">
+                <span class="block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.REFUND_MODAL.REFUNDABLE_AMOUNT' | translate }}</span>
+                <span class="font-['Inter'] text-xl font-black text-zadna-primary">{{ refundableAmount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t border-slate-200/70 pt-4 md:grid-cols-4">
+              <div>
+                <p class="mb-1 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.ORDER_SUBTOTAL' | translate }}</p>
+                <p class="font-['Inter'] text-sm font-black text-slate-800">{{ order.subtotal | number:'1.2-2' }} <span class="text-[10px] font-medium">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+              </div>
+              <div>
+                <p class="mb-1 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.DELIVERY_FEE' | translate }}</p>
+                <p class="font-['Inter'] text-sm font-black text-slate-800">{{ order.deliveryFee | number:'1.2-2' }} <span class="text-[10px] font-medium">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+              </div>
+              <div>
+                <p class="mb-1 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.REFUND_MODAL.DISCOUNTS' | translate }}</p>
+                <p class="font-['Inter'] text-sm font-black text-red-500">-{{ discountAmount | number:'1.2-2' }} <span class="text-[10px] font-medium">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+              </div>
+              <div>
+                <p class="mb-1 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.TAX' | translate }}</p>
+                <p class="font-['Inter'] text-sm font-black text-slate-800">{{ order.tax | number:'1.2-2' }} <span class="text-[10px] font-medium">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <section class="space-y-4">
+            <h3 class="flex items-center gap-2 text-sm font-black text-zadna-primary">
+              <span class="material-symbols-outlined text-lg">settings</span>
+              {{ 'ORDERS.DETAIL.REFUND_MODAL.SETUP_TITLE' | translate }}
+            </h3>
+
+            <div class="space-y-3">
+              <div>
+                <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.REFUND_TYPE' | translate }}</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button class="flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-black transition-all" type="button" [ngClass]="getRefundTypeClasses('full')" (click)="onRefundTypeChange('full')">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    {{ 'ORDERS.DETAIL.REFUND_MODAL.FULL_AMOUNT' | translate }}
+                  </button>
+                  <button class="flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-black transition-all" type="button" [ngClass]="getRefundTypeClasses('partial')" (click)="onRefundTypeChange('partial')">
+                    {{ 'ORDERS.DETAIL.REFUND_MODAL.PARTIAL' | translate }}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.REFUND_AMOUNT' | translate }}</label>
+                <div class="relative">
+                  <input
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-['Inter'] outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+                    type="text"
+                    dir="ltr"
+                    [(ngModel)]="form.refundAmount" />
+                  <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.MAIN_REASON' | translate }}</label>
+                <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.reason">
+                  <option *ngFor="let reason of reasonOptions" [value]="reason">{{ ('ORDERS.DETAIL.REFUND_MODAL.REASONS.' + reason.toUpperCase()) | translate }}</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section class="space-y-4">
+            <h3 class="flex items-center gap-2 text-sm font-black text-zadna-primary">
+              <span class="material-symbols-outlined text-lg">account_balance_wallet</span>
+              {{ 'ORDERS.DETAIL.REFUND_MODAL.IMPACT_TITLE' | translate }}
+            </h3>
+
+            <div class="space-y-3">
+              <div>
+                <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.REFUND_METHOD' | translate }}</label>
+                <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.refundMethod">
+                  <option *ngFor="let method of refundMethodOptions" [value]="method">{{ ('ORDERS.DETAIL.REFUND_MODAL.METHODS.' + method.toUpperCase()) | translate }}</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.COST_BEARER' | translate }}</label>
+                <div class="flex gap-2">
+                  <button
+                    *ngFor="let option of costBearerOptions"
+                    class="flex-1 rounded-lg border px-2 py-2 text-[11px] font-black transition-all"
+                    type="button"
+                    [ngClass]="getCostBearerClasses(option)"
+                    (click)="form.costBearer = option">
+                    {{ ('ORDERS.DETAIL.REFUND_MODAL.COST_BEARERS.' + option.toUpperCase()) | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="space-y-4">
+          <h3 class="flex items-center gap-2 text-sm font-black text-zadna-primary">
+            <span class="material-symbols-outlined text-lg">chat_bubble</span>
+            {{ 'ORDERS.DETAIL.REFUND_MODAL.COMMUNICATION_TITLE' | translate }}
+          </h3>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.INTERNAL_NOTES' | translate }}</label>
+              <textarea
+                class="min-h-[104px] w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+                [placeholder]="'ORDERS.DETAIL.REFUND_MODAL.INTERNAL_NOTES_PLACEHOLDER' | translate"
+                [(ngModel)]="form.internalNotes"></textarea>
+            </div>
+
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.CUSTOMER_MESSAGE' | translate }}</label>
+              <textarea
+                class="min-h-[104px] w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+                [placeholder]="'ORDERS.DETAIL.REFUND_MODAL.CUSTOMER_MESSAGE_PLACEHOLDER' | translate"
+                [(ngModel)]="form.customerMessage"></textarea>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-6 pt-2">
+            <label class="group flex cursor-pointer items-center gap-2">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCustomerSms" />
+              <span class="text-xs text-slate-500 transition-colors group-hover:text-slate-700">{{ 'ORDERS.DETAIL.REFUND_MODAL.NOTIFY_SMS' | translate }}</span>
+            </label>
+            <label class="group flex cursor-pointer items-center gap-2">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyFinance" />
+              <span class="text-xs text-slate-500 transition-colors group-hover:text-slate-700">{{ 'ORDERS.DETAIL.REFUND_MODAL.NOTIFY_FINANCE' | translate }}</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 p-4">
+          <span class="material-symbols-outlined text-amber-600">warning</span>
+          <div class="space-y-1">
+            <p class="text-xs font-black text-amber-800">{{ 'ORDERS.DETAIL.REFUND_MODAL.SYSTEM_ALERTS' | translate }}</p>
+            <ul class="space-y-1 text-[11px] leading-6 text-amber-800/90">
+              <li>{{ 'ORDERS.DETAIL.REFUND_MODAL.SYSTEM_ALERT_ONE' | translate }}</li>
+              <li>{{ 'ORDERS.DETAIL.REFUND_MODAL.SYSTEM_ALERT_TWO' | translate }}</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/70 bg-slate-50/80 px-8 py-4 backdrop-blur-md">
+      <button class="px-4 py-2 text-sm font-medium text-slate-500 transition-colors hover:text-red-600" type="button" (click)="close.emit()">
+        {{ 'ORDERS.DETAIL.REFUND_MODAL.CANCEL_PROCESS' | translate }}
+      </button>
+
+      <div class="flex flex-wrap gap-3">
+        <button class="rounded-lg bg-zadna-primary px-8 py-2.5 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700" type="button" (click)="onSubmit()">
+          {{ 'ORDERS.DETAIL.REFUND_MODAL.CREATE_REQUEST' | translate }}
+        </button>
+        <button class="rounded-lg bg-slate-200 px-6 py-2.5 text-sm font-black text-slate-700 transition-all hover:bg-slate-300" type="button" (click)="onSaveDraft()">
+          {{ 'COMMON.SAVE_DRAFT' | translate }}
+        </button>
+      </div>
+    </footer>
+
+    <div class="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 bg-zadna-primary/5 blur-[100px]"></div>
+    <div class="pointer-events-none absolute -left-20 -top-20 h-64 w-64 bg-amber-200/10 blur-[100px]"></div>
+  </div>
+</div>

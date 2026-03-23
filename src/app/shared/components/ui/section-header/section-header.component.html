@@ -1,0 +1,30 @@
+<div class="flex items-start justify-between gap-4" [class.items-center]="compact">
+  <div class="flex min-w-0 items-start gap-3">
+    <div *ngIf="icon" [class]="iconWrapperClasses">
+      <span class="material-symbols-outlined text-[20px]">{{ icon }}</span>
+    </div>
+
+    <div class="min-w-0">
+      <p *ngIf="eyebrow" class="mb-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+        {{ translate ? (eyebrow | translate) : eyebrow }}
+      </p>
+
+      <div class="flex min-w-0 items-center gap-2">
+        <h3 [class]="titleClasses">
+          {{ translate ? (title | translate) : title }}
+        </h3>
+        <ng-content select="[meta]"></ng-content>
+      </div>
+
+      <p *ngIf="description" class="mt-1 text-xs font-medium leading-5 text-slate-500">
+        {{ translate ? (description | translate) : description }}
+      </p>
+
+      <ng-content select="[description]"></ng-content>
+    </div>
+  </div>
+
+  <div class="flex shrink-0 items-center gap-2">
+    <ng-content select="[actions]"></ng-content>
+  </div>
+</div>

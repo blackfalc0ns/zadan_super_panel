@@ -6,6 +6,9 @@ export type RejectionReason = 'policy' | 'evidence' | 'delivered' | 'expired' | 
 export type RequestInfoTarget = 'customer' | 'merchant' | 'internal';
 export type RequestInfoType = 'invoice' | 'photos' | 'statement' | 'proof';
 export type RequestInfoPriority = 'normal' | 'urgent';
+export type EscalationTarget = 'finance' | 'legal' | 'risk' | 'operations' | 'support';
+export type EscalationPriority = 'medium' | 'high' | 'critical';
+export type EscalationReason = 'conflicting_evidence' | 'high_amount' | 'fraud' | 'legal_sensitivity' | 'repeat_issues' | 'other';
 
 export interface TimelineItem {
   titleKey: string;
@@ -74,4 +77,18 @@ export interface RequestInfoForm {
   pauseSla: boolean;
   alertSupervisor: boolean;
   internalNotes: string;
+}
+
+export interface EscalationDecisionForm {
+  target: EscalationTarget;
+  priority: EscalationPriority;
+  reason: EscalationReason;
+  detailedExplanation: string;
+  reviewedSummary: string;
+  requestedAction: string;
+  responseDeadline: string;
+  notifyEscalatedTeam: boolean;
+  notifyCurrentReviewer: boolean;
+  addTrackingNote: boolean;
+  markHighRisk: boolean;
 }
