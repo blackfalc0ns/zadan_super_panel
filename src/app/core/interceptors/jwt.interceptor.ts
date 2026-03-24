@@ -21,7 +21,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         catchError((error: HttpErrorResponse) => {
             if (error.status === 401 || error.status === 403) {
                 authService.forceLogout();
-                router.navigate(['/login'], { queryParams: { returnUrl: router.routerState.snapshot.url } });
+                router.navigate(['/dashboard']);
             }
             return throwError(() => error);
         })

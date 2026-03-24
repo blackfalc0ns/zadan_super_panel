@@ -1,18 +1,16 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/auth/login/login.component';
 import { LayoutComponent } from './core/layout/layout.component';
-import { authGuard } from './core/guards/auth.guard';
-import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
-    { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+    { path: 'login', redirectTo: 'dashboard', pathMatch: 'full' },
     {
         path: '',
         component: LayoutComponent,
-        canActivate: [authGuard],
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+            { path: 'drivers', loadComponent: () => import('./features/drivers/drivers-list/drivers-list.component').then(m => m.DriversListComponent) },
+            { path: 'drivers/:id', loadComponent: () => import('./features/drivers/driver-detail/driver-detail.component').then(m => m.DriverDetailComponent) },
             { path: 'vendors', loadComponent: () => import('./features/vendors/vendors-list/vendors-list.component').then(m => m.VendorsListComponent) },
             { path: 'customers', loadComponent: () => import('./features/customers/customers-list/customers-list.component').then(m => m.CustomersListComponent) },
             { path: 'customers/:id', loadComponent: () => import('./features/customers/customer-detail/customer-detail.component').then(m => m.CustomerDetailComponent) },

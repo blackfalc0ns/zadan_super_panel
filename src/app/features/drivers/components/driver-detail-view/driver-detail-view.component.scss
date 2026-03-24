@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep .driver-trips-table table th,
+:host ::ng-deep .driver-trips-table table td {
+  padding-inline: 0.9rem !important;
+}
+
+:host ::ng-deep .driver-trips-table table th {
+  padding-block: 1rem !important;
+}
+
+:host ::ng-deep .driver-trips-table table td {
+  padding-block: 0.95rem !important;
+}

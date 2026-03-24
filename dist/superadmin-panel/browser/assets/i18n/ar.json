@@ -120,7 +120,7 @@
         "DIR": "rtl"
     },
     "SIDEBAR_EXTRA": {
-        "WELCOME_USER": "زدنا الموحد",
+        "WELCOME_USER": "مرحبا بك",
         "HQ_CORE": "المقر الرئيسي",
         "ECOSYSTEM": "المنظومة التشغيلية",
         "GLOBAL_CATALOG": "الكتالوج الأساسي",
@@ -448,6 +448,56 @@
                 "QUICK_NOTE_PLACEHOLDER": "إضافة ملاحظة داخلية سريعة...",
                 "SAVE": "حفظ"
             }
+        }
+    },
+    "DRIVERS": {
+        "TITLE": "السائقين",
+        "DESC": "إدارة السائقين وتتبع مهامهم وأدائهم",
+        "KPI": {
+            "TOTAL_DRIVERS": "إجمالي السائقين",
+            "LIVE_NOW": "المتصلون الآن",
+            "ACTIVE_TASKS": "مهام نشطة",
+            "UNVERIFIED": "غير موثقين",
+            "SUSPENDED": "موقوفون",
+            "LOW_PERFORMANCE": "أداء منخفض"
+        },
+        "FILTERS": {
+            "ALL": "الكل",
+            "CITY": "المدينة",
+            "VERIFICATION_STATUS": "حالة التوثيق",
+            "VEHICLE_TYPE": "نوع المركبة",
+            "PERFORMANCE": "الأداء"
+        },
+        "TABLE": {
+            "DRIVER": "السائق",
+            "DRIVER_ID": "معرف السائق",
+            "CITY": "المدينة",
+            "VERIFICATION_STATUS": "حالة التوثيق",
+            "TASKS": "المهام",
+            "ACCEPTANCE_RATE": "معدل القبول",
+            "COLLECTION_PAYMENT": "التحصيل/الدفع",
+            "LAST_SEEN": "آخر ظهور",
+            "ACTIONS": "إجراءات"
+        },
+        "ACTIONS": {
+            "ADVANCED_FILTERS": "فلاتر متقدمة",
+            "EXPORT_CSV": "تصدير CSV"
+        },
+        "VERIFICATION": {
+            "VERIFIED": "موثق",
+            "UNVERIFIED": "غير موثق",
+            "SUSPENDED": "موقوف مؤقتا",
+            "UNDER_REVIEW": "قيد المراجعة"
+        },
+        "PERFORMANCE": {
+            "BAD": "أداء منخفض",
+            "POOR": "يحتاج تحسين",
+            "GOOD": "أداء جيد",
+            "EXCELLENT": "أداء ممتاز"
+        },
+        "ALERTS": {
+            "HIGH_RISK": "مخاطر عالية",
+            "ACTIVE_REPORTS": "بلاغات نشطة"
         }
     },
     "BRANDS": {

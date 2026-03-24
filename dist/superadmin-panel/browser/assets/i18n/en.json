@@ -120,7 +120,7 @@
         "DIR": "ltr"
     },
     "SIDEBAR_EXTRA": {
-        "WELCOME_USER": "Zadana Unified",
+        "WELCOME_USER": "Welcome",
         "HQ_CORE": "HQ Core",
         "ECOSYSTEM": "Ecosystem",
         "GLOBAL_CATALOG": "Global Catalog",
@@ -449,6 +449,91 @@
                 "SAVE": "Save"
             }
         }
+    },
+    "DRIVERS": {
+        "TITLE": "Drivers",
+        "DESC": "Monitor drivers, operational availability, verification, performance, and delivery-related issues",
+        "HEADER": {
+            "ADD_DRIVER": "Add Driver",
+            "EXPORT": "Export",
+            "ADJUST": "Adjust"
+        },
+        "KPI": {
+            "TOTAL_DRIVERS": "Total Drivers",
+            "ONLINE_NOW": "Online Now",
+            "ON_MISSION": "On Active Mission",
+            "UNDER_REVIEW": "Unverified",
+            "SUSPENDED": "Suspended",
+            "LOW_PERFORMANCE": "Low Performance"
+        },
+        "FILTERS": {
+            "SEARCH_LABEL": "Name or ID",
+            "SEARCH_PLACEHOLDER": "Enter data...",
+            "ALL": "All",
+            "CITY": "City",
+            "STATUS": "Connection Status",
+            "VERIFICATION_STATUS": "Verification",
+            "VEHICLE_TYPE": "Vehicle Type",
+            "PERFORMANCE": "Performance",
+            "APPLY": "Apply",
+            "RESET": "Reset"
+        },
+        "TABLE": {
+            "SUMMARY": "Showing {{start}} - {{end}} of {{total}} drivers",
+            "DRIVER": "Driver",
+            "DRIVER_ID": "Driver ID",
+            "CITY": "City",
+            "STATUS": "Status",
+            "VERIFICATION_STATUS": "Verification",
+            "TASKS": "Tasks",
+            "PERFORMANCE": "Performance",
+            "WALLET": "Wallet",
+            "ISSUES": "Issues",
+            "ACTIONS": "Actions",
+            "NO_ACTIVITY": "No activity",
+            "ACTIVE_DELIVERIES": "{{count}} active",
+            "COMPLETED_ORDERS": "{{count}} completed"
+        },
+        "ACTIONS": {
+            "ADVANCED_FILTERS": "Advanced Filters",
+            "EXPORT_CSV": "Export CSV"
+        },
+        "STATUS": {
+            "ONLINE": "Online",
+            "OFFLINE": "Offline",
+            "ONMISSION": "On mission",
+            "SUSPENDED": "Suspended"
+        },
+        "VERIFICATION": {
+            "VERIFIED": "Verified",
+            "UNVERIFIED": "Unverified",
+            "SUSPENDED": "Temporarily Suspended",
+            "UNDER_REVIEW": "Under Review"
+        },
+        "PERFORMANCE": {
+            "LOW": "Low",
+            "NEEDS_IMPROVEMENT": "Needs Improvement",
+            "GOOD": "Good",
+            "EXCELLENT": "Excellent"
+        },
+        "VEHICLES": {
+            "CAR": "Car",
+            "BIKE": "Bike",
+            "SCOOTER": "Scooter",
+            "VAN": "Van"
+        },
+        "ISSUES": {
+            "CLEAR": "Clear",
+            "WARNING": "Warning",
+            "PAYMENT": "Collection",
+            "LEGAL": "Reports"
+        },
+        "ALERTS": {
+            "HIGH_RISK": "High Risk",
+            "ACTIVE_REPORTS": "Active Reports"
+        },
+        "EMPTY_TITLE": "No drivers found",
+        "EMPTY_MESSAGE": "No drivers matched the current filters."
     },
     "BRANDS": {
         "TITLE": "Brands & Trademarks",

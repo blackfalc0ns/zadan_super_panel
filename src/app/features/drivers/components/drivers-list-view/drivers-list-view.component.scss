@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.drivers-page {
+  min-height: 100%;
+}
+
+:host ::ng-deep .drivers-table-container {
+  border-radius: 1.25rem;
+}
+
+:host ::ng-deep .drivers-table-container table {
+  table-layout: fixed;
+}
+
+:host ::ng-deep .drivers-table-container thead th {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background: transparent;
+}
+
+:host ::ng-deep .drivers-table-container tbody td {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+:host ::ng-deep .drivers-table-container tbody tr {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+:host ::ng-deep .drivers-table-container tbody tr:last-child {
+  border-bottom: 0;
+}
+
+:host ::ng-deep .drivers-table-container .group:hover td {
+  background: rgba(248, 250, 252, 0.7);
+}
