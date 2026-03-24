@@ -188,12 +188,20 @@
     - `DisputeRejectionModalComponent`
     - `DisputeRequestInfoModalComponent`
 
+### Customers Module
+
+- `/customers`
+  - `CustomersListComponent`
+  - KPI summary row
+  - compact high-density filters
+  - customers table
+  - quick preview drawer
+
 ## 3. Navigation Placeholders Present in Sidebar
 
 These entries exist in navigation design, but no routed page is implemented yet in `app.routes.ts`.
 
 - `/analytics`
-- `/customers`
 - `/drivers`
 - `/finances`
 - `/marketing`

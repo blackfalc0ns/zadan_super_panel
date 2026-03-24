@@ -14,7 +14,7 @@ type InlineBannerVariant = 'info' | 'success' | 'warning' | 'error' | 'critical'
 export class InlineBannerComponent {
   @Input() title = '';
   @Input() message = '';
-  @Input() translate = true;
+  @Input() shouldTranslate = true;
   @Input() icon = '';
   @Input() compact = false;
   @Input() variant: InlineBannerVariant = 'info';

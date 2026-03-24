@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+.customer-hero {
+  background:
+    radial-gradient(circle at top left, rgba(125, 211, 229, 0.14), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(255, 183, 122, 0.12), transparent 28%),
+    rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(14px);
+}
+
+.detail-card {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(190, 200, 203, 0.24);
+  background: rgba(255, 255, 255, 0.86);
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.03);
+}
+
+.detail-card--p0 {
+  padding: 0;
+}
+
+.detail-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(190, 200, 203, 0.35);
+  background: rgba(255, 255, 255, 0.78);
+  padding-inline: 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #127c8c;
+  transition: all 0.2s ease;
+}
+
+.detail-action-btn:hover {
+  border-color: rgba(18, 124, 140, 0.18);
+  background: rgba(236, 254, 255, 0.9);
+}
+
+.detail-action-btn--warning {
+  color: #8f4e00;
+}
+
+.detail-action-btn--warning:hover {
+  border-color: rgba(255, 151, 46, 0.24);
+  background: rgba(255, 247, 237, 0.95);
+}
+
+.detail-action-btn--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #127c8c 0%, #0f6d7d 100%);
+  color: #fff;
+  box-shadow: 0 12px 24px -16px rgba(18, 124, 140, 0.55);
+}
+
+.detail-action-btn--primary:hover {
+  background: linear-gradient(135deg, #0f6d7d 0%, #0c6170 100%);
+}
+
+.mini-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding-inline: 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid transparent;
+  font-size: 0.75rem;
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+.mini-action.danger {
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  border-color: rgba(239, 68, 68, 0.14);
+}
+
+.mini-action.warning {
+  background: rgba(245, 158, 11, 0.08);
+  color: #b45309;
+  border-color: rgba(245, 158, 11, 0.14);
+}
+
+:host ::ng-deep .customer-orders-table table th,
+:host ::ng-deep .customer-orders-table table td {
+  padding-inline: 0.9rem !important;
+}
+
+:host ::ng-deep .customer-orders-table table th {
+  padding-block: 1rem !important;
+}
+
+:host ::ng-deep .customer-orders-table table td {
+  padding-block: 0.95rem !important;
+}

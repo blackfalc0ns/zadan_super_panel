@@ -1,0 +1,330 @@
+<div class="h-full flex flex-col bg-slate-50/50 pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
+  <app-page-header
+    [title]="'CUSTOMERS.DETAIL.PAGE_TITLE'"
+    [subtitle]="'CUSTOMERS.DETAIL.PAGE_SUBTITLE'"
+    [showBack]="true"
+    [showToolbar]="true"
+    [backUrl]="['/customers']"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'SIDEBAR.CUSTOMERS', url: '/customers' },
+      { label: 'CUSTOMERS.DETAIL.PAGE_TITLE' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">person</span>
+
+    <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+      <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all">
+        <span class="material-symbols-outlined text-[20px]">edit_square</span>
+        {{ 'CUSTOMERS.DETAIL.EDIT_ACCOUNT' | translate }}
+      </button>
+    </div>
+  </app-page-header>
+
+  <div *ngIf="customer as currentCustomer" class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <section class="customer-hero rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+      <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="text-2xl font-black text-slate-900">{{ currentCustomer.name }}</h2>
+            <span class="inline-flex items-center rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary" dir="ltr">
+              {{ currentCustomer.id }}
+            </span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 text-xs font-bold">
+            <app-status-pill
+              [label]="'CUSTOMERS.STATUS.' + currentCustomer.status.toUpperCase()"
+              [variant]="statusVariant"
+              size="sm">
+            </app-status-pill>
+
+            <app-status-pill
+              [label]="currentCustomer.riskSummary"
+              [variant]="riskVariant"
+              size="sm">
+            </app-status-pill>
+
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-500">
+              <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+              {{ 'CUSTOMERS.DETAIL.REGISTERED_AT' | translate }}: {{ currentCustomer.registrationDate }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" class="detail-action-btn" (click)="openOrdersList()">
+            <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+            {{ 'CUSTOMERS.DETAIL.ACTION_VIEW_ORDERS' | translate }}
+          </button>
+
+          <button type="button" class="detail-action-btn" (click)="openCasesList()">
+            <span class="material-symbols-outlined text-[18px]">chat</span>
+            {{ 'CUSTOMERS.DETAIL.ACTION_VIEW_CASES' | translate }}
+          </button>
+
+          <button type="button" class="detail-action-btn detail-action-btn--warning" (click)="toggleReviewFlag()">
+            <span class="material-symbols-outlined text-[18px]">flag</span>
+            {{ 'CUSTOMERS.DETAIL.ACTION_FLAG_REVIEW' | translate }}
+          </button>
+
+          <button type="button" class="detail-action-btn detail-action-btn--primary" (click)="addQuickNote()">
+            <span class="material-symbols-outlined text-[18px]">add_notes</span>
+            {{ 'CUSTOMERS.DETAIL.ACTION_ADD_NOTE' | translate }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <app-inline-banner
+      *ngIf="isFlaggedForReview"
+      variant="warning"
+      icon="priority_high"
+      [title]="'CUSTOMERS.DETAIL.REVIEW_FLAG_TITLE'"
+      [message]="'CUSTOMERS.DETAIL.REVIEW_FLAG_MESSAGE'">
+    </app-inline-banner>
+
+    <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
+
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 lg:col-span-4 space-y-6">
+        <section class="detail-card">
+          <app-section-header
+            [title]="'CUSTOMERS.DETAIL.SECTIONS.PROFILE'"
+            icon="person"
+            [compact]="true">
+            <app-status-pill
+              actions
+              [label]="currentCustomer.isVerified ? 'CUSTOMERS.DETAIL.PROFILE_FIELDS.VERIFIED_ACCOUNT' : 'CUSTOMERS.DETAIL.PROFILE_FIELDS.UNVERIFIED_ACCOUNT'"
+              [variant]="verificationVariant"
+              size="sm">
+            </app-status-pill>
+          </app-section-header>
+
+          <div class="mt-5">
+            <app-key-value-grid [items]="profileItems" [columns]="2" [dense]="true" [bordered]="true"></app-key-value-grid>
+          </div>
+        </section>
+
+        <section class="detail-card">
+          <app-section-header
+            [title]="'CUSTOMERS.DETAIL.SECTIONS.BEHAVIOR_RISK'"
+            icon="analytics"
+            [compact]="true">
+            <app-status-pill
+              actions
+              [label]="currentCustomer.riskSummary"
+              [variant]="riskVariant"
+              size="sm">
+            </app-status-pill>
+          </app-section-header>
+
+          <div class="mt-5">
+            <app-key-value-grid [items]="behaviorItems" [columns]="1" [dense]="true" [bordered]="true"></app-key-value-grid>
+          </div>
+
+          <app-inline-banner
+            class="mt-5 block"
+            variant="info"
+            icon="insights"
+            [title]="'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.ANALYSIS_SUMMARY'"
+            [message]="currentCustomer.analysisSummary"
+            [shouldTranslate]="false"
+            [compact]="true">
+          </app-inline-banner>
+        </section>
+      </div>
+
+      <div class="col-span-12 lg:col-span-8 space-y-6">
+        <section class="detail-card detail-card--p0">
+          <div class="p-6 border-b border-slate-200/70">
+            <app-section-header
+              [title]="'CUSTOMERS.DETAIL.SECTIONS.RECENT_ORDERS'"
+              icon="local_mall"
+              [compact]="true">
+              <button actions type="button" class="text-[11px] font-black text-zadna-primary hover:underline" (click)="openOrdersList()">
+                {{ 'CUSTOMERS.DETAIL.ORDERS_TABLE.VIEW_ALL' | translate }}
+              </button>
+            </app-section-header>
+          </div>
+
+          <div class="px-3 pb-3">
+            <app-data-table
+              [data]="recentOrders"
+              [columns]="recentOrdersColumns"
+              [clickableRows]="true"
+              [emptyStateTitle]="'CUSTOMERS.EMPTY_TITLE'"
+              [emptyStateMessage]="'CUSTOMERS.EMPTY_MESSAGE'"
+              [containerClass]="'customer-orders-table bg-transparent'"
+              (rowClick)="openOrder($event)">
+
+              <ng-template #customColumn let-order let-column="column">
+                <ng-container *ngIf="column.key === 'id'">
+                  <span class="text-[11px] font-black text-slate-800" dir="ltr">{{ order.id }}</span>
+                </ng-container>
+
+                <ng-container *ngIf="column.key === 'date'">
+                  <span class="text-[12px] font-bold text-slate-600">{{ order.date }}</span>
+                </ng-container>
+
+                <ng-container *ngIf="column.key === 'total'">
+                  <span class="font-['Inter'] text-[12px] font-black text-slate-800">
+                    {{ order.total | number:'1.0-0' }}
+                    <span class="text-[10px] text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                  </span>
+                </ng-container>
+
+                <ng-container *ngIf="column.key === 'status'">
+                  <app-status-pill
+                    [label]="getOrderStatusLabel(order.status)"
+                    [variant]="getOrderStatusVariant(order.status)"
+                    size="sm">
+                  </app-status-pill>
+                </ng-container>
+
+                <ng-container *ngIf="column.key === 'open'">
+                  <button type="button" class="h-8 w-8 rounded-full bg-slate-50 text-slate-400 transition-all hover:bg-slate-100 hover:text-zadna-primary">
+                    <span class="material-symbols-outlined text-[18px] rtl:rotate-180">arrow_forward_ios</span>
+                  </button>
+                </ng-container>
+              </ng-template>
+
+              <ng-template #mobileCard let-order>
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="text-sm font-black text-slate-900" dir="ltr">{{ order.id }}</span>
+                    <app-status-pill
+                      [label]="getOrderStatusLabel(order.status)"
+                      [variant]="getOrderStatusVariant(order.status)"
+                      size="sm">
+                    </app-status-pill>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3 text-[11px] font-bold">
+                    <div class="rounded-xl bg-slate-50 px-3 py-2">
+                      <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.DETAIL.ORDERS_TABLE.DATE' | translate }}</p>
+                      <p class="text-slate-800">{{ order.date }}</p>
+                    </div>
+                    <div class="rounded-xl bg-slate-50 px-3 py-2">
+                      <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.DETAIL.ORDERS_TABLE.AMOUNT' | translate }}</p>
+                      <p class="font-['Inter'] text-slate-800">{{ order.total | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </app-data-table>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section class="detail-card">
+            <app-section-header
+              [title]="'CUSTOMERS.DETAIL.SECTIONS.REFUNDS_DISPUTES'"
+              icon="keyboard_return"
+              [compact]="true">
+            </app-section-header>
+
+            <div class="mt-5 space-y-4">
+              <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4 flex items-center justify-between gap-3">
+                <div>
+                  <p class="text-[10px] font-black text-slate-400">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_CASES' | translate }}</p>
+                  <p class="mt-1 text-sm font-black text-slate-900">
+                    {{ currentCustomer.refundsCount }} {{ 'CUSTOMERS.DETAIL.REFUNDS.CASES_TOTAL' | translate }}
+                  </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 justify-end">
+                  <app-status-pill [label]="currentCustomer.refundsClosedCount + ' ' + ('CUSTOMERS.DETAIL.REFUNDS.CLOSED' | translate)" variant="success" [shouldTranslate]="false" size="sm"></app-status-pill>
+                  <app-status-pill [label]="currentCustomer.refundsInProgressCount + ' ' + ('CUSTOMERS.DETAIL.REFUNDS.IN_PROGRESS' | translate)" variant="warning" [shouldTranslate]="false" size="sm"></app-status-pill>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-sm font-bold">
+                <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_AMOUNT' | translate }}</span>
+                <span class="font-['Inter'] text-slate-900">{{ currentCustomer.refundsTotalAmount | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+              </div>
+
+              <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary/10 text-zadna-primary text-[11px] font-black hover:bg-zadna-primary/15 transition-all" (click)="openCasesList()">
+                {{ 'CUSTOMERS.DETAIL.REFUNDS.VIEW_ALL' | translate }}
+              </button>
+            </div>
+          </section>
+
+          <section class="detail-card">
+            <app-section-header
+              [title]="'CUSTOMERS.DETAIL.SECTIONS.SUPPORT_CASES'"
+              icon="support_agent"
+              [compact]="true">
+            </app-section-header>
+
+            <div class="mt-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.COMPLAINTS_RECORDED' | translate }}</span>
+                <app-status-pill
+                  [label]="currentCustomer.complaintsSolvedCount > 0 ? 'CUSTOMERS.DETAIL.SUPPORT.RESOLVED' : 'CUSTOMERS.DETAIL.SUPPORT.NO_CASES'"
+                  [variant]="currentCustomer.complaintsSolvedCount > 0 ? 'success' : 'neutral'"
+                  size="sm">
+                </app-status-pill>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT' | translate }}</span>
+                <span class="text-[11px] font-black text-slate-800">{{ currentCustomer.lastSupportContact }}</span>
+              </div>
+
+              <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary text-white text-[11px] font-black shadow-sm hover:bg-teal-700 transition-all" (click)="openCasesList()">
+                {{ 'CUSTOMERS.DETAIL.SUPPORT.OPEN_TICKET' | translate }}
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <section class="detail-card">
+          <app-section-header
+            [title]="'CUSTOMERS.DETAIL.SECTIONS.INTERNAL_NOTES'"
+            icon="admin_panel_settings"
+            [compact]="true">
+            <span meta class="inline-flex rounded-full border border-zadna-primary/10 bg-zadna-primary/5 px-3 py-1 text-[10px] font-black text-zadna-primary">
+              {{ currentCustomer.accountTeam }}
+            </span>
+          </app-section-header>
+
+          <div class="mt-5 space-y-4">
+            <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4" *ngFor="let note of currentCustomer.internalNotes">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-[11px] font-black text-zadna-primary">{{ note.author }}</span>
+                  <span class="text-[10px] font-bold text-slate-400">{{ note.role }}</span>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 font-['Inter']">{{ note.createdAt }}</span>
+              </div>
+              <p class="mt-2 text-[12px] leading-6 font-medium text-slate-600">{{ note.message }}</p>
+            </div>
+
+            <div class="flex flex-col xl:flex-row gap-3 border-t border-slate-200/70 pt-5">
+              <button type="button" class="mini-action danger">
+                <span class="material-symbols-outlined text-[16px]">block</span>
+                {{ 'CUSTOMERS.DETAIL.ADMIN.SUSPEND' | translate }}
+              </button>
+
+              <button type="button" class="mini-action warning" (click)="toggleReviewFlag()">
+                <span class="material-symbols-outlined text-[16px]">trending_up</span>
+                {{ 'CUSTOMERS.DETAIL.ADMIN.ESCALATE' | translate }}
+              </button>
+
+              <div class="flex-1 flex flex-col sm:flex-row gap-3">
+                <input
+                  [(ngModel)]="quickNote"
+                  type="text"
+                  [placeholder]="'CUSTOMERS.DETAIL.ADMIN.QUICK_NOTE_PLACEHOLDER' | translate"
+                  class="flex-1 h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary/30 focus:ring-4 focus:ring-zadna-primary/5" />
+
+                <button type="button" class="h-11 px-5 rounded-xl bg-zadna-primary text-white text-[11px] font-black hover:bg-teal-700 transition-all" (click)="addQuickNote()">
+                  {{ 'CUSTOMERS.DETAIL.ADMIN.SAVE' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

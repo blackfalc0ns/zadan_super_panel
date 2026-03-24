@@ -53,6 +53,8 @@
   - `AppPageHeaderComponent`
 - `disputes-dashboard`
   - `AppPageHeaderComponent`
+- `customers-list`
+  - `AppPageHeaderComponent`
 - `brand-detail`
   - `DetailHeaderComponent`
 - `category-details`
@@ -82,6 +84,8 @@
   - product status in desktop and mobile views
 - `disputes-dashboard`
   - dispute status in desktop and mobile views
+- `customers-list`
+  - customer account statuses
 - `brand-detail`
   - brand status and related product statuses
 - `category-details`
@@ -238,7 +242,6 @@
   - `payment-detail-modal`
 - remaining placeholder navigation modules
   - `/analytics`
-  - `/customers`
   - `/drivers`
   - `/finances`
   - `/marketing`

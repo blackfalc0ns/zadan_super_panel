@@ -243,6 +243,213 @@
             "REJECTION_REASON": "سبب الرفض"
         }
     },
+    "CUSTOMERS": {
+        "TITLE": "العملاء",
+        "DESC": "مراقبة قاعدة العملاء، نشاط الطلبات، المخاطر، والدعم من لوحة واحدة عالية الكثافة",
+        "EXPORT": "تصدير التقرير",
+        "SEARCH_PLACEHOLDER": "ابحث بالاسم، البريد، الجوال، أو رقم العميل...",
+        "EMPTY_TITLE": "لا يوجد عملاء مطابقون",
+        "EMPTY_MESSAGE": "لم نعثر على عملاء بهذه المعايير. جرّب تعديل البحث أو الفلاتر.",
+        "KPI": {
+            "TOTAL_CUSTOMERS": "إجمالي العملاء",
+            "VIP": "عملاء VIP",
+            "BUSINESS": "حسابات الأعمال",
+            "HIGH_RISK": "مخاطر مرتفعة",
+            "ACTIVE_30D": "نشطون خلال 30 يوم",
+            "WATCHLIST": "قائمة المراقبة",
+            "ACTIVE_CUSTOMERS": "العملاء النشطون",
+            "NEW_CUSTOMERS": "العملاء الجدد",
+            "COMPLAINT_CUSTOMERS": "عملاء بشكاوى",
+            "REPEAT_REFUNDS": "استرجاعات متكررة"
+        },
+        "FILTERS": {
+            "ALL": "الكل",
+            "WATCHLIST_ONLY": "قائمة المراقبة فقط",
+            "CLEAR": "إعادة تعيين",
+            "ACTIVE_COUNT": "فلاتر نشطة",
+            "SEARCH_LABEL": "البحث عن عميل",
+            "CITY": "المدينة",
+            "STATUS": "الحالة",
+            "SPEND_RANGE": "نطاق الإنفاق",
+            "APPLY": "تصفية",
+            "RESET": "إعادة ضبط"
+        },
+        "TABLE": {
+            "CUSTOMER": "العميل",
+            "SEGMENT": "التقسيم",
+            "ACTIVITY": "النشاط",
+            "VALUE": "القيمة",
+            "RISK": "المخاطر",
+            "SUPPORT": "الدعم",
+            "STATUS": "الحالة",
+            "ACTIONS": "الإجراءات",
+            "ID": "المعرف",
+            "CITY": "المدينة",
+            "ORDERS": "الطلبات",
+            "LAST_ORDER": "آخر طلب",
+            "PROFILE_RISK": "المستوى / المخاطر"
+        },
+        "ACTIONS": {
+            "VIEW": "عرض المعاينة"
+        },
+        "BULK": {
+            "ADD_WATCHLIST": "إضافة للمراقبة",
+            "FLAG_REVIEW": "تعليم للمراجعة",
+            "EXPORT": "تصدير"
+        },
+        "SEGMENTS": {
+            "VIP": "VIP",
+            "BUSINESS": "أعمال",
+            "NEW": "جديد",
+            "WATCHLIST": "مراقبة",
+            "DORMANT": "خامل"
+        },
+        "STATUS": {
+            "ACTIVE": "نشط",
+            "LOW_ACTIVITY": "نشاط منخفض",
+            "RESTRICTED": "مقيد",
+            "DORMANT": "خامل"
+        },
+        "RISK_LEVEL": {
+            "LOW": "منخفض",
+            "MEDIUM": "متوسط",
+            "HIGH": "عالٍ",
+            "CRITICAL": "حرج"
+        },
+        "SUPPORT": {
+            "VIP_PRIORITY": "أولوية VIP",
+            "HIGH_REFUND": "استرجاعات مرتفعة",
+            "FRAUD_SIGNAL": "إشارة احتيال",
+            "NEW_CUSTOMER": "عميل جديد",
+            "RETENTION_NEEDED": "يحتاج استبقاء",
+            "COMPLIANCE_REVIEW": "مراجعة امتثال",
+            "DORMANT_ACCOUNT": "حساب خامل",
+            "NO_FLAGS": "لا توجد إشارات مرتفعة"
+        },
+        "DRAWER": {
+            "LIFETIME_VALUE": "القيمة العمرية",
+            "ORDERS": "الطلبات",
+            "LOYALTY_SCORE": "نقاط الولاء",
+            "ACTIVE_DAYS": "نشاط 30 يوم",
+            "PHONE": "الجوال",
+            "CITY": "المدينة",
+            "JOINED": "تاريخ الانضمام",
+            "PREFERRED_CHANNEL": "القناة المفضلة",
+            "BEHAVIOR": "السلوك الشرائي",
+            "TOTAL_SPENT": "إجمالي الإنفاق",
+            "AVG_BASKET": "متوسط السلة",
+            "LAST_ORDER": "آخر طلب",
+            "SUPPORT_LOAD": "الضغط الدعمي",
+            "REFUNDS_DISPUTES": "استرجاعات / نزاعات",
+            "WATCH_FLAGS": "مؤشرات المتابعة",
+            "NOTES": "ملاحظات الفريق"
+        },
+        "SPENDING": {
+            "ALL": "الكل",
+            "LT_1000": "أقل من 1,000 ر.س",
+            "BETWEEN_1000_5000": "1,000 - 5,000 ر.س",
+            "GT_5000": "أكثر من 5,000 ر.س"
+        },
+        "PAGINATION": {
+            "SUMMARY": "عرض {{start}} - {{end}} من أصل {{total}} عميل"
+        },
+        "SECTIONS": {
+            "KPI_TITLE": "ملخص العملاء",
+            "KPI_DESC": "مؤشرات مكثفة عن حجم قاعدة العملاء وجودة نشاطهم.",
+            "FILTERS_TITLE": "البحث والتصفية",
+            "FILTERS_DESC": "تصفية قائمة العملاء حسب المدينة والحالة ومستوى الإنفاق.",
+            "TABLE_TITLE": "قائمة العملاء",
+            "TABLE_DESC": "عرض تشغيلي مكثف مع وصول سريع للمعاينة.",
+            "OVERVIEW_TITLE": "الملف الأساسي",
+            "OVERVIEW_DESC": "بيانات العميل الأساسية وقناة التواصل.",
+            "BEHAVIOR_TITLE": "الإنفاق والسلوك",
+            "BEHAVIOR_DESC": "إشارات الإنفاق وآخر الطلبات وحمل الدعم.",
+            "FLAGS_TITLE": "المؤشرات والملاحظات",
+            "FLAGS_DESC": "إشارات المتابعة والملاحظات الداخلية للفريق."
+        },
+        "DETAIL": {
+            "PAGE_TITLE": "تفاصيل العميل",
+            "PAGE_SUBTITLE": "الملف الشخصي والسلوك والدعم والاسترجاعات وإجراءات الإدارة",
+            "EDIT_ACCOUNT": "تعديل الحساب",
+            "REGISTERED_AT": "تاريخ التسجيل",
+            "ACTION_VIEW_ORDERS": "عرض الطلبات",
+            "ACTION_VIEW_CASES": "عرض الشكاوى",
+            "ACTION_FLAG_REVIEW": "تعليم للمراجعة",
+            "ACTION_ADD_NOTE": "إضافة ملاحظة",
+            "REVIEW_FLAG_TITLE": "العميل معلّم للمراجعة",
+            "REVIEW_FLAG_MESSAGE": "هذا الملف تحت متابعة تشغيلية حالياً ويحتاج مراجعة داخلية في الطلبات القادمة.",
+            "RISK_LOW": "مؤشر مخاطر منخفض",
+            "RISK_MEDIUM": "مؤشر مخاطر متوسط",
+            "RISK_HIGH": "مؤشر مخاطر مرتفع",
+            "RISK_CRITICAL": "مؤشر مخاطر حرج",
+            "SECTIONS": {
+                "PROFILE": "ملف العميل",
+                "BEHAVIOR_RISK": "السلوك والمخاطر",
+                "RECENT_ORDERS": "آخر الطلبات",
+                "REFUNDS_DISPUTES": "الاسترجاعات والنزاعات",
+                "SUPPORT_CASES": "الدعم والشكاوى",
+                "INTERNAL_NOTES": "إجراءات الإدارة والملاحظات الداخلية"
+            },
+            "METRICS": {
+                "TOTAL_ORDERS": "إجمالي الطلبات",
+                "TOTAL_SPENT": "إجمالي الإنفاق",
+                "LAST_ORDER": "آخر طلب",
+                "COMPLAINTS": "عدد الشكاوى",
+                "REFUNDS": "عدد الاسترجاعات",
+                "RISK_SCORE": "مؤشر المخاطر"
+            },
+            "PROFILE_FIELDS": {
+                "FULL_NAME": "الاسم الكامل",
+                "PHONE": "رقم الجوال",
+                "EMAIL": "البريد الإلكتروني",
+                "CITY": "المدينة",
+                "LANGUAGE": "اللغة المفضلة",
+                "LAST_SEEN": "آخر ظهور",
+                "VERIFIED_ACCOUNT": "حساب موثق",
+                "UNVERIFIED_ACCOUNT": "يحتاج توثيق"
+            },
+            "BEHAVIOR_FIELDS": {
+                "REFUND_RISK": "مخاطر تكرار الاسترجاع",
+                "SUSPICIOUS_LOGINS": "محاولات دخول مشبوهة",
+                "PAYMENT_FAILURES": "فشل الدفع المتكرر",
+                "COMPLAINT_FREQUENCY": "وتيرة تقديم الشكاوى",
+                "ANALYSIS_SUMMARY": "ملخص التحليل"
+            },
+            "ORDERS_TABLE": {
+                "ORDER_ID": "رقم الطلب",
+                "DATE": "التاريخ",
+                "AMOUNT": "القيمة",
+                "STATUS": "الحالة",
+                "VIEW_ALL": "عرض كل الطلبات"
+            },
+            "ORDER_STATUS": {
+                "DELIVERED": "تم التسليم",
+                "REFUNDED": "مسترجع",
+                "PROCESSING": "قيد التنفيذ"
+            },
+            "REFUNDS": {
+                "TOTAL_CASES": "حالات الاسترجاع",
+                "CASES_TOTAL": "إجمالاً",
+                "CLOSED": "مغلق",
+                "IN_PROGRESS": "قيد التنفيذ",
+                "TOTAL_AMOUNT": "إجمالي مبالغ الاسترجاع",
+                "VIEW_ALL": "عرض الاسترجاعات"
+            },
+            "SUPPORT": {
+                "COMPLAINTS_RECORDED": "الشكاوى المسجلة",
+                "RESOLVED": "تم الحل",
+                "NO_CASES": "لا توجد حالات",
+                "LAST_CONTACT": "آخر تواصل",
+                "OPEN_TICKET": "فتح تذكرة دعم"
+            },
+            "ADMIN": {
+                "SUSPEND": "تعليق مؤقت",
+                "ESCALATE": "تصعيد للمراجعة",
+                "QUICK_NOTE_PLACEHOLDER": "إضافة ملاحظة داخلية سريعة...",
+                "SAVE": "حفظ"
+            }
+        }
+    },
     "BRANDS": {
         "TITLE": "العلامات التجارية والماركات",
         "AND_BRANDS": "والماركات",
@@ -309,7 +516,6 @@
         "PRODUCTS": "المنتجات",
         "STATUS": "الحالة"
     },
-
     "DASHBOARD": {
         "GREETING": "صباح الخير، {{name}}!",
         "SYSTEM_LIVE": "عقدة نشطة",

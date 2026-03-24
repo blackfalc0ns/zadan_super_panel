@@ -1,0 +1,212 @@
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
+  <app-page-header
+    [title]="'CUSTOMERS.TITLE'"
+    [subtitle]="'CUSTOMERS.DESC'"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'SIDEBAR.CUSTOMERS' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">groups</span>
+
+    <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+      <button class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary">
+        <span class="material-symbols-outlined text-[20px]">download</span>
+        {{ 'CUSTOMERS.EXPORT' | translate }}
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
+
+    <div class="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-6">
+      <div class="w-full xl:w-[450px] group relative order-1 xl:order-1">
+        <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none">
+          <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+          [placeholder]="'CUSTOMERS.SEARCH_PLACEHOLDER' | translate"
+          class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pr-14 pl-6" />
+      </div>
+
+      <div class="flex-1 order-2 xl:order-2">
+        <div class="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[1.5rem] shadow-sm px-4 py-3 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
+          <div class="min-w-[10rem]">
+            <label class="block text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 mb-2">{{ 'CUSTOMERS.FILTERS.CITY' | translate }}</label>
+            <select
+              [(ngModel)]="cityFilter"
+              (ngModelChange)="applyFilters()"
+              class="w-full h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5">
+              <option value="all">{{ 'CUSTOMERS.FILTERS.ALL' | translate }}</option>
+              <option *ngFor="let city of cityOptions" [value]="city">{{ city }}</option>
+            </select>
+          </div>
+
+          <div class="min-w-[10rem]">
+            <label class="block text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 mb-2">{{ 'CUSTOMERS.FILTERS.STATUS' | translate }}</label>
+            <select
+              [(ngModel)]="statusFilter"
+              (ngModelChange)="applyFilters()"
+              class="w-full h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5">
+              <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </div>
+
+          <div class="min-w-[12rem]">
+            <label class="block text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 mb-2">{{ 'CUSTOMERS.FILTERS.SPEND_RANGE' | translate }}</label>
+            <select
+              [(ngModel)]="spendRangeFilter"
+              (ngModelChange)="applyFilters()"
+              class="w-full h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5">
+              <option *ngFor="let option of spendingOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </div>
+
+          <div class="lg:ms-auto flex items-center gap-3">
+            <div class="h-11 px-4 rounded-full bg-slate-100 text-slate-500 flex items-center gap-2 text-xs font-black whitespace-nowrap">
+              <span class="material-symbols-outlined text-[18px] text-zadna-primary">filter_list</span>
+              <span>{{ activeFilterCount }}</span>
+              <span>{{ 'CUSTOMERS.FILTERS.ACTIVE_COUNT' | translate }}</span>
+            </div>
+
+            <button
+              type="button"
+              class="h-11 px-5 rounded-full border border-slate-200 bg-white text-xs font-black text-slate-500 hover:text-zadna-primary hover:border-zadna-primary/20 transition-all"
+              (click)="clearFilters()">
+              {{ 'CUSTOMERS.FILTERS.RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-data-table
+      [data]="paginatedCustomers"
+      [columns]="tableColumns"
+      [selectable]="true"
+      [clickableRows]="true"
+      [emptyStateTitle]="'CUSTOMERS.EMPTY_TITLE'"
+      [emptyStateMessage]="'CUSTOMERS.EMPTY_MESSAGE'"
+      [containerClass]="'customers-table extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
+      (rowClick)="openCustomerDetail($event)">
+
+      <ng-template #customColumn let-customer let-column="column">
+        <ng-container *ngIf="column.key === 'id'">
+          <span class="text-[11px] font-black text-slate-800 text-start" dir="ltr">{{ customer.id }}</span>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'customer'">
+          <div class="flex items-center gap-2.5 text-start">
+            <div class="w-10 h-10 rounded-full bg-zadna-primary/10 text-zadna-primary flex items-center justify-center text-[11px] font-black shrink-0">
+              {{ getCustomerInitials(customer.name) }}
+            </div>
+
+            <div class="min-w-0 flex flex-1 flex-col items-start">
+              <div class="flex w-full items-center gap-2">
+                <span class="truncate text-[13px] font-black text-slate-900 leading-snug">{{ customer.name }}</span>
+                <span *ngIf="getAttentionIcon(customer) as attentionIcon" class="material-symbols-outlined text-[16px] text-red-500 shrink-0">
+                  {{ attentionIcon }}
+                </span>
+              </div>
+              <span class="customer-email mt-0.5 inline-block max-w-full truncate text-[10px] font-bold text-slate-400/80" dir="ltr">
+                {{ customer.email }}
+              </span>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'city'">
+          <span class="text-[12px] font-bold text-slate-700 text-start">{{ customer.city }}</span>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'lastOrder'">
+          <div class="flex flex-col text-start">
+            <span class="text-[12px] font-bold text-slate-700">{{ customer.lastOrderAt }}</span>
+            <span class="text-[10px] font-bold text-slate-400 mt-1">
+              {{ customer.totalOrders | number:'1.0-0' }} {{ 'CUSTOMERS.TABLE.ORDERS' | translate }}
+            </span>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'status'">
+          <div class="flex justify-center">
+            <app-status-pill
+              [label]="getStatusLabel(customer.status)"
+              [variant]="getStatusVariant(customer.status)"
+              size="sm">
+            </app-status-pill>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'value'">
+          <span class="text-[12px] font-black" [ngClass]="getCustomerValueClasses(customer)" dir="ltr">
+            {{ customer.totalSpent | number:'1.0-0' }}
+          </span>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #mobileCard let-customer>
+        <div class="space-y-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0 flex items-center gap-3">
+              <div class="w-11 h-11 rounded-full bg-zadna-primary/10 text-zadna-primary flex items-center justify-center text-xs font-black shrink-0">
+                {{ getCustomerInitials(customer.name) }}
+              </div>
+              <div class="min-w-0 flex flex-col items-start">
+                <div class="flex w-full items-center gap-2">
+                  <p class="truncate text-sm font-black text-slate-900">{{ customer.name }}</p>
+                  <span *ngIf="getAttentionIcon(customer) as attentionIcon" class="material-symbols-outlined text-[16px] text-red-500 shrink-0">
+                    {{ attentionIcon }}
+                  </span>
+                </div>
+                <p class="customer-email mt-0.5 inline-block max-w-full truncate text-[11px] font-bold text-slate-400" dir="ltr">
+                  {{ customer.email }}
+                </p>
+              </div>
+            </div>
+
+            <app-status-pill
+              [label]="getStatusLabel(customer.status)"
+              [variant]="getStatusVariant(customer.status)"
+              size="sm">
+            </app-status-pill>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-[11px] font-bold">
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.TABLE.ID' | translate }}</p>
+              <p class="text-slate-800" dir="ltr">{{ customer.id }}</p>
+            </div>
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.TABLE.CITY' | translate }}</p>
+              <p class="text-slate-800">{{ customer.city }}</p>
+            </div>
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.TABLE.LAST_ORDER' | translate }}</p>
+              <p class="text-slate-800">{{ customer.lastOrderAt }}</p>
+            </div>
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.TABLE.VALUE' | translate }}</p>
+              <p class="font-['Inter']" [ngClass]="getCustomerValueClasses(customer)" dir="ltr">
+                {{ customer.totalSpent | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </app-data-table>
+
+    <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+      <app-pagination
+        [currentPage]="page"
+        [pageSize]="pageSize"
+        [totalItems]="totalItems"
+        (pageChange)="changePage($event)">
+      </app-pagination>
+    </div>
+  </div>
+</div>
