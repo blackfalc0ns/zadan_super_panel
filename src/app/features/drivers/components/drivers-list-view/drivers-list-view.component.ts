@@ -17,13 +17,13 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import {
-  getDriverStatusLabel as getDriverStatusLabelText,
+  getDriverStatusKey,
   getDriverStatusVariant as getDriverStatusPillVariant,
   getIssueIcon as getIssueIconName,
-  getIssueLabel as getIssueTextLabel,
+  getIssueKey,
   getIssueVariant as getIssueTone,
-  getPerformanceLabel as getPerformanceTextLabel,
-  getVerificationLabel as getVerificationTextLabel,
+  getPerformanceKey,
+  getVerificationKey,
   getVerificationVariant as getVerificationPillVariant
 } from '../../driver-ui.utils';
 
@@ -71,16 +71,16 @@ export class DriversListViewComponent {
   @Output() pageChanged = new EventEmitter<number>();
 
   readonly tableColumns: TableColumn[] = [
-    { key: 'driver', title: 'السائق', width: '24%', align: 'left', type: 'custom' },
-    { key: 'driverId', title: 'معرّف السائق', width: '10%', align: 'center', type: 'custom' },
-    { key: 'city', title: 'المدينة', width: '8%', align: 'center', type: 'custom' },
-    { key: 'status', title: 'الحالة', width: '9%', align: 'center', type: 'custom' },
-    { key: 'verificationStatus', title: 'التحقق', width: '10%', align: 'center', type: 'custom' },
-    { key: 'tasks', title: 'المهام', width: '10%', align: 'center', type: 'custom' },
-    { key: 'performance', title: 'الأداء', width: '11%', align: 'center', type: 'custom' },
-    { key: 'wallet', title: 'المحفظة', width: '8%', align: 'center', type: 'custom' },
-    { key: 'issues', title: 'المشكلات', width: '5%', align: 'center', type: 'custom' },
-    { key: 'actions', title: 'الإجراءات', width: '5%', align: 'center', type: 'custom' }
+    { key: 'driver', title: 'DRIVERS.TABLE.DRIVER', width: '24%', align: 'left', type: 'custom' },
+    { key: 'driverId', title: 'DRIVERS.TABLE.DRIVER_ID', width: '10%', align: 'center', type: 'custom' },
+    { key: 'city', title: 'DRIVERS.TABLE.CITY', width: '8%', align: 'center', type: 'custom' },
+    { key: 'status', title: 'DRIVERS.TABLE.STATUS', width: '9%', align: 'center', type: 'custom' },
+    { key: 'verificationStatus', title: 'DRIVERS.TABLE.VERIFICATION_STATUS', width: '10%', align: 'center', type: 'custom' },
+    { key: 'tasks', title: 'DRIVERS.TABLE.TASKS', width: '10%', align: 'center', type: 'custom' },
+    { key: 'performance', title: 'DRIVERS.TABLE.PERFORMANCE', width: '11%', align: 'center', type: 'custom' },
+    { key: 'wallet', title: 'DRIVERS.TABLE.WALLET', width: '8%', align: 'center', type: 'custom' },
+    { key: 'issues', title: 'DRIVERS.TABLE.ISSUES', width: '5%', align: 'center', type: 'custom' },
+    { key: 'actions', title: 'DRIVERS.TABLE.ACTIONS', width: '5%', align: 'center', type: 'custom' }
   ];
 
   onSearch(): void {
@@ -126,7 +126,7 @@ export class DriversListViewComponent {
   }
 
   getDriverStatusLabel(status: DriverStatus): string {
-    return getDriverStatusLabelText(status);
+    return getDriverStatusKey(status);
   }
 
   getVerificationStatusVariant(status: VerificationStatus) {
@@ -134,11 +134,34 @@ export class DriversListViewComponent {
   }
 
   getVerificationLabel(status: VerificationStatus): string {
-    return getVerificationTextLabel(status);
+    return getVerificationKey(status);
   }
 
   getPerformanceLabel(performance: DriverPerformance): string {
-    return getPerformanceTextLabel(performance);
+    return getPerformanceKey(performance);
+  }
+
+  getTaskSubtitle(subtitle?: string): string {
+    if (!subtitle) {
+      return 'DRIVERS.TABLE.NO_ACTIVITY';
+    }
+
+    const subtitleKeys: Record<string, string> = {
+      'آخر تسليم قبل 10 دقائق': 'DRIVERS.TASK_SUBTITLES.LAST_DELIVERY_10_MIN',
+      'توصيل قيد التنفيذ': 'DRIVERS.TASK_SUBTITLES.DELIVERY_IN_PROGRESS',
+      'لا يوجد نشاط': 'DRIVERS.TABLE.NO_ACTIVITY',
+      'متاح في المنطقة الشرقية': 'DRIVERS.TASK_SUBTITLES.EASTERN_REGION_AVAILABLE',
+      'آخر ظهور منذ 6 ساعات': 'DRIVERS.TASK_SUBTITLES.LAST_SEEN_6_HOURS',
+      'يشحن 3 طلبات حالياً': 'DRIVERS.TASK_SUBTITLES.CARRYING_3_ORDERS',
+      'مستوى خدمة ممتاز': 'DRIVERS.TASK_SUBTITLES.EXCELLENT_SERVICE_LEVEL',
+      'مستندات قيد المراجعة': 'DRIVERS.TASK_SUBTITLES.DOCUMENTS_UNDER_REVIEW',
+      'منطقة التسليم الجنوبية': 'DRIVERS.TASK_SUBTITLES.SOUTH_DELIVERY_ZONE',
+      'جاهز للاستلام القادم': 'DRIVERS.TASK_SUBTITLES.READY_FOR_NEXT_PICKUP',
+      'إيقاف لحين التسوية': 'DRIVERS.TASK_SUBTITLES.SUSPENDED_PENDING_SETTLEMENT',
+      'أفضل معدل قبول في المنطقة': 'DRIVERS.TASK_SUBTITLES.BEST_ACCEPTANCE_RATE'
+    };
+
+    return subtitleKeys[subtitle] ?? subtitle;
   }
 
   getIssueIcon(issue: string): string {
@@ -146,7 +169,7 @@ export class DriversListViewComponent {
   }
 
   getIssueLabel(issue: string): string {
-    return getIssueTextLabel(issue);
+    return getIssueKey(issue);
   }
 
   getIssueVariant(issue: string): 'success' | 'warning' | 'danger' {

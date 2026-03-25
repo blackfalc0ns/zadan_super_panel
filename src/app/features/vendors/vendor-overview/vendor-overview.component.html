@@ -22,6 +22,83 @@
     </div>
   </div>
 
+  <section *ngIf="workflowSnapshot as workflow" class="rounded-[1.35rem] border border-slate-200/70 bg-white/90 p-4 shadow-sm backdrop-blur-sm md:p-5">
+    <div class="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(19rem,0.95fr)]">
+      <div class="rounded-[1.1rem] border border-slate-200/70 bg-slate-50/70 p-4">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-black text-slate-500">
+              {{ workflow.queueLabel }}
+            </span>
+            <app-status-pill
+              [label]="workflow.workflowStateLabel"
+              [variant]="workflow.workflowVariant"
+              [shouldTranslate]="false"
+              size="sm">
+            </app-status-pill>
+          </div>
+
+          <span class="inline-flex items-center rounded-full bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary">
+            {{ workflow.ownerTeamLabel }}
+          </span>
+        </div>
+
+        <div class="mt-4 space-y-2">
+          <h3 class="text-lg font-black text-slate-900">{{ vendorName }}</h3>
+          <p class="text-[13px] leading-6 text-slate-600">{{ workflow.summary }}</p>
+        </div>
+
+        <div class="mt-4 rounded-[0.95rem] border border-cyan-100 bg-cyan-50/80 p-3">
+          <p class="text-[9px] font-extrabold uppercase tracking-[0.16em] text-cyan-700">{{ 'WORKFLOW_LINKS.NEXT_STEP' | translate }}</p>
+          <p class="mt-2 text-[12px] font-black leading-6 text-slate-900">{{ workflow.nextStep }}</p>
+        </div>
+      </div>
+
+      <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-1">
+        <div class="rounded-[1rem] border border-red-100 bg-red-50/70 p-3.5">
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-red-700">{{ 'WORKFLOW_LINKS.CURRENT_BLOCKERS' | translate }}</p>
+            <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-white px-2 text-[10px] font-black text-red-600">
+              {{ workflow.blockers.length }}
+            </span>
+          </div>
+
+          <div class="mt-3 space-y-2">
+            <div *ngFor="let blocker of workflow.blockers" class="rounded-[0.9rem] border border-red-100 bg-white px-3 py-2 text-[11px] font-bold leading-5 text-red-700">
+              {{ blocker }}
+            </div>
+            <div *ngIf="workflow.blockers.length === 0" class="rounded-[0.9rem] border border-emerald-100 bg-emerald-50 px-3 py-2 text-[11px] font-bold leading-5 text-emerald-700">
+              {{ 'WORKFLOW_LINKS.NO_BLOCKERS' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-[1rem] border border-amber-100 bg-amber-50/70 p-3.5">
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-amber-700">{{ 'WORKFLOW_LINKS.FOLLOW_UP_ALERTS' | translate }}</p>
+            <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-white px-2 text-[10px] font-black text-amber-600">
+              {{ workflow.alerts.length }}
+            </span>
+          </div>
+
+          <div class="mt-3 space-y-2">
+            <div *ngFor="let alert of workflow.alerts" class="rounded-[0.9rem] border border-amber-100 bg-white px-3 py-2 text-[11px] font-bold leading-5 text-amber-700">
+              {{ alert }}
+            </div>
+            <div *ngIf="workflow.alerts.length === 0" class="rounded-[0.9rem] border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold leading-5 text-slate-500">
+              {{ 'WORKFLOW_LINKS.NO_ALERTS' | translate }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <app-workflow-links-panel
+    *ngIf="workflowLinks.length"
+    [cards]="workflowLinks">
+  </app-workflow-links-panel>
+
   <!-- Three Column Layout -->
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
 

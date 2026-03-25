@@ -44,7 +44,7 @@
                 </div>
                 <div class="space-y-1">
                   <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.COMPREHENSIVE' | translate }}</span>
-                  <span class="block text-[11px] text-slate-500 leading-relaxed">تقرير مفصل يغطي كافة الأنشطة المالية والحسابات</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">{{ 'MODALS.FINANCIAL_STATEMENT.STATEMENT_DESC_COMPREHENSIVE' | translate }}</span>
                 </div>
               </label>
 
@@ -60,7 +60,7 @@
                 </div>
                 <div class="space-y-1">
                   <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.PAYMENTS_ONLY' | translate }}</span>
-                  <span class="block text-[11px] text-slate-500 leading-relaxed">تتبع المبالغ المحولة والمدفوعات البنكية</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">{{ 'MODALS.FINANCIAL_STATEMENT.STATEMENT_DESC_PAYMENTS' | translate }}</span>
                 </div>
               </label>
 
@@ -76,7 +76,7 @@
                 </div>
                 <div class="space-y-1">
                   <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.DEDUCTIONS_ONLY' | translate }}</span>
-                  <span class="block text-[11px] text-slate-500 leading-relaxed">تحليل الرسوم المقتطعة وعمولات البيع</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">{{ 'MODALS.FINANCIAL_STATEMENT.STATEMENT_DESC_DEDUCTIONS' | translate }}</span>
                 </div>
               </label>
 
@@ -92,7 +92,7 @@
                 </div>
                 <div class="space-y-1">
                   <span class="block text-sm font-bold text-slate-900">{{ 'MODALS.FINANCIAL_STATEMENT.RETURNS_ONLY' | translate }}</span>
-                  <span class="block text-[11px] text-slate-500 leading-relaxed">حصر الطلبات الملغاة والمبالغ المستردة</span>
+                  <span class="block text-[11px] text-slate-500 leading-relaxed">{{ 'MODALS.FINANCIAL_STATEMENT.STATEMENT_DESC_RETURNS' | translate }}</span>
                 </div>
               </label>
             </div>
@@ -106,8 +106,8 @@
                 {{ 'MODALS.FINANCIAL_STATEMENT.DATE_RANGE' | translate }}
               </h3>
               <div class="flex gap-2">
-                <button *ngFor="let range of quickDateRanges" (click)="selectQuickRange(range.label, range.days)" [ngClass]="{'bg-primary/10 text-primary border border-primary/20': selectedQuickRange === range.label, 'bg-slate-100 text-slate-600 hover:bg-primary/10 hover:text-primary': selectedQuickRange !== range.label}" class="px-3 py-1 text-xs font-medium rounded-full transition-colors">
-                  {{ range.label }}
+                <button *ngFor="let range of quickDateRanges" (click)="selectQuickRange(range.key, range.days)" [ngClass]="{'bg-primary/10 text-primary border border-primary/20': selectedQuickRange === range.key, 'bg-slate-100 text-slate-600 hover:bg-primary/10 hover:text-primary': selectedQuickRange !== range.key}" class="px-3 py-1 text-xs font-medium rounded-full transition-colors">
+                  {{ range.key | translate }}
                 </button>
               </div>
             </div>
@@ -127,13 +127,7 @@
                     </button>
                   </div>
                   <div class="grid grid-cols-7 gap-1 text-center">
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ح</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ن</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ث</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ر</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">خ</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ج</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">س</div>
+                    <div *ngFor="let dayLabel of weekdayLabels" class="text-[10px] font-bold text-slate-400 py-1">{{ dayLabel }}</div>
                     
                     <button *ngFor="let day of getDaysInMonth(currentMonthFrom)" (click)="selectDateFrom(day)" [ngClass]="isSelectedFrom(day) ? 'bg-primary text-white font-bold shadow-md shadow-primary/30' : 'hover:bg-slate-100 text-slate-600'" class="w-8 h-8 rounded-full text-xs flex items-center justify-center transition-colors">
                       {{ day }}
@@ -156,13 +150,7 @@
                     </button>
                   </div>
                   <div class="grid grid-cols-7 gap-1 text-center">
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ح</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ن</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ث</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ر</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">خ</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">ج</div>
-                    <div class="text-[10px] font-bold text-slate-400 py-1">س</div>
+                    <div *ngFor="let dayLabel of weekdayLabels" class="text-[10px] font-bold text-slate-400 py-1">{{ dayLabel }}</div>
                     
                     <button *ngFor="let day of getDaysInMonth(currentMonthTo)" (click)="selectDateTo(day)" [ngClass]="isSelectedTo(day) ? 'bg-primary text-white font-bold shadow-md shadow-primary/30' : 'hover:bg-slate-100 text-slate-600'" class="w-8 h-8 rounded-full text-xs flex items-center justify-center transition-colors">
                       {{ day }}
@@ -182,23 +170,23 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
               <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
                 <input type="checkbox" [(ngModel)]="config.includedData.sales" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
-                <span class="text-sm font-medium">المبيعات</span>
+                <span class="text-sm font-medium">{{ 'MODALS.FINANCIAL_STATEMENT.SALES' | translate }}</span>
               </label>
               <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
                 <input type="checkbox" [(ngModel)]="config.includedData.returns" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
-                <span class="text-sm font-medium">المرتجعات</span>
+                <span class="text-sm font-medium">{{ 'MODALS.FINANCIAL_STATEMENT.RETURNS' | translate }}</span>
               </label>
               <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
                 <input type="checkbox" [(ngModel)]="config.includedData.discounts" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
-                <span class="text-sm font-medium">الخصومات</span>
+                <span class="text-sm font-medium">{{ 'MODALS.FINANCIAL_STATEMENT.DISCOUNTS' | translate }}</span>
               </label>
               <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
                 <input type="checkbox" [(ngModel)]="config.includedData.commissions" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
-                <span class="text-sm font-medium">عمولات المنصة</span>
+                <span class="text-sm font-medium">{{ 'MODALS.FINANCIAL_STATEMENT.PLATFORM_COMMISSIONS' | translate }}</span>
               </label>
               <label class="flex items-center gap-2 p-3 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-primary/50 transition-colors">
                 <input type="checkbox" [(ngModel)]="config.includedData.netAmount" class="rounded text-primary focus:ring-primary/50 bg-slate-100 border-slate-300 w-4 h-4"/>
-                <span class="text-sm font-medium">صافي المبلغ</span>
+                <span class="text-sm font-medium">{{ 'MODALS.FINANCIAL_STATEMENT.NET_AMOUNT_ITEM' | translate }}</span>
               </label>
             </div>
           </section>
@@ -253,7 +241,7 @@
               </div>
               <div class="flex flex-col gap-1 pb-4 border-b border-slate-200/50">
                 <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.ESTIMATED_RECORDS' | translate }}</span>
-                <span class="text-sm font-bold text-slate-900">~ {{ previewData.estimatedRecords }} سجل</span>
+                <span class="text-sm font-bold text-slate-900">~ {{ previewData.estimatedRecords }} {{ 'MODALS.FINANCIAL_STATEMENT.RECORDS_SUFFIX' | translate }}</span>
               </div>
               <div class="flex flex-col gap-1 pb-4 border-b border-slate-200/50">
                 <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.FILE_SIZE' | translate }}</span>
@@ -261,7 +249,7 @@
               </div>
               <div class="flex flex-col gap-1 pt-2">
                 <span class="text-xs text-slate-500">{{ 'MODALS.FINANCIAL_STATEMENT.TOTAL_AMOUNT' | translate }}</span>
-                <span class="text-2xl font-bold text-teal-600">{{ previewData.totalAmount | number:'1.2-2' }} ر.س</span>
+                <span class="text-2xl font-bold text-teal-600">{{ previewData.totalAmount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
             </div>
           </div>

@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CustomersService } from '../../../core/services/customers.service';
 import { DataTableComponent, TableColumn } from '../../../shared/components/ui/data-table/data-table.component';
 import { KpiCardsComponent, KPICard } from '../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
-import { CUSTOMER_RECORDS } from '../customers.mock';
-import { CustomerRecord, CustomerSpendRange, CustomerStatus } from '../customers.models';
+import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../customers.models';
 
 @Component({
   selector: 'app-customers-list',
@@ -27,7 +27,7 @@ import { CustomerRecord, CustomerSpendRange, CustomerStatus } from '../customers
   templateUrl: './customers-list.component.html',
   styleUrl: './customers-list.component.scss'
 })
-export class CustomersListComponent {
+export class CustomersListComponent implements OnInit {
   page = 1;
   pageSize = 15;
   searchTerm = '';
@@ -35,7 +35,7 @@ export class CustomersListComponent {
   statusFilter: 'all' | CustomerStatus = 'all';
   spendRangeFilter: CustomerSpendRange = 'all';
 
-  readonly customers = CUSTOMER_RECORDS;
+  customers: CustomerDetailRecord[] = [];
 
   readonly statusOptions: Array<{ value: 'all' | CustomerStatus; labelKey: string }> = [
     { value: 'all', labelKey: 'CUSTOMERS.FILTERS.ALL' },
@@ -63,8 +63,13 @@ export class CustomersListComponent {
 
   constructor(
     private readonly router: Router,
-    public readonly translate: TranslateService
+    public readonly translate: TranslateService,
+    private readonly customersService: CustomersService
   ) {}
+
+  ngOnInit(): void {
+    this.customers = this.customersService.getCustomers();
+  }
 
   get cityOptions(): string[] {
     return [...new Set(this.customers.map((customer) => customer.city))];
@@ -159,7 +164,7 @@ export class CustomersListComponent {
     ];
   }
 
-  get filteredCustomers(): CustomerRecord[] {
+  get filteredCustomers(): CustomerDetailRecord[] {
     return this.customers.filter((customer) => {
       const search = this.searchTerm.trim().toLowerCase();
       const matchesSearch = !search || [
@@ -178,7 +183,7 @@ export class CustomersListComponent {
     });
   }
 
-  get paginatedCustomers(): CustomerRecord[] {
+  get paginatedCustomers(): CustomerDetailRecord[] {
     const start = (this.page - 1) * this.pageSize;
     return this.filteredCustomers.slice(start, start + this.pageSize);
   }
@@ -216,7 +221,7 @@ export class CustomersListComponent {
     this.page = newPage;
   }
 
-  openCustomerDetail(customer: CustomerRecord): void {
+  openCustomerDetail(customer: CustomerDetailRecord): void {
     this.router.navigate(['/customers', customer.id]);
   }
 
@@ -244,7 +249,7 @@ export class CustomersListComponent {
     return map[status];
   }
 
-  getCustomerValueClasses(customer: CustomerRecord): string {
+  getCustomerValueClasses(customer: CustomerDetailRecord): string {
     if (customer.totalSpent >= 20000) {
       return 'text-secondary';
     }
@@ -252,7 +257,19 @@ export class CustomersListComponent {
     return 'text-zadna-primary';
   }
 
-  getAttentionIcon(customer: CustomerRecord): string | null {
+  getAttentionIcon(customer: CustomerDetailRecord): string | null {
+    if (customer.accountState === 'suspended') {
+      return 'block';
+    }
+
+    if (customer.reviewState === 'escalated') {
+      return 'gpp_bad';
+    }
+
+    if (customer.reviewState === 'flagged') {
+      return 'flag';
+    }
+
     if (customer.disputesCount >= 2 || customer.risk === 'critical') {
       return 'report';
     }

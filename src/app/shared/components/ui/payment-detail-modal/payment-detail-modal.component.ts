@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface PaymentDetail {
   transactionId: string;
@@ -51,6 +51,8 @@ export class PaymentDetailModalComponent {
   @Output() downloadReceipt = new EventEmitter<string>();
   @Output() retryPayment = new EventEmitter<string>();
   @Output() viewActivityLog = new EventEmitter<string>();
+
+  constructor(private translate: TranslateService) {}
 
   onClose() {
     this.close.emit();
@@ -115,10 +117,11 @@ export class PaymentDetailModalComponent {
 
   getLogTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
-      success: '[SUCCESS]',
-      error: '[ERROR]',
-      debug: '[DEBUG]'
+      success: 'MODALS.PAYMENT_DETAIL.LOG_TYPES.SUCCESS',
+      error: 'MODALS.PAYMENT_DETAIL.LOG_TYPES.ERROR',
+      debug: 'MODALS.PAYMENT_DETAIL.LOG_TYPES.DEBUG'
     };
-    return labels[type] || '';
+
+    return labels[type] ? this.translate.instant(labels[type]) : '';
   }
 }

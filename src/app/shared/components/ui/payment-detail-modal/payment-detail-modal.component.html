@@ -9,8 +9,8 @@
     <div class="px-6 pt-6 pb-4 border-b border-slate-200/60 shrink-0">
       <div class="flex justify-between items-start">
         <div>
-          <h2 class="text-xl font-bold text-slate-800 leading-tight">تفاصيل الدفعة</h2>
-          <p class="text-xs text-slate-500 mt-1">عرض البيانات التفصيلية لعملية التحويل المالي وحالتها التقنية</p>
+          <h2 class="text-xl font-bold text-slate-800 leading-tight">{{ 'MODALS.PAYMENT_DETAIL.TITLE' | translate }}</h2>
+          <p class="text-xs text-slate-500 mt-1">{{ 'MODALS.PAYMENT_DETAIL.SUBTITLE' | translate }}</p>
         </div>
         <button (click)="onClose()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors group">
           <span class="material-symbols-outlined text-slate-400 group-hover:text-slate-600">close</span>
@@ -32,12 +32,12 @@
           </div>
           <div>
             <span class="text-sm font-bold block">{{ paymentDetail.statusLabel }}</span>
-            <span class="text-[10px] text-slate-500">تم التحديث في: {{ paymentDetail.lastUpdated }}</span>
+            <span class="text-[10px] text-slate-500">{{ 'MODALS.PAYMENT_DETAIL.UPDATED_AT' | translate }}: {{ paymentDetail.lastUpdated }}</span>
           </div>
         </div>
         <div class="text-left" *ngIf="paymentDetail.statusCode">
           <span class="px-2 py-1 bg-white/50 border rounded text-[10px] font-bold">
-            الرمز: {{ paymentDetail.statusCode }}
+            {{ 'MODALS.PAYMENT_DETAIL.STATUS_CODE' | translate }}: {{ paymentDetail.statusCode }}
           </span>
         </div>
       </div>
@@ -46,7 +46,7 @@
       <div *ngIf="paymentDetail.status === 'failed' && paymentDetail.failureReason" class="bg-rose-50 border border-rose-200 rounded-xl p-4">
         <p class="text-xs text-rose-800 font-bold mb-2 flex items-center gap-2">
           <span class="material-symbols-outlined text-base">error</span>
-          سبب الفشل:
+          {{ 'MODALS.PAYMENT_DETAIL.FAILURE_REASON' | translate }}
         </p>
         <p class="text-xs text-rose-600 leading-relaxed">{{ paymentDetail.failureReason }}</p>
       </div>
@@ -55,31 +55,31 @@
       <div class="inner-card p-4">
         <h3 class="text-xs font-bold text-primary mb-3 flex items-center gap-2">
           <span class="material-symbols-outlined text-base">description</span>
-          معلومات الدفعة
+          {{ 'MODALS.PAYMENT_DETAIL.PAYMENT_INFO' | translate }}
         </h3>
         <div class="grid grid-cols-2 gap-y-4 gap-x-6">
           <div class="space-y-1">
-            <label class="text-[10px] text-slate-400">رقم العملية (Transaction ID)</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.TRANSACTION_ID' | translate }}</label>
             <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.transactionId }}</p>
           </div>
           <div class="space-y-1 text-left">
-            <label class="text-[10px] text-slate-400">المرجع البنكي</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.BANK_REFERENCE' | translate }}</label>
             <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.bankReference }}</p>
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] text-slate-400">نوع العملية</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.OPERATION_TYPE' | translate }}</label>
             <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] rounded border border-blue-100 font-medium">
               {{ paymentDetail.operationType }}
             </span>
           </div>
           <div class="space-y-1 text-left">
-            <label class="text-[10px] text-slate-400">تاريخ العملية</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.OPERATION_DATE' | translate }}</label>
             <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.operationDate }}</p>
           </div>
           <div class="col-span-2 pt-2 border-t border-slate-100 flex justify-between items-center">
-            <label class="text-xs font-bold text-slate-600">المبلغ الإجمالي</label>
+            <label class="text-xs font-bold text-slate-600">{{ 'MODALS.PAYMENT_DETAIL.TOTAL_AMOUNT' | translate }}</label>
             <div class="text-lg font-bold text-primary">
-              {{ paymentDetail.amount | number:'1.2-2' }} <span class="text-xs font-normal text-slate-500">ر.س</span>
+              {{ paymentDetail.amount | number:'1.2-2' }} <span class="text-xs font-normal text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
             </div>
           </div>
         </div>
@@ -89,19 +89,19 @@
       <div class="inner-card p-4">
         <h3 class="text-xs font-bold text-primary mb-3 flex items-center gap-2">
           <span class="material-symbols-outlined text-base">account_balance</span>
-          بيانات المستفيد
+          {{ 'MODALS.PAYMENT_DETAIL.RECIPIENT_INFO' | translate }}
         </h3>
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1">
-            <label class="text-[10px] text-slate-400">اسم التاجر</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.VENDOR_NAME' | translate }}</label>
             <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.vendorName }}</p>
           </div>
           <div class="space-y-1 text-left">
-            <label class="text-[10px] text-slate-400">اسم البنك</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.BANK_NAME' | translate }}</label>
             <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.bankName }}</p>
           </div>
           <div class="col-span-2 space-y-1">
-            <label class="text-[10px] text-slate-400">رقم الآيبان (IBAN)</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.IBAN' | translate }}</label>
             <div class="flex items-center gap-2 bg-slate-50/50 p-2 rounded border border-slate-100">
               <p class="text-xs font-mono font-medium text-slate-700">{{ paymentDetail.iban }}</p>
               <button (click)="copyToClipboard(paymentDetail.iban)" class="mr-auto text-primary hover:text-primary/80">
@@ -110,11 +110,11 @@
             </div>
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] text-slate-400">اسم المستفيد</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.RECIPIENT_NAME' | translate }}</label>
             <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.beneficiaryName }}</p>
           </div>
           <div class="space-y-1 text-left">
-            <label class="text-[10px] text-slate-400">كود السويفت</label>
+            <label class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.SWIFT_CODE' | translate }}</label>
             <p class="text-xs font-semibold text-slate-700">{{ paymentDetail.swiftCode }}</p>
           </div>
         </div>
@@ -124,7 +124,7 @@
       <div class="inner-card p-4">
         <h3 class="text-xs font-bold text-primary mb-4 flex items-center gap-2">
           <span class="material-symbols-outlined text-base">schedule</span>
-          تتبع حالة العملية
+          {{ 'MODALS.PAYMENT_DETAIL.TIMELINE' | translate }}
         </h3>
         <div class="relative flex justify-between">
           <!-- Progress Line Background -->
@@ -137,7 +137,7 @@
             <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs shadow-lg shadow-emerald-500/20">
               <span class="material-symbols-outlined text-sm">check</span>
             </div>
-            <span class="text-[10px] font-bold mt-2 text-slate-800">تم الإنشاء</span>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">{{ 'MODALS.PAYMENT_DETAIL.INITIATED' | translate }}</span>
             <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.created }}</span>
           </div>
 
@@ -146,7 +146,7 @@
             <div [ngClass]="paymentDetail.status !== 'pending' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-200 text-slate-400'" class="w-8 h-8 rounded-full flex items-center justify-center text-xs">
               <span class="material-symbols-outlined text-sm">check</span>
             </div>
-            <span class="text-[10px] font-bold mt-2 text-slate-800">قيد المعالجة</span>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">{{ 'MODALS.PAYMENT_DETAIL.PROCESSING' | translate }}</span>
             <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.processing }}</span>
           </div>
 
@@ -155,7 +155,7 @@
             <div [ngClass]="paymentDetail.status === 'success' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-200 text-slate-400'" class="w-8 h-8 rounded-full flex items-center justify-center text-xs">
               <span class="material-symbols-outlined text-sm">check</span>
             </div>
-            <span class="text-[10px] font-bold mt-2 text-slate-800">تم التحويل</span>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">{{ 'MODALS.PAYMENT_DETAIL.BANK_TRANSFER' | translate }}</span>
             <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.transferred }}</span>
           </div>
 
@@ -164,7 +164,7 @@
             <div [ngClass]="paymentDetail.status === 'success' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-slate-200 text-slate-400'" class="w-8 h-8 rounded-full flex items-center justify-center text-xs">
               <span class="material-symbols-outlined text-sm">check</span>
             </div>
-            <span class="text-[10px] font-bold mt-2 text-slate-800">تأكيد الاستلام</span>
+            <span class="text-[10px] font-bold mt-2 text-slate-800">{{ 'MODALS.PAYMENT_DETAIL.COMPLETED' | translate }}</span>
             <span class="text-[9px] text-slate-400">{{ paymentDetail.timeline.confirmed }}</span>
           </div>
         </div>
@@ -175,9 +175,9 @@
         <div class="flex justify-between items-center mb-3">
           <h3 class="text-xs font-bold text-slate-600 flex items-center gap-2">
             <span class="material-symbols-outlined text-base">code</span>
-            السجلات التقنية
+            {{ 'MODALS.PAYMENT_DETAIL.TECHNICAL_LOGS' | translate }}
           </h3>
-          <span class="text-[10px] text-slate-400">آخر محاولة: منذ ساعة</span>
+          <span class="text-[10px] text-slate-400">{{ 'MODALS.PAYMENT_DETAIL.LAST_ATTEMPT' | translate }}</span>
         </div>
         <div class="bg-slate-900 rounded-lg p-3 font-mono text-[10px] text-slate-300 space-y-1 overflow-x-auto">
           <div *ngFor="let log of paymentDetail.logs" class="flex gap-2">
@@ -193,20 +193,20 @@
       <div class="flex gap-2">
         <button (click)="onDownloadReceipt()" class="px-4 py-2 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary/90 transition-all flex items-center gap-2 shadow-lg shadow-primary/10">
           <span class="material-symbols-outlined text-base">download</span>
-          تحميل الإيصال (PDF)
+          {{ 'MODALS.PAYMENT_DETAIL.ACTIONS.DOWNLOAD_RECEIPT' | translate }}
         </button>
         
         <button *ngIf="paymentDetail.status === 'failed'" (click)="onRetryPayment()" class="px-4 py-2 bg-orange-500 text-white rounded-lg text-xs font-semibold hover:bg-orange-600 transition-all flex items-center gap-2 shadow-lg shadow-orange-500/10">
           <span class="material-symbols-outlined text-base">refresh</span>
-          إعادة محاولة التحويل
+          {{ 'MODALS.PAYMENT_DETAIL.ACTIONS.RETRY_PAYMENT' | translate }}
         </button>
 
         <button (click)="onViewActivityLog()" class="px-4 py-2 text-slate-600 bg-white border border-slate-200 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-all">
-          عرض سجل النشاط
+          {{ 'MODALS.PAYMENT_DETAIL.ACTIONS.VIEW_ACTIVITY' | translate }}
         </button>
       </div>
       <button (click)="onClose()" class="px-4 py-2 text-slate-500 hover:text-slate-800 text-xs font-semibold transition-all">
-        إغلاق
+        {{ 'MODALS.PAYMENT_DETAIL.CLOSE' | translate }}
       </button>
     </div>
   </div>

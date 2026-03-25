@@ -11,6 +11,16 @@ import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/compone
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
+interface ProductVendorSnapshot {
+  nameAr: string;
+  nameEn: string;
+  quantity: number;
+  ratio: number;
+  price: number;
+  colorClass: string;
+  timeKey: string;
+}
+
 @Component({
   selector: 'app-product-detail',
   standalone: true,
@@ -36,6 +46,13 @@ export class ProductDetailComponent implements OnInit {
   brandName: string = '';
   unitName: string = '';
   breadcrumbs: { label: string; action?: () => void }[] = [];
+  readonly vendorSnapshots: ProductVendorSnapshot[] = [
+    { nameAr: 'مؤسسة الأمين للتجارة', nameEn: 'Alameen Trading Est.', quantity: 850, ratio: 85, price: 120, colorClass: 'bg-emerald-500', timeKey: 'PRODUCTS.DETAIL.TIME_TWO_HOURS_AGO' },
+    { nameAr: 'تجارة الجود المريح', nameEn: 'Aljood Comfort Trading', quantity: 420, ratio: 42, price: 125, colorClass: 'bg-red-500', timeKey: 'PRODUCTS.DETAIL.TIME_YESTERDAY' },
+    { nameAr: 'تجارة الجملة الحديثة', nameEn: 'Modern Wholesale Trading', quantity: 150, ratio: 15, price: 118, colorClass: 'bg-blue-500', timeKey: 'PRODUCTS.DETAIL.TIME_THREE_DAYS_AGO' },
+    { nameAr: 'مؤسسة الوداد', nameEn: 'Alwidad Est.', quantity: 950, ratio: 95, price: 122, colorClass: 'bg-purple-500', timeKey: 'PRODUCTS.DETAIL.TIME_TODAY' },
+    { nameAr: 'تجارة الوحدة الحديثة', nameEn: 'Modern Unity Trading', quantity: 600, ratio: 60, price: 120, colorClass: 'bg-pink-500', timeKey: 'PRODUCTS.DETAIL.TIME_WEEK_AGO' }
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -191,6 +208,10 @@ export class ProductDetailComponent implements OnInit {
     };
 
     return labels[status || ''] || status || '-';
+  }
+
+  getVendorName(vendor: ProductVendorSnapshot): string {
+    return this.activeLang === 'ar' ? vendor.nameAr : vendor.nameEn;
   }
 
   private buildPlaceholderImage(label: string): string {

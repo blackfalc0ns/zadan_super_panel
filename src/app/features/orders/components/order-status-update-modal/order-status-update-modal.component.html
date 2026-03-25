@@ -36,14 +36,14 @@
             <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.PAYMENT_STATUS' | translate }}</span>
             <div class="flex items-center gap-1">
               <span class="h-1.5 w-1.5 rounded-full bg-zadna-primary"></span>
-              <span class="text-[11px] font-bold text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.PAYMENT_STATUS_VALUE' | translate }}</span>
+              <span class="text-[11px] font-bold text-zadna-primary">{{ currentPaymentStatusKey | translate }}</span>
             </div>
           </div>
           <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
             <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.DELIVERY_STATUS' | translate }}</span>
             <div class="flex items-center gap-1">
               <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
-              <span class="text-[11px] font-bold text-amber-600">{{ 'ORDERS.STATUS.' + order.status | translate }}</span>
+              <span class="text-[11px] font-bold text-amber-600">{{ currentFulfillmentStatusKey | translate }}</span>
             </div>
           </div>
         </div>
@@ -65,11 +65,15 @@
               <select
                 class="modal-field-control modal-select-control w-full appearance-none rounded-lg border-2 border-zadna-primary/20 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
                 [(ngModel)]="form.newStatus">
-                <option *ngFor="let status of statusOptions" [value]="status">{{ 'ORDERS.STATUS.' + status | translate }}</option>
+                <option *ngFor="let status of availableStatusOptions" [value]="status">{{ 'ORDERS.STATUS.' + status | translate }}</option>
               </select>
               <span class="modal-field-icon modal-select-icon material-symbols-outlined pointer-events-none absolute top-1/2 -translate-y-1/2 text-zadna-primary/60">expand_more</span>
             </div>
           </div>
+        </div>
+
+        <div class="rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-[11px] font-bold text-amber-700">
+          {{ workflowGuardMessageKey | translate }}
         </div>
       </section>
 

@@ -1,237 +1,226 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
-    <app-page-header
-        [title]="'ORDERS.TITLE'"
-        [subtitle]="'ORDERS.SUBTITLE'"
-        [showToolbar]="true"
-        [breadcrumbs]="[
-            { label: 'SIDEBAR.HOME', url: '/dashboard' },
-            { label: 'ORDERS.OPERATIONS_MANAGEMENT' }
-        ]">
-        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">shopping_cart</span>
+  <app-page-header
+    [title]="'ORDERS.TITLE'"
+    [subtitle]="'ORDERS.SUBTITLE'"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'ORDERS.OPERATIONS_MANAGEMENT' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">shopping_cart</span>
 
-        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-            <button class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary transition-colors">
-                <span class="material-symbols-outlined text-[20px]">download</span>
-                {{ 'ORDERS.EXPORT_REPORT' | translate }}
-            </button>
-            <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
-                <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
-                {{ 'ORDERS.CREATE_MANUAL' | translate }}
-            </button>
-        </div>
-    </app-page-header>
-
-    <!-- Main Content Area -->
-    <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
-        
-        <!-- KPI Grid via app-kpi-cards -->
-        <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
-
-        <!-- Search & Filter Area -->
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
-            <!-- RIGHT SIDE: Enhanced Search Input -->
-            <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
-                <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none">
-                    <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
-                </div>
-                <input type="text" 
-                       [placeholder]="'ORDERS.SEARCH_PLACEHOLDER' | translate"
-                       class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pr-14 pl-6">
-            </div>
-
-            <div class="flex items-center gap-4 order-2 lg:order-2">
-                <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md cursor-pointer hover:bg-slate-50 group">
-                    <div class="flex items-center gap-3 px-6 h-full select-none">
-                        <span class="material-symbols-outlined text-[24px] text-zadna-primary group-hover:scale-110 transition-transform duration-500">filter_list</span>
-                        <div class="flex flex-col">
-                            <span class="text-[13px] font-black text-slate-800">{{ 'ORDERS.ADVANCED_FILTER' | translate }}</span>
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'ORDERS.FILTER_DESC' | translate }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Data Table (Desktop) -->
-        <app-data-table
-            [data]="orders"
-            [columns]="tableColumns"
-            [actions]="tableActions"
-            [selectable]="true"
-            [clickableRows]="true"
-            [containerClass]="'extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
-            (rowClick)="onTableRowClick($event)"
-            (actionClick)="onTableAction($event)">
-            
-            <ng-template #customColumn let-order let-column="column">
-                
-                <ng-container *ngIf="column.key === 'id'">
-                    <span class="text-[11px] font-black text-slate-800 text-start">{{ order.id }}</span>
-                </ng-container>
-
-                <ng-container *ngIf="column.key === 'customer'">
-                    <div class="flex flex-col text-start">
-                        <span class="text-[13px] font-black text-slate-900 leading-snug truncate">
-                            {{ order.customerName }}
-                        </span>
-                        <span class="text-[9px] font-bold text-slate-400/80 tracking-widest mt-0.5 truncate" dir="ltr">
-                            {{ order.customerPhone }}
-                        </span>
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="column.key === 'date'">
-                    <div class="flex flex-col text-start">
-                        <span class="text-[12px] font-bold text-slate-600">{{ order.date }}</span>
-                        <span class="text-[10px] text-slate-400/80">{{ order.time }}</span>
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="column.key === 'status'">
-                    <div class="flex justify-center">
-                        <app-status-pill
-                            [label]="'ORDERS.STATUS.' + order.status"
-                            [variant]="getOrderStatusVariant(order.status)"
-                            size="sm">
-                        </app-status-pill>
-                    </div>
-                </ng-container>
-
-                <ng-container *ngIf="column.key === 'total'">
-                    <span class="text-[12px] font-black text-zadna-primary">{{ order.total }} <span class="text-[9px]">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></span>
-                </ng-container>
-
-            </ng-template>
-        </app-data-table>
-
-        <!-- Pagination footer -->
-        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
-            <app-pagination
-                [currentPage]="page"
-                [pageSize]="pageSize"
-                [totalItems]="totalItems"
-                (pageChange)="changePage($event)">
-            </app-pagination>
-        </div>
+    <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+      <button class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary">
+        <span class="material-symbols-outlined text-[20px]">download</span>
+        {{ 'ORDERS.EXPORT_REPORT' | translate }}
+      </button>
+      <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
+        <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
+        {{ 'ORDERS.CREATE_MANUAL' | translate }}
+      </button>
     </div>
-</div>
+  </app-page-header>
 
-<!-- Quick View Drawer Overlay -->
-<div *ngIf="isDrawerOpen()" 
-     class="fixed inset-0 z-50 flex justify-end"
-     (click)="closeDrawer()">
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"></div>
-    
-    <!-- Drawer Panel -->
-    <div class="relative w-full max-w-md h-full bg-white shadow-[-20px_0_50px_rgba(0,0,0,0.1)] flex flex-col transform transition-transform duration-300 ltr:animate-puzzle-left rtl:animate-puzzle-right"
-         (click)="$event.stopPropagation()">
-        
-        <!-- Drawer Header -->
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <div>
-                <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-zadna-primary">receipt_long</span>
-                    {{ 'ORDERS.DETAIL.TITLE' | translate }} {{ selectedOrder()?.id }}
-                </h2>
-                <p class="text-[10px] font-bold text-slate-500 mt-1">{{ 'ORDERS.DETAIL.ORDERED_IN' | translate }} {{ selectedOrder()?.date }}، {{ selectedOrder()?.time }}</p>
-            </div>
-            <button class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 flex items-center justify-center transition-colors"
-                (click)="closeDrawer()">
-                <span class="material-symbols-outlined text-sm">close</span>
-            </button>
+  <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <app-kpi-cards [cards]="kpiCards" (cardClick)="onKpiCardClick($event)"></app-kpi-cards>
+
+    <section class="bg-white/75 backdrop-blur-xl border border-slate-200/60 rounded-[1.6rem] p-4 md:p-5 shadow-sm">
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.7fr)_repeat(4,minmax(0,1fr))] gap-3">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-zadna-primary text-[22px]">search</span>
+          <input
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+            type="text"
+            [placeholder]="'ORDERS.SEARCH_PLACEHOLDER' | translate"
+            class="w-full py-4 bg-slate-50 border border-slate-200 rounded-[1.2rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pr-12 pl-4">
         </div>
 
-        <!-- Drawer Content -->
-        <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-            
-            <!-- Customer Details Block -->
-            <div>
-                <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-3 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">person</span>
-                    {{ 'ORDERS.DETAIL.CUSTOMER_INFO' | translate }}
-                </h3>
-                <div class="glass-card-sm p-4 bg-slate-50/50">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 rounded-full bg-zadna-primary/10 text-zadna-primary flex items-center justify-center font-black text-sm">
-                            {{ selectedOrder()?.customerName?.charAt(0) }}
-                        </div>
-                        <div>
-                            <p class="text-sm font-black text-slate-800">{{ selectedOrder()?.customerName }}</p>
-                            <p class="text-xs font-bold text-slate-500 font-mono" dir="ltr">{{ selectedOrder()?.customerPhone }}</p>
-                        </div>
-                    </div>
-                    <div class="p-3 bg-white rounded-xl border border-slate-100 flex items-start gap-2">
-                        <span class="material-symbols-outlined text-[16px] text-slate-400 mt-0.5">location_on</span>
-                        <p class="text-xs font-bold text-slate-600 leading-relaxed">{{ 'ORDERS.DETAIL.DEFAULT_MOCK_LOCATION' | translate }}</p>
-                    </div>
-                </div>
-            </div>
+        <select
+          [(ngModel)]="orderStatusFilter"
+          (ngModelChange)="onFiltersChange()"
+          class="w-full rounded-[1.2rem] border border-slate-200 bg-slate-50 px-4 py-4 text-[12px] font-bold text-slate-700 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 outline-none">
+          <option *ngFor="let option of orderStatusOptions" [value]="option.value">{{ option.label | translate }}</option>
+        </select>
 
-            <!-- Merchant & Location Block -->
-            <div>
-                <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-3 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">storefront</span>
-                    {{ 'ORDERS.DETAIL.VENDOR_INFO' | translate }}
-                </h3>
-                <div class="glass-card-sm p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
-                                <span class="material-symbols-outlined">store</span>
-                            </div>
-                            <div>
-                                <p class="text-sm font-black text-slate-800">{{ (selectedOrder()?.merchantNameKey || 'ORDERS.DETAIL.MOCK_MERCHANT') | translate }}</p>
-                                <p class="text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.BRANCH' | translate }}: {{ (selectedOrder()?.merchantBranchKey || 'ORDERS.DETAIL.BRANCH_YASMINE') | translate }}</p>
-                            </div>
-                        </div>
-                        <button class="btn-ghost !p-2">
-                            <span class="material-symbols-outlined text-[18px]">open_in_new</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <select
+          [(ngModel)]="paymentStatusFilter"
+          (ngModelChange)="onFiltersChange()"
+          class="w-full rounded-[1.2rem] border border-slate-200 bg-slate-50 px-4 py-4 text-[12px] font-bold text-slate-700 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 outline-none">
+          <option *ngFor="let option of paymentStatusOptions" [value]="option.value">{{ option.label | translate }}</option>
+        </select>
 
-            <!-- Payment Summary Block -->
-            <div>
-                <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-3 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">payments</span>
-                    {{ 'ORDERS.DETAIL.PAYMENT_DETAILS' | translate }}
-                </h3>
-                <div class="glass-card-sm p-5 space-y-3 bg-slate-800 text-white relative overflow-hidden">
-                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full blur-xl pointer-events-none"></div>
-                    <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-zadna-primary/20 rounded-full blur-xl pointer-events-none"></div>
-                    
-                    <div class="flex items-center justify-between text-xs font-bold opacity-80">
-                        <span>{{ 'ORDERS.DETAIL.ORDER_SUBTOTAL' | translate }}</span>
-                        <span>{{ (selectedOrder()?.total || 0) * 0.85 | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs font-bold opacity-80">
-                        <span>{{ 'ORDERS.DETAIL.TAX' | translate }}</span>
-                        <span>{{ (selectedOrder()?.total || 0) * 0.15 | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs font-bold opacity-80 pb-3 border-b border-white/10">
-                        <span>{{ 'ORDERS.DETAIL.DELIVERY_FEE' | translate }}</span>
-                        <span>15.00 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                    </div>
-                    <div class="flex items-center justify-between pt-1">
-                        <span class="text-sm font-black text-slate-300">{{ 'ORDERS.DETAIL.FINAL_TOTAL' | translate }}</span>
-                        <span class="text-lg font-black text-zadna-accent">{{ (selectedOrder()?.total || 0) + 15 | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                    </div>
-                </div>
-            </div>
+        <select
+          [(ngModel)]="fulfillmentStatusFilter"
+          (ngModelChange)="onFiltersChange()"
+          class="w-full rounded-[1.2rem] border border-slate-200 bg-slate-50 px-4 py-4 text-[12px] font-bold text-slate-700 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 outline-none">
+          <option *ngFor="let option of fulfillmentStatusOptions" [value]="option.value">{{ option.label | translate }}</option>
+        </select>
 
-        </div>
-        
-        <!-- Drawer Footer -->
-        <div class="p-4 border-t border-slate-100 bg-slate-50 flex gap-3">
-            <button class="flex-1 btn-primary !rounded-xl !py-3">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-                {{ 'ORDERS.DETAIL.UPDATE_STATUS' | translate }}
-            </button>
-            <button class="btn-secondary !rounded-xl !px-4 hover:!text-red-500 hover:!border-red-200">
-                <span class="material-symbols-outlined text-[18px]">cancel</span>
-            </button>
-        </div>
+        <button
+          type="button"
+          (click)="resetFilters()"
+          class="shrink-0 px-4 rounded-[1.2rem] border border-slate-200 bg-white text-[12px] font-black text-slate-500 hover:text-zadna-primary hover:border-zadna-primary/30 transition-colors">
+          {{ 'COMMON.RESET_FILTERS' | translate }}
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 mt-4">
+        <span class="text-[11px] font-black text-slate-400">{{ 'ORDERS.CURRENT_VIEW' | translate }}</span>
+        <button
+          *ngFor="let view of queueViewOptions"
+          type="button"
+          (click)="queueView = view.value; onFiltersChange()"
+          class="px-3 py-1.5 rounded-full border text-[11px] font-black transition-colors"
+          [ngClass]="queueView === view.value ? 'border-zadna-primary bg-zadna-primary/10 text-zadna-primary' : 'border-slate-200 bg-white text-slate-500 hover:border-zadna-primary/30 hover:text-zadna-primary'">
+          {{ view.label | translate }}
+        </button>
+      </div>
+    </section>
+
+    <div *ngIf="errorMessage" class="rounded-[1.4rem] border border-red-100 bg-red-50/80 px-5 py-4 text-sm font-bold text-red-700">
+      {{ errorMessage | translate }}
     </div>
+
+    <div *ngIf="isLoading" class="grid grid-cols-1 gap-4">
+      <div *ngFor="let skeleton of [1,2,3,4,5,6]" class="h-20 rounded-[1.5rem] border border-slate-200/60 bg-white/70 animate-pulse"></div>
+    </div>
+
+    <ng-container *ngIf="!isLoading">
+      <app-data-table
+        [data]="orders"
+        [columns]="tableColumns"
+        [actions]="tableActions"
+        [selectable]="true"
+        [clickableRows]="true"
+        [containerClass]="'extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
+        [emptyStateTitle]="'ORDERS.EMPTY.TITLE'"
+        [emptyStateMessage]="'ORDERS.EMPTY.MESSAGE'"
+        (rowClick)="onTableRowClick($event)"
+        (actionClick)="onTableAction($event)">
+
+        <ng-template #customColumn let-order let-column="column">
+          <ng-container *ngIf="column.key === 'reference'">
+            <div class="flex flex-col text-start">
+              <span class="text-[11px] font-black text-slate-800">{{ order.displayId }}</span>
+              <span class="text-[9px] font-bold text-slate-400 mt-1">{{ order.merchantName }} - {{ order.merchantBranch }}</span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'customer'">
+            <div class="flex flex-col text-start">
+              <span class="text-[13px] font-black text-slate-900 leading-snug truncate">{{ order.customerName }}</span>
+              <span class="text-[10px] font-bold text-slate-400 mt-1" dir="ltr">{{ order.customerPhone }}</span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'statuses'">
+            <div class="space-y-2 text-start">
+              <div class="flex flex-wrap gap-1.5">
+                <app-status-pill
+                  [label]="getOrderStatusKey(order.status)"
+                  [variant]="getOrderStatusVariant(order.status)"
+                  [shouldTranslate]="true"
+                  size="sm">
+                </app-status-pill>
+                <app-status-pill
+                  [label]="getPaymentStatusKey(order.paymentStatus)"
+                  [variant]="getPaymentStatusVariant(order.paymentStatus)"
+                  [shouldTranslate]="true"
+                  size="sm">
+                </app-status-pill>
+                <app-status-pill
+                  [label]="getFulfillmentStatusKey(order.fulfillmentStatus)"
+                  [variant]="getFulfillmentStatusVariant(order.fulfillmentStatus)"
+                  [shouldTranslate]="true"
+                  size="sm">
+                </app-status-pill>
+              </div>
+              <p class="text-[10px] font-bold text-slate-500">{{ order.nextActionLabel | translate }}</p>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'workflow'">
+            <div class="space-y-2 text-start">
+              <app-status-pill
+                [label]="getWorkflowStageKey(order.workflowStage)"
+                variant="neutral"
+                [shouldTranslate]="true"
+                size="sm">
+              </app-status-pill>
+              <app-status-pill
+                [label]="getResolutionStateKey(order.resolutionState)"
+                [variant]="getResolutionStateVariant(order.resolutionState)"
+                [shouldTranslate]="true"
+                size="sm">
+              </app-status-pill>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'updated'">
+            <div class="flex flex-col text-start">
+              <span class="text-[12px] font-bold text-slate-600">{{ order.lastUpdatedAt }}</span>
+              <span class="text-[10px] font-bold mt-1" [ngClass]="order.isLate ? 'text-amber-600' : 'text-slate-400'">
+                {{ (order.isLate ? 'ORDERS.SLA.LATE' : 'ORDERS.SLA.ON_TRACK') | translate }}
+              </span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.key === 'total'">
+            <div class="flex flex-col items-center">
+              <span class="text-[12px] font-black text-zadna-primary">{{ order.total | number:'1.2-2' }}</span>
+              <span class="text-[10px] font-bold text-slate-400">{{ order.paymentMethodLabel }}</span>
+            </div>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #mobileCard let-order>
+          <div class="space-y-3">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="text-[11px] font-black text-slate-500">{{ order.displayId }}</p>
+                <p class="text-sm font-black text-slate-900 mt-1">{{ order.customerName }}</p>
+                <p class="text-[10px] font-bold text-slate-400 mt-1">{{ order.merchantName }} - {{ order.merchantBranch }}</p>
+              </div>
+              <span class="text-sm font-black text-zadna-primary">{{ order.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              <app-status-pill
+                [label]="getOrderStatusKey(order.status)"
+                [variant]="getOrderStatusVariant(order.status)"
+                [shouldTranslate]="true"
+                size="sm">
+              </app-status-pill>
+              <app-status-pill
+                [label]="getPaymentStatusKey(order.paymentStatus)"
+                [variant]="getPaymentStatusVariant(order.paymentStatus)"
+                [shouldTranslate]="true"
+                size="sm">
+              </app-status-pill>
+            </div>
+
+            <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+              <p class="text-[10px] font-black text-slate-500">{{ getWorkflowStageKey(order.workflowStage) | translate }}</p>
+              <p class="text-[10px] font-bold text-slate-600 mt-1">{{ order.nextActionLabel | translate }}</p>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] font-bold text-slate-500">
+              <span>{{ getResolutionStateKey(order.resolutionState) | translate }}</span>
+              <span>{{ order.lastUpdatedAt }}</span>
+            </div>
+          </div>
+        </ng-template>
+      </app-data-table>
+
+      <div *ngIf="totalItems > 0" class="pt-4 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+        <app-pagination
+          [currentPage]="page"
+          [pageSize]="pageSize"
+          [totalItems]="totalItems"
+          (pageChange)="changePage($event)">
+        </app-pagination>
+      </div>
+    </ng-container>
+  </div>
 </div>

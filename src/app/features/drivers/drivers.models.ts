@@ -9,6 +9,36 @@ export type DriverSupportTicketPriority = 'NORMAL' | 'HIGH' | 'CRITICAL';
 export type DriverIncidentSeverity = 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type DriverIncidentStatus = 'NEW' | 'REVIEW' | 'WAITING_DOCS' | 'RESOLVED';
 export type DriverFinanceEntryStatus = 'SETTLED' | 'PENDING' | 'FAILED';
+export type DriverWorkflowState =
+  | 'PENDING_DOCUMENTS'
+  | 'VERIFICATION_REVIEW'
+  | 'READY_TO_ACTIVATE'
+  | 'READY_FOR_DISPATCH'
+  | 'ACTIVE_DELIVERY'
+  | 'FINANCE_HOLD'
+  | 'COMPLIANCE_REVIEW'
+  | 'SUSPENDED';
+export type DriverWorkflowReadiness = 'READY' | 'LIMITED' | 'BLOCKED';
+export type DriverWorkflowActionTone = 'primary' | 'success' | 'warning' | 'danger' | 'secondary';
+export type DriverWorkflowTargetTab =
+  | 'overview'
+  | 'operations'
+  | 'performance'
+  | 'support'
+  | 'compliance'
+  | 'finance'
+  | 'verification';
+export type DriverWorkflowActionId =
+  | 'APPROVE_VERIFICATION'
+  | 'REQUEST_DOCUMENTS'
+  | 'CLEAR_FINANCE_HOLD'
+  | 'SUSPEND_DRIVER'
+  | 'REACTIVATE_DRIVER'
+  | 'MARK_READY_FOR_DISPATCH'
+  | 'OPEN_OPERATIONS'
+  | 'OPEN_SUPPORT'
+  | 'OPEN_FINANCE'
+  | 'REVIEW_COMPLIANCE';
 
 export interface DriverRecentTrip {
   id: string;
@@ -49,6 +79,29 @@ export interface DriverLifecycleStage {
   description: string;
   state: DriverLifecycleStageState;
   metric: string;
+}
+
+export interface DriverWorkflowAction {
+  id: DriverWorkflowActionId;
+  label: string;
+  helper: string;
+  icon: string;
+  tone: DriverWorkflowActionTone;
+  targetTab: DriverWorkflowTargetTab;
+}
+
+export interface DriverWorkflowSummary {
+  state: DriverWorkflowState;
+  stateLabel: string;
+  summary: string;
+  nextActionLabel: string;
+  readiness: DriverWorkflowReadiness;
+  readinessLabel: string;
+  ownerTeamLabel: string;
+  queueLabel: string;
+  blockers: string[];
+  alerts: string[];
+  actions: DriverWorkflowAction[];
 }
 
 export interface DriverTaskAssignment {
@@ -262,6 +315,7 @@ export interface DriverDetailRecord extends Driver {
   notes: DriverInternalNote[];
   recentTrips: DriverRecentTrip[];
   lifecycleStages: DriverLifecycleStage[];
+  workflow: DriverWorkflowSummary;
   operations: DriverOperationsSnapshot;
   performanceSnapshot: DriverPerformanceSnapshot;
   support: DriverSupportSnapshot;

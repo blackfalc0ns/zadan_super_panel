@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaymentDetailModalComponent, PaymentDetail } from '../payment-detail-modal/payment-detail-modal.component';
+
+type PayoutBankCode = 'alrajhi' | 'alahli' | 'alinma' | 'wallet';
 
 export interface PayoutTransaction {
   id: string;
@@ -10,9 +12,9 @@ export interface PayoutTransaction {
   date: string;
   time: string;
   amount: number;
-  bankDestination: string;
+  bankCode: PayoutBankCode;
+  accountMask?: string;
   status: 'success' | 'failed' | 'pending' | 'reviewing';
-  statusLabel: string;
   reference: string;
   failureReason?: string;
 }
@@ -46,57 +48,11 @@ export class PayoutsReviewModalComponent {
 
   internalNotes = '';
 
-  transactions: PayoutTransaction[] = [
-    {
-      id: '1',
-      paymentNumber: '#PAY-9821',
-      date: '2023-11-05',
-      time: '10:30 AM',
-      amount: 5400,
-      bankDestination: 'الراجحي - **** 1234',
-      status: 'success',
-      statusLabel: 'ناجحة',
-      reference: 'TRX882910'
-    },
-    {
-      id: '2',
-      paymentNumber: '#PAY-9818',
-      date: '2023-11-04',
-      time: '03:45 PM',
-      amount: 12500,
-      bankDestination: 'الأهلي - **** 5566',
-      status: 'failed',
-      statusLabel: 'فاشلة',
-      reference: 'TRX882905',
-      failureReason: 'فشل في المصادقة البنكية (رمز: BANK_AUTH_01). العميل لم يكمل التحقق بنجاح من خلال تطبيق البنك.'
-    },
-    {
-      id: '3',
-      paymentNumber: '#PAY-9815',
-      date: '2023-11-04',
-      time: '11:20 AM',
-      amount: 3200,
-      bankDestination: 'الإنماء - **** 9911',
-      status: 'pending',
-      statusLabel: 'معلقة',
-      reference: 'TRX882901'
-    },
-    {
-      id: '4',
-      paymentNumber: '#PAY-9810',
-      date: '2023-11-03',
-      time: '09:15 AM',
-      amount: 22000,
-      bankDestination: 'محفظة رقمية',
-      status: 'reviewing',
-      statusLabel: 'قيد المراجعة',
-      reference: 'TRX882895'
-    }
-  ];
+  transactions: PayoutTransaction[] = [];
 
-  constructor() {
-    // Select the failed transaction by default
-    this.selectedTransaction = this.transactions.find(t => t.status === 'failed') || null;
+  constructor(private translate: TranslateService) {
+    this.rebuildTransactions();
+    this.translate.onLangChange.subscribe(() => this.rebuildTransactions());
   }
 
   onClose() {
@@ -108,40 +64,7 @@ export class PayoutsReviewModalComponent {
   }
 
   viewTransactionDetails(transaction: PayoutTransaction) {
-    // Convert PayoutTransaction to PaymentDetail
-    this.selectedPaymentDetail = {
-      transactionId: transaction.paymentNumber,
-      bankReference: transaction.reference,
-      operationType: 'Payout (تحويل صادر)',
-      operationDate: transaction.date,
-      amount: transaction.amount,
-      status: transaction.status,
-      statusLabel: transaction.statusLabel,
-      statusCode: transaction.status === 'success' ? '200 OK' : undefined,
-      lastUpdated: `${transaction.date} - ${transaction.time}`,
-      
-      vendorName: 'شركة المسارات السريعة للتجارة',
-      bankName: transaction.bankDestination.split(' - ')[0] || 'مصرف الراجحي',
-      iban: 'SA43 8000 0000 **** **** 4920',
-      beneficiaryName: 'أحمد محمد عبد الله',
-      swiftCode: 'ALRJSAXX',
-      
-      timeline: {
-        created: '09:15 ص',
-        processing: '09:20 ص',
-        transferred: '10:15 ص',
-        confirmed: '10:30 ص'
-      },
-      
-      logs: [
-        { type: 'success', message: 'API Call to SAMA Gateway initiated.' },
-        { type: 'success', message: 'Response 200: Transaction verified.' },
-        { type: 'debug', message: 'Retry count: 0 of 3' }
-      ],
-      
-      failureReason: transaction.failureReason
-    };
-    
+    this.selectedPaymentDetail = this.buildPaymentDetail(transaction);
     this.showPaymentDetailModal = true;
   }
 
@@ -189,5 +112,122 @@ export class PayoutsReviewModalComponent {
         : 'bg-blue-50/40 ring-1 ring-inset ring-blue-200';
     }
     return 'hover:bg-slate-50 transition-colors';
+  }
+
+  getStatusLabel(status: PayoutTransaction['status']): string {
+    const keys: Record<PayoutTransaction['status'], string> = {
+      success: 'MODALS.PAYOUTS_REVIEW.SUCCESS',
+      failed: 'MODALS.PAYOUTS_REVIEW.FAILED',
+      pending: 'MODALS.PAYOUTS_REVIEW.PENDING',
+      reviewing: 'MODALS.PAYOUTS_REVIEW.REVIEWING'
+    };
+
+    return this.translate.instant(keys[status]);
+  }
+
+  getBankLabel(bankCode: PayoutBankCode): string {
+    const keys: Record<PayoutBankCode, string> = {
+      alrajhi: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALRAJHI',
+      alahli: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALAHLI',
+      alinma: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALINMA',
+      wallet: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.WALLET'
+    };
+
+    return this.translate.instant(keys[bankCode]);
+  }
+
+  formatBankDestination(transaction: PayoutTransaction): string {
+    const bankLabel = this.getBankLabel(transaction.bankCode);
+    return transaction.accountMask ? `${bankLabel} - ${transaction.accountMask}` : bankLabel;
+  }
+
+  private rebuildTransactions(): void {
+    const selectedId = this.selectedTransaction?.id;
+
+    this.transactions = [
+      {
+        id: '1',
+        paymentNumber: '#PAY-9821',
+        date: '2023-11-05',
+        time: '10:30 AM',
+        amount: 5400,
+        bankCode: 'alrajhi',
+        accountMask: '**** 1234',
+        status: 'success',
+        reference: 'TRX882910'
+      },
+      {
+        id: '2',
+        paymentNumber: '#PAY-9818',
+        date: '2023-11-04',
+        time: '03:45 PM',
+        amount: 12500,
+        bankCode: 'alahli',
+        accountMask: '**** 5566',
+        status: 'failed',
+        reference: 'TRX882905',
+        failureReason: this.translate.instant('MODALS.PAYOUTS_REVIEW.FAILURE_REASON_BANK_AUTH')
+      },
+      {
+        id: '3',
+        paymentNumber: '#PAY-9815',
+        date: '2023-11-04',
+        time: '11:20 AM',
+        amount: 3200,
+        bankCode: 'alinma',
+        accountMask: '**** 9911',
+        status: 'pending',
+        reference: 'TRX882901'
+      },
+      {
+        id: '4',
+        paymentNumber: '#PAY-9810',
+        date: '2023-11-03',
+        time: '09:15 AM',
+        amount: 22000,
+        bankCode: 'wallet',
+        status: 'reviewing',
+        reference: 'TRX882895'
+      }
+    ];
+
+    this.selectedTransaction = this.transactions.find(t => t.id === selectedId)
+      || this.transactions.find(t => t.status === 'failed')
+      || null;
+
+    if (this.showPaymentDetailModal && this.selectedTransaction) {
+      this.selectedPaymentDetail = this.buildPaymentDetail(this.selectedTransaction);
+    }
+  }
+
+  private buildPaymentDetail(transaction: PayoutTransaction): PaymentDetail {
+    return {
+      transactionId: transaction.paymentNumber,
+      bankReference: transaction.reference,
+      operationType: this.translate.instant('MODALS.PAYMENT_DETAIL.PAYOUT_OPERATION'),
+      operationDate: transaction.date,
+      amount: transaction.amount,
+      status: transaction.status,
+      statusLabel: this.getStatusLabel(transaction.status),
+      statusCode: transaction.status === 'success' ? '200 OK' : undefined,
+      lastUpdated: `${transaction.date} - ${transaction.time}`,
+      vendorName: this.translate.instant('MODALS.PAYOUTS_REVIEW.MOCK_VENDOR_NAME'),
+      bankName: this.getBankLabel(transaction.bankCode),
+      iban: 'SA43 8000 0000 **** **** 4920',
+      beneficiaryName: this.translate.instant('MODALS.PAYOUTS_REVIEW.MOCK_BENEFICIARY_NAME'),
+      swiftCode: 'ALRJSAXX',
+      timeline: {
+        created: '09:15 AM',
+        processing: '09:20 AM',
+        transferred: '10:15 AM',
+        confirmed: '10:30 AM'
+      },
+      logs: [
+        { type: 'success', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.API_INITIATED') },
+        { type: 'success', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.RESPONSE_VERIFIED') },
+        { type: 'debug', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.RETRY_COUNT') }
+      ],
+      failureReason: transaction.failureReason
+    };
   }
 }

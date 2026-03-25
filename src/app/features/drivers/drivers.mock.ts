@@ -10,6 +10,8 @@ import {
   DriverInsightGroup,
   DriverInternalNote,
   DriverLifecycleStage,
+  DriverWorkflowAction,
+  DriverWorkflowSummary,
   DriverOperationsSnapshot,
   DriverPerformanceBenchmark,
   DriverPerformanceMetricCard,
@@ -21,6 +23,7 @@ import {
   DriverVerificationSnapshot,
   DriverWeeklyEfficiencyPoint
 } from './drivers.models';
+import { createMockOrders } from '../orders/orders.mock';
 
 const DOCUMENT_IMAGES = {
   nationalId: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD8oOIEAvbL0EPqhChtIb524LCdqQCh_E5PgOEU5RrsD_cCn8JBiGGNT2blqu8OjfHSPhMbHxL-lu5Oluhegv8fay1fwN1g7AGtsSMYJajenvXuQ0dpDi3l-nf9RxeeH4YYhQl661ZXxlvsbBEh_kNqHlRbB1ZHb46zH1CMTl9uX6GWLfrAtM9C_TxL5V5f8ibnDc3kP9Dm7jtCoDBxz6kgg5zrq4NTM8P-W-oGVaEH26z6kRYUo1e6D95GwCfxoze9ZTXlUY0Ksn0',
@@ -35,6 +38,13 @@ const DOCUMENT_IMAGES = {
 const DAY_LABELS = ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي'];
 const REVIEWERS = ['أحمد السويلم', 'سارة أحمد', 'محمد كمال', 'فهد الرشيد', 'نورة علي'];
 const VENDORS = ['مطاعم الرومانسية', 'هرفي - العليا', 'بنده - الملقا', 'ماكدونالدز', 'برغرايززر', 'Barns'];
+
+const ORDER_LINK_POOL = createMockOrders().map((order) => order.id);
+
+function normalizeIssues(issues: string[]): string[] {
+  const cleaned = issues.filter((issue) => issue !== 'clear');
+  return cleaned.length ? Array.from(new Set(cleaned)) : ['clear'];
+}
 
 function getDisplayName(driver: Driver): string {
   return `${driver.firstName} ${driver.lastName}`.trim();
@@ -194,6 +204,11 @@ function buildWeeklyEfficiency(driver: Driver, sequence: number): DriverWeeklyEf
       benchmark
     };
   });
+}
+
+function getLinkedOrderId(sequence: number, offset = 0): string {
+  const index = (sequence + offset) % ORDER_LINK_POOL.length;
+  return ORDER_LINK_POOL[index];
 }
 
 function buildTaskAssignments(driver: Driver, sequence: number): DriverTaskAssignment[] {
@@ -428,7 +443,7 @@ function buildSupportTickets(driver: Driver, sequence: number): DriverSupportTic
       priorityLabel: 'مرتفعة',
       reviewer: REVIEWERS[sequence % REVIEWERS.length],
       updatedAt: '2026/03/24 10:15',
-      linkedOrder: `ORD-${4400 + sequence}`
+      linkedOrder: getLinkedOrderId(sequence, 0)
     },
     {
       id: `TK-${8900 + sequence}`,
@@ -439,7 +454,7 @@ function buildSupportTickets(driver: Driver, sequence: number): DriverSupportTic
       priorityLabel: 'حرجة',
       reviewer: REVIEWERS[(sequence + 2) % REVIEWERS.length],
       updatedAt: 'منذ ساعة',
-      linkedOrder: `ORD-${4388 + sequence}`
+      linkedOrder: getLinkedOrderId(sequence, 1)
     },
     {
       id: `TK-${8700 + sequence}`,
@@ -450,7 +465,7 @@ function buildSupportTickets(driver: Driver, sequence: number): DriverSupportTic
       priorityLabel: 'عادية',
       reviewer: REVIEWERS[(sequence + 1) % REVIEWERS.length],
       updatedAt: '2026/03/22 14:40',
-      linkedOrder: `ORD-${4300 + sequence}`
+      linkedOrder: getLinkedOrderId(sequence, 2)
     }
   ];
 }
@@ -507,7 +522,7 @@ function buildIncidents(driver: Driver, sequence: number): DriverIncidentRecord[
       statusLabel: 'قيد المراجعة',
       reviewer: REVIEWERS[sequence % REVIEWERS.length],
       createdAt: '2026/03/24 14:20',
-      linkedOrder: `ORD-${4400 + sequence}`,
+      linkedOrder: getLinkedOrderId(sequence, 0),
       summary: 'حادث بسيط أثناء التسليم يحتاج استكمال تقرير المرور والصور الميدانية.',
       evidenceImages: [DOCUMENT_IMAGES.incidentOne, DOCUMENT_IMAGES.incidentTwo]
     },
@@ -520,7 +535,7 @@ function buildIncidents(driver: Driver, sequence: number): DriverIncidentRecord[
       statusLabel: driver.issues.includes('payment') ? 'بانتظار مستندات' : 'جديد',
       reviewer: REVIEWERS[(sequence + 2) % REVIEWERS.length],
       createdAt: '2026/03/24 12:45',
-      linkedOrder: `ORD-${4395 + sequence}`,
+      linkedOrder: getLinkedOrderId(sequence, 3),
       summary: 'مطابقة غير مكتملة بين قيمة COD وإثبات التحصيل وتتطلب مراجعة فريق المالية.',
       evidenceImages: [DOCUMENT_IMAGES.incidentTwo]
     },
@@ -533,7 +548,7 @@ function buildIncidents(driver: Driver, sequence: number): DriverIncidentRecord[
       statusLabel: 'تم الإغلاق',
       reviewer: REVIEWERS[(sequence + 1) % REVIEWERS.length],
       createdAt: '2026/03/22 10:15',
-      linkedOrder: `ORD-${4380 + sequence}`,
+      linkedOrder: getLinkedOrderId(sequence, 4),
       summary: 'تم إغلاق الحالة بعد إعادة توزيع المنطقة وتحسن الأداء خلال 48 ساعة.',
       evidenceImages: []
     }
@@ -737,6 +752,184 @@ function buildLifecycleStages(driver: Driver, complianceVariant: 'success' | 'wa
   ];
 }
 
+function buildWorkflowSummary(
+  driver: Driver,
+  verification: DriverVerificationSnapshot,
+  compliance: DriverComplianceSnapshot,
+  finance: DriverDetailRecord['finance'],
+  support: DriverSupportSnapshot,
+  documents: DriverDocumentRecord[]
+): DriverWorkflowSummary {
+  const issues = normalizeIssues(driver.issues);
+  const hasPaymentHold = issues.includes('payment') || driver.collectionPaymentStatus === 'critical' || finance.dueAmount > 1600;
+  const hasComplianceHold = issues.includes('legal') || compliance.criticalCases > 0;
+  const hasVerificationBlock = driver.verificationStatus !== VerificationStatus.Verified;
+  const hasExpiringDocs = documents.some((document) => document.status === 'expiring');
+  const hasReviewDocs = documents.some((document) => document.status === 'review');
+  const hasPerformanceAlert = driver.performance === DriverPerformance.Low || driver.performance === DriverPerformance.NeedsImprovement;
+
+  const blockers: string[] = [];
+  const alerts: string[] = [];
+
+  if (hasVerificationBlock) {
+    blockers.push('الملف لم يحصل على اعتماد التوثيق بعد، ولا يجب فتح السائق للإسناد.');
+  }
+
+  if (driver.status === 'Suspended') {
+    blockers.push('الحساب موقوف حاليًا ولا يمكن إسناد مهام أو صرف مستحقات جديدة.');
+  }
+
+  if (hasPaymentHold) {
+    blockers.push('يوجد تعليق مالي أو COD غير مسوى ويحتاج حسم قبل أي صرف جديد.');
+  }
+
+  if (hasComplianceHold) {
+    blockers.push('هناك حالة امتثال أو بلاغ مفتوح يحتاج قرارًا قبل العودة للتشغيل الطبيعي.');
+  }
+
+  if (hasExpiringDocs) {
+    alerts.push('بعض المستندات تقترب من الانتهاء وتحتاج متابعة قبل أن تتحول إلى إيقاف.');
+  }
+
+  if (hasReviewDocs) {
+    alerts.push('يوجد مستند أو صورة هوية تحت المراجعة اليدوية.');
+  }
+
+  if (hasPerformanceAlert) {
+    alerts.push('أداء السائق يحتاج متابعة قبل زيادة الحمل التشغيلي عليه.');
+  }
+
+  if (support.pendingFollowUpsCount > 1) {
+    alerts.push(`هناك ${support.pendingFollowUpsCount} متابعات دعم معلقة على هذا السائق.`);
+  }
+
+  let state: DriverWorkflowSummary['state'];
+  let stateLabel: string;
+  let summary: string;
+  let nextActionLabel: string;
+  let readiness: DriverWorkflowSummary['readiness'];
+  let readinessLabel: string;
+  let ownerTeamLabel: string;
+  let queueLabel: string;
+  let actions: DriverWorkflowAction[];
+
+  if (driver.status === 'Suspended') {
+    state = 'SUSPENDED';
+    stateLabel = 'موقوف تشغيليًا';
+    summary = 'السائق خارج التشغيل حاليًا، والقرار المطلوب هو حسم سبب الإيقاف ثم تقرير إعادة التفعيل أو استمرار التعليق.';
+    nextActionLabel = 'راجع سبب الإيقاف أولًا ثم قرر إعادة التفعيل أو إبقاء الحساب معلقًا.';
+    readiness = 'BLOCKED';
+    readinessLabel = 'متوقف بالكامل';
+    ownerTeamLabel = 'الامتثال + العمليات';
+    queueLabel = 'طابور الإيقاف وإعادة التفعيل';
+    actions = [
+      { id: 'REVIEW_COMPLIANCE', label: 'مراجعة الامتثال', helper: 'افتح الحالات والبلاغات المرتبطة قبل اتخاذ القرار.', icon: 'gavel', tone: 'warning', targetTab: 'compliance' },
+      { id: 'OPEN_FINANCE', label: 'مراجعة المالية', helper: 'تأكد من عدم وجود حجز مالي يمنع إعادة التفعيل.', icon: 'payments', tone: 'secondary', targetTab: 'finance' },
+      { id: 'REACTIVATE_DRIVER', label: 'إعادة التفعيل', helper: 'يعيد السائق إلى وضع الاستعداد وليس الإسناد المباشر.', icon: 'restart_alt', tone: 'success', targetTab: 'overview' }
+    ];
+  } else if (hasVerificationBlock) {
+    state = verification.progressPercentage >= 75 ? 'VERIFICATION_REVIEW' : 'PENDING_DOCUMENTS';
+    stateLabel = verification.progressPercentage >= 75 ? 'مراجعة توثيق' : 'استكمال مستندات';
+    summary = 'السائق ما زال في مسار التوثيق ولا ينبغي اعتباره جاهزًا للتشغيل حتى اكتمال الاعتماد.';
+    nextActionLabel = verification.progressPercentage >= 75
+      ? 'راجع العناصر الحرجة واعتمد القرار النهائي للتوثيق.'
+      : 'اطلب المستندات الناقصة أو غير الواضحة ثم أعد الملف للمراجعة.';
+    readiness = 'BLOCKED';
+    readinessLabel = 'محجوب حتى الاعتماد';
+    ownerTeamLabel = 'فريق التوثيق';
+    queueLabel = verification.progressPercentage >= 75 ? 'طابور اعتماد التوثيق' : 'طابور استكمال المستندات';
+    actions = [
+      { id: 'REQUEST_DOCUMENTS', label: 'طلب مستندات', helper: 'يبقي السائق خارج التشغيل لحين استكمال النواقص.', icon: 'description', tone: 'warning', targetTab: 'verification' },
+      { id: 'APPROVE_VERIFICATION', label: 'اعتماد التوثيق', helper: 'يحرك السائق إلى جاهزية التفعيل بدلاً من بقائه معلقًا.', icon: 'verified', tone: 'success', targetTab: 'verification' },
+      { id: 'OPEN_SUPPORT', label: 'فتح متابعة دعم', helper: 'للتواصل مع السائق إذا كان الملف متعثرًا بسبب نقص مستندات.', icon: 'support_agent', tone: 'secondary', targetTab: 'support' }
+    ];
+  } else if (hasComplianceHold) {
+    state = 'COMPLIANCE_REVIEW';
+    stateLabel = 'مراجعة امتثال';
+    summary = 'الملف لديه حالة امتثال أو بلاغ مفتوح، ويجب حسمه قبل توسيع الإسناد أو إعادة التفعيل الكامل.';
+    nextActionLabel = 'راجع الحالة المفتوحة وحدد هل تكفي المراقبة أم يلزم تعليق أو تصعيد.';
+    readiness = 'BLOCKED';
+    readinessLabel = 'محجوب بالامتثال';
+    ownerTeamLabel = 'فريق الامتثال';
+    queueLabel = 'طابور الحوادث والبلاغات';
+    actions = [
+      { id: 'REVIEW_COMPLIANCE', label: 'فتح حالات الامتثال', helper: 'راجع الأدلة والحالة المفتوحة من شاشة الامتثال.', icon: 'policy', tone: 'warning', targetTab: 'compliance' },
+      { id: 'SUSPEND_DRIVER', label: 'تعليق السائق', helper: 'يُستخدم عند وجود خطر تشغيلي أو امتثالي فعلي.', icon: 'block', tone: 'danger', targetTab: 'overview' },
+      { id: 'OPEN_SUPPORT', label: 'مراجعة الدعم', helper: 'تحقق من التذاكر المفتوحة والسياق التشغيلي المرتبط.', icon: 'support_agent', tone: 'secondary', targetTab: 'support' }
+    ];
+  } else if (hasPaymentHold) {
+    state = 'FINANCE_HOLD';
+    stateLabel = 'تعليق مالي';
+    summary = 'يوجد تعليق مالي أو عدم تسوية في COD، ويجب إنهاؤه قبل صرف جديد أو إعادة الثقة التشغيلية الكاملة.';
+    nextActionLabel = 'راجع المالية أولًا ثم أزل التعليق إذا كانت التسوية مكتملة.';
+    readiness = 'LIMITED';
+    readinessLabel = 'جاهز جزئيًا';
+    ownerTeamLabel = 'المالية + العمليات';
+    queueLabel = 'طابور COD والتسويات';
+    actions = [
+      { id: 'OPEN_FINANCE', label: 'فتح المالية', helper: 'راجع الرصيد والمستحقات والسجلات الفاشلة قبل الإجراء.', icon: 'payments', tone: 'warning', targetTab: 'finance' },
+      { id: 'CLEAR_FINANCE_HOLD', label: 'إزالة التعليق المالي', helper: 'يصفّر الحجز المحلي ويعيد الملف لوضع أكثر استقرارًا.', icon: 'task_alt', tone: 'success', targetTab: 'finance' },
+      { id: 'OPEN_SUPPORT', label: 'فتح الدعم', helper: 'إذا كانت المشكلة مرتبطة بتواصل مع السائق أو اعتراض على التحصيل.', icon: 'support_agent', tone: 'secondary', targetTab: 'support' }
+    ];
+  } else if (driver.status === 'OnMission') {
+    state = 'ACTIVE_DELIVERY';
+    stateLabel = 'نشط في مهمة';
+    summary = 'السائق داخل مهمة حية الآن، والتركيز الحالي يجب أن يكون على مراقبة التنفيذ وSLA والدعم السريع فقط.';
+    nextActionLabel = 'تابع المهمة الحالية وافتح الدعم فقط عند وجود تأخير أو شكوى فعلية.';
+    readiness = 'READY';
+    readinessLabel = 'يعمل الآن';
+    ownerTeamLabel = 'العمليات الحية';
+    queueLabel = 'طابور المراقبة المباشرة';
+    actions = [
+      { id: 'OPEN_OPERATIONS', label: 'فتح المهام الحية', helper: 'يعرض التعيينات الحالية والمنطقة والحمولة.', icon: 'local_shipping', tone: 'primary', targetTab: 'operations' },
+      { id: 'OPEN_SUPPORT', label: 'فتح الدعم', helper: 'للتعامل مع أي تصعيد من السائق أو العميل أثناء المهمة.', icon: 'support_agent', tone: 'secondary', targetTab: 'support' },
+      { id: 'OPEN_FINANCE', label: 'مراجعة COD', helper: 'تحقق من التحصيل فقط إذا كانت المهمة مرتبطة بمبالغ نقدية.', icon: 'payments', tone: 'secondary', targetTab: 'finance' }
+    ];
+  } else if (driver.status === 'Online') {
+    state = 'READY_FOR_DISPATCH';
+    stateLabel = 'جاهز للإسناد';
+    summary = 'السائق مفعّل وجاهز حاليًا، ودور المشرف هنا هو المراقبة والتأكد من بقاء الجاهزية بدون عوائق.';
+    nextActionLabel = 'لا يوجد إجراء عاجل الآن، راقب المنطقة ووزع المهام عند الحاجة.';
+    readiness = 'READY';
+    readinessLabel = 'جاهز بالكامل';
+    ownerTeamLabel = 'العمليات';
+    queueLabel = 'طابور السائقين الجاهزين';
+    actions = [
+      { id: 'OPEN_OPERATIONS', label: 'فتح التشغيل', helper: 'راجع الحمل الحالي وتوزيع المنطقة قبل إسناد جديد.', icon: 'map', tone: 'primary', targetTab: 'operations' },
+      { id: 'OPEN_SUPPORT', label: 'متابعة الدعم', helper: 'تحقق من أي متابعات مفتوحة قد تؤثر على الاستقرار التشغيلي.', icon: 'support_agent', tone: 'secondary', targetTab: 'support' },
+      { id: 'SUSPEND_DRIVER', label: 'تعليق السائق', helper: 'استخدمه فقط إذا ظهر سبب تشغيلي أو امتثالي واضح.', icon: 'block', tone: 'danger', targetTab: 'overview' }
+    ];
+  } else {
+    state = 'READY_TO_ACTIVATE';
+    stateLabel = 'جاهز لإعادة الإدراج';
+    summary = 'السائق موثق لكن خارج الجدول الآن، ويمكن إعادته للتشغيل بعد التحقق من آخر جاهزية تشغيلية ومالية.';
+    nextActionLabel = 'أعد السائق إلى طابور الإسناد بعد مراجعة سريعة للمنطقة والرصيد والتذاكر المفتوحة.';
+    readiness = hasExpiringDocs || hasPerformanceAlert ? 'LIMITED' : 'READY';
+    readinessLabel = readiness === 'READY' ? 'جاهز للإدراج' : 'جاهز مع متابعة';
+    ownerTeamLabel = 'العمليات';
+    queueLabel = 'طابور التفعيل والتجهيز';
+    actions = [
+      { id: 'MARK_READY_FOR_DISPATCH', label: 'إعادته للإسناد', helper: 'يحوّل السائق إلى وضع الجاهزية التشغيلية.', icon: 'rocket_launch', tone: 'success', targetTab: 'operations' },
+      { id: 'OPEN_OPERATIONS', label: 'فتح التشغيل', helper: 'راجع المنطقة والحمل قبل دفعه إلى الجدول.', icon: 'map', tone: 'primary', targetTab: 'operations' },
+      { id: 'OPEN_SUPPORT', label: 'فتح الدعم', helper: 'راجع أي ملاحظات أو متابعات أخيرة قبل التفعيل.', icon: 'support_agent', tone: 'secondary', targetTab: 'support' }
+    ];
+  }
+
+  return {
+    state,
+    stateLabel,
+    summary,
+    nextActionLabel,
+    readiness,
+    readinessLabel,
+    ownerTeamLabel,
+    queueLabel,
+    blockers,
+    alerts,
+    actions
+  };
+}
+
 function buildRouteScore(driver: Driver, completionRate: number, averageDelayMinutes: number): number {
   const score = completionRate + Math.round(driver.acceptanceRate * 0.08) - averageDelayMinutes * 2;
   return Math.max(62, Math.min(96, score));
@@ -771,6 +964,7 @@ export function buildDriverDetailRecord(driver: Driver): DriverDetailRecord {
   const complianceSnapshot = buildComplianceSnapshot(driver, documents, sequence);
   const finance = buildFinanceSnapshot(sequence, totalEarnings, currentDueAmount, codCollectedAmount);
   const verification = buildVerificationSnapshot(driver, sequence, documents);
+  const workflow = buildWorkflowSummary(driver, verification, complianceSnapshot, finance, support, documents);
 
   return {
     ...driver,
@@ -803,6 +997,7 @@ export function buildDriverDetailRecord(driver: Driver): DriverDetailRecord {
     notes,
     recentTrips,
     lifecycleStages: buildLifecycleStages(driver, compliance.variant, verification.progressPercentage),
+    workflow,
     operations,
     performanceSnapshot,
     support,

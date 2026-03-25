@@ -58,12 +58,12 @@
               
               <div class="flex flex-col gap-0.5">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.ESTABLISHMENT_NAME' | translate }}</span>
-                <span class="text-slate-900 font-semibold text-base">{{ crData?.establishmentName || 'شركة زدانة التجارية' }}</span>
+                <span class="text-slate-900 font-semibold text-base">{{ crData?.establishmentName || ('MODALS.CR_VIEWER.DEFAULT_ESTABLISHMENT_NAME' | translate) }}</span>
               </div>
               
               <div class="flex flex-col gap-0.5">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.ENTITY_TYPE' | translate }}</span>
-                <span class="text-slate-900 font-semibold text-sm">{{ crData?.entityType || 'شركة ذات مسؤولية محدودة' }}</span>
+                <span class="text-slate-900 font-semibold text-sm">{{ crData?.entityType || ('MODALS.CR_VIEWER.DEFAULT_ENTITY_TYPE' | translate) }}</span>
               </div>
               
               <div class="flex flex-col gap-0.5">
@@ -79,7 +79,7 @@
               
               <div class="flex flex-col gap-0.5 col-span-2">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.MAIN_ACTIVITY' | translate }}</span>
-                <span class="text-slate-900 font-semibold text-sm">{{ crData?.mainActivity || 'تجارة الجملة والتجزئة في المعدات والآلات' }}</span>
+                <span class="text-slate-900 font-semibold text-sm">{{ crData?.mainActivity || ('MODALS.CR_VIEWER.DEFAULT_MAIN_ACTIVITY' | translate) }}</span>
               </div>
             </div>
           </div>
@@ -101,13 +101,13 @@
                     <img alt="Wathq Logo" 
                          class="w-5 h-5 rounded" 
                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ3u-JZJxdC4AEGzNAWBnMW4HlCQ1pb-DhLg2rxl6Aasl2u9w7hHhnS-MHjlBYMzfsfEkafByIHlWbPF_p8JJS3WYS5dap-_2D-kchlUt1tj3L1-upwsQnt_4anff5AIt4NeZmAc9GIqJJYgY_HxxCGSkH-ywdQYPvQUL4_EJdq38gjsk57d8AVjWTcvNlQsdPd_Ca-s6OGDzwTkJDLJ0LAiC1q5qw-Z38IreH9JJN2zbbDhjQJbCReBSbPdJ7Pe4kukCNamJltzM"/>
-                    {{ crData?.dataSource || 'منصة واثق (API)' }}
+                    {{ crData?.dataSource || ('MODALS.CR_VIEWER.DEFAULT_DATA_SOURCE' | translate) }}
                   </span>
                 </div>
                 
                 <div class="flex flex-col gap-0.5">
                   <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.VERIFIED_BY' | translate }}</span>
-                  <span class="text-slate-900 font-semibold text-sm">{{ crData?.verifiedBy || 'النظام الآلي (Zadana-Auto-Verify)' }}</span>
+                  <span class="text-slate-900 font-semibold text-sm">{{ crData?.verifiedBy || ('MODALS.CR_VIEWER.DEFAULT_VERIFIED_BY' | translate) }}</span>
                 </div>
                 
                 <div class="flex flex-col gap-0.5">
@@ -232,7 +232,7 @@
                         </div>
                         <div class="flex-1">
                           <p class="text-xs text-slate-600 font-bold mb-1">{{ 'MODALS.CR_VIEWER.ESTABLISHMENT_NAME' | translate }}</p>
-                          <p class="text-base font-black text-slate-900 leading-snug">{{ crData?.establishmentName || 'شركة زدانة التجارية' }}</p>
+                          <p class="text-base font-black text-slate-900 leading-snug">{{ crData?.establishmentName || ('MODALS.CR_VIEWER.DEFAULT_ESTABLISHMENT_NAME' | translate) }}</p>
                         </div>
                       </div>
                     </div>
@@ -243,7 +243,7 @@
                         <span class="material-symbols-outlined text-slate-400 text-sm">corporate_fare</span>
                         <p class="text-xs text-slate-500 font-bold">{{ 'MODALS.CR_VIEWER.ENTITY_TYPE' | translate }}</p>
                       </div>
-                      <p class="text-sm font-bold text-slate-800 mr-6">{{ crData?.entityType || 'شركة ذات مسؤولية محدودة' }}</p>
+                      <p class="text-sm font-bold text-slate-800 mr-6">{{ crData?.entityType || ('MODALS.CR_VIEWER.DEFAULT_ENTITY_TYPE' | translate) }}</p>
                     </div>
                     
                     <!-- Main Activity -->
@@ -252,7 +252,7 @@
                         <span class="material-symbols-outlined text-slate-400 text-sm">work</span>
                         <p class="text-xs text-slate-500 font-bold">{{ 'MODALS.CR_VIEWER.MAIN_ACTIVITY' | translate }}</p>
                       </div>
-                      <p class="text-sm font-bold text-slate-800 leading-relaxed mr-6">{{ crData?.mainActivity || 'تجارة الجملة والتجزئة في المعدات والآلات' }}</p>
+                      <p class="text-sm font-bold text-slate-800 leading-relaxed mr-6">{{ crData?.mainActivity || ('MODALS.CR_VIEWER.DEFAULT_MAIN_ACTIVITY' | translate) }}</p>
                     </div>
                     
                     <!-- Dates Grid -->
@@ -260,7 +260,7 @@
                       <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
                         <div class="flex items-center gap-1 mb-2">
                           <span class="material-symbols-outlined text-green-600 text-sm">event_available</span>
-                          <p class="text-xs text-slate-600 font-bold">تاريخ الإصدار</p>
+                          <p class="text-xs text-slate-600 font-bold">{{ 'MODALS.CR_VIEWER.ISSUE_DATE' | translate }}</p>
                         </div>
                         <p class="text-sm font-black text-slate-900 font-mono">2020-01-15</p>
                       </div>
@@ -282,13 +282,13 @@
                     <!-- Additional Info -->
                     <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
                       <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-500 font-semibold">المدينة</span>
-                        <span class="text-slate-900 font-bold">الرياض</span>
+                        <span class="text-slate-500 font-semibold">{{ 'MODALS.CR_VIEWER.CITY' | translate }}</span>
+                        <span class="text-slate-900 font-bold">{{ crData?.headquarters || ('MODALS.CR_VIEWER.DEFAULT_CITY' | translate) }}</span>
                       </div>
                       <div class="h-px bg-slate-200"></div>
                       <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-500 font-semibold">رأس المال</span>
-                        <span class="text-slate-900 font-bold">500,000 ريال</span>
+                        <span class="text-slate-500 font-semibold">{{ 'MODALS.CR_VIEWER.CAPITAL' | translate }}</span>
+                        <span class="text-slate-900 font-bold">{{ crData?.capital || ('MODALS.CR_VIEWER.DEFAULT_CAPITAL' | translate) }}</span>
                       </div>
                     </div>
                   </div>
@@ -346,7 +346,7 @@
                 <!-- Watermark -->
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                   <p class="text-slate-200 font-black text-6xl transform -rotate-45 opacity-[0.03] select-none">
-                    زدانة
+                    {{ 'MODALS.CR_VIEWER.WATERMARK' | translate }}
                   </p>
                 </div>
 
@@ -381,7 +381,7 @@
         <button (click)="onAccept()" 
                 class="px-8 py-2.5 bg-primary hover:bg-primary/90 text-slate-900 rounded-lg font-bold shadow-sm shadow-primary/20 transition-all flex items-center gap-2">
           <span class="material-symbols-outlined text-[20px]">check_circle</span>
-          قبول المستند
+          {{ 'MODALS.CR_VIEWER.ACCEPT_DOC' | translate }}
         </button>
       </div>
     </footer>

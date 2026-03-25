@@ -15,6 +15,31 @@ export class DriverService {
     return of(driver).pipe(delay(120));
   }
 
+  getDriverSnapshotById(id: string): Driver | undefined {
+    const normalizedId = id.trim();
+    const driver = this.mockDrivers.find((item) => item.id === normalizedId || item.driverId === normalizedId);
+
+    return driver ? this.cloneDriver(driver) : undefined;
+  }
+
+  getDriversSnapshot(): Driver[] {
+    return this.mockDrivers.map((driver) => this.cloneDriver(driver));
+  }
+
+  findDriverByIdentity(criteria: { driverId?: string | null; phoneNumber?: string | null; fullName?: string | null }): Driver | undefined {
+    const normalizedDriverId = criteria.driverId?.trim();
+    const normalizedPhone = this.normalizePhone(criteria.phoneNumber);
+    const normalizedName = this.normalizeName(criteria.fullName);
+
+    const driver = this.mockDrivers.find((item) =>
+      (normalizedDriverId && (item.id === normalizedDriverId || item.driverId === normalizedDriverId))
+      || (normalizedPhone && this.normalizePhone(item.phoneNumber) === normalizedPhone)
+      || (normalizedName && this.normalizeName(`${item.firstName} ${item.lastName}`) === normalizedName)
+    );
+
+    return driver ? this.cloneDriver(driver) : undefined;
+  }
+
   getDrivers(
     page: number,
     pageSize: number,
@@ -303,5 +328,27 @@ export class DriverService {
   private formatPhone(sequence: number): string {
     const seed = `${500000000 + sequence}`.padStart(9, '0').slice(-9);
     return `05${seed.slice(1, 3)}-${seed.slice(3, 6)}-${seed.slice(6, 9)}`;
+  }
+
+  private cloneDriver(driver: Driver): Driver {
+    return {
+      ...driver,
+      tasks: { ...driver.tasks },
+      issues: [...driver.issues],
+      alerts: driver.alerts ? [...driver.alerts] : undefined,
+      lastSeenAt: new Date(driver.lastSeenAt)
+    };
+  }
+
+  private normalizePhone(value: string | null | undefined): string {
+    return (value || '').replace(/\D+/g, '');
+  }
+
+  private normalizeName(value: string | null | undefined): string {
+    return (value || '')
+      .toLowerCase()
+      .replace(/[^a-z\u0600-\u06ff0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 }

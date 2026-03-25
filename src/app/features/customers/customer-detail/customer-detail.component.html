@@ -62,12 +62,21 @@
             {{ 'CUSTOMERS.DETAIL.ACTION_VIEW_CASES' | translate }}
           </button>
 
-          <button type="button" class="detail-action-btn detail-action-btn--warning" (click)="toggleReviewFlag()">
-            <span class="material-symbols-outlined text-[18px]">flag</span>
-            {{ 'CUSTOMERS.DETAIL.ACTION_FLAG_REVIEW' | translate }}
+          <button type="button" class="detail-action-btn detail-action-btn--warning" (click)="handleReviewAction()">
+            <span class="material-symbols-outlined text-[18px]">{{ reviewActionIcon }}</span>
+            {{ reviewActionLabelKey | translate }}
           </button>
 
-          <button type="button" class="detail-action-btn detail-action-btn--primary" (click)="addQuickNote()">
+          <button
+            type="button"
+            class="detail-action-btn"
+            [ngClass]="currentCustomer.accountState === 'suspended' ? 'detail-action-btn--success' : 'detail-action-btn--danger'"
+            (click)="handleAccountAction()">
+            <span class="material-symbols-outlined text-[18px]">{{ accountActionIcon }}</span>
+            {{ accountActionLabelKey | translate }}
+          </button>
+
+          <button type="button" class="detail-action-btn detail-action-btn--primary" (click)="focusQuickNote()">
             <span class="material-symbols-outlined text-[18px]">add_notes</span>
             {{ 'CUSTOMERS.DETAIL.ACTION_ADD_NOTE' | translate }}
           </button>
@@ -76,12 +85,122 @@
     </section>
 
     <app-inline-banner
-      *ngIf="isFlaggedForReview"
+      *ngIf="hasReviewFlag"
       variant="warning"
       icon="priority_high"
-      [title]="'CUSTOMERS.DETAIL.REVIEW_FLAG_TITLE'"
-      [message]="'CUSTOMERS.DETAIL.REVIEW_FLAG_MESSAGE'">
+      [title]="reviewBannerTitleKey"
+      [message]="reviewBannerMessageKey">
     </app-inline-banner>
+
+    <section class="detail-card workflow-shell">
+      <div class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <div class="min-w-0 xl:max-w-[35rem]">
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black text-slate-500">
+              {{ currentCustomer.workflow.queueLabelKey | translate }}
+            </span>
+
+            <app-status-pill
+              [label]="workflowStateLabelKey"
+              [variant]="workflowStateVariant"
+              size="sm">
+            </app-status-pill>
+
+            <span class="text-[11px] font-extrabold text-zadna-primary">
+              {{ currentCustomer.workflow.ownerTeamLabelKey | translate }}
+            </span>
+          </div>
+
+          <div class="mt-4 space-y-2">
+            <h3 class="text-xl font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TITLE' | translate }}</h3>
+            <p class="text-sm leading-7 text-slate-600">{{ currentCustomer.workflow.summaryKey | translate }}</p>
+          </div>
+
+          <div class="mt-4 rounded-[1rem] border border-cyan-100 bg-cyan-50/70 p-4">
+            <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-cyan-700">
+              {{ 'CUSTOMERS.DETAIL.WORKFLOW.NEXT_STEP_TITLE' | translate }}
+            </p>
+            <p class="mt-2 text-[13px] font-black text-slate-900">
+              {{ currentCustomer.workflow.nextStepKey | translate }}
+            </p>
+          </div>
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-2 xl:w-[31rem] xl:flex-none">
+          <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.CURRENT_BLOCKERS' | translate }}</p>
+              <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-red-100 px-2 text-[10px] font-black text-red-700">
+                {{ currentCustomer.workflow.blockers.length }}
+              </span>
+            </div>
+
+            <div class="mt-3 space-y-2">
+              <div
+                *ngFor="let blocker of currentCustomer.workflow.blockers"
+                class="rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-[11px] font-bold leading-6 text-red-700">
+                {{ blocker | translate }}
+              </div>
+
+              <div *ngIf="currentCustomer.workflow.blockers.length === 0" class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[11px] font-bold leading-6 text-emerald-700">
+                {{ 'CUSTOMERS.DETAIL.WORKFLOW.NO_BLOCKERS' | translate }}
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.FOLLOW_UP_ALERTS' | translate }}</p>
+              <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-slate-200 px-2 text-[10px] font-black text-slate-700">
+                {{ currentCustomer.workflow.alerts.length }}
+              </span>
+            </div>
+
+            <div class="mt-3 space-y-2">
+              <div
+                *ngFor="let alert of currentCustomer.workflow.alerts"
+                class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold leading-6 text-slate-600">
+                {{ alert | translate }}
+              </div>
+
+              <div *ngIf="currentCustomer.workflow.alerts.length === 0" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold leading-6 text-slate-500">
+                {{ 'CUSTOMERS.DETAIL.WORKFLOW.NO_ALERTS' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <article *ngFor="let stage of lifecycleStages" [class]="getLifecycleCardClasses(stage)">
+          <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">{{ stage.labelKey | translate }}</p>
+          <p class="mt-2 text-sm font-black" [ngClass]="getLifecycleValueClasses(stage)">{{ stage.valueKey | translate }}</p>
+          <p class="mt-1 text-[11px] font-medium leading-5 text-slate-500">{{ stage.hintKey | translate }}</p>
+        </article>
+      </div>
+
+      <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <button
+          *ngFor="let action of workflowActions"
+          type="button"
+          [class]="getWorkflowActionClasses(action)"
+          (click)="handleWorkflowAction(action.id)">
+          <div class="flex items-center justify-between gap-3">
+            <span class="material-symbols-outlined text-[18px]">{{ action.icon }}</span>
+            <span class="text-[11px] font-black">{{ action.labelKey | translate }}</span>
+          </div>
+
+          <p class="mt-3 text-[11px] font-medium leading-5 opacity-85">
+            {{ action.helperKey | translate }}
+          </p>
+        </button>
+      </div>
+    </section>
+
+    <app-workflow-links-panel
+      *ngIf="linkedWorkflowCards.length"
+      [cards]="linkedWorkflowCards">
+    </app-workflow-links-panel>
 
     <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
 
@@ -159,7 +278,7 @@
 
               <ng-template #customColumn let-order let-column="column">
                 <ng-container *ngIf="column.key === 'id'">
-                  <span class="text-[11px] font-black text-slate-800" dir="ltr">{{ order.id }}</span>
+                  <span class="text-[11px] font-black text-slate-800" dir="ltr">{{ order.displayId }}</span>
                 </ng-container>
 
                 <ng-container *ngIf="column.key === 'date'">
@@ -191,7 +310,7 @@
               <ng-template #mobileCard let-order>
                 <div class="space-y-3">
                   <div class="flex items-center justify-between gap-3">
-                    <span class="text-sm font-black text-slate-900" dir="ltr">{{ order.id }}</span>
+                    <span class="text-sm font-black text-slate-900" dir="ltr">{{ order.displayId }}</span>
                     <app-status-pill
                       [label]="getOrderStatusLabel(order.status)"
                       [variant]="getOrderStatusVariant(order.status)"
@@ -288,7 +407,7 @@
           </app-section-header>
 
           <div class="mt-5 space-y-4">
-            <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4" *ngFor="let note of currentCustomer.internalNotes">
+            <div [class]="getNoteCardClasses(note)" *ngFor="let note of currentCustomer.internalNotes">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-2">
                   <span class="text-[11px] font-black text-zadna-primary">{{ note.author }}</span>
@@ -300,18 +419,23 @@
             </div>
 
             <div class="flex flex-col xl:flex-row gap-3 border-t border-slate-200/70 pt-5">
-              <button type="button" class="mini-action danger">
-                <span class="material-symbols-outlined text-[16px]">block</span>
-                {{ 'CUSTOMERS.DETAIL.ADMIN.SUSPEND' | translate }}
+              <button
+                type="button"
+                class="mini-action"
+                [ngClass]="currentCustomer.accountState === 'suspended' ? 'success' : 'danger'"
+                (click)="handleAccountAction()">
+                <span class="material-symbols-outlined text-[16px]">{{ accountActionIcon }}</span>
+                {{ accountActionLabelKey | translate }}
               </button>
 
-              <button type="button" class="mini-action warning" (click)="toggleReviewFlag()">
-                <span class="material-symbols-outlined text-[16px]">trending_up</span>
-                {{ 'CUSTOMERS.DETAIL.ADMIN.ESCALATE' | translate }}
+              <button type="button" class="mini-action warning" (click)="handleReviewAction()">
+                <span class="material-symbols-outlined text-[16px]">{{ reviewActionIcon }}</span>
+                {{ reviewActionLabelKey | translate }}
               </button>
 
               <div class="flex-1 flex flex-col sm:flex-row gap-3">
                 <input
+                  #quickNoteInput
                   [(ngModel)]="quickNote"
                   type="text"
                   [placeholder]="'CUSTOMERS.DETAIL.ADMIN.QUICK_NOTE_PLACEHOLDER' | translate"

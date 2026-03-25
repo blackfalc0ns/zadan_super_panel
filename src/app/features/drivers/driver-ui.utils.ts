@@ -9,6 +9,17 @@ import {
 } from './drivers.models';
 import { StatusPillVariant } from '../../shared/components/ui/status-pill/status-pill.component';
 
+export function getDriverStatusKey(status: DriverStatus): string {
+  const keys: Record<DriverStatus, string> = {
+    Online: 'DRIVERS.STATUS.ONLINE',
+    OnMission: 'DRIVERS.STATUS.ONMISSION',
+    Offline: 'DRIVERS.STATUS.OFFLINE',
+    Suspended: 'DRIVERS.STATUS.SUSPENDED'
+  };
+
+  return keys[status];
+}
+
 export function getDriverStatusLabel(status: DriverStatus): string {
   const labels: Record<DriverStatus, string> = {
     Online: 'متصل',
@@ -40,6 +51,17 @@ export function getLifecycleDriverStatusVariant(status: DriverStatus): StatusPil
   };
 
   return variants[status];
+}
+
+export function getVerificationKey(status: VerificationStatus): string {
+  const keys: Record<VerificationStatus, string> = {
+    [VerificationStatus.Verified]: 'DRIVERS.VERIFICATION.VERIFIED',
+    [VerificationStatus.UnderReview]: 'DRIVERS.VERIFICATION.UNDER_REVIEW',
+    [VerificationStatus.Unverified]: 'DRIVERS.VERIFICATION.UNVERIFIED',
+    [VerificationStatus.Suspended]: 'DRIVERS.VERIFICATION.SUSPENDED'
+  };
+
+  return keys[status];
 }
 
 export function getVerificationLabel(status: VerificationStatus): string {
@@ -74,6 +96,17 @@ export function getComplianceVariant(variant: DriverDetailRecord['complianceStat
   return variants[variant];
 }
 
+export function getPerformanceKey(performance: DriverPerformance): string {
+  const keys: Record<DriverPerformance, string> = {
+    [DriverPerformance.Excellent]: 'DRIVERS.PERFORMANCE.EXCELLENT',
+    [DriverPerformance.Good]: 'DRIVERS.PERFORMANCE.GOOD',
+    [DriverPerformance.NeedsImprovement]: 'DRIVERS.PERFORMANCE.NEEDS_IMPROVEMENT',
+    [DriverPerformance.Low]: 'DRIVERS.PERFORMANCE.LOW'
+  };
+
+  return keys[performance];
+}
+
 export function getPerformanceLabel(performance: DriverPerformance): string {
   const labels: Record<DriverPerformance, string> = {
     [DriverPerformance.Excellent]: 'ممتاز',
@@ -95,6 +128,19 @@ export function getIssueIcon(issue: string): string {
       return 'gavel';
     default:
       return 'check';
+  }
+}
+
+export function getIssueKey(issue: string): string {
+  switch (issue) {
+    case 'warning':
+      return 'DRIVERS.ISSUES.WARNING';
+    case 'payment':
+      return 'DRIVERS.ISSUES.PAYMENT';
+    case 'legal':
+      return 'DRIVERS.ISSUES.LEGAL';
+    default:
+      return 'DRIVERS.ISSUES.CLEAR';
   }
 }
 

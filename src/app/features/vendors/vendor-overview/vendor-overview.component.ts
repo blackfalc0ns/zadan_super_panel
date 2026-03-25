@@ -2,9 +2,11 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { WorkflowLinkCard, WorkflowLinksService, VendorWorkflowSnapshot } from '../../../core/services/workflow-links.service';
 import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
+import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
 
 interface KPI {
   id: string;
@@ -51,7 +53,7 @@ interface Alert {
 @Component({
   selector: 'app-vendor-overview',
   standalone: true,
-  imports: [CommonModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent],
+  imports: [CommonModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent, WorkflowLinksPanelComponent],
   templateUrl: './vendor-overview.component.html'
 })
 export class VendorOverviewComponent {
@@ -62,6 +64,8 @@ export class VendorOverviewComponent {
   vendorLocation: string = 'الرياض، المملكة العربية السعودية';
   currentLang: string = 'ar';
   isRTL: boolean = true;
+  workflowSnapshot: VendorWorkflowSnapshot | null = null;
+  workflowLinks: WorkflowLinkCard[] = [];
 
   kpis: KPI[] = [
     {
@@ -213,7 +217,8 @@ export class VendorOverviewComponent {
   constructor(
     private translate: TranslateService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private workflowLinksService: WorkflowLinksService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -221,13 +226,18 @@ export class VendorOverviewComponent {
     this.translate.onLangChange.subscribe((event) => {
       this.currentLang = event.lang;
       this.isRTL = event.lang === 'ar';
+      this.syncVendorContext();
     });
 
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.vendorId = params['id'];
       }
+
+      this.syncVendorContext();
     });
+
+    this.syncVendorContext();
   }
 
   onApproveVendor() {
@@ -258,7 +268,7 @@ export class VendorOverviewComponent {
   }
 
   onViewOrderDetails(orderId: string) {
-    this.tabChange.emit('orders');
+    this.router.navigate(['/orders', orderId]);
   }
 
   onNavigateToDetails() {
@@ -299,5 +309,53 @@ export class VendorOverviewComponent {
 
   getAlertVariant(alertId: string): 'warning' | 'error' {
     return alertId === '1' ? 'error' : 'warning';
+  }
+
+  private syncVendorContext(): void {
+    const snapshot = this.workflowLinksService.getVendorSnapshot(this.vendorId);
+    this.workflowSnapshot = snapshot;
+    this.workflowLinks = this.workflowLinksService.getVendorWorkflowLinks(this.vendorId);
+    this.vendorName = snapshot.displayName;
+    this.vendorLocation = snapshot.location;
+    this.storeInfo = {
+      ...this.storeInfo,
+      category: snapshot.category,
+      phone: snapshot.phone,
+      email: snapshot.email
+    };
+    this.recentOrders = snapshot.linkedOrders.map((order) => ({
+      id: order.id,
+      orderNumber: order.displayId,
+      customer: order.customerName,
+      amount: `${order.total.toFixed(0)} SAR`,
+      statusKey: this.mapOrderStatusKey(order.status),
+      statusClass: this.mapOrderStatusClass(order.status)
+    }));
+  }
+
+  private mapOrderStatusKey(status: string): string {
+    const map: Record<string, string> = {
+      IN_PROGRESS: 'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING',
+      OUT_FOR_DELIVERY: 'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING',
+      COMPLETED: 'VENDOR_OVERVIEW.ORDER_STATUS.COMPLETED',
+      DELIVERED: 'VENDOR_OVERVIEW.ORDER_STATUS.COMPLETED',
+      CANCELLED: 'VENDOR_OVERVIEW.ORDER_STATUS.CANCELLED',
+      PENDING: 'VENDOR_OVERVIEW.ORDER_STATUS.PENDING_PAYMENT'
+    };
+
+    return map[status] ?? 'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING';
+  }
+
+  private mapOrderStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      IN_PROGRESS: 'bg-blue-50 text-blue-700',
+      OUT_FOR_DELIVERY: 'bg-blue-50 text-blue-700',
+      COMPLETED: 'bg-green-50 text-green-700',
+      DELIVERED: 'bg-green-50 text-green-700',
+      CANCELLED: 'bg-gray-100 text-gray-700',
+      PENDING: 'bg-orange-50 text-orange-700'
+    };
+
+    return map[status] ?? 'bg-slate-100 text-slate-700';
   }
 }

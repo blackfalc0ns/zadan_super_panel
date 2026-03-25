@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { OrderDetail, OrderStatus, OrderStatusUpdateForm } from '../../orders.models';
+import { getFulfillmentStatusKey, getPaymentStatusKey } from '../../orders.mock';
 
 @Component({
   selector: 'app-order-status-update-modal',
@@ -20,7 +21,7 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
   @Output() close = new EventEmitter<void>();
   @Output() submitStatusUpdate = new EventEmitter<OrderStatusUpdateForm>();
 
-  readonly statusOptions: OrderStatus[] = ['NEW', 'IN_PROGRESS', 'OUT_FOR_DELIVERY', 'DELIVERED', 'COMPLETED', 'CANCELLED', 'PENDING'];
+  readonly statusOptions: OrderStatus[] = ['NEW', 'PENDING', 'IN_PROGRESS', 'OUT_FOR_DELIVERY', 'DELIVERED', 'COMPLETED', 'CANCELLED'];
   form: OrderStatusUpdateForm = this.createEmptyForm();
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,6 +61,77 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
       default:
         return 'ORDERS.DETAIL.STATUS_MODAL.IMPACT_NOTIFY_SMS';
     }
+  }
+
+  get currentPaymentStatusKey(): string {
+    return this.order ? getPaymentStatusKey(this.order.paymentStatus) : '';
+  }
+
+  get currentFulfillmentStatusKey(): string {
+    return this.order ? getFulfillmentStatusKey(this.order.fulfillmentStatus) : '';
+  }
+
+  get availableStatusOptions(): OrderStatus[] {
+    if (!this.order) {
+      return this.statusOptions;
+    }
+
+    const matrix: Record<OrderStatus, OrderStatus[]> = {
+      NEW: ['NEW', 'PENDING', 'IN_PROGRESS', 'CANCELLED'],
+      PENDING: ['PENDING', 'IN_PROGRESS', 'CANCELLED'],
+      IN_PROGRESS: ['IN_PROGRESS', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'],
+      OUT_FOR_DELIVERY: ['OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'],
+      DELIVERED: ['DELIVERED', 'COMPLETED'],
+      COMPLETED: ['COMPLETED'],
+      CANCELLED: ['CANCELLED']
+    };
+
+    const allowed = new Set(matrix[this.order.status]);
+
+    if (
+      this.order.paymentStatus === 'FAILED'
+      || this.order.paymentStatus === 'PENDING'
+      || this.order.paymentStatus === 'COD_PENDING'
+    ) {
+      allowed.delete('IN_PROGRESS');
+      allowed.delete('OUT_FOR_DELIVERY');
+      allowed.delete('DELIVERED');
+      allowed.delete('COMPLETED');
+    }
+
+    if (this.order.status === 'PENDING' && this.order.fulfillmentStatus === 'QUEUED') {
+      allowed.add('IN_PROGRESS');
+    }
+
+    return this.statusOptions.filter((status) => allowed.has(status));
+  }
+
+  get workflowGuardMessageKey(): string {
+    if (!this.order) {
+      return '';
+    }
+
+    if (
+      this.order.paymentStatus === 'FAILED'
+      || this.order.paymentStatus === 'PENDING'
+      || this.order.paymentStatus === 'COD_PENDING'
+    ) {
+      return 'ORDERS.DETAIL.STATUS_MODAL.WORKFLOW_GUARDS.PAYMENT_BLOCKED';
+    }
+
+    if (this.order.fulfillmentStatus === 'FAILED') {
+      return 'ORDERS.DETAIL.STATUS_MODAL.WORKFLOW_GUARDS.FULFILLMENT_FAILED';
+    }
+
+    if (this.order.status === 'DELIVERED') {
+      return 'ORDERS.DETAIL.STATUS_MODAL.WORKFLOW_GUARDS.DELIVERED_READY_TO_CLOSE';
+    }
+
+    if (this.order.status === 'CANCELLED' || this.order.status === 'COMPLETED') {
+      return 'ORDERS.DETAIL.STATUS_MODAL.WORKFLOW_GUARDS.CLOSED_STATE';
+    }
+
+    return 'ORDERS.DETAIL.STATUS_MODAL.WORKFLOW_GUARDS.DEFAULT';
   }
 
   onBackdropClick(event: MouseEvent): void {

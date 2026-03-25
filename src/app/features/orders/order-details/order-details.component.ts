@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { OrderCancellationModalComponent } from '../components/order-cancellation-modal/order-cancellation-modal.component';
 import { OrderDriverAssignmentModalComponent } from '../components/order-driver-assignment-modal/order-driver-assignment-modal.component';
 import { OrderDisputeModalComponent } from '../components/order-dispute-modal/order-dispute-modal.component';
@@ -12,7 +12,32 @@ import { InlineBannerComponent } from '../../../shared/components/ui/inline-bann
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
-import { DriverAssignmentForm, DriverCandidate, OrderCancellationForm, OrderDetail, OrderDisputeForm, OrderIssueFlagForm, OrderRefundForm, OrderStatusUpdateForm } from '../orders.models';
+import { OrdersService } from '../../../core/services/orders.service';
+import { WorkflowLinkCard, WorkflowLinksService } from '../../../core/services/workflow-links.service';
+import {
+  DriverAssignmentForm,
+  OrderCancellationForm,
+  OrderDetail,
+  OrderDisputeForm,
+  OrderFulfillmentStatus,
+  OrderIssueFlagForm,
+  OrderOperationalCase,
+  OrderPaymentStatus,
+  OrderResolutionState,
+  OrderRefundForm,
+  OrderStatus,
+  OrderStatusUpdateForm
+} from '../orders.models';
+import {
+  getFulfillmentStatusKey,
+  getOperationalCaseStatusKey,
+  getOperationalCaseTypeKey,
+  getOrderStatusKey,
+  getPaymentStatusKey,
+  getResolutionStateKey,
+  getWorkflowStageKey
+} from '../orders.mock';
+import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
 
 @Component({
   selector: 'app-order-details',
@@ -30,23 +55,31 @@ import { DriverAssignmentForm, DriverCandidate, OrderCancellationForm, OrderDeta
     SectionHeaderComponent,
     StatusPillComponent,
     InlineBannerComponent,
-    KeyValueGridComponent
+    KeyValueGridComponent,
+    WorkflowLinksPanelComponent
   ],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss']
 })
 export class OrderDetailsComponent implements OnInit {
-  orderId = signal<string | null>(null);
-  order = signal<OrderDetail | null>(null);
+  readonly orderId = signal<string | null>(null);
+  readonly order = signal<OrderDetail | null>(null);
+
+  isLoading = false;
+  errorMessage = '';
+
   isStatusModalOpen = false;
   isDriverAssignmentModalOpen = false;
   isCancellationModalOpen = false;
   isRefundModalOpen = false;
   isDisputeModalOpen = false;
   isIssueFlagModalOpen = false;
-  driverCandidates: DriverCandidate[] = [];
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly ordersService: OrdersService,
+    private readonly workflowLinks: WorkflowLinksService
+  ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -54,127 +87,68 @@ export class OrderDetailsComponent implements OnInit {
     this.loadOrderDetails();
   }
 
-  loadOrderDetails(): void {
-    this.order.set({
-      id: this.orderId() || '#ZD-94821',
-      customerName: 'سارة علي حسن',
-      customerPhone: '055-123-XXXX',
-      customerAddress: 'شارع الثمامة، حي العليا',
-      merchantName: 'لولو هايبر ماركت',
-      merchantBranch: 'الياسمين',
-      merchantLocation: 'الرياض، حي الياسمين',
-      driverName: 'أحمد منصور',
-      driverPhone: '050-XXXX-XXX',
-      city: 'الرياض',
-      district: 'العليا',
-      slaScore: 98,
-      date: '2023-10-25',
-      time: '10:45 AM',
-      status: 'OUT_FOR_DELIVERY',
-      total: 480.00,
-      subtotal: 404.35,
-      deliveryFee: 15.00,
-      tax: 60.65,
-      items: [
-        { name: 'حليب طازج كامل الدسم', brand: 'المراعي', quantity: '2 لتر', price: 12.00, total: 24.00, icon: 'local_drink', sku: 'SKU-782910' },
-        { name: 'بيض عضوي فاخر', brand: 'مزارع الرياض', quantity: 'طبق 30 حبة', price: 45.00, total: 45.00, icon: 'egg_alt', sku: 'SKU-992817' },
-        { name: 'قهوة اسبريسو مطحونة', brand: 'بارنيز', quantity: '250 جرام', price: 38.00, total: 38.00, icon: 'coffee', sku: 'SKU-102933' }
-      ],
-      timeline: [
-        { titleKey: 'ORDERS.DETAIL.TIMELINE_CREATED', subtitleKey: 'ORDERS.DETAIL.WEB_CLIENT', time: '09:00 AM', status: 'COMPLETED', current: false },
-        { titleKey: 'ORDERS.DETAIL.TIMELINE_PAYMENT', subtitleKey: 'ORDERS.DETAIL.MADA_GATEWAY', time: '09:16 AM', status: 'COMPLETED', current: false },
-        { titleKey: 'ORDERS.DETAIL.TIMELINE_PREP', subtitleKey: 'ORDERS.DETAIL.MOCK_MERCHANT', time: '10:05 AM', status: 'COMPLETED', current: false },
-        { titleKey: 'ORDERS.DETAIL.TIMELINE_DELIVERY', subtitleKey: 'ORDERS.DETAIL.MOCK_DRIVER', time: '10:20 AM', status: 'IN_PROGRESS', current: true },
-        { titleKey: 'ORDERS.DETAIL.TIMELINE_COMPLETED', subtitleKey: 'ORDERS.DETAIL.AWAITING_CONFIRM', time: '--:--', status: 'PENDING', current: false }
-      ],
-      activities: [
-        { titleKey: 'ORDERS.DETAIL.LOG_STATUS_OUT', actorKey: 'ORDERS.DETAIL.SYSTEM_AUTO', time: '10:20 AM' },
-        { titleKey: 'ORDERS.DETAIL.LOG_PREP_COMPLETE', actorKey: 'ORDERS.DETAIL.MOCK_MERCHANT', time: '10:05 AM' },
-        { titleKey: 'ORDERS.DETAIL.LOG_PAYMENT_OK', actorKey: 'ORDERS.DETAIL.MADA_GATEWAY', time: '09:16 AM' }
-      ]
-    });
-
-    this.driverCandidates = [
-      {
-        id: 'driver-1',
-        name: 'أحمد منصور',
-        code: '#DRV-7721',
-        phone: '050-111-2211',
-        city: 'الرياض',
-        area: 'العليا',
-        status: 'AVAILABLE',
-        distanceKm: 1.2,
-        activeOrders: 0,
-        rating: 4.8,
-        rejectionRate: 2,
-        lastActivity: 'الآن',
-        initials: 'أم',
-        avatarTone: 'from-teal-500 to-cyan-500',
-        verified: true
-      },
-      {
-        id: 'driver-2',
-        name: 'خالد العتيبي',
-        code: '#DRV-8842',
-        phone: '050-111-2299',
-        city: 'الرياض',
-        area: 'الياسمين',
-        status: 'DELIVERING',
-        distanceKm: 3.5,
-        activeOrders: 2,
-        rating: 4.5,
-        rejectionRate: 5,
-        lastActivity: 'قبل 10 دقائق',
-        initials: 'خع',
-        avatarTone: 'from-amber-500 to-orange-500',
-        verified: true
-      },
-      {
-        id: 'driver-3',
-        name: 'فهد سليمان',
-        code: '#DRV-1109',
-        phone: '050-111-3322',
-        city: 'الرياض',
-        area: 'الملقا',
-        status: 'AVAILABLE',
-        distanceKm: 0.8,
-        activeOrders: 1,
-        rating: 3.2,
-        rejectionRate: 15,
-        lastActivity: 'الآن',
-        initials: 'فس',
-        avatarTone: 'from-rose-500 to-pink-500',
-        lowPerformance: true,
-        verified: true
-      }
-    ];
+  get orderStatusLabel(): string {
+    const currentOrder = this.order();
+    return currentOrder ? getOrderStatusKey(currentOrder.status) : '';
   }
 
-  getStatusClass(status: string): string {
-    const map: Record<string, string> = {
-      COMPLETED: 'text-emerald-500 bg-emerald-50 border-emerald-100',
-      DELIVERED: 'text-emerald-500 bg-emerald-50 border-emerald-100',
-      IN_PROGRESS: 'text-amber-500 bg-amber-50 border-amber-100',
-      OUT_FOR_DELIVERY: 'text-blue-500 bg-blue-50 border-blue-100',
-      NEW: 'text-blue-500 bg-blue-50 border-blue-100',
-      CANCELLED: 'text-red-500 bg-red-50 border-red-100'
-    };
-
-    return map[status] || 'text-slate-400 bg-slate-50 border-slate-100';
+  get paymentStatusLabel(): string {
+    const currentOrder = this.order();
+    return currentOrder ? getPaymentStatusKey(currentOrder.paymentStatus) : '';
   }
 
-  get orderStatusVariant(): StatusPillVariant {
-    const currentStatus = this.order()?.status;
-    const map: Record<string, StatusPillVariant> = {
-      COMPLETED: 'success',
-      DELIVERED: 'success',
-      IN_PROGRESS: 'warning',
-      OUT_FOR_DELIVERY: 'processing',
-      NEW: 'info',
-      CANCELLED: 'danger'
-    };
+  get fulfillmentStatusLabel(): string {
+    const currentOrder = this.order();
+    return currentOrder ? getFulfillmentStatusKey(currentOrder.fulfillmentStatus) : '';
+  }
 
-    return map[currentStatus || ''] || 'neutral';
+  get workflowStageLabel(): string {
+    const currentOrder = this.order();
+    return currentOrder ? getWorkflowStageKey(currentOrder.workflowStage) : '';
+  }
+
+  get resolutionStateLabel(): string {
+    const currentOrder = this.order();
+    return currentOrder ? getResolutionStateKey(currentOrder.resolutionState) : '';
+  }
+
+  get operationalCase(): OrderOperationalCase | null {
+    return this.order()?.operationalCase || null;
+  }
+
+  get operationalCaseTypeLabel(): string {
+    return this.operationalCase ? getOperationalCaseTypeKey(this.operationalCase.type) : '';
+  }
+
+  get operationalCaseStatusLabel(): string {
+    return this.operationalCase ? getOperationalCaseStatusKey(this.operationalCase.status) : '';
+  }
+
+  get canResolveOperationalCase(): boolean {
+    return this.operationalCase?.status === 'OPEN';
+  }
+
+  get canCloseOperationalCase(): boolean {
+    return this.operationalCase?.status === 'RESOLVED';
+  }
+
+  get canReopenOperationalCase(): boolean {
+    return this.operationalCase?.status === 'RESOLVED' || this.operationalCase?.status === 'CLOSED';
+  }
+
+  get canOpenIssueTools(): boolean {
+    return !this.operationalCase || this.operationalCase.status === 'CLOSED';
+  }
+
+  get canOpenRefund(): boolean {
+    const currentOrder = this.order();
+
+    if (!currentOrder) {
+      return false;
+    }
+
+    const paymentBlocked = currentOrder.paymentStatus === 'FAILED' || currentOrder.paymentStatus === 'PENDING';
+    return !paymentBlocked && this.canOpenIssueTools;
   }
 
   get paymentInfoItems(): KeyValueGridItem[] {
@@ -185,31 +159,17 @@ export class OrderDetailsComponent implements OnInit {
     }
 
     return [
+      { label: 'ORDERS.DETAIL.PAYMENT_METHOD', value: currentOrder.paymentMethodLabel },
+      { label: 'ORDERS.DETAIL.TRANSACTION_REF', value: currentOrder.transactionRef, valueDir: 'ltr' },
       {
-        label: 'ORDERS.DETAIL.PAYMENT_METHOD',
-        value: 'ORDERS.DETAIL.MADA',
+        label: 'ORDERS.DETAIL.PAYMENT_STATUS_LABEL',
+        value: this.paymentStatusLabel,
+        valueTone: this.getPaymentStatusTone(currentOrder.paymentStatus),
         translateValue: true
       },
-      {
-        label: 'ORDERS.DETAIL.TRANSACTION_REF',
-        value: '#TRX-8271039',
-        valueDir: 'ltr'
-      },
-      {
-        label: 'ORDERS.DETAIL.ORDER_SUBTOTAL',
-        value: this.formatCurrency(currentOrder.subtotal),
-        valueDir: 'ltr'
-      },
-      {
-        label: 'ORDERS.DETAIL.DELIVERY_FEE',
-        value: this.formatCurrency(currentOrder.deliveryFee),
-        valueDir: 'ltr'
-      },
-      {
-        label: 'ORDERS.DETAIL.TAX',
-        value: this.formatCurrency(currentOrder.tax),
-        valueDir: 'ltr'
-      }
+      { label: 'ORDERS.DETAIL.ORDER_SUBTOTAL', value: this.formatCurrency(currentOrder.subtotal), valueDir: 'ltr' },
+      { label: 'ORDERS.DETAIL.DELIVERY_FEE', value: this.formatCurrency(currentOrder.deliveryFee), valueDir: 'ltr' },
+      { label: 'ORDERS.DETAIL.TAX', value: this.formatCurrency(currentOrder.tax), valueDir: 'ltr' }
     ];
   }
 
@@ -221,18 +181,122 @@ export class OrderDetailsComponent implements OnInit {
     }
 
     return [
+      { label: 'ORDERS.DETAIL.EXPECTED_TIME', value: currentOrder.expectedDeliveryWindow },
       {
-        label: 'ORDERS.DETAIL.EXPECTED_TIME',
-        value: currentOrder.time,
-        valueDir: 'ltr',
-        valueTone: 'warning'
-      },
-      {
-        label: 'ORDERS.DETAIL.HOUSING_TYPE',
-        value: 'ORDERS.DETAIL.APARTMENT',
+        label: 'ORDERS.DETAIL.FULFILLMENT_STATUS',
+        value: this.fulfillmentStatusLabel,
+        valueTone: this.getFulfillmentStatusTone(currentOrder.fulfillmentStatus),
         translateValue: true
-      }
+      },
+      { label: 'ORDERS.DETAIL.LAST_UPDATED', value: currentOrder.lastUpdatedAt },
+      { label: 'ORDERS.DETAIL.SLA_LABEL', value: `${currentOrder.slaScore || 0}%`, valueDir: 'ltr', valueTone: currentOrder.isLate ? 'warning' : 'accent' }
     ];
+  }
+
+  get linkedWorkflowCards(): WorkflowLinkCard[] {
+    return this.workflowLinks.getOrderWorkflowLinks(this.order());
+  }
+
+  loadOrderDetails(): void {
+    const id = this.orderId();
+
+    if (!id) {
+      this.errorMessage = 'ORDERS.ERRORS.INVALID_ID';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.ordersService.getOrderById(id).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to load order details', error);
+        this.errorMessage = 'ORDERS.ERRORS.LOAD_DETAIL';
+        this.order.set(null);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getOrderStatusVariant(status: OrderStatus): StatusPillVariant {
+    const variants: Record<OrderStatus, StatusPillVariant> = {
+      NEW: 'info',
+      PENDING: 'warning',
+      IN_PROGRESS: 'processing',
+      OUT_FOR_DELIVERY: 'processing',
+      DELIVERED: 'success',
+      COMPLETED: 'success',
+      CANCELLED: 'danger'
+    };
+
+    return variants[status];
+  }
+
+  getPaymentStatusVariant(status: OrderPaymentStatus): StatusPillVariant {
+    const variants: Record<OrderPaymentStatus, StatusPillVariant> = {
+      PENDING: 'warning',
+      PAID: 'success',
+      FAILED: 'danger',
+      REFUNDED: 'info',
+      PARTIALLY_REFUNDED: 'warning',
+      COD_PENDING: 'paused',
+      SETTLED: 'success'
+    };
+
+    return variants[status];
+  }
+
+  getFulfillmentStatusVariant(status: OrderFulfillmentStatus): StatusPillVariant {
+    const variants: Record<OrderFulfillmentStatus, StatusPillVariant> = {
+      QUEUED: 'neutral',
+      PREPARING: 'warning',
+      READY_FOR_PICKUP: 'info',
+      DRIVER_ASSIGNED: 'processing',
+      PICKED_UP: 'processing',
+      ON_ROUTE: 'processing',
+      DELIVERED: 'success',
+      FAILED: 'danger',
+      CANCELLED: 'danger'
+    };
+
+    return variants[status];
+  }
+
+  getResolutionStateVariant(state: OrderResolutionState): StatusPillVariant {
+    const variants: Record<OrderResolutionState, StatusPillVariant> = {
+      ACTION_REQUIRED: 'danger',
+      MONITORING: 'warning',
+      RESOLVED: 'success'
+    };
+
+    return variants[state];
+  }
+
+  getOperationalCaseStatusVariant(status: OrderOperationalCase['status']): StatusPillVariant {
+    const variants: Record<OrderOperationalCase['status'], StatusPillVariant> = {
+      OPEN: 'danger',
+      RESOLVED: 'warning',
+      CLOSED: 'success'
+    };
+
+    return variants[status];
+  }
+
+  getActivityDotClass(tone?: string): string {
+    switch (tone) {
+      case 'payment':
+        return 'bg-blue-500';
+      case 'issue':
+        return 'bg-red-500';
+      case 'note':
+        return 'bg-amber-500';
+      default:
+        return 'bg-zadna-primary';
+    }
   }
 
   openStatusModal(): void {
@@ -283,114 +347,145 @@ export class OrderDetailsComponent implements OnInit {
     this.isIssueFlagModalOpen = false;
   }
 
-  submitStatusUpdate(form: OrderStatusUpdateForm): void {
-    const currentOrder = this.order();
+  resolveOperationalCase(): void {
+    const id = this.orderId();
 
-    if (!currentOrder) {
+    if (!id) {
       return;
     }
 
-    this.order.set({
-      ...currentOrder,
-      status: form.newStatus,
-      time: form.expectedDeliveryTime ? this.formatTime(form.expectedDeliveryTime) : currentOrder.time,
-      activities: form.addInternalLog
-        ? [
-            {
-              titleKey: 'ORDERS.DETAIL.LOG_STATUS_MANUAL_UPDATE',
-              actorKey: 'ORDERS.DETAIL.SYSTEM_AUTO',
-              time: this.formatTime(form.expectedDeliveryTime || new Date().toISOString())
-            },
-            ...currentOrder.activities
-          ]
-        : currentOrder.activities
+    this.ordersService.resolveOperationalCase(id).subscribe({
+      next: (order) => this.order.set(order)
     });
+  }
 
-    this.closeStatusModal();
+  closeOperationalCase(): void {
+    const id = this.orderId();
+
+    if (!id) {
+      return;
+    }
+
+    this.ordersService.closeOperationalCase(id).subscribe({
+      next: (order) => this.order.set(order)
+    });
+  }
+
+  reopenOperationalCase(): void {
+    const id = this.orderId();
+
+    if (!id) {
+      return;
+    }
+
+    this.ordersService.reopenOperationalCase(id).subscribe({
+      next: (order) => this.order.set(order)
+    });
+  }
+
+  submitStatusUpdate(form: OrderStatusUpdateForm): void {
+    const id = this.orderId();
+
+    if (!id) {
+      return;
+    }
+
+    this.ordersService.updateOrderStatus(id, form).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.closeStatusModal();
+      }
+    });
   }
 
   submitDriverAssignment(form: DriverAssignmentForm): void {
-    const currentOrder = this.order();
-    const selectedDriver = this.driverCandidates.find((driver) => driver.id === form.selectedDriverId);
+    const id = this.orderId();
 
-    if (!currentOrder || !selectedDriver) {
+    if (!id) {
       return;
     }
 
-    this.order.set({
-      ...currentOrder,
-      driverName: selectedDriver.name,
-      driverPhone: selectedDriver.phone,
-      activities: [
-        {
-          titleKey: 'ORDERS.DETAIL.LOG_DRIVER_REASSIGNED',
-          actorKey: 'ORDERS.DETAIL.SYSTEM_AUTO',
-          time: this.formatTime(new Date().toISOString())
-        },
-        ...currentOrder.activities
-      ]
+    this.ordersService.assignDriver(id, form).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.closeDriverAssignmentModal();
+      }
     });
-
-    this.closeDriverAssignmentModal();
   }
 
   submitCancellation(form: OrderCancellationForm): void {
-    const currentOrder = this.order();
+    const id = this.orderId();
 
-    if (!currentOrder) {
+    if (!id) {
       return;
     }
 
-    this.order.set({
-      ...currentOrder,
-      status: 'CANCELLED',
-      activities: [
-        {
-          titleKey: 'ORDERS.DETAIL.LOG_ORDER_CANCELLED',
-          actorKey: 'ORDERS.DETAIL.SYSTEM_AUTO',
-          time: this.formatTime(new Date().toISOString())
-        },
-        ...currentOrder.activities
-      ]
+    this.ordersService.cancelOrder(id, form).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.closeCancellationModal();
+      }
     });
-
-    this.closeCancellationModal();
   }
 
   saveRefundDraft(form: OrderRefundForm): void {
     void form;
-    this.addActivity('ORDERS.DETAIL.LOG_REFUND_DRAFT');
     this.closeRefundModal();
   }
 
   submitRefund(form: OrderRefundForm): void {
-    void form;
-    this.addActivity('ORDERS.DETAIL.LOG_REFUND_OPENED');
-    this.closeRefundModal();
+    const id = this.orderId();
+
+    if (!id) {
+      return;
+    }
+
+    this.ordersService.createRefund(id, form).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.closeRefundModal();
+      }
+    });
   }
 
   saveDisputeDraft(form: OrderDisputeForm): void {
     void form;
-    this.addActivity('ORDERS.DETAIL.LOG_DISPUTE_DRAFT');
     this.closeDisputeModal();
   }
 
   submitDispute(form: OrderDisputeForm): void {
-    void form;
-    this.addActivity('ORDERS.DETAIL.LOG_DISPUTE_OPENED');
-    this.closeDisputeModal();
+    const id = this.orderId();
+
+    if (!id) {
+      return;
+    }
+
+    this.ordersService.openDispute(id, form).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.closeDisputeModal();
+      }
+    });
   }
 
   saveIssueNote(form: OrderIssueFlagForm): void {
     void form;
-    this.addActivity('ORDERS.DETAIL.LOG_ISSUE_NOTE_SAVED');
     this.closeIssueFlagModal();
   }
 
   submitIssueFlag(form: OrderIssueFlagForm): void {
-    void form;
-    this.addActivity('ORDERS.DETAIL.LOG_ISSUE_FLAGGED');
-    this.closeIssueFlagModal();
+    const id = this.orderId();
+
+    if (!id) {
+      return;
+    }
+
+    this.ordersService.flagIssue(id, form).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.closeIssueFlagModal();
+      }
+    });
   }
 
   @HostListener('document:keydown.escape')
@@ -425,38 +520,37 @@ export class OrderDetailsComponent implements OnInit {
     }
   }
 
-  private addActivity(titleKey: string): void {
-    const currentOrder = this.order();
-
-    if (!currentOrder) {
-      return;
+  private getPaymentStatusTone(status: OrderPaymentStatus): KeyValueGridItem['valueTone'] {
+    switch (status) {
+      case 'FAILED':
+        return 'danger';
+      case 'PENDING':
+      case 'COD_PENDING':
+      case 'PARTIALLY_REFUNDED':
+        return 'warning';
+      case 'PAID':
+      case 'SETTLED':
+        return 'accent';
+      default:
+        return 'muted';
     }
-
-    this.order.set({
-      ...currentOrder,
-      activities: [
-        {
-          titleKey,
-          actorKey: 'ORDERS.DETAIL.SYSTEM_AUTO',
-          time: this.formatTime(new Date().toISOString())
-        },
-        ...currentOrder.activities
-      ]
-    });
   }
 
-  private formatTime(dateValue: string): string {
-    const date = new Date(dateValue);
-
-    if (Number.isNaN(date.getTime())) {
-      return '--:--';
+  private getFulfillmentStatusTone(status: OrderFulfillmentStatus): KeyValueGridItem['valueTone'] {
+    switch (status) {
+      case 'FAILED':
+      case 'CANCELLED':
+        return 'danger';
+      case 'PREPARING':
+      case 'READY_FOR_PICKUP':
+        return 'warning';
+      case 'ON_ROUTE':
+      case 'DRIVER_ASSIGNED':
+      case 'PICKED_UP':
+        return 'accent';
+      default:
+        return 'default';
     }
-
-    return new Intl.DateTimeFormat('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    }).format(date);
   }
 
   private formatCurrency(value: number): string {

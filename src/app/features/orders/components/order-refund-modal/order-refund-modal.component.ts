@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { OrderDetail, OrderRefundForm } from '../../orders.models';
+import { getPaymentStatusLabel } from '../../orders.mock';
 
 @Component({
   selector: 'app-order-refund-modal',
@@ -44,6 +45,10 @@ export class OrderRefundModalComponent implements OnChanges {
 
     const calculated = this.order.subtotal + this.order.deliveryFee + this.order.tax - this.order.total;
     return Number(calculated.toFixed(2));
+  }
+
+  get paymentStatusLabel(): string {
+    return this.order ? getPaymentStatusLabel(this.order.paymentStatus) : '--';
   }
 
   onBackdropClick(event: MouseEvent): void {

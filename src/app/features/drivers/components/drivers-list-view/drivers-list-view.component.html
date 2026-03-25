@@ -1,7 +1,7 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
   <app-page-header
-    [title]="'السائقون'"
-    [subtitle]="'متابعة السائقين ودوامهم التشغيلي وأدائهم والتحقق والمشكلات المرتبطة بالتوصيل'"
+    [title]="'DRIVERS.TITLE'"
+    [subtitle]="'DRIVERS.DESC'"
     [showToolbar]="true"
     [breadcrumbs]="[
       { label: 'SIDEBAR.HOME', url: '/dashboard' },
@@ -12,7 +12,7 @@
     <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
       <app-button variant="primary" size="md" customClass="!rounded-[1.2rem] !text-sm !font-black shadow-xl shadow-zadna-primary/20">
         <span class="material-symbols-outlined text-[20px]">add</span>
-        إضافة سائق
+        {{ 'DRIVERS.HEADER.ADD_DRIVER' | translate }}
       </app-button>
     </div>
   </app-page-header>
@@ -30,7 +30,7 @@
             type="text"
             [(ngModel)]="searchTerm"
             (ngModelChange)="onSearchTermInput($event)"
-            placeholder="ابحث باسم السائق أو رقم الجوال أو المعرّف..."
+            [placeholder]="'DRIVERS.FILTERS.SEARCH_PLACEHOLDER' | translate"
             class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
             [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
         </div>
@@ -45,8 +45,8 @@
                 class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500"
                 [class.rotate-180]="isFiltersExpanded">filter_list</span>
               <div class="flex flex-col">
-                <span class="text-[13px] font-black text-slate-800">تصفية السائقين</span>
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">اضبط معايير البحث</span>
+                <span class="text-[13px] font-black text-slate-800">{{ 'DRIVERS.FILTERS.TITLE' | translate }}</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'DRIVERS.FILTERS.ADJUST_CRITERIA' | translate }}</span>
               </div>
               <span
                 class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
@@ -60,7 +60,7 @@
             (click)="resetFilters()"
             class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
             <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
-            <span class="text-[11px] font-black uppercase tracking-widest">إعادة ضبط</span>
+            <span class="text-[11px] font-black uppercase tracking-widest">{{ 'DRIVERS.FILTERS.RESET' | translate }}</span>
           </button>
         </div>
       </div>
@@ -68,9 +68,9 @@
       <div *ngIf="isFiltersExpanded" class="animate-in slide-in-from-top-3 duration-500 overflow-hidden rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6">
         <app-advanced-filter-panel
           [isExpanded]="true"
-          [title]="'تصفية السائقين'"
-          [subtitle]="'اضبط معايير البحث'"
-          [activeFiltersLabel]="'الفلاتر النشطة'"
+          [title]="'DRIVERS.FILTERS.TITLE'"
+          [subtitle]="'DRIVERS.FILTERS.ADJUST_CRITERIA'"
+          [activeFiltersLabel]="'DRIVERS.FILTERS.ACTIVE'"
           [fields]="filterFields"
           [filters]="filters"
           (filtersChange)="onFiltersChange($event)"
@@ -80,14 +80,14 @@
     </div>
 
     <app-data-table
-      *ngIf="!isLoading && drivers.length > 0"
+      *ngIf="!isLoading && !showError"
       [data]="drivers"
       [columns]="tableColumns"
       [selectable]="true"
       [clickableRows]="true"
       [containerClass]="'drivers-table-container'"
-      [emptyStateTitle]="'لا يوجد سائقون'"
-      [emptyStateMessage]="'لم يتم العثور على نتائج مطابقة للفلاتر الحالية.'"
+      [emptyStateTitle]="'DRIVERS.EMPTY_TITLE'"
+      [emptyStateMessage]="'DRIVERS.EMPTY_MESSAGE'"
       (rowClick)="onTableRowClick($event)">
 
       <ng-template #customColumn let-driver let-column="column">
@@ -140,9 +140,11 @@
 
         <ng-container *ngIf="column.key === 'tasks'">
           <div class="flex flex-col items-center gap-1">
-            <span class="text-[11px] font-black text-slate-800">{{ driver.tasks.active }} نشاط</span>
+            <span class="text-[11px] font-black text-slate-800">
+              {{ 'DRIVERS.TABLE.ACTIVITY_COUNT' | translate:{ count: driver.tasks.active } }}
+            </span>
             <span class="text-[9px] font-bold text-slate-400 max-w-[88px] leading-tight text-center">
-              {{ driver.tasks.subtitle || 'لا يوجد نشاط' }}
+              {{ getTaskSubtitle(driver.tasks.subtitle) | translate }}
             </span>
           </div>
         </ng-container>
@@ -150,7 +152,7 @@
         <ng-container *ngIf="column.key === 'performance'">
           <div class="flex flex-col gap-1.5 w-full px-2 max-w-[100px] mx-auto">
             <div class="flex justify-between items-center w-full text-[10px] font-black">
-              <span class="text-slate-400">{{ getPerformanceLabel(driver.performance) }}</span>
+              <span class="text-slate-400">{{ getPerformanceLabel(driver.performance) | translate }}</span>
               <span class="text-slate-800">{{ driver.acceptanceRate }}%</span>
             </div>
             <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden relative" dir="ltr">
@@ -200,7 +202,7 @@
                 'border-amber-100 bg-amber-50 text-amber-600': getIssueVariant(issue) === 'warning',
                 'border-red-100 bg-red-50 text-red-500': getIssueVariant(issue) === 'danger'
               }"
-              [title]="getIssueLabel(issue)">
+              [title]="getIssueLabel(issue) | translate">
               <span class="material-symbols-outlined text-[12px]">{{ getIssueIcon(issue) }}</span>
             </span>
           </div>
@@ -237,11 +239,11 @@
 
           <div class="grid grid-cols-2 gap-3">
             <div class="rounded-2xl bg-slate-50 px-4 py-3">
-              <p class="text-[10px] font-black text-slate-400">معرّف السائق</p>
+              <p class="text-[10px] font-black text-slate-400">{{ 'DRIVERS.TABLE.DRIVER_ID' | translate }}</p>
               <p class="mt-1 font-['Inter'] text-[12px] font-black text-slate-800" dir="ltr">{{ driver.driverId }}</p>
             </div>
             <div class="rounded-2xl bg-slate-50 px-4 py-3">
-              <p class="text-[10px] font-black text-slate-400">المدينة</p>
+              <p class="text-[10px] font-black text-slate-400">{{ 'DRIVERS.TABLE.CITY' | translate }}</p>
               <p class="mt-1 text-[12px] font-black text-slate-800">{{ driver.city }}</p>
             </div>
           </div>
@@ -267,7 +269,7 @@
     </div>
 
     <div *ngIf="showError" class="rounded-[1.25rem] border border-red-100 bg-red-50 px-5 py-4 text-sm font-black text-red-600">
-      {{ errorMessage }}
+      {{ errorMessage | translate }}
     </div>
   </div>
 </div>

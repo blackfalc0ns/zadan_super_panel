@@ -1,4 +1,30 @@
-export type OrderStatus = 'NEW' | 'IN_PROGRESS' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED' | 'COMPLETED' | 'PENDING';
+export type OrderStatus = 'NEW' | 'PENDING' | 'IN_PROGRESS' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'COMPLETED' | 'CANCELLED';
+
+export type OrderPaymentStatus =
+  | 'PENDING'
+  | 'PAID'
+  | 'FAILED'
+  | 'REFUNDED'
+  | 'PARTIALLY_REFUNDED'
+  | 'COD_PENDING'
+  | 'SETTLED';
+
+export type OrderFulfillmentStatus =
+  | 'QUEUED'
+  | 'PREPARING'
+  | 'READY_FOR_PICKUP'
+  | 'DRIVER_ASSIGNED'
+  | 'PICKED_UP'
+  | 'ON_ROUTE'
+  | 'DELIVERED'
+  | 'FAILED'
+  | 'CANCELLED';
+
+export type OrderQueueView = 'ALL' | 'ACTIVE' | 'LATE' | 'PAYMENT_ISSUES' | 'REFUNDS';
+export type OrderWorkflowStage = 'PAYMENT_REVIEW' | 'PREPARATION' | 'DISPATCH' | 'REFUND_REVIEW' | 'ISSUE_REVIEW' | 'READY_TO_CLOSE' | 'CANCELLED' | 'CLOSED';
+export type OrderResolutionState = 'ACTION_REQUIRED' | 'MONITORING' | 'RESOLVED';
+export type OrderOperationalCaseType = 'REFUND' | 'DISPUTE' | 'ISSUE';
+export type OrderOperationalCaseStatus = 'OPEN' | 'RESOLVED' | 'CLOSED';
 
 export interface OrderItem {
   name: string;
@@ -11,17 +37,18 @@ export interface OrderItem {
 }
 
 export interface OrderTimelineItem {
-  titleKey: string;
-  subtitleKey: string;
+  title: string;
+  subtitle: string;
   time: string;
   status: 'COMPLETED' | 'IN_PROGRESS' | 'PENDING';
   current: boolean;
 }
 
 export interface OrderActivity {
-  titleKey: string;
-  actorKey: string;
+  title: string;
+  actor: string;
   time: string;
+  tone?: 'status' | 'payment' | 'issue' | 'note';
 }
 
 export interface DriverCandidate {
@@ -43,29 +70,74 @@ export interface DriverCandidate {
   verified?: boolean;
 }
 
-export interface OrderDetail {
+export interface OrderCancellationSummary {
+  reasonLabel: string;
+  details: string;
+  refundType: 'full' | 'partial' | 'none';
+  costBearer: 'platform' | 'merchant' | 'shared';
+  cancelledAt: string;
+  cancelledBy: string;
+  customerMessage: string;
+}
+
+export interface OrderOperationalCase {
+  type: OrderOperationalCaseType;
+  status: OrderOperationalCaseStatus;
+  title: string;
+  queueLabel: string;
+  openedAt: string;
+  lastUpdatedAt: string;
+}
+
+export interface OrderListItem {
   id: string;
+  displayId: string;
   customerName: string;
   customerPhone: string;
-  customerAddress: string;
   merchantName: string;
   merchantBranch: string;
-  merchantLocation: string;
-  driverName: string;
-  driverPhone: string;
-  city?: string;
-  district?: string;
-  slaScore?: number;
   date: string;
   time: string;
   status: OrderStatus;
+  paymentStatus: OrderPaymentStatus;
+  fulfillmentStatus: OrderFulfillmentStatus;
+  paymentMethodLabel: string;
+  workflowStage: OrderWorkflowStage;
+  nextActionLabel: string;
+  resolutionState: OrderResolutionState;
+  operationalCase: OrderOperationalCase | null;
+  lastUpdatedAt: string;
   total: number;
+  isLate: boolean;
+  hasActiveIssue: boolean;
+  cancellationReason?: string | null;
+}
+
+export interface OrderDetail extends OrderListItem {
+  customerEmail: string;
+  customerAddress: string;
+  merchantLocation: string;
+  driverName: string;
+  driverPhone: string;
+  driverVehicleLabel: string;
+  driverPlateNumber: string;
+  city?: string;
+  district?: string;
+  slaScore?: number;
+  expectedDeliveryWindow: string;
+  transactionRef: string;
+  paymentStatusNote: string;
+  fulfillmentStatusNote: string;
+  supportSummary: string;
+  alertLabel: string;
   subtotal: number;
   deliveryFee: number;
   tax: number;
   items: OrderItem[];
   timeline: OrderTimelineItem[];
   activities: OrderActivity[];
+  driverCandidates: DriverCandidate[];
+  cancellationSummary: OrderCancellationSummary | null;
 }
 
 export interface OrderStatusUpdateForm {
@@ -136,4 +208,33 @@ export interface OrderIssueFlagForm {
   showInOperationsCenter: boolean;
   notifyAssignedTeam: boolean;
   highRiskAlert: boolean;
+}
+
+export interface OrderListQuery {
+  page: number;
+  pageSize: number;
+  searchTerm?: string;
+  status?: OrderStatus | 'ALL';
+  paymentStatus?: OrderPaymentStatus | 'ALL';
+  fulfillmentStatus?: OrderFulfillmentStatus | 'ALL';
+  queueView?: OrderQueueView;
+}
+
+export interface OrdersSummary {
+  total: number;
+  active: number;
+  late: number;
+  paymentIssues: number;
+  refunds: number;
+}
+
+export interface PaginatedOrdersResponse {
+  items: OrderListItem[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+  summary: OrdersSummary;
 }

@@ -34,7 +34,7 @@ export interface StatementPreview {
 })
 export class FinancialStatementModalComponent {
   @Input() isOpen = false;
-  @Input() vendorName = 'متجر زادانة المميز';
+  @Input() vendorName = '';
   @Output() close = new EventEmitter<void>();
   @Output() download = new EventEmitter<FinancialStatementConfig>();
   @Output() preview = new EventEmitter<FinancialStatementConfig>();
@@ -60,12 +60,12 @@ export class FinancialStatementModalComponent {
   };
 
   quickDateRanges = [
-    { label: 'آخر 7 أيام', days: 7 },
-    { label: 'هذا الشهر', days: 30 },
-    { label: 'آخر 30 يوم', days: 30 }
+    { key: 'MODALS.FINANCIAL_STATEMENT.LAST_7_DAYS', days: 7 },
+    { key: 'MODALS.FINANCIAL_STATEMENT.THIS_MONTH', days: 30 },
+    { key: 'MODALS.FINANCIAL_STATEMENT.LAST_30_DAYS', days: 30 }
   ];
 
-  selectedQuickRange = 'هذا الشهر';
+  selectedQuickRange = 'MODALS.FINANCIAL_STATEMENT.THIS_MONTH';
 
   // Calendar state
   currentMonthFrom = new Date(2023, 11, 1);
@@ -74,12 +74,17 @@ export class FinancialStatementModalComponent {
   get previewData(): StatementPreview {
     const daysDiff = Math.ceil((this.config.dateTo.getTime() - this.config.dateFrom.getTime()) / (1000 * 60 * 60 * 24));
     return {
-      vendorName: this.vendorName,
+      vendorName: this.vendorName || this.translate.instant('MODALS.FINANCIAL_STATEMENT.DEFAULT_VENDOR_NAME'),
       dateRange: `${this.formatDate(this.config.dateFrom)} - ${this.formatDate(this.config.dateTo)}`,
       estimatedRecords: Math.floor(daysDiff * 35), // ~35 records per day
       estimatedFileSize: `${(daysDiff * 0.065).toFixed(1)} MB`,
       totalAmount: 45250.00
     };
+  }
+
+  get weekdayLabels(): string[] {
+    return ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+      .map(day => this.translate.instant(`MODALS.FINANCIAL_STATEMENT.WEEKDAYS.${day}`));
   }
 
   onClose() {
@@ -94,8 +99,8 @@ export class FinancialStatementModalComponent {
     this.preview.emit(this.config);
   }
 
-  selectQuickRange(label: string, days: number) {
-    this.selectedQuickRange = label;
+  selectQuickRange(labelKey: string, days: number) {
+    this.selectedQuickRange = labelKey;
     this.config.dateTo = new Date();
     this.config.dateFrom = new Date();
     this.config.dateFrom.setDate(this.config.dateTo.getDate() - days);
@@ -114,7 +119,7 @@ export class FinancialStatementModalComponent {
   }
 
   private formatDate(date: Date): string {
-    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    return date.toLocaleDateString(this.isRTL ? 'ar-SA' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   // Calendar navigation
@@ -135,7 +140,7 @@ export class FinancialStatementModalComponent {
   }
 
   getMonthName(date: Date): string {
-    return date.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
+    return date.toLocaleDateString(this.isRTL ? 'ar-SA' : 'en-US', { month: 'long', year: 'numeric' });
   }
 
   selectDateFrom(day: number) {

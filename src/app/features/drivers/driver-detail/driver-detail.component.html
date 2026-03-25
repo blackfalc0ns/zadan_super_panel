@@ -1,5 +1,6 @@
 <app-driver-detail-view
   [driverDetail]="driverDetail"
+  [linkedWorkflowCards]="linkedWorkflowCards"
   [currentTab]="currentTab"
   [quickNote]="quickNote"
   [reviewerDecisionNote]="reviewerDecisionNote"
@@ -22,5 +23,6 @@
   (taskPreviewRequested)="openTaskPreview($event)"
   (incidentPreviewRequested)="openIncidentPreview($event)"
   (previewClosed)="closePreview()"
-  (previewActionClick)="handlePreviewAction($event)">
+  (previewActionClick)="handlePreviewAction($event)"
+  (workflowActionRequested)="handleWorkflowAction($event)">
 </app-driver-detail-view>

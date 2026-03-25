@@ -69,7 +69,7 @@ export interface PreviewAction {
                       [ngClass]="getActionClasses(action)">
                 <div class="flex items-center justify-center gap-2">
                   <span [innerHTML]="action.icon" class="w-4 h-4"></span>
-                  {{ action.label }}
+                  {{ action.label | translate }}
                 </div>
               </button>
               

@@ -17,7 +17,6 @@ import { DriversListViewComponent } from '../components/drivers-list-view/driver
 type SelectOption<T> = {
   value: T;
   label: string;
-  translate?: boolean;
 };
 
 @Component({
@@ -28,31 +27,31 @@ type SelectOption<T> = {
 })
 export class DriversListComponent implements OnInit {
   readonly statusOptions: SelectOption<DriverStatus>[] = [
-    { value: 'Online', label: 'متصل', translate: false },
-    { value: 'OnMission', label: 'في مهمة', translate: false },
-    { value: 'Offline', label: 'غير متصل', translate: false },
-    { value: 'Suspended', label: 'موقوف', translate: false }
+    { value: 'Online', label: 'DRIVERS.STATUS.ONLINE' },
+    { value: 'OnMission', label: 'DRIVERS.STATUS.ONMISSION' },
+    { value: 'Offline', label: 'DRIVERS.STATUS.OFFLINE' },
+    { value: 'Suspended', label: 'DRIVERS.STATUS.SUSPENDED' }
   ];
 
   readonly verificationOptions: SelectOption<VerificationStatus>[] = [
-    { value: VerificationStatus.Verified, label: 'موثق', translate: false },
-    { value: VerificationStatus.UnderReview, label: 'قيد المراجعة', translate: false },
-    { value: VerificationStatus.Unverified, label: 'غير موثق', translate: false },
-    { value: VerificationStatus.Suspended, label: 'موقوف مؤقتًا', translate: false }
+    { value: VerificationStatus.Verified, label: 'DRIVERS.VERIFICATION.VERIFIED' },
+    { value: VerificationStatus.UnderReview, label: 'DRIVERS.VERIFICATION.UNDER_REVIEW' },
+    { value: VerificationStatus.Unverified, label: 'DRIVERS.VERIFICATION.UNVERIFIED' },
+    { value: VerificationStatus.Suspended, label: 'DRIVERS.VERIFICATION.SUSPENDED' }
   ];
 
   readonly performanceOptions: SelectOption<DriverPerformance>[] = [
-    { value: DriverPerformance.Excellent, label: 'ممتاز', translate: false },
-    { value: DriverPerformance.Good, label: 'جيد', translate: false },
-    { value: DriverPerformance.NeedsImprovement, label: 'يحتاج تحسين', translate: false },
-    { value: DriverPerformance.Low, label: 'ضعيف', translate: false }
+    { value: DriverPerformance.Excellent, label: 'DRIVERS.PERFORMANCE.EXCELLENT' },
+    { value: DriverPerformance.Good, label: 'DRIVERS.PERFORMANCE.GOOD' },
+    { value: DriverPerformance.NeedsImprovement, label: 'DRIVERS.PERFORMANCE.NEEDS_IMPROVEMENT' },
+    { value: DriverPerformance.Low, label: 'DRIVERS.PERFORMANCE.LOW' }
   ];
 
   readonly vehicleTypeOptions: SelectOption<string>[] = [
-    { value: 'سيارة', label: 'سيارة', translate: false },
-    { value: 'دراجة', label: 'دراجة', translate: false },
-    { value: 'سكوتر', label: 'سكوتر', translate: false },
-    { value: 'فان', label: 'فان', translate: false }
+    { value: 'سيارة', label: 'DRIVERS.VEHICLES.CAR' },
+    { value: 'دراجة', label: 'DRIVERS.VEHICLES.BIKE' },
+    { value: 'سكوتر', label: 'DRIVERS.VEHICLES.SCOOTER' },
+    { value: 'فان', label: 'DRIVERS.VEHICLES.VAN' }
   ];
 
   drivers: Driver[] = [];
@@ -107,28 +106,28 @@ export class DriversListComponent implements OnInit {
     this.filterFields = [
       {
         key: 'city',
-        label: 'المدينة',
+        label: 'DRIVERS.FILTERS.CITY',
         type: 'select',
         color: '#0ea5e9',
         options: this.cityOptions.map((city) => ({ value: city, label: city }))
       },
       {
         key: 'status',
-        label: 'حالة الاتصال',
+        label: 'DRIVERS.FILTERS.STATUS',
         type: 'select',
         color: '#10b981',
         options: this.statusOptions.map((option) => ({ value: option.value, label: option.label }))
       },
       {
         key: 'verificationStatus',
-        label: 'التحقق',
+        label: 'DRIVERS.FILTERS.VERIFICATION_STATUS',
         type: 'select',
         color: '#f59e0b',
         options: this.verificationOptions.map((option) => ({ value: option.value, label: option.label }))
       },
       {
         key: 'vehicleType',
-        label: 'نوع المركبة',
+        label: 'DRIVERS.FILTERS.VEHICLE_TYPE',
         type: 'select',
         color: '#8b5cf6',
         options: this.vehicleTypeOptions.map((option) => ({ value: option.value, label: option.label }))
@@ -151,7 +150,7 @@ export class DriversListComponent implements OnInit {
       error: () => {
         this.isLoading = false;
         this.showError = true;
-        this.errorMessage = 'لم يتم العثور على نتائج مطابقة للفلاتر الحالية.';
+        this.errorMessage = 'DRIVERS.LOAD_ERROR';
       }
     });
   }
@@ -162,42 +161,42 @@ export class DriversListComponent implements OnInit {
       this.kpiCards = [
         {
           id: 'total',
-          title: 'إجمالي السائقين',
+          title: 'DRIVERS.KPI.TOTAL_DRIVERS',
           value: this.kpis.total.toLocaleString('en-US'),
           icon: '<span class="material-symbols-outlined text-[20px]">group</span>',
           color: '#0f766e'
         },
         {
           id: 'online',
-          title: 'المتصلون الآن',
+          title: 'DRIVERS.KPI.ONLINE_NOW',
           value: this.kpis.onlineNow.toLocaleString('en-US'),
           icon: '<span class="material-symbols-outlined text-[20px]">wifi_tethering</span>',
           color: '#14b8a6'
         },
         {
           id: 'mission',
-          title: 'في مهمة نشطة',
+          title: 'DRIVERS.KPI.ON_MISSION',
           value: this.kpis.onMission.toLocaleString('en-US'),
           icon: '<span class="material-symbols-outlined text-[20px]">local_shipping</span>',
           color: '#d97706'
         },
         {
           id: 'review',
-          title: 'قيد المراجعة',
+          title: 'DRIVERS.KPI.UNDER_REVIEW',
           value: this.kpis.underReview.toLocaleString('en-US'),
           icon: '<span class="material-symbols-outlined text-[20px]">report_problem</span>',
           color: '#dc2626'
         },
         {
           id: 'suspended',
-          title: 'موقوفون',
+          title: 'DRIVERS.KPI.SUSPENDED',
           value: this.kpis.suspended.toLocaleString('en-US'),
           icon: '<span class="material-symbols-outlined text-[20px]">block</span>',
           color: '#ef4444'
         },
         {
           id: 'low-performance',
-          title: 'منخفضو الأداء',
+          title: 'DRIVERS.KPI.LOW_PERFORMANCE',
           value: this.kpis.lowPerformance.toLocaleString('en-US'),
           icon: '<span class="material-symbols-outlined text-[20px]">trending_down</span>',
           color: '#f97316'
