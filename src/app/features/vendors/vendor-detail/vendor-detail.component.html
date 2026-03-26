@@ -121,7 +121,7 @@
               <div class="flex flex-col">
                 <span class="data-label">{{ 'VENDOR_DETAIL.STATUS' | translate }}</span>
                 <div class="mt-1">
-                  <app-status-pill [label]="'COMMON.ACTIVE'" variant="success" size="sm"></app-status-pill>
+                  <app-status-pill [label]="getCurrentStatusLabel()" [variant]="getCurrentStatusVariant()" size="sm"></app-status-pill>
                 </div>
               </div>
               <div class="flex flex-col">
@@ -206,10 +206,7 @@
                   <h2 class="text-xs font-black text-slate-900">{{ 'VENDOR_DETAIL.LEGAL_DATA' | translate }}</h2>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="status-verified scale-[0.85] origin-right rtl:origin-left">
-                    <span class="material-symbols-outlined text-[11px]">verified</span>
-                    <span>{{ 'VENDOR_DETAIL.STATUS_VERIFIED' | translate }}</span>
-                  </span>
+                  <app-status-pill [label]="getVerificationLabel()" [variant]="getVerificationVariant()" size="sm"></app-status-pill>
                   <button (click)="onEditClick('legal_bank')" class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100/50 text-slate-400 hover:bg-orange-500 hover:text-white transition-all">
                     <span class="material-symbols-outlined text-xs">edit</span>
                   </button>
@@ -277,9 +274,9 @@
                     <span class="text-sm font-black text-slate-800">{{ getPaymentCycleLabel(legalBankData.paymentCycle) }}</span>
                   </div>
                 </div>
-                <button class="w-full mt-auto py-3 px-4 bg-zadna-accent text-white text-[11px] font-black rounded-2xl shadow-lg shadow-zadna-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <button (click)="onVerifyAccount()" class="w-full mt-auto py-3 px-4 bg-zadna-accent text-white text-[11px] font-black rounded-2xl shadow-lg shadow-zadna-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="button">
                   <span class="material-symbols-outlined text-sm">verified_user</span>
-                  {{ 'VENDOR_DETAIL.VERIFY_ACCOUNT' | translate }}
+                  {{ (vendorDetail?.verificationStatus === 'Verified' ? 'VENDOR_DETAIL.STATUS_VERIFIED' : 'VENDOR_DETAIL.VERIFY_ACCOUNT') | translate }}
                 </button>
               </div>
             </section>

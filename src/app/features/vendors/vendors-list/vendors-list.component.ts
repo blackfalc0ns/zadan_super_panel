@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VendorService } from '../../../core/services/vendor.service';
 import { 
@@ -195,10 +196,6 @@ export class VendorsListComponent implements OnInit {
     this.translate.onLangChange.subscribe(() => {
       this.initializeFilterOptions();
       this.updateKPICards();
-
-      if (this.vendors.length > 0) {
-        this.addMockDataToVendors();
-      }
     });
   }
 
@@ -257,23 +254,19 @@ export class VendorsListComponent implements OnInit {
   loadVendors() {
     this.isLoading = true;
     this.showError = false;
-    
-    const allFilters = {
-      ...this.filters,
-      searchTerm: this.searchTerm || undefined
-    };
 
-    this.vendorService.getVendors(this.pageNumber, this.pageSize, this.searchTerm, allFilters.status)
+    this.vendorService.getVendors(this.pageNumber, this.pageSize, this.searchTerm, this.filters.status)
       .subscribe({
         next: (response) => {
-          this.vendors = response.items ?? [];
+          this.vendors = (response.items ?? []).map(vendor => ({ ...vendor }));
           this.totalCount = response.totalCount ?? 0;
-          this.totalPages = Math.ceil(this.totalCount / this.pageSize);
-          this.hasPreviousPage = this.pageNumber > 1;
-          this.hasNextPage = this.pageNumber < this.totalPages;
+          this.totalPages = response.totalPages ?? Math.ceil(this.totalCount / this.pageSize);
+          this.pageNumber = response.pageNumber ?? this.pageNumber;
+          this.hasPreviousPage = response.hasPreviousPage ?? this.pageNumber > 1;
+          this.hasNextPage = response.hasNextPage ?? this.pageNumber < this.totalPages;
           this.isLoading = false;
-          this.addMockDataToVendors();
           this.loadKPIs();
+          this.refreshPreviewVendor();
         },
         error: (err) => {
           console.error('Error loading vendors', err);
@@ -286,23 +279,10 @@ export class VendorsListComponent implements OnInit {
   }
 
   loadKPIs() {
-    setTimeout(() => {
-      const pendingCount = this.vendors.filter(v => v.status === 'Pending').length;
-      const missingDocsCount = this.vendors.filter(v => (v.documentsCompleteness || 0) < 100).length;
-      const highRiskCount = this.vendors.filter(v => v.riskLevel === 'High' || v.riskLevel === 'Critical').length;
-      const payoutBlockedCount = this.vendors.filter(v => v.payoutStatus === 'Blocked').length;
-      const suspendedCount = this.vendors.filter(v => v.status === 'Suspended').length;
-
-      this.kpis = {
-        pendingApproval: pendingCount || 12,
-        missingDocuments: missingDocsCount || 8,
-        highRisk: highRiskCount || 3,
-        payoutBlocked: payoutBlockedCount || 2,
-        suspended: suspendedCount || 5
-      };
-
+    this.vendorService.getVendorKPIs().subscribe((kpis) => {
+      this.kpis = kpis;
       this.updateKPICards();
-    }, 200);
+    });
   }
 
   updateKPICards() {
@@ -450,7 +430,7 @@ export class VendorsListComponent implements OnInit {
 
   getVerificationStatusLabel(status?: string): string {
     if (!status) return '-';
-    const map: any = { 'Verified': 'VENDOR_DETAIL.STATUS_VERIFIED', 'Unverified': 'VENDOR_DETAIL.UNDER_REVIEW', 'Pending': 'VENDORS.STATUS.PENDING' };
+    const map: any = { 'Verified': 'VENDOR_DETAIL.STATUS_VERIFIED', 'Unverified': 'VENDOR_REVIEW.STATUS.UNVERIFIED', 'Pending': 'VENDORS.STATUS.PENDING' };
     return map[status] || status;
   }
 
@@ -497,7 +477,17 @@ export class VendorsListComponent implements OnInit {
   }
 
   onBulkAction(event: { action: BulkAction, items: Vendor[] }) {
-    // Bulk action executed
+    switch (event.action.id) {
+      case 'approve':
+        event.items.forEach((vendor) => this.handleVendorMutation(this.vendorService.approveVendorReview(vendor.id, vendor.commissionRate ?? 13)));
+        break;
+      case 'documents':
+        event.items.forEach((vendor) => this.handleVendorMutation(this.vendorService.requestVendorDocuments(vendor.id)));
+        break;
+      case 'block':
+        event.items.forEach((vendor) => this.handleVendorMutation(this.vendorService.suspendVendorAccount(vendor.id)));
+        break;
+    }
   }
 
   onPreviewAction(action: PreviewAction) {
@@ -507,17 +497,18 @@ export class VendorsListComponent implements OnInit {
         this.router.navigate(['/vendors', this.previewVendor.id]); 
         break;
       case 'approve': this.quickApprove(this.previewVendor, new Event('click')); break;
+      case 'documents': this.quickRequestDocuments(this.previewVendor, new Event('click')); break;
     }
   }
 
   quickApprove(vendor: Vendor, event: Event) {
     event.stopPropagation();
-    // Vendor approved
+    this.handleVendorMutation(this.vendorService.approveVendorReview(vendor.id, vendor.commissionRate ?? 13));
   }
 
   quickSuspend(vendor: Vendor, event: Event) {
     event.stopPropagation();
-    // Vendor suspended
+    this.handleVendorMutation(this.vendorService.suspendVendorAccount(vendor.id));
   }
 
   // Drawer
@@ -544,7 +535,7 @@ export class VendorsListComponent implements OnInit {
 
   quickRequestDocuments(vendor: Vendor, event: Event) {
     event.stopPropagation();
-    // Documents requested
+    this.handleVendorMutation(this.vendorService.requestVendorDocuments(vendor.id));
   }
 
   updateBulkActionsVisibility() {
@@ -587,12 +578,28 @@ export class VendorsListComponent implements OnInit {
 
   // Mock data generator
   addMockDataToVendors() {
-    this.vendors = this.vendors.map((v, i) => ({
-      ...v,
-      city: this.translate.instant(this.cityOptions[i % this.cityOptions.length]),
-      documentsCompleteness: Math.floor(Math.random() * 100),
-      riskLevel: (['Low', 'Medium', 'High', 'Critical'])[i % 4] as any,
-      payoutStatus: (['Active', 'Blocked', 'Pending'])[i % 3] as any
-    }));
+    this.vendors = this.vendors.map((vendor) => ({ ...vendor }));
+  }
+
+  private handleVendorMutation(request$: Observable<unknown>) {
+    request$.subscribe({
+      next: () => {
+        this.loadVendors();
+      },
+      error: (error) => {
+        console.error('Vendor action failed', error);
+      }
+    });
+  }
+
+  private refreshPreviewVendor(vendorId: string | null = this.previewVendor?.id ?? null): void {
+    if (!vendorId) {
+      return;
+    }
+
+    const updatedVendor = this.vendors.find((vendor) => vendor.id === vendorId);
+    if (updatedVendor) {
+      this.previewVendor = { ...updatedVendor };
+    }
   }
 }

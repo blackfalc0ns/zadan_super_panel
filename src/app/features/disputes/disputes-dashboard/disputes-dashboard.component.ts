@@ -4,13 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DisputesService } from '../../../core/services/disputes.service';
-import { WorkflowLinkCard, WorkflowLinksService } from '../../../core/services/workflow-links.service';
 import { BulkAction, DataTableComponent, TableAction, TableColumn } from '../../../shared/components/ui/data-table/data-table.component';
 import { KPICard, KpiCardsComponent } from '../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
-import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
 import { DisputeApprovalModalComponent } from '../components/dispute-approval-modal/dispute-approval-modal.component';
 import { DisputeEscalationModalComponent } from '../components/dispute-escalation-modal/dispute-escalation-modal.component';
 import { DisputeRejectionModalComponent } from '../components/dispute-rejection-modal/dispute-rejection-modal.component';
@@ -29,7 +27,6 @@ import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel,
     AppPaginationComponent,
     AppPageHeaderComponent,
     StatusPillComponent,
-    WorkflowLinksPanelComponent,
     DisputeApprovalModalComponent,
     DisputeEscalationModalComponent,
     DisputeRejectionModalComponent,
@@ -61,7 +58,6 @@ export class DisputesDashboardComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly disputesService: DisputesService,
-    private readonly workflowLinks: WorkflowLinksService,
     public translate: TranslateService
   ) {
     this.disputes = this.disputesService.getDisputesSnapshot();
@@ -130,10 +126,6 @@ export class DisputesDashboardComponent implements OnInit {
 
   get isRtl(): boolean {
     return this.translate.currentLang === 'ar';
-  }
-
-  get linkedWorkflowCards(): WorkflowLinkCard[] {
-    return this.workflowLinks.getDisputeWorkflowLinks(this.selectedDispute);
   }
 
   selectDispute(dispute: DisputeRow): void {

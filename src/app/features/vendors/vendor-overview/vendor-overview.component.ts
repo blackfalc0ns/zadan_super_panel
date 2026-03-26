@@ -1,12 +1,12 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WorkflowLinkCard, WorkflowLinksService, VendorWorkflowSnapshot } from '../../../core/services/workflow-links.service';
 import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
-import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
+import { VendorDetail, VendorReviewDocument } from '../../../core/models/vendor';
+import { VendorService } from '../../../core/services/vendor.service';
 
 interface KPI {
   id: string;
@@ -30,7 +30,7 @@ interface Order {
   statusClass: string;
 }
 
-interface Document {
+interface DocumentCard {
   id: string;
   titleKey: string;
   number: string;
@@ -38,34 +38,29 @@ interface Document {
   statusClass: string;
 }
 
-interface Alert {
+interface AlertCard {
   id: string;
   titleKey: string;
   descriptionKey: string;
   icon: string;
-  bgClass: string;
-  borderClass: string;
-  iconClass: string;
-  titleClass: string;
-  descClass: string;
+  variant: 'warning' | 'error';
 }
 
 @Component({
   selector: 'app-vendor-overview',
   standalone: true,
-  imports: [CommonModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent, WorkflowLinksPanelComponent],
+  imports: [CommonModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent],
   templateUrl: './vendor-overview.component.html'
 })
 export class VendorOverviewComponent {
   @Output() tabChange = new EventEmitter<string>();
-  
-  vendorId: string = 'VND-9928';
-  vendorName: string = 'متجر التقنية الحديثة';
-  vendorLocation: string = 'الرياض، المملكة العربية السعودية';
-  currentLang: string = 'ar';
-  isRTL: boolean = true;
-  workflowSnapshot: VendorWorkflowSnapshot | null = null;
-  workflowLinks: WorkflowLinkCard[] = [];
+
+  vendorId = 'VND-9928';
+  vendorName = '';
+  vendorLocation = '';
+  currentLang = 'ar';
+  isRTL = true;
+  vendorDetail: VendorDetail | null = null;
 
   kpis: KPI[] = [
     {
@@ -116,120 +111,32 @@ export class VendorOverviewComponent {
   ];
 
   storeInfo = {
-    category: 'إلكترونيات وتقنية',
-    registrationDate: '15 May 2023',
-    phone: '+966 50 123 4567',
-    email: 'contact@moderntech.sa'
+    category: '-',
+    registrationDate: '-',
+    phone: '-',
+    email: '-'
   };
 
-  documents: Document[] = [
-    {
-      id: 'cr',
-      titleKey: 'VENDOR_OVERVIEW.DOCS.COMMERCIAL_REG',
-      number: 'CR-1010123456',
-      statusKey: 'VENDOR_OVERVIEW.STATUS.VERIFIED',
-      statusClass: 'bg-green-50 text-green-700'
-    },
-    {
-      id: 'tax',
-      titleKey: 'VENDOR_OVERVIEW.DOCS.TAX_CERT',
-      number: 'VAT-3001234567',
-      statusKey: 'VENDOR_OVERVIEW.STATUS.VERIFIED',
-      statusClass: 'bg-green-50 text-green-700'
-    },
-    {
-      id: 'id',
-      titleKey: 'VENDOR_OVERVIEW.DOCS.OWNER_ID',
-      number: 'ID-10*******34',
-      statusKey: 'VENDOR_OVERVIEW.STATUS.UNDER_REVIEW',
-      statusClass: 'bg-yellow-50 text-yellow-700'
-    }
-  ];
-
-  recentOrders: Order[] = [
-    {
-      id: '1',
-      orderNumber: '#ORD-8821',
-      customer: 'أحمد عبدالله',
-      amount: '1,250 SAR',
-      statusKey: 'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING',
-      statusClass: 'bg-blue-50 text-blue-700'
-    },
-    {
-      id: '2',
-      orderNumber: '#ORD-8820',
-      customer: 'سارة محمد',
-      amount: '450 SAR',
-      statusKey: 'VENDOR_OVERVIEW.ORDER_STATUS.COMPLETED',
-      statusClass: 'bg-green-50 text-green-700'
-    },
-    {
-      id: '3',
-      orderNumber: '#ORD-8819',
-      customer: 'خالد الدوسري',
-      amount: '3,800 SAR',
-      statusKey: 'VENDOR_OVERVIEW.ORDER_STATUS.PENDING_PAYMENT',
-      statusClass: 'bg-orange-50 text-orange-700'
-    },
-    {
-      id: '4',
-      orderNumber: '#ORD-8818',
-      customer: 'فهد العنزي',
-      amount: '120 SAR',
-      statusKey: 'VENDOR_OVERVIEW.ORDER_STATUS.CANCELLED',
-      statusClass: 'bg-gray-100 text-gray-700'
-    },
-    {
-      id: '5',
-      orderNumber: '#ORD-8817',
-      customer: 'نورة السالم',
-      amount: '890 SAR',
-      statusKey: 'VENDOR_OVERVIEW.ORDER_STATUS.COMPLETED',
-      statusClass: 'bg-green-50 text-green-700'
-    }
-  ];
-
-  alerts: Alert[] = [
-    {
-      id: '1',
-      titleKey: 'VENDOR_OVERVIEW.ALERTS.BANK_NOT_VERIFIED',
-      descriptionKey: 'VENDOR_OVERVIEW.ALERTS.BANK_NOT_VERIFIED_DESC',
-      icon: 'error',
-      bgClass: 'bg-red-50',
-      borderClass: 'border-red-100',
-      iconClass: 'text-red-500',
-      titleClass: 'text-red-800',
-      descClass: 'text-red-600'
-    },
-    {
-      id: '2',
-      titleKey: 'VENDOR_OVERVIEW.ALERTS.OWNER_ID_UPDATE',
-      descriptionKey: 'VENDOR_OVERVIEW.ALERTS.OWNER_ID_UPDATE_DESC',
-      icon: 'info',
-      bgClass: 'bg-yellow-50',
-      borderClass: 'border-yellow-100',
-      iconClass: 'text-yellow-600',
-      titleClass: 'text-yellow-800',
-      descClass: 'text-yellow-700'
-    }
-  ];
+  documents: DocumentCard[] = [];
+  recentOrders: Order[] = [];
+  alerts: AlertCard[] = [];
 
   constructor(
     private translate: TranslateService,
     private route: ActivatedRoute,
     private router: Router,
-    private workflowLinksService: WorkflowLinksService
+    private vendorService: VendorService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
-    
+
     this.translate.onLangChange.subscribe((event) => {
       this.currentLang = event.lang;
       this.isRTL = event.lang === 'ar';
       this.syncVendorContext();
     });
 
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       if (params['id']) {
         this.vendorId = params['id'];
       }
@@ -240,31 +147,112 @@ export class VendorOverviewComponent {
     this.syncVendorContext();
   }
 
+  get reviewStateLabelKey(): string {
+    const state = this.vendorDetail?.reviewState;
+    const labelMap: Record<string, string> = {
+      awaiting_submission: 'VENDOR_REVIEW.STATE.AWAITING_SUBMISSION',
+      submitted: 'VENDOR_REVIEW.STATE.SUBMITTED',
+      under_review: 'VENDOR_REVIEW.STATE.UNDER_REVIEW',
+      changes_requested: 'VENDOR_REVIEW.STATE.CHANGES_REQUESTED',
+      verified: 'VENDOR_REVIEW.STATE.VERIFIED',
+      rejected: 'VENDOR_REVIEW.STATE.REJECTED',
+      suspended: 'VENDOR_REVIEW.STATE.SUSPENDED'
+    };
+
+    return labelMap[state || ''] ?? 'VENDORS.STATUS.PENDING';
+  }
+
+  get reviewStateVariant(): StatusPillVariant {
+    switch (this.vendorDetail?.reviewState) {
+      case 'verified':
+        return 'success';
+      case 'changes_requested':
+        return 'warning';
+      case 'submitted':
+      case 'under_review':
+        return 'processing';
+      case 'rejected':
+      case 'suspended':
+        return 'danger';
+      default:
+        return 'neutral';
+    }
+  }
+
+  get reviewSummaryKey(): string {
+    switch (this.vendorDetail?.reviewState) {
+      case 'awaiting_submission':
+        return 'VENDOR_REVIEW.SUMMARY.WAITING_VENDOR';
+      case 'submitted':
+      case 'under_review':
+        return 'VENDOR_REVIEW.SUMMARY.READY_TO_VERIFY';
+      case 'changes_requested':
+        return 'VENDOR_REVIEW.SUMMARY.CHANGES_REQUIRED';
+      case 'verified':
+        return 'VENDOR_REVIEW.SUMMARY.VERIFIED_SUCCESS';
+      case 'rejected':
+        return 'VENDOR_REVIEW.SUMMARY.REJECTED';
+      case 'suspended':
+        return 'VENDOR_REVIEW.SUMMARY.SUSPENDED';
+      default:
+        return 'VENDOR_REVIEW.SUMMARY.WAITING_VENDOR';
+    }
+  }
+
+  get assignedReviewer(): string {
+    return this.vendorDetail?.assignedReviewer || '-';
+  }
+
+  get reviewSubmittedAt(): string {
+    return this.formatDate(this.vendorDetail?.reviewSubmittedAtUtc || this.vendorDetail?.createdAtUtc || null);
+  }
+
+  get reviewBlockers(): VendorReviewDocument[] {
+    return (this.vendorDetail?.reviewDocuments || []).filter((document) => document.status !== 'completed');
+  }
+
   onApproveVendor() {
-    console.log('Approve vendor:', this.vendorId);
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .approveVendorReview(this.vendorDetail.id, this.vendorDetail.commissionRate ?? 13)
+      .subscribe((vendor) => this.applyVendorDetail(vendor));
   }
 
   onRequestDocuments() {
-    console.log('Request additional documents');
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .requestVendorDocuments(this.vendorDetail.id)
+      .subscribe((vendor) => this.applyVendorDetail(vendor));
   }
 
   onSuspendVendor() {
-    console.log('Suspend vendor temporarily');
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .suspendVendorAccount(this.vendorDetail.id)
+      .subscribe((vendor) => this.applyVendorDetail(vendor));
   }
 
   onViewAllOrders() {
-    // Navigate to vendor detail page with orders tab
-    this.router.navigate(['/vendors', this.vendorId], { 
-      queryParams: { tab: 'orders' } 
+    this.router.navigate(['/vendors', this.vendorId], {
+      queryParams: { tab: 'orders' }
     });
   }
 
   onViewAllDocuments() {
-    console.log('View all documents');
+    this.tabChange.emit('compliance');
   }
 
   onFilterOrders() {
-    console.log('Filter orders');
+    this.tabChange.emit('orders');
   }
 
   onViewOrderDetails(orderId: string) {
@@ -276,7 +264,7 @@ export class VendorOverviewComponent {
   }
 
   getDocumentStatusVariant(statusKey: string): StatusPillVariant {
-    if (statusKey.includes('VERIFIED')) {
+    if (statusKey.includes('VERIFIED') || statusKey.includes('COMPLETED')) {
       return 'success';
     }
 
@@ -307,55 +295,114 @@ export class VendorOverviewComponent {
     return 'neutral';
   }
 
-  getAlertVariant(alertId: string): 'warning' | 'error' {
-    return alertId === '1' ? 'error' : 'warning';
+  private syncVendorContext(): void {
+    this.vendorService.getVendorById(this.vendorId).subscribe((vendor) => this.applyVendorDetail(vendor));
   }
 
-  private syncVendorContext(): void {
-    const snapshot = this.workflowLinksService.getVendorSnapshot(this.vendorId);
-    this.workflowSnapshot = snapshot;
-    this.workflowLinks = this.workflowLinksService.getVendorWorkflowLinks(this.vendorId);
-    this.vendorName = snapshot.displayName;
-    this.vendorLocation = snapshot.location;
+  private applyVendorDetail(vendor: VendorDetail): void {
+    this.vendorDetail = vendor;
+    this.vendorName = this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn;
+    this.vendorLocation = vendor.city ? `${vendor.city}${this.isRTL ? '،' : ','} Saudi Arabia` : '';
     this.storeInfo = {
-      ...this.storeInfo,
-      category: snapshot.category,
-      phone: snapshot.phone,
-      email: snapshot.email
+      category: vendor.businessType,
+      registrationDate: this.formatDate(vendor.createdAtUtc),
+      phone: vendor.contactPhone,
+      email: vendor.contactEmail
     };
-    this.recentOrders = snapshot.linkedOrders.map((order) => ({
-      id: order.id,
-      orderNumber: order.displayId,
-      customer: order.customerName,
-      amount: `${order.total.toFixed(0)} SAR`,
-      statusKey: this.mapOrderStatusKey(order.status),
-      statusClass: this.mapOrderStatusClass(order.status)
+    this.recentOrders = this.buildRecentOrders(vendor);
+    this.documents = this.mapDocuments(vendor);
+    this.alerts = this.mapAlerts(vendor);
+  }
+
+  private buildRecentOrders(vendor: VendorDetail): Order[] {
+    const baseNumber = Number(vendor.id.replace(/\D/g, '').slice(-3) || '100');
+    const statuses = [
+      'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING',
+      'VENDOR_OVERVIEW.ORDER_STATUS.COMPLETED',
+      'VENDOR_OVERVIEW.ORDER_STATUS.PENDING_PAYMENT'
+    ];
+    const classes = [
+      'bg-blue-50 text-blue-700',
+      'bg-green-50 text-green-700',
+      'bg-orange-50 text-orange-700'
+    ];
+    const customers = this.currentLang === 'ar'
+      ? ['أحمد عبدالله', 'سارة محمد', 'خالد الدوسري']
+      : ['Ahmed Abdullah', 'Sarah Mohammed', 'Khaled Al-Dosari'];
+
+    return customers.map((customer, index) => ({
+      id: `V-${vendor.id}-${index + 1}`,
+      orderNumber: `#ORD-${baseNumber + index + 1200}`,
+      customer,
+      amount: `${(index + 1) * 450} SAR`,
+      statusKey: statuses[index % statuses.length],
+      statusClass: classes[index % classes.length]
     }));
   }
 
-  private mapOrderStatusKey(status: string): string {
-    const map: Record<string, string> = {
-      IN_PROGRESS: 'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING',
-      OUT_FOR_DELIVERY: 'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING',
-      COMPLETED: 'VENDOR_OVERVIEW.ORDER_STATUS.COMPLETED',
-      DELIVERED: 'VENDOR_OVERVIEW.ORDER_STATUS.COMPLETED',
-      CANCELLED: 'VENDOR_OVERVIEW.ORDER_STATUS.CANCELLED',
-      PENDING: 'VENDOR_OVERVIEW.ORDER_STATUS.PENDING_PAYMENT'
-    };
-
-    return map[status] ?? 'VENDOR_OVERVIEW.ORDER_STATUS.PROCESSING';
+  private mapDocuments(vendor: VendorDetail): DocumentCard[] {
+    return vendor.reviewDocuments.slice(0, 3).map((document) => ({
+      id: document.id,
+      titleKey: document.titleKey,
+      number: this.resolveDocumentNumber(vendor, document.type),
+      statusKey: document.statusLabelKey,
+      statusClass: document.status === 'completed'
+        ? 'bg-green-50 text-green-700'
+        : document.status === 'pending'
+          ? 'bg-yellow-50 text-yellow-700'
+          : 'bg-slate-100 text-slate-600'
+    }));
   }
 
-  private mapOrderStatusClass(status: string): string {
-    const map: Record<string, string> = {
-      IN_PROGRESS: 'bg-blue-50 text-blue-700',
-      OUT_FOR_DELIVERY: 'bg-blue-50 text-blue-700',
-      COMPLETED: 'bg-green-50 text-green-700',
-      DELIVERED: 'bg-green-50 text-green-700',
-      CANCELLED: 'bg-gray-100 text-gray-700',
-      PENDING: 'bg-orange-50 text-orange-700'
-    };
+  private mapAlerts(vendor: VendorDetail): AlertCard[] {
+    const documentAlerts = vendor.reviewDocuments
+      .filter((document) => document.status !== 'completed')
+      .map((document) => ({
+        id: `doc-${document.id}`,
+        titleKey: document.titleKey,
+        descriptionKey: document.descriptionKey,
+        icon: document.icon,
+        variant: document.status === 'missing' ? 'error' as const : 'warning' as const
+      }));
 
-    return map[status] ?? 'bg-slate-100 text-slate-700';
+    const riskAlerts = vendor.riskIndicators.map((indicator) => ({
+      id: indicator.id,
+      titleKey: indicator.titleKey,
+      descriptionKey: indicator.descriptionKey,
+      icon: indicator.icon,
+      variant: indicator.severity === 'high' ? 'error' as const : 'warning' as const
+    }));
+
+    return [...documentAlerts, ...riskAlerts].slice(0, 3);
   }
+
+  private resolveDocumentNumber(vendor: VendorDetail, type: VendorReviewDocument['type']): string {
+    switch (type) {
+      case 'commercial':
+        return vendor.commercialRegistrationNumber;
+      case 'tax':
+        return vendor.taxId || '-';
+      case 'identity':
+        return 'ID-10*******34';
+      case 'bank':
+        return 'IBAN-***4321';
+      case 'license':
+        return 'LIC-77821';
+      default:
+        return '-';
+    }
+  }
+
+  private formatDate(value: string | null): string {
+    if (!value) {
+      return '-';
+    }
+
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).format(new Date(value));
+  }
+
 }

@@ -92,121 +92,245 @@
       [message]="reviewBannerMessageKey">
     </app-inline-banner>
 
-    <section class="detail-card workflow-shell">
-      <div class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-        <div class="min-w-0 xl:max-w-[35rem]">
-          <div class="flex flex-wrap items-center gap-3">
-            <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black text-slate-500">
-              {{ currentCustomer.workflow.queueLabelKey | translate }}
-            </span>
-
-            <app-status-pill
-              [label]="workflowStateLabelKey"
-              [variant]="workflowStateVariant"
-              size="sm">
-            </app-status-pill>
-
-            <span class="text-[11px] font-extrabold text-zadna-primary">
-              {{ currentCustomer.workflow.ownerTeamLabelKey | translate }}
-            </span>
-          </div>
-
-          <div class="mt-4 space-y-2">
-            <h3 class="text-xl font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TITLE' | translate }}</h3>
-            <p class="text-sm leading-7 text-slate-600">{{ currentCustomer.workflow.summaryKey | translate }}</p>
-          </div>
-
-          <div class="mt-4 rounded-[1rem] border border-cyan-100 bg-cyan-50/70 p-4">
-            <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-cyan-700">
-              {{ 'CUSTOMERS.DETAIL.WORKFLOW.NEXT_STEP_TITLE' | translate }}
-            </p>
-            <p class="mt-2 text-[13px] font-black text-slate-900">
-              {{ currentCustomer.workflow.nextStepKey | translate }}
-            </p>
-          </div>
-        </div>
-
-        <div class="grid gap-3 md:grid-cols-2 xl:w-[31rem] xl:flex-none">
-          <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
-            <div class="flex items-center justify-between gap-3">
-              <p class="text-[10px] font-extrabold text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.CURRENT_BLOCKERS' | translate }}</p>
-              <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-red-100 px-2 text-[10px] font-black text-red-700">
-                {{ currentCustomer.workflow.blockers.length }}
-              </span>
-            </div>
-
-            <div class="mt-3 space-y-2">
-              <div
-                *ngFor="let blocker of currentCustomer.workflow.blockers"
-                class="rounded-xl border border-red-100 bg-red-50 px-3 py-2 text-[11px] font-bold leading-6 text-red-700">
-                {{ blocker | translate }}
-              </div>
-
-              <div *ngIf="currentCustomer.workflow.blockers.length === 0" class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[11px] font-bold leading-6 text-emerald-700">
-                {{ 'CUSTOMERS.DETAIL.WORKFLOW.NO_BLOCKERS' | translate }}
-              </div>
-            </div>
-          </div>
-
-          <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
-            <div class="flex items-center justify-between gap-3">
-              <p class="text-[10px] font-extrabold text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.FOLLOW_UP_ALERTS' | translate }}</p>
-              <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-slate-200 px-2 text-[10px] font-black text-slate-700">
-                {{ currentCustomer.workflow.alerts.length }}
-              </span>
-            </div>
-
-            <div class="mt-3 space-y-2">
-              <div
-                *ngFor="let alert of currentCustomer.workflow.alerts"
-                class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold leading-6 text-slate-600">
-                {{ alert | translate }}
-              </div>
-
-              <div *ngIf="currentCustomer.workflow.alerts.length === 0" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold leading-6 text-slate-500">
-                {{ 'CUSTOMERS.DETAIL.WORKFLOW.NO_ALERTS' | translate }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <article *ngFor="let stage of lifecycleStages" [class]="getLifecycleCardClasses(stage)">
-          <p class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">{{ stage.labelKey | translate }}</p>
-          <p class="mt-2 text-sm font-black" [ngClass]="getLifecycleValueClasses(stage)">{{ stage.valueKey | translate }}</p>
-          <p class="mt-1 text-[11px] font-medium leading-5 text-slate-500">{{ stage.hintKey | translate }}</p>
-        </article>
-      </div>
-
-      <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <section class="detail-card !p-2.5">
+      <div class="flex flex-wrap items-center gap-2">
         <button
-          *ngFor="let action of workflowActions"
           type="button"
-          [class]="getWorkflowActionClasses(action)"
-          (click)="handleWorkflowAction(action.id)">
-          <div class="flex items-center justify-between gap-3">
-            <span class="material-symbols-outlined text-[18px]">{{ action.icon }}</span>
-            <span class="text-[11px] font-black">{{ action.labelKey | translate }}</span>
-          </div>
+          class="group inline-flex items-center gap-2 rounded-xl border px-4 py-3 text-[11px] font-extrabold transition-all"
+          [ngClass]="currentTab === 'overview'
+            ? 'border-zadna-primary bg-zadna-primary text-white shadow-lg shadow-zadna-primary/15'
+            : 'border-slate-200 bg-white text-slate-500 hover:border-zadna-primary/20 hover:text-zadna-primary'"
+          (click)="setTab('overview')">
+          <span class="material-symbols-outlined text-[18px]">dashboard</span>
+          <span>{{ 'CUSTOMERS.DETAIL.TABS.OVERVIEW' | translate }}</span>
+        </button>
 
-          <p class="mt-3 text-[11px] font-medium leading-5 opacity-85">
-            {{ action.helperKey | translate }}
-          </p>
+        <button
+          type="button"
+          class="group inline-flex items-center gap-2 rounded-xl border px-4 py-3 text-[11px] font-extrabold transition-all"
+          [ngClass]="currentTab === 'workflow'
+            ? 'border-zadna-primary bg-zadna-primary text-white shadow-lg shadow-zadna-primary/15'
+            : 'border-slate-200 bg-white text-slate-500 hover:border-zadna-primary/20 hover:text-zadna-primary'"
+          (click)="setTab('workflow')">
+          <span class="material-symbols-outlined text-[18px]">account_tree</span>
+          <span>{{ 'CUSTOMERS.DETAIL.TABS.WORKFLOW' | translate }}</span>
         </button>
       </div>
     </section>
 
-    <app-workflow-links-panel
-      *ngIf="linkedWorkflowCards.length"
-      [cards]="linkedWorkflowCards">
-    </app-workflow-links-panel>
-
-    <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
+    <app-kpi-cards *ngIf="currentTab === 'overview'" [cards]="kpiCards"></app-kpi-cards>
 
     <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-12 lg:col-span-4 space-y-6">
-        <section class="detail-card">
+      <div [ngClass]="currentTab === 'workflow' ? 'col-span-12 space-y-6' : 'col-span-12 lg:col-span-4 space-y-6'">
+        <section *ngIf="currentTab === 'workflow'" class="detail-card workflow-shell relative overflow-hidden">
+          <div class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-cyan-50/80 via-white to-amber-50/70"></div>
+          <div class="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-cyan-100/60 blur-3xl"></div>
+          <div class="pointer-events-none absolute -bottom-10 -left-8 h-28 w-28 rounded-full bg-amber-100/60 blur-3xl"></div>
+
+          <div class="relative space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="space-y-2">
+                <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.TABS.WORKFLOW' | translate }}
+                </p>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <h3 class="text-xl font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TITLE' | translate }}</h3>
+                  <app-status-pill
+                    [label]="workflowStateLabelKey"
+                    [variant]="workflowStateVariant"
+                    size="sm">
+                  </app-status-pill>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[10px] font-black text-slate-500">
+                  {{ currentCustomer.workflow.queueLabelKey | translate }}
+                </span>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary">
+                  <span class="material-symbols-outlined text-[14px]">groups</span>
+                  {{ currentCustomer.workflow.ownerTeamLabelKey | translate }}
+                </span>
+              </div>
+            </div>
+
+            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
+              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
+                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.SUMMARY_TITLE' | translate }}</h4>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-start">
+                  <thead class="bg-white/80">
+                    <tr>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
+                        {{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.FIELD' | translate }}
+                      </th>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">
+                        {{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.VALUE' | translate }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200/70">
+                    <tr>
+                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'COMMON.STATUS' | translate }}</td>
+                      <td class="px-4 py-4">
+                        <app-status-pill
+                          [label]="workflowStateLabelKey"
+                          [variant]="workflowStateVariant"
+                          size="sm">
+                        </app-status-pill>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.QUEUE' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-black text-slate-900">{{ currentCustomer.workflow.queueLabelKey | translate }}</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.OWNER' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-black text-slate-900">{{ currentCustomer.workflow.ownerTeamLabelKey | translate }}</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.SUMMARY' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] leading-7 text-slate-600">{{ currentCustomer.workflow.summaryKey | translate }}</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.NEXT_STEP_TITLE' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-black leading-7 text-slate-900">{{ currentCustomer.workflow.nextStepKey | translate }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
+              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
+                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.EXCEPTIONS_TITLE' | translate }}</h4>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-start">
+                  <thead class="bg-white/80">
+                    <tr>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.TYPE' | translate }}</th>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.COUNT' | translate }}</th>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.DETAILS' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200/70">
+                    <tr>
+                      <td class="px-4 py-4 text-[12px] font-black text-red-700">{{ 'CUSTOMERS.DETAIL.WORKFLOW.CURRENT_BLOCKERS' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-black text-red-700">{{ currentCustomer.workflow.blockers.length }}</td>
+                      <td class="px-4 py-4">
+                        <div *ngIf="currentCustomer.workflow.blockers.length > 0; else noBlockersCell" class="flex flex-wrap gap-2">
+                          <span
+                            *ngFor="let blocker of currentCustomer.workflow.blockers"
+                            class="inline-flex rounded-full border border-red-100 bg-red-50 px-3 py-1.5 text-[11px] font-bold text-red-700">
+                            {{ blocker | translate }}
+                          </span>
+                        </div>
+                        <ng-template #noBlockersCell>
+                          <span class="inline-flex rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700">
+                            {{ 'CUSTOMERS.DETAIL.WORKFLOW.NO_BLOCKERS' | translate }}
+                          </span>
+                        </ng-template>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-4 text-[12px] font-black text-slate-700">{{ 'CUSTOMERS.DETAIL.WORKFLOW.FOLLOW_UP_ALERTS' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-black text-slate-700">{{ currentCustomer.workflow.alerts.length }}</td>
+                      <td class="px-4 py-4">
+                        <div *ngIf="currentCustomer.workflow.alerts.length > 0; else noAlertsCell" class="flex flex-wrap gap-2">
+                          <span
+                            *ngFor="let alert of currentCustomer.workflow.alerts"
+                            class="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-700">
+                            {{ alert | translate }}
+                          </span>
+                        </div>
+                        <ng-template #noAlertsCell>
+                          <span class="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-500">
+                            {{ 'CUSTOMERS.DETAIL.WORKFLOW.NO_ALERTS' | translate }}
+                          </span>
+                        </ng-template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
+              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
+                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.LIFECYCLE_TITLE' | translate }}</h4>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-start">
+                  <thead class="bg-white/80">
+                    <tr>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.STAGE' | translate }}</th>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'COMMON.STATUS' | translate }}</th>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.NOTE' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200/70">
+                    <tr *ngFor="let stage of lifecycleStages">
+                      <td class="px-4 py-4 text-[12px] font-black text-slate-900">{{ stage.labelKey | translate }}</td>
+                      <td class="px-4 py-4">
+                        <span class="inline-flex rounded-full bg-slate-50 px-3 py-1.5 text-[11px] font-black" [ngClass]="getLifecycleValueClasses(stage)">
+                          {{ stage.valueKey | translate }}
+                        </span>
+                      </td>
+                      <td class="px-4 py-4 text-[12px] leading-6 text-slate-600">{{ stage.hintKey | translate }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
+              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
+                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.ACTIONS_TITLE' | translate }}</h4>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-start">
+                  <thead class="bg-white/80">
+                    <tr>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.ACTION' | translate }}</th>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.DESCRIPTION' | translate }}</th>
+                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.EXECUTE' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200/70">
+                    <tr *ngFor="let action of workflowActions">
+                      <td class="px-4 py-4">
+                        <div class="flex items-center gap-3">
+                          <span class="inline-flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-slate-100 text-slate-600">
+                            <span class="material-symbols-outlined text-[18px]">{{ action.icon }}</span>
+                          </span>
+                          <span class="text-[12px] font-black text-slate-900">{{ action.labelKey | translate }}</span>
+                        </div>
+                      </td>
+                      <td class="px-4 py-4 text-[12px] leading-6 text-slate-600">{{ action.helperKey | translate }}</td>
+                      <td class="px-4 py-4">
+                        <button
+                          type="button"
+                          [class]="getWorkflowActionRunClasses(action)"
+                          (click)="handleWorkflowAction(action.id)">
+                          {{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.RUN' | translate }}
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section *ngIf="currentTab === 'overview'" class="detail-card">
           <app-section-header
             [title]="'CUSTOMERS.DETAIL.SECTIONS.PROFILE'"
             icon="person"
@@ -224,7 +348,7 @@
           </div>
         </section>
 
-        <section class="detail-card">
+        <section *ngIf="currentTab === 'overview'" class="detail-card">
           <app-section-header
             [title]="'CUSTOMERS.DETAIL.SECTIONS.BEHAVIOR_RISK'"
             icon="analytics"
@@ -253,7 +377,7 @@
         </section>
       </div>
 
-      <div class="col-span-12 lg:col-span-8 space-y-6">
+      <div *ngIf="currentTab === 'overview'" class="col-span-12 lg:col-span-8 space-y-6">
         <section class="detail-card detail-card--p0">
           <div class="p-6 border-b border-slate-200/70">
             <app-section-header

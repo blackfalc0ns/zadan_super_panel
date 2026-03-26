@@ -13,7 +13,6 @@ import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/compone
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 import { OrdersService } from '../../../core/services/orders.service';
-import { WorkflowLinkCard, WorkflowLinksService } from '../../../core/services/workflow-links.service';
 import {
   DriverAssignmentForm,
   OrderCancellationForm,
@@ -37,7 +36,6 @@ import {
   getResolutionStateKey,
   getWorkflowStageKey
 } from '../orders.mock';
-import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
 
 @Component({
   selector: 'app-order-details',
@@ -55,8 +53,7 @@ import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workf
     SectionHeaderComponent,
     StatusPillComponent,
     InlineBannerComponent,
-    KeyValueGridComponent,
-    WorkflowLinksPanelComponent
+    KeyValueGridComponent
   ],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss']
@@ -77,8 +74,7 @@ export class OrderDetailsComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly ordersService: OrdersService,
-    private readonly workflowLinks: WorkflowLinksService
+    private readonly ordersService: OrdersService
   ) {}
 
   ngOnInit(): void {
@@ -191,10 +187,6 @@ export class OrderDetailsComponent implements OnInit {
       { label: 'ORDERS.DETAIL.LAST_UPDATED', value: currentOrder.lastUpdatedAt },
       { label: 'ORDERS.DETAIL.SLA_LABEL', value: `${currentOrder.slaScore || 0}%`, valueDir: 'ltr', valueTone: currentOrder.isLate ? 'warning' : 'accent' }
     ];
-  }
-
-  get linkedWorkflowCards(): WorkflowLinkCard[] {
-    return this.workflowLinks.getOrderWorkflowLinks(this.order());
   }
 
   loadOrderDetails(): void {

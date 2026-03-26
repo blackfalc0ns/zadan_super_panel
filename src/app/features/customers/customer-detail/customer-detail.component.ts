@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CustomersService } from '../../../core/services/customers.service';
-import { WorkflowLinkCard, WorkflowLinksService } from '../../../core/services/workflow-links.service';
 import { DataTableComponent, TableColumn } from '../../../shared/components/ui/data-table/data-table.component';
 import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/components/ui/key-value-grid/key-value-grid.component';
@@ -12,7 +11,6 @@ import { KpiCardsComponent, KPICard } from '../../../shared/components/ui/kpi-ca
 import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
-import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
 import {
   CustomerDetailRecord,
   CustomerLifecycleStage,
@@ -20,6 +18,8 @@ import {
   CustomerWorkflowAction,
   CustomerWorkflowActionId
 } from '../customers.models';
+
+type CustomerDetailTabId = 'overview' | 'workflow';
 
 const WORKFLOW_STATE_KEYS: Record<NonNullable<CustomerDetailRecord['workflow']>['state'], string> = {
   healthy: 'CUSTOMERS.DETAIL.WORKFLOW.STATE.HEALTHY',
@@ -42,8 +42,7 @@ const WORKFLOW_STATE_KEYS: Record<NonNullable<CustomerDetailRecord['workflow']>[
     StatusPillComponent,
     KeyValueGridComponent,
     DataTableComponent,
-    InlineBannerComponent,
-    WorkflowLinksPanelComponent
+    InlineBannerComponent
   ],
   templateUrl: './customer-detail.component.html',
   styleUrl: './customer-detail.component.scss'
@@ -52,6 +51,7 @@ export class CustomerDetailComponent implements OnInit {
   @ViewChild('quickNoteInput') quickNoteInput?: ElementRef<HTMLInputElement>;
 
   customer: CustomerDetailRecord | null = null;
+  currentTab: CustomerDetailTabId = 'overview';
   quickNote = '';
 
   readonly recentOrdersColumns: TableColumn[] = [
@@ -66,11 +66,14 @@ export class CustomerDetailComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly translate: TranslateService,
-    private readonly customersService: CustomersService,
-    private readonly workflowLinks: WorkflowLinksService
+    private readonly customersService: CustomersService
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.currentTab = this.normalizeTab(params.get('tab'));
+    });
+
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       this.customer = this.customersService.getCustomerById(id) ?? this.customersService.getCustomers()[0] ?? null;
@@ -252,10 +255,6 @@ export class CustomerDetailComponent implements OnInit {
     return this.customer?.lifecycle ?? [];
   }
 
-  get linkedWorkflowCards(): WorkflowLinkCard[] {
-    return this.workflowLinks.getCustomerWorkflowLinks(this.customer);
-  }
-
   get hasReviewFlag(): boolean {
     return this.customer?.reviewState !== 'none';
   }
@@ -332,6 +331,19 @@ export class CustomerDetailComponent implements OnInit {
 
   get accountActionIcon(): string {
     return this.customer?.accountState === 'suspended' ? 'restart_alt' : 'block';
+  }
+
+  setTab(tab: CustomerDetailTabId): void {
+    if (this.currentTab === tab) {
+      return;
+    }
+
+    this.currentTab = tab;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tab === 'overview' ? null : tab },
+      queryParamsHandling: 'merge'
+    });
   }
 
   openOrdersList(): void {
@@ -430,11 +442,29 @@ export class CustomerDetailComponent implements OnInit {
 
   getWorkflowActionClasses(action: CustomerWorkflowAction): string {
     const base =
-      'flex h-full min-h-[5.25rem] flex-col justify-between rounded-[1rem] border px-4 py-3 text-right transition-all';
+      'flex h-full min-h-[4.85rem] flex-col justify-between rounded-[1rem] border px-4 py-3 transition-all shadow-sm';
 
     switch (action.tone) {
       case 'primary':
-        return `${base} border-zadna-primary/15 bg-zadna-primary text-white shadow-sm shadow-zadna-primary/20 hover:bg-teal-700`;
+        return `${base} border-zadna-primary/10 bg-gradient-to-br from-zadna-primary to-teal-700 text-white shadow-zadna-primary/20 hover:from-teal-700 hover:to-teal-800`;
+      case 'warning':
+        return `${base} border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100`;
+      case 'danger':
+        return `${base} border-red-200 bg-red-50 text-red-700 hover:bg-red-100`;
+      case 'success':
+        return `${base} border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100`;
+      default:
+        return `${base} border-slate-200 bg-white text-slate-700 hover:border-zadna-primary/20 hover:text-zadna-primary`;
+    }
+  }
+
+  getWorkflowActionRunClasses(action: CustomerWorkflowAction): string {
+    const base =
+      'inline-flex h-9 items-center justify-center rounded-lg border px-3 text-[11px] font-black transition-all';
+
+    switch (action.tone) {
+      case 'primary':
+        return `${base} border-zadna-primary/10 bg-zadna-primary text-white hover:bg-teal-700`;
       case 'warning':
         return `${base} border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100`;
       case 'danger':
@@ -493,5 +523,9 @@ export class CustomerDetailComponent implements OnInit {
       default:
         return `${base} border-slate-200/70 bg-slate-50`;
     }
+  }
+
+  private normalizeTab(value: string | null): CustomerDetailTabId {
+    return value === 'workflow' ? 'workflow' : 'overview';
   }
 }

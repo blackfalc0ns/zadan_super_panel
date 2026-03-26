@@ -7,7 +7,6 @@ import { buildDriverDetailRecord, getDriverMapPreview } from '../drivers.mock';
 import { DriverDetailRecord, DriverIncidentRecord, DriverTaskAssignment, DriverWorkflowActionId } from '../drivers.models';
 import { DriverLifecycleTabId, DriverPreviewType } from '../driver-view.types';
 import { DriverService } from '../../../core/services/driver.service';
-import { WorkflowLinkCard, WorkflowLinksService } from '../../../core/services/workflow-links.service';
 import { Driver, DriverStatus, VerificationStatus } from '../../../core/models/driver';
 
 @Component({
@@ -36,7 +35,6 @@ export class DriverDetailComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly driverService: DriverService,
-    private readonly workflowLinks: WorkflowLinksService,
     private readonly translate: TranslateService
   ) {}
 
@@ -237,10 +235,6 @@ export class DriverDetailComponent implements OnInit {
       default:
         break;
     }
-  }
-
-  get linkedWorkflowCards(): WorkflowLinkCard[] {
-    return this.workflowLinks.getDriverWorkflowLinks(this.sourceDriver, this.driverDetail);
   }
 
   private normalizeTab(value: string | null): DriverLifecycleTabId {

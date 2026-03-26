@@ -1,9 +1,7 @@
-<!-- Compliance Content Without Header -->
 <div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
 
   <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
 
-    <!-- Right Column: Verification Status -->
     <div class="flex flex-col gap-6 lg:col-span-4">
       <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <div class="border-b border-gray-100 bg-gray-50 px-5 py-4">
@@ -18,8 +16,7 @@
         </div>
 
         <div class="divide-y divide-gray-100">
-          <div *ngFor="let item of verificationItems"
-               class="flex items-center justify-between gap-3 p-4 transition-colors hover:bg-gray-50">
+          <div *ngFor="let item of verificationItems" class="flex items-center justify-between gap-3 p-4 transition-colors hover:bg-gray-50">
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" [ngClass]="item.iconBgClass">
                 <span class="material-symbols-outlined text-[18px]">{{ item.icon }}</span>
@@ -41,7 +38,6 @@
       </div>
     </div>
 
-    <!-- Center Column: Risk & Comments -->
     <div class="flex flex-col gap-6 lg:col-span-5">
       <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <div class="border-b border-gray-100 bg-gray-50 px-5 py-4">
@@ -56,10 +52,9 @@
         <div class="flex flex-col gap-3 p-5">
           <div *ngFor="let indicator of riskIndicators"
                class="flex items-center justify-between gap-3 rounded-lg border p-4"
-               [ngClass]="indicator.borderClass + ' ' + indicator.bgClass">
+               [ngClass]="getRiskCardClasses(indicator.severity)">
             <div class="flex flex-1 items-center gap-3">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
-                   [ngClass]="indicator.severity === 'high' ? 'bg-red-500' : indicator.severity === 'medium' ? 'bg-orange-500' : 'bg-slate-500'">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" [ngClass]="getRiskIconClasses(indicator.severity)">
                 <span class="material-symbols-outlined text-[18px]">{{ indicator.icon }}</span>
               </div>
               <div class="flex-1">
@@ -89,17 +84,16 @@
 
         <div class="flex max-h-96 flex-1 flex-col gap-4 overflow-y-auto p-5">
           <div *ngFor="let note of complianceNotes" class="flex gap-3">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold" [ngClass]="note.avatarClass">
-              {{ isRTL ? note.authorInitialsAr : note.authorInitialsEn }}
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold" [ngClass]="getNoteAvatarClasses(note)">
+              {{ getAuthorInitials(note.authorName) }}
             </div>
             <div class="flex-1 rounded-xl rounded-tr-none border border-gray-100 bg-gray-50 p-4">
               <div class="mb-2 flex items-center justify-between gap-3">
-                <span class="text-sm font-bold text-gray-900">{{ note.authorKey | translate }} ({{ note.roleKey | translate }})</span>
-                <span class="text-xs text-gray-500">{{ note.timestampKey | translate }}</span>
+                <span class="text-sm font-bold text-gray-900">{{ note.authorName }} ({{ note.roleLabel }})</span>
+                <span class="text-xs text-gray-500">{{ formatNoteTimestamp(note.createdAtUtc) }}</span>
               </div>
-              <p class="text-sm leading-relaxed text-gray-700">
-                {{ note.messageKey | translate }}
-              </p>
+              <p *ngIf="note.message" class="text-sm leading-relaxed text-gray-700">{{ note.message }}</p>
+              <p *ngIf="!note.message && note.messageKey" class="text-sm leading-relaxed text-gray-700">{{ note.messageKey | translate }}</p>
             </div>
           </div>
         </div>
@@ -124,7 +118,6 @@
       </div>
     </div>
 
-    <!-- Left Column: Decision Panel -->
     <div class="flex flex-col gap-6 lg:col-span-3">
       <div class="overflow-hidden rounded-xl border-2 border-primary/20 bg-white shadow-sm">
         <div class="border-b border-gray-100 bg-primary/5 px-5 py-4">
@@ -185,10 +178,10 @@
           <div>
             <span class="mb-2 block text-xs text-gray-500">{{ 'COMPLIANCE.CURRENT_REVIEW_STATUS' | translate }}</span>
             <app-status-pill
-              label="COMPLIANCE.AWAITING_ACTION"
+              [label]="reviewStateLabelKey"
               [showDot]="false"
               [size]="'sm'"
-              variant="warning">
+              [variant]="reviewStateVariant">
             </app-status-pill>
           </div>
 
@@ -196,19 +189,23 @@
             <span class="mb-1 block text-xs text-gray-500">{{ 'COMPLIANCE.LAST_REVIEWER' | translate }}</span>
             <div class="flex items-center gap-2">
               <span class="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">{{ lastReviewerInitials }}</span>
-              <span class="text-sm font-medium text-slate-800">{{ 'COMPLIANCE.INITIAL_REVIEW' | translate }}</span>
+              <span class="text-sm font-medium text-slate-800">{{ lastReviewerName }}</span>
             </div>
           </div>
 
           <app-inline-banner
             title="COMPLIANCE.BLOCKING_ITEMS"
-            variant="warning"
-            icon="warning"
+            [variant]="blockingDocuments.length ? 'warning' : 'success'"
+            [icon]="blockingDocuments.length ? 'warning' : 'check_circle'"
             [compact]="true">
-            <ul class="mt-2 list-inside list-disc space-y-1 text-xs text-current/90">
-              <li>{{ 'COMPLIANCE.VERIFICATION.TAX_CERT' | translate }} ({{ 'COMPLIANCE.STATUS.UNDER_REVIEW' | translate }})</li>
-              <li>{{ 'COMPLIANCE.VERIFICATION.MUNICIPAL_LICENSE' | translate }} ({{ 'COMPLIANCE.STATUS.MISSING' | translate }})</li>
-            </ul>
+            <div *ngIf="blockingDocuments.length > 0" class="mt-2 space-y-2 text-xs text-current/90">
+              <div *ngFor="let blocker of blockingDocuments">
+                {{ blocker.titleKey | translate }} ({{ blocker.statusLabelKey | translate }})
+              </div>
+            </div>
+            <div *ngIf="blockingDocuments.length === 0" class="mt-2 text-xs text-current/90">
+              {{ 'COMMON.NO_RESULTS' | translate }}
+            </div>
           </app-inline-banner>
         </div>
       </div>

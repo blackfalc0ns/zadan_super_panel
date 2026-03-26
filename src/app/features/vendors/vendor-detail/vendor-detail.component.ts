@@ -15,7 +15,9 @@ import { EditOwnerModalComponent, OwnerData } from '../../../shared/components/u
 import { EditLegalBankModalComponent, LegalBankData } from '../../../shared/components/ui/edit-legal-bank-modal/edit-legal-bank-modal.component';
 import { EditStoreModalComponent, StoreData } from '../../../shared/components/ui/edit-store-modal/edit-store-modal.component';
 import { CrViewerModalComponent, CommercialRegisterData } from '../../../shared/components/ui/cr-viewer-modal/cr-viewer-modal.component';
-import { StatusPillComponent } from '../../../shared/components/ui/status-pill/status-pill.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
+import { VendorDetail } from '../../../core/models/vendor';
+import { VendorService } from '../../../core/services/vendor.service';
 
 @Component({
   selector: 'app-vendor-detail',
@@ -27,6 +29,8 @@ export class VendorDetailComponent implements OnInit {
   currentTab: string = 'overview';
   currentLang: string = 'ar';
   isRTL: boolean = true;
+  vendorId = 'VND-9928';
+  vendorDetail: VendorDetail | null = null;
   showEditOwnerModal = false;
   showEditLegalBankModal = false;
   showEditStoreModal = false;
@@ -109,7 +113,8 @@ export class VendorDetailComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private vendorService: VendorService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -117,10 +122,22 @@ export class VendorDetailComponent implements OnInit {
     this.translate.onLangChange.subscribe((event) => {
       this.currentLang = event.lang;
       this.isRTL = event.lang === 'ar';
+
+      if (this.vendorDetail) {
+        this.applyVendorDetail(this.vendorDetail);
+      }
     });
   }
 
   ngOnInit() {
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.vendorId = params['id'];
+      }
+
+      this.loadVendor();
+    });
+
     // Check for tab query parameter
     this.route.queryParams.subscribe(params => {
       if (params['tab']) {
@@ -194,6 +211,58 @@ export class VendorDetailComponent implements OnInit {
     console.log('CR source verification requested');
   }
 
+  onVerifyAccount() {
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .approveVendorReview(this.vendorDetail.id, this.vendorDetail.commissionRate ?? 13)
+      .subscribe((vendor) => this.applyVendorDetail(vendor));
+  }
+
+  getCurrentStatusLabel(): string {
+    const map: Record<string, string> = {
+      Active: 'COMMON.ACTIVE',
+      Pending: 'VENDORS.STATUS.PENDING',
+      Suspended: 'VENDORS.STATUS.SUSPENDED',
+      Rejected: 'VENDORS.STATUS.REJECTED'
+    };
+
+    return map[this.vendorDetail?.status || ''] ?? 'VENDORS.STATUS.PENDING';
+  }
+
+  getCurrentStatusVariant(): StatusPillVariant {
+    const map: Record<string, StatusPillVariant> = {
+      Active: 'success',
+      Pending: 'warning',
+      Suspended: 'danger',
+      Rejected: 'danger'
+    };
+
+    return map[this.vendorDetail?.status || ''] ?? 'neutral';
+  }
+
+  getVerificationLabel(): string {
+    const map: Record<string, string> = {
+      Verified: 'VENDOR_DETAIL.STATUS_VERIFIED',
+      Pending: 'VENDORS.STATUS.PENDING',
+      Unverified: 'VENDOR_REVIEW.STATUS.UNVERIFIED'
+    };
+
+    return map[this.vendorDetail?.verificationStatus || ''] ?? 'VENDORS.STATUS.PENDING';
+  }
+
+  getVerificationVariant(): StatusPillVariant {
+    const map: Record<string, StatusPillVariant> = {
+      Verified: 'success',
+      Pending: 'warning',
+      Unverified: 'neutral'
+    };
+
+    return map[this.vendorDetail?.verificationStatus || ''] ?? 'neutral';
+  }
+
   getBankNameLabel(bankName: string): string {
     const bankKeys: Record<string, string> = {
       alrajhi: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALRAJHI',
@@ -213,5 +282,46 @@ export class VendorDetailComponent implements OnInit {
     };
 
     return cycleKeys[paymentCycle] ? this.translate.instant(cycleKeys[paymentCycle]) : paymentCycle;
+  }
+
+  private loadVendor(): void {
+    this.vendorService.getVendorById(this.vendorId).subscribe((vendor) => {
+      this.applyVendorDetail(vendor);
+    });
+  }
+
+  private applyVendorDetail(vendor: VendorDetail): void {
+    this.vendorDetail = vendor;
+    this.progressPercentage = vendor.documentsCompleteness || this.progressPercentage;
+    this.storeData = {
+      ...this.storeData,
+      name: this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn,
+      category: vendor.businessType,
+      location: vendor.city || this.storeData.location,
+      phone: vendor.contactPhone,
+      email: vendor.contactEmail
+    };
+    this.ownerData = {
+      ...this.ownerData,
+      fullName: vendor.ownerName,
+      email: vendor.ownerEmail,
+      phone: vendor.ownerPhone.replace('+966 ', '')
+    };
+    this.legalBankData = {
+      ...this.legalBankData,
+      commercialRegister: vendor.commercialRegistrationNumber,
+      taxNumber: vendor.taxId || this.legalBankData.taxNumber
+    };
+    this.storeDataModal = {
+      ...this.storeDataModal,
+      storeName: this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn,
+      city: vendor.city || this.storeDataModal.city,
+      crNumber: vendor.commercialRegistrationNumber
+    };
+    this.legalDocuments = {
+      ...this.legalDocuments,
+      commercialRegister: vendor.commercialRegistrationNumber,
+      taxNumber: vendor.taxId || this.legalDocuments.taxNumber
+    };
   }
 }

@@ -397,6 +397,10 @@
             "PAGE_TITLE": "Customer Details",
             "PAGE_SUBTITLE": "Profile, behavior, support, refunds, and internal admin actions",
             "EDIT_ACCOUNT": "Edit Account",
+            "TABS": {
+                "OVERVIEW": "Overview",
+                "WORKFLOW": "Workflow"
+            },
             "REGISTERED_AT": "Registered",
             "ACTION_VIEW_ORDERS": "View Orders",
             "ACTION_VIEW_CASES": "View Cases",
@@ -421,6 +425,26 @@
                 "FOLLOW_UP_ALERTS": "Follow-up Alerts",
                 "NO_BLOCKERS": "No hard blockers are open on this account right now.",
                 "NO_ALERTS": "No follow-up alerts outside routine monitoring.",
+                "TABLE": {
+                    "SUMMARY_TITLE": "Workflow Snapshot",
+                    "FIELD": "Field",
+                    "VALUE": "Value",
+                    "QUEUE": "Queue",
+                    "OWNER": "Owner Team",
+                    "SUMMARY": "Summary",
+                    "EXCEPTIONS_TITLE": "Blockers & Alerts",
+                    "TYPE": "Type",
+                    "COUNT": "Count",
+                    "DETAILS": "Details",
+                    "LIFECYCLE_TITLE": "Lifecycle Stages",
+                    "STAGE": "Stage",
+                    "NOTE": "Operational Note",
+                    "ACTIONS_TITLE": "Available Actions",
+                    "ACTION": "Action",
+                    "DESCRIPTION": "Description",
+                    "EXECUTE": "Execute",
+                    "RUN": "Run"
+                },
                 "STATE": {
                     "HEALTHY": "Stable",
                     "MONITORING": "Monitoring",
@@ -1754,6 +1778,38 @@
                 "TAX_CERTIFICATE_BLUR": "The attached tax certificate is unclear. Please request a higher-quality re-upload so the tax number can be matched with the register.",
                 "CANCELLATION_FOLLOWUP": "The vendor was contacted about the elevated cancellation rate and confirmed that an inventory integration issue was resolved."
             }
+        }
+    },
+    "VENDOR_REVIEW": {
+        "STATE": {
+            "AWAITING_SUBMISSION": "Awaiting Vendor Submission",
+            "SUBMITTED": "Submitted",
+            "UNDER_REVIEW": "Under Review",
+            "CHANGES_REQUESTED": "Changes Requested",
+            "VERIFIED": "Verified",
+            "REJECTED": "Rejected",
+            "SUSPENDED": "Suspended"
+        },
+        "STATUS": {
+            "UNVERIFIED": "Unverified"
+        },
+        "SUMMARY": {
+            "ASSIGNED_REVIEWER": "Assigned Reviewer",
+            "SUBMITTED_AT": "Submitted At",
+            "WAITING_VENDOR": "The vendor still needs to finish the required uploads before the review queue can start.",
+            "READY_TO_VERIFY": "The submitted file is in the review queue and is ready for manual verification and approval.",
+            "CHANGES_REQUIRED": "The reviewer requested updates before the account can move to verified status.",
+            "VERIFIED_SUCCESS": "The account is verified and can operate normally with payouts and catalog access enabled.",
+            "REJECTED": "The latest submission was rejected and the vendor must correct the business data before another review.",
+            "SUSPENDED": "The account is suspended pending a higher-risk compliance decision."
+        },
+        "NOTES": {
+            "SUBMITTED": "The vendor submitted a fresh onboarding pack and the file moved into the review queue.",
+            "UNDER_REVIEW": "Manual review started and the uploaded business data is being validated against compliance rules.",
+            "CHANGES_REQUESTED": "Changes were requested from the vendor before approval can be completed.",
+            "APPROVED": "All required documents passed review and the vendor account was verified successfully.",
+            "REJECTED": "The current submission was rejected because the required legal and business evidence was not sufficient.",
+            "SUSPENDED": "The vendor account was suspended while the compliance team reviews the flagged risks."
         }
     },
     "ACTIVITY_LOG": {

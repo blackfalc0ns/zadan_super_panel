@@ -6,38 +6,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InlineBannerComponent } from '../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
-
-interface VerificationItem {
-  id: string;
-  titleKey: string;
-  descriptionKey: string;
-  icon: string;
-  status: 'completed' | 'pending' | 'missing';
-  statusLabelKey: string;
-  iconBgClass: string;
-}
-
-interface RiskIndicator {
-  id: string;
-  titleKey: string;
-  descriptionKey: string;
-  severity: 'high' | 'medium' | 'low';
-  severityLabelKey: string;
-  icon: string;
-  borderClass: string;
-  bgClass: string;
-}
-
-interface ComplianceNote {
-  id: string;
-  authorKey: string;
-  authorInitialsAr: string;
-  authorInitialsEn: string;
-  roleKey: string;
-  timestampKey: string;
-  messageKey: string;
-  avatarClass: string;
-}
+import { VendorDetail, VendorReviewDocument, VendorReviewNote, VendorRiskIndicator } from '../../../core/models/vendor';
+import { VendorService } from '../../../core/services/vendor.service';
 
 @Component({
   selector: 'app-vendor-compliance',
@@ -50,114 +20,12 @@ export class VendorComplianceComponent {
   currentLang = 'ar';
   isRTL = true;
   newNote = '';
-
-  verificationItems: VerificationItem[] = [
-    {
-      id: 'identity',
-      titleKey: 'COMPLIANCE.VERIFICATION.IDENTITY',
-      descriptionKey: 'COMPLIANCE.VERIFICATION.IDENTITY_DESC',
-      icon: 'badge',
-      status: 'completed',
-      statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
-      iconBgClass: 'bg-teal-50 text-teal-500'
-    },
-    {
-      id: 'commercial',
-      titleKey: 'COMPLIANCE.VERIFICATION.COMMERCIAL_REG',
-      descriptionKey: 'COMPLIANCE.VERIFICATION.COMMERCIAL_DESC',
-      icon: 'storefront',
-      status: 'completed',
-      statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
-      iconBgClass: 'bg-teal-50 text-teal-500'
-    },
-    {
-      id: 'tax',
-      titleKey: 'COMPLIANCE.VERIFICATION.TAX_CERT',
-      descriptionKey: 'COMPLIANCE.VERIFICATION.TAX_DESC',
-      icon: 'receipt_long',
-      status: 'pending',
-      statusLabelKey: 'COMPLIANCE.STATUS.UNDER_REVIEW',
-      iconBgClass: 'bg-orange-50 text-orange-500'
-    },
-    {
-      id: 'bank',
-      titleKey: 'COMPLIANCE.VERIFICATION.BANK_ACCOUNT',
-      descriptionKey: 'COMPLIANCE.VERIFICATION.BANK_DESC',
-      icon: 'account_balance',
-      status: 'completed',
-      statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
-      iconBgClass: 'bg-teal-50 text-teal-500'
-    },
-    {
-      id: 'license',
-      titleKey: 'COMPLIANCE.VERIFICATION.MUNICIPAL_LICENSE',
-      descriptionKey: 'COMPLIANCE.VERIFICATION.LICENSE_DESC',
-      icon: 'verified',
-      status: 'missing',
-      statusLabelKey: 'COMPLIANCE.STATUS.MISSING',
-      iconBgClass: 'bg-slate-100 text-slate-500'
-    }
-  ];
-
-  riskIndicators: RiskIndicator[] = [
-    {
-      id: 'cancellation',
-      titleKey: 'COMPLIANCE.RISK.HIGH_CANCELLATION',
-      descriptionKey: 'COMPLIANCE.RISK.HIGH_CANCELLATION_DESC',
-      severity: 'high',
-      severityLabelKey: 'COMPLIANCE.SEVERITY.HIGH',
-      icon: 'error',
-      borderClass: 'border-red-100',
-      bgClass: 'bg-red-50/50'
-    },
-    {
-      id: 'address',
-      titleKey: 'COMPLIANCE.RISK.ADDRESS_MISMATCH',
-      descriptionKey: 'COMPLIANCE.RISK.ADDRESS_MISMATCH_DESC',
-      severity: 'medium',
-      severityLabelKey: 'COMPLIANCE.SEVERITY.MEDIUM',
-      icon: 'report_problem',
-      borderClass: 'border-orange-100',
-      bgClass: 'bg-orange-50/50'
-    },
-    {
-      id: 'iban',
-      titleKey: 'COMPLIANCE.RISK.IBAN_CHANGES',
-      descriptionKey: 'COMPLIANCE.RISK.IBAN_CHANGES_DESC',
-      severity: 'low',
-      severityLabelKey: 'COMPLIANCE.SEVERITY.LOW',
-      icon: 'info',
-      borderClass: 'border-slate-200',
-      bgClass: 'bg-slate-50'
-    }
-  ];
-
-  complianceNotes: ComplianceNote[] = [
-    {
-      id: '1',
-      authorKey: 'COMPLIANCE.NOTES.AUTHORS.ABDULLAH_MOHAMMED',
-      authorInitialsAr: 'ع.م',
-      authorInitialsEn: 'A.M',
-      roleKey: 'COMPLIANCE.NOTES.ROLES.REVIEW_TEAM',
-      timestampKey: 'COMPLIANCE.NOTES.TIMESTAMPS.TODAY_1030',
-      messageKey: 'COMPLIANCE.NOTES.MESSAGES.TAX_CERTIFICATE_BLUR',
-      avatarClass: 'bg-primary/20 text-primary'
-    },
-    {
-      id: '2',
-      authorKey: 'COMPLIANCE.NOTES.AUTHORS.SARAH_FAHAD',
-      authorInitialsAr: 'س.ف',
-      authorInitialsEn: 'S.F',
-      roleKey: 'COMPLIANCE.NOTES.ROLES.RISK_TEAM',
-      timestampKey: 'COMPLIANCE.NOTES.TIMESTAMPS.YESTERDAY_0215',
-      messageKey: 'COMPLIANCE.NOTES.MESSAGES.CANCELLATION_FOLLOWUP',
-      avatarClass: 'bg-slate-200 text-slate-600'
-    }
-  ];
+  vendorDetail: VendorDetail | null = null;
 
   constructor(
     private translate: TranslateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private vendorService: VendorService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -171,41 +39,127 @@ export class VendorComplianceComponent {
       if (params['id']) {
         this.vendorId = params['id'];
       }
+
+      this.loadVendor();
     });
+
+    this.loadVendor();
   }
 
-  onApproveVendor() {
-    console.log('Approve vendor:', this.vendorId);
+  get verificationItems(): VendorReviewDocument[] {
+    return this.vendorDetail?.reviewDocuments || [];
   }
 
-  onRequestDocuments() {
-    console.log('Request documents from vendor:', this.vendorId);
+  get riskIndicators(): VendorRiskIndicator[] {
+    return this.vendorDetail?.riskIndicators || [];
   }
 
-  onSuspendAccount() {
-    console.log('Suspend vendor account:', this.vendorId);
-  }
-
-  onRejectVendor() {
-    console.log('Reject vendor:', this.vendorId);
-  }
-
-  onAddNote() {
-    if (this.newNote.trim()) {
-      console.log('Add note:', this.newNote);
-      this.newNote = '';
-    }
+  get complianceNotes(): VendorReviewNote[] {
+    return this.vendorDetail?.reviewNotes || [];
   }
 
   get verificationCompletedCount(): number {
     return this.verificationItems.filter((item) => item.status === 'completed').length;
   }
 
-  get lastReviewerInitials(): string {
-    return this.isRTL ? 'م.أ' : 'M.A';
+  get blockingDocuments(): VendorReviewDocument[] {
+    return this.verificationItems.filter((item) => item.status !== 'completed');
   }
 
-  getVerificationStatusVariant(status: VerificationItem['status']): StatusPillVariant {
+  get reviewStateLabelKey(): string {
+    const state = this.vendorDetail?.reviewState;
+    const labelMap: Record<string, string> = {
+      awaiting_submission: 'VENDOR_REVIEW.STATE.AWAITING_SUBMISSION',
+      submitted: 'VENDOR_REVIEW.STATE.SUBMITTED',
+      under_review: 'VENDOR_REVIEW.STATE.UNDER_REVIEW',
+      changes_requested: 'VENDOR_REVIEW.STATE.CHANGES_REQUESTED',
+      verified: 'VENDOR_REVIEW.STATE.VERIFIED',
+      rejected: 'VENDOR_REVIEW.STATE.REJECTED',
+      suspended: 'VENDOR_REVIEW.STATE.SUSPENDED'
+    };
+
+    return labelMap[state || ''] ?? 'VENDORS.STATUS.PENDING';
+  }
+
+  get reviewStateVariant(): StatusPillVariant {
+    switch (this.vendorDetail?.reviewState) {
+      case 'verified':
+        return 'success';
+      case 'changes_requested':
+        return 'warning';
+      case 'submitted':
+      case 'under_review':
+        return 'processing';
+      case 'rejected':
+      case 'suspended':
+        return 'danger';
+      default:
+        return 'neutral';
+    }
+  }
+
+  get lastReviewerName(): string {
+    return this.vendorDetail?.assignedReviewer || '-';
+  }
+
+  get lastReviewerInitials(): string {
+    return this.getInitials(this.lastReviewerName);
+  }
+
+  onApproveVendor() {
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .approveVendorReview(this.vendorDetail.id, this.vendorDetail.commissionRate ?? 13)
+      .subscribe((vendor) => this.vendorDetail = vendor);
+  }
+
+  onRequestDocuments() {
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .requestVendorDocuments(this.vendorDetail.id)
+      .subscribe((vendor) => this.vendorDetail = vendor);
+  }
+
+  onSuspendAccount() {
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .suspendVendorAccount(this.vendorDetail.id)
+      .subscribe((vendor) => this.vendorDetail = vendor);
+  }
+
+  onRejectVendor() {
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorService
+      .rejectVendorReview(this.vendorDetail.id)
+      .subscribe((vendor) => this.vendorDetail = vendor);
+  }
+
+  onAddNote() {
+    if (!this.vendorDetail || !this.newNote.trim()) {
+      return;
+    }
+
+    this.vendorService
+      .addVendorReviewNote(this.vendorDetail.id, this.newNote.trim())
+      .subscribe((vendor) => {
+        this.vendorDetail = vendor;
+        this.newNote = '';
+      });
+  }
+
+  getVerificationStatusVariant(status: VendorReviewDocument['status']): StatusPillVariant {
     switch (status) {
       case 'completed':
         return 'success';
@@ -218,7 +172,7 @@ export class VendorComplianceComponent {
     }
   }
 
-  getRiskSeverityVariant(severity: RiskIndicator['severity']): StatusPillVariant {
+  getRiskSeverityVariant(severity: VendorRiskIndicator['severity']): StatusPillVariant {
     switch (severity) {
       case 'high':
         return 'danger';
@@ -229,5 +183,68 @@ export class VendorComplianceComponent {
       default:
         return 'neutral';
     }
+  }
+
+  getRiskCardClasses(severity: VendorRiskIndicator['severity']): string {
+    switch (severity) {
+      case 'high':
+        return 'border-red-100 bg-red-50/50';
+      case 'medium':
+        return 'border-orange-100 bg-orange-50/50';
+      default:
+        return 'border-slate-200 bg-slate-50';
+    }
+  }
+
+  getRiskIconClasses(severity: VendorRiskIndicator['severity']): string {
+    switch (severity) {
+      case 'high':
+        return 'bg-red-500';
+      case 'medium':
+        return 'bg-orange-500';
+      default:
+        return 'bg-slate-500';
+    }
+  }
+
+  getNoteAvatarClasses(note: VendorReviewNote): string {
+    switch (note.tone) {
+      case 'success':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'warning':
+        return 'bg-amber-100 text-amber-700';
+      case 'danger':
+        return 'bg-red-100 text-red-700';
+      default:
+        return 'bg-primary/20 text-primary';
+    }
+  }
+
+  getAuthorInitials(name: string): string {
+    return this.getInitials(name);
+  }
+
+  formatNoteTimestamp(value: string): string {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(value));
+  }
+
+  private loadVendor(): void {
+    this.vendorService.getVendorById(this.vendorId).subscribe((vendor) => {
+      this.vendorDetail = vendor;
+    });
+  }
+
+  private getInitials(name: string): string {
+    const words = name.split(' ').filter(Boolean);
+    if (words.length === 0 || name === '-') {
+      return this.isRTL ? 'م.ر' : 'R.V';
+    }
+
+    return words.slice(0, 2).map((word) => word.charAt(0).toUpperCase()).join('.');
   }
 }

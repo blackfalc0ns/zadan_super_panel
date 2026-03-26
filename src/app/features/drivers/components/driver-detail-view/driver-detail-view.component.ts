@@ -11,8 +11,6 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 import { QuickPreviewDrawerComponent, PreviewAction } from '../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { WorkflowLinksPanelComponent } from '../../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
-import { WorkflowLinkCard } from '../../../../core/services/workflow-links.service';
 import { DriverLifecycleTabDefinition, DriverLifecycleTabId, DriverPreviewType } from '../../driver-view.types';
 import {
   getComplianceVariant as getCompliancePillVariant,
@@ -301,15 +299,13 @@ const OPERATIONS_RULE_KEYS: Record<string, string> = {
     KeyValueGridComponent,
     InlineBannerComponent,
     DataTableComponent,
-    QuickPreviewDrawerComponent,
-    WorkflowLinksPanelComponent
+    QuickPreviewDrawerComponent
   ],
   templateUrl: './driver-detail-view.component.html',
   styleUrl: './driver-detail-view.component.scss'
 })
 export class DriverDetailViewComponent {
   @Input() driverDetail: DriverDetailRecord | null = null;
-  @Input() linkedWorkflowCards: WorkflowLinkCard[] = [];
   @Input() currentTab: DriverLifecycleTabId = 'overview';
   @Input() quickNote = '';
   @Input() reviewerDecisionNote = '';
@@ -878,7 +874,7 @@ export class DriverDetailViewComponent {
       secondary: 'border-slate-200 bg-white text-slate-700 hover:border-zadna-primary/20 hover:text-zadna-primary hover:shadow-slate-200/80'
     };
 
-    return `inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[0.95rem] border px-4 py-3 text-[11px] font-extrabold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${tones[tone]}`;
+    return `inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.8rem] border text-[10px] font-extrabold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${tones[tone]}`;
   }
 
   getWorkflowActionNoteClasses(tone: DriverWorkflowActionTone): string {
@@ -890,7 +886,7 @@ export class DriverDetailViewComponent {
       secondary: 'border-slate-200 bg-white/85'
     };
 
-    return `rounded-[0.95rem] border px-3.5 py-3 ${tones[tone]}`;
+    return `rounded-[0.95rem] border bg-white/80 px-3.5 py-3 shadow-sm ${tones[tone]}`;
   }
 
   getInsightCardClasses(tone: 'primary' | 'success' | 'warning' | 'danger'): string {
