@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent {
   title = 'superadmin-panel';
+  private readonly materialSymbolsDescriptor = '400 24px "Material Symbols Outlined"';
 
   constructor(
     private translate: TranslateService,
@@ -38,20 +39,47 @@ export class AppComponent {
     });
   }
 
-  private async loadMaterialSymbolsFont() {
+  private async loadMaterialSymbolsFont(): Promise<void> {
+    const body = this.document.body;
+
+    if (!body) {
+      return;
+    }
+
     try {
-      // Add class to hide icons initially
-      this.renderer.addClass(this.document.body, 'icons-loading');
-      
-      // Wait for Material Symbols font to load
-      await (document as any).fonts.load('400 24px "Material Symbols Outlined"');
-      
-      // Remove hiding class once loaded
-      this.renderer.removeClass(this.document.body, 'icons-loading');
+      this.renderer.addClass(body, 'icons-loading');
+
+      const fontSet = this.document.fonts;
+      if (!fontSet) {
+        window.setTimeout(() => this.renderer.removeClass(body, 'icons-loading'), 1500);
+        return;
+      }
+
+      if (fontSet.check(this.materialSymbolsDescriptor)) {
+        this.renderer.removeClass(body, 'icons-loading');
+        return;
+      }
+
+      await Promise.race([
+        fontSet.load(this.materialSymbolsDescriptor),
+        fontSet.ready,
+        new Promise((resolve) => window.setTimeout(resolve, 4000))
+      ]);
+
+      if (fontSet.check(this.materialSymbolsDescriptor)) {
+        this.renderer.removeClass(body, 'icons-loading');
+        return;
+      }
+
+      // Fallback for browsers that finish loading slightly after the first readiness check.
+      window.setTimeout(() => {
+        if (fontSet.check(this.materialSymbolsDescriptor)) {
+          this.renderer.removeClass(body, 'icons-loading');
+        }
+      }, 1200);
     } catch (error) {
       console.warn('Material Symbols font loading failed:', error);
-      // Remove class anyway to show icons
-      this.renderer.removeClass(this.document.body, 'icons-loading');
+      window.setTimeout(() => this.renderer.removeClass(body, 'icons-loading'), 1500);
     }
   }
 

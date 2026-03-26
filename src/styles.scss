@@ -12,13 +12,16 @@
 @import '@fontsource/cairo/800.css';
 @import '@fontsource/cairo/900.css';
 
-/* Material Symbols Outlined - Local Package with Custom Font Face */
+/* Material Symbols Outlined - bundled local asset for consistent cross-browser rendering */
 @font-face {
   font-family: 'Material Symbols Outlined';
   font-style: normal;
   font-weight: 100 700;
-  font-display: optional;
-  src: url('../node_modules/material-symbols/material-symbols-outlined.woff2') format('woff2');
+  font-display: block;
+  src:
+    local('Material Symbols Outlined'),
+    local('MaterialSymbolsOutlined'),
+    url('/assets/fonts/material-symbols-outlined.woff2') format('woff2');
 }
 
 .material-symbols-outlined {
@@ -33,6 +36,7 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
+  speak: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
