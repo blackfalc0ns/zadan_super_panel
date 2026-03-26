@@ -1495,6 +1495,7 @@
             "NET_REVENUE": "Net revenue",
             "NET_REVENUE_DESC": "Total gross commercial value across the selected window.",
             "EXPOSURE_DESC": "Refunds and disputes currently putting revenue quality under pressure.",
+            "FORECAST_ACCURACY": "Forecast accuracy",
             "PEAK_PERIOD": "Peak exposure period",
             "GMV_LINE": "GMV",
             "REFUND_LINE": "Refund/dispute exposure"

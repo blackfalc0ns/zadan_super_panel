@@ -82,96 +82,94 @@
         </div>
       </section>
 
-      <section class="grid grid-cols-12 gap-4">
-        <article class="dashboard-shell-card relative col-span-12 overflow-hidden rounded-[1.6rem] p-6 lg:col-span-8">
-          <div class="pointer-events-none absolute inset-y-0 end-0 w-52 bg-gradient-to-l from-zadna-primary/10 to-transparent"></div>
-          <div class="pointer-events-none absolute -top-10 end-10 h-32 w-32 rounded-full bg-zadna-primary/10 blur-3xl"></div>
+      <section class="grid grid-cols-12 gap-3">
+        <article class="dashboard-shell-card dashboard-hero-primary relative col-span-12 overflow-hidden rounded-[1.45rem] p-5 lg:col-span-8">
+          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-zadna-primary/5 to-transparent"></div>
+          <div class="pointer-events-none absolute -top-10 end-10 h-28 w-28 rounded-full bg-zadna-primary/10 blur-3xl"></div>
 
-          <div class="relative flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
-            <div class="space-y-4">
-              <span class="inline-flex items-center gap-2 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">
-                <span class="material-symbols-outlined text-[15px]">space_dashboard</span>
-                {{ 'DASHBOARD.CONTROL_CENTER' | translate }}
-              </span>
-
-              <div>
-                <h1 class="text-2xl font-black tracking-tight text-zadna-primary md:text-[2rem]">
-                  {{ 'DASHBOARD.HELLO' | translate:{ name: userName } }}
-                </h1>
-                <p class="mt-2 max-w-2xl text-xs leading-7 text-slate-500">
-                  {{ 'DASHBOARD.HERO_SUCCESS' | translate:{ rate: vm.kpis[2].value } }}
-                </p>
-              </div>
-
-              <div class="flex flex-wrap gap-8">
-                <div class="flex flex-col">
-                  <span class="text-[10px] font-bold text-slate-400">{{ 'DASHBOARD.OVERVIEW.CONVERSION' | translate }}</span>
-                  <span class="mt-1 text-xl font-black text-slate-900">{{ getOverviewConversionRate() }}</span>
-                  <span class="text-[10px] font-medium text-emerald-600">+0.4%</span>
-                </div>
-                <div class="flex flex-col">
-                  <span class="text-[10px] font-bold text-slate-400">{{ 'DASHBOARD.OVERVIEW.RESPONSE_TIME' | translate }}</span>
-                  <span class="mt-1 text-xl font-black text-slate-900">{{ getOverviewResponseTime() }}</span>
-                  <span class="text-[10px] font-medium text-emerald-600">{{ vm.kpis[2].value }}</span>
-                </div>
-              </div>
+          <div class="relative flex h-full flex-col justify-between gap-5">
+            <div class="space-y-2 text-start">
+              <h1 class="text-[1.65rem] font-black tracking-tight text-zadna-primary md:text-[1.95rem]">
+                {{ 'DASHBOARD.HELLO' | translate:{ name: userName } }}
+              </h1>
+              <p class="max-w-xl text-[11px] leading-6 text-slate-500">
+                {{ 'DASHBOARD.HERO_SUCCESS' | translate:{ rate: vm.kpis[2].value } }}
+              </p>
             </div>
 
-            <div class="grid gap-3 sm:grid-cols-3 xl:w-[24rem] xl:grid-cols-1">
-              <div class="rounded-[1.15rem] border border-slate-200 bg-white/95 p-4 shadow-sm">
-                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.DIRECT_ORDERS' | translate }}</p>
-                <p class="mt-2 text-xl font-black text-slate-900">{{ vm.kpis[1].value }}</p>
-                <p class="mt-1 text-[11px] font-bold text-slate-500">{{ vm.kpis[1].labelKey | translate }}</p>
+            <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+              <div class="flex flex-wrap gap-6 xl:shrink-0">
+                <div class="flex flex-col">
+                  <span class="text-[9px] font-bold text-slate-400">{{ 'DASHBOARD.OVERVIEW.CONVERSION' | translate }}</span>
+                  <span class="mt-1 text-[1.55rem] font-black leading-none text-slate-900">{{ getOverviewConversionRate() }}</span>
+                  <span class="mt-1.5 text-[9px] font-medium text-emerald-600">+0.4%</span>
+                </div>
+
+                <div class="flex flex-col">
+                  <span class="text-[9px] font-bold text-slate-400">{{ 'DASHBOARD.OVERVIEW.RESPONSE_TIME' | translate }}</span>
+                  <span class="mt-1 text-[1.55rem] font-black leading-none text-slate-900">{{ getOverviewResponseTime() }}</span>
+                  <span class="mt-1.5 text-[9px] font-medium text-emerald-600">{{ vm.kpis[2].value }}</span>
+                </div>
               </div>
 
-              <div class="rounded-[1.15rem] border border-slate-200 bg-white/95 p-4 shadow-sm">
-                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.HIGH_RISK' | translate }}</p>
-                <p class="mt-2 text-xl font-black text-red-600">{{ getRiskLoadSummary(vm) }}</p>
-                <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DASHBOARD.SUMMARY.RISK_LOAD_HINT' | translate }}</p>
-              </div>
+              <div class="grid gap-2.5 sm:grid-cols-2 xl:min-w-[26rem] xl:grid-cols-3">
+                <div class="dashboard-hero-mini-card rounded-[1rem] p-3.5">
+                  <p class="text-[9px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.DIRECT_ORDERS' | translate }}</p>
+                  <p class="mt-2 text-[1.45rem] font-black leading-none text-zadna-primary">{{ vm.kpis[1].value }}</p>
+                  <p class="mt-1.5 text-[10px] font-bold text-slate-500">{{ vm.kpis[1].labelKey | translate }}</p>
+                </div>
 
-              <div class="rounded-[1.15rem] border border-slate-200 bg-white/95 p-4 shadow-sm">
-                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.PENDING_ACTIONS' | translate }}</p>
-                <p class="mt-2 text-xl font-black text-secondary">{{ vm.attentionItems.length }}</p>
-                <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DASHBOARD.SUMMARY.ACTIONS_OPEN_HINT' | translate }}</p>
+                <div class="dashboard-hero-mini-card rounded-[1rem] p-3.5">
+                  <p class="text-[9px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.HIGH_RISK' | translate }}</p>
+                  <p class="mt-2 text-[1.45rem] font-black leading-none text-amber-600">{{ getRiskLoadSummary(vm) }}</p>
+                  <p class="mt-1.5 text-[10px] font-bold text-slate-500">{{ 'DASHBOARD.SUMMARY.RISK_LOAD_HINT' | translate }}</p>
+                </div>
+
+                <div class="dashboard-hero-mini-card rounded-[1rem] p-3.5 sm:col-span-2 xl:col-span-1">
+                  <p class="text-[9px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.PENDING_ACTIONS' | translate }}</p>
+                  <p class="mt-2 text-[1.45rem] font-black leading-none text-secondary">{{ vm.attentionItems.length }}</p>
+                  <p class="mt-1.5 text-[10px] font-bold text-slate-500">{{ 'DASHBOARD.SUMMARY.ACTIONS_OPEN_HINT' | translate }}</p>
+                </div>
               </div>
             </div>
           </div>
         </article>
 
-        <aside class="col-span-12 rounded-[1.8rem] bg-slate-900 p-6 text-white shadow-sm lg:col-span-4">
-          <div class="flex h-full flex-col justify-between gap-6" *ngIf="vm.insights[0] as spotlightInsight; else noInsight">
+        <aside class="dashboard-insight-shell relative col-span-12 overflow-hidden rounded-[1.45rem] p-5 lg:col-span-4">
+          <div class="pointer-events-none absolute -top-6 start-6 h-24 w-24 rounded-full bg-cyan-200/30 blur-3xl"></div>
+
+          <div class="relative flex h-full flex-col justify-between gap-5" *ngIf="vm.insights[0] as spotlightInsight; else noInsight">
             <div>
-              <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200">
-                <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+              <div class="flex items-center gap-2 text-[12px] font-black text-zadna-primary">
+                <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
                 {{ 'DASHBOARD.INSIGHTS_TITLE' | translate }}
               </div>
 
-              <p class="mt-4 text-lg font-black leading-8 text-white">
-                {{ spotlightInsight.messageKey | translate: spotlightInsight.messageParams }}
+              <p class="mt-4 text-[11px] font-semibold italic leading-6 text-slate-600">
+                "{{ spotlightInsight.messageKey | translate: spotlightInsight.messageParams }}"
               </p>
 
-              <p class="mt-3 text-[12px] leading-6 text-white/65">
+              <p class="mt-4 text-[10px] font-bold text-slate-400">
                 {{ spotlightInsight.supportingMetric }}
               </p>
             </div>
 
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap items-center gap-2.5">
               <a
                 [routerLink]="spotlightInsight.route"
-                class="inline-flex h-10 items-center gap-2 rounded-[0.95rem] bg-white px-4 text-[11px] font-black text-slate-900 transition-all hover:bg-white/90">
+                class="inline-flex h-9 items-center gap-1.5 rounded-[0.85rem] bg-zadna-primary/15 px-3.5 text-[10px] font-black text-zadna-primary transition-all hover:bg-zadna-primary/20">
                 {{ spotlightInsight.actionLabelKey | translate }}
               </a>
               <button
                 type="button"
-                class="inline-flex h-10 items-center rounded-[0.95rem] border border-white/15 px-4 text-[11px] font-black text-white/80 transition-all hover:bg-white/10">
+                class="inline-flex h-9 items-center rounded-[0.85rem] px-1 text-[10px] font-black text-slate-500 transition-all hover:text-slate-700">
                 {{ 'DASHBOARD.ACTIONS.DISMISS' | translate }}
               </button>
             </div>
           </div>
 
           <ng-template #noInsight>
-            <div class="flex h-full items-center justify-center text-sm font-bold text-white/70">
+            <div class="relative flex h-full items-center justify-center text-sm font-bold text-slate-500">
               {{ 'DASHBOARD.INSIGHTS_DESC' | translate }}
             </div>
           </ng-template>
