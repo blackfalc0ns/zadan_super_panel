@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { CatalogService } from '../../../../core/services/catalog.service';
-import { Category } from '../../../../core/models/catalog.model';
+import { Category, MasterProduct } from '../../../../core/models/catalog.model';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
@@ -38,6 +38,7 @@ import { DeleteConfirmationModalComponent } from '../../../../shared/components/
 })
 export class CategoryDetailsComponent implements OnInit, OnDestroy {
   category: Category | null = null;
+  relatedProducts: MasterProduct[] = [];
   isLoading = true;
   activeLang = 'ar';
   isEditModalOpen = false;
@@ -114,11 +115,32 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     this.catalogService.getCategoryById(id).subscribe({
       next: (data) => {
         this.category = data;
+        this.loadCategoryProducts(id);
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Failed to load category:', err);
+        this.relatedProducts = [];
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadCategoryProducts(categoryId: string): void {
+    this.catalogService.getProducts(1, 6, undefined, categoryId).subscribe({
+      next: (response) => {
+        const items = Array.isArray(response?.items)
+          ? response.items
+          : Array.isArray(response?.data)
+            ? response.data
+            : Array.isArray(response)
+              ? response
+              : [];
+        this.relatedProducts = items;
+      },
+      error: (err) => {
+        console.error('Failed to load category products:', err);
+        this.relatedProducts = [];
       }
     });
   }

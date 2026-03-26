@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface LegalBankData {
   commercialRegister: string;
@@ -44,6 +44,13 @@ export class EditLegalBankModalComponent {
     { value: 'biweekly' },
     { value: 'monthly' }
   ];
+
+  constructor(private translate: TranslateService) {}
+
+  get isRTL(): boolean {
+    const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
+    return lang.startsWith('ar');
+  }
 
   onClose() {
     this.close.emit();

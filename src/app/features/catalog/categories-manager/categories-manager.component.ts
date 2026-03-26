@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { Category } from '../../../core/models/catalog.model';
 import { CategoryFormModalComponent } from '../shared/category-form-modal/category-form-modal.component';
@@ -83,6 +83,7 @@ export class CategoriesManagerComponent implements OnInit {
   Math = Math;
 
   constructor(
+    private readonly route: ActivatedRoute,
     private catalogService: CatalogService,
     public translate: TranslateService,
     private router: Router
@@ -100,7 +101,10 @@ export class CategoriesManagerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadHierarchy();
+    this.route.queryParams.subscribe((params) => {
+      this.searchTerm = params['search'] || '';
+      this.loadHierarchy();
+    });
   }
 
   loadHierarchy() {

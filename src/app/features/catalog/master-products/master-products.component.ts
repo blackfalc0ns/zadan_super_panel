@@ -79,6 +79,7 @@ export class MasterProductsComponent implements OnInit {
   searchTerm = '';
   searchSubject = new Subject<string>();
   categoryId: string | null = null;
+  brandId: string | null = null;
   categories: Category[] = [];
   isCategoryDropdownOpen = false;
   viewMode: 'table' | 'bento' = 'bento';
@@ -107,6 +108,9 @@ export class MasterProductsComponent implements OnInit {
     this.loadCategories();
     this.route.queryParams.subscribe(params => {
       this.categoryId = params['categoryId'] || null;
+      this.brandId = params['brandId'] || null;
+      this.searchTerm = params['search'] || '';
+      this.page = 1;
       this.loadProducts();
     });
   }
@@ -125,7 +129,13 @@ export class MasterProductsComponent implements OnInit {
 
   loadProducts() {
     this.isLoading = true;
-    this.catalogService.getProducts(this.page, this.pageSize, this.searchTerm, this.categoryId || undefined).subscribe({
+    this.catalogService.getProducts(
+      this.page,
+      this.pageSize,
+      this.searchTerm || undefined,
+      this.categoryId || undefined,
+      this.brandId || undefined
+    ).subscribe({
       next: (res: any) => {
         this.products = Array.isArray(res?.items) ? res.items : [];
         this.totalItems = typeof res?.totalCount === 'number' ? res.totalCount : this.products.length;
@@ -171,6 +181,11 @@ export class MasterProductsComponent implements OnInit {
     this.searchSubject.next(event.target.value);
   }
 
+  onSearchTermChange(term: string) {
+    this.currentPageReset();
+    this.searchSubject.next(term);
+  }
+
   changePage(newPage: number) {
     if (newPage < 1 || newPage > this.totalPages) return;
     this.page = newPage;
@@ -194,6 +209,10 @@ export class MasterProductsComponent implements OnInit {
     this.pageSize = view === 'bento' ? 8 : 10;
     this.page = 1;
     this.loadProducts();
+  }
+
+  private currentPageReset(): void {
+    this.page = 1;
   }
 
   private findCategoryById(categories: Category[], categoryId: string): Category | null {

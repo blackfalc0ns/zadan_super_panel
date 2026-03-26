@@ -5,19 +5,20 @@
   
   <!-- Modal Container -->
   <div class="bg-slate-50 dark:bg-slate-800 w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col relative z-50 animate-in zoom-in-95 slide-in-from-bottom-10 duration-500"
+       [attr.dir]="isRTL ? 'rtl' : 'ltr'"
        (click)="$event.stopPropagation()">
     
     <!-- Modal Header -->
-    <header class="flex items-center justify-between px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md sticky top-0 z-10">
-      <div class="flex items-center gap-4">
+    <header class="flex items-center justify-between gap-6 px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md sticky top-0 z-10">
+      <div class="flex flex-wrap items-center gap-4" [ngClass]="isRTL ? 'flex-row-reverse text-right' : 'text-left'">
         <div class="bg-primary/10 text-primary p-2.5 rounded-2xl border border-primary/20">
           <span class="material-symbols-outlined text-2xl">person</span>
         </div>
-        <div>
+        <div class="space-y-0.5">
           <h2 class="text-slate-900 dark:text-slate-100 text-xl font-black tracking-tight">{{ 'MODALS.OWNER_EDIT.TITLE' | translate }}</h2>
-          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{{ 'MODALS.OWNER_EDIT.SUBTITLE' | translate }}</p>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'MODALS.OWNER_EDIT.SUBTITLE' | translate }}</p>
         </div>
-        <span class="mr-4 px-3 py-1 text-[10px] font-black bg-emerald-50 text-emerald-600 rounded-full flex items-center gap-1.5 shadow-sm border border-emerald-100">
+        <span class="px-3 py-1 text-[10px] font-black bg-emerald-50 text-emerald-600 rounded-full flex items-center gap-1.5 shadow-sm border border-emerald-100">
           <span class="material-symbols-outlined text-[14px]">verified</span>
           {{ 'MODALS.OWNER_EDIT.VERIFIED' | translate }}
         </span>
@@ -39,7 +40,7 @@
           <div class="space-y-6">
             <!-- Full Name -->
             <div class="space-y-2.5">
-              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.FULL_NAME' | translate }}
               </label>
               <input type="text" 
@@ -50,7 +51,7 @@
 
             <!-- Nationality -->
             <div class="space-y-2.5">
-              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.NATIONALITY' | translate }}
               </label>
               <div class="relative group">
@@ -59,13 +60,13 @@
                         class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
                   <option *ngFor="let nat of nationalityOptions" [value]="nat">{{ nat | translate }}</option>
                 </select>
-                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform">expand_more</span>
+                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
               </div>
             </div>
 
             <!-- Phone -->
             <div class="space-y-2.5">
-              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.PHONE_NUMBER' | translate }}
               </label>
               <div class="flex gap-3">
@@ -76,15 +77,16 @@
                           dir="ltr">
                     <option *ngFor="let code of phoneCodeOptions" [value]="code">{{ code }}</option>
                   </select>
-                  <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform">expand_more</span>
+                  <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-3' : 'right-3'">expand_more</span>
                 </div>
                 <div class="relative flex-1 group">
                   <input type="tel" 
                          [(ngModel)]="ownerData.phone"
                          name="phone"
                          dir="ltr"
-                         class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl pl-12 pr-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-mono font-bold text-lg shadow-sm tracking-widest">
-                  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors">call</span>
+                         class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-mono font-bold text-lg shadow-sm tracking-widest"
+                         [ngClass]="isRTL ? 'pr-12 pl-6' : 'pl-12 pr-6'">
+                  <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors" [ngClass]="isRTL ? 'right-4' : 'left-4'">call</span>
                 </div>
               </div>
             </div>
@@ -94,7 +96,7 @@
           <div class="space-y-6">
             <!-- ID Number (Read-only) -->
             <div class="space-y-2.5">
-              <div class="flex items-center justify-between ml-1">
+              <div class="flex items-center justify-between" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest">
                   {{ 'MODALS.OWNER_EDIT.ID_NUMBER' | translate }}
                 </label>
@@ -112,7 +114,7 @@
 
             <!-- Email -->
             <div class="space-y-2.5">
-              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.EMAIL' | translate }}
               </label>
               <div class="relative group">
@@ -134,7 +136,7 @@
             
             <!-- Edit Reason -->
             <div class="space-y-2.5">
-              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.EDIT_REASON' | translate }}
               </label>
               <div class="relative group">
@@ -144,13 +146,13 @@
                   <option value="" disabled selected>{{ 'MODALS.OWNER_EDIT.SELECT_REASON' | translate }}</option>
                   <option *ngFor="let reason of reasonOptions" [value]="reason">{{ reason | translate }}</option>
                 </select>
-                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform">expand_more</span>
+                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
               </div>
             </div>
 
             <!-- Admin Notes -->
             <div class="space-y-2.5">
-              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+              <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.ADMIN_NOTES' | translate }}
               </label>
               <textarea [(ngModel)]="adminNotes"

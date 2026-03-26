@@ -55,6 +55,11 @@ export class PayoutsReviewModalComponent {
     this.translate.onLangChange.subscribe(() => this.rebuildTransactions());
   }
 
+  get isRTL(): boolean {
+    const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
+    return lang.startsWith('ar');
+  }
+
   onClose() {
     this.close.emit();
   }

@@ -38,6 +38,25 @@ export class ModalShellComponent {
     return `${base} ${this.headerClass}`.trim();
   }
 
+  get isRtl(): boolean {
+    return this.dir !== 'ltr';
+  }
+
+  get headerContentClasses(): string {
+    const base = 'flex min-w-0 flex-1 items-start gap-4';
+    return `${base} ${this.isRtl ? 'flex-row-reverse' : ''}`.trim();
+  }
+
+  get titleWrapperClasses(): string {
+    const base = 'min-w-0 flex-1';
+    return `${base} ${this.isRtl ? 'text-right' : 'text-left'}`.trim();
+  }
+
+  get titleRowClasses(): string {
+    const base = 'flex min-w-0 items-center gap-2';
+    return `${base} ${this.icon && this.isRtl ? 'flex-row-reverse' : ''}`.trim();
+  }
+
   get bodyClasses(): string {
     const base = 'modal-shell-body relative z-[1] flex-1 overflow-y-auto bg-white px-6 py-6';
     return `${base} ${this.bodyClass}`.trim();

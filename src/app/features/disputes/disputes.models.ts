@@ -22,6 +22,13 @@ export interface EvidenceItem {
   preview?: string;
 }
 
+export interface DisputeWorkflowContext {
+  productName?: string;
+  brandName?: string;
+  categoryName?: string;
+  sku?: string;
+}
+
 export interface DisputeRow {
   id: string;
   orderId: string;
@@ -44,6 +51,7 @@ export interface DisputeRow {
   merchantSummary: string;
   evidence: EvidenceItem[];
   timeline: TimelineItem[];
+  workflowContext?: DisputeWorkflowContext;
 }
 
 export interface RefundDecisionForm {

@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { Brand, Category, MasterProduct } from '../models/catalog.model';
 import { Driver } from '../models/driver';
 import { CustomerDetailRecord } from '../../features/customers/customers.models';
 import { buildDriverDetailRecord } from '../../features/drivers/drivers.mock';
 import { DriverDetailRecord } from '../../features/drivers/drivers.models';
+import { DisputeRow } from '../../features/disputes/disputes.models';
 import { getWorkflowStageKey } from '../../features/orders/orders.mock';
 import { OrderDetail } from '../../features/orders/orders.models';
 import { CustomersService } from './customers.service';
+import { DisputesService } from './disputes.service';
 import { DriverService } from './driver.service';
 import { OrdersService } from './orders.service';
 
@@ -402,6 +405,7 @@ const VENDOR_WORKFLOW_SEEDS: VendorWorkflowSeed[] = [
 export class WorkflowLinksService {
   constructor(
     private readonly customersService: CustomersService,
+    private readonly disputesService: DisputesService,
     private readonly driverService: DriverService,
     private readonly ordersService: OrdersService,
     private readonly translate: TranslateService
@@ -412,27 +416,12 @@ export class WorkflowLinksService {
       return [];
     }
 
-    const cards: WorkflowLinkCard[] = [];
-    const customer = this.findCustomerByOrderId(order.id);
-    const driver = this.driverService.findDriverByIdentity({
-      fullName: order.driverName,
-      phoneNumber: order.driverPhone
-    });
-    const vendor = this.findVendorByMerchantName(order.merchantName);
-
-    if (customer) {
-      cards.push(this.buildCustomerCard(customer));
-    }
-
-    if (driver) {
-      cards.push(this.buildDriverCard(driver));
-    }
-
-    if (vendor) {
-      cards.push(this.buildVendorCard(vendor));
-    }
-
-    return cards;
+    return this.dedupeCards(
+      this.buildOrderContextCards(order, {
+        includeOrder: false,
+        includeCatalog: true
+      })
+    );
   }
 
   getCustomerWorkflowLinks(customer: CustomerDetailRecord | null): WorkflowLinkCard[] {
@@ -440,28 +429,16 @@ export class WorkflowLinksService {
       return [];
     }
 
-    const cards: WorkflowLinkCard[] = [];
     const primaryOrder = this.findPrimaryOrderForCustomer(customer);
 
-    if (primaryOrder) {
-      cards.push(this.buildOrderCard(primaryOrder));
-
-      const driver = this.driverService.findDriverByIdentity({
-        fullName: primaryOrder.driverName,
-        phoneNumber: primaryOrder.driverPhone
-      });
-      const vendor = this.findVendorByMerchantName(primaryOrder.merchantName);
-
-      if (driver) {
-        cards.push(this.buildDriverCard(driver));
-      }
-
-      if (vendor) {
-        cards.push(this.buildVendorCard(vendor));
-      }
-    }
-
-    return cards;
+    return primaryOrder
+      ? this.dedupeCards(
+          this.buildOrderContextCards(primaryOrder, {
+            includeCustomer: false,
+            includeCatalog: true
+          })
+        )
+      : [];
   }
 
   getDriverWorkflowLinks(driver: Driver | null, driverDetail?: DriverDetailRecord | null): WorkflowLinkCard[] {
@@ -469,25 +446,16 @@ export class WorkflowLinksService {
       return [];
     }
 
-    const cards: WorkflowLinkCard[] = [];
     const activeOrder = this.findPrimaryOrderForDriver(driver);
     const detail = driverDetail ?? buildDriverDetailRecord(driver);
 
     if (activeOrder) {
-      cards.push(this.buildOrderCard(activeOrder));
-
-      const customer = this.findCustomerByOrderId(activeOrder.id);
-      const vendor = this.findVendorByMerchantName(activeOrder.merchantName);
-
-      if (customer) {
-        cards.push(this.buildCustomerCard(customer));
-      }
-
-      if (vendor) {
-        cards.push(this.buildVendorCard(vendor));
-      }
-
-      return cards;
+      return this.dedupeCards(
+        this.buildOrderContextCards(activeOrder, {
+          includeDriver: false,
+          includeCatalog: true
+        })
+      );
     }
 
     const fallbackVendor = detail.operations.taskAssignments
@@ -499,28 +467,147 @@ export class WorkflowLinksService {
 
   getVendorWorkflowLinks(vendorId: string | null): WorkflowLinkCard[] {
     const vendor = this.getVendorSnapshot(vendorId);
-    const cards: WorkflowLinkCard[] = [];
     const primaryOrder = vendor.linkedOrders[0];
 
-    if (primaryOrder) {
-      cards.push(this.buildOrderCard(primaryOrder));
+    return primaryOrder
+      ? this.dedupeCards(
+          this.buildOrderContextCards(primaryOrder, {
+            includeVendor: false,
+            includeCatalog: true
+          })
+        )
+      : [];
+  }
 
-      const customer = this.findCustomerByOrderId(primaryOrder.id);
-      const driver = this.driverService.findDriverByIdentity({
-        fullName: primaryOrder.driverName,
-        phoneNumber: primaryOrder.driverPhone
-      });
+  getProductWorkflowLinks(
+    product: MasterProduct | null,
+    context: {
+      brandName?: string;
+      categoryName?: string;
+      vendorIds?: string[];
+    } = {}
+  ): WorkflowLinkCard[] {
+    if (!product) {
+      return [];
+    }
 
-      if (customer) {
-        cards.push(this.buildCustomerCard(customer));
-      }
+    const cards: WorkflowLinkCard[] = [];
 
-      if (driver) {
-        cards.push(this.buildDriverCard(driver));
+    if (product.brandId && context.brandName) {
+      cards.push(this.buildBrandDetailCard(product.brandId, context.brandName));
+    }
+
+    if (product.categoryId && context.categoryName) {
+      cards.push(this.buildCategoryDetailCard(product.categoryId, context.categoryName));
+    }
+
+    for (const vendorId of context.vendorIds ?? []) {
+      cards.push(this.buildVendorCard(this.getVendorSnapshot(vendorId)));
+    }
+
+    const relatedOrder = this.findRelatedOrderForCatalog({
+      productNames: this.collectProductNames(product),
+      brandNames: context.brandName ? [context.brandName] : []
+    });
+
+    if (relatedOrder) {
+      cards.push(
+        ...this.buildOrderContextCards(relatedOrder, {
+          includeCatalog: false
+        })
+      );
+    }
+
+    return this.dedupeCards(cards);
+  }
+
+  getBrandWorkflowLinks(brand: Brand | null, products: MasterProduct[] = []): WorkflowLinkCard[] {
+    if (!brand) {
+      return [];
+    }
+
+    const cards: WorkflowLinkCard[] = [];
+    const leadProduct = products[0];
+
+    if (leadProduct) {
+      cards.push(this.buildProductDetailCard(leadProduct));
+      const categoryName = this.extractLocalizedField(leadProduct as unknown as Record<string, unknown>, 'categoryNameAr', 'categoryNameEn');
+      if (leadProduct.categoryId && categoryName) {
+        cards.push(this.buildCategoryDetailCard(leadProduct.categoryId, categoryName));
       }
     }
 
-    return cards;
+    const relatedOrder = this.findRelatedOrderForCatalog({
+      productNames: this.collectProductNames(...products),
+      brandNames: this.collectLocalizedNames(brand)
+    });
+
+    if (relatedOrder) {
+      cards.push(
+        ...this.buildOrderContextCards(relatedOrder, {
+          includeCatalog: false
+        })
+      );
+    }
+
+    return this.dedupeCards(cards);
+  }
+
+  getCategoryWorkflowLinks(category: Category | null, products: MasterProduct[] = []): WorkflowLinkCard[] {
+    if (!category) {
+      return [];
+    }
+
+    const cards: WorkflowLinkCard[] = [];
+    const leadProduct = products[0];
+
+    if (leadProduct) {
+      cards.push(this.buildProductDetailCard(leadProduct));
+
+      const brandName = this.extractLocalizedField(leadProduct as unknown as Record<string, unknown>, 'brandNameAr', 'brandNameEn');
+      if (leadProduct.brandId && brandName) {
+        cards.push(this.buildBrandDetailCard(leadProduct.brandId, brandName));
+      }
+    }
+
+    const relatedOrder = this.findRelatedOrderForCatalog({
+      productNames: this.collectProductNames(...products),
+      brandNames: this.collectRelatedBrandNames(products)
+    });
+
+    if (relatedOrder) {
+      cards.push(
+        ...this.buildOrderContextCards(relatedOrder, {
+          includeCatalog: false
+        })
+      );
+    }
+
+    return this.dedupeCards(cards);
+  }
+
+  getDisputeWorkflowLinks(dispute: DisputeRow | null): WorkflowLinkCard[] {
+    if (!dispute) {
+      return [];
+    }
+
+    const cards: WorkflowLinkCard[] = [];
+    const order = this.ordersService.getOrderSnapshotById(dispute.orderId);
+
+    if (order) {
+      cards.push(
+        ...this.buildOrderContextCards(order, {
+          includeDispute: false,
+          includeCatalog: true
+        })
+      );
+    }
+
+    if (dispute.workflowContext?.categoryName) {
+      cards.push(this.buildCategorySearchCard(dispute.workflowContext.categoryName));
+    }
+
+    return this.dedupeCards(cards);
   }
 
   getVendorSnapshot(vendorId: string | null): VendorWorkflowSnapshot {
@@ -615,6 +702,228 @@ export class WorkflowLinksService {
     };
   }
 
+  private buildDisputeCard(dispute: DisputeRow): WorkflowLinkCard {
+    return {
+      id: `dispute-${dispute.id}`,
+      entityLabel: this.translate.instant('WORKFLOW_LINKS.ENTITY.DISPUTE'),
+      title: dispute.id,
+      reference: dispute.orderId,
+      referenceDir: 'ltr',
+      subtitle: `${dispute.customerName} - ${dispute.merchantName}`,
+      contextLabel: this.localizeInline('مكتب النزاعات', 'Dispute Desk'),
+      statusLabel: this.getDisputeStatusLabel(dispute),
+      statusVariant: this.getDisputeVariant(dispute),
+      summary: dispute.reason,
+      nextStep: this.getDisputeNextStep(dispute),
+      routeCommands: ['/disputes'],
+      queryParams: { focus: dispute.id }
+    };
+  }
+
+  private buildProductDetailCard(product: MasterProduct): WorkflowLinkCard {
+    return {
+      id: `product-${product.id}`,
+      entityLabel: this.translate.instant('WORKFLOW_LINKS.ENTITY.PRODUCT'),
+      title: this.isArabic ? product.nameAr : product.nameEn,
+      reference: product.barcode || product.id,
+      referenceDir: 'ltr',
+      subtitle: this.localizeInline('سجل المنتج الرئيسي', 'Master product record'),
+      contextLabel: this.localizeInline('الكتالوج', 'Catalog'),
+      statusLabel: product.status,
+      statusVariant: this.getCatalogVariant(product.status),
+      summary: this.localizeInline(
+        'المنتج مرتبط بالكتالوج ويمكن تتبع الطلبات والكيانات التشغيلية المرتبطة به من نفس المسار.',
+        'This product is part of the catalog and can be traced to related operational entities.'
+      ),
+      nextStep: this.localizeInline(
+        'راجع علاقة المنتج بالطلبات المفتوحة والتجار النشطين قبل أي تعديل مؤثر.',
+        'Review open-order and vendor relationships before making impactful changes.'
+      ),
+      routeCommands: ['/catalog/products/view', product.id]
+    };
+  }
+
+  private buildBrandDetailCard(brandId: string, brandName: string): WorkflowLinkCard {
+    return {
+      id: `brand-${brandId}`,
+      entityLabel: this.translate.instant('WORKFLOW_LINKS.ENTITY.BRAND'),
+      title: brandName,
+      reference: brandId,
+      referenceDir: 'ltr',
+      subtitle: this.localizeInline('ملف العلامة التجارية', 'Brand profile'),
+      contextLabel: this.localizeInline('الكتالوج', 'Catalog'),
+      statusLabel: this.localizeInline('مرجع معتمد', 'Approved Reference'),
+      statusVariant: 'info',
+      summary: this.localizeInline(
+        'العلامة التجارية مرتبطة بسجلات المنتجات والتشغيل الحالية داخل نفس المسار.',
+        'The brand is connected to current product and operational records.'
+      ),
+      nextStep: this.localizeInline(
+        'راجع المنتجات التابعة لهذه العلامة قبل تحديثها أو إيقافها.',
+        'Review the linked products before editing or pausing this brand.'
+      ),
+      routeCommands: ['/catalog/brands/view', brandId]
+    };
+  }
+
+  private buildCategoryDetailCard(categoryId: string, categoryName: string): WorkflowLinkCard {
+    return {
+      id: `category-${categoryId}`,
+      entityLabel: this.translate.instant('WORKFLOW_LINKS.ENTITY.CATEGORY'),
+      title: categoryName,
+      reference: categoryId,
+      referenceDir: 'ltr',
+      subtitle: this.localizeInline('عقدة تصنيف تشغيلية', 'Operational category node'),
+      contextLabel: this.localizeInline('الكتالوج', 'Catalog'),
+      statusLabel: this.localizeInline('تصنيف فعال', 'Active Taxonomy'),
+      statusVariant: 'neutral',
+      summary: this.localizeInline(
+        'هذا التصنيف يحدد مكان المنتجات ضمن هيكل الكتالوج ومسار الربط التشغيلي.',
+        'This category anchors products inside the catalog and operational linking flow.'
+      ),
+      nextStep: this.localizeInline(
+        'راجع المنتجات التابعة ثم تحقق من أي طلبات أو نزاعات متأثرة بهذا التصنيف.',
+        'Review linked products, then verify any orders or disputes affected by this category.'
+      ),
+      routeCommands: ['/catalog/categories', categoryId]
+    };
+  }
+
+  private buildProductSearchCard(productName: string, brandName?: string, sku?: string): WorkflowLinkCard {
+    return {
+      id: `product-search-${this.normalizeName(productName)}-${this.normalizeName(sku)}`,
+      entityLabel: this.translate.instant('WORKFLOW_LINKS.ENTITY.PRODUCT'),
+      title: productName,
+      reference: sku,
+      referenceDir: 'ltr',
+      subtitle: brandName,
+      contextLabel: this.localizeInline('طلب/نزاع مرتبط', 'Linked Demand'),
+      statusLabel: this.localizeInline('عرض مرتبط', 'Linked Listing'),
+      statusVariant: 'processing',
+      summary: this.localizeInline(
+        'تم رصد هذا المنتج داخل سجل تشغيلي أو نزاع ويُنصح بمراجعته من الكتالوج.',
+        'This product was detected in an operational record or dispute and should be reviewed in the catalog.'
+      ),
+      nextStep: this.localizeInline(
+        'افتح قائمة المنتجات المفلترة لمراجعة بياناته وسعره وصوره ووحدته.',
+        'Open the filtered product list to review its data, pricing, imagery, and unit.'
+      ),
+      routeCommands: ['/catalog/products'],
+      queryParams: { search: productName }
+    };
+  }
+
+  private buildBrandSearchCard(brandName: string, productName?: string): WorkflowLinkCard {
+    return {
+      id: `brand-search-${this.normalizeName(brandName)}`,
+      entityLabel: this.translate.instant('WORKFLOW_LINKS.ENTITY.BRAND'),
+      title: brandName,
+      subtitle: productName,
+      contextLabel: this.localizeInline('مرجع الطلب', 'Order Reference'),
+      statusLabel: this.localizeInline('عرض مرتبط', 'Linked Listing'),
+      statusVariant: 'info',
+      summary: this.localizeInline(
+        'هذه العلامة ظهرت داخل سياق تشغيلي وترتبط بمنتجات تحتاج متابعة داخل الكتالوج.',
+        'This brand appears in an operational context and links to products that need catalog follow-up.'
+      ),
+      nextStep: this.localizeInline(
+        'افتح قائمة العلامات المفلترة لمراجعة حالة العلامة والمنتجات التابعة لها.',
+        'Open the filtered brands list to review the brand and its linked products.'
+      ),
+      routeCommands: ['/catalog/brands'],
+      queryParams: { search: brandName }
+    };
+  }
+
+  private buildCategorySearchCard(categoryName: string): WorkflowLinkCard {
+    return {
+      id: `category-search-${this.normalizeName(categoryName)}`,
+      entityLabel: this.translate.instant('WORKFLOW_LINKS.ENTITY.CATEGORY'),
+      title: categoryName,
+      contextLabel: this.localizeInline('نزاع مرتبط', 'Linked Dispute'),
+      statusLabel: this.localizeInline('مرجع تصنيف', 'Category Reference'),
+      statusVariant: 'neutral',
+      summary: this.localizeInline(
+        'التصنيف مرتبط بهذه الحالة ويستحق مراجعة سريعة من هيكل الكتالوج.',
+        'This category is associated with the current case and deserves a quick catalog review.'
+      ),
+      nextStep: this.localizeInline(
+        'افتح قائمة التصنيفات المفلترة لمراجعة الهيكل والمنتجات التابعة.',
+        'Open the filtered categories list to review the hierarchy and linked products.'
+      ),
+      routeCommands: ['/catalog/categories'],
+      queryParams: { search: categoryName }
+    };
+  }
+
+  private buildOrderContextCards(
+    order: OrderDetail,
+    options: {
+      includeOrder?: boolean;
+      includeCustomer?: boolean;
+      includeDriver?: boolean;
+      includeVendor?: boolean;
+      includeDispute?: boolean;
+      includeCatalog?: boolean;
+    } = {}
+  ): WorkflowLinkCard[] {
+    const cards: WorkflowLinkCard[] = [];
+    const includeOrder = options.includeOrder ?? true;
+    const includeCustomer = options.includeCustomer ?? true;
+    const includeDriver = options.includeDriver ?? true;
+    const includeVendor = options.includeVendor ?? true;
+    const includeDispute = options.includeDispute ?? true;
+    const includeCatalog = options.includeCatalog ?? false;
+
+    if (includeOrder) {
+      cards.push(this.buildOrderCard(order));
+    }
+
+    if (includeCustomer) {
+      const customer = this.findCustomerByOrderId(order.id);
+      if (customer) {
+        cards.push(this.buildCustomerCard(customer));
+      }
+    }
+
+    if (includeDriver) {
+      const driver = this.driverService.findDriverByIdentity({
+        fullName: order.driverName,
+        phoneNumber: order.driverPhone
+      });
+      if (driver) {
+        cards.push(this.buildDriverCard(driver));
+      }
+    }
+
+    if (includeVendor) {
+      const vendor = this.findVendorByMerchantName(order.merchantName);
+      if (vendor) {
+        cards.push(this.buildVendorCard(vendor));
+      }
+    }
+
+    if (includeDispute) {
+      const dispute = this.disputesService.findPrimaryDisputeByOrderId(order.id);
+      if (dispute) {
+        cards.push(this.buildDisputeCard(dispute));
+      }
+    }
+
+    if (includeCatalog) {
+      const primaryItem = order.items[0];
+      if (primaryItem?.name) {
+        cards.push(this.buildProductSearchCard(primaryItem.name, primaryItem.brand, primaryItem.sku));
+      }
+
+      if (primaryItem?.brand) {
+        cards.push(this.buildBrandSearchCard(primaryItem.brand, primaryItem.name));
+      }
+    }
+
+    return cards;
+  }
+
   private findCustomerByOrderId(orderId: string): CustomerDetailRecord | undefined {
     return this.customersService
       .getCustomers()
@@ -678,6 +987,143 @@ export class WorkflowLinksService {
       );
   }
 
+  private findRelatedOrderForCatalog(criteria: { productNames?: string[]; brandNames?: string[] }): OrderDetail | undefined {
+    const productNames = (criteria.productNames ?? []).filter(Boolean);
+    const brandNames = (criteria.brandNames ?? []).filter(Boolean);
+
+    if (!productNames.length && !brandNames.length) {
+      return undefined;
+    }
+
+    return this.ordersService
+      .getOrdersSnapshot()
+      .find((order) =>
+        order.items.some((item) =>
+          productNames.some((name) => this.namesLooselyMatch(item.name, name))
+          || brandNames.some((name) => this.namesLooselyMatch(item.brand, name))
+        )
+      );
+  }
+
+  private collectProductNames(...products: MasterProduct[]): string[] {
+    return products.flatMap((product) => this.collectLocalizedNames(product));
+  }
+
+  private collectLocalizedNames(entity: { nameAr?: string; nameEn?: string }): string[] {
+    return [entity.nameAr, entity.nameEn].filter((value): value is string => Boolean(value?.trim()));
+  }
+
+  private collectRelatedBrandNames(products: MasterProduct[]): string[] {
+    return products
+      .map((product) => this.extractLocalizedField(product as unknown as Record<string, unknown>, 'brandNameAr', 'brandNameEn'))
+      .filter((value): value is string => Boolean(value));
+  }
+
+  private extractLocalizedField(
+    source: Record<string, unknown>,
+    arabicKey: string,
+    englishKey: string
+  ): string | undefined {
+    const arabicValue = typeof source[arabicKey] === 'string' ? source[arabicKey] as string : '';
+    const englishValue = typeof source[englishKey] === 'string' ? source[englishKey] as string : '';
+    return this.isArabic ? arabicValue || englishValue || undefined : englishValue || arabicValue || undefined;
+  }
+
+  private namesLooselyMatch(left: string | null | undefined, right: string | null | undefined): boolean {
+    const normalizedLeft = this.normalizeName(left);
+    const normalizedRight = this.normalizeName(right);
+
+    if (!normalizedLeft || !normalizedRight) {
+      return false;
+    }
+
+    return normalizedLeft === normalizedRight
+      || normalizedLeft.includes(normalizedRight)
+      || normalizedRight.includes(normalizedLeft);
+  }
+
+  private getDisputeVariant(dispute: DisputeRow): WorkflowLinkVariant {
+    switch (dispute.status) {
+      case 'resolved':
+        return 'success';
+      case 'merchant':
+        return 'paused';
+      case 'review':
+        return dispute.priority === 'critical' ? 'high-risk' : 'warning';
+      case 'open':
+      default:
+        return dispute.priority === 'critical' ? 'high-risk' : 'danger';
+    }
+  }
+
+  private getDisputeStatusLabel(dispute: DisputeRow): string {
+    switch (dispute.status) {
+      case 'resolved':
+        return this.localizeInline('مغلق', 'Resolved');
+      case 'merchant':
+        return this.localizeInline('بانتظار التاجر', 'Waiting on Merchant');
+      case 'review':
+        return this.localizeInline('قيد المراجعة', 'Under Review');
+      case 'open':
+      default:
+        return this.localizeInline('نزاع مفتوح', 'Open Dispute');
+    }
+  }
+
+  private getDisputeNextStep(dispute: DisputeRow): string {
+    switch (dispute.status) {
+      case 'resolved':
+        return this.localizeInline(
+          'راجع الإغلاق النهائي ثم أرشف الحالة إن لم توجد متابعة مالية مفتوحة.',
+          'Review the final closure, then archive the case if no finance follow-up remains open.'
+        );
+      case 'merchant':
+        return this.localizeInline(
+          'تابع رد التاجر وأغلق المسار التشغيلي أو المالي حسب النتيجة.',
+          'Follow up on the merchant response and close the operational or finance track accordingly.'
+        );
+      case 'review':
+        return this.localizeInline(
+          'استكمل التحقق من الأدلة واربط القرار النهائي مع المالية أو الدعم.',
+          'Finish evidence review and align the final decision with finance or support.'
+        );
+      case 'open':
+      default:
+        return this.localizeInline(
+          'ابدأ التحقق من الأطراف المرتبطة ثم حدد جهة التصعيد المناسبة.',
+          'Start validating the involved parties, then route the case to the correct escalation desk.'
+        );
+    }
+  }
+
+  private getCatalogVariant(status: MasterProduct['status'] | string | undefined): WorkflowLinkVariant {
+    switch (status) {
+      case 'Active':
+        return 'success';
+      case 'Draft':
+        return 'warning';
+      case 'Inactive':
+        return 'paused';
+      case 'Discontinued':
+        return 'danger';
+      default:
+        return 'neutral';
+    }
+  }
+
+  private dedupeCards(cards: WorkflowLinkCard[]): WorkflowLinkCard[] {
+    const seen = new Set<string>();
+
+    return cards.filter((card) => {
+      if (seen.has(card.id)) {
+        return false;
+      }
+
+      seen.add(card.id);
+      return true;
+    });
+  }
+
   private getOrderVariant(order: OrderDetail): WorkflowLinkVariant {
     if (order.hasActiveIssue || order.operationalCase?.status === 'OPEN') {
       return 'warning';
@@ -726,6 +1172,10 @@ export class WorkflowLinksService {
 
   private localize(text: LocalizedText): string {
     return this.isArabic ? text.ar : text.en;
+  }
+
+  private localizeInline(ar: string, en: string): string {
+    return this.isArabic ? ar : en;
   }
 
   private get isArabic(): boolean {

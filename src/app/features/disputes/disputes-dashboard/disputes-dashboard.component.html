@@ -304,6 +304,12 @@
           </div>
         </div>
 
+        <app-workflow-links-panel
+          [cards]="linkedWorkflowCards"
+          titleKey="WORKFLOW_LINKS.DISPUTE_TITLE"
+          subtitleKey="WORKFLOW_LINKS.DISPUTE_SUBTITLE">
+        </app-workflow-links-panel>
+
         <div class="premium-glass-light rounded-[2rem] border border-white/70 p-5">
           <div class="flex items-center justify-between">
           <h3 class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'DISPUTES_DASHBOARD.DRAWER.EVIDENCE' | translate }}</h3>

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface CommercialRegisterData {
   crNumber: string;
@@ -37,6 +37,13 @@ export class CrViewerModalComponent {
   @Output() verifySource = new EventEmitter<void>();
 
   zoomLevel = 100;
+
+  constructor(private translate: TranslateService) {}
+
+  get isRTL(): boolean {
+    const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
+    return lang.startsWith('ar');
+  }
 
   onClose() {
     this.close.emit();

@@ -7,18 +7,18 @@
     [class]="panelClasses"
     (click)="$event.stopPropagation()">
     <header [class]="headerClasses">
-      <div class="flex min-w-0 flex-1 items-start gap-4">
+      <div [class]="headerContentClasses">
         <ng-content select="[header-prefix]"></ng-content>
 
-        <div class="min-w-0 flex-1 text-right">
-          <div class="flex items-center gap-2" [class.justify-end]="!icon">
+        <div [class]="titleWrapperClasses">
+          <div [class]="titleRowClasses">
             <span *ngIf="icon" class="material-symbols-outlined text-[22px] text-zadna-primary">{{ icon }}</span>
-            <h2 [class]="titleClass">
+            <h2 class="min-w-0" [ngClass]="titleClass">
               {{ shouldTranslate ? (title | translate) : title }}
             </h2>
           </div>
 
-          <p *ngIf="subtitle" class="mt-1" [class]="subtitleClass">
+          <p *ngIf="subtitle" class="mt-1" [ngClass]="subtitleClass">
             {{ shouldTranslate ? (subtitle | translate) : subtitle }}
           </p>
 

@@ -5,24 +5,25 @@
   
   <!-- Modal Container -->
   <div class="bg-slate-50 dark:bg-slate-800 w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col relative z-50 animate-in zoom-in-95 slide-in-from-bottom-10 duration-500"
+       [attr.dir]="isRTL ? 'rtl' : 'ltr'"
        (click)="$event.stopPropagation()">
     
     <!-- Modal Header -->
-    <header class="flex items-center justify-between px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md sticky top-0 z-10">
-      <div class="flex items-center gap-6 flex-1">
-        <button (click)="onClose()" 
-                class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-          <span class="material-symbols-outlined text-[24px]">close</span>
-        </button>
-        <div class="flex flex-col gap-0.5">
+    <header class="flex items-center justify-between gap-6 px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md sticky top-0 z-10">
+      <div class="flex min-w-0 flex-1 items-center gap-4" [ngClass]="isRTL ? 'flex-row-reverse text-right' : 'text-left'">
+        <div class="flex min-w-0 flex-col gap-0.5">
           <h2 class="text-slate-900 dark:text-slate-100 text-xl font-black tracking-tight">{{ 'MODALS.STORE_EDIT.TITLE' | translate }}</h2>
           <p class="text-xs font-bold text-slate-500 dark:text-slate-400 capitalize">{{ 'MODALS.STORE_EDIT.SUBTITLE' | translate }}</p>
         </div>
+        <div class="flex h-9 shrink-0 items-center gap-2.5 rounded-full bg-amber-50 dark:bg-amber-900/10 px-4 border border-amber-200 dark:border-amber-900/30">
+          <span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] animate-pulse"></span>
+          <p class="text-amber-700 dark:text-amber-400 text-[10px] font-black uppercase tracking-wider">{{ 'MODALS.STORE_EDIT.PENDING_REVIEW' | translate }}</p>
+        </div>
       </div>
-      <div class="flex h-9 items-center gap-2.5 rounded-full bg-amber-50 dark:bg-amber-900/10 px-4 border border-amber-200 dark:border-amber-900/30">
-        <span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] animate-pulse"></span>
-        <p class="text-amber-700 dark:text-amber-400 text-[10px] font-black uppercase tracking-wider">{{ 'MODALS.STORE_EDIT.PENDING_REVIEW' | translate }}</p>
-      </div>
+      <button (click)="onClose()" 
+              class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+        <span class="material-symbols-outlined text-[24px]">close</span>
+      </button>
     </header>
 
     <!-- Modal Body -->
@@ -33,7 +34,7 @@
         
         <!-- Store Name -->
         <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.STORE_NAME' | translate }}
           </label>
           <input type="text" 
@@ -45,7 +46,7 @@
 
         <!-- Activity Type -->
         <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.ACTIVITY_TYPE' | translate }}
           </label>
           <div class="relative group">
@@ -55,13 +56,13 @@
               <option value="">{{ 'MODALS.STORE_EDIT.SELECT_ACTIVITY' | translate }}</option>
               <option *ngFor="let activity of activityTypeOptions" [value]="activity.value">{{ activity.label | translate }}</option>
             </select>
-            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform">expand_more</span>
+            <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
           </div>
         </div>
 
         <!-- City -->
         <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.CITY' | translate }}
           </label>
           <div class="relative group">
@@ -69,14 +70,15 @@
                    [(ngModel)]="storeData.city"
                    name="city"
                    [placeholder]="'MODALS.STORE_EDIT.CITY_PLACEHOLDER' | translate"
-                   class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl pl-12 pr-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors">search</span>
+                   class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm"
+                   [ngClass]="isRTL ? 'pr-12 pl-6 text-right' : 'pl-12 pr-6 text-left'">
+            <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors" [ngClass]="isRTL ? 'right-4' : 'left-4'">search</span>
           </div>
         </div>
 
         <!-- National Address -->
         <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.ADDRESS' | translate }}
           </label>
           <input type="text" 
@@ -88,22 +90,23 @@
 
         <!-- CR Number -->
         <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.CR_NUMBER' | translate }}
           </label>
           <div class="relative group">
             <input type="text" 
                    [(ngModel)]="storeData.crNumber"
                    name="crNumber"
-                   class="w-full h-14 bg-white dark:bg-slate-700/50 border border-red-200 dark:border-red-900/30 rounded-2xl pl-12 pr-6 focus:ring-4 focus:ring-red-500/5 focus:border-red-400 outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-red-500 text-xl group-focus-within:scale-110 transition-transform">error</span>
+                   class="w-full h-14 bg-white dark:bg-slate-700/50 border border-red-200 dark:border-red-900/30 rounded-2xl focus:ring-4 focus:ring-red-500/5 focus:border-red-400 outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm"
+                   [ngClass]="isRTL ? 'pr-12 pl-6 text-right' : 'pl-12 pr-6 text-left'">
+            <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-red-500 text-xl group-focus-within:scale-110 transition-transform" [ngClass]="isRTL ? 'right-4' : 'left-4'">error</span>
           </div>
-          <p class="text-[10px] text-red-500 dark:text-red-400 font-black uppercase tracking-wider ml-1">{{ 'MODALS.STORE_EDIT.CR_VALIDATION_ERROR' | translate }}</p>
+          <p class="text-[10px] text-red-500 dark:text-red-400 font-black uppercase tracking-wider" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.STORE_EDIT.CR_VALIDATION_ERROR' | translate }}</p>
         </div>
 
         <!-- Registration Date (Readonly) -->
         <div class="space-y-2.5">
-          <label class="text-slate-400 dark:text-slate-500 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-400 dark:text-slate-500 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.REG_DATE' | translate }}
           </label>
           <input type="text" 
@@ -115,7 +118,7 @@
 
         <!-- Short Description (Spans 2 columns) -->
         <div class="md:col-span-2 space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.DESCRIPTION' | translate }}
           </label>
           <textarea [(ngModel)]="storeData.description"
@@ -135,7 +138,7 @@
           <h3 class="text-slate-900 dark:text-slate-100 text-base font-black tracking-tight">{{ 'MODALS.STORE_EDIT.ADMIN_NOTES_TITLE' | translate }}</h3>
         </div>
         <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest ml-1">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.EDIT_REASON' | translate }}
           </label>
           <input type="text" 

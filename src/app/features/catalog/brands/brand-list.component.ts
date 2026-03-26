@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { Brand } from '../../../core/models/catalog.model';
 import { BrandFormModalComponent } from '../shared/brand-form-modal/brand-form-modal.component';
@@ -55,6 +55,7 @@ export class BrandListComponent implements OnInit {
   }
 
   constructor(
+    private readonly route: ActivatedRoute,
     private catalogService: CatalogService,
     public translate: TranslateService
   ) {
@@ -68,7 +69,11 @@ export class BrandListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadBrands();
+    this.route.queryParams.subscribe((params) => {
+      this.searchTerm = params['search'] || '';
+      this.currentPage = 1;
+      this.loadBrands();
+    });
   }
 
   loadBrands(): void {
@@ -117,6 +122,11 @@ export class BrandListComponent implements OnInit {
   onSearch(event: any): void {
     this.currentPage = 1; // Reset to first page on search
     this.searchSubject.next(event.target.value);
+  }
+
+  onSearchTermChange(term: string): void {
+    this.currentPage = 1;
+    this.searchSubject.next(term);
   }
 
   toggleInactive(): void {

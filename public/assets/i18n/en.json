@@ -98,11 +98,19 @@
     "WORKFLOW_LINKS": {
         "TITLE": "Related Workflow",
         "SUBTITLE": "Linked operational records across orders, customers, drivers, and vendors.",
+        "CATALOG_TITLE": "Catalog Workflow",
+        "CATALOG_SUBTITLE": "Connected catalog references across products, brands, categories, orders, vendors, and disputes.",
+        "DISPUTE_TITLE": "Case Workflow",
+        "DISPUTE_SUBTITLE": "Trace the dispute across order execution, customer impact, merchant follow-up, and catalog context.",
         "ENTITY": {
             "ORDER": "Order",
             "CUSTOMER": "Customer",
             "DRIVER": "Driver",
-            "VENDOR": "Vendor"
+            "VENDOR": "Vendor",
+            "PRODUCT": "Product",
+            "BRAND": "Brand",
+            "CATEGORY": "Category",
+            "DISPUTE": "Dispute"
         },
         "CURRENT_STATE": "Current State",
         "NEXT_STEP": "Next Step",

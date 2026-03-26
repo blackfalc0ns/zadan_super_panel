@@ -54,6 +54,11 @@ export class PaymentDetailModalComponent {
 
   constructor(private translate: TranslateService) {}
 
+  get isRTL(): boolean {
+    const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
+    return lang.startsWith('ar');
+  }
+
   onClose() {
     this.close.emit();
   }

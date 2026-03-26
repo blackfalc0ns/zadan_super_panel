@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DisputesService } from '../../../core/services/disputes.service';
+import { WorkflowLinkCard, WorkflowLinksService } from '../../../core/services/workflow-links.service';
 import { BulkAction, DataTableComponent, TableAction, TableColumn } from '../../../shared/components/ui/data-table/data-table.component';
 import { KPICard, KpiCardsComponent } from '../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
+import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
+import { WorkflowLinksPanelComponent } from '../../../shared/components/ui/workflow-links-panel/workflow-links-panel.component';
 import { DisputeApprovalModalComponent } from '../components/dispute-approval-modal/dispute-approval-modal.component';
 import { DisputeEscalationModalComponent } from '../components/dispute-escalation-modal/dispute-escalation-modal.component';
 import { DisputeRejectionModalComponent } from '../components/dispute-rejection-modal/dispute-rejection-modal.component';
 import { DisputeRequestInfoModalComponent } from '../components/dispute-request-info-modal/dispute-request-info-modal.component';
 import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel, TimelineItem } from '../disputes.models';
-import { AppPageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
-import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-disputes-dashboard',
@@ -25,6 +29,7 @@ import { StatusPillComponent, StatusPillVariant } from '../../../shared/componen
     AppPaginationComponent,
     AppPageHeaderComponent,
     StatusPillComponent,
+    WorkflowLinksPanelComponent,
     DisputeApprovalModalComponent,
     DisputeEscalationModalComponent,
     DisputeRejectionModalComponent,
@@ -34,153 +39,8 @@ import { StatusPillComponent, StatusPillVariant } from '../../../shared/componen
   styleUrl: './disputes-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DisputesDashboardComponent {
-  readonly disputes: DisputeRow[] = [
-    {
-      id: 'DIS-9902',
-      orderId: 'ORD-44120',
-      customerName: 'أحمد محمد',
-      customerEmail: 'premium@email.com',
-      customerInitials: 'أم',
-      merchantName: 'متجر الأناقة',
-      type: 'نزاع مالي',
-      reason: 'المنتج لم يصل بعد 5 أيام رغم تأكيد الشحن.',
-      amount: 1240,
-      status: 'review',
-      priority: 'critical',
-      owner: 'سارة فهد',
-      risk: 'high',
-      createdAt: 'منذ 12 دقيقة',
-      sla: '4 ساعات متبقية',
-      note: 'العميل من شريحة VIP وتم رصد شكوى مشابهة للتاجر خلال آخر 14 يوم.',
-      paymentMask: '**** 4421',
-      customerSummary: 'عميل موثق • 14 طلب ناجح • معدل استرجاع منخفض',
-      merchantSummary: 'نسبة نزاعات 0.2% • تقييم 4.8 • الرياض',
-      evidence: [
-        {
-          type: 'image',
-          label: 'صورة المنتج',
-          preview: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80'
-        },
-        {
-          type: 'pdf',
-          label: 'INVOICE.PDF'
-        }
-      ],
-      timeline: [
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.DIS9902.OPENED_BY_CUSTOMER', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_1024_AM', tone: 'primary' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.DIS9902.ASSIGNED_TO_SARAH', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_1115_AM', tone: 'muted' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.DIS9902.ESCALATED_CRITICAL', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_22_MIN_AGO', tone: 'warning' }
-      ]
-    },
-    {
-      id: 'REF-8812',
-      orderId: 'ORD-43221',
-      customerName: 'هند العتيبي',
-      customerEmail: 'hind@domain.sa',
-      customerInitials: 'ها',
-      merchantName: 'إلكترونيات الرياض',
-      type: 'طلب استرجاع',
-      reason: 'خلل مصنعي في الشاشة بعد أول تشغيل.',
-      amount: 4599,
-      status: 'merchant',
-      priority: 'high',
-      owner: 'بانتظار التاجر',
-      risk: 'high',
-      createdAt: 'منذ 36 دقيقة',
-      sla: '11 ساعة متبقية',
-      note: 'التاجر ضمن قائمة المراقبة العالية، مع 3 قضايا مماثلة هذا الشهر.',
-      paymentMask: '**** 9912',
-      customerSummary: 'عميلة مميزة • 8 طلبات مكتملة • لم تسجل نزاعات سابقة',
-      merchantSummary: 'تصنيف مخاطر مرتفع • جدة • تأخير استجابة متكرر',
-      evidence: [
-        {
-          type: 'image',
-          label: 'صورة التلف',
-          preview: 'https://images.unsplash.com/photo-1517336714739-489689fd1ca8?auto=format&fit=crop&w=900&q=80'
-        },
-        {
-          type: 'pdf',
-          label: 'WARRANTY.PDF'
-        }
-      ],
-      timeline: [
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.REF8812.REFUND_REQUEST_RECEIVED', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_0910_AM', tone: 'primary' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.REF8812.EVIDENCE_SENT_TO_MERCHANT', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_0921_AM', tone: 'muted' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.REF8812.WAITING_FOR_MERCHANT', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_NOW', tone: 'warning' }
-      ]
-    },
-    {
-      id: 'DIS-7721',
-      orderId: 'ORD-42110',
-      customerName: 'محمد سلطان',
-      customerEmail: 'm.sultan@corp.com',
-      customerInitials: 'مس',
-      merchantName: 'أثاث البيت',
-      type: 'نزاع مالي',
-      reason: 'لم يتم تطبيق كود الخصم على الفاتورة النهائية.',
-      amount: 150,
-      status: 'open',
-      priority: 'medium',
-      owner: 'عبدالله خالد',
-      risk: 'medium',
-      createdAt: 'منذ ساعة',
-      sla: '19 ساعة متبقية',
-      note: 'القضية منخفضة القيمة لكن مرتبطة بحملة خصومات موسمية تؤثر على عدة طلبات.',
-      paymentMask: '**** 1204',
-      customerSummary: 'حساب أعمال • 23 طلب ناجح • حساسية عالية للفواتير',
-      merchantSummary: 'نزاعات منخفضة • الدمام • أداء مستقر',
-      evidence: [
-        {
-          type: 'image',
-          label: 'لقطة من الفاتورة',
-          preview: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=80'
-        },
-        {
-          type: 'pdf',
-          label: 'DISCOUNT-RULES.PDF'
-        }
-      ],
-      timeline: [
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.DIS7721.DISPUTE_REGISTERED', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_0842_AM', tone: 'primary' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.DIS7721.INVOICE_REVIEWED', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_0905_AM', tone: 'muted' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.DIS7721.COUPON_MATCH_REQUIRED', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_0916_AM', tone: 'warning' }
-      ]
-    },
-    {
-      id: 'REF-6404',
-      orderId: 'ORD-40188',
-      customerName: 'نوف الشمري',
-      customerEmail: 'nouf@studio.sa',
-      customerInitials: 'نش',
-      merchantName: 'مذاق المدينة',
-      type: 'استرجاع جزئي',
-      reason: 'تم تسليم طلب ناقص مع عنصر مفقود.',
-      amount: 86,
-      status: 'resolved',
-      priority: 'low',
-      owner: 'تم الإغلاق',
-      risk: 'low',
-      createdAt: 'أمس',
-      sla: 'مغلق',
-      note: 'الحالة أغلقت مع استرداد جزئي وإشعار للطرفين.',
-      paymentMask: '**** 8755',
-      customerSummary: 'عميلة متكررة • 31 طلبًا • رضى مرتفع',
-      merchantSummary: 'مطعم مستقر • زمن حل ممتاز • الرياض',
-      evidence: [
-        {
-          type: 'image',
-          label: 'صورة الطلب',
-          preview: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80'
-        }
-      ],
-      timeline: [
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.REF6404.REFUND_OPENED', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_YESTERDAY_0712_PM', tone: 'primary' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.REF6404.PARTIAL_REFUND_APPROVED', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_YESTERDAY_0802_PM', tone: 'muted' },
-        { titleKey: 'DISPUTES_DASHBOARD.TIMELINE.REF6404.CASE_SETTLED_AND_CLOSED', timeKey: 'DISPUTES_DASHBOARD.TIMELINE.TIME_YESTERDAY_0807_PM', tone: 'warning' }
-      ]
-    }
-  ];
+export class DisputesDashboardComponent implements OnInit {
+  readonly disputes: DisputeRow[];
 
   kpiCards: KPICard[] = [];
   tableColumns: TableColumn[] = [];
@@ -191,18 +51,44 @@ export class DisputesDashboardComponent {
   pageSize = 8;
   searchTerm = '';
   activeFilter: DisputeFilterId = 'all';
-  selectedDispute: DisputeRow = this.disputes[0];
+  selectedDispute: DisputeRow;
   isDetailsDrawerOpen = false;
   isApprovalModalOpen = false;
   isEscalationModalOpen = false;
   isRejectionModalOpen = false;
   isRequestInfoModalOpen = false;
 
-  constructor(public translate: TranslateService) {
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly disputesService: DisputesService,
+    private readonly workflowLinks: WorkflowLinksService,
+    public translate: TranslateService
+  ) {
+    this.disputes = this.disputesService.getDisputesSnapshot();
+    this.selectedDispute = this.disputes[0];
     this.buildUiConfig();
 
     this.translate.onLangChange.subscribe(() => {
       this.buildUiConfig();
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      const search = params.get('search')?.trim() ?? '';
+      const filter = params.get('status');
+      const focus = params.get('focus');
+
+      this.searchTerm = search;
+      this.activeFilter = this.isValidFilter(filter) ? filter : 'all';
+      this.resetToFirstPage();
+
+      if (focus) {
+        const dispute = this.disputes.find((item) => item.id === focus);
+        if (dispute) {
+          this.selectDispute(dispute);
+        }
+      }
     });
   }
 
@@ -244,6 +130,10 @@ export class DisputesDashboardComponent {
 
   get isRtl(): boolean {
     return this.translate.currentLang === 'ar';
+  }
+
+  get linkedWorkflowCards(): WorkflowLinkCard[] {
+    return this.workflowLinks.getDisputeWorkflowLinks(this.selectedDispute);
   }
 
   selectDispute(dispute: DisputeRow): void {
@@ -630,6 +520,15 @@ export class DisputesDashboardComponent {
       { id: 'note', label: this.t('DISPUTES_DASHBOARD.BULK.ADD_NOTE'), icon: 'note_add', color: 'bg-slate-700 text-white shadow-slate-700/20' },
       { id: 'delete', label: this.t('COMMON.DELETE'), icon: 'delete', color: 'bg-red-500 text-white shadow-red-500/20' }
     ];
+  }
+
+  private isValidFilter(value: string | null): value is DisputeFilterId {
+    return value === 'all'
+      || value === 'active'
+      || value === 'critical'
+      || value === 'review'
+      || value === 'merchant'
+      || value === 'resolved';
   }
 
   private t(key: string, params?: Record<string, unknown>): string {
