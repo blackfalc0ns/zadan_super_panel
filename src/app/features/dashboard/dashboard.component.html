@@ -1,235 +1,596 @@
-<div class="grid grid-cols-12 gap-8 font-sans text-zadna-bgDark pb-32">
+<div class="dashboard-canvas space-y-6 pb-10" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <ng-container *ngIf="!isLoading && dashboard as vm; else dashboardLoading">
+    <div class="px-4 md:px-6 xl:px-8 space-y-6">
+      <section class="dashboard-shell-card rounded-[1.35rem] p-4 md:p-5">
+        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div class="flex flex-col gap-4 xl:flex-row xl:items-center">
+            <div class="flex items-center gap-3">
+              <span
+                class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em]"
+                [ngClass]="dashboard.systemMode === 'live'
+                  ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                  : 'border border-cyan-200 bg-cyan-50 text-cyan-700'">
+                <span class="h-2 w-2 rounded-full" [ngClass]="dashboard.systemMode === 'live' ? 'bg-emerald-500 animate-pulse' : 'bg-cyan-500'"></span>
+                {{ dashboard.systemStatusLabelKey | translate }}
+              </span>
 
-    <!-- Left Column: Primary Insights (8 cols) -->
-    <div class="col-span-12 lg:col-span-8 space-y-10">
-
-        <!-- Header: Executive Summary -->
-        <div class="ltr:animate-puzzle-right rtl:animate-puzzle-left stagger-1">
-            <h1 class="text-3xl md:text-5xl font-black text-zadna-bgDark tracking-tighter mb-3">
-                {{ 'DASHBOARD.GREETING' | translate:{name: userName} }}
-            </h1>
-            <div class="flex flex-wrap items-center gap-4">
-                <div
-                    class="flex items-center gap-2 px-3 py-1.5 bg-zadna-primary/10 rounded-full border border-zadna-primary/20">
-                    <span
-                        class="w-2 h-2 rounded-full bg-zadna-primary animate-pulse shadow-[0_0_10px_rgba(18,124,140,0.5)]"></span>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-zadna-primary">{{
-                        'DASHBOARD.SYSTEM_LIVE' | translate }}</span>
-                </div>
-                <p class="text-zadna-bgDark/30 font-bold text-sm tracking-wide">
-                    {{ 'DASHBOARD.HUB_DESC' | translate }} • <span class="text-zadna-bgDark/60">{{ today | date:'EEEE,
-                        MMMM d' }}</span>
-                </p>
-            </div>
-        </div>
-
-        <!-- High-Performance Metrics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger-2">
-            <div *ngFor="let m of metrics; let i = index"
-                class="premium-glass p-8 rounded-[3rem] border border-white shadow-xl hover:shadow-2xl hover:shadow-zadna-primary/5 transition-all group relative overflow-hidden animate-puzzle-up"
-                [style.animation-delay]="(i * 100 + 400) + 'ms'">
-
-                <div
-                    class="absolute -top-10 -right-10 w-32 h-32 bg-zadna-primary/5 rounded-full blur-3xl group-hover:bg-zadna-primary/10 transition-colors">
-                </div>
-
-                <div class="flex justify-between items-start relative z-10">
-                    <div class="space-y-4">
-                        <p
-                            class="text-[10px] font-black text-zadna-bgDark/20 uppercase tracking-[0.3em] font-sans group-hover:text-zadna-primary transition-colors">
-                            {{ m.label | translate }}
-                        </p>
-                        <h3 class="text-5xl font-black text-zadna-bgDark tracking-tighter leading-none">{{ m.value }}
-                        </h3>
-                    </div>
-                    <div [class]="m.trendUp ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-500 border-red-100'"
-                        class="px-3 py-1.5 rounded-xl text-[10px] font-black border shadow-sm flex items-center gap-1.5">
-                        <svg *ngIf="m.trendUp" class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" />
-                        </svg>
-                        <svg *ngIf="!m.trendUp" class="w-3 h-3 rotate-180" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" />
-                        </svg>
-                        {{ m.trend }}
-                    </div>
-                </div>
-
-                <div class="mt-8 flex items-center gap-2 relative z-10">
-                    <div class="h-1 flex-1 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full bg-zadna-primary rounded-full transition-all duration-1000"
-                            [style.width.%]="m.trendUp ? 75 : 45"></div>
-                    </div>
-                    <span class="text-[9px] font-black text-zadna-bgDark/30 uppercase tracking-widest">{{ m.sub |
-                        translate }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Traffic Momentum Chart Visualization -->
-        <div
-            class="premium-glass p-10 rounded-[4rem] border border-white shadow-2xl relative overflow-hidden animate-puzzle-up stagger-4 h-[440px] flex flex-col">
-            <div class="mb-auto relative z-10">
-                <app-section-header
-                    [title]="'DASHBOARD.TRAFFIC_MOMENTUM'"
-                    [description]="'DASHBOARD.TRAFFIC_DESC'"
-                    icon="query_stats"
-                    [compact]="true">
-                    <div actions class="flex gap-2">
-                        <button
-                            class="px-4 py-2 rounded-xl bg-white border border-gray-100 text-[10px] font-black text-zadna-bgDark hover:border-zadna-primary/20 transition-all shadow-sm uppercase tracking-widest">
-                            {{ 'DASHBOARD.EXPORT_CHART' | translate }}
-                        </button>
-                        <div class="bg-zadna-bgLight/50 p-1 rounded-xl flex gap-1 border border-white">
-                            <button (click)="activeTab = 'week'" [class.bg-white]="activeTab === 'week'"
-                                class="px-4 py-1.5 rounded-lg text-[9px] font-black transition-all">7D</button>
-                            <button (click)="activeTab = 'month'" [class.bg-white]="activeTab === 'month'"
-                                class="px-4 py-1.5 rounded-lg text-[9px] font-black transition-all">30D</button>
-                        </div>
-                    </div>
-                </app-section-header>
+              <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-500">
+                <span class="material-symbols-outlined text-[15px] text-zadna-primary">schedule</span>
+                {{ 'DASHBOARD.LAST_UPDATED' | translate }}: {{ dashboard.lastUpdatedLabel }}
+              </span>
             </div>
 
-            <!-- SVG Line Chart Mockup -->
-            <div class="absolute inset-x-0 bottom-0 h-64 flex items-end gap-1.5 px-12 pb-24 group">
-                <div *ngFor="let h of trafficData; let i = index" [style.height.%]="h"
-                    class="flex-1 bg-gradient-to-t from-zadna-primary/40 to-zadna-primary/5 rounded-t-2xl transition-all duration-700 hover:from-zadna-primary hover:to-zadna-primary/20 cursor-crosshair relative group/bar">
-                    <div
-                        class="absolute -top-10 left-1/2 -translate-x-1/2 bg-zadna-bgDark text-white px-2 py-1 rounded-lg text-[8px] font-black opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-20">
-                        {{ h * 124 }} Sessions
-                    </div>
-                </div>
+            <div class="flex flex-wrap items-center gap-3 xl:border-s xl:border-slate-200 xl:ps-4">
+              <label class="dashboard-inline-filter">
+                <span>{{ 'DASHBOARD.FILTERS.DATE_RANGE' | translate }}</span>
+                <select [(ngModel)]="filterState.dateRange" (ngModelChange)="onFilterChange()">
+                  <option *ngFor="let option of vm.filterOptions.dateRanges; trackBy: trackByValue" [ngValue]="option.value">{{ option.label }}</option>
+                </select>
+              </label>
+
+              <label class="dashboard-inline-filter">
+                <span>{{ 'DASHBOARD.FILTERS.REGION' | translate }}</span>
+                <select [(ngModel)]="filterState.region" (ngModelChange)="onFilterChange()">
+                  <option *ngFor="let option of vm.filterOptions.regions; trackBy: trackByValue" [ngValue]="option.value">
+                    {{ option.label }} <ng-container *ngIf="option.count">({{ option.count }})</ng-container>
+                  </option>
+                </select>
+              </label>
+
+              <label class="dashboard-inline-filter">
+                <span>{{ 'DASHBOARD.FILTERS.VENDOR' | translate }}</span>
+                <select [(ngModel)]="filterState.vendorId" (ngModelChange)="onFilterChange()">
+                  <option *ngFor="let option of vm.filterOptions.vendors; trackBy: trackByValue" [ngValue]="option.value">{{ option.label }}</option>
+                </select>
+              </label>
             </div>
+          </div>
 
-            <div class="flex justify-between items-center relative z-10 pt-10 border-t border-gray-100/50">
-                <div class="flex gap-8 text-[10px] font-black text-zadna-bgDark/20 uppercase tracking-[0.4em]">
-                    <span>Mon</span><span>Tue</span><span>Wed</span><span
-                        class="text-zadna-primary font-black">Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-1.5 h-1.5 rounded-full bg-zadna-primary animate-ping"></div>
-                    <span class="text-[10px] font-black text-zadna-primary uppercase tracking-widest">Real-time Data
-                        Streaming</span>
-                </div>
-            </div>
-        </div>
-    </div>
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <label class="dashboard-search min-w-0 sm:min-w-[18rem]">
+              <span class="material-symbols-outlined text-[18px] text-slate-400">search</span>
+              <input [(ngModel)]="dashboardSearch" [placeholder]="'DASHBOARD.SEARCH_PLACEHOLDER' | translate" type="text" />
+            </label>
 
-    <!-- Right Column: Operational Core (4 cols) -->
-    <div class="col-span-12 lg:col-span-4 space-y-10">
+            <div class="flex items-center gap-2 text-slate-400">
+              <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-[1rem] border border-slate-200 bg-white transition-all hover:text-zadna-primary">
+                <span class="material-symbols-outlined text-[18px]">notifications</span>
+              </button>
 
-        <!-- Strategy Advisor Card (Brand Orange) -->
-        <div
-            class="bg-zadna-accent p-8 rounded-[4rem] text-white shadow-2xl shadow-zadna-accent/20 relative overflow-hidden group ltr:animate-puzzle-left rtl:animate-puzzle-right stagger-3">
-            <div
-                class="absolute -top-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-3xl transition-transform duration-1000 group-hover:scale-150">
-            </div>
+              <button
+                type="button"
+                class="inline-flex h-11 w-11 items-center justify-center rounded-[1rem] border border-slate-200 bg-white transition-all hover:text-zadna-primary"
+                (click)="refreshDashboard()">
+                <span class="material-symbols-outlined text-[18px]">refresh</span>
+              </button>
 
-            <div class="relative z-10">
-                <div
-                    class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center mb-8 shadow-xl">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <h3 class="text-2xl font-black tracking-tighter mb-2">{{ 'DASHBOARD.ADVISOR_TITLE' | translate }}</h3>
-                <p class="text-white/60 text-xs font-black uppercase tracking-widest mb-10 leading-relaxed">{{
-                    'DASHBOARD.ADVISOR_DESC' | translate }}</p>
+              <div class="h-6 w-px bg-slate-200"></div>
 
-                <button (click)="activeTab = 'advisor'"
-                    class="w-full py-5 bg-white text-zadna-accent rounded-2xl md:rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-zadna-bgDark hover:text-white transition-all shadow-xl active:scale-95">
-                    {{ 'DASHBOARD.RUN_DIAGNOSTICS' | translate }}
-                </button>
-            </div>
-        </div>
-
-        <!-- Catalog Pulse: Standalone Stats -->
-        <div
-            class="premium-glass p-10 rounded-[4rem] border border-white shadow-xl ltr:animate-puzzle-left rtl:animate-puzzle-right stagger-5 space-y-8">
-            <app-section-header
-                [title]="'DASHBOARD.CATALOG_PULSE'"
-                icon="inventory_2"
-                [compact]="true">
-                <button
-                    actions
-                    class="w-8 h-8 rounded-full bg-zadna-bgLight flex items-center justify-center border border-white text-zadna-bgDark/20 hover:text-zadna-primary transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-width="2.5" d="M12 4v16m8-8H4" />
-                    </svg>
-                </button>
-            </app-section-header>
-
-            <div class="grid grid-cols-1 gap-6">
-                <div *ngFor="let stat of catalogStats"
-                    class="flex items-center justify-between p-4 bg-white/50 rounded-3xl border border-white/50 hover:bg-white hover:border-zadna-primary/20 transition-all group cursor-pointer">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-12 h-12 rounded-2xl bg-zadna-bgLight flex items-center justify-center text-zadna-bgDark/20 group-hover:bg-zadna-primary/10 group-hover:text-zadna-primary transition-all">
-                            <svg *ngIf="stat.icon === 'cube'" class="w-6 h-6" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-width="2"
-                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                            <svg *ngIf="stat.icon === 'folder'" class="w-6 h-6" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-width="2"
-                                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                            </svg>
-                            <svg *ngIf="stat.icon === 'exclamation'" class="w-6 h-6" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <span
-                            class="text-xs font-black text-zadna-bgDark/30 uppercase tracking-widest group-hover:text-zadna-bgDark/60">{{
-                            stat.label | translate }}</span>
-                    </div>
-                    <span
-                        class="text-2xl font-black text-zadna-bgDark group-hover:text-zadna-primary transition-colors">{{
-                        stat.value }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Professional Audit Log -->
-        <div
-            class="premium-glass p-10 rounded-[4rem] border border-white shadow-xl ltr:animate-puzzle-left rtl:animate-puzzle-right stagger-6 overflow-hidden flex flex-col h-[400px]">
-            <div class="mb-8">
-                <app-section-header
-                    [title]="'DASHBOARD.AUDIT_LOG'"
-                    icon="history"
-                    [compact]="true">
-                    <span actions class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-                </app-section-header>
-            </div>
-
-            <div class="flex-1 overflow-y-auto space-y-8 custom-scrollbar pr-4">
-                <div *ngFor="let activity of activities" class="flex gap-5 relative group">
-                    <!-- Timeline Line -->
-                    <div class="absolute top-12 left-6 bottom-0 w-0.5 bg-gray-50 group-last:hidden"></div>
-
-                    <div [class]="activity.color"
-                        class="w-12 h-12 rounded-2xl flex items-center justify-center text-[10px] font-black shrink-0 shadow-sm transition-transform group-hover:scale-110">
-                        {{ activity.avatar }}
-                    </div>
-                    <div class="flex-1 pb-8 border-b border-gray-50 group-last:border-0 group-last:pb-0">
-                        <div class="flex justify-between items-start mb-1">
-                            <h4 class="text-xs font-black text-zadna-bgDark">{{ activity.user }}</h4>
-                            <span class="text-[8px] font-black text-zadna-bgDark/20 uppercase tracking-widest">{{
-                                activity.time }}m ago</span>
-                        </div>
-                        <p class="text-[10px] font-bold text-zadna-bgDark/40 leading-relaxed">{{ activity.action |
-                            translate }}</p>
-                    </div>
-                </div>
+              <div class="flex h-11 w-11 items-center justify-center rounded-full border border-zadna-primary/20 bg-zadna-primary/10 text-[11px] font-black text-zadna-primary">
+                {{ getUserInitials(userName) }}
+              </div>
             </div>
 
             <button
-                class="mt-8 w-full py-4 bg-zadna-bgLight/30 rounded-2xl text-[9px] font-black uppercase tracking-[0.3em] text-zadna-bgDark/30 hover:bg-white hover:text-zadna-primary transition-all border border-transparent hover:border-zadna-primary/10">
-                {{ 'DASHBOARD.FULL_SYSTEM_AUDIT' | translate }}
+              type="button"
+              class="inline-flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-4 text-xs font-black text-slate-700 transition-all hover:border-zadna-primary/20 hover:text-zadna-primary"
+              (click)="refreshDashboard()">
+              <span class="material-symbols-outlined text-[18px]">download</span>
+              {{ 'COMMON.EXPORT' | translate }}
             </button>
+          </div>
         </div>
+      </section>
+
+      <section class="grid grid-cols-12 gap-4">
+        <article class="dashboard-shell-card relative col-span-12 overflow-hidden rounded-[1.6rem] p-6 lg:col-span-8">
+          <div class="pointer-events-none absolute inset-y-0 end-0 w-52 bg-gradient-to-l from-zadna-primary/10 to-transparent"></div>
+          <div class="pointer-events-none absolute -top-10 end-10 h-32 w-32 rounded-full bg-zadna-primary/10 blur-3xl"></div>
+
+          <div class="relative flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+            <div class="space-y-4">
+              <span class="inline-flex items-center gap-2 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">
+                <span class="material-symbols-outlined text-[15px]">space_dashboard</span>
+                {{ 'DASHBOARD.CONTROL_CENTER' | translate }}
+              </span>
+
+              <div>
+                <h1 class="text-2xl font-black tracking-tight text-zadna-primary md:text-[2rem]">
+                  {{ 'DASHBOARD.HELLO' | translate:{ name: userName } }}
+                </h1>
+                <p class="mt-2 max-w-2xl text-xs leading-7 text-slate-500">
+                  {{ 'DASHBOARD.HERO_SUCCESS' | translate:{ rate: vm.kpis[2].value } }}
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-8">
+                <div class="flex flex-col">
+                  <span class="text-[10px] font-bold text-slate-400">{{ 'DASHBOARD.OVERVIEW.CONVERSION' | translate }}</span>
+                  <span class="mt-1 text-xl font-black text-slate-900">{{ getOverviewConversionRate() }}</span>
+                  <span class="text-[10px] font-medium text-emerald-600">+0.4%</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-[10px] font-bold text-slate-400">{{ 'DASHBOARD.OVERVIEW.RESPONSE_TIME' | translate }}</span>
+                  <span class="mt-1 text-xl font-black text-slate-900">{{ getOverviewResponseTime() }}</span>
+                  <span class="text-[10px] font-medium text-emerald-600">{{ vm.kpis[2].value }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-3 xl:w-[24rem] xl:grid-cols-1">
+              <div class="rounded-[1.15rem] border border-slate-200 bg-white/95 p-4 shadow-sm">
+                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.DIRECT_ORDERS' | translate }}</p>
+                <p class="mt-2 text-xl font-black text-slate-900">{{ vm.kpis[1].value }}</p>
+                <p class="mt-1 text-[11px] font-bold text-slate-500">{{ vm.kpis[1].labelKey | translate }}</p>
+              </div>
+
+              <div class="rounded-[1.15rem] border border-slate-200 bg-white/95 p-4 shadow-sm">
+                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.HIGH_RISK' | translate }}</p>
+                <p class="mt-2 text-xl font-black text-red-600">{{ getRiskLoadSummary(vm) }}</p>
+                <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DASHBOARD.SUMMARY.RISK_LOAD_HINT' | translate }}</p>
+              </div>
+
+              <div class="rounded-[1.15rem] border border-slate-200 bg-white/95 p-4 shadow-sm">
+                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.OVERVIEW.PENDING_ACTIONS' | translate }}</p>
+                <p class="mt-2 text-xl font-black text-secondary">{{ vm.attentionItems.length }}</p>
+                <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DASHBOARD.SUMMARY.ACTIONS_OPEN_HINT' | translate }}</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <aside class="col-span-12 rounded-[1.8rem] bg-slate-900 p-6 text-white shadow-sm lg:col-span-4">
+          <div class="flex h-full flex-col justify-between gap-6" *ngIf="vm.insights[0] as spotlightInsight; else noInsight">
+            <div>
+              <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200">
+                <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                {{ 'DASHBOARD.INSIGHTS_TITLE' | translate }}
+              </div>
+
+              <p class="mt-4 text-lg font-black leading-8 text-white">
+                {{ spotlightInsight.messageKey | translate: spotlightInsight.messageParams }}
+              </p>
+
+              <p class="mt-3 text-[12px] leading-6 text-white/65">
+                {{ spotlightInsight.supportingMetric }}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <a
+                [routerLink]="spotlightInsight.route"
+                class="inline-flex h-10 items-center gap-2 rounded-[0.95rem] bg-white px-4 text-[11px] font-black text-slate-900 transition-all hover:bg-white/90">
+                {{ spotlightInsight.actionLabelKey | translate }}
+              </a>
+              <button
+                type="button"
+                class="inline-flex h-10 items-center rounded-[0.95rem] border border-white/15 px-4 text-[11px] font-black text-white/80 transition-all hover:bg-white/10">
+                {{ 'DASHBOARD.ACTIONS.DISMISS' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <ng-template #noInsight>
+            <div class="flex h-full items-center justify-center text-sm font-bold text-white/70">
+              {{ 'DASHBOARD.INSIGHTS_DESC' | translate }}
+            </div>
+          </ng-template>
+        </aside>
+      </section>
+
+      <section class="grid grid-cols-2 gap-4 xl:grid-cols-6">
+        <article
+          *ngFor="let kpi of vm.kpis; trackBy: trackById"
+          class="relative overflow-hidden rounded-[1rem] border border-slate-200 bg-slate-50/85 p-4 shadow-sm"
+          [ngClass]="getKpiAccentClasses(kpi.severity)">
+          <div class="absolute inset-y-0 start-0 w-1.5 rounded-full"
+            [ngClass]="{
+              'bg-zadna-primary/30': !kpi.severity || kpi.severity === 'neutral' || kpi.severity === 'info',
+              'bg-emerald-400/60': kpi.severity === 'success',
+              'bg-amber-400/70': kpi.severity === 'warning',
+              'bg-red-400/70': kpi.severity === 'critical'
+            }">
+          </div>
+          <div class="flex items-start justify-between gap-3">
+            <span class="text-[10px] font-bold text-slate-400">{{ kpi.labelKey | translate }}</span>
+            <span class="rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="getTrendClasses(kpi.trendDirection)">
+              {{ kpi.trendLabel }}
+            </span>
+          </div>
+
+          <div class="mt-4 flex items-end gap-2">
+            <span class="font-inter text-[1.28rem] font-black tracking-tight text-slate-900">{{ kpi.unitLabel ? (kpi.unitLabel + ' ') : '' }}{{ kpi.value }}</span>
+          </div>
+
+          <p class="mt-1 text-[9px] text-slate-500">{{ kpi.contextKey | translate }}</p>
+        </article>
+      </section>
+
+      <section class="grid grid-cols-12 gap-6">
+        <article class="dashboard-shell-card col-span-12 overflow-hidden rounded-[1.6rem] lg:col-span-6">
+          <div class="flex items-center justify-between border-b border-slate-200/70 px-5 py-4">
+            <div>
+              <h3 class="text-sm font-black text-slate-900">{{ 'DASHBOARD.ALERTS_TITLE' | translate }}</h3>
+              <p class="mt-1 text-[11px] text-slate-500">{{ 'DASHBOARD.ALERTS_DESC' | translate }}</p>
+            </div>
+            <span class="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-[10px] font-black text-red-700">
+              {{ vm.alerts.length }} {{ 'DASHBOARD.AFFECTED' | translate }}
+            </span>
+          </div>
+
+          <div class="max-h-[24rem] overflow-y-auto">
+            <article
+              *ngFor="let alert of vm.alerts; trackBy: trackById"
+              class="flex items-center gap-4 border-b border-slate-100 px-5 py-4 transition-all hover:bg-slate-50/70">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full" [ngClass]="getSeverityCardClasses(alert.severity)">
+                <span class="material-symbols-outlined text-[18px]" [ngClass]="{
+                  'text-red-600': alert.severity === 'critical',
+                  'text-amber-600': alert.severity === 'warning',
+                  'text-cyan-600': alert.severity === 'info',
+                  'text-emerald-600': alert.severity === 'success',
+                  'text-slate-500': alert.severity === 'neutral'
+                }">{{ getAlertIcon(alert.severity) }}</span>
+              </div>
+
+              <div class="min-w-0 flex-1">
+                <h4 class="truncate text-[13px] font-black text-slate-900">{{ alert.titleKey | translate }}</h4>
+                <p class="mt-1 text-[11px] leading-5 text-slate-500">{{ alert.summaryKey | translate: alert.summaryParams }}</p>
+              </div>
+
+              <div class="shrink-0 text-end">
+                <p class="text-[10px] font-bold text-slate-400">{{ 'DASHBOARD.AFFECTED' | translate }}: {{ alert.affectedCount }}</p>
+                <a [routerLink]="alert.route" class="mt-2 inline-flex text-[11px] font-black text-zadna-primary hover:underline">
+                  {{ alert.actionLabelKey | translate }}
+                </a>
+              </div>
+            </article>
+          </div>
+        </article>
+
+        <div class="col-span-12 grid grid-cols-2 gap-4 lg:col-span-6">
+          <article class="dashboard-shell-card rounded-[1.5rem] p-5">
+            <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+              <span class="material-symbols-outlined text-[16px] text-zadna-primary">rule</span>
+              {{ 'DASHBOARD.OPS_AUDIT_TITLE' | translate }}
+            </div>
+
+            <div class="mt-4 space-y-4">
+              <div>
+                <div class="mb-1 flex items-center justify-between text-[11px]">
+                  <span class="font-medium text-slate-700">{{ vm.riskQueues[0].labelKey | translate }}</span>
+                  <span class="font-black text-red-600">{{ vm.riskQueues[0].count }}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200">
+                  <div class="h-full rounded-full bg-red-500" [style.width.%]="getRelativeValueWidth(vm.riskQueues[0].count, [vm.riskQueues[0].count, vm.riskQueues[1].count, vm.riskQueues[3].count])"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="mb-1 flex items-center justify-between text-[11px]">
+                  <span class="font-medium text-slate-700">{{ vm.riskQueues[1].labelKey | translate }}</span>
+                  <span class="font-black text-amber-600">{{ vm.riskQueues[1].count }}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200">
+                  <div class="h-full rounded-full bg-amber-500" [style.width.%]="getRelativeValueWidth(vm.riskQueues[1].count, [vm.riskQueues[0].count, vm.riskQueues[1].count, vm.riskQueues[3].count])"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="mb-1 flex items-center justify-between text-[11px]">
+                  <span class="font-medium text-slate-700">{{ vm.liveQueues[1].labelKey | translate }}</span>
+                  <span class="font-black text-zadna-primary">{{ vm.liveQueues[1].count }}</span>
+                </div>
+                <div class="h-1.5 rounded-full bg-slate-200">
+                  <div class="h-full rounded-full bg-zadna-primary" [style.width.%]="getRelativeValueWidth(vm.liveQueues[1].count, [vm.liveQueues[0].count, vm.liveQueues[1].count, vm.liveQueues[2].count])"></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="dashboard-shell-card rounded-[1.5rem] p-5">
+            <div class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">
+              <span class="material-symbols-outlined text-[16px] text-slate-500">history</span>
+              {{ 'DASHBOARD.AUDIT_TITLE' | translate }}
+            </div>
+
+            <div class="mt-4 max-h-[10rem] space-y-3 overflow-y-auto">
+              <div
+                *ngFor="let item of vm.auditItems; trackBy: trackById"
+                class="flex items-start gap-3">
+                <span class="mt-1 inline-flex h-2.5 w-2.5 rounded-full" [ngClass]="getProgressClasses(item.tone)"></span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-[10px] font-medium text-slate-800">{{ item.titleKey | translate }}</p>
+                  <span class="text-[8px] font-bold text-slate-400">{{ item.timeLabel }}</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-12 gap-6">
+        <article class="dashboard-shell-card col-span-12 rounded-[1.6rem] p-5 lg:col-span-7">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-black text-slate-900">{{ 'DASHBOARD.CHARTS.ORDER_FUNNEL' | translate }}</h3>
+              <p class="mt-1 text-[10px] text-slate-500">{{ 'DASHBOARD.CHARTS.ORDER_FUNNEL_DESC' | translate }}</p>
+            </div>
+
+            <div class="inline-flex items-center rounded-[0.95rem] border border-slate-200 bg-slate-50 p-1">
+              <button
+                type="button"
+                class="rounded-[0.75rem] px-3 py-1.5 text-[10px] font-black transition-all"
+                [ngClass]="filterState.dateRange === 'today' ? 'bg-zadna-primary text-white shadow-sm' : 'text-slate-500'"
+                (click)="setDateRange('today')">
+                {{ vm.filterOptions.dateRanges[0].label }}
+              </button>
+              <button
+                type="button"
+                class="rounded-[0.75rem] px-3 py-1.5 text-[10px] font-black transition-all"
+                [ngClass]="filterState.dateRange === 'week' ? 'bg-zadna-primary text-white shadow-sm' : 'text-slate-500'"
+                (click)="setDateRange('week')">
+                {{ vm.filterOptions.dateRanges[1].label }}
+              </button>
+              <button
+                type="button"
+                class="rounded-[0.75rem] px-3 py-1.5 text-[10px] font-black transition-all"
+                [ngClass]="filterState.dateRange === 'month' ? 'bg-zadna-primary text-white shadow-sm' : 'text-slate-500'"
+                (click)="setDateRange('month')">
+                {{ vm.filterOptions.dateRanges[2].label }}
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-3 gap-8 items-end">
+            <div class="relative col-span-2 flex h-48 items-end gap-2 rounded-[1rem] bg-gradient-to-t from-zadna-primary/5 to-transparent px-4">
+              <div
+                *ngFor="let point of vm.hourlyFunnel.points; trackBy: trackByLabel"
+                class="flex-1 rounded-t-[0.4rem] bg-zadna-primary transition-all"
+                [style.height.%]="getPointHeight(point, vm.hourlyFunnel.points)"
+                [style.opacity]="0.18 + (getPointHeight(point, vm.hourlyFunnel.points) / 125)">
+              </div>
+            </div>
+
+            <div class="col-span-1 space-y-4">
+              <div *ngFor="let segment of getSegmentSummaries(vm.hourlyFunnel.points) | slice:0:3; trackBy: trackById">
+                <div class="mb-1 flex items-center justify-between text-[10px] font-bold">
+                  <span>{{ segment.labelKey | translate }}</span>
+                  <span class="font-inter">{{ segment.share | number:'1.0-0' }}%</span>
+                </div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-slate-200">
+                  <div class="h-full" [ngClass]="getProgressClasses(segment.tone)" [style.width.%]="segment.share"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="dashboard-shell-card col-span-12 rounded-[1.6rem] p-5 lg:col-span-5">
+          <div>
+            <h3 class="text-sm font-black text-slate-900">{{ 'DASHBOARD.CHARTS.REVENUE_QUALITY' | translate }}</h3>
+            <p class="mt-1 text-[10px] text-slate-500">{{ 'DASHBOARD.CHARTS.REVENUE_QUALITY_DESC' | translate }}</p>
+          </div>
+
+          <div class="mt-5 space-y-4">
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 p-4">
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-[10px] font-bold text-slate-400">{{ 'DASHBOARD.CHARTS.NET_REVENUE' | translate }}</span>
+                <span class="material-symbols-outlined text-[16px] text-zadna-primary">trending_up</span>
+              </div>
+              <p class="mt-2 font-inter text-[1.45rem] font-black text-slate-900">SAR {{ getNetRevenueProjection(vm.revenueQuality.points) | number:'1.0-0' }}</p>
+              <div class="mt-3 border-t border-slate-200 pt-3 text-[10px] text-slate-500">
+                <span class="me-4 inline-flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-zadna-primary"></span>{{ 'DASHBOARD.CHARTS.GMV_LINE' | translate }}: {{ getSeriesValueTotal(vm.revenueQuality.points, 'value') | number:'1.0-0' }}</span>
+                <span class="inline-flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>{{ 'DASHBOARD.CHARTS.REFUND_LINE' | translate }}: {{ getSeriesValueTotal(vm.revenueQuality.points, 'secondaryValue') | number:'1.0-0' }}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="rounded-[0.95rem] bg-slate-50/80 p-3.5">
+                <span class="block text-[9px] text-slate-400">{{ 'DASHBOARD.CHARTS.EXPOSURE_DESC' | translate }}</span>
+                <span class="mt-1 block font-inter text-sm font-black text-red-600">SAR {{ getSeriesValueTotal(vm.revenueQuality.points, 'secondaryValue') | number:'1.0-0' }}</span>
+              </div>
+              <div class="rounded-[0.95rem] bg-slate-50/80 p-3.5">
+                <span class="block text-[9px] text-slate-400">{{ 'DASHBOARD.CHARTS.FORECAST_ACCURACY' | translate }}</span>
+                <span class="mt-1 block font-inter text-sm font-black text-zadna-primary">{{ getForecastAccuracy(vm.revenueQuality.points) | number:'1.1-1' }}%</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid grid-cols-12 gap-6">
+        <article class="dashboard-shell-card col-span-12 rounded-[1.6rem] p-5 lg:col-span-4">
+          <div>
+            <h3 class="text-sm font-black text-slate-900">{{ 'DASHBOARD.REGION_PRESSURE_TITLE' | translate }}</h3>
+            <p class="mt-1 text-[11px] text-slate-500">{{ 'DASHBOARD.REGION_PRESSURE_DESC' | translate }}</p>
+          </div>
+
+          <div class="mt-5 space-y-4">
+            <article *ngFor="let row of vm.regionPressure; trackBy: trackById" class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-[0.9rem] bg-slate-100 text-[11px] font-black text-zadna-primary">
+                {{ getRegionShortCode(row.regionLabel) }}
+              </div>
+
+              <div class="min-w-0 flex-1">
+                <div class="mb-1 flex items-center justify-between gap-2">
+                  <span class="truncate text-[12px] font-black text-slate-900">{{ row.regionLabel }}</span>
+                  <span class="text-[10px] font-black" [ngClass]="getPressureTextClasses(row.score, vm.regionPressure)">
+                    {{ getPressureLabel(row.score, vm.regionPressure) }} ({{ row.score }})
+                  </span>
+                </div>
+
+                <div class="h-2 rounded-full bg-slate-200">
+                  <div
+                    class="h-full rounded-full bg-gradient-to-r"
+                    [ngClass]="getRegionPressureBarClasses(row.score, vm.regionPressure)"
+                    [style.width.%]="getRelativePressureWidth(row.score, vm.regionPressure)">
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </article>
+
+        <article class="dashboard-shell-card col-span-12 rounded-[1.6rem] p-5 lg:col-span-8">
+          <div>
+            <h3 class="text-sm font-black text-slate-900">{{ 'DASHBOARD.SUPPLY_TITLE' | translate }}</h3>
+            <p class="mt-1 text-[11px] text-slate-500">{{ 'DASHBOARD.SUPPLY_DESC' | translate }}</p>
+          </div>
+
+          <div class="mt-5 grid gap-4 md:grid-cols-4">
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4 text-center">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.CATALOG.PRODUCTS' | translate }}</p>
+              <p class="mt-2 text-lg font-black text-slate-900">{{ vm.catalogPulse.products }}</p>
+              <p class="text-[10px] text-slate-500">{{ vm.catalogPulse.concentrationLabel }}</p>
+            </div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4 text-center">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.CATALOG.BRANDS' | translate }}</p>
+              <p class="mt-2 text-lg font-black text-slate-900">{{ vm.catalogPulse.brands }}</p>
+              <p class="text-[10px] text-slate-500">{{ 'DASHBOARD.VENDOR_PRESSURE_TITLE' | translate }}</p>
+            </div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4 text-center">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.CATALOG.CATEGORIES' | translate }}</p>
+              <p class="mt-2 text-lg font-black text-slate-900">{{ vm.catalogPulse.categories }}</p>
+              <p class="text-[10px] text-slate-500">{{ 'DASHBOARD.CATALOG.CONCENTRATION' | translate }}</p>
+            </div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4 text-center">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DASHBOARD.SUPPLY.DRIVER_SPLIT' | translate }}</p>
+              <p class="mt-2 text-lg font-black text-slate-900">{{ vm.driverSupplyReadiness[0].share | number:'1.0-0' }}%</p>
+              <p class="text-[10px] text-slate-500">{{ 'DASHBOARD.SUPPLY.DRIVERS_READY' | translate }}</p>
+            </div>
+          </div>
+
+          <div class="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div class="space-y-4">
+              <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
+                <p class="text-[11px] font-black text-slate-900">{{ 'DASHBOARD.SUPPLY.VENDOR_SPLIT' | translate }}</p>
+                <div class="mt-4 flex h-3 overflow-hidden rounded-full bg-slate-200">
+                  <div *ngFor="let bucket of vm.vendorSupplyReadiness" [style.width.%]="bucket.share" [ngClass]="getProgressClasses(bucket.tone)"></div>
+                </div>
+                <div class="mt-4 space-y-3">
+                  <div *ngFor="let bucket of vm.vendorSupplyReadiness; trackBy: trackById" class="flex items-center justify-between text-[11px] font-bold">
+                    <span class="text-slate-600">{{ bucket.labelKey | translate }}</span>
+                    <span class="text-slate-900">{{ bucket.count }} / {{ bucket.share | number:'1.0-0' }}%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
+                <p class="text-[11px] font-black text-slate-900">{{ 'DASHBOARD.SUPPLY.DRIVER_SPLIT' | translate }}</p>
+                <div class="mt-4 flex h-3 overflow-hidden rounded-full bg-slate-200">
+                  <div *ngFor="let bucket of vm.driverSupplyReadiness" [style.width.%]="bucket.share" [ngClass]="getProgressClasses(bucket.tone)"></div>
+                </div>
+                <div class="mt-4 space-y-3">
+                  <div *ngFor="let bucket of vm.driverSupplyReadiness; trackBy: trackById" class="flex items-center justify-between text-[11px] font-bold">
+                    <span class="text-slate-600">{{ bucket.labelKey | translate }}</span>
+                    <span class="text-slate-900">{{ bucket.count }} / {{ bucket.share | number:'1.0-0' }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
+                <p class="text-[11px] font-black text-slate-900">{{ 'DASHBOARD.CATALOG.CONCENTRATION' | translate }}</p>
+                <p class="mt-2 text-[12px] leading-6 text-slate-500">{{ 'DASHBOARD.CATALOG.CONCENTRATION_HINT' | translate:{ share: vm.catalogPulse.concentrationLabel } }}</p>
+              </div>
+
+              <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-[11px] font-black text-slate-900">{{ 'DASHBOARD.VENDOR_PRESSURE_TITLE' | translate }}</p>
+                  <span class="text-[10px] font-bold text-slate-400">{{ vm.vendorLeaderboard.length }}</span>
+                </div>
+
+                <div class="mt-4 space-y-3">
+                  <article *ngFor="let row of vm.vendorLeaderboard | slice:0:3; trackBy: trackById" class="rounded-[0.95rem] border border-slate-200 bg-white p-3.5">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <h4 class="truncate text-[12px] font-black text-slate-900">{{ row.title }}</h4>
+                        <p class="mt-1 text-[10px] text-slate-500">{{ row.subtitle }}</p>
+                      </div>
+                      <span class="text-[11px] font-black text-zadna-primary">{{ row.metricValue }}</span>
+                    </div>
+
+                    <div class="mt-3 h-2 rounded-full bg-slate-200">
+                      <div class="h-full rounded-full" [ngClass]="getProgressClasses(row.tone)" [style.width.%]="row.progress"></div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="dashboard-shell-card overflow-hidden rounded-[1.6rem]">
+        <div class="flex items-center justify-between border-b border-slate-200/70 px-6 py-4">
+          <div>
+            <h3 class="text-sm font-black text-slate-900">{{ 'DASHBOARD.ACTION_QUEUE_TITLE' | translate }}</h3>
+            <p class="mt-1 text-[11px] text-slate-500">{{ 'DASHBOARD.ACTION_QUEUE_DESC' | translate }}</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-[0.85rem] border border-slate-200 bg-white text-slate-500 transition-all hover:text-zadna-primary">
+              <span class="material-symbols-outlined text-[16px]">filter_list</span>
+            </button>
+            <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-[0.85rem] border border-slate-200 bg-white text-slate-500 transition-all hover:text-zadna-primary">
+              <span class="material-symbols-outlined text-[16px]">download</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full border-collapse">
+            <thead>
+              <tr class="bg-slate-50 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
+                <th class="px-6 py-3 text-start">{{ 'DASHBOARD.TABLES.ENTITY' | translate }}</th>
+                <th class="px-6 py-3 text-start">{{ 'DASHBOARD.TABLES.ISSUE' | translate }}</th>
+                <th class="px-6 py-3 text-start">{{ 'DASHBOARD.TABLES.OWNER' | translate }}</th>
+                <th class="px-6 py-3 text-start">{{ 'DASHBOARD.TABLES.PRESSURE_SCORE' | translate }}</th>
+                <th class="px-6 py-3 text-end">{{ 'COMMON.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let item of vm.attentionItems; trackBy: trackById" class="border-t border-slate-100 bg-white transition-all hover:bg-slate-50/60">
+                <td class="px-6 py-4 align-top">
+                  <p class="text-[12px] font-black text-slate-900">{{ item.entityName }}</p>
+                  <p class="mt-1 text-[10px] font-medium text-slate-500">{{ item.entityLabelKey | translate }}</p>
+                </td>
+
+                <td class="px-6 py-4 align-top">
+                  <span
+                    class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-black"
+                    [ngClass]="getPriorityBadgeClasses(item.priority)">
+                    {{ ('DASHBOARD.SEVERITY.' + item.priority.toUpperCase()) | translate }}
+                  </span>
+                  <p class="mt-2 text-[11px] leading-6 text-slate-600">{{ item.summary }}</p>
+                </td>
+
+                <td class="px-6 py-4 align-top text-[11px] font-bold text-slate-700">{{ item.owner }}</td>
+                <td class="px-6 py-4 align-top text-[11px] font-black text-slate-900">{{ item.priority | uppercase }}</td>
+                <td class="px-6 py-4 align-top text-end">
+                  <a
+                    [routerLink]="item.route"
+                    class="inline-flex h-9 items-center gap-2 rounded-[0.85rem] bg-zadna-primary/10 px-3.5 text-[11px] font-black text-zadna-primary transition-all hover:bg-zadna-primary hover:text-white">
+                    {{ item.ctaLabelKey | translate }}
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
+  </ng-container>
 </div>
+
+<ng-template #dashboardLoading>
+  <div class="flex flex-col items-center justify-center py-32">
+    <div class="relative h-20 w-20">
+      <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
+      <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+    </div>
+    <p class="mt-5 text-sm font-black text-slate-500">{{ 'COMMON.LOADING' | translate }}</p>
+  </div>
+</ng-template>

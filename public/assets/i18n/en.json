@@ -1381,7 +1381,213 @@
         "CONVERSION_SUB": "from last 732 (Last 7 days)",
         "ACTION_FAVORITED": "favorited your store",
         "ACTION_PURCHASED": "purchased your product",
-        "TIME_MINS_AGO": "{{mins}} mins ago"
+        "TIME_MINS_AGO": "{{mins}} mins ago",
+        "TITLE": "Super Admin Control Center",
+        "SUBTITLE": "Live marketplace operations, risk, and revenue quality in one command surface",
+        "CONTROL_CENTER": "Control Center",
+        "SEARCH_PLACEHOLDER": "Search for vendor, order, customer, or driver...",
+        "HELLO": "Hello, {{name}}",
+        "HERO_SUCCESS": "Overview of today's system performance. {{rate}} of operational flow is currently inside the target band.",
+        "OPS_AUDIT_TITLE": "Risk management and audit",
+        "HEADER_SUMMARY": "Viewing {{scope}} with {{mode}}. This surface is optimized for decision-making, queue pressure, and immediate operational action.",
+        "LAST_UPDATED": "Last updated",
+        "FILTERS": {
+            "DATE_RANGE": "Date range",
+            "REGION": "Region",
+            "VENDOR": "Vendor"
+        },
+        "SYSTEM_STATUS": {
+            "LIVE": "Live data mode",
+            "SNAPSHOT": "Snapshot fallback mode"
+        },
+        "SUMMARY": {
+            "LIVE_ORDERS": "Live flow",
+            "LIVE_ORDERS_HINT": "Preparation and dispatch work currently active.",
+            "RISK_LOAD": "Risk load",
+            "RISK_LOAD_HINT": "Open disputes and driver holds requiring intervention.",
+            "ACTIONS_OPEN": "Action queue",
+            "ACTIONS_OPEN_HINT": "Priority entities waiting for a supervisor decision."
+        },
+        "OVERVIEW": {
+            "CONVERSION": "Conversion rate",
+            "RESPONSE_TIME": "Response time",
+            "DIRECT_ORDERS": "Direct orders",
+            "HIGH_RISK": "High risk",
+            "PENDING_ACTIONS": "Pending actions"
+        },
+        "KPI": {
+            "GMV": "Today GMV",
+            "COMPLETED_ORDERS": "Completed orders",
+            "ON_TIME_RATE": "On-time delivery",
+            "ORDERS_AT_RISK": "Orders at risk",
+            "DISPUTE_EXPOSURE": "Open dispute exposure",
+            "SUPPLY_BACKLOG": "Supply backlog"
+        },
+        "KPI_CONTEXT": {
+            "GMV": "Direct commercial pulse across the active marketplace scope.",
+            "COMPLETED_ORDERS": "Platform throughput that already crossed fulfillment successfully.",
+            "ON_TIME_RATE": "The health signal that most directly impacts customer trust.",
+            "ORDERS_AT_RISK": "Late, issue-linked, or payment-blocked orders needing action now.",
+            "DISPUTE_EXPOSURE": "Revenue currently tied up in refunds, disputes, or pending review.",
+            "SUPPLY_BACKLOG": "Vendors and drivers not yet fully ready to support growth safely."
+        },
+        "ALERTS_TITLE": "Critical alerts",
+        "ALERTS_DESC": "Immediate anomalies that require escalation or direct intervention.",
+        "INSIGHTS_TITLE": "Smart insights",
+        "INSIGHTS_DESC": "Operator-facing narratives that explain where the pressure is building.",
+        "LIVE_OPERATIONS_TITLE": "Live operations rail",
+        "LIVE_OPERATIONS_DESC": "Where fulfillment is currently moving or getting stuck.",
+        "RISK_QUEUES_TITLE": "Risk and exceptions",
+        "RISK_QUEUES_DESC": "Trust, disputes, vendor compliance, and blocked driver pressure.",
+        "AUDIT_TITLE": "System and audit pulse",
+        "AUDIT_DESC": "Current platform mode and the latest control-tower events.",
+        "REGION_PRESSURE_TITLE": "Region pressure comparison",
+        "REGION_PRESSURE_DESC": "Operational hotspots ranked by delay, payment friction, and driver gap.",
+        "SUPPLY_TITLE": "Supply readiness",
+        "SUPPLY_DESC": "How much vendor and driver capacity is truly ready to scale.",
+        "VENDOR_PRESSURE_TITLE": "Vendor contribution vs complaint share",
+        "VENDOR_PRESSURE_DESC": "Which vendors create a disproportionate amount of complaints or dispute exposure.",
+        "ACTION_QUEUE_TITLE": "Needs attention now",
+        "ACTION_QUEUE_DESC": "Priority entities that should move into a reviewer decision next.",
+        "AFFECTED": "Affected",
+        "SEVERITY": {
+            "CRITICAL": "Critical",
+            "WARNING": "Warning",
+            "INFO": "Info",
+            "SUCCESS": "Stable",
+            "NEUTRAL": "Normal"
+        },
+        "QUEUES": {
+            "PREPARATION": "Preparation queue",
+            "DISPATCH": "Dispatch queue",
+            "LATE_ORDERS": "Late orders",
+            "PAYMENT_REVIEW": "Payment review"
+        },
+        "QUEUE_HELPERS": {
+            "PREPARATION": "Orders still waiting on merchant-side readiness before dispatch.",
+            "DISPATCH": "Orders already in driver assignment or delivery movement.",
+            "LATE_ORDERS": "Orders breaching SLA and likely to trigger complaints or compensation.",
+            "PAYMENT_REVIEW": "Orders blocked by failed, pending, or COD confirmation issues."
+        },
+        "RISK_QUEUES": {
+            "OPEN_DISPUTES": "Open disputes",
+            "VENDOR_BACKLOG": "Vendor review backlog",
+            "CUSTOMER_REVIEW": "Customer trust review",
+            "DRIVER_HOLDS": "Driver finance/compliance holds"
+        },
+        "RISK_HELPERS": {
+            "OPEN_DISPUTES": "Cases still consuming reviewer bandwidth and financial exposure.",
+            "VENDOR_BACKLOG": "Merchants waiting on verification, document fixes, or approval decisions.",
+            "CUSTOMER_REVIEW": "Customers marked for review, escalation, or trust restrictions.",
+            "DRIVER_HOLDS": "Drivers blocked by wallet, COD, or compliance readiness issues."
+        },
+        "CHARTS": {
+            "ORDER_FUNNEL": "Hourly order funnel",
+            "ORDER_FUNNEL_DESC": "Shows where orders are accumulating across new, prep, dispatch, delivered, and failed flow.",
+            "ORDER_VOLUME": "Order volume trend",
+            "ORDER_VOLUME_DESC": "Tracks the total operational load across the selected time window.",
+            "TOTAL_LOAD": "Total load",
+            "STAGE_MIX": "Stage mix",
+            "STAGE_MIX_DESC": "Distribution of volume across each workflow stage.",
+            "SHARE": "share",
+            "REVENUE_QUALITY": "GMV vs refund/dispute exposure",
+            "REVENUE_QUALITY_DESC": "Separates healthy revenue from the amount at risk through issues and disputes.",
+            "NET_REVENUE": "Net revenue",
+            "NET_REVENUE_DESC": "Total gross commercial value across the selected window.",
+            "EXPOSURE_DESC": "Refunds and disputes currently putting revenue quality under pressure.",
+            "PEAK_PERIOD": "Peak exposure period",
+            "GMV_LINE": "GMV",
+            "REFUND_LINE": "Refund/dispute exposure"
+        },
+        "CHART_SEGMENTS": {
+            "NEW": "New",
+            "PREPARING": "Preparing",
+            "DISPATCH": "Dispatch",
+            "DELIVERED": "Delivered",
+            "FAILED": "Failed"
+        },
+        "TABLES": {
+            "LATE": "Late",
+            "PAYMENT_ISSUES": "Payment issues",
+            "DRIVER_GAP": "Driver gap",
+            "PRESSURE_SCORE": "Pressure",
+            "ENTITY": "Entity",
+            "ISSUE": "Issue",
+            "OWNER": "Owner",
+            "VENDOR_DISPUTE_EXPOSURE": "Dispute exposure",
+            "VENDOR_GMV_SHARE": "GMV share"
+        },
+        "SUPPLY": {
+            "VENDORS_VERIFIED": "Vendors verified",
+            "VENDORS_UNDER_REVIEW": "Vendors under review",
+            "VENDORS_BLOCKED": "Vendors blocked",
+            "DRIVERS_READY": "Drivers ready",
+            "DRIVERS_LIMITED": "Drivers limited",
+            "DRIVERS_BLOCKED": "Drivers blocked",
+            "VENDOR_SPLIT": "Vendor readiness split",
+            "DRIVER_SPLIT": "Driver readiness split"
+        },
+        "CATALOG": {
+            "PRODUCTS": "Products",
+            "BRANDS": "Brands",
+            "CATEGORIES": "Categories",
+            "CONCENTRATION": "Catalog concentration",
+            "CONCENTRATION_HINT": "Top catalog branches currently represent {{share}} of visible master products."
+        },
+        "ENTITY": {
+            "ORDER": "Order",
+            "DISPUTE": "Dispute",
+            "VENDOR": "Vendor",
+            "DRIVER": "Driver",
+            "CUSTOMER": "Customer"
+        },
+        "ACTIONS": {
+            "REFRESH": "Refresh",
+            "DISMISS": "Dismiss",
+            "REVIEW_PAYMENTS": "Review payments",
+            "OPEN_DISPUTES": "Open disputes",
+            "OPEN_SUPPLY": "Open supply queue",
+            "OPEN_OPERATIONS": "Open operations",
+            "OPEN_DRIVERS": "Open drivers",
+            "REVIEW_VENDOR": "Review vendor",
+            "OPEN_ORDER": "Open order",
+            "OPEN_DRIVER": "Open driver",
+            "OPEN_CUSTOMER": "Open customer"
+        },
+        "ALERTS": {
+            "PAYMENT_FAILURE": {
+                "TITLE": "Payment failure spike",
+                "SUMMARY": "{{count}} orders are failing payment or waiting confirmation inside {{scope}}."
+            },
+            "DISPUTE_CLUSTER": {
+                "TITLE": "Critical dispute exposure",
+                "SUMMARY": "{{count}} high-priority disputes are currently exposing SAR {{exposure}}."
+            },
+            "SUPPLY_BACKLOG": {
+                "TITLE": "Supply readiness backlog",
+                "SUMMARY": "{{count}} vendor or driver entities remain blocked or limited inside {{vendor}}."
+            },
+            "SNAPSHOT_MODE": {
+                "TITLE": "Running on synchronized snapshot",
+                "SUMMARY": "The dashboard is currently using resilient fallback data because live admin auth is not active."
+            }
+        },
+        "INSIGHTS": {
+            "ORDER_DROP": "Orders dropped {{drop}}% in {{region}} while payment issues rose to {{paymentIssues}} active cases.",
+            "VENDOR_PRESSURE": "{{vendor}} is driving {{complaintsShare}}% of complaint pressure from only {{gmvShare}}% of GMV share.",
+            "DRIVER_READINESS": "Driver readiness in {{region}} is down to {{readiness}}%, creating {{dispatches}} at-risk dispatches."
+        },
+        "AUDIT": {
+            "SYSTEM_MODE": "Platform mode",
+            "SYSTEM_MODE_LIVE": "Live admin data is active and routing decisions are using authenticated sources.",
+            "SYSTEM_MODE_SNAPSHOT": "Fallback snapshot mode is active to keep the control center operational.",
+            "VENDOR_REVIEW": "Vendor review backlog",
+            "VENDOR_REVIEW_SUMMARY": "{{count}} merchant records are currently waiting on reviewer action.",
+            "DISPUTE_PULSE": "Dispute pulse",
+            "DISPUTE_PULSE_SUMMARY": "{{count}} dispute cases remain unresolved across the current scope.",
+            "CUSTOMER_RISK": "Customer trust pulse",
+            "CUSTOMER_RISK_SUMMARY": "{{count}} escalated customer accounts are still under trust review."
+        }
     },
     "CATEGORIES": {
         "TITLE": "Categories & Activity",
