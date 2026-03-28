@@ -1,3 +1,5 @@
+import type { DriverCompensationRule } from './finance-rules';
+
 export interface Driver {
     id: string;
     driverId: string;
@@ -21,6 +23,7 @@ export interface Driver {
     performance: DriverPerformance;
     vehicleType?: string;
     alerts?: string[];
+    compensationOverride?: DriverCompensationRule;
 }
 
 export type DriverStatus = Driver['status'];

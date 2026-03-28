@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DriverStatus, VerificationStatus } from '../../../../core/models/driver';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
+import { DetailTabsNavComponent, DetailTabNavItem } from '../../../../shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
@@ -291,12 +293,14 @@ const OPERATIONS_RULE_KEYS: Record<string, string> = {
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     TranslateModule,
     AppPageHeaderComponent,
     KpiCardsComponent,
     SectionHeaderComponent,
     StatusPillComponent,
     KeyValueGridComponent,
+    DetailTabsNavComponent,
     InlineBannerComponent,
     DataTableComponent,
     QuickPreviewDrawerComponent
@@ -506,6 +510,16 @@ export class DriverDetailViewComponent {
     ];
   }
 
+  get navTabs(): DetailTabNavItem[] {
+    return this.lifecycleTabs.map((tab) => ({
+      id: tab.id,
+      labelKey: tab.label,
+      icon: tab.icon,
+      count: tab.count,
+      attention: tab.attention
+    }));
+  }
+
   get statusVariant(): StatusPillVariant {
     return this.driverDetail ? getLifecycleStatusPillVariant(this.driverDetail.status) : 'neutral';
   }
@@ -600,6 +614,10 @@ export class DriverDetailViewComponent {
 
   setTab(tabId: DriverLifecycleTabId): void {
     this.tabChange.emit(tabId);
+  }
+
+  onNavTabChange(tabId: string): void {
+    this.setTab(tabId as DriverLifecycleTabId);
   }
 
   addQuickNote(): void {

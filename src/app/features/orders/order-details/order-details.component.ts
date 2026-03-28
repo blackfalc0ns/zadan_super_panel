@@ -13,6 +13,8 @@ import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/compone
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
 import { OrdersService } from '../../../core/services/orders.service';
+import { FinanceService } from '../../finances/services/finance.service';
+import { OrderFinancialBreakdown } from '../../finances/models/finance.models';
 import {
   DriverAssignmentForm,
   OrderCancellationForm,
@@ -61,6 +63,7 @@ import {
 export class OrderDetailsComponent implements OnInit {
   readonly orderId = signal<string | null>(null);
   readonly order = signal<OrderDetail | null>(null);
+  readonly financialBreakdown = signal<OrderFinancialBreakdown | null>(null);
 
   isLoading = false;
   errorMessage = '';
@@ -74,7 +77,8 @@ export class OrderDetailsComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly ordersService: OrdersService
+    private readonly ordersService: OrdersService,
+    private readonly financeService: FinanceService
   ) {}
 
   ngOnInit(): void {
@@ -199,16 +203,19 @@ export class OrderDetailsComponent implements OnInit {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.financialBreakdown.set(null);
 
     this.ordersService.getOrderById(id).subscribe({
       next: (order) => {
         this.order.set(order);
+        this.loadFinancialBreakdown(id);
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Failed to load order details', error);
         this.errorMessage = 'ORDERS.ERRORS.LOAD_DETAIL';
         this.order.set(null);
+        this.financialBreakdown.set(null);
         this.isLoading = false;
       }
     });
@@ -385,6 +392,7 @@ export class OrderDetailsComponent implements OnInit {
     this.ordersService.updateOrderStatus(id, form).subscribe({
       next: (order) => {
         this.order.set(order);
+        this.loadFinancialBreakdown(id);
         this.closeStatusModal();
       }
     });
@@ -400,6 +408,7 @@ export class OrderDetailsComponent implements OnInit {
     this.ordersService.assignDriver(id, form).subscribe({
       next: (order) => {
         this.order.set(order);
+        this.loadFinancialBreakdown(id);
         this.closeDriverAssignmentModal();
       }
     });
@@ -415,6 +424,7 @@ export class OrderDetailsComponent implements OnInit {
     this.ordersService.cancelOrder(id, form).subscribe({
       next: (order) => {
         this.order.set(order);
+        this.loadFinancialBreakdown(id);
         this.closeCancellationModal();
       }
     });
@@ -435,6 +445,7 @@ export class OrderDetailsComponent implements OnInit {
     this.ordersService.createRefund(id, form).subscribe({
       next: (order) => {
         this.order.set(order);
+        this.loadFinancialBreakdown(id);
         this.closeRefundModal();
       }
     });
@@ -455,6 +466,7 @@ export class OrderDetailsComponent implements OnInit {
     this.ordersService.openDispute(id, form).subscribe({
       next: (order) => {
         this.order.set(order);
+        this.loadFinancialBreakdown(id);
         this.closeDisputeModal();
       }
     });
@@ -475,6 +487,7 @@ export class OrderDetailsComponent implements OnInit {
     this.ordersService.flagIssue(id, form).subscribe({
       next: (order) => {
         this.order.set(order);
+        this.loadFinancialBreakdown(id);
         this.closeIssueFlagModal();
       }
     });
@@ -550,5 +563,11 @@ export class OrderDetailsComponent implements OnInit {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(value)} SAR`;
+  }
+
+  private loadFinancialBreakdown(orderId: string): void {
+    this.financeService.getOrderFinancialBreakdown(orderId).subscribe((breakdown) => {
+      this.financialBreakdown.set(breakdown);
+    });
   }
 }

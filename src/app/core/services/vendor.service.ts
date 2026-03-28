@@ -100,6 +100,15 @@ export class VendorService {
     );
   }
 
+  getVendorSnapshotById(id: string): VendorDetail | undefined {
+    const vendor = this.findVendor(id);
+    return vendor ? this.clone(vendor) : undefined;
+  }
+
+  getVendorsSnapshot(): VendorDetail[] {
+    return this.vendorStore.map((vendor) => this.clone(vendor));
+  }
+
   getVendorKPIs(): Observable<VendorKPIs> {
     return of(this.buildVendorKPIs(this.vendorStore));
   }

@@ -70,7 +70,7 @@ export interface FilterPreset {
           <div *ngIf="field.type === 'select'" class="relative">
             <select [(ngModel)]="filters[field.key]" (change)="onFilterChange()"
                     class="w-full px-3.5 py-2 text-[11px] font-bold border border-slate-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-primary-20 focus:border-primary transition-all duration-200 bg-white hover:border-slate-300 appearance-none cursor-pointer text-slate-700">
-              <option [value]="undefined">{{ 'COMMON.HIDE_INACTIVE' | translate }}</option>
+              <option [value]="undefined">{{ (field.placeholder || 'COMMON.HIDE_INACTIVE') | translate }}</option>
               <option *ngFor="let option of field.options" [value]="option.value">{{ option.label | translate }}</option>
             </select>
             <div class="absolute inset-y-0 left-2.5 flex items-center pointer-events-none">

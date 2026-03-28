@@ -227,7 +227,12 @@ export class DriverDetailComponent implements OnInit {
         this.setTab('support');
         break;
       case 'OPEN_FINANCE':
-        this.setTab('finance');
+        this.router.navigate(['/finances/settlements'], {
+          queryParams: {
+            entityType: 'driver',
+            entityId: this.sourceDriver.id
+          }
+        });
         break;
       case 'REVIEW_COMPLIANCE':
         this.setTab('compliance');

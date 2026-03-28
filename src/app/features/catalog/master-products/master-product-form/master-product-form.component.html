@@ -1,17 +1,19 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/50 pb-6 sm:pb-12 overflow-x-hidden">
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/50 px-3 sm:px-4 md:px-6 lg:px-8 pb-6 sm:pb-12 overflow-x-hidden">
     
     <!-- Header -->
     <app-detail-header
         [title]="productForm.get('id')?.value ? (translate.instant('MASTER_PRODUCTS.EDIT_TITLE')) : (translate.instant('MASTER_PRODUCTS.ADD_TITLE'))"
         [breadcrumbs]="breadcrumbs"
         [actionButtonLabel]="productForm.get('id')?.value ? ('COMMON.SAVE_EDIT' | translate) : ('COMMON.SAVE' | translate)"
+        [containerClass]="'w-full max-w-[110rem] mx-auto mb-0 relative z-10'"
+        [headerClass]="'flex justify-between items-center px-0 py-4 md:py-6'"
         actionButtonIcon="save"
         [isActionDisabled]="isLoading"
         (backClick)="onCancel()"
         (actionClick)="onSubmit()">
     </app-detail-header>
 
-    <div *ngIf="productForm" class="max-w-[1300px] mx-auto px-4 sm:px-6 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <div *ngIf="productForm" class="w-full max-w-[110rem] mx-auto px-0 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
         <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
             
             <!-- Left Wing: Core DNA & Media -->

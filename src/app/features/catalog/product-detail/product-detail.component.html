@@ -1,15 +1,15 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/50 p-4 md:p-6">
-    
-    <!-- Header -->
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/50 px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6">
+
     <app-detail-header
         [breadcrumbs]="breadcrumbs"
         [actionButtonLabel]="translate.instant('PRODUCTS.DETAIL.EDIT')"
+        [containerClass]="'w-full max-w-[110rem] mx-auto mb-0 relative z-10'"
+        [headerClass]="'flex justify-between items-center px-0 py-4 md:py-6'"
         actionButtonIcon="edit"
         (backClick)="goBack()"
         (actionClick)="editProduct()">
     </app-detail-header>
 
-    <!-- Loading State -->
     <div *ngIf="isLoading" class="flex items-center justify-center min-h-[400px]">
         <div class="relative w-16 h-16">
             <div class="absolute inset-0 rounded-full border-4 border-zadna-primary/20"></div>
@@ -17,24 +17,20 @@
         </div>
     </div>
 
-    <!-- Product Content -->
-    <div *ngIf="!isLoading && product" class="max-w-7xl mx-auto">
+    <div *ngIf="!isLoading && product" class="w-full max-w-[110rem] mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Right Side: Image Gallery (1 column) -->
+
             <div class="lg:col-span-1 lg:order-2">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-6">
-                    <!-- Main Image -->
                     <div class="mb-4">
                         <div class="aspect-square rounded-xl overflow-hidden bg-slate-50 border border-slate-100">
-                            <img [src]="getMainImage()" 
+                            <img [src]="getMainImage()"
                                  [alt]="activeLang === 'ar' ? product.nameAr : product.nameEn"
                                  class="w-full h-full object-cover">
                         </div>
                     </div>
 
-                    <!-- Thumbnails -->
-                    <div *ngIf="product.images && product.images.length > 1" 
+                    <div *ngIf="product.images && product.images.length > 1"
                          class="grid grid-cols-4 gap-2">
                         <div *ngFor="let image of product.images; let i = index"
                              (click)="selectImage(i)"
@@ -42,7 +38,7 @@
                              [class.border-zadna-primary]="selectedImageIndex === i"
                              [class.border-slate-200]="selectedImageIndex !== i"
                              [class.opacity-50]="selectedImageIndex !== i">
-                            <img [src]="image.url" 
+                            <img [src]="image.url"
                                  [alt]="('PRODUCTS.DETAIL.IMAGE_ALT' | translate) + ' ' + (i + 1)"
                                  class="w-full h-full object-cover">
                         </div>
@@ -50,10 +46,8 @@
                 </div>
             </div>
 
-            <!-- Left Side: Product Info (2 columns) -->
             <div class="lg:col-span-2 lg:order-1 space-y-6">
-                
-                <!-- Main Info Card -->
+
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex-1">
@@ -76,7 +70,6 @@
                     </div>
                 </div>
 
-                <!-- Details Grid -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                     <app-section-header
                         [compact]="true"
@@ -93,7 +86,6 @@
                     </div>
                 </div>
 
-                <!-- Vendors Table -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="mb-4">
                         <app-section-header
@@ -102,274 +94,68 @@
                             title="PRODUCTS.DETAIL.VENDORS_TABLE">
                         </app-section-header>
                     </div>
-                    
-                    <!-- Desktop Table -->
-                    <div class="hidden md:block overflow-x-auto">
-                        <table class="w-full table-fixed">
-                            <thead>
-                                <tr class="border-b border-slate-200">
-                                    <th class="text-right text-xs font-semibold text-slate-600 pb-3 px-2">{{ 'PRODUCTS.DETAIL.VENDOR_NAME' | translate }}</th>
-                                    <th class="text-center text-xs font-semibold text-slate-600 pb-3 px-2">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</th>
-                                    <th class="text-center text-xs font-semibold text-slate-600 pb-3 px-2">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</th>
-                                    <th class="text-center text-xs font-semibold text-slate-600 pb-3 px-2">{{ 'PRODUCTS.DETAIL.LAST_UPDATE' | translate }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Vendor 1 -->
-                                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                            <span class="text-sm font-medium text-slate-900">مؤسسة الأمين للتجارة</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-sm font-bold text-slate-700 w-10 text-right">850</span>
-                                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                <div class="h-full bg-teal-600 rounded-full" style="width: 85%"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TWO_HOURS_AGO' | translate }}</span>
-                                    </td>
-                                </tr>
 
-                                <!-- Vendor 2 -->
-                                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                            <span class="text-sm font-medium text-slate-900">تجارة الجود المريح</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-sm font-bold text-slate-700 w-10 text-right">420</span>
-                                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                <div class="h-full bg-teal-600 rounded-full" style="width: 42%"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">125 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_YESTERDAY' | translate }}</span>
-                                    </td>
-                                </tr>
-
-                                <!-- Vendor 3 -->
-                                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                            <span class="text-sm font-medium text-slate-900">تجارة الجملة الحديثة</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-sm font-bold text-slate-700 w-10 text-right">150</span>
-                                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                <div class="h-full bg-teal-600 rounded-full" style="width: 15%"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">118 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_THREE_DAYS_AGO' | translate }}</span>
-                                    </td>
-                                </tr>
-
-                                <!-- Vendor 4 -->
-                                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-                                            <span class="text-sm font-medium text-slate-900">مؤسسة الوداد</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-sm font-bold text-slate-700 w-10 text-right">950</span>
-                                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                <div class="h-full bg-teal-600 rounded-full" style="width: 95%"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">122 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TODAY' | translate }}</span>
-                                    </td>
-                                </tr>
-
-                                <!-- Vendor 5 -->
-                                <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-2 h-2 rounded-full bg-pink-500"></div>
-                                            <span class="text-sm font-medium text-slate-900">تجارة الوحدة الحديثة</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-sm font-bold text-slate-700 w-10 text-right">600</span>
-                                            <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                                <div class="h-full bg-teal-600 rounded-full" style="width: 60%"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                    </td>
-                                    <td class="text-center py-3 px-2">
-                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_WEEK_AGO' | translate }}</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Mobile Cards -->
-                    <div class="md:hidden space-y-4">
-                        <!-- Vendor 1 -->
-                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                    <span class="text-sm font-medium text-slate-900">مؤسسة الأمين للتجارة</span>
+                    <app-data-table
+                        [data]="vendorSnapshots"
+                        [columns]="vendorTableColumns"
+                        [containerClass]="'extraordinary-table-container'"
+                        [emptyStateTitle]="'PRODUCTS.DETAIL.NOT_FOUND'"
+                        [emptyStateMessage]="'PRODUCTS.DETAIL.NOT_FOUND_DESC'">
+                        <ng-template #customColumn let-vendor let-column="column">
+                            <ng-container *ngIf="column.key === 'vendor'">
+                                <div class="flex items-center gap-3 text-start">
+                                    <div class="w-2 h-2 rounded-full shrink-0" [class]="vendor.colorClass"></div>
+                                    <span class="text-sm font-medium text-slate-900 truncate">{{ getVendorName(vendor) }}</span>
                                 </div>
-                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TWO_HOURS_AGO' | translate }}</span>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-bold text-slate-700">850</span>
-                                        <div class="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                            <div class="h-full bg-teal-600 rounded-full" style="width: 85%"></div>
-                                        </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="column.key === 'quantity'">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-bold text-slate-700 w-10 text-end shrink-0">{{ vendor.quantity }}</span>
+                                    <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-teal-600 rounded-full" [style.width]="getVendorRatioWidth(vendor)"></div>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                </div>
-                            </div>
-                        </div>
+                            </ng-container>
 
-                        <!-- Vendor 2 -->
-                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                                    <span class="text-sm font-medium text-slate-900">تجارة الجود المريح</span>
+                            <ng-container *ngIf="column.key === 'price'">
+                                <span class="text-sm font-semibold text-slate-900">{{ vendor.price }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                            </ng-container>
+
+                            <ng-container *ngIf="column.key === 'time'">
+                                <span class="text-xs text-slate-500">{{ vendor.timeKey | translate }}</span>
+                            </ng-container>
+                        </ng-template>
+
+                        <ng-template #mobileCard let-vendor>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <div class="w-2 h-2 rounded-full shrink-0" [class]="vendor.colorClass"></div>
+                                        <span class="text-sm font-medium text-slate-900 truncate">{{ getVendorName(vendor) }}</span>
+                                    </div>
+                                    <span class="text-xs text-slate-500 shrink-0">{{ vendor.timeKey | translate }}</span>
                                 </div>
-                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_YESTERDAY' | translate }}</span>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-bold text-slate-700">420</span>
-                                        <div class="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                            <div class="h-full bg-teal-600 rounded-full" style="width: 42%"></div>
+
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
+                                        <div class="flex items-center gap-2 min-w-[8rem]">
+                                            <span class="text-sm font-bold text-slate-700 shrink-0">{{ vendor.quantity }}</span>
+                                            <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                                <div class="h-full bg-teal-600 rounded-full" [style.width]="getVendorRatioWidth(vendor)"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">125 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Vendor 3 -->
-                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                    <span class="text-sm font-medium text-slate-900">تجارة الجملة الحديثة</span>
-                                </div>
-                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_THREE_DAYS_AGO' | translate }}</span>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-bold text-slate-700">150</span>
-                                        <div class="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                            <div class="h-full bg-teal-600 rounded-full" style="width: 15%"></div>
-                                        </div>
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
+                                        <span class="text-sm font-semibold text-slate-900">{{ vendor.price }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                                     </div>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">118 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                </div>
                             </div>
-                        </div>
-
-                        <!-- Vendor 4 -->
-                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-                                    <span class="text-sm font-medium text-slate-900">مؤسسة الوداد</span>
-                                </div>
-                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_TODAY' | translate }}</span>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-bold text-slate-700">950</span>
-                                        <div class="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                            <div class="h-full bg-teal-600 rounded-full" style="width: 95%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">122 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Vendor 5 -->
-                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-pink-500"></div>
-                                    <span class="text-sm font-medium text-slate-900">تجارة الوحدة الحديثة</span>
-                                </div>
-                                <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.TIME_WEEK_AGO' | translate }}</span>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-bold text-slate-700">600</span>
-                                        <div class="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                            <div class="h-full bg-teal-600 rounded-full" style="width: 60%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                    <span class="text-sm font-semibold text-slate-900">120 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        </ng-template>
+                    </app-data-table>
                 </div>
 
             </div>
@@ -377,7 +163,6 @@
         </div>
     </div>
 
-    <!-- Empty State -->
     <div *ngIf="!isLoading && !product" class="flex items-center justify-center min-h-[400px]">
         <div class="text-center">
             <div class="w-24 h-24 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">

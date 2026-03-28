@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Observable, delay, of } from 'rxjs';
 import { Driver, DriverFilters, DriverKPIs, DriverPerformance, VerificationStatus } from '../models/driver';
+import { DriverCompensationRule } from '../models/finance-rules';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DriverService {
+  static readonly defaultCompensation: DriverCompensationRule = {
+    basePayout: 8,
+    distanceRatePerKm: 2.5,
+    peakBonus: 15,
+    zoneBonus: 10,
+    overrideAllowed: true
+  };
   private readonly mockDrivers = this.buildMockDrivers(12842);
 
   getDriverById(id: string): Observable<Driver | undefined> {
@@ -320,7 +328,16 @@ export class DriverService {
           ? Number((template.walletBalance + walletShift).toFixed(2))
           : Number((template.walletBalance - (walletShift / 3)).toFixed(2)),
         lastSeenAt: new Date(Date.now() - ((index % 120) + 5) * 60 * 1000),
-        alerts: sequence % 19 === 0 ? ['بلاغات نشطة (2)'] : template.alerts
+        alerts: sequence % 19 === 0 ? ['بلاغات نشطة (2)'] : template.alerts,
+        compensationOverride: sequence % 17 === 0
+          ? {
+              ...DriverService.defaultCompensation,
+              basePayout: Number((DriverService.defaultCompensation.basePayout + ((index % 3) * 0.5)).toFixed(2)),
+              distanceRatePerKm: Number((DriverService.defaultCompensation.distanceRatePerKm + ((index % 2) * 0.25)).toFixed(2)),
+              peakBonus: DriverService.defaultCompensation.peakBonus + ((index % 4) * 2),
+              zoneBonus: DriverService.defaultCompensation.zoneBonus + (index % 3)
+            }
+          : undefined
       };
     });
   }
@@ -336,7 +353,8 @@ export class DriverService {
       tasks: { ...driver.tasks },
       issues: [...driver.issues],
       alerts: driver.alerts ? [...driver.alerts] : undefined,
-      lastSeenAt: new Date(driver.lastSeenAt)
+      lastSeenAt: new Date(driver.lastSeenAt),
+      compensationOverride: driver.compensationOverride ? { ...driver.compensationOverride } : undefined
     };
   }
 
@@ -352,3 +370,4 @@ export class DriverService {
       .trim();
   }
 }
+

@@ -1,4 +1,4 @@
-{
+﻿{
     "COMMON": {
         "CANCEL": "إلغاء",
         "CONFIRM_DELETE": "تأكيد الحذف",
@@ -1601,6 +1601,9 @@
         "TITLE": "التصنيفات والنشاط",
         "CATEGORIES_ACTIVITY": "التصنيفات والنشاط",
         "CONTENT_MGMT": "إدارة المحتوى",
+        "MENU": {
+            "CATEGORIES": "التصنيفات"
+        },
         "DESCRIPTION": "تتبع وإدارة هيكلة التصنيفات الرئيسية في النظام بدقة واحترافية",
         "ADD_NEW": "إضافة تصنيف جديد",
         "SEARCH_PLACEHOLDER": "البحث في التصنيفات والأنشطة...",
@@ -2995,6 +2998,17 @@
             "PAYMENT_STATUS_LABEL": "حالة الدفع",
             "PAYMENT_NOTE": "ملاحظة الدفع",
             "FULFILLMENT_NOTE": "ملاحظة التنفيذ",
+            "FINANCE_CARD": {
+                "TITLE": "الملخص المالي",
+                "SUBTITLE": "تفصيل مالي على مستوى المنصة لهذا الطلب.",
+                "OPEN_LEDGER": "فتح الدفتر المالي",
+                "OPEN_REFUNDS": "فتح الاستردادات",
+                "VENDOR_COMMISSION": "عمولة المورّد",
+                "DRIVER_PAYOUT": "مستحق السائق",
+                "SERVICE_FEE": "رسوم الخدمة",
+                "VAT": "ضريبة القيمة المضافة",
+                "NET_MARGIN": "صافي الهامش"
+            },
             "PAYMENT_DETAILS": "تفاصيل الدفع",
             "PAYMENT_METHOD": "طريقة الدفع",
             "TRANSACTION_REF": "مرجع المعاملة",
@@ -3456,5 +3470,435 @@
             "LOAD_DETAIL": "تعذر تحميل تفاصيل الطلب.",
             "INVALID_ID": "رقم الطلب غير صالح."
         }
+    },
+    "FINANCES": {
+        "TITLE": "المالية",
+        "SUBTITLE": "التسعير والإيرادات والتسويات والنزاعات في مكان واحد",
+        "EXPORT": "تصدير",
+        "CONFIGURE": "إعداد",
+        "LAST_UPDATED": "آخر تحديث",
+        "TABS": {
+            "DASHBOARD": "لوحة التحكم",
+            "PRICING": "التسعير",
+            "LEDGER": "الدفتر المالي",
+            "SETTLEMENTS": "التسويات",
+            "COD": "الدفع عند الاستلام",
+            "REFUNDS": "الاستردادات",
+            "ADJUSTMENTS": "التعديلات",
+            "AUDIT": "التدقيق"
+        },
+        "PERIODS": {
+            "TODAY": "اليوم",
+            "WEEK": "أسبوع",
+            "MONTH": "شهر",
+            "QUARTER": "ربع سنة",
+            "THIS_WEEK": "هذا الأسبوع",
+            "THIS_MONTH": "هذا الشهر",
+            "THIS_QUARTER": "هذا الربع",
+            "MAR_2026": "مارس 2026"
+        },
+        "COMMON": {
+            "ACTIONS": "الإجراءات",
+            "STATUS": "الحالة",
+            "CANCEL": "إلغاء",
+            "VIEW": "عرض",
+            "HIDE": "إخفاء",
+            "BEFORE": "قبل",
+            "AFTER": "بعد",
+            "TIMESTAMP": "الوقت",
+            "ENTITY": "الكيان",
+            "TYPE": "النوع",
+            "REFERENCE": "المرجع",
+            "AMOUNT": "المبلغ",
+            "DIRECTION": "الاتجاه"
+        },
+        "TIME": {
+            "JUST_NOW": "الآن",
+            "MINUTES_AGO": "منذ {{count}} دقيقة",
+            "HOURS_AGO": "منذ {{count}} ساعة"
+        },
+        "DIRECTIONS": {
+            "CREDIT": "إضافة",
+            "DEBIT": "خصم"
+        },
+        "ENTITIES": {
+            "VENDOR": "مورّد",
+            "DRIVER": "سائق",
+            "ORDER": "طلب",
+            "PLATFORM": "المنصة",
+            "CUSTOMER": "عميل"
+        },
+        "STATUS": {
+            "PENDING": "قيد الانتظار",
+            "PROCESSING": "قيد المعالجة",
+            "PAID": "مدفوع",
+            "FAILED": "فشل",
+            "DISPUTED": "متنازع عليه",
+            "OPEN": "مفتوح",
+            "UNDER_REVIEW": "قيد المراجعة",
+            "APPROVED": "معتمد",
+            "REJECTED": "مرفوض",
+            "ESCALATED": "تم التصعيد",
+            "COLLECTED": "تم التحصيل",
+            "OVERDUE": "متأخر",
+            "PENDING_APPROVAL": "بانتظار الموافقة"
+        },
+        "CHART": {
+            "GMV_VS_REVENUE": "إجمالي قيمة البضائع مقابل صافي الإيراد",
+            "LAST_7_MONTHS": "آخر 7 أشهر",
+            "COMPOSITION": "التركيب",
+            "REVENUE_BREAKDOWN": "توزيع الإيرادات",
+            "REFUND_TREND": "اتجاه الاستردادات",
+            "REFUND_RATE": "نسبة الاسترداد",
+            "SERIES_GMV": "إجمالي قيمة البضائع",
+            "SERIES_NET_REVENUE": "صافي الإيراد"
+        },
+        "KPI": {
+            "GMV": "إجمالي قيمة البضائع",
+            "NET_REVENUE": "صافي الإيراد",
+            "VENDOR_COMMISSIONS": "عمولات المورّدين",
+            "DRIVER_PAYOUTS": "مستحقات السائقين",
+            "REFUND_RATIO": "نسبة الاسترداد",
+            "DISPUTE_EXPOSURE": "مخاطر النزاعات",
+            "VS_LAST_MONTH": "مقارنة بالشهر الماضي"
+        },
+        "COMPOSITION": {
+            "COMMISSIONS": "العمولات",
+            "DELIVERY_FEES": "رسوم التوصيل",
+            "SERVICE_FEES": "رسوم الخدمة",
+            "COD_FEES": "رسوم الدفع عند الاستلام",
+            "VAT": "ضريبة القيمة المضافة"
+        },
+        "ALERTS": {
+            "TITLE": "تنبيهات تحتاج متابعة",
+            "NEGATIVE_MARGIN": "هامش سلبي",
+            "NEGATIVE_MARGIN_DESC": "انخفض هامش الربح في أحد القطاعات بعد احتساب التوصيل والاستردادات.",
+            "HIGH_DISPUTE_VENDOR": "مورّد عالي النزاعات",
+            "HIGH_DISPUTE_VENDOR_DESC": "تجاوز أحد المورّدين حد النزاعات هذا الأسبوع ويحتاج إلى مراجعة مالية.",
+            "COD_OVERDUE": "تحصيلات COD متأخرة",
+            "COD_OVERDUE_DESC": "هناك تحصيلات دفع عند الاستلام لم تُسوَّ بعد ضمن المهلة المتوقعة.",
+            "SETTLEMENT_DUE": "تسوية مستحقة",
+            "SETTLEMENT_DUE_DESC": "بعض التسويات المعلّقة اقتربت من موعد الصرف."
+        },
+        "DASHBOARD": {
+            "LOAD_ERROR_TITLE": "بيانات اللوحة تحتاج إعادة تحميل",
+            "LOAD_ERROR_MESSAGE": "تعذر إكمال تحميل نظرة المالية العامة الآن. أعد المحاولة وستبقى بقية صفحات المركز المالي متاحة.",
+            "RETRY": "إعادة المحاولة",
+            "NO_ALERTS_TITLE": "لا توجد تنبيهات مالية حاليًا",
+            "NO_ALERTS_MESSAGE": "هوامش الربح والاستردادات وCOD والتسويات ضمن النطاق المتوقع حاليًا."
+        },
+        "ACTIONS": {
+            "VIEW_ALL": "عرض الكل",
+            "VIEW_VENDOR": "عرض المورّد",
+            "VIEW_REFUNDS": "عرض الاستردادات",
+            "VIEW_COD": "عرض الدفع عند الاستلام",
+            "VIEW_SETTLEMENTS": "عرض التسويات",
+            "APPROVE": "اعتماد",
+            "REJECT": "رفض",
+            "ESCALATE": "تصعيد",
+            "PROCESS": "معالجة"
+        },
+        "FILTERS": {
+            "TITLE": "تصفية المالية",
+            "SUBTITLE": "ابحث وعدّل نطاق العرض",
+            "ACTIVE": "الفلاتر النشطة",
+            "PERIOD": "الفترة",
+            "SEARCH_PLACEHOLDER": "ابحث بالطلب أو التسوية أو المرجع...",
+            "ALL": "الكل",
+            "ALL_PERIODS": "كل الفترات",
+            "ALL_ENTITIES": "كل الكيانات",
+            "ALL_TYPES": "كل الأنواع",
+            "CLEAR": "مسح"
+        },
+        "LEDGER": {
+            "BALANCE_AFTER": "الرصيد بعد العملية",
+            "ENTRY_TITLE": "قيد الدفتر المالي",
+            "ORDER_ID": "رقم الطلب",
+            "SETTLEMENT": "التسوية",
+            "EMPTY": {
+                "TITLE": "لا توجد قيود",
+                "MESSAGE": "جرّب تعديل الفلاتر لعرض المزيد من حركة الدفتر المالي."
+            },
+            "SUMMARY": {
+                "TOTAL_ENTRIES": "إجمالي القيود",
+                "TOTAL_CREDITS": "إجمالي الإضافات",
+                "TOTAL_DEBITS": "إجمالي الخصومات",
+                "NET_FLOW": "صافي الحركة"
+            },
+            "TYPES": {
+                "COMMISSION": "عمولة",
+                "PAYOUT": "دفعة",
+                "REFUND": "استرداد",
+                "SETTLEMENT": "تسوية",
+                "ADJUSTMENT": "تعديل",
+                "SERVICE_FEE": "رسوم خدمة",
+                "DELIVERY_FEE": "رسوم توصيل",
+                "VAT": "ضريبة القيمة المضافة",
+                "BONUS": "مكافأة",
+                "PENALTY": "غرامة",
+                "COD_COLLECTION": "تحصيل الدفع عند الاستلام"
+            },
+            "DESC": {
+                "COMMISSION": "عمولة المنصة المحسوبة على إيراد الطلب.",
+                "PAYOUT": "دفعة مصروفة إلى السائق أو المورّد.",
+                "REFUND": "استرداد مُعالج لطلب عميل.",
+                "SERVICE_FEE": "رسوم خدمة مُحصلة على الطلب.",
+                "DELIVERY_FEE": "رسوم توصيل مُحصلة على الطلب.",
+                "ADJUSTMENT": "تعديل يدوي على الرصيد بواسطة المسؤول.",
+                "SETTLEMENT": "دفعة تسوية تم ترحيلها إلى الدفتر المالي.",
+                "COD_COLLECTION": "مبلغ دفع عند الاستلام تم تحصيله.",
+                "VAT": "ضريبة قيمة مضافة مطبقة على الرسوم الخاضعة.",
+                "BONUS": "مكافأة تشغيلية أو ترويجية.",
+                "PENALTY": "غرامة مخصومة بسبب مخالفة سياسة."
+            }
+        },
+        "SETTLEMENTS": {
+            "VENDORS": "المورّدون",
+            "DRIVERS": "السائقون",
+            "VENDOR_LIST": "تسويات المورّدين",
+            "DRIVER_LIST": "تسويات السائقين",
+            "NEW_SETTLEMENT": "تسوية جديدة",
+            "PROCESS_SETTLEMENT": "معالجة التسوية",
+            "DOWNLOAD_STATEMENT": "تنزيل الكشف",
+            "SUMMARY": {
+                "TOTAL_SETTLEMENTS": "إجمالي التسويات",
+                "PAID": "المدفوع",
+                "PENDING": "المعلّق",
+                "TOTAL_NET": "إجمالي صافي المستحقات"
+            },
+            "TABLE": {
+                "SETTLEMENT": "التسوية",
+                "ENTITY": "الكيان",
+                "PERIOD": "الفترة",
+                "ORDERS": "الطلبات",
+                "GROSS": "الإجمالي",
+                "DEDUCTIONS": "الاستقطاعات",
+                "NET_PAYOUT": "صافي المستحق"
+            },
+            "DRAWER": {
+                "NET_PAYOUT": "صافي المستحق",
+                "GROSS_AMOUNT": "إجمالي المبلغ",
+                "DEDUCTIONS": "الاستقطاعات",
+                "ORDERS": "الطلبات",
+                "PERIOD": "الفترة"
+            }
+        },
+        "COD": {
+            "TITLE": "مطابقة الدفع عند الاستلام",
+            "RECONCILE_ALL": "مطابقة الكل",
+            "RECONCILE": "مطابقة",
+            "DONE": "تم",
+            "MATCHED": "متطابق",
+            "SUMMARY": {
+                "EXPECTED": "المتوقع",
+                "COLLECTED": "المحصّل",
+                "DELTA": "الفرق",
+                "OVERDUE": "المتأخر",
+                "PENDING": "المعلّق"
+            },
+            "TABLE": {
+                "ORDER": "الطلب",
+                "DRIVER": "السائق",
+                "VENDOR": "المورّد",
+                "EXPECTED": "المتوقع",
+                "COLLECTED": "المحصّل",
+                "DELTA": "الفرق"
+            }
+        },
+        "REFUNDS": {
+            "FILTERS": {
+                "ALL": "الكل"
+            },
+            "SUMMARY": {
+                "OPEN_CASES": "الحالات المفتوحة",
+                "TOTAL_EXPOSURE": "إجمالي التعرّض",
+                "APPROVED": "القيمة المعتمدة",
+                "ESCALATED": "الحالات المصعّدة",
+                "TOTAL_CASES": "إجمالي الحالات"
+            },
+            "TABLE": {
+                "CASE": "الحالة",
+                "CUSTOMER_VENDOR": "العميل / المورّد",
+                "REQUESTED": "المبلغ المطلوب",
+                "RESPONSIBLE": "الجهة المسؤولة"
+            },
+            "EMPTY": {
+                "TITLE": "لا توجد حالات مطابقة",
+                "MESSAGE": "جرّب تعديل الفلاتر لعرض المزيد من حالات الاسترداد."
+            },
+            "DETAIL": {
+                "FINANCIAL_IMPACT": "الأثر المالي",
+                "RESPONSIBLE": "الجهة المسؤولة",
+                "CUSTOMER": "العميل",
+                "VENDOR": "المورّد",
+                "ORDER": "الطلب",
+                "REASON": "السبب",
+                "CREATED": "تاريخ الإنشاء",
+                "TIMELINE": "التسلسل الزمني",
+                "ADMIN_NOTE": "ملاحظة المسؤول",
+                "ADMIN_NOTE_PLACEHOLDER": "أضف ملاحظة للمراجع التالي..."
+            },
+            "REASONS": {
+                "WRONG_ITEM_DELIVERED": "تم تسليم منتج خاطئ",
+                "DAMAGED_PRODUCTS": "المنتجات تالفة",
+                "ORDER_NEVER_ARRIVED": "الطلب لم يصل",
+                "ITEM_QUALITY_ISSUE": "مشكلة في جودة المنتج",
+                "DUPLICATE_CHARGE": "تحصيل مكرر"
+            },
+            "NOTES": {
+                "CUSTOMER_SUBMITTED_REQUEST": "العميل قدّم طلب الاسترداد",
+                "ESCALATED_TO_FINANCE_REVIEW": "تم التصعيد إلى المراجعة المالية",
+                "FULL_REFUND_VENDOR_AT_FAULT": "استرداد كامل، والخطأ من المورّد",
+                "AWAITING_ADMIN_ASSIGNMENT": "بانتظار إسناد الحالة لمسؤول",
+                "INSUFFICIENT_EVIDENCE": "الأدلة غير كافية",
+                "PAYMENT_GATEWAY_ESCALATION": "تم التصعيد إلى بوابة الدفع"
+            }
+        },
+        "ADJUSTMENTS": {
+            "FORM": {
+                "TITLE": "إنشاء تعديل مالي",
+                "SUBTITLE": "أضف قيدًا يدويًا دائنًا أو مدينًا مع معاينة فورية للأثر.",
+                "ENTITY_TYPE": "نوع الكيان",
+                "ENTITY_NAME": "اسم الكيان",
+                "ENTITY_PLACEHOLDER": "اكتب اسم المورّد أو السائق",
+                "DIRECTION": "الاتجاه",
+                "AMOUNT": "المبلغ",
+                "CATEGORY": "الفئة",
+                "REASON": "السبب",
+                "REASON_PLACEHOLDER": "اشرح سبب هذا التعديل",
+                "REASON_HELPER": "سيظهر هذا السبب في الدفتر المالي وسجل التدقيق.",
+                "PREVIEW": "المعاينة",
+                "FOR": "لـ {{entity}}",
+                "SUBMIT": "إنشاء التعديل"
+            },
+            "HISTORY": {
+                "TITLE": "آخر التعديلات",
+                "SUBTITLE": "تتبّع آخر القيود اليدوية عبر المورّدين والسائقين."
+            },
+            "TABLE": {
+                "REF": "المرجع",
+                "REASON": "السبب",
+                "BY": "بواسطة"
+            },
+            "CATEGORIES": {
+                "COMPENSATION": "تعويض",
+                "COD_RECOVERY": "استرداد COD",
+                "PROMOTION": "ترقية",
+                "PENALTY": "غرامة",
+                "CORRECTION": "تصحيح",
+                "OTHER": "أخرى"
+            },
+            "REASONS": {
+                "SYSTEM_DOWNTIME": "تعويض عن توقف النظام",
+                "COD_SHORTAGE": "استرداد عجز COD",
+                "ONBOARDING_BONUS": "مكافأة انضمام"
+            }
+        },
+        "AUDIT": {
+            "BANNER_TITLE": "كل إجراء مالي قابل للتتبع",
+            "BANNER_DESC": "يتم تسجيل تغييرات التسعير وقرارات الاسترداد ومعالجة التسويات والتعديلات اليدوية هنا.",
+            "TITLE": "سجل التدقيق",
+            "ENTRIES": "إدخالات",
+            "TABLE": {
+                "ADMIN": "المسؤول",
+                "ACTION": "الإجراء",
+                "CHANGES": "التغييرات"
+            },
+            "ACTIONS": {
+                "ADJUSTMENT_APPROVED": "تم اعتماد تعديل مالي",
+                "ADJUSTMENT_CREATED": "تم إنشاء تعديل مالي",
+                "SETTLEMENT_PAID": "تم صرف تسوية",
+                "REFUND_ESCALATED": "تم تصعيد استرداد",
+                "REFUND_APPROVED": "تم اعتماد استرداد",
+                "REFUND_REJECTED": "تم رفض استرداد",
+                "PRICING_UPDATED": "تم تحديث قواعد التسعير"
+            }
+        },
+        "PRICING": {
+            "WARNING": "لديك تغييرات غير محفوظة على قواعد التسعير.",
+            "DISCARD_CHANGES": "تجاهل التغييرات",
+            "SAVE_RULES": "حفظ القواعد",
+            "CURRENT_RULESET": "مجموعة القواعد الحالية",
+            "EFFECTIVE_FROM": "سارية من",
+            "LAST_UPDATED": "آخر تحديث",
+            "BY": "بواسطة",
+            "CONFIRM_TITLE": "تأكيد تحديث التسعير",
+            "CONFIRM_MESSAGE": "هل تريد تطبيق قواعد التسعير هذه؟ ستؤثر على الطلبات والتسويات القادمة.",
+            "CONFIRM_UPDATE": "تأكيد التحديث",
+            "RULESET_NAME": "قواعد السوق الافتراضية",
+            "VENDOR_COMMISSION": {
+                "TITLE": "عمولة المورّد",
+                "SUBTITLE": "القواعد الأساسية للعمولة قبل أي تخصيصات خاصة بالمورّد.",
+                "DEFAULT_PERCENT": "النسبة الافتراضية",
+                "MIN_PERCENT": "الحد الأدنى",
+                "MAX_PERCENT": "الحد الأقصى",
+                "ALLOW_OVERRIDES": "السماح بتخصيصات للمورّدين"
+            },
+            "DRIVER_COMPENSATION": {
+                "TITLE": "مستحقات السائق",
+                "SUBTITLE": "الدفعة الأساسية وأجر المسافة والحوافز التشغيلية للسائقين.",
+                "BASE_PAYOUT": "الدفعة الأساسية",
+                "DISTANCE_RATE": "سعر المسافة / كم",
+                "PEAK_BONUS": "حافز الذروة",
+                "ZONE_BONUS": "حافز المنطقة",
+                "ALLOW_OVERRIDES": "السماح بتخصيصات للسائقين"
+            },
+            "DELIVERY": {
+                "TITLE": "رسوم التوصيل",
+                "SUBTITLE": "الرسم الأساسي والمسافة ومعاملات أوقات الذروة.",
+                "BASE_FEE": "الرسوم الأساسية",
+                "PER_KM": "لكل كيلومتر",
+                "PEAK_MULTIPLIER": "معامل الذروة",
+                "PEAK_START": "بداية الذروة",
+                "PEAK_END": "نهاية الذروة"
+            },
+            "SERVICE_FEE": {
+                "TITLE": "رسوم الخدمة",
+                "SUBTITLE": "الرسوم المطبقة على العميل عند إتمام الطلب.",
+                "PERCENT": "النسبة",
+                "CAP": "الحد الأقصى"
+            },
+            "COD_FEE": {
+                "TITLE": "رسوم الدفع عند الاستلام",
+                "SUBTITLE": "رسوم مناولة اختيارية لطلبات الدفع عند الاستلام.",
+                "PERCENT": "النسبة",
+                "FLAT_FEE": "رسوم ثابتة",
+                "USE_FLAT": "استخدام رسم ثابت"
+            },
+            "VAT": {
+                "TITLE": "ضريبة القيمة المضافة",
+                "SUBTITLE": "حدّد نسبة الضريبة والرسوم الخاضعة لها.",
+                "RATE": "النسبة",
+                "APPLY_TO": "تُطبق على",
+                "TARGETS": {
+                    "SERVICE_FEE": "رسوم الخدمة",
+                    "DELIVERY_FEE": "رسوم التوصيل",
+                    "COMMISSION": "العمولة"
+                }
+            }
+        },
+        "MONTHS": {
+            "JAN": "ينا",
+            "FEB": "فبر",
+            "MAR": "مار",
+            "APR": "أبر",
+            "MAY": "ماي",
+            "JUN": "يون",
+            "JUL": "يول",
+            "AUG": "أغس",
+            "SEP": "سبت",
+            "OCT": "أكت",
+            "NOV": "نوف",
+            "DEC": "ديس"
+        },
+        "ADMINS": {
+            "SUPER_ADMIN": "مدير النظام",
+            "FINANCE_ADMIN": "مسؤول المالية"
+        },
+        "ROLES": {
+            "SUPER_ADMIN": "مدير النظام",
+            "ADMIN": "مسؤول"
+        }
     }
 }
+

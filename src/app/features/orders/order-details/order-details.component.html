@@ -237,6 +237,59 @@
           </section>
         </div>
 
+        <section *ngIf="financialBreakdown() as finance"
+                 class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] p-6 shadow-sm">
+          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <app-section-header [compact]="true" icon="account_balance_wallet" title="ORDERS.DETAIL.FINANCE_CARD.TITLE"></app-section-header>
+              <p class="mt-2 text-[11px] font-medium text-slate-500">{{ 'ORDERS.DETAIL.FINANCE_CARD.SUBTITLE' | translate }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <a
+                [routerLink]="['/finances/ledger']"
+                [queryParams]="{ orderId: currentOrder.id }"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[11px] font-black text-slate-700 transition-all hover:bg-slate-100">
+                <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_LEDGER' | translate }}
+              </a>
+              <a
+                [routerLink]="['/finances/refunds']"
+                [queryParams]="{ orderId: currentOrder.id }"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-4 text-[11px] font-black text-white transition-all hover:bg-zadna-primaryDark">
+                <span class="material-symbols-outlined text-[16px]">undo</span>
+                {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_REFUNDS' | translate }}
+              </a>
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+              <p class="text-[10px] font-black text-slate-400 mb-2">{{ 'ORDERS.DETAIL.FINANCE_CARD.VENDOR_COMMISSION' | translate }}</p>
+              <p class="text-sm font-black text-slate-900">{{ finance.vendorCommission | number:'1.2-2' }} SAR</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+              <p class="text-[10px] font-black text-slate-400 mb-2">{{ 'ORDERS.DETAIL.FINANCE_CARD.DRIVER_PAYOUT' | translate }}</p>
+              <p class="text-sm font-black text-slate-900">{{ finance.driverPayout | number:'1.2-2' }} SAR</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+              <p class="text-[10px] font-black text-slate-400 mb-2">{{ 'ORDERS.DETAIL.FINANCE_CARD.SERVICE_FEE' | translate }}</p>
+              <p class="text-sm font-black text-slate-900">{{ finance.serviceFee | number:'1.2-2' }} SAR</p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+              <p class="text-[10px] font-black text-slate-400 mb-2">{{ 'ORDERS.DETAIL.FINANCE_CARD.VAT' | translate }}</p>
+              <p class="text-sm font-black text-slate-900">{{ finance.vat | number:'1.2-2' }} SAR</p>
+            </div>
+            <div class="rounded-2xl border p-4"
+                 [ngClass]="finance.netMargin >= 0 ? 'border-emerald-200 bg-emerald-50/70' : 'border-red-200 bg-red-50/70'">
+              <p class="text-[10px] font-black text-slate-400 mb-2">{{ 'ORDERS.DETAIL.FINANCE_CARD.NET_MARGIN' | translate }}</p>
+              <p class="text-sm font-black"
+                 [ngClass]="finance.netMargin >= 0 ? 'text-emerald-700' : 'text-red-700'">{{ finance.netMargin | number:'1.2-2' }} SAR</p>
+              <p class="mt-1 text-[10px] font-bold text-slate-500">{{ finance.marginPercent | number:'1.1-1' }}%</p>
+            </div>
+          </div>
+        </section>
+
         <section class="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-[1.5rem] overflow-hidden flex flex-col md:flex-row shadow-sm min-h-[300px]">
           <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center border-l border-slate-100">
             <app-section-header class="mb-6" [compact]="true" icon="location_on" title="ORDERS.DETAIL.LOCATION_DELIVERY"></app-section-header>

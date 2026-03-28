@@ -1594,6 +1594,9 @@
         "TITLE": "Categories & Activity",
         "CATEGORIES_ACTIVITY": "Categories & Activity",
         "CONTENT_MGMT": "Content Management",
+        "MENU": {
+            "CATEGORIES": "Categories"
+        },
         "DESCRIPTION": "Track and manage the structure of main categories in the system with precision and professionalism",
         "ADD_NEW": "Add New Category",
         "SEARCH_PLACEHOLDER": "Search categories and activities...",
@@ -2988,6 +2991,17 @@
             "PAYMENT_STATUS_LABEL": "Payment Status",
             "PAYMENT_NOTE": "Payment Note",
             "FULFILLMENT_NOTE": "Fulfillment Note",
+            "FINANCE_CARD": {
+                "TITLE": "Finance Snapshot",
+                "SUBTITLE": "Platform-side financial breakdown for this order.",
+                "OPEN_LEDGER": "Open Ledger",
+                "OPEN_REFUNDS": "Open Refunds",
+                "VENDOR_COMMISSION": "Vendor Commission",
+                "DRIVER_PAYOUT": "Driver Payout",
+                "SERVICE_FEE": "Service Fee",
+                "VAT": "VAT",
+                "NET_MARGIN": "Net Margin"
+            },
             "PAYMENT_DETAILS": "Payment Details",
             "PAYMENT_METHOD": "Payment Method",
             "TRANSACTION_REF": "Transaction Ref",
@@ -3448,6 +3462,435 @@
             "LOAD_LIST": "Failed to load orders. Check the current filters or try again.",
             "LOAD_DETAIL": "Failed to load order details.",
             "INVALID_ID": "Invalid order ID."
+        }
+    },
+    "FINANCES": {
+        "TITLE": "Finance",
+        "SUBTITLE": "Pricing, revenue, settlements, and disputes in one workspace",
+        "EXPORT": "Export",
+        "CONFIGURE": "Configure",
+        "LAST_UPDATED": "Last updated",
+        "TABS": {
+            "DASHBOARD": "Dashboard",
+            "PRICING": "Pricing",
+            "LEDGER": "Ledger",
+            "SETTLEMENTS": "Settlements",
+            "COD": "COD",
+            "REFUNDS": "Refunds",
+            "ADJUSTMENTS": "Adjustments",
+            "AUDIT": "Audit"
+        },
+        "PERIODS": {
+            "TODAY": "Today",
+            "WEEK": "Week",
+            "MONTH": "Month",
+            "QUARTER": "Quarter",
+            "THIS_WEEK": "This week",
+            "THIS_MONTH": "This month",
+            "THIS_QUARTER": "This quarter",
+            "MAR_2026": "Mar 2026"
+        },
+        "COMMON": {
+            "ACTIONS": "Actions",
+            "STATUS": "Status",
+            "CANCEL": "Cancel",
+            "VIEW": "View",
+            "HIDE": "Hide",
+            "BEFORE": "Before",
+            "AFTER": "After",
+            "TIMESTAMP": "Timestamp",
+            "ENTITY": "Entity",
+            "TYPE": "Type",
+            "REFERENCE": "Reference",
+            "AMOUNT": "Amount",
+            "DIRECTION": "Direction"
+        },
+        "TIME": {
+            "JUST_NOW": "Just now",
+            "MINUTES_AGO": "{{count}} min ago",
+            "HOURS_AGO": "{{count}} hr ago"
+        },
+        "DIRECTIONS": {
+            "CREDIT": "Credit",
+            "DEBIT": "Debit"
+        },
+        "ENTITIES": {
+            "VENDOR": "Vendor",
+            "DRIVER": "Driver",
+            "ORDER": "Order",
+            "PLATFORM": "Platform",
+            "CUSTOMER": "Customer"
+        },
+        "STATUS": {
+            "PENDING": "Pending",
+            "PROCESSING": "Processing",
+            "PAID": "Paid",
+            "FAILED": "Failed",
+            "DISPUTED": "Disputed",
+            "OPEN": "Open",
+            "UNDER_REVIEW": "Under review",
+            "APPROVED": "Approved",
+            "REJECTED": "Rejected",
+            "ESCALATED": "Escalated",
+            "COLLECTED": "Collected",
+            "OVERDUE": "Overdue",
+            "PENDING_APPROVAL": "Pending approval"
+        },
+        "CHART": {
+            "GMV_VS_REVENUE": "GMV vs net revenue",
+            "LAST_7_MONTHS": "Last 7 months",
+            "COMPOSITION": "Composition",
+            "REVENUE_BREAKDOWN": "Revenue breakdown",
+            "REFUND_TREND": "Refund trend",
+            "REFUND_RATE": "Refund rate",
+            "SERIES_GMV": "GMV",
+            "SERIES_NET_REVENUE": "Net revenue"
+        },
+        "KPI": {
+            "GMV": "GMV",
+            "NET_REVENUE": "Net revenue",
+            "VENDOR_COMMISSIONS": "Vendor commissions",
+            "DRIVER_PAYOUTS": "Driver payouts",
+            "REFUND_RATIO": "Refund ratio",
+            "DISPUTE_EXPOSURE": "Dispute exposure",
+            "VS_LAST_MONTH": "vs last month"
+        },
+        "COMPOSITION": {
+            "COMMISSIONS": "Commissions",
+            "DELIVERY_FEES": "Delivery fees",
+            "SERVICE_FEES": "Service fees",
+            "COD_FEES": "COD fees",
+            "VAT": "VAT"
+        },
+        "ALERTS": {
+            "TITLE": "Alerts requiring attention",
+            "NEGATIVE_MARGIN": "Negative margin",
+            "NEGATIVE_MARGIN_DESC": "One cluster slipped below target margin after delivery and refund costs.",
+            "HIGH_DISPUTE_VENDOR": "High-dispute vendor",
+            "HIGH_DISPUTE_VENDOR_DESC": "A vendor crossed the dispute threshold this week and needs finance review.",
+            "COD_OVERDUE": "Overdue COD",
+            "COD_OVERDUE_DESC": "Several COD collections are overdue for reconciliation.",
+            "SETTLEMENT_DUE": "Settlement due",
+            "SETTLEMENT_DUE_DESC": "Pending settlements are approaching their payout deadline."
+        },
+        "DASHBOARD": {
+            "LOAD_ERROR_TITLE": "Dashboard data needs a refresh",
+            "LOAD_ERROR_MESSAGE": "We could not finish loading the finance overview right now. Try again and the rest of the finance center will stay available.",
+            "RETRY": "Retry",
+            "NO_ALERTS_TITLE": "No finance alerts right now",
+            "NO_ALERTS_MESSAGE": "Margins, refunds, COD, and settlements are currently within the expected range."
+        },
+        "ACTIONS": {
+            "VIEW_ALL": "View all",
+            "VIEW_VENDOR": "View vendor",
+            "VIEW_REFUNDS": "View refunds",
+            "VIEW_COD": "View COD",
+            "VIEW_SETTLEMENTS": "View settlements",
+            "APPROVE": "Approve",
+            "REJECT": "Reject",
+            "ESCALATE": "Escalate",
+            "PROCESS": "Process"
+        },
+        "FILTERS": {
+            "TITLE": "Finance filters",
+            "SUBTITLE": "Search and adjust the view",
+            "ACTIVE": "Active filters",
+            "PERIOD": "Period",
+            "SEARCH_PLACEHOLDER": "Search by order, settlement, or reference...",
+            "ALL": "All",
+            "ALL_PERIODS": "All periods",
+            "ALL_ENTITIES": "All entities",
+            "ALL_TYPES": "All types",
+            "CLEAR": "Clear"
+        },
+        "LEDGER": {
+            "BALANCE_AFTER": "Balance after",
+            "ENTRY_TITLE": "Ledger entry",
+            "ORDER_ID": "Order ID",
+            "SETTLEMENT": "Settlement",
+            "EMPTY": {
+                "TITLE": "No entries found",
+                "MESSAGE": "Try adjusting the filters to view more ledger activity."
+            },
+            "SUMMARY": {
+                "TOTAL_ENTRIES": "Total entries",
+                "TOTAL_CREDITS": "Total credits",
+                "TOTAL_DEBITS": "Total debits",
+                "NET_FLOW": "Net flow"
+            },
+            "TYPES": {
+                "COMMISSION": "Commission",
+                "PAYOUT": "Payout",
+                "REFUND": "Refund",
+                "SETTLEMENT": "Settlement",
+                "ADJUSTMENT": "Adjustment",
+                "SERVICE_FEE": "Service fee",
+                "DELIVERY_FEE": "Delivery fee",
+                "VAT": "VAT",
+                "BONUS": "Bonus",
+                "PENALTY": "Penalty",
+                "COD_COLLECTION": "COD collection"
+            },
+            "DESC": {
+                "COMMISSION": "Platform commission charged on order revenue.",
+                "PAYOUT": "Payout issued to the driver or vendor.",
+                "REFUND": "Refund processed for a customer order.",
+                "SERVICE_FEE": "Service fee collected from the order.",
+                "DELIVERY_FEE": "Delivery fee collected from the order.",
+                "ADJUSTMENT": "Manual balance adjustment by an admin.",
+                "SETTLEMENT": "Settlement batch posted to the ledger.",
+                "COD_COLLECTION": "Cash on delivery amount collected.",
+                "VAT": "VAT applied to taxable fees.",
+                "BONUS": "Promotional or operational bonus.",
+                "PENALTY": "Penalty deducted due to a policy breach."
+            }
+        },
+        "SETTLEMENTS": {
+            "VENDORS": "Vendors",
+            "DRIVERS": "Drivers",
+            "VENDOR_LIST": "Vendor settlements",
+            "DRIVER_LIST": "Driver settlements",
+            "NEW_SETTLEMENT": "New settlement",
+            "PROCESS_SETTLEMENT": "Process settlement",
+            "DOWNLOAD_STATEMENT": "Download statement",
+            "SUMMARY": {
+                "TOTAL_SETTLEMENTS": "Total settlements",
+                "PAID": "Paid",
+                "PENDING": "Pending",
+                "TOTAL_NET": "Total net payout"
+            },
+            "TABLE": {
+                "SETTLEMENT": "Settlement",
+                "ENTITY": "Entity",
+                "PERIOD": "Period",
+                "ORDERS": "Orders",
+                "GROSS": "Gross",
+                "DEDUCTIONS": "Deductions",
+                "NET_PAYOUT": "Net payout"
+            },
+            "DRAWER": {
+                "NET_PAYOUT": "Net payout",
+                "GROSS_AMOUNT": "Gross amount",
+                "DEDUCTIONS": "Deductions",
+                "ORDERS": "Orders",
+                "PERIOD": "Period"
+            }
+        },
+        "COD": {
+            "TITLE": "COD reconciliation",
+            "RECONCILE_ALL": "Reconcile all",
+            "RECONCILE": "Reconcile",
+            "DONE": "Done",
+            "MATCHED": "Matched",
+            "SUMMARY": {
+                "EXPECTED": "Expected",
+                "COLLECTED": "Collected",
+                "DELTA": "Delta",
+                "OVERDUE": "Overdue",
+                "PENDING": "Pending"
+            },
+            "TABLE": {
+                "ORDER": "Order",
+                "DRIVER": "Driver",
+                "VENDOR": "Vendor",
+                "EXPECTED": "Expected",
+                "COLLECTED": "Collected",
+                "DELTA": "Delta"
+            }
+        },
+        "REFUNDS": {
+            "FILTERS": {
+                "ALL": "All"
+            },
+            "SUMMARY": {
+                "OPEN_CASES": "Open cases",
+                "TOTAL_EXPOSURE": "Total exposure",
+                "APPROVED": "Approved value",
+                "ESCALATED": "Escalated",
+                "TOTAL_CASES": "Total cases"
+            },
+            "TABLE": {
+                "CASE": "Case",
+                "CUSTOMER_VENDOR": "Customer / Vendor",
+                "REQUESTED": "Requested",
+                "RESPONSIBLE": "Responsible party"
+            },
+            "EMPTY": {
+                "TITLE": "No matching cases",
+                "MESSAGE": "Try changing the filters to see more refund cases."
+            },
+            "DETAIL": {
+                "FINANCIAL_IMPACT": "Financial impact",
+                "RESPONSIBLE": "Responsible party",
+                "CUSTOMER": "Customer",
+                "VENDOR": "Vendor",
+                "ORDER": "Order",
+                "REASON": "Reason",
+                "CREATED": "Created",
+                "TIMELINE": "Timeline",
+                "ADMIN_NOTE": "Admin note",
+                "ADMIN_NOTE_PLACEHOLDER": "Add a note for the next reviewer..."
+            },
+            "REASONS": {
+                "WRONG_ITEM_DELIVERED": "Wrong item delivered",
+                "DAMAGED_PRODUCTS": "Damaged products",
+                "ORDER_NEVER_ARRIVED": "Order never arrived",
+                "ITEM_QUALITY_ISSUE": "Item quality issue",
+                "DUPLICATE_CHARGE": "Duplicate charge"
+            },
+            "NOTES": {
+                "CUSTOMER_SUBMITTED_REQUEST": "Customer submitted request",
+                "ESCALATED_TO_FINANCE_REVIEW": "Escalated to finance review",
+                "FULL_REFUND_VENDOR_AT_FAULT": "Full refund, vendor at fault",
+                "AWAITING_ADMIN_ASSIGNMENT": "Awaiting admin assignment",
+                "INSUFFICIENT_EVIDENCE": "Insufficient evidence",
+                "PAYMENT_GATEWAY_ESCALATION": "Escalated to payment gateway"
+            }
+        },
+        "ADJUSTMENTS": {
+            "FORM": {
+                "TITLE": "Create financial adjustment",
+                "SUBTITLE": "Add a manual credit or debit with an instant impact preview.",
+                "ENTITY_TYPE": "Entity type",
+                "ENTITY_NAME": "Entity name",
+                "ENTITY_PLACEHOLDER": "Enter vendor or driver name",
+                "DIRECTION": "Direction",
+                "AMOUNT": "Amount",
+                "CATEGORY": "Category",
+                "REASON": "Reason",
+                "REASON_PLACEHOLDER": "Explain why this adjustment is needed",
+                "REASON_HELPER": "This reason will appear in the ledger and audit log.",
+                "PREVIEW": "Preview",
+                "FOR": "For {{entity}}",
+                "SUBMIT": "Create adjustment"
+            },
+            "HISTORY": {
+                "TITLE": "Recent adjustments",
+                "SUBTITLE": "Track the latest manual entries across vendors and drivers."
+            },
+            "TABLE": {
+                "REF": "Reference",
+                "REASON": "Reason",
+                "BY": "By"
+            },
+            "CATEGORIES": {
+                "COMPENSATION": "Compensation",
+                "COD_RECOVERY": "COD recovery",
+                "PROMOTION": "Promotion",
+                "PENALTY": "Penalty",
+                "CORRECTION": "Correction",
+                "OTHER": "Other"
+            },
+            "REASONS": {
+                "SYSTEM_DOWNTIME": "Compensation for system downtime",
+                "COD_SHORTAGE": "COD shortage recovery",
+                "ONBOARDING_BONUS": "Onboarding bonus"
+            }
+        },
+        "AUDIT": {
+            "BANNER_TITLE": "Every finance action is traceable",
+            "BANNER_DESC": "Pricing updates, refund decisions, settlement processing, and manual adjustments are recorded here.",
+            "TITLE": "Audit log",
+            "ENTRIES": "entries",
+            "TABLE": {
+                "ADMIN": "Admin",
+                "ACTION": "Action",
+                "CHANGES": "Changes"
+            },
+            "ACTIONS": {
+                "ADJUSTMENT_APPROVED": "Financial adjustment approved",
+                "ADJUSTMENT_CREATED": "Financial adjustment created",
+                "SETTLEMENT_PAID": "Settlement paid",
+                "REFUND_ESCALATED": "Refund escalated",
+                "REFUND_APPROVED": "Refund approved",
+                "REFUND_REJECTED": "Refund rejected",
+                "PRICING_UPDATED": "Pricing rules updated"
+            }
+        },
+        "PRICING": {
+            "WARNING": "You have unsaved pricing rule changes.",
+            "DISCARD_CHANGES": "Discard changes",
+            "SAVE_RULES": "Save rules",
+            "CURRENT_RULESET": "Current ruleset",
+            "EFFECTIVE_FROM": "Effective from",
+            "LAST_UPDATED": "Last updated",
+            "BY": "By",
+            "CONFIRM_TITLE": "Confirm pricing update",
+            "CONFIRM_MESSAGE": "Apply these pricing rules? They will affect future orders and settlements.",
+            "CONFIRM_UPDATE": "Confirm update",
+            "RULESET_NAME": "Default marketplace rules",
+            "VENDOR_COMMISSION": {
+                "TITLE": "Vendor commission",
+                "SUBTITLE": "Base commission rules before vendor-specific overrides.",
+                "DEFAULT_PERCENT": "Default percent",
+                "MIN_PERCENT": "Min percent",
+                "MAX_PERCENT": "Max percent",
+                "ALLOW_OVERRIDES": "Allow vendor overrides"
+            },
+            "DRIVER_COMPENSATION": {
+                "TITLE": "Driver compensation",
+                "SUBTITLE": "Base payout, distance pay, and operational incentives for drivers.",
+                "BASE_PAYOUT": "Base payout",
+                "DISTANCE_RATE": "Distance rate / km",
+                "PEAK_BONUS": "Peak bonus",
+                "ZONE_BONUS": "Zone bonus",
+                "ALLOW_OVERRIDES": "Allow driver overrides"
+            },
+            "DELIVERY": {
+                "TITLE": "Delivery fees",
+                "SUBTITLE": "Base fee, distance pricing, and peak-time multipliers.",
+                "BASE_FEE": "Base fee",
+                "PER_KM": "Per km",
+                "PEAK_MULTIPLIER": "Peak multiplier",
+                "PEAK_START": "Peak start",
+                "PEAK_END": "Peak end"
+            },
+            "SERVICE_FEE": {
+                "TITLE": "Service fee",
+                "SUBTITLE": "Customer-facing service fees applied at checkout.",
+                "PERCENT": "Percent",
+                "CAP": "Cap"
+            },
+            "COD_FEE": {
+                "TITLE": "COD fee",
+                "SUBTITLE": "Optional handling fees for cash-on-delivery orders.",
+                "PERCENT": "Percent",
+                "FLAT_FEE": "Flat fee",
+                "USE_FLAT": "Use flat fee"
+            },
+            "VAT": {
+                "TITLE": "VAT",
+                "SUBTITLE": "Set the VAT rate and choose which fees are taxable.",
+                "RATE": "Rate",
+                "APPLY_TO": "Apply to",
+                "TARGETS": {
+                    "SERVICE_FEE": "Service fee",
+                    "DELIVERY_FEE": "Delivery fee",
+                    "COMMISSION": "Commission"
+                }
+            }
+        },
+        "MONTHS": {
+            "JAN": "Jan",
+            "FEB": "Feb",
+            "MAR": "Mar",
+            "APR": "Apr",
+            "MAY": "May",
+            "JUN": "Jun",
+            "JUL": "Jul",
+            "AUG": "Aug",
+            "SEP": "Sep",
+            "OCT": "Oct",
+            "NOV": "Nov",
+            "DEC": "Dec"
+        },
+        "ADMINS": {
+            "SUPER_ADMIN": "Super Admin",
+            "FINANCE_ADMIN": "Finance Admin"
+        },
+        "ROLES": {
+            "SUPER_ADMIN": "Super Admin",
+            "ADMIN": "Admin"
         }
     }
 }

@@ -73,6 +73,14 @@
 
             <button
               type="button"
+              routerLink="/finances"
+              class="inline-flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-zadna-primary/20 bg-zadna-primary/10 px-4 text-xs font-black text-zadna-primary transition-all hover:bg-zadna-primary hover:text-white">
+              <span class="material-symbols-outlined text-[18px]">account_balance</span>
+              {{ 'FINANCES.TITLE' | translate }}
+            </button>
+
+            <button
+              type="button"
               class="inline-flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-4 text-xs font-black text-slate-700 transition-all hover:border-zadna-primary/20 hover:text-zadna-primary"
               (click)="refreshDashboard()">
               <span class="material-symbols-outlined text-[18px]">download</span>

@@ -5,12 +5,14 @@
     *ngIf="category"
     [breadcrumbs]="breadcrumbs"
     actionButtonLabel="{{ 'COMMON.EDIT' | translate }}"
+    [containerClass]="'w-full max-w-[110rem] mx-auto mb-0 relative z-10'"
+    [headerClass]="'flex justify-between items-center px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6'"
     actionButtonIcon="edit"
     (backClick)="onBack()"
     (actionClick)="onEdit()">
   </app-detail-header>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+  <div class="w-full max-w-[110rem] mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
     <!-- Loading State -->
     <div *ngIf="isLoading" class="h-[60vh] flex flex-col items-center justify-center space-y-6">
       <div class="relative">

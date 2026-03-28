@@ -271,26 +271,11 @@
     <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
 
     <section class="rounded-[1.15rem] border border-slate-200/60 bg-white/80 p-2.5 shadow-sm backdrop-blur-sm">
-      <div class="flex flex-wrap items-center gap-2">
-        <button
-          *ngFor="let tab of lifecycleTabs"
-          type="button"
-          class="group inline-flex items-center gap-2 rounded-xl border px-3 py-2.5 text-[11px] font-extrabold transition-all"
-          [ngClass]="currentTab === tab.id
-            ? 'border-zadna-primary bg-zadna-primary text-white shadow-lg shadow-cyan-100'
-            : 'border-slate-200 bg-white text-slate-500 hover:border-zadna-primary/25 hover:text-zadna-primary'"
-          (click)="setTab(tab.id)">
-          <span class="material-symbols-outlined text-[18px]">{{ tab.icon }}</span>
-          <span>{{ tab.label | translate }}</span>
-          <span
-            *ngIf="tab.count !== undefined"
-            class="rounded-full px-2 py-0.5 text-[10px] font-black"
-            [ngClass]="currentTab === tab.id ? 'bg-white/15 text-white' : 'bg-slate-100 text-slate-500'">
-            {{ tab.count }}
-          </span>
-          <span *ngIf="tab.attention" class="h-2 w-2 rounded-full bg-red-500"></span>
-        </button>
-      </div>
+      <app-detail-tabs-nav
+        [tabs]="navTabs"
+        [activeTab]="currentTab"
+        (tabChange)="onNavTabChange($event)">
+      </app-detail-tabs-nav>
     </section>
 
     <ng-container [ngSwitch]="currentTab">
@@ -724,17 +709,47 @@
             </div>
           </section>
 
-          <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-7">
-            <app-section-header [title]="'DRIVERS.DETAIL.FINANCE.SETTLEMENTS_SUMMARY' | translate" [shouldTranslate]="false" icon="account_balance_wallet" [compact]="true"></app-section-header>
-            <div class="mt-5 grid gap-4 md:grid-cols-3">
-              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.PENDING_DEDUCTIONS' | translate }}</p><p class="mt-2 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.pendingDeductions | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p></div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.NEXT_PAYOUT' | translate }}</p><p class="mt-2 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.nextPayoutDate }}</p></div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.PAYOUT_METHOD' | translate }}</p><p class="mt-2 text-sm font-black text-slate-900">{{ getFinanceMethodLabel(driver.finance.payoutMethod) }}</p></div>
-            </div>
-          </section>
-        </div>
+        <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-7">
+          <app-section-header [title]="'DRIVERS.DETAIL.FINANCE.SETTLEMENTS_SUMMARY' | translate" [shouldTranslate]="false" icon="account_balance_wallet" [compact]="true"></app-section-header>
+          <div class="mt-5 grid gap-4 md:grid-cols-3">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.PENDING_DEDUCTIONS' | translate }}</p><p class="mt-2 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.pendingDeductions | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p></div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.NEXT_PAYOUT' | translate }}</p><p class="mt-2 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.nextPayoutDate }}</p></div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.PAYOUT_METHOD' | translate }}</p><p class="mt-2 text-sm font-black text-slate-900">{{ getFinanceMethodLabel(driver.finance.payoutMethod) }}</p></div>
+          </div>
+        </section>
 
-        <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 shadow-sm overflow-hidden">
+        <section class="col-span-12 rounded-[1.3rem] border border-cyan-200 bg-cyan-50/70 p-5 shadow-sm">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.TITLE' | translate }}</p>
+              <h3 class="mt-1 text-base font-black text-slate-900">{{ 'FINANCES.SETTLEMENTS.DRIVER_LIST' | translate }}</h3>
+              <p class="mt-1 text-xs font-medium text-slate-500" dir="ltr">{{ driver.id }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <a
+                [routerLink]="['/finances/settlements']"
+                [queryParams]="{ entityType: 'driver', entityId: driver.id }"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[11px] font-black text-slate-700 transition-all hover:bg-slate-100"
+              >
+                <span class="material-symbols-outlined text-[16px]">payments</span>
+                {{ 'FINANCES.ACTIONS.VIEW_SETTLEMENTS' | translate }}
+              </a>
+
+              <a
+                [routerLink]="['/finances/refunds']"
+                [queryParams]="{ entityType: 'driver', entityId: driver.id }"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-4 text-[11px] font-black text-white transition-all hover:bg-zadna-primaryDark"
+              >
+                <span class="material-symbols-outlined text-[16px]">undo</span>
+                {{ 'FINANCES.ACTIONS.VIEW_REFUNDS' | translate }}
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 shadow-sm overflow-hidden">
           <div class="border-b border-slate-200/70 p-6">
             <app-section-header [title]="'DRIVERS.DETAIL.FINANCE.SETTLEMENTS_HISTORY' | translate" [shouldTranslate]="false" icon="receipt_long" [compact]="true"></app-section-header>
           </div>

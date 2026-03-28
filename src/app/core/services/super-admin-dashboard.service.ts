@@ -442,7 +442,7 @@ export class SuperAdminDashboardService {
         },
         affectedCount: paymentFailures.length,
         actionLabelKey: 'DASHBOARD.ACTIONS.REVIEW_PAYMENTS',
-        route: '/orders'
+        route: '/finances/ledger'
       });
     }
 
@@ -793,7 +793,7 @@ export class SuperAdminDashboardService {
         summary: this.localizeWord('Review queue and payouts require manual decision.', 'طابور المراجعة والتحويلات يحتاج قرارًا يدويًا.', lang),
         owner: riskyVendor.assignedReviewer || this.localizeWord('Vendor Compliance Desk', 'مكتب امتثال التجار', lang),
         priority: 'warning',
-        route: `/vendors/${riskyVendor.id}`,
+        route: `/finances/refunds?entityType=vendor&entityId=${riskyVendor.id}`,
         ctaLabelKey: 'DASHBOARD.ACTIONS.REVIEW_VENDOR'
       });
     }
@@ -807,7 +807,7 @@ export class SuperAdminDashboardService {
         summary: this.localizeWord('Finance/compliance hold is blocking dispatch readiness.', 'تعليق مالي أو امتثال يمنع جاهزية الإسناد.', lang),
         owner: blockedDriver.city,
         priority: 'critical',
-        route: `/drivers/${blockedDriver.id}`,
+        route: `/finances/settlements?entityType=driver&entityId=${blockedDriver.id}`,
         ctaLabelKey: 'DASHBOARD.ACTIONS.OPEN_DRIVER'
       });
     }

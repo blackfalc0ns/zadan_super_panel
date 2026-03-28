@@ -10,6 +10,7 @@ import { DetailHeaderComponent } from '../../../shared/components/ui/detail-head
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../shared/components/ui/status-pill/status-pill.component';
+import { DataTableComponent, TableColumn } from '../../../shared/components/ui/data-table/data-table.component';
 
 interface ProductVendorSnapshot {
   nameAr: string;
@@ -33,7 +34,8 @@ interface ProductVendorSnapshot {
     DetailHeaderComponent,
     KeyValueGridComponent,
     SectionHeaderComponent,
-    StatusPillComponent
+    StatusPillComponent,
+    DataTableComponent
   ],
   templateUrl: './product-detail.component.html',
   styles: []
@@ -64,6 +66,13 @@ export class ProductDetailComponent implements OnInit {
   get activeLang(): string {
     return this.translate.currentLang || 'ar';
   }
+
+  readonly vendorTableColumns: TableColumn[] = [
+    { key: 'vendor', title: 'PRODUCTS.DETAIL.VENDOR_NAME', type: 'custom', align: 'left', width: '34%' },
+    { key: 'quantity', title: 'PRODUCTS.DETAIL.AVAILABLE_QTY', type: 'custom', align: 'center', width: '26%' },
+    { key: 'price', title: 'PRODUCTS.DETAIL.UNIT_PRICE', type: 'custom', align: 'center', width: '20%' },
+    { key: 'time', title: 'PRODUCTS.DETAIL.LAST_UPDATE', type: 'custom', align: 'center', width: '20%' }
+  ];
 
   ngOnInit(): void {
     this.setupBreadcrumbs();
@@ -212,6 +221,10 @@ export class ProductDetailComponent implements OnInit {
 
   getVendorName(vendor: ProductVendorSnapshot): string {
     return this.activeLang === 'ar' ? vendor.nameAr : vendor.nameEn;
+  }
+
+  getVendorRatioWidth(vendor: ProductVendorSnapshot): string {
+    return `${Math.max(0, Math.min(100, vendor.ratio))}%`;
   }
 
   private buildPlaceholderImage(label: string): string {

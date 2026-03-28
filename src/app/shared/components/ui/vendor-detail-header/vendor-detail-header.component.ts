@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DetailTabsNavComponent, DetailTabNavItem } from '../detail-tabs-nav/detail-tabs-nav.component';
 
 interface Tab {
   id: string;
@@ -12,7 +13,7 @@ interface Tab {
 @Component({
   selector: 'app-vendor-detail-header',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, DetailTabsNavComponent],
   templateUrl: './vendor-detail-header.component.html',
   styleUrls: ['./vendor-detail-header.component.scss']
 })
@@ -22,11 +23,6 @@ export class VendorDetailHeaderComponent implements OnChanges {
 
   currentLang: string = 'ar';
   isRTL: boolean = true;
-
-  // Drag to scroll properties
-  isDragging = false;
-  startX = 0;
-  scrollLeft = 0;
 
   title = '';
   vendorId = 'VND-9928';
@@ -63,35 +59,16 @@ export class VendorDetailHeaderComponent implements OnChanges {
   }
 
   onTabClick(tabId: string) {
-    if (this.isDragging) return; // Prevent click if the user was just dragging
     this.tabs.forEach(tab => tab.active = tab.id === tabId);
     this.tabChanged.emit(tabId);
   }
 
-  // Drag to scroll functionality
-  onMouseDown(event: MouseEvent, container: HTMLElement) {
-    this.isDragging = true;
-    container.classList.add('cursor-grabbing');
-    this.startX = event.pageX - container.offsetLeft;
-    this.scrollLeft = container.scrollLeft;
-  }
-
-  onMouseLeave(container: HTMLElement) {
-    this.isDragging = false;
-    container.classList.remove('cursor-grabbing');
-  }
-
-  onMouseUp(container: HTMLElement) {
-    this.isDragging = false;
-    container.classList.remove('cursor-grabbing');
-  }
-
-  onMouseMove(event: MouseEvent, container: HTMLElement) {
-    if (!this.isDragging) return;
-    event.preventDefault();
-    const x = event.pageX - container.offsetLeft;
-    const walk = (x - this.startX) * 2; // Scroll speed multiplier
-    container.scrollLeft = this.scrollLeft - walk;
+  get navTabs(): DetailTabNavItem[] {
+    return this.tabs.map((tab) => ({
+      id: tab.id,
+      labelKey: tab.labelKey,
+      count: tab.count
+    }));
   }
 
   private updateHeaderContent(): void {

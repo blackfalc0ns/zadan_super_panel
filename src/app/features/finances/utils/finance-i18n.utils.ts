@@ -1,0 +1,62 @@
+export const FINANCE_STATUS_LABEL_KEYS: Record<string, string> = {
+  pending: 'FINANCES.STATUS.PENDING',
+  processing: 'FINANCES.STATUS.PROCESSING',
+  paid: 'FINANCES.STATUS.PAID',
+  failed: 'FINANCES.STATUS.FAILED',
+  disputed: 'FINANCES.STATUS.DISPUTED',
+  open: 'FINANCES.STATUS.OPEN',
+  under_review: 'FINANCES.STATUS.UNDER_REVIEW',
+  approved: 'FINANCES.STATUS.APPROVED',
+  rejected: 'FINANCES.STATUS.REJECTED',
+  escalated: 'FINANCES.STATUS.ESCALATED',
+  collected: 'FINANCES.STATUS.COLLECTED',
+  overdue: 'FINANCES.STATUS.OVERDUE',
+  pending_approval: 'FINANCES.STATUS.PENDING_APPROVAL'
+};
+
+export const FINANCE_ENTITY_LABEL_KEYS: Record<string, string> = {
+  vendor: 'FINANCES.ENTITIES.VENDOR',
+  driver: 'FINANCES.ENTITIES.DRIVER',
+  order: 'FINANCES.ENTITIES.ORDER',
+  platform: 'FINANCES.ENTITIES.PLATFORM',
+  customer: 'FINANCES.ENTITIES.CUSTOMER'
+};
+
+export const FINANCE_LEDGER_TYPE_LABEL_KEYS: Record<string, string> = {
+  commission: 'FINANCES.LEDGER.TYPES.COMMISSION',
+  payout: 'FINANCES.LEDGER.TYPES.PAYOUT',
+  refund: 'FINANCES.LEDGER.TYPES.REFUND',
+  settlement: 'FINANCES.LEDGER.TYPES.SETTLEMENT',
+  adjustment: 'FINANCES.LEDGER.TYPES.ADJUSTMENT',
+  service_fee: 'FINANCES.LEDGER.TYPES.SERVICE_FEE',
+  delivery_fee: 'FINANCES.LEDGER.TYPES.DELIVERY_FEE',
+  vat: 'FINANCES.LEDGER.TYPES.VAT',
+  bonus: 'FINANCES.LEDGER.TYPES.BONUS',
+  penalty: 'FINANCES.LEDGER.TYPES.PENALTY',
+  cod_collection: 'FINANCES.LEDGER.TYPES.COD_COLLECTION'
+};
+
+export const FINANCE_DIRECTION_LABEL_KEYS: Record<string, string> = {
+  credit: 'FINANCES.DIRECTIONS.CREDIT',
+  debit: 'FINANCES.DIRECTIONS.DEBIT'
+};
+
+export const FINANCE_MONTH_LABEL_KEYS: Record<string, string> = {
+  Jan: 'FINANCES.MONTHS.JAN',
+  Feb: 'FINANCES.MONTHS.FEB',
+  Mar: 'FINANCES.MONTHS.MAR',
+  Apr: 'FINANCES.MONTHS.APR',
+  May: 'FINANCES.MONTHS.MAY',
+  Jun: 'FINANCES.MONTHS.JUN',
+  Jul: 'FINANCES.MONTHS.JUL',
+  Aug: 'FINANCES.MONTHS.AUG',
+  Sep: 'FINANCES.MONTHS.SEP',
+  Oct: 'FINANCES.MONTHS.OCT',
+  Nov: 'FINANCES.MONTHS.NOV',
+  Dec: 'FINANCES.MONTHS.DEC'
+};
+
+export function getFinanceLocale(lang?: string): string {
+  return lang === 'ar' ? 'ar-SA-u-ca-gregory' : 'en-SA';
+}
+

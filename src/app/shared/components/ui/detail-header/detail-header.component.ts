@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,12 +8,14 @@ import { CommonModule } from '@angular/common';
   templateUrl: './detail-header.component.html'
 })
 export class DetailHeaderComponent {
-  @Input() title: string = '';
+  @Input() title = '';
   @Input() breadcrumbs: { label: string; action?: () => void }[] = [];
-  @Input() actionButtonLabel: string = 'تعديل';
+  @Input() actionButtonLabel = 'تعديل';
   @Input() actionButtonIcon: 'edit' | 'save' = 'edit';
-  @Input() isActionDisabled: boolean = false;
-  
+  @Input() isActionDisabled = false;
+  @Input() containerClass = 'max-w-7xl mx-auto mb-0 relative z-10';
+  @Input() headerClass = 'flex justify-between items-center p-4 md:p-6';
+
   @Output() backClick = new EventEmitter<void>();
   @Output() actionClick = new EventEmitter<void>();
 

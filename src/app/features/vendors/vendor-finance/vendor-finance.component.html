@@ -4,7 +4,7 @@
   <!-- Financial Statement Modal -->
   <app-financial-statement-modal
     [isOpen]="showFinancialStatementModal"
-    [vendorName]="'VENDOR_FINANCE.MOCK_VENDOR_NAME' | translate"
+    [vendorName]="vendorName"
     (close)="showFinancialStatementModal = false"
     (download)="onStatementDownload($event)"
     (preview)="onStatementPreview($event)">
@@ -13,7 +13,7 @@
   <!-- Payouts Review Modal -->
   <app-payouts-review-modal
     [isOpen]="showPayoutsReviewModal"
-    [availableBalance]="5000"
+    [availableBalance]="availableBalance"
     (close)="showPayoutsReviewModal = false"
     (retryPayment)="onRetryPayment($event)"
     (suspendPayment)="onSuspendPayment($event)"
@@ -27,6 +27,36 @@
     (createSettlement)="onSettlementCreated($event)"
     (saveDraft)="onSettlementDraftSaved($event)">
   </app-create-settlement-modal>
+
+  <div class="rounded-2xl border border-cyan-200 bg-cyan-50/70 p-5 shadow-sm">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.TITLE' | translate }}</p>
+        <h3 class="mt-1 text-base font-black text-slate-900">{{ 'FINANCES.SETTLEMENTS.VENDOR_LIST' | translate }}</h3>
+        <p class="mt-1 text-xs font-medium text-slate-500" dir="ltr">{{ vendorId }}</p>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <a
+          [routerLink]="['/finances/settlements']"
+          [queryParams]="{ entityType: 'vendor', entityId: vendorId }"
+          class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[11px] font-black text-slate-700 transition-all hover:bg-slate-100"
+        >
+          <span class="material-symbols-outlined text-[16px]">payments</span>
+          {{ 'FINANCES.ACTIONS.VIEW_SETTLEMENTS' | translate }}
+        </a>
+
+        <a
+          [routerLink]="['/finances/refunds']"
+          [queryParams]="{ entityType: 'vendor', entityId: vendorId }"
+          class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-4 text-[11px] font-black text-white transition-all hover:bg-zadna-primaryDark"
+        >
+          <span class="material-symbols-outlined text-[16px]">undo</span>
+          {{ 'FINANCES.ACTIONS.VIEW_REFUNDS' | translate }}
+        </a>
+      </div>
+    </div>
+  </div>
 
   <!-- KPI Cards -->
   <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

@@ -18,6 +18,7 @@ export const routes: Routes = [
             { path: 'catalog', loadChildren: () => import('./features/catalog/catalog.module').then(m => m.CatalogModule) },
             { path: 'disputes', loadComponent: () => import('./features/disputes/disputes-dashboard/disputes-dashboard.component').then(m => m.DisputesDashboardComponent) },
             { path: 'orders', loadChildren: () => import('./features/orders/orders.routes').then(m => m.ORDERS_ROUTES) },
+            { path: 'finances', loadChildren: () => import('./features/finances/finances.routes').then(m => m.FINANCES_ROUTES) },
         ]
     },
     { path: '**', redirectTo: '' }
