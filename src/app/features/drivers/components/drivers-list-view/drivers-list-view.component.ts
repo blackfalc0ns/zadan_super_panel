@@ -25,7 +25,7 @@ import {
   getPerformanceKey,
   getVerificationKey,
   getVerificationVariant as getVerificationPillVariant
-} from '../../driver-ui.utils';
+} from '../../utils/driver-ui.utils';
 
 @Component({
   selector: 'app-drivers-list-view',

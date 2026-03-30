@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { DisputeRow, RejectionDecisionForm, RejectionReason } from '../../disputes.models';
+import { DisputeRow, RejectionDecisionForm, RejectionReason } from '../../models/disputes.models';
 
 @Component({
   selector: 'app-dispute-rejection-modal',

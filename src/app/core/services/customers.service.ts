@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { createCustomerDetailRecords, refreshCustomerDetailRecord } from '../../features/customers/customers.mock';
+import { createCustomerDetailRecords, refreshCustomerDetailRecord } from '../../features/customers/data/customers.mock';
 import {
   CustomerAccountState,
   CustomerDetailRecord
-} from '../../features/customers/customers.models';
+} from '../../features/customers/models/customers.models';
 
 @Injectable({
   providedIn: 'root'

@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { OrderDetail, OrderDisputeForm } from '../../orders.models';
-import { getPaymentStatusLabel } from '../../orders.mock';
+import { OrderDetail, OrderDisputeForm } from '../../models/orders.models';
+import { getPaymentStatusLabel } from '../../data/orders.mock';
 
 type DisputeTypeOption = { value: OrderDisputeForm['disputeType']; icon: string };
 

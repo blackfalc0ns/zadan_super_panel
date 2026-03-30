@@ -1,4 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://zadana.runasp.net/api'
+    apiUrl: 'https://zadana.runasp.net/api',
+    skipAuthForDevelopment: false
 };

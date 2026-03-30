@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { DisputeRow, DisputeStatus, RequestInfoForm, RequestInfoTarget, RequestInfoType } from '../../disputes.models';
+import { DisputeRow, DisputeStatus, RequestInfoForm, RequestInfoTarget, RequestInfoType } from '../../models/disputes.models';
 
 @Component({
   selector: 'app-dispute-request-info-modal',
@@ -40,11 +40,13 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
   }
 
   get previewGreeting(): string {
-    return {
+    const labels: Record<RequestInfoTarget, string> = {
       customer: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_CUSTOMER'),
       merchant: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_MERCHANT'),
       internal: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_INTERNAL')
-    }[this.form.target];
+    };
+
+    return labels[this.form.target];
   }
 
   get dueDateLabel(): string {
@@ -99,21 +101,25 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
   }
 
   getRequestInfoTypeLabel(type: RequestInfoType): string {
-    return {
+    const labels: Record<RequestInfoType, string> = {
       invoice: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_INVOICE'),
       photos: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_PHOTOS'),
       statement: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_STATEMENT'),
       proof: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_PROOF')
-    }[type];
+    };
+
+    return labels[type];
   }
 
   getStatusLabel(status: DisputeStatus): string {
-    return {
+    const labels: Record<DisputeStatus, string> = {
       open: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
       review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
       merchant: this.t('DISPUTES_DASHBOARD.STATUS.MERCHANT'),
       resolved: this.t('DISPUTES_DASHBOARD.STATUS.RESOLVED')
-    }[status];
+    };
+
+    return labels[status];
   }
 
   private createDefaultForm(dispute: DisputeRow): RequestInfoForm {

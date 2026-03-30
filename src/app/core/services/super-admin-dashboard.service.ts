@@ -10,9 +10,9 @@ import { AuthService } from './auth.service';
 import { Brand, Category, MasterProduct } from '../models/catalog.model';
 import { Driver, VerificationStatus as DriverVerificationStatus } from '../models/driver';
 import { Vendor, VendorDetail } from '../models/vendor';
-import { CustomerDetailRecord } from '../../features/customers/customers.models';
-import { DisputeRow } from '../../features/disputes/disputes.models';
-import { OrderDetail } from '../../features/orders/orders.models';
+import { CustomerDetailRecord } from '../../features/customers/models/customers.models';
+import { DisputeRow } from '../../features/disputes/models/disputes.models';
+import { OrderDetail } from '../../features/orders/models/orders.models';
 import {
   DashboardAlert,
   DashboardAttentionItem,
@@ -31,7 +31,7 @@ import {
   DashboardSupplyBucket,
   DashboardTrendPoint,
   DashboardTrendSeries
-} from '../../features/dashboard/dashboard.models';
+} from '../../features/dashboard/models/dashboard.models';
 
 interface DashboardSourceSnapshot {
   orders: OrderDetail[];

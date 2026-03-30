@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { OrderCancellationForm, OrderDetail } from '../../orders.models';
+import { OrderCancellationForm, OrderDetail } from '../../models/orders.models';
 
 @Component({
   selector: 'app-order-cancellation-modal',

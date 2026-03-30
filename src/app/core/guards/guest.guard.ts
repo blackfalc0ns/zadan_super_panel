@@ -1,12 +1,18 @@
 import { inject } from '@angular/core';
 import { Router, type CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 /**
  * Prevents authenticated users from accessing login/register pages
  */
 export const guestGuard: CanActivateFn = (route, state) => {
     const router = inject(Router);
+
+    if (environment.skipAuthForDevelopment) {
+        return router.createUrlTree(['/dashboard']);
+    }
+
     const authService = inject(AuthService);
 
     if (authService.isAuthenticated) {

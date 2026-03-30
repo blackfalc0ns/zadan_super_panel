@@ -13,7 +13,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 import { QuickPreviewDrawerComponent, PreviewAction } from '../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { DriverLifecycleTabDefinition, DriverLifecycleTabId, DriverPreviewType } from '../../driver-view.types';
+import { DriverLifecycleTabDefinition, DriverLifecycleTabId, DriverPreviewType } from '../../models/driver-view.types';
 import {
   getComplianceVariant as getCompliancePillVariant,
   getDocumentStatusVariant as getDocumentPillVariant,
@@ -27,7 +27,7 @@ import {
   getTaskStatusVariant as getTaskPillVariant,
   getVerificationLabel as getVerificationText,
   getVerificationVariant as getVerificationPillVariant
-} from '../../driver-ui.utils';
+} from '../../utils/driver-ui.utils';
 import {
   DriverDetailRecord,
   DriverVerificationChecklistItem,
@@ -38,7 +38,7 @@ import {
   DriverTaskAssignment,
   DriverWorkflowActionId,
   DriverWorkflowActionTone
-} from '../../drivers.models';
+} from '../../models/drivers.models';
 
 const WORKFLOW_STATE_LABEL_KEYS: Record<DriverDetailRecord['workflow']['state'], string> = {
   SUSPENDED: 'DRIVERS.DETAIL.WORKFLOW.STATE_LABELS.SUSPENDED',

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { OrdersService } from './orders.service';
-import { DisputeRow, TimelineItem } from '../../features/disputes/disputes.models';
+import { DisputeRow, TimelineItem } from '../../features/disputes/models/disputes.models';
 
 interface DisputeSeed {
   id: string;

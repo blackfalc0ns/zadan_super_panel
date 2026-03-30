@@ -151,7 +151,7 @@
               </div>
 
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <ng-container *ngFor="let file of dispute.evidence | slice:0:2; let index = index; trackBy: trackEvidence">
+                <ng-container *ngFor="let file of getEvidencePreviewItems(dispute.evidence); let index = index; trackBy: trackEvidence">
                   <div class="group overflow-hidden rounded-[1rem] border border-slate-200/70 bg-slate-50 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
                     <div class="relative flex h-24 items-center justify-center overflow-hidden border-b border-slate-200/60 bg-white">
                       <ng-container *ngIf="isEvidencePreviewAvailable(file, index); else evidencePreviewFallback">

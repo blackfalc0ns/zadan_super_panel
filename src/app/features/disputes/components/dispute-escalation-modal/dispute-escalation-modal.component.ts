@@ -12,7 +12,7 @@ import {
   EscalationPriority,
   EscalationReason,
   EscalationTarget
-} from '../../disputes.models';
+} from '../../models/disputes.models';
 
 @Component({
   selector: 'app-dispute-escalation-modal',
@@ -93,12 +93,14 @@ export class DisputeEscalationModalComponent implements OnChanges {
   }
 
   getStatusLabel(status: DisputeStatus): string {
-    return {
+    const labels: Record<DisputeStatus, string> = {
       open: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
       review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
       merchant: this.t('DISPUTES_DASHBOARD.STATUS.MERCHANT'),
       resolved: this.t('DISPUTES_DASHBOARD.STATUS.RESOLVED')
-    }[status];
+    };
+
+    return labels[status];
   }
 
   getPriorityButtonClass(priority: EscalationPriority): string {
@@ -110,12 +112,14 @@ export class DisputeEscalationModalComponent implements OnChanges {
   }
 
   getCurrentPriorityLabel(priority: DisputePriority): string {
-    return {
+    const labels: Record<DisputePriority, string> = {
       critical: this.t('DISPUTES_DASHBOARD.PRIORITY.CRITICAL'),
       high: this.t('DISPUTES_DASHBOARD.PRIORITY.HIGH'),
       medium: this.t('DISPUTES_DASHBOARD.PRIORITY.MEDIUM'),
       low: this.t('DISPUTES_DASHBOARD.PRIORITY.LOW')
-    }[priority];
+    };
+
+    return labels[priority];
   }
 
   isEvidencePreviewAvailable(file: EvidenceItem, index: number): boolean {
@@ -139,6 +143,10 @@ export class DisputeEscalationModalComponent implements OnChanges {
 
   trackEvidence(_: number, file: EvidenceItem): string {
     return `${file.type}-${file.label}`;
+  }
+
+  getEvidencePreviewItems(evidence: EvidenceItem[]): EvidenceItem[] {
+    return evidence.slice(0, 2);
   }
 
   private createDefaultForm(dispute: DisputeRow): EscalationDecisionForm {

@@ -1,5 +1,5 @@
-import { Routes } from '@angular/router';
-import { FinancesShellComponent } from './finances-shell/finances-shell.component';
+﻿import { Routes } from '@angular/router';
+import { FinancesShellComponent } from './pages/shell/finances-shell/finances-shell.component';
 
 export const FINANCES_ROUTES: Routes = [
   {
@@ -42,3 +42,4 @@ export const FINANCES_ROUTES: Routes = [
     ]
   }
 ];
+

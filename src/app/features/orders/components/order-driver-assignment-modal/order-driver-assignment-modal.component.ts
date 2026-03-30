@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { DriverAssignmentForm, DriverCandidate, OrderDetail } from '../../orders.models';
+import { DriverAssignmentForm, DriverCandidate, OrderDetail } from '../../models/orders.models';
 
 @Component({
   selector: 'app-order-driver-assignment-modal',

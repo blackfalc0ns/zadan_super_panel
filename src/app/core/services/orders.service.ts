@@ -15,7 +15,7 @@ import {
   OrderStatusUpdateForm,
   OrdersSummary,
   PaginatedOrdersResponse
-} from '../../features/orders/orders.models';
+} from '../../features/orders/models/orders.models';
 import {
   cloneOrder,
   createMockOrders,
@@ -24,7 +24,7 @@ import {
   getPaymentStatusLabel,
   refreshOrderTimeline,
   refreshOrderWorkflow
-} from '../../features/orders/orders.mock';
+} from '../../features/orders/data/orders.mock';
 
 @Injectable({
   providedIn: 'root'

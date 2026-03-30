@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { OrderDetail, OrderIssueFlagForm } from '../../orders.models';
+import { OrderDetail, OrderIssueFlagForm } from '../../models/orders.models';
 
 type IssueOption = { value: OrderIssueFlagForm['issueType'] };
 

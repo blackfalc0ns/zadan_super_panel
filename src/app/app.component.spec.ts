@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { provideAppTesting } from './testing/testing.providers';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [...provideAppTesting()]
     }).compileComponents();
   });
 
@@ -20,10 +22,9 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('superadmin-panel');
   });
 
-  it('should render title', () => {
+  it('should set the document direction based on the default language', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, superadmin-panel');
+    expect(document.documentElement.getAttribute('dir')).toBe('rtl');
   });
 });

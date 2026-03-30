@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { OrderDetail, OrderStatus, OrderStatusUpdateForm } from '../../orders.models';
-import { getFulfillmentStatusKey, getPaymentStatusKey } from '../../orders.mock';
+import { OrderDetail, OrderStatus, OrderStatusUpdateForm } from '../../models/orders.models';
+import { getFulfillmentStatusKey, getPaymentStatusKey } from '../../data/orders.mock';
 
 @Component({
   selector: 'app-order-status-update-modal',

@@ -6,7 +6,7 @@ import { VendorDetail } from '../../../core/models/vendor';
 import { DriverService } from '../../../core/services/driver.service';
 import { OrdersService } from '../../../core/services/orders.service';
 import { VendorService } from '../../../core/services/vendor.service';
-import { OrderDetail } from '../../orders/orders.models';
+import { OrderDetail } from '../../orders/models/orders.models';
 import {
   AuditLogEntry,
   AuditLogFilter,

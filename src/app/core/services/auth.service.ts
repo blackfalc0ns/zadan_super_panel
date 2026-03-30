@@ -19,6 +19,13 @@ export interface AuthResponse {
     user: AdminUser;
 }
 
+const DEV_ADMIN_USER: AdminUser = {
+    id: 'dev-super-admin',
+    fullName: 'Development Admin',
+    email: 'dev@zadana.local',
+    role: 'SuperAdmin'
+};
+
 @Injectable({
     providedIn: 'root'
 })
@@ -29,6 +36,11 @@ export class AuthService {
     public currentUser$ = this.currentUserSubject.asObservable();
 
     constructor(private http: HttpClient) {
+        if (environment.skipAuthForDevelopment) {
+            this.currentUserSubject.next(DEV_ADMIN_USER);
+            return;
+        }
+
         this.loadUserFromStorage();
     }
 
@@ -37,6 +49,10 @@ export class AuthService {
     }
 
     public get isAuthenticated(): boolean {
+        if (environment.skipAuthForDevelopment) {
+            return true;
+        }
+
         const token = this.getToken();
         if (!token) return false;
 
@@ -84,6 +100,11 @@ export class AuthService {
     }
 
     logout(): Observable<void> {
+        if (environment.skipAuthForDevelopment) {
+            this.currentUserSubject.next(DEV_ADMIN_USER);
+            return of(void 0);
+        }
+
         const refreshToken = this.getRefreshToken();
         if (!refreshToken) {
             this.clearSession();

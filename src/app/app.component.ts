@@ -73,9 +73,7 @@ export class AppComponent {
 
       // Fallback for browsers that finish loading slightly after the first readiness check.
       window.setTimeout(() => {
-        if (fontSet.check(this.materialSymbolsDescriptor)) {
-          this.renderer.removeClass(body, 'icons-loading');
-        }
+        this.renderer.removeClass(body, 'icons-loading');
       }, 1200);
     } catch (error) {
       console.warn('Material Symbols font loading failed:', error);
