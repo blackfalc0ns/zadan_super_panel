@@ -1,4 +1,4 @@
-import { DriverPerformance, DriverStatus, VerificationStatus } from '../../../core/models/driver';
+import { DriverPerformance, DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import {
   DriverDetailRecord,
   DriverDocumentRecord,
@@ -241,3 +241,4 @@ export function getDocumentStatusVariant(status: DriverDocumentRecord['status'])
 
   return variants[status];
 }
+

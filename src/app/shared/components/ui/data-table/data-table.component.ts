@@ -18,7 +18,7 @@ export interface TableAction {
   label: string;
   icon: string;
   color?: string;
-  condition?: (item: any) => boolean;
+  condition?: (item: Record<string, unknown>) => boolean;
 }
 
 export interface BulkAction {
@@ -125,9 +125,9 @@ export interface BulkAction {
               <div *ngIf="col.type === 'progress'" class="flex flex-col items-center gap-1">
                 <div class="w-full max-w-[60px] bg-slate-100 rounded-full h-1.5 overflow-hidden">
                   <div class="h-full rounded-full transition-all bg-primary"
-                       [style.width.%]="getColumnValue(item, col.key)"></div>
+                       [style.width.%]="getProgressValue(item, col.key)"></div>
                 </div>
-                <span class="text-[9px] font-bold text-slate-500">{{ getColumnValue(item, col.key) }}%</span>
+                <span class="text-[9px] font-bold text-slate-500">{{ getProgressValue(item, col.key) }}%</span>
               </div>
 
               <!-- Actions Column -->
@@ -195,8 +195,8 @@ export interface BulkAction {
     .hover\\:bg-primary:hover { background-color: var(--primary-color, #127c8c); }
   `]
 })
-export class DataTableComponent {
-  @Input() data: any[] = [];
+export class DataTableComponent<T extends object = Record<string, unknown>> {
+  @Input() data: T[] = [];
   @Input() columns: TableColumn[] = [];
   @Input() actions: TableAction[] = [];
   @Input() bulkActions: BulkAction[] = [];
@@ -208,32 +208,32 @@ export class DataTableComponent {
   @Input() idField = 'id';
   @Input() containerClass = '';
 
-  @Output() rowClick = new EventEmitter<any>();
-  @Output() actionClick = new EventEmitter<{ action: TableAction, item: any }>();
-  @Output() bulkActionClick = new EventEmitter<{ action: BulkAction, items: any[] }>();
-  @Output() selectionChange = new EventEmitter<any[]>();
+  @Output() rowClick = new EventEmitter<T>();
+  @Output() actionClick = new EventEmitter<{ action: TableAction; item: T }>();
+  @Output() bulkActionClick = new EventEmitter<{ action: BulkAction; items: T[] }>();
+  @Output() selectionChange = new EventEmitter<T[]>();
 
-  @ContentChild('customColumn') customColumnTemplate!: TemplateRef<any>;
-  @ContentChild('mobileCard') mobileCardTemplate!: TemplateRef<any>;
+  @ContentChild('customColumn') customColumnTemplate: TemplateRef<unknown> | null = null;
+  @ContentChild('mobileCard') mobileCardTemplate: TemplateRef<unknown> | null = null;
 
-  selectedItems = new Set<any>();
+  selectedItems = new Set<unknown>();
   readonly selectionColumnWidth = '3.5rem';
 
   get allSelected(): boolean {
-    return this.data.length > 0 && this.data.every(item => this.selectedItems.has(item[this.idField]));
+    return this.data.length > 0 && this.data.every((item) => this.selectedItems.has(this.getItemId(item)));
   }
 
   toggleSelectAll() {
     if (this.allSelected) {
       this.selectedItems.clear();
     } else {
-      this.data.forEach(item => this.selectedItems.add(item[this.idField]));
+      this.data.forEach((item) => this.selectedItems.add(this.getItemId(item)));
     }
     this.emitSelectionChange();
   }
 
-  toggleSelectItem(item: any) {
-    const id = item[this.idField];
+  toggleSelectItem(item: T) {
+    const id = this.getItemId(item);
     if (this.selectedItems.has(id)) {
       this.selectedItems.delete(id);
     } else {
@@ -242,22 +242,22 @@ export class DataTableComponent {
     this.emitSelectionChange();
   }
 
-  isSelected(item: any): boolean {
-    return this.selectedItems.has(item[this.idField]);
+  isSelected(item: T): boolean {
+    return this.selectedItems.has(this.getItemId(item));
   }
 
-  onRowClick(item: any) {
+  onRowClick(item: T) {
     if (this.clickableRows) {
       this.rowClick.emit(item);
     }
   }
 
-  onAction(action: TableAction, item: any) {
+  onAction(action: TableAction, item: T) {
     this.actionClick.emit({ action, item });
   }
 
   onBulkAction(action: BulkAction) {
-    const selectedData = this.data.filter(item => this.selectedItems.has(item[this.idField]));
+    const selectedData = this.data.filter((item) => this.selectedItems.has(this.getItemId(item)));
     this.bulkActionClick.emit({ action, items: selectedData });
   }
 
@@ -266,20 +266,44 @@ export class DataTableComponent {
     this.emitSelectionChange();
   }
 
-  getColumnValue(item: any, key: string): any {
-    return key.split('.').reduce((obj, prop) => obj?.[prop], item);
+  getColumnValue(item: T, key: string): string {
+    const value = this.getResolvedColumnValue(item, key);
+    return value == null ? '' : String(value);
   }
 
-  getItemActions(item: any): TableAction[] {
-    return this.actions.filter(action => !action.condition || action.condition(item));
+  getProgressValue(item: T, key: string): number {
+    const value = this.getResolvedColumnValue(item, key);
+    return typeof value === 'number' ? value : Number(value ?? 0);
+  }
+
+  getItemActions(item: T): TableAction[] {
+    return this.actions.filter((action) => !action.condition || action.condition(item as Record<string, unknown>));
   }
 
   getColumnWidth(column: TableColumn): string | null {
     return column.width ?? null;
   }
 
+  private getItemId(item: T): unknown {
+    return this.getFieldValue(item, this.idField);
+  }
+
+  private getResolvedColumnValue(item: T, key: string): unknown {
+    return key.split('.').reduce<unknown>((obj, prop) => {
+      if (obj && typeof obj === 'object') {
+        return (obj as Record<string, unknown>)[prop];
+      }
+
+      return undefined;
+    }, item);
+  }
+
+  private getFieldValue(item: T, field: string): unknown {
+    return (item as Record<string, unknown>)[field];
+  }
+
   private emitSelectionChange() {
-    const selectedData = this.data.filter(item => this.selectedItems.has(item[this.idField]));
+    const selectedData = this.data.filter((item) => this.selectedItems.has(this.getItemId(item)));
     this.selectionChange.emit(selectedData);
   }
 }

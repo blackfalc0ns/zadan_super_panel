@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute } from '@angular/router';
+import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 
@@ -13,6 +15,7 @@ interface Product {
   variant: string;
   sku: string;
   category: string;
+  categoryId: string;
   price: string;
   stock: number;
   stockPercentage: number;
@@ -31,30 +34,24 @@ interface Product {
   templateUrl: './vendor-products.component.html'
 })
 export class VendorProductsComponent {
-  vendorId: string = 'VND-9928';
-  currentLang: string = 'ar';
-  isRTL: boolean = true;
-
-  // Summary stats
-  totalProducts: number = 1245;
-  outOfStock: number = 23;
-  underReview: number = 5;
-  totalInventoryValue: string = '342,500';
-
-  // Filters
-  searchQuery: string = '';
-  selectedCategory: string = '';
-  selectedStatus: string = '';
-  selectAll: boolean = false;
+  vendorId = 'VND-9928';
+  currentLang = 'ar';
+  isRTL = true;
+  searchQuery = '';
+  selectedCategory = '';
+  selectedStatus = '';
+  selectAll = false;
+  private readonly destroyRef = inject(DestroyRef);
 
   products: Product[] = [
     {
-      id: '1',
-      nameAr: 'ساعة ذكية ابل واتش سيريز 8',
+      id: 'PRD-24001',
+      nameAr: 'Ø³Ø§Ø¹Ø© Ø°ÙƒÙŠØ© Ø§Ø¨Ù„ ÙˆØ§ØªØ´ Ø³ÙŠØ±ÙŠØ² 8',
       nameEn: 'Apple Watch Series 8',
-      variant: 'أسود, 45mm',
+      variant: 'Ø£Ø³ÙˆØ¯, 45mm',
       sku: 'AW-S8-45-BLK',
-      category: 'ساعات ذكية',
+      category: 'Ø³Ø§Ø¹Ø§Øª Ø°ÙƒÙŠØ©',
+      categoryId: 'CAT-ELECTRONICS',
       price: '1,599',
       stock: 45,
       stockPercentage: 75,
@@ -66,12 +63,13 @@ export class VendorProductsComponent {
       selected: false
     },
     {
-      id: '2',
-      nameAr: 'سماعات رأس لاسلكية سوني',
+      id: 'PRD-24002',
+      nameAr: 'Ø³Ù…Ø§Ø¹Ø§Øª Ø±Ø£Ø³ Ù„Ø§Ø³Ù„ÙƒÙŠØ© Ø³ÙˆÙ†ÙŠ',
       nameEn: 'Sony WH-1000XM4',
-      variant: 'فضي, إلغاء الضوضاء',
+      variant: 'ÙØ¶ÙŠ, Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø¶ÙˆØ¶Ø§Ø¡',
       sku: 'SN-WHXM4-SLV',
-      category: 'صوتيات',
+      category: 'ØµÙˆØªÙŠØ§Øª',
+      categoryId: 'CAT-AUDIO',
       price: '1,249',
       stock: 3,
       stockPercentage: 10,
@@ -83,12 +81,13 @@ export class VendorProductsComponent {
       selected: false
     },
     {
-      id: '3',
-      nameAr: 'عدسة كانون 50mm',
+      id: 'PRD-24003',
+      nameAr: 'Ø¹Ø¯Ø³Ø© ÙƒØ§Ù†ÙˆÙ† 50mm',
       nameEn: 'Canon 50mm f/1.8',
-      variant: 'أسود, STM',
+      variant: 'Ø£Ø³ÙˆØ¯, STM',
       sku: 'CN-50F18-STM',
-      category: 'تصوير',
+      category: 'ØªØµÙˆÙŠØ±',
+      categoryId: 'CAT-CAMERAS',
       price: '499',
       stock: 0,
       stockPercentage: 0,
@@ -100,12 +99,13 @@ export class VendorProductsComponent {
       selected: false
     },
     {
-      id: '4',
-      nameAr: 'نظارة واقع افتراضي Quest 2',
+      id: 'PRD-24004',
+      nameAr: 'Ù†Ø¸Ø§Ø±Ø© ÙˆØ§Ù‚Ø¹ Ø§ÙØªØ±Ø§Ø¶ÙŠ Quest 2',
       nameEn: 'Meta Quest 2',
-      variant: 'أبيض, 128GB',
+      variant: 'Ø£Ø¨ÙŠØ¶, 128GB',
       sku: 'MQ-2-128-WHT',
-      category: 'ألعاب',
+      category: 'Ø£Ù„Ø¹Ø§Ø¨',
+      categoryId: 'CAT-GAMING',
       price: '1,899',
       stock: 12,
       stockPercentage: 30,
@@ -119,54 +119,89 @@ export class VendorProductsComponent {
   ];
 
   constructor(
-    private translate: TranslateService,
-    private route: ActivatedRoute
+    private readonly translate: TranslateService,
+    private readonly router: Router,
+    private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
-    
-    this.translate.onLangChange.subscribe((event) => {
-      this.currentLang = event.lang;
-      this.isRTL = event.lang === 'ar';
+
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        this.currentLang = event.lang;
+        this.isRTL = event.lang === 'ar';
+      });
+
+    this.vendorDetailFacade.vendorId$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((vendorId) => {
+        if (vendorId) {
+          this.vendorId = vendorId;
+        }
+      });
+  }
+
+  get filteredProducts(): Product[] {
+    const normalizedSearch = this.searchQuery.trim().toLowerCase();
+
+    return this.products.filter((product) => {
+      const matchesSearch = !normalizedSearch || [
+        product.nameAr,
+        product.nameEn,
+        product.sku,
+        product.category
+      ].some((value) => value.toLowerCase().includes(normalizedSearch));
+
+      const matchesCategory = !this.selectedCategory || product.categoryId === this.selectedCategory;
+      const matchesStatus = !this.selectedStatus || product.status === this.selectedStatus;
+
+      return matchesSearch && matchesCategory && matchesStatus;
     });
+  }
 
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.vendorId = params['id'];
-      }
+  get totalProducts(): number {
+    return this.products.length;
+  }
+
+  get outOfStock(): number {
+    return this.products.filter((product) => product.status === 'out_of_stock').length;
+  }
+
+  get underReview(): number {
+    return this.products.filter((product) => product.status === 'under_review').length;
+  }
+
+  get totalInventoryValue(): string {
+    const total = this.products.reduce((sum, product) => sum + Number(product.price.replace(/,/g, '')) * product.stock, 0);
+    return total.toLocaleString('en-US');
+  }
+
+  onSelectAll(): void {
+    this.filteredProducts.forEach((product) => {
+      product.selected = this.selectAll;
     });
   }
 
-  onSelectAll() {
-    this.products.forEach(p => p.selected = this.selectAll);
+  onProductSelect(): void {
+    this.selectAll = this.filteredProducts.length > 0 && this.filteredProducts.every((product) => product.selected);
   }
 
-  onProductSelect() {
-    this.selectAll = this.products.every(p => p.selected);
+  onAddProduct(): void {
+    this.router.navigate(['/catalog/products/create']);
   }
 
-  onAddProduct() {
-    console.log('Add new product');
+  onViewProduct(productId: string): void {
+    this.router.navigate(['/catalog/products/view', productId]);
   }
 
-  onEditVendorData() {
-    console.log('Edit vendor data');
+  onEditProduct(productId: string): void {
+    this.router.navigate(['/catalog/products/edit', productId]);
   }
 
-  onViewProduct(productId: string) {
-    console.log('View product:', productId);
-  }
-
-  onEditProduct(productId: string) {
-    console.log('Edit product:', productId);
-  }
-
-  onDeleteProduct(productId: string) {
-    console.log('Delete product:', productId);
-  }
-
-  onFilterProducts() {
-    console.log('Filter products');
+  onDeleteProduct(productId: string): void {
+    this.products = this.products.filter((product) => product.id !== productId);
+    this.selectAll = false;
   }
 
   getStockColorClass(status: string): string {

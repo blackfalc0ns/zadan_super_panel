@@ -1,4 +1,4 @@
-import type { DriverCompensationRule } from '../../../core/models/finance-rules';
+import type { DriverCompensationRule } from '@finances/models/finance-rules.models';
 
 export type { DriverCompensationRule };
 
@@ -421,3 +421,4 @@ export interface DriverPayment {
   status: SettlementStatus;
   paidAt?: string;
 }
+

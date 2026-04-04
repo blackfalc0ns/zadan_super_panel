@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,7 +8,7 @@ import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/
 import { DataTableComponent, TableAction, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page-header/page-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
-import { OrdersService } from '../../../../../core/services/orders.service';
+import { OrdersService } from '@orders/services/orders.api.service';
 import {
   OrderFulfillmentStatus,
   OrderListItem,
@@ -325,4 +325,5 @@ export class OrdersListComponent implements OnInit {
     ];
   }
 }
+
 

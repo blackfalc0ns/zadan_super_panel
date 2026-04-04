@@ -102,13 +102,13 @@ export class QuickPreviewDrawerComponent {
   @Input() subtitle = '';
   @Input() headerIcon = '';
   @Input() headerColor = '#127c8c';
-  @Input() data: any = null;
+  @Input() data: unknown = null;
   @Input() actions: PreviewAction[] = [];
 
   @Output() close = new EventEmitter<void>();
   @Output() actionClick = new EventEmitter<PreviewAction>();
 
-  @ContentChild('content') contentTemplate!: TemplateRef<any>;
+  @ContentChild('content') contentTemplate!: TemplateRef<unknown>;
 
   constructor(private translate: TranslateService) {}
 

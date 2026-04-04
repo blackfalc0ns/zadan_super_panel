@@ -1,39 +1,20 @@
-﻿import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { VendorDetailHeaderComponent } from '../../../../../shared/components/ui/vendor-detail-header/vendor-detail-header.component';
-import { VendorComplianceComponent } from '../../../components/vendor-compliance/vendor-compliance.component';
-import { VendorActivityLogComponent } from '../../../components/vendor-activity-log/vendor-activity-log.component';
-import { VendorOverviewComponent } from '../../../components/vendor-overview/vendor-overview.component';
-import { VendorProductsComponent } from '../../../components/vendor-products/vendor-products.component';
-import { VendorOrdersComponent } from '../../../components/vendor-orders/vendor-orders.component';
-import { VendorFinanceComponent } from '../../../components/vendor-finance/vendor-finance.component';
-import { VendorSettingsComponent } from '../../../components/vendor-settings/vendor-settings.component';
-import { VendorAnalyticsComponent } from '../../../components/vendor-analytics/vendor-analytics.component';
-import { EditOwnerModalComponent, OwnerData } from '../../../../../shared/components/ui/edit-owner-modal/edit-owner-modal.component';
-import { EditLegalBankModalComponent, LegalBankData } from '../../../../../shared/components/ui/edit-legal-bank-modal/edit-legal-bank-modal.component';
-import { EditStoreModalComponent, StoreData } from '../../../../../shared/components/ui/edit-store-modal/edit-store-modal.component';
-import { CrViewerModalComponent, CommercialRegisterData } from '../../../../../shared/components/ui/cr-viewer-modal/cr-viewer-modal.component';
+import { CrViewerModalComponent, CommercialRegisterData } from '@vendors/components/workflows/cr-viewer-modal/cr-viewer-modal.component';
+import { EditLegalBankModalComponent, LegalBankData } from '@vendors/components/workflows/edit-legal-bank-modal/edit-legal-bank-modal.component';
+import { EditOwnerModalComponent, OwnerData } from '@vendors/components/workflows/edit-owner-modal/edit-owner-modal.component';
+import { EditStoreModalComponent, StoreData } from '@vendors/components/workflows/edit-store-modal/edit-store-modal.component';
+import { VendorDetail } from '@vendors/models/vendors.domain.models';
+import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
-import { VendorDetail } from '../../../../../core/models/vendor';
-import { VendorService } from '../../../../../core/services/vendor.service';
 
 @Component({
   selector: 'app-vendor-detail',
   standalone: true,
   imports: [
     CommonModule,
-    VendorDetailHeaderComponent,
-    VendorComplianceComponent,
-    VendorActivityLogComponent,
-    VendorOverviewComponent,
-    VendorProductsComponent,
-    VendorOrdersComponent,
-    VendorFinanceComponent,
-    VendorSettingsComponent,
-    VendorAnalyticsComponent,
     TranslateModule,
     EditOwnerModalComponent,
     EditLegalBankModalComponent,
@@ -44,7 +25,6 @@ import { VendorService } from '../../../../../core/services/vendor.service';
   templateUrl: './vendor-detail.component.html'
 })
 export class VendorDetailComponent implements OnInit {
-  currentTab = 'overview';
   currentLang = 'ar';
   isRTL = true;
   vendorId = 'VND-9928';
@@ -131,9 +111,8 @@ export class VendorDetailComponent implements OnInit {
   };
 
   constructor(
-    private translate: TranslateService,
-    private route: ActivatedRoute,
-    private vendorService: VendorService
+    private readonly translate: TranslateService,
+    private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -150,35 +129,20 @@ export class VendorDetailComponent implements OnInit {
       });
   }
 
-  ngOnInit() {
-    this.route.params
+  ngOnInit(): void {
+    this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        if (params['id']) {
-          this.vendorId = params['id'];
+      .subscribe((vendor) => {
+        if (!vendor) {
+          return;
         }
 
-        this.loadVendor();
-      });
-
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        if (params['tab']) {
-          this.currentTab = params['tab'];
-          this.updateHeaderTab(params['tab']);
-        }
+        this.vendorId = vendor.id;
+        this.applyVendorDetail(vendor);
       });
   }
 
-  onTabChange(tabId: string) {
-    this.currentTab = tabId;
-  }
-
-  updateHeaderTab(tabId: string) {}
-
-  onEditClick(section: string) {
-    console.log('Edit clicked for:', section);
+  onEditClick(section: string): void {
     if (section === 'owner') {
       this.showEditOwnerModal = true;
     } else if (section === 'legal_bank') {
@@ -188,57 +152,67 @@ export class VendorDetailComponent implements OnInit {
     }
   }
 
-  onSaveOwnerData(data: OwnerData) {
-    console.log('Saving owner data:', data);
+  onSaveOwnerData(data: OwnerData): void {
     this.ownerData = data;
+    this.vendorDetailFacade.updateVendorLocally({
+      ownerName: data.fullName,
+      ownerEmail: data.email,
+      ownerPhone: `${data.phoneCode} ${data.phone}`.trim()
+    });
     this.showEditOwnerModal = false;
   }
 
-  onSaveLegalBankData(data: LegalBankData) {
-    console.log('Saving legal bank data:', data);
+  onSaveLegalBankData(data: LegalBankData): void {
     this.legalBankData = data;
+    this.vendorDetailFacade.updateVendorLocally({
+      commercialRegistrationNumber: data.commercialRegister,
+      taxId: data.taxNumber
+    });
     this.showEditLegalBankModal = false;
   }
 
-  onSaveStoreData(data: StoreData) {
-    console.log('Saving store data:', data);
+  onSaveStoreData(data: StoreData): void {
     this.storeDataModal = data;
+    this.vendorDetailFacade.updateVendorLocally({
+      businessNameAr: data.storeName,
+      businessNameEn: data.storeName,
+      businessType: this.translate.instant(`MODALS.STORE_EDIT.ACTIVITIES.${data.activityType}`),
+      city: data.city
+    });
     this.showEditStoreModal = false;
   }
 
-  onViewDetailsClick() {
-    console.log('View details clicked');
-  }
-
-  onGenerateReportClick() {
-    console.log('Generate report clicked');
-  }
-
-  onViewCrClick() {
+  onViewCrClick(): void {
     this.showCrViewerModal = true;
   }
 
-  onCrAccept() {
-    console.log('CR document accepted');
+  onCrAccept(): void {
     this.showCrViewerModal = false;
   }
 
-  onCrDownload() {
-    console.log('CR document download requested');
+  onCrDownload(): void {
+    this.downloadTextFile(
+      `commercial-register-${this.vendorId}.txt`,
+      [
+        `CR Number: ${this.crData.crNumber}`,
+        `Establishment: ${this.crData.establishmentName}`,
+        `Issue Date: ${this.crData.issueDate}`,
+        `Expiry Date: ${this.crData.expiryDate}`
+      ].join('\n')
+    );
   }
 
-  onCrVerifySource() {
-    console.log('CR source verification requested');
+  onCrVerifySource(): void {
+    const reference = this.crData.internalReference || this.crData.crNumber;
+    void navigator.clipboard?.writeText(reference);
   }
 
-  onVerifyAccount() {
+  onVerifyAccount(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .approveVendorReview(this.vendorDetail.id, this.vendorDetail.commissionRate ?? 13)
-      .subscribe((vendor) => this.applyVendorDetail(vendor));
+    this.vendorDetailFacade.approveVendorReview(this.vendorDetail.commissionRate ?? 13);
   }
 
   getCurrentStatusLabel(): string {
@@ -304,12 +278,6 @@ export class VendorDetailComponent implements OnInit {
     return cycleKeys[paymentCycle] ? this.translate.instant(cycleKeys[paymentCycle]) : paymentCycle;
   }
 
-  private loadVendor(): void {
-    this.vendorService.getVendorById(this.vendorId).subscribe((vendor) => {
-      this.applyVendorDetail(vendor);
-    });
-  }
-
   private applyVendorDetail(vendor: VendorDetail): void {
     this.vendorDetail = vendor;
     this.progressPercentage = vendor.documentsCompleteness || this.progressPercentage;
@@ -344,5 +312,16 @@ export class VendorDetailComponent implements OnInit {
       taxNumber: vendor.taxId || this.legalDocuments.taxNumber
     };
   }
-}
 
+  private downloadTextFile(fileName: string, content: string): void {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = objectUrl;
+    link.download = fileName;
+    link.click();
+
+    URL.revokeObjectURL(objectUrl);
+  }
+}

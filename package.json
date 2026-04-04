@@ -5,8 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "lint": "eslint src",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "check:boundaries": "node tools/check-boundaries.mjs"
   },
   "private": true,
   "dependencies": {
@@ -28,11 +30,17 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.21",
+    "@angular-eslint/eslint-plugin": "^21.3.1",
+    "@angular-eslint/eslint-plugin-template": "^21.3.1",
+    "@angular-eslint/template-parser": "^21.3.1",
     "@angular/cli": "^18.2.21",
     "@angular/compiler-cli": "^18.2.0",
     "@tailwindcss/forms": "^0.5.11",
     "@types/jasmine": "~5.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
     "autoprefixer": "^10.4.27",
+    "eslint": "^10.2.0",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

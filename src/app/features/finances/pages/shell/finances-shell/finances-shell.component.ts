@@ -1,9 +1,10 @@
-﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import { DetailTabsNavComponent, DetailTabNavItem } from '../../../../../shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
+import { DetailTabNavItem, DetailTabsNavComponent } from '../../../../../shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 
 interface FinanceTab {
   id: string;
@@ -21,11 +22,8 @@ interface FinanceTab {
   template: `
     <div class="flex flex-col min-h-full">
 
-      <!-- Page Header -->
       <div class="bg-white border-b border-slate-200/60 sticky top-0 z-30">
         <div class="px-6 pt-6 pb-0">
-
-          <!-- Title Row -->
           <div class="flex items-center justify-between mb-5">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-zadna-primary to-zadna-primaryLight flex items-center justify-center shadow-lg shadow-zadna-primary/25">
@@ -37,7 +35,6 @@ interface FinanceTab {
               </div>
             </div>
 
-            <!-- Quick Actions -->
             <div class="flex items-center gap-2">
               <a
                 [routerLink]="'/finances/overview'"
@@ -63,7 +60,6 @@ interface FinanceTab {
             </div>
           </div>
 
-          <!-- Tab Navigation -->
           <app-detail-tabs-nav
             [tabs]="navTabs"
             [activeTab]="activeTabId"
@@ -72,7 +68,6 @@ interface FinanceTab {
         </div>
       </div>
 
-      <!-- Page Content -->
       <div class="flex-1 p-6 min-h-0">
         <router-outlet></router-outlet>
       </div>
@@ -83,23 +78,30 @@ interface FinanceTab {
 })
 export class FinancesShellComponent {
   currentUrl = '';
+  private readonly destroyRef = inject(DestroyRef);
 
   tabs: FinanceTab[] = [
-    { id: 'overview',     labelKey: 'FINANCES.TABS.DASHBOARD',    route: '/finances/overview',     icon: 'dashboard' },
-    { id: 'pricing',      labelKey: 'FINANCES.TABS.PRICING',      route: '/finances/pricing',      icon: 'tune' },
-    { id: 'ledger',       labelKey: 'FINANCES.TABS.LEDGER',       route: '/finances/ledger',       icon: 'receipt_long' },
-    { id: 'settlements',  labelKey: 'FINANCES.TABS.SETTLEMENTS',  route: '/finances/settlements',  icon: 'payments' },
-    { id: 'refunds',      labelKey: 'FINANCES.TABS.REFUNDS',      route: '/finances/refunds',      icon: 'undo', badge: 3, badgeColor: 'bg-orange-500 text-white' },
-    { id: 'cod',          labelKey: 'FINANCES.TABS.COD',          route: '/finances/cod',          icon: 'local_atm' },
-    { id: 'adjustments',  labelKey: 'FINANCES.TABS.ADJUSTMENTS',  route: '/finances/adjustments',  icon: 'rule' },
-    { id: 'audit',        labelKey: 'FINANCES.TABS.AUDIT',        route: '/finances/audit',        icon: 'history' },
+    { id: 'overview', labelKey: 'FINANCES.TABS.DASHBOARD', route: '/finances/overview', icon: 'dashboard' },
+    { id: 'pricing', labelKey: 'FINANCES.TABS.PRICING', route: '/finances/pricing', icon: 'tune' },
+    { id: 'ledger', labelKey: 'FINANCES.TABS.LEDGER', route: '/finances/ledger', icon: 'receipt_long' },
+    { id: 'settlements', labelKey: 'FINANCES.TABS.SETTLEMENTS', route: '/finances/settlements', icon: 'payments' },
+    { id: 'refunds', labelKey: 'FINANCES.TABS.REFUNDS', route: '/finances/refunds', icon: 'undo', badge: 3, badgeColor: 'bg-orange-500 text-white' },
+    { id: 'cod', labelKey: 'FINANCES.TABS.COD', route: '/finances/cod', icon: 'local_atm' },
+    { id: 'adjustments', labelKey: 'FINANCES.TABS.ADJUSTMENTS', route: '/finances/adjustments', icon: 'rule' },
+    { id: 'audit', labelKey: 'FINANCES.TABS.AUDIT', route: '/finances/audit', icon: 'history' }
   ];
 
-  constructor(private router: Router) {
+  constructor(private readonly router: Router) {
     this.currentUrl = this.router.url;
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
-      this.currentUrl = e.urlAfterRedirects || e.url;
-    });
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((event) => {
+        const navigation = event as NavigationEnd;
+        this.currentUrl = navigation.urlAfterRedirects || navigation.url;
+      });
   }
 
   get activeTabId(): string {
@@ -122,4 +124,3 @@ export class FinancesShellComponent {
 
   onTabSelect(_: string): void {}
 }
-

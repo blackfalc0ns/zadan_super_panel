@@ -1,11 +1,11 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { CatalogService } from '../../../../core/services/catalog.service';
-import { Category, MasterProduct } from '../../../../core/models/catalog.model';
+import { CatalogService } from '@catalog/services/catalog.api.service';
+import { Category, MasterProduct } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
@@ -257,7 +257,7 @@ export class MasterProductsComponent implements OnInit {
         console.error('Failed to delete product', err);
         this.isDeleting = false;
         alert(this.translate.currentLang === 'ar' 
-          ? 'ÙØ´Ù„ Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬' 
+          ? 'فشل حذف المنتج' 
           : 'Failed to delete product');
       }
     });
@@ -291,4 +291,5 @@ export class MasterProductsComponent implements OnInit {
     return labels[status || ''] || status || '-';
   }
 }
+
 

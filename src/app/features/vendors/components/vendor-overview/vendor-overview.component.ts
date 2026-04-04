@@ -1,13 +1,13 @@
-import { Component, DestroyRef, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, DestroyRef, EventEmitter, Output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { VendorDetail, VendorReviewDocument } from '../../../../core/models/vendor';
-import { VendorService } from '../../../../core/services/vendor.service';
+import { VendorDetail, VendorReviewDocument } from '@vendors/models/vendors.domain.models';
+import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 interface KPI {
   id: string;
@@ -124,10 +124,9 @@ export class VendorOverviewComponent {
   alerts: AlertCard[] = [];
 
   constructor(
-    private translate: TranslateService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private vendorService: VendorService
+    private readonly translate: TranslateService,
+    private readonly router: Router,
+    private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -137,17 +136,19 @@ export class VendorOverviewComponent {
       .subscribe((event) => {
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
-        this.syncVendorContext();
+        if (this.vendorDetail) {
+          this.applyVendorDetail(this.vendorDetail);
+        }
       });
 
-    this.route.params
+    this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        if (params['id']) {
-          this.vendorId = params['id'];
+      .subscribe((vendor) => {
+        if (!vendor) {
+          return;
         }
 
-        this.syncVendorContext();
+        this.applyVendorDetail(vendor);
       });
   }
 
@@ -215,56 +216,48 @@ export class VendorOverviewComponent {
     return (this.vendorDetail?.reviewDocuments || []).filter((document) => document.status !== 'completed');
   }
 
-  onApproveVendor() {
+  onApproveVendor(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .approveVendorReview(this.vendorDetail.id, this.vendorDetail.commissionRate ?? 13)
-      .subscribe((vendor) => this.applyVendorDetail(vendor));
+    this.vendorDetailFacade.approveVendorReview(this.vendorDetail.commissionRate ?? 13);
   }
 
-  onRequestDocuments() {
+  onRequestDocuments(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .requestVendorDocuments(this.vendorDetail.id)
-      .subscribe((vendor) => this.applyVendorDetail(vendor));
+    this.vendorDetailFacade.requestVendorDocuments();
   }
 
-  onSuspendVendor() {
+  onSuspendVendor(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .suspendVendorAccount(this.vendorDetail.id)
-      .subscribe((vendor) => this.applyVendorDetail(vendor));
+    this.vendorDetailFacade.suspendVendorAccount();
   }
 
-  onViewAllOrders() {
-    this.router.navigate(['/vendors', this.vendorId], {
-      queryParams: { tab: 'orders' }
-    });
+  onViewAllOrders(): void {
+    this.router.navigate(['/vendors', this.vendorId, 'orders']);
   }
 
-  onViewAllDocuments() {
+  onViewAllDocuments(): void {
     this.tabChange.emit('compliance');
   }
 
-  onFilterOrders() {
+  onFilterOrders(): void {
     this.tabChange.emit('orders');
   }
 
-  onViewOrderDetails(orderId: string) {
+  onViewOrderDetails(orderId: string): void {
     this.router.navigate(['/orders', orderId]);
   }
 
-  onNavigateToDetails() {
-    this.router.navigate(['/vendors', this.vendorId]);
+  onNavigateToDetails(): void {
+    this.router.navigate(['/vendors', this.vendorId, 'overview']);
   }
 
   getDocumentStatusVariant(statusKey: string): StatusPillVariant {
@@ -299,14 +292,11 @@ export class VendorOverviewComponent {
     return 'neutral';
   }
 
-  private syncVendorContext(): void {
-    this.vendorService.getVendorById(this.vendorId).subscribe((vendor) => this.applyVendorDetail(vendor));
-  }
-
   private applyVendorDetail(vendor: VendorDetail): void {
     this.vendorDetail = vendor;
+    this.vendorId = vendor.id;
     this.vendorName = this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn;
-    this.vendorLocation = vendor.city ? `${vendor.city}${this.isRTL ? 'ØŒ' : ','} Saudi Arabia` : '';
+    this.vendorLocation = vendor.city ? `${vendor.city}${this.isRTL ? 'Ã˜Å’' : ','} Saudi Arabia` : '';
     this.storeInfo = {
       category: vendor.businessType,
       registrationDate: this.formatDate(vendor.createdAtUtc),
@@ -331,7 +321,7 @@ export class VendorOverviewComponent {
       'bg-orange-50 text-orange-700'
     ];
     const customers = this.currentLang === 'ar'
-      ? ['Ø£Ø­Ù…Ø¯ Ø¹Ø¨Ø¯Ø§Ù„Ù„Ù‡', 'Ø³Ø§Ø±Ø© Ù…Ø­Ù…Ø¯', 'Ø®Ø§Ù„Ø¯ Ø§Ù„Ø¯ÙˆØ³Ø±ÙŠ']
+      ? ['Ã˜Â£Ã˜Â­Ã™â€¦Ã˜Â¯ Ã˜Â¹Ã˜Â¨Ã˜Â¯Ã˜Â§Ã™â€žÃ™â€žÃ™â€¡', 'Ã˜Â³Ã˜Â§Ã˜Â±Ã˜Â© Ã™â€¦Ã˜Â­Ã™â€¦Ã˜Â¯', 'Ã˜Â®Ã˜Â§Ã™â€žÃ˜Â¯ Ã˜Â§Ã™â€žÃ˜Â¯Ã™Ë†Ã˜Â³Ã˜Â±Ã™Å ']
       : ['Ahmed Abdullah', 'Sarah Mohammed', 'Khaled Al-Dosari'];
 
     return customers.map((customer, index) => ({

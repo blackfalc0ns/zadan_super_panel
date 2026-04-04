@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { DriverStatus, VerificationStatus } from '../../../../core/models/driver';
+import { DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
 import { DetailTabsNavComponent, DetailTabNavItem } from '../../../../shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
@@ -986,3 +986,5 @@ export class DriverDetailViewComponent {
     return item.critical ? 'warning' : 'neutral';
   }
 }
+
+

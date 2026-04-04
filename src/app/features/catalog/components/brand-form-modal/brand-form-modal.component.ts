@@ -1,9 +1,9 @@
-﻿import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CatalogService } from '../../../../core/services/catalog.service';
-import { Brand } from '../../../../core/models/catalog.model';
+import { CatalogService } from '@catalog/services/catalog.api.service';
+import { Brand } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
@@ -95,17 +95,28 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     this.isSaving = true;
     const payload = this.form.value;
 
-    const request = this.mode === 'create'
-      ? this.catalogService.createBrand(payload)
-      : this.catalogService.updateBrand(payload.id, payload);
+    if (this.mode === 'create') {
+      this.catalogService.createBrand(payload).subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.saved.emit();
+          this.onClose();
+        },
+        error: (err: unknown) => {
+          console.error('Save failed', err);
+          this.isSaving = false;
+        }
+      });
+      return;
+    }
 
-    request.subscribe({
+    this.catalogService.updateBrand(payload.id, payload).subscribe({
       next: () => {
         this.isSaving = false;
         this.saved.emit();
         this.onClose();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         console.error('Save failed', err);
         this.isSaving = false;
       }
@@ -117,4 +128,5 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     this.close.emit();
   }
 }
+
 

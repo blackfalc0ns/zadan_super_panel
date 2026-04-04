@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
+type FilterValue = unknown;
+
 export interface FilterOption {
-  value: any;
+  value: FilterValue;
   label: string;
   color?: string;
 }
@@ -22,7 +24,7 @@ export interface FilterField {
 export interface FilterPreset {
   id: string;
   name: string;
-  filters: { [key: string]: any };
+  filters: Record<string, FilterValue>;
 }
 
 @Component({
@@ -68,7 +70,7 @@ export interface FilterPreset {
           
           <!-- Select Field -->
           <div *ngIf="field.type === 'select'" class="relative">
-            <select [(ngModel)]="filters[field.key]" (change)="onFilterChange()"
+            <select [ngModel]="getFilterValue(field.key)" (ngModelChange)="setFilterValue(field.key, $event)"
                     class="w-full px-3.5 py-2 text-[11px] font-bold border border-slate-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-primary-20 focus:border-primary transition-all duration-200 bg-white hover:border-slate-300 appearance-none cursor-pointer text-slate-700">
               <option [value]="undefined">{{ (field.placeholder || 'COMMON.HIDE_INACTIVE') | translate }}</option>
               <option *ngFor="let option of field.options" [value]="option.value">{{ option.label | translate }}</option>
@@ -86,12 +88,12 @@ export interface FilterPreset {
         <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ activeFiltersLabel | translate }}:</span>
         <div class="flex flex-wrap gap-1.5">
           <ng-container *ngFor="let field of fields">
-            <span *ngIf="filters[field.key]" 
+            <span *ngIf="getFilterValue(field.key)" 
                   class="inline-flex items-center gap-1.5 px-2 py-0.5 text-[9px] font-black rounded border transition-all"
                   [style.background-color]="(field.color || '#6366f1') + '08'"
                   [style.border-color]="(field.color || '#6366f1') + '20'"
                   [style.color]="field.color || '#6366f1'">
-              {{ getFilterDisplayValue(field, filters[field.key]) | translate }}
+              {{ getFilterDisplayValue(field, getFilterValue(field.key)) | translate }}
               <button (click)="removeFilter(field.key)" class="hover:scale-110 transition-transform">
                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -111,7 +113,7 @@ export interface FilterPreset {
     .ring-primary-20 { box-shadow: 0 0 0 4px var(--primary-color-20, #127c8c33); }
   `]
 })
-export class AdvancedFilterPanelComponent implements OnInit {
+export class AdvancedFilterPanelComponent<TFilters extends object = Record<string, FilterValue>> implements OnInit {
   @Input() isExpanded = false;
   @Input() title = 'VENDORS.FILTER_VENDORS';
   @Input() subtitle = 'VENDORS.ADJUST_CRITERIA';
@@ -119,12 +121,12 @@ export class AdvancedFilterPanelComponent implements OnInit {
   @Input() saveLabel = 'COMMON.SAVE';
   @Input() activeFiltersLabel = 'VENDORS.KPI.PENDING_APPROVAL';
   @Input() fields: FilterField[] = [];
-  @Input() filters: { [key: string]: any } = {};
+  @Input() filters = {} as TFilters;
   @Input() presets: FilterPreset[] = [];
 
-  @Output() filtersChange = new EventEmitter<{ [key: string]: any }>();
+  @Output() filtersChange = new EventEmitter<TFilters>();
   @Output() reset = new EventEmitter<void>();
-  @Output() save = new EventEmitter<{ [key: string]: any }>();
+  @Output() save = new EventEmitter<TFilters>();
 
   ngOnInit() {
     // Set CSS custom properties for theming
@@ -134,8 +136,8 @@ export class AdvancedFilterPanelComponent implements OnInit {
   }
 
   get hasActiveFilters(): boolean {
-    return Object.keys(this.filters).some(key => 
-      this.filters[key] !== undefined && this.filters[key] !== null && this.filters[key] !== ''
+    return Object.keys(this.asMutableFilters()).some((key) =>
+      this.getFilterValue(key) !== undefined && this.getFilterValue(key) !== null && this.getFilterValue(key) !== ''
     );
   }
 
@@ -144,7 +146,7 @@ export class AdvancedFilterPanelComponent implements OnInit {
   }
 
   onReset() {
-    this.filters = {};
+    this.filters = {} as TFilters;
     this.reset.emit();
     this.filtersChange.emit(this.filters);
   }
@@ -154,15 +156,28 @@ export class AdvancedFilterPanelComponent implements OnInit {
   }
 
   removeFilter(key: string) {
-    delete this.filters[key];
+    delete this.asMutableFilters()[key];
     this.onFilterChange();
   }
 
-  getFilterDisplayValue(field: FilterField, value: any): string {
+  getFilterDisplayValue(field: FilterField, value: FilterValue): string {
     if (field.options) {
-      const option = field.options.find(opt => opt.value === value);
-      return option ? option.label : value;
+      const option = field.options.find((opt) => opt.value === value);
+      return option ? option.label : String(value ?? '');
     }
-    return value;
+    return String(value ?? '');
+  }
+
+  getFilterValue(key: string): FilterValue {
+    return this.asMutableFilters()[key];
+  }
+
+  setFilterValue(key: string, value: FilterValue): void {
+    this.asMutableFilters()[key] = value;
+    this.onFilterChange();
+  }
+
+  private asMutableFilters(): Record<string, FilterValue> {
+    return this.filters as Record<string, FilterValue>;
   }
 }

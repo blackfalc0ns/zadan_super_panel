@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./src",
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
@@ -16,6 +17,56 @@
     "declaration": false,
     "experimentalDecorators": true,
     "moduleResolution": "bundler",
+    "paths": {
+      "@core/*": [
+        "app/core/*"
+      ],
+      "@shared/*": [
+        "app/shared/*"
+      ],
+      "@dashboard/*": [
+        "app/features/dashboard/*"
+      ],
+      "@vendors/*": [
+        "app/features/vendors/*"
+      ],
+      "@catalog/*": [
+        "app/features/catalog/*"
+      ],
+      "@customers/*": [
+        "app/features/customers/*"
+      ],
+      "@drivers/*": [
+        "app/features/drivers/*"
+      ],
+      "@orders/*": [
+        "app/features/orders/*"
+      ],
+      "@disputes/*": [
+        "app/features/disputes/*"
+      ],
+      "@finances/*": [
+        "app/features/finances/*"
+      ],
+      "@deliveries/*": [
+        "app/features/deliveries/*"
+      ],
+      "@notifications/*": [
+        "app/features/notifications/*"
+      ],
+      "@reviews/*": [
+        "app/features/reviews/*"
+      ],
+      "@reports/*": [
+        "app/features/reports/*"
+      ],
+      "@settings/*": [
+        "app/features/settings/*"
+      ],
+      "@admin-users/*": [
+        "app/features/admin-users/*"
+      ]
+    },
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",

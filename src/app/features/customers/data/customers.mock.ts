@@ -1,5 +1,4 @@
-import { OrderDetail } from '../../orders/models/orders.models';
-import { createMockOrders } from '../../orders/data/orders.mock';
+import { createMockOrders, OrderDetail } from '@orders/public-api';
 import {
   CustomerAccountState,
   CustomerDetailRecord,

@@ -1,9 +1,9 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CustomersService } from '../../../../../core/services/customers.service';
+import { CustomersService } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -294,4 +294,5 @@ export class CustomersListComponent implements OnInit {
     }
   }
 }
+
 

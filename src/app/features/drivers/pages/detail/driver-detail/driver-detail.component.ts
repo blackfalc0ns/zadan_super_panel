@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { PreviewAction } from '../../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
@@ -6,8 +6,8 @@ import { DriverDetailViewComponent } from '../../../components/driver-detail-vie
 import { buildDriverDetailRecord, getDriverMapPreview } from '../../../data/drivers.mock';
 import { DriverDetailRecord, DriverIncidentRecord, DriverTaskAssignment, DriverWorkflowActionId } from '../../../models/drivers.models';
 import { DriverLifecycleTabId, DriverPreviewType } from '../../../models/driver-view.types';
-import { DriverService } from '../../../../../core/services/driver.service';
-import { Driver, DriverStatus, VerificationStatus } from '../../../../../core/models/driver';
+import { DriverService } from '@drivers/services/drivers.api.service';
+import { Driver, DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 
 @Component({
   selector: 'app-driver-detail',
@@ -317,4 +317,6 @@ export class DriverDetailComponent implements OnInit {
     return cleaned.length ? Array.from(new Set(cleaned)) : ['clear'];
   }
 }
+
+
 

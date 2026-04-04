@@ -20,7 +20,7 @@
               <span class="material-symbols-outlined text-primary text-base">inventory_2</span>
               <span>{{ 'VENDOR_PRODUCTS.TOTAL_PRODUCTS' | translate }}</span>
             </span>
-            <span class="text-sm font-bold text-gray-900">1,245</span>
+            <span class="text-sm font-bold text-gray-900">{{ totalProducts }}</span>
           </div>
           
           <!-- Out of Stock -->
@@ -29,7 +29,7 @@
               <span class="material-symbols-outlined text-orange-600 text-base">warning</span>
               <span>{{ 'VENDOR_PRODUCTS.OUT_OF_STOCK' | translate }}</span>
             </span>
-            <span class="text-sm font-bold text-gray-900">23</span>
+            <span class="text-sm font-bold text-gray-900">{{ outOfStock }}</span>
           </div>
           
           <!-- Under Review -->
@@ -38,13 +38,13 @@
               <span class="material-symbols-outlined text-gray-500 text-base">pending_actions</span>
               <span>{{ 'VENDOR_PRODUCTS.UNDER_REVIEW' | translate }}</span>
             </span>
-            <span class="text-sm font-bold text-gray-900">5</span>
+            <span class="text-sm font-bold text-gray-900">{{ underReview }}</span>
           </div>
           
           <!-- Total Inventory Value -->
           <div class="mt-2 pt-4 border-t border-gray-200">
             <span class="text-xs text-gray-500 block mb-1">{{ 'VENDOR_PRODUCTS.TOTAL_INVENTORY_VALUE' | translate }}</span>
-            <span class="text-lg font-bold text-primary">{{ 'COMMON.CURRENCY_SAR' | translate }} 342,500</span>
+            <span class="text-lg font-bold text-primary">{{ 'COMMON.CURRENCY_SAR' | translate }} {{ totalInventoryValue }}</span>
           </div>
         </div>
       </div>
@@ -67,13 +67,13 @@
         
         <!-- Filters -->
         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-          <select 
+          <select
             [(ngModel)]="selectedCategory"
             class="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 appearance-none relative bg-no-repeat bg-[length:1.2em_1.2em] pe-8 ps-3 bg-[position:right_0.5rem_center]"
             style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
             <option value="">{{ 'VENDOR_PRODUCTS.ALL_CATEGORIES' | translate }}</option>
-            <option value="electronics">{{ 'VENDOR_PRODUCTS.ELECTRONICS' | translate }}</option>
-            <option value="accessories">{{ 'VENDOR_PRODUCTS.ACCESSORIES' | translate }}</option>
+            <option value="CAT-ELECTRONICS">{{ 'VENDOR_PRODUCTS.ELECTRONICS' | translate }}</option>
+            <option value="CAT-AUDIO">{{ 'VENDOR_PRODUCTS.ACCESSORIES' | translate }}</option>
           </select>
           
           <select 
@@ -84,12 +84,6 @@
             <option value="active">{{ 'VENDOR_PRODUCTS.STATUS.ACTIVE' | translate }}</option>
             <option value="out_of_stock">{{ 'VENDOR_PRODUCTS.STATUS.OUT_OF_STOCK' | translate }}</option>
           </select>
-          
-          <button 
-            (click)="onFilterProducts()"
-            class="px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-center">
-            <span class="material-symbols-outlined text-sm">filter_list</span>
-          </button>
         </div>
       </div>
 
@@ -118,7 +112,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr *ngFor="let product of products" 
+              <tr *ngFor="let product of filteredProducts"
                   class="hover:bg-gray-50 transition-colors group"
                   [ngClass]="{'bg-red-50/30': product.status === 'out_of_stock'}">
                 <td class="p-3 text-center">

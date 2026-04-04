@@ -29,21 +29,21 @@ export class AppInputComponent implements ControlValueAccessor {
   @Input() customClass = '';
   @Input() inputClass = '';
 
-  value: any = '';
+  value = '';
   disabled = false;
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: (value: string) => void = () => {};
+  onTouched: () => void = () => {};
 
-  writeValue(value: any): void {
-    this.value = value;
+  writeValue(value: string | null): void {
+    this.value = value ?? '';
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 

@@ -1,4 +1,4 @@
-import { Driver, DriverStatus, VerificationStatus } from '../../../core/models/driver';
+import { Driver, DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 
 export type DriverTripStatus = 'COMPLETED' | 'CANCELLED' | 'IN_PROGRESS';
 export type DriverDocumentStatus = 'valid' | 'expiring' | 'review';
@@ -339,3 +339,4 @@ export interface DriverStatusSummary {
   verificationLabel: string;
   lastSeenLabel: string;
 }
+

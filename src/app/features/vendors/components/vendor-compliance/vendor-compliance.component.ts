@@ -1,14 +1,13 @@
-import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { VendorDetail, VendorReviewDocument, VendorReviewNote, VendorRiskIndicator } from '../../../../core/models/vendor';
-import { VendorService } from '../../../../core/services/vendor.service';
+import { VendorDetail, VendorReviewDocument, VendorReviewNote, VendorRiskIndicator } from '@vendors/models/vendors.domain.models';
+import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 @Component({
   selector: 'app-vendor-compliance',
@@ -25,9 +24,8 @@ export class VendorComplianceComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
-    private translate: TranslateService,
-    private route: ActivatedRoute,
-    private vendorService: VendorService
+    private readonly translate: TranslateService,
+    private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -39,14 +37,15 @@ export class VendorComplianceComponent {
         this.isRTL = event.lang === 'ar';
       });
 
-    this.route.params
+    this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        if (params['id']) {
-          this.vendorId = params['id'];
+      .subscribe((vendor) => {
+        if (!vendor) {
+          return;
         }
 
-        this.loadVendor();
+        this.vendorId = vendor.id;
+        this.vendorDetail = vendor;
       });
   }
 
@@ -110,57 +109,45 @@ export class VendorComplianceComponent {
     return this.getInitials(this.lastReviewerName);
   }
 
-  onApproveVendor() {
+  onApproveVendor(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .approveVendorReview(this.vendorDetail.id, this.vendorDetail.commissionRate ?? 13)
-      .subscribe((vendor) => this.vendorDetail = vendor);
+    this.vendorDetailFacade.approveVendorReview(this.vendorDetail.commissionRate ?? 13);
   }
 
-  onRequestDocuments() {
+  onRequestDocuments(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .requestVendorDocuments(this.vendorDetail.id)
-      .subscribe((vendor) => this.vendorDetail = vendor);
+    this.vendorDetailFacade.requestVendorDocuments();
   }
 
-  onSuspendAccount() {
+  onSuspendAccount(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .suspendVendorAccount(this.vendorDetail.id)
-      .subscribe((vendor) => this.vendorDetail = vendor);
+    this.vendorDetailFacade.suspendVendorAccount();
   }
 
-  onRejectVendor() {
+  onRejectVendor(): void {
     if (!this.vendorDetail) {
       return;
     }
 
-    this.vendorService
-      .rejectVendorReview(this.vendorDetail.id)
-      .subscribe((vendor) => this.vendorDetail = vendor);
+    this.vendorDetailFacade.rejectVendorReview();
   }
 
-  onAddNote() {
+  onAddNote(): void {
     if (!this.vendorDetail || !this.newNote.trim()) {
       return;
     }
 
-    this.vendorService
-      .addVendorReviewNote(this.vendorDetail.id, this.newNote.trim())
-      .subscribe((vendor) => {
-        this.vendorDetail = vendor;
-        this.newNote = '';
-      });
+    this.vendorDetailFacade.addVendorReviewNote(this.newNote.trim());
+    this.newNote = '';
   }
 
   getVerificationStatusVariant(status: VendorReviewDocument['status']): StatusPillVariant {
@@ -237,16 +224,10 @@ export class VendorComplianceComponent {
     }).format(new Date(value));
   }
 
-  private loadVendor(): void {
-    this.vendorService.getVendorById(this.vendorId).subscribe((vendor) => {
-      this.vendorDetail = vendor;
-    });
-  }
-
   private getInitials(name: string): string {
     const words = name.split(' ').filter(Boolean);
     if (words.length === 0 || name === '-') {
-      return this.isRTL ? 'Ù….Ø±' : 'R.V';
+      return this.isRTL ? 'Ã™â€¦.Ã˜Â±' : 'R.V';
     }
 
     return words.slice(0, 2).map((word) => word.charAt(0).toUpperCase()).join('.');

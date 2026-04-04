@@ -1,10 +1,10 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { VendorService } from '../../../../../core/services/vendor.service';
+import { VendorService } from '@vendors/services/vendor.api.service';
 import { 
   Vendor, 
   VendorStatus, 
@@ -15,7 +15,7 @@ import {
   DocumentsStatus,
   RiskLevel,
   PayoutStatus
-} from '../../../../../core/models/vendor';
+} from '@vendors/models/vendors.domain.models';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../../shared/components/ui/form-controls/input/input.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -27,7 +27,7 @@ import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { DataTableComponent, TableColumn, TableAction, BulkAction } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { QuickPreviewDrawerComponent, PreviewAction } from '../../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
-import { MobileVendorCardsComponent, VendorCardData } from '../../../../../shared/components/ui/mobile-vendor-cards/mobile-vendor-cards.component';
+import { MobileVendorCardsComponent, VendorCardData } from '@vendors/components/cards/mobile-vendor-cards/mobile-vendor-cards.component';
 
 @Component({
   selector: 'app-vendors-list',
@@ -166,8 +166,8 @@ export class VendorsListComponent implements OnInit {
 
   tableActions: TableAction[] = [
     { id: 'view', label: 'VENDORS.ACTIONS.VIEW', icon: 'visibility' },
-    { id: 'approve', label: 'VENDORS.ACTIONS.APPROVE', icon: 'check_circle', condition: (item) => item.status === 'Pending' },
-    { id: 'suspend', label: 'VENDORS.ACTIONS.SUSPEND', icon: 'block', condition: (item) => item.status === 'Active' }
+    { id: 'approve', label: 'VENDORS.ACTIONS.APPROVE', icon: 'check_circle', condition: (item) => item['status'] === 'Pending' },
+    { id: 'suspend', label: 'VENDORS.ACTIONS.SUSPEND', icon: 'block', condition: (item) => item['status'] === 'Active' }
   ];
 
   bulkActions: BulkAction[] = [
@@ -603,4 +603,5 @@ export class VendorsListComponent implements OnInit {
     }
   }
 }
+
 

@@ -1,4 +1,5 @@
-import { Driver, DriverPerformance, VerificationStatus } from '../../../core/models/driver';
+import { Driver, DriverPerformance, VerificationStatus } from '@drivers/models/drivers.domain.models';
+import { createMockOrders } from '@orders/public-api';
 import {
   DriverComplianceSnapshot,
   DriverDetailRecord,
@@ -23,7 +24,6 @@ import {
   DriverVerificationSnapshot,
   DriverWeeklyEfficiencyPoint
 } from '../models/drivers.models';
-import { createMockOrders } from '../../orders/data/orders.mock';
 
 const DOCUMENT_IMAGES = {
   nationalId: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD8oOIEAvbL0EPqhChtIb524LCdqQCh_E5PgOEU5RrsD_cCn8JBiGGNT2blqu8OjfHSPhMbHxL-lu5Oluhegv8fay1fwN1g7AGtsSMYJajenvXuQ0dpDi3l-nf9RxeeH4YYhQl661ZXxlvsbBEh_kNqHlRbB1ZHb46zH1CMTl9uX6GWLfrAtM9C_TxL5V5f8ibnDc3kP9Dm7jtCoDBxz6kgg5zrq4NTM8P-W-oGVaEH26z6kRYUo1e6D95GwCfxoze9ZTXlUY0Ksn0',
@@ -1010,3 +1010,4 @@ export function buildDriverDetailRecord(driver: Driver): DriverDetailRecord {
 export function getDriverMapPreview(): string {
   return DOCUMENT_IMAGES.map;
 }
+

@@ -1,11 +1,11 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CatalogService } from '../../../../../core/services/catalog.service';
-import { Brand } from '../../../../../core/models/catalog.model';
+import { CatalogService } from '@catalog/services/catalog.api.service';
+import { Brand } from '@catalog/models/catalog.domain.models';
 import { BrandFormModalComponent } from '../../../components/brand-form-modal/brand-form-modal.component';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppCardComponent } from '../../../../../shared/components/ui/card/card.component';
@@ -119,9 +119,9 @@ export class BrandListComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  onSearch(event: any): void {
+  onSearch(event: Event): void {
     this.currentPage = 1; // Reset to first page on search
-    this.searchSubject.next(event.target.value);
+    this.searchSubject.next((event.target as HTMLInputElement).value);
   }
 
   onSearchTermChange(term: string): void {
@@ -148,11 +148,15 @@ export class BrandListComponent implements OnInit {
   }
 
   deleteBrand(brand: Brand): void {
-    console.log('Delete brand requested:', brand.id);
+    this.allBrands = this.allBrands.filter((item) => item.id !== brand.id);
+    this.totalItems = this.allBrands.length;
+    this.updatePaginatedBrands();
   }
 
   getBrandStatusVariant(isActive: boolean): StatusPillVariant {
     return isActive ? 'success' : 'paused';
   }
 }
+
+
 

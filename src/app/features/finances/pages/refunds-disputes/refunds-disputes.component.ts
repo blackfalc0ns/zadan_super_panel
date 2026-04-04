@@ -9,6 +9,7 @@ import { RefundCase, RefundStatus } from '../../models/finance.models';
 import { MoneyBadgeComponent } from '../../components/money-badge/money-badge.component';
 import { FinanceStatusBadgeComponent } from '../../components/finance-status-badge/finance-status-badge.component';
 import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance-i18n.utils';
+import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 
 @Component({
   selector: 'app-refunds-disputes',
@@ -333,15 +334,11 @@ export class RefundsDisputesComponent implements OnInit {
       return;
     }
 
-    if (!this.scopedEntityId) return;
+    if (!this.scopedEntityId || !this.scopedEntityType) return;
 
-    const commands = this.scopedEntityType === 'vendor'
-      ? ['/vendors', this.scopedEntityId]
-      : ['/drivers', this.scopedEntityId];
+    const navigation = buildFinanceScopedProfileNavigation(this.scopedEntityType, this.scopedEntityId);
 
-    this.router.navigate(commands, {
-      queryParams: { tab: 'finance' }
-    });
+    this.router.navigate(navigation.commands, navigation.extras);
   }
 
   takeAction(action: RefundStatus): void {

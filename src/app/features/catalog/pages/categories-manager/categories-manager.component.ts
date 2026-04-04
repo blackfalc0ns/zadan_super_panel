@@ -1,10 +1,10 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CatalogService } from '../../../../core/services/catalog.service';
-import { Category } from '../../../../core/models/catalog.model';
+import { CatalogService } from '@catalog/services/catalog.api.service';
+import { Category } from '@catalog/models/catalog.domain.models';
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 
@@ -272,4 +272,5 @@ export class CategoriesManagerComponent implements OnInit {
     return isActive ? 'success' : 'paused';
   }
 }
+
 

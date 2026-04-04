@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
+type RouteTarget = string | Array<string | number>;
+
 @Component({
   selector: 'app-page-header',
   standalone: true,
@@ -15,8 +17,8 @@ export class AppPageHeaderComponent {
   @Input() subtitle = '';
   @Input() showBack = false;
   @Input() showToolbar = false;
-  @Input() backUrl: string | any[] = '..';
-  @Input() breadcrumbs: { label: string, url?: string | any[] }[] = [];
+  @Input() backUrl: RouteTarget = '..';
+  @Input() breadcrumbs: Array<{ label: string; url?: RouteTarget }> = [];
 
   @Output() backClick = new EventEmitter<void>();
 

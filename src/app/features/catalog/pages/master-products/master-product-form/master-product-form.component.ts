@@ -1,10 +1,10 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { CatalogService } from '../../../../../core/services/catalog.service';
+import { CatalogService } from '@catalog/services/catalog.api.service';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../../shared/components/ui/form-controls/input/input.component';
 import { AppTextareaComponent } from '../../../../../shared/components/ui/form-controls/textarea/textarea.component';
@@ -12,7 +12,7 @@ import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/bad
 import { DetailHeaderComponent } from '../../../../../shared/components/ui/detail-header/detail-header.component';
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
-import { Category } from '../../../../../core/models/catalog.model';
+import { Category } from '@catalog/models/catalog.domain.models';
 
 @Component({
   selector: 'app-master-product-form',
@@ -236,7 +236,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   private flattenCategories(categories: any[], pathAr: string = '', pathEn: string = '', level: number = 0): any[] {
     let result: any[] = [];
     categories.forEach(cat => {
-      const separator = ' » ';
+      const separator = ' � ';
       const currentPathAr = pathAr ? `${pathAr}${separator}${cat.nameAr}` : cat.nameAr;
       const currentPathEn = pathEn ? `${pathEn}${separator}${cat.nameEn}` : cat.nameEn;
       
@@ -348,5 +348,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     }
   }
 }
+
+
 
 

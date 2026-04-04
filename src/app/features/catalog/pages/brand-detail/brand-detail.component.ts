@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DetailHeaderComponent } from '../../../../shared/components/ui/detail-header/detail-header.component';
-import { CatalogService } from '../../../../core/services/catalog.service';
-import { Brand } from '../../../../core/models/catalog.model';
+import { CatalogService } from '@catalog/services/catalog.api.service';
+import { Brand } from '@catalog/models/catalog.domain.models';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
@@ -122,3 +122,4 @@ export class BrandDetailComponent implements OnInit {
     return labels[status || ''] || status || '-';
   }
 }
+

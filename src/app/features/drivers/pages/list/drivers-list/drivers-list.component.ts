@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -8,8 +8,8 @@ import {
   DriverPerformance,
   DriverStatus,
   VerificationStatus
-} from '../../../../../core/models/driver';
-import { DriverService } from '../../../../../core/services/driver.service';
+} from '@drivers/models/drivers.domain.models';
+import { DriverService } from '@drivers/services/drivers.api.service';
 import { FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { DriversListViewComponent } from '../../../components/drivers-list-view/drivers-list-view.component';
@@ -48,10 +48,10 @@ export class DriversListComponent implements OnInit {
   ];
 
   readonly vehicleTypeOptions: SelectOption<string>[] = [
-    { value: 'Ø³ÙŠØ§Ø±Ø©', label: 'DRIVERS.VEHICLES.CAR' },
-    { value: 'Ø¯Ø±Ø§Ø¬Ø©', label: 'DRIVERS.VEHICLES.BIKE' },
-    { value: 'Ø³ÙƒÙˆØªØ±', label: 'DRIVERS.VEHICLES.SCOOTER' },
-    { value: 'ÙØ§Ù†', label: 'DRIVERS.VEHICLES.VAN' }
+    { value: 'سيارة', label: 'DRIVERS.VEHICLES.CAR' },
+    { value: 'دراجة', label: 'DRIVERS.VEHICLES.BIKE' },
+    { value: 'سكوتر', label: 'DRIVERS.VEHICLES.SCOOTER' },
+    { value: 'فان', label: 'DRIVERS.VEHICLES.VAN' }
   ];
 
   drivers: Driver[] = [];
@@ -271,9 +271,11 @@ export class DriversListComponent implements OnInit {
   }
 
   private buildCityOptions(drivers: Driver[]): string[] {
-    const fallbackCities = ['Ø§Ù„Ø±ÙŠØ§Ø¶', 'Ø¬Ø¯Ø©', 'Ø§Ù„Ø¯Ù…Ø§Ù…', 'Ø§Ù„Ø®Ø¨Ø±', 'Ù…ÙƒØ©', 'Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©', 'Ø§Ù„Ø·Ø§Ø¦Ù', 'ØªØ¨ÙˆÙƒ'];
+    const fallbackCities = ['الرياض', 'جدة', 'الدمام', 'الخبر', 'مكة', 'المدينة', 'الطائف', 'تبوك'];
     const cities = drivers.map((driver) => driver.city);
     return Array.from(new Set([...cities, ...fallbackCities]));
   }
 }
+
+
 

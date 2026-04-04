@@ -83,7 +83,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <tr *ngFor="let entry of activityLog" class="transition-colors hover:bg-white/50">
+              <tr *ngFor="let entry of filteredActivityLog" class="transition-colors hover:bg-white/50">
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-[16px]" [ngClass]="entry.iconColor">{{ entry.actionIcon }}</span>

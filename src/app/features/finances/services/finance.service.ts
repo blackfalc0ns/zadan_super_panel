@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Driver } from '../../../core/models/driver';
-import { DriverCompensationRule } from '../../../core/models/finance-rules';
-import { VendorDetail } from '../../../core/models/vendor';
-import { DriverService } from '../../../core/services/driver.service';
-import { OrdersService } from '../../../core/services/orders.service';
-import { VendorService } from '../../../core/services/vendor.service';
-import { OrderDetail } from '../../orders/models/orders.models';
+import { DriverCompensationRule } from '@finances/models/finance-rules.models';
+import { Driver, DriverService } from '@drivers/public-api';
+import { OrderDetail, OrdersService } from '@orders/public-api';
+import { VendorDetail, VendorService } from '@vendors/public-api';
 import {
   AuditLogEntry,
   AuditLogFilter,
@@ -1639,3 +1636,4 @@ export class FinanceService {
     return JSON.parse(JSON.stringify(value)) as T;
   }
 }
+

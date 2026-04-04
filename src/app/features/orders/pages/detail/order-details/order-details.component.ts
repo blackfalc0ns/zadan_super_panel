@@ -1,4 +1,4 @@
-﻿import { Component, HostListener, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,9 +12,8 @@ import { InlineBannerComponent } from '../../../../../shared/components/ui/inlin
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
-import { OrdersService } from '../../../../../core/services/orders.service';
-import { FinanceService } from '../../../../finances/services/finance.service';
-import { OrderFinancialBreakdown } from '../../../../finances/models/finance.models';
+import { FinanceService, OrderFinancialBreakdown } from '@finances/public-api';
+import { OrdersService } from '@orders/services/orders.api.service';
 import {
   DriverAssignmentForm,
   OrderCancellationForm,
@@ -571,4 +570,5 @@ export class OrderDetailsComponent implements OnInit {
     });
   }
 }
+
 

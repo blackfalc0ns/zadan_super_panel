@@ -5,8 +5,8 @@ import { RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
-import { AuthService } from '../../../../core/services/auth.service';
-import { SuperAdminDashboardService } from '../../../../core/services/super-admin-dashboard.service';
+import { AuthService } from '@core/services/auth.service';
+import { SuperAdminDashboardService } from '@dashboard/services/dashboard.api.service';
 import {
   DashboardDateRange,
   DashboardFilterState,
@@ -474,3 +474,4 @@ export class DashboardComponent implements OnInit {
     return item.label;
   }
 }
+

@@ -26,3 +26,7 @@ Thumbs.db
 
 # Angular cache
 .angular/
+
+# Local artifacts
+/build-superadmin.log
+/tmp_base64.txt

@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
@@ -42,13 +44,12 @@ interface Order {
   templateUrl: './vendor-orders.component.html'
 })
 export class VendorOrdersComponent {
-  vendorId: string = 'VND-9928';
-  currentLang: string = 'ar';
-  isRTL: boolean = true;
+  vendorId = 'VND-9928';
+  currentLang = 'ar';
+  isRTL = true;
+  searchQuery = '';
+  private readonly destroyRef = inject(DestroyRef);
 
-  searchQuery: string = '';
-
-  // KPIs
   kpis: KPI[] = [
     {
       id: 'total',
@@ -108,7 +109,7 @@ export class VendorOrdersComponent {
     {
       id: 'average',
       titleKey: 'VENDOR_ORDERS.KPI.AVERAGE_ORDER',
-      value: '250 ر.س',
+      value: '250 Ø±.Ø³',
       trend: '10%',
       trendKey: 'VENDOR_ORDERS.KPI.INCREASE',
       icon: 'payments',
@@ -118,19 +119,17 @@ export class VendorOrdersComponent {
     }
   ];
 
-  // Summary stats
-  totalSales: string = '3,850,000';
-  delayedOrders: number = 45;
-  openDisputes: number = 12;
-  cancellationRate: string = '1.5%';
+  totalSales = '3,850,000';
+  delayedOrders = 45;
+  openDisputes = 12;
+  cancellationRate = '1.5%';
 
-  // Orders
   orders: Order[] = [
     {
       id: '1',
       orderNumber: 'ORD-1001',
-      customer: 'أحمد محمود',
-      customerLocation: 'الرياض',
+      customer: 'Ø£Ø­Ù…Ø¯ Ù…Ø­Ù…ÙˆØ¯',
+      customerLocation: 'Ø§Ù„Ø±ÙŠØ§Ø¶',
       date: '2023-10-25',
       time: '14:30',
       amount: '500',
@@ -144,8 +143,8 @@ export class VendorOrdersComponent {
     {
       id: '2',
       orderNumber: 'ORD-1002',
-      customer: 'فاطمة علي',
-      customerLocation: 'جدة',
+      customer: 'ÙØ§Ø·Ù…Ø© Ø¹Ù„ÙŠ',
+      customerLocation: 'Ø¬Ø¯Ø©',
       date: '2023-10-24',
       time: '09:15',
       amount: '1200',
@@ -159,8 +158,8 @@ export class VendorOrdersComponent {
     {
       id: '3',
       orderNumber: 'ORD-1003',
-      customer: 'محمد خالد',
-      customerLocation: 'الدمام',
+      customer: 'Ù…Ø­Ù…Ø¯ Ø®Ø§Ù„Ø¯',
+      customerLocation: 'Ø§Ù„Ø¯Ù…Ø§Ù…',
       date: '2023-10-23',
       time: '18:45',
       amount: '350',
@@ -174,8 +173,8 @@ export class VendorOrdersComponent {
     {
       id: '4',
       orderNumber: 'ORD-1004',
-      customer: 'سارة عبد الله',
-      customerLocation: 'مكة',
+      customer: 'Ø³Ø§Ø±Ø© Ø¹Ø¨Ø¯ Ø§Ù„Ù„Ù‡',
+      customerLocation: 'Ù…ÙƒØ©',
       date: '2023-10-22',
       time: '11:20',
       amount: '800',
@@ -188,7 +187,6 @@ export class VendorOrdersComponent {
     }
   ];
 
-  // Alerts
   alerts: string[] = [
     'VENDOR_ORDERS.ALERTS.SHIPPING_DELAY',
     'VENDOR_ORDERS.ALERTS.LOW_STOCK',
@@ -196,55 +194,69 @@ export class VendorOrdersComponent {
   ];
 
   constructor(
-    private translate: TranslateService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly translate: TranslateService,
+    private readonly router: Router,
+    private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
-    
-    this.translate.onLangChange.subscribe((event) => {
-      this.currentLang = event.lang;
-      this.isRTL = event.lang === 'ar';
-    });
 
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.vendorId = params['id'];
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        this.currentLang = event.lang;
+        this.isRTL = event.lang === 'ar';
+      });
+
+    this.vendorDetailFacade.vendorId$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((vendorId) => {
+        if (vendorId) {
+          this.vendorId = vendorId;
+        }
+      });
+  }
+
+  get filteredOrders(): Order[] {
+    const normalizedSearch = this.searchQuery.trim().toLowerCase();
+
+    return this.orders.filter((order) => {
+      if (!normalizedSearch) {
+        return true;
       }
+
+      return [
+        order.orderNumber,
+        order.customer,
+        order.customerLocation
+      ].some((value) => value.toLowerCase().includes(normalizedSearch));
     });
   }
 
-  onSearch() {
-    console.log('Search:', this.searchQuery);
+  onExport(): void {
+    const rows = this.filteredOrders.map((order) => [
+      order.orderNumber,
+      order.customer,
+      order.customerLocation,
+      order.date,
+      order.time,
+      order.amount
+    ].join(','));
+
+    const content = ['Order Number,Customer,Location,Date,Time,Amount', ...rows].join('\n');
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `vendor-orders-${this.vendorId}.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
   }
 
-  onFilter() {
-    console.log('Open filters');
-  }
-
-  onDateRange() {
-    console.log('Open date range picker');
-  }
-
-  onBulkActions() {
-    console.log('Open bulk actions');
-  }
-
-  onExport() {
-    console.log('Export orders');
-  }
-
-  onViewOrder(orderId: string) {
-    // Navigate to order detail page (to be created)
-    // For now, you can create the route: /orders/:id
+  onViewOrder(orderId: string): void {
     this.router.navigate(['/orders', orderId]);
-  }
-
-  onEditOrder(orderId: string) {
-    // Navigate to order edit page (to be created)
-    // For now, you can create the route: /orders/:id/edit
-    this.router.navigate(['/orders', orderId, 'edit']);
   }
 
   getPaymentStatusVariant(statusKey: string): StatusPillVariant {

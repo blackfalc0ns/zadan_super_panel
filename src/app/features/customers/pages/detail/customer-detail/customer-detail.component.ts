@@ -1,9 +1,9 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CustomersService } from '../../../../../core/services/customers.service';
+import { CustomersService } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { InlineBannerComponent } from '../../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../../shared/components/ui/key-value-grid/key-value-grid.component';
@@ -529,4 +529,5 @@ export class CustomerDetailComponent implements OnInit {
     return value === 'workflow' ? 'workflow' : 'overview';
   }
 }
+
 

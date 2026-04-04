@@ -1,10 +1,10 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { CatalogService } from '../../../../../core/services/catalog.service';
-import { Category, MasterProduct } from '../../../../../core/models/catalog.model';
+import { CatalogService } from '@catalog/services/catalog.api.service';
+import { Category, MasterProduct } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/badge.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -225,4 +225,6 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     return isActive ? 'success' : 'neutral';
   }
 }
+
+
 

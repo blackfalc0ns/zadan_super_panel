@@ -39,35 +39,13 @@
           <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-gray-400 text-sm inset-inline-start-2">search</span>
           <input 
             [(ngModel)]="searchQuery"
-            (keyup.enter)="onSearch()"
             class="w-full bg-white border border-gray-200 rounded-lg py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all ps-8 pe-3"
             [placeholder]="'VENDOR_ORDERS.SEARCH_PLACEHOLDER' | translate"
             type="text"/>
         </div>
-        
+
         <!-- Action Buttons - Left Side -->
         <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-          <button 
-            (click)="onFilter()"
-            class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2 text-xs font-medium">
-            <span class="material-symbols-outlined text-sm">filter_list</span>
-            <span>{{ 'VENDOR_ORDERS.FILTER' | translate }}</span>
-          </button>
-          
-          <button 
-            (click)="onDateRange()"
-            class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2 text-xs font-medium">
-            <span class="material-symbols-outlined text-sm">calendar_today</span>
-            <span>{{ 'VENDOR_ORDERS.DATE_RANGE' | translate }}</span>
-          </button>
-          
-          <button 
-            (click)="onBulkActions()"
-            class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2 text-xs font-medium">
-            <span class="material-symbols-outlined text-sm">checklist</span>
-            <span>{{ 'VENDOR_ORDERS.BULK_ACTIONS' | translate }}</span>
-          </button>
-          
           <button 
             (click)="onExport()"
             class="px-3 py-2 border border-primary rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-2 text-xs font-medium">
@@ -96,7 +74,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr *ngFor="let order of orders" 
+              <tr *ngFor="let order of filteredOrders"
                   class="hover:bg-gray-50 transition-colors group">
                 <td class="p-3">
                   <span class="text-sm font-mono font-medium text-primary">{{ order.orderNumber }}</span>
@@ -150,12 +128,6 @@
                       class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
                       [title]="'COMMON.VIEW_DETAILS' | translate">
                       <span class="material-symbols-outlined text-[18px]">visibility</span>
-                    </button>
-                    <button 
-                      (click)="onEditOrder(order.id)"
-                      class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
-                      [title]="'COMMON.EDIT' | translate">
-                      <span class="material-symbols-outlined text-[18px]">edit</span>
                     </button>
                   </div>
                 </td>

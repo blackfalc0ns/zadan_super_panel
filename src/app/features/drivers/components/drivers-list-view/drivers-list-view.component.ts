@@ -8,7 +8,7 @@ import {
   DriverPerformance,
   DriverStatus,
   VerificationStatus
-} from '../../../../core/models/driver';
+} from '@drivers/models/drivers.domain.models';
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
@@ -176,3 +176,5 @@ export class DriversListViewComponent {
     return getIssueTone(issue);
   }
 }
+
+

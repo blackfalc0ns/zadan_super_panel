@@ -1,9 +1,9 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { DisputesService } from '../../../../../core/services/disputes.service';
+import { DisputesService } from '@disputes/services/disputes.api.service';
 import { BulkAction, DataTableComponent, TableAction, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { KPICard, KpiCardsComponent } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -527,4 +527,5 @@ export class DisputesDashboardComponent implements OnInit {
     return this.translate.instant(key, params);
   }
 }
+
 

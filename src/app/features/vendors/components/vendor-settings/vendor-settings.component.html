@@ -15,8 +15,8 @@
           <div class="flex justify-between items-center border-b border-gray-50 pb-4">
             <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_STATUS' | translate }}</span>
             <app-status-pill
-              label="VENDOR_SETTINGS.ACTIVE"
-              variant="success"
+              [label]="accountStatusLabel"
+              [variant]="accountStatusVariant"
               [showDot]="false"
               [size]="'sm'">
             </app-status-pill>
@@ -30,7 +30,11 @@
             <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.DEFAULT_LANGUAGE_VALUE' | translate }}</span>
           </div>
           
-          <button (click)="onResetPassword()" class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors mt-4">
+          <button
+            (click)="onResetPassword()"
+            [disabled]="resetPasswordQueued"
+            class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
+            type="button">
             <span class="material-symbols-outlined text-sm">lock_reset</span>
             <span class="text-sm font-bold">{{ 'VENDOR_SETTINGS.RESET_PASSWORD' | translate }}</span>
           </button>
@@ -183,23 +187,27 @@
         </app-section-header>
         
         <div class="space-y-4 pt-6">
-          <button class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group">
+          <button (click)="toggleSuspended()" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group" type="button">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">pause_circle</span>
               <span class="text-sm font-medium text-gray-700">{{ 'VENDOR_SETTINGS.SUSPEND_ACCOUNT' | translate }}</span>
             </div>
-            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+            <div class="w-2 h-2 rounded-full" [ngClass]="isAccountSuspended ? 'bg-red-400' : 'bg-gray-300'"></div>
           </button>
           
-          <button class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group">
+          <button (click)="toggleLoginLock()" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group" type="button">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">lock_reset</span>
               <span class="text-sm font-medium text-gray-700">{{ 'VENDOR_SETTINGS.LOCK_LOGIN' | translate }}</span>
             </div>
-            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+            <div class="w-2 h-2 rounded-full" [ngClass]="isLoginLocked ? 'bg-amber-400' : 'bg-gray-300'"></div>
           </button>
           
-          <button (click)="onArchiveAccount()" class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors mt-4">
+          <button
+            (click)="onArchiveAccount()"
+            [disabled]="isArchived"
+            class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
+            type="button">
             <span class="material-symbols-outlined text-sm">delete_forever</span>
             <span class="text-sm font-bold">{{ 'VENDOR_SETTINGS.ARCHIVE_ACCOUNT' | translate }}</span>
           </button>

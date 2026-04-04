@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -21,6 +22,7 @@ import {
   FINANCE_LEDGER_TYPE_LABEL_KEYS,
   getFinanceLocale
 } from '../../utils/finance-i18n.utils';
+import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 
 @Component({
   selector: 'app-financial-ledger',
@@ -262,6 +264,7 @@ export class FinancialLedgerComponent implements OnInit {
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   allEntries: LedgerEntry[] = [];
   filteredEntries: LedgerEntry[] = [];
@@ -322,15 +325,17 @@ export class FinancialLedgerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe(params => {
-      const entityType = params.get('entityType');
-      this.scopedEntityType = entityType === 'vendor' || entityType === 'driver' || entityType === 'platform' || entityType === 'order' || entityType === 'customer'
-        ? entityType
-        : null;
-      this.scopedEntityId = params.get('entityId');
-      this.scopedOrderId = params.get('orderId');
-      this.loadData();
-    });
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const entityType = params.get('entityType');
+        this.scopedEntityType = entityType === 'vendor' || entityType === 'driver' || entityType === 'platform' || entityType === 'order' || entityType === 'customer'
+          ? entityType
+          : null;
+        this.scopedEntityId = params.get('entityId');
+        this.scopedOrderId = params.get('orderId');
+        this.loadData();
+      });
   }
 
   loadData(filter: LedgerFilter = this.currentFilter): void {
@@ -351,7 +356,33 @@ export class FinancialLedgerComponent implements OnInit {
     this.loadData(filter);
   }
 
-  onExport(): void { console.log('Export ledger'); }
+  onExport(): void {
+    const rows = this.filteredEntries.map((entry) => [
+      entry.timestamp,
+      entry.entityType,
+      entry.entityName,
+      entry.type,
+      entry.referenceId,
+      entry.direction,
+      entry.amount.toString(),
+      entry.currency
+    ].join(','));
+
+    const blob = new Blob([[
+      'Timestamp,Entity Type,Entity Name,Type,Reference,Direction,Amount,Currency',
+      ...rows
+    ].join('\n')], {
+      type: 'text/csv;charset=utf-8'
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = 'financial-ledger.csv';
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
   changePage(page: number): void { this.page = page; }
 
   openEntryDetail(entry: LedgerEntry): void { this.selectedEntry = entry; }
@@ -380,13 +411,9 @@ export class FinancialLedgerComponent implements OnInit {
       return;
     }
 
-    const commands = this.scopedEntityType === 'vendor'
-      ? ['/vendors', this.scopedEntityId]
-      : ['/drivers', this.scopedEntityId];
+    const navigation = buildFinanceScopedProfileNavigation(this.scopedEntityType, this.scopedEntityId);
 
-    this.router.navigate(commands, {
-      queryParams: { tab: 'finance' }
-    });
+    this.router.navigate(navigation.commands, navigation.extras);
   }
 
   formatDate(ts: string): string {

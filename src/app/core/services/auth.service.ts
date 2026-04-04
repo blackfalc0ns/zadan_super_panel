@@ -19,6 +19,11 @@ export interface AuthResponse {
     user: AdminUser;
 }
 
+export interface LoginCredentials {
+    identifier: string;
+    password: string;
+}
+
 const DEV_ADMIN_USER: AdminUser = {
     id: 'dev-super-admin',
     fullName: 'Development Admin',
@@ -48,20 +53,28 @@ export class AuthService {
         return this.currentUserSubject.value;
     }
 
+    public get hasApiSession(): boolean {
+        const token = this.getToken();
+        if (!token) {
+            return false;
+        }
+
+        if (this.isTokenExpired(token)) {
+            if (!environment.skipAuthForDevelopment) {
+                this.forceLogout();
+            }
+            return false;
+        }
+
+        return true;
+    }
+
     public get isAuthenticated(): boolean {
         if (environment.skipAuthForDevelopment) {
             return true;
         }
 
-        const token = this.getToken();
-        if (!token) return false;
-
-        if (this.isTokenExpired(token)) {
-            this.forceLogout();
-            return false;
-        }
-
-        return true;
+        return this.hasApiSession;
     }
 
     private isTokenExpired(token: string): boolean {
@@ -87,7 +100,7 @@ export class AuthService {
         return localStorage.getItem('admin_refresh_token');
     }
 
-    login(credentials: any): Observable<AuthResponse> {
+    login(credentials: LoginCredentials): Observable<AuthResponse> {
         return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
             .pipe(
                 tap(response => {

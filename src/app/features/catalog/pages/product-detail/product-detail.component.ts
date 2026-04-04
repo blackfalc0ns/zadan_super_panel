@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CatalogService } from '../../../../core/services/catalog.service';
-import { MasterProduct } from '../../../../core/models/catalog.model';
+import { CatalogService } from '@catalog/services/catalog.api.service';
+import { MasterProduct } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { DetailHeaderComponent } from '../../../../shared/components/ui/detail-header/detail-header.component';
@@ -231,3 +231,4 @@ export class ProductDetailComponent implements OnInit {
     return `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="24" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3E${encodeURIComponent(label)}%3C/text%3E%3C/svg%3E`;
   }
 }
+

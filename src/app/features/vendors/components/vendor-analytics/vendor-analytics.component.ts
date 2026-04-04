@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
@@ -28,17 +29,20 @@ interface BestSeller {
   templateUrl: './vendor-analytics.component.html'
 })
 export class VendorAnalyticsComponent {
-  currentLang: string = 'ar';
-  isRTL: boolean = true;
+  currentLang = 'ar';
+  isRTL = true;
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private translate: TranslateService) {
+  constructor(private readonly translate: TranslateService) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
-    
-    this.translate.onLangChange.subscribe((event) => {
-      this.currentLang = event.lang;
-      this.isRTL = event.lang === 'ar';
-    });
+
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        this.currentLang = event.lang;
+        this.isRTL = event.lang === 'ar';
+      });
   }
 
   metrics: AnalyticsMetric[] = [

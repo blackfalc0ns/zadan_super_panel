@@ -7,6 +7,7 @@ import { FinanceService } from '../../services/finance.service';
 import { CodFilter, CodRecord, CodReconciliationSummary } from '../../models/finance.models';
 import { FinanceStatusBadgeComponent } from '../../components/finance-status-badge/finance-status-badge.component';
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
+import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 
 @Component({
   selector: 'app-cod-reconciliation',
@@ -226,13 +227,9 @@ export class CodReconciliationComponent implements OnInit {
       return;
     }
 
-    const commands = this.scopedEntityType === 'vendor'
-      ? ['/vendors', this.scopedEntityId]
-      : ['/drivers', this.scopedEntityId];
+    const navigation = buildFinanceScopedProfileNavigation(this.scopedEntityType, this.scopedEntityId);
 
-    this.router.navigate(commands, {
-      queryParams: { tab: 'finance' }
-    });
+    this.router.navigate(navigation.commands, navigation.extras);
   }
 
   formatNumber(value: number): string {

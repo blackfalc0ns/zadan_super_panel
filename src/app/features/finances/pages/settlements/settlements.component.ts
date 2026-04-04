@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -13,6 +14,7 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
 import { KeyValueGridComponent } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import type { KeyValueGridItem } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
+import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 
 @Component({
   selector: 'app-settlements',
@@ -241,6 +243,7 @@ export class SettlementsComponent implements OnInit {
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   allSettlements: Settlement[] = [];
   selectedSettlement: Settlement | null = null;
@@ -287,13 +290,15 @@ export class SettlementsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe(params => {
-      const entityType = params.get('entityType');
-      this.scopedEntityId = params.get('entityId');
-      if (entityType === 'vendor' || entityType === 'driver') {
-        this.activeTab = entityType;
-      }
-    });
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const entityType = params.get('entityType');
+        this.scopedEntityId = params.get('entityId');
+        if (entityType === 'vendor' || entityType === 'driver') {
+          this.activeTab = entityType;
+        }
+      });
 
     this.financeService.getSettlements().pipe(take(1)).subscribe(data => {
       this.allSettlements = data;
@@ -301,7 +306,26 @@ export class SettlementsComponent implements OnInit {
   }
 
   openDetail(s: Settlement): void { this.selectedSettlement = s; }
-  processSettlement(s: Settlement): void { console.log('Process', s.settlementCode); }
+  processSettlement(s: Settlement): void {
+    const paidAt = new Date().toISOString();
+    this.allSettlements = this.allSettlements.map((settlement) =>
+      settlement.id === s.id
+        ? {
+            ...settlement,
+            status: 'paid',
+            paidAt
+          }
+        : settlement
+    );
+
+    if (this.selectedSettlement?.id === s.id) {
+      this.selectedSettlement = {
+        ...this.selectedSettlement,
+        status: 'paid',
+        paidAt
+      };
+    }
+  }
   trackById(_: number, s: Settlement): string { return s.id; }
 
   clearScope(): void {
@@ -314,14 +338,16 @@ export class SettlementsComponent implements OnInit {
 
   openScopedProfile(): void {
     if (!this.scopedSettlement) return;
+    if (this.scopedSettlement.entityType !== 'vendor' && this.scopedSettlement.entityType !== 'driver') {
+      return;
+    }
 
-    const commands = this.scopedSettlement.entityType === 'vendor'
-      ? ['/vendors', this.scopedSettlement.entityId]
-      : ['/drivers', this.scopedSettlement.entityId];
+    const navigation = buildFinanceScopedProfileNavigation(
+      this.scopedSettlement.entityType,
+      this.scopedSettlement.entityId
+    );
 
-    this.router.navigate(commands, {
-      queryParams: { tab: 'finance' }
-    });
+    this.router.navigate(navigation.commands, navigation.extras);
   }
 
   formatDate(d: string): string {
