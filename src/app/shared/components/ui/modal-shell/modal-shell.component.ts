@@ -48,13 +48,13 @@ export class ModalShellComponent {
   }
 
   get titleWrapperClasses(): string {
-    const base = 'min-w-0 flex-1';
-    return `${base} ${this.isRtl ? 'text-right' : 'text-left'}`.trim();
+    const base = 'min-w-0 flex-1 flex flex-col';
+    return `${base} ${this.isRtl ? 'items-end text-right' : 'items-start text-left'}`.trim();
   }
 
   get titleRowClasses(): string {
-    const base = 'flex min-w-0 items-center gap-2';
-    return `${base} ${this.icon && this.isRtl ? 'flex-row-reverse' : ''}`.trim();
+    const base = 'inline-flex max-w-full min-w-0 items-center gap-2';
+    return `${base} ${this.isRtl ? 'flex-row-reverse justify-end' : 'flex-row justify-start'}`.trim();
   }
 
   get bodyClasses(): string {

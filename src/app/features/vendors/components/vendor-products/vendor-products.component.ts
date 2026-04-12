@@ -4,9 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { AdminVendorProductItem, VendorService } from '@vendors/services/vendor.api.service';
+import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 interface Product {
   id: string;
@@ -22,7 +23,6 @@ interface Product {
   stockStatus: 'high' | 'low' | 'out';
   status: 'active' | 'out_of_stock' | 'under_review';
   statusKey: string;
-  statusClass: string;
   imageUrl: string;
   selected: boolean;
 }
@@ -34,7 +34,7 @@ interface Product {
   templateUrl: './vendor-products.component.html'
 })
 export class VendorProductsComponent {
-  vendorId = 'VND-9928';
+  vendorId = '';
   currentLang = 'ar';
   isRTL = true;
   searchQuery = '';
@@ -43,84 +43,12 @@ export class VendorProductsComponent {
   selectAll = false;
   private readonly destroyRef = inject(DestroyRef);
 
-  products: Product[] = [
-    {
-      id: 'PRD-24001',
-      nameAr: 'Ø³Ø§Ø¹Ø© Ø°ÙƒÙŠØ© Ø§Ø¨Ù„ ÙˆØ§ØªØ´ Ø³ÙŠØ±ÙŠØ² 8',
-      nameEn: 'Apple Watch Series 8',
-      variant: 'Ø£Ø³ÙˆØ¯, 45mm',
-      sku: 'AW-S8-45-BLK',
-      category: 'Ø³Ø§Ø¹Ø§Øª Ø°ÙƒÙŠØ©',
-      categoryId: 'CAT-ELECTRONICS',
-      price: '1,599',
-      stock: 45,
-      stockPercentage: 75,
-      stockStatus: 'high',
-      status: 'active',
-      statusKey: 'VENDOR_PRODUCTS.STATUS.ACTIVE',
-      statusClass: 'bg-green-50 text-green-700 border-green-200',
-      imageUrl: 'https://via.placeholder.com/40',
-      selected: false
-    },
-    {
-      id: 'PRD-24002',
-      nameAr: 'Ø³Ù…Ø§Ø¹Ø§Øª Ø±Ø£Ø³ Ù„Ø§Ø³Ù„ÙƒÙŠØ© Ø³ÙˆÙ†ÙŠ',
-      nameEn: 'Sony WH-1000XM4',
-      variant: 'ÙØ¶ÙŠ, Ø¥Ù„ØºØ§Ø¡ Ø§Ù„Ø¶ÙˆØ¶Ø§Ø¡',
-      sku: 'SN-WHXM4-SLV',
-      category: 'ØµÙˆØªÙŠØ§Øª',
-      categoryId: 'CAT-AUDIO',
-      price: '1,249',
-      stock: 3,
-      stockPercentage: 10,
-      stockStatus: 'low',
-      status: 'active',
-      statusKey: 'VENDOR_PRODUCTS.STATUS.ACTIVE',
-      statusClass: 'bg-green-50 text-green-700 border-green-200',
-      imageUrl: 'https://via.placeholder.com/40',
-      selected: false
-    },
-    {
-      id: 'PRD-24003',
-      nameAr: 'Ø¹Ø¯Ø³Ø© ÙƒØ§Ù†ÙˆÙ† 50mm',
-      nameEn: 'Canon 50mm f/1.8',
-      variant: 'Ø£Ø³ÙˆØ¯, STM',
-      sku: 'CN-50F18-STM',
-      category: 'ØªØµÙˆÙŠØ±',
-      categoryId: 'CAT-CAMERAS',
-      price: '499',
-      stock: 0,
-      stockPercentage: 0,
-      stockStatus: 'out',
-      status: 'out_of_stock',
-      statusKey: 'VENDOR_PRODUCTS.STATUS.OUT_OF_STOCK',
-      statusClass: 'bg-red-50 text-red-700 border-red-200',
-      imageUrl: 'https://via.placeholder.com/40',
-      selected: false
-    },
-    {
-      id: 'PRD-24004',
-      nameAr: 'Ù†Ø¸Ø§Ø±Ø© ÙˆØ§Ù‚Ø¹ Ø§ÙØªØ±Ø§Ø¶ÙŠ Quest 2',
-      nameEn: 'Meta Quest 2',
-      variant: 'Ø£Ø¨ÙŠØ¶, 128GB',
-      sku: 'MQ-2-128-WHT',
-      category: 'Ø£Ù„Ø¹Ø§Ø¨',
-      categoryId: 'CAT-GAMING',
-      price: '1,899',
-      stock: 12,
-      stockPercentage: 30,
-      stockStatus: 'high',
-      status: 'under_review',
-      statusKey: 'VENDOR_PRODUCTS.STATUS.UNDER_REVIEW',
-      statusClass: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-      imageUrl: 'https://via.placeholder.com/40',
-      selected: false
-    }
-  ];
+  products: Product[] = [];
 
   constructor(
     private readonly translate: TranslateService,
     private readonly router: Router,
+    private readonly vendorService: VendorService,
     private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
@@ -136,9 +64,12 @@ export class VendorProductsComponent {
     this.vendorDetailFacade.vendorId$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendorId) => {
-        if (vendorId) {
-          this.vendorId = vendorId;
+        if (!vendorId) {
+          return;
         }
+
+        this.vendorId = vendorId;
+        this.loadProducts();
       });
   }
 
@@ -233,5 +164,61 @@ export class VendorProductsComponent {
       default:
         return 'neutral';
     }
+  }
+
+  private loadProducts(): void {
+    this.vendorService.getVendorProducts(this.vendorId, 1, 100)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.products = (response.items ?? []).map((product) => this.mapProduct(product));
+          this.selectAll = false;
+        },
+        error: () => {
+          this.products = [];
+          this.selectAll = false;
+        }
+      });
+  }
+
+  private mapProduct(product: AdminVendorProductItem): Product {
+    const primaryImage = product.masterProduct.images.find((image) => image.isPrimary)?.url
+      || product.masterProduct.images[0]?.url
+      || '';
+    const normalizedStatus = this.normalizeProductStatus(product);
+
+    return {
+      id: product.id,
+      nameAr: product.masterProduct.nameAr,
+      nameEn: product.masterProduct.nameEn,
+      variant: product.masterProduct.barcode || product.masterProduct.slug,
+      sku: product.masterProduct.barcode || product.id,
+      category: product.masterProduct.status,
+      categoryId: product.masterProduct.categoryId,
+      price: product.sellingPrice.toLocaleString('en-US'),
+      stock: product.stockQuantity,
+      stockPercentage: Math.max(0, Math.min(100, product.stockQuantity)),
+      stockStatus: product.stockQuantity <= 0 ? 'out' : product.stockQuantity <= 5 ? 'low' : 'high',
+      status: normalizedStatus,
+      statusKey: normalizedStatus === 'active'
+        ? 'VENDOR_PRODUCTS.STATUS.ACTIVE'
+        : normalizedStatus === 'under_review'
+          ? 'VENDOR_PRODUCTS.STATUS.UNDER_REVIEW'
+          : 'VENDOR_PRODUCTS.STATUS.OUT_OF_STOCK',
+      imageUrl: primaryImage,
+      selected: false
+    };
+  }
+
+  private normalizeProductStatus(product: AdminVendorProductItem): Product['status'] {
+    if (!product.isAvailable || product.stockQuantity <= 0 || product.status.toLowerCase().includes('inactive')) {
+      return 'out_of_stock';
+    }
+
+    if (product.status.toLowerCase().includes('review') || product.status.toLowerCase().includes('pending')) {
+      return 'under_review';
+    }
+
+    return 'active';
   }
 }

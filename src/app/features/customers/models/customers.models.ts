@@ -25,6 +25,7 @@ export interface CustomerRecord {
   email: string;
   phone: string;
   city: string;
+  isOnlineNow?: boolean;
   segment: CustomerSegment;
   status: CustomerStatus;
   risk: CustomerRisk;
@@ -54,10 +55,13 @@ export interface CustomerRecentOrder {
 }
 
 export interface CustomerInternalNote {
-  author: string;
-  role: string;
+  author?: string;
+  authorKey?: string;
+  role?: string;
+  roleKey?: string;
   createdAt: string;
-  message: string;
+  message?: string;
+  messageKey?: string;
   tone?: CustomerLifecycleTone;
   isSystem?: boolean;
 }
@@ -94,6 +98,7 @@ export interface CustomerDetailRecord extends CustomerRecord {
   riskScore: number;
   riskSummary: string;
   lastSeenAt: string;
+  lastSeenAtUtc?: string | null;
   preferredLanguageLabel: string;
   isVerified: boolean;
   suspiciousLoginAttempts: string;

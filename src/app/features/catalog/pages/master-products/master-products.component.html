@@ -9,41 +9,18 @@
         ]">
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">inventory_2</span>
 
-        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-            <div class="relative">
-                <button (click)="isCategoryDropdownOpen = !isCategoryDropdownOpen"
-                    class="flex items-center justify-between gap-3 bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-xl px-4 py-2.5 min-w-[140px] text-[10px] font-black uppercase tracking-widest text-slate-500 focus:ring-2 focus:ring-zadna-primary/20 outline-none transition-all shadow-sm cursor-pointer hover:border-zadna-primary/30 hover:bg-white/90">
-                    <span class="truncate max-w-[150px]">
-                        <ng-container *ngIf="!categoryId">{{ 'SIDEBAR.VENDORS.FILTER_ALL' | translate }}</ng-container>
-                        <ng-container *ngIf="categoryId">{{ getCategoryName(categoryId) }}</ng-container>
-                    </span>
-                    <svg class="w-4 h-4 text-slate-400 transition-transform duration-300" 
-                         [class.rotate-180]="isCategoryDropdownOpen" 
-                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-                <div *ngIf="isCategoryDropdownOpen" (click)="isCategoryDropdownOpen = false" class="fixed inset-0 z-40"></div>
-                <div *ngIf="isCategoryDropdownOpen"
-                    class="absolute top-12 ltr:right-0 rtl:left-0 z-50 w-56 bg-white/90 backdrop-blur-3xl border border-slate-100 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                    <button (click)="filterByCategory(null); isCategoryDropdownOpen = false" 
-                        class="flex items-center justify-between w-full px-4 py-3 text-start hover:bg-slate-50 transition-colors group">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-zadna-primary">{{ 'SIDEBAR.VENDORS.FILTER_ALL' | translate }}</span>
-                        <svg *ngIf="!categoryId" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                    </button>
-                    <div class="h-px bg-slate-100 w-full mx-auto"></div>
-                    <div class="max-h-64 overflow-y-auto custom-scrollbar">
-                        <button *ngFor="let cat of categories" 
-                            (click)="filterByCategory(cat.id); isCategoryDropdownOpen = false" 
-                            class="flex items-center justify-between w-full px-4 py-3 text-start hover:bg-slate-50 transition-colors group">
-                            <span class="text-[10px] font-black text-slate-600 truncate group-hover:text-zadna-primary">
-                                {{ translate.currentLang === 'ar' ? cat.nameAr : cat.nameEn }}
-                            </span>
-                            <svg *ngIf="categoryId === cat.id" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                        </button>
-                    </div>
+        <div
+            actions
+            class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+            <app-button
+                variant="ghost"
+                (btnClick)="isProductRequestsModalOpen = true"
+                customClass="!rounded-[1.25rem] !bg-white/80 !border !border-slate-200/70 !text-slate-700 hover:!bg-white hover:!border-zadna-primary/40 hover:!text-zadna-primary !px-5 !py-3 shadow-sm">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">assignment</span>
+                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'CATALOG.PRODUCT_REQUESTS' | translate }}</span>
                 </div>
-            </div>
+            </app-button>
 
             <app-button routerLink="/catalog/products/create" variant="primary" 
                 customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
@@ -60,18 +37,56 @@
     </app-page-header>
 
     <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
-        <!-- Search Bar Mirror -->
-        <div class="flex flex-col sm:flex-row items-center gap-4">
-            <div class="flex-1 w-full max-w-md">
-                <app-input [placeholder]="'PRODUCTS.SEARCH_PLACEHOLDER' | translate" [ngModel]="searchTerm" (ngModelChange)="onSearchTermChange($event)"
-                    [dir]="translate.currentLang === 'ar' ? 'rtl' : 'ltr'" 
-                    [inputClass]="'!bg-transparent !border-0 !ring-0 !text-zadna-primary !placeholder-zadna-primary/40'"
-                    [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-[1.5rem] overflow-hidden'"
-                    [hasIcon]="true">
-                    <svg icon class="w-4 h-4 text-zadna-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </app-input>
+        <div class="flex flex-col gap-3">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div class="w-full lg:w-[450px] group relative order-1">
+                    <div class="absolute inset-y-0 start-5 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+                    </div>
+                    <input
+                        type="text"
+                        [ngModel]="searchTerm"
+                        (ngModelChange)="onSearchTermChange($event)"
+                        [placeholder]="'PRODUCTS.SEARCH_PLACEHOLDER' | translate"
+                        class="w-full py-4 ps-14 pe-6 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm" />
+                </div>
+
+                <div class="flex items-center gap-4 order-2 self-stretch lg:self-auto">
+                    <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+                        <div
+                            class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+                            (click)="toggleFilters()"
+                            [class.bg-teal-50]="isFiltersExpanded">
+                            <span class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500" [class.rotate-180]="isFiltersExpanded">filter_list</span>
+                            <div class="flex flex-col">
+                                <span class="text-[13px] font-black text-slate-800">{{ 'MASTER_PRODUCTS.FILTERS_TITLE' | translate }}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'MASTER_PRODUCTS.FILTERS_SUBTITLE' | translate }}</span>
+                            </div>
+                            <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform ms-2" [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+                        </div>
+                    </div>
+
+                    <button
+                        *ngIf="hasActiveFilters"
+                        (click)="resetFilters()"
+                        class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+                        <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.RESET_FILTERS' | translate }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl">
+                <app-advanced-filter-panel
+                    [isExpanded]="true"
+                    [title]="'MASTER_PRODUCTS.FILTERS_TITLE'"
+                    [subtitle]="'MASTER_PRODUCTS.FILTERS_SUBTITLE'"
+                    [activeFiltersLabel]="'MASTER_PRODUCTS.ACTIVE_FILTERS'"
+                    [fields]="filterFields"
+                    [filters]="panelFilters"
+                    (filtersChange)="onFiltersChange($event)"
+                    (reset)="resetFilters()">
+                </app-advanced-filter-panel>
             </div>
         </div>
 
@@ -93,7 +108,7 @@
                         <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.IMAGE' | translate }}</th>
                         <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'PRODUCTS.PRODUCT' | translate }}</th>
                         <th class="text-center w-[12%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.BARCODE' | translate }}</th>
-                        <th class="text-center w-[13%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.CATEGORY' | translate }}</th>
+                        <th class="text-center w-[13%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.SUB_CATEGORY' | translate }}</th>
                         <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.STATUS' | translate }}</th>
                         <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.ACTIONS' | translate }}</th>
                     </tr>
@@ -124,9 +139,18 @@
                                 <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
                                     {{ translate.currentLang === 'ar' ? product.nameAr : product.nameEn }}
                                 </span>
-                                <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
-                                    {{ translate.currentLang === 'ar' ? product.nameEn : product.nameAr }}
-                                </span>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest truncate">
+                                        {{ translate.currentLang === 'ar' ? product.nameEn : product.nameAr }}
+                                    </span>
+                                    <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                                    <span class="text-[9px] font-black text-zadna-primary/70 uppercase tracking-widest truncate bg-zadna-primary/5 px-1.5 py-0.5 rounded-md">
+                                        {{ (translate.currentLang === 'ar' ? product.brandNameAr : product.brandNameEn) || ('COMMON.BRAND_GENERAL' | translate) }}
+                                    </span>
+                                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest truncate bg-slate-100 px-1.5 py-0.5 rounded-md">
+                                        {{ (translate.currentLang === 'ar' ? product.unitNameAr : product.unitNameEn) || ('PRODUCTS.UNIT_PIECE' | translate) }}
+                                    </span>
+                                </div>
                             </div>
                         </td>
 
@@ -140,7 +164,7 @@
                         <!-- Col 5: Category -->
                         <td class="text-center align-middle py-4 w-[13%]">
                             <span class="text-[9px] font-black text-zadna-primary uppercase px-2 py-1 rounded-md bg-zadna-primary/5 border border-zadna-primary/10">
-                                {{ getCategoryName(product.categoryId) }}
+                                {{ getSubcategoryName(product.categoryId) }}
                             </span>
                         </td>
 
@@ -203,9 +227,18 @@
                             <h3 class="text-sm font-bold text-slate-900 truncate">
                                 {{ translate.currentLang === 'ar' ? product.nameAr : product.nameEn }}
                             </h3>
-                            <p class="text-xs text-slate-500 truncate">
-                                {{ translate.currentLang === 'ar' ? product.nameEn : product.nameAr }}
-                            </p>
+                            <div class="flex items-center gap-2">
+                                <p class="text-[10px] text-slate-500 truncate">
+                                    {{ translate.currentLang === 'ar' ? product.nameEn : product.nameAr }}
+                                </p>
+                                <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                <p class="text-[10px] font-black text-zadna-primary tracking-tight truncate">
+                                    {{ (translate.currentLang === 'ar' ? product.brandNameAr : product.brandNameEn) || ('COMMON.BRAND_GENERAL' | translate) }}
+                                </p>
+                                <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-1 rounded uppercase">
+                                    {{ (translate.currentLang === 'ar' ? product.unitNameAr : product.unitNameEn) || ('PRODUCTS.UNIT_PIECE' | translate) }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     
@@ -225,9 +258,9 @@
                         </code>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.CATEGORY' | translate }}</span>
+                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.SUB_CATEGORY' | translate }}</span>
                         <span class="text-xs font-bold text-zadna-primary">
-                            {{ getCategoryName(product.categoryId) }}
+                            {{ getSubcategoryName(product.categoryId) }}
                         </span>
                     </div>
                 </div>
@@ -285,7 +318,7 @@
                 <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'PRODUCTS.NO_PRODUCTS' | translate }}</h3>
                 <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ 'PRODUCTS.NO_PRODUCTS_DESC' | translate }}</p>
                 <div class="pt-6">
-                    <app-button variant="ghost" (btnClick)="filterByCategory(null)" customClass="bg-slate-50 border border-slate-100 rounded-2xl px-8">{{ 'PRODUCTS.RESET_ALL_FILTERS' | translate }}</app-button>
+                    <app-button variant="ghost" (btnClick)="resetFilters()" customClass="bg-slate-50 border border-slate-100 rounded-2xl px-8">{{ 'PRODUCTS.RESET_ALL_FILTERS' | translate }}</app-button>
                 </div>
             </div>
         </div>
@@ -302,3 +335,10 @@
     (confirm)="confirmDelete()"
     (close)="closeDeleteModal()">
 </app-delete-confirmation-modal>
+
+<app-catalog-request-center-modal
+    [isOpen]="isProductRequestsModalOpen"
+    requestType="product"
+    (close)="isProductRequestsModalOpen = false"
+    (refreshed)="loadProducts()">
+</app-catalog-request-center-modal>

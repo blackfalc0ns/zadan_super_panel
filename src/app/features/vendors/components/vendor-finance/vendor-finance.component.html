@@ -5,6 +5,8 @@
   <app-financial-statement-modal
     [isOpen]="showFinancialStatementModal"
     [vendorName]="vendorName"
+    [estimatedRecords]="orders.length"
+    [totalAmount]="settlementModalTotalSales"
     (close)="showFinancialStatementModal = false"
     (download)="onStatementDownload($event)"
     (preview)="onStatementPreview($event)">
@@ -14,15 +16,33 @@
   <app-payouts-review-modal
     [isOpen]="showPayoutsReviewModal"
     [availableBalance]="availableBalance"
+    [vendorName]="vendorName"
+    [beneficiaryName]="settlementModalBeneficiaryName"
+    [iban]="settlementModalBankIban"
+    [swiftCode]="settlementModalSwiftCode"
+    [bankName]="settlementModalBankName"
+    [transactions]="payoutTransactions"
     (close)="showPayoutsReviewModal = false"
     (retryPayment)="onRetryPayment($event)"
     (suspendPayment)="onSuspendPayment($event)"
-    (escalatePayment)="onEscalatePayment($event)">
+    (escalatePayment)="onEscalatePayment($event)"
+    (downloadReceipt)="onDownloadReceipt($event)"
+    (viewActivityLog)="onViewPaymentActivity($event)">
   </app-payouts-review-modal>
 
   <!-- Create Settlement Modal -->
   <app-create-settlement-modal
     [isOpen]="showCreateSettlementModal"
+    [vendorId]="vendorId"
+    [vendorName]="vendorName"
+    [currentBalance]="availableBalance"
+    [availableBalance]="availableBalance"
+    [totalSales]="settlementModalTotalSales"
+    [returns]="0"
+    [additionalFees]="settlementModalAdditionalFees"
+    [financialAdjustments]="0"
+    [bankName]="settlementModalBankName"
+    [bankIban]="settlementModalBankIban"
     (close)="showCreateSettlementModal = false"
     (createSettlement)="onSettlementCreated($event)"
     (saveDraft)="onSettlementDraftSaved($event)">

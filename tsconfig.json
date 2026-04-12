@@ -48,6 +48,9 @@
       "@finances/*": [
         "app/features/finances/*"
       ],
+      "@marketing/*": [
+        "app/features/marketing/*"
+      ],
       "@deliveries/*": [
         "app/features/deliveries/*"
       ],

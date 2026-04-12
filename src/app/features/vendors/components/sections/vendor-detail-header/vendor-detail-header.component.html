@@ -67,6 +67,20 @@
       <!-- MOBILE: center-aligned row. TABLET(sm): right-aligned row. -->
       <div
         class="flex items-center justify-center sm:justify-end gap-2 sm:gap-3 w-full lg:w-auto mt-2 sm:mt-0 shrink-0">
+        <button
+          (click)="openAccessDirectory()"
+          type="button"
+          class="bg-white text-slate-600 h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-bold text-xs sm:text-sm border border-slate-200 hover:text-primary hover:border-primary/20 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 shadow-sm">
+          <span class="material-symbols-outlined text-[18px] sm:text-[20px]">shield_person</span>
+          <span class="whitespace-nowrap">{{ 'VENDOR_DETAIL.OPEN_ACCESS_DIRECTORY' | translate }}</span>
+        </button>
+        <button
+          (click)="openEmailRouting()"
+          type="button"
+          class="bg-white text-slate-600 h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-bold text-xs sm:text-sm border border-slate-200 hover:text-primary hover:border-primary/20 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 shadow-sm">
+          <span class="material-symbols-outlined text-[18px] sm:text-[20px]">mail</span>
+          <span class="whitespace-nowrap">{{ 'VENDOR_DETAIL.OPEN_EMAIL_ROUTING' | translate }}</span>
+        </button>
         <div class="flex items-center gap-2">
           <button
             (click)="onShare()"

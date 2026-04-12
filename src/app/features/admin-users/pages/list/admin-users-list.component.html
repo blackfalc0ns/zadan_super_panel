@@ -1,0 +1,272 @@
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
+  <app-page-header
+    [title]="'ADMIN_USERS.TITLE'"
+    [subtitle]="'ADMIN_USERS.DESC'"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'SIDEBAR.ADMIN_USERS' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">hub</span>
+
+    <div actions class="flex items-center gap-3 animate-in slide-in-from-left-10 duration-700">
+      <button
+        type="button"
+        class="px-5 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
+        (click)="openEmailCenter()">
+        <span class="material-symbols-outlined text-[20px]">mail</span>
+        {{ 'ADMIN_USERS.OPEN_EMAIL_CENTER' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="px-5 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all"
+        (click)="createIdentity()">
+        <span class="material-symbols-outlined text-[20px]">person_add</span>
+        {{ 'ADMIN_USERS.ADD_IDENTITY' | translate }}
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
+
+    <section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-5 shadow-sm space-y-5">
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          *ngFor="let tab of audienceTabs"
+          type="button"
+          class="rounded-full px-4 py-2.5 text-xs font-black transition-all"
+          [ngClass]="selectedAudience === tab.value
+            ? 'bg-zadna-primary text-white shadow-lg shadow-zadna-primary/20'
+            : 'bg-slate-100 text-slate-500 hover:bg-slate-200/80'"
+          (click)="setAudience(tab.value)">
+          {{ tab.labelKey | translate }}
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-[1.25fr_2fr] gap-4">
+        <div class="group relative">
+          <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none">
+            <span class="material-symbols-outlined text-[22px] text-zadna-primary">search</span>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilters()"
+            [placeholder]="'ADMIN_USERS.SEARCH_PLACEHOLDER' | translate"
+            class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pr-14 pl-6" />
+        </div>
+
+        <div class="bg-slate-50/80 border border-slate-200/70 rounded-[1.5rem] px-4 py-4 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
+          <label class="filter-card">
+            <span>{{ 'ADMIN_USERS.FILTERS.PANEL' | translate }}</span>
+            <select [(ngModel)]="panelFilter" (ngModelChange)="applyFilters()">
+              <option *ngFor="let option of panelOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </label>
+
+          <label class="filter-card">
+            <span>{{ 'ADMIN_USERS.FILTERS.PERSONA' | translate }}</span>
+            <select [(ngModel)]="personaFilter" (ngModelChange)="applyFilters()">
+              <option *ngFor="let option of personaOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </label>
+
+          <label class="filter-card">
+            <span>{{ 'ADMIN_USERS.FILTERS.STATUS' | translate }}</span>
+            <select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+              <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </label>
+
+          <label class="filter-card">
+            <span>{{ 'ADMIN_USERS.FILTERS.ACCESS_LEVEL' | translate }}</span>
+            <select [(ngModel)]="accessLevelFilter" (ngModelChange)="applyFilters()">
+              <option *ngFor="let option of accessLevelOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+            </select>
+          </label>
+
+          <label class="filter-card">
+            <span>{{ 'ADMIN_USERS.FILTERS.ROLE' | translate }}</span>
+            <select [(ngModel)]="roleFilter" (ngModelChange)="applyFilters()">
+              <option value="all">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
+              <option *ngFor="let preset of filteredRolePresets" [value]="preset.id">{{ preset.nameKey | translate }}</option>
+            </select>
+          </label>
+
+          <label class="filter-card">
+            <span>{{ 'ADMIN_USERS.FILTERS.VENDOR' | translate }}</span>
+            <select [(ngModel)]="vendorFilter" (ngModelChange)="applyFilters()">
+              <option value="all">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
+              <option *ngFor="let vendor of vendorOptions" [value]="vendor.id">{{ vendor.name }}</option>
+            </select>
+          </label>
+
+          <label class="filter-card">
+            <span>{{ 'ADMIN_USERS.FILTERS.BRANCH' | translate }}</span>
+            <select [(ngModel)]="branchFilter" (ngModelChange)="applyFilters()">
+              <option value="all">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
+              <option *ngFor="let branch of branchOptions" [value]="branch.id">{{ branch.name }}</option>
+            </select>
+          </label>
+
+          <div class="flex items-end gap-3">
+            <div class="h-11 px-4 rounded-full bg-white text-slate-500 flex items-center gap-2 text-xs font-black whitespace-nowrap border border-slate-200">
+              <span class="material-symbols-outlined text-[18px] text-zadna-primary">filter_list</span>
+              <span>{{ activeFilterCount }}</span>
+              <span>{{ 'ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate }}</span>
+            </div>
+
+            <button
+              type="button"
+              class="h-11 px-5 rounded-full border border-slate-200 bg-white text-xs font-black text-slate-500 hover:text-zadna-primary hover:border-zadna-primary/20 transition-all"
+              (click)="clearFilters()">
+              {{ 'ADMIN_USERS.FILTERS.RESET' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <app-data-table
+      [data]="paginatedUsers"
+      [columns]="tableColumns"
+      [selectable]="true"
+      [clickableRows]="true"
+      [emptyStateTitle]="'ADMIN_USERS.EMPTY_TITLE'"
+      [emptyStateMessage]="'ADMIN_USERS.EMPTY_MESSAGE'"
+      [containerClass]="'admin-users-table extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
+      (rowClick)="openUser($event)">
+
+      <ng-template #customColumn let-user let-column="column">
+        <ng-container *ngIf="column.key === 'identity'">
+          <div class="flex items-center gap-3 text-start">
+            <div
+              class="w-11 h-11 rounded-full text-white flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm"
+              [style.background]="user.avatarHue">
+              {{ getInitials(user.fullName || 'NA') }}
+            </div>
+
+            <div class="min-w-0 flex flex-1 flex-col items-start">
+              <span class="truncate text-[13px] font-black text-slate-900 leading-snug">
+                {{ user.fullName || ('ADMIN_USERS.DETAIL.NEW_USER' | translate) }}
+              </span>
+              <span class="mt-0.5 inline-block max-w-full truncate text-[10px] font-bold text-slate-400/80" dir="ltr">
+                {{ user.email || ('ADMIN_USERS.DETAIL.EMAIL_PENDING' | translate) }}
+              </span>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'persona'">
+          <div class="flex flex-col text-start">
+            <span class="text-[12px] font-black text-slate-800">{{ getPersonaLabel(user) | translate }}</span>
+            <span class="mt-1 text-[10px] font-bold text-slate-400">{{ getPanelLabel(user) | translate }}</span>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'scope'">
+          <div class="flex flex-col text-start">
+            <span class="text-[12px] font-black text-slate-800">{{ getScopeSummary(user) }}</span>
+            <span class="mt-1 text-[10px] font-bold text-slate-400">{{ user.department || ('ADMIN_USERS.SCOPE.DIRECTORY' | translate) }}</span>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'role'">
+          <div class="flex flex-col text-start">
+            <span class="text-[12px] font-black text-slate-800">{{ getRolePresetName(user) | translate }}</span>
+            <div class="mt-1">
+              <app-status-pill
+                [label]="'ADMIN_USERS.ACCESS_LEVEL.' + user.accessLevel.toUpperCase()"
+                [variant]="getAccessLevelVariant(user.accessLevel)"
+                size="sm">
+              </app-status-pill>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'status'">
+          <div class="flex flex-col items-center gap-2">
+            <app-status-pill
+              [label]="'ADMIN_USERS.STATUS.' + user.status.toUpperCase()"
+              [variant]="getStatusVariant(user.status)"
+              size="sm">
+            </app-status-pill>
+            <span class="text-[10px] font-black text-slate-400">
+              {{ ('ADMIN_USERS.INVITE.' + user.inviteState.toUpperCase()) | translate }}
+            </span>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="column.key === 'security'">
+          <div class="flex flex-col items-center gap-2">
+            <app-status-pill
+              [label]="getSecurityLabel(user)"
+              [variant]="getSecurityVariant(user)"
+              size="sm">
+            </app-status-pill>
+            <span class="text-[10px] font-black text-slate-500">
+              {{ getCustomPermissionCount(user) }}
+              {{ 'ADMIN_USERS.TABLE.CUSTOM_ACCESS' | translate }}
+            </span>
+          </div>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #mobileCard let-user>
+        <div class="space-y-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0 flex items-center gap-3">
+              <div
+                class="w-11 h-11 rounded-full text-white flex items-center justify-center text-xs font-black shrink-0"
+                [style.background]="user.avatarHue">
+                {{ getInitials(user.fullName || 'NA') }}
+              </div>
+              <div class="min-w-0 flex flex-col items-start">
+                <p class="truncate text-sm font-black text-slate-900">{{ user.fullName || ('ADMIN_USERS.DETAIL.NEW_USER' | translate) }}</p>
+                <p class="mt-0.5 inline-block max-w-full truncate text-[11px] font-bold text-slate-400" dir="ltr">
+                  {{ user.email || ('ADMIN_USERS.DETAIL.EMAIL_PENDING' | translate) }}
+                </p>
+              </div>
+            </div>
+
+            <app-status-pill
+              [label]="'ADMIN_USERS.STATUS.' + user.status.toUpperCase()"
+              [variant]="getStatusVariant(user.status)"
+              size="sm">
+            </app-status-pill>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-[11px] font-bold">
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.PERSONA' | translate }}</p>
+              <p class="text-slate-800">{{ getPersonaLabel(user) | translate }}</p>
+            </div>
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.SCOPE' | translate }}</p>
+              <p class="text-slate-800">{{ getScopeSummary(user) }}</p>
+            </div>
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.ROLE' | translate }}</p>
+              <p class="text-slate-800">{{ getRolePresetName(user) | translate }}</p>
+            </div>
+            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
+              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.SECURITY' | translate }}</p>
+              <p class="text-slate-800">{{ getSecurityLabel(user) | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </app-data-table>
+
+    <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+      <app-pagination
+        [currentPage]="page"
+        [pageSize]="pageSize"
+        [totalItems]="totalItems"
+        (pageChange)="changePage($event)">
+      </app-pagination>
+    </div>
+  </div>
+</div>

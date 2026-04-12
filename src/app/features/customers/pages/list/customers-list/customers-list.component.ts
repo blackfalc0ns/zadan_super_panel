@@ -68,7 +68,15 @@ export class CustomersListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.customers = this.customersService.getCustomers();
+    this.customersService.getCustomers().subscribe({
+      next: (customers) => {
+        this.customers = customers;
+      },
+      error: (error) => {
+        console.error('Failed to load admin customers.', error);
+        this.customers = [];
+      }
+    });
   }
 
   get cityOptions(): string[] {
@@ -96,10 +104,18 @@ export class CustomersListComponent implements OnInit {
   }
 
   get activeCustomerRate(): number {
+    if (this.customers.length === 0) {
+      return 0;
+    }
+
     return Math.round((this.activeCustomersCount / this.customers.length) * 100);
   }
 
   get complaintRate(): number {
+    if (this.customers.length === 0) {
+      return 0;
+    }
+
     return Math.round((this.complaintCustomersCount / this.customers.length) * 100);
   }
 
@@ -279,6 +295,22 @@ export class CustomersListComponent implements OnInit {
     }
 
     return null;
+  }
+
+  getPresenceLabel(customer: CustomerDetailRecord): string {
+    return customer.isOnlineNow
+      ? this.translate.instant('CUSTOMERS.PRESENCE.ONLINE_NOW')
+      : `${this.translate.instant('CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN')}: ${customer.lastSeenAt}`;
+  }
+
+  getPresenceClasses(customer: CustomerDetailRecord): string {
+    return customer.isOnlineNow
+      ? 'bg-emerald-50 text-emerald-700'
+      : 'bg-slate-100 text-slate-500';
+  }
+
+  getPresenceDotClasses(customer: CustomerDetailRecord): string {
+    return customer.isOnlineNow ? 'bg-emerald-500' : 'bg-slate-300';
   }
 
   matchesSpendRange(totalSpent: number): boolean {

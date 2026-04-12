@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
-import { Brand } from '@catalog/models/catalog.domain.models';
+import { Brand, Category } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
@@ -33,6 +33,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   isSaving = false;
   isUploading = false;
   activeInputLang: 'ar' | 'en' = 'ar';
+  leafCategories: Category[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -43,14 +44,18 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.loadLeafCategories();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['brand']) {
       if (this.mode === 'edit' && this.brand) {
-        this.form.patchValue(this.brand);
+        this.form.patchValue({
+          ...this.brand,
+          categoryId: this.brand.categoryId ?? null
+        });
       } else {
-        this.form.reset({ isActive: true });
+        this.form.reset({ isActive: true, categoryId: null });
       }
     }
   }
@@ -61,7 +66,20 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       nameAr: ['', [Validators.required, Validators.maxLength(100)]],
       nameEn: ['', [Validators.required, Validators.maxLength(100)]],
       logoUrl: [''],
+      categoryId: [null, [Validators.required]],
       isActive: [true]
+    });
+  }
+
+  loadLeafCategories(): void {
+    this.catalogService.getCategories(undefined, true).subscribe({
+      next: (categories) => {
+        this.leafCategories = this.flattenLeafCategories(categories ?? []);
+      },
+      error: (err) => {
+        console.error('Failed to load brand categories', err);
+        this.leafCategories = [];
+      }
     });
   }
 
@@ -124,8 +142,34 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   }
 
   onClose(): void {
-    this.form.reset({ isActive: true });
+    this.form.reset({ isActive: true, categoryId: null });
     this.close.emit();
+  }
+
+  getLocalizedCategoryName(category: Category): string {
+    return this.translate.currentLang === 'ar' ? category.nameAr : category.nameEn;
+  }
+
+  private flattenLeafCategories(categories: Category[]): Category[] {
+    const subCategories: Category[] = [];
+
+    for (const category of categories) {
+      const children = category.subCategories ?? [];
+
+      // Add children that are subcategories (have a parentCategoryId)
+      for (const child of children) {
+        if (child.parentCategoryId) {
+          subCategories.push(child);
+        }
+      }
+
+      // Recurse into children to find deeper subcategories
+      if (children.length > 0) {
+        subCategories.push(...this.flattenLeafCategories(children));
+      }
+    }
+
+    return subCategories;
   }
 }
 

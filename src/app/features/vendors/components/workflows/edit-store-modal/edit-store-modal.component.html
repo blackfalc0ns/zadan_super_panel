@@ -32,16 +32,29 @@
       <!-- Grid Section -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         
-        <!-- Store Name -->
+        <!-- Arabic Store Name -->
         <div class="space-y-2.5">
           <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.STORE_NAME' | translate }}
+            {{ isRTL ? 'اسم المتجر بالعربية' : 'Store name (Arabic)' }}
           </label>
           <input type="text" 
-                 [(ngModel)]="storeData.storeName"
-                 name="storeName"
-                 [placeholder]="'MODALS.STORE_EDIT.STORE_NAME_PLACEHOLDER' | translate"
+                 [(ngModel)]="draftStoreData.businessNameAr"
+                 name="businessNameAr"
+                 [placeholder]="isRTL ? 'أدخل الاسم العربي' : 'Enter Arabic name'"
                  class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
+        </div>
+
+        <!-- English Store Name -->
+        <div class="space-y-2.5">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
+            {{ isRTL ? 'اسم المتجر بالإنجليزية' : 'Store name (English)' }}
+          </label>
+          <input type="text" 
+                 [(ngModel)]="draftStoreData.businessNameEn"
+                 name="businessNameEn"
+                 placeholder="Enter English name"
+                 dir="ltr"
+                 class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm text-left">
         </div>
 
         <!-- Activity Type -->
@@ -50,7 +63,7 @@
             {{ 'MODALS.STORE_EDIT.ACTIVITY_TYPE' | translate }}
           </label>
           <div class="relative group">
-            <select [(ngModel)]="storeData.activityType"
+            <select [(ngModel)]="draftStoreData.activityType"
                     name="activityType"
                     class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
               <option value="">{{ 'MODALS.STORE_EDIT.SELECT_ACTIVITY' | translate }}</option>
@@ -60,6 +73,18 @@
           </div>
         </div>
 
+        <!-- Region -->
+        <div class="space-y-2.5">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
+            {{ isRTL ? 'المنطقة' : 'Region' }}
+          </label>
+          <input type="text" 
+                 [(ngModel)]="draftStoreData.region"
+                 name="region"
+                 [placeholder]="isRTL ? 'أدخل المنطقة' : 'Enter region'"
+                 class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
+        </div>
+
         <!-- City -->
         <div class="space-y-2.5">
           <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
@@ -67,7 +92,7 @@
           </label>
           <div class="relative group">
             <input type="text" 
-                   [(ngModel)]="storeData.city"
+                   [(ngModel)]="draftStoreData.city"
                    name="city"
                    [placeholder]="'MODALS.STORE_EDIT.CITY_PLACEHOLDER' | translate"
                    class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm"
@@ -82,7 +107,7 @@
             {{ 'MODALS.STORE_EDIT.ADDRESS' | translate }}
           </label>
           <input type="text" 
-                 [(ngModel)]="storeData.nationalAddress"
+                 [(ngModel)]="draftStoreData.nationalAddress"
                  name="nationalAddress"
                  [placeholder]="'MODALS.STORE_EDIT.ADDRESS_PLACEHOLDER' | translate"
                  class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
@@ -95,8 +120,8 @@
           </label>
           <div class="relative group">
             <input type="text" 
-                   [(ngModel)]="storeData.crNumber"
-                   name="crNumber"
+                   [(ngModel)]="draftStoreData.commercialRegistrationNumber"
+                   name="commercialRegistrationNumber"
                    class="w-full h-14 bg-white dark:bg-slate-700/50 border border-red-200 dark:border-red-900/30 rounded-2xl focus:ring-4 focus:ring-red-500/5 focus:border-red-400 outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm"
                    [ngClass]="isRTL ? 'pr-12 pl-6 text-right' : 'pl-12 pr-6 text-left'">
             <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-red-500 text-xl group-focus-within:scale-110 transition-transform" [ngClass]="isRTL ? 'right-4' : 'left-4'">error</span>
@@ -110,22 +135,35 @@
             {{ 'MODALS.STORE_EDIT.REG_DATE' | translate }}
           </label>
           <input type="text" 
-                 [value]="storeData.registrationDate"
+                 [value]="draftStoreData.registrationDate"
                  readonly
                  disabled
                  class="w-full h-14 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 outline-none text-slate-500 dark:text-slate-400 font-bold cursor-not-allowed text-lg">
         </div>
 
-        <!-- Short Description (Spans 2 columns) -->
+        <!-- Arabic Description -->
         <div class="md:col-span-2 space-y-2.5">
           <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.DESCRIPTION' | translate }}
+            {{ isRTL ? 'وصف المتجر بالعربية' : 'Store description (Arabic)' }}
           </label>
-          <textarea [(ngModel)]="storeData.description"
-                    name="description"
+          <textarea [(ngModel)]="draftStoreData.descriptionAr"
+                    name="descriptionAr"
                     rows="3"
-                    [placeholder]="'MODALS.STORE_EDIT.DESCRIPTION_PLACEHOLDER' | translate"
+                    [placeholder]="isRTL ? 'أدخل الوصف العربي' : 'Enter Arabic description'"
                     class="w-full bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-3xl px-6 py-5 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 resize-none font-bold text-lg shadow-sm"></textarea>
+        </div>
+
+        <!-- English Description -->
+        <div class="md:col-span-2 space-y-2.5">
+          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
+            {{ isRTL ? 'وصف المتجر بالإنجليزية' : 'Store description (English)' }}
+          </label>
+          <textarea [(ngModel)]="draftStoreData.descriptionEn"
+                    name="descriptionEn"
+                    rows="3"
+                    placeholder="Enter English description"
+                    dir="ltr"
+                    class="w-full bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-3xl px-6 py-5 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 resize-none font-bold text-lg shadow-sm text-left"></textarea>
         </div>
       </div>
 

@@ -1,16 +1,19 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface StoreData {
-  storeName: string;
+  businessNameAr: string;
+  businessNameEn: string;
   activityType: string;
+  region: string;
   city: string;
   nationalAddress: string;
-  crNumber: string;
+  commercialRegistrationNumber: string;
   registrationDate: string;
-  description: string;
+  descriptionAr: string;
+  descriptionEn: string;
 }
 
 @Component({
@@ -19,20 +22,36 @@ export interface StoreData {
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './edit-store-modal.component.html'
 })
-export class EditStoreModalComponent {
+export class EditStoreModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() storeData: StoreData = {
-    storeName: 'متجر الأناقة العربية',
+    businessNameAr: '',
+    businessNameEn: '',
     activityType: 'fashion',
-    city: 'الرياض',
-    nationalAddress: '8228 طريق الملك فهد - حي العليا',
-    crNumber: '1010123456',
-    registrationDate: '15 مايو 2023',
-    description: 'متجر متخصص في بيع الملابس العربية التقليدية والحديثة بجودة عالية وأسعار منافسة.'
+    region: '',
+    city: '',
+    nationalAddress: '',
+    commercialRegistrationNumber: '',
+    registrationDate: '',
+    descriptionAr: '',
+    descriptionEn: ''
   };
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<StoreData>();
+
+  draftStoreData: StoreData = {
+    businessNameAr: '',
+    businessNameEn: '',
+    activityType: 'fashion',
+    region: '',
+    city: '',
+    nationalAddress: '',
+    commercialRegistrationNumber: '',
+    registrationDate: '',
+    descriptionAr: '',
+    descriptionEn: ''
+  };
 
   editReason = '';
 
@@ -45,6 +64,23 @@ export class EditStoreModalComponent {
 
   constructor(private translate: TranslateService) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['storeData']) {
+      this.draftStoreData = {
+        businessNameAr: this.storeData.businessNameAr || '',
+        businessNameEn: this.storeData.businessNameEn || '',
+        activityType: this.storeData.activityType || 'fashion',
+        region: this.storeData.region || '',
+        city: this.storeData.city || '',
+        nationalAddress: this.storeData.nationalAddress || '',
+        commercialRegistrationNumber: this.storeData.commercialRegistrationNumber || '',
+        registrationDate: this.storeData.registrationDate || '',
+        descriptionAr: this.storeData.descriptionAr || '',
+        descriptionEn: this.storeData.descriptionEn || ''
+      };
+    }
+  }
+
   get isRTL(): boolean {
     const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
     return lang.startsWith('ar');
@@ -55,8 +91,7 @@ export class EditStoreModalComponent {
   }
 
   onSave() {
-    this.save.emit(this.storeData);
-    this.onClose();
+    this.save.emit(this.draftStoreData);
   }
 
   onBackdropClick(event: MouseEvent) {

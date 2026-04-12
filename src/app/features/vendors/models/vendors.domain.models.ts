@@ -4,6 +4,14 @@ export interface Vendor {
   businessNameEn: string;
   businessType: string;
   status: VendorStatus;
+  accountStatus?: string;
+  isLoginLocked?: boolean;
+  lockedAtUtc?: string | null;
+  archivedAtUtc?: string | null;
+  suspendedAtUtc?: string | null;
+  suspensionReason?: string | null;
+  lockReason?: string | null;
+  archiveReason?: string | null;
   ownerName: string;
   contactPhone: string;
   createdAtUtc: string;
@@ -122,14 +130,27 @@ export interface PaginatedVendors {
 
 export interface VendorDetail extends Vendor {
   commercialRegistrationNumber: string;
+  commercialRegistrationExpiryDate?: string | null;
   taxId: string | null;
+  licenseNumber?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
+  nationalAddress?: string | null;
+  idNumber?: string | null;
+  nationality?: string | null;
+  payoutCycle?: string | null;
   rejectionReason: string | null;
   logoUrl: string | null;
   commercialRegisterDocumentUrl: string | null;
   approvedAtUtc: string | null;
   approvedBy: string | null;
+  updatedAtUtc?: string | null;
   ownerEmail: string;
   ownerPhone: string;
+  operationsSettings?: VendorOperationsSettings | null;
+  notificationSettings?: VendorNotificationSettings | null;
+  operatingHours?: VendorOperatingHour[];
+  primaryBankAccount?: VendorBankAccount | null;
   branchesCount: number;
   bankAccountsCount: number;
   reviewStartedAtUtc: string | null;
@@ -139,6 +160,37 @@ export interface VendorDetail extends Vendor {
   reviewDocuments: VendorReviewDocument[];
   reviewNotes: VendorReviewNote[];
   riskIndicators: VendorRiskIndicator[];
+}
+
+export interface VendorBankAccount {
+  id: string;
+  bankName: string;
+  accountHolderName: string;
+  iban: string;
+  swiftCode?: string | null;
+  isPrimary: boolean;
+  status: string;
+  rejectionReason?: string | null;
+  verifiedAtUtc?: string | null;
+}
+
+export interface VendorOperatingHour {
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+  isOpen: boolean;
+}
+
+export interface VendorOperationsSettings {
+  acceptOrders: boolean;
+  minimumOrderAmount?: number | null;
+  preparationTimeMinutes?: number | null;
+}
+
+export interface VendorNotificationSettings {
+  emailNotificationsEnabled: boolean;
+  smsNotificationsEnabled: boolean;
+  newOrdersNotificationsEnabled: boolean;
 }
 
 export interface VendorKPIs {

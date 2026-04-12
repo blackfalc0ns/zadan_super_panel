@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, TemplateRef, ContentChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface PreviewAction {
@@ -38,7 +39,7 @@ export interface PreviewAction {
               <div *ngIf="headerIcon" 
                    class="w-10 h-10 rounded-2xl flex items-center justify-center"
                    [style.background-color]="headerColor + '20'">
-                <div [innerHTML]="headerIcon" 
+                <div [innerHTML]="getSafeHtml(headerIcon)" 
                      class="w-5 h-5"
                      [style.color]="headerColor"></div>
               </div>
@@ -68,7 +69,7 @@ export interface PreviewAction {
                       class="w-full py-3 rounded-2xl font-bold transition-all text-sm"
                       [ngClass]="getActionClasses(action)">
                 <div class="flex items-center justify-center gap-2">
-                  <span [innerHTML]="action.icon" class="w-4 h-4"></span>
+                  <span [innerHTML]="getSafeHtml(action.icon)" class="w-4 h-4"></span>
                   {{ action.label | translate }}
                 </div>
               </button>
@@ -79,7 +80,7 @@ export interface PreviewAction {
                         class="py-2 rounded-2xl font-bold transition-all text-sm"
                         [ngClass]="getActionClasses(action)">
                   <div class="flex items-center justify-center gap-2">
-                    <span [innerHTML]="action.icon" class="w-3.5 h-3.5"></span>
+                    <span [innerHTML]="getSafeHtml(action.icon)" class="w-3.5 h-3.5"></span>
                     {{ action.label | translate }}
                   </div>
                 </button>
@@ -110,7 +111,10 @@ export class QuickPreviewDrawerComponent {
 
   @ContentChild('content') contentTemplate!: TemplateRef<unknown>;
 
-  constructor(private translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    private readonly sanitizer: DomSanitizer
+  ) {}
 
   get isRTL(): boolean {
     return this.translate.currentLang === 'ar';
@@ -130,6 +134,10 @@ export class QuickPreviewDrawerComponent {
 
   onAction(action: PreviewAction) {
     this.actionClick.emit(action);
+  }
+
+  getSafeHtml(value: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(value);
   }
 
   getActionClasses(action: PreviewAction): string {

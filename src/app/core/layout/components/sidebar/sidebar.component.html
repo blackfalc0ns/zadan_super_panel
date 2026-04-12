@@ -24,7 +24,7 @@
                 </span>
                 <div class="flex items-center justify-center gap-1.5 mt-1 opacity-70">
                     <span class="w-1.5 h-1.5 rounded-full bg-zadna-primary animate-ping"></span>
-                    <span class="text-[9px] font-black text-zadna-primary uppercase tracking-[0.25em]">Operational</span>
+                    <span class="text-[9px] font-black text-zadna-primary uppercase tracking-[0.2em]">Operational</span>
                 </div>
             </div>
         </div>
@@ -94,6 +94,18 @@
                 </div>
                 <div class="flex-1 flex items-center justify-between">
                     <span class="font-bold text-xs group-hover:font-black transition-all">{{ 'SIDEBAR.BRANDS' | translate }}</span>
+                </div>
+            </a>
+
+            <a routerLink="/catalog/product-requests" routerLinkActive="active-link"
+                class="nav-item group stagger-2 relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-slate-500 hover:text-zadna-primary hover:bg-white/80 transition-all duration-300 hover:shadow-sm hover:translate-x-1 rtl:hover:-translate-x-1">
+                <div class="nav-icon-box w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:bg-zadna-primary/10 group-hover:scale-110">
+                    <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                </div>
+                <div class="flex-1 flex items-center justify-between">
+                    <span class="font-bold text-xs group-hover:font-black transition-all">{{ 'SIDEBAR.PRODUCT_REQUESTS' | translate }}</span>
                 </div>
             </a>
         </div>
@@ -181,6 +193,44 @@
                 </div>
                 <div class="flex-1 flex items-center justify-between">
                     <span class="font-bold text-xs group-hover:font-black transition-all">{{ 'SIDEBAR.FINANCES' | translate }}</span>
+                </div>
+            </a>
+
+            <a routerLink="/marketing" routerLinkActive="active-link"
+                class="nav-item group stagger-4 relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-slate-500 hover:text-zadna-primary hover:bg-white/80 transition-all duration-300 hover:shadow-sm hover:translate-x-1 rtl:hover:-translate-x-1">
+                <div class="nav-icon-box w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:bg-zadna-primary/10 group-hover:scale-110">
+                    <span class="material-symbols-outlined text-[18px]">campaign</span>
+                </div>
+                <div class="flex-1 flex items-center justify-between">
+                    <span class="font-bold text-xs group-hover:font-black transition-all">{{ 'SIDEBAR.MARKETING' | translate }}</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Group: Users & Access -->
+        <div class="flex flex-col space-y-1.5">
+            <div class="flex items-center justify-between px-3 mb-1">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.USERS_NETWORK' | translate }}</span>
+                <div class="h-px flex-1 ms-3 bg-gradient-to-r rtl:bg-gradient-to-l from-slate-200/80 to-transparent"></div>
+            </div>
+
+            <a routerLink="/admin-users" routerLinkActive="active-link"
+                class="nav-item group stagger-5 relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-slate-500 hover:text-zadna-primary hover:bg-white/80 transition-all duration-300 hover:shadow-sm hover:translate-x-1 rtl:hover:-translate-x-1">
+                <div class="nav-icon-box w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:bg-zadna-primary/10 group-hover:scale-110">
+                    <span class="material-symbols-outlined text-[18px]">shield_person</span>
+                </div>
+                <div class="flex-1 flex items-center justify-between">
+                    <span class="font-bold text-xs group-hover:font-black transition-all">{{ 'SIDEBAR.ADMIN_USERS' | translate }}</span>
+                </div>
+            </a>
+
+            <a routerLink="/email-center" routerLinkActive="active-link"
+                class="nav-item group stagger-5 relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-slate-500 hover:text-zadna-primary hover:bg-white/80 transition-all duration-300 hover:shadow-sm hover:translate-x-1 rtl:hover:-translate-x-1">
+                <div class="nav-icon-box w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:bg-zadna-primary/10 group-hover:scale-110">
+                    <span class="material-symbols-outlined text-[18px]">mail</span>
+                </div>
+                <div class="flex-1 flex items-center justify-between">
+                    <span class="font-bold text-xs group-hover:font-black transition-all">{{ 'SIDEBAR.EMAIL_CENTER' | translate }}</span>
                 </div>
             </a>
         </div>

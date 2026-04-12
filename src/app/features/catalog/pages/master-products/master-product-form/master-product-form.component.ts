@@ -12,7 +12,7 @@ import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/bad
 import { DetailHeaderComponent } from '../../../../../shared/components/ui/detail-header/detail-header.component';
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
-import { Category } from '@catalog/models/catalog.domain.models';
+import { Brand, Category } from '@catalog/models/catalog.domain.models';
 
 @Component({
   selector: 'app-master-product-form',
@@ -40,7 +40,9 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   isUploading = false;
   activeLang = 'ar';
   availableCategories: any[] = [];
-  availableBrands: any[] = [];
+  allFlatCategories: any[] = [];
+  availableBrands: Brand[] = [];
+  allBrands: Brand[] = [];
   availableUnits: any[] = [];
   breadcrumbs: { label: string; action?: () => void }[] = [];
   private langSub?: Subscription;
@@ -65,6 +67,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.loadCategories();
     this.loadBrands();
     this.loadUnits();
+    this.watchCategoryChanges();
 
     // Check for id in route params for editing
     const id = this.route.snapshot.paramMap.get('id');
@@ -141,6 +144,12 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.productForm.get('nameAr')?.valueChanges.subscribe(() => updateSlug());
   }
 
+  private watchCategoryChanges(): void {
+    this.productForm.get('categoryId')?.valueChanges.subscribe((categoryId: string | null) => {
+      this.filterBrandsByCategory(categoryId);
+    });
+  }
+
   generateSlug(force: boolean = false): void {
     const slugControl = this.productForm.get('slug');
     if (!force && slugControl?.dirty && slugControl?.value) return;
@@ -185,6 +194,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
           status: product.status,
           primaryImageUrl: product.images?.find((img: any) => img.isPrimary)?.url
         });
+        this.filterBrandsByCategory(product.categoryId);
         this.isLoading = false;
       },
       error: (err) => {
@@ -218,7 +228,8 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   loadCategories(): void {
     this.catalogService.getCategories(undefined, true).subscribe({
       next: (cats) => {
-        this.availableCategories = this.flattenCategories(cats);
+        this.allFlatCategories = this.flattenAllCategories(cats);
+        this.availableCategories = this.allFlatCategories.filter(c => c.isLeaf);
         
         // Re-apply categoryId from query params if available after list loads
         const catId = this.route.snapshot.queryParamMap.get('categoryId');
@@ -229,43 +240,101 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Failed to load categories', err);
         this.availableCategories = [];
+        this.allFlatCategories = [];
       }
     });
   }
 
-  private flattenCategories(categories: any[], pathAr: string = '', pathEn: string = '', level: number = 0): any[] {
+  private flattenAllCategories(categories: any[], pathAr: string = '', pathEn: string = '', level: number = 0, parentId: string | null = null): any[] {
     let result: any[] = [];
     categories.forEach(cat => {
-      const separator = ' » ';
+      const separator = ' \u00BB ';
       const currentPathAr = pathAr ? `${pathAr}${separator}${cat.nameAr}` : cat.nameAr;
       const currentPathEn = pathEn ? `${pathEn}${separator}${cat.nameEn}` : cat.nameEn;
-      
-      // Specifically target Level 3 (Sub-Category) as requested
-      const isTargetLevel = level === 3;
+      const hasChildren = cat.subCategories && cat.subCategories.length > 0;
+      const isLeaf = level === 3;
 
-      if (isTargetLevel) {
-        result.push({
-          id: cat.id,
-          nameAr: cat.nameAr,
-          nameEn: cat.nameEn,
-          displayNameAr: currentPathAr,
-          displayNameEn: currentPathEn,
-          level: level
-        });
-      }
+      result.push({
+        id: cat.id,
+        nameAr: cat.nameAr,
+        nameEn: cat.nameEn,
+        parentCategoryId: parentId || cat.parentCategoryId || null,
+        displayNameAr: currentPathAr,
+        displayNameEn: currentPathEn,
+        level: level,
+        isLeaf: isLeaf
+      });
 
-      // Always explore children if they exist to find level 3 nodes
-      if (cat.subCategories && cat.subCategories.length > 0) {
-        result = result.concat(this.flattenCategories(cat.subCategories, currentPathAr, currentPathEn, level + 1));
+      if (hasChildren) {
+        result = result.concat(this.flattenAllCategories(cat.subCategories, currentPathAr, currentPathEn, level + 1, cat.id));
       }
     });
     return result;
   }
 
   loadBrands(): void {
-    this.catalogService.getBrands().subscribe(brands => {
-      this.availableBrands = brands;
+    this.catalogService.getBrands(true, false).subscribe({
+      next: (brands) => {
+        this.allBrands = brands ?? [];
+        this.filterBrandsByCategory(this.productForm.get('categoryId')?.value || null);
+      },
+      error: (err) => {
+        console.error('Failed to load brands', err);
+        this.allBrands = [];
+        this.availableBrands = [];
+      }
     });
+  }
+
+  private filterBrandsByCategory(categoryId: string | null): void {
+    if (!categoryId) {
+      this.availableBrands = [];
+      this.productForm.patchValue({ brandId: null }, { emitEvent: false });
+      return;
+    }
+
+    // Get the selected category and all its ancestor IDs
+    const ancestorIds = this.getAncestorCategoryIds(categoryId);
+    const matchIds = new Set([categoryId, ...ancestorIds]);
+
+    // Show brands that are linked to the selected category or any of its ancestors
+    this.availableBrands = this.allBrands.filter((brand) => brand.categoryId && matchIds.has(brand.categoryId));
+
+    const selectedBrandId = this.productForm.get('brandId')?.value;
+    const selectedBrandIsValid = this.availableBrands.some((brand) => brand.id === selectedBrandId);
+
+    if (!selectedBrandIsValid) {
+      this.productForm.patchValue({ brandId: null }, { emitEvent: false });
+    }
+  }
+
+  private getAncestorCategoryIds(categoryId: string): string[] {
+    const ancestors: string[] = [];
+    const categoryMap = this.buildCategoryMap(this.availableCategories);
+
+    let currentId: string | null | undefined = categoryId;
+    const visited = new Set<string>();
+
+    while (currentId && !visited.has(currentId)) {
+      visited.add(currentId);
+      const cat = categoryMap.get(currentId);
+      if (cat?.parentCategoryId) {
+        ancestors.push(cat.parentCategoryId);
+        currentId = cat.parentCategoryId;
+      } else {
+        break;
+      }
+    }
+
+    return ancestors;
+  }
+
+  private buildCategoryMap(categories: any[]): Map<string, any> {
+    const map = new Map<string, any>();
+    for (const cat of this.allFlatCategories) {
+      map.set(cat.id, cat);
+    }
+    return map;
   }
 
   loadUnits(): void {
@@ -318,8 +387,9 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       descriptionEn: val.descriptionEn,
       barcode: val.barcode,
       categoryId: val.categoryId,
-      brandId: val.brandId,
-      unitId: val.unitId,
+      brandId: val.brandId || null,
+      unitId: val.unitId || null,
+      status: val.status,
       images: val.primaryImageUrl ? [{ url: val.primaryImageUrl, isPrimary: true, displayOrder: 1 }] : [] 
     };
 

@@ -115,6 +115,12 @@
               <span class="customer-email mt-0.5 inline-block max-w-full truncate text-[10px] font-bold text-slate-400/80" dir="ltr">
                 {{ customer.email }}
               </span>
+              <span
+                class="mt-1 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[10px] font-black"
+                [ngClass]="getPresenceClasses(customer)">
+                <span class="h-1.5 w-1.5 rounded-full" [ngClass]="getPresenceDotClasses(customer)"></span>
+                {{ getPresenceLabel(customer) }}
+              </span>
             </div>
           </div>
         </ng-container>
@@ -166,6 +172,12 @@
                 <p class="customer-email mt-0.5 inline-block max-w-full truncate text-[11px] font-bold text-slate-400" dir="ltr">
                   {{ customer.email }}
                 </p>
+                <span
+                  class="mt-1 inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[10px] font-black"
+                  [ngClass]="getPresenceClasses(customer)">
+                  <span class="h-1.5 w-1.5 rounded-full" [ngClass]="getPresenceDotClasses(customer)"></span>
+                  {{ getPresenceLabel(customer) }}
+                </span>
               </div>
             </div>
 

@@ -62,7 +62,7 @@ import {
         </div>
       </div>
 
-      <div *ngIf="isFiltersExpanded" class="animate-in slide-in-from-top-3 duration-500 overflow-hidden rounded-[1.5rem] border border-slate-200/60 shadow-xl">
+      <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl">
         <app-advanced-filter-panel
           [isExpanded]="true"
           [title]="'FINANCES.FILTERS.TITLE'"

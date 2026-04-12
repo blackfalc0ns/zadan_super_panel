@@ -12,7 +12,7 @@
 
         <div [class]="titleWrapperClasses">
           <div [class]="titleRowClasses">
-            <span *ngIf="icon" class="material-symbols-outlined text-[22px] text-zadna-primary">{{ icon }}</span>
+            <span *ngIf="icon" class="material-symbols-outlined shrink-0 text-[22px] text-zadna-primary">{{ icon }}</span>
             <h2 class="min-w-0" [ngClass]="titleClass">
               {{ shouldTranslate ? (title | translate) : title }}
             </h2>

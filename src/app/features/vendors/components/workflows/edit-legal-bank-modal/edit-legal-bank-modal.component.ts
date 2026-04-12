@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -18,7 +18,7 @@ export interface LegalBankData {
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './edit-legal-bank-modal.component.html'
 })
-export class EditLegalBankModalComponent {
+export class EditLegalBankModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() legalBankData: LegalBankData = {
     commercialRegister: '',
@@ -31,6 +31,15 @@ export class EditLegalBankModalComponent {
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<LegalBankData>();
+
+  draftLegalBankData: LegalBankData = {
+    commercialRegister: '',
+    taxNumber: '',
+    expiryDate: '',
+    bankName: '',
+    paymentCycle: '',
+    iban: ''
+  };
 
   bankOptions = [
     { value: 'alrajhi', label: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALRAJHI' },
@@ -47,6 +56,19 @@ export class EditLegalBankModalComponent {
 
   constructor(private translate: TranslateService) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['legalBankData']) {
+      this.draftLegalBankData = {
+        commercialRegister: this.legalBankData.commercialRegister || '',
+        taxNumber: this.legalBankData.taxNumber || '',
+        expiryDate: this.legalBankData.expiryDate || '',
+        bankName: this.legalBankData.bankName || '',
+        paymentCycle: this.legalBankData.paymentCycle || '',
+        iban: this.legalBankData.iban || ''
+      };
+    }
+  }
+
   get isRTL(): boolean {
     const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
     return lang.startsWith('ar');
@@ -57,8 +79,10 @@ export class EditLegalBankModalComponent {
   }
 
   onSave() {
-    this.save.emit(this.legalBankData);
-    this.onClose();
+    this.save.emit({
+      ...this.draftLegalBankData,
+      iban: this.normalizeIban(this.draftLegalBankData.iban)
+    });
   }
 
   onBackdropClick(event: MouseEvent) {
@@ -68,8 +92,16 @@ export class EditLegalBankModalComponent {
   }
 
   copyIban() {
-    const fullIban = 'SA' + this.legalBankData.iban.replace(/\s/g, '');
-    navigator.clipboard.writeText(fullIban);
+    navigator.clipboard.writeText(this.normalizeIban(this.draftLegalBankData.iban));
     // Ideally add a toast here via a service
+  }
+
+  private normalizeIban(value: string): string {
+    const sanitized = (value || '').replace(/\s+/g, '').toUpperCase();
+    if (!sanitized) {
+      return '';
+    }
+
+    return sanitized.startsWith('SA') ? sanitized : `SA${sanitized}`;
   }
 }

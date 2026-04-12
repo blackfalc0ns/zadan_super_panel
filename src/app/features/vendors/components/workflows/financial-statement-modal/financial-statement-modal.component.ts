@@ -35,6 +35,8 @@ export interface StatementPreview {
 export class FinancialStatementModalComponent {
   @Input() isOpen = false;
   @Input() vendorName = '';
+  @Input() estimatedRecords = 0;
+  @Input() totalAmount = 0;
   @Output() close = new EventEmitter<void>();
   @Output() download = new EventEmitter<FinancialStatementConfig>();
   @Output() preview = new EventEmitter<FinancialStatementConfig>();
@@ -76,9 +78,9 @@ export class FinancialStatementModalComponent {
     return {
       vendorName: this.vendorName || this.translate.instant('MODALS.FINANCIAL_STATEMENT.DEFAULT_VENDOR_NAME'),
       dateRange: `${this.formatDate(this.config.dateFrom)} - ${this.formatDate(this.config.dateTo)}`,
-      estimatedRecords: Math.floor(daysDiff * 35), // ~35 records per day
+      estimatedRecords: this.estimatedRecords || Math.floor(daysDiff * 35),
       estimatedFileSize: `${(daysDiff * 0.065).toFixed(1)} MB`,
-      totalAmount: 45250.00
+      totalAmount: this.totalAmount || 0
     };
   }
 

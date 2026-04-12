@@ -13,6 +13,14 @@
     <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">person</span>
 
     <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+      <button
+        type="button"
+        class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
+        (click)="openAccessProfile()">
+        <span class="material-symbols-outlined text-[20px]">shield_person</span>
+        {{ 'CUSTOMERS.DETAIL.OPEN_ACCESS_PROFILE' | translate }}
+      </button>
+
       <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all">
         <span class="material-symbols-outlined text-[20px]">edit_square</span>
         {{ 'CUSTOMERS.DETAIL.EDIT_ACCOUNT' | translate }}
@@ -32,6 +40,20 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-3 text-xs font-bold">
+            <span
+              class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5"
+              [ngClass]="currentCustomer.isOnlineNow
+                ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
+                : 'border border-slate-200 bg-white text-slate-500'">
+              <span class="h-2 w-2 rounded-full" [ngClass]="currentCustomer.isOnlineNow ? 'bg-emerald-500' : 'bg-slate-300'"></span>
+              <ng-container *ngIf="currentCustomer.isOnlineNow; else offlinePresence">
+                {{ 'CUSTOMERS.PRESENCE.ONLINE_NOW' | translate }}
+              </ng-container>
+              <ng-template #offlinePresence>
+                {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN' | translate }}: {{ currentCustomer.lastSeenAt }}
+              </ng-template>
+            </span>
+
             <app-status-pill
               [label]="'CUSTOMERS.STATUS.' + currentCustomer.status.toUpperCase()"
               [variant]="statusVariant"
@@ -370,8 +392,7 @@
             variant="info"
             icon="insights"
             [title]="'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.ANALYSIS_SUMMARY'"
-            [message]="currentCustomer.analysisSummary"
-            [shouldTranslate]="false"
+            [message]="currentCustomer.workflow.summaryKey"
             [compact]="true">
           </app-inline-banner>
         </section>
@@ -510,7 +531,7 @@
 
               <div class="flex items-center justify-between">
                 <span class="text-sm font-bold text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT' | translate }}</span>
-                <span class="text-[11px] font-black text-slate-800">{{ currentCustomer.lastSupportContact }}</span>
+                <span class="text-[11px] font-black text-slate-800">{{ getLastSupportContactKey() | translate }}</span>
               </div>
 
               <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary text-white text-[11px] font-black shadow-sm hover:bg-teal-700 transition-all" (click)="openCasesList()">
@@ -526,7 +547,7 @@
             icon="admin_panel_settings"
             [compact]="true">
             <span meta class="inline-flex rounded-full border border-zadna-primary/10 bg-zadna-primary/5 px-3 py-1 text-[10px] font-black text-zadna-primary">
-              {{ currentCustomer.accountTeam }}
+              {{ currentCustomer.workflow.ownerTeamLabelKey | translate }}
             </span>
           </app-section-header>
 
@@ -534,12 +555,12 @@
             <div [class]="getNoteCardClasses(note)" *ngFor="let note of currentCustomer.internalNotes">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="text-[11px] font-black text-zadna-primary">{{ note.author }}</span>
-                  <span class="text-[10px] font-bold text-slate-400">{{ note.role }}</span>
+                  <span class="text-[11px] font-black text-zadna-primary">{{ note.authorKey ? (note.authorKey | translate) : note.author }}</span>
+                  <span class="text-[10px] font-bold text-slate-400">{{ note.roleKey ? (note.roleKey | translate) : note.role }}</span>
                 </div>
                 <span class="text-[10px] font-bold text-slate-400 font-['Inter']">{{ note.createdAt }}</span>
               </div>
-              <p class="mt-2 text-[12px] leading-6 font-medium text-slate-600">{{ note.message }}</p>
+              <p class="mt-2 text-[12px] leading-6 font-medium text-slate-600">{{ note.messageKey ? (note.messageKey | translate) : note.message }}</p>
             </div>
 
             <div class="flex flex-col xl:flex-row gap-3 border-t border-slate-200/70 pt-5">

@@ -50,7 +50,7 @@ export interface BulkAction {
           <button *ngFor="let action of bulkActions" 
                   (click)="onBulkAction(action)"
                   [class]="'flex items-center gap-2 px-5 py-2.5 rounded-[1.2rem] text-xs font-black transition-all hover:scale-105 active:scale-95 shadow-lg ' + (action.color || 'bg-zadna-primary text-white')">
-            <span class="material-symbols-outlined text-[18px]" [innerHTML]="action.icon"></span>
+            <span class="material-symbols-outlined text-[18px]">{{ action.icon }}</span>
             {{ action.label | translate }}
           </button>
         </div>
@@ -63,9 +63,18 @@ export interface BulkAction {
       </div>
     </div>
 
-    <!-- Desktop Table -->
-    <div [class]="'hidden md:block w-full overflow-x-auto animate-in fade-in slide-in-from-bottom-10 duration-1000 ' + containerClass">
-      <table class="w-full table-fixed border-separate border-spacing-y-0">
+    <!-- Desktop Table Content -->
+    <div [class]="'hidden md:block w-full overflow-x-auto relative ' + containerClass">
+      
+      <!-- Loading Overlay -->
+      <div *ngIf="isLoading" class="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in duration-300">
+         <div class="flex flex-col items-center gap-3">
+            <div class="h-10 w-10 border-4 border-slate-100 border-t-zadna-primary rounded-full animate-spin"></div>
+            <span class="text-[0.8rem] font-black text-slate-400 uppercase tracking-widest">{{ 'COMMON.LOADING' | translate }}</span>
+         </div>
+      </div>
+
+      <table class="w-full border-separate border-spacing-y-0" style="min-width: 800px;">
         <colgroup>
           <col *ngIf="selectable" [style.width]="selectionColumnWidth">
           <col *ngFor="let col of columns" [style.width]="getColumnWidth(col)">
@@ -79,12 +88,12 @@ export interface BulkAction {
                      class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20">
             </th>
             <th *ngFor="let col of columns" 
-                class="px-4 py-7 align-middle text-[10px] font-black uppercase text-slate-400/70 tracking-tighter"
+                class="px-5 py-7 align-middle text-[10px] font-black uppercase text-slate-400/80 tracking-tighter"
                 [class.text-center]="col.align === 'center'"
                 [class.text-start]="col.align === 'left'"
                 [class.text-end]="col.align === 'right'"
                 [style.width]="col.width">
-              {{ col.title | translate }}
+              <span class="inline-block transition-transform hover:scale-105 cursor-default">{{ col.title | translate }}</span>
             </th>
           </tr>
         </thead>
@@ -102,7 +111,7 @@ export interface BulkAction {
             </td>
 
             <td *ngFor="let col of columns" 
-                class="px-4 py-6 align-middle overflow-hidden"
+                class="px-5 py-6 align-middle overflow-hidden"
                 [class.text-center]="col.align === 'center'"
                 [class.text-start]="col.align === 'left'"
                 [class.text-end]="col.align === 'right'">
@@ -162,7 +171,12 @@ export interface BulkAction {
     </div>
 
     <!-- Mobile Cards -->
-    <div class="md:hidden space-y-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+    <div class="md:hidden space-y-4 relative">
+      <!-- Loading Overlay (Mobile) -->
+      <div *ngIf="isLoading" class="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in duration-300">
+         <div class="h-10 w-10 border-4 border-slate-100 border-t-zadna-primary rounded-full animate-spin"></div>
+      </div>
+
       <div *ngFor="let item of data" 
            class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all"
            [class.cursor-pointer]="clickableRows"
@@ -173,7 +187,7 @@ export interface BulkAction {
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="data.length === 0" 
+    <div *ngIf="data.length === 0 && !isLoading" 
          class="relative p-20 text-center animate-in zoom-in duration-700">
       <div class="max-w-md mx-auto space-y-6">
         <div class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl flex items-center justify-center mx-auto text-slate-100">
@@ -206,6 +220,7 @@ export class DataTableComponent<T extends object = Record<string, unknown>> {
   @Input() emptyStateTitle = 'COMMON.NO_RESULTS';
   @Input() emptyStateMessage = 'COMMON.NO_RESULTS';
   @Input() idField = 'id';
+  @Input() isLoading = false;
   @Input() containerClass = '';
 
   @Output() rowClick = new EventEmitter<T>();
@@ -289,17 +304,13 @@ export class DataTableComponent<T extends object = Record<string, unknown>> {
   }
 
   private getResolvedColumnValue(item: T, key: string): unknown {
-    return key.split('.').reduce<unknown>((obj, prop) => {
-      if (obj && typeof obj === 'object') {
-        return (obj as Record<string, unknown>)[prop];
-      }
-
-      return undefined;
+    return key.split('.').reduce<any>((obj, prop) => {
+      return obj && typeof obj === 'object' ? obj[prop] : undefined;
     }, item);
   }
 
-  private getFieldValue(item: T, field: string): unknown {
-    return (item as Record<string, unknown>)[field];
+  private getFieldValue(item: T, field: string): any {
+    return (item as any)[field];
   }
 
   private emitSelectionChange() {

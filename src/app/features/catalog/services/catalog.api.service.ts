@@ -1,12 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
+  BrandSearchFacets,
+  BrandSearchFilters,
   Brand,
+  CatalogSearchRequest,
+  CatalogSearchResponse,
   Category,
+  CategorySearchFacets,
+  CategorySearchFilters,
   MasterProduct,
-  MasterProductImage
+  MasterProductImage,
+  ProductSearchFacets,
+  ProductSearchFilters,
+  ProductRequest,
+  ProductRequestStatus
 } from '@catalog/models/catalog.domain.models';
 import { AuthService } from '@core/services/auth.service';
 
@@ -15,6 +25,15 @@ interface CatalogUnit {
   nameAr: string;
   nameEn: string;
   isActive?: boolean;
+}
+
+export interface ProductVendorSnapshotDto {
+  vendorId: string;
+  nameAr: string;
+  nameEn: string;
+  quantity: number;
+  price: number;
+  updatedAtUtc: string;
 }
 
 interface CatalogProductRecord extends MasterProduct {
@@ -57,10 +76,11 @@ interface CatalogBrandPayload {
   nameAr: string;
   nameEn: string;
   logoUrl?: string;
+  categoryId?: string | null;
   isActive?: boolean;
 }
 
-interface CatalogPaginatedProducts {
+export interface CatalogPaginatedProducts {
   items: MasterProduct[];
   data?: MasterProduct[];
   totalCount: number;
@@ -70,6 +90,10 @@ interface CatalogPaginatedProducts {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
 }
+
+export interface ProductSearchResult extends CatalogSearchResponse<MasterProduct, ProductSearchFilters, ProductSearchFacets> {}
+export interface CategorySearchResult extends CatalogSearchResponse<Category, CategorySearchFilters, CategorySearchFacets> {}
+export interface BrandSearchResult extends CatalogSearchResponse<Brand, BrandSearchFilters, BrandSearchFacets> {}
 
 @Injectable({
   providedIn: 'root'
@@ -98,10 +122,10 @@ export class CatalogService {
       : new HttpHeaders();
   }
 
-  getCategories(parentId?: string, includeInactive: boolean = false): Observable<Category[]> {
+  getCategories(parentId?: string, includeInactive: boolean = false, allowFallback: boolean = true): Observable<Category[]> {
     const fallback = this.getFallbackCategories(parentId, includeInactive);
 
-    if (this.shouldUseLocalReadFallback()) {
+    if (allowFallback && this.shouldUseLocalReadFallback()) {
       return of(fallback);
     }
 
@@ -112,7 +136,9 @@ export class CatalogService {
       params
     }).pipe(
       map((response) => this.normalizeCategoriesResponse(response, parentId, includeInactive, fallback)),
-      catchError((error) => this.handleReadFallback('Catalog categories', fallback, error))
+      catchError((error) => allowFallback
+        ? this.handleReadFallback('Catalog categories', fallback, error)
+        : throwError(() => error))
     );
   }
 
@@ -146,9 +172,10 @@ export class CatalogService {
     pageSize: number = 10,
     searchTerm?: string,
     categoryId?: string,
-    brandId?: string
+    brandId?: string,
+    status?: string
   ): Observable<CatalogPaginatedProducts> {
-    const fallback = this.buildFallbackPaginatedProducts(page, pageSize, searchTerm, categoryId, brandId);
+    const fallback = this.buildFallbackPaginatedProducts(page, pageSize, searchTerm, categoryId, brandId, status);
 
     if (this.shouldUseLocalReadFallback()) {
       return of(fallback);
@@ -167,10 +194,28 @@ export class CatalogService {
     if (brandId) {
       params = params.set('brandId', brandId);
     }
+    if (status) {
+      params = params.set('status', status);
+    }
 
     return this.http.get<unknown>(`${this.apiUrl}/products`, { headers: this.getHeaders(), params }).pipe(
-      map((response) => this.normalizeProductsResponse(response, page, pageSize, searchTerm, categoryId, brandId)),
+      map((response) => this.normalizeProductsResponse(response, page, pageSize, searchTerm, categoryId, brandId, status)),
       catchError((error) => this.handleReadFallback('Catalog products', fallback, error))
+    );
+  }
+
+  searchProducts(request: CatalogSearchRequest<ProductSearchFilters>, allowFallback: boolean = true): Observable<ProductSearchResult> {
+    const fallback = this.buildFallbackProductSearchResponse(request);
+
+    if (allowFallback && this.shouldUseLocalReadFallback()) {
+      return of(fallback);
+    }
+
+    return this.http.post<unknown>(`${this.apiUrl}/products/search`, request, { headers: this.getHeaders() }).pipe(
+      map((response) => this.normalizeProductSearchResponse(response, request, fallback)),
+      catchError((error) => allowFallback
+        ? this.handleReadFallback('Catalog products search', fallback, error)
+        : throwError(() => error))
     );
   }
 
@@ -191,6 +236,22 @@ export class CatalogService {
     );
   }
 
+  getProductVendors(productId: string, page: number = 1, pageSize: number = 10): Observable<{ items: ProductVendorSnapshotDto[], totalCount: number }> {
+    const params = new HttpParams()
+      .set('pageNumber', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<{ items: ProductVendorSnapshotDto[], totalCount: number }>(`${this.apiUrl}/products/${productId}/vendors`, {
+      headers: this.getHeaders(),
+      params
+    }).pipe(
+      catchError((error) => {
+        console.warn('Fallback: returning empty vendors list due to error', error);
+        return of({ items: [], totalCount: 0 });
+      })
+    );
+  }
+
   updateProduct(id: string, payload: CatalogProductPayload): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/products/${id}`, payload, { headers: this.getHeaders() });
   }
@@ -199,10 +260,10 @@ export class CatalogService {
     return this.http.delete<void>(`${this.apiUrl}/products/${id}`, { headers: this.getHeaders() });
   }
 
-  getBrands(includeInactive: boolean = false): Observable<Brand[]> {
+  getBrands(includeInactive: boolean = false, allowFallback: boolean = true): Observable<Brand[]> {
     const fallback = this.getFallbackBrands(includeInactive);
 
-    if (this.shouldUseLocalReadFallback()) {
+    if (allowFallback && this.shouldUseLocalReadFallback()) {
       return of(fallback);
     }
 
@@ -210,7 +271,35 @@ export class CatalogService {
 
     return this.http.get<unknown>(`${this.apiUrl}/brands`, { headers: this.getHeaders(), params }).pipe(
       map((response) => this.normalizeBrandsResponse(response, includeInactive, fallback)),
-      catchError((error) => this.handleReadFallback('Catalog brands', fallback, error))
+      catchError((error) => allowFallback
+        ? this.handleReadFallback('Catalog brands', fallback, error)
+        : throwError(() => error))
+    );
+  }
+
+  searchCategories(request: CatalogSearchRequest<CategorySearchFilters>): Observable<CategorySearchResult> {
+    const fallback = this.buildFallbackCategorySearchResponse(request);
+
+    if (this.shouldUseLocalReadFallback()) {
+      return of(fallback);
+    }
+
+    return this.http.post<unknown>(`${this.apiUrl}/categories/search`, request, { headers: this.getHeaders() }).pipe(
+      map((response) => this.normalizeCategorySearchResponse(response, request, fallback)),
+      catchError((error) => this.handleReadFallback('Catalog categories search', fallback, error))
+    );
+  }
+
+  searchBrands(request: CatalogSearchRequest<BrandSearchFilters>): Observable<BrandSearchResult> {
+    const fallback = this.buildFallbackBrandSearchResponse(request);
+
+    if (this.shouldUseLocalReadFallback()) {
+      return of(fallback);
+    }
+
+    return this.http.post<unknown>(`${this.apiUrl}/brands/search`, request, { headers: this.getHeaders() }).pipe(
+      map((response) => this.normalizeBrandSearchResponse(response, request, fallback)),
+      catchError((error) => this.handleReadFallback('Catalog brands search', fallback, error))
     );
   }
 
@@ -237,6 +326,170 @@ export class CatalogService {
       map((response) => this.normalizeUnitsResponse(response, fallback)),
       catchError((error) => this.handleReadFallback('Catalog units', fallback, error))
     );
+  }
+
+  getProductRequests(status?: ProductRequestStatus): Observable<ProductRequest[]> {
+    let params = new HttpParams();
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/request-center`, {
+      headers: this.getHeaders(),
+      params: params.set('type', 'product')
+    }).pipe(
+      map((response) => this.extractArray<any>(response).map((item) => this.mapCatalogRequest(item)))
+    );
+  }
+
+  getProductRequestById(id: string): Observable<ProductRequest> {
+    return this.http.get<any>(`${this.apiUrl}/request-center/${id}`, {
+      headers: this.getHeaders(),
+      params: new HttpParams().set('type', 'product')
+    }).pipe(
+      map((response) => this.mapCatalogRequest(this.extractEntity<any>(response) ?? response))
+    );
+  }
+
+  reviewProductRequest(id: string, status: 'Approved' | 'Rejected', notes?: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/product-requests/${id}/review`, {
+      isApproved: status === 'Approved',
+      rejectionReason: notes ?? null
+    }, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getCatalogRequests(params?: {
+    type?: 'all' | 'product' | 'brand' | 'category';
+    status?: 'all' | ProductRequestStatus;
+    vendorId?: string;
+  }): Observable<ProductRequest[]> {
+    let httpParams = new HttpParams();
+    if (params?.type && params.type !== 'all') httpParams = httpParams.set('type', params.type);
+    if (params?.status && params.status !== 'all') httpParams = httpParams.set('status', params.status);
+    if (params?.vendorId) httpParams = httpParams.set('vendorId', params.vendorId);
+
+    return this.http.get<any>(`${this.apiUrl}/request-center`, {
+      headers: this.getHeaders(),
+      params: httpParams
+    }).pipe(
+      map((response) => this.extractArray<any>(response).map((item) => this.mapCatalogRequest(item)))
+    );
+  }
+
+  getCatalogRequestById(id: string, type: 'product' | 'brand' | 'category'): Observable<ProductRequest> {
+    return this.http.get<any>(`${this.apiUrl}/request-center/${id}`, {
+      headers: this.getHeaders(),
+      params: new HttpParams().set('type', type)
+    }).pipe(
+      map((response) => this.mapCatalogRequest(this.extractEntity<any>(response) ?? response))
+    );
+  }
+
+  reviewBrandRequest(id: string, status: 'Approved' | 'Rejected', notes?: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/brand-requests/${id}/review`, {
+      isApproved: status === 'Approved',
+      rejectionReason: notes ?? null
+    }, {
+      headers: this.getHeaders()
+    });
+  }
+
+  reviewCategoryRequest(id: string, status: 'Approved' | 'Rejected', notes?: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/category-requests/${id}/review`, {
+      isApproved: status === 'Approved',
+      rejectionReason: notes ?? null
+    }, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getCategoryPath(categoryId: string, lang: 'ar' | 'en' = 'ar'): string {
+    const path: string[] = [];
+    let currentId: string | null = categoryId;
+    
+    // We search through all categories (flattened or recursive)
+    const allCategories = this.flattenCategories(this.fallbackCategories);
+    
+    while (currentId) {
+      const category = allCategories.find(c => c.id === currentId);
+      if (category) {
+        path.unshift(lang === 'ar' ? category.nameAr : category.nameEn);
+        currentId = category.parentCategoryId || null;
+      } else {
+        currentId = null;
+      }
+    }
+    
+    return path.join(' > ');
+  }
+
+  private buildMockProductRequests(): ProductRequest[] {
+    return [
+      {
+        id: 'REQ-001',
+        requestType: 'product',
+        suggestedNameAr: 'حليب كامل الدسم ١ لتر',
+        suggestedNameEn: 'Full Cream Milk 1L',
+        suggestedCategoryId: 'CAT-COLD-DRINKS',
+        suggestedDescriptionAr: 'حليب طبيعي طازج',
+        suggestedDescriptionEn: 'Fresh natural milk',
+        imageUrl: this.buildPlaceholderAsset('Milk', 'f3f4f6'),
+        status: 'Pending',
+        vendorId: 'VND-001',
+        vendorName: 'سوبر ماركت الهدى',
+        createdAtUtc: '2024-03-31T10:00:00Z',
+        categoryPathAr: 'البقالة > المشروبات > المشروبات الباردة',
+        categoryPathEn: 'Grocery > Beverages > Cold Drinks'
+      },
+      {
+        id: 'REQ-002',
+        requestType: 'product',
+        suggestedNameAr: 'قهوة اسبريسو مطحونة',
+        suggestedNameEn: 'Ground Espresso Coffee',
+        suggestedCategoryId: 'CAT-ARABIC-COFFEE',
+        suggestedDescriptionAr: 'بن برازيلي فاخر',
+        suggestedDescriptionEn: 'Premium Brazilian coffee',
+        imageUrl: this.buildPlaceholderAsset('Coffee', 'fef3c7'),
+        status: 'Pending',
+        vendorId: 'VND-002',
+        vendorName: 'بن الشروق',
+        createdAtUtc: '2024-03-31T11:30:00Z',
+        categoryPathAr: 'البقالة > المشروبات > المشروبات الساخنة > القهوة العربية',
+        categoryPathEn: 'Grocery > Beverages > Hot Drinks > Arabic Coffee'
+      }
+    ];
+  }
+
+  private mapCatalogRequest(item: any): ProductRequest {
+    return {
+      id: item.id,
+      requestType: item.requestType,
+      suggestedNameAr: item.nameAr,
+      suggestedNameEn: item.nameEn,
+      suggestedCategoryId: item.categoryId || null,
+      suggestedBrandId: item.brandId || undefined,
+      suggestedBrandName: item.brandNameAr || undefined,
+      suggestedBrandNameEn: item.brandNameEn || undefined,
+      suggestedDescriptionAr: item.descriptionAr || undefined,
+      suggestedDescriptionEn: item.descriptionEn || undefined,
+      imageUrl: item.imageUrl || undefined,
+      parentCategoryNameAr: item.parentCategoryNameAr || undefined,
+      parentCategoryNameEn: item.parentCategoryNameEn || undefined,
+      displayOrder: item.displayOrder ?? null,
+      unitNameAr: item.unitNameAr || undefined,
+      unitNameEn: item.unitNameEn || undefined,
+      status: item.status,
+      adminNotes: item.rejectionReason || undefined,
+      reviewedBy: item.reviewedBy || undefined,
+      reviewedAtUtc: item.reviewedAtUtc || undefined,
+      vendorId: item.vendorId,
+      vendorName: item.vendorName,
+      createdAtUtc: item.createdAtUtc,
+      categoryPathAr: item.categoryNameAr || item.parentCategoryNameAr || undefined,
+      categoryPathEn: item.categoryNameEn || item.parentCategoryNameEn || undefined
+    };
   }
 
   uploadFile(file: File, directory: string = 'catalog'): Observable<{ url: string }> {
@@ -338,12 +591,13 @@ export class CatalogService {
     pageSize: number,
     searchTerm?: string,
     categoryId?: string,
-    brandId?: string
+    brandId?: string,
+    status?: string
   ): CatalogPaginatedProducts {
     const items = this.extractArray<CatalogProductRecord>(response).map((product) => this.normalizeProduct(product));
 
     if (items.length === 0) {
-      return this.buildFallbackPaginatedProducts(page, pageSize, searchTerm, categoryId, brandId);
+      return this.buildFallbackPaginatedProducts(page, pageSize, searchTerm, categoryId, brandId, status);
     }
 
     const totalCount = this.extractNumber(response, ['totalCount', 'count', 'total', 'totalItems']) ?? items.length;
@@ -384,6 +638,77 @@ export class CatalogService {
     }
 
     return includeInactive ? brands : brands.filter((brand) => brand.isActive);
+  }
+
+  private normalizeProductSearchResponse(
+    response: unknown,
+    request: CatalogSearchRequest<ProductSearchFilters>,
+    fallback: ProductSearchResult
+  ): ProductSearchResult {
+    const items = this.extractArray<CatalogProductRecord>(response).map((product) => this.normalizeProduct(product));
+    if (!items.length) {
+      return fallback;
+    }
+
+    return {
+      items,
+      totalCount: this.extractNumber(response, ['totalCount', 'count', 'total']) ?? items.length,
+      totalPages: this.extractNumber(response, ['totalPages']) ?? fallback.totalPages,
+      pageNumber: this.extractNumber(response, ['pageNumber', 'page']) ?? request.pagination?.pageNumber ?? 1,
+      pageSize: this.extractNumber(response, ['pageSize']) ?? request.pagination?.pageSize ?? fallback.pageSize,
+      appliedFilters: this.extractObject<ProductSearchFilters>(response, ['appliedFilters']) ?? request.filters ?? {},
+      availableSorts: this.extractArray<{ field: string; direction: 'asc' | 'desc'; label?: string }>(this.extractNestedValue(response, ['availableSorts']))
+        .map((item) => ({ field: item.field, direction: item.direction, label: item.label })),
+      facets: this.extractObject<ProductSearchFacets>(response, ['facets']) ?? fallback.facets
+    };
+  }
+
+  private normalizeCategorySearchResponse(
+    response: unknown,
+    request: CatalogSearchRequest<CategorySearchFilters>,
+    fallback: CategorySearchResult
+  ): CategorySearchResult {
+    const items = this.extractArray<Category>(response).map((category, index) =>
+      this.normalizeCategory(category, index, null, category.level ?? 0)
+    );
+    if (!items.length) {
+      return fallback;
+    }
+
+    return {
+      items,
+      totalCount: this.extractNumber(response, ['totalCount', 'count', 'total']) ?? items.length,
+      totalPages: this.extractNumber(response, ['totalPages']) ?? fallback.totalPages,
+      pageNumber: this.extractNumber(response, ['pageNumber', 'page']) ?? request.pagination?.pageNumber ?? 1,
+      pageSize: this.extractNumber(response, ['pageSize']) ?? request.pagination?.pageSize ?? fallback.pageSize,
+      appliedFilters: this.extractObject<CategorySearchFilters>(response, ['appliedFilters']) ?? request.filters ?? {},
+      availableSorts: this.extractArray<{ field: string; direction: 'asc' | 'desc'; label?: string }>(this.extractNestedValue(response, ['availableSorts']))
+        .map((item) => ({ field: item.field, direction: item.direction, label: item.label })),
+      facets: this.extractObject<CategorySearchFacets>(response, ['facets']) ?? fallback.facets
+    };
+  }
+
+  private normalizeBrandSearchResponse(
+    response: unknown,
+    request: CatalogSearchRequest<BrandSearchFilters>,
+    fallback: BrandSearchResult
+  ): BrandSearchResult {
+    const items = this.extractArray<Brand>(response).map((brand, index) => this.normalizeBrand(brand, index));
+    if (!items.length) {
+      return fallback;
+    }
+
+    return {
+      items,
+      totalCount: this.extractNumber(response, ['totalCount', 'count', 'total']) ?? items.length,
+      totalPages: this.extractNumber(response, ['totalPages']) ?? fallback.totalPages,
+      pageNumber: this.extractNumber(response, ['pageNumber', 'page']) ?? request.pagination?.pageNumber ?? 1,
+      pageSize: this.extractNumber(response, ['pageSize']) ?? request.pagination?.pageSize ?? fallback.pageSize,
+      appliedFilters: this.extractObject<BrandSearchFilters>(response, ['appliedFilters']) ?? request.filters ?? {},
+      availableSorts: this.extractArray<{ field: string; direction: 'asc' | 'desc'; label?: string }>(this.extractNestedValue(response, ['availableSorts']))
+        .map((item) => ({ field: item.field, direction: item.direction, label: item.label })),
+      facets: this.extractObject<BrandSearchFacets>(response, ['facets']) ?? fallback.facets
+    };
   }
 
   private normalizeUnitsResponse(response: unknown, fallback: CatalogUnit[]): CatalogUnit[] {
@@ -438,6 +763,56 @@ export class CatalogService {
     }
 
     return [];
+  }
+
+  private extractObject<T>(response: unknown, keys: string[]): T | null {
+    if (!response || typeof response !== 'object') {
+      return null;
+    }
+
+    const candidate = response as Record<string, unknown>;
+    for (const key of keys) {
+      const value = candidate[key];
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        return value as T;
+      }
+    }
+
+    if (candidate['data'] && typeof candidate['data'] === 'object') {
+      const nested = candidate['data'] as Record<string, unknown>;
+      for (const key of keys) {
+        const value = nested[key];
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+          return value as T;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private extractNestedValue(response: unknown, keys: string[]): unknown {
+    if (!response || typeof response !== 'object') {
+      return null;
+    }
+
+    const candidate = response as Record<string, unknown>;
+    for (const key of keys) {
+      if (key in candidate) {
+        return candidate[key];
+      }
+    }
+
+    if (candidate['data'] && typeof candidate['data'] === 'object') {
+      const nested = candidate['data'] as Record<string, unknown>;
+      for (const key of keys) {
+        if (key in nested) {
+          return nested[key];
+        }
+      }
+    }
+
+    return null;
   }
 
   private extractNumber(response: unknown, keys: string[]): number | null {
@@ -498,7 +873,8 @@ export class CatalogService {
     pageSize: number,
     searchTerm?: string,
     categoryId?: string,
-    brandId?: string
+    brandId?: string,
+    status?: string
   ): CatalogPaginatedProducts {
     const filtered = this.fallbackProducts.filter((product) => {
       const normalizedQuery = searchTerm?.trim().toLowerCase() || '';
@@ -515,8 +891,9 @@ export class CatalogService {
       const categoryIds = categoryId ? this.collectCategoryBranchIds(categoryId) : null;
       const categoryMatch = !categoryIds || categoryIds.has(product.categoryId);
       const brandMatch = !brandId || product.brandId === brandId;
+      const statusMatch = !status || product.status === status;
 
-      return searchMatch && categoryMatch && brandMatch;
+      return searchMatch && categoryMatch && brandMatch && statusMatch;
     });
 
     const totalCount = filtered.length;
@@ -537,6 +914,325 @@ export class CatalogService {
       hasPreviousPage: safePage > 1,
       hasNextPage: safePage < totalPages
     };
+  }
+
+  private buildFallbackProductSearchResponse(request: CatalogSearchRequest<ProductSearchFilters>): ProductSearchResult {
+    const pageNumber = Math.max(1, request.pagination?.pageNumber ?? 1);
+    const pageSize = Math.max(1, request.pagination?.pageSize ?? 10);
+    const filters = request.filters ?? {};
+    const filtered = this.applyProductSearchFilters(this.fallbackProducts, request.search, filters);
+    const sorted = this.sortFallbackProducts(filtered, request.sort);
+    const totalCount = sorted.length;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const items = sorted
+      .slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
+      .map((product) => this.cloneProduct(product));
+
+    return {
+      items,
+      totalCount,
+      totalPages,
+      pageNumber,
+      pageSize,
+      appliedFilters: { ...filters },
+      availableSorts: this.getFallbackProductSorts(),
+      facets: {
+        statuses: this.buildCountFacets(
+          filtered,
+          (product) => product.status,
+          (status) => this.getProductStatusFacetLabels(status)
+        ),
+        brands: this.buildCountFacets(
+          filtered.filter((product) => !!product.brandId),
+          (product) => product.brandId!,
+          (brandId) => {
+            const brand = this.fallbackBrands.find((item) => item.id === brandId);
+            return { ar: brand?.nameAr || brandId, en: brand?.nameEn || brandId };
+          }
+        ),
+        categories: this.buildCountFacets(
+          filtered,
+          (product) => product.categoryId,
+          (categoryId) => {
+            const category = this.findFallbackCategoryById(categoryId);
+            return { ar: category?.nameAr || categoryId, en: category?.nameEn || categoryId };
+          }
+        )
+      }
+    };
+  }
+
+  private buildFallbackCategorySearchResponse(request: CatalogSearchRequest<CategorySearchFilters>): CategorySearchResult {
+    const pageNumber = Math.max(1, request.pagination?.pageNumber ?? 1);
+    const pageSize = Math.max(1, request.pagination?.pageSize ?? 10);
+    const filters = request.filters ?? {};
+    const prepared = this.flattenCategories(this.getFallbackCategories(undefined, true));
+    const filtered = prepared.filter((category) => {
+      const matchesSearch = !request.search || [category.nameAr, category.nameEn].some((value) =>
+        (value || '').toLowerCase().includes(request.search!.trim().toLowerCase())
+      );
+      const matchesParent = !filters.parentCategoryId || category.parentCategoryId === filters.parentCategoryId;
+      const matchesLevel = filters.level == null || category.level === filters.level;
+      const matchesActive = filters.isActive == null || category.isActive === filters.isActive;
+      const hasChildren = !!category.subCategories?.length;
+      const matchesChildren = filters.hasChildren == null || hasChildren === filters.hasChildren;
+      const matchesCreatedFrom = !filters.createdAtFrom || this.isOnOrAfter(category.createdAtUtc, filters.createdAtFrom);
+      const matchesCreatedTo = !filters.createdAtTo || this.isOnOrBefore(category.createdAtUtc, filters.createdAtTo);
+
+      return matchesSearch && matchesParent && matchesLevel && matchesActive && matchesChildren && matchesCreatedFrom && matchesCreatedTo;
+    });
+
+    const sorted = this.sortFallbackCategories(filtered, request.sort);
+    const totalCount = sorted.length;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
+    return {
+      items: sorted.slice((pageNumber - 1) * pageSize, pageNumber * pageSize).map((category) => ({ ...category, subCategories: undefined })),
+      totalCount,
+      totalPages,
+      pageNumber,
+      pageSize,
+      appliedFilters: { ...filters },
+      availableSorts: [
+        { field: 'displayOrder', direction: 'asc', label: 'Display order' },
+        { field: 'createdAtUtc', direction: 'desc', label: 'Newest created' },
+        { field: 'nameAr', direction: 'asc', label: 'Arabic name' },
+        { field: 'nameEn', direction: 'asc', label: 'English name' }
+      ],
+      facets: {
+        levels: this.buildCountFacets(
+          filtered,
+          (category) => String(category.level ?? 0),
+          (level) => ({ ar: `المستوى ${level}`, en: `Level ${level}` })
+        ),
+        activeCount: filtered.filter((category) => category.isActive).length,
+        inactiveCount: filtered.filter((category) => !category.isActive).length,
+        withChildrenCount: filtered.filter((category) => !!category.subCategories?.length).length
+      }
+    };
+  }
+
+  private buildFallbackBrandSearchResponse(request: CatalogSearchRequest<BrandSearchFilters>): BrandSearchResult {
+    const pageNumber = Math.max(1, request.pagination?.pageNumber ?? 1);
+    const pageSize = Math.max(1, request.pagination?.pageSize ?? 10);
+    const filters = request.filters ?? {};
+    const filtered = this.fallbackBrands.filter((brand) => {
+      const matchesSearch = !request.search || [brand.nameAr, brand.nameEn].some((value) =>
+        (value || '').toLowerCase().includes(request.search!.trim().toLowerCase())
+      );
+      const matchesActive = filters.isActive == null || brand.isActive === filters.isActive;
+      const hasProducts = (brand.masterProductsCount ?? 0) > 0;
+      const matchesProducts = filters.hasProducts == null || hasProducts === filters.hasProducts;
+      const matchesCreatedFrom = !filters.createdAtFrom || this.isOnOrAfter(brand.createdAtUtc, filters.createdAtFrom);
+      const matchesCreatedTo = !filters.createdAtTo || this.isOnOrBefore(brand.createdAtUtc, filters.createdAtTo);
+
+      return matchesSearch && matchesActive && matchesProducts && matchesCreatedFrom && matchesCreatedTo;
+    });
+
+    const sorted = this.sortFallbackBrands(filtered, request.sort);
+    const totalCount = sorted.length;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+
+    return {
+      items: sorted.slice((pageNumber - 1) * pageSize, pageNumber * pageSize).map((brand) => ({ ...brand })),
+      totalCount,
+      totalPages,
+      pageNumber,
+      pageSize,
+      appliedFilters: { ...filters },
+      availableSorts: [
+        { field: 'nameEn', direction: 'asc', label: 'English name' },
+        { field: 'nameAr', direction: 'asc', label: 'Arabic name' },
+        { field: 'createdAtUtc', direction: 'desc', label: 'Newest created' },
+        { field: 'masterProductsCount', direction: 'desc', label: 'Most products' }
+      ],
+      facets: {
+        activeCount: filtered.filter((brand) => brand.isActive).length,
+        inactiveCount: filtered.filter((brand) => !brand.isActive).length,
+        withProductsCount: filtered.filter((brand) => (brand.masterProductsCount ?? 0) > 0).length
+      }
+    };
+  }
+
+  private applyProductSearchFilters(
+    products: CatalogProductRecord[],
+    search: string | undefined,
+    filters: ProductSearchFilters
+  ): CatalogProductRecord[] {
+    const normalizedSearch = search?.trim().toLowerCase() || '';
+
+    return products.filter((product) => {
+      const matchesSearch = !normalizedSearch || [
+        product.id,
+        product.nameAr,
+        product.nameEn,
+        product.barcode,
+        product.slug,
+        product.descriptionAr,
+        product.descriptionEn
+      ].some((value) => (value || '').toLowerCase().includes(normalizedSearch));
+
+      const matchesSubcategory = !filters.subcategoryIds?.length || filters.subcategoryIds.includes(product.categoryId);
+      const matchesBrand = !filters.brandIds?.length || (!!product.brandId && filters.brandIds.includes(product.brandId));
+      const matchesStatus = !filters.statuses?.length || filters.statuses.includes(product.status);
+      const matchesHasBrand = filters.hasBrand == null || (!!product.brandId === filters.hasBrand);
+
+      const brand = product.brandId ? this.fallbackBrands.find((item) => item.id === product.brandId) : null;
+      const matchesActiveBrand = filters.isActiveBrand == null || (!!brand && brand.isActive === filters.isActiveBrand);
+      return matchesSearch
+        && matchesSubcategory
+        && matchesBrand
+        && matchesStatus
+        && matchesHasBrand
+        && matchesActiveBrand;
+    });
+  }
+
+  private sortFallbackProducts(products: CatalogProductRecord[], sort?: { field: string; direction: 'asc' | 'desc' }): CatalogProductRecord[] {
+    const items = [...products];
+    const field = sort?.field || 'updatedAtUtc';
+    const direction = sort?.direction || 'desc';
+
+    return items.sort((left, right) => {
+      const leftValue = this.getProductSortValue(left, field);
+      const rightValue = this.getProductSortValue(right, field);
+      const result = leftValue < rightValue ? -1 : leftValue > rightValue ? 1 : 0;
+      return direction === 'desc' ? result * -1 : result;
+    });
+  }
+
+  private sortFallbackCategories(categories: Category[], sort?: { field: string; direction: 'asc' | 'desc' }): Category[] {
+    const items = [...categories];
+    const field = sort?.field || 'displayOrder';
+    const direction = sort?.direction || 'asc';
+
+    return items.sort((left, right) => {
+      const leftValue = this.getCategorySortValue(left, field);
+      const rightValue = this.getCategorySortValue(right, field);
+      const result = leftValue < rightValue ? -1 : leftValue > rightValue ? 1 : 0;
+      return direction === 'desc' ? result * -1 : result;
+    });
+  }
+
+  private sortFallbackBrands(brands: Brand[], sort?: { field: string; direction: 'asc' | 'desc' }): Brand[] {
+    const items = [...brands];
+    const field = sort?.field || 'nameEn';
+    const direction = sort?.direction || 'asc';
+
+    return items.sort((left, right) => {
+      const leftValue = this.getBrandSortValue(left, field);
+      const rightValue = this.getBrandSortValue(right, field);
+      const result = leftValue < rightValue ? -1 : leftValue > rightValue ? 1 : 0;
+      return direction === 'desc' ? result * -1 : result;
+    });
+  }
+
+  private getProductSortValue(product: CatalogProductRecord, field: string): string | number {
+    switch (field) {
+      case 'createdAtUtc':
+        return product.createdAtUtc || '';
+      case 'nameAr':
+        return product.nameAr || '';
+      case 'nameEn':
+        return product.nameEn || '';
+      case 'status':
+        return product.status || '';
+      case 'updatedAtUtc':
+      default:
+        return product.updatedAtUtc || '';
+    }
+  }
+
+  private getCategorySortValue(category: Category, field: string): string | number {
+    switch (field) {
+      case 'createdAtUtc':
+        return category.createdAtUtc || '';
+      case 'nameAr':
+        return category.nameAr || '';
+      case 'nameEn':
+        return category.nameEn || '';
+      case 'displayOrder':
+      default:
+        return category.displayOrder ?? 0;
+    }
+  }
+
+  private getBrandSortValue(brand: Brand, field: string): string | number {
+    switch (field) {
+      case 'createdAtUtc':
+        return brand.createdAtUtc || '';
+      case 'nameAr':
+        return brand.nameAr || '';
+      case 'masterProductsCount':
+        return brand.masterProductsCount ?? 0;
+      case 'nameEn':
+      default:
+        return brand.nameEn || '';
+    }
+  }
+
+  private buildCountFacets<T>(
+    items: T[],
+    keySelector: (item: T) => string,
+    labelsSelector: (key: string) => { ar: string; en: string }
+  ) {
+    const counts = new Map<string, number>();
+    items.forEach((item) => {
+      const key = keySelector(item);
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    });
+
+    return Array.from(counts.entries()).map(([key, count]) => {
+      const labels = labelsSelector(key);
+      return {
+        key,
+        labelAr: labels.ar,
+        labelEn: labels.en,
+        count
+      };
+    });
+  }
+
+  private isOnOrAfter(value: string | undefined, threshold: string): boolean {
+    if (!value) {
+      return false;
+    }
+
+    return new Date(value).getTime() >= new Date(threshold).getTime();
+  }
+
+  private isOnOrBefore(value: string | undefined, threshold: string): boolean {
+    if (!value) {
+      return false;
+    }
+
+    const thresholdDate = new Date(threshold);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(threshold)) {
+      thresholdDate.setHours(23, 59, 59, 999);
+    }
+
+    return new Date(value).getTime() <= thresholdDate.getTime();
+  }
+
+  private getFallbackProductSorts() {
+    return [
+      { field: 'updatedAtUtc', direction: 'desc' as const, label: 'Newest updated' },
+      { field: 'createdAtUtc', direction: 'desc' as const, label: 'Newest created' },
+      { field: 'nameAr', direction: 'asc' as const, label: 'Arabic name' },
+      { field: 'nameEn', direction: 'asc' as const, label: 'English name' },
+      { field: 'status', direction: 'asc' as const, label: 'Status' }
+    ];
+  }
+
+  private getProductStatusFacetLabels(status: string) {
+    const labels: Record<string, { ar: string; en: string }> = {
+      Active: { ar: 'نشط', en: 'Active' },
+      Draft: { ar: 'مسودة', en: 'Draft' },
+      Inactive: { ar: 'غير نشط', en: 'Inactive' },
+      Discontinued: { ar: 'متوقف', en: 'Discontinued' }
+    };
+
+    return labels[status] ?? { ar: status, en: status };
   }
 
   private findFallbackProductById(id: string): CatalogProductRecord | null {
@@ -600,6 +1296,9 @@ export class CatalogService {
   }
 
   private normalizeCategory(category: Category, index: number, parent: Category | null, level: number): Category {
+    const createdAtUtc = category.createdAtUtc || new Date(Date.UTC(2025, 0, index + 1)).toISOString();
+    const updatedAtUtc = category.updatedAtUtc || createdAtUtc;
+
     const base: Category = {
       ...category,
       id: category.id || `CAT-${level}-${index + 1}`,
@@ -610,7 +1309,9 @@ export class CatalogService {
       parentNameAr: category.parentNameAr ?? parent?.nameAr,
       parentNameEn: category.parentNameEn ?? parent?.nameEn,
       isActive: category.isActive ?? true,
-      level
+      level,
+      createdAtUtc,
+      updatedAtUtc
     };
 
     const subCategories = (category.subCategories ?? []).map((item, childIndex) =>
@@ -624,6 +1325,9 @@ export class CatalogService {
   }
 
   private normalizeProduct(product: CatalogProductRecord): CatalogProductRecord {
+    const createdAtUtc = product.createdAtUtc || this.buildFallbackTimestampFromSeed(product.id || product.nameEn || product.nameAr || 'product', 0);
+    const updatedAtUtc = product.updatedAtUtc || this.buildFallbackTimestampFromSeed(product.id || product.nameEn || product.nameAr || 'product', 21);
+
     return {
       ...product,
       id: product.id || `PRD-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
@@ -633,10 +1337,16 @@ export class CatalogService {
       descriptionEn: product.descriptionEn || '',
       categoryId: product.categoryId,
       brandId: product.brandId,
+      brandNameAr: product.brandNameAr,
+      brandNameEn: product.brandNameEn,
       unitOfMeasureId: product.unitOfMeasureId || product.unitId || undefined,
+      unitNameAr: product.unitNameAr,
+      unitNameEn: product.unitNameEn,
       status: product.status || 'Draft',
       slug: product.slug || this.buildSlug(product.nameEn || product.nameAr || product.id || 'product'),
-      images: this.normalizeImages(product)
+      images: this.normalizeImages(product),
+      createdAtUtc,
+      updatedAtUtc
     };
   }
 
@@ -662,15 +1372,26 @@ export class CatalogService {
 
   private normalizeBrand(brand: Brand, index: number): Brand {
     const relatedProductsCount = (this.fallbackProducts ?? []).filter((product) => product.brandId === brand.id).length;
+    const createdAtUtc = brand.createdAtUtc || new Date(Date.UTC(2025, 1, index + 1)).toISOString();
+    const updatedAtUtc = brand.updatedAtUtc || createdAtUtc;
+    const normalizedCategoryId = brand.categoryId
+      || (this.fallbackProducts ?? []).find((product) => product.brandId === brand.id)?.categoryId
+      || null;
+    const normalizedCategory = normalizedCategoryId ? this.findFallbackCategoryById(normalizedCategoryId) : null;
 
     return {
       ...brand,
       id: brand.id || `BRD-${index + 1}`,
       nameAr: brand.nameAr || brand.nameEn || `علامة ${index + 1}`,
       nameEn: brand.nameEn || brand.nameAr || `Brand ${index + 1}`,
+      categoryId: normalizedCategoryId,
+      categoryNameAr: brand.categoryNameAr || normalizedCategory?.nameAr,
+      categoryNameEn: brand.categoryNameEn || normalizedCategory?.nameEn,
       isActive: brand.isActive ?? true,
       masterProductsCount: brand.masterProductsCount ?? relatedProductsCount,
-      logoUrl: brand.logoUrl || this.buildPlaceholderAsset(brand.nameEn || brand.nameAr || 'Brand', 'f3f4f6')
+      logoUrl: brand.logoUrl || this.buildPlaceholderAsset(brand.nameEn || brand.nameAr || 'Brand', 'f3f4f6'),
+      createdAtUtc,
+      updatedAtUtc
     };
   }
 
@@ -743,6 +1464,12 @@ export class CatalogService {
       .trim()
       .replace(/[^\u0600-\u06FFa-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
+  }
+
+  private buildFallbackTimestampFromSeed(seed: string, dayOffset: number): string {
+    const hash = Array.from(seed).reduce((total, char) => total + char.charCodeAt(0), 0);
+    const day = (hash % 24) + 1 + dayOffset;
+    return new Date(Date.UTC(2025, 0, day)).toISOString();
   }
 
   private buildPlaceholderAsset(label: string, background: string): string {
@@ -954,6 +1681,7 @@ export class CatalogService {
         nameAr: 'المراعي',
         nameEn: 'Almarai',
         logoUrl: this.buildPlaceholderAsset('Almarai', 'dbeafe'),
+        categoryId: 'CAT-YOGURT',
         isActive: true,
         createdAtUtc: '2025-08-01T09:00:00Z'
       },
@@ -962,6 +1690,7 @@ export class CatalogService {
         nameAr: 'نادك',
         nameEn: 'NADEC',
         logoUrl: this.buildPlaceholderAsset('NADEC', 'd1fae5'),
+        categoryId: 'CAT-LABNEH',
         isActive: true,
         createdAtUtc: '2025-08-04T09:00:00Z'
       },
@@ -970,6 +1699,7 @@ export class CatalogService {
         nameAr: 'نستله',
         nameEn: 'Nestle',
         logoUrl: this.buildPlaceholderAsset('Nestle', 'fef3c7'),
+        categoryId: 'CAT-BLACK-TEA',
         isActive: true,
         createdAtUtc: '2025-08-08T09:00:00Z'
       },
@@ -978,6 +1708,7 @@ export class CatalogService {
         nameAr: 'أمريكانا',
         nameEn: 'Americana',
         logoUrl: this.buildPlaceholderAsset('Americana', 'fee2e2'),
+        categoryId: 'CAT-PASTA',
         isActive: true,
         createdAtUtc: '2025-08-11T09:00:00Z'
       },
@@ -986,6 +1717,7 @@ export class CatalogService {
         nameAr: 'منتجات مختارة',
         nameEn: 'Selected Goods',
         logoUrl: this.buildPlaceholderAsset('Selected Goods', 'ede9fe'),
+        categoryId: 'CAT-ARABIC-COFFEE',
         isActive: false,
         createdAtUtc: '2025-08-15T09:00:00Z'
       }

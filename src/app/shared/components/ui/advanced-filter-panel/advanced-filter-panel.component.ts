@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -33,7 +33,7 @@ export interface FilterPreset {
   imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div *ngIf="isExpanded" 
-         class="bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-[2rem] p-5 shadow-xl animate-in slide-in-from-top-3 duration-300">
+         class="relative z-10 overflow-visible bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-[2rem] p-5 shadow-xl animate-in slide-in-from-top-3 duration-300">
       
       <!-- Header -->
       <div class="flex items-center justify-between mb-4">
@@ -61,24 +61,61 @@ export interface FilterPreset {
       </div>
       
       <!-- Filters Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div *ngFor="let field of fields" class="space-y-1.5">
+      <div class="relative z-0 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 overflow-visible">
+        <div *ngFor="let field of fields" class="relative z-0 space-y-1.5 overflow-visible focus-within:z-30">
           <label class="flex items-center gap-2 text-[10px] font-black text-slate-500 px-1">
             <div class="w-1.5 h-1.5 rounded-full" [style.background-color]="field.color || '#6366f1'"></div>
             {{ field.label | translate }}
           </label>
           
           <!-- Select Field -->
-          <div *ngIf="field.type === 'select'" class="relative">
-            <select [ngModel]="getFilterValue(field.key)" (ngModelChange)="setFilterValue(field.key, $event)"
-                    class="w-full px-3.5 py-2 text-[11px] font-bold border border-slate-200 rounded-lg focus:outline-none focus:ring-4 focus:ring-primary-20 focus:border-primary transition-all duration-200 bg-white hover:border-slate-300 appearance-none cursor-pointer text-slate-700">
-              <option [value]="undefined">{{ (field.placeholder || 'COMMON.HIDE_INACTIVE') | translate }}</option>
-              <option *ngFor="let option of field.options" [value]="option.value">{{ option.label | translate }}</option>
-            </select>
-            <div class="absolute inset-y-0 left-2.5 flex items-center pointer-events-none">
-              <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div *ngIf="field.type === 'select'" class="relative z-10 overflow-visible">
+            <button
+              type="button"
+              (click)="toggleDropdown(field.key)"
+              class="relative z-10 flex w-full items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-[11px] font-bold text-slate-700 transition-all duration-200 hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-primary-20 focus:border-primary"
+              [attr.aria-expanded]="isDropdownOpen(field.key)">
+              <span class="truncate">
+                {{ getSelectDisplayLabel(field) | translate }}
+              </span>
+              <svg
+                class="h-3 w-3 shrink-0 text-slate-400 transition-transform duration-200"
+                [class.rotate-180]="isDropdownOpen(field.key)"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
+            </button>
+
+            <div
+              *ngIf="isDropdownOpen(field.key)"
+              class="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-[1rem] border border-slate-200 bg-white shadow-[0_18px_40px_-16px_rgba(15,23,42,0.35)]">
+              <div class="max-h-64 overflow-y-auto py-2">
+                <button
+                  type="button"
+                  (click)="clearFilterValue(field.key)"
+                  class="flex w-full items-center justify-between gap-3 px-3.5 py-2 text-start text-[11px] font-bold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-800">
+                  <span class="truncate">{{ (field.placeholder || 'COMMON.HIDE_INACTIVE') | translate }}</span>
+                  <svg *ngIf="!hasFilterValue(field.key)" class="h-4 w-4 shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+
+                <button
+                  *ngFor="let option of field.options"
+                  type="button"
+                  (click)="selectDropdownOption(field.key, option.value)"
+                  class="flex w-full items-center justify-between gap-3 px-3.5 py-2 text-start text-[11px] font-bold text-slate-700 transition-colors hover:bg-slate-50"
+                  [ngClass]="{
+                    'bg-zadna-primary/5 text-zadna-primary': isOptionSelected(field.key, option.value)
+                  }">
+                  <span class="truncate">{{ option.label | translate }}</span>
+                  <svg *ngIf="isOptionSelected(field.key, option.value)" class="h-4 w-4 shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -114,6 +151,8 @@ export interface FilterPreset {
   `]
 })
 export class AdvancedFilterPanelComponent<TFilters extends object = Record<string, FilterValue>> implements OnInit {
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
+
   @Input() isExpanded = false;
   @Input() title = 'VENDORS.FILTER_VENDORS';
   @Input() subtitle = 'VENDORS.ADJUST_CRITERIA';
@@ -127,6 +166,8 @@ export class AdvancedFilterPanelComponent<TFilters extends object = Record<strin
   @Output() filtersChange = new EventEmitter<TFilters>();
   @Output() reset = new EventEmitter<void>();
   @Output() save = new EventEmitter<TFilters>();
+
+  openDropdownKey: string | null = null;
 
   ngOnInit() {
     // Set CSS custom properties for theming
@@ -147,6 +188,7 @@ export class AdvancedFilterPanelComponent<TFilters extends object = Record<strin
 
   onReset() {
     this.filters = {} as TFilters;
+    this.openDropdownKey = null;
     this.reset.emit();
     this.filtersChange.emit(this.filters);
   }
@@ -158,6 +200,43 @@ export class AdvancedFilterPanelComponent<TFilters extends object = Record<strin
   removeFilter(key: string) {
     delete this.asMutableFilters()[key];
     this.onFilterChange();
+  }
+
+  toggleDropdown(key: string): void {
+    this.openDropdownKey = this.openDropdownKey === key ? null : key;
+  }
+
+  isDropdownOpen(key: string): boolean {
+    return this.openDropdownKey === key;
+  }
+
+  selectDropdownOption(key: string, value: FilterValue): void {
+    this.setFilterValue(key, value);
+    this.openDropdownKey = null;
+  }
+
+  clearFilterValue(key: string): void {
+    delete this.asMutableFilters()[key];
+    this.onFilterChange();
+    this.openDropdownKey = null;
+  }
+
+  hasFilterValue(key: string): boolean {
+    const value = this.getFilterValue(key);
+    return value !== undefined && value !== null && value !== '';
+  }
+
+  isOptionSelected(key: string, value: FilterValue): boolean {
+    return this.getFilterValue(key) === value;
+  }
+
+  getSelectDisplayLabel(field: FilterField): string {
+    const value = this.getFilterValue(field.key);
+    if (value === undefined || value === null || value === '') {
+      return field.placeholder || 'COMMON.HIDE_INACTIVE';
+    }
+
+    return this.getFilterDisplayValue(field, value);
   }
 
   getFilterDisplayValue(field: FilterField, value: FilterValue): string {
@@ -175,6 +254,23 @@ export class AdvancedFilterPanelComponent<TFilters extends object = Record<strin
   setFilterValue(key: string, value: FilterValue): void {
     this.asMutableFilters()[key] = value;
     this.onFilterChange();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target;
+    if (!(target instanceof Node)) {
+      return;
+    }
+
+    if (!this.elementRef.nativeElement.contains(target)) {
+      this.openDropdownKey = null;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.openDropdownKey = null;
   }
 
   private asMutableFilters(): Record<string, FilterValue> {

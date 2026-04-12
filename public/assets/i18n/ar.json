@@ -1,4 +1,4 @@
-﻿{
+{
     "COMMON": {
         "CANCEL": "إلغاء",
         "CONFIRM_DELETE": "تأكيد الحذف",
@@ -22,7 +22,7 @@
         "REQUIRED_FIELD": "هذا الحقل مطلوب",
         "MAX_LENGTH_ERROR": "تجاوز الحد الأقصى للحروف المسموح بها",
         "INVALID_VALUE": "القيمة المدخلة غير صالحة",
-        "BRAND": "العلامة التجارية (Brand)",
+        "BRAND": "العلامة التجارية",
         "SELECT_BRAND": "-- اختر العلامة التجارية --",
         "BROWSE_FILES": "تصفح الملفات",
         "SAVE": "حفظ",
@@ -68,7 +68,19 @@
             "EASTERN": "المنطقة الشرقية",
             "NORTHERN": "المنطقة الشمالية",
             "SOUTHERN": "المنطقة الجنوبية"
-        }
+        },
+        "LOADING": "جارٍ التحميل...",
+        "ALL": "الكل",
+        "BRAND_GENERAL": "علامة عامة",
+        "COPY": "نسخ",
+        "ERROR": "خطأ",
+        "EXPORT": "تصدير",
+        "FAILED_TO_LOAD": "تعذر تحميل البيانات.",
+        "PENDING": "قيد الانتظار",
+        "REFRESH": "تحديث",
+        "REJECTED": "مرفوض",
+        "RETRY": "إعادة المحاولة",
+        "UPLOAD": "رفع"
     },
     "VALIDATION": {
         "REQUIRED": "هذا الحقل مطلوب"
@@ -114,8 +126,8 @@
         },
         "CURRENT_STATE": "الحالة الحالية",
         "NEXT_STEP": "الخطوة التالية",
-        "OPEN_WORKFLOW": "فتح الـ workflow",
-        "EMPTY": "لا توجد سجلات workflow مرتبطة بهذا الملف حتى الآن.",
+        "OPEN_WORKFLOW": "فتح المسار التشغيلي",
+        "EMPTY": "لا توجد سجلات مرتبطة بهذا المسار حتى الآن.",
         "CURRENT_BLOCKERS": "العوائق الحالية",
         "FOLLOW_UP_ALERTS": "تنبيهات المتابعة",
         "NO_BLOCKERS": "لا توجد عوائق نشطة في الربط التشغيلي الحالي.",
@@ -147,7 +159,10 @@
         "SEARCH": "بحث عن بريد أو طلب...",
         "MENU": "القائمة الرئيسية",
         "ADMIN_PORTAL": "بوابة المسؤول",
-        "DIR": "rtl"
+        "DIR": "rtl",
+        "EMAIL_CENTER": "مركز البريد",
+        "PRODUCT_REQUESTS": "طلبات المنتجات",
+        "MARKETING": "التسويق"
     },
     "SIDEBAR_EXTRA": {
         "WELCOME_USER": "مرحبا بك",
@@ -196,7 +211,8 @@
             "DOCUMENTS": "المستندات",
             "RISK": "المخاطر",
             "ACTIONS": "الإجراءات",
-            "VIEW": "عرض التفاصيل"
+            "VIEW": "عرض التفاصيل",
+            "STATUS": "الحالة"
         },
         "ACTIONS": {
             "VIEW": "عرض",
@@ -272,7 +288,24 @@
             "CREATED_AT": "تاريخ التسجيل",
             "APPROVED_AT": "تاريخ الموافقة",
             "REJECTION_REASON": "سبب الرفض"
-        }
+        },
+        "APPLICATIONS": "الطلبات",
+        "APPLICATIONS_DESC": "مراجعة طلبات انضمام التجار وقرارات الاعتماد وما يلزم من متابعات.",
+        "APPLICATIONS_TITLE": "طلبات انضمام التجار",
+        "BUSINESS_NAME": "الاسم التجاري",
+        "NO_APPLICATIONS": "لا توجد طلبات انضمام للتجار",
+        "NO_APPLICATIONS_DESC": "لا توجد طلبات تطابق عوامل التصفية الحالية. جرّب تعديل حالة المراجعة أو عبارة البحث.",
+        "NO_REASON": "لم يتم إدخال سبب",
+        "OWNER": "المالك",
+        "REJECTED_TITLE": "طلب مرفوض",
+        "REVIEW_STATE": {
+            "AWAITING": "بانتظار المراجعة",
+            "CHANGES_REQUESTED": "تم طلب تعديلات",
+            "SUBMITTED": "تم التقديم",
+            "UNDER_REVIEW": "قيد المراجعة"
+        },
+        "REVIEW_STATUS": "حالة المراجعة",
+        "SUBMITTED_DATE": "تاريخ التقديم"
     },
     "CUSTOMERS": {
         "TITLE": "العملاء",
@@ -281,6 +314,12 @@
         "SEARCH_PLACEHOLDER": "ابحث بالاسم، البريد، الجوال، أو رقم العميل...",
         "EMPTY_TITLE": "لا يوجد عملاء مطابقون",
         "EMPTY_MESSAGE": "لم نعثر على عملاء بهذه المعايير. جرّب تعديل البحث أو الفلاتر.",
+        "PRESENCE": {
+            "ONLINE_NOW": "متصل الآن"
+        },
+        "PROFILE": {
+            "PREFERRED_CHANNEL_APP": "تطبيق العميل"
+        },
         "KPI": {
             "TOTAL_CUSTOMERS": "إجمالي العملاء",
             "VIP": "عملاء VIP",
@@ -613,14 +652,34 @@
                 "LANGUAGE": "اللغة المفضلة",
                 "LAST_SEEN": "آخر ظهور",
                 "VERIFIED_ACCOUNT": "حساب موثق",
-                "UNVERIFIED_ACCOUNT": "يحتاج توثيق"
+                "UNVERIFIED_ACCOUNT": "يحتاج توثيق",
+                "LANGUAGE_VALUES": {
+                    "ARABIC": "العربية",
+                    "ENGLISH": "الإنجليزية"
+                },
+                "LAST_SEEN_VALUES": {
+                    "ACTIVE": "نشط خلال الفترة الأخيرة",
+                    "LOW_ACTIVITY": "نشاط منخفض مؤخرًا",
+                    "RESTRICTED": "الوصول مقيّد مؤقتًا",
+                    "DORMANT": "لا يوجد نشاط حديث"
+                }
             },
             "BEHAVIOR_FIELDS": {
                 "REFUND_RISK": "مخاطر تكرار الاسترجاع",
                 "SUSPICIOUS_LOGINS": "محاولات دخول مشبوهة",
                 "PAYMENT_FAILURES": "فشل الدفع المتكرر",
                 "COMPLAINT_FREQUENCY": "وتيرة تقديم الشكاوى",
-                "ANALYSIS_SUMMARY": "ملخص التحليل"
+                "ANALYSIS_SUMMARY": "ملخص التحليل",
+                "SUSPICIOUS_LOGIN_VALUES": {
+                    "NONE": "لا توجد إشارات مقلقة",
+                    "TWO_RECENT": "محاولتان مشبوهتان مؤخرًا",
+                    "FIVE_RECENT": "خمس محاولات أو أكثر مؤخرًا"
+                },
+                "COMPLAINT_FREQUENCY_VALUES": {
+                    "LOW": "منخفضة",
+                    "MEDIUM": "متوسطة",
+                    "HIGH": "مرتفعة"
+                }
             },
             "ORDERS_TABLE": {
                 "ORDER_ID": "رقم الطلب",
@@ -647,14 +706,33 @@
                 "RESOLVED": "تم الحل",
                 "NO_CASES": "لا توجد حالات",
                 "LAST_CONTACT": "آخر تواصل",
-                "OPEN_TICKET": "فتح تذكرة دعم"
+                "OPEN_TICKET": "فتح تذكرة دعم",
+                "LAST_CONTACT_VALUES": {
+                    "RECENT": "تم التواصل مؤخرًا",
+                    "STALE": "آخر تواصل قديم نسبيًا",
+                    "NONE": "لا يوجد تواصل حديث"
+                }
             },
             "ADMIN": {
                 "SUSPEND": "تعليق مؤقت",
                 "ESCALATE": "تصعيد للمراجعة",
                 "QUICK_NOTE_PLACEHOLDER": "إضافة ملاحظة داخلية سريعة...",
-                "SAVE": "حفظ"
-            }
+                "SAVE": "حفظ",
+                "AUTHORS": {
+                    "ADMIN_USER": "مسؤول النظام",
+                    "OPERATIONS_DESK": "مكتب العمليات",
+                    "RISK_TRUST_OPS": "عمليات الثقة والمخاطر",
+                    "RISK_COMMITTEE": "لجنة المخاطر"
+                },
+                "NOTES": {
+                    "FLAG_FOR_REVIEW": "تم تعليم الحساب للمراجعة التشغيلية ومتابعة الإشارات المرتبطة به.",
+                    "CLEAR_REVIEW": "تم إغلاق تعليم المراجعة وإعادة الحساب إلى المتابعة الروتينية.",
+                    "ESCALATE_REVIEW": "تم تصعيد الحالة إلى مراجعة ثقة أعمق مع ضوابط إضافية على الحساب.",
+                    "SUSPEND_ACCOUNT": "تم تعليق الحساب مؤقتًا إلى حين إغلاق ملاحظات الثقة والدفع.",
+                    "REACTIVATE_ACCOUNT": "تمت إعادة تفعيل الحساب مع استمرار المراقبة المحكومة بعد المراجعة."
+                }
+            },
+            "OPEN_ACCESS_PROFILE": "فتح ملف الوصول"
         }
     },
     "DRIVERS": {
@@ -1249,7 +1327,8 @@
                 "ACTION_RESOLVE": "إغلاق الحالة كـ محلولة",
                 "ACTION_SUSPEND": "إيقاف السائق",
                 "ACTION_REQUEST_DOCS": "طلب مستندات"
-            }
+            },
+            "BTN_ACCESS_PROFILE": "فتح ملف الوصول"
         }
     },
     "BRANDS": {
@@ -1264,6 +1343,9 @@
         "ACTIONS": "الإجراءات",
         "STATUS_ACTIVE": "نشط",
         "STATUS_DISABLED": "معطل",
+        "SUB_CATEGORY": "التصنيف الفرعي",
+        "WITH_PRODUCTS": "بها منتجات",
+        "WITHOUT_PRODUCTS": "بدون منتجات",
         "NO_RESULTS_DESC": "لا يوجد نتائج للبحث حالياً.",
         "SEARCH_PLACEHOLDER": "بحث عن العلامات التجارية...",
         "VAULT_INIT": "جاري تحميل قائمة الماركات...",
@@ -1277,6 +1359,7 @@
             "STATUS": "الحالة",
             "STATISTICS": "الإحصائيات",
             "PRODUCTS_COUNT": "عدد المنتجات",
+            "LINKED_SUB_CATEGORY": "التصنيف الفرعي المرتبط",
             "CREATED_DATE": "تاريخ الإنشاء",
             "BRAND_ID": "معرف العلامة التجارية",
             "RELATED_PRODUCTS": "المنتجات المرتبطة",
@@ -1307,6 +1390,9 @@
             "NAME_EN": "الاسم (بالإنجليزي)",
             "NAME_AR_PLACEHOLDER": "مثل: المراعي",
             "NAME_EN_PLACEHOLDER": "مثل: Almarai",
+            "SELECT_SUB_CATEGORY": "التصنيف الفرعي المرتبط",
+            "SELECT_SUB_CATEGORY_PLACEHOLDER": "اختر التصنيف الفرعي",
+            "SUB_CATEGORY_REQUIRED": "اختيار التصنيف الفرعي مطلوب.",
             "STATUS_VISIBLE": "مرئي للعملاء في المتجر",
             "STATUS_HIDDEN": "مخفي عن العملاء حالياً"
         }
@@ -1316,7 +1402,8 @@
         "NAME": "اسم الماركة",
         "SLUG": "المعرف / الرابط",
         "PRODUCTS": "المنتجات",
-        "STATUS": "الحالة"
+        "STATUS": "الحالة",
+        "VIEW": "عرض"
     },
     "DASHBOARD": {
         "GREETING": "صباح الخير، {{name}}!",
@@ -1600,6 +1687,11 @@
             "DISPUTE_PULSE_SUMMARY": "{{count}} حالات نزاع ما زالت غير مغلقة داخل النطاق الحالي.",
             "CUSTOMER_RISK": "نبض ثقة العملاء",
             "CUSTOMER_RISK_SUMMARY": "{{count}} حسابات عملاء مصعّدة ما زالت تحت مراجعة الثقة."
+        },
+        "PRESSURE_LEVEL": {
+            "HIGH": "مرتفع",
+            "MEDIUM": "متوسط",
+            "LOW": "منخفض"
         }
     },
     "CATEGORIES": {
@@ -1623,6 +1715,9 @@
         "IMAGE_LABEL": "الصورة",
         "ITEM_COUNT": "عدد العناصر",
         "PRODUCT_UNIT": "منتج",
+        "BRANDS_COUNT": "علامات",
+        "WITH_CHILDREN": "بها فروع فرعية",
+        "WITHOUT_CHILDREN": "بدون فروع فرعية",
         "STATUS_ACTIVE": "نشط",
         "STATUS_DISABLED": "معطل",
         "NO_ITEMS_FOUND": "لم يتم العثور على عناصر",
@@ -1710,7 +1805,9 @@
             "LIVE_FLOW": "التدفق المباشر",
             "PEERS": "النظراء (الفروع)",
             "SYNC_ACTIVE": "بروتوكول المزامنة نشط",
-            "OPEN": "فتح"
+            "OPEN": "فتح",
+            "RELATED_BRANDS": "العلامات التجارية المرتبطة",
+            "NO_RELATED_BRANDS": "لا توجد علامات تجارية مرتبطة بهذا التصنيف الفرعي حتى الآن."
         }
     },
     "ASSETS": {
@@ -1749,6 +1846,7 @@
         "NAME_AR": "الاسم (AR)",
         "BARCODE": "الباركود",
         "CATEGORY": "التصنيف",
+        "SUB_CATEGORY": "التصنيف الفرعي",
         "STATUS": "الحالة",
         "IMAGE": "الصورة",
         "PRODUCT": "المنتج",
@@ -1819,7 +1917,8 @@
             "NAME": "اسم المنتج",
             "BARCODE": "الباركود",
             "STATUS": "الحالة"
-        }
+        },
+        "UNIT_PIECE": "قطعة"
     },
     "MASTER_PRODUCTS": {
         "ADD_TITLE": "إضافة منتج جديد",
@@ -1846,6 +1945,23 @@
         "UPLOAD_HINT": "اسحب الصور هنا أو اختر من جهازك (JPG, PNG, WEBP) بحد أقصى 5MB.",
         "CLASSIFICATION": "تصنيف المنتج",
         "CLASSIFICATION_DESC": "اختر القسم المناسب للمنتج في شجرة التصنيفات.",
+        "FILTERS_TITLE": "تصفية المنتجات",
+        "FILTERS_SUBTITLE": "اضبط معايير البحث",
+        "ACTIVE_FILTERS": "الفلاتر النشطة",
+        "HAS_BRAND": "مرتبط ببراند",
+        "ACTIVE_BRAND": "البراند نشط",
+        "SORT": "الفرز",
+        "SORT_NEWEST_UPDATED": "الأحدث تحديثًا",
+        "SORT_NEWEST_CREATED": "الأحدث إنشاءً",
+        "SORT_NAME_AR": "الاسم العربي",
+        "SORT_NAME_EN": "الاسم الإنجليزي",
+        "SORT_STATUS": "الحالة",
+        "OPERATIONAL_DATES": "فلاتر التواريخ التشغيلية",
+        "OPERATIONAL_DATES_HINT": "فلترة حسب تاريخ الإنشاء وآخر تحديث للمنتج.",
+        "CREATED_FROM": "تاريخ الإنشاء من",
+        "CREATED_TO": "تاريخ الإنشاء إلى",
+        "UPDATED_FROM": "آخر تحديث من",
+        "UPDATED_TO": "آخر تحديث إلى",
         "MASTER_CATEGORY_LABEL": "الفئة الفرعية *",
         "SELECT_CATEGORY_PLACEHOLDER": "اختر فئة المنتج",
         "ASSIGNED_BRAND_LABEL": "العلامة التجارية",
@@ -1866,7 +1982,10 @@
         "STAGING_HIDDEN": "مخفي (قيد التجهيز)",
         "SYSTEM_IDENTIFIER": "المعرف التقني للنظام",
         "SLUG_LABEL": "اسم الرابط (Slug) *",
-        "SLUG_PLACEHOLDER": "مثال: milk-almarai-1l"
+        "SLUG_PLACEHOLDER": "مثال: milk-almarai-1l",
+        "DELETE_FAILED": "فشل حذف المنتج",
+        "STATUS_INACTIVE": "غير نشط",
+        "STATUS_DISCONTINUED": "متوقف"
     },
     "VENDOR_DETAIL": {
         "TITLE": "تفاصيل التاجر",
@@ -1926,7 +2045,14 @@
         "TIME_HOUR_AGO": "منذ ساعة",
         "ACTIVITY_NAME_UPDATE_DATE": "25 سبتمبر 2023",
         "VIEW_DIGITAL_CR": "عرض السجل التجاري الرقمي",
-        "LEGAL_ENTITY_VALUE": "مؤسسة فردية"
+        "LEGAL_ENTITY_VALUE": "مؤسسة فردية",
+        "OPEN_ACCESS_DIRECTORY": "فتح دليل الوصول",
+        "OPEN_EMAIL_ROUTING": "فتح توجيه البريد",
+        "SUBMITTED_DATE": "تاريخ التقديم",
+        "DETAILS": {
+            "LAST_REVIEWER": "آخر مراجع"
+        },
+        "DOWNLOAD_ATTACHMENT": "تنزيل المرفق"
     },
     "COMPLIANCE": {
         "TITLE": "المراجعة والامتثال",
@@ -1981,7 +2107,8 @@
             "APPROVE_VENDOR": "اعتماد التاجر",
             "REQUEST_DOCUMENTS": "طلب مستندات",
             "SUSPEND_ACCOUNT": "تعليق الحساب",
-            "REJECT_VENDOR": "رفض التاجر"
+            "REJECT_VENDOR": "رفض التاجر",
+            "START_REVIEW": "بدء المراجعة"
         },
         "NOTES": {
             "AUTHORS": {
@@ -2000,7 +2127,17 @@
                 "TAX_CERTIFICATE_BLUR": "الشهادة الضريبية المرفقة غير واضحة المعالم، أرجو طلب إعادة رفعها بجودة أعلى ليتم مطابقة الرقم الضريبي مع السجل.",
                 "CANCELLATION_FOLLOWUP": "تم التواصل مع التاجر بخصوص ارتفاع معدل الإلغاء، وأفاد بوجود مشكلة تقنية في ربط المخزون تم حلها."
             }
-        }
+        },
+        "REVIEWER_INITIALS": "ف.م",
+        "ROLES": {
+            "OPERATIONS": "العمليات",
+            "COMPLIANCE_REVIEW": "مراجعة الامتثال",
+            "RISK_COMPLIANCE": "المخاطر والامتثال",
+            "VENDOR_REVIEW": "مراجعة المورّد",
+            "RISK_TEAM": "فريق المخاطر",
+            "REVIEW_TEAM": "فريق المراجعة"
+        },
+        "NO_BLOCKERS": "لا توجد عوائق نشطة"
     },
     "VENDOR_REVIEW": {
         "STATE": {
@@ -2057,7 +2194,8 @@
             "API_UPDATE": "تحديث إعدادات API",
             "LOGIN": "تسجيل دخول",
             "PRODUCT_UPLOAD": "رفع منتجات",
-            "STORE_ACTIVATION": "تفعيل المتجر"
+            "STORE_ACTIVATION": "تفعيل المتجر",
+            "MANUAL_NOTE": "ملاحظة داخلية"
         },
         "TIMELINE": {
             "COMPLIANCE_APPROVAL": "موافقة الامتثال",
@@ -2066,6 +2204,19 @@
             "DOCUMENTS_UPLOAD_DESC": "تم استلام السجل التجاري والهوية الوطنية والشهادة الضريبية.",
             "ACCOUNT_CREATION": "إنشاء الحساب",
             "ACCOUNT_CREATION_DESC": "التسجيل الأولي في منصة زدنا للموردين."
+        },
+        "DEFAULT_INITIALS": "ف.ع",
+        "AUTHORS": {
+            "OPERATIONS_TEAM": "فريق العمليات"
+        },
+        "NOTES": {
+            "FOLLOW_UP_CREATED": "تم إنشاء ملاحظة متابعة داخلية للمورّد {{vendorId}}."
+        },
+        "EXPORT_HEADERS": {
+            "ACTION": "الإجراء",
+            "EXECUTOR": "المنفذ",
+            "TIMESTAMP": "التاريخ والوقت",
+            "DESCRIPTION": "الوصف"
         }
     },
     "VENDOR_PRODUCTS": {
@@ -2208,7 +2359,10 @@
         },
         "VIEW_ALL_INVOICES": "عرض كل الفواتير",
         "MOCK_VENDOR_NAME": "متجر زادانة المميز",
-        "WEEKLY_CYCLE": "أسبوعية"
+        "WEEKLY_CYCLE": "أسبوعية",
+        "GENERAL_STATUS": {
+            "NEW": "جديد"
+        }
     },
     "VENDOR_OVERVIEW": {
         "STATUS": {
@@ -2304,7 +2458,11 @@
         "SMS_NOTIFICATIONS": "رسائل SMS",
         "NEW_ORDERS_NOTIFICATIONS": "طلبات جديدة",
         "LAST_UPDATED_BY": "آخر تعديل بواسطة",
-        "LAST_UPDATED_BY_VALUE": "أحمد محمد (Admin)"
+        "LAST_UPDATED_BY_VALUE": "أحمد محمد (Admin)",
+        "OPERATIONS": {
+            "ORDER_RECEPTION": "استقبال الطلبات",
+            "WORKING_HOURS": "ساعات العمل"
+        }
     },
     "VENDOR_ANALYTICS": {
         "DAY": "يوم",
@@ -2330,7 +2488,17 @@
             "AVERAGE_ORDER_VALUE": "متوسط قيمة الطلب",
             "PREPARATION_SPEED": "سرعة التجهيز",
             "ON_TIME_DELIVERY": "التسليم في الوقت",
-            "CUSTOMER_RATING": "تقييم العملاء"
+            "CUSTOMER_RATING": "تقييم العملاء",
+            "TOTAL_ORDERS": "إجمالي الطلبات",
+            "TOTAL_ORDERS_HINT": "إجمالي الطلبات المتاحة في العينة الحالية.",
+            "CANCELLATION_RATE_HINT": "نسبة الطلبات الملغاة من إجمالي الطلبات في العينة.",
+            "AVERAGE_ORDER_VALUE_HINT": "متوسط قيمة الطلبات المحسوب من إجمالي الإيراد.",
+            "COMPLETED_ORDERS": "الطلبات المكتملة",
+            "COMPLETED_ORDERS_HINT": "عدد الطلبات المسلّمة بنجاح داخل العينة الحالية.",
+            "AVAILABLE_PRODUCTS": "المنتجات المتاحة",
+            "AVAILABLE_PRODUCTS_HINT": "المنتجات القابلة للبيع والمفعلة حاليًا.",
+            "LOW_STOCK_PRODUCTS": "منتجات تحتاج متابعة",
+            "LOW_STOCK_PRODUCTS_HINT": "منتجات منخفضة المخزون أو نافدة وتحتاج تدخلاً سريعًا."
         },
         "BEST_SELLERS": {
             "WATCH_NAME": "ساعة ذكية الإصدار الأخير",
@@ -2347,6 +2515,15 @@
             "REVIEWER_TWO": "سارة ج.",
             "REVIEW_TWO_TEXT": "\"جودة السماعات رائعة مقارنة بالسعر، شكراً لكم على الخدمة المميزة.\"",
             "REVIEW_TWO_TIME": "منذ 4 أيام"
+        },
+        "API_BANNER_TITLE": "تحليلات الأداء المباشرة",
+        "API_BANNER_MESSAGE": "المؤشرات التالية تُحتسب مباشرة من الطلبات والمنتجات النشطة الخاصة بهذا المورّد.",
+        "LIVE_SNAPSHOT": "لقطة تشغيلية مباشرة",
+        "SOURCES": {
+            "ORDERS_TITLE": "مصدر بيانات الطلبات",
+            "ORDERS_VALUE": "آخر 200 طلب تمت مزامنتها من واجهة إدارة المورّد.",
+            "PRODUCTS_TITLE": "مصدر بيانات المنتجات",
+            "PRODUCTS_VALUE": "آخر 200 منتج تمت مزامنتها من كتالوج المورّد الحالي."
         }
     },
     "DISPUTES_DASHBOARD": {
@@ -2697,7 +2874,18 @@
             "REF_LABEL": "الرقم المرجعي",
             "ELECTRONICALLY_VERIFIED": "موثق إلكترونياً",
             "VIEW_ONLY": "نسخة للعرض فقط",
-            "ZADANA_WATHQ_SYNC": "هذا المستند صادر من منصة زدانة بالتكامل مع منصة واثق"
+            "ZADANA_WATHQ_SYNC": "هذا المستند صادر من منصة زدانة بالتكامل مع منصة واثق",
+            "CAPITAL": "رأس المال",
+            "CITY": "المدينة",
+            "DEFAULT_CAPITAL": "غير متوفر",
+            "DEFAULT_CITY": "غير متوفر",
+            "DEFAULT_DATA_SOURCE": "مصدر تحقق آلي",
+            "DEFAULT_ENTITY_TYPE": "غير متوفر",
+            "DEFAULT_ESTABLISHMENT_NAME": "غير متوفر",
+            "DEFAULT_MAIN_ACTIVITY": "غير متوفر",
+            "DEFAULT_VERIFIED_BY": "التحقق الآلي للنظام",
+            "ISSUE_DATE": "تاريخ الإصدار",
+            "WATERMARK": "نسخة للمعاينة"
         },
         "FINANCIAL_STATEMENT": {
             "TITLE": "تصدير كشف مالي",
@@ -2733,7 +2921,20 @@
             "TOTAL_AMOUNT": "المبلغ الإجمالي",
             "CANCEL": "إلغاء",
             "DOWNLOAD": "تحميل الكشف",
-            "PREVIEW_BTN": "معاينة"
+            "PREVIEW_BTN": "معاينة",
+            "DEFAULT_VENDOR_NAME": "حساب التاجر",
+            "DISCOUNTS": "الخصومات",
+            "LAST_30_DAYS": "آخر 30 يومًا",
+            "LAST_7_DAYS": "آخر 7 أيام",
+            "NET_AMOUNT_ITEM": "صافي المبلغ",
+            "PLATFORM_COMMISSIONS": "عمولات المنصة",
+            "RECORDS_SUFFIX": "سجل",
+            "RETURNS": "المرتجعات",
+            "SALES": "المبيعات",
+            "STATEMENT_DESC_COMPREHENSIVE": "يتضمن المبيعات والمرتجعات والخصومات والعمولات وصافي المبلغ النهائي.",
+            "STATEMENT_DESC_DEDUCTIONS": "يعرض الخصومات والعمولات والتسويات المرتبطة بالرسوم فقط.",
+            "STATEMENT_DESC_PAYMENTS": "يركّز على الأرصدة الجاهزة للصرف وحركات المستحقات خلال الفترة المحددة.",
+            "STATEMENT_DESC_RETURNS": "يوضح أثر المرتجعات والمبالغ المستقطعة المرتبطة بحركات الاسترداد."
         },
         "PAYOUTS_REVIEW": {
             "TITLE": "مراجعة الدفعات",
@@ -2756,7 +2957,9 @@
                 "BANK": "البنك",
                 "DATE": "التاريخ",
                 "STATUS": "الحالة",
-                "ACTIONS": "إجراءات"
+                "ACTIONS": "إجراءات",
+                "BANK_DESTINATION": "البنك المستلم",
+                "PAYMENT_NUMBER": "رقم الدفعة"
             },
             "TRANSACTION_DETAILS": "تفاصيل المعاملة",
             "SELECT_TRANSACTION": "اختر معاملة لعرض التفاصيل",
@@ -2770,7 +2973,21 @@
                 "SUSPEND": "تعليق",
                 "ESCALATE": "تصعيد"
             },
-            "CLOSE": "إغلاق"
+            "CLOSE": "إغلاق",
+            "BANK_OPTIONS": {
+                "ALAHLI": "البنك الأهلي السعودي",
+                "ALINMA": "مصرف الإنماء",
+                "ALRAJHI": "مصرف الراجحي",
+                "WALLET": "المحفظة"
+            },
+            "EXPORT_RECORD": "تصدير السجل",
+            "INTERNAL_NOTES": "ملاحظات داخلية",
+            "INTERNAL_NOTES_PLACEHOLDER": "أضف ملاحظة داخلية لفريق المالية أو الامتثال...",
+            "MANAGER_ACTIONS": "إجراءات المدير",
+            "REFERENCE_PLACEHOLDER": "ابحث برقم الحوالة أو مرجع الصرف",
+            "RESET": "إعادة التعيين",
+            "SAVE_UPDATE": "حفظ التحديث",
+            "SHOWING_RESULTS": "عرض النتائج"
         },
         "PAYMENT_DETAIL": {
             "TITLE": "تفاصيل الدفعة",
@@ -2800,7 +3017,26 @@
                 "RETRY_PAYMENT": "إعادة المحاولة",
                 "VIEW_ACTIVITY": "عرض سجل النشاط"
             },
-            "CLOSE": "إغلاق"
+            "CLOSE": "إغلاق",
+            "BANK_REFERENCE": "مرجع البنك",
+            "FAILURE_REASON": "سبب الفشل",
+            "LAST_ATTEMPT": "آخر محاولة",
+            "LOG_MESSAGES": {
+                "API_INITIATED": "تم بدء طلب الصرف من مسار العمل المالي."
+            },
+            "LOG_TYPES": {
+                "DEBUG": "تشخيص",
+                "ERROR": "خطأ",
+                "SUCCESS": "نجاح"
+            },
+            "OPERATION_DATE": "تاريخ العملية",
+            "OPERATION_TYPE": "نوع العملية",
+            "PAYOUT_OPERATION": "عملية صرف",
+            "STATUS_CODE": "رمز الحالة",
+            "SWIFT_CODE": "رمز سويفت",
+            "TOTAL_AMOUNT": "إجمالي المبلغ",
+            "UPDATED_AT": "آخر تحديث",
+            "VENDOR_NAME": "اسم التاجر"
         },
         "CREATE_SETTLEMENT": {
             "TITLE": "إنشاء تسوية مالية",
@@ -2839,7 +3075,8 @@
             "FINANCE_APPROVAL": "إرسال للمراجعة المالية (Finance Approval Required)",
             "CANCEL": "إلغاء",
             "SAVE_DRAFT": "حفظ كمسودة",
-            "CREATE_APPROVE": "إنشاء واعتماد التسوية"
+            "CREATE_APPROVE": "إنشاء واعتماد التسوية",
+            "SAR": "ر.س"
         },
         "LEGAL_BANK_EDIT": {
             "TITLE": "تعديل البيانات القانونية والبنكية",
@@ -2930,6 +3167,12 @@
                 "ELECTRONICS": "إلكترونيات",
                 "FOOD": "أغذية ومشروبات",
                 "HOME": "منزل وديكور"
+            },
+            "ACTIVITY_TYPES": {
+                "ELECTRONICS": "إلكترونيات",
+                "FASHION": "أزياء",
+                "FOOD": "أغذية وبقالة",
+                "HOME": "المنزل"
             }
         }
     },
@@ -3474,7 +3717,9 @@
             "LOAD_LIST": "تعذر تحميل الطلبات. تأكد من الفلاتر الحالية أو أعد المحاولة.",
             "LOAD_DETAIL": "تعذر تحميل تفاصيل الطلب.",
             "INVALID_ID": "رقم الطلب غير صالح."
-        }
+        },
+        "STATUS_READY_FOR_PICKUP": "جاهز للاستلام",
+        "STATUS_DELIVERED": "تم التسليم"
     },
     "FINANCES": {
         "TITLE": "المالية",
@@ -3546,7 +3791,9 @@
             "ESCALATED": "تم التصعيد",
             "COLLECTED": "تم التحصيل",
             "OVERDUE": "متأخر",
-            "PENDING_APPROVAL": "بانتظار الموافقة"
+            "PENDING_APPROVAL": "بانتظار الموافقة",
+            "COMPLETED": "مكتمل",
+            "IN_PROGRESS": "قيد التنفيذ"
         },
         "CHART": {
             "GMV_VS_REVENUE": "إجمالي قيمة البضائع مقابل صافي الإيراد",
@@ -3655,7 +3902,8 @@
                 "VAT": "ضريبة قيمة مضافة مطبقة على الرسوم الخاضعة.",
                 "BONUS": "مكافأة تشغيلية أو ترويجية.",
                 "PENALTY": "غرامة مخصومة بسبب مخالفة سياسة."
-            }
+            },
+            "TITLE": "دفتر القيود المالية"
         },
         "SETTLEMENTS": {
             "VENDORS": "المورّدون",
@@ -3904,6 +4152,897 @@
             "SUPER_ADMIN": "مدير النظام",
             "ADMIN": "مسؤول"
         }
+    },
+    "ADMIN_USERS": {
+        "TITLE": "دليل الصلاحيات",
+        "DESC": "إدارة مسؤولي المنصة وفرق التجار والسائقين والعملاء من دليل موحّد للوصول والتواصل.",
+        "OPEN_EMAIL_CENTER": "مركز البريد",
+        "ADD_ADMIN": "دعوة مسؤول",
+        "ADD_IDENTITY": "إضافة هوية",
+        "SEARCH_PLACEHOLDER": "ابحث بالاسم أو البريد أو الفريق أو القسم...",
+        "EMPTY_TITLE": "لا توجد هويات مطابقة",
+        "EMPTY_MESSAGE": "جرّب إزالة الفلاتر النشطة أو أنشئ سجل وصول جديدًا.",
+        "KPI": {
+            "TOTAL": "إجمالي الهويات",
+            "ACTIVE": "الصلاحيات النشطة",
+            "INVITED": "الدعوات المعلقة",
+            "SUSPENDED": "الصلاحيات الموقوفة",
+            "MFA_GAPS": "حسابات بدون مصادقة متعددة العوامل",
+            "CUSTOM_ACCESS": "صلاحيات مخصصة",
+            "OPERATIONAL": "هويات تشغيلية",
+            "VENDOR_PANEL": "هويات لوحة التاجر",
+            "EXTERNAL": "حسابات خارجية"
+        },
+        "AUDIENCE": {
+            "ALL": "كل الشرائح",
+            "SUPER_ADMIN": "الإدارة العليا",
+            "VENDOR_NETWORK": "شبكة التجار",
+            "DRIVERS": "السائقون",
+            "CUSTOMERS": "العملاء"
+        },
+        "FILTERS": {
+            "ALL": "الكل",
+            "STATUS": "الحالة",
+            "ACCESS_LEVEL": "مستوى الصلاحية",
+            "ROLE": "القالب الوظيفي",
+            "TEAM": "الفريق",
+            "PANEL": "نطاق اللوحة",
+            "PERSONA": "نوع الشخصية",
+            "VENDOR": "التاجر",
+            "BRANCH": "الفرع",
+            "ACTIVE_COUNT": "فلاتر نشطة",
+            "RESET": "إعادة ضبط الفلاتر"
+        },
+        "TABLE": {
+            "ADMIN": "المسؤول",
+            "IDENTITY": "الهوية",
+            "PERSONA": "الشخصية",
+            "ROLE": "الدور",
+            "TEAM": "الفريق",
+            "SCOPE": "النطاق",
+            "LAST_LOGIN": "آخر دخول",
+            "STATUS": "الحالة",
+            "SECURITY": "الأمان",
+            "CUSTOM_ACCESS": "مخصص"
+        },
+        "STATUS": {
+            "ACTIVE": "نشط",
+            "INVITED": "مدعو",
+            "SUSPENDED": "موقوف",
+            "INACTIVE": "غير نشط"
+        },
+        "INVITE": {
+            "DRAFT": "مسودة",
+            "PENDING": "قيد الانتظار",
+            "ACCEPTED": "تم القبول",
+            "EXPIRED": "منتهية"
+        },
+        "ACCESS_LEVEL": {
+            "FULL": "تحكم كامل",
+            "RESTRICTED": "مقيد",
+            "OBSERVER": "مراقب"
+        },
+        "FIELDS": {
+            "FULL_NAME": "الاسم الكامل",
+            "EMAIL": "البريد الإلكتروني",
+            "PHONE": "رقم الجوال",
+            "DEPARTMENT": "القسم",
+            "TEAM": "الفريق",
+            "ROLE_PRESET": "القالب الوظيفي",
+            "ACCESS_LEVEL": "مستوى الصلاحية",
+            "STATUS": "الحالة",
+            "INVITE_STATE": "حالة الدعوة",
+            "MFA": "التحقق متعدد العوامل",
+            "PERSONA": "نوع الشخصية",
+            "PANEL_SCOPE": "نطاق اللوحة",
+            "ENTITY_ID": "معرّف الكيان",
+            "VENDOR": "التاجر",
+            "BRANCH": "الفرع",
+            "REGION": "المنطقة",
+            "CITY": "المدينة",
+            "REPLY_TO": "عنوان الرد",
+            "PREFERRED_LOCALE": "اللغة المفضلة",
+            "NOTIFICATION_EMAILS": "بريد الإشعارات",
+            "ESCALATION_EMAILS": "بريد التصعيد"
+        },
+        "ACTIONS": {
+            "RESET_PRESET": "إعادة القالب الافتراضي",
+            "RESEND_INVITE": "إعادة إرسال الدعوة",
+            "REACTIVATE": "إعادة التفعيل",
+            "SUSPEND": "تعليق الصلاحية",
+            "SAVE": "حفظ التعديلات",
+            "BACK_TO_LIST": "العودة إلى الدليل",
+            "DUPLICATE": "نسخ الدور"
+        },
+        "SECURITY": {
+            "MFA_ON": "المصادقة متعددة العوامل مفعلة",
+            "MFA_OFF": "المصادقة متعددة العوامل غير مكتملة",
+            "LAST_LOGIN": "آخر دخول",
+            "INVITED_BY": "تمت الدعوة بواسطة",
+            "INVITED_AT": "تاريخ الدعوة",
+            "ACCEPTED_AT": "تاريخ القبول",
+            "NEVER": "أبدًا",
+            "VERIFICATION": "التحقق"
+        },
+        "DETAIL": {
+            "TITLE": "ملف الهوية والصلاحية",
+            "SUBTITLE": "بيانات الهوية، الارتباطات، إعدادات التواصل، وتصميم الصلاحيات حسب نوع الحساب.",
+            "BREADCRUMB": "ملف الصلاحية",
+            "NOT_FOUND": "الهوية غير موجودة",
+            "NOT_FOUND_DESC": "السجل المطلوب غير متوفر داخل دليل الصلاحيات المحلي.",
+            "NEW_USER": "هوية جديدة",
+            "EMAIL_PENDING": "البريد غير محدد بعد",
+            "IDENTITY_BADGE": "الهوية",
+            "IDENTITY_TITLE": "الملف التعريفي",
+            "IDENTITY_DESC": "بيانات التواصل الأساسية، تبعية القسم، وتصنيف الشخصية.",
+            "ASSIGNMENT_BADGE": "الارتباطات",
+            "ASSIGNMENT_TITLE": "ربط الكيان والفرع",
+            "ASSIGNMENT_DESC": "اربط الهوية بالتاجر أو الفرع أو نطاق الحساب الخارجي الصحيح.",
+            "ACCESS_BADGE": "نموذج الصلاحية",
+            "ACCESS_TITLE": "الدور والحالة ونمط الوصول",
+            "ACCESS_DESC": "استخدم القوالب مع التخصيص عند الحاجة للمشغلين، أو ملفات خفيفة للحسابات الخارجية.",
+            "COMMUNICATION_BADGE": "ملف التواصل",
+            "COMMUNICATION_TITLE": "توجيه البريد والإشعارات",
+            "COMMUNICATION_DESC": "اضبط الردود وجهات التصعيد وخيارات الاشتراك في الإشعارات لكل هوية.",
+            "PERMISSIONS_BADGE": "مصفوفة الصلاحيات",
+            "PERMISSIONS_TITLE": "مصفوفة الصلاحيات التشغيلية",
+            "PERMISSIONS_DESC": "ترث مجموعات الصلاحيات من القالب المحدد، ثم يمكن تعديل إجراءات بعينها.",
+            "FEATURES_BADGE": "صلاحيات المزايا",
+            "FEATURES_TITLE": "مفاتيح مزايا الحساب",
+            "FEATURES_DESC": "الحسابات الخارجية تعتمد على مفاتيح المنتج والتواصل بدل مصفوفة الصلاحيات الإدارية الكاملة.",
+            "SECURITY_BADGE": "الحالة الأمنية",
+            "SECURITY_TITLE": "نقاط التحقق الأمنية",
+            "SECURITY_DESC": "تابع جاهزية المصادقة متعددة العوامل وسجل الدعوات وآخر النشاطات.",
+            "SUMMARY_BADGE": "ملخص التخصيص",
+            "SUMMARY_TITLE": "ملخص الصلاحية الفعالة",
+            "SUMMARY_DESC": "نظرة سريعة على القالب الحالي ومدى الانحراف الناتج عن التخصيص.",
+            "EFFECTIVE_PERMISSIONS": "صلاحيات فعّالة",
+            "GRANTED_OVERRIDES": "استثناءات ممنوحة",
+            "REVOKED_OVERRIDES": "استثناءات مسحوبة",
+            "CUSTOM_TOTAL": "تعديلات مخصصة",
+            "NOTIFICATION_RECIPIENTS": "مستلمو الإشعارات",
+            "MFA_HINT": "استخدم هذا الحقل لتحديد ما إذا كان المسؤول أكمل التسجيل الآمن."
+        },
+        "SCOPE": {
+            "GLOBAL": "لوحة عامة",
+            "DIRECTORY": "مرتبط بكيان"
+        },
+        "PANELS": {
+            "SUPER_ADMIN_PANEL": "لوحة الإدارة العليا",
+            "VENDOR_PANEL": "لوحة التاجر",
+            "DRIVER_APP": "تطبيق السائق",
+            "CUSTOMER_APP": "تطبيق العميل"
+        },
+        "PERSONAS": {
+            "SUPER_ADMIN_MANAGER": "مدير إدارة عليا",
+            "SUPER_ADMIN_STAFF": "موظف إدارة عليا",
+            "VENDOR_OWNER": "مالك التاجر",
+            "VENDOR_COMPANY_MANAGER": "مدير شركة التاجر",
+            "VENDOR_BRANCH_MANAGER": "مدير فرع التاجر",
+            "VENDOR_BRANCH_EMPLOYEE": "موظف فرع التاجر",
+            "VENDOR_FINANCE": "مالية التاجر",
+            "VENDOR_SUPPORT": "دعم التاجر",
+            "DRIVER": "حساب سائق",
+            "CUSTOMER": "حساب عميل"
+        },
+        "VERIFICATION": {
+            "VERIFIED": "موثّق",
+            "PENDING": "قيد الانتظار",
+            "UNDER_REVIEW": "قيد المراجعة",
+            "SUSPENDED": "موقوف",
+            "NOT_REQUIRED": "غير مطلوب"
+        },
+        "LOCALE": {
+            "AR": "العربية",
+            "EN": "الإنجليزية",
+            "BILINGUAL": "ثنائي اللغة"
+        },
+        "COMMUNICATION_FLAGS": {
+            "ACCESS_INVITES": {
+                "LABEL": "دعوات الوصول",
+                "DESC": "رسائل الدعوة وإعادة تفعيل الوصول للحسابات التشغيلية."
+            },
+            "BRANCH_ALERTS": {
+                "LABEL": "تنبيهات الفروع",
+                "DESC": "تحديثات التشغيل وتغييرات تغطية الفروع وصلاحيات الموظفين."
+            },
+            "DISPATCH_NOTIFICATIONS": {
+                "LABEL": "تنبيهات التوجيه",
+                "DESC": "تغييرات إسناد السائقين، المهمات، وإشعارات التوجيه المباشر."
+            },
+            "COMPLIANCE_EMAILS": {
+                "LABEL": "رسائل الامتثال",
+                "DESC": "متابعة التحقق وطلبات المستندات والتصعيدات المرتبطة بالامتثال."
+            },
+            "FINANCE_DIGESTS": {
+                "LABEL": "ملخصات المالية",
+                "DESC": "ملخصات التسويات والتنبيهات المالية ومراجعات الأرصدة."
+            },
+            "SUPPORT_ESCALATIONS": {
+                "LABEL": "تصعيدات الدعم",
+                "DESC": "توجيه حالات الدعم عالية الأولوية ومتابعات استعادة الخدمة."
+            },
+            "ORDER_UPDATES": {
+                "LABEL": "تحديثات مشاكل الطلبات",
+                "DESC": "إشعارات مشكلات الطلبات والاستردادات وتحديثات الحالات."
+            },
+            "MARKETING_OPT_IN": {
+                "LABEL": "الاشتراك التسويقي",
+                "DESC": "السماح برسائل التسويق وإعادة التنشيط لحسابات العملاء."
+            }
+        },
+        "FEATURE_TOGGLES": {
+            "DRIVER_DISPATCH": {
+                "LABEL": "تنبيهات التوجيه",
+                "DESC": "السماح بإشعارات الإسناد وتغييرات المهمات وجهوزية الاستلام."
+            },
+            "DRIVER_COMPLIANCE": {
+                "LABEL": "تذكيرات الامتثال",
+                "DESC": "إرسال تنبيهات انتهاء المستندات ومتابعات التحقق."
+            },
+            "DRIVER_FINANCE": {
+                "LABEL": "ملخصات المالية",
+                "DESC": "تفعيل ملخصات السداد والدفع عند الاستلام لحسابات السائقين."
+            },
+            "CUSTOMER_MARKETING": {
+                "LABEL": "التواصل التسويقي",
+                "DESC": "السماح بالرسائل التسويقية ورسائل دورة الحياة لحساب العميل."
+            },
+            "CUSTOMER_ESCALATION": {
+                "LABEL": "تصعيدات الدعم",
+                "DESC": "إرسال تحديثات الدعم المصعّد ورسائل استعادة الخدمة."
+            },
+            "CUSTOMER_ISSUES": {
+                "LABEL": "تحديثات المشاكل",
+                "DESC": "إشعار العميل بتقدم الاستردادات والنزاعات ومشاكل الطلبات."
+            }
+        },
+        "PERMISSIONS": {
+            "ACTIONS": {
+                "VIEW": "عرض",
+                "CREATE": "إنشاء",
+                "EDIT": "تعديل",
+                "APPROVE": "اعتماد",
+                "EXPORT": "تصدير",
+                "MANAGE_SETTINGS": "إدارة الإعدادات"
+            },
+            "GROUPS": {
+                "DASHBOARD": {
+                    "TITLE": "لوحة المؤشرات",
+                    "DESC": "الرؤى التنفيذية وبطاقات المؤشرات وتقارير الصحة التشغيلية."
+                },
+                "VENDORS": {
+                    "TITLE": "التجار",
+                    "DESC": "مراجعة التجار وإجراءات الانضمام ومتابعات الامتثال."
+                },
+                "CATALOG": {
+                    "TITLE": "الكتالوج",
+                    "DESC": "البيانات الرئيسية والتحكم بالعلامات التجارية وحوكمة التصنيفات."
+                },
+                "ORDERS": {
+                    "TITLE": "الطلبات",
+                    "DESC": "الإشراف على الطلبات والاستثناءات ومسارات الحل."
+                },
+                "CUSTOMERS": {
+                    "TITLE": "العملاء",
+                    "DESC": "صحة العملاء ومؤشرات الثقة ورؤية الاستبقاء."
+                },
+                "DRIVERS": {
+                    "TITLE": "السائقون",
+                    "DESC": "جاهزية السائقين والتحقق وصلاحيات الإجراء التشغيلي."
+                },
+                "DISPUTES": {
+                    "TITLE": "النزاعات",
+                    "DESC": "مراجعة الحالات والتصعيد وسلطات الاعتماد."
+                },
+                "FINANCES": {
+                    "TITLE": "المالية",
+                    "DESC": "التسويات والضوابط المالية وتغييرات السياسات."
+                },
+                "USERS_ACCESS": {
+                    "TITLE": "المستخدمون والصلاحيات",
+                    "DESC": "دورة حياة الهويات وقوالب الأدوار وضوابط الوصول."
+                },
+                "EMAIL_CENTER": {
+                    "TITLE": "مركز البريد",
+                    "DESC": "توجيه البريد التشغيلي والقوالب وملفات الإرسال."
+                },
+                "SYSTEM": {
+                    "TITLE": "النظام",
+                    "DESC": "إعدادات المنصة العامة ونقاط التحكم الحساسة."
+                },
+                "VENDOR_DASHBOARD": {
+                    "TITLE": "لوحة التاجر",
+                    "DESC": "رؤية المؤشرات للفروع والشركة لمشغلي التاجر."
+                },
+                "VENDOR_ORDERS": {
+                    "TITLE": "طلبات التاجر",
+                    "DESC": "تدفق الطلبات من جهة التاجر والاعتمادات والتصدير."
+                },
+                "VENDOR_CATALOG": {
+                    "TITLE": "كتالوج التاجر",
+                    "DESC": "التشكيلة المملوكة للتاجر وتعديلات المنتجات والنشر."
+                },
+                "VENDOR_BRANCH_TEAM": {
+                    "TITLE": "فريق الفرع",
+                    "DESC": "إدارة طاقم الفرع وصلاحياته وإعداداته المحلية."
+                },
+                "VENDOR_FINANCE": {
+                    "TITLE": "مالية التاجر",
+                    "DESC": "محفظة التاجر والتسويات وإعدادات المالية."
+                },
+                "VENDOR_SUPPORT": {
+                    "TITLE": "دعم التاجر",
+                    "DESC": "التعامل مع المشاكل وسجل الدعم وتصدير التذاكر."
+                },
+                "VENDOR_SETTINGS": {
+                    "TITLE": "إعدادات التاجر",
+                    "DESC": "إعدادات لوحة التاجر والتفضيلات التشغيلية والتهيئة."
+                }
+            }
+        },
+        "PRESETS": {
+            "SUPER_ADMIN": {
+                "NAME": "مدير نظام",
+                "DESC": "صلاحية كاملة على كل نطاقات المنصة بما فيها الصلاحيات وإعدادات النظام."
+            },
+            "OPERATIONS_LEAD": {
+                "NAME": "قائد العمليات",
+                "DESC": "تحكم تشغيلي واسع عبر التجار والطلبات والعملاء والسائقين."
+            },
+            "RISK_ADMIN": {
+                "NAME": "مسؤول المخاطر",
+                "DESC": "صلاحيات مركزة للنزاعات والاعتمادات والقرارات الحساسة للثقة."
+            },
+            "FINANCE_ADMIN": {
+                "NAME": "مسؤول المالية",
+                "DESC": "رؤية مالية متقدمة وصلاحيات اعتماد للتسويات وضوابط التسعير."
+            },
+            "SUPPORT_ADMIN": {
+                "NAME": "مسؤول الدعم",
+                "DESC": "وصول موجه للدعم مع تدخلات محدودة في العملاء والطلبات."
+            },
+            "VENDOR_OWNER": {
+                "NAME": "مالك التاجر",
+                "DESC": "تحكم كامل في لوحة التاجر على مستوى الشركة والمالية والفروع."
+            },
+            "VENDOR_COMPANY_MANAGER": {
+                "NAME": "مدير شركة التاجر",
+                "DESC": "تحكم تشغيلي على مستوى الشركة للفروع والطلبات وتنفيذ الكتالوج."
+            },
+            "VENDOR_BRANCH_MANAGER": {
+                "NAME": "مدير فرع التاجر",
+                "DESC": "إدارة محلية للفرع والموظفين والطلبات وجودة الخدمة."
+            },
+            "VENDOR_BRANCH_EMPLOYEE": {
+                "NAME": "موظف فرع التاجر",
+                "DESC": "مشغل فرع بصلاحيات محدودة ودون وصول لإعدادات الشركة."
+            },
+            "VENDOR_FINANCE_MANAGER": {
+                "NAME": "مدير مالية التاجر",
+                "DESC": "رؤية مالية للتاجر مع ضوابط التسويات ونطاق تشغيلي محدود."
+            },
+            "VENDOR_SUPPORT_MANAGER": {
+                "NAME": "مدير دعم التاجر",
+                "DESC": "شخصية دعم للتذاكر والتصعيدات ومتابعات الخدمة."
+            },
+            "DRIVER_ACCOUNT": {
+                "NAME": "حساب سائق",
+                "DESC": "هوية خارجية تعتمد على تفضيلات التواصل ومفاتيح المزايا."
+            },
+            "CUSTOMER_ACCOUNT": {
+                "NAME": "حساب عميل",
+                "DESC": "هوية خارجية تركز على توجيه التواصل وإتاحة خدمات دورة الحياة."
+            }
+        }
+    },
+    "EMAIL_CENTER": {
+        "TITLE": "مركز البريد",
+        "DESC": "إدارة ملفات الإرسال، التوجيه حسب الشخصية، بُناة المستلمين، ومعاينات سير العمل الثنائية اللغة.",
+        "OPEN_ADMIN_USERS": "دليل الصلاحيات",
+        "KPI": {
+            "TOTAL_RULES": "قواعد سير العمل",
+            "ENABLED": "القواعد المفعلة",
+            "SENDER_PROFILES": "ملفات الإرسال",
+            "ROUTED_RULES": "قواعد موجهة",
+            "DIRECTORY_DRIVEN": "قواعد مرتبطة بالدليل",
+            "AUDIENCE_COVERAGE": "تغطية الشرائح"
+        },
+        "AUDIENCE": {
+            "BADGE": "توجيه الشرائح",
+            "TITLE": "تغطية سير العمل حسب نوع الشخصية",
+            "DESC": "بدّل بين سيناريوهات الإدارة العليا والتجار والسائقين والعملاء.",
+            "ALL": "كل الشرائح"
+        },
+        "STATUS": {
+            "PRIMARY": "أساسي",
+            "SECONDARY": "ثانوي",
+            "BACKUP": "احتياطي"
+        },
+        "LOCALE": {
+            "BILINGUAL": "ثنائي اللغة",
+            "ARABIC": "العربية",
+            "ENGLISH": "الإنجليزية"
+        },
+        "SENDER_PROFILES": {
+            "BADGE": "ملفات الإرسال",
+            "TITLE": "طبقة الإرسال التشغيلية",
+            "DESC": "هويات إرسال قابلة لإعادة الاستخدام للإشعارات الإدارية وسير العمل التشغيلي.",
+            "REPLY_TO": "عنوان الرد",
+            "LOCALE": "وضع اللغة",
+            "DEFAULT": "المرسل الافتراضي"
+        },
+        "PROFILES": {
+            "OPS_PRIMARY": "المرسل الأساسي لرسائل الوصول والرسائل التشغيلية العامة على المنصة.",
+            "RISK_DESK": "مرسل مخصص للمخاطر والامتثال ومسارات التصعيد.",
+            "VENDOR_NETWORK": "مرسل مخصص لانضمام التجار والفروع وتحديثات التوجيه.",
+            "FINANCE_DIGEST": "مرسل مناسب للتقارير المالية وملخصات التسويات."
+        },
+        "WORKFLOWS": {
+            "BADGE": "قواعد سير العمل",
+            "TITLE": "سير العمل حسب نوع الشخصية",
+            "DESC": "راجع القواعد المفعلة، نطاق الشريحة، ملف الإرسال، وآلية التوجيه من مكان واحد.",
+            "ENABLED": "مفعّل",
+            "DISABLED": "غير مفعّل"
+        },
+        "CONFIG": {
+            "BADGE": "تهيئة القاعدة"
+        },
+        "PERSONAS": {
+            "BADGE": "نطاق الشخصية",
+            "TITLE": "استهداف الشخصيات",
+            "DESC": "قيّد كل قاعدة بالشخصيات التي يجب أن تستقبل أو تؤثر في سير العمل."
+        },
+        "RECIPIENTS": {
+            "BADGE": "باني المستلمين",
+            "TITLE": "مستلمو الدليل",
+            "DESC": "أنشئ قوائم الإرسال الرئيسية والنسخ والنسخ المخفية من هويات دليل الصلاحيات بدل العناوين الثابتة."
+        },
+        "STATIC_RECIPIENTS": {
+            "BADGE": "مستلمون ثابتون",
+            "TITLE": "مستلمون يدويون",
+            "DESC": "أضف هؤلاء المستلمين دائمًا بجانب التوجيه القادم من الدليل."
+        },
+        "FALLBACK": {
+            "BADGE": "توجيه بديل",
+            "TITLE": "مستلمو الاحتياط",
+            "DESC": "استخدم جهات بديلة عندما لا يتم العثور على مستلم مناسب في الدليل."
+        },
+        "RESOLVED": {
+            "BADGE": "المعاينة النهائية",
+            "EMPTY": "لا يوجد مستلمون مطابقون"
+        },
+        "BRANCH_SCOPE": {
+            "ALL_BRANCHES": "كل الفروع",
+            "ASSIGNED_BRANCH": "الفرع المرتبط",
+            "SPECIFIC_BRANCH": "فرع محدد"
+        },
+        "FILTERS": {
+            "ALL_VENDORS": "كل التجار",
+            "ALL_BRANCHES": "كل الفروع"
+        },
+        "FIELDS": {
+            "ENABLED": "حالة القاعدة",
+            "SENDER_PROFILE": "ملف الإرسال",
+            "TO": "To ثابت",
+            "CC": "CC ثابت",
+            "BCC": "نسخ مخفية",
+            "OWNER": "مالك المسار",
+            "ESCALATION": "جهة التصعيد",
+            "AUDIENCE": "الشريحة",
+            "PANEL_SCOPE": "نطاق اللوحة",
+            "ENTITY_ID": "معرّف الكيان",
+            "VENDOR": "التاجر",
+            "BRANCH": "الفرع",
+            "BRANCH_SCOPE": "وضع نطاق الفرع",
+            "FALLBACK_TO": "To احتياطي",
+            "FALLBACK_CC": "CC احتياطي",
+            "FALLBACK_BCC": "نسخ مخفية احتياطية",
+            "DIRECTORY_TO": "To من الدليل",
+            "DIRECTORY_CC": "CC من الدليل",
+            "DIRECTORY_BCC": "نسخ مخفية من الدليل"
+        },
+        "ACTIONS": {
+            "SAVE": "حفظ القاعدة"
+        },
+        "PREVIEW": {
+            "BADGE": "معاينة القالب",
+            "TITLE": "معاينة مباشرة ثنائية اللغة",
+            "DESC": "راجع العنوان والنص والمتغيرات الديناميكية بدون فتح محرر القوالب.",
+            "ENGLISH": "الإنجليزية",
+            "ARABIC": "العربية",
+            "SUBJECT": "العنوان",
+            "BODY": "المحتوى",
+            "VARIABLES": "المتغيرات المتاحة",
+            "SENDER": "المرسل الحالي"
+        },
+        "CATEGORIES": {
+            "ACCESS": "الوصول",
+            "OPERATIONS": "العمليات",
+            "RISK": "المخاطر والثقة",
+            "FINANCE": "المالية",
+            "VENDOR_NETWORK": "شبكة التجار",
+            "DRIVER_NETWORK": "عمليات السائقين",
+            "CUSTOMER_CARE": "رعاية العملاء"
+        },
+        "CADENCE": {
+            "INSTANT": "فوري",
+            "BATCH_15": "دفعة كل 15 دقيقة",
+            "DAILY": "ملخص يومي"
+        },
+        "NOTES": {
+            "ADMIN_INVITE": "يُرسل مباشرة عند دعوة مسؤول جديد إلى مركز التحكم.",
+            "ACCESS_RESET": "يُستخدم عند إعادة تعيين الوصول الإداري أو إصداره من جديد.",
+            "VENDOR_REVIEW": "يوجه حالات مراجعة التجار الجديدة إلى مسار الحوكمة.",
+            "DISPUTE_ESCALATION": "يصعّد خروقات اتفاقية مستوى الخدمة والنزاعات الحساسة إلى قيادة المخاطر.",
+            "SETTLEMENT_DIGEST": "ملخص مالي يومي للتسويات والمدفوعات والمخاطر المحجوبة.",
+            "SUPER_ADMIN_ACCESS_INVITE": "إشعار الهويات المدعوة للإدارة العليا ومديريهم عند إنشاء الصلاحية.",
+            "VENDOR_BRANCH_INVITE": "يُفعّل عند دعوة موظف فرع أو مدير فرع إلى لوحة التاجر.",
+            "BRANCH_PASSWORD_RESET": "يُستخدم لإعادة التفعيل أو إعادة ضبط بيانات دخول فروع التجار.",
+            "VENDOR_FINANCE_DIGEST": "يوصل ملخصات المدفوعات والتسويات والأرصدة لأصحاب المصلحة الماليين لدى التاجر.",
+            "DRIVER_VERIFICATION_UPDATE": "يوجه تحديثات حالة التحقق الخاصة بالسائقين إلى فرق الامتثال والمتابعة.",
+            "DRIVER_PAYOUT_ALERT": "يلخص جاهزية الصرف ومخاطر الدفع عند الاستلام وحركة الرصيد لحسابات السائقين.",
+            "CUSTOMER_SUPPORT_ESCALATION": "ينبه فرق العميل والدعم والمتابعة عند تصعيد حالة دعم عالية الحساسية.",
+            "CUSTOMER_ACCOUNT_RECOVERY": "مسار آمن لاستعادة وصول العميل ومتابعة الدعم بعد ذلك."
+        },
+        "EVENTS": {
+            "ADMIN_INVITE": {
+                "TITLE": "دعوة مسؤول",
+                "SUBTITLE": "رسالة انضمام للمسؤولين الجدد إلى مركز التحكم."
+            },
+            "ACCESS_RESET": {
+                "TITLE": "إعادة تعيين الوصول",
+                "SUBTITLE": "مسار آمن لإعادة ضبط بيانات اعتماد المسؤول."
+            },
+            "VENDOR_REVIEW": {
+                "TITLE": "مراجعة انضمام تاجر",
+                "SUBTITLE": "يُفعّل عندما تحتاج موافقة التاجر إلى متابعة تشغيلية."
+            },
+            "DISPUTE_ESCALATION": {
+                "TITLE": "تصعيد نزاع",
+                "SUBTITLE": "مسار تصعيد للنزاعات عالية المخاطر أو المتجاوزة لاتفاقية مستوى الخدمة."
+            },
+            "SETTLEMENT_DIGEST": {
+                "TITLE": "ملخص التسويات",
+                "SUBTITLE": "ملخص مالي لمتابعة المدفوعات والتسويات."
+            },
+            "SUPER_ADMIN_ACCESS_INVITE": {
+                "TITLE": "دعوة وصول للإدارة العليا",
+                "SUBTITLE": "إنشاء وتوجيه دعوات الصلاحية الجديدة للإدارة العليا."
+            },
+            "VENDOR_BRANCH_INVITE": {
+                "TITLE": "دعوة فرع تاجر",
+                "SUBTITLE": "مسار انضمام فرق الفروع ومديريها داخل لوحة التاجر."
+            },
+            "BRANCH_PASSWORD_RESET": {
+                "TITLE": "إعادة ضبط كلمة مرور الفرع",
+                "SUBTITLE": "مسار آمن لإعادة ضبط بيانات دخول فرع التاجر."
+            },
+            "VENDOR_FINANCE_DIGEST": {
+                "TITLE": "ملخص مالية التاجر",
+                "SUBTITLE": "ملخص مالي يومي لملاك التجار وفرقهم المالية."
+            },
+            "DRIVER_VERIFICATION_UPDATE": {
+                "TITLE": "تحديث تحقق السائق",
+                "SUBTITLE": "رسائل حالة التحقق ومتابعة المستندات والجاهزية."
+            },
+            "DRIVER_PAYOUT_ALERT": {
+                "TITLE": "تنبيه صرف السائق",
+                "SUBTITLE": "ملخص جاهزية صرف السائق ومخاطر الدفع عند الاستلام."
+            },
+            "CUSTOMER_SUPPORT_ESCALATION": {
+                "TITLE": "تصعيد دعم العميل",
+                "SUBTITLE": "مسار دعم مصعّد للحالات الحساسة الخاصة بالعملاء."
+            },
+            "CUSTOMER_ACCOUNT_RECOVERY": {
+                "TITLE": "استعادة حساب العميل",
+                "SUBTITLE": "مسار استعادة الوصول للعميل بشكل آمن."
+            }
+        },
+        "RECIPIENT_TARGETS": {
+            "PRIMARY_ACCOUNT_EMAIL": "البريد الأساسي للحساب",
+            "VENDOR_OWNER": "مالك التاجر",
+            "VENDOR_COMPANY_MANAGER": "مدير شركة التاجر",
+            "BRANCH_MANAGER": "مدير الفرع",
+            "BRANCH_STAFF": "موظفو الفرع",
+            "VENDOR_FINANCE": "مالية التاجر",
+            "VENDOR_SUPPORT": "دعم التاجر",
+            "ASSIGNED_SUPER_ADMIN_MANAGER": "مدير الإدارة العليا المكلّف",
+            "DRIVER_ACCOUNT": "حساب السائق",
+            "CUSTOMER_ACCOUNT": "حساب العميل"
+        },
+        "EMPTY": {
+            "TITLE": "لا توجد قواعد توجيه متاحة",
+            "MESSAGE": "لم يتم العثور على قواعد بريد تطابق عوامل التصفية الحالية."
+        }
+    },
+    "CATALOG": {
+        "PRODUCT_REQUESTS": "طلبات إضافة المنتجات",
+        "BRAND_REQUESTS": "طلبات إضافة العلامات التجارية",
+        "CATEGORY_REQUESTS": "طلبات إضافة التصنيفات",
+        "REQUEST_DETAILS": "تفاصيل طلب المنتج",
+        "REQUESTS_MODAL_SUBTITLE": "راجع طلبات الإضافة المقدمة من التجار واعتمدها أو ارفضها بدون مغادرة القائمة الحالية.",
+        "REQUESTS_EMPTY_TITLE": "لا توجد طلبات مطابقة",
+        "REQUESTS_EMPTY_DESC": "جرّب تغيير فلتر الحالة أو عد لاحقًا عند وصول طلبات جديدة.",
+        "REQUESTS_SELECT_TITLE": "اختر طلبًا لعرض التفاصيل",
+        "REQUESTS_SELECT_DESC": "اختر طلبًا من القائمة الجانبية لمراجعة البيانات الكاملة واتخاذ الإجراء المناسب.",
+        "PRODUCT_NAME": "اسم المنتج",
+        "PRODUCT_REQUEST_LABEL": "طلب منتج",
+        "BRAND_REQUEST_LABEL": "طلب علامة تجارية",
+        "CATEGORY_REQUEST_LABEL": "طلب تصنيف",
+        "SUBMITTED_BY": "مقدم الطلب",
+        "DATE_SUBMITTED": "تاريخ التقديم",
+        "STATUS_PENDING": "قيد المراجعة",
+        "STATUS_APPROVED": "تم الاعتماد",
+        "STATUS_REJECTED": "مرفوض",
+        "COMMISSION_RATE": "نسبة العمولة",
+        "APPROVE": "اعتماد",
+        "REJECT": "رفض",
+        "REJECTION_REASON": "سبب الرفض",
+        "REJECTION_REASON_PLACEHOLDER": "اكتب سبب رفض الطلب...",
+        "ADMIN_NOTES": "ملاحظات إدارية",
+        "REVIEW_INFO": "بيانات المراجعة",
+        "REVIEWED_BY": "تمت المراجعة بواسطة",
+        "REVIEWED_AT": "تاريخ المراجعة",
+        "SUGGESTED_BRAND": "العلامة التجارية المقترحة",
+        "PRODUCT_IMAGE": "صورة المنتج",
+        "NO_ADMIN_NOTES": "لا توجد ملاحظات إدارية حتى الآن.",
+        "CONFIRM_APPROVE": "تأكيد الاعتماد",
+        "CONFIRM_APPROVE_MSG": "هل تريد اعتماد هذا المنتج وإضافته إلى الكتالوج؟",
+        "CONFIRM_REJECT": "تأكيد الرفض",
+        "CONFIRM_REJECT_MSG": "هل تريد رفض هذا الطلب؟",
+        "PRODUCT_INFO_HINT": "البيانات الأساسية للمنتج كما قدّمها التاجر.",
+        "CLASSIFICATION": "التصنيف والعلامة التجارية",
+        "CLASSIFICATION_HINT": "تحديد موضع المنتج داخل هيكل الكتالوج العام.",
+        "IMAGE_PREVIEW": "معاينة صورة المنتج",
+        "IMAGE_SOURCE": "مصدر الصورة",
+        "VENDOR_UPLOAD": "رفع التاجر",
+        "REQUESTER_VENDOR": "التاجر مقدم الطلب",
+        "VIEW_VENDOR_PROFILE": "عرض ملف التاجر",
+        "REQUEST_METADATA": "بيانات التتبع",
+        "SUBMITTED_DATE": "تاريخ التقديم",
+        "APPROVED_AT": "تاريخ الاعتماد",
+        "REJECTED_AT": "تاريخ الرفض",
+        "BY": "بواسطة",
+        "REJECTED_REQUEST": "طلب مرفوض",
+        "NO_NOTES": "لا توجد ملاحظات مسجلة",
+        "REJECT_CONFIRM_MSG": "عند رفض هذا المنتج سيتم إشعار التاجر بالسبب الموضح أدناه. هل تريد المتابعة؟",
+        "REJECT_REQUEST": "رفض طلب المنتج",
+        "CONFIRM_REJECTION": "تأكيد الرفض النهائي",
+        "DESCRIPTION": "وصف المنتج",
+        "REVIEWED": "تمت مراجعته",
+        "PRODUCT_INFO": "بيانات المنتج",
+        "CATEGORY": "التصنيف",
+        "BRAND": "العلامة التجارية",
+        "VENDOR": "التاجر",
+        "UNIT": "الوحدة",
+        "DISPLAY_ORDER": "ترتيب العرض",
+        "NAME_AR": "الاسم بالعربية",
+        "NAME_EN": "الاسم بالإنجليزية",
+        "DESCRIPTION_AR": "الوصف بالعربية",
+        "DESCRIPTION_EN": "الوصف بالإنجليزية",
+        "PRODUCT_REQUESTS_DESC": "مراجعة طلبات المنتجات الجديدة واعتمادها أو رفضها قبل إضافتها إلى الكتالوج.",
+        "BRAND_REQUESTS_DESC": "إدارة طلبات العلامات التجارية القادمة من التجار قبل ربطها بالكتالوج.",
+        "CATEGORY_REQUESTS_DESC": "مراجعة طلبات التصنيفات الجديدة وضبط موضعها في الهيكل العام.",
+        "APPROVE_VENDORS_MSG": "اعتماد هذا التاجر سيؤدي إلى تفعيل الحساب وإتاحة عمليات الكتالوج والمدفوعات.",
+        "DATE": "التاريخ",
+        "PRODUCT": "المنتج",
+        "REJECT_VENDORS_MSG": "رفض هذا التاجر سيُبقي الحساب غير نشط حتى يتم استكمال الملاحظات المطلوبة.",
+        "STATUS": "الحالة",
+        "TITLE": "الكتالوج"
+    },
+    "MARKETING": {
+        "SHELL": {
+            "TITLE": "مركز التحكم التسويقي",
+            "SUBTITLE": "إدارة المحتوى التسويقي المباشر عبر واجهات التسويق الخاصة بلوحة الإدارة"
+        },
+        "TABS": {
+            "BANNERS": "اللافتات",
+            "FEATURED_PRODUCTS": "المنتجات المميزة",
+            "HOME_SECTIONS": "أقسام الصفحة الرئيسية",
+            "HOME_VISIBILITY": "إظهار أقسام الرئيسية"
+        },
+        "ACTIONS": {
+            "REFRESH": "تحديث",
+            "ACTIVATE": "تفعيل",
+            "DEACTIVATE": "إيقاف",
+            "SAVE_CHANGES": "حفظ التغييرات"
+        },
+        "COMMON": {
+            "WORKFLOW": "مسار العمل",
+            "FIELDS": {
+                "IMAGE_URL": "رابط الصورة",
+                "STARTS_AT": "يبدأ في",
+                "ENDS_AT": "ينتهي في"
+            },
+            "PLACEHOLDERS": {
+                "URL": "https://...",
+                "GUID": "GUID",
+                "ORDER": "1"
+            },
+            "TABLE": {
+                "SCHEDULE": "الجدولة",
+                "UPDATED": "آخر تحديث"
+            }
+        },
+        "SECTION_TYPES": {
+            "Banners": "اللافتات",
+            "Categories": "التصنيفات",
+            "SpecialOffers": "العروض الخاصة",
+            "Recommended": "موصى بها",
+            "BestSelling": "الأكثر مبيعًا",
+            "Brands": "العلامات التجارية",
+            "FeaturedProducts": "المنتجات المميزة",
+            "ExploreMore": "استكشف المزيد",
+            "DynamicSections": "الأقسام الديناميكية"
+        },
+        "BANNERS": {
+            "DESCRIPTION": "أنشئ لافتات الصفحة الرئيسية ورتبها وجدولها وتحكم في تفعيلها من مكان واحد.",
+            "API_HINT": "مرتبط مباشرة بـ",
+            "ACTIONS": {
+                "CREATE": "إنشاء لافتة"
+            },
+            "KPI": {
+                "TOTAL": "إجمالي اللافتات",
+                "ACTIVE": "النشطة الآن"
+            },
+            "FIELDS": {
+                "TAG_AR": "الوسم بالعربية",
+                "TAG_EN": "الوسم بالإنجليزية",
+                "TITLE_AR": "العنوان بالعربية",
+                "TITLE_EN": "العنوان بالإنجليزية",
+                "SUBTITLE_AR": "العنوان الفرعي بالعربية",
+                "SUBTITLE_EN": "العنوان الفرعي بالإنجليزية",
+                "ACTION_AR": "نص زر الإجراء بالعربية",
+                "ACTION_EN": "نص زر الإجراء بالإنجليزية",
+                "IS_ACTIVE": "اللافتة مفعلة"
+            },
+            "PLACEHOLDERS": {
+                "TAG": "عروض جديدة",
+                "TITLE_AR": "عنوان اللافتة بالعربية",
+                "TITLE_EN": "عنوان اللافتة بالإنجليزية",
+                "SUBTITLE_AR": "سطر داعم قصير بالعربية",
+                "SUBTITLE_EN": "سطر داعم قصير بالإنجليزية",
+                "ACTION_AR": "تسوق الآن بالعربية",
+                "ACTION_EN": "Shop now"
+            },
+            "TABLE": {
+                "TAG": "الوسم",
+                "TITLE": "العنوان"
+            },
+            "MODAL": {
+                "CREATE_TITLE": "إنشاء لافتة",
+                "EDIT_TITLE": "تعديل لافتة",
+                "SUBTITLE": "أدر محتوى بطاقة الواجهة الرئيسية التي تظهر في الصفحة الرئيسية للعملاء."
+            },
+            "MESSAGES": {
+                "LOADING": "جارٍ تحميل اللافتات...",
+                "EMPTY_TITLE": "لا توجد لافتات مهيأة حتى الآن.",
+                "EMPTY_SUBTITLE": "أنشئ أول لافتة رئيسية لبدء إدارة المساحة البارزة في الصفحة الرئيسية.",
+                "REQUIRED_FIELDS": "يرجى استكمال الحقول المطلوبة للافتة قبل الحفظ.",
+                "DELETE_TITLE": "حذف اللافتة",
+                "DELETE_MESSAGE": "سيتم حذف هذه اللافتة من مخزون التسويق الإداري.",
+                "CREATED": "تم إنشاء اللافتة بنجاح.",
+                "UPDATED": "تم تحديث اللافتة بنجاح.",
+                "ACTIVATED": "تم تفعيل اللافتة.",
+                "DEACTIVATED": "تم إيقاف اللافتة.",
+                "DELETED": "تم حذف اللافتة بنجاح."
+            }
+        },
+        "FEATURED": {
+            "DESCRIPTION": "ثبّت منتجات التجار أو المنتجات الأساسية داخل مسارات العرض التسويقي في الصفحة الرئيسية للعملاء.",
+            "API_HINT": "تتم إدارته بواسطة",
+            "ACTIONS": {
+                "CREATE": "إضافة موضع"
+            },
+            "KPI": {
+                "TOTAL": "إجمالي المواضع",
+                "VENDOR_LINKED": "مرتبطة بتاجر"
+            },
+            "TYPES": {
+                "VENDOR_PRODUCT": "منتج تاجر",
+                "MASTER_PRODUCT": "منتج أساسي"
+            },
+            "FIELDS": {
+                "PLACEMENT_TYPE": "نوع الموضع",
+                "VENDOR_PRODUCT_ID": "معرف منتج التاجر",
+                "MASTER_PRODUCT_ID": "معرف المنتج الأساسي",
+                "NOTE": "ملاحظة داخلية",
+                "IS_ACTIVE": "الموضع مفعل"
+            },
+            "PLACEHOLDERS": {
+                "NOTE": "سياق تسويقي اختياري"
+            },
+            "TABLE": {
+                "TARGET": "الهدف",
+                "TYPE": "النوع",
+                "NOTE": "ملاحظة"
+            },
+            "MODAL": {
+                "CREATE_TITLE": "إنشاء موضع مميز",
+                "EDIT_TITLE": "تعديل الموضع المميز",
+                "SUBTITLE": "اربط منتج تاجر أو منتجًا أساسيًا مباشرة بمسار العرض التسويقي في الصفحة الرئيسية."
+            },
+            "MESSAGES": {
+                "LOADING": "جارٍ تحميل المواضع المميزة...",
+                "EMPTY_TITLE": "لا توجد مواضع مميزة حتى الآن.",
+                "EMPTY_SUBTITLE": "أنشئ أول موضع واربطه بمنتج تاجر أو بمعرف منتج أساسي.",
+                "VENDOR_ID_REQUIRED": "مواضع منتجات التجار تتطلب معرف منتج تاجر.",
+                "MASTER_ID_REQUIRED": "مواضع المنتجات الأساسية تتطلب معرف منتج أساسي.",
+                "DELETE_TITLE": "حذف الموضع المميز",
+                "DELETE_MESSAGE": "سيتم حذف هذا الموضع من مسار المنتجات المميزة.",
+                "CREATED": "تم إنشاء الموضع المميز.",
+                "UPDATED": "تم تحديث الموضع المميز.",
+                "ACTIVATED": "تم تفعيل الموضع.",
+                "DEACTIVATED": "تم إيقاف الموضع.",
+                "DELETED": "تم حذف الموضع المميز."
+            }
+        },
+        "HOME_SECTIONS": {
+            "DESCRIPTION": "اختر تصنيفًا فرعيًا من المستوى الثالث وثيمة يمكن لتطبيق العميل عرضها مباشرة.",
+            "API_HINT": "مدعوم بواسطة",
+            "ACTIONS": {
+                "CREATE": "إنشاء قسم"
+            },
+            "KPI": {
+                "TOTAL": "الأقسام الديناميكية",
+                "SUBCATEGORIES": "التصنيفات الفرعية المتاحة"
+            },
+            "FIELDS": {
+                "SUBCATEGORY": "التصنيف الفرعي",
+                "THEME": "الثيمة",
+                "PRODUCTS_TAKE": "عدد المنتجات المعروضة",
+                "IS_ACTIVE": "القسم مفعل"
+            },
+            "PLACEHOLDERS": {
+                "SUBCATEGORY": "اختر تصنيفًا من المستوى الثالث",
+                "THEME": "theme1",
+                "PRODUCTS_TAKE": "8"
+            },
+            "TABLE": {
+                "SUBCATEGORY": "التصنيف الفرعي",
+                "THEME": "الثيمة",
+                "TAKE": "العدد"
+            },
+            "MODAL": {
+                "CREATE_TITLE": "إنشاء قسم رئيسي",
+                "EDIT_TITLE": "تعديل قسم رئيسي",
+                "SUBTITLE": "اختر تصنيفًا فرعيًا من المستوى الثالث وحدد ثيمة البطاقة وعدد المنتجات المطلوب عرضها في الصفحة الرئيسية."
+            },
+            "MESSAGES": {
+                "LOADING": "جارٍ تحميل أقسام الصفحة الرئيسية...",
+                "EMPTY_TITLE": "لا توجد أقسام ديناميكية حتى الآن.",
+                "EMPTY_SUBTITLE": "أنشئ قسمًا واربطه بتصنيف فرعي من المستوى الثالث مثل المخبوزات أو اللحوم.",
+                "NO_SUBCATEGORIES": "لا توجد تصنيفات من المستوى الثالث في الكتالوج حتى الآن. أضف تصنيفات فرعية أولًا.",
+                "REQUIRED_FIELDS": "يرجى اختيار تصنيف فرعي واستكمال الحقول المطلوبة للقسم.",
+                "DELETE_TITLE": "حذف قسم الصفحة الرئيسية",
+                "DELETE_MESSAGE": "سيختفي هذا القسم الديناميكي من مخزون التسويق الإداري ومن الصفحة الرئيسية.",
+                "CREATED": "تم إنشاء قسم الصفحة الرئيسية.",
+                "UPDATED": "تم تحديث قسم الصفحة الرئيسية.",
+                "ACTIVATED": "تم تفعيل قسم الصفحة الرئيسية.",
+                "DEACTIVATED": "تم إيقاف قسم الصفحة الرئيسية.",
+                "DELETED": "تم حذف قسم الصفحة الرئيسية."
+            }
+        },
+        "VISIBILITY": {
+            "DESCRIPTION": "تحكم في إظهار الأقسام الثابتة بالصفحة الرئيسية دون إعادة نشر تطبيق العميل أو تعديل الأعلام البرمجية.",
+            "API_HINT": "هذه الحالات قادمة من",
+            "CARD_DESCRIPTION": "يتحكم هذا الخيار في ظهور هذا القسم الثابت داخل نقطة النهاية الخاصة بالصفحة الرئيسية.",
+            "ENABLED": "مفعل",
+            "DISABLED": "غير مفعل",
+            "KPI": {
+                "MANAGED": "الأقسام المُدارة",
+                "ENABLED": "المفعلة الآن"
+            },
+            "ACTIONS": {
+                "SAVE_STATE": "حفظ الحالة الحالية"
+            },
+            "MESSAGES": {
+                "LOADING": "جارٍ تحميل إعدادات إظهار الصفحة الرئيسية...",
+                "ACTIVATED": "تم تفعيل القسم.",
+                "DEACTIVATED": "تم إيقاف القسم.",
+                "SAVED": "تم حفظ حالة القسم."
+            }
+        }
     }
 }
-

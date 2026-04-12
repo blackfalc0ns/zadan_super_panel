@@ -246,12 +246,22 @@
         </div>
 
         <div class="mt-5 flex flex-col gap-3">
+          <app-inline-banner
+            *ngIf="mutationError"
+            [title]="isRTL ? 'تعذر تنفيذ الإجراء' : 'Action failed'"
+            [message]="mutationError"
+            variant="error"
+            icon="error"
+            [compact]="true">
+          </app-inline-banner>
+
           <button
             (click)="onApproveVendor()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary/90"
+            [disabled]="!canApproveVendor && !canReactivateVendor"
+            class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             type="button">
-            <span class="material-symbols-outlined text-[18px]">check_circle</span>
-            <span>{{ 'VENDOR_OVERVIEW.ACTIONS.APPROVE' | translate }}</span>
+            <span class="material-symbols-outlined text-[18px]">{{ canReactivateVendor ? 'play_circle' : 'check_circle' }}</span>
+            <span>{{ primaryActionLabel }}</span>
           </button>
 
           <button

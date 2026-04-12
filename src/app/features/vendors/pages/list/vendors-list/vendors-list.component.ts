@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VendorService } from '@vendors/services/vendor.api.service';
 import { 
   Vendor, 
+  VendorDetail,
   VendorStatus, 
   VendorKPIs, 
   VendorFilters,
@@ -186,6 +187,9 @@ export class VendorsListComponent implements OnInit {
   selectedVendorIds: Set<string> = new Set();
   showBulkActions = false;
   previewVendor: Vendor | null = null;
+  previewVendorDetail: VendorDetail | null = null;
+  previewLoading = false;
+  previewError = '';
   showPreviewDrawer = false;
 
   constructor(
@@ -513,13 +517,22 @@ export class VendorsListComponent implements OnInit {
 
   // Drawer
   openPreview(vendor: Vendor) {
-    this.previewVendor = vendor;
+    this.previewVendor = { ...vendor };
+    this.previewVendorDetail = null;
+    this.previewError = '';
+    this.previewLoading = true;
     this.showPreviewDrawer = true;
+    this.loadPreviewDetail(vendor.id);
   }
 
   closePreview() {
     this.showPreviewDrawer = false;
-    setTimeout(() => this.previewVendor = null, 300);
+    this.previewLoading = false;
+    setTimeout(() => {
+      this.previewVendor = null;
+      this.previewVendorDetail = null;
+      this.previewError = '';
+    }, 300);
   }
 
   // Getters
@@ -585,6 +598,9 @@ export class VendorsListComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.loadVendors();
+        if (this.showPreviewDrawer && this.previewVendor?.id) {
+          this.loadPreviewDetail(this.previewVendor.id);
+        }
       },
       error: (error) => {
         console.error('Vendor action failed', error);
@@ -601,6 +617,206 @@ export class VendorsListComponent implements OnInit {
     if (updatedVendor) {
       this.previewVendor = { ...updatedVendor };
     }
+  }
+
+  get previewTitle(): string {
+    return this.getDisplayVendorName(this.previewVendorDetail ?? this.previewVendor);
+  }
+
+  get previewSubtitle(): string {
+    return this.previewVendorDetail?.contactEmail
+      || this.previewVendorDetail?.ownerEmail
+      || this.previewVendor?.contactEmail
+      || '';
+  }
+
+  get previewCompletion(): number {
+    return this.previewVendorDetail?.documentsCompleteness
+      ?? this.previewVendor?.documentsCompleteness
+      ?? 0;
+  }
+
+  get previewOperationalScore(): number {
+    const vendor = this.previewVendorDetail;
+    if (!vendor) {
+      return this.previewCompletion;
+    }
+
+    let score = vendor.documentsCompleteness ?? 0;
+
+    if (vendor.primaryBankAccount?.status?.toLowerCase() === 'verified') {
+      score += 10;
+    }
+
+    if (vendor.operationsSettings?.acceptOrders) {
+      score += 5;
+    }
+
+    if (vendor.isLoginLocked) {
+      score -= 20;
+    }
+
+    switch (vendor.riskLevel) {
+      case 'Critical':
+        score -= 35;
+        break;
+      case 'High':
+        score -= 20;
+        break;
+      case 'Medium':
+        score -= 10;
+        break;
+    }
+
+    return Math.max(0, Math.min(100, Math.round(score)));
+  }
+
+  get previewBlockingDocuments() {
+    return (this.previewVendorDetail?.reviewDocuments ?? []).filter((document) => document.status !== 'completed');
+  }
+
+  get previewLatestNote() {
+    return this.previewVendorDetail?.reviewNotes?.[0] ?? null;
+  }
+
+  get previewReviewerName(): string {
+    const vendor = this.previewVendorDetail;
+    if (!vendor) {
+      return '---';
+    }
+
+    return vendor.approvedBy
+      || vendor.reviewNotes.find((note) => !!note.authorName?.trim())?.authorName
+      || vendor.assignedReviewer
+      || '---';
+  }
+
+  get previewWorkingHours(): string {
+    const hours = this.previewVendorDetail?.operatingHours ?? [];
+    const openDays = hours.filter((hour) => hour.isOpen);
+    if (openDays.length === 0) {
+      return '---';
+    }
+
+    const first = openDays[0];
+    return `${openDays.length}/7 • ${first.openTime}-${first.closeTime}`;
+  }
+
+  get previewBankStatusLabel(): string {
+    const status = this.previewVendorDetail?.primaryBankAccount?.status;
+    if (!status) {
+      return '---';
+    }
+
+    const normalized = status.toLowerCase();
+    const map: Record<string, string> = {
+      verified: 'VENDOR_DETAIL.STATUS_VERIFIED',
+      pendingverification: 'VENDORS.STATUS.PENDING',
+      rejected: 'VENDORS.STATUS.REJECTED'
+    };
+
+    const key = map[normalized];
+    return key ? this.translate.instant(key) : status;
+  }
+
+  get previewAcceptOrdersLabel(): string {
+    const acceptOrders = this.previewVendorDetail?.operationsSettings?.acceptOrders;
+    if (acceptOrders == null) {
+      return '---';
+    }
+
+    return this.translate.instant(acceptOrders ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE');
+  }
+
+  get previewWorkingHoursSummary(): string {
+    const hours = this.previewVendorDetail?.operatingHours ?? [];
+    const openDays = hours.filter((hour) => hour.isOpen);
+    if (openDays.length === 0) {
+      return '---';
+    }
+
+    const first = openDays[0];
+    return `${openDays.length}/7 - ${first.openTime}-${first.closeTime}`;
+  }
+
+  get previewLatestNoteMessage(): string {
+    const note = this.previewLatestNote;
+    if (!note) {
+      return '';
+    }
+
+    if (note.message?.trim()) {
+      return note.message;
+    }
+
+    if (note.messageKey) {
+      const translated = this.translate.instant(note.messageKey);
+      return translated === note.messageKey ? '' : translated;
+    }
+
+    return '';
+  }
+
+  formatPreviewDate(value?: string | null): string {
+    if (!value) {
+      return '---';
+    }
+
+    return new Intl.DateTimeFormat(this.activeLang === 'ar' ? 'ar-EG' : 'en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).format(new Date(value));
+  }
+
+  formatPreviewDateTime(value?: string | null): string {
+    if (!value) {
+      return '---';
+    }
+
+    return new Intl.DateTimeFormat(this.activeLang === 'ar' ? 'ar-EG' : 'en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(value));
+  }
+
+  private loadPreviewDetail(vendorId: string): void {
+    this.previewLoading = true;
+    this.previewError = '';
+
+    this.vendorService.getVendorById(vendorId).subscribe({
+      next: (vendorDetail) => {
+        if (this.previewVendor?.id !== vendorId) {
+          return;
+        }
+
+        this.previewVendorDetail = vendorDetail;
+        this.previewLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading preview vendor detail', error);
+        if (this.previewVendor?.id !== vendorId) {
+          return;
+        }
+
+        this.previewVendorDetail = null;
+        this.previewLoading = false;
+        this.previewError = this.translate.instant('VENDORS.LOAD_ERROR');
+      }
+    });
+  }
+
+  private getDisplayVendorName(vendor: Vendor | VendorDetail | null): string {
+    if (!vendor) {
+      return '';
+    }
+
+    const preferred = this.activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn;
+    const alternate = this.activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr;
+    return preferred || alternate || vendor.ownerName || vendor.contactEmail || '';
   }
 }
 

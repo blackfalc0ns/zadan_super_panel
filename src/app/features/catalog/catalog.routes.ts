@@ -1,4 +1,4 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 export const CATALOG_ROUTES: Routes = [
   {
@@ -33,6 +33,16 @@ export const CATALOG_ROUTES: Routes = [
     path: 'brands',
     loadComponent: () => import('./pages/brands/brand-list/brand-list.component').then(m => m.BrandListComponent)
   },
+  {
+    path: 'requests',
+    loadComponent: () => import('./pages/product-requests/request-list.component').then(m => m.ProductRequestListComponent)
+  },
+  {
+    path: 'requests/view/:id',
+    loadComponent: () => import('./pages/product-requests/request-detail.component').then(m => m.ProductRequestDetailComponent)
+  },
+  { path: 'product-requests', redirectTo: 'requests', pathMatch: 'full' },
+  { path: 'product-requests/view/:id', redirectTo: 'requests/view/:id', pathMatch: 'full' },
   { path: 'image-bank', redirectTo: 'products' },
   { path: '', redirectTo: 'categories', pathMatch: 'full' }
 ];

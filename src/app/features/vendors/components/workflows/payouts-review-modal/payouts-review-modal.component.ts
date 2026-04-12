@@ -1,16 +1,18 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PaymentDetailModalComponent, PaymentDetail } from '../payment-detail-modal/payment-detail-modal.component';
+import { PaymentDetail, PaymentDetailModalComponent } from '../payment-detail-modal/payment-detail-modal.component';
 
-type PayoutBankCode = 'alrajhi' | 'alahli' | 'alinma' | 'wallet';
+type PayoutBankCode = 'alrajhi' | 'alahli' | 'alinma' | 'wallet' | 'bank';
 
 export interface PayoutTransaction {
   id: string;
   paymentNumber: string;
   date: string;
   time: string;
+  createdAtUtc?: string;
+  processedAtUtc?: string;
   amount: number;
   bankCode: PayoutBankCode;
   accountMask?: string;
@@ -26,19 +28,26 @@ export interface PayoutTransaction {
   templateUrl: './payouts-review-modal.component.html',
   styleUrls: ['./payouts-review-modal.component.scss']
 })
-export class PayoutsReviewModalComponent {
+export class PayoutsReviewModalComponent implements OnChanges {
   @Input() isOpen = false;
-  @Input() availableBalance = 45250;
+  @Input() availableBalance = 0;
+  @Input() vendorName = '';
+  @Input() beneficiaryName = '';
+  @Input() iban = '';
+  @Input() swiftCode = '';
+  @Input() bankName = '';
+  @Input() transactions: PayoutTransaction[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() retryPayment = new EventEmitter<string>();
   @Output() suspendPayment = new EventEmitter<string>();
   @Output() escalatePayment = new EventEmitter<string>();
+  @Output() downloadReceipt = new EventEmitter<string>();
+  @Output() viewActivityLog = new EventEmitter<string>();
 
   selectedTransaction: PayoutTransaction | null = null;
   showPaymentDetailModal = false;
   selectedPaymentDetail: PaymentDetail | null = null;
-  
-  // Filters
+
   filters = {
     reference: '',
     status: 'all',
@@ -48,16 +57,38 @@ export class PayoutsReviewModalComponent {
 
   internalNotes = '';
 
-  transactions: PayoutTransaction[] = [];
+  constructor(private translate: TranslateService) {}
 
-  constructor(private translate: TranslateService) {
-    this.rebuildTransactions();
-    this.translate.onLangChange.subscribe(() => this.rebuildTransactions());
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['transactions']) {
+      const selectedId = this.selectedTransaction?.id ?? null;
+      this.selectedTransaction = this.filteredTransactions.find((transaction) => transaction.id === selectedId)
+        ?? this.filteredTransactions.find((transaction) => transaction.status === 'failed')
+        ?? this.filteredTransactions[0]
+        ?? null;
+
+      if (this.showPaymentDetailModal && this.selectedTransaction) {
+        this.selectedPaymentDetail = this.buildPaymentDetail(this.selectedTransaction);
+      }
+    }
   }
 
   get isRTL(): boolean {
     const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
     return lang.startsWith('ar');
+  }
+
+  get filteredTransactions(): PayoutTransaction[] {
+    return this.transactions.filter((transaction) => {
+      const matchesReference = !this.filters.reference.trim()
+        || transaction.reference.toLowerCase().includes(this.filters.reference.trim().toLowerCase())
+        || transaction.paymentNumber.toLowerCase().includes(this.filters.reference.trim().toLowerCase());
+      const matchesStatus = this.filters.status === 'all' || transaction.status === this.filters.status;
+      const matchesDate = !this.filters.date || transaction.date === this.filters.date;
+      const matchesBank = this.filters.bank === 'all' || transaction.bankCode === this.filters.bank;
+
+      return matchesReference && matchesStatus && matchesDate && matchesBank;
+    });
   }
 
   onClose() {
@@ -69,6 +100,7 @@ export class PayoutsReviewModalComponent {
   }
 
   viewTransactionDetails(transaction: PayoutTransaction) {
+    this.selectedTransaction = transaction;
     this.selectedPaymentDetail = this.buildPaymentDetail(transaction);
     this.showPaymentDetailModal = true;
   }
@@ -91,6 +123,18 @@ export class PayoutsReviewModalComponent {
     }
   }
 
+  onDownloadReceipt() {
+    if (this.selectedTransaction) {
+      this.downloadReceipt.emit(this.selectedTransaction.id);
+    }
+  }
+
+  onViewActivityLog() {
+    if (this.selectedTransaction) {
+      this.viewActivityLog.emit(this.selectedTransaction.id);
+    }
+  }
+
   resetFilters() {
     this.filters = {
       reference: '',
@@ -98,6 +142,8 @@ export class PayoutsReviewModalComponent {
       date: '',
       bank: 'all'
     };
+
+    this.selectedTransaction = this.filteredTransactions[0] ?? null;
   }
 
   getStatusClass(status: string): string {
@@ -112,8 +158,8 @@ export class PayoutsReviewModalComponent {
 
   getRowClass(transaction: PayoutTransaction): string {
     if (this.selectedTransaction?.id === transaction.id) {
-      return transaction.status === 'failed' 
-        ? 'bg-rose-50/40 ring-1 ring-inset ring-rose-200' 
+      return transaction.status === 'failed'
+        ? 'bg-rose-50/40 ring-1 ring-inset ring-rose-200'
         : 'bg-blue-50/40 ring-1 ring-inset ring-blue-200';
     }
     return 'hover:bg-slate-50 transition-colors';
@@ -135,10 +181,12 @@ export class PayoutsReviewModalComponent {
       alrajhi: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALRAJHI',
       alahli: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALAHLI',
       alinma: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALINMA',
-      wallet: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.WALLET'
+      wallet: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.WALLET',
+      bank: ''
     };
 
-    return this.translate.instant(keys[bankCode]);
+    const translated = keys[bankCode] ? this.translate.instant(keys[bankCode]) : '';
+    return translated || this.bankName || '-';
   }
 
   formatBankDestination(transaction: PayoutTransaction): string {
@@ -146,66 +194,21 @@ export class PayoutsReviewModalComponent {
     return transaction.accountMask ? `${bankLabel} - ${transaction.accountMask}` : bankLabel;
   }
 
-  private rebuildTransactions(): void {
-    const selectedId = this.selectedTransaction?.id;
-
-    this.transactions = [
-      {
-        id: '1',
-        paymentNumber: '#PAY-9821',
-        date: '2023-11-05',
-        time: '10:30 AM',
-        amount: 5400,
-        bankCode: 'alrajhi',
-        accountMask: '**** 1234',
-        status: 'success',
-        reference: 'TRX882910'
-      },
-      {
-        id: '2',
-        paymentNumber: '#PAY-9818',
-        date: '2023-11-04',
-        time: '03:45 PM',
-        amount: 12500,
-        bankCode: 'alahli',
-        accountMask: '**** 5566',
-        status: 'failed',
-        reference: 'TRX882905',
-        failureReason: this.translate.instant('MODALS.PAYOUTS_REVIEW.FAILURE_REASON_BANK_AUTH')
-      },
-      {
-        id: '3',
-        paymentNumber: '#PAY-9815',
-        date: '2023-11-04',
-        time: '11:20 AM',
-        amount: 3200,
-        bankCode: 'alinma',
-        accountMask: '**** 9911',
-        status: 'pending',
-        reference: 'TRX882901'
-      },
-      {
-        id: '4',
-        paymentNumber: '#PAY-9810',
-        date: '2023-11-03',
-        time: '09:15 AM',
-        amount: 22000,
-        bankCode: 'wallet',
-        status: 'reviewing',
-        reference: 'TRX882895'
-      }
-    ];
-
-    this.selectedTransaction = this.transactions.find(t => t.id === selectedId)
-      || this.transactions.find(t => t.status === 'failed')
-      || null;
-
-    if (this.showPaymentDetailModal && this.selectedTransaction) {
-      this.selectedPaymentDetail = this.buildPaymentDetail(this.selectedTransaction);
-    }
-  }
-
   private buildPaymentDetail(transaction: PayoutTransaction): PaymentDetail {
+    const createdAt = transaction.createdAtUtc
+      ? new Date(transaction.createdAtUtc)
+      : null;
+    const processedAt = transaction.processedAtUtc
+      ? new Date(transaction.processedAtUtc)
+      : null;
+    const createdLabel = createdAt
+      ? `${transaction.date} - ${transaction.time}`
+      : transaction.date;
+    const processingLabel = transaction.status === 'pending' ? '-' : createdLabel;
+    const completedLabel = processedAt
+      ? processedAt.toLocaleString(this.isRTL ? 'ar-SA' : 'en-US')
+      : '-';
+
     return {
       transactionId: transaction.paymentNumber,
       bankReference: transaction.reference,
@@ -216,21 +219,23 @@ export class PayoutsReviewModalComponent {
       statusLabel: this.getStatusLabel(transaction.status),
       statusCode: transaction.status === 'success' ? '200 OK' : undefined,
       lastUpdated: `${transaction.date} - ${transaction.time}`,
-      vendorName: this.translate.instant('MODALS.PAYOUTS_REVIEW.MOCK_VENDOR_NAME'),
+      vendorName: this.vendorName || '-',
       bankName: this.getBankLabel(transaction.bankCode),
-      iban: 'SA43 8000 0000 **** **** 4920',
-      beneficiaryName: this.translate.instant('MODALS.PAYOUTS_REVIEW.MOCK_BENEFICIARY_NAME'),
-      swiftCode: 'ALRJSAXX',
+      iban: this.iban || '-',
+      beneficiaryName: this.beneficiaryName || this.vendorName || '-',
+      swiftCode: this.swiftCode || '-',
       timeline: {
-        created: '09:15 AM',
-        processing: '09:20 AM',
-        transferred: '10:15 AM',
-        confirmed: '10:30 AM'
+        created: createdLabel,
+        processing: processingLabel,
+        transferred: transaction.status === 'success' ? completedLabel : '-',
+        confirmed: transaction.status === 'success' ? completedLabel : '-'
       },
       logs: [
-        { type: 'success', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.API_INITIATED') },
-        { type: 'success', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.RESPONSE_VERIFIED') },
-        { type: 'debug', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.RETRY_COUNT') }
+        { type: 'debug', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.API_INITIATED') },
+        {
+          type: transaction.status === 'failed' ? 'error' : transaction.status === 'success' ? 'success' : 'debug',
+          message: `${this.translate.instant('MODALS.PAYOUTS_REVIEW.STATUS')}: ${this.getStatusLabel(transaction.status)}`
+        }
       ],
       failureReason: transaction.failureReason
     };

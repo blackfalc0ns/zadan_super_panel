@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -23,19 +23,28 @@ export interface OwnerData {
     }
   `]
 })
-export class EditOwnerModalComponent {
+export class EditOwnerModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() ownerData: OwnerData = {
-    fullName: 'عبدالله بن خالد بن عبدالعزيز',
-    idNumber: '10****4321',
+    fullName: '',
+    idNumber: '',
     nationality: 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI',
-    email: 'info@moderntech.com',
-    phone: '50 123 4567',
+    email: '',
+    phone: '',
     phoneCode: '+966'
   };
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<OwnerData>();
+
+  draftOwnerData: OwnerData = {
+    fullName: '',
+    idNumber: '',
+    nationality: 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI',
+    email: '',
+    phone: '',
+    phoneCode: '+966'
+  };
 
   editReason = '';
   adminNotes = '';
@@ -58,6 +67,19 @@ export class EditOwnerModalComponent {
 
   constructor(private translate: TranslateService) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['ownerData']) {
+      this.draftOwnerData = {
+        fullName: this.ownerData.fullName || '',
+        idNumber: this.ownerData.idNumber || '',
+        nationality: this.ownerData.nationality || 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI',
+        email: this.ownerData.email || '',
+        phone: this.ownerData.phone || '',
+        phoneCode: this.ownerData.phoneCode || '+966'
+      };
+    }
+  }
+
   get isRTL(): boolean {
     const lang = this.translate.currentLang || this.translate.getDefaultLang() || 'ar';
     return lang.startsWith('ar');
@@ -68,8 +90,7 @@ export class EditOwnerModalComponent {
   }
 
   onSave() {
-    this.save.emit(this.ownerData);
-    this.onClose();
+    this.save.emit(this.draftOwnerData);
   }
 
   onBackdropClick(event: MouseEvent) {

@@ -4,10 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { AdminVendorOrderItem, VendorService } from '@vendors/services/vendor.api.service';
+import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 interface KPI {
   id: string;
@@ -21,7 +22,7 @@ interface KPI {
   trendIcon: string;
 }
 
-interface Order {
+interface OrderRow {
   id: string;
   orderNumber: string;
   customer: string;
@@ -30,11 +31,8 @@ interface Order {
   time: string;
   amount: string;
   paymentStatusKey: string;
-  paymentStatusClass: string;
   shippingStatusKey: string;
-  shippingStatusClass: string;
   generalStatusKey: string;
-  generalStatusClass: string;
 }
 
 @Component({
@@ -44,158 +42,25 @@ interface Order {
   templateUrl: './vendor-orders.component.html'
 })
 export class VendorOrdersComponent {
-  vendorId = 'VND-9928';
+  vendorId = '';
   currentLang = 'ar';
   isRTL = true;
   searchQuery = '';
+  isLoading = false;
   private readonly destroyRef = inject(DestroyRef);
 
-  kpis: KPI[] = [
-    {
-      id: 'total',
-      titleKey: 'VENDOR_ORDERS.KPI.TOTAL_ORDERS',
-      value: '15,420',
-      trend: '5%',
-      trendKey: 'VENDOR_ORDERS.KPI.INCREASE',
-      icon: 'receipt_long',
-      borderColor: 'border-l-primary',
-      trendClass: 'text-green-600',
-      trendIcon: 'arrow_upward'
-    },
-    {
-      id: 'open',
-      titleKey: 'VENDOR_ORDERS.KPI.OPEN_ORDERS',
-      value: '1,230',
-      trend: '2%',
-      trendKey: 'VENDOR_ORDERS.KPI.INCREASE',
-      icon: 'pending_actions',
-      borderColor: 'border-l-blue-500',
-      trendClass: 'text-green-600',
-      trendIcon: 'arrow_upward'
-    },
-    {
-      id: 'completed',
-      titleKey: 'VENDOR_ORDERS.KPI.COMPLETED_ORDERS',
-      value: '13,850',
-      trend: '1%',
-      trendKey: 'VENDOR_ORDERS.KPI.INCREASE',
-      icon: 'check_circle',
-      borderColor: 'border-l-green-500',
-      trendClass: 'text-green-600',
-      trendIcon: 'arrow_upward'
-    },
-    {
-      id: 'cancelled',
-      titleKey: 'VENDOR_ORDERS.KPI.CANCELLED_ORDERS',
-      value: '240',
-      trend: '1%',
-      trendKey: 'VENDOR_ORDERS.KPI.DECREASE',
-      icon: 'cancel',
-      borderColor: 'border-l-red-500',
-      trendClass: 'text-red-600',
-      trendIcon: 'arrow_downward'
-    },
-    {
-      id: 'returned',
-      titleKey: 'VENDOR_ORDERS.KPI.RETURNED_ORDERS',
-      value: '100',
-      trend: '0.5%',
-      trendKey: 'VENDOR_ORDERS.KPI.DECREASE',
-      icon: 'keyboard_return',
-      borderColor: 'border-l-orange-500',
-      trendClass: 'text-red-600',
-      trendIcon: 'arrow_downward'
-    },
-    {
-      id: 'average',
-      titleKey: 'VENDOR_ORDERS.KPI.AVERAGE_ORDER',
-      value: '250 Ø±.Ø³',
-      trend: '10%',
-      trendKey: 'VENDOR_ORDERS.KPI.INCREASE',
-      icon: 'payments',
-      borderColor: 'border-l-purple-500',
-      trendClass: 'text-green-600',
-      trendIcon: 'arrow_upward'
-    }
-  ];
-
-  totalSales = '3,850,000';
-  delayedOrders = 45;
-  openDisputes = 12;
-  cancellationRate = '1.5%';
-
-  orders: Order[] = [
-    {
-      id: '1',
-      orderNumber: 'ORD-1001',
-      customer: 'Ø£Ø­Ù…Ø¯ Ù…Ø­Ù…ÙˆØ¯',
-      customerLocation: 'Ø§Ù„Ø±ÙŠØ§Ø¶',
-      date: '2023-10-25',
-      time: '14:30',
-      amount: '500',
-      paymentStatusKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PAID',
-      paymentStatusClass: 'bg-green-100 text-green-700',
-      shippingStatusKey: 'VENDOR_ORDERS.SHIPPING_STATUS.PENDING',
-      shippingStatusClass: 'bg-yellow-100 text-yellow-700',
-      generalStatusKey: 'VENDOR_ORDERS.GENERAL_STATUS.NEW',
-      generalStatusClass: 'bg-blue-100 text-blue-700'
-    },
-    {
-      id: '2',
-      orderNumber: 'ORD-1002',
-      customer: 'ÙØ§Ø·Ù…Ø© Ø¹Ù„ÙŠ',
-      customerLocation: 'Ø¬Ø¯Ø©',
-      date: '2023-10-24',
-      time: '09:15',
-      amount: '1200',
-      paymentStatusKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PENDING',
-      paymentStatusClass: 'bg-yellow-100 text-yellow-700',
-      shippingStatusKey: 'VENDOR_ORDERS.SHIPPING_STATUS.IN_PROGRESS',
-      shippingStatusClass: 'bg-blue-100 text-blue-700',
-      generalStatusKey: 'VENDOR_ORDERS.GENERAL_STATUS.IN_PROGRESS',
-      generalStatusClass: 'bg-blue-100 text-blue-700'
-    },
-    {
-      id: '3',
-      orderNumber: 'ORD-1003',
-      customer: 'Ù…Ø­Ù…Ø¯ Ø®Ø§Ù„Ø¯',
-      customerLocation: 'Ø§Ù„Ø¯Ù…Ø§Ù…',
-      date: '2023-10-23',
-      time: '18:45',
-      amount: '350',
-      paymentStatusKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PAID',
-      paymentStatusClass: 'bg-green-100 text-green-700',
-      shippingStatusKey: 'VENDOR_ORDERS.SHIPPING_STATUS.COMPLETED',
-      shippingStatusClass: 'bg-green-100 text-green-700',
-      generalStatusKey: 'VENDOR_ORDERS.GENERAL_STATUS.COMPLETED',
-      generalStatusClass: 'bg-green-100 text-green-700'
-    },
-    {
-      id: '4',
-      orderNumber: 'ORD-1004',
-      customer: 'Ø³Ø§Ø±Ø© Ø¹Ø¨Ø¯ Ø§Ù„Ù„Ù‡',
-      customerLocation: 'Ù…ÙƒØ©',
-      date: '2023-10-22',
-      time: '11:20',
-      amount: '800',
-      paymentStatusKey: 'VENDOR_ORDERS.PAYMENT_STATUS.REFUNDED',
-      paymentStatusClass: 'bg-orange-100 text-orange-700',
-      shippingStatusKey: 'VENDOR_ORDERS.SHIPPING_STATUS.CANCELLED',
-      shippingStatusClass: 'bg-red-100 text-red-700',
-      generalStatusKey: 'VENDOR_ORDERS.GENERAL_STATUS.CANCELLED',
-      generalStatusClass: 'bg-red-100 text-red-700'
-    }
-  ];
-
-  alerts: string[] = [
-    'VENDOR_ORDERS.ALERTS.SHIPPING_DELAY',
-    'VENDOR_ORDERS.ALERTS.LOW_STOCK',
-    'VENDOR_ORDERS.ALERTS.NEW_DISPUTE'
-  ];
+  ordersData: AdminVendorOrderItem[] = [];
+  kpis: KPI[] = [];
+  totalSales = '0';
+  delayedOrders = 0;
+  openDisputes = 0;
+  cancellationRate = '0%';
+  alerts: string[] = [];
 
   constructor(
     private readonly translate: TranslateService,
     private readonly router: Router,
+    private readonly vendorService: VendorService,
     private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
@@ -206,21 +71,25 @@ export class VendorOrdersComponent {
       .subscribe((event) => {
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
+        this.rebuildViewModel();
       });
 
     this.vendorDetailFacade.vendorId$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendorId) => {
-        if (vendorId) {
-          this.vendorId = vendorId;
+        if (!vendorId) {
+          return;
         }
+
+        this.vendorId = vendorId;
+        this.loadOrders();
       });
   }
 
-  get filteredOrders(): Order[] {
+  get filteredOrders(): OrderRow[] {
     const normalizedSearch = this.searchQuery.trim().toLowerCase();
 
-    return this.orders.filter((order) => {
+    return this.mapOrders(this.ordersData).filter((order) => {
       if (!normalizedSearch) {
         return true;
       }
@@ -264,23 +133,23 @@ export class VendorOrdersComponent {
       return 'success';
     }
 
-    if (statusKey.includes('PENDING')) {
+    if (statusKey.includes('INITIATED') || statusKey.includes('PENDING')) {
       return 'warning';
     }
 
-    if (statusKey.includes('REFUNDED')) {
-      return 'info';
+    if (statusKey.includes('FAILED') || statusKey.includes('REFUND')) {
+      return 'danger';
     }
 
     return 'neutral';
   }
 
   getShippingStatusVariant(statusKey: string): StatusPillVariant {
-    if (statusKey.includes('COMPLETED')) {
+    if (statusKey.includes('DELIVERED')) {
       return 'success';
     }
 
-    if (statusKey.includes('IN_PROGRESS')) {
+    if (statusKey.includes('PLACED') || statusKey.includes('PREPARING') || statusKey.includes('ONTHEWAY')) {
       return 'processing';
     }
 
@@ -296,34 +165,180 @@ export class VendorOrdersComponent {
   }
 
   getGeneralStatusVariant(statusKey: string): StatusPillVariant {
-    if (statusKey.includes('COMPLETED')) {
-      return 'success';
-    }
-
-    if (statusKey.includes('IN_PROGRESS')) {
-      return 'processing';
-    }
-
-    if (statusKey.includes('NEW')) {
-      return 'info';
-    }
-
-    if (statusKey.includes('CANCELLED')) {
-      return 'danger';
-    }
-
-    return 'neutral';
+    return this.getShippingStatusVariant(statusKey);
   }
 
   getAlertVariant(alertKey: string): 'warning' | 'error' | 'info' {
-    if (alertKey.includes('NEW_DISPUTE')) {
+    if (alertKey.includes('NEW_DISPUTE') || alertKey.includes('CANCEL')) {
       return 'error';
     }
 
-    if (alertKey.includes('SHIPPING_DELAY')) {
+    if (alertKey.includes('SHIPPING_DELAY') || alertKey.includes('PAYMENT')) {
       return 'warning';
     }
 
     return 'info';
+  }
+
+  private loadOrders(): void {
+    this.isLoading = true;
+    this.vendorService.getVendorOrders(this.vendorId, 1, 100)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.ordersData = response.items ?? [];
+          this.rebuildViewModel();
+          this.isLoading = false;
+        },
+        error: () => {
+          this.ordersData = [];
+          this.rebuildViewModel();
+          this.isLoading = false;
+        }
+      });
+  }
+
+  private rebuildViewModel(): void {
+    const totalOrders = this.ordersData.length;
+    const completedOrders = this.ordersData.filter((order) => order.status.toLowerCase() === 'delivered').length;
+    const cancelledOrders = this.ordersData.filter((order) => order.status.toLowerCase() === 'cancelled').length;
+    const openOrders = this.ordersData.filter((order) => order.status.toLowerCase() !== 'delivered' && order.status.toLowerCase() !== 'cancelled').length;
+    const paymentIssues = this.ordersData.filter((order) => order.paymentStatus.toLowerCase() !== 'paid').length;
+    const totalSalesValue = this.ordersData.reduce((sum, order) => sum + order.totalAmount, 0);
+    const averageOrder = totalOrders > 0 ? totalSalesValue / totalOrders : 0;
+
+    this.totalSales = this.formatNumber(totalSalesValue);
+    this.delayedOrders = openOrders;
+    this.openDisputes = paymentIssues;
+    this.cancellationRate = totalOrders > 0 ? `${((cancelledOrders / totalOrders) * 100).toFixed(1)}%` : '0%';
+    this.alerts = [
+      ...(openOrders > 0 ? ['VENDOR_ORDERS.ALERTS.SHIPPING_DELAY'] : []),
+      ...(paymentIssues > 0 ? ['VENDOR_ORDERS.ALERTS.NEW_DISPUTE'] : []),
+      ...(cancelledOrders > 0 ? ['VENDOR_ORDERS.ALERTS.LOW_STOCK'] : [])
+    ];
+
+    this.kpis = [
+      {
+        id: 'total',
+        titleKey: 'VENDOR_ORDERS.KPI.TOTAL_ORDERS',
+        value: this.formatNumber(totalOrders),
+        trend: `${completedOrders}`,
+        trendKey: 'VENDOR_ORDERS.KPI.COMPLETED_ORDERS',
+        icon: 'receipt_long',
+        borderColor: 'border-l-primary',
+        trendClass: 'text-green-600',
+        trendIcon: 'check_circle'
+      },
+      {
+        id: 'open',
+        titleKey: 'VENDOR_ORDERS.KPI.OPEN_ORDERS',
+        value: this.formatNumber(openOrders),
+        trend: `${paymentIssues}`,
+        trendKey: 'VENDOR_ORDERS.OPEN_DISPUTES',
+        icon: 'pending_actions',
+        borderColor: 'border-l-blue-500',
+        trendClass: paymentIssues > 0 ? 'text-orange-600' : 'text-green-600',
+        trendIcon: paymentIssues > 0 ? 'warning' : 'check_circle'
+      },
+      {
+        id: 'completed',
+        titleKey: 'VENDOR_ORDERS.KPI.COMPLETED_ORDERS',
+        value: this.formatNumber(completedOrders),
+        trend: `${totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 0}%`,
+        trendKey: 'COMMON.STATUS',
+        icon: 'check_circle',
+        borderColor: 'border-l-green-500',
+        trendClass: 'text-green-600',
+        trendIcon: 'arrow_upward'
+      },
+      {
+        id: 'cancelled',
+        titleKey: 'VENDOR_ORDERS.KPI.CANCELLED_ORDERS',
+        value: this.formatNumber(cancelledOrders),
+        trend: this.cancellationRate,
+        trendKey: 'VENDOR_ORDERS.CANCELLATION_RATE',
+        icon: 'cancel',
+        borderColor: 'border-l-red-500',
+        trendClass: 'text-red-600',
+        trendIcon: 'arrow_downward'
+      },
+      {
+        id: 'returned',
+        titleKey: 'VENDOR_ORDERS.OPEN_DISPUTES',
+        value: this.formatNumber(paymentIssues),
+        trend: `${openOrders}`,
+        trendKey: 'VENDOR_ORDERS.KPI.OPEN_ORDERS',
+        icon: 'report_problem',
+        borderColor: 'border-l-orange-500',
+        trendClass: paymentIssues > 0 ? 'text-red-600' : 'text-green-600',
+        trendIcon: paymentIssues > 0 ? 'warning' : 'check_circle'
+      },
+      {
+        id: 'average',
+        titleKey: 'VENDOR_ORDERS.KPI.AVERAGE_ORDER',
+        value: `${this.formatNumber(averageOrder)} ${this.translate.instant('COMMON.CURRENCY_SAR')}`,
+        trend: `${this.formatNumber(totalSalesValue)}`,
+        trendKey: 'VENDOR_ORDERS.TOTAL_SALES',
+        icon: 'payments',
+        borderColor: 'border-l-purple-500',
+        trendClass: 'text-green-600',
+        trendIcon: 'arrow_upward'
+      }
+    ];
+  }
+
+  private mapOrders(orders: AdminVendorOrderItem[]): OrderRow[] {
+    return orders.map((order) => {
+      const placedAt = new Date(order.placedAtUtc);
+      return {
+        id: order.id,
+        orderNumber: order.orderNumber,
+        customer: order.customerName,
+        customerLocation: '-',
+        date: placedAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US'),
+        time: placedAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        amount: this.formatNumber(order.totalAmount),
+        paymentStatusKey: this.mapPaymentStatusKey(order.paymentStatus),
+        shippingStatusKey: this.mapOrderStatusKey(order.status),
+        generalStatusKey: this.mapOrderStatusKey(order.status)
+      };
+    });
+  }
+
+  private mapPaymentStatusKey(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'paid':
+        return 'VENDOR_ORDERS.PAYMENT_STATUS.PAID';
+      case 'refunded':
+      case 'partiallyrefunded':
+        return 'VENDOR_ORDERS.PAYMENT_STATUS.REFUNDED';
+      default:
+        return 'VENDOR_ORDERS.PAYMENT_STATUS.PENDING';
+    }
+  }
+
+  private mapOrderStatusKey(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'delivered':
+        return 'VENDOR_ORDERS.GENERAL_STATUS.COMPLETED';
+      case 'cancelled':
+        return 'VENDOR_ORDERS.GENERAL_STATUS.CANCELLED';
+      case 'placed':
+      case 'preparing':
+      case 'ontheway':
+        return 'VENDOR_ORDERS.GENERAL_STATUS.IN_PROGRESS';
+      default:
+        return 'VENDOR_ORDERS.GENERAL_STATUS.NEW';
+    }
+  }
+
+  private formatNumber(value: number): string {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(value);
   }
 }

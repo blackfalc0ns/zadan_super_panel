@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '@core/services/auth.service';
 import {
@@ -41,12 +41,174 @@ interface VendorSeed {
   commissionRate?: number;
 }
 
+interface AdminVendorListItemDto {
+  id: string;
+  businessNameAr: string;
+  businessNameEn: string;
+  businessType: string;
+  status: string;
+  ownerName: string;
+  contactPhone: string;
+  createdAtUtc: string;
+  contactEmail?: string | null;
+  commissionRate?: number | null;
+  city?: string | null;
+  region?: string | null;
+  accountStatus?: string | null;
+  isLoginLocked?: boolean;
+  lockedAtUtc?: string | null;
+  archivedAtUtc?: string | null;
+}
+
+interface AdminVendorDetailDto extends AdminVendorListItemDto {
+  commercialRegistrationNumber?: string | null;
+  commercialRegistrationExpiryDate?: string | null;
+  taxId?: string | null;
+  licenseNumber?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
+  nationalAddress?: string | null;
+  suspendedAtUtc?: string | null;
+  rejectionReason?: string | null;
+  suspensionReason?: string | null;
+  lockReason?: string | null;
+  archiveReason?: string | null;
+  logoUrl?: string | null;
+  commercialRegisterDocumentUrl?: string | null;
+  approvedAtUtc?: string | null;
+  approvedByName?: string | null;
+  updatedAtUtc?: string | null;
+  ownerEmail?: string | null;
+  ownerPhone?: string | null;
+  idNumber?: string | null;
+  nationality?: string | null;
+  payoutCycle?: string | null;
+  operationsSettings?: {
+    acceptOrders: boolean;
+    minimumOrderAmount?: number | null;
+    preparationTimeMinutes?: number | null;
+  } | null;
+  notificationSettings?: {
+    emailNotificationsEnabled: boolean;
+    smsNotificationsEnabled: boolean;
+    newOrdersNotificationsEnabled: boolean;
+  } | null;
+  reviewStartedAtUtc?: string | null;
+  reviewCompletedAtUtc?: string | null;
+  requestedChangesAtUtc?: string | null;
+  reviewDecisionReason?: string | null;
+  reviewNotes?: Array<{
+    id: string;
+    authorName: string;
+    roleLabel: string;
+    createdAtUtc: string;
+    message?: string | null;
+    messageKey?: string | null;
+    tone: 'info' | 'success' | 'warning' | 'danger' | string;
+    isSystem?: boolean;
+  }> | null;
+  primaryBankAccount?: VendorDetail['primaryBankAccount'];
+  operatingHours?: Array<{
+    dayOfWeek: number;
+    openTime: string;
+    closeTime: string;
+    isOpen: boolean;
+  }> | null;
+  branchesCount?: number | null;
+  bankAccountsCount?: number | null;
+}
+
+interface ApiPaginatedResponse<T> {
+  items: T[];
+  totalCount: number;
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
+}
+
+export interface AdminVendorOrderItem {
+  id: string;
+  orderNumber: string;
+  vendorId: string;
+  customerId: string;
+  customerName: string;
+  status: string;
+  paymentStatus: string;
+  subtotal: number;
+  deliveryFee: number;
+  commissionAmount: number;
+  totalAmount: number;
+  itemsCount: number;
+  placedAtUtc: string;
+}
+
+export interface AdminVendorProductItem {
+  id: string;
+  vendorId: string;
+  masterProductId: string;
+  sellingPrice: number;
+  compareAtPrice?: number | null;
+  stockQuantity: number;
+  isAvailable: boolean;
+  status: string;
+  masterProduct: {
+    id: string;
+    nameAr: string;
+    nameEn: string;
+    slug: string;
+    descriptionAr?: string | null;
+    descriptionEn?: string | null;
+    barcode?: string | null;
+    categoryId: string;
+    brandId?: string | null;
+    unitOfMeasureId?: string | null;
+    status: string;
+    images: Array<{
+      url: string;
+      altText?: string | null;
+      displayOrder: number;
+      isPrimary: boolean;
+    }>;
+  };
+}
+
+export interface AdminVendorSettlementItem {
+  id: string;
+  settlementNumber: string;
+  grossAmount: number;
+  commissionAmount: number;
+  netAmount: number;
+  status: string;
+  createdAtUtc: string;
+  processedAtUtc?: string | null;
+  payoutsCount: number;
+}
+
+export interface AdminVendorPayoutItem {
+  id: string;
+  settlementId: string;
+  payoutNumber: string;
+  amount: number;
+  status: string;
+  transferReference?: string | null;
+  createdAtUtc: string;
+  processedAtUtc?: string | null;
+  vendorBankAccountId?: string | null;
+  bankName?: string | null;
+  accountHolderName?: string | null;
+  iban?: string | null;
+  swiftCode?: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class VendorService {
   private readonly apiUrl = `${environment.apiUrl}/admin/vendors`;
   private readonly vendorStore = this.buildMockVendorStore();
+  private readonly apiVendorStore = new Map<string, VendorDetail>();
   private readonly fallbackWarnings = new Set<string>();
   private unauthorizedReadToken: string | null = null;
 
@@ -63,10 +225,6 @@ export class VendorService {
   ): Observable<PaginatedVendors> {
     const fallback = this.buildLocalPaginatedVendors(pageNumber, pageSize, search, status);
 
-    if (this.shouldUseLocalReadFallback()) {
-      return of(fallback);
-    }
-
     let params = new HttpParams()
       .set('page', pageNumber.toString())
       .set('pageSize', pageSize.toString());
@@ -79,45 +237,113 @@ export class VendorService {
       params = params.set('status', status);
     }
 
-    return this.http.get<PaginatedVendors | Vendor[]>(this.apiUrl, { params }).pipe(
+    return this.http.get<PaginatedVendors | AdminVendorListItemDto[]>(this.apiUrl, { params }).pipe(
       map((response) => this.normalizeVendorResponse(response, pageNumber, pageSize, search, status)),
       catchError((error) => this.handleReadFallback('Vendor list', fallback, error))
     );
   }
 
   getVendorById(id: string): Observable<VendorDetail> {
-    const localVendor = this.findVendorOrFallback(id);
+    const fallback = this.getFallbackVendorDetail(id);
 
-    if (this.shouldUseLocalReadFallback()) {
-      return of(this.clone(localVendor));
-    }
-
-    return this.http.get<Partial<VendorDetail>>(`${this.apiUrl}/${id}`).pipe(
-      map((response) => this.mergeVendorDetail(localVendor, response)),
-      catchError((error) => this.handleReadFallback('Vendor detail', this.clone(localVendor), error))
+    return this.http.get<AdminVendorDetailDto>(`${this.apiUrl}/${id}`).pipe(
+      map((response) => {
+        const mappedVendor = this.mapApiVendorDetail(response, fallback);
+        this.rememberVendorDetail(mappedVendor);
+        return mappedVendor;
+      }),
+      catchError((error) => this.handleReadFallback('Vendor detail', this.clone(fallback), error))
     );
   }
 
   getVendorSnapshotById(id: string): VendorDetail | undefined {
-    const vendor = this.findVendor(id);
+    const vendor = this.apiVendorStore.get(id) ?? this.findVendor(id);
     return vendor ? this.clone(vendor) : undefined;
   }
 
   getVendorsSnapshot(): VendorDetail[] {
+    if (this.apiVendorStore.size > 0) {
+      return Array.from(this.apiVendorStore.values()).map((vendor) => this.clone(vendor));
+    }
+
     return this.vendorStore.map((vendor) => this.clone(vendor));
   }
 
   getVendorKPIs(): Observable<VendorKPIs> {
-    return of(this.buildVendorKPIs(this.vendorStore));
+    if (this.shouldUseLocalReadFallback()) {
+      return of(this.buildVendorKPIs(this.vendorStore));
+    }
+
+    return this.http.get<PaginatedVendors | AdminVendorListItemDto[]>(this.apiUrl, {
+      params: new HttpParams().set('page', '1').set('pageSize', '250')
+    }).pipe(
+      map((response) => this.normalizeVendorResponse(response, 1, 250)),
+      map((response) => this.buildVendorKPIsFromSummaries(response.items ?? [])),
+      catchError((error) => this.handleReadFallback('Vendor KPIs', this.buildVendorKPIs(this.vendorStore), error))
+    );
+  }
+
+  getVendorOrders(vendorId: string, page: number = 1, pageSize: number = 10): Observable<ApiPaginatedResponse<AdminVendorOrderItem>> {
+    return this.http.get<ApiPaginatedResponse<AdminVendorOrderItem>>(`${this.apiUrl}/${vendorId}/orders`, {
+      params: new HttpParams()
+        .set('page', page.toString())
+        .set('pageSize', pageSize.toString())
+    });
+  }
+
+  getVendorProducts(vendorId: string, page: number = 1, pageSize: number = 10): Observable<ApiPaginatedResponse<AdminVendorProductItem>> {
+    return this.http.get<ApiPaginatedResponse<AdminVendorProductItem>>(`${this.apiUrl}/${vendorId}/products`, {
+      params: new HttpParams()
+        .set('page', page.toString())
+        .set('pageSize', pageSize.toString())
+    });
+  }
+
+  getVendorSettlements(vendorId: string, page: number = 1, pageSize: number = 20): Observable<ApiPaginatedResponse<AdminVendorSettlementItem>> {
+    return this.http.get<ApiPaginatedResponse<AdminVendorSettlementItem>>(`${this.apiUrl}/${vendorId}/settlements`, {
+      params: new HttpParams()
+        .set('page', page.toString())
+        .set('pageSize', pageSize.toString())
+    });
+  }
+
+  getVendorPayouts(vendorId: string, page: number = 1, pageSize: number = 20): Observable<ApiPaginatedResponse<AdminVendorPayoutItem>> {
+    return this.http.get<ApiPaginatedResponse<AdminVendorPayoutItem>>(`${this.apiUrl}/${vendorId}/payouts`, {
+      params: new HttpParams()
+        .set('page', page.toString())
+        .set('pageSize', pageSize.toString())
+    });
+  }
+
+  createVendorSettlement(
+    vendorId: string,
+    payload: {
+      grossAmount: number;
+      commissionAmount: number;
+      netAmount: number;
+    }
+  ): Observable<{ settlementId: string }> {
+    return this.http.post<{ settlementId: string }>(`${this.apiUrl}/${vendorId}/settlements`, payload);
+  }
+
+  retryVendorPayout(vendorId: string, payoutId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${vendorId}/payouts/${payoutId}/retry`, {});
+  }
+
+  suspendVendorPayout(vendorId: string, payoutId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${vendorId}/payouts/${payoutId}/suspend`, {});
+  }
+
+  escalateVendorPayout(vendorId: string, payoutId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${vendorId}/payouts/${payoutId}/escalate`, {});
   }
 
   private shouldUseLocalReadFallback(): boolean {
-    if (!this.authService.hasApiSession) {
-      this.resetReadFallbackState();
-      return true;
+    if (!environment.skipAuthForDevelopment) {
+      return false;
     }
 
-    const token = this.authService.getToken();
+    const token = this.authService.getToken() ?? '__guest__';
     if (this.unauthorizedReadToken && this.unauthorizedReadToken !== token) {
       this.resetReadFallbackState();
     }
@@ -126,9 +352,13 @@ export class VendorService {
   }
 
   private handleReadFallback<T>(context: string, fallback: T, error: unknown): Observable<T> {
+    if (!environment.skipAuthForDevelopment) {
+      return throwError(() => error);
+    }
+
     const unauthorized = this.isUnauthorizedError(error);
     if (unauthorized) {
-      this.unauthorizedReadToken = this.authService.getToken();
+      this.unauthorizedReadToken = this.authService.getToken() ?? '__guest__';
     }
 
     if (!this.fallbackWarnings.has(context)) {
@@ -154,7 +384,7 @@ export class VendorService {
   }
 
   approveVendor(id: string, commissionRate: number): Observable<{ message: string }> {
-    const request$ = this.authService.hasApiSession
+    const request$ = this.canUseApiMutations()
       ? this.http.post(`${this.apiUrl}/${id}/approve`, { commissionRate })
       : null;
 
@@ -166,7 +396,7 @@ export class VendorService {
   }
 
   rejectVendor(id: string, reason: string): Observable<{ message: string }> {
-    const request$ = this.authService.hasApiSession
+    const request$ = this.canUseApiMutations()
       ? this.http.post(`${this.apiUrl}/${id}/reject`, { reason })
       : null;
 
@@ -178,7 +408,7 @@ export class VendorService {
   }
 
   suspendVendor(id: string, reason: string): Observable<{ message: string }> {
-    const request$ = this.authService.hasApiSession
+    const request$ = this.canUseApiMutations()
       ? this.http.post(`${this.apiUrl}/${id}/suspend`, { reason })
       : null;
 
@@ -190,7 +420,7 @@ export class VendorService {
   }
 
   approveVendorReview(id: string, commissionRate: number = 13): Observable<VendorDetail> {
-    const request$ = this.authService.hasApiSession
+    const request$ = this.canUseApiMutations()
       ? this.http.post(`${this.apiUrl}/${id}/approve`, { commissionRate })
       : null;
 
@@ -204,44 +434,60 @@ export class VendorService {
     id: string,
     note: string = 'Please re-upload the missing documents and confirm the latest business details.'
   ): Observable<VendorDetail> {
-    return of(this.updateVendor(id, (vendor) => {
-      vendor.reviewState = 'changes_requested';
-      vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
-      vendor.requestedChangesAtUtc = this.timestamp();
-      vendor.reviewDecisionReason = note;
-      vendor.reviewCompletedAtUtc = null;
-      this.markDocumentForReupload(vendor.reviewDocuments);
-      this.pushSystemNote(vendor, {
-        authorName: 'Vendor Compliance Desk',
-        roleLabel: 'Compliance Review',
-        messageKey: 'VENDOR_REVIEW.NOTES.CHANGES_REQUESTED',
-        tone: 'warning'
-      });
-    }));
+    const request$ = this.canUseApiMutations()
+      ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/request-documents`, { note })
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.reviewState = 'changes_requested';
+        vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
+        vendor.requestedChangesAtUtc = this.timestamp();
+        vendor.reviewDecisionReason = note;
+        vendor.reviewCompletedAtUtc = null;
+        this.markDocumentForReupload(vendor.reviewDocuments);
+        this.pushSystemNote(vendor, {
+          authorName: 'Vendor Compliance Desk',
+          roleLabel: 'Compliance Review',
+          messageKey: 'VENDOR_REVIEW.NOTES.CHANGES_REQUESTED',
+          tone: 'warning'
+        });
+      }),
+      id
+    );
   }
 
   startVendorReview(id: string): Observable<VendorDetail> {
-    return of(this.updateVendor(id, (vendor) => {
-      vendor.reviewState = 'under_review';
-      vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
-      vendor.reviewStartedAtUtc = vendor.reviewStartedAtUtc || this.timestamp();
-      vendor.reviewSubmittedAtUtc = vendor.reviewSubmittedAtUtc || this.timestamp();
-      vendor.reviewCompletedAtUtc = null;
-      this.markPendingDocuments(vendor.reviewDocuments);
-      this.pushSystemNote(vendor, {
-        authorName: 'Vendor Compliance Desk',
-        roleLabel: 'Compliance Review',
-        messageKey: 'VENDOR_REVIEW.NOTES.UNDER_REVIEW',
-        tone: 'info'
-      });
-    }));
+    const request$ = this.canUseApiMutations()
+      ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/start-review`, {})
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.reviewState = 'under_review';
+        vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
+        vendor.reviewStartedAtUtc = vendor.reviewStartedAtUtc || this.timestamp();
+        vendor.reviewSubmittedAtUtc = vendor.reviewSubmittedAtUtc || this.timestamp();
+        vendor.reviewCompletedAtUtc = null;
+        this.markPendingDocuments(vendor.reviewDocuments);
+        this.pushSystemNote(vendor, {
+          authorName: 'Vendor Compliance Desk',
+          roleLabel: 'Compliance Review',
+          messageKey: 'VENDOR_REVIEW.NOTES.UNDER_REVIEW',
+          tone: 'info'
+        });
+      }),
+      id
+    );
   }
 
   rejectVendorReview(
     id: string,
     reason: string = 'Submitted data did not pass compliance review.'
   ): Observable<VendorDetail> {
-    const request$ = this.authService.hasApiSession
+    const request$ = this.canUseApiMutations()
       ? this.http.post(`${this.apiUrl}/${id}/reject`, { reason })
       : null;
 
@@ -255,7 +501,7 @@ export class VendorService {
     id: string,
     reason: string = 'The account was suspended pending a manual compliance decision.'
   ): Observable<VendorDetail> {
-    const request$ = this.authService.hasApiSession
+    const request$ = this.canUseApiMutations()
       ? this.http.post(`${this.apiUrl}/${id}/suspend`, { reason })
       : null;
 
@@ -265,25 +511,327 @@ export class VendorService {
     );
   }
 
+  reactivateVendorAccount(id: string): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post(`${this.apiUrl}/${id}/reactivate`, {})
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.applyReactivation(id),
+      id
+    );
+  }
+
+  lockVendorLogin(id: string, reason: string): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post(`${this.apiUrl}/${id}/lock-login`, { reason })
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.isLoginLocked = true;
+        vendor.lockedAtUtc = this.timestamp();
+        vendor.lockReason = reason;
+        if (vendor.status === VendorStatus.Active) {
+          vendor.status = VendorStatus.Suspended;
+        }
+      }),
+      id
+    );
+  }
+
+  unlockVendorLogin(id: string): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post(`${this.apiUrl}/${id}/unlock-login`, {})
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.isLoginLocked = false;
+        vendor.lockedAtUtc = null;
+        vendor.lockReason = null;
+        if (vendor.status === VendorStatus.Suspended
+          && !vendor.archivedAtUtc
+          && !vendor.suspensionReason
+          && !vendor.rejectionReason) {
+          vendor.status = VendorStatus.Active;
+        }
+      }),
+      id
+    );
+  }
+
+  archiveVendorAccount(id: string, reason: string): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post(`${this.apiUrl}/${id}/archive`, { reason })
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.archivedAtUtc = this.timestamp();
+        vendor.archiveReason = reason;
+        vendor.status = VendorStatus.Suspended;
+      }),
+      id
+    );
+  }
+
+  resetVendorPassword(id: string, newPassword: string): Observable<{ message: string }> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post(`${this.apiUrl}/${id}/reset-password`, { newPassword })
+      : null;
+
+    return this.executeApiMessage(
+      request$,
+      () => this.findVendorOrFallback(id),
+      'Vendor password reset successfully.'
+    );
+  }
+
+  updateVendorStore(
+    id: string,
+    payload: {
+      businessNameAr: string;
+      businessNameEn: string;
+      businessType: string;
+      contactEmail: string;
+      contactPhone: string;
+      descriptionAr?: string | null;
+      descriptionEn?: string | null;
+      logoUrl?: string | null;
+      commercialRegisterDocumentUrl?: string | null;
+      region?: string | null;
+      city?: string | null;
+      nationalAddress?: string | null;
+      commercialRegistrationNumber?: string | null;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/store`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.businessNameAr = payload.businessNameAr;
+        vendor.businessNameEn = payload.businessNameEn;
+        vendor.businessType = payload.businessType;
+        vendor.contactEmail = payload.contactEmail;
+        vendor.contactPhone = payload.contactPhone;
+        vendor.region = payload.region ?? vendor.region;
+        vendor.city = payload.city ?? vendor.city;
+        vendor.nationalAddress = payload.nationalAddress ?? vendor.nationalAddress;
+        vendor.commercialRegistrationNumber = payload.commercialRegistrationNumber ?? vendor.commercialRegistrationNumber;
+        vendor.logoUrl = payload.logoUrl ?? vendor.logoUrl;
+        vendor.commercialRegisterDocumentUrl = payload.commercialRegisterDocumentUrl ?? vendor.commercialRegisterDocumentUrl;
+      }),
+      id
+    );
+  }
+
+  updateVendorContact(
+    id: string,
+    payload: {
+      region: string;
+      city: string;
+      nationalAddress: string;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/contact`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.region = payload.region;
+        vendor.city = payload.city;
+        vendor.nationalAddress = payload.nationalAddress;
+      }),
+      id
+    );
+  }
+
+  updateVendorOwner(
+    id: string,
+    payload: {
+      ownerName: string;
+      ownerEmail: string;
+      ownerPhone: string;
+      idNumber?: string | null;
+      nationality?: string | null;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/owner`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.ownerName = payload.ownerName;
+        vendor.ownerEmail = payload.ownerEmail;
+        vendor.ownerPhone = payload.ownerPhone;
+        vendor.idNumber = payload.idNumber ?? vendor.idNumber;
+        vendor.nationality = payload.nationality ?? vendor.nationality;
+      }),
+      id
+    );
+  }
+
+  updateVendorLegalBanking(
+    id: string,
+    payload: {
+      commercialRegistrationNumber: string;
+      commercialRegistrationExpiryDate?: string | null;
+      taxId?: string | null;
+      licenseNumber?: string | null;
+      bankName: string;
+      accountHolderName: string;
+      iban: string;
+      swiftCode?: string | null;
+      payoutCycle?: string | null;
+      commercialRegisterDocumentUrl?: string | null;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/legal-banking`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.commercialRegistrationNumber = payload.commercialRegistrationNumber;
+        vendor.commercialRegistrationExpiryDate = payload.commercialRegistrationExpiryDate ?? vendor.commercialRegistrationExpiryDate;
+        vendor.taxId = payload.taxId ?? vendor.taxId;
+        vendor.licenseNumber = payload.licenseNumber ?? vendor.licenseNumber;
+        vendor.payoutCycle = payload.payoutCycle ?? vendor.payoutCycle;
+        vendor.commercialRegisterDocumentUrl = payload.commercialRegisterDocumentUrl ?? vendor.commercialRegisterDocumentUrl;
+        vendor.primaryBankAccount = {
+          id: vendor.primaryBankAccount?.id || 'draft-primary-bank-account',
+          bankName: payload.bankName,
+          accountHolderName: payload.accountHolderName,
+          iban: payload.iban,
+          swiftCode: payload.swiftCode ?? vendor.primaryBankAccount?.swiftCode ?? null,
+          isPrimary: true,
+          status: vendor.primaryBankAccount?.status || 'PendingVerification',
+          rejectionReason: null,
+          verifiedAtUtc: null
+        };
+      }),
+      id
+    );
+  }
+
+  updateVendorHours(
+    id: string,
+    payload: {
+      hours: Array<{
+        dayOfWeek: number;
+        openTime: string;
+        closeTime: string;
+        isOpen: boolean;
+      }>;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/hours`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.operatingHours = payload.hours.map((hour) => ({ ...hour }));
+      }),
+      id
+    );
+  }
+
+  updateVendorOperationsSettings(
+    id: string,
+    payload: {
+      acceptOrders: boolean;
+      minimumOrderAmount?: number | null;
+      preparationTimeMinutes?: number | null;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/operations-settings`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.operationsSettings = {
+          acceptOrders: payload.acceptOrders,
+          minimumOrderAmount: payload.minimumOrderAmount ?? null,
+          preparationTimeMinutes: payload.preparationTimeMinutes ?? null
+        };
+      }),
+      id
+    );
+  }
+
+  updateVendorNotificationSettings(
+    id: string,
+    payload: {
+      emailNotificationsEnabled: boolean;
+      smsNotificationsEnabled: boolean;
+      newOrdersNotificationsEnabled: boolean;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/notification-settings`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.notificationSettings = {
+          emailNotificationsEnabled: payload.emailNotificationsEnabled,
+          smsNotificationsEnabled: payload.smsNotificationsEnabled,
+          newOrdersNotificationsEnabled: payload.newOrdersNotificationsEnabled
+        };
+      }),
+      id
+    );
+  }
+
   addVendorReviewNote(
     id: string,
     message: string,
     authorName: string = 'Operations Reviewer',
     roleLabel: string = 'Vendor Review'
   ): Observable<VendorDetail> {
-    return of(this.updateVendor(id, (vendor) => {
-      vendor.reviewNotes = [
-        {
-          id: this.nextNoteId(vendor.reviewNotes),
-          authorName,
-          roleLabel,
-          createdAtUtc: this.timestamp(),
+    const request$ = this.canUseApiMutations()
+      ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/review-notes`, {
           message,
-          tone: 'info'
-        },
-        ...vendor.reviewNotes
-      ];
-    }));
+          authorName,
+          roleLabel
+        })
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.reviewNotes = [
+          {
+            id: this.nextNoteId(vendor.reviewNotes),
+            authorName,
+            roleLabel,
+            createdAtUtc: this.timestamp(),
+            message,
+            tone: 'info'
+          },
+          ...vendor.reviewNotes
+        ];
+      }),
+      id
+    );
   }
 
   private executeApiMessage(
@@ -302,6 +850,10 @@ export class VendorService {
         return { message: successMessage };
       }),
       catchError((error) => {
+        if (!environment.skipAuthForDevelopment) {
+          return throwError(() => error);
+        }
+
         console.warn('Vendor mutation API failed, applying local fallback.', error);
         localMutation();
         return of({ message: successMessage });
@@ -311,35 +863,46 @@ export class VendorService {
 
   private executeVendorMutation(
     request$: Observable<unknown> | null,
-    localMutation: () => VendorDetail
+    localMutation: () => VendorDetail,
+    vendorId?: string
   ): Observable<VendorDetail> {
     if (!request$) {
       return of(localMutation());
     }
 
     return request$.pipe(
-      map(() => localMutation()),
+      switchMap(() => vendorId ? this.getVendorById(vendorId) : of(localMutation())),
       catchError((error) => {
+        if (!environment.skipAuthForDevelopment) {
+          return throwError(() => error);
+        }
+
         console.warn('Vendor mutation API failed, applying local fallback.', error);
         return of(localMutation());
       })
     );
   }
 
+  private canUseApiMutations(): boolean {
+    return this.authService.hasApiSession || !environment.skipAuthForDevelopment;
+  }
+
   private normalizeVendorResponse(
-    response: PaginatedVendors | Vendor[] | null | undefined,
+    response: PaginatedVendors | AdminVendorListItemDto[] | null | undefined,
     pageNumber: number,
     pageSize: number,
     search?: string,
     status?: VendorStatus
   ): PaginatedVendors {
     if (Array.isArray(response)) {
-      const enriched = response.map((vendor) => this.mergeVendorSummary(vendor));
+      const enriched = response.map((vendor) => this.mapApiVendorSummary(vendor));
+      enriched.forEach((vendor) => this.rememberVendorSummary(vendor));
       return this.paginateVendors(enriched, pageNumber, pageSize, search, status);
     }
 
     if (response && Array.isArray(response.items)) {
-      const items = response.items.map((vendor) => this.mergeVendorSummary(vendor));
+      const items = response.items.map((vendor) => this.mapApiVendorSummary(vendor as AdminVendorListItemDto));
+      items.forEach((vendor) => this.rememberVendorSummary(vendor));
       const totalCount = response.totalCount ?? items.length;
       const totalPages = response.totalPages ?? Math.max(1, Math.ceil(totalCount / pageSize));
       const safePage = response.pageNumber ?? Math.min(Math.max(1, pageNumber), totalPages);
@@ -416,23 +979,389 @@ export class VendorService {
     };
   }
 
-  private mergeVendorSummary(apiVendor: Vendor): Vendor {
-    const localVendor = this.findVendor(apiVendor.id);
-    const base = localVendor ? this.toVendorSummary(localVendor) : this.toVendorSummary(this.vendorStore[0]);
+  private buildVendorKPIsFromSummaries(vendors: Vendor[]): VendorKPIs {
+    return {
+      pendingApproval: vendors.filter((vendor) => vendor.status === VendorStatus.Pending).length,
+      missingDocuments: vendors.filter((vendor) => (vendor.documentsCompleteness ?? 0) < 100).length,
+      highRisk: vendors.filter((vendor) => vendor.riskLevel === RiskLevel.High || vendor.riskLevel === RiskLevel.Critical).length,
+      payoutBlocked: vendors.filter((vendor) => vendor.payoutStatus === PayoutStatus.Blocked).length,
+      suspended: vendors.filter((vendor) => vendor.status === VendorStatus.Suspended).length
+    };
+  }
+
+  private mapApiVendorSummary(apiVendor: AdminVendorListItemDto): Vendor {
+    const businessNameAr = apiVendor.businessNameAr?.trim() || apiVendor.businessNameEn?.trim() || '';
+    const businessNameEn = apiVendor.businessNameEn?.trim() || apiVendor.businessNameAr?.trim() || '';
+    const businessType = apiVendor.businessType?.trim() || 'Retail';
+    const ownerName = apiVendor.ownerName?.trim() || apiVendor.contactEmail?.trim() || 'Vendor';
+    const contactPhone = apiVendor.contactPhone?.trim() || '';
+    const status = this.normalizeStatus(apiVendor.status);
+    const accountStatus = apiVendor.accountStatus || (status === VendorStatus.Active ? 'Active' : 'Pending');
+    const isLocked = apiVendor.isLoginLocked ?? false;
+
     return this.clone({
-      ...base,
-      ...apiVendor
+      id: apiVendor.id,
+      businessNameAr,
+      businessNameEn,
+      businessType,
+      status,
+      accountStatus,
+      isLoginLocked: isLocked,
+      lockedAtUtc: apiVendor.lockedAtUtc ?? null,
+      archivedAtUtc: apiVendor.archivedAtUtc ?? null,
+      suspendedAtUtc: status === VendorStatus.Suspended ? (apiVendor.lockedAtUtc ?? null) : null,
+      ownerName,
+      contactPhone,
+      createdAtUtc: apiVendor.createdAtUtc,
+      contactEmail: apiVendor.contactEmail ?? '',
+      commissionRate: apiVendor.commissionRate ?? null,
+      city: apiVendor.city ?? undefined,
+      region: apiVendor.region ?? undefined,
+      onboardingStage: this.resolveOnboardingStage(status),
+      verificationStatus: this.resolveVerificationStatus(status),
+      documentsStatus: this.resolveDocumentsStatusFromStatus(status),
+      riskLevel: this.resolveRiskLevel(status, accountStatus, isLocked),
+      payoutStatus: status === VendorStatus.Active ? PayoutStatus.Active : PayoutStatus.Pending,
+      documentsCompleteness: this.resolveDocumentsCompleteness(status),
+      hasKYC: status === VendorStatus.Active,
+      hasPendingCompliance: status === VendorStatus.Pending,
+      hasFraudFlag: false,
+      complaintsCount: 0,
+      isLowPerformance: false,
+      reviewState: this.resolveReviewState(status, isLocked, apiVendor.archivedAtUtc),
+      assignedReviewer: null,
+      reviewSubmittedAtUtc: status === VendorStatus.Pending ? apiVendor.createdAtUtc : null,
+      reviewUpdatedAtUtc: apiVendor.lockedAtUtc ?? apiVendor.archivedAtUtc ?? apiVendor.createdAtUtc
     });
   }
 
-  private mergeVendorDetail(base: VendorDetail, apiVendor: Partial<VendorDetail>): VendorDetail {
+  private mapApiVendorDetail(apiVendor: AdminVendorDetailDto, fallback?: VendorDetail): VendorDetail {
+    const summary = this.mapApiVendorSummary(apiVendor);
+    const base = fallback ?? this.createVendorDetailFromSummary(summary);
+    const primaryBankAccount = apiVendor.primaryBankAccount
+      ? {
+          ...apiVendor.primaryBankAccount,
+          id: apiVendor.primaryBankAccount.id || 'primary-bank'
+        }
+      : base.primaryBankAccount ?? null;
+
+    const vendor = this.clone({
+      ...base,
+      ...summary,
+      commercialRegistrationNumber: apiVendor.commercialRegistrationNumber ?? base.commercialRegistrationNumber,
+      commercialRegistrationExpiryDate: apiVendor.commercialRegistrationExpiryDate ?? base.commercialRegistrationExpiryDate ?? null,
+      taxId: apiVendor.taxId ?? base.taxId ?? null,
+      licenseNumber: apiVendor.licenseNumber ?? base.licenseNumber ?? null,
+      descriptionAr: apiVendor.descriptionAr ?? base.descriptionAr ?? null,
+      descriptionEn: apiVendor.descriptionEn ?? base.descriptionEn ?? null,
+      nationalAddress: apiVendor.nationalAddress ?? base.nationalAddress ?? null,
+      suspendedAtUtc: apiVendor.suspendedAtUtc ?? base.suspendedAtUtc ?? null,
+      rejectionReason: apiVendor.rejectionReason ?? base.rejectionReason ?? null,
+      suspensionReason: apiVendor.suspensionReason ?? base.suspensionReason ?? null,
+      lockReason: apiVendor.lockReason ?? base.lockReason ?? null,
+      archiveReason: apiVendor.archiveReason ?? base.archiveReason ?? null,
+      logoUrl: apiVendor.logoUrl ?? base.logoUrl ?? null,
+      commercialRegisterDocumentUrl: apiVendor.commercialRegisterDocumentUrl ?? base.commercialRegisterDocumentUrl ?? null,
+      approvedAtUtc: apiVendor.approvedAtUtc ?? base.approvedAtUtc ?? null,
+      approvedBy: apiVendor.approvedByName ?? base.approvedBy ?? null,
+      updatedAtUtc: apiVendor.updatedAtUtc ?? base.updatedAtUtc ?? summary.reviewUpdatedAtUtc ?? null,
+      ownerEmail: apiVendor.ownerEmail ?? base.ownerEmail ?? '',
+      ownerPhone: apiVendor.ownerPhone ?? base.ownerPhone ?? apiVendor.contactPhone,
+      idNumber: apiVendor.idNumber ?? base.idNumber ?? null,
+      nationality: apiVendor.nationality ?? base.nationality ?? null,
+      payoutCycle: apiVendor.payoutCycle ?? base.payoutCycle ?? null,
+      operationsSettings: apiVendor.operationsSettings
+        ? {
+            acceptOrders: apiVendor.operationsSettings.acceptOrders,
+            minimumOrderAmount: apiVendor.operationsSettings.minimumOrderAmount ?? null,
+            preparationTimeMinutes: apiVendor.operationsSettings.preparationTimeMinutes ?? null
+          }
+        : base.operationsSettings ?? null,
+      notificationSettings: apiVendor.notificationSettings
+        ? {
+            emailNotificationsEnabled: apiVendor.notificationSettings.emailNotificationsEnabled,
+            smsNotificationsEnabled: apiVendor.notificationSettings.smsNotificationsEnabled,
+            newOrdersNotificationsEnabled: apiVendor.notificationSettings.newOrdersNotificationsEnabled
+          }
+        : base.notificationSettings ?? null,
+      operatingHours: apiVendor.operatingHours?.map((hour) => ({
+        dayOfWeek: hour.dayOfWeek,
+        openTime: hour.openTime,
+        closeTime: hour.closeTime,
+        isOpen: hour.isOpen
+      })) ?? base.operatingHours ?? [],
+      reviewStartedAtUtc: apiVendor.reviewStartedAtUtc ?? base.reviewStartedAtUtc ?? null,
+      reviewCompletedAtUtc: apiVendor.reviewCompletedAtUtc ?? base.reviewCompletedAtUtc ?? null,
+      requestedChangesAtUtc: apiVendor.requestedChangesAtUtc ?? base.requestedChangesAtUtc ?? null,
+      reviewDecisionReason: apiVendor.reviewDecisionReason ?? base.reviewDecisionReason ?? null,
+      primaryBankAccount,
+      branchesCount: apiVendor.branchesCount ?? base.branchesCount ?? 0,
+      bankAccountsCount: apiVendor.bankAccountsCount ?? base.bankAccountsCount ?? (primaryBankAccount ? 1 : 0),
+      reviewDocuments: this.buildReviewDocumentsFromApi(apiVendor, base),
+      reviewNotes: (apiVendor.reviewNotes?.map((note) => ({
+        id: note.id,
+        authorName: note.authorName,
+        roleLabel: note.roleLabel,
+        createdAtUtc: note.createdAtUtc,
+        message: note.message ?? undefined,
+        messageKey: note.messageKey ?? undefined,
+        tone: this.normalizeReviewTone(note.tone),
+        isSystem: note.isSystem ?? false
+      })) ?? base.reviewNotes ?? []),
+      riskIndicators: base.riskIndicators ?? []
+    });
+
+    vendor.reviewState = this.resolveDetailReviewState(vendor);
+    vendor.reviewUpdatedAtUtc = vendor.updatedAtUtc
+      ?? vendor.requestedChangesAtUtc
+      ?? vendor.reviewCompletedAtUtc
+      ?? vendor.reviewStartedAtUtc
+      ?? summary.reviewUpdatedAtUtc
+      ?? vendor.createdAtUtc;
+    vendor.riskIndicators = this.buildRiskIndicators(vendor);
+    return vendor;
+  }
+
+  private rememberVendorSummary(summary: Vendor): void {
+    const currentVendor = this.apiVendorStore.get(summary.id);
+    if (currentVendor) {
+      this.apiVendorStore.set(summary.id, this.clone({
+        ...currentVendor,
+        ...summary
+      }));
+      return;
+    }
+
+    this.apiVendorStore.set(summary.id, this.createVendorDetailFromSummary(summary));
+  }
+
+  private rememberVendorDetail(vendor: VendorDetail): void {
+    this.apiVendorStore.set(vendor.id, this.clone(vendor));
+  }
+
+  private getFallbackVendorDetail(id: string): VendorDetail {
+    return this.getVendorSnapshotById(id) ?? this.clone(this.findVendorOrFallback(id));
+  }
+
+  private createVendorDetailFromSummary(summary: Vendor): VendorDetail {
+    const localVendor = this.findVendor(summary.id);
+    const base = localVendor ? this.clone(localVendor) : this.clone(this.vendorStore[0]);
+
     return this.clone({
       ...base,
-      ...apiVendor,
-      reviewDocuments: base.reviewDocuments,
-      reviewNotes: base.reviewNotes,
-      riskIndicators: base.riskIndicators
+      ...summary,
+      commercialRegistrationNumber: localVendor?.commercialRegistrationNumber ?? '',
+      commercialRegistrationExpiryDate: localVendor?.commercialRegistrationExpiryDate ?? null,
+      taxId: localVendor?.taxId ?? null,
+      licenseNumber: localVendor?.licenseNumber ?? null,
+      descriptionAr: localVendor?.descriptionAr ?? null,
+      descriptionEn: localVendor?.descriptionEn ?? null,
+      nationalAddress: localVendor?.nationalAddress ?? null,
+      rejectionReason: localVendor?.rejectionReason ?? null,
+      logoUrl: localVendor?.logoUrl ?? null,
+      commercialRegisterDocumentUrl: localVendor?.commercialRegisterDocumentUrl ?? null,
+      approvedAtUtc: localVendor?.approvedAtUtc ?? null,
+      approvedBy: localVendor?.approvedBy ?? null,
+      updatedAtUtc: summary.reviewUpdatedAtUtc ?? localVendor?.reviewUpdatedAtUtc ?? null,
+      ownerEmail: localVendor?.ownerEmail ?? summary.contactEmail,
+      ownerPhone: localVendor?.ownerPhone ?? summary.contactPhone,
+      operationsSettings: localVendor?.operationsSettings ?? {
+        acceptOrders: true,
+        minimumOrderAmount: null,
+        preparationTimeMinutes: null
+      },
+      notificationSettings: localVendor?.notificationSettings ?? {
+        emailNotificationsEnabled: true,
+        smsNotificationsEnabled: false,
+        newOrdersNotificationsEnabled: true
+      },
+      operatingHours: localVendor?.operatingHours ?? [],
+      branchesCount: localVendor?.branchesCount ?? 0,
+      bankAccountsCount: localVendor?.bankAccountsCount ?? 0,
+      reviewStartedAtUtc: localVendor?.reviewStartedAtUtc ?? null,
+      reviewCompletedAtUtc: localVendor?.reviewCompletedAtUtc ?? null,
+      requestedChangesAtUtc: localVendor?.requestedChangesAtUtc ?? null,
+      reviewDecisionReason: localVendor?.reviewDecisionReason ?? null,
+      primaryBankAccount: localVendor?.primaryBankAccount ?? null,
+      reviewDocuments: localVendor?.reviewDocuments ?? this.buildReviewDocuments(summary.reviewState ?? 'submitted'),
+      reviewNotes: localVendor?.reviewNotes ?? [],
+      riskIndicators: localVendor?.riskIndicators ?? []
     });
+  }
+
+  private buildReviewDocumentsFromApi(apiVendor: AdminVendorDetailDto, fallback: VendorDetail): VendorReviewDocument[] {
+    const documents = this.buildReviewDocuments(this.resolveReviewState(
+      this.normalizeStatus(apiVendor.status),
+      apiVendor.isLoginLocked ?? false,
+      apiVendor.archivedAtUtc ?? null
+    ));
+
+    if (apiVendor.commercialRegisterDocumentUrl) {
+      return documents.map((document) =>
+        document.type === 'commercial'
+          ? this.applyDocumentStatus(document, 'completed')
+          : document
+      );
+    }
+
+    if (apiVendor.commercialRegistrationNumber || apiVendor.taxId || apiVendor.licenseNumber || apiVendor.primaryBankAccount?.iban) {
+      return documents.map((document) => {
+        if (document.type === 'commercial' && apiVendor.commercialRegistrationNumber) {
+          return this.applyDocumentStatus(document, 'completed');
+        }
+
+        if (document.type === 'tax' && apiVendor.taxId) {
+          return this.applyDocumentStatus(document, 'completed');
+        }
+
+        if (document.type === 'license' && apiVendor.licenseNumber) {
+          return this.applyDocumentStatus(document, 'completed');
+        }
+
+        if (document.type === 'bank' && apiVendor.primaryBankAccount?.iban) {
+          return this.applyDocumentStatus(document, 'completed');
+        }
+
+        return document;
+      });
+    }
+
+    return fallback.reviewDocuments;
+  }
+
+  private normalizeStatus(status?: string | null): VendorStatus {
+    switch ((status || '').toLowerCase()) {
+      case 'active':
+        return VendorStatus.Active;
+      case 'rejected':
+        return VendorStatus.Rejected;
+      case 'suspended':
+      case 'inactive':
+      case 'archived':
+        return VendorStatus.Suspended;
+      case 'pendingreview':
+      case 'pending_review':
+      case 'pending':
+      default:
+        return VendorStatus.Pending;
+    }
+  }
+
+  private normalizeReviewTone(tone?: string | null): 'info' | 'success' | 'warning' | 'danger' {
+    switch ((tone || '').toLowerCase()) {
+      case 'success':
+        return 'success';
+      case 'warning':
+        return 'warning';
+      case 'danger':
+      case 'error':
+        return 'danger';
+      default:
+        return 'info';
+    }
+  }
+
+  private resolveReviewState(status: VendorStatus, isLoginLocked: boolean, archivedAtUtc?: string | null): VendorReviewState {
+    if (archivedAtUtc || isLoginLocked || status === VendorStatus.Suspended) {
+      return 'suspended';
+    }
+
+    if (status === VendorStatus.Active) {
+      return 'verified';
+    }
+
+    if (status === VendorStatus.Rejected) {
+      return 'rejected';
+    }
+
+    return 'submitted';
+  }
+
+  private resolveDetailReviewState(vendor: VendorDetail): VendorReviewState {
+    if (vendor.archivedAtUtc || vendor.isLoginLocked || vendor.status === VendorStatus.Suspended) {
+      return 'suspended';
+    }
+
+    if (vendor.status === VendorStatus.Active) {
+      return 'verified';
+    }
+
+    if (vendor.status === VendorStatus.Rejected) {
+      return 'rejected';
+    }
+
+    if (vendor.requestedChangesAtUtc) {
+      return 'changes_requested';
+    }
+
+    if (vendor.reviewStartedAtUtc) {
+      return 'under_review';
+    }
+
+    return 'submitted';
+  }
+
+  private resolveOnboardingStage(status: VendorStatus): OnboardingStage {
+    if (status === VendorStatus.Active) {
+      return OnboardingStage.Approved;
+    }
+
+    if (status === VendorStatus.Pending) {
+      return OnboardingStage.UnderReview;
+    }
+
+    return OnboardingStage.DocumentsPending;
+  }
+
+  private resolveVerificationStatus(status: VendorStatus): VerificationStatus {
+    if (status === VendorStatus.Active) {
+      return VerificationStatus.Verified;
+    }
+
+    if (status === VendorStatus.Pending) {
+      return VerificationStatus.Pending;
+    }
+
+    return VerificationStatus.Unverified;
+  }
+
+  private resolveDocumentsStatusFromStatus(status: VendorStatus): DocumentsStatus {
+    if (status === VendorStatus.Active) {
+      return DocumentsStatus.Complete;
+    }
+
+    if (status === VendorStatus.Pending) {
+      return DocumentsStatus.Incomplete;
+    }
+
+    return DocumentsStatus.Missing;
+  }
+
+  private resolveDocumentsCompleteness(status: VendorStatus): number {
+    switch (status) {
+      case VendorStatus.Active:
+        return 100;
+      case VendorStatus.Pending:
+        return 70;
+      case VendorStatus.Rejected:
+        return 45;
+      case VendorStatus.Suspended:
+        return 100;
+      default:
+        return 0;
+    }
+  }
+
+  private resolveRiskLevel(status: VendorStatus, accountStatus?: string | null, isLoginLocked?: boolean): RiskLevel {
+    if (isLoginLocked || status === VendorStatus.Suspended) {
+      return RiskLevel.High;
+    }
+
+    if ((accountStatus || '').toLowerCase() === 'inactive') {
+      return RiskLevel.Medium;
+    }
+
+    return status === VendorStatus.Pending ? RiskLevel.Medium : RiskLevel.Low;
   }
 
   private applyApproval(id: string, commissionRate: number): VendorDetail {
@@ -485,7 +1414,10 @@ export class VendorService {
     return this.updateVendor(id, (vendor) => {
       vendor.status = VendorStatus.Suspended;
       vendor.reviewState = 'suspended';
+      vendor.accountStatus = 'Inactive';
       vendor.reviewDecisionReason = reason;
+      vendor.suspensionReason = reason;
+      vendor.suspendedAtUtc = this.timestamp();
       vendor.payoutStatus = PayoutStatus.Blocked;
       vendor.assignedReviewer = vendor.assignedReviewer || 'Risk & Compliance Desk';
       vendor.reviewCompletedAtUtc = this.timestamp();
@@ -494,6 +1426,31 @@ export class VendorService {
         roleLabel: 'Risk & Compliance',
         messageKey: 'VENDOR_REVIEW.NOTES.SUSPENDED',
         tone: 'danger'
+      });
+    });
+  }
+
+  private applyReactivation(id: string): VendorDetail {
+    return this.updateVendor(id, (vendor) => {
+      vendor.status = VendorStatus.Active;
+      vendor.accountStatus = 'Active';
+      vendor.reviewState = vendor.approvedAtUtc ? 'verified' : 'under_review';
+      vendor.reviewDecisionReason = null;
+      vendor.suspensionReason = null;
+      vendor.suspendedAtUtc = null;
+      vendor.lockReason = null;
+      vendor.lockedAtUtc = null;
+      vendor.isLoginLocked = false;
+      vendor.archiveReason = null;
+      vendor.archivedAtUtc = null;
+      vendor.payoutStatus = PayoutStatus.Active;
+      vendor.reviewCompletedAtUtc = this.timestamp();
+      this.pushSystemNote(vendor, {
+        authorName: vendor.assignedReviewer || 'Risk & Compliance Desk',
+        roleLabel: 'Risk & Compliance',
+        message: 'Vendor account reactivated and restored to active status.',
+        messageKey: undefined,
+        tone: 'success'
       });
     });
   }
@@ -618,7 +1575,10 @@ export class VendorService {
 
   private pushSystemNote(
     vendor: VendorDetail,
-    note: Pick<VendorReviewNote, 'authorName' | 'roleLabel' | 'messageKey' | 'tone'>
+    note: Pick<VendorReviewNote, 'authorName' | 'roleLabel' | 'tone'> & {
+      messageKey?: string;
+      message?: string;
+    }
   ): void {
     vendor.reviewNotes = [
       {
@@ -626,6 +1586,7 @@ export class VendorService {
         authorName: note.authorName,
         roleLabel: note.roleLabel,
         createdAtUtc: this.timestamp(),
+        message: note.message,
         messageKey: note.messageKey,
         tone: note.tone,
         isSystem: true
@@ -645,6 +1606,14 @@ export class VendorService {
       businessNameEn: vendor.businessNameEn,
       businessType: vendor.businessType,
       status: vendor.status,
+      accountStatus: vendor.accountStatus,
+      isLoginLocked: vendor.isLoginLocked,
+      lockedAtUtc: vendor.lockedAtUtc,
+      archivedAtUtc: vendor.archivedAtUtc,
+      suspendedAtUtc: vendor.suspendedAtUtc,
+      suspensionReason: vendor.suspensionReason,
+      lockReason: vendor.lockReason,
+      archiveReason: vendor.archiveReason,
       ownerName: vendor.ownerName,
       contactPhone: vendor.contactPhone,
       createdAtUtc: vendor.createdAtUtc,

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
-import { Category, MasterProduct } from '@catalog/models/catalog.domain.models';
+import { Brand, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/badge.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -39,6 +39,7 @@ import { DeleteConfirmationModalComponent } from '../../../../../shared/componen
 export class CategoryDetailsComponent implements OnInit, OnDestroy {
   category: Category | null = null;
   relatedProducts: MasterProduct[] = [];
+  relatedBrands: Brand[] = [];
   isLoading = true;
   activeLang = 'ar';
   isEditModalOpen = false;
@@ -115,13 +116,35 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     this.catalogService.getCategoryById(id).subscribe({
       next: (data) => {
         this.category = data;
+        this.loadRelatedBrands(id);
         this.loadCategoryProducts(id);
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Failed to load category:', err);
         this.relatedProducts = [];
+        this.relatedBrands = [];
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadRelatedBrands(categoryId: string): void {
+    this.catalogService.searchBrands({
+      pagination: {
+        pageNumber: 1,
+        pageSize: 24
+      },
+      filters: {
+        categoryId
+      }
+    }).subscribe({
+      next: (response) => {
+        this.relatedBrands = response.items ?? [];
+      },
+      error: (err) => {
+        console.error('Failed to load related brands:', err);
+        this.relatedBrands = [];
       }
     });
   }
@@ -223,6 +246,10 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
   getCategoryStatusVariant(isActive?: boolean): StatusPillVariant {
     return isActive ? 'success' : 'neutral';
+  }
+
+  getLocalizedBrandName(brand: Brand): string {
+    return this.activeLang === 'ar' ? brand.nameAr : brand.nameEn;
   }
 }
 

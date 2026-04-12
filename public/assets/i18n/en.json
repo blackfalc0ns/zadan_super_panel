@@ -68,7 +68,19 @@
             "EASTERN": "Eastern Region",
             "NORTHERN": "Northern Region",
             "SOUTHERN": "Southern Region"
-        }
+        },
+        "LOADING": "Loading...",
+        "ALL": "All",
+        "BRAND_GENERAL": "General brand",
+        "COPY": "Copy",
+        "ERROR": "Error",
+        "EXPORT": "Export",
+        "FAILED_TO_LOAD": "Failed to load data.",
+        "PENDING": "Pending",
+        "REFRESH": "Refresh",
+        "REJECTED": "Rejected",
+        "RETRY": "Retry",
+        "UPLOAD": "Upload"
     },
     "VALIDATION": {
         "REQUIRED": "This field is required"
@@ -139,15 +151,18 @@
         "REPORTS": "Reports",
         "NOTIFICATIONS": "Notifications",
         "REVIEWS": "Reviews",
-        "ADMIN_USERS": "Admin Users",
+        "ADMIN_USERS": "Access Directory",
+        "EMAIL_CENTER": "Email Center",
         "SETTINGS": "Settings",
         "BRANDS": "Brands",
+        "PRODUCT_REQUESTS": "Product Requests",
         "DISPUTES": "Disputes",
         "LOGOUT": "Logout",
         "SEARCH": "Search email or order...",
         "MENU": "Main Menu",
         "ADMIN_PORTAL": "Admin Portal",
-        "DIR": "ltr"
+        "DIR": "ltr",
+        "MARKETING": "Marketing"
     },
     "SIDEBAR_EXTRA": {
         "WELCOME_USER": "Welcome",
@@ -164,8 +179,8 @@
         "CLOUD_SERVICES": "Live Services: Active",
         "ADMIN_STATUS": "Main Hub",
         "REALM_LABEL": "Active Realm",
-        "REALM_VALUE": "Headquarters • Global Ops",
-        "USER_ROLE_ID": "Engineer • ID: 892",
+        "REALM_VALUE": "Headquarters â€¢ Global Ops",
+        "USER_ROLE_ID": "Engineer â€¢ ID: 892",
         "LIVE_OPS": "Live Ops"
     },
     "VENDORS": {
@@ -196,7 +211,8 @@
             "DOCUMENTS": "Documents",
             "RISK": "Risk",
             "STATUS": "Status",
-            "ACTIONS": "Actions"
+            "ACTIONS": "Actions",
+            "VIEW": "View"
         },
         "ACTIONS": {
             "VIEW": "View",
@@ -272,7 +288,24 @@
             "CREATED_AT": "Registration Date",
             "APPROVED_AT": "Approval Date",
             "REJECTION_REASON": "Rejection Reason"
-        }
+        },
+        "APPLICATIONS": "Applications",
+        "APPLICATIONS_DESC": "Review vendor onboarding submissions, approvals, and required follow-up actions.",
+        "APPLICATIONS_TITLE": "Vendor applications",
+        "BUSINESS_NAME": "Business name",
+        "NO_APPLICATIONS": "No vendor applications found",
+        "NO_APPLICATIONS_DESC": "No applications match the current filters. Try adjusting the review state or search query.",
+        "NO_REASON": "No reason provided",
+        "OWNER": "Owner",
+        "REJECTED_TITLE": "Rejected application",
+        "REVIEW_STATE": {
+            "AWAITING": "Awaiting review",
+            "CHANGES_REQUESTED": "Changes requested",
+            "SUBMITTED": "Submitted",
+            "UNDER_REVIEW": "Under review"
+        },
+        "REVIEW_STATUS": "Review status",
+        "SUBMITTED_DATE": "Submitted date"
     },
     "CUSTOMERS": {
         "TITLE": "Customers",
@@ -281,6 +314,12 @@
         "SEARCH_PLACEHOLDER": "Search by name, email, phone, or customer ID...",
         "EMPTY_TITLE": "No matching customers",
         "EMPTY_MESSAGE": "No customers matched the current search and filters. Try adjusting your criteria.",
+        "PRESENCE": {
+            "ONLINE_NOW": "Online now"
+        },
+        "PROFILE": {
+            "PREFERRED_CHANNEL_APP": "Customer app"
+        },
         "KPI": {
             "TOTAL_CUSTOMERS": "Total Customers",
             "ACTIVE_CUSTOMERS": "Active Customers",
@@ -402,6 +441,7 @@
             "PAGE_TITLE": "Customer Details",
             "PAGE_SUBTITLE": "Profile, behavior, support, refunds, and internal admin actions",
             "EDIT_ACCOUNT": "Edit Account",
+            "OPEN_ACCESS_PROFILE": "Open Access Profile",
             "TABS": {
                 "OVERVIEW": "Overview",
                 "WORKFLOW": "Workflow"
@@ -613,14 +653,34 @@
                 "LANGUAGE": "Preferred Language",
                 "LAST_SEEN": "Last Seen",
                 "VERIFIED_ACCOUNT": "Verified Account",
-                "UNVERIFIED_ACCOUNT": "Needs Verification"
+                "UNVERIFIED_ACCOUNT": "Needs Verification",
+                "LANGUAGE_VALUES": {
+                    "ARABIC": "Arabic",
+                    "ENGLISH": "English"
+                },
+                "LAST_SEEN_VALUES": {
+                    "ACTIVE": "Active recently",
+                    "LOW_ACTIVITY": "Low activity recently",
+                    "RESTRICTED": "Access temporarily restricted",
+                    "DORMANT": "No recent activity"
+                }
             },
             "BEHAVIOR_FIELDS": {
                 "REFUND_RISK": "Refund Repeat Risk",
                 "SUSPICIOUS_LOGINS": "Suspicious Login Attempts",
                 "PAYMENT_FAILURES": "Repeated Payment Failure",
                 "COMPLAINT_FREQUENCY": "Complaint Frequency",
-                "ANALYSIS_SUMMARY": "Analysis Summary"
+                "ANALYSIS_SUMMARY": "Analysis Summary",
+                "SUSPICIOUS_LOGIN_VALUES": {
+                    "NONE": "No concerning signals",
+                    "TWO_RECENT": "Two recent suspicious attempts",
+                    "FIVE_RECENT": "Five or more recent attempts"
+                },
+                "COMPLAINT_FREQUENCY_VALUES": {
+                    "LOW": "Low",
+                    "MEDIUM": "Medium",
+                    "HIGH": "High"
+                }
             },
             "ORDERS_TABLE": {
                 "ORDER_ID": "Order ID",
@@ -647,13 +707,31 @@
                 "RESOLVED": "Resolved",
                 "NO_CASES": "No Cases",
                 "LAST_CONTACT": "Last Contact",
-                "OPEN_TICKET": "Open Support Ticket"
+                "OPEN_TICKET": "Open Support Ticket",
+                "LAST_CONTACT_VALUES": {
+                    "RECENT": "Contacted recently",
+                    "STALE": "Last contact is aging",
+                    "NONE": "No recent contact"
+                }
             },
             "ADMIN": {
                 "SUSPEND": "Temporary Suspend",
                 "ESCALATE": "Escalate Review",
                 "QUICK_NOTE_PLACEHOLDER": "Add a quick internal note...",
-                "SAVE": "Save"
+                "SAVE": "Save",
+                "AUTHORS": {
+                    "ADMIN_USER": "Admin User",
+                    "OPERATIONS_DESK": "Operations Desk",
+                    "RISK_TRUST_OPS": "Risk & Trust Ops",
+                    "RISK_COMMITTEE": "Risk Committee"
+                },
+                "NOTES": {
+                    "FLAG_FOR_REVIEW": "The account was flagged for operational review and closer signal monitoring.",
+                    "CLEAR_REVIEW": "The review flag was cleared and the account returned to routine monitoring.",
+                    "ESCALATE_REVIEW": "The case was escalated to a deeper trust review with additional controls.",
+                    "SUSPEND_ACCOUNT": "The account was temporarily suspended until trust and payment blockers are closed.",
+                    "REACTIVATE_ACCOUNT": "The account was reactivated with guarded monitoring after review completion."
+                }
             }
         }
     },
@@ -671,7 +749,10 @@
             "ON_MISSION": "On Active Mission",
             "UNDER_REVIEW": "Under Review",
             "SUSPENDED": "Suspended",
-            "LOW_PERFORMANCE": "Low Performance"
+            "LOW_PERFORMANCE": "Low Performance",
+            "LIVE_NOW": "Live now",
+            "ACTIVE_TASKS": "Active tasks",
+            "UNVERIFIED": "Unverified"
         },
         "FILTERS": {
             "SEARCH_LABEL": "Name or ID",
@@ -703,7 +784,10 @@
             "NO_ACTIVITY": "No activity",
             "ACTIVITY_COUNT": "{{count}} active",
             "ACTIVE_DELIVERIES": "{{count}} active",
-            "COMPLETED_ORDERS": "{{count}} completed"
+            "COMPLETED_ORDERS": "{{count}} completed",
+            "ACCEPTANCE_RATE": "Acceptance rate",
+            "COLLECTION_PAYMENT": "Collection / Payment",
+            "LAST_SEEN": "Last seen"
         },
         "TASK_SUBTITLES": {
             "LAST_DELIVERY_10_MIN": "Last delivery was 10 minutes ago",
@@ -738,7 +822,9 @@
             "LOW": "Low",
             "NEEDS_IMPROVEMENT": "Needs Improvement",
             "GOOD": "Good",
-            "EXCELLENT": "Excellent"
+            "EXCELLENT": "Excellent",
+            "BAD": "Bad",
+            "POOR": "Poor"
         },
         "VEHICLES": {
             "CAR": "Car",
@@ -772,6 +858,7 @@
             "PAGE_TITLE": "Comprehensive Driver Operational Profile",
             "PAGE_SUBTITLE": "Unified driver journey from documentation to operation, support, compliance, and collection",
             "BTN_VERIFY": "Verification",
+            "BTN_ACCESS_PROFILE": "Access Profile",
             "BTN_OPERATIONS": "Operations",
             "BTN_REACTIVATE": "Reactivate",
             "BTN_SUSPEND": "Suspend",
@@ -1256,6 +1343,9 @@
         "ACTIONS": "Actions",
         "STATUS_ACTIVE": "Active",
         "STATUS_DISABLED": "Disabled",
+        "SUB_CATEGORY": "Sub-category",
+        "WITH_PRODUCTS": "With products",
+        "WITHOUT_PRODUCTS": "Without products",
         "NO_RESULTS_DESC": "There are no search results currently.",
         "SEARCH_PLACEHOLDER": "Search by keywords or name...",
         "VAULT_INIT": "Loading brand list...",
@@ -1269,6 +1359,7 @@
             "STATUS": "Status",
             "STATISTICS": "Statistics",
             "PRODUCTS_COUNT": "Products Count",
+            "LINKED_SUB_CATEGORY": "Linked Sub-category",
             "CREATED_DATE": "Creation Date",
             "BRAND_ID": "Brand ID",
             "RELATED_PRODUCTS": "Related Products",
@@ -1299,6 +1390,9 @@
             "NAME_EN": "Name (English)",
             "NAME_AR_PLACEHOLDER": "Ex: Almarai",
             "NAME_EN_PLACEHOLDER": "Ex: Almarai",
+            "SELECT_SUB_CATEGORY": "Linked sub-category",
+            "SELECT_SUB_CATEGORY_PLACEHOLDER": "Select a sub-category",
+            "SUB_CATEGORY_REQUIRED": "Sub-category selection is required.",
             "STATUS_VISIBLE": "Visible to customers in store",
             "STATUS_HIDDEN": "Currently hidden from customers"
         }
@@ -1319,7 +1413,7 @@
         "ADMIN_HUB": "Zadana Management Center",
         "UPGRADE_TITLE": "Scale your business faster",
         "UPGRADE_BANNER": "Upgrade your plan to unlock advanced system features",
-        "VIEW_PLANS": "View Plans ↗",
+        "VIEW_PLANS": "View Plans â†—",
         "LEARN_MORE": "Learn More",
         "PERFORMANCE": "Performance Overview",
         "REVENUE": "Revenue Details",
@@ -1593,6 +1687,11 @@
             "DISPUTE_PULSE_SUMMARY": "{{count}} dispute cases remain unresolved across the current scope.",
             "CUSTOMER_RISK": "Customer trust pulse",
             "CUSTOMER_RISK_SUMMARY": "{{count}} escalated customer accounts are still under trust review."
+        },
+        "PRESSURE_LEVEL": {
+            "HIGH": "High",
+            "MEDIUM": "Medium",
+            "LOW": "Low"
         }
     },
     "CATEGORIES": {
@@ -1616,6 +1715,9 @@
         "IMAGE_LABEL": "Image",
         "ITEM_COUNT": "Item Count",
         "PRODUCT_UNIT": "product",
+        "BRANDS_COUNT": "brands",
+        "WITH_CHILDREN": "With child nodes",
+        "WITHOUT_CHILDREN": "Without child nodes",
         "STATUS_ACTIVE": "Active",
         "STATUS_DISABLED": "Disabled",
         "NO_ITEMS_FOUND": "No items found",
@@ -1703,7 +1805,9 @@
             "LIVE_FLOW": "Live Flow",
             "PEERS": "Peers (Branches)",
             "SYNC_ACTIVE": "Sync Protocol Active",
-            "OPEN": "Open"
+            "OPEN": "Open",
+            "RELATED_BRANDS": "Related Brands",
+            "NO_RELATED_BRANDS": "No brands are linked to this sub-category yet."
         }
     },
     "ASSETS": {
@@ -1742,6 +1846,7 @@
         "NAME_AR": "Name (AR)",
         "BARCODE": "Barcode",
         "CATEGORY": "Category",
+        "SUB_CATEGORY": "Subcategory",
         "STATUS": "Status",
         "IMAGE": "Image",
         "PRODUCT": "Product",
@@ -1812,7 +1917,8 @@
             "NAME": "Product Name",
             "BARCODE": "Barcode",
             "STATUS": "Status"
-        }
+        },
+        "UNIT_PIECE": "Piece"
     },
     "MASTER_PRODUCTS": {
         "ADD_TITLE": "Add New Product",
@@ -1839,6 +1945,23 @@
         "UPLOAD_HINT": "Drag images here or select from device (JPG, PNG, WEBP) Max 5MB.",
         "CLASSIFICATION": "Product Categorization",
         "CLASSIFICATION_DESC": "Choose appropriate section for the product in category tree.",
+        "FILTERS_TITLE": "Filter Products",
+        "FILTERS_SUBTITLE": "Adjust search criteria",
+        "ACTIVE_FILTERS": "Active filters",
+        "HAS_BRAND": "Has Brand",
+        "ACTIVE_BRAND": "Brand Is Active",
+        "SORT": "Sort",
+        "SORT_NEWEST_UPDATED": "Newest Updated",
+        "SORT_NEWEST_CREATED": "Newest Created",
+        "SORT_NAME_AR": "Arabic Name",
+        "SORT_NAME_EN": "English Name",
+        "SORT_STATUS": "Status",
+        "OPERATIONAL_DATES": "Operational Date Filters",
+        "OPERATIONAL_DATES_HINT": "Filter by product creation and last update dates.",
+        "CREATED_FROM": "Created From",
+        "CREATED_TO": "Created To",
+        "UPDATED_FROM": "Updated From",
+        "UPDATED_TO": "Updated To",
         "MASTER_CATEGORY_LABEL": "Sub-Category *",
         "SELECT_CATEGORY_PLACEHOLDER": "Choose product category",
         "ASSIGNED_BRAND_LABEL": "Brand",
@@ -1859,7 +1982,10 @@
         "STAGING_HIDDEN": "Hidden (Processing)",
         "SYSTEM_IDENTIFIER": "Technical System ID",
         "SLUG_LABEL": "Slug *",
-        "SLUG_PLACEHOLDER": "Ex: milk-almarai-1l"
+        "SLUG_PLACEHOLDER": "Ex: milk-almarai-1l",
+        "DELETE_FAILED": "Failed to delete product",
+        "STATUS_INACTIVE": "Inactive",
+        "STATUS_DISCONTINUED": "Discontinued"
     },
     "VENDOR_DETAIL": {
         "TITLE": "Vendor Details",
@@ -1870,6 +1996,8 @@
         "CATEGORY_VALUE": "Electronics & Technology",
         "QUICK_CONTACT_FULL": "Quick Contact",
         "QUICK_CONTACT_SHORT": "Contact",
+        "OPEN_ACCESS_DIRECTORY": "Access Directory",
+        "OPEN_EMAIL_ROUTING": "Email Routing",
         "TAB_OVERVIEW": "Overview",
         "TAB_BASIC_DATA": "Basic Data",
         "TAB_PRODUCTS": "Products",
@@ -1888,6 +2016,7 @@
         "CATEGORY": "Activity Type",
         "STATUS": "Status",
         "LOCATION_CITY": "City",
+        "SUBMITTED_DATE": "Submission Date",
         "ADDRESS": "National Address",
         "JOIN_DATE": "Registration Date",
         "PROFILE_DATA": "Owner Data",
@@ -1919,7 +2048,11 @@
         "TIME_HOUR_AGO": "1 hour ago",
         "ACTIVITY_NAME_UPDATE_DATE": "25 September 2023",
         "VIEW_DIGITAL_CR": "View digital commercial register",
-        "LEGAL_ENTITY_VALUE": "Sole proprietorship"
+        "DOWNLOAD_ATTACHMENT": "Download attachment",
+        "LEGAL_ENTITY_VALUE": "Sole proprietorship",
+        "DETAILS": {
+            "LAST_REVIEWER": "Last reviewer"
+        }
     },
     "COMPLIANCE": {
         "TITLE": "Review & Compliance",
@@ -1974,7 +2107,8 @@
             "APPROVE_VENDOR": "Approve Vendor",
             "REQUEST_DOCUMENTS": "Request Documents",
             "SUSPEND_ACCOUNT": "Suspend Account",
-            "REJECT_VENDOR": "Reject Vendor"
+            "REJECT_VENDOR": "Reject Vendor",
+            "START_REVIEW": "Start Review"
         },
         "NOTES": {
             "AUTHORS": {
@@ -1993,7 +2127,17 @@
                 "TAX_CERTIFICATE_BLUR": "The attached tax certificate is unclear. Please request a higher-quality re-upload so the tax number can be matched with the register.",
                 "CANCELLATION_FOLLOWUP": "The vendor was contacted about the elevated cancellation rate and confirmed that an inventory integration issue was resolved."
             }
-        }
+        },
+        "REVIEWER_INITIALS": "R.T",
+        "ROLES": {
+            "OPERATIONS": "Operations",
+            "COMPLIANCE_REVIEW": "Compliance Review",
+            "RISK_COMPLIANCE": "Risk & Compliance",
+            "VENDOR_REVIEW": "Vendor Review",
+            "RISK_TEAM": "Risk Team",
+            "REVIEW_TEAM": "Review Team"
+        },
+        "NO_BLOCKERS": "No active blockers"
     },
     "VENDOR_REVIEW": {
         "STATE": {
@@ -2050,7 +2194,8 @@
             "API_UPDATE": "API Settings Update",
             "LOGIN": "Login",
             "PRODUCT_UPLOAD": "Product Upload",
-            "STORE_ACTIVATION": "Store Activation"
+            "STORE_ACTIVATION": "Store Activation",
+            "MANUAL_NOTE": "Internal Note"
         },
         "TIMELINE": {
             "COMPLIANCE_APPROVAL": "Compliance Approval",
@@ -2059,6 +2204,19 @@
             "DOCUMENTS_UPLOAD_DESC": "CR, ID, and Tax certificate received.",
             "ACCOUNT_CREATION": "Account Creation",
             "ACCOUNT_CREATION_DESC": "Initial registration in Zadana Vendor Platform."
+        },
+        "DEFAULT_INITIALS": "O.T",
+        "AUTHORS": {
+            "OPERATIONS_TEAM": "Operations Team"
+        },
+        "NOTES": {
+            "FOLLOW_UP_CREATED": "Created an internal follow-up note for vendor {{vendorId}}."
+        },
+        "EXPORT_HEADERS": {
+            "ACTION": "Action",
+            "EXECUTOR": "Executor",
+            "TIMESTAMP": "Timestamp",
+            "DESCRIPTION": "Description"
         }
     },
     "VENDOR_PRODUCTS": {
@@ -2201,7 +2359,10 @@
         },
         "VIEW_ALL_INVOICES": "View All Invoices",
         "MOCK_VENDOR_NAME": "Zadana Premium Store",
-        "WEEKLY_CYCLE": "Weekly"
+        "WEEKLY_CYCLE": "Weekly",
+        "GENERAL_STATUS": {
+            "NEW": "New"
+        }
     },
     "VENDOR_OVERVIEW": {
         "STATUS": {
@@ -2297,7 +2458,11 @@
         "SMS_NOTIFICATIONS": "SMS Messages",
         "NEW_ORDERS_NOTIFICATIONS": "New Orders",
         "LAST_UPDATED_BY": "Last updated by",
-        "LAST_UPDATED_BY_VALUE": "Ahmed Mohamed (Admin)"
+        "LAST_UPDATED_BY_VALUE": "Ahmed Mohamed (Admin)",
+        "OPERATIONS": {
+            "ORDER_RECEPTION": "Order reception",
+            "WORKING_HOURS": "Working hours"
+        }
     },
     "VENDOR_ANALYTICS": {
         "DAY": "day",
@@ -2323,7 +2488,17 @@
             "AVERAGE_ORDER_VALUE": "Average Order Value",
             "PREPARATION_SPEED": "Preparation Speed",
             "ON_TIME_DELIVERY": "On-Time Delivery",
-            "CUSTOMER_RATING": "Customer Rating"
+            "CUSTOMER_RATING": "Customer Rating",
+            "TOTAL_ORDERS": "Total Orders",
+            "TOTAL_ORDERS_HINT": "Total orders available in the current sample.",
+            "CANCELLATION_RATE_HINT": "Share of cancelled orders out of the current sample.",
+            "AVERAGE_ORDER_VALUE_HINT": "Average order value calculated from total revenue.",
+            "COMPLETED_ORDERS": "Completed Orders",
+            "COMPLETED_ORDERS_HINT": "Orders delivered successfully within the current sample.",
+            "AVAILABLE_PRODUCTS": "Available Products",
+            "AVAILABLE_PRODUCTS_HINT": "Products that are active and ready for sale now.",
+            "LOW_STOCK_PRODUCTS": "Products Requiring Attention",
+            "LOW_STOCK_PRODUCTS_HINT": "Low-stock or out-of-stock products that need quick action."
         },
         "BEST_SELLERS": {
             "WATCH_NAME": "Latest Edition Smart Watch",
@@ -2340,6 +2515,15 @@
             "REVIEWER_TWO": "Sara J.",
             "REVIEW_TWO_TEXT": "\"The headphone quality is great for the price. Thank you for the outstanding service.\"",
             "REVIEW_TWO_TIME": "4 days ago"
+        },
+        "API_BANNER_TITLE": "Live Performance Analytics",
+        "API_BANNER_MESSAGE": "The metrics below are calculated directly from this vendor's active orders and products.",
+        "LIVE_SNAPSHOT": "Live Operational Snapshot",
+        "SOURCES": {
+            "ORDERS_TITLE": "Orders Data Source",
+            "ORDERS_VALUE": "Latest 200 orders synced from the vendor admin endpoint.",
+            "PRODUCTS_TITLE": "Products Data Source",
+            "PRODUCTS_VALUE": "Latest 200 products synced from the current vendor catalog."
         }
     },
     "DISPUTES_DASHBOARD": {
@@ -2555,7 +2739,7 @@
         },
         "REQUEST_INFO_MODAL": {
             "TITLE": "Request Additional Information",
-            "SUBTITLE": "Disputes and requests management • Case {{disputeId}}",
+            "SUBTITLE": "Disputes and requests management â€¢ Case {{disputeId}}",
             "SUMMARY_TITLE": "Target Case Summary",
             "CASE_ID": "Case ID",
             "ORDER_ID": "Order ID",
@@ -2690,7 +2874,18 @@
             "REF_LABEL": "Reference Number",
             "ELECTRONICALLY_VERIFIED": "Electronically Verified",
             "VIEW_ONLY": "View Only Copy",
-            "ZADANA_WATHQ_SYNC": "This document is issued by the Zadana platform in integration with Wathq"
+            "ZADANA_WATHQ_SYNC": "This document is issued by the Zadana platform in integration with Wathq",
+            "CAPITAL": "Capital",
+            "CITY": "City",
+            "DEFAULT_CAPITAL": "Not provided",
+            "DEFAULT_CITY": "Not provided",
+            "DEFAULT_DATA_SOURCE": "Automated verification source",
+            "DEFAULT_ENTITY_TYPE": "Not provided",
+            "DEFAULT_ESTABLISHMENT_NAME": "Not available",
+            "DEFAULT_MAIN_ACTIVITY": "Not provided",
+            "DEFAULT_VERIFIED_BY": "System verification",
+            "ISSUE_DATE": "Issue date",
+            "WATERMARK": "Preview copy"
         },
         "FINANCIAL_STATEMENT": {
             "TITLE": "Export Financial Statement",
@@ -2726,7 +2921,20 @@
             "TOTAL_AMOUNT": "Total Amount",
             "CANCEL": "Cancel",
             "DOWNLOAD": "Download Statement",
-            "PREVIEW_BTN": "Preview"
+            "PREVIEW_BTN": "Preview",
+            "DEFAULT_VENDOR_NAME": "Vendor account",
+            "DISCOUNTS": "Discounts",
+            "LAST_30_DAYS": "Last 30 days",
+            "LAST_7_DAYS": "Last 7 days",
+            "NET_AMOUNT_ITEM": "Net amount",
+            "PLATFORM_COMMISSIONS": "Platform commissions",
+            "RECORDS_SUFFIX": "records",
+            "RETURNS": "Returns",
+            "SALES": "Sales",
+            "STATEMENT_DESC_COMPREHENSIVE": "Includes sales, returns, discounts, commissions, and the final net amount.",
+            "STATEMENT_DESC_DEDUCTIONS": "Highlights deductions, commissions, and fee-related adjustments only.",
+            "STATEMENT_DESC_PAYMENTS": "Focuses on payout-ready balances and payable movements for the selected period.",
+            "STATEMENT_DESC_RETURNS": "Shows return-driven impact and deducted amounts linked to refund activity."
         },
         "PAYOUTS_REVIEW": {
             "TITLE": "Review Payouts",
@@ -2749,7 +2957,9 @@
                 "BANK": "Bank",
                 "DATE": "Date",
                 "STATUS": "Status",
-                "ACTIONS": "Actions"
+                "ACTIONS": "Actions",
+                "BANK_DESTINATION": "Destination bank",
+                "PAYMENT_NUMBER": "Payment number"
             },
             "TRANSACTION_DETAILS": "Transaction Details",
             "SELECT_TRANSACTION": "Select a transaction to view details",
@@ -2763,7 +2973,21 @@
                 "SUSPEND": "Suspend",
                 "ESCALATE": "Escalate"
             },
-            "CLOSE": "Close"
+            "CLOSE": "Close",
+            "BANK_OPTIONS": {
+                "ALAHLI": "SNB",
+                "ALINMA": "alinma",
+                "ALRAJHI": "Al Rajhi",
+                "WALLET": "Wallet"
+            },
+            "EXPORT_RECORD": "Export record",
+            "INTERNAL_NOTES": "Internal notes",
+            "INTERNAL_NOTES_PLACEHOLDER": "Add an internal note for the finance or compliance team...",
+            "MANAGER_ACTIONS": "Manager actions",
+            "REFERENCE_PLACEHOLDER": "Search by transfer or payout reference",
+            "RESET": "Reset",
+            "SAVE_UPDATE": "Save update",
+            "SHOWING_RESULTS": "Showing results"
         },
         "PAYMENT_DETAIL": {
             "TITLE": "Payment Details",
@@ -2793,7 +3017,26 @@
                 "RETRY_PAYMENT": "Retry Payment",
                 "VIEW_ACTIVITY": "View Activity Log"
             },
-            "CLOSE": "Close"
+            "CLOSE": "Close",
+            "BANK_REFERENCE": "Bank reference",
+            "FAILURE_REASON": "Failure reason",
+            "LAST_ATTEMPT": "Last attempt",
+            "LOG_MESSAGES": {
+                "API_INITIATED": "Payout request initiated from the finance workflow."
+            },
+            "LOG_TYPES": {
+                "DEBUG": "Debug",
+                "ERROR": "Error",
+                "SUCCESS": "Success"
+            },
+            "OPERATION_DATE": "Operation date",
+            "OPERATION_TYPE": "Operation type",
+            "PAYOUT_OPERATION": "Payout operation",
+            "STATUS_CODE": "Status code",
+            "SWIFT_CODE": "SWIFT code",
+            "TOTAL_AMOUNT": "Total amount",
+            "UPDATED_AT": "Updated at",
+            "VENDOR_NAME": "Vendor name"
         },
         "CREATE_SETTLEMENT": {
             "TITLE": "Create Financial Settlement",
@@ -2832,7 +3075,8 @@
             "FINANCE_APPROVAL": "Send for Finance Approval Required",
             "CANCEL": "Cancel",
             "SAVE_DRAFT": "Save as Draft",
-            "CREATE_APPROVE": "Create and Approve Settlement"
+            "CREATE_APPROVE": "Create and Approve Settlement",
+            "SAR": "SAR"
         },
         "LEGAL_BANK_EDIT": {
             "TITLE": "Edit Legal & Banking Info",
@@ -2923,6 +3167,12 @@
                 "ELECTRONICS": "Electronics",
                 "FOOD": "Food & Beverage",
                 "HOME": "Home & Decor"
+            },
+            "ACTIVITY_TYPES": {
+                "ELECTRONICS": "Electronics",
+                "FASHION": "Fashion",
+                "FOOD": "Food & grocery",
+                "HOME": "Home"
             }
         }
     },
@@ -2935,6 +3185,8 @@
         "OPERATIONS_MANAGEMENT": "Operations Management",
         "TITLE": "Order Management",
         "SUBTITLE": "Monitor and manage all platform orders",
+        "STATUS_READY_FOR_PICKUP": "Ready for Pickup",
+        "STATUS_DELIVERED": "Delivered",
         "SEARCH_PLACEHOLDER": "Search by order ID, customer...",
         "ADVANCED_FILTER": "Advanced Filter",
         "FILTER_DESC": "By status and date",
@@ -3539,7 +3791,9 @@
             "ESCALATED": "Escalated",
             "COLLECTED": "Collected",
             "OVERDUE": "Overdue",
-            "PENDING_APPROVAL": "Pending approval"
+            "PENDING_APPROVAL": "Pending approval",
+            "COMPLETED": "Completed",
+            "IN_PROGRESS": "In progress"
         },
         "CHART": {
             "GMV_VS_REVENUE": "GMV vs net revenue",
@@ -3648,7 +3902,8 @@
                 "VAT": "VAT applied to taxable fees.",
                 "BONUS": "Promotional or operational bonus.",
                 "PENALTY": "Penalty deducted due to a policy breach."
-            }
+            },
+            "TITLE": "Financial ledger"
         },
         "SETTLEMENTS": {
             "VENDORS": "Vendors",
@@ -3896,6 +4151,898 @@
         "ROLES": {
             "SUPER_ADMIN": "Super Admin",
             "ADMIN": "Admin"
+        }
+    },
+    "ADMIN_USERS": {
+        "TITLE": "Access Directory",
+        "DESC": "Manage super admin staff, vendor teams, drivers, and customers from one local access and communication directory.",
+        "OPEN_EMAIL_CENTER": "Email Center",
+        "ADD_ADMIN": "Invite Admin",
+        "ADD_IDENTITY": "Add Identity",
+        "SEARCH_PLACEHOLDER": "Search by name, email, team, or department...",
+        "EMPTY_TITLE": "No admin users found",
+        "EMPTY_MESSAGE": "Try clearing the active filters or create a new admin access record.",
+        "KPI": {
+            "TOTAL": "Total Admins",
+            "ACTIVE": "Active Access",
+            "INVITED": "Pending Invites",
+            "SUSPENDED": "Suspended Access",
+            "MFA_GAPS": "MFA Gaps",
+            "CUSTOM_ACCESS": "Custom Access",
+            "OPERATIONAL": "Operational Identities",
+            "VENDOR_PANEL": "Vendor Panel Identities",
+            "EXTERNAL": "External Accounts"
+        },
+        "AUDIENCE": {
+            "ALL": "All audiences",
+            "SUPER_ADMIN": "Super admin",
+            "VENDOR_NETWORK": "Vendor network",
+            "DRIVERS": "Drivers",
+            "CUSTOMERS": "Customers"
+        },
+        "FILTERS": {
+            "ALL": "All",
+            "STATUS": "Status",
+            "ACCESS_LEVEL": "Access level",
+            "ROLE": "Role preset",
+            "TEAM": "Team",
+            "PANEL": "Panel scope",
+            "PERSONA": "Persona",
+            "VENDOR": "Vendor",
+            "BRANCH": "Branch",
+            "ACTIVE_COUNT": "active filters",
+            "RESET": "Reset filters"
+        },
+        "TABLE": {
+            "ADMIN": "Admin",
+            "IDENTITY": "Identity",
+            "PERSONA": "Persona",
+            "ROLE": "Role",
+            "TEAM": "Team",
+            "SCOPE": "Scope",
+            "LAST_LOGIN": "Last login",
+            "STATUS": "Status",
+            "SECURITY": "Security",
+            "CUSTOM_ACCESS": "custom"
+        },
+        "STATUS": {
+            "ACTIVE": "Active",
+            "INVITED": "Invited",
+            "SUSPENDED": "Suspended",
+            "INACTIVE": "Inactive"
+        },
+        "INVITE": {
+            "DRAFT": "Draft",
+            "PENDING": "Pending",
+            "ACCEPTED": "Accepted",
+            "EXPIRED": "Expired"
+        },
+        "ACCESS_LEVEL": {
+            "FULL": "Full control",
+            "RESTRICTED": "Restricted",
+            "OBSERVER": "Observer"
+        },
+        "FIELDS": {
+            "FULL_NAME": "Full name",
+            "EMAIL": "Email",
+            "PHONE": "Phone",
+            "DEPARTMENT": "Department",
+            "TEAM": "Team",
+            "ROLE_PRESET": "Role preset",
+            "ACCESS_LEVEL": "Access level",
+            "STATUS": "Status",
+            "INVITE_STATE": "Invite state",
+            "MFA": "Multi-factor authentication",
+            "PERSONA": "Persona type",
+            "PANEL_SCOPE": "Panel scope",
+            "ENTITY_ID": "Entity ID",
+            "VENDOR": "Vendor",
+            "BRANCH": "Branch",
+            "REGION": "Region",
+            "CITY": "City",
+            "REPLY_TO": "Reply-to",
+            "PREFERRED_LOCALE": "Preferred locale",
+            "NOTIFICATION_EMAILS": "Notification emails",
+            "ESCALATION_EMAILS": "Escalation emails"
+        },
+        "ACTIONS": {
+            "RESET_PRESET": "Reset to preset",
+            "RESEND_INVITE": "Resend invite",
+            "REACTIVATE": "Reactivate",
+            "SUSPEND": "Suspend access",
+            "SAVE": "Save changes",
+            "BACK_TO_LIST": "Back to directory",
+            "DUPLICATE": "Duplicate role"
+        },
+        "SECURITY": {
+            "MFA_ON": "MFA enabled",
+            "MFA_OFF": "MFA missing",
+            "LAST_LOGIN": "Last login",
+            "INVITED_BY": "Invited by",
+            "INVITED_AT": "Invited at",
+            "ACCEPTED_AT": "Accepted at",
+            "NEVER": "Never",
+            "VERIFICATION": "Verification"
+        },
+        "DETAIL": {
+            "TITLE": "Identity Access Profile",
+            "SUBTITLE": "Identity, assignments, communication controls, and persona-aware access design.",
+            "BREADCRUMB": "Access profile",
+            "NOT_FOUND": "Identity not found",
+            "NOT_FOUND_DESC": "The requested directory record is not available in the local access registry.",
+            "NEW_USER": "New identity",
+            "EMAIL_PENDING": "Email not set yet",
+            "IDENTITY_BADGE": "Identity",
+            "IDENTITY_TITLE": "Identity profile",
+            "IDENTITY_DESC": "Primary contact details, department ownership, and persona classification.",
+            "ASSIGNMENT_BADGE": "Assignments",
+            "ASSIGNMENT_TITLE": "Entity and branch assignment",
+            "ASSIGNMENT_DESC": "Connect the identity to the correct vendor, branch, or external account scope.",
+            "ACCESS_BADGE": "Access model",
+            "ACCESS_TITLE": "Role, status, and access posture",
+            "ACCESS_DESC": "Use hybrid presets with custom overrides for operators, or lightweight profiles for external accounts.",
+            "COMMUNICATION_BADGE": "Communication profile",
+            "COMMUNICATION_TITLE": "Email routing and notification posture",
+            "COMMUNICATION_DESC": "Control reply-to behavior, escalation contacts, and notification opt-in flags for each identity.",
+            "PERMISSIONS_BADGE": "Permission matrix",
+            "PERMISSIONS_TITLE": "Operational permission matrix",
+            "PERMISSIONS_DESC": "Permission domains inherit from the selected preset, then override specific actions as needed.",
+            "FEATURES_BADGE": "Feature access",
+            "FEATURES_TITLE": "Account feature toggles",
+            "FEATURES_DESC": "External identities use product and communication toggles instead of the full admin permission matrix.",
+            "SECURITY_BADGE": "Security posture",
+            "SECURITY_TITLE": "Security checkpoints",
+            "SECURITY_DESC": "Track MFA readiness, invitation history, and recent activity.",
+            "SUMMARY_BADGE": "Override summary",
+            "SUMMARY_TITLE": "Effective access summary",
+            "SUMMARY_DESC": "A fast snapshot of the current preset and custom access drift.",
+            "EFFECTIVE_PERMISSIONS": "effective permissions",
+            "GRANTED_OVERRIDES": "granted overrides",
+            "REVOKED_OVERRIDES": "revoked overrides",
+            "CUSTOM_TOTAL": "custom changes",
+            "NOTIFICATION_RECIPIENTS": "notification recipients",
+            "MFA_HINT": "Use this to reflect whether the admin completed secure enrollment."
+        },
+        "SCOPE": {
+            "GLOBAL": "Global panel",
+            "DIRECTORY": "Entity-linked"
+        },
+        "PANELS": {
+            "SUPER_ADMIN_PANEL": "Super admin panel",
+            "VENDOR_PANEL": "Vendor panel",
+            "DRIVER_APP": "Driver app",
+            "CUSTOMER_APP": "Customer app"
+        },
+        "PERSONAS": {
+            "SUPER_ADMIN_MANAGER": "Super admin manager",
+            "SUPER_ADMIN_STAFF": "Super admin staff",
+            "VENDOR_OWNER": "Vendor owner",
+            "VENDOR_COMPANY_MANAGER": "Vendor company manager",
+            "VENDOR_BRANCH_MANAGER": "Vendor branch manager",
+            "VENDOR_BRANCH_EMPLOYEE": "Vendor branch employee",
+            "VENDOR_FINANCE": "Vendor finance",
+            "VENDOR_SUPPORT": "Vendor support",
+            "DRIVER": "Driver account",
+            "CUSTOMER": "Customer account"
+        },
+        "VERIFICATION": {
+            "VERIFIED": "Verified",
+            "PENDING": "Pending",
+            "UNDER_REVIEW": "Under review",
+            "SUSPENDED": "Suspended",
+            "NOT_REQUIRED": "Not required"
+        },
+        "LOCALE": {
+            "AR": "Arabic",
+            "EN": "English",
+            "BILINGUAL": "Bilingual"
+        },
+        "COMMUNICATION_FLAGS": {
+            "ACCESS_INVITES": {
+                "LABEL": "Access invites",
+                "DESC": "Invitation and access reset traffic for operational identities."
+            },
+            "BRANCH_ALERTS": {
+                "LABEL": "Branch alerts",
+                "DESC": "Operational updates, branch coverage changes, and staff access changes."
+            },
+            "DISPATCH_NOTIFICATIONS": {
+                "LABEL": "Dispatch notifications",
+                "DESC": "Driver dispatch status changes, assignment updates, and live routing notices."
+            },
+            "COMPLIANCE_EMAILS": {
+                "LABEL": "Compliance emails",
+                "DESC": "Verification follow-up, document requests, and compliance escalations."
+            },
+            "FINANCE_DIGESTS": {
+                "LABEL": "Finance digests",
+                "DESC": "Settlement summaries, payout alerts, and balance reviews."
+            },
+            "SUPPORT_ESCALATIONS": {
+                "LABEL": "Support escalations",
+                "DESC": "High-priority support routing and service recovery follow-up."
+            },
+            "ORDER_UPDATES": {
+                "LABEL": "Order issue updates",
+                "DESC": "Order issues, refund progress, and case-level communication updates."
+            },
+            "MARKETING_OPT_IN": {
+                "LABEL": "Marketing opt-in",
+                "DESC": "Allow marketing and reactivation communication for customer accounts."
+            }
+        },
+        "FEATURE_TOGGLES": {
+            "DRIVER_DISPATCH": {
+                "LABEL": "Dispatch notifications",
+                "DESC": "Allow route dispatch, mission changes, and pickup readiness notifications."
+            },
+            "DRIVER_COMPLIANCE": {
+                "LABEL": "Compliance reminders",
+                "DESC": "Deliver document expiry reminders and verification follow-up emails."
+            },
+            "DRIVER_FINANCE": {
+                "LABEL": "Finance digests",
+                "DESC": "Enable payout and COD summary digests for driver accounts."
+            },
+            "CUSTOMER_MARKETING": {
+                "LABEL": "Marketing outreach",
+                "DESC": "Allow campaign and lifecycle marketing messages for the customer account."
+            },
+            "CUSTOMER_ESCALATION": {
+                "LABEL": "Support escalations",
+                "DESC": "Send escalated support updates and service recovery communication."
+            },
+            "CUSTOMER_ISSUES": {
+                "LABEL": "Order issue updates",
+                "DESC": "Notify the customer about refunds, disputes, and order issue progress."
+            }
+        },
+        "PERMISSIONS": {
+            "ACTIONS": {
+                "VIEW": "View",
+                "CREATE": "Create",
+                "EDIT": "Edit",
+                "APPROVE": "Approve",
+                "EXPORT": "Export",
+                "MANAGE_SETTINGS": "Manage settings"
+            },
+            "GROUPS": {
+                "DASHBOARD": {
+                    "TITLE": "Dashboard",
+                    "DESC": "Executive insights, KPI cards, and operational health reporting."
+                },
+                "VENDORS": {
+                    "TITLE": "Vendors",
+                    "DESC": "Vendor review, onboarding actions, and compliance follow-up."
+                },
+                "CATALOG": {
+                    "TITLE": "Catalog",
+                    "DESC": "Master data, brand controls, and category governance."
+                },
+                "ORDERS": {
+                    "TITLE": "Orders",
+                    "DESC": "Order supervision, exceptions, and resolution workflows."
+                },
+                "CUSTOMERS": {
+                    "TITLE": "Customers",
+                    "DESC": "Customer health, trust flags, and retention visibility."
+                },
+                "DRIVERS": {
+                    "TITLE": "Drivers",
+                    "DESC": "Driver readiness, verification, and operational action rights."
+                },
+                "DISPUTES": {
+                    "TITLE": "Disputes",
+                    "DESC": "Case review, escalation, and approval authority."
+                },
+                "FINANCES": {
+                    "TITLE": "Finances",
+                    "DESC": "Reconciliation, settlements, finance controls, and policy changes."
+                },
+                "USERS_ACCESS": {
+                    "TITLE": "Users & Access",
+                    "DESC": "Admin user lifecycle, role presets, and access controls."
+                },
+                "EMAIL_CENTER": {
+                    "TITLE": "Email Center",
+                    "DESC": "Operational email routing, templates, and sender profiles."
+                },
+                "SYSTEM": {
+                    "TITLE": "System",
+                    "DESC": "Platform-wide configuration and sensitive control surfaces."
+                },
+                "VENDOR_DASHBOARD": {
+                    "TITLE": "Vendor dashboard",
+                    "DESC": "Branch and company KPI views for vendor operators."
+                },
+                "VENDOR_ORDERS": {
+                    "TITLE": "Vendor orders",
+                    "DESC": "Vendor-side order flow, approvals, and operational exports."
+                },
+                "VENDOR_CATALOG": {
+                    "TITLE": "Vendor catalog",
+                    "DESC": "Vendor-owned assortment, listing edits, and item publishing."
+                },
+                "VENDOR_BRANCH_TEAM": {
+                    "TITLE": "Branch team",
+                    "DESC": "Branch roster management, staffing access, and local settings."
+                },
+                "VENDOR_FINANCE": {
+                    "TITLE": "Vendor finance",
+                    "DESC": "Vendor wallet, settlement visibility, and finance settings."
+                },
+                "VENDOR_SUPPORT": {
+                    "TITLE": "Vendor support",
+                    "DESC": "Issue handling, support visibility, and ticket exports."
+                },
+                "VENDOR_SETTINGS": {
+                    "TITLE": "Vendor settings",
+                    "DESC": "Vendor panel settings, operational preferences, and configuration."
+                }
+            }
+        },
+        "PRESETS": {
+            "SUPER_ADMIN": {
+                "NAME": "Super Admin",
+                "DESC": "Full platform authority across every domain, including access and system settings."
+            },
+            "OPERATIONS_LEAD": {
+                "NAME": "Operations Lead",
+                "DESC": "Strong operational control across vendors, orders, customers, and drivers."
+            },
+            "RISK_ADMIN": {
+                "NAME": "Risk Admin",
+                "DESC": "Focused access for disputes, approvals, and trust-sensitive decisions."
+            },
+            "FINANCE_ADMIN": {
+                "NAME": "Finance Admin",
+                "DESC": "Finance-first visibility and approval power for settlements and pricing controls."
+            },
+            "SUPPORT_ADMIN": {
+                "NAME": "Support Admin",
+                "DESC": "Read-heavy support access with limited customer and order interventions."
+            },
+            "VENDOR_OWNER": {
+                "NAME": "Vendor Owner",
+                "DESC": "Top-level vendor panel control across company scope, finance visibility, and branch access."
+            },
+            "VENDOR_COMPANY_MANAGER": {
+                "NAME": "Vendor Company Manager",
+                "DESC": "Company-wide operational control for branches, orders, and catalog execution."
+            },
+            "VENDOR_BRANCH_MANAGER": {
+                "NAME": "Vendor Branch Manager",
+                "DESC": "Branch-scoped management over local staff, orders, and service delivery."
+            },
+            "VENDOR_BRANCH_EMPLOYEE": {
+                "NAME": "Vendor Branch Employee",
+                "DESC": "Local branch operator with limited edits and no company-level settings access."
+            },
+            "VENDOR_FINANCE_MANAGER": {
+                "NAME": "Vendor Finance Manager",
+                "DESC": "Vendor finance visibility with settlement controls and restricted operational scope."
+            },
+            "VENDOR_SUPPORT_MANAGER": {
+                "NAME": "Vendor Support Manager",
+                "DESC": "Support-first vendor persona for tickets, escalations, and service follow-up."
+            },
+            "DRIVER_ACCOUNT": {
+                "NAME": "Driver Account",
+                "DESC": "External driver identity using communication preferences and feature toggles."
+            },
+            "CUSTOMER_ACCOUNT": {
+                "NAME": "Customer Account",
+                "DESC": "External customer identity focused on communication routing and lifecycle access."
+            }
+        }
+    },
+    "EMAIL_CENTER": {
+        "TITLE": "Email Center",
+        "DESC": "Configure sender profiles, persona-based routing, recipient builders, and bilingual workflow previews.",
+        "OPEN_ADMIN_USERS": "Access Directory",
+        "KPI": {
+            "TOTAL_RULES": "Workflow rules",
+            "ENABLED": "Enabled rules",
+            "SENDER_PROFILES": "Sender profiles",
+            "ROUTED_RULES": "Routed rules",
+            "DIRECTORY_DRIVEN": "Directory-driven rules",
+            "AUDIENCE_COVERAGE": "Audience coverage"
+        },
+        "AUDIENCE": {
+            "BADGE": "Audience routing",
+            "TITLE": "Persona-aware workflow coverage",
+            "DESC": "Switch between super admin, vendor, driver, and customer routing scenarios.",
+            "ALL": "All audiences"
+        },
+        "STATUS": {
+            "PRIMARY": "Primary",
+            "SECONDARY": "Secondary",
+            "BACKUP": "Backup"
+        },
+        "LOCALE": {
+            "BILINGUAL": "Bilingual",
+            "ARABIC": "Arabic",
+            "ENGLISH": "English"
+        },
+        "SENDER_PROFILES": {
+            "BADGE": "Sender profiles",
+            "TITLE": "Operational sender stack",
+            "DESC": "Reusable from-address identities for admin notifications and operational workflows.",
+            "REPLY_TO": "Reply-to",
+            "LOCALE": "Locale mode",
+            "DEFAULT": "Default sender"
+        },
+        "PROFILES": {
+            "OPS_PRIMARY": "Primary sender for platform-wide operational and access messages.",
+            "RISK_DESK": "Dedicated sender for risk, compliance, and escalation workflows.",
+            "VENDOR_NETWORK": "Dedicated sender for vendor network onboarding, branch access, and routing updates.",
+            "FINANCE_DIGEST": "Finance-safe sender for settlement summaries and reconciliation digests."
+        },
+        "WORKFLOWS": {
+            "BADGE": "Workflow rules",
+            "TITLE": "Persona-based email workflows",
+            "DESC": "Review enabled rules, audience scope, sender profile, and routing strategy from one place.",
+            "ENABLED": "Enabled",
+            "DISABLED": "Disabled"
+        },
+        "CONFIG": {
+            "BADGE": "Rule configuration"
+        },
+        "PERSONAS": {
+            "BADGE": "Persona scope",
+            "TITLE": "Persona targeting",
+            "DESC": "Limit each rule to the personas that should receive or influence the workflow."
+        },
+        "RECIPIENTS": {
+            "BADGE": "Recipient builder",
+            "TITLE": "Directory recipient targets",
+            "DESC": "Build To, CC, and BCC groups from access-directory identities instead of hardcoded emails."
+        },
+        "STATIC_RECIPIENTS": {
+            "BADGE": "Static recipients",
+            "TITLE": "Manual recipients",
+            "DESC": "Always include these fixed recipients in addition to directory-driven routing."
+        },
+        "FALLBACK": {
+            "BADGE": "Fallback routing",
+            "TITLE": "Fallback recipients",
+            "DESC": "Use fallback contacts when no directory target is resolved for the selected scope."
+        },
+        "RESOLVED": {
+            "BADGE": "Resolved preview",
+            "EMPTY": "No recipients resolved"
+        },
+        "BRANCH_SCOPE": {
+            "ALL_BRANCHES": "All branches",
+            "ASSIGNED_BRANCH": "Assigned branch",
+            "SPECIFIC_BRANCH": "Specific branch"
+        },
+        "FILTERS": {
+            "ALL_VENDORS": "All vendors",
+            "ALL_BRANCHES": "All branches"
+        },
+        "FIELDS": {
+            "ENABLED": "Rule state",
+            "SENDER_PROFILE": "Sender profile",
+            "TO": "Static To",
+            "CC": "Static CC",
+            "BCC": "Static BCC",
+            "OWNER": "Workflow owner",
+            "ESCALATION": "Escalation owner",
+            "AUDIENCE": "Audience",
+            "PANEL_SCOPE": "Panel scope",
+            "ENTITY_ID": "Entity ID",
+            "VENDOR": "Vendor",
+            "BRANCH": "Branch",
+            "BRANCH_SCOPE": "Branch scope mode",
+            "FALLBACK_TO": "Fallback To",
+            "FALLBACK_CC": "Fallback CC",
+            "FALLBACK_BCC": "Fallback BCC",
+            "DIRECTORY_TO": "Directory To",
+            "DIRECTORY_CC": "Directory CC",
+            "DIRECTORY_BCC": "Directory BCC"
+        },
+        "ACTIONS": {
+            "SAVE": "Save rule"
+        },
+        "PREVIEW": {
+            "BADGE": "Template preview",
+            "TITLE": "Live bilingual preview",
+            "DESC": "Review subjects, body copy, and dynamic variables without opening a template builder.",
+            "ENGLISH": "English",
+            "ARABIC": "Arabic",
+            "SUBJECT": "Subject",
+            "BODY": "Body",
+            "VARIABLES": "Available variables",
+            "SENDER": "Current sender"
+        },
+        "CATEGORIES": {
+            "ACCESS": "Access control",
+            "OPERATIONS": "Operations",
+            "RISK": "Risk & trust",
+            "FINANCE": "Finance",
+            "VENDOR_NETWORK": "Vendor network",
+            "DRIVER_NETWORK": "Driver operations",
+            "CUSTOMER_CARE": "Customer care"
+        },
+        "CADENCE": {
+            "INSTANT": "Instant",
+            "BATCH_15": "15-minute batch",
+            "DAILY": "Daily digest"
+        },
+        "NOTES": {
+            "ADMIN_INVITE": "Send immediately when a new admin user is invited into the control center.",
+            "ACCESS_RESET": "Used when administrative access is reset or reissued.",
+            "VENDOR_REVIEW": "Routes new vendor review cases to the governance queue.",
+            "DISPUTE_ESCALATION": "Escalates SLA breaches and sensitive disputes to risk leadership.",
+            "SETTLEMENT_DIGEST": "Daily finance digest for payout, reconciliation, and blocked exposure review.",
+            "SUPER_ADMIN_ACCESS_INVITE": "Notify invited super admin identities and their owning managers when access is provisioned.",
+            "VENDOR_BRANCH_INVITE": "Trigger when a branch operator or branch manager receives a new vendor-panel invitation.",
+            "BRANCH_PASSWORD_RESET": "Used for secure reset and re-activation of vendor branch credentials.",
+            "VENDOR_FINANCE_DIGEST": "Delivers vendor payout, settlement, and balance summaries to finance stakeholders.",
+            "DRIVER_VERIFICATION_UPDATE": "Routes verification state updates for driver identities and compliance teams.",
+            "DRIVER_PAYOUT_ALERT": "Summarizes payout readiness, COD exposure, and balance movement for driver accounts.",
+            "CUSTOMER_SUPPORT_ESCALATION": "Alerts customer, support, and oversight teams when a high-touch support case escalates.",
+            "CUSTOMER_ACCOUNT_RECOVERY": "Secure recovery workflow for customer account access and follow-up support."
+        },
+        "EVENTS": {
+            "ADMIN_INVITE": {
+                "TITLE": "Admin invite",
+                "SUBTITLE": "Onboarding invitation for new control-center admins."
+            },
+            "ACCESS_RESET": {
+                "TITLE": "Access reset",
+                "SUBTITLE": "Secure reset and re-issue workflow for admin credentials."
+            },
+            "VENDOR_REVIEW": {
+                "TITLE": "Vendor onboarding review",
+                "SUBTITLE": "Triggered when vendor approval needs operational follow-up."
+            },
+            "DISPUTE_ESCALATION": {
+                "TITLE": "Dispute escalation",
+                "SUBTITLE": "Escalation workflow for high-risk or SLA-breached disputes."
+            },
+            "SETTLEMENT_DIGEST": {
+                "TITLE": "Settlement digest",
+                "SUBTITLE": "Finance digest for payout and reconciliation oversight."
+            },
+            "SUPER_ADMIN_ACCESS_INVITE": {
+                "TITLE": "Super admin access invite",
+                "SUBTITLE": "Provision and route new super admin access invitations."
+            },
+            "VENDOR_BRANCH_INVITE": {
+                "TITLE": "Vendor branch invite",
+                "SUBTITLE": "Onboarding workflow for vendor branch teams and managers."
+            },
+            "BRANCH_PASSWORD_RESET": {
+                "TITLE": "Branch password reset",
+                "SUBTITLE": "Secure reset flow for vendor panel branch credentials."
+            },
+            "VENDOR_FINANCE_DIGEST": {
+                "TITLE": "Vendor finance digest",
+                "SUBTITLE": "Daily finance digest for vendor owners and finance roles."
+            },
+            "DRIVER_VERIFICATION_UPDATE": {
+                "TITLE": "Driver verification update",
+                "SUBTITLE": "Verification state, document follow-up, and readiness communication."
+            },
+            "DRIVER_PAYOUT_ALERT": {
+                "TITLE": "Driver payout alert",
+                "SUBTITLE": "Driver payout and COD readiness digest."
+            },
+            "CUSTOMER_SUPPORT_ESCALATION": {
+                "TITLE": "Customer support escalation",
+                "SUBTITLE": "Escalated support workflow for sensitive customer cases."
+            },
+            "CUSTOMER_ACCOUNT_RECOVERY": {
+                "TITLE": "Customer account recovery",
+                "SUBTITLE": "Recovery flow for customer access and secure re-entry."
+            }
+        },
+        "RECIPIENT_TARGETS": {
+            "PRIMARY_ACCOUNT_EMAIL": "Primary account email",
+            "VENDOR_OWNER": "Vendor owner",
+            "VENDOR_COMPANY_MANAGER": "Vendor company manager",
+            "BRANCH_MANAGER": "Branch manager",
+            "BRANCH_STAFF": "Branch staff",
+            "VENDOR_FINANCE": "Vendor finance",
+            "VENDOR_SUPPORT": "Vendor support",
+            "ASSIGNED_SUPER_ADMIN_MANAGER": "Assigned super admin manager",
+            "DRIVER_ACCOUNT": "Driver account",
+            "CUSTOMER_ACCOUNT": "Customer account"
+        },
+        "EMPTY": {
+            "TITLE": "No routing rules found",
+            "MESSAGE": "No email rules match the current filters."
+        }
+    },
+    "CATALOG": {
+        "PRODUCT_REQUESTS": "Product Addition Requests",
+        "BRAND_REQUESTS": "Brand Addition Requests",
+        "CATEGORY_REQUESTS": "Category Addition Requests",
+        "REQUEST_DETAILS": "Product Request Details",
+        "REQUESTS_MODAL_SUBTITLE": "Review vendor-submitted addition requests and approve or reject them without leaving the current list.",
+        "REQUESTS_EMPTY_TITLE": "No matching requests",
+        "REQUESTS_EMPTY_DESC": "Try changing the status filter or check again when new requests arrive.",
+        "REQUESTS_SELECT_TITLE": "Select a request to preview its details",
+        "REQUESTS_SELECT_DESC": "Choose a request from the side list to inspect the full data and take action.",
+        "PRODUCT_NAME": "Product Name",
+        "PRODUCT_REQUEST_LABEL": "Product request",
+        "BRAND_REQUEST_LABEL": "Brand request",
+        "CATEGORY_REQUEST_LABEL": "Category request",
+        "SUBMITTED_BY": "Submitted By",
+        "DATE_SUBMITTED": "Date Submitted",
+        "STATUS_PENDING": "Pending",
+        "STATUS_APPROVED": "Approved",
+        "STATUS_REJECTED": "Rejected",
+        "COMMISSION_RATE": "Commission Rate",
+        "APPROVE": "Approve",
+        "REJECT": "Reject",
+        "REJECTION_REASON": "Rejection Reason",
+        "REJECTION_REASON_PLACEHOLDER": "Enter product rejection reason...",
+        "ADMIN_NOTES": "Administrative Notes",
+        "REVIEW_INFO": "Review Information",
+        "REVIEWED_BY": "Reviewed By",
+        "REVIEWED_AT": "Reviewed At",
+        "SUGGESTED_BRAND": "Suggested Brand",
+        "PRODUCT_IMAGE": "Product Image",
+        "NO_ADMIN_NOTES": "No administrative notes yet.",
+        "CONFIRM_APPROVE": "Confirm Approval",
+        "CONFIRM_APPROVE_MSG": "Are you sure you want to approve this product and add it to the catalog?",
+        "CONFIRM_REJECT": "Confirm Rejection",
+        "CONFIRM_REJECT_MSG": "Are you sure you want to reject this request?",
+        "PRODUCT_INFO_HINT": "Basic product details as suggested by the vendor.",
+        "CLASSIFICATION": "Classification & Brand",
+        "CLASSIFICATION_HINT": "Defining where the product fits in the catalog hierarchy.",
+        "IMAGE_PREVIEW": "Product Image Preview",
+        "IMAGE_SOURCE": "Image Source",
+        "VENDOR_UPLOAD": "Vendor Upload",
+        "REQUESTER_VENDOR": "Requester Vendor",
+        "VIEW_VENDOR_PROFILE": "View Vendor Profile",
+        "REQUEST_METADATA": "Tracking Metadata",
+        "SUBMITTED_DATE": "Submission Date",
+        "APPROVED_AT": "Approved At",
+        "REJECTED_AT": "Rejected At",
+        "BY": "By",
+        "REJECTED_REQUEST": "Rejected Request",
+        "NO_NOTES": "No notes recorded",
+        "REJECT_CONFIRM_MSG": "When rejecting this product, the vendor will be notified with the reason below. Do you want to continue?",
+        "REJECT_REQUEST": "Reject Product Request",
+        "CONFIRM_REJECTION": "Confirm Final Rejection",
+        "DESCRIPTION": "Product Description",
+        "REVIEWED": "Reviewed",
+        "PRODUCT_INFO": "Product Information",
+        "CATEGORY": "Category",
+        "BRAND": "Brand",
+        "VENDOR": "Vendor",
+        "UNIT": "Unit",
+        "DISPLAY_ORDER": "Display Order",
+        "NAME_AR": "Name (Arabic)",
+        "NAME_EN": "Name (English)",
+        "DESCRIPTION_AR": "Description (Arabic)",
+        "DESCRIPTION_EN": "Description (English)",
+        "APPROVE_VENDORS_MSG": "Approving this vendor will activate the account and allow catalog and payout operations.",
+        "DATE": "Date",
+        "PRODUCT": "Product",
+        "PRODUCT_REQUESTS_DESC": "Review new product requests and approve or reject them before adding them to the catalog.",
+        "BRAND_REQUESTS_DESC": "Review brand addition requests from vendors before linking them to the catalog.",
+        "CATEGORY_REQUESTS_DESC": "Review new category requests and place them correctly within the catalog hierarchy.",
+        "REJECT_VENDORS_MSG": "Rejecting this vendor will keep the account inactive until the required issues are resolved.",
+        "STATUS": "Status",
+        "TITLE": "Catalog"
+    },
+    "MARKETING": {
+        "SHELL": {
+            "TITLE": "Marketing Control Center",
+            "SUBTITLE": "Live merchandising powered by the admin marketing APIs"
+        },
+        "TABS": {
+            "BANNERS": "Banners",
+            "FEATURED_PRODUCTS": "Featured Products",
+            "HOME_SECTIONS": "Home Sections",
+            "HOME_VISIBILITY": "Home Visibility"
+        },
+        "ACTIONS": {
+            "REFRESH": "Refresh",
+            "ACTIVATE": "Activate",
+            "DEACTIVATE": "Deactivate",
+            "SAVE_CHANGES": "Save changes"
+        },
+        "COMMON": {
+            "WORKFLOW": "Workflow",
+            "FIELDS": {
+                "IMAGE_URL": "Image URL",
+                "STARTS_AT": "Starts at",
+                "ENDS_AT": "Ends at"
+            },
+            "PLACEHOLDERS": {
+                "URL": "https://...",
+                "GUID": "GUID",
+                "ORDER": "1"
+            },
+            "TABLE": {
+                "SCHEDULE": "Schedule",
+                "UPDATED": "Updated"
+            }
+        },
+        "SECTION_TYPES": {
+            "Banners": "Banners",
+            "Categories": "Categories",
+            "SpecialOffers": "Special Offers",
+            "Recommended": "Recommended",
+            "BestSelling": "Best Selling",
+            "Brands": "Brands",
+            "FeaturedProducts": "Featured Products",
+            "ExploreMore": "Explore More",
+            "DynamicSections": "Dynamic Sections"
+        },
+        "BANNERS": {
+            "DESCRIPTION": "Create, reorder, schedule, and toggle home banners from one place.",
+            "API_HINT": "Driven directly by",
+            "ACTIONS": {
+                "CREATE": "Create banner"
+            },
+            "KPI": {
+                "TOTAL": "Total banners",
+                "ACTIVE": "Active now"
+            },
+            "FIELDS": {
+                "TAG_AR": "Arabic tag",
+                "TAG_EN": "English tag",
+                "TITLE_AR": "Arabic title",
+                "TITLE_EN": "English title",
+                "SUBTITLE_AR": "Arabic subtitle",
+                "SUBTITLE_EN": "English subtitle",
+                "ACTION_AR": "Arabic CTA label",
+                "ACTION_EN": "English CTA label",
+                "IS_ACTIVE": "Banner is active"
+            },
+            "PLACEHOLDERS": {
+                "TAG": "Fresh deals",
+                "TITLE_AR": "Banner title in Arabic",
+                "TITLE_EN": "Banner title",
+                "SUBTITLE_AR": "Short Arabic supporting line",
+                "SUBTITLE_EN": "Short supporting line",
+                "ACTION_AR": "Shop now in Arabic",
+                "ACTION_EN": "Shop now"
+            },
+            "TABLE": {
+                "TAG": "Tag",
+                "TITLE": "Title"
+            },
+            "MODAL": {
+                "CREATE_TITLE": "Create banner",
+                "EDIT_TITLE": "Edit banner",
+                "SUBTITLE": "Manage the hero card content that appears in the customer home feed."
+            },
+            "MESSAGES": {
+                "LOADING": "Loading banners...",
+                "EMPTY_TITLE": "No banners configured yet.",
+                "EMPTY_SUBTITLE": "Create the first home banner to start managing the hero rail.",
+                "REQUIRED_FIELDS": "Please complete the required banner fields before saving.",
+                "DELETE_TITLE": "Delete banner",
+                "DELETE_MESSAGE": "This banner will be removed from the admin marketing inventory.",
+                "CREATED": "Banner created successfully.",
+                "UPDATED": "Banner updated successfully.",
+                "ACTIVATED": "Banner activated.",
+                "DEACTIVATED": "Banner deactivated.",
+                "DELETED": "Banner deleted successfully."
+            }
+        },
+        "FEATURED": {
+            "DESCRIPTION": "Pin vendor or master products into the customer home merchandising rails.",
+            "API_HINT": "Controlled by",
+            "ACTIONS": {
+                "CREATE": "Add placement"
+            },
+            "KPI": {
+                "TOTAL": "Placements",
+                "VENDOR_LINKED": "Vendor-linked"
+            },
+            "TYPES": {
+                "VENDOR_PRODUCT": "Vendor product",
+                "MASTER_PRODUCT": "Master product"
+            },
+            "FIELDS": {
+                "PLACEMENT_TYPE": "Placement type",
+                "VENDOR_PRODUCT_ID": "Vendor product ID",
+                "MASTER_PRODUCT_ID": "Master product ID",
+                "NOTE": "Internal note",
+                "IS_ACTIVE": "Placement is active"
+            },
+            "PLACEHOLDERS": {
+                "NOTE": "Optional merchandising context"
+            },
+            "TABLE": {
+                "TARGET": "Target",
+                "TYPE": "Type",
+                "NOTE": "Note"
+            },
+            "MODAL": {
+                "CREATE_TITLE": "Create featured placement",
+                "EDIT_TITLE": "Edit featured placement",
+                "SUBTITLE": "Attach a vendor product or master product directly to the home merchandising rail."
+            },
+            "MESSAGES": {
+                "LOADING": "Loading featured placements...",
+                "EMPTY_TITLE": "No featured placements yet.",
+                "EMPTY_SUBTITLE": "Create the first placement and point it to a vendor product or a master product GUID.",
+                "VENDOR_ID_REQUIRED": "Vendor product placements require a vendor product ID.",
+                "MASTER_ID_REQUIRED": "Master product placements require a master product ID.",
+                "DELETE_TITLE": "Delete featured placement",
+                "DELETE_MESSAGE": "This merchandising placement will be removed from the featured products rail.",
+                "CREATED": "Featured placement created.",
+                "UPDATED": "Featured placement updated.",
+                "ACTIVATED": "Placement activated.",
+                "DEACTIVATED": "Placement deactivated.",
+                "DELETED": "Featured placement deleted."
+            }
+        },
+        "HOME_SECTIONS": {
+            "DESCRIPTION": "Choose a level-3 subcategory and a theme that the customer app can render directly.",
+            "API_HINT": "Backed by",
+            "ACTIONS": {
+                "CREATE": "Create section"
+            },
+            "KPI": {
+                "TOTAL": "Dynamic sections",
+                "SUBCATEGORIES": "Available subcategories"
+            },
+            "FIELDS": {
+                "SUBCATEGORY": "Subcategory",
+                "THEME": "Theme",
+                "PRODUCTS_TAKE": "Products to show",
+                "IS_ACTIVE": "Section is active"
+            },
+            "PLACEHOLDERS": {
+                "SUBCATEGORY": "Select a level-3 category",
+                "THEME": "theme1",
+                "PRODUCTS_TAKE": "8"
+            },
+            "TABLE": {
+                "SUBCATEGORY": "Subcategory",
+                "THEME": "Theme",
+                "TAKE": "Take"
+            },
+            "MODAL": {
+                "CREATE_TITLE": "Create home section",
+                "EDIT_TITLE": "Edit home section",
+                "SUBTITLE": "Pick a level-3 subcategory, choose the card theme, and define how many products the home feed should render."
+            },
+            "MESSAGES": {
+                "LOADING": "Loading home sections...",
+                "EMPTY_TITLE": "No dynamic home sections yet.",
+                "EMPTY_SUBTITLE": "Create one and bind it to a level-3 subcategory like Bakery or Meat.",
+                "NO_SUBCATEGORIES": "No level-3 catalog categories are available yet. Add subcategories first.",
+                "REQUIRED_FIELDS": "Please choose a subcategory and complete the required section fields.",
+                "DELETE_TITLE": "Delete home section",
+                "DELETE_MESSAGE": "This dynamic section will disappear from the admin marketing inventory and the home feed.",
+                "CREATED": "Home section created.",
+                "UPDATED": "Home section updated.",
+                "ACTIVATED": "Home section activated.",
+                "DEACTIVATED": "Home section deactivated.",
+                "DELETED": "Home section deleted."
+            }
+        },
+        "VISIBILITY": {
+            "DESCRIPTION": "Toggle fixed home sections without redeploying the customer app or touching hardcoded flags.",
+            "API_HINT": "These flags come from",
+            "CARD_DESCRIPTION": "Controls whether the customer home endpoint should expose this fixed section.",
+            "ENABLED": "Enabled",
+            "DISABLED": "Disabled",
+            "KPI": {
+                "MANAGED": "Managed sections",
+                "ENABLED": "Enabled now"
+            },
+            "ACTIONS": {
+                "SAVE_STATE": "Save explicit state"
+            },
+            "MESSAGES": {
+                "LOADING": "Loading home visibility settings...",
+                "ACTIVATED": "Section enabled.",
+                "DEACTIVATED": "Section disabled.",
+                "SAVED": "Section state saved."
+            }
         }
     }
 }

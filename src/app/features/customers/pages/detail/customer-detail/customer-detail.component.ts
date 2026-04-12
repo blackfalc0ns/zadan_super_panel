@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { switchMap } from 'rxjs';
 import { CustomersService } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { InlineBannerComponent } from '../../../../../shared/components/ui/inline-banner/inline-banner.component';
@@ -74,9 +75,16 @@ export class CustomerDetailComponent implements OnInit {
       this.currentTab = this.normalizeTab(params.get('tab'));
     });
 
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      this.customer = this.customersService.getCustomerById(id) ?? this.customersService.getCustomers()[0] ?? null;
+    this.route.paramMap.pipe(
+      switchMap((params) => this.customersService.getCustomerById(params.get('id')))
+    ).subscribe({
+      next: (customer) => {
+        this.customer = customer ?? null;
+      },
+      error: (error) => {
+        console.error('Failed to load admin customer detail.', error);
+        this.customer = null;
+      }
     });
   }
 
@@ -166,13 +174,13 @@ export class CustomerDetailComponent implements OnInit {
       },
       {
         label: 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE',
-        value: this.customer.preferredLanguageLabel,
-        translateValue: false
+        value: this.getPreferredLanguageKey(),
+        translateValue: true
       },
       {
         label: 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN',
-        value: this.customer.lastSeenAt,
-        translateValue: false
+        value: this.getLastSeenValue(),
+        translateValue: this.shouldTranslateLastSeenValue()
       }
     ];
   }
@@ -191,8 +199,8 @@ export class CustomerDetailComponent implements OnInit {
       },
       {
         label: 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGINS',
-        value: this.customer.suspiciousLoginAttempts,
-        translateValue: false
+        value: this.getSuspiciousLoginsKey(),
+        translateValue: true
       },
       {
         label: 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.PAYMENT_FAILURES',
@@ -202,8 +210,8 @@ export class CustomerDetailComponent implements OnInit {
       },
       {
         label: 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY',
-        value: this.customer.complaintRateLabel,
-        translateValue: false
+        value: this.getComplaintFrequencyKey(),
+        translateValue: true
       }
     ];
   }
@@ -352,6 +360,14 @@ export class CustomerDetailComponent implements OnInit {
 
   openCasesList(): void {
     this.router.navigate(['/disputes']);
+  }
+
+  openAccessProfile(): void {
+    if (!this.customer) {
+      return;
+    }
+
+    this.router.navigate(['/admin-users', `customer-${this.customer.id}`]);
   }
 
   handleReviewAction(): void {
@@ -527,6 +543,74 @@ export class CustomerDetailComponent implements OnInit {
 
   private normalizeTab(value: string | null): CustomerDetailTabId {
     return value === 'workflow' ? 'workflow' : 'overview';
+  }
+
+  private getPreferredLanguageKey(): string {
+    return this.customer?.preferredLanguage === 'en'
+      ? 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ENGLISH'
+      : 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ARABIC';
+  }
+
+  private getLastSeenValue(): string {
+    if (!this.customer) {
+      return 'CUSTOMERS.PRESENCE.ONLINE_NOW';
+    }
+
+    return this.customer.isOnlineNow
+      ? 'CUSTOMERS.PRESENCE.ONLINE_NOW'
+      : this.customer.lastSeenAt;
+  }
+
+  private shouldTranslateLastSeenValue(): boolean {
+    return this.customer?.isOnlineNow ?? true;
+  }
+
+  private getSuspiciousLoginsKey(): string {
+    if (!this.customer) {
+      return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.NONE';
+    }
+
+    if (this.customer.trustState === 'blocked') {
+      return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.FIVE_RECENT';
+    }
+
+    if (this.customer.trustState === 'watch') {
+      return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.TWO_RECENT';
+    }
+
+    return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.NONE';
+  }
+
+  private getComplaintFrequencyKey(): string {
+    if (!this.customer) {
+      return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW';
+    }
+
+    if (this.customer.disputesCount >= 3 || this.customer.refundsCount >= 4) {
+      return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.HIGH';
+    }
+
+    if (this.customer.disputesCount > 0 || this.customer.refundsCount > 1) {
+      return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.MEDIUM';
+    }
+
+    return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW';
+  }
+
+  getLastSupportContactKey(): string {
+    if (!this.customer) {
+      return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.NONE';
+    }
+
+    if (this.customer.disputesCount >= 3) {
+      return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.RECENT';
+    }
+
+    if (this.customer.disputesCount > 0 || this.customer.refundsCount > 1) {
+      return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.STALE';
+    }
+
+    return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.NONE';
   }
 }
 

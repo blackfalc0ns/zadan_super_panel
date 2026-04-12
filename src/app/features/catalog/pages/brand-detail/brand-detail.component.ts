@@ -47,9 +47,9 @@ export class BrandDetailComponent implements OnInit {
 
   setupBreadcrumbs(): void {
     this.breadcrumbs = [
-      { label: 'الكتالوج', action: () => this.goBack() },
-      { label: 'العلامات التجارية', action: () => this.goBack() },
-      { label: 'تفاصيل العلامة التجارية' }
+      { label: this.translate.instant('SIDEBAR.CATALOG'), action: () => this.goBack() },
+      { label: this.translate.instant('BRANDS.TITLE'), action: () => this.goBack() },
+      { label: this.translate.instant('BRANDS.DETAIL.TITLE') }
     ];
   }
 
@@ -57,12 +57,13 @@ export class BrandDetailComponent implements OnInit {
     this.isLoading = true;
     this.catalogService.getBrands().subscribe({
       next: (brands) => {
-        this.brand = brands.find(b => b.id === id) || null;
+        this.brand = brands.find((item) => item.id === id) || null;
         if (this.brand) {
           this.loadBrandProducts(id);
-        } else {
-          this.isLoading = false;
+          return;
         }
+
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading brand', err);
@@ -72,10 +73,8 @@ export class BrandDetailComponent implements OnInit {
   }
 
   loadBrandProducts(brandId: string): void {
-    // Fetch products filtered by brandId server-side
     this.catalogService.getProducts(1, 100, undefined, undefined, brandId).subscribe({
       next: (res) => {
-        // Now res directly contains the products for this brand (paginated)
         this.products = res.data || res.items || res;
         this.isLoading = false;
       },
@@ -121,5 +120,14 @@ export class BrandDetailComponent implements OnInit {
 
     return labels[status || ''] || status || '-';
   }
-}
 
+  getLocalizedCategoryName(): string {
+    if (!this.brand) {
+      return '-';
+    }
+
+    return this.activeLang === 'ar'
+      ? (this.brand.categoryNameAr || this.brand.categoryNameEn || '-')
+      : (this.brand.categoryNameEn || this.brand.categoryNameAr || '-');
+  }
+}

@@ -4,211 +4,198 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CatalogService } from '@catalog/services/catalog.api.service';
-import { Category } from '@catalog/models/catalog.domain.models';
+import { CatalogSearchRequest, Category, CategorySearchFilters } from '@catalog/models/catalog.domain.models';
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
-
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
-import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { CatalogRequestCenterModalComponent } from '../../components/catalog-request-center-modal/catalog-request-center-modal.component';
+import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 
 @Component({
   selector: 'app-categories-manager',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    TranslateModule, 
-    CategoryFormModalComponent, 
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    CategoryFormModalComponent,
     DeleteConfirmationModalComponent,
     AppButtonComponent,
     AppBadgeComponent,
     AppPaginationComponent,
     AppPageHeaderComponent,
-    AppInputComponent,
-    StatusPillComponent
+    StatusPillComponent,
+    CatalogRequestCenterModalComponent,
+    AdvancedFilterPanelComponent
   ],
   templateUrl: './categories-manager.component.html',
   styleUrl: './categories-manager.component.scss'
 })
 export class CategoriesManagerComponent implements OnInit {
   isLoading = true;
-  industries: Category[] = [];
-
-  // Navigation & Pagination State
-  breadcrumbs: Category[] = [];
   currentItems: Category[] = [];
   searchTerm = '';
-  
   currentPage = 1;
   pageSize = 10;
-  
-  get totalPages(): number {
-    return Math.ceil(this.currentItems.length / this.pageSize);
-  }
+  totalItems = 0;
+  selectedLevel: number | null = null;
+  statusFilter: boolean | null = null;
+  childrenFilter: boolean | null = null;
+  isFiltersExpanded = false;
+  panelFilters: Record<string, string | null | undefined> = {};
 
-  get paginatedItems(): Category[] {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.currentItems.slice(startIndex, startIndex + this.pageSize);
-  }
-
-  changePage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-    }
-  }
-
-  // Modal State
   isModalOpen = false;
   modalMode: 'create' | 'edit' = 'create';
   modalLevelKey = '';
-  isSaving = false;
   categoryForm: Partial<Category> | null = null;
-
-  // Deletion State
   isDeleteModalOpen = false;
   isDeleting = false;
   itemToDelete: Category | null = null;
-
-  // Context State
   parentCategoryForModal: { id: string | null, nameAr: string, nameEn: string } | null = null;
-
-  // Tree Table State
-  expandedRows = new Set<string>();
-
-  // Expose Math to template
+  isCategoryRequestsModalOpen = false;
   Math = Math;
+
+  readonly filterFields: FilterField[] = [
+    { key: 'selectedLevel', label: 'CATEGORIES.DETAILS.LEVEL', type: 'select', color: '#127c8c', options: [] },
+    { key: 'statusFilter', label: 'COMMON.STATUS', type: 'select', color: '#2563eb', options: [] },
+    { key: 'childrenFilter', label: 'CATEGORIES.DETAILS.BRANCH_NODES', type: 'select', color: '#0f766e', options: [] }
+  ];
+
+  get activeLang(): string {
+    return this.translate.currentLang || 'ar';
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(this.searchTerm || this.selectedLevel != null || this.statusFilter != null || this.childrenFilter != null);
+  }
 
   constructor(
     private readonly route: ActivatedRoute,
     private catalogService: CatalogService,
     public translate: TranslateService,
     private router: Router
-  ) { }
-
-  get activeLang(): string {
-    return this.translate.currentLang || 'ar';
-  }
-
-  getDynamicBreadcrumbs(): any[] {
-    return [
-      { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
-      { label: 'CATEGORIES.INDUSTRY', url: '' }
-    ];
+  ) {
+    this.translate.onLangChange.subscribe(() => this.initializeFilterOptions());
   }
 
   ngOnInit() {
+    this.initializeFilterOptions();
     this.route.queryParams.subscribe((params) => {
       this.searchTerm = params['search'] || '';
+      this.currentPage = 1;
+      this.syncPanelFilters();
       this.loadHierarchy();
     });
   }
 
   loadHierarchy() {
     this.isLoading = true;
-    this.catalogService.getCategories(undefined, true).subscribe({
-      next: (data: Category[]) => {
-        this.industries = data || [];
-        this.refreshCurrentItems();
+    this.catalogService.searchCategories(this.buildSearchRequest()).subscribe({
+      next: (response) => {
+        this.currentItems = response.items ?? [];
+        this.totalItems = response.totalCount ?? this.currentItems.length;
         this.isLoading = false;
       },
       error: (err: any) => {
         console.error(err);
+        this.currentItems = [];
+        this.totalItems = 0;
         this.isLoading = false;
       }
     });
+  }
+
+  initializeFilterOptions(): void {
+    const levelField = this.filterFields.find((field) => field.key === 'selectedLevel');
+    const statusField = this.filterFields.find((field) => field.key === 'statusFilter');
+    const childrenField = this.filterFields.find((field) => field.key === 'childrenFilter');
+
+    if (levelField) {
+      levelField.options = [
+        { value: '0', label: 'CATEGORIES.INDUSTRY' },
+        { value: '1', label: 'CATEGORIES.SUB_INDUSTRY' },
+        { value: '2', label: 'CATEGORIES.CATEGORY' },
+        { value: '3', label: 'CATEGORIES.SUB_CATEGORY' }
+      ];
+      levelField.placeholder = 'COMMON.ALL';
+    }
+
+    if (statusField) {
+      statusField.options = [
+        { value: 'true', label: 'CATEGORIES.STATUS_ACTIVE' },
+        { value: 'false', label: 'CATEGORIES.STATUS_DISABLED' }
+      ];
+      statusField.placeholder = 'COMMON.ALL';
+    }
+
+    if (childrenField) {
+      childrenField.options = [
+        { value: 'true', label: 'CATEGORIES.WITH_CHILDREN' },
+        { value: 'false', label: 'CATEGORIES.WITHOUT_CHILDREN' }
+      ];
+      childrenField.placeholder = 'COMMON.ALL';
+    }
+  }
+
+  get paginatedItems(): Category[] {
+    return this.currentItems;
+  }
+
+  changePage(page: number) {
+    this.currentPage = page;
+    this.loadHierarchy();
+  }
+
+  onSearchTermChange(term: string): void {
+    this.searchTerm = term;
+    this.currentPage = 1;
+    this.loadHierarchy();
+  }
+
+  toggleFilters(): void {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
+
+  onFiltersChange(filters: Record<string, unknown>): void {
+    this.selectedLevel = this.toNullableNumber(filters['selectedLevel']);
+    this.statusFilter = this.toNullableBoolean(filters['statusFilter']);
+    this.childrenFilter = this.toNullableBoolean(filters['childrenFilter']);
+    this.currentPage = 1;
+    this.syncPanelFilters();
+    this.loadHierarchy();
+  }
+
+  resetFilters() {
+    this.searchTerm = '';
+    this.selectedLevel = null;
+    this.statusFilter = null;
+    this.childrenFilter = null;
+    this.currentPage = 1;
+    this.syncPanelFilters();
+    this.loadHierarchy();
   }
 
   getLevelNameKey(): string {
     return 'CATEGORIES.INDUSTRY';
   }
 
-  toggleRow(categoryId: string, event?: Event) {
-    if (event) event.stopPropagation();
-    if (this.expandedRows.has(categoryId)) {
-      this.expandedRows.delete(categoryId);
-    } else {
-      this.expandedRows.add(categoryId);
-    }
-  }
-
-  isExpanded(categoryId: string): boolean {
-    return this.expandedRows.has(categoryId);
-  }
-
-  getFlattenedHierarchy(): any[] {
-    const flatList: any[] = [];
-    
-    const process = (items: Category[], level: number, parentVisible: boolean) => {
-      for (const item of items) {
-        flatList.push({
-          ...item,
-          level,
-          isExpanded: this.isExpanded(item.id),
-          hasChildren: !!(item.subCategories && item.subCategories.length > 0)
-        });
-
-        if (this.isExpanded(item.id) && item.subCategories) {
-          process(item.subCategories, level + 1, true);
-        }
-      }
-    };
-
-    process(this.industries, 0, true);
-    return flatList;
-  }
-
-  getCurrentParentId(): string | null {
-    if (this.breadcrumbs.length === 0) return null;
-    return this.breadcrumbs[this.breadcrumbs.length - 1].id;
-  }
-
-  refreshCurrentItems() {
-    let items = [...this.industries];
-    
-    if (this.searchTerm && this.searchTerm.trim() !== '') {
-        const term = this.searchTerm.toLowerCase().trim();
-        items = items.filter(i => 
-            (i.nameAr && i.nameAr.toLowerCase().includes(term)) ||
-            (i.nameEn && i.nameEn.toLowerCase().includes(term))
-        );
-    }
-    
-    this.currentItems = items;
-    this.currentPage = 1;
-  }
-
-  onSearch(event?: any) {
-    this.refreshCurrentItems();
-  }
-
   selectItem(item: Category) {
-    // Navigate to details page for the activity
     this.router.navigate(['/catalog/categories', item.id]);
-  }
-
-  goToLevel(index: number) {
-    if (index === 0) {
-      this.breadcrumbs = [];
-    } else {
-      this.breadcrumbs = this.breadcrumbs.slice(0, index);
-    }
-    this.refreshCurrentItems();
   }
 
   openCreateModal(parent?: any) {
     this.modalMode = 'create';
-    const activeParent = parent || (this.breadcrumbs.length > 0 ? this.breadcrumbs[this.breadcrumbs.length - 1] : null);
-    
+    const activeParent = parent ?? null;
     this.modalLevelKey = this.getLevelNameKey();
 
     this.parentCategoryForModal = activeParent ? {
-        id: activeParent.id,
-        nameAr: activeParent.nameAr,
-        nameEn: activeParent.nameEn
+      id: activeParent.id,
+      nameAr: activeParent.nameAr,
+      nameEn: activeParent.nameEn
     } : null;
 
     this.isModalOpen = true;
@@ -228,7 +215,7 @@ export class CategoriesManagerComponent implements OnInit {
   }
 
   handleSaved() {
-    this.loadHierarchy(); // Full refresh
+    this.loadHierarchy();
   }
 
   onCreateProduct(category: Category) {
@@ -271,6 +258,39 @@ export class CategoriesManagerComponent implements OnInit {
   getCategoryStatusVariant(isActive: boolean): StatusPillVariant {
     return isActive ? 'success' : 'paused';
   }
+
+  private syncPanelFilters(): void {
+    this.panelFilters = {
+      selectedLevel: this.selectedLevel == null ? null : String(this.selectedLevel),
+      statusFilter: this.statusFilter == null ? null : String(this.statusFilter),
+      childrenFilter: this.childrenFilter == null ? null : String(this.childrenFilter)
+    };
+  }
+
+  private buildSearchRequest(): CatalogSearchRequest<CategorySearchFilters> {
+    return {
+      pagination: {
+        pageNumber: this.currentPage,
+        pageSize: this.pageSize
+      },
+      search: this.searchTerm.trim() || undefined,
+      filters: {
+        level: this.selectedLevel,
+        isActive: this.statusFilter,
+        hasChildren: this.childrenFilter
+      }
+    };
+  }
+
+  private toNullableBoolean(value: unknown): boolean | null {
+    if (value === true || value === 'true') return true;
+    if (value === false || value === 'false') return false;
+    return null;
+  }
+
+  private toNullableNumber(value: unknown): number | null {
+    if (typeof value === 'string' && value.trim() !== '') return Number(value);
+    if (typeof value === 'number') return value;
+    return null;
+  }
 }
-
-

@@ -11,6 +11,19 @@
 <div class="ambient-glow glow-orange"></div>
 
 <div class="min-h-screen pt-1 px-6 pb-6 relative z-10" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <!-- Status Feedback Banner -->
+  <div *ngIf="vendorDetail?.status === 'Rejected'" class="mb-5 animate-in slide-in-from-top-4 duration-500">
+    <div class="glass-card !bg-rose-50/40 border-rose-200/50 p-5 rounded-[1.6rem] flex items-center gap-4">
+      <div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
+        <span class="material-symbols-outlined">report</span>
+      </div>
+      <div>
+        <h4 class="text-xs font-black text-rose-900 uppercase tracking-widest mb-1">{{ 'VENDORS.REJECTED_TITLE' | translate }}</h4>
+        <p class="text-sm font-medium text-rose-700/80">{{ vendorDetail?.rejectionReason || ('VENDORS.NO_REASON' | translate) }}</p>
+      </div>
+    </div>
+  </div>
+
   <div class="flex flex-col lg:flex-row gap-5">
     <aside class="w-full lg:w-60 shrink-0 flex flex-col gap-4">
       <div class="glass-card rounded-[1.4rem] p-5 flex flex-col items-center">
@@ -33,14 +46,14 @@
               <span class="material-symbols-outlined text-slate-400 text-sm">schedule</span>
               <span class="text-xs font-bold text-slate-500">{{ 'VENDOR_DETAIL.LAST_UPDATE' | translate }}</span>
             </div>
-            <span class="text-xs font-black text-slate-800">{{ storeData.lastUpdate }}</span>
+            <span class="text-xs font-black text-slate-800">{{ storeData.lastUpdate ? (storeData.lastUpdate | date:'short') : '---' }}</span>
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-slate-400 text-sm">person_outline</span>
               <span class="text-xs font-bold text-slate-500">{{ 'VENDOR_DETAIL.BY' | translate }}</span>
             </div>
-            <span class="text-xs font-black text-slate-800">{{ 'VENDOR_DETAIL.SAMPLE_EDITOR_NAME' | translate }}</span>
+            <span class="text-xs font-black text-slate-800">{{ getDisplayReviewer() }}</span>
           </div>
         </div>
       </div>
@@ -84,39 +97,57 @@
         <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-8">
           <div class="flex flex-col">
             <span class="data-label">{{ 'VENDOR_DETAIL.STORE_NAME' | translate }}</span>
-            <span class="data-value">{{ storeDataModal.storeName }}</span>
+            <span class="data-value">{{ getDisplayStoreName() }}</span>
           </div>
           <div class="flex flex-col">
             <span class="data-label">{{ 'VENDOR_DETAIL.CATEGORY' | translate }}</span>
-            <span class="data-value">{{ storeDataModal.activityType | translate }}</span>
+            <span class="data-value">{{ getDisplayBusinessType(vendorDetail?.businessType) }}</span>
           </div>
           <div class="flex flex-col">
             <span class="data-label">{{ 'VENDOR_DETAIL.STATUS' | translate }}</span>
-            <div class="mt-1">
-              <app-status-pill [label]="getCurrentStatusLabel()" [variant]="getCurrentStatusVariant()" size="sm"></app-status-pill>
+            <div class="mt-1 flex items-center gap-2">
+              <app-status-pill [label]="getCurrentStatusLabel() | translate" [variant]="getCurrentStatusVariant()" size="sm"></app-status-pill>
+              
+              <!-- Review Actions for Admin -->
+              <ng-container *ngIf="vendorDetail?.status === 'Pending'">
+                <button (click)="onVerifyAccount()" class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all shadow-sm" [title]="'CATALOG.APPROVE' | translate">
+                   <span class="material-symbols-outlined text-[16px]">done</span>
+                </button>
+                <button (click)="openRejectModal()" class="w-6 h-6 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm" [title]="'CATALOG.REJECT' | translate">
+                   <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+              </ng-container>
             </div>
           </div>
           <div class="flex flex-col">
             <span class="data-label">{{ 'VENDOR_DETAIL.LOCATION_CITY' | translate }}</span>
-            <span class="data-value">{{ storeDataModal.city }}</span>
-          </div>
-          <div class="md:col-span-3 flex flex-col">
-            <span class="data-label">{{ 'VENDOR_DETAIL.ADDRESS' | translate }}</span>
-            <span class="data-value leading-relaxed">{{ storeDataModal.nationalAddress }}</span>
+            <span class="data-value">{{ vendorDetail?.city || '---' }}</span>
           </div>
           <div class="flex flex-col">
-            <span class="data-label">{{ 'VENDOR_DETAIL.JOIN_DATE' | translate }}</span>
-            <span class="data-value">{{ storeDataModal.registrationDate }}</span>
+             <span class="data-label">{{ 'VENDOR_DETAIL.SUBMITTED_DATE' | translate }}</span>
+             <span class="data-value">{{ vendorDetail?.createdAtUtc | date:'mediumDate' }}</span>
+          </div>
+          <div class="flex flex-col">
+             <span class="data-label">{{ 'CATALOG.COMMISSION_RATE' | translate }}</span>
+             <span class="data-value text-primary">{{ vendorDetail?.commissionRate || 0 }}%</span>
           </div>
         </div>
 
-        <div class="px-5 py-2.5 bg-slate-50/40 border-t border-slate-100/50 flex justify-end">
+        <div class="px-5 py-2.5 bg-slate-50/40 border-t border-slate-100/50 flex justify-end gap-4">
           <a
             (click)="onViewCrClick(); $event.preventDefault()"
             href="#"
             class="text-[9.5px] font-black text-primary flex items-center gap-1.5 hover:translate-x-1 rtl:hover:-translate-x-1 transition-transform group cursor-pointer">
             <span>{{ 'VENDOR_DETAIL.VIEW_DIGITAL_CR' | translate }}</span>
-            <span class="material-symbols-outlined text-[10px]">open_in_new</span>
+            <span class="material-symbols-outlined text-[10px]">description</span>
+          </a>
+          <a
+            *ngIf="vendorDetail?.commercialRegisterDocumentUrl"
+            [href]="vendorDetail?.commercialRegisterDocumentUrl"
+            target="_blank"
+            class="text-[9.5px] font-black text-slate-400 flex items-center gap-1.5 hover:translate-x-1 rtl:hover:-translate-x-1 transition-transform group cursor-pointer">
+            <span>{{ 'VENDOR_DETAIL.DOWNLOAD_ATTACHMENT' | translate }}</span>
+            <span class="material-symbols-outlined text-[10px]">download</span>
           </a>
         </div>
       </section>
@@ -196,7 +227,7 @@
             </div>
             <div class="flex justify-between items-center border-b border-slate-100/50 pb-2">
               <span class="data-label mb-0 uppercase tracking-tighter">{{ 'VENDOR_DETAIL.LEGAL_ENTITY' | translate }}</span>
-              <span class="data-value">{{ 'VENDOR_DETAIL.LEGAL_ENTITY_VALUE' | translate }}</span>
+              <span class="data-value">{{ vendorDetail?.accountStatus || '---' }}</span>
             </div>
             <div class="flex justify-between items-center mt-auto pt-2">
               <span class="data-label mb-0 uppercase tracking-tighter">{{ 'VENDOR_DETAIL.EXPIRY_DATE' | translate }}</span>
@@ -235,7 +266,7 @@
             <div class="grid grid-cols-2 gap-4">
               <div class="flex flex-col">
                 <span class="data-label">SWIFT</span>
-                <span class="text-sm font-black text-slate-800 font-mono">RJHI SASR</span>
+                <span class="text-sm font-black text-slate-800 font-mono">{{ bankingData.swiftCode || '---' }}</span>
               </div>
               <div class="flex flex-col text-end">
                 <span class="data-label">{{ 'MODALS.LEGAL_BANK_EDIT.PAYMENT_CYCLE' | translate }}</span>
@@ -273,3 +304,71 @@
   (close)="showEditStoreModal = false"
   (save)="onSaveStoreData($event)">
 </app-edit-store-modal>
+
+<!-- Approval Modal -->
+<div *ngIf="showApproveModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+  <div class="w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 border border-white/20 animate-in zoom-in-95 duration-300">
+    <div class="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center mb-5">
+      <span class="material-symbols-outlined text-[24px]">verified</span>
+    </div>
+    <h3 class="text-xl font-black text-slate-900 mb-2">{{ 'CATALOG.APPROVE' | translate }}?</h3>
+    <p class="text-[0.8rem] font-medium text-slate-500 mb-6">{{ 'CATALOG.APPROVE_VENDORS_MSG' | translate }}</p>
+    
+    <div class="space-y-2 mb-8">
+       <label class="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest pl-1">{{ 'CATALOG.COMMISSION_RATE' | translate }} (%)</label>
+       <input 
+         type="number"
+         [(ngModel)]="commissionRate"
+         class="w-full rounded-2xl border-slate-200 bg-slate-50/50 p-4 text-[0.8rem] font-black text-slate-900 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 transition-all outline-none"
+         placeholder="12.5"
+       >
+    </div>
+
+    <p *ngIf="modalError" class="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-[0.8rem] font-medium text-rose-600">
+      {{ modalError }}
+    </p>
+
+    <div class="flex gap-3">
+       <button (click)="showApproveModal = false" [disabled]="submitting" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-xs font-black text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-60">
+         {{ 'COMMON.CANCEL' | translate }}
+       </button>
+       <button (click)="confirmApprove()" [disabled]="submitting" class="flex-1 py-3 px-4 rounded-xl bg-emerald-500 text-white text-xs font-black shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-60 disabled:hover:scale-100">
+         {{ 'CATALOG.APPROVE' | translate }}
+       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div *ngIf="showRejectModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+  <div class="w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 border border-white/20 animate-in zoom-in-95 duration-300">
+    <div class="h-12 w-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mb-5">
+      <span class="material-symbols-outlined text-[24px]">report</span>
+    </div>
+    <h3 class="text-xl font-black text-slate-900 mb-2">{{ 'CATALOG.REJECT' | translate }}?</h3>
+    <p class="text-[0.8rem] font-medium text-slate-500 mb-6">{{ 'CATALOG.REJECT_VENDORS_MSG' | translate }}</p>
+    
+    <div class="space-y-2 mb-8">
+       <label class="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest pl-1">{{ 'CATALOG.REJECTION_REASON' | translate }}</label>
+       <textarea 
+         [(ngModel)]="rejectionNotes"
+         class="w-full rounded-2xl border-slate-200 bg-slate-50/50 p-4 text-[0.8rem] font-bold text-slate-900 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 transition-all outline-none resize-none"
+         rows="3"
+         [placeholder]="'CATALOG.REJECTION_REASON_PLACEHOLDER' | translate"
+       ></textarea>
+    </div>
+
+    <p *ngIf="modalError" class="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-[0.8rem] font-medium text-rose-600">
+      {{ modalError }}
+    </p>
+
+    <div class="flex gap-3">
+       <button (click)="showRejectModal = false" [disabled]="submitting" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-xs font-black text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-60">
+         {{ 'COMMON.CANCEL' | translate }}
+       </button>
+       <button (click)="confirmReject()" [disabled]="submitting || !rejectionNotes.trim()" class="flex-1 py-3 px-4 rounded-xl bg-rose-500 text-white text-xs font-black shadow-lg shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-60 disabled:hover:scale-100">
+         {{ 'CATALOG.REJECT' | translate }}
+       </button>
+    </div>
+  </div>
+</div>

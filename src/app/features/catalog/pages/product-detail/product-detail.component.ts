@@ -5,7 +5,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { MasterProduct } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
-import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { DetailHeaderComponent } from '../../../../shared/components/ui/detail-header/detail-header.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
@@ -30,7 +29,6 @@ interface ProductVendorSnapshot {
     RouterModule,
     TranslateModule,
     AppButtonComponent,
-    AppBadgeComponent,
     DetailHeaderComponent,
     KeyValueGridComponent,
     SectionHeaderComponent,
@@ -48,13 +46,7 @@ export class ProductDetailComponent implements OnInit {
   brandName: string = '';
   unitName: string = '';
   breadcrumbs: { label: string; action?: () => void }[] = [];
-  readonly vendorSnapshots: ProductVendorSnapshot[] = [
-    { nameAr: 'مؤسسة الأمين للتجارة', nameEn: 'Alameen Trading Est.', quantity: 850, ratio: 85, price: 120, colorClass: 'bg-emerald-500', timeKey: 'PRODUCTS.DETAIL.TIME_TWO_HOURS_AGO' },
-    { nameAr: 'تجارة الجود المريح', nameEn: 'Aljood Comfort Trading', quantity: 420, ratio: 42, price: 125, colorClass: 'bg-red-500', timeKey: 'PRODUCTS.DETAIL.TIME_YESTERDAY' },
-    { nameAr: 'تجارة الجملة الحديثة', nameEn: 'Modern Wholesale Trading', quantity: 150, ratio: 15, price: 118, colorClass: 'bg-blue-500', timeKey: 'PRODUCTS.DETAIL.TIME_THREE_DAYS_AGO' },
-    { nameAr: 'مؤسسة الوداد', nameEn: 'Alwidad Est.', quantity: 950, ratio: 95, price: 122, colorClass: 'bg-purple-500', timeKey: 'PRODUCTS.DETAIL.TIME_TODAY' },
-    { nameAr: 'تجارة الوحدة الحديثة', nameEn: 'Modern Unity Trading', quantity: 600, ratio: 60, price: 120, colorClass: 'bg-pink-500', timeKey: 'PRODUCTS.DETAIL.TIME_WEEK_AGO' }
-  ];
+  vendorSnapshots: ProductVendorSnapshot[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -96,6 +88,7 @@ export class ProductDetailComponent implements OnInit {
       next: (product) => {
         this.product = product;
         this.loadCategoryAndBrand();
+        this.loadLinkedVendors(id);
         this.isLoading = false;
       },
       error: (err) => {
@@ -103,6 +96,45 @@ export class ProductDetailComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  loadLinkedVendors(id: string): void {
+    this.catalogService.getProductVendors(id).subscribe({
+      next: (res) => {
+        const maxQty = Math.max(1, ...res.items.map(i => i.quantity));
+        const colors = [
+          'bg-emerald-500', 'bg-red-500', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500',
+          'bg-orange-500', 'bg-teal-500', 'bg-indigo-500', 'bg-amber-500'
+        ];
+        
+        this.vendorSnapshots = res.items.map((item, index) => {
+          return {
+            nameAr: item.nameAr,
+            nameEn: item.nameEn,
+            quantity: item.quantity,
+            ratio: (item.quantity / maxQty) * 100,
+            price: item.price,
+            colorClass: colors[index % colors.length],
+            timeKey: this.formatTimeKey(item.updatedAtUtc)
+          };
+        });
+      },
+      error: (err) => console.error('Error loading product vendors', err)
+    });
+  }
+
+  formatTimeKey(dateStr: string): string {
+    const updatedAt = new Date(dateStr);
+    const now = new Date();
+    const diffHours = (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60);
+    
+    if (diffHours < 24 && now.getDate() === updatedAt.getDate()) {
+      return 'PRODUCTS.DETAIL.TIME_TODAY';
+    } else if (diffHours < 48) {
+      return 'PRODUCTS.DETAIL.TIME_YESTERDAY';
+    } else {
+      return 'PRODUCTS.DETAIL.TIME_WEEK_AGO';
+    }
   }
 
   loadCategoryAndBrand(): void {

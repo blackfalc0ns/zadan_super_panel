@@ -297,14 +297,14 @@ export class DashboardComponent implements OnInit {
     const width = this.getRelativePressureWidth(score, rows);
 
     if (width >= 75) {
-      return this.currentLang === 'ar' ? 'مرتفع' : 'High';
+      return this.translate.instant('DASHBOARD.PRESSURE_LEVEL.HIGH');
     }
 
     if (width >= 45) {
-      return this.currentLang === 'ar' ? 'متوسط' : 'Medium';
+      return this.translate.instant('DASHBOARD.PRESSURE_LEVEL.MEDIUM');
     }
 
-    return this.currentLang === 'ar' ? 'منخفض' : 'Low';
+    return this.translate.instant('DASHBOARD.PRESSURE_LEVEL.LOW');
   }
 
   getPressureTextClasses(score: number, rows: Array<{ score: number }>): string {

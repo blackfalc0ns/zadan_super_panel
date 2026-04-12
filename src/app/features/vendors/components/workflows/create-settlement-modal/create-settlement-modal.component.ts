@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -29,34 +29,56 @@ export interface SettlementConfig {
   templateUrl: './create-settlement-modal.component.html',
   styleUrls: ['./create-settlement-modal.component.scss']
 })
-export class CreateSettlementModalComponent {
+export class CreateSettlementModalComponent implements OnChanges {
   @Input() isOpen = false;
+  @Input() vendorId = '';
+  @Input() vendorName = '';
+  @Input() currentBalance = 0;
+  @Input() availableBalance = 0;
+  @Input() totalSales = 0;
+  @Input() returns = 0;
+  @Input() additionalFees = 0;
+  @Input() financialAdjustments = 0;
+  @Input() bankName = '';
+  @Input() bankIban = '';
   @Output() close = new EventEmitter<void>();
   @Output() createSettlement = new EventEmitter<SettlementConfig>();
   @Output() saveDraft = new EventEmitter<SettlementConfig>();
 
   config: SettlementConfig = {
-    vendorId: '#VN-8821',
-    vendorName: 'متجر زادانا الرئيسي',
-    currentBalance: 12450,
-    availableBalance: 8920,
+    vendorId: '',
+    vendorName: '',
+    currentBalance: 0,
+    availableBalance: 0,
     periodFrom: '2023-10-01',
     periodTo: '2023-10-31',
     settlementType: 'manual',
     priority: 'normal',
     applyExceptionalFee: false,
     exceptionalFeeAmount: '',
-    totalSales: 15600,
-    returns: 1200,
-    additionalFees: 480,
+    totalSales: 0,
+    returns: 0,
+    additionalFees: 0,
     financialAdjustments: 0,
-    netAmount: 13920,
+    netAmount: 0,
     requiresApproval: false
   };
 
   showBreakdown = false;
 
   constructor(private translate: TranslateService) {}
+
+  ngOnChanges(_: SimpleChanges): void {
+    this.config.vendorId = this.vendorId;
+    this.config.vendorName = this.vendorName;
+    this.config.currentBalance = this.currentBalance;
+    this.config.availableBalance = this.availableBalance;
+    this.config.totalSales = this.totalSales;
+    this.config.returns = this.returns;
+    this.config.additionalFees = this.additionalFees;
+    this.config.financialAdjustments = this.financialAdjustments;
+    this.calculateNetAmount();
+  }
 
   get isRTL(): boolean {
     return this.translate.currentLang === 'ar';
@@ -106,10 +128,10 @@ export class CreateSettlementModalComponent {
   }
 
   calculateNetAmount() {
-    this.config.netAmount = 
-      this.config.totalSales - 
-      this.config.returns - 
-      this.config.additionalFees + 
+    this.config.netAmount =
+      this.config.totalSales -
+      this.config.returns -
+      this.config.additionalFees +
       this.config.financialAdjustments;
   }
 }

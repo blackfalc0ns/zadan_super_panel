@@ -172,7 +172,7 @@ export class SuperAdminDashboardService {
     return forkJoin({
       orders: of(this.ordersService.getOrdersSnapshot()),
       drivers: of(this.driverService.getDriversSnapshot()),
-      customers: of(this.customersService.getCustomers()),
+      customers: this.customersService.getCustomers(),
       disputes: of(this.disputesService.getDisputesSnapshot()),
       vendors: this.vendorService.getVendors(1, 100),
       products: this.catalogService.getProducts(1, 250),

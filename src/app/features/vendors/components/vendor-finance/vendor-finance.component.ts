@@ -4,15 +4,21 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, take } from 'rxjs';
-import { FinanceService, VendorFinanceProfile } from '@finances/public-api';
+import { filter, forkJoin } from 'rxjs';
 import { CreateSettlementModalComponent, SettlementConfig } from '@vendors/components/workflows/create-settlement-modal/create-settlement-modal.component';
 import { FinancialStatementConfig, FinancialStatementModalComponent } from '@vendors/components/workflows/financial-statement-modal/financial-statement-modal.component';
-import { PayoutsReviewModalComponent } from '@vendors/components/workflows/payouts-review-modal/payouts-review-modal.component';
+import { PayoutTransaction, PayoutsReviewModalComponent } from '@vendors/components/workflows/payouts-review-modal/payouts-review-modal.component';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import {
+  AdminVendorOrderItem,
+  AdminVendorPayoutItem,
+  AdminVendorSettlementItem,
+  VendorService
+} from '@vendors/services/vendor.api.service';
+import { VendorDetail } from '@vendors/models/vendors.domain.models';
 
 interface KPI {
   id: string;
@@ -34,7 +40,6 @@ interface Settlement {
   total: string;
   net: string;
   statusKey: string;
-  statusClass: string;
   date: string;
 }
 
@@ -56,7 +61,7 @@ interface Settlement {
   templateUrl: './vendor-finance.component.html'
 })
 export class VendorFinanceComponent implements OnInit {
-  vendorId = 'VND-9928';
+  vendorId = '';
   vendorName = 'Vendor';
   currentLang = 'ar';
   isRTL = true;
@@ -64,9 +69,12 @@ export class VendorFinanceComponent implements OnInit {
   showPayoutsReviewModal = false;
   showCreateSettlementModal = false;
   availableBalance = 0;
-  profile: VendorFinanceProfile | null = null;
+  vendorDetail: VendorDetail | null = null;
   private readonly destroyRef = inject(DestroyRef);
 
+  orders: AdminVendorOrderItem[] = [];
+  settlementRecords: AdminVendorSettlementItem[] = [];
+  payoutRecords: AdminVendorPayoutItem[] = [];
   kpis: KPI[] = [];
 
   financialSummary = {
@@ -78,19 +86,43 @@ export class VendorFinanceComponent implements OnInit {
   };
 
   bankInfo = {
-    bankName: 'Al Rajhi Bank',
-    iban: 'SA** **** **** 0000',
+    bankName: '-',
+    iban: '-',
     paymentCycle: 'VENDOR_FINANCE.WEEKLY_CYCLE'
   };
 
   settlements: Settlement[] = [];
-
   alerts: Array<{ id: string; titleKey: string; descriptionKey: string; settlementId: string }> = [];
+  payoutTransactions: PayoutTransaction[] = [];
+
+  get settlementModalTotalSales(): number {
+    return this.orders.reduce((sum, order) => sum + order.totalAmount, 0);
+  }
+
+  get settlementModalAdditionalFees(): number {
+    return this.orders.reduce((sum, order) => sum + order.commissionAmount, 0);
+  }
+
+  get settlementModalBeneficiaryName(): string {
+    return this.vendorDetail?.primaryBankAccount?.accountHolderName || this.vendorDetail?.ownerName || this.vendorName;
+  }
+
+  get settlementModalBankName(): string {
+    return this.vendorDetail?.primaryBankAccount?.bankName || '';
+  }
+
+  get settlementModalBankIban(): string {
+    return this.vendorDetail?.primaryBankAccount?.iban || '';
+  }
+
+  get settlementModalSwiftCode(): string {
+    return this.vendorDetail?.primaryBankAccount?.swiftCode || '';
+  }
 
   constructor(
     private readonly translate: TranslateService,
     private readonly router: Router,
-    private readonly financeService: FinanceService,
+    private readonly vendorService: VendorService,
     private readonly vendorDetailFacade: VendorDetailFacade
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
@@ -101,10 +133,19 @@ export class VendorFinanceComponent implements OnInit {
       .subscribe((event) => {
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
+        this.rebuildViewModel();
+      });
 
-        if (this.profile) {
-          this.applyProfile(this.profile);
+    this.vendorDetailFacade.vendor$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((vendor) => {
+        if (!vendor) {
+          return;
         }
+
+        this.vendorDetail = vendor;
+        this.vendorName = vendor.businessNameEn || vendor.businessNameAr;
+        this.rebuildViewModel();
       });
   }
 
@@ -124,38 +165,27 @@ export class VendorFinanceComponent implements OnInit {
     this.showCreateSettlementModal = true;
   }
 
-  onSettlementCreated(config: SettlementConfig): void {
-    this.showCreateSettlementModal = false;
-    if (!this.profile) {
+  onSettlementCreated(_: SettlementConfig): void {
+    if (!this.vendorId) {
+      this.showCreateSettlementModal = false;
       return;
     }
 
-    const settlementId = `STL-${Date.now().toString().slice(-6)}`;
-    const nextProfile: VendorFinanceProfile = {
-      ...this.profile,
-      pendingBalance: this.profile.pendingBalance + config.netAmount,
-      settlements: [
-        {
-          id: settlementId,
-          settlementCode: settlementId,
-          entityType: 'vendor',
-          entityId: this.vendorId,
-          entityName: this.profile.vendorName,
-          period: `${config.periodFrom} - ${config.periodTo}`,
-          periodFrom: config.periodFrom,
-          periodTo: config.periodTo,
-          ordersCount: 0,
-          grossAmount: config.totalSales,
-          deductions: config.returns + config.additionalFees,
-          netAmount: config.netAmount,
-          status: 'pending',
-          createdAt: new Date().toISOString()
+    this.vendorService.createVendorSettlement(this.vendorId, {
+      grossAmount: _.totalSales,
+      commissionAmount: _.additionalFees,
+      netAmount: _.netAmount
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.showCreateSettlementModal = false;
+          this.loadData();
         },
-        ...this.profile.settlements
-      ]
-    };
-
-    this.applyProfile(nextProfile);
+        error: () => {
+          this.showCreateSettlementModal = false;
+        }
+      });
   }
 
   onSettlementDraftSaved(_: SettlementConfig): void {
@@ -197,15 +227,75 @@ export class VendorFinanceComponent implements OnInit {
   }
 
   onRetryPayment(_: string): void {
-    this.showPayoutsReviewModal = false;
+    if (!this.vendorId) {
+      return;
+    }
+
+    this.vendorService.retryVendorPayout(this.vendorId, _)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.loadData(),
+        error: () => undefined
+      });
   }
 
   onSuspendPayment(_: string): void {
-    this.showPayoutsReviewModal = false;
+    if (!this.vendorId) {
+      return;
+    }
+
+    this.vendorService.suspendVendorPayout(this.vendorId, _)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.loadData(),
+        error: () => undefined
+      });
   }
 
   onEscalatePayment(_: string): void {
+    if (!this.vendorId) {
+      return;
+    }
+
+    this.vendorService.escalateVendorPayout(this.vendorId, _)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.loadData(),
+        error: () => undefined
+      });
+  }
+
+  onDownloadReceipt(payoutId: string): void {
+    const payout = this.payoutRecords.find((item) => item.id === payoutId);
+    if (!payout) {
+      return;
+    }
+
+    this.downloadTextFile(
+      `vendor-payout-${payout.payoutNumber}.txt`,
+      [
+        `Vendor: ${this.vendorName}`,
+        `Vendor ID: ${this.vendorId}`,
+        `Payout ID: ${payout.payoutNumber}`,
+        `Settlement ID: ${payout.settlementId}`,
+        `Status: ${payout.status}`,
+        `Amount: ${payout.amount}`,
+        `Bank: ${payout.bankName ?? '-'}`,
+        `IBAN: ${payout.iban ?? '-'}`,
+        `Transfer Reference: ${payout.transferReference ?? '-'}`,
+        `Created At: ${payout.createdAtUtc}`,
+        `Processed At: ${payout.processedAtUtc ?? '-'}`
+      ].join('\n')
+    );
+  }
+
+  onViewPaymentActivity(_: string): void {
+    if (!this.vendorId) {
+      return;
+    }
+
     this.showPayoutsReviewModal = false;
+    void this.router.navigate(['/vendors', this.vendorId, 'logs']);
   }
 
   onViewMoreSettlements(): void {
@@ -241,24 +331,48 @@ export class VendorFinanceComponent implements OnInit {
   }
 
   private loadData(): void {
-    this.financeService.getVendorFinanceProfile(this.vendorId).pipe(take(1)).subscribe((profile) => {
-      this.applyProfile(profile);
-    });
+    forkJoin({
+      orders: this.vendorService.getVendorOrders(this.vendorId, 1, 200),
+      settlements: this.vendorService.getVendorSettlements(this.vendorId, 1, 100),
+      payouts: this.vendorService.getVendorPayouts(this.vendorId, 1, 100)
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ orders, settlements, payouts }) => {
+          this.orders = orders.items ?? [];
+          this.settlementRecords = settlements.items ?? [];
+          this.payoutRecords = payouts.items ?? [];
+          this.rebuildViewModel();
+        },
+        error: () => {
+          this.orders = [];
+          this.settlementRecords = [];
+          this.payoutRecords = [];
+          this.rebuildViewModel();
+        }
+      });
   }
 
-  private applyProfile(profile: VendorFinanceProfile): void {
-    this.profile = profile;
-    this.vendorName = profile.vendorName;
-    this.availableBalance = profile.availableBalance;
+  private rebuildViewModel(): void {
+    const vendor = this.vendorDetail;
+    const totalSales = this.orders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const totalCommissions = this.orders.reduce((sum, order) => sum + order.commissionAmount, 0);
+    const totalReturns = 0;
+    const totalDiscounts = 0;
+    const netSales = totalSales - totalCommissions;
+    const pendingPayments = this.orders.filter((order) => order.paymentStatus.toLowerCase() !== 'paid').length;
+    const lastOrder = this.orders[0];
+
+    this.availableBalance = netSales;
     this.kpis = [
       {
         id: 'total_sales',
         titleKey: 'VENDOR_FINANCE.KPI.TOTAL_SALES',
-        value: this.formatNumber(profile.totalSales),
+        value: this.formatNumber(totalSales),
         unit: 'SAR',
         icon: 'point_of_sale',
         iconBgClass: 'bg-primary/10 text-primary',
-        trend: `${this.formatNumber(profile.commissionRate)}%`,
+        trend: `${vendor?.commissionRate ?? 0}%`,
         trendKey: 'FINANCES.PRICING.VENDOR_COMMISSION.DEFAULT_PERCENT',
         trendIcon: 'percent',
         trendClass: 'text-slate-500'
@@ -266,47 +380,47 @@ export class VendorFinanceComponent implements OnInit {
       {
         id: 'net_sales',
         titleKey: 'VENDOR_FINANCE.KPI.NET_SALES',
-        value: this.formatNumber(profile.netSales),
+        value: this.formatNumber(netSales),
         unit: 'SAR',
         icon: 'account_balance_wallet',
         iconBgClass: 'bg-primary/10 text-primary',
-        trend: this.formatNumber(profile.refundExposure),
+        trend: this.formatNumber(totalReturns),
         trendKey: 'FINANCES.REFUNDS.SUMMARY.TOTAL_EXPOSURE',
         trendIcon: 'undo',
-        trendClass: profile.refundExposure > 0 ? 'text-red-600' : 'text-green-600'
+        trendClass: totalReturns > 0 ? 'text-red-600' : 'text-green-600'
       },
       {
         id: 'commissions',
         titleKey: 'VENDOR_FINANCE.KPI.TOTAL_COMMISSIONS',
-        value: this.formatNumber(profile.totalCommissions),
+        value: this.formatNumber(totalCommissions),
         unit: 'SAR',
         icon: 'percent',
         iconBgClass: 'bg-orange-50 text-orange-500',
-        trend: `${this.formatNumber(profile.commissionRate)}%`,
-        trendKey: 'FINANCES.ENTITIES.VENDOR',
-        trendIcon: 'trending_up',
+        trend: `${this.orders.length}`,
+        trendKey: 'VENDOR_ORDERS.KPI.TOTAL_ORDERS',
+        trendIcon: 'receipt_long',
         trendClass: 'text-slate-500'
       },
       {
         id: 'available',
         titleKey: 'VENDOR_FINANCE.KPI.AVAILABLE_BALANCE',
-        value: this.formatNumber(profile.availableBalance),
+        value: this.formatNumber(netSales),
         unit: 'SAR',
         icon: 'payments',
         iconBgClass: 'bg-green-50 text-green-500',
-        trend: `${this.formatNumber(profile.disputeCount)}`,
-        trendKey: 'FINANCES.REFUNDS.SUMMARY.TOTAL_CASES',
-        trendIcon: 'gavel',
+        trend: `${pendingPayments}`,
+        trendKey: 'FINANCES.STATUS.PENDING',
+        trendIcon: 'schedule',
         trendClass: 'text-slate-500'
       },
       {
         id: 'pending',
         titleKey: 'VENDOR_FINANCE.KPI.PENDING_BALANCE',
-        value: this.formatNumber(profile.pendingBalance),
+        value: this.formatNumber(0),
         unit: 'SAR',
         icon: 'pending_actions',
         iconBgClass: 'bg-amber-50 text-amber-500',
-        trend: `${profile.settlements.filter((item) => item.status !== 'paid').length}`,
+        trend: `${pendingPayments}`,
         trendKey: 'FINANCES.STATUS.PENDING',
         trendIcon: 'schedule',
         trendClass: 'text-amber-600'
@@ -314,54 +428,115 @@ export class VendorFinanceComponent implements OnInit {
       {
         id: 'last_payment',
         titleKey: 'VENDOR_FINANCE.KPI.LAST_PAYMENT',
-        value: this.formatNumber(profile.lastPaymentAmount),
+        value: this.formatNumber(lastOrder?.totalAmount ?? 0),
         unit: 'SAR',
         icon: 'history',
         iconBgClass: 'bg-primary/10 text-primary',
-        trend: this.formatDate(profile.lastPaymentDate),
+        trend: lastOrder ? this.formatDate(lastOrder.placedAtUtc) : '-',
         trendKey: '',
         trendIcon: '',
         trendClass: 'text-gray-500'
       }
     ];
+
     this.financialSummary = {
-      sales: this.formatNumber(profile.financialSummary.sales),
-      returns: this.formatSignedNumber(profile.financialSummary.returns),
-      discounts: this.formatSignedNumber(profile.financialSummary.discounts),
-      commissions: this.formatSignedNumber(profile.financialSummary.commissions),
-      netTotal: this.formatNumber(profile.financialSummary.netTotal)
+      sales: this.formatNumber(totalSales),
+      returns: this.formatSignedNumber(totalReturns),
+      discounts: this.formatSignedNumber(totalDiscounts),
+      commissions: this.formatSignedNumber(totalCommissions),
+      netTotal: this.formatNumber(netSales)
     };
-    this.bankInfo = profile.bankInfo;
-    this.settlements = profile.settlements.slice(0, 6).map((settlement) => ({
+
+    this.bankInfo = {
+      bankName: vendor?.primaryBankAccount?.bankName || '-',
+      iban: vendor?.primaryBankAccount?.iban || '-',
+      paymentCycle: vendor?.payoutCycle || 'VENDOR_FINANCE.WEEKLY_CYCLE'
+    };
+
+    this.settlements = this.settlementRecords.map((settlement) => ({
       id: settlement.id,
-      settlementId: settlement.settlementCode,
-      period: settlement.period,
+      settlementId: settlement.settlementNumber,
+      period: this.formatDate(settlement.createdAtUtc),
       total: this.formatNumber(settlement.grossAmount),
       net: this.formatNumber(settlement.netAmount),
-      statusKey: settlement.status === 'paid' ? 'VENDOR_FINANCE.STATUS.COMPLETED' : 'VENDOR_FINANCE.STATUS.PENDING',
-      statusClass: settlement.status === 'paid'
-        ? 'bg-green-100 text-green-800 border-green-200'
-        : 'bg-amber-100 text-amber-800 border-amber-200',
-      date: this.formatDate(settlement.paidAt || settlement.createdAt)
+      statusKey: this.mapSettlementStatusKey(settlement.status),
+      date: this.formatDate(settlement.processedAtUtc || settlement.createdAtUtc)
     }));
+
+    this.payoutTransactions = this.payoutRecords.map((payout) => {
+      const payoutDate = payout.processedAtUtc || payout.createdAtUtc;
+      return {
+        id: payout.id,
+        paymentNumber: payout.payoutNumber,
+        date: new Date(payoutDate).toISOString().slice(0, 10),
+        time: new Date(payoutDate).toLocaleTimeString(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        createdAtUtc: payout.createdAtUtc,
+        processedAtUtc: payout.processedAtUtc ?? undefined,
+        amount: payout.amount,
+        bankCode: 'bank',
+        accountMask: this.maskIban(payout.iban),
+        status: this.mapPayoutStatus(payout.status),
+        reference: payout.transferReference || payout.payoutNumber
+      };
+    });
+
     this.alerts = [
-      ...(profile.pendingBalance > 0 ? [{
+      ...(pendingPayments > 0 ? [{
         id: 'pending-settlement',
         titleKey: 'FINANCES.ALERTS.SETTLEMENT_DUE',
         descriptionKey: 'FINANCES.ALERTS.SETTLEMENT_DUE_DESC',
-        settlementId: this.settlements.find((item) => item.statusKey === 'VENDOR_FINANCE.STATUS.PENDING')?.settlementId ?? this.vendorId
+        settlementId: this.vendorId
       }] : []),
-      ...(profile.refundExposure > 0 ? [{
-        id: 'refund-exposure',
-        titleKey: 'FINANCES.ALERTS.HIGH_DISPUTE_VENDOR',
-        descriptionKey: 'FINANCES.ALERTS.HIGH_DISPUTE_VENDOR_DESC',
-        settlementId: `${profile.disputeCount}`
+      ...(this.payoutTransactions.some((item) => item.status === 'failed') ? [{
+        id: 'failed-payout',
+        titleKey: 'FINANCES.ALERTS.SETTLEMENT_DUE',
+        descriptionKey: 'FINANCES.ALERTS.SETTLEMENT_DUE_DESC',
+        settlementId: this.payoutTransactions.find((item) => item.status === 'failed')?.paymentNumber || this.vendorId
       }] : [])
     ];
   }
 
+  private mapSettlementStatusKey(status: string): string {
+    switch ((status || '').toLowerCase()) {
+      case 'settled':
+        return 'FINANCES.STATUS.COMPLETED';
+      case 'processing':
+        return 'FINANCES.STATUS.IN_PROGRESS';
+      case 'failed':
+        return 'FINANCES.STATUS.FAILED';
+      default:
+        return 'FINANCES.STATUS.PENDING';
+    }
+  }
+
+  private mapPayoutStatus(status: string): 'success' | 'failed' | 'pending' | 'reviewing' {
+    switch ((status || '').toLowerCase()) {
+      case 'paid':
+        return 'success';
+      case 'failed':
+        return 'failed';
+      case 'processing':
+        return 'reviewing';
+      case 'cancelled':
+        return 'failed';
+      default:
+        return 'pending';
+    }
+  }
+
+  private maskIban(iban?: string | null): string | undefined {
+    const normalized = (iban || '').replace(/\s+/g, '');
+    if (!normalized) {
+      return undefined;
+    }
+
+    return `**** ${normalized.slice(-4)}`;
+  }
+
   private buildStatementContent(config: FinancialStatementConfig): string {
-    const profile = this.profile;
     const includedKeys = Object.entries(config.includedData)
       .filter(([, enabled]) => enabled)
       .map(([key]) => key)
@@ -375,11 +550,10 @@ export class VendorFinanceComponent implements OnInit {
       `Export format: ${config.exportFormat}`,
       `Included sections: ${includedKeys}`,
       '',
-      `Total sales: ${profile?.totalSales ?? 0}`,
-      `Net sales: ${profile?.netSales ?? 0}`,
-      `Total commissions: ${profile?.totalCommissions ?? 0}`,
-      `Available balance: ${profile?.availableBalance ?? 0}`,
-      `Pending balance: ${profile?.pendingBalance ?? 0}`
+      `Total sales: ${this.financialSummary.sales}`,
+      `Net sales: ${this.financialSummary.netTotal}`,
+      `Total commissions: ${this.financialSummary.commissions}`,
+      `Available balance: ${this.formatNumber(this.availableBalance)}`
     ].join('\n');
   }
 

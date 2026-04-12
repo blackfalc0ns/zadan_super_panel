@@ -21,7 +21,10 @@ describe('App Route Structure', () => {
       'customers',
       'drivers',
       'disputes',
-      'finances'
+      'finances',
+      'marketing',
+      'admin-users',
+      'email-center'
     ].forEach((path) => {
       const route = findRoute(childRoutes, path);
 

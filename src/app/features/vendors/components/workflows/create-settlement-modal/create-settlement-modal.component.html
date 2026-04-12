@@ -167,13 +167,22 @@
             <h4 class="text-sm font-bold">{{ 'MODALS.CREATE_SETTLEMENT.LINKED_BANK' | translate }}</h4>
             <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">{{ 'MODALS.CREATE_SETTLEMENT.VERIFIED' | translate }}</span>
           </div>
-          <div class="flex items-center gap-3">
+          <div *ngIf="false" class="flex items-center gap-3">
             <div class="w-8 h-8 rounded bg-slate-100 flex items-center justify-center">
               <span class="material-symbols-outlined text-slate-400 text-base">account_balance</span>
             </div>
             <div>
               <p class="text-sm font-semibold">مصرف الراجحي</p>
               <p class="text-xs text-slate-500 font-mono tracking-widest">SA 43 1000 **** **** 8892</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded bg-slate-100 flex items-center justify-center">
+              <span class="material-symbols-outlined text-slate-400 text-base">account_balance</span>
+            </div>
+            <div>
+              <p class="text-sm font-semibold">{{ bankName || '-' }}</p>
+              <p class="text-xs text-slate-500 font-mono tracking-widest" dir="ltr">{{ bankIban || '-' }}</p>
             </div>
           </div>
         </div>

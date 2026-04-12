@@ -1,16 +1,17 @@
 <div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="max-w-7xl mx-auto py-4">
+  <p *ngIf="pageError" class="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">
+    {{ pageError }}
+  </p>
+
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    
-    <!-- Right Column: Account & Operational (Leading Column) -->
     <div class="lg:col-span-1 space-y-6">
-      <!-- Account Settings Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <app-section-header
           [compact]="true"
           icon="manage_accounts"
           title="VENDOR_SETTINGS.ACCOUNT_SETTINGS">
         </app-section-header>
-        
+
         <div class="space-y-5 pt-8">
           <div class="flex justify-between items-center border-b border-gray-50 pb-4">
             <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_STATUS' | translate }}</span>
@@ -29,10 +30,10 @@
             <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.DEFAULT_LANGUAGE' | translate }}</span>
             <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.DEFAULT_LANGUAGE_VALUE' | translate }}</span>
           </div>
-          
+
           <button
             (click)="onResetPassword()"
-            [disabled]="resetPasswordQueued"
+            [disabled]="resetPasswordQueued || dialogSubmitting"
             class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
             type="button">
             <span class="material-symbols-outlined text-sm">lock_reset</span>
@@ -41,14 +42,13 @@
         </div>
       </div>
 
-      <!-- Operational Settings Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <app-section-header
           [compact]="true"
           icon="storefront"
           title="VENDOR_SETTINGS.OPERATIONS_SETTINGS">
         </app-section-header>
-        
+
         <div class="space-y-6 pt-6">
           <div class="flex items-center justify-between">
             <div>
@@ -56,7 +56,7 @@
               <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.ORDER_RECEPTION_DESC' | translate }}</p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" checked class="sr-only peer">
+              <input type="checkbox" [(ngModel)]="acceptOrders" class="sr-only peer">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
@@ -64,7 +64,7 @@
           <div>
             <p class="text-sm font-bold text-gray-900 mb-2">{{ 'VENDOR_SETTINGS.WORKING_HOURS' | translate }}</p>
             <div class="p-3 bg-gray-50 rounded-xl text-sm font-medium text-gray-700 text-center">
-              {{ 'VENDOR_SETTINGS.WORKING_HOURS_VALUE' | translate }}
+              {{ workingHoursLabel }}
             </div>
           </div>
 
@@ -72,31 +72,48 @@
             <div>
               <p class="text-[10px] text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.MIN_ORDER' | translate }}</p>
               <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                <span class="text-sm font-bold text-gray-900">50</span>
+                <input
+                  [(ngModel)]="minimumOrderAmount"
+                  type="number"
+                  min="0"
+                  class="w-full bg-transparent text-sm font-bold text-gray-900 outline-none"
+                />
                 <span class="text-[10px] text-gray-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
             </div>
             <div>
               <p class="text-[10px] text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.PREPARATION_TIME' | translate }}</p>
-              <div class="p-2 bg-gray-50 rounded-lg text-sm font-bold text-gray-900 text-center">
-                {{ 'VENDOR_SETTINGS.PREPARATION_TIME_VALUE' | translate }}
+              <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                <input
+                  [(ngModel)]="preparationTimeMinutes"
+                  type="number"
+                  min="0"
+                  class="w-full bg-transparent text-sm font-bold text-gray-900 outline-none text-center"
+                />
+                <span class="text-[10px] text-gray-400">{{ isRTL ? 'دقيقة' : 'min' }}</span>
               </div>
             </div>
           </div>
+
+          <button
+            (click)="saveOperationsSettings()"
+            [disabled]="operationsSubmitting"
+            class="w-full rounded-xl bg-slate-950 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:opacity-60"
+            type="button">
+            {{ operationsSubmitting ? (isRTL ? 'جارٍ الحفظ...' : 'Saving...') : (isRTL ? 'حفظ إعدادات التشغيل' : 'Save operations settings') }}
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Center Column: Permissions & Registry -->
     <div class="lg:col-span-1 space-y-6">
-      <!-- Permissions Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
         <app-section-header
           [compact]="true"
           icon="verified_user"
           title="VENDOR_SETTINGS.PERMISSIONS_ACCESS">
         </app-section-header>
-        
+
         <div class="space-y-6 pt-6">
           <div class="flex items-start gap-4">
             <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -104,15 +121,15 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.PRODUCT_MANAGEMENT' | translate }}</span>
+                <span class="text-sm font-bold text-gray-900">{{ isRTL ? 'الفروع النشطة' : 'Active branches' }}</span>
                 <app-status-pill
-                  label="VENDOR_SETTINGS.FULL_ACCESS"
+                  [label]="(vendor?.branchesCount || 0).toString()"
                   variant="success"
                   [showDot]="false"
                   [size]="'sm'">
                 </app-status-pill>
               </div>
-              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.PRODUCT_MANAGEMENT_DESC' | translate }}</p>
+              <p class="text-xs text-gray-400">{{ isRTL ? 'عدد الفروع القادمة من بيانات التاجر الحقيقية في الباك إند.' : 'Number of branches coming from the live vendor backend data.' }}</p>
             </div>
           </div>
 
@@ -122,13 +139,10 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.FINANCIAL_ACCESS' | translate }}</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked class="sr-only peer">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
+                <span class="text-sm font-bold text-gray-900">{{ isRTL ? 'الحسابات البنكية' : 'Bank accounts' }}</span>
+                <span class="text-xs font-bold text-gray-600">{{ vendor?.bankAccountsCount || 0 }}</span>
               </div>
-              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.FINANCIAL_ACCESS_DESC' | translate }}</p>
+              <p class="text-xs text-gray-400">{{ vendor?.primaryBankAccount?.bankName || (isRTL ? 'لا يوجد حساب بنكي أساسي' : 'No primary bank account') }}</p>
             </div>
           </div>
 
@@ -138,22 +152,21 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.SUB_USERS' | translate }}</span>
-                <span class="text-xs font-bold text-gray-600">5 / 3</span>
+                <span class="text-sm font-bold text-gray-900">{{ isRTL ? 'حالة تسجيل الدخول' : 'Login status' }}</span>
+                <span class="text-xs font-bold text-gray-600">{{ isLoginLocked ? (isRTL ? 'مقفل' : 'Locked') : (isRTL ? 'متاح' : 'Available') }}</span>
               </div>
-              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.SUB_USERS_DESC' | translate }}</p>
+              <p class="text-xs text-gray-400">{{ isRTL ? 'تُدار الصلاحيات التشغيلية من الباك إند، ولا توجد صلاحيات محلية وهمية في هذه الشاشة.' : 'Operational permissions are managed by the backend; this screen no longer shows fake local permissions.' }}</p>
             </div>
           </div>
         </div>
 
-        <!-- Registry Settings -->
         <div class="mt-12 pt-8 border-t border-gray-100">
           <app-section-header
             [compact]="true"
             icon="settings_input_component"
             title="VENDOR_SETTINGS.API_SETTINGS">
           </app-section-header>
-          
+
           <div class="space-y-4 pt-6">
             <div class="flex justify-between items-center text-sm">
               <span class="text-gray-400">{{ 'VENDOR_SETTINGS.CONNECTION_STATUS' | translate }}</span>
@@ -168,16 +181,14 @@
             </div>
             <div class="flex justify-between items-center text-sm">
               <span class="text-gray-400">{{ 'VENDOR_SETTINGS.LAST_SYNC' | translate }}</span>
-              <span class="text-gray-900 font-medium">2023-10-25 14:30:00</span>
+              <span class="text-gray-900 font-medium">{{ lastUpdatedAtLabel }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Left Column: Actions & Notifications -->
     <div class="lg:col-span-1 space-y-6">
-      <!-- Control Actions Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <app-section-header
           [compact]="true"
@@ -185,27 +196,27 @@
           title="VENDOR_SETTINGS.CONTROL_ACTIONS"
           tone="danger">
         </app-section-header>
-        
+
         <div class="space-y-4 pt-6">
-          <button (click)="toggleSuspended()" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group" type="button">
+          <button (click)="toggleSuspended()" [disabled]="dialogSubmitting || isArchived || isLoginLocked" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group disabled:opacity-60" type="button">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">pause_circle</span>
-              <span class="text-sm font-medium text-gray-700">{{ 'VENDOR_SETTINGS.SUSPEND_ACCOUNT' | translate }}</span>
+              <span class="text-sm font-medium text-gray-700">{{ suspensionActionLabel }}</span>
             </div>
             <div class="w-2 h-2 rounded-full" [ngClass]="isAccountSuspended ? 'bg-red-400' : 'bg-gray-300'"></div>
           </button>
-          
-          <button (click)="toggleLoginLock()" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group" type="button">
+
+          <button (click)="toggleLoginLock()" [disabled]="dialogSubmitting" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group disabled:opacity-60" type="button">
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">lock_reset</span>
-              <span class="text-sm font-medium text-gray-700">{{ 'VENDOR_SETTINGS.LOCK_LOGIN' | translate }}</span>
+              <span class="text-sm font-medium text-gray-700">{{ loginActionLabel }}</span>
             </div>
             <div class="w-2 h-2 rounded-full" [ngClass]="isLoginLocked ? 'bg-amber-400' : 'bg-gray-300'"></div>
           </button>
-          
+
           <button
             (click)="onArchiveAccount()"
-            [disabled]="isArchived"
+            [disabled]="isArchived || dialogSubmitting"
             class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
             type="button">
             <span class="material-symbols-outlined text-sm">delete_forever</span>
@@ -214,49 +225,104 @@
         </div>
       </div>
 
-      <!-- Notifications Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <app-section-header
           [compact]="true"
           icon="notifications"
           title="VENDOR_SETTINGS.NOTIFICATIONS">
         </app-section-header>
-        
+
         <div class="space-y-5 pt-6">
           <div class="flex items-center justify-between">
             <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.EMAIL_NOTIFICATIONS' | translate }}</span>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" checked class="sr-only peer">
+              <input type="checkbox" [(ngModel)]="emailNotificationsEnabled" class="sr-only peer">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
-          <div class="flex items-center justify-between opacity-50">
+          <div class="flex items-center justify-between">
             <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.SMS_NOTIFICATIONS' | translate }}</span>
-            <label class="relative inline-flex items-center cursor-not-allowed">
-              <input type="checkbox" disabled class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="smsNotificationsEnabled" class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.NEW_ORDERS_NOTIFICATIONS' | translate }}</span>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" checked class="sr-only peer">
+              <input type="checkbox" [(ngModel)]="newOrdersNotificationsEnabled" class="sr-only peer">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
+
+          <button
+            (click)="saveNotificationSettings()"
+            [disabled]="notificationsSubmitting"
+            class="w-full rounded-xl bg-slate-950 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:opacity-60"
+            type="button">
+            {{ notificationsSubmitting ? (isRTL ? 'جارٍ الحفظ...' : 'Saving...') : (isRTL ? 'حفظ إعدادات الإشعارات' : 'Save notification settings') }}
+          </button>
         </div>
       </div>
 
-      <!-- Last Edit Card -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center text-center">
         <div class="mb-3 w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center">
           <span class="material-symbols-outlined text-gray-400">history</span>
         </div>
         <p class="text-xs text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.LAST_UPDATED_BY' | translate }}</p>
-        <p class="text-sm font-bold text-gray-900">{{ 'VENDOR_SETTINGS.LAST_UPDATED_BY_VALUE' | translate }}</p>
-        <p class="text-[10px] text-gray-400 mt-1">2023-10-24 09:15 AM</p>
+        <p class="text-sm font-bold text-gray-900">{{ lastUpdatedByLabel }}</p>
+        <p class="text-[10px] text-gray-400 mt-1">{{ lastUpdatedAtLabel }}</p>
       </div>
     </div>
   </div>
 </div>
 
+<div *ngIf="isDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+    <div class="mb-5">
+      <h3 class="text-lg font-bold text-slate-900">{{ dialogTitle }}</h3>
+      <p class="mt-2 text-sm leading-6 text-slate-500">{{ dialogDescription }}</p>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="mb-2 block text-sm font-medium text-slate-700">{{ dialogPrimaryLabel }}</label>
+        <input
+          [(ngModel)]="dialogPrimaryValue"
+          class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-primary"
+          [type]="dialogPrimaryInputType"
+          [placeholder]="dialogPrimaryPlaceholder" />
+      </div>
+
+      <div *ngIf="showDialogSecondaryInput">
+        <label class="mb-2 block text-sm font-medium text-slate-700">{{ dialogSecondaryLabel }}</label>
+        <input
+          [(ngModel)]="dialogSecondaryValue"
+          class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-primary"
+          type="password"
+          [placeholder]="dialogSecondaryPlaceholder" />
+      </div>
+
+      <p *ngIf="dialogError" class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+        {{ dialogError }}
+      </p>
+    </div>
+
+    <div class="mt-6 flex items-center justify-end gap-3">
+      <button
+        (click)="closeDialog()"
+        [disabled]="dialogSubmitting"
+        class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+        type="button">
+        {{ isRTL ? 'إلغاء' : 'Cancel' }}
+      </button>
+      <button
+        (click)="confirmDialog()"
+        [disabled]="dialogSubmitting"
+        class="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-slate-900 transition hover:bg-primary/90 disabled:opacity-60"
+        type="button">
+        {{ dialogConfirmLabel }}
+      </button>
+    </div>
+  </div>
+</div>

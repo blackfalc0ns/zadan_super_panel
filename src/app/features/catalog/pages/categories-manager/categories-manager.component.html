@@ -10,6 +10,16 @@
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">category</span>
 
         <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+            <app-button
+                variant="ghost"
+                (btnClick)="isCategoryRequestsModalOpen = true"
+                customClass="!rounded-[1.25rem] !bg-white/80 !border !border-slate-200/70 !text-slate-700 hover:!bg-white hover:!border-zadna-primary/40 hover:!text-zadna-primary !px-5 !py-3 shadow-sm">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">assignment</span>
+                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'CATALOG.CATEGORY_REQUESTS' | translate }}</span>
+                </div>
+            </app-button>
+
             <app-button variant="primary" (btnClick)="openCreateModal()" 
                 customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
                 <div class="flex items-center gap-3">
@@ -25,6 +35,59 @@
     </app-page-header>
 
     <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
+        <div class="flex flex-col gap-3">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div class="w-full lg:w-[450px] group relative order-1">
+                    <div class="absolute inset-y-0 start-5 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+                    </div>
+                    <input
+                        type="text"
+                        [ngModel]="searchTerm"
+                        (ngModelChange)="onSearchTermChange($event)"
+                        [placeholder]="'CATEGORIES.SEARCH_PLACEHOLDER' | translate"
+                        class="w-full py-4 ps-14 pe-6 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm" />
+                </div>
+
+                <div class="flex items-center gap-4 order-2 self-stretch lg:self-auto">
+                    <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+                        <div
+                            class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+                            (click)="toggleFilters()"
+                            [class.bg-teal-50]="isFiltersExpanded">
+                            <span class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500" [class.rotate-180]="isFiltersExpanded">filter_list</span>
+                            <div class="flex flex-col">
+                                <span class="text-[13px] font-black text-slate-800">{{ 'MASTER_PRODUCTS.FILTERS_TITLE' | translate }}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'MASTER_PRODUCTS.FILTERS_SUBTITLE' | translate }}</span>
+                            </div>
+                            <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform ms-2" [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+                        </div>
+                    </div>
+
+                    <button
+                        *ngIf="hasActiveFilters"
+                        (click)="resetFilters()"
+                        class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+                        <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.RESET_FILTERS' | translate }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl">
+                <app-advanced-filter-panel
+                    [isExpanded]="true"
+                    [title]="'MASTER_PRODUCTS.FILTERS_TITLE'"
+                    [subtitle]="'MASTER_PRODUCTS.FILTERS_SUBTITLE'"
+                    [activeFiltersLabel]="'MASTER_PRODUCTS.ACTIVE_FILTERS'"
+                    [fields]="filterFields"
+                    [filters]="panelFilters"
+                    (filtersChange)="onFiltersChange($event)"
+                    (reset)="resetFilters()">
+                </app-advanced-filter-panel>
+            </div>
+        </div>
+
         <!-- Loading State -->
         <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
             <div class="relative w-24 h-24">
@@ -95,8 +158,13 @@
                         <!-- Col 4: Count -->
                         <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
                             <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</span>
-                            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 bg-slate-50/50 rounded-xl border border-slate-100 group-hover:border-zadna-primary/10 transition-all">
-                                <span class="text-[11px] sm:text-[10px] font-bold text-slate-500">{{ item.subCategories?.length || 0 }} {{ 'CATEGORIES.PRODUCT_UNIT' | translate }}</span>
+                            <div class="flex flex-wrap items-center justify-center gap-2">
+                                <div class="inline-flex items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-1.5 transition-all group-hover:border-zadna-primary/10 sm:py-1">
+                                    <span class="text-[11px] font-bold text-slate-500 sm:text-[10px]">{{ item.subCategories?.length || 0 }} {{ 'CATEGORIES.DETAILS.BRANCH_NODES' | translate }}</span>
+                                </div>
+                                <div class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50/70 px-3 py-1.5 sm:py-1">
+                                    <span class="text-[11px] font-bold text-emerald-700 sm:text-[10px]">{{ item.brandsCount || 0 }} {{ 'CATEGORIES.BRANDS_COUNT' | translate }}</span>
+                                </div>
                             </div>
                         </td>
 
@@ -166,7 +234,7 @@
             *ngIf="!isLoading"
             [currentPage]="currentPage"
             [pageSize]="pageSize"
-            [totalItems]="currentItems.length"
+            [totalItems]="totalItems"
             (pageChange)="changePage($event)">
         </app-pagination>
     </div>
@@ -181,4 +249,11 @@
     <app-delete-confirmation-modal [isOpen]="isDeleteModalOpen" [isLoading]="isDeleting" (confirm)="confirmDelete()"
         (close)="closeDeleteModal()">
     </app-delete-confirmation-modal>
+
+    <app-catalog-request-center-modal
+        [isOpen]="isCategoryRequestsModalOpen"
+        requestType="category"
+        (close)="isCategoryRequestsModalOpen = false"
+        (refreshed)="loadHierarchy()">
+    </app-catalog-request-center-modal>
 </div>

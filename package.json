@@ -8,7 +8,8 @@
     "lint": "eslint src",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "check:boundaries": "node tools/check-boundaries.mjs"
+    "check:boundaries": "node tools/check-boundaries.mjs",
+    "check:i18n": "node tools/check-i18n.mjs"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@fontsource/cairo": "^5.2.7",
+    "@microsoft/signalr": "^10.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "material-symbols": "^0.40.2",

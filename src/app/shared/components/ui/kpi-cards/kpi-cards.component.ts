@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 
 export interface KPICard {
@@ -51,7 +52,7 @@ export interface KPICard {
 
            <div class="w-12 h-12 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500"
                 [style.background-color]="card.color + '10'">
-                <div [innerHTML]="card.icon" 
+                <div [innerHTML]="getSafeIcon(card.icon)" 
                     class="w-6 h-6 flex items-center justify-center"
                     [style.color]="card.color"></div>
            </div>
@@ -68,6 +69,12 @@ export interface KPICard {
 export class KpiCardsComponent {
   @Input() cards: KPICard[] = [];
   @Output() cardClick = new EventEmitter<KPICard>();
+
+  constructor(private readonly sanitizer: DomSanitizer) {}
+
+  getSafeIcon(icon: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(icon);
+  }
 
   onCardClick(card: KPICard) {
     if (card.clickable) {

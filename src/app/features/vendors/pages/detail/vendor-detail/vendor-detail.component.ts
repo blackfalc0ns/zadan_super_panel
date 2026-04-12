@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { CrViewerModalComponent, CommercialRegisterData } from '@vendors/components/workflows/cr-viewer-modal/cr-viewer-modal.component';
 import { EditLegalBankModalComponent, LegalBankData } from '@vendors/components/workflows/edit-legal-bank-modal/edit-legal-bank-modal.component';
 import { EditOwnerModalComponent, OwnerData } from '@vendors/components/workflows/edit-owner-modal/edit-owner-modal.component';
 import { EditStoreModalComponent, StoreData } from '@vendors/components/workflows/edit-store-modal/edit-store-modal.component';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
-import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 
 @Component({
   selector: 'app-vendor-detail',
@@ -20,94 +22,106 @@ import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/co
     EditLegalBankModalComponent,
     EditStoreModalComponent,
     CrViewerModalComponent,
-    StatusPillComponent
+    StatusPillComponent,
+    FormsModule
   ],
   templateUrl: './vendor-detail.component.html'
 })
 export class VendorDetailComponent implements OnInit {
   currentLang = 'ar';
   isRTL = true;
-  vendorId = 'VND-9928';
+  vendorId = '';
   vendorDetail: VendorDetail | null = null;
   showEditOwnerModal = false;
   showEditLegalBankModal = false;
   showEditStoreModal = false;
   showCrViewerModal = false;
+
+  showApproveModal = false;
+  showRejectModal = false;
+  commissionRate = 12;
+  modalError = '';
+  rejectionNotes = '';
+  submitting = false;
+
   private readonly destroyRef = inject(DestroyRef);
 
   storeData = {
-    name: 'Ã™â€¦Ã˜Â¤Ã˜Â³Ã˜Â³Ã˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ™â€šÃ™â€ Ã™Å Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â­Ã˜Â¯Ã™Å Ã˜Â«Ã˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â¬Ã˜Â§Ã˜Â±Ã™Å Ã˜Â©',
-    category: 'Ã˜Â§Ã™â€žÃ˜Â¥Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â±Ã™Ë†Ã™â€ Ã™Å Ã˜Â§Ã˜Âª',
-    location: 'Ã˜Â§Ã™â€žÃ˜Â±Ã™Å Ã˜Â§Ã˜Â¶',
-    phone: '+966 50 123 4567',
-    email: 'info@moderntech.com',
-    completionRate: '100%',
-    joinDate: '15 Jan 2022',
-    lastUpdate: '14.39.2023-18:01'
+    name: '',
+    category: '',
+    location: '',
+    phone: '',
+    email: '',
+    completionRate: '0%',
+    joinDate: '',
+    lastUpdate: ''
   };
 
   bankingData = {
-    accountHolder: 'Ã™â€¦Ã˜Â­Ã™â€¦Ã˜Â¯ Ã˜Â£Ã˜Â­Ã™â€¦Ã˜Â¯',
-    accountNumber: '3001234567890123',
-    bankName: 'Ã˜Â§Ã™â€žÃ˜Â¨Ã™â€ Ã™Æ’ Ã˜Â§Ã™â€žÃ˜Â£Ã™â€¡Ã™â€žÃ™Å ',
-    iban: 'SA9876543210987654321',
-    swiftCode: 'RJHI SASR',
-    cardNumber: '5409 5000 0000 0000 1234 6789',
-    expiryDate: '20 Dec 2026'
+    accountHolder: '',
+    accountNumber: '',
+    bankName: '',
+    iban: '',
+    swiftCode: '',
+    cardNumber: '',
+    expiryDate: ''
   };
 
   legalDocuments = {
-    commercialRegister: '1010123456',
-    taxNumber: '300123456789012',
-    establishmentName: 'Ã™â€¦Ã˜Â¤Ã˜Â³Ã˜Â³Ã˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ™â€šÃ™â€ Ã™Å Ã˜Â©',
-    licenseNumber: 'L-987654'
+    commercialRegister: '',
+    taxNumber: '',
+    establishmentName: '',
+    licenseNumber: ''
   };
 
-  progressPercentage = 95;
+  progressPercentage = 0;
 
   ownerData: OwnerData = {
-    fullName: 'Ã˜Â¹Ã˜Â¨Ã˜Â¯Ã˜Â§Ã™â€žÃ™â€žÃ™â€¡ Ã˜Â¨Ã™â€  Ã˜Â®Ã˜Â§Ã™â€žÃ˜Â¯ Ã˜Â¨Ã™â€  Ã˜Â¹Ã˜Â¨Ã˜Â¯Ã˜Â§Ã™â€žÃ˜Â¹Ã˜Â²Ã™Å Ã˜Â²',
-    idNumber: '10****4321',
+    fullName: '',
+    idNumber: '',
     nationality: 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI',
-    email: 'info@moderntech.com',
-    phone: '50 123 4567',
+    email: '',
+    phone: '',
     phoneCode: '+966'
   };
 
   legalBankData: LegalBankData = {
-    commercialRegister: '1010123456',
-    taxNumber: '300123456700003',
-    expiryDate: '2024-05-15',
-    bankName: 'alrajhi',
-    paymentCycle: 'biweekly',
-    iban: '12 8000 0000 6080 1234 5678'
+    commercialRegister: '',
+    taxNumber: '',
+    expiryDate: '',
+    bankName: '',
+    paymentCycle: '',
+    iban: ''
   };
 
   storeDataModal: StoreData = {
-    storeName: 'Ã™â€¦Ã˜Â¤Ã˜Â³Ã˜Â³Ã˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ™â€šÃ™â€ Ã™Å Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â­Ã˜Â¯Ã™Å Ã˜Â«Ã˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â¬Ã˜Â§Ã˜Â±Ã™Å Ã˜Â©',
-    activityType: 'electronics',
-    city: 'Ã˜Â§Ã™â€žÃ˜Â±Ã™Å Ã˜Â§Ã˜Â¶',
-    nationalAddress: '7293 Ã˜Â·Ã˜Â±Ã™Å Ã™â€š Ã˜Â§Ã™â€žÃ™â€¦Ã™â€žÃ™Æ’ Ã™ÂÃ™â€¡Ã˜Â¯Ã˜Å’ Ã˜Â­Ã™Å  Ã˜Â§Ã™â€žÃ™â€¦Ã™â€žÃ™â€šÃ˜Â§Ã˜Å’ Ã˜Â§Ã™â€žÃ˜Â±Ã™Å Ã˜Â§Ã˜Â¶ 13524',
-    crNumber: '1010123456',
-    registrationDate: '15 Jan 2022',
-    description: 'Ã™â€¦Ã˜ÂªÃ˜Â¬Ã˜Â± Ã™â€¦Ã˜ÂªÃ˜Â®Ã˜ÂµÃ˜Âµ Ã™ÂÃ™Å  Ã˜Â¨Ã™Å Ã˜Â¹ Ã˜Â§Ã™â€žÃ˜Â¥Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â±Ã™Ë†Ã™â€ Ã™Å Ã˜Â§Ã˜Âª Ã™Ë†Ã˜Â§Ã™â€žÃ˜Â£Ã˜Â¬Ã™â€¡Ã˜Â²Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â°Ã™Æ’Ã™Å Ã˜Â©'
+    businessNameAr: '',
+    businessNameEn: '',
+    activityType: '',
+    region: '',
+    city: '',
+    nationalAddress: '',
+    commercialRegistrationNumber: '',
+    registrationDate: '',
+    descriptionAr: '',
+    descriptionEn: ''
   };
 
   crData: CommercialRegisterData = {
-    crNumber: '1010123456',
-    establishmentName: 'Ã˜Â´Ã˜Â±Ã™Æ’Ã˜Â© Ã˜Â²Ã˜Â¯Ã˜Â§Ã™â€ Ã˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â¬Ã˜Â§Ã˜Â±Ã™Å Ã˜Â©',
-    entityType: 'Ã˜Â´Ã˜Â±Ã™Æ’Ã˜Â© Ã˜Â°Ã˜Â§Ã˜Âª Ã™â€¦Ã˜Â³Ã˜Â¤Ã™Ë†Ã™â€žÃ™Å Ã˜Â© Ã™â€¦Ã˜Â­Ã˜Â¯Ã™Ë†Ã˜Â¯Ã˜Â©',
-    expiryDate: '2024-12-31',
-    issueDate: '2020-01-15',
-    mainActivity: 'Ã˜ÂªÃ˜Â¬Ã˜Â§Ã˜Â±Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â¬Ã™â€¦Ã™â€žÃ˜Â© Ã™Ë†Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â¬Ã˜Â²Ã˜Â¦Ã˜Â© Ã™ÂÃ™Å  Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â¹Ã˜Â¯Ã˜Â§Ã˜Âª Ã™Ë†Ã˜Â§Ã™â€žÃ˜Â¢Ã™â€žÃ˜Â§Ã˜Âª',
-    dataSource: 'Ã™â€¦Ã™â€ Ã˜ÂµÃ˜Â© Ã™Ë†Ã˜Â§Ã˜Â«Ã™â€š (API)',
-    verifiedBy: 'Ã˜Â§Ã™â€žÃ™â€ Ã˜Â¸Ã˜Â§Ã™â€¦ Ã˜Â§Ã™â€žÃ˜Â¢Ã™â€žÃ™Å  (Zadana-Auto-Verify)',
-    internalReference: 'ZAD-CR-99823-2023',
-    isExpiringSoon: true,
-    capital: '500,000 Ã˜Â±Ã™Å Ã˜Â§Ã™â€ž',
-    headquarters: 'Ã˜Â§Ã™â€žÃ˜Â±Ã™Å Ã˜Â§Ã˜Â¶ - Ã˜Â­Ã™Å  Ã˜Â§Ã™â€žÃ™â€¦Ã™â€žÃ™â€šÃ˜Â§',
-    ownerName: 'Ã˜Â¹Ã˜Â¨Ã˜Â¯Ã˜Â§Ã™â€žÃ™â€žÃ™â€¡ Ã˜Â¨Ã™â€  Ã˜Â®Ã˜Â§Ã™â€žÃ˜Â¯ Ã˜Â¨Ã™â€  Ã˜Â¹Ã˜Â¨Ã˜Â¯Ã˜Â§Ã™â€žÃ˜Â¹Ã˜Â²Ã™Å Ã˜Â²',
-    ownerIdNumber: '10****4321'
+    crNumber: '',
+    establishmentName: '',
+    entityType: '',
+    expiryDate: '',
+    issueDate: '',
+    mainActivity: '',
+    dataSource: 'API',
+    verifiedBy: '',
+    internalReference: '',
+    isExpiringSoon: false,
+    capital: '',
+    headquarters: '',
+    ownerName: '',
+    ownerIdNumber: ''
   };
 
   constructor(
@@ -153,33 +167,80 @@ export class VendorDetailComponent implements OnInit {
   }
 
   onSaveOwnerData(data: OwnerData): void {
-    this.ownerData = data;
-    this.vendorDetailFacade.updateVendorLocally({
+    this.modalError = '';
+    this.vendorDetailFacade.updateVendorOwnerRequest({
       ownerName: data.fullName,
       ownerEmail: data.email,
-      ownerPhone: `${data.phoneCode} ${data.phone}`.trim()
-    });
-    this.showEditOwnerModal = false;
+      ownerPhone: `${data.phoneCode} ${data.phone}`.trim(),
+      idNumber: data.idNumber || null,
+      nationality: data.nationality
+    })
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.ownerData = data;
+          this.showEditOwnerModal = false;
+        },
+        error: () => {
+          this.modalError = this.vendorDetailFacade.mutationError || 'Unable to save owner data right now.';
+        }
+      });
   }
 
   onSaveLegalBankData(data: LegalBankData): void {
-    this.legalBankData = data;
-    this.vendorDetailFacade.updateVendorLocally({
+    this.modalError = '';
+    const normalizedIban = this.normalizeIban(data.iban);
+    this.vendorDetailFacade.updateVendorLegalBankingRequest({
       commercialRegistrationNumber: data.commercialRegister,
-      taxId: data.taxNumber
-    });
-    this.showEditLegalBankModal = false;
+      commercialRegistrationExpiryDate: data.expiryDate || null,
+      taxId: data.taxNumber,
+      licenseNumber: this.vendorDetail?.licenseNumber || null,
+      bankName: data.bankName,
+      accountHolderName: this.vendorDetail?.primaryBankAccount?.accountHolderName || this.vendorDetail?.ownerName || '',
+      iban: normalizedIban,
+      swiftCode: this.vendorDetail?.primaryBankAccount?.swiftCode || null,
+      payoutCycle: data.paymentCycle,
+      commercialRegisterDocumentUrl: this.vendorDetail?.commercialRegisterDocumentUrl || null
+    })
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.legalBankData = data;
+          this.showEditLegalBankModal = false;
+        },
+        error: () => {
+          this.modalError = this.vendorDetailFacade.mutationError || 'Unable to save legal and banking data right now.';
+        }
+      });
   }
 
   onSaveStoreData(data: StoreData): void {
-    this.storeDataModal = data;
-    this.vendorDetailFacade.updateVendorLocally({
-      businessNameAr: data.storeName,
-      businessNameEn: data.storeName,
-      businessType: this.translate.instant(`MODALS.STORE_EDIT.ACTIVITIES.${data.activityType}`),
-      city: data.city
-    });
-    this.showEditStoreModal = false;
+    this.modalError = '';
+    this.vendorDetailFacade.updateVendorStoreRequest({
+      businessNameAr: data.businessNameAr,
+      businessNameEn: data.businessNameEn,
+      businessType: this.toBusinessTypeValue(data.activityType),
+      contactEmail: this.vendorDetail?.contactEmail || '',
+      contactPhone: this.vendorDetail?.contactPhone || '',
+      descriptionAr: this.nullIfEmpty(data.descriptionAr),
+      descriptionEn: this.nullIfEmpty(data.descriptionEn),
+      logoUrl: this.vendorDetail?.logoUrl || null,
+      commercialRegisterDocumentUrl: this.vendorDetail?.commercialRegisterDocumentUrl || null,
+      region: this.nullIfEmpty(data.region),
+      city: this.nullIfEmpty(data.city),
+      nationalAddress: this.nullIfEmpty(data.nationalAddress),
+      commercialRegistrationNumber: this.nullIfEmpty(data.commercialRegistrationNumber)
+    })
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.storeDataModal = data;
+          this.showEditStoreModal = false;
+        },
+        error: () => {
+          this.modalError = this.vendorDetailFacade.mutationError || 'Unable to save store data right now.';
+        }
+      });
   }
 
   onViewCrClick(): void {
@@ -212,7 +273,63 @@ export class VendorDetailComponent implements OnInit {
       return;
     }
 
-    this.vendorDetailFacade.approveVendorReview(this.vendorDetail.commissionRate ?? 13);
+    if (this.vendorDetail.status === 'Pending') {
+      this.modalError = '';
+      this.showApproveModal = true;
+    }
+  }
+
+  confirmApprove(): void {
+    if (!this.vendorDetail || this.submitting) {
+      return;
+    }
+
+    this.submitting = true;
+    this.modalError = '';
+    this.vendorDetailFacade.approveVendorReviewRequest(this.commissionRate)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.showApproveModal = false;
+        },
+        error: () => {
+          this.modalError = this.vendorDetailFacade.mutationError || 'Unable to approve the vendor right now.';
+          this.submitting = false;
+        },
+        complete: () => {
+          this.submitting = false;
+        }
+      });
+  }
+
+  openRejectModal(): void {
+    this.rejectionNotes = '';
+    this.modalError = '';
+    this.showRejectModal = true;
+  }
+
+  confirmReject(): void {
+    if (!this.vendorDetail || !this.rejectionNotes.trim() || this.submitting) {
+      return;
+    }
+
+    this.submitting = true;
+    this.modalError = '';
+    this.vendorDetailFacade.rejectVendorReviewRequest(this.rejectionNotes)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.showRejectModal = false;
+          this.rejectionNotes = '';
+        },
+        error: () => {
+          this.modalError = this.vendorDetailFacade.mutationError || 'Unable to reject the vendor right now.';
+          this.submitting = false;
+        },
+        complete: () => {
+          this.submitting = false;
+        }
+      });
   }
 
   getCurrentStatusLabel(): string {
@@ -265,7 +382,8 @@ export class VendorDetailComponent implements OnInit {
       alinma: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALINMA'
     };
 
-    return bankKeys[bankName] ? this.translate.instant(bankKeys[bankName]) : bankName;
+    const normalized = (bankName || '').toLowerCase();
+    return bankKeys[normalized] ? this.translate.instant(bankKeys[normalized]) : bankName;
   }
 
   getPaymentCycleLabel(paymentCycle: string): string {
@@ -275,42 +393,212 @@ export class VendorDetailComponent implements OnInit {
       monthly: 'MODALS.LEGAL_BANK_EDIT.MONTHLY'
     };
 
-    return cycleKeys[paymentCycle] ? this.translate.instant(cycleKeys[paymentCycle]) : paymentCycle;
+    const normalized = (paymentCycle || '').toLowerCase();
+    return cycleKeys[normalized] ? this.translate.instant(cycleKeys[normalized]) : paymentCycle;
+  }
+
+  getDisplayStoreName(vendor: VendorDetail | null = this.vendorDetail): string {
+    if (!vendor) {
+      return '---';
+    }
+
+    const preferred = this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn;
+    const alternate = this.currentLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr;
+    return preferred?.trim() || alternate?.trim() || vendor.ownerName?.trim() || vendor.contactEmail?.trim() || '---';
+  }
+
+  getDisplayBusinessType(businessType?: string | null): string {
+    const normalized = (businessType || '').trim();
+    if (!normalized) {
+      return '---';
+    }
+
+    const keyMap: Record<string, string> = {
+      electronics: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.ELECTRONICS',
+      food: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FOOD',
+      grocery: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FOOD',
+      fashion: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FASHION',
+      home: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.HOME'
+    };
+
+    const translatedKey = keyMap[normalized.toLowerCase()];
+    if (translatedKey) {
+      return this.translate.instant(translatedKey);
+    }
+
+    return normalized
+      .replace(/[_-]+/g, ' ')
+      .replace(/\b\w/g, (value) => value.toUpperCase());
+  }
+
+  getDisplayReviewer(): string {
+    const explicitReviewer = this.vendorDetail?.approvedBy?.trim();
+    if (explicitReviewer) {
+      return explicitReviewer;
+    }
+
+    const noteAuthor = this.vendorDetail?.reviewNotes?.find((note) => !!note.authorName?.trim())?.authorName?.trim();
+    return noteAuthor || '---';
   }
 
   private applyVendorDetail(vendor: VendorDetail): void {
+    const ownerPhone = this.parsePhone(vendor.ownerPhone || vendor.contactPhone);
+    const storeName = this.getDisplayStoreName(vendor);
+    const bankName = (vendor.primaryBankAccount?.bankName || '').toLowerCase();
+    const payoutCycle = (vendor.payoutCycle || '').toLowerCase();
+
     this.vendorDetail = vendor;
-    this.progressPercentage = vendor.documentsCompleteness || this.progressPercentage;
+    this.progressPercentage = vendor.documentsCompleteness ?? 0;
     this.storeData = {
-      ...this.storeData,
-      name: this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn,
+      name: storeName,
       category: vendor.businessType,
-      location: vendor.city || this.storeData.location,
+      location: vendor.city || vendor.region || '',
       phone: vendor.contactPhone,
-      email: vendor.contactEmail
+      email: vendor.contactEmail,
+      completionRate: `${vendor.documentsCompleteness ?? 0}%`,
+      joinDate: vendor.createdAtUtc,
+      lastUpdate: vendor.updatedAtUtc || vendor.reviewUpdatedAtUtc || vendor.createdAtUtc
     };
+
+    this.bankingData = {
+      accountHolder: vendor.primaryBankAccount?.accountHolderName || vendor.ownerName,
+      accountNumber: '',
+      bankName,
+      iban: vendor.primaryBankAccount?.iban || '',
+      swiftCode: vendor.primaryBankAccount?.swiftCode || '',
+      cardNumber: '',
+      expiryDate: vendor.commercialRegistrationExpiryDate || ''
+    };
+
     this.ownerData = {
-      ...this.ownerData,
       fullName: vendor.ownerName,
+      idNumber: vendor.idNumber || '',
+      nationality: vendor.nationality || 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI',
       email: vendor.ownerEmail,
-      phone: vendor.ownerPhone.replace('+966 ', '')
+      phone: ownerPhone.number,
+      phoneCode: ownerPhone.code
     };
+
     this.legalBankData = {
-      ...this.legalBankData,
       commercialRegister: vendor.commercialRegistrationNumber,
-      taxNumber: vendor.taxId || this.legalBankData.taxNumber
+      taxNumber: vendor.taxId || '',
+      expiryDate: vendor.commercialRegistrationExpiryDate || '',
+      bankName,
+      paymentCycle: payoutCycle,
+      iban: this.formatIbanForDisplay(vendor.primaryBankAccount?.iban || '')
     };
+
     this.storeDataModal = {
-      ...this.storeDataModal,
-      storeName: this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn,
-      city: vendor.city || this.storeDataModal.city,
-      crNumber: vendor.commercialRegistrationNumber
+      businessNameAr: vendor.businessNameAr || '',
+      businessNameEn: vendor.businessNameEn || '',
+      activityType: this.resolveActivityType(vendor.businessType),
+      region: vendor.region || '',
+      city: vendor.city || '',
+      nationalAddress: vendor.nationalAddress || '',
+      commercialRegistrationNumber: vendor.commercialRegistrationNumber,
+      registrationDate: vendor.createdAtUtc,
+      descriptionAr: vendor.descriptionAr || '',
+      descriptionEn: vendor.descriptionEn || ''
     };
+
     this.legalDocuments = {
-      ...this.legalDocuments,
       commercialRegister: vendor.commercialRegistrationNumber,
-      taxNumber: vendor.taxId || this.legalDocuments.taxNumber
+      taxNumber: vendor.taxId || '',
+      establishmentName: storeName,
+      licenseNumber: vendor.licenseNumber || ''
     };
+
+    this.crData = {
+      crNumber: vendor.commercialRegistrationNumber,
+      establishmentName: storeName,
+      entityType: vendor.businessType,
+      expiryDate: vendor.commercialRegistrationExpiryDate || '',
+      issueDate: vendor.createdAtUtc,
+      mainActivity: vendor.businessType,
+      dataSource: 'API',
+      verifiedBy: vendor.approvedBy || '',
+      internalReference: vendor.id,
+      isExpiringSoon: this.isExpiringSoon(vendor.commercialRegistrationExpiryDate),
+      capital: '',
+      headquarters: vendor.nationalAddress || vendor.city || '',
+      ownerName: vendor.ownerName,
+      ownerIdNumber: vendor.idNumber || ''
+    };
+  }
+
+  private parsePhone(phone: string): { code: string; number: string } {
+    const normalized = (phone || '').trim();
+    if (!normalized) {
+      return { code: '+966', number: '' };
+    }
+
+    const [code, ...rest] = normalized.split(' ');
+    if (code.startsWith('+') && rest.length > 0) {
+      return { code, number: rest.join(' ') };
+    }
+
+    return { code: '+966', number: normalized.replace(/^\+966\s*/, '') };
+  }
+
+  private formatIbanForDisplay(iban: string): string {
+    return (iban || '').replace(/\s+/g, '').replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  private normalizeIban(iban: string): string {
+    const sanitized = (iban || '').replace(/\s+/g, '').toUpperCase();
+    if (!sanitized) {
+      return '';
+    }
+
+    return sanitized.startsWith('SA') ? sanitized : `SA${sanitized}`;
+  }
+
+  private resolveActivityType(businessType: string): string {
+    const normalized = (businessType || '').toLowerCase();
+    if (normalized.includes('elect')) {
+      return 'electronics';
+    }
+
+    if (normalized.includes('food') || normalized.includes('grocery')) {
+      return 'food';
+    }
+
+    if (normalized.includes('fashion')) {
+      return 'fashion';
+    }
+
+    if (normalized.includes('home')) {
+      return 'home';
+    }
+
+    return normalized || 'electronics';
+  }
+
+  private toBusinessTypeValue(activityType: string): string {
+    const normalized = (activityType || '').trim().toLowerCase();
+    const mapping: Record<string, string> = {
+      electronics: 'Electronics',
+      food: 'Food',
+      fashion: 'Fashion',
+      home: 'Home'
+    };
+
+    return mapping[normalized] ?? this.vendorDetail?.businessType ?? 'Retail';
+  }
+
+  private nullIfEmpty(value: string): string | null {
+    const normalized = value.trim();
+    return normalized ? normalized : null;
+  }
+
+  private isExpiringSoon(value?: string | null): boolean {
+    if (!value) {
+      return false;
+    }
+
+    const expiry = new Date(value);
+    const diff = expiry.getTime() - Date.now();
+    return diff > 0 && diff <= 1000 * 60 * 60 * 24 * 30;
   }
 
   private downloadTextFile(fileName: string, content: string): void {

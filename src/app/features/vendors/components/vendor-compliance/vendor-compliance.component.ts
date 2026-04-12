@@ -16,7 +16,7 @@ import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
   templateUrl: './vendor-compliance.component.html'
 })
 export class VendorComplianceComponent {
-  vendorId = 'VND-9928';
+  vendorId = '';
   currentLang = 'ar';
   isRTL = true;
   newNote = '';
@@ -101,12 +101,25 @@ export class VendorComplianceComponent {
     }
   }
 
+  get canStartReview(): boolean {
+    const reviewState = this.vendorDetail?.reviewState;
+    return reviewState === 'submitted' || reviewState === 'awaiting_submission' || reviewState === 'changes_requested';
+  }
+
   get lastReviewerName(): string {
     return this.vendorDetail?.assignedReviewer || '-';
   }
 
   get lastReviewerInitials(): string {
     return this.getInitials(this.lastReviewerName);
+  }
+
+  onStartReview(): void {
+    if (!this.vendorDetail) {
+      return;
+    }
+
+    this.vendorDetailFacade.startVendorReview();
   }
 
   onApproveVendor(): void {
@@ -215,6 +228,12 @@ export class VendorComplianceComponent {
     return this.getInitials(name);
   }
 
+  getLocalizedRoleLabel(roleLabel: string): string {
+    const key = `COMPLIANCE.ROLES.${roleLabel.toUpperCase().replace(/[^A-Z]+/g, '_')}`;
+    const translated = this.translate.instant(key);
+    return translated === key ? roleLabel : translated;
+  }
+
   formatNoteTimestamp(value: string): string {
     return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
       day: '2-digit',
@@ -227,7 +246,7 @@ export class VendorComplianceComponent {
   private getInitials(name: string): string {
     const words = name.split(' ').filter(Boolean);
     if (words.length === 0 || name === '-') {
-      return this.isRTL ? 'Ã™â€¦.Ã˜Â±' : 'R.V';
+      return this.translate.instant('COMPLIANCE.REVIEWER_INITIALS');
     }
 
     return words.slice(0, 2).map((word) => word.charAt(0).toUpperCase()).join('.');

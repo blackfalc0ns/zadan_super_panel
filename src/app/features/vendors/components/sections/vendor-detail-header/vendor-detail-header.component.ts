@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 import { DetailTabNavItem, DetailTabsNavComponent } from '@shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
@@ -27,7 +28,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
   isRTL = true;
 
   title = '';
-  vendorId = 'VND-9928';
+  vendorId = '';
   registrationDate = '';
   category = '';
   statusLabelKey = 'VENDORS.STATUS.PENDING';
@@ -50,7 +51,8 @@ export class VendorDetailHeaderComponent implements OnChanges {
 
   constructor(
     private readonly translate: TranslateService,
-    private readonly vendorDetailFacade: VendorDetailFacade
+    private readonly vendorDetailFacade: VendorDetailFacade,
+    private readonly router: Router
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -114,6 +116,34 @@ export class VendorDetailHeaderComponent implements OnChanges {
     }
   }
 
+  openAccessDirectory(): void {
+    if (!this.vendor) {
+      return;
+    }
+
+    this.router.navigate(['/admin-users'], {
+      queryParams: {
+        audience: 'vendor_network',
+        panel: 'vendor_panel',
+        vendor: this.vendor.id
+      }
+    });
+  }
+
+  openEmailRouting(): void {
+    if (!this.vendor) {
+      return;
+    }
+
+    this.router.navigate(['/email-center'], {
+      queryParams: {
+        audience: 'vendor_network',
+        vendor: this.vendor.id,
+        entityId: this.vendor.id
+      }
+    });
+  }
+
   get navTabs(): DetailTabNavItem[] {
     return this.tabs.map((tab) => ({
       id: tab.id,
@@ -123,9 +153,9 @@ export class VendorDetailHeaderComponent implements OnChanges {
 
   private updateHeaderContent(): void {
     this.title = this.vendor
-      ? (this.currentLang === 'ar' ? this.vendor.businessNameAr : this.vendor.businessNameEn)
+      ? this.getDisplayStoreName(this.vendor)
       : this.translate.instant('VENDOR_DETAIL.HEADER_TITLE');
-    this.vendorId = this.vendor?.id ?? 'VND-9928';
+    this.vendorId = this.vendor?.id ?? '';
     this.registrationDate = this.vendor?.createdAtUtc
       ? new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
           day: '2-digit',
@@ -133,9 +163,39 @@ export class VendorDetailHeaderComponent implements OnChanges {
           year: 'numeric'
         }).format(new Date(this.vendor.createdAtUtc))
       : this.translate.instant('VENDOR_DETAIL.REGISTERED_SINCE');
-    this.category = this.vendor?.businessType ?? this.translate.instant('VENDOR_DETAIL.CATEGORY_VALUE');
+    this.category = this.getDisplayBusinessType(this.vendor?.businessType) || this.translate.instant('VENDOR_DETAIL.CATEGORY_VALUE');
     this.statusLabelKey = this.resolveStatusLabelKey(this.vendor);
     this.verificationLabelKey = this.resolveVerificationLabelKey(this.vendor);
+  }
+
+  private getDisplayStoreName(vendor: VendorDetail): string {
+    const preferred = this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn;
+    const alternate = this.currentLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr;
+    return preferred?.trim() || alternate?.trim() || vendor.ownerName?.trim() || vendor.contactEmail?.trim() || this.translate.instant('VENDOR_DETAIL.HEADER_TITLE');
+  }
+
+  private getDisplayBusinessType(businessType?: string | null): string {
+    const normalized = (businessType || '').trim();
+    if (!normalized) {
+      return '';
+    }
+
+    const keyMap: Record<string, string> = {
+      electronics: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.ELECTRONICS',
+      food: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FOOD',
+      grocery: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FOOD',
+      fashion: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FASHION',
+      home: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.HOME'
+    };
+
+    const translatedKey = keyMap[normalized.toLowerCase()];
+    if (translatedKey) {
+      return this.translate.instant(translatedKey);
+    }
+
+    return normalized
+      .replace(/[_-]+/g, ' ')
+      .replace(/\b\w/g, (value) => value.toUpperCase());
   }
 
   private resolveStatusLabelKey(vendor: VendorDetail | null): string {

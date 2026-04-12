@@ -161,16 +161,21 @@ export class MobileVendorCardComponent {
   }
 
   getVendorInitial(): string {
-    const name = this.activeLang === 'ar' ? this.vendor.businessNameAr : this.vendor.businessNameEn;
+    const name = this.getDisplayName();
     return name.charAt(0).toUpperCase();
   }
 
   getDisplayName(): string {
-    return this.activeLang === 'ar' ? this.vendor.businessNameAr : this.vendor.businessNameEn;
+    return (this.activeLang === 'ar' ? this.vendor.businessNameAr : this.vendor.businessNameEn)
+      || (this.activeLang === 'ar' ? this.vendor.businessNameEn : this.vendor.businessNameAr)
+      || this.vendor.contactEmail
+      || 'Vendor';
   }
 
   getSecondaryName(): string {
-    return this.activeLang === 'ar' ? this.vendor.businessNameEn : this.vendor.businessNameAr;
+    return (this.activeLang === 'ar' ? this.vendor.businessNameEn : this.vendor.businessNameAr)
+      || this.vendor.contactEmail
+      || '';
   }
 
   getStatusLabel(): string {

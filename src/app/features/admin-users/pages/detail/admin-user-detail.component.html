@@ -1,0 +1,452 @@
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
+  <app-page-header
+    [title]="user ? 'ADMIN_USERS.DETAIL.TITLE' : 'ADMIN_USERS.DETAIL.NOT_FOUND'"
+    [subtitle]="'ADMIN_USERS.DETAIL.SUBTITLE'"
+    [showBack]="true"
+    [backUrl]="'/admin-users'"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'SIDEBAR.ADMIN_USERS', url: '/admin-users' },
+      { label: 'ADMIN_USERS.DETAIL.BREADCRUMB' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">shield_lock</span>
+
+    <div title-extra *ngIf="user" class="hidden sm:flex">
+      <app-status-pill
+        [label]="'ADMIN_USERS.STATUS.' + user.status.toUpperCase()"
+        [variant]="headerStatusVariant"
+        size="sm">
+      </app-status-pill>
+    </div>
+
+    <div actions *ngIf="user" class="flex flex-wrap items-center gap-3 animate-in slide-in-from-left-10 duration-700">
+      <button
+        *ngIf="isOperationalIdentity"
+        type="button"
+        class="px-4 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
+        (click)="duplicateAsNewRole()">
+        <span class="material-symbols-outlined text-[20px]">content_copy</span>
+        {{ 'ADMIN_USERS.ACTIONS.DUPLICATE' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="px-4 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
+        (click)="resetToPreset()">
+        <span class="material-symbols-outlined text-[20px]">restart_alt</span>
+        {{ 'ADMIN_USERS.ACTIONS.RESET_PRESET' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="px-4 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
+        (click)="resendInvite()">
+        <span class="material-symbols-outlined text-[20px]">forward_to_inbox</span>
+        {{ 'ADMIN_USERS.ACTIONS.RESEND_INVITE' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="px-4 py-3 rounded-[1.2rem] text-sm font-black flex items-center gap-2 transition-all"
+        [ngClass]="user.status === 'suspended'
+          ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+          : 'bg-red-50 text-red-600 border border-red-100'"
+        (click)="toggleSuspension()">
+        <span class="material-symbols-outlined text-[20px]">
+          {{ user.status === 'suspended' ? 'verified_user' : 'block' }}
+        </span>
+        {{ (user.status === 'suspended' ? 'ADMIN_USERS.ACTIONS.REACTIVATE' : 'ADMIN_USERS.ACTIONS.SUSPEND') | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="px-5 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all"
+        (click)="saveUser()">
+        <span class="material-symbols-outlined text-[20px]">save</span>
+        {{ 'ADMIN_USERS.ACTIONS.SAVE' | translate }}
+      </button>
+    </div>
+  </app-page-header>
+
+  <div *ngIf="!user" class="px-4 md:px-10 py-10 max-w-[120rem] mx-auto w-full">
+    <div class="rounded-[2rem] border border-dashed border-slate-300 bg-white/80 p-10 text-center">
+      <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-slate-400">
+        <span class="material-symbols-outlined text-[28px]">person_off</span>
+      </div>
+      <h2 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.NOT_FOUND' | translate }}</h2>
+      <p class="mt-2 text-sm font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.NOT_FOUND_DESC' | translate }}</p>
+      <button
+        type="button"
+        class="mt-6 rounded-full bg-zadna-primary px-5 py-3 text-sm font-black text-white shadow-lg shadow-zadna-primary/20"
+        (click)="navigateBack()">
+        {{ 'ADMIN_USERS.ACTIONS.BACK_TO_LIST' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="user as currentUser" class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <section class="xl:col-span-2 space-y-6">
+        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4 mb-6">
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.IDENTITY_BADGE' | translate }}</p>
+              <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.IDENTITY_TITLE' | translate }}</h3>
+              <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.IDENTITY_DESC' | translate }}</p>
+            </div>
+            <div
+              class="hidden sm:flex h-14 w-14 items-center justify-center rounded-3xl text-white text-sm font-black shadow-lg"
+              [style.background]="currentUser.avatarHue">
+              {{ (currentUser.fullName && currentUser.fullName.length ? currentUser.fullName : 'NA').slice(0, 2).toUpperCase() }}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.FULL_NAME' | translate }}</span>
+              <input [(ngModel)]="currentUser.fullName" type="text" />
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.EMAIL' | translate }}</span>
+              <input [(ngModel)]="currentUser.email" type="email" dir="ltr" />
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.PHONE' | translate }}</span>
+              <input [(ngModel)]="currentUser.phone" type="text" dir="ltr" />
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.PERSONA' | translate }}</span>
+              <select [(ngModel)]="currentUser.personaType" (ngModelChange)="onPersonaChange($event)">
+                <option *ngFor="let option of personaOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+              </select>
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.DEPARTMENT' | translate }}</span>
+              <input [(ngModel)]="currentUser.department" type="text" />
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.TEAM' | translate }}</span>
+              <input [(ngModel)]="currentUser.team" type="text" />
+            </label>
+          </div>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <div class="mb-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.ASSIGNMENT_BADGE' | translate }}</p>
+            <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.ASSIGNMENT_TITLE' | translate }}</h3>
+            <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.ASSIGNMENT_DESC' | translate }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.PANEL_SCOPE' | translate }}</span>
+              <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700">
+                {{ panelLabelKey | translate }}
+              </div>
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
+              <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700" dir="ltr">
+                {{ currentUser.entityId || '-' }}
+              </div>
+            </label>
+
+            <label *ngIf="isVendorIdentity" class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.VENDOR' | translate }}</span>
+              <select [(ngModel)]="currentUser.assignment.vendorId" (ngModelChange)="onVendorChange($event)">
+                <option [ngValue]="null">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
+                <option *ngFor="let vendor of vendorOptions" [value]="vendor.id">{{ vendor.name }}</option>
+              </select>
+            </label>
+
+            <label *ngIf="isVendorIdentity" class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.BRANCH' | translate }}</span>
+              <select [(ngModel)]="currentUser.assignment.branchId" (ngModelChange)="onBranchChange($event)">
+                <option [ngValue]="null">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
+                <option *ngFor="let branch of branchOptions" [value]="branch.id">{{ branch.name }}</option>
+              </select>
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.REGION' | translate }}</span>
+              <input [(ngModel)]="currentUser.assignment.region" type="text" />
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.CITY' | translate }}</span>
+              <input [(ngModel)]="currentUser.assignment.city" type="text" />
+            </label>
+          </div>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4 mb-6">
+            <div>
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.ACCESS_BADGE' | translate }}</p>
+              <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.ACCESS_TITLE' | translate }}</h3>
+              <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.ACCESS_DESC' | translate }}</p>
+            </div>
+            <div class="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-500">
+              {{ effectivePermissionCount }} {{ 'ADMIN_USERS.DETAIL.EFFECTIVE_PERMISSIONS' | translate }}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.ROLE_PRESET' | translate }}</span>
+              <select [(ngModel)]="currentUser.rolePresetId" (ngModelChange)="onPresetChange($event)">
+                <option *ngFor="let preset of rolePresets" [value]="preset.id">{{ preset.nameKey | translate }}</option>
+              </select>
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.ACCESS_LEVEL' | translate }}</span>
+              <select [(ngModel)]="currentUser.accessLevel">
+                <option *ngFor="let option of accessLevelOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+              </select>
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.STATUS' | translate }}</span>
+              <select [(ngModel)]="currentUser.status">
+                <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+              </select>
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.INVITE_STATE' | translate }}</span>
+              <select [(ngModel)]="currentUser.inviteState">
+                <option *ngFor="let option of inviteStateOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="mt-5 rounded-[1.6rem] border border-dashed border-zadna-primary/20 bg-zadna-primary/[0.03] p-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <app-status-pill [label]="selectedPreset.nameKey" variant="primary" size="sm"></app-status-pill>
+              <app-status-pill
+                [label]="grantedOverrideCount + ' ' + ('ADMIN_USERS.DETAIL.GRANTED_OVERRIDES' | translate)"
+                variant="success"
+                [shouldTranslate]="false"
+                size="sm">
+              </app-status-pill>
+              <app-status-pill
+                [label]="revokedOverrideCount + ' ' + ('ADMIN_USERS.DETAIL.REVOKED_OVERRIDES' | translate)"
+                variant="warning"
+                [shouldTranslate]="false"
+                size="sm">
+              </app-status-pill>
+              <app-status-pill
+                [label]="customPermissionCount + ' ' + ('ADMIN_USERS.DETAIL.CUSTOM_TOTAL' | translate)"
+                variant="info"
+                [shouldTranslate]="false"
+                size="sm">
+              </app-status-pill>
+            </div>
+            <p class="mt-3 text-xs font-bold text-slate-500">{{ selectedPreset.descriptionKey | translate }}</p>
+          </div>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <div class="mb-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.COMMUNICATION_BADGE' | translate }}</p>
+            <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.COMMUNICATION_TITLE' | translate }}</h3>
+            <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.COMMUNICATION_DESC' | translate }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.REPLY_TO' | translate }}</span>
+              <input [(ngModel)]="currentUser.communication.replyTo" type="email" dir="ltr" />
+            </label>
+
+            <label class="field-card">
+              <span>{{ 'ADMIN_USERS.FIELDS.PREFERRED_LOCALE' | translate }}</span>
+              <select [(ngModel)]="currentUser.communication.preferredLocale">
+                <option *ngFor="let option of localeOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+              </select>
+            </label>
+
+            <label class="field-card md:col-span-2">
+              <span>{{ 'ADMIN_USERS.FIELDS.NOTIFICATION_EMAILS' | translate }}</span>
+              <textarea [(ngModel)]="notificationEmailsText" rows="3" dir="ltr"></textarea>
+            </label>
+
+            <label class="field-card md:col-span-2">
+              <span>{{ 'ADMIN_USERS.FIELDS.ESCALATION_EMAILS' | translate }}</span>
+              <textarea [(ngModel)]="escalationEmailsText" rows="3" dir="ltr"></textarea>
+            </label>
+          </div>
+
+          <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label *ngFor="let flag of visibleCommunicationFlags" class="toggle-card">
+              <div>
+                <p class="text-sm font-black text-slate-800">{{ flag.labelKey | translate }}</p>
+                <p class="text-[11px] font-bold text-slate-400">{{ flag.descriptionKey | translate }}</p>
+              </div>
+              <input
+                [checked]="currentUser.communication.emailOptIn[flag.id]"
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                (change)="toggleCommunicationFlag(flag.id, $any($event.target).checked)" />
+            </label>
+          </div>
+        </div>
+
+        <div *ngIf="isOperationalIdentity" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <div class="mb-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.PERMISSIONS_BADGE' | translate }}</p>
+            <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.PERMISSIONS_TITLE' | translate }}</h3>
+            <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.PERMISSIONS_DESC' | translate }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+            <article *ngFor="let group of permissionGroups" class="rounded-[1.7rem] border border-slate-200 bg-slate-50/80 p-5 shadow-sm">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h4 class="text-sm font-black text-slate-900">{{ group.labelKey | translate }}</h4>
+                  <p class="mt-1 text-[11px] font-bold text-slate-400 leading-5">{{ group.descriptionKey | translate }}</p>
+                </div>
+                <div class="rounded-full bg-white px-3 py-1 text-[10px] font-black text-slate-500">
+                  {{ getGroupEnabledCount(group) }}/{{ group.actions.length }}
+                </div>
+              </div>
+
+              <div class="mt-4 space-y-3">
+                <label
+                  *ngFor="let action of group.actions"
+                  class="flex items-center justify-between gap-3 rounded-2xl border border-white/60 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
+                  <div class="flex flex-col">
+                    <span>{{ permissionActionLabels[action] | translate }}</span>
+                    <span class="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ group.labelKey | translate }}</span>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                    [checked]="hasPermission(group.id, action)"
+                    (change)="togglePermission(group.id, action, $any($event.target).checked)" />
+                </label>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div *ngIf="!isOperationalIdentity" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <div class="mb-6">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.FEATURES_BADGE' | translate }}</p>
+            <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.FEATURES_TITLE' | translate }}</h3>
+            <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.FEATURES_DESC' | translate }}</p>
+          </div>
+
+          <div class="space-y-3">
+            <label
+              *ngFor="let toggle of featureToggleDefinitions"
+              class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-4 shadow-sm">
+              <div class="flex flex-col">
+                <span class="text-sm font-black text-slate-800">{{ toggle.labelKey | translate }}</span>
+                <span class="mt-1 text-[11px] font-bold text-slate-400">{{ toggle.descriptionKey | translate }}</span>
+              </div>
+
+              <input
+                type="checkbox"
+                class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                [checked]="hasFeatureToggle(toggle.id)"
+                (change)="toggleFeatureToggle(toggle.id, $any($event.target).checked)" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <aside class="space-y-6">
+        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.SECURITY_BADGE' | translate }}</p>
+          <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.SECURITY_TITLE' | translate }}</h3>
+          <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.SECURITY_DESC' | translate }}</p>
+
+          <div class="mt-5 space-y-4">
+            <label class="toggle-card">
+              <div>
+                <p class="text-sm font-black text-slate-800">{{ 'ADMIN_USERS.FIELDS.MFA' | translate }}</p>
+                <p class="text-[11px] font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.MFA_HINT' | translate }}</p>
+              </div>
+              <input [(ngModel)]="currentUser.security.mfaEnabled" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" />
+            </label>
+
+            <div class="security-row">
+              <span>{{ 'ADMIN_USERS.FIELDS.PERSONA' | translate }}</span>
+              <strong>{{ personaLabelKey | translate }}</strong>
+            </div>
+
+            <div class="security-row">
+              <span>{{ 'ADMIN_USERS.FIELDS.PANEL_SCOPE' | translate }}</span>
+              <strong>{{ panelLabelKey | translate }}</strong>
+            </div>
+
+            <div class="security-row">
+              <span>{{ 'ADMIN_USERS.SECURITY.VERIFICATION' | translate }}</span>
+              <strong>{{ verificationLabelKey | translate }}</strong>
+            </div>
+
+            <div class="security-row">
+              <span>{{ 'ADMIN_USERS.SECURITY.LAST_LOGIN' | translate }}</span>
+              <strong>{{ currentUser.security.lastLoginAt || ('ADMIN_USERS.SECURITY.NEVER' | translate) }}</strong>
+            </div>
+
+            <div class="security-row">
+              <span>{{ 'ADMIN_USERS.SECURITY.INVITED_BY' | translate }}</span>
+              <strong>{{ currentUser.security.invitedBy }}</strong>
+            </div>
+
+            <div class="security-row">
+              <span>{{ 'ADMIN_USERS.SECURITY.INVITED_AT' | translate }}</span>
+              <strong>{{ currentUser.security.invitedAt || '-' }}</strong>
+            </div>
+
+            <div class="security-row">
+              <span>{{ 'ADMIN_USERS.SECURITY.ACCEPTED_AT' | translate }}</span>
+              <strong>{{ currentUser.security.acceptedAt || '-' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'ADMIN_USERS.DETAIL.SUMMARY_BADGE' | translate }}</p>
+          <h3 class="mt-2 text-lg font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.SUMMARY_TITLE' | translate }}</h3>
+          <p class="text-xs font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.SUMMARY_DESC' | translate }}</p>
+
+          <div class="mt-5 space-y-3">
+            <div class="summary-card">
+              <span>{{ 'ADMIN_USERS.DETAIL.EFFECTIVE_PERMISSIONS' | translate }}</span>
+              <strong>{{ effectivePermissionCount }}</strong>
+            </div>
+            <div class="summary-card">
+              <span>{{ 'ADMIN_USERS.DETAIL.CUSTOM_TOTAL' | translate }}</span>
+              <strong>{{ customPermissionCount }}</strong>
+            </div>
+            <div class="summary-card">
+              <span>{{ 'ADMIN_USERS.DETAIL.GRANTED_OVERRIDES' | translate }}</span>
+              <strong>{{ grantedOverrideCount }}</strong>
+            </div>
+            <div class="summary-card">
+              <span>{{ 'ADMIN_USERS.DETAIL.REVOKED_OVERRIDES' | translate }}</span>
+              <strong>{{ revokedOverrideCount }}</strong>
+            </div>
+            <div class="summary-card">
+              <span>{{ 'ADMIN_USERS.DETAIL.NOTIFICATION_RECIPIENTS' | translate }}</span>
+              <strong>{{ currentUser.communication.notificationEmails.length }}</strong>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

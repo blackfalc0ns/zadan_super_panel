@@ -23,7 +23,10 @@ export const routes: Routes = [
       { path: 'customers', loadChildren: () => import('./features/customers/customers.routes').then((m) => m.CUSTOMERS_ROUTES) },
       { path: 'drivers', loadChildren: () => import('./features/drivers/drivers.routes').then((m) => m.DRIVERS_ROUTES) },
       { path: 'disputes', loadChildren: () => import('./features/disputes/disputes.routes').then((m) => m.DISPUTES_ROUTES) },
-      { path: 'finances', loadChildren: () => import('./features/finances/finances.routes').then((m) => m.FINANCES_ROUTES) }
+      { path: 'finances', loadChildren: () => import('./features/finances/finances.routes').then((m) => m.FINANCES_ROUTES) },
+      { path: 'marketing', loadChildren: () => import('./features/marketing/marketing.routes').then((m) => m.MARKETING_ROUTES) },
+      { path: 'admin-users', loadChildren: () => import('./features/admin-users/admin-users.routes').then((m) => m.ADMIN_USERS_ROUTES) },
+      { path: 'email-center', loadChildren: () => import('./features/email-center/email-center.routes').then((m) => m.EMAIL_CENTER_ROUTES) }
     ]
   },
   { path: '**', redirectTo: '' }

@@ -44,7 +44,7 @@
                 {{ 'MODALS.OWNER_EDIT.FULL_NAME' | translate }}
               </label>
               <input type="text" 
-                     [(ngModel)]="ownerData.fullName"
+                     [(ngModel)]="draftOwnerData.fullName"
                      name="fullName"
                      class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
             </div>
@@ -55,7 +55,7 @@
                 {{ 'MODALS.OWNER_EDIT.NATIONALITY' | translate }}
               </label>
               <div class="relative group">
-                <select [(ngModel)]="ownerData.nationality"
+                <select [(ngModel)]="draftOwnerData.nationality"
                         name="nationality"
                         class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
                   <option *ngFor="let nat of nationalityOptions" [value]="nat">{{ nat | translate }}</option>
@@ -71,7 +71,7 @@
               </label>
               <div class="flex gap-3">
                 <div class="relative w-32 group">
-                  <select [(ngModel)]="ownerData.phoneCode"
+                  <select [(ngModel)]="draftOwnerData.phoneCode"
                           name="phoneCode"
                           class="w-full h-14 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-4 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-black text-sm"
                           dir="ltr">
@@ -81,7 +81,7 @@
                 </div>
                 <div class="relative flex-1 group">
                   <input type="tel" 
-                         [(ngModel)]="ownerData.phone"
+                         [(ngModel)]="draftOwnerData.phone"
                          name="phone"
                          dir="ltr"
                          class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-mono font-bold text-lg shadow-sm tracking-widest"
@@ -106,7 +106,7 @@
                 </span>
               </div>
               <input type="text" 
-                     [value]="ownerData.idNumber"
+                     [value]="draftOwnerData.idNumber"
                      readonly
                      dir="ltr"
                      class="w-full h-14 bg-slate-100 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 outline-none text-slate-500 font-mono font-bold tracking-[0.2em] cursor-not-allowed">
@@ -119,7 +119,7 @@
               </label>
               <div class="relative group">
                 <input type="email" 
-                       [(ngModel)]="ownerData.email"
+                       [(ngModel)]="draftOwnerData.email"
                        name="email"
                        dir="ltr"
                        class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl pl-12 pr-12 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-mono font-bold text-lg shadow-sm">
