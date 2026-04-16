@@ -45,6 +45,13 @@ export interface MasterProductImage {
     url?: string;
 }
 
+export interface CatalogUnit {
+    id: string;
+    nameAr: string;
+    nameEn: string;
+    isActive?: boolean;
+}
+
 export interface ImageBankAsset {
     id: string;
     url: string;
@@ -134,6 +141,103 @@ export interface ProductSearchFacets {
     statuses?: CatalogFacetCount[];
     brands?: CatalogFacetCount[];
     categories?: CatalogFacetCount[];
+}
+
+export interface BulkMasterProductDraft {
+    rowId: string;
+    nameAr: string;
+    nameEn: string;
+    slug?: string | null;
+    barcode?: string | null;
+    categoryId?: string | null;
+    brandId?: string | null;
+    unitId?: string | null;
+    status: MasterProduct['status'];
+    descriptionAr?: string | null;
+    descriptionEn?: string | null;
+    images?: Array<{
+        url: string;
+        altText?: string | null;
+        displayOrder: number;
+        isPrimary: boolean;
+    }> | null;
+    selected?: boolean;
+}
+
+export interface BulkBrandDraft {
+    rowId: string;
+    nameAr: string;
+    nameEn: string;
+    categoryId?: string | null;
+    logoUrl?: string | null;
+    isActive: boolean;
+    selected?: boolean;
+}
+
+export interface BulkBrandRowResult {
+    rowId: string;
+    status: 'Succeeded' | 'Failed' | 'Pending';
+    brandId?: string | null;
+    errorMessage?: string | null;
+}
+
+export interface AdminBrandBulkOperation {
+    id: string;
+    idempotencyKey: string;
+    status: 'Pending' | 'Processing' | 'Completed' | 'CompletedWithErrors' | 'Failed';
+    totalRows: number;
+    processedRows: number;
+    succeededRows: number;
+    failedRows: number;
+    errorMessage?: string | null;
+    createdAtUtc: string;
+    startedAtUtc?: string | null;
+    completedAtUtc?: string | null;
+}
+
+export interface AdminBrandBulkOperationItem {
+    id: string;
+    rowNumber: number;
+    nameAr: string;
+    nameEn: string;
+    logoUrl?: string | null;
+    categoryId: string;
+    isActive: boolean;
+    status: 'Pending' | 'Succeeded' | 'Failed' | 'Skipped';
+    errorMessage?: string | null;
+    createdBrandId?: string | null;
+}
+
+export interface AdminMasterProductBulkOperation {
+    id: string;
+    idempotencyKey: string;
+    status: 'Pending' | 'Processing' | 'Completed' | 'CompletedWithErrors' | 'Failed';
+    totalRows: number;
+    processedRows: number;
+    succeededRows: number;
+    failedRows: number;
+    errorMessage?: string | null;
+    createdAtUtc: string;
+    startedAtUtc?: string | null;
+    completedAtUtc?: string | null;
+}
+
+export interface AdminMasterProductBulkOperationItem {
+    id: string;
+    rowNumber: number;
+    nameAr: string;
+    nameEn: string;
+    slug: string;
+    barcode?: string | null;
+    categoryId: string;
+    brandId?: string | null;
+    unitId?: string | null;
+    statusValue: MasterProduct['status'];
+    descriptionAr?: string | null;
+    descriptionEn?: string | null;
+    status: 'Pending' | 'Succeeded' | 'Failed' | 'Skipped';
+    errorMessage?: string | null;
+    createdMasterProductId?: string | null;
 }
 
 export interface CategorySearchFacets {

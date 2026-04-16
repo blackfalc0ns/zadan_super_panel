@@ -4979,7 +4979,7 @@
             }
         },
         "HOME_SECTIONS": {
-            "DESCRIPTION": "Choose a level-3 subcategory and a theme that the customer app can render directly.",
+            "DESCRIPTION": "Choose a level-3 subcategory, select one of the approved section themes, and optionally schedule when the section appears.",
             "API_HINT": "Backed by",
             "ACTIONS": {
                 "CREATE": "Create section"
@@ -4992,12 +4992,23 @@
                 "SUBCATEGORY": "Subcategory",
                 "THEME": "Theme",
                 "PRODUCTS_TAKE": "Products to show",
+                "ALWAYS_VISIBLE": "Always visible",
                 "IS_ACTIVE": "Section is active"
             },
             "PLACEHOLDERS": {
                 "SUBCATEGORY": "Select a level-3 category",
-                "THEME": "theme1",
+                "THEME": "Select theme",
                 "PRODUCTS_TAKE": "8"
+            },
+            "THEMES": {
+                "soft-blue": "Theme 1",
+                "fresh-orange": "Theme 2",
+                "bold-dark": "Theme 3"
+            },
+            "HELPERS": {
+                "PRODUCTS_TAKE": "This controls how many products the home feed will render in this section.",
+                "SCHEDULE_ALWAYS": "This section will stay visible all the time until you disable it.",
+                "SCHEDULE_WINDOW": "You can set a start date, an end date, or leave one side open."
             },
             "TABLE": {
                 "SUBCATEGORY": "Subcategory",

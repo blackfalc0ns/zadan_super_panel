@@ -5,6 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Category } from '@catalog/models/catalog.domain.models';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import {
+  HomeSectionThemeOption,
   MarketingCategoryOption,
   MarketingHomeSection,
   MarketingHomeSectionPayload,
@@ -132,7 +133,7 @@ import { forkJoin } from 'rxjs';
 
             <ng-container *ngIf="column.key === 'theme'">
               <span class="rounded-xl bg-zadna-primary/10 px-3 py-1.5 text-xs font-black text-zadna-primary">
-                {{ section.theme }}
+                {{ getThemeLabel(section) }}
               </span>
             </ng-container>
 
@@ -229,7 +230,7 @@ import { forkJoin } from 'rxjs';
               <div class="grid grid-cols-2 gap-3 text-[11px] font-bold">
                 <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
                   <p class="mb-1 text-slate-400">{{ 'MARKETING.HOME_SECTIONS.TABLE.THEME' | translate }}</p>
-                  <p class="text-slate-800">{{ section.theme }}</p>
+                  <p class="text-slate-800">{{ getThemeLabel(section) }}</p>
                 </div>
                 <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
                   <p class="mb-1 text-slate-400">{{ 'MARKETING.HOME_SECTIONS.TABLE.TAKE' | translate }}</p>
@@ -271,7 +272,7 @@ import { forkJoin } from 'rxjs';
       </app-data-table>
     </div>
 
-    <app-home-section-form-modal [isOpen]="isModalOpen" [isSaving]="saving" [section]="selectedSection" [categoryOptions]="categoryOptions" (close)="closeModal()" (save)="saveSection($event)"></app-home-section-form-modal>
+    <app-home-section-form-modal [isOpen]="isModalOpen" [isSaving]="saving" [section]="selectedSection" [categoryOptions]="categoryOptions" [themeOptions]="themeOptions" (close)="closeModal()" (save)="saveSection($event)"></app-home-section-form-modal>
 
     <app-delete-confirmation-modal
       [isOpen]="deleteTarget !== null"
@@ -286,6 +287,7 @@ import { forkJoin } from 'rxjs';
 export class MarketingHomeSectionsComponent implements OnInit {
   sections: MarketingHomeSection[] = [];
   categoryOptions: MarketingCategoryOption[] = [];
+  themeOptions: HomeSectionThemeOption[] = [];
   loading = false;
   saving = false;
   deleting = false;
@@ -335,12 +337,14 @@ export class MarketingHomeSectionsComponent implements OnInit {
 
     forkJoin({
       sections: this.marketingApi.getHomeSections(),
-      categories: this.catalogService.getCategories(undefined, true)
+      categories: this.catalogService.getCategories(undefined, true),
+      themes: this.marketingApi.getHomeSectionThemes()
     }).subscribe({
-      next: ({ sections, categories }) => {
+      next: ({ sections, categories, themes }) => {
         this.sections = [...sections].sort(
           (left, right) => left.displayOrder - right.displayOrder || right.updatedAtUtc.localeCompare(left.updatedAtUtc)
         );
+        this.themeOptions = themes;
         this.categoryOptions = flattenLevelThreeCategories(categories)
           .map((category) => ({
             id: category.id,
@@ -452,6 +456,10 @@ export class MarketingHomeSectionsComponent implements OnInit {
 
   formatDateRangeLabel(section: MarketingHomeSection): string {
     return formatDateRange(section.startsAtUtc, section.endsAtUtc);
+  }
+
+  getThemeLabel(section: MarketingHomeSection): string {
+    return this.translateService.currentLang === 'ar' ? section.themeLabelAr : section.themeLabelEn;
   }
 
   formatDateTimeLabel(value: string): string {

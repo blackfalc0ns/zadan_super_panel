@@ -1,4 +1,5 @@
 export type FeaturedPlacementType = 'VendorProduct' | 'MasterProduct';
+export type HomeSectionTheme = 'soft-blue' | 'fresh-orange' | 'bold-dark';
 
 export type HomeContentSectionType =
   | 'Banners'
@@ -84,7 +85,9 @@ export interface MarketingHomeSection {
   categoryId: string;
   categoryNameAr: string;
   categoryNameEn: string;
-  theme: string;
+  theme: HomeSectionTheme;
+  themeLabelAr: string;
+  themeLabelEn: string;
   displayOrder: number;
   productsTake: number;
   isActive: boolean;
@@ -96,7 +99,7 @@ export interface MarketingHomeSection {
 
 export interface MarketingHomeSectionPayload {
   categoryId: string;
-  theme: string;
+  theme: HomeSectionTheme;
   displayOrder: number;
   productsTake: number;
   startsAtUtc?: string | null;
@@ -105,6 +108,12 @@ export interface MarketingHomeSectionPayload {
 
 export interface MarketingHomeSectionUpdatePayload extends MarketingHomeSectionPayload {
   isActive: boolean;
+}
+
+export interface HomeSectionThemeOption {
+  key: HomeSectionTheme;
+  labelAr: string;
+  labelEn: string;
 }
 
 export interface HomeContentSectionSetting {

@@ -3,9 +3,16 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
+  AdminBrandBulkOperation,
+  AdminBrandBulkOperationItem,
+  AdminMasterProductBulkOperation,
+  AdminMasterProductBulkOperationItem,
   BrandSearchFacets,
   BrandSearchFilters,
   Brand,
+  BulkBrandDraft,
+  BulkMasterProductDraft,
+  CatalogUnit,
   CatalogSearchRequest,
   CatalogSearchResponse,
   Category,
@@ -19,13 +26,6 @@ import {
   ProductRequestStatus
 } from '@catalog/models/catalog.domain.models';
 import { AuthService } from '@core/services/auth.service';
-
-interface CatalogUnit {
-  id: string;
-  nameAr: string;
-  nameEn: string;
-  isActive?: boolean;
-}
 
 export interface ProductVendorSnapshotDto {
   vendorId: string;
@@ -223,6 +223,40 @@ export class CatalogService {
     return this.http.post<string>(`${this.apiUrl}/products`, payload, { headers: this.getHeaders() });
   }
 
+  createProductsBulk(items: BulkMasterProductDraft[]): Observable<AdminMasterProductBulkOperation> {
+    const payload = {
+      idempotencyKey: this.generateIdempotencyKey('admin-master-bulk'),
+      items: items.map((item) => ({
+        nameAr: item.nameAr,
+        nameEn: item.nameEn,
+        slug: item.slug || null,
+        barcode: item.barcode || null,
+        categoryId: item.categoryId,
+        brandId: item.brandId || null,
+        unitId: item.unitId || null,
+        status: item.status,
+        descriptionAr: item.descriptionAr || null,
+        descriptionEn: item.descriptionEn || null,
+        images: (item.images || []).map((image) => ({
+          url: image.url,
+          altText: image.altText || null,
+          displayOrder: image.displayOrder,
+          isPrimary: image.isPrimary
+        }))
+      }))
+    };
+
+    return this.http.post<AdminMasterProductBulkOperation>(`${this.apiUrl}/products/bulk`, payload, { headers: this.getHeaders() });
+  }
+
+  getProductsBulkOperation(operationId: string): Observable<AdminMasterProductBulkOperation> {
+    return this.http.get<AdminMasterProductBulkOperation>(`${this.apiUrl}/products/bulk/${operationId}`, { headers: this.getHeaders() });
+  }
+
+  getProductsBulkOperationItems(operationId: string): Observable<AdminMasterProductBulkOperationItem[]> {
+    return this.http.get<AdminMasterProductBulkOperationItem[]>(`${this.apiUrl}/products/bulk/${operationId}/items`, { headers: this.getHeaders() });
+  }
+
   getProductById(id: string): Observable<CatalogProductRecord> {
     const fallback = this.findFallbackProductById(id) ?? this.cloneProduct(this.fallbackProducts[0]);
 
@@ -305,6 +339,29 @@ export class CatalogService {
 
   createBrand(payload: CatalogBrandPayload): Observable<Brand> {
     return this.http.post<Brand>(`${this.apiUrl}/brands`, payload, { headers: this.getHeaders() });
+  }
+
+  createBrandsBulk(items: BulkBrandDraft[]): Observable<AdminBrandBulkOperation> {
+    const payload = {
+      idempotencyKey: this.generateIdempotencyKey('admin-brand-bulk'),
+      items: items.map((item) => ({
+        nameAr: item.nameAr,
+        nameEn: item.nameEn,
+        logoUrl: item.logoUrl || null,
+        categoryId: item.categoryId,
+        isActive: item.isActive
+      }))
+    };
+
+    return this.http.post<AdminBrandBulkOperation>(`${this.apiUrl}/brands/bulk`, payload, { headers: this.getHeaders() });
+  }
+
+  getBrandsBulkOperation(operationId: string): Observable<AdminBrandBulkOperation> {
+    return this.http.get<AdminBrandBulkOperation>(`${this.apiUrl}/brands/bulk/${operationId}`, { headers: this.getHeaders() });
+  }
+
+  getBrandsBulkOperationItems(operationId: string): Observable<AdminBrandBulkOperationItem[]> {
+    return this.http.get<AdminBrandBulkOperationItem[]>(`${this.apiUrl}/brands/bulk/${operationId}/items`, { headers: this.getHeaders() });
   }
 
   updateBrand(id: string, payload: CatalogBrandPayload): Observable<void> {
@@ -490,6 +547,10 @@ export class CatalogService {
       categoryPathAr: item.categoryNameAr || item.parentCategoryNameAr || undefined,
       categoryPathEn: item.categoryNameEn || item.parentCategoryNameEn || undefined
     };
+  }
+
+  private generateIdempotencyKey(prefix: string): string {
+    return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   }
 
   uploadFile(file: File, directory: string = 'catalog'): Observable<{ url: string }> {

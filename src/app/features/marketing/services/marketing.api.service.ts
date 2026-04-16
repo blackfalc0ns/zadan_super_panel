@@ -9,6 +9,7 @@ import {
   FeaturedPlacementUpdatePayload,
   HomeContentSectionSetting,
   HomeContentSectionSettingPayload,
+  HomeSectionThemeOption,
   HomeContentSectionType,
   MarketingBanner,
   MarketingBannerPayload,
@@ -122,6 +123,10 @@ export class MarketingApiService {
 
   deleteHomeSection(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/home-sections/${id}`, { headers: this.getHeaders() });
+  }
+
+  getHomeSectionThemes(): Observable<HomeSectionThemeOption[]> {
+    return this.http.get<HomeSectionThemeOption[]>(`${this.apiUrl}/home-sections/themes`, { headers: this.getHeaders() });
   }
 
   getHomeContentSectionSettings(): Observable<HomeContentSectionSetting[]> {

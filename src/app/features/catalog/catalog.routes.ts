@@ -22,12 +22,20 @@ export const CATALOG_ROUTES: Routes = [
     loadComponent: () => import('./pages/product-detail/product-detail.component').then(m => m.ProductDetailComponent)
   },
   {
+    path: 'products/bulk-create',
+    loadComponent: () => import('./pages/bulk-master-products-page/bulk-master-products-page.component').then(m => m.BulkMasterProductsPageComponent)
+  },
+  {
     path: 'products',
     loadComponent: () => import('./pages/master-products/master-products.component').then(m => m.MasterProductsComponent)
   },
   {
     path: 'brands/view/:id',
     loadComponent: () => import('./pages/brand-detail/brand-detail.component').then(m => m.BrandDetailComponent)
+  },
+  {
+    path: 'brands/bulk-create',
+    loadComponent: () => import('./pages/bulk-brands-page/bulk-brands-page.component').then(m => m.BulkBrandsPageComponent)
   },
   {
     path: 'brands',

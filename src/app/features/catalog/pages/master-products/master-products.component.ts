@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
-import { Brand, Category, CatalogSearchRequest, MasterProduct, ProductSearchFilters } from '@catalog/models/catalog.domain.models';
+import { Brand, CatalogSearchRequest, Category, MasterProduct, ProductSearchFilters } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
