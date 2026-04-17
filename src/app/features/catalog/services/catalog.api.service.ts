@@ -453,10 +453,18 @@ export class CatalogService {
     });
   }
 
-  reviewCategoryRequest(id: string, status: 'Approved' | 'Rejected', notes?: string): Observable<void> {
+  reviewCategoryRequest(
+    id: string,
+    status: 'Approved' | 'Rejected',
+    notes?: string,
+    approvedTargetLevel?: string | null,
+    approvedParentCategoryId?: string | null
+  ): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/category-requests/${id}/review`, {
       isApproved: status === 'Approved',
-      rejectionReason: notes ?? null
+      rejectionReason: notes ?? null,
+      approvedTargetLevel: approvedTargetLevel ?? null,
+      approvedParentCategoryId: approvedParentCategoryId ?? null
     }, {
       headers: this.getHeaders()
     });
@@ -534,6 +542,12 @@ export class CatalogService {
       imageUrl: item.imageUrl || undefined,
       parentCategoryNameAr: item.parentCategoryNameAr || undefined,
       parentCategoryNameEn: item.parentCategoryNameEn || undefined,
+      requestKind: item.requestKind || undefined,
+      requestedLevelKey: item.requestedLevelKey || undefined,
+      requestedPathAr: item.requestedPathAr || undefined,
+      requestedPathEn: item.requestedPathEn || undefined,
+      approvedPathAr: item.approvedPathAr || undefined,
+      approvedPathEn: item.approvedPathEn || undefined,
       displayOrder: item.displayOrder ?? null,
       unitNameAr: item.unitNameAr || undefined,
       unitNameEn: item.unitNameEn || undefined,
@@ -544,8 +558,8 @@ export class CatalogService {
       vendorId: item.vendorId,
       vendorName: item.vendorName,
       createdAtUtc: item.createdAtUtc,
-      categoryPathAr: item.categoryNameAr || item.parentCategoryNameAr || undefined,
-      categoryPathEn: item.categoryNameEn || item.parentCategoryNameEn || undefined
+      categoryPathAr: item.requestedPathAr || item.approvedPathAr || item.categoryNameAr || item.parentCategoryNameAr || undefined,
+      categoryPathEn: item.requestedPathEn || item.approvedPathEn || item.categoryNameEn || item.parentCategoryNameEn || undefined
     };
   }
 

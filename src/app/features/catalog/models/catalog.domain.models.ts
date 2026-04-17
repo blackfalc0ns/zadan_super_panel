@@ -256,6 +256,7 @@ export interface BrandSearchFacets {
 
 export type CatalogRequestType = 'product' | 'brand' | 'category';
 export type ProductRequestStatus = 'Pending' | 'Approved' | 'Rejected';
+export type CategoryRequestKind = 'category' | 'sub_category';
 
 export interface ProductRequest {
     id: string;
@@ -271,6 +272,12 @@ export interface ProductRequest {
     imageUrl?: string;
     parentCategoryNameAr?: string;
     parentCategoryNameEn?: string;
+    requestKind?: CategoryRequestKind;
+    requestedLevelKey?: string;
+    requestedPathAr?: string;
+    requestedPathEn?: string;
+    approvedPathAr?: string;
+    approvedPathEn?: string;
     displayOrder?: number | null;
     unitNameAr?: string;
     unitNameEn?: string;
