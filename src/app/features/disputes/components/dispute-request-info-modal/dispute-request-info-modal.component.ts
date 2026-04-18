@@ -3,12 +3,13 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { DisputeRow, DisputeStatus, RequestInfoForm, RequestInfoTarget, RequestInfoType } from '../../models/disputes.models';
 
 @Component({
   selector: 'app-dispute-request-info-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent, SearchableSelectComponent],
   templateUrl: './dispute-request-info-modal.component.html',
   styleUrl: './dispute-request-info-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -28,6 +29,18 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
     { value: 'statement', labelKey: 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_STATEMENT' },
     { value: 'proof', labelKey: 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_PROOF' }
   ];
+
+  get requestInfoTargetOptions(): SearchableSelectOption<RequestInfoTarget>[] {
+    if (!this.dispute) {
+      return [];
+    }
+
+    return [
+      { value: 'customer', label: this.getRequestInfoTargetLabel('customer', this.dispute) },
+      { value: 'merchant', label: this.getRequestInfoTargetLabel('merchant', this.dispute) },
+      { value: 'internal', label: this.getRequestInfoTargetLabel('internal', this.dispute) }
+    ];
+  }
 
   form: RequestInfoForm = this.createEmptyForm();
 

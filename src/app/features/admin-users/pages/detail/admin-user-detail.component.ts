@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
+import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import {
   ADMIN_ROLE_PRESETS,
@@ -35,7 +36,7 @@ type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn']
 @Component({
   selector: 'app-admin-user-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, AppPageHeaderComponent, StatusPillComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, AppPageHeaderComponent, SearchableSelectComponent, StatusPillComponent],
   templateUrl: './admin-user-detail.component.html',
   styleUrl: './admin-user-detail.component.scss'
 })
@@ -443,5 +444,25 @@ export class AdminUserDetailComponent implements OnInit {
       .split(',')
       .map((entry) => entry.trim().toLowerCase())
       .filter(Boolean);
+  }
+
+  get mappedVendorOptions(): any[] {
+    return [
+        {value: null, labelKey: 'ADMIN_USERS.FILTERS.ALL'},
+        ...this.vendorOptions.map((v: any) => ({value: v.id, label: v.name}))
+    ];
+  }
+  get mappedBranchOptions(): any[] {
+    return [
+        {value: null, labelKey: 'ADMIN_USERS.FILTERS.ALL'},
+        ...this.branchOptions.map((v: any) => ({value: v.id, label: v.name}))
+    ];
+  }
+
+  get rolePresetOptions(): Array<{ value: AdminRolePresetId; labelKey: string }> {
+    return this.rolePresets.map((preset) => ({
+      value: preset.id,
+      labelKey: preset.nameKey
+    }));
   }
 }

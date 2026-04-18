@@ -39,13 +39,7 @@
           </div>
           <div class="flex-1 min-w-[180px]">
             <label class="block text-xs font-bold text-slate-600 mb-2" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.STATUS' | translate }}</label>
-            <select [(ngModel)]="filters.status" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3">
-              <option value="all">{{ 'MODALS.PAYOUTS_REVIEW.ALL_STATUS' | translate }}</option>
-              <option value="success">{{ 'MODALS.PAYOUTS_REVIEW.SUCCESS' | translate }}</option>
-              <option value="pending">{{ 'MODALS.PAYOUTS_REVIEW.PENDING' | translate }}</option>
-              <option value="failed">{{ 'MODALS.PAYOUTS_REVIEW.FAILED' | translate }}</option>
-              <option value="reviewing">{{ 'MODALS.PAYOUTS_REVIEW.REVIEWING' | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="filters.status" [searchable]="false" [options]="statusOptions" [placeholder]="'MODALS.PAYOUTS_REVIEW.STATUS' | translate"></app-searchable-select>
           </div>
           <div class="flex-1 min-w-[180px]">
             <label class="block text-xs font-bold text-slate-600 mb-2" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.DATE' | translate }}</label>
@@ -53,12 +47,7 @@
           </div>
           <div class="flex-1 min-w-[180px]">
             <label class="block text-xs font-bold text-slate-600 mb-2" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.BANK' | translate }}</label>
-            <select [(ngModel)]="filters.bank" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3">
-              <option value="all">{{ 'MODALS.PAYOUTS_REVIEW.ALL_BANKS' | translate }}</option>
-              <option value="alrajhi">{{ 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALRAJHI' | translate }}</option>
-              <option value="alinma">{{ 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALINMA' | translate }}</option>
-              <option value="alahli">{{ 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALAHLI' | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="filters.bank" [searchable]="false" [options]="bankOptions" [placeholder]="'MODALS.PAYOUTS_REVIEW.BANK' | translate"></app-searchable-select>
           </div>
           <div class="w-full lg:w-auto">
             <button (click)="resetFilters()" class="w-full lg:px-6 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-colors border border-slate-200">

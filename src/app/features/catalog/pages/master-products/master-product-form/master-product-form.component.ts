@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../../shared/components/ui/form-controls/input/input.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { AppTextareaComponent } from '../../../../../shared/components/ui/form-controls/textarea/textarea.component';
 import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/badge.component';
 import { DetailHeaderComponent } from '../../../../../shared/components/ui/detail-header/detail-header.component';
@@ -24,6 +25,7 @@ import { Brand, Category } from '@catalog/models/catalog.domain.models';
     RouterModule,
     AppButtonComponent,
     AppInputComponent,
+    SearchableSelectComponent,
     AppTextareaComponent,
     AppBadgeComponent,
     DetailHeaderComponent,
@@ -356,6 +358,33 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     return this.productForm.get('status')?.value === 'Active'
       ? 'MASTER_PRODUCTS.STATUS_ACTIVE'
       : 'MASTER_PRODUCTS.STATUS_DRAFT';
+  }
+
+  get categoryOptions(): SearchableSelectOption<string>[] {
+    return this.availableCategories.map((cat) => ({
+      value: cat.id,
+      label: this.activeLang === 'ar' ? cat.displayNameAr : cat.displayNameEn
+    }));
+  }
+
+  get brandOptions(): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' },
+      ...this.availableBrands.map((brand) => ({
+        value: brand.id,
+        label: this.activeLang === 'ar' ? brand.nameAr : brand.nameEn
+      }))
+    ];
+  }
+
+  get unitOptions(): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'MASTER_PRODUCTS.STANDARD_UNIT' },
+      ...this.availableUnits.map((unit) => ({
+        value: unit.id,
+        label: this.activeLang === 'ar' ? unit.nameAr : unit.nameEn
+      }))
+    ];
   }
 
   onCancel(): void {

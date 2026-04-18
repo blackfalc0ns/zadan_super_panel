@@ -6,6 +6,7 @@ import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Brand, Category } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 
 @Component({
@@ -17,6 +18,7 @@ import { ModalShellComponent } from '../../../../shared/components/ui/modal-shel
     TranslateModule,
     AppButtonComponent,
     AppInputComponent,
+    SearchableSelectComponent,
     ModalShellComponent
   ],
   templateUrl: './brand-form-modal.component.html',
@@ -148,6 +150,16 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
 
   getLocalizedCategoryName(category: Category): string {
     return this.translate.currentLang === 'ar' ? category.nameAr : category.nameEn;
+  }
+
+  get leafCategoryOptions(): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'BRANDS.MODAL.SELECT_SUB_CATEGORY_PLACEHOLDER' },
+      ...this.leafCategories.map((category) => ({
+        value: category.id,
+        label: this.getLocalizedCategoryName(category)
+      }))
+    ];
   }
 
   private flattenLeafCategories(categories: Category[]): Category[] {

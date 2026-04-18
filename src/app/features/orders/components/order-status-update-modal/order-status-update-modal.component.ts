@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
+import { SearchableSelectComponent } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { OrderDetail, OrderStatus, OrderStatusUpdateForm } from '../../models/orders.models';
 import { getFulfillmentStatusKey, getPaymentStatusKey } from '../../data/orders.mock';
 
 @Component({
   selector: 'app-order-status-update-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent, SearchableSelectComponent],
   templateUrl: './order-status-update-modal.component.html',
   styleUrl: './order-status-update-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -104,6 +105,13 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
     }
 
     return this.statusOptions.filter((status) => allowed.has(status));
+  }
+
+  get availableStatusSelectOptions() {
+    return this.availableStatusOptions.map((status) => ({
+      value: status,
+      labelKey: 'ORDERS.STATUS.' + status
+    }));
   }
 
   get workflowGuardMessageKey(): string {

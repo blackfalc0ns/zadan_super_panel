@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 export interface OwnerData {
   fullName: string;
@@ -15,7 +16,7 @@ export interface OwnerData {
 @Component({
   selector: 'app-edit-owner-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-owner-modal.component.html',
   styles: [`
     .modal-backdrop {
@@ -50,19 +51,19 @@ export class EditOwnerModalComponent implements OnChanges {
   adminNotes = '';
 
   nationalityOptions = [
-    'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI',
-    'MODALS.OWNER_EDIT.NATIONALITIES.KUWAITI',
-    'MODALS.OWNER_EDIT.NATIONALITIES.EMIRATI',
-    'MODALS.OWNER_EDIT.NATIONALITIES.BAHRAINI',
-    'MODALS.OWNER_EDIT.NATIONALITIES.OMANI',
-    'MODALS.OWNER_EDIT.NATIONALITIES.QATARI'
+    { value: 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI' },
+    { value: 'MODALS.OWNER_EDIT.NATIONALITIES.KUWAITI', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.KUWAITI' },
+    { value: 'MODALS.OWNER_EDIT.NATIONALITIES.EMIRATI', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.EMIRATI' },
+    { value: 'MODALS.OWNER_EDIT.NATIONALITIES.BAHRAINI', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.BAHRAINI' },
+    { value: 'MODALS.OWNER_EDIT.NATIONALITIES.OMANI', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.OMANI' },
+    { value: 'MODALS.OWNER_EDIT.NATIONALITIES.QATARI', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.QATARI' }
   ];
-  phoneCodeOptions = ['+966', '+971', '+965', '+973', '+968', '+974'];
+  phoneCodeOptions = ['+966', '+971', '+965', '+973', '+968', '+974'].map((code) => ({ value: code, label: code }));
   reasonOptions = [
-    'MODALS.OWNER_EDIT.REASONS.ROUTINE_UPDATE',
-    'MODALS.OWNER_EDIT.REASONS.CLIENT_REQUEST',
-    'MODALS.OWNER_EDIT.REASONS.TYPO_FIX',
-    'MODALS.OWNER_EDIT.REASONS.CONTACT_UPDATE'
+    { value: 'MODALS.OWNER_EDIT.REASONS.ROUTINE_UPDATE', labelKey: 'MODALS.OWNER_EDIT.REASONS.ROUTINE_UPDATE' },
+    { value: 'MODALS.OWNER_EDIT.REASONS.CLIENT_REQUEST', labelKey: 'MODALS.OWNER_EDIT.REASONS.CLIENT_REQUEST' },
+    { value: 'MODALS.OWNER_EDIT.REASONS.TYPO_FIX', labelKey: 'MODALS.OWNER_EDIT.REASONS.TYPO_FIX' },
+    { value: 'MODALS.OWNER_EDIT.REASONS.CONTACT_UPDATE', labelKey: 'MODALS.OWNER_EDIT.REASONS.CONTACT_UPDATE' }
   ];
 
   constructor(private translate: TranslateService) {}

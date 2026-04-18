@@ -15,6 +15,7 @@ import {
   DashboardTrendSegment,
   DashboardTrendPoint
 } from '../../models/dashboard.models';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +24,8 @@ import {
     CommonModule,
     FormsModule,
     RouterModule,
-    TranslateModule
+    TranslateModule,
+    SearchableSelectComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -45,6 +47,27 @@ export class DashboardComponent implements OnInit {
   };
 
   dashboard: DashboardSnapshot | null = null;
+
+  get dateRangeFilterOptions(): SearchableSelectOption[] {
+    return (this.dashboard?.filterOptions.dateRanges ?? []).map((option) => ({
+      value: option.value,
+      label: option.label
+    }));
+  }
+
+  get regionFilterOptions(): SearchableSelectOption[] {
+    return (this.dashboard?.filterOptions.regions ?? []).map((option) => ({
+      value: option.value,
+      label: option.count ? `${option.label} (${option.count})` : option.label
+    }));
+  }
+
+  get vendorFilterOptions(): SearchableSelectOption[] {
+    return (this.dashboard?.filterOptions.vendors ?? []).map((option) => ({
+      value: option.value,
+      label: option.label
+    }));
+  }
 
   constructor(
     private readonly authService: AuthService,

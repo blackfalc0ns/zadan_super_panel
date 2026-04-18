@@ -30,7 +30,7 @@ export interface SearchableSelectOption<T = any> {
       <div class="relative" #dropdownContainer>
         <button
           type="button"
-          [disabled]="disabled"
+          [disabled]="disabled || isDisabled"
           (click)="toggle()"
           class="flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 text-[0.85rem] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
           [class.border-rose-500]="isTouched && error"
@@ -43,23 +43,25 @@ export interface SearchableSelectOption<T = any> {
           </svg>
         </button>
 
-        @if (isOpen && !disabled) {
+        @if (isOpen && !(disabled || isDisabled)) {
           <div class="absolute inset-x-0 top-full z-50 mt-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl origin-top animate-in fade-in zoom-in-95 duration-200">
-            <div class="relative">
-              <svg class="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-              <input
-                type="text"
-                [(ngModel)]="searchTerm"
-                class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[0.8rem] font-bold text-slate-900 outline-none transition-colors focus:border-zadna-primary rtl:pl-4 rtl:pr-10"
-                [placeholder]="searchPlaceholder | translate"
-                (click)="$event.stopPropagation()"
-                #searchInput
-              >
-            </div>
+            @if (searchable) {
+              <div class="relative">
+                <svg class="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input
+                  type="text"
+                  [(ngModel)]="searchTerm"
+                  class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[0.8rem] font-bold text-slate-900 outline-none transition-colors focus:border-zadna-primary rtl:pl-4 rtl:pr-10"
+                  [placeholder]="searchPlaceholder | translate"
+                  (click)="$event.stopPropagation()"
+                  #searchInput
+                >
+              </div>
+            }
 
-            <div class="mt-3 max-h-60 overflow-y-auto rounded-xl border border-slate-100 no-scrollbar">
+            <div class="max-h-60 overflow-y-auto rounded-xl border border-slate-100 no-scrollbar" [class.mt-3]="searchable">
               @if (allowClear && hasValue) {
                 <button
                   type="button"
@@ -120,6 +122,8 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   @Input() isRequired = false;
   @Input() customClass = '';
   @Input() allowClear = true;
+  @Input() searchable = true;
+  @Input() isDisabled = false;
 
   @Output() selectionChange = new EventEmitter<any>();
 
@@ -158,7 +162,7 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   }
 
   toggle(): void {
-    if (this.disabled) return;
+    if (this.disabled || this.isDisabled) return;
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       this.searchTerm = '';

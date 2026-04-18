@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaymentDetail, PaymentDetailModalComponent } from '../payment-detail-modal/payment-detail-modal.component';
+import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 type PayoutBankCode = 'alrajhi' | 'alahli' | 'alinma' | 'wallet' | 'bank';
 
@@ -24,7 +25,7 @@ export interface PayoutTransaction {
 @Component({
   selector: 'app-payouts-review-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, PaymentDetailModalComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, PaymentDetailModalComponent, SearchableSelectComponent],
   templateUrl: './payouts-review-modal.component.html',
   styleUrls: ['./payouts-review-modal.component.scss']
 })
@@ -56,6 +57,21 @@ export class PayoutsReviewModalComponent implements OnChanges {
   };
 
   internalNotes = '';
+
+  readonly statusOptions = [
+    { value: 'all', labelKey: 'MODALS.PAYOUTS_REVIEW.ALL_STATUS' },
+    { value: 'success', labelKey: 'MODALS.PAYOUTS_REVIEW.SUCCESS' },
+    { value: 'pending', labelKey: 'MODALS.PAYOUTS_REVIEW.PENDING' },
+    { value: 'failed', labelKey: 'MODALS.PAYOUTS_REVIEW.FAILED' },
+    { value: 'reviewing', labelKey: 'MODALS.PAYOUTS_REVIEW.REVIEWING' }
+  ];
+
+  readonly bankOptions = [
+    { value: 'all', labelKey: 'MODALS.PAYOUTS_REVIEW.ALL_BANKS' },
+    { value: 'alrajhi', labelKey: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALRAJHI' },
+    { value: 'alinma', labelKey: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALINMA' },
+    { value: 'alahli', labelKey: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALAHLI' }
+  ];
 
   constructor(private translate: TranslateService) {}
 

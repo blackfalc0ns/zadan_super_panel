@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
+import { SearchableSelectComponent } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { OrderDetail, OrderIssueFlagForm } from '../../models/orders.models';
 
 type IssueOption = { value: OrderIssueFlagForm['issueType'] };
@@ -10,7 +11,7 @@ type IssueOption = { value: OrderIssueFlagForm['issueType'] };
 @Component({
   selector: 'app-order-issue-flag-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent, SearchableSelectComponent],
   templateUrl: './order-issue-flag-modal.component.html',
   styleUrl: './order-issue-flag-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -51,6 +52,13 @@ export class OrderIssueFlagModalComponent implements OnChanges {
 
   get isSlaWarning(): boolean {
     return (this.order?.slaScore ?? 100) < 99;
+  }
+
+  get teamSelectOptions() {
+    return this.teamOptions.map((team) => ({
+      value: team,
+      labelKey: 'ORDERS.DETAIL.ISSUE_MODAL.TEAMS.' + team.toUpperCase()
+    }));
   }
 
   onBackdropClick(event: MouseEvent): void {

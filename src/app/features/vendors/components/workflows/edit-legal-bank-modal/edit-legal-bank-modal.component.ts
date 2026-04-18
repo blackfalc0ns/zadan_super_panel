@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 export interface LegalBankData {
   commercialRegister: string;
@@ -15,7 +16,7 @@ export interface LegalBankData {
 @Component({
   selector: 'app-edit-legal-bank-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-legal-bank-modal.component.html'
 })
 export class EditLegalBankModalComponent implements OnChanges {
@@ -42,16 +43,16 @@ export class EditLegalBankModalComponent implements OnChanges {
   };
 
   bankOptions = [
-    { value: 'alrajhi', label: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALRAJHI' },
-    { value: 'alahli', label: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALAHLI' },
-    { value: 'inma', label: 'MODALS.LEGAL_BANK_EDIT.BANKS.INMA' },
-    { value: 'alinma', label: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALINMA' }
+    { value: 'alrajhi', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALRAJHI' },
+    { value: 'alahli', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALAHLI' },
+    { value: 'inma', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.INMA' },
+    { value: 'alinma', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALINMA' }
   ];
 
   paymentCycleOptions = [
-    { value: 'weekly' },
-    { value: 'biweekly' },
-    { value: 'monthly' }
+    { value: 'weekly', labelKey: 'MODALS.LEGAL_BANK_EDIT.WEEKLY' },
+    { value: 'biweekly', labelKey: 'MODALS.LEGAL_BANK_EDIT.BIWEEKLY' },
+    { value: 'monthly', labelKey: 'MODALS.LEGAL_BANK_EDIT.MONTHLY' }
   ];
 
   constructor(private translate: TranslateService) {}

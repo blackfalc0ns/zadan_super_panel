@@ -23,25 +23,17 @@
             <div class="flex flex-wrap items-center gap-3 xl:border-s xl:border-slate-200 xl:ps-4">
               <label class="dashboard-inline-filter">
                 <span>{{ 'DASHBOARD.FILTERS.DATE_RANGE' | translate }}</span>
-                <select [(ngModel)]="filterState.dateRange" (ngModelChange)="onFilterChange()">
-                  <option *ngFor="let option of vm.filterOptions.dateRanges; trackBy: trackByValue" [ngValue]="option.value">{{ option.label }}</option>
-                </select>
+                <app-searchable-select [(ngModel)]="filterState.dateRange" [searchable]="false" (ngModelChange)="onFilterChange()" [options]="dateRangeFilterOptions" [placeholder]="'COMMON.SELECT' | translate"></app-searchable-select>
               </label>
 
               <label class="dashboard-inline-filter">
                 <span>{{ 'DASHBOARD.FILTERS.REGION' | translate }}</span>
-                <select [(ngModel)]="filterState.region" (ngModelChange)="onFilterChange()">
-                  <option *ngFor="let option of vm.filterOptions.regions; trackBy: trackByValue" [ngValue]="option.value">
-                    {{ option.label }} <ng-container *ngIf="option.count">({{ option.count }})</ng-container>
-                  </option>
-                </select>
+                <app-searchable-select [(ngModel)]="filterState.region" [searchable]="false" (ngModelChange)="onFilterChange()" [options]="regionFilterOptions" [placeholder]="'COMMON.SELECT' | translate"></app-searchable-select>
               </label>
 
               <label class="dashboard-inline-filter">
                 <span>{{ 'DASHBOARD.FILTERS.VENDOR' | translate }}</span>
-                <select [(ngModel)]="filterState.vendorId" (ngModelChange)="onFilterChange()">
-                  <option *ngFor="let option of vm.filterOptions.vendors; trackBy: trackByValue" [ngValue]="option.value">{{ option.label }}</option>
-                </select>
+                <app-searchable-select [(ngModel)]="filterState.vendorId" [searchable]="false" (ngModelChange)="onFilterChange()" [options]="vendorFilterOptions" [placeholder]="'COMMON.SELECT' | translate"></app-searchable-select>
               </label>
             </div>
           </div>

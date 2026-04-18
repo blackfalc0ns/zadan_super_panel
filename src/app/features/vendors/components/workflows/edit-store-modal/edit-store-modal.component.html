@@ -62,15 +62,12 @@
           <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
             {{ 'MODALS.STORE_EDIT.ACTIVITY_TYPE' | translate }}
           </label>
-          <div class="relative group">
-            <select [(ngModel)]="draftStoreData.activityType"
-                    name="activityType"
-                    class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
-              <option value="">{{ 'MODALS.STORE_EDIT.SELECT_ACTIVITY' | translate }}</option>
-              <option *ngFor="let activity of activityTypeOptions" [value]="activity.value">{{ activity.label | translate }}</option>
-            </select>
-            <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
-          </div>
+          <app-searchable-select
+            [(ngModel)]="draftStoreData.activityType"
+            name="activityType"
+            [options]="activityTypeOptions"
+            [placeholder]="'MODALS.STORE_EDIT.SELECT_ACTIVITY' | translate">
+          </app-searchable-select>
         </div>
 
         <!-- Region -->

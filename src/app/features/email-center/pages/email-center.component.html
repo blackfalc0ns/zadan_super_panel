@@ -154,17 +154,12 @@
           <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.ENABLED' | translate }}</span>
-              <select [(ngModel)]="selectedRule.enabled">
-                <option [ngValue]="true">{{ 'EMAIL_CENTER.WORKFLOWS.ENABLED' | translate }}</option>
-                <option [ngValue]="false">{{ 'EMAIL_CENTER.WORKFLOWS.DISABLED' | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="selectedRule.enabled" [searchable]="false" [options]="enabledOptions" [placeholder]="'EMAIL_CENTER.WORKFLOWS.ENABLED' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.SENDER_PROFILE' | translate }}</span>
-              <select [(ngModel)]="selectedRule.senderProfileId">
-                <option *ngFor="let profile of senderProfiles" [value]="profile.id">{{ profile.name }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="selectedRule.senderProfileId" [searchable]="false" [options]="senderProfileOptions" [placeholder]="'EMAIL_CENTER.SENDER_PROFILE' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
@@ -194,25 +189,17 @@
 
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH_SCOPE' | translate }}</span>
-              <select [(ngModel)]="selectedRule.branchScopeMode" (ngModelChange)="onBranchScopeModeChange($event)">
-                <option *ngFor="let option of branchScopeOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="selectedRule.branchScopeMode" [searchable]="false" (ngModelChange)="onBranchScopeModeChange($event)" [options]="branchScopeOptions" [placeholder]="'EMAIL_CENTER.BRANCH_SCOPE' | translate"></app-searchable-select>
             </label>
 
             <label *ngIf="selectedRule.audienceType === 'vendor_network'" class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.VENDOR' | translate }}</span>
-              <select [(ngModel)]="selectedRule.entityScope.vendorId" (ngModelChange)="onVendorChange($event)">
-                <option [ngValue]="null">{{ 'EMAIL_CENTER.FILTERS.ALL_VENDORS' | translate }}</option>
-                <option *ngFor="let vendor of vendorOptions" [value]="vendor.id">{{ vendor.name }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="selectedRule.entityScope.vendorId" (ngModelChange)="onVendorChange($event)" [options]="mappedVendorOptions" [placeholder]="'EMAIL_CENTER.FILTERS.ALL_VENDORS' | translate"></app-searchable-select>
             </label>
 
             <label *ngIf="selectedRule.audienceType === 'vendor_network' && selectedRule.branchScopeMode === 'specific_branch'" class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH' | translate }}</span>
-              <select [(ngModel)]="selectedRule.entityScope.branchId">
-                <option [ngValue]="null">{{ 'EMAIL_CENTER.FILTERS.ALL_BRANCHES' | translate }}</option>
-                <option *ngFor="let branch of branchOptions" [value]="branch.id">{{ branch.name }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="selectedRule.entityScope.branchId" [options]="mappedBranchOptions" [placeholder]="'EMAIL_CENTER.FILTERS.ALL_BRANCHES' | translate"></app-searchable-select>
             </label>
           </div>
 

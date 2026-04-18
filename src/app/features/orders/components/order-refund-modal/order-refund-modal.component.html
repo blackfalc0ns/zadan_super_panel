@@ -83,9 +83,11 @@
 
             <div>
               <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.MAIN_REASON' | translate }}</label>
-              <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.reason">
-                <option *ngFor="let reason of reasonOptions" [value]="reason">{{ ('ORDERS.DETAIL.REFUND_MODAL.REASONS.' + reason.toUpperCase()) | translate }}</option>
-              </select>
+              <app-searchable-select
+                [(ngModel)]="form.reason"
+                [options]="reasonSelectOptions"
+                [placeholder]="'ORDERS.DETAIL.REFUND_MODAL.MAIN_REASON' | translate">
+              </app-searchable-select>
             </div>
           </div>
         </section>
@@ -99,9 +101,11 @@
           <div class="space-y-3">
             <div>
               <label class="mb-1.5 block text-xs font-medium text-slate-500">{{ 'ORDERS.DETAIL.REFUND_MODAL.REFUND_METHOD' | translate }}</label>
-              <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.refundMethod">
-                <option *ngFor="let method of refundMethodOptions" [value]="method">{{ ('ORDERS.DETAIL.REFUND_MODAL.METHODS.' + method.toUpperCase()) | translate }}</option>
-              </select>
+              <app-searchable-select
+                [(ngModel)]="form.refundMethod"
+                [options]="refundMethodSelectOptions"
+                [placeholder]="'ORDERS.DETAIL.REFUND_MODAL.REFUND_METHOD' | translate">
+              </app-searchable-select>
             </div>
 
             <div>

@@ -54,14 +54,12 @@
               <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.NATIONALITY' | translate }}
               </label>
-              <div class="relative group">
-                <select [(ngModel)]="draftOwnerData.nationality"
-                        name="nationality"
-                        class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
-                  <option *ngFor="let nat of nationalityOptions" [value]="nat">{{ nat | translate }}</option>
-                </select>
-                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
-              </div>
+              <app-searchable-select
+                [(ngModel)]="draftOwnerData.nationality"
+                name="nationality"
+                [options]="nationalityOptions"
+                [placeholder]="'MODALS.OWNER_EDIT.NATIONALITY' | translate">
+              </app-searchable-select>
             </div>
 
             <!-- Phone -->
@@ -70,15 +68,13 @@
                 {{ 'MODALS.OWNER_EDIT.PHONE_NUMBER' | translate }}
               </label>
               <div class="flex gap-3">
-                <div class="relative w-32 group">
-                  <select [(ngModel)]="draftOwnerData.phoneCode"
-                          name="phoneCode"
-                          class="w-full h-14 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-4 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-black text-sm"
-                          dir="ltr">
-                    <option *ngFor="let code of phoneCodeOptions" [value]="code">{{ code }}</option>
-                  </select>
-                  <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-[18px] text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-3' : 'right-3'">expand_more</span>
-                </div>
+                <app-searchable-select
+                  [(ngModel)]="draftOwnerData.phoneCode"
+                  name="phoneCode"
+                  customClass="w-32"
+                  [options]="phoneCodeOptions"
+                  [placeholder]="'MODALS.OWNER_EDIT.PHONE_NUMBER' | translate">
+                </app-searchable-select>
                 <div class="relative flex-1 group">
                   <input type="tel" 
                          [(ngModel)]="draftOwnerData.phone"
@@ -139,15 +135,12 @@
               <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
                 {{ 'MODALS.OWNER_EDIT.EDIT_REASON' | translate }}
               </label>
-              <div class="relative group">
-                <select [(ngModel)]="editReason"
-                        name="editReason"
-                        class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
-                  <option value="" disabled selected>{{ 'MODALS.OWNER_EDIT.SELECT_REASON' | translate }}</option>
-                  <option *ngFor="let reason of reasonOptions" [value]="reason">{{ reason | translate }}</option>
-                </select>
-                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
-              </div>
+              <app-searchable-select
+                [(ngModel)]="editReason"
+                name="editReason"
+                [options]="reasonOptions"
+                [placeholder]="'MODALS.OWNER_EDIT.SELECT_REASON' | translate">
+              </app-searchable-select>
             </div>
 
             <!-- Admin Notes -->

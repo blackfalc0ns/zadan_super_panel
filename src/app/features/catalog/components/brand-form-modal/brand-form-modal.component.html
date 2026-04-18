@@ -56,20 +56,13 @@
             {{ 'BRANDS.MODAL.SELECT_SUB_CATEGORY' | translate }}
             <span class="text-rose-500">*</span>
           </label>
-          <div class="relative">
-            <select
-              formControlName="categoryId"
-              class="w-full appearance-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/10"
-              [class.border-rose-300]="form.get('categoryId')?.invalid && form.get('categoryId')?.touched">
-              <option [ngValue]="null">{{ 'BRANDS.MODAL.SELECT_SUB_CATEGORY_PLACEHOLDER' | translate }}</option>
-              <option *ngFor="let category of leafCategories" [value]="category.id">
-                {{ getLocalizedCategoryName(category) }}
-              </option>
-            </select>
-            <svg class="pointer-events-none absolute inset-y-0 left-4 my-auto h-4 w-4 text-slate-400 rtl:left-auto rtl:right-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="m19 9-7 7-7-7" />
-            </svg>
-          </div>
+          <app-searchable-select
+            formControlName="categoryId"
+            [options]="leafCategoryOptions"
+            [placeholder]="'BRANDS.MODAL.SELECT_SUB_CATEGORY_PLACEHOLDER' | translate"
+            [isTouched]="form.get('categoryId')?.touched || false"
+            [error]="form.get('categoryId')?.invalid && form.get('categoryId')?.touched ? ('BRANDS.MODAL.SUB_CATEGORY_REQUIRED' | translate) : ''">
+          </app-searchable-select>
           <p *ngIf="form.get('categoryId')?.invalid && form.get('categoryId')?.touched" class="text-xs font-bold text-rose-500">
             {{ 'BRANDS.MODAL.SUB_CATEGORY_REQUIRED' | translate }}
           </p>

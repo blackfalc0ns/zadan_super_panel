@@ -7,6 +7,7 @@ import { DataTableComponent, TableColumn } from '@shared/components/ui/data-tabl
 import { KpiCardsComponent, KPICard } from '@shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '@shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
+import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import {
   AdminAccessLevel,
@@ -35,6 +36,7 @@ type FilterValue<T extends string> = 'all' | T;
     KpiCardsComponent,
     AppPaginationComponent,
     AppPageHeaderComponent,
+    SearchableSelectComponent,
     StatusPillComponent
   ],
   templateUrl: './admin-users-list.component.html',
@@ -452,5 +454,24 @@ export class AdminUsersListComponent implements OnInit {
       case 'customer':
         return 'customers';
     }
+  }
+
+  get mappedRoleFilterOptions(): any[] {
+    return [
+      {value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL'},
+      ...this.filteredRolePresets.map((x: any) => ({value: x.id, labelKey: x.nameKey}))
+    ];
+  }
+  get mappedVendorFilterOptions(): any[] {
+    return [
+      {value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL'},
+      ...this.vendorOptions.map((v: any) => ({value: v.id, label: v.name}))
+    ];
+  }
+  get mappedBranchFilterOptions(): any[] {
+    return [
+      {value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL'},
+      ...this.branchOptions.map((v: any) => ({value: v.id, label: v.name}))
+    ];
   }
 }

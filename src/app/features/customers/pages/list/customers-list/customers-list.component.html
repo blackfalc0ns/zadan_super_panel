@@ -37,33 +37,17 @@
         <div class="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[1.5rem] shadow-sm px-4 py-3 flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
           <div class="min-w-[10rem]">
             <label class="block text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 mb-2">{{ 'CUSTOMERS.FILTERS.CITY' | translate }}</label>
-            <select
-              [(ngModel)]="cityFilter"
-              (ngModelChange)="applyFilters()"
-              class="w-full h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5">
-              <option value="all">{{ 'CUSTOMERS.FILTERS.ALL' | translate }}</option>
-              <option *ngFor="let city of cityOptions" [value]="city">{{ city }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="cityFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="mappedCityOptions" [placeholder]="'CUSTOMERS.FILTERS.CITY' | translate"></app-searchable-select>
           </div>
 
           <div class="min-w-[10rem]">
             <label class="block text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 mb-2">{{ 'CUSTOMERS.FILTERS.STATUS' | translate }}</label>
-            <select
-              [(ngModel)]="statusFilter"
-              (ngModelChange)="applyFilters()"
-              class="w-full h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5">
-              <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="statusFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="statusOptions" [placeholder]="'CUSTOMERS.FILTERS.STATUS' | translate"></app-searchable-select>
           </div>
 
           <div class="min-w-[12rem]">
             <label class="block text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 mb-2">{{ 'CUSTOMERS.FILTERS.SPEND_RANGE' | translate }}</label>
-            <select
-              [(ngModel)]="spendRangeFilter"
-              (ngModelChange)="applyFilters()"
-              class="w-full h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5">
-              <option *ngFor="let option of spendingOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="spendRangeFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="spendingOptions" [placeholder]="'CUSTOMERS.FILTERS.SPEND' | translate"></app-searchable-select>
           </div>
 
           <div class="lg:ms-auto flex items-center gap-3">

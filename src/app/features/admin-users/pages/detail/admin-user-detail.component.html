@@ -120,9 +120,7 @@
 
             <label class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.PERSONA' | translate }}</span>
-              <select [(ngModel)]="currentUser.personaType" (ngModelChange)="onPersonaChange($event)">
-                <option *ngFor="let option of personaOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.personaType" [searchable]="false" (ngModelChange)="onPersonaChange($event)" [options]="personaOptions" [placeholder]="'ADMIN_USERS.FIELDS.PERSONA' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
@@ -161,18 +159,12 @@
 
             <label *ngIf="isVendorIdentity" class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.VENDOR' | translate }}</span>
-              <select [(ngModel)]="currentUser.assignment.vendorId" (ngModelChange)="onVendorChange($event)">
-                <option [ngValue]="null">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
-                <option *ngFor="let vendor of vendorOptions" [value]="vendor.id">{{ vendor.name }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.assignment.vendorId" (ngModelChange)="onVendorChange($event)" [options]="mappedVendorOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
             </label>
 
             <label *ngIf="isVendorIdentity" class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.BRANCH' | translate }}</span>
-              <select [(ngModel)]="currentUser.assignment.branchId" (ngModelChange)="onBranchChange($event)">
-                <option [ngValue]="null">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
-                <option *ngFor="let branch of branchOptions" [value]="branch.id">{{ branch.name }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.assignment.branchId" (ngModelChange)="onBranchChange($event)" [options]="mappedBranchOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
@@ -202,30 +194,22 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.ROLE_PRESET' | translate }}</span>
-              <select [(ngModel)]="currentUser.rolePresetId" (ngModelChange)="onPresetChange($event)">
-                <option *ngFor="let preset of rolePresets" [value]="preset.id">{{ preset.nameKey | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.rolePresetId" [searchable]="false" (ngModelChange)="onPresetChange($event)" [options]="rolePresetOptions" [placeholder]="'ADMIN_USERS.FIELDS.ROLE' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.ACCESS_LEVEL' | translate }}</span>
-              <select [(ngModel)]="currentUser.accessLevel">
-                <option *ngFor="let option of accessLevelOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.accessLevel" [searchable]="false" [options]="accessLevelOptions" [placeholder]="'ADMIN_USERS.FIELDS.ACCESS_LEVEL' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.STATUS' | translate }}</span>
-              <select [(ngModel)]="currentUser.status">
-                <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.status" [searchable]="false" [options]="statusOptions" [placeholder]="'ADMIN_USERS.FIELDS.STATUS' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.INVITE_STATE' | translate }}</span>
-              <select [(ngModel)]="currentUser.inviteState">
-                <option *ngFor="let option of inviteStateOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.inviteState" [searchable]="false" [options]="inviteStateOptions" [placeholder]="'ADMIN_USERS.FIELDS.INVITE_STATE' | translate"></app-searchable-select>
             </label>
           </div>
 
@@ -270,9 +254,7 @@
 
             <label class="field-card">
               <span>{{ 'ADMIN_USERS.FIELDS.PREFERRED_LOCALE' | translate }}</span>
-              <select [(ngModel)]="currentUser.communication.preferredLocale">
-                <option *ngFor="let option of localeOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-              </select>
+              <app-searchable-select [(ngModel)]="currentUser.communication.preferredLocale" [searchable]="false" [options]="localeOptions" [placeholder]="'ADMIN_USERS.FIELDS.LOCALE' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card md:col-span-2">

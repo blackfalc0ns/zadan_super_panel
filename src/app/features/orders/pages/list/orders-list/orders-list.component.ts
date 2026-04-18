@@ -7,6 +7,7 @@ import { AppPaginationComponent } from '../../../../../shared/components/ui/pagi
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { DataTableComponent, TableAction, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page-header/page-header.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { OrdersService } from '@orders/services/orders.api.service';
 import {
@@ -39,6 +40,7 @@ import {
     KpiCardsComponent,
     DataTableComponent,
     AppPageHeaderComponent,
+    SearchableSelectComponent,
     StatusPillComponent
   ],
   templateUrl: './orders-list.component.html',
@@ -116,6 +118,18 @@ export class OrdersListComponent implements OnInit {
   page = 1;
   pageSize = 8;
   totalItems = 0;
+
+  get orderStatusFilterOptions(): SearchableSelectOption[] {
+    return this.orderStatusOptions.map((option) => ({ value: option.value, labelKey: option.label }));
+  }
+
+  get paymentStatusFilterOptions(): SearchableSelectOption[] {
+    return this.paymentStatusOptions.map((option) => ({ value: option.value, labelKey: option.label }));
+  }
+
+  get fulfillmentStatusFilterOptions(): SearchableSelectOption[] {
+    return this.fulfillmentStatusOptions.map((option) => ({ value: option.value, labelKey: option.label }));
+  }
 
   constructor(
     private readonly router: Router,

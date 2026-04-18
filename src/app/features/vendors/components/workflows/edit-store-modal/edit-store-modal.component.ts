@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 export interface StoreData {
   businessNameAr: string;
@@ -19,7 +20,7 @@ export interface StoreData {
 @Component({
   selector: 'app-edit-store-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-store-modal.component.html'
 })
 export class EditStoreModalComponent implements OnChanges {
@@ -56,10 +57,10 @@ export class EditStoreModalComponent implements OnChanges {
   editReason = '';
 
   activityTypeOptions = [
-    { value: 'fashion', label: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.FASHION' },
-    { value: 'electronics', label: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.ELECTRONICS' },
-    { value: 'food', label: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.FOOD' },
-    { value: 'home', label: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.HOME' }
+    { value: 'fashion', labelKey: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.FASHION' },
+    { value: 'electronics', labelKey: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.ELECTRONICS' },
+    { value: 'food', labelKey: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.FOOD' },
+    { value: 'home', labelKey: 'MODALS.STORE_EDIT.ACTIVITY_OPTIONS.HOME' }
   ];
 
   constructor(private translate: TranslateService) {}

@@ -66,18 +66,20 @@
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div class="space-y-2">
                   <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_LABEL' | translate }}</label>
-                  <select class="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.target">
-                    <option value="customer">{{ getRequestInfoTargetLabel('customer', dispute) }}</option>
-                    <option value="merchant">{{ getRequestInfoTargetLabel('merchant', dispute) }}</option>
-                    <option value="internal">{{ getRequestInfoTargetLabel('internal', dispute) }}</option>
-                  </select>
+                  <app-searchable-select
+                    [(ngModel)]="form.target"
+                    [options]="requestInfoTargetOptions"
+                    [placeholder]="'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_LABEL' | translate">
+                  </app-searchable-select>
                 </div>
 
                 <div class="space-y-2">
                   <label class="pr-1 text-xs font-bold text-slate-500">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_LABEL' | translate }}</label>
-                  <select class="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.infoType">
-                    <option *ngFor="let option of requestInfoTypeOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-                  </select>
+                  <app-searchable-select
+                    [(ngModel)]="form.infoType"
+                    [options]="requestInfoTypeOptions"
+                    [placeholder]="'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.INFO_TYPE_LABEL' | translate">
+                  </app-searchable-select>
                 </div>
               </div>
             </section>

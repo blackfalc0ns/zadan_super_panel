@@ -57,9 +57,11 @@
               <span class="material-symbols-outlined text-sm">move_item</span>
               {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_LABEL' | translate }}
             </label>
-            <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.target">
-              <option *ngFor="let option of targetOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select
+              [(ngModel)]="form.target"
+              [options]="targetOptions"
+              [placeholder]="'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_LABEL' | translate">
+            </app-searchable-select>
           </div>
 
           <div class="space-y-2">
@@ -84,9 +86,11 @@
               <span class="material-symbols-outlined text-sm">help_outline</span>
               {{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.REASON_LABEL' | translate }}
             </label>
-            <select class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.reason">
-              <option *ngFor="let option of reasonOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select
+              [(ngModel)]="form.reason"
+              [options]="reasonOptions"
+              [placeholder]="'DISPUTES_DASHBOARD.ESCALATION_MODAL.REASON_LABEL' | translate">
+            </app-searchable-select>
           </div>
         </section>
 

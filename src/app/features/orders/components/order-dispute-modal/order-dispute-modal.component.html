@@ -92,9 +92,11 @@
               {{ 'ORDERS.DETAIL.DISPUTE_MODAL.ROUTING_TITLE' | translate }}
             </label>
 
-            <select class="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.routeTo">
-              <option *ngFor="let route of routeOptions" [value]="route">{{ ('ORDERS.DETAIL.DISPUTE_MODAL.ROUTES.' + route.toUpperCase()) | translate }}</option>
-            </select>
+            <app-searchable-select
+              [(ngModel)]="form.routeTo"
+              [options]="routeSelectOptions"
+              [placeholder]="'ORDERS.DETAIL.DISPUTE_MODAL.ROUTING_TITLE' | translate">
+            </app-searchable-select>
           </div>
         </section>
       </div>

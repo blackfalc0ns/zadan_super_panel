@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
+import { SearchableSelectComponent } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import {
   DisputePriority,
   DisputeRow,
@@ -17,7 +18,7 @@ import {
 @Component({
   selector: 'app-dispute-escalation-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent, SearchableSelectComponent],
   templateUrl: './dispute-escalation-modal.component.html',
   styleUrl: './dispute-escalation-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

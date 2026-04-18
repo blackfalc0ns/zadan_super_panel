@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
+import { SearchableSelectComponent } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { OrderDetail, OrderRefundForm } from '../../models/orders.models';
 import { getPaymentStatusLabel } from '../../data/orders.mock';
 
 @Component({
   selector: 'app-order-refund-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent, SearchableSelectComponent],
   templateUrl: './order-refund-modal.component.html',
   styleUrl: './order-refund-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -49,6 +50,20 @@ export class OrderRefundModalComponent implements OnChanges {
 
   get paymentStatusLabel(): string {
     return this.order ? getPaymentStatusLabel(this.order.paymentStatus) : '--';
+  }
+
+  get reasonSelectOptions() {
+    return this.reasonOptions.map((reason) => ({
+      value: reason,
+      labelKey: 'ORDERS.DETAIL.REFUND_MODAL.REASONS.' + reason.toUpperCase()
+    }));
+  }
+
+  get refundMethodSelectOptions() {
+    return this.refundMethodOptions.map((method) => ({
+      value: method,
+      labelKey: 'ORDERS.DETAIL.REFUND_MODAL.METHODS.' + method.toUpperCase()
+    }));
   }
 
   onBackdropClick(event: MouseEvent): void {

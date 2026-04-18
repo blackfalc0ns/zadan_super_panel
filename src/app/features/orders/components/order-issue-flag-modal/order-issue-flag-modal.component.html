@@ -103,12 +103,11 @@
 
           <div class="space-y-2">
             <label class="pr-1 text-xs font-black text-slate-500">{{ 'ORDERS.DETAIL.ISSUE_MODAL.ASSIGN_TEAM' | translate }}</label>
-            <div class="relative">
-              <select class="w-full appearance-none rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.assignedTeam">
-                <option *ngFor="let team of teamOptions" [value]="team">{{ ('ORDERS.DETAIL.ISSUE_MODAL.TEAMS.' + team.toUpperCase()) | translate }}</option>
-              </select>
-              <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">expand_more</span>
-            </div>
+            <app-searchable-select
+              [(ngModel)]="form.assignedTeam"
+              [options]="teamSelectOptions"
+              [placeholder]="'ORDERS.DETAIL.ISSUE_MODAL.ASSIGN_TEAM' | translate">
+            </app-searchable-select>
           </div>
 
           <div class="space-y-2">

@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription, forkJoin, interval, switchMap } from 'rxjs';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import {
   AdminMasterProductBulkOperation,
   AdminMasterProductBulkOperationItem,
@@ -19,7 +20,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
 @Component({
   selector: 'app-bulk-master-products-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   template: `
     <div
       [dir]="currentLang === 'ar' ? 'rtl' : 'ltr'"
@@ -77,38 +78,19 @@ type BulkStage = 'review' | 'submitting' | 'done';
               <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                 <label class="space-y-1">
                   <span class="text-[0.72rem] font-black text-slate-500">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</span>
-                  <select [(ngModel)]="defaults.categoryId" (ngModelChange)="onDefaultsCategoryChanged($event)" class="h-9 w-full rounded-xl border border-slate-200 px-2.5 text-xs font-bold outline-none focus:border-zadna-primary/40">
-                    <option [ngValue]="null">{{ 'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate }}</option>
-                    @for (category of leafCategories; track category.id) {
-                      <option [value]="category.id">{{ getCategoryLabel(category.id) }}</option>
-                    }
-                  </select>
+                  <app-searchable-select [(ngModel)]="defaults.categoryId" (selectionChange)="onDefaultsCategoryChanged($event)" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
                 </label>
                 <label class="space-y-1">
                   <span class="text-[0.72rem] font-black text-slate-500">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</span>
-                  <select [(ngModel)]="defaults.brandId" [disabled]="!defaults.categoryId" class="h-9 w-full rounded-xl border border-slate-200 px-2.5 text-xs font-bold outline-none focus:border-zadna-primary/40 disabled:bg-slate-50 disabled:text-slate-400">
-                    <option [ngValue]="null">{{ 'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate }}</option>
-                    @for (brand of getAvailableBrandsForCategory(defaults.categoryId); track brand.id) {
-                      <option [value]="brand.id">{{ currentLang === 'ar' ? (brand.nameAr || brand.nameEn) : (brand.nameEn || brand.nameAr) }}</option>
-                    }
-                  </select>
+                  <app-searchable-select [(ngModel)]="defaults.brandId" [isDisabled]="!defaults.categoryId" [options]="getBrandOptionsForCategory(defaults.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
                 </label>
                 <label class="space-y-1">
                   <span class="text-[0.72rem] font-black text-slate-500">{{ 'MASTER_PRODUCTS.UNIT_LABEL' | translate }}</span>
-                  <select [(ngModel)]="defaults.unitId" class="h-9 w-full rounded-xl border border-slate-200 px-2.5 text-xs font-bold outline-none focus:border-zadna-primary/40">
-                    <option [ngValue]="null">{{ 'MASTER_PRODUCTS.STANDARD_UNIT' | translate }}</option>
-                    @for (unit of units; track unit.id) {
-                      <option [value]="unit.id">{{ currentLang === 'ar' ? unit.nameAr : unit.nameEn }}</option>
-                    }
-                  </select>
+                  <app-searchable-select [(ngModel)]="defaults.unitId" [options]="unitSelectOptions" [placeholder]="'MASTER_PRODUCTS.STANDARD_UNIT' | translate"></app-searchable-select>
                 </label>
                 <label class="space-y-1">
                   <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'Ø§Ù„Ø­Ø§Ù„Ø©' : 'Status' }}</span>
-                  <select [(ngModel)]="defaults.status" class="h-9 w-full rounded-xl border border-slate-200 px-2.5 text-xs font-bold outline-none focus:border-zadna-primary/40">
-                    @for (status of statusOptions; track status) {
-                      <option [value]="status">{{ getStatusLabel(status) }}</option>
-                    }
-                  </select>
+                  <app-searchable-select [(ngModel)]="defaults.status" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
                 </label>
               </div>
 
@@ -265,35 +247,16 @@ type BulkStage = 'review' | 'submitting' | 'done';
                     </div>
                   </td>
                   <td class="py-2.5">
-                    <select [(ngModel)]="row.categoryId" (ngModelChange)="onRowCategoryChanged(row, $event)" [disabled]="stage !== 'review'" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-[0.7rem] font-bold">
-                      <option [ngValue]="null">{{ 'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate }}</option>
-                      @for (category of leafCategories; track category.id) {
-                        <option [value]="category.id">{{ getCategoryLabel(category.id) }}</option>
-                      }
-                    </select>
+                    <app-searchable-select [(ngModel)]="row.categoryId" (selectionChange)="onRowCategoryChanged(row, $event)" [isDisabled]="stage !== 'review'" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
                   </td>
                   <td class="py-2.5">
-                    <select [(ngModel)]="row.brandId" [disabled]="stage !== 'review' || !row.categoryId" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-[0.7rem] font-bold disabled:bg-slate-50 disabled:text-slate-400">
-                      <option [ngValue]="null">{{ 'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate }}</option>
-                      @for (brand of getAvailableBrandsForCategory(row.categoryId); track brand.id) {
-                        <option [value]="brand.id">{{ currentLang === 'ar' ? (brand.nameAr || brand.nameEn) : (brand.nameEn || brand.nameAr) }}</option>
-                      }
-                    </select>
+                    <app-searchable-select [(ngModel)]="row.brandId" [isDisabled]="stage !== 'review' || !row.categoryId" [options]="getBrandOptionsForCategory(row.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
                   </td>
                   <td class="py-2.5">
-                    <select [(ngModel)]="row.unitId" [disabled]="stage !== 'review'" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-[0.7rem] font-bold">
-                      <option [ngValue]="null">{{ 'MASTER_PRODUCTS.STANDARD_UNIT' | translate }}</option>
-                      @for (unit of units; track unit.id) {
-                        <option [value]="unit.id">{{ currentLang === 'ar' ? unit.nameAr : unit.nameEn }}</option>
-                      }
-                    </select>
+                    <app-searchable-select [(ngModel)]="row.unitId" [isDisabled]="stage !== 'review'" [options]="unitSelectOptions" [placeholder]="'MASTER_PRODUCTS.STANDARD_UNIT' | translate"></app-searchable-select>
                   </td>
                   <td class="py-2.5">
-                    <select [(ngModel)]="row.status" [disabled]="stage !== 'review'" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-[0.7rem] font-bold">
-                      @for (status of statusOptions; track status) {
-                        <option [value]="status">{{ getStatusLabel(status) }}</option>
-                      }
-                    </select>
+                    <app-searchable-select [(ngModel)]="row.status" [isDisabled]="stage !== 'review'" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
                   </td>
                   <td class="py-2.5"><textarea [(ngModel)]="row.descriptionAr" [disabled]="stage !== 'review'" rows="2" class="w-full resize-none rounded-lg border border-slate-200 px-2.5 py-2 text-[0.7rem] font-bold"></textarea></td>
                   <td class="py-2.5"><textarea [(ngModel)]="row.descriptionEn" [disabled]="stage !== 'review'" rows="2" class="w-full resize-none rounded-lg border border-slate-200 px-2.5 py-2 text-[0.7rem] font-bold"></textarea></td>
@@ -438,6 +401,33 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
       }
       return acc;
     }, {});
+  }
+
+  get leafCategoryOptions(): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' },
+      ...this.leafCategories.map((category) => ({
+        value: category.id,
+        label: this.getCategoryLabel(category.id)
+      }))
+    ];
+  }
+
+  get unitSelectOptions(): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'MASTER_PRODUCTS.STANDARD_UNIT' },
+      ...this.units.map((unit) => ({
+        value: unit.id,
+        label: this.currentLang === 'ar' ? unit.nameAr : unit.nameEn
+      }))
+    ];
+  }
+
+  get statusSelectOptions(): SearchableSelectOption<MasterProduct['status']>[] {
+    return this.statusOptions.map((status) => ({
+      value: status,
+      label: this.getStatusLabel(status)
+    }));
   }
 
   onClose(): void {
@@ -708,6 +698,16 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     const matchIds = new Set([categoryId, ...ancestorIds]);
 
     return this.brands.filter((brand) => !!brand.categoryId && matchIds.has(brand.categoryId));
+  }
+
+  getBrandOptionsForCategory(categoryId: string | null | undefined): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' },
+      ...this.getAvailableBrandsForCategory(categoryId).map((brand) => ({
+        value: brand.id,
+        label: this.currentLang === 'ar' ? (brand.nameAr || brand.nameEn) : (brand.nameEn || brand.nameAr)
+      }))
+    ];
   }
 
   getStatusLabel(status: MasterProduct['status']): string {

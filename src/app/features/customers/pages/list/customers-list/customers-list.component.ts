@@ -8,6 +8,7 @@ import { DataTableComponent, TableColumn } from '../../../../../shared/component
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page-header/page-header.component';
+import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../../models/customers.models';
 
@@ -22,6 +23,7 @@ import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../
     KpiCardsComponent,
     AppPaginationComponent,
     AppPageHeaderComponent,
+    SearchableSelectComponent,
     StatusPillComponent
   ],
   templateUrl: './customers-list.component.html',
@@ -324,6 +326,13 @@ export class CustomersListComponent implements OnInit {
       default:
         return true;
     }
+  }
+
+  get mappedCityOptions(): any[] {
+    return [
+      {value: 'all', labelKey: 'CUSTOMERS.FILTERS.ALL'},
+      ...this.cityOptions.map((c: string) => ({value: c, label: c}))
+    ];
   }
 }
 

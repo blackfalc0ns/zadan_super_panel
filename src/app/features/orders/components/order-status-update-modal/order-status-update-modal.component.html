@@ -61,14 +61,11 @@
 
           <div class="space-y-1.5">
             <label class="px-1 text-[11px] font-black text-zadna-primary">{{ 'ORDERS.DETAIL.STATUS_MODAL.NEW_STATUS' | translate }}</label>
-            <div class="relative modal-select-field">
-              <select
-                class="modal-field-control modal-select-control w-full appearance-none rounded-lg border-2 border-zadna-primary/20 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
-                [(ngModel)]="form.newStatus">
-                <option *ngFor="let status of availableStatusOptions" [value]="status">{{ 'ORDERS.STATUS.' + status | translate }}</option>
-              </select>
-              <span class="modal-field-icon modal-select-icon material-symbols-outlined pointer-events-none absolute top-1/2 -translate-y-1/2 text-zadna-primary/60">expand_more</span>
-            </div>
+            <app-searchable-select
+              [(ngModel)]="form.newStatus"
+              [options]="availableStatusSelectOptions"
+              [placeholder]="'ORDERS.DETAIL.STATUS_MODAL.NEW_STATUS' | translate">
+            </app-searchable-select>
           </div>
         </div>
 

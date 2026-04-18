@@ -183,39 +183,20 @@
                     <div class="space-y-8 relative z-10">
                         <div class="flex flex-col">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-2">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</label>
-                            <div class="relative group/select">
-                                <select formControlName="categoryId" 
-                                        class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 outline-none transition-all duration-300 focus:bg-white focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 appearance-none">
-                                    <option value="" disabled>{{ 'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate }}</option>
-                                    <option *ngFor="let cat of availableCategories" [value]="cat.id" class="py-2">
-                                        {{ activeLang === 'ar' ? cat.displayNameAr : cat.displayNameEn }}
-                                    </option>
-                                </select>
-                                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover/select:text-zadna-primary transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                            </div>
+                            <app-searchable-select
+                                formControlName="categoryId"
+                                [options]="categoryOptions"
+                                [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate">
+                            </app-searchable-select>
                         </div>
 
                         <div class="flex flex-col">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-2">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</label>
-                            <div class="relative group/select">
-                                <select formControlName="brandId"
-                                        [disabled]="!productForm.get('categoryId')?.value"
-                                        class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 outline-none transition-all duration-300 focus:bg-white focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 appearance-none disabled:cursor-not-allowed disabled:opacity-60">
-                                    <option [value]="null">{{ 'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate }}</option>
-                                    <option *ngFor="let brand of availableBrands" [value]="brand.id" class="py-2">
-                                        {{ activeLang === 'ar' ? brand.nameAr : brand.nameEn }}
-                                    </option>
-                                </select>
-                                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover/select:text-zadna-primary transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                            </div>
+                            <app-searchable-select
+                                formControlName="brandId"
+                                [options]="brandOptions"
+                                [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate">
+                            </app-searchable-select>
                             <p *ngIf="!productForm.get('categoryId')?.value" class="mt-2 px-2 text-[10px] font-bold text-slate-400">
                                 {{ 'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate }}
                             </p>
@@ -223,20 +204,11 @@
 
                         <div class="flex flex-col">
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-2">{{ 'MASTER_PRODUCTS.UNIT_LABEL' | translate }}</label>
-                            <div class="relative group/select">
-                                <select formControlName="unitId"
-                                        class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 outline-none transition-all duration-300 focus:bg-white focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 appearance-none">
-                                    <option [value]="null">{{ 'MASTER_PRODUCTS.STANDARD_UNIT' | translate }}</option>
-                                    <option *ngFor="let unit of availableUnits" [value]="unit.id" class="py-2">
-                                        {{ activeLang === 'ar' ? unit.nameAr : unit.nameEn }}
-                                    </option>
-                                </select>
-                                <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-hover/select:text-zadna-primary transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                            </div>
+                            <app-searchable-select
+                                formControlName="unitId"
+                                [options]="unitOptions"
+                                [placeholder]="'MASTER_PRODUCTS.STANDARD_UNIT' | translate">
+                            </app-searchable-select>
                         </div>
                     </div>
                 </div>

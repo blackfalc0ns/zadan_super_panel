@@ -61,54 +61,37 @@
         <div class="bg-slate-50/80 border border-slate-200/70 rounded-[1.5rem] px-4 py-4 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
           <label class="filter-card">
             <span>{{ 'ADMIN_USERS.FILTERS.PANEL' | translate }}</span>
-            <select [(ngModel)]="panelFilter" (ngModelChange)="applyFilters()">
-              <option *ngFor="let option of panelOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="panelFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="panelOptions" [placeholder]="'ADMIN_USERS.FILTERS.PANEL' | translate"></app-searchable-select>
           </label>
 
           <label class="filter-card">
             <span>{{ 'ADMIN_USERS.FILTERS.PERSONA' | translate }}</span>
-            <select [(ngModel)]="personaFilter" (ngModelChange)="applyFilters()">
-              <option *ngFor="let option of personaOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="personaFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="personaOptions" [placeholder]="'ADMIN_USERS.FILTERS.PERSONA' | translate"></app-searchable-select>
           </label>
 
           <label class="filter-card">
             <span>{{ 'ADMIN_USERS.FILTERS.STATUS' | translate }}</span>
-            <select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
-              <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="statusFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="statusOptions" [placeholder]="'ADMIN_USERS.FILTERS.STATUS' | translate"></app-searchable-select>
           </label>
 
           <label class="filter-card">
             <span>{{ 'ADMIN_USERS.FILTERS.ACCESS_LEVEL' | translate }}</span>
-            <select [(ngModel)]="accessLevelFilter" (ngModelChange)="applyFilters()">
-              <option *ngFor="let option of accessLevelOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="accessLevelFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="accessLevelOptions" [placeholder]="'ADMIN_USERS.FILTERS.ACCESS_LEVEL' | translate"></app-searchable-select>
           </label>
 
           <label class="filter-card">
             <span>{{ 'ADMIN_USERS.FILTERS.ROLE' | translate }}</span>
-            <select [(ngModel)]="roleFilter" (ngModelChange)="applyFilters()">
-              <option value="all">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
-              <option *ngFor="let preset of filteredRolePresets" [value]="preset.id">{{ preset.nameKey | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="roleFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="mappedRoleFilterOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
           </label>
 
           <label class="filter-card">
             <span>{{ 'ADMIN_USERS.FILTERS.VENDOR' | translate }}</span>
-            <select [(ngModel)]="vendorFilter" (ngModelChange)="applyFilters()">
-              <option value="all">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
-              <option *ngFor="let vendor of vendorOptions" [value]="vendor.id">{{ vendor.name }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="vendorFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="mappedVendorFilterOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
           </label>
 
           <label class="filter-card">
             <span>{{ 'ADMIN_USERS.FILTERS.BRANCH' | translate }}</span>
-            <select [(ngModel)]="branchFilter" (ngModelChange)="applyFilters()">
-              <option value="all">{{ 'ADMIN_USERS.FILTERS.ALL' | translate }}</option>
-              <option *ngFor="let branch of branchOptions" [value]="branch.id">{{ branch.name }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="branchFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="mappedBranchFilterOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
           </label>
 
           <div class="flex items-end gap-3">

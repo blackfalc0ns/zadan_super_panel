@@ -58,13 +58,7 @@
         <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
           <div class="space-y-2">
             <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE' | translate }}</label>
-            <select
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10"
-              [(ngModel)]="form.refundType"
-              (ngModelChange)="onRefundTypeChange($event)">
-              <option value="full">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE_FULL' | translate }}</option>
-              <option value="partial">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE_PARTIAL' | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="form.refundType" [searchable]="false" (ngModelChange)="onRefundTypeChange($event)" [options]="refundTypeOptions" [placeholder]="'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE' | translate"></app-searchable-select>
           </div>
 
           <div class="space-y-2">
@@ -82,11 +76,7 @@
 
           <div class="space-y-2">
             <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD' | translate }}</label>
-            <select class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.refundMethod">
-              <option value="same_method">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_SAME' | translate }}</option>
-              <option value="wallet">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_WALLET' | translate }}</option>
-              <option value="manual">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_MANUAL' | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="form.refundMethod" [searchable]="false" [options]="refundMethodOptions" [placeholder]="'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD' | translate"></app-searchable-select>
           </div>
 
           <div class="space-y-2 md:col-span-2">
@@ -100,11 +90,7 @@
 
           <div class="space-y-2">
             <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER' | translate }}</label>
-            <select class="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/10" [(ngModel)]="form.costBearer">
-              <option value="vendor">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_VENDOR' | translate }}</option>
-              <option value="platform">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_PLATFORM' | translate }}</option>
-              <option value="shared">{{ 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_SHARED' | translate }}</option>
-            </select>
+            <app-searchable-select [(ngModel)]="form.costBearer" [searchable]="false" [options]="costBearerOptions" [placeholder]="'DISPUTES_DASHBOARD.MODAL.COST_BEARER' | translate"></app-searchable-select>
           </div>
         </div>
       </section>

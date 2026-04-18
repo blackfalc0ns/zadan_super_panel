@@ -102,15 +102,12 @@
             <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
               {{ 'MODALS.LEGAL_BANK_EDIT.BANK_NAME' | translate }}
             </label>
-            <div class="relative group">
-              <select [(ngModel)]="draftLegalBankData.bankName"
-                      name="bankName"
-                      class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
-                <option value="" disabled>{{ 'MODALS.LEGAL_BANK_EDIT.SELECT_BANK' | translate }}</option>
-                <option *ngFor="let bank of bankOptions" [value]="bank.value">{{ bank.label | translate }}</option>
-              </select>
-              <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
-            </div>
+            <app-searchable-select
+              [(ngModel)]="draftLegalBankData.bankName"
+              name="bankName"
+              [options]="bankOptions"
+              [placeholder]="'MODALS.LEGAL_BANK_EDIT.SELECT_BANK' | translate">
+            </app-searchable-select>
           </div>
 
           <!-- Payment Cycle -->
@@ -118,17 +115,12 @@
             <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
               {{ 'MODALS.LEGAL_BANK_EDIT.PAYMENT_CYCLE' | translate }}
             </label>
-            <div class="relative group">
-              <select [(ngModel)]="draftLegalBankData.paymentCycle"
-                      name="paymentCycle"
-                      class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 appearance-none focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold shadow-sm">
-                <option value="" disabled>{{ 'MODALS.LEGAL_BANK_EDIT.SELECT_CYCLE' | translate }}</option>
-                <option *ngFor="let cycle of paymentCycleOptions" [value]="cycle.value">
-                  {{ 'MODALS.LEGAL_BANK_EDIT.' + cycle.value.toUpperCase() | translate }}
-                </option>
-              </select>
-              <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" [ngClass]="isRTL ? 'left-4' : 'right-4'">expand_more</span>
-            </div>
+            <app-searchable-select
+              [(ngModel)]="draftLegalBankData.paymentCycle"
+              name="paymentCycle"
+              [options]="paymentCycleOptions"
+              [placeholder]="'MODALS.LEGAL_BANK_EDIT.SELECT_CYCLE' | translate">
+            </app-searchable-select>
           </div>
         </div>
 

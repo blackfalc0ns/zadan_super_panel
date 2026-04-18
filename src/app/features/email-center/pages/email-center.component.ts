@@ -14,6 +14,7 @@ import {
 import { AdminUsersService } from '@admin-users/public-api';
 import { KpiCardsComponent, KPICard } from '@shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import {
   EmailBranchScopeMode,
@@ -38,6 +39,7 @@ type RecipientChannel = 'to' | 'cc' | 'bcc';
     TranslateModule,
     AppPageHeaderComponent,
     KpiCardsComponent,
+    SearchableSelectComponent,
     StatusPillComponent
   ],
   templateUrl: './email-center.component.html',
@@ -385,5 +387,32 @@ export class EmailCenterComponent implements OnInit {
       default:
         return 'customers';
     }
+  }
+
+  get mappedVendorOptions(): any[] {
+    return [
+      {value: null, labelKey: 'EMAIL_CENTER.FILTERS.ALL_VENDORS'},
+      ...this.vendorOptions.map((x: any) => ({value: x.id, label: x.name}))
+    ];
+  }
+  get mappedBranchOptions(): any[] {
+    return [
+      {value: null, labelKey: 'EMAIL_CENTER.FILTERS.ALL_BRANCHES'},
+      ...this.branchOptions.map((x: any) => ({value: x.id, label: x.name}))
+    ];
+  }
+
+  get enabledOptions(): SearchableSelectOption<boolean>[] {
+    return [
+      { value: true, labelKey: 'EMAIL_CENTER.WORKFLOWS.ENABLED' },
+      { value: false, labelKey: 'EMAIL_CENTER.WORKFLOWS.DISABLED' }
+    ];
+  }
+
+  get senderProfileOptions(): SearchableSelectOption<string>[] {
+    return this.senderProfiles.map((profile) => ({
+      value: profile.id,
+      label: profile.name
+    }));
   }
 }
