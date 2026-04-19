@@ -14,13 +14,13 @@ import { BulkMasterProductsModalComponent } from '../../components/bulk-master-p
   template: `
     <div class="flex min-h-full flex-col overflow-x-hidden bg-slate-50/50">
       <app-page-header
-        [title]="'إضافة جماعية لبنك المنتجات'"
-        [subtitle]="'أنشئ عددًا كبيرًا من منتجات بنك المنتجات من صفحة مستقلة.'"
+        [title]="currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk Create Product Bank Items'"
+        [subtitle]="currentLang === 'ar' ? 'أنشئ عددًا كبيرًا من منتجات بنك المنتجات من صفحة مستقلة.' : 'Create many product bank items from a dedicated page.'"
         [showToolbar]="true"
         [breadcrumbs]="[
           { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
           { label: 'PRODUCTS.TITLE', url: '/catalog/products' },
-          { label: 'إضافة جماعية' }
+          { label: currentLang === 'ar' ? 'إضافة جماعية' : 'Bulk Create' }
         ]">
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">post_add</span>
       </app-page-header>

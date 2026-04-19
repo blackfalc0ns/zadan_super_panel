@@ -42,7 +42,6 @@ export class CategoriesManagerComponent implements OnInit {
   currentPage = 1;
   pageSize = 10;
   totalItems = 0;
-  selectedLevel: number | null = null;
   statusFilter: boolean | null = null;
   childrenFilter: boolean | null = null;
   isFiltersExpanded = false;
@@ -60,7 +59,6 @@ export class CategoriesManagerComponent implements OnInit {
   Math = Math;
 
   readonly filterFields: FilterField[] = [
-    { key: 'selectedLevel', label: 'CATEGORIES.DETAILS.LEVEL', type: 'select', color: '#127c8c', options: [] },
     { key: 'statusFilter', label: 'COMMON.STATUS', type: 'select', color: '#2563eb', options: [] },
     { key: 'childrenFilter', label: 'CATEGORIES.DETAILS.BRANCH_NODES', type: 'select', color: '#0f766e', options: [] }
   ];
@@ -70,7 +68,7 @@ export class CategoriesManagerComponent implements OnInit {
   }
 
   get hasActiveFilters(): boolean {
-    return !!(this.searchTerm || this.selectedLevel != null || this.statusFilter != null || this.childrenFilter != null);
+    return !!(this.searchTerm || this.statusFilter != null || this.childrenFilter != null);
   }
 
   constructor(
@@ -110,19 +108,8 @@ export class CategoriesManagerComponent implements OnInit {
   }
 
   initializeFilterOptions(): void {
-    const levelField = this.filterFields.find((field) => field.key === 'selectedLevel');
     const statusField = this.filterFields.find((field) => field.key === 'statusFilter');
     const childrenField = this.filterFields.find((field) => field.key === 'childrenFilter');
-
-    if (levelField) {
-      levelField.options = [
-        { value: '0', label: 'CATEGORIES.INDUSTRY' },
-        { value: '1', label: 'CATEGORIES.SUB_INDUSTRY' },
-        { value: '2', label: 'CATEGORIES.CATEGORY' },
-        { value: '3', label: 'CATEGORIES.SUB_CATEGORY' }
-      ];
-      levelField.placeholder = 'COMMON.ALL';
-    }
 
     if (statusField) {
       statusField.options = [
@@ -161,7 +148,6 @@ export class CategoriesManagerComponent implements OnInit {
   }
 
   onFiltersChange(filters: Record<string, unknown>): void {
-    this.selectedLevel = this.toNullableNumber(filters['selectedLevel']);
     this.statusFilter = this.toNullableBoolean(filters['statusFilter']);
     this.childrenFilter = this.toNullableBoolean(filters['childrenFilter']);
     this.currentPage = 1;
@@ -171,7 +157,6 @@ export class CategoriesManagerComponent implements OnInit {
 
   resetFilters() {
     this.searchTerm = '';
-    this.selectedLevel = null;
     this.statusFilter = null;
     this.childrenFilter = null;
     this.currentPage = 1;
@@ -179,8 +164,20 @@ export class CategoriesManagerComponent implements OnInit {
     this.loadHierarchy();
   }
 
-  getLevelNameKey(): string {
-    return 'CATEGORIES.INDUSTRY';
+  getLevelNameKey(level: number = 0): string {
+    if (level === 0) return 'CATEGORIES.INDUSTRY';
+    if (level === 1) return 'CATEGORIES.SUB_INDUSTRY';
+    if (level === 2) return 'CATEGORIES.CATEGORY';
+    if (level === 3) return 'CATEGORIES.SUB_CATEGORY';
+    return 'CATEGORIES.ITEM';
+  }
+
+  getActivityName(category: Category): string {
+    if (this.activeLang === 'ar') {
+      return category.activityNameAr || category.parentNameAr || category.nameAr;
+    }
+
+    return category.activityNameEn || category.parentNameEn || category.nameEn;
   }
 
   selectItem(item: Category) {
@@ -190,7 +187,8 @@ export class CategoriesManagerComponent implements OnInit {
   openCreateModal(parent?: any) {
     this.modalMode = 'create';
     const activeParent = parent ?? null;
-    this.modalLevelKey = this.getLevelNameKey();
+    const nextLevel = activeParent ? (activeParent.level ?? 0) + 1 : 0;
+    this.modalLevelKey = this.getLevelNameKey(nextLevel);
 
     this.parentCategoryForModal = activeParent ? {
       id: activeParent.id,
@@ -204,7 +202,7 @@ export class CategoriesManagerComponent implements OnInit {
   openEditModal(category: any, event: Event) {
     event.stopPropagation();
     this.modalMode = 'edit';
-    this.modalLevelKey = this.getLevelNameKey();
+    this.modalLevelKey = this.getLevelNameKey(category?.level ?? 0);
     this.categoryForm = { ...category };
     this.isModalOpen = true;
   }
@@ -261,7 +259,6 @@ export class CategoriesManagerComponent implements OnInit {
 
   private syncPanelFilters(): void {
     this.panelFilters = {
-      selectedLevel: this.selectedLevel == null ? null : String(this.selectedLevel),
       statusFilter: this.statusFilter == null ? null : String(this.statusFilter),
       childrenFilter: this.childrenFilter == null ? null : String(this.childrenFilter)
     };
@@ -275,7 +272,7 @@ export class CategoriesManagerComponent implements OnInit {
       },
       search: this.searchTerm.trim() || undefined,
       filters: {
-        level: this.selectedLevel,
+        level: 0,
         isActive: this.statusFilter,
         hasChildren: this.childrenFilter
       }

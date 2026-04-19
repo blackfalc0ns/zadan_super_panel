@@ -36,11 +36,11 @@
             class="w-full py-4 bg-slate-50 border border-slate-200 rounded-[1.2rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pr-12 pl-4">
         </div>
 
-        <app-searchable-select [(ngModel)]="orderStatusFilter" [searchable]="false" (ngModelChange)="onFiltersChange()" [options]="orderStatusFilterOptions" [placeholder]="'ORDERS.FILTERS.ORDER_STATUS' | translate"></app-searchable-select>
+        <app-searchable-select [(ngModel)]="orderStatusFilter" [searchable]="false" (ngModelChange)="onFiltersChange()" [options]="orderStatusFilterOptions" [placeholder]="'ORDERS.FILTERS.ORDER_STATUS' | translate" [dropdownPanelClass]="'sm:min-w-[18rem] lg:min-w-[20rem]'"></app-searchable-select>
 
-        <app-searchable-select [(ngModel)]="paymentStatusFilter" [searchable]="false" (ngModelChange)="onFiltersChange()" [options]="paymentStatusFilterOptions" [placeholder]="'ORDERS.FILTERS.PAYMENT_STATUS' | translate"></app-searchable-select>
+        <app-searchable-select [(ngModel)]="paymentStatusFilter" [searchable]="false" (ngModelChange)="onFiltersChange()" [options]="paymentStatusFilterOptions" [placeholder]="'ORDERS.FILTERS.PAYMENT_STATUS' | translate" [dropdownPanelClass]="'sm:min-w-[18rem] lg:min-w-[20rem]'"></app-searchable-select>
 
-        <app-searchable-select [(ngModel)]="fulfillmentStatusFilter" [searchable]="false" (ngModelChange)="onFiltersChange()" [options]="fulfillmentStatusFilterOptions" [placeholder]="'ORDERS.FILTERS.FULFILLMENT_STATUS' | translate"></app-searchable-select>
+        <app-searchable-select [(ngModel)]="fulfillmentStatusFilter" [searchable]="false" (ngModelChange)="onFiltersChange()" [options]="fulfillmentStatusFilterOptions" [placeholder]="'ORDERS.FILTERS.FULFILLMENT_STATUS' | translate" [dropdownPanelClass]="'sm:min-w-[18rem] lg:min-w-[20rem]'"></app-searchable-select>
 
         <button
           type="button"

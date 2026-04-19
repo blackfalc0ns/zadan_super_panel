@@ -36,10 +36,10 @@ type BulkStage = 'review' | 'submitting' | 'done';
           <div class="flex items-start justify-between gap-4">
             <div class="min-w-0 flex-1">
               <h2 class="text-lg font-black text-slate-900">
-                {{ currentLang === 'ar' ? 'Ø¥Ø¶Ø§ÙØ© Ø¬Ù…Ø§Ø¹ÙŠØ© Ù„Ø¨Ù†Ùƒ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª' : 'Bulk Create Product Bank Items' }}
+                {{ currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk Create Product Bank Items' }}
               </h2>
               <p class="mt-1 max-w-3xl text-xs font-bold leading-5 text-slate-500">
-                {{ currentLang === 'ar' ? 'Ø£Ø¶Ù Ø¹Ø¯Ø¯Ù‹Ø§ ÙƒØ¨ÙŠØ±Ù‹Ø§ Ù…Ù† Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ù…Ø¹ ØªÙˆÙ„ÙŠØ¯ ØªÙ„Ù‚Ø§Ø¦ÙŠ Ù„Ù„Ù€ slug ÙˆØ§Ù„Ø¨Ø§Ø±ÙƒÙˆØ¯ Ø¹Ù†Ø¯ Ø§Ù„Ø­Ø§Ø¬Ø©.' : 'Create many master products with automatic slug and barcode generation when needed.' }}
+                {{ currentLang === 'ar' ? 'أضف عددًا كبيرًا من المنتجات مع توليد تلقائي للـ slug والباركود عند الحاجة.' : 'Create many master products with automatic slug and barcode generation when needed.' }}
               </p>
             </div>
             @if (embedded) {
@@ -47,7 +47,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
                 type="button"
                 (click)="onClose()"
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-slate-200">
-                <span class="text-base font-black">Ã—</span>
+                <span class="text-base font-black">×</span>
               </button>
             }
           </div>
@@ -58,19 +58,19 @@ type BulkStage = 'review' | 'submitting' | 'done';
           <div class="grid gap-4 2xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.8fr)]">
             <div class="rounded-[20px] border border-slate-200 bg-white p-4">
               <div class="flex flex-wrap items-center justify-between gap-3">
-                <h3 class="text-xs font-black text-slate-900">{{ currentLang === 'ar' ? 'Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª Ø³Ø±ÙŠØ¹Ø©' : 'Quick actions' }}</h3>
+                <h3 class="text-xs font-black text-slate-900">{{ currentLang === 'ar' ? 'إجراءات سريعة' : 'Quick actions' }}</h3>
                 <div class="flex flex-wrap gap-2">
                   <button type="button" (click)="addRows(25)" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                    {{ currentLang === 'ar' ? 'Ø¥Ø¶Ø§ÙØ© 25 ØµÙ' : 'Add 25 rows' }}
+                    {{ currentLang === 'ar' ? 'إضافة 25 صفًا' : 'Add 25 rows' }}
                   </button>
                   <button type="button" (click)="addRows(100)" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                    {{ currentLang === 'ar' ? 'Ø¥Ø¶Ø§ÙØ© 100 ØµÙ' : 'Add 100 rows' }}
+                    {{ currentLang === 'ar' ? 'إضافة 100 صف' : 'Add 100 rows' }}
                   </button>
                   <button type="button" (click)="duplicateSelectedRows()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                    {{ currentLang === 'ar' ? 'Ù†Ø³Ø® Ø§Ù„Ù…Ø­Ø¯Ø¯' : 'Duplicate selected' }}
+                    {{ currentLang === 'ar' ? 'نسخ المحدد' : 'Duplicate selected' }}
                   </button>
                   <button type="button" (click)="removeSelectedRows()" class="rounded-xl border border-rose-200 px-3 py-1.5 text-[0.7rem] font-black text-rose-600">
-                    {{ currentLang === 'ar' ? 'Ø­Ø°Ù Ø§Ù„Ù…Ø­Ø¯Ø¯' : 'Remove selected' }}
+                    {{ currentLang === 'ar' ? 'حذف المحدد' : 'Remove selected' }}
                   </button>
                 </div>
               </div>
@@ -89,7 +89,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
                   <app-searchable-select [(ngModel)]="defaults.unitId" [options]="unitSelectOptions" [placeholder]="'MASTER_PRODUCTS.STANDARD_UNIT' | translate"></app-searchable-select>
                 </label>
                 <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'Ø§Ù„Ø­Ø§Ù„Ø©' : 'Status' }}</span>
+                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</span>
                   <app-searchable-select [(ngModel)]="defaults.status" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
                 </label>
               </div>
@@ -98,11 +98,11 @@ type BulkStage = 'review' | 'submitting' | 'done';
                 <div class="flex items-center gap-2">
                   <input #defaultImagesInput type="file" accept="image/*" multiple class="hidden" (change)="onDefaultImagesSelected($event)">
                   <button type="button" (click)="defaultImagesInput.click()" [disabled]="isUploadingDefaultImages" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-50">
-                    {{ currentLang === 'ar' ? 'Ø±ÙØ¹ ØµÙˆØ± Ø§ÙØªØ±Ø§Ø¶ÙŠØ©' : 'Upload default images' }}
+                    {{ currentLang === 'ar' ? 'رفع صور افتراضية' : 'Upload default images' }}
                   </button>
                   @if (defaults.images?.length) {
                     <span class="text-[0.72rem] font-black text-slate-500">
-                      {{ currentLang === 'ar' ? 'Ø¹Ø¯Ø¯ Ø§Ù„ØµÙˆØ±' : 'Images' }}: {{ defaults.images?.length }}
+                      {{ currentLang === 'ar' ? 'عدد الصور' : 'Images' }}: {{ defaults.images?.length }}
                     </span>
                   }
                 </div>
@@ -111,7 +111,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
                     @for (image of defaults.images; track image.url; let imageIndex = $index) {
                       <div class="relative">
                         <img [src]="image.url" alt="Default product image" class="h-12 w-12 rounded-lg border border-slate-200 bg-white object-cover">
-                        <button type="button" (click)="removeDefaultImage(imageIndex)" class="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-black text-white">Ã—</button>
+                        <button type="button" (click)="removeDefaultImage(imageIndex)" class="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-black text-white">×</button>
                       </div>
                     }
                   </div>
@@ -120,31 +120,31 @@ type BulkStage = 'review' | 'submitting' | 'done';
 
               <div class="mt-4 flex flex-wrap items-center gap-3">
                 <button type="button" (click)="applyDefaultsToSelected()" class="rounded-xl bg-zadna-primary px-3 py-1.5 text-[0.7rem] font-black text-white shadow-lg shadow-zadna-primary/20">
-                  {{ currentLang === 'ar' ? 'ØªØ·Ø¨ÙŠÙ‚ Ø¹Ù„Ù‰ Ø§Ù„Ù…Ø­Ø¯Ø¯' : 'Apply to selected' }}
+                  {{ currentLang === 'ar' ? 'تطبيق على المحدد' : 'Apply to selected' }}
                 </button>
                 <button type="button" (click)="applyDefaultsToAll()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                  {{ currentLang === 'ar' ? 'ØªØ·Ø¨ÙŠÙ‚ Ø¹Ù„Ù‰ Ø§Ù„ÙƒÙ„' : 'Apply to all' }}
+                  {{ currentLang === 'ar' ? 'تطبيق على الكل' : 'Apply to all' }}
                 </button>
               </div>
             </div>
 
             <div class="rounded-[20px] border border-slate-200 bg-white p-4">
-              <h3 class="text-xs font-black text-slate-900">{{ currentLang === 'ar' ? 'Ù…Ù„Ø®Øµ' : 'Summary' }}</h3>
+              <h3 class="text-xs font-black text-slate-900">{{ currentLang === 'ar' ? 'ملخص' : 'Summary' }}</h3>
               <div class="mt-3 grid gap-2.5 sm:grid-cols-2">
                 <div class="rounded-xl bg-slate-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„ØµÙÙˆÙ' : 'Rows' }}</div>
+                  <div class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'إجمالي الصفوف' : 'Rows' }}</div>
                   <div class="mt-1 text-lg font-black text-slate-900">{{ rows.length }}</div>
                 </div>
                 <div class="rounded-xl bg-slate-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'Ø§Ù„Ù…Ø­Ø¯Ø¯' : 'Selected' }}</div>
+                  <div class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'المحدد' : 'Selected' }}</div>
                   <div class="mt-1 text-lg font-black text-slate-900">{{ selectedCount }}</div>
                 </div>
                 <div class="rounded-xl bg-emerald-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-emerald-600">{{ currentLang === 'ar' ? 'Ø§Ù„ØµØ§Ù„Ø­Ø© Ù„Ù„Ø¥Ø±Ø³Ø§Ù„' : 'Ready to submit' }}</div>
+                  <div class="text-[0.72rem] font-black text-emerald-600">{{ currentLang === 'ar' ? 'الصالحة للإرسال' : 'Ready to submit' }}</div>
                   <div class="mt-1 text-lg font-black text-emerald-700">{{ submittableRows.length }}</div>
                 </div>
                 <div class="rounded-xl bg-rose-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-rose-600">{{ currentLang === 'ar' ? 'Ø¨Ù‡Ø§ Ø£Ø®Ø·Ø§Ø¡' : 'With errors' }}</div>
+                  <div class="text-[0.72rem] font-black text-rose-600">{{ currentLang === 'ar' ? 'بها أخطاء' : 'With errors' }}</div>
                   <div class="mt-1 text-lg font-black text-rose-700">{{ invalidRowsCount }}</div>
                 </div>
               </div>
@@ -153,14 +153,14 @@ type BulkStage = 'review' | 'submitting' | 'done';
                 <div class="mt-4 rounded-2xl bg-slate-50 p-4">
                   <div class="text-sm font-black text-slate-900">{{ operation.status }}</div>
                   <div class="mt-2 text-xs font-bold text-slate-500">{{ operation.processedRows }} / {{ operation.totalRows }}</div>
-                  <div class="mt-1 text-xs font-bold text-emerald-600">{{ currentLang === 'ar' ? 'Ù†Ø¬Ø­' : 'Succeeded' }}: {{ operation.succeededRows }}</div>
-                  <div class="text-xs font-bold text-rose-600">{{ currentLang === 'ar' ? 'ÙØ´Ù„' : 'Failed' }}: {{ operation.failedRows }}</div>
+                  <div class="mt-1 text-xs font-bold text-emerald-600">{{ currentLang === 'ar' ? 'نجح' : 'Succeeded' }}: {{ operation.succeededRows }}</div>
+                  <div class="text-xs font-bold text-rose-600">{{ currentLang === 'ar' ? 'فشل' : 'Failed' }}: {{ operation.failedRows }}</div>
                   <div class="mt-3 flex flex-wrap gap-2">
                     <button type="button" (click)="copyErrors()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.72rem] font-black text-slate-700">
-                      {{ currentLang === 'ar' ? 'Ù†Ø³Ø® Ø§Ù„Ø£Ø®Ø·Ø§Ø¡' : 'Copy errors' }}
+                      {{ currentLang === 'ar' ? 'نسخ الأخطاء' : 'Copy errors' }}
                     </button>
                     <button type="button" (click)="downloadErrors()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.72rem] font-black text-slate-700">
-                      {{ currentLang === 'ar' ? 'ØªÙ†Ø²ÙŠÙ„ Ø§Ù„Ø£Ø®Ø·Ø§Ø¡' : 'Download errors' }}
+                      {{ currentLang === 'ar' ? 'تنزيل الأخطاء' : 'Download errors' }}
                     </button>
                   </div>
                 </div>
@@ -177,17 +177,17 @@ type BulkStage = 'review' | 'submitting' | 'done';
                 <th class="w-10 px-1 pb-3 text-start">#</th>
                 <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.NAME_AR_LABEL' | translate }}</th>
                 <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.NAME_EN_LABEL' | translate }}</th>
-                <th class="w-32 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'Ø§Ù„ØµÙˆØ±' : 'Images' }}</th>
+                <th class="w-32 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الصور' : 'Images' }}</th>
                 <th class="w-32 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</th>
                 <th class="w-24 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</th>
                 <th class="w-24 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.UNIT_LABEL' | translate }}</th>
-                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'Ø§Ù„Ø­Ø§Ù„Ø©' : 'Status' }}</th>
+                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</th>
                 <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.DESC_AR_LABEL' | translate }}</th>
                 <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.DESC_EN_LABEL' | translate }}</th>
                 @if (stage === 'done') {
-                  <th class="w-40 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'Ø§Ù„Ù†ØªÙŠØ¬Ø©' : 'Result' }}</th>
+                  <th class="w-40 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'النتيجة' : 'Result' }}</th>
                 }
-                <th class="w-32 px-2 pb-3 text-end">{{ currentLang === 'ar' ? 'Ø¥Ø¬Ø±Ø§Ø¡' : 'Action' }}</th>
+                <th class="w-32 px-2 pb-3 text-end">{{ currentLang === 'ar' ? 'إجراء' : 'Action' }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -215,11 +215,11 @@ type BulkStage = 'review' | 'submitting' | 'done';
                           (click)="rowImagesInput.click()"
                           [disabled]="stage !== 'review' || uploadingRowIds.has(row.rowId)"
                           class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-[0.68rem] font-black text-slate-600 disabled:opacity-50">
-                          {{ currentLang === 'ar' ? 'Ø±ÙØ¹ ØµÙˆØ±' : 'Upload images' }}
+                          {{ currentLang === 'ar' ? 'رفع صور' : 'Upload images' }}
                         </button>
                         @if (row.images?.length) {
                           <span class="text-[0.68rem] font-bold text-slate-500">
-                            {{ currentLang === 'ar' ? 'Ø§Ù„Ø¹Ø¯Ø¯' : 'Count' }}: {{ row.images?.length }}
+                            {{ currentLang === 'ar' ? 'العدد' : 'Count' }}: {{ row.images?.length }}
                           </span>
                         }
                       </div>
@@ -230,7 +230,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
                               <img [src]="image.url" alt="Product image" class="h-11 w-11 rounded-lg border border-slate-200 bg-white object-cover">
                               @if (image.isPrimary) {
                                 <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-zadna-primary px-1.5 py-0.5 text-[9px] font-black text-white">
-                                  {{ currentLang === 'ar' ? 'Ø±Ø¦ÙŠØ³ÙŠØ©' : 'Primary' }}
+                                  {{ currentLang === 'ar' ? 'رئيسية' : 'Primary' }}
                                 </span>
                               }
                               <button
@@ -238,7 +238,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
                                 (click)="removeRowImage(row, imageIndex)"
                                 [disabled]="stage !== 'review'"
                                 class="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-black text-white disabled:opacity-50">
-                                Ã—
+                                ×
                               </button>
                             </div>
                           }
@@ -280,10 +280,10 @@ type BulkStage = 'review' | 'submitting' | 'done';
                     @if (stage === 'review') {
                       <div class="flex flex-nowrap justify-end gap-2 whitespace-nowrap">
                         <button type="button" (click)="duplicateRow(row)" class="shrink-0 rounded-lg border border-slate-200 px-2.5 py-1.5 text-[0.68rem] font-black text-slate-600">
-                          {{ currentLang === 'ar' ? 'Ù†Ø³Ø®' : 'Duplicate' }}
+                          {{ currentLang === 'ar' ? 'نسخ' : 'Duplicate' }}
                         </button>
                         <button type="button" (click)="removeRow(row.rowId)" class="shrink-0 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[0.68rem] font-black text-rose-600">
-                          {{ currentLang === 'ar' ? 'Ø­Ø°Ù' : 'Remove' }}
+                          {{ currentLang === 'ar' ? 'حذف' : 'Remove' }}
                         </button>
                       </div>
                     }
@@ -297,25 +297,25 @@ type BulkStage = 'review' | 'submitting' | 'done';
         <div [ngClass]="embedded ? 'border-t border-slate-100 px-5 py-3' : 'max-w-full rounded-[24px] border border-slate-200/70 bg-white px-5 py-3 shadow-sm'">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-xs font-black text-slate-600">
-              <span>{{ currentLang === 'ar' ? 'Ø§Ù„ØµÙÙˆÙ' : 'Rows' }}: {{ rows.length }}</span>
-              <span>â€¢</span>
-              <span>{{ currentLang === 'ar' ? 'Ø§Ù„ØµØ§Ù„Ø­Ø©' : 'Valid' }}: {{ submittableRows.length }}</span>
-              <span>â€¢</span>
-              <span>{{ currentLang === 'ar' ? 'Ø§Ù„ØµÙØ­Ø©' : 'Page' }} {{ currentPage }} / {{ totalPages }}</span>
+              <span>{{ currentLang === 'ar' ? 'الصفوف' : 'Rows' }}: {{ rows.length }}</span>
+              <span>•</span>
+              <span>{{ currentLang === 'ar' ? 'الصالحة' : 'Valid' }}: {{ submittableRows.length }}</span>
+              <span>•</span>
+              <span>{{ currentLang === 'ar' ? 'الصفحة' : 'Page' }} {{ currentPage }} / {{ totalPages }}</span>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" (click)="previousPage()" [disabled]="currentPage === 1" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-40">â€¹</button>
-              <button type="button" (click)="nextPage()" [disabled]="currentPage === totalPages" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-40">â€º</button>
+              <button type="button" (click)="previousPage()" [disabled]="currentPage === 1" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-40">‹</button>
+              <button type="button" (click)="nextPage()" [disabled]="currentPage === totalPages" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-40">›</button>
               <button type="button" (click)="onClose()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                {{ currentLang === 'ar' ? (embedded ? 'Ø¥ØºÙ„Ø§Ù‚' : 'Ø±Ø¬ÙˆØ¹') : (embedded ? 'Close' : 'Back') }}
+                {{ currentLang === 'ar' ? (embedded ? 'إغلاق' : 'رجوع') : (embedded ? 'Close' : 'Back') }}
               </button>
               @if (stage === 'review') {
                 <button type="button" (click)="submit()" [disabled]="submittableRows.length === 0" class="rounded-xl bg-zadna-primary px-4 py-2 text-[0.72rem] font-black text-white shadow-lg shadow-zadna-primary/20 disabled:opacity-40">
-                  {{ currentLang === 'ar' ? 'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø¬Ù…Ø§Ø¹ÙŠØ©' : 'Submit bulk create' }}
+                  {{ currentLang === 'ar' ? 'إرسال الإضافة الجماعية' : 'Submit bulk create' }}
                 </button>
               } @else if (stage === 'done') {
                 <button type="button" (click)="emitCompleted()" class="rounded-xl bg-zadna-primary px-4 py-2 text-[0.72rem] font-black text-white shadow-lg shadow-zadna-primary/20">
-                  {{ currentLang === 'ar' ? 'ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©' : 'Refresh list' }}
+                  {{ currentLang === 'ar' ? 'تحديث القائمة' : 'Refresh list' }}
                 </button>
               }
             </div>
@@ -517,23 +517,23 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
 
   validateRow(row: BulkMasterProductDraft): string | null {
     if (!row.nameAr?.trim()) {
-      return this.currentLang === 'ar' ? 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ø¹Ø±Ø¨ÙŠ Ù…Ø·Ù„ÙˆØ¨.' : 'Arabic name is required.';
+      return this.currentLang === 'ar' ? 'الاسم العربي مطلوب.' : 'Arabic name is required.';
     }
 
     if (!row.nameEn?.trim()) {
-      return this.currentLang === 'ar' ? 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ø¥Ù†Ø¬Ù„ÙŠØ²ÙŠ Ù…Ø·Ù„ÙˆØ¨.' : 'English name is required.';
+      return this.currentLang === 'ar' ? 'الاسم الإنجليزي مطلوب.' : 'English name is required.';
     }
 
     if (!row.categoryId) {
-      return this.currentLang === 'ar' ? 'Ø§Ù„ØªØµÙ†ÙŠÙ Ù…Ø·Ù„ÙˆØ¨.' : 'Category is required.';
+      return this.currentLang === 'ar' ? 'التصنيف مطلوب.' : 'Category is required.';
     }
 
     if ((row.slug || '').trim().length > 250) {
-      return this.currentLang === 'ar' ? 'Ø§Ù„Ù€ slug ÙŠØ¬Ø¨ Ø£Ù„Ø§ ÙŠØªØ¬Ø§ÙˆØ² 250 Ø­Ø±ÙÙ‹Ø§.' : 'Slug must not exceed 250 characters.';
+      return this.currentLang === 'ar' ? 'قيمة slug يجب ألا تتجاوز 250 حرفًا.' : 'Slug must not exceed 250 characters.';
     }
 
     if ((row.barcode || '').trim().length > 100) {
-      return this.currentLang === 'ar' ? 'Ø§Ù„Ø¨Ø§Ø±ÙƒÙˆØ¯ ÙŠØ¬Ø¨ Ø£Ù„Ø§ ÙŠØªØ¬Ø§ÙˆØ² 100 Ø­Ø±Ù.' : 'Barcode must not exceed 100 characters.';
+      return this.currentLang === 'ar' ? 'الباركود يجب ألا يتجاوز 100 حرف.' : 'Barcode must not exceed 100 characters.';
     }
 
     return null;
@@ -717,13 +717,13 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
 
     switch (status) {
       case 'Draft':
-        return 'Ù…Ø³ÙˆØ¯Ø©';
+        return 'مسودة';
       case 'Active':
-        return 'Ù†Ø´Ø·';
+        return 'نشط';
       case 'Inactive':
-        return 'ØºÙŠØ± Ù†Ø´Ø·';
+        return 'غير نشط';
       case 'Discontinued':
-        return 'Ù…ØªÙˆÙ‚Ù';
+        return 'متوقف';
       default:
         return status;
     }

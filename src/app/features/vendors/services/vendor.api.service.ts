@@ -202,6 +202,33 @@ export interface AdminVendorPayoutItem {
   swiftCode?: string | null;
 }
 
+export interface AdminSendVendorNotificationRequest {
+  titleAr?: string | null;
+  titleEn?: string | null;
+  bodyAr?: string | null;
+  bodyEn?: string | null;
+  type?: string | null;
+  referenceId?: string | null;
+  data?: string | null;
+  targetUrl?: string | null;
+  sendPush?: boolean;
+}
+
+export interface AdminVendorNotificationResponse {
+  message: string;
+  vendorId: string;
+  userId: string;
+  externalId: string;
+  type: string;
+  inboxRequested: boolean;
+  pushAttempted: boolean;
+  pushSent: boolean;
+  pushSkipped: boolean;
+  pushStatusCode?: number | null;
+  providerNotificationId?: string | null;
+  pushReason?: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -336,6 +363,13 @@ export class VendorService {
 
   escalateVendorPayout(vendorId: string, payoutId: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/${vendorId}/payouts/${payoutId}/escalate`, {});
+  }
+
+  sendVendorNotificationTest(
+    vendorId: string,
+    payload: AdminSendVendorNotificationRequest = {}
+  ): Observable<AdminVendorNotificationResponse> {
+    return this.http.post<AdminVendorNotificationResponse>(`${this.apiUrl}/${vendorId}/notifications/test`, payload);
   }
 
   private shouldUseLocalReadFallback(): boolean {

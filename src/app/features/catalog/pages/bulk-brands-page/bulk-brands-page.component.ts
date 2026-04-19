@@ -15,13 +15,13 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
   template: `
     <div class="flex min-h-full flex-col overflow-x-hidden bg-slate-50/50">
       <app-page-header
-        [title]="'Bulk Upload Brands'"
-        [subtitle]="'Create many brands and upload logos directly in the same page.'"
+        [title]="'BRANDS.BULK_UPLOAD'"
+        [subtitle]="'BRANDS.BULK_UPLOAD_DESC'"
         [showToolbar]="true"
         [breadcrumbs]="[
           { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
           { label: 'BRANDS.TITLE', url: '/catalog/brands' },
-          { label: 'Bulk Upload Brands' }
+          { label: 'BRANDS.BULK_UPLOAD' }
         ]">
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">brand_family</span>
       </app-page-header>

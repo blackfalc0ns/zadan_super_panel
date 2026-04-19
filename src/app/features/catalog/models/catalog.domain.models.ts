@@ -12,6 +12,8 @@ export interface Category {
     updatedAtUtc?: string;
     masterProductsCount?: number;
     brandsCount?: number;
+    activityNameAr?: string;
+    activityNameEn?: string;
     level?: number;
     subCategories?: Category[];
 }

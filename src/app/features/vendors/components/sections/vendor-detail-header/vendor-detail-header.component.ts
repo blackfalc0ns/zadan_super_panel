@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { DetailTabNavItem, DetailTabsNavComponent } from '@shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
+import { ToastService } from '@shared/services/toast.service';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
@@ -33,6 +35,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
   category = '';
   statusLabelKey = 'VENDORS.STATUS.PENDING';
   verificationLabelKey = 'VENDORS.STATUS.PENDING';
+  isSendingTestNotification = false;
 
   tabs: Tab[] = [
     { id: 'overview', labelKey: 'VENDOR_DETAIL.TAB_OVERVIEW', active: true },
@@ -52,7 +55,8 @@ export class VendorDetailHeaderComponent implements OnChanges {
   constructor(
     private readonly translate: TranslateService,
     private readonly vendorDetailFacade: VendorDetailFacade,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -144,11 +148,54 @@ export class VendorDetailHeaderComponent implements OnChanges {
     });
   }
 
+  sendTestNotification(): void {
+    if (!this.vendor || this.isSendingTestNotification) {
+      return;
+    }
+
+    const displayName = this.getDisplayStoreName(this.vendor);
+
+    this.isSendingTestNotification = true;
+    this.vendorDetailFacade.sendVendorNotificationTestRequest({
+      titleAr: 'إشعار اختبار من الأدمن',
+      titleEn: 'Admin test notification',
+      bodyAr: `هذا إشعار تجريبي للمتجر ${displayName} للتأكد من وصول الإشعارات في لوحة التاجر.`,
+      bodyEn: `This is a test notification for ${displayName} to verify delivery in the vendor panel.`,
+      type: 'vendor_admin_test',
+      targetUrl: '/alerts',
+      sendPush: true
+    }).subscribe({
+      next: (response) => {
+        this.isSendingTestNotification = false;
+        this.showTestNotificationResult(response);
+      },
+      error: (error) => {
+        this.isSendingTestNotification = false;
+        this.toastService.error(
+          this.resolveApiError(error),
+          this.notificationToastTitle
+        );
+      }
+    });
+  }
+
   get navTabs(): DetailTabNavItem[] {
     return this.tabs.map((tab) => ({
       id: tab.id,
       labelKey: tab.labelKey
     }));
+  }
+
+  get sendTestNotificationLabel(): string {
+    return this.currentLang === 'ar' ? 'إرسال إشعار تجريبي' : 'Send test notification';
+  }
+
+  get sendingTestNotificationLabel(): string {
+    return this.currentLang === 'ar' ? 'جاري الإرسال...' : 'Sending...';
+  }
+
+  get notificationToastTitle(): string {
+    return this.currentLang === 'ar' ? 'إشعارات التاجر' : 'Vendor notifications';
   }
 
   private updateHeaderContent(): void {
@@ -217,5 +264,77 @@ export class VendorDetailHeaderComponent implements OnChanges {
     };
 
     return map[vendor?.verificationStatus ?? ''] ?? 'VENDORS.STATUS.PENDING';
+  }
+
+  private showTestNotificationResult(response: {
+    message?: string | null;
+    pushSent?: boolean;
+    pushAttempted?: boolean;
+    pushSkipped?: boolean;
+    pushReason?: string | null;
+  }): void {
+    if (response.pushSent) {
+      this.toastService.success(
+        this.currentLang === 'ar'
+          ? 'تم إنشاء الإشعار وإرسال الويب بوش للتاجر بنجاح.'
+          : 'The notification was created and web push was sent to the vendor successfully.',
+        this.notificationToastTitle
+      );
+      return;
+    }
+
+    if (response.pushAttempted && !response.pushSent) {
+      this.toastService.warning(
+        response.pushReason?.trim() || (
+          this.currentLang === 'ar'
+            ? 'تم إنشاء الإشعار داخل النظام لكن إرسال الويب بوش لم ينجح.'
+            : 'The notification was created in-app, but web push delivery did not succeed.'
+        ),
+        this.notificationToastTitle
+      );
+      return;
+    }
+
+    if (response.pushSkipped) {
+      this.toastService.info(
+        response.pushReason?.trim() || (
+          this.currentLang === 'ar'
+            ? 'تم إنشاء الإشعار داخل لوحة التاجر، لكن تم تجاوز الويب بوش في هذه التجربة.'
+            : 'The vendor inbox notification was created, but web push was skipped for this test.'
+        ),
+        this.notificationToastTitle
+      );
+      return;
+    }
+
+    this.toastService.success(
+      response.message?.trim() || (
+        this.currentLang === 'ar'
+          ? 'تم إنشاء إشعار للتاجر بنجاح.'
+          : 'The vendor notification was created successfully.'
+      ),
+      this.notificationToastTitle
+    );
+  }
+
+  private resolveApiError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const detail = error.error?.detail ?? error.error?.title ?? error.error?.message;
+      if (typeof detail === 'string' && detail.trim()) {
+        return detail.trim();
+      }
+
+      if (typeof error.message === 'string' && error.message.trim()) {
+        return error.message.trim();
+      }
+    }
+
+    if (error instanceof Error && error.message.trim()) {
+      return error.message.trim();
+    }
+
+    return this.currentLang === 'ar'
+      ? 'تعذر إرسال الإشعار التجريبي الآن.'
+      : 'Unable to send the test notification right now.';
   }
 }

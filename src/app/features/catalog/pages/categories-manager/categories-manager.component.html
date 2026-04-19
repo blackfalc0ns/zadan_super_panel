@@ -103,10 +103,11 @@
                     <tr class="sm:table-row">
                         <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
                         <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.IMAGE_LABEL' | translate }}</th>
-                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'COMMON.NAME' | translate }}</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.STATUS' | translate }}</th>
-                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.ACTIONS' | translate }}</th>
+                        <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'COMMON.NAME' | translate }}</th>
+                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.INDUSTRY' | translate }}</th>
+                        <th class="text-center w-[17%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</th>
+                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.STATUS' | translate }}</th>
+                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.ACTIONS' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody class="block sm:table-row-group stagger-rows w-full">
@@ -144,7 +145,7 @@
                         </td>
 
                         <!-- Col 3: Name (Desktop Only) -->
-                        <td class="hidden sm:table-cell sm:table-cell border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[25%] px-2">
+                        <td class="hidden sm:table-cell sm:table-cell border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[22%] px-2">
                             <div class="flex flex-col text-start">
                                 <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug">
                                     {{ activeLang === 'ar' ? item.nameAr : item.nameEn }}
@@ -155,8 +156,17 @@
                             </div>
                         </td>
 
+                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[18%]">
+                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'CATEGORIES.INDUSTRY' | translate }}</span>
+                            <div class="flex items-center justify-end sm:justify-center">
+                                <span class="inline-flex items-center rounded-full bg-[#f0f9fa] px-2.5 py-1 text-[10px] font-black text-zadna-primary">
+                                    {{ 'CATEGORIES.INDUSTRY' | translate }}
+                                </span>
+                            </div>
+                        </td>
+
                         <!-- Col 4: Count -->
-                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
+                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[17%]">
                             <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</span>
                             <div class="flex flex-wrap items-center justify-center gap-2">
                                 <div class="inline-flex items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-1.5 transition-all group-hover:border-zadna-primary/10 sm:py-1">
@@ -169,7 +179,7 @@
                         </td>
 
                         <!-- Col 5: Status -->
-                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[20%]">
+                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[18%]">
                             <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'COMMON.STATUS' | translate }}</span>
                             <app-status-pill
                                 [label]="item.isActive ? 'CATEGORIES.STATUS_ACTIVE' : 'CATEGORIES.STATUS_DISABLED'"
@@ -179,7 +189,7 @@
                         </td>
 
                         <!-- Col 6: Actions -->
-                        <td class="flex sm:table-cell justify-center items-center pt-4 sm:pt-0 mt-2 sm:mt-0 align-middle sm:w-[20%]">
+                        <td class="flex sm:table-cell justify-center items-center pt-4 sm:pt-0 mt-2 sm:mt-0 align-middle sm:w-[18%]">
                             <div class="flex flex-row-reverse items-center justify-center gap-3 sm:gap-1.5 w-full sm:w-auto">
                                 <button (click)="viewDetails(item, $event)" class="w-9 h-9 sm:w-8 sm:h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-zadna-primary hover:text-white transition-all">
                                     <svg class="w-4.5 h-4.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

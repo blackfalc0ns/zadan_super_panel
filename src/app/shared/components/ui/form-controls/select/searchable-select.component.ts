@@ -44,7 +44,9 @@ export interface SearchableSelectOption<T = any> {
         </button>
 
         @if (isOpen && !(disabled || isDisabled)) {
-          <div class="absolute inset-x-0 top-full z-50 mt-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl origin-top animate-in fade-in zoom-in-95 duration-200">
+          <div
+            class="absolute start-0 top-full z-50 mt-2 w-full rounded-2xl border border-slate-200 bg-white p-3 shadow-xl origin-top animate-in fade-in zoom-in-95 duration-200"
+            [ngClass]="dropdownPanelClass">
             @if (searchable) {
               <div class="relative">
                 <svg class="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,6 +123,7 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   @Input() isTouched = false;
   @Input() isRequired = false;
   @Input() customClass = '';
+  @Input() dropdownPanelClass = '';
   @Input() allowClear = true;
   @Input() searchable = true;
   @Input() isDisabled = false;

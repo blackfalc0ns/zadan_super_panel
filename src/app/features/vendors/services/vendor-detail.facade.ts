@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, finalize, map, take, tap, throwError } from 'rxjs';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
-import { VendorService } from '@vendors/services/vendor.api.service';
+import {
+  AdminSendVendorNotificationRequest,
+  AdminVendorNotificationResponse,
+  VendorService
+} from '@vendors/services/vendor.api.service';
 
 @Injectable()
 export class VendorDetailFacade {
@@ -319,6 +323,26 @@ export class VendorDetailFacade {
   ): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) =>
       this.vendorService.addVendorReviewNote(vendorId, message, authorName, roleLabel)
+    );
+  }
+
+  sendVendorNotificationTestRequest(
+    payload: AdminSendVendorNotificationRequest = {}
+  ): Observable<AdminVendorNotificationResponse> {
+    const vendorId = this.vendorId;
+
+    if (!vendorId) {
+      return throwError(() => new Error('Vendor is not loaded.'));
+    }
+
+    this.mutationErrorSubject.next(null);
+
+    return this.vendorService.sendVendorNotificationTest(vendorId, payload).pipe(
+      take(1),
+      catchError((error) => {
+        this.mutationErrorSubject.next(this.resolveErrorMessage(error));
+        return throwError(() => error);
+      })
     );
   }
 
