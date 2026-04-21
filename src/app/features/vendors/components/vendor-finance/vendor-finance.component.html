@@ -215,8 +215,8 @@
           </article>
         </section>
 
-        <article class="glass-panel rounded-[1.7rem] border border-white/70 px-4 py-4 shadow-sm">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <article class="glass-panel rounded-[1.9rem] border border-white/70 px-4 py-4 shadow-sm">
+          <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div>
               <h3 class="text-sm font-black text-slate-950">{{ isRTL ? 'التحويلات والتسويات' : 'Settlements and payouts' }}</h3>
               <p class="mt-1 text-xs font-medium text-slate-500">
@@ -230,7 +230,7 @@
               <app-button
                 variant="outline"
                 size="sm"
-                [customClass]="'min-w-[9rem] justify-center'"
+                [customClass]="'min-w-[9rem] justify-center rounded-full'"
                 (btnClick)="showPayoutsReviewModal = true">
                 {{ isRTL ? 'مراجعة التحويلات' : 'Review payouts' }}
               </app-button>
@@ -239,48 +239,106 @@
                 *ngIf="!isDirectMode"
                 variant="primary"
                 size="sm"
-                [customClass]="'min-w-[9rem] justify-center'"
+                [customClass]="'min-w-[9rem] justify-center rounded-full'"
                 (btnClick)="onCreateSettlement()">
                 {{ isRTL ? 'إنشاء تسوية' : 'Create settlement' }}
               </app-button>
             </div>
           </div>
 
-          <div class="mt-4 grid gap-4 xl:grid-cols-2">
-            <div class="space-y-3">
+          <div class="mt-5 grid gap-3 md:grid-cols-3">
+            <div class="rounded-[1.4rem] border border-slate-200/80 bg-white/90 px-4 py-3">
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ isRTL ? 'إجمالي الدفعات' : 'Total payouts' }}</p>
+              <p class="mt-2 text-lg font-black text-slate-950">{{ formatNumber(payouts.length) }}</p>
+              <p class="mt-1 text-[11px] font-semibold text-slate-500">
+                {{ isRTL ? 'كل التحويلات المسجلة داخل دورة المالية الحالية' : 'All payouts currently recorded in this finance stream.' }}
+              </p>
+            </div>
+
+            <div class="rounded-[1.4rem] border border-rose-200 bg-rose-50/80 px-4 py-3">
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-rose-500">{{ isRTL ? 'دفعات تحتاج مراجعة' : 'Needs review' }}</p>
+              <p class="mt-2 text-lg font-black text-rose-700">{{ formatNumber(failedPayouts.length) }}</p>
+              <p class="mt-1 text-[11px] font-semibold text-rose-600/90">
+                {{ isRTL ? 'حالات فشل أو تأخير تتطلب متابعة من الفريق المالي' : 'Failed or delayed cases that need finance team attention.' }}
+              </p>
+            </div>
+
+            <div class="rounded-[1.4rem] border border-amber-200 bg-amber-50/80 px-4 py-3">
+              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-amber-600">
+                {{ isDirectMode ? (isRTL ? 'طلبات بانتظار التحويل' : 'Awaiting payout') : (isRTL ? 'تسويات مجمعة' : 'Batch settlements') }}
+              </p>
+              <p class="mt-2 text-lg font-black text-amber-700">
+                {{ formatNumber(isDirectMode ? deliveredOrdersAwaitingPayout.length : batchSettlements.length) }}
+              </p>
+              <p class="mt-1 text-[11px] font-semibold text-amber-700/90">
+                {{ isDirectMode
+                  ? (isRTL ? 'طلبات مسلمة لم تتحول بعد إلى payout بنكي' : 'Delivered orders not yet converted into a bank payout.')
+                  : (isRTL ? 'آخر التسويات المجمعة الجاهزة للمراجعة والمتابعة' : 'Recent grouped settlements ready for follow-up and review.') }}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.95fr)]">
+            <div class="space-y-3 rounded-[1.5rem] border border-slate-200/80 bg-white/88 p-3">
+              <p class="text-[11px] font-medium text-slate-500">
+                {{ isDirectMode
+                  ? (isRTL ? 'هذه القائمة تبرز الطلبات التي اكتمل تسليمها وما زالت بانتظار التحويل البنكي.' : 'This queue highlights delivered orders still waiting for bank payout creation.')
+                  : (isRTL ? 'هذه القائمة تعرض آخر التسويات المجمعة الجاهزة للمتابعة المالية.' : 'This queue highlights the latest grouped settlements ready for financial follow-up.') }}
+              </p>
+              <p class="text-[11px] font-medium text-slate-500">
+                {{ isRTL ? 'عرض أوضح لحالة كل دفعة مع مرجع التحويل والمصدر.' : 'A clearer view of each payout with its transfer reference and source.' }}
+              </p>
               <h4 class="text-xs font-black text-slate-900">{{ isRTL ? 'آخر التحويلات' : 'Recent payouts' }}</h4>
 
-              <div *ngFor="let payout of payouts | slice:0:5; trackBy: trackById" class="rounded-[1.2rem] border border-slate-200/80 bg-white/90 px-3 py-3">
-                <div class="flex items-start justify-between gap-3">
+              <div *ngFor="let payout of payouts | slice:0:5; trackBy: trackById" class="rounded-[1.25rem] border border-slate-200/80 bg-slate-50/85 px-3 py-3">
+                <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div class="min-w-0">
-                    <p class="text-[11px] font-black text-slate-950">{{ payout.payoutNumber }}</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <p class="text-[11px] font-black text-slate-950">{{ payout.payoutNumber }}</p>
+                      <span class="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
+                        {{ payout.origin === 'PerOrderDirectPayout' ? (isRTL ? 'مباشر' : 'Direct') : (isRTL ? 'مجمعة' : 'Batch') }}
+                      </span>
+                    </div>
                     <p class="mt-1 text-[11px] font-medium text-slate-500">
                       {{ payout.sourceOrderNumber || (isRTL ? 'بدون طلب مرجعي مباشر' : 'No direct source order') }}
                     </p>
+                    <p class="mt-2 text-[11px] font-semibold text-slate-400">
+                      {{ payout.transferReference || (isRTL ? 'لا يوجد مرجع تحويل بعد' : 'No transfer reference yet') }}
+                    </p>
                   </div>
 
-                  <app-status-pill
-                    [label]="payout.status"
-                    [variant]="getPayoutStatusVariant(payout.status)"
-                    [showDot]="true"
-                    size="sm"
-                    [shouldTranslate]="false">
-                  </app-status-pill>
+                  <div class="flex flex-col items-start gap-2 lg:items-end">
+                    <app-status-pill
+                      [label]="payout.status"
+                      [variant]="getPayoutStatusVariant(payout.status)"
+                      [showDot]="true"
+                      size="sm"
+                      [shouldTranslate]="false">
+                    </app-status-pill>
+
+                    <p class="text-sm font-black text-slate-950">{{ formatCurrency(payout.amount) }}</p>
+                  </div>
                 </div>
 
                 <div class="mt-3 flex items-center justify-between gap-3 text-[11px] font-bold text-slate-500">
-                  <span>{{ formatCurrency(payout.amount) }}</span>
+                  <span>{{ isRTL ? 'تم التحديث' : 'Updated' }}</span>
                   <span>{{ formatDate(payout.processedAtUtc || payout.createdAtUtc) }}</span>
                 </div>
               </div>
 
-              <div *ngIf="payouts.length === 0" class="rounded-[1.2rem] border border-dashed border-slate-200 bg-slate-50/70 px-4 py-6 text-center text-[11px] font-bold text-slate-500">
+              <div *ngIf="payouts.length === 0" class="rounded-[1.25rem] border border-dashed border-slate-200 bg-slate-50/70 px-4 py-8 text-center text-[11px] font-bold text-slate-500">
                 {{ isRTL ? 'لا توجد تحويلات مالية مسجلة بعد.' : 'No finance payouts recorded yet.' }}
               </div>
             </div>
 
-            <div class="space-y-3">
+            <div class="space-y-3 rounded-[1.5rem] border border-slate-200/80 bg-white/88 p-3">
               <h4 class="text-xs font-black text-slate-900">{{ isDirectMode ? (isRTL ? 'طلبات تنتظر إنشاء payout' : 'Delivered orders awaiting payout') : (isRTL ? 'آخر التسويات المجمعة' : 'Recent batch settlements') }}</h4>
+
+              <p class="text-[11px] font-medium text-slate-500">
+                {{ isDirectMode
+                  ? (isRTL ? 'هذه القائمة تبرز الطلبات التي اكتمل تسليمها وما زالت بانتظار التحويل البنكي.' : 'This queue highlights delivered orders still waiting for bank payout creation.')
+                  : (isRTL ? 'هذه القائمة تعرض آخر التسويات المجمعة الجاهزة للمتابعة المالية.' : 'This queue highlights the latest grouped settlements ready for financial follow-up.') }}
+              </p>
 
               <ng-container *ngIf="isDirectMode; else batchSettlementsState">
                 <div *ngFor="let order of deliveredOrdersAwaitingPayout | slice:0:5; trackBy: trackById" class="rounded-[1.2rem] border border-amber-200 bg-amber-50/70 px-3 py-3">
@@ -313,6 +371,27 @@
                   {{ isRTL ? 'لا توجد تسويات مجمعة حتى الآن.' : 'No grouped settlements created yet.' }}
                 </div>
               </ng-template>
+
+              <div class="rounded-[1.25rem] border border-slate-200/80 bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(255,255,255,0.92))] px-3 py-3">
+                <h5 class="text-[11px] font-black text-slate-900">{{ isRTL ? 'ملف المراجعة السريع' : 'Quick review profile' }}</h5>
+
+                <div class="mt-3 space-y-2">
+                  <div class="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-200/80 bg-white/90 px-3 py-2">
+                    <span class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'آخر تحويل مباشر' : 'Latest direct payout' }}</span>
+                    <span class="text-[11px] font-black text-slate-900">{{ latestDirectPayout ? formatDate(latestDirectPayout.processedAtUtc || latestDirectPayout.createdAtUtc) : '—' }}</span>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-200/80 bg-white/90 px-3 py-2">
+                    <span class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'الحساب البنكي الأساسي' : 'Primary bank account' }}</span>
+                    <span class="text-[11px] font-black text-slate-900">{{ vendorDetail?.primaryBankAccount?.bankName || '—' }}</span>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-200/80 bg-white/90 px-3 py-2">
+                    <span class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'الرصيد الجاهز للتحويل' : 'Available transfer balance' }}</span>
+                    <span class="text-[11px] font-black text-emerald-700">{{ formatCurrency(availableBalance) }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </article>
