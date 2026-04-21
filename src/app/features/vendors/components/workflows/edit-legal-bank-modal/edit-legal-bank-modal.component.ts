@@ -1,71 +1,71 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 export interface LegalBankData {
-  commercialRegister: string;
-  taxNumber: string;
-  expiryDate: string;
+  commercialRegistrationNumber: string;
+  commercialRegistrationExpiryDate: string;
+  taxId: string;
+  licenseNumber: string;
   bankName: string;
-  paymentCycle: string;
+  accountHolderName: string;
   iban: string;
+  swiftCode: string;
+  commercialRegisterDocumentUrl: string;
 }
 
 @Component({
   selector: 'app-edit-legal-bank-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './edit-legal-bank-modal.component.html'
 })
 export class EditLegalBankModalComponent implements OnChanges {
   @Input() isOpen = false;
+  @Input() isSaving = false;
+  @Input() errorMessage = '';
   @Input() legalBankData: LegalBankData = {
-    commercialRegister: '',
-    taxNumber: '',
-    expiryDate: '',
+    commercialRegistrationNumber: '',
+    commercialRegistrationExpiryDate: '',
+    taxId: '',
+    licenseNumber: '',
     bankName: '',
-    paymentCycle: '',
-    iban: ''
+    accountHolderName: '',
+    iban: '',
+    swiftCode: '',
+    commercialRegisterDocumentUrl: ''
   };
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<LegalBankData>();
 
   draftLegalBankData: LegalBankData = {
-    commercialRegister: '',
-    taxNumber: '',
-    expiryDate: '',
+    commercialRegistrationNumber: '',
+    commercialRegistrationExpiryDate: '',
+    taxId: '',
+    licenseNumber: '',
     bankName: '',
-    paymentCycle: '',
-    iban: ''
+    accountHolderName: '',
+    iban: '',
+    swiftCode: '',
+    commercialRegisterDocumentUrl: ''
   };
-
-  bankOptions = [
-    { value: 'alrajhi', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALRAJHI' },
-    { value: 'alahli', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALAHLI' },
-    { value: 'inma', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.INMA' },
-    { value: 'alinma', labelKey: 'MODALS.LEGAL_BANK_EDIT.BANKS.ALINMA' }
-  ];
-
-  paymentCycleOptions = [
-    { value: 'weekly', labelKey: 'MODALS.LEGAL_BANK_EDIT.WEEKLY' },
-    { value: 'biweekly', labelKey: 'MODALS.LEGAL_BANK_EDIT.BIWEEKLY' },
-    { value: 'monthly', labelKey: 'MODALS.LEGAL_BANK_EDIT.MONTHLY' }
-  ];
 
   constructor(private translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['legalBankData']) {
       this.draftLegalBankData = {
-        commercialRegister: this.legalBankData.commercialRegister || '',
-        taxNumber: this.legalBankData.taxNumber || '',
-        expiryDate: this.legalBankData.expiryDate || '',
+        commercialRegistrationNumber: this.legalBankData.commercialRegistrationNumber || '',
+        commercialRegistrationExpiryDate: this.legalBankData.commercialRegistrationExpiryDate || '',
+        taxId: this.legalBankData.taxId || '',
+        licenseNumber: this.legalBankData.licenseNumber || '',
         bankName: this.legalBankData.bankName || '',
-        paymentCycle: this.legalBankData.paymentCycle || '',
-        iban: this.legalBankData.iban || ''
+        accountHolderName: this.legalBankData.accountHolderName || '',
+        iban: this.legalBankData.iban || '',
+        swiftCode: this.legalBankData.swiftCode || '',
+        commercialRegisterDocumentUrl: this.legalBankData.commercialRegisterDocumentUrl || ''
       };
     }
   }
@@ -75,26 +75,92 @@ export class EditLegalBankModalComponent implements OnChanges {
     return lang.startsWith('ar');
   }
 
-  onClose() {
-    this.close.emit();
+  get validationMessage(): string {
+    if (!this.draftLegalBankData.commercialRegistrationNumber.trim()) {
+      return this.text('رقم السجل التجاري مطلوب.', 'Commercial registration number is required.');
+    }
+
+    if (this.draftLegalBankData.commercialRegistrationNumber.trim().length > 50) {
+      return this.text('رقم السجل التجاري يجب ألا يتجاوز 50 حرفًا.', 'Commercial registration number must not exceed 50 characters.');
+    }
+
+    if (this.draftLegalBankData.taxId.trim().length > 50) {
+      return this.text('الرقم الضريبي يجب ألا يتجاوز 50 حرفًا.', 'Tax ID must not exceed 50 characters.');
+    }
+
+    if (this.draftLegalBankData.licenseNumber.trim().length > 100) {
+      return this.text('رقم الرخصة يجب ألا يتجاوز 100 حرف.', 'License number must not exceed 100 characters.');
+    }
+
+    if (!this.draftLegalBankData.bankName.trim()) {
+      return this.text('اسم البنك مطلوب.', 'Bank name is required.');
+    }
+
+    if (this.draftLegalBankData.bankName.trim().length > 200) {
+      return this.text('اسم البنك يجب ألا يتجاوز 200 حرف.', 'Bank name must not exceed 200 characters.');
+    }
+
+    if (!this.draftLegalBankData.accountHolderName.trim()) {
+      return this.text('اسم صاحب الحساب مطلوب.', 'Account holder name is required.');
+    }
+
+    if (this.draftLegalBankData.accountHolderName.trim().length > 200) {
+      return this.text('اسم صاحب الحساب يجب ألا يتجاوز 200 حرف.', 'Account holder name must not exceed 200 characters.');
+    }
+
+    const normalizedIban = this.normalizeIban(this.draftLegalBankData.iban);
+    if (!normalizedIban) {
+      return this.text('رقم IBAN مطلوب.', 'IBAN is required.');
+    }
+
+    if (normalizedIban.length > 34) {
+      return this.text('رقم IBAN يجب ألا يتجاوز 34 حرفًا.', 'IBAN must not exceed 34 characters.');
+    }
+
+    if (this.draftLegalBankData.swiftCode.trim().length > 11) {
+      return this.text('رمز SWIFT يجب ألا يتجاوز 11 حرفًا.', 'SWIFT code must not exceed 11 characters.');
+    }
+
+    return '';
   }
 
-  onSave() {
+  get isFormValid(): boolean {
+    return !this.validationMessage;
+  }
+
+  onClose(): void {
+    if (!this.isSaving) {
+      this.close.emit();
+    }
+  }
+
+  onSave(): void {
+    if (!this.isFormValid || this.isSaving) {
+      return;
+    }
+
     this.save.emit({
       ...this.draftLegalBankData,
-      iban: this.normalizeIban(this.draftLegalBankData.iban)
+      commercialRegistrationNumber: this.draftLegalBankData.commercialRegistrationNumber.trim(),
+      commercialRegistrationExpiryDate: this.draftLegalBankData.commercialRegistrationExpiryDate.trim(),
+      taxId: this.draftLegalBankData.taxId.trim(),
+      licenseNumber: this.draftLegalBankData.licenseNumber.trim(),
+      bankName: this.draftLegalBankData.bankName.trim(),
+      accountHolderName: this.draftLegalBankData.accountHolderName.trim(),
+      iban: this.normalizeIban(this.draftLegalBankData.iban),
+      swiftCode: this.draftLegalBankData.swiftCode.trim(),
+      commercialRegisterDocumentUrl: this.draftLegalBankData.commercialRegisterDocumentUrl.trim()
     });
   }
 
-  onBackdropClick(event: MouseEvent) {
-    if (event.target === event.currentTarget) {
+  onBackdropClick(event: MouseEvent): void {
+    if (!this.isSaving && event.target === event.currentTarget) {
       this.onClose();
     }
   }
 
-  copyIban() {
+  copyIban(): void {
     navigator.clipboard.writeText(this.normalizeIban(this.draftLegalBankData.iban));
-    // Ideally add a toast here via a service
   }
 
   private normalizeIban(value: string): string {
@@ -104,5 +170,9 @@ export class EditLegalBankModalComponent implements OnChanges {
     }
 
     return sanitized.startsWith('SA') ? sanitized : `SA${sanitized}`;
+  }
+
+  private text(arabic: string, english: string): string {
+    return this.isRTL ? arabic : english;
   }
 }

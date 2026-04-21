@@ -83,6 +83,7 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
   idNumber?: string | null;
   nationality?: string | null;
   payoutCycle?: string | null;
+  financialLifecycleMode?: string | null;
   operationsSettings?: {
     acceptOrders: boolean;
     minimumOrderAmount?: number | null;
@@ -174,16 +175,75 @@ export interface AdminVendorProductItem {
   };
 }
 
+export type AdminVendorAnalyticsRange = '7d' | '30d' | '90d';
+
+export interface AdminVendorAnalyticsSummary {
+  totalRevenue: number;
+  totalOrders: number;
+  averageOrderValue: number;
+  completionRate: number;
+  cancellationRate: number;
+  availableProducts: number;
+  lowStockProducts: number;
+}
+
+export interface AdminVendorAnalyticsTrendPoint {
+  date: string;
+  ordersCount: number;
+  revenue: number;
+}
+
+export interface AdminVendorAnalyticsStatusBreakdown {
+  status: string;
+  count: number;
+  percentage: number;
+}
+
+export interface AdminVendorAnalyticsProductHealth {
+  available: number;
+  lowStock: number;
+  outOfStock: number;
+  inactive: number;
+}
+
+export interface AdminVendorAnalyticsTopProduct {
+  vendorProductId: string;
+  productName: string;
+  unitsSold: number;
+  revenue: number;
+  ordersCount: number;
+}
+
+export interface AdminVendorAnalyticsMeta {
+  range: AdminVendorAnalyticsRange;
+  fromUtc: string;
+  toUtc: string;
+  generatedAtUtc: string;
+}
+
+export interface AdminVendorAnalyticsDto {
+  summary: AdminVendorAnalyticsSummary;
+  salesTrend: AdminVendorAnalyticsTrendPoint[];
+  orderStatusBreakdown: AdminVendorAnalyticsStatusBreakdown[];
+  productHealth: AdminVendorAnalyticsProductHealth;
+  topProducts: AdminVendorAnalyticsTopProduct[];
+  meta: AdminVendorAnalyticsMeta;
+}
+
 export interface AdminVendorSettlementItem {
   id: string;
   settlementNumber: string;
   grossAmount: number;
   commissionAmount: number;
   netAmount: number;
+  origin: string;
   status: string;
   createdAtUtc: string;
   processedAtUtc?: string | null;
   payoutsCount: number;
+  ordersCount: number;
+  sourceOrderId?: string | null;
+  sourceOrderNumber?: string | null;
 }
 
 export interface AdminVendorPayoutItem {
@@ -191,10 +251,13 @@ export interface AdminVendorPayoutItem {
   settlementId: string;
   payoutNumber: string;
   amount: number;
+  origin: string;
   status: string;
   transferReference?: string | null;
   createdAtUtc: string;
   processedAtUtc?: string | null;
+  sourceOrderId?: string | null;
+  sourceOrderNumber?: string | null;
   vendorBankAccountId?: string | null;
   bankName?: string | null;
   accountHolderName?: string | null;
@@ -310,19 +373,77 @@ export class VendorService {
     );
   }
 
-  getVendorOrders(vendorId: string, page: number = 1, pageSize: number = 10): Observable<ApiPaginatedResponse<AdminVendorOrderItem>> {
+  getVendorOrders(
+    vendorId: string,
+    pageOrOptions: number | {
+      page?: number;
+      pageSize?: number;
+      search?: string;
+      status?: string;
+      paymentStatus?: string;
+    } = 1,
+    pageSize: number = 10
+  ): Observable<ApiPaginatedResponse<AdminVendorOrderItem>> {
+    const options = typeof pageOrOptions === 'number'
+      ? { page: pageOrOptions, pageSize }
+      : pageOrOptions;
+
+    const page = options.page ?? 1;
+    const size = options.pageSize ?? 10;
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', size.toString());
+
+    if (options.search?.trim()) {
+      params = params.set('search', options.search.trim());
+    }
+
+    if (options.status?.trim()) {
+      params = params.set('status', options.status.trim());
+    }
+
+    if (options.paymentStatus?.trim()) {
+      params = params.set('paymentStatus', options.paymentStatus.trim());
+    }
+
     return this.http.get<ApiPaginatedResponse<AdminVendorOrderItem>>(`${this.apiUrl}/${vendorId}/orders`, {
-      params: new HttpParams()
-        .set('page', page.toString())
-        .set('pageSize', pageSize.toString())
+      params
     });
   }
 
-  getVendorProducts(vendorId: string, page: number = 1, pageSize: number = 10): Observable<ApiPaginatedResponse<AdminVendorProductItem>> {
+  getVendorProducts(
+    vendorId: string,
+    options?: {
+      page?: number;
+      pageSize?: number;
+      search?: string;
+      status?: string;
+    }
+  ): Observable<ApiPaginatedResponse<AdminVendorProductItem>> {
+    const page = options?.page ?? 1;
+    const pageSize = options?.pageSize ?? 10;
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    if (options?.search?.trim()) {
+      params = params.set('search', options.search.trim());
+    }
+
+    if (options?.status?.trim()) {
+      params = params.set('status', options.status.trim());
+    }
+
     return this.http.get<ApiPaginatedResponse<AdminVendorProductItem>>(`${this.apiUrl}/${vendorId}/products`, {
-      params: new HttpParams()
-        .set('page', page.toString())
-        .set('pageSize', pageSize.toString())
+      params
+    });
+  }
+
+  getVendorAnalytics(vendorId: string, range: AdminVendorAnalyticsRange = '30d'): Observable<AdminVendorAnalyticsDto> {
+    return this.http.get<AdminVendorAnalyticsDto>(`${this.apiUrl}/${vendorId}/analytics`, {
+      params: new HttpParams().set('range', range)
     });
   }
 
@@ -351,6 +472,29 @@ export class VendorService {
     }
   ): Observable<{ settlementId: string }> {
     return this.http.post<{ settlementId: string }>(`${this.apiUrl}/${vendorId}/settlements`, payload);
+  }
+
+  updateVendorFinanceSettings(
+    id: string,
+    payload: {
+      financialLifecycleMode: string;
+      payoutCycle?: string | null;
+    }
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/finance-settings`, payload)
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.financialLifecycleMode = payload.financialLifecycleMode;
+        vendor.payoutCycle = payload.financialLifecycleMode === 'per_order_direct_payout'
+          ? null
+          : payload.payoutCycle ?? vendor.payoutCycle ?? null;
+      }),
+      id
+    );
   }
 
   retryVendorPayout(vendorId: string, payoutId: string): Observable<{ message: string }> {
@@ -728,7 +872,6 @@ export class VendorService {
       accountHolderName: string;
       iban: string;
       swiftCode?: string | null;
-      payoutCycle?: string | null;
       commercialRegisterDocumentUrl?: string | null;
     }
   ): Observable<VendorDetail> {
@@ -743,7 +886,6 @@ export class VendorService {
         vendor.commercialRegistrationExpiryDate = payload.commercialRegistrationExpiryDate ?? vendor.commercialRegistrationExpiryDate;
         vendor.taxId = payload.taxId ?? vendor.taxId;
         vendor.licenseNumber = payload.licenseNumber ?? vendor.licenseNumber;
-        vendor.payoutCycle = payload.payoutCycle ?? vendor.payoutCycle;
         vendor.commercialRegisterDocumentUrl = payload.commercialRegisterDocumentUrl ?? vendor.commercialRegisterDocumentUrl;
         vendor.primaryBankAccount = {
           id: vendor.primaryBankAccount?.id || 'draft-primary-bank-account',
@@ -1104,6 +1246,7 @@ export class VendorService {
       idNumber: apiVendor.idNumber ?? base.idNumber ?? null,
       nationality: apiVendor.nationality ?? base.nationality ?? null,
       payoutCycle: apiVendor.payoutCycle ?? base.payoutCycle ?? null,
+      financialLifecycleMode: apiVendor.financialLifecycleMode ?? base.financialLifecycleMode ?? null,
       operationsSettings: apiVendor.operationsSettings
         ? {
             acceptOrders: apiVendor.operationsSettings.acceptOrders,
@@ -1199,6 +1342,7 @@ export class VendorService {
       updatedAtUtc: summary.reviewUpdatedAtUtc ?? localVendor?.reviewUpdatedAtUtc ?? null,
       ownerEmail: localVendor?.ownerEmail ?? summary.contactEmail,
       ownerPhone: localVendor?.ownerPhone ?? summary.contactPhone,
+      financialLifecycleMode: localVendor?.financialLifecycleMode ?? null,
       operationsSettings: localVendor?.operationsSettings ?? {
         acceptOrders: true,
         minimumOrderAmount: null,

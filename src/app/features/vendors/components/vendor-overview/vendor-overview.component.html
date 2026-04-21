@@ -1,287 +1,260 @@
-<!-- Vendor Overview Content -->
-<div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-
-  <!-- KPI Cards Row -->
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-    <div *ngFor="let kpi of kpis"
-         class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="mb-3 flex items-start justify-between gap-3">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-2xl" [ngClass]="kpi.iconBgClass">{{ kpi.icon }}</span>
-          <p class="text-xs font-semibold text-gray-500">{{ kpi.titleKey | translate }}</p>
+<div class="flex flex-col gap-4 px-4 pb-3 sm:px-8 lg:px-10 xl:px-12" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <article
+      *ngFor="let metric of metrics"
+      class="rounded-xl border p-3 shadow-sm"
+      [ngClass]="metric.cardClass">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg shadow-sm" [ngClass]="metric.iconClass">
+          <span class="material-symbols-outlined text-[15px]">{{ metric.icon }}</span>
         </div>
-        <p class="flex items-center gap-1 text-xs font-medium" [ngClass]="kpi.trendClass">
-          <span>{{ kpi.trend }}</span>
-          <span class="material-symbols-outlined text-[14px]">{{ kpi.trendIcon }}</span>
-          <span class="font-normal text-gray-400">{{ kpi.trendKey | translate }}</span>
-        </p>
+        <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ metric.label }}</p>
       </div>
-      <p class="mb-2 text-2xl font-bold text-gray-900">
-        <span *ngIf="kpi.unit" class="ms-1 text-sm font-normal text-gray-500">{{ kpi.unit }}</span>{{ kpi.value }}
-      </p>
-    </div>
+
+      <p class="mt-2 text-xl font-black tracking-tight" [ngClass]="metric.valueClass">{{ metric.value }}</p>
+      <p class="mt-1 text-[11px] leading-5 text-slate-500">{{ metric.helper }}</p>
+    </article>
   </div>
 
-  <!-- Three Column Layout -->
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
-
-    <!-- Right Column: Store Info & Documents -->
-    <div class="flex flex-col gap-6 lg:col-span-3">
-
-      <!-- Store Info Card -->
-      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+  <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
+    <div class="flex flex-col gap-4 xl:col-span-8">
+      <section class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
         <app-section-header
           [compact]="true"
-          icon="store"
-          title="VENDOR_OVERVIEW.STORE_INFO">
+          [shouldTranslate]="false"
+          [title]="localize('ملخص سريع', 'Quick summary')"
+          [description]="localize('معلومات عامة فقط تساعدك في القرار السريع بدون تفاصيل زائدة.', 'High-level information only for quick review without excessive detail.')"
+          icon="dashboard">
         </app-section-header>
 
-        <div class="mt-5 flex flex-col gap-3">
-          <div>
-            <p class="mb-1 text-xs text-gray-500">{{ 'VENDOR_OVERVIEW.CATEGORY' | translate }}</p>
-            <p class="text-sm font-medium text-gray-900">{{ storeInfo.category }}</p>
-          </div>
-
-          <div>
-            <p class="mb-1 text-xs text-gray-500">{{ 'VENDOR_OVERVIEW.REGISTRATION_DATE' | translate }}</p>
-            <p class="text-sm font-medium text-gray-900">{{ storeInfo.registrationDate }}</p>
-          </div>
-
-          <div>
-            <p class="mb-1 text-xs text-gray-500">{{ 'VENDOR_OVERVIEW.PHONE' | translate }}</p>
-            <p class="text-sm font-medium text-gray-900" dir="ltr">{{ storeInfo.phone }}</p>
-          </div>
-
-          <div>
-            <p class="mb-1 text-xs text-gray-500">{{ 'VENDOR_OVERVIEW.EMAIL' | translate }}</p>
-            <p class="text-sm font-medium text-gray-900" dir="ltr">{{ storeInfo.email }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Essential Documents Card -->
-      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          icon="description"
-          title="VENDOR_OVERVIEW.ESSENTIAL_DOCS">
-          <button
-            actions
-            (click)="onViewAllDocuments()"
-            class="text-xs font-medium text-primary transition-colors hover:text-primary/80"
-            type="button">
-            {{ 'VENDOR_OVERVIEW.VIEW_ALL' | translate }}
-          </button>
-        </app-section-header>
-
-        <div class="mt-5 flex flex-col gap-3">
-          <div *ngFor="let doc of documents"
-               class="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
-            <div>
-              <p class="text-xs font-semibold text-gray-900">{{ doc.titleKey | translate }}</p>
-              <p class="text-[10px] text-gray-500">{{ doc.number }}</p>
+        <div class="mt-3 grid gap-2 lg:grid-cols-3">
+          <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('حالة المراجعة', 'Review state') }}</p>
+              <app-status-pill
+                [label]="reviewStateLabelKey"
+                [showDot]="false"
+                [size]="'sm'"
+                [variant]="reviewStateVariant">
+              </app-status-pill>
             </div>
+            <p class="mt-1.5 text-[11px] font-bold leading-5 text-slate-700">{{ reviewSummaryKey | translate }}</p>
+          </div>
 
-            <app-status-pill
-              [label]="doc.statusKey"
-              [showDot]="false"
-              [size]="'sm'"
-              [variant]="getDocumentStatusVariant(doc.statusKey)">
-            </app-status-pill>
+          <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('الخطوة التالية', 'Next step') }}</p>
+            <p class="mt-1.5 text-[12px] font-black text-slate-900">{{ nextStepTitle }}</p>
+            <p class="mt-0.5 text-[10px] leading-5 text-slate-500">{{ nextStepMessage }}</p>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('مؤشرات عامة', 'General signals') }}</p>
+            <div class="mt-1.5 space-y-1.5">
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="font-bold text-slate-600">{{ localize('المراجع', 'Reviewer') }}</span>
+                <span class="truncate font-black text-slate-900">{{ assignedReviewer }}</span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="font-bold text-slate-600">{{ localize('العناصر المعلّقة', 'Pending items') }}</span>
+                <span class="font-black text-slate-900">{{ reviewBlockers.length }}</span>
+              </div>
+              <div class="flex items-center justify-between gap-2 text-[11px]">
+                <span class="font-bold text-slate-600">{{ localize('جاهزية الحساب', 'Account health') }}</span>
+                <span class="font-black text-slate-900">{{ accountHealthScore }}%</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-    </div>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <button
+            (click)="onApproveVendor()"
+            [disabled]="!canApproveVendor && !canReactivateVendor"
+            class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-[12px] font-black text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+            type="button">
+            <span class="material-symbols-outlined text-[16px]">{{ canReactivateVendor ? 'play_circle' : 'check_circle' }}</span>
+            <span>{{ primaryActionLabel }}</span>
+          </button>
 
-    <!-- Center Column: Recent Orders Table -->
-    <div class="flex flex-col gap-6 lg:col-span-6">
-      <div class="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+          <button
+            (click)="onRequestDocuments()"
+            class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] font-black text-slate-700 transition-colors hover:bg-slate-50"
+            type="button">
+            <span class="material-symbols-outlined text-[16px]">upload_file</span>
+            <span>{{ 'VENDOR_OVERVIEW.ACTIONS.REQUEST_DOCS' | translate }}</span>
+          </button>
 
-        <!-- Header -->
-        <div class="border-b border-gray-200 p-5">
+          <button
+            (click)="onOpenCompliance()"
+            class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] font-black text-slate-700 transition-colors hover:bg-slate-50"
+            type="button">
+            <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+            <span>{{ 'VENDOR_DETAIL.TAB_COMPLIANCE' | translate }}</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-100 px-4 py-3">
           <app-section-header
             [compact]="true"
             icon="receipt_long"
-            title="VENDOR_OVERVIEW.RECENT_ORDERS">
+            [shouldTranslate]="false"
+            [title]="localize('أحدث الطلبات', 'Latest orders')"
+            [description]="localize('عرض سريع فقط، ويمكن متابعة كل التفاصيل من تبويب الطلبات.', 'Quick preview only. Full details are available in the orders tab.')">
             <button
               actions
-              (click)="onFilterOrders()"
-              class="text-gray-500 transition-colors hover:text-primary"
+              (click)="onViewAllOrders()"
+              class="text-[11px] font-bold text-zadna-primary transition-colors hover:text-zadna-primaryDark"
               type="button">
-              <span class="material-symbols-outlined text-sm">filter_list</span>
+              {{ 'VENDOR_OVERVIEW.VIEW_ALL' | translate }}
             </button>
           </app-section-header>
         </div>
 
-        <!-- Table -->
-        <div class="overflow-x-auto">
+        <div *ngIf="recentOrders.length === 0" class="px-4 py-6">
+          <app-inline-banner
+            [shouldTranslate]="false"
+            [title]="emptyOrdersTitle"
+            [message]="emptyOrdersMessage"
+            variant="info"
+            icon="shopping_basket">
+          </app-inline-banner>
+        </div>
+
+        <div *ngIf="recentOrders.length > 0" class="hidden md:block overflow-x-auto">
           <table class="w-full table-fixed border-collapse">
             <thead>
-              <tr class="border-b border-gray-200 bg-gray-50">
-                <th class="px-5 py-3 text-start text-xs font-semibold text-gray-500">
+              <tr class="border-b border-slate-100 bg-slate-50">
+                <th class="px-4 py-2.5 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
                   {{ 'VENDOR_OVERVIEW.TABLE.ORDER_NUMBER' | translate }}
                 </th>
-                <th class="px-5 py-3 text-start text-xs font-semibold text-gray-500">
+                <th class="px-4 py-2.5 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
                   {{ 'VENDOR_OVERVIEW.TABLE.CUSTOMER' | translate }}
                 </th>
-                <th class="px-5 py-3 text-start text-xs font-semibold text-gray-500">
+                <th class="px-4 py-2.5 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
                   {{ 'VENDOR_OVERVIEW.TABLE.AMOUNT' | translate }}
                 </th>
-                <th class="px-5 py-3 text-center text-xs font-semibold text-gray-500">
+                <th class="px-4 py-2.5 text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
                   {{ 'VENDOR_OVERVIEW.TABLE.STATUS' | translate }}
                 </th>
-                <th class="w-10 px-5 py-3 text-end text-xs font-semibold text-gray-500"></th>
               </tr>
             </thead>
-            <tbody class="text-sm">
-              <tr *ngFor="let order of recentOrders"
-                  class="border-b border-gray-100 transition-colors hover:bg-gray-50">
-                <td class="px-5 py-3 text-start font-medium text-primary">{{ order.orderNumber }}</td>
-                <td class="px-5 py-3 text-start text-gray-900">{{ order.customer }}</td>
-                <td class="px-5 py-3 text-start font-medium text-gray-900">{{ order.amount }}</td>
-                <td class="px-5 py-3 text-center">
+
+            <tbody class="text-[12px]">
+              <tr
+                *ngFor="let order of recentOrders | slice:0:4"
+                class="border-b border-slate-100 last:border-b-0">
+                <td class="px-4 py-3 font-black text-zadna-primary">{{ order.orderNumber }}</td>
+                <td class="px-4 py-3 text-slate-700">{{ order.customer }}</td>
+                <td class="px-4 py-3 font-bold text-slate-900">{{ order.amount }}</td>
+                <td class="px-4 py-3 text-center">
                   <app-status-pill
                     [label]="order.statusKey"
                     [showDot]="false"
                     [size]="'sm'"
-                    [variant]="getOrderStatusVariant(order.statusKey)">
+                    [variant]="getOrderStatusVariant(order.status)">
                   </app-status-pill>
-                </td>
-                <td class="px-5 py-3 text-end">
-                  <button
-                    (click)="onViewOrderDetails(order.id)"
-                    class="text-gray-600 transition-colors hover:text-primary"
-                    type="button">
-                    <span class="material-symbols-outlined text-sm">chevron_left</span>
-                  </button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Footer -->
-        <div class="border-t border-gray-200 px-5 py-3 text-center">
-          <button
-            (click)="onViewAllOrders()"
-            class="text-xs font-semibold text-primary hover:underline"
-            type="button">
-            {{ 'VENDOR_OVERVIEW.VIEW_ALL_ORDERS' | translate }}
-          </button>
+        <div *ngIf="recentOrders.length > 0" class="grid gap-2 p-4 md:hidden">
+          <div
+            *ngFor="let order of recentOrders | slice:0:3"
+            class="rounded-lg border border-slate-200 bg-slate-50/80 p-3">
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-[12px] font-black text-zadna-primary">{{ order.orderNumber }}</p>
+              <app-status-pill
+                [label]="order.statusKey"
+                [showDot]="false"
+                [size]="'sm'"
+                [variant]="getOrderStatusVariant(order.status)">
+              </app-status-pill>
+            </div>
+            <div class="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-slate-600">
+              <span>{{ order.customer }}</span>
+              <span class="font-bold text-slate-900">{{ order.amount }}</span>
+            </div>
+          </div>
         </div>
-
-      </div>
+      </section>
     </div>
 
-    <!-- Left Column: Alerts & Admin Actions -->
-    <div class="flex flex-col gap-6 lg:col-span-3">
-
-      <!-- Alerts Widget -->
-      <div class="rounded-xl border border-red-200 bg-red-50 p-5">
+    <div class="flex flex-col gap-4 xl:col-span-4">
+      <section class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
         <app-section-header
           [compact]="true"
-          icon="warning"
-          title="VENDOR_OVERVIEW.ALERTS_TITLE"
-          tone="danger">
+          icon="info"
+          [shouldTranslate]="false"
+          [title]="localize('بيانات عامة', 'General info')"
+          [description]="localize('ملخص أساسي فقط، أمّا باقي التفاصيل ففي التبويبات الأخرى.', 'Only the essential summary is shown here. The rest is available in the other tabs.')">
         </app-section-header>
 
-        <div class="mt-4 flex flex-col gap-3">
-          <app-inline-banner
-            *ngFor="let alert of alerts"
-            [title]="alert.titleKey"
-            [message]="alert.descriptionKey"
-            [variant]="alert.variant"
-            [icon]="alert.icon"
-            [compact]="true">
-          </app-inline-banner>
+        <div class="mt-3 grid gap-2">
+          <div
+            *ngFor="let item of storeFacts | slice:0:4"
+            class="rounded-lg border border-slate-100 bg-slate-50/80 p-2.5">
+            <div class="flex items-start gap-2.5">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-600 shadow-sm">
+                <span class="material-symbols-outlined text-[15px]">{{ item.icon }}</span>
+              </div>
 
-          <div *ngIf="alerts.length === 0" class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
-            {{ 'COMMON.NO_RESULTS' | translate }}
-          </div>
-        </div>
-      </div>
-
-      <!-- Admin Actions Card -->
-      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          icon="admin_panel_settings"
-          title="VENDOR_OVERVIEW.ADMIN_ACTIONS">
-        </app-section-header>
-
-        <div *ngIf="vendorDetail" class="mt-5 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-          <div class="flex items-center justify-between gap-3">
-            <p class="text-[11px] font-black text-slate-500">{{ 'COMPLIANCE.CURRENT_REVIEW_STATUS' | translate }}</p>
-            <app-status-pill
-              [label]="reviewStateLabelKey"
-              [showDot]="false"
-              [size]="'sm'"
-              [variant]="reviewStateVariant">
-            </app-status-pill>
-          </div>
-
-          <p class="mt-3 text-[12px] font-bold leading-6 text-slate-700">{{ reviewSummaryKey | translate }}</p>
-
-          <div class="mt-4 grid gap-3 sm:grid-cols-2">
-            <div class="rounded-xl border border-white bg-white/90 px-3 py-2">
-              <p class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'VENDOR_REVIEW.SUMMARY.ASSIGNED_REVIEWER' | translate }}</p>
-              <p class="mt-1 text-[12px] font-black text-slate-900">{{ assignedReviewer }}</p>
-            </div>
-
-            <div class="rounded-xl border border-white bg-white/90 px-3 py-2">
-              <p class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'VENDOR_REVIEW.SUMMARY.SUBMITTED_AT' | translate }}</p>
-              <p class="mt-1 text-[12px] font-black text-slate-900">{{ reviewSubmittedAt }}</p>
-            </div>
-          </div>
-
-          <div *ngIf="reviewBlockers.length > 0" class="mt-4 rounded-xl border border-amber-100 bg-amber-50 px-3 py-3">
-            <p class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-amber-700">{{ 'COMPLIANCE.BLOCKING_ITEMS' | translate }}</p>
-            <div class="mt-2 space-y-2">
-              <div *ngFor="let blocker of reviewBlockers" class="rounded-lg border border-amber-100 bg-white px-3 py-2 text-[11px] font-bold text-amber-700">
-                {{ blocker.titleKey | translate }} - {{ blocker.statusLabelKey | translate }}
+              <div class="min-w-0 flex-1">
+                <p class="text-[10px] font-black tracking-[0.02em] text-slate-400" [class.text-right]="isRTL" [class.text-left]="!isRTL">{{ item.label }}</p>
+                <p
+                  class="mt-0.5 truncate text-[11px] font-bold text-slate-900"
+                  [class.text-right]="isRTL"
+                  [class.text-left]="!isRTL"
+                  [class.break-all]="false"
+                  [class.break-words]="false"
+                  [attr.dir]="item.dir || (isRTL ? 'rtl' : 'ltr')">
+                  {{ item.value }}
+                </p>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <div class="mt-5 flex flex-col gap-3">
-          <app-inline-banner
-            *ngIf="mutationError"
-            [title]="isRTL ? 'تعذر تنفيذ الإجراء' : 'Action failed'"
-            [message]="mutationError"
-            variant="error"
-            icon="error"
-            [compact]="true">
-          </app-inline-banner>
+      <section class="flex h-[248px] flex-col rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+        <app-section-header
+          [compact]="true"
+          icon="warning"
+          [shouldTranslate]="false"
+          [title]="localize('تنبيهات مختصرة', 'Quick alerts')"
+          [description]="localize('أهم ما يحتاج انتباه الآن فقط.', 'Only the most important items that need attention right now.')"
+          tone="danger">
+        </app-section-header>
 
-          <button
-            (click)="onApproveVendor()"
-            [disabled]="!canApproveVendor && !canReactivateVendor"
-            class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-            type="button">
-            <span class="material-symbols-outlined text-[18px]">{{ canReactivateVendor ? 'play_circle' : 'check_circle' }}</span>
-            <span>{{ primaryActionLabel }}</span>
-          </button>
-
-          <button
-            (click)="onRequestDocuments()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200"
-            type="button">
-            <span class="material-symbols-outlined text-[18px]">description</span>
-            <span>{{ 'VENDOR_OVERVIEW.ACTIONS.REQUEST_DOCS' | translate }}</span>
-          </button>
-
-          <button
-            (click)="onSuspendVendor()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200"
-            type="button">
-            <span class="material-symbols-outlined text-[18px]">pause_circle</span>
-            <span>{{ 'VENDOR_OVERVIEW.ACTIONS.SUSPEND' | translate }}</span>
-          </button>
+        <div class="mt-3 flex-1 space-y-2 overflow-y-auto pe-1">
+          <ng-container *ngIf="alerts.length > 0; else noAlertsState">
+            <app-inline-banner
+              *ngFor="let alert of alerts | slice:0:2"
+              [title]="alert.titleKey"
+              [message]="alert.descriptionKey"
+              [variant]="alert.variant"
+              [icon]="alert.icon"
+              [compact]="true">
+            </app-inline-banner>
+          </ng-container>
         </div>
-      </div>
 
+        <ng-template #noAlertsState>
+          <div class="flex h-full items-start">
+            <app-inline-banner
+              class="w-full"
+              [shouldTranslate]="false"
+              [title]="emptyAlertsTitle"
+              [message]="emptyAlertsMessage"
+              variant="success"
+              icon="verified">
+            </app-inline-banner>
+          </div>
+        </ng-template>
+      </section>
     </div>
   </div>
 </div>

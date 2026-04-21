@@ -1,210 +1,112 @@
-<!-- Modal Backdrop -->
-<div *ngIf="isOpen" 
-     class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
-     (click)="onBackdropClick($event)">
-  
-  <!-- Modal Container -->
-  <div class="bg-slate-50 dark:bg-slate-800 w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col relative z-50 animate-in zoom-in-95 slide-in-from-bottom-10 duration-500"
-       [attr.dir]="isRTL ? 'rtl' : 'ltr'"
-       (click)="$event.stopPropagation()">
-    
-    <!-- Modal Header -->
-    <header class="flex items-center justify-between gap-6 px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md sticky top-0 z-10">
-      <div class="flex min-w-0 flex-1 items-center gap-4" [ngClass]="isRTL ? 'flex-row-reverse text-right' : 'text-left'">
-        <div class="flex min-w-0 flex-col gap-0.5">
-          <h2 class="text-slate-900 dark:text-slate-100 text-xl font-black tracking-tight">{{ 'MODALS.STORE_EDIT.TITLE' | translate }}</h2>
-          <p class="text-xs font-bold text-slate-500 dark:text-slate-400 capitalize">{{ 'MODALS.STORE_EDIT.SUBTITLE' | translate }}</p>
-        </div>
-        <div class="flex h-9 shrink-0 items-center gap-2.5 rounded-full bg-amber-50 dark:bg-amber-900/10 px-4 border border-amber-200 dark:border-amber-900/30">
-          <span class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] animate-pulse"></span>
-          <p class="text-amber-700 dark:text-amber-400 text-[10px] font-black uppercase tracking-wider">{{ 'MODALS.STORE_EDIT.PENDING_REVIEW' | translate }}</p>
-        </div>
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4"
+  (click)="onBackdropClick($event)">
+  <div
+    class="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-2xl"
+    [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+    (click)="$event.stopPropagation()">
+
+    <header class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5">
+      <div class="space-y-1">
+        <h2 class="text-lg font-black text-slate-900">
+          {{ isRTL ? 'تعديل هوية المتجر' : 'Edit store identity' }}
+        </h2>
+        <p class="text-sm font-medium text-slate-500">
+          {{ isRTL ? 'تحديث الاسم التجاري والنشاط وقنوات التواصل والعنوان.' : 'Update the business identity, activity, contact channels, and address.' }}
+        </p>
       </div>
-      <button (click)="onClose()" 
-              class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-        <span class="material-symbols-outlined text-[24px]">close</span>
+      <button type="button" (click)="onClose()" [disabled]="isSaving" class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40">
+        <span class="material-symbols-outlined text-[20px]">close</span>
       </button>
     </header>
 
-    <!-- Modal Body -->
-    <div class="p-8 overflow-y-auto max-h-[70vh] space-y-8 custom-scrollbar">
-      
-      <!-- Grid Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
-        <!-- Arabic Store Name -->
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ isRTL ? 'اسم المتجر بالعربية' : 'Store name (Arabic)' }}
-          </label>
-          <input type="text" 
-                 [(ngModel)]="draftStoreData.businessNameAr"
-                 name="businessNameAr"
-                 [placeholder]="isRTL ? 'أدخل الاسم العربي' : 'Enter Arabic name'"
-                 class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
-        </div>
+    <div class="max-h-[72vh] overflow-y-auto px-6 py-5">
+      <fieldset class="space-y-6" [disabled]="isSaving">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'الاسم التجاري بالعربية' : 'Business name (Arabic)' }}</label>
+            <input type="text" name="businessNameAr" [(ngModel)]="draftStoreData.businessNameAr" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
 
-        <!-- English Store Name -->
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ isRTL ? 'اسم المتجر بالإنجليزية' : 'Store name (English)' }}
-          </label>
-          <input type="text" 
-                 [(ngModel)]="draftStoreData.businessNameEn"
-                 name="businessNameEn"
-                 placeholder="Enter English name"
-                 dir="ltr"
-                 class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm text-left">
-        </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'الاسم التجاري بالإنجليزية' : 'Business name (English)' }}</label>
+            <input type="text" dir="ltr" name="businessNameEn" [(ngModel)]="draftStoreData.businessNameEn" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
 
-        <!-- Activity Type -->
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.ACTIVITY_TYPE' | translate }}
-          </label>
-          <app-searchable-select
-            [(ngModel)]="draftStoreData.activityType"
-            name="activityType"
-            [options]="activityTypeOptions"
-            [placeholder]="'MODALS.STORE_EDIT.SELECT_ACTIVITY' | translate">
-          </app-searchable-select>
-        </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'نوع النشاط' : 'Business type' }}</label>
+            <input type="text" name="businessType" [(ngModel)]="draftStoreData.businessType" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
 
-        <!-- Region -->
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ isRTL ? 'المنطقة' : 'Region' }}
-          </label>
-          <input type="text" 
-                 [(ngModel)]="draftStoreData.region"
-                 name="region"
-                 [placeholder]="isRTL ? 'أدخل المنطقة' : 'Enter region'"
-                 class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
-        </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'رقم السجل التجاري' : 'Commercial registration number' }}</label>
+            <input type="text" dir="ltr" name="commercialRegistrationNumber" [(ngModel)]="draftStoreData.commercialRegistrationNumber" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
 
-        <!-- City -->
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.CITY' | translate }}
-          </label>
-          <div class="relative group">
-            <input type="text" 
-                   [(ngModel)]="draftStoreData.city"
-                   name="city"
-                   [placeholder]="'MODALS.STORE_EDIT.CITY_PLACEHOLDER' | translate"
-                   class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm"
-                   [ngClass]="isRTL ? 'pr-12 pl-6 text-right' : 'pl-12 pr-6 text-left'">
-            <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-primary transition-colors" [ngClass]="isRTL ? 'right-4' : 'left-4'">search</span>
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'بريد التواصل' : 'Contact email' }}</label>
+            <input type="email" dir="ltr" name="contactEmail" [(ngModel)]="draftStoreData.contactEmail" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'رقم التواصل' : 'Contact phone' }}</label>
+            <input type="text" dir="ltr" name="contactPhone" [(ngModel)]="draftStoreData.contactPhone" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'المدينة' : 'City' }}</label>
+            <input type="text" name="city" [(ngModel)]="draftStoreData.city" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'المنطقة' : 'Region' }}</label>
+            <input type="text" name="region" [(ngModel)]="draftStoreData.region" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
+
+          <div class="space-y-2 md:col-span-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'العنوان الوطني' : 'National address' }}</label>
+            <input type="text" name="nationalAddress" [(ngModel)]="draftStoreData.nationalAddress" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
+
+          <div class="space-y-2 md:col-span-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'رابط الشعار' : 'Logo URL' }}</label>
+            <input type="text" dir="ltr" name="logoUrl" [(ngModel)]="draftStoreData.logoUrl" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
+
+          <div class="space-y-2 md:col-span-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'رابط مرفق السجل' : 'CR attachment URL' }}</label>
+            <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftStoreData.commercialRegisterDocumentUrl" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+          </div>
+
+          <div class="space-y-2 md:col-span-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'الوصف بالعربية' : 'Description (Arabic)' }}</label>
+            <textarea name="descriptionAr" rows="3" [(ngModel)]="draftStoreData.descriptionAr" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5"></textarea>
+          </div>
+
+          <div class="space-y-2 md:col-span-2">
+            <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'الوصف بالإنجليزية' : 'Description (English)' }}</label>
+            <textarea dir="ltr" name="descriptionEn" rows="3" [(ngModel)]="draftStoreData.descriptionEn" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5"></textarea>
           </div>
         </div>
 
-        <!-- National Address -->
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.ADDRESS' | translate }}
-          </label>
-          <input type="text" 
-                 [(ngModel)]="draftStoreData.nationalAddress"
-                 name="nationalAddress"
-                 [placeholder]="'MODALS.STORE_EDIT.ADDRESS_PLACEHOLDER' | translate"
-                 class="w-full h-14 bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
+        <div *ngIf="validationMessage" class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
+          {{ validationMessage }}
         </div>
 
-        <!-- CR Number -->
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.CR_NUMBER' | translate }}
-          </label>
-          <div class="relative group">
-            <input type="text" 
-                   [(ngModel)]="draftStoreData.commercialRegistrationNumber"
-                   name="commercialRegistrationNumber"
-                   class="w-full h-14 bg-white dark:bg-slate-700/50 border border-red-200 dark:border-red-900/30 rounded-2xl focus:ring-4 focus:ring-red-500/5 focus:border-red-400 outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm"
-                   [ngClass]="isRTL ? 'pr-12 pl-6 text-right' : 'pl-12 pr-6 text-left'">
-            <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-red-500 text-xl group-focus-within:scale-110 transition-transform" [ngClass]="isRTL ? 'right-4' : 'left-4'">error</span>
-          </div>
-          <p class="text-[10px] text-red-500 dark:text-red-400 font-black uppercase tracking-wider" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.STORE_EDIT.CR_VALIDATION_ERROR' | translate }}</p>
+        <div *ngIf="errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+          {{ errorMessage }}
         </div>
-
-        <!-- Registration Date (Readonly) -->
-        <div class="space-y-2.5">
-          <label class="text-slate-400 dark:text-slate-500 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.REG_DATE' | translate }}
-          </label>
-          <input type="text" 
-                 [value]="draftStoreData.registrationDate"
-                 readonly
-                 disabled
-                 class="w-full h-14 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl px-6 outline-none text-slate-500 dark:text-slate-400 font-bold cursor-not-allowed text-lg">
-        </div>
-
-        <!-- Arabic Description -->
-        <div class="md:col-span-2 space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ isRTL ? 'وصف المتجر بالعربية' : 'Store description (Arabic)' }}
-          </label>
-          <textarea [(ngModel)]="draftStoreData.descriptionAr"
-                    name="descriptionAr"
-                    rows="3"
-                    [placeholder]="isRTL ? 'أدخل الوصف العربي' : 'Enter Arabic description'"
-                    class="w-full bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-3xl px-6 py-5 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 resize-none font-bold text-lg shadow-sm"></textarea>
-        </div>
-
-        <!-- English Description -->
-        <div class="md:col-span-2 space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ isRTL ? 'وصف المتجر بالإنجليزية' : 'Store description (English)' }}
-          </label>
-          <textarea [(ngModel)]="draftStoreData.descriptionEn"
-                    name="descriptionEn"
-                    rows="3"
-                    placeholder="Enter English description"
-                    dir="ltr"
-                    class="w-full bg-white dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-3xl px-6 py-5 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 resize-none font-bold text-lg shadow-sm text-left"></textarea>
-        </div>
-      </div>
-
-      <!-- Admin Section -->
-      <section class="bg-primary/5 dark:bg-primary/10 rounded-[2rem] border border-primary/20 dark:border-primary/30 p-8 space-y-6">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary text-2xl font-black">admin_panel_settings</span>
-          </div>
-          <h3 class="text-slate-900 dark:text-slate-100 text-base font-black tracking-tight">{{ 'MODALS.STORE_EDIT.ADMIN_NOTES_TITLE' | translate }}</h3>
-        </div>
-        <div class="space-y-2.5">
-          <label class="text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">
-            {{ 'MODALS.STORE_EDIT.EDIT_REASON' | translate }}
-          </label>
-          <input type="text" 
-                 [(ngModel)]="editReason"
-                 name="editReason"
-                 [placeholder]="'MODALS.STORE_EDIT.EDIT_REASON_PLACEHOLDER' | translate"
-                 class="w-full h-14 bg-white dark:bg-slate-700/50 border border-primary/30 rounded-2xl px-6 focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-slate-900 dark:text-slate-100 font-bold text-lg shadow-sm">
-        </div>
-      </section>
-
+      </fieldset>
     </div>
 
-    <!-- Modal Footer -->
-    <footer class="px-8 py-5 border-t border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/80 backdrop-blur-md flex items-center justify-end gap-3 sticky bottom-0 z-10">
-      <button (click)="onClose()"
-              type="button"
-              class="px-6 py-3 text-sm font-black text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-2xl transition-all uppercase tracking-widest">
-        {{ 'MODALS.STORE_EDIT.CANCEL' | translate }}
+    <footer class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+      <button type="button" (click)="onClose()" [disabled]="isSaving" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">
+        {{ isRTL ? 'إلغاء' : 'Cancel' }}
       </button>
-      <button type="button"
-              class="px-5 py-3 text-sm font-black text-primary border-2 border-primary hover:bg-primary/5 rounded-2xl transition-all flex items-center gap-2 uppercase tracking-widest group">
-        <span class="material-symbols-outlined text-[18px] group-hover:-translate-y-1 transition-transform">send</span>
-        {{ 'MODALS.STORE_EDIT.SAVE_REVIEW' | translate }}
-      </button>
-      <button (click)="onSave()"
-              type="button"
-              class="px-8 py-3 text-sm font-black text-white bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-95 rounded-2xl transition-all shadow-xl shadow-primary/20 flex items-center gap-2 uppercase tracking-widest group">
-        {{ 'MODALS.STORE_EDIT.SAVE' | translate }}
-        <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform">save</span>
+      <button type="button" (click)="onSave()" [disabled]="!isFormValid || isSaving" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50">
+        {{ isSaving ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
       </button>
     </footer>
-
   </div>
 </div>

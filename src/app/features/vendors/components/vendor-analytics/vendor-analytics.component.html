@@ -1,36 +1,366 @@
-<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="space-y-6 py-4">
-  <app-inline-banner
-    title="VENDOR_ANALYTICS.API_BANNER_TITLE"
-    message="VENDOR_ANALYTICS.API_BANNER_MESSAGE"
-    variant="info"
-    icon="insights">
-  </app-inline-banner>
+<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto max-w-[1520px] space-y-5 px-4 py-4 md:px-6 lg:px-7">
+  <section class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5">
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+      <div class="space-y-3.5">
+        <div class="flex items-center gap-4">
+          <div
+            class="icon-box relative flex h-[3.1rem] w-[3.1rem] shrink-0 items-center justify-center rounded-[1.2rem] border border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 text-primary shadow-inner">
+            <span class="material-symbols-outlined text-[24px]">monitoring</span>
+            <div class="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-400 shadow-sm"></div>
+          </div>
 
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-    <div *ngFor="let metric of metrics" class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-      <p class="text-[11px] font-bold text-gray-400">{{ metric.titleKey | translate }}</p>
-      <h4 class="mt-3 text-2xl font-black text-gray-900">{{ metric.value }}</h4>
-      <p class="mt-2 text-xs font-medium text-gray-500">{{ metric.hintKey | translate }}</p>
-    </div>
-  </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-3">
+              <h1 class="text-lg font-black tracking-tight text-slate-900">
+                {{ 'VENDOR_ANALYTICS.TITLE' | translate }}
+              </h1>
+              <span
+                class="rounded-xl border border-primary/15 bg-gradient-to-r from-primary/10 to-primary/5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-primary shadow-sm">
+                {{ 'VENDOR_ANALYTICS.EXECUTIVE_BADGE' | translate }}
+              </span>
+            </div>
+            <p class="mt-1 text-sm font-semibold text-slate-500">
+              {{ 'VENDOR_ANALYTICS.SUBTITLE' | translate:{ vendor: vendorDisplayName } }}
+            </p>
+          </div>
+        </div>
 
-  <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-    <app-section-header
-      [compact]="true"
-      icon="monitoring"
-      title="VENDOR_ANALYTICS.LIVE_SNAPSHOT">
-    </app-section-header>
-
-    <div class="mt-5 grid gap-4 md:grid-cols-2">
-      <div class="rounded-xl bg-slate-50 p-4">
-        <p class="text-xs font-bold text-slate-400">{{ 'VENDOR_ANALYTICS.SOURCES.ORDERS_TITLE' | translate }}</p>
-        <p class="mt-2 text-sm font-semibold text-slate-800">{{ 'VENDOR_ANALYTICS.SOURCES.ORDERS_VALUE' | translate }}</p>
+        <div class="flex w-fit flex-wrap items-center gap-2 rounded-2xl border border-slate-200/50 bg-white/50 p-1.5 backdrop-blur-md">
+          <button
+            *ngFor="let option of rangeOptions; trackBy: trackByRange"
+            type="button"
+            (click)="selectRange(option.value)"
+            class="inline-flex h-9 items-center rounded-xl px-4 text-xs font-black transition-all duration-300"
+            [ngClass]="option.value === selectedRange
+              ? 'scale-105 bg-primary text-white shadow-md shadow-primary/20'
+              : 'text-slate-600 hover:bg-white hover:text-primary hover:shadow-sm'">
+            {{ option.labelKey | translate }}
+          </button>
+        </div>
       </div>
 
-      <div class="rounded-xl bg-slate-50 p-4">
-        <p class="text-xs font-bold text-slate-400">{{ 'VENDOR_ANALYTICS.SOURCES.PRODUCTS_TITLE' | translate }}</p>
-        <p class="mt-2 text-sm font-semibold text-slate-800">{{ 'VENDOR_ANALYTICS.SOURCES.PRODUCTS_VALUE' | translate }}</p>
+      <div class="flex flex-col gap-3 text-xs font-bold text-slate-500 sm:flex-row">
+        <div class="flex items-center gap-3 rounded-[1.2rem] border border-slate-200/60 bg-white/60 px-4 py-3 shadow-sm backdrop-blur-sm">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 text-slate-500">
+            <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+          </div>
+          <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400">{{ 'VENDOR_ANALYTICS.META.PERIOD' | translate }}</p>
+            <p class="text-sm font-black text-slate-900">{{ periodLabel }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 rounded-[1.2rem] border border-slate-200/60 bg-white/60 px-4 py-3 shadow-sm backdrop-blur-sm">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+            <span class="material-symbols-outlined text-[16px]">update</span>
+          </div>
+          <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400">{{ 'VENDOR_ANALYTICS.META.GENERATED' | translate }}</p>
+            <p class="text-sm font-black text-slate-900">{{ generatedAtLabel }}</p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <section *ngIf="isLoading" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
+    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-gradient-to-br from-primary/10 to-primary/5 text-primary shadow-inner">
+      <span class="material-symbols-outlined animate-bounce text-[30px]">monitoring</span>
+    </div>
+    <p class="mt-5 text-base font-black text-slate-900">{{ 'VENDOR_ANALYTICS.STATES.LOADING_TITLE' | translate }}</p>
+    <p class="mt-2 text-sm font-medium text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.LOADING_MESSAGE' | translate }}</p>
+  </section>
+
+  <section
+    *ngIf="!isLoading && hasError"
+    class="premium-glass rounded-[1.8rem] border-rose-200/60 bg-gradient-to-b from-rose-50/50 to-white/50 px-5 py-14 text-center">
+    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-rose-100 text-rose-500 shadow-inner">
+      <span class="material-symbols-outlined text-[30px]">warning</span>
+    </div>
+    <p class="mt-5 text-base font-black text-rose-950">{{ 'VENDOR_ANALYTICS.STATES.ERROR_TITLE' | translate }}</p>
+    <p class="mt-2 text-sm font-medium text-rose-600/80">{{ 'VENDOR_ANALYTICS.STATES.ERROR_MESSAGE' | translate }}</p>
+  </section>
+
+  <ng-container *ngIf="!isLoading && !hasError && analytics as vm">
+    <section class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <article *ngFor="let card of kpiCards" class="premium-glass kpi-card group rounded-[1.3rem] px-4 py-3.5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="z-10 w-full space-y-1">
+            <div class="flex w-full items-center justify-between">
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                {{ card.labelKey | translate }}
+              </p>
+              <div
+                class="icon-box flex h-8 w-8 shrink-0 items-center justify-center rounded-xl shadow-inner transition-transform group-hover:scale-110"
+                [ngClass]="{
+                  'border border-primary/10 bg-gradient-to-br from-primary/10 to-primary/5 text-primary': card.tone === 'primary',
+                  'border border-emerald-100 bg-gradient-to-br from-emerald-100/60 to-emerald-50 text-emerald-600': card.tone === 'success',
+                  'border border-amber-100 bg-gradient-to-br from-amber-100/60 to-amber-50 text-amber-600': card.tone === 'warning'
+                }">
+                <span class="material-symbols-outlined text-[16px]">{{ card.icon }}</span>
+              </div>
+            </div>
+            <p class="metric-value-gradient mt-2 text-[22px] font-black tracking-tight drop-shadow-sm">{{ card.value }}</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid items-start gap-5 xl:grid-cols-12">
+      <!-- Main Insights Column -->
+      <div class="flex flex-col gap-5 xl:col-span-7">
+        <!-- Trend Line -->
+        <article class="premium-glass rounded-[1.8rem] px-4 py-4 sm:px-5 sm:py-5">
+          <div class="mb-5 flex items-start justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200/50 bg-gradient-to-br from-slate-100 to-white text-slate-600 shadow-sm">
+                <span class="material-symbols-outlined text-[20px]">ssid_chart</span>
+              </div>
+              <div>
+                <h2 class="text-base font-black text-slate-900">{{ 'VENDOR_ANALYTICS.CHARTS.REVENUE_TITLE' | translate }}</h2>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.CHARTS.REVENUE_SUBTITLE' | translate }}</p>
+              </div>
+            </div>
+            <span class="rounded-xl border border-slate-200/70 bg-white/80 px-3 py-1.5 text-[10px] font-black tracking-widest text-slate-600 shadow-sm">
+              {{ vm.meta.range | uppercase }}
+            </span>
+          </div>
+
+          <ng-container *ngIf="vm.summary.totalOrders > 0; else noTrendState">
+            <div class="chart-container-premium">
+              <div echarts [options]="salesTrendOptions" class="h-[300px] w-full xl:h-[340px]"></div>
+            </div>
+          </ng-container>
+
+          <ng-template #noTrendState>
+            <div class="flex h-[300px] items-center justify-center rounded-[1.45rem] border border-dashed border-slate-300/60 bg-slate-50/50 text-center xl:h-[340px]">
+              <div class="space-y-3">
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                  <span class="material-symbols-outlined text-[24px]">analytics</span>
+                </div>
+                <div>
+                  <p class="text-sm font-black text-slate-900">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_TREND_TITLE' | translate }}</p>
+                  <p class="mt-1 text-xs font-semibold text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_TREND_MESSAGE' | translate }}</p>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </article>
+
+        <!-- Operational Insights -->
+        <article class="premium-glass rounded-[1.8rem] px-4 py-4 sm:px-5 sm:py-5">
+          <div class="mb-5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/10 bg-gradient-to-br from-primary/10 to-white text-primary shadow-sm">
+                <span class="material-symbols-outlined text-[20px]">insights</span>
+              </div>
+              <div>
+                <h2 class="text-base font-black text-slate-900">إشارات تشغيلية إضافية</h2>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">بيانات مساندة تساعد على فهم النشاط بدون تكرار المؤشرات الأساسية.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-2">
+            <!-- Active Workload -->
+            <div class="rounded-[1.2rem] border border-slate-200/60 bg-white/75 px-4 py-3 shadow-sm">
+              <p class="text-[10px] font-black tracking-wider text-slate-400">الطلبات النشطة (قيد التنفيذ)</p>
+              <p class="mt-2 text-lg font-black text-slate-900">{{ formatNumber(activeWorkloadCount) }}</p>
+              <p class="mt-1 text-[11px] font-bold text-slate-500">طلبات تنتظر المعالجة أو التوصيل</p>
+            </div>
+
+            <!-- Daily Average Revenue -->
+            <div class="rounded-[1.2rem] border border-emerald-100 bg-emerald-50/40 px-4 py-3 shadow-sm">
+              <p class="text-[10px] font-black tracking-wider text-emerald-600">متوسط الإيراد اليومي</p>
+              <p class="mt-2 text-lg font-black text-emerald-700">{{ formatCurrency(dailyAverageRevenue) }}</p>
+              <p class="mt-1 text-[11px] font-bold text-emerald-700/80">المعدل اليومي للفترة المحددة</p>
+            </div>
+
+            <!-- Top Products Concentration -->
+            <div class="rounded-[1.2rem] border border-amber-100 bg-amber-50/40 px-4 py-3 shadow-sm">
+              <p class="text-[10px] font-black tracking-wider text-amber-600">تركز تأثير أفضل المنتجات</p>
+              <p class="mt-2 text-lg font-black text-amber-700">{{ formatPercent(revenueConcentration) }}</p>
+              <p class="mt-1 text-[11px] font-bold text-amber-700/80">نسبة دخل المتجر من المنتجات الأعلى مبيعاً</p>
+            </div>
+
+            <!-- Inventory Risk -->
+            <div class="rounded-[1.2rem] border border-slate-200/60 bg-white/75 px-4 py-3 shadow-sm transition-colors duration-300"
+                 [ngClass]="inventoryRiskRatio > 0.3 ? 'border-rose-200 bg-rose-50/40' : ''">
+              <p class="text-[10px] font-black tracking-wider"
+                 [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-600' : 'text-slate-400'">
+                مؤشر خطر المخزون
+              </p>
+              <p class="mt-2 text-lg font-black"
+                 [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700' : 'text-slate-900'">
+                {{ formatPercent(inventoryRiskRatio) }}
+              </p>
+              <p class="mt-1 text-[11px] font-bold"
+                 [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700/80' : 'text-slate-500'">
+                نسبة المنتجات التي تقترب من النفاد
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Right Column: Status Breakdown & Product Health -->
+      <article class="premium-glass rounded-[1.8rem] px-4 py-4 sm:px-5 sm:py-5 xl:col-span-5">
+        <div class="space-y-5">
+          <div class="flex items-center gap-3">
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-100/50 bg-gradient-to-br from-indigo-50 to-white text-indigo-500 shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">donut_small</span>
+            </div>
+            <div>
+              <h2 class="text-base font-black text-slate-900">{{ 'VENDOR_ANALYTICS.CHARTS.STATUS_TITLE' | translate }}</h2>
+              <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.CHARTS.STATUS_SUBTITLE' | translate }}</p>
+            </div>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-[10rem_minmax(0,1fr)] xl:grid-cols-1">
+            <div class="chart-container-premium mx-auto h-[190px] w-[190px]">
+              <div class="h-full w-full" echarts [options]="statusBreakdownOptions"></div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
+              <div
+                *ngFor="let item of statusLegendItems"
+                class="group relative overflow-hidden rounded-[1.2rem] border bg-white/70 px-4 py-2.5 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                [ngClass]="getStatusToneClass(item.key)">
+                <div class="relative z-10 flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-2.5">
+                    <span class="status-ring h-3 w-3 rounded-full bg-slate-200" [style.backgroundColor]="item.color"></span>
+                    <span class="text-[11px] font-black uppercase tracking-wide">{{ item.labelKey | translate }}</span>
+                  </div>
+                  <span class="rounded-lg bg-black/5 px-2 py-0.5 text-[10px] font-black">{{ item.percentage }}</span>
+                </div>
+                <p class="relative z-10 mt-1.5 text-lg font-black drop-shadow-sm">{{ item.count }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[1.35rem] border border-slate-200/70 bg-gradient-to-br from-slate-50/80 to-white/90 p-4 shadow-sm">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-slate-400">inventory_2</span>
+                <h3 class="text-xs font-black text-slate-900">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.TITLE' | translate }}</h3>
+              </div>
+              <span class="rounded-lg border border-slate-100 bg-white px-2 py-1 text-[9px] font-black uppercase tracking-widest text-slate-400 shadow-sm">
+                {{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.SUBTITLE' | translate }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div class="rounded-[1.1rem] border border-slate-100 bg-white p-3 shadow-sm transition-transform hover:scale-[1.02]">
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.AVAILABLE' | translate }}</p>
+                <p class="mt-1.5 text-base font-black text-slate-900">{{ formatNumber(vm.productHealth.available) }}</p>
+              </div>
+              <div class="rounded-[1.1rem] border border-amber-100 bg-amber-50/30 p-3 shadow-sm transition-transform hover:scale-[1.02]">
+                <p class="text-[10px] font-black uppercase tracking-wider text-amber-600/80">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.LOW_STOCK' | translate }}</p>
+                <p class="mt-1.5 text-base font-black text-amber-600">{{ formatNumber(vm.productHealth.lowStock) }}</p>
+              </div>
+              <div class="rounded-[1.1rem] border border-rose-100 bg-rose-50/30 p-3 shadow-sm transition-transform hover:scale-[1.02]">
+                <p class="text-[10px] font-black uppercase tracking-wider text-rose-600/80">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.OUT_OF_STOCK' | translate }}</p>
+                <p class="mt-1.5 text-base font-black text-rose-600">{{ formatNumber(vm.productHealth.outOfStock) }}</p>
+              </div>
+              <div class="rounded-[1.1rem] border border-slate-200 bg-slate-50 p-3 shadow-sm transition-transform hover:scale-[1.02]">
+                <p class="text-[10px] font-black uppercase tracking-wider text-slate-500">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.INACTIVE' | translate }}</p>
+                <p class="mt-1.5 text-base font-black text-slate-700">{{ formatNumber(vm.productHealth.inactive) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="premium-glass rounded-[1.8rem] px-4 py-4 sm:px-5 sm:py-5">
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-200/50 bg-gradient-to-br from-amber-50 to-amber-100/50 text-amber-500 shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
+          </div>
+          <div>
+            <h2 class="text-base font-black text-slate-900">{{ 'VENDOR_ANALYTICS.TOP_PRODUCTS.TITLE' | translate }}</h2>
+            <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.TOP_PRODUCTS.SUBTITLE' | translate }}</p>
+          </div>
+        </div>
+
+        <span class="rounded-xl border border-slate-200/70 bg-white/80 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600 shadow-sm">
+          {{ formatNumber(vm.topProducts.length) }} {{ 'VENDOR_ANALYTICS.TOP_PRODUCTS.ITEMS' | translate }}
+        </span>
+      </div>
+
+      <ng-container *ngIf="vm.topProducts.length > 0; else noProductsState">
+        <div class="grid gap-3 xl:grid-cols-2">
+          <div
+            *ngFor="let product of vm.topProducts; let index = index; trackBy: trackByProduct"
+            class="group relative overflow-hidden rounded-[1.35rem] border border-slate-200/60 bg-white/70 px-4 py-4 transition-all hover:-translate-y-1 hover:bg-white hover:shadow-xl hover:shadow-primary/5">
+            <div class="flex items-start gap-4">
+              <div
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.1rem] border text-base font-black shadow-inner transition-transform group-hover:rotate-3 group-hover:scale-110"
+                [ngClass]="{
+                  'border-amber-200 bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600': index === 0,
+                  'border-slate-300 bg-gradient-to-br from-slate-200 to-slate-100 text-slate-600': index === 1,
+                  'border-orange-200 bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600': index === 2,
+                  'border-slate-200 bg-gradient-to-br from-slate-100 to-white text-slate-500': index > 2
+                }">
+                <span>#{{ index + 1 }}</span>
+              </div>
+
+              <div class="min-w-0 flex-1 space-y-3">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-black text-slate-900 transition-colors duration-300 group-hover:text-primary">
+                      {{ product.productName }}
+                    </p>
+                    <div class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-bold text-slate-500">
+                      <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-slate-400">inventory</span>
+                        {{ 'VENDOR_ANALYTICS.TOP_PRODUCTS.UNITS' | translate }}:
+                        <span class="text-slate-700">{{ formatNumber(product.unitsSold) }}</span>
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-slate-400">receipt_long</span>
+                        {{ 'VENDOR_ANALYTICS.TOP_PRODUCTS.ORDERS' | translate }}:
+                        <span class="text-slate-700">{{ formatNumber(product.ordersCount) }}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="rounded-xl border border-slate-100 bg-slate-50 px-3 py-1.5 shadow-sm transition-colors duration-300 group-hover:bg-primary/5 sm:self-start">
+                    <p class="text-sm font-black text-slate-900 transition-colors duration-300 group-hover:text-primary">
+                      {{ formatCurrency(product.revenue) }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="relative h-2.5 overflow-hidden rounded-full bg-slate-100 inset-shadow-sm">
+                  <div
+                    class="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-primary to-[#22d3ee] transition-all duration-1000 ease-out"
+                    [style.width.%]="topProductsMaxRevenue > 0 ? (product.revenue / topProductsMaxRevenue) * 100 : 0"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noProductsState>
+        <div class="flex min-h-[160px] items-center justify-center rounded-[1.8rem] border border-dashed border-slate-300/60 bg-slate-50/50 px-4 py-10 text-center">
+          <div class="space-y-3">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <span class="material-symbols-outlined text-[24px]">inventory_2</span>
+            </div>
+            <div>
+              <p class="text-sm font-black text-slate-900">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_PRODUCTS_TITLE' | translate }}</p>
+              <p class="mt-1 text-xs font-semibold text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_PRODUCTS_MESSAGE' | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </section>
+  </ng-container>
 </div>

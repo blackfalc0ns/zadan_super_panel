@@ -139,6 +139,7 @@ export interface VendorDetail extends Vendor {
   idNumber?: string | null;
   nationality?: string | null;
   payoutCycle?: string | null;
+  financialLifecycleMode?: string | null;
   rejectionReason: string | null;
   logoUrl: string | null;
   commercialRegisterDocumentUrl: string | null;
@@ -161,6 +162,12 @@ export interface VendorDetail extends Vendor {
   reviewNotes: VendorReviewNote[];
   riskIndicators: VendorRiskIndicator[];
 }
+
+export type VendorFinancialLifecycleMode =
+  | 'per_order_direct_payout'
+  | 'weekly'
+  | 'biweekly'
+  | 'monthly';
 
 export interface VendorBankAccount {
   id: string;

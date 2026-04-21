@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, EventEmitter, Output, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -7,27 +7,42 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { AdminVendorOrderItem, VendorService } from '@vendors/services/vendor.api.service';
-import { VendorDetail, VendorReviewDocument } from '@vendors/models/vendors.domain.models';
+import { VendorDetail, VendorReviewDocument, VendorReviewDocumentStatus } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
-interface KPI {
+interface OverviewMetric {
   id: string;
-  titleKey: string;
+  label: string;
   value: string;
-  unit?: string;
+  helper: string;
   icon: string;
-  iconBgClass: string;
-  trend: string;
-  trendKey: string;
-  trendIcon: string;
-  trendClass: string;
+  cardClass: string;
+  iconClass: string;
+  valueClass: string;
 }
 
-interface Order {
+interface OverviewFact {
+  id: string;
+  label: string;
+  value: string;
+  icon: string;
+  dir?: 'ltr' | 'rtl';
+}
+
+interface ReviewCheckpoint {
+  id: string;
+  label: string;
+  hint: string;
+  icon: string;
+  state: 'done' | 'attention' | 'neutral';
+}
+
+interface OrderRow {
   id: string;
   orderNumber: string;
   customer: string;
   amount: string;
+  status: string;
   statusKey: string;
 }
 
@@ -35,7 +50,10 @@ interface DocumentCard {
   id: string;
   titleKey: string;
   number: string;
+  status: VendorReviewDocumentStatus;
   statusKey: string;
+  icon: string;
+  iconBgClass: string;
 }
 
 interface AlertCard {
@@ -46,6 +64,15 @@ interface AlertCard {
   variant: 'warning' | 'error';
 }
 
+interface HealthIndicator {
+  id: string;
+  label: string;
+  value: string;
+  progress: number;
+  barClass: string;
+  valueClass: string;
+}
+
 @Component({
   selector: 'app-vendor-overview',
   standalone: true,
@@ -53,8 +80,6 @@ interface AlertCard {
   templateUrl: './vendor-overview.component.html'
 })
 export class VendorOverviewComponent {
-  @Output() tabChange = new EventEmitter<string>();
-
   vendorId = '';
   vendorName = '';
   vendorLocation = '';
@@ -62,20 +87,18 @@ export class VendorOverviewComponent {
   isRTL = true;
   mutationError = '';
   vendorDetail: VendorDetail | null = null;
-  private readonly destroyRef = inject(DestroyRef);
 
-  kpis: KPI[] = [];
-  storeInfo = {
-    category: '-',
-    registrationDate: '-',
-    phone: '-',
-    email: '-'
-  };
-
+  metrics: OverviewMetric[] = [];
+  heroFacts: OverviewFact[] = [];
+  storeFacts: OverviewFact[] = [];
+  reviewChecklist: ReviewCheckpoint[] = [];
+  healthIndicators: HealthIndicator[] = [];
   documents: DocumentCard[] = [];
-  recentOrders: Order[] = [];
+  recentOrders: OrderRow[] = [];
   alerts: AlertCard[] = [];
+
   private ordersData: AdminVendorOrderItem[] = [];
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private readonly translate: TranslateService,
@@ -203,12 +226,332 @@ export class VendorOverviewComponent {
       && !this.vendorDetail.archivedAtUtc;
   }
 
+  get canSuspendVendor(): boolean {
+    if (!this.vendorDetail) {
+      return false;
+    }
+
+    return this.vendorDetail.status !== 'Suspended' && !this.vendorDetail.archivedAtUtc;
+  }
+
   get primaryActionLabel(): string {
     if (this.canReactivateVendor) {
-      return this.isRTL ? 'إعادة تفعيل الحساب' : 'Reactivate account';
+      return this.localize('إعادة تفعيل الحساب', 'Reactivate account');
     }
 
     return this.translate.instant('VENDOR_OVERVIEW.ACTIONS.APPROVE');
+  }
+
+  get executiveSummaryEyebrow(): string {
+    return this.localize('ملخص تنفيذي', 'Executive summary');
+  }
+
+  get executiveSummaryText(): string {
+    const location = this.vendorLocation || this.localize('الموقع غير محدد', 'Location not specified');
+    return this.localize(
+      `النشاط مسجل في ${location}. ${this.nextStepMessage}`,
+      `This vendor operates in ${location}. ${this.nextStepMessage}`
+    );
+  }
+
+  get currentStatusLabelKey(): string {
+    const map: Record<string, string> = {
+      Active: 'COMMON.ACTIVE',
+      Pending: 'VENDORS.STATUS.PENDING',
+      Suspended: 'VENDORS.STATUS.SUSPENDED',
+      Rejected: 'VENDORS.STATUS.REJECTED'
+    };
+
+    return map[this.vendorDetail?.status ?? ''] ?? 'VENDORS.STATUS.PENDING';
+  }
+
+  get currentStatusVariant(): StatusPillVariant {
+    switch (this.vendorDetail?.status) {
+      case 'Active':
+        return 'success';
+      case 'Suspended':
+      case 'Rejected':
+        return 'danger';
+      case 'Pending':
+        return 'warning';
+      default:
+        return 'neutral';
+    }
+  }
+
+  get verificationLabelKey(): string {
+    const map: Record<string, string> = {
+      Verified: 'VENDOR_DETAIL.STATUS_VERIFIED',
+      Pending: 'VENDORS.STATUS.PENDING',
+      Unverified: 'VENDOR_REVIEW.STATUS.UNVERIFIED'
+    };
+
+    return map[this.vendorDetail?.verificationStatus ?? ''] ?? 'VENDORS.STATUS.PENDING';
+  }
+
+  get verificationVariant(): StatusPillVariant {
+    switch (this.vendorDetail?.verificationStatus) {
+      case 'Verified':
+        return 'success';
+      case 'Pending':
+        return 'processing';
+      case 'Unverified':
+        return 'warning';
+      default:
+        return 'neutral';
+    }
+  }
+
+  get riskLabel(): string {
+    return this.resolveRiskLabel();
+  }
+
+  get riskVariant(): StatusPillVariant {
+    switch (this.resolveRiskLevel().toLowerCase()) {
+      case 'low':
+        return 'success';
+      case 'medium':
+        return 'warning';
+      case 'high':
+      case 'critical':
+        return 'high-risk';
+      default:
+        return 'neutral';
+    }
+  }
+
+  get documentsProgressValue(): number {
+    if (typeof this.vendorDetail?.documentsCompleteness === 'number') {
+      return this.clamp(this.vendorDetail.documentsCompleteness, 0, 100);
+    }
+
+    if (!this.vendorDetail?.reviewDocuments.length) {
+      return 0;
+    }
+
+    const completedCount = this.vendorDetail.reviewDocuments.filter((item) => item.status === 'completed').length;
+    return Math.round((completedCount / this.vendorDetail.reviewDocuments.length) * 100);
+  }
+
+  get completedDocumentsCount(): number {
+    return this.vendorDetail?.reviewDocuments.filter((document) => document.status === 'completed').length ?? 0;
+  }
+
+  get accountHealthScore(): number {
+    if (!this.vendorDetail) {
+      return 0;
+    }
+
+    const docsScore = this.documentsProgressValue;
+    const blockersScore = Math.max(0, 100 - (this.reviewBlockers.length * 24));
+    const bankScore = this.resolveBankScore(this.vendorDetail.primaryBankAccount?.status || null, this.vendorDetail.bankAccountsCount);
+    const riskScore = this.resolveRiskScore();
+    const complaintsScore = Math.max(20, 100 - ((this.vendorDetail.complaintsCount ?? 0) * 10));
+
+    return Math.round(
+      (docsScore * 0.35)
+      + (blockersScore * 0.2)
+      + (bankScore * 0.2)
+      + (riskScore * 0.15)
+      + (complaintsScore * 0.1)
+    );
+  }
+
+  get accountHealthLabel(): string {
+    const score = this.accountHealthScore;
+
+    if (score >= 85) {
+      return this.localize('جاهزية قوية', 'Strong readiness');
+    }
+
+    if (score >= 70) {
+      return this.localize('وضع مستقر', 'Stable status');
+    }
+
+    if (score >= 50) {
+      return this.localize('يحتاج متابعة', 'Needs attention');
+    }
+
+    return this.localize('حالة حرجة', 'Critical state');
+  }
+
+  get accountHealthDescription(): string {
+    if (this.canApproveVendor) {
+      return this.localize('لا توجد عوائق رئيسية تمنع اتخاذ القرار الآن.', 'No major blockers are preventing a decision now.');
+    }
+
+    if (this.reviewBlockers.length > 0) {
+      return this.localize('أغلق العناصر المعلّقة أولًا لتقليل التأخير في المراجعة.', 'Resolve pending blockers first to reduce review delays.');
+    }
+
+    return this.localize('الحساب منظم، لكنه يحتاج خطوة تشغيلية أخيرة قبل الإغلاق.', 'The account is organized, but still needs one operational step before closure.');
+  }
+
+  get nextStepTitle(): string {
+    if (this.canApproveVendor) {
+      return this.localize('الحساب جاهز للاعتماد', 'Ready for approval');
+    }
+
+    if (this.canReactivateVendor) {
+      return this.localize('يمكن إعادة تفعيل الحساب', 'Ready for reactivation');
+    }
+
+    switch (this.vendorDetail?.reviewState) {
+      case 'awaiting_submission':
+        return this.localize('بانتظار استكمال الملف', 'Waiting for full submission');
+      case 'submitted':
+      case 'under_review':
+        return this.reviewBlockers.length > 0
+          ? this.localize('توجد عناصر تحتاج مراجعة', 'There are items pending review')
+          : this.localize('الملف تحت التقييم النهائي', 'The file is in final review');
+      case 'changes_requested':
+        return this.localize('المطلوب متابعة التعديلات', 'Changes need follow-up');
+      case 'verified':
+        return this.localize('الحساب معتمد', 'Account verified');
+      case 'rejected':
+        return this.localize('تم رفض الملف', 'The file was rejected');
+      case 'suspended':
+        return this.localize('الحساب موقوف', 'Account is suspended');
+      default:
+        return this.localize('تحتاج الصورة الكاملة لمراجعة إضافية', 'The account needs another quick review');
+    }
+  }
+
+  get nextStepMessage(): string {
+    if (this.canApproveVendor) {
+      return this.localize(
+        'المستندات الأساسية مكتملة ويمكن للمشرف اعتماد التاجر من نفس الصفحة.',
+        'Core documents are complete and the admin can approve the vendor directly from this page.'
+      );
+    }
+
+    if (this.canReactivateVendor) {
+      return this.localize(
+        'الحساب موقوف لكن لا يوجد قفل دخول أو أرشفة تمنع إعادة تفعيله.',
+        'The account is suspended, but there is no login lock or archive flag blocking reactivation.'
+      );
+    }
+
+    switch (this.vendorDetail?.reviewState) {
+      case 'awaiting_submission':
+        return this.localize(
+          'التاجر لم يرفع كل ما يلزم بعد، والأولوية الآن هي طلب الاستكمال.',
+          'The vendor has not uploaded everything yet, so the current priority is requesting completion.'
+        );
+      case 'submitted':
+      case 'under_review':
+        return this.reviewBlockers.length > 0
+          ? this.localize(
+              'هناك مستندات أو ملاحظات غير مكتملة، لذا الأفضل مراجعتها قبل اتخاذ القرار.',
+              'Some documents or review notes are still incomplete, so they should be checked before deciding.'
+            )
+          : this.localize(
+              'كل شيء شبه جاهز، ويكفي التحقق النهائي من المخاطر والحساب البنكي.',
+              'Everything is nearly ready; only a final check on risk and bank readiness is needed.'
+            );
+      case 'changes_requested':
+        return this.localize(
+          'تم إرسال ملاحظات للتاجر، وما زالت المتابعة مطلوبة قبل إعادة التقييم.',
+          'Feedback has already been sent to the vendor, and follow-up is needed before reassessment.'
+        );
+      case 'verified':
+        return this.localize(
+          'الحساب في وضع جيد ويمكن استخدام الصفحة لمراقبة الطلبات والمستندات والحالة التشغيلية.',
+          'The account is in a good state and this page can now be used to monitor orders, documents, and operations.'
+        );
+      case 'rejected':
+        return this.localize(
+          'تم رفض الملف، ويُفضّل مراجعة سبب القرار قبل أي خطوة لاحقة.',
+          'The file was rejected, so the decision reason should be reviewed before taking any next step.'
+        );
+      case 'suspended':
+        return this.localize(
+          'الحساب موقوف حاليًا، لذلك راجع سبب الإيقاف قبل إعادة التفعيل أو التصعيد.',
+          'The account is currently suspended, so review the suspension reason before reactivation or escalation.'
+        );
+      default:
+        return this.localize(
+          'الصفحة تعرض أهم النقاط التشغيلية والامتثالية لتسريع اتخاذ القرار.',
+          'This page surfaces the key operational and compliance signals to help accelerate decisions.'
+        );
+    }
+  }
+
+  get reviewCenterTitle(): string {
+    return this.localize('مركز القرار', 'Decision center');
+  }
+
+  get reviewCenterDescription(): string {
+    return this.localize(
+      'الحالة الحالية، العناصر المعلّقة، والخطوة التالية في مكان واحد.',
+      'Current status, blockers, and the recommended next step in one place.'
+    );
+  }
+
+  get actionCenterTitle(): string {
+    return this.localize('الإجراءات الإدارية', 'Admin actions');
+  }
+
+  get actionCenterDescription(): string {
+    return this.localize(
+      'اختر الإجراء المناسب حسب جاهزية الملف بدل التنقل بين أكثر من تبويب.',
+      'Choose the right action based on the account state without switching across tabs.'
+    );
+  }
+
+  get emptyOrdersTitle(): string {
+    return this.localize('لا توجد طلبات حديثة', 'No recent orders');
+  }
+
+  get emptyOrdersMessage(): string {
+    return this.localize(
+      'عند وصول طلبات جديدة لهذا التاجر ستظهر هنا مع الحالة والقيمة.',
+      'Once new orders arrive for this vendor, they will appear here with status and amount.'
+    );
+  }
+
+  get emptyAlertsTitle(): string {
+    return this.localize('لا توجد تنبيهات حرجة الآن', 'No critical alerts right now');
+  }
+
+  get emptyAlertsMessage(): string {
+    return this.localize(
+      'هذا مؤشر جيد. ما زالت الصفحة تعرض المخاطر والمستندات المعلّقة إن ظهرت لاحقًا.',
+      'This is a good sign. The page will still surface risk and pending documents if anything changes later.'
+    );
+  }
+
+  get decisionReasonTitle(): string {
+    return this.localize('ملاحظة قرار سابقة', 'Previous decision note');
+  }
+
+  get checklistTitle(): string {
+    return this.localize('قائمة التحقق السريعة', 'Quick checklist');
+  }
+
+  get checklistMeta(): string {
+    const doneCount = this.reviewChecklist.filter((item) => item.state === 'done').length;
+    return `${this.formatNumber(doneCount)} / ${this.formatNumber(this.reviewChecklist.length)}`;
+  }
+
+  get documentsMeta(): string {
+    const totalDocuments = this.vendorDetail?.reviewDocuments.length ?? 0;
+    return `${this.formatNumber(this.completedDocumentsCount)} / ${this.formatNumber(totalDocuments)}`;
+  }
+
+  get alertsMeta(): string {
+    return this.formatNumber(this.alerts.length);
+  }
+
+  get ordersMeta(): string {
+    return this.localize(
+      `${this.formatNumber(this.recentOrders.length)} طلبات معروضة`,
+      `${this.formatNumber(this.recentOrders.length)} orders shown`
+    );
+  }
+
+  get actionFailedTitle(): string {
+    return this.localize('تعذر تنفيذ الإجراء', 'Action failed');
   }
 
   onApproveVendor(): void {
@@ -224,9 +567,10 @@ export class VendorOverviewComponent {
     }
 
     if (!this.canApproveVendor) {
-      this.mutationError = this.isRTL
-        ? 'لا يمكن الموافقة على هذا التاجر في حالته الحالية.'
-        : 'This vendor cannot be approved in its current state.';
+      this.mutationError = this.localize(
+        'لا يمكن اعتماد هذا التاجر في حالته الحالية.',
+        'This vendor cannot be approved in its current state.'
+      );
       return;
     }
 
@@ -243,7 +587,7 @@ export class VendorOverviewComponent {
   }
 
   onSuspendVendor(): void {
-    if (!this.vendorDetail) {
+    if (!this.vendorDetail || !this.canSuspendVendor) {
       return;
     }
 
@@ -252,55 +596,77 @@ export class VendorOverviewComponent {
   }
 
   onViewAllOrders(): void {
-    this.router.navigate(['/vendors', this.vendorId, 'orders']);
+    void this.router.navigate(['/vendors', this.vendorId, 'orders']);
   }
 
   onViewAllDocuments(): void {
-    this.tabChange.emit('compliance');
+    void this.router.navigate(['/vendors', this.vendorId, 'compliance']);
   }
 
   onFilterOrders(): void {
-    this.tabChange.emit('orders');
+    void this.router.navigate(['/vendors', this.vendorId, 'orders']);
   }
 
   onViewOrderDetails(orderId: string): void {
-    this.router.navigate(['/orders', orderId]);
+    void this.router.navigate(['/orders', orderId]);
   }
 
-  onNavigateToDetails(): void {
-    this.router.navigate(['/vendors', this.vendorId, 'overview']);
+  onOpenCompliance(): void {
+    void this.router.navigate(['/vendors', this.vendorId, 'compliance']);
   }
 
-  getDocumentStatusVariant(statusKey: string): StatusPillVariant {
-    if (statusKey.includes('VERIFIED') || statusKey.includes('COMPLETED')) {
-      return 'success';
-    }
-
-    if (statusKey.includes('UNDER_REVIEW')) {
-      return 'warning';
-    }
-
-    return 'neutral';
+  onOpenVendorData(): void {
+    void this.router.navigate(['/vendors', this.vendorId, 'data']);
   }
 
-  getOrderStatusVariant(statusKey: string): StatusPillVariant {
-    if (statusKey.includes('DELIVERED')) {
-      return 'success';
+  getDocumentStatusVariant(status: VendorReviewDocumentStatus): StatusPillVariant {
+    switch (status) {
+      case 'completed':
+        return 'success';
+      case 'pending':
+        return 'warning';
+      case 'missing':
+        return 'danger';
+      default:
+        return 'neutral';
     }
+  }
 
-    if (statusKey.includes('PLACED') || statusKey.includes('PREPARING') || statusKey.includes('ONTHEWAY')) {
-      return 'processing';
+  getOrderStatusVariant(status: string): StatusPillVariant {
+    switch (status.toLowerCase()) {
+      case 'delivered':
+        return 'success';
+      case 'placed':
+      case 'preparing':
+      case 'ontheway':
+        return 'processing';
+      case 'pending':
+        return 'warning';
+      case 'cancelled':
+        return 'danger';
+      default:
+        return 'neutral';
     }
+  }
 
-    if (statusKey.includes('PENDING')) {
-      return 'warning';
-    }
+  getCheckpointClasses(checkpoint: ReviewCheckpoint): string {
+    const palette: Record<ReviewCheckpoint['state'], string> = {
+      done: 'border-emerald-200 bg-emerald-50/80',
+      attention: 'border-amber-200 bg-amber-50/80',
+      neutral: 'border-slate-200 bg-slate-50/80'
+    };
 
-    if (statusKey.includes('CANCELLED')) {
-      return 'danger';
-    }
+    return palette[checkpoint.state];
+  }
 
-    return 'neutral';
+  getCheckpointIconClasses(checkpoint: ReviewCheckpoint): string {
+    const palette: Record<ReviewCheckpoint['state'], string> = {
+      done: 'bg-emerald-100 text-emerald-700',
+      attention: 'bg-amber-100 text-amber-700',
+      neutral: 'bg-slate-200 text-slate-600'
+    };
+
+    return palette[checkpoint.state];
   }
 
   private loadOrders(): void {
@@ -326,63 +692,188 @@ export class VendorOverviewComponent {
 
     this.vendorName = this.getDisplayStoreName(vendor);
     this.vendorLocation = [vendor.city, vendor.region].filter(Boolean).join(this.isRTL ? '، ' : ', ');
-    this.storeInfo = {
-      category: this.getDisplayBusinessType(vendor.businessType),
-      registrationDate: this.formatDate(vendor.createdAtUtc),
-      phone: vendor.contactPhone,
-      email: vendor.contactEmail
-    };
 
-    const totalOrders = this.ordersData.length;
-    const totalRevenue = this.ordersData.reduce((sum, order) => sum + order.totalAmount, 0);
-    const completedOrders = this.ordersData.filter((order) => order.status.toLowerCase() === 'delivered').length;
-    const commission = vendor.commissionRate ?? 0;
+    this.heroFacts = [
+      {
+        id: 'location',
+        label: this.localize('الموقع', 'Location'),
+        value: this.vendorLocation || this.localize('غير محدد', 'Not specified'),
+        icon: 'location_on'
+      },
+      {
+        id: 'category',
+        label: this.localize('نوع النشاط', 'Business type'),
+        value: this.getDisplayBusinessType(vendor.businessType),
+        icon: 'category'
+      },
+      {
+        id: 'last-active',
+        label: this.localize('آخر نشاط', 'Last active'),
+        value: this.formatDate(vendor.lastActiveAtUtc || vendor.updatedAtUtc || vendor.createdAtUtc),
+        icon: 'schedule'
+      }
+    ];
 
-    this.kpis = [
+    this.storeFacts = [
       {
-        id: 'sales',
-        titleKey: 'VENDOR_OVERVIEW.KPI.TOTAL_SALES',
-        value: this.formatNumber(totalRevenue),
-        unit: 'SAR',
-        icon: 'payments',
-        iconBgClass: 'bg-primary/10 text-primary',
-        trend: `${commission}%`,
-        trendKey: 'CATALOG.COMMISSION_RATE',
-        trendIcon: 'percent',
-        trendClass: 'text-slate-600'
+        id: 'owner',
+        label: this.localize('المالك', 'Owner'),
+        value: vendor.ownerName || '-',
+        icon: 'person'
       },
       {
-        id: 'orders',
-        titleKey: 'VENDOR_OVERVIEW.KPI.TOTAL_ORDERS',
-        value: this.formatNumber(totalOrders),
-        icon: 'shopping_cart',
-        iconBgClass: 'bg-blue-50 text-blue-600',
-        trend: `${completedOrders}`,
-        trendKey: 'VENDOR_ORDERS.KPI.COMPLETED_ORDERS',
-        trendIcon: 'check_circle',
-        trendClass: 'text-green-600'
+        id: 'phone',
+        label: this.translate.instant('VENDOR_OVERVIEW.PHONE'),
+        value: vendor.contactPhone || '-',
+        icon: 'call',
+        dir: 'ltr'
       },
       {
-        id: 'returns',
-        titleKey: 'VENDOR_OVERVIEW.KPI.RETURN_RATE',
-        value: `${vendor.documentsCompleteness ?? 0}%`,
-        icon: 'verified',
-        iconBgClass: 'bg-orange-50 text-orange-600',
-        trend: vendor.verificationStatus || '-',
-        trendKey: 'VENDORS.PREVIEW.VERIFICATION_STATUS',
-        trendIcon: 'shield',
-        trendClass: 'text-orange-600'
+        id: 'email',
+        label: this.translate.instant('VENDOR_OVERVIEW.EMAIL'),
+        value: vendor.contactEmail || '-',
+        icon: 'mail',
+        dir: 'ltr'
       },
       {
-        id: 'products',
-        titleKey: 'VENDOR_OVERVIEW.KPI.ACTIVE_PRODUCTS',
+        id: 'commercial-register',
+        label: this.localize('السجل التجاري', 'Commercial registration'),
+        value: vendor.commercialRegistrationNumber || '-',
+        icon: 'badge',
+        dir: 'ltr'
+      },
+      {
+        id: 'vendor-id',
+        label: this.localize('معرف التاجر', 'Vendor ID'),
+        value: vendor.id,
+        icon: 'fingerprint',
+        dir: 'ltr'
+      }
+    ];
+
+    this.metrics = [
+      {
+        id: 'docs',
+        label: this.localize('اكتمال المستندات', 'Documents completion'),
+        value: `${this.documentsProgressValue}%`,
+        helper: this.reviewBlockers.length > 0
+          ? this.localize(
+              `${this.formatNumber(this.reviewBlockers.length)} عناصر تحتاج متابعة`,
+              `${this.formatNumber(this.reviewBlockers.length)} items need attention`
+            )
+          : this.localize('كل المستندات الأساسية مكتملة', 'All required documents are complete'),
+        icon: 'task_alt',
+        cardClass: 'border-emerald-200 bg-emerald-50/80',
+        iconClass: 'bg-white text-emerald-700',
+        valueClass: 'text-emerald-700'
+      },
+      {
+        id: 'branches',
+        label: this.localize('الفروع المرتبطة', 'Linked branches'),
         value: this.formatNumber(vendor.branchesCount),
+        helper: this.vendorLocation || this.localize('بدون موقع واضح', 'Location not specified'),
         icon: 'storefront',
-        iconBgClass: 'bg-purple-50 text-purple-600',
-        trend: this.formatNumber(vendor.bankAccountsCount),
-        trendKey: 'VENDOR_DETAIL.BANKING_DATA',
-        trendIcon: 'account_balance',
-        trendClass: 'text-green-600'
+        cardClass: 'border-sky-200 bg-sky-50/80',
+        iconClass: 'bg-white text-sky-700',
+        valueClass: 'text-sky-700'
+      },
+      {
+        id: 'bank-accounts',
+        label: this.localize('الحسابات البنكية', 'Bank accounts'),
+        value: this.formatNumber(vendor.bankAccountsCount),
+        helper: this.resolveBankLabel(vendor.primaryBankAccount?.status || null, vendor.bankAccountsCount),
+        icon: 'account_balance',
+        cardClass: 'border-violet-200 bg-violet-50/80',
+        iconClass: 'bg-white text-violet-700',
+        valueClass: 'text-violet-700'
+      },
+      {
+        id: 'complaints',
+        label: this.localize('الشكاوى المسجلة', 'Reported complaints'),
+        value: this.formatNumber(vendor.complaintsCount ?? 0),
+        helper: vendor.performanceRating
+          ? this.localize(
+              `تقييم الأداء ${this.formatNumber(vendor.performanceRating)} / 5`,
+              `Performance rating ${this.formatNumber(vendor.performanceRating)} / 5`
+            )
+          : this.localize('لا يوجد تقييم أداء واضح بعد', 'No performance rating recorded yet'),
+        icon: 'sentiment_dissatisfied',
+        cardClass: 'border-amber-200 bg-amber-50/80',
+        iconClass: 'bg-white text-amber-700',
+        valueClass: 'text-amber-700'
+      }
+    ];
+
+    this.healthIndicators = [
+      {
+        id: 'documents',
+        label: this.localize('المستندات', 'Documents'),
+        value: `${this.documentsProgressValue}%`,
+        progress: this.documentsProgressValue,
+        barClass: 'bg-emerald-500',
+        valueClass: 'text-emerald-700'
+      },
+      {
+        id: 'banking',
+        label: this.localize('الجاهزية البنكية', 'Banking readiness'),
+        value: this.resolveBankLabel(vendor.primaryBankAccount?.status || null, vendor.bankAccountsCount),
+        progress: this.resolveBankScore(vendor.primaryBankAccount?.status || null, vendor.bankAccountsCount),
+        barClass: 'bg-violet-500',
+        valueClass: 'text-violet-700'
+      },
+      {
+        id: 'risk',
+        label: this.localize('المخاطر', 'Risk'),
+        value: this.riskLabel,
+        progress: this.resolveRiskScore(),
+        barClass: 'bg-amber-500',
+        valueClass: 'text-amber-700'
+      },
+      {
+        id: 'complaints',
+        label: this.localize('الشكاوى', 'Complaints'),
+        value: this.formatNumber(vendor.complaintsCount ?? 0),
+        progress: Math.max(20, 100 - ((vendor.complaintsCount ?? 0) * 10)),
+        barClass: 'bg-sky-500',
+        valueClass: 'text-sky-700'
+      }
+    ];
+
+    this.reviewChecklist = [
+      {
+        id: 'submission',
+        label: this.localize('تم استلام الملف', 'Submission received'),
+        hint: this.vendorDetail?.reviewState === 'awaiting_submission'
+          ? this.localize('بانتظار رفع المستندات الأساسية', 'Waiting for the vendor to submit the core documents')
+          : this.localize(`آخر إرسال ${this.reviewSubmittedAt}`, `Last submission ${this.reviewSubmittedAt}`),
+        icon: 'upload_file',
+        state: this.vendorDetail?.reviewState === 'awaiting_submission' ? 'attention' : 'done'
+      },
+      {
+        id: 'documents',
+        label: this.localize('مراجعة المستندات', 'Document review'),
+        hint: this.reviewBlockers.length > 0
+          ? this.localize(
+              `${this.formatNumber(this.reviewBlockers.length)} مستندات أو عناصر غير مكتملة`,
+              `${this.formatNumber(this.reviewBlockers.length)} items are still incomplete`
+            )
+          : this.localize('لا توجد مستندات معلّقة', 'No pending document blockers'),
+        icon: 'description',
+        state: this.reviewBlockers.length > 0 ? 'attention' : 'done'
+      },
+      {
+        id: 'bank',
+        label: this.localize('الحساب البنكي الأساسي', 'Primary bank account'),
+        hint: this.resolveBankLabel(vendor.primaryBankAccount?.status || null, vendor.bankAccountsCount),
+        icon: 'account_balance',
+        state: this.resolveBankScore(vendor.primaryBankAccount?.status || null, vendor.bankAccountsCount) >= 70 ? 'done' : 'neutral'
+      },
+      {
+        id: 'decision',
+        label: this.localize('جاهزية القرار النهائي', 'Decision readiness'),
+        hint: this.nextStepTitle,
+        icon: 'fact_check',
+        state: this.canApproveVendor || this.canReactivateVendor ? 'done' : 'neutral'
       }
     ];
 
@@ -390,15 +881,19 @@ export class VendorOverviewComponent {
       id: order.id,
       orderNumber: order.orderNumber,
       customer: order.customerName,
-      amount: `${this.formatNumber(order.totalAmount)} SAR`,
+      amount: this.formatCurrency(order.totalAmount),
+      status: order.status,
       statusKey: this.mapOrderStatusKey(order.status)
     }));
 
-    this.documents = vendor.reviewDocuments.slice(0, 3).map((document) => ({
+    this.documents = vendor.reviewDocuments.slice(0, 4).map((document) => ({
       id: document.id,
       titleKey: document.titleKey,
       number: this.resolveDocumentNumber(vendor, document.type),
-      statusKey: document.statusLabelKey
+      status: document.status,
+      statusKey: document.statusLabelKey,
+      icon: document.icon,
+      iconBgClass: document.iconBgClass
     }));
 
     const documentAlerts = vendor.reviewDocuments
@@ -419,7 +914,11 @@ export class VendorOverviewComponent {
       variant: indicator.severity === 'high' ? 'error' as const : 'warning' as const
     }));
 
-    this.alerts = [...documentAlerts, ...riskAlerts].slice(0, 3);
+    this.alerts = [...documentAlerts, ...riskAlerts].slice(0, 4);
+  }
+
+  localize(ar: string, en: string): string {
+    return this.currentLang === 'ar' ? ar : en;
   }
 
   private getDisplayStoreName(vendor: VendorDetail): string {
@@ -469,6 +968,94 @@ export class VendorOverviewComponent {
     }
   }
 
+  private resolveRiskLevel(): string {
+    if (this.vendorDetail?.riskLevel) {
+      return this.vendorDetail.riskLevel;
+    }
+
+    const highestSeverity = this.vendorDetail?.riskIndicators.some((indicator) => indicator.severity === 'high')
+      ? 'High'
+      : this.vendorDetail?.riskIndicators.some((indicator) => indicator.severity === 'medium')
+        ? 'Medium'
+        : this.vendorDetail?.riskIndicators.length
+          ? 'Low'
+          : 'Low';
+
+    return highestSeverity;
+  }
+
+  private resolveRiskLabel(): string {
+    switch (this.resolveRiskLevel().toLowerCase()) {
+      case 'low':
+        return this.localize('مخاطر منخفضة', 'Low risk');
+      case 'medium':
+        return this.localize('مخاطر متوسطة', 'Medium risk');
+      case 'high':
+        return this.localize('مخاطر مرتفعة', 'High risk');
+      case 'critical':
+        return this.localize('مخاطر حرجة', 'Critical risk');
+      default:
+        return this.localize('المخاطر غير واضحة', 'Risk not classified');
+    }
+  }
+
+  private resolveRiskScore(): number {
+    switch (this.resolveRiskLevel().toLowerCase()) {
+      case 'low':
+        return 90;
+      case 'medium':
+        return 65;
+      case 'high':
+        return 35;
+      case 'critical':
+        return 15;
+      default:
+        return 55;
+    }
+  }
+
+  private resolveBankLabel(status: string | null, count: number): string {
+    if (!count) {
+      return this.localize('لا يوجد حساب بنكي مضاف', 'No bank account added');
+    }
+
+    const normalized = (status || '').toLowerCase();
+    if (normalized.includes('verified') || normalized.includes('active')) {
+      return this.localize('جاهز للتحويل', 'Ready for payouts');
+    }
+
+    if (normalized.includes('pending') || normalized.includes('review')) {
+      return this.localize('بانتظار التحقق', 'Pending verification');
+    }
+
+    if (normalized.includes('reject') || normalized.includes('block')) {
+      return this.localize('يحتاج معالجة', 'Needs attention');
+    }
+
+    return this.localize('بحاجة لمراجعة سريعة', 'Needs a quick check');
+  }
+
+  private resolveBankScore(status: string | null, count: number): number {
+    if (!count) {
+      return 20;
+    }
+
+    const normalized = (status || '').toLowerCase();
+    if (normalized.includes('verified') || normalized.includes('active')) {
+      return 95;
+    }
+
+    if (normalized.includes('pending') || normalized.includes('review')) {
+      return 60;
+    }
+
+    if (normalized.includes('reject') || normalized.includes('block')) {
+      return 25;
+    }
+
+    return 50;
+  }
+
   private formatDate(value: string | null): string {
     if (!value) {
       return '-';
@@ -479,6 +1066,14 @@ export class VendorOverviewComponent {
       month: 'short',
       year: 'numeric'
     }).format(new Date(value));
+  }
+
+  private formatCurrency(value: number): string {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+      style: 'currency',
+      currency: 'SAR',
+      maximumFractionDigits: 0
+    }).format(value);
   }
 
   private formatNumber(value: number): string {
@@ -501,5 +1096,9 @@ export class VendorOverviewComponent {
       default:
         return 'VENDOR_ORDERS.GENERAL_STATUS.NEW';
     }
+  }
+
+  private clamp(value: number, min: number, max: number): number {
+    return Math.min(max, Math.max(min, value));
   }
 }

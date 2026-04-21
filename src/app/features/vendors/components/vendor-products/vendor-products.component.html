@@ -1,216 +1,203 @@
-<!-- Vendor Products Content -->
-<div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+<div class="mx-auto flex max-w-[1520px] flex-col gap-5 px-4 py-4 md:px-6 lg:px-7" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <section class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5">
+    <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+          <div class="min-w-0">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] border border-primary/15 bg-gradient-to-br from-primary/12 to-white text-primary shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+              </div>
 
-  <!-- Main Layout -->
-  <div class="flex flex-col lg:flex-row gap-6">
-    
-    <!-- Sidebar: Product Summary -->
-    <div class="w-full lg:w-64 flex-shrink-0 flex flex-col gap-6">
-      <div class="bg-white rounded-xl p-5 flex flex-col gap-4 border border-gray-200 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          icon="summarize"
-          title="VENDOR_PRODUCTS.SUMMARY_TITLE">
-        </app-section-header>
-        
-        <div class="flex flex-col gap-3 pt-1">
-          <!-- Total Products -->
-          <div class="flex justify-between items-center p-3 rounded-lg bg-primary/5 border border-primary/10">
-            <span class="text-xs text-gray-600 flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-base">inventory_2</span>
-              <span>{{ 'VENDOR_PRODUCTS.TOTAL_PRODUCTS' | translate }}</span>
-            </span>
-            <span class="text-sm font-bold text-gray-900">{{ totalProducts }}</span>
+              <div>
+                <h1 class="text-base font-black tracking-tight text-slate-900">كتالوج المنتجات</h1>
+                <p class="mt-1 text-xs font-medium text-slate-500">
+                  عرض تشغيلي مبسط لمنتجات التاجر مع التركيز على الجاهزية والمخزون.
+                </p>
+              </div>
+            </div>
           </div>
-          
-          <!-- Out of Stock -->
-          <div class="flex justify-between items-center p-3 rounded-lg bg-orange-50 border border-orange-100">
-            <span class="text-xs text-gray-600 flex items-center gap-2">
-              <span class="material-symbols-outlined text-orange-600 text-base">warning</span>
-              <span>{{ 'VENDOR_PRODUCTS.OUT_OF_STOCK' | translate }}</span>
-            </span>
-            <span class="text-sm font-bold text-gray-900">{{ outOfStock }}</span>
-          </div>
-          
-          <!-- Under Review -->
-          <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50 border border-gray-200">
-            <span class="text-xs text-gray-600 flex items-center gap-2">
-              <span class="material-symbols-outlined text-gray-500 text-base">pending_actions</span>
-              <span>{{ 'VENDOR_PRODUCTS.UNDER_REVIEW' | translate }}</span>
-            </span>
-            <span class="text-sm font-bold text-gray-900">{{ underReview }}</span>
-          </div>
-          
-          <!-- Total Inventory Value -->
-          <div class="mt-2 pt-4 border-t border-gray-200">
-            <span class="text-xs text-gray-500 block mb-1">{{ 'VENDOR_PRODUCTS.TOTAL_INVENTORY_VALUE' | translate }}</span>
-            <span class="text-lg font-bold text-primary">{{ 'COMMON.CURRENCY_SAR' | translate }} {{ totalInventoryValue }}</span>
+
+          <div class="grid gap-3 sm:grid-cols-2 xl:w-[42rem] xl:grid-cols-4">
+            <div class="rounded-[1.2rem] border border-slate-200/70 bg-white/80 px-3.5 py-3 shadow-sm">
+              <p class="text-[10px] font-black tracking-[0.08em] text-slate-400">{{ 'VENDOR_PRODUCTS.TOTAL_PRODUCTS' | translate }}</p>
+              <p class="mt-2 text-lg font-black text-slate-900">{{ formatNumber(totalProducts) }}</p>
+            </div>
+
+            <div class="rounded-[1.2rem] border border-emerald-100 bg-emerald-50/70 px-3.5 py-3 shadow-sm">
+              <p class="text-[10px] font-black tracking-[0.08em] text-emerald-600">منتجات نشطة</p>
+              <p class="mt-2 text-lg font-black text-emerald-700">{{ formatNumber(activeProducts) }}</p>
+            </div>
+
+            <div class="rounded-[1.2rem] border border-amber-100 bg-amber-50/70 px-3.5 py-3 shadow-sm">
+              <p class="text-[10px] font-black tracking-[0.08em] text-amber-600">مخزون منخفض</p>
+              <p class="mt-2 text-lg font-black text-amber-700">{{ formatNumber(lowStockProducts) }}</p>
+            </div>
+
+            <div class="rounded-[1.2rem] border border-slate-200/70 bg-white/80 px-3.5 py-3 shadow-sm">
+              <p class="text-[10px] font-black tracking-[0.08em] text-slate-400">{{ 'VENDOR_PRODUCTS.TOTAL_INVENTORY_VALUE' | translate }}</p>
+              <p class="mt-2 text-lg font-black text-slate-900">{{ formatCurrency(totalInventoryValue) }}</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Main Content: Products Table -->
-    <div class="flex-1 flex flex-col gap-4">
-      
-      <!-- Filters Bar -->
-      <div class="bg-white rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-center justify-between border border-gray-200 shadow-sm">
-        <!-- Search -->
-        <div class="w-full sm:flex-1 relative">
-          <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 inset-inline-start-3 text-gray-400 text-sm">search</span>
-          <input 
-            [(ngModel)]="searchQuery"
-            class="w-full bg-white border border-gray-200 rounded-lg py-2 ps-9 pe-3 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all"
-            [placeholder]="'VENDOR_PRODUCTS.SEARCH_PLACEHOLDER' | translate"
-            type="text"/>
-        </div>
-        
-        <!-- Filters -->
-        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-          <select
-            [(ngModel)]="selectedCategory"
-            class="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 appearance-none relative bg-no-repeat bg-[length:1.2em_1.2em] pe-8 ps-3 bg-[position:right_0.5rem_center]"
-            style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
-            <option value="">{{ 'VENDOR_PRODUCTS.ALL_CATEGORIES' | translate }}</option>
-            <option value="CAT-ELECTRONICS">{{ 'VENDOR_PRODUCTS.ELECTRONICS' | translate }}</option>
-            <option value="CAT-AUDIO">{{ 'VENDOR_PRODUCTS.ACCESSORIES' | translate }}</option>
-          </select>
-          
-          <select 
-            [(ngModel)]="selectedStatus"
-            class="bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 appearance-none relative bg-no-repeat bg-[length:1.2em_1.2em] pe-8 ps-3 bg-[position:right_0.5rem_center]"
-            style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
-            <option value="">{{ 'VENDOR_PRODUCTS.PRODUCT_STATUS' | translate }}</option>
-            <option value="active">{{ 'VENDOR_PRODUCTS.STATUS.ACTIVE' | translate }}</option>
-            <option value="out_of_stock">{{ 'VENDOR_PRODUCTS.STATUS.OUT_OF_STOCK' | translate }}</option>
-          </select>
-        </div>
+  <div class="flex flex-col gap-4 xl:flex-row xl:items-stretch xl:justify-between">
+    <div class="w-full xl:w-[26rem]">
+      <app-input
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()"
+        [label]="'COMMON.SEARCH'"
+        [placeholder]="'VENDOR_PRODUCTS.SEARCH_PLACEHOLDER'"
+        [dir]="isRTL ? 'rtl' : 'ltr'"
+        [hasIcon]="true"
+        [customClass]="'w-full'"
+        [inputClass]="'h-11 rounded-[1.2rem] text-[13px] font-medium shadow-sm'">
+        <span icon class="material-symbols-outlined text-[18px]">search</span>
+      </app-input>
+    </div>
+
+    <div class="flex flex-1 flex-col gap-3 lg:flex-row lg:items-end lg:gap-4">
+      <div class="min-w-[13rem] flex-1 lg:max-w-[16rem]">
+        <app-searchable-select
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onStatusChange()"
+          [label]="'VENDOR_PRODUCTS.PRODUCT_STATUS'"
+          [searchable]="false"
+          [allowClear]="false"
+          [options]="statusOptions"
+          [placeholder]="'VENDOR_PRODUCTS.PRODUCT_STATUS'"
+          [customClass]="'w-full'">
+        </app-searchable-select>
       </div>
 
-      <!-- Products Table -->
-      <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
-        <div class="overflow-x-auto">
-          <table class="w-full table-fixed border-collapse">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-200">
-                <th class="p-3 text-xs font-semibold text-gray-500 w-10 text-center">
-                  <input 
-                    [(ngModel)]="selectAll"
-                    (change)="onSelectAll()"
-                    class="rounded border-gray-300 text-primary focus:ring-primary size-3.5" 
-                    type="checkbox"/>
-                </th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-start">{{ 'VENDOR_PRODUCTS.TABLE.PRODUCT' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-start">SKU</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-start">{{ 'VENDOR_PRODUCTS.TABLE.CATEGORY' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-start">{{ 'VENDOR_PRODUCTS.TABLE.PRICE' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 w-32 text-start">{{ 'VENDOR_PRODUCTS.TABLE.STOCK' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-center">{{ 'VENDOR_PRODUCTS.TABLE.STATUS' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 w-24 text-start">
-                  {{ 'VENDOR_PRODUCTS.TABLE.ACTIONS' | translate }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr *ngFor="let product of filteredProducts"
-                  class="hover:bg-gray-50 transition-colors group"
-                  [ngClass]="{'bg-red-50/30': product.status === 'out_of_stock'}">
-                <td class="p-3 text-center">
-                  <input 
-                    [(ngModel)]="product.selected"
-                    (change)="onProductSelect()"
-                    class="rounded border-gray-300 text-primary focus:ring-primary size-3.5" 
-                    type="checkbox"/>
-                </td>
-                <td class="p-3">
-                  <div class="flex items-center gap-3">
-                    <div class="size-10 rounded border border-gray-200 bg-gray-100 shrink-0 overflow-hidden"
-                         [ngClass]="{'grayscale': product.status === 'out_of_stock'}">
-                      <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-gray-400 text-lg">image</span>
-                      </div>
-                    </div>
-                    <div class="flex flex-col max-w-[200px]">
-                      <span class="text-sm font-medium text-gray-900 truncate" [attr.title]="product.nameAr">
-                        {{ product.nameAr }}
-                      </span>
-                      <span class="text-xs text-gray-500 truncate">{{ product.variant }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="p-3 text-sm font-mono text-gray-600">{{ product.sku }}</td>
-                <td class="p-3 text-sm text-gray-600">{{ product.category }}</td>
-                <td class="p-3 text-sm font-semibold text-gray-900">{{ 'COMMON.CURRENCY_SAR' | translate }} {{ product.price }}</td>
-                <td class="p-3">
-                  <div class="flex flex-col gap-1">
-                    <div class="flex justify-between text-xs">
-                      <span class="font-medium" [ngClass]="getStockColorClass(product.stockStatus)">
-                        {{ product.stock }} {{ 'VENDOR_PRODUCTS.PIECES' | translate }}
-                      </span>
-                      <span *ngIf="product.stockStatus === 'low'" class="text-gray-400 text-[10px]">
-                        {{ 'VENDOR_PRODUCTS.LOW' | translate }}
-                      </span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                      <div class="h-1.5 rounded-full" 
-                           [ngClass]="getStockBarClass(product.stockStatus)"
-                           [style.width.%]="product.stockPercentage"></div>
-                    </div>
-                  </div>
-                </td>
-                <td class="p-3 text-center">
-                  <app-status-pill
-                    [label]="product.statusKey"
-                    [showDot]="false"
-                    [size]="'sm'"
-                    [variant]="getProductStatusVariant(product.status)">
-                  </app-status-pill>
-                </td>
-                <td class="p-3">
-                  <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-start">
-                    <button 
-                      (click)="onViewProduct(product.id)"
-                      class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
-                      [title]="'COMMON.VIEW_DETAILS' | translate">
-                      <span class="material-symbols-outlined text-[18px]">visibility</span>
-                    </button>
-                    <button 
-                      (click)="onEditProduct(product.id)"
-                      class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
-                      [title]="'COMMON.EDIT' | translate">
-                      <span class="material-symbols-outlined text-[18px]">edit</span>
-                    </button>
-                    <button 
-                      (click)="onDeleteProduct(product.id)"
-                      class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors" 
-                      [title]="'COMMON.DELETE' | translate">
-                      <span class="material-symbols-outlined text-[18px]">delete</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="lg:ms-auto flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div class="inline-flex h-11 items-center rounded-full bg-slate-100 px-4 text-xs font-black text-slate-500">
+          <span class="material-symbols-outlined me-2 text-[18px] text-primary">filter_list</span>
+          <span>{{ activeFilterCount }}</span>
+          <span class="mx-2 text-slate-300">|</span>
+          <span>{{ showingCountLabel }}</span>
         </div>
-        
-        <!-- Pagination -->
-        <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
-          <span>{{ 'VENDOR_PRODUCTS.SHOWING_ENTRIES' | translate }}</span>
-          <div class="flex gap-1">
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white disabled:opacity-50" disabled>
-              {{ 'COMMON.PREVIOUS' | translate }}
-            </button>
-            <button class="px-2 py-1 rounded border border-primary bg-primary text-white">1</button>
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">2</button>
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">3</button>
-            <span class="px-2 py-1">...</span>
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">
-              {{ 'COMMON.NEXT' | translate }}
-            </button>
-          </div>
-        </div>
+
+        <app-button
+          *ngIf="hasActiveFilters"
+          variant="outline"
+          size="sm"
+          (btnClick)="clearFilters()"
+          customClass="w-full sm:w-auto">
+          مسح الفلاتر
+        </app-button>
       </div>
-      
     </div>
   </div>
+
+  <section *ngIf="isLoading" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-primary/10 text-primary shadow-inner">
+      <span class="material-symbols-outlined animate-pulse text-[28px]">inventory_2</span>
+    </div>
+    <p class="mt-4 text-sm font-black text-slate-900">جاري تحميل المنتجات</p>
+    <p class="mt-1 text-xs font-medium text-slate-500">يتم تجهيز قائمة المنتجات الحالية لهذا التاجر.</p>
+  </section>
+
+  <section *ngIf="!isLoading && hasError" class="premium-glass rounded-[1.8rem] border-rose-200/60 bg-rose-50/40 px-5 py-14 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-rose-100 text-rose-600 shadow-inner">
+      <span class="material-symbols-outlined text-[28px]">warning</span>
+    </div>
+    <p class="mt-4 text-sm font-black text-slate-900">تعذر تحميل المنتجات</p>
+    <p class="mt-1 text-xs font-medium text-slate-500">حدثت مشكلة أثناء قراءة بيانات الكتالوج، حاول تحديث الصفحة.</p>
+  </section>
+
+  <section *ngIf="!isLoading && !hasError && hasProducts" class="premium-glass overflow-hidden rounded-[1.8rem] shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="min-w-full border-collapse">
+        <thead>
+          <tr class="border-b border-slate-200 bg-slate-50/90">
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.PRODUCT' | translate }}</th>
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">SKU</th>
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.PRICE' | translate }}</th>
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.STOCK' | translate }}</th>
+            <th class="px-4 py-3 text-center text-[11px] font-black text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.STATUS' | translate }}</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-200">
+          <tr
+            *ngFor="let product of filteredProducts"
+            class="cursor-pointer bg-white transition-colors hover:bg-slate-50/80"
+            [ngClass]="{ 'bg-rose-50/30': product.status === 'out_of_stock' }">
+            <td class="px-4 py-3.5" (click)="onViewProduct(product.masterProductId)">
+              <div class="flex items-center gap-3">
+                <div class="h-12 w-12 shrink-0 overflow-hidden rounded-[1rem] border border-slate-200 bg-slate-100">
+                  <ng-container *ngIf="product.imageUrl; else fallbackImage">
+                    <img [src]="product.imageUrl" [alt]="product.nameAr" class="h-full w-full object-cover" />
+                  </ng-container>
+                  <ng-template #fallbackImage>
+                    <div class="flex h-full w-full items-center justify-center text-slate-400">
+                      <span class="material-symbols-outlined text-[22px]">image</span>
+                    </div>
+                  </ng-template>
+                </div>
+
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-black text-slate-900">{{ product.nameAr }}</p>
+                  <p class="mt-0.5 truncate text-xs font-medium text-slate-500">{{ product.variant }}</p>
+                </div>
+              </div>
+            </td>
+
+            <td class="px-4 py-3.5 text-sm font-bold text-slate-600" (click)="onViewProduct(product.masterProductId)">{{ product.sku }}</td>
+            <td class="px-4 py-3.5 text-sm font-black text-slate-900" (click)="onViewProduct(product.masterProductId)">{{ formatCurrency(product.price) }}</td>
+
+            <td class="px-4 py-3.5" (click)="onViewProduct(product.masterProductId)">
+              <div class="min-w-[9rem] space-y-1.5">
+                <div class="flex items-center justify-between gap-3 text-xs font-bold">
+                  <span [ngClass]="getStockColorClass(product.stockStatus)">
+                    {{ formatNumber(product.stock) }} {{ 'VENDOR_PRODUCTS.PIECES' | translate }}
+                  </span>
+                  <span *ngIf="product.stockStatus === 'low'" class="text-[10px] font-black text-amber-600">
+                    {{ 'VENDOR_PRODUCTS.LOW' | translate }}
+                  </span>
+                </div>
+
+                <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                  <div
+                    class="h-full rounded-full"
+                    [ngClass]="getStockBarClass(product.stockStatus)"
+                    [style.width.%]="product.stockPercentage"></div>
+                </div>
+              </div>
+            </td>
+
+            <td class="px-4 py-3.5 text-center" (click)="onViewProduct(product.masterProductId)">
+              <app-status-pill
+                [label]="product.statusKey"
+                [showDot]="false"
+                [size]="'sm'"
+                [variant]="getProductStatusVariant(product.status)">
+              </app-status-pill>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="border-t border-slate-200 bg-slate-50/60 px-4 py-4 sm:px-5">
+      <app-pagination
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        [totalItems]="totalItems"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+    </div>
+  </section>
+
+  <section *ngIf="!isLoading && !hasError && !hasProducts" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-slate-100 text-slate-400 shadow-inner">
+      <span class="material-symbols-outlined text-[28px]">inventory_2</span>
+    </div>
+    <p class="mt-4 text-sm font-black text-slate-900">لا توجد منتجات مطابقة</p>
+    <p class="mt-1 text-xs font-medium text-slate-500">جرّب تغيير البحث أو الفلتر للعثور على نتائج مناسبة.</p>
+  </section>
 </div>

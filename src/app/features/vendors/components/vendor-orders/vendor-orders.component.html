@@ -1,231 +1,215 @@
-<!-- Vendor Orders Content -->
-<div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+<div class="mx-auto flex max-w-[1520px] flex-col gap-5 px-4 py-4 md:px-6 lg:px-7" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <section class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5">
+    <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] border border-primary/15 bg-gradient-to-br from-primary/12 to-white text-primary shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+          </div>
 
-  <!-- KPI Cards -->
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-    <div *ngFor="let kpi of kpis" 
-         class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 border-l-4"
-         [ngClass]="kpi.borderColor">
-      <!-- Header: Icon, Title, Trend from right to left (exact order from image) -->
-      <div class="flex items-center justify-between mb-3">
-        <!-- Right side: Icon and Title -->
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">{{ kpi.titleKey | translate }}</span>
-          <span class="material-symbols-outlined text-2xl text-gray-400">{{ kpi.icon }}</span>
-        </div>
-        <!-- Left side: Trend -->
-        <div class="flex items-center gap-1 text-xs" [ngClass]="kpi.trendClass">
-          <span>{{ kpi.trend }}</span>
-          <span class="material-symbols-outlined text-sm">{{ kpi.trendIcon }}</span>
+          <div>
+            <h1 class="text-base font-black tracking-tight text-slate-900">طلبات التاجر</h1>
+            <p class="mt-1 text-xs font-medium text-slate-500">
+              متابعة تشغيلية مباشرة للطلبات مع البحث والفلترة من الباك.
+            </p>
+          </div>
         </div>
       </div>
-      <!-- Value -->
-      <div>
-        <p class="text-xl font-bold text-gray-900">{{ kpi.value }}</p>
+
+      <div class="flex items-center gap-2">
+        <app-button
+          variant="outline"
+          size="sm"
+          (btnClick)="onExport()"
+          customClass="w-full sm:w-auto">
+          تصدير
+        </app-button>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+    <article
+      *ngFor="let kpi of kpis"
+      class="premium-glass rounded-[1.4rem] border border-slate-200/70 px-3.5 py-3 shadow-sm">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-[10px] font-black tracking-[0.08em] text-slate-400">{{ kpi.label }}</p>
+          <p class="mt-2 text-[1.05rem] font-black tracking-tight text-slate-950">{{ kpi.value }}</p>
+        </div>
+
+        <div
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem]"
+          [ngClass]="{
+            'bg-primary/10 text-primary': kpi.tone === 'primary',
+            'bg-emerald-50 text-emerald-600': kpi.tone === 'success',
+            'bg-amber-50 text-amber-600': kpi.tone === 'warning',
+            'bg-rose-50 text-rose-600': kpi.tone === 'danger'
+          }">
+          <span class="material-symbols-outlined text-[18px]">{{ kpi.icon }}</span>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div class="w-full xl:w-[26rem]">
+      <app-input
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()"
+        [label]="'COMMON.SEARCH'"
+        [placeholder]="'VENDOR_ORDERS.SEARCH_PLACEHOLDER'"
+        [dir]="isRTL ? 'rtl' : 'ltr'"
+        [hasIcon]="true"
+        [customClass]="'w-full'"
+        [inputClass]="'h-11 rounded-[1.2rem] text-[13px] font-medium shadow-sm'">
+        <span icon class="material-symbols-outlined text-[18px]">search</span>
+      </app-input>
+    </div>
+
+    <div class="flex flex-1 flex-col gap-3 lg:flex-row lg:items-end lg:gap-4">
+      <div class="min-w-[12rem] flex-1 lg:max-w-[15rem]">
+        <app-searchable-select
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onStatusChange()"
+          [label]="'VENDOR_ORDERS.TABLE.GENERAL_STATUS'"
+          [searchable]="false"
+          [allowClear]="false"
+          [options]="statusOptions"
+          [placeholder]="'VENDOR_ORDERS.TABLE.GENERAL_STATUS'">
+        </app-searchable-select>
+      </div>
+
+      <div class="min-w-[12rem] flex-1 lg:max-w-[15rem]">
+        <app-searchable-select
+          [(ngModel)]="selectedPaymentStatus"
+          (ngModelChange)="onPaymentStatusChange()"
+          [label]="'VENDOR_ORDERS.TABLE.PAYMENT_STATUS'"
+          [searchable]="false"
+          [allowClear]="false"
+          [options]="paymentStatusOptions"
+          [placeholder]="'VENDOR_ORDERS.TABLE.PAYMENT_STATUS'">
+        </app-searchable-select>
+      </div>
+
+      <div class="lg:ms-auto flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div class="inline-flex h-11 items-center rounded-full bg-slate-100 px-4 text-xs font-black text-slate-500">
+          <span class="material-symbols-outlined me-2 text-[18px] text-primary">filter_list</span>
+          <span>{{ activeFilterCount }}</span>
+          <span class="mx-2 text-slate-300">|</span>
+          <span>{{ showingCountLabel }}</span>
+        </div>
+
+        <app-button
+          *ngIf="hasActiveFilters"
+          variant="outline"
+          size="sm"
+          (btnClick)="clearFilters()"
+          customClass="w-full sm:w-auto">
+          مسح الفلاتر
+        </app-button>
       </div>
     </div>
   </div>
 
-  <!-- Main Layout -->
-  <div class="flex flex-col lg:flex-row gap-6">
-    
-    <!-- Main Content: Orders Table -->
-    <div class="flex-1 flex flex-col gap-4">
-      
-      <!-- Toolbar -->
-      <div class="bg-white rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-center justify-between border border-gray-200 shadow-sm">
-        <!-- Search - Right Side -->
-        <div class="w-full sm:flex-1 relative">
-          <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 text-gray-400 text-sm inset-inline-start-2">search</span>
-          <input 
-            [(ngModel)]="searchQuery"
-            class="w-full bg-white border border-gray-200 rounded-lg py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary transition-all ps-8 pe-3"
-            [placeholder]="'VENDOR_ORDERS.SEARCH_PLACEHOLDER' | translate"
-            type="text"/>
-        </div>
+  <section *ngIf="isLoading" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-primary/10 text-primary shadow-inner">
+      <span class="material-symbols-outlined animate-pulse text-[28px]">receipt_long</span>
+    </div>
+    <p class="mt-4 text-sm font-black text-slate-900">جاري تحميل الطلبات</p>
+    <p class="mt-1 text-xs font-medium text-slate-500">يتم تجهيز أحدث الطلبات لهذا التاجر.</p>
+  </section>
 
-        <!-- Action Buttons - Left Side -->
-        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-          <button 
-            (click)="onExport()"
-            class="px-3 py-2 border border-primary rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-2 text-xs font-medium">
-            <span class="material-symbols-outlined text-sm">download</span>
-            <span>{{ 'VENDOR_ORDERS.EXPORT' | translate }}</span>
-          </button>
-        </div>
-      </div>
+  <section *ngIf="!isLoading && hasError" class="premium-glass rounded-[1.8rem] border-rose-200/60 bg-rose-50/40 px-5 py-14 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-rose-100 text-rose-600 shadow-inner">
+      <span class="material-symbols-outlined text-[28px]">warning</span>
+    </div>
+    <p class="mt-4 text-sm font-black text-slate-900">تعذر تحميل الطلبات</p>
+    <p class="mt-1 text-xs font-medium text-slate-500">حدثت مشكلة أثناء قراءة بيانات الطلبات، حاول تحديث الصفحة.</p>
+  </section>
 
-      <!-- Orders Table -->
-      <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
-        <div class="overflow-x-auto">
-          <table class="w-full table-fixed border-collapse">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-200">
-                <th class="p-3 text-xs font-semibold text-gray-500">{{ 'VENDOR_ORDERS.TABLE.ORDER_NUMBER' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500">{{ 'VENDOR_ORDERS.TABLE.CUSTOMER' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500">{{ 'VENDOR_ORDERS.TABLE.DATE' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500">{{ 'VENDOR_ORDERS.TABLE.AMOUNT' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-center">{{ 'VENDOR_ORDERS.TABLE.PAYMENT_STATUS' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-center">{{ 'VENDOR_ORDERS.TABLE.SHIPPING_STATUS' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 text-center">{{ 'VENDOR_ORDERS.TABLE.GENERAL_STATUS' | translate }}</th>
-                <th class="p-3 text-xs font-semibold text-gray-500 w-24 text-start">
-                  {{ 'COMMON.ACTIONS' | translate }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr *ngFor="let order of filteredOrders"
-                  class="hover:bg-gray-50 transition-colors group">
-                <td class="p-3">
-                  <span class="text-sm font-mono font-medium text-primary">{{ order.orderNumber }}</span>
-                </td>
-                <td class="p-3">
-                  <div class="flex flex-col">
-                    <span class="text-sm font-medium text-gray-900">{{ order.customer }}</span>
-                    <span class="text-xs text-gray-500 flex items-center gap-1">
-                      <span class="material-symbols-outlined text-[14px]">location_on</span>
-                      <span>{{ order.customerLocation }}</span>
-                    </span>
-                  </div>
-                </td>
-                <td class="p-3">
-                  <div class="flex flex-col">
-                    <span class="text-sm text-gray-900">{{ order.date }}</span>
-                    <span class="text-xs text-gray-500">{{ order.time }}</span>
-                  </div>
-                </td>
-                <td class="p-3">
-                  <span class="text-sm font-semibold text-gray-900">{{ order.amount }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                </td>
-                <td class="p-3 text-center">
-                  <app-status-pill
-                    [label]="order.paymentStatusKey"
-                    [showDot]="false"
-                    [size]="'sm'"
-                    [variant]="getPaymentStatusVariant(order.paymentStatusKey)">
-                  </app-status-pill>
-                </td>
-                <td class="p-3 text-center">
-                  <app-status-pill
-                    [label]="order.shippingStatusKey"
-                    [showDot]="false"
-                    [size]="'sm'"
-                    [variant]="getShippingStatusVariant(order.shippingStatusKey)">
-                  </app-status-pill>
-                </td>
-                <td class="p-3 text-center">
-                  <app-status-pill
-                    [label]="order.generalStatusKey"
-                    [showDot]="false"
-                    [size]="'sm'"
-                    [variant]="getGeneralStatusVariant(order.generalStatusKey)">
-                  </app-status-pill>
-                </td>
-                <td class="p-3">
-                  <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-start">
-                    <button 
-                      (click)="onViewOrder(order.id)"
-                      class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors" 
-                      [title]="'COMMON.VIEW_DETAILS' | translate">
-                      <span class="material-symbols-outlined text-[18px]">visibility</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        
-        <!-- Pagination -->
-        <div class="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50 text-xs text-gray-500">
-          <span>{{ 'VENDOR_ORDERS.SHOWING_ENTRIES' | translate }}</span>
-          <div class="flex gap-1">
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white disabled:opacity-50" disabled>
-              {{ 'COMMON.PREVIOUS' | translate }}
-            </button>
-            <button class="px-2 py-1 rounded border border-primary bg-primary text-white">1</button>
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">2</button>
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">3</button>
-            <span class="px-2 py-1">...</span>
-            <button class="px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50">
-              {{ 'COMMON.NEXT' | translate }}
-            </button>
-          </div>
-        </div>
-      </div>
-      
+  <section *ngIf="!isLoading && !hasError && hasOrders" class="premium-glass overflow-hidden rounded-[1.8rem] shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="min-w-full border-collapse">
+        <thead>
+          <tr class="border-b border-slate-200 bg-slate-50/90">
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.ORDER_NUMBER' | translate }}</th>
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.CUSTOMER' | translate }}</th>
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.DATE' | translate }}</th>
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.AMOUNT' | translate }}</th>
+            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">العناصر</th>
+            <th class="px-4 py-3 text-center text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.PAYMENT_STATUS' | translate }}</th>
+            <th class="px-4 py-3 text-center text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.GENERAL_STATUS' | translate }}</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-200">
+          <tr
+            *ngFor="let order of rows"
+            class="cursor-pointer bg-white transition-colors hover:bg-slate-50/80"
+            (click)="onViewOrder(order.id)">
+            <td class="px-4 py-3.5">
+              <div class="min-w-0">
+                <p class="text-sm font-black text-primary">{{ order.orderNumber }}</p>
+              </div>
+            </td>
+
+            <td class="px-4 py-3.5">
+              <p class="text-sm font-black text-slate-900">{{ order.customer }}</p>
+            </td>
+
+            <td class="px-4 py-3.5">
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-slate-800">{{ order.date }}</span>
+                <span class="text-xs font-medium text-slate-500">{{ order.time }}</span>
+              </div>
+            </td>
+
+            <td class="px-4 py-3.5">
+              <span class="text-sm font-black text-slate-900">{{ order.amount }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </td>
+
+            <td class="px-4 py-3.5">
+              <span class="text-sm font-bold text-slate-600">{{ order.itemsCount }}</span>
+            </td>
+
+            <td class="px-4 py-3.5 text-center">
+              <app-status-pill
+                [label]="order.paymentStatusKey"
+                [showDot]="false"
+                [size]="'sm'"
+                [variant]="getPaymentStatusVariant(order.paymentStatusRaw)">
+              </app-status-pill>
+            </td>
+
+            <td class="px-4 py-3.5 text-center">
+              <app-status-pill
+                [label]="order.orderStatusKey"
+                [showDot]="false"
+                [size]="'sm'"
+                [variant]="getOrderStatusVariant(order.orderStatusRaw)">
+              </app-status-pill>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Right Sidebar -->
-    <div class="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6">
-      
-      <!-- Operations Summary -->
-      <div class="bg-white rounded-xl p-5 flex flex-col gap-4 border border-gray-200 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          icon="summarize"
-          title="VENDOR_ORDERS.SUMMARY_TITLE">
-        </app-section-header>
-        
-        <div class="flex flex-col gap-3 pt-1">
-          <!-- Total Sales -->
-          <div class="flex justify-between items-center p-3 rounded-lg bg-green-50 border border-green-100">
-            <span class="text-xs text-gray-600 flex items-center gap-2">
-              <span class="material-symbols-outlined text-green-600 text-base">payments</span>
-              <span>{{ 'VENDOR_ORDERS.TOTAL_SALES' | translate }}</span>
-            </span>
-            <span class="text-sm font-bold text-gray-900">{{ totalSales }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-          </div>
-          
-          <!-- Delayed Orders -->
-          <div class="flex justify-between items-center p-3 rounded-lg bg-orange-50 border border-orange-100">
-            <span class="text-xs text-gray-600 flex items-center gap-2">
-              <span class="material-symbols-outlined text-orange-600 text-base">schedule</span>
-              <span>{{ 'VENDOR_ORDERS.DELAYED_ORDERS' | translate }}</span>
-            </span>
-            <span class="text-sm font-bold text-gray-900">{{ delayedOrders }}</span>
-          </div>
-          
-          <!-- Open Disputes -->
-          <div class="flex justify-between items-center p-3 rounded-lg bg-red-50 border border-red-100">
-            <span class="text-xs text-gray-600 flex items-center gap-2">
-              <span class="material-symbols-outlined text-red-600 text-base">report_problem</span>
-              <span>{{ 'VENDOR_ORDERS.OPEN_DISPUTES' | translate }}</span>
-            </span>
-            <span class="text-sm font-bold text-gray-900">{{ openDisputes }}</span>
-          </div>
-          
-          <!-- Cancellation Rate -->
-          <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50 border border-gray-200">
-            <span class="text-xs text-gray-600 flex items-center gap-2">
-              <span class="material-symbols-outlined text-gray-500 text-base">cancel</span>
-              <span>{{ 'VENDOR_ORDERS.CANCELLATION_RATE' | translate }}</span>
-            </span>
-            <span class="text-sm font-bold text-gray-900">{{ cancellationRate }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Alerts Widget -->
-      <div class="bg-white rounded-xl p-5 flex flex-col gap-4 border-2 border-red-200 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          icon="warning"
-          title="VENDOR_ORDERS.ALERTS_TITLE"
-          tone="danger">
-        </app-section-header>
-        
-        <div class="flex flex-col gap-3 pt-1">
-          <app-inline-banner
-            *ngFor="let alert of alerts"
-            [title]="alert"
-            [variant]="getAlertVariant(alert)"
-            [compact]="true"
-            icon="error">
-          </app-inline-banner>
-        </div>
-      </div>
-      
+    <div class="border-t border-slate-200 bg-slate-50/60 px-4 py-4 sm:px-5">
+      <app-pagination
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        [totalItems]="totalItems"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
     </div>
-  </div>
+  </section>
+
+  <section *ngIf="!isLoading && !hasError && !hasOrders" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-slate-100 text-slate-400 shadow-inner">
+      <span class="material-symbols-outlined text-[28px]">receipt_long</span>
+    </div>
+    <p class="mt-4 text-sm font-black text-slate-900">لا توجد طلبات مطابقة</p>
+    <p class="mt-1 text-xs font-medium text-slate-500">جرّب تغيير البحث أو الفلاتر للعثور على نتائج مناسبة.</p>
+  </section>
 </div>

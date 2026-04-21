@@ -5066,5 +5066,67 @@
                 "SAVED": "Section state saved."
             }
         }
+    },
+    "VENDOR_ANALYTICS": {
+        "TITLE": "Vendor Analytics",
+        "EXECUTIVE_BADGE": "Executive Summary",
+        "SUBTITLE": "Operational summary for {{ vendor }} based on a dedicated analytics API.",
+        "RANGE": {
+            "7D": "7 days",
+            "30D": "30 days",
+            "90D": "90 days"
+        },
+        "META": {
+            "PERIOD": "Reporting period",
+            "GENERATED": "Generated at"
+        },
+        "KPIS": {
+            "TOTAL_REVENUE": "Total revenue",
+            "TOTAL_ORDERS": "Total orders",
+            "AVERAGE_ORDER": "Average order",
+            "COMPLETION_RATE": "Completion rate",
+            "CANCELLATION_RATE": "Cancellation rate",
+            "STOCK_RISK": "Stock risk"
+        },
+        "CHARTS": {
+            "REVENUE_TITLE": "Revenue and orders trend",
+            "REVENUE_SUBTITLE": "Compact trend for the selected period without loading raw order pages.",
+            "STATUS_TITLE": "Order status mix",
+            "STATUS_SUBTITLE": "Executive view of the current operational mix.",
+            "REVENUE_SERIES": "Revenue",
+            "ORDERS_SERIES": "Orders"
+        },
+        "STATUS": {
+            "COMPLETED": "Completed",
+            "IN_PROGRESS": "In progress",
+            "AWAITING_ACTION": "Awaiting action",
+            "CANCELLED": "Cancelled",
+            "FAILED": "Failed"
+        },
+        "PRODUCT_HEALTH": {
+            "TITLE": "Product health",
+            "SUBTITLE": "Current catalog readiness",
+            "AVAILABLE": "Healthy stock",
+            "LOW_STOCK": "Low stock",
+            "OUT_OF_STOCK": "Out of stock",
+            "INACTIVE": "Inactive"
+        },
+        "TOP_PRODUCTS": {
+            "TITLE": "Top products",
+            "SUBTITLE": "Best performing products in the selected period.",
+            "ITEMS": "items",
+            "UNITS": "Units",
+            "ORDERS": "Orders"
+        },
+        "STATES": {
+            "LOADING_TITLE": "Loading analytics workspace",
+            "LOADING_MESSAGE": "Preparing executive metrics, trends, and stock signals.",
+            "ERROR_TITLE": "Failed to load analytics",
+            "ERROR_MESSAGE": "The analytics endpoint could not be loaded right now. Try refreshing the page.",
+            "EMPTY_TREND_TITLE": "No order trend in this period",
+            "EMPTY_TREND_MESSAGE": "The vendor has no operational orders in the selected range yet.",
+            "EMPTY_PRODUCTS_TITLE": "No product ranking yet",
+            "EMPTY_PRODUCTS_MESSAGE": "There is not enough completed demand in the selected range to rank products."
+        }
     }
 }

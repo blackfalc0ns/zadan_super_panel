@@ -7,285 +7,232 @@
   (verifySource)="onCrVerifySource()">
 </app-cr-viewer-modal>
 
-<div class="ambient-glow glow-teal"></div>
-<div class="ambient-glow glow-orange"></div>
-
-<div class="min-h-screen pt-1 px-6 pb-6 relative z-10" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <!-- Status Feedback Banner -->
-  <div *ngIf="vendorDetail?.status === 'Rejected'" class="mb-5 animate-in slide-in-from-top-4 duration-500">
-    <div class="glass-card !bg-rose-50/40 border-rose-200/50 p-5 rounded-[1.6rem] flex items-center gap-4">
-      <div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
-        <span class="material-symbols-outlined">report</span>
-      </div>
-      <div>
-        <h4 class="text-xs font-black text-rose-900 uppercase tracking-widest mb-1">{{ 'VENDORS.REJECTED_TITLE' | translate }}</h4>
-        <p class="text-sm font-medium text-rose-700/80">{{ vendorDetail?.rejectionReason || ('VENDORS.NO_REASON' | translate) }}</p>
-      </div>
-    </div>
+<div class="px-4 pb-4 sm:px-8 lg:px-10 xl:px-12" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <div
+    *ngIf="feedbackMessage"
+    class="mb-3 flex items-center gap-2 rounded-2xl border px-3.5 py-2.5 text-[11px] font-bold shadow-sm"
+    [ngClass]="feedbackTone === 'success'
+      ? 'border-primary/15 bg-primary/5 text-primary'
+      : 'border-red-200 bg-red-50 text-red-700'">
+    <span class="material-symbols-outlined text-[16px]">{{ feedbackTone === 'success' ? 'check_circle' : 'error' }}</span>
+    <span>{{ feedbackMessage }}</span>
   </div>
 
-  <div class="flex flex-col lg:flex-row gap-5">
-    <aside class="w-full lg:w-60 shrink-0 flex flex-col gap-4">
-      <div class="glass-card rounded-[1.4rem] p-5 flex flex-col items-center">
-        <h3 class="text-[8.5px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 text-center">{{ 'VENDOR_DETAIL.COMPLETION_RATE' | translate }}</h3>
-
-        <div class="relative w-28 h-28 flex items-center justify-center">
-          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-            <circle class="text-slate-100" cx="18" cy="18" fill="none" r="16" stroke="currentColor" stroke-width="2.2"></circle>
-            <circle class="text-primary" cx="18" cy="18" fill="none" r="16" stroke="currentColor"
-                    [attr.stroke-dasharray]="progressPercentage + ', 100'" stroke-linecap="round" stroke-width="2.2"></circle>
-          </svg>
-          <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span class="text-xl font-black text-slate-900 leading-none">{{ progressPercentage }}%</span>
-          </div>
-        </div>
-
-        <div class="mt-5 w-full space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100/50 pb-3">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-slate-400 text-sm">schedule</span>
-              <span class="text-xs font-bold text-slate-500">{{ 'VENDOR_DETAIL.LAST_UPDATE' | translate }}</span>
+  <div class="grid grid-cols-1 gap-3 xl:grid-cols-[minmax(0,1.45fr)_22rem]">
+    <div class="space-y-3">
+      <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        <section class="glass-panel rounded-[1.6rem] border border-primary/10 bg-white/85 p-3 sm:p-4">
+          <header class="mb-3 flex items-start justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+                  <span class="material-symbols-outlined text-[15px]">store</span>
+                </span>
+                <h2 class="text-[14px] font-black tracking-tight text-slate-900">
+                  {{ getLocalizedSectionTitle('هوية المتجر', 'Store Identity') }}
+                </h2>
+              </div>
+              <p class="text-[10px] font-medium leading-4 text-slate-500">
+                {{ getLocalizedSectionTitle('الاسم، النشاط، التواصل، والعنوان.', 'Name, activity, contact, and address.') }}
+              </p>
             </div>
-            <span class="text-xs font-black text-slate-800">{{ storeData.lastUpdate ? (storeData.lastUpdate | date:'short') : '---' }}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-slate-400 text-sm">person_outline</span>
-              <span class="text-xs font-bold text-slate-500">{{ 'VENDOR_DETAIL.BY' | translate }}</span>
+            <button
+              type="button"
+              class="inline-flex h-7 items-center gap-1 rounded-xl border border-primary/10 bg-white px-2.5 text-[10px] font-black text-slate-700 transition-all hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
+              (click)="onEditClick('store')">
+              <span class="material-symbols-outlined text-[13px]">edit</span>
+              <span>{{ getLocalizedSectionTitle('تعديل', 'Edit') }}</span>
+            </button>
+          </header>
+
+          <div class="space-y-1.5">
+            <div
+              *ngFor="let row of storeIdentityRows; trackBy: trackRow"
+              class="grid grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] items-start gap-2 rounded-xl border border-primary/10 bg-gradient-to-r from-white to-primary/[0.02] px-2.5 py-2">
+              <span
+                class="text-[10px] font-black leading-4 text-slate-500"
+                [ngClass]="isRTL ? 'text-right' : 'text-left'">
+                {{ isRTL ? row.labelAr : row.labelEn }}
+              </span>
+              <span
+                class="text-[11.5px] font-black leading-4.5 text-slate-900 break-words"
+                [attr.dir]="row.direction || 'rtl'"
+                [ngClass]="[
+                  row.missing ? 'text-slate-400' : '',
+                  'text-left',
+                  row.direction === 'ltr' ? 'tracking-tight' : ''
+                ]">
+                {{ getLocalizedValue(row) }}
+              </span>
             </div>
-            <span class="text-xs font-black text-slate-800">{{ getDisplayReviewer() }}</span>
           </div>
-        </div>
+        </section>
+
+        <section class="glass-panel rounded-[1.6rem] border border-primary/10 bg-white/85 p-3 sm:p-4">
+          <header class="mb-3 flex items-start justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-zadna-accent/10 text-zadna-accent shadow-inner">
+                  <span class="material-symbols-outlined text-[15px]">person</span>
+                </span>
+                <h2 class="text-[14px] font-black tracking-tight text-slate-900">
+                  {{ getLocalizedSectionTitle('سجل المالك', 'Owner Record') }}
+                </h2>
+              </div>
+              <p class="text-[10px] font-medium leading-4 text-slate-500">
+                {{ getLocalizedSectionTitle('هوية المسؤول الأساسي وبيانات التواصل.', 'Primary responsible identity and contact data.') }}
+              </p>
+            </div>
+            <button
+              type="button"
+              class="inline-flex h-7 items-center gap-1 rounded-xl border border-zadna-accent/10 bg-white px-2.5 text-[10px] font-black text-slate-700 transition-all hover:border-zadna-accent/30 hover:bg-zadna-accent/5 hover:text-zadna-accent"
+              (click)="onEditClick('owner')">
+              <span class="material-symbols-outlined text-[13px]">edit</span>
+              <span>{{ getLocalizedSectionTitle('تعديل', 'Edit') }}</span>
+            </button>
+          </header>
+
+          <div class="space-y-1.5">
+            <div
+              *ngFor="let row of ownerRecordRows; trackBy: trackRow"
+              class="grid grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] items-start gap-2 rounded-xl border border-zadna-accent/10 bg-gradient-to-r from-white to-zadna-accent/[0.03] px-2.5 py-2">
+              <span
+                class="text-[10px] font-black leading-4 text-slate-500"
+                [ngClass]="isRTL ? 'text-right' : 'text-left'">
+                {{ isRTL ? row.labelAr : row.labelEn }}
+              </span>
+              <span
+                class="text-[11.5px] font-black leading-4.5 text-slate-900 break-words"
+                [attr.dir]="row.direction || 'rtl'"
+                [ngClass]="[
+                  row.missing ? 'text-slate-400' : '',
+                  'text-left',
+                  row.direction === 'ltr' ? 'tracking-tight' : ''
+                ]">
+                {{ getLocalizedValue(row) }}
+              </span>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div class="glass-card rounded-[2rem] p-6">
-        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-6">{{ 'ACTIVITY_LOG.PAGE_TITLE' | translate }}</h3>
-        <div class="space-y-6">
-          <div class="flex gap-4 group cursor-pointer">
-            <div class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 ring-4 ring-primary/10"></div>
-            <div class="flex flex-col">
-              <span class="text-xs font-black text-slate-800 group-hover:text-primary transition-colors">{{ 'VENDOR_DETAIL.ACTIVITY_BANKING_UPDATE' | translate }}</span>
-              <span class="text-[10px] font-bold text-slate-400 mt-0.5">{{ 'VENDOR_DETAIL.TIME_HOUR_AGO' | translate }}</span>
+      <section class="glass-panel rounded-[1.6rem] border border-primary/10 bg-white/85 p-3 sm:p-4">
+        <header class="mb-3 space-y-2">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+                <span class="material-symbols-outlined text-[15px]">account_balance</span>
+              </span>
+              <h2 class="text-[14px] font-black tracking-tight text-slate-900">
+                {{ getLocalizedSectionTitle('البيانات القانونية والبنكية', 'Legal & Banking') }}
+              </h2>
             </div>
+            <p class="text-[10px] font-medium leading-4 text-slate-500">
+              {{ getLocalizedSectionTitle('السجل التجاري، الرخصة، والحساب البنكي الرئيسي.', 'Commercial record, license, and primary bank account.') }}
+            </p>
           </div>
-          <div class="flex gap-4 group cursor-pointer">
-            <div class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 ring-4 ring-orange-400/10"></div>
-            <div class="flex flex-col">
-              <span class="text-xs font-black text-slate-800 group-hover:text-primary transition-colors">{{ 'VENDOR_DETAIL.ACTIVITY_NAME_UPDATE' | translate }}</span>
-              <span class="text-[10px] font-bold text-slate-400 mt-0.5">{{ 'VENDOR_DETAIL.ACTIVITY_NAME_UPDATE_DATE' | translate }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <div class="flex-1 flex flex-col gap-5">
-      <section class="glass-card rounded-[1.6rem] overflow-hidden">
-        <div class="px-5 py-3.5 border-b border-slate-200/40 flex justify-between items-center bg-white/30">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20">
-              <span class="material-symbols-outlined text-primary text-lg">storefront</span>
-            </div>
-            <h2 class="text-xs font-black text-slate-900 tracking-tight">{{ 'VENDOR_DETAIL.STORE_DATA' | translate }}</h2>
-          </div>
-          <button (click)="onEditClick('store')" class="flex items-center gap-1.5 text-primary hover:bg-primary/10 px-2.5 py-1 rounded-lg transition-all group" type="button">
-            <span class="material-symbols-outlined text-xs group-hover:rotate-12 transition-transform">edit</span>
-            <span class="text-[9.5px] font-black uppercase tracking-wider">{{ 'COMMON.EDIT' | translate }}</span>
+          <button
+            type="button"
+            class="inline-flex h-7 items-center gap-1 self-start rounded-xl border border-primary/10 bg-white px-2.5 text-[10px] font-black text-slate-700 transition-all hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
+            (click)="onEditClick('legal_bank')">
+            <span class="material-symbols-outlined text-[13px]">edit</span>
+            <span>{{ getLocalizedSectionTitle('تعديل', 'Edit') }}</span>
           </button>
-        </div>
+        </header>
 
-        <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-5 gap-x-8">
-          <div class="flex flex-col">
-            <span class="data-label">{{ 'VENDOR_DETAIL.STORE_NAME' | translate }}</span>
-            <span class="data-value">{{ getDisplayStoreName() }}</span>
-          </div>
-          <div class="flex flex-col">
-            <span class="data-label">{{ 'VENDOR_DETAIL.CATEGORY' | translate }}</span>
-            <span class="data-value">{{ getDisplayBusinessType(vendorDetail?.businessType) }}</span>
-          </div>
-          <div class="flex flex-col">
-            <span class="data-label">{{ 'VENDOR_DETAIL.STATUS' | translate }}</span>
-            <div class="mt-1 flex items-center gap-2">
-              <app-status-pill [label]="getCurrentStatusLabel() | translate" [variant]="getCurrentStatusVariant()" size="sm"></app-status-pill>
-              
-              <!-- Review Actions for Admin -->
-              <ng-container *ngIf="vendorDetail?.status === 'Pending'">
-                <button (click)="onVerifyAccount()" class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all shadow-sm" [title]="'CATALOG.APPROVE' | translate">
-                   <span class="material-symbols-outlined text-[16px]">done</span>
-                </button>
-                <button (click)="openRejectModal()" class="w-6 h-6 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm" [title]="'CATALOG.REJECT' | translate">
-                   <span class="material-symbols-outlined text-[16px]">close</span>
-                </button>
-              </ng-container>
-            </div>
-          </div>
-          <div class="flex flex-col">
-            <span class="data-label">{{ 'VENDOR_DETAIL.LOCATION_CITY' | translate }}</span>
-            <span class="data-value">{{ vendorDetail?.city || '---' }}</span>
-          </div>
-          <div class="flex flex-col">
-             <span class="data-label">{{ 'VENDOR_DETAIL.SUBMITTED_DATE' | translate }}</span>
-             <span class="data-value">{{ vendorDetail?.createdAtUtc | date:'mediumDate' }}</span>
-          </div>
-          <div class="flex flex-col">
-             <span class="data-label">{{ 'CATALOG.COMMISSION_RATE' | translate }}</span>
-             <span class="data-value text-primary">{{ vendorDetail?.commissionRate || 0 }}%</span>
+        <div class="grid grid-cols-1 gap-1.5 md:grid-cols-2 xl:grid-cols-3">
+          <div
+            *ngFor="let row of legalBankingRows; trackBy: trackRow"
+            class="rounded-xl border border-primary/10 bg-gradient-to-br from-white to-primary/[0.025] px-2.5 py-2">
+            <p
+              class="text-[10px] font-black leading-4 text-slate-500"
+              [ngClass]="isRTL ? 'text-right' : 'text-left'">
+              {{ isRTL ? row.labelAr : row.labelEn }}
+            </p>
+            <p
+              class="mt-0.5 text-[11.5px] font-black leading-4.5 text-slate-900 break-words"
+              [attr.dir]="row.direction || 'rtl'"
+              [ngClass]="[
+                row.missing ? 'text-slate-400' : '',
+                row.direction === 'ltr' ? 'text-right tracking-tight' : 'text-right'
+              ]">
+              {{ getLocalizedValue(row) }}
+            </p>
           </div>
         </div>
+      </section>
+    </div>
 
-        <div class="px-5 py-2.5 bg-slate-50/40 border-t border-slate-100/50 flex justify-end gap-4">
-          <a
-            (click)="onViewCrClick(); $event.preventDefault()"
-            href="#"
-            class="text-[9.5px] font-black text-primary flex items-center gap-1.5 hover:translate-x-1 rtl:hover:-translate-x-1 transition-transform group cursor-pointer">
-            <span>{{ 'VENDOR_DETAIL.VIEW_DIGITAL_CR' | translate }}</span>
-            <span class="material-symbols-outlined text-[10px]">description</span>
-          </a>
-          <a
-            *ngIf="vendorDetail?.commercialRegisterDocumentUrl"
-            [href]="vendorDetail?.commercialRegisterDocumentUrl"
-            target="_blank"
-            class="text-[9.5px] font-black text-slate-400 flex items-center gap-1.5 hover:translate-x-1 rtl:hover:-translate-x-1 transition-transform group cursor-pointer">
-            <span>{{ 'VENDOR_DETAIL.DOWNLOAD_ATTACHMENT' | translate }}</span>
-            <span class="material-symbols-outlined text-[10px]">download</span>
-          </a>
+    <aside class="space-y-3">
+      <section class="glass-panel rounded-[1.6rem] border border-primary/10 bg-white/85 p-3 sm:p-4">
+        <header class="mb-3 space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+              <span class="material-symbols-outlined text-[15px]">monitoring</span>
+            </span>
+            <h2 class="text-[14px] font-black tracking-tight text-slate-900">
+              {{ getLocalizedSectionTitle('لقطة تشغيلية', 'Operational Snapshot') }}
+            </h2>
+          </div>
+          <p class="text-[10px] font-medium leading-4 text-slate-500">
+            {{ getLocalizedSectionTitle('ملخص سريع لحالة الحساب الحالية.', 'Quick summary of the current account state.') }}
+          </p>
+        </header>
+
+        <div class="space-y-1.5">
+          <div
+            *ngFor="let row of operationalSnapshotRows; trackBy: trackRow"
+            class="flex items-center justify-between gap-2 rounded-xl border border-primary/10 bg-gradient-to-r from-white to-primary/[0.02] px-2.5 py-2">
+            <span
+              class="text-[10px] font-black leading-4 text-slate-500"
+              [ngClass]="isRTL ? 'text-left' : 'text-right'">
+              {{ isRTL ? row.labelAr : row.labelEn }}
+            </span>
+            <span
+              class="text-[11.5px] font-black leading-4.5 text-slate-900 break-words"
+              [attr.dir]="row.direction || 'rtl'"
+              [ngClass]="[
+                row.missing ? 'text-slate-400' : '',
+                row.direction === 'ltr' ? 'text-right tracking-tight' : (isRTL ? 'text-left' : 'text-right')
+              ]">
+              {{ getLocalizedValue(row) }}
+            </span>
+          </div>
         </div>
       </section>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-stretch">
-        <section class="glass-card rounded-[1.6rem] flex flex-col overflow-hidden">
-          <div class="px-5 py-3.5 border-b border-slate-200/40 flex justify-between items-center bg-white/30">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20">
-                <span class="material-symbols-outlined text-primary text-sm">person</span>
-              </div>
-              <h2 class="text-xs font-black text-slate-900">{{ 'VENDOR_DETAIL.PROFILE_DATA' | translate }}</h2>
-            </div>
-            <button (click)="onEditClick('owner')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100/50 text-slate-400 hover:bg-primary hover:text-white transition-all" type="button">
-              <span class="material-symbols-outlined text-sm">edit</span>
-            </button>
+      <section class="glass-panel rounded-[1.6rem] border border-primary/10 bg-white/85 p-3 sm:p-4">
+        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">
+          {{ getLocalizedSectionTitle('ملاحظات تشغيلية', 'Operational Notes') }}
+        </p>
+        <div class="mt-2 space-y-2">
+          <div class="rounded-xl border border-primary/10 bg-gradient-to-r from-white to-primary/[0.02] px-2.5 py-2">
+            <p class="text-[10px] font-black text-slate-500">
+              {{ getLocalizedSectionTitle('الوصف', 'Description') }}
+            </p>
+            <p class="mt-1 text-[10.5px] font-semibold leading-5 text-slate-700 text-left" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+              {{ storeDescription }}
+            </p>
           </div>
-          <div class="p-6 space-y-6 flex-1">
-            <div class="flex flex-col">
-              <span class="data-label">{{ 'VENDOR_DETAIL.OWNER_NAME' | translate }}</span>
-              <span class="data-value">{{ ownerData.fullName }}</span>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="flex flex-col">
-                <span class="data-label">{{ 'VENDOR_DETAIL.ID_NUMBER' | translate }}</span>
-                <span class="data-value font-mono">{{ ownerData.idNumber }}</span>
-              </div>
-              <div class="flex flex-col text-end">
-                <span class="data-label">{{ 'VENDOR_DETAIL.ID_RESIDENCE' | translate }}</span>
-                <span class="data-value">{{ ownerData.nationality | translate }}</span>
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <span class="data-label">{{ 'VENDOR_DETAIL.EMAIL' | translate }}</span>
-              <span class="data-value flex items-center gap-2">
-                <span class="material-symbols-outlined text-slate-400 text-sm">mail</span>
-                {{ ownerData.email }}
-              </span>
-            </div>
-            <div class="flex flex-col">
-              <span class="data-label">{{ 'VENDOR_DETAIL.MOBILE' | translate }}</span>
-              <span class="data-value flex items-center gap-2" dir="ltr">
-                <span class="material-symbols-outlined text-slate-400 text-sm">call</span>
-                {{ ownerData.phoneCode }} {{ ownerData.phone }}
-              </span>
-            </div>
-          </div>
-        </section>
 
-        <section class="glass-card rounded-[1.6rem] flex flex-col overflow-hidden">
-          <div class="px-5 py-3.5 border-b border-slate-200/40 flex justify-between items-center bg-white/30">
-            <div class="flex items-center gap-2.5">
-              <div class="w-7 h-7 bg-orange-100/30 rounded-lg flex items-center justify-center border border-orange-200/40">
-                <span class="material-symbols-outlined text-orange-600 text-xs">gavel</span>
-              </div>
-              <h2 class="text-xs font-black text-slate-900">{{ 'VENDOR_DETAIL.LEGAL_DATA' | translate }}</h2>
-            </div>
-            <div class="flex items-center gap-2">
-              <app-status-pill [label]="getVerificationLabel()" [variant]="getVerificationVariant()" size="sm"></app-status-pill>
-              <button (click)="onEditClick('legal_bank')" class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100/50 text-slate-400 hover:bg-orange-500 hover:text-white transition-all" type="button">
-                <span class="material-symbols-outlined text-xs">edit</span>
-              </button>
-            </div>
+          <div class="rounded-xl border border-zadna-accent/10 bg-zadna-accent/[0.05] px-2.5 py-2">
+            <p class="text-[10px] font-black text-slate-500">
+              {{ getLocalizedSectionTitle('تنبيه', 'Note') }}
+            </p>
+            <p class="mt-1 text-[10.5px] font-semibold leading-5 text-slate-700 text-left">
+              {{ getLocalizedSectionTitle('إجراءات الاعتماد والرفض وطلب المستندات متاحة من تبويب الامتثال فقط.', 'Approval, rejection, and document requests are available from the compliance tab only.') }}
+            </p>
           </div>
-          <div class="p-5 space-y-3.5 flex-1">
-            <div class="flex justify-between items-center border-b border-slate-100/50 pb-2">
-              <span class="data-label mb-0 uppercase tracking-tighter">{{ 'VENDOR_DETAIL.COMMERCIAL_REG' | translate }}</span>
-              <span class="data-value font-mono">{{ legalBankData.commercialRegister }}</span>
-            </div>
-            <div class="flex justify-between items-center border-b border-slate-100/50 pb-2">
-              <span class="data-label mb-0 uppercase tracking-tighter">{{ 'VENDOR_DETAIL.TAX_ID' | translate }}</span>
-              <span class="data-value font-mono">{{ legalBankData.taxNumber }}</span>
-            </div>
-            <div class="flex justify-between items-center border-b border-slate-100/50 pb-2 text-end">
-              <span class="data-label mb-0 uppercase tracking-tighter">{{ 'VENDOR_DETAIL.LICENSE_NUMBER' | translate }}</span>
-              <span class="data-value">{{ legalDocuments.licenseNumber }}</span>
-            </div>
-            <div class="flex justify-between items-center border-b border-slate-100/50 pb-2">
-              <span class="data-label mb-0 uppercase tracking-tighter">{{ 'VENDOR_DETAIL.LEGAL_ENTITY' | translate }}</span>
-              <span class="data-value">{{ vendorDetail?.accountStatus || '---' }}</span>
-            </div>
-            <div class="flex justify-between items-center mt-auto pt-2">
-              <span class="data-label mb-0 uppercase tracking-tighter">{{ 'VENDOR_DETAIL.EXPIRY_DATE' | translate }}</span>
-              <span class="data-value text-secondary">{{ legalBankData.expiryDate }}</span>
-            </div>
-          </div>
-        </section>
-
-        <section class="glass-card rounded-[1.6rem] flex flex-col overflow-hidden">
-          <div class="px-5 py-3.5 border-b border-slate-200/40 flex justify-between items-center bg-white/30">
-            <div class="flex items-center gap-2.5">
-              <div class="w-7 h-7 bg-green-100/30 rounded-lg flex items-center justify-center border border-green-200/40">
-                <span class="material-symbols-outlined text-green-600 text-xs">account_balance</span>
-              </div>
-              <h2 class="text-xs font-black text-slate-900">{{ 'VENDOR_DETAIL.BANKING_DATA' | translate }}</h2>
-            </div>
-            <button (click)="onEditClick('legal_bank')" class="w-6 h-6 flex items-center justify-center rounded-lg bg-slate-100/50 text-slate-400 hover:bg-primary hover:text-white transition-all" type="button">
-              <span class="material-symbols-outlined text-[10px]">edit</span>
-            </button>
-          </div>
-          <div class="p-5 space-y-4 flex-1">
-            <div class="bg-white/40 p-2.5 rounded-xl border border-white/60">
-              <span class="data-label">{{ 'VENDOR_DETAIL.BANK_NAME' | translate }}</span>
-              <div class="flex items-center gap-2 mt-0">
-                <span class="material-symbols-outlined text-primary text-xs">domain</span>
-                <span class="text-[11px] font-black text-slate-800">{{ getBankNameLabel(legalBankData.bankName) }}</span>
-              </div>
-            </div>
-            <div>
-              <span class="data-label">IBAN</span>
-              <div class="bg-slate-50/50 p-3 rounded-xl border border-slate-100 flex items-center justify-between group">
-                <span class="text-sm font-black text-slate-900 font-mono tracking-tighter" dir="ltr">{{ legalBankData.iban }}</span>
-                <span class="material-symbols-outlined text-slate-300 text-sm group-hover:text-primary transition-colors cursor-pointer">content_copy</span>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="flex flex-col">
-                <span class="data-label">SWIFT</span>
-                <span class="text-sm font-black text-slate-800 font-mono">{{ bankingData.swiftCode || '---' }}</span>
-              </div>
-              <div class="flex flex-col text-end">
-                <span class="data-label">{{ 'MODALS.LEGAL_BANK_EDIT.PAYMENT_CYCLE' | translate }}</span>
-                <span class="text-sm font-black text-slate-800">{{ getPaymentCycleLabel(legalBankData.paymentCycle) }}</span>
-              </div>
-            </div>
-            <button (click)="onVerifyAccount()" class="w-full mt-auto py-3 px-4 bg-zadna-accent text-white text-[11px] font-black rounded-2xl shadow-lg shadow-zadna-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="button">
-              <span class="material-symbols-outlined text-sm">verified_user</span>
-              {{ (vendorDetail?.verificationStatus === 'Verified' ? 'VENDOR_DETAIL.STATUS_VERIFIED' : 'VENDOR_DETAIL.VERIFY_ACCOUNT') | translate }}
-            </button>
-          </div>
-        </section>
-      </div>
-    </div>
+        </div>
+      </section>
+    </aside>
   </div>
 </div>
 
 <app-edit-owner-modal
   [isOpen]="showEditOwnerModal"
+  [isSaving]="isMutating"
+  [errorMessage]="modalError"
   [ownerData]="ownerData"
   (close)="showEditOwnerModal = false"
   (save)="onSaveOwnerData($event)">
@@ -293,6 +240,8 @@
 
 <app-edit-legal-bank-modal
   [isOpen]="showEditLegalBankModal"
+  [isSaving]="isMutating"
+  [errorMessage]="modalError"
   [legalBankData]="legalBankData"
   (close)="showEditLegalBankModal = false"
   (save)="onSaveLegalBankData($event)">
@@ -300,75 +249,9 @@
 
 <app-edit-store-modal
   [isOpen]="showEditStoreModal"
+  [isSaving]="isMutating"
+  [errorMessage]="modalError"
   [storeData]="storeDataModal"
   (close)="showEditStoreModal = false"
   (save)="onSaveStoreData($event)">
 </app-edit-store-modal>
-
-<!-- Approval Modal -->
-<div *ngIf="showApproveModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-  <div class="w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 border border-white/20 animate-in zoom-in-95 duration-300">
-    <div class="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center mb-5">
-      <span class="material-symbols-outlined text-[24px]">verified</span>
-    </div>
-    <h3 class="text-xl font-black text-slate-900 mb-2">{{ 'CATALOG.APPROVE' | translate }}?</h3>
-    <p class="text-[0.8rem] font-medium text-slate-500 mb-6">{{ 'CATALOG.APPROVE_VENDORS_MSG' | translate }}</p>
-    
-    <div class="space-y-2 mb-8">
-       <label class="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest pl-1">{{ 'CATALOG.COMMISSION_RATE' | translate }} (%)</label>
-       <input 
-         type="number"
-         [(ngModel)]="commissionRate"
-         class="w-full rounded-2xl border-slate-200 bg-slate-50/50 p-4 text-[0.8rem] font-black text-slate-900 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 transition-all outline-none"
-         placeholder="12.5"
-       >
-    </div>
-
-    <p *ngIf="modalError" class="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-[0.8rem] font-medium text-rose-600">
-      {{ modalError }}
-    </p>
-
-    <div class="flex gap-3">
-       <button (click)="showApproveModal = false" [disabled]="submitting" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-xs font-black text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-60">
-         {{ 'COMMON.CANCEL' | translate }}
-       </button>
-       <button (click)="confirmApprove()" [disabled]="submitting" class="flex-1 py-3 px-4 rounded-xl bg-emerald-500 text-white text-xs font-black shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-60 disabled:hover:scale-100">
-         {{ 'CATALOG.APPROVE' | translate }}
-       </button>
-    </div>
-  </div>
-</div>
-
-<!-- Reject Modal -->
-<div *ngIf="showRejectModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-  <div class="w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 border border-white/20 animate-in zoom-in-95 duration-300">
-    <div class="h-12 w-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mb-5">
-      <span class="material-symbols-outlined text-[24px]">report</span>
-    </div>
-    <h3 class="text-xl font-black text-slate-900 mb-2">{{ 'CATALOG.REJECT' | translate }}?</h3>
-    <p class="text-[0.8rem] font-medium text-slate-500 mb-6">{{ 'CATALOG.REJECT_VENDORS_MSG' | translate }}</p>
-    
-    <div class="space-y-2 mb-8">
-       <label class="text-[0.65rem] font-black text-slate-400 uppercase tracking-widest pl-1">{{ 'CATALOG.REJECTION_REASON' | translate }}</label>
-       <textarea 
-         [(ngModel)]="rejectionNotes"
-         class="w-full rounded-2xl border-slate-200 bg-slate-50/50 p-4 text-[0.8rem] font-bold text-slate-900 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 transition-all outline-none resize-none"
-         rows="3"
-         [placeholder]="'CATALOG.REJECTION_REASON_PLACEHOLDER' | translate"
-       ></textarea>
-    </div>
-
-    <p *ngIf="modalError" class="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-[0.8rem] font-medium text-rose-600">
-      {{ modalError }}
-    </p>
-
-    <div class="flex gap-3">
-       <button (click)="showRejectModal = false" [disabled]="submitting" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-xs font-black text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-60">
-         {{ 'COMMON.CANCEL' | translate }}
-       </button>
-       <button (click)="confirmReject()" [disabled]="submitting || !rejectionNotes.trim()" class="flex-1 py-3 px-4 rounded-xl bg-rose-500 text-white text-xs font-black shadow-lg shadow-rose-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-60 disabled:hover:scale-100">
-         {{ 'CATALOG.REJECT' | translate }}
-       </button>
-    </div>
-  </div>
-</div>

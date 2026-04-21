@@ -153,7 +153,6 @@ export class VendorDetailFacade {
     accountHolderName: string;
     iban: string;
     swiftCode?: string | null;
-    payoutCycle?: string | null;
     commercialRegisterDocumentUrl?: string | null;
   }): void {
     this.subscribeSilently(this.updateVendorLegalBankingRequest(payload));
@@ -168,10 +167,16 @@ export class VendorDetailFacade {
     accountHolderName: string;
     iban: string;
     swiftCode?: string | null;
-    payoutCycle?: string | null;
     commercialRegisterDocumentUrl?: string | null;
   }): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) => this.vendorService.updateVendorLegalBanking(vendorId, payload));
+  }
+
+  updateVendorFinanceSettingsRequest(payload: {
+    financialLifecycleMode: string;
+    payoutCycle?: string | null;
+  }): Observable<VendorDetail> {
+    return this.trackVendorMutation((vendorId) => this.vendorService.updateVendorFinanceSettings(vendorId, payload));
   }
 
   updateVendorContactRequest(payload: {
