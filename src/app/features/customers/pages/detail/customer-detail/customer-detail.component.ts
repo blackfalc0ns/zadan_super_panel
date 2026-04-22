@@ -3,8 +3,12 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { switchMap } from 'rxjs';
-import { CustomersService } from '@customers/services/customers.api.service';
+import { finalize, switchMap } from 'rxjs';
+import {
+  AdminCustomerNotificationResponse,
+  CustomersService
+} from '@customers/services/customers.api.service';
+import { ToastService } from '@shared/services/toast.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { InlineBannerComponent } from '../../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../../shared/components/ui/key-value-grid/key-value-grid.component';
@@ -54,6 +58,7 @@ export class CustomerDetailComponent implements OnInit {
   customer: CustomerDetailRecord | null = null;
   currentTab: CustomerDetailTabId = 'overview';
   quickNote = '';
+  isSendingTestNotification = false;
 
   readonly recentOrdersColumns: TableColumn[] = [
     { key: 'id', title: 'CUSTOMERS.DETAIL.ORDERS_TABLE.ORDER_ID', width: '26%', align: 'left', type: 'custom' },
@@ -67,7 +72,8 @@ export class CustomerDetailComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly translate: TranslateService,
-    private readonly customersService: CustomersService
+    private readonly customersService: CustomersService,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -438,6 +444,38 @@ export class CustomerDetailComponent implements OnInit {
     this.quickNote = '';
   }
 
+  sendTestMobileNotification(): void {
+    if (!this.customer || this.isSendingTestNotification) {
+      return;
+    }
+
+    const customer = this.customer;
+    this.isSendingTestNotification = true;
+
+    this.customersService.sendTestMobileNotification(customer.id, {
+      titleAr: 'إشعار تجريبي من لوحة التحكم',
+      titleEn: 'Admin mobile test notification',
+      bodyAr: `هذا إشعار تجريبي للتأكد من وصول إشعارات الموبايل إلى العميل ${customer.name}.`,
+      bodyEn: `This is a test mobile notification for ${customer.name}.`,
+      type: 'customer_test',
+      sendPush: true
+    }).pipe(
+      finalize(() => {
+        this.isSendingTestNotification = false;
+      })
+    ).subscribe({
+      next: (response) => {
+        this.showNotificationResult(response);
+      },
+      error: (error) => {
+        this.toastService.error(
+          this.describeApiError(error),
+          'إشعارات العميل'
+        );
+      }
+    });
+  }
+
   openOrder(order: CustomerRecentOrder): void {
     this.router.navigate(['/orders', order.id]);
   }
@@ -541,6 +579,29 @@ export class CustomerDetailComponent implements OnInit {
     }
   }
 
+  private showNotificationResult(response: AdminCustomerNotificationResponse): void {
+    if (response.pushSent) {
+      this.toastService.success(
+        'تم إرسال إشعار الموبايل التجريبي بنجاح.',
+        'إشعارات العميل'
+      );
+      return;
+    }
+
+    if (response.pushSkipped) {
+      this.toastService.warning(
+        response.pushReason ?? 'تم إنشاء إشعار داخلي فقط بدون Push.',
+        'إشعارات العميل'
+      );
+      return;
+    }
+
+    this.toastService.warning(
+      response.pushReason ?? 'تم تنفيذ الطلب لكن لم يتم تأكيد إرسال Push.',
+      'إشعارات العميل'
+    );
+  }
+
   private normalizeTab(value: string | null): CustomerDetailTabId {
     return value === 'workflow' ? 'workflow' : 'overview';
   }
@@ -595,6 +656,40 @@ export class CustomerDetailComponent implements OnInit {
     }
 
     return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW';
+  }
+
+  private describeApiError(error: unknown): string {
+    if (typeof error !== 'object' || error === null) {
+      return 'تعذر إرسال الإشعار الآن. حاول مرة أخرى.';
+    }
+
+    const candidate = error as {
+      status?: number;
+      error?: {
+        detail?: string;
+        title?: string;
+        errors?: Record<string, string[]>;
+      };
+      message?: string;
+    };
+
+    if (candidate.status === 401 || candidate.status === 403) {
+      return 'الجلسة الحالية لا تسمح بتنفيذ هذا الإجراء.';
+    }
+
+    const validation = candidate.error?.errors;
+    if (validation) {
+      const firstKey = Object.keys(validation)[0];
+      const firstMessage = firstKey ? validation[firstKey]?.[0] : null;
+      if (firstMessage) {
+        return firstMessage;
+      }
+    }
+
+    return candidate.error?.detail
+      ?? candidate.error?.title
+      ?? candidate.message
+      ?? 'تعذر إرسال الإشعار الآن. حاول مرة أخرى.';
   }
 
   getLastSupportContactKey(): string {

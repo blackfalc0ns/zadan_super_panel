@@ -75,6 +75,8 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
   archiveReason?: string | null;
   logoUrl?: string | null;
   commercialRegisterDocumentUrl?: string | null;
+  taxDocumentUrl?: string | null;
+  licenseDocumentUrl?: string | null;
   approvedAtUtc?: string | null;
   approvedByName?: string | null;
   updatedAtUtc?: string | null;
@@ -98,6 +100,7 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
   reviewCompletedAtUtc?: string | null;
   requestedChangesAtUtc?: string | null;
   reviewDecisionReason?: string | null;
+  readyForFinalApproval?: boolean | null;
   reviewNotes?: Array<{
     id: string;
     authorName: string;
@@ -107,6 +110,24 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
     messageKey?: string | null;
     tone: 'info' | 'success' | 'warning' | 'danger' | string;
     isSystem?: boolean;
+  }> | null;
+  reviewDocuments?: Array<{
+    id: string;
+    type: VendorReviewDocument['type'] | string;
+    titleKey: string;
+    descriptionKey: string;
+    icon: string;
+    status: VendorReviewDocument['status'] | string;
+    statusLabelKey: string;
+    iconBgClass: string;
+    isRequired: boolean;
+    isUploaded: boolean;
+    previewKind: VendorReviewDocument['previewKind'] | string;
+    fileUrl?: string | null;
+    reviewDecision: VendorReviewDocument['reviewDecision'] | string;
+    rejectionReason?: string | null;
+    reviewedAtUtc?: string | null;
+    reviewedByName?: string | null;
   }> | null;
   primaryBankAccount?: VendorDetail['primaryBankAccount'];
   operatingHours?: Array<{
@@ -873,6 +894,8 @@ export class VendorService {
       iban: string;
       swiftCode?: string | null;
       commercialRegisterDocumentUrl?: string | null;
+      taxDocumentUrl?: string | null;
+      licenseDocumentUrl?: string | null;
     }
   ): Observable<VendorDetail> {
     const request$ = this.canUseApiMutations()
@@ -887,6 +910,8 @@ export class VendorService {
         vendor.taxId = payload.taxId ?? vendor.taxId;
         vendor.licenseNumber = payload.licenseNumber ?? vendor.licenseNumber;
         vendor.commercialRegisterDocumentUrl = payload.commercialRegisterDocumentUrl ?? vendor.commercialRegisterDocumentUrl;
+        vendor.taxDocumentUrl = payload.taxDocumentUrl ?? vendor.taxDocumentUrl;
+        vendor.licenseDocumentUrl = payload.licenseDocumentUrl ?? vendor.licenseDocumentUrl;
         vendor.primaryBankAccount = {
           id: vendor.primaryBankAccount?.id || 'draft-primary-bank-account',
           bankName: payload.bankName,
@@ -898,6 +923,59 @@ export class VendorService {
           rejectionReason: null,
           verifiedAtUtc: null
         };
+      }),
+      id
+    );
+  }
+
+  approveVendorDocument(id: string, documentId: string): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/documents/${documentId}/approve`, {})
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        const target = vendor.reviewDocuments.find((document) => document.id === documentId);
+        if (!target) {
+          return;
+        }
+
+        target.reviewDecision = 'approved';
+        target.rejectionReason = null;
+        target.reviewedAtUtc = this.timestamp();
+        target.reviewedBy = 'Vendor Compliance Desk';
+      }),
+      id
+    );
+  }
+
+  rejectVendorDocument(id: string, documentId: string, reason: string): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/documents/${documentId}/reject`, { reason })
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        const target = vendor.reviewDocuments.find((document) => document.id === documentId);
+        if (!target) {
+          return;
+        }
+
+        target.reviewDecision = 'rejected';
+        target.rejectionReason = reason;
+        target.reviewedAtUtc = this.timestamp();
+        target.reviewedBy = 'Vendor Compliance Desk';
+        vendor.requestedChangesAtUtc = this.timestamp();
+        vendor.reviewDecisionReason = reason;
+
+        this.pushSystemNote(vendor, {
+          authorName: 'Vendor Compliance Desk',
+          roleLabel: 'Document Review',
+          message: reason,
+          tone: 'warning'
+        });
       }),
       id
     );
@@ -1024,15 +1102,6 @@ export class VendorService {
       map(() => {
         localMutation();
         return { message: successMessage };
-      }),
-      catchError((error) => {
-        if (!environment.skipAuthForDevelopment) {
-          return throwError(() => error);
-        }
-
-        console.warn('Vendor mutation API failed, applying local fallback.', error);
-        localMutation();
-        return of({ message: successMessage });
       })
     );
   }
@@ -1047,15 +1116,7 @@ export class VendorService {
     }
 
     return request$.pipe(
-      switchMap(() => vendorId ? this.getVendorById(vendorId) : of(localMutation())),
-      catchError((error) => {
-        if (!environment.skipAuthForDevelopment) {
-          return throwError(() => error);
-        }
-
-        console.warn('Vendor mutation API failed, applying local fallback.', error);
-        return of(localMutation());
-      })
+      switchMap(() => vendorId ? this.getVendorById(vendorId) : of(localMutation()))
     );
   }
 
@@ -1238,6 +1299,8 @@ export class VendorService {
       archiveReason: apiVendor.archiveReason ?? base.archiveReason ?? null,
       logoUrl: apiVendor.logoUrl ?? base.logoUrl ?? null,
       commercialRegisterDocumentUrl: apiVendor.commercialRegisterDocumentUrl ?? base.commercialRegisterDocumentUrl ?? null,
+      taxDocumentUrl: apiVendor.taxDocumentUrl ?? base.taxDocumentUrl ?? null,
+      licenseDocumentUrl: apiVendor.licenseDocumentUrl ?? base.licenseDocumentUrl ?? null,
       approvedAtUtc: apiVendor.approvedAtUtc ?? base.approvedAtUtc ?? null,
       approvedBy: apiVendor.approvedByName ?? base.approvedBy ?? null,
       updatedAtUtc: apiVendor.updatedAtUtc ?? base.updatedAtUtc ?? summary.reviewUpdatedAtUtc ?? null,
@@ -1271,6 +1334,7 @@ export class VendorService {
       reviewCompletedAtUtc: apiVendor.reviewCompletedAtUtc ?? base.reviewCompletedAtUtc ?? null,
       requestedChangesAtUtc: apiVendor.requestedChangesAtUtc ?? base.requestedChangesAtUtc ?? null,
       reviewDecisionReason: apiVendor.reviewDecisionReason ?? base.reviewDecisionReason ?? null,
+      readyForFinalApproval: apiVendor.readyForFinalApproval ?? base.readyForFinalApproval ?? false,
       primaryBankAccount,
       branchesCount: apiVendor.branchesCount ?? base.branchesCount ?? 0,
       bankAccountsCount: apiVendor.bankAccountsCount ?? base.bankAccountsCount ?? (primaryBankAccount ? 1 : 0),
@@ -1337,6 +1401,8 @@ export class VendorService {
       rejectionReason: localVendor?.rejectionReason ?? null,
       logoUrl: localVendor?.logoUrl ?? null,
       commercialRegisterDocumentUrl: localVendor?.commercialRegisterDocumentUrl ?? null,
+      taxDocumentUrl: localVendor?.taxDocumentUrl ?? null,
+      licenseDocumentUrl: localVendor?.licenseDocumentUrl ?? null,
       approvedAtUtc: localVendor?.approvedAtUtc ?? null,
       approvedBy: localVendor?.approvedBy ?? null,
       updatedAtUtc: summary.reviewUpdatedAtUtc ?? localVendor?.reviewUpdatedAtUtc ?? null,
@@ -1368,32 +1434,76 @@ export class VendorService {
   }
 
   private buildReviewDocumentsFromApi(apiVendor: AdminVendorDetailDto, fallback: VendorDetail): VendorReviewDocument[] {
+    if (apiVendor.reviewDocuments?.length) {
+      return apiVendor.reviewDocuments.map((document) => ({
+        id: document.id,
+        type: this.normalizeDocumentType(document.type),
+        titleKey: document.titleKey,
+        descriptionKey: document.descriptionKey,
+        icon: document.icon,
+        status: this.normalizeDocumentStatus(document.status),
+        statusLabelKey: document.statusLabelKey,
+        iconBgClass: document.iconBgClass,
+        isRequired: document.isRequired,
+        isUploaded: document.isUploaded,
+        previewKind: this.normalizePreviewKind(document.previewKind),
+        fileUrl: document.fileUrl ?? null,
+        reviewDecision: this.normalizeReviewDecision(document.reviewDecision),
+        rejectionReason: document.rejectionReason ?? null,
+        reviewedAtUtc: document.reviewedAtUtc ?? null,
+        reviewedBy: document.reviewedByName ?? null
+      }));
+    }
+
     const documents = this.buildReviewDocuments(this.resolveReviewState(
       this.normalizeStatus(apiVendor.status),
       apiVendor.isLoginLocked ?? false,
       apiVendor.archivedAtUtc ?? null
     ));
 
-    if (apiVendor.commercialRegisterDocumentUrl) {
-      return documents.map((document) =>
-        document.type === 'commercial'
-          ? this.applyDocumentStatus(document, 'completed')
-          : document
-      );
-    }
-
-    if (apiVendor.commercialRegistrationNumber || apiVendor.taxId || apiVendor.licenseNumber || apiVendor.primaryBankAccount?.iban) {
+    if (
+      apiVendor.idNumber
+      || apiVendor.ownerName
+      || apiVendor.ownerEmail
+      || apiVendor.ownerPhone
+      || apiVendor.commercialRegisterDocumentUrl
+      || apiVendor.taxDocumentUrl
+      || apiVendor.licenseDocumentUrl
+      || apiVendor.commercialRegistrationNumber
+      || apiVendor.taxId
+      || apiVendor.licenseNumber
+      || apiVendor.primaryBankAccount?.iban
+    ) {
       return documents.map((document) => {
-        if (document.type === 'commercial' && apiVendor.commercialRegistrationNumber) {
+        if (document.type === 'identity' && (apiVendor.idNumber || apiVendor.ownerName || apiVendor.ownerEmail || apiVendor.ownerPhone)) {
           return this.applyDocumentStatus(document, 'completed');
         }
 
-        if (document.type === 'tax' && apiVendor.taxId) {
-          return this.applyDocumentStatus(document, 'completed');
+        if (document.type === 'commercial' && (apiVendor.commercialRegisterDocumentUrl || apiVendor.commercialRegistrationNumber)) {
+          const completed = this.applyDocumentStatus(document, 'completed');
+          return {
+            ...completed,
+            fileUrl: apiVendor.commercialRegisterDocumentUrl ?? completed.fileUrl ?? null,
+            previewKind: apiVendor.commercialRegisterDocumentUrl ? 'pdf' : 'structured'
+          };
         }
 
-        if (document.type === 'license' && apiVendor.licenseNumber) {
-          return this.applyDocumentStatus(document, 'completed');
+        if (document.type === 'tax' && (apiVendor.taxDocumentUrl || apiVendor.taxId)) {
+          const completed = this.applyDocumentStatus(document, 'completed');
+          return {
+            ...completed,
+            fileUrl: apiVendor.taxDocumentUrl ?? null,
+            previewKind: apiVendor.taxDocumentUrl ? 'pdf' : 'structured'
+          };
+        }
+
+        if (document.type === 'license' && (apiVendor.licenseDocumentUrl || apiVendor.licenseNumber)) {
+          const completed = this.applyDocumentStatus(document, 'completed');
+          return {
+            ...completed,
+            fileUrl: apiVendor.licenseDocumentUrl ?? null,
+            previewKind: apiVendor.licenseDocumentUrl ? 'pdf' : 'structured'
+          };
         }
 
         if (document.type === 'bank' && apiVendor.primaryBankAccount?.iban) {
@@ -1468,8 +1578,16 @@ export class VendorService {
       return 'rejected';
     }
 
-    if (vendor.requestedChangesAtUtc) {
+    const requiredDocuments = this.getRequiredReviewDocuments(vendor.reviewDocuments);
+    const hasRejectedRequiredDocument = requiredDocuments.some((document) => document.reviewDecision === 'rejected');
+    const hasMissingRequiredDocument = requiredDocuments.some((document) => !document.isUploaded);
+
+    if (hasRejectedRequiredDocument || vendor.requestedChangesAtUtc) {
       return 'changes_requested';
+    }
+
+    if (hasMissingRequiredDocument) {
+      return vendor.reviewStartedAtUtc ? 'changes_requested' : 'awaiting_submission';
     }
 
     if (vendor.reviewStartedAtUtc) {
@@ -1641,14 +1759,17 @@ export class VendorService {
   }
 
   private reconcileVendorState(vendor: VendorDetail): void {
-    const uploadedDocuments = vendor.reviewDocuments.filter((document) => document.status !== 'missing').length;
-    const pendingDocuments = vendor.reviewDocuments.filter((document) => document.status === 'pending').length;
-    const missingDocuments = vendor.reviewDocuments.filter((document) => document.status === 'missing').length;
+    const requiredDocuments = this.getRequiredReviewDocuments(vendor.reviewDocuments);
+    const uploadedDocuments = requiredDocuments.filter((document) => document.isUploaded).length;
+    const pendingDocuments = requiredDocuments.filter((document) => document.status === 'pending').length;
+    const missingDocuments = requiredDocuments.filter((document) => document.status === 'missing').length;
+    const requiredCount = requiredDocuments.length;
 
-    vendor.documentsCompleteness = Math.round((uploadedDocuments / vendor.reviewDocuments.length) * 100);
+    vendor.documentsCompleteness = requiredCount === 0 ? 100 : Math.round((uploadedDocuments / requiredCount) * 100);
     vendor.documentsStatus = this.resolveDocumentsStatus(uploadedDocuments, missingDocuments);
     vendor.hasKYC = vendor.reviewDocuments.some((document) => document.type === 'identity' && document.status !== 'missing');
-    vendor.hasPendingCompliance = vendor.reviewState === 'submitted' || vendor.reviewState === 'under_review' || vendor.reviewState === 'changes_requested';
+    vendor.readyForFinalApproval = requiredCount > 0
+      && requiredDocuments.every((document) => document.isUploaded && document.reviewDecision === 'approved');
     vendor.reviewUpdatedAtUtc = this.timestamp();
 
     switch (vendor.reviewState) {
@@ -1711,6 +1832,11 @@ export class VendorService {
       vendor.verificationStatus = VerificationStatus.Pending;
     }
 
+    vendor.reviewState = this.resolveDetailReviewState(vendor);
+    vendor.hasPendingCompliance = vendor.reviewState === 'submitted'
+      || vendor.reviewState === 'under_review'
+      || vendor.reviewState === 'changes_requested'
+      || vendor.reviewState === 'awaiting_submission';
     vendor.riskIndicators = this.buildRiskIndicators(vendor);
   }
 
@@ -2239,7 +2365,15 @@ export class VendorService {
       icon,
       status: 'missing',
       statusLabelKey: 'COMPLIANCE.STATUS.MISSING',
-      iconBgClass: 'bg-slate-100 text-slate-500'
+      iconBgClass: 'bg-slate-100 text-slate-500',
+      isRequired: this.isRequiredReviewDocument(type),
+      isUploaded: false,
+      previewKind: 'unavailable',
+      fileUrl: null,
+      reviewDecision: 'pending',
+      rejectionReason: null,
+      reviewedAtUtc: null,
+      reviewedBy: null
     };
   }
 
@@ -2252,7 +2386,9 @@ export class VendorService {
         ...document,
         status,
         statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
-        iconBgClass: 'bg-teal-50 text-teal-500'
+        iconBgClass: 'bg-teal-50 text-teal-500',
+        isUploaded: true,
+        previewKind: document.previewKind === 'unavailable' ? 'structured' : document.previewKind
       };
     }
 
@@ -2261,7 +2397,9 @@ export class VendorService {
         ...document,
         status,
         statusLabelKey: 'COMPLIANCE.STATUS.UNDER_REVIEW',
-        iconBgClass: 'bg-orange-50 text-orange-500'
+        iconBgClass: 'bg-orange-50 text-orange-500',
+        isUploaded: true,
+        previewKind: document.previewKind === 'unavailable' ? 'structured' : document.previewKind
       };
     }
 
@@ -2269,8 +2407,73 @@ export class VendorService {
       ...document,
       status,
       statusLabelKey: 'COMPLIANCE.STATUS.MISSING',
-      iconBgClass: 'bg-slate-100 text-slate-500'
+      iconBgClass: 'bg-slate-100 text-slate-500',
+      isUploaded: false,
+      previewKind: 'unavailable'
     };
+  }
+
+  private isRequiredReviewDocument(type: VendorReviewDocument['type']): boolean {
+    return type === 'commercial' || type === 'tax' || type === 'license';
+  }
+
+  private getRequiredReviewDocuments(documents: VendorReviewDocument[]): VendorReviewDocument[] {
+    return documents.filter((document) => document.isRequired);
+  }
+
+  private normalizeDocumentType(type?: string | null): VendorReviewDocument['type'] {
+    const normalized = (type || '').toLowerCase();
+
+    switch (normalized) {
+      case 'identity':
+      case 'commercial':
+      case 'tax':
+      case 'bank':
+      case 'license':
+        return normalized as VendorReviewDocument['type'];
+      default:
+        return 'commercial';
+    }
+  }
+
+  private normalizeDocumentStatus(status?: string | null): VendorReviewDocument['status'] {
+    const normalized = (status || '').toLowerCase();
+
+    switch (normalized) {
+      case 'completed':
+      case 'pending':
+      case 'missing':
+        return normalized as VendorReviewDocument['status'];
+      default:
+        return 'missing';
+    }
+  }
+
+  private normalizePreviewKind(kind?: string | null): VendorReviewDocument['previewKind'] {
+    const normalized = (kind || '').toLowerCase();
+
+    switch (normalized) {
+      case 'pdf':
+      case 'image':
+      case 'structured':
+      case 'unavailable':
+        return normalized as VendorReviewDocument['previewKind'];
+      default:
+        return 'unavailable';
+    }
+  }
+
+  private normalizeReviewDecision(decision?: string | null): VendorReviewDocument['reviewDecision'] {
+    const normalized = (decision || '').toLowerCase();
+
+    switch (normalized) {
+      case 'approved':
+      case 'rejected':
+      case 'pending':
+        return normalized as VendorReviewDocument['reviewDecision'];
+      default:
+        return 'pending';
+    }
   }
 
   private buildReviewNotes(seed: VendorSeed): VendorReviewNote[] {

@@ -49,6 +49,12 @@
   background: rgba(236, 254, 255, 0.9);
 }
 
+.detail-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+  box-shadow: none;
+}
+
 .detail-action-btn--warning {
   color: #8f4e00;
 }

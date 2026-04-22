@@ -87,6 +87,8 @@ export type VendorReviewState =
   | 'suspended';
 
 export type VendorReviewDocumentStatus = 'completed' | 'pending' | 'missing';
+export type VendorReviewDecision = 'pending' | 'approved' | 'rejected';
+export type VendorDocumentPreviewKind = 'pdf' | 'image' | 'structured' | 'unavailable';
 
 export interface VendorReviewDocument {
   id: string;
@@ -97,6 +99,14 @@ export interface VendorReviewDocument {
   status: VendorReviewDocumentStatus;
   statusLabelKey: string;
   iconBgClass: string;
+  isRequired: boolean;
+  isUploaded: boolean;
+  previewKind: VendorDocumentPreviewKind;
+  fileUrl?: string | null;
+  reviewDecision: VendorReviewDecision;
+  rejectionReason?: string | null;
+  reviewedAtUtc?: string | null;
+  reviewedBy?: string | null;
 }
 
 export interface VendorRiskIndicator {
@@ -143,6 +153,8 @@ export interface VendorDetail extends Vendor {
   rejectionReason: string | null;
   logoUrl: string | null;
   commercialRegisterDocumentUrl: string | null;
+  taxDocumentUrl?: string | null;
+  licenseDocumentUrl?: string | null;
   approvedAtUtc: string | null;
   approvedBy: string | null;
   updatedAtUtc?: string | null;
@@ -158,6 +170,7 @@ export interface VendorDetail extends Vendor {
   reviewCompletedAtUtc: string | null;
   requestedChangesAtUtc: string | null;
   reviewDecisionReason: string | null;
+  readyForFinalApproval?: boolean;
   reviewDocuments: VendorReviewDocument[];
   reviewNotes: VendorReviewNote[];
   riskIndicators: VendorRiskIndicator[];

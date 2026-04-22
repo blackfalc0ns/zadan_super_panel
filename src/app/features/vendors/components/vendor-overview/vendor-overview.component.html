@@ -1,4 +1,10 @@
 <div class="flex flex-col gap-4 px-4 pb-3 sm:px-8 lg:px-10 xl:px-12" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <div
+    *ngIf="mutationError"
+    class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-[12px] font-bold text-rose-700 shadow-sm">
+    {{ mutationError }}
+  </div>
+
   <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
     <article
       *ngFor="let metric of metrics"

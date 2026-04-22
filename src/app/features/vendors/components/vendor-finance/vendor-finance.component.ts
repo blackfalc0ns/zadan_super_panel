@@ -59,6 +59,7 @@ export class VendorFinanceComponent implements OnInit {
   isLoading = true;
   hasError = false;
   isSavingMode = false;
+  mutationError = '';
   modeError = '';
   modeSuccess = '';
 
@@ -99,6 +100,12 @@ export class VendorFinanceComponent implements OnInit {
         this.vendorDetail = vendor;
         this.vendorName = vendor.businessNameAr || vendor.businessNameEn || vendor.ownerName || 'Vendor';
         this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
+      });
+
+    this.vendorDetailFacade.mutationError$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((error) => {
+        this.mutationError = error ?? '';
       });
 
     this.vendorDetailFacade.vendorId$

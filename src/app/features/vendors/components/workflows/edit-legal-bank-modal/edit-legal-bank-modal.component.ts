@@ -13,6 +13,8 @@ export interface LegalBankData {
   iban: string;
   swiftCode: string;
   commercialRegisterDocumentUrl: string;
+  taxDocumentUrl: string;
+  licenseDocumentUrl: string;
 }
 
 @Component({
@@ -34,7 +36,9 @@ export class EditLegalBankModalComponent implements OnChanges {
     accountHolderName: '',
     iban: '',
     swiftCode: '',
-    commercialRegisterDocumentUrl: ''
+    commercialRegisterDocumentUrl: '',
+    taxDocumentUrl: '',
+    licenseDocumentUrl: ''
   };
 
   @Output() close = new EventEmitter<void>();
@@ -49,7 +53,9 @@ export class EditLegalBankModalComponent implements OnChanges {
     accountHolderName: '',
     iban: '',
     swiftCode: '',
-    commercialRegisterDocumentUrl: ''
+    commercialRegisterDocumentUrl: '',
+    taxDocumentUrl: '',
+    licenseDocumentUrl: ''
   };
 
   constructor(private translate: TranslateService) {}
@@ -65,7 +71,9 @@ export class EditLegalBankModalComponent implements OnChanges {
         accountHolderName: this.legalBankData.accountHolderName || '',
         iban: this.legalBankData.iban || '',
         swiftCode: this.legalBankData.swiftCode || '',
-        commercialRegisterDocumentUrl: this.legalBankData.commercialRegisterDocumentUrl || ''
+        commercialRegisterDocumentUrl: this.legalBankData.commercialRegisterDocumentUrl || '',
+        taxDocumentUrl: this.legalBankData.taxDocumentUrl || '',
+        licenseDocumentUrl: this.legalBankData.licenseDocumentUrl || ''
       };
     }
   }
@@ -149,7 +157,9 @@ export class EditLegalBankModalComponent implements OnChanges {
       accountHolderName: this.draftLegalBankData.accountHolderName.trim(),
       iban: this.normalizeIban(this.draftLegalBankData.iban),
       swiftCode: this.draftLegalBankData.swiftCode.trim(),
-      commercialRegisterDocumentUrl: this.draftLegalBankData.commercialRegisterDocumentUrl.trim()
+      commercialRegisterDocumentUrl: this.draftLegalBankData.commercialRegisterDocumentUrl.trim(),
+      taxDocumentUrl: this.draftLegalBankData.taxDocumentUrl.trim(),
+      licenseDocumentUrl: this.draftLegalBankData.licenseDocumentUrl.trim()
     });
   }
 

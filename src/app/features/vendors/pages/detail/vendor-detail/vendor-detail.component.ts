@@ -83,7 +83,9 @@ export class VendorDetailComponent implements OnInit {
     accountHolderName: '',
     iban: '',
     swiftCode: '',
-    commercialRegisterDocumentUrl: ''
+    commercialRegisterDocumentUrl: '',
+    taxDocumentUrl: '',
+    licenseDocumentUrl: ''
   };
 
   storeDataModal: StoreData = {
@@ -343,7 +345,9 @@ export class VendorDetailComponent implements OnInit {
       accountHolderName: vendor.primaryBankAccount?.accountHolderName || vendor.ownerName || '',
       iban: this.formatIbanForDisplay(vendor.primaryBankAccount?.iban || ''),
       swiftCode: vendor.primaryBankAccount?.swiftCode || '',
-      commercialRegisterDocumentUrl: vendor.commercialRegisterDocumentUrl || ''
+      commercialRegisterDocumentUrl: vendor.commercialRegisterDocumentUrl || '',
+      taxDocumentUrl: vendor.taxDocumentUrl || '',
+      licenseDocumentUrl: vendor.licenseDocumentUrl || ''
     };
 
     this.storeDataModal = {
@@ -492,6 +496,8 @@ export class VendorDetailComponent implements OnInit {
     iban: string;
     swiftCode?: string | null;
     commercialRegisterDocumentUrl?: string | null;
+    taxDocumentUrl?: string | null;
+    licenseDocumentUrl?: string | null;
   } {
     return {
       commercialRegistrationNumber: data.commercialRegistrationNumber.trim(),
@@ -502,7 +508,9 @@ export class VendorDetailComponent implements OnInit {
       accountHolderName: data.accountHolderName.trim(),
       iban: this.normalizeIban(data.iban),
       swiftCode: this.nullIfEmpty(data.swiftCode),
-      commercialRegisterDocumentUrl: this.nullIfEmpty(data.commercialRegisterDocumentUrl)
+      commercialRegisterDocumentUrl: this.nullIfEmpty(data.commercialRegisterDocumentUrl),
+      taxDocumentUrl: this.nullIfEmpty(data.taxDocumentUrl),
+      licenseDocumentUrl: this.nullIfEmpty(data.licenseDocumentUrl)
     };
   }
 

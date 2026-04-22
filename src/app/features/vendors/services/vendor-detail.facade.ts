@@ -154,6 +154,8 @@ export class VendorDetailFacade {
     iban: string;
     swiftCode?: string | null;
     commercialRegisterDocumentUrl?: string | null;
+    taxDocumentUrl?: string | null;
+    licenseDocumentUrl?: string | null;
   }): void {
     this.subscribeSilently(this.updateVendorLegalBankingRequest(payload));
   }
@@ -168,6 +170,8 @@ export class VendorDetailFacade {
     iban: string;
     swiftCode?: string | null;
     commercialRegisterDocumentUrl?: string | null;
+    taxDocumentUrl?: string | null;
+    licenseDocumentUrl?: string | null;
   }): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) => this.vendorService.updateVendorLegalBanking(vendorId, payload));
   }
@@ -222,6 +226,22 @@ export class VendorDetailFacade {
     return this.trackVendorMutation((vendorId) =>
       this.vendorService.requestVendorDocuments(vendorId, note)
     );
+  }
+
+  approveVendorDocument(documentId: string): void {
+    this.subscribeSilently(this.approveVendorDocumentRequest(documentId));
+  }
+
+  approveVendorDocumentRequest(documentId: string): Observable<VendorDetail> {
+    return this.trackVendorMutation((vendorId) => this.vendorService.approveVendorDocument(vendorId, documentId));
+  }
+
+  rejectVendorDocument(documentId: string, reason: string): void {
+    this.subscribeSilently(this.rejectVendorDocumentRequest(documentId, reason));
+  }
+
+  rejectVendorDocumentRequest(documentId: string, reason: string): Observable<VendorDetail> {
+    return this.trackVendorMutation((vendorId) => this.vendorService.rejectVendorDocument(vendorId, documentId, reason));
   }
 
   startVendorReview(): void {
@@ -382,19 +402,33 @@ export class VendorDetailFacade {
     if (error instanceof HttpErrorResponse) {
       const detail = error.error?.detail ?? error.error?.title ?? error.error?.message;
       if (typeof detail === 'string' && detail.trim()) {
-        return detail.trim();
+        return this.resolveLocalizedMessage(detail.trim());
       }
 
       if (typeof error.message === 'string' && error.message.trim()) {
-        return error.message.trim();
+        return this.resolveLocalizedMessage(error.message.trim());
       }
     }
 
     if (error instanceof Error && error.message.trim()) {
-      return error.message.trim();
+      return this.resolveLocalizedMessage(error.message.trim());
     }
 
     return 'Unable to complete the request right now.';
+  }
+
+  private resolveLocalizedMessage(message: string): string {
+    if (!message.includes('|')) {
+      return message;
+    }
+
+    const currentLang = (localStorage.getItem('lang') || localStorage.getItem('vendor_lang') || 'ar').toLowerCase();
+    const parts = message.split('|').map((item) => item.trim()).filter(Boolean);
+    if (parts.length < 2) {
+      return message;
+    }
+
+    return currentLang.startsWith('ar') ? parts[0] : parts[1];
   }
 
   private subscribeSilently<T>(request$: Observable<T>): void {

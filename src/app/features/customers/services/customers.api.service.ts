@@ -64,6 +64,33 @@ interface AdminCustomerDetailDto extends AdminCustomerListItemDto {
   recentOrders: AdminCustomerRecentOrderDto[];
 }
 
+export interface AdminSendCustomerNotificationRequest {
+  titleAr?: string | null;
+  titleEn?: string | null;
+  bodyAr?: string | null;
+  bodyEn?: string | null;
+  type?: string | null;
+  referenceId?: string | null;
+  data?: string | null;
+  targetUrl?: string | null;
+  sendPush?: boolean;
+}
+
+export interface AdminCustomerNotificationResponse {
+  message: string;
+  customerId: string;
+  userId: string;
+  externalId: string;
+  type: string;
+  inboxRequested: boolean;
+  pushAttempted: boolean;
+  pushSent: boolean;
+  pushSkipped: boolean;
+  pushStatusCode?: number | null;
+  providerNotificationId?: string | null;
+  pushReason?: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -121,6 +148,16 @@ export class CustomersService {
         })
       );
     });
+  }
+
+  sendTestMobileNotification(
+    id: string,
+    request: AdminSendCustomerNotificationRequest
+  ): Observable<AdminCustomerNotificationResponse> {
+    return this.http.post<AdminCustomerNotificationResponse>(
+      `${this.apiUrl}/${id}/notifications/test`,
+      request
+    );
   }
 
   addInternalNote(id: string, message: string): CustomerDetailRecord | undefined {

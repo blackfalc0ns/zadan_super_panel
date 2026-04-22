@@ -1,224 +1,524 @@
-<div class="flex flex-col gap-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto max-w-[1480px] space-y-4 px-3 py-3 md:px-5 lg:px-6">
+  <section class="premium-glass rounded-[1.55rem] px-3.5 py-3.5 shadow-sm sm:px-4 sm:py-4">
+    <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+      <div class="space-y-2.5">
+        <div class="flex items-start gap-3">
+          <div class="icon-box relative flex h-[2.75rem] w-[2.75rem] shrink-0 items-center justify-center rounded-[1rem] border border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 text-primary shadow-inner">
+            <span class="material-symbols-outlined text-[21px]">shield_person</span>
+            <div class="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-400 shadow-sm"></div>
+          </div>
 
-  <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2.5">
+              <h1 class="text-base font-black tracking-tight text-slate-900">
+                {{ isRTL ? 'تشغيل الامتثال والمستندات' : 'Compliance operations workspace' }}
+              </h1>
+              <app-status-pill
+                [label]="reviewStateLabel"
+                [showDot]="true"
+                [shouldTranslate]="false"
+                size="sm"
+                [variant]="reviewStateVariant">
+              </app-status-pill>
+            </div>
+            <p class="mt-1 text-xs font-semibold leading-5 text-slate-500">
+              {{ isRTL
+                ? 'مراجعة المستندات المرفوعة، اتخاذ قرار لكل مستند، ثم تجهيز الاعتماد النهائي للتاجر بشكل عملي وواضح.'
+                : 'Review uploaded documents, decide each document independently, and prepare the vendor for final approval with an operational workflow.' }}
+            </p>
+          </div>
+        </div>
+      </div>
 
-    <div class="flex flex-col gap-6 lg:col-span-4">
-      <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div class="border-b border-gray-100 bg-gray-50 px-5 py-4">
-          <app-section-header
-            [compact]="true"
-            icon="verified_user"
-            title="COMPLIANCE.VERIFICATION_MATRIX">
-            <span meta class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
-              {{ verificationCompletedCount }} {{ 'COMMON.OF' | translate }} {{ verificationItems.length }}
-            </span>
-          </app-section-header>
+      <div class="grid gap-2.5 text-[11px] font-bold text-slate-500 sm:grid-cols-2">
+        <div class="flex items-center gap-2.5 rounded-[1rem] border border-slate-200/60 bg-white/60 px-3 py-2.5 shadow-sm backdrop-blur-sm">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 text-slate-500">
+            <span class="material-symbols-outlined text-[16px]">person_search</span>
+          </div>
+          <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400">{{ isRTL ? 'آخر مراجع' : 'Latest reviewer' }}</p>
+            <p class="text-sm font-black text-slate-900">{{ lastReviewerName }}</p>
+          </div>
         </div>
 
-        <div class="divide-y divide-gray-100">
-          <div *ngFor="let item of verificationItems" class="flex items-center justify-between gap-3 p-4 transition-colors hover:bg-gray-50">
-            <div class="flex items-center gap-3">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" [ngClass]="item.iconBgClass">
-                <span class="material-symbols-outlined text-[18px]">{{ item.icon }}</span>
+        <div class="flex items-center gap-2.5 rounded-[1rem] border border-slate-200/60 bg-white/60 px-3 py-2.5 shadow-sm backdrop-blur-sm">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+            <span class="material-symbols-outlined text-[16px]">task_alt</span>
+          </div>
+          <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400">{{ isRTL ? 'جاهزية القرار النهائي' : 'Final approval readiness' }}</p>
+            <p class="text-sm font-black text-slate-900">
+              {{ complianceReadyForFinalApproval
+                ? (isRTL ? 'جاهز للاعتماد' : 'Ready to approve')
+                : (isRTL ? 'ما زال يحتاج مراجعة' : 'Still needs review') }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_minmax(300px,0.8fr)]">
+      <div class="rounded-[1.15rem] border border-slate-200/70 bg-white/80 px-3.5 py-3.5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2.5">
+          <div>
+            <p class="text-[10px] font-black tracking-[0.14em] text-slate-400">{{ isRTL ? 'تقدم الاعتماد' : 'Approval progress' }}</p>
+            <p class="mt-1 text-[13px] font-black text-slate-900">
+              {{ isRTL
+                ? 'إقفال المستندات المطلوبة قبل قرار الاعتماد النهائي'
+                : 'Close required documents before final approval' }}
+            </p>
+          </div>
+          <div class="text-end">
+            <p class="text-[22px] font-black tracking-tight text-slate-950">{{ formatNumber(reviewCompletionPercent) }}%</p>
+            <p class="text-[11px] font-bold text-slate-500">
+              {{ pendingRequiredDocumentsCount === 0
+                ? (isRTL ? 'كل المطلوب مكتمل' : 'All required docs complete')
+                : isRTL
+                  ? formatNumber(pendingRequiredDocumentsCount) + ' مستندات ما زالت مفتوحة'
+                  : formatNumber(pendingRequiredDocumentsCount) + ' documents still open' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100">
+          <div class="h-full rounded-full bg-gradient-to-r from-primary via-sky-500 to-emerald-500 transition-all" [style.width.%]="reviewCompletionPercent"></div>
+        </div>
+      </div>
+
+      <div class="rounded-[1.15rem] border border-slate-200/70 bg-white/80 px-3.5 py-3.5 shadow-sm">
+        <p class="text-[10px] font-black tracking-[0.14em] text-slate-400">{{ isRTL ? 'المسار التالي' : 'Next action' }}</p>
+        <p class="mt-2 text-[13px] font-black leading-6 text-slate-900">
+          {{ isVendorAlreadyApproved
+            ? (isRTL ? 'التاجر معتمد بالفعل، ويمكن الاكتفاء بمراجعة المستندات والأرشفة التشغيلية.' : 'This vendor is already approved, so the page can now be used for document review and operational record keeping.')
+            : complianceReadyForFinalApproval
+            ? (isRTL ? 'يمكن اعتماد التاجر الآن بعد إقفال كل المستندات الرسمية.' : 'The vendor can now be approved after all official documents were closed.')
+            : (isRTL ? 'راجع المستندات الرسمية المفتوحة أولاً ثم اطلب إعادة الرفع أو اعتمدها.' : 'Review the open official documents first, then request re-upload or approve them.') }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <article *ngFor="let card of complianceMetricCards" class="premium-glass rounded-[1.1rem] px-3.5 py-3">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-[10px] font-black tracking-[0.08em] text-slate-400">{{ card.label }}</p>
+          <p class="mt-1.5 text-[19px] font-black tracking-tight text-slate-950">{{ card.value }}</p>
+          <p class="mt-2 text-[11px] font-medium leading-5 text-slate-500">{{ card.hint }}</p>
+        </div>
+        <app-status-pill [label]="''" [variant]="card.variant" [showDot]="true" size="sm"></app-status-pill>
+      </div>
+    </article>
+  </section>
+
+  <section class="grid items-start gap-4 xl:grid-cols-12">
+    <article class="premium-glass rounded-[1.55rem] px-3.5 py-3.5 shadow-sm sm:px-4 sm:py-4 xl:col-span-7">
+      <div class="mb-4 flex items-start justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-9 w-9 items-center justify-center rounded-[0.95rem] border border-slate-200/50 bg-gradient-to-br from-slate-100 to-white text-slate-600 shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">folder_managed</span>
+          </div>
+          <div>
+            <h2 class="text-base font-black text-slate-900">{{ isRTL ? 'قائمة مراجعة المستندات' : 'Document review queue' }}</h2>
+            <p class="mt-0.5 text-[11px] font-bold text-slate-500">
+              {{ isRTL ? 'الأولوية للمرفوض ثم المرفوع المعلّق ثم النواقص.' : 'Rejected first, then uploaded pending items, then missing documents.' }}
+            </p>
+          </div>
+        </div>
+
+        <span class="rounded-[0.9rem] border border-slate-200/70 bg-white/80 px-2.5 py-1.5 text-[10px] font-black tracking-widest text-slate-600 shadow-sm">
+          {{ formatNumber(reviewDocuments.length) }} {{ isRTL ? 'مستند' : 'DOCS' }}
+        </span>
+      </div>
+
+      <div class="space-y-3.5">
+        <section *ngFor="let group of documentGroups; trackBy: trackByGroup" class="space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2.5 rounded-[1rem] border border-slate-200/70 bg-slate-50/70 px-3.5 py-2.5">
+            <div>
+              <p class="text-[13px] font-black text-slate-900">{{ group.title }}</p>
+              <p class="mt-1 text-[11px] font-medium leading-5 text-slate-500">{{ group.hint }}</p>
+            </div>
+            <span class="rounded-[0.9rem] border px-2.5 py-1.5 text-[10px] font-black tracking-widest shadow-sm" [ngClass]="group.accentClass">
+              {{ formatNumber(group.documents.length) }} {{ isRTL ? 'عناصر' : 'ITEMS' }}
+            </span>
+          </div>
+
+          <button
+            *ngFor="let document of group.documents; trackBy: trackByDocument"
+            type="button"
+            (click)="selectDocument(document)"
+            class="w-full rounded-[1.05rem] border px-3.5 py-2.5 text-start transition-all hover:-translate-y-0.5 hover:shadow-md"
+            [ngClass]="selectedDocument?.id === document.id
+              ? 'border-primary/20 bg-primary/5 shadow-sm'
+              : 'border-slate-200/70 bg-white/80'">
+            <div class="flex flex-col gap-2.5 lg:flex-row lg:items-start lg:justify-between">
+              <div class="flex min-w-0 items-start gap-2.5">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.9rem]" [ngClass]="document.iconBgClass">
+                  <span class="material-symbols-outlined text-[17px]">{{ document.icon }}</span>
+                </div>
+
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <p class="text-[13px] font-black text-slate-900">{{ document.titleKey | translate }}</p>
+                    <app-status-pill
+                      [label]="getUploadStatusLabel(document)"
+                      [variant]="getUploadStatusVariant(document.status)"
+                      [showDot]="true"
+                      [shouldTranslate]="false"
+                      size="sm">
+                    </app-status-pill>
+                    <app-status-pill
+                      [label]="getDecisionLabel(document.reviewDecision)"
+                      [variant]="getDecisionVariant(document.reviewDecision)"
+                      [showDot]="true"
+                      [shouldTranslate]="false"
+                      size="sm">
+                    </app-status-pill>
+                  </div>
+
+                  <p class="mt-1 text-[11px] font-medium leading-5 text-slate-500">{{ getDocumentQueueSummary(document) }}</p>
+
+                  <div class="mt-1.5 flex flex-wrap items-center gap-2.5 text-[11px] font-semibold text-slate-500">
+                    <span>{{ getDocumentMetaLabel(document) }}</span>
+                    <span *ngIf="document.reviewedAtUtc">{{ formatNoteTimestamp(document.reviewedAtUtc) }}</span>
+                    <span *ngIf="document.reviewedBy">{{ document.reviewedBy }}</span>
+                  </div>
+
+                  <p *ngIf="document.rejectionReason" class="mt-2 rounded-[0.9rem] border border-rose-100 bg-rose-50/70 px-3 py-2 text-[11px] font-bold text-rose-700">
+                    {{ document.rejectionReason }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex shrink-0 flex-wrap gap-1.5">
+                <button
+                  *ngIf="document.fileUrl"
+                  type="button"
+                  (click)="$event.stopPropagation(); onOpenDocumentFile(document)"
+                  class="inline-flex h-8 items-center rounded-[0.85rem] border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700 transition-colors hover:border-primary/20 hover:text-primary">
+                  {{ isRTL ? 'فتح الملف' : 'Open file' }}
+                </button>
+
+                <button
+                  type="button"
+                  (click)="$event.stopPropagation(); onApproveDocument(document)"
+                  [disabled]="isSubmittingDocumentDecision || !document.isUploaded || document.reviewDecision === 'approved'"
+                  class="inline-flex h-8 items-center rounded-[0.85rem] bg-emerald-500 px-3 text-[11px] font-black text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-200">
+                  {{ isRTL ? 'قبول' : 'Approve' }}
+                </button>
+              </div>
+            </div>
+          </button>
+        </section>
+      </div>
+    </article>
+
+    <div class="flex flex-col gap-4 xl:col-span-5">
+      <article class="premium-glass rounded-[1.55rem] px-3.5 py-3.5 shadow-sm sm:px-4 sm:py-4">
+        <div class="mb-4 flex items-start justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <div class="flex h-9 w-9 items-center justify-center rounded-[0.95rem] border border-primary/10 bg-gradient-to-br from-primary/10 to-white text-primary shadow-sm">
+              <span class="material-symbols-outlined text-[18px]">preview</span>
+            </div>
+            <div>
+              <h2 class="text-base font-black text-slate-900">{{ isRTL ? 'معاينة المستند' : 'Document preview' }}</h2>
+              <p class="mt-0.5 text-[11px] font-bold text-slate-500">
+                {{ selectedDocument ? (selectedDocument.titleKey | translate) : (isRTL ? 'اختر مستندًا من القائمة' : 'Select a document from the queue') }}
+              </p>
+            </div>
+          </div>
+
+          <app-status-pill
+            *ngIf="selectedDocument"
+            [label]="getDecisionLabel(selectedDocument.reviewDecision)"
+            [variant]="getDecisionVariant(selectedDocument.reviewDecision)"
+            [showDot]="true"
+            [shouldTranslate]="false"
+            size="sm">
+          </app-status-pill>
+        </div>
+
+        <ng-container *ngIf="selectedDocument as document; else emptyPreview">
+          <div *ngIf="uploadedFileDocuments.length > 0" class="mb-3.5 space-y-2.5">
+            <div class="flex items-center justify-between gap-2.5">
+              <p class="text-[10px] font-black tracking-[0.14em] text-slate-400">
+                {{ isRTL ? 'الملفات المرفوعة داخل الصفحة' : 'Uploaded files in-page' }}
+              </p>
+              <span class="text-[11px] font-bold text-slate-500">
+                {{ formatNumber(uploadedFileDocuments.length) }} {{ isRTL ? 'ملفات متاحة للمعاينة' : 'files ready to preview' }}
+              </span>
+            </div>
+
+            <div class="grid gap-2 sm:grid-cols-2">
+              <button
+                *ngFor="let fileDocument of uploadedFileDocuments; trackBy: trackByDocument"
+                type="button"
+                (click)="selectDocument(fileDocument)"
+                class="rounded-[0.95rem] border px-3 py-2.5 text-start transition-all hover:-translate-y-0.5 hover:shadow-sm"
+                [ngClass]="selectedDocument.id === fileDocument.id
+                  ? 'border-primary/20 bg-primary/5'
+                  : 'border-slate-200/70 bg-white/80'">
+                <div class="flex items-start gap-2.5">
+                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.9rem]" [ngClass]="fileDocument.iconBgClass">
+                    <span class="material-symbols-outlined text-[17px]">{{ fileDocument.icon }}</span>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="truncate text-[13px] font-black text-slate-900">{{ fileDocument.titleKey | translate }}</p>
+                    <p class="mt-1 truncate text-[11px] font-semibold text-slate-500" dir="ltr">{{ getDocumentFileName(fileDocument) }}</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3.5 grid gap-2.5 sm:grid-cols-3">
+            <div class="rounded-[0.95rem] border border-slate-200/70 bg-slate-50/70 px-3.5 py-2.5">
+              <p class="text-[10px] font-black tracking-[0.12em] text-slate-400">{{ isRTL ? 'نوع المستند' : 'Document type' }}</p>
+              <p class="mt-1.5 text-[13px] font-black text-slate-900">{{ getDocumentMetaLabel(document) }}</p>
+            </div>
+            <div class="rounded-[0.95rem] border border-slate-200/70 bg-slate-50/70 px-3.5 py-2.5">
+              <p class="text-[10px] font-black tracking-[0.12em] text-slate-400">{{ isRTL ? 'اسم الملف' : 'File name' }}</p>
+              <p class="mt-1.5 truncate text-[13px] font-black text-slate-900" dir="ltr">{{ getDocumentFileName(document) }}</p>
+            </div>
+            <div class="rounded-[0.95rem] border border-slate-200/70 bg-slate-50/70 px-3.5 py-2.5">
+              <p class="text-[10px] font-black tracking-[0.12em] text-slate-400">{{ isRTL ? 'حالة الرفع' : 'Upload mode' }}</p>
+              <p class="mt-1.5 text-[13px] font-black text-slate-900">
+                {{ document.previewKind === 'structured'
+                  ? (isRTL ? 'بيانات تشغيلية' : 'Structured data')
+                  : document.previewKind === 'pdf'
+                    ? 'PDF'
+                    : document.previewKind === 'image'
+                      ? (isRTL ? 'صورة' : 'Image')
+                      : (isRTL ? 'غير متاح' : 'Unavailable') }}
+              </p>
+            </div>
+          </div>
+
+          <div *ngIf="document.previewKind === 'image' && document.fileUrl" class="overflow-hidden rounded-[1.05rem] border border-slate-200/70 bg-white">
+            <img [src]="document.fileUrl" alt="" class="max-h-[18rem] w-full object-contain bg-slate-50" />
+          </div>
+
+          <div *ngIf="document.previewKind === 'pdf' && safePreviewUrl" class="overflow-hidden rounded-[1.05rem] border border-slate-200/70 bg-white">
+            <iframe [src]="safePreviewUrl" class="h-[18rem] w-full bg-white"></iframe>
+          </div>
+
+          <div *ngIf="document.previewKind === 'structured' || !document.fileUrl" class="space-y-3">
+            <div *ngIf="document.previewKind === 'structured' && !document.fileUrl" class="rounded-[0.95rem] border border-amber-200 bg-amber-50/70 px-3.5 py-2.5 text-[11px] font-bold text-amber-700">
+              {{ isRTL ? 'هذا المستند يحتوي على بيانات تشغيلية متاحة لكن لا يوجد ملف مرفوع فعليًا.' : 'This document has structured operational data, but no uploaded file is attached yet.' }}
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div *ngFor="let row of getStructuredPreviewRows(document)" class="rounded-[0.95rem] border border-slate-200/70 bg-white/80 px-3.5 py-2.5">
+                <p class="text-[10px] font-black tracking-[0.12em] text-slate-400">{{ row.label }}</p>
+                <p class="mt-1.5 text-[13px] font-black text-slate-900" [attr.dir]="row.direction || (isRTL ? 'rtl' : 'ltr')">{{ row.value }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-3.5 space-y-2.5">
+            <div class="rounded-[0.95rem] border border-slate-200/70 bg-slate-50/70 px-3.5 py-2.5">
+              <p class="text-[10px] font-black tracking-[0.12em] text-slate-400">{{ isRTL ? 'سبب الرفض أو طلب إعادة الرفع' : 'Rejection or re-upload note' }}</p>
+              <textarea
+                [(ngModel)]="documentRejectReason"
+                rows="3"
+                class="mt-2.5 w-full rounded-[0.95rem] border border-slate-200 bg-white px-3.5 py-2.5 text-[13px] font-medium text-slate-700 outline-none transition-colors focus:border-primary/30"
+                [placeholder]="isRTL ? 'اكتب سبب الرفض أو ما الذي يجب على التاجر تعديله قبل إعادة الرفع...' : 'Explain what needs to be fixed before the vendor re-uploads this document...'">
+              </textarea>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                [disabled]="isSubmittingDocumentDecision || !document.isUploaded || document.reviewDecision === 'approved'"
+                (click)="onApproveDocument(document)"
+                class="inline-flex h-9 items-center rounded-[0.9rem] bg-emerald-500 px-4 text-[13px] font-black text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-200">
+                {{ isRTL ? 'قبول المستند' : 'Approve document' }}
+              </button>
+
+              <button
+                type="button"
+                [disabled]="isSubmittingDocumentDecision || !document.isUploaded || !documentRejectReason.trim()"
+                (click)="onRejectDocument(document)"
+                class="inline-flex h-9 items-center rounded-[0.9rem] border border-rose-200 bg-white px-4 text-[13px] font-black text-rose-700 transition-colors hover:bg-rose-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400">
+                {{ isRTL ? 'رفض المستند' : 'Reject document' }}
+              </button>
+
+              <button
+                *ngIf="document.fileUrl"
+                type="button"
+                (click)="onOpenDocumentFile(document)"
+                class="inline-flex h-9 items-center rounded-[0.9rem] border border-slate-200 bg-white px-4 text-[13px] font-black text-slate-700 transition-colors hover:border-primary/20 hover:text-primary">
+                {{ isRTL ? 'فتح الملف في نافذة جديدة' : 'Open in new tab' }}
+              </button>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #emptyPreview>
+          <div class="flex h-[15rem] items-center justify-center rounded-[1.1rem] border border-dashed border-slate-300/60 bg-slate-50/50 text-center">
+            <div class="space-y-3">
+              <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                <span class="material-symbols-outlined text-[24px]">draft</span>
               </div>
               <div>
-                <p class="text-sm font-bold text-gray-900">{{ item.titleKey | translate }}</p>
-                <p class="text-xs text-gray-500">{{ item.descriptionKey | translate }}</p>
+                <p class="text-sm font-black text-slate-900">{{ isRTL ? 'اختر مستندًا من القائمة' : 'Select a document from the queue' }}</p>
+                <p class="mt-1 text-xs font-semibold text-slate-500">{{ isRTL ? 'ستظهر المعاينة وقرار المراجعة هنا.' : 'Preview and decision tools will appear here.' }}</p>
               </div>
             </div>
-
-            <app-status-pill
-              [label]="item.statusLabelKey"
-              [showDot]="false"
-              [size]="'sm'"
-              [variant]="getVerificationStatusVariant(item.status)">
-            </app-status-pill>
           </div>
-        </div>
-      </div>
-    </div>
+        </ng-template>
+      </article>
 
-    <div class="flex flex-col gap-6 lg:col-span-5">
-      <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div class="border-b border-gray-100 bg-gray-50 px-5 py-4">
-          <app-section-header
-            [compact]="true"
-            icon="shield_with_heart"
-            title="COMPLIANCE.RISK_INDICATORS"
-            tone="warning">
-          </app-section-header>
-        </div>
-
-        <div class="flex flex-col gap-3 p-5">
-          <div *ngFor="let indicator of riskIndicators"
-               class="flex items-center justify-between gap-3 rounded-lg border p-4"
-               [ngClass]="getRiskCardClasses(indicator.severity)">
-            <div class="flex flex-1 items-center gap-3">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white" [ngClass]="getRiskIconClasses(indicator.severity)">
-                <span class="material-symbols-outlined text-[18px]">{{ indicator.icon }}</span>
-              </div>
-              <div class="flex-1">
-                <h4 class="text-base font-bold text-gray-900">{{ indicator.titleKey | translate }}</h4>
-                <p class="text-sm text-gray-600">{{ indicator.descriptionKey | translate }}</p>
-              </div>
-            </div>
-
-            <app-status-pill
-              [label]="indicator.severityLabelKey"
-              [showDot]="false"
-              [size]="'sm'"
-              [variant]="getRiskSeverityVariant(indicator.severity)">
-            </app-status-pill>
+      <article class="premium-glass rounded-[1.55rem] px-3.5 py-3.5 shadow-sm sm:px-4 sm:py-4">
+        <div class="mb-4 flex items-center gap-2.5">
+          <div class="flex h-9 w-9 items-center justify-center rounded-[0.95rem] border border-slate-200/50 bg-gradient-to-br from-slate-100 to-white text-slate-600 shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">fact_check</span>
           </div>
-        </div>
-      </div>
-
-      <div class="flex flex-1 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div class="border-b border-gray-100 bg-gray-50 px-5 py-4">
-          <app-section-header
-            [compact]="true"
-            icon="speaker_notes"
-            title="COMPLIANCE.COMPLIANCE_NOTES">
-          </app-section-header>
-        </div>
-
-        <div class="flex max-h-96 flex-1 flex-col gap-4 overflow-y-auto p-5">
-          <div *ngFor="let note of complianceNotes" class="flex gap-3">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold" [ngClass]="getNoteAvatarClasses(note)">
-              {{ getAuthorInitials(note.authorName) }}
-            </div>
-            <div class="flex-1 rounded-xl rounded-tr-none border border-gray-100 bg-gray-50 p-4">
-              <div class="mb-2 flex items-center justify-between gap-3">
-                <span class="text-sm font-bold text-gray-900">{{ note.authorName }} ({{ getLocalizedRoleLabel(note.roleLabel) }})</span>
-                <span class="text-xs text-gray-500">{{ formatNoteTimestamp(note.createdAtUtc) }}</span>
-              </div>
-              <p *ngIf="note.message" class="text-sm leading-relaxed text-gray-700">{{ note.message }}</p>
-              <p *ngIf="!note.message && note.messageKey" class="text-sm leading-relaxed text-gray-700">{{ note.messageKey | translate }}</p>
-            </div>
+          <div>
+            <h2 class="text-base font-black text-slate-900">{{ isRTL ? 'مكتب القرار التشغيلي' : 'Decision desk' }}</h2>
+            <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ isRTL ? 'تشغيل المراجعة وطلب إعادة الرفع والاعتماد النهائي من مكان واحد.' : 'Operate review, re-upload requests, and final approval from one place.' }}</p>
           </div>
         </div>
 
-        <div class="border-t border-gray-100 bg-white p-5">
-          <div class="flex gap-3">
-            <input
-              [(ngModel)]="newNote"
-              class="flex-1 rounded-xl border-gray-200 px-4 py-3 text-sm focus:border-primary focus:ring-primary"
-              [dir]="isRTL ? 'rtl' : 'ltr'"
-              [placeholder]="'COMPLIANCE.ADD_NOTE_PLACEHOLDER' | translate"
-              type="text" />
-            <button
-              (click)="onAddNote()"
-              class="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-gray-900 hover:bg-primary/90"
-              type="button">
-              <span>{{ 'COMPLIANCE.ADD' | translate }}</span>
-              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </button>
+        <div class="space-y-2.5">
+          <div *ngIf="mutationError" class="rounded-[0.95rem] border border-rose-200 bg-rose-50/80 px-3.5 py-2.5 text-[13px] font-bold text-rose-700">
+            {{ mutationError }}
           </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="flex flex-col gap-6 lg:col-span-3">
-      <div class="overflow-hidden rounded-xl border-2 border-primary/20 bg-white shadow-sm">
-        <div class="border-b border-gray-100 bg-primary/5 px-5 py-4">
-          <app-section-header
-            [compact]="true"
-            icon="task_alt"
-            title="COMPLIANCE.REVIEWER_ACTIONS">
-          </app-section-header>
-        </div>
-
-        <div class="flex flex-col gap-3 p-5">
           <button
             *ngIf="canStartReview"
             (click)="onStartReview()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-700"
-            type="button">
-            <span class="material-symbols-outlined text-[18px]">fact_check</span>
-            <span>{{ 'COMPLIANCE.ACTIONS.START_REVIEW' | translate }}</span>
+            type="button"
+            class="flex w-full items-center justify-center gap-2 rounded-[0.95rem] bg-primary px-4 py-2.5 text-[13px] font-black text-white transition-colors hover:bg-primary/90">
+            <span class="material-symbols-outlined text-[18px]">play_circle</span>
+            <span>{{ isRTL ? 'بدء المراجعة' : 'Start review' }}</span>
           </button>
 
           <button
+            *ngIf="complianceReadyForFinalApproval && !isVendorAlreadyApproved"
             (click)="onApproveVendor()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg bg-teal-500 px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-teal-600"
-            type="button">
-            <span class="material-symbols-outlined text-[18px]">check_circle</span>
-            <span>{{ 'COMPLIANCE.ACTIONS.APPROVE_VENDOR' | translate }}</span>
+            type="button"
+            class="flex w-full items-center justify-center gap-2 rounded-[0.95rem] bg-emerald-500 px-4 py-2.5 text-[13px] font-black text-white transition-colors hover:bg-emerald-600">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+            <span>{{ isRTL ? 'اعتماد نهائي للتاجر' : 'Final vendor approval' }}</span>
           </button>
+
+          <div *ngIf="isVendorAlreadyApproved" class="rounded-[0.95rem] border border-emerald-200 bg-emerald-50/80 px-3.5 py-2.5 text-[13px] font-bold text-emerald-700">
+            {{ isRTL ? 'هذا التاجر معتمد بالفعل، لذلك تم إخفاء زر الاعتماد النهائي.' : 'This vendor is already approved, so the final approval action is hidden.' }}
+          </div>
 
           <button
             (click)="onRequestDocuments()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-orange-600"
-            type="button">
+            type="button"
+            class="flex w-full items-center justify-center gap-2 rounded-[0.95rem] bg-amber-500 px-4 py-2.5 text-[13px] font-black text-white transition-colors hover:bg-amber-600">
             <span class="material-symbols-outlined text-[18px]">upload_file</span>
-            <span>{{ 'COMPLIANCE.ACTIONS.REQUEST_DOCUMENTS' | translate }}</span>
+            <span>{{ isRTL ? 'طلب إعادة رفع مستندات' : 'Request document re-upload' }}</span>
           </button>
 
-          <div class="my-1 h-px bg-gray-100"></div>
+          <div class="grid gap-2.5 sm:grid-cols-2">
+            <button
+              (click)="onSuspendAccount()"
+              type="button"
+              class="flex w-full items-center justify-center gap-2 rounded-[0.95rem] border border-slate-200 bg-white px-4 py-2.5 text-[13px] font-black text-slate-700 transition-colors hover:bg-slate-50">
+              <span class="material-symbols-outlined text-[18px]">pause_circle</span>
+              <span>{{ isRTL ? 'تعليق الحساب' : 'Suspend account' }}</span>
+            </button>
 
-          <button
-            (click)="onSuspendAccount()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-200"
-            type="button">
-            <span class="material-symbols-outlined text-[18px]">pause_circle</span>
-            <span>{{ 'COMPLIANCE.ACTIONS.SUSPEND_ACCOUNT' | translate }}</span>
-          </button>
-
-          <button
-            (click)="onRejectVendor()"
-            class="flex w-full items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2.5 text-sm font-bold text-red-600 transition-colors hover:bg-red-50"
-            type="button">
-            <span class="material-symbols-outlined text-[18px]">cancel</span>
-            <span>{{ 'COMPLIANCE.ACTIONS.REJECT_VENDOR' | translate }}</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div class="border-b border-gray-100 bg-gray-50 px-5 py-4">
-          <app-section-header
-            [compact]="true"
-            icon="summarize"
-            title="COMPLIANCE.DECISION_SUMMARY">
-          </app-section-header>
-        </div>
-
-        <div class="flex flex-col gap-4 p-5">
-          <div>
-            <span class="mb-2 block text-xs text-gray-500">{{ 'COMPLIANCE.CURRENT_REVIEW_STATUS' | translate }}</span>
-            <app-status-pill
-              [label]="reviewStateLabelKey"
-              [showDot]="false"
-              [size]="'sm'"
-              [variant]="reviewStateVariant">
-            </app-status-pill>
+            <button
+              (click)="onRejectVendor()"
+              type="button"
+              class="flex w-full items-center justify-center gap-2 rounded-[0.95rem] border border-rose-200 bg-white px-4 py-2.5 text-[13px] font-black text-rose-700 transition-colors hover:bg-rose-50">
+              <span class="material-symbols-outlined text-[18px]">cancel</span>
+              <span>{{ isRTL ? 'رفض التاجر' : 'Reject vendor' }}</span>
+            </button>
           </div>
 
-          <div>
-            <span class="mb-1 block text-xs text-gray-500">{{ 'COMPLIANCE.LAST_REVIEWER' | translate }}</span>
-            <div class="flex items-center gap-2">
-              <span class="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-600">{{ lastReviewerInitials }}</span>
-              <span class="text-sm font-medium text-slate-800">{{ lastReviewerName }}</span>
+          <div class="rounded-[0.95rem] border border-slate-200/70 bg-slate-50/70 px-3.5 py-2.5">
+            <p class="text-[10px] font-black tracking-[0.12em] text-slate-400">{{ isRTL ? 'ملاحظة امتثال جديدة' : 'New compliance note' }}</p>
+            <div class="mt-2.5 flex flex-col gap-2.5 sm:flex-row">
+              <input
+                [(ngModel)]="newNote"
+                class="h-10 flex-1 rounded-[0.95rem] border border-slate-200 bg-white px-3.5 text-[13px] font-medium text-slate-700 outline-none transition-colors focus:border-primary/30"
+                [placeholder]="isRTL ? 'أضف ملاحظة تشغيلية تظهر في سجل الامتثال...' : 'Add an operational compliance note to the timeline...'"
+                type="text" />
+              <button
+                (click)="onAddNote()"
+                type="button"
+                class="inline-flex h-10 items-center justify-center rounded-[0.95rem] bg-slate-900 px-4 text-[13px] font-black text-white transition-colors hover:bg-slate-800">
+                {{ isRTL ? 'إضافة' : 'Add note' }}
+              </button>
             </div>
           </div>
-
-          <app-inline-banner
-            title="COMPLIANCE.BLOCKING_ITEMS"
-            [variant]="blockingDocuments.length ? 'warning' : 'success'"
-            [icon]="blockingDocuments.length ? 'warning' : 'check_circle'"
-            [compact]="true">
-            <div *ngIf="blockingDocuments.length > 0" class="mt-2 space-y-2 text-xs text-current/90">
-              <div *ngFor="let blocker of blockingDocuments">
-                {{ blocker.titleKey | translate }} ({{ blocker.statusLabelKey | translate }})
-              </div>
-            </div>
-            <div *ngIf="blockingDocuments.length === 0" class="mt-2 text-xs text-current/90">
-              {{ 'COMMON.NO_RESULTS' | translate }}
-            </div>
-          </app-inline-banner>
         </div>
-      </div>
+      </article>
     </div>
+  </section>
 
-  </div>
+  <section class="grid items-start gap-4 xl:grid-cols-12">
+    <article class="premium-glass rounded-[1.55rem] px-3.5 py-3.5 shadow-sm sm:px-4 sm:py-4 xl:col-span-8">
+      <div class="mb-4 flex items-center gap-2.5">
+        <div class="flex h-9 w-9 items-center justify-center rounded-[0.95rem] border border-primary/10 bg-gradient-to-br from-primary/10 to-white text-primary shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">speaker_notes</span>
+        </div>
+        <div>
+          <h2 class="text-base font-black text-slate-900">{{ isRTL ? 'سجل ملاحظات الامتثال' : 'Compliance timeline' }}</h2>
+          <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ isRTL ? 'كل القرارات والملاحظات الأخيرة في مكان واحد.' : 'Recent decisions and notes in one place.' }}</p>
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        <div *ngFor="let note of complianceNotes; trackBy: trackByNote" class="rounded-[1rem] border border-slate-200/70 bg-white/80 px-3.5 py-2.5">
+          <div class="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p class="text-[13px] font-black text-slate-900">{{ note.authorName }}</p>
+              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ note.roleLabel }}</p>
+            </div>
+            <span class="text-[11px] font-semibold text-slate-400">{{ formatNoteTimestamp(note.createdAtUtc) }}</span>
+          </div>
+          <p class="mt-2.5 text-[13px] leading-6 text-slate-700">
+            {{ note.message || (note.messageKey ? (note.messageKey | translate) : '') }}
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <article class="premium-glass rounded-[1.55rem] px-3.5 py-3.5 shadow-sm sm:px-4 sm:py-4 xl:col-span-4">
+      <div class="mb-4 flex items-center gap-2.5">
+        <div class="flex h-9 w-9 items-center justify-center rounded-[0.95rem] border border-amber-100/80 bg-gradient-to-br from-amber-50 to-white text-amber-600 shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">policy_alert</span>
+        </div>
+        <div>
+          <h2 class="text-base font-black text-slate-900">{{ isRTL ? 'إشارات المخاطر' : 'Risk indicators' }}</h2>
+          <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ isRTL ? 'تنبيهات تشغيلية تساعد في قرار المراجع.' : 'Operational alerts that support the reviewer decision.' }}</p>
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        <div *ngFor="let indicator of riskIndicators; trackBy: trackByRisk" class="rounded-[0.95rem] border px-3.5 py-2.5" [ngClass]="indicator.severity === 'high' ? 'border-rose-200 bg-rose-50/70' : indicator.severity === 'medium' ? 'border-amber-200 bg-amber-50/70' : 'border-slate-200/70 bg-white/80'">
+          <div class="flex items-start gap-2.5">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white" [ngClass]="indicator.severity === 'high' ? 'bg-rose-500' : indicator.severity === 'medium' ? 'bg-amber-500' : 'bg-slate-500'">
+              <span class="material-symbols-outlined text-[17px]">{{ indicator.icon }}</span>
+            </div>
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <p class="text-[13px] font-black text-slate-900">{{ indicator.titleKey | translate }}</p>
+                <app-status-pill
+                  [label]="indicator.severityLabelKey"
+                  [variant]="indicator.severity === 'high' ? 'danger' : indicator.severity === 'medium' ? 'warning' : 'neutral'"
+                  [showDot]="false"
+                  size="sm">
+                </app-status-pill>
+              </div>
+              <p class="mt-1 text-[11px] font-medium leading-5 text-slate-500">{{ indicator.descriptionKey | translate }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="riskIndicators.length === 0" class="rounded-[0.95rem] border border-dashed border-slate-300/70 bg-slate-50/60 px-3.5 py-5 text-center">
+          <p class="text-[13px] font-black text-slate-900">{{ isRTL ? 'لا توجد إشارات خطر حالية' : 'No active risk indicators' }}</p>
+          <p class="mt-1 text-[11px] font-medium text-slate-500">{{ isRTL ? 'التركيز الآن على استكمال مراجعة المستندات.' : 'The main focus now is completing document review.' }}</p>
+        </div>
+      </div>
+    </article>
+  </section>
 </div>

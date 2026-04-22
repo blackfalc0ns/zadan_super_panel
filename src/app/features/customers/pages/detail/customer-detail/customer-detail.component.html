@@ -84,6 +84,20 @@
             {{ 'CUSTOMERS.DETAIL.ACTION_VIEW_CASES' | translate }}
           </button>
 
+          <button
+            type="button"
+            class="detail-action-btn detail-action-btn--primary"
+            [disabled]="isSendingTestNotification"
+            [attr.aria-busy]="isSendingTestNotification"
+            (click)="sendTestMobileNotification()">
+            <span
+              class="material-symbols-outlined text-[18px]"
+              [ngClass]="{ 'animate-spin': isSendingTestNotification }">
+              {{ isSendingTestNotification ? 'progress_activity' : 'notifications_active' }}
+            </span>
+            {{ isSendingTestNotification ? 'جاري إرسال إشعار الموبايل...' : 'تجربة إشعار الموبايل' }}
+          </button>
+
           <button type="button" class="detail-action-btn detail-action-btn--warning" (click)="handleReviewAction()">
             <span class="material-symbols-outlined text-[18px]">{{ reviewActionIcon }}</span>
             {{ reviewActionLabelKey | translate }}

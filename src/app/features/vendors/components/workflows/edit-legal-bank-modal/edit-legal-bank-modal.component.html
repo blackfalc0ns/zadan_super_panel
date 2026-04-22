@@ -58,6 +58,16 @@
               <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'رابط مرفق السجل' : 'CR attachment URL' }}</label>
               <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftLegalBankData.commercialRegisterDocumentUrl" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
             </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'Ø±Ø§Ø¨Ø· Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠ' : 'Tax document URL' }}</label>
+              <input type="text" dir="ltr" name="taxDocumentUrl" [(ngModel)]="draftLegalBankData.taxDocumentUrl" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-500">{{ isRTL ? 'Ø±Ø§Ø¨Ø· Ù…Ù„Ù Ø§Ù„Ø±Ø®ØµØ©' : 'License document URL' }}</label>
+              <input type="text" dir="ltr" name="licenseDocumentUrl" [(ngModel)]="draftLegalBankData.licenseDocumentUrl" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            </div>
           </div>
         </section>
 
