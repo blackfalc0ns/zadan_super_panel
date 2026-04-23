@@ -212,6 +212,8 @@ export class VendorOverviewComponent {
     }
 
     return this.vendorDetail.status === 'Pending'
+      && !!this.vendorDetail.readyForFinalApproval
+      && !this.vendorDetail.approvedAtUtc
       && !this.vendorDetail.isLoginLocked
       && !this.vendorDetail.archivedAtUtc;
   }
@@ -231,7 +233,9 @@ export class VendorOverviewComponent {
       return false;
     }
 
-    return this.vendorDetail.status !== 'Suspended' && !this.vendorDetail.archivedAtUtc;
+    return this.vendorDetail.status === 'Active'
+      && !this.vendorDetail.archivedAtUtc
+      && !this.vendorDetail.isLoginLocked;
   }
 
   get primaryActionLabel(): string {

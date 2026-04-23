@@ -1662,6 +1662,14 @@ export class VendorService {
 
   private applyApproval(id: string, commissionRate: number): VendorDetail {
     return this.updateVendor(id, (vendor) => {
+      if (vendor.status === VendorStatus.Active) {
+        throw new Error('التاجر معتمد بالفعل.|Vendor is already approved.');
+      }
+
+      if (vendor.status !== VendorStatus.Pending || !vendor.readyForFinalApproval) {
+        throw new Error('لا يمكن اعتماد التاجر قبل إقفال المستندات المطلوبة.|Vendor cannot be approved before the required documents are closed.');
+      }
+
       vendor.status = VendorStatus.Active;
       vendor.reviewState = 'verified';
       vendor.commissionRate = commissionRate;
@@ -1689,13 +1697,28 @@ export class VendorService {
 
   private applyRejection(id: string, reason: string): VendorDetail {
     return this.updateVendor(id, (vendor) => {
+      const normalizedReason = reason.trim();
+      if (!normalizedReason) {
+        throw new Error('يجب إدخال سبب رفض واضح.|A clear rejection reason is required.');
+      }
+
+      if (vendor.status === VendorStatus.Active || vendor.status === VendorStatus.Suspended) {
+        throw new Error('لا يمكن رفض تاجر معتمد أو معلق. استخدم التعليق لإيقاف الحساب التشغيلي.|Approved or suspended vendors cannot be rejected. Use suspension for operational shutdown.');
+      }
+
+      if (vendor.status !== VendorStatus.Pending) {
+        throw new Error(`لا يمكن رفض التاجر بينما حالته الحالية هي ${vendor.status}.|Vendor cannot be rejected while its current status is ${vendor.status}.`);
+      }
+
       vendor.status = VendorStatus.Rejected;
       vendor.reviewState = 'rejected';
-      vendor.rejectionReason = reason;
-      vendor.reviewDecisionReason = reason;
+      vendor.rejectionReason = normalizedReason;
+      vendor.reviewDecisionReason = normalizedReason;
       vendor.reviewCompletedAtUtc = this.timestamp();
       vendor.approvedAtUtc = null;
       vendor.approvedBy = null;
+      vendor.suspensionReason = null;
+      vendor.suspendedAtUtc = null;
       this.markDocumentForReupload(vendor.reviewDocuments);
       this.pushSystemNote(vendor, {
         authorName: 'Vendor Compliance Desk',
@@ -1708,11 +1731,21 @@ export class VendorService {
 
   private applySuspension(id: string, reason: string): VendorDetail {
     return this.updateVendor(id, (vendor) => {
+      const normalizedReason = reason.trim();
+      if (!normalizedReason) {
+        throw new Error('يجب إدخال سبب تعليق واضح.|A clear suspension reason is required.');
+      }
+
+      if (vendor.status !== VendorStatus.Active) {
+        throw new Error(`لا يمكن تعليق الحساب بينما حالته الحالية هي ${vendor.status}.|Vendor cannot be suspended while its current status is ${vendor.status}.`);
+      }
+
       vendor.status = VendorStatus.Suspended;
       vendor.reviewState = 'suspended';
       vendor.accountStatus = 'Inactive';
-      vendor.reviewDecisionReason = reason;
-      vendor.suspensionReason = reason;
+      vendor.reviewDecisionReason = normalizedReason;
+      vendor.suspensionReason = normalizedReason;
+      vendor.rejectionReason = null;
       vendor.suspendedAtUtc = this.timestamp();
       vendor.payoutStatus = PayoutStatus.Blocked;
       vendor.assignedReviewer = vendor.assignedReviewer || 'Risk & Compliance Desk';
@@ -1728,9 +1761,13 @@ export class VendorService {
 
   private applyReactivation(id: string): VendorDetail {
     return this.updateVendor(id, (vendor) => {
+      if (vendor.status !== VendorStatus.Suspended) {
+        throw new Error(`لا يمكن تشغيل الحساب إلا إذا كان معلقًا. الحالة الحالية هي ${vendor.status}.|Vendor can only be reactivated when it is suspended. Current status is ${vendor.status}.`);
+      }
+
       vendor.status = VendorStatus.Active;
       vendor.accountStatus = 'Active';
-      vendor.reviewState = vendor.approvedAtUtc ? 'verified' : 'under_review';
+      vendor.reviewState = 'verified';
       vendor.reviewDecisionReason = null;
       vendor.suspensionReason = null;
       vendor.suspendedAtUtc = null;

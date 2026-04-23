@@ -1,4 +1,4 @@
-import { Driver, DriverPerformance, VerificationStatus } from '@drivers/models/drivers.domain.models';
+import { Driver, DriverPerformance, DriverVehicleType, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import { createMockOrders } from '@orders/public-api';
 import {
   DriverComplianceSnapshot,
@@ -55,8 +55,19 @@ function getDriverSequence(driver: Driver): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
 }
 
-function getVehicleLabel(vehicleType?: string): string {
+function getVehicleLabel(vehicleType?: DriverVehicleType | string): string {
   switch (vehicleType) {
+    case DriverVehicleType.Van:
+      return 'Ford Transit 2023';
+    case DriverVehicleType.Motorcycle:
+    case 'Motorbike':
+      return 'Honda Delivery 2024';
+    case DriverVehicleType.Scooter:
+      return 'Yamaha Scooter 2024';
+    case DriverVehicleType.Bicycle:
+      return 'City delivery bicycle';
+    case DriverVehicleType.Truck:
+      return 'Light delivery truck';
     case 'فان':
       return 'فورد ترانزيت 2023';
     case 'دراجة':

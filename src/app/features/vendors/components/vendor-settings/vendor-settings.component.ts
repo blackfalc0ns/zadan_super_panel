@@ -77,6 +77,14 @@ export class VendorSettingsComponent {
     return !!this.vendor?.archivedAtUtc;
   }
 
+  get canSuspendAccount(): boolean {
+    return !!this.vendor && !this.isArchived && !this.isLoginLocked && this.vendor.status === 'Active';
+  }
+
+  get canReactivateAccount(): boolean {
+    return !!this.vendor && !this.isArchived && !this.isLoginLocked && this.vendor.status === 'Suspended';
+  }
+
   get isDialogOpen(): boolean {
     return this.activeDialog !== null;
   }
@@ -258,7 +266,7 @@ export class VendorSettingsComponent {
       return;
     }
 
-    if (this.isAccountSuspended) {
+    if (this.canReactivateAccount) {
       this.pageError = '';
       this.dialogSubmitting = true;
       this.vendorDetailFacade.reactivateVendorAccountRequest()
@@ -272,6 +280,12 @@ export class VendorSettingsComponent {
             this.dialogSubmitting = false;
           }
         });
+      return;
+    }
+
+    if (!this.canSuspendAccount) {
+      this.pageError = this.vendorDetailFacade.mutationError
+        || (this.isRTL ? 'لا يمكن تعليق الحساب إلا إذا كان نشطًا حاليًا.' : 'The account can only be suspended while it is active.');
       return;
     }
 

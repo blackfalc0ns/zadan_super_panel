@@ -171,7 +171,7 @@ export class SuperAdminDashboardService {
   ): Observable<DashboardSnapshot> {
     return forkJoin({
       orders: this.ordersService.getLiveSnapshot(80),
-      drivers: of(this.driverService.getDriversSnapshot()),
+      drivers: this.driverService.getLiveSnapshot(80),
       customers: this.customersService.getCustomers(),
       disputes: of(this.disputesService.getDisputesSnapshot()),
       vendors: this.vendorService.getVendors(1, 100),

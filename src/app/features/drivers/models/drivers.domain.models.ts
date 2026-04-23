@@ -21,7 +21,7 @@ export interface Driver {
     collectionPaymentStatus: 'good' | 'warning' | 'critical'; // Keeping for backward compatibility if needed
     lastSeenAt: Date; // Keeping for backward compatibility
     performance: DriverPerformance;
-    vehicleType?: string;
+    vehicleType?: DriverVehicleType;
     alerts?: string[];
     compensationOverride?: DriverCompensationRule;
 }
@@ -42,12 +42,21 @@ export enum DriverPerformance {
     Low = 'Low'
 }
 
+export enum DriverVehicleType {
+    Car = 'Car',
+    Motorcycle = 'Motorcycle',
+    Scooter = 'Scooter',
+    Van = 'Van',
+    Bicycle = 'Bicycle',
+    Truck = 'Truck'
+}
+
 export interface DriverFilters {
     searchTerm?: string;
     city?: string;
     status?: DriverStatus;
     verificationStatus?: VerificationStatus;
-    vehicleType?: string;
+    vehicleType?: DriverVehicleType;
     performance?: DriverPerformance;
 }
 

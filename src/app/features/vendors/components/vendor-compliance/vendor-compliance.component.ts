@@ -10,11 +10,13 @@ import {
   VendorReviewDecision,
   VendorReviewDocument,
   VendorReviewNote,
-  VendorRiskIndicator
+  VendorRiskIndicator,
+  VendorStatus
 } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 interface ComplianceMetricCard {
+  id: string;
   label: string;
   value: string;
   hint: string;
@@ -35,6 +37,9 @@ interface ComplianceDocumentGroup {
   documents: VendorReviewDocument[];
 }
 
+type ComplianceRailTab = 'timeline' | 'risks';
+type ComplianceWorkspaceWindow = 'operations' | 'review';
+
 @Component({
   selector: 'app-vendor-compliance',
   standalone: true,
@@ -46,10 +51,13 @@ export class VendorComplianceComponent {
   currentLang = 'ar';
   isRTL = true;
   newNote = '';
+  actionReason = '';
   documentRejectReason = '';
   mutationError = '';
   vendorDetail: VendorDetail | null = null;
   selectedDocumentId: string | null = null;
+  activeRailTab: ComplianceRailTab = 'timeline';
+  activeWorkspaceWindow: ComplianceWorkspaceWindow = 'review';
   isSubmittingDocumentDecision = false;
 
   private readonly destroyRef = inject(DestroyRef);
@@ -83,11 +91,9 @@ export class VendorComplianceComponent {
           this.selectedDocumentId = this.sortedReviewDocuments[0]?.id ?? null;
         }
 
-        if (this.selectedDocument && this.selectedDocument.reviewDecision !== 'rejected') {
-          this.documentRejectReason = '';
-        } else if (this.selectedDocument?.rejectionReason) {
-          this.documentRejectReason = this.selectedDocument.rejectionReason;
-        }
+        this.documentRejectReason = this.selectedDocument?.reviewDecision === 'rejected'
+          ? (this.selectedDocument.rejectionReason ?? '')
+          : '';
       });
 
     this.vendorDetailFacade.mutationError$
@@ -105,16 +111,16 @@ export class VendorComplianceComponent {
     return [...this.reviewDocuments].sort((left, right) => this.getDocumentRank(left) - this.getDocumentRank(right));
   }
 
-  get uploadedFileDocuments(): VendorReviewDocument[] {
-    return this.sortedReviewDocuments.filter((document) => !!document.fileUrl);
-  }
-
   get selectedDocument(): VendorReviewDocument | null {
     if (!this.selectedDocumentId) {
       return this.sortedReviewDocuments[0] ?? null;
     }
 
     return this.reviewDocuments.find((document) => document.id === this.selectedDocumentId) ?? this.sortedReviewDocuments[0] ?? null;
+  }
+
+  get uploadedFileDocuments(): VendorReviewDocument[] {
+    return this.sortedReviewDocuments.filter((document) => !!document.fileUrl);
   }
 
   get safePreviewUrl(): SafeResourceUrl | null {
@@ -126,11 +132,15 @@ export class VendorComplianceComponent {
   }
 
   get complianceNotes(): VendorReviewNote[] {
-    return this.vendorDetail?.reviewNotes || [];
+    return this.vendorDetail?.reviewNotes ?? [];
   }
 
   get riskIndicators(): VendorRiskIndicator[] {
-    return this.vendorDetail?.riskIndicators || [];
+    return this.vendorDetail?.riskIndicators ?? [];
+  }
+
+  get requiredDocuments(): VendorReviewDocument[] {
+    return this.reviewDocuments.filter((document) => document.isRequired);
   }
 
   get documentsApprovedCount(): number {
@@ -149,8 +159,21 @@ export class VendorComplianceComponent {
     return this.reviewDocuments.filter((document) => document.isUploaded).length;
   }
 
-  get requiredDocumentsCount(): number {
-    return this.reviewDocuments.filter((document) => document.isRequired).length;
+  get pendingRequiredDocumentsCount(): number {
+    return this.requiredDocuments.filter((document) => !document.isUploaded || document.reviewDecision !== 'approved').length;
+  }
+
+  get requiredDocumentsApprovedCount(): number {
+    return this.requiredDocuments.filter((document) => document.isUploaded && document.reviewDecision === 'approved').length;
+  }
+
+  get reviewCompletionPercent(): number {
+    if (!this.requiredDocuments.length) {
+      return 0;
+    }
+
+    const approvedRequiredCount = this.requiredDocuments.filter((document) => document.isUploaded && document.reviewDecision === 'approved').length;
+    return Math.round((approvedRequiredCount / this.requiredDocuments.length) * 100);
   }
 
   get complianceReadyForFinalApproval(): boolean {
@@ -158,18 +181,128 @@ export class VendorComplianceComponent {
       return this.vendorDetail.readyForFinalApproval;
     }
 
-    const requiredDocuments = this.reviewDocuments.filter((document) => document.isRequired);
-    return requiredDocuments.length > 0
-      && requiredDocuments.every((document) => document.isUploaded && document.reviewDecision === 'approved');
+    return this.requiredDocuments.length > 0
+      && this.requiredDocuments.every((document) => document.isUploaded && document.reviewDecision === 'approved');
   }
 
   get isVendorAlreadyApproved(): boolean {
-    return this.vendorDetail?.status === 'Active' && !!this.vendorDetail?.approvedAtUtc;
+    return this.vendorDetail?.status === VendorStatus.Active && !!this.vendorDetail?.approvedAtUtc;
+  }
+
+  get canStartReview(): boolean {
+    if (!this.vendorDetail) {
+      return false;
+    }
+
+    return this.vendorDetail.status === VendorStatus.Pending
+      && !this.vendorDetail.archivedAtUtc
+      && !this.vendorDetail.isLoginLocked
+      && (this.vendorDetail.reviewState === 'submitted'
+        || this.vendorDetail.reviewState === 'awaiting_submission'
+        || this.vendorDetail.reviewState === 'changes_requested');
+  }
+
+  get canApproveVendor(): boolean {
+    if (!this.vendorDetail) {
+      return false;
+    }
+
+    return this.vendorDetail.status === VendorStatus.Pending
+      && this.complianceReadyForFinalApproval
+      && !this.vendorDetail.approvedAtUtc
+      && !this.vendorDetail.archivedAtUtc
+      && !this.vendorDetail.isLoginLocked
+      && this.vendorDetail.reviewState !== 'rejected'
+      && this.vendorDetail.reviewState !== 'suspended';
+  }
+
+  get canRejectVendor(): boolean {
+    if (!this.vendorDetail) {
+      return false;
+    }
+
+    return this.vendorDetail.status === VendorStatus.Pending
+      && !this.vendorDetail.approvedAtUtc
+      && !this.vendorDetail.archivedAtUtc
+      && !this.vendorDetail.isLoginLocked
+      && this.vendorDetail.reviewState !== 'rejected';
+  }
+
+  get canSuspendVendor(): boolean {
+    if (!this.vendorDetail) {
+      return false;
+    }
+
+    return this.vendorDetail.status === VendorStatus.Active
+      && !this.vendorDetail.archivedAtUtc
+      && !this.vendorDetail.isLoginLocked;
+  }
+
+  get canReactivateVendor(): boolean {
+    if (!this.vendorDetail) {
+      return false;
+    }
+
+    return this.vendorDetail.status === VendorStatus.Suspended
+      && !this.vendorDetail.archivedAtUtc
+      && !this.vendorDetail.isLoginLocked;
+  }
+
+  get canRequestDocuments(): boolean {
+    if (!this.vendorDetail) {
+      return false;
+    }
+
+    return this.vendorDetail.status === VendorStatus.Pending
+      && !this.vendorDetail.archivedAtUtc
+      && !this.vendorDetail.isLoginLocked
+      && this.vendorDetail.reviewState !== 'rejected';
+  }
+
+  get hasActionRailCommands(): boolean {
+    return this.canStartReview
+      || this.canApproveVendor
+      || this.canRejectVendor
+      || this.canSuspendVendor
+      || this.canReactivateVendor
+      || this.canRequestDocuments;
+  }
+
+  isWorkspaceWindowActive(window: ComplianceWorkspaceWindow): boolean {
+    return this.activeWorkspaceWindow === window;
+  }
+
+  get selectedDocumentStructuredRows(): PreviewRow[] {
+    return this.getStructuredPreviewRows(this.selectedDocument);
+  }
+
+  get accountStatusLabel(): string {
+    switch (this.vendorDetail?.status) {
+      case VendorStatus.Active:
+        return this.localize('حساب نشط', 'Active account');
+      case VendorStatus.Suspended:
+        return this.localize('حساب معلق', 'Suspended account');
+      case VendorStatus.Rejected:
+        return this.localize('تاجر مرفوض', 'Rejected vendor');
+      default:
+        return this.localize('قبل التشغيل', 'Pre-activation');
+    }
+  }
+
+  get accountStatusVariant(): StatusPillVariant {
+    switch (this.vendorDetail?.status) {
+      case VendorStatus.Active:
+        return 'success';
+      case VendorStatus.Suspended:
+      case VendorStatus.Rejected:
+        return 'danger';
+      default:
+        return 'warning';
+    }
   }
 
   get reviewStateLabel(): string {
-    const state = this.vendorDetail?.reviewState;
-    switch (state) {
+    switch (this.vendorDetail?.reviewState) {
       case 'verified':
         return this.localize('جاهز للاعتماد النهائي', 'Ready for final approval');
       case 'changes_requested':
@@ -179,7 +312,9 @@ export class VendorComplianceComponent {
       case 'rejected':
         return this.localize('مرفوض', 'Rejected');
       case 'suspended':
-        return this.localize('معلّق', 'Suspended');
+        return this.localize('معلق', 'Suspended');
+      case 'awaiting_submission':
+        return this.localize('بانتظار الاستكمال', 'Awaiting submission');
       default:
         return this.localize('تم الاستلام', 'Submitted');
     }
@@ -201,62 +336,129 @@ export class VendorComplianceComponent {
     }
   }
 
-  get canStartReview(): boolean {
-    const reviewState = this.vendorDetail?.reviewState;
-    return reviewState === 'submitted' || reviewState === 'awaiting_submission' || reviewState === 'changes_requested';
+  get lastReviewerName(): string {
+    return this.reviewDocuments
+      .filter((document) => !!document.reviewedBy)
+      .sort((left, right) => (right.reviewedAtUtc || '').localeCompare(left.reviewedAtUtc || ''))[0]?.reviewedBy
+      || this.complianceNotes.find((note) => !!note.authorName)?.authorName
+      || this.localize('غير محدد', 'Unassigned');
   }
 
-  get lastReviewerName(): string {
-    const documentReviewer = this.reviewDocuments
-      .filter((document) => !!document.reviewedBy)
-      .sort((left, right) => (right.reviewedAtUtc || '').localeCompare(left.reviewedAtUtc || ''))[0]?.reviewedBy;
+  get operationsHeadline(): string {
+    if (this.canApproveVendor) {
+      return this.localize('الملف جاهز للاعتماد النهائي', 'The file is ready for final approval');
+    }
 
-    return documentReviewer
-      || this.complianceNotes[0]?.authorName
-      || this.localize('غير محدد', 'Unassigned');
+    if (this.canReactivateVendor) {
+      return this.localize('الحساب جاهز لإعادة التشغيل', 'The account is ready for reactivation');
+    }
+
+    if (this.canSuspendVendor) {
+      return this.localize('الحساب يعمل حاليًا ويمكن تعليقه إذا لزم الأمر', 'The account is live and can be suspended if needed');
+    }
+
+    if (this.vendorDetail?.status === VendorStatus.Rejected) {
+      return this.localize('تم إغلاق ملف الاعتماد بالرفض', 'The onboarding file was closed as rejected');
+    }
+
+    return this.localize('راجع المستندات المطلوبة ثم اتخذ القرار المناسب', 'Review the required documents, then take the appropriate decision');
+  }
+
+  get operationsHint(): string {
+    if (this.isVendorAlreadyApproved) {
+      return this.localize('الاعتماد تم بالفعل، لذلك هذه الشاشة مخصصة الآن للمتابعة التشغيلية والأرشفة.', 'Approval is already complete, so this workspace now serves operational follow-up and record keeping.');
+    }
+
+    if (this.canApproveVendor) {
+      return this.localize('كل المستندات الرسمية المطلوبة أغلقت بنجاح ويمكن اعتماد التاجر من هذه الشاشة.', 'All required official documents are closed, and the vendor can be approved from this workspace.');
+    }
+
+    if (this.pendingRequiredDocumentsCount > 0) {
+      return this.localize(
+        `${this.formatNumber(this.pendingRequiredDocumentsCount)} مستندات مطلوبة ما زالت مفتوحة قبل الاعتماد.`,
+        `${this.formatNumber(this.pendingRequiredDocumentsCount)} required documents are still open before approval.`
+      );
+    }
+
+    if (this.canReactivateVendor) {
+      return this.localize('الحساب موقوف تشغيليًا، ويمكن إعادته إلى حالة نشطة مباشرة.', 'The account is operationally suspended and can be restored directly to active.');
+    }
+
+    if (this.canSuspendVendor) {
+      return this.localize('إذا ظهرت مخاطرة تشغيلية، استخدم التعليق بدل الرفض النهائي.', 'If an operational risk appears, suspend the account instead of rejecting it.');
+    }
+
+    return this.localize('اتبع مسار المراجعة الظاهر في العمود الجانبي وفق حالة الحساب الحالية.', 'Follow the operating path shown in the side rail based on the current account state.');
+  }
+
+  get operationsBlockedMessage(): string {
+    if (!this.vendorDetail) {
+      return '';
+    }
+
+    if (this.isVendorAlreadyApproved) {
+      return this.localize('التاجر معتمد بالفعل، لذلك تم إخفاء إجراء الاعتماد النهائي.', 'This vendor is already approved, so final approval is hidden.');
+    }
+
+    if (this.vendorDetail.status === VendorStatus.Suspended) {
+      return this.localize('الحساب معلق حاليًا. استخدم إعادة التشغيل بدل الاعتماد أو الرفض.', 'The account is currently suspended. Use reactivation instead of approval or rejection.');
+    }
+
+    if (this.vendorDetail.status === VendorStatus.Rejected) {
+      return this.localize('ملف التاجر مرفوض بالفعل، ولا توجد إجراءات تشغيل إضافية من هذه الشاشة.', 'The vendor file is already rejected, and no further account actions are available here.');
+    }
+
+    if (!this.complianceReadyForFinalApproval) {
+      return this.localize('الاعتماد النهائي سيظهر بعد اعتماد كل المستندات المطلوبة فقط.', 'Final approval becomes available only after all required documents are approved.');
+    }
+
+    return this.localize('الإجراء غير متاح في الحالة الحالية.', 'This action is not available in the current state.');
+  }
+
+  get actionReasonLabel(): string {
+    if (this.canSuspendVendor) {
+      return this.localize('سبب التعليق', 'Suspension reason');
+    }
+
+    if (this.canRejectVendor) {
+      return this.localize('سبب الرفض أو طلب الإعادة', 'Rejection or re-upload reason');
+    }
+
+    return this.localize('ملاحظة تشغيلية', 'Operational note');
+  }
+
+  get actionReasonPlaceholder(): string {
+    if (this.canSuspendVendor) {
+      return this.localize('اكتب سببًا واضحًا لتعليق الحساب يظهر في السجل التشغيلي...', 'Write a clear suspension reason that will appear in the operating timeline...');
+    }
+
+    return this.localize('اكتب سبب الرفض أو ما الذي يجب على التاجر تعديله قبل إعادة الرفع...', 'Explain what must be fixed before the vendor re-uploads or before the file is rejected...');
   }
 
   get complianceMetricCards(): ComplianceMetricCard[] {
     return [
       {
-        label: this.localize('مستندات معتمدة', 'Approved documents'),
+        id: 'approved',
+        label: this.localize('مستندات مغلقة', 'Closed documents'),
         value: this.formatNumber(this.documentsApprovedCount),
-        hint: this.localize('مستندات أغلقت مراجعتها بنجاح', 'Documents that passed review successfully'),
+        hint: this.localize('عناصر تم اعتمادها ضمن الملف الحالي', 'Items approved in the current packet'),
         variant: 'success'
       },
       {
-        label: this.localize('مستندات مرفوضة', 'Rejected documents'),
-        value: this.formatNumber(this.documentsRejectedCount),
-        hint: this.localize('تحتاج إعادة رفع أو تصحيح', 'Need re-upload or correction'),
-        variant: 'danger'
-      },
-      {
-        label: this.localize('قيد القرار', 'Pending decisions'),
+        id: 'pending',
+        label: this.localize('قرارات مفتوحة', 'Open decisions'),
         value: this.formatNumber(this.documentsPendingCount),
-        hint: this.localize('مرفوعة لكنها لم تُحسم بعد', 'Uploaded but not decided yet'),
+        hint: this.localize('ملفات ما زالت بانتظار الحسم', 'Files still waiting for a decision'),
         variant: 'warning'
       },
       {
-        label: this.localize('المرفوع من المطلوب', 'Uploaded vs required'),
-        value: `${this.formatNumber(this.uploadedDocumentsCount)} / ${this.formatNumber(this.requiredDocumentsCount)}`,
-        hint: this.localize('تغطي المستندات المتوفرة ملف الاعتماد الحالي', 'Available documents covering the current review packet'),
-        variant: 'processing'
+        id: 'rejected',
+        label: this.localize('مرفوض ويحتاج إعادة رفع', 'Rejected and needs re-upload'),
+        value: this.formatNumber(this.documentsRejectedCount),
+        hint: this.localize('عناصر تحتاج تصحيحًا من التاجر', 'Items that need correction from the vendor'),
+        variant: 'danger'
       }
     ];
-  }
-
-  get reviewCompletionPercent(): number {
-    if (!this.requiredDocumentsCount) {
-      return 0;
-    }
-
-    return Math.round((this.documentsApprovedCount / this.requiredDocumentsCount) * 100);
-  }
-
-  get pendingRequiredDocumentsCount(): number {
-    return this.reviewDocuments.filter((document) =>
-      document.isRequired && (!document.isUploaded || document.reviewDecision !== 'approved')
-    ).length;
   }
 
   get documentGroups(): ComplianceDocumentGroup[] {
@@ -264,21 +466,21 @@ export class VendorComplianceComponent {
       {
         id: 'official',
         title: this.localize('المستندات الرسمية الأساسية', 'Official compliance documents'),
-        hint: this.localize('السجل التجاري والضريبة والرخصة هي ملفات القرار النهائي الأساسية.', 'Commercial, tax, and license files drive the final approval decision.'),
+        hint: this.localize('السجل التجاري والضريبة والرخصة هي أساس قرار الاعتماد النهائي.', 'Commercial, tax, and license files drive the final approval decision.'),
         accentClass: 'border-sky-200 bg-sky-50/70 text-sky-700',
         types: ['commercial', 'tax', 'license']
       },
       {
         id: 'owner',
         title: this.localize('بيانات المالك والهوية', 'Owner and identity data'),
-        hint: this.localize('مرجع تشغيلي للتحقق من هوية صاحب النشاط وربطها بالمستندات الرسمية.', 'Structured owner data used to validate identity against official records.'),
+        hint: this.localize('بيانات مرجعية للتأكد من هوية صاحب النشاط.', 'Reference data used to validate the business owner identity.'),
         accentClass: 'border-violet-200 bg-violet-50/70 text-violet-700',
         types: ['identity']
       },
       {
         id: 'financial',
-        title: this.localize('البيانات المالية والبنكية', 'Financial and banking data'),
-        hint: this.localize('معلومات التحويل البنكي المرجعية للحساب المستفيد والـ IBAN.', 'Reference banking details used for payout and beneficiary validation.'),
+        title: this.localize('البيانات البنكية', 'Banking data'),
+        hint: this.localize('مرجع التحويلات والحساب المستفيد المستخدم للتسوية.', 'Reference banking data used for payout and settlement.'),
         accentClass: 'border-emerald-200 bg-emerald-50/70 text-emerald-700',
         types: ['bank']
       }
@@ -295,16 +497,33 @@ export class VendorComplianceComponent {
       .filter((group) => group.documents.length > 0);
   }
 
+  getGroupApprovedCount(group: ComplianceDocumentGroup): number {
+    return group.documents.filter((document) => document.reviewDecision === 'approved').length;
+  }
+
+  getGroupOpenCount(group: ComplianceDocumentGroup): number {
+    return group.documents.filter((document) => document.reviewDecision === 'pending').length;
+  }
+
+  getGroupRejectedCount(group: ComplianceDocumentGroup): number {
+    return group.documents.filter((document) => document.reviewDecision === 'rejected').length;
+  }
+
   selectDocument(document: VendorReviewDocument): void {
     this.selectedDocumentId = document.id;
     this.documentRejectReason = document.rejectionReason ?? '';
   }
 
+  setWorkspaceWindow(window: ComplianceWorkspaceWindow): void {
+    this.activeWorkspaceWindow = window;
+  }
+
   onApproveDocument(document: VendorReviewDocument): void {
-    if (this.isSubmittingDocumentDecision || !document.isUploaded) {
+    if (this.isSubmittingDocumentDecision || !document.isUploaded || document.reviewDecision === 'approved') {
       return;
     }
 
+    this.vendorDetailFacade.clearMutationError();
     this.isSubmittingDocumentDecision = true;
     this.vendorDetailFacade.approveVendorDocumentRequest(document.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -320,15 +539,23 @@ export class VendorComplianceComponent {
   }
 
   onRejectDocument(document: VendorReviewDocument): void {
-    if (this.isSubmittingDocumentDecision || !document.isUploaded || !this.documentRejectReason.trim()) {
+    if (this.isSubmittingDocumentDecision || !document.isUploaded) {
       return;
     }
 
+    const reason = this.documentRejectReason.trim();
+    if (!reason) {
+      this.mutationError = this.localize('أدخل سببًا واضحًا قبل رفض المستند.', 'Enter a clear reason before rejecting the document.');
+      return;
+    }
+
+    this.vendorDetailFacade.clearMutationError();
     this.isSubmittingDocumentDecision = true;
-    this.vendorDetailFacade.rejectVendorDocumentRequest(document.id, this.documentRejectReason.trim())
+    this.vendorDetailFacade.rejectVendorDocumentRequest(document.id, reason)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          this.actionReason = reason;
           this.isSubmittingDocumentDecision = false;
         },
         error: () => {
@@ -346,63 +573,111 @@ export class VendorComplianceComponent {
   }
 
   onStartReview(): void {
-    if (!this.vendorDetail) {
+    if (!this.canStartReview) {
+      this.mutationError = this.operationsBlockedMessage;
       return;
     }
 
+    this.vendorDetailFacade.clearMutationError();
     this.vendorDetailFacade.startVendorReview();
   }
 
   onApproveVendor(): void {
-    if (!this.vendorDetail || !this.complianceReadyForFinalApproval || this.isVendorAlreadyApproved) {
+    if (!this.vendorDetail || !this.canApproveVendor) {
+      this.mutationError = this.operationsBlockedMessage;
       return;
     }
 
-    const isConfirmed = window.confirm(this.localize(
-      'تمت مراجعة جميع المستندات المطلوبة. هل تريد اعتماد التاجر الآن؟',
-      'All required documents are approved. Do you want to approve this vendor now?'
+    const confirmed = window.confirm(this.localize(
+      'تم إقفال جميع المستندات المطلوبة. هل تريد اعتماد التاجر نهائيًا الآن؟',
+      'All required documents are closed. Do you want to approve this vendor now?'
     ));
 
-    if (!isConfirmed) {
+    if (!confirmed) {
       return;
     }
 
+    this.vendorDetailFacade.clearMutationError();
     this.vendorDetailFacade.approveVendorReview(this.vendorDetail.commissionRate ?? 13);
   }
 
   onRequestDocuments(): void {
-    if (!this.vendorDetail) {
+    if (!this.canRequestDocuments) {
+      this.mutationError = this.operationsBlockedMessage;
       return;
     }
 
-    const note = this.selectedDocument?.reviewDecision === 'rejected' && this.documentRejectReason.trim()
-      ? `${this.localize('برجاء إعادة رفع', 'Please re-upload')} ${this.getDocumentLabel(this.selectedDocument)}. ${this.documentRejectReason.trim()}`
-      : undefined;
-
+    const note = this.buildRequestDocumentsNote();
+    this.vendorDetailFacade.clearMutationError();
     this.vendorDetailFacade.requestVendorDocuments(note);
   }
 
   onSuspendAccount(): void {
-    if (!this.vendorDetail) {
+    if (!this.canSuspendVendor) {
+      this.mutationError = this.operationsBlockedMessage;
       return;
     }
 
-    this.vendorDetailFacade.suspendVendorAccount();
+    const reason = this.actionReason.trim();
+    if (!reason) {
+      this.mutationError = this.localize('أدخل سببًا واضحًا قبل تعليق الحساب.', 'Enter a clear reason before suspending the account.');
+      return;
+    }
+
+    this.vendorDetailFacade.clearMutationError();
+    this.vendorDetailFacade.suspendVendorAccount(reason);
+  }
+
+  onReactivateAccount(): void {
+    if (!this.canReactivateVendor) {
+      this.mutationError = this.operationsBlockedMessage;
+      return;
+    }
+
+    const confirmed = window.confirm(this.localize(
+      'سيعود الحساب إلى حالة نشطة مباشرة. هل تريد متابعة إعادة التشغيل؟',
+      'The account will return directly to active status. Do you want to continue?'
+    ));
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.vendorDetailFacade.clearMutationError();
+    this.vendorDetailFacade.reactivateVendorAccount();
   }
 
   onRejectVendor(): void {
-    if (!this.vendorDetail) {
+    if (!this.canRejectVendor) {
+      this.mutationError = this.operationsBlockedMessage;
       return;
     }
 
-    this.vendorDetailFacade.rejectVendorReview();
+    const reason = this.actionReason.trim();
+    if (!reason) {
+      this.mutationError = this.localize('أدخل سبب رفض واضح قبل إغلاق الملف.', 'Enter a clear rejection reason before closing the file.');
+      return;
+    }
+
+    const confirmed = window.confirm(this.localize(
+      'سيتم رفض ملف التاجر قبل التشغيل ولن يستخدم هذا الإجراء كبديل للتعليق. هل تريد المتابعة؟',
+      'The vendor onboarding file will be rejected before activation. Do you want to continue?'
+    ));
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.vendorDetailFacade.clearMutationError();
+    this.vendorDetailFacade.rejectVendorReview(reason);
   }
 
   onAddNote(): void {
-    if (!this.vendorDetail || !this.newNote.trim()) {
+    if (!this.newNote.trim()) {
       return;
     }
 
+    this.vendorDetailFacade.clearMutationError();
     this.vendorDetailFacade.addVendorReviewNote(this.newNote.trim());
     this.newNote = '';
   }
@@ -452,6 +727,37 @@ export class VendorComplianceComponent {
     return this.localize('مرفوع', 'Uploaded');
   }
 
+  getDocumentQueueSummary(document: VendorReviewDocument): string {
+    if (!document.isUploaded) {
+      return this.localize('ناقص ويحتاج رفعًا من التاجر.', 'Missing and requires vendor upload.');
+    }
+
+    if (document.reviewDecision === 'rejected') {
+      return this.localize('مرفوض ويحتاج تصحيحًا قبل إعادة الرفع.', 'Rejected and needs correction before re-upload.');
+    }
+
+    if (document.reviewDecision === 'approved') {
+      return this.localize('أغلق بنجاح ضمن ملف الامتثال الحالي.', 'Closed successfully in the current compliance packet.');
+    }
+
+    return this.localize('مرفوع وينتظر قرار المراجع.', 'Uploaded and waiting for the reviewer decision.');
+  }
+
+  getDocumentMetaLabel(document: VendorReviewDocument): string {
+    switch (document.type) {
+      case 'commercial':
+        return this.localize('السجل التجاري', 'Commercial registration');
+      case 'tax':
+        return this.localize('الشهادة الضريبية', 'Tax certificate');
+      case 'license':
+        return this.localize('الرخصة التشغيلية', 'Operating license');
+      case 'identity':
+        return this.localize('بيانات الهوية', 'Identity data');
+      default:
+        return this.localize('بيانات بنكية', 'Banking data');
+    }
+  }
+
   getDocumentFileName(document: VendorReviewDocument | null): string {
     if (!document?.fileUrl) {
       return this.localize('لا يوجد ملف فعلي', 'No physical file');
@@ -465,35 +771,17 @@ export class VendorComplianceComponent {
     }
   }
 
-  getDocumentMetaLabel(document: VendorReviewDocument): string {
-    switch (document.type) {
-      case 'commercial':
-        return this.localize('ملف رسمي أساسي', 'Primary official file');
-      case 'tax':
-        return this.localize('شهادة ضريبية', 'Tax certificate');
-      case 'license':
-        return this.localize('رخصة تشغيل', 'Operating license');
-      case 'identity':
-        return this.localize('بيانات هوية', 'Identity data');
+  getPreviewKindLabel(document: VendorReviewDocument): string {
+    switch (document.previewKind) {
+      case 'pdf':
+        return 'PDF';
+      case 'image':
+        return this.localize('صورة', 'Image');
+      case 'structured':
+        return this.localize('بيانات تشغيلية', 'Structured data');
       default:
-        return this.localize('بيانات بنكية', 'Banking data');
+        return this.localize('غير متاح', 'Unavailable');
     }
-  }
-
-  getDocumentQueueSummary(document: VendorReviewDocument): string {
-    if (!document.isUploaded) {
-      return this.localize('ناقص ويحتاج رفع من التاجر', 'Missing and requires vendor upload');
-    }
-
-    if (document.reviewDecision === 'rejected') {
-      return this.localize('مرفوض ويحتاج تصحيح قبل إعادة الرفع', 'Rejected and needs correction before re-upload');
-    }
-
-    if (document.reviewDecision === 'approved') {
-      return this.localize('أغلق بنجاح ضمن ملف الامتثال', 'Closed successfully in the compliance packet');
-    }
-
-    return this.localize('مرفوع وينتظر قرار المراجع', 'Uploaded and waiting for reviewer decision');
   }
 
   getStructuredPreviewRows(document: VendorReviewDocument | null): PreviewRow[] {
@@ -513,7 +801,7 @@ export class VendorComplianceComponent {
       case 'commercial':
         return [
           { label: this.localize('رقم السجل', 'Commercial number'), value: vendor.commercialRegistrationNumber || '—', direction: 'ltr' },
-          { label: this.localize('المنشأة', 'Business name'), value: this.isRTL ? vendor.businessNameAr : vendor.businessNameEn },
+          { label: this.localize('اسم المنشأة', 'Business name'), value: this.isRTL ? vendor.businessNameAr : vendor.businessNameEn },
           { label: this.localize('نوع النشاط', 'Business type'), value: vendor.businessType || '—' },
           { label: this.localize('تاريخ الانتهاء', 'Expiry date'), value: vendor.commercialRegistrationExpiryDate || '—', direction: 'ltr' }
         ];
@@ -562,6 +850,23 @@ export class VendorComplianceComponent {
   trackByNote = (_: number, note: VendorReviewNote) => note.id;
   trackByRisk = (_: number, risk: VendorRiskIndicator) => risk.id;
 
+  private buildRequestDocumentsNote(): string {
+    const selectedDocumentLabel = this.selectedDocument ? this.getDocumentMetaLabel(this.selectedDocument) : this.localize('المستند المطلوب', 'the required document');
+    const reason = this.actionReason.trim() || this.documentRejectReason.trim();
+
+    if (reason) {
+      return this.localize(
+        `يرجى إعادة رفع ${selectedDocumentLabel} بعد معالجة الملاحظة التالية: ${reason}`,
+        `Please re-upload ${selectedDocumentLabel} after addressing this note: ${reason}`
+      );
+    }
+
+    return this.localize(
+      `يرجى استكمال أو إعادة رفع ${selectedDocumentLabel} مع التأكد من مطابقة البيانات الحالية.`,
+      `Please complete or re-upload ${selectedDocumentLabel} and make sure it matches the latest submitted data.`
+    );
+  }
+
   private getDocumentRank(document: VendorReviewDocument): number {
     if (document.reviewDecision === 'rejected') {
       return 0;
@@ -576,21 +881,6 @@ export class VendorComplianceComponent {
     }
 
     return 3;
-  }
-
-  private getDocumentLabel(document: VendorReviewDocument): string {
-    switch (document.type) {
-      case 'identity':
-        return this.localize('الهوية', 'identity document');
-      case 'commercial':
-        return this.localize('السجل التجاري', 'commercial registration');
-      case 'tax':
-        return this.localize('المستند الضريبي', 'tax certificate');
-      case 'bank':
-        return this.localize('المستند البنكي', 'bank account document');
-      default:
-        return this.localize('الرخصة', 'license');
-    }
   }
 
   private localize(ar: string, en: string): string {

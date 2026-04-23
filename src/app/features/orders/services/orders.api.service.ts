@@ -9,6 +9,7 @@ import {
   OrderCancellationForm,
   OrderCancellationSummary,
   OrderDetail,
+  OrderDispatchState,
   OrderDisputeForm,
   OrderFulfillmentStatus,
   OrderIssueFlagForm,
@@ -49,6 +50,8 @@ interface AdminOrderListItemResponse {
   status: OrderStatus;
   paymentStatus: OrderPaymentStatus;
   fulfillmentStatus: OrderFulfillmentStatus;
+  dispatchState?: OrderDispatchState;
+  dispatchReason?: string;
   paymentMethodLabel: string;
   lastUpdatedAtUtc: string;
   total: number;
@@ -74,6 +77,8 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
   transactionRef: string;
   paymentStatusNote: string;
   fulfillmentStatusNote: string;
+  dispatchState?: OrderDispatchState;
+  dispatchReason?: string;
   supportSummary: string;
   alertLabel: string;
   subtotal: number;
@@ -91,6 +96,7 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
   timeline: OrderTimelineItem[];
   activities: OrderActivity[];
   driverCandidates: DriverCandidate[];
+  candidateScoreBreakdown?: string[];
   cancellationSummary: OrderCancellationSummary | null;
 }
 
@@ -191,6 +197,13 @@ export class OrdersService {
     );
   }
 
+  recomputeDispatch(id: string): Observable<OrderDetail> {
+    return this.http.post<AdminOrderDetailResponse>(`${this.apiUrl}/${this.normalizeOrderId(id)}/dispatch/recompute`, {}).pipe(
+      map((response) => this.mapDetail(response)),
+      tap((order) => this.upsertCache(order))
+    );
+  }
+
   cancelOrder(id: string, form: OrderCancellationForm): Observable<OrderDetail> {
     return this.http.post<AdminOrderDetailResponse>(`${this.apiUrl}/${this.normalizeOrderId(id)}/cancel`, form).pipe(
       map((response) => this.mapDetail(response)),
@@ -253,6 +266,8 @@ export class OrdersService {
       status: item.status,
       paymentStatus: item.paymentStatus,
       fulfillmentStatus: item.fulfillmentStatus,
+      dispatchState: item.dispatchState,
+      dispatchReason: item.dispatchReason,
       paymentMethodLabel: item.paymentMethodLabel,
       workflowStage: this.deriveWorkflowStage(item.status, item.paymentStatus, item.fulfillmentStatus, item.hasActiveIssue, item.operationalCase),
       nextActionLabel: this.deriveNextAction(item.status, item.paymentStatus, item.fulfillmentStatus, item.operationalCase, item.cancellationReason),
@@ -285,6 +300,8 @@ export class OrdersService {
       transactionRef: item.transactionRef,
       paymentStatusNote: item.paymentStatusNote,
       fulfillmentStatusNote: item.fulfillmentStatusNote,
+      dispatchState: item.dispatchState,
+      dispatchReason: item.dispatchReason,
       supportSummary: item.supportSummary,
       alertLabel: item.alertLabel,
       subtotal: item.subtotal,
@@ -294,6 +311,7 @@ export class OrdersService {
       timeline: item.timeline,
       activities: item.activities,
       driverCandidates: item.driverCandidates,
+      candidateScoreBreakdown: item.candidateScoreBreakdown ?? [],
       cancellationSummary: item.cancellationSummary
     };
   }
@@ -315,6 +333,8 @@ export class OrdersService {
       transactionRef: item.displayId.replace('#', ''),
       paymentStatusNote: '',
       fulfillmentStatusNote: '',
+      dispatchState: item.dispatchState,
+      dispatchReason: item.dispatchReason,
       supportSummary: item.hasActiveIssue ? 'Order needs operational review.' : 'No active support case.',
       alertLabel: item.operationalCase?.title || (item.isLate ? 'Order is running behind SLA' : 'Order flow is healthy'),
       subtotal: item.total,
@@ -324,6 +344,7 @@ export class OrdersService {
       timeline: this.buildFallbackTimeline(item),
       activities: [],
       driverCandidates: [],
+      candidateScoreBreakdown: [],
       cancellationSummary: null
     };
   }

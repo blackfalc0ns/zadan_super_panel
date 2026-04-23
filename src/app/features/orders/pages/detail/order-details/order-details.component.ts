@@ -150,6 +150,13 @@ export class OrderDetailsComponent implements OnInit {
     return !paymentBlocked && this.canOpenIssueTools;
   }
 
+  get canRecomputeDispatch(): boolean {
+    const currentOrder = this.order();
+
+    return currentOrder?.fulfillmentStatus === 'READY_FOR_PICKUP'
+      || currentOrder?.fulfillmentStatus === 'DRIVER_ASSIGNED';
+  }
+
   get paymentInfoItems(): KeyValueGridItem[] {
     const currentOrder = this.order();
 
@@ -187,6 +194,12 @@ export class OrderDetailsComponent implements OnInit {
         valueTone: this.getFulfillmentStatusTone(currentOrder.fulfillmentStatus),
         translateValue: true
       },
+      ...(currentOrder.dispatchState
+        ? [{ label: 'Dispatch', value: currentOrder.dispatchState, valueDir: 'ltr' as const }]
+        : []),
+      ...(currentOrder.dispatchReason
+        ? [{ label: 'Dispatch note', value: currentOrder.dispatchReason }]
+        : []),
       { label: 'ORDERS.DETAIL.LAST_UPDATED', value: currentOrder.lastUpdatedAt },
       { label: 'ORDERS.DETAIL.SLA_LABEL', value: `${currentOrder.slaScore || 0}%`, valueDir: 'ltr', valueTone: currentOrder.isLate ? 'warning' : 'accent' }
     ];
@@ -409,6 +422,21 @@ export class OrderDetailsComponent implements OnInit {
         this.order.set(order);
         this.loadFinancialBreakdown(id);
         this.closeDriverAssignmentModal();
+      }
+    });
+  }
+
+  recomputeDispatch(): void {
+    const id = this.orderId();
+
+    if (!id) {
+      return;
+    }
+
+    this.ordersService.recomputeDispatch(id).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.loadFinancialBreakdown(id);
       }
     });
   }

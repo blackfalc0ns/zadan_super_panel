@@ -20,6 +20,15 @@ export type OrderFulfillmentStatus =
   | 'FAILED'
   | 'CANCELLED';
 
+export type OrderDispatchState =
+  | 'NOT_REQUIRED'
+  | 'PENDING'
+  | 'SEARCHING'
+  | 'ASSIGNED'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELLED';
+
 export type OrderQueueView = 'ALL' | 'ACTIVE' | 'LATE' | 'PAYMENT_ISSUES' | 'REFUNDS';
 export type OrderWorkflowStage = 'PAYMENT_REVIEW' | 'PREPARATION' | 'DISPATCH' | 'REFUND_REVIEW' | 'ISSUE_REVIEW' | 'READY_TO_CLOSE' | 'CANCELLED' | 'CLOSED';
 export type OrderResolutionState = 'ACTION_REQUIRED' | 'MONITORING' | 'RESOLVED';
@@ -101,6 +110,8 @@ export interface OrderListItem {
   status: OrderStatus;
   paymentStatus: OrderPaymentStatus;
   fulfillmentStatus: OrderFulfillmentStatus;
+  dispatchState?: OrderDispatchState;
+  dispatchReason?: string;
   paymentMethodLabel: string;
   workflowStage: OrderWorkflowStage;
   nextActionLabel: string;
@@ -137,6 +148,7 @@ export interface OrderDetail extends OrderListItem {
   timeline: OrderTimelineItem[];
   activities: OrderActivity[];
   driverCandidates: DriverCandidate[];
+  candidateScoreBreakdown?: string[];
   cancellationSummary: OrderCancellationSummary | null;
 }
 

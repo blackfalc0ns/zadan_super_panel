@@ -7,6 +7,7 @@ import {
   DriverKPIs,
   DriverPerformance,
   DriverStatus,
+  DriverVehicleType,
   VerificationStatus
 } from '@drivers/models/drivers.domain.models';
 import { DriverService } from '@drivers/services/drivers.api.service';
@@ -47,11 +48,13 @@ export class DriversListComponent implements OnInit {
     { value: DriverPerformance.Low, label: 'DRIVERS.PERFORMANCE.LOW' }
   ];
 
-  readonly vehicleTypeOptions: SelectOption<string>[] = [
-    { value: 'سيارة', label: 'DRIVERS.VEHICLES.CAR' },
-    { value: 'دراجة', label: 'DRIVERS.VEHICLES.BIKE' },
-    { value: 'سكوتر', label: 'DRIVERS.VEHICLES.SCOOTER' },
-    { value: 'فان', label: 'DRIVERS.VEHICLES.VAN' }
+  readonly vehicleTypeOptions: SelectOption<DriverVehicleType>[] = [
+    { value: DriverVehicleType.Car, label: 'DRIVERS.VEHICLES.CAR' },
+    { value: DriverVehicleType.Motorcycle, label: 'DRIVERS.VEHICLES.BIKE' },
+    { value: DriverVehicleType.Scooter, label: 'DRIVERS.VEHICLES.SCOOTER' },
+    { value: DriverVehicleType.Van, label: 'DRIVERS.VEHICLES.VAN' },
+    { value: DriverVehicleType.Bicycle, label: 'DRIVERS.VEHICLES.BICYCLE' },
+    { value: DriverVehicleType.Truck, label: 'DRIVERS.VEHICLES.TRUCK' }
   ];
 
   drivers: Driver[] = [];

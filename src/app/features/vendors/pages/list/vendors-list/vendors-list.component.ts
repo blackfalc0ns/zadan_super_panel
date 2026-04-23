@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VendorService } from '@vendors/services/vendor.api.service';
 import { 
@@ -167,7 +167,7 @@ export class VendorsListComponent implements OnInit {
 
   tableActions: TableAction[] = [
     { id: 'view', label: 'VENDORS.ACTIONS.VIEW', icon: 'visibility' },
-    { id: 'approve', label: 'VENDORS.ACTIONS.APPROVE', icon: 'check_circle', condition: (item) => item['status'] === 'Pending' },
+    { id: 'approve', label: 'VENDORS.ACTIONS.APPROVE', icon: 'check_circle', condition: (item) => this.canShowApproveAction(item as unknown as Vendor) },
     { id: 'suspend', label: 'VENDORS.ACTIONS.SUSPEND', icon: 'block', condition: (item) => item['status'] === 'Active' }
   ];
 
@@ -483,13 +483,15 @@ export class VendorsListComponent implements OnInit {
   onBulkAction(event: { action: BulkAction, items: Vendor[] }) {
     switch (event.action.id) {
       case 'approve':
-        event.items.forEach((vendor) => this.handleVendorMutation(this.vendorService.approveVendorReview(vendor.id, vendor.commissionRate ?? 13)));
+        event.items.forEach((vendor) => this.quickApprove(vendor, new Event('click')));
         break;
       case 'documents':
         event.items.forEach((vendor) => this.handleVendorMutation(this.vendorService.requestVendorDocuments(vendor.id)));
         break;
       case 'block':
-        event.items.forEach((vendor) => this.handleVendorMutation(this.vendorService.suspendVendorAccount(vendor.id)));
+        event.items
+          .filter((vendor) => vendor.status === VendorStatus.Active)
+          .forEach((vendor) => this.handleVendorMutation(this.vendorService.suspendVendorAccount(vendor.id)));
         break;
     }
   }
@@ -507,11 +509,26 @@ export class VendorsListComponent implements OnInit {
 
   quickApprove(vendor: Vendor, event: Event) {
     event.stopPropagation();
-    this.handleVendorMutation(this.vendorService.approveVendorReview(vendor.id, vendor.commissionRate ?? 13));
+    if (!this.canShowApproveAction(vendor)) {
+      this.showApprovalBlockedMessage();
+      return;
+    }
+
+    this.handleVendorMutation(
+      this.vendorService.getVendorById(vendor.id).pipe(
+        switchMap((detail) => this.canApproveVendorFromDetail(detail)
+          ? this.vendorService.approveVendorReview(vendor.id, vendor.commissionRate ?? 13)
+          : this.blockApproveAttempt())
+      )
+    );
   }
 
   quickSuspend(vendor: Vendor, event: Event) {
     event.stopPropagation();
+    if (vendor.status !== VendorStatus.Active) {
+      return;
+    }
+
     this.handleVendorMutation(this.vendorService.suspendVendorAccount(vendor.id));
   }
 
@@ -597,6 +614,8 @@ export class VendorsListComponent implements OnInit {
   private handleVendorMutation(request$: Observable<unknown>) {
     request$.subscribe({
       next: () => {
+        this.showError = false;
+        this.errorMessage = '';
         this.loadVendors();
         if (this.showPreviewDrawer && this.previewVendor?.id) {
           this.loadPreviewDetail(this.previewVendor.id);
@@ -604,8 +623,41 @@ export class VendorsListComponent implements OnInit {
       },
       error: (error) => {
         console.error('Vendor action failed', error);
+        this.showError = true;
+        this.errorMessage = error?.error?.message || this.translate.instant('VENDORS.LOAD_ERROR');
       }
     });
+  }
+
+  private canShowApproveAction(vendor: Vendor): boolean {
+    return vendor.status === 'Pending'
+      && !vendor.isLoginLocked
+      && !vendor.archivedAtUtc
+      && !vendor.suspendedAtUtc;
+  }
+
+  private canApproveVendorFromDetail(vendor: VendorDetail): boolean {
+    return vendor.status === VendorStatus.Pending
+      && !!vendor.readyForFinalApproval
+      && !vendor.approvedAtUtc
+      && !vendor.isLoginLocked
+      && !vendor.archivedAtUtc;
+  }
+
+  private blockApproveAttempt(): Observable<never> {
+    this.showApprovalBlockedMessage();
+    return of(null).pipe(
+      switchMap(() => {
+        throw new Error(this.errorMessage);
+      })
+    );
+  }
+
+  private showApprovalBlockedMessage(): void {
+    this.showError = true;
+    this.errorMessage = this.translate.currentLang === 'ar'
+      ? 'لا يمكن اعتماد التاجر الآن. أكمل مراجعة المستندات المطلوبة أولًا أو افتح تبويب الامتثال.'
+      : 'This vendor cannot be approved yet. Complete the required compliance review first or open the compliance tab.';
   }
 
   private refreshPreviewVendor(vendorId: string | null = this.previewVendor?.id ?? null): void {

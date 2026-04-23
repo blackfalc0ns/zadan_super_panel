@@ -830,7 +830,9 @@
             "CAR": "Car",
             "BIKE": "Bike",
             "SCOOTER": "Scooter",
-            "VAN": "Van"
+            "VAN": "Van",
+            "BICYCLE": "Bicycle",
+            "TRUCK": "Truck"
         },
         "ISSUES": {
             "CLEAR": "Clear",

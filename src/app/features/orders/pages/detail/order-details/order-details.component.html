@@ -449,9 +449,14 @@
               <span class="font-black font-mono text-slate-800" dir="ltr">{{ currentOrder.driverPlateNumber }}</span>
             </div>
           </div>
-          <button class="w-full py-2.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl text-[11px] font-black hover:bg-amber-100 transition-colors" type="button" (click)="openDriverAssignmentModal()">
-            {{ 'ORDERS.DETAIL.CHANGE_DRIVER' | translate }}
-          </button>
+          <div class="space-y-2">
+            <button class="w-full py-2.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl text-[11px] font-black hover:bg-amber-100 transition-colors" type="button" (click)="openDriverAssignmentModal()">
+              {{ 'ORDERS.DETAIL.CHANGE_DRIVER' | translate }}
+            </button>
+            <button *ngIf="canRecomputeDispatch" class="w-full py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-[11px] font-black hover:bg-slate-50 transition-colors" type="button" (click)="recomputeDispatch()">
+              Recompute Dispatch
+            </button>
+          </div>
         </section>
 
         <section class="bg-red-50/50 backdrop-blur-xl border border-red-100 rounded-[1.5rem] p-6 shadow-sm">
