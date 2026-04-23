@@ -1,7 +1,8 @@
-<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto max-w-[1520px] space-y-5 px-4 py-4 md:px-6 lg:px-7">
+<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto max-w-[1520px] space-y-6 px-4 py-6 md:px-6 lg:px-8">
   <div
     *ngIf="mutationError"
-    class="rounded-[1.2rem] border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700 shadow-sm">
+    class="animate-in fade-in slide-in-from-top-2 rounded-[1rem] border border-rose-200 bg-rose-50 px-5 py-4 text-[13px] font-bold text-rose-700 shadow-sm flex items-center gap-3">
+    <span class="material-symbols-outlined text-[20px]">error</span>
     {{ mutationError }}
   </div>
 
@@ -36,172 +37,145 @@
     (createSettlement)="onSettlementCreated($event)">
   </app-create-settlement-modal>
 
-  <section class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5">
-    <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-      <div class="min-w-0 flex-1">
-        <div class="flex items-start gap-3">
-          <div class="icon-box relative flex h-[3.1rem] w-[3.1rem] shrink-0 items-center justify-center rounded-[1.2rem] border border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 text-primary shadow-inner">
-            <span class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
-            <div class="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-400 shadow-sm"></div>
-          </div>
-
-          <div class="min-w-0 flex-1">
-            <div class="flex flex-wrap items-center gap-2">
-              <h2 class="text-lg font-black tracking-tight text-slate-900">
-                {{ isRTL ? 'المشهد المالي التشغيلي' : 'Operational finance workspace' }}
-              </h2>
-              <span class="inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-full border border-primary/15 bg-gradient-to-r from-primary/10 via-white to-primary/5 px-3.5 py-1.5 text-[11px] font-black text-primary shadow-sm shadow-primary/5">
-                <span class="h-2 w-2 rounded-full bg-primary/70"></span>
-                <span>{{ getLifecycleModeLabel(selectedLifecycleMode) }}</span>
-              </span>
-            </div>
-
-            <p class="mt-1 text-sm font-semibold leading-6 text-slate-500">
-              {{ isRTL
-                ? 'إدارة دورة حياة أموال التاجر من الطلب وحتى التحويل البنكي، مع فصل واضح بين التحويل المباشر والتسوية المجمعة.'
-                : 'Manage the vendor money lifecycle from delivered orders to bank payout with a clear split between direct and batch settlement flows.' }}
-            </p>
-          </div>
+  <!-- Main Header -->
+  <section class="group relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:shadow-md">
+    <div class="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-primary/5 transition-transform duration-700 group-hover:scale-[2] pointer-events-none"></div>
+    
+    <div class="relative z-10 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+      <div class="flex items-start gap-4">
+        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[1rem] border border-primary/10 bg-primary/5 text-primary shadow-inner backdrop-blur-sm transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3">
+          <span class="material-symbols-outlined text-[24px]">account_balance_wallet</span>
         </div>
 
-      </div>
-
-      <div class="hidden">
-        <div class="rounded-[1.5rem] border border-slate-200/80 bg-white/90 p-4 shadow-sm">
-          <div class="space-y-3">
-            <div>
-              <p class="text-[10px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'إعداد الدورة المالية' : 'Finance lifecycle control' }}</p>
-              <h3 class="mt-1 text-sm font-black text-slate-950">{{ isRTL ? 'وضع التسوية الحالي' : 'Current settlement mode' }}</h3>
-            </div>
-
-            <app-searchable-select
-              [(ngModel)]="selectedLifecycleMode"
-              [options]="lifecycleOptions"
-              [searchable]="false"
-              [allowClear]="false"
-              [placeholder]="isRTL ? 'اختر دورة الحياة المالية' : 'Select finance lifecycle'"
-              (selectionChange)="onLifecycleModeChange($event)">
-            </app-searchable-select>
-
-            <div *ngIf="!hasPrimaryBankAccount" class="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-[11px] font-bold text-amber-700">
-              {{ isRTL ? 'لا يمكن تفعيل التحويل المباشر لكل طلب قبل وجود حساب بنكي أساسي صالح.' : 'Direct per-order payout requires a valid primary bank account first.' }}
-            </div>
-
-            <div *ngIf="modeSuccess" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[11px] font-bold text-emerald-700">
-              {{ modeSuccess }}
-            </div>
-
-            <div *ngIf="modeError" class="rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-[11px] font-bold text-rose-700">
-              {{ modeError }}
-            </div>
-
-            <app-button
-              variant="primary"
-              size="sm"
-              [isLoading]="isSavingMode"
-              [disabled]="isSavingMode"
-              [customClass]="'w-full justify-center'"
-              (btnClick)="saveLifecycleMode()">
-              {{ isRTL ? 'حفظ دورة الحياة المالية' : 'Save finance lifecycle' }}
-            </app-button>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-3">
+            <h1 class="text-xl font-black tracking-tight text-slate-900">
+              {{ isRTL ? 'المشهد المالي التشغيلي' : 'Operational finance workspace' }}
+            </h1>
+            <span class="inline-flex h-7 items-center gap-1.5 rounded-full border border-primary/15 bg-gradient-to-r from-primary/10 to-primary/5 px-3 text-[11px] font-black text-primary shadow-sm">
+              <span class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+              {{ getLifecycleModeLabel(selectedLifecycleMode) }}
+            </span>
           </div>
+
+          <p class="mt-1 text-[13px] font-medium leading-relaxed text-slate-500 max-w-2xl">
+            {{ isRTL
+              ? 'إدارة دورة حياة أموال التاجر من الطلب وحتى التحويل البنكي، مع فصل واضح بين التحويل المباشر والتسوية المجمعة.'
+              : 'Manage the vendor money lifecycle from delivered orders to bank payout with a clear split between direct and batch settlement flows.' }}
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <section *ngIf="isLoading" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
-    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-      <span class="material-symbols-outlined animate-pulse text-[22px]">sync</span>
+  <!-- Loading State -->
+  <section *ngIf="isLoading" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-slate-200/60 bg-white/80 py-16 text-center backdrop-blur-md shadow-sm">
+    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary/10 text-primary shadow-inner mb-4">
+      <span class="material-symbols-outlined animate-spin text-[32px]">sync</span>
     </div>
-    <p class="mt-3 text-sm font-black text-slate-900">{{ isRTL ? 'جاري تحميل المشهد المالي...' : 'Loading finance workspace...' }}</p>
+    <p class="text-[14px] font-black text-slate-900">{{ isRTL ? 'جاري تحميل المشهد المالي...' : 'Loading finance workspace...' }}</p>
   </section>
 
-  <section *ngIf="!isLoading && hasError" class="premium-glass rounded-[1.8rem] border-rose-200/60 bg-gradient-to-b from-rose-50/50 to-white/50 px-5 py-14 text-center">
-    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
-      <span class="material-symbols-outlined text-[22px]">warning</span>
+  <!-- Error State -->
+  <section *ngIf="!isLoading && hasError" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-rose-200 bg-rose-50/50 py-16 text-center shadow-sm">
+    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-rose-100 text-rose-600 shadow-inner mb-4">
+      <span class="material-symbols-outlined text-[32px]">warning</span>
     </div>
-    <p class="mt-3 text-sm font-black text-slate-900">{{ isRTL ? 'تعذر تحميل البيانات المالية' : 'Unable to load finance data' }}</p>
+    <p class="text-[14px] font-black text-rose-900">{{ isRTL ? 'تعذر تحميل البيانات المالية' : 'Unable to load finance data' }}</p>
   </section>
 
   <ng-container *ngIf="!isLoading && !hasError">
-    <section class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
+    <!-- Summary Cards -->
+    <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
       <article
         *ngFor="let card of summaryCards"
-        class="premium-glass kpi-card group rounded-[1.3rem] px-4 py-3.5">
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0">
-            <p class="text-[10px] font-black tracking-[0.08em] text-slate-400">{{ card.label }}</p>
-            <p class="mt-2 text-sm font-black text-slate-950">{{ card.value }}</p>
-            <p class="mt-2 text-[11px] font-medium leading-5 text-slate-500">{{ card.hint }}</p>
-          </div>
+        class="group relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:-translate-y-1 hover:shadow-md">
+        
+        <div class="absolute -right-4 -top-4 h-20 w-20 rounded-full opacity-30 transition-transform duration-500 group-hover:scale-150"
+             [ngClass]="{
+               'bg-primary/20': card.variant === 'primary',
+               'bg-emerald-100': card.variant === 'success',
+               'bg-amber-100': card.variant === 'warning',
+               'bg-rose-100': card.variant === 'danger'
+             }"></div>
+
+        <div class="relative z-10 flex items-start justify-between gap-3 mb-2">
+          <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ card.label }}</p>
           <app-status-pill [label]="''" [variant]="card.variant" [showDot]="true" size="sm"></app-status-pill>
         </div>
 
+        <div class="relative z-10">
+          <p class="text-2xl font-black tracking-tight text-slate-900">{{ card.value }}</p>
+          <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-500">{{ card.hint }}</p>
+        </div>
       </article>
     </section>
 
-    <section>
-      <div class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <p class="text-[10px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'إعداد الدورة المالية' : 'Finance lifecycle control' }}</p>
-            <h3 class="mt-1 text-sm font-black text-slate-950">{{ isRTL ? 'وضع التسوية الحالي' : 'Current settlement mode' }}</h3>
-            <p class="mt-1 text-xs font-medium leading-5 text-slate-500">
-              {{ isRTL ? 'اختر طريقة إدارة أموال التاجر قبل مراجعة دورة الحياة المالية والتدفق التشغيلي.' : 'Choose how the vendor funds are managed before reviewing the lifecycle flow and operations.' }}
-            </p>
+    <!-- Lifecycle Control Setting -->
+    <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between border-b border-slate-100 pb-5 mb-5">
+        <div>
+          <p class="text-[10px] font-black tracking-[0.1em] text-primary uppercase mb-1">{{ isRTL ? 'إعداد الدورة المالية' : 'Finance lifecycle control' }}</p>
+          <h2 class="text-lg font-black text-slate-900">{{ isRTL ? 'وضع التسوية الحالي' : 'Current settlement mode' }}</h2>
+          <p class="mt-1 text-[13px] font-medium text-slate-500 max-w-xl">
+            {{ isRTL ? 'اختر طريقة إدارة أموال التاجر، سيؤثر هذا الاختيار على آلية عمل التحويلات وتسوياتها.' : 'Choose how vendor funds are managed; this affects payout and settlement behavior.' }}
+          </p>
+        </div>
+
+        <div class="w-full lg:w-[28rem] space-y-3">
+          <app-searchable-select
+            [(ngModel)]="selectedLifecycleMode"
+            [options]="lifecycleOptions"
+            [searchable]="false"
+            [allowClear]="false"
+            [placeholder]="isRTL ? 'اختر دورة الحياة المالية' : 'Select finance lifecycle'"
+            (selectionChange)="onLifecycleModeChange($event)">
+          </app-searchable-select>
+
+          <div *ngIf="!hasPrimaryBankAccount" class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-bold text-amber-700 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">warning</span>
+            {{ isRTL ? 'لا يمكن تفعيل التحويل المباشر قبل إضافة حساب بنكي أساسي.' : 'Direct payout requires a valid primary bank account.' }}
           </div>
 
-          <div class="w-full lg:w-[26rem]">
-            <div class="space-y-3">
-              <app-searchable-select
-                [(ngModel)]="selectedLifecycleMode"
-                [options]="lifecycleOptions"
-                [searchable]="false"
-                [allowClear]="false"
-                [placeholder]="isRTL ? 'اختر دورة الحياة المالية' : 'Select finance lifecycle'"
-                (selectionChange)="onLifecycleModeChange($event)">
-              </app-searchable-select>
-
-              <div *ngIf="!hasPrimaryBankAccount" class="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-[11px] font-bold text-amber-700">
-                {{ isRTL ? 'لا يمكن تفعيل التحويل المباشر لكل طلب قبل وجود حساب بنكي أساسي صالح.' : 'Direct per-order payout requires a valid primary bank account first.' }}
-              </div>
-
-              <div *ngIf="modeSuccess" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[11px] font-bold text-emerald-700">
-                {{ modeSuccess }}
-              </div>
-
-              <div *ngIf="modeError" class="rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-[11px] font-bold text-rose-700">
-                {{ modeError }}
-              </div>
-
-              <app-button
-                variant="primary"
-                size="sm"
-                [isLoading]="isSavingMode"
-                [disabled]="isSavingMode"
-                [customClass]="'w-full justify-center'"
-                (btnClick)="saveLifecycleMode()">
-                {{ isRTL ? 'حفظ الدورة المالية' : 'Save finance lifecycle' }}
-              </app-button>
-            </div>
+          <div *ngIf="modeSuccess" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[12px] font-bold text-emerald-700 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            {{ modeSuccess }}
           </div>
+
+          <div *ngIf="modeError" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">error</span>
+            {{ modeError }}
+          </div>
+
+          <button
+            (click)="saveLifecycleMode()"
+            [disabled]="isSavingMode"
+            class="group flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-[13px] font-black text-white transition-all hover:bg-slate-800 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110" [class.animate-spin]="isSavingMode">{{ isSavingMode ? 'progress_activity' : 'save' }}</span>
+            <span>{{ isRTL ? 'حفظ الدورة المالية' : 'Save finance lifecycle' }}</span>
+          </button>
         </div>
       </div>
     </section>
 
-    <section class="grid items-start gap-5 xl:grid-cols-12">
-      <article class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5 xl:col-span-7">
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <h3 class="text-sm font-black text-slate-950">{{ isRTL ? 'دورة الحياة المالية' : 'Financial lifecycle flow' }}</h3>
-            <p class="mt-1 text-xs font-medium text-slate-500">
-              {{ isDirectMode
-                ? (isRTL ? 'هذا التاجر يُحوَّل له المبلغ بعد تسليم كل طلب مباشرة.' : 'This vendor receives a direct payout after each delivered order.')
-                : (isRTL ? 'هذا التاجر يعمل على دورة تسوية مجمعة ويظل إنشاء التسوية اليدوي هو المسار الأساسي.' : 'This vendor is on a grouped settlement cycle where manual settlement remains the primary flow.') }}
-            </p>
+    <!-- Flow & Quick Ops Layout -->
+    <section class="grid items-start gap-6 xl:grid-cols-12">
+      <!-- Left Column: Lifecycle Flow -->
+      <article class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md xl:col-span-7">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-100 text-slate-600">
+              <span class="material-symbols-outlined text-[20px]">account_tree</span>
+            </div>
+            <div>
+              <h2 class="text-base font-black text-slate-900">{{ isRTL ? 'دورة الحياة المالية' : 'Financial lifecycle flow' }}</h2>
+              <p class="text-[12px] font-medium text-slate-500">
+                {{ isDirectMode
+                  ? (isRTL ? 'التحويل المباشر مفعل.' : 'Direct mode is active.')
+                  : (isRTL ? 'التسوية المجمعة مفعلة.' : 'Batch mode is active.') }}
+              </p>
+            </div>
           </div>
-
           <app-status-pill
             [label]="isDirectMode ? (isRTL ? 'تشغيل مباشر' : 'Direct mode') : (isRTL ? 'تشغيل مجمع' : 'Batch mode')"
             [variant]="isDirectMode ? 'success' : 'processing'"
@@ -210,301 +184,103 @@
           </app-status-pill>
         </div>
 
-        <div class="mt-4 grid gap-3">
-          <div class="hidden">
-            <span class="material-symbols-outlined text-primary">shopping_cart</span>
+        <div class="grid gap-3">
+          <!-- Step 1 -->
+          <div class="flex items-start gap-4 rounded-[1.25rem] border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-slate-200">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-primary shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">local_shipping</span>
+            </div>
             <div>
-              <p class="text-[11px] font-black text-slate-900">{{ isRTL ? 'إنشاء الطلب' : 'Order placed' }}</p>
-              <p class="mt-1 text-[11px] font-medium text-slate-500">{{ isRTL ? 'لا يتم تحويل أي مبلغ في هذه المرحلة.' : 'No payout is created at this stage.' }}</p>
+              <p class="text-[13px] font-black text-slate-900">{{ isRTL ? 'تسليم الطلب' : 'Order delivered' }}</p>
+              <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-500">{{ isRTL ? 'يصبح الطلب مؤهلًا للدخول في الدورة المالية.' : 'The order becomes eligible for the finance flow.' }}</p>
             </div>
           </div>
 
-          <div class="flex items-start gap-3 rounded-[1rem] border border-slate-200/80 bg-white/90 px-3 py-3">
-            <span class="material-symbols-outlined text-primary">local_shipping</span>
+          <!-- Step 2 -->
+          <div class="flex items-start gap-4 rounded-[1.25rem] border p-4 transition-all hover:shadow-sm"
+               [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/50' : 'border-slate-100 bg-slate-50'">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white shadow-sm"
+                 [ngClass]="isDirectMode ? 'text-emerald-600' : 'text-primary'">
+              <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+            </div>
             <div>
-              <p class="text-[11px] font-black text-slate-900">{{ isRTL ? 'تسليم الطلب' : 'Order delivered' }}</p>
-              <p class="mt-1 text-[11px] font-medium text-slate-500">{{ isRTL ? 'يصبح الطلب مؤهلًا للدخول في الدورة المالية.' : 'The order becomes eligible for the finance flow.' }}</p>
+              <p class="text-[13px] font-black text-slate-900">{{ isDirectMode ? (isRTL ? 'تسوية مباشرة لكل طلب' : 'Per-order settlement') : (isRTL ? 'تجميع الرصيد في دورة السداد' : 'Accumulate into payout cycle') }}</p>
+              <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-500">{{ isDirectMode ? (isRTL ? 'يتم إنشاء settlement مرتبط بهذا الطلب وحده.' : 'A dedicated settlement is created for that delivered order.') : (isRTL ? 'تظل الطلبات المسلمة بانتظار إنشاء تسوية مجمعة.' : 'Delivered orders remain queued for the grouped settlement cycle.') }}</p>
             </div>
           </div>
 
-          <div class="flex items-start gap-3 rounded-[1rem] border px-3 py-3"
-               [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/70' : 'border-slate-200/80 bg-white/90'">
-            <span class="material-symbols-outlined" [ngClass]="isDirectMode ? 'text-emerald-600' : 'text-primary'">account_balance_wallet</span>
-            <div>
-              <p class="text-[11px] font-black text-slate-900">{{ isDirectMode ? (isRTL ? 'تسوية مباشرة لكل طلب' : 'Per-order settlement') : (isRTL ? 'تجميع الرصيد في دورة السداد' : 'Accumulate into payout cycle') }}</p>
-              <p class="mt-1 text-[11px] font-medium text-slate-500">{{ isDirectMode ? (isRTL ? 'يتم إنشاء settlement مرتبط بهذا الطلب وحده.' : 'A dedicated settlement is created for that delivered order.') : (isRTL ? 'تظل الطلبات المسلمة بانتظار إنشاء تسوية مجمعة.' : 'Delivered orders remain queued for the grouped settlement cycle.') }}</p>
+          <!-- Step 3 -->
+          <div class="flex items-start gap-4 rounded-[1.25rem] border p-4 transition-all hover:shadow-sm"
+               [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/50' : 'border-slate-100 bg-slate-50'">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white shadow-sm"
+                 [ngClass]="isDirectMode ? 'text-emerald-600' : 'text-primary'">
+              <span class="material-symbols-outlined text-[20px]">payments</span>
             </div>
-          </div>
-
-          <div class="flex items-start gap-3 rounded-[1rem] border px-3 py-3"
-               [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/70' : 'border-slate-200/80 bg-white/90'">
-            <span class="material-symbols-outlined" [ngClass]="isDirectMode ? 'text-emerald-600' : 'text-primary'">payments</span>
             <div>
-              <p class="text-[11px] font-black text-slate-900">{{ isDirectMode ? (isRTL ? 'إصدار payout مباشر' : 'Issue direct payout') : (isRTL ? 'تحويل بعد إنشاء التسوية' : 'Transfer after settlement creation') }}</p>
-              <p class="mt-1 text-[11px] font-medium text-slate-500">{{ isDirectMode ? (isRTL ? 'يتم استخدام الحساب البنكي الأساسي مباشرة بعد إنشاء التسوية.' : 'The primary bank account is used immediately after the settlement is created.') : (isRTL ? 'التحويل البنكي يتبع دورة التسوية المجمعة الحالية.' : 'The bank transfer follows the grouped settlement cycle.') }}</p>
+              <p class="text-[13px] font-black text-slate-900">{{ isDirectMode ? (isRTL ? 'إصدار payout مباشر' : 'Issue direct payout') : (isRTL ? 'تحويل بعد إنشاء التسوية' : 'Transfer after settlement creation') }}</p>
+              <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-500">{{ isDirectMode ? (isRTL ? 'يتم استخدام الحساب البنكي الأساسي مباشرة بعد إنشاء التسوية.' : 'The primary bank account is used immediately after the settlement is created.') : (isRTL ? 'التحويل البنكي يتبع دورة التسوية المجمعة الحالية.' : 'The bank transfer follows the grouped settlement cycle.') }}</p>
             </div>
           </div>
         </div>
       </article>
 
-      <aside class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5 xl:col-span-5">
-        <div class="space-y-4">
-          <div class="flex items-start justify-between gap-3">
+      <!-- Right Column: Quick Ops Desk -->
+      <aside class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md xl:col-span-5 flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-amber-50 text-amber-500">
+              <span class="material-symbols-outlined text-[20px]">flash_on</span>
+            </div>
             <div>
-              <h3 class="text-sm font-black text-slate-950">{{ isRTL ? 'لوحة التشغيل السريعة' : 'Quick operations desk' }}</h3>
-              <p class="mt-1 text-xs font-medium leading-5 text-slate-500">
-                {{ isRTL
-                  ? 'نظرة مركزة على الحساب البنكي، آخر تحويل، والحالات التي تحتاج حركة قبل النزول إلى تفاصيل الدفعات.'
-                  : 'A focused snapshot of the bank account, latest payout activity, and cases that need action before reviewing detailed payouts.' }}
-              </p>
-            </div>
-
-            <app-status-pill
-              [label]="getLifecycleModeLabel(selectedLifecycleMode)"
-              [variant]="getLifecycleBadgeVariant(selectedLifecycleMode)"
-              [showDot]="true"
-              size="sm">
-            </app-status-pill>
-          </div>
-
-          <div class="flex flex-wrap gap-2">
-            <app-button
-              variant="outline"
-              size="sm"
-              [customClass]="'min-w-[9rem] justify-center rounded-full'"
-              (btnClick)="showPayoutsReviewModal = true">
-              {{ isRTL ? 'مراجعة التحويلات' : 'Review payouts' }}
-            </app-button>
-
-            <app-button
-              *ngIf="!isDirectMode"
-              variant="primary"
-              size="sm"
-              [customClass]="'min-w-[9rem] justify-center rounded-full'"
-              (btnClick)="onCreateSettlement()">
-              {{ isRTL ? 'إنشاء تسوية' : 'Create settlement' }}
-            </app-button>
-          </div>
-
-          <div class="grid gap-3 sm:grid-cols-2">
-            <div class="rounded-[1.35rem] border border-slate-200/80 bg-white/90 px-4 py-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ isRTL ? 'الحساب البنكي الأساسي' : 'Primary bank account' }}</p>
-              <p class="mt-2 text-sm font-black text-slate-950">{{ vendorDetail?.primaryBankAccount?.bankName || '—' }}</p>
-              <p class="mt-1 text-[11px] font-medium text-slate-500">{{ vendorDetail?.primaryBankAccount?.accountHolderName || vendorDetail?.ownerName || vendorName }}</p>
-            </div>
-
-            <div class="rounded-[1.35rem] border border-slate-200/80 bg-white/90 px-4 py-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ isRTL ? 'آخر تحويل مباشر' : 'Latest direct payout' }}</p>
-              <p class="mt-2 text-sm font-black text-slate-950">{{ latestDirectPayout ? formatDate(latestDirectPayout.processedAtUtc || latestDirectPayout.createdAtUtc) : '—' }}</p>
-              <p class="mt-1 text-[11px] font-medium text-slate-500">{{ latestDirectPayout?.payoutNumber || (isRTL ? 'لا يوجد تحويل مكتمل بعد' : 'No completed payout yet') }}</p>
-            </div>
-
-            <div class="grid gap-3 sm:grid-cols-2">
-              <div class="rounded-[1.35rem] border border-emerald-200 bg-emerald-50/80 px-4 py-3">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-600">{{ isRTL ? 'رصيد جاهز للتحويل' : 'Available transfer balance' }}</p>
-                <p class="mt-2 text-sm font-black text-emerald-700">{{ formatCurrency(availableBalance) }}</p>
-              </div>
-
-              <div class="rounded-[1.35rem] border border-amber-200 bg-amber-50/80 px-4 py-3">
-                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-amber-600">{{ isRTL ? 'حالات تنتظر إجراء' : 'Cases awaiting action' }}</p>
-                <p class="mt-2 text-sm font-black text-amber-700">{{ formatNumber(isDirectMode ? deliveredOrdersAwaitingPayout.length : failedPayouts.length) }}</p>
-              </div>
-            </div>
-
-            <div class="rounded-[1.35rem] border border-slate-200/80 bg-slate-50/80 px-4 py-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ isRTL ? 'الإجراء التالي' : 'Next finance action' }}</p>
-              <p class="mt-2 text-sm font-black text-slate-950">
-                {{ isDirectMode
-                  ? (isRTL ? 'مراجعة الطلبات التي لم تتحول بعد إلى دفعات مباشرة' : 'Review delivered orders that have not yet become direct payouts')
-                  : (isRTL ? 'إنشاء أو مراجعة دورة التسوية المجمعة الحالية' : 'Create or review the current batch settlement cycle') }}
-              </p>
+              <h2 class="text-base font-black text-slate-900">{{ isRTL ? 'لوحة التشغيل السريعة' : 'Quick ops desk' }}</h2>
+              <p class="text-[12px] font-medium text-slate-500">{{ isRTL ? 'إجراءات ومتابعة سريعة.' : 'Fast actions and tracking.' }}</p>
             </div>
           </div>
         </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 mb-6">
+          <button
+            (click)="showPayoutsReviewModal = true"
+            class="flex-1 flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">rule</span>
+            <span>{{ isRTL ? 'مراجعة التحويلات' : 'Review payouts' }}</span>
+          </button>
+
+          <button
+            *ngIf="!isDirectMode"
+            (click)="onCreateSettlement()"
+            class="flex-1 flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-[13px] font-black text-white transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-[18px]">add_circle</span>
+            <span>{{ isRTL ? 'إنشاء تسوية' : 'Create settlement' }}</span>
+          </button>
+        </div>
+
+        <!-- Ops Data Grid -->
+        <div class="grid gap-3 sm:grid-cols-2 flex-1">
+          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-slate-200">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-2">{{ isRTL ? 'الحساب البنكي الأساسي' : 'Primary bank account' }}</p>
+            <p class="text-[13px] font-black text-slate-900">{{ vendorDetail?.primaryBankAccount?.bankName || '—' }}</p>
+            <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ vendorDetail?.primaryBankAccount?.accountHolderName || vendorDetail?.ownerName || vendorName }}</p>
+          </div>
+
+          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-slate-200">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-2">{{ isRTL ? 'آخر تحويل مباشر' : 'Latest direct payout' }}</p>
+            <p class="text-[13px] font-black text-slate-900">{{ latestDirectPayout ? formatDate(latestDirectPayout.processedAtUtc || latestDirectPayout.createdAtUtc) : '—' }}</p>
+            <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ latestDirectPayout?.payoutNumber || (isRTL ? 'لا يوجد' : 'None') }}</p>
+          </div>
+
+          <div class="rounded-[1.25rem] border border-emerald-200 bg-emerald-50/50 p-4 transition-colors hover:border-emerald-300">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-emerald-600 mb-2">{{ isRTL ? 'جاهز للتحويل' : 'Available balance' }}</p>
+            <p class="text-[16px] font-black text-emerald-700">{{ formatCurrency(availableBalance) }}</p>
+          </div>
+
+          <div class="rounded-[1.25rem] border border-amber-200 bg-amber-50/50 p-4 transition-colors hover:border-amber-300">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-amber-600 mb-2">{{ isRTL ? 'حالات تنتظر إجراء' : 'Awaiting action' }}</p>
+            <p class="text-[16px] font-black text-amber-700">{{ formatNumber(isDirectMode ? deliveredOrdersAwaitingPayout.length : failedPayouts.length) }}</p>
+          </div>
+        </div>
       </aside>
-    </section>
-
-    <section class="mt-3 hidden">
-      <article class="glass-panel rounded-[1.9rem] border border-white/70 px-4 py-4 shadow-sm">
-          <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-            <div>
-              <h3 class="text-sm font-black text-slate-950">{{ isRTL ? 'التحويلات والتسويات' : 'Settlements and payouts' }}</h3>
-              <p class="mt-1 text-xs font-medium text-slate-500">
-                {{ isDirectMode
-                  ? (isRTL ? 'متابعة التحويلات المباشرة وحالات الفشل والطلبات المنتظرة.' : 'Track direct payouts, failures, and delivered orders still waiting for a payout.')
-                  : (isRTL ? 'متابعة التسويات المجمعة مع بقاء إنشاء التسوية اليدوي كالإجراء الأساسي.' : 'Track grouped settlements while manual settlement remains the primary action.') }}
-              </p>
-            </div>
-
-            <div class="flex flex-wrap gap-2">
-              <app-button
-                variant="outline"
-                size="sm"
-                [customClass]="'min-w-[9rem] justify-center rounded-full'"
-                (btnClick)="showPayoutsReviewModal = true">
-                {{ isRTL ? 'مراجعة التحويلات' : 'Review payouts' }}
-              </app-button>
-
-              <app-button
-                *ngIf="!isDirectMode"
-                variant="primary"
-                size="sm"
-                [customClass]="'min-w-[9rem] justify-center rounded-full'"
-                (btnClick)="onCreateSettlement()">
-                {{ isRTL ? 'إنشاء تسوية' : 'Create settlement' }}
-              </app-button>
-            </div>
-          </div>
-
-          <div class="hidden">
-            <div class="rounded-[1.4rem] border border-slate-200/80 bg-white/90 px-4 py-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ isRTL ? 'إجمالي الدفعات' : 'Total payouts' }}</p>
-              <p class="mt-2 text-lg font-black text-slate-950">{{ formatNumber(payouts.length) }}</p>
-              <p class="mt-1 text-[11px] font-semibold text-slate-500">
-                {{ isRTL ? 'كل التحويلات المسجلة داخل دورة المالية الحالية' : 'All payouts currently recorded in this finance stream.' }}
-              </p>
-            </div>
-
-            <div class="rounded-[1.4rem] border border-rose-200 bg-rose-50/80 px-4 py-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-rose-500">{{ isRTL ? 'دفعات تحتاج مراجعة' : 'Needs review' }}</p>
-              <p class="mt-2 text-lg font-black text-rose-700">{{ formatNumber(failedPayouts.length) }}</p>
-              <p class="mt-1 text-[11px] font-semibold text-rose-600/90">
-                {{ isRTL ? 'حالات فشل أو تأخير تتطلب متابعة من الفريق المالي' : 'Failed or delayed cases that need finance team attention.' }}
-              </p>
-            </div>
-
-            <div class="rounded-[1.4rem] border border-amber-200 bg-amber-50/80 px-4 py-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-amber-600">
-                {{ isDirectMode ? (isRTL ? 'طلبات بانتظار التحويل' : 'Awaiting payout') : (isRTL ? 'تسويات مجمعة' : 'Batch settlements') }}
-              </p>
-              <p class="mt-2 text-lg font-black text-amber-700">
-                {{ formatNumber(isDirectMode ? deliveredOrdersAwaitingPayout.length : batchSettlements.length) }}
-              </p>
-              <p class="mt-1 text-[11px] font-semibold text-amber-700/90">
-                {{ isDirectMode
-                  ? (isRTL ? 'طلبات مسلمة لم تتحول بعد إلى payout بنكي' : 'Delivered orders not yet converted into a bank payout.')
-                  : (isRTL ? 'آخر التسويات المجمعة الجاهزة للمراجعة والمتابعة' : 'Recent grouped settlements ready for follow-up and review.') }}
-              </p>
-            </div>
-          </div>
-
-          <div class="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.95fr)]">
-            <div class="space-y-3 rounded-[1.5rem] border border-slate-200/80 bg-white/88 p-3">
-              <p class="hidden">
-                {{ isDirectMode
-                  ? (isRTL ? 'هذه القائمة تبرز الطلبات التي اكتمل تسليمها وما زالت بانتظار التحويل البنكي.' : 'This queue highlights delivered orders still waiting for bank payout creation.')
-                  : (isRTL ? 'هذه القائمة تعرض آخر التسويات المجمعة الجاهزة للمتابعة المالية.' : 'This queue highlights the latest grouped settlements ready for financial follow-up.') }}
-              </p>
-              <p class="text-[11px] font-medium text-slate-500">
-                {{ isRTL ? 'عرض أوضح لحالة كل دفعة مع مرجع التحويل والمصدر.' : 'A clearer view of each payout with its transfer reference and source.' }}
-              </p>
-              <h4 class="text-xs font-black text-slate-900">{{ isRTL ? 'آخر التحويلات' : 'Recent payouts' }}</h4>
-
-              <div *ngFor="let payout of payouts | slice:0:5; trackBy: trackById" class="rounded-[1.25rem] border border-slate-200/80 bg-slate-50/85 px-3 py-3">
-                <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                  <div class="min-w-0">
-                    <div class="flex flex-wrap items-center gap-2">
-                      <p class="text-[11px] font-black text-slate-950">{{ payout.payoutNumber }}</p>
-                      <span class="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
-                        {{ payout.origin === 'PerOrderDirectPayout' ? (isRTL ? 'مباشر' : 'Direct') : (isRTL ? 'مجمعة' : 'Batch') }}
-                      </span>
-                    </div>
-                    <p class="mt-1 text-[11px] font-medium text-slate-500">
-                      {{ payout.sourceOrderNumber || (isRTL ? 'بدون طلب مرجعي مباشر' : 'No direct source order') }}
-                    </p>
-                    <p class="mt-2 text-[11px] font-semibold text-slate-400">
-                      {{ payout.transferReference || (isRTL ? 'لا يوجد مرجع تحويل بعد' : 'No transfer reference yet') }}
-                    </p>
-                  </div>
-
-                  <div class="flex flex-col items-start gap-2 lg:items-end">
-                    <app-status-pill
-                      [label]="payout.status"
-                      [variant]="getPayoutStatusVariant(payout.status)"
-                      [showDot]="true"
-                      size="sm"
-                      [shouldTranslate]="false">
-                    </app-status-pill>
-
-                    <p class="text-sm font-black text-slate-950">{{ formatCurrency(payout.amount) }}</p>
-                  </div>
-                </div>
-
-                <div class="mt-3 flex items-center justify-between gap-3 text-[11px] font-bold text-slate-500">
-                  <span>{{ isRTL ? 'تم التحديث' : 'Updated' }}</span>
-                  <span>{{ formatDate(payout.processedAtUtc || payout.createdAtUtc) }}</span>
-                </div>
-              </div>
-
-              <div *ngIf="payouts.length === 0" class="rounded-[1.25rem] border border-dashed border-slate-200 bg-slate-50/70 px-4 py-8 text-center text-[11px] font-bold text-slate-500">
-                {{ isRTL ? 'لا توجد تحويلات مالية مسجلة بعد.' : 'No finance payouts recorded yet.' }}
-              </div>
-            </div>
-
-            <div class="space-y-3 rounded-[1.5rem] border border-slate-200/80 bg-white/88 p-3">
-              <h4 class="text-xs font-black text-slate-900">{{ isDirectMode ? (isRTL ? 'طلبات تنتظر إنشاء payout' : 'Delivered orders awaiting payout') : (isRTL ? 'آخر التسويات المجمعة' : 'Recent batch settlements') }}</h4>
-
-              <p class="text-[11px] font-medium text-slate-500">
-                {{ isDirectMode
-                  ? (isRTL ? 'هذه القائمة تبرز الطلبات التي اكتمل تسليمها وما زالت بانتظار التحويل البنكي.' : 'This queue highlights delivered orders still waiting for bank payout creation.')
-                  : (isRTL ? 'هذه القائمة تعرض آخر التسويات المجمعة الجاهزة للمتابعة المالية.' : 'This queue highlights the latest grouped settlements ready for financial follow-up.') }}
-              </p>
-
-              <ng-container *ngIf="isDirectMode; else batchSettlementsState">
-                <div *ngFor="let order of deliveredOrdersAwaitingPayout | slice:0:5; trackBy: trackById" class="rounded-[1.2rem] border border-amber-200 bg-amber-50/70 px-3 py-3">
-                  <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                      <p class="text-[11px] font-black text-slate-950">{{ order.orderNumber }}</p>
-                      <p class="mt-1 text-[11px] font-medium text-slate-500">{{ order.customerName }}</p>
-                    </div>
-                    <span class="text-[11px] font-black text-amber-700">{{ formatCurrency(order.totalAmount - order.commissionAmount) }}</span>
-                  </div>
-                </div>
-
-                <div *ngIf="deliveredOrdersAwaitingPayout.length === 0" class="rounded-[1.2rem] border border-dashed border-slate-200 bg-slate-50/70 px-4 py-6 text-center text-[11px] font-bold text-slate-500">
-                  {{ isRTL ? 'لا توجد طلبات مسلمة تنتظر إنشاء payout الآن.' : 'No delivered orders are waiting for payout creation right now.' }}
-                </div>
-              </ng-container>
-
-              <ng-template #batchSettlementsState>
-                <div *ngFor="let settlement of batchSettlements | slice:0:5; trackBy: trackById" class="rounded-[1.2rem] border border-slate-200/80 bg-white/90 px-3 py-3">
-                  <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                      <p class="text-[11px] font-black text-slate-950">{{ settlement.settlementNumber }}</p>
-                      <p class="mt-1 text-[11px] font-medium text-slate-500">{{ formatDate(settlement.createdAtUtc) }}</p>
-                    </div>
-                    <span class="text-[11px] font-black text-slate-900">{{ formatCurrency(settlement.netAmount) }}</span>
-                  </div>
-                </div>
-
-                <div *ngIf="batchSettlements.length === 0" class="rounded-[1.2rem] border border-dashed border-slate-200 bg-slate-50/70 px-4 py-6 text-center text-[11px] font-bold text-slate-500">
-                  {{ isRTL ? 'لا توجد تسويات مجمعة حتى الآن.' : 'No grouped settlements created yet.' }}
-                </div>
-              </ng-template>
-
-              <div class="rounded-[1.25rem] border border-slate-200/80 bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(255,255,255,0.92))] px-3 py-3">
-                <h5 class="text-[11px] font-black text-slate-900">{{ isRTL ? 'ملف المراجعة السريع' : 'Quick review profile' }}</h5>
-
-                <div class="mt-3 space-y-2">
-                  <div class="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-200/80 bg-white/90 px-3 py-2">
-                    <span class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'آخر تحويل مباشر' : 'Latest direct payout' }}</span>
-                    <span class="text-[11px] font-black text-slate-900">{{ latestDirectPayout ? formatDate(latestDirectPayout.processedAtUtc || latestDirectPayout.createdAtUtc) : '—' }}</span>
-                  </div>
-
-                  <div class="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-200/80 bg-white/90 px-3 py-2">
-                    <span class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'الحساب البنكي الأساسي' : 'Primary bank account' }}</span>
-                    <span class="text-[11px] font-black text-slate-900">{{ vendorDetail?.primaryBankAccount?.bankName || '—' }}</span>
-                  </div>
-
-                  <div class="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-200/80 bg-white/90 px-3 py-2">
-                    <span class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'الرصيد الجاهز للتحويل' : 'Available transfer balance' }}</span>
-                    <span class="text-[11px] font-black text-emerald-700">{{ formatCurrency(availableBalance) }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
     </section>
   </ng-container>
 </div>

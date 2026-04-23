@@ -1,41 +1,56 @@
-<div class="flex flex-col gap-4 px-4 pb-3 sm:px-8 lg:px-10 xl:px-12" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <div
-    *ngIf="mutationError"
-    class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-[12px] font-bold text-rose-700 shadow-sm">
+<div class="mx-auto max-w-[1520px] space-y-6 px-4 py-6 md:px-6 lg:px-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <!-- Error Banner -->
+  <div *ngIf="mutationError" class="animate-in fade-in slide-in-from-top-2 rounded-[1rem] border border-rose-200 bg-rose-50 px-5 py-4 text-[13px] font-bold text-rose-700 shadow-sm flex items-center gap-3">
+    <span class="material-symbols-outlined text-[20px]">error</span>
     {{ mutationError }}
   </div>
 
-  <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+  <!-- Metric Cards Array -->
+  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
     <article
       *ngFor="let metric of metrics"
-      class="rounded-xl border p-3 shadow-sm"
+      class="group relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md backdrop-blur-md"
       [ngClass]="metric.cardClass">
-      <div class="flex items-center justify-between gap-2">
-        <div class="flex h-8 w-8 items-center justify-center rounded-lg shadow-sm" [ngClass]="metric.iconClass">
-          <span class="material-symbols-outlined text-[15px]">{{ metric.icon }}</span>
+      
+      <!-- Decorative background accent -->
+      <div class="absolute -right-4 -top-4 h-24 w-24 rounded-full opacity-50 transition-transform group-hover:scale-150"
+           [ngClass]="{'bg-blue-100': metric.icon === 'shopping_bag', 'bg-emerald-100': metric.icon === 'payments', 'bg-amber-100': metric.icon === 'star', 'bg-purple-100': metric.icon === 'inventory_2'}"></div>
+      
+      <div class="relative z-10">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{{ metric.label }}</p>
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white shadow-sm transition-transform group-hover:scale-110" [ngClass]="metric.iconClass">
+            <span class="material-symbols-outlined text-[18px]">{{ metric.icon }}</span>
+          </div>
         </div>
-        <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ metric.label }}</p>
-      </div>
 
-      <p class="mt-2 text-xl font-black tracking-tight" [ngClass]="metric.valueClass">{{ metric.value }}</p>
-      <p class="mt-1 text-[11px] leading-5 text-slate-500">{{ metric.helper }}</p>
+        <p class="text-3xl font-black tracking-tight" [ngClass]="metric.valueClass">{{ metric.value }}</p>
+        <p class="mt-2 text-[12px] font-medium leading-relaxed text-slate-500">{{ metric.helper }}</p>
+      </div>
     </article>
   </div>
 
-  <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
-    <div class="flex flex-col gap-4 xl:col-span-8">
-      <section class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          [shouldTranslate]="false"
-          [title]="localize('ملخص سريع', 'Quick summary')"
-          [description]="localize('معلومات عامة فقط تساعدك في القرار السريع بدون تفاصيل زائدة.', 'High-level information only for quick review without excessive detail.')"
-          icon="dashboard">
-        </app-section-header>
+  <!-- Main Grid Layout -->
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+    <!-- Left Column: Operations & Orders -->
+    <div class="flex flex-col gap-6 xl:col-span-8">
+      
+      <!-- Quick Summary Command Panel -->
+      <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-100 text-slate-600">
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-black text-slate-900">{{ localize('ملخص سريع', 'Quick summary') }}</h2>
+            <p class="text-[12px] font-medium text-slate-500">{{ localize('معلومات القرار السريع', 'High-level information for quick decisions') }}</p>
+          </div>
+        </div>
 
-        <div class="mt-3 grid gap-2 lg:grid-cols-3">
-          <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
-            <div class="flex items-center justify-between gap-2">
+        <div class="grid gap-4 lg:grid-cols-3">
+          <!-- Review State -->
+          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-slate-200">
+            <div class="flex items-center justify-between gap-2 mb-2">
               <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('حالة المراجعة', 'Review state') }}</p>
               <app-status-pill
                 [label]="reviewStateLabelKey"
@@ -44,120 +59,115 @@
                 [variant]="reviewStateVariant">
               </app-status-pill>
             </div>
-            <p class="mt-1.5 text-[11px] font-bold leading-5 text-slate-700">{{ reviewSummaryKey | translate }}</p>
+            <p class="text-[13px] font-black text-slate-700 leading-relaxed">{{ reviewSummaryKey | translate }}</p>
           </div>
 
-          <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
-            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('الخطوة التالية', 'Next step') }}</p>
-            <p class="mt-1.5 text-[12px] font-black text-slate-900">{{ nextStepTitle }}</p>
-            <p class="mt-0.5 text-[10px] leading-5 text-slate-500">{{ nextStepMessage }}</p>
+          <!-- Next Step -->
+          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-slate-200">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-2">{{ localize('الخطوة التالية', 'Next step') }}</p>
+            <p class="text-[14px] font-black text-slate-900 mb-1">{{ nextStepTitle }}</p>
+            <p class="text-[12px] font-medium leading-relaxed text-slate-500">{{ nextStepMessage }}</p>
           </div>
 
-          <div class="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5">
-            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('مؤشرات عامة', 'General signals') }}</p>
-            <div class="mt-1.5 space-y-1.5">
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="font-bold text-slate-600">{{ localize('المراجع', 'Reviewer') }}</span>
+          <!-- General Signals -->
+          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-slate-200">
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-3">{{ localize('مؤشرات عامة', 'General signals') }}</p>
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between gap-2 text-[12px]">
+                <span class="font-bold text-slate-500">{{ localize('المراجع', 'Reviewer') }}</span>
                 <span class="truncate font-black text-slate-900">{{ assignedReviewer }}</span>
               </div>
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="font-bold text-slate-600">{{ localize('العناصر المعلّقة', 'Pending items') }}</span>
-                <span class="font-black text-slate-900">{{ reviewBlockers.length }}</span>
+              <div class="flex items-center justify-between gap-2 text-[12px]">
+                <span class="font-bold text-slate-500">{{ localize('العناصر المعلّقة', 'Pending items') }}</span>
+                <span class="rounded-md bg-white px-2 py-0.5 font-black text-slate-900 shadow-sm border border-slate-100">{{ reviewBlockers.length }}</span>
               </div>
-              <div class="flex items-center justify-between gap-2 text-[11px]">
-                <span class="font-bold text-slate-600">{{ localize('جاهزية الحساب', 'Account health') }}</span>
-                <span class="font-black text-slate-900">{{ accountHealthScore }}%</span>
+              <div class="flex items-center justify-between gap-2 text-[12px]">
+                <span class="font-bold text-slate-500">{{ localize('جاهزية الحساب', 'Account health') }}</span>
+                <span class="font-black text-emerald-600">{{ accountHealthScore }}%</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap gap-2">
+        <!-- Action Row -->
+        <div class="mt-6 flex flex-wrap gap-3">
           <button
             (click)="onApproveVendor()"
             [disabled]="!canApproveVendor && !canReactivateVendor"
-            class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-[12px] font-black text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-            type="button">
-            <span class="material-symbols-outlined text-[16px]">{{ canReactivateVendor ? 'play_circle' : 'check_circle' }}</span>
+            class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] bg-slate-900 px-5 text-[13px] font-black text-white transition-all hover:bg-slate-800 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none">
+            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">{{ canReactivateVendor ? 'play_circle' : 'check_circle' }}</span>
             <span>{{ primaryActionLabel }}</span>
           </button>
 
           <button
             (click)="onRequestDocuments()"
-            class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] font-black text-slate-700 transition-colors hover:bg-slate-50"
-            type="button">
-            <span class="material-symbols-outlined text-[16px]">upload_file</span>
+            class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-5 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-sm">
+            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">upload_file</span>
             <span>{{ 'VENDOR_OVERVIEW.ACTIONS.REQUEST_DOCS' | translate }}</span>
           </button>
 
           <button
             (click)="onOpenCompliance()"
-            class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] font-black text-slate-700 transition-colors hover:bg-slate-50"
-            type="button">
-            <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+            class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-5 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-sm">
+            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" [class.-scale-x-100]="isRTL">arrow_outward</span>
             <span>{{ 'VENDOR_DETAIL.TAB_COMPLIANCE' | translate }}</span>
           </button>
         </div>
       </section>
 
-      <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-100 px-4 py-3">
-          <app-section-header
-            [compact]="true"
-            icon="receipt_long"
-            [shouldTranslate]="false"
-            [title]="localize('أحدث الطلبات', 'Latest orders')"
-            [description]="localize('عرض سريع فقط، ويمكن متابعة كل التفاصيل من تبويب الطلبات.', 'Quick preview only. Full details are available in the orders tab.')">
-            <button
-              actions
-              (click)="onViewAllOrders()"
-              class="text-[11px] font-bold text-zadna-primary transition-colors hover:text-zadna-primaryDark"
-              type="button">
-              {{ 'VENDOR_OVERVIEW.VIEW_ALL' | translate }}
-            </button>
-          </app-section-header>
+      <!-- Latest Orders Panel -->
+      <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-100 text-slate-600">
+              <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+            </div>
+            <div>
+              <h2 class="text-lg font-black text-slate-900">{{ localize('أحدث الطلبات', 'Latest orders') }}</h2>
+              <p class="text-[12px] font-medium text-slate-500">{{ localize('عرض سريع لآخر النشاطات', 'Quick preview of latest activity') }}</p>
+            </div>
+          </div>
+          <button
+            (click)="onViewAllOrders()"
+            class="rounded-lg bg-primary/10 px-3 py-1.5 text-[11px] font-black text-primary transition-colors hover:bg-primary/20">
+            {{ 'VENDOR_OVERVIEW.VIEW_ALL' | translate }}
+          </button>
         </div>
 
-        <div *ngIf="recentOrders.length === 0" class="px-4 py-6">
-          <app-inline-banner
-            [shouldTranslate]="false"
-            [title]="emptyOrdersTitle"
-            [message]="emptyOrdersMessage"
-            variant="info"
-            icon="shopping_basket">
-          </app-inline-banner>
+        <div *ngIf="recentOrders.length === 0" class="flex flex-col items-center justify-center rounded-[1.25rem] border border-dashed border-slate-200 bg-slate-50 py-10 text-center">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-3">
+             <span class="material-symbols-outlined text-[24px]">shopping_basket</span>
+          </div>
+          <p class="text-[14px] font-black text-slate-900">{{ emptyOrdersTitle }}</p>
+          <p class="mt-1 text-[12px] font-medium text-slate-500">{{ emptyOrdersMessage }}</p>
         </div>
 
-        <div *ngIf="recentOrders.length > 0" class="hidden md:block overflow-x-auto">
-          <table class="w-full table-fixed border-collapse">
+        <div *ngIf="recentOrders.length > 0" class="overflow-x-auto custom-scrollbar">
+          <table class="w-full min-w-[500px] border-collapse">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50">
-                <th class="px-4 py-2.5 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
-                  {{ 'VENDOR_OVERVIEW.TABLE.ORDER_NUMBER' | translate }}
-                </th>
-                <th class="px-4 py-2.5 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
-                  {{ 'VENDOR_OVERVIEW.TABLE.CUSTOMER' | translate }}
-                </th>
-                <th class="px-4 py-2.5 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
-                  {{ 'VENDOR_OVERVIEW.TABLE.AMOUNT' | translate }}
-                </th>
-                <th class="px-4 py-2.5 text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">
-                  {{ 'VENDOR_OVERVIEW.TABLE.STATUS' | translate }}
-                </th>
+              <tr class="border-b border-slate-100">
+                <th class="px-4 py-3 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ 'VENDOR_OVERVIEW.TABLE.ORDER_NUMBER' | translate }}</th>
+                <th class="px-4 py-3 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ 'VENDOR_OVERVIEW.TABLE.CUSTOMER' | translate }}</th>
+                <th class="px-4 py-3 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ 'VENDOR_OVERVIEW.TABLE.AMOUNT' | translate }}</th>
+                <th class="px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ 'VENDOR_OVERVIEW.TABLE.STATUS' | translate }}</th>
               </tr>
             </thead>
-
-            <tbody class="text-[12px]">
-              <tr
-                *ngFor="let order of recentOrders | slice:0:4"
-                class="border-b border-slate-100 last:border-b-0">
-                <td class="px-4 py-3 font-black text-zadna-primary">{{ order.orderNumber }}</td>
-                <td class="px-4 py-3 text-slate-700">{{ order.customer }}</td>
-                <td class="px-4 py-3 font-bold text-slate-900">{{ order.amount }}</td>
-                <td class="px-4 py-3 text-center">
+            <tbody>
+              <tr *ngFor="let order of recentOrders | slice:0:4" class="group border-b border-slate-50 transition-colors hover:bg-slate-50/50 last:border-0">
+                <td class="px-4 py-3.5">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-slate-400 group-hover:text-primary transition-colors">tag</span>
+                    <span class="text-[13px] font-black text-slate-900 group-hover:text-primary transition-colors">{{ order.orderNumber }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3.5 text-[13px] font-bold text-slate-600">{{ order.customer }}</td>
+                <td class="px-4 py-3.5">
+                  <span class="rounded-md bg-slate-100 px-2 py-1 text-[13px] font-black text-slate-900">{{ order.amount }}</span>
+                </td>
+                <td class="px-4 py-3.5 text-center">
                   <app-status-pill
                     [label]="order.statusKey"
-                    [showDot]="false"
+                    [showDot]="true"
                     [size]="'sm'"
                     [variant]="getOrderStatusVariant(order.status)">
                   </app-status-pill>
@@ -166,100 +176,80 @@
             </tbody>
           </table>
         </div>
-
-        <div *ngIf="recentOrders.length > 0" class="grid gap-2 p-4 md:hidden">
-          <div
-            *ngFor="let order of recentOrders | slice:0:3"
-            class="rounded-lg border border-slate-200 bg-slate-50/80 p-3">
-            <div class="flex items-center justify-between gap-2">
-              <p class="text-[12px] font-black text-zadna-primary">{{ order.orderNumber }}</p>
-              <app-status-pill
-                [label]="order.statusKey"
-                [showDot]="false"
-                [size]="'sm'"
-                [variant]="getOrderStatusVariant(order.status)">
-              </app-status-pill>
-            </div>
-            <div class="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-slate-600">
-              <span>{{ order.customer }}</span>
-              <span class="font-bold text-slate-900">{{ order.amount }}</span>
-            </div>
-          </div>
-        </div>
       </section>
     </div>
 
-    <div class="flex flex-col gap-4 xl:col-span-4">
-      <section class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          icon="info"
-          [shouldTranslate]="false"
-          [title]="localize('بيانات عامة', 'General info')"
-          [description]="localize('ملخص أساسي فقط، أمّا باقي التفاصيل ففي التبويبات الأخرى.', 'Only the essential summary is shown here. The rest is available in the other tabs.')">
-        </app-section-header>
+    <!-- Right Column: Info & Alerts -->
+    <div class="flex flex-col gap-6 xl:col-span-4">
+      
+      <!-- General Info Panel -->
+      <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-100 text-slate-600">
+            <span class="material-symbols-outlined text-[20px]">info</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-black text-slate-900">{{ localize('بيانات عامة', 'General info') }}</h2>
+            <p class="text-[12px] font-medium text-slate-500">{{ localize('البيانات المرجعية الأساسية', 'Core reference data') }}</p>
+          </div>
+        </div>
 
-        <div class="mt-3 grid gap-2">
+        <div class="grid gap-3">
           <div
             *ngFor="let item of storeFacts | slice:0:4"
-            class="rounded-lg border border-slate-100 bg-slate-50/80 p-2.5">
-            <div class="flex items-start gap-2.5">
-              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-600 shadow-sm">
-                <span class="material-symbols-outlined text-[15px]">{{ item.icon }}</span>
-              </div>
-
-              <div class="min-w-0 flex-1">
-                <p class="text-[10px] font-black tracking-[0.02em] text-slate-400" [class.text-right]="isRTL" [class.text-left]="!isRTL">{{ item.label }}</p>
-                <p
-                  class="mt-0.5 truncate text-[11px] font-bold text-slate-900"
-                  [class.text-right]="isRTL"
-                  [class.text-left]="!isRTL"
-                  [class.break-all]="false"
-                  [class.break-words]="false"
-                  [attr.dir]="item.dir || (isRTL ? 'rtl' : 'ltr')">
-                  {{ item.value }}
-                </p>
-              </div>
+            class="flex items-center gap-3 rounded-[1.25rem] border border-slate-100 bg-slate-50 p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-sm">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-slate-500 shadow-sm">
+              <span class="material-symbols-outlined text-[18px]">{{ item.icon }}</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-[10px] font-black uppercase tracking-[0.05em] text-slate-400" [class.text-right]="isRTL" [class.text-left]="!isRTL">{{ item.label }}</p>
+              <p class="mt-0.5 truncate text-[13px] font-black text-slate-900"
+                 [class.text-right]="isRTL" [class.text-left]="!isRTL" [attr.dir]="item.dir || (isRTL ? 'rtl' : 'ltr')">
+                {{ item.value }}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="flex h-[248px] flex-col rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-        <app-section-header
-          [compact]="true"
-          icon="warning"
-          [shouldTranslate]="false"
-          [title]="localize('تنبيهات مختصرة', 'Quick alerts')"
-          [description]="localize('أهم ما يحتاج انتباه الآن فقط.', 'Only the most important items that need attention right now.')"
-          tone="danger">
-        </app-section-header>
-
-        <div class="mt-3 flex-1 space-y-2 overflow-y-auto pe-1">
-          <ng-container *ngIf="alerts.length > 0; else noAlertsState">
-            <app-inline-banner
-              *ngFor="let alert of alerts | slice:0:2"
-              [title]="alert.titleKey"
-              [message]="alert.descriptionKey"
-              [variant]="alert.variant"
-              [icon]="alert.icon"
-              [compact]="true">
-            </app-inline-banner>
-          </ng-container>
+      <!-- Quick Alerts Panel -->
+      <section class="flex flex-col rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md min-h-[300px]">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-rose-50 text-rose-500">
+            <span class="material-symbols-outlined text-[20px]">warning</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-black text-slate-900">{{ localize('تنبيهات مختصرة', 'Quick alerts') }}</h2>
+            <p class="text-[12px] font-medium text-slate-500">{{ localize('ما يحتاج انتباهك الآن', 'Needs your attention') }}</p>
+          </div>
         </div>
 
-        <ng-template #noAlertsState>
-          <div class="flex h-full items-start">
-            <app-inline-banner
-              class="w-full"
-              [shouldTranslate]="false"
-              [title]="emptyAlertsTitle"
-              [message]="emptyAlertsMessage"
-              variant="success"
-              icon="verified">
-            </app-inline-banner>
-          </div>
-        </ng-template>
+        <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
+          <ng-container *ngIf="alerts.length > 0; else noAlertsState">
+            <!-- Modern alert cards -->
+            <div *ngFor="let alert of alerts" class="flex gap-3 rounded-[1.25rem] border p-4 transition-all hover:shadow-sm"
+                 [ngClass]="alert.variant === 'error' ? 'border-rose-200 bg-rose-50/50' : 'border-amber-200 bg-amber-50/50'">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-sm mt-0.5"
+                   [ngClass]="alert.variant === 'error' ? 'bg-rose-500' : 'bg-amber-500'">
+                <span class="material-symbols-outlined text-[16px]">{{ alert.icon }}</span>
+              </div>
+              <div>
+                <p class="text-[13px] font-black text-slate-900 mb-1">{{ alert.titleKey | translate }}</p>
+                <p class="text-[12px] font-medium leading-relaxed text-slate-600">{{ alert.descriptionKey | translate }}</p>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noAlertsState>
+            <div class="flex h-full flex-col items-center justify-center rounded-[1.25rem] border border-dashed border-emerald-200 bg-emerald-50/50 py-10 text-center">
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-500 mb-3 shadow-sm">
+                 <span class="material-symbols-outlined text-[24px]">verified</span>
+              </div>
+              <p class="text-[14px] font-black text-emerald-900">{{ emptyAlertsTitle }}</p>
+              <p class="mt-1 text-[12px] font-medium text-emerald-700/80">{{ emptyAlertsMessage }}</p>
+            </div>
+          </ng-template>
+        </div>
       </section>
     </div>
   </div>

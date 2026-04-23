@@ -1,50 +1,61 @@
-<div class="mx-auto flex max-w-[1520px] flex-col gap-5 px-4 py-4 md:px-6 lg:px-7" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <section class="premium-glass rounded-[1.8rem] px-4 py-4 shadow-sm sm:px-5 sm:py-5">
-    <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-      <div class="min-w-0 flex-1">
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] border border-primary/15 bg-gradient-to-br from-primary/12 to-white text-primary shadow-sm">
-            <span class="material-symbols-outlined text-[18px]">receipt_long</span>
-          </div>
+<div class="mx-auto flex max-w-[1520px] flex-col gap-6 px-4 py-6 md:px-6 lg:px-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  
+  <!-- Main Header & Export Action -->
+  <section class="group relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:shadow-md">
+    <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/5 transition-transform duration-700 group-hover:scale-[2] pointer-events-none"></div>
+    
+    <div class="relative z-10 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div class="flex items-center gap-4">
+        <div class="flex h-14 w-14 items-center justify-center rounded-[1rem] border border-primary/10 bg-primary/5 text-primary shadow-inner backdrop-blur-sm transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3">
+          <span class="material-symbols-outlined text-[24px]">receipt_long</span>
+        </div>
 
-          <div>
-            <h1 class="text-base font-black tracking-tight text-slate-900">طلبات التاجر</h1>
-            <p class="mt-1 text-xs font-medium text-slate-500">
-              متابعة تشغيلية مباشرة للطلبات مع البحث والفلترة من الباك.
-            </p>
-          </div>
+        <div>
+          <h1 class="text-xl font-black tracking-tight text-slate-900">{{ 'VENDOR_ORDERS.ORDERS_TITLE' | translate }}</h1>
+          <p class="mt-0.5 text-[12px] font-medium text-slate-500">
+            {{ 'VENDOR_ORDERS.ORDERS_SUBTITLE' | translate }}
+          </p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <app-button
-          variant="outline"
-          size="sm"
-          (btnClick)="onExport()"
-          customClass="w-full sm:w-auto">
-          تصدير
-        </app-button>
+      <div class="flex items-center gap-3">
+        <button
+          (click)="onExport()"
+          class="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-[13px] font-black text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md">
+          <span class="material-symbols-outlined text-[18px]">download</span>
+          <span>{{ 'COMMON.EXPORT' | translate }}</span>
+        </button>
       </div>
     </div>
   </section>
 
-  <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+  <!-- KPI Cards -->
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
     <article
       *ngFor="let kpi of kpis"
-      class="premium-glass rounded-[1.4rem] border border-slate-200/70 px-3.5 py-3 shadow-sm">
-      <div class="flex items-start justify-between gap-3">
+      class="group relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm backdrop-blur-md transition-all hover:-translate-y-1 hover:shadow-md">
+      
+      <div class="absolute -right-3 -top-3 h-16 w-16 rounded-full opacity-30 transition-transform duration-500 group-hover:scale-150"
+           [ngClass]="{
+             'bg-primary/20': kpi.tone === 'primary',
+             'bg-emerald-100': kpi.tone === 'success',
+             'bg-amber-100': kpi.tone === 'warning',
+             'bg-rose-100': kpi.tone === 'danger'
+           }"></div>
+
+      <div class="relative z-10 flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <p class="text-[10px] font-black tracking-[0.08em] text-slate-400">{{ kpi.label }}</p>
-          <p class="mt-2 text-[1.05rem] font-black tracking-tight text-slate-950">{{ kpi.value }}</p>
+          <p class="text-[10px] font-black uppercase tracking-[0.08em] text-slate-400">{{ kpi.label }}</p>
+          <p class="mt-1.5 text-xl font-black tracking-tight text-slate-900">{{ kpi.value }}</p>
         </div>
 
         <div
-          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem]"
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] shadow-sm transition-transform duration-500 group-hover:scale-110"
           [ngClass]="{
-            'bg-primary/10 text-primary': kpi.tone === 'primary',
-            'bg-emerald-50 text-emerald-600': kpi.tone === 'success',
-            'bg-amber-50 text-amber-600': kpi.tone === 'warning',
-            'bg-rose-50 text-rose-600': kpi.tone === 'danger'
+            'bg-primary/10 text-primary border border-primary/20': kpi.tone === 'primary',
+            'bg-emerald-50 text-emerald-600 border border-emerald-100': kpi.tone === 'success',
+            'bg-amber-50 text-amber-600 border border-amber-100': kpi.tone === 'warning',
+            'bg-rose-50 text-rose-600 border border-rose-100': kpi.tone === 'danger'
           }">
           <span class="material-symbols-outlined text-[18px]">{{ kpi.icon }}</span>
         </div>
@@ -52,6 +63,7 @@
     </article>
   </section>
 
+  <!-- Filters & Search Controls -->
   <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
     <div class="w-full xl:w-[26rem]">
       <app-input
@@ -62,13 +74,13 @@
         [dir]="isRTL ? 'rtl' : 'ltr'"
         [hasIcon]="true"
         [customClass]="'w-full'"
-        [inputClass]="'h-11 rounded-[1.2rem] text-[13px] font-medium shadow-sm'">
+        [inputClass]="'h-11 rounded-[1rem] text-[13px] font-medium shadow-sm border-slate-200 focus:border-primary'">
         <span icon class="material-symbols-outlined text-[18px]">search</span>
       </app-input>
     </div>
 
     <div class="flex flex-1 flex-col gap-3 lg:flex-row lg:items-end lg:gap-4">
-      <div class="min-w-[12rem] flex-1 lg:max-w-[15rem]">
+      <div class="min-w-[13rem] flex-1 lg:max-w-[16rem]">
         <app-searchable-select
           [(ngModel)]="selectedStatus"
           (ngModelChange)="onStatusChange()"
@@ -80,7 +92,7 @@
         </app-searchable-select>
       </div>
 
-      <div class="min-w-[12rem] flex-1 lg:max-w-[15rem]">
+      <div class="min-w-[13rem] flex-1 lg:max-w-[16rem]">
         <app-searchable-select
           [(ngModel)]="selectedPaymentStatus"
           (ngModelChange)="onPaymentStatusChange()"
@@ -93,96 +105,102 @@
       </div>
 
       <div class="lg:ms-auto flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div class="inline-flex h-11 items-center rounded-full bg-slate-100 px-4 text-xs font-black text-slate-500">
+        <div class="inline-flex h-11 items-center rounded-xl bg-white border border-slate-200 px-4 text-[12px] font-black text-slate-500 shadow-sm">
           <span class="material-symbols-outlined me-2 text-[18px] text-primary">filter_list</span>
           <span>{{ activeFilterCount }}</span>
           <span class="mx-2 text-slate-300">|</span>
           <span>{{ showingCountLabel }}</span>
         </div>
 
-        <app-button
+        <button
           *ngIf="hasActiveFilters"
-          variant="outline"
-          size="sm"
-          (btnClick)="clearFilters()"
-          customClass="w-full sm:w-auto">
-          مسح الفلاتر
-        </app-button>
+          (click)="clearFilters()"
+          class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-[12px] font-black text-slate-700 transition-colors hover:bg-slate-100 w-full sm:w-auto">
+          {{ 'COMMON.CLEAR_FILTERS' | translate }}
+        </button>
       </div>
     </div>
   </div>
 
-  <section *ngIf="isLoading" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
-    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-primary/10 text-primary shadow-inner">
-      <span class="material-symbols-outlined animate-pulse text-[28px]">receipt_long</span>
+  <!-- Loading State -->
+  <section *ngIf="isLoading" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-slate-200/60 bg-white/80 py-16 text-center backdrop-blur-md shadow-sm">
+    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary/10 text-primary shadow-inner mb-4">
+      <span class="material-symbols-outlined animate-pulse text-[32px]">receipt_long</span>
     </div>
-    <p class="mt-4 text-sm font-black text-slate-900">جاري تحميل الطلبات</p>
-    <p class="mt-1 text-xs font-medium text-slate-500">يتم تجهيز أحدث الطلبات لهذا التاجر.</p>
+    <p class="text-[14px] font-black text-slate-900">{{ 'VENDOR_ORDERS.STATES.LOADING_TITLE' | translate }}</p>
+    <p class="mt-1 text-[12px] font-medium text-slate-500">{{ 'VENDOR_ORDERS.STATES.LOADING_MESSAGE' | translate }}</p>
   </section>
 
-  <section *ngIf="!isLoading && hasError" class="premium-glass rounded-[1.8rem] border-rose-200/60 bg-rose-50/40 px-5 py-14 text-center">
-    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-rose-100 text-rose-600 shadow-inner">
-      <span class="material-symbols-outlined text-[28px]">warning</span>
+  <!-- Error State -->
+  <section *ngIf="!isLoading && hasError" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-rose-200 bg-rose-50/50 py-16 text-center shadow-sm">
+    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-rose-100 text-rose-600 shadow-inner mb-4">
+      <span class="material-symbols-outlined text-[32px]">warning</span>
     </div>
-    <p class="mt-4 text-sm font-black text-slate-900">تعذر تحميل الطلبات</p>
-    <p class="mt-1 text-xs font-medium text-slate-500">حدثت مشكلة أثناء قراءة بيانات الطلبات، حاول تحديث الصفحة.</p>
+    <p class="text-[14px] font-black text-rose-900">{{ 'VENDOR_ORDERS.STATES.ERROR_TITLE' | translate }}</p>
+    <p class="mt-1 text-[12px] font-medium text-rose-700/80">{{ 'VENDOR_ORDERS.STATES.ERROR_MESSAGE' | translate }}</p>
   </section>
 
-  <section *ngIf="!isLoading && !hasError && hasOrders" class="premium-glass overflow-hidden rounded-[1.8rem] shadow-sm">
-    <div class="overflow-x-auto">
+  <!-- Data Table -->
+  <section *ngIf="!isLoading && !hasError && hasOrders" class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 shadow-sm backdrop-blur-md overflow-hidden">
+    <div class="overflow-x-auto custom-scrollbar">
       <table class="min-w-full border-collapse">
         <thead>
-          <tr class="border-b border-slate-200 bg-slate-50/90">
-            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.ORDER_NUMBER' | translate }}</th>
-            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.CUSTOMER' | translate }}</th>
-            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.DATE' | translate }}</th>
-            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.AMOUNT' | translate }}</th>
-            <th class="px-4 py-3 text-start text-[11px] font-black text-slate-500">العناصر</th>
-            <th class="px-4 py-3 text-center text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.PAYMENT_STATUS' | translate }}</th>
-            <th class="px-4 py-3 text-center text-[11px] font-black text-slate-500">{{ 'VENDOR_ORDERS.TABLE.GENERAL_STATUS' | translate }}</th>
+          <tr class="border-b border-slate-200 bg-slate-50/80">
+            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_ORDERS.TABLE.ORDER_NUMBER' | translate }}</th>
+            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_ORDERS.TABLE.CUSTOMER' | translate }}</th>
+            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_ORDERS.TABLE.DATE' | translate }}</th>
+            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_ORDERS.TABLE.AMOUNT' | translate }}</th>
+            <th class="px-5 py-4 text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_ORDERS.TABLE.ITEMS' | translate }}</th>
+            <th class="px-5 py-4 text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_ORDERS.TABLE.PAYMENT_STATUS' | translate }}</th>
+            <th class="px-5 py-4 text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_ORDERS.TABLE.GENERAL_STATUS' | translate }}</th>
           </tr>
         </thead>
 
-        <tbody class="divide-y divide-slate-200">
+        <tbody class="divide-y divide-slate-100">
           <tr
             *ngFor="let order of rows"
-            class="cursor-pointer bg-white transition-colors hover:bg-slate-50/80"
+            class="group cursor-pointer bg-white transition-colors hover:bg-slate-50/80"
             (click)="onViewOrder(order.id)">
-            <td class="px-4 py-3.5">
-              <div class="min-w-0">
-                <p class="text-sm font-black text-primary">{{ order.orderNumber }}</p>
+            
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[16px] text-slate-400 group-hover:text-primary transition-colors">tag</span>
+                <span class="text-[13px] font-black text-slate-900 group-hover:text-primary transition-colors">{{ order.orderNumber }}</span>
               </div>
             </td>
 
-            <td class="px-4 py-3.5">
-              <p class="text-sm font-black text-slate-900">{{ order.customer }}</p>
+            <td class="px-5 py-4 text-[13px] font-bold text-slate-600">
+              {{ order.customer }}
             </td>
 
-            <td class="px-4 py-3.5">
-              <div class="flex flex-col">
-                <span class="text-sm font-bold text-slate-800">{{ order.date }}</span>
-                <span class="text-xs font-medium text-slate-500">{{ order.time }}</span>
+            <td class="px-5 py-4">
+              <div class="flex flex-col gap-0.5">
+                <span class="text-[13px] font-bold text-slate-800">{{ order.date }}</span>
+                <span class="text-[11px] font-medium text-slate-500 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[12px]">schedule</span>
+                  {{ order.time }}
+                </span>
               </div>
             </td>
 
-            <td class="px-4 py-3.5">
-              <span class="text-sm font-black text-slate-900">{{ order.amount }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            <td class="px-5 py-4">
+              <span class="rounded-md bg-slate-100 px-2.5 py-1 text-[13px] font-black text-slate-900">{{ order.amount }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
             </td>
 
-            <td class="px-4 py-3.5">
-              <span class="text-sm font-bold text-slate-600">{{ order.itemsCount }}</span>
+            <td class="px-5 py-4 text-center">
+              <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-[12px] font-bold text-slate-600 group-hover:bg-primary/10 group-hover:text-primary transition-colors">{{ order.itemsCount }}</span>
             </td>
 
-            <td class="px-4 py-3.5 text-center">
+            <td class="px-5 py-4 text-center">
               <app-status-pill
                 [label]="order.paymentStatusKey"
-                [showDot]="false"
+                [showDot]="true"
                 [size]="'sm'"
                 [variant]="getPaymentStatusVariant(order.paymentStatusRaw)">
               </app-status-pill>
             </td>
 
-            <td class="px-4 py-3.5 text-center">
+            <td class="px-5 py-4 text-center">
               <app-status-pill
                 [label]="order.orderStatusKey"
                 [showDot]="false"
@@ -195,7 +213,8 @@
       </table>
     </div>
 
-    <div class="border-t border-slate-200 bg-slate-50/60 px-4 py-4 sm:px-5">
+    <!-- Pagination Footer -->
+    <div class="border-t border-slate-200 bg-slate-50/50 px-5 py-4">
       <app-pagination
         [currentPage]="currentPage"
         [pageSize]="pageSize"
@@ -205,11 +224,12 @@
     </div>
   </section>
 
-  <section *ngIf="!isLoading && !hasError && !hasOrders" class="premium-glass rounded-[1.8rem] px-5 py-14 text-center">
-    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.3rem] bg-slate-100 text-slate-400 shadow-inner">
-      <span class="material-symbols-outlined text-[28px]">receipt_long</span>
+  <!-- Empty State -->
+  <section *ngIf="!isLoading && !hasError && !hasOrders" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50/50 py-16 text-center">
+    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white text-slate-400 shadow-sm mb-4">
+      <span class="material-symbols-outlined text-[32px]">receipt_long</span>
     </div>
-    <p class="mt-4 text-sm font-black text-slate-900">لا توجد طلبات مطابقة</p>
-    <p class="mt-1 text-xs font-medium text-slate-500">جرّب تغيير البحث أو الفلاتر للعثور على نتائج مناسبة.</p>
+    <p class="text-[14px] font-black text-slate-900">{{ 'VENDOR_ORDERS.STATES.EMPTY_ORDERS_TITLE' | translate }}</p>
+    <p class="mt-1 text-[12px] font-medium text-slate-500">{{ 'VENDOR_ORDERS.STATES.EMPTY_ORDERS_MESSAGE' | translate }}</p>
   </section>
 </div>
