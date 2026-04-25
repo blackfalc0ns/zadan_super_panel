@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, finalize, map, take, tap, throwError } from 'rxjs';
-import { VendorDetail } from '@vendors/models/vendors.domain.models';
+import { BehaviorSubject, Observable, Subscription, catchError, finalize, interval, map, take, tap, throwError } from 'rxjs';
+import { VendorActivityLogFilters, VendorActivityLogPage, VendorDetail } from '@vendors/models/vendors.domain.models';
 import {
   AdminSendVendorNotificationRequest,
   AdminVendorNotificationResponse,
@@ -9,18 +9,30 @@ import {
 } from '@vendors/services/vendor.api.service';
 
 @Injectable()
-export class VendorDetailFacade {
+export class VendorDetailFacade implements OnDestroy {
   private readonly vendorIdSubject = new BehaviorSubject<string | null>(null);
   private readonly vendorSubject = new BehaviorSubject<VendorDetail | null>(null);
+  private readonly activityLogSubject = new BehaviorSubject<VendorActivityLogPage | null>(null);
   private readonly isLoadingSubject = new BehaviorSubject(false);
+  private readonly isActivityLogLoadingSubject = new BehaviorSubject(false);
   private readonly mutationErrorSubject = new BehaviorSubject<string | null>(null);
+  private readonly activityLogErrorSubject = new BehaviorSubject<string | null>(null);
+  private activityLogFilters: VendorActivityLogFilters = { page: 1, pageSize: 20 };
+  private liveRefreshSubscription?: Subscription;
 
   readonly vendorId$ = this.vendorIdSubject.asObservable();
   readonly vendor$ = this.vendorSubject.asObservable();
+  readonly activityLog$ = this.activityLogSubject.asObservable();
   readonly isLoading$ = this.isLoadingSubject.asObservable();
+  readonly isActivityLogLoading$ = this.isActivityLogLoadingSubject.asObservable();
   readonly mutationError$ = this.mutationErrorSubject.asObservable();
+  readonly activityLogError$ = this.activityLogErrorSubject.asObservable();
 
   constructor(private readonly vendorService: VendorService) {}
+
+  ngOnDestroy(): void {
+    this.liveRefreshSubscription?.unsubscribe();
+  }
 
   get vendorId(): string | null {
     return this.vendorIdSubject.value;
@@ -34,13 +46,24 @@ export class VendorDetailFacade {
     return this.mutationErrorSubject.value;
   }
 
+  get activityLog(): VendorActivityLogPage | null {
+    return this.activityLogSubject.value;
+  }
+
+  get activityLogError(): string | null {
+    return this.activityLogErrorSubject.value;
+  }
+
   loadVendor(vendorId: string): void {
     if (this.vendorId === vendorId && this.vendor) {
+      this.ensureLiveRefresh();
       return;
     }
 
     this.vendorIdSubject.next(vendorId);
     this.refreshVendor();
+    this.refreshVendorActivityLog();
+    this.ensureLiveRefresh();
   }
 
   refreshVendor(): void {
@@ -65,6 +88,69 @@ export class VendorDetailFacade {
           this.isLoadingSubject.next(false);
         }
       });
+  }
+
+  loadVendorActivityLog(filters: VendorActivityLogFilters = {}): void {
+    this.activityLogFilters = {
+      ...this.activityLogFilters,
+      ...filters
+    };
+
+    this.refreshVendorActivityLog();
+  }
+
+  refreshVendorActivityLog(): void {
+    const vendorId = this.vendorId;
+
+    if (!vendorId) {
+      return;
+    }
+
+    this.isActivityLogLoadingSubject.next(true);
+    this.activityLogErrorSubject.next(null);
+    this.vendorService
+      .getVendorActivityLog(vendorId, this.activityLogFilters)
+      .pipe(take(1))
+      .subscribe({
+        next: (activityLog) => {
+          this.activityLogSubject.next(activityLog);
+          this.isActivityLogLoadingSubject.next(false);
+        },
+        error: (error) => {
+          this.activityLogErrorSubject.next(this.resolveErrorMessage(error));
+          this.isActivityLogLoadingSubject.next(false);
+        }
+      });
+  }
+
+  private ensureLiveRefresh(): void {
+    if (this.liveRefreshSubscription) {
+      return;
+    }
+
+    this.liveRefreshSubscription = interval(15000).subscribe(() => {
+      const vendorId = this.vendorId;
+
+      if (!vendorId) {
+        return;
+      }
+
+      this.vendorService
+        .getVendorById(vendorId)
+        .pipe(take(1))
+        .subscribe({
+          next: (vendor) => this.vendorSubject.next(vendor),
+          error: () => undefined
+        });
+
+      this.vendorService
+        .getVendorActivityLog(vendorId, this.activityLogFilters)
+        .pipe(take(1))
+        .subscribe({
+          next: (activityLog) => this.activityLogSubject.next(activityLog),
+          error: () => undefined
+        });
+    });
   }
 
   updateVendorLocally(patch: Partial<VendorDetail>): void {
@@ -312,6 +398,7 @@ export class VendorDetailFacade {
 
     return this.vendorService.resetVendorPassword(vendorId, newPassword).pipe(
       take(1),
+      tap(() => this.refreshVendorActivityLog()),
       map(() => void 0),
       catchError((error) => {
         this.mutationErrorSubject.next(this.resolveErrorMessage(error));
@@ -354,6 +441,13 @@ export class VendorDetailFacade {
   sendVendorNotificationTestRequest(
     payload: AdminSendVendorNotificationRequest = {}
   ): Observable<AdminVendorNotificationResponse> {
+    return this.sendVendorMessageRequest(payload, true);
+  }
+
+  sendVendorMessageRequest(
+    payload: AdminSendVendorNotificationRequest = {},
+    useTestEndpoint = false
+  ): Observable<AdminVendorNotificationResponse> {
     const vendorId = this.vendorId;
 
     if (!vendorId) {
@@ -362,8 +456,13 @@ export class VendorDetailFacade {
 
     this.mutationErrorSubject.next(null);
 
-    return this.vendorService.sendVendorNotificationTest(vendorId, payload).pipe(
+    const request$ = useTestEndpoint
+      ? this.vendorService.sendVendorNotificationTest(vendorId, payload)
+      : this.vendorService.sendVendorMessage(vendorId, payload);
+
+    return request$.pipe(
       take(1),
+      tap(() => this.refreshVendorActivityLog()),
       catchError((error) => {
         this.mutationErrorSubject.next(this.resolveErrorMessage(error));
         return throwError(() => error);
@@ -387,7 +486,10 @@ export class VendorDetailFacade {
 
     return factory(vendorId).pipe(
       take(1),
-      tap((vendor) => this.vendorSubject.next(vendor)),
+      tap((vendor) => {
+        this.vendorSubject.next(vendor);
+        this.refreshVendorActivityLog();
+      }),
       catchError((error) => {
         this.mutationErrorSubject.next(this.resolveErrorMessage(error));
         return throwError(() => error);

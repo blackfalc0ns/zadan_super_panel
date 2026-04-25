@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
@@ -44,7 +43,6 @@ interface OrderRow {
     CommonModule,
     FormsModule,
     TranslateModule,
-    AppButtonComponent,
     AppInputComponent,
     SearchableSelectComponent,
     AppPaginationComponent,
@@ -64,28 +62,14 @@ export class VendorOrdersComponent {
   currentPage = 1;
   readonly pageSize = 12;
   totalItems = 0;
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly searchSubject = new Subject<string>();
-
   ordersData: AdminVendorOrderItem[] = [];
   kpis: KPI[] = [];
 
-  readonly statusOptions: SearchableSelectOption<string>[] = [
-    { value: '', label: this.currentLang === 'ar' ? 'كل الحالات' : 'All statuses' },
-    { value: 'Placed', label: this.currentLang === 'ar' ? 'جديد' : 'New' },
-    { value: 'Preparing', label: this.currentLang === 'ar' ? 'قيد التجهيز' : 'Preparing' },
-    { value: 'OnTheWay', label: this.currentLang === 'ar' ? 'في الطريق' : 'On the way' },
-    { value: 'Delivered', label: this.currentLang === 'ar' ? 'مكتمل' : 'Delivered' },
-    { value: 'Cancelled', label: this.currentLang === 'ar' ? 'ملغي' : 'Cancelled' }
-  ];
+  readonly statusOptions: SearchableSelectOption<string>[] = this.buildStatusOptions();
+  readonly paymentStatusOptions: SearchableSelectOption<string>[] = this.buildPaymentStatusOptions();
 
-  readonly paymentStatusOptions: SearchableSelectOption<string>[] = [
-    { value: '', label: this.currentLang === 'ar' ? 'كل حالات الدفع' : 'All payment states' },
-    { value: 'Paid', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PAID' },
-    { value: 'Pending', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PENDING' },
-    { value: 'Refunded', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.REFUNDED' },
-    { value: 'Failed', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.FAILED' }
-  ];
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly searchSubject = new Subject<string>();
 
   constructor(
     private readonly translate: TranslateService,
@@ -95,6 +79,7 @@ export class VendorOrdersComponent {
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
+    this.rebuildFilters();
 
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -398,22 +383,29 @@ export class VendorOrdersComponent {
   }
 
   private rebuildFilters(): void {
-    this.statusOptions.splice(0, this.statusOptions.length, ...[
+    this.statusOptions.splice(0, this.statusOptions.length, ...this.buildStatusOptions());
+    this.paymentStatusOptions.splice(0, this.paymentStatusOptions.length, ...this.buildPaymentStatusOptions());
+  }
+
+  private buildStatusOptions(): SearchableSelectOption<string>[] {
+    return [
       { value: '', label: this.currentLang === 'ar' ? 'كل الحالات' : 'All statuses' },
       { value: 'Placed', label: this.currentLang === 'ar' ? 'جديد' : 'New' },
       { value: 'Preparing', label: this.currentLang === 'ar' ? 'قيد التجهيز' : 'Preparing' },
       { value: 'OnTheWay', label: this.currentLang === 'ar' ? 'في الطريق' : 'On the way' },
       { value: 'Delivered', label: this.currentLang === 'ar' ? 'مكتمل' : 'Delivered' },
       { value: 'Cancelled', label: this.currentLang === 'ar' ? 'ملغي' : 'Cancelled' }
-    ]);
+    ];
+  }
 
-    this.paymentStatusOptions.splice(0, this.paymentStatusOptions.length, ...[
+  private buildPaymentStatusOptions(): SearchableSelectOption<string>[] {
+    return [
       { value: '', label: this.currentLang === 'ar' ? 'كل حالات الدفع' : 'All payment states' },
       { value: 'Paid', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PAID' },
       { value: 'Pending', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PENDING' },
       { value: 'Refunded', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.REFUNDED' },
       { value: 'Failed', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.FAILED' }
-    ]);
+    ];
   }
 
   private formatNumber(value: number): string {

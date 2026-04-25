@@ -1,0 +1,80 @@
+<div class="rounded-[1.5rem] bg-white border border-slate-200 shadow-sm animate-in slide-in-from-top-4 duration-500 delay-75">
+  <div class="flex flex-col lg:flex-row">
+    <!-- Workflow Status & Actions Bar -->
+    <div class="flex flex-1 flex-col justify-between border-b border-slate-100 p-5 lg:border-b-0 lg:border-l lg:border-slate-100" [ngClass]="isRTL ? 'lg:border-l' : 'lg:border-r'">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" 
+            [ngClass]="{
+              'bg-emerald-100 text-emerald-600': workflow.readiness === 'READY',
+              'bg-amber-100 text-amber-600': workflow.readiness === 'LIMITED',
+              'bg-red-100 text-red-600': workflow.readiness === 'BLOCKED'
+            }">
+            <span class="material-symbols-outlined text-[24px]">
+              {{ workflow.readiness === 'READY' ? 'task_alt' : workflow.readiness === 'LIMITED' ? 'warning' : 'gpp_bad' }}
+            </span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-black text-slate-900">{{ workflow.stateLabel | translate }}</h3>
+              <app-status-pill [label]="workflow.readinessLabel" [variant]="readinessVariant" [shouldTranslate]="true" size="sm"></app-status-pill>
+            </div>
+            <p class="mt-1 text-xs font-medium text-slate-500 line-clamp-1">{{ workflow.summary | translate }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button *ngFor="let action of workflow.actions | slice:0:3" 
+                  type="button" 
+                  (click)="workflowActionRequested.emit(action.id)"
+                  class="group relative inline-flex h-9 items-center justify-center gap-2 rounded-lg border px-3 text-xs font-bold transition-all active:scale-95"
+                  [ngClass]="{
+                    'border-transparent bg-zadna-primary text-white shadow-sm hover:bg-zadna-primaryDark': action.tone === 'primary',
+                    'border-transparent bg-emerald-500 text-white shadow-sm hover:bg-emerald-600': action.tone === 'success',
+                    'border-transparent bg-red-500 text-white shadow-sm hover:bg-red-600': action.tone === 'danger',
+                    'border-transparent bg-amber-500 text-white shadow-sm hover:bg-amber-600': action.tone === 'warning',
+                    'border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900': action.tone === 'secondary'
+                  }">
+            <span class="material-symbols-outlined text-[16px]">{{ action.icon }}</span>
+            <span class="hidden sm:inline">{{ action.label | translate }}</span>
+            
+            <!-- Tooltip -->
+            <div class="absolute -top-10 left-1/2 -translate-x-1/2 pointer-events-none opacity-0 transition-opacity group-hover:opacity-100 whitespace-nowrap rounded bg-slate-900 px-2 py-1 text-[10px] font-medium text-white shadow-lg z-10">
+              {{ action.helper | translate }}
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Compact Blockers/Alerts -->
+      <div *ngIf="workflow.blockers.length > 0 || workflow.alerts.length > 0" class="mt-4 flex flex-wrap gap-2 pt-4 border-t border-slate-100">
+        <div *ngFor="let blocker of workflow.blockers" class="inline-flex items-center gap-1.5 rounded-md bg-red-50 px-2 py-1 text-[11px] font-bold text-red-700">
+          <span class="material-symbols-outlined text-[14px]">block</span>
+          {{ blocker | translate }}
+        </div>
+        <div *ngFor="let alert of workflow.alerts" class="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2 py-1 text-[11px] font-bold text-amber-700">
+          <span class="material-symbols-outlined text-[14px]">warning</span>
+          {{ alert | translate }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Lifecycle Pipeline Bar -->
+    <div class="flex items-center p-5 lg:w-[400px]">
+      <div class="relative w-full flex justify-between items-center">
+        <!-- Connecting Line -->
+        <div class="absolute top-1/2 left-4 right-4 h-0.5 -translate-y-1/2 bg-slate-100 z-0"></div>
+        <div class="absolute top-1/2 -translate-y-1/2 h-0.5 bg-emerald-500 z-0 transition-all duration-500" 
+             [ngClass]="isRTL ? 'right-4' : 'left-4'"
+             [style.width.%]="lifecycleProgress">
+        </div>
+
+        <!-- Pipeline Nodes -->
+        <div *ngFor="let stage of lifecycleStages; let i = index" class="relative z-10 flex flex-col items-center gap-2 group cursor-help">
+          <div class="h-4 w-4 rounded-full border-2 transition-all duration-300" [ngClass]="getStageStateClass(stage.state)"></div>
+          <p class="absolute -bottom-6 text-[10px] font-extrabold text-slate-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-white px-1 shadow-sm rounded">{{ stage.label | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

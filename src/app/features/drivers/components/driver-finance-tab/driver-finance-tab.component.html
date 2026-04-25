@@ -1,0 +1,111 @@
+<div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+  <!-- Balance Snapshot -->
+  <section class="grid gap-4 lg:grid-cols-4">
+    <div class="col-span-full rounded-[1.5rem] bg-gradient-to-br from-[#0f5f69] to-[#127c8c] p-6 text-white shadow-lg lg:col-span-1 flex flex-col justify-between relative overflow-hidden">
+      <!-- Decorative rings -->
+      <div class="absolute -right-10 -top-10 h-32 w-32 rounded-full border-[20px] border-white/5"></div>
+      <div class="absolute -bottom-10 -left-10 h-32 w-32 rounded-full border-[20px] border-white/5"></div>
+      
+      <div class="relative z-10">
+        <h3 class="text-[11px] font-extrabold text-white/70 uppercase tracking-widest">{{ 'DRIVERS.DETAIL.FINANCE.AVAILABLE_BALANCE' | translate }}</h3>
+        <p class="mt-2 text-3xl font-black text-white" dir="ltr">{{ driver.finance.availableBalance | number:'1.2-2' }} <span class="text-sm font-bold opacity-70">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+      </div>
+      
+      <div class="relative z-10 mt-6 border-t border-white/10 pt-4 text-xs font-medium text-white/80">
+        {{ 'DRIVERS.DETAIL.FINANCE.NEXT_PAYOUT' | translate }}: <span class="font-bold text-white">{{ driver.finance.nextPayoutDate }}</span>
+      </div>
+    </div>
+
+    <div class="col-span-full grid grid-cols-1 gap-4 sm:grid-cols-3 lg:col-span-3">
+      <!-- Due Amount (COD) -->
+      <div class="flex flex-col justify-center rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+          </div>
+          <div>
+            <h3 class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">{{ 'DRIVERS.DETAIL.FINANCE.DUE_AMOUNT' | translate }}</h3>
+            <p class="mt-1 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.dueAmount | number:'1.2-2' }} <span class="text-[10px] font-bold text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pending Deductions -->
+      <div class="flex flex-col justify-center rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+            <span class="material-symbols-outlined text-[20px]">money_off</span>
+          </div>
+          <div>
+            <h3 class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">{{ 'DRIVERS.DETAIL.FINANCE.PENDING_DEDUCTIONS' | translate }}</h3>
+            <p class="mt-1 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.pendingDeductions | number:'1.2-2' }} <span class="text-[10px] font-bold text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collected COD -->
+      <div class="flex flex-col justify-center rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <span class="material-symbols-outlined text-[20px]">savings</span>
+          </div>
+          <div>
+            <h3 class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">{{ 'DRIVERS.DETAIL.FINANCE.COD_COLLECTED' | translate }}</h3>
+            <p class="mt-1 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.codCollected | number:'1.2-2' }} <span class="text-[10px] font-bold text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statements Table -->
+  <section class="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div class="border-b border-slate-100 p-6 flex items-center justify-between">
+      <app-section-header 
+        [title]="'DRIVERS.DETAIL.FINANCE.STATEMENTS_TITLE' | translate" 
+        [description]="'DRIVERS.DETAIL.FINANCE.STATEMENTS_DESC' | translate" 
+        [shouldTranslate]="false" 
+        icon="receipt_long"
+        [compact]="true">
+      </app-section-header>
+      <button class="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors">
+        <span class="material-symbols-outlined text-[16px]">download</span>
+        {{ 'COMMON.DOWNLOAD' | translate }}
+      </button>
+    </div>
+    <div class="p-0">
+      <app-data-table
+        [data]="driver.finance.entries"
+        [columns]="financeColumns">
+        <ng-template #cellTemplate let-item let-column="column">
+          <ng-container [ngSwitch]="column.key">
+            <div *ngSwitchCase="'id'" class="font-bold text-slate-900" dir="ltr">{{ item.id }}</div>
+            <div *ngSwitchCase="'type'" class="font-bold text-slate-700">{{ item.type | translate }}</div>
+            <div *ngSwitchCase="'amount'">
+              <span class="font-bold text-slate-900" dir="ltr">{{ item.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </div>
+            <div *ngSwitchCase="'status'">
+              <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black"
+                [ngClass]="{
+                  'bg-emerald-50 text-emerald-700': getFinanceStatusVariant(item.status) === 'success',
+                  'bg-amber-50 text-amber-700': getFinanceStatusVariant(item.status) === 'warning',
+                  'bg-red-50 text-red-700': getFinanceStatusVariant(item.status) === 'danger',
+                  'bg-sky-50 text-sky-700': getFinanceStatusVariant(item.status) === 'info',
+                  'bg-slate-100 text-slate-600': getFinanceStatusVariant(item.status) === 'neutral'
+                }">
+                {{ getFinanceStatusKey(item.status) | translate }}
+              </span>
+            </div>
+            <div *ngSwitchCase="'method'">
+              <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                <span class="material-symbols-outlined text-[14px]">account_balance</span>
+                {{ item.method | translate }}
+              </div>
+            </div>
+            <div *ngSwitchDefault class="text-sm text-slate-600">{{ item[column.key] }}</div>
+          </ng-container>
+        </ng-template>
+      </app-data-table>
+    </div>
+  </section>
+</div>

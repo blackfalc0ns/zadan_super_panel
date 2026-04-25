@@ -9,6 +9,9 @@ import {
   PaginatedVendors,
   PayoutStatus,
   RiskLevel,
+  VendorActivityLogEntry,
+  VendorActivityLogFilters,
+  VendorActivityLogPage,
   Vendor,
   VendorDetail,
   VendorKPIs,
@@ -145,6 +148,27 @@ interface ApiPaginatedResponse<T> {
   totalCount: number;
   page?: number;
   pageSize?: number;
+  totalPages?: number;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
+}
+
+interface AdminVendorActivityLogEntryDto {
+  id: string;
+  type: string;
+  severity: string;
+  actorName: string;
+  roleLabel: string;
+  createdAtUtc: string;
+  message: string;
+  isSystem: boolean;
+}
+
+interface AdminVendorActivityLogPageDto {
+  items: AdminVendorActivityLogEntryDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
   totalPages?: number;
   hasPrevious?: boolean;
   hasNext?: boolean;
@@ -295,7 +319,9 @@ export interface AdminSendVendorNotificationRequest {
   referenceId?: string | null;
   data?: string | null;
   targetUrl?: string | null;
+  sendInbox?: boolean;
   sendPush?: boolean;
+  sendEmail?: boolean;
 }
 
 export interface AdminVendorNotificationResponse {
@@ -311,6 +337,10 @@ export interface AdminVendorNotificationResponse {
   pushStatusCode?: number | null;
   providerNotificationId?: string | null;
   pushReason?: string | null;
+  emailAttempted?: boolean;
+  emailSent?: boolean;
+  emailSkipped?: boolean;
+  emailReason?: string | null;
 }
 
 @Injectable({
@@ -364,6 +394,37 @@ export class VendorService {
         return mappedVendor;
       }),
       catchError((error) => this.handleReadFallback('Vendor detail', this.clone(fallback), error))
+    );
+  }
+
+  getVendorActivityLog(vendorId: string, filters: VendorActivityLogFilters = {}): Observable<VendorActivityLogPage> {
+    const fallback = this.buildFallbackVendorActivityLog(vendorId, filters);
+    const page = filters.page ?? 1;
+    const pageSize = filters.pageSize ?? 20;
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    if (filters.type?.trim()) {
+      params = params.set('type', filters.type.trim());
+    }
+
+    if (filters.severity?.trim()) {
+      params = params.set('severity', filters.severity.trim());
+    }
+
+    if (filters.dateFrom?.trim()) {
+      params = params.set('dateFrom', filters.dateFrom.trim());
+    }
+
+    if (filters.dateTo?.trim()) {
+      params = params.set('dateTo', filters.dateTo.trim());
+    }
+
+    return this.http.get<AdminVendorActivityLogPageDto>(`${this.apiUrl}/${vendorId}/activity-log`, { params }).pipe(
+      map((response) => this.mapVendorActivityLogPage(response, page, pageSize)),
+      catchError((error) => this.handleActivityLogReadFallback(fallback, error))
     );
   }
 
@@ -537,6 +598,21 @@ export class VendorService {
     return this.http.post<AdminVendorNotificationResponse>(`${this.apiUrl}/${vendorId}/notifications/test`, payload);
   }
 
+  sendVendorMessage(
+    vendorId: string,
+    payload: AdminSendVendorNotificationRequest = {}
+  ): Observable<AdminVendorNotificationResponse> {
+    return this.http.post<AdminVendorNotificationResponse>(`${this.apiUrl}/${vendorId}/notifications/send`, payload);
+  }
+
+  getVendorWorkspaceState<T>(vendorId: string, feature: string): Observable<T> {
+    return this.http.get<T>(`${this.apiUrl}/${vendorId}/workspace-state/${feature}`);
+  }
+
+  saveVendorWorkspaceState<T>(vendorId: string, feature: string, payload: T): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${vendorId}/workspace-state/${feature}`, payload);
+  }
+
   private shouldUseLocalReadFallback(): boolean {
     if (!environment.skipAuthForDevelopment) {
       return false;
@@ -571,6 +647,22 @@ export class VendorService {
     }
 
     return of(fallback);
+  }
+
+  private handleActivityLogReadFallback(fallback: VendorActivityLogPage, error: unknown): Observable<VendorActivityLogPage> {
+    if (error instanceof HttpErrorResponse && error.status === 404) {
+      if (!this.fallbackWarnings.has('Vendor activity log')) {
+        this.fallbackWarnings.add('Vendor activity log');
+        console.warn(
+          'Vendor activity log API returned 404, using review notes fallback. Restart the API to enable the real audit endpoint.',
+          error
+        );
+      }
+
+      return of(fallback);
+    }
+
+    return this.handleReadFallback('Vendor activity log', fallback, error);
   }
 
   private resetReadFallbackState(): void {
@@ -1122,6 +1214,94 @@ export class VendorService {
 
   private canUseApiMutations(): boolean {
     return this.authService.hasApiSession || !environment.skipAuthForDevelopment;
+  }
+
+  private mapVendorActivityLogPage(
+    response: AdminVendorActivityLogPageDto | null | undefined,
+    page: number,
+    pageSize: number
+  ): VendorActivityLogPage {
+    const items = (response?.items ?? []).map((entry) => this.mapVendorActivityLogEntry(entry));
+    const totalCount = response?.totalCount ?? items.length;
+    const totalPages = response?.totalPages ?? Math.max(1, Math.ceil(totalCount / pageSize));
+
+    return {
+      items,
+      totalCount,
+      page: response?.page ?? page,
+      pageSize: response?.pageSize ?? pageSize,
+      totalPages,
+      hasPrevious: response?.hasPrevious ?? (page > 1),
+      hasNext: response?.hasNext ?? (page < totalPages)
+    };
+  }
+
+  private mapVendorActivityLogEntry(entry: AdminVendorActivityLogEntryDto): VendorActivityLogEntry {
+    return {
+      id: entry.id,
+      type: (entry.type || 'note').trim().toLowerCase(),
+      severity: this.normalizeActivitySeverity(entry.severity),
+      actorName: entry.actorName?.trim() || 'System',
+      roleLabel: entry.roleLabel?.trim() || 'Vendor Activity',
+      createdAtUtc: entry.createdAtUtc,
+      message: entry.message?.trim() || '-',
+      isSystem: !!entry.isSystem
+    };
+  }
+
+  private buildFallbackVendorActivityLog(vendorId: string, filters: VendorActivityLogFilters): VendorActivityLogPage {
+    const vendor = this.getVendorSnapshotById(vendorId);
+    const page = filters.page ?? 1;
+    const pageSize = filters.pageSize ?? 20;
+    const typeFilter = filters.type?.trim().toLowerCase() || null;
+    const severityFilter = filters.severity?.trim().toLowerCase() || null;
+    const from = filters.dateFrom ? new Date(filters.dateFrom).getTime() : null;
+    const to = filters.dateTo ? new Date(filters.dateTo).getTime() : null;
+
+    const entries = (vendor?.reviewNotes ?? [])
+      .map((note) => ({
+        id: note.id,
+        type: 'note',
+        severity: this.normalizeActivitySeverity(note.tone),
+        actorName: note.authorName,
+        roleLabel: note.roleLabel,
+        createdAtUtc: note.createdAtUtc,
+        message: note.message?.trim() || note.messageKey || '-',
+        isSystem: !!note.isSystem
+      } satisfies VendorActivityLogEntry))
+      .filter((entry) => !typeFilter || entry.type === typeFilter)
+      .filter((entry) => !severityFilter || entry.severity === severityFilter)
+      .filter((entry) => from === null || new Date(entry.createdAtUtc).getTime() >= from)
+      .filter((entry) => to === null || new Date(entry.createdAtUtc).getTime() <= to)
+      .sort((left, right) => right.createdAtUtc.localeCompare(left.createdAtUtc));
+
+    const totalCount = entries.length;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const items = entries.slice((page - 1) * pageSize, page * pageSize);
+
+    return {
+      items,
+      totalCount,
+      page,
+      pageSize,
+      totalPages,
+      hasPrevious: page > 1,
+      hasNext: page < totalPages
+    };
+  }
+
+  private normalizeActivitySeverity(value?: string | null): VendorActivityLogEntry['severity'] {
+    switch ((value || '').trim().toLowerCase()) {
+      case 'success':
+        return 'success';
+      case 'warning':
+        return 'warning';
+      case 'danger':
+      case 'error':
+        return 'danger';
+      default:
+        return 'info';
+    }
   }
 
   private normalizeVendorResponse(

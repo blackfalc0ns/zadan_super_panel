@@ -49,6 +49,11 @@ export const VENDORS_ROUTES: Routes = [
         data: { tabId: 'compliance' }
       },
       {
+        path: 'workspace',
+        loadComponent: () => import('./components/vendor-workspace/vendor-workspace.component').then((m) => m.VendorWorkspaceComponent),
+        data: { tabId: 'workspace' }
+      },
+      {
         path: 'logs',
         loadComponent: () => import('./components/vendor-activity-log/vendor-activity-log.component').then((m) => m.VendorActivityLogComponent),
         data: { tabId: 'logs' }

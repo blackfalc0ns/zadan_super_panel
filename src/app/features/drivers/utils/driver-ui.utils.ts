@@ -21,14 +21,26 @@ export function getDriverStatusKey(status: DriverStatus): string {
 }
 
 export function getDriverStatusLabel(status: DriverStatus): string {
-  const labels: Record<DriverStatus, string> = {
-    Online: 'متصل',
-    OnMission: 'في مهمة',
-    Offline: 'غير متصل',
-    Suspended: 'موقوف'
-  };
+  return getDriverStatusKey(status);
+}
 
-  return labels[status];
+export function getVehicleTypeKey(vehicleType: DriverPerformance | string | undefined | null): string {
+  switch (vehicleType) {
+    case 'Car':
+      return 'DRIVERS.VEHICLES.CAR';
+    case 'Motorcycle':
+      return 'DRIVERS.VEHICLES.BIKE';
+    case 'Scooter':
+      return 'DRIVERS.VEHICLES.SCOOTER';
+    case 'Van':
+      return 'DRIVERS.VEHICLES.VAN';
+    case 'Bicycle':
+      return 'DRIVERS.VEHICLES.BICYCLE';
+    case 'Truck':
+      return 'DRIVERS.VEHICLES.TRUCK';
+    default:
+      return 'COMMON.NOT_AVAILABLE';
+  }
 }
 
 export function getDriverStatusVariant(status: DriverStatus): StatusPillVariant {
@@ -65,14 +77,7 @@ export function getVerificationKey(status: VerificationStatus): string {
 }
 
 export function getVerificationLabel(status: VerificationStatus): string {
-  const labels: Record<VerificationStatus, string> = {
-    [VerificationStatus.Verified]: 'موثق',
-    [VerificationStatus.UnderReview]: 'قيد المراجعة',
-    [VerificationStatus.Unverified]: 'غير موثق',
-    [VerificationStatus.Suspended]: 'موقوف مؤقتًا'
-  };
-
-  return labels[status];
+  return getVerificationKey(status);
 }
 
 export function getVerificationVariant(status: VerificationStatus): StatusPillVariant {
@@ -108,14 +113,7 @@ export function getPerformanceKey(performance: DriverPerformance): string {
 }
 
 export function getPerformanceLabel(performance: DriverPerformance): string {
-  const labels: Record<DriverPerformance, string> = {
-    [DriverPerformance.Excellent]: 'ممتاز',
-    [DriverPerformance.Good]: 'جيد',
-    [DriverPerformance.NeedsImprovement]: 'يحتاج تحسين',
-    [DriverPerformance.Low]: 'ضعيف'
-  };
-
-  return labels[performance];
+  return getPerformanceKey(performance);
 }
 
 export function getIssueIcon(issue: string): string {
@@ -145,16 +143,7 @@ export function getIssueKey(issue: string): string {
 }
 
 export function getIssueLabel(issue: string): string {
-  switch (issue) {
-    case 'warning':
-      return 'تنبيه';
-    case 'payment':
-      return 'تحصيل';
-    case 'legal':
-      return 'بلاغات';
-    default:
-      return 'سليم';
-  }
+  return getIssueKey(issue);
 }
 
 export function getIssueVariant(issue: string): 'success' | 'warning' | 'danger' {
@@ -181,6 +170,18 @@ export function getTaskStatusVariant(status: DriverTaskAssignment['status']): St
   return variants[status];
 }
 
+export function getTaskStatusKey(status: DriverTaskAssignment['status']): string {
+  const keys: Record<DriverTaskAssignment['status'], string> = {
+    IN_PROGRESS: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.STATUS.IN_PROGRESS',
+    PREPARING: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.STATUS.PREPARING',
+    WAITING_DRIVER: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.STATUS.WAITING_DRIVER',
+    COMPLETED: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.STATUS.COMPLETED',
+    FAILED: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.STATUS.FAILED'
+  };
+
+  return keys[status];
+}
+
 export function getSupportStatusVariant(status: DriverSupportTicket['status']): StatusPillVariant {
   const variants: Record<DriverSupportTicket['status'], StatusPillVariant> = {
     WAITING: 'info',
@@ -191,6 +192,16 @@ export function getSupportStatusVariant(status: DriverSupportTicket['status']): 
   return variants[status];
 }
 
+export function getSupportStatusKey(status: DriverSupportTicket['status']): string {
+  const keys: Record<DriverSupportTicket['status'], string> = {
+    WAITING: 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.STATUS.WAITING',
+    IN_PROGRESS: 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.STATUS.IN_PROGRESS',
+    RESOLVED: 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.STATUS.RESOLVED'
+  };
+
+  return keys[status];
+}
+
 export function getPriorityVariant(priority: DriverSupportTicket['priority']): StatusPillVariant {
   const variants: Record<DriverSupportTicket['priority'], StatusPillVariant> = {
     NORMAL: 'neutral',
@@ -199,6 +210,16 @@ export function getPriorityVariant(priority: DriverSupportTicket['priority']): S
   };
 
   return variants[priority];
+}
+
+export function getPriorityKey(priority: DriverSupportTicket['priority']): string {
+  const keys: Record<DriverSupportTicket['priority'], string> = {
+    NORMAL: 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.PRIORITY.NORMAL',
+    HIGH: 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.PRIORITY.HIGH',
+    CRITICAL: 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.PRIORITY.CRITICAL'
+  };
+
+  return keys[priority];
 }
 
 export function getIncidentStatusVariant(status: DriverIncidentRecord['status']): StatusPillVariant {
@@ -212,6 +233,17 @@ export function getIncidentStatusVariant(status: DriverIncidentRecord['status'])
   return variants[status];
 }
 
+export function getIncidentStatusKey(status: DriverIncidentRecord['status']): string {
+  const keys: Record<DriverIncidentRecord['status'], string> = {
+    NEW: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.STATUS.NEW',
+    REVIEW: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.STATUS.REVIEW',
+    WAITING_DOCS: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.STATUS.WAITING_DOCS',
+    RESOLVED: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.STATUS.RESOLVED'
+  };
+
+  return keys[status];
+}
+
 export function getIncidentSeverityVariant(severity: DriverIncidentRecord['severity']): StatusPillVariant {
   const variants: Record<DriverIncidentRecord['severity'], StatusPillVariant> = {
     MEDIUM: 'warning',
@@ -220,6 +252,27 @@ export function getIncidentSeverityVariant(severity: DriverIncidentRecord['sever
   };
 
   return variants[severity];
+}
+
+export function getIncidentSeverityKey(severity: DriverIncidentRecord['severity']): string {
+  const keys: Record<DriverIncidentRecord['severity'], string> = {
+    MEDIUM: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.SEVERITY.MEDIUM',
+    HIGH: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.SEVERITY.HIGH',
+    CRITICAL: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.SEVERITY.CRITICAL'
+  };
+
+  return keys[severity];
+}
+
+export function getIncidentTypeKey(type: string): string {
+  const normalizedType = type.toUpperCase();
+  const keys: Record<string, string> = {
+    TRAFFIC_ACCIDENT: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.TYPES.TRAFFIC_ACCIDENT',
+    FRAUD_SUSPECTED: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.TYPES.FRAUD_SUSPECTED',
+    REPEATED_DELAY: 'DRIVERS.DETAIL.COMPLIANCE.DYNAMIC.TYPES.REPEATED_DELAY'
+  };
+
+  return keys[normalizedType] || type;
 }
 
 export function getFinanceStatusVariant(status: DriverFinanceEntry['status']): StatusPillVariant {
@@ -232,6 +285,27 @@ export function getFinanceStatusVariant(status: DriverFinanceEntry['status']): S
   return variants[status];
 }
 
+export function getFinanceStatusKey(status: DriverFinanceEntry['status']): string {
+  const keys: Record<DriverFinanceEntry['status'], string> = {
+    SETTLED: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.SETTLED',
+    PENDING: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.PENDING',
+    FAILED: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.FAILED'
+  };
+
+  return keys[status];
+}
+
+export function getDocumentStatusKey(status: DriverDocumentRecord['status']): string {
+  switch (status) {
+    case 'valid':
+      return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.VALID';
+    case 'expiring':
+      return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.EXPIRING';
+    default:
+      return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.UNDER_REVIEW';
+  }
+}
+
 export function getDocumentStatusVariant(status: DriverDocumentRecord['status']): StatusPillVariant {
   const variants: Record<DriverDocumentRecord['status'], StatusPillVariant> = {
     valid: 'success',
@@ -241,4 +315,3 @@ export function getDocumentStatusVariant(status: DriverDocumentRecord['status'])
 
   return variants[status];
 }
-

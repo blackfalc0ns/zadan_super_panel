@@ -1,1013 +1,110 @@
-<div class="h-full flex flex-col bg-slate-50/60 pb-10 overflow-y-auto" [attr.dir]="direction">
-  <app-page-header
-    [title]="'DRIVERS.DETAIL.PAGE_TITLE' | translate"
-    [subtitle]="'DRIVERS.DETAIL.PAGE_SUBTITLE' | translate"
-    [showBack]="true"
-    [showToolbar]="true"
-    [backUrl]="['/drivers']"
-    [breadcrumbs]="[
-      { label: 'SIDEBAR.HOME', url: '/dashboard' },
-      { label: 'SIDEBAR.DRIVERS', url: '/drivers' },
-      { label: 'DRIVERS.DETAIL.PAGE_TITLE' }
-    ]">
-    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">person_search</span>
+<div class="relative min-h-screen bg-slate-50/50" [dir]="isRTL ? 'rtl' : 'ltr'">
+  <div *ngIf="driver && !isLoading" class="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8 animate-in fade-in duration-500">
+    
+    <!-- Header / Hero Section -->
+    <app-driver-hero 
+      [driver]="driver" 
+      [isRTL]="isRTL"
+      (editDriverRequested)="workflowActionRequested.emit('OPEN_OPERATIONS')"
+      (openTasksRequested)="onTabChange('operations')"
+      (toggleSuspensionRequested)="workflowActionRequested.emit('SUSPEND_DRIVER')">
+    </app-driver-hero>
 
-    <div actions class="flex flex-wrap items-center gap-3 animate-in slide-in-from-left-10 duration-700">
-      <button
-        *ngIf="driverDetail as driver"
-        type="button"
-        class="inline-flex h-11 items-center gap-2 rounded-[0.9rem] border border-slate-200/60 bg-white/80 px-4 text-xs font-extrabold text-zadna-primary transition-all hover:border-zadna-primary/20 hover:bg-cyan-50/70"
-        [routerLink]="['/admin-users', 'driver-' + driver.id]">
-        <span class="material-symbols-outlined text-[18px]">shield_person</span>
-        {{ 'DRIVERS.DETAIL.BTN_ACCESS_PROFILE' | translate }}
-      </button>
+    <!-- Command Center & Pipeline Strip -->
+    <app-driver-command-center 
+      *ngIf="driver.workflow"
+      [workflow]="driver.workflow"
+      [lifecycleStages]="driver.lifecycleStages"
+      [isRTL]="isRTL"
+      (workflowActionRequested)="workflowActionRequested.emit($event)">
+    </app-driver-command-center>
 
-      <button
-        type="button"
-        class="inline-flex h-11 items-center gap-2 rounded-[0.9rem] border border-slate-200/60 bg-white/80 px-4 text-xs font-extrabold text-zadna-primary transition-all hover:border-zadna-primary/20 hover:bg-cyan-50/70"
-        (click)="editDriver()">
-        <span class="material-symbols-outlined text-[18px]">verified_user</span>
-        {{ 'DRIVERS.DETAIL.BTN_VERIFY' | translate }}
-      </button>
-
-      <button
-        type="button"
-        class="inline-flex h-11 items-center gap-2 rounded-[0.9rem] border border-slate-200/60 bg-white/80 px-4 text-xs font-extrabold text-zadna-primary transition-all hover:border-zadna-primary/20 hover:bg-cyan-50/70"
-        (click)="openTasks()">
-        <span class="material-symbols-outlined text-[18px]">map</span>
-        {{ 'DRIVERS.DETAIL.BTN_OPERATIONS' | translate }}
-      </button>
-
-      <button
-        type="button"
-        class="inline-flex h-11 items-center gap-2 rounded-[0.9rem] border border-red-200/50 bg-red-50/80 px-4 text-xs font-extrabold text-red-600 transition-all hover:bg-red-100"
-        (click)="toggleSuspension()">
-        <span class="material-symbols-outlined text-[18px]">block</span>
-        {{ (driverDetail?.status === 'Suspended' ? 'DRIVERS.DETAIL.BTN_REACTIVATE' : 'DRIVERS.DETAIL.BTN_SUSPEND') | translate }}
-      </button>
+    <!-- Tab Navigation -->
+    <div class="sticky top-0 z-20 -mx-4 mb-6 mt-2 bg-slate-50/95 px-4 pt-4 shadow-[0_4px_20px_-15px_rgba(0,0,0,0.1)] backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div class="flex items-center justify-between pb-4">
+        <app-detail-tabs-nav
+          [tabs]="navItems"
+          [activeTab]="currentTab"
+          (tabChange)="onTabChange($event)">
+        </app-detail-tabs-nav>
+      </div>
     </div>
-  </app-page-header>
 
-  <div *ngIf="!isLoading && driverDetail as driver" class="flex-1 min-h-0 px-4 md:px-10 py-5 max-w-[120rem] mx-auto w-full space-y-5 animate-in slide-in-from-bottom-10 duration-700">
-    <section class="relative overflow-hidden rounded-[1.45rem] border border-slate-200/70 bg-white/85 p-5 shadow-sm backdrop-blur-xl">
-      <div class="pointer-events-none absolute -top-16 -left-12 h-40 w-40 rounded-full bg-cyan-200/20 blur-3xl"></div>
-      <div class="pointer-events-none absolute -bottom-20 -right-12 h-40 w-40 rounded-full bg-amber-200/20 blur-3xl"></div>
-
-      <div class="relative flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-        <div class="flex items-start gap-4 xl:min-w-0 xl:flex-1">
-          <div class="h-16 w-16 shrink-0 overflow-hidden rounded-[1.1rem] bg-slate-100 ring-1 ring-white/70 shadow-sm">
-            <img *ngIf="driver.imageUrl" [src]="driver.imageUrl" [alt]="driver.displayName" class="h-full w-full object-cover">
-          </div>
-
-          <div class="min-w-0 space-y-2.5">
-            <div class="flex flex-wrap items-center gap-3">
-              <h2 class="text-[1.7rem] font-black text-slate-900">{{ driver.displayName }}</h2>
-              <span class="inline-flex items-center rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary" dir="ltr">
-                {{ driver.driverId }}
-              </span>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-3 text-xs font-bold">
-              <app-status-pill
-                [label]="getDriverStatusLabel(driver.status)"
-                [variant]="statusVariant"
-                [shouldTranslate]="false"
-                size="sm">
-              </app-status-pill>
-
-              <app-status-pill
-                [label]="getVerificationLabel(driver.verificationStatus)"
-                [variant]="verificationVariant"
-                [shouldTranslate]="false"
-                size="sm">
-              </app-status-pill>
-
-              <app-status-pill
-                [label]="driver.complianceStatusLabel"
-                [variant]="complianceVariant"
-                [shouldTranslate]="false"
-                size="sm">
-              </app-status-pill>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2.5 xl:w-[46rem] xl:grid-cols-4 xl:flex-none">
-          <div class="flex min-h-[5.8rem] flex-col justify-between rounded-[1rem] border border-slate-200/60 bg-white/82 px-3.5 py-3 shadow-sm shadow-slate-200/40" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-            <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.AVAILABLE_BALANCE' | translate }}</p>
-            <div class="mt-2 flex items-end justify-between gap-2">
-              <span class="text-[1.45rem] font-black leading-none text-slate-900" dir="ltr">{{ driver.finance.availableBalance | number:'1.0-0' }}</span>
-              <span class="text-[10px] font-bold text-emerald-600">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-            </div>
-          </div>
-
-          <div class="flex min-h-[5.8rem] flex-col justify-between rounded-[1rem] border border-slate-200/60 bg-white/82 px-3.5 py-3 shadow-sm shadow-slate-200/40" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-            <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.TRUST_SCORE' | translate }}</p>
-            <div class="mt-2 flex items-end justify-between gap-2">
-              <span class="text-[1.45rem] font-black leading-none text-slate-900">{{ driver.verification.trustScore }}%</span>
-              <span class="text-[10px] font-bold text-zadna-primary">{{ getVerificationRecommendation(driver.verification.recommendation) }}</span>
-            </div>
-          </div>
-
-          <div class="flex min-h-[5.8rem] flex-col justify-between rounded-[1rem] border border-slate-200/60 bg-white/82 px-3.5 py-3 shadow-sm shadow-slate-200/40" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-            <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONAL_STATUS' | translate }}</p>
-            <p class="mt-2 truncate text-[13px] font-black text-slate-900">{{ driver.operations.zoneName }}</p>
-            <p class="mt-1 truncate text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.LIVE_MISSION' | translate }}: {{ driver.liveMissionId }}</p>
-          </div>
-
-          <div class="flex min-h-[5.8rem] flex-col justify-between rounded-[1rem] border border-slate-200/60 bg-white/82 px-3.5 py-3 shadow-sm shadow-slate-200/40" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-            <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.CURRENT_REVIEWER' | translate }}</p>
-            <p class="mt-2 truncate text-[13px] font-black text-slate-900">{{ driver.verification.reviewer }}</p>
-            <p class="mt-1 truncate text-[10px] font-medium text-slate-500">{{ driver.support.reviewerRole }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="relative overflow-hidden rounded-[1.25rem] border border-slate-200/70 bg-white/95 p-3.5 shadow-sm backdrop-blur-sm md:p-4">
-      <div class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-l from-cyan-50/70 via-white to-amber-50/70"></div>
-      <div class="pointer-events-none absolute -left-8 top-6 h-24 w-24 rounded-full bg-cyan-100/55 blur-3xl"></div>
-      <div class="pointer-events-none absolute -right-10 bottom-0 h-24 w-24 rounded-full bg-amber-100/50 blur-3xl"></div>
-
-      <div class="relative grid gap-3.5 xl:grid-cols-[minmax(0,1.2fr)_minmax(18.5rem,0.9fr)]">
-        <div class="rounded-[1.05rem] border border-slate-200/70 bg-white/88 p-4 shadow-[0_18px_38px_-34px_rgba(15,23,42,0.55)]">
-          <div class="flex flex-wrap items-start justify-between gap-3">
-            <div class="space-y-2.5">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[9px] font-black text-slate-500">
-                  {{ getWorkflowQueueLabel(driver.workflow) }}
-                </span>
-                <app-status-pill
-                  [label]="getWorkflowReadinessLabel(driver.workflow)"
-                  [variant]="getWorkflowReadinessVariant(driver.workflow.readiness)"
-                  [shouldTranslate]="false"
-                  size="sm">
-                </app-status-pill>
-              </div>
-
-              <span class="inline-flex items-center gap-1.5 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-2.5 py-1 text-[9px] font-black text-zadna-primary">
-                <span class="material-symbols-outlined text-[13px]">groups</span>
-                {{ getWorkflowOwnerTeamLabel(driver.workflow) }}
-              </span>
-            </div>
-
-            <div class="grid min-w-[12rem] grid-cols-3 gap-2">
-              <div class="rounded-[0.85rem] border border-slate-200 bg-slate-50/80 px-2.5 py-2">
-                <p class="text-[8px] font-extrabold tracking-[0.12em] text-slate-400">{{ 'DRIVERS.DETAIL.CURRENT_BLOCKERS' | translate }}</p>
-                <p class="mt-1 text-[13px] font-black text-slate-900">{{ driver.workflow.blockers.length }}</p>
-              </div>
-              <div class="rounded-[0.85rem] border border-slate-200 bg-slate-50/80 px-2.5 py-2">
-                <p class="text-[8px] font-extrabold tracking-[0.12em] text-slate-400">{{ 'DRIVERS.DETAIL.FOLLOW_UP_ALERTS' | translate }}</p>
-                <p class="mt-1 text-[13px] font-black text-slate-900">{{ driver.workflow.alerts.length }}</p>
-              </div>
-              <div class="rounded-[0.85rem] border border-slate-200 bg-slate-50/80 px-2.5 py-2">
-                <p class="text-[8px] font-extrabold tracking-[0.12em] text-slate-400">{{ 'COMMON.ACTIONS' | translate }}</p>
-                <p class="mt-1 text-[13px] font-black text-slate-900">{{ driver.workflow.actions.length }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_14.5rem] lg:items-start">
-            <div class="rounded-[0.95rem] border border-slate-200/70 bg-slate-50/70 p-3.5">
-              <div class="flex items-center gap-2.5">
-                <span class="inline-flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-slate-900 text-white shadow-sm">
-                  <span class="material-symbols-outlined text-[16px]">account_tree</span>
-                </span>
-                <h3 class="text-[0.98rem] font-black leading-5 text-slate-900">{{ getWorkflowStateLabel(driver.workflow) }}</h3>
-              </div>
-              <p class="mt-3 max-w-2xl text-[12px] leading-6 text-slate-600">{{ getWorkflowSummary(driver.workflow) }}</p>
-            </div>
-
-            <div class="rounded-[0.95rem] border border-cyan-100 bg-cyan-50/80 p-3.5">
-              <div class="flex items-center gap-2 text-cyan-700">
-                <span class="material-symbols-outlined text-[15px]">flag</span>
-                <p class="text-[9px] font-extrabold tracking-[0.12em]">{{ 'DRIVERS.DETAIL.NEXT_STEP' | translate }}</p>
-              </div>
-              <p class="mt-2 text-[11px] font-black leading-5 text-slate-900">{{ getWorkflowNextStepLabel(driver.workflow) }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
-          <div class="rounded-[0.95rem] border border-red-100 bg-gradient-to-br from-red-50 to-white p-3">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-2 text-red-700">
-                <span class="material-symbols-outlined text-[15px]">warning</span>
-                <p class="text-[9px] font-extrabold tracking-[0.12em]">{{ 'DRIVERS.DETAIL.CURRENT_BLOCKERS' | translate }}</p>
-              </div>
-              <span class="inline-flex min-w-6 items-center justify-center rounded-full bg-white/90 px-1.5 py-0.5 text-[9px] font-black text-red-600 shadow-sm">
-                {{ driver.workflow.blockers.length }}
-              </span>
-            </div>
-            <div class="mt-2.5 space-y-1.5">
-              <div
-                *ngFor="let blocker of driver.workflow.blockers"
-                class="rounded-[0.85rem] border border-red-100 bg-white/90 px-2.5 py-2 text-[10px] font-bold leading-5 text-red-700">
-                {{ getWorkflowItemLabel(blocker) }}
-              </div>
-              <div *ngIf="driver.workflow.blockers.length === 0" class="rounded-[0.85rem] border border-emerald-100 bg-emerald-50 px-2.5 py-2 text-[10px] font-bold leading-5 text-emerald-700">
-                {{ 'DRIVERS.DETAIL.NO_BLOCKERS' | translate }}
-              </div>
-            </div>
-          </div>
-
-          <div class="rounded-[0.95rem] border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-3">
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex items-center gap-2 text-amber-700">
-                <span class="material-symbols-outlined text-[15px]">notifications_active</span>
-                <p class="text-[9px] font-extrabold tracking-[0.12em]">{{ 'DRIVERS.DETAIL.FOLLOW_UP_ALERTS' | translate }}</p>
-              </div>
-              <span class="inline-flex min-w-6 items-center justify-center rounded-full bg-white/90 px-1.5 py-0.5 text-[9px] font-black text-amber-600 shadow-sm">
-                {{ driver.workflow.alerts.length }}
-              </span>
-            </div>
-            <div class="mt-2.5 space-y-1.5">
-              <div
-                *ngFor="let alert of driver.workflow.alerts"
-                class="rounded-[0.85rem] border border-amber-100 bg-white/90 px-2.5 py-2 text-[10px] font-bold leading-5 text-amber-700">
-                {{ getWorkflowItemLabel(alert) }}
-              </div>
-              <div *ngIf="driver.workflow.alerts.length === 0" class="rounded-[0.85rem] border border-slate-200 bg-white px-2.5 py-2 text-[10px] font-bold leading-5 text-slate-500">
-                {{ 'DRIVERS.DETAIL.NO_ALERTS' | translate }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="relative mt-3.5 rounded-[1rem] border border-slate-200/70 bg-slate-50/70 p-3">
-        <div class="grid gap-2.5 md:grid-cols-2 xl:grid-cols-3">
-          <article
-            *ngFor="let action of driver.workflow.actions"
-            [class]="getWorkflowActionNoteClasses(action.tone)">
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-start gap-2.5">
-                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] bg-white/90 text-slate-700 shadow-sm">
-                  <span class="material-symbols-outlined text-[15px]">{{ action.icon }}</span>
-                </span>
-                <div class="min-w-0">
-                  <p class="text-[10px] font-black text-slate-900">{{ getWorkflowActionLabel(action) }}</p>
-                  <p class="mt-1 text-[9px] font-medium leading-5 text-slate-600">{{ getWorkflowActionHelper(action) }}</p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                [class]="getWorkflowActionClasses(action.tone)"
-                (click)="triggerWorkflowAction(action.id)"
-                [attr.aria-label]="getWorkflowActionLabel(action)">
-                <span class="material-symbols-outlined text-[15px]">arrow_outward</span>
-              </button>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-      <article *ngFor="let stage of driver.lifecycleStages" [class]="getStageCardClasses(stage)">
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <span class="h-2.5 w-2.5 rounded-full" [ngClass]="getStageIconClasses(stage.state)"></span>
-            <h3 class="text-[13px] font-black text-slate-900">{{ stage.label }}</h3>
-          </div>
-          <span class="text-[9px] font-black text-slate-400">{{ stage.metric }}</span>
-        </div>
-        <p class="mt-2 text-[10px] font-medium leading-5 text-slate-500">{{ stage.description }}</p>
-      </article>
-    </section>
-
-    <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
-
-    <section class="rounded-[1.15rem] border border-slate-200/60 bg-white/80 p-2.5 shadow-sm backdrop-blur-sm">
-      <app-detail-tabs-nav
-        [tabs]="navTabs"
-        [activeTab]="currentTab"
-        (tabChange)="onNavTabChange($event)">
-      </app-detail-tabs-nav>
-    </section>
-
-    <ng-container [ngSwitch]="currentTab">
-      <div *ngSwitchCase="'overview'" class="grid grid-cols-12 gap-6">
-        <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-4">
-          <app-section-header [title]="'DRIVERS.DETAIL.PROFILE.SECTION_TITLE' | translate" [shouldTranslate]="false" icon="badge" [compact]="true"></app-section-header>
-          <div class="mt-5">
-            <app-key-value-grid [items]="profileItems" [columns]="2" [dense]="true" [bordered]="true"></app-key-value-grid>
-          </div>
-        </section>
-
-        <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-4">
-          <app-section-header [title]="'DRIVERS.DETAIL.ACCOUNT.SECTION_TITLE' | translate" [shouldTranslate]="false" icon="manage_accounts" [compact]="true"></app-section-header>
-          <div class="mt-5">
-            <app-key-value-grid [items]="accountItems" [columns]="2" [dense]="true" [bordered]="true"></app-key-value-grid>
-          </div>
-          <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-            <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.ACCOUNT.CURRENT_RECOMMENDATION' | translate }}</p>
-            <h3 class="mt-2 text-lg font-black text-slate-900">{{ getVerificationRecommendation(driver.verification.recommendation) }}</h3>
-            <p class="mt-2 text-sm leading-7 text-slate-500">{{ getVerificationReason(driver.verification.recommendationReason) }}</p>
-          </div>
-        </section>
-
-        <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-4">
-          <app-section-header [title]="'DRIVERS.DETAIL.LINKED_PATHS.SECTION_TITLE' | translate" [shouldTranslate]="false" icon="hub" [compact]="true"></app-section-header>
-          <div class="mt-5 space-y-3">
-            <button type="button" class="w-full rounded-2xl border border-slate-200 bg-slate-50/80 p-4 transition-all hover:border-zadna-primary/20 hover:bg-cyan-50/40" [ngClass]="isRTL ? 'text-right' : 'text-left'" (click)="setTab('operations')">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-black text-slate-900">{{ 'DRIVERS.DETAIL.LINKED_PATHS.OPERATIONS_TITLE' | translate }}</p>
-                  <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.LINKED_PATHS.OPERATIONS_SUB' | translate }} {{ driver.operations.zoneCapacityLabel }}</p>
-                </div>
-                <span class="material-symbols-outlined text-zadna-primary">arrow_outward</span>
-              </div>
-            </button>
-            <button type="button" class="w-full rounded-2xl border border-slate-200 bg-slate-50/80 p-4 transition-all hover:border-zadna-primary/20 hover:bg-cyan-50/40" [ngClass]="isRTL ? 'text-right' : 'text-left'" (click)="setTab('support')">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-black text-slate-900">{{ 'DRIVERS.DETAIL.LINKED_PATHS.SUPPORT_TITLE' | translate }}</p>
-                  <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.LINKED_PATHS.SUPPORT_SUB' | translate: { open: driver.support.unresolvedCount, pending: driver.support.pendingFollowUpsCount } }}</p>
-                </div>
-                <span class="material-symbols-outlined text-zadna-primary">arrow_outward</span>
-              </div>
-            </button>
-            <button type="button" class="w-full rounded-2xl border border-slate-200 bg-slate-50/80 p-4 transition-all hover:border-zadna-primary/20 hover:bg-cyan-50/40" [ngClass]="isRTL ? 'text-right' : 'text-left'" (click)="setTab('finance')">
-              <div class="flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-sm font-black text-slate-900">{{ 'DRIVERS.DETAIL.LINKED_PATHS.FINANCE_TITLE' | translate }}</p>
-                  <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.LINKED_PATHS.FINANCE_SUB' | translate }} {{ driver.finance.dueAmount | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
-                </div>
-                <span class="material-symbols-outlined text-zadna-primary">arrow_outward</span>
-              </div>
-            </button>
-          </div>
-        </section>
-      </div>
-
-      <div *ngSwitchCase="'operations'" class="grid grid-cols-12 gap-6">
-        <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 shadow-sm lg:col-span-8 overflow-hidden">
-          <div class="border-b border-slate-200/70 p-6">
-            <app-section-header [title]="'DRIVERS.DETAIL.OPERATIONS.MAP_SECTION' | translate" [shouldTranslate]="false" icon="map" [compact]="true"></app-section-header>
-          </div>
-
-          <div class="relative h-[360px] overflow-hidden">
-            <img [src]="mapPreviewUrl" [alt]="'DRIVERS.DETAIL.OPERATIONS.MAP_ALT' | translate" class="h-full w-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent"></div>
-            <div class="absolute top-4 inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-black text-slate-700 shadow-sm" [ngClass]="isRTL ? 'right-4' : 'left-4'">
-              <span class="material-symbols-outlined text-zadna-primary text-[16px]">location_on</span>
-              {{ driver.operations.zoneName }}
-            </div>
-            <div class="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/92 p-4 shadow-lg backdrop-blur-sm">
-              <div class="grid gap-3 md:grid-cols-4">
-                <div>
-                  <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.ZONE_CAPACITY' | translate }}</p>
-                  <p class="mt-1 text-sm font-black text-slate-900">{{ driver.operations.zoneCapacityLabel }}</p>
-                </div>
-                <div>
-                  <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.OCCUPANCY_RATE' | translate }}</p>
-                  <p class="mt-1 text-sm font-black text-slate-900">{{ driver.operations.zoneUtilizationPercent }}%</p>
-                </div>
-                <div>
-                  <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.AVG_DELIVERY' | translate }}</p>
-                  <p class="mt-1 text-sm font-black text-slate-900">{{ driver.operations.avgDeliveryTimeLabel }}</p>
-                </div>
-                <div>
-                  <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.ZONE_STATUS' | translate }}</p>
-                  <p class="mt-1 text-sm font-black text-slate-900">{{ getOperationsStabilityLabel(driver.operations.stabilityLabel) }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div class="col-span-12 space-y-6 lg:col-span-4">
-          <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm">
-            <app-section-header [title]="'DRIVERS.DETAIL.OPERATIONS.ZONE_SUMMARY' | translate" [shouldTranslate]="false" icon="distance" [compact]="true"></app-section-header>
-            <div class="mt-5 space-y-4">
-              <div>
-                <div class="flex items-center justify-between text-[11px] font-black text-slate-500">
-                  <span>{{ 'DRIVERS.DETAIL.OPERATIONS.ZONE_OCCUPANCY' | translate }}</span>
-                  <span>{{ driver.operations.zoneUtilizationPercent }}%</span>
-                </div>
-                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                  <div class="h-full rounded-full bg-gradient-to-r from-zadna-primary to-cyan-400" [style.width.%]="driver.operations.zoneUtilizationPercent"></div>
-                </div>
-              </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-                <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.ACTIVE_DRIVERS' | translate }}</p>
-                <p class="mt-2 text-xl font-black text-slate-900">{{ driver.operations.activeDriversLabel }}</p>
-              </div>
-            </div>
-          </section>
-
-          <section class="rounded-[1.3rem] border border-slate-200/60 bg-gradient-to-br from-[#0f5f69] to-[#127c8c] p-6 text-white shadow-sm">
-            <app-section-header [title]="'DRIVERS.DETAIL.OPERATIONS.ASSIGNMENT_RULES' | translate" [shouldTranslate]="false" icon="rule" [compact]="true"></app-section-header>
-            <div class="mt-5 space-y-3">
-              <div *ngFor="let rule of driver.operations.rules" class="flex items-start gap-3 text-sm leading-7 text-white/90">
-                <span class="material-symbols-outlined text-[18px]">verified</span>
-                <span>{{ getOperationsRuleLabel(rule) }}</span>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 shadow-sm overflow-hidden">
-          <div class="border-b border-slate-200/70 p-6">
-            <app-section-header [title]="'DRIVERS.DETAIL.OPERATIONS.TASKS_SECTION' | translate" [shouldTranslate]="false" icon="local_shipping" [compact]="true"></app-section-header>
-          </div>
-          <div class="px-3 pb-3">
-            <app-data-table
-              [data]="driver.operations.taskAssignments"
-              [columns]="operationsColumns"
-              [clickableRows]="true"
-              [containerClass]="'driver-trips-table bg-transparent'"
-              [emptyStateTitle]="'DRIVERS.DETAIL.OPERATIONS.NO_TASKS' | translate"
-              [emptyStateMessage]="'DRIVERS.DETAIL.OPERATIONS.NO_TASKS_MSG' | translate"
-              (rowClick)="openTaskPreview($event)">
-              <ng-template #customColumn let-task let-column="column">
-                <ng-container *ngIf="column.key === 'id'">
-                  <span class="text-[11px] font-black text-zadna-primary" dir="ltr">{{ task.id }}</span>
-                </ng-container>
-                <ng-container *ngIf="column.key === 'vendor'">
-                  <span class="text-[12px] font-bold text-slate-700">{{ task.vendor }}</span>
-                </ng-container>
-                <ng-container *ngIf="column.key === 'zone'">
-                  <span class="text-[11px] font-bold text-slate-500">{{ task.zone }}</span>
-                </ng-container>
-                <ng-container *ngIf="column.key === 'status'">
-                  <app-status-pill [label]="getTaskStatusLabel(task.status)" [variant]="getTaskStatusVariant(task.status)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                </ng-container>
-                <ng-container *ngIf="column.key === 'assignedAt'">
-                  <span class="text-[11px] font-black text-slate-500" dir="ltr">{{ task.assignedAt }}</span>
-                </ng-container>
-                <ng-container *ngIf="column.key === 'duration'">
-                  <div class="space-y-1">
-                    <p class="text-[11px] font-black text-slate-700" dir="ltr">{{ task.duration }}</p>
-                    <p class="text-[10px] font-bold" [ngClass]="task.delayLabel === '00:00' ? 'text-emerald-600' : 'text-red-500'" dir="ltr">{{ task.delayLabel }}</p>
-                  </div>
-                </ng-container>
-                <ng-container *ngIf="column.key === 'codAmount'">
-                  <span class="font-['Inter'] text-[11px] font-black text-slate-800" dir="ltr">{{ task.codAmount | number:'1.2-2' }}</span>
-                </ng-container>
-              </ng-template>
-
-              <ng-template #mobileCard let-task>
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between gap-3">
-                    <span class="text-sm font-black text-zadna-primary" dir="ltr">{{ task.id }}</span>
-                    <app-status-pill [label]="getTaskStatusLabel(task.status)" [variant]="getTaskStatusVariant(task.status)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                  </div>
-                  <p class="text-sm font-bold text-slate-800">{{ task.vendor }}</p>
-                  <div class="grid grid-cols-2 gap-3 text-[11px] font-bold">
-                    <div class="rounded-xl bg-slate-50 px-3 py-2">
-                      <p class="mb-1 text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.TABLE_ZONE_MOBILE' | translate }}</p>
-                      <p>{{ task.zone }}</p>
-                    </div>
-                    <div class="rounded-xl bg-slate-50 px-3 py-2">
-                      <p class="mb-1 text-slate-400">{{ 'DRIVERS.DETAIL.PREVIEW.TASK_COD' | translate }}</p>
-                      <p dir="ltr">{{ task.codAmount | number:'1.2-2' }}</p>
-                    </div>
-                  </div>
-                </div>
-              </ng-template>
-            </app-data-table>
-          </div>
-        </section>
-      </div>
-
-      <div *ngSwitchCase="'performance'" class="space-y-6">
-        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-          <article *ngFor="let metric of driver.performanceSnapshot.metricCards" class="rounded-[1.2rem] border border-slate-200/60 bg-white/85 p-4 shadow-sm">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-[11px] font-extrabold text-slate-400">{{ metric.title }}</p>
-                <h3 class="mt-2 text-2xl font-black text-slate-900">{{ metric.value }}</h3>
-              </div>
-              <span class="material-symbols-outlined text-[18px]" [ngClass]="metric.tone === 'danger' ? 'text-red-500' : metric.tone === 'warning' ? 'text-amber-500' : metric.tone === 'success' ? 'text-emerald-500' : 'text-zadna-primary'">query_stats</span>
-            </div>
-            <p class="mt-2 text-[11px] font-medium text-slate-500">{{ metric.helper }}</p>
-            <p *ngIf="metric.deltaLabel" class="mt-2 text-[11px] font-black" [ngClass]="metric.tone === 'danger' ? 'text-red-500' : metric.tone === 'warning' ? 'text-amber-600' : 'text-emerald-600'">
-              {{ metric.deltaLabel }}
-            </p>
-          </article>
-        </section>
-
-        <div class="grid grid-cols-12 gap-6">
-          <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-8">
-            <app-section-header [title]="'DRIVERS.DETAIL.PERFORMANCE.TREND_SECTION' | translate" [shouldTranslate]="false" icon="monitoring" [compact]="true"></app-section-header>
-            <div class="mt-8 grid min-h-[14rem] grid-cols-5 items-end gap-3">
-              <div *ngFor="let point of driver.weeklyEfficiency" class="flex flex-col items-center gap-3">
-                <div class="flex h-[10rem] w-full items-end gap-1 rounded-t-2xl rounded-b-sm bg-slate-100 p-[0.18rem]">
-                  <div class="flex-1 rounded-t-xl bg-slate-300/80" [style.height.%]="point.benchmark"></div>
-                  <div class="flex-1 rounded-t-xl bg-gradient-to-t from-zadna-primary to-cyan-500" [style.height.%]="point.driver"></div>
-                </div>
-                <span class="text-[11px] font-extrabold text-slate-400">{{ point.label }}</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-4">
-            <app-section-header [title]="'DRIVERS.DETAIL.PERFORMANCE.COMPARISON_SECTION' | translate" [shouldTranslate]="false" icon="leaderboard" [compact]="true"></app-section-header>
-            <div class="mt-5 space-y-5">
-              <div *ngFor="let benchmark of driver.performanceSnapshot.benchmarks" class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-                <div class="flex items-center justify-between gap-3">
-                  <h3 class="text-sm font-black text-slate-900">{{ benchmark.label }}</h3>
-                  <span class="text-[11px] font-black text-zadna-primary">{{ benchmark.driverValue }}{{ benchmark.unit }}</span>
-                </div>
-                <div class="mt-3 space-y-2 text-[11px] font-bold">
-                  <div class="flex items-center justify-between text-slate-500">
-                    <span>{{ 'DRIVERS.DETAIL.PERFORMANCE.REGION_AVG' | translate }}</span>
-                    <span>{{ benchmark.regionValue }}{{ benchmark.unit }}</span>
-                  </div>
-                  <div class="flex items-center justify-between text-slate-500">
-                    <span>{{ 'DRIVERS.DETAIL.PERFORMANCE.FLEET_AVG' | translate }}</span>
-                    <span>{{ benchmark.fleetValue }}{{ benchmark.unit }}</span>
-                  </div>
-                </div>
-                <p class="mt-3 text-[11px] leading-6 text-slate-500">{{ benchmark.insight }}</p>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-
-      <div *ngSwitchCase="'support'" class="space-y-6">
-        <app-inline-banner
-          *ngIf="driver.support.pendingFollowUpsCount > 0"
-          variant="warning"
-          icon="warning"
-          [title]="'DRIVERS.DETAIL.SUPPORT.PENDING_FOLLOWUPS_TITLE' | translate"
-          [message]="'DRIVERS.DETAIL.SUPPORT.PENDING_FOLLOWUPS_MSG' | translate: { count: driver.support.pendingFollowUpsCount }"
-          [shouldTranslate]="false">
-        </app-inline-banner>
-
-        <div class="grid grid-cols-12 gap-6">
-          <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-5">
-            <app-section-header [title]="'DRIVERS.DETAIL.SUPPORT.INTERNAL_NOTES' | translate" [shouldTranslate]="false" icon="forum" [compact]="true"></app-section-header>
-            <div class="mt-5 max-h-[20rem] space-y-3 overflow-y-auto" [ngClass]="isRTL ? 'pr-1' : 'pl-1'">
-              <article *ngFor="let note of driver.notes" class="rounded-2xl bg-slate-50 p-4" [ngClass]="isRTL ? 'border-r-[3px] border-r-zadna-primary/35' : 'border-l-[3px] border-l-zadna-primary/35'">
-                <div class="flex items-center justify-between gap-3">
-                  <div>
-                    <h4 class="text-[12px] font-black text-slate-900">{{ note.author }}</h4>
-                    <p class="text-[10px] font-bold text-slate-400">{{ note.role }}</p>
-                  </div>
-                  <span class="text-[10px] font-black text-slate-400" dir="ltr">{{ note.createdAt }}</span>
-                </div>
-                <p class="mt-3 text-[12px] leading-7 text-slate-600">{{ note.message }}</p>
-              </article>
-            </div>
-            <div class="mt-4 flex gap-3 border-t border-slate-200/70 pt-4">
-              <input [(ngModel)]="quickNote" (ngModelChange)="onQuickNoteChange($event)" type="text" [placeholder]="'DRIVERS.DETAIL.SUPPORT.ADD_NOTE_PLACEHOLDER' | translate" class="h-11 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary/30 focus:ring-4 focus:ring-zadna-primary/5">
-              <button type="button" class="h-11 rounded-xl bg-zadna-primary px-4 text-[11px] font-extrabold text-white transition-all hover:bg-teal-700" (click)="addQuickNote()">{{ 'DRIVERS.DETAIL.SUPPORT.SAVE_NOTE' | translate }}</button>
-            </div>
-          </section>
-
-          <div class="col-span-12 space-y-6 lg:col-span-7">
-            <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm">
-              <app-section-header [title]="'DRIVERS.DETAIL.SUPPORT.DRIVERS_INTERACTIONS' | translate" [shouldTranslate]="false" icon="chat" [compact]="true"></app-section-header>
-              <div class="mt-5 space-y-4">
-                <div *ngFor="let message of driver.support.chatMessages" class="flex" [ngClass]="message.direction === 'support' ? 'justify-end' : 'justify-start'">
-                  <div class="max-w-[80%] rounded-[1.35rem] px-4 py-3" [ngClass]="message.direction === 'support' ? 'rounded-tr-sm bg-slate-100 text-slate-700' : 'rounded-tl-sm bg-cyan-50 text-zadna-primary'">
-                    <p class="text-sm leading-7">{{ message.message }}</p>
-                    <p class="mt-2 text-[10px] font-black text-slate-400" dir="ltr">{{ message.time }}</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div class="grid gap-6 md:grid-cols-2">
-              <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-5 shadow-sm">
-                <app-section-header [title]="'DRIVERS.DETAIL.SUPPORT.RESPONSIBLE_REVIEWER' | translate" [shouldTranslate]="false" icon="person" [compact]="true"></app-section-header>
-                <div class="mt-5 flex items-center gap-4">
-                  <div class="relative h-14 w-14 rounded-2xl bg-cyan-50 p-0.5">
-                    <img *ngIf="driver.imageUrl" [src]="driver.imageUrl" [alt]="driver.support.reviewerName" class="h-full w-full rounded-[1rem] object-cover">
-                    <span class="absolute -bottom-1 -left-1 h-4 w-4 rounded-full border-2 border-white" [ngClass]="driver.support.reviewerOnline ? 'bg-emerald-500' : 'bg-slate-300'"></span>
-                  </div>
-                  <div>
-                    <h4 class="text-sm font-black text-slate-900">{{ driver.support.reviewerName }}</h4>
-                    <p class="mt-1 text-[11px] font-medium text-slate-500">{{ driver.support.reviewerRole }}</p>
-                  </div>
-                </div>
-              </section>
-
-              <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-5 shadow-sm">
-                <app-section-header [title]="'DRIVERS.DETAIL.SUPPORT.DRIVER_TAGS' | translate" [shouldTranslate]="false" icon="sell" [compact]="true"></app-section-header>
-                <div class="mt-5 flex flex-wrap gap-2">
-                  <span *ngFor="let tag of driver.support.tags" [class]="getTagClasses(tag.tone)">{{ getSupportTagLabel(tag.label) }}</span>
-                </div>
-              </section>
-            </div>
-          </div>
-        </div>
-
-        <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 shadow-sm overflow-hidden">
-          <div class="border-b border-slate-200/70 p-6">
-            <app-section-header [title]="'DRIVERS.DETAIL.SUPPORT.LINKED_TICKETS' | translate" [shouldTranslate]="false" icon="confirmation_number" [compact]="true"></app-section-header>
-          </div>
-          <div class="px-3 pb-3">
-            <app-data-table [data]="driver.support.tickets" [columns]="supportColumns" [emptyStateTitle]="'DRIVERS.DETAIL.SUPPORT.NO_TICKETS' | translate" [emptyStateMessage]="'DRIVERS.DETAIL.SUPPORT.NO_TICKETS_MSG' | translate">
-              <ng-template #customColumn let-ticket let-column="column">
-                <ng-container *ngIf="column.key === 'id'"><span class="text-[11px] font-black text-zadna-primary" dir="ltr">{{ ticket.id }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'subject'"><span class="text-[12px] font-bold text-slate-700">{{ ticket.subject }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'status'"><app-status-pill [label]="getSupportStatusLabel(ticket.status)" [variant]="getSupportStatusVariant(ticket.status)" [shouldTranslate]="false" size="sm"></app-status-pill></ng-container>
-                <ng-container *ngIf="column.key === 'priority'"><app-status-pill [label]="getSupportPriorityLabel(ticket.priority)" [variant]="getPriorityVariant(ticket.priority)" [shouldTranslate]="false" size="sm"></app-status-pill></ng-container>
-                <ng-container *ngIf="column.key === 'reviewer'"><span class="text-[11px] font-bold text-slate-700">{{ ticket.reviewer }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'updatedAt'"><span class="text-[11px] font-black text-slate-500" dir="ltr">{{ ticket.updatedAt }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'open'"><button type="button" class="h-8 w-8 rounded-full bg-slate-50 text-slate-400 transition-all hover:bg-slate-100 hover:text-zadna-primary"><span class="material-symbols-outlined text-[18px]">open_in_new</span></button></ng-container>
-              </ng-template>
-              <ng-template #mobileCard let-ticket>
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between gap-3">
-                    <span class="text-sm font-black text-zadna-primary" dir="ltr">{{ ticket.id }}</span>
-                    <app-status-pill [label]="getSupportStatusLabel(ticket.status)" [variant]="getSupportStatusVariant(ticket.status)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                  </div>
-                  <p class="text-sm font-bold text-slate-800">{{ ticket.subject }}</p>
-                  <div class="flex flex-wrap gap-2">
-                    <app-status-pill [label]="getSupportPriorityLabel(ticket.priority)" [variant]="getPriorityVariant(ticket.priority)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                  </div>
-                </div>
-              </ng-template>
-            </app-data-table>
-          </div>
-        </section>
-      </div>
-
-      <div *ngSwitchCase="'compliance'" class="space-y-6">
-        <app-inline-banner
-          *ngIf="driver.compliance.criticalCases > 0"
-          variant="critical"
-          icon="warning"
-          [title]="'DRIVERS.DETAIL.COMPLIANCE.CRITICAL_ALERT_TITLE' | translate"
-          [message]="'DRIVERS.DETAIL.COMPLIANCE.CRITICAL_ALERT_MSG' | translate: { count: driver.compliance.criticalCases }"
-          [shouldTranslate]="false">
-        </app-inline-banner>
-
-        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <article class="rounded-[1.2rem] border border-slate-200/60 bg-white/85 p-4 shadow-sm"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.COMPLIANCE.OPEN_CASES' | translate }}</p><h3 class="mt-2 text-2xl font-black text-slate-900">{{ driver.compliance.openCases }}</h3></article>
-          <article class="rounded-[1.2rem] border border-red-100 bg-red-50/70 p-4 shadow-sm"><p class="text-[11px] font-extrabold text-red-500">{{ 'DRIVERS.DETAIL.COMPLIANCE.CRITICAL_CASES' | translate }}</p><h3 class="mt-2 text-2xl font-black text-red-600">{{ driver.compliance.criticalCases }}</h3></article>
-          <article class="rounded-[1.2rem] border border-slate-200/60 bg-white/85 p-4 shadow-sm"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.COMPLIANCE.SAFETY_ALERTS' | translate }}</p><h3 class="mt-2 text-2xl font-black text-slate-900">{{ driver.compliance.safetyAlerts }}</h3></article>
-          <article class="rounded-[1.2rem] border border-slate-200/60 bg-white/85 p-4 shadow-sm"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOCS_FOLLOWUP' | translate }}</p><h3 class="mt-2 text-2xl font-black text-slate-900">{{ driver.compliance.expiredDocuments + driver.compliance.documentHealth.review }}</h3></article>
-          <article class="rounded-[1.2rem] border border-slate-200/60 bg-white/85 p-4 shadow-sm"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.COMPLIANCE.RISK_LEVEL' | translate }}</p><h3 class="mt-2 text-2xl font-black text-slate-900">{{ getComplianceRiskLabel(driver.compliance.riskLabel) }}</h3></article>
-        </section>
-
-        <div class="grid grid-cols-12 gap-6">
-          <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 shadow-sm overflow-hidden lg:col-span-8">
-            <div class="border-b border-slate-200/70 p-6">
-              <app-section-header [title]="'DRIVERS.DETAIL.COMPLIANCE.INCIDENTS_SECTION' | translate" [shouldTranslate]="false" icon="gavel" [compact]="true"></app-section-header>
-            </div>
-            <div class="px-3 pb-3">
-              <app-data-table [data]="driver.compliance.incidents" [columns]="incidentsColumns" [clickableRows]="true" [emptyStateTitle]="'DRIVERS.DETAIL.COMPLIANCE.NO_CASES' | translate" [emptyStateMessage]="'DRIVERS.DETAIL.COMPLIANCE.NO_CASES_MSG' | translate" (rowClick)="openIncidentPreview($event)">
-                <ng-template #customColumn let-incident let-column="column">
-                  <ng-container *ngIf="column.key === 'id'"><span class="text-[11px] font-black text-zadna-primary" dir="ltr">{{ incident.id }}</span></ng-container>
-                  <ng-container *ngIf="column.key === 'type'"><span class="text-[12px] font-bold text-slate-700">{{ getIncidentTypeLabel(incident.type) }}</span></ng-container>
-                  <ng-container *ngIf="column.key === 'severity'"><app-status-pill [label]="getIncidentSeverityLabel(incident.severity)" [variant]="getIncidentSeverityVariant(incident.severity)" [shouldTranslate]="false" size="sm"></app-status-pill></ng-container>
-                  <ng-container *ngIf="column.key === 'status'"><app-status-pill [label]="getIncidentStatusLabel(incident.status)" [variant]="getIncidentStatusVariant(incident.status)" [shouldTranslate]="false" size="sm"></app-status-pill></ng-container>
-                  <ng-container *ngIf="column.key === 'reviewer'"><span class="text-[11px] font-bold text-slate-700">{{ incident.reviewer }}</span></ng-container>
-                  <ng-container *ngIf="column.key === 'createdAt'"><span class="text-[11px] font-black text-slate-500" dir="ltr">{{ incident.createdAt }}</span></ng-container>
-                  <ng-container *ngIf="column.key === 'open'"><button type="button" class="h-8 w-8 rounded-full bg-slate-50 text-slate-400 transition-all hover:bg-slate-100 hover:text-zadna-primary"><span class="material-symbols-outlined text-[18px]">visibility</span></button></ng-container>
-                </ng-template>
-                <ng-template #mobileCard let-incident>
-                  <div class="space-y-3">
-                    <div class="flex items-center justify-between gap-3">
-                      <span class="text-sm font-black text-zadna-primary" dir="ltr">{{ incident.id }}</span>
-                      <app-status-pill [label]="getIncidentStatusLabel(incident.status)" [variant]="getIncidentStatusVariant(incident.status)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                    </div>
-                    <p class="text-sm font-bold text-slate-800">{{ getIncidentTypeLabel(incident.type) }}</p>
-                    <app-status-pill [label]="getIncidentSeverityLabel(incident.severity)" [variant]="getIncidentSeverityVariant(incident.severity)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                  </div>
-                </ng-template>
-              </app-data-table>
-            </div>
-          </section>
-
-          <div class="col-span-12 space-y-6 lg:col-span-4">
-            <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm">
-              <app-section-header [title]="'DRIVERS.DETAIL.COMPLIANCE.DOCS_HEALTH' | translate" [shouldTranslate]="false" icon="description" [compact]="true"></app-section-header>
-              <div class="mt-5 space-y-3">
-                <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3"><span class="text-sm font-bold text-slate-700">{{ 'DRIVERS.DETAIL.COMPLIANCE.VALID' | translate }}</span><span class="text-sm font-black text-emerald-600">{{ driver.compliance.documentHealth.valid }}</span></div>
-                <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3"><span class="text-sm font-bold text-slate-700">{{ 'DRIVERS.DETAIL.COMPLIANCE.EXPIRING_SOON' | translate }}</span><span class="text-sm font-black text-amber-600">{{ driver.compliance.documentHealth.expiring }}</span></div>
-                <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3"><span class="text-sm font-bold text-slate-700">{{ 'DRIVERS.DETAIL.COMPLIANCE.UNDER_REVIEW' | translate }}</span><span class="text-sm font-black text-slate-700">{{ driver.compliance.documentHealth.review }}</span></div>
-              </div>
-            </section>
-
-            <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm">
-              <app-section-header [title]="'DRIVERS.DETAIL.COMPLIANCE.RISK_INDEX' | translate" [shouldTranslate]="false" icon="gpp_maybe" tone="danger" [compact]="true"></app-section-header>
-              <div class="mt-5">
-                <div class="h-2 overflow-hidden rounded-full bg-slate-200">
-                  <div class="h-full rounded-full bg-red-500" [style.width.%]="(driver.complianceRiskPoints / driver.complianceRiskThreshold) * 100"></div>
-                </div>
-                <div class="mt-3 flex items-center justify-between text-[11px] font-black text-slate-500">
-                  <span>{{ 'DRIVERS.DETAIL.COMPLIANCE.CURRENT_POINTS' | translate }}</span>
-                  <span class="text-red-500">{{ driver.complianceRiskPoints }}/{{ driver.complianceRiskThreshold }}</span>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-      </div>
-
-      <div *ngSwitchCase="'finance'" class="space-y-6">
-        <div class="grid grid-cols-12 gap-6">
-          <section class="col-span-12 rounded-[1.3rem] bg-gradient-to-br from-[#0f4b56] via-[#0d5967] to-[#127c8c] p-6 text-white shadow-[0_18px_30px_-22px_rgba(15,75,86,0.65)] lg:col-span-5">
-            <p class="text-[11px] font-extrabold text-white/70">{{ 'DRIVERS.DETAIL.FINANCE.BALANCE_SECTION' | translate }}</p>
-            <div class="mt-4 space-y-2">
-              <p class="text-xs text-white/70">{{ 'DRIVERS.DETAIL.FINANCE.AVAILABLE_BALANCE' | translate }}</p>
-              <p class="text-3xl font-black" dir="ltr">{{ driver.finance.availableBalance | number:'1.2-2' }} <span class="text-sm opacity-70">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
-            </div>
-            <div class="mt-5 grid grid-cols-2 gap-3">
-              <div class="rounded-2xl bg-white/10 p-4"><p class="text-[10px] font-bold text-white/70">{{ 'DRIVERS.DETAIL.FINANCE.COD_COLLECTED' | translate }}</p><p class="mt-2 text-lg font-black" dir="ltr">{{ driver.finance.codCollected | number:'1.0-0' }}</p></div>
-              <div class="rounded-2xl bg-white/10 p-4"><p class="text-[10px] font-bold text-white/70">{{ 'DRIVERS.DETAIL.FINANCE.CURRENT_DUE' | translate }}</p><p class="mt-2 text-lg font-black" dir="ltr">{{ driver.finance.dueAmount | number:'1.0-0' }}</p></div>
-            </div>
-          </section>
-
-        <section class="col-span-12 rounded-[1.3rem] border border-slate-200/60 bg-white/85 p-6 shadow-sm lg:col-span-7">
-          <app-section-header [title]="'DRIVERS.DETAIL.FINANCE.SETTLEMENTS_SUMMARY' | translate" [shouldTranslate]="false" icon="account_balance_wallet" [compact]="true"></app-section-header>
-          <div class="mt-5 grid gap-4 md:grid-cols-3">
-            <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.PENDING_DEDUCTIONS' | translate }}</p><p class="mt-2 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.pendingDeductions | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p></div>
-            <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.NEXT_PAYOUT' | translate }}</p><p class="mt-2 text-xl font-black text-slate-900" dir="ltr">{{ driver.finance.nextPayoutDate }}</p></div>
-            <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4"><p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.PAYOUT_METHOD' | translate }}</p><p class="mt-2 text-sm font-black text-slate-900">{{ getFinanceMethodLabel(driver.finance.payoutMethod) }}</p></div>
-          </div>
-        </section>
-
-        <section class="col-span-12 rounded-[1.3rem] border border-cyan-200 bg-cyan-50/70 p-5 shadow-sm">
-          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.TITLE' | translate }}</p>
-              <h3 class="mt-1 text-base font-black text-slate-900">{{ 'FINANCES.SETTLEMENTS.DRIVER_LIST' | translate }}</h3>
-              <p class="mt-1 text-xs font-medium text-slate-500" dir="ltr">{{ driver.id }}</p>
-            </div>
-
-            <div class="flex flex-wrap gap-2">
-              <a
-                [routerLink]="['/finances/settlements']"
-                [queryParams]="{ entityType: 'driver', entityId: driver.id }"
-                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[11px] font-black text-slate-700 transition-all hover:bg-slate-100"
-              >
-                <span class="material-symbols-outlined text-[16px]">payments</span>
-                {{ 'FINANCES.ACTIONS.VIEW_SETTLEMENTS' | translate }}
-              </a>
-
-              <a
-                [routerLink]="['/finances/refunds']"
-                [queryParams]="{ entityType: 'driver', entityId: driver.id }"
-                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-4 text-[11px] font-black text-white transition-all hover:bg-zadna-primaryDark"
-              >
-                <span class="material-symbols-outlined text-[16px]">undo</span>
-                {{ 'FINANCES.ACTIONS.VIEW_REFUNDS' | translate }}
-              </a>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <section class="rounded-[1.3rem] border border-slate-200/60 bg-white/85 shadow-sm overflow-hidden">
-          <div class="border-b border-slate-200/70 p-6">
-            <app-section-header [title]="'DRIVERS.DETAIL.FINANCE.SETTLEMENTS_HISTORY' | translate" [shouldTranslate]="false" icon="receipt_long" [compact]="true"></app-section-header>
-          </div>
-          <div class="px-3 pb-3">
-            <app-data-table [data]="driver.finance.entries" [columns]="financeColumns" [emptyStateTitle]="'DRIVERS.DETAIL.FINANCE.NO_SETTLEMENTS' | translate" [emptyStateMessage]="'DRIVERS.DETAIL.FINANCE.NO_SETTLEMENTS_MSG' | translate">
-              <ng-template #customColumn let-entry let-column="column">
-                <ng-container *ngIf="column.key === 'reference'"><span class="text-[11px] font-black text-zadna-primary" dir="ltr">{{ entry.reference }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'type'"><span class="text-[12px] font-bold text-slate-700">{{ getFinanceTypeLabel(entry.type) }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'amount'"><span class="font-['Inter'] text-[11px] font-black text-slate-800" dir="ltr">{{ entry.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'status'"><app-status-pill [label]="getFinanceStatusLabel(entry.status)" [variant]="getFinanceStatusVariant(entry.status)" [shouldTranslate]="false" size="sm"></app-status-pill></ng-container>
-                <ng-container *ngIf="column.key === 'method'"><span class="text-[11px] font-bold text-slate-700">{{ getFinanceMethodLabel(entry.method) }}</span></ng-container>
-                <ng-container *ngIf="column.key === 'date'"><span class="text-[11px] font-black text-slate-500" dir="ltr">{{ entry.date }}</span></ng-container>
-              </ng-template>
-              <ng-template #mobileCard let-entry>
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between gap-3">
-                    <span class="text-sm font-black text-zadna-primary" dir="ltr">{{ entry.reference }}</span>
-                    <app-status-pill [label]="getFinanceStatusLabel(entry.status)" [variant]="getFinanceStatusVariant(entry.status)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                  </div>
-                  <p class="text-sm font-bold text-slate-800">{{ getFinanceTypeLabel(entry.type) }}</p>
-                  <p class="font-['Inter'] text-sm font-black text-slate-900" dir="ltr">{{ entry.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
-                </div>
-              </ng-template>
-            </app-data-table>
-          </div>
-        </section>
-      </div>
-
-      <div *ngSwitchCase="'verification'" class="space-y-6">
-        <section class="rounded-[1.15rem] border border-slate-200/60 bg-white/85 p-5 shadow-sm">
-          <app-section-header [title]="'DRIVERS.DETAIL.VERIFICATION.SECTION_TITLE' | translate" [shouldTranslate]="false" icon="verified_user" [compact]="true"></app-section-header>
-          <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-3" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-              <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.APP_NUMBER' | translate }}</p>
-              <p class="mt-1.5 text-base font-black text-slate-900" dir="ltr">{{ driver.verification.applicationId }}</p>
-            </div>
-            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-3" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-              <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.SUBMIT_DATE' | translate }}</p>
-              <p class="mt-1.5 text-base font-black text-slate-900" dir="ltr">{{ driver.verification.submittedAt }}</p>
-            </div>
-            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-3" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-              <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.PROGRESS_RATE' | translate }}</p>
-              <p class="mt-1.5 text-base font-black text-slate-900">{{ driver.verification.progressPercentage }}%</p>
-            </div>
-            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-3" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-              <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.CRITICAL_NOTES' | translate }}</p>
-              <p class="mt-1.5 text-base font-black text-slate-900">{{ getCriticalChecklistCount(driver) }}</p>
-            </div>
-          </div>
-        </section>
-
-        <div class="grid gap-5 lg:grid-cols-3">
-          <section class="h-full rounded-[1rem] bg-gradient-to-br from-[#0f5f69] to-[#127c8c] p-4 text-white shadow-[0_18px_30px_-22px_rgba(15,95,105,0.8)]">
-            <p class="text-[11px] font-extrabold text-white/70">{{ 'DRIVERS.DETAIL.VERIFICATION.READINESS_SUMMARY' | translate }}</p>
-            <div class="mt-3 flex items-end justify-between gap-4">
-              <div>
-                <h3 class="text-3xl font-black">{{ driver.verification.progressPercentage }}%</h3>
-                <p class="mt-1 text-[13px] font-medium text-white/75">{{ 'DRIVERS.DETAIL.VERIFICATION.FILE_PROGRESS' | translate }}</p>
-              </div>
-              <app-status-pill
-                [label]="getVerificationRecommendation(driver.verification.recommendation)"
-                [variant]="getVerificationRecommendationVariant(driver)"
-                [shouldTranslate]="false"
-                size="sm">
-              </app-status-pill>
-            </div>
-
-            <div class="mt-4 h-2 overflow-hidden rounded-full bg-white/15">
-              <div class="h-full rounded-full bg-white" [style.width.%]="driver.verification.progressPercentage"></div>
-            </div>
-
-            <div class="mt-4 grid grid-cols-2 gap-2.5">
-              <div class="rounded-[0.9rem] bg-white/10 p-3">
-                <p class="text-[10px] font-bold text-white/70">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}</p>
-                <p class="mt-1.5 text-lg font-black">{{ driver.verification.trustScore }}%</p>
-              </div>
-              <div class="rounded-[0.9rem] bg-white/10 p-3">
-                <p class="text-[10px] font-bold text-white/70">{{ 'DRIVERS.DETAIL.VERIFICATION.COMPLETED_ITEMS' | translate }}</p>
-                <p class="mt-1.5 text-lg font-black">{{ getCompletedChecklistCount(driver) }}</p>
-              </div>
-            </div>
-
-            <div class="mt-4 rounded-[0.9rem] border border-white/10 bg-white/10 p-3">
-              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-white/60">{{ 'DRIVERS.DETAIL.VERIFICATION.CURRENT_REVIEWER' | translate }}</p>
-              <p class="mt-1.5 text-[15px] font-black">{{ driver.verification.reviewer }}</p>
-              <p class="mt-1 text-[12px] leading-6 text-white/75">{{ getVerificationReason(driver.verification.recommendationReason) }}</p>
-            </div>
-
-            <div class="mt-3 space-y-2 text-[12px] leading-6 text-white/90">
-              <div class="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2.5">
-                <span>{{ 'DRIVERS.DETAIL.VERIFICATION.PENDING_ITEMS_COUNT' | translate }}</span>
-                <span class="font-black">{{ getPendingChecklistCount(driver) }}</span>
-              </div>
-              <div class="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2.5">
-                <span>{{ 'DRIVERS.DETAIL.VERIFICATION.APP_NUMBER_LABEL' | translate }}</span>
-                <span class="font-black" dir="ltr">{{ driver.verification.applicationId }}</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="flex h-full flex-col rounded-[1rem] border border-slate-200 bg-white/85 p-4 shadow-sm">
-            <div class="flex flex-col gap-3 border-b border-slate-200 pb-3 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <h3 class="text-[13px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_TITLE' | translate }}</h3>
-                <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_DESC' | translate }}</p>
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black text-emerald-700">{{ getCompletedChecklistCount(driver) }} {{ 'DRIVERS.DETAIL.VERIFICATION.COMPLETED' | translate }}</span>
-                <span class="inline-flex items-center rounded-full bg-amber-50 px-3 py-1 text-[10px] font-black text-amber-700">{{ getPendingChecklistCount(driver) }} {{ 'DRIVERS.DETAIL.VERIFICATION.PENDING' | translate }}</span>
-              </div>
-            </div>
-
-            <div class="mt-4 flex-1 space-y-2.5">
-              <article
-                *ngFor="let item of driver.verification.checklist"
-                class="rounded-[1rem] border p-3 transition-all"
-                [ngClass]="getChecklistItemClasses(item)">
-                <div class="flex items-start justify-between gap-4">
-                  <div class="flex min-w-0 items-start gap-3">
-                    <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
-                      [ngClass]="item.completed ? 'bg-emerald-100 text-emerald-600' : item.critical ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'">
-                      <span class="material-symbols-outlined text-[16px]">
-                        {{ item.completed ? 'check_circle' : item.critical ? 'priority_high' : 'hourglass_top' }}
-                      </span>
-                    </div>
-                    <div class="min-w-0">
-                      <p class="text-[13px] font-black text-slate-900">{{ getChecklistItemLabel(item.label) }}</p>
-                      <p *ngIf="item.note" class="mt-1 text-[11px] font-medium leading-6" [ngClass]="item.critical ? 'text-red-500' : 'text-slate-500'">{{ getChecklistItemNote(item.note) }}</p>
-                    </div>
-                  </div>
-
-                  <app-status-pill
-                    [label]="getChecklistItemStatusLabel(item)"
-                    [variant]="getChecklistItemStatusVariant(item)"
-                    [shouldTranslate]="false"
-                    size="sm">
-                  </app-status-pill>
-                </div>
-              </article>
-            </div>
-          </section>
-
-          <section class="flex h-full flex-col rounded-[1rem] border border-slate-200 bg-white/85 p-4 shadow-sm">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <h3 class="text-[13px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.DECISION_NOTES_TITLE' | translate }}</h3>
-                <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.DECISION_NOTES_DESC' | translate }}</p>
-              </div>
-              <app-status-pill
-                [label]="getVerificationRecommendation(driver.verification.recommendation)"
-                [variant]="getVerificationRecommendationVariant(driver)"
-                [shouldTranslate]="false"
-                size="sm">
-              </app-status-pill>
-            </div>
-
-            <div class="mt-4 flex flex-1 flex-col space-y-3.5">
-              <div>
-                <label class="mb-2 block text-[11px] font-extrabold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_LABEL' | translate }}</label>
-                <textarea
-                  [(ngModel)]="reviewerDecisionNote"
-                  (ngModelChange)="onReviewerDecisionNoteChange($event)"
-                  [placeholder]="'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_PLACEHOLDER' | translate"
-                  class="min-h-[112px] w-full rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm outline-none transition-all focus:border-zadna-primary/30 focus:ring-4 focus:ring-zadna-primary/5"></textarea>
-              </div>
-
-              <div>
-                <label class="mb-2 block text-[11px] font-extrabold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REJECTION_REASON_LABEL' | translate }}</label>
-                <select
-                  [(ngModel)]="selectedRejectionReason"
-                  (ngModelChange)="onSelectedRejectionReasonChange($event)"
-                  class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 text-sm font-medium outline-none transition-all focus:border-zadna-primary/30 focus:ring-4 focus:ring-zadna-primary/5">
-                  <option *ngFor="let reason of driver.verification.rejectionReasonOptions" [value]="reason">{{ getRejectionReasonLabel(reason) }}</option>
-                </select>
-              </div>
-
-              <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 p-3" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-                <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEWER_LABEL' | translate }}</p>
-                <p class="mt-1.5 text-[13px] font-black text-slate-900">{{ driver.verification.reviewer }}</p>
-                <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}: {{ driver.verification.trustScore }}%</p>
-              </div>
-
-              <div>
-                <label class="mb-2 block text-[11px] font-extrabold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.INTERNAL_NOTES_LABEL' | translate }}</label>
-                <textarea
-                  [(ngModel)]="internalReviewNote"
-                  (ngModelChange)="onInternalReviewNoteChange($event)"
-                  [placeholder]="'DRIVERS.DETAIL.VERIFICATION.INTERNAL_NOTES_PLACEHOLDER' | translate"
-                  class="min-h-[96px] w-full rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm outline-none transition-all focus:border-zadna-primary/30 focus:ring-4 focus:ring-zadna-primary/5"></textarea>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <section class="rounded-[1.15rem] border border-slate-200/60 bg-white/85 p-5 shadow-sm">
-          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <app-section-header [title]="'DRIVERS.DETAIL.VERIFICATION.DOCS_SECTION' | translate" [shouldTranslate]="false" icon="description" [compact]="true"></app-section-header>
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-3 py-2.5" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.TOTAL_FILES' | translate }}</p>
-                <p class="mt-1 text-sm font-black text-slate-900">{{ driver.documents.length }}</p>
-              </div>
-              <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-3 py-2.5" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-                <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCS_NEED_FOLLOW' | translate }}</p>
-                <p class="mt-1 text-sm font-black text-slate-900">{{ getPendingChecklistCount(driver) }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <article *ngFor="let document of driver.documents" class="overflow-hidden rounded-[1rem] border border-slate-200/80 bg-slate-50 shadow-sm">
-              <div class="relative">
-                <img [src]="document.imageUrl" [alt]="getDocumentTitle(document.title)" class="h-36 w-full object-cover">
-                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/60 to-transparent p-4">
-                  <app-status-pill [label]="getDocumentStatusLabel(document.statusLabel)" [variant]="getDocumentStatusVariant(document.status)" [shouldTranslate]="false" size="sm"></app-status-pill>
-                </div>
-              </div>
-
-              <div class="p-3" [ngClass]="isRTL ? 'text-right' : 'text-left'">
-                <div class="flex items-start justify-between gap-3">
-                  <div class="min-w-0">
-                    <h3 class="text-[13px] font-black text-slate-900">{{ getDocumentTitle(document.title) }}</h3>
-                    <p class="mt-2 text-[11px] font-medium leading-6 text-slate-500">{{ getDocumentSubtitle(document.subtitle) }}</p>
-                  </div>
-                  <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-400 shadow-sm transition-all hover:text-zadna-primary">
-                    <span class="material-symbols-outlined text-[18px]">zoom_in</span>
-                  </button>
-                </div>
-                <div class="mt-4 flex items-center justify-between gap-3 border-t border-slate-200/70 pt-3">
-                  <span class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}</span>
-                  <span class="text-[11px] font-black text-slate-700" [attr.dir]="getDocumentExpiryDirection(document.expiryDate)">{{ getDocumentExpiryText(document.expiryDate) }}</span>
-                </div>
-              </div>
-            </article>
-          </div>
-        </section>
-      </div>
-    </ng-container>
-
+    <!-- Tab Contents -->
+    <div class="mt-6">
+      <ng-container [ngSwitch]="currentTab">
+        <!-- Overview -->
+        <app-driver-overview-tab 
+          *ngSwitchCase="'overview'" 
+          [driver]="driver" 
+          [isRTL]="isRTL"
+          (tabChange)="onTabChange($event)">
+        </app-driver-overview-tab>
+
+        <!-- Operations -->
+        <app-driver-operations-tab 
+          *ngSwitchCase="'operations'" 
+          [driver]="driver" 
+          [mapPreviewUrl]="mapPreviewUrl" 
+          [isRTL]="isRTL"
+          (taskPreviewRequested)="taskPreviewRequested.emit($event)">
+        </app-driver-operations-tab>
+
+        <!-- Performance -->
+        <app-driver-performance-tab 
+          *ngSwitchCase="'performance'" 
+          [driver]="driver" 
+          [isRTL]="isRTL">
+        </app-driver-performance-tab>
+
+        <!-- Support -->
+        <app-driver-support-tab 
+          *ngSwitchCase="'support'" 
+          [driver]="driver" 
+          [isRTL]="isRTL"
+          [(quickNote)]="quickNote"
+          (quickNoteAdded)="quickNoteAdded.emit()">
+        </app-driver-support-tab>
+
+        <!-- Compliance -->
+        <app-driver-compliance-tab 
+          *ngSwitchCase="'compliance'" 
+          [driver]="driver" 
+          [isRTL]="isRTL"
+          (incidentPreviewRequested)="incidentPreviewRequested.emit($event)">
+        </app-driver-compliance-tab>
+
+        <!-- Finance -->
+        <app-driver-finance-tab 
+          *ngSwitchCase="'finance'" 
+          [driver]="driver" 
+          [isRTL]="isRTL">
+        </app-driver-finance-tab>
+
+        <!-- Verification -->
+        <app-driver-verification-tab 
+          *ngSwitchCase="'verification'" 
+          [driver]="driver" 
+          [isRTL]="isRTL"
+          [(reviewerDecisionNote)]="reviewerDecisionNote"
+          [(selectedRejectionReason)]="selectedRejectionReason"
+          [(internalReviewNote)]="internalReviewNote">
+        </app-driver-verification-tab>
+      </ng-container>
+    </div>
+
+    <!-- Quick Preview Drawer -->
     <app-quick-preview-drawer
-      [isOpen]="!!previewType"
+      [isOpen]="previewType !== null"
       [title]="previewTitle"
       [subtitle]="previewSubtitle"
-      [headerColor]="'#127c8c'"
       [actions]="previewActions"
-      (close)="closePreview()"
+      (closeDrawer)="closePreview()"
       (actionClick)="handlePreviewAction($event)">
       <ng-template #content>
         <ng-container [ngSwitch]="previewType">
+          
+          <!-- Task Preview Content -->
           <div *ngSwitchCase="'task'" class="space-y-5">
             <div *ngIf="selectedTask" class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
               <p class="text-[11px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.PREVIEW.TASK_SUMMARY' | translate }}</p>
@@ -1029,31 +126,34 @@
               <div class="relative" [ngClass]="isRTL ? 'pr-8' : 'pl-8'">
                 <span class="absolute top-1 h-4 w-4 rounded-full bg-amber-400 ring-4 ring-amber-100" [ngClass]="isRTL ? 'right-0' : 'left-0'"></span>
                 <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.PREVIEW.TRANSIT' | translate }}</p>
-                <p class="mt-1 text-sm font-black text-slate-900">{{ getTaskStatusLabel(selectedTask.status) }}</p>
+                <p class="mt-1 text-sm font-black text-slate-900">{{ getTaskStatusLabel(selectedTask.status) | translate }}</p>
                 <p class="text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.PREVIEW.DELAY' | translate }} {{ selectedTask.delayLabel }}</p>
               </div>
             </div>
           </div>
 
+          <!-- Incident Preview Content -->
           <div *ngSwitchCase="'incident'" class="space-y-5">
             <div *ngIf="selectedIncident" class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
               <div class="flex items-center justify-between gap-3">
-                <h4 class="text-sm font-black text-slate-900">{{ getIncidentTypeLabel(selectedIncident.type) }}</h4>
-                <app-status-pill [label]="getIncidentSeverityLabel(selectedIncident.severity)" [variant]="getIncidentSeverityVariant(selectedIncident.severity)" [shouldTranslate]="false" size="sm"></app-status-pill>
+                <h4 class="text-sm font-black text-slate-900">{{ getIncidentTypeLabel(selectedIncident.type) | translate }}</h4>
+                <app-status-pill [label]="getIncidentSeverityLabel(selectedIncident.severity)" [variant]="getIncidentSeverityVariant(selectedIncident.severity)" [shouldTranslate]="true" size="sm"></app-status-pill>
               </div>
-              <p class="mt-3 text-sm leading-7 text-slate-600">{{ getIncidentSummary(selectedIncident.summary) }}</p>
+              <p class="mt-3 text-sm leading-7 text-slate-600">{{ getIncidentSummary(selectedIncident.summary) | translate }}</p>
             </div>
 
             <div *ngIf="selectedIncident?.evidenceImages?.length" class="grid grid-cols-2 gap-3">
               <img *ngFor="let image of selectedIncident?.evidenceImages" [src]="image" [alt]="'DRIVERS.DETAIL.PREVIEW.EVIDENCE_ALT' | translate" class="aspect-square rounded-2xl object-cover border border-slate-200">
             </div>
           </div>
+
         </ng-container>
       </ng-template>
     </app-quick-preview-drawer>
   </div>
 
-  <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex min-h-[60vh] flex-col items-center justify-center animate-pulse">
     <div class="relative w-24 h-24">
       <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
       <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>

@@ -2,6 +2,11 @@
   display: block;
 }
 
+.vendor-executive-header {
+  background: #127c8c;
+  box-shadow: none;
+}
+
 ::ng-deep {
   app-detail-tabs-nav {
     .bg-slate-900\/\[0\.04\] {
@@ -20,9 +25,10 @@
     }
     
     .bg-gradient-to-br.from-\[\#127c8c\] {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important; /* slate-900 to slate-800 */
-      border: 1px solid rgba(255,255,255,0.1) !important;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+      background: #ffffff !important;
+      border: 1px solid #ffffff !important;
+      color: #0e5f6b !important;
+      box-shadow: none !important;
     }
   }
 }

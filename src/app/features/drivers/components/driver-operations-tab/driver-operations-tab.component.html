@@ -1,0 +1,94 @@
+<div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+  <!-- Operations Snapshot -->
+  <section class="grid gap-4 lg:grid-cols-4">
+    <div class="col-span-full rounded-[1.5rem] bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 p-6 shadow-sm text-white lg:col-span-1 flex flex-col justify-between">
+      <div>
+        <h3 class="text-[11px] font-extrabold text-white/50 tracking-widest uppercase">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.ZONE_TITLE' | translate }}</h3>
+        <p class="mt-2 text-xl font-black text-white">{{ driver.operations.zoneName }}</p>
+      </div>
+      <div class="mt-6 space-y-4">
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-white/70">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.CAPACITY' | translate }}</span>
+          <span class="font-bold text-white">{{ driver.operations.zoneCapacityLabel }}</span>
+        </div>
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-white/70">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.ACTIVE_DRIVERS' | translate }}</span>
+          <span class="font-bold text-white">{{ driver.operations.activeDriversLabel }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-full rounded-[1.5rem] border border-slate-200 bg-white p-2 shadow-sm lg:col-span-3">
+      <div class="relative h-64 w-full overflow-hidden rounded-[1.15rem] bg-slate-100">
+        <img *ngIf="mapPreviewUrl" [src]="mapPreviewUrl" alt="Zone Map" class="h-full w-full object-cover">
+        <div *ngIf="!mapPreviewUrl" class="flex h-full items-center justify-center text-slate-400">
+          <div class="text-center">
+            <span class="material-symbols-outlined text-[48px] opacity-20">map</span>
+            <p class="mt-2 text-sm font-medium">{{ 'DRIVERS.DETAIL.OPERATIONS.MAP_UNAVAILABLE' | translate }}</p>
+            <p *ngIf="driver.liveLatitude != null && driver.liveLongitude != null" class="mt-2 text-[11px] font-bold text-slate-500" dir="ltr">
+              {{ driver.liveLatitude | number:'1.4-4' }}, {{ driver.liveLongitude | number:'1.4-4' }}
+            </p>
+          </div>
+        </div>
+        
+        <!-- Map Overlay Actions -->
+        <div class="absolute right-4 top-4 flex flex-col gap-2" [ngClass]="isRTL ? 'left-4 right-auto' : 'right-4'">
+          <button class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 text-slate-700 shadow-sm backdrop-blur transition-all hover:bg-zadna-primary hover:text-white">
+            <span class="material-symbols-outlined text-[20px]">my_location</span>
+          </button>
+          <button class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 text-slate-700 shadow-sm backdrop-blur transition-all hover:bg-zadna-primary hover:text-white">
+            <span class="material-symbols-outlined text-[20px]">layers</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tasks Table -->
+  <section class="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div class="border-b border-slate-100 p-6">
+      <app-section-header 
+        [title]="'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.TABLE_TITLE' | translate" 
+        [description]="'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.TABLE_DESC' | translate" 
+        [shouldTranslate]="false" 
+        icon="list_alt"
+        [compact]="true">
+      </app-section-header>
+    </div>
+    <div class="p-0">
+      <app-data-table
+        [data]="driver.operations.taskAssignments"
+        [columns]="taskColumns"
+        (rowClick)="taskPreviewRequested.emit($event)">
+        <ng-template #cellTemplate let-item let-column="column">
+          <ng-container [ngSwitch]="column.key">
+            <div *ngSwitchCase="'id'" class="font-bold text-slate-900" dir="ltr">{{ item.id }}</div>
+            <div *ngSwitchCase="'vendor'" class="font-medium text-slate-700">{{ item.vendor }}</div>
+            <div *ngSwitchCase="'status'">
+              <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black"
+                [ngClass]="{
+                  'bg-emerald-50 text-emerald-700': getTaskVariant(item.status) === 'success',
+                  'bg-amber-50 text-amber-700': getTaskVariant(item.status) === 'warning',
+                  'bg-red-50 text-red-700': getTaskVariant(item.status) === 'danger',
+                  'bg-sky-50 text-sky-700': getTaskVariant(item.status) === 'info',
+                  'bg-slate-100 text-slate-600': getTaskVariant(item.status) === 'neutral'
+                }">
+                {{ getTaskStatusKey(item.status) | translate }}
+              </span>
+            </div>
+            <div *ngSwitchCase="'duration'">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-900" dir="ltr">{{ item.duration }}</span>
+                <span *ngIf="item.delayLabel && item.delayLabel !== '00:00' && item.delayLabel !== '--'" 
+                      class="rounded bg-red-50 px-1.5 py-0.5 text-[10px] font-bold text-red-600" dir="ltr">
+                  {{ item.delayLabel }}
+                </span>
+              </div>
+            </div>
+            <div *ngSwitchDefault class="text-sm text-slate-600">{{ item[column.key] }}</div>
+          </ng-container>
+        </ng-template>
+      </app-data-table>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,178 @@
+<div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+  <div class="grid gap-6 lg:grid-cols-3">
+    <!-- Verification Summary -->
+    <section class="lg:col-span-1 rounded-[1.5rem] bg-gradient-to-br from-[#0f5f69] to-[#127c8c] p-6 text-white shadow-lg flex flex-col">
+      <p class="text-[11px] font-extrabold text-white/70 uppercase tracking-widest">{{ 'DRIVERS.DETAIL.VERIFICATION.READINESS_SUMMARY' | translate }}</p>
+      <div class="mt-4 flex items-end justify-between gap-4">
+        <div>
+          <h3 class="text-3xl font-black">{{ driver.verification.progressPercentage }}%</h3>
+          <p class="mt-1 text-[13px] font-medium text-white/75">{{ 'DRIVERS.DETAIL.VERIFICATION.FILE_PROGRESS' | translate }}</p>
+        </div>
+        <app-status-pill [label]="driver.verification.recommendation" [variant]="getVerificationRecommendationVariant()" [shouldTranslate]="true" size="sm"></app-status-pill>
+      </div>
+
+      <div class="mt-5 h-2 overflow-hidden rounded-full bg-white/15">
+        <div class="h-full rounded-full bg-white transition-all duration-1000" [style.width.%]="driver.verification.progressPercentage"></div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <div class="rounded-xl bg-white/10 p-3 backdrop-blur-sm border border-white/5">
+          <p class="text-[10px] font-bold text-white/70">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}</p>
+          <p class="mt-1 text-lg font-black">{{ driver.verification.trustScore }}%</p>
+        </div>
+        <div class="rounded-xl bg-white/10 p-3 backdrop-blur-sm border border-white/5">
+          <p class="text-[10px] font-bold text-white/70">{{ 'DRIVERS.DETAIL.VERIFICATION.COMPLETED_ITEMS' | translate }}</p>
+          <p class="mt-1 text-lg font-black">{{ getCompletedChecklistCount() }}</p>
+        </div>
+      </div>
+
+      <div class="mt-4 space-y-2 text-[12px] leading-6 text-white/90">
+        <div class="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2.5">
+          <span>{{ 'DRIVERS.DETAIL.VERIFICATION.APP_NUMBER_LABEL' | translate }}</span>
+          <span class="font-black tracking-wider" dir="ltr">{{ driver.verification.applicationId }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Checklist -->
+    <section class="lg:col-span-2 rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm flex flex-col">
+      <div class="flex flex-col gap-3 border-b border-slate-100 pb-4 lg:flex-row lg:items-center lg:justify-between">
+        <app-section-header 
+          [title]="'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_TITLE' | translate" 
+          [description]="'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_DESC' | translate" 
+          [shouldTranslate]="false" 
+          icon="checklist"
+          [compact]="true">
+        </app-section-header>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center rounded-lg bg-emerald-50 px-2.5 py-1 text-[10px] font-black text-emerald-700">{{ getCompletedChecklistCount() }} {{ 'DRIVERS.DETAIL.VERIFICATION.COMPLETED' | translate }}</span>
+          <span class="inline-flex items-center rounded-lg bg-amber-50 px-2.5 py-1 text-[10px] font-black text-amber-700">{{ getPendingChecklistCount() }} {{ 'DRIVERS.DETAIL.VERIFICATION.PENDING' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="mt-5 flex-1 space-y-3">
+        <article *ngFor="let item of driver.verification.checklist" class="rounded-xl border p-3 transition-all hover:bg-slate-50"
+                 [ngClass]="item.completed ? 'border-emerald-100' : item.critical ? 'border-red-200 bg-red-50/30' : 'border-slate-200'">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex min-w-0 items-start gap-3">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm"
+                   [ngClass]="item.completed ? 'bg-emerald-100 text-emerald-600' : item.critical ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-500'">
+                <span class="material-symbols-outlined text-[18px]">
+                  {{ item.completed ? 'check_circle' : item.critical ? 'priority_high' : 'hourglass_top' }}
+                </span>
+              </div>
+              <div class="min-w-0 pt-1.5">
+                <p class="text-[13px] font-black text-slate-900">{{ item.label | translate }}</p>
+                <p *ngIf="item.note" class="mt-1 text-[11px] font-medium leading-relaxed" [ngClass]="item.critical ? 'text-red-500' : 'text-slate-500'">{{ item.note | translate }}</p>
+              </div>
+            </div>
+            <app-status-pill [label]="getChecklistItemStatusLabel(item)" [variant]="getChecklistItemStatusVariant(item)" [shouldTranslate]="true" size="sm"></app-status-pill>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <!-- Documents Grid -->
+  <section class="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div class="border-b border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <app-section-header 
+        [title]="'DRIVERS.DETAIL.VERIFICATION.DOCS_SECTION' | translate" 
+        [shouldTranslate]="false" 
+        icon="folder_special"
+        [compact]="true">
+      </app-section-header>
+      <div class="flex items-center gap-3">
+        <div class="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-center min-w-[80px]">
+          <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.TOTAL_FILES' | translate }}</p>
+          <p class="text-sm font-black text-slate-900">{{ driver.documents.length }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <article *ngFor="let doc of driver.documents" class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm transition-all hover:border-zadna-primary/40 hover:shadow-md">
+        <div class="relative h-40 w-full overflow-hidden bg-slate-200">
+          <img [src]="doc.imageUrl" [alt]="doc.title | translate" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110">
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/80 to-transparent p-4 flex justify-between items-end">
+            <app-status-pill [label]="getDocumentStatusKey(doc.status)" [variant]="getDocumentStatusVariant(doc.status)" [shouldTranslate]="true" size="sm"></app-status-pill>
+            <button class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white hover:text-zadna-primary">
+              <span class="material-symbols-outlined text-[16px]">zoom_in</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="p-4 bg-white">
+          <h3 class="text-sm font-black text-slate-900 line-clamp-1" [title]="doc.title | translate">{{ doc.title | translate }}</h3>
+          <p class="mt-1 text-[11px] font-medium text-slate-500 line-clamp-1">{{ doc.subtitle ? (doc.subtitle | translate) : '' }}</p>
+          
+          <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+            <span class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}</span>
+            <span class="text-[11px] font-bold text-slate-700" dir="ltr">{{ doc.expiryDate }}</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Decision Form -->
+  <section class="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
+    <app-section-header 
+      [title]="'DRIVERS.DETAIL.VERIFICATION.DECISION_NOTES_TITLE' | translate" 
+      [description]="'DRIVERS.DETAIL.VERIFICATION.DECISION_NOTES_DESC' | translate" 
+      [shouldTranslate]="false" 
+      icon="rate_review"
+      [compact]="true">
+    </app-section-header>
+
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <div class="space-y-4">
+        <div>
+          <label class="mb-2 block text-[11px] font-extrabold text-slate-500 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_LABEL' | translate }}</label>
+          <textarea
+            [ngModel]="reviewerDecisionNote"
+            (ngModelChange)="onReviewerDecisionNoteChange($event)"
+            [placeholder]="'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_PLACEHOLDER' | translate"
+            class="min-h-[100px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10">
+          </textarea>
+        </div>
+
+        <div>
+          <label class="mb-2 block text-[11px] font-extrabold text-slate-500 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.REJECTION_REASON_LABEL' | translate }}</label>
+          <select
+            [ngModel]="selectedRejectionReason"
+            (ngModelChange)="onSelectedRejectionReasonChange($event)"
+            class="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-medium outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10">
+            <option value="" disabled>{{ 'COMMON.SELECT' | translate }}</option>
+            <option *ngFor="let reason of driver.verification.rejectionReasonOptions" [value]="reason">{{ reason | translate }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="rounded-xl border border-sky-100 bg-sky-50/50 p-4">
+          <p class="text-[11px] font-extrabold text-sky-600/70 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEWER_LABEL' | translate }}</p>
+          <div class="mt-2 flex items-center gap-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 text-sky-700">
+              <span class="material-symbols-outlined text-[16px]">shield_person</span>
+            </div>
+            <div>
+              <p class="text-sm font-black text-sky-900">{{ driver.verification.reviewer }}</p>
+              <p class="text-[10px] font-bold text-sky-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}: {{ driver.verification.trustScore }}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-2 block text-[11px] font-extrabold text-slate-500 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.INTERNAL_NOTES_LABEL' | translate }}</label>
+          <textarea
+            [ngModel]="internalReviewNote"
+            (ngModelChange)="onInternalReviewNoteChange($event)"
+            [placeholder]="'DRIVERS.DETAIL.VERIFICATION.INTERNAL_NOTES_PLACEHOLDER' | translate"
+            class="min-h-[92px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10">
+          </textarea>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

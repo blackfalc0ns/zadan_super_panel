@@ -129,6 +129,38 @@ export interface VendorReviewNote {
   isSystem?: boolean;
 }
 
+export type VendorActivitySeverity = 'info' | 'success' | 'warning' | 'danger';
+
+export interface VendorActivityLogEntry {
+  id: string;
+  type: string;
+  severity: VendorActivitySeverity;
+  actorName: string;
+  roleLabel: string;
+  createdAtUtc: string;
+  message: string;
+  isSystem: boolean;
+}
+
+export interface VendorActivityLogPage {
+  items: VendorActivityLogEntry[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
+
+export interface VendorActivityLogFilters {
+  type?: string | null;
+  severity?: VendorActivitySeverity | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  page?: number;
+  pageSize?: number;
+}
+
 export interface PaginatedVendors {
   items: Vendor[];
   pageNumber: number;

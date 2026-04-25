@@ -16,12 +16,14 @@ import {
   standalone: true,
   imports: [CommonModule, RouterModule, VendorDetailHeaderComponent],
   template: `
-    <app-vendor-detail-header
-      [activeTab]="activeTab"
-      (tabChanged)="onTabChange($event)">
-    </app-vendor-detail-header>
+    <section class="vendor-brand-scope">
+      <app-vendor-detail-header
+        [activeTab]="activeTab"
+        (tabChanged)="onTabChange($event)">
+      </app-vendor-detail-header>
 
-    <router-outlet></router-outlet>
+      <router-outlet></router-outlet>
+    </section>
   `
 })
 export class VendorDetailShellComponent implements OnInit {

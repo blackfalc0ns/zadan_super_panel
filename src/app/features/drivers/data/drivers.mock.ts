@@ -1,4 +1,4 @@
-import { Driver, DriverPerformance, DriverVehicleType, VerificationStatus } from '@drivers/models/drivers.domain.models';
+﻿import { Driver, DriverPerformance, DriverVehicleType, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import { createMockOrders } from '@orders/public-api';
 import {
   DriverComplianceSnapshot,
@@ -1021,4 +1021,5 @@ export function buildDriverDetailRecord(driver: Driver): DriverDetailRecord {
 export function getDriverMapPreview(): string {
   return DOCUMENT_IMAGES.map;
 }
+
 

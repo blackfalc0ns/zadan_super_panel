@@ -2,65 +2,59 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { VendorDetail, VendorReviewNote } from '@vendors/models/vendors.domain.models';
+import {
+  VendorActivityLogEntry,
+  VendorActivitySeverity,
+  VendorDetail,
+  VendorReviewNote
+} from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
-import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
-
-interface InternalNote {
-  id: string;
-  author: string;
-  authorInitials: string;
-  department: string;
-  departmentColor: string;
-  timestamp: string;
-  message: string;
-  avatarClass: string;
-  avatarUrl?: string;
-  borderColor: string;
-}
-
-interface ActivityLogEntry {
-  id: string;
-  actionKey: string;
-  actionIcon: string;
-  iconColor: string;
-  executor: string;
-  timestamp: string;
-  description: string;
-}
 
 interface TimelineEvent {
   id: string;
-  titleKey: string;
-  descriptionKey: string;
+  title: string;
+  description: string;
   date: string;
   icon: string;
-  bgColor: string;
+  toneClass: string;
 }
+
+type SidePanel = 'notes' | 'timeline';
 
 @Component({
   selector: 'app-vendor-activity-log',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, SectionHeaderComponent],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './vendor-activity-log.component.html',
   styleUrls: ['./vendor-activity-log.component.scss']
 })
 export class VendorActivityLogComponent {
-  vendorId = '';
   currentLang = 'ar';
+  filterDateFrom = '';
+  filterDateTo = '';
+  filterSeverity: 'all' | VendorActivitySeverity = 'all';
+  filterType = 'all';
+  isActivityLoading = false;
   isRTL = true;
-  showOnlyCritical = false;
-  private readonly destroyRef = inject(DestroyRef);
-
+  noteDraft = '';
+  noteError = '';
+  noteSubmitting = false;
+  page = 1;
+  pageSize = 12;
+  selectedSidePanel: SidePanel = 'notes';
+  activityError = '';
   vendorDetail: VendorDetail | null = null;
-  lastInteraction = '-';
-  openNotes = 0;
-  weeklyActivity = 0;
-  weeklyGrowth = '0';
-  internalNotes: InternalNote[] = [];
-  activityLog: ActivityLogEntry[] = [];
   timeline: TimelineEvent[] = [];
+  totalActivityPages = 1;
+  hasPreviousActivityPage = false;
+  hasNextActivityPage = false;
+
+  private readonly destroyRef = inject(DestroyRef);
+  private lastVendorId: string | null = null;
+  private activityEntries: VendorActivityLogEntry[] = [];
+  private totalActivityCount = 0;
 
   constructor(
     private readonly translate: TranslateService,
@@ -74,60 +68,195 @@ export class VendorActivityLogComponent {
       .subscribe((event) => {
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
-        this.rebuildViewModel();
+        this.timeline = this.vendorDetail ? this.buildTimeline(this.vendorDetail) : [];
       });
 
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
-        if (!vendor) {
-          return;
-        }
-
         this.vendorDetail = vendor;
-        this.vendorId = vendor.id;
-        this.rebuildViewModel();
+        this.timeline = vendor ? this.buildTimeline(vendor) : [];
+
+        if (vendor?.id && vendor.id !== this.lastVendorId) {
+          this.lastVendorId = vendor.id;
+          this.page = 1;
+          this.loadActivityLog();
+        }
+      });
+
+    this.vendorDetailFacade.activityLog$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((page) => {
+        this.activityEntries = page?.items ?? [];
+        this.totalActivityCount = page?.totalCount ?? 0;
+        this.totalActivityPages = page?.totalPages ?? 1;
+        this.hasPreviousActivityPage = page?.hasPrevious ?? false;
+        this.hasNextActivityPage = page?.hasNext ?? false;
+      });
+
+    this.vendorDetailFacade.isActivityLogLoading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((loading) => {
+        this.isActivityLoading = loading;
+      });
+
+    this.vendorDetailFacade.activityLogError$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((error) => {
+        this.activityError = error || '';
       });
   }
 
-  get filteredActivityLog(): ActivityLogEntry[] {
-    if (!this.showOnlyCritical) {
-      return this.activityLog;
-    }
-
-    return this.activityLog.filter((entry) => entry.iconColor.includes('red') || entry.iconColor.includes('orange'));
+  get internalNotes(): VendorReviewNote[] {
+    return this.vendorDetail?.reviewNotes ?? [];
   }
 
-  onAddNote(): void {
-    const vendor = this.vendorDetail;
-    if (!vendor) {
+  get auditEntries(): VendorActivityLogEntry[] {
+    return this.activityEntries;
+  }
+
+  get auditCount(): number {
+    return this.totalActivityCount;
+  }
+
+  get criticalCount(): number {
+    return this.auditEntries.filter((entry) => entry.severity === 'danger' || entry.severity === 'warning').length;
+  }
+
+  get lastActivityLabel(): string {
+    const timestamp = this.auditEntries[0]?.createdAtUtc || this.vendorDetail?.updatedAtUtc || null;
+    return timestamp ? this.formatDateTime(timestamp) : '-';
+  }
+
+  get notesCount(): number {
+    return this.internalNotes.length;
+  }
+
+  get showingRangeLabel(): string {
+    if (!this.auditCount) {
+      return this.isRTL ? 'لا توجد أحداث مطابقة للفلاتر الحالية' : 'No audit events match the current filters';
+    }
+
+    const start = (this.page - 1) * this.pageSize + 1;
+    const end = Math.min(this.page * this.pageSize, this.auditCount);
+    return this.isRTL
+      ? `عرض ${start} - ${end} من ${this.auditCount}`
+      : `Showing ${start}-${end} of ${this.auditCount}`;
+  }
+
+  get typeOptions(): string[] {
+    const defaults = [
+      'all',
+      'note',
+      'start-review',
+      'request-documents',
+      'approved',
+      'rejected',
+      'suspended',
+      'reactivated',
+      'locked',
+      'login-unlocked',
+      'archived',
+      'profile-store-updated',
+      'profile-owner-updated',
+      'profile-contact-updated',
+      'profile-legal-updated',
+      'profile-banking-updated',
+      'profile-hours-updated',
+      'profile-operations-updated',
+      'profile-notifications-updated',
+      'vendor-document-reuploaded',
+      'vendor-profile-submitted',
+      'operations-settings-updated',
+      'notification-settings-updated',
+      'password-reset'
+    ];
+
+    const dynamic = this.auditEntries.map((entry) => entry.type);
+    return Array.from(new Set([...defaults, ...dynamic]));
+  }
+
+  selectSidePanel(panel: SidePanel): void {
+    this.selectedSidePanel = panel;
+  }
+
+  onApplyFilters(): void {
+    this.page = 1;
+    this.loadActivityLog();
+  }
+
+  onResetFilters(): void {
+    this.filterDateFrom = '';
+    this.filterDateTo = '';
+    this.filterSeverity = 'all';
+    this.filterType = 'all';
+    this.page = 1;
+    this.loadActivityLog();
+  }
+
+  onPreviousPage(): void {
+    if (!this.hasPreviousActivityPage) {
       return;
     }
 
-    this.vendorDetailFacade.addVendorReviewNote(
-      this.translate.instant('ACTIVITY_LOG.NOTES.FOLLOW_UP_CREATED', { vendorId: vendor.id }),
-      this.translate.instant('ACTIVITY_LOG.AUTHORS.OPERATIONS_TEAM'),
-      this.translate.instant('COMPLIANCE.ROLES.OPERATIONS')
-    );
+    this.page -= 1;
+    this.loadActivityLog();
   }
 
-  onFilterLog(): void {
-    this.showOnlyCritical = !this.showOnlyCritical;
+  onNextPage(): void {
+    if (!this.hasNextActivityPage) {
+      return;
+    }
+
+    this.page += 1;
+    this.loadActivityLog();
+  }
+
+  onAddNote(): void {
+    const message = this.noteDraft.trim();
+    if (!message) {
+      this.noteError = this.isRTL ? 'اكتب ملاحظة داخلية أولًا.' : 'Write an internal note first.';
+      return;
+    }
+
+    this.noteSubmitting = true;
+    this.noteError = '';
+    this.vendorDetailFacade.addVendorReviewNoteRequest(
+      message,
+      this.isRTL ? 'فريق التشغيل' : 'Operations Desk',
+      'Operations Console'
+    )
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.noteDraft = '';
+          this.noteSubmitting = false;
+          this.selectedSidePanel = 'notes';
+        },
+        error: () => {
+          this.noteError = this.vendorDetailFacade.mutationError || (this.isRTL ? 'تعذر إضافة الملاحظة الآن.' : 'Unable to add the note right now.');
+          this.noteSubmitting = false;
+        }
+      });
   }
 
   onExportLog(): void {
-    const rows = this.filteredActivityLog.map((entry) => [
-      this.translate.instant(entry.actionKey),
-      entry.executor,
-      entry.timestamp,
-      entry.description
+    const rows = this.auditEntries.map((entry) => [
+      this.resolveTypeLabel(entry.type),
+      this.resolveSeverityLabel(entry.severity),
+      entry.actorName,
+      entry.roleLabel,
+      this.formatDateTime(entry.createdAtUtc),
+      entry.message.replace(/,/g, ' ')
     ].join(','));
 
     const headers = [
-      this.translate.instant('ACTIVITY_LOG.EXPORT_HEADERS.ACTION'),
-      this.translate.instant('ACTIVITY_LOG.EXPORT_HEADERS.EXECUTOR'),
-      this.translate.instant('ACTIVITY_LOG.EXPORT_HEADERS.TIMESTAMP'),
-      this.translate.instant('ACTIVITY_LOG.EXPORT_HEADERS.DESCRIPTION')
+      this.isRTL ? 'النوع' : 'Type',
+      this.isRTL ? 'الشدة' : 'Severity',
+      this.isRTL ? 'المنفذ' : 'Actor',
+      this.isRTL ? 'الدور' : 'Role',
+      this.isRTL ? 'التاريخ' : 'Timestamp',
+      this.isRTL ? 'الوصف' : 'Description'
     ].join(',');
 
     const blob = new Blob([[headers, ...rows].join('\n')], {
@@ -137,198 +266,26 @@ export class VendorActivityLogComponent {
     const link = document.createElement('a');
 
     link.href = url;
-    link.download = `vendor-activity-${this.vendorId}.csv`;
+    link.download = `vendor-activity-${this.vendorDetail?.id || 'unknown'}.csv`;
     link.click();
-
     URL.revokeObjectURL(url);
   }
 
-  private rebuildViewModel(): void {
-    const vendor = this.vendorDetail;
-    if (!vendor) {
-      return;
-    }
-
-    const notes = vendor.reviewNotes ?? [];
-    this.internalNotes = notes.map((note) => this.mapInternalNote(note));
-    this.activityLog = notes.map((note) => this.mapActivityLogEntry(note));
-    this.timeline = this.buildTimeline(vendor);
-    this.openNotes = this.internalNotes.length;
-    this.lastInteraction = notes.length > 0 ? this.formatTimestamp(notes[0].createdAtUtc) : '-';
-    this.weeklyActivity = notes.filter((note) => this.isWithinLastDays(note.createdAtUtc, 7)).length;
-    this.weeklyGrowth = `${this.weeklyActivity}`;
-  }
-
-  private mapInternalNote(note: VendorReviewNote): InternalNote {
-    return {
-      id: note.id,
-      author: note.authorName,
-      authorInitials: this.getInitials(note.authorName),
-      department: this.localizeRoleLabel(note.roleLabel),
-      departmentColor: this.getDepartmentColor(note.tone),
-      timestamp: this.formatTimestamp(note.createdAtUtc),
-      message: this.resolveNoteMessage(note),
-      avatarClass: this.getAvatarClass(note.tone),
-      borderColor: this.getBorderClass(note.tone)
-    };
-  }
-
-  private mapActivityLogEntry(note: VendorReviewNote): ActivityLogEntry {
-    return {
-      id: note.id,
-      actionKey: note.messageKey || 'ACTIVITY_LOG.ACTION.MANUAL_NOTE',
-      actionIcon: this.getActionIcon(note.tone),
-      iconColor: this.getIconColor(note.tone),
-      executor: `${note.authorName} (${this.localizeRoleLabel(note.roleLabel)})`,
-      timestamp: this.formatTimestamp(note.createdAtUtc),
-      description: this.resolveNoteMessage(note)
-    };
-  }
-
-  private buildTimeline(vendor: VendorDetail): TimelineEvent[] {
-    const timeline: TimelineEvent[] = [
-      {
-        id: 'created',
-        titleKey: 'ACTIVITY_LOG.TIMELINE.ACCOUNT_CREATION',
-        descriptionKey: 'ACTIVITY_LOG.TIMELINE.ACCOUNT_CREATION_DESC',
-        date: this.formatDate(vendor.createdAtUtc),
-        icon: 'person_add',
-        bgColor: 'bg-slate-300'
-      }
-    ];
-
-    if (vendor.reviewSubmittedAtUtc) {
-      timeline.unshift({
-        id: 'submitted',
-        titleKey: 'ACTIVITY_LOG.TIMELINE.DOCUMENTS_UPLOAD',
-        descriptionKey: 'ACTIVITY_LOG.TIMELINE.DOCUMENTS_UPLOAD_DESC',
-        date: this.formatDate(vendor.reviewSubmittedAtUtc),
-        icon: 'folder_open',
-        bgColor: 'bg-blue-500'
-      });
-    }
-
-    if (vendor.reviewStartedAtUtc) {
-      timeline.unshift({
-        id: 'review-started',
-        titleKey: 'VENDOR_REVIEW.STATE.UNDER_REVIEW',
-        descriptionKey: 'VENDOR_REVIEW.SUMMARY.READY_TO_VERIFY',
-        date: this.formatDate(vendor.reviewStartedAtUtc),
-        icon: 'fact_check',
-        bgColor: 'bg-blue-500'
-      });
-    }
-
-    if (vendor.requestedChangesAtUtc) {
-      timeline.unshift({
-        id: 'changes-requested',
-        titleKey: 'VENDOR_REVIEW.STATE.CHANGES_REQUESTED',
-        descriptionKey: 'VENDOR_REVIEW.SUMMARY.CHANGES_REQUIRED',
-        date: this.formatDate(vendor.requestedChangesAtUtc),
-        icon: 'rule',
-        bgColor: 'bg-orange-500'
-      });
-    }
-
-    if (vendor.approvedAtUtc) {
-      timeline.unshift({
-        id: 'approved',
-        titleKey: 'ACTIVITY_LOG.TIMELINE.COMPLIANCE_APPROVAL',
-        descriptionKey: 'ACTIVITY_LOG.TIMELINE.COMPLIANCE_APPROVAL_DESC',
-        date: this.formatDate(vendor.approvedAtUtc),
-        icon: 'verified',
-        bgColor: 'bg-primary'
-      });
-    }
-
-    if (vendor.reviewState === 'rejected' && vendor.reviewCompletedAtUtc) {
-      timeline.unshift({
-        id: 'rejected',
-        titleKey: 'VENDOR_REVIEW.STATE.REJECTED',
-        descriptionKey: 'VENDOR_REVIEW.SUMMARY.REJECTED',
-        date: this.formatDate(vendor.reviewCompletedAtUtc),
-        icon: 'cancel',
-        bgColor: 'bg-red-500'
-      });
-    }
-
-    if (vendor.suspendedAtUtc) {
-      timeline.unshift({
-        id: 'suspended',
-        titleKey: 'VENDOR_REVIEW.STATE.SUSPENDED',
-        descriptionKey: 'VENDOR_REVIEW.SUMMARY.SUSPENDED',
-        date: this.formatDate(vendor.suspendedAtUtc),
-        icon: 'pause_circle',
-        bgColor: 'bg-slate-500'
-      });
-    }
-
-    if (vendor.lockedAtUtc) {
-      timeline.unshift({
-        id: 'login-locked',
-        titleKey: 'VENDOR_SETTINGS.LOCK_LOGIN',
-        descriptionKey: 'VENDOR_REVIEW.SUMMARY.SUSPENDED',
-        date: this.formatDate(vendor.lockedAtUtc),
-        icon: 'lock',
-        bgColor: 'bg-amber-500'
-      });
-    }
-
-    if (vendor.archivedAtUtc) {
-      timeline.unshift({
-        id: 'archived',
-        titleKey: 'VENDOR_SETTINGS.ARCHIVE_ACCOUNT',
-        descriptionKey: 'VENDOR_REVIEW.SUMMARY.SUSPENDED',
-        date: this.formatDate(vendor.archivedAtUtc),
-        icon: 'archive',
-        bgColor: 'bg-slate-700'
-      });
-    }
-
-    return timeline;
-  }
-
-  private getDepartmentColor(tone: VendorReviewNote['tone']): string {
-    switch (tone) {
+  resolveSeverityBadge(severity: VendorActivitySeverity): string {
+    switch (severity) {
       case 'success':
-        return 'bg-emerald-100 text-emerald-700';
+        return 'border-emerald-200 bg-emerald-50 text-emerald-700';
       case 'warning':
-        return 'bg-orange-100 text-orange-700';
+        return 'border-amber-200 bg-amber-50 text-amber-700';
       case 'danger':
-        return 'bg-red-100 text-red-700';
+        return 'border-rose-200 bg-rose-50 text-rose-700';
       default:
-        return 'bg-blue-100 text-blue-700';
+        return 'border-primary/20 bg-primary/10 text-primary';
     }
   }
 
-  private getAvatarClass(tone: VendorReviewNote['tone']): string {
-    switch (tone) {
-      case 'success':
-        return 'bg-emerald-200 text-emerald-700';
-      case 'warning':
-        return 'bg-orange-200 text-orange-700';
-      case 'danger':
-        return 'bg-red-200 text-red-700';
-      default:
-        return 'bg-blue-200 text-blue-700';
-    }
-  }
-
-  private getBorderClass(tone: VendorReviewNote['tone']): string {
-    switch (tone) {
-      case 'success':
-        return 'border-l-emerald-500';
-      case 'warning':
-        return 'border-l-accent-orange';
-      case 'danger':
-        return 'border-l-red-500';
-      default:
-        return 'border-l-primary';
-    }
-  }
-
-  private getActionIcon(tone: VendorReviewNote['tone']): string {
-    switch (tone) {
+  resolveSeverityIcon(severity: VendorActivitySeverity): string {
+    switch (severity) {
       case 'success':
         return 'check_circle';
       case 'warning':
@@ -336,60 +293,91 @@ export class VendorActivityLogComponent {
       case 'danger':
         return 'report';
       default:
-        return 'edit_note';
+        return 'info';
     }
   }
 
-  private getIconColor(tone: VendorReviewNote['tone']): string {
-    switch (tone) {
+  resolveSeverityLabel(severity: VendorActivitySeverity): string {
+    switch (severity) {
       case 'success':
-        return 'text-green-500';
+        return this.isRTL ? 'ناجح' : 'Success';
       case 'warning':
-        return 'text-orange-500';
+        return this.isRTL ? 'تحذير' : 'Warning';
       case 'danger':
-        return 'text-red-500';
+        return this.isRTL ? 'حرج' : 'Critical';
       default:
-        return 'text-blue-500';
+        return this.isRTL ? 'معلومات' : 'Info';
     }
   }
 
-  private getInitials(name: string): string {
-    const words = name.split(' ').filter(Boolean);
-    if (words.length === 0 || name === '-') {
-      return this.translate.instant('ACTIVITY_LOG.DEFAULT_INITIALS');
+  resolveTypeLabel(type: string): string {
+    const normalized = (type || '').trim().toLowerCase();
+
+    switch (normalized) {
+      case 'all':
+        return this.isRTL ? 'كل الأحداث' : 'All events';
+      case 'note':
+        return this.isRTL ? 'ملاحظة داخلية' : 'Internal note';
+      case 'start-review':
+        return this.isRTL ? 'بدء المراجعة' : 'Review started';
+      case 'request-documents':
+        return this.isRTL ? 'طلب مستندات' : 'Documents requested';
+      case 'approved':
+        return this.isRTL ? 'اعتماد نهائي' : 'Vendor approved';
+      case 'rejected':
+        return this.isRTL ? 'رفض' : 'Vendor rejected';
+      case 'suspended':
+        return this.isRTL ? 'تعليق' : 'Account suspended';
+      case 'reactivated':
+        return this.isRTL ? 'إعادة تشغيل' : 'Account reactivated';
+      case 'locked':
+        return this.isRTL ? 'قفل الدخول' : 'Login locked';
+      case 'login-unlocked':
+        return this.isRTL ? 'فتح الدخول' : 'Login unlocked';
+      case 'archived':
+        return this.isRTL ? 'أرشفة' : 'Account archived';
+      case 'profile-store-updated':
+        return this.isRTL ? 'تحديث بيانات المتجر' : 'Store profile updated';
+      case 'profile-owner-updated':
+        return this.isRTL ? 'تحديث بيانات المالك' : 'Owner profile updated';
+      case 'profile-contact-updated':
+        return this.isRTL ? 'تحديث العنوان والتواصل' : 'Contact details updated';
+      case 'profile-legal-updated':
+        return this.isRTL ? 'تحديث البيانات القانونية' : 'Legal profile updated';
+      case 'profile-banking-updated':
+        return this.isRTL ? 'تحديث البيانات البنكية' : 'Banking profile updated';
+      case 'profile-hours-updated':
+        return this.isRTL ? 'تحديث ساعات العمل' : 'Operating hours updated';
+      case 'profile-operations-updated':
+        return this.isRTL ? 'تحديث إعدادات التشغيل' : 'Vendor operations updated';
+      case 'profile-notifications-updated':
+        return this.isRTL ? 'تحديث تفضيلات الإشعارات' : 'Vendor notification preferences updated';
+      case 'vendor-document-reuploaded':
+        return this.isRTL ? 'إعادة رفع مستند' : 'Document re-uploaded';
+      case 'vendor-profile-submitted':
+        return this.isRTL ? 'إرسال الملف للمراجعة' : 'Profile submitted for review';
+      case 'operations-settings-updated':
+        return this.isRTL ? 'تحديث إعدادات التشغيل' : 'Operations settings updated';
+      case 'notification-settings-updated':
+        return this.isRTL ? 'تحديث الإشعارات' : 'Notification settings updated';
+      case 'password-reset':
+        return this.isRTL ? 'إعادة تعيين كلمة المرور' : 'Password reset';
+      default:
+        return normalized || (this.isRTL ? 'حدث' : 'Event');
     }
-
-    return words.slice(0, 2).map((word) => word.charAt(0).toUpperCase()).join('.');
   }
 
-  private resolveNoteMessage(note: VendorReviewNote): string {
-    if (note.message?.trim()) {
-      return note.message.trim();
-    }
-
-    if (note.messageKey) {
-      const translated = this.translate.instant(note.messageKey);
-      if (translated !== note.messageKey) {
-        return translated;
-      }
-    }
-
-    return '-';
+  formatDateTime(value: string): string {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(value));
   }
 
-  private localizeRoleLabel(roleLabel: string): string {
-    const key = `COMPLIANCE.ROLES.${roleLabel.toUpperCase().replace(/[^A-Z]+/g, '_')}`;
-    const translated = this.translate.instant(key);
-    return translated === key ? roleLabel : translated;
-  }
-
-  private isWithinLastDays(value: string, days: number): boolean {
-    const targetDate = new Date(value).getTime();
-    const threshold = Date.now() - days * 24 * 60 * 60 * 1000;
-    return targetDate >= threshold;
-  }
-
-  private formatDate(value: string): string {
+  formatDate(value: string): string {
     return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
       day: '2-digit',
       month: 'short',
@@ -397,12 +385,106 @@ export class VendorActivityLogComponent {
     }).format(new Date(value));
   }
 
-  private formatTimestamp(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(new Date(value));
+  private loadActivityLog(): void {
+    this.vendorDetailFacade.loadVendorActivityLog({
+      type: this.filterType === 'all' ? null : this.filterType,
+      severity: this.filterSeverity === 'all' ? null : this.filterSeverity,
+      dateFrom: this.filterDateFrom ? new Date(`${this.filterDateFrom}T00:00:00`).toISOString() : null,
+      dateTo: this.filterDateTo ? new Date(`${this.filterDateTo}T23:59:59.999`).toISOString() : null,
+      page: this.page,
+      pageSize: this.pageSize
+    });
+  }
+
+  private buildTimeline(vendor: VendorDetail): TimelineEvent[] {
+    const timeline: TimelineEvent[] = [
+      {
+        id: 'created',
+        title: this.isRTL ? 'إنشاء الحساب' : 'Account created',
+        description: this.isRTL ? 'تم إنشاء سجل التاجر في النظام.' : 'The vendor account record was created in the system.',
+        date: this.formatDate(vendor.createdAtUtc),
+        icon: 'person_add',
+        toneClass: 'bg-slate-400'
+      }
+    ];
+
+    if (vendor.reviewSubmittedAtUtc) {
+      timeline.unshift({
+        id: 'submitted',
+        title: this.isRTL ? 'رفع المستندات' : 'Documents submitted',
+        description: this.isRTL ? 'تم استلام المستندات الأولية من التاجر.' : 'The initial vendor documents were submitted.',
+        date: this.formatDate(vendor.reviewSubmittedAtUtc),
+        icon: 'folder_open',
+        toneClass: 'bg-primary'
+      });
+    }
+
+    if (vendor.reviewStartedAtUtc) {
+      timeline.unshift({
+        id: 'review-started',
+        title: this.isRTL ? 'بدء المراجعة' : 'Review started',
+        description: this.isRTL ? 'دخل الحساب مسار مراجعة الامتثال الفعلية.' : 'The account entered the active compliance review workflow.',
+        date: this.formatDate(vendor.reviewStartedAtUtc),
+        icon: 'fact_check',
+        toneClass: 'bg-primary'
+      });
+    }
+
+    if (vendor.requestedChangesAtUtc) {
+      timeline.unshift({
+        id: 'changes-requested',
+        title: this.isRTL ? 'طلب تعديلات' : 'Changes requested',
+        description: this.isRTL ? 'تم طلب إعادة رفع أو تصحيح بعض البيانات.' : 'The vendor was asked to re-upload or correct specific data.',
+        date: this.formatDate(vendor.requestedChangesAtUtc),
+        icon: 'rule',
+        toneClass: 'bg-amber-500'
+      });
+    }
+
+    if (vendor.approvedAtUtc) {
+      timeline.unshift({
+        id: 'approved',
+        title: this.isRTL ? 'اعتماد التاجر' : 'Vendor approved',
+        description: this.isRTL ? 'تم اعتماد الحساب وتشغيله رسميًا.' : 'The account was approved and officially activated.',
+        date: this.formatDate(vendor.approvedAtUtc),
+        icon: 'verified',
+        toneClass: 'bg-emerald-500'
+      });
+    }
+
+    if (vendor.suspendedAtUtc) {
+      timeline.unshift({
+        id: 'suspended',
+        title: this.isRTL ? 'تعليق الحساب' : 'Account suspended',
+        description: vendor.suspensionReason || (this.isRTL ? 'تم تعليق التشغيل إداريًا.' : 'Operations were suspended administratively.'),
+        date: this.formatDate(vendor.suspendedAtUtc),
+        icon: 'pause_circle',
+        toneClass: 'bg-rose-500'
+      });
+    }
+
+    if (vendor.lockedAtUtc) {
+      timeline.unshift({
+        id: 'locked',
+        title: this.isRTL ? 'قفل الدخول' : 'Login locked',
+        description: vendor.lockReason || (this.isRTL ? 'تم قفل تسجيل الدخول لهذا الحساب.' : 'Login access was locked for this account.'),
+        date: this.formatDate(vendor.lockedAtUtc),
+        icon: 'lock',
+        toneClass: 'bg-amber-600'
+      });
+    }
+
+    if (vendor.archivedAtUtc) {
+      timeline.unshift({
+        id: 'archived',
+        title: this.isRTL ? 'أرشفة الحساب' : 'Account archived',
+        description: vendor.archiveReason || (this.isRTL ? 'تمت أرشفة الحساب نهائيًا.' : 'The account was archived permanently.'),
+        date: this.formatDate(vendor.archivedAtUtc),
+        icon: 'archive',
+        toneClass: 'bg-slate-700'
+      });
+    }
+
+    return timeline;
   }
 }

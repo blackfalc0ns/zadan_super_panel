@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as echarts from 'echarts/core';
 import { EChartsOption } from 'echarts';
-import { LineChart, PieChart } from 'echarts/charts';
+import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
@@ -18,6 +18,7 @@ import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 echarts.use([
   LineChart,
+  BarChart,
   PieChart,
   GridComponent,
   LegendComponent,
@@ -50,7 +51,8 @@ interface AnalyticsStatusLegendItem {
   standalone: true,
   imports: [CommonModule, TranslateModule, NgxEchartsDirective],
   providers: [provideEchartsCore({ echarts })],
-  templateUrl: './vendor-analytics.component.html'
+  templateUrl: './vendor-analytics.component.html',
+  styleUrl: './vendor-analytics.component.scss'
 })
 export class VendorAnalyticsComponent {
   private readonly destroyRef = inject(DestroyRef);
@@ -84,6 +86,7 @@ export class VendorAnalyticsComponent {
   statusLegendItems: AnalyticsStatusLegendItem[] = [];
   salesTrendOptions: EChartsOption = {};
   statusBreakdownOptions: EChartsOption = {};
+  topProductsOptions: EChartsOption = {};
 
   constructor(
     private readonly translate: TranslateService,
@@ -136,12 +139,12 @@ export class VendorAnalyticsComponent {
 
   get generatedAtLabel(): string {
     const value = this.analytics?.meta.generatedAtUtc;
-    return value ? this.formatDateTime(value) : '—';
+    return value ? this.formatDateTime(value) : '-';
   }
 
   get periodLabel(): string {
     if (!this.analytics) {
-      return '—';
+      return '-';
     }
 
     return `${this.formatShortDate(this.analytics.meta.fromUtc)} - ${this.formatShortDate(this.analytics.meta.toUtc)}`;
@@ -180,6 +183,60 @@ export class VendorAnalyticsComponent {
     const total = h.available + h.lowStock + h.outOfStock + h.inactive;
     if (total === 0) return 0;
     return (h.lowStock + h.outOfStock) / total;
+  }
+
+  get totalProductHealthCount(): number {
+    if (!this.analytics) return 0;
+    const h = this.analytics.productHealth;
+    return h.available + h.lowStock + h.outOfStock + h.inactive;
+  }
+
+  get topProductRevenueShare(): number {
+    if (!this.analytics || this.analytics.summary.totalRevenue === 0 || this.analytics.topProducts.length === 0) {
+      return 0;
+    }
+
+    return this.analytics.topProducts[0].revenue / this.analytics.summary.totalRevenue;
+  }
+
+  get performanceScore(): number {
+    if (!this.analytics) return 0;
+
+    const summary = this.analytics.summary;
+    const health = this.analytics.productHealth;
+    const totalProducts = this.totalProductHealthCount;
+    const completionScore = Math.max(0, Math.min(summary.completionRate, 100)) / 100;
+    const cancellationScore = 1 - (Math.max(0, Math.min(summary.cancellationRate, 100)) / 100);
+    const stockScore = 1 - this.inventoryRiskRatio;
+    const availabilityScore = totalProducts > 0 ? health.available / totalProducts : 0;
+
+    return Math.max(0, Math.min(1, (completionScore * 0.45) + (cancellationScore * 0.25) + (stockScore * 0.2) + (availabilityScore * 0.1)));
+  }
+
+  get performanceScoreLabel(): string {
+    return this.formatPercent(this.performanceScore * 100);
+  }
+
+  get dominantProductName(): string {
+    return this.analytics?.topProducts[0]?.productName ?? '-';
+  }
+
+  get operationsSignalLabel(): string {
+    if (!this.analytics) return '-';
+
+    if (this.inventoryRiskRatio > 0.3) {
+      return this.isRTL ? 'راجع المخزون الآن' : 'Review inventory now';
+    }
+
+    if (this.analytics.summary.cancellationRate > 15) {
+      return this.isRTL ? 'قلل الإلغاءات' : 'Reduce cancellations';
+    }
+
+    if (this.activeWorkloadCount > 0) {
+      return this.isRTL ? 'تابع الطلبات النشطة' : 'Track active workload';
+    }
+
+    return this.isRTL ? 'الأداء مستقر' : 'Performance is steady';
   }
 
   selectRange(range: AdminVendorAnalyticsRange): void {
@@ -232,6 +289,7 @@ export class VendorAnalyticsComponent {
           this.statusLegendItems = [];
           this.salesTrendOptions = {};
           this.statusBreakdownOptions = {};
+          this.topProductsOptions = {};
           this.hasLoaded = true;
           this.hasError = true;
           this.isLoading = false;
@@ -295,6 +353,7 @@ export class VendorAnalyticsComponent {
 
     this.salesTrendOptions = this.buildSalesTrendOptions();
     this.statusBreakdownOptions = this.buildStatusBreakdownOptions();
+    this.topProductsOptions = this.buildTopProductsOptions();
   }
 
   private buildSalesTrendOptions(): EChartsOption {
@@ -398,7 +457,7 @@ export class VendorAnalyticsComponent {
           const label = params?.data?.labelKey ? this.translate.instant(params.data.labelKey) : '';
           const count = this.formatNumber(params?.data?.count ?? 0);
           const percentage = this.formatPercent(params?.data?.percentage ?? 0);
-          return `${label}<br/>${count} • ${percentage}`;
+          return `${label}<br/>${count} - ${percentage}`;
         }
       },
       series: [
@@ -423,6 +482,98 @@ export class VendorAnalyticsComponent {
               color: this.statusColors[item.status] ?? '#94a3b8'
             }
           }))
+        }
+      ]
+    };
+  }
+
+  private buildTopProductsOptions(): EChartsOption {
+    const products = [...(this.analytics?.topProducts ?? [])]
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 6)
+      .reverse();
+
+    return {
+      animationDuration: 450,
+      grid: {
+        left: this.isRTL ? 18 : 160,
+        right: 18,
+        top: 10,
+        bottom: 8,
+        containLabel: true
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        },
+        backgroundColor: '#0f172a',
+        borderWidth: 0,
+        textStyle: {
+          color: '#f8fafc',
+          fontFamily: 'Cairo, sans-serif'
+        },
+        formatter: (params: any) => {
+          const item = Array.isArray(params) ? params[0] : params;
+          const index = item?.dataIndex ?? 0;
+          const product = products[index];
+
+          if (!product) {
+            return '';
+          }
+
+          return [
+            product.productName,
+            `${this.isRTL ? 'الدخل' : 'Revenue'}: ${this.formatCurrency(product.revenue)}`,
+            `${this.isRTL ? 'الوحدات' : 'Units'}: ${this.formatNumber(product.unitsSold)}`,
+            `${this.isRTL ? 'الطلبات' : 'Orders'}: ${this.formatNumber(product.ordersCount)}`
+          ].join('<br/>');
+        }
+      },
+      xAxis: {
+        type: 'value',
+        splitLine: { lineStyle: { color: '#e8eef4' } },
+        axisLabel: {
+          color: '#64748b',
+          fontSize: 10,
+          formatter: (value: number) => this.formatCompactNumber(value)
+        }
+      },
+      yAxis: {
+        type: 'category',
+        data: products.map((product) => product.productName),
+        axisTick: { show: false },
+        axisLine: { show: false },
+        axisLabel: {
+          color: '#334155',
+          fontSize: 12,
+          fontWeight: 800,
+          width: 155,
+          overflow: 'truncate'
+        }
+      },
+      series: [
+        {
+          type: 'bar',
+          data: products.map((product, index) => ({
+            value: product.revenue,
+            itemStyle: {
+              color: index === products.length - 1 ? '#e48215' : '#127c8c'
+            }
+          })),
+          barWidth: 12,
+          barMaxWidth: 16,
+          label: {
+            show: true,
+            position: this.isRTL ? 'left' : 'right',
+            color: '#0f172a',
+            fontSize: 10,
+            fontWeight: 800,
+            formatter: (params: any) => this.formatCompactNumber(Number(params.value ?? 0))
+          },
+          itemStyle: {
+            borderRadius: [8, 8, 8, 8]
+          }
         }
       ]
     };

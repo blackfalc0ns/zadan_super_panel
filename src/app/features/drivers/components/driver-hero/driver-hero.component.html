@@ -1,0 +1,103 @@
+<div class="relative overflow-hidden rounded-[1.5rem] bg-gradient-to-r from-slate-900 via-slate-800 to-[#0f3d44] p-6 shadow-lg lg:p-8 animate-in slide-in-from-top-4 duration-500">
+  <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-70 mix-blend-overlay"></div>
+  <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5 blur-3xl"></div>
+  <div class="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-zadna-primary/20 blur-3xl"></div>
+
+  <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+    <div class="flex items-center gap-5">
+      <div class="relative">
+        <div class="absolute -inset-1 rounded-full bg-gradient-to-br opacity-70 blur-sm"
+          [ngClass]="{
+            'from-emerald-400 to-emerald-600': driver.status === 'Online',
+            'from-amber-400 to-amber-600': driver.status === 'OnMission',
+            'from-red-400 to-red-600': driver.status === 'Suspended',
+            'from-slate-400 to-slate-600': driver.status === 'Offline'
+          }">
+        </div>
+        <img [src]="driver.imageUrl || 'assets/images/placeholders/driver-avatar.png'" alt="Driver" class="relative h-20 w-20 rounded-full border-2 border-slate-900 object-cover shadow-xl">
+        <span class="absolute bottom-0 h-5 w-5 rounded-full border-2 border-slate-900"
+          [ngClass]="{
+            'bg-emerald-500': driver.status === 'Online',
+            'bg-amber-500': driver.status === 'OnMission',
+            'bg-red-500': driver.status === 'Suspended',
+            'bg-slate-400': driver.status === 'Offline',
+            'right-0': isRTL,
+            'left-0': !isRTL
+          }">
+        </span>
+      </div>
+
+      <div class="text-white">
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-black tracking-tight text-white">{{ driver.firstName }} {{ driver.lastName }}</h1>
+          <span class="rounded-lg bg-white/10 px-2 py-0.5 text-xs font-bold tracking-widest text-white/80" dir="ltr">#{{ driver.id }}</span>
+        </div>
+
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <app-status-pill [label]="driverStatusLabel" [variant]="driver.status === 'Online' ? 'success' : driver.status === 'OnMission' ? 'warning' : driver.status === 'Suspended' ? 'danger' : 'neutral'" [shouldTranslate]="true" size="sm"></app-status-pill>
+          <app-status-pill [label]="verificationLabel" [variant]="verificationVariant" [shouldTranslate]="true" size="sm"></app-status-pill>
+          <app-status-pill *ngIf="driver.issues.includes('legal') || driver.status === 'Suspended'" [label]="'DRIVERS.DETAIL.STATUS.COMPLIANCE_ISSUE' | translate" variant="danger" [shouldTranslate]="true" size="sm"></app-status-pill>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button type="button" (click)="openTasksRequested.emit()" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white/10 px-4 text-sm font-bold text-white shadow-sm backdrop-blur-md transition-all hover:bg-white/20 hover:shadow-md active:scale-95">
+        <span class="material-symbols-outlined text-[18px]">local_shipping</span>
+        {{ 'DRIVERS.DETAIL.ACTIONS.TRACK_TASKS' | translate }}
+      </button>
+      <button type="button" (click)="editDriverRequested.emit()" class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white shadow-sm backdrop-blur-md transition-all hover:bg-white/20 hover:shadow-md active:scale-95">
+        <span class="material-symbols-outlined text-[20px]">edit</span>
+      </button>
+      <button type="button" (click)="toggleSuspensionRequested.emit()" class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white shadow-sm backdrop-blur-md transition-all hover:bg-red-500 hover:text-white hover:shadow-md active:scale-95">
+        <span class="material-symbols-outlined text-[20px]">{{ driver.status === 'Suspended' ? 'play_arrow' : 'block' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-6 border-t border-white/10 pt-5">
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/80">
+          <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold tracking-wider text-white/60 uppercase">{{ 'DRIVERS.DETAIL.KPI.BALANCE' | translate }}</p>
+          <p class="text-sm font-black text-white" dir="ltr">{{ driver.finance.availableBalance | number:'1.2-2' }} <span class="text-[10px] font-bold text-white/70">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/80">
+          <span class="material-symbols-outlined text-[20px]">target</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold tracking-wider text-white/60 uppercase">{{ 'DRIVERS.DETAIL.KPI.ACCEPTANCE_RATE' | translate }}</p>
+          <div class="flex items-center gap-1 text-sm font-black text-white" dir="ltr">
+            {{ driver.acceptanceRate }}%
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/80">
+          <span class="material-symbols-outlined text-[20px]">location_on</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold tracking-wider text-white/60 uppercase">{{ 'DRIVERS.DETAIL.KPI.CITY' | translate }}</p>
+          <p class="text-sm font-black text-white">{{ driver.city }}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/80">
+          <span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-bold tracking-wider text-white/60 uppercase">{{ 'DRIVERS.DETAIL.KPI.TRUST_SCORE' | translate }}</p>
+          <p class="text-sm font-black text-white" dir="ltr">{{ driver.verification.trustScore }}%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

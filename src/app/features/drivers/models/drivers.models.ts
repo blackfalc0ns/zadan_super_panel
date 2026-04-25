@@ -288,17 +288,20 @@ export interface DriverVerificationSnapshot {
 export interface DriverDetailRecord extends Driver {
   displayName: string;
   email: string;
+  address?: string;
   joinedAt: string;
   vehicleLabel: string;
-  plateNumber: string;
+  licenseNumber: string;
+  zoneName?: string;
   liveZone: string;
+  liveLatitude?: number | null;
+  liveLongitude?: number | null;
   liveSpeedKmh: number;
   liveMissionId: string;
   todayTrips: number;
   todayTripsDelta: string;
   completionRate: number;
   averageDelayMinutes: number;
-  rating: number;
   codPendingAmount: number;
   totalEarnings: number;
   currentDueAmount: number;
@@ -329,7 +332,7 @@ export interface DriverProfileInfo {
   email: string;
   joinedAt: string;
   vehicleLabel: string;
-  plateNumber: string;
+  licenseNumber: string;
 }
 
 export interface DriverStatusSummary {

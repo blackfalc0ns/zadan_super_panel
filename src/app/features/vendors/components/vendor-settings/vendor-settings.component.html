@@ -1,325 +1,323 @@
-<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="max-w-7xl mx-auto py-4">
-  <p *ngIf="pageError" class="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">
+<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-4 md:px-6">
+  <div *ngIf="pageError" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[12px] font-bold text-red-700 shadow-sm">
     {{ pageError }}
-  </p>
+  </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-1 space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <app-section-header
-          [compact]="true"
-          icon="manage_accounts"
-          title="VENDOR_SETTINGS.ACCOUNT_SETTINGS">
-        </app-section-header>
+  <div *ngIf="pageSuccess" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[12px] font-bold text-emerald-700 shadow-sm">
+    {{ pageSuccess }}
+  </div>
 
-        <div class="space-y-5 pt-8">
-          <div class="flex justify-between items-center border-b border-gray-50 pb-4">
-            <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_STATUS' | translate }}</span>
-            <app-status-pill
-              [label]="accountStatusLabel"
-              [variant]="accountStatusVariant"
-              [showDot]="false"
-              [size]="'sm'">
-            </app-status-pill>
-          </div>
-          <div class="flex justify-between items-center border-b border-gray-50 pb-4">
-            <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.ACCOUNT_TYPE' | translate }}</span>
-            <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.ACCOUNT_TYPE_VALUE' | translate }}</span>
-          </div>
-          <div class="flex justify-between items-center border-b border-gray-50 pb-4">
-            <span class="text-sm text-gray-400 font-medium">{{ 'VENDOR_SETTINGS.DEFAULT_LANGUAGE' | translate }}</span>
-            <span class="text-sm font-bold text-gray-700">{{ 'VENDOR_SETTINGS.DEFAULT_LANGUAGE_VALUE' | translate }}</span>
-          </div>
+  <section class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+    <div class="flex flex-col gap-3 border-b border-slate-100 px-4 py-3 xl:flex-row xl:items-center xl:justify-between">
+      <div class="flex min-w-0 items-center gap-3">
+        <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-cyan-100 bg-cyan-50 text-cyan-700">
+          <span class="material-symbols-outlined text-[20px]">tune</span>
+        </div>
 
-          <button
-            (click)="onResetPassword()"
-            [disabled]="resetPasswordQueued || dialogSubmitting"
-            class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
-            type="button">
-            <span class="material-symbols-outlined text-sm">lock_reset</span>
-            <span class="text-sm font-bold">{{ 'VENDOR_SETTINGS.RESET_PASSWORD' | translate }}</span>
-          </button>
+        <div class="min-w-0">
+          <p class="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
+            {{ isRTL ? 'نافذة التشغيل' : 'Operations console' }}
+          </p>
+          <h1 class="mt-1 text-[18px] font-black leading-tight text-slate-950">
+            {{ isRTL ? 'إعدادات التشغيل والتحكم' : 'Vendor settings and control desk' }}
+          </h1>
+          <p class="mt-1 max-w-3xl text-[12px] font-semibold leading-5 text-slate-500">
+            {{ settingsHealthLabel }}
+          </p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <app-section-header
-          [compact]="true"
-          icon="storefront"
-          title="VENDOR_SETTINGS.OPERATIONS_SETTINGS">
-        </app-section-header>
+      <div class="flex flex-wrap items-center gap-2">
+        <app-status-pill [label]="accountStatusLabel" [variant]="accountStatusVariant" [showDot]="false" [size]="'sm'"></app-status-pill>
+        <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-black text-slate-600">
+          {{ isRTL ? 'آخر تحديث' : 'Last sync' }}: {{ lastUpdatedAtLabel }}
+        </span>
+      </div>
+    </div>
 
-        <div class="space-y-6 pt-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-bold text-gray-900 mb-1">{{ 'VENDOR_SETTINGS.ORDER_RECEPTION' | translate }}</p>
-              <p class="text-xs text-gray-400">{{ 'VENDOR_SETTINGS.ORDER_RECEPTION_DESC' | translate }}</p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" [(ngModel)]="acceptOrders" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
-          </div>
+    <div class="grid gap-2 p-3 sm:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{{ isRTL ? 'حالة الحساب' : 'Account state' }}</p>
+        <p class="mt-1 text-[16px] font-black text-slate-950">{{ accountStatusLabel }}</p>
+      </article>
 
+      <article class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{{ isRTL ? 'ساعات التشغيل' : 'Working hours' }}</p>
+        <p class="mt-1 truncate text-[16px] font-black text-slate-950">{{ workingHoursLabel }}</p>
+      </article>
+
+      <article class="rounded-xl border border-violet-100 bg-violet-50/40 px-3 py-2.5">
+        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-violet-600/80">{{ isRTL ? 'قنوات الإشعار' : 'Notification channels' }}</p>
+        <p class="mt-1 text-[16px] font-black text-slate-950">{{ activeNotificationChannelsCount }}/3</p>
+      </article>
+
+      <article class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{{ isRTL ? 'المسؤول' : 'Owner' }}</p>
+        <p class="mt-1 truncate text-[16px] font-black text-slate-950">{{ lastUpdatedByLabel }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="grid gap-4 xl:grid-cols-12">
+    <div class="space-y-4 xl:col-span-8">
+      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
           <div>
-            <p class="text-sm font-bold text-gray-900 mb-2">{{ 'VENDOR_SETTINGS.WORKING_HOURS' | translate }}</p>
-            <div class="p-3 bg-gray-50 rounded-xl text-sm font-medium text-gray-700 text-center">
-              {{ workingHoursLabel }}
-            </div>
+            <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'ضبط التشغيل اليومي' : 'Operational controls' }}</h2>
+            <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
+              {{ isRTL ? 'استقبال الطلبات والحد الأدنى وزمن التحضير.' : 'Order intake, minimum amount and preparation time.' }}
+            </p>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <span class="rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1.5 text-[11px] font-black text-cyan-700">
+            {{ acceptOrders ? (isRTL ? 'يستقبل الطلبات' : 'Accepting orders') : (isRTL ? 'متوقف' : 'Paused') }}
+          </span>
+        </div>
+
+        <div class="grid gap-3 p-3 lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
+          <label class="flex min-h-[72px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
             <div>
-              <p class="text-[10px] text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.MIN_ORDER' | translate }}</p>
-              <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                <input
-                  [(ngModel)]="minimumOrderAmount"
-                  type="number"
-                  min="0"
-                  class="w-full bg-transparent text-sm font-bold text-gray-900 outline-none"
-                />
-                <span class="text-[10px] text-gray-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-              </div>
+              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'استقبال الطلبات' : 'Order reception' }}</p>
+              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تشغيل أو إيقاف الطلبات الجديدة.' : 'Enable or pause new orders.' }}</p>
             </div>
-            <div>
-              <p class="text-[10px] text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.PREPARATION_TIME' | translate }}</p>
-              <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                <input
-                  [(ngModel)]="preparationTimeMinutes"
-                  type="number"
-                  min="0"
-                  class="w-full bg-transparent text-sm font-bold text-gray-900 outline-none text-center"
-                />
-                <span class="text-[10px] text-gray-400">{{ isRTL ? 'دقيقة' : 'min' }}</span>
-              </div>
+            <span class="relative inline-flex cursor-pointer items-center">
+              <input [(ngModel)]="acceptOrders" type="checkbox" class="peer sr-only">
+              <span class="h-6 w-11 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-cyan-700 peer-checked:after:translate-x-full peer-checked:after:border-white"></span>
+            </span>
+          </label>
+
+          <label class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'الحد الأدنى للطلب' : 'Minimum order' }}</span>
+            <div class="mt-1 flex items-center gap-2 rounded-lg border border-white bg-white px-3 py-2">
+              <input [(ngModel)]="minimumOrderAmount" type="number" min="0" class="w-full bg-transparent text-[14px] font-black text-slate-950 outline-none">
+              <span class="text-[11px] font-black text-slate-400">{{ isRTL ? 'ر.س' : 'SAR' }}</span>
             </div>
-          </div>
+          </label>
+
+          <label class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'زمن التحضير' : 'Preparation time' }}</span>
+            <div class="mt-1 flex items-center gap-2 rounded-lg border border-white bg-white px-3 py-2">
+              <input [(ngModel)]="preparationTimeMinutes" type="number" min="0" class="w-full bg-transparent text-[14px] font-black text-slate-950 outline-none">
+              <span class="text-[11px] font-black text-slate-400">{{ isRTL ? 'دقيقة' : 'min' }}</span>
+            </div>
+          </label>
 
           <button
             (click)="saveOperationsSettings()"
             [disabled]="operationsSubmitting"
-            class="w-full rounded-xl bg-slate-950 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:opacity-60"
+            class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
             type="button">
-            {{ operationsSubmitting ? (isRTL ? 'جارٍ الحفظ...' : 'Saving...') : (isRTL ? 'حفظ إعدادات التشغيل' : 'Save operations settings') }}
+            <span class="material-symbols-outlined text-[17px]">save</span>
+            {{ operationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ' : 'Save') }}
           </button>
         </div>
-      </div>
-    </div>
+      </article>
 
-    <div class="lg:col-span-1 space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
-        <app-section-header
-          [compact]="true"
-          icon="verified_user"
-          title="VENDOR_SETTINGS.PERMISSIONS_ACCESS">
-        </app-section-header>
-
-        <div class="space-y-6 pt-6">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-gray-400">inventory_2</span>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">{{ isRTL ? 'الفروع النشطة' : 'Active branches' }}</span>
-                <app-status-pill
-                  [label]="(vendor?.branchesCount || 0).toString()"
-                  variant="success"
-                  [showDot]="false"
-                  [size]="'sm'">
-                </app-status-pill>
-              </div>
-              <p class="text-xs text-gray-400">{{ isRTL ? 'عدد الفروع القادمة من بيانات التاجر الحقيقية في الباك إند.' : 'Number of branches coming from the live vendor backend data.' }}</p>
-            </div>
+      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
+          <div>
+            <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'إدارة الإشعارات' : 'Notification controls' }}</h2>
+            <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
+              {{ isRTL ? 'قنوات التنبيه اليومية للتاجر.' : 'Daily vendor alert channels.' }}
+            </p>
           </div>
 
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-gray-400">account_balance_wallet</span>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">{{ isRTL ? 'الحسابات البنكية' : 'Bank accounts' }}</span>
-                <span class="text-xs font-bold text-gray-600">{{ vendor?.bankAccountsCount || 0 }}</span>
-              </div>
-              <p class="text-xs text-gray-400">{{ vendor?.primaryBankAccount?.bankName || (isRTL ? 'لا يوجد حساب بنكي أساسي' : 'No primary bank account') }}</p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-gray-400">group</span>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-sm font-bold text-gray-900">{{ isRTL ? 'حالة تسجيل الدخول' : 'Login status' }}</span>
-                <span class="text-xs font-bold text-gray-600">{{ isLoginLocked ? (isRTL ? 'مقفل' : 'Locked') : (isRTL ? 'متاح' : 'Available') }}</span>
-              </div>
-              <p class="text-xs text-gray-400">{{ isRTL ? 'تُدار الصلاحيات التشغيلية من الباك إند، ولا توجد صلاحيات محلية وهمية في هذه الشاشة.' : 'Operational permissions are managed by the backend; this screen no longer shows fake local permissions.' }}</p>
-            </div>
-          </div>
+          <span class="rounded-full border border-violet-100 bg-violet-50 px-3 py-1.5 text-[11px] font-black text-violet-700">
+            {{ activeNotificationChannelsCount }}/3
+          </span>
         </div>
 
-        <div class="mt-12 pt-8 border-t border-gray-100">
-          <app-section-header
-            [compact]="true"
-            icon="settings_input_component"
-            title="VENDOR_SETTINGS.API_SETTINGS">
-          </app-section-header>
+        <div class="grid gap-3 p-3 md:grid-cols-3">
+          <label class="flex min-h-[78px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <div>
+              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'البريد الإلكتروني' : 'Email' }}</p>
+              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تنبيهات إدارية ورسائل متابعة.' : 'Admin and follow-up alerts.' }}</p>
+            </div>
+            <input [(ngModel)]="emailNotificationsEnabled" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-500">
+          </label>
 
-          <div class="space-y-4 pt-6">
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">{{ 'VENDOR_SETTINGS.CONNECTION_STATUS' | translate }}</span>
-              <span class="flex items-center gap-1.5 text-green-600 font-bold">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
-                {{ 'VENDOR_SETTINGS.CONNECTED' | translate }}
-              </span>
+          <label class="flex min-h-[78px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <div>
+              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'الرسائل النصية' : 'SMS' }}</p>
+              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'قناة الرسائل الحساسة.' : 'High-priority text channel.' }}</p>
             </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">{{ 'VENDOR_SETTINGS.PAYMENT_GATEWAY' | translate }}</span>
-              <span class="text-gray-900 font-bold">PayTabs</span>
+            <input [(ngModel)]="smsNotificationsEnabled" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-500">
+          </label>
+
+          <label class="flex min-h-[78px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <div>
+              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'طلبات جديدة' : 'New orders' }}</p>
+              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تنبيه فوري عند وصول الطلب.' : 'Instant alert when an order arrives.' }}</p>
             </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-gray-400">{{ 'VENDOR_SETTINGS.LAST_SYNC' | translate }}</span>
-              <span class="text-gray-900 font-medium">{{ lastUpdatedAtLabel }}</span>
-            </div>
+            <input [(ngModel)]="newOrdersNotificationsEnabled" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-500">
+          </label>
+        </div>
+
+        <div class="border-t border-slate-100 bg-slate-50/60 px-3 py-3">
+          <button
+            (click)="saveNotificationSettings()"
+            [disabled]="notificationsSubmitting"
+            class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+            type="button">
+            <span class="material-symbols-outlined text-[17px]">notifications</span>
+            {{ notificationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ إعدادات الإشعارات' : 'Save notification settings') }}
+          </button>
+        </div>
+      </article>
+
+      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+        <div class="border-b border-slate-100 px-4 py-3">
+          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'سياق مباشر' : 'Live context' }}</h2>
+        </div>
+
+        <div class="grid gap-3 p-3 md:grid-cols-3">
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'اسم النشاط' : 'Business name' }}</p>
+            <p class="mt-1 truncate text-[12px] font-black text-slate-950">{{ vendor?.businessNameAr || vendor?.businessNameEn || '-' }}</p>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'الحساب البنكي' : 'Primary bank' }}</p>
+            <p class="mt-1 truncate text-[12px] font-black text-slate-950">{{ vendor?.primaryBankAccount?.bankName || (isRTL ? 'غير متوفر' : 'Unavailable') }}</p>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'آخر ملاحظة' : 'Latest note' }}</p>
+            <p class="mt-1 line-clamp-1 text-[12px] font-black text-slate-950">{{ latestNotePreview }}</p>
           </div>
         </div>
-      </div>
+      </article>
     </div>
 
-    <div class="lg:col-span-1 space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <app-section-header
-          [compact]="true"
-          icon="warning"
-          title="VENDOR_SETTINGS.CONTROL_ACTIONS"
-          tone="danger">
-        </app-section-header>
+    <aside class="space-y-4 xl:col-span-4 xl:sticky xl:top-4 xl:self-start">
+      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+        <div class="border-b border-slate-100 px-4 py-3">
+          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'لوحة التحكم بالحساب' : 'Account control desk' }}</h2>
+          <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-500">{{ accountControlHint }}</p>
+        </div>
 
-        <div class="space-y-4 pt-6">
-          <button (click)="toggleSuspended()" [disabled]="dialogSubmitting || (!canSuspendAccount && !canReactivateAccount)" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group disabled:opacity-60" type="button">
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">pause_circle</span>
-              <span class="text-sm font-medium text-gray-700">{{ suspensionActionLabel }}</span>
-            </div>
-            <div class="w-2 h-2 rounded-full" [ngClass]="isAccountSuspended ? 'bg-red-400' : 'bg-gray-300'"></div>
+        <div class="space-y-2 p-3">
+          <button
+            (click)="onResetPassword()"
+            [disabled]="resetPasswordQueued || dialogSubmitting"
+            class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-start transition hover:border-cyan-200 hover:bg-cyan-50/50 disabled:opacity-60"
+            type="button">
+            <span>
+              <span class="block text-[12px] font-black text-slate-950">{{ isRTL ? 'إعادة كلمة المرور' : 'Reset password' }}</span>
+              <span class="mt-0.5 block text-[11px] font-semibold text-slate-500">{{ isRTL ? 'إجراء أمني مسجل.' : 'Logged security action.' }}</span>
+            </span>
+            <span class="material-symbols-outlined text-[18px] text-slate-400">lock_reset</span>
           </button>
 
-          <button (click)="toggleLoginLock()" [disabled]="dialogSubmitting" class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group disabled:opacity-60" type="button">
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">lock_reset</span>
-              <span class="text-sm font-medium text-gray-700">{{ loginActionLabel }}</span>
-            </div>
-            <div class="w-2 h-2 rounded-full" [ngClass]="isLoginLocked ? 'bg-amber-400' : 'bg-gray-300'"></div>
+          <button
+            (click)="toggleSuspended()"
+            [disabled]="dialogSubmitting || (!canSuspendAccount && !canReactivateAccount)"
+            class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-start transition hover:border-cyan-200 hover:bg-cyan-50/50 disabled:opacity-60"
+            type="button">
+            <span>
+              <span class="block text-[12px] font-black text-slate-950">{{ suspensionActionLabel }}</span>
+              <span class="mt-0.5 block text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تعليق أو إعادة تشغيل.' : 'Suspend or reactivate.' }}</span>
+            </span>
+            <span class="material-symbols-outlined text-[18px] text-slate-400">pause_circle</span>
+          </button>
+
+          <button
+            (click)="toggleLoginLock()"
+            [disabled]="dialogSubmitting"
+            class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-start transition hover:border-cyan-200 hover:bg-cyan-50/50 disabled:opacity-60"
+            type="button">
+            <span>
+              <span class="block text-[12px] font-black text-slate-950">{{ loginActionLabel }}</span>
+              <span class="mt-0.5 block text-[11px] font-semibold text-slate-500">{{ isRTL ? 'قفل أو فتح الوصول.' : 'Lock or restore access.' }}</span>
+            </span>
+            <span class="material-symbols-outlined text-[18px] text-slate-400">vpn_key</span>
           </button>
 
           <button
             (click)="onArchiveAccount()"
             [disabled]="isArchived || dialogSubmitting"
-            class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
+            class="flex w-full items-center justify-between rounded-xl border border-red-200 bg-red-50/70 px-3 py-2.5 text-start transition hover:bg-red-100/80 disabled:opacity-60"
             type="button">
-            <span class="material-symbols-outlined text-sm">delete_forever</span>
-            <span class="text-sm font-bold">{{ 'VENDOR_SETTINGS.ARCHIVE_ACCOUNT' | translate }}</span>
+            <span>
+              <span class="block text-[12px] font-black text-red-700">{{ isRTL ? 'أرشفة الحساب' : 'Archive account' }}</span>
+              <span class="mt-0.5 block text-[11px] font-semibold text-red-600">{{ isRTL ? 'إيقاف نهائي محفوظ بالسجل.' : 'Final shutdown with audit.' }}</span>
+            </span>
+            <span class="material-symbols-outlined text-[18px] text-red-500">archive</span>
           </button>
         </div>
-      </div>
+      </article>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <app-section-header
-          [compact]="true"
-          icon="notifications"
-          title="VENDOR_SETTINGS.NOTIFICATIONS">
-        </app-section-header>
-
-        <div class="space-y-5 pt-6">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.EMAIL_NOTIFICATIONS' | translate }}</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" [(ngModel)]="emailNotificationsEnabled" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.SMS_NOTIFICATIONS' | translate }}</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" [(ngModel)]="smsNotificationsEnabled" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600">{{ 'VENDOR_SETTINGS.NEW_ORDERS_NOTIFICATIONS' | translate }}</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" [(ngModel)]="newOrdersNotificationsEnabled" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
-          </div>
-
-          <button
-            (click)="saveNotificationSettings()"
-            [disabled]="notificationsSubmitting"
-            class="w-full rounded-xl bg-slate-950 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:opacity-60"
-            type="button">
-            {{ notificationsSubmitting ? (isRTL ? 'جارٍ الحفظ...' : 'Saving...') : (isRTL ? 'حفظ إعدادات الإشعارات' : 'Save notification settings') }}
-          </button>
+      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+        <div class="border-b border-slate-100 px-4 py-3">
+          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'هوية تشغيلية' : 'Operational identity' }}</h2>
         </div>
-      </div>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center text-center">
-        <div class="mb-3 w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center">
-          <span class="material-symbols-outlined text-gray-400">history</span>
+        <div class="grid gap-2 p-3 text-[12px]">
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'البريد' : 'Email' }}</p>
+            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.contactEmail || '-' }}</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'الهاتف' : 'Phone' }}</p>
+            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.contactPhone || '-' }}</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'صاحب الحساب' : 'Owner' }}</p>
+            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.ownerName || '-' }}</p>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'المدينة والمنطقة' : 'City and region' }}</p>
+            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.city || '-' }}{{ vendor?.region ? ' - ' + vendor?.region : '' }}</p>
+          </div>
         </div>
-        <p class="text-xs text-gray-400 mb-1">{{ 'VENDOR_SETTINGS.LAST_UPDATED_BY' | translate }}</p>
-        <p class="text-sm font-bold text-gray-900">{{ lastUpdatedByLabel }}</p>
-        <p class="text-[10px] text-gray-400 mt-1">{{ lastUpdatedAtLabel }}</p>
-      </div>
-    </div>
-  </div>
+      </article>
+    </aside>
+  </section>
 </div>
 
 <div *ngIf="isDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-    <div class="mb-5">
-      <h3 class="text-lg font-bold text-slate-900">{{ dialogTitle }}</h3>
-      <p class="mt-2 text-sm leading-6 text-slate-500">{{ dialogDescription }}</p>
+  <div class="w-full max-w-md rounded-2xl border border-white/70 bg-white p-4 shadow-2xl">
+    <div>
+      <h3 class="text-[16px] font-black text-slate-950">{{ dialogTitle }}</h3>
+      <p class="mt-2 text-[12px] font-semibold leading-6 text-slate-500">{{ dialogDescription }}</p>
     </div>
 
-    <div class="space-y-4">
-      <div>
-        <label class="mb-2 block text-sm font-medium text-slate-700">{{ dialogPrimaryLabel }}</label>
+    <div class="mt-4 space-y-3">
+      <label class="block">
+        <span class="mb-1.5 block text-[12px] font-black text-slate-700">{{ dialogPrimaryLabel }}</span>
         <input
           [(ngModel)]="dialogPrimaryValue"
-          class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-primary"
+          class="h-10 w-full rounded-xl border border-slate-200 px-3 text-[12px] font-semibold outline-none transition focus:border-cyan-500"
           [type]="dialogPrimaryInputType"
           [placeholder]="dialogPrimaryPlaceholder" />
-      </div>
+      </label>
 
-      <div *ngIf="showDialogSecondaryInput">
-        <label class="mb-2 block text-sm font-medium text-slate-700">{{ dialogSecondaryLabel }}</label>
+      <label *ngIf="showDialogSecondaryInput" class="block">
+        <span class="mb-1.5 block text-[12px] font-black text-slate-700">{{ dialogSecondaryLabel }}</span>
         <input
           [(ngModel)]="dialogSecondaryValue"
-          class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-primary"
+          class="h-10 w-full rounded-xl border border-slate-200 px-3 text-[12px] font-semibold outline-none transition focus:border-cyan-500"
           type="password"
           [placeholder]="dialogSecondaryPlaceholder" />
-      </div>
+      </label>
 
-      <p *ngIf="dialogError" class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+      <p *ngIf="dialogError" class="rounded-xl bg-red-50 px-3 py-2 text-[12px] font-bold text-red-600">
         {{ dialogError }}
       </p>
     </div>
 
-    <div class="mt-6 flex items-center justify-end gap-3">
+    <div class="mt-5 flex items-center justify-end gap-2">
       <button
         (click)="closeDialog()"
         [disabled]="dialogSubmitting"
-        class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+        class="h-9 rounded-xl border border-slate-200 px-4 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
         type="button">
         {{ isRTL ? 'إلغاء' : 'Cancel' }}
       </button>
       <button
         (click)="confirmDialog()"
         [disabled]="dialogSubmitting"
-        class="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-slate-900 transition hover:bg-primary/90 disabled:opacity-60"
+        class="h-9 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
         type="button">
         {{ dialogConfirmLabel }}
       </button>

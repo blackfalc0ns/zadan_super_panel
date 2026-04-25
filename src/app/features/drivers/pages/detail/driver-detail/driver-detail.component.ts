@@ -1,9 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { PreviewAction } from '../../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
 import { DriverDetailViewComponent } from '../../../components/driver-detail-view/driver-detail-view.component';
-import { getDriverMapPreview } from '../../../data/drivers.mock';
 import { DriverDetailRecord, DriverIncidentRecord, DriverTaskAssignment, DriverWorkflowActionId } from '../../../models/drivers.models';
 import { DriverLifecycleTabId, DriverPreviewType } from '../../../models/driver-view.types';
 import { DriverService } from '@drivers/services/drivers.api.service';
@@ -12,7 +13,7 @@ import { Driver } from '@drivers/models/drivers.domain.models';
 @Component({
   selector: 'app-driver-detail',
   standalone: true,
-  imports: [DriverDetailViewComponent],
+  imports: [CommonModule, TranslateModule, DriverDetailViewComponent],
   templateUrl: './driver-detail.component.html'
 })
 export class DriverDetailComponent implements OnInit {
@@ -24,17 +25,18 @@ export class DriverDetailComponent implements OnInit {
   reviewerDecisionNote = '';
   internalReviewNote = '';
   selectedRejectionReason = '';
-  readonly mapPreviewUrl = getDriverMapPreview();
+  readonly mapPreviewUrl = null;
 
   previewType: DriverPreviewType | null = null;
   selectedTask: DriverTaskAssignment | null = null;
   selectedIncident: DriverIncidentRecord | null = null;
 
   isLoading = true;
+  hasLoadError = false;
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
+    public readonly router: Router,
     private readonly driverService: DriverService
   ) {}
 
@@ -78,6 +80,12 @@ export class DriverDetailComponent implements OnInit {
         this.currentDriverId,
         this.internalReviewNote.trim() || this.reviewerDecisionNote.trim() || undefined),
       'compliance');
+  }
+
+  retryLoad(): void {
+    if (this.currentDriverId) {
+      this.loadDriver(this.currentDriverId);
+    }
   }
 
   addQuickNote(): void {
@@ -200,11 +208,15 @@ export class DriverDetailComponent implements OnInit {
 
   private loadDriver(id: string): void {
     this.isLoading = true;
+    this.hasLoadError = false;
     this.currentDriverId = id;
 
     this.driverService.getDriverDetailRecordById(id).subscribe((driverDetail) => {
       if (!driverDetail) {
-        this.router.navigate(['/drivers']);
+        this.driverDetail = null;
+        this.sourceDriver = null;
+        this.isLoading = false;
+        this.hasLoadError = true;
         return;
       }
 
@@ -220,6 +232,7 @@ export class DriverDetailComponent implements OnInit {
       this.internalReviewNote = this.driverDetail.verification.internalNote;
       this.selectedRejectionReason = this.driverDetail.verification.rejectionReasonOptions[0] ?? '';
       this.isLoading = false;
+      this.hasLoadError = false;
     });
   }
 

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -18,7 +19,7 @@ interface Tab {
 @Component({
   selector: 'app-vendor-detail-header',
   standalone: true,
-  imports: [CommonModule, TranslateModule, DetailTabsNavComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, DetailTabsNavComponent],
   templateUrl: './vendor-detail-header.component.html',
   styleUrls: ['./vendor-detail-header.component.scss']
 })
@@ -35,7 +36,18 @@ export class VendorDetailHeaderComponent implements OnChanges {
   category = '';
   statusLabelKey = 'VENDORS.STATUS.PENDING';
   verificationLabelKey = 'VENDORS.STATUS.PENDING';
+  performanceRating = 0;
+  riskLevelLabelKey = 'VENDORS.RISK_LEVEL.LOW';
+  reviewStateLabelKey = 'VENDOR_REVIEW.STATE.UNKNOWN';
   isSendingTestNotification = false;
+  isMessageComposerOpen = false;
+  messageTitleAr = '';
+  messageTitleEn = '';
+  messageBodyAr = '';
+  messageBodyEn = '';
+  messageSendInbox = true;
+  messageSendPush = true;
+  messageSendEmail = true;
 
   tabs: Tab[] = [
     { id: 'overview', labelKey: 'VENDOR_DETAIL.TAB_OVERVIEW', active: true },
@@ -45,11 +57,12 @@ export class VendorDetailHeaderComponent implements OnChanges {
     { id: 'orders', labelKey: 'VENDOR_DETAIL.TAB_ORDERS', active: false },
     { id: 'finance', labelKey: 'VENDOR_DETAIL.TAB_FINANCE', active: false },
     { id: 'compliance', labelKey: 'VENDOR_DETAIL.TAB_COMPLIANCE', active: false },
+    { id: 'workspace', labelKey: 'تشغيل التاجر', active: false },
     { id: 'logs', labelKey: 'VENDOR_DETAIL.TAB_LOGS', active: false },
     { id: 'settings', labelKey: 'VENDOR_DETAIL.TAB_SETTINGS', active: false }
   ];
 
-  private vendor: VendorDetail | null = null;
+  vendor: VendorDetail | null = null;
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -156,17 +169,73 @@ export class VendorDetailHeaderComponent implements OnChanges {
     const displayName = this.getDisplayStoreName(this.vendor);
 
     this.isSendingTestNotification = true;
-    this.vendorDetailFacade.sendVendorNotificationTestRequest({
+    this.vendorDetailFacade.sendVendorMessageRequest({
       titleAr: 'إشعار اختبار من الأدمن',
       titleEn: 'Admin test notification',
       bodyAr: `هذا إشعار تجريبي للمتجر ${displayName} للتأكد من وصول الإشعارات في لوحة التاجر.`,
       bodyEn: `This is a test notification for ${displayName} to verify delivery in the vendor panel.`,
       type: 'vendor_admin_test',
       targetUrl: '/alerts',
-      sendPush: true
+      sendInbox: true,
+      sendPush: true,
+      sendEmail: true
     }).subscribe({
       next: (response) => {
         this.isSendingTestNotification = false;
+        this.showTestNotificationResult(response);
+      },
+      error: (error) => {
+        this.isSendingTestNotification = false;
+        this.toastService.error(
+          this.resolveApiError(error),
+          this.notificationToastTitle
+        );
+      }
+    });
+  }
+
+  openMessageComposer(): void {
+    if (!this.vendor || this.isSendingTestNotification) {
+      return;
+    }
+
+    const displayName = this.getDisplayStoreName(this.vendor);
+    this.messageTitleAr = 'رسالة من إدارة زدنا';
+    this.messageTitleEn = 'Message from Zadana admin';
+    this.messageBodyAr = `مرحبًا ${displayName}، يوجد تحديث مهم من فريق الإدارة.`;
+    this.messageBodyEn = `Hello ${displayName}, there is an important update from the admin team.`;
+    this.messageSendInbox = true;
+    this.messageSendPush = true;
+    this.messageSendEmail = true;
+    this.isMessageComposerOpen = true;
+  }
+
+  closeMessageComposer(): void {
+    if (!this.isSendingTestNotification) {
+      this.isMessageComposerOpen = false;
+    }
+  }
+
+  sendVendorMessage(): void {
+    if (!this.vendor || this.isSendingTestNotification) {
+      return;
+    }
+
+    this.isSendingTestNotification = true;
+    this.vendorDetailFacade.sendVendorMessageRequest({
+      titleAr: this.messageTitleAr,
+      titleEn: this.messageTitleEn,
+      bodyAr: this.messageBodyAr,
+      bodyEn: this.messageBodyEn,
+      type: 'vendor_admin_message',
+      targetUrl: '/alerts',
+      sendInbox: this.messageSendInbox,
+      sendPush: this.messageSendPush,
+      sendEmail: this.messageSendEmail
+    }).subscribe({
+      next: (response) => {
+        this.isSendingTestNotification = false;
+        this.isMessageComposerOpen = false;
         this.showTestNotificationResult(response);
       },
       error: (error) => {
@@ -213,6 +282,32 @@ export class VendorDetailHeaderComponent implements OnChanges {
     this.category = this.getDisplayBusinessType(this.vendor?.businessType) || this.translate.instant('VENDOR_DETAIL.CATEGORY_VALUE');
     this.statusLabelKey = this.resolveStatusLabelKey(this.vendor);
     this.verificationLabelKey = this.resolveVerificationLabelKey(this.vendor);
+    this.riskLevelLabelKey = this.resolveRiskLevelLabelKey(this.vendor);
+    this.reviewStateLabelKey = this.resolveReviewStateLabelKey(this.vendor);
+    this.performanceRating = this.vendor?.performanceRating ?? 0;
+  }
+
+  resolveRiskLevelLabelKey(vendor: VendorDetail | null): string {
+    const map: Record<string, string> = {
+      Low: 'VENDORS.RISK_LEVEL.LOW',
+      Medium: 'VENDORS.RISK_LEVEL.MEDIUM',
+      High: 'VENDORS.RISK_LEVEL.HIGH',
+      Critical: 'VENDORS.RISK_LEVEL.CRITICAL'
+    };
+    return map[vendor?.riskLevel ?? ''] ?? 'VENDORS.RISK_LEVEL.LOW';
+  }
+
+  resolveReviewStateLabelKey(vendor: VendorDetail | null): string {
+    const map: Record<string, string> = {
+      'awaiting_submission': 'VENDOR_REVIEW.STATE.AWAITING',
+      'submitted': 'VENDOR_REVIEW.STATE.SUBMITTED',
+      'under_review': 'VENDOR_REVIEW.STATE.UNDER_REVIEW',
+      'changes_requested': 'VENDOR_REVIEW.STATE.CHANGES_REQUESTED',
+      'verified': 'VENDOR_REVIEW.STATE.VERIFIED',
+      'rejected': 'VENDOR_REVIEW.STATE.REJECTED',
+      'suspended': 'VENDOR_REVIEW.STATE.SUSPENDED'
+    };
+    return map[vendor?.reviewState ?? ''] ?? 'VENDOR_REVIEW.STATE.UNKNOWN';
   }
 
   private getDisplayStoreName(vendor: VendorDetail): string {
@@ -338,3 +433,5 @@ export class VendorDetailHeaderComponent implements OnChanges {
       : 'Unable to send the test notification right now.';
   }
 }
+
+
