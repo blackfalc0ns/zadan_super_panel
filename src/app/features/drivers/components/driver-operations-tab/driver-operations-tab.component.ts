@@ -35,4 +35,20 @@ export class DriverOperationsTabComponent {
   getTaskStatusKey(status: string) {
     return getTaskStatusKey(status as any);
   }
+
+  get hasCoordinates(): boolean {
+    return this.driver.liveLatitude != null && this.driver.liveLongitude != null;
+  }
+
+  get mapsUrl(): string | null {
+    if (!this.hasCoordinates) {
+      return null;
+    }
+
+    return `https://www.google.com/maps?q=${this.driver.liveLatitude},${this.driver.liveLongitude}`;
+  }
+
+  get activeMissionLabel(): string {
+    return this.driver.liveMissionId || 'COMMON.NOT_AVAILABLE';
+  }
 }

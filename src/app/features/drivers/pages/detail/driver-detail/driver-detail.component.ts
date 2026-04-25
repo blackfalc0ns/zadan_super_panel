@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { PreviewAction } from '../../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
 import { DriverDetailViewComponent } from '../../../components/driver-detail-view/driver-detail-view.component';
@@ -37,7 +38,8 @@ export class DriverDetailComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     public readonly router: Router,
-    private readonly driverService: DriverService
+    private readonly driverService: DriverService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -201,6 +203,19 @@ export class DriverDetailComponent implements OnInit {
     }
   }
 
+  handleReviewAction(action: 'approve' | 'request-docs' | 'reject'): void {
+    if (!this.currentDriverId) {
+      return;
+    }
+
+    this.runDriverAction(
+      this.driverService.reviewDriver(
+        this.currentDriverId,
+        action,
+        this.buildReviewNote(action)),
+      'verification');
+  }
+
   private normalizeTab(value: string | null): DriverLifecycleTabId {
     const allowedTabs: DriverLifecycleTabId[] = ['overview', 'operations', 'performance', 'support', 'compliance', 'finance', 'verification'];
     return allowedTabs.includes(value as DriverLifecycleTabId) ? (value as DriverLifecycleTabId) : 'overview';
@@ -255,6 +270,39 @@ export class DriverDetailComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private buildReviewNote(action: 'approve' | 'request-docs' | 'reject'): string | undefined {
+    const parts: string[] = [];
+    const reason = this.resolveTranslatedReason();
+    const decision = this.reviewerDecisionNote.trim();
+    const internal = this.internalReviewNote.trim();
+
+    if (action !== 'approve' && reason) {
+      parts.push(reason);
+    }
+
+    if (decision) {
+      parts.push(decision);
+    }
+
+    if (internal && internal !== decision) {
+      parts.push(internal);
+    }
+
+    const note = parts.join(' | ').trim();
+    return note || undefined;
+  }
+
+  private resolveTranslatedReason(): string {
+    const key = this.selectedRejectionReason.trim();
+
+    if (!key) {
+      return '';
+    }
+
+    const translated = this.translate.instant(key);
+    return translated === key ? key : translated;
   }
 }
 

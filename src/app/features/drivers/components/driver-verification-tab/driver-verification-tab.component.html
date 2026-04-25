@@ -1,4 +1,60 @@
 <div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+  <section class="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="space-y-4">
+        <app-section-header
+          [title]="'DRIVERS.DETAIL.VERIFICATION.PERSONAL_INFO_TITLE' | translate"
+          [description]="'DRIVERS.DETAIL.VERIFICATION.PERSONAL_INFO_DESC' | translate"
+          [shouldTranslate]="false"
+          icon="badge">
+        </app-section-header>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FIELDS.FULL_NAME' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-900">{{ driver.displayName }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FIELDS.PHONE' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-900" dir="ltr">{{ driver.phoneNumber }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FIELDS.EMAIL' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-900 break-all">{{ driver.email }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FIELDS.ADDRESS' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-900">{{ driver.address || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <app-section-header
+          [title]="'DRIVERS.DETAIL.VERIFICATION.VEHICLE_INFO_TITLE' | translate"
+          [description]="'DRIVERS.DETAIL.VERIFICATION.VEHICLE_INFO_DESC' | translate"
+          [shouldTranslate]="false"
+          icon="two_wheeler">
+        </app-section-header>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FIELDS.VEHICLE_TYPE' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-900">{{ driver.vehicleLabel | translate }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FIELDS.LICENSE_NUMBER' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-900">{{ driver.licenseNumber }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 sm:col-span-2">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FIELDS.ZONE' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-900">{{ driver.zoneName || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <div class="grid gap-6 lg:grid-cols-3">
     <!-- Verification Summary -->
     <section class="lg:col-span-1 rounded-[1.5rem] bg-gradient-to-br from-[#0f5f69] to-[#127c8c] p-6 text-white shadow-lg flex flex-col">
@@ -96,7 +152,7 @@
           <img [src]="doc.imageUrl" [alt]="doc.title | translate" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110">
           <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/80 to-transparent p-4 flex justify-between items-end">
             <app-status-pill [label]="getDocumentStatusKey(doc.status)" [variant]="getDocumentStatusVariant(doc.status)" [shouldTranslate]="true" size="sm"></app-status-pill>
-            <button class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white hover:text-zadna-primary">
+            <button type="button" (click)="openDocumentPreview(doc)" class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white hover:text-zadna-primary">
               <span class="material-symbols-outlined text-[16px]">zoom_in</span>
             </button>
           </div>
@@ -108,7 +164,7 @@
           
           <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
             <span class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}</span>
-            <span class="text-[11px] font-bold text-slate-700" dir="ltr">{{ doc.expiryDate }}</span>
+            <span class="text-[11px] font-bold text-slate-700" dir="ltr">{{ doc.expiryDate | translate }}</span>
           </div>
         </div>
       </article>
@@ -157,7 +213,7 @@
               <span class="material-symbols-outlined text-[16px]">shield_person</span>
             </div>
             <div>
-              <p class="text-sm font-black text-sky-900">{{ driver.verification.reviewer }}</p>
+              <p class="text-sm font-black text-sky-900">{{ driver.verification.reviewer | translate }}</p>
               <p class="text-[10px] font-bold text-sky-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}: {{ driver.verification.trustScore }}%</p>
             </div>
           </div>
@@ -174,5 +230,79 @@
         </div>
       </div>
     </div>
+
+    <div class="mt-6 rounded-2xl border border-amber-100 bg-amber-50/60 p-4" *ngIf="!canSubmitAction('reject')">
+      <p class="text-sm font-bold text-amber-800">{{ 'DRIVERS.DETAIL.VERIFICATION.REASON_REQUIRED_HELPER' | translate }}</p>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        (click)="requestReviewAction('approve')"
+        class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 text-sm font-bold text-white shadow-sm transition-all hover:bg-emerald-700 active:scale-95">
+        <span class="material-symbols-outlined text-[18px]">task_alt</span>
+        {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE' | translate }}
+      </button>
+
+      <button
+        type="button"
+        (click)="requestReviewAction('request-docs')"
+        [disabled]="!canSubmitAction('request-docs')"
+        class="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-5 text-sm font-bold text-amber-800 shadow-sm transition-all hover:bg-amber-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50">
+        <span class="material-symbols-outlined text-[18px]">assignment_late</span>
+        {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REQUEST_DOCUMENTS' | translate }}
+      </button>
+
+      <button
+        type="button"
+        (click)="requestReviewAction('reject')"
+        [disabled]="!canSubmitAction('reject')"
+        class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-rose-600 px-5 text-sm font-bold text-white shadow-sm transition-all hover:bg-rose-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50">
+        <span class="material-symbols-outlined text-[18px]">cancel</span>
+        {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT' | translate }}
+      </button>
+    </div>
   </section>
+
+  <div *ngIf="selectedDocumentPreview" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4" (click)="closeDocumentPreview()">
+    <div class="relative w-full max-w-4xl overflow-hidden rounded-[1.75rem] bg-white shadow-2xl" (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div>
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_PREVIEW' | translate }}</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">{{ getDocumentPreviewTitle() | translate }}</h3>
+        </div>
+        <button type="button" (click)="closeDocumentPreview()" class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition-all hover:bg-slate-200">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <div class="grid gap-0 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div class="flex min-h-[380px] items-center justify-center bg-slate-950 p-4">
+          <img
+            [src]="selectedDocumentPreview.imageUrl"
+            [alt]="selectedDocumentPreview.title | translate"
+            class="max-h-[70vh] w-auto max-w-full rounded-2xl object-contain">
+        </div>
+
+        <div class="space-y-4 p-5">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[10px] font-extrabold uppercase text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_STATUS' | translate }}</p>
+            <div class="mt-2">
+              <app-status-pill [label]="getDocumentStatusKey(selectedDocumentPreview.status)" [variant]="getDocumentStatusVariant(selectedDocumentPreview.status)" [shouldTranslate]="true" size="sm"></app-status-pill>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[10px] font-extrabold uppercase text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_NOTE' | translate }}</p>
+            <p class="mt-2 text-sm font-bold leading-6 text-slate-700">{{ selectedDocumentPreview.subtitle ? (selectedDocumentPreview.subtitle | translate) : ('COMMON.NOT_AVAILABLE' | translate) }}</p>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[10px] font-extrabold uppercase text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}</p>
+            <p class="mt-2 text-sm font-bold text-slate-700">{{ selectedDocumentPreview.expiryDate | translate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -53,4 +53,21 @@ export class DriverOverviewTabComponent {
       && !this.driver.support.lastUpdateLabel.startsWith('DRIVERS.')
       && !this.driver.support.lastUpdateLabel.startsWith('COMMON.');
   }
+
+  get completedChecklistItems(): number {
+    return this.driver.profileReadiness.checklist.filter((item) => item.completed).length;
+  }
+
+  get missingRequirementLabels(): string[] {
+    return this.driver.profileReadiness.missingRequirements.map((requirement) =>
+      `DRIVERS.DETAIL.VERIFICATION.BACKEND.REJECTION_REASONS.${requirement.toUpperCase()}`);
+  }
+
+  get hasReviewNote(): boolean {
+    return Boolean(this.driver.verification.decisionNote || this.driver.verification.internalNote);
+  }
+
+  get reviewNote(): string {
+    return this.driver.verification.decisionNote || this.driver.verification.internalNote || '';
+  }
 }

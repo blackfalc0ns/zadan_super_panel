@@ -143,6 +143,7 @@ interface AdminDriverDetailResponse {
   reviewedAtUtc?: string | null;
   reviewNote?: string | null;
   suspensionReason?: string | null;
+  profileReadiness: AdminDriverProfileReadinessResponse;
   documents: AdminDriverDocumentResponse[];
   notes: AdminDriverNoteResponse[];
   incidents: AdminDriverIncidentResponse[];
@@ -165,6 +166,14 @@ interface AdminDriverOverviewResponse {
   completionRate: number;
   commitmentScore: number;
   collectionPaymentStatus: 'good' | 'warning' | 'critical';
+}
+
+interface AdminDriverProfileReadinessResponse {
+  isProfileComplete: boolean;
+  completionPercent: number;
+  missingRequirements: string[];
+  canSubmitForReview: boolean;
+  checklist: AdminDriverVerificationChecklistItemResponse[];
 }
 
 interface AdminDriverWorkflowActionResponse {
@@ -578,8 +587,8 @@ export class DriverService {
       liveZone: response.operations.zoneName || response.overview.zoneName || response.zoneName || response.city,
       liveLatitude: response.operations.currentLatitude ?? null,
       liveLongitude: response.operations.currentLongitude ?? null,
-      liveSpeedKmh: 0,
-      liveMissionId: taskAssignments[0]?.id || '',
+      liveSpeedKmh: null,
+      liveMissionId: this.getActiveMissionId(taskAssignments),
       todayTrips: response.activeTasks,
       todayTripsDelta: this.buildTodayTripsDelta(response.activeTasks, response.completedTasks),
       completionRate: response.performanceDetails.completionRate || response.overview.completionRate || response.acceptanceRate,
@@ -596,6 +605,13 @@ export class DriverService {
       routeEfficiencyDelta: this.buildRouteEfficiencyDelta(response.performanceDetails.commitmentScore),
       lifetimeTrips: response.completedTasks,
       weeklyEfficiency: [],
+      profileReadiness: {
+        isProfileComplete: response.profileReadiness.isProfileComplete,
+        completionPercent: response.profileReadiness.completionPercent,
+        missingRequirements: [...response.profileReadiness.missingRequirements],
+        canSubmitForReview: response.profileReadiness.canSubmitForReview,
+        checklist: this.mapVerificationChecklist(response.profileReadiness.checklist)
+      },
       notes,
       documents,
       recentTrips,
@@ -613,8 +629,8 @@ export class DriverService {
       },
       performanceSnapshot: {
         routeScore: Number(response.performanceDetails.commitmentScore || response.overview.commitmentScore || 0),
-        rankInZone: 0,
-        rankInFleet: 0,
+        rankInZone: null,
+        rankInFleet: null,
         metricCards: response.performanceDetails.metrics.map((metric) => ({
           id: metric.id,
           title: this.mapPerformanceMetricTitle(metric.id),
@@ -773,6 +789,13 @@ export class DriverService {
       delayLabel: assignment.delayLabel || '00:00',
       codAmount: assignment.codAmount
     }));
+  }
+
+  private getActiveMissionId(assignments: DriverTaskAssignment[]): string | null {
+    const active = assignments.find((assignment) =>
+      assignment.status !== 'COMPLETED' && assignment.status !== 'FAILED');
+
+    return active?.id ?? null;
   }
 
   private mapRecentTrips(assignments: DriverTaskAssignment[], zoneLabel: string) {
@@ -1102,10 +1125,12 @@ export class DriverService {
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.NATIONAL_ID';
       case 'License':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.LICENSE';
+      case 'Vehicle':
+        return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.VEHICLE';
       case 'PersonalPhoto':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.SELFIE';
       default:
-        return type;
+        return 'COMMON.NOT_AVAILABLE';
     }
   }
 
@@ -1797,7 +1822,13 @@ export class DriverService {
   }
 
   private mapVerificationReviewer(reviewer: string): string {
-    return reviewer;
+    switch (reviewer.toLowerCase()) {
+      case 'operations_desk':
+      case 'operations':
+        return 'DRIVERS.DETAIL.SUPPORT.REVIEWER_OPERATIONS';
+      default:
+        return reviewer;
+    }
   }
 
   private mapVerificationRecommendation(recommendation: string): string {

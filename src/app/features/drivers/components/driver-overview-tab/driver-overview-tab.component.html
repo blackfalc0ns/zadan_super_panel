@@ -1,11 +1,10 @@
 <div class="grid gap-6 lg:grid-cols-12 animate-in slide-in-from-bottom-8 duration-700">
-  <!-- Main Info Column -->
   <div class="lg:col-span-8 flex flex-col gap-6">
-    <section class="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm p-6">
-      <app-section-header 
-        [title]="'DRIVERS.DETAIL.OVERVIEW.PERSONAL_INFO_TITLE' | translate" 
-        [description]="'DRIVERS.DETAIL.OVERVIEW.PERSONAL_INFO_DESC' | translate" 
-        [shouldTranslate]="false" 
+    <section class="rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-sm">
+      <app-section-header
+        [title]="'DRIVERS.DETAIL.OVERVIEW.PERSONAL_INFO_TITLE' | translate"
+        [description]="'DRIVERS.DETAIL.OVERVIEW.PERSONAL_INFO_DESC' | translate"
+        [shouldTranslate]="false"
         icon="person">
       </app-section-header>
       <div class="mt-6">
@@ -13,78 +12,116 @@
       </div>
     </section>
 
-    <section class="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm p-6">
-      <app-section-header 
-        [title]="'DRIVERS.DETAIL.OVERVIEW.VEHICLE_INFO_TITLE' | translate" 
-        [description]="'DRIVERS.DETAIL.OVERVIEW.VEHICLE_INFO_DESC' | translate" 
-        [shouldTranslate]="false" 
-        icon="directions_car">
+    <section class="rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-sm">
+      <app-section-header
+        [title]="'DRIVERS.DETAIL.OVERVIEW.VEHICLE_INFO_TITLE' | translate"
+        [description]="'DRIVERS.DETAIL.OVERVIEW.VEHICLE_INFO_DESC' | translate"
+        [shouldTranslate]="false"
+        icon="two_wheeler">
       </app-section-header>
       <div class="mt-6">
         <app-key-value-grid [items]="vehicleInfoItems" [columns]="2"></app-key-value-grid>
       </div>
     </section>
+
+    <section class="rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-sm">
+      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <app-section-header
+          [title]="'DRIVERS.DETAIL.HERO.OPERATIONAL_GATE' | translate"
+          [description]="'DRIVERS.DETAIL.HERO.OVERVIEW_GATE_DESC' | translate"
+          [shouldTranslate]="false"
+          icon="rule"
+          [compact]="true">
+        </app-section-header>
+        <span class="rounded-full border px-3 py-1 text-[11px] font-black"
+          [ngClass]="{
+            'border-emerald-200 bg-emerald-50 text-emerald-700': driver.workflow.readiness === 'READY',
+            'border-amber-200 bg-amber-50 text-amber-700': driver.workflow.readiness === 'LIMITED',
+            'border-red-200 bg-red-50 text-red-700': driver.workflow.readiness === 'BLOCKED'
+          }">
+          {{ driver.workflow.readinessLabel | translate }}
+        </span>
+      </div>
+
+      <div class="mt-5 grid gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.HERO.PROFILE_COMPLETION' | translate }}</p>
+          <p class="mt-2 text-2xl font-black text-slate-950" dir="ltr">{{ driver.profileReadiness.completionPercent }}%</p>
+          <p class="mt-1 text-xs font-semibold text-slate-500">{{ completedChecklistItems }} / {{ driver.profileReadiness.checklist.length }} {{ 'DRIVERS.DETAIL.VERIFICATION.COMPLETED' | translate }}</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.HERO.ACTIVE_TASKS' | translate }}</p>
+          <p class="mt-2 text-2xl font-black text-slate-950" dir="ltr">{{ driver.tasks.active }}</p>
+          <p class="mt-1 text-xs font-semibold text-slate-500">{{ driver.operations.stabilityLabel | translate }}</p>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.TABS.FINANCE' | translate }}</p>
+          <p class="mt-2 text-2xl font-black text-slate-950" dir="ltr">{{ driver.finance.dueAmount | number:'1.2-2' }}</p>
+          <p class="mt-1 text-xs font-semibold text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }} {{ 'DRIVERS.DETAIL.FINANCE.DUE_AMOUNT' | translate }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="missingRequirementLabels.length > 0" class="mt-5 rounded-2xl border border-amber-100 bg-amber-50 p-4">
+        <p class="text-xs font-black text-amber-800">{{ 'DRIVERS.DETAIL.HERO.MISSING_REQUIREMENTS' | translate }}</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <span *ngFor="let item of missingRequirementLabels" class="rounded-full bg-white px-3 py-1 text-[11px] font-black text-amber-800 shadow-sm">{{ item | translate }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="hasReviewNote" class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.HERO.REVIEW_NOTE' | translate }}</p>
+        <p class="mt-2 text-sm font-semibold leading-7 text-slate-700">{{ reviewNote }}</p>
+      </div>
+    </section>
   </div>
 
-  <!-- Side Panel -->
-  <div class="lg:col-span-4 flex flex-col gap-6">
-    <section class="rounded-[1.5rem] bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-6 shadow-sm">
-      <h3 class="text-sm font-black text-slate-900 mb-4">{{ 'DRIVERS.DETAIL.OVERVIEW.QUICK_LINKS' | translate }}</h3>
-      <div class="space-y-3">
-        <button (click)="tabChange.emit('operations')" class="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-zadna-primary/30 hover:shadow-md transition-all group">
-          <div class="flex items-center gap-3">
-            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-              <span class="material-symbols-outlined text-[18px]">local_shipping</span>
-            </div>
-            <span class="text-xs font-bold text-slate-700 group-hover:text-zadna-primary">{{ 'DRIVERS.DETAIL.TABS.OPERATIONS' | translate }}</span>
-          </div>
+  <aside class="lg:col-span-4 flex flex-col gap-6">
+    <section class="rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-sm">
+      <h3 class="text-sm font-black text-slate-900">{{ 'DRIVERS.DETAIL.OVERVIEW.QUICK_LINKS' | translate }}</h3>
+      <div class="mt-4 space-y-3">
+        <button (click)="tabChange.emit('operations')" class="group flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 transition-all hover:border-zadna-primary/40 hover:bg-white hover:shadow-sm">
+          <span class="flex items-center gap-3 text-xs font-black text-slate-700">
+            <span class="material-symbols-outlined text-[18px] text-emerald-600">local_shipping</span>
+            {{ 'DRIVERS.DETAIL.TABS.OPERATIONS' | translate }}
+          </span>
           <span class="material-symbols-outlined text-[16px] text-slate-400" [ngClass]="isRTL ? 'rotate-180' : ''">chevron_right</span>
         </button>
-
-        <button (click)="tabChange.emit('finance')" class="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-zadna-primary/30 hover:shadow-md transition-all group">
-          <div class="flex items-center gap-3">
-            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600">
-              <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
-            </div>
-            <span class="text-xs font-bold text-slate-700 group-hover:text-zadna-primary">{{ 'DRIVERS.DETAIL.TABS.FINANCE' | translate }}</span>
-          </div>
+        <button (click)="tabChange.emit('verification')" class="group flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 transition-all hover:border-zadna-primary/40 hover:bg-white hover:shadow-sm">
+          <span class="flex items-center gap-3 text-xs font-black text-slate-700">
+            <span class="material-symbols-outlined text-[18px] text-cyan-600">verified_user</span>
+            {{ 'DRIVERS.DETAIL.TABS.VERIFICATION' | translate }}
+          </span>
           <span class="material-symbols-outlined text-[16px] text-slate-400" [ngClass]="isRTL ? 'rotate-180' : ''">chevron_right</span>
         </button>
-
-        <button (click)="tabChange.emit('compliance')" class="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-zadna-primary/30 hover:shadow-md transition-all group">
-          <div class="flex items-center gap-3">
-            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-600">
-              <span class="material-symbols-outlined text-[18px]">gavel</span>
-            </div>
-            <span class="text-xs font-bold text-slate-700 group-hover:text-zadna-primary">{{ 'DRIVERS.DETAIL.TABS.COMPLIANCE' | translate }}</span>
-          </div>
+        <button (click)="tabChange.emit('finance')" class="group flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 transition-all hover:border-zadna-primary/40 hover:bg-white hover:shadow-sm">
+          <span class="flex items-center gap-3 text-xs font-black text-slate-700">
+            <span class="material-symbols-outlined text-[18px] text-sky-600">account_balance_wallet</span>
+            {{ 'DRIVERS.DETAIL.TABS.FINANCE' | translate }}
+          </span>
           <span class="material-symbols-outlined text-[16px] text-slate-400" [ngClass]="isRTL ? 'rotate-180' : ''">chevron_right</span>
         </button>
       </div>
     </section>
 
-    <!-- Recent System Notes Snippet -->
-    <section class="rounded-[1.5rem] bg-white border border-slate-200 p-6 shadow-sm">
-      <div class="flex items-center justify-between mb-4">
+    <section class="rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
         <h3 class="text-sm font-black text-slate-900">{{ 'DRIVERS.DETAIL.SUPPORT.INTERNAL_NOTES_TITLE' | translate }}</h3>
-        <button (click)="tabChange.emit('support')" class="text-[10px] font-bold text-zadna-primary hover:underline uppercase tracking-wider">
+        <button (click)="tabChange.emit('support')" class="text-[10px] font-black uppercase tracking-wider text-zadna-primary hover:underline">
           {{ 'COMMON.VIEW_ALL' | translate }}
         </button>
       </div>
-      
-      <div class="space-y-4" *ngIf="driver.support.openNotesCount > 0">
-        <div class="relative pl-4" [ngClass]="isRTL ? 'pr-4 pl-0' : 'pl-4'">
-          <div class="absolute top-1.5 bottom-0 w-0.5 bg-slate-100" [ngClass]="isRTL ? 'right-0' : 'left-0'"></div>
-          <div class="absolute top-1.5 w-2 h-2 rounded-full bg-slate-300" [ngClass]="isRTL ? '-right-[3px]' : '-left-[3px]'"></div>
-          <p class="text-xs text-slate-600 line-clamp-2">{{ (driver.support.followUps.length > 0 ? driver.support.followUps[0].title : 'DRIVERS.DETAIL.OVERVIEW.NO_RECENT_NOTES') | translate }}</p>
-          <p class="mt-1 text-[10px] font-medium text-slate-400">
-            {{ hasSupportUpdateTimestamp ? driver.support.lastUpdateLabel : (driver.support.lastUpdateLabel | translate) }}
-          </p>
+
+      <div class="mt-4 space-y-4" *ngIf="driver.notes.length > 0; else emptyNotes">
+        <div *ngFor="let note of driver.notes | slice:0:2" class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+          <p class="line-clamp-3 text-xs font-semibold leading-6 text-slate-600">{{ note.message }}</p>
+          <p class="mt-2 text-[10px] font-bold text-slate-400">{{ note.author }} · {{ note.createdAt }}</p>
         </div>
       </div>
-      <div *ngIf="driver.support.openNotesCount === 0" class="py-4 text-center">
-        <p class="text-xs font-medium text-slate-400">{{ 'COMMON.NO_DATA' | translate }}</p>
-      </div>
+      <ng-template #emptyNotes>
+        <div class="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-center">
+          <p class="text-xs font-semibold text-slate-400">{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </ng-template>
     </section>
-  </div>
+  </aside>
 </div>

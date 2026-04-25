@@ -1,5 +1,15 @@
 <div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
-    <app-kpi-cards [cards]="performanceKpis"></app-kpi-cards>
+  <app-kpi-cards *ngIf="performanceKpis.length > 0; else emptyPerformanceKpis" [cards]="performanceKpis"></app-kpi-cards>
+
+  <ng-template #emptyPerformanceKpis>
+    <section class="rounded-[1.75rem] border border-dashed border-slate-200 bg-white/90 p-10 text-center shadow-sm">
+      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+        <span class="material-symbols-outlined text-[28px]">analytics</span>
+      </div>
+      <h3 class="mt-4 text-sm font-black text-slate-900">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_METRICS_TITLE' | translate }}</h3>
+      <p class="mx-auto mt-2 max-w-md text-sm font-semibold leading-7 text-slate-500">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_METRICS_DESC' | translate }}</p>
+    </section>
+  </ng-template>
 
   <div class="grid gap-6 lg:grid-cols-2">
     <!-- Benchmarks -->
@@ -11,7 +21,7 @@
         [compact]="true">
       </app-section-header>
 
-      <div class="mt-6 flex-1 space-y-6">
+      <div *ngIf="driver.performanceSnapshot.benchmarks.length > 0; else emptyBenchmarks" class="mt-6 flex-1 space-y-6">
         <div *ngFor="let benchmark of driver.performanceSnapshot.benchmarks" class="space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-black text-slate-900">{{ benchmark.label | translate }}</span>
@@ -39,6 +49,11 @@
           <p class="text-[10px] text-slate-400">{{ benchmark.insight | translate }}</p>
         </div>
       </div>
+      <ng-template #emptyBenchmarks>
+        <div class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+          <p class="text-sm font-semibold text-slate-400">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_BENCHMARKS' | translate }}</p>
+        </div>
+      </ng-template>
     </section>
 
     <!-- Insights -->
@@ -50,7 +65,7 @@
         [compact]="true">
       </app-section-header>
 
-      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      <div *ngIf="driver.performanceSnapshot.insightGroups.length > 0; else emptyInsights" class="mt-6 grid gap-4 sm:grid-cols-2">
         <div *ngFor="let group of driver.performanceSnapshot.insightGroups" 
              class="rounded-xl border p-4"
              [ngClass]="{
@@ -77,6 +92,11 @@
           </ul>
         </div>
       </div>
+      <ng-template #emptyInsights>
+        <div class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+          <p class="text-sm font-semibold text-slate-400">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_INSIGHTS' | translate }}</p>
+        </div>
+      </ng-template>
     </section>
   </div>
 </div>

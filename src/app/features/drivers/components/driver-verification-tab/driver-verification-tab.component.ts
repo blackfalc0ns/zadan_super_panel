@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
-import { DriverDetailRecord, DriverVerificationChecklistItem } from '../../models/drivers.models';
+import { DriverDetailRecord, DriverDocumentRecord, DriverVerificationChecklistItem } from '../../models/drivers.models';
 import { getDocumentStatusKey, getDocumentStatusVariant } from '../../utils/driver-ui.utils';
 
 @Component({
@@ -23,6 +23,9 @@ export class DriverVerificationTabComponent {
   @Output() reviewerDecisionNoteChange = new EventEmitter<string>();
   @Output() selectedRejectionReasonChange = new EventEmitter<string>();
   @Output() internalReviewNoteChange = new EventEmitter<string>();
+  @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
+
+  selectedDocumentPreview: DriverDocumentRecord | null = null;
 
   onReviewerDecisionNoteChange(value: string) {
     this.reviewerDecisionNote = value;
@@ -37,6 +40,34 @@ export class DriverVerificationTabComponent {
   onInternalReviewNoteChange(value: string) {
     this.internalReviewNote = value;
     this.internalReviewNoteChange.emit(value);
+  }
+
+  requestReviewAction(action: 'approve' | 'request-docs' | 'reject') {
+    this.reviewActionRequested.emit(action);
+  }
+
+  openDocumentPreview(document: DriverDocumentRecord) {
+    this.selectedDocumentPreview = document;
+  }
+
+  closeDocumentPreview() {
+    this.selectedDocumentPreview = null;
+  }
+
+  getDocumentPreviewTitle(): string {
+    return this.selectedDocumentPreview?.title ?? '';
+  }
+
+  requiresReason(action: 'approve' | 'request-docs' | 'reject'): boolean {
+    return action !== 'approve';
+  }
+
+  canSubmitAction(action: 'approve' | 'request-docs' | 'reject'): boolean {
+    if (!this.requiresReason(action)) {
+      return true;
+    }
+
+    return Boolean(this.selectedRejectionReason.trim() || this.reviewerDecisionNote.trim() || this.internalReviewNote.trim());
   }
 
   getVerificationRecommendationVariant() {

@@ -40,4 +40,31 @@ export class DriverHeroComponent {
   get complianceVariant(): StatusPillVariant {
     return getComplianceVariant(this.driver.complianceStatusVariant);
   }
+
+  get readinessVariant(): StatusPillVariant {
+    if (this.driver.workflow.readiness === 'READY') return 'success';
+    if (this.driver.workflow.readiness === 'LIMITED') return 'warning';
+    return 'danger';
+  }
+
+  get profileCompletionPercent(): number {
+    return Math.max(0, Math.min(100, this.driver.profileReadiness.completionPercent));
+  }
+
+  get hasMissingRequirements(): boolean {
+    return this.driver.profileReadiness.missingRequirements.length > 0;
+  }
+
+  get missingRequirementLabels(): string[] {
+    return this.driver.profileReadiness.missingRequirements.map((requirement) =>
+      `DRIVERS.DETAIL.VERIFICATION.BACKEND.REJECTION_REASONS.${requirement.toUpperCase()}`);
+  }
+
+  get hasReviewNote(): boolean {
+    return Boolean(this.driver.verification.decisionNote || this.driver.verification.internalNote);
+  }
+
+  get primaryReviewNote(): string {
+    return this.driver.verification.decisionNote || this.driver.verification.internalNote || '';
+  }
 }

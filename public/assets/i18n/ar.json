@@ -939,10 +939,11 @@
           "CHECKLIST": {
             "PERSONAL_INFO": "البيانات الشخصية مكتملة",
             "VEHICLE_INFO": "بيانات المركبة مكتملة",
-            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-            "ZONE_SELECTION": "تم اختيار منطقة التشغيل الأساسية"
+              "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
+              "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
+              "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
+              "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
+              "ZONE_SELECTION": "تم اختيار منطقة التشغيل الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
@@ -1095,13 +1096,24 @@
           "INSIGHTS": {
             "STRONG_ACCEPTANCE_RATE": "معدل القبول أعلى من المتوسط المرجعي للمنطقة.",
             "STRONG_COMPLETION_RATE": "معدل الإكمال مستقر مقارنة بالأسطول النشط.",
+            "STRONG_COMMITMENT_SCORE": "نقاط الالتزام قوية ويمكن الاعتماد عليها تشغيليًا.",
             "HIGH_COMMITMENT_SCORE": "الالتزام التشغيلي مستقر ويمكن الاعتماد عليه.",
+            "STABLE_BASELINE": "أداء السائق حاليًا ضمن خط تشغيلي مستقر.",
+            "HAS_OFFER_REJECTIONS": "هناك رفضات عروض حديثة تحتاج متابعة.",
+            "HAS_OFFER_TIMEOUTS": "انتهاء مهلة الرد على العروض يؤثر على جودة الإسناد.",
+            "FINANCE_HOLD_AFFECTS_READINESS": "يوجد تعليق مالي يؤثر على الجاهزية التشغيلية.",
+            "OPEN_COMPLIANCE_SIGNALS": "توجد إشارات امتثال مفتوحة تحتاج مراجعة قبل زيادة الضغط.",
+            "NO_CRITICAL_WATCHOUTS": "لا توجد ملاحظات حرجة حاليًا.",
             "LOW_ACCEPTANCE_RATE": "معدل قبول العروض يحتاج متابعة قبل زيادة الضغط التشغيلي.",
             "LOW_COMPLETION_RATE": "انخفض معدل الإكمال ويحتاج مراجعة تشغيلية.",
             "LOW_COMMITMENT_SCORE": "نقاط الالتزام متأثرة بسبب رفضات أو انتهاء مهلة حديثة.",
             "REVIEW_ZONE_LOAD": "راجع ضغط المنطقة قبل إضافة مهام جديدة.",
             "COACH_OFFER_RESPONSE": "يحتاج السائق إلى تحسين سرعة الرد على العروض والانضباط في التوفر.",
             "MONITOR_SUPPORT_RISK": "إشارات الدعم أو الامتثال تستدعي المتابعة قبل التوسع في الإسناد.",
+            "IMPROVE_OFFER_ACCEPTANCE": "حسّن معدل قبول العروض قبل توسيع الإسناد.",
+            "REDUCE_FAILED_ASSIGNMENTS": "قلّل المهام الفاشلة وراجع أسباب تعثر التسليم.",
+            "IMPROVE_COMMITMENT_DISCIPLINE": "عزّز الانضباط في الالتزام تجاه الرفضات وانتهاء المهلة.",
+            "MAINTAIN_CURRENT_OPERATING_BAND": "حافظ على المستوى التشغيلي الحالي مع استمرار المتابعة.",
             "ABOVE_ZONE_AVERAGE": "هذا المؤشر أعلى حاليًا من متوسط المنطقة.",
             "BELOW_ZONE_AVERAGE": "هذا المؤشر أقل حاليًا من متوسط المنطقة.",
             "COMPLETION_STABLE": "معدل الإكمال مستقر مقارنة بالمنطقة التشغيلية.",
@@ -1362,6 +1374,10 @@
         "CRITICAL_NOTES": "ملاحظات حرجة",
         "READINESS_SECTION": "ملخص الجاهزية",
         "READINESS_SUMMARY": "ملخص الجاهزية",
+        "PERSONAL_INFO_TITLE": "بيانات مقدم الطلب",
+        "PERSONAL_INFO_DESC": "البيانات الأساسية ووسائل التواصل التي رفعها السائق.",
+        "VEHICLE_INFO_TITLE": "بيانات المركبة والمنطقة",
+        "VEHICLE_INFO_DESC": "تفاصيل تشغيلية تستخدم لتحديد جاهزية السائق للإسناد.",
         "FILE_COMPLETION": "تقدم استكمال الملف",
         "FILE_PROGRESS": "تقدم استكمال الملف",
         "TRUST_SCORE": "نسبة الثقة",
@@ -1390,9 +1406,27 @@
         "INTERNAL_NOTES_LABEL": "ملاحظات داخلية",
         "INTERNAL_NOTES_PLACEHOLDER": "هذه الملاحظات داخلية ولن تظهر خارج المراجعة.",
         "DOCS_SECTION": "مراجعة المستندات الثبوتية",
+        "DOCUMENT_PREVIEW": "معاينة المستند",
+        "DOCUMENT_STATUS": "حالة المستند",
+        "DOCUMENT_NOTE": "ملاحظة المراجعة",
         "TOTAL_FILES": "إجمالي الملفات",
         "DOCS_NEED_FOLLOW": "مستندات تحتاج متابعة",
         "DOC_EXPIRY": "تاريخ الانتهاء",
+        "REASON_REQUIRED_HELPER": "يجب توضيح سبب عند طلب الاستكمال أو رفض السائق.",
+        "FIELDS": {
+          "FULL_NAME": "الاسم الكامل",
+          "PHONE": "رقم الجوال",
+          "EMAIL": "البريد الإلكتروني",
+          "ADDRESS": "العنوان الوطني",
+          "VEHICLE_TYPE": "نوع المركبة",
+          "LICENSE_NUMBER": "رقم الرخصة",
+          "ZONE": "المنطقة الأساسية"
+        },
+        "ACTIONS": {
+          "APPROVE": "اعتماد السائق",
+          "REQUEST_DOCUMENTS": "طلب استكمال المستندات",
+          "REJECT": "رفض السائق"
+        },
         "STATUS_COMPLETED": "مكتمل",
         "STATUS_NEEDS_REVIEW": "يتطلب مراجعة",
         "STATUS_REQUIRED": "مطلوب",
@@ -1443,12 +1477,38 @@
             "SUBTITLES": {
               "NATIONAL_ID": "آخر تحديث: 2026/03/12",
               "LICENSE": "تنتهي خلال 120 يوم",
+              "VEHICLE": "صورة المركبة متاحة للمراجعة",
               "SELFIE": "مطابقة الوجه والهوية"
             },
             "EXPIRY": {
               "RECENT_CAPTURE": "تم الالتقاط مؤخرًا",
               "BIOMETRIC_CHECK": "تحقق حيوي"
             }
+          }
+        },
+        "BACKEND": {
+          "CHECKLIST": {
+            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
+            "VEHICLE_INFO": "بيانات المركبة مكتملة",
+              "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
+              "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
+              "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
+              "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
+              "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
+          },
+          "CHECKLIST_NOTES": {
+            "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
+            "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية للمركبة ناقصة.",
+            "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
+            "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية."
+          },
+          "REJECTION_REASONS": {
+            "MISSING_PERSONAL_INFO": "نقص في البيانات الشخصية",
+            "MISSING_VEHICLE_INFO": "نقص في بيانات المركبة",
+            "MISSING_DOCUMENTS": "نقص في المستندات المطلوبة",
+            "MISSING_ZONE_SELECTION": "لم يتم تحديد المنطقة الأساسية",
+            "QUALITY_ISSUE": "مشكلة في جودة المستندات",
+            "ZONE_MISSING": "المنطقة الأساسية غير محددة"
           }
         },
         "NO_RECOMMENDATION_REASON": "لم يتم إضافة سبب للتوصية بعد."

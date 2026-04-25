@@ -20,6 +20,7 @@
     (reviewerDecisionNoteChange)="reviewerDecisionNote = $event"
     (internalReviewNoteChange)="internalReviewNote = $event"
     (selectedRejectionReasonChange)="selectedRejectionReason = $event"
+    (reviewActionRequested)="handleReviewAction($event)"
     (taskPreviewRequested)="openTaskPreview($event)"
     (incidentPreviewRequested)="openIncidentPreview($event)"
     (previewClosed)="closePreview()"

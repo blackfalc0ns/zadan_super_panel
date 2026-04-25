@@ -159,8 +159,8 @@ export interface DriverHeatmapRow {
 
 export interface DriverPerformanceSnapshot {
   routeScore: number;
-  rankInZone: number;
-  rankInFleet: number;
+  rankInZone?: number | null;
+  rankInFleet?: number | null;
   metricCards: DriverPerformanceMetricCard[];
   benchmarks: DriverPerformanceBenchmark[];
   insightGroups: DriverInsightGroup[];
@@ -271,6 +271,14 @@ export interface DriverVerificationChecklistItem {
   critical?: boolean;
 }
 
+export interface DriverProfileReadinessSnapshot {
+  isProfileComplete: boolean;
+  completionPercent: number;
+  missingRequirements: string[];
+  canSubmitForReview: boolean;
+  checklist: DriverVerificationChecklistItem[];
+}
+
 export interface DriverVerificationSnapshot {
   applicationId: string;
   submittedAt: string;
@@ -296,8 +304,8 @@ export interface DriverDetailRecord extends Driver {
   liveZone: string;
   liveLatitude?: number | null;
   liveLongitude?: number | null;
-  liveSpeedKmh: number;
-  liveMissionId: string;
+  liveSpeedKmh?: number | null;
+  liveMissionId?: string | null;
   todayTrips: number;
   todayTripsDelta: string;
   completionRate: number;
@@ -314,6 +322,7 @@ export interface DriverDetailRecord extends Driver {
   routeEfficiencyDelta: string;
   lifetimeTrips: number;
   weeklyEfficiency: DriverWeeklyEfficiencyPoint[];
+  profileReadiness: DriverProfileReadinessSnapshot;
   documents: DriverDocumentRecord[];
   notes: DriverInternalNote[];
   recentTrips: DriverRecentTrip[];

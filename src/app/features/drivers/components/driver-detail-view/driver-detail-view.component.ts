@@ -81,6 +81,7 @@ export class DriverDetailViewComponent {
   @Output() reviewerDecisionNoteChange = new EventEmitter<string>();
   @Output() internalReviewNoteChange = new EventEmitter<string>();
   @Output() selectedRejectionReasonChange = new EventEmitter<string>();
+  @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
 
   @Output() taskPreviewRequested = new EventEmitter<DriverTaskAssignment>();
   @Output() incidentPreviewRequested = new EventEmitter<DriverIncidentRecord>();

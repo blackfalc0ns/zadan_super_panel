@@ -1,61 +1,81 @@
 <div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
-  <!-- Operations Snapshot -->
-  <section class="grid gap-4 lg:grid-cols-4">
-    <div class="col-span-full rounded-[1.5rem] bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 p-6 shadow-sm text-white lg:col-span-1 flex flex-col justify-between">
-      <div>
-        <h3 class="text-[11px] font-extrabold text-white/50 tracking-widest uppercase">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.ZONE_TITLE' | translate }}</h3>
-        <p class="mt-2 text-xl font-black text-white">{{ driver.operations.zoneName }}</p>
-      </div>
-      <div class="mt-6 space-y-4">
-        <div class="flex justify-between items-center text-sm">
-          <span class="text-white/70">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.CAPACITY' | translate }}</span>
-          <span class="font-bold text-white">{{ driver.operations.zoneCapacityLabel }}</span>
+  <section class="grid gap-4 lg:grid-cols-[360px_minmax(0,1fr)]">
+    <div class="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-sm">
+      <p class="text-[11px] font-black uppercase tracking-[0.28em] text-white/45">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.ZONE_TITLE' | translate }}</p>
+      <h3 class="mt-3 text-2xl font-black">{{ driver.operations.zoneName || ('COMMON.NOT_AVAILABLE' | translate) }}</h3>
+      <div class="mt-6 grid gap-3">
+        <div class="rounded-2xl border border-white/10 bg-white/[0.07] p-4">
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-xs font-bold text-white/55">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.CAPACITY' | translate }}</span>
+            <span class="text-sm font-black text-white">{{ driver.operations.zoneCapacityLabel }}</span>
+          </div>
+          <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+            <div class="h-full rounded-full bg-cyan-400" [style.width.%]="driver.operations.zoneUtilizationPercent"></div>
+          </div>
         </div>
-        <div class="flex justify-between items-center text-sm">
-          <span class="text-white/70">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.ACTIVE_DRIVERS' | translate }}</span>
-          <span class="font-bold text-white">{{ driver.operations.activeDriversLabel }}</span>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-2xl border border-white/10 bg-white/[0.07] p-4">
+            <p class="text-[10px] font-black uppercase tracking-wider text-white/45">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.ACTIVE_DRIVERS' | translate }}</p>
+            <p class="mt-2 text-lg font-black">{{ driver.operations.activeDriversLabel }}</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.07] p-4">
+            <p class="text-[10px] font-black uppercase tracking-wider text-white/45">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.AVG_DELIVERY' | translate }}</p>
+            <p class="mt-2 text-lg font-black">{{ driver.operations.avgDeliveryTimeLabel | translate }}</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="col-span-full rounded-[1.5rem] border border-slate-200 bg-white p-2 shadow-sm lg:col-span-3">
-      <div class="relative h-64 w-full overflow-hidden rounded-[1.15rem] bg-slate-100">
-        <img *ngIf="mapPreviewUrl" [src]="mapPreviewUrl" alt="Zone Map" class="h-full w-full object-cover">
-        <div *ngIf="!mapPreviewUrl" class="flex h-full items-center justify-center text-slate-400">
-          <div class="text-center">
-            <span class="material-symbols-outlined text-[48px] opacity-20">map</span>
-            <p class="mt-2 text-sm font-medium">{{ 'DRIVERS.DETAIL.OPERATIONS.MAP_UNAVAILABLE' | translate }}</p>
-            <p *ngIf="driver.liveLatitude != null && driver.liveLongitude != null" class="mt-2 text-[11px] font-bold text-slate-500" dir="ltr">
-              {{ driver.liveLatitude | number:'1.4-4' }}, {{ driver.liveLongitude | number:'1.4-4' }}
-            </p>
+    <div class="rounded-[1.75rem] border border-slate-200 bg-white/95 p-5 shadow-sm">
+      <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
+        <div class="relative min-h-[260px] overflow-hidden rounded-[1.35rem] border border-slate-200 bg-[#eef4f1]">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(15,23,42,0.12)_1px,transparent_0)] [background-size:26px_26px]"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-cyan-100/70 via-transparent to-emerald-100/70"></div>
+          <div class="relative flex h-full min-h-[260px] items-center justify-center p-6 text-center">
+            <div>
+              <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-zadna-primary shadow-sm">
+                <span class="material-symbols-outlined text-[32px]">{{ hasCoordinates ? 'my_location' : 'location_off' }}</span>
+              </div>
+              <h3 class="mt-4 text-lg font-black text-slate-950">{{ hasCoordinates ? ('DRIVERS.DETAIL.OPERATIONS.LIVE_LOCATION' | translate) : ('DRIVERS.DETAIL.OPERATIONS.MAP_UNAVAILABLE' | translate) }}</h3>
+              <p *ngIf="hasCoordinates" class="mt-2 text-sm font-bold text-slate-500" dir="ltr">{{ driver.liveLatitude | number:'1.5-5' }}, {{ driver.liveLongitude | number:'1.5-5' }}</p>
+              <a *ngIf="mapsUrl" [href]="mapsUrl" target="_blank" rel="noopener" class="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-xs font-black text-white transition-all hover:bg-zadna-primary">
+                <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                {{ 'DRIVERS.DETAIL.OPERATIONS.OPEN_MAPS' | translate }}
+              </a>
+            </div>
           </div>
         </div>
-        
-        <!-- Map Overlay Actions -->
-        <div class="absolute right-4 top-4 flex flex-col gap-2" [ngClass]="isRTL ? 'left-4 right-auto' : 'right-4'">
-          <button class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 text-slate-700 shadow-sm backdrop-blur transition-all hover:bg-zadna-primary hover:text-white">
-            <span class="material-symbols-outlined text-[20px]">my_location</span>
-          </button>
-          <button class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 text-slate-700 shadow-sm backdrop-blur transition-all hover:bg-zadna-primary hover:text-white">
-            <span class="material-symbols-outlined text-[20px]">layers</span>
-          </button>
+
+        <div class="grid gap-3">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.ACTIVE_MISSION' | translate }}</p>
+            <p class="mt-2 break-all text-sm font-black text-slate-950" dir="ltr">{{ activeMissionLabel | translate }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.OPERATIONS.STABILITY' | translate }}</p>
+            <p class="mt-2 text-sm font-black text-slate-950">{{ driver.operations.stabilityLabel | translate }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'DRIVERS.DETAIL.HERO.ACTIVE_TASKS' | translate }}</p>
+            <p class="mt-2 text-sm font-black text-slate-950" dir="ltr">{{ driver.operations.taskAssignments.length }}</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Tasks Table -->
-  <section class="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm overflow-hidden">
+  <section class="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white/95 shadow-sm">
     <div class="border-b border-slate-100 p-6">
-      <app-section-header 
-        [title]="'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.TABLE_TITLE' | translate" 
-        [description]="'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.TABLE_DESC' | translate" 
-        [shouldTranslate]="false" 
+      <app-section-header
+        [title]="'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.TABLE_TITLE' | translate"
+        [description]="'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.TABLE_DESC' | translate"
+        [shouldTranslate]="false"
         icon="list_alt"
         [compact]="true">
       </app-section-header>
     </div>
-    <div class="p-0">
+
+    <div *ngIf="driver.operations.taskAssignments.length > 0; else emptyTasks">
       <app-data-table
         [data]="driver.operations.taskAssignments"
         [columns]="taskColumns"
@@ -79,7 +99,7 @@
             <div *ngSwitchCase="'duration'">
               <div class="flex items-center gap-2">
                 <span class="font-bold text-slate-900" dir="ltr">{{ item.duration }}</span>
-                <span *ngIf="item.delayLabel && item.delayLabel !== '00:00' && item.delayLabel !== '--'" 
+                <span *ngIf="item.delayLabel && item.delayLabel !== '00:00' && item.delayLabel !== '--'"
                       class="rounded bg-red-50 px-1.5 py-0.5 text-[10px] font-bold text-red-600" dir="ltr">
                   {{ item.delayLabel }}
                 </span>
@@ -90,5 +110,15 @@
         </ng-template>
       </app-data-table>
     </div>
+
+    <ng-template #emptyTasks>
+      <div class="p-10 text-center">
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+          <span class="material-symbols-outlined text-[28px]">assignment</span>
+        </div>
+        <h3 class="mt-4 text-sm font-black text-slate-900">{{ 'DRIVERS.DETAIL.OPERATIONS.NO_TASKS_TITLE' | translate }}</h3>
+        <p class="mx-auto mt-2 max-w-md text-sm font-semibold leading-7 text-slate-500">{{ 'DRIVERS.DETAIL.OPERATIONS.NO_TASKS_DESC' | translate }}</p>
+      </div>
+    </ng-template>
   </section>
 </div>

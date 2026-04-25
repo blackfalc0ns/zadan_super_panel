@@ -1004,13 +1004,24 @@
           "INSIGHTS": {
             "STRONG_ACCEPTANCE_RATE": "Acceptance is stronger than the regional benchmark.",
             "STRONG_COMPLETION_RATE": "Completion is consistently healthy against the active fleet.",
+            "STRONG_COMMITMENT_SCORE": "Commitment score is strong and operationally reliable.",
             "HIGH_COMMITMENT_SCORE": "Commitment is stable and operationally reliable.",
+            "STABLE_BASELINE": "The driver is operating within a stable baseline.",
+            "HAS_OFFER_REJECTIONS": "Recent offer rejections need follow-up.",
+            "HAS_OFFER_TIMEOUTS": "Offer response timeouts are affecting dispatch quality.",
+            "FINANCE_HOLD_AFFECTS_READINESS": "A finance hold is affecting operational readiness.",
+            "OPEN_COMPLIANCE_SIGNALS": "Open compliance signals should be reviewed before increasing load.",
+            "NO_CRITICAL_WATCHOUTS": "No critical watchouts are currently flagged.",
             "LOW_ACCEPTANCE_RATE": "Offer acceptance needs follow-up before increasing load.",
             "LOW_COMPLETION_RATE": "Completion ratio dropped and needs operational review.",
             "LOW_COMMITMENT_SCORE": "Commitment is under pressure because of recent rejects or timeouts.",
             "REVIEW_ZONE_LOAD": "Review zone load and active shift pressure before assigning more work.",
             "COACH_OFFER_RESPONSE": "Coach the driver on faster offer response and better availability hygiene.",
             "MONITOR_SUPPORT_RISK": "Support or compliance signals should be watched before increasing exposure.",
+            "IMPROVE_OFFER_ACCEPTANCE": "Improve offer acceptance before increasing dispatch exposure.",
+            "REDUCE_FAILED_ASSIGNMENTS": "Reduce failed assignments and review delivery breakdown causes.",
+            "IMPROVE_COMMITMENT_DISCIPLINE": "Strengthen commitment discipline around rejections and timeouts.",
+            "MAINTAIN_CURRENT_OPERATING_BAND": "Maintain the current operating band and continue monitoring.",
             "ABOVE_ZONE_AVERAGE": "This metric is currently above the zone average.",
             "BELOW_ZONE_AVERAGE": "This metric is currently below the zone average.",
             "COMPLETION_STABLE": "Completion remains stable compared with the operating zone.",
@@ -1350,6 +1361,10 @@
         "CRITICAL_NOTES": "Critical Notes",
         "READINESS_SECTION": "Readiness Summary",
         "READINESS_SUMMARY": "Readiness Summary",
+        "PERSONAL_INFO_TITLE": "Applicant Information",
+        "PERSONAL_INFO_DESC": "Core identity and contact details submitted by the driver.",
+        "VEHICLE_INFO_TITLE": "Vehicle and Zone Details",
+        "VEHICLE_INFO_DESC": "Operational details used to verify dispatch readiness.",
         "FILE_COMPLETION": "File Completion Progress",
         "FILE_PROGRESS": "File Completion Progress",
         "TRUST_SCORE": "Trust Score",
@@ -1378,9 +1393,27 @@
         "INTERNAL_NOTES_LABEL": "Internal Notes",
         "INTERNAL_NOTES_PLACEHOLDER": "These notes are internal and will not appear outside the review.",
         "DOCS_SECTION": "Identity Documents Review",
+        "DOCUMENT_PREVIEW": "Document Preview",
+        "DOCUMENT_STATUS": "Document Status",
+        "DOCUMENT_NOTE": "Review Note",
         "TOTAL_FILES": "Total Files",
         "DOCS_NEED_FOLLOW": "Docs Needing Follow-up",
         "DOC_EXPIRY": "Expiry Date",
+        "REASON_REQUIRED_HELPER": "A rejection or document request should include a reason or reviewer note.",
+        "FIELDS": {
+          "FULL_NAME": "Full Name",
+          "PHONE": "Phone Number",
+          "EMAIL": "Email Address",
+          "ADDRESS": "National Address",
+          "VEHICLE_TYPE": "Vehicle Type",
+          "LICENSE_NUMBER": "License Number",
+          "ZONE": "Primary Zone"
+        },
+        "ACTIONS": {
+          "APPROVE": "Approve Driver",
+          "REQUEST_DOCUMENTS": "Request Missing Documents",
+          "REJECT": "Reject Driver"
+        },
         "NO_RECOMMENDATION_REASON": "No recommendation reason was provided yet.",
         "STATUS_COMPLETED": "Completed",
         "STATUS_NEEDS_REVIEW": "Needs Review",
@@ -1389,10 +1422,11 @@
           "CHECKLIST": {
             "PERSONAL_INFO": "Personal information is complete",
             "VEHICLE_INFO": "Vehicle information is complete",
-            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
-            "LICENSE_DOCUMENT": "Driving license is available and valid",
-            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
-            "ZONE_SELECTION": "Primary zone is selected"
+              "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
+              "LICENSE_DOCUMENT": "Driving license is available and valid",
+              "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
+              "PERSONAL_PHOTO": "Personal verification photo is available",
+              "ZONE_SELECTION": "Primary zone is selected"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
@@ -1404,7 +1438,9 @@
             "MISSING_PERSONAL_INFO": "Missing personal information",
             "MISSING_VEHICLE_INFO": "Missing vehicle information",
             "MISSING_DOCUMENTS": "Missing required documents",
-            "MISSING_ZONE_SELECTION": "Primary zone is not selected"
+            "MISSING_ZONE_SELECTION": "Primary zone is not selected",
+            "QUALITY_ISSUE": "Document quality issue",
+            "ZONE_MISSING": "Primary zone is missing"
           }
         },
         "DYNAMIC": {
@@ -1454,6 +1490,7 @@
             "SUBTITLES": {
               "NATIONAL_ID": "Last update: 2026/03/12",
               "LICENSE": "Expires within 120 days",
+              "VEHICLE": "Vehicle image is available for review",
               "SELFIE": "Face and ID are matched"
             },
             "EXPIRY": {
@@ -1595,6 +1632,25 @@
       "LOAD_ERROR_TITLE": "We couldn't load this driver profile",
       "LOAD_ERROR_DESC": "The driver detail page is now backend-first, so the page will only render after a valid admin response. Try again or go back to the drivers list.",
       "BACK_TO_DRIVERS": "Back to Drivers",
+      "HERO": {
+        "BACKEND_FIRST": "Backend-first driver file",
+        "PHONE": "Phone",
+        "ZONE": "Zone",
+        "LICENSE": "License",
+        "LAST_SEEN": "Joined",
+        "ACTIVE_TASKS": "Active / completed",
+        "OPERATIONAL_GATE": "Operational gate",
+        "PROFILE_COMPLETION": "Profile completion",
+        "MISSING_REQUIREMENTS": "Missing requirements",
+        "NO_BLOCKERS": "No hard blockers",
+        "NO_BLOCKERS_DESC": "Backend readiness shows no required blocker for this profile.",
+        "REVIEW_NOTE": "Review note",
+        "NEXT_STEP": "Next step",
+        "BLOCKERS": "Blockers",
+        "ALERTS": "Alerts",
+        "LIFECYCLE": "Lifecycle",
+        "OVERVIEW_GATE_DESC": "Readiness, review and finance state are calculated from the backend response."
+      },
       "OVERVIEW": {
         "PERSONAL_INFO_TITLE": "Personal Information",
         "PERSONAL_INFO_DESC": "Core identity and contact details pulled from the backend profile.",

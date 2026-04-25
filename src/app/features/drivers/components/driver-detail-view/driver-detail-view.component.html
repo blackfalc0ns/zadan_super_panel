@@ -1,5 +1,11 @@
-<div class="relative min-h-screen bg-slate-50/50" [dir]="isRTL ? 'rtl' : 'ltr'">
-  <div *ngIf="driver && !isLoading" class="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8 animate-in fade-in duration-500">
+<div class="relative min-h-screen overflow-hidden bg-[#f6f7f2]" [dir]="isRTL ? 'rtl' : 'ltr'">
+  <div class="pointer-events-none absolute inset-0">
+    <div class="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-cyan-100/70 via-emerald-50/50 to-transparent"></div>
+    <div class="absolute top-24 h-72 w-72 rounded-full bg-orange-100/70 blur-3xl" [ngClass]="isRTL ? 'left-[-7rem]' : 'right-[-7rem]'"></div>
+    <div class="absolute bottom-20 h-80 w-80 rounded-full bg-teal-100/60 blur-3xl" [ngClass]="isRTL ? 'right-[-8rem]' : 'left-[-8rem]'"></div>
+  </div>
+
+  <div *ngIf="driver && !isLoading" class="relative mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8 animate-in fade-in duration-500">
     
     <!-- Header / Hero Section -->
     <app-driver-hero 
@@ -20,7 +26,7 @@
     </app-driver-command-center>
 
     <!-- Tab Navigation -->
-    <div class="sticky top-0 z-20 -mx-4 mb-6 mt-2 bg-slate-50/95 px-4 pt-4 shadow-[0_4px_20px_-15px_rgba(0,0,0,0.1)] backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+    <div class="sticky top-0 z-20 -mx-4 mb-6 mt-2 border-y border-white/60 bg-[#f6f7f2]/90 px-4 pt-4 shadow-[0_18px_45px_-38px_rgba(15,23,42,0.8)] backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       <div class="flex items-center justify-between pb-4">
         <app-detail-tabs-nav
           [tabs]="navItems"
@@ -88,7 +94,8 @@
           [isRTL]="isRTL"
           [(reviewerDecisionNote)]="reviewerDecisionNote"
           [(selectedRejectionReason)]="selectedRejectionReason"
-          [(internalReviewNote)]="internalReviewNote">
+          [(internalReviewNote)]="internalReviewNote"
+          (reviewActionRequested)="reviewActionRequested.emit($event)">
         </app-driver-verification-tab>
       </ng-container>
     </div>
@@ -153,10 +160,18 @@
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="isLoading" class="flex min-h-[60vh] flex-col items-center justify-center animate-pulse">
-    <div class="relative w-24 h-24">
-      <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
-      <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+  <div *ngIf="isLoading" class="relative mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+    <div class="overflow-hidden rounded-[2rem] border border-white/70 bg-white/70 p-5 shadow-sm backdrop-blur">
+      <div class="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.65fr)]">
+        <div class="h-72 animate-pulse rounded-[1.65rem] bg-slate-200"></div>
+        <div class="h-72 animate-pulse rounded-[1.65rem] bg-slate-100"></div>
+      </div>
+    </div>
+    <div class="mt-6 grid gap-4 lg:grid-cols-4">
+      <div class="h-28 animate-pulse rounded-[1.5rem] bg-white/80"></div>
+      <div class="h-28 animate-pulse rounded-[1.5rem] bg-white/80"></div>
+      <div class="h-28 animate-pulse rounded-[1.5rem] bg-white/80"></div>
+      <div class="h-28 animate-pulse rounded-[1.5rem] bg-white/80"></div>
     </div>
   </div>
 </div>
