@@ -1516,6 +1516,8 @@ export class DriverService {
         return 'verified';
       case 'REQUEST_DOCUMENTS':
         return 'assignment_late';
+      case 'REJECT_VERIFICATION':
+        return 'cancel';
       case 'CLEAR_FINANCE_HOLD':
         return 'rule';
       case 'SUSPEND_DRIVER':

@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { DriverDetailRecord } from '../../models/drivers.models';
+import { DriverDetailRecord, DriverWorkflowActionId } from '../../models/drivers.models';
 import {
   getDriverStatusKey,
   getVerificationKey,
@@ -24,6 +24,7 @@ export class DriverHeroComponent {
   @Output() editDriverRequested = new EventEmitter<void>();
   @Output() openTasksRequested = new EventEmitter<void>();
   @Output() toggleSuspensionRequested = new EventEmitter<void>();
+  @Output() workflowActionRequested = new EventEmitter<DriverWorkflowActionId>();
 
   get driverStatusLabel(): string {
     return getDriverStatusKey(this.driver.status);
@@ -66,5 +67,9 @@ export class DriverHeroComponent {
 
   get primaryReviewNote(): string {
     return this.driver.verification.decisionNote || this.driver.verification.internalNote || '';
+  }
+
+  get workflow() {
+    return this.driver.workflow;
   }
 }

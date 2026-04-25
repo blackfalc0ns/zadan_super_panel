@@ -946,7 +946,8 @@
         "STATIC": {
           "ZONE_TITLE": "Current Zone",
           "CAPACITY": "Capacity",
-          "ACTIVE_DRIVERS": "Active Drivers"
+          "ACTIVE_DRIVERS": "Active Drivers",
+          "AVG_DELIVERY": "Avg Delivery"
         },
         "DYNAMIC": {
           "TABLE_TITLE": "Assignments Snapshot",
@@ -978,13 +979,23 @@
         },
         "TABLE_ZONE_MOBILE": "Zone",
         "NO_TASKS": "No Tasks",
-        "NO_TASKS_MSG": "There are no active tasks for this driver currently."
+        "NO_TASKS_MSG": "There are no active tasks for this driver currently.",
+        "LIVE_LOCATION": "Live GPS location",
+        "OPEN_MAPS": "Open in Maps",
+        "ACTIVE_MISSION": "Active mission",
+        "STABILITY": "Operational stability",
+        "NO_TASKS_TITLE": "No assignments from the backend",
+        "NO_TASKS_DESC": "This driver has no active or recent task assignments in the admin detail payload."
       },
       "PERFORMANCE": {
         "STATIC": {
           "BENCHMARKS_TITLE": "Benchmarks",
           "INSIGHTS_TITLE": "Operational Insights"
         },
+        "NO_METRICS_TITLE": "No performance metrics yet",
+        "NO_METRICS_DESC": "The page will only show metrics that are calculated by the backend. No synthetic charts are rendered.",
+        "NO_BENCHMARKS": "No backend benchmarks are available for this driver yet.",
+        "NO_INSIGHTS": "No backend insights are available for this driver yet.",
         "TREND_SECTION": "Performance Trend Over Time",
         "BENCHMARK_SECTION": "Region & Fleet Comparison",
         "COMPARISON_SECTION": "Region & Fleet Comparison",

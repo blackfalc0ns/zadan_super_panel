@@ -5,28 +5,20 @@
     <div class="absolute bottom-20 h-80 w-80 rounded-full bg-teal-100/60 blur-3xl" [ngClass]="isRTL ? 'right-[-8rem]' : 'left-[-8rem]'"></div>
   </div>
 
-  <div *ngIf="driver && !isLoading" class="relative mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8 animate-in fade-in duration-500">
+  <div *ngIf="driver && !isLoading" class="relative mx-auto max-w-[1600px] space-y-6 p-4 sm:p-6 lg:p-8 animate-in fade-in duration-500">
     
     <!-- Header / Hero Section -->
     <app-driver-hero 
       [driver]="driver" 
       [isRTL]="isRTL"
-      (editDriverRequested)="workflowActionRequested.emit('OPEN_OPERATIONS')"
+      (editDriverRequested)="editDriverRequested.emit()"
       (openTasksRequested)="onTabChange('operations')"
-      (toggleSuspensionRequested)="workflowActionRequested.emit('SUSPEND_DRIVER')">
+      (toggleSuspensionRequested)="toggleSuspensionRequested.emit()"
+      (workflowActionRequested)="workflowActionRequested.emit($event)">
     </app-driver-hero>
 
-    <!-- Command Center & Pipeline Strip -->
-    <app-driver-command-center 
-      *ngIf="driver.workflow"
-      [workflow]="driver.workflow"
-      [lifecycleStages]="driver.lifecycleStages"
-      [isRTL]="isRTL"
-      (workflowActionRequested)="workflowActionRequested.emit($event)">
-    </app-driver-command-center>
-
     <!-- Tab Navigation -->
-    <div class="sticky top-0 z-20 -mx-4 mb-6 mt-2 border-y border-white/60 bg-[#f6f7f2]/90 px-4 pt-4 shadow-[0_18px_45px_-38px_rgba(15,23,42,0.8)] backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+    <div class="sticky top-0 z-20 -mx-4 mb-6 mt-2 border-y border-slate-200 bg-white/90 px-4 pt-4 shadow-sm backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       <div class="flex items-center justify-between pb-4">
         <app-detail-tabs-nav
           [tabs]="navItems"

@@ -165,6 +165,14 @@ export class DriverDetailComponent implements OnInit {
             this.reviewerDecisionNote.trim() || this.internalReviewNote.trim() || undefined),
           'verification');
         break;
+      case 'REJECT_VERIFICATION':
+        this.runDriverAction(
+          this.driverService.reviewDriver(
+            this.currentDriverId,
+            'reject',
+            this.buildReviewNote('reject')),
+          'verification');
+        break;
       case 'CLEAR_FINANCE_HOLD':
         this.setTab('finance');
         break;

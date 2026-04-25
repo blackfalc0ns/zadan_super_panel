@@ -31,6 +31,7 @@ export type DriverWorkflowTargetTab =
 export type DriverWorkflowActionId =
   | 'APPROVE_VERIFICATION'
   | 'REQUEST_DOCUMENTS'
+  | 'REJECT_VERIFICATION'
   | 'CLEAR_FINANCE_HOLD'
   | 'SUSPEND_DRIVER'
   | 'REACTIVATE_DRIVER'
@@ -351,4 +352,3 @@ export interface DriverStatusSummary {
   verificationLabel: string;
   lastSeenLabel: string;
 }
-
