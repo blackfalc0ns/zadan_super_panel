@@ -61,7 +61,11 @@ export interface DriverInternalNote {
 export interface DriverDocumentRecord {
   id: string;
   title: string;
-  imageUrl: string;
+  imageUrl?: string;
+  fileUrl?: string;
+  fileName?: string;
+  contentType?: string;
+  documentType?: string;
   status: DriverDocumentStatus;
   statusLabel: string;
   expiryDate: string;

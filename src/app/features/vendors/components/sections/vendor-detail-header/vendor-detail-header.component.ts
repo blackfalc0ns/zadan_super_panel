@@ -57,7 +57,6 @@ export class VendorDetailHeaderComponent implements OnChanges {
     { id: 'orders', labelKey: 'VENDOR_DETAIL.TAB_ORDERS', active: false },
     { id: 'finance', labelKey: 'VENDOR_DETAIL.TAB_FINANCE', active: false },
     { id: 'compliance', labelKey: 'VENDOR_DETAIL.TAB_COMPLIANCE', active: false },
-    { id: 'workspace', labelKey: 'تشغيل التاجر', active: false },
     { id: 'logs', labelKey: 'VENDOR_DETAIL.TAB_LOGS', active: false },
     { id: 'settings', labelKey: 'VENDOR_DETAIL.TAB_SETTINGS', active: false }
   ];
@@ -256,15 +255,15 @@ export class VendorDetailHeaderComponent implements OnChanges {
   }
 
   get sendTestNotificationLabel(): string {
-    return this.currentLang === 'ar' ? 'إرسال إشعار تجريبي' : 'Send test notification';
+    return this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.SEND_TEST_NOTIFICATION');
   }
 
   get sendingTestNotificationLabel(): string {
-    return this.currentLang === 'ar' ? 'جاري الإرسال...' : 'Sending...';
+    return this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.SENDING');
   }
 
   get notificationToastTitle(): string {
-    return this.currentLang === 'ar' ? 'إشعارات التاجر' : 'Vendor notifications';
+    return this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.TOAST_TITLE');
   }
 
   private updateHeaderContent(): void {
@@ -299,7 +298,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
 
   resolveReviewStateLabelKey(vendor: VendorDetail | null): string {
     const map: Record<string, string> = {
-      'awaiting_submission': 'VENDOR_REVIEW.STATE.AWAITING',
+      'awaiting_submission': 'VENDOR_REVIEW.STATE.AWAITING_SUBMISSION',
       'submitted': 'VENDOR_REVIEW.STATE.SUBMITTED',
       'under_review': 'VENDOR_REVIEW.STATE.UNDER_REVIEW',
       'changes_requested': 'VENDOR_REVIEW.STATE.CHANGES_REQUESTED',
@@ -370,9 +369,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
   }): void {
     if (response.pushSent) {
       this.toastService.success(
-        this.currentLang === 'ar'
-          ? 'تم إنشاء الإشعار وإرسال الويب بوش للتاجر بنجاح.'
-          : 'The notification was created and web push was sent to the vendor successfully.',
+        this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.TOAST_PUSH_SENT'),
         this.notificationToastTitle
       );
       return;
@@ -380,11 +377,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
 
     if (response.pushAttempted && !response.pushSent) {
       this.toastService.warning(
-        response.pushReason?.trim() || (
-          this.currentLang === 'ar'
-            ? 'تم إنشاء الإشعار داخل النظام لكن إرسال الويب بوش لم ينجح.'
-            : 'The notification was created in-app, but web push delivery did not succeed.'
-        ),
+        response.pushReason?.trim() || this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.TOAST_PUSH_FAILED'),
         this.notificationToastTitle
       );
       return;
@@ -392,22 +385,14 @@ export class VendorDetailHeaderComponent implements OnChanges {
 
     if (response.pushSkipped) {
       this.toastService.info(
-        response.pushReason?.trim() || (
-          this.currentLang === 'ar'
-            ? 'تم إنشاء الإشعار داخل لوحة التاجر، لكن تم تجاوز الويب بوش في هذه التجربة.'
-            : 'The vendor inbox notification was created, but web push was skipped for this test.'
-        ),
+        response.pushReason?.trim() || this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.TOAST_PUSH_SKIPPED'),
         this.notificationToastTitle
       );
       return;
     }
 
     this.toastService.success(
-      response.message?.trim() || (
-        this.currentLang === 'ar'
-          ? 'تم إنشاء إشعار للتاجر بنجاح.'
-          : 'The vendor notification was created successfully.'
-      ),
+      response.message?.trim() || this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.TOAST_CREATED'),
       this.notificationToastTitle
     );
   }
@@ -428,9 +413,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
       return error.message.trim();
     }
 
-    return this.currentLang === 'ar'
-      ? 'تعذر إرسال الإشعار التجريبي الآن.'
-      : 'Unable to send the test notification right now.';
+    return this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.ERROR_SEND_FAILED');
   }
 }
 

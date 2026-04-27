@@ -198,7 +198,18 @@ export class VendorOrdersComponent {
       order.paymentStatus
     ].join(','));
 
-    const content = ['Order Number,Customer,Date,Time,Amount,Status,Payment Status', ...rows].join('\n');
+    const content = [
+      [
+        'VENDOR_ORDERS.EXPORT_HEADERS.ORDER_NUMBER',
+        'VENDOR_ORDERS.EXPORT_HEADERS.CUSTOMER',
+        'VENDOR_ORDERS.EXPORT_HEADERS.DATE',
+        'VENDOR_ORDERS.EXPORT_HEADERS.TIME',
+        'VENDOR_ORDERS.EXPORT_HEADERS.AMOUNT',
+        'VENDOR_ORDERS.EXPORT_HEADERS.STATUS',
+        'VENDOR_ORDERS.EXPORT_HEADERS.PAYMENT_STATUS'
+      ].map((key) => this.translate.instant(key)).join(','),
+      ...rows
+    ].join('\n');
     const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -389,18 +400,18 @@ export class VendorOrdersComponent {
 
   private buildStatusOptions(): SearchableSelectOption<string>[] {
     return [
-      { value: '', label: this.currentLang === 'ar' ? 'كل الحالات' : 'All statuses' },
-      { value: 'Placed', label: this.currentLang === 'ar' ? 'جديد' : 'New' },
-      { value: 'Preparing', label: this.currentLang === 'ar' ? 'قيد التجهيز' : 'Preparing' },
-      { value: 'OnTheWay', label: this.currentLang === 'ar' ? 'في الطريق' : 'On the way' },
-      { value: 'Delivered', label: this.currentLang === 'ar' ? 'مكتمل' : 'Delivered' },
-      { value: 'Cancelled', label: this.currentLang === 'ar' ? 'ملغي' : 'Cancelled' }
+      { value: '', labelKey: 'VENDOR_ORDERS.FILTERS.ALL_STATUSES' },
+      { value: 'Placed', labelKey: 'VENDOR_ORDERS.GENERAL_STATUS.NEW' },
+      { value: 'Preparing', labelKey: 'VENDOR_ORDERS.FILTERS.PREPARING' },
+      { value: 'OnTheWay', labelKey: 'VENDOR_ORDERS.FILTERS.ON_THE_WAY' },
+      { value: 'Delivered', labelKey: 'VENDOR_ORDERS.FILTERS.DELIVERED' },
+      { value: 'Cancelled', labelKey: 'VENDOR_ORDERS.GENERAL_STATUS.CANCELLED' }
     ];
   }
 
   private buildPaymentStatusOptions(): SearchableSelectOption<string>[] {
     return [
-      { value: '', label: this.currentLang === 'ar' ? 'كل حالات الدفع' : 'All payment states' },
+      { value: '', labelKey: 'VENDOR_ORDERS.FILTERS.ALL_PAYMENT_STATES' },
       { value: 'Paid', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PAID' },
       { value: 'Pending', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.PENDING' },
       { value: 'Refunded', labelKey: 'VENDOR_ORDERS.PAYMENT_STATUS.REFUNDED' },

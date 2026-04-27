@@ -44,6 +44,7 @@
     "HIDE_INACTIVE": "إخفاء غير النشط",
     "SHOW_INACTIVE": "إظهار الكل",
     "RESET_FILTERS": "إعادة ضبط البحث",
+    "CLEAR_FILTERS": "مسح الفلاتر",
     "SEARCH": "البحث عن...",
     "PREVIOUS": "السابق",
     "NEXT": "التالي",
@@ -51,6 +52,13 @@
     "NO_RESULTS": "لا توجد نتائج",
     "SELECTED_ITEMS": "عناصر مختارة",
     "CURRENCY_SAR": "ر.س",
+    "CURRENCY": "ر.س",
+    "BACK_TO_LIST": "العودة للقائمة",
+    "NO_DATA": "لا توجد بيانات",
+    "OPEN": "فتح",
+    "TODAY": "اليوم",
+    "THIS_WEEK": "هذا الأسبوع",
+    "VIEW_ALL": "عرض الكل",
     "CITIES": {
       "RIYADH": "الرياض",
       "JEDDAH": "جدة",
@@ -859,10 +867,24 @@
       "FINANCE": "المالية",
       "VERIFICATION": "التوثيق"
     },
-    "DETAIL": {
-      "PAGE_TITLE": "الملف التشغيلي الشامل للسائق",
-      "PAGE_SUBTITLE": "رحلة موحدة للسائق من التوثيق وحتى التشغيل والدعم والامتثال والتحصيل",
-      "BTN_VERIFY": "التوثيق",
+      "DETAIL": {
+        "PAGE_TITLE": "الملف التشغيلي الشامل للسائق",
+        "PAGE_SUBTITLE": "رحلة موحدة للسائق من التوثيق وحتى التشغيل والدعم والامتثال والتحصيل",
+      "MESSAGES": {
+        "INVALID_DRIVER_ID": "معرف السائق غير صالح.",
+        "DRIVER_NOT_FOUND": "لم يتم العثور على السائق.",
+        "LOAD_DETAILS_FAILED": "تعذر تحميل تفاصيل السائق.",
+        "WRITE_NOTE_FIRST": "اكتب ملاحظة قبل الحفظ.",
+        "NOTE_ADDED": "تمت إضافة الملاحظة بنجاح.",
+        "DRIVER_REACTIVATED": "تمت إعادة تفعيل السائق.",
+        "DRIVER_SUSPENDED": "تم إيقاف السائق.",
+        "ACTION_FAILED": "تعذر تنفيذ الإجراء. حاول مرة أخرى.",
+        "OPENED_RELATED_SECTION": "تم فتح القسم المرتبط. هذا الإجراء لا يملك نقطة API تنفيذية مباشرة حاليًا.",
+        "VERIFICATION_APPROVED": "تم اعتماد توثيق السائق.",
+        "DOCUMENT_REQUEST_SUBMITTED": "تم طلب استكمال المستندات.",
+        "VERIFICATION_REJECTED": "تم رفض توثيق السائق."
+      },
+        "BTN_VERIFY": "التوثيق",
       "BTN_OPERATIONS": "التشغيل",
       "BTN_REACTIVATE": "إعادة تفعيل",
       "BTN_SUSPEND": "تعليق",
@@ -917,6 +939,10 @@
       "OPERATIONS": {
         "MAP_SECTION": "مناطق السائقين والمهام",
         "MAP_ALT": "معاينة منطقة السائق",
+        "TELEMETRY_DESC": "الموقع المباشر والنطاق وسياق المهمة الحالية.",
+        "METRICS_TITLE": "مؤشرات التشغيل",
+        "LIVE_BADGE": "مباشر",
+        "DRIVER_LOCATION": "موقع السائق",
         "ZONE_CAPACITY": "السعة الحالية",
         "OCCUPANCY_RATE": "معدل الإشغال",
         "AVG_DELIVERY": "متوسط التسليم",
@@ -1009,6 +1035,8 @@
         "BENCHMARK_SECTION": "مقارنة المنطقة والأسطول",
         "COMPARISON_SECTION": "مقارنة المنطقة والأسطول",
         "REGION_AVG": "متوسط المنطقة",
+        "REGION_AVERAGE": "متوسط المنطقة",
+        "AVG_LABEL": "المتوسط",
         "FLEET_AVG": "متوسط الأسطول",
         "DYNAMIC": {
           "METRICS": {
@@ -1091,7 +1119,9 @@
         },
         "STATIC": {
           "BENCHMARKS_TITLE": "المقارنات المرجعية",
-          "INSIGHTS_TITLE": "رؤى تشغيلية"
+          "BENCHMARKS_DESC": "مقارنة السائق بمتوسطات التشغيل في المنطقة.",
+          "INSIGHTS_TITLE": "رؤى تشغيلية",
+          "INSIGHTS_DESC": "إشارات من الباك إند توضح نقاط القوة والمخاطر والخطوات التالية."
         },
         "BACKEND": {
           "METRICS": {
@@ -1248,6 +1278,8 @@
           "REVIEW": "قيد المراجعة",
           "REVIEW_DESC": "مستندات لا تزال تنتظر التحقق اليدوي."
         },
+        "NO_INCIDENTS": "لا توجد حوادث",
+        "NO_INCIDENTS_DESC": "لا توجد حوادث امتثال مرتبطة بهذا السائق.",
         "DOCS_HEALTH": "صحة المستندات",
         "DOC_VALID": "صالحة",
         "VALID": "صالحة",
@@ -1308,7 +1340,9 @@
         "AVAILABLE_WITHDRAW": "المتاح للسحب",
         "AVAILABLE_BALANCE": "الرصيد المتاح",
         "COD_COLLECTED": "COD المحصل",
+        "COLLECTED_COD": "المحصل نقدًا",
         "DUE_AMOUNT": "مستحقات حالية",
+        "DUE_AMOUNT_LABEL": "المستحقات الحالية",
         "CURRENT_DUE": "المستحق الحالي",
         "SETTLEMENTS_SECTION": "ملخص التسويات",
         "SETTLEMENTS_SUMMARY": "ملخص التسويات",
@@ -1324,7 +1358,12 @@
         "TABLE_METHOD": "الوسيلة",
         "TABLE_DATE": "التاريخ",
         "NO_SETTLEMENTS": "لا توجد تسويات",
+        "NO_STATEMENTS": "لا توجد قيود مالية",
         "NO_SETTLEMENTS_MSG": "لا توجد حركات مالية مرتبطة بهذا السائق.",
+        "ACTIONS": {
+          "SETTLE": "تسوية الرصيد",
+          "DOWNLOAD_STATEMENT": "تنزيل كشف الحساب"
+        },
         "DYNAMIC": {
           "STATUS": {
             "SETTLED": "تم الدفع",
@@ -1376,6 +1415,43 @@
       },
       "VERIFICATION": {
         "SECTION_TITLE": "مراجعة وتوثيق السائق",
+        "COMMAND_CENTER": "مركز أوامر التوثيق",
+        "EXECUTIVE_REVIEW": "مراجعة تنفيذية",
+        "EXECUTIVE_REVIEW_DESC": "مساحة مركزة لمراجعة المستندات وإدارة قرار الحساب وسجل الامتثال.",
+        "WINDOWS": {
+          "OPERATIONS": "الإدارة والسجل",
+          "REVIEW": "المستندات والمعاينة"
+        },
+        "APPROVAL_READINESS": "جاهزية الاعتماد",
+        "READINESS_READY": "جاهز للاعتماد النهائي",
+        "READINESS_WAITING": "بانتظار استكمال المستندات",
+        "FILES_AVAILABLE": "الملفات المتاحة",
+        "TOTAL_DOCUMENTS": "إجمالي المستندات",
+        "VALID_DOCUMENTS": "المستندات الصالحة",
+        "VALID_DOCUMENTS_DESC": "مستندات سارية المفعول",
+        "UNDER_REVIEW": "قيد المراجعة",
+        "UNDER_REVIEW_DESC": "ملفات بانتظار الحسم",
+        "EXPIRING_ITEMS": "عناصر على وشك الانتهاء",
+        "EXPIRING_ITEMS_DESC": "عناصر تحتاج تجديدًا",
+        "ACCOUNT_CONTROL_TITLE": "لوحة إدارة الحساب",
+        "ACCOUNT_CONTROL_DESC": "إدارة حالة السائق وقرارات الحساب",
+        "REQUIREMENTS_TITLE": "متطلبات الاعتماد",
+        "REQUIREMENTS_DESC": "قائمة التحقق والملاحظات",
+        "ADD_INTERNAL_NOTE": "إضافة ملاحظة داخلية",
+        "ADD_INTERNAL_NOTE_PLACEHOLDER": "ملاحظة داخلية للمراجعين...",
+        "CHECKLIST_TAB": "قائمة التحقق",
+        "DOCUMENT_BOARD": "لوحة المستندات",
+        "FILES_IN_PACKET": "{{count}} ملف في الحزمة",
+        "PREVIEW_DECISION": "المعاينة والقرار",
+        "SELECT_DOCUMENT": "اختر مستندًا",
+        "FILE_READY": "ملف جاهز للتحميل والمعاينة",
+        "PREVIEW_NOTES": "ملاحظات المعاينة",
+        "PREVIEW_NOTES_PLACEHOLDER": "تفاصيل القرار أو سبب الرفض...",
+        "NO_DOCUMENT_SELECTED": "لا يوجد مستند محدد",
+        "NO_DOCUMENT_SELECTED_DESC": "اختر مستندًا من اللوحة لمعاينته واتخاذ القرار المناسب.",
+        "DOCUMENT_GROUPS": {
+          "DRIVER_DOCUMENTS": "مستندات السائق"
+        },
         "APP_ID": "رقم الطلب",
         "APP_NUMBER": "رقم الطلب",
         "SUBMITTED_AT": "تاريخ التقديم",
@@ -1436,7 +1512,9 @@
         "ACTIONS": {
           "APPROVE": "اعتماد السائق",
           "REQUEST_DOCUMENTS": "طلب استكمال المستندات",
-          "REJECT": "رفض السائق"
+          "REJECT": "رفض السائق",
+          "APPROVE_SHORT": "موافق",
+          "REJECT_SHORT": "رفض"
         },
         "STATUS_COMPLETED": "مكتمل",
         "STATUS_NEEDS_REVIEW": "يتطلب مراجعة",
@@ -1689,8 +1767,16 @@
         "JOINED_AT": "تاريخ الانضمام",
         "VEHICLE_TYPE": "نوع المركبة",
         "LICENSE_NUMBER": "رقم الرخصة",
-        "ZONE": "المنطقة الأساسية",
-        "NO_RECENT_NOTES": "لا توجد ملاحظات حديثة."
+      "ZONE": "المنطقة الأساسية",
+      "NO_RECENT_NOTES": "لا توجد ملاحظات حديثة.",
+      "QUICK_SUMMARY_TITLE": "ملخص السائق",
+      "QUICK_SUMMARY_DESC": "لقطة تشغيلية من أحدث بيانات ملف السائق.",
+      "SIGNALS": "المؤشرات",
+      "ALERTS_TITLE": "التنبيهات وملاحظات المراجعة",
+      "ALERTS_DESC": "العوائق المفتوحة وإشارات المتابعة الخاصة بهذا السائق.",
+      "NO_ALERTS": "لا توجد تنبيهات نشطة",
+      "NO_ALERTS_DESC": "هذا الملف سليم خارج المتابعة الروتينية.",
+      "NOTES_HISTORY": "سجل الملاحظات"
       },
       "LIFECYCLE": {
         "APPLICATION": {
@@ -2412,6 +2498,33 @@
     "TAB_LOGS": "السجل والملاحظات",
     "TAB_SETTINGS": "الإعدادات",
     "TAB_ANALYTICS": "التحليلات والأداء",
+    "HEADER_METRICS": {
+      "PERFORMANCE": "الأداء",
+      "RISK_LEVEL": "مستوى الخطر",
+      "REVIEW_STATE": "حالة المراجعة",
+      "NETWORK": "الشبكة",
+      "BRANCHES": "فروع"
+    },
+    "MESSAGE_COMPOSER": {
+      "BADGE": "تواصل التاجر",
+      "TITLE": "إرسال رسالة للتاجر",
+      "ARABIC_TITLE": "العنوان العربي",
+      "ENGLISH_TITLE": "العنوان الإنجليزي",
+      "ARABIC_BODY": "النص العربي",
+      "ENGLISH_BODY": "النص الإنجليزي",
+      "CHANNEL_INBOX": "صندوق الوارد",
+      "CHANNEL_PUSH": "إشعار فوري",
+      "CHANNEL_EMAIL": "البريد الإلكتروني",
+      "SEND": "إرسال",
+      "SENDING": "جاري الإرسال...",
+      "SEND_TEST_NOTIFICATION": "إرسال إشعار تجريبي",
+      "TOAST_TITLE": "إشعارات التاجر",
+      "TOAST_PUSH_SENT": "تم إنشاء الإشعار وإرسال الويب بوش للتاجر بنجاح.",
+      "TOAST_PUSH_FAILED": "تم إنشاء الإشعار داخل النظام لكن إرسال الويب بوش لم ينجح.",
+      "TOAST_PUSH_SKIPPED": "تم إنشاء الإشعار داخل لوحة التاجر، لكن تم تجاوز الويب بوش في هذه التجربة.",
+      "TOAST_CREATED": "تم إنشاء إشعار للتاجر بنجاح.",
+      "ERROR_SEND_FAILED": "تعذر إرسال الإشعار التجريبي الآن."
+    },
     "DATA_MANAGEMENT_SUMMARY": "ملخص إدارة البيانات",
     "COMPLETION_RATE": "اكتمال الملف",
     "LAST_UPDATE": "آخر تحديث",
@@ -2554,7 +2667,8 @@
       "CHANGES_REQUESTED": "مطلوب استكمال",
       "VERIFIED": "موثق",
       "REJECTED": "مرفوض",
-      "SUSPENDED": "معلّق"
+      "SUSPENDED": "معلّق",
+      "UNKNOWN": "غير معروف"
     },
     "STATUS": {
       "UNVERIFIED": "غير موثق"
@@ -2685,6 +2799,17 @@
       "COMPLETED": "مكتمل",
       "CANCELLED": "ملغي"
     },
+    "FILTERS": {
+      "ALL_STATUSES": "كل الحالات",
+      "ALL_PAYMENT_STATES": "كل حالات الدفع",
+      "PREPARING": "قيد التجهيز",
+      "ON_THE_WAY": "في الطريق",
+      "DELIVERED": "تم التسليم"
+    },
+    "ORDERS_TITLE": "طلبات التاجر",
+    "ORDERS_SUBTITLE": "مراجعة طلبات التاجر التشغيلية وحالة الدفع وتقدم التنفيذ.",
+    "ORDERS_BOARD": "قائمة الطلبات",
+    "ORDERS_BOARD_DESC": "اضغط على أي طلب لفتح تفاصيله.",
     "SEARCH_PLACEHOLDER": "البحث برقم الطلب أو اسم العميل...",
     "FILTER": "فلترة",
     "DATE_RANGE": "النطاق الزمني",
@@ -2702,9 +2827,28 @@
       "CUSTOMER": "العميل",
       "DATE": "التاريخ",
       "AMOUNT": "المبلغ",
+      "ITEMS": "العناصر",
       "PAYMENT_STATUS": "حالة الدفع",
       "SHIPPING_STATUS": "حالة الشحن",
-      "GENERAL_STATUS": "الحالة العامة"
+      "GENERAL_STATUS": "الحالة العامة",
+      "OPEN": "فتح"
+    },
+    "EXPORT_HEADERS": {
+      "ORDER_NUMBER": "رقم الطلب",
+      "CUSTOMER": "العميل",
+      "DATE": "التاريخ",
+      "TIME": "الوقت",
+      "AMOUNT": "المبلغ",
+      "STATUS": "الحالة",
+      "PAYMENT_STATUS": "حالة الدفع"
+    },
+    "STATES": {
+      "LOADING_TITLE": "جاري تحميل طلبات التاجر",
+      "LOADING_MESSAGE": "يتم تجهيز أحدث سجلات الطلبات لهذا التاجر.",
+      "ERROR_TITLE": "تعذر تحميل الطلبات",
+      "ERROR_MESSAGE": "تعذر تحميل واجهة طلبات التاجر الآن. حاول تحديث الصفحة.",
+      "EMPTY_ORDERS_TITLE": "لا توجد طلبات",
+      "EMPTY_ORDERS_MESSAGE": "لا توجد طلبات لهذا التاجر تطابق الفلاتر الحالية."
     },
     "ALERTS": {
       "SHIPPING_DELAY": "3 طلبات تجاوزت وقت الشحن المحدد (48 ساعة).",

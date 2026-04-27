@@ -1,194 +1,124 @@
-<!-- Executive Command Center Header -->
-<div class="relative overflow-hidden rounded-[2.5rem] p-6 shadow-2xl sm:p-8 w-full border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-  <!-- Dynamic Glowing Effects -->
-  <div class="absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full blur-[120px] pointer-events-none transition-all duration-1000"
-       [ngClass]="{
-         'bg-emerald-500/10': driver.status === 'Online',
-         'bg-amber-500/10': driver.status === 'OnMission',
-         'bg-rose-500/10': driver.status === 'Suspended',
-         'bg-slate-500/10': driver.status === 'Offline'
-       }"></div>
-  <div class="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full blur-[120px] pointer-events-none transition-all duration-1000 bg-cyan-500/10"></div>
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_45%),linear-gradient(135deg,_rgba(255,255,255,0.04),_transparent_55%)] opacity-80 mix-blend-overlay pointer-events-none"></div>
-
-  <div class="relative z-10 flex flex-col gap-8">
+<div class="flex flex-col gap-6">
+  
+  <!-- Consolidated Profile & Tabs Card -->
+  <div class="flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
     
-    <!-- Top Row: Main Info & Actions -->
-    <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-      
-      <!-- Driver Info Cluster -->
-      <div class="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-6 w-full lg:w-auto text-center sm:text-start">
-        
-        <!-- Driver Avatar -->
-        <div class="relative flex h-20 w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-[1.8rem] border border-white/10 bg-white/5 shadow-inner backdrop-blur-xl group">
-          <img [src]="driver.imageUrl || 'assets/images/placeholders/driver-avatar.png'" [alt]="driver.displayName" class="h-full w-full object-cover rounded-[1.8rem]" />
-          
-          <!-- Status Dot -->
-          <span class="absolute -right-1 -top-1 h-5 w-5 rounded-full border-[3px] border-slate-950"
-                [ngClass]="{
-                  'bg-emerald-500': driver.status === 'Online',
-                  'bg-amber-500': driver.status === 'OnMission',
-                  'bg-rose-500': driver.status === 'Suspended',
-                  'bg-slate-500': driver.status === 'Offline'
-                }">
+    <!-- Top Section: Profile Details -->
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between p-6">
+      <div class="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:text-start lg:items-center">
+      <div class="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50 md:h-24 md:w-24">
+        <img *ngIf="driver.imageUrl; else driverInitials"
+             [src]="driver.imageUrl"
+             [alt]="driver.displayName"
+             class="h-full w-full rounded-xl object-cover" />
+        <ng-template #driverInitials>
+          <span class="flex h-full w-full items-center justify-center rounded-xl bg-slate-100 text-2xl font-black text-slate-700">
+            {{ driver.firstName.charAt(0) }}{{ driver.lastName.charAt(0) }}
           </span>
-        </div>
-
-        <!-- Text Details -->
-        <div class="flex flex-col items-center sm:items-start gap-2.5 min-w-0">
-          <p class="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400">{{ 'DRIVERS.DETAIL.HERO.BACKEND_FIRST' | translate }}</p>
-          <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight truncate">
-            {{ driver.displayName || (driver.firstName + ' ' + driver.lastName) }}
-          </h1>
-          
-          <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-1">
-            <div class="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-300 backdrop-blur-md">
-              <span class="material-symbols-outlined text-[16px] text-cyan-400">tag</span>
-              <span class="font-mono tracking-wider">{{ driver.id }}</span>
-            </div>
-            <div class="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-300 backdrop-blur-md">
-              <span class="material-symbols-outlined text-[16px] text-emerald-400">calendar_today</span>
-              <span>{{ driver.joinedAt }}</span>
-            </div>
-            <div class="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-300 backdrop-blur-md">
-              <span class="material-symbols-outlined text-[16px] text-amber-400">map</span>
-              <span>{{ driver.zoneName || driver.liveZone || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
-            </div>
-            <app-status-pill [label]="verificationLabel" [variant]="verificationVariant" [shouldTranslate]="true" size="sm"></app-status-pill>
-          </div>
-        </div>
+        </ng-template>
+        <span class="absolute -right-1 -top-1 h-5 w-5 rounded-full border-[3px] border-white"
+              [ngClass]="{
+                'bg-emerald-500': driver.status === 'Online',
+                'bg-amber-500': driver.status === 'OnMission',
+                'bg-rose-500': driver.status === 'Suspended',
+                'bg-slate-500': driver.status === 'Offline'
+              }">
+        </span>
       </div>
 
-      <!-- Quick Actions Array (Including Workflow Actions) -->
-      <div class="flex flex-wrap items-center justify-center sm:justify-end gap-2 w-full lg:w-auto shrink-0">
+      <div class="flex min-w-0 flex-col items-center gap-2.5 sm:items-start">
+        <h1 class="max-w-full truncate text-2xl font-black leading-tight tracking-tight text-slate-900 md:text-3xl">
+          {{ driver.displayName || (driver.firstName + ' ' + driver.lastName) }}
+        </h1>
         
-        <!-- Workflow Actions mapped directly to the Header -->
-        <ng-container *ngIf="driver.workflow?.actions">
-          <button *ngFor="let action of driver.workflow.actions | slice:0:3"
-                  type="button"
-                  (click)="workflowActionRequested.emit(action.id)"
-                  class="group flex h-11 items-center gap-2.5 rounded-xl border border-white/10 px-4 text-xs font-black backdrop-blur-md transition-all hover:-translate-y-0.5 active:scale-95"
-                  [ngClass]="{
-                    'bg-cyan-500 text-slate-950 hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] border-transparent': action.tone === 'primary',
-                    'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30': action.tone === 'success',
-                    'bg-rose-500/20 text-rose-400 hover:bg-rose-500/30': action.tone === 'danger',
-                    'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30': action.tone === 'warning',
-                    'bg-white/5 text-white hover:bg-white/10': action.tone === 'secondary'
-                  }">
-            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">{{ action.icon }}</span>
-            <span>{{ action.label | translate }}</span>
-          </button>
-        </ng-container>
-
-        <!-- Divider if workflow actions exist -->
-        <div *ngIf="driver.workflow?.actions?.length" class="mx-1 h-8 w-px bg-white/10"></div>
-
-        <button (click)="openTasksRequested.emit()" type="button"
-          class="group flex h-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 text-xs font-black text-white backdrop-blur-md transition-all hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-          <span class="material-symbols-outlined text-[18px]">route</span>
-          <span class="hidden sm:inline">{{ 'DRIVERS.DETAIL.ACTIONS.TRACK_TASKS' | translate }}</span>
-        </button>
-
-        <button (click)="toggleSuspensionRequested.emit()" type="button"
-          class="group flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white backdrop-blur-md transition-all hover:bg-rose-500 hover:border-transparent hover:shadow-[0_0_20px_rgba(244,63,94,0.3)]">
-          <span class="material-symbols-outlined text-[20px]">{{ driver.status === 'Suspended' ? 'play_arrow' : 'block' }}</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Middle Strip: Workflow Summary (Operational Gate) -->
-    <div class="flex items-center justify-between rounded-[1.2rem] border border-white/5 bg-black/20 p-4 backdrop-blur-xl">
-      <div class="flex items-center gap-4">
-        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-             [ngClass]="{
-               'bg-emerald-500/20 text-emerald-400': driver.workflow.readiness === 'READY',
-               'bg-amber-500/20 text-amber-400': driver.workflow.readiness === 'LIMITED',
-               'bg-rose-500/20 text-rose-400': driver.workflow.readiness === 'BLOCKED'
-             }">
-          <span class="material-symbols-outlined text-[20px]">{{ driver.workflow.readiness === 'READY' ? 'task_alt' : driver.workflow.readiness === 'LIMITED' ? 'warning' : 'lock' }}</span>
-        </div>
-        <div>
-          <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.HERO.OPERATIONAL_GATE' | translate }} <span class="text-white">({{ driver.workflow.stateLabel | translate }})</span></p>
-          <p class="mt-0.5 text-sm font-semibold text-slate-300">{{ driver.workflow.summary | translate }}</p>
-        </div>
-      </div>
-      <div class="hidden md:block">
-         <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.HERO.NEXT_STEP' | translate }}</p>
-         <p class="mt-0.5 text-sm font-black text-cyan-400">{{ driver.workflow.nextActionLabel | translate }}</p>
-      </div>
-    </div>
-
-    <!-- Backend Metrics Bar -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      
-      <!-- Balance -->
-      <div class="flex items-center gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur-md">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-cyan-400">
-          <span class="material-symbols-outlined text-[24px]">account_balance_wallet</span>
-        </div>
-        <div class="min-w-0">
-          <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.KPI.BALANCE' | translate }}</p>
-          <p class="mt-0.5 truncate text-lg font-black text-white" dir="ltr">
-            {{ driver.finance.availableBalance | number:'1.2-2' }} <span class="text-xs text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-          </p>
-        </div>
-      </div>
-
-      <!-- Trust Score -->
-      <div class="flex items-center gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur-md">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">
-          <span class="material-symbols-outlined text-[24px]">verified</span>
-        </div>
-        <div>
-          <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.KPI.TRUST_SCORE' | translate }}</p>
-          <p class="mt-0.5 text-lg font-black text-white" dir="ltr">{{ driver.verification.trustScore }}%</p>
-        </div>
-      </div>
-
-      <!-- Acceptance Rate -->
-      <div class="flex items-center gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur-md">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-400">
-          <span class="material-symbols-outlined text-[24px]">done_all</span>
-        </div>
-        <div>
-          <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.KPI.ACCEPTANCE_RATE' | translate }}</p>
-          <p class="mt-0.5 text-lg font-black text-white" dir="ltr">{{ driver.acceptanceRate }}%</p>
-        </div>
-      </div>
-
-      <!-- Active Tasks -->
-      <div class="flex items-center gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur-md">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple-500/10 text-purple-400">
-          <span class="material-symbols-outlined text-[24px]">local_shipping</span>
-        </div>
-        <div>
-          <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.HERO.ACTIVE_TASKS' | translate }}</p>
-          <p class="mt-0.5 text-lg font-black text-white" dir="ltr">{{ driver.tasks.active }} <span class="text-sm text-slate-500">/ {{ driver.tasks.completed }}</span></p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Warnings & Blockers Strip -->
-    <div *ngIf="workflow?.blockers?.length || workflow?.alerts?.length" class="grid gap-3 md:grid-cols-2">
-      <div *ngIf="workflow?.blockers?.length" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 backdrop-blur-md">
-        <p class="text-[10px] font-black uppercase tracking-wider text-rose-400">{{ 'DRIVERS.DETAIL.HERO.BLOCKERS' | translate }}</p>
-        <div class="mt-2 space-y-1">
-          <div *ngFor="let blocker of workflow!.blockers" class="flex items-start gap-2 text-xs font-bold leading-5 text-rose-300">
-            <span class="material-symbols-outlined mt-0.5 text-[14px]">block</span>
-            <span>{{ blocker | translate }}</span>
+        <div class="mt-1 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+          <div class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600">
+            <span class="material-symbols-outlined text-[16px] text-cyan-600">tag</span>
+            <span class="font-mono tracking-wider">{{ driver.id }}</span>
           </div>
-        </div>
-      </div>
-      <div *ngIf="workflow?.alerts?.length" class="rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 backdrop-blur-md">
-        <p class="text-[10px] font-black uppercase tracking-wider text-amber-400">{{ 'DRIVERS.DETAIL.HERO.ALERTS' | translate }}</p>
-        <div class="mt-2 space-y-1">
-          <div *ngFor="let alert of workflow!.alerts" class="flex items-start gap-2 text-xs font-bold leading-5 text-amber-300">
-            <span class="material-symbols-outlined mt-0.5 text-[14px]">warning</span>
-            <span>{{ alert | translate }}</span>
+          <div class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600">
+            <span class="material-symbols-outlined text-[16px] text-emerald-600">calendar_today</span>
+            <span>{{ driver.joinedAt }}</span>
           </div>
+          <div class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600">
+            <span class="material-symbols-outlined text-[16px] text-amber-600">map</span>
+            <span>{{ driver.zoneName || driver.liveZone || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
+          </div>
+          <app-status-pill [label]="driverStatusLabel" [variant]="driver.status === 'Suspended' ? 'danger' : driver.status === 'Online' ? 'success' : 'neutral'" [shouldTranslate]="true" size="sm"></app-status-pill>
+          <app-status-pill [label]="verificationLabel" [variant]="verificationVariant" [shouldTranslate]="true" size="sm"></app-status-pill>
         </div>
       </div>
+    </div>
+
+    <div class="flex w-full shrink-0 flex-wrap items-center justify-center gap-2 sm:justify-end lg:w-auto">
+      <button *ngIf="driver.workflow?.actions?.[0]"
+              type="button"
+              (click)="workflowActionRequested.emit(driver.workflow.actions[0].id)"
+              class="group flex h-11 items-center gap-2.5 rounded-xl bg-zadna-primary px-4 text-xs font-black text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-zadna-primary/90 active:scale-95">
+        <span class="material-symbols-outlined text-[18px]">{{ driver.workflow.actions[0].icon }}</span>
+        <span>{{ driver.workflow.actions[0].label | translate }}</span>
+      </button>
+      <button (click)="openTasksRequested.emit()" type="button"
+        class="group flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-black text-slate-700 transition-all hover:bg-slate-50 hover:shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">route</span>
+        <span class="hidden sm:inline">{{ 'DRIVERS.DETAIL.ACTIONS.TRACK_TASKS' | translate }}</span>
+      </button>
+
+      <button (click)="toggleSuspensionRequested.emit()" type="button"
+        class="group flex h-11 w-11 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition-all hover:bg-rose-100 hover:shadow-sm">
+        <span class="material-symbols-outlined text-[20px]">{{ driver.status === 'Suspended' ? 'play_arrow' : 'block' }}</span>
+      </button>
+    </div>
+    </div>
+
+    <!-- Bottom Section: Integrated Tabs Navigation -->
+    <div class="border-t border-slate-100 bg-slate-50/50 px-4 py-3 sm:px-6">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <!-- KPI Grid -->
+  <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+    <div class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-cyan-50 text-cyan-600">
+          <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+        </div>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">{{ 'DRIVERS.DETAIL.KPI.BALANCE' | translate }}</p>
+      </div>
+      <p class="truncate text-2xl font-black text-slate-900" dir="ltr">
+        {{ driver.finance.availableBalance | number:'1.2-2' }} <span class="text-xs text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+          <span class="material-symbols-outlined text-[20px]">verified</span>
+        </div>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">{{ 'DRIVERS.DETAIL.KPI.TRUST_SCORE' | translate }}</p>
+      </div>
+      <p class="text-2xl font-black text-slate-900" dir="ltr">{{ driver.verification.trustScore }}%</p>
+    </div>
+
+    <div class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+          <span class="material-symbols-outlined text-[20px]">done_all</span>
+        </div>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">{{ 'DRIVERS.DETAIL.KPI.ACCEPTANCE_RATE' | translate }}</p>
+      </div>
+      <p class="text-2xl font-black text-slate-900" dir="ltr">{{ driver.acceptanceRate }}%</p>
+    </div>
+
+    <div class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-slate-300">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+          <span class="material-symbols-outlined text-[20px]">local_shipping</span>
+        </div>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">{{ 'DRIVERS.DETAIL.HERO.ACTIVE_TASKS' | translate }}</p>
+      </div>
+      <p class="text-2xl font-black text-slate-900" dir="ltr">{{ driver.tasks.active }} <span class="text-sm text-slate-500">/ {{ driver.tasks.completed }}</span></p>
     </div>
   </div>
 </div>

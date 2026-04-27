@@ -1,13 +1,8 @@
-<div class="relative min-h-screen overflow-hidden bg-[#f6f7f2]" [dir]="isRTL ? 'rtl' : 'ltr'">
-  <div class="pointer-events-none absolute inset-0">
-    <div class="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-cyan-100/70 via-emerald-50/50 to-transparent"></div>
-    <div class="absolute top-24 h-72 w-72 rounded-full bg-orange-100/70 blur-3xl" [ngClass]="isRTL ? 'left-[-7rem]' : 'right-[-7rem]'"></div>
-    <div class="absolute bottom-20 h-80 w-80 rounded-full bg-teal-100/60 blur-3xl" [ngClass]="isRTL ? 'right-[-8rem]' : 'left-[-8rem]'"></div>
-  </div>
+<div [dir]="isRTL ? 'rtl' : 'ltr'">
 
   <div *ngIf="driver && !isLoading" class="relative mx-auto max-w-[1600px] space-y-6 p-4 sm:p-6 lg:p-8 animate-in fade-in duration-500">
     
-    <!-- Header / Hero Section -->
+    <!-- Header / Hero Section with Linked Tabs -->
     <app-driver-hero 
       [driver]="driver" 
       [isRTL]="isRTL"
@@ -15,18 +10,16 @@
       (openTasksRequested)="onTabChange('operations')"
       (toggleSuspensionRequested)="toggleSuspensionRequested.emit()"
       (workflowActionRequested)="workflowActionRequested.emit($event)">
-    </app-driver-hero>
-
-    <!-- Tab Navigation -->
-    <div class="sticky top-0 z-20 -mx-4 mb-6 mt-2 border-y border-slate-200 bg-white/90 px-4 pt-4 shadow-sm backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      <div class="flex items-center justify-between pb-4">
+      
+      <!-- Embedded Tabs Navigation -->
+      <div class="mt-2">
         <app-detail-tabs-nav
           [tabs]="navItems"
           [activeTab]="currentTab"
           (tabChange)="onTabChange($event)">
         </app-detail-tabs-nav>
       </div>
-    </div>
+    </app-driver-hero>
 
     <!-- Tab Contents -->
     <div class="mt-6">

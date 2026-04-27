@@ -95,7 +95,7 @@
             <span class="material-symbols-outlined text-[24px]">kid_star</span>
           </div>
           <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ currentLang === 'ar' ? 'الأداء' : 'Performance' }}</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'VENDOR_DETAIL.HEADER_METRICS.PERFORMANCE' | translate }}</p>
             <p class="mt-0.5 text-lg font-black text-white">{{ performanceRating | number:'1.1-1' }} <span class="text-sm text-slate-500">/ 5.0</span></p>
           </div>
         </div>
@@ -112,7 +112,7 @@
             <span class="material-symbols-outlined text-[24px]">admin_panel_settings</span>
           </div>
           <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ currentLang === 'ar' ? 'مستوى الخطر' : 'Risk Level' }}</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'VENDOR_DETAIL.HEADER_METRICS.RISK_LEVEL' | translate }}</p>
             <p class="mt-0.5 text-sm font-black text-white uppercase">{{ riskLevelLabelKey | translate }}</p>
           </div>
         </div>
@@ -123,7 +123,7 @@
             <span class="material-symbols-outlined text-[24px]">rule</span>
           </div>
           <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ currentLang === 'ar' ? 'الاعتماد' : 'Review State' }}</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'VENDOR_DETAIL.HEADER_METRICS.REVIEW_STATE' | translate }}</p>
             <p class="mt-0.5 text-sm font-black text-white uppercase">{{ reviewStateLabelKey | translate }}</p>
           </div>
         </div>
@@ -134,8 +134,8 @@
             <span class="material-symbols-outlined text-[24px]">account_tree</span>
           </div>
           <div>
-            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ currentLang === 'ar' ? 'الشبكة' : 'Network' }}</p>
-            <p class="mt-0.5 text-sm font-black text-white">{{ vendor?.branchesCount || 0 }} {{ currentLang === 'ar' ? 'فروع' : 'Branches' }}</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'VENDOR_DETAIL.HEADER_METRICS.NETWORK' | translate }}</p>
+            <p class="mt-0.5 text-sm font-black text-white">{{ vendor?.branchesCount || 0 }} {{ 'VENDOR_DETAIL.HEADER_METRICS.BRANCHES' | translate }}</p>
           </div>
         </div>
       </div>
@@ -159,8 +159,8 @@
     <div class="w-full max-w-2xl rounded-[1.5rem] border border-white/15 bg-slate-950 p-5 text-white shadow-2xl" (click)="$event.stopPropagation()">
       <div class="mb-4 flex items-center justify-between gap-3">
         <div>
-          <p class="text-[11px] font-black uppercase tracking-[0.2em] text-zadna-primary">Vendor communication</p>
-          <h2 class="text-lg font-black">{{ isRTL ? 'إرسال رسالة للتاجر' : 'Send vendor message' }}</h2>
+          <p class="text-[11px] font-black uppercase tracking-[0.2em] text-zadna-primary">{{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.BADGE' | translate }}</p>
+          <h2 class="text-lg font-black">{{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.TITLE' | translate }}</h2>
         </div>
         <button type="button" class="rounded-full border border-white/10 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white" (click)="closeMessageComposer()">
           <span class="material-symbols-outlined text-[18px]">close</span>
@@ -169,19 +169,19 @@
 
       <div class="grid gap-3 md:grid-cols-2">
         <label class="space-y-1 text-xs font-bold text-slate-300">
-          <span>العنوان العربي</span>
+          <span>{{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.ARABIC_TITLE' | translate }}</span>
           <input [(ngModel)]="messageTitleAr" class="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-zadna-primary" />
         </label>
         <label class="space-y-1 text-xs font-bold text-slate-300">
-          <span>English title</span>
+          <span>{{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.ENGLISH_TITLE' | translate }}</span>
           <input [(ngModel)]="messageTitleEn" class="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-zadna-primary" />
         </label>
         <label class="space-y-1 text-xs font-bold text-slate-300 md:col-span-2">
-          <span>النص العربي</span>
+          <span>{{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.ARABIC_BODY' | translate }}</span>
           <textarea [(ngModel)]="messageBodyAr" rows="3" class="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-zadna-primary"></textarea>
         </label>
         <label class="space-y-1 text-xs font-bold text-slate-300 md:col-span-2">
-          <span>English body</span>
+          <span>{{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.ENGLISH_BODY' | translate }}</span>
           <textarea [(ngModel)]="messageBodyEn" rows="3" class="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-zadna-primary"></textarea>
         </label>
       </div>
@@ -189,26 +189,26 @@
       <div class="mt-4 flex flex-wrap items-center gap-2 text-xs font-black text-slate-200">
         <label class="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
           <input [(ngModel)]="messageSendInbox" type="checkbox" />
-          Inbox
+          {{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.CHANNEL_INBOX' | translate }}
         </label>
         <label class="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
           <input [(ngModel)]="messageSendPush" type="checkbox" />
-          Push
+          {{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.CHANNEL_PUSH' | translate }}
         </label>
         <label class="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
           <input [(ngModel)]="messageSendEmail" type="checkbox" />
-          Email
+          {{ 'VENDOR_DETAIL.MESSAGE_COMPOSER.CHANNEL_EMAIL' | translate }}
         </label>
       </div>
 
       <div class="mt-5 flex justify-end gap-2">
         <button type="button" class="rounded-xl border border-white/10 px-4 py-2 text-xs font-black text-slate-300 transition hover:bg-white/10 hover:text-white" (click)="closeMessageComposer()">
-          {{ isRTL ? 'إلغاء' : 'Cancel' }}
+          {{ 'COMMON.CANCEL' | translate }}
         </button>
         <button type="button" class="rounded-xl bg-zadna-primary px-5 py-2 text-xs font-black text-slate-950 shadow-lg shadow-zadna-primary/20 transition hover:-translate-y-0.5 disabled:opacity-50"
           [disabled]="isSendingTestNotification || !messageTitleAr.trim() || !messageTitleEn.trim() || !messageBodyAr.trim() || !messageBodyEn.trim()"
           (click)="sendVendorMessage()">
-          {{ isSendingTestNotification ? (isRTL ? 'جاري الإرسال...' : 'Sending...') : (isRTL ? 'إرسال' : 'Send') }}
+          {{ (isSendingTestNotification ? 'VENDOR_DETAIL.MESSAGE_COMPOSER.SENDING' : 'VENDOR_DETAIL.MESSAGE_COMPOSER.SEND') | translate }}
         </button>
       </div>
     </div>

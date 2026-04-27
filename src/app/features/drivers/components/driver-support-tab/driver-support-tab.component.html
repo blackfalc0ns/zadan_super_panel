@@ -1,117 +1,133 @@
 <div class="grid gap-6 lg:grid-cols-12 animate-in slide-in-from-bottom-8 duration-700">
+  
   <div class="lg:col-span-8 flex flex-col gap-6">
-    <!-- Active Tickets -->
-    <section class="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
-      <app-section-header 
-        [title]="'DRIVERS.DETAIL.SUPPORT.ACTIVE_TICKETS_TITLE' | translate" 
-        [description]="'DRIVERS.DETAIL.SUPPORT.ACTIVE_TICKETS_DESC' | translate" 
-        [shouldTranslate]="false" 
-        icon="confirmation_number"
-        [compact]="true">
-      </app-section-header>
+    <!-- Active Tickets Command Panel -->
+    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+          <span class="material-symbols-outlined text-[20px]">confirmation_number</span>
+        </div>
+        <div>
+          <h2 class="text-lg font-black text-slate-900">{{ 'DRIVERS.DETAIL.SUPPORT.ACTIVE_TICKETS_TITLE' | translate }}</h2>
+          <p class="text-[12px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.SUPPORT.ACTIVE_TICKETS_DESC' | translate }}</p>
+        </div>
+      </div>
 
-      <div class="mt-6 space-y-4">
-        <article *ngFor="let ticket of driver.support.tickets" class="group flex flex-col justify-between gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:border-zadna-primary/30 hover:bg-slate-50 sm:flex-row sm:items-center">
+      <div class="mt-4 space-y-3">
+        <article *ngFor="let ticket of driver.support.tickets" class="group flex flex-col justify-between gap-4 rounded-xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 sm:flex-row sm:items-center">
           <div class="flex items-start gap-3">
-            <div class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm">
-              <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-zadna-primary">local_activity</span>
+            <div class="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm border border-slate-100">
+              <span class="material-symbols-outlined text-[20px] text-slate-400">local_activity</span>
             </div>
             <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="text-[10px] font-black tracking-wider text-slate-400" dir="ltr">{{ ticket.id }}</span>
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <span class="text-[10px] font-black tracking-wider text-slate-500" dir="ltr">#{{ ticket.id }}</span>
                 <app-status-pill [label]="getTicketPriorityKey(ticket.priority)" [variant]="getTicketPriorityVariant(ticket.priority)" [shouldTranslate]="true" size="sm"></app-status-pill>
               </div>
-              <h4 class="mt-1 text-sm font-bold text-slate-900">{{ ticket.subject | translate }}</h4>
-              <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.SUPPORT.LAST_UPDATE' | translate }}: <span dir="ltr">{{ ticket.updatedAt }}</span></p>
+              <h4 class="text-[13px] font-black text-slate-900 leading-tight">{{ ticket.subject | translate }}</h4>
+              <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.SUPPORT.LAST_UPDATE' | translate }}: <span dir="ltr">{{ ticket.updatedAt }}</span></p>
             </div>
           </div>
           <div class="flex items-center gap-4 sm:flex-col sm:items-end">
             <app-status-pill [label]="getTicketStatusKey(ticket.status)" [variant]="getTicketStatusVariant(ticket.status)" [shouldTranslate]="true"></app-status-pill>
-            <button class="text-[11px] font-bold text-zadna-primary hover:underline">{{ 'COMMON.VIEW_DETAILS' | translate }}</button>
+            <button class="text-[11px] font-bold text-zadna-primary transition-colors hover:text-zadna-primaryDark hover:underline">{{ 'COMMON.VIEW_DETAILS' | translate }}</button>
           </div>
         </article>
         
-        <div *ngIf="driver.support.tickets.length === 0" class="rounded-xl border border-dashed border-slate-200 py-8 text-center">
-          <span class="material-symbols-outlined mb-2 text-[32px] text-slate-300">check_circle</span>
-          <p class="text-sm font-medium text-slate-500">{{ 'DRIVERS.DETAIL.SUPPORT.NO_TICKETS' | translate }}</p>
+        <div *ngIf="driver.support.tickets.length === 0" class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-10 text-center">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-500 mb-3 shadow-sm border border-emerald-100">
+            <span class="material-symbols-outlined text-[24px]">check_circle</span>
+          </div>
+          <p class="text-[13px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.SUPPORT.NO_TICKETS' | translate }}</p>
         </div>
       </div>
     </section>
 
-    <!-- Support Chat / Comms -->
-    <section class="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm flex flex-col overflow-hidden">
-      <div class="border-b border-slate-100 p-6 bg-slate-50/50">
-        <app-section-header 
-          [title]="'DRIVERS.DETAIL.SUPPORT.RECENT_COMMS_TITLE' | translate" 
-          [shouldTranslate]="false" 
-          icon="forum"
-          [compact]="true">
-        </app-section-header>
+    <!-- Support Chat / Comms Command Panel -->
+    <section class="rounded-xl border border-slate-200 bg-white shadow-sm flex flex-col overflow-hidden h-full">
+      <div class="flex items-center gap-3 border-b border-slate-100 p-5 bg-slate-50">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-200 text-slate-600">
+          <span class="material-symbols-outlined text-[20px]">forum</span>
+        </div>
+        <div>
+          <h2 class="text-lg font-black text-slate-900">{{ 'DRIVERS.DETAIL.SUPPORT.RECENT_COMMS_TITLE' | translate }}</h2>
+        </div>
       </div>
 
-      <div class="flex-1 space-y-6 p-6">
-        <div *ngFor="let msg of driver.support.chatMessages" class="flex flex-col gap-1" [ngClass]="msg.direction === 'driver' ? 'items-start' : 'items-end'">
-          <span class="text-[10px] font-bold text-slate-400" [ngClass]="msg.direction === 'driver' ? 'ml-2' : 'mr-2'">{{ msg.direction === 'driver' ? ('DRIVERS.DETAIL.SUPPORT.DRIVER' | translate) : ('DRIVERS.DETAIL.SUPPORT.SUPPORT_TEAM' | translate) }}</span>
-          <div class="max-w-[85%] rounded-2xl p-3 text-sm"
-            [ngClass]="msg.direction === 'driver' ? 'rounded-tr-sm bg-slate-100 text-slate-700' : 'rounded-tl-sm bg-zadna-primary text-white'">
+      <div class="flex-1 space-y-5 p-5 bg-slate-50/50">
+        <div *ngFor="let msg of driver.support.chatMessages" class="flex flex-col gap-1.5" [ngClass]="msg.direction === 'driver' ? 'items-start' : 'items-end'">
+          <span class="text-[10px] font-bold uppercase tracking-[0.05em] text-slate-500" [ngClass]="msg.direction === 'driver' ? 'ml-2' : 'mr-2'">
+            {{ msg.direction === 'driver' ? ('DRIVERS.DETAIL.SUPPORT.DRIVER' | translate) : ('DRIVERS.DETAIL.SUPPORT.SUPPORT_TEAM' | translate) }}
+          </span>
+          <div class="max-w-[85%] rounded-xl p-4 text-[13px] font-medium leading-relaxed shadow-sm"
+            [ngClass]="msg.direction === 'driver' ? 'rounded-tl-sm bg-white border border-slate-200 text-slate-800' : 'rounded-tr-sm bg-slate-800 text-white'">
             {{ msg.message }}
           </div>
-          <span class="text-[10px] font-medium text-slate-400" [ngClass]="msg.direction === 'driver' ? 'ml-2' : 'mr-2'" dir="ltr">{{ msg.time }}</span>
+          <span class="text-[10px] font-bold text-slate-500" [ngClass]="msg.direction === 'driver' ? 'ml-2' : 'mr-2'" dir="ltr">{{ msg.time }}</span>
         </div>
 
-        <div *ngIf="driver.support.chatMessages.length === 0" class="flex h-full min-h-[220px] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/40">
-          <div class="text-center">
-            <span class="material-symbols-outlined text-[36px] text-slate-300">forum</span>
-            <p class="mt-3 text-sm font-bold text-slate-500">{{ 'DRIVERS.DETAIL.SUPPORT.NO_MESSAGES' | translate }}</p>
+        <div *ngIf="driver.support.chatMessages.length === 0" class="flex h-full min-h-[200px] flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-white py-10 text-center">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-3 shadow-sm border border-slate-200">
+            <span class="material-symbols-outlined text-[24px]">forum</span>
           </div>
+          <p class="text-[13px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.SUPPORT.NO_MESSAGES' | translate }}</p>
         </div>
       </div>
     </section>
   </div>
 
+  <!-- Right Column -->
   <div class="lg:col-span-4 flex flex-col gap-6">
-    <!-- Internal Notes -->
-    <section class="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
-      <app-section-header 
-        [title]="'DRIVERS.DETAIL.SUPPORT.INTERNAL_NOTES_TITLE' | translate" 
-        [shouldTranslate]="false" 
-        icon="note_alt"
-        [compact]="true">
-      </app-section-header>
+    <!-- Internal Notes Command Panel -->
+    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+          <span class="material-symbols-outlined text-[20px]">note_alt</span>
+        </div>
+        <div>
+          <h2 class="text-lg font-black text-slate-900">{{ 'DRIVERS.DETAIL.SUPPORT.INTERNAL_NOTES_TITLE' | translate }}</h2>
+        </div>
+      </div>
 
-      <div class="mt-6 flex flex-col gap-3">
+      <div class="mt-4 flex flex-col gap-3">
         <textarea
           [ngModel]="quickNote"
           (ngModelChange)="onQuickNoteChange($event)"
           [placeholder]="'DRIVERS.DETAIL.SUPPORT.QUICK_NOTE_PLACEHOLDER' | translate"
-          class="min-h-[100px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10">
+          class="min-h-[110px] w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-4 text-[13px] font-medium outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-1 focus:ring-zadna-primary">
         </textarea>
         <button 
           (click)="quickNoteAdded.emit()"
           [disabled]="!quickNote.trim()"
-          class="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zadna-primary text-sm font-bold text-white shadow-sm transition-all hover:bg-zadna-primaryDark disabled:opacity-50 active:scale-95">
+          class="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-zadna-primary text-[13px] font-bold text-white shadow-sm transition-all hover:bg-zadna-primary/90 disabled:opacity-50">
           <span class="material-symbols-outlined text-[18px]">add</span>
           {{ 'DRIVERS.DETAIL.SUPPORT.ADD_NOTE_BTN' | translate }}
         </button>
       </div>
 
-      <div class="mt-6 space-y-4">
+      <div class="mt-8 space-y-4">
+        <h3 class="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-500 mb-4">{{ 'DRIVERS.DETAIL.OVERVIEW.NOTES_HISTORY' | translate }}</h3>
+        
         <div *ngFor="let note of driver.notes" class="relative pl-6" [ngClass]="isRTL ? 'pr-6 pl-0' : 'pl-6'">
+          <!-- Timeline line -->
           <div class="absolute top-2 bottom-0 w-px bg-slate-200" [ngClass]="isRTL ? 'right-2' : 'left-2'"></div>
-          <div class="absolute top-2 h-2 w-2 rounded-full border-2 border-white bg-slate-400" [ngClass]="isRTL ? 'right-[5px]' : 'left-[5px]'"></div>
+          <!-- Timeline dot -->
+          <div class="absolute top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-slate-400 shadow-sm" [ngClass]="isRTL ? 'right-[5px]' : 'left-[5px]'"></div>
           
-          <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-3">
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-[11px] font-black text-slate-700">{{ note.author }}</span>
-              <span class="text-[10px] font-bold text-slate-400" dir="ltr">{{ note.createdAt }}</span>
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-black text-slate-900">{{ note.author }}</span>
+              <span class="text-[10px] font-bold text-slate-500" dir="ltr">{{ note.createdAt }}</span>
             </div>
-            <p class="text-xs font-medium leading-relaxed text-slate-600">{{ note.message }}</p>
+            <p class="text-[12px] font-medium leading-relaxed text-slate-700">{{ note.message }}</p>
           </div>
         </div>
 
-        <div *ngIf="driver.notes.length === 0" class="rounded-xl border border-dashed border-slate-200 py-8 text-center">
-          <span class="material-symbols-outlined mb-2 text-[32px] text-slate-300">sticky_note_2</span>
-          <p class="text-sm font-medium text-slate-500">{{ 'DRIVERS.DETAIL.OVERVIEW.NO_RECENT_NOTES' | translate }}</p>
+        <div *ngIf="driver.notes.length === 0" class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-10 text-center">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-slate-400 mb-3 shadow-sm border border-slate-100">
+            <span class="material-symbols-outlined text-[24px]">sticky_note_2</span>
+          </div>
+          <p class="text-[13px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.OVERVIEW.NO_RECENT_NOTES' | translate }}</p>
         </div>
       </div>
     </section>

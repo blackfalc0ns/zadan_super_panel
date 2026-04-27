@@ -44,6 +44,7 @@
     "HIDE_INACTIVE": "Hide Inactive",
     "SHOW_INACTIVE": "Show All",
     "RESET_FILTERS": "Reset Search",
+    "CLEAR_FILTERS": "Clear filters",
     "SEARCH": "Search...",
     "PREVIOUS": "Previous",
     "NEXT": "Next",
@@ -51,6 +52,13 @@
     "NO_RESULTS": "No results found",
     "SELECTED_ITEMS": "Selected items",
     "CURRENCY_SAR": "SAR",
+    "CURRENCY": "SAR",
+    "BACK_TO_LIST": "Back to List",
+    "NO_DATA": "No data",
+    "OPEN": "Open",
+    "TODAY": "Today",
+    "THIS_WEEK": "This week",
+    "VIEW_ALL": "View all",
     "CITIES": {
       "RIYADH": "Riyadh",
       "JEDDAH": "Jeddah",
@@ -859,10 +867,24 @@
       "FINANCE": "Finance",
       "VERIFICATION": "Verification"
     },
-    "DETAIL": {
-      "PAGE_TITLE": "Comprehensive Driver Operational Profile",
-      "PAGE_SUBTITLE": "Unified driver journey from documentation to operation, support, compliance, and collection",
-      "BTN_VERIFY": "Verification",
+      "DETAIL": {
+        "PAGE_TITLE": "Comprehensive Driver Operational Profile",
+        "PAGE_SUBTITLE": "Unified driver journey from documentation to operation, support, compliance, and collection",
+      "MESSAGES": {
+        "INVALID_DRIVER_ID": "Invalid driver ID.",
+        "DRIVER_NOT_FOUND": "Driver not found.",
+        "LOAD_DETAILS_FAILED": "Failed to load driver details.",
+        "WRITE_NOTE_FIRST": "Write a note before saving.",
+        "NOTE_ADDED": "Note added successfully.",
+        "DRIVER_REACTIVATED": "Driver reactivated successfully.",
+        "DRIVER_SUSPENDED": "Driver suspended successfully.",
+        "ACTION_FAILED": "Action failed. Please try again.",
+        "OPENED_RELATED_SECTION": "Opened the related section. This action does not have a direct API endpoint yet.",
+        "VERIFICATION_APPROVED": "Driver verification approved.",
+        "DOCUMENT_REQUEST_SUBMITTED": "Document request submitted.",
+        "VERIFICATION_REJECTED": "Driver verification rejected."
+      },
+        "BTN_VERIFY": "Verification",
       "BTN_ACCESS_PROFILE": "Access Profile",
       "BTN_OPERATIONS": "Operations",
       "BTN_REACTIVATE": "Reactivate",
@@ -928,6 +950,10 @@
         "MAP_SECTION": "Driver Zones & Tasks",
         "MAP_ALT": "Driver zone preview",
         "MAP_UNAVAILABLE": "No live map preview is available for this driver.",
+        "TELEMETRY_DESC": "Live position, zone, and current assignment context.",
+        "METRICS_TITLE": "Operations Metrics",
+        "LIVE_BADGE": "Live",
+        "DRIVER_LOCATION": "Driver Location",
         "ZONE_CAPACITY": "Current Capacity",
         "OCCUPANCY_RATE": "Occupancy Rate",
         "AVG_DELIVERY": "Avg Delivery Time",
@@ -985,12 +1011,37 @@
         "ACTIVE_MISSION": "Active mission",
         "STABILITY": "Operational stability",
         "NO_TASKS_TITLE": "No assignments from the backend",
-        "NO_TASKS_DESC": "This driver has no active or recent task assignments in the admin detail payload."
+        "NO_TASKS_DESC": "This driver has no active or recent task assignments in the admin detail payload.",
+        "BACKEND": {
+          "CHECKLIST": {
+            "PERSONAL_INFO": "Personal information is complete",
+            "VEHICLE_INFO": "Vehicle information is complete",
+            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
+            "LICENSE_DOCUMENT": "Driving license is available and valid",
+            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
+            "PERSONAL_PHOTO": "Personal verification photo is available",
+            "ZONE_SELECTION": "Primary zone is selected"
+          },
+          "CHECKLIST_NOTES": {
+            "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
+            "MISSING_VEHICLE_INFO_NOTE": "Missing operational vehicle details.",
+            "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
+            "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required."
+          },
+          "REJECTION_REASONS": {
+            "MISSING_PERSONAL_INFO": "Missing personal information",
+            "MISSING_VEHICLE_INFO": "Missing vehicle information",
+            "MISSING_DOCUMENTS": "Missing required documents",
+            "MISSING_ZONE_SELECTION": "Primary zone is not selected"
+          }
+        }
       },
       "PERFORMANCE": {
         "STATIC": {
           "BENCHMARKS_TITLE": "Benchmarks",
-          "INSIGHTS_TITLE": "Operational Insights"
+          "BENCHMARKS_DESC": "Compare the driver against regional operating baselines.",
+          "INSIGHTS_TITLE": "Operational Insights",
+          "INSIGHTS_DESC": "Backend signals that explain strengths, risks, and next actions."
         },
         "NO_METRICS_TITLE": "No performance metrics yet",
         "NO_METRICS_DESC": "The page will only show metrics that are calculated by the backend. No synthetic charts are rendered.",
@@ -1000,6 +1051,8 @@
         "BENCHMARK_SECTION": "Region & Fleet Comparison",
         "COMPARISON_SECTION": "Region & Fleet Comparison",
         "REGION_AVG": "Region Average",
+        "REGION_AVERAGE": "Region Average",
+        "AVG_LABEL": "Avg",
         "FLEET_AVG": "Fleet Average",
         "BACKEND": {
           "METRICS": {
@@ -1232,6 +1285,8 @@
           "REVIEW": "Under Review",
           "REVIEW_DESC": "Files still waiting for manual verification."
         },
+        "NO_INCIDENTS": "No incidents",
+        "NO_INCIDENTS_DESC": "There are no compliance incidents linked to this driver.",
         "CRITICAL_BANNER": "Critical Compliance Alert",
         "CRITICAL_BANNER_MSG": "There are {{count}} critical cases requiring immediate review to avoid SLA breach or extended suspension.",
         "CRITICAL_ALERT_TITLE": "Critical Compliance Alert",
@@ -1295,7 +1350,9 @@
         "AVAILABLE_WITHDRAW": "Available for Withdrawal",
         "AVAILABLE_BALANCE": "Available Balance",
         "COD_COLLECTED": "Collected COD",
+        "COLLECTED_COD": "Collected COD",
         "DUE_AMOUNT": "Current Dues",
+        "DUE_AMOUNT_LABEL": "Current Dues",
         "CURRENT_DUE": "Current Dues",
         "STATEMENTS_TITLE": "Ledger Entries",
         "STATEMENTS_DESC": "Real wallet and settlement entries from the backend ledger.",
@@ -1321,7 +1378,12 @@
           "DATE": "Date"
         },
         "NO_SETTLEMENTS": "No Settlements",
+        "NO_STATEMENTS": "No ledger entries",
         "NO_SETTLEMENTS_MSG": "There are no financial transactions linked to this driver.",
+        "ACTIONS": {
+          "SETTLE": "Settle balance",
+          "DOWNLOAD_STATEMENT": "Download statement"
+        },
         "BACKEND": {
           "TYPES": {
             "CREDIT": "Credit",
@@ -1363,6 +1425,43 @@
       },
       "VERIFICATION": {
         "SECTION_TITLE": "Driver Verification & Review",
+        "COMMAND_CENTER": "Verification Command Center",
+        "EXECUTIVE_REVIEW": "Executive Review",
+        "EXECUTIVE_REVIEW_DESC": "Focused workspace for document review, account control, and compliance records.",
+        "WINDOWS": {
+          "OPERATIONS": "Operations & Timeline",
+          "REVIEW": "Documents & Preview"
+        },
+        "APPROVAL_READINESS": "Approval Readiness",
+        "READINESS_READY": "Ready for final approval",
+        "READINESS_WAITING": "Waiting for document completion",
+        "FILES_AVAILABLE": "Files available",
+        "TOTAL_DOCUMENTS": "Total documents",
+        "VALID_DOCUMENTS": "Valid documents",
+        "VALID_DOCUMENTS_DESC": "Valid and active documents",
+        "UNDER_REVIEW": "Under Review",
+        "UNDER_REVIEW_DESC": "Files waiting for review",
+        "EXPIRING_ITEMS": "Expiring items",
+        "EXPIRING_ITEMS_DESC": "Items needing renewal",
+        "ACCOUNT_CONTROL_TITLE": "Account Control Rail",
+        "ACCOUNT_CONTROL_DESC": "Manage driver status and decisions",
+        "REQUIREMENTS_TITLE": "Verification Requirements",
+        "REQUIREMENTS_DESC": "Checklist and notes",
+        "ADD_INTERNAL_NOTE": "Add internal note",
+        "ADD_INTERNAL_NOTE_PLACEHOLDER": "Internal note for reviewers...",
+        "CHECKLIST_TAB": "Checklist",
+        "DOCUMENT_BOARD": "Document Board",
+        "FILES_IN_PACKET": "{{count}} files in packet",
+        "PREVIEW_DECISION": "Preview & Decision",
+        "SELECT_DOCUMENT": "Select a document",
+        "FILE_READY": "File ready for download and preview",
+        "PREVIEW_NOTES": "Preview Notes",
+        "PREVIEW_NOTES_PLACEHOLDER": "Decision details...",
+        "NO_DOCUMENT_SELECTED": "No Document Selected",
+        "NO_DOCUMENT_SELECTED_DESC": "Select a document from the board to preview it.",
+        "DOCUMENT_GROUPS": {
+          "DRIVER_DOCUMENTS": "Driver Documents"
+        },
         "APP_ID": "Application Number",
         "APP_NUMBER": "Application Number",
         "SUBMITTED_AT": "Submission Date",
@@ -1423,7 +1522,9 @@
         "ACTIONS": {
           "APPROVE": "Approve Driver",
           "REQUEST_DOCUMENTS": "Request Missing Documents",
-          "REJECT": "Reject Driver"
+          "REJECT": "Reject Driver",
+          "APPROVE_SHORT": "Approve",
+          "REJECT_SHORT": "Reject"
         },
         "NO_RECOMMENDATION_REASON": "No recommendation reason was provided yet.",
         "STATUS_COMPLETED": "Completed",
@@ -1675,8 +1776,16 @@
         "JOINED_AT": "Joined At",
         "VEHICLE_TYPE": "Vehicle Type",
         "LICENSE_NUMBER": "License Number",
-        "ZONE": "Primary Zone",
-        "NO_RECENT_NOTES": "No recent notes."
+      "ZONE": "Primary Zone",
+      "NO_RECENT_NOTES": "No recent notes.",
+      "QUICK_SUMMARY_TITLE": "Driver Summary",
+      "QUICK_SUMMARY_DESC": "Operational snapshot from the latest driver profile data.",
+      "SIGNALS": "Signals",
+      "ALERTS_TITLE": "Alerts & Review Notes",
+      "ALERTS_DESC": "Open blockers and follow-up signals for this driver.",
+      "NO_ALERTS": "No active alerts",
+      "NO_ALERTS_DESC": "This profile is clear outside routine monitoring.",
+      "NOTES_HISTORY": "Notes History"
       },
       "LIFECYCLE": {
         "APPLICATION": {
@@ -2391,6 +2500,33 @@
     "TAB_LOGS": "Logs & Notes",
     "TAB_SETTINGS": "Settings",
     "TAB_ANALYTICS": "Analytics & Performance",
+    "HEADER_METRICS": {
+      "PERFORMANCE": "Performance",
+      "RISK_LEVEL": "Risk Level",
+      "REVIEW_STATE": "Review State",
+      "NETWORK": "Network",
+      "BRANCHES": "Branches"
+    },
+    "MESSAGE_COMPOSER": {
+      "BADGE": "Vendor communication",
+      "TITLE": "Send vendor message",
+      "ARABIC_TITLE": "Arabic title",
+      "ENGLISH_TITLE": "English title",
+      "ARABIC_BODY": "Arabic body",
+      "ENGLISH_BODY": "English body",
+      "CHANNEL_INBOX": "Inbox",
+      "CHANNEL_PUSH": "Push",
+      "CHANNEL_EMAIL": "Email",
+      "SEND": "Send",
+      "SENDING": "Sending...",
+      "SEND_TEST_NOTIFICATION": "Send test notification",
+      "TOAST_TITLE": "Vendor notifications",
+      "TOAST_PUSH_SENT": "The notification was created and web push was sent to the vendor successfully.",
+      "TOAST_PUSH_FAILED": "The notification was created in-app, but web push delivery did not succeed.",
+      "TOAST_PUSH_SKIPPED": "The vendor inbox notification was created, but web push was skipped for this test.",
+      "TOAST_CREATED": "The vendor notification was created successfully.",
+      "ERROR_SEND_FAILED": "Unable to send the test notification right now."
+    },
     "DATA_MANAGEMENT_SUMMARY": "Data Management Summary",
     "COMPLETION_RATE": "Profile Completion",
     "LAST_UPDATE": "Last Update",
@@ -2531,7 +2667,8 @@
       "CHANGES_REQUESTED": "Changes Requested",
       "VERIFIED": "Verified",
       "REJECTED": "Rejected",
-      "SUSPENDED": "Suspended"
+      "SUSPENDED": "Suspended",
+      "UNKNOWN": "Unknown"
     },
     "STATUS": {
       "UNVERIFIED": "Unverified"
@@ -2662,6 +2799,17 @@
       "COMPLETED": "Completed",
       "CANCELLED": "Cancelled"
     },
+    "FILTERS": {
+      "ALL_STATUSES": "All statuses",
+      "ALL_PAYMENT_STATES": "All payment states",
+      "PREPARING": "Preparing",
+      "ON_THE_WAY": "On the way",
+      "DELIVERED": "Delivered"
+    },
+    "ORDERS_TITLE": "Vendor Orders",
+    "ORDERS_SUBTITLE": "Review the vendor's operational orders, payment state, and fulfillment progress.",
+    "ORDERS_BOARD": "Orders board",
+    "ORDERS_BOARD_DESC": "Select any order to open its details.",
     "SEARCH_PLACEHOLDER": "Search by order number or customer name...",
     "FILTER": "Filter",
     "DATE_RANGE": "Date Range",
@@ -2679,9 +2827,28 @@
       "CUSTOMER": "Customer",
       "DATE": "Date",
       "AMOUNT": "Amount",
+      "ITEMS": "Items",
       "PAYMENT_STATUS": "Payment Status",
       "SHIPPING_STATUS": "Shipping Status",
-      "GENERAL_STATUS": "General Status"
+      "GENERAL_STATUS": "General Status",
+      "OPEN": "Open"
+    },
+    "EXPORT_HEADERS": {
+      "ORDER_NUMBER": "Order Number",
+      "CUSTOMER": "Customer",
+      "DATE": "Date",
+      "TIME": "Time",
+      "AMOUNT": "Amount",
+      "STATUS": "Status",
+      "PAYMENT_STATUS": "Payment Status"
+    },
+    "STATES": {
+      "LOADING_TITLE": "Loading vendor orders",
+      "LOADING_MESSAGE": "Preparing the latest order records for this vendor.",
+      "ERROR_TITLE": "Could not load orders",
+      "ERROR_MESSAGE": "The vendor orders endpoint could not be loaded right now. Try refreshing the page.",
+      "EMPTY_ORDERS_TITLE": "No orders found",
+      "EMPTY_ORDERS_MESSAGE": "This vendor has no orders matching the current filters."
     },
     "ALERTS": {
       "SHIPPING_DELAY": "3 orders exceeded the scheduled shipping window (48 hours).",

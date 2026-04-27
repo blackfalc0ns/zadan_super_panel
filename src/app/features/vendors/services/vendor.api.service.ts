@@ -605,14 +605,6 @@ export class VendorService {
     return this.http.post<AdminVendorNotificationResponse>(`${this.apiUrl}/${vendorId}/notifications/send`, payload);
   }
 
-  getVendorWorkspaceState<T>(vendorId: string, feature: string): Observable<T> {
-    return this.http.get<T>(`${this.apiUrl}/${vendorId}/workspace-state/${feature}`);
-  }
-
-  saveVendorWorkspaceState<T>(vendorId: string, feature: string, payload: T): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${vendorId}/workspace-state/${feature}`, payload);
-  }
-
   private shouldUseLocalReadFallback(): boolean {
     if (!environment.skipAuthForDevelopment) {
       return false;

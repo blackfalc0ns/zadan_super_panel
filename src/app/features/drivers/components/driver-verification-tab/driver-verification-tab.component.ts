@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
@@ -13,7 +13,7 @@ import { getDocumentStatusKey, getDocumentStatusVariant } from '../../utils/driv
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, SectionHeaderComponent],
   templateUrl: './driver-verification-tab.component.html'
 })
-export class DriverVerificationTabComponent {
+export class DriverVerificationTabComponent implements OnInit {
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() reviewerDecisionNote = '';
   @Input() selectedRejectionReason = '';
@@ -26,6 +26,61 @@ export class DriverVerificationTabComponent {
   @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
 
   selectedDocumentPreview: DriverDocumentRecord | null = null;
+  workspaceWindow: 'operations' | 'review' = 'review';
+  activeRailTab: 'checklist' | 'notes' = 'checklist';
+  newNote = '';
+  documentRejectReason = '';
+
+  get documentGroups() {
+    // Group documents into a single group for now to match vendor UI structure
+    return [
+      {
+        title: 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_GROUPS.DRIVER_DOCUMENTS',
+        documents: this.driver.documents
+      }
+    ];
+  }
+
+  get reviewCompletionPercent() {
+    return this.driver.verification.progressPercentage || 0;
+  }
+
+  get validDocumentsCount() {
+    return this.driver.documents.filter(d => d.status === 'valid').length;
+  }
+
+  get pendingDocumentsCount() {
+    return this.driver.documents.filter(d => d.status === 'review').length;
+  }
+
+  get rejectedDocumentsCount() {
+    return this.driver.documents.filter(d => d.status === 'expiring').length;
+  }
+
+  ngOnInit() {
+    if (this.driver.documents && this.driver.documents.length > 0) {
+      this.selectedDocumentPreview = this.driver.documents[0];
+    }
+  }
+
+  setWorkspaceWindow(window: 'operations' | 'review') {
+    this.workspaceWindow = window;
+  }
+
+  isWorkspaceWindowActive(window: 'operations' | 'review') {
+    return this.workspaceWindow === window;
+  }
+
+  selectDocument(document: DriverDocumentRecord) {
+    this.selectedDocumentPreview = document;
+    this.documentRejectReason = '';
+  }
+
+  onAddNote() {
+    if (!this.newNote.trim()) return;
+    // In a real app, dispatch to backend
+    this.newNote = '';
+  }
 
   onReviewerDecisionNoteChange(value: string) {
     this.reviewerDecisionNote = value;
@@ -47,15 +102,56 @@ export class DriverVerificationTabComponent {
   }
 
   openDocumentPreview(document: DriverDocumentRecord) {
-    this.selectedDocumentPreview = document;
+    if (this.hasDocumentFile(document)) {
+      this.selectedDocumentPreview = document;
+    }
   }
 
   closeDocumentPreview() {
     this.selectedDocumentPreview = null;
   }
 
+  openDocumentInNewTab(document: DriverDocumentRecord) {
+    const documentUrl = this.getDocumentUrl(document);
+    if (!documentUrl || typeof window === 'undefined') {
+      return;
+    }
+
+    window.open(documentUrl, '_blank', 'noopener,noreferrer');
+  }
+
   getDocumentPreviewTitle(): string {
     return this.selectedDocumentPreview?.title ?? '';
+  }
+
+  getDocumentUrl(document: DriverDocumentRecord | null): string {
+    return document?.fileUrl || document?.imageUrl || '';
+  }
+
+  hasDocumentFile(document: DriverDocumentRecord | null): boolean {
+    return Boolean(this.getDocumentUrl(document).trim());
+  }
+
+  isImageDocument(document: DriverDocumentRecord | null): boolean {
+    const url = this.getDocumentUrl(document).toLowerCase().split('?')[0];
+    const contentType = document?.contentType?.toLowerCase() || '';
+
+    return contentType.startsWith('image/')
+      || /\.(png|jpe?g|webp|gif|bmp|avif)$/i.test(url);
+  }
+
+  isPdfDocument(document: DriverDocumentRecord | null): boolean {
+    const url = this.getDocumentUrl(document).toLowerCase().split('?')[0];
+    const contentType = document?.contentType?.toLowerCase() || '';
+
+    return contentType.includes('pdf') || url.endsWith('.pdf');
+  }
+
+  getDocumentTypeIcon(document: DriverDocumentRecord): string {
+    if (!this.hasDocumentFile(document)) return 'upload_file';
+    if (this.isPdfDocument(document)) return 'picture_as_pdf';
+    if (this.isImageDocument(document)) return 'image';
+    return 'description';
   }
 
   requiresReason(action: 'approve' | 'request-docs' | 'reject'): boolean {

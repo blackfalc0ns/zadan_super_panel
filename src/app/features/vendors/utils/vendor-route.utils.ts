@@ -8,7 +8,6 @@ export const VENDOR_DETAIL_TABS = [
   'orders',
   'finance',
   'compliance',
-  'workspace',
   'logs',
   'settings'
 ] as const;

@@ -119,8 +119,8 @@
     class="overflow-hidden rounded-2xl border border-slate-200/70 bg-white/90 shadow-sm backdrop-blur">
     <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-2.5">
       <div>
-        <h2 class="text-[13px] font-black text-slate-950">{{ isRTL ? 'قائمة الطلبات' : 'Orders board' }}</h2>
-        <p class="mt-0.5 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'اضغط على أي طلب لفتح تفاصيله.' : 'Select any order to open its details.' }}</p>
+        <h2 class="text-[13px] font-black text-slate-950">{{ 'VENDOR_ORDERS.ORDERS_BOARD' | translate }}</h2>
+        <p class="mt-0.5 text-[11px] font-semibold text-slate-500">{{ 'VENDOR_ORDERS.ORDERS_BOARD_DESC' | translate }}</p>
       </div>
 
       <div class="hidden items-center gap-2 sm:flex">
@@ -155,7 +155,7 @@
               {{ 'VENDOR_ORDERS.TABLE.GENERAL_STATUS' | translate }}
             </th>
             <th class="px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.08em] text-slate-500">
-              {{ isRTL ? 'فتح' : 'Open' }}
+              {{ 'VENDOR_ORDERS.TABLE.OPEN' | translate }}
             </th>
           </tr>
         </thead>

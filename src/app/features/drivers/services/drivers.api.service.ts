@@ -66,6 +66,10 @@ interface AdminDriversListResponse {
 interface AdminDriverDocumentResponse {
   documentType: string;
   imageUrl?: string | null;
+  fileUrl?: string | null;
+  url?: string | null;
+  fileName?: string | null;
+  contentType?: string | null;
   status: string;
   expiryInfo?: string | null;
 }
@@ -748,11 +752,16 @@ export class DriverService {
   private mapDriverDocuments(documents: AdminDriverDocumentResponse[]): DriverDocumentRecord[] {
     return documents.map((document, index) => {
       const mappedStatus = this.mapDocumentStatus(document.status);
+      const documentUrl = document.fileUrl || document.url || document.imageUrl || undefined;
 
       return {
         id: `${document.documentType}-${index}`,
         title: this.mapDocumentTitle(document.documentType),
-        imageUrl: document.imageUrl || 'assets/images/placeholders/driver-avatar.png',
+        imageUrl: documentUrl,
+        fileUrl: documentUrl,
+        fileName: document.fileName || undefined,
+        contentType: document.contentType || undefined,
+        documentType: document.documentType,
         status: mappedStatus,
         statusLabel: this.mapDocumentStatusLabel(mappedStatus),
         expiryDate: document.expiryInfo || this.mapDocumentExpiryLabel(document.status),

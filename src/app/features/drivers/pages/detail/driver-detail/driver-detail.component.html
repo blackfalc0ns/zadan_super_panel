@@ -1,52 +1,44 @@
-<ng-container *ngIf="!hasLoadError; else loadErrorState">
+<section class="font-sans" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <!-- Clean Professional Back Link -->
+  <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+    <button (click)="goBack()" 
+      class="group flex items-center gap-2 text-sm font-black text-slate-500 hover:text-slate-900 transition-colors w-fit outline-none focus-visible:ring-2 focus-visible:ring-slate-400 rounded-md">
+      <span class="material-symbols-outlined text-[18px] transition-transform duration-300" [ngClass]="isRTL ? 'group-hover:translate-x-1' : 'group-hover:-translate-x-1'">{{ isRTL ? 'arrow_forward' : 'arrow_back' }}</span>
+      <span>{{ 'COMMON.BACK_TO_LIST' | translate }}</span>
+    </button>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-bold text-rose-700 shadow-sm">
+      {{ error }}
+    </div>
+  </div>
+
   <app-driver-detail-view
-    [driverDetail]="driverDetail"
-    [currentTab]="currentTab"
+    *ngIf="!error || isLoading"
+    [driverDetail]="driver"
+    [isLoading]="isLoading"
+    [currentTab]="activeTab"
     [quickNote]="quickNote"
     [reviewerDecisionNote]="reviewerDecisionNote"
-    [internalReviewNote]="internalReviewNote"
     [selectedRejectionReason]="selectedRejectionReason"
-    [mapPreviewUrl]="mapPreviewUrl"
+    [internalReviewNote]="internalReviewNote"
     [previewType]="previewType"
     [selectedTask]="selectedTask"
     [selectedIncident]="selectedIncident"
-    [isLoading]="isLoading"
-    (editDriverRequested)="editDriver()"
-    (openTasksRequested)="openTasks()"
-    (toggleSuspensionRequested)="toggleSuspension()"
+    [isRTL]="isRTL"
     (tabChange)="setTab($event)"
+    (workflowActionRequested)="executeWorkflowAction($event)"
+    (openTasksRequested)="setTab('operations')"
+    (toggleSuspensionRequested)="toggleSuspension()"
     (quickNoteChange)="quickNote = $event"
     (quickNoteAdded)="addQuickNote()"
     (reviewerDecisionNoteChange)="reviewerDecisionNote = $event"
-    (internalReviewNoteChange)="internalReviewNote = $event"
     (selectedRejectionReasonChange)="selectedRejectionReason = $event"
-    (reviewActionRequested)="handleReviewAction($event)"
+    (internalReviewNoteChange)="internalReviewNote = $event"
+    (reviewActionRequested)="requestReviewAction($event)"
     (taskPreviewRequested)="openTaskPreview($event)"
     (incidentPreviewRequested)="openIncidentPreview($event)"
-    (previewClosed)="closePreview()"
-    (previewActionClick)="handlePreviewAction($event)"
-    (workflowActionRequested)="handleWorkflowAction($event)">
+    (previewClosed)="closePreview()">
   </app-driver-detail-view>
-</ng-container>
-
-<ng-template #loadErrorState>
-  <div class="min-h-[70vh] bg-slate-50/50 p-4 sm:p-6 lg:p-8" dir="rtl">
-    <div class="mx-auto flex max-w-2xl flex-col items-center justify-center rounded-[1.75rem] border border-red-100 bg-white p-10 text-center shadow-sm">
-      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-500">
-        <span class="material-symbols-outlined text-[30px]">error</span>
-      </div>
-      <h1 class="mt-5 text-2xl font-black text-slate-900">{{ 'DRIVERS.DETAIL.LOAD_ERROR_TITLE' | translate }}</h1>
-      <p class="mt-3 max-w-xl text-sm font-medium leading-7 text-slate-500">{{ 'DRIVERS.DETAIL.LOAD_ERROR_DESC' | translate }}</p>
-      <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-        <button type="button" (click)="retryLoad()" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-5 text-sm font-bold text-white shadow-sm transition-all hover:bg-zadna-primaryDark active:scale-95">
-          <span class="material-symbols-outlined text-[18px]">refresh</span>
-          {{ 'COMMON.RETRY' | translate }}
-        </button>
-        <button type="button" (click)="router.navigate(['/drivers'])" class="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95">
-          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-          {{ 'DRIVERS.DETAIL.BACK_TO_DRIVERS' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
-</ng-template>
+</section>

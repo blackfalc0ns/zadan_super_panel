@@ -1,128 +1,130 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { PreviewAction } from '../../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
-import { DriverDetailViewComponent } from '../../../components/driver-detail-view/driver-detail-view.component';
-import { DriverDetailRecord, DriverIncidentRecord, DriverTaskAssignment, DriverWorkflowActionId } from '../../../models/drivers.models';
-import { DriverLifecycleTabId, DriverPreviewType } from '../../../models/driver-view.types';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { finalize, Subject, takeUntil } from 'rxjs';
+
 import { DriverService } from '@drivers/services/drivers.api.service';
-import { Driver } from '@drivers/models/drivers.domain.models';
+import {
+  DriverDetailRecord,
+  DriverIncidentRecord,
+  DriverTaskAssignment,
+  DriverWorkflowActionId
+} from '@drivers/models/drivers.models';
+import { DriverLifecycleTabId, DriverPreviewType } from '@drivers/models/driver-view.types';
+import { DriverDetailViewComponent } from '@drivers/components/driver-detail-view/driver-detail-view.component';
+import { ToastService } from '@shared/services/toast.service';
 
 @Component({
   selector: 'app-driver-detail',
   standalone: true,
-  imports: [CommonModule, TranslateModule, DriverDetailViewComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, DriverDetailViewComponent],
   templateUrl: './driver-detail.component.html'
 })
-export class DriverDetailComponent implements OnInit {
-  driverDetail: DriverDetailRecord | null = null;
-  private sourceDriver: Driver | null = null;
-  private currentDriverId: string | null = null;
-  currentTab: DriverLifecycleTabId = 'overview';
+export class DriverDetailComponent implements OnInit, OnDestroy {
+  driverId: string | null = null;
+  driver: DriverDetailRecord | null = null;
+  isLoading = true;
+  isMutating = false;
+  error: string | null = null;
+  activeTab: DriverLifecycleTabId = 'overview';
   quickNote = '';
   reviewerDecisionNote = '';
   internalReviewNote = '';
   selectedRejectionReason = '';
-  readonly mapPreviewUrl = null;
-
   previewType: DriverPreviewType | null = null;
   selectedTask: DriverTaskAssignment | null = null;
   selectedIncident: DriverIncidentRecord | null = null;
 
-  isLoading = true;
-  hasLoadError = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private readonly route: ActivatedRoute,
-    public readonly router: Router,
+    private readonly router: Router,
     private readonly driverService: DriverService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly toastService: ToastService
   ) {}
 
+  get isRTL(): boolean {
+    return this.translate.currentLang !== 'en';
+  }
+
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((params) => {
-      this.currentTab = this.normalizeTab(params.get('tab'));
-    });
-
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-
-      if (!id) {
-        this.router.navigate(['/drivers']);
-        return;
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      this.driverId = params.get('id');
+      if (this.driverId) {
+        this.loadDriver(this.driverId);
+      } else {
+        this.error = this.t('DRIVERS.DETAIL.MESSAGES.INVALID_DRIVER_ID');
+        this.isLoading = false;
       }
+    });
 
-      this.loadDriver(id);
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const tab = params.get('tab') as DriverLifecycleTabId;
+      if (tab) {
+        this.activeTab = tab;
+      }
     });
   }
 
-  editDriver(): void {
-    this.setTab('verification');
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  openTasks(): void {
-    this.setTab('operations');
+  loadDriver(id: string, showLoading = true): void {
+    if (showLoading) {
+      this.isLoading = true;
+    }
+    this.error = null;
+
+    this.driverService.getDriverDetailRecordById(id).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (data) => {
+        if (data) {
+          this.driver = data;
+        } else {
+          this.driver = null;
+          this.error = this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_NOT_FOUND');
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load driver', err);
+        this.driver = null;
+        this.error = this.t('DRIVERS.DETAIL.MESSAGES.LOAD_DETAILS_FAILED');
+        this.isLoading = false;
+      }
+    });
   }
 
-  toggleSuspension(): void {
-    if (!this.sourceDriver || !this.currentDriverId) {
-      return;
-    }
-
-    if (this.sourceDriver.status === 'Suspended') {
-      this.runDriverAction(this.driverService.reactivateDriver(this.currentDriverId));
-      return;
-    }
-
-    this.runDriverAction(
-      this.driverService.suspendDriver(
-        this.currentDriverId,
-        this.internalReviewNote.trim() || this.reviewerDecisionNote.trim() || undefined),
-      'compliance');
-  }
-
-  retryLoad(): void {
-    if (this.currentDriverId) {
-      this.loadDriver(this.currentDriverId);
-    }
-  }
-
-  addQuickNote(): void {
-    const note = this.quickNote.trim();
-
-    if (!note || !this.driverDetail || !this.currentDriverId) {
-      return;
-    }
-    this.quickNote = '';
-    this.runDriverAction(this.driverService.addDriverNote(this.currentDriverId, note), 'support');
-  }
-
-  setTab(tabId: DriverLifecycleTabId): void {
-    if (this.currentTab === tabId) {
-      return;
-    }
-
-    this.currentTab = tabId;
+  setTab(tab: DriverLifecycleTabId): void {
+    this.activeTab = tab;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { tab: tabId === 'overview' ? null : tabId },
+      queryParams: { tab },
       queryParamsHandling: 'merge'
     });
   }
 
+  goBack(): void {
+    this.router.navigate(['/drivers']);
+  }
+
   openTaskPreview(task: DriverTaskAssignment): void {
-    this.previewType = 'task';
     this.selectedTask = task;
     this.selectedIncident = null;
+    this.previewType = 'task';
   }
 
   openIncidentPreview(incident: DriverIncidentRecord): void {
-    this.previewType = 'incident';
     this.selectedIncident = incident;
     this.selectedTask = null;
+    this.previewType = 'incident';
   }
 
   closePreview(): void {
@@ -131,188 +133,142 @@ export class DriverDetailComponent implements OnInit {
     this.selectedIncident = null;
   }
 
-  handlePreviewAction(action: PreviewAction): void {
-    if (action.id === 'reassign') {
-      this.setTab('operations');
-    } else if (action.id === 'request-docs') {
-      this.setTab('verification');
-    } else if (action.id === 'urgent' || action.id === 'suspend-driver') {
-      this.setTab('compliance');
+  addQuickNote(): void {
+    if (!this.driverId || this.isMutating) {
+      return;
     }
 
-    this.closePreview();
+    const message = this.quickNote.trim();
+    if (!message) {
+      this.toastService.warning(this.t('DRIVERS.DETAIL.MESSAGES.WRITE_NOTE_FIRST'));
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.addDriverNote(this.driverId!, message),
+      this.t('DRIVERS.DETAIL.MESSAGES.NOTE_ADDED'),
+      () => {
+        this.quickNote = '';
+      }
+    );
   }
 
-  handleWorkflowAction(actionId: DriverWorkflowActionId): void {
-    if (!this.sourceDriver || !this.currentDriverId) {
+  requestReviewAction(action: 'approve' | 'request-docs' | 'reject'): void {
+    if (!this.driverId || this.isMutating) {
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.reviewDriver(this.driverId!, action, this.composeReviewNote()),
+      this.getReviewSuccessMessage(action)
+    );
+  }
+
+  toggleSuspension(): void {
+    if (!this.driverId || !this.driver || this.isMutating) {
+      return;
+    }
+
+    if (this.driver.status === 'Suspended') {
+      this.runMutation(
+        () => this.driverService.reactivateDriver(this.driverId!),
+        this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_REACTIVATED')
+      );
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.suspendDriver(this.driverId!, this.composeReviewNote()),
+      this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_SUSPENDED')
+    );
+  }
+
+  executeWorkflowAction(actionId: DriverWorkflowActionId): void {
+    if (this.isMutating) {
       return;
     }
 
     switch (actionId) {
       case 'APPROVE_VERIFICATION':
-        this.runDriverAction(
-          this.driverService.reviewDriver(
-            this.currentDriverId,
-            'approve',
-            this.reviewerDecisionNote.trim() || this.internalReviewNote.trim() || undefined),
-          'verification');
+        this.requestReviewAction('approve');
         break;
       case 'REQUEST_DOCUMENTS':
-        this.runDriverAction(
-          this.driverService.reviewDriver(
-            this.currentDriverId,
-            'request-docs',
-            this.reviewerDecisionNote.trim() || this.internalReviewNote.trim() || undefined),
-          'verification');
+        this.requestReviewAction('request-docs');
         break;
       case 'REJECT_VERIFICATION':
-        this.runDriverAction(
-          this.driverService.reviewDriver(
-            this.currentDriverId,
-            'reject',
-            this.buildReviewNote('reject')),
-          'verification');
-        break;
-      case 'CLEAR_FINANCE_HOLD':
-        this.setTab('finance');
+        this.requestReviewAction('reject');
         break;
       case 'SUSPEND_DRIVER':
-        this.runDriverAction(
-          this.driverService.suspendDriver(
-            this.currentDriverId,
-            this.internalReviewNote.trim() || this.reviewerDecisionNote.trim() || undefined),
-          'compliance');
-        break;
       case 'REACTIVATE_DRIVER':
-        this.runDriverAction(this.driverService.reactivateDriver(this.currentDriverId), 'overview');
-        break;
-      case 'MARK_READY_FOR_DISPATCH':
-        this.setTab('operations');
-        break;
-      case 'OPEN_OPERATIONS':
-        this.setTab('operations');
-        break;
-      case 'OPEN_SUPPORT':
-        this.setTab('support');
-        break;
-      case 'OPEN_FINANCE':
-        this.router.navigate(['/finances/settlements'], {
-          queryParams: {
-            entityType: 'driver',
-            entityId: this.sourceDriver.id
-          }
-        });
-        break;
-      case 'REVIEW_COMPLIANCE':
-        this.setTab('compliance');
+        this.toggleSuspension();
         break;
       default:
+        this.openWorkflowContext(actionId);
         break;
     }
   }
 
-  handleReviewAction(action: 'approve' | 'request-docs' | 'reject'): void {
-    if (!this.currentDriverId) {
+  private runMutation(
+    requestFactory: () => ReturnType<DriverService['addDriverNote']>,
+    successMessage: string,
+    afterSuccess?: () => void
+  ): void {
+    if (!this.driverId) {
       return;
     }
 
-    this.runDriverAction(
-      this.driverService.reviewDriver(
-        this.currentDriverId,
-        action,
-        this.buildReviewNote(action)),
-      'verification');
-  }
-
-  private normalizeTab(value: string | null): DriverLifecycleTabId {
-    const allowedTabs: DriverLifecycleTabId[] = ['overview', 'operations', 'performance', 'support', 'compliance', 'finance', 'verification'];
-    return allowedTabs.includes(value as DriverLifecycleTabId) ? (value as DriverLifecycleTabId) : 'overview';
-  }
-
-  private loadDriver(id: string): void {
-    this.isLoading = true;
-    this.hasLoadError = false;
-    this.currentDriverId = id;
-
-    this.driverService.getDriverDetailRecordById(id).subscribe((driverDetail) => {
-      if (!driverDetail) {
-        this.driverDetail = null;
-        this.sourceDriver = null;
-        this.isLoading = false;
-        this.hasLoadError = true;
-        return;
-      }
-
-      this.sourceDriver = {
-        ...driverDetail,
-        tasks: { ...driverDetail.tasks },
-        issues: [...driverDetail.issues],
-        alerts: driverDetail.alerts ? [...driverDetail.alerts] : undefined,
-        lastSeenAt: new Date(driverDetail.lastSeenAt)
-      };
-      this.driverDetail = driverDetail;
-      this.reviewerDecisionNote = this.driverDetail.verification.decisionNote;
-      this.internalReviewNote = this.driverDetail.verification.internalNote;
-      this.selectedRejectionReason = this.driverDetail.verification.rejectionReasonOptions[0] ?? '';
-      this.isLoading = false;
-      this.hasLoadError = false;
-    });
-  }
-
-  private runDriverAction(action$: Observable<unknown>, targetTab?: DriverLifecycleTabId): void {
-    if (targetTab) {
-      this.setTab(targetTab);
-    }
-
-    this.isLoading = true;
-    action$.subscribe({
+    this.isMutating = true;
+    requestFactory().pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
+        this.isMutating = false;
+      })
+    ).subscribe({
       next: () => {
-        if (this.currentDriverId) {
-          this.loadDriver(this.currentDriverId);
-        } else {
-          this.isLoading = false;
-        }
+        afterSuccess?.();
+        this.toastService.success(successMessage);
+        this.loadDriver(this.driverId!, false);
       },
-      error: (error) => {
-        console.error('Driver action failed', error);
-        this.isLoading = false;
+      error: (err) => {
+        console.error('Driver mutation failed', err);
+        this.toastService.error(this.t('DRIVERS.DETAIL.MESSAGES.ACTION_FAILED'));
       }
     });
   }
 
-  private buildReviewNote(action: 'approve' | 'request-docs' | 'reject'): string | undefined {
-    const parts: string[] = [];
-    const reason = this.resolveTranslatedReason();
-    const decision = this.reviewerDecisionNote.trim();
-    const internal = this.internalReviewNote.trim();
+  private composeReviewNote(): string | undefined {
+    const parts = [
+      this.selectedRejectionReason,
+      this.reviewerDecisionNote,
+      this.internalReviewNote
+    ]
+      .map((item) => item.trim())
+      .filter(Boolean);
 
-    if (action !== 'approve' && reason) {
-      parts.push(reason);
-    }
-
-    if (decision) {
-      parts.push(decision);
-    }
-
-    if (internal && internal !== decision) {
-      parts.push(internal);
-    }
-
-    const note = parts.join(' | ').trim();
-    return note || undefined;
+    return parts.length ? parts.join('\n') : undefined;
   }
 
-  private resolveTranslatedReason(): string {
-    const key = this.selectedRejectionReason.trim();
-
-    if (!key) {
-      return '';
+  private openWorkflowContext(actionId: DriverWorkflowActionId): void {
+    const action = this.driver?.workflow.actions.find((item) => item.id === actionId);
+    if (action?.targetTab) {
+      this.activeTab = action.targetTab;
     }
 
-    const translated = this.translate.instant(key);
-    return translated === key ? key : translated;
+    this.toastService.info(this.t('DRIVERS.DETAIL.MESSAGES.OPENED_RELATED_SECTION'));
+  }
+
+  private getReviewSuccessMessage(action: 'approve' | 'request-docs' | 'reject'): string {
+    switch (action) {
+      case 'approve':
+        return this.t('DRIVERS.DETAIL.MESSAGES.VERIFICATION_APPROVED');
+      case 'request-docs':
+        return this.t('DRIVERS.DETAIL.MESSAGES.DOCUMENT_REQUEST_SUBMITTED');
+      case 'reject':
+        return this.t('DRIVERS.DETAIL.MESSAGES.VERIFICATION_REJECTED');
+    }
+  }
+
+  private t(key: string): string {
+    return this.translate.instant(key);
   }
 }
-
-
-
