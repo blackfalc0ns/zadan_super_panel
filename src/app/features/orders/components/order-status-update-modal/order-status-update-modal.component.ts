@@ -22,7 +22,8 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
   @Output() close = new EventEmitter<void>();
   @Output() submitStatusUpdate = new EventEmitter<OrderStatusUpdateForm>();
 
-  readonly statusOptions: OrderStatus[] = ['NEW', 'PENDING', 'IN_PROGRESS', 'OUT_FOR_DELIVERY', 'DELIVERED', 'COMPLETED', 'CANCELLED'];
+  // Admin can only set pre-delivery statuses; delivery/cancellation use dedicated endpoints
+  readonly statusOptions: OrderStatus[] = ['NEW', 'PENDING', 'IN_PROGRESS'];
   form: OrderStatusUpdateForm = this.createEmptyForm();
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -78,13 +79,13 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
     }
 
     const matrix: Record<OrderStatus, OrderStatus[]> = {
-      NEW: ['NEW', 'PENDING', 'IN_PROGRESS', 'CANCELLED'],
-      PENDING: ['PENDING', 'IN_PROGRESS', 'CANCELLED'],
-      IN_PROGRESS: ['IN_PROGRESS', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'],
-      OUT_FOR_DELIVERY: ['OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'],
-      DELIVERED: ['DELIVERED', 'COMPLETED'],
-      COMPLETED: ['COMPLETED'],
-      CANCELLED: ['CANCELLED']
+      NEW: ['NEW', 'PENDING', 'IN_PROGRESS'],
+      PENDING: ['PENDING', 'IN_PROGRESS'],
+      IN_PROGRESS: ['IN_PROGRESS'],
+      OUT_FOR_DELIVERY: [],
+      DELIVERED: [],
+      COMPLETED: [],
+      CANCELLED: []
     };
 
     const allowed = new Set(matrix[this.order.status]);
@@ -95,9 +96,6 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
       || this.order.paymentStatus === 'COD_PENDING'
     ) {
       allowed.delete('IN_PROGRESS');
-      allowed.delete('OUT_FOR_DELIVERY');
-      allowed.delete('DELIVERED');
-      allowed.delete('COMPLETED');
     }
 
     if (this.order.status === 'PENDING' && this.order.fulfillmentStatus === 'QUEUED') {
@@ -129,6 +127,10 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
 
     if (this.order.fulfillmentStatus === 'FAILED') {
       return 'ORDERS.DETAIL.STATUS_MODAL.WORKFLOW_GUARDS.FULFILLMENT_FAILED';
+    }
+
+    if (this.order.status === 'OUT_FOR_DELIVERY') {
+      return 'ORDERS.DETAIL.STATUS_MODAL.WORKFLOW_GUARDS.DELIVERY_IN_PROGRESS';
     }
 
     if (this.order.status === 'DELIVERED') {
