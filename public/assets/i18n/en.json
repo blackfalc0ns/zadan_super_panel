@@ -3078,11 +3078,11 @@
     }
   },
   "DISPUTES_DASHBOARD": {
-    "TITLE": "Returns & Disputes",
-    "SUBTITLE": "A dedicated control desk for active cases, refunds, and critical escalations.",
+    "TITLE": "Support Cases",
+    "SUBTITLE": "A dedicated control desk for complaints and return requests.",
     "EXPORT_REPORT": "Export Report",
-    "CREATE_DISPUTE": "Open New Dispute",
-    "SEARCH_PLACEHOLDER": "Search by dispute ID, order, customer, or merchant...",
+    "CREATE_DISPUTE": "Open New Support Case",
+    "SEARCH_PLACEHOLDER": "Search by case ID, order, customer, or merchant...",
     "CRITICAL_ONLY": "Show Critical Cases",
     "CLEAR": "Clear",
     "KPI": {
@@ -3191,9 +3191,9 @@
       }
     },
     "DRAWER": {
-      "CLOSE_ARIA": "Close dispute details drawer",
-      "TITLE": "Dispute Details",
-      "DISPUTE_VALUE": "Dispute Value",
+      "CLOSE_ARIA": "Close support case details drawer",
+      "TITLE": "Case Details",
+      "DISPUTE_VALUE": "Case Value",
       "CUSTOMER_SUMMARY": "Customer Summary",
       "MERCHANT_SUMMARY": "Merchant Summary",
       "OPERATIONAL_NOTE": "Operational Note",
@@ -3201,9 +3201,17 @@
       "EVIDENCE": "Evidence & Attachments",
       "DOWNLOAD_ALL": "Download All",
       "APPROVE": "Approve Request",
+      "APPROVE_RETURN": "Approve Return",
+      "APPROVE_COMPLAINT": "Approve Complaint",
+      "ADD_NOTE": "Add Note",
+      "ASSIGN": "Assign Case",
+      "APPROVE_COMPLAINT_PROMPT": "Enter internal approval notes:",
+      "RESOLVE_CONFIRM": "Are you sure you want to resolve this support case?",
+      "ADD_NOTE_PROMPT": "Enter case note:",
       "REJECT": "Reject Request",
       "REQUEST_INFO": "Request More Information",
-      "ESCALATE": "Escalate Dispute"
+      "ESCALATE": "Escalate Case",
+      "RESOLVE": "Resolve Case"
     },
     "MODAL": {
       "TITLE": "Approve Refund",

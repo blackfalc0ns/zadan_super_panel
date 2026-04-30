@@ -68,6 +68,7 @@ export class DriverDetailViewComponent {
   @Input() selectedTask: DriverTaskAssignment | null = null;
   @Input() selectedIncident: DriverIncidentRecord | null = null;
   @Input() isRTL = true;
+  @Input() isMutating = false;
 
   @Output() tabChange = new EventEmitter<DriverLifecycleTabId>();
   @Output() workflowActionRequested = new EventEmitter<DriverWorkflowActionId>();
@@ -87,6 +88,7 @@ export class DriverDetailViewComponent {
   @Output() incidentPreviewRequested = new EventEmitter<DriverIncidentRecord>();
   @Output() previewClosed = new EventEmitter<void>();
   @Output() previewActionClick = new EventEmitter<PreviewAction>();
+  @Output() locationAccessActionRequested = new EventEmitter<'block' | 'unblock'>();
 
   previewTitle = '';
   previewSubtitle = '';

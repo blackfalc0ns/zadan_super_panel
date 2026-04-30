@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class HeaderComponent {
     @Input() currentLang: string = 'ar';
     @Input() isSidebarOpen: boolean = false;
+    @Input() unreadNotificationCount: number = 0;
     @Output() languageSwitch = new EventEmitter<void>();
     @Output() toggleSidebar = new EventEmitter<void>();
 

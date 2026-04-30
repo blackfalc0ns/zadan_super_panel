@@ -7,12 +7,12 @@ import { SearchableSelectComponent } from '../../../../shared/components/ui/form
 import {
   DisputePriority,
   DisputeRow,
-  DisputeStatus,
   EvidenceItem,
   EscalationDecisionForm,
   EscalationPriority,
   EscalationReason,
-  EscalationTarget
+  EscalationTarget,
+  SupportCaseWorkflowStatus
 } from '../../models/disputes.models';
 
 @Component({
@@ -93,11 +93,13 @@ export class DisputeEscalationModalComponent implements OnChanges {
     this.submitEscalation.emit({ ...this.form });
   }
 
-  getStatusLabel(status: DisputeStatus): string {
-    const labels: Record<DisputeStatus, string> = {
-      open: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
-      review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
-      merchant: this.t('DISPUTES_DASHBOARD.STATUS.MERCHANT'),
+  getStatusLabel(status: SupportCaseWorkflowStatus): string {
+    const labels: Record<SupportCaseWorkflowStatus, string> = {
+      submitted: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
+      in_review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
+      awaiting_customer_evidence: this.t('DISPUTES_DASHBOARD.STATUS.AWAITING_CUSTOMER'),
+      approved: this.t('DISPUTES_DASHBOARD.STATUS.APPROVED'),
+      rejected: this.t('DISPUTES_DASHBOARD.STATUS.REJECTED'),
       resolved: this.t('DISPUTES_DASHBOARD.STATUS.RESOLVED')
     };
 
@@ -215,8 +217,8 @@ export class DisputeEscalationModalComponent implements OnChanges {
       return 'fraud';
     }
 
-    if (dispute.status === 'merchant') {
-      return 'repeat_issues';
+    if (dispute.caseStatus === 'awaiting_customer_evidence') {
+      return 'conflicting_evidence';
     }
 
     return 'conflicting_evidence';

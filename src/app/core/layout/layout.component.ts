@@ -67,7 +67,8 @@ export class LayoutComponent {
 
   logout() {
     if (environment.skipAuthForDevelopment) {
-      this.router.navigate(['/dashboard']);
+      this.authService.forceLogout();
+      this.router.navigate(['/login']);
       return;
     }
 

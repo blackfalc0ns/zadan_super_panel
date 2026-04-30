@@ -183,7 +183,7 @@ export class SuperAdminDashboardService {
         orders: response.orders,
         drivers: response.drivers,
         customers: response.customers,
-        disputes: response.disputes,
+        disputes: response.disputes.items,
         vendors: response.vendors.items as VendorDetail[],
         products: (response.products?.items ?? []) as MasterProduct[],
         brands: response.brands,

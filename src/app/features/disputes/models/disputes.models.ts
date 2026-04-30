@@ -1,7 +1,10 @@
-export type DisputeStatus = 'open' | 'review' | 'merchant' | 'resolved';
+export type SupportCaseWorkflowStatus = 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected' | 'resolved';
+export type SupportCaseType = 'complaint' | 'return_request';
+
+export type DisputeStatus = 'open' | 'review' | 'merchant' | 'resolved'; // legacy
 export type DisputePriority = 'critical' | 'high' | 'medium' | 'low';
 export type RiskLevel = 'high' | 'medium' | 'low';
-export type DisputeFilterId = 'all' | 'active' | 'critical' | 'review' | 'merchant' | 'resolved';
+export type DisputeFilterId = 'all' | 'active' | 'critical' | 'review' | 'merchant' | 'resolved' | 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected';
 export type RejectionReason = 'policy' | 'evidence' | 'delivered' | 'expired' | 'misuse' | 'other';
 export type RequestInfoTarget = 'customer' | 'merchant' | 'internal';
 export type RequestInfoType = 'invoice' | 'photos' | 'statement' | 'proof';
@@ -29,19 +32,21 @@ export interface DisputeWorkflowContext {
   sku?: string;
 }
 
-export interface DisputeRow {
+export interface SupportCaseRow {
   id: string;
   orderId: string;
   customerName: string;
   customerEmail: string;
   customerInitials: string;
   merchantName: string;
-  type: string;
+  type: SupportCaseType | string;
   reason: string;
   amount: number;
-  status: DisputeStatus;
+  caseStatus: SupportCaseWorkflowStatus;
+  status: DisputeStatus; // fallback for legacy
   priority: DisputePriority;
   owner: string;
+  queue: string;
   risk: RiskLevel;
   createdAt: string;
   sla: string;
@@ -53,6 +58,8 @@ export interface DisputeRow {
   timeline: TimelineItem[];
   workflowContext?: DisputeWorkflowContext;
 }
+
+export type DisputeRow = SupportCaseRow;
 
 export interface RefundDecisionForm {
   refundType: 'full' | 'partial';

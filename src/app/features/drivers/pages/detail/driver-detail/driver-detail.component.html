@@ -27,6 +27,7 @@
     [selectedTask]="selectedTask"
     [selectedIncident]="selectedIncident"
     [isRTL]="isRTL"
+    [isMutating]="isMutating"
     (tabChange)="setTab($event)"
     (workflowActionRequested)="executeWorkflowAction($event)"
     (openTasksRequested)="setTab('operations')"
@@ -37,6 +38,7 @@
     (selectedRejectionReasonChange)="selectedRejectionReason = $event"
     (internalReviewNoteChange)="internalReviewNote = $event"
     (reviewActionRequested)="requestReviewAction($event)"
+    (locationAccessActionRequested)="updateLocationAccess($event)"
     (taskPreviewRequested)="openTaskPreview($event)"
     (incidentPreviewRequested)="openIncidentPreview($event)"
     (previewClosed)="closePreview()">

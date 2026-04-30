@@ -183,6 +183,19 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  updateLocationAccess(action: 'block' | 'unblock'): void {
+    if (!this.driverId || !this.driver || this.isMutating) {
+      return;
+    }
+
+    this.runMutation(
+      () => action === 'unblock'
+        ? this.driverService.unblockDriverLocationUpdates(this.driverId!)
+        : this.driverService.blockDriverLocationUpdates(this.driverId!),
+      this.getLocationAccessSuccessMessage(action)
+    );
+  }
+
   executeWorkflowAction(actionId: DriverWorkflowActionId): void {
     if (this.isMutating) {
       return;
@@ -266,6 +279,18 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       case 'reject':
         return this.t('DRIVERS.DETAIL.MESSAGES.VERIFICATION_REJECTED');
     }
+  }
+
+  private getLocationAccessSuccessMessage(action: 'block' | 'unblock'): string {
+    if (this.isRTL) {
+      return action === 'unblock'
+        ? 'تم فك الحظر الموقعي لهذا السائق'
+        : 'تم إيقاف تحديثات الموقع لهذا السائق';
+    }
+
+    return action === 'unblock'
+      ? 'Location updates were unblocked for this driver'
+      : 'Location updates were blocked for this driver';
   }
 
   private t(key: string): string {

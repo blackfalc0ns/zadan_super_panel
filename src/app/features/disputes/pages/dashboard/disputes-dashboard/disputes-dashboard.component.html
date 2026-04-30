@@ -157,9 +157,9 @@
           <ng-container *ngIf="column.key === 'status'">
             <div class="flex justify-center">
               <app-status-pill
-                [label]="getStatusLabel(dispute.status)"
+                [label]="getStatusLabel(dispute.caseStatus)"
                 [shouldTranslate]="false"
-                [variant]="getStatusVariant(dispute.status)"
+                [variant]="getStatusVariant(dispute.caseStatus)"
                 size="sm">
               </app-status-pill>
             </div>
@@ -219,9 +219,9 @@
                 {{ getPriorityLabel(dispute.priority) }}
               </span>
               <app-status-pill
-                [label]="getStatusLabel(dispute.status)"
+                [label]="getStatusLabel(dispute.caseStatus)"
                 [shouldTranslate]="false"
-                [variant]="getStatusVariant(dispute.status)"
+                [variant]="getStatusVariant(dispute.caseStatus)"
                 size="sm">
               </app-status-pill>
             </div>
@@ -349,24 +349,37 @@
           </div>
 
           <div class="mt-6 grid gap-3">
-            <button class="btn-primary !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openApprovalModal()">
-              <span class="material-symbols-outlined text-[18px]">check_circle</span>
-              {{ 'DISPUTES_DASHBOARD.DRAWER.APPROVE' | translate }}
+            <button class="btn-ghost !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="assignCase()" *ngIf="canManageSelectedDispute">
+              <span class="material-symbols-outlined text-[18px]">person_add</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.ASSIGN' | translate }}
             </button>
-            <button
-              class="flex items-center justify-center gap-2 rounded-[1.2rem] border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] font-black text-amber-700 transition-all hover:bg-amber-100"
-              type="button"
-              (click)="openEscalationModal()">
+            <button class="btn-ghost !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="addNote()" *ngIf="canManageSelectedDispute">
+              <span class="material-symbols-outlined text-[18px]">note_add</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.ADD_NOTE' | translate }}
+            </button>
+            <button class="btn-ghost !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openEscalationModal()" *ngIf="canManageSelectedDispute">
               <span class="material-symbols-outlined text-[18px]">priority_high</span>
-              {{ 'DISPUTES_DASHBOARD.DRAWER.ESCALATE' | translate }}
+              {{ 'DISPUTES_DASHBOARD.BULK.ESCALATE' | translate }}
             </button>
-            <button class="btn-danger !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openRejectionModal()">
+            <button class="btn-primary !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openApprovalModal()" *ngIf="selectedDispute.type === 'return_request' && canManageSelectedDispute">
+              <span class="material-symbols-outlined text-[18px]">check_circle</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.APPROVE_RETURN' | translate }}
+            </button>
+            <button class="btn-primary !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="approveComplaint()" *ngIf="selectedDispute.type === 'complaint' && canManageSelectedDispute">
+              <span class="material-symbols-outlined text-[18px]">check_circle</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.APPROVE_COMPLAINT' | translate }}
+            </button>
+            <button class="btn-secondary !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openRequestInfoModal()" *ngIf="canManageSelectedDispute">
+              <span class="material-symbols-outlined text-[18px]">help_outline</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.REQUEST_INFO' | translate }}
+            </button>
+            <button class="btn-danger !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openRejectionModal()" *ngIf="canManageSelectedDispute">
               <span class="material-symbols-outlined text-[18px]">cancel</span>
               {{ 'DISPUTES_DASHBOARD.DRAWER.REJECT' | translate }}
             </button>
-            <button class="btn-secondary !rounded-[1.2rem] !py-3 normal-case" type="button" (click)="openRequestInfoModal()">
-              <span class="material-symbols-outlined text-[18px]">help_outline</span>
-              {{ 'DISPUTES_DASHBOARD.DRAWER.REQUEST_INFO' | translate }}
+            <button class="flex items-center justify-center gap-2 rounded-[1.2rem] border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] font-black text-emerald-700 transition-all hover:bg-emerald-100" type="button" (click)="resolveCase()" *ngIf="selectedDispute.caseStatus !== 'resolved'">
+              <span class="material-symbols-outlined text-[18px]">done_all</span>
+              {{ 'DISPUTES_DASHBOARD.DRAWER.RESOLVE' | translate }}
             </button>
           </div>
         </div>
@@ -388,8 +401,9 @@
     [isRtl]="isRtl"
     (close)="closeEscalationModal()"
     (saveDraft)="saveEscalationDraft()"
-    (submitEscalation)="submitEscalation()">
+    (submitEscalation)="submitEscalation($event)">
   </app-dispute-escalation-modal>
+
 
   <app-dispute-rejection-modal
     [isOpen]="isRejectionModalOpen"

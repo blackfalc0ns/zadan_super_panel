@@ -165,6 +165,8 @@ interface AdminDriverDetailResponse {
 
 interface AdminDriverOverviewResponse {
   address?: string | null;
+  region?: string | null;
+  city?: string | null;
   zoneName?: string | null;
   licenseNumber?: string | null;
   completionRate: number;
@@ -203,7 +205,7 @@ interface AdminDriverWorkflowResponse {
 interface AdminDriverOperationsTaskResponse {
   id: string;
   vendorName: string;
-  zoneName: string;
+  cityLabel: string;
   status: string;
   assignedAtUtc: string;
   durationMinutes?: number | null;
@@ -212,14 +214,18 @@ interface AdminDriverOperationsTaskResponse {
 }
 
 interface AdminDriverOperationsResponse {
-  zoneName?: string | null;
+  region?: string | null;
+  city?: string | null;
   currentLatitude?: number | null;
   currentLongitude?: number | null;
   currentAccuracyMeters?: number | null;
   lastLocationAtUtc?: string | null;
-  activeDriversInZone?: number | null;
+  locationUpdatesBlocked?: boolean;
+  locationBlockReason?: string | null;
+  locationBlockedAtUtc?: string | null;
+  activeDriversInCity?: number | null;
   avgDeliveryMinutes?: number | null;
-  zoneCapacityLimit?: number | null;
+  cityCapacityLimit?: number | null;
   taskAssignments: AdminDriverOperationsTaskResponse[];
 }
 
@@ -508,6 +514,16 @@ export class DriverService {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/reactivate`, {});
   }
 
+  blockDriverLocationUpdates(id: string, reason?: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/location-updates/block`, {
+      reason: reason?.trim() || null
+    });
+  }
+
+  unblockDriverLocationUpdates(id: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/location-updates/unblock`, {});
+  }
+
   addDriverNote(id: string, message: string): Observable<DriverActionResponse> {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/notes`, {
       message: message.trim()
@@ -574,9 +590,14 @@ export class DriverService {
     const documents = this.mapDriverDocuments(response.documents);
     const incidents = this.mapDriverIncidents(response.incidents);
     const taskAssignments = this.mapOperationsTasks(response.operations.taskAssignments);
+    const operationsArea = response.operations.city
+      || response.overview.city
+      || response.overview.zoneName
+      || response.zoneName
+      || response.city;
     const recentTrips = this.mapRecentTrips(
       taskAssignments,
-      response.operations.zoneName || response.overview.zoneName || response.zoneName || response.city
+      operationsArea
     );
 
     return {
@@ -588,7 +609,7 @@ export class DriverService {
       vehicleLabel: driver.vehicleType ? this.mapVehicleLabel(driver.vehicleType) : 'COMMON.NOT_AVAILABLE',
       licenseNumber: response.overview.licenseNumber || response.licenseNumber || '',
       zoneName: response.overview.zoneName || response.zoneName || undefined,
-      liveZone: response.operations.zoneName || response.overview.zoneName || response.zoneName || response.city,
+      liveZone: operationsArea,
       liveLatitude: response.operations.currentLatitude ?? null,
       liveLongitude: response.operations.currentLongitude ?? null,
       liveSpeedKmh: null,
@@ -622,12 +643,20 @@ export class DriverService {
       lifecycleStages: this.mapLifecycleStages(response.workflow.lifecycleStages),
       workflow: this.mapWorkflow(response.workflow),
       operations: {
-        zoneName: response.operations.zoneName || response.overview.zoneName || response.zoneName || response.city,
-        zoneCapacityLabel: this.buildZoneCapacityLabel(response.operations.activeDriversInZone, response.operations.zoneCapacityLimit),
-        zoneUtilizationPercent: this.buildZoneUtilizationPercent(response.operations.activeDriversInZone, response.operations.zoneCapacityLimit),
+        zoneName: operationsArea,
+        zoneCapacityLabel: this.buildZoneCapacityLabel(response.operations.activeDriversInCity, response.operations.cityCapacityLimit),
+        zoneUtilizationPercent: this.buildZoneUtilizationPercent(response.operations.activeDriversInCity, response.operations.cityCapacityLimit),
         avgDeliveryTimeLabel: this.buildAvgDeliveryTimeLabel(response.operations.avgDeliveryMinutes),
-        activeDriversLabel: this.buildActiveDriversLabel(response.operations.activeDriversInZone),
+        activeDriversLabel: this.buildActiveDriversLabel(response.operations.activeDriversInCity),
         stabilityLabel: this.buildOperationsStabilityLabel(response.operations.avgDeliveryMinutes, response.activeTasks),
+        locationUpdatesBlocked: response.operations.locationUpdatesBlocked ?? false,
+        locationBlockReason: response.operations.locationBlockReason || undefined,
+        locationBlockedAtLabel: response.operations.locationBlockedAtUtc
+          ? this.formatDateTime(response.operations.locationBlockedAtUtc)
+          : undefined,
+        lastLocationLabel: response.operations.lastLocationAtUtc
+          ? this.formatDateTime(response.operations.lastLocationAtUtc)
+          : undefined,
         rules: [],
         taskAssignments
       },
@@ -790,7 +819,7 @@ export class DriverService {
     return assignments.map((assignment) => ({
       id: assignment.id,
       vendor: assignment.vendorName,
-      zone: assignment.zoneName,
+      zone: assignment.cityLabel,
       status: this.mapAssignmentStatus(assignment.status),
       statusLabel: this.mapAssignmentStatusLabel(assignment.status),
       assignedAt: this.formatDateTime(assignment.assignedAtUtc),

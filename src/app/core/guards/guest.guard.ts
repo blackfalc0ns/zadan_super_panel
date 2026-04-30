@@ -7,12 +7,11 @@ import { environment } from '../../../environments/environment';
  * Prevents authenticated users from accessing login/register pages
  */
 export const guestGuard: CanActivateFn = (route, state) => {
-    const router = inject(Router);
-
     if (environment.skipAuthForDevelopment) {
-        return router.createUrlTree(['/dashboard']);
+        return true;
     }
 
+    const router = inject(Router);
     const authService = inject(AuthService);
 
     if (authService.isAuthenticated) {

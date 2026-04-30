@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
-  DisputeRow,
+  SupportCaseRow,
+  EscalationDecisionForm,
   RefundDecisionForm,
   RejectionDecisionForm,
   RequestInfoForm,
@@ -30,11 +31,12 @@ interface AdminOrderSupportCaseResponse {
   type: string;
   reason: string;
   amount: number;
-  status: DisputeRow['status'];
-  priority: DisputeRow['priority'];
+  caseStatus: SupportCaseRow['caseStatus'];
+  status: SupportCaseRow['status'];
+  priority: SupportCaseRow['priority'];
   owner: string;
   queue: string;
-  risk: DisputeRow['risk'];
+  risk: SupportCaseRow['risk'];
   createdAt: string;
   sla: string;
   note: string;
@@ -53,26 +55,53 @@ interface AdminOrderSupportCaseResponse {
 })
 export class DisputesService {
   private readonly apiUrl = `${environment.apiUrl}/admin/order-cases`;
-  private readonly disputesCache = new Map<string, DisputeRow>();
+  private readonly disputesCache = new Map<string, SupportCaseRow>();
 
   constructor(private readonly http: HttpClient) {}
 
-  getDisputes(pageSize = 200): Observable<DisputeRow[]> {
-    const params = new HttpParams()
-      .set('page', '1')
+  getDisputes(
+    page = 1,
+    pageSize = 8,
+    search?: string,
+    status?: string,
+    priority?: string,
+    queue?: string,
+    type?: string
+  ): Observable<{ items: SupportCaseRow[]; totalCount: number }> {
+    let params = new HttpParams()
+      .set('page', String(Math.max(1, page)))
       .set('pageSize', String(Math.max(1, pageSize)));
 
+    if (search) params = params.set('search', search);
+    if (status && status !== 'all') params = params.set('status', status);
+    if (priority && priority !== 'all') params = params.set('priority', priority);
+    if (queue) params = params.set('queue', queue);
+    if (type) params = params.set('type', type);
+
     return this.http.get<AdminOrderSupportCasesResponse>(this.apiUrl, { params }).pipe(
-      map((response) => response.items.map((item) => this.mapDispute(item))),
-      tap((items) => this.replaceCache(items)),
-      catchError((error) => {
-        console.error('Failed to load support cases queue.', error);
-        return of(this.getDisputesSnapshot());
+      map((response) => {
+        const items = response.items.map((item) => this.mapDispute(item));
+        this.replaceCache(items);
+        return { items, totalCount: response.totalCount };
       })
     );
   }
 
-  approveCase(id: string, form: RefundDecisionForm): Observable<DisputeRow> {
+  assignCase(id: string): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/assign`, {}).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
+  addNote(id: string, note: string): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/note`, { note }).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
+  approveReturnRequest(id: string, form: RefundDecisionForm): Observable<SupportCaseRow> {
     return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/approve`, {
       refundAmount: Number.parseFloat(form.refundAmount || '0') || undefined,
       refundMethod: form.refundMethod,
@@ -88,7 +117,24 @@ export class DisputesService {
     );
   }
 
-  rejectCase(id: string, form: RejectionDecisionForm): Observable<DisputeRow> {
+  approveComplaint(id: string, internalNotes?: string, customerMessage?: string): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/approve`, {
+      decisionNotes: internalNotes,
+      customerVisibleNote: customerMessage || undefined
+    }).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
+  resolveCase(id: string): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/resolve`, {}).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
+  rejectCase(id: string, form: RejectionDecisionForm): Observable<SupportCaseRow> {
     return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/reject`, {
       decisionNotes: this.buildNoteLines([
         `Reason: ${form.reason}`,
@@ -102,7 +148,7 @@ export class DisputesService {
     );
   }
 
-  requestEvidence(id: string, form: RequestInfoForm): Observable<DisputeRow> {
+  requestEvidence(id: string, form: RequestInfoForm): Observable<SupportCaseRow> {
     return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/request-evidence`, {
       note: this.buildNoteLines([
         form.title,
@@ -120,7 +166,34 @@ export class DisputesService {
     );
   }
 
-  getDisputesSnapshot(): DisputeRow[] {
+  escalateCase(id: string, form: EscalationDecisionForm): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/escalate`, {
+      queue: form.target,
+      priority: form.markHighRisk ? 'critical' : form.priority,
+      note: this.buildNoteLines([
+        `Escalation reason: ${form.reason}`,
+        form.detailedExplanation,
+        form.reviewedSummary ? `Reviewed summary: ${form.reviewedSummary}` : undefined,
+        form.requestedAction ? `Requested action: ${form.requestedAction}` : undefined,
+        form.notifyEscalatedTeam ? 'Notify escalated team: yes' : undefined,
+        form.notifyCurrentReviewer ? 'Notify current reviewer: yes' : undefined
+      ]),
+      customerVisibleNote: form.addTrackingNote
+        ? this.buildNoteLines([
+            'Your case has been escalated for specialist review.',
+            form.requestedAction ? `Next step: ${form.requestedAction}` : undefined
+          ])
+        : undefined,
+      notifyEscalatedTeam: form.notifyEscalatedTeam,
+      notifyCurrentReviewer: form.notifyCurrentReviewer,
+      slaDueAtUtc: form.responseDeadline ? new Date(form.responseDeadline).toISOString() : undefined
+    }).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
+  getDisputesSnapshot(): SupportCaseRow[] {
     return [...this.disputesCache.values()].map((item) => ({
       ...item,
       evidence: item.evidence.map((evidence) => ({ ...evidence })),
@@ -129,7 +202,7 @@ export class DisputesService {
     }));
   }
 
-  getDisputeById(id: string | null): DisputeRow | undefined {
+  getDisputeById(id: string | null): SupportCaseRow | undefined {
     if (!id) {
       return undefined;
     }
@@ -138,7 +211,7 @@ export class DisputesService {
     return this.getDisputesSnapshot().find((item) => this.normalizeId(item.id) === normalizedId);
   }
 
-  findPrimaryDisputeByOrderId(orderId: string | null | undefined): DisputeRow | undefined {
+  findPrimaryDisputeByOrderId(orderId: string | null | undefined): SupportCaseRow | undefined {
     if (!orderId) {
       return undefined;
     }
@@ -147,7 +220,7 @@ export class DisputesService {
     return this.getDisputesSnapshot().find((item) => this.normalizeId(item.orderId) === normalizedOrderId);
   }
 
-  private mapDispute(item: AdminOrderSupportCaseResponse): DisputeRow {
+  private mapDispute(item: AdminOrderSupportCaseResponse): SupportCaseRow {
     return {
       id: item.id,
       orderId: item.orderId,
@@ -155,25 +228,27 @@ export class DisputesService {
       customerEmail: item.customerEmail,
       customerInitials: this.buildInitials(item.customerName),
       merchantName: item.merchantName,
-      type: item.type,
+      type: item.type || 'complaint',
       reason: item.reason,
       amount: item.amount,
-      status: item.status,
-      priority: item.priority,
-      owner: item.owner,
-      risk: item.risk,
+      caseStatus: item.caseStatus || 'submitted',
+      status: item.status || 'open',
+      priority: item.priority || 'medium',
+      owner: item.owner || 'Unassigned',
+      queue: item.queue || 'General',
+      risk: item.risk || 'low',
       createdAt: item.createdAt,
       sla: item.sla,
       note: item.note,
       paymentMask: item.paymentMask,
       customerSummary: item.customerSummary,
       merchantSummary: item.merchantSummary,
-      evidence: item.evidence.map((evidenceItem) => this.mapEvidence(evidenceItem)),
-      timeline: item.timeline.map((timelineItem) => ({ ...timelineItem }))
+      evidence: item.evidence ? item.evidence.map((evidenceItem) => this.mapEvidence(evidenceItem)) : [],
+      timeline: item.timeline ? item.timeline.map((timelineItem) => ({ ...timelineItem })) : []
     };
   }
 
-  private mapEvidence(item: { fileName: string; fileUrl: string }): DisputeRow['evidence'][number] {
+  private mapEvidence(item: { fileName: string; fileUrl: string }): SupportCaseRow['evidence'][number] {
     const normalizedName = `${item.fileName} ${item.fileUrl}`.toLowerCase();
     const isPdf = normalizedName.includes('.pdf');
 
@@ -185,6 +260,7 @@ export class DisputesService {
   }
 
   private buildInitials(name: string): string {
+    if (!name) return '';
     return name
       .split(' ')
       .filter(Boolean)
@@ -193,12 +269,12 @@ export class DisputesService {
       .join('');
   }
 
-  private replaceCache(items: DisputeRow[]): void {
+  private replaceCache(items: SupportCaseRow[]): void {
     this.disputesCache.clear();
     items.forEach((item) => this.disputesCache.set(item.id, item));
   }
 
-  private upsertCache(item: DisputeRow): void {
+  private upsertCache(item: SupportCaseRow): void {
     this.disputesCache.set(item.id, item);
   }
 

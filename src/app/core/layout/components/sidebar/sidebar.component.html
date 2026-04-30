@@ -28,13 +28,12 @@
                 <span class="text-[10px] font-black text-white/50 uppercase tracking-[0.15em]">{{ 'SIDEBAR_EXTRA.HQ_CORE' | translate }}</span>
             </div>
             
-            <a routerLink="/dashboard" routerLinkActive="bg-white/15 text-white font-black shadow-inner" [routerLinkActiveOptions]="{exact: true}"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/dashboard')" [ngClass]="navItemClasses('/dashboard', true)">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
                 <span>{{ 'SIDEBAR.HOME' | translate }}</span>
-            </a>
+            </button>
         </div>
 
         <!-- Group: Global Catalog -->
@@ -43,37 +42,33 @@
                 <span class="text-[10px] font-black text-white/50 uppercase tracking-[0.15em]">{{ 'SIDEBAR_EXTRA.GLOBAL_CATALOG' | translate }}</span>
             </div>
             
-            <a routerLink="/catalog/categories" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/catalog/categories')" [ngClass]="navItemClasses('/catalog/categories')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
                 <span>{{ 'SIDEBAR.CATALOG_HIERARCHY' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/catalog/products" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/catalog/products')" [ngClass]="navItemClasses('/catalog/products')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
                 <span>{{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/catalog/brands" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/catalog/brands')" [ngClass]="navItemClasses('/catalog/brands')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
                 <span>{{ 'SIDEBAR.BRANDS' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/catalog/product-requests" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/catalog/product-requests')" [ngClass]="navItemClasses('/catalog/product-requests')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
                 <span>{{ 'SIDEBAR.PRODUCT_REQUESTS' | translate }}</span>
-            </a>
+            </button>
         </div>
 
         <!-- Group: Ecosystem Operators -->
@@ -82,29 +77,26 @@
                 <span class="text-[10px] font-black text-white/50 uppercase tracking-[0.15em]">{{ 'SIDEBAR_EXTRA.ECOSYSTEM' | translate }}</span>
             </div>
 
-            <a routerLink="/vendors" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/vendors')" [ngClass]="navItemClasses('/vendors')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 <span>{{ 'SIDEBAR.VENDORS' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/customers" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/customers')" [ngClass]="navItemClasses('/customers')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
                 <span>{{ 'SIDEBAR.CUSTOMERS' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/drivers" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/drivers')" [ngClass]="navItemClasses('/drivers')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14H5a2 2 0 01-2-2V6a2 2 0 012-2h4a2 2 0 012 2v6m0 0v-1h4l2 2v4h-6m-4 0v1a2 2 0 11-4 0v-1m4 0v1a2 2 0 104 0v-1m-4 0H5" />
                 </svg>
                 <span>{{ 'SIDEBAR.DRIVERS' | translate }}</span>
-            </a>
+            </button>
         </div>
 
         <!-- Group: Operations & Commerce -->
@@ -113,33 +105,29 @@
                 <span class="text-[10px] font-black text-white/50 uppercase tracking-[0.15em]">{{ 'SIDEBAR_EXTRA.COMMERCE' | translate }}</span>
             </div>
 
-            <a routerLink="/orders" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/orders')" [ngClass]="navItemClasses('/orders')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
                 <span>{{ 'SIDEBAR.ORDERS' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/disputes" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/disputes')" [ngClass]="navItemClasses('/disputes')">
                 <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100">gavel</span>
                 <span>{{ 'SIDEBAR.DISPUTES' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/finances" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/finances')" [ngClass]="navItemClasses('/finances')">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
                 <span>{{ 'SIDEBAR.FINANCES' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/marketing" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/marketing')" [ngClass]="navItemClasses('/marketing')">
                 <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100">campaign</span>
                 <span>{{ 'SIDEBAR.MARKETING' | translate }}</span>
-            </a>
+            </button>
         </div>
 
         <!-- Group: Users & Access -->
@@ -148,17 +136,15 @@
                 <span class="text-[10px] font-black text-white/50 uppercase tracking-[0.15em]">{{ 'SIDEBAR_EXTRA.USERS_NETWORK' | translate }}</span>
             </div>
 
-            <a routerLink="/admin-users" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/admin-users')" [ngClass]="navItemClasses('/admin-users')">
                 <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100">shield_person</span>
                 <span>{{ 'SIDEBAR.ADMIN_USERS' | translate }}</span>
-            </a>
+            </button>
 
-            <a routerLink="/email-center" routerLinkActive="bg-white/15 text-white font-black shadow-inner"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 font-bold text-[13px] hover:bg-white/10 hover:text-white transition-colors group">
+            <button type="button" (click)="navigateTo('/email-center')" [ngClass]="navItemClasses('/email-center')">
                 <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100">mail</span>
                 <span>{{ 'SIDEBAR.EMAIL_CENTER' | translate }}</span>
-            </a>
+            </button>
         </div>
 
         <ng-content></ng-content>

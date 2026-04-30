@@ -128,6 +128,10 @@ export interface DriverOperationsSnapshot {
   avgDeliveryTimeLabel: string;
   activeDriversLabel: string;
   stabilityLabel: string;
+  locationUpdatesBlocked: boolean;
+  locationBlockReason?: string;
+  locationBlockedAtLabel?: string;
+  lastLocationLabel?: string;
   rules: string[];
   taskAssignments: DriverTaskAssignment[];
 }

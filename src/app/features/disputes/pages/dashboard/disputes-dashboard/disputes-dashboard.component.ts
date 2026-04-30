@@ -17,8 +17,10 @@ import { DisputeRequestInfoModalComponent } from '../../../components/dispute-re
 import {
   DisputeFilterId,
   DisputePriority,
-  DisputeRow,
-  DisputeStatus,
+  SupportCaseRow,
+  SupportCaseWorkflowStatus,
+  SupportCaseType,
+  EscalationDecisionForm,
   RefundDecisionForm,
   RejectionDecisionForm,
   RequestInfoForm,
@@ -48,7 +50,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DisputesDashboardComponent implements OnInit {
-  disputes: DisputeRow[] = [];
+  disputes: SupportCaseRow[] = [];
+  totalCount = 0;
   private readonly destroyRef = inject(DestroyRef);
   private focusedDisputeId: string | null = null;
 
@@ -61,7 +64,7 @@ export class DisputesDashboardComponent implements OnInit {
   pageSize = 8;
   searchTerm = '';
   activeFilter: DisputeFilterId = 'all';
-  selectedDispute: DisputeRow = this.createEmptyDispute();
+  selectedDispute: SupportCaseRow = this.createEmptyDispute();
   isDetailsDrawerOpen = false;
   isApprovalModalOpen = false;
   isEscalationModalOpen = false;
@@ -96,21 +99,20 @@ export class DisputesDashboardComponent implements OnInit {
     this.loadDisputes();
   }
 
-  get filteredDisputes(): DisputeRow[] {
-    return this.disputes.filter((dispute) => this.matchesFilter(dispute) && this.matchesSearch(dispute));
-  }
-
   get hasActiveFilters(): boolean {
     return this.activeFilter !== 'all' || this.searchTerm.trim().length > 0;
   }
 
   get totalFilteredItems(): number {
-    return this.filteredDisputes.length;
+    return this.totalCount;
   }
 
-  get paginatedDisputes(): DisputeRow[] {
-    const startIndex = (this.page - 1) * this.pageSize;
-    return this.filteredDisputes.slice(startIndex, startIndex + this.pageSize);
+  get canManageSelectedDispute(): boolean {
+    return this.selectedDispute.caseStatus !== 'resolved' && this.selectedDispute.caseStatus !== 'rejected';
+  }
+
+  get paginatedDisputes(): SupportCaseRow[] {
+    return this.disputes;
   }
 
   get currentStartItem(): number {
@@ -128,32 +130,47 @@ export class DisputesDashboardComponent implements OnInit {
       critical: this.t('DISPUTES_DASHBOARD.FILTERS.CRITICAL'),
       review: this.t('DISPUTES_DASHBOARD.FILTERS.REVIEW'),
       merchant: this.t('DISPUTES_DASHBOARD.FILTERS.MERCHANT'),
-      resolved: this.t('DISPUTES_DASHBOARD.FILTERS.RESOLVED')
-    }[this.activeFilter];
+      resolved: this.t('DISPUTES_DASHBOARD.FILTERS.RESOLVED'),
+      submitted: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
+      in_review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
+      awaiting_customer_evidence: this.t('DISPUTES_DASHBOARD.STATUS.AWAITING_CUSTOMER'),
+      approved: this.t('DISPUTES_DASHBOARD.STATUS.APPROVED'),
+      rejected: this.t('DISPUTES_DASHBOARD.STATUS.REJECTED')
+    }[this.activeFilter] || this.activeFilter;
   }
 
   get isRtl(): boolean {
     return this.translate.currentLang === 'ar';
   }
 
-  selectDispute(dispute: DisputeRow): void {
+  selectDispute(dispute: SupportCaseRow): void {
     this.selectedDispute = dispute;
     this.isDetailsDrawerOpen = true;
   }
 
-  onTableRowClick(dispute: DisputeRow): void {
+  onTableRowClick(dispute: SupportCaseRow): void {
     this.selectDispute(dispute);
   }
 
-  onTableAction(event: { action: TableAction; item: DisputeRow }): void {
+  onTableAction(event: { action: TableAction; item: SupportCaseRow }): void {
     if (event.action.id === 'view') {
       this.selectDispute(event.item);
     }
   }
 
-  onBulkAction(event: { action: BulkAction; items: DisputeRow[] }): void {
+  onBulkAction(event: { action: BulkAction; items: SupportCaseRow[] }): void {
     if (event.items.length > 0) {
       this.selectDispute(event.items[0]);
+
+      if (event.action.id === 'assign') {
+        this.assignCase();
+        return;
+      }
+
+      if (event.action.id === 'note') {
+        this.addNote();
+        return;
+      }
 
       if (event.action.id === 'escalate') {
         this.openEscalationModal();
@@ -167,6 +184,8 @@ export class DisputesDashboardComponent implements OnInit {
       case 'critical':
       case 'review':
       case 'merchant':
+      case 'in_review':
+      case 'awaiting_customer_evidence':
       case 'resolved':
         this.activeFilter = card.id as DisputeFilterId;
         break;
@@ -180,22 +199,26 @@ export class DisputesDashboardComponent implements OnInit {
 
   onSearchChange(): void {
     this.resetToFirstPage();
+    this.loadDisputes();
   }
 
   toggleActiveCases(): void {
     this.activeFilter = this.activeFilter === 'active' ? 'all' : 'active';
     this.resetToFirstPage();
+    this.loadDisputes();
   }
 
   toggleCriticalFilter(): void {
     this.activeFilter = this.activeFilter === 'critical' ? 'all' : 'critical';
     this.resetToFirstPage();
+    this.loadDisputes();
   }
 
   clearFilters(): void {
     this.searchTerm = '';
     this.activeFilter = 'all';
     this.resetToFirstPage();
+    this.loadDisputes();
   }
 
   changePage(newPage: number): void {
@@ -206,6 +229,7 @@ export class DisputesDashboardComponent implements OnInit {
     }
 
     this.page = newPage;
+    this.loadDisputes();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -229,7 +253,7 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   submitApproval(form: RefundDecisionForm): void {
-    this.disputesService.approveCase(this.selectedDispute.id, form)
+    this.disputesService.approveReturnRequest(this.selectedDispute.id, form)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (dispute) => {
@@ -255,8 +279,16 @@ export class DisputesDashboardComponent implements OnInit {
     this.closeEscalationModal();
   }
 
-  submitEscalation(): void {
-    this.closeEscalationModal();
+  submitEscalation(form: EscalationDecisionForm): void {
+    this.disputesService.escalateCase(this.selectedDispute.id, form)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+          this.closeEscalationModal();
+        },
+        error: (error) => console.error('Failed to escalate support case.', error)
+      });
   }
 
   openRejectionModal(): void {
@@ -340,33 +372,39 @@ export class DisputesDashboardComponent implements OnInit {
     }
   }
 
-  getStatusLabel(status: DisputeStatus): string {
+  getStatusLabel(status: SupportCaseWorkflowStatus): string {
     return {
-      open: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
-      review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
-      merchant: this.t('DISPUTES_DASHBOARD.STATUS.MERCHANT'),
+      submitted: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
+      in_review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
+      awaiting_customer_evidence: this.t('DISPUTES_DASHBOARD.STATUS.AWAITING_CUSTOMER'),
+      approved: this.t('DISPUTES_DASHBOARD.STATUS.APPROVED'),
+      rejected: this.t('DISPUTES_DASHBOARD.STATUS.REJECTED'),
       resolved: this.t('DISPUTES_DASHBOARD.STATUS.RESOLVED')
-    }[status];
+    }[status] || status;
   }
 
-  getStatusClass(status: DisputeStatus): string {
+  getStatusClass(status: SupportCaseWorkflowStatus): string {
     return {
-      open: 'text-sky-600',
-      review: 'text-amber-500',
-      merchant: 'text-violet-500',
+      submitted: 'text-sky-600',
+      in_review: 'text-amber-500',
+      awaiting_customer_evidence: 'text-orange-500',
+      approved: 'text-emerald-600',
+      rejected: 'text-red-500',
       resolved: 'text-emerald-500'
-    }[status];
+    }[status] || 'text-slate-500';
   }
 
-  getStatusVariant(status: DisputeStatus): StatusPillVariant {
-    const variants: Record<DisputeStatus, StatusPillVariant> = {
-      open: 'info',
-      review: 'warning',
-      merchant: 'processing',
+  getStatusVariant(status: SupportCaseWorkflowStatus): StatusPillVariant {
+    const variants: Record<SupportCaseWorkflowStatus, StatusPillVariant> = {
+      submitted: 'info',
+      in_review: 'warning',
+      awaiting_customer_evidence: 'processing',
+      approved: 'success',
+      rejected: 'danger',
       resolved: 'success'
     };
 
-    return variants[status];
+    return variants[status] || 'info';
   }
 
   getPriorityClass(priority: DisputePriority): string {
@@ -415,43 +453,12 @@ export class DisputesDashboardComponent implements OnInit {
     return tone === 'warning' ? 'text-amber-700' : 'text-slate-800';
   }
 
-  private matchesFilter(dispute: DisputeRow): boolean {
-    switch (this.activeFilter) {
-      case 'active':
-        return dispute.status !== 'resolved';
-      case 'critical':
-        return dispute.priority === 'critical';
-      case 'review':
-        return dispute.status === 'review';
-      case 'merchant':
-        return dispute.status === 'merchant';
-      case 'resolved':
-        return dispute.status === 'resolved';
-      default:
-        return true;
-    }
+  private matchesFilter(dispute: SupportCaseRow): boolean {
+    return true; // Filtering is now server-side
   }
 
-  private matchesSearch(dispute: DisputeRow): boolean {
-    const query = this.searchTerm.trim().toLowerCase();
-
-    if (!query) {
-      return true;
-    }
-
-    return [
-      dispute.id,
-      dispute.orderId,
-      dispute.customerName,
-      dispute.customerEmail,
-      dispute.merchantName,
-      dispute.type,
-      dispute.reason,
-      dispute.owner
-    ]
-      .join(' ')
-      .toLowerCase()
-      .includes(query);
+  private matchesSearch(dispute: SupportCaseRow): boolean {
+    return true; // Filtering is now server-side
   }
 
   private getTotalDisputeValue(): string {
@@ -461,10 +468,21 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   private loadDisputes(): void {
-    this.disputesService.getDisputes()
+    const filters = this.resolveServerFilters();
+    
+    this.disputesService.getDisputes(
+      this.page,
+      this.pageSize,
+      this.searchTerm,
+      filters.status,
+      filters.priority,
+      undefined,
+      undefined
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((disputes) => {
-        this.disputes = disputes;
+      .subscribe((response) => {
+        this.disputes = response.items;
+        this.totalCount = response.totalCount;
         this.applyFocusedSelection();
         this.normalizeCurrentPage();
         this.buildUiConfig();
@@ -485,7 +503,7 @@ export class DisputesDashboardComponent implements OnInit {
       {
         id: 'active',
         title: this.t('DISPUTES_DASHBOARD.KPI.ACTIVE'),
-        value: this.disputes.filter((item) => item.status !== 'resolved').length,
+        value: this.disputes.filter((item) => item.caseStatus !== 'resolved' && item.caseStatus !== 'rejected').length,
         color: '#127c8c',
         icon: '<span class="material-symbols-outlined text-[20px]">gavel</span>',
         trend: { value: 6, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.ACTIVE_TREND') },
@@ -501,18 +519,18 @@ export class DisputesDashboardComponent implements OnInit {
         clickable: true
       },
       {
-        id: 'review',
+        id: 'in_review',
         title: this.t('DISPUTES_DASHBOARD.KPI.REVIEW'),
-        value: this.disputes.filter((item) => item.status === 'review').length,
+        value: this.disputes.filter((item) => item.caseStatus === 'in_review').length,
         color: '#f59e0b',
         icon: '<span class="material-symbols-outlined text-[20px]">fact_check</span>',
         trend: { value: 0, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.REVIEW_TREND') },
         clickable: true
       },
       {
-        id: 'merchant',
+        id: 'awaiting_customer_evidence',
         title: this.t('DISPUTES_DASHBOARD.KPI.MERCHANT'),
-        value: this.disputes.filter((item) => item.status === 'merchant').length,
+        value: this.disputes.filter((item) => item.caseStatus === 'awaiting_customer_evidence').length,
         color: '#8b5cf6',
         icon: '<span class="material-symbols-outlined text-[20px]">storefront</span>',
         trend: { value: 0, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.MERCHANT_TREND') },
@@ -521,7 +539,7 @@ export class DisputesDashboardComponent implements OnInit {
       {
         id: 'resolved',
         title: this.t('DISPUTES_DASHBOARD.KPI.RESOLVED'),
-        value: this.disputes.filter((item) => item.status === 'resolved').length,
+        value: this.disputes.filter((item) => item.caseStatus === 'resolved').length,
         color: '#10b981',
         icon: '<span class="material-symbols-outlined text-[20px]">check_circle</span>',
         trend: { value: 91, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.RESOLVED_TREND') },
@@ -568,7 +586,34 @@ export class DisputesDashboardComponent implements OnInit {
       || value === 'critical'
       || value === 'review'
       || value === 'merchant'
+      || value === 'submitted'
+      || value === 'in_review'
+      || value === 'awaiting_customer_evidence'
+      || value === 'approved'
+      || value === 'rejected'
       || value === 'resolved';
+  }
+
+  private resolveServerFilters(): { status?: string; priority?: string } {
+    switch (this.activeFilter) {
+      case 'active':
+        return { status: 'active' };
+      case 'critical':
+        return { priority: 'critical' };
+      case 'review':
+      case 'in_review':
+        return { status: 'in_review' };
+      case 'merchant':
+      case 'awaiting_customer_evidence':
+        return { status: 'awaiting_customer_evidence' };
+      case 'submitted':
+      case 'approved':
+      case 'rejected':
+      case 'resolved':
+        return { status: this.activeFilter };
+      default:
+        return {};
+    }
   }
 
   private t(key: string, params?: Record<string, unknown>): string {
@@ -598,7 +643,7 @@ export class DisputesDashboardComponent implements OnInit {
     }
   }
 
-  private applyDisputeUpdate(updated: DisputeRow): void {
+  private applyDisputeUpdate(updated: SupportCaseRow): void {
     const index = this.disputes.findIndex((item) => item.id === updated.id);
 
     if (index === -1) {
@@ -612,7 +657,7 @@ export class DisputesDashboardComponent implements OnInit {
     this.buildUiConfig();
   }
 
-  private createEmptyDispute(): DisputeRow {
+  private createEmptyDispute(): SupportCaseRow {
     return {
       id: '',
       orderId: '',
@@ -620,12 +665,14 @@ export class DisputesDashboardComponent implements OnInit {
       customerEmail: '',
       customerInitials: '',
       merchantName: '',
-      type: '',
+      type: 'complaint',
       reason: '',
       amount: 0,
+      caseStatus: 'submitted',
       status: 'open',
       priority: 'low',
       owner: '',
+      queue: '',
       risk: 'low',
       createdAt: '',
       sla: '',
@@ -636,6 +683,55 @@ export class DisputesDashboardComponent implements OnInit {
       evidence: [],
       timeline: []
     };
+  }
+  
+  approveComplaint(internalNotes?: string, customerMessage?: string): void {
+    if (this.selectedDispute.type !== 'complaint') return;
+    const note = internalNotes || prompt(this.t('DISPUTES_DASHBOARD.DRAWER.APPROVE_COMPLAINT_PROMPT') || 'Enter approval notes:') || undefined;
+    this.disputesService.approveComplaint(this.selectedDispute.id, note, customerMessage)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+        },
+        error: (error) => console.error('Failed to approve complaint.', error)
+      });
+  }
+  
+  resolveCase(): void {
+    if (!confirm(this.t('DISPUTES_DASHBOARD.DRAWER.RESOLVE_CONFIRM') || 'Are you sure you want to resolve this case?')) return;
+    this.disputesService.resolveCase(this.selectedDispute.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+        },
+        error: (error) => console.error('Failed to resolve case.', error)
+      });
+  }
+  
+  assignCase(): void {
+    this.disputesService.assignCase(this.selectedDispute.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+        },
+        error: (error) => console.error('Failed to assign case.', error)
+      });
+  }
+  
+  addNote(): void {
+    const note = prompt(this.t('DISPUTES_DASHBOARD.DRAWER.ADD_NOTE_PROMPT') || 'Enter note:');
+    if (!note) return;
+    this.disputesService.addNote(this.selectedDispute.id, note)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+        },
+        error: (error) => console.error('Failed to add note.', error)
+      });
   }
 }
 

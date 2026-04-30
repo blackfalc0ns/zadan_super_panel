@@ -38,6 +38,8 @@
           [driver]="driver" 
           [mapPreviewUrl]="mapPreviewUrl" 
           [isRTL]="isRTL"
+          [isActionPending]="isMutating"
+          (locationAccessActionRequested)="locationAccessActionRequested.emit($event)"
           (taskPreviewRequested)="taskPreviewRequested.emit($event)">
         </app-driver-operations-tab>
 

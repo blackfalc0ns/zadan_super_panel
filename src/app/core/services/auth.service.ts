@@ -41,7 +41,7 @@ export class AuthService {
     public currentUser$ = this.currentUserSubject.asObservable();
 
     constructor(private http: HttpClient) {
-        if (environment.skipAuthForDevelopment) {
+        if (this.shouldUseDevelopmentBypass()) {
             this.currentUserSubject.next(DEV_ADMIN_USER);
             return;
         }
@@ -60,9 +60,7 @@ export class AuthService {
         }
 
         if (this.isTokenExpired(token)) {
-            if (!environment.skipAuthForDevelopment) {
-                this.forceLogout();
-            }
+            this.clearSession();
             return false;
         }
 
@@ -70,7 +68,7 @@ export class AuthService {
     }
 
     public get isAuthenticated(): boolean {
-        if (environment.skipAuthForDevelopment) {
+        if (this.shouldUseDevelopmentBypass()) {
             return true;
         }
 
@@ -113,11 +111,6 @@ export class AuthService {
     }
 
     logout(): Observable<void> {
-        if (environment.skipAuthForDevelopment) {
-            this.currentUserSubject.next(DEV_ADMIN_USER);
-            return of(void 0);
-        }
-
         const refreshToken = this.getRefreshToken();
         if (!refreshToken) {
             this.clearSession();
@@ -141,9 +134,21 @@ export class AuthService {
         this.currentUserSubject.next(null);
     }
 
+    private hasValidStoredSession(): boolean {
+        const token = this.getToken();
+        return !!token && !this.isTokenExpired(token);
+    }
+
+    private shouldUseDevelopmentBypass(): boolean {
+        return environment.skipAuthForDevelopment && !this.hasValidStoredSession();
+    }
+
     private loadUserFromStorage(): void {
         const userJson = localStorage.getItem('admin_user');
         if (!userJson) {
+            if (this.shouldUseDevelopmentBypass()) {
+                this.currentUserSubject.next(DEV_ADMIN_USER);
+            }
             return;
         }
 
