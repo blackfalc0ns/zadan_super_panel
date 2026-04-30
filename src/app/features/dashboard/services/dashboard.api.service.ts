@@ -173,7 +173,7 @@ export class SuperAdminDashboardService {
       orders: this.ordersService.getLiveSnapshot(80),
       drivers: this.driverService.getLiveSnapshot(80),
       customers: this.customersService.getCustomers(),
-      disputes: of(this.disputesService.getDisputesSnapshot()),
+      disputes: this.disputesService.getDisputes(),
       vendors: this.vendorService.getVendors(1, 100),
       products: this.catalogService.getProducts(1, 250),
       brands: this.catalogService.getBrands(true),

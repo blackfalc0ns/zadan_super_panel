@@ -342,8 +342,8 @@
                 class="absolute top-1 h-4 w-4 rounded-full border-4 border-white shadow-sm"
                 [ngClass]="[getTimelineDotClass(item.tone), isRtl ? '-right-[2px]' : '-left-[2px]']"></div>
               <div [ngClass]="isRtl ? 'pr-6' : 'pl-6'">
-                <p class="text-[12px] font-black" [ngClass]="getTimelineTextClass(item.tone)">{{ item.titleKey | translate }}</p>
-                <p class="mt-1 text-[10px] font-bold text-slate-400">{{ item.timeKey | translate }}</p>
+                <p class="text-[12px] font-black" [ngClass]="getTimelineTextClass(item.tone)">{{ item.title }}</p>
+                <p class="mt-1 text-[10px] font-bold text-slate-400">{{ item.time }}</p>
               </div>
             </div>
           </div>
@@ -379,7 +379,7 @@
     [dispute]="selectedDispute"
     (close)="closeApprovalModal()"
     (saveDraft)="saveApprovalDraft()"
-    (submitDecision)="submitApproval()">
+    (submitDecision)="submitApproval($event)">
   </app-dispute-approval-modal>
 
   <app-dispute-escalation-modal
@@ -397,7 +397,7 @@
     [isRtl]="isRtl"
     (close)="closeRejectionModal()"
     (saveDraft)="saveRejectionDraft()"
-    (submitDecision)="submitRejection()">
+    (submitDecision)="submitRejection($event)">
   </app-dispute-rejection-modal>
 
   <app-dispute-request-info-modal
@@ -406,6 +406,6 @@
     [isRtl]="isRtl"
     (close)="closeRequestInfoModal()"
     (saveDraft)="saveRequestInfoDraft()"
-    (submitRequest)="submitRequestInfo()">
+    (submitRequest)="submitRequestInfo($event)">
   </app-dispute-request-info-modal>
 </div>

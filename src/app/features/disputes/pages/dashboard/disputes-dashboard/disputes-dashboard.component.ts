@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,7 +14,17 @@ import { DisputeApprovalModalComponent } from '../../../components/dispute-appro
 import { DisputeEscalationModalComponent } from '../../../components/dispute-escalation-modal/dispute-escalation-modal.component';
 import { DisputeRejectionModalComponent } from '../../../components/dispute-rejection-modal/dispute-rejection-modal.component';
 import { DisputeRequestInfoModalComponent } from '../../../components/dispute-request-info-modal/dispute-request-info-modal.component';
-import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel, TimelineItem } from '../../../models/disputes.models';
+import {
+  DisputeFilterId,
+  DisputePriority,
+  DisputeRow,
+  DisputeStatus,
+  RefundDecisionForm,
+  RejectionDecisionForm,
+  RequestInfoForm,
+  RiskLevel,
+  TimelineItem
+} from '../../../models/disputes.models';
 
 @Component({
   selector: 'app-disputes-dashboard',
@@ -37,7 +48,9 @@ import { DisputeFilterId, DisputePriority, DisputeRow, DisputeStatus, RiskLevel,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DisputesDashboardComponent implements OnInit {
-  readonly disputes: DisputeRow[];
+  disputes: DisputeRow[] = [];
+  private readonly destroyRef = inject(DestroyRef);
+  private focusedDisputeId: string | null = null;
 
   kpiCards: KPICard[] = [];
   tableColumns: TableColumn[] = [];
@@ -48,7 +61,7 @@ export class DisputesDashboardComponent implements OnInit {
   pageSize = 8;
   searchTerm = '';
   activeFilter: DisputeFilterId = 'all';
-  selectedDispute: DisputeRow;
+  selectedDispute: DisputeRow = this.createEmptyDispute();
   isDetailsDrawerOpen = false;
   isApprovalModalOpen = false;
   isEscalationModalOpen = false;
@@ -60,32 +73,27 @@ export class DisputesDashboardComponent implements OnInit {
     private readonly disputesService: DisputesService,
     public translate: TranslateService
   ) {
-    this.disputes = this.disputesService.getDisputesSnapshot();
-    this.selectedDispute = this.disputes[0];
     this.buildUiConfig();
 
-    this.translate.onLangChange.subscribe(() => {
-      this.buildUiConfig();
-    });
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.buildUiConfig();
+      });
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((params) => {
-      const search = params.get('search')?.trim() ?? '';
-      const filter = params.get('status');
-      const focus = params.get('focus');
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.searchTerm = params.get('search')?.trim() ?? '';
+        this.activeFilter = this.isValidFilter(params.get('status')) ? params.get('status') as DisputeFilterId : 'all';
+        this.focusedDisputeId = params.get('focus')?.trim() ?? null;
+        this.resetToFirstPage();
+        this.applyFocusedSelection();
+      });
 
-      this.searchTerm = search;
-      this.activeFilter = this.isValidFilter(filter) ? filter : 'all';
-      this.resetToFirstPage();
-
-      if (focus) {
-        const dispute = this.disputes.find((item) => item.id === focus);
-        if (dispute) {
-          this.selectDispute(dispute);
-        }
-      }
-    });
+    this.loadDisputes();
   }
 
   get filteredDisputes(): DisputeRow[] {
@@ -220,8 +228,16 @@ export class DisputesDashboardComponent implements OnInit {
     this.closeApprovalModal();
   }
 
-  submitApproval(): void {
-    this.closeApprovalModal();
+  submitApproval(form: RefundDecisionForm): void {
+    this.disputesService.approveCase(this.selectedDispute.id, form)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+          this.closeApprovalModal();
+        },
+        error: (error) => console.error('Failed to approve support case.', error)
+      });
   }
 
   openEscalationModal(): void {
@@ -258,8 +274,16 @@ export class DisputesDashboardComponent implements OnInit {
     this.closeRejectionModal();
   }
 
-  submitRejection(): void {
-    this.closeRejectionModal();
+  submitRejection(form: RejectionDecisionForm): void {
+    this.disputesService.rejectCase(this.selectedDispute.id, form)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+          this.closeRejectionModal();
+        },
+        error: (error) => console.error('Failed to reject support case.', error)
+      });
   }
 
   openRequestInfoModal(): void {
@@ -277,8 +301,16 @@ export class DisputesDashboardComponent implements OnInit {
     this.closeRequestInfoModal();
   }
 
-  submitRequestInfo(): void {
-    this.closeRequestInfoModal();
+  submitRequestInfo(form: RequestInfoForm): void {
+    this.disputesService.requestEvidence(this.selectedDispute.id, form)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+          this.closeRequestInfoModal();
+        },
+        error: (error) => console.error('Failed to request additional evidence.', error)
+      });
   }
 
   @HostListener('document:keydown.escape')
@@ -428,8 +460,24 @@ export class DisputesDashboardComponent implements OnInit {
       .toLocaleString('en-US');
   }
 
+  private loadDisputes(): void {
+    this.disputesService.getDisputes()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((disputes) => {
+        this.disputes = disputes;
+        this.applyFocusedSelection();
+        this.normalizeCurrentPage();
+        this.buildUiConfig();
+      });
+  }
+
   private resetToFirstPage(): void {
     this.page = 1;
+  }
+
+  private normalizeCurrentPage(): void {
+    const totalPages = Math.max(1, Math.ceil(this.totalFilteredItems / this.pageSize));
+    this.page = Math.min(this.page, totalPages);
   }
 
   private buildUiConfig(): void {
@@ -525,6 +573,69 @@ export class DisputesDashboardComponent implements OnInit {
 
   private t(key: string, params?: Record<string, unknown>): string {
     return this.translate.instant(key, params);
+  }
+
+  private applyFocusedSelection(): void {
+    const selectedFromFocus = this.focusedDisputeId
+      ? this.disputes.find((item) => item.id === this.focusedDisputeId)
+      : undefined;
+    const selectedFromCurrent = this.selectedDispute.id
+      ? this.disputes.find((item) => item.id === this.selectedDispute.id)
+      : undefined;
+
+    this.selectedDispute = selectedFromFocus
+      ?? selectedFromCurrent
+      ?? this.disputes[0]
+      ?? this.createEmptyDispute();
+
+    if (!this.disputes.length) {
+      this.isDetailsDrawerOpen = false;
+      return;
+    }
+
+    if (selectedFromFocus) {
+      this.isDetailsDrawerOpen = true;
+    }
+  }
+
+  private applyDisputeUpdate(updated: DisputeRow): void {
+    const index = this.disputes.findIndex((item) => item.id === updated.id);
+
+    if (index === -1) {
+      this.disputes = [updated, ...this.disputes];
+    } else {
+      this.disputes = this.disputes.map((item, currentIndex) => currentIndex === index ? updated : item);
+    }
+
+    this.selectedDispute = this.selectedDispute.id === updated.id ? updated : this.selectedDispute;
+    this.normalizeCurrentPage();
+    this.buildUiConfig();
+  }
+
+  private createEmptyDispute(): DisputeRow {
+    return {
+      id: '',
+      orderId: '',
+      customerName: '',
+      customerEmail: '',
+      customerInitials: '',
+      merchantName: '',
+      type: '',
+      reason: '',
+      amount: 0,
+      status: 'open',
+      priority: 'low',
+      owner: '',
+      risk: 'low',
+      createdAt: '',
+      sla: '',
+      note: '',
+      paymentMask: '',
+      customerSummary: '',
+      merchantSummary: '',
+      evidence: [],
+      timeline: []
+    };
   }
 }
 

@@ -11,8 +11,8 @@ export type EscalationPriority = 'medium' | 'high' | 'critical';
 export type EscalationReason = 'conflicting_evidence' | 'high_amount' | 'fraud' | 'legal_sensitivity' | 'repeat_issues' | 'other';
 
 export interface TimelineItem {
-  titleKey: string;
-  timeKey: string;
+  title: string;
+  time: string;
   tone: 'primary' | 'warning' | 'muted';
 }
 
