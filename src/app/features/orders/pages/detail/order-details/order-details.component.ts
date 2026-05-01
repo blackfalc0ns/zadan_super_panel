@@ -12,6 +12,7 @@ import { InlineBannerComponent } from '../../../../../shared/components/ui/inlin
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
+import { OrderTrackingMapComponent } from '../../../components/order-tracking-map/order-tracking-map.component';
 import { FinanceService, OrderFinancialBreakdown } from '@finances/public-api';
 import { OrdersService } from '@orders/services/orders.api.service';
 import {
@@ -54,7 +55,8 @@ import {
     SectionHeaderComponent,
     StatusPillComponent,
     InlineBannerComponent,
-    KeyValueGridComponent
+    KeyValueGridComponent,
+    OrderTrackingMapComponent
   ],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss']
@@ -155,6 +157,11 @@ export class OrderDetailsComponent implements OnInit {
 
     return currentOrder?.fulfillmentStatus === 'READY_FOR_PICKUP'
       || currentOrder?.fulfillmentStatus === 'DRIVER_ASSIGNED';
+  }
+
+  get isOrderTerminal(): boolean {
+    const status = this.order()?.status;
+    return status === 'DELIVERED' || status === 'COMPLETED' || status === 'CANCELLED';
   }
 
   get paymentInfoItems(): KeyValueGridItem[] {

@@ -11,6 +11,7 @@ import {
   OrderDetail,
   OrderDispatchState,
   OrderDisputeForm,
+  OrderFilterOptions,
   OrderFulfillmentStatus,
   OrderIssueFlagForm,
   OrderListItem,
@@ -98,6 +99,9 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
   driverCandidates: DriverCandidate[];
   candidateScoreBreakdown?: string[];
   cancellationSummary: OrderCancellationSummary | null;
+  customerGeo?: { latitude: number; longitude: number } | null;
+  merchantGeo?: { latitude: number; longitude: number } | null;
+  driverLiveLocation?: { latitude: number; longitude: number; accuracyMeters?: number; recordedAtUtc?: string } | null;
 }
 
 @Injectable({
@@ -108,6 +112,10 @@ export class OrdersService {
   private ordersCache = new Map<string, OrderDetail>();
 
   constructor(private readonly http: HttpClient) {}
+
+  getFilterOptions(): Observable<OrderFilterOptions> {
+    return this.http.get<OrderFilterOptions>(`${this.apiUrl}/filter-options`);
+  }
 
   getOrders(query: OrderListQuery): Observable<PaginatedOrdersResponse> {
     let params = new HttpParams()
@@ -312,7 +320,10 @@ export class OrdersService {
       activities: item.activities,
       driverCandidates: item.driverCandidates,
       candidateScoreBreakdown: item.candidateScoreBreakdown ?? [],
-      cancellationSummary: item.cancellationSummary
+      cancellationSummary: item.cancellationSummary,
+      customerGeo: item.customerGeo ?? null,
+      merchantGeo: item.merchantGeo ?? null,
+      driverLiveLocation: item.driverLiveLocation ?? null
     };
   }
 

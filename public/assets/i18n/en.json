@@ -4209,6 +4209,12 @@
       "CANCELLED": "Fulfillment Stopped"
     },
     "FILTERS": {
+      "TITLE": "Filter Orders",
+      "SUBTITLE": "Adjust search criteria",
+      "ACTIVE_FILTERS": "Active Filters",
+      "ORDER_STATUS": "Order Status",
+      "PAYMENT_STATUS": "Payment Status",
+      "FULFILLMENT_STATUS": "Fulfillment Status",
       "ORDER_STATUS_ALL": "All Order Statuses",
       "PAYMENT_STATUS_ALL": "All Payment Statuses",
       "FULFILLMENT_STATUS_ALL": "All Fulfillment Statuses"

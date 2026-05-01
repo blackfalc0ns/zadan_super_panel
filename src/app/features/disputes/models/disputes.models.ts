@@ -1,10 +1,10 @@
 export type SupportCaseWorkflowStatus = 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected' | 'resolved';
-export type SupportCaseType = 'complaint' | 'return_request';
+export type SupportCaseType = 'complaint' | 'return_request' | 'driver_report' | 'driver_dispute';
 
 export type DisputeStatus = 'open' | 'review' | 'merchant' | 'resolved'; // legacy
 export type DisputePriority = 'critical' | 'high' | 'medium' | 'low';
 export type RiskLevel = 'high' | 'medium' | 'low';
-export type DisputeFilterId = 'all' | 'active' | 'critical' | 'review' | 'merchant' | 'resolved' | 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected';
+export type DisputeFilterId = 'all' | 'active' | 'critical' | 'review' | 'merchant' | 'resolved' | 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected' | 'driver' | 'customer' | 'vendor';
 export type RejectionReason = 'policy' | 'evidence' | 'delivered' | 'expired' | 'misuse' | 'other';
 export type RequestInfoTarget = 'customer' | 'merchant' | 'internal';
 export type RequestInfoType = 'invoice' | 'photos' | 'statement' | 'proof';
@@ -57,6 +57,9 @@ export interface SupportCaseRow {
   evidence: EvidenceItem[];
   timeline: TimelineItem[];
   workflowContext?: DisputeWorkflowContext;
+  initiatorRole: string;
+  vendorResponse?: string;
+  driverResponse?: string;
 }
 
 export type DisputeRow = SupportCaseRow;

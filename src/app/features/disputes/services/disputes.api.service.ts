@@ -48,6 +48,9 @@ interface AdminOrderSupportCaseResponse {
     fileUrl: string;
   }>;
   timeline: TimelineItem[];
+  initiatorRole: string;
+  vendorResponse?: string;
+  driverResponse?: string;
 }
 
 @Injectable({
@@ -66,7 +69,8 @@ export class DisputesService {
     status?: string,
     priority?: string,
     queue?: string,
-    type?: string
+    type?: string,
+    initiatorRole?: string
   ): Observable<{ items: SupportCaseRow[]; totalCount: number }> {
     let params = new HttpParams()
       .set('page', String(Math.max(1, page)))
@@ -77,6 +81,7 @@ export class DisputesService {
     if (priority && priority !== 'all') params = params.set('priority', priority);
     if (queue) params = params.set('queue', queue);
     if (type) params = params.set('type', type);
+    if (initiatorRole && initiatorRole !== 'all') params = params.set('initiatorRole', initiatorRole);
 
     return this.http.get<AdminOrderSupportCasesResponse>(this.apiUrl, { params }).pipe(
       map((response) => {
@@ -244,7 +249,10 @@ export class DisputesService {
       customerSummary: item.customerSummary,
       merchantSummary: item.merchantSummary,
       evidence: item.evidence ? item.evidence.map((evidenceItem) => this.mapEvidence(evidenceItem)) : [],
-      timeline: item.timeline ? item.timeline.map((timelineItem) => ({ ...timelineItem })) : []
+      timeline: item.timeline ? item.timeline.map((timelineItem) => ({ ...timelineItem })) : [],
+      initiatorRole: item.initiatorRole || 'customer',
+      vendorResponse: item.vendorResponse,
+      driverResponse: item.driverResponse
     };
   }
 

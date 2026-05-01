@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router, RouterModule } from '@angular/router';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { DataTableComponent, TableAction, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page-header/page-header.component';
-import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
+import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { OrdersService } from '@orders/services/orders.api.service';
 import {
   OrderFulfillmentStatus,
@@ -18,7 +18,8 @@ import {
   OrderResolutionState,
   OrderStatus,
   OrderWorkflowStage,
-  OrdersSummary
+  OrdersSummary,
+  OrderFilterOptions
 } from '../../../models/orders.models';
 import {
   getFulfillmentStatusKey,
@@ -40,104 +41,96 @@ import {
     KpiCardsComponent,
     DataTableComponent,
     AppPageHeaderComponent,
-    SearchableSelectComponent,
-    StatusPillComponent
+    StatusPillComponent,
+    AdvancedFilterPanelComponent
   ],
   templateUrl: './orders-list.component.html',
   styleUrls: ['./orders-list.component.scss']
 })
 export class OrdersListComponent implements OnInit {
   readonly tableColumns: TableColumn[] = [
-    { key: 'reference', title: 'ORDERS.TABLE.ID', width: '14%', align: 'left', type: 'custom' },
-    { key: 'customer', title: 'ORDERS.TABLE.CUSTOMER', width: '18%', align: 'left', type: 'custom' },
-    { key: 'statuses', title: 'ORDERS.TABLE.STATUSES', width: '28%', align: 'left', type: 'custom' },
-    { key: 'workflow', title: 'ORDERS.TABLE.WORKFLOW', width: '20%', align: 'left', type: 'custom' },
-    { key: 'updated', title: 'ORDERS.TABLE.UPDATED', width: '14%', align: 'left', type: 'custom' },
-    { key: 'total', title: 'ORDERS.TABLE.TOTAL', width: '12%', align: 'center', type: 'custom' },
-    { key: 'actions', title: 'ORDERS.TABLE.ACTIONS', width: '8%', align: 'center', type: 'actions' }
+    { key: 'reference', title: 'ORDERS.TABLE.ID', width: '13%', align: 'left', type: 'custom' },
+    { key: 'customer', title: 'ORDERS.TABLE.CUSTOMER', width: '15%', align: 'left', type: 'custom' },
+    { key: 'statuses', title: 'ORDERS.TABLE.STATUSES', width: '26%', align: 'left', type: 'custom' },
+    { key: 'workflow', title: 'ORDERS.TABLE.WORKFLOW', width: '18%', align: 'left', type: 'custom' },
+    { key: 'updated', title: 'ORDERS.TABLE.UPDATED', width: '12%', align: 'left', type: 'custom' },
+    { key: 'total', title: 'ORDERS.TABLE.TOTAL', width: '10%', align: 'center', type: 'custom' },
+    { key: 'actions', title: 'ORDERS.TABLE.ACTIONS', width: '6%', align: 'center', type: 'actions' }
   ];
 
   readonly tableActions: TableAction[] = [
     { id: 'view', label: 'ORDERS_LIST.TABLE.VIEW', icon: 'visibility' }
   ];
 
-  readonly orderStatusOptions: Array<{ value: OrderStatus | 'ALL'; label: string }> = [
-    { value: 'ALL', label: 'ORDERS.FILTERS.ORDER_STATUS_ALL' },
-    { value: 'NEW', label: 'ORDERS.STATUS.NEW' },
-    { value: 'PENDING', label: 'ORDERS.STATUS.PENDING' },
-    { value: 'IN_PROGRESS', label: 'ORDERS.STATUS.IN_PROGRESS' },
-    { value: 'OUT_FOR_DELIVERY', label: 'ORDERS.STATUS.OUT_FOR_DELIVERY' },
-    { value: 'DELIVERED', label: 'ORDERS.STATUS.DELIVERED' },
-    { value: 'COMPLETED', label: 'ORDERS.STATUS.COMPLETED' },
-    { value: 'CANCELLED', label: 'ORDERS.STATUS.CANCELLED' }
-  ];
-
-  readonly paymentStatusOptions: Array<{ value: OrderPaymentStatus | 'ALL'; label: string }> = [
-    { value: 'ALL', label: 'ORDERS.FILTERS.PAYMENT_STATUS_ALL' },
-    { value: 'PENDING', label: 'ORDERS.PAYMENT_STATUS.PENDING' },
-    { value: 'PAID', label: 'ORDERS.PAYMENT_STATUS.PAID' },
-    { value: 'FAILED', label: 'ORDERS.PAYMENT_STATUS.FAILED' },
-    { value: 'REFUNDED', label: 'ORDERS.PAYMENT_STATUS.REFUNDED' },
-    { value: 'PARTIALLY_REFUNDED', label: 'ORDERS.PAYMENT_STATUS.PARTIALLY_REFUNDED' },
-    { value: 'COD_PENDING', label: 'ORDERS.PAYMENT_STATUS.COD_PENDING' },
-    { value: 'SETTLED', label: 'ORDERS.PAYMENT_STATUS.SETTLED' }
-  ];
-
-  readonly fulfillmentStatusOptions: Array<{ value: OrderFulfillmentStatus | 'ALL'; label: string }> = [
-    { value: 'ALL', label: 'ORDERS.FILTERS.FULFILLMENT_STATUS_ALL' },
-    { value: 'QUEUED', label: 'ORDERS.FULFILLMENT_STATUS.QUEUED' },
-    { value: 'PREPARING', label: 'ORDERS.FULFILLMENT_STATUS.PREPARING' },
-    { value: 'READY_FOR_PICKUP', label: 'ORDERS.FULFILLMENT_STATUS.READY_FOR_PICKUP' },
-    { value: 'DRIVER_ASSIGNED', label: 'ORDERS.FULFILLMENT_STATUS.DRIVER_ASSIGNED' },
-    { value: 'PICKED_UP', label: 'ORDERS.FULFILLMENT_STATUS.PICKED_UP' },
-    { value: 'ON_ROUTE', label: 'ORDERS.FULFILLMENT_STATUS.ON_ROUTE' },
-    { value: 'DELIVERED', label: 'ORDERS.FULFILLMENT_STATUS.DELIVERED' },
-    { value: 'FAILED', label: 'ORDERS.FULFILLMENT_STATUS.FAILED' },
-    { value: 'CANCELLED', label: 'ORDERS.FULFILLMENT_STATUS.CANCELLED' }
-  ];
-
-  readonly queueViewOptions: Array<{ value: OrderQueueView; label: string }> = [
-    { value: 'ALL', label: 'ORDERS.QUEUE_VIEW.ALL' },
-    { value: 'ACTIVE', label: 'ORDERS.QUEUE_VIEW.ACTIVE' },
-    { value: 'LATE', label: 'ORDERS.QUEUE_VIEW.LATE' },
-    { value: 'PAYMENT_ISSUES', label: 'ORDERS.QUEUE_VIEW.PAYMENT_ISSUES' },
-    { value: 'REFUNDS', label: 'ORDERS.QUEUE_VIEW.REFUNDS' }
-  ];
-
   orders: OrderListItem[] = [];
   kpiCards: KPICard[] = [];
   isLoading = false;
   errorMessage = '';
+  isFiltersExpanded = false;
 
   searchTerm = '';
-  orderStatusFilter: OrderStatus | 'ALL' = 'ALL';
-  paymentStatusFilter: OrderPaymentStatus | 'ALL' = 'ALL';
-  fulfillmentStatusFilter: OrderFulfillmentStatus | 'ALL' = 'ALL';
+  orderStatusFilter: string | null = null;
+  paymentStatusFilter: string | null = null;
+  fulfillmentStatusFilter: string | null = null;
   queueView: OrderQueueView = 'ALL';
+
+  panelFilters: Record<string, string | null | undefined> = {};
+
+  filterFields: FilterField[] = [
+    { key: 'status', label: 'ORDERS.FILTERS.ORDER_STATUS', type: 'select', color: '#127c8c', options: [] },
+    { key: 'paymentStatus', label: 'ORDERS.FILTERS.PAYMENT_STATUS', type: 'select', color: '#0f766e', options: [] },
+    { key: 'fulfillmentStatus', label: 'ORDERS.FILTERS.FULFILLMENT_STATUS', type: 'select', color: '#2563eb', options: [] },
+    { key: 'queueView', label: 'ORDERS.CURRENT_VIEW', type: 'select', color: '#7c3aed', options: [] }
+  ];
 
   page = 1;
   pageSize = 8;
   totalItems = 0;
 
-  get orderStatusFilterOptions(): SearchableSelectOption[] {
-    return this.orderStatusOptions.map((option) => ({ value: option.value, labelKey: option.label }));
-  }
-
-  get paymentStatusFilterOptions(): SearchableSelectOption[] {
-    return this.paymentStatusOptions.map((option) => ({ value: option.value, labelKey: option.label }));
-  }
-
-  get fulfillmentStatusFilterOptions(): SearchableSelectOption[] {
-    return this.fulfillmentStatusOptions.map((option) => ({ value: option.value, labelKey: option.label }));
+  get hasActiveFilters(): boolean {
+    return !!(this.searchTerm || this.orderStatusFilter || this.paymentStatusFilter || this.fulfillmentStatusFilter || (this.queueView && this.queueView !== 'ALL'));
   }
 
   constructor(
     private readonly router: Router,
-    private readonly ordersService: OrdersService
+    private readonly ordersService: OrdersService,
+    private readonly translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    this.loadFilterOptions();
     this.loadOrders();
+  }
+
+  loadFilterOptions(): void {
+    this.ordersService.getFilterOptions().subscribe({
+      next: (options: OrderFilterOptions) => {
+        const statusField = this.filterFields.find(f => f.key === 'status');
+        const paymentField = this.filterFields.find(f => f.key === 'paymentStatus');
+        const fulfillmentField = this.filterFields.find(f => f.key === 'fulfillmentStatus');
+        const queueField = this.filterFields.find(f => f.key === 'queueView');
+
+        if (statusField) {
+          statusField.options = options.orderStatuses.map(s => ({ value: s.value, label: s.label }));
+          statusField.placeholder = 'ORDERS.FILTERS.ORDER_STATUS_ALL';
+        }
+        if (paymentField) {
+          paymentField.options = options.paymentStatuses.map(s => ({ value: s.value, label: s.label }));
+          paymentField.placeholder = 'ORDERS.FILTERS.PAYMENT_STATUS_ALL';
+        }
+        if (fulfillmentField) {
+          fulfillmentField.options = options.fulfillmentStatuses.map(s => ({ value: s.value, label: s.label }));
+          fulfillmentField.placeholder = 'ORDERS.FILTERS.FULFILLMENT_STATUS_ALL';
+        }
+        if (queueField) {
+          queueField.options = options.queueViews.map(s => ({ value: s.value, label: s.label }));
+          queueField.placeholder = 'ORDERS.QUEUE_VIEW.ALL';
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load filter options', err);
+      }
+    });
   }
 
   loadOrders(): void {
@@ -148,9 +141,9 @@ export class OrdersListComponent implements OnInit {
       page: this.page,
       pageSize: this.pageSize,
       searchTerm: this.searchTerm,
-      status: this.orderStatusFilter,
-      paymentStatus: this.paymentStatusFilter,
-      fulfillmentStatus: this.fulfillmentStatusFilter,
+      status: (this.orderStatusFilter as OrderStatus) || 'ALL',
+      paymentStatus: (this.paymentStatusFilter as OrderPaymentStatus) || 'ALL',
+      fulfillmentStatus: (this.fulfillmentStatusFilter as OrderFulfillmentStatus) || 'ALL',
       queueView: this.queueView
     }).subscribe({
       next: (response) => {
@@ -185,23 +178,34 @@ export class OrdersListComponent implements OnInit {
     this.loadOrders();
   }
 
-  onFiltersChange(): void {
+  toggleFilters(): void {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
+
+  onFiltersChange(filters: Record<string, unknown>): void {
+    this.orderStatusFilter = this.toNullableString(filters['status']);
+    this.paymentStatusFilter = this.toNullableString(filters['paymentStatus']);
+    this.fulfillmentStatusFilter = this.toNullableString(filters['fulfillmentStatus']);
+    this.queueView = (this.toNullableString(filters['queueView']) as OrderQueueView) || 'ALL';
+    this.syncPanelFilters();
     this.page = 1;
     this.loadOrders();
   }
 
   resetFilters(): void {
     this.searchTerm = '';
-    this.orderStatusFilter = 'ALL';
-    this.paymentStatusFilter = 'ALL';
-    this.fulfillmentStatusFilter = 'ALL';
+    this.orderStatusFilter = null;
+    this.paymentStatusFilter = null;
+    this.fulfillmentStatusFilter = null;
     this.queueView = 'ALL';
+    this.syncPanelFilters();
     this.page = 1;
     this.loadOrders();
   }
 
   onKpiCardClick(card: KPICard): void {
     this.queueView = (card.id.toUpperCase() as OrderQueueView);
+    this.syncPanelFilters();
     this.page = 1;
     this.loadOrders();
   }
@@ -294,6 +298,19 @@ export class OrdersListComponent implements OnInit {
     return variants[state];
   }
 
+  private syncPanelFilters(): void {
+    this.panelFilters = {
+      status: this.orderStatusFilter,
+      paymentStatus: this.paymentStatusFilter,
+      fulfillmentStatus: this.fulfillmentStatusFilter,
+      queueView: this.queueView === 'ALL' ? null : this.queueView
+    };
+  }
+
+  private toNullableString(value: unknown): string | null {
+    return typeof value === 'string' && value.trim() ? value : null;
+  }
+
   private buildKpiCards(summary: OrdersSummary): KPICard[] {
     return [
       {
@@ -339,5 +356,3 @@ export class OrdersListComponent implements OnInit {
     ];
   }
 }
-
-

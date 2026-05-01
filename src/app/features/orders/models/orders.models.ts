@@ -150,6 +150,9 @@ export interface OrderDetail extends OrderListItem {
   driverCandidates: DriverCandidate[];
   candidateScoreBreakdown?: string[];
   cancellationSummary: OrderCancellationSummary | null;
+  customerGeo?: { latitude: number; longitude: number } | null;
+  merchantGeo?: { latitude: number; longitude: number } | null;
+  driverLiveLocation?: { latitude: number; longitude: number; accuracyMeters?: number; recordedAtUtc?: string } | null;
 }
 
 export interface OrderStatusUpdateForm {
@@ -249,4 +252,16 @@ export interface PaginatedOrdersResponse {
   hasPreviousPage: boolean;
   hasNextPage: boolean;
   summary: OrdersSummary;
+}
+
+export interface FilterOptionItem {
+  value: string;
+  label: string;
+}
+
+export interface OrderFilterOptions {
+  orderStatuses: FilterOptionItem[];
+  paymentStatuses: FilterOptionItem[];
+  fulfillmentStatuses: FilterOptionItem[];
+  queueViews: FilterOptionItem[];
 }

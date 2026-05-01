@@ -64,6 +64,7 @@ export class DisputesDashboardComponent implements OnInit {
   pageSize = 8;
   searchTerm = '';
   activeFilter: DisputeFilterId = 'all';
+  initiatorRoleFilter: string = 'all';
   selectedDispute: SupportCaseRow = this.createEmptyDispute();
   isDetailsDrawerOpen = false;
   isApprovalModalOpen = false;
@@ -135,7 +136,10 @@ export class DisputesDashboardComponent implements OnInit {
       in_review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
       awaiting_customer_evidence: this.t('DISPUTES_DASHBOARD.STATUS.AWAITING_CUSTOMER'),
       approved: this.t('DISPUTES_DASHBOARD.STATUS.APPROVED'),
-      rejected: this.t('DISPUTES_DASHBOARD.STATUS.REJECTED')
+      rejected: this.t('DISPUTES_DASHBOARD.STATUS.REJECTED'),
+      driver: 'Driver Cases',
+      customer: 'Customer Cases',
+      vendor: 'Vendor Cases'
     }[this.activeFilter] || this.activeFilter;
   }
 
@@ -477,7 +481,8 @@ export class DisputesDashboardComponent implements OnInit {
       filters.status,
       filters.priority,
       undefined,
-      undefined
+      undefined,
+      filters.initiatorRole
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((response) => {
@@ -556,6 +561,20 @@ export class DisputesDashboardComponent implements OnInit {
       }
     ];
 
+    // Add driver cases KPI if any exist
+    const driverCases = this.disputes.filter((item) => item.initiatorRole === 'driver');
+    if (driverCases.length > 0) {
+      this.kpiCards.splice(4, 0, {
+        id: 'driver' as string,
+        title: 'Driver Cases',
+        value: driverCases.length,
+        color: '#6366f1',
+        icon: '<span class="material-symbols-outlined text-[20px]">local_shipping</span>',
+        trend: { value: 0, isPositive: true, label: 'Driver-initiated' },
+        clickable: true
+      });
+    }
+
     this.tableColumns = [
       { key: 'id', title: this.t('DISPUTES_DASHBOARD.TABLE.ID'), width: '14%', align: 'left', type: 'custom' },
       { key: 'customer', title: this.t('DISPUTES_DASHBOARD.TABLE.CUSTOMER'), width: '17%', align: 'left', type: 'custom' },
@@ -591,10 +610,13 @@ export class DisputesDashboardComponent implements OnInit {
       || value === 'awaiting_customer_evidence'
       || value === 'approved'
       || value === 'rejected'
-      || value === 'resolved';
+      || value === 'resolved'
+      || value === 'driver'
+      || value === 'customer'
+      || value === 'vendor';
   }
 
-  private resolveServerFilters(): { status?: string; priority?: string } {
+  private resolveServerFilters(): { status?: string; priority?: string; initiatorRole?: string } {
     switch (this.activeFilter) {
       case 'active':
         return { status: 'active' };
@@ -611,6 +633,12 @@ export class DisputesDashboardComponent implements OnInit {
       case 'rejected':
       case 'resolved':
         return { status: this.activeFilter };
+      case 'driver':
+        return { initiatorRole: 'driver' };
+      case 'customer':
+        return { initiatorRole: 'customer' };
+      case 'vendor':
+        return { initiatorRole: 'vendor' };
       default:
         return {};
     }
@@ -681,7 +709,8 @@ export class DisputesDashboardComponent implements OnInit {
       customerSummary: '',
       merchantSummary: '',
       evidence: [],
-      timeline: []
+      timeline: [],
+      initiatorRole: 'customer'
     };
   }
   

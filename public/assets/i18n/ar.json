@@ -4207,6 +4207,12 @@
       "CANCELLED": "أوقف التنفيذ"
     },
     "FILTERS": {
+      "TITLE": "تصفية الطلبات",
+      "SUBTITLE": "اضبط معايير البحث",
+      "ACTIVE_FILTERS": "الفلاتر النشطة",
+      "ORDER_STATUS": "حالة الطلب",
+      "PAYMENT_STATUS": "حالة الدفع",
+      "FULFILLMENT_STATUS": "حالة التنفيذ",
       "ORDER_STATUS_ALL": "كل حالات الطلب",
       "PAYMENT_STATUS_ALL": "كل حالات الدفع",
       "FULFILLMENT_STATUS_ALL": "كل حالات التنفيذ"

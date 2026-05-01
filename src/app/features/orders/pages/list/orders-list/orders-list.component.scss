@@ -13,6 +13,8 @@ thead th {
     top: 0;
     background: white;
     z-index: 10;
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
 }
 
 tbody tr {
@@ -25,4 +27,15 @@ tbody tr:hover {
 
 td, th {
     vertical-align: middle !important;
+}
+
+td {
+    padding-top: 0.625rem !important;
+    padding-bottom: 0.625rem !important;
+}
+
+:host ::ng-deep .extraordinary-table-container {
+    border-radius: 1.2rem !important;
+    border: 1px solid rgba(226, 232, 240, 0.6) !important;
+    overflow: hidden;
 }
