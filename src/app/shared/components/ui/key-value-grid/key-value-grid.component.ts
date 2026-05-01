@@ -40,7 +40,7 @@ export class KeyValueGridComponent {
 
   getItemClasses(): string {
     return this.bordered
-      ? 'rounded-xl border border-slate-100 bg-white/70 p-4'
+      ? 'rounded-[1.25rem] border border-slate-200/70 bg-white/60 p-5 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.04)] hover:bg-white hover:border-slate-300/60 hover:shadow-[0_4px_16px_-4px_rgba(15,23,42,0.06)] transition-all duration-300'
       : '';
   }
 

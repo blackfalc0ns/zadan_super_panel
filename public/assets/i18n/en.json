@@ -867,9 +867,9 @@
       "FINANCE": "Finance",
       "VERIFICATION": "Verification"
     },
-      "DETAIL": {
-        "PAGE_TITLE": "Comprehensive Driver Operational Profile",
-        "PAGE_SUBTITLE": "Unified driver journey from documentation to operation, support, compliance, and collection",
+    "DETAIL": {
+      "PAGE_TITLE": "Comprehensive Driver Operational Profile",
+      "PAGE_SUBTITLE": "Unified driver journey from documentation to operation, support, compliance, and collection",
       "MESSAGES": {
         "INVALID_DRIVER_ID": "Invalid driver ID.",
         "DRIVER_NOT_FOUND": "Driver not found.",
@@ -884,7 +884,7 @@
         "DOCUMENT_REQUEST_SUBMITTED": "Document request submitted.",
         "VERIFICATION_REJECTED": "Driver verification rejected."
       },
-        "BTN_VERIFY": "Verification",
+      "BTN_VERIFY": "Verification",
       "BTN_ACCESS_PROFILE": "Access Profile",
       "BTN_OPERATIONS": "Operations",
       "BTN_REACTIVATE": "Reactivate",
@@ -1534,11 +1534,11 @@
           "CHECKLIST": {
             "PERSONAL_INFO": "Personal information is complete",
             "VEHICLE_INFO": "Vehicle information is complete",
-              "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
-              "LICENSE_DOCUMENT": "Driving license is available and valid",
-              "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
-              "PERSONAL_PHOTO": "Personal verification photo is available",
-              "ZONE_SELECTION": "Primary zone is selected"
+            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
+            "LICENSE_DOCUMENT": "Driving license is available and valid",
+            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
+            "PERSONAL_PHOTO": "Personal verification photo is available",
+            "ZONE_SELECTION": "Primary zone is selected"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
@@ -1776,16 +1776,16 @@
         "JOINED_AT": "Joined At",
         "VEHICLE_TYPE": "Vehicle Type",
         "LICENSE_NUMBER": "License Number",
-      "ZONE": "Primary Zone",
-      "NO_RECENT_NOTES": "No recent notes.",
-      "QUICK_SUMMARY_TITLE": "Driver Summary",
-      "QUICK_SUMMARY_DESC": "Operational snapshot from the latest driver profile data.",
-      "SIGNALS": "Signals",
-      "ALERTS_TITLE": "Alerts & Review Notes",
-      "ALERTS_DESC": "Open blockers and follow-up signals for this driver.",
-      "NO_ALERTS": "No active alerts",
-      "NO_ALERTS_DESC": "This profile is clear outside routine monitoring.",
-      "NOTES_HISTORY": "Notes History"
+        "ZONE": "Primary Zone",
+        "NO_RECENT_NOTES": "No recent notes.",
+        "QUICK_SUMMARY_TITLE": "Driver Summary",
+        "QUICK_SUMMARY_DESC": "Operational snapshot from the latest driver profile data.",
+        "SIGNALS": "Signals",
+        "ALERTS_TITLE": "Alerts & Review Notes",
+        "ALERTS_DESC": "Open blockers and follow-up signals for this driver.",
+        "NO_ALERTS": "No active alerts",
+        "NO_ALERTS_DESC": "This profile is clear outside routine monitoring.",
+        "NOTES_HISTORY": "Notes History"
       },
       "LIFECYCLE": {
         "APPLICATION": {
@@ -4174,7 +4174,10 @@
           "DEFAULT": "Only logical transitions for the current state are available here."
         },
         "CONFIRM": "Confirm Status Change"
-      }
+      },
+      "RECOMPUTE_DISPATCH": "Recompute Dispatch",
+      "DISPATCH_STATE": "Dispatch State",
+      "DISPATCH_NOTE": "Dispatch Note"
     },
     "STATUS": {
       "NEW": "New",

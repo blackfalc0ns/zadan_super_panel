@@ -1,146 +1,8 @@
-<div class="h-full flex flex-col font-sans pb-10 overflow-y-auto px-4 md:px-10 py-6 max-w-[1440px] mx-auto w-full" [dir]="'SIDEBAR.DIR' | translate">
-  <nav class="flex items-center gap-2 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-6 animate-in slide-in-from-right-5 duration-700">
-    <a routerLink="/" class="hover:text-zadna-primary transition-colors">{{ 'SIDEBAR.HOME' | translate }}</a>
-    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-    <a routerLink="/orders" class="hover:text-zadna-primary transition-colors">{{ 'ORDERS.TITLE' | translate }}</a>
-    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-    <span class="text-zadna-primary">{{ 'ORDERS.DETAIL.TITLE' | translate }}</span>
-  </nav>
+const fs = require('fs');
+const file = 'src/app/features/orders/pages/detail/order-details/order-details.component.html';
+let content = fs.readFileSync(file, 'utf8');
 
-  <div *ngIf="errorMessage" class="rounded-[1.4rem] border border-red-100 bg-red-50/80 px-5 py-4 text-sm font-bold text-red-700">
-    {{ errorMessage | translate }}
-  </div>
-
-  <div *ngIf="isLoading" class="space-y-4">
-    <div *ngFor="let skeleton of [1,2,3,4,5]" class="h-28 rounded-[1.6rem] border border-slate-200/60 bg-white/70 animate-pulse"></div>
-  </div>
-
-  <ng-container *ngIf="!isLoading && order() as currentOrder">
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 animate-in fade-in duration-700">
-      <div>
-        <div class="flex items-center gap-3 mb-2">
-          <h1 class="text-2xl font-extrabold text-zadna-primary leading-tight">{{ 'ORDERS.DETAIL.TITLE' | translate }}</h1>
-          <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-bold font-mono text-slate-600">
-            {{ currentOrder.displayId }}
-          </span>
-          <span *ngIf="currentOrder.hasActiveIssue" class="px-3 py-1 bg-red-50 text-red-600 border border-red-100 rounded-full text-[11px] font-extrabold">
-            {{ 'ORDERS.DETAIL.NEEDS_INTERVENTION' | translate }}
-          </span>
-        </div>
-        <p class="text-sm text-slate-400 max-w-2xl">{{ 'ORDERS.DETAIL.OPERATIONAL_DESC' | translate }}</p>
-
-        <div class="flex flex-wrap gap-2 mt-4">
-          <app-status-pill
-            [label]="orderStatusLabel"
-            [variant]="getOrderStatusVariant(currentOrder.status)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="paymentStatusLabel"
-            [variant]="getPaymentStatusVariant(currentOrder.paymentStatus)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="fulfillmentStatusLabel"
-            [variant]="getFulfillmentStatusVariant(currentOrder.fulfillmentStatus)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="workflowStageLabel"
-            variant="neutral"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="resolutionStateLabel"
-            [variant]="getResolutionStateVariant(currentOrder.resolutionState)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap gap-2">
-        <button class="bg-zadna-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:scale-95 transition-transform" type="button" (click)="openStatusModal()">
-          <span class="material-symbols-outlined text-sm">edit</span> {{ 'ORDERS.DETAIL.UPDATE_STATUS' | translate }}
-        </button>
-        <button
-          *ngIf="canOpenRefund"
-          class="bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-zadna-primary hover:bg-slate-50 transition-all"
-          type="button"
-          (click)="openRefundModal()">
-          {{ 'ORDERS.DETAIL.OPEN_REFUND' | translate }}
-        </button>
-        <button
-          *ngIf="currentOrder.status !== 'CANCELLED' && currentOrder.status !== 'COMPLETED'"
-          class="bg-red-50 border border-red-200 px-4 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-100 transition-all"
-          type="button"
-          (click)="openCancellationModal()">
-          {{ 'ORDERS.DETAIL.CANCEL_ORDER' | translate }}
-        </button>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8 animate-in slide-in-from-bottom-5 duration-700">
-      <div class="bg-white border border-slate-200/60 p-4 rounded-[1.5rem] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] hover:shadow-[0_8px_24px_-4px_rgba(15,23,42,0.06)] hover:border-zadna-primary/20 transition-all duration-300 flex flex-col items-center justify-center text-center">
-        <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
-        <span class="text-sm font-extrabold font-mono text-zadna-primary">{{ currentOrder.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-      </div>
-      <div class="bg-white border border-slate-200/60 p-4 rounded-[1.5rem] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] hover:shadow-[0_8px_24px_-4px_rgba(15,23,42,0.06)] hover:border-zadna-primary/20 transition-all duration-300 flex flex-col items-center justify-center text-center">
-        <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.PAYMENT' | translate }}</span>
-        <span class="text-sm font-bold text-slate-800">{{ paymentStatusLabel | translate }}</span>
-      </div>
-      <div class="bg-white border border-slate-200/60 p-4 rounded-[1.5rem] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] hover:shadow-[0_8px_24px_-4px_rgba(15,23,42,0.06)] hover:border-zadna-primary/20 transition-all duration-300 flex flex-col items-center justify-center text-center">
-        <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.NEXT_ACTION' | translate }}</span>
-        <span class="text-[11px] font-bold text-slate-800 leading-snug">{{ currentOrder.nextActionLabel | translate }}</span>
-      </div>
-      <div class="bg-white border border-slate-200/60 p-4 rounded-[1.5rem] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] hover:shadow-[0_8px_24px_-4px_rgba(15,23,42,0.06)] hover:border-zadna-primary/20 transition-all duration-300 flex flex-col items-center justify-center text-center">
-        <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.FULFILLMENT_STATUS' | translate }}</span>
-        <span class="text-sm font-bold text-slate-800">{{ fulfillmentStatusLabel | translate }}</span>
-      </div>
-      <div class="bg-white border border-slate-200/60 p-4 rounded-[1.5rem] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] hover:shadow-[0_8px_24px_-4px_rgba(15,23,42,0.06)] hover:border-zadna-primary/20 transition-all duration-300 flex flex-col items-center justify-center text-center">
-        <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.LAST_UPDATED' | translate }}</span>
-        <span class="text-sm font-bold text-slate-800">{{ currentOrder.lastUpdatedAt }}</span>
-      </div>
-      <div class="bg-white border border-slate-200/60 p-4 rounded-[1.5rem] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] hover:shadow-[0_8px_24px_-4px_rgba(15,23,42,0.06)] hover:border-zadna-primary/20 transition-all duration-300 flex flex-col items-center justify-center text-center">
-        <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.SLA_LABEL' | translate }}</span>
-        <span class="text-sm font-extrabold font-mono" [ngClass]="currentOrder.isLate ? 'text-amber-600' : 'text-zadna-primary'">{{ currentOrder.slaScore || 0 }}%</span>
-      </div>
-      <div class="bg-white/70 backdrop-blur-xl border p-4 rounded-2xl flex flex-col items-center justify-center text-center"
-           [ngClass]="currentOrder.hasActiveIssue ? 'border-red-200 bg-red-50/70' : 'border-emerald-200 bg-emerald-50/70'">
-        <span class="text-[10px] text-slate-400 font-bold mb-1">{{ 'ORDERS.DETAIL.CURRENT_ALERT' | translate }}</span>
-        <span class="text-[11px] font-bold" [ngClass]="currentOrder.hasActiveIssue ? 'text-red-600' : 'text-emerald-600'">{{ currentOrder.alertLabel }}</span>
-      </div>
-    </div>
-
-    <div *ngIf="currentOrder.cancellationSummary as cancellation" class="mb-8 space-y-4">
-      <app-inline-banner
-        variant="critical"
-        [shouldTranslate]="false"
-        [title]="'ORDERS.DETAIL.CANCELLATION.BANNER_TITLE' | translate"
-        [message]="'ORDERS.DETAIL.CANCELLATION.BANNER_MESSAGE' | translate:{ reason: cancellation.reasonLabel, details: cancellation.details }">
-      </app-inline-banner>
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.REASON' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ cancellation.reasonLabel }}</p>
-        </div>
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.REFUND_TYPE' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ ('ORDERS.DETAIL.CANCEL_MODAL.REFUND_' + cancellation.refundType.toUpperCase()) | translate }}</p>
-        </div>
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.COST_BEARER' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ ('ORDERS.DETAIL.CANCEL_MODAL.COST_' + cancellation.costBearer.toUpperCase()) | translate }}</p>
-        </div>
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.CLOSED_BY' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ cancellation.cancelledBy }}</p>
-          <p class="text-[10px] font-bold text-slate-400 mt-1">{{ cancellation.cancelledAt }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-12 gap-6 animate-in slide-in-from-bottom-10 duration-1000">
+const newGridContent = `<div class="grid grid-cols-12 gap-6 animate-in slide-in-from-bottom-10 duration-1000">
       <!-- Left Column (Operational & Details) -->
       <div class="col-span-12 xl:col-span-8 space-y-6">
         
@@ -284,32 +146,32 @@
             <div class="space-y-1.5 flex-1">
               <div class="flex justify-between items-center py-2 border-b border-slate-100">
                 <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.VENDOR_COMMISSION' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.vendorCommission | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.vendorCommission | number:'1.2-2' }} SAR</span>
               </div>
               <div class="flex justify-between items-center py-2 border-b border-slate-100">
                 <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.DRIVER_PAYOUT' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.driverPayout | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.driverPayout | number:'1.2-2' }} SAR</span>
               </div>
               <div class="flex justify-between items-center py-2 border-b border-slate-100">
                 <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.SERVICE_FEE' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.serviceFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.serviceFee | number:'1.2-2' }} SAR</span>
               </div>
               <div class="flex justify-between items-center py-2 border-b border-slate-100">
                 <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.VAT' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.vat | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.vat | number:'1.2-2' }} SAR</span>
               </div>
               <div class="flex justify-between items-center py-3 px-3 mt-4 rounded-xl" [ngClass]="finance.netMargin >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'">
                 <span class="text-[11px] font-extrabold">{{ 'ORDERS.DETAIL.FINANCE_CARD.NET_MARGIN' | translate }} ({{ finance.marginPercent | number:'1.1-1' }}%)</span>
-                <span class="text-[14px] font-extrabold">{{ finance.netMargin | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="text-[14px] font-extrabold">{{ finance.netMargin | number:'1.2-2' }} SAR</span>
               </div>
             </div>
 
             <div class="mt-5 pt-4 flex gap-2 border-t border-slate-100">
               <a [routerLink]="['/finances/ledger']" [queryParams]="{ orderId: currentOrder.id }" class="flex-1 inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-2 text-[11px] font-extrabold text-slate-700 hover:bg-slate-50">
-                <span class="material-symbols-outlined text-[16px]">receipt_long</span> {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_LEDGER' | translate }}
+                <span class="material-symbols-outlined text-[16px]">receipt_long</span> Ledger
               </a>
               <a [routerLink]="['/finances/refunds']" [queryParams]="{ orderId: currentOrder.id }" class="flex-1 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-2 text-[11px] font-extrabold text-white hover:bg-zadna-primaryDark">
-                <span class="material-symbols-outlined text-[16px]">undo</span> {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_REFUNDS' | translate }}
+                <span class="material-symbols-outlined text-[16px]">undo</span> Refunds
               </a>
             </div>
           </section>
@@ -345,7 +207,7 @@
               {{ 'ORDERS.DETAIL.CHANGE_DRIVER' | translate }}
             </button>
             <button *ngIf="canRecomputeDispatch" class="w-full py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-[11px] font-extrabold hover:bg-slate-50 transition-colors" type="button" (click)="recomputeDispatch()">
-              {{ 'ORDERS.DETAIL.RECOMPUTE_DISPATCH' | translate }}
+              Recompute Dispatch
             </button>
           </div>
         </section>
@@ -494,52 +356,10 @@
           </div>
         </section>
       </div>
-    </div>
+    </div>`;
 
-    <app-order-status-update-modal
-      [isOpen]="isStatusModalOpen"
-      [order]="order()"
-      (close)="closeStatusModal()"
-      (submitStatusUpdate)="submitStatusUpdate($event)">
-    </app-order-status-update-modal>
+const regex = /<div class="grid grid-cols-12 gap-6 animate-in slide-in-from-bottom-10 duration-1000">[\s\S]*?(?=\s*<app-order-status-update-modal)/;
+content = content.replace(regex, newGridContent);
 
-    <app-order-driver-assignment-modal
-      [isOpen]="isDriverAssignmentModalOpen"
-      [order]="order()"
-      [drivers]="order()?.driverCandidates || []"
-      (close)="closeDriverAssignmentModal()"
-      (submitAssignment)="submitDriverAssignment($event)">
-    </app-order-driver-assignment-modal>
-
-    <app-order-cancellation-modal
-      [isOpen]="isCancellationModalOpen"
-      [order]="order()"
-      (close)="closeCancellationModal()"
-      (submitCancellation)="submitCancellation($event)">
-    </app-order-cancellation-modal>
-
-    <app-order-refund-modal
-      [isOpen]="isRefundModalOpen"
-      [order]="order()"
-      (close)="closeRefundModal()"
-      (saveDraft)="saveRefundDraft($event)"
-      (submitRefund)="submitRefund($event)">
-    </app-order-refund-modal>
-
-    <app-order-dispute-modal
-      [isOpen]="isDisputeModalOpen"
-      [order]="order()"
-      (close)="closeDisputeModal()"
-      (saveDraft)="saveDisputeDraft($event)"
-      (submitDispute)="submitDispute($event)">
-    </app-order-dispute-modal>
-
-    <app-order-issue-flag-modal
-      [isOpen]="isIssueFlagModalOpen"
-      [order]="order()"
-      (close)="closeIssueFlagModal()"
-      (saveNote)="saveIssueNote($event)"
-      (submitIssue)="submitIssueFlag($event)">
-    </app-order-issue-flag-modal>
-  </ng-container>
-</div>
+fs.writeFileSync(file, content);
+console.log('Rearrangement complete');

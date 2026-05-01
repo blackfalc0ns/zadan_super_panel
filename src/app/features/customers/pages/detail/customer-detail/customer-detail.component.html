@@ -15,26 +15,30 @@
     <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
       <button
         type="button"
-        class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
+        class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-extrabold flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
         (click)="openAccessProfile()">
         <span class="material-symbols-outlined text-[20px]">shield_person</span>
         {{ 'CUSTOMERS.DETAIL.OPEN_ACCESS_PROFILE' | translate }}
       </button>
 
-      <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all">
+      <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-extrabold flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all">
         <span class="material-symbols-outlined text-[20px]">edit_square</span>
         {{ 'CUSTOMERS.DETAIL.EDIT_ACCOUNT' | translate }}
       </button>
     </div>
   </app-page-header>
 
-  <div *ngIf="customer as currentCustomer" class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
-    <section class="customer-hero rounded-[1.75rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-      <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
+  <div *ngIf="customer as currentCustomer" class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[100rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <section class="relative overflow-hidden rounded-[1.75rem] border border-slate-200/60 bg-white p-6 shadow-sm">
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-zadna-primary/5 to-transparent"></div>
+      <div class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-zadna-primary/10 blur-[50px]"></div>
+      <div class="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-zadna-accent/10 blur-[50px]"></div>
+      
+      <div class="relative z-10 flex flex-col xl:flex-row xl:items-end justify-between gap-6">
         <div class="space-y-3">
           <div class="flex flex-wrap items-center gap-3">
-            <h2 class="text-2xl font-black text-slate-900">{{ currentCustomer.name }}</h2>
-            <span class="inline-flex items-center rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary" dir="ltr">
+            <h2 class="text-2xl font-extrabold text-slate-800">{{ currentCustomer.name }}</h2>
+            <span class="inline-flex items-center rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-extrabold text-zadna-primary" dir="ltr">
               {{ currentCustomer.id }}
             </span>
           </div>
@@ -158,12 +162,12 @@
 
     <div class="grid grid-cols-12 gap-6">
       <div [ngClass]="currentTab === 'workflow' ? 'col-span-12 space-y-6' : 'col-span-12 lg:col-span-4 space-y-6'">
-        <section *ngIf="currentTab === 'workflow'" class="detail-card workflow-shell relative overflow-hidden">
-          <div class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-cyan-50/80 via-white to-amber-50/70"></div>
-          <div class="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-cyan-100/60 blur-3xl"></div>
-          <div class="pointer-events-none absolute -bottom-10 -left-8 h-28 w-28 rounded-full bg-amber-100/60 blur-3xl"></div>
+        <section *ngIf="currentTab === 'workflow'" class="detail-card relative overflow-hidden bg-white">
+          <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-cyan-50/50 to-transparent"></div>
+          <div class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-zadna-primary/10 blur-[50px]"></div>
+          <div class="pointer-events-none absolute -bottom-10 -left-8 h-40 w-40 rounded-full bg-zadna-accent/10 blur-[50px]"></div>
 
-          <div class="relative space-y-5">
+          <div class="relative z-10 space-y-5">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div class="space-y-2">
                 <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
@@ -171,7 +175,7 @@
                 </p>
 
                 <div class="flex flex-wrap items-center gap-2.5">
-                  <h3 class="text-xl font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TITLE' | translate }}</h3>
+                  <h3 class="text-xl font-extrabold text-slate-800">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TITLE' | translate }}</h3>
                   <app-status-pill
                     [label]="workflowStateLabelKey"
                     [variant]="workflowStateVariant"
@@ -181,22 +185,22 @@
               </div>
 
               <div class="flex flex-wrap items-center gap-2">
-                <span class="inline-flex items-center rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[10px] font-black text-slate-500">
+                <span class="inline-flex items-center rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[10px] font-extrabold text-slate-500">
                   {{ currentCustomer.workflow.queueLabelKey | translate }}
                 </span>
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary">
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-extrabold text-zadna-primary">
                   <span class="material-symbols-outlined text-[14px]">groups</span>
                   {{ currentCustomer.workflow.ownerTeamLabelKey | translate }}
                 </span>
               </div>
             </div>
 
-            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
-              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
-                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.SUMMARY_TITLE' | translate }}</h4>
+            <section class="overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white shadow-sm hover:shadow-md transition-all">
+              <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
+                <h4 class="text-[13px] font-extrabold text-zadna-primary">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.SUMMARY_TITLE' | translate }}</h4>
               </div>
 
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto p-1">
                 <table class="min-w-full text-start">
                   <thead class="bg-white/80">
                     <tr>
@@ -210,7 +214,7 @@
                   </thead>
                   <tbody class="divide-y divide-slate-200/70">
                     <tr>
-                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'COMMON.STATUS' | translate }}</td>
+                      <td class="px-4 py-4 text-[11px] font-extrabold text-slate-500">{{ 'COMMON.STATUS' | translate }}</td>
                       <td class="px-4 py-4">
                         <app-status-pill
                           [label]="workflowStateLabelKey"
@@ -220,32 +224,32 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.QUEUE' | translate }}</td>
-                      <td class="px-4 py-4 text-[13px] font-black text-slate-900">{{ currentCustomer.workflow.queueLabelKey | translate }}</td>
+                      <td class="px-4 py-4 text-[11px] font-extrabold text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.QUEUE' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-extrabold text-slate-800">{{ currentCustomer.workflow.queueLabelKey | translate }}</td>
                     </tr>
                     <tr>
-                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.OWNER' | translate }}</td>
-                      <td class="px-4 py-4 text-[13px] font-black text-slate-900">{{ currentCustomer.workflow.ownerTeamLabelKey | translate }}</td>
+                      <td class="px-4 py-4 text-[11px] font-extrabold text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.OWNER' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-extrabold text-slate-800">{{ currentCustomer.workflow.ownerTeamLabelKey | translate }}</td>
                     </tr>
                     <tr>
-                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.SUMMARY' | translate }}</td>
+                      <td class="px-4 py-4 text-[11px] font-extrabold text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.SUMMARY' | translate }}</td>
                       <td class="px-4 py-4 text-[13px] leading-7 text-slate-600">{{ currentCustomer.workflow.summaryKey | translate }}</td>
                     </tr>
                     <tr>
-                      <td class="px-4 py-4 text-[11px] font-black text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.NEXT_STEP_TITLE' | translate }}</td>
-                      <td class="px-4 py-4 text-[13px] font-black leading-7 text-slate-900">{{ currentCustomer.workflow.nextStepKey | translate }}</td>
+                      <td class="px-4 py-4 text-[11px] font-extrabold text-slate-500">{{ 'CUSTOMERS.DETAIL.WORKFLOW.NEXT_STEP_TITLE' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-extrabold leading-7 text-slate-800">{{ currentCustomer.workflow.nextStepKey | translate }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </section>
 
-            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
-              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
-                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.EXCEPTIONS_TITLE' | translate }}</h4>
+            <section class="overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white shadow-sm hover:shadow-md transition-all">
+              <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
+                <h4 class="text-[13px] font-extrabold text-zadna-primary">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.EXCEPTIONS_TITLE' | translate }}</h4>
               </div>
 
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto p-1">
                 <table class="min-w-full text-start">
                   <thead class="bg-white/80">
                     <tr>
@@ -256,8 +260,8 @@
                   </thead>
                   <tbody class="divide-y divide-slate-200/70">
                     <tr>
-                      <td class="px-4 py-4 text-[12px] font-black text-red-700">{{ 'CUSTOMERS.DETAIL.WORKFLOW.CURRENT_BLOCKERS' | translate }}</td>
-                      <td class="px-4 py-4 text-[13px] font-black text-red-700">{{ currentCustomer.workflow.blockers.length }}</td>
+                      <td class="px-4 py-4 text-[12px] font-extrabold text-red-700">{{ 'CUSTOMERS.DETAIL.WORKFLOW.CURRENT_BLOCKERS' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-extrabold text-red-700">{{ currentCustomer.workflow.blockers.length }}</td>
                       <td class="px-4 py-4">
                         <div *ngIf="currentCustomer.workflow.blockers.length > 0; else noBlockersCell" class="flex flex-wrap gap-2">
                           <span
@@ -274,8 +278,8 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="px-4 py-4 text-[12px] font-black text-slate-700">{{ 'CUSTOMERS.DETAIL.WORKFLOW.FOLLOW_UP_ALERTS' | translate }}</td>
-                      <td class="px-4 py-4 text-[13px] font-black text-slate-700">{{ currentCustomer.workflow.alerts.length }}</td>
+                      <td class="px-4 py-4 text-[12px] font-extrabold text-slate-700">{{ 'CUSTOMERS.DETAIL.WORKFLOW.FOLLOW_UP_ALERTS' | translate }}</td>
+                      <td class="px-4 py-4 text-[13px] font-extrabold text-slate-700">{{ currentCustomer.workflow.alerts.length }}</td>
                       <td class="px-4 py-4">
                         <div *ngIf="currentCustomer.workflow.alerts.length > 0; else noAlertsCell" class="flex flex-wrap gap-2">
                           <span
@@ -296,12 +300,12 @@
               </div>
             </section>
 
-            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
-              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
-                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.LIFECYCLE_TITLE' | translate }}</h4>
+            <section class="overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white shadow-sm hover:shadow-md transition-all">
+              <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
+                <h4 class="text-[13px] font-extrabold text-zadna-primary">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.LIFECYCLE_TITLE' | translate }}</h4>
               </div>
 
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto p-1">
                 <table class="min-w-full text-start">
                   <thead class="bg-white/80">
                     <tr>
@@ -312,9 +316,9 @@
                   </thead>
                   <tbody class="divide-y divide-slate-200/70">
                     <tr *ngFor="let stage of lifecycleStages">
-                      <td class="px-4 py-4 text-[12px] font-black text-slate-900">{{ stage.labelKey | translate }}</td>
+                      <td class="px-4 py-4 text-[12px] font-extrabold text-slate-800">{{ stage.labelKey | translate }}</td>
                       <td class="px-4 py-4">
-                        <span class="inline-flex rounded-full bg-slate-50 px-3 py-1.5 text-[11px] font-black" [ngClass]="getLifecycleValueClasses(stage)">
+                        <span class="inline-flex rounded-full bg-slate-50 px-3 py-1.5 text-[11px] font-extrabold" [ngClass]="getLifecycleValueClasses(stage)">
                           {{ stage.valueKey | translate }}
                         </span>
                       </td>
@@ -325,12 +329,12 @@
               </div>
             </section>
 
-            <section class="overflow-hidden rounded-[1.15rem] border border-slate-200/70 bg-white/90 shadow-sm">
-              <div class="border-b border-slate-200/70 bg-slate-50/80 px-4 py-3">
-                <h4 class="text-[12px] font-black text-slate-900">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.ACTIONS_TITLE' | translate }}</h4>
+            <section class="overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white shadow-sm hover:shadow-md transition-all">
+              <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
+                <h4 class="text-[13px] font-extrabold text-zadna-primary">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.ACTIONS_TITLE' | translate }}</h4>
               </div>
 
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto p-1">
                 <table class="min-w-full text-start">
                   <thead class="bg-white/80">
                     <tr>
@@ -346,7 +350,7 @@
                           <span class="inline-flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-slate-100 text-slate-600">
                             <span class="material-symbols-outlined text-[18px]">{{ action.icon }}</span>
                           </span>
-                          <span class="text-[12px] font-black text-slate-900">{{ action.labelKey | translate }}</span>
+                          <span class="text-[12px] font-extrabold text-slate-800">{{ action.labelKey | translate }}</span>
                         </div>
                       </td>
                       <td class="px-4 py-4 text-[12px] leading-6 text-slate-600">{{ action.helperKey | translate }}</td>
@@ -419,7 +423,7 @@
               [title]="'CUSTOMERS.DETAIL.SECTIONS.RECENT_ORDERS'"
               icon="local_mall"
               [compact]="true">
-              <button actions type="button" class="text-[11px] font-black text-zadna-primary hover:underline" (click)="openOrdersList()">
+              <button actions type="button" class="text-[11px] font-extrabold text-zadna-primary hover:underline" (click)="openOrdersList()">
                 {{ 'CUSTOMERS.DETAIL.ORDERS_TABLE.VIEW_ALL' | translate }}
               </button>
             </app-section-header>
@@ -437,7 +441,7 @@
 
               <ng-template #customColumn let-order let-column="column">
                 <ng-container *ngIf="column.key === 'id'">
-                  <span class="text-[11px] font-black text-slate-800" dir="ltr">{{ order.displayId }}</span>
+                  <span class="text-[11px] font-extrabold text-slate-800" dir="ltr">{{ order.displayId }}</span>
                 </ng-container>
 
                 <ng-container *ngIf="column.key === 'date'">
@@ -445,7 +449,7 @@
                 </ng-container>
 
                 <ng-container *ngIf="column.key === 'total'">
-                  <span class="font-['Inter'] text-[12px] font-black text-slate-800">
+                  <span class="font-['Inter'] text-[12px] font-extrabold text-slate-800">
                     {{ order.total | number:'1.0-0' }}
                     <span class="text-[10px] text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                   </span>
@@ -469,7 +473,7 @@
               <ng-template #mobileCard let-order>
                 <div class="space-y-3">
                   <div class="flex items-center justify-between gap-3">
-                    <span class="text-sm font-black text-slate-900" dir="ltr">{{ order.displayId }}</span>
+                    <span class="text-sm font-extrabold text-slate-900" dir="ltr">{{ order.displayId }}</span>
                     <app-status-pill
                       [label]="getOrderStatusLabel(order.status)"
                       [variant]="getOrderStatusVariant(order.status)"
@@ -502,25 +506,25 @@
             </app-section-header>
 
             <div class="mt-5 space-y-4">
-              <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4 flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-[10px] font-black text-slate-400">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_CASES' | translate }}</p>
-                  <p class="mt-1 text-sm font-black text-slate-900">
+              <div class="rounded-2xl border border-red-100 bg-gradient-to-br from-red-50/80 to-white p-5 flex items-center justify-between gap-3 shadow-sm relative overflow-hidden">
+                <div class="relative z-10">
+                  <p class="text-[11px] font-extrabold text-red-400 uppercase tracking-wide">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_CASES' | translate }}</p>
+                  <p class="mt-1 text-[15px] font-extrabold text-slate-900">
                     {{ currentCustomer.refundsCount }} {{ 'CUSTOMERS.DETAIL.REFUNDS.CASES_TOTAL' | translate }}
                   </p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 justify-end">
+                <div class="relative z-10 flex flex-wrap items-center gap-2 justify-end">
                   <app-status-pill [label]="currentCustomer.refundsClosedCount + ' ' + ('CUSTOMERS.DETAIL.REFUNDS.CLOSED' | translate)" variant="success" [shouldTranslate]="false" size="sm"></app-status-pill>
                   <app-status-pill [label]="currentCustomer.refundsInProgressCount + ' ' + ('CUSTOMERS.DETAIL.REFUNDS.IN_PROGRESS' | translate)" variant="warning" [shouldTranslate]="false" size="sm"></app-status-pill>
                 </div>
               </div>
 
-              <div class="flex items-center justify-between text-sm font-bold">
+              <div class="flex items-center justify-between text-sm font-bold bg-white rounded-xl p-4 border border-slate-100 shadow-sm hover:border-red-100 transition-colors">
                 <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_AMOUNT' | translate }}</span>
-                <span class="font-['Inter'] text-slate-900">{{ currentCustomer.refundsTotalAmount | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="font-['Inter'] text-red-600 text-base">{{ currentCustomer.refundsTotalAmount | number:'1.0-0' }} <span class="text-xs text-slate-400 font-bold">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></span>
               </div>
 
-              <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary/10 text-zadna-primary text-[11px] font-black hover:bg-zadna-primary/15 transition-all" (click)="openCasesList()">
+              <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary/10 text-zadna-primary text-[11px] font-extrabold hover:bg-zadna-primary/15 transition-all" (click)="openCasesList()">
                 {{ 'CUSTOMERS.DETAIL.REFUNDS.VIEW_ALL' | translate }}
               </button>
             </div>
@@ -534,8 +538,8 @@
             </app-section-header>
 
             <div class="mt-5 space-y-4">
-              <div class="flex items-center justify-between">
-                <span class="text-sm font-bold text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.COMPLAINTS_RECORDED' | translate }}</span>
+              <div class="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50/80 to-white p-5 flex items-center justify-between gap-3 shadow-sm">
+                <span class="text-[12px] font-extrabold text-slate-700">{{ 'CUSTOMERS.DETAIL.SUPPORT.COMPLAINTS_RECORDED' | translate }}</span>
                 <app-status-pill
                   [label]="currentCustomer.complaintsSolvedCount > 0 ? 'CUSTOMERS.DETAIL.SUPPORT.RESOLVED' : 'CUSTOMERS.DETAIL.SUPPORT.NO_CASES'"
                   [variant]="currentCustomer.complaintsSolvedCount > 0 ? 'success' : 'neutral'"
@@ -543,12 +547,12 @@
                 </app-status-pill>
               </div>
 
-              <div class="flex items-center justify-between">
-                <span class="text-sm font-bold text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT' | translate }}</span>
-                <span class="text-[11px] font-black text-slate-800">{{ getLastSupportContactKey() | translate }}</span>
+              <div class="flex items-center justify-between text-sm font-bold bg-white rounded-xl p-4 border border-slate-100 shadow-sm hover:border-amber-100 transition-colors">
+                <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT' | translate }}</span>
+                <span class="text-[12px] font-extrabold text-slate-900">{{ getLastSupportContactKey() | translate }}</span>
               </div>
 
-              <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary text-white text-[11px] font-black shadow-sm hover:bg-teal-700 transition-all" (click)="openCasesList()">
+              <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary text-white text-[11px] font-extrabold shadow-sm hover:bg-teal-700 transition-all" (click)="openCasesList()">
                 {{ 'CUSTOMERS.DETAIL.SUPPORT.OPEN_TICKET' | translate }}
               </button>
             </div>
@@ -560,7 +564,7 @@
             [title]="'CUSTOMERS.DETAIL.SECTIONS.INTERNAL_NOTES'"
             icon="admin_panel_settings"
             [compact]="true">
-            <span meta class="inline-flex rounded-full border border-zadna-primary/10 bg-zadna-primary/5 px-3 py-1 text-[10px] font-black text-zadna-primary">
+            <span meta class="inline-flex rounded-full border border-zadna-primary/10 bg-zadna-primary/5 px-3 py-1 text-[10px] font-extrabold text-zadna-primary">
               {{ currentCustomer.workflow.ownerTeamLabelKey | translate }}
             </span>
           </app-section-header>
@@ -569,7 +573,7 @@
             <div [class]="getNoteCardClasses(note)" *ngFor="let note of currentCustomer.internalNotes">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="text-[11px] font-black text-zadna-primary">{{ note.authorKey ? (note.authorKey | translate) : note.author }}</span>
+                  <span class="text-[11px] font-extrabold text-zadna-primary">{{ note.authorKey ? (note.authorKey | translate) : note.author }}</span>
                   <span class="text-[10px] font-bold text-slate-400">{{ note.roleKey ? (note.roleKey | translate) : note.role }}</span>
                 </div>
                 <span class="text-[10px] font-bold text-slate-400 font-['Inter']">{{ note.createdAt }}</span>
@@ -600,7 +604,7 @@
                   [placeholder]="'CUSTOMERS.DETAIL.ADMIN.QUICK_NOTE_PLACEHOLDER' | translate"
                   class="flex-1 h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary/30 focus:ring-4 focus:ring-zadna-primary/5" />
 
-                <button type="button" class="h-11 px-5 rounded-xl bg-zadna-primary text-white text-[11px] font-black hover:bg-teal-700 transition-all" (click)="addQuickNote()">
+                <button type="button" class="h-11 px-5 rounded-xl bg-zadna-primary text-white text-[11px] font-extrabold hover:bg-teal-700 transition-all" (click)="addQuickNote()">
                   {{ 'CUSTOMERS.DETAIL.ADMIN.SAVE' | translate }}
                 </button>
               </div>

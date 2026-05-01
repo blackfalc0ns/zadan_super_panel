@@ -867,9 +867,9 @@
       "FINANCE": "المالية",
       "VERIFICATION": "التوثيق"
     },
-      "DETAIL": {
-        "PAGE_TITLE": "الملف التشغيلي الشامل للسائق",
-        "PAGE_SUBTITLE": "رحلة موحدة للسائق من التوثيق وحتى التشغيل والدعم والامتثال والتحصيل",
+    "DETAIL": {
+      "PAGE_TITLE": "الملف التشغيلي الشامل للسائق",
+      "PAGE_SUBTITLE": "رحلة موحدة للسائق من التوثيق وحتى التشغيل والدعم والامتثال والتحصيل",
       "MESSAGES": {
         "INVALID_DRIVER_ID": "معرف السائق غير صالح.",
         "DRIVER_NOT_FOUND": "لم يتم العثور على السائق.",
@@ -884,7 +884,7 @@
         "DOCUMENT_REQUEST_SUBMITTED": "تم طلب استكمال المستندات.",
         "VERIFICATION_REJECTED": "تم رفض توثيق السائق."
       },
-        "BTN_VERIFY": "التوثيق",
+      "BTN_VERIFY": "التوثيق",
       "BTN_OPERATIONS": "التشغيل",
       "BTN_REACTIVATE": "إعادة تفعيل",
       "BTN_SUSPEND": "تعليق",
@@ -971,11 +971,11 @@
           "CHECKLIST": {
             "PERSONAL_INFO": "البيانات الشخصية مكتملة",
             "VEHICLE_INFO": "بيانات المركبة مكتملة",
-              "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-              "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-              "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-              "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
-              "ZONE_SELECTION": "تم اختيار منطقة التشغيل الأساسية"
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
+            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
+            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
+            "ZONE_SELECTION": "تم اختيار منطقة التشغيل الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
@@ -1579,11 +1579,11 @@
           "CHECKLIST": {
             "PERSONAL_INFO": "البيانات الشخصية مكتملة",
             "VEHICLE_INFO": "بيانات المركبة مكتملة",
-              "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-              "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-              "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-              "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
-              "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
+            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
+            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
+            "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
@@ -1767,16 +1767,16 @@
         "JOINED_AT": "تاريخ الانضمام",
         "VEHICLE_TYPE": "نوع المركبة",
         "LICENSE_NUMBER": "رقم الرخصة",
-      "ZONE": "المنطقة الأساسية",
-      "NO_RECENT_NOTES": "لا توجد ملاحظات حديثة.",
-      "QUICK_SUMMARY_TITLE": "ملخص السائق",
-      "QUICK_SUMMARY_DESC": "لقطة تشغيلية من أحدث بيانات ملف السائق.",
-      "SIGNALS": "المؤشرات",
-      "ALERTS_TITLE": "التنبيهات وملاحظات المراجعة",
-      "ALERTS_DESC": "العوائق المفتوحة وإشارات المتابعة الخاصة بهذا السائق.",
-      "NO_ALERTS": "لا توجد تنبيهات نشطة",
-      "NO_ALERTS_DESC": "هذا الملف سليم خارج المتابعة الروتينية.",
-      "NOTES_HISTORY": "سجل الملاحظات"
+        "ZONE": "المنطقة الأساسية",
+        "NO_RECENT_NOTES": "لا توجد ملاحظات حديثة.",
+        "QUICK_SUMMARY_TITLE": "ملخص السائق",
+        "QUICK_SUMMARY_DESC": "لقطة تشغيلية من أحدث بيانات ملف السائق.",
+        "SIGNALS": "المؤشرات",
+        "ALERTS_TITLE": "التنبيهات وملاحظات المراجعة",
+        "ALERTS_DESC": "العوائق المفتوحة وإشارات المتابعة الخاصة بهذا السائق.",
+        "NO_ALERTS": "لا توجد تنبيهات نشطة",
+        "NO_ALERTS_DESC": "هذا الملف سليم خارج المتابعة الروتينية.",
+        "NOTES_HISTORY": "سجل الملاحظات"
       },
       "LIFECYCLE": {
         "APPLICATION": {
@@ -4172,7 +4172,10 @@
           "DEFAULT": "المتاح هنا فقط هو الانتقالات المنطقية للحالة الحالية."
         },
         "CONFIRM": "تأكيد تغيير الحالة"
-      }
+      },
+      "RECOMPUTE_DISPATCH": "إعادة حساب التوجيه",
+      "DISPATCH_STATE": "حالة التوجيه",
+      "DISPATCH_NOTE": "ملاحظات التوجيه"
     },
     "STATUS": {
       "NEW": "جديد",

@@ -2,51 +2,41 @@
   display: block;
 }
 
-.customer-hero {
-  background:
-    radial-gradient(circle at top left, rgba(125, 211, 229, 0.14), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(255, 183, 122, 0.12), transparent 28%),
-    rgba(255, 255, 255, 0.84);
-  backdrop-filter: blur(14px);
-}
 
 .detail-card {
-  border-radius: 1.25rem;
-  border: 1px solid rgba(190, 200, 203, 0.24);
-  background: rgba(255, 255, 255, 0.86);
-  padding: 1.5rem;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.03);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #ffffff;
+  padding: 1.75rem;
+  box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.03);
 }
 
 .detail-card--p0 {
   padding: 0;
 }
 
-.workflow-shell {
-  background:
-    radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 24%),
-    radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.08), transparent 26%),
-    rgba(255, 255, 255, 0.88);
-}
 
 .detail-action-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   height: 2.75rem;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(190, 200, 203, 0.35);
-  background: rgba(255, 255, 255, 0.78);
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #ffffff;
   padding-inline: 1rem;
   font-size: 0.75rem;
   font-weight: 800;
   color: #127c8c;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.02);
 }
 
 .detail-action-btn:hover {
   border-color: rgba(18, 124, 140, 0.18);
-  background: rgba(236, 254, 255, 0.9);
+  background: rgba(236, 254, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(18, 124, 140, 0.08);
 }
 
 .detail-action-btn:disabled {

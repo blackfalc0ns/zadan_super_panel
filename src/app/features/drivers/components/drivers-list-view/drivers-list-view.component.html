@@ -10,7 +10,7 @@
     <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">directions_car</span>
 
     <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-      <app-button variant="primary" size="md" customClass="!rounded-[1.2rem] !text-sm !font-black shadow-xl shadow-zadna-primary/20">
+      <app-button variant="primary" size="md" customClass="!rounded-[1.2rem] !text-sm !font-extrabold shadow-xl shadow-zadna-primary/20">
         <span class="material-symbols-outlined text-[20px]">add</span>
         {{ 'DRIVERS.HEADER.ADD_DRIVER' | translate }}
       </app-button>
@@ -36,16 +36,16 @@
         </div>
 
         <div class="flex items-center gap-4 order-2 lg:order-2">
-          <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+          <div class="flex items-center bg-white border border-slate-200/70 rounded-full h-[60px] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] px-2 transition-all hover:shadow-md hover:border-slate-300/60 overflow-hidden">
             <div
-              class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+              class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group rounded-[1.2rem]"
               (click)="toggleFilters()"
               [class.bg-teal-50]="isFiltersExpanded">
               <span
                 class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500"
                 [class.rotate-180]="isFiltersExpanded">filter_list</span>
               <div class="flex flex-col">
-                <span class="text-[13px] font-black text-slate-800">{{ 'DRIVERS.FILTERS.TITLE' | translate }}</span>
+                <span class="text-[13px] font-extrabold text-slate-800">{{ 'DRIVERS.FILTERS.TITLE' | translate }}</span>
                 <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'DRIVERS.FILTERS.ADJUST_CRITERIA' | translate }}</span>
               </div>
               <span
@@ -60,7 +60,7 @@
             (click)="resetFilters()"
             class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
             <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
-            <span class="text-[11px] font-black uppercase tracking-widest">{{ 'DRIVERS.FILTERS.RESET' | translate }}</span>
+            <span class="text-[11px] font-extrabold uppercase tracking-widest">{{ 'DRIVERS.FILTERS.RESET' | translate }}</span>
           </button>
         </div>
       </div>
@@ -85,41 +85,57 @@
       [columns]="tableColumns"
       [selectable]="true"
       [clickableRows]="true"
-      [containerClass]="'drivers-table-container'"
+      [containerClass]="'drivers-table-container rounded-[1.5rem] shadow-sm border border-slate-200/60 overflow-hidden bg-white'"
       [emptyStateTitle]="'DRIVERS.EMPTY_TITLE'"
       [emptyStateMessage]="'DRIVERS.EMPTY_MESSAGE'"
       (rowClick)="onTableRowClick($event)">
 
       <ng-template #customColumn let-driver let-column="column">
+        
+        <!-- Driver Info (Combined Avatar, Name, Phone) -->
         <ng-container *ngIf="column.key === 'driver'">
-          <div class="flex items-center gap-3">
-            <div class="h-11 w-11 rounded-full bg-slate-100 overflow-hidden shrink-0 ring-1 ring-slate-200/70">
+          <div class="flex items-center gap-4 py-1">
+            <div class="h-12 w-12 rounded-[1rem] bg-slate-100 overflow-hidden shrink-0 ring-1 ring-slate-200/70 relative">
               <img *ngIf="driver.imageUrl" [src]="driver.imageUrl" [alt]="driver.firstName" class="w-full h-full object-cover">
-              <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-sm font-black text-slate-500">
+              <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-sm font-extrabold text-slate-500">
                 {{ driver.firstName.charAt(0) }}{{ driver.lastName.charAt(0) }}
               </div>
+              <div class="absolute bottom-[-1px] right-[-1px] w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm"
+                   [ngClass]="{
+                     'bg-emerald-500': driver.status === 'Online',
+                     'bg-amber-500': driver.status === 'OnMission',
+                     'bg-red-500': driver.status === 'Offline' || driver.status === 'Suspended'
+                   }"></div>
             </div>
             <div class="flex flex-col text-start min-w-0">
-              <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
+              <span class="text-[14px] font-extrabold text-slate-800 group-hover:text-zadna-primary transition-colors leading-tight truncate">
                 {{ driver.firstName }} {{ driver.lastName }}
               </span>
-              <span class="text-[9px] font-bold text-slate-400/80 tracking-widest mt-0.5 truncate" dir="ltr">
+              <span class="text-[10px] font-bold text-slate-400/80 tracking-widest mt-1 truncate" dir="ltr">
                 {{ driver.phoneNumber }}
               </span>
             </div>
           </div>
         </ng-container>
 
+        <!-- Driver ID -->
         <ng-container *ngIf="column.key === 'driverId'">
-          <span class="text-[11px] font-black text-slate-700 font-['Inter']" dir="ltr">{{ driver.driverId }}</span>
+          <span class="inline-flex items-center rounded-lg bg-slate-50 border border-slate-100 px-3 py-1 text-[11px] font-extrabold text-slate-700 font-['Inter']" dir="ltr">
+            #{{ driver.driverId }}
+          </span>
         </ng-container>
 
+        <!-- City -->
         <ng-container *ngIf="column.key === 'city'">
-          <span class="text-[12px] font-black text-slate-700">{{ driver.city }}</span>
+          <span class="inline-flex items-center gap-1.5 text-[12px] font-extrabold text-slate-600 bg-slate-50/80 px-2 py-1 rounded-lg">
+            <span class="material-symbols-outlined text-[14px] text-slate-400">location_on</span>
+            {{ driver.city }}
+          </span>
         </ng-container>
 
+        <!-- Status -->
         <ng-container *ngIf="column.key === 'status'">
-          <div class="flex justify-center">
+          <div class="flex justify-start">
             <app-status-pill
               [label]="getDriverStatusLabel(driver.status)"
               [variant]="getDriverStatusVariant(driver.status)"
@@ -128,8 +144,9 @@
           </div>
         </ng-container>
 
+        <!-- Verification -->
         <ng-container *ngIf="column.key === 'verificationStatus'">
-          <div class="flex justify-center">
+          <div class="flex justify-start">
             <app-status-pill
               [label]="getVerificationLabel(driver.verificationStatus)"
               [variant]="getVerificationStatusVariant(driver.verificationStatus)"
@@ -138,30 +155,32 @@
           </div>
         </ng-container>
 
+        <!-- Tasks -->
         <ng-container *ngIf="column.key === 'tasks'">
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-[11px] font-black text-slate-800">
-              {{ 'DRIVERS.TABLE.ACTIVITY_COUNT' | translate:{ count: driver.tasks.active } }}
+          <div class="flex flex-col items-center gap-1.5">
+            <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-[12px] font-black text-slate-800 font-['Inter'] shadow-sm">
+              {{ driver.tasks.active }}
             </span>
-            <span class="text-[9px] font-bold text-slate-400 max-w-[88px] leading-tight text-center">
+            <span class="text-[9px] font-bold text-slate-400 max-w-[120px] leading-tight text-center truncate" [title]="getTaskSubtitle(driver.tasks.subtitle) | translate">
               {{ getTaskSubtitle(driver.tasks.subtitle) | translate }}
             </span>
           </div>
         </ng-container>
 
+        <!-- Performance -->
         <ng-container *ngIf="column.key === 'performance'">
-          <div class="flex flex-col gap-1.5 w-full px-2 max-w-[100px] mx-auto">
-            <div class="flex justify-between items-center w-full text-[10px] font-black">
-              <span class="text-slate-400">{{ getPerformanceLabel(driver.performance) | translate }}</span>
-              <span class="text-slate-800">{{ driver.acceptanceRate }}%</span>
+          <div class="flex flex-col gap-1.5 w-full max-w-[120px] mx-auto">
+            <div class="flex justify-between items-center w-full text-[10px] font-extrabold">
+              <span class="text-slate-400 truncate max-w-[70px]">{{ getPerformanceLabel(driver.performance) | translate }}</span>
+              <span class="text-slate-800 font-['Inter'] shrink-0">{{ driver.acceptanceRate }}%</span>
             </div>
-            <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden relative" dir="ltr">
+            <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden relative shadow-inner" dir="ltr">
               <div
-                class="h-full rounded-full transition-all duration-700"
+                class="h-full rounded-full transition-all duration-700 shadow-sm"
                 [ngClass]="{
-                  'bg-emerald-500': driver.acceptanceRate >= 85,
-                  'bg-amber-500': driver.acceptanceRate >= 60 && driver.acceptanceRate < 85,
-                  'bg-red-500': driver.acceptanceRate < 60
+                  'bg-gradient-to-r from-emerald-400 to-emerald-500': driver.acceptanceRate >= 85,
+                  'bg-gradient-to-r from-amber-400 to-amber-500': driver.acceptanceRate >= 60 && driver.acceptanceRate < 85,
+                  'bg-gradient-to-r from-red-400 to-red-500': driver.acceptanceRate < 60
                 }"
                 [style.width.%]="driver.acceptanceRate">
               </div>
@@ -169,64 +188,83 @@
           </div>
         </ng-container>
 
+        <!-- Wallet -->
         <ng-container *ngIf="column.key === 'wallet'">
-          <div class="flex flex-col justify-center items-center">
-            <span
-              class="text-[11px] font-black font-['Inter']"
-              [ngClass]="{
-                'text-amber-600': driver.walletBalance > 1000,
-                'text-red-600': driver.walletBalance < 0,
-                'text-slate-800': driver.walletBalance >= 0 && driver.walletBalance <= 1000
-              }">
-              {{ driver.walletBalance | number:'1.2-2' }}
-            </span>
-            <span
-              class="text-[9px] font-bold"
-              [ngClass]="{
-                'text-red-600': driver.walletBalance < 0,
-                'text-amber-500': driver.walletBalance > 1000,
-                'text-slate-400': driver.walletBalance >= 0 && driver.walletBalance <= 1000
-              }">
-              {{ 'COMMON.CURRENCY_SAR' | translate }}
-            </span>
+          <div class="flex flex-col justify-center items-start px-2 py-1.5 rounded-[0.85rem] w-fit"
+            [ngClass]="{
+              'bg-amber-50/80': driver.walletBalance > 1000,
+              'bg-red-50/80': driver.walletBalance < 0
+            }">
+            <div class="flex items-baseline gap-1">
+              <span
+                class="text-[13px] font-extrabold font-['Inter']"
+                [ngClass]="{
+                  'text-amber-600': driver.walletBalance > 1000,
+                  'text-red-600': driver.walletBalance < 0,
+                  'text-slate-800': driver.walletBalance >= 0 && driver.walletBalance <= 1000
+                }">
+                {{ driver.walletBalance | number:'1.0-0' }}
+              </span>
+              <span
+                class="text-[9px] font-extrabold"
+                [ngClass]="{
+                  'text-red-600/80': driver.walletBalance < 0,
+                  'text-amber-600/80': driver.walletBalance > 1000,
+                  'text-slate-400': driver.walletBalance >= 0 && driver.walletBalance <= 1000
+                }">
+                {{ 'COMMON.CURRENCY_SAR' | translate }}
+              </span>
+            </div>
           </div>
         </ng-container>
 
+        <!-- Issues -->
         <ng-container *ngIf="column.key === 'issues'">
-          <div class="flex justify-center gap-1">
-            <span
-              *ngFor="let issue of driver.issues"
-              class="inline-flex h-6 w-6 items-center justify-center rounded-full border"
-              [ngClass]="{
-                'border-emerald-100 bg-emerald-50 text-emerald-500': getIssueVariant(issue) === 'success',
-                'border-amber-100 bg-amber-50 text-amber-600': getIssueVariant(issue) === 'warning',
-                'border-red-100 bg-red-50 text-red-500': getIssueVariant(issue) === 'danger'
-              }"
-              [title]="getIssueLabel(issue) | translate">
-              <span class="material-symbols-outlined text-[12px]">{{ getIssueIcon(issue) }}</span>
-            </span>
+          <div class="flex justify-center gap-1.5 flex-wrap">
+            <ng-container *ngIf="driver.issues && driver.issues.length > 0; else noIssues">
+              <span
+                *ngFor="let issue of driver.issues"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-[0.85rem] border shadow-sm transition-transform hover:scale-110 cursor-help"
+                [ngClass]="{
+                  'border-emerald-200 bg-emerald-50 text-emerald-600': getIssueVariant(issue) === 'success',
+                  'border-amber-200 bg-amber-50 text-amber-600': getIssueVariant(issue) === 'warning',
+                  'border-red-200 bg-red-50 text-red-600': getIssueVariant(issue) === 'danger'
+                }"
+                [title]="getIssueLabel(issue) | translate">
+                <span class="material-symbols-outlined text-[16px]">{{ getIssueIcon(issue) }}</span>
+              </span>
+            </ng-container>
+            <ng-template #noIssues>
+              <span class="text-[12px] font-black text-slate-300">-</span>
+            </ng-template>
           </div>
         </ng-container>
 
+        <!-- Actions -->
         <ng-container *ngIf="column.key === 'actions'">
-          <button class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors mx-auto">
-            <span class="material-symbols-outlined text-[20px]">more_vert</span>
-          </button>
+          <div class="flex justify-center">
+            <button 
+              class="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors shadow-sm bg-white border border-slate-100"
+              (click)="onTableRowClick(driver); $event.stopPropagation()">
+              <span class="material-symbols-outlined text-[20px]">more_vert</span>
+            </button>
+          </div>
         </ng-container>
       </ng-template>
 
+      <!-- Mobile Card Layout -->
       <ng-template #mobileCard let-driver>
         <div class="space-y-4">
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-              <div class="h-11 w-11 rounded-full bg-slate-100 overflow-hidden ring-1 ring-slate-200/70">
+              <div class="h-11 w-11 rounded-[1rem] bg-slate-100 overflow-hidden ring-2 ring-white shadow-sm relative">
                 <img *ngIf="driver.imageUrl" [src]="driver.imageUrl" [alt]="driver.firstName" class="w-full h-full object-cover">
-                <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-sm font-black text-slate-500">
+                <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-sm font-extrabold text-slate-500">
                   {{ driver.firstName.charAt(0) }}{{ driver.lastName.charAt(0) }}
                 </div>
               </div>
               <div>
-                <p class="text-sm font-black text-slate-900">{{ driver.firstName }} {{ driver.lastName }}</p>
+                <p class="text-[14px] font-extrabold text-slate-800">{{ driver.firstName }} {{ driver.lastName }}</p>
                 <p class="text-[11px] font-bold text-slate-400" dir="ltr">{{ driver.phoneNumber }}</p>
               </div>
             </div>
@@ -238,18 +276,37 @@
           </div>
 
           <div class="grid grid-cols-2 gap-3">
-            <div class="rounded-2xl bg-slate-50 px-4 py-3">
-              <p class="text-[10px] font-black text-slate-400">{{ 'DRIVERS.TABLE.DRIVER_ID' | translate }}</p>
-              <p class="mt-1 font-['Inter'] text-[12px] font-black text-slate-800" dir="ltr">{{ driver.driverId }}</p>
+            <div class="rounded-[1rem] bg-slate-50 px-4 py-3 border border-slate-100">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.TABLE.DRIVER_ID' | translate }}</p>
+              <p class="mt-1 font-['Inter'] text-[12px] font-extrabold text-slate-800" dir="ltr">#{{ driver.driverId }}</p>
             </div>
-            <div class="rounded-2xl bg-slate-50 px-4 py-3">
-              <p class="text-[10px] font-black text-slate-400">{{ 'DRIVERS.TABLE.CITY' | translate }}</p>
-              <p class="mt-1 text-[12px] font-black text-slate-800">{{ driver.city }}</p>
+            <div class="rounded-[1rem] bg-slate-50 px-4 py-3 border border-slate-100">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.TABLE.CITY' | translate }}</p>
+              <p class="mt-1 text-[12px] font-extrabold text-slate-800 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px] text-slate-400">location_on</span>
+                {{ driver.city }}
+              </p>
             </div>
           </div>
+          
+          <button 
+            class="w-full flex items-center justify-center gap-2 py-3 bg-zadna-primary/10 text-zadna-primary hover:bg-zadna-primary hover:text-white text-[12px] font-extrabold rounded-xl transition-all duration-300"
+            (click)="onTableRowClick(driver)">
+            <span class="material-symbols-outlined text-[18px]">visibility</span>
+            {{ 'DRIVERS.ACTIONS.VIEW_PROFILE' | translate }}
+          </button>
         </div>
       </ng-template>
     </app-data-table>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !showError && drivers.length === 0" class="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-1000">
+      <div class="w-32 h-32 mb-6 rounded-[2rem] bg-slate-50 flex items-center justify-center border-4 border-white shadow-sm">
+        <span class="material-symbols-outlined text-[48px] text-slate-300">directions_car</span>
+      </div>
+      <h3 class="text-xl font-extrabold text-slate-800 mb-2">{{ 'DRIVERS.EMPTY_TITLE' | translate }}</h3>
+      <p class="text-sm font-medium text-slate-500 max-w-md">{{ 'DRIVERS.EMPTY_MESSAGE' | translate }}</p>
+    </div>
 
     <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
       <app-pagination
@@ -268,7 +325,7 @@
       </div>
     </div>
 
-    <div *ngIf="showError" class="rounded-[1.25rem] border border-red-100 bg-red-50 px-5 py-4 text-sm font-black text-red-600">
+    <div *ngIf="showError" class="rounded-[1.25rem] border border-red-100 bg-red-50 px-5 py-4 text-sm font-extrabold text-red-600">
       {{ errorMessage | translate }}
     </div>
   </div>

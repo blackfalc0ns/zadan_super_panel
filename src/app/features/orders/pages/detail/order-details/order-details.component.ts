@@ -195,10 +195,10 @@ export class OrderDetailsComponent implements OnInit {
         translateValue: true
       },
       ...(currentOrder.dispatchState
-        ? [{ label: 'Dispatch', value: currentOrder.dispatchState, valueDir: 'ltr' as const }]
+        ? [{ label: 'ORDERS.DETAIL.DISPATCH_STATE', value: currentOrder.dispatchState, valueDir: 'ltr' as const }]
         : []),
       ...(currentOrder.dispatchReason
-        ? [{ label: 'Dispatch note', value: currentOrder.dispatchReason }]
+        ? [{ label: 'ORDERS.DETAIL.DISPATCH_NOTE', value: currentOrder.dispatchReason }]
         : []),
       { label: 'ORDERS.DETAIL.LAST_UPDATED', value: currentOrder.lastUpdatedAt },
       { label: 'ORDERS.DETAIL.SLA_LABEL', value: `${currentOrder.slaScore || 0}%`, valueDir: 'ltr', valueTone: currentOrder.isLate ? 'warning' : 'accent' }
