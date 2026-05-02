@@ -39,6 +39,11 @@ export const VENDORS_ROUTES: Routes = [
         data: { tabId: 'orders' }
       },
       {
+        path: 'disputes',
+        loadComponent: () => import('./components/vendor-disputes/vendor-disputes.component').then((m) => m.VendorDisputesComponent),
+        data: { tabId: 'disputes' }
+      },
+      {
         path: 'finance',
         loadComponent: () => import('./components/vendor-finance/vendor-finance.component').then((m) => m.VendorFinanceComponent),
         data: { tabId: 'finance' }

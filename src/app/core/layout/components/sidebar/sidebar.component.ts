@@ -36,6 +36,15 @@ export class SidebarComponent {
         void this.router.navigateByUrl(route);
     }
 
+    get currentVendorDisputesRoute(): string | null {
+        const match = this.router.url.match(/^\/vendors\/([^\/?#]+)(?:\/|$)/);
+        return match ? `/vendors/${match[1]}/disputes` : null;
+    }
+
+    get isInsideVendorDetail(): boolean {
+        return this.currentVendorDisputesRoute !== null;
+    }
+
     navItemClasses(route: string, exact = false): string[] {
         return [
             'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-start text-[13px] font-bold transition-colors group',

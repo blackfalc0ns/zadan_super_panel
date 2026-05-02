@@ -55,6 +55,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
     { id: 'analytics', labelKey: 'VENDOR_DETAIL.TAB_ANALYTICS', active: false },
     { id: 'products', labelKey: 'VENDOR_DETAIL.TAB_PRODUCTS', active: false },
     { id: 'orders', labelKey: 'VENDOR_DETAIL.TAB_ORDERS', active: false },
+    { id: 'disputes', labelKey: 'VENDOR_DETAIL.TAB_DISPUTES', active: false },
     { id: 'finance', labelKey: 'VENDOR_DETAIL.TAB_FINANCE', active: false },
     { id: 'compliance', labelKey: 'VENDOR_DETAIL.TAB_COMPLIANCE', active: false },
     { id: 'logs', labelKey: 'VENDOR_DETAIL.TAB_LOGS', active: false },

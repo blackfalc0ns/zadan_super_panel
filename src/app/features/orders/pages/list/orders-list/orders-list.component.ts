@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router, RouterModule } from '@angular/router';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
-import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { DataTableComponent, TableAction, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page-header/page-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
@@ -38,7 +37,6 @@ import {
     TranslateModule,
     RouterModule,
     AppPaginationComponent,
-    KpiCardsComponent,
     DataTableComponent,
     AppPageHeaderComponent,
     StatusPillComponent,
@@ -63,7 +61,6 @@ export class OrdersListComponent implements OnInit {
   ];
 
   orders: OrderListItem[] = [];
-  kpiCards: KPICard[] = [];
   isLoading = false;
   errorMessage = '';
   isFiltersExpanded = false;
@@ -149,20 +146,12 @@ export class OrdersListComponent implements OnInit {
       next: (response) => {
         this.orders = response.items;
         this.totalItems = response.totalCount;
-        this.kpiCards = this.buildKpiCards(response.summary);
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Failed to load orders', error);
         this.errorMessage = 'ORDERS.ERRORS.LOAD_LIST';
         this.orders = [];
-        this.kpiCards = this.buildKpiCards({
-          total: 0,
-          active: 0,
-          late: 0,
-          paymentIssues: 0,
-          refunds: 0
-        });
         this.isLoading = false;
       }
     });
@@ -198,13 +187,6 @@ export class OrdersListComponent implements OnInit {
     this.paymentStatusFilter = null;
     this.fulfillmentStatusFilter = null;
     this.queueView = 'ALL';
-    this.syncPanelFilters();
-    this.page = 1;
-    this.loadOrders();
-  }
-
-  onKpiCardClick(card: KPICard): void {
-    this.queueView = (card.id.toUpperCase() as OrderQueueView);
     this.syncPanelFilters();
     this.page = 1;
     this.loadOrders();
@@ -309,50 +291,5 @@ export class OrdersListComponent implements OnInit {
 
   private toNullableString(value: unknown): string | null {
     return typeof value === 'string' && value.trim() ? value : null;
-  }
-
-  private buildKpiCards(summary: OrdersSummary): KPICard[] {
-    return [
-      {
-        id: 'ALL',
-        title: 'ORDERS.KPI.TOTAL',
-        value: summary.total,
-        color: '#127c8c',
-        icon: '<span class="material-symbols-outlined text-[20px]">shopping_bag</span>',
-        clickable: true
-      },
-      {
-        id: 'ACTIVE',
-        title: 'ORDERS.KPI.ACTIVE',
-        value: summary.active,
-        color: '#0f766e',
-        icon: '<span class="material-symbols-outlined text-[20px]">rocket_launch</span>',
-        clickable: true
-      },
-      {
-        id: 'LATE',
-        title: 'ORDERS.KPI.LATE',
-        value: summary.late,
-        color: '#f97316',
-        icon: '<span class="material-symbols-outlined text-[20px]">warning</span>',
-        clickable: true
-      },
-      {
-        id: 'PAYMENT_ISSUES',
-        title: 'ORDERS.KPI.PAYMENT_ISSUES',
-        value: summary.paymentIssues,
-        color: '#dc2626',
-        icon: '<span class="material-symbols-outlined text-[20px]">credit_card_off</span>',
-        clickable: true
-      },
-      {
-        id: 'REFUNDS',
-        title: 'ORDERS.KPI.REFUNDS',
-        value: summary.refunds,
-        color: '#7c3aed',
-        icon: '<span class="material-symbols-outlined text-[20px]">reply</span>',
-        clickable: true
-      }
-    ];
   }
 }

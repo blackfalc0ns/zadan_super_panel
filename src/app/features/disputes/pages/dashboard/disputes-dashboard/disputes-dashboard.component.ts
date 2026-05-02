@@ -689,6 +689,7 @@ export class DisputesDashboardComponent implements OnInit {
     return {
       id: '',
       orderId: '',
+      orderDisplayId: '',
       customerName: '',
       customerEmail: '',
       customerInitials: '',
@@ -710,7 +711,11 @@ export class DisputesDashboardComponent implements OnInit {
       merchantSummary: '',
       evidence: [],
       timeline: [],
-      initiatorRole: 'customer'
+      initiatorRole: 'customer',
+      waitingOnRole: 'customer',
+      participants: [],
+      allowedActions: [],
+      messages: []
     };
   }
   
@@ -761,6 +766,42 @@ export class DisputesDashboardComponent implements OnInit {
         },
         error: (error) => console.error('Failed to add note.', error)
       });
+  }
+
+  sendPublicMessage(): void {
+    const message = prompt(this.t('DISPUTES_DASHBOARD.DRAWER.SEND_MESSAGE_PROMPT') || 'Enter message:');
+    if (!message) return;
+
+    const audience = this.resolveAudienceForSelectedDispute();
+    this.disputesService.addPublicMessage(this.selectedDispute.id, message, audience)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+        },
+        error: (error) => console.error('Failed to send public message.', error)
+      });
+  }
+
+  waitingOnLabel(role?: string): string {
+    switch ((role || '').toLowerCase()) {
+      case 'vendor':
+        return this.t('DISPUTES_DASHBOARD.WAITING_ON.VENDOR');
+      case 'driver':
+        return this.t('DISPUTES_DASHBOARD.WAITING_ON.DRIVER');
+      case 'customer':
+        return this.t('DISPUTES_DASHBOARD.WAITING_ON.CUSTOMER');
+      default:
+        return this.t('DISPUTES_DASHBOARD.WAITING_ON.REVIEW');
+    }
+  }
+
+  private resolveAudienceForSelectedDispute(): string {
+    const waitingOn = this.selectedDispute.waitingOnRole?.toLowerCase();
+    if (waitingOn === 'vendor') return 'vendor';
+    if (waitingOn === 'driver') return 'driver';
+    if (waitingOn === 'customer') return 'customer';
+    return 'customer,vendor';
   }
 }
 

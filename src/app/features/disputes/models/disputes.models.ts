@@ -19,6 +19,25 @@ export interface TimelineItem {
   tone: 'primary' | 'warning' | 'muted';
 }
 
+export interface SupportCaseMessage {
+  id: string;
+  action: string;
+  messageType: string;
+  title: string;
+  body: string | null;
+  authorRole: string;
+  visibleTo: string[];
+  isInternalOnly: boolean;
+  createdAt: string;
+}
+
+export interface SupportCaseParticipant {
+  role: string;
+  isInitiator: boolean;
+  isAwaitingResponse: boolean;
+  hasMessages: boolean;
+}
+
 export interface EvidenceItem {
   type: 'image' | 'pdf';
   label: string;
@@ -35,6 +54,7 @@ export interface DisputeWorkflowContext {
 export interface SupportCaseRow {
   id: string;
   orderId: string;
+  orderDisplayId: string;
   customerName: string;
   customerEmail: string;
   customerInitials: string;
@@ -58,6 +78,10 @@ export interface SupportCaseRow {
   timeline: TimelineItem[];
   workflowContext?: DisputeWorkflowContext;
   initiatorRole: string;
+  waitingOnRole?: string;
+  participants?: SupportCaseParticipant[];
+  allowedActions?: string[];
+  messages?: SupportCaseMessage[];
   vendorResponse?: string;
   driverResponse?: string;
 }

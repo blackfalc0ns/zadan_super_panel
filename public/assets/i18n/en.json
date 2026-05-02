@@ -1,4 +1,4 @@
-{
+﻿{
   "COMMON": {
     "CANCEL": "Cancel",
     "CONFIRM_DELETE": "Confirm Delete",
@@ -168,6 +168,7 @@
     "BRANDS": "Brands",
     "PRODUCT_REQUESTS": "Product Requests",
     "DISPUTES": "Disputes",
+    "VENDOR_DISPUTES": "Vendor Disputes",
     "LOGOUT": "Logout",
     "SEARCH": "Search email or order...",
     "MENU": "Main Menu",
@@ -2480,7 +2481,65 @@
     "STATUS_INACTIVE": "Inactive",
     "STATUS_DISCONTINUED": "Discontinued"
   },
-  "VENDOR_DETAIL": {
+  "VENDOR_DISPUTES": {
+    "TITLE": "Vendor Disputes",
+    "SUBTITLE": "Support cases linked to this vendor account",
+    "SEARCH_PLACEHOLDER": "Search by case ID, order number, or dispute type",
+    "TABLE_TITLE": "Disputes Board",
+    "TABLE_SUBTITLE": "Review dispute activity and open the full dispute workspace",
+    "KPI": {
+      "TOTAL": "Total Cases",
+      "OPEN": "Open Cases",
+      "RESOLVED": "Resolved",
+      "REJECTED": "Rejected"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "All statuses",
+      "ALL_PRIORITIES": "All priorities"
+    },
+    "TABLE": {
+      "CASE_ID": "Case ID",
+      "ORDER_NUMBER": "Order #",
+      "TYPE": "Type",
+      "STATUS": "Status",
+      "PRIORITY": "Priority",
+      "QUEUE": "Queue",
+      "CREATED": "Created",
+      "SLA": "SLA",
+      "OPEN": "Open",
+      "NO_SLA": "No SLA",
+      "UNASSIGNED_QUEUE": "Unassigned"
+    },
+    "TYPE": {
+      "COMPLAINT": "Complaint",
+      "RETURN_REQUEST": "Return Request",
+      "DRIVER_REPORT": "Driver Report",
+      "DRIVER_DISPUTE": "Driver Dispute",
+      "OTHER": "Other"
+    },
+    "STATUS": {
+      "OPEN": "Open",
+      "IN_REVIEW": "In Review",
+      "AWAITING_EVIDENCE": "Awaiting Evidence",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "RESOLVED": "Resolved"
+    },
+    "PRIORITY": {
+      "CRITICAL": "Critical",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "STATES": {
+      "LOADING_TITLE": "Loading disputes",
+      "LOADING_MESSAGE": "Fetching support cases linked to this vendor.",
+      "ERROR_TITLE": "Unable to load disputes",
+      "ERROR_MESSAGE": "Please try again in a moment.",
+      "EMPTY_TITLE": "No disputes found",
+      "EMPTY_MESSAGE": "This vendor has no support cases matching the current filters."
+    }
+  },  "VENDOR_DETAIL": {
     "TITLE": "Vendor Details",
     "STATUS_ACTIVE": "Active",
     "STATUS_VERIFIED": "Verified",
@@ -2495,6 +2554,7 @@
     "TAB_BASIC_DATA": "Basic Data",
     "TAB_PRODUCTS": "Products",
     "TAB_ORDERS": "Orders",
+    "TAB_DISPUTES": "Disputes",
     "TAB_FINANCE": "Finance",
     "TAB_COMPLIANCE": "Review & Compliance",
     "TAB_LOGS": "Logs & Notes",
@@ -3140,6 +3200,12 @@
       "MERCHANT": "Waiting on Merchant",
       "RESOLVED": "Resolved"
     },
+    "WAITING_ON": {
+      "CUSTOMER": "Waiting on customer",
+      "VENDOR": "Waiting on vendor",
+      "DRIVER": "Waiting on driver",
+      "REVIEW": "Under admin review"
+    },
     "PRIORITY": {
       "CRITICAL": "Critical",
       "HIGH": "High",
@@ -3208,6 +3274,11 @@
       "APPROVE_COMPLAINT_PROMPT": "Enter internal approval notes:",
       "RESOLVE_CONFIRM": "Are you sure you want to resolve this support case?",
       "ADD_NOTE_PROMPT": "Enter case note:",
+      "SEND_MESSAGE": "Send Public Message",
+      "SEND_MESSAGE_PROMPT": "Enter the message to send to the visible participants:",
+      "WAITING_ON": "Waiting on",
+      "PARTICIPANTS": "Participants",
+      "CONVERSATION": "Conversation",
       "REJECT": "Reject Request",
       "REQUEST_INFO": "Request More Information",
       "ESCALATE": "Escalate Case",

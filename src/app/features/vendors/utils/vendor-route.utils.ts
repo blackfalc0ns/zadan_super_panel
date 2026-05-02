@@ -6,6 +6,7 @@ export const VENDOR_DETAIL_TABS = [
   'analytics',
   'products',
   'orders',
+  'disputes',
   'finance',
   'compliance',
   'logs',

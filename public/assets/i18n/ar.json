@@ -1,4 +1,4 @@
-{
+﻿{
   "COMMON": {
     "CANCEL": "إلغاء",
     "CONFIRM_DELETE": "تأكيد الحذف",
@@ -173,6 +173,7 @@
     "DIR": "rtl",
     "EMAIL_CENTER": "مركز البريد",
     "PRODUCT_REQUESTS": "طلبات المنتجات",
+    "VENDOR_DISPUTES": "نزاعات التاجر",
     "MARKETING": "التسويق"
   },
   "SIDEBAR_EXTRA": {
@@ -2480,7 +2481,65 @@
     "STATUS_INACTIVE": "غير نشط",
     "STATUS_DISCONTINUED": "متوقف"
   },
-  "VENDOR_DETAIL": {
+  "VENDOR_DISPUTES": {
+    "TITLE": "النزاعات الخاصة بالتاجر",
+    "SUBTITLE": "حالات الدعم المرتبطة بحساب هذا التاجر",
+    "SEARCH_PLACEHOLDER": "ابحث برقم الحالة أو رقم الطلب أو نوع النزاع",
+    "TABLE_TITLE": "لوحة النزاعات",
+    "TABLE_SUBTITLE": "استعرض حركة النزاعات وافتح مساحة النزاع الكاملة",
+    "KPI": {
+      "TOTAL": "إجمالي الحالات",
+      "OPEN": "الحالات المفتوحة",
+      "RESOLVED": "الحالات المحسومة",
+      "REJECTED": "الحالات المرفوضة"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "كل الحالات",
+      "ALL_PRIORITIES": "كل الأولويات"
+    },
+    "TABLE": {
+      "CASE_ID": "رقم الحالة",
+      "ORDER_NUMBER": "رقم الطلب",
+      "TYPE": "النوع",
+      "STATUS": "الحالة",
+      "PRIORITY": "الأولوية",
+      "QUEUE": "المسار",
+      "CREATED": "تاريخ الإنشاء",
+      "SLA": "SLA",
+      "OPEN": "فتح",
+      "NO_SLA": "بدون SLA",
+      "UNASSIGNED_QUEUE": "غير معين"
+    },
+    "TYPE": {
+      "COMPLAINT": "شكوى",
+      "RETURN_REQUEST": "طلب استرجاع",
+      "DRIVER_REPORT": "تقرير سائق",
+      "DRIVER_DISPUTE": "نزاع سائق",
+      "OTHER": "أخرى"
+    },
+    "STATUS": {
+      "OPEN": "مفتوحة",
+      "IN_REVIEW": "قيد المراجعة",
+      "AWAITING_EVIDENCE": "بانتظار الأدلة",
+      "APPROVED": "موافق عليها",
+      "REJECTED": "مرفوضة",
+      "RESOLVED": "محسومة"
+    },
+    "PRIORITY": {
+      "CRITICAL": "حرجة",
+      "HIGH": "عالية",
+      "MEDIUM": "متوسطة",
+      "LOW": "منخفضة"
+    },
+    "STATES": {
+      "LOADING_TITLE": "جاري تحميل النزاعات",
+      "LOADING_MESSAGE": "نجلب حالات الدعم المرتبطة بهذا التاجر.",
+      "ERROR_TITLE": "تعذر تحميل النزاعات",
+      "ERROR_MESSAGE": "يرجى المحاولة مرة أخرى بعد قليل.",
+      "EMPTY_TITLE": "لا توجد نزاعات",
+      "EMPTY_MESSAGE": "لا توجد حالات دعم لهذا التاجر تطابق الفلاتر الحالية."
+    }
+  },  "VENDOR_DETAIL": {
     "TITLE": "تفاصيل التاجر",
     "STATUS_ACTIVE": "نشط",
     "STATUS_VERIFIED": "موثق",
@@ -2493,6 +2552,7 @@
     "TAB_BASIC_DATA": "البيانات الأساسية",
     "TAB_PRODUCTS": "المنتجات",
     "TAB_ORDERS": "الطلبات",
+    "TAB_DISPUTES": "النزاعات",
     "TAB_FINANCE": "المالية",
     "TAB_COMPLIANCE": "المراجعة والامتثال",
     "TAB_LOGS": "السجل والملاحظات",
@@ -3140,6 +3200,12 @@
       "MERCHANT": "بانتظار التاجر",
       "RESOLVED": "تم الحل"
     },
+    "WAITING_ON": {
+      "CUSTOMER": "بانتظار رد العميل",
+      "VENDOR": "بانتظار رد التاجر",
+      "DRIVER": "بانتظار رد المندوب",
+      "REVIEW": "قيد مراجعة الإدارة"
+    },
     "PRIORITY": {
       "CRITICAL": "حرجة",
       "HIGH": "عالية",
@@ -3208,6 +3274,11 @@
       "APPROVE_COMPLAINT_PROMPT": "أدخل ملاحظات القبول الداخلية:",
       "RESOLVE_CONFIRM": "هل أنت متأكد أنك تريد إغلاق حالة الدعم هذه؟",
       "ADD_NOTE_PROMPT": "أدخل ملاحظة الحالة:",
+      "SEND_MESSAGE": "إرسال رسالة عامة",
+      "SEND_MESSAGE_PROMPT": "اكتب الرسالة التي تريد إرسالها إلى الأطراف المعنية:",
+      "WAITING_ON": "بانتظار",
+      "PARTICIPANTS": "الأطراف المشاركة",
+      "CONVERSATION": "المحادثة",
       "REJECT": "رفض الطلب",
       "REQUEST_INFO": "طلب معلومات إضافية",
       "ESCALATE": "تصعيد الحالة",

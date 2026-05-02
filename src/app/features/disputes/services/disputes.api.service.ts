@@ -49,6 +49,29 @@ interface AdminOrderSupportCaseResponse {
   }>;
   timeline: TimelineItem[];
   initiatorRole: string;
+  waitingOnRole?: string;
+  participants?: Array<{
+    role: string;
+    isInitiator: boolean;
+    isAwaitingResponse: boolean;
+    hasMessages: boolean;
+  }>;
+  allowedActions?: string[];
+  messages?: Array<{
+    id: string;
+    action: string;
+    messageType: string;
+    title: string;
+    body: string | null;
+    authorRole: string;
+    visibleTo: string[];
+    isInternalOnly: boolean;
+    createdAt: string;
+    attachments: Array<{
+      fileName: string;
+      fileUrl: string;
+    }>;
+  }>;
   vendorResponse?: string;
   driverResponse?: string;
 }
@@ -70,7 +93,8 @@ export class DisputesService {
     priority?: string,
     queue?: string,
     type?: string,
-    initiatorRole?: string
+    initiatorRole?: string,
+    vendorId?: string
   ): Observable<{ items: SupportCaseRow[]; totalCount: number }> {
     let params = new HttpParams()
       .set('page', String(Math.max(1, page)))
@@ -82,6 +106,7 @@ export class DisputesService {
     if (queue) params = params.set('queue', queue);
     if (type) params = params.set('type', type);
     if (initiatorRole && initiatorRole !== 'all') params = params.set('initiatorRole', initiatorRole);
+    if (vendorId) params = params.set('vendorId', vendorId);
 
     return this.http.get<AdminOrderSupportCasesResponse>(this.apiUrl, { params }).pipe(
       map((response) => {
@@ -164,7 +189,18 @@ export class DisputesService {
         form.title,
         form.details
       ]),
+      targetRole: form.target,
       slaDueAtUtc: this.toSlaDueAtUtc(form.dueDate)
+    }).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
+  addPublicMessage(id: string, message: string, audience: string): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/messages`, {
+      message,
+      audience
     }).pipe(
       map((response) => this.mapDispute(response)),
       tap((item) => this.upsertCache(item))
@@ -229,6 +265,7 @@ export class DisputesService {
     return {
       id: item.id,
       orderId: item.orderId,
+      orderDisplayId: item.orderDisplayId,
       customerName: item.customerName,
       customerEmail: item.customerEmail,
       customerInitials: this.buildInitials(item.customerName),
@@ -251,6 +288,14 @@ export class DisputesService {
       evidence: item.evidence ? item.evidence.map((evidenceItem) => this.mapEvidence(evidenceItem)) : [],
       timeline: item.timeline ? item.timeline.map((timelineItem) => ({ ...timelineItem })) : [],
       initiatorRole: item.initiatorRole || 'customer',
+      waitingOnRole: item.waitingOnRole,
+      participants: item.participants ? item.participants.map((participant) => ({ ...participant })) : [],
+      allowedActions: item.allowedActions ? [...item.allowedActions] : [],
+      messages: item.messages ? item.messages.map((message) => ({
+        ...message,
+        visibleTo: [...message.visibleTo],
+        attachments: message.attachments.map((attachment) => ({ ...attachment }))
+      })) : [],
       vendorResponse: item.vendorResponse,
       driverResponse: item.driverResponse
     };
