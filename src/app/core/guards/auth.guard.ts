@@ -1,13 +1,8 @@
 import { inject } from '@angular/core';
 import { Router, type CanActivateChildFn, type CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { environment } from '../../../environments/environment';
 
 function checkAuth(stateUrl: string) {
-    if (environment.skipAuthForDevelopment) {
-        return true;
-    }
-
     const router = inject(Router);
     const authService = inject(AuthService);
 

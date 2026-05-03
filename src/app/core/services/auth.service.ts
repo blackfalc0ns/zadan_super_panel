@@ -36,6 +36,7 @@ const DEV_ADMIN_USER: AdminUser = {
 })
 export class AuthService {
     private readonly apiUrl = `${environment.apiUrl}/admin/auth`;
+    private readonly loginRequiredStorageKey = 'admin_login_required';
 
     private currentUserSubject = new BehaviorSubject<AdminUser | null>(null);
     public currentUser$ = this.currentUserSubject.asObservable();
@@ -60,6 +61,7 @@ export class AuthService {
         }
 
         if (this.isTokenExpired(token)) {
+            this.markLoginRequired();
             this.clearSession();
             return false;
         }
@@ -68,11 +70,11 @@ export class AuthService {
     }
 
     public get isAuthenticated(): boolean {
-        if (this.shouldUseDevelopmentBypass()) {
-            return true;
-        }
+        return this.hasApiSession || this.shouldUseDevelopmentBypass();
+    }
 
-        return this.hasApiSession;
+    public get requiresFreshLogin(): boolean {
+        return localStorage.getItem(this.loginRequiredStorageKey) === '1';
     }
 
     private isTokenExpired(token: string): boolean {
@@ -102,6 +104,7 @@ export class AuthService {
         return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
             .pipe(
                 tap(response => {
+                    this.clearLoginRequired();
                     localStorage.setItem('admin_token', response.tokens.accessToken);
                     localStorage.setItem('admin_refresh_token', response.tokens.refreshToken);
                     localStorage.setItem('admin_user', JSON.stringify(response.user));
@@ -113,17 +116,27 @@ export class AuthService {
     logout(): Observable<void> {
         const refreshToken = this.getRefreshToken();
         if (!refreshToken) {
+            this.clearLoginRequired();
             this.clearSession();
             return of(void 0);
         }
 
         return this.http.post<void>(`${this.apiUrl}/logout`, { refreshToken }).pipe(
             catchError(() => of(void 0)),
-            tap(() => this.clearSession())
+            tap(() => {
+                this.clearLoginRequired();
+                this.clearSession();
+            })
         );
     }
 
     forceLogout(): void {
+        this.clearLoginRequired();
+        this.clearSession();
+    }
+
+    forceLogoutForExpiredSession(): void {
+        this.markLoginRequired();
         this.clearSession();
     }
 
@@ -140,7 +153,7 @@ export class AuthService {
     }
 
     private shouldUseDevelopmentBypass(): boolean {
-        return environment.skipAuthForDevelopment && !this.hasValidStoredSession();
+        return environment.skipAuthForDevelopment && !this.hasValidStoredSession() && !this.requiresFreshLogin;
     }
 
     private loadUserFromStorage(): void {
@@ -157,5 +170,13 @@ export class AuthService {
         } catch {
             this.clearSession();
         }
+    }
+
+    private markLoginRequired(): void {
+        localStorage.setItem(this.loginRequiredStorageKey, '1');
+    }
+
+    private clearLoginRequired(): void {
+        localStorage.removeItem(this.loginRequiredStorageKey);
     }
 }

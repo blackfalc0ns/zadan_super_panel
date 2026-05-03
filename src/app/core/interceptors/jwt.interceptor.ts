@@ -3,7 +3,6 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { environment } from '../../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
@@ -26,14 +25,29 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
-            if (environment.skipAuthForDevelopment) {
-                return throwError(() => error);
+            if (error.status === 401 || error.status === 403) {
+                const isAdminAuthRequest =
+                    req.url.includes('/api/admin/auth/login') ||
+                    req.url.includes('/api/admin/auth/logout');
+                const hasStoredSession = !!token || !!authService.getRefreshToken() || authService.requiresFreshLogin;
+
+                if (!isAdminAuthRequest && hasStoredSession) {
+                    authService.forceLogoutForExpiredSession();
+
+                    const returnUrl = router.url && !router.url.startsWith('/login')
+                        ? router.url
+                        : '/dashboard';
+
+                    void router.navigate(['/login'], {
+                        queryParams: {
+                            returnUrl,
+                            reason: 'session-expired'
+                        },
+                        replaceUrl: true
+                    });
+                }
             }
 
-            if (error.status === 401 || error.status === 403) {
-                authService.forceLogout();
-                router.navigate(['/dashboard']);
-            }
             return throwError(() => error);
         })
     );
