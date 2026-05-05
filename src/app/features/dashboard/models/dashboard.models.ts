@@ -1,8 +1,7 @@
 export type DashboardDateRange = 'today' | 'week' | 'month';
-export type DashboardRefreshMode = 'manual' | 'live';
-export type DashboardTrendDirection = 'up' | 'down' | 'flat';
+export type DashboardRefreshMode = 'manual';
 export type DashboardSeverity = 'critical' | 'warning' | 'info' | 'success' | 'neutral';
-export type DashboardComparisonMode = 'single' | 'dual' | 'stacked';
+export type DashboardTrendDirection = 'up' | 'down' | 'flat';
 
 export interface DashboardFilterState {
   dateRange: DashboardDateRange;
@@ -24,8 +23,8 @@ export interface DashboardKpiCard {
   unitLabel?: string;
   trendLabel: string;
   trendDirection: DashboardTrendDirection;
+  severity: DashboardSeverity;
   contextKey: string;
-  severity?: DashboardSeverity;
 }
 
 export interface DashboardAlert {
@@ -34,88 +33,39 @@ export interface DashboardAlert {
   titleKey: string;
   summaryKey: string;
   summaryParams?: Record<string, string | number>;
-  affectedCount: number;
-  actionLabelKey: string;
+  count: number;
   route: string;
 }
 
-export interface DashboardInsight {
-  id: string;
-  type: DashboardSeverity;
-  messageKey: string;
-  messageParams?: Record<string, string | number>;
-  actionLabelKey: string;
-  route: string;
-  supportingMetric: string;
-}
-
-export interface DashboardOperationalQueue {
+export interface DashboardQueue {
   id: string;
   labelKey: string;
   count: number;
-  delta: string;
-  tone: DashboardSeverity;
   helperKey: string;
+  severity: DashboardSeverity;
   route: string;
 }
 
-export interface DashboardTrendSegment {
-  id: string;
-  labelKey: string;
-  value: number;
-  tone: DashboardSeverity;
-}
-
-export interface DashboardTrendPoint {
+export interface DashboardChartPoint {
   label: string;
   value: number;
-  secondaryValue?: number;
-  segments?: DashboardTrendSegment[];
 }
 
-export interface DashboardTrendSeries {
+export interface DashboardChartSeries {
   id: string;
   labelKey: string;
-  points: DashboardTrendPoint[];
-  comparisonMode: DashboardComparisonMode;
+  color: string;
+  points: DashboardChartPoint[];
 }
 
-export interface DashboardLeaderboardRow {
-  id: string;
-  title: string;
-  subtitle: string;
-  metricValue: string;
-  metricLabelKey: string;
-  secondaryValue: string;
-  secondaryLabelKey: string;
-  progress: number;
-  tone: DashboardSeverity;
-  route: string;
-}
-
-export interface DashboardAttentionItem {
-  id: string;
-  entityLabelKey: string;
-  entityName: string;
-  summary: string;
-  owner: string;
-  priority: DashboardSeverity;
-  route: string;
-  ctaLabelKey: string;
-}
-
-export interface DashboardAuditItem {
-  id: string;
+export interface DashboardSeriesChart {
   titleKey: string;
-  subtitleKey: string;
-  subtitleParams?: Record<string, string | number>;
-  tone: DashboardSeverity;
-  timeLabel: string;
-  route?: string;
+  descriptionKey: string;
+  series: DashboardChartSeries[];
 }
 
 export interface DashboardRegionPressureRow {
-  id: string;
+  regionKey: string;
   regionLabel: string;
   lateOrders: number;
   paymentIssues: number;
@@ -129,14 +79,84 @@ export interface DashboardSupplyBucket {
   labelKey: string;
   count: number;
   share: number;
-  tone: DashboardSeverity;
+  color: string;
+  severity: DashboardSeverity;
 }
 
-export interface DashboardCatalogPulse {
-  products: number;
-  brands: number;
-  categories: number;
-  concentrationLabel: string;
+export interface DashboardAttentionItem {
+  id: string;
+  entityLabelKey: string;
+  entityName: string;
+  summary: string;
+  owner: string;
+  priority: DashboardSeverity;
+  route: string;
+  actionLabelKey: string;
+}
+
+export interface DashboardAuditItem {
+  id: string;
+  titleKey: string;
+  titleParams?: Record<string, string | number>;
+  subtitleKey: string;
+  subtitleParams?: Record<string, string | number>;
+  severity: DashboardSeverity;
+  timestampUtc: string;
+  route: string;
+}
+
+export interface DashboardSectionStatus {
+  severity: DashboardSeverity;
+  summaryKey: string;
+  summaryParams?: Record<string, string | number>;
+}
+
+export interface DashboardSectionStat {
+  id: string;
+  labelKey: string;
+  value: number;
+  displayValue: string;
+  unit?: string;
+  tone: DashboardSeverity;
+  helperKey: string;
+}
+
+export interface DashboardRankedRow {
+  id: string;
+  label: string;
+  value: string;
+  secondaryValue?: string;
+  metaLabel?: string;
+  severity: DashboardSeverity;
+  route: string;
+}
+
+export interface DashboardRankedList {
+  id: string;
+  titleKey: string;
+  descriptionKey: string;
+  rows: DashboardRankedRow[];
+}
+
+export interface DashboardExceptionRow {
+  id: string;
+  entityLabel: string;
+  issueLabel: string;
+  ownerLabel: string;
+  metricLabel: string;
+  severity: DashboardSeverity;
+  route: string;
+}
+
+export interface DashboardSection {
+  id: string;
+  titleKey: string;
+  descriptionKey: string;
+  route: string;
+  status: DashboardSectionStatus;
+  stats: DashboardSectionStat[];
+  rankedLists: DashboardRankedList[];
+  exceptions: DashboardExceptionRow[];
 }
 
 export interface DashboardSnapshot {
@@ -146,23 +166,24 @@ export interface DashboardSnapshot {
     regions: DashboardFilterOption[];
     vendors: DashboardFilterOption[];
   };
-  headerSummaryKey: string;
-  headerSummaryParams?: Record<string, string | number>;
+  headerSummary: string;
   lastUpdatedLabel: string;
   systemMode: 'live' | 'snapshot';
   systemStatusLabelKey: string;
   kpis: DashboardKpiCard[];
   alerts: DashboardAlert[];
-  insights: DashboardInsight[];
-  liveQueues: DashboardOperationalQueue[];
-  riskQueues: DashboardOperationalQueue[];
-  hourlyFunnel: DashboardTrendSeries;
-  revenueQuality: DashboardTrendSeries;
-  vendorLeaderboard: DashboardLeaderboardRow[];
+  queues: {
+    live: DashboardQueue[];
+    risk: DashboardQueue[];
+  };
+  charts: {
+    ordersTrend: DashboardSeriesChart;
+    revenueTrend: DashboardSeriesChart;
+    regionPressure: DashboardRegionPressureRow[];
+    vendorReadiness: DashboardSupplyBucket[];
+    driverReadiness: DashboardSupplyBucket[];
+  };
   attentionItems: DashboardAttentionItem[];
-  regionPressure: DashboardRegionPressureRow[];
-  vendorSupplyReadiness: DashboardSupplyBucket[];
-  driverSupplyReadiness: DashboardSupplyBucket[];
   auditItems: DashboardAuditItem[];
-  catalogPulse: DashboardCatalogPulse;
+  sections: DashboardSection[];
 }

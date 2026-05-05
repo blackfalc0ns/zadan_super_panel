@@ -1,7 +1,21 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+
+export interface AccessScope {
+    panelScope: string;
+    scopeType: string;
+    scopeEntityId?: string | null;
+    roleCode: string;
+    roleName: string;
+}
+
+export interface EffectiveAccess {
+    permissionVersion: number;
+    permissions: string[];
+    activeScope?: AccessScope | null;
+}
 
 export interface AdminUser {
     id: string;
@@ -9,6 +23,7 @@ export interface AdminUser {
     email?: string | null;
     phone?: string | null;
     role: string;
+    access?: EffectiveAccess | null;
 }
 
 export interface AuthResponse {
@@ -28,7 +43,12 @@ const DEV_ADMIN_USER: AdminUser = {
     id: 'dev-super-admin',
     fullName: 'Development Admin',
     email: 'dev@zadana.local',
-    role: 'SuperAdmin'
+    role: 'SuperAdmin',
+    access: {
+        permissionVersion: 1,
+        permissions: ['*'], // A wildcard or just let it pass development bypass
+        activeScope: null
+    }
 };
 
 @Injectable({
@@ -138,6 +158,43 @@ export class AuthService {
     forceLogoutForExpiredSession(): void {
         this.markLoginRequired();
         this.clearSession();
+    }
+
+    public bootstrap(): Observable<AdminUser | null> {
+        if (!this.hasApiSession && !this.shouldUseDevelopmentBypass()) {
+            return of(null);
+        }
+
+        if (this.shouldUseDevelopmentBypass()) {
+            this.currentUserSubject.next(DEV_ADMIN_USER);
+            return of(DEV_ADMIN_USER);
+        }
+
+        return this.fetchMe().pipe(
+            catchError(() => {
+                return of(this.currentUserValue);
+            })
+        );
+    }
+
+    public refreshAccess(): Observable<AdminUser | null> {
+        return this.fetchMe().pipe(
+            catchError((err) => {
+                if (err.status === 401 || err.status === 403) {
+                    this.forceLogoutForExpiredSession();
+                }
+                return of(null);
+            })
+        );
+    }
+
+    private fetchMe(): Observable<AdminUser> {
+        return this.http.get<AdminUser>(`${this.apiUrl}/me`).pipe(
+            tap(user => {
+                localStorage.setItem('admin_user', JSON.stringify(user));
+                this.currentUserSubject.next(user);
+            })
+        );
     }
 
     private clearSession(): void {

@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { HasPermissionDirective } from '@shared/directives/has-permission.directive';
 import { DetailTabNavItem, DetailTabsNavComponent } from '@shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 import { ToastService } from '@shared/services/toast.service';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
@@ -19,7 +20,7 @@ interface Tab {
 @Component({
   selector: 'app-vendor-detail-header',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, DetailTabsNavComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, DetailTabsNavComponent, HasPermissionDirective],
   templateUrl: './vendor-detail-header.component.html',
   styleUrls: ['./vendor-detail-header.component.scss']
 })

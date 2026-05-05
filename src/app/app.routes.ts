@@ -1,4 +1,4 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout.component';
 import { authChildGuard, authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';

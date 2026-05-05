@@ -1,477 +1,286 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { DataTableComponent, TableColumn } from '@shared/components/ui/data-table/data-table.component';
-import { KpiCardsComponent, KPICard } from '@shared/components/ui/kpi-cards/kpi-cards.component';
-import { AppPaginationComponent } from '@shared/components/ui/pagination/pagination.component';
-import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
-import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
-import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
+import { AdminAccessApiService, RoleDefinitionDto } from '../../../../core/services/admin-access-api.service';
 import {
-  AdminAccessLevel,
-  AdminAccessStatus,
-  AdminRolePreset,
   AdminUserRecord,
   DIRECTORY_AUDIENCE_LABELS,
   DIRECTORY_PANEL_LABELS,
-  DIRECTORY_PERSONA_LABELS,
-  DirectoryAudienceType,
-  DirectoryPanelScope,
-  DirectoryPersonaType
+  getRolePresetById
 } from '../../models/admin-users.models';
-import { AdminUsersService } from '../../services/admin-users.service';
+import { Subscription } from 'rxjs';
 
-type FilterValue<T extends string> = 'all' | T;
+import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
+import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { DataTableComponent, TableColumn, TableAction } from '../../../../shared/components/ui/data-table/data-table.component';
+import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 
 @Component({
   selector: 'app-admin-users-list',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
+    CommonModule, 
+    FormsModule, 
     TranslateModule,
+    AppPageHeaderComponent,
+    AppPaginationComponent,
     DataTableComponent,
     KpiCardsComponent,
-    AppPaginationComponent,
-    AppPageHeaderComponent,
-    SearchableSelectComponent,
     StatusPillComponent
   ],
   templateUrl: './admin-users-list.component.html',
-  styleUrl: './admin-users-list.component.scss'
+  styles: [`
+    table {
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      table-layout: fixed !important;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 10;
+    }
+
+    tbody tr {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    tbody tr:hover {
+      background: white;
+    }
+
+    td, th {
+      vertical-align: middle !important;
+      text-align: center !important;
+    }
+
+    td:first-child, th:first-child {
+      text-align: center !important;
+    }
+
+    td:nth-child(2), th:nth-child(2) {
+      text-align: start !important;
+    }
+  `]
 })
-export class AdminUsersListComponent implements OnInit {
-  page = 1;
-  pageSize = 8;
-  searchTerm = '';
-  selectedAudience: FilterValue<DirectoryAudienceType> = 'all';
-  statusFilter: FilterValue<AdminAccessStatus> = 'all';
-  accessLevelFilter: FilterValue<AdminAccessLevel> = 'all';
-  roleFilter = 'all';
-  panelFilter: FilterValue<DirectoryPanelScope> = 'all';
-  personaFilter: FilterValue<DirectoryPersonaType> = 'all';
-  vendorFilter = 'all';
-  branchFilter = 'all';
-
+export class AdminUsersListComponent implements OnInit, OnDestroy {
   users: AdminUserRecord[] = [];
-  rolePresets: AdminRolePreset[] = [];
+  roles: RoleDefinitionDto[] = [];
+  isLoading = false;
+  searchTerm = '';
+  isFiltersExpanded = false;
 
-  readonly audienceTabs: Array<{ value: FilterValue<DirectoryAudienceType>; labelKey: string }> = [
-    { value: 'all', labelKey: 'ADMIN_USERS.AUDIENCE.ALL' },
-    { value: 'super_admin', labelKey: DIRECTORY_AUDIENCE_LABELS.super_admin },
-    { value: 'vendor_network', labelKey: DIRECTORY_AUDIENCE_LABELS.vendor_network },
-    { value: 'drivers', labelKey: DIRECTORY_AUDIENCE_LABELS.drivers },
-    { value: 'customers', labelKey: DIRECTORY_AUDIENCE_LABELS.customers }
+  // Pagination
+  pageNumber = 1;
+  pageSize = 10;
+  totalCount = 0;
+  totalPages = 0;
+
+  get isRTL(): boolean {
+    return this.translate.currentLang === 'ar';
+  }
+
+  kpiCards: KPICard[] = [];
+  
+  tableColumns: TableColumn[] = [
+    { key: 'identity', title: 'ADMIN_USERS.TABLE.IDENTITY', width: '30%', align: 'left', type: 'custom' },
+    { key: 'role', title: 'ADMIN_USERS.TABLE.ROLE', width: '20%', align: 'left', type: 'custom' },
+    { key: 'scope', title: 'ADMIN_USERS.TABLE.SCOPE', width: '15%', align: 'center', type: 'custom' },
+    { key: 'status', title: 'ADMIN_USERS.TABLE.STATUS', width: '15%', align: 'center', type: 'custom' },
+    { key: 'actions', title: 'ADMIN_USERS.TABLE.ACTIONS', width: '10%', align: 'center', type: 'actions' }
   ];
 
-  readonly statusOptions: Array<{ value: FilterValue<AdminAccessStatus>; labelKey: string }> = [
-    { value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL' },
-    { value: 'active', labelKey: 'ADMIN_USERS.STATUS.ACTIVE' },
-    { value: 'invited', labelKey: 'ADMIN_USERS.STATUS.INVITED' },
-    { value: 'suspended', labelKey: 'ADMIN_USERS.STATUS.SUSPENDED' },
-    { value: 'inactive', labelKey: 'ADMIN_USERS.STATUS.INACTIVE' }
+  tableActions: TableAction[] = [
+    { id: 'view', label: 'ADMIN_USERS.ACTIONS.VIEW', icon: 'visibility' },
+    { id: 'edit', label: 'ADMIN_USERS.ACTIONS.EDIT_ROLE', icon: 'edit' }
   ];
 
-  readonly accessLevelOptions: Array<{ value: FilterValue<AdminAccessLevel>; labelKey: string }> = [
-    { value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL' },
-    { value: 'full', labelKey: 'ADMIN_USERS.ACCESS_LEVEL.FULL' },
-    { value: 'restricted', labelKey: 'ADMIN_USERS.ACCESS_LEVEL.RESTRICTED' },
-    { value: 'observer', labelKey: 'ADMIN_USERS.ACCESS_LEVEL.OBSERVER' }
-  ];
-
-  readonly panelOptions: Array<{ value: FilterValue<DirectoryPanelScope>; labelKey: string }> = [
-    { value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL' },
-    { value: 'super_admin_panel', labelKey: DIRECTORY_PANEL_LABELS.super_admin_panel },
-    { value: 'vendor_panel', labelKey: DIRECTORY_PANEL_LABELS.vendor_panel },
-    { value: 'driver_app', labelKey: DIRECTORY_PANEL_LABELS.driver_app },
-    { value: 'customer_app', labelKey: DIRECTORY_PANEL_LABELS.customer_app }
-  ];
-
-  readonly tableColumns: TableColumn[] = [
-    { key: 'identity', title: 'ADMIN_USERS.TABLE.IDENTITY', width: '25%', align: 'left', type: 'custom' },
-    { key: 'persona', title: 'ADMIN_USERS.TABLE.PERSONA', width: '16%', align: 'left', type: 'custom' },
-    { key: 'scope', title: 'ADMIN_USERS.TABLE.SCOPE', width: '17%', align: 'left', type: 'custom' },
-    { key: 'role', title: 'ADMIN_USERS.TABLE.ROLE', width: '16%', align: 'left', type: 'custom' },
-    { key: 'status', title: 'ADMIN_USERS.TABLE.STATUS', width: '12%', align: 'center', type: 'custom' },
-    { key: 'security', title: 'ADMIN_USERS.TABLE.SECURITY', width: '14%', align: 'center', type: 'custom' }
-  ];
+  private readonly subscriptions = new Subscription();
 
   constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly adminUsersService: AdminUsersService,
-    public readonly translate: TranslateService
+    private adminAccessApi: AdminAccessApiService,
+    private translate: TranslateService,
+    private router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.rolePresets = this.adminUsersService.getRolePresets();
-    this.users = this.adminUsersService.getUsers();
-
-    this.route.queryParamMap.subscribe((params) => {
-      this.searchTerm = params.get('q') ?? '';
-      this.selectedAudience = this.normalizeAudience(params.get('audience'));
-      this.statusFilter = this.normalizeStatus(params.get('status'));
-      this.accessLevelFilter = this.normalizeAccessLevel(params.get('access'));
-      this.roleFilter = params.get('role') ?? 'all';
-      this.panelFilter = this.normalizePanel(params.get('panel'));
-      this.personaFilter = this.normalizePersona(params.get('persona'));
-      this.vendorFilter = params.get('vendor') ?? 'all';
-      this.branchFilter = params.get('branch') ?? 'all';
-      this.page = 1;
-    });
+  ngOnInit() {
+    this.updateKPICards();
+    this.loadUsers();
+    this.loadRolesSummary();
   }
 
-  get kpiCards(): KPICard[] {
-    const snapshot = this.adminUsersService.getKpiSnapshot(this.filteredUsers);
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
-    return [
+  get totalRoles(): number {
+    return this.roles.length;
+  }
+
+  get systemRolesCount(): number {
+    return this.roles.filter((role) => role.isSystem).length;
+  }
+
+  get customRolesCount(): number {
+    return this.roles.filter((role) => !role.isSystem).length;
+  }
+
+  get permissionsCatalogCount(): number {
+    return new Set(this.roles.flatMap((role) => role.permissions)).size;
+  }
+
+  updateKPICards() {
+    this.kpiCards = [
       {
-        id: 'total-identities',
-        title: 'ADMIN_USERS.KPI.TOTAL',
-        value: snapshot.totalIdentities,
-        icon: '<span class="material-symbols-outlined text-[20px]">hub</span>',
-        color: '#127c8c'
+        id: 'total',
+        title: 'ADMIN_USERS.STATS.TOTAL',
+        value: this.users.length,
+        icon: '<span class="material-symbols-outlined text-[20px]">group</span>',
+        color: '#127c8c',
+        clickable: false
       },
       {
-        id: 'operational-identities',
-        title: 'ADMIN_USERS.KPI.OPERATIONAL',
-        value: snapshot.operationalIdentities,
-        icon: '<span class="material-symbols-outlined text-[20px]">shield_person</span>',
-        color: '#2563eb'
+        id: 'active',
+        title: 'ADMIN_USERS.STATS.ACTIVE',
+        value: this.users.filter(u => u.status === 'active').length,
+        icon: '<span class="material-symbols-outlined text-[20px]">check_circle</span>',
+        color: '#10b981',
+        clickable: true
       },
       {
-        id: 'vendor-panel',
-        title: 'ADMIN_USERS.KPI.VENDOR_PANEL',
-        value: snapshot.vendorPanelIdentities,
-        icon: '<span class="material-symbols-outlined text-[20px]">storefront</span>',
-        color: '#10b981'
-      },
-      {
-        id: 'external-accounts',
-        title: 'ADMIN_USERS.KPI.EXTERNAL',
-        value: snapshot.externalAccounts,
-        icon: '<span class="material-symbols-outlined text-[20px]">person_search</span>',
-        color: '#8b5cf6'
-      },
-      {
-        id: 'mfa-gaps',
-        title: 'ADMIN_USERS.KPI.MFA_GAPS',
-        value: snapshot.mfaGapIdentities,
-        icon: '<span class="material-symbols-outlined text-[20px]">security_update_warning</span>',
-        color: '#f59e0b'
-      },
-      {
-        id: 'custom-access',
-        title: 'ADMIN_USERS.KPI.CUSTOM_ACCESS',
-        value: snapshot.customRoleIdentities,
-        icon: '<span class="material-symbols-outlined text-[20px]">tune</span>',
-        color: '#0f766e'
+        id: 'suspended',
+        title: 'ADMIN_USERS.STATS.LOCKED',
+        value: this.users.filter(u => u.status === 'suspended').length,
+        icon: '<span class="material-symbols-outlined text-[20px]">lock</span>',
+        color: '#ef4444',
+        clickable: true
       }
     ];
   }
 
-  get personaOptions(): Array<{ value: FilterValue<DirectoryPersonaType>; labelKey: string }> {
-    const personas = Object.entries(DIRECTORY_PERSONA_LABELS)
-      .filter(([persona]) => this.selectedAudience === 'all' || this.mapPersonaToAudience(persona as DirectoryPersonaType) === this.selectedAudience)
-      .map(([persona, labelKey]) => ({ value: persona as DirectoryPersonaType, labelKey }));
-
-    return [{ value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL' }, ...personas];
-  }
-
-  get vendorOptions(): Array<{ id: string; name: string }> {
-    return this.adminUsersService.getVendorOptions().map((vendor) => ({ id: vendor.id, name: vendor.name }));
-  }
-
-  get branchOptions(): Array<{ id: string; name: string }> {
-    return this.adminUsersService.getBranchOptions(this.vendorFilter === 'all' ? null : this.vendorFilter)
-      .map((branch) => ({ id: branch.id, name: branch.name }));
-  }
-
-  get filteredRolePresets(): AdminRolePreset[] {
-    return this.rolePresets.filter((preset) => this.panelFilter === 'all' || preset.panelScope === this.panelFilter);
-  }
-
-  get filteredUsers(): AdminUserRecord[] {
-    const search = this.searchTerm.trim().toLowerCase();
-
-    return this.users.filter((user) => {
-      const matchesSearch = !search || [
-        user.fullName,
-        user.email,
-        user.team,
-        user.department,
-        user.assignment.vendorName,
-        user.assignment.branchName
-      ].some((value) => value.toLowerCase().includes(search));
-
-      const matchesAudience = this.selectedAudience === 'all' || user.audienceType === this.selectedAudience;
-      const matchesStatus = this.statusFilter === 'all' || user.status === this.statusFilter;
-      const matchesAccess = this.accessLevelFilter === 'all' || user.accessLevel === this.accessLevelFilter;
-      const matchesRole = this.roleFilter === 'all' || user.rolePresetId === this.roleFilter;
-      const matchesPanel = this.panelFilter === 'all' || user.panelScope === this.panelFilter;
-      const matchesPersona = this.personaFilter === 'all' || user.personaType === this.personaFilter;
-      const matchesVendor = this.vendorFilter === 'all' || user.assignment.vendorId === this.vendorFilter;
-      const matchesBranch = this.branchFilter === 'all' || user.assignment.branchId === this.branchFilter;
-
-      return matchesSearch
-        && matchesAudience
-        && matchesStatus
-        && matchesAccess
-        && matchesRole
-        && matchesPanel
-        && matchesPersona
-        && matchesVendor
-        && matchesBranch;
-    });
-  }
-
-  get paginatedUsers(): AdminUserRecord[] {
-    const start = (this.page - 1) * this.pageSize;
-    return this.filteredUsers.slice(start, start + this.pageSize);
-  }
-
-  get totalItems(): number {
-    return this.filteredUsers.length;
-  }
-
-  get activeFilterCount(): number {
-    return [
-      this.searchTerm.trim().length > 0,
-      this.selectedAudience !== 'all',
-      this.statusFilter !== 'all',
-      this.accessLevelFilter !== 'all',
-      this.roleFilter !== 'all',
-      this.panelFilter !== 'all',
-      this.personaFilter !== 'all',
-      this.vendorFilter !== 'all',
-      this.branchFilter !== 'all'
-    ].filter(Boolean).length;
-  }
-
-  setAudience(audience: FilterValue<DirectoryAudienceType>): void {
-    this.selectedAudience = audience;
-    if (this.personaFilter !== 'all' && this.mapPersonaToAudience(this.personaFilter) !== audience && audience !== 'all') {
-      this.personaFilter = 'all';
-    }
-    this.applyFilters();
-  }
-
-  applyFilters(): void {
-    this.page = 1;
-    this.persistRouteState();
-  }
-
-  clearFilters(): void {
-    this.searchTerm = '';
-    this.selectedAudience = 'all';
-    this.statusFilter = 'all';
-    this.accessLevelFilter = 'all';
-    this.roleFilter = 'all';
-    this.panelFilter = 'all';
-    this.personaFilter = 'all';
-    this.vendorFilter = 'all';
-    this.branchFilter = 'all';
-    this.page = 1;
-    this.persistRouteState();
-  }
-
-  changePage(page: number): void {
-    this.page = page;
-  }
-
-  openUser(user: AdminUserRecord): void {
-    this.router.navigate(['/admin-users', user.id]);
-  }
-
-  createIdentity(): void {
-    const persona = this.selectedAudience === 'vendor_network'
-      ? 'vendor_company_manager'
-      : this.selectedAudience === 'drivers'
-        ? 'driver'
-        : this.selectedAudience === 'customers'
-          ? 'customer'
-          : 'super_admin_staff';
-
-    const user = this.adminUsersService.createDraftUser(persona);
-    this.router.navigate(['/admin-users', user.id]);
-  }
-
-  openEmailCenter(): void {
-    this.router.navigate(['/email-center'], {
-      queryParams: {
-        audience: this.selectedAudience === 'all' ? null : this.selectedAudience
+  loadUsers() {
+    this.isLoading = true;
+    const usersSub = this.adminAccessApi.getUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        this.totalCount = data.length;
+        this.totalPages = Math.ceil(this.totalCount / this.pageSize);
+        this.updateKPICards();
+        this.isLoading = false;
       },
-      queryParamsHandling: 'merge'
+      error: (err) => {
+        console.error('Failed to load admin users', err);
+        this.isLoading = false;
+      }
     });
+    this.subscriptions.add(usersSub);
   }
 
-  getRolePresetName(user: AdminUserRecord): string {
-    return this.rolePresets.find((preset) => preset.id === user.rolePresetId)?.nameKey ?? 'ADMIN_USERS.PRESETS.SUPPORT_ADMIN.NAME';
+  loadRolesSummary() {
+    const rolesSub = this.adminAccessApi.getRoles().subscribe({
+      next: (roles) => {
+        this.roles = roles;
+      },
+      error: (err) => {
+        console.error('Failed to load roles summary', err);
+        this.roles = [];
+      }
+    });
+    this.subscriptions.add(rolesSub);
   }
 
-  getPersonaLabel(user: AdminUserRecord): string {
-    return DIRECTORY_PERSONA_LABELS[user.personaType];
+  changePage(newPage: number) {
+    if (newPage >= 1 && newPage <= this.totalPages) {
+      this.pageNumber = newPage;
+      this.loadUsers();
+    }
   }
 
-  getPanelLabel(user: AdminUserRecord): string {
+  onSearch() {
+    // Basic local filter simulation or API fetch
+  }
+
+  toggleFilters() {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
+
+  onKPICardClick(card: KPICard) {
+    // Handle KPI clicks
+  }
+
+  onTableRowClick(user: AdminUserRecord) {
+    this.router.navigate(['/admin-users', user.id]);
+  }
+
+  onTableAction(event: { action: TableAction, item: AdminUserRecord }) {
+    if (event.action.id === 'view') {
+      this.router.navigate(['/admin-users', event.item.id]);
+    } else if (event.action.id === 'edit') {
+      this.openRolesManagement();
+    }
+  }
+
+  openRolesManagement() {
+    this.router.navigate(['/admin-users/roles']);
+  }
+
+  getInitials(user: AdminUserRecord): string {
+    return user.fullName.charAt(0).toUpperCase();
+  }
+
+  getAvatarGradient(user: AdminUserRecord): string {
+    const gradients = [
+      'linear-gradient(135deg, #3b82f6, #2563eb)',
+      'linear-gradient(135deg, #10b981, #059669)',
+      'linear-gradient(135deg, #f59e0b, #d97706)',
+      'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+      'linear-gradient(135deg, #ec4899, #db2777)',
+      'linear-gradient(135deg, #127c8c, #0d5f6b)',
+      'linear-gradient(135deg, #f43f5e, #e11d48)'
+    ];
+    let hash = 0;
+    for (let i = 0; i < user.id.length; i++) {
+      hash = user.id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % gradients.length;
+    return gradients[index];
+  }
+
+  getScopeBadgeClasses(user: AdminUserRecord): string {
+    if (user.audienceType === 'vendor_network') return 'bg-amber-100 text-amber-600';
+    if (user.audienceType === 'drivers') return 'bg-emerald-100 text-emerald-600';
+    if (user.audienceType === 'customers') return 'bg-purple-100 text-purple-600';
+    return 'bg-blue-100 text-blue-600';
+  }
+
+  getScopeIcon(user: AdminUserRecord): string {
+    if (user.audienceType === 'vendor_network') return 'storefront';
+    if (user.audienceType === 'drivers') return 'local_shipping';
+    if (user.audienceType === 'customers') return 'person';
+    return 'admin_panel_settings';
+  }
+
+  getStatusVariant(status: string): StatusPillVariant {
+    if (status === 'active') return 'success';
+    if (status === 'locked') return 'danger';
+    if (status === 'inactive') return 'warning';
+    return 'neutral';
+  }
+
+  getRoleNameKey(user: AdminUserRecord): string {
+    return getRolePresetById(user.rolePresetId).nameKey;
+  }
+
+  getAudienceLabelKey(user: AdminUserRecord): string {
+    return DIRECTORY_AUDIENCE_LABELS[user.audienceType];
+  }
+
+  getPanelLabelKey(user: AdminUserRecord): string {
     return DIRECTORY_PANEL_LABELS[user.panelScope];
-  }
-
-  getScopeSummary(user: AdminUserRecord): string {
-    if (user.assignment.branchName) {
-      return `${user.assignment.vendorName} - ${user.assignment.branchName}`;
-    }
-
-    if (user.assignment.vendorName) {
-      return user.assignment.vendorName;
-    }
-
-    if (user.team) {
-      return user.team;
-    }
-
-    if (user.assignment.city) {
-      return user.assignment.city;
-    }
-
-    return this.translate.instant('ADMIN_USERS.SCOPE.GLOBAL');
-  }
-
-  getStatusVariant(status: AdminAccessStatus): StatusPillVariant {
-    const variants: Record<AdminAccessStatus, StatusPillVariant> = {
-      active: 'success',
-      invited: 'warning',
-      suspended: 'danger',
-      inactive: 'neutral'
-    };
-
-    return variants[status];
-  }
-
-  getAccessLevelVariant(level: AdminAccessLevel): StatusPillVariant {
-    const variants: Record<AdminAccessLevel, StatusPillVariant> = {
-      full: 'primary',
-      restricted: 'info',
-      observer: 'neutral'
-    };
-
-    return variants[level];
-  }
-
-  getSecurityLabel(user: AdminUserRecord): string {
-    if (user.identityKind === 'external') {
-      return `ADMIN_USERS.VERIFICATION.${user.security.verificationState.toUpperCase()}`;
-    }
-
-    return user.security.mfaEnabled ? 'ADMIN_USERS.SECURITY.MFA_ON' : 'ADMIN_USERS.SECURITY.MFA_OFF';
-  }
-
-  getSecurityVariant(user: AdminUserRecord): StatusPillVariant {
-    if (user.identityKind === 'external') {
-      switch (user.security.verificationState) {
-        case 'verified':
-          return 'success';
-        case 'pending':
-        case 'under_review':
-          return 'warning';
-        case 'suspended':
-          return 'danger';
-        default:
-          return 'neutral';
-      }
-    }
-
-    return user.security.mfaEnabled ? 'success' : 'warning';
-  }
-
-  getInitials(name: string): string {
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase() ?? '')
-      .join('');
-  }
-
-  getCustomPermissionCount(user: AdminUserRecord): number {
-    return this.adminUsersService.getCustomPermissionCount(user);
-  }
-
-  private persistRouteState(): void {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        q: this.searchTerm.trim() || null,
-        audience: this.selectedAudience !== 'all' ? this.selectedAudience : null,
-        status: this.statusFilter !== 'all' ? this.statusFilter : null,
-        access: this.accessLevelFilter !== 'all' ? this.accessLevelFilter : null,
-        role: this.roleFilter !== 'all' ? this.roleFilter : null,
-        panel: this.panelFilter !== 'all' ? this.panelFilter : null,
-        persona: this.personaFilter !== 'all' ? this.personaFilter : null,
-        vendor: this.vendorFilter !== 'all' ? this.vendorFilter : null,
-        branch: this.branchFilter !== 'all' ? this.branchFilter : null
-      },
-      replaceUrl: true
-    });
-  }
-
-  private normalizeAudience(value: string | null): FilterValue<DirectoryAudienceType> {
-    return this.audienceTabs.some((option) => option.value === value) ? (value as FilterValue<DirectoryAudienceType>) : 'all';
-  }
-
-  private normalizeStatus(value: string | null): FilterValue<AdminAccessStatus> {
-    return this.statusOptions.some((option) => option.value === value) ? (value as FilterValue<AdminAccessStatus>) : 'all';
-  }
-
-  private normalizeAccessLevel(value: string | null): FilterValue<AdminAccessLevel> {
-    return this.accessLevelOptions.some((option) => option.value === value) ? (value as FilterValue<AdminAccessLevel>) : 'all';
-  }
-
-  private normalizePanel(value: string | null): FilterValue<DirectoryPanelScope> {
-    return this.panelOptions.some((option) => option.value === value) ? (value as FilterValue<DirectoryPanelScope>) : 'all';
-  }
-
-  private normalizePersona(value: string | null): FilterValue<DirectoryPersonaType> {
-    return value && value in DIRECTORY_PERSONA_LABELS ? value as FilterValue<DirectoryPersonaType> : 'all';
-  }
-
-  private mapPersonaToAudience(persona: DirectoryPersonaType): DirectoryAudienceType {
-    switch (persona) {
-      case 'super_admin_manager':
-      case 'super_admin_staff':
-        return 'super_admin';
-      case 'vendor_owner':
-      case 'vendor_company_manager':
-      case 'vendor_branch_manager':
-      case 'vendor_branch_employee':
-      case 'vendor_finance':
-      case 'vendor_support':
-        return 'vendor_network';
-      case 'driver':
-        return 'drivers';
-      case 'customer':
-        return 'customers';
-    }
-  }
-
-  get mappedRoleFilterOptions(): any[] {
-    return [
-      {value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL'},
-      ...this.filteredRolePresets.map((x: any) => ({value: x.id, labelKey: x.nameKey}))
-    ];
-  }
-  get mappedVendorFilterOptions(): any[] {
-    return [
-      {value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL'},
-      ...this.vendorOptions.map((v: any) => ({value: v.id, label: v.name}))
-    ];
-  }
-  get mappedBranchFilterOptions(): any[] {
-    return [
-      {value: 'all', labelKey: 'ADMIN_USERS.FILTERS.ALL'},
-      ...this.branchOptions.map((v: any) => ({value: v.id, label: v.name}))
-    ];
   }
 }

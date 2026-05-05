@@ -46,6 +46,10 @@
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.PAYMENT_STATUS' | translate }}</label>
             <span class="inline-flex rounded-full bg-zadna-primary/10 px-2 py-1 text-[10px] font-bold text-zadna-primary">{{ 'DISPUTES_DASHBOARD.MODAL.PAYMENT_COMPLETE' | translate }}</span>
           </div>
+          <div class="rounded-2xl bg-slate-50 p-4 md:col-span-2">
+            <label class="mb-1 block text-[11px] font-semibold text-slate-500">Payment method</label>
+            <span class="text-sm font-bold text-slate-700">{{ dispute.paymentMethod }}</span>
+          </div>
         </div>
       </section>
 
@@ -76,7 +80,8 @@
 
           <div class="space-y-2">
             <label class="text-xs font-bold text-slate-800">{{ 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD' | translate }}</label>
-            <app-searchable-select [(ngModel)]="form.refundMethod" [searchable]="false" [options]="refundMethodOptions" [placeholder]="'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD' | translate"></app-searchable-select>
+            <app-searchable-select [(ngModel)]="form.refundMethod" (selectionChange)="onRefundMethodChange($event)" [searchable]="false" [allowClear]="false" [options]="refundMethodOptions" [placeholder]="'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD' | translate"></app-searchable-select>
+            <p class="text-[11px] font-medium text-slate-500">{{ refundMethodHint }}</p>
           </div>
 
           <div class="space-y-2 md:col-span-2">

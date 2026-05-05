@@ -22,7 +22,8 @@ export type PermissionDomainId =
   | 'vendor_branch_team'
   | 'vendor_finance'
   | 'vendor_support'
-  | 'vendor_settings';
+  | 'vendor_settings'
+  | 'marketing';
 export type DirectoryPanelScope = 'super_admin_panel' | 'vendor_panel' | 'driver_app' | 'customer_app';
 export type DirectoryPersonaType =
   | 'super_admin_manager'
@@ -308,6 +309,14 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     identityKinds: ['operational']
   },
   {
+    id: 'marketing',
+    labelKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.MARKETING.TITLE',
+    descriptionKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.MARKETING.DESC',
+    actions: ['view', 'create', 'edit', 'approve', 'manage_settings'],
+    panelScopes: ['super_admin_panel'],
+    identityKinds: ['operational']
+  },
+  {
     id: 'vendor_dashboard',
     labelKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.VENDOR_DASHBOARD.TITLE',
     descriptionKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.VENDOR_DASHBOARD.DESC',
@@ -439,7 +448,8 @@ export const DIRECTORY_ROLE_PRESETS: DirectoryRolePreset[] = [
       finances: ['view', 'edit', 'approve', 'export', 'manage_settings'],
       users_access: ['view', 'create', 'edit', 'approve', 'manage_settings'],
       email_center: ['view', 'edit', 'approve', 'manage_settings'],
-      system: ['view', 'edit', 'manage_settings']
+      system: ['view', 'edit', 'manage_settings'],
+      marketing: ['view', 'create', 'edit', 'approve', 'manage_settings']
     })
   },
   {

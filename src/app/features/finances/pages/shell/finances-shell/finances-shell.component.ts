@@ -1,18 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import { DetailTabNavItem, DetailTabsNavComponent } from '../../../../../shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
+import { DetailTabNavItem, DetailTabsNavComponent } from '@shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 
-interface FinanceTab {
+interface FinanceRouteItem {
   id: string;
-  labelKey: string;
+  label: string;
   route: string;
+  summary: string;
+  dataMode: 'مفعل' | 'قيد التطوير';
+  emphasis?: 'danger' | 'warning' | 'neutral';
+}
+
+interface FinanceGroup {
+  id: string;
+  label: string;
   icon: string;
-  badge?: number;
-  badgeColor?: string;
+  routes: FinanceRouteItem[];
 }
 
 @Component({
@@ -20,79 +27,177 @@ interface FinanceTab {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule, DetailTabsNavComponent],
   template: `
-    <div class="flex flex-col min-h-full">
-
-      <div class="bg-white border-b border-slate-200/60 sticky top-0 z-30">
-        <div class="px-6 pt-6 pb-0">
-          <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-zadna-primary to-zadna-primaryLight flex items-center justify-center shadow-lg shadow-zadna-primary/25">
-                <span class="material-symbols-outlined text-white text-[20px]">account_balance</span>
+    <div class="finance-shell min-h-screen bg-slate-50/50" dir="rtl">
+      
+      <!-- Top Global Header -->
+      <div class="bg-white border-b border-slate-200 shadow-sm relative z-20">
+        <div class="mx-auto flex w-full max-w-[1680px] flex-col px-4 sm:px-6 lg:px-8">
+          
+          <!-- Header Content -->
+          <div class="flex flex-wrap items-center justify-between gap-4 py-6">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center border border-slate-800 shadow-md">
+                <span class="material-symbols-outlined text-white text-[24px]">account_balance</span>
               </div>
               <div>
-                <h1 class="text-lg font-black text-slate-800">{{ 'FINANCES.TITLE' | translate }}</h1>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ 'FINANCES.SUBTITLE' | translate }}</p>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">المالية والحسابات</h1>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-[12px] font-bold text-slate-500">الإدارة المركزية للتدفقات النقدية، التسويات، والمحافظ</span>
+                  <div class="h-1 w-1 rounded-full bg-slate-300"></div>
+                  <div class="flex items-center gap-1.5 bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 border border-emerald-100">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">متصل بالشبكة</span>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <div class="flex items-center gap-2">
-              <a
-                [routerLink]="'/finances/overview'"
-                class="h-8 px-3 flex items-center gap-1.5 text-[10px] font-black text-slate-600 bg-slate-100 rounded-xl border border-slate-200 hover:bg-slate-200 transition-all"
-              >
-                <span class="material-symbols-outlined text-[14px]">analytics</span>
-                {{ 'FINANCES.TABS.DASHBOARD' | translate }}
-              </a>
-              <a
-                [routerLink]="'/finances/settlements'"
-                class="h-8 px-3 flex items-center gap-1.5 text-[10px] font-black text-slate-600 bg-slate-100 rounded-xl border border-slate-200 hover:bg-slate-200 transition-all"
-              >
-                <span class="material-symbols-outlined text-[14px]">payments</span>
-                {{ 'FINANCES.ACTIONS.VIEW_SETTLEMENTS' | translate }}
-              </a>
-              <a
-                [routerLink]="'/finances/refunds'"
-                class="h-8 px-3 flex items-center gap-1.5 text-[10px] font-black text-white bg-zadna-primary rounded-xl shadow-sm shadow-zadna-primary/30 hover:bg-zadna-primaryDark transition-all"
-              >
-                <span class="material-symbols-outlined text-[14px]">undo</span>
-                {{ 'FINANCES.ACTIONS.VIEW_REFUNDS' | translate }}
-              </a>
+            
+            <div class="flex items-center gap-3">
+               <button class="h-10 px-4 rounded-xl bg-slate-100 text-[13px] font-bold text-slate-700 hover:bg-slate-200 transition-all border border-slate-200/50 flex items-center gap-2">
+                 <span class="material-symbols-outlined text-[18px]">download</span>
+                 تصدير التقارير
+               </button>
             </div>
           </div>
 
-          <app-detail-tabs-nav
-            [tabs]="navTabs"
-            [activeTab]="activeTabId"
-            (tabChange)="onTabSelect($event)">
-          </app-detail-tabs-nav>
+          <!-- Main Navigation Groups -->
+          <div class="-mb-px pt-2">
+            <app-detail-tabs-nav
+              [tabs]="mainNavTabs"
+              [activeTab]="activeGroupId()"
+              (tabChange)="onMainGroupChange($event)">
+            </app-detail-tabs-nav>
+          </div>
+
         </div>
       </div>
 
-      <div class="flex-1 p-6 min-h-0">
-        <router-outlet></router-outlet>
+      <!-- Secondary Sub-Navigation (Only visible if the active group has multiple routes) -->
+      <div *ngIf="activeGroupRoutes().length > 1" class="bg-white/80 backdrop-blur-md border-b border-slate-200/70 sticky top-0 z-10">
+        <div class="mx-auto w-full max-w-[1680px] px-4 sm:px-6 lg:px-8 py-3 flex gap-2 overflow-x-auto scroll-smooth">
+           <button *ngFor="let route of activeGroupRoutes()"
+                   (click)="navigate(route.route)"
+                   class="px-4 py-2 rounded-lg text-[12px] font-black transition-all whitespace-nowrap flex items-center gap-2"
+                   [ngClass]="activeRouteId() === route.id ? 'bg-slate-800 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'">
+             {{ route.label }}
+             <span *ngIf="route.emphasis === 'warning'" class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+             <span *ngIf="route.emphasis === 'danger'" class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+             <span *ngIf="route.dataMode === 'قيد التطوير'" class="bg-white/20 text-slate-300 px-1.5 py-0.5 rounded text-[9px] mr-1">قريباً</span>
+           </button>
+        </div>
       </div>
+
+      <!-- Main Content Area -->
+      <main class="mx-auto w-full max-w-[1680px] p-4 sm:p-6 lg:p-8">
+         
+         <div class="mb-5 flex flex-wrap items-center gap-2" *ngIf="activeGroupRoutes().length > 1">
+            <h2 class="text-xl font-black text-slate-800">{{ activeRoute().label }}</h2>
+            <div class="h-4 w-px bg-slate-300 mx-2"></div>
+            <p class="text-[12px] font-medium text-slate-500">{{ activeRoute().summary }}</p>
+         </div>
+
+         <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+           <router-outlet></router-outlet>
+         </div>
+      </main>
 
     </div>
   `,
-  styles: [`:host { display: flex; flex-direction: column; height: 100%; }`]
+  styles: [`
+    :host {
+      display: block;
+      width: 100%;
+    }
+  `]
 })
 export class FinancesShellComponent {
-  currentUrl = '';
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly currentUrl = signal(this.router.url);
 
-  tabs: FinanceTab[] = [
-    { id: 'overview', labelKey: 'FINANCES.TABS.DASHBOARD', route: '/finances/overview', icon: 'dashboard' },
-    { id: 'pricing', labelKey: 'FINANCES.TABS.PRICING', route: '/finances/pricing', icon: 'tune' },
-    { id: 'ledger', labelKey: 'FINANCES.TABS.LEDGER', route: '/finances/ledger', icon: 'receipt_long' },
-    { id: 'settlements', labelKey: 'FINANCES.TABS.SETTLEMENTS', route: '/finances/settlements', icon: 'payments' },
-    { id: 'refunds', labelKey: 'FINANCES.TABS.REFUNDS', route: '/finances/refunds', icon: 'undo', badge: 3, badgeColor: 'bg-orange-500 text-white' },
-    { id: 'cod', labelKey: 'FINANCES.TABS.COD', route: '/finances/cod', icon: 'local_atm' },
-    { id: 'adjustments', labelKey: 'FINANCES.TABS.ADJUSTMENTS', route: '/finances/adjustments', icon: 'rule' },
-    { id: 'audit', labelKey: 'FINANCES.TABS.AUDIT', route: '/finances/audit', icon: 'history' }
+  readonly groups: FinanceGroup[] = [
+    {
+      id: 'dashboard',
+      label: 'نظرة عامة',
+      icon: 'space_dashboard',
+      routes: [
+        { id: 'overview', label: 'اللوحة الرئيسية', route: '/finances/overview', summary: 'ملخص للإيرادات وحالة العمليات المفتوحة.', dataMode: 'مفعل' }
+      ]
+    },
+    {
+      id: 'accounts',
+      label: 'المحافظ والسجلات',
+      icon: 'account_balance_wallet',
+      routes: [
+        { id: 'wallets', label: 'أرصدة المحافظ', route: '/finances/wallets', summary: 'إدارة المحافظ الافتراضية للمتاجر والمناديب وتتبع الأرصدة.', dataMode: 'مفعل' },
+        { id: 'ledger', label: 'السجل المالي', route: '/finances/ledger', summary: 'سجل تدقيق يوضح جميع الحركات المالية الداخلة والخارجة.', dataMode: 'مفعل' },
+        { id: 'adjustments', label: 'تسويات يدوية', route: '/finances/adjustments', summary: 'القيام بإدخالات مالية يدوية وتصحيح الأرصدة.', dataMode: 'قيد التطوير' }
+      ]
+    },
+    {
+      id: 'operations',
+      label: 'العمليات والتسويات',
+      icon: 'sync_alt',
+      routes: [
+        { id: 'settlements', label: 'التسويات الدورية', route: '/finances/settlements', summary: 'دفع المستحقات المالية الدورية للمتاجر والمناديب.', dataMode: 'مفعل' },
+        { id: 'withdrawals', label: 'طلبات السحب', route: '/finances/withdrawals', summary: 'الطلبات المرفوعة من المناديب لسحب أرصدتهم النقدية.', dataMode: 'مفعل', emphasis: 'warning' },
+        { id: 'cod', label: 'مطابقة COD', route: '/finances/cod', summary: 'تتبع وتحصيل المبالغ النقدية الدفع عند الاستلام من المناديب.', dataMode: 'مفعل', emphasis: 'warning' }
+      ]
+    },
+    {
+      id: 'disputes',
+      label: 'المنازعات المالية',
+      icon: 'gavel',
+      routes: [
+        { id: 'refunds', label: 'طلبات التعويض والمرتجعات', route: '/finances/refunds', summary: 'إدارة طلبات التعويض وتحديد الجهة المسؤولة عن الخسارة.', dataMode: 'مفعل', emphasis: 'danger' }
+      ]
+    },
+    {
+      id: 'settings',
+      label: 'الرسوم والتدقيق',
+      icon: 'admin_panel_settings',
+      routes: [
+        { id: 'pricing', label: 'هيكلة التسعير', route: '/finances/pricing', summary: 'تكوين عمولات المنصة، رسوم التوصيل، ونسب ضريبة القيمة المضافة.', dataMode: 'مفعل' },
+        { id: 'audit', label: 'سجل التدقيق', route: '/finances/audit', summary: 'تتبع كافة التغييرات الحساسة التي تمت على النظام المالي.', dataMode: 'قيد التطوير' }
+      ]
+    }
   ];
 
-  constructor(private readonly router: Router) {
-    this.currentUrl = this.router.url;
+  readonly activeGroup = computed(() => {
+    const url = this.currentUrl();
+    for (const group of this.groups) {
+      if (group.routes.some(r => url.includes(r.route))) {
+        return group;
+      }
+    }
+    return this.groups[0];
+  });
+
+  readonly activeGroupId = computed(() => this.activeGroup().id);
+  readonly activeGroupRoutes = computed(() => this.activeGroup().routes);
+
+  readonly activeRoute = computed(() => {
+    const url = this.currentUrl();
+    for (const route of this.activeGroup().routes) {
+      if (url.includes(route.route)) {
+        return route;
+      }
+    }
+    return this.activeGroup().routes[0];
+  });
+
+  readonly activeRouteId = computed(() => this.activeRoute().id);
+
+  get mainNavTabs(): DetailTabNavItem[] {
+    return this.groups.map(g => ({
+      id: g.id,
+      labelKey: g.label,
+      icon: g.icon,
+      attention: g.routes.some(r => r.emphasis === 'danger' || r.emphasis === 'warning')
+    }));
+  }
+
+  constructor() {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
@@ -100,27 +205,18 @@ export class FinancesShellComponent {
       )
       .subscribe((event) => {
         const navigation = event as NavigationEnd;
-        this.currentUrl = navigation.urlAfterRedirects || navigation.url;
+        this.currentUrl.set(navigation.urlAfterRedirects || navigation.url);
       });
   }
 
-  get activeTabId(): string {
-    return this.tabs.find((tab) => this.isActiveTab(tab))?.id ?? 'overview';
+  onMainGroupChange(groupId: string): void {
+    const group = this.groups.find(g => g.id === groupId);
+    if (group && group.routes.length > 0) {
+      void this.router.navigateByUrl(group.routes[0].route);
+    }
   }
 
-  get navTabs(): DetailTabNavItem[] {
-    return this.tabs.map((tab) => ({
-      id: tab.id,
-      labelKey: tab.labelKey,
-      icon: tab.icon,
-      count: tab.badge,
-      route: tab.route
-    }));
+  navigate(route: string): void {
+    void this.router.navigateByUrl(route);
   }
-
-  isActiveTab(tab: FinanceTab): boolean {
-    return this.currentUrl.includes(tab.route);
-  }
-
-  onTabSelect(_: string): void {}
 }

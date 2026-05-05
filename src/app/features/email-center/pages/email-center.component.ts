@@ -12,6 +12,7 @@ import {
   DirectoryPersonaType
 } from '@admin-users/public-api';
 import { AdminUsersService } from '@admin-users/public-api';
+import { AccessService } from '@core/services/access.service';
 import { KpiCardsComponent, KPICard } from '@shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
@@ -83,6 +84,7 @@ export class EmailCenterComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly accessService: AccessService,
     private readonly adminUsersService: AdminUsersService,
     private readonly emailCenterService: EmailCenterService
   ) {}
@@ -180,6 +182,10 @@ export class EmailCenterComponent implements OnInit {
       }));
   }
 
+  get canEdit(): boolean {
+    return this.accessService.hasPermission('email_center.edit');
+  }
+
   get vendorOptions(): Array<{ id: string; name: string }> {
     return this.adminUsersService.getVendorOptions().map((vendor) => ({ id: vendor.id, name: vendor.name }));
   }
@@ -213,6 +219,10 @@ export class EmailCenterComponent implements OnInit {
   }
 
   saveSelectedRule(): void {
+    if (!this.canEdit) {
+      return;
+    }
+
     const rule = this.selectedRule;
     if (!rule) {
       return;
@@ -258,6 +268,10 @@ export class EmailCenterComponent implements OnInit {
   }
 
   toggleRecipientTarget(channel: RecipientChannel, targetId: string, enabled: boolean): void {
+    if (!this.canEdit) {
+      return;
+    }
+
     const rule = this.selectedRule;
     if (!rule) {
       return;
@@ -278,6 +292,10 @@ export class EmailCenterComponent implements OnInit {
   }
 
   togglePersonaTarget(personaType: DirectoryPersonaType, enabled: boolean): void {
+    if (!this.canEdit) {
+      return;
+    }
+
     const rule = this.selectedRule;
     if (!rule) {
       return;
@@ -294,6 +312,10 @@ export class EmailCenterComponent implements OnInit {
   }
 
   onVendorChange(vendorId: string): void {
+    if (!this.canEdit) {
+      return;
+    }
+
     const rule = this.selectedRule;
     if (!rule) {
       return;
@@ -306,6 +328,10 @@ export class EmailCenterComponent implements OnInit {
   }
 
   onBranchScopeModeChange(branchScopeMode: EmailBranchScopeMode): void {
+    if (!this.canEdit) {
+      return;
+    }
+
     const rule = this.selectedRule;
     if (!rule) {
       return;

@@ -90,6 +90,7 @@ export interface OrderCancellationSummary {
 }
 
 export interface OrderOperationalCase {
+  caseId?: string | null;
   type: OrderOperationalCaseType;
   status: OrderOperationalCaseStatus;
   title: string;

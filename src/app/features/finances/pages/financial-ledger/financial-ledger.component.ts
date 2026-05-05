@@ -12,17 +12,11 @@ import { FinanceFilterBarComponent } from '../../components/finance-filter-bar/f
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
-import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
-import { KeyValueGridComponent } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
-import type { KeyValueGridItem } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
-import {
-  FINANCE_DIRECTION_LABEL_KEYS,
-  FINANCE_ENTITY_LABEL_KEYS,
-  FINANCE_LEDGER_TYPE_LABEL_KEYS,
-  getFinanceLocale
-} from '../../utils/finance-i18n.utils';
+import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
+import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
+import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
   selector: 'app-financial-ledger',
@@ -36,218 +30,231 @@ import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile
     AppPaginationComponent,
     AppCardComponent,
     AppButtonComponent,
-    SectionHeaderComponent,
     InlineBannerComponent,
-    KeyValueGridComponent
+    KeyValueGridComponent,
+    AppPageHeaderComponent
   ],
   template: `
-    <div *ngIf="selectedEntry"
-         class="fixed inset-0 z-[90]"
-         (click)="selectedEntry = null">
-      <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"></div>
-      <div class="absolute inset-y-0 ltr:right-0 rtl:left-0 w-full max-w-md bg-white h-full shadow-2xl flex flex-col"
-           (click)="$event.stopPropagation()">
-
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+    <!-- نافذة تفاصيل الحركة (Entry Detail Modal) -->
+    <div *ngIf="selectedEntry" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="selectedEntry = null"></div>
+      <div class="relative bg-white rounded-3xl shadow-xl w-full max-w-md animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div>
-            <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.LEDGER.ENTRY_TITLE' | translate }}</h3>
-            <p class="text-[10px] font-bold text-slate-400 tabular-nums">{{ selectedEntry.referenceId }}</p>
+            <h3 class="text-[15px] font-black text-slate-900">تفاصيل العملية المالية</h3>
+            <p class="text-[11px] font-bold text-slate-500 font-mono mt-0.5">{{ selectedEntry.referenceId }}</p>
           </div>
-          <app-button variant="ghost" size="xs" customClass="!w-8 !h-8 !px-0 !rounded-xl !bg-slate-100 hover:!bg-slate-200" (btnClick)="selectedEntry = null">
-            <span class="material-symbols-outlined text-[18px] text-slate-500">close</span>
-          </app-button>
+          <button class="w-8 h-8 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors" (click)="selectedEntry = null">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-6 space-y-5">
-          <div class="p-5 rounded-2xl text-center"
-               [ngClass]="selectedEntry.direction === 'credit' ? 'bg-emerald-50 border border-emerald-100' : 'bg-red-50 border border-red-100'">
-            <p class="text-[10px] font-black uppercase tracking-widest mb-2"
-               [ngClass]="selectedEntry.direction === 'credit' ? 'text-emerald-500' : 'text-red-500'">
-              {{ getDirectionLabelKey(selectedEntry.direction) | translate }}
+        <div class="flex-1 overflow-y-auto p-6">
+          <div class="p-6 rounded-2xl text-center mb-6 border"
+               [ngClass]="selectedEntry.direction === 'credit' ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'">
+            <p class="text-[11px] font-black uppercase tracking-widest mb-2"
+               [ngClass]="selectedEntry.direction === 'credit' ? 'text-emerald-600' : 'text-red-600'">
+               {{ selectedEntry.direction === 'credit' ? 'إيداع (دائن)' : 'خصم (مدين)' }}
             </p>
-            <p class="text-3xl font-black tabular-nums"
+            <p class="text-4xl font-black tabular-nums tracking-tight"
                [ngClass]="selectedEntry.direction === 'credit' ? 'text-emerald-700' : 'text-red-700'">
-              {{ selectedEntry.direction === 'credit' ? '+' : '-' }}{{ formatNumber(selectedEntry.amount) }}
-              <span class="text-lg font-bold">{{ selectedEntry.currency }}</span>
+               <span class="text-2xl font-bold">{{ selectedEntry.direction === 'credit' ? '+' : '-' }}</span>{{ formatNumber(selectedEntry.amount) }}
+               <span class="text-[15px] font-bold">SAR</span>
             </p>
           </div>
 
-          <div class="space-y-3">
-            <div class="flex justify-between py-2 border-b border-slate-100">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.ENTITY' | translate }}</span>
-              <span class="text-xs font-bold text-slate-700">{{ selectedEntry.entityName | translate }}</span>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+               <span class="text-[11px] font-bold text-slate-500">الكيان المرتبط</span>
+               <div class="flex items-center gap-2">
+                 <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase" [ngClass]="getEntityBadgeClass(selectedEntry.entityType)">{{ getTranslatedEntityType(selectedEntry.entityType) }}</span>
+                 <span class="text-[13px] font-black text-slate-900">{{ selectedEntry.entityName }}</span>
+               </div>
             </div>
-            <div class="flex justify-between py-2 border-b border-slate-100">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.TYPE' | translate }}</span>
-              <span class="text-xs font-bold text-slate-700">{{ getTypeLabelKey(selectedEntry.type) | translate }}</span>
+            
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+               <span class="text-[11px] font-bold text-slate-500">نوع العملية</span>
+               <span class="text-[13px] font-black text-slate-900">{{ getTranslatedLedgerType(selectedEntry.type) }}</span>
             </div>
-            <div class="flex justify-between py-2 border-b border-slate-100">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.REFERENCE' | translate }}</span>
-              <span class="text-xs font-black text-slate-700 font-mono">{{ selectedEntry.referenceId }}</span>
+
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+               <span class="text-[11px] font-bold text-slate-500">المرجع الأساسي</span>
+               <span class="text-[12px] font-black text-slate-700 font-mono">{{ selectedEntry.referenceId }}</span>
             </div>
-            <div *ngIf="selectedEntry.orderId" class="flex justify-between py-2 border-b border-slate-100">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.LEDGER.ORDER_ID' | translate }}</span>
-              <span class="text-xs font-black text-zadna-primary font-mono">{{ selectedEntry.orderId }}</span>
+
+            <div *ngIf="selectedEntry.orderId" class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+               <span class="text-[11px] font-bold text-slate-500">رقم الطلب</span>
+               <span class="text-[12px] font-black text-zadna-primary font-mono bg-zadna-primary/10 px-2 py-0.5 rounded-md">{{ selectedEntry.orderId }}</span>
             </div>
-            <div *ngIf="selectedEntry.settlementId" class="flex justify-between py-2 border-b border-slate-100">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.LEDGER.SETTLEMENT' | translate }}</span>
-              <span class="text-xs font-black text-zadna-primary font-mono">{{ selectedEntry.settlementId }}</span>
+
+            <div *ngIf="selectedEntry.settlementId" class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+               <span class="text-[11px] font-bold text-slate-500">رقم التسوية</span>
+               <span class="text-[12px] font-black text-indigo-600 font-mono bg-indigo-50 px-2 py-0.5 rounded-md">{{ selectedEntry.settlementId }}</span>
             </div>
-            <div *ngIf="selectedEntry.balanceAfter !== undefined" class="flex justify-between py-2 border-b border-slate-100">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.LEDGER.BALANCE_AFTER' | translate }}</span>
-              <span class="text-xs font-bold text-slate-700 tabular-nums">{{ formatNumber(selectedEntry.balanceAfter) }} SAR</span>
+
+            <div *ngIf="selectedEntry.balanceAfter !== undefined" class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+               <span class="text-[11px] font-bold text-slate-500">الرصيد المتبقي</span>
+               <span class="text-[13px] font-black text-slate-800 tabular-nums">{{ formatNumber(selectedEntry.balanceAfter) }} SAR</span>
             </div>
-            <div class="flex justify-between py-2">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.TIMESTAMP' | translate }}</span>
-              <span class="text-xs font-bold text-slate-700">{{ formatDate(selectedEntry.timestamp) }} {{ formatTime(selectedEntry.timestamp) }}</span>
+
+            <div class="flex justify-between items-center py-2">
+               <span class="text-[11px] font-bold text-slate-500">التاريخ والوقت</span>
+               <span class="text-[13px] font-bold text-slate-700" dir="ltr">{{ formatTime(selectedEntry.timestamp) }} - {{ formatDate(selectedEntry.timestamp) }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col gap-5 animate-in fade-in duration-700">
+    <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
-      <app-finance-filter-bar
-        [showEntityType]="true"
-        [showLedgerType]="true"
-        [showDirection]="true"
-        [showExport]="true"
-        (filterChange)="onFilterChange($event)"
-        (export)="onExport()">
-      </app-finance-filter-bar>
-
-      <app-inline-banner
-        *ngIf="hasScope"
-        [title]="scopedOrderId ? 'FINANCES.ENTITIES.ORDER' : getEntityLabelKey(scopedEntityType || 'platform')"
-        [message]="scopeTitle"
-        [shouldTranslate]="false"
-        [icon]="scopedOrderId ? 'receipt_long' : scopedEntityType === 'vendor' ? 'store' : 'local_shipping'"
-        variant="info">
-        <div actions class="flex items-center gap-2">
-          <app-button
-            variant="outline"
-            size="sm"
-            customClass="!rounded-xl !bg-white"
-            (btnClick)="openScopedProfile()">
-            {{ 'FINANCES.COMMON.VIEW' | translate }}
-          </app-button>
-          <app-button
-            variant="ghost"
-            size="sm"
-            customClass="!rounded-xl !bg-slate-900 !text-white hover:!bg-slate-700"
-            (btnClick)="clearScope()">
-            {{ 'FINANCES.FILTERS.CLEAR' | translate }}
+      <!-- شريط الصفحة العلوي (Header) -->
+      <app-page-header title="السجل المالي (Ledger)" subtitle="مراقبة شاملة لجميع التدفقات النقدية، التسويات، الرسوم، وحركات المحافظ">
+        <div actions>
+          <app-button variant="outline" size="sm" customClass="!rounded-xl bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm" (btnClick)="onExport()">
+            <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">download</span>
+            تصدير CSV
           </app-button>
         </div>
-      </app-inline-banner>
+      </app-page-header>
 
-      <app-card variant="default" rounded="xl" padding="sm" customClass="border-slate-200/70 shadow-sm">
-        <app-key-value-grid [items]="summaryItems" [columns]="4" [bordered]="true"></app-key-value-grid>
+      <!-- شريط الفلاتر والإشعارات -->
+      <div class="flex flex-col gap-4">
+        <app-finance-filter-bar
+          [showEntityType]="true"
+          [showLedgerType]="true"
+          [showDirection]="true"
+          [showExport]="false"
+          (filterChange)="onFilterChange($event)">
+        </app-finance-filter-bar>
+
+        <app-inline-banner
+          *ngIf="hasScope"
+          [title]="scopedOrderId ? 'طلب محدد' : getTranslatedEntityType(scopedEntityType || 'platform')"
+          [message]="scopeTitle"
+          [shouldTranslate]="false"
+          [icon]="scopedOrderId ? 'receipt_long' : scopedEntityType === 'vendor' ? 'storefront' : 'local_shipping'"
+          variant="info">
+          <div actions class="flex items-center gap-2">
+            <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="openScopedProfile()">
+              عرض الملف
+            </app-button>
+            <app-button variant="ghost" size="sm" customClass="!rounded-xl !bg-slate-900 !text-white hover:!bg-slate-800" (btnClick)="clearScope()">
+              مسح الفلتر
+            </app-button>
+          </div>
+        </app-inline-banner>
+      </div>
+
+      <!-- ملخص الأرقام (Summary Stats) -->
+      <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200 shadow-sm overflow-hidden bg-white">
+        <div class="grid grid-cols-2 lg:grid-cols-4 divide-x rtl:divide-x-reverse divide-slate-100">
+           <div *ngFor="let stat of summaryStats" class="px-6 py-5">
+             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ stat.label }}</p>
+             <p class="text-2xl font-black tabular-nums tracking-tight" [ngClass]="stat.color">{{ stat.value }}</p>
+           </div>
+        </div>
       </app-card>
 
-      <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200/70 shadow-sm overflow-hidden extraordinary-table-container">
-        <div class="px-6 py-4 border-b border-slate-100">
-          <app-section-header
-            [compact]="true"
-            icon="receipt_long"
-            title="FINANCES.LEDGER.TITLE">
-          </app-section-header>
-        </div>
-        <table class="w-full">
-          <thead>
-            <tr class="bg-slate-50/80 border-b border-slate-100">
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.TIMESTAMP' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.ENTITY' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.TYPE' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.REFERENCE' | translate }}</th>
-              <th class="px-6 py-4 text-end text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.AMOUNT' | translate }}</th>
-              <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.DIRECTION' | translate }}</th>
-              <th class="px-6 py-4 text-end text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.LEDGER.BALANCE_AFTER' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-50">
-            <tr *ngFor="let entry of pagedEntries; trackBy: trackById"
-                class="group hover:bg-slate-50/60 transition-all duration-200 table-row-object cursor-pointer"
-                [class.opacity-50]="isLoading"
-                (click)="openEntryDetail(entry)">
+      <!-- جدول السجل المالي -->
+      <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200 shadow-sm overflow-hidden bg-white">
+        <div class="overflow-x-auto">
+          <table class="w-full whitespace-nowrap text-right text-[13px]">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">التاريخ</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">الكيان</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">النوع</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">المرجع</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">المبلغ</th>
+                <th class="px-6 py-4 text-center w-16">الاتجاه</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">الرصيد اللاحق</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr *ngFor="let entry of pagedEntries; trackBy: trackById"
+                  class="group hover:bg-slate-50/80 transition-colors duration-150 cursor-pointer"
+                  [class.opacity-50]="isLoading"
+                  (click)="openEntryDetail(entry)">
 
-              <td class="px-6 py-4">
-                <div class="flex flex-col">
-                  <span class="text-xs font-bold text-slate-700 tabular-nums">{{ formatDate(entry.timestamp) }}</span>
-                  <span class="text-[9px] font-medium text-slate-400 tabular-nums">{{ formatTime(entry.timestamp) }}</span>
-                </div>
-              </td>
-
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                       [ngClass]="getEntityIconBg(entry.entityType)">
-                    <span class="material-symbols-outlined text-[14px]"
-                          [ngClass]="getEntityIconColor(entry.entityType)">
-                      {{ getEntityIcon(entry.entityType) }}
-                    </span>
+                <td class="px-6 py-4 align-middle">
+                  <div class="flex flex-col gap-0.5">
+                    <span class="font-bold text-slate-900 tabular-nums">{{ formatDate(entry.timestamp) }}</span>
+                    <span class="text-[10px] font-bold text-slate-400 tabular-nums">{{ formatTime(entry.timestamp) }}</span>
                   </div>
-                  <div>
-                    <p class="text-xs font-bold text-slate-800">{{ entry.entityName | translate }}</p>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">{{ getEntityLabelKey(entry.entityType) | translate }}</p>
+                </td>
+
+                <td class="px-6 py-4 align-middle">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"
+                         [ngClass]="getEntityIconBg(entry.entityType)">
+                      <span class="material-symbols-outlined text-[16px]">
+                        {{ getEntityIcon(entry.entityType) }}
+                      </span>
+                    </div>
+                    <div>
+                      <p class="text-[13px] font-black text-slate-800 leading-tight">{{ entry.entityName }}</p>
+                      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{{ getTranslatedEntityType(entry.entityType) }}</p>
+                    </div>
                   </div>
-                </div>
-              </td>
+                </td>
 
-              <td class="px-6 py-4">
-                <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black border"
-                      [ngClass]="getTypeBadgeClass(entry.type)">
-                  {{ getTypeLabelKey(entry.type) | translate }}
-                </span>
-              </td>
-
-              <td class="px-6 py-4">
-                <span class="text-xs font-black text-slate-600 font-mono">{{ entry.referenceId }}</span>
-              </td>
-
-              <td class="px-6 py-4 text-end">
-                <app-money-badge
-                  [amount]="entry.amount"
-                  [direction]="entry.direction"
-                  [showDirection]="true"
-                  [currency]="entry.currency"
-                  size="sm">
-                </app-money-badge>
-              </td>
-
-              <td class="px-6 py-4">
-                <div class="flex justify-center">
-                  <span class="w-7 h-7 rounded-full flex items-center justify-center"
-                        [ngClass]="entry.direction === 'credit' ? 'bg-emerald-50' : 'bg-red-50'">
-                    <span class="material-symbols-outlined text-[14px]"
-                          [ngClass]="entry.direction === 'credit' ? 'text-emerald-500' : 'text-red-500'">
-                      {{ entry.direction === 'credit' ? 'add' : 'remove' }}
-                    </span>
+                <td class="px-6 py-4 align-middle">
+                  <span class="inline-flex px-2.5 py-1 rounded-md text-[10px] font-black tracking-widest border"
+                        [ngClass]="getTypeBadgeClass(entry.type)">
+                    {{ getTranslatedLedgerType(entry.type) }}
                   </span>
-                </div>
-              </td>
+                </td>
 
-              <td class="px-6 py-4 text-end">
-                <span *ngIf="entry.balanceAfter !== undefined" class="text-xs font-bold text-slate-600 tabular-nums">
-                  {{ formatNumber(entry.balanceAfter) }} SAR
-                </span>
-                <span *ngIf="entry.balanceAfter === undefined" class="text-[10px] text-slate-300">&mdash;</span>
-              </td>
+                <td class="px-6 py-4 align-middle">
+                  <span class="text-[12px] font-black text-slate-600 font-mono bg-slate-100 px-2 py-0.5 rounded-md">{{ entry.referenceId }}</span>
+                </td>
 
-            </tr>
-          </tbody>
-        </table>
+                <td class="px-6 py-4 align-middle text-left" dir="ltr">
+                  <app-money-badge
+                    [amount]="entry.amount"
+                    [direction]="entry.direction"
+                    [showDirection]="true"
+                    [currency]="entry.currency"
+                    size="sm">
+                  </app-money-badge>
+                </td>
+
+                <td class="px-6 py-4 align-middle">
+                  <div class="flex justify-center">
+                    <span class="w-6 h-6 rounded-full flex items-center justify-center"
+                          [ngClass]="entry.direction === 'credit' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'">
+                      <span class="material-symbols-outlined text-[16px]">
+                        {{ entry.direction === 'credit' ? 'arrow_downward' : 'arrow_upward' }}
+                      </span>
+                    </span>
+                  </div>
+                </td>
+
+                <td class="px-6 py-4 align-middle text-left" dir="ltr">
+                  <span *ngIf="entry.balanceAfter !== undefined" class="text-[13px] font-black text-slate-700 tabular-nums">
+                    {{ formatNumber(entry.balanceAfter) }}
+                  </span>
+                  <span *ngIf="entry.balanceAfter === undefined" class="text-[12px] font-bold text-slate-300">&mdash;</span>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <div *ngIf="!isLoading && filteredEntries.length === 0"
-             class="flex flex-col items-center justify-center py-16 text-center">
-          <span class="material-symbols-outlined text-5xl text-slate-200 mb-3">receipt_long</span>
-          <p class="text-sm font-black text-slate-400">{{ 'FINANCES.LEDGER.EMPTY.TITLE' | translate }}</p>
-          <p class="text-[11px] text-slate-300 mt-1">{{ 'FINANCES.LEDGER.EMPTY.MESSAGE' | translate }}</p>
+             class="flex flex-col items-center justify-center py-24 text-center bg-white">
+          <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+             <span class="material-symbols-outlined text-4xl text-slate-300">receipt_long</span>
+          </div>
+          <h3 class="text-[15px] font-black text-slate-800">لا توجد سجلات مطابقة</h3>
+          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">لم نتمكن من العثور على أي حركات مالية تتطابق مع الفلاتر الحالية. جرب تغيير فلاتر البحث.</p>
         </div>
       </app-card>
 
-      <div *ngIf="filteredEntries.length > 0" class="pt-4 animate-in fade-in duration-300">
+      <!-- الترقيم (Pagination) -->
+      <div *ngIf="filteredEntries.length > 0" class="flex justify-center pt-2 pb-8">
         <app-pagination
           [currentPage]="page"
           [pageSize]="pageSize"
@@ -271,7 +278,7 @@ export class FinancialLedgerComponent implements OnInit {
   selectedEntry: LedgerEntry | null = null;
   isLoading = false;
   page = 1;
-  pageSize = 10;
+  pageSize = 15;
   currentFilter: LedgerFilter = {};
   scopedEntityType: LedgerFilter['entityType'] | null = null;
   scopedEntityId: string | null = null;
@@ -299,24 +306,11 @@ export class FinancialLedgerComponent implements OnInit {
     const credits = this.filteredEntries.filter(e => e.direction === 'credit').reduce((s, e) => s + e.amount, 0);
     const debits = this.filteredEntries.filter(e => e.direction === 'debit').reduce((s, e) => s + e.amount, 0);
     return [
-      { labelKey: 'FINANCES.LEDGER.SUMMARY.TOTAL_ENTRIES', value: this.formatNumber(this.filteredEntries.length), color: 'text-slate-800' },
-      { labelKey: 'FINANCES.LEDGER.SUMMARY.TOTAL_CREDITS', value: `+${this.formatNumber(credits)} SAR`, color: 'text-emerald-600' },
-      { labelKey: 'FINANCES.LEDGER.SUMMARY.TOTAL_DEBITS', value: `-${this.formatNumber(debits)} SAR`, color: 'text-red-600' },
-      { labelKey: 'FINANCES.LEDGER.SUMMARY.NET_FLOW', value: `${this.formatNumber(credits - debits)} SAR`, color: (credits - debits) >= 0 ? 'text-emerald-600' : 'text-red-600' }
+      { label: 'إجمالي الحركات', value: this.formatNumber(this.filteredEntries.length), color: 'text-slate-900' },
+      { label: 'إجمالي الإيداعات (+)', value: `${this.formatNumber(credits)}`, color: 'text-emerald-600' },
+      { label: 'إجمالي الخصومات (-)', value: `${this.formatNumber(debits)}`, color: 'text-red-600' },
+      { label: 'صافي التدفق المالي', value: `${this.formatNumber(credits - debits)}`, color: (credits - debits) >= 0 ? 'text-emerald-600' : 'text-red-600' }
     ];
-  }
-
-  get summaryItems(): KeyValueGridItem[] {
-    return this.summaryStats.map((stat): KeyValueGridItem => ({
-      label: stat.labelKey,
-      value: stat.value,
-      translateValue: false,
-      valueTone: stat.color.includes('emerald')
-        ? 'accent'
-        : stat.color.includes('red')
-          ? 'danger'
-          : 'default'
-    }));
   }
 
   get pagedEntries(): LedgerEntry[] {
@@ -339,6 +333,7 @@ export class FinancialLedgerComponent implements OnInit {
   }
 
   loadData(filter: LedgerFilter = this.currentFilter): void {
+    this.isLoading = true;
     this.currentFilter = filter;
     this.financeService.getLedgerEntries({
       ...filter,
@@ -349,6 +344,7 @@ export class FinancialLedgerComponent implements OnInit {
       this.allEntries = entries;
       this.filteredEntries = entries;
       this.page = 1;
+      this.isLoading = false;
     });
   }
 
@@ -383,6 +379,7 @@ export class FinancialLedgerComponent implements OnInit {
 
     URL.revokeObjectURL(url);
   }
+
   changePage(page: number): void { this.page = page; }
 
   openEntryDetail(entry: LedgerEntry): void { this.selectedEntry = entry; }
@@ -431,36 +428,46 @@ export class FinancialLedgerComponent implements OnInit {
     });
   }
 
-  getTypeLabelKey(type: string): string {
-    return FINANCE_LEDGER_TYPE_LABEL_KEYS[type] ?? type;
+  getTranslatedLedgerType(type: string): string {
+    const map: Record<string, string> = {
+      commission: 'عمولة منصة',
+      payout: 'تسوية نقدية',
+      refund: 'مسترد',
+      settlement: 'تسوية مالية',
+      adjustment: 'تسوية يدوية',
+      service_fee: 'رسوم خدمة',
+      delivery_fee: 'رسوم توصيل',
+      vat: 'ضريبة (VAT)',
+      bonus: 'مكافأة',
+      penalty: 'غرامة',
+      cod_collection: 'تحصيل كاش'
+    };
+    return map[type] ?? type;
   }
 
-  getEntityLabelKey(type: string): string {
-    return FINANCE_ENTITY_LABEL_KEYS[type] ?? type;
-  }
-
-  getDirectionLabelKey(direction: string): string {
-    return FINANCE_DIRECTION_LABEL_KEYS[direction] ?? direction;
+  getTranslatedEntityType(type: string): string {
+    const map: Record<string, string> = { vendor: 'متجر', driver: 'مندوب', customer: 'عميل', platform: 'منصة', order: 'طلب' };
+    return map[type] ?? type;
   }
 
   getEntityIcon(type: string): string {
-    const map: Record<string, string> = { vendor: 'store', driver: 'local_shipping', customer: 'person', platform: 'hub', order: 'receipt' };
+    const map: Record<string, string> = { vendor: 'storefront', driver: 'local_shipping', customer: 'person', platform: 'hub', order: 'receipt_long' };
     return map[type] ?? 'circle';
   }
 
   getEntityIconBg(type: string): string {
-    const map: Record<string, string> = { vendor: 'bg-zadna-primary/10', driver: 'bg-amber-50', customer: 'bg-slate-100', platform: 'bg-purple-50', order: 'bg-blue-50' };
-    return map[type] ?? 'bg-slate-100';
+    const map: Record<string, string> = { vendor: 'bg-cyan-50 border-cyan-100 text-cyan-600', driver: 'bg-amber-50 border-amber-100 text-amber-600', customer: 'bg-slate-100 border-slate-200 text-slate-600', platform: 'bg-purple-50 border-purple-100 text-purple-600', order: 'bg-blue-50 border-blue-100 text-blue-600' };
+    return map[type] ?? 'bg-slate-100 text-slate-600 border-slate-200';
   }
 
-  getEntityIconColor(type: string): string {
-    const map: Record<string, string> = { vendor: 'text-zadna-primary', driver: 'text-amber-500', customer: 'text-slate-500', platform: 'text-purple-500', order: 'text-blue-500' };
-    return map[type] ?? 'text-slate-400';
+  getEntityBadgeClass(type: string): string {
+    const map: Record<string, string> = { vendor: 'bg-cyan-50 text-cyan-700', driver: 'bg-amber-50 text-amber-700', customer: 'bg-slate-100 text-slate-700', platform: 'bg-purple-50 text-purple-700', order: 'bg-blue-50 text-blue-700' };
+    return map[type] ?? 'bg-slate-100 text-slate-700';
   }
 
   getTypeBadgeClass(type: string): string {
     const map: Record<string, string> = {
-      commission: 'bg-zadna-primary/10 text-zadna-primary border-zadna-primary/20',
+      commission: 'bg-cyan-50 text-cyan-700 border-cyan-200',
       payout: 'bg-amber-50 text-amber-700 border-amber-200',
       refund: 'bg-red-50 text-red-600 border-red-200',
       settlement: 'bg-emerald-50 text-emerald-700 border-emerald-200',

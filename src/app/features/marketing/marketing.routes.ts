@@ -8,6 +8,10 @@ export const MARKETING_ROUTES: Routes = [
     children: [
       { path: '', redirectTo: 'banners', pathMatch: 'full' },
       {
+        path: 'coupons',
+        loadComponent: () => import('./pages/coupons/marketing-coupons.component').then((m) => m.MarketingCouponsComponent)
+      },
+      {
         path: 'banners',
         loadComponent: () => import('./pages/banners/marketing-banners.component').then((m) => m.MarketingBannersComponent)
       },

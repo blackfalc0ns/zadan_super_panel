@@ -1,21 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { SuperAdminDashboardService } from '@dashboard/services/dashboard.api.service';
 import {
   DashboardDateRange,
   DashboardFilterState,
+  DashboardQueue,
+  DashboardSection,
   DashboardSeverity,
   DashboardSnapshot,
-  DashboardTrendSegment,
-  DashboardTrendPoint
+  DashboardSupplyBucket,
+  DashboardChartPoint
 } from '../../models/dashboard.models';
-import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
+import * as echarts from 'echarts/core';
+import { EChartsOption } from 'echarts';
+import { BarChart, LineChart, PieChart } from 'echarts/charts';
+import { CanvasRenderer } from 'echarts/renderers';
+import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
+import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
+
+echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
 @Component({
   selector: 'app-dashboard',
@@ -25,8 +35,10 @@ import { SearchableSelectComponent, SearchableSelectOption } from '../../../../s
     FormsModule,
     RouterModule,
     TranslateModule,
-    SearchableSelectComponent
+    SearchableSelectComponent,
+    NgxEchartsDirective
   ],
+  providers: [provideEchartsCore({ echarts })],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -37,7 +49,7 @@ export class DashboardComponent implements OnInit {
   currentLang: 'ar' | 'en' = 'ar';
   isRTL = true;
   isLoading = true;
-  dashboardSearch = '';
+  loadError = false;
 
   filterState: DashboardFilterState = {
     dateRange: 'today',
@@ -46,12 +58,20 @@ export class DashboardComponent implements OnInit {
     refreshMode: 'manual'
   };
 
+  activeTab: string = 'overview';
+
   dashboard: DashboardSnapshot | null = null;
+  ordersTrendOptions: EChartsOption = {};
+  revenueTrendOptions: EChartsOption = {};
+  vendorReadinessOptions: EChartsOption = {};
+  driverReadinessOptions: EChartsOption = {};
+  sectionChartOptions: Record<string, EChartsOption> = {};
+  sectionOpenState: Record<string, boolean> = {};
 
   get dateRangeFilterOptions(): SearchableSelectOption[] {
     return (this.dashboard?.filterOptions.dateRanges ?? []).map((option) => ({
       value: option.value,
-      label: option.label
+      label: this.getDateRangeLabel(option.value as DashboardDateRange)
     }));
   }
 
@@ -90,7 +110,9 @@ export class DashboardComponent implements OnInit {
       .subscribe((event) => {
         this.currentLang = event.lang as 'ar' | 'en';
         this.isRTL = this.currentLang === 'ar';
-        this.loadDashboard();
+        if (this.dashboard) {
+          this.loadDashboard();
+        }
       });
 
     this.loadDashboard();
@@ -98,11 +120,22 @@ export class DashboardComponent implements OnInit {
 
   loadDashboard(): void {
     this.isLoading = true;
+    this.loadError = false;
+
     this.dashboardService.getDashboardSnapshot(this.filterState, this.currentLang)
       .pipe(take(1))
-      .subscribe((dashboard) => {
-        this.dashboard = dashboard;
-        this.isLoading = false;
+      .subscribe({
+        next: (dashboard) => {
+          this.dashboard = dashboard;
+          this.syncSectionState();
+          this.isLoading = false;
+          this.buildCharts();
+        },
+        error: (error) => {
+          console.error('Superadmin dashboard failed to load.', error);
+          this.loadError = true;
+          this.isLoading = false;
+        }
       });
   }
 
@@ -126,21 +159,6 @@ export class DashboardComponent implements OnInit {
     this.loadDashboard();
   }
 
-  getSeverityPillVariant(severity: DashboardSeverity): 'processing' | 'success' | 'warning' | 'danger' | 'neutral' {
-    switch (severity) {
-      case 'critical':
-        return 'danger';
-      case 'warning':
-        return 'warning';
-      case 'success':
-        return 'success';
-      case 'info':
-        return 'processing';
-      default:
-        return 'neutral';
-    }
-  }
-
   getSeverityCardClasses(severity: DashboardSeverity): string {
     const classes: Record<DashboardSeverity, string> = {
       critical: 'border-red-200 bg-red-50/80',
@@ -153,17 +171,16 @@ export class DashboardComponent implements OnInit {
     return classes[severity];
   }
 
-  getKpiAccentClasses(severity: DashboardSeverity | undefined): string {
-    const classes: Record<DashboardSeverity | 'default', string> = {
-      critical: 'from-red-500/12 to-red-50/40 border-red-200/80',
-      warning: 'from-amber-500/12 to-amber-50/40 border-amber-200/80',
-      info: 'from-cyan-500/12 to-cyan-50/40 border-cyan-200/80',
-      success: 'from-emerald-500/12 to-emerald-50/40 border-emerald-200/80',
-      neutral: 'from-slate-500/10 to-slate-50/40 border-slate-200/80',
-      default: 'from-slate-500/10 to-slate-50/40 border-slate-200/80'
+  getSectionSurfaceClasses(severity: DashboardSeverity): string {
+    const classes: Record<DashboardSeverity, string> = {
+      critical: 'border-red-200 bg-red-50/60',
+      warning: 'border-amber-200 bg-amber-50/60',
+      info: 'border-cyan-200 bg-cyan-50/60',
+      success: 'border-emerald-200 bg-emerald-50/60',
+      neutral: 'border-slate-200 bg-slate-50/70'
     };
 
-    return classes[severity ?? 'default'];
+    return classes[severity];
   }
 
   getTrendClasses(direction: 'up' | 'down' | 'flat'): string {
@@ -178,18 +195,6 @@ export class DashboardComponent implements OnInit {
     return 'text-slate-500 bg-slate-100 border-slate-200';
   }
 
-  getQueueToneClasses(severity: DashboardSeverity): string {
-    const classes: Record<DashboardSeverity, string> = {
-      critical: 'border-red-200 bg-red-50/70',
-      warning: 'border-amber-200 bg-amber-50/70',
-      info: 'border-cyan-200 bg-cyan-50/70',
-      success: 'border-emerald-200 bg-emerald-50/70',
-      neutral: 'border-slate-200 bg-white'
-    };
-
-    return classes[severity];
-  }
-
   getUserInitials(name: string): string {
     return name
       .split(' ')
@@ -197,26 +202,6 @@ export class DashboardComponent implements OnInit {
       .slice(0, 2)
       .map((part) => part[0]?.toUpperCase() ?? '')
       .join('') || 'SA';
-  }
-
-  getOverviewConversionRate(): string {
-    const values: Record<DashboardDateRange, string> = {
-      today: '3.82%',
-      week: '4.07%',
-      month: '3.94%'
-    };
-
-    return values[this.filterState.dateRange];
-  }
-
-  getOverviewResponseTime(): string {
-    const values: Record<DashboardDateRange, string> = {
-      today: '142ms',
-      week: '156ms',
-      month: '163ms'
-    };
-
-    return values[this.filterState.dateRange];
   }
 
   getAlertIcon(severity: DashboardSeverity): string {
@@ -231,13 +216,13 @@ export class DashboardComponent implements OnInit {
     return icons[severity];
   }
 
-  getSegmentClasses(severity: DashboardSeverity): string {
+  getQueueToneClasses(severity: DashboardSeverity): string {
     const classes: Record<DashboardSeverity, string> = {
-      critical: 'bg-red-400',
-      warning: 'bg-amber-400',
-      info: 'bg-cyan-400',
-      success: 'bg-emerald-400',
-      neutral: 'bg-slate-400'
+      critical: 'border-red-200 bg-red-50/70',
+      warning: 'border-amber-200 bg-amber-50/70',
+      info: 'border-cyan-200 bg-cyan-50/70',
+      success: 'border-emerald-200 bg-emerald-50/70',
+      neutral: 'border-slate-200 bg-white'
     };
 
     return classes[severity];
@@ -255,246 +240,394 @@ export class DashboardComponent implements OnInit {
     return classes[severity];
   }
 
-  getRelativeValueWidth(value: number, values: number[]): number {
-    const max = Math.max(...values, 1);
-    if (value <= 0) {
-      return 0;
-    }
-
-    return Math.max(10, Math.min(100, (value / max) * 100));
-  }
-
-  getProgressClasses(severity: DashboardSeverity): string {
+  getStatToneClasses(severity: DashboardSeverity): string {
     const classes: Record<DashboardSeverity, string> = {
-      critical: 'bg-red-500',
-      warning: 'bg-amber-500',
-      info: 'bg-cyan-500',
-      success: 'bg-emerald-500',
-      neutral: 'bg-slate-400'
+      critical: 'border-red-200 bg-white text-red-700',
+      warning: 'border-amber-200 bg-white text-amber-700',
+      info: 'border-cyan-200 bg-white text-cyan-700',
+      success: 'border-emerald-200 bg-white text-emerald-700',
+      neutral: 'border-slate-200 bg-white text-slate-700'
     };
 
     return classes[severity];
   }
 
-  getMaxPointTotal(points: DashboardTrendPoint[]): number {
-    return Math.max(
-      ...points.map((point) =>
-        point.segments?.reduce((sum, segment) => sum + segment.value, 0) ?? point.value
-      ),
-      1
-    );
-  }
-
-  getLiveOrdersSummary(snapshot: DashboardSnapshot): number {
-    return (snapshot.liveQueues[0]?.count ?? 0) + (snapshot.liveQueues[1]?.count ?? 0);
-  }
-
-  getRiskLoadSummary(snapshot: DashboardSnapshot): number {
-    return (snapshot.riskQueues[0]?.count ?? 0) + (snapshot.riskQueues[3]?.count ?? 0);
-  }
-
-  getRelativePressureWidth(score: number, rows: Array<{ score: number }>): number {
-    const max = Math.max(...rows.map((row) => row.score), 1);
-    if (score <= 0) {
-      return 0;
+  getRegionPressureTone(score: number): string {
+    if (score >= 15) {
+      return 'bg-red-500';
     }
 
-    return Math.max(12, Math.min(100, (score / max) * 100));
-  }
-
-  getRegionPressureBarClasses(score: number, rows: Array<{ score: number }>): string {
-    const width = this.getRelativePressureWidth(score, rows);
-
-    if (width >= 75) {
-      return 'from-red-500 to-orange-500';
+    if (score >= 8) {
+      return 'bg-amber-500';
     }
 
-    if (width >= 45) {
-      return 'from-amber-500 to-orange-400';
+    return 'bg-cyan-600';
+  }
+
+  getRegionPressureWidth(score: number): number {
+    const maxScore = Math.max(...(this.dashboard?.charts.regionPressure.map((row) => row.score) ?? [1]));
+    return Math.max(12, Math.round((score / Math.max(maxScore, 1)) * 100));
+  }
+
+  toggleSection(sectionId: string): void {
+    this.sectionOpenState[sectionId] = !this.sectionOpenState[sectionId];
+  }
+
+  isSectionOpen(sectionId: string): boolean {
+    return this.sectionOpenState[sectionId] ?? true;
+  }
+
+  get primarySections(): DashboardSection[] {
+    return this.dashboard?.sections.slice(0, 4) ?? [];
+  }
+
+  get secondarySections(): DashboardSection[] {
+    return this.dashboard?.sections.slice(4) ?? [];
+  }
+
+  formatRelativeTime(value: string): string {
+    const timestamp = new Date(value).getTime();
+    const minutes = Math.max(0, Math.floor((Date.now() - timestamp) / 60000));
+    
+    if (this.currentLang === 'ar') {
+      if (minutes < 1) return 'الآن';
+      if (minutes === 1) return 'منذ دقيقة';
+      if (minutes === 2) return 'منذ دقيقتين';
+      if (minutes >= 3 && minutes <= 10) return `منذ ${minutes} دقائق`;
+      if (minutes < 60) return `منذ ${minutes} دقيقة`;
+      
+      const hours = Math.floor(minutes / 60);
+      if (hours === 1) return 'منذ ساعة';
+      if (hours === 2) return 'منذ ساعتين';
+      if (hours >= 3 && hours <= 10) return `منذ ${hours} ساعات`;
+      if (hours < 24) return `منذ ${hours} ساعة`;
+      
+      return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short' }).format(new Date(value));
+    } else {
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes} min ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours} hr ago`;
+      return new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short' }).format(new Date(value));
     }
-
-    return 'from-cyan-500 to-zadna-primary';
   }
 
-  getPressureLabel(score: number, rows: Array<{ score: number }>): string {
-    const width = this.getRelativePressureWidth(score, rows);
-
-    if (width >= 75) {
-      return this.translate.instant('DASHBOARD.PRESSURE_LEVEL.HIGH');
-    }
-
-    if (width >= 45) {
-      return this.translate.instant('DASHBOARD.PRESSURE_LEVEL.MEDIUM');
-    }
-
-    return this.translate.instant('DASHBOARD.PRESSURE_LEVEL.LOW');
+  getQueueTotal(queues: DashboardQueue[]): number {
+    return queues.reduce((sum, queue) => sum + queue.count, 0);
   }
 
-  getPressureTextClasses(score: number, rows: Array<{ score: number }>): string {
-    const width = this.getRelativePressureWidth(score, rows);
-
-    if (width >= 75) {
-      return 'text-red-600';
-    }
-
-    if (width >= 45) {
-      return 'text-amber-600';
-    }
-
-    return 'text-emerald-600';
-  }
-
-  getRegionShortCode(label: string): string {
-    const normalized = label.toLowerCase();
-
-    if (normalized.includes('central') || normalized.includes('الوسط')) {
-      return 'CEN';
-    }
-
-    if (normalized.includes('western') || normalized.includes('الغرب')) {
-      return 'WES';
-    }
-
-    if (normalized.includes('eastern') || normalized.includes('الشرق')) {
-      return 'EST';
-    }
-
-    if (normalized.includes('northern') || normalized.includes('الشمال')) {
-      return 'NOR';
-    }
-
-    if (normalized.includes('southern') || normalized.includes('الجنوب')) {
-      return 'STH';
-    }
-
-    return label.replace(/[^A-Za-z\u0621-\u064A]/g, '').slice(0, 3).toUpperCase();
-  }
-
-  getPointTotal(point: DashboardTrendPoint): number {
-    return point.segments?.reduce((sum, segment) => sum + segment.value, 0) ?? point.value;
-  }
-
-  getSeriesTotal(points: DashboardTrendPoint[]): number {
-    return points.reduce((sum, point) => sum + this.getPointTotal(point), 0);
-  }
-
-  getSegmentSummaries(points: DashboardTrendPoint[]): Array<DashboardTrendSegment & { share: number }> {
-    const totals = new Map<string, DashboardTrendSegment>();
-
-    points.forEach((point) => {
-      point.segments?.forEach((segment) => {
-        const current = totals.get(segment.id);
-        if (current) {
-          current.value += segment.value;
-          return;
-        }
-
-        totals.set(segment.id, { ...segment });
-      });
-    });
-
-    const totalVolume = Math.max(
-      1,
-      [...totals.values()].reduce((sum, segment) => sum + segment.value, 0)
-    );
-
-    return [...totals.values()].map((segment) => ({
-      ...segment,
-      share: (segment.value / totalVolume) * 100
-    }));
-  }
-
-  getAreaPath(points: DashboardTrendPoint[], key: 'value' | 'secondaryValue'): string {
-    if (!points.length) {
-      return '';
-    }
-
-    const linePath = this.getLinePath(points, key);
-    const width = 100;
-    const height = 100;
-    const startX = points.length === 1 ? width / 2 : 0;
-    const endX = points.length === 1 ? width / 2 : width;
-
-    return `${linePath} L ${endX} ${height} L ${startX} ${height} Z`;
-  }
-
-  getSeriesValueTotal(points: DashboardTrendPoint[], key: 'value' | 'secondaryValue'): number {
-    return points.reduce((sum, point) => sum + (key === 'secondaryValue' ? point.secondaryValue ?? 0 : point.value), 0);
-  }
-
-  getPeakPoint(points: DashboardTrendPoint[], key: 'value' | 'secondaryValue'): DashboardTrendPoint | null {
-    if (!points.length) {
-      return null;
-    }
-
-    return points.reduce((peak, point) => {
-      const peakValue = key === 'secondaryValue' ? peak.secondaryValue ?? 0 : peak.value;
-      const pointValue = key === 'secondaryValue' ? point.secondaryValue ?? 0 : point.value;
-      return pointValue > peakValue ? point : peak;
-    });
-  }
-
-  getRiskRatio(point: DashboardTrendPoint): number {
-    const exposure = point.secondaryValue ?? 0;
-    if (!point.value) {
-      return 0;
-    }
-
-    return (exposure / point.value) * 100;
-  }
-
-  getRevenueBarWidth(point: DashboardTrendPoint, points: DashboardTrendPoint[], key: 'value' | 'secondaryValue'): number {
-    const max = Math.max(
-      ...points.map((item) => key === 'secondaryValue' ? item.secondaryValue ?? 0 : item.value),
-      1
-    );
-    const value = key === 'secondaryValue' ? point.secondaryValue ?? 0 : point.value;
-    return Math.max(value > 0 ? 10 : 0, (value / max) * 100);
-  }
-
-  getPointHeight(point: DashboardTrendPoint, points: DashboardTrendPoint[]): number {
-    const max = Math.max(...points.map((item) => this.getPointTotal(item)), 1);
-    return Math.max(16, (this.getPointTotal(point) / max) * 100);
-  }
-
-  getNetRevenueProjection(points: DashboardTrendPoint[]): number {
-    return this.getSeriesValueTotal(points, 'value') - this.getSeriesValueTotal(points, 'secondaryValue');
-  }
-
-  getForecastAccuracy(points: DashboardTrendPoint[]): number {
-    const total = this.getSeriesValueTotal(points, 'value');
-    const exposure = this.getSeriesValueTotal(points, 'secondaryValue');
-    const ratio = total > 0 ? exposure / total : 0;
-    return Math.max(92, Math.min(99.4, 99.2 - ratio * 6.4));
-  }
-
-  getLinePath(points: DashboardTrendPoint[], key: 'value' | 'secondaryValue'): string {
-    if (!points.length) {
-      return '';
-    }
-
-    const width = 100;
-    const height = 100;
-    const values = points.map((point) => key === 'secondaryValue' ? point.secondaryValue ?? 0 : point.value);
-    const max = Math.max(...values, 1);
-
-    return values.map((value, index) => {
-      const x = points.length === 1 ? width / 2 : (index / (points.length - 1)) * width;
-      const y = height - (value / max) * height;
-      return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
-    }).join(' ');
+  getTopKpiValue(index: number): string {
+    return this.dashboard?.kpis[index]?.value ?? '0';
   }
 
   trackById(_index: number, item: { id: string }): string {
     return item.id;
   }
 
-  trackByValue(_index: number, item: { value: string }): string {
-    return item.value;
+  trackByRegion(_index: number, item: { regionKey: string }): string {
+    return item.regionKey;
   }
 
-  trackByLabel(_index: number, item: { label: string }): string {
-    return item.label;
+  heroMicroChartOptions: Record<string, EChartsOption> = {};
+  insightPanels: {
+    id: string;
+    titleKey: string;
+    icon: string;
+    iconClass: string;
+    description: string;
+    value: string;
+    trendLabel?: string;
+  }[] = [];
+
+  private buildCharts(): void {
+    if (!this.dashboard) {
+      return;
+    }
+
+    this.ordersTrendOptions = this.buildLineChart(this.dashboard.charts.ordersTrend, true);
+    this.revenueTrendOptions = this.buildLineChart(this.dashboard.charts.revenueTrend, false);
+    this.vendorReadinessOptions = this.buildReadinessChart('vendor');
+    this.driverReadinessOptions = this.buildReadinessChart('driver');
+    this.sectionChartOptions = Object.fromEntries(
+      (this.dashboard.sections ?? []).map((section) => [section.id, this.buildSectionChart(section)])
+    );
+
+    this.buildMicroCharts();
+    this.buildInsightPanels();
+  }
+
+  private buildMicroCharts(): void {
+    if (!this.dashboard) return;
+    
+    // Build Sparklines for time-series KPIs
+    const gmvColor = '#10b981'; // emerald
+    const ordersColor = '#3b82f6'; // blue
+    
+    this.heroMicroChartOptions['gmv'] = this.buildSparkline(this.dashboard.charts.revenueTrend.series[0]?.points ?? [], gmvColor);
+    this.heroMicroChartOptions['completed-orders'] = this.buildSparkline(this.dashboard.charts.ordersTrend.series[0]?.points ?? [], ordersColor);
+  }
+
+  private buildSparkline(points: DashboardChartPoint[], color: string): EChartsOption {
+    return {
+      grid: { left: 0, right: 0, top: 0, bottom: 0 },
+      xAxis: { type: 'category', show: false, data: points.map(p => p.label) },
+      yAxis: { type: 'value', show: false },
+      tooltip: { show: false },
+      series: [{
+        type: 'line',
+        data: points.map(p => p.value),
+        smooth: true,
+        showSymbol: false,
+        lineStyle: { width: 2, color },
+        itemStyle: { color },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: `${color}44` },
+            { offset: 1, color: `${color}00` }
+          ])
+        }
+      }]
+    };
+  }
+
+  private buildInsightPanels(): void {
+    if (!this.dashboard) return;
+    
+    // Extract some key values for the insight texts
+    const gmvKpi = this.dashboard.kpis.find(k => k.id === 'gmv');
+    const onTimeKpi = this.dashboard.kpis.find(k => k.id === 'on-time-rate');
+    const riskOrders = this.dashboard.kpis.find(k => k.id === 'orders-at-risk');
+    
+    this.insightPanels = [
+      {
+        id: 'revenue-insight',
+        titleKey: 'DASHBOARD.INSIGHTS.REVENUE_TITLE',
+        icon: 'trending_up',
+        iconClass: 'text-emerald-500 bg-emerald-50',
+        description: 'DASHBOARD.INSIGHTS.REVENUE_DESC',
+        value: gmvKpi?.value ?? '0',
+        trendLabel: gmvKpi?.trendLabel
+      },
+      {
+        id: 'fulfillment-insight',
+        titleKey: 'DASHBOARD.INSIGHTS.FULFILLMENT_TITLE',
+        icon: 'local_shipping',
+        iconClass: 'text-blue-500 bg-blue-50',
+        description: 'DASHBOARD.INSIGHTS.FULFILLMENT_DESC',
+        value: onTimeKpi?.value ?? '0%',
+        trendLabel: riskOrders?.value ? `Risk: ${riskOrders.value}` : undefined
+      },
+      {
+        id: 'supply-insight',
+        titleKey: 'DASHBOARD.INSIGHTS.SUPPLY_TITLE',
+        icon: 'groups',
+        iconClass: 'text-purple-500 bg-purple-50',
+        description: 'DASHBOARD.INSIGHTS.SUPPLY_DESC',
+        value: `${this.dashboard.charts.vendorReadiness.reduce((a, b) => a + b.count, 0)} V | ${this.dashboard.charts.driverReadiness.reduce((a, b) => a + b.count, 0)} D`
+      }
+    ];
+  }
+
+  private buildLineChart(chart: DashboardSnapshot['charts']['ordersTrend'], filled: boolean): EChartsOption {
+    const isRtl = this.isRTL;
+    const categories = chart.series[0]?.points.map((point) => point.label) ?? [];
+
+    return {
+      tooltip: {
+        trigger: 'axis',
+        className: '!rounded-xl !shadow-lg !border-none !bg-white/95 !backdrop-blur-md',
+        textStyle: { fontFamily: 'inherit', color: '#1e293b' }
+      },
+      legend: {
+        bottom: 0,
+        icon: 'circle',
+        textStyle: { fontFamily: 'inherit', color: '#64748b', fontSize: 11, fontWeight: 700 }
+      },
+      grid: {
+        left: isRtl ? '4%' : '3%',
+        right: isRtl ? '3%' : '4%',
+        top: '8%',
+        bottom: '14%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: categories,
+        inverse: isRtl,
+        axisTick: { show: false },
+        axisLine: { lineStyle: { color: '#e2e8f0' } },
+        axisLabel: { color: '#94a3b8', fontSize: 11, fontWeight: 700 }
+      },
+      yAxis: {
+        type: 'value',
+        position: isRtl ? 'right' : 'left',
+        splitLine: { lineStyle: { color: '#f1f5f9', type: 'dashed' } },
+        axisLabel: { color: '#94a3b8', fontSize: 11, fontWeight: 700 }
+      },
+      series: chart.series.map((series) => ({
+        name: this.translate.instant(series.labelKey),
+        type: 'line',
+        smooth: true,
+        showSymbol: false,
+        symbol: 'none',
+        lineStyle: { width: 3, color: series.color },
+        itemStyle: { color: series.color },
+        areaStyle: filled ? {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: `${series.color}55` },
+            { offset: 1, color: `${series.color}05` }
+          ])
+        } : undefined,
+        data: series.points.map((point) => point.value)
+      }))
+    };
+  }
+
+  private buildReadinessChart(type: 'vendor' | 'driver'): EChartsOption {
+    const data = type === 'vendor' ? (this.dashboard?.charts.vendorReadiness ?? []) : (this.dashboard?.charts.driverReadiness ?? []);
+    const name = type === 'vendor' ? this.translate.instant('DASHBOARD.SUPPLY.VENDOR_SPLIT') : this.translate.instant('DASHBOARD.SUPPLY.DRIVER_SPLIT');
+
+    return {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)'
+      },
+      legend: {
+        bottom: 0,
+        icon: 'circle',
+        itemGap: 10,
+        itemWidth: 8,
+        textStyle: { color: '#64748b', fontSize: 10, fontWeight: 700 }
+      },
+      series: [
+        {
+          name,
+          type: 'pie',
+          radius: ['35%', '55%'],
+          center: ['50%', '35%'],
+          label: { show: false },
+          labelLine: { show: false },
+          data: this.mapReadinessSeries(data)
+        }
+      ]
+    };
+  }
+
+  private buildSectionChart(section: DashboardSection): EChartsOption {
+    const statData = section.stats.slice(0, 4);
+
+    if (statData.length > 0) {
+      return {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' }
+        },
+        grid: {
+          left: '4%',
+          right: '4%',
+          top: '8%',
+          bottom: '4%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          inverse: this.isRTL,
+          data: statData.map((item) => this.translate.instant(item.labelKey)),
+          axisTick: { show: false },
+          axisLine: { show: false },
+          axisLabel: {
+            color: '#64748b',
+            fontSize: 10,
+            interval: 0,
+            rotate: statData.length > 3 ? 15 : 0
+          }
+        },
+        yAxis: {
+          type: 'value',
+          splitLine: { lineStyle: { color: '#e2e8f0', type: 'dashed' } },
+          axisLabel: { color: '#94a3b8', fontSize: 10 }
+        },
+        series: [
+          {
+            type: 'bar',
+            barWidth: 18,
+            data: statData.map((item) => ({
+              value: item.value,
+              itemStyle: {
+                color: this.resolveSeverityColor(item.tone),
+                borderRadius: [10, 10, 0, 0]
+              }
+            }))
+          }
+        ]
+      };
+    }
+
+    const exceptionBuckets = ['critical', 'warning', 'info', 'success', 'neutral']
+      .map((severity) => ({
+        severity: severity as DashboardSeverity,
+        count: section.exceptions.filter((item) => item.severity === severity).length
+      }))
+      .filter((bucket) => bucket.count > 0);
+
+    return {
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        bottom: 0,
+        icon: 'circle',
+        textStyle: { color: '#64748b', fontSize: 10, fontWeight: 700 }
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: ['42%', '66%'],
+          center: ['50%', '42%'],
+          label: { show: false },
+          labelLine: { show: false },
+          data: exceptionBuckets.map((bucket) => ({
+            value: bucket.count,
+            name: this.translate.instant(`DASHBOARD.SEVERITY.${bucket.severity.toUpperCase()}`),
+            itemStyle: { color: this.resolveSeverityColor(bucket.severity) }
+          }))
+        }
+      ]
+    };
+  }
+
+  private mapReadinessSeries(buckets: DashboardSupplyBucket[]): Array<{ value: number; name: string; itemStyle: { color: string } }> {
+    return buckets.map((bucket) => ({
+      value: bucket.count,
+      name: this.translate.instant(bucket.labelKey),
+      itemStyle: { color: bucket.color }
+    }));
+  }
+
+  private getDateRangeLabel(value: DashboardDateRange): string {
+    const key = value === 'today'
+      ? 'DASHBOARD.TABS.DAY'
+      : value === 'week'
+        ? 'DASHBOARD.TABS.WEEK'
+        : 'DASHBOARD.TABS.MONTH';
+    return this.translate.instant(key);
+  }
+
+  private resolveSeverityColor(severity: DashboardSeverity): string {
+    const colors: Record<DashboardSeverity, string> = {
+      critical: '#ef4444',
+      warning: '#f59e0b',
+      info: '#127c8c',
+      success: '#10b981',
+      neutral: '#64748b'
+    };
+
+    return colors[severity];
+  }
+
+  private syncSectionState(): void {
+    for (const section of this.dashboard?.sections ?? []) {
+      this.sectionOpenState[section.id] ??= true;
+    }
   }
 }
-

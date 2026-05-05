@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '@core/services/auth.service';
 import {
+  CouponDiscountType,
   FeaturedPlacement,
   FeaturedPlacementPayload,
   FeaturedPlacementUpdatePayload,
@@ -14,6 +15,9 @@ import {
   MarketingBanner,
   MarketingBannerPayload,
   MarketingBannerUpdatePayload,
+  MarketingCoupon,
+  MarketingCouponPayload,
+  MarketingCouponUpdatePayload,
   MarketingHomeSection,
   MarketingHomeSectionPayload,
   MarketingHomeSectionUpdatePayload
@@ -97,6 +101,38 @@ export class MarketingApiService {
     return this.http.delete<void>(`${this.apiUrl}/featured-products/${id}`, { headers: this.getHeaders() });
   }
 
+  getCoupons(): Observable<MarketingCoupon[]> {
+    return this.http.get<MarketingCoupon[]>(`${this.apiUrl}/coupons`, { headers: this.getHeaders() });
+  }
+
+  getCouponById(id: string): Observable<MarketingCoupon> {
+    return this.http.get<MarketingCoupon>(`${this.apiUrl}/coupons/${id}`, { headers: this.getHeaders() });
+  }
+
+  createCoupon(payload: MarketingCouponPayload): Observable<MarketingCoupon> {
+    return this.http.post<MarketingCoupon>(`${this.apiUrl}/coupons`, this.normalizeCouponPayload(payload), {
+      headers: this.getHeaders()
+    });
+  }
+
+  updateCoupon(id: string, payload: MarketingCouponUpdatePayload): Observable<MarketingCoupon> {
+    return this.http.put<MarketingCoupon>(`${this.apiUrl}/coupons/${id}`, this.normalizeCouponPayload(payload), {
+      headers: this.getHeaders()
+    });
+  }
+
+  activateCoupon(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/coupons/${id}/activate`, {}, { headers: this.getHeaders() });
+  }
+
+  deactivateCoupon(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/coupons/${id}/deactivate`, {}, { headers: this.getHeaders() });
+  }
+
+  deleteCoupon(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/coupons/${id}`, { headers: this.getHeaders() });
+  }
+
   getHomeSections(): Observable<MarketingHomeSection[]> {
     return this.http.get<MarketingHomeSection[]>(`${this.apiUrl}/home-sections`, { headers: this.getHeaders() });
   }
@@ -152,6 +188,19 @@ export class MarketingApiService {
     return this.http.patch<void>(`${this.apiUrl}/home-content-sections/${sectionType}/deactivate`, {}, {
       headers: this.getHeaders()
     });
+  }
+
+  private normalizeCouponPayload<T extends MarketingCouponPayload | MarketingCouponUpdatePayload>(payload: T): T {
+    return {
+      ...payload,
+      code: payload.code.trim().toUpperCase(),
+      title: payload.title.trim(),
+      discountType: this.normalizeCouponDiscountType(payload.discountType)
+    } as T;
+  }
+
+  private normalizeCouponDiscountType(discountType: CouponDiscountType | string): CouponDiscountType {
+    return discountType === 'Percentage' ? 'Percentage' : 'Fixed';
   }
 
   private getHeaders(): HttpHeaders {

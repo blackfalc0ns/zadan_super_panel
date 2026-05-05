@@ -2,11 +2,12 @@ import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IsActiveMatchOptions, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 
 @Component({
     selector: 'app-sidebar',
     standalone: true,
-    imports: [CommonModule, TranslateModule],
+    imports: [CommonModule, TranslateModule, HasPermissionDirective],
     templateUrl: './sidebar.component.html',
     styleUrl: './sidebar.component.scss'
 })

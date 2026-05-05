@@ -1,7 +1,8 @@
-import { Component, Inject, Renderer2 } from '@angular/core';
+import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { AdminSupportCaseRealtimeService } from './core/services/admin-support-case-realtime.service';
 
 @Component({
   selector: 'app-root',
@@ -10,14 +11,15 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'superadmin-panel';
   private readonly materialSymbolsDescriptor = '400 24px "Material Symbols Outlined"';
 
   constructor(
     private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private adminSupportCaseRealtime: AdminSupportCaseRealtimeService
   ) {
     // Hide Material Symbols text until font loads
     this.loadMaterialSymbolsFont();
@@ -37,6 +39,10 @@ export class AppComponent {
       this.setDocumentDirection(event.lang);
       localStorage.setItem('lang', event.lang);
     });
+  }
+
+  ngOnInit(): void {
+    this.adminSupportCaseRealtime.startMonitoring();
   }
 
   private async loadMaterialSymbolsFont(): Promise<void> {

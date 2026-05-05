@@ -308,7 +308,7 @@
               <a [routerLink]="['/finances/ledger']" [queryParams]="{ orderId: currentOrder.id }" class="flex-1 inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-2 text-[11px] font-extrabold text-slate-700 hover:bg-slate-50">
                 <span class="material-symbols-outlined text-[16px]">receipt_long</span> {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_LEDGER' | translate }}
               </a>
-              <a [routerLink]="['/finances/refunds']" [queryParams]="{ orderId: currentOrder.id }" class="flex-1 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-2 text-[11px] font-extrabold text-white hover:bg-zadna-primaryDark">
+              <a [routerLink]="['/disputes']" [queryParams]="{ type: 'return_request', search: currentOrder.id }" class="flex-1 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-2 text-[11px] font-extrabold text-white hover:bg-zadna-primaryDark">
                 <span class="material-symbols-outlined text-[16px]">undo</span> {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_REFUNDS' | translate }}
               </a>
             </div>
@@ -434,26 +434,33 @@
 
               <div class="flex flex-wrap gap-2 pt-1">
                 <button
-                  *ngIf="canResolveOperationalCase"
+                  *ngIf="canResolveOperationalCaseAction"
                   class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] font-extrabold text-emerald-700 hover:bg-emerald-100 transition-colors"
                   type="button"
                   (click)="resolveOperationalCase()">
                   {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.RESOLVE' | translate }}
                 </button>
                 <button
-                  *ngIf="canCloseOperationalCase"
+                  *ngIf="canCloseOperationalCaseAction"
                   class="rounded-xl border border-zadna-primary/20 bg-zadna-primary/10 px-3 py-2 text-[11px] font-extrabold text-zadna-primary hover:bg-zadna-primary/15 transition-colors"
                   type="button"
                   (click)="closeOperationalCase()">
                   {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.CLOSE' | translate }}
                 </button>
                 <button
-                  *ngIf="canReopenOperationalCase"
+                  *ngIf="canReopenOperationalCaseAction"
                   class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-extrabold text-amber-700 hover:bg-amber-100 transition-colors"
                   type="button"
                   (click)="reopenOperationalCase()">
                   {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.REOPEN' | translate }}
                 </button>
+                <a
+                  *ngIf="canViewDisputesCenter"
+                  [routerLink]="['/disputes']"
+                  [queryParams]="supportCenterQueryParams"
+                  class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-extrabold text-slate-700 hover:bg-slate-50 transition-colors">
+                  {{ 'SIDEBAR.DISPUTES' | translate }}
+                </a>
               </div>
             </div>
           </div>
@@ -464,13 +471,25 @@
           <div class="flex items-center justify-between mb-5">
             <app-section-header [compact]="true" tone="danger" icon="report" title="ORDERS.DETAIL.SUPPORT_DISPUTES"></app-section-header>
           </div>
-          <div *ngIf="canOpenIssueTools; else activeCaseNotice" class="flex gap-2">
-            <button class="flex-1 py-2.5 bg-white rounded-xl text-[11px] font-extrabold border border-red-100 text-slate-700 hover:shadow-md transition-shadow" type="button" (click)="openIssueFlagModal()">{{ 'ORDERS.DETAIL.FLAG_ISSUE' | translate }}</button>
-            <button class="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-[11px] font-extrabold hover:bg-red-700 transition-colors" type="button" (click)="openDisputeModal()">{{ 'ORDERS.DETAIL.ESCALATE' | translate }}</button>
+          <div *ngIf="canOpenIssueTools && (canOpenIssueCase || canOpenDisputeCase || canViewDisputesCenter); else activeCaseNotice" class="flex gap-2">
+            <button *ngIf="canOpenIssueCase" class="flex-1 py-2.5 bg-white rounded-xl text-[11px] font-extrabold border border-red-100 text-slate-700 hover:shadow-md transition-shadow" type="button" (click)="openIssueFlagModal()">{{ 'ORDERS.DETAIL.FLAG_ISSUE' | translate }}</button>
+            <button *ngIf="canOpenDisputeCase" class="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-[11px] font-extrabold hover:bg-red-700 transition-colors" type="button" (click)="openDisputeModal()">{{ 'ORDERS.DETAIL.ESCALATE' | translate }}</button>
+            <a *ngIf="canViewDisputesCenter" [routerLink]="['/disputes']" [queryParams]="supportCenterQueryParams" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-red-100 bg-white px-3 py-2.5 text-[11px] font-extrabold text-slate-700 hover:shadow-md transition-shadow">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+              {{ 'SIDEBAR.DISPUTES' | translate }}
+            </a>
           </div>
           <ng-template #activeCaseNotice>
-            <div class="rounded-xl border border-red-100 bg-white px-4 py-3 text-[11px] font-bold text-slate-600">
-              {{ 'ORDERS.DETAIL.ACTIVE_CASE_NOTICE' | translate }}
+            <div class="rounded-xl border border-red-100 bg-white px-4 py-3 text-[11px] font-bold text-slate-600 space-y-3">
+              <p>{{ 'ORDERS.DETAIL.ACTIVE_CASE_NOTICE' | translate }}</p>
+              <a
+                *ngIf="canViewDisputesCenter"
+                [routerLink]="['/disputes']"
+                [queryParams]="supportCenterQueryParams"
+                class="inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-[11px] font-extrabold text-red-700 hover:bg-red-100">
+                <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+                {{ 'SIDEBAR.DISPUTES' | translate }}
+              </a>
             </div>
           </ng-template>
         </section>

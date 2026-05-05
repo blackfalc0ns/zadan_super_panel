@@ -71,9 +71,18 @@ export interface SupportCaseRow {
   createdAt: string;
   sla: string;
   note: string;
+  paymentMethod: 'cash' | 'card' | 'bank' | 'wallet' | 'apple_pay' | 'mada' | string;
   paymentMask: string;
   customerSummary: string;
   merchantSummary: string;
+  compensationType?: 'cash_refund' | 'coupon_compensation' | string | null;
+  settlementStatus?: 'pending_review' | 'cash_refunded' | 'coupon_issued' | 'coupon_redeemed' | 'rejected' | 'approved' | string | null;
+  vendorRecoveryStatus?: 'pending' | 'partial' | 'recovered' | string | null;
+  vendorRecoveredAmount?: number;
+  vendorOutstandingAmount?: number;
+  couponCode?: string | null;
+  couponExpiresAtUtc?: string | null;
+  couponRedeemed?: boolean;
   evidence: EvidenceItem[];
   timeline: TimelineItem[];
   workflowContext?: DisputeWorkflowContext;
@@ -91,7 +100,7 @@ export type DisputeRow = SupportCaseRow;
 export interface RefundDecisionForm {
   refundType: 'full' | 'partial';
   refundAmount: string;
-  refundMethod: 'same_method' | 'wallet' | 'manual';
+  refundMethod: 'same_method' | 'coupon';
   approvalReason: string;
   costBearer: 'vendor' | 'platform' | 'shared';
   internalNotes: string;

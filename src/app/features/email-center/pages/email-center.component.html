@@ -146,6 +146,7 @@
             <button
               type="button"
               class="rounded-full bg-zadna-primary px-5 py-3 text-sm font-black text-white shadow-lg shadow-zadna-primary/20"
+              [disabled]="!canEdit"
               (click)="saveSelectedRule()">
               {{ 'EMAIL_CENTER.ACTIONS.SAVE' | translate }}
             </button>
@@ -154,12 +155,12 @@
           <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.ENABLED' | translate }}</span>
-              <app-searchable-select [(ngModel)]="selectedRule.enabled" [searchable]="false" [options]="enabledOptions" [placeholder]="'EMAIL_CENTER.WORKFLOWS.ENABLED' | translate"></app-searchable-select>
+              <app-searchable-select [(ngModel)]="selectedRule.enabled" [searchable]="false" [isDisabled]="!canEdit" [options]="enabledOptions" [placeholder]="'EMAIL_CENTER.WORKFLOWS.ENABLED' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.SENDER_PROFILE' | translate }}</span>
-              <app-searchable-select [(ngModel)]="selectedRule.senderProfileId" [searchable]="false" [options]="senderProfileOptions" [placeholder]="'EMAIL_CENTER.SENDER_PROFILE' | translate"></app-searchable-select>
+              <app-searchable-select [(ngModel)]="selectedRule.senderProfileId" [searchable]="false" [isDisabled]="!canEdit" [options]="senderProfileOptions" [placeholder]="'EMAIL_CENTER.SENDER_PROFILE' | translate"></app-searchable-select>
             </label>
 
             <label class="field-card">
@@ -174,32 +175,32 @@
 
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.OWNER' | translate }}</span>
-              <input [(ngModel)]="selectedRule.route.owner" type="text" />
+              <input [(ngModel)]="selectedRule.route.owner" type="text" [disabled]="!canEdit" />
             </label>
 
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.ESCALATION' | translate }}</span>
-              <input [(ngModel)]="selectedRule.route.escalation" type="text" />
+              <input [(ngModel)]="selectedRule.route.escalation" type="text" [disabled]="!canEdit" />
             </label>
 
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.ENTITY_ID' | translate }}</span>
-              <input [(ngModel)]="selectedRule.entityScope.entityId" type="text" dir="ltr" />
+              <input [(ngModel)]="selectedRule.entityScope.entityId" type="text" dir="ltr" [disabled]="!canEdit" />
             </label>
 
             <label class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH_SCOPE' | translate }}</span>
-              <app-searchable-select [(ngModel)]="selectedRule.branchScopeMode" [searchable]="false" (ngModelChange)="onBranchScopeModeChange($event)" [options]="branchScopeOptions" [placeholder]="'EMAIL_CENTER.BRANCH_SCOPE' | translate"></app-searchable-select>
+              <app-searchable-select [(ngModel)]="selectedRule.branchScopeMode" [searchable]="false" [isDisabled]="!canEdit" (ngModelChange)="onBranchScopeModeChange($event)" [options]="branchScopeOptions" [placeholder]="'EMAIL_CENTER.BRANCH_SCOPE' | translate"></app-searchable-select>
             </label>
 
             <label *ngIf="selectedRule.audienceType === 'vendor_network'" class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.VENDOR' | translate }}</span>
-              <app-searchable-select [(ngModel)]="selectedRule.entityScope.vendorId" (ngModelChange)="onVendorChange($event)" [options]="mappedVendorOptions" [placeholder]="'EMAIL_CENTER.FILTERS.ALL_VENDORS' | translate"></app-searchable-select>
+              <app-searchable-select [(ngModel)]="selectedRule.entityScope.vendorId" [isDisabled]="!canEdit" (ngModelChange)="onVendorChange($event)" [options]="mappedVendorOptions" [placeholder]="'EMAIL_CENTER.FILTERS.ALL_VENDORS' | translate"></app-searchable-select>
             </label>
 
             <label *ngIf="selectedRule.audienceType === 'vendor_network' && selectedRule.branchScopeMode === 'specific_branch'" class="field-card">
               <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH' | translate }}</span>
-              <app-searchable-select [(ngModel)]="selectedRule.entityScope.branchId" [options]="mappedBranchOptions" [placeholder]="'EMAIL_CENTER.FILTERS.ALL_BRANCHES' | translate"></app-searchable-select>
+              <app-searchable-select [(ngModel)]="selectedRule.entityScope.branchId" [isDisabled]="!canEdit" [options]="mappedBranchOptions" [placeholder]="'EMAIL_CENTER.FILTERS.ALL_BRANCHES' | translate"></app-searchable-select>
             </label>
           </div>
 
@@ -215,11 +216,12 @@
                     <p class="text-sm font-black text-slate-800">{{ persona.labelKey | translate }}</p>
                     <p class="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ getPanelLabelKey(selectedRule.panelScope) | translate }}</p>
                   </div>
-                  <input
-                    type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
-                    [checked]="hasPersonaTarget(persona.value)"
-                    (change)="togglePersonaTarget(persona.value, $any($event.target).checked)" />
+                      <input
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
+                        [checked]="hasPersonaTarget(persona.value)"
+                        [disabled]="!canEdit"
+                        (change)="togglePersonaTarget(persona.value, $any($event.target).checked)" />
                 </label>
               </div>
             </div>
@@ -245,6 +247,7 @@
                         type="checkbox"
                         class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
                         [checked]="hasRecipientTarget(channel.value, option.id)"
+                        [disabled]="!canEdit"
                         (change)="toggleRecipientTarget(channel.value, option.id, $any($event.target).checked)" />
                     </label>
                   </div>
@@ -262,15 +265,15 @@
               <div class="mt-4 grid grid-cols-1 gap-4">
                 <label class="field-card">
                   <span>{{ 'EMAIL_CENTER.FIELDS.TO' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.staticTo" rows="2" dir="ltr"></textarea>
+                  <textarea [(ngModel)]="recipientEditor.staticTo" rows="2" dir="ltr" [disabled]="!canEdit"></textarea>
                 </label>
                 <label class="field-card">
                   <span>{{ 'EMAIL_CENTER.FIELDS.CC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.staticCc" rows="2" dir="ltr"></textarea>
+                  <textarea [(ngModel)]="recipientEditor.staticCc" rows="2" dir="ltr" [disabled]="!canEdit"></textarea>
                 </label>
                 <label class="field-card">
                   <span>{{ 'EMAIL_CENTER.FIELDS.BCC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.staticBcc" rows="2" dir="ltr"></textarea>
+                  <textarea [(ngModel)]="recipientEditor.staticBcc" rows="2" dir="ltr" [disabled]="!canEdit"></textarea>
                 </label>
               </div>
             </div>
@@ -283,15 +286,15 @@
               <div class="mt-4 grid grid-cols-1 gap-4">
                 <label class="field-card">
                   <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_TO' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.fallbackTo" rows="2" dir="ltr"></textarea>
+                  <textarea [(ngModel)]="recipientEditor.fallbackTo" rows="2" dir="ltr" [disabled]="!canEdit"></textarea>
                 </label>
                 <label class="field-card">
                   <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_CC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.fallbackCc" rows="2" dir="ltr"></textarea>
+                  <textarea [(ngModel)]="recipientEditor.fallbackCc" rows="2" dir="ltr" [disabled]="!canEdit"></textarea>
                 </label>
                 <label class="field-card">
                   <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_BCC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.fallbackBcc" rows="2" dir="ltr"></textarea>
+                  <textarea [(ngModel)]="recipientEditor.fallbackBcc" rows="2" dir="ltr" [disabled]="!canEdit"></textarea>
                 </label>
               </div>
             </div>

@@ -47,19 +47,19 @@ export function formatDateTime(value?: string | null): string {
 
 export function formatDateRange(startsAtUtc?: string | null, endsAtUtc?: string | null): string {
   if (!startsAtUtc && !endsAtUtc) {
-    return 'Always active';
+    return 'نشط دائمًا';
   }
 
   if (startsAtUtc && endsAtUtc) {
-    return `${formatDateTime(startsAtUtc)} -> ${formatDateTime(endsAtUtc)}`;
+    return `${formatDateTime(startsAtUtc)} - ${formatDateTime(endsAtUtc)}`;
   }
 
-  return startsAtUtc ? `From ${formatDateTime(startsAtUtc)}` : `Until ${formatDateTime(endsAtUtc)}`;
+  return startsAtUtc ? `من ${formatDateTime(startsAtUtc)}` : `حتى ${formatDateTime(endsAtUtc)}`;
 }
 
 export function describeApiError(error: unknown): string {
   if (typeof error !== 'object' || error === null) {
-    return 'Something went wrong. Please try again.';
+    return 'حدث خطأ ما. حاول مرة أخرى.';
   }
 
   const candidate = error as {
@@ -73,7 +73,7 @@ export function describeApiError(error: unknown): string {
   };
 
   if (candidate.status === 401 || candidate.status === 403) {
-    return 'Your admin session is no longer authorized for this action.';
+    return 'جلسة الأدمن الحالية غير مخولة لتنفيذ هذا الإجراء.';
   }
 
   const validation = candidate.error?.errors;
@@ -85,7 +85,7 @@ export function describeApiError(error: unknown): string {
     }
   }
 
-  return candidate.error?.detail ?? candidate.error?.title ?? candidate.message ?? 'Something went wrong. Please try again.';
+  return candidate.error?.detail ?? candidate.error?.title ?? candidate.message ?? 'حدث خطأ ما. حاول مرة أخرى.';
 }
 
 export function humanizeSectionType(sectionType: string): string {

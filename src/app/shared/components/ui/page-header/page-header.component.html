@@ -1,41 +1,36 @@
-<header class="bg-white/80 backdrop-blur-xl border-b border-white shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] px-4 md:px-8 py-4 sm:py-5 flex flex-col lg:flex-row items-center gap-4 transition-all relative z-10 w-full overflow-visible">
-    <!-- Subtle Background Elements -->
-    <div class="absolute inset-0 bg-gradient-to-r from-slate-50/50 via-transparent to-slate-50/50 pointer-events-none"></div>
-
+<header class="bg-white border-b border-slate-200 px-6 lg:px-8 py-4 flex flex-col lg:flex-row items-center gap-5 transition-all relative z-10 w-full min-h-[72px]">
     <!-- Title & Breadcrumbs -->
     <div class="flex items-center gap-3 relative z-10 w-full lg:w-auto shrink-0">
         <!-- Back Button -->
         <button *ngIf="showBack" type="button" 
                 [routerLink]="backUrl" 
                 (click)="onBack()"
-                class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-[1.25rem] bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-lg hover:shadow-zadna-primary/5 transition-all cursor-pointer active:scale-95 group"
+                class="w-10 h-10 shrink-0 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors focus:ring-2 focus:ring-slate-200 focus:outline-none"
                 title="Go Back">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5 rtl:rotate-180 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
+            <span class="material-symbols-outlined text-[20px] rtl:rotate-180">arrow_back</span>
         </button>
 
         <div class="min-w-0">
-            <nav *ngIf="breadcrumbs.length" class="flex justify-start items-center gap-2 text-[10px] sm:text-[11px] font-bold text-zadna-primary/80 uppercase tracking-widest mb-1.5">
+            <nav *ngIf="breadcrumbs.length" class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 mb-1">
                 <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
-                    <a *ngIf="breadcrumb.url && !last" [routerLink]="breadcrumb.url" class="transition-colors hover:text-zadna-primary">
+                    <a *ngIf="breadcrumb.url && !last" [routerLink]="breadcrumb.url" class="hover:text-slate-900 transition-colors">
                         {{ breadcrumb.label | translate }}
                     </a>
-                    <span *ngIf="!breadcrumb.url || last" [class.text-zadna-primary]="last">
+                    <span *ngIf="!breadcrumb.url || last" [class.text-slate-900]="last">
                         {{ breadcrumb.label | translate }}
                     </span>
-                    <span *ngIf="!last" class="w-1 h-1 rounded-full bg-zadna-primary/20"></span>
+                    <span *ngIf="!last" class="material-symbols-outlined text-[14px] text-slate-300 opacity-70 rtl:rotate-180">chevron_right</span>
                 </ng-container>
             </nav>
 
             <div class="flex items-center gap-2">
                 <ng-content select="[title-prefix]"></ng-content>
-                <h1 *ngIf="title" class="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none whitespace-nowrap">
+                <h1 *ngIf="title" class="text-xl font-black text-slate-900 tracking-tight leading-none">
                     {{ title | translate }}
                 </h1>
                 <ng-content select="[title-extra]"></ng-content>
             </div>
-            <p *ngIf="subtitle" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ subtitle | translate }}</p>
+            <p *ngIf="subtitle" class="text-xs font-medium text-slate-500 mt-1">{{ subtitle | translate }}</p>
         </div>
     </div>
 

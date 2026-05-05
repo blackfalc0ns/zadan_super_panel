@@ -1,4 +1,4 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { FinancesShellComponent } from './pages/shell/finances-shell/finances-shell.component';
 
 export const FINANCES_ROUTES: Routes = [
@@ -38,6 +38,18 @@ export const FINANCES_ROUTES: Routes = [
       {
         path: 'audit',
         loadComponent: () => import('./pages/audit-log/audit-log.component').then(m => m.AuditLogComponent)
+      },
+      {
+        path: 'wallets',
+        loadComponent: () => import('./pages/wallets-list/wallets-list.component').then(m => m.WalletsListComponent)
+      },
+      {
+        path: 'wallets/:id',
+        loadComponent: () => import('./pages/wallet-details/wallet-details.component').then(m => m.WalletDetailsComponent)
+      },
+      {
+        path: 'withdrawals',
+        loadComponent: () => import('./pages/withdrawals-queue/withdrawals-queue.component').then(m => m.WithdrawalsQueueComponent)
       }
     ]
   }

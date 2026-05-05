@@ -1,255 +1,193 @@
-<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
-  <app-page-header
-    [title]="'ADMIN_USERS.TITLE'"
-    [subtitle]="'ADMIN_USERS.DESC'"
-    [showToolbar]="true"
-    [breadcrumbs]="[
-      { label: 'SIDEBAR.HOME', url: '/dashboard' },
-      { label: 'SIDEBAR.ADMIN_USERS' }
-    ]">
-    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">hub</span>
+<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+    <app-page-header
+        [title]="'ADMIN_USERS.TITLE'"
+        [subtitle]="'ADMIN_USERS.DESC'"
+        [showToolbar]="true"
+        [breadcrumbs]="[
+            { label: 'SIDEBAR.SYSTEM' },
+            { label: 'ADMIN_USERS.TITLE' }
+        ]">
+        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">admin_panel_settings</span>
 
-    <div actions class="flex items-center gap-3 animate-in slide-in-from-left-10 duration-700">
-      <button
-        type="button"
-        class="px-5 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
-        (click)="openEmailCenter()">
-        <span class="material-symbols-outlined text-[20px]">mail</span>
-        {{ 'ADMIN_USERS.OPEN_EMAIL_CENTER' | translate }}
-      </button>
-
-      <button
-        type="button"
-        class="px-5 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all"
-        (click)="createIdentity()">
-        <span class="material-symbols-outlined text-[20px]">person_add</span>
-        {{ 'ADMIN_USERS.ADD_IDENTITY' | translate }}
-      </button>
-    </div>
-  </app-page-header>
-
-  <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
-    <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
-
-    <section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-5 shadow-sm space-y-5">
-      <div class="flex flex-wrap items-center gap-3">
-        <button
-          *ngFor="let tab of audienceTabs"
-          type="button"
-          class="rounded-full px-4 py-2.5 text-xs font-black transition-all"
-          [ngClass]="selectedAudience === tab.value
-            ? 'bg-zadna-primary text-white shadow-lg shadow-zadna-primary/20'
-            : 'bg-slate-100 text-slate-500 hover:bg-slate-200/80'"
-          (click)="setAudience(tab.value)">
-          {{ tab.labelKey | translate }}
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 xl:grid-cols-[1.25fr_2fr] gap-4">
-        <div class="group relative">
-          <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none">
-            <span class="material-symbols-outlined text-[22px] text-zadna-primary">search</span>
-          </div>
-          <input
-            type="text"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="applyFilters()"
-            [placeholder]="'ADMIN_USERS.SEARCH_PLACEHOLDER' | translate"
-            class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pr-14 pl-6" />
-        </div>
-
-        <div class="bg-slate-50/80 border border-slate-200/70 rounded-[1.5rem] px-4 py-4 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
-          <label class="filter-card">
-            <span>{{ 'ADMIN_USERS.FILTERS.PANEL' | translate }}</span>
-            <app-searchable-select [(ngModel)]="panelFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="panelOptions" [placeholder]="'ADMIN_USERS.FILTERS.PANEL' | translate"></app-searchable-select>
-          </label>
-
-          <label class="filter-card">
-            <span>{{ 'ADMIN_USERS.FILTERS.PERSONA' | translate }}</span>
-            <app-searchable-select [(ngModel)]="personaFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="personaOptions" [placeholder]="'ADMIN_USERS.FILTERS.PERSONA' | translate"></app-searchable-select>
-          </label>
-
-          <label class="filter-card">
-            <span>{{ 'ADMIN_USERS.FILTERS.STATUS' | translate }}</span>
-            <app-searchable-select [(ngModel)]="statusFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="statusOptions" [placeholder]="'ADMIN_USERS.FILTERS.STATUS' | translate"></app-searchable-select>
-          </label>
-
-          <label class="filter-card">
-            <span>{{ 'ADMIN_USERS.FILTERS.ACCESS_LEVEL' | translate }}</span>
-            <app-searchable-select [(ngModel)]="accessLevelFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="accessLevelOptions" [placeholder]="'ADMIN_USERS.FILTERS.ACCESS_LEVEL' | translate"></app-searchable-select>
-          </label>
-
-          <label class="filter-card">
-            <span>{{ 'ADMIN_USERS.FILTERS.ROLE' | translate }}</span>
-            <app-searchable-select [(ngModel)]="roleFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="mappedRoleFilterOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
-          </label>
-
-          <label class="filter-card">
-            <span>{{ 'ADMIN_USERS.FILTERS.VENDOR' | translate }}</span>
-            <app-searchable-select [(ngModel)]="vendorFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="mappedVendorFilterOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
-          </label>
-
-          <label class="filter-card">
-            <span>{{ 'ADMIN_USERS.FILTERS.BRANCH' | translate }}</span>
-            <app-searchable-select [(ngModel)]="branchFilter" [searchable]="false" (ngModelChange)="applyFilters()" [options]="mappedBranchFilterOptions" [placeholder]="'ADMIN_USERS.FILTERS.ALL' | translate"></app-searchable-select>
-          </label>
-
-          <div class="flex items-end gap-3">
-            <div class="h-11 px-4 rounded-full bg-white text-slate-500 flex items-center gap-2 text-xs font-black whitespace-nowrap border border-slate-200">
-              <span class="material-symbols-outlined text-[18px] text-zadna-primary">filter_list</span>
-              <span>{{ activeFilterCount }}</span>
-              <span>{{ 'ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate }}</span>
-            </div>
-
+        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
             <button
-              type="button"
-              class="h-11 px-5 rounded-full border border-slate-200 bg-white text-xs font-black text-slate-500 hover:text-zadna-primary hover:border-zadna-primary/20 transition-all"
-              (click)="clearFilters()">
-              {{ 'ADMIN_USERS.FILTERS.RESET' | translate }}
+                type="button"
+                (click)="openRolesManagement()"
+                class="px-5 py-3 bg-white text-slate-600 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-sm hover:text-zadna-primary hover:border-zadna-primary/20 hover:bg-slate-50 transition-all">
+                <span class="material-symbols-outlined text-[20px]">shield</span>
+                {{ 'ADMIN_USERS.OPEN_ROLES_MANAGEMENT' | translate }}
             </button>
-          </div>
+
+            <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
+                <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
+                {{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}
+            </button>
         </div>
-      </div>
-    </section>
+    </app-page-header>
 
-    <app-data-table
-      [data]="paginatedUsers"
-      [columns]="tableColumns"
-      [selectable]="true"
-      [clickableRows]="true"
-      [emptyStateTitle]="'ADMIN_USERS.EMPTY_TITLE'"
-      [emptyStateMessage]="'ADMIN_USERS.EMPTY_MESSAGE'"
-      [containerClass]="'admin-users-table extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
-      (rowClick)="openUser($event)">
+    <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
+        
+        <!-- 1. KPI Summary Cards -->
+        <app-kpi-cards 
+            [cards]="kpiCards" 
+            (cardClick)="onKPICardClick($event)">
+        </app-kpi-cards>
 
-      <ng-template #customColumn let-user let-column="column">
-        <ng-container *ngIf="column.key === 'identity'">
-          <div class="flex items-center gap-3 text-start">
-            <div
-              class="w-11 h-11 rounded-full text-white flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm"
-              [style.background]="user.avatarHue">
-              {{ getInitials(user.fullName || 'NA') }}
+        <section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-5 shadow-sm">
+            <div class="grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-5 items-stretch">
+                <div class="rounded-[1.7rem] border border-zadna-primary/10 bg-gradient-to-br from-zadna-primary/[0.08] via-white to-slate-50 p-5">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">
+                                {{ 'ADMIN_USERS.ACCESS_HUB.BADGE' | translate }}
+                            </p>
+                            <h3 class="mt-2 text-xl font-black text-slate-900">
+                                {{ 'ADMIN_USERS.ACCESS_HUB.TITLE' | translate }}
+                            </h3>
+                            <p class="mt-2 max-w-2xl text-sm font-bold leading-6 text-slate-500">
+                                {{ 'ADMIN_USERS.ACCESS_HUB.DESC' | translate }}
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            (click)="openRolesManagement()"
+                            class="h-11 px-5 rounded-2xl bg-zadna-primary text-white text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all">
+                            <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+                            {{ 'ADMIN_USERS.ACCESS_HUB.OPEN' | translate }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
+                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.ROLES' | translate }}</p>
+                        <p class="mt-2 text-2xl font-black text-slate-900">{{ totalRoles }}</p>
+                    </div>
+
+                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
+                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.PERMISSIONS' | translate }}</p>
+                        <p class="mt-2 text-2xl font-black text-slate-900">{{ permissionsCatalogCount }}</p>
+                    </div>
+
+                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
+                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.SYSTEM_ROLES' | translate }}</p>
+                        <p class="mt-2 text-2xl font-black text-emerald-600">{{ systemRolesCount }}</p>
+                    </div>
+
+                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
+                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.CUSTOM_ROLES' | translate }}</p>
+                        <p class="mt-2 text-2xl font-black text-amber-600">{{ customRolesCount }}</p>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="min-w-0 flex flex-1 flex-col items-start">
-              <span class="truncate text-[13px] font-black text-slate-900 leading-snug">
-                {{ user.fullName || ('ADMIN_USERS.DETAIL.NEW_USER' | translate) }}
-              </span>
-              <span class="mt-0.5 inline-block max-w-full truncate text-[10px] font-bold text-slate-400/80" dir="ltr">
-                {{ user.email || ('ADMIN_USERS.DETAIL.EMAIL_PENDING' | translate) }}
-              </span>
+        <!-- 2. Search & Filter Section -->
+        <div class="flex flex-col gap-3">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
+                
+                <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
+                    <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+                    </div>
+                    <input type="text" 
+                           [(ngModel)]="searchTerm" 
+                           (input)="onSearch()"
+                           [placeholder]="'ADMIN_USERS.SEARCH_PLACEHOLDER' | translate"
+                           class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pl-14 pr-6">
+                </div>
+
+                <div class="flex items-center gap-4 order-2 lg:order-2">
+                    <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+                        <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+                             (click)="toggleFilters()">
+                            <span class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500" 
+                                  [class.rotate-180]="isFiltersExpanded">filter_list</span>
+                            <div class="flex flex-col">
+                                <span class="text-[13px] font-black text-slate-800">{{ 'VENDORS.FILTER_VENDORS' | translate }}</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'VENDORS.ADJUST_CRITERIA' | translate }}</span>
+                            </div>
+                            <span class="material-symbols-outlined text-[18px] text-slate-300 ml-2 group-hover:translate-y-0.5 transition-transform"
+                                  [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="column.key === 'persona'">
-          <div class="flex flex-col text-start">
-            <span class="text-[12px] font-black text-slate-800">{{ getPersonaLabel(user) | translate }}</span>
-            <span class="mt-1 text-[10px] font-bold text-slate-400">{{ getPanelLabel(user) | translate }}</span>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="column.key === 'scope'">
-          <div class="flex flex-col text-start">
-            <span class="text-[12px] font-black text-slate-800">{{ getScopeSummary(user) }}</span>
-            <span class="mt-1 text-[10px] font-bold text-slate-400">{{ user.department || ('ADMIN_USERS.SCOPE.DIRECTORY' | translate) }}</span>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="column.key === 'role'">
-          <div class="flex flex-col text-start">
-            <span class="text-[12px] font-black text-slate-800">{{ getRolePresetName(user) | translate }}</span>
-            <div class="mt-1">
-              <app-status-pill
-                [label]="'ADMIN_USERS.ACCESS_LEVEL.' + user.accessLevel.toUpperCase()"
-                [variant]="getAccessLevelVariant(user.accessLevel)"
-                size="sm">
-              </app-status-pill>
-            </div>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="column.key === 'status'">
-          <div class="flex flex-col items-center gap-2">
-            <app-status-pill
-              [label]="'ADMIN_USERS.STATUS.' + user.status.toUpperCase()"
-              [variant]="getStatusVariant(user.status)"
-              size="sm">
-            </app-status-pill>
-            <span class="text-[10px] font-black text-slate-400">
-              {{ ('ADMIN_USERS.INVITE.' + user.inviteState.toUpperCase()) | translate }}
-            </span>
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="column.key === 'security'">
-          <div class="flex flex-col items-center gap-2">
-            <app-status-pill
-              [label]="getSecurityLabel(user)"
-              [variant]="getSecurityVariant(user)"
-              size="sm">
-            </app-status-pill>
-            <span class="text-[10px] font-black text-slate-500">
-              {{ getCustomPermissionCount(user) }}
-              {{ 'ADMIN_USERS.TABLE.CUSTOM_ACCESS' | translate }}
-            </span>
-          </div>
-        </ng-container>
-      </ng-template>
-
-      <ng-template #mobileCard let-user>
-        <div class="space-y-4">
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0 flex items-center gap-3">
-              <div
-                class="w-11 h-11 rounded-full text-white flex items-center justify-center text-xs font-black shrink-0"
-                [style.background]="user.avatarHue">
-                {{ getInitials(user.fullName || 'NA') }}
-              </div>
-              <div class="min-w-0 flex flex-col items-start">
-                <p class="truncate text-sm font-black text-slate-900">{{ user.fullName || ('ADMIN_USERS.DETAIL.NEW_USER' | translate) }}</p>
-                <p class="mt-0.5 inline-block max-w-full truncate text-[11px] font-bold text-slate-400" dir="ltr">
-                  {{ user.email || ('ADMIN_USERS.DETAIL.EMAIL_PENDING' | translate) }}
-                </p>
-              </div>
-            </div>
-
-            <app-status-pill
-              [label]="'ADMIN_USERS.STATUS.' + user.status.toUpperCase()"
-              [variant]="getStatusVariant(user.status)"
-              size="sm">
-            </app-status-pill>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3 text-[11px] font-bold">
-            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
-              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.PERSONA' | translate }}</p>
-              <p class="text-slate-800">{{ getPersonaLabel(user) | translate }}</p>
-            </div>
-            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
-              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.SCOPE' | translate }}</p>
-              <p class="text-slate-800">{{ getScopeSummary(user) }}</p>
-            </div>
-            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
-              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.ROLE' | translate }}</p>
-              <p class="text-slate-800">{{ getRolePresetName(user) | translate }}</p>
-            </div>
-            <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
-              <p class="text-slate-400 mb-1">{{ 'ADMIN_USERS.TABLE.SECURITY' | translate }}</p>
-              <p class="text-slate-800">{{ getSecurityLabel(user) | translate }}</p>
-            </div>
-          </div>
         </div>
-      </ng-template>
-    </app-data-table>
 
-    <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
-      <app-pagination
-        [currentPage]="page"
-        [pageSize]="pageSize"
-        [totalItems]="totalItems"
-        (pageChange)="changePage($event)">
-      </app-pagination>
+        <!-- 3. Data Table -->
+        <app-data-table
+            *ngIf="!isLoading && users.length > 0"
+            [data]="users"
+            [columns]="tableColumns"
+            [actions]="tableActions"
+            [selectable]="true"
+            [clickableRows]="true"
+            [containerClass]="'extraordinary-table-container'"
+            (rowClick)="onTableRowClick($event)"
+            (actionClick)="onTableAction($event)">
+            
+            <ng-template #customColumn let-user let-column="column">
+                
+                <ng-container *ngIf="column.key === 'identity'">
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-12 h-12 rounded-[1.2rem] flex items-center justify-center shrink-0 border border-zadna-primary/10"
+                             [style.background]="getAvatarGradient(user)">
+                            <span class="text-lg font-black text-white mix-blend-overlay">
+                                {{ getInitials(user) }}
+                            </span>
+                        </div>
+                        <div class="flex flex-col text-start">
+                            <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug">{{ user.fullName }}</span>
+                            <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">{{ user.email }}</span>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="column.key === 'role'">
+                    <div class="flex flex-col text-start">
+                        <span class="text-[13px] font-bold text-slate-700 tracking-tight">{{ getRoleNameKey(user) | translate }}</span>
+                        <span class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">{{ user.department }} • {{ user.team }}</span>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="column.key === 'scope'">
+                    <div class="flex flex-col text-start items-center">
+                        <span class="text-[11px] font-black text-slate-700">{{ getAudienceLabelKey(user) | translate }}</span>
+                        <span class="text-[9px] font-bold text-slate-400 tracking-widest mt-0.5">{{ getPanelLabelKey(user) | translate }}</span>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="column.key === 'status'">
+                    <div class="flex justify-center">
+                        <app-status-pill
+                            [label]="user.status"
+                            [variant]="getStatusVariant(user.status)"
+                            size="sm">
+                        </app-status-pill>
+                    </div>
+                </ng-container>
+            </ng-template>
+        </app-data-table>
+
+        <!-- 4. Pagination -->
+        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+            <app-pagination
+                *ngIf="!isLoading && users.length > 0"
+                [currentPage]="pageNumber"
+                [pageSize]="pageSize"
+                [totalItems]="totalCount"
+                (pageChange)="changePage($event)">
+            </app-pagination>
+        </div>
+
+        <!-- 5. Loading state -->
+        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
+            <div class="relative w-24 h-24">
+                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
+                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

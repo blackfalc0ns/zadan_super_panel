@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../core/services/auth.service';
 import {
   SupportCaseRow,
   EscalationDecisionForm,
@@ -40,9 +41,18 @@ interface AdminOrderSupportCaseResponse {
   createdAt: string;
   sla: string;
   note: string;
+  paymentMethod: SupportCaseRow['paymentMethod'];
   paymentMask: string;
   customerSummary: string;
   merchantSummary: string;
+  compensationType?: SupportCaseRow['compensationType'];
+  settlementStatus?: SupportCaseRow['settlementStatus'];
+  vendorRecoveryStatus?: SupportCaseRow['vendorRecoveryStatus'];
+  vendorRecoveredAmount?: number;
+  vendorOutstandingAmount?: number;
+  couponCode?: string | null;
+  couponExpiresAtUtc?: string | null;
+  couponRedeemed?: boolean;
   evidence: Array<{
     fileName: string;
     fileUrl: string;
@@ -83,7 +93,10 @@ export class DisputesService {
   private readonly apiUrl = `${environment.apiUrl}/admin/order-cases`;
   private readonly disputesCache = new Map<string, SupportCaseRow>();
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly authService: AuthService
+  ) {}
 
   getDisputes(
     page = 1,
@@ -94,8 +107,15 @@ export class DisputesService {
     queue?: string,
     type?: string,
     initiatorRole?: string,
-    vendorId?: string
+    vendorId?: string,
+    driverId?: string
   ): Observable<{ items: SupportCaseRow[]; totalCount: number }> {
+    const fallback = this.buildFallbackDisputesPage(page, pageSize, search);
+
+    if (this.shouldUseLocalReadFallback()) {
+      return of(fallback);
+    }
+
     let params = new HttpParams()
       .set('page', String(Math.max(1, page)))
       .set('pageSize', String(Math.max(1, pageSize)));
@@ -107,13 +127,15 @@ export class DisputesService {
     if (type) params = params.set('type', type);
     if (initiatorRole && initiatorRole !== 'all') params = params.set('initiatorRole', initiatorRole);
     if (vendorId) params = params.set('vendorId', vendorId);
+    if (driverId) params = params.set('driverId', driverId);
 
     return this.http.get<AdminOrderSupportCasesResponse>(this.apiUrl, { params }).pipe(
       map((response) => {
         const items = response.items.map((item) => this.mapDispute(item));
         this.replaceCache(items);
         return { items, totalCount: response.totalCount };
-      })
+      }),
+      catchError(() => of(fallback))
     );
   }
 
@@ -159,6 +181,15 @@ export class DisputesService {
 
   resolveCase(id: string): Observable<SupportCaseRow> {
     return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/resolve`, {}).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
+  reopenCase(id: string, note?: string): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/reopen`, {
+      note: note || undefined
+    }).pipe(
       map((response) => this.mapDispute(response)),
       tap((item) => this.upsertCache(item))
     );
@@ -282,9 +313,18 @@ export class DisputesService {
       createdAt: item.createdAt,
       sla: item.sla,
       note: item.note,
+      paymentMethod: item.paymentMethod || 'card',
       paymentMask: item.paymentMask,
       customerSummary: item.customerSummary,
       merchantSummary: item.merchantSummary,
+      compensationType: item.compensationType ?? null,
+      settlementStatus: item.settlementStatus ?? null,
+      vendorRecoveryStatus: item.vendorRecoveryStatus ?? null,
+      vendorRecoveredAmount: item.vendorRecoveredAmount ?? 0,
+      vendorOutstandingAmount: item.vendorOutstandingAmount ?? 0,
+      couponCode: item.couponCode ?? null,
+      couponExpiresAtUtc: item.couponExpiresAtUtc ?? null,
+      couponRedeemed: item.couponRedeemed ?? false,
       evidence: item.evidence ? item.evidence.map((evidenceItem) => this.mapEvidence(evidenceItem)) : [],
       timeline: item.timeline ? item.timeline.map((timelineItem) => ({ ...timelineItem })) : [],
       initiatorRole: item.initiatorRole || 'customer',
@@ -350,5 +390,39 @@ export class DisputesService {
 
   private normalizeId(value: string): string {
     return value.trim().toLowerCase();
+  }
+
+  private shouldUseLocalReadFallback(): boolean {
+    return environment.skipAuthForDevelopment && !this.authService.hasApiSession;
+  }
+
+  private buildFallbackDisputesPage(
+    page: number,
+    pageSize: number,
+    search?: string
+  ): { items: SupportCaseRow[]; totalCount: number } {
+    const normalizedSearch = search?.trim().toLowerCase() ?? '';
+    const source = this.getDisputesSnapshot();
+    const filtered = !normalizedSearch
+      ? source
+      : source.filter((item) =>
+          [
+            item.id,
+            item.orderId,
+            item.orderDisplayId,
+            item.customerName,
+            item.customerEmail,
+            item.merchantName,
+            item.reason
+          ]
+            .filter(Boolean)
+            .some((value) => value.toLowerCase().includes(normalizedSearch))
+        );
+
+    const startIndex = Math.max(0, (Math.max(1, page) - 1) * Math.max(1, pageSize));
+    return {
+      items: filtered.slice(startIndex, startIndex + Math.max(1, pageSize)),
+      totalCount: filtered.length
+    };
   }
 }

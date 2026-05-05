@@ -119,7 +119,7 @@
                 <span>{{ 'SIDEBAR.ORDERS' | translate }}</span>
             </button>
 
-            <button type="button" (click)="navigateTo('/disputes')" [ngClass]="navItemClasses('/disputes')">
+            <button *appHasPermission="'disputes.view'" type="button" (click)="navigateTo('/disputes')" [ngClass]="navItemClasses('/disputes')">
                 <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100">gavel</span>
                 <span>{{ 'SIDEBAR.DISPUTES' | translate }}</span>
             </button>
@@ -148,7 +148,7 @@
                 <span>{{ 'SIDEBAR.ADMIN_USERS' | translate }}</span>
             </button>
 
-            <button type="button" (click)="navigateTo('/email-center')" [ngClass]="navItemClasses('/email-center')">
+            <button *appHasPermission="'email_center.view'" type="button" (click)="navigateTo('/email-center')" [ngClass]="navItemClasses('/email-center')">
                 <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100">mail</span>
                 <span>{{ 'SIDEBAR.EMAIL_CENTER' | translate }}</span>
             </button>

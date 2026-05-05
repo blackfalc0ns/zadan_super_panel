@@ -1,5 +1,6 @@
 export type FeaturedPlacementType = 'VendorProduct' | 'MasterProduct';
 export type HomeSectionTheme = 'soft-blue' | 'fresh-orange' | 'bold-dark';
+export type CouponDiscountType = 'Fixed' | 'Percentage';
 
 export type HomeContentSectionType =
   | 'Banners'
@@ -131,4 +132,47 @@ export interface MarketingCategoryOption {
   nameEn: string;
   level: number;
   pathLabel: string;
+}
+
+export interface MarketingCouponVendor {
+  vendorId: string;
+  vendorNameAr: string;
+  vendorNameEn: string;
+}
+
+export interface MarketingCoupon {
+  id: string;
+  code: string;
+  title: string;
+  discountType: CouponDiscountType;
+  discountValue: number;
+  minOrderAmount?: number | null;
+  maxDiscountAmount?: number | null;
+  startsAtUtc?: string | null;
+  endsAtUtc?: string | null;
+  usageLimit?: number | null;
+  perUserLimit?: number | null;
+  isActive: boolean;
+  assignedVendorsCount: number;
+  applicableVendors: MarketingCouponVendor[];
+  createdAtUtc: string;
+  updatedAtUtc: string;
+}
+
+export interface MarketingCouponPayload {
+  code: string;
+  title: string;
+  discountType: CouponDiscountType;
+  discountValue: number;
+  minOrderAmount?: number | null;
+  maxDiscountAmount?: number | null;
+  startsAtUtc?: string | null;
+  endsAtUtc?: string | null;
+  usageLimit?: number | null;
+  perUserLimit?: number | null;
+  vendorIds?: string[] | null;
+}
+
+export interface MarketingCouponUpdatePayload extends MarketingCouponPayload {
+  isActive: boolean;
 }

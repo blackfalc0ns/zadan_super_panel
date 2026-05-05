@@ -1,377 +1,725 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { take } from 'rxjs';
+import { ZoneFinanceSettings } from '../../models/finance.models';
 import { FinanceService } from '../../services/finance.service';
-import { PricingRuleSet } from '../../models/finance.models';
-import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
-import { getFinanceLocale } from '../../utils/finance-i18n.utils';
+import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
+import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { ToastService } from '../../../../shared/services/toast.service';
+
+type NumericZoneField =
+  | 'baseDeliveryFee'
+  | 'includedKm'
+  | 'extraKmFee'
+  | 'minDeliveryFee'
+  | 'maxDeliveryFee'
+  | 'vatPercent'
+  | 'codFlatFee'
+  | 'codPercent';
 
 @Component({
   selector: 'app-platform-pricing',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, AppCardComponent, AppButtonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    AppCardComponent,
+    AppButtonComponent,
+    AppPageHeaderComponent
+  ],
   template: `
-    <div *ngIf="showConfirm"
-         class="fixed inset-0 z-[90] flex items-center justify-center"
-         (click)="showConfirm = false">
-      <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
-      <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6"
-           (click)="$event.stopPropagation()">
-        <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-4">
-          <span class="material-symbols-outlined text-amber-500 text-[24px]">warning</span>
+    <div *ngIf="showConfirm" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="closeConfirm()"></div>
+      <div class="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-xl" (click)="$event.stopPropagation()">
+        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-100 bg-amber-50">
+          <span class="material-symbols-outlined text-[24px] text-amber-500">warning</span>
         </div>
-        <h3 class="text-base font-black text-slate-800 text-center mb-2">{{ 'FINANCES.PRICING.CONFIRM_TITLE' | translate }}</h3>
-        <p class="text-xs font-medium text-slate-500 text-center mb-6">
-          {{ 'FINANCES.PRICING.CONFIRM_MESSAGE' | translate }}
+        <h3 class="mb-2 text-center text-lg font-black text-slate-900">تأكيد حفظ الإعدادات</h3>
+        <p class="mb-6 text-center text-[13px] font-medium leading-relaxed text-slate-500">
+          سيتم حفظ إعدادات التسعير وضريبة القيمة المضافة ورسوم الدفع عند الاستلام للمنطقة المحددة.
         </p>
-        <div class="grid grid-cols-2 gap-3">
-          <app-button variant="ghost" size="sm" customClass="!h-11 !rounded-xl !bg-slate-100 hover:!bg-slate-200" (btnClick)="showConfirm = false">
-            {{ 'FINANCES.COMMON.CANCEL' | translate }}
+        <div class="flex gap-3">
+          <app-button
+            variant="ghost"
+            size="md"
+            customClass="!flex-1 !rounded-xl !bg-slate-50 hover:!bg-slate-100"
+            [disabled]="isSaving"
+            (btnClick)="closeConfirm()">
+            إلغاء
           </app-button>
-          <app-button variant="primary" size="sm" customClass="!h-11 !rounded-xl" (btnClick)="savePricing()">
-            {{ 'FINANCES.PRICING.CONFIRM_UPDATE' | translate }}
+          <app-button
+            variant="primary"
+            size="md"
+            customClass="!flex-1 !rounded-xl shadow-md shadow-zadna-primary/20"
+            [isLoading]="isSaving"
+            [disabled]="!canSave"
+            (btnClick)="savePricing()">
+            تأكيد الحفظ
           </app-button>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col gap-5 animate-in fade-in duration-700">
+    <div class="flex flex-col gap-6">
+      <app-page-header
+        title="إعدادات التسعير والرسوم"
+        subtitle="إدارة رسوم التوصيل والضريبة ورسوم الدفع عند الاستلام لكل منطقة من البيانات الحقيقية في الباك إند.">
+        <div actions class="flex flex-wrap items-center gap-3">
+          <div class="relative w-64">
+            <select
+              *ngIf="zones.length"
+              [(ngModel)]="selectedZoneId"
+              (ngModelChange)="onZoneChange()"
+              class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
+              <option *ngFor="let zone of zones" [value]="zone.zoneId">
+                {{ displayZoneName(zone.zoneName) }} ({{ displayCityName(zone.city) }})
+              </option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
+              expand_more
+            </span>
+          </div>
 
-      <!-- Header -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3 px-4 py-2.5 bg-amber-50 border border-amber-100 rounded-2xl">
-          <span class="material-symbols-outlined text-amber-500 text-[18px]">warning</span>
-          <p class="text-[10px] font-black text-amber-700">{{ 'FINANCES.PRICING.WARNING' | translate }}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadData()">
-            {{ 'FINANCES.PRICING.DISCARD_CHANGES' | translate }}
+          <div *ngIf="isLoading" class="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2">
+            <div class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-zadna-primary"></div>
+            <span class="text-xs font-bold text-slate-500">جاري تحميل المناطق...</span>
+          </div>
+
+          <app-button
+            variant="outline"
+            size="sm"
+            customClass="!rounded-xl !bg-white hover:!bg-slate-50"
+            [disabled]="isLoading || isSaving"
+            (btnClick)="loadData()">
+            تحديث
           </app-button>
-          <app-button (btnClick)="confirmSave()"
-                  variant="primary"
-                  size="sm"
-                  customClass="!rounded-xl"
-                  [disabled]="!isDirty"
-                  >
-            <span class="material-symbols-outlined text-[14px]">save</span>
-            {{ 'FINANCES.PRICING.SAVE_RULES' | translate }}
+
+          <app-button
+            variant="outline"
+            size="sm"
+            customClass="!rounded-xl !bg-white hover:!bg-slate-50"
+            [disabled]="!isDirty || isSaving"
+            (btnClick)="resetChanges()">
+            تجاهل التغييرات
+          </app-button>
+
+          <app-button
+            variant="primary"
+            size="sm"
+            customClass="!rounded-xl shadow-sm"
+            [disabled]="!canSave"
+            [isLoading]="isSaving"
+            (btnClick)="confirmSave()">
+            <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">save</span>
+            حفظ الإعدادات
           </app-button>
         </div>
+      </app-page-header>
+
+      <div *ngIf="errorMessage" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+        {{ errorMessage }}
       </div>
 
-      <!-- Pricing Cards Grid -->
-      <div *ngIf="pricing" class="columns-1 md:columns-2 xl:columns-3 [column-gap:0.875rem]">
-
-        <!-- Vendor Commission Card -->
-        <app-card class="mb-3.5 block break-inside-avoid" variant="default" rounded="2xl" padding="none" customClass="border-slate-200/70 shadow-sm overflow-hidden">
-          <div class="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-zadna-primary/10 flex items-center justify-center">
-              <span class="material-symbols-outlined text-zadna-primary text-[17px]">percent</span>
-            </div>
-            <div>
-              <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.PRICING.VENDOR_COMMISSION.TITLE' | translate }}</h3>
-              <p class="text-[9px] font-bold text-slate-400">{{ 'FINANCES.PRICING.VENDOR_COMMISSION.SUBTITLE' | translate }}</p>
-            </div>
-          </div>
-          <div class="p-4 space-y-3.5">
-            <div class="grid grid-cols-3 gap-3">
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.VENDOR_COMMISSION.DEFAULT_PERCENT' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.vendorCommission.defaultPercent" (ngModelChange)="isDirty = true"
-                       min="0" max="100" step="0.5"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.VENDOR_COMMISSION.MIN_PERCENT' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.vendorCommission.minPercent" (ngModelChange)="isDirty = true"
-                       min="0" max="100" step="0.5"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.VENDOR_COMMISSION.MAX_PERCENT' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.vendorCommission.maxPercent" (ngModelChange)="isDirty = true"
-                       min="0" max="100" step="0.5"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 py-2 border-t border-slate-100">
-              <span class="text-xs font-bold text-slate-600 flex-1">{{ 'FINANCES.PRICING.VENDOR_COMMISSION.ALLOW_OVERRIDES' | translate }}</span>
-              <button (click)="pricing!.vendorCommission.overrideAllowed = !pricing!.vendorCommission.overrideAllowed; isDirty = true"
-                      class="relative w-10 h-5 rounded-full transition-all"
-                      [ngClass]="pricing.vendorCommission.overrideAllowed ? 'bg-zadna-primary' : 'bg-slate-200'">
-                <span class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all"
-                      [ngClass]="pricing.vendorCommission.overrideAllowed ? 'start-5' : 'start-0.5'"></span>
-              </button>
-            </div>
-          </div>
-        </app-card>
-
-        <!-- Driver Compensation Card -->
-        <app-card class="mb-3.5 block break-inside-avoid" variant="default" rounded="2xl" padding="none" customClass="border-slate-200/70 shadow-sm overflow-hidden">
-          <div class="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
-              <span class="material-symbols-outlined text-emerald-500 text-[17px]">local_shipping</span>
-            </div>
-            <div>
-              <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.PRICING.DRIVER_COMPENSATION.TITLE' | translate }}</h3>
-              <p class="text-[9px] font-bold text-slate-400">{{ 'FINANCES.PRICING.DRIVER_COMPENSATION.SUBTITLE' | translate }}</p>
-            </div>
-          </div>
-          <div class="p-4 space-y-3.5">
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DRIVER_COMPENSATION.BASE_PAYOUT' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.driverCompensation.basePayout" (ngModelChange)="isDirty = true"
-                       min="0" step="0.5"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DRIVER_COMPENSATION.DISTANCE_RATE' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.driverCompensation.distanceRatePerKm" (ngModelChange)="isDirty = true"
-                       min="0" step="0.25"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DRIVER_COMPENSATION.PEAK_BONUS' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.driverCompensation.peakBonus" (ngModelChange)="isDirty = true"
-                       min="0" step="1"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DRIVER_COMPENSATION.ZONE_BONUS' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.driverCompensation.zoneBonus" (ngModelChange)="isDirty = true"
-                       min="0" step="1"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 py-2 border-t border-slate-100">
-              <span class="text-xs font-bold text-slate-600 flex-1">{{ 'FINANCES.PRICING.DRIVER_COMPENSATION.ALLOW_OVERRIDES' | translate }}</span>
-              <button (click)="pricing!.driverCompensation.overrideAllowed = !pricing!.driverCompensation.overrideAllowed; isDirty = true"
-                      class="relative w-10 h-5 rounded-full transition-all"
-                      [ngClass]="pricing.driverCompensation.overrideAllowed ? 'bg-zadna-primary' : 'bg-slate-200'">
-                <span class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all"
-                      [ngClass]="pricing.driverCompensation.overrideAllowed ? 'start-5' : 'start-0.5'"></span>
-              </button>
-            </div>
-          </div>
-        </app-card>
-
-        <!-- Delivery Pricing Card -->
-        <app-card class="mb-3.5 block break-inside-avoid" variant="default" rounded="2xl" padding="none" customClass="border-slate-200/70 shadow-sm overflow-hidden">
-          <div class="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center">
-              <span class="material-symbols-outlined text-amber-500 text-[17px]">local_shipping</span>
-            </div>
-            <div>
-              <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.PRICING.DELIVERY.TITLE' | translate }}</h3>
-              <p class="text-[9px] font-bold text-slate-400">{{ 'FINANCES.PRICING.DELIVERY.SUBTITLE' | translate }}</p>
-            </div>
-          </div>
-          <div class="p-4 space-y-3.5">
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DELIVERY.BASE_FEE' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.deliveryPricing.baseFee" (ngModelChange)="isDirty = true" min="0"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DELIVERY.PER_KM' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.deliveryPricing.perKmRate" (ngModelChange)="isDirty = true" min="0" step="0.5"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-            </div>
-            <div>
-              <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">
-                {{ 'FINANCES.PRICING.DELIVERY.PEAK_MULTIPLIER' | translate }}:
-                <span class="text-zadna-primary">{{ pricing.deliveryPricing.peakMultiplier }}x</span>
-              </label>
-              <input type="range" [(ngModel)]="pricing.deliveryPricing.peakMultiplier" (ngModelChange)="isDirty = true"
-                     min="1" max="3" step="0.1"
-                     class="w-full accent-zadna-primary"/>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DELIVERY.PEAK_START' | translate }}</label>
-                <input type="time" [(ngModel)]="pricing.deliveryPricing.peakHoursStart" (ngModelChange)="isDirty = true"
-                       class="w-full h-10 px-3 text-xs font-bold bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.DELIVERY.PEAK_END' | translate }}</label>
-                <input type="time" [(ngModel)]="pricing.deliveryPricing.peakHoursEnd" (ngModelChange)="isDirty = true"
-                       class="w-full h-10 px-3 text-xs font-bold bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all"/>
-              </div>
-            </div>
-          </div>
-        </app-card>
-
-        <!-- Service Fee Card -->
-        <app-card class="mb-3.5 block break-inside-avoid" variant="default" rounded="2xl" padding="none" customClass="border-slate-200/70 shadow-sm overflow-hidden">
-          <div class="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
-              <span class="material-symbols-outlined text-blue-500 text-[17px]">receipt</span>
-            </div>
-            <div>
-              <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.PRICING.SERVICE_FEE.TITLE' | translate }}</h3>
-              <p class="text-[9px] font-bold text-slate-400">{{ 'FINANCES.PRICING.SERVICE_FEE.SUBTITLE' | translate }}</p>
-            </div>
-          </div>
-          <div class="p-4 space-y-3.5">
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.SERVICE_FEE.PERCENT' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.serviceFee.percent" (ngModelChange)="isDirty = true" min="0" max="100" step="0.5"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.SERVICE_FEE.CAP' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.serviceFee.capAmount" (ngModelChange)="isDirty = true" min="0"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-            </div>
-          </div>
-        </app-card>
-
-        <!-- COD Fee Card -->
-        <app-card class="mb-3.5 block break-inside-avoid" variant="default" rounded="2xl" padding="none" customClass="border-slate-200/70 shadow-sm overflow-hidden">
-          <div class="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
-              <span class="material-symbols-outlined text-indigo-500 text-[17px]">local_atm</span>
-            </div>
-            <div>
-              <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.PRICING.COD_FEE.TITLE' | translate }}</h3>
-              <p class="text-[9px] font-bold text-slate-400">{{ 'FINANCES.PRICING.COD_FEE.SUBTITLE' | translate }}</p>
-            </div>
-          </div>
-          <div class="p-4 space-y-3.5">
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.COD_FEE.PERCENT' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.codFee.percent" (ngModelChange)="isDirty = true" min="0" max="100" step="0.1"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-              <div>
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">{{ 'FINANCES.PRICING.COD_FEE.FLAT_FEE' | translate }}</label>
-                <input type="number" [(ngModel)]="pricing.codFee.flatFee" (ngModelChange)="isDirty = true" min="0"
-                       class="w-full h-10 px-3 text-sm font-black bg-slate-50 rounded-xl border border-slate-200 focus:border-zadna-primary outline-none transition-all text-center tabular-nums"/>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 py-2 border-t border-slate-100">
-              <span class="text-xs font-bold text-slate-600 flex-1">{{ 'FINANCES.PRICING.COD_FEE.USE_FLAT' | translate }}</span>
-              <button (click)="pricing!.codFee.useFlat = !pricing!.codFee.useFlat; isDirty = true"
-                      class="relative w-10 h-5 rounded-full transition-all"
-                      [ngClass]="pricing.codFee.useFlat ? 'bg-zadna-primary' : 'bg-slate-200'">
-                <span class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all"
-                      [ngClass]="pricing.codFee.useFlat ? 'start-5' : 'start-0.5'"></span>
-              </button>
-            </div>
-          </div>
-        </app-card>
-
-        <!-- VAT Card -->
-        <app-card class="mb-3.5 block break-inside-avoid" variant="default" rounded="2xl" padding="none" customClass="border-slate-200/70 shadow-sm overflow-hidden">
-          <div class="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center">
-              <span class="material-symbols-outlined text-purple-500 text-[17px]">account_balance</span>
-            </div>
-            <div>
-              <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.PRICING.VAT.TITLE' | translate }}</h3>
-              <p class="text-[9px] font-bold text-slate-400">{{ 'FINANCES.PRICING.VAT.SUBTITLE' | translate }}</p>
-            </div>
-          </div>
-          <div class="p-4 space-y-3.5">
-            <div>
-              <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">
-                {{ 'FINANCES.PRICING.VAT.RATE' | translate }}:
-                <span class="text-purple-600">{{ pricing.vat.percent }}%</span>
-              </label>
-              <input type="range" [(ngModel)]="pricing.vat.percent" (ngModelChange)="isDirty = true"
-                     min="0" max="25" step="1"
-                     class="w-full accent-purple-500"/>
-            </div>
-            <div class="space-y-2 border-t border-slate-100 pt-3">
-              <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 block">{{ 'FINANCES.PRICING.VAT.APPLY_TO' | translate }}</label>
-              <div *ngFor="let vr of vatRules" class="flex items-center justify-between py-1.5">
-                <span class="text-xs font-bold text-slate-600">{{ vr.labelKey | translate }}</span>
-                <button (click)="toggleVatRule(vr.key); isDirty = true"
-                        class="relative w-9 h-4.5 rounded-full transition-all"
-                        [ngClass]="getVatRuleValue(vr.key) ? 'bg-purple-500' : 'bg-slate-200'">
-                  <span class="absolute top-0.5 w-3.5 h-3.5 bg-white rounded-full shadow transition-all"
-                        [ngClass]="getVatRuleValue(vr.key) ? 'start-[18px]' : 'start-0.5'"></span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </app-card>
-
-        <!-- Last Updated Card -->
-        <app-card class="mb-3.5 block break-inside-avoid" variant="default" rounded="2xl" padding="sm" customClass="!bg-slate-900 !border-slate-900 shadow-sm text-white flex flex-col justify-between">
+      <div *ngIf="zones.length" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="mb-4 flex items-center justify-between gap-3">
           <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">{{ 'FINANCES.PRICING.CURRENT_RULESET' | translate }}</p>
-            <h3 class="text-sm font-black">{{ pricing.name | translate }}</h3>
-            <p class="text-[10px] font-medium text-slate-400 mt-2">{{ 'FINANCES.PRICING.EFFECTIVE_FROM' | translate }} {{ formatDate(pricing.effectiveFrom) }}</p>
+            <h3 class="text-[15px] font-black text-slate-900">المناطق المتاحة</h3>
+            <p class="mt-1 text-[12px] font-medium text-slate-500">
+              اختر المنطقة التي تريد تعديلها، ثم احفظ إعدادات التسعير والضريبة ورسوم الدفع عند الاستلام الخاصة بها.
+            </p>
           </div>
-          <div class="mt-6 pt-4 border-t border-slate-700">
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.PRICING.LAST_UPDATED' | translate }}</p>
-            <p class="text-xs font-bold text-slate-300">{{ formatDate(pricing.lastUpdatedAt) }}</p>
-            <p class="text-[10px] text-slate-500">{{ 'FINANCES.PRICING.BY' | translate }} {{ pricing.lastUpdatedBy | translate }}</p>
+          <div class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-black text-slate-600">
+            {{ zones.length }} منطقة
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-end">
+          <div class="space-y-2">
+            <label class="block text-[11px] font-bold text-slate-400">قائمة المناطق</label>
+            <div class="relative">
+              <select
+                [(ngModel)]="selectedZoneId"
+                (ngModelChange)="onZoneChange()"
+                class="w-full appearance-none rounded-2xl border border-slate-200 bg-white px-4 py-3 pe-11 text-[14px] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
+                <option *ngFor="let zone of zones" [value]="zone.zoneId">
+                  {{ displayZoneName(zone.zoneName) }} ({{ displayCityName(zone.city) }})
+                </option>
+              </select>
+              <span class="material-symbols-outlined pointer-events-none absolute end-4 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
+                expand_more
+              </span>
+            </div>
+          </div>
+
+          <div *ngIf="selectedZone" class="flex flex-wrap items-center gap-2 lg:justify-end">
+            <span
+              class="rounded-full px-3 py-1.5 text-[11px] font-black"
+              [ngClass]="selectedZone.isPricingActive
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'bg-slate-100 text-slate-500'">
+              {{ selectedZone.isPricingActive ? 'نشطة' : 'موقوفة' }}
+            </span>
+            <span class="rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600">
+              ضريبة {{ selectedZone.vatPercent }}%
+            </span>
+            <span class="rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600">
+              الدفع عند الاستلام {{ selectedZone.codFeeType === 'percent' ? (selectedZone.codPercent + '%') : (selectedZone.codFlatFee + ' SAR') }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && !zones.length" class="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-300">
+          <span class="material-symbols-outlined text-[30px]">location_off</span>
+        </div>
+        <h3 class="text-lg font-black text-slate-900">لا توجد مناطق متاحة</h3>
+        <p class="mt-2 text-sm font-medium text-slate-500">لم يتم العثور على مناطق تسعير قابلة للإدارة من الباك إند.</p>
+      </div>
+
+      <div *ngIf="selectedZone" class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p class="text-[11px] font-bold text-slate-400">المنطقة المختارة</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">{{ displayZoneName(selectedZone.zoneName) }} <span class="text-slate-400">/</span> {{ displayCityName(selectedZone.city) }}</h3>
+          <p class="mt-1 text-[12px] font-medium" [ngClass]="isDirty ? 'text-amber-600' : 'text-slate-500'">
+            {{ isDirty ? 'توجد تغييرات غير محفوظة لهذه المنطقة.' : 'كل تغييرات هذه المنطقة محفوظة.' }}
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <app-button
+            variant="outline"
+            size="sm"
+            customClass="!rounded-xl !bg-white hover:!bg-slate-50"
+            [disabled]="!isDirty || isSaving"
+            (btnClick)="resetChanges()">
+            تجاهل التغييرات
+          </app-button>
+
+          <app-button
+            variant="primary"
+            size="sm"
+            customClass="!rounded-xl shadow-sm"
+            [disabled]="!canSave"
+            [isLoading]="isSaving"
+            (btnClick)="confirmSave()">
+            <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">save</span>
+            حفظ التغييرات
+          </app-button>
+        </div>
+      </div>
+
+      <div *ngIf="selectedZone" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <app-card variant="default" rounded="2xl" padding="none" customClass="flex h-full flex-col overflow-visible border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
+          <div class="flex items-center justify-between rounded-t-2xl border-b border-slate-100 bg-slate-50/60 px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-100 bg-amber-50">
+                <span class="material-symbols-outlined text-[20px] text-amber-500">local_shipping</span>
+              </div>
+              <div>
+                <h3 class="text-[15px] font-black text-slate-900">التسعير الأساسي للتوصيل</h3>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">مرتبط مباشرة بقاعدة التسعير الخاصة بالمنطقة.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="togglePricingActive()"
+              class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-zadna-primary focus:ring-offset-2"
+              [ngClass]="selectedZone.isPricingActive ? 'bg-zadna-primary' : 'bg-slate-200'">
+              <span
+                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+                [ngClass]="selectedZone.isPricingActive ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+          </div>
+
+          <div
+            class="flex-1 space-y-5 p-5 transition-opacity duration-200"
+            [class.pointer-events-none]="!selectedZone.isPricingActive"
+            [class.opacity-40]="!selectedZone.isPricingActive">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold text-slate-600">الرسوم الأساسية</label>
+                <div class="relative">
+                  <input
+                    type="number"
+                    [ngModel]="selectedZone.baseDeliveryFee"
+                    (ngModelChange)="updateNumberField('baseDeliveryFee', $event)"
+                    min="0"
+                    class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold text-slate-600">المسافة المشمولة</label>
+                <div class="relative">
+                  <input
+                    type="number"
+                    [ngModel]="selectedZone.includedKm"
+                    (ngModelChange)="updateNumberField('includedKm', $event)"
+                    min="0"
+                    step="0.5"
+                    class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">KM</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="block text-[11px] font-bold text-slate-600">رسوم الكيلومتر الإضافي</label>
+              <div class="relative">
+                <input
+                  type="number"
+                  [ngModel]="selectedZone.extraKmFee"
+                  (ngModelChange)="updateNumberField('extraKmFee', $event)"
+                  min="0"
+                  step="0.5"
+                  class="w-full rounded-xl border border-slate-200 bg-white pl-16 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR/KM</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold text-slate-600">الحد الأدنى للرسوم</label>
+                <div class="relative">
+                  <input
+                    type="number"
+                    [ngModel]="selectedZone.minDeliveryFee"
+                    (ngModelChange)="updateNumberField('minDeliveryFee', $event)"
+                    min="0"
+                    class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold text-slate-600">الحد الأقصى للرسوم</label>
+                <div class="relative">
+                  <input
+                    type="number"
+                    [ngModel]="selectedZone.maxDeliveryFee"
+                    (ngModelChange)="updateNumberField('maxDeliveryFee', $event)"
+                    min="0"
+                    class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                </div>
+              </div>
+            </div>
           </div>
         </app-card>
 
-      </div>
+        <app-card variant="default" rounded="2xl" padding="none" customClass="flex h-full flex-col overflow-visible border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
+          <div class="flex items-center justify-between rounded-t-2xl border-b border-slate-100 bg-slate-50/60 px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50">
+                <span class="material-symbols-outlined text-[20px] text-indigo-500">local_atm</span>
+              </div>
+              <div>
+                <h3 class="text-[15px] font-black text-slate-900">رسوم الدفع عند الاستلام</h3>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">مطابقة تمامًا للهيكل المدعوم في الباك إند.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="toggleCodActive()"
+              class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              [ngClass]="selectedZone.isCodFeeActive ? 'bg-indigo-500' : 'bg-slate-200'">
+              <span
+                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+                [ngClass]="selectedZone.isCodFeeActive ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+          </div>
 
+          <div
+            class="flex-1 space-y-5 p-5 transition-opacity duration-200"
+            [class.pointer-events-none]="!selectedZone.isCodFeeActive"
+            [class.opacity-40]="!selectedZone.isCodFeeActive">
+            <div class="space-y-1.5">
+              <label class="block text-[11px] font-bold text-slate-600">نوع الرسوم</label>
+              <div class="relative">
+                <select
+                  [(ngModel)]="selectedZone.codFeeType"
+                  (ngModelChange)="markDirty()"
+                  class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                  <option value="flat">رسوم ثابتة</option>
+                  <option value="percent">نسبة مئوية</option>
+                </select>
+                <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">unfold_more</span>
+              </div>
+              <p class="text-[11px] font-medium text-slate-400">
+                الباك إند يدعم حاليًا نوعًا واحدًا فعالًا لكل منطقة: ثابت أو نسبة.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1.5" [class.opacity-30]="selectedZone.codFeeType === 'flat'">
+                <label class="block text-[11px] font-bold text-slate-600">النسبة المئوية</label>
+                <div class="relative">
+                  <input
+                    type="number"
+                    [ngModel]="selectedZone.codPercent"
+                    (ngModelChange)="updateNumberField('codPercent', $event)"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    [disabled]="selectedZone.codFeeType === 'flat'"
+                    class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-50" />
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">%</span>
+                </div>
+              </div>
+              <div class="space-y-1.5" [class.opacity-30]="selectedZone.codFeeType === 'percent'">
+                <label class="block text-[11px] font-bold text-slate-600">الرسوم الثابتة</label>
+                <div class="relative">
+                  <input
+                    type="number"
+                    [ngModel]="selectedZone.codFlatFee"
+                    (ngModelChange)="updateNumberField('codFlatFee', $event)"
+                    min="0"
+                    [disabled]="selectedZone.codFeeType === 'percent'"
+                    class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-50" />
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-card>
+
+        <app-card variant="default" rounded="2xl" padding="none" customClass="flex h-full flex-col overflow-visible border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
+          <div class="flex items-center justify-between rounded-t-2xl border-b border-slate-100 bg-slate-50/60 px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-purple-100 bg-purple-50">
+                <span class="material-symbols-outlined text-[20px] text-purple-500">account_balance</span>
+              </div>
+              <div>
+                <h3 class="text-[15px] font-black text-slate-900">ضريبة القيمة المضافة</h3>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">تُستخدم مباشرة في حسابات الـ checkout.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="toggleVatActive()"
+              class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+              [ngClass]="selectedZone.isVatActive ? 'bg-purple-500' : 'bg-slate-200'">
+              <span
+                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+                [ngClass]="selectedZone.isVatActive ? 'translate-x-5' : 'translate-x-0'"></span>
+            </button>
+          </div>
+
+          <div
+            class="flex flex-1 flex-col items-center justify-center space-y-6 p-5 transition-opacity duration-200"
+            [class.pointer-events-none]="!selectedZone.isVatActive"
+            [class.opacity-40]="!selectedZone.isVatActive">
+            <div class="text-center">
+              <div class="mb-2 text-4xl font-black text-purple-600 tabular-nums">
+                {{ selectedZone.vatPercent }}<span class="text-2xl text-purple-400">%</span>
+              </div>
+              <p class="text-[11px] font-bold text-slate-500">النسبة الحالية المطبقة على المنطقة المحددة</p>
+            </div>
+
+            <div class="w-full">
+              <input
+                type="range"
+                [ngModel]="selectedZone.vatPercent"
+                (ngModelChange)="updateNumberField('vatPercent', $event)"
+                min="0"
+                max="25"
+                step="1"
+                class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-purple-600" />
+              <div class="mt-2 flex justify-between text-[10px] font-bold text-slate-400">
+                <span>0%</span>
+                <span>25%</span>
+              </div>
+            </div>
+          </div>
+        </app-card>
+      </div>
     </div>
   `
 })
 export class PlatformPricingComponent implements OnInit {
-  private financeService = inject(FinanceService);
-  private translate = inject(TranslateService);
+  private readonly financeService = inject(FinanceService);
+  private readonly toastService = inject(ToastService);
+  private readonly cityArabicMap: Record<string, string> = {
+    riyadh: 'الرياض',
+    jeddah: 'جدة',
+    dammam: 'الدمام',
+    khobar: 'الخبر',
+    'al khobar': 'الخبر',
+    makkah: 'مكة',
+    mecca: 'مكة',
+    madinah: 'المدينة',
+    medina: 'المدينة',
+    taif: 'الطائف',
+    tabuk: 'تبوك'
+  };
+  private readonly zoneArabicMap: Record<string, string> = {
+    'al olaya': 'العليا',
+    olaya: 'العليا',
+    'al sulaymaniyah': 'السليمانية',
+    sulaymaniyah: 'السليمانية',
+    'al malqa': 'الملقا',
+    malqa: 'الملقا',
+    'al yasmin': 'الياسمين',
+    yasmin: 'الياسمين',
+    'al nakheel': 'النخيل',
+    nakheel: 'النخيل',
+    'al rawdah': 'الروضة',
+    rawdah: 'الروضة',
+    standard: 'قياسي',
+    central: 'المركزية',
+    remote: 'البعيدة',
+    north: 'الشمال',
+    south: 'الجنوب',
+    east: 'الشرق',
+    west: 'الغرب',
+    airport: 'المطار',
+    industrial: 'الصناعية',
+    branch: 'الفرع',
+    zone: 'المنطقة'
+  };
 
-  pricing: PricingRuleSet | null = null;
+  zones: ZoneFinanceSettings[] = [];
+  selectedZoneId: string | null = null;
+  selectedZone: ZoneFinanceSettings | null = null;
+
+  isLoading = false;
+  isSaving = false;
   isDirty = false;
   showConfirm = false;
+  errorMessage = '';
 
-  vatRules = [
-    { key: 'applyOnServiceFee', labelKey: 'FINANCES.PRICING.VAT.TARGETS.SERVICE_FEE' },
-    { key: 'applyOnDelivery', labelKey: 'FINANCES.PRICING.VAT.TARGETS.DELIVERY_FEE' },
-    { key: 'applyOnCommission', labelKey: 'FINANCES.PRICING.VAT.TARGETS.COMMISSION' }
-  ];
+  ngOnInit(): void {
+    this.loadData();
+  }
 
-  ngOnInit(): void { this.loadData(); }
+  get canSave(): boolean {
+    return Boolean(this.selectedZone) && this.isDirty && !this.isSaving;
+  }
 
   loadData(): void {
-    this.financeService.getPricingRules().pipe(take(1)).subscribe(data => {
-      this.pricing = { ...data };
-      this.isDirty = false;
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.financeService.getZonePricingSettings().pipe(take(1)).subscribe({
+      next: (zones) => {
+        this.zones = zones;
+        if (zones.length > 0) {
+          if (!this.selectedZoneId || !zones.some((zone) => zone.zoneId === this.selectedZoneId)) {
+            this.selectedZoneId = zones[0].zoneId;
+          }
+          this.onZoneChange();
+        } else {
+          this.selectedZone = null;
+        }
+        this.isDirty = false;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = this.describeApiError(error);
+        this.zones = [];
+        this.selectedZone = null;
+        this.isLoading = false;
+      }
     });
   }
 
-  confirmSave(): void { this.showConfirm = true; }
+  onZoneChange(): void {
+    const zone = this.zones.find((item) => item.zoneId === this.selectedZoneId);
+    this.selectedZone = zone ? this.clone(zone) : null;
+    this.isDirty = false;
+    this.showConfirm = false;
+  }
+
+  resetChanges(): void {
+    this.onZoneChange();
+  }
+
+  confirmSave(): void {
+    if (!this.canSave) {
+      return;
+    }
+
+    this.showConfirm = true;
+  }
+
+  closeConfirm(): void {
+    if (this.isSaving) {
+      return;
+    }
+
+    this.showConfirm = false;
+  }
 
   savePricing(): void {
-    if (!this.pricing) return;
-    this.financeService.savePricingRules(this.pricing).pipe(take(1)).subscribe(saved => {
-      this.pricing = saved;
-      this.isDirty = false;
-      this.showConfirm = false;
+    if (!this.selectedZone || this.isSaving) {
+      return;
+    }
+
+    const payload = this.buildSavePayload(this.selectedZone);
+    this.isSaving = true;
+    this.errorMessage = '';
+
+    this.financeService.updateZonePricingSettings(payload.zoneId, payload).pipe(take(1)).subscribe({
+      next: (savedZone) => {
+        const index = this.zones.findIndex((zone) => zone.zoneId === savedZone.zoneId);
+        if (index >= 0) {
+          this.zones[index] = this.clone(savedZone);
+        }
+        this.selectedZone = this.clone(savedZone);
+        this.isDirty = false;
+        this.isSaving = false;
+        this.showConfirm = false;
+        this.toastService.success('تم حفظ إعدادات المنطقة وربطها بالباك إند بنجاح.', 'التسعير');
+      },
+      error: (error) => {
+        this.isSaving = false;
+        this.errorMessage = this.describeApiError(error);
+        this.toastService.error(this.errorMessage, 'التسعير');
+      }
     });
   }
 
-  getVatRuleValue(key: string): boolean {
-    if (!this.pricing) return false;
-    return this.pricing.vat[key as keyof typeof this.pricing.vat] as boolean;
+  togglePricingActive(): void {
+    if (!this.selectedZone) {
+      return;
+    }
+
+    this.selectedZone.isPricingActive = !this.selectedZone.isPricingActive;
+    this.markDirty();
   }
 
-  toggleVatRule(key: string): void {
-    if (!this.pricing) return;
-    (this.pricing.vat as unknown as Record<string, boolean>)[key] = !this.getVatRuleValue(key);
+  toggleCodActive(): void {
+    if (!this.selectedZone) {
+      return;
+    }
+
+    this.selectedZone.isCodFeeActive = !this.selectedZone.isCodFeeActive;
+    this.markDirty();
   }
 
-  formatDate(d: string): string {
-    return new Date(d).toLocaleDateString(getFinanceLocale(this.translate.currentLang), { calendar: 'gregory' });
+  toggleVatActive(): void {
+    if (!this.selectedZone) {
+      return;
+    }
+
+    this.selectedZone.isVatActive = !this.selectedZone.isVatActive;
+    this.markDirty();
+  }
+
+  updateNumberField(field: NumericZoneField, value: number | string): void {
+    if (!this.selectedZone) {
+      return;
+    }
+
+    const numericValue = Number(value);
+    this.selectedZone[field] = Number.isFinite(numericValue)
+      ? Math.max(0, numericValue)
+      : 0;
+
+    this.markDirty();
+  }
+
+  markDirty(): void {
+    this.isDirty = true;
+  }
+
+  displayCityName(city: string): string {
+    if (!city) {
+      return '';
+    }
+
+    if (this.containsArabic(city)) {
+      return city;
+    }
+
+    return this.cityArabicMap[this.normalizeLookupKey(city)] ?? city;
+  }
+
+  displayZoneName(zoneName: string): string {
+    if (!zoneName) {
+      return '';
+    }
+
+    if (this.containsArabic(zoneName)) {
+      return zoneName;
+    }
+
+    const normalized = this.normalizeLookupKey(zoneName);
+    if (this.zoneArabicMap[normalized]) {
+      return this.zoneArabicMap[normalized];
+    }
+
+    const translated = normalized
+      .split(/\s+/)
+      .map((part) => this.zoneArabicMap[part] ?? part)
+      .join(' ')
+      .trim();
+
+    return translated || zoneName;
+  }
+
+  private buildSavePayload(zone: ZoneFinanceSettings): ZoneFinanceSettings {
+    const minDeliveryFee = Math.min(zone.minDeliveryFee, zone.maxDeliveryFee || zone.minDeliveryFee);
+    const maxDeliveryFee = Math.max(zone.maxDeliveryFee, minDeliveryFee);
+
+    return {
+      ...this.clone(zone),
+      baseDeliveryFee: this.normalizeNumber(zone.baseDeliveryFee),
+      includedKm: this.normalizeNumber(zone.includedKm),
+      extraKmFee: this.normalizeNumber(zone.extraKmFee),
+      minDeliveryFee: this.normalizeNumber(minDeliveryFee),
+      maxDeliveryFee: this.normalizeNumber(maxDeliveryFee),
+      vatPercent: this.normalizeNumber(zone.vatPercent),
+      codFlatFee: this.normalizeNumber(zone.codFlatFee),
+      codPercent: this.normalizeNumber(zone.codPercent),
+      codFeeType: zone.codFeeType === 'percent' ? 'percent' : 'flat'
+    };
+  }
+
+  private normalizeNumber(value: number): number {
+    if (!Number.isFinite(value)) {
+      return 0;
+    }
+
+    return Math.max(0, Math.round((value + Number.EPSILON) * 100) / 100);
+  }
+
+  private describeApiError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        return 'تعذر الاتصال بالباك إند الخاص بالتسعير. شغّل الـ API ثم أعد المحاولة.';
+      }
+
+      const apiMessage =
+        (typeof error.error === 'string' && error.error) ||
+        error.error?.message ||
+        error.error?.title ||
+        error.message;
+
+      return apiMessage || 'تعذر حفظ إعدادات التسعير حاليًا.';
+    }
+
+    return 'تعذر حفظ إعدادات التسعير حاليًا.';
+  }
+
+  private clone<T>(value: T): T {
+    return JSON.parse(JSON.stringify(value)) as T;
+  }
+
+  private normalizeLookupKey(value: string): string {
+    return value
+      .toLowerCase()
+      .replace(/[_-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private containsArabic(value: string): boolean {
+    return /[\u0600-\u06FF]/.test(value);
   }
 }

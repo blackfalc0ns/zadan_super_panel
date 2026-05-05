@@ -1,5 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Injectable, Injector, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 import { DriverCompensationRule } from '@finances/models/finance-rules.models';
 import { Driver, DriverService } from '@drivers/public-api';
 import { OrderDetail, OrdersService } from '@orders/public-api';
@@ -25,7 +28,8 @@ import {
   RefundStatus,
   Settlement,
   SettlementFilter,
-  VendorFinanceProfile
+  VendorFinanceProfile,
+  ZoneFinanceSettings
 } from '../models/finance.models';
 
 interface FinanceOrderContext {
@@ -50,8 +54,45 @@ interface FinanceDriverDirectory {
   byName: Map<string, Driver>;
 }
 
+interface DeliveryPricingRuleApiModel {
+  id: string;
+  deliveryZoneId: string | null;
+  city: string;
+  name: string;
+  baseFee: number;
+  includedKm: number;
+  perKmFee: number;
+  minFee: number;
+  maxFee: number;
+  isActive: boolean;
+}
+
+interface UpsertDeliveryPricingRulePayload {
+  deliveryZoneId: string;
+  city: string;
+  name: string;
+  baseFee: number;
+  includedKm: number;
+  perKmFee: number;
+  minFee: number;
+  maxFee: number;
+  isActive: boolean;
+  surgeWindows: [];
+}
+
+interface DeliveryZoneApiModel {
+  id: string;
+  city: string;
+  name: string;
+  centerLat: number;
+  centerLng: number;
+  radiusKm: number;
+  isActive: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FinanceService {
+  private readonly injector = inject(Injector);
   private pricingRulesStore: PricingRuleSet = {
     id: 'price-001',
     name: 'FINANCES.PRICING.RULESET_NAME',
@@ -81,76 +122,29 @@ export class FinanceService {
   private readonly auditStore: AuditLogEntry[];
   private driverDirectory: FinanceDriverDirectory | null = null;
   private orderContextsCache: FinanceOrderContext[] | null = null;
+  private vendorServiceInstance: VendorService | null = null;
+  private driverServiceInstance: DriverService | null = null;
+  private ordersServiceInstance: OrdersService | null = null;
 
-  constructor(
-    private readonly vendorService: VendorService,
-    private readonly driverService: DriverService,
-    private readonly ordersService: OrdersService
-  ) {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/admin/finances`;
+  private readonly deliveryPricingApiUrl = `${environment.apiUrl}/admin/delivery-pricing`;
+  private readonly deliveryZonesApiUrl = `${environment.apiUrl}/admin/delivery-zones`;
+
+  constructor() {
     this.adjustmentsStore = this.buildInitialAdjustments();
     this.auditStore = this.buildInitialAuditLog();
   }
 
   getDashboardSnapshot(period: FinancePeriod = 'month'): Observable<FinanceDashboardSnapshot> {
-    try {
-      const contexts = this.getOrderContexts();
-      const refunds = this.buildRefundCases();
-      const settlements = this.buildSettlements();
-      const { summary: codSummary } = this.buildCodData();
-
-      const gmv = this.sum(contexts.map((context) => context.order.total));
-      const vendorCommissions = this.sum(contexts.map((context) => context.breakdown.vendorCommission));
-      const driverPayouts = this.sum(contexts.map((context) => context.breakdown.driverPayout));
-      const serviceFees = this.sum(contexts.map((context) => context.breakdown.serviceFee));
-      const deliveryFees = this.sum(contexts.map((context) => context.breakdown.deliveryFee));
-      const vat = this.sum(contexts.map((context) => context.breakdown.vat));
-      const codFees = this.sum(contexts.map((context) => context.breakdown.codFee));
-      const netRevenue = this.sum(contexts.map((context) => context.breakdown.netMargin));
-      const openRefunds = refunds.filter((refund) => refund.status !== 'approved' && refund.status !== 'rejected');
-      const disputeExposure = this.sum(openRefunds.map((refund) => refund.requestedAmount));
-      const refundRatio = gmv > 0 ? (disputeExposure / gmv) * 100 : 0;
-      const revenueSegments = [
-        { id: 'commissions', labelKey: 'FINANCES.COMPOSITION.COMMISSIONS', amount: vendorCommissions, color: '#127C8C' },
-        { id: 'delivery_fees', labelKey: 'FINANCES.COMPOSITION.DELIVERY_FEES', amount: deliveryFees, color: '#1FA3B5' },
-        { id: 'service_fees', labelKey: 'FINANCES.COMPOSITION.SERVICE_FEES', amount: serviceFees, color: '#e48215' },
-        { id: 'cod_fees', labelKey: 'FINANCES.COMPOSITION.COD_FEES', amount: codFees, color: '#f59e0b' },
-        { id: 'vat', labelKey: 'FINANCES.COMPOSITION.VAT', amount: vat, color: '#94a3b8' }
-      ];
-      const compositionTotal = Math.max(1, this.sum(revenueSegments.map((segment) => segment.amount)));
-
-      const snapshot: FinanceDashboardSnapshot = {
-        period,
-        gmv: this.buildKpi('gmv', 'FINANCES.KPI.GMV', gmv, 'SAR', 'up', 12.4, 'FINANCES.KPI.VS_LAST_MONTH', 'success', 'trending_up', '/finances/ledger'),
-        netRevenue: this.buildKpi('net_revenue', 'FINANCES.KPI.NET_REVENUE', netRevenue, 'SAR', 'up', 8.7, undefined, netRevenue >= 0 ? 'success' : 'danger', 'account_balance_wallet', '/finances/overview'),
-        vendorCommissions: this.buildKpi('vendor_commissions', 'FINANCES.KPI.VENDOR_COMMISSIONS', vendorCommissions, 'SAR', 'up', 11.2, undefined, 'neutral', 'store', '/finances/settlements?entityType=vendor'),
-        driverPayouts: this.buildKpi('driver_payouts', 'FINANCES.KPI.DRIVER_PAYOUTS', driverPayouts, 'SAR', 'up', 9.8, undefined, 'neutral', 'local_shipping', '/finances/settlements?entityType=driver'),
-        refundRatio: {
-          id: 'refund_ratio',
-          labelKey: 'FINANCES.KPI.REFUND_RATIO',
-          value: this.round(refundRatio),
-          formattedValue: `${this.round(refundRatio, 1)}%`,
-          trend: refundRatio > 0 ? 'up' : 'flat',
-          trendPercent: 0.6,
-          severity: openRefunds.length ? 'warning' : 'neutral',
-          icon: 'undo',
-          clickRoute: '/finances/refunds',
-          sparkline: this.buildSparkline(this.round(refundRatio, 1), 10, 0.25)
-        },
-        disputeExposure: this.buildKpi('dispute_exposure', 'FINANCES.KPI.DISPUTE_EXPOSURE', disputeExposure, 'SAR', 'up', 3.1, undefined, disputeExposure > 0 ? 'danger' : 'neutral', 'gavel', '/finances/refunds'),
-        revenueComposition: revenueSegments.map((segment) => ({
-          ...segment,
-          percent: Math.round((segment.amount / compositionTotal) * 100)
-        })),
-        gmvTrend: this.buildTrendSeries(contexts),
-        refundTrend: this.buildRefundTrend(refunds),
-        alerts: this.buildDashboardAlerts(refunds, settlements, codSummary)
-      };
-
-      return of(snapshot);
-    } catch (error) {
-      console.error('Failed to build finance dashboard snapshot.', error);
-      return of(this.buildEmptyDashboardSnapshot(period));
-    }
+    return this.http.get<FinanceDashboardSnapshot>(`${this.apiUrl}/dashboard/snapshot`, {
+      params: { period }
+    }).pipe(
+      catchError((error) => {
+        console.error('Failed to build finance dashboard snapshot.', error);
+        return of(this.buildEmptyDashboardSnapshot(period));
+      })
+    );
   }
 
   getLedgerEntries(filter?: LedgerFilter): Observable<LedgerEntry[]> {
@@ -296,6 +290,104 @@ export class FinanceService {
     });
 
     return of(this.clone(this.pricingRulesStore));
+  }
+
+  getZonePricingSettings(): Observable<ZoneFinanceSettings[]> {
+    return forkJoin({
+      financeSettings: this.http.get<ZoneFinanceSettings[]>(`${this.apiUrl}/pricing-settings`).pipe(
+        catchError((error) => {
+          console.warn('Failed to load finance zone pricing settings. Falling back to delivery zones.', error);
+          return of<ZoneFinanceSettings[] | null>(null);
+        })
+      ),
+      deliveryRules: this.http.get<DeliveryPricingRuleApiModel[]>(this.deliveryPricingApiUrl).pipe(
+        catchError((error) => {
+          console.warn('Failed to load delivery pricing rules while building zone pricing settings.', error);
+          return of<DeliveryPricingRuleApiModel[]>([]);
+        })
+      ),
+      deliveryZones: this.http.get<DeliveryZoneApiModel[]>(this.deliveryZonesApiUrl).pipe(
+        catchError((error) => {
+          console.warn('Failed to load delivery zones while building zone pricing settings.', error);
+          return of<DeliveryZoneApiModel[]>([]);
+        })
+      )
+    }).pipe(
+      map(({ financeSettings, deliveryRules, deliveryZones }) => {
+        const rulesByZoneId = new Map<string, DeliveryPricingRuleApiModel>();
+        const zonesById = new Map<string, ZoneFinanceSettings>();
+
+        deliveryRules.forEach((rule) => {
+          if (rule.deliveryZoneId) {
+            rulesByZoneId.set(rule.deliveryZoneId, rule);
+          }
+        });
+
+        (financeSettings ?? []).forEach((zone) => {
+          zonesById.set(zone.zoneId, this.mergeZoneWithPricingRule(zone, rulesByZoneId.get(zone.zoneId)));
+        });
+
+        deliveryZones.forEach((zone) => {
+          if (!zonesById.has(zone.id)) {
+            zonesById.set(
+              zone.id,
+              this.mergeZoneWithPricingRule(
+                this.buildZoneFinanceSettingsFromDeliveryZone(zone),
+                rulesByZoneId.get(zone.id)
+              )
+            );
+          }
+        });
+
+        return Array.from(zonesById.values()).sort((left, right) =>
+          left.city.localeCompare(right.city) || left.zoneName.localeCompare(right.zoneName)
+        );
+      }),
+      switchMap((zones) => {
+        if (zones.length > 0) {
+          return of(zones);
+        }
+
+        return throwError(() => new Error('Unable to load delivery zones or pricing settings from the backend.'));
+      }),
+      catchError((error) => {
+        console.error('Failed to load zone pricing settings.', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateZonePricingSettings(zoneId: string, settings: Partial<ZoneFinanceSettings>): Observable<ZoneFinanceSettings> {
+    const normalized = this.normalizeZonePricingSettingsForSave(zoneId, settings);
+    const deliveryRulePayload = this.buildDeliveryRulePayload(normalized);
+    const financePayload = {
+      zoneId: normalized.zoneId,
+      vatPercent: normalized.vatPercent,
+      codFeeType: normalized.codFeeType,
+      codFlatFee: normalized.codFlatFee,
+      codPercent: normalized.codPercent,
+      isVatActive: normalized.isVatActive,
+      isCodFeeActive: normalized.isCodFeeActive
+    };
+
+    const upsertPricingRule$ = normalized.pricingRuleId
+      ? this.http.put<DeliveryPricingRuleApiModel>(
+          `${this.deliveryPricingApiUrl}/${normalized.pricingRuleId}`,
+          deliveryRulePayload
+        )
+      : this.http.post<DeliveryPricingRuleApiModel>(this.deliveryPricingApiUrl, deliveryRulePayload);
+
+    return upsertPricingRule$.pipe(
+      switchMap((rule) =>
+        this.http.put<ZoneFinanceSettings>(`${this.apiUrl}/pricing-settings/${zoneId}`, financePayload).pipe(
+          map((savedFinanceSettings) => this.mergeZoneWithPricingRule(savedFinanceSettings, rule))
+        )
+      ),
+      catchError((error) => {
+        console.error(`Failed to update zone pricing settings for ${zoneId}.`, error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getVendorFinanceProfile(vendorId: string): Observable<VendorFinanceProfile> {
@@ -797,7 +889,7 @@ export class FinanceService {
         entityType: 'platform',
         entityId: 'platform',
         entityName: 'Platform',
-        type: 'service_fee',
+         type: 'service_fee',
         direction: 'credit',
         amount: context.breakdown.serviceFee,
         currency: 'SAR',
@@ -1070,7 +1162,7 @@ export class FinanceService {
     severity: 'success' | 'warning' | 'danger' | 'neutral' | undefined,
     icon: string,
     clickRoute?: string
-  ): FinanceDashboardSnapshot['gmv'] {
+  ): FinanceDashboardSnapshot['grossCollections'] {
     const roundedValue = this.round(value);
 
     return {
@@ -1179,18 +1271,13 @@ export class FinanceService {
   }
 
   private buildInitialAdjustments(): FinancialAdjustment[] {
-    const vendors = this.vendorService.getVendorsSnapshot();
-    const driver = this.driverService.getDriverSnapshotById('1');
-    const secondDriver = this.driverService.getDriverSnapshotById('2');
-    const vendor = vendors[0];
-
     return [
       {
         id: 'adj-1001',
         adjustmentRef: 'ADJ-1001',
         entityType: 'vendor',
-        entityId: vendor?.id ?? 'VND-24001',
-        entityName: vendor?.businessNameAr ?? vendor?.businessNameEn ?? 'Vendor',
+        entityId: 'VND-24001',
+        entityName: 'LuLu Hypermarket',
         direction: 'credit',
         amount: 125,
         currency: 'SAR',
@@ -1207,8 +1294,8 @@ export class FinanceService {
         id: 'adj-1002',
         adjustmentRef: 'ADJ-1002',
         entityType: 'driver',
-        entityId: driver?.id ?? '1',
-        entityName: driver ? `${driver.firstName} ${driver.lastName}` : 'Driver',
+        entityId: '1',
+        entityName: 'Driver 1',
         direction: 'debit',
         amount: 48,
         currency: 'SAR',
@@ -1225,8 +1312,8 @@ export class FinanceService {
         id: 'adj-1003',
         adjustmentRef: 'ADJ-1003',
         entityType: 'driver',
-        entityId: secondDriver?.id ?? '2',
-        entityName: secondDriver ? `${secondDriver.firstName} ${secondDriver.lastName}` : 'Driver',
+        entityId: '2',
+        entityName: 'Driver 2',
         direction: 'credit',
         amount: 85,
         currency: 'SAR',
@@ -1546,32 +1633,23 @@ export class FinanceService {
   }
 
   private buildEmptyDashboardSnapshot(period: FinancePeriod): FinanceDashboardSnapshot {
-    const gmvTrend = [
+    const collectionTrend = [
       { label: 'Jan', value: 0, secondaryValue: 0 },
       { label: 'Feb', value: 0, secondaryValue: 0 },
       { label: 'Mar', value: 0, secondaryValue: 0 }
     ];
-    const refundTrend = gmvTrend.map(({ label }) => ({ label, value: 0 }));
+    const revenueTrend = collectionTrend.map(({ label }) => ({ label, value: 0 }));
 
     return {
       period,
-      gmv: this.buildKpi('gmv', 'FINANCES.KPI.GMV', 0, 'SAR', 'flat', 0, 'FINANCES.KPI.VS_LAST_MONTH', 'neutral', 'trending_up', '/finances/ledger'),
-      netRevenue: this.buildKpi('net_revenue', 'FINANCES.KPI.NET_REVENUE', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'account_balance_wallet', '/finances/overview'),
-      vendorCommissions: this.buildKpi('vendor_commissions', 'FINANCES.KPI.VENDOR_COMMISSIONS', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'store', '/finances/settlements?entityType=vendor'),
+      grossCollections: this.buildKpi('gross_collections', 'FINANCES.KPI.GROSS_COLLECTIONS', 0, 'SAR', 'flat', 0, 'FINANCES.KPI.VS_LAST_MONTH', 'neutral', 'trending_up', '/finances/ledger'),
+      platformNetRevenue: this.buildKpi('platform_net_revenue', 'FINANCES.KPI.PLATFORM_NET_REVENUE', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'account_balance_wallet', '/finances/overview'),
+      commissionRevenue: this.buildKpi('commission_revenue', 'FINANCES.KPI.COMMISSION_REVENUE', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'store', '/finances/settlements?entityType=vendor'),
+      deliveryRevenue: this.buildKpi('delivery_revenue', 'FINANCES.KPI.DELIVERY_REVENUE', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'local_shipping', '/finances/overview'),
+      codFeesCollected: this.buildKpi('cod_fees_collected', 'FINANCES.KPI.COD_FEES_COLLECTED', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'payments', '/finances/cod'),
+      vatCollected: this.buildKpi('vat_collected', 'FINANCES.KPI.VAT_COLLECTED', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'receipt', '/finances/ledger'),
       driverPayouts: this.buildKpi('driver_payouts', 'FINANCES.KPI.DRIVER_PAYOUTS', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'local_shipping', '/finances/settlements?entityType=driver'),
-      refundRatio: {
-        id: 'refund_ratio',
-        labelKey: 'FINANCES.KPI.REFUND_RATIO',
-        value: 0,
-        formattedValue: '0%',
-        trend: 'flat',
-        trendPercent: 0,
-        severity: 'neutral',
-        icon: 'undo',
-        clickRoute: '/finances/refunds',
-        sparkline: this.buildSparkline(0, 10, 0.1)
-      },
-      disputeExposure: this.buildKpi('dispute_exposure', 'FINANCES.KPI.DISPUTE_EXPOSURE', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'gavel', '/finances/refunds'),
+      refundExposure: this.buildKpi('refund_exposure', 'FINANCES.KPI.REFUND_EXPOSURE', 0, 'SAR', 'flat', 0, undefined, 'neutral', 'undo', '/finances/refunds'),
       revenueComposition: [
         { id: 'commissions', labelKey: 'FINANCES.COMPOSITION.COMMISSIONS', amount: 0, percent: 0, color: '#127C8C' },
         { id: 'delivery_fees', labelKey: 'FINANCES.COMPOSITION.DELIVERY_FEES', amount: 0, percent: 0, color: '#1FA3B5' },
@@ -1579,8 +1657,8 @@ export class FinanceService {
         { id: 'cod_fees', labelKey: 'FINANCES.COMPOSITION.COD_FEES', amount: 0, percent: 0, color: '#f59e0b' },
         { id: 'vat', labelKey: 'FINANCES.COMPOSITION.VAT', amount: 0, percent: 0, color: '#94a3b8' }
       ],
-      gmvTrend,
-      refundTrend,
+      collectionTrend,
+      revenueTrend,
       alerts: []
     };
   }
@@ -1635,5 +1713,103 @@ export class FinanceService {
   private clone<T>(value: T): T {
     return JSON.parse(JSON.stringify(value)) as T;
   }
-}
 
+  private mergeZoneWithPricingRule(
+    zone: ZoneFinanceSettings,
+    rule?: DeliveryPricingRuleApiModel | null
+  ): ZoneFinanceSettings {
+    return {
+      ...zone,
+      pricingRuleId: rule?.id ?? null,
+      baseDeliveryFee: rule?.baseFee ?? zone.baseDeliveryFee ?? 0,
+      includedKm: rule?.includedKm ?? zone.includedKm ?? 0,
+      extraKmFee: rule?.perKmFee ?? zone.extraKmFee ?? 0,
+      minDeliveryFee: rule?.minFee ?? zone.minDeliveryFee ?? 0,
+      maxDeliveryFee: rule?.maxFee ?? zone.maxDeliveryFee ?? 0,
+      isPricingActive: rule?.isActive ?? zone.isPricingActive ?? false,
+      codFeeType: this.normalizeCodFeeType(zone.codFeeType)
+    };
+  }
+
+  private buildZoneFinanceSettingsFromDeliveryZone(zone: DeliveryZoneApiModel): ZoneFinanceSettings {
+    return {
+      zoneId: zone.id,
+      zoneName: zone.name,
+      city: zone.city,
+      pricingRuleId: null,
+      baseDeliveryFee: 0,
+      includedKm: 0,
+      extraKmFee: 0,
+      minDeliveryFee: 0,
+      maxDeliveryFee: 0,
+      isPricingActive: zone.isActive,
+      vatPercent: 15,
+      codFeeType: 'flat',
+      codFlatFee: 10,
+      codPercent: 0,
+      isVatActive: true,
+      isCodFeeActive: true
+    };
+  }
+
+  private normalizeZonePricingSettingsForSave(
+    zoneId: string,
+    settings: Partial<ZoneFinanceSettings>
+  ): ZoneFinanceSettings {
+    const zoneName = settings.zoneName?.trim() || 'Zone pricing';
+    const city = settings.city?.trim() || 'Unknown city';
+
+    return {
+      zoneId,
+      zoneName,
+      city,
+      pricingRuleId: settings.pricingRuleId ?? null,
+      baseDeliveryFee: this.round(Math.max(0, Number(settings.baseDeliveryFee ?? 0))),
+      includedKm: this.round(Math.max(0, Number(settings.includedKm ?? 0))),
+      extraKmFee: this.round(Math.max(0, Number(settings.extraKmFee ?? 0))),
+      minDeliveryFee: this.round(Math.max(0, Number(settings.minDeliveryFee ?? 0))),
+      maxDeliveryFee: this.round(Math.max(0, Number(settings.maxDeliveryFee ?? 0))),
+      isPricingActive: Boolean(settings.isPricingActive),
+      vatPercent: this.round(Math.max(0, Number(settings.vatPercent ?? 0))),
+      codFeeType: this.normalizeCodFeeType(settings.codFeeType),
+      codFlatFee: this.round(Math.max(0, Number(settings.codFlatFee ?? 0))),
+      codPercent: this.round(Math.max(0, Number(settings.codPercent ?? 0))),
+      isVatActive: Boolean(settings.isVatActive),
+      isCodFeeActive: Boolean(settings.isCodFeeActive)
+    };
+  }
+
+  private normalizeCodFeeType(value: string | undefined): 'flat' | 'percent' {
+    return value?.toLowerCase() === 'percent' ? 'percent' : 'flat';
+  }
+
+  private buildDeliveryRulePayload(zone: ZoneFinanceSettings): UpsertDeliveryPricingRulePayload {
+    return {
+      deliveryZoneId: zone.zoneId,
+      city: zone.city,
+      name: `${zone.city} - ${zone.zoneName}`,
+      baseFee: zone.baseDeliveryFee,
+      includedKm: zone.includedKm,
+      perKmFee: zone.extraKmFee,
+      minFee: zone.minDeliveryFee,
+      maxFee: zone.maxDeliveryFee,
+      isActive: zone.isPricingActive,
+      surgeWindows: []
+    };
+  }
+
+  private get vendorService(): VendorService {
+    this.vendorServiceInstance ??= this.injector.get(VendorService);
+    return this.vendorServiceInstance;
+  }
+
+  private get driverService(): DriverService {
+    this.driverServiceInstance ??= this.injector.get(DriverService);
+    return this.driverServiceInstance;
+  }
+
+  private get ordersService(): OrdersService {
+    this.ordersServiceInstance ??= this.injector.get(OrdersService);
+    return this.ordersServiceInstance;
+  }
+}

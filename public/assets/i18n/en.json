@@ -2041,6 +2041,7 @@
     "VENDOR_PRESSURE_DESC": "Which vendors create a disproportionate amount of complaints or dispute exposure.",
     "ACTION_QUEUE_TITLE": "Needs attention now",
     "ACTION_QUEUE_DESC": "Priority entities that should move into a reviewer decision next.",
+    "NO_OPEN_ACTIONS": "No open actions",
     "AFFECTED": "Affected",
     "SEVERITY": {
       "CRITICAL": "Critical",
@@ -2076,6 +2077,8 @@
     "CHARTS": {
       "ORDER_FUNNEL": "Hourly order funnel",
       "ORDER_FUNNEL_DESC": "Shows where orders are accumulating across new, prep, dispatch, delivered, and failed flow.",
+      "SERIES_TOTAL_ORDERS": "Total orders",
+      "SERIES_DELIVERED_ORDERS": "Delivered orders",
       "ORDER_VOLUME": "Order volume trend",
       "ORDER_VOLUME_DESC": "Tracks the total operational load across the selected time window.",
       "TOTAL_LOAD": "Total load",
@@ -2100,6 +2103,9 @@
       "FAILED": "Failed"
     },
     "TABLES": {
+      "REGION": "Region",
+      "SCORE": "Score",
+      "ISSUES": "Issues",
       "LATE": "Late",
       "PAYMENT_ISSUES": "Payment issues",
       "DRIVER_GAP": "Driver gap",
@@ -2107,6 +2113,8 @@
       "ENTITY": "Entity",
       "ISSUE": "Issue",
       "OWNER": "Owner",
+      "METRIC": "Metric",
+      "STATUS": "Status",
       "VENDOR_DISPUTE_EXPOSURE": "Dispute exposure",
       "VENDOR_GMV_SHARE": "GMV share"
     },
@@ -2180,6 +2188,165 @@
       "DISPUTE_PULSE_SUMMARY": "{{count}} dispute cases remain unresolved across the current scope.",
       "CUSTOMER_RISK": "Customer trust pulse",
       "CUSTOMER_RISK_SUMMARY": "{{count}} escalated customer accounts are still under trust review."
+    },
+    "REGION_PRESSURE_BADGE": "regions",
+    "WINDOWS_TITLE": "Windows section",
+    "WINDOWS_DESC": "Quick navigation cards for every control-tower window in the dashboard.",
+    "WINDOWS_STATS": "stats",
+    "WINDOWS_CHART": "chart",
+    "WINDOWS_ALERTS": "issues",
+    "WINDOWS_EXCEPTIONS": "exceptions",
+    "WINDOWS_VIEW": "view",
+    "OPEN_WINDOW": "Open window",
+    "DEEP_DIVE_TITLE": "Full system drilldown",
+    "DEEP_DIVE_DESC": "Each lane summarizes one part of the platform with direct routes to the owning module.",
+    "SECTIONS_BADGE": "sections",
+    "OPEN_MODULE": "Open module",
+    "WINDOW_EXCEPTIONS": "Priority exceptions",
+    "WINDOW_EXCEPTIONS_DESC": "The most important entities inside this operational window.",
+    "SECTIONS": {
+      "SYSTEM_HEALTH": {
+        "TITLE": "System health",
+        "DESC": "Platform pulse, operator reach, and message pressure.",
+        "STATUS_STABLE": "System stable",
+        "STATUS_ATTENTION": "{{count}} alerts need attention"
+      },
+      "ORDER_OPS": {
+        "TITLE": "Orders command center",
+        "DESC": "Throughput, late risk, payment friction, and queue pressure.",
+        "STATUS": "{{late}} late, {{payment}} payment issues"
+      },
+      "VENDOR_OPS": {
+        "TITLE": "Vendor network",
+        "DESC": "Merchant readiness, branch footprint, and review backlog.",
+        "STATUS": "{{pending}} reviews pending, {{blocked}} blocked vendors"
+      },
+      "DRIVER_OPS": {
+        "TITLE": "Driver operations",
+        "DESC": "Driver readiness, regional supply gap, and payout friction.",
+        "STATUS": "{{blocked}} blocked drivers, {{incidents}} incidents open"
+      },
+      "CUSTOMER_SUPPORT": {
+        "TITLE": "Customers and support",
+        "DESC": "Customer growth, trust pressure, support aging, and review quality.",
+        "STATUS": "{{critical}} critical cases, {{reviews}} low reviews without reply"
+      },
+      "FINANCE_OPS": {
+        "TITLE": "Finance and wallets",
+        "DESC": "Revenue quality, refund load, settlements, and wallet movement.",
+        "STATUS": "{{failed}} failed payments, {{pending}} pending settlements"
+      },
+      "CATALOG_HEALTH": {
+        "TITLE": "Catalog health",
+        "DESC": "Master assortment, vendor availability, and approval backlog.",
+        "STATUS": "{{requests}} catalog requests pending"
+      },
+      "MARKETING_PULSE": {
+        "TITLE": "Marketing and notifications",
+        "DESC": "Campaign footprint, visibility surfaces, and engagement pulse.",
+        "STATUS": "{{notifications}} unread notifications, {{reviews}} low reviews pending reply"
+      },
+      "ACCESS_SECURITY": {
+        "TITLE": "Access and security pulse",
+        "DESC": "Admin access shape, permission sprawl, and locked account visibility.",
+        "STATUS": "{{locked}} locked admins, {{inactive}} inactive admins"
+      }
+    },
+    "STATS": {
+      "ADMIN_USERS": "Admin users",
+      "ACTIVE_USERS": "Recently active users",
+      "UNREAD_NOTIFICATIONS": "Unread notifications",
+      "PUSH_DEVICES": "Push devices",
+      "TOTAL_ORDERS": "Total orders",
+      "LATE_ORDERS": "Late orders",
+      "CANCELLATIONS": "Cancelled orders",
+      "AVG_BASKET": "Average basket",
+      "ACTIVE_VENDORS": "Active vendors",
+      "PENDING_VENDORS": "Pending vendors",
+      "BLOCKED_VENDORS": "Blocked vendors",
+      "VENDOR_BRANCHES": "Vendor branches",
+      "READY_DRIVERS": "Ready drivers",
+      "LIMITED_DRIVERS": "Limited drivers",
+      "BLOCKED_DRIVERS": "Blocked drivers",
+      "DRIVER_INCIDENTS": "Open incidents",
+      "CUSTOMERS_TOTAL": "Customer base",
+      "CUSTOMERS_NEW": "New customers",
+      "CUSTOMERS_ACTIVE": "Active customers",
+      "AVG_RATING": "Average rating",
+      "FINANCE_GMV": "Window GMV",
+      "REFUNDS_TOTAL": "Refund total",
+      "SETTLED_NET": "Settled net",
+      "WALLETS_COUNT": "Wallets",
+      "MASTER_PRODUCTS": "Master products",
+      "BRANDS": "Brands",
+      "CATEGORIES": "Categories",
+      "LOW_STOCK": "Low stock items",
+      "ACTIVE_COUPONS": "Active coupons",
+      "HOME_BANNERS": "Home banners",
+      "FEATURED_PLACEMENTS": "Featured placements",
+      "REVIEW_SCORE": "Review score",
+      "ROLES_COUNT": "Roles",
+      "PERMISSIONS_COUNT": "Permissions",
+      "ACCESS_SCOPES": "Access scopes",
+      "OVERRIDES_COUNT": "Permission overrides"
+    },
+    "STATS_HELPERS": {
+      "ADMIN_USERS": "Accounts operating the admin surface right now.",
+      "ACTIVE_USERS": "Users with recent authenticated activity in the selected window.",
+      "UNREAD_NOTIFICATIONS": "Notifications still waiting to be opened by recipients.",
+      "PUSH_DEVICES": "Registered mobile devices that can receive system pushes.",
+      "TOTAL_ORDERS": "Orders created in the selected dashboard window.",
+      "LATE_ORDERS": "Orders currently drifting beyond the expected service band.",
+      "CANCELLATIONS": "Orders cancelled before successful fulfillment.",
+      "AVG_BASKET": "Average order value across the filtered operational scope.",
+      "ACTIVE_VENDORS": "Vendors currently active inside the selected scope.",
+      "PENDING_VENDORS": "Vendors still waiting on review or readiness completion.",
+      "BLOCKED_VENDORS": "Vendors blocked by suspension, lock, or disabled ordering.",
+      "VENDOR_BRANCHES": "Total branches available across the network.",
+      "READY_DRIVERS": "Drivers fully approved and available for assignment.",
+      "LIMITED_DRIVERS": "Drivers who are available with partial readiness constraints.",
+      "BLOCKED_DRIVERS": "Drivers blocked by verification, status, or location issues.",
+      "DRIVER_INCIDENTS": "Driver incidents still unresolved across the system.",
+      "CUSTOMERS_TOTAL": "Total customer accounts in the platform.",
+      "CUSTOMERS_NEW": "Customers created during the selected period.",
+      "CUSTOMERS_ACTIVE": "Customers who logged in during the selected period.",
+      "AVG_RATING": "Average rating captured from the current review slice.",
+      "FINANCE_GMV": "Gross merchandise value for the active dashboard scope.",
+      "REFUNDS_TOTAL": "Total refund amount created during the selected window.",
+      "SETTLED_NET": "Net amount already processed through settlements.",
+      "WALLETS_COUNT": "Total wallet records registered in the platform.",
+      "MASTER_PRODUCTS": "Count of master catalog products available centrally.",
+      "BRANDS": "Count of brands in the central catalog.",
+      "CATEGORIES": "Count of categories in the central catalog.",
+      "LOW_STOCK": "Vendor products with low remaining stock.",
+      "ACTIVE_COUPONS": "Coupon campaigns still enabled in the system.",
+      "HOME_BANNERS": "Visibility surfaces currently configured on home placement.",
+      "FEATURED_PLACEMENTS": "Featured placement records driving merchandising visibility.",
+      "REVIEW_SCORE": "Average rating level across recent customer reviews.",
+      "ROLES_COUNT": "Defined role presets in access management.",
+      "PERMISSIONS_COUNT": "Permission definitions available to the admin system.",
+      "ACCESS_SCOPES": "Scope assignments currently stored for users.",
+      "OVERRIDES_COUNT": "Direct user permission overrides on top of role presets."
+    },
+    "RANKINGS": {
+      "TOP_VENDORS_ORDERS": "Top vendors by order load",
+      "TOP_VENDORS_ORDERS_DESC": "Vendors currently carrying the heaviest transaction flow.",
+      "SUPPORT_PRESSURE": "Support queue pressure",
+      "SUPPORT_PRESSURE_DESC": "Queues consuming the most operational energy.",
+      "VENDOR_ISSUE_SHARE": "Vendor issue share",
+      "VENDOR_ISSUE_SHARE_DESC": "Merchants generating the highest complaint or dispute pressure.",
+      "REGIONAL_SUPPLY_GAP": "Regional supply gap",
+      "REGIONAL_SUPPLY_GAP_DESC": "Where the driver gap is adding the most operational stress.",
+      "SUPPORT_QUEUE_AGING": "Support queue aging",
+      "SUPPORT_QUEUE_AGING_DESC": "Open customer and dispute queues that keep growing.",
+      "FINANCE_WATCHLIST": "Finance watchlist",
+      "FINANCE_WATCHLIST_DESC": "Payment and settlement signals that deserve attention.",
+      "CATALOG_VENDOR_GAPS": "Vendor catalog gaps",
+      "CATALOG_VENDOR_GAPS_DESC": "Vendors with the largest unavailable or out-of-stock footprint.",
+      "ENGAGEMENT_PULSE": "Engagement pulse",
+      "ENGAGEMENT_PULSE_DESC": "Visibility and messaging counters that shape marketplace reach.",
+      "ADMIN_ACCESS_HEALTH": "Admin access health",
+      "ADMIN_ACCESS_HEALTH_DESC": "How access management is expanding or locking down."
     },
     "PRESSURE_LEVEL": {
       "HIGH": "High",
@@ -4797,6 +4964,19 @@
     "TITLE": "Access Directory",
     "DESC": "Manage super admin staff, vendor teams, drivers, and customers from one local access and communication directory.",
     "OPEN_EMAIL_CENTER": "Email Center",
+    "OPEN_ROLES_MANAGEMENT": "Roles Management",
+    "ACCESS_HUB": {
+      "BADGE": "Roles and permissions",
+      "TITLE": "Open permission management from the users page",
+      "DESC": "Review role presets, permission coverage, and system versus custom roles here, then jump into the full management screen when needed.",
+      "OPEN": "Open Roles Management",
+      "STATS": {
+        "ROLES": "Total roles",
+        "PERMISSIONS": "Total permissions",
+        "SYSTEM_ROLES": "System roles",
+        "CUSTOM_ROLES": "Custom roles"
+      }
+    },
     "ADD_ADMIN": "Invite Admin",
     "ADD_IDENTITY": "Add Identity",
     "SEARCH_PLACEHOLDER": "Search by name, email, team, or department...",
@@ -4903,6 +5083,40 @@
       "ACCEPTED_AT": "Accepted at",
       "NEVER": "Never",
       "VERIFICATION": "Verification"
+    },
+    "ROLES_MANAGEMENT": {
+      "TITLE": "Roles & Permissions Management",
+      "SUBTITLE": "Create and update access roles and define each role's permissions across the system.",
+      "BADGES": {
+        "SYSTEM": "System",
+        "CUSTOM": "Custom"
+      },
+      "CARDS": {
+        "PERMISSIONS": "Permissions",
+        "USERS": "Users",
+        "LEVEL": "Level",
+        "SCOPE": "Scope:"
+      },
+      "MATRIX": {
+        "SECTION": "Section"
+      },
+      "CREATE": {
+        "TITLE": "Create a new custom role",
+        "SUBTITLE": "Choose the role name and access level, then refine permissions from the permission matrix.",
+        "NAME": "Role name",
+        "NAME_PLACEHOLDER": "Example: Content Manager",
+        "DESCRIPTION": "Description",
+        "DESCRIPTION_PLACEHOLDER": "A short role description...",
+        "ACCESS_LEVEL": "Access level",
+        "PANEL_SCOPE": "Panel scope"
+      },
+      "ACTIONS": {
+        "CREATE_ROLE": "Create role",
+        "DELETE_ROLE": "Delete role",
+        "SAVE_CHANGES": "Save changes",
+        "CLOSE": "Close",
+        "CANCEL": "Cancel"
+      }
     },
     "DETAIL": {
       "TITLE": "Identity Access Profile",

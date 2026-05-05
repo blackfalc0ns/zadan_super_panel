@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
+import { AdminAccessApiService } from '../../../../core/services/admin-access-api.service';
 import {
   ADMIN_ROLE_PRESETS,
   AdminAccessLevel,
@@ -42,6 +43,8 @@ type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn']
 })
 export class AdminUserDetailComponent implements OnInit {
   user: AdminUserRecord | null = null;
+  isLoading = false;
+  activeTab: 'general' | 'access' | 'communication' = 'general';
   permissionGroups: PermissionGroup[] = [];
   rolePresets: AdminRolePreset[] = [];
   featureToggleDefinitions: DirectoryFeatureToggleDefinition[] = [];
@@ -125,6 +128,7 @@ export class AdminUserDetailComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly adminAccessApiService: AdminAccessApiService,
     private readonly adminUsersService: AdminUsersService
   ) {}
 
@@ -411,8 +415,34 @@ export class AdminUserDetailComponent implements OnInit {
 
   private loadUser(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.user = this.adminUsersService.getUserById(id) ?? null;
-    this.refreshSupportingData();
+    if (!id) {
+      this.user = null;
+      this.refreshSupportingData();
+      return;
+    }
+
+    this.isLoading = true;
+    this.adminAccessApiService.getUser(id).subscribe({
+      next: (user) => {
+        this.user = user;
+        this.isLoading = false;
+        this.refreshSupportingData();
+      },
+      error: () => {
+        this.adminAccessApiService.getUsers().subscribe({
+          next: (users) => {
+            this.user = users.find((entry) => entry.id === id) ?? this.adminUsersService.getUserById(id) ?? null;
+            this.isLoading = false;
+            this.refreshSupportingData();
+          },
+          error: () => {
+            this.user = this.adminUsersService.getUserById(id) ?? null;
+            this.isLoading = false;
+            this.refreshSupportingData();
+          }
+        });
+      }
+    });
   }
 
   private refreshSupportingData(): void {

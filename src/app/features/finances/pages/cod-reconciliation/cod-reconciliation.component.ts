@@ -8,152 +8,201 @@ import { CodFilter, CodRecord, CodReconciliationSummary } from '../../models/fin
 import { FinanceStatusBadgeComponent } from '../../components/finance-status-badge/finance-status-badge.component';
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
+import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
+import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
+import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 
 @Component({
   selector: 'app-cod-reconciliation',
   standalone: true,
-  imports: [CommonModule, TranslateModule, FinanceStatusBadgeComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    FinanceStatusBadgeComponent,
+    AppPageHeaderComponent,
+    AppCardComponent,
+    AppButtonComponent,
+    InlineBannerComponent
+  ],
   template: `
-    <div class="flex flex-col gap-5 animate-in fade-in duration-700">
+    <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
-      <div *ngIf="hasScope"
-           class="bg-cyan-50 border border-cyan-200 rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl flex items-center justify-center bg-white border border-cyan-100 text-cyan-700">
-            <span class="material-symbols-outlined text-[18px]">
-              {{ scopedOrderId ? 'receipt_long' : scopedEntityType === 'vendor' ? 'store' : 'local_shipping' }}
-            </span>
-          </div>
-          <div>
-            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-              {{ scopedOrderId ? ('FINANCES.ENTITIES.ORDER' | translate) : (scopedEntityType === 'vendor' ? ('FINANCES.ENTITIES.VENDOR' | translate) : ('FINANCES.ENTITIES.DRIVER' | translate)) }}
-            </p>
-            <p class="text-sm font-black text-slate-800">{{ scopeTitle }}</p>
-          </div>
+      <!-- شريط الصفحة العلوي (Header) -->
+      <app-page-header title="مطابقة الدفع عند الاستلام (COD)" subtitle="مراقبة ومطابقة المبالغ النقدية المحصلة من العملاء عبر المناديب وتسويتها">
+        <div actions>
+          <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" *ngIf="summary && summary.pendingCases > 0">
+            <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">done_all</span>
+            تسوية المبالغ المعلقة
+          </app-button>
         </div>
+      </app-page-header>
 
-        <div class="flex items-center gap-2">
-          <button
-            (click)="openScopedProfile()"
-            class="h-9 px-4 rounded-xl border border-slate-200 bg-white text-[10px] font-black text-slate-700 hover:bg-slate-100 transition-all">
-            {{ 'FINANCES.COMMON.VIEW' | translate }}
-          </button>
-          <button
-            (click)="clearScope()"
-            class="h-9 px-4 rounded-xl bg-slate-900 text-[10px] font-black text-white hover:bg-slate-700 transition-all">
-            {{ 'FINANCES.FILTERS.CLEAR' | translate }}
-          </button>
+      <!-- بانر الإشعار للفلترة -->
+      <app-inline-banner
+        *ngIf="hasScope && scopeTitle"
+        [title]="scopedOrderId ? 'مطابقة طلب محدد' : (scopedEntityType === 'vendor' ? 'مطابقة متجر محدد' : 'مطابقة مندوب محدد')"
+        [message]="scopeTitle"
+        [shouldTranslate]="false"
+        [icon]="scopedOrderId ? 'receipt_long' : scopedEntityType === 'vendor' ? 'storefront' : 'local_shipping'"
+        variant="info">
+        <div actions class="flex items-center gap-2">
+          <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="openScopedProfile()">
+            عرض الملف
+          </app-button>
+          <app-button variant="ghost" size="sm" customClass="!rounded-xl !bg-slate-900 !text-white hover:!bg-slate-800" (btnClick)="clearScope()">
+            مسح الفلتر
+          </app-button>
         </div>
-      </div>
+      </app-inline-banner>
 
+      <!-- ملخص الأرقام (Summary Stats) -->
       <div *ngIf="summary" class="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200/70 px-5 py-4 shadow-sm">
-          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.COD.SUMMARY.EXPECTED' | translate }}</p>
-          <p class="text-xl font-black text-slate-800 tabular-nums">{{ formatNumber(summary.totalExpected) }} <span class="text-sm font-bold text-slate-400">SAR</span></p>
+        <!-- إجمالي المتوقع -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm px-5 py-4">
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">إجمالي المتوقع تحصيله</p>
+          <p class="text-2xl font-black text-slate-800 tabular-nums">{{ formatNumber(summary.totalExpected) }} <span class="text-sm font-bold text-slate-400">SAR</span></p>
         </div>
-        <div class="bg-white rounded-2xl border border-emerald-200 px-5 py-4 shadow-sm">
-          <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">{{ 'FINANCES.COD.SUMMARY.COLLECTED' | translate }}</p>
-          <p class="text-xl font-black text-emerald-700 tabular-nums">{{ formatNumber(summary.totalCollected) }} <span class="text-sm font-bold text-emerald-400">SAR</span></p>
+        
+        <!-- المحصل الفعلي -->
+        <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm px-5 py-4 relative overflow-hidden">
+          <div class="absolute -right-6 -top-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl"></div>
+          <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1.5 relative z-10">المُحصّل الفعلي وتمت تسويته</p>
+          <p class="text-2xl font-black text-emerald-700 tabular-nums relative z-10">{{ formatNumber(summary.totalCollected) }} <span class="text-sm font-bold text-emerald-500/70">SAR</span></p>
         </div>
-        <div class="bg-white rounded-2xl border px-5 py-4 shadow-sm"
+        
+        <!-- الفارق المالي -->
+        <div class="bg-white rounded-2xl border shadow-sm px-5 py-4"
              [ngClass]="summary.totalDelta < 0 ? 'border-red-200' : 'border-slate-200'">
-          <p class="text-[9px] font-black uppercase tracking-widest mb-1"
-             [ngClass]="summary.totalDelta < 0 ? 'text-red-500' : 'text-slate-400'">{{ 'FINANCES.COD.SUMMARY.DELTA' | translate }}</p>
-          <p class="text-xl font-black tabular-nums"
-             [ngClass]="summary.totalDelta < 0 ? 'text-red-700' : 'text-emerald-700'">
+          <p class="text-[10px] font-black uppercase tracking-widest mb-1.5"
+             [ngClass]="summary.totalDelta < 0 ? 'text-red-500' : 'text-slate-500'">الفارق المالي (العجز / الزيادة)</p>
+          <p class="text-2xl font-black tabular-nums"
+             [ngClass]="summary.totalDelta < 0 ? 'text-red-700' : 'text-slate-800'">
             {{ formatNumber(summary.totalDelta) }} <span class="text-sm font-bold">SAR</span>
           </p>
         </div>
-        <div class="bg-white rounded-2xl border border-red-200 px-5 py-4 shadow-sm">
-          <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mb-1">{{ 'FINANCES.COD.SUMMARY.OVERDUE' | translate }}</p>
-          <p class="text-xl font-black text-red-700">{{ formatNumber(summary.overdueCases) }}</p>
+
+        <!-- متأخرات -->
+        <div class="bg-white rounded-2xl border border-red-200 shadow-sm px-5 py-4 relative overflow-hidden">
+          <div class="absolute -right-6 -top-6 w-20 h-20 bg-red-500/10 rounded-full blur-xl"></div>
+          <p class="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1.5 relative z-10">مبالغ متأخرة التحصيل</p>
+          <div class="flex items-end gap-2 relative z-10">
+             <p class="text-2xl font-black text-red-700 tabular-nums">{{ formatNumber(summary.overdueCases) }}</p>
+             <p class="text-[12px] font-bold text-red-500/70 mb-1">طلب</p>
+          </div>
         </div>
-        <div class="bg-white rounded-2xl border border-amber-200 px-5 py-4 shadow-sm">
-          <p class="text-[9px] font-black text-amber-500 uppercase tracking-widest mb-1">{{ 'FINANCES.COD.SUMMARY.PENDING' | translate }}</p>
-          <p class="text-xl font-black text-amber-700">{{ formatNumber(summary.pendingCases) }}</p>
+
+        <!-- معلق -->
+        <div class="bg-white rounded-2xl border border-amber-200 shadow-sm px-5 py-4 relative overflow-hidden">
+          <div class="absolute -right-6 -top-6 w-20 h-20 bg-amber-500/10 rounded-full blur-xl"></div>
+          <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1.5 relative z-10">بانتظار التسوية (معلق)</p>
+          <div class="flex items-end gap-2 relative z-10">
+             <p class="text-2xl font-black text-amber-700 tabular-nums">{{ formatNumber(summary.pendingCases) }}</p>
+             <p class="text-[12px] font-bold text-amber-500/70 mb-1">طلب</p>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden extraordinary-table-container">
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 class="text-sm font-black text-slate-800">{{ 'FINANCES.COD.TITLE' | translate }}</h3>
-          <button class="h-8 px-3 text-[10px] font-black text-white bg-zadna-primary rounded-xl shadow-sm hover:bg-zadna-primaryDark transition-all">
-            {{ 'FINANCES.COD.RECONCILE_ALL' | translate }}
-          </button>
+      <!-- جدول مطابقة الدفع -->
+      <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200 shadow-sm overflow-hidden bg-white">
+        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div class="flex items-center gap-3">
+             <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-200">
+               <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+             </div>
+             <div>
+               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">سجل المطابقات</h3>
+               <p class="text-[11px] font-bold text-slate-500 mt-0.5">تفاصيل المبالغ لكل طلب وحالة التسوية الميدانية</p>
+             </div>
+          </div>
         </div>
 
-        <table class="w-full">
-          <thead>
-            <tr class="bg-slate-50/80 border-b border-slate-100">
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COD.TABLE.ORDER' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COD.TABLE.DRIVER' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COD.TABLE.VENDOR' | translate }}</th>
-              <th class="px-6 py-4 text-end text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COD.TABLE.EXPECTED' | translate }}</th>
-              <th class="px-6 py-4 text-end text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COD.TABLE.COLLECTED' | translate }}</th>
-              <th class="px-6 py-4 text-end text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COD.TABLE.DELTA' | translate }}</th>
-              <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.STATUS' | translate }}</th>
-              <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.ACTIONS' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-50">
-            <tr *ngFor="let rec of records; trackBy: trackById"
-                class="group hover:bg-slate-50/60 transition-all duration-200 table-row-object">
+        <div class="overflow-x-auto">
+          <table class="w-full whitespace-nowrap text-right text-[13px]">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">الطلب (المرجع)</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">المندوب المُحصل</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">المتجر</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">المبلغ المطلوب تحصيله</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">ما تم توريده فعلياً</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">الفارق المالي (العجز)</th>
+                <th class="px-6 py-4 text-center">الحالة</th>
+                <th class="px-6 py-4 text-center">الإجراء</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr *ngFor="let rec of records; trackBy: trackById"
+                  class="group hover:bg-slate-50/80 transition-colors duration-150">
 
-              <td class="px-6 py-4">
-                <span class="text-xs font-black text-slate-700 font-mono">{{ rec.orderRef }}</span>
-              </td>
+                <td class="px-6 py-4 align-middle">
+                  <span class="text-[12px] font-black text-slate-600 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">{{ rec.orderRef }}</span>
+                </td>
 
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[13px] text-amber-500">local_shipping</span>
+                <td class="px-6 py-4 align-middle">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+                      <span class="material-symbols-outlined text-[14px] text-amber-600">local_shipping</span>
+                    </div>
+                    <span class="text-[13px] font-black text-slate-800">{{ rec.driverName }}</span>
                   </div>
-                  <span class="text-xs font-bold text-slate-700">{{ rec.driverName | translate }}</span>
-                </div>
-              </td>
+                </td>
 
-              <td class="px-6 py-4">
-                <span class="text-xs font-medium text-slate-500">{{ rec.vendorName | translate }}</span>
-              </td>
+                <td class="px-6 py-4 align-middle">
+                  <span class="text-[12px] font-bold text-slate-600">{{ rec.vendorName }}</span>
+                </td>
 
-              <td class="px-6 py-4 text-end">
-                <span class="text-xs font-bold text-slate-600 tabular-nums">{{ formatNumber(rec.expectedAmount) }} SAR</span>
-              </td>
+                <td class="px-6 py-4 align-middle text-left" dir="ltr">
+                  <span class="text-[13px] font-black text-slate-700 tabular-nums">{{ formatNumber(rec.expectedAmount) }} SAR</span>
+                </td>
 
-              <td class="px-6 py-4 text-end">
-                <span class="text-xs font-bold tabular-nums"
-                      [ngClass]="rec.collectedAmount > 0 ? 'text-emerald-600' : 'text-slate-400'">
-                  {{ formatNumber(rec.collectedAmount) }} SAR
-                </span>
-              </td>
+                <td class="px-6 py-4 align-middle text-left" dir="ltr">
+                  <span class="text-[13px] font-black tabular-nums"
+                        [ngClass]="rec.collectedAmount > 0 ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100' : 'text-slate-400'">
+                    {{ formatNumber(rec.collectedAmount) }} SAR
+                  </span>
+                </td>
 
-              <td class="px-6 py-4 text-end">
-                <span class="text-xs font-black tabular-nums"
-                      [ngClass]="rec.delta < 0 ? 'text-red-600' : rec.delta === 0 ? 'text-emerald-600' : 'text-slate-600'">
-                  {{ rec.delta === 0 ? ('FINANCES.COD.MATCHED' | translate) : formatNumber(rec.delta) + ' SAR' }}
-                </span>
-              </td>
+                <td class="px-6 py-4 align-middle text-left" dir="ltr">
+                  <div class="flex items-center justify-end gap-1" [ngClass]="rec.delta < 0 ? 'text-red-600' : rec.delta === 0 ? 'text-emerald-600' : 'text-slate-600'">
+                     <span class="material-symbols-outlined text-[14px]" *ngIf="rec.delta < 0">warning</span>
+                     <span class="material-symbols-outlined text-[14px]" *ngIf="rec.delta === 0">check_circle</span>
+                     <span class="text-[13px] font-black tabular-nums">
+                       {{ rec.delta === 0 ? 'متطابق' : formatNumber(rec.delta) + ' SAR' }}
+                     </span>
+                  </div>
+                </td>
 
-              <td class="px-6 py-4">
-                <div class="flex justify-center">
-                  <app-finance-status-badge [status]="rec.status"></app-finance-status-badge>
-                </div>
-              </td>
+                <td class="px-6 py-4 align-middle">
+                  <div class="flex justify-center">
+                    <app-finance-status-badge [status]="rec.status"></app-finance-status-badge>
+                  </div>
+                </td>
 
-              <td class="px-6 py-4">
-                <div class="flex justify-center">
-                  <button *ngIf="rec.status === 'overdue' || rec.status === 'pending'"
-                          class="h-7 px-2.5 text-[9px] font-black text-white bg-zadna-primary rounded-lg hover:bg-zadna-primaryDark transition-all">
-                    {{ 'FINANCES.COD.RECONCILE' | translate }}
-                  </button>
-                  <span *ngIf="rec.status === 'collected'" class="text-[10px] font-black text-emerald-600">{{ 'FINANCES.COD.DONE' | translate }}</span>
-                </div>
-              </td>
+                <td class="px-6 py-4 align-middle">
+                  <div class="flex justify-center">
+                    <button *ngIf="rec.status === 'overdue' || rec.status === 'pending'"
+                            class="h-8 px-3 text-[10px] font-black text-white bg-slate-900 rounded-lg hover:bg-slate-800 shadow-sm transition-all flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[14px]">done_all</span>
+                      تسوية يدوية
+                    </button>
+                    <span *ngIf="rec.status === 'collected'" class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">تمت التسوية</span>
+                  </div>
+                </td>
 
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="records.length === 0" class="flex flex-col items-center justify-center py-24 text-center bg-white">
+          <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+             <span class="material-symbols-outlined text-4xl text-slate-300">task_alt</span>
+          </div>
+          <h3 class="text-[15px] font-black text-slate-800">لا يوجد بيانات مطابقة</h3>
+          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">جميع المبالغ المحصلة مسواة بالكامل أو لم يتم العثور على سجلات تطابق طلبك.</p>
+        </div>
+      </app-card>
     </div>
   `
 })

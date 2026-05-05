@@ -75,7 +75,7 @@
             <span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-zadna-primary">shield_person</span>
           </button>
           
-          <button (click)="openEmailRouting()" type="button"
+          <button *appHasPermission="'email_center.view'" (click)="openEmailRouting()" type="button"
             class="group flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-700 backdrop-blur-md transition-all hover:border-zadna-primary/30 hover:bg-slate-50 hover:shadow-sm"
             title="{{ 'VENDOR_DETAIL.OPEN_EMAIL_ROUTING' | translate }}">
             <span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-zadna-primary">mail</span>

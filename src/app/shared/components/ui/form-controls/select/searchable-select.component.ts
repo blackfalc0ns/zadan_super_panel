@@ -27,7 +27,7 @@ export interface SearchableSelectOption<T = any> {
         {{ label | translate }} <span *ngIf="isRequired" class="text-rose-500">*</span>
       </label>
 
-      <div class="relative" #dropdownContainer>
+      <div class="relative" [ngClass]="{'z-50': isOpen}" #dropdownContainer>
         <button
           type="button"
           [disabled]="disabled || isDisabled"

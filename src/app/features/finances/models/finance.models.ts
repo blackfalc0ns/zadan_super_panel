@@ -45,15 +45,17 @@ export interface FinanceDashboardAlert {
 
 export interface FinanceDashboardSnapshot {
   period: FinancePeriod;
-  gmv: FinanceKPI;
-  netRevenue: FinanceKPI;
-  vendorCommissions: FinanceKPI;
+  grossCollections: FinanceKPI;
+  platformNetRevenue: FinanceKPI;
+  commissionRevenue: FinanceKPI;
+  deliveryRevenue: FinanceKPI;
+  codFeesCollected: FinanceKPI;
+  vatCollected: FinanceKPI;
   driverPayouts: FinanceKPI;
-  refundRatio: FinanceKPI;
-  disputeExposure: FinanceKPI;
+  refundExposure: FinanceKPI;
   revenueComposition: RevenueCompositionSegment[];
-  gmvTrend: ChartDataPoint[];
-  refundTrend: ChartDataPoint[];
+  collectionTrend: ChartDataPoint[];
+  revenueTrend: ChartDataPoint[];
   alerts: FinanceDashboardAlert[];
 }
 
@@ -420,5 +422,28 @@ export interface DriverPayment {
   period: string;
   status: SettlementStatus;
   paidAt?: string;
+}
+
+export interface ZoneFinanceSettings {
+  zoneId: string;
+  zoneName: string;
+  city: string;
+  pricingRuleId?: string | null;
+  
+  // Pricing Rule
+  baseDeliveryFee: number;
+  includedKm: number;
+  extraKmFee: number;
+  minDeliveryFee: number;
+  maxDeliveryFee: number;
+  isPricingActive: boolean;
+  
+  // Finance Settings
+  vatPercent: number;
+  codFeeType: 'flat' | 'percent';
+  codFlatFee: number;
+  codPercent: number;
+  isVatActive: boolean;
+  isCodFeeActive: boolean;
 }
 

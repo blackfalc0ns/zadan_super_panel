@@ -30,10 +30,12 @@ export class DisputeApprovalModalComponent implements OnChanges {
     { value: 'partial', labelKey: 'DISPUTES_DASHBOARD.MODAL.REFUND_TYPE_PARTIAL' }
   ];
 
-  readonly refundMethodOptions: SearchableSelectOption<RefundDecisionForm['refundMethod']>[] = [
+  readonly onlineRefundMethodOptions: SearchableSelectOption<RefundDecisionForm['refundMethod']>[] = [
     { value: 'same_method', labelKey: 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_SAME' },
-    { value: 'wallet', labelKey: 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_WALLET' },
-    { value: 'manual', labelKey: 'DISPUTES_DASHBOARD.MODAL.REFUND_METHOD_MANUAL' }
+  ];
+
+  readonly codRefundMethodOptions: SearchableSelectOption<RefundDecisionForm['refundMethod']>[] = [
+    { value: 'coupon', label: 'Compensation coupon' }
   ];
 
   readonly costBearerOptions: SearchableSelectOption<RefundDecisionForm['costBearer']>[] = [
@@ -58,6 +60,20 @@ export class DisputeApprovalModalComponent implements OnChanges {
     return Math.max(this.refundAmountValue - this.nonRefundableDeliveryFee, 0);
   }
 
+  get refundMethodOptions(): SearchableSelectOption<RefundDecisionForm['refundMethod']>[] {
+    return this.isCashOnDelivery ? this.codRefundMethodOptions : this.onlineRefundMethodOptions;
+  }
+
+  get isCashOnDelivery(): boolean {
+    return this.dispute?.paymentMethod === 'cash';
+  }
+
+  get refundMethodHint(): string {
+    return this.isCashOnDelivery
+      ? 'Cash on delivery orders are approved as customer-specific compensation coupons.'
+      : 'Online-paid orders are refunded back to the original payment method.';
+  }
+
   onBackdropClick(event: MouseEvent): void {
     if (event.target === event.currentTarget) {
       this.close.emit();
@@ -73,6 +89,10 @@ export class DisputeApprovalModalComponent implements OnChanges {
     this.form.refundAmount = refundType === 'full' ? this.dispute.amount.toFixed(2) : this.getSuggestedRefundAmount(this.dispute);
   }
 
+  onRefundMethodChange(refundMethod: RefundDecisionForm['refundMethod']): void {
+    this.form.refundMethod = refundMethod;
+  }
+
   onSaveDraft(): void {
     this.saveDraft.emit({ ...this.form });
   }
@@ -82,10 +102,12 @@ export class DisputeApprovalModalComponent implements OnChanges {
   }
 
   private createDefaultForm(dispute: DisputeRow): RefundDecisionForm {
+    const refundMethod: RefundDecisionForm['refundMethod'] = dispute.paymentMethod === 'cash' ? 'coupon' : 'same_method';
+
     return {
       refundType: dispute.amount > 450 ? 'partial' : 'full',
       refundAmount: this.getSuggestedRefundAmount(dispute),
-      refundMethod: 'same_method',
+      refundMethod,
       approvalReason: this.t('DISPUTES_DASHBOARD.MODAL.DEFAULT_APPROVAL_REASON'),
       costBearer: 'shared',
       internalNotes: '',

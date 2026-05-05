@@ -15,6 +15,7 @@ import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/co
 import { OrderTrackingMapComponent } from '../../../components/order-tracking-map/order-tracking-map.component';
 import { FinanceService, OrderFinancialBreakdown } from '@finances/public-api';
 import { OrdersService } from '@orders/services/orders.api.service';
+import { AccessService } from '../../../../../core/services/access.service';
 import {
   DriverAssignmentForm,
   OrderCancellationForm,
@@ -79,7 +80,8 @@ export class OrderDetailsComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly ordersService: OrdersService,
-    private readonly financeService: FinanceService
+    private readonly financeService: FinanceService,
+    private readonly accessService: AccessService
   ) {}
 
   ngOnInit(): void {
@@ -141,6 +143,18 @@ export class OrderDetailsComponent implements OnInit {
     return !this.operationalCase || this.operationalCase.status === 'CLOSED';
   }
 
+  get canViewDisputesCenter(): boolean {
+    return this.accessService.hasPermission('disputes.view');
+  }
+
+  get canEditDisputes(): boolean {
+    return this.accessService.hasPermission('disputes.edit');
+  }
+
+  get canApproveDisputes(): boolean {
+    return this.accessService.hasPermission('disputes.approve');
+  }
+
   get canOpenRefund(): boolean {
     const currentOrder = this.order();
 
@@ -149,7 +163,45 @@ export class OrderDetailsComponent implements OnInit {
     }
 
     const paymentBlocked = currentOrder.paymentStatus === 'FAILED' || currentOrder.paymentStatus === 'PENDING';
-    return !paymentBlocked && this.canOpenIssueTools;
+    return !paymentBlocked && this.canOpenIssueTools && this.canEditDisputes;
+  }
+
+  get canOpenIssueCase(): boolean {
+    return this.canOpenIssueTools && this.canEditDisputes;
+  }
+
+  get canOpenDisputeCase(): boolean {
+    return this.canOpenIssueTools && this.canEditDisputes;
+  }
+
+  get canResolveOperationalCaseAction(): boolean {
+    return this.canResolveOperationalCase && this.canApproveDisputes;
+  }
+
+  get canCloseOperationalCaseAction(): boolean {
+    return this.canCloseOperationalCase && this.canApproveDisputes;
+  }
+
+  get canReopenOperationalCaseAction(): boolean {
+    return this.canReopenOperationalCase && this.canApproveDisputes;
+  }
+
+  get supportCaseFocusId(): string | null {
+    return this.operationalCase?.caseId ?? null;
+  }
+
+  get supportCenterQueryParams(): Record<string, string> {
+    const currentOrder = this.order();
+
+    if (this.supportCaseFocusId) {
+      return { focus: this.supportCaseFocusId };
+    }
+
+    if (currentOrder?.id) {
+      return { search: currentOrder.id };
+    }
+
+    return {};
   }
 
   get canRecomputeDispatch(): boolean {
@@ -330,14 +382,26 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   openRefundModal(): void {
+    if (!this.canOpenRefund) {
+      return;
+    }
+
     this.isRefundModalOpen = true;
   }
 
   openDisputeModal(): void {
+    if (!this.canOpenDisputeCase) {
+      return;
+    }
+
     this.isDisputeModalOpen = true;
   }
 
   openIssueFlagModal(): void {
+    if (!this.canOpenIssueCase) {
+      return;
+    }
+
     this.isIssueFlagModalOpen = true;
   }
 
@@ -366,6 +430,10 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   resolveOperationalCase(): void {
+    if (!this.canResolveOperationalCaseAction) {
+      return;
+    }
+
     const id = this.orderId();
 
     if (!id) {
@@ -378,6 +446,10 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   closeOperationalCase(): void {
+    if (!this.canCloseOperationalCaseAction) {
+      return;
+    }
+
     const id = this.orderId();
 
     if (!id) {
@@ -390,6 +462,10 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   reopenOperationalCase(): void {
+    if (!this.canReopenOperationalCaseAction) {
+      return;
+    }
+
     const id = this.orderId();
 
     if (!id) {

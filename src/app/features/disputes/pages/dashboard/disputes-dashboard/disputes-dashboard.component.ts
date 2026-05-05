@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AccessService } from '../../../../../core/services/access.service';
+import { AdminSupportCaseRealtimeService } from '../../../../../core/services/admin-support-case-realtime.service';
 import { DisputesService } from '@disputes/services/disputes.api.service';
 import { BulkAction, DataTableComponent, TableAction, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { KPICard, KpiCardsComponent } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
@@ -35,6 +37,7 @@ import {
     CommonModule,
     FormsModule,
     TranslateModule,
+    RouterModule,
     KpiCardsComponent,
     DataTableComponent,
     AppPaginationComponent,
@@ -52,6 +55,8 @@ import {
 export class DisputesDashboardComponent implements OnInit {
   disputes: SupportCaseRow[] = [];
   totalCount = 0;
+  isLoading = false;
+  loadError = '';
   private readonly destroyRef = inject(DestroyRef);
   private focusedDisputeId: string | null = null;
 
@@ -64,7 +69,12 @@ export class DisputesDashboardComponent implements OnInit {
   pageSize = 8;
   searchTerm = '';
   activeFilter: DisputeFilterId = 'all';
+  typeFilter = 'all';
+  priorityFilter = 'all';
+  queueFilter = 'all';
   initiatorRoleFilter: string = 'all';
+  vendorIdFilter = '';
+  driverIdFilter = '';
   selectedDispute: SupportCaseRow = this.createEmptyDispute();
   isDetailsDrawerOpen = false;
   isApprovalModalOpen = false;
@@ -74,7 +84,9 @@ export class DisputesDashboardComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly accessService: AccessService,
     private readonly disputesService: DisputesService,
+    private readonly adminSupportCaseRealtime: AdminSupportCaseRealtimeService,
     public translate: TranslateService
   ) {
     this.buildUiConfig();
@@ -92,16 +104,37 @@ export class DisputesDashboardComponent implements OnInit {
       .subscribe((params) => {
         this.searchTerm = params.get('search')?.trim() ?? '';
         this.activeFilter = this.isValidFilter(params.get('status')) ? params.get('status') as DisputeFilterId : 'all';
+        this.typeFilter = params.get('type')?.trim() ?? 'all';
+        this.priorityFilter = params.get('priority')?.trim() ?? 'all';
+        this.queueFilter = params.get('queue')?.trim() ?? 'all';
+        this.initiatorRoleFilter = params.get('initiatorRole')?.trim() ?? 'all';
+        this.vendorIdFilter = params.get('vendorId')?.trim() ?? '';
+        this.driverIdFilter = params.get('driverId')?.trim() ?? '';
         this.focusedDisputeId = params.get('focus')?.trim() ?? null;
         this.resetToFirstPage();
         this.applyFocusedSelection();
+      });
+
+    this.adminSupportCaseRealtime.getEvents()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event.targetUrl?.startsWith('/disputes')) {
+          this.loadDisputes();
+        }
       });
 
     this.loadDisputes();
   }
 
   get hasActiveFilters(): boolean {
-    return this.activeFilter !== 'all' || this.searchTerm.trim().length > 0;
+    return this.activeFilter !== 'all'
+      || this.searchTerm.trim().length > 0
+      || this.typeFilter !== 'all'
+      || this.priorityFilter !== 'all'
+      || this.queueFilter !== 'all'
+      || this.initiatorRoleFilter !== 'all'
+      || this.vendorIdFilter.trim().length > 0
+      || this.driverIdFilter.trim().length > 0;
   }
 
   get totalFilteredItems(): number {
@@ -109,7 +142,61 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   get canManageSelectedDispute(): boolean {
-    return this.selectedDispute.caseStatus !== 'resolved' && this.selectedDispute.caseStatus !== 'rejected';
+    return this.canEditDisputes || this.canApproveDisputes;
+  }
+
+  get canEditDisputes(): boolean {
+    return this.accessService.hasPermission('disputes.edit');
+  }
+
+  get canApproveDisputes(): boolean {
+    return this.accessService.hasPermission('disputes.approve');
+  }
+
+  get canCreateDisputes(): boolean {
+    return this.canEditDisputes;
+  }
+
+  get typeOptions(): Array<{ value: string; label: string }> {
+    return [
+      { value: 'all', label: this.isRtl ? 'كل الأنواع' : 'All types' },
+      { value: 'return_request', label: this.getTypeLabel('return_request') },
+      { value: 'complaint', label: this.getTypeLabel('complaint') },
+      { value: 'driver_report', label: this.getTypeLabel('driver_report') },
+      { value: 'driver_dispute', label: this.getTypeLabel('driver_dispute') }
+    ];
+  }
+
+  get priorityOptions(): Array<{ value: string; label: string }> {
+    return [
+      { value: 'all', label: this.isRtl ? 'كل الأولويات' : 'All priorities' },
+      { value: 'critical', label: this.getPriorityLabel('critical') },
+      { value: 'high', label: this.getPriorityLabel('high') },
+      { value: 'medium', label: this.getPriorityLabel('medium') },
+      { value: 'low', label: this.getPriorityLabel('low') }
+    ];
+  }
+
+  get queueOptions(): Array<{ value: string; label: string }> {
+    return [
+      { value: 'all', label: this.isRtl ? 'كل المسارات' : 'All queues' },
+      { value: 'support', label: this.isRtl ? 'الدعم' : 'Support' },
+      { value: 'finance', label: this.isRtl ? 'المالية' : 'Finance' },
+      { value: 'operations', label: this.isRtl ? 'العمليات' : 'Operations' },
+      { value: 'risk', label: this.isRtl ? 'المخاطر' : 'Risk' },
+      { value: 'legal', label: this.isRtl ? 'القانوني' : 'Legal' },
+      { value: 'driverops', label: this.isRtl ? 'عمليات المندوبين' : 'Driver Ops' }
+    ];
+  }
+
+  get initiatorRoleOptions(): Array<{ value: string; label: string }> {
+    return [
+      { value: 'all', label: this.isRtl ? 'كل المصادر' : 'All initiators' },
+      { value: 'customer', label: this.getInitiatorRoleLabel('customer') },
+      { value: 'vendor', label: this.getInitiatorRoleLabel('vendor') },
+      { value: 'driver', label: this.getInitiatorRoleLabel('driver') },
+      { value: 'admin', label: this.getInitiatorRoleLabel('admin') }
+    ];
   }
 
   get paginatedDisputes(): SupportCaseRow[] {
@@ -206,6 +293,11 @@ export class DisputesDashboardComponent implements OnInit {
     this.loadDisputes();
   }
 
+  onAdvancedFiltersChange(): void {
+    this.resetToFirstPage();
+    this.loadDisputes();
+  }
+
   toggleActiveCases(): void {
     this.activeFilter = this.activeFilter === 'active' ? 'all' : 'active';
     this.resetToFirstPage();
@@ -221,6 +313,12 @@ export class DisputesDashboardComponent implements OnInit {
   clearFilters(): void {
     this.searchTerm = '';
     this.activeFilter = 'all';
+    this.typeFilter = 'all';
+    this.priorityFilter = 'all';
+    this.queueFilter = 'all';
+    this.initiatorRoleFilter = 'all';
+    this.vendorIdFilter = '';
+    this.driverIdFilter = '';
     this.resetToFirstPage();
     this.loadDisputes();
   }
@@ -242,6 +340,10 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   openApprovalModal(): void {
+    if (!this.canApproveReturnSelectedDispute) {
+      return;
+    }
+
     this.isEscalationModalOpen = false;
     this.isRejectionModalOpen = false;
     this.isRequestInfoModalOpen = false;
@@ -269,6 +371,10 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   openEscalationModal(): void {
+    if (!this.canEscalateSelectedDispute) {
+      return;
+    }
+
     this.isApprovalModalOpen = false;
     this.isRejectionModalOpen = false;
     this.isRequestInfoModalOpen = false;
@@ -296,6 +402,10 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   openRejectionModal(): void {
+    if (!this.canRejectSelectedDispute) {
+      return;
+    }
+
     this.isApprovalModalOpen = false;
     this.isEscalationModalOpen = false;
     this.isRequestInfoModalOpen = false;
@@ -323,6 +433,10 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   openRequestInfoModal(): void {
+    if (!this.canRequestEvidenceForSelectedDispute) {
+      return;
+    }
+
     this.isApprovalModalOpen = false;
     this.isEscalationModalOpen = false;
     this.isRejectionModalOpen = false;
@@ -429,6 +543,18 @@ export class DisputesDashboardComponent implements OnInit {
     }[priority];
   }
 
+  getPriorityFilterLabel(priority: string): string {
+    switch (priority) {
+      case 'critical':
+      case 'high':
+      case 'medium':
+      case 'low':
+        return this.getPriorityLabel(priority as DisputePriority);
+      default:
+        return priority;
+    }
+  }
+
   getRiskClass(risk: RiskLevel): string {
     return {
       high: 'text-red-500 bg-red-50',
@@ -457,6 +583,139 @@ export class DisputesDashboardComponent implements OnInit {
     return tone === 'warning' ? 'text-amber-700' : 'text-slate-800';
   }
 
+  getTypeLabel(type: SupportCaseType | string): string {
+    switch ((type || '').toLowerCase()) {
+      case 'return_request':
+        return this.isRtl ? 'استرجاع / تعويض' : 'Return request';
+      case 'driver_report':
+        return this.isRtl ? 'بلاغ مندوب' : 'Driver report';
+      case 'driver_dispute':
+        return this.isRtl ? 'نزاع مندوب' : 'Driver dispute';
+      default:
+        return this.isRtl ? 'شكوى / نزاع' : 'Complaint';
+    }
+  }
+
+  getInitiatorRoleLabel(role: string): string {
+    switch ((role || '').toLowerCase()) {
+      case 'vendor':
+        return this.isRtl ? 'المتجر' : 'Vendor';
+      case 'driver':
+        return this.isRtl ? 'المندوب' : 'Driver';
+      case 'admin':
+        return this.isRtl ? 'الأدمن' : 'Admin';
+      default:
+        return this.isRtl ? 'العميل' : 'Customer';
+    }
+  }
+
+  getPaymentMethodLabel(paymentMethod: string): string {
+    switch ((paymentMethod || '').toLowerCase()) {
+      case 'cash':
+        return this.isRtl ? 'الدفع عند الاستلام' : 'Cash on delivery';
+      case 'card':
+        return this.isRtl ? 'بطاقة' : 'Card';
+      case 'bank':
+        return this.isRtl ? 'تحويل بنكي' : 'Bank transfer';
+      case 'wallet':
+        return this.isRtl ? 'محفظة' : 'Wallet';
+      case 'apple_pay':
+        return 'Apple Pay';
+      case 'mada':
+        return 'Mada';
+      default:
+        return paymentMethod || 'Unknown';
+    }
+  }
+
+  getCompensationTypeLabel(compensationType?: string | null): string {
+    switch ((compensationType || '').toLowerCase()) {
+      case 'cash_refund':
+        return this.isRtl ? 'استرجاع نقدي' : 'Cash refund';
+      case 'coupon_compensation':
+        return this.isRtl ? 'تعويض بكوبون' : 'Coupon compensation';
+      default:
+        return compensationType || (this.isRtl ? 'غير محدد' : 'Not set');
+    }
+  }
+
+  getSettlementStatusLabel(settlementStatus?: string | null): string {
+    switch ((settlementStatus || '').toLowerCase()) {
+      case 'pending_review':
+        return this.isRtl ? 'بانتظار المراجعة' : 'Pending review';
+      case 'cash_refunded':
+        return this.isRtl ? 'تم الاسترجاع النقدي' : 'Cash refunded';
+      case 'coupon_issued':
+        return this.isRtl ? 'تم إصدار الكوبون' : 'Coupon issued';
+      case 'coupon_redeemed':
+        return this.isRtl ? 'تم استخدام الكوبون' : 'Coupon redeemed';
+      case 'rejected':
+        return this.isRtl ? 'مرفوض' : 'Rejected';
+      case 'approved':
+        return this.isRtl ? 'تمت الموافقة' : 'Approved';
+      default:
+        return settlementStatus || (this.isRtl ? 'غير محدد' : 'Not set');
+    }
+  }
+
+  getVendorRecoveryStatusLabel(status?: string | null): string {
+    switch ((status || '').toLowerCase()) {
+      case 'pending':
+        return this.isRtl ? 'بانتظار التحصيل' : 'Pending recovery';
+      case 'partial':
+        return this.isRtl ? 'تم التحصيل جزئيًا' : 'Partially recovered';
+      case 'recovered':
+        return this.isRtl ? 'تم التحصيل بالكامل' : 'Recovered in full';
+      default:
+        return status || (this.isRtl ? 'لا يوجد' : 'Not applicable');
+    }
+  }
+
+  canPerformAction(action: string, permission: 'disputes.edit' | 'disputes.approve'): boolean {
+    const isAllowedByCase = this.selectedDispute.allowedActions?.includes(action) ?? false;
+    return this.accessService.hasPermission(permission) && isAllowedByCase;
+  }
+
+  get canAssignSelectedDispute(): boolean {
+    return this.canPerformAction('assign', 'disputes.edit');
+  }
+
+  get canAddNoteToSelectedDispute(): boolean {
+    return this.canPerformAction('note', 'disputes.edit');
+  }
+
+  get canMessageSelectedDispute(): boolean {
+    return this.canPerformAction('message', 'disputes.edit');
+  }
+
+  get canRequestEvidenceForSelectedDispute(): boolean {
+    return this.canPerformAction('request_evidence', 'disputes.edit');
+  }
+
+  get canEscalateSelectedDispute(): boolean {
+    return this.canPerformAction('escalate', 'disputes.edit');
+  }
+
+  get canApproveReturnSelectedDispute(): boolean {
+    return this.selectedDispute.type === 'return_request' && this.canPerformAction('approve', 'disputes.approve');
+  }
+
+  get canApproveComplaintSelectedDispute(): boolean {
+    return this.selectedDispute.type !== 'return_request' && this.canPerformAction('approve', 'disputes.approve');
+  }
+
+  get canRejectSelectedDispute(): boolean {
+    return this.canPerformAction('reject', 'disputes.approve');
+  }
+
+  get canResolveSelectedDispute(): boolean {
+    return this.canPerformAction('resolve', 'disputes.approve');
+  }
+
+  get canReopenSelectedDispute(): boolean {
+    return this.canPerformAction('reopen', 'disputes.approve');
+  }
+
   private matchesFilter(dispute: SupportCaseRow): boolean {
     return true; // Filtering is now server-side
   }
@@ -473,24 +732,42 @@ export class DisputesDashboardComponent implements OnInit {
 
   private loadDisputes(): void {
     const filters = this.resolveServerFilters();
-    
+
+    this.isLoading = true;
+    this.loadError = '';
+
     this.disputesService.getDisputes(
       this.page,
       this.pageSize,
       this.searchTerm,
       filters.status,
       filters.priority,
-      undefined,
-      undefined,
-      filters.initiatorRole
+      filters.queue,
+      filters.type,
+      filters.initiatorRole,
+      filters.vendorId,
+      filters.driverId
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((response) => {
-        this.disputes = response.items;
-        this.totalCount = response.totalCount;
-        this.applyFocusedSelection();
-        this.normalizeCurrentPage();
-        this.buildUiConfig();
+      .subscribe({
+        next: (response) => {
+          this.disputes = response.items;
+          this.totalCount = response.totalCount;
+          this.applyFocusedSelection();
+          this.normalizeCurrentPage();
+          this.buildUiConfig();
+          this.isLoading = false;
+        },
+        error: () => {
+          this.disputes = [];
+          this.totalCount = 0;
+          this.applyFocusedSelection();
+          this.buildUiConfig();
+          this.loadError = this.isRtl
+            ? 'تعذر تحميل النزاعات حالياً.'
+            : 'Unable to load disputes right now.';
+          this.isLoading = false;
+        }
       });
   }
 
@@ -591,12 +868,17 @@ export class DisputesDashboardComponent implements OnInit {
       { id: 'view', label: this.t('COMMON.VIEW_DETAILS'), icon: 'visibility' }
     ];
 
-    this.bulkActions = [
-      { id: 'assign', label: this.t('DISPUTES_DASHBOARD.BULK.ASSIGN'), icon: 'person_add', color: 'bg-zadna-primary text-white shadow-zadna-primary/20' },
-      { id: 'escalate', label: this.t('DISPUTES_DASHBOARD.BULK.ESCALATE'), icon: 'priority_high', color: 'bg-amber-500 text-white shadow-amber-500/20' },
-      { id: 'note', label: this.t('DISPUTES_DASHBOARD.BULK.ADD_NOTE'), icon: 'note_add', color: 'bg-slate-700 text-white shadow-slate-700/20' },
-      { id: 'delete', label: this.t('COMMON.DELETE'), icon: 'delete', color: 'bg-red-500 text-white shadow-red-500/20' }
-    ];
+    const bulkActions: BulkAction[] = [];
+
+    if (this.canEditDisputes) {
+      bulkActions.push(
+        { id: 'assign', label: this.t('DISPUTES_DASHBOARD.BULK.ASSIGN'), icon: 'person_add', color: 'bg-zadna-primary text-white shadow-zadna-primary/20' },
+        { id: 'escalate', label: this.t('DISPUTES_DASHBOARD.BULK.ESCALATE'), icon: 'priority_high', color: 'bg-amber-500 text-white shadow-amber-500/20' },
+        { id: 'note', label: this.t('DISPUTES_DASHBOARD.BULK.ADD_NOTE'), icon: 'note_add', color: 'bg-slate-700 text-white shadow-slate-700/20' }
+      );
+    }
+
+    this.bulkActions = bulkActions;
   }
 
   private isValidFilter(value: string | null): value is DisputeFilterId {
@@ -616,31 +898,40 @@ export class DisputesDashboardComponent implements OnInit {
       || value === 'vendor';
   }
 
-  private resolveServerFilters(): { status?: string; priority?: string; initiatorRole?: string } {
+  private resolveServerFilters(): { status?: string; priority?: string; queue?: string; type?: string; initiatorRole?: string; vendorId?: string; driverId?: string } {
+    const baseFilters = {
+      type: this.typeFilter !== 'all' ? this.typeFilter : undefined,
+      priority: this.priorityFilter !== 'all' ? this.priorityFilter : undefined,
+      queue: this.queueFilter !== 'all' ? this.queueFilter : undefined,
+      initiatorRole: this.initiatorRoleFilter !== 'all' ? this.initiatorRoleFilter : undefined,
+      vendorId: this.vendorIdFilter.trim() || undefined,
+      driverId: this.driverIdFilter.trim() || undefined
+    };
+
     switch (this.activeFilter) {
       case 'active':
-        return { status: 'active' };
+        return { ...baseFilters, status: 'active' };
       case 'critical':
-        return { priority: 'critical' };
+        return { ...baseFilters, priority: 'critical' };
       case 'review':
       case 'in_review':
-        return { status: 'in_review' };
+        return { ...baseFilters, status: 'in_review' };
       case 'merchant':
       case 'awaiting_customer_evidence':
-        return { status: 'awaiting_customer_evidence' };
+        return { ...baseFilters, status: 'awaiting_customer_evidence' };
       case 'submitted':
       case 'approved':
       case 'rejected':
       case 'resolved':
-        return { status: this.activeFilter };
+        return { ...baseFilters, status: this.activeFilter };
       case 'driver':
-        return { initiatorRole: 'driver' };
+        return { ...baseFilters, initiatorRole: 'driver' };
       case 'customer':
-        return { initiatorRole: 'customer' };
+        return { ...baseFilters, initiatorRole: 'customer' };
       case 'vendor':
-        return { initiatorRole: 'vendor' };
+        return { ...baseFilters, initiatorRole: 'vendor' };
       default:
-        return {};
+        return baseFilters;
     }
   }
 
@@ -706,9 +997,18 @@ export class DisputesDashboardComponent implements OnInit {
       createdAt: '',
       sla: '',
       note: '',
+      paymentMethod: 'card',
       paymentMask: '',
       customerSummary: '',
       merchantSummary: '',
+      compensationType: null,
+      settlementStatus: null,
+      vendorRecoveryStatus: null,
+      vendorRecoveredAmount: 0,
+      vendorOutstandingAmount: 0,
+      couponCode: null,
+      couponExpiresAtUtc: null,
+      couponRedeemed: false,
       evidence: [],
       timeline: [],
       initiatorRole: 'customer',
@@ -720,7 +1020,7 @@ export class DisputesDashboardComponent implements OnInit {
   }
   
   approveComplaint(internalNotes?: string, customerMessage?: string): void {
-    if (this.selectedDispute.type !== 'complaint') return;
+    if (!this.canApproveComplaintSelectedDispute) return;
     const note = internalNotes || prompt(this.t('DISPUTES_DASHBOARD.DRAWER.APPROVE_COMPLAINT_PROMPT') || 'Enter approval notes:') || undefined;
     this.disputesService.approveComplaint(this.selectedDispute.id, note, customerMessage)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -733,6 +1033,7 @@ export class DisputesDashboardComponent implements OnInit {
   }
   
   resolveCase(): void {
+    if (!this.canResolveSelectedDispute) return;
     if (!confirm(this.t('DISPUTES_DASHBOARD.DRAWER.RESOLVE_CONFIRM') || 'Are you sure you want to resolve this case?')) return;
     this.disputesService.resolveCase(this.selectedDispute.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -745,6 +1046,7 @@ export class DisputesDashboardComponent implements OnInit {
   }
   
   assignCase(): void {
+    if (!this.canAssignSelectedDispute) return;
     this.disputesService.assignCase(this.selectedDispute.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -756,6 +1058,7 @@ export class DisputesDashboardComponent implements OnInit {
   }
   
   addNote(): void {
+    if (!this.canAddNoteToSelectedDispute) return;
     const note = prompt(this.t('DISPUTES_DASHBOARD.DRAWER.ADD_NOTE_PROMPT') || 'Enter note:');
     if (!note) return;
     this.disputesService.addNote(this.selectedDispute.id, note)
@@ -769,6 +1072,7 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   sendPublicMessage(): void {
+    if (!this.canMessageSelectedDispute) return;
     const message = prompt(this.t('DISPUTES_DASHBOARD.DRAWER.SEND_MESSAGE_PROMPT') || 'Enter message:');
     if (!message) return;
 
@@ -802,6 +1106,19 @@ export class DisputesDashboardComponent implements OnInit {
     if (waitingOn === 'driver') return 'driver';
     if (waitingOn === 'customer') return 'customer';
     return 'customer,vendor';
+  }
+
+  reopenCase(): void {
+    if (!this.canReopenSelectedDispute) return;
+    const note = prompt(this.isRtl ? 'أضف ملاحظة إعادة الفتح (اختياري)' : 'Add a reopen note (optional)') || undefined;
+    this.disputesService.reopenCase(this.selectedDispute.id, note)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dispute) => {
+          this.applyDisputeUpdate(dispute);
+        },
+        error: (error) => console.error('Failed to reopen case.', error)
+      });
   }
 }
 
