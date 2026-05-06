@@ -1,11 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { finalize, Subject, takeUntil } from 'rxjs';
 
-import { DriverService } from '@drivers/services/drivers.api.service';
+import {
+  AdminDriverNotificationResponse,
+  DriverService
+} from '@drivers/services/drivers.api.service';
 import {
   DriverDetailRecord,
   DriverIncidentRecord,
@@ -27,12 +31,19 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
   driver: DriverDetailRecord | null = null;
   isLoading = true;
   isMutating = false;
+  isSendingTestNotification = false;
   error: string | null = null;
   activeTab: DriverLifecycleTabId = 'overview';
   quickNote = '';
   reviewerDecisionNote = '';
   internalReviewNote = '';
   selectedRejectionReason = '';
+  showTestNotificationComposer = false;
+  testNotificationTitle = '';
+  testNotificationBody = '';
+  testNotificationTargetUrl = '/notifications';
+  testNotificationType = 'driver_test';
+  testNotificationSendPush = true;
   previewType: DriverPreviewType | null = null;
   selectedTask: DriverTaskAssignment | null = null;
   selectedIncident: DriverIncidentRecord | null = null;
@@ -221,6 +232,46 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  sendTestNotification(): void {
+    if (!this.driverId || !this.driver || this.isSendingTestNotification) {
+      return;
+    }
+
+    this.isSendingTestNotification = true;
+    const driver = this.driver;
+    const displayName = `${driver.firstName} ${driver.lastName}`.trim();
+
+    this.driverService.sendTestNotification(this.driverId, {
+      titleAr: 'إشعار تجريبي من الأدمن',
+      titleEn: this.testNotificationTitle.trim() || 'Admin mobile test notification',
+      bodyAr: `هذا إشعار تجريبي للمندوب ${displayName || driver.driverId} للتأكد من وصول إشعارات تطبيق المندوب.`,
+      bodyEn: this.testNotificationBody.trim() || `This is a test mobile notification for ${displayName || driver.driverId}.`,
+      type: this.testNotificationType.trim() || 'driver_test',
+      targetUrl: this.testNotificationTargetUrl.trim() || null,
+      sendPush: this.testNotificationSendPush
+    }).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
+        this.isSendingTestNotification = false;
+      })
+    ).subscribe({
+      next: (response) => {
+        this.showNotificationResult(response);
+      },
+      error: (err) => {
+        console.error('Driver test notification failed', err);
+        this.toastService.error(
+          this.describeApiError(err),
+          this.t('DRIVERS.DETAIL.TEST_NOTIFICATION.TOAST_TITLE')
+        );
+      }
+    });
+  }
+
+  toggleTestNotificationComposer(): void {
+    this.showTestNotificationComposer = !this.showTestNotificationComposer;
+  }
+
   private runMutation(
     requestFactory: () => ReturnType<DriverService['addDriverNote']>,
     successMessage: string,
@@ -295,5 +346,58 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
   private t(key: string): string {
     return this.translate.instant(key);
+  }
+
+  private showNotificationResult(response: AdminDriverNotificationResponse): void {
+    const title = this.t('DRIVERS.DETAIL.TEST_NOTIFICATION.TOAST_TITLE');
+
+    if (response.pushSent) {
+      this.toastService.success(
+        this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_PUSH_SENT'),
+        title
+      );
+      return;
+    }
+
+    if (response.pushSkipped) {
+      this.toastService.warning(
+        response.pushReason?.trim() || this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_INBOX_ONLY'),
+        title
+      );
+      return;
+    }
+
+    this.toastService.warning(
+      response.pushReason?.trim() || this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_UNCONFIRMED'),
+      title
+    );
+  }
+
+  private describeApiError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const validation = error.error?.errors as Record<string, string[]> | undefined;
+      if (validation) {
+        const firstKey = Object.keys(validation)[0];
+        const firstMessage = firstKey ? validation[firstKey]?.[0] : null;
+        if (firstMessage) {
+          return firstMessage;
+        }
+      }
+
+      const detail = error.error?.detail ?? error.error?.title ?? error.error?.message;
+      if (typeof detail === 'string' && detail.trim()) {
+        return detail.trim();
+      }
+
+      if (typeof error.message === 'string' && error.message.trim()) {
+        return error.message.trim();
+      }
+    }
+
+    if (error instanceof Error && error.message.trim()) {
+      return error.message.trim();
+    }
+
+    return this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_FAILED');
   }
 }

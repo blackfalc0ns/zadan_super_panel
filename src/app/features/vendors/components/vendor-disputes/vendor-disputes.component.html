@@ -180,13 +180,13 @@
             </td>
 
             <td class="px-4 py-3 text-center">
-              <app-status-pill [label]="dispute.statusLabelKey" [showDot]="true" [size]="'sm'"
+              <app-status-pill [label]="dispute.statusLabel" [shouldTranslate]="false" [showDot]="true" [size]="'sm'"
                 [variant]="getStatusVariant(dispute.status)">
               </app-status-pill>
             </td>
 
             <td class="px-4 py-3 text-center">
-              <app-status-pill [label]="dispute.priorityLabelKey" [showDot]="false" [size]="'sm'"
+              <app-status-pill [label]="dispute.priorityLabel" [shouldTranslate]="false" [showDot]="false" [size]="'sm'"
                 [variant]="getPriorityVariant(dispute.priority)">
               </app-status-pill>
             </td>

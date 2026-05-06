@@ -28,9 +28,9 @@ interface DisputeRowViewModel {
   type: string;
   typeLabel: string;
   status: string;
-  statusLabelKey: string;
+  statusLabel: string;
   priority: string;
-  priorityLabelKey: string;
+  priorityLabel: string;
   queue: string;
   queueLabel: string;
   createdDate: string;
@@ -301,13 +301,13 @@ export class VendorDisputesComponent {
       caseNumber: this.formatCaseIdentifier(item.id),
       orderNumber: item.orderDisplayId || this.formatCaseIdentifier(item.orderId),
       type: item.type,
-      typeLabel: this.translate.instant(this.getTypeLabelKey(item.type)),
+      typeLabel: item.typeLabel?.trim() || this.translate.instant(this.getTypeLabelKey(item.type)),
       status: item.caseStatus || item.status,
-      statusLabelKey: this.getStatusLabelKey(item.caseStatus || item.status),
+      statusLabel: item.caseStatusLabel?.trim() || this.translate.instant(this.getStatusLabelKey(item.caseStatus || item.status)),
       priority: item.priority,
-      priorityLabelKey: this.getPriorityLabelKey(item.priority),
+      priorityLabel: item.priorityLabel?.trim() || this.translate.instant(this.getPriorityLabelKey(item.priority)),
       queue: item.queue,
-      queueLabel: this.humanizeLabel(item.queue),
+      queueLabel: item.queueLabel?.trim() || this.humanizeLabel(item.queue),
       createdDate: createdAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US'),
       createdTime: createdAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
         hour: '2-digit',

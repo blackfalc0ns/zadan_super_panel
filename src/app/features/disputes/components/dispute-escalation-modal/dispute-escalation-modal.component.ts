@@ -12,7 +12,8 @@ import {
   EscalationPriority,
   EscalationReason,
   EscalationTarget,
-  SupportCaseWorkflowStatus
+  SupportCaseWorkflowStatus,
+  createDefaultEscalationDecisionForm
 } from '../../models/disputes.models';
 
 @Component({
@@ -27,6 +28,7 @@ export class DisputeEscalationModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() isRtl = true;
   @Input() dispute: DisputeRow | null = null;
+  @Input() draft: EscalationDecisionForm | null = null;
 
   @Output() close = new EventEmitter<void>();
   @Output() saveDraft = new EventEmitter<EscalationDecisionForm>();
@@ -74,7 +76,7 @@ export class DisputeEscalationModalComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['isOpen']?.currentValue || changes['dispute']) && this.isOpen && this.dispute) {
-      this.form = this.createDefaultForm(this.dispute);
+      this.form = this.draft ? { ...this.draft } : this.createDefaultForm(this.dispute);
       this.brokenEvidencePreviewKeys = new Set<string>();
     }
   }
@@ -153,19 +155,11 @@ export class DisputeEscalationModalComponent implements OnChanges {
   }
 
   private createDefaultForm(dispute: DisputeRow): EscalationDecisionForm {
-    return {
-      target: this.getDefaultTarget(dispute),
-      priority: this.getDefaultPriority(dispute),
-      reason: this.getDefaultReason(dispute),
-      detailedExplanation: dispute.reason,
-      reviewedSummary: dispute.note,
-      requestedAction: this.t('DISPUTES_DASHBOARD.ESCALATION_MODAL.DEFAULT_ACTION'),
-      responseDeadline: this.getDefaultDeadline(),
-      notifyEscalatedTeam: true,
-      notifyCurrentReviewer: true,
-      addTrackingNote: false,
-      markHighRisk: dispute.risk === 'high'
-    };
+    return createDefaultEscalationDecisionForm(
+      dispute,
+      this.t('DISPUTES_DASHBOARD.ESCALATION_MODAL.DEFAULT_ACTION'),
+      this.getDefaultDeadline()
+    );
   }
 
   private createEmptyForm(): EscalationDecisionForm {
@@ -182,46 +176,6 @@ export class DisputeEscalationModalComponent implements OnChanges {
       addTrackingNote: false,
       markHighRisk: false
     };
-  }
-
-  private getDefaultTarget(dispute: DisputeRow): EscalationTarget {
-    if (dispute.amount >= 3000) {
-      return 'finance';
-    }
-
-    if (dispute.risk === 'high') {
-      return 'risk';
-    }
-
-    return 'operations';
-  }
-
-  private getDefaultPriority(dispute: DisputeRow): EscalationPriority {
-    if (dispute.priority === 'critical') {
-      return 'critical';
-    }
-
-    if (dispute.priority === 'high') {
-      return 'high';
-    }
-
-    return 'medium';
-  }
-
-  private getDefaultReason(dispute: DisputeRow): EscalationReason {
-    if (dispute.amount >= 3000) {
-      return 'high_amount';
-    }
-
-    if (dispute.risk === 'high') {
-      return 'fraud';
-    }
-
-    if (dispute.caseStatus === 'awaiting_customer_evidence') {
-      return 'conflicting_evidence';
-    }
-
-    return 'conflicting_evidence';
   }
 
   private getDefaultDeadline(): string {

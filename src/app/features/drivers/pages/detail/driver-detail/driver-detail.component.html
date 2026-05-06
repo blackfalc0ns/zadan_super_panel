@@ -14,6 +14,129 @@
     </div>
   </div>
 
+  <section *ngIf="driverId" class="mx-auto max-w-[1600px] px-4 pb-2 sm:px-6 lg:px-8">
+    <div class="mb-4 flex flex-wrap items-center justify-end gap-3">
+      <button
+        type="button"
+        (click)="sendTestNotification()"
+        [disabled]="isSendingTestNotification"
+        class="inline-flex items-center justify-center gap-2 rounded-[1.2rem] bg-cyan-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-cyan-600/20 transition-all hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60">
+        <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isSendingTestNotification">
+          {{ isSendingTestNotification ? 'progress_activity' : 'notifications_active' }}
+        </span>
+        <span>
+          {{ (isSendingTestNotification ? 'DRIVERS.DETAIL.TEST_NOTIFICATION.SENDING' : 'DRIVERS.DETAIL.TEST_NOTIFICATION.QUICK_CTA') | translate }}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        (click)="toggleTestNotificationComposer()"
+        class="inline-flex items-center justify-center gap-2 rounded-[1.2rem] border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition-all hover:border-cyan-300 hover:text-cyan-700">
+        <span class="material-symbols-outlined text-[18px]">
+          {{ showTestNotificationComposer ? 'expand_less' : 'tune' }}
+        </span>
+        <span>{{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.ADVANCED_CTA' | translate }}</span>
+      </button>
+    </div>
+
+    <div *ngIf="showTestNotificationComposer" class="rounded-[1.75rem] border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur">
+      <div class="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <div class="max-w-3xl">
+          <p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.EYEBROW' | translate }}
+          </p>
+          <h2 class="mt-2 text-lg font-black text-slate-950">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.TITLE' | translate }}
+          </h2>
+          <p class="mt-2 text-sm font-semibold leading-7 text-slate-500">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.DESCRIPTION' | translate }}
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-cyan-100 bg-cyan-50 px-4 py-3 text-xs font-bold leading-6 text-cyan-900">
+          {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.HELPER' | translate }}
+        </div>
+      </div>
+
+      <div class="mt-5 grid gap-4 lg:grid-cols-2">
+        <label class="block">
+          <span class="text-xs font-black uppercase tracking-wide text-slate-500">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.FIELDS.TITLE' | translate }}
+          </span>
+          <input
+            [(ngModel)]="testNotificationTitle"
+            class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+            [placeholder]="'DRIVERS.DETAIL.TEST_NOTIFICATION.PLACEHOLDERS.TITLE' | translate">
+        </label>
+
+        <label class="block">
+          <span class="text-xs font-black uppercase tracking-wide text-slate-500">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.FIELDS.TYPE' | translate }}
+          </span>
+          <input
+            [(ngModel)]="testNotificationType"
+            class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+            [placeholder]="'DRIVERS.DETAIL.TEST_NOTIFICATION.PLACEHOLDERS.TYPE' | translate">
+        </label>
+
+        <label class="block lg:col-span-2">
+          <span class="text-xs font-black uppercase tracking-wide text-slate-500">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.FIELDS.BODY' | translate }}
+          </span>
+          <textarea
+            [(ngModel)]="testNotificationBody"
+            rows="3"
+            class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+            [placeholder]="'DRIVERS.DETAIL.TEST_NOTIFICATION.PLACEHOLDERS.BODY' | translate"></textarea>
+        </label>
+
+        <label class="block">
+          <span class="text-xs font-black uppercase tracking-wide text-slate-500">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.FIELDS.TARGET_URL' | translate }}
+          </span>
+          <input
+            [(ngModel)]="testNotificationTargetUrl"
+            class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+            [placeholder]="'DRIVERS.DETAIL.TEST_NOTIFICATION.PLACEHOLDERS.TARGET_URL' | translate">
+        </label>
+
+        <label class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <input
+            [(ngModel)]="testNotificationSendPush"
+            type="checkbox"
+            class="h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500">
+          <span class="text-sm font-bold text-slate-700">
+            {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.FIELDS.SEND_PUSH' | translate }}
+          </span>
+        </label>
+      </div>
+
+      <div class="mt-5 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          (click)="sendTestNotification()"
+          [disabled]="isSendingTestNotification"
+          class="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-600 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60">
+          <span class="material-symbols-outlined text-[18px]">
+            {{ isSendingTestNotification ? 'hourglass_top' : 'notifications_active' }}
+          </span>
+          <span>
+            {{ (isSendingTestNotification ? 'DRIVERS.DETAIL.TEST_NOTIFICATION.SENDING' : 'DRIVERS.DETAIL.TEST_NOTIFICATION.CTA') | translate }}
+          </span>
+        </button>
+
+        <p class="text-xs font-semibold text-slate-500">
+          {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.FOOTNOTE' | translate }}
+        </p>
+      </div>
+    </div>
+
+    <div *ngIf="!showTestNotificationComposer" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600">
+      {{ 'DRIVERS.DETAIL.TEST_NOTIFICATION.QUICK_HELPER' | translate }}
+    </div>
+  </section>
+
   <app-driver-detail-view
     *ngIf="!error || isLoading"
     [driverDetail]="driver"

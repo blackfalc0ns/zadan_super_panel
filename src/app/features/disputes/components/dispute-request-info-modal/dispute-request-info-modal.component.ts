@@ -4,7 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
-import { DisputeRow, DisputeStatus, RequestInfoForm, RequestInfoTarget, RequestInfoType } from '../../models/disputes.models';
+import {
+  DisputeRow,
+  RequestInfoForm,
+  RequestInfoTarget,
+  RequestInfoType,
+  SupportCaseWorkflowStatus,
+  createDefaultRequestInfoForm,
+  resolveRequestInfoTargets
+} from '../../models/disputes.models';
 
 @Component({
   selector: 'app-dispute-request-info-modal',
@@ -18,6 +26,7 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() isRtl = true;
   @Input() dispute: DisputeRow | null = null;
+  @Input() draft: RequestInfoForm | null = null;
 
   @Output() close = new EventEmitter<void>();
   @Output() saveDraft = new EventEmitter<RequestInfoForm>();
@@ -31,15 +40,15 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
   ];
 
   get requestInfoTargetOptions(): SearchableSelectOption<RequestInfoTarget>[] {
-    if (!this.dispute) {
+    const dispute = this.dispute;
+    if (!dispute) {
       return [];
     }
 
-    return [
-      { value: 'customer', label: this.getRequestInfoTargetLabel('customer', this.dispute) },
-      { value: 'merchant', label: this.getRequestInfoTargetLabel('merchant', this.dispute) },
-      { value: 'internal', label: this.getRequestInfoTargetLabel('internal', this.dispute) }
-    ];
+    return resolveRequestInfoTargets(dispute).map((target) => ({
+      value: target,
+      label: this.getRequestInfoTargetLabel(target, dispute)
+    }));
   }
 
   form: RequestInfoForm = this.createEmptyForm();
@@ -48,15 +57,15 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['isOpen']?.currentValue || changes['dispute']) && this.isOpen && this.dispute) {
-      this.form = this.createDefaultForm(this.dispute);
+      this.form = this.draft ? { ...this.draft } : this.createDefaultForm(this.dispute);
     }
   }
 
   get previewGreeting(): string {
     const labels: Record<RequestInfoTarget, string> = {
       customer: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_CUSTOMER'),
-      merchant: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_MERCHANT'),
-      internal: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_INTERNAL')
+      vendor: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_MERCHANT'),
+      driver: this.isRtl ? 'مرحبًا بفريق التوصيل' : 'Hello delivery partner'
     };
 
     return labels[this.form.target];
@@ -106,10 +115,10 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
     switch (target) {
       case 'customer':
         return this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_CUSTOMER', { name: dispute.customerName });
-      case 'merchant':
+      case 'vendor':
         return this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_MERCHANT', { name: dispute.merchantName });
       default:
-        return this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_INTERNAL');
+        return this.isRtl ? 'المندوب المسؤول' : 'Assigned driver';
     }
   }
 
@@ -124,11 +133,13 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
     return labels[type];
   }
 
-  getStatusLabel(status: DisputeStatus): string {
-    const labels: Record<DisputeStatus, string> = {
-      open: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
-      review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
-      merchant: this.t('DISPUTES_DASHBOARD.STATUS.MERCHANT'),
+  getStatusLabel(status: SupportCaseWorkflowStatus): string {
+    const labels: Record<SupportCaseWorkflowStatus, string> = {
+      submitted: this.t('DISPUTES_DASHBOARD.STATUS.OPEN'),
+      in_review: this.t('DISPUTES_DASHBOARD.STATUS.REVIEW'),
+      awaiting_customer_evidence: this.t('DISPUTES_DASHBOARD.STATUS.AWAITING_CUSTOMER'),
+      approved: this.t('DISPUTES_DASHBOARD.STATUS.APPROVED'),
+      rejected: this.t('DISPUTES_DASHBOARD.STATUS.REJECTED'),
       resolved: this.t('DISPUTES_DASHBOARD.STATUS.RESOLVED')
     };
 
@@ -136,17 +147,7 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
   }
 
   private createDefaultForm(dispute: DisputeRow): RequestInfoForm {
-    return {
-      target: dispute.status === 'merchant' ? 'merchant' : 'customer',
-      infoType: 'invoice',
-      title: '',
-      details: '',
-      dueDate: this.getDefaultDueDate(),
-      priority: 'urgent',
-      pauseSla: false,
-      alertSupervisor: false,
-      internalNotes: ''
-    };
+    return createDefaultRequestInfoForm(dispute, this.getDefaultDueDate());
   }
 
   private createEmptyForm(): RequestInfoForm {

@@ -366,6 +366,33 @@ interface DriverActionResponse {
   message: string;
 }
 
+export interface AdminSendDriverNotificationRequest {
+  titleAr?: string | null;
+  titleEn?: string | null;
+  bodyAr?: string | null;
+  bodyEn?: string | null;
+  type?: string | null;
+  referenceId?: string | null;
+  data?: string | null;
+  targetUrl?: string | null;
+  sendPush?: boolean;
+}
+
+export interface AdminDriverNotificationResponse {
+  message: string;
+  driverId: string;
+  userId: string;
+  externalId: string;
+  type: string;
+  inboxRequested: boolean;
+  pushAttempted: boolean;
+  pushSent: boolean;
+  pushSkipped: boolean;
+  pushStatusCode?: number | null;
+  providerNotificationId?: string | null;
+  pushReason?: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -512,6 +539,16 @@ export class DriverService {
 
   reactivateDriver(id: string): Observable<DriverActionResponse> {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/reactivate`, {});
+  }
+
+  sendTestNotification(
+    id: string,
+    request: AdminSendDriverNotificationRequest
+  ): Observable<AdminDriverNotificationResponse> {
+    return this.http.post<AdminDriverNotificationResponse>(
+      `${this.apiUrl}/${this.normalizeDriverId(id)}/notifications/test`,
+      request
+    );
   }
 
   blockDriverLocationUpdates(id: string, reason?: string): Observable<DriverActionResponse> {

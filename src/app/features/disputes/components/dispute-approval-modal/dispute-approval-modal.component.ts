@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
-import { DisputeRow, RefundDecisionForm } from '../../models/disputes.models';
+import { DisputeRow, RefundDecisionForm, createDefaultRefundDecisionForm } from '../../models/disputes.models';
 
 @Component({
   selector: 'app-dispute-approval-modal',
@@ -17,6 +17,7 @@ import { DisputeRow, RefundDecisionForm } from '../../models/disputes.models';
 export class DisputeApprovalModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() dispute: DisputeRow | null = null;
+  @Input() draft: RefundDecisionForm | null = null;
 
   @Output() close = new EventEmitter<void>();
   @Output() saveDraft = new EventEmitter<RefundDecisionForm>();
@@ -48,7 +49,7 @@ export class DisputeApprovalModalComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['isOpen']?.currentValue || changes['dispute']) && this.isOpen && this.dispute) {
-      this.form = this.createDefaultForm(this.dispute);
+      this.form = this.draft ? { ...this.draft } : this.createDefaultForm(this.dispute);
     }
   }
 
@@ -102,19 +103,11 @@ export class DisputeApprovalModalComponent implements OnChanges {
   }
 
   private createDefaultForm(dispute: DisputeRow): RefundDecisionForm {
-    const refundMethod: RefundDecisionForm['refundMethod'] = dispute.paymentMethod === 'cash' ? 'coupon' : 'same_method';
-
-    return {
-      refundType: dispute.amount > 450 ? 'partial' : 'full',
-      refundAmount: this.getSuggestedRefundAmount(dispute),
-      refundMethod,
-      approvalReason: this.t('DISPUTES_DASHBOARD.MODAL.DEFAULT_APPROVAL_REASON'),
-      costBearer: 'shared',
-      internalNotes: '',
-      customerMessage: this.t('DISPUTES_DASHBOARD.MODAL.DEFAULT_CUSTOMER_MESSAGE'),
-      notifyCustomer: true,
-      notifyFinance: true
-    };
+    return createDefaultRefundDecisionForm(
+      dispute,
+      this.t('DISPUTES_DASHBOARD.MODAL.DEFAULT_APPROVAL_REASON'),
+      this.t('DISPUTES_DASHBOARD.MODAL.DEFAULT_CUSTOMER_MESSAGE')
+    );
   }
 
   private createEmptyForm(): RefundDecisionForm {

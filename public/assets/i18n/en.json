@@ -883,7 +883,37 @@
         "OPENED_RELATED_SECTION": "Opened the related section. This action does not have a direct API endpoint yet.",
         "VERIFICATION_APPROVED": "Driver verification approved.",
         "DOCUMENT_REQUEST_SUBMITTED": "Document request submitted.",
-        "VERIFICATION_REJECTED": "Driver verification rejected."
+        "VERIFICATION_REJECTED": "Driver verification rejected.",
+        "TEST_NOTIFICATION_PUSH_SENT": "Driver test notification was sent to inbox and push.",
+        "TEST_NOTIFICATION_INBOX_ONLY": "Driver test notification was saved to inbox. Push was skipped or unavailable.",
+        "TEST_NOTIFICATION_FAILED": "Failed to send the driver test notification.",
+        "TEST_NOTIFICATION_UNCONFIRMED": "The request completed, but push delivery was not confirmed."
+      },
+      "TEST_NOTIFICATION": {
+        "EYEBROW": "Driver push lab",
+        "TITLE": "Test the driver notification from admin",
+        "DESCRIPTION": "Use this panel to verify the driver app inbox flow, push delivery, and deep-link payload without leaving the admin profile.",
+        "HELPER": "Leave the fields empty to use the backend defaults for the driver app test notification.",
+        "QUICK_HELPER": "The main button sends a ready-made mobile test notification immediately, just like the customer and vendor admin flows.",
+        "TOAST_TITLE": "Driver notifications",
+        "CTA": "Send test notification",
+        "QUICK_CTA": "Test mobile notification",
+        "ADVANCED_CTA": "Advanced options",
+        "SENDING": "Sending test notification...",
+        "FOOTNOTE": "The request hits the admin driver test endpoint and targets the dedicated driver OneSignal app.",
+        "FIELDS": {
+          "TITLE": "English title override",
+          "TYPE": "Notification type",
+          "BODY": "English body override",
+          "TARGET_URL": "Target route",
+          "SEND_PUSH": "Also send push to the driver app"
+        },
+        "PLACEHOLDERS": {
+          "TITLE": "Driver test notification",
+          "TYPE": "driver_test",
+          "BODY": "This is a test push for the driver app.",
+          "TARGET_URL": "/notifications"
+        }
       },
       "BTN_VERIFY": "Verification",
       "BTN_ACCESS_PROFILE": "Access Profile",
@@ -3335,7 +3365,59 @@
     },
     "FILTER_PANEL": {
       "TITLE": "Filter Disputes",
-      "SUBTITLE": "Active cases only"
+      "SUBTITLE": "Adjust criteria",
+      "ACTIVE_FILTERS": "Active filters"
+    },
+    "FILTER_FIELDS": {
+      "TYPE": "Type",
+      "PRIORITY": "Priority",
+      "QUEUE": "Queue",
+      "INITIATOR": "Initiator",
+      "ALL_TYPES": "All types",
+      "ALL_PRIORITIES": "All priorities",
+      "ALL_QUEUES": "All queues",
+      "ALL_INITIATORS": "All initiators"
+    },
+    "TYPE": {
+      "COMPLAINT": "Complaint",
+      "RETURN_REQUEST": "Return request",
+      "DRIVER_REPORT": "Driver report",
+      "DRIVER_DISPUTE": "Driver dispute"
+    },
+    "INITIATOR": {
+      "CUSTOMER": "Customer",
+      "VENDOR": "Vendor",
+      "DRIVER": "Driver",
+      "ADMIN": "Admin"
+    },
+    "PAYMENT_METHOD": {
+      "CASH": "Cash on delivery",
+      "CARD": "Card",
+      "BANK": "Bank transfer",
+      "WALLET": "Wallet",
+      "APPLE_PAY": "Apple Pay",
+      "MADA": "Mada",
+      "UNKNOWN": "Unknown"
+    },
+    "COMPENSATION": {
+      "CASH_REFUND": "Cash refund",
+      "COUPON_COMPENSATION": "Coupon compensation",
+      "NOT_SET": "Not set"
+    },
+    "SETTLEMENT": {
+      "PENDING_REVIEW": "Pending review",
+      "CASH_REFUNDED": "Cash refunded",
+      "COUPON_ISSUED": "Coupon issued",
+      "COUPON_REDEEMED": "Coupon redeemed",
+      "REJECTED": "Rejected",
+      "APPROVED": "Approved",
+      "NOT_SET": "Not set"
+    },
+    "VENDOR_RECOVERY": {
+      "PENDING": "Pending recovery",
+      "PARTIAL": "Partially recovered",
+      "RECOVERED": "Recovered in full",
+      "NOT_APPLICABLE": "Not applicable"
     },
     "INFO": {
       "OPERATIONAL_ALERT": "Operational Alert",

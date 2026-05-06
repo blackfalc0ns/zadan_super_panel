@@ -883,7 +883,37 @@
         "OPENED_RELATED_SECTION": "تم فتح القسم المرتبط. هذا الإجراء لا يملك نقطة API تنفيذية مباشرة حاليًا.",
         "VERIFICATION_APPROVED": "تم اعتماد توثيق السائق.",
         "DOCUMENT_REQUEST_SUBMITTED": "تم طلب استكمال المستندات.",
-        "VERIFICATION_REJECTED": "تم رفض توثيق السائق."
+        "VERIFICATION_REJECTED": "تم رفض توثيق السائق.",
+        "TEST_NOTIFICATION_PUSH_SENT": "تم إرسال إشعار الاختبار إلى صندوق الوارد والدفع الفوري للمندوب.",
+        "TEST_NOTIFICATION_INBOX_ONLY": "تم حفظ إشعار الاختبار في صندوق الوارد فقط، وتم تخطي الدفع أو لم يكن متاحًا.",
+        "TEST_NOTIFICATION_FAILED": "تعذر إرسال إشعار الاختبار للمندوب.",
+        "TEST_NOTIFICATION_UNCONFIRMED": "تم تنفيذ الطلب لكن لم يتم تأكيد وصول الـ push."
+      },
+      "TEST_NOTIFICATION": {
+        "EYEBROW": "مختبر إشعارات المندوب",
+        "TITLE": "اختبر إشعار المندوب من لوحة الأدمن",
+        "DESCRIPTION": "استخدم هذه البطاقة للتحقق من صندوق الوارد داخل تطبيق المندوب، ووصول الـ push، وبيانات الـ deep link بدون مغادرة ملف السائق.",
+        "HELPER": "يمكنك ترك الحقول فارغة لاستخدام القيم الافتراضية من الباك إند لاختبار تطبيق المندوب.",
+        "QUICK_HELPER": "الزر الرئيسي يرسل إشعار موبايل تجريبي جاهز فورًا، تمامًا مثل تجربة العميل والتاجر.",
+        "TOAST_TITLE": "إشعارات المندوب",
+        "CTA": "إرسال إشعار تجريبي",
+        "QUICK_CTA": "تجربة إشعار الموبايل",
+        "ADVANCED_CTA": "خيارات متقدمة",
+        "SENDING": "جارٍ إرسال الإشعار التجريبي...",
+        "FOOTNOTE": "الطلب يذهب إلى endpoint اختبار السائق في الأدمن ويستهدف تطبيق OneSignal الخاص بالمندوب.",
+        "FIELDS": {
+          "TITLE": "عنوان إنجليزي بديل",
+          "TYPE": "نوع الإشعار",
+          "BODY": "نص إنجليزي بديل",
+          "TARGET_URL": "مسار الفتح",
+          "SEND_PUSH": "أرسل push أيضًا لتطبيق المندوب"
+        },
+        "PLACEHOLDERS": {
+          "TITLE": "Driver test notification",
+          "TYPE": "driver_test",
+          "BODY": "This is a test push for the driver app.",
+          "TARGET_URL": "/notifications"
+        }
       },
       "BTN_VERIFY": "التوثيق",
       "BTN_OPERATIONS": "التشغيل",
@@ -3335,7 +3365,59 @@
     },
     "FILTER_PANEL": {
       "TITLE": "تصفية النزاعات",
-      "SUBTITLE": "الحالات النشطة فقط"
+      "SUBTITLE": "اضبط معايير البحث",
+      "ACTIVE_FILTERS": "الفلاتر النشطة"
+    },
+    "FILTER_FIELDS": {
+      "TYPE": "النوع",
+      "PRIORITY": "الأولوية",
+      "QUEUE": "المسار",
+      "INITIATOR": "مصدر الحالة",
+      "ALL_TYPES": "كل الأنواع",
+      "ALL_PRIORITIES": "كل الأولويات",
+      "ALL_QUEUES": "كل المسارات",
+      "ALL_INITIATORS": "كل المصادر"
+    },
+    "TYPE": {
+      "COMPLAINT": "شكوى / نزاع",
+      "RETURN_REQUEST": "استرجاع / تعويض",
+      "DRIVER_REPORT": "بلاغ مندوب",
+      "DRIVER_DISPUTE": "نزاع مندوب"
+    },
+    "INITIATOR": {
+      "CUSTOMER": "العميل",
+      "VENDOR": "التاجر",
+      "DRIVER": "المندوب",
+      "ADMIN": "الأدمن"
+    },
+    "PAYMENT_METHOD": {
+      "CASH": "الدفع عند الاستلام",
+      "CARD": "بطاقة",
+      "BANK": "تحويل بنكي",
+      "WALLET": "محفظة",
+      "APPLE_PAY": "Apple Pay",
+      "MADA": "مدى",
+      "UNKNOWN": "غير معروف"
+    },
+    "COMPENSATION": {
+      "CASH_REFUND": "استرجاع نقدي",
+      "COUPON_COMPENSATION": "تعويض بكوبون",
+      "NOT_SET": "غير محدد"
+    },
+    "SETTLEMENT": {
+      "PENDING_REVIEW": "بانتظار المراجعة",
+      "CASH_REFUNDED": "تم الاسترجاع النقدي",
+      "COUPON_ISSUED": "تم إصدار الكوبون",
+      "COUPON_REDEEMED": "تم استخدام الكوبون",
+      "REJECTED": "مرفوض",
+      "APPROVED": "تمت الموافقة",
+      "NOT_SET": "غير محدد"
+    },
+    "VENDOR_RECOVERY": {
+      "PENDING": "بانتظار التحصيل",
+      "PARTIAL": "تم التحصيل جزئيًا",
+      "RECOVERED": "تم التحصيل بالكامل",
+      "NOT_APPLICABLE": "لا يوجد"
     },
     "INFO": {
       "OPERATIONAL_ALERT": "تنبيه تشغيلي",

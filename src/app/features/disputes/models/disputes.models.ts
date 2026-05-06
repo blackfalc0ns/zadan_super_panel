@@ -1,17 +1,21 @@
 export type SupportCaseWorkflowStatus = 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected' | 'resolved';
 export type SupportCaseType = 'complaint' | 'return_request' | 'driver_report' | 'driver_dispute';
+export type SupportCaseActorRole = 'customer' | 'vendor' | 'driver' | 'admin';
 
 export type DisputeStatus = 'open' | 'review' | 'merchant' | 'resolved'; // legacy
 export type DisputePriority = 'critical' | 'high' | 'medium' | 'low';
 export type RiskLevel = 'high' | 'medium' | 'low';
 export type DisputeFilterId = 'all' | 'active' | 'critical' | 'review' | 'merchant' | 'resolved' | 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected' | 'driver' | 'customer' | 'vendor';
 export type RejectionReason = 'policy' | 'evidence' | 'delivered' | 'expired' | 'misuse' | 'other';
-export type RequestInfoTarget = 'customer' | 'merchant' | 'internal';
+export type RequestInfoTarget = 'customer' | 'vendor' | 'driver';
 export type RequestInfoType = 'invoice' | 'photos' | 'statement' | 'proof';
 export type RequestInfoPriority = 'normal' | 'urgent';
 export type EscalationTarget = 'finance' | 'legal' | 'risk' | 'operations' | 'support';
 export type EscalationPriority = 'medium' | 'high' | 'critical';
 export type EscalationReason = 'conflicting_evidence' | 'high_amount' | 'fraud' | 'legal_sensitivity' | 'repeat_issues' | 'other';
+export type DisputeModalKey = 'approval' | 'escalation' | 'rejection' | 'request_info';
+export type DisputeDashboardAlertTone = 'teal' | 'amber' | 'violet';
+export type DisputeQuickActionType = 'approve_complaint' | 'resolve' | 'reopen' | 'add_note' | 'send_message';
 
 export interface TimelineItem {
   title: string;
@@ -23,9 +27,13 @@ export interface SupportCaseMessage {
   id: string;
   action: string;
   messageType: string;
+  messageTypeLabel?: string | null;
   title: string;
+  localizedTitle?: string | null;
   body: string | null;
+  localizedBody?: string | null;
   authorRole: string;
+  authorRoleLabel?: string | null;
   visibleTo: string[];
   isInternalOnly: boolean;
   createdAt: string;
@@ -33,6 +41,7 @@ export interface SupportCaseMessage {
 
 export interface SupportCaseParticipant {
   role: string;
+  roleLabel?: string | null;
   isInitiator: boolean;
   isAwaitingResponse: boolean;
   hasMessages: boolean;
@@ -42,6 +51,7 @@ export interface EvidenceItem {
   type: 'image' | 'pdf';
   label: string;
   preview?: string;
+  fileUrl?: string;
 }
 
 export interface DisputeWorkflowContext {
@@ -60,13 +70,18 @@ export interface SupportCaseRow {
   customerInitials: string;
   merchantName: string;
   type: SupportCaseType | string;
+  typeLabel?: string | null;
   reason: string;
   amount: number;
   caseStatus: SupportCaseWorkflowStatus;
+  caseStatusLabel?: string | null;
   status: DisputeStatus; // fallback for legacy
+  statusLabel?: string | null;
   priority: DisputePriority;
+  priorityLabel?: string | null;
   owner: string;
   queue: string;
+  queueLabel?: string | null;
   risk: RiskLevel;
   createdAt: string;
   sla: string;
@@ -87,7 +102,9 @@ export interface SupportCaseRow {
   timeline: TimelineItem[];
   workflowContext?: DisputeWorkflowContext;
   initiatorRole: string;
+  initiatorRoleLabel?: string | null;
   waitingOnRole?: string;
+  waitingOnRoleLabel?: string | null;
   participants?: SupportCaseParticipant[];
   allowedActions?: string[];
   messages?: SupportCaseMessage[];
@@ -96,6 +113,39 @@ export interface SupportCaseRow {
 }
 
 export type DisputeRow = SupportCaseRow;
+
+export interface DisputeDashboardAlertCard {
+  id: string;
+  titleKey: string;
+  descriptionKey: string;
+  metaKey?: string;
+  tone: DisputeDashboardAlertTone;
+}
+
+export interface DisputeModalState {
+  activeModal: DisputeModalKey | null;
+  isDetailsDrawerOpen: boolean;
+}
+
+export interface DisputeQuickActionModalConfig {
+  type: DisputeQuickActionType;
+  title: string;
+  subtitle: string;
+  icon: string;
+  confirmLabel: string;
+  confirmClass: string;
+  primaryLabel?: string;
+  primaryPlaceholder?: string;
+  primaryRequired?: boolean;
+  secondaryLabel?: string;
+  secondaryPlaceholder?: string;
+  secondaryRequired?: boolean;
+}
+
+export interface DisputeQuickActionFormValue {
+  primaryValue: string;
+  secondaryValue: string;
+}
 
 export interface RefundDecisionForm {
   refundType: 'full' | 'partial';
@@ -142,4 +192,153 @@ export interface EscalationDecisionForm {
   notifyCurrentReviewer: boolean;
   addTrackingNote: boolean;
   markHighRisk: boolean;
+}
+
+export interface DisputeFormDrafts {
+  approval: RefundDecisionForm | null;
+  escalation: EscalationDecisionForm | null;
+  rejection: RejectionDecisionForm | null;
+  requestInfo: RequestInfoForm | null;
+}
+
+export function createEmptyModalState(): DisputeModalState {
+  return {
+    activeModal: null,
+    isDetailsDrawerOpen: false
+  };
+}
+
+export function createEmptyQuickActionFormValue(): DisputeQuickActionFormValue {
+  return {
+    primaryValue: '',
+    secondaryValue: ''
+  };
+}
+
+export function createEmptyFormDrafts(): DisputeFormDrafts {
+  return {
+    approval: null,
+    escalation: null,
+    rejection: null,
+    requestInfo: null
+  };
+}
+
+export function buildDisputeDashboardAlerts(): DisputeDashboardAlertCard[] {
+  return [
+    {
+      id: 'operational-alert',
+      titleKey: 'DISPUTES_DASHBOARD.INFO.OPERATIONAL_ALERT',
+      descriptionKey: 'DISPUTES_DASHBOARD.INFO.OPERATIONAL_ALERT_DESC',
+      tone: 'teal'
+    },
+    {
+      id: 'highest-risk-vendor',
+      titleKey: 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR',
+      descriptionKey: 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR_NAME',
+      metaKey: 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR_DESC',
+      tone: 'amber'
+    },
+    {
+      id: 'team-capacity',
+      titleKey: 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY',
+      descriptionKey: 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY_DESC',
+      metaKey: 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY_META',
+      tone: 'violet'
+    }
+  ];
+}
+
+export function createDefaultRefundDecisionForm(
+  dispute: Pick<DisputeRow, 'amount' | 'paymentMethod'>,
+  defaultApprovalReason: string,
+  defaultCustomerMessage: string
+): RefundDecisionForm {
+  const refundMethod: RefundDecisionForm['refundMethod'] = dispute.paymentMethod === 'cash' ? 'coupon' : 'same_method';
+  const refundType: RefundDecisionForm['refundType'] = dispute.amount > 450 ? 'partial' : 'full';
+
+  return {
+    refundType,
+    refundAmount: Math.min(dispute.amount, 450).toFixed(2),
+    refundMethod,
+    approvalReason: defaultApprovalReason,
+    costBearer: 'shared',
+    internalNotes: '',
+    customerMessage: defaultCustomerMessage,
+    notifyCustomer: true,
+    notifyFinance: true
+  };
+}
+
+export function createDefaultEscalationDecisionForm(
+  dispute: Pick<DisputeRow, 'amount' | 'priority' | 'risk' | 'reason' | 'note' | 'caseStatus'>,
+  defaultAction: string,
+  deadlineIsoLocal: string
+): EscalationDecisionForm {
+  return {
+    target: dispute.amount >= 3000 ? 'finance' : dispute.risk === 'high' ? 'risk' : 'operations',
+    priority: dispute.priority === 'critical' ? 'critical' : dispute.priority === 'high' ? 'high' : 'medium',
+    reason: dispute.amount >= 3000
+      ? 'high_amount'
+      : dispute.risk === 'high'
+        ? 'fraud'
+        : dispute.caseStatus === 'awaiting_customer_evidence'
+          ? 'conflicting_evidence'
+          : 'conflicting_evidence',
+    detailedExplanation: dispute.reason,
+    reviewedSummary: dispute.note,
+    requestedAction: defaultAction,
+    responseDeadline: deadlineIsoLocal,
+    notifyEscalatedTeam: true,
+    notifyCurrentReviewer: true,
+    addTrackingNote: false,
+    markHighRisk: dispute.risk === 'high'
+  };
+}
+
+export function resolveRequestInfoTargets(
+  dispute: Pick<DisputeRow, 'waitingOnRole' | 'participants'>
+): RequestInfoTarget[] {
+  const roles = new Set<RequestInfoTarget>();
+
+  const waitingOnRole = normalizeRoleToken(dispute.waitingOnRole);
+  if (waitingOnRole === 'vendor' || waitingOnRole === 'driver' || waitingOnRole === 'customer') {
+    roles.add(waitingOnRole);
+  }
+
+  for (const participant of dispute.participants ?? []) {
+    const role = normalizeRoleToken(participant.role);
+    if (role === 'vendor' || role === 'driver' || role === 'customer') {
+      roles.add(role);
+    }
+  }
+
+  if (roles.size === 0) {
+    roles.add('customer');
+    roles.add('vendor');
+  }
+
+  return Array.from(roles);
+}
+
+export function createDefaultRequestInfoForm(
+  dispute: Pick<DisputeRow, 'waitingOnRole' | 'participants'>,
+  dueDate: string
+): RequestInfoForm {
+  const targets = resolveRequestInfoTargets(dispute);
+  return {
+    target: targets[0] ?? 'customer',
+    infoType: 'invoice',
+    title: '',
+    details: '',
+    dueDate,
+    priority: 'urgent',
+    pauseSla: false,
+    alertSupervisor: false,
+    internalNotes: ''
+  };
+}
+
+function normalizeRoleToken(value: string | null | undefined): string {
+  return value?.trim().toLowerCase() ?? '';
 }

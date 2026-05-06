@@ -30,13 +30,19 @@ interface AdminOrderSupportCaseResponse {
   customerEmail: string;
   merchantName: string;
   type: string;
+  typeLabel?: string | null;
   reason: string;
+  reasonCode?: string | null;
   amount: number;
   caseStatus: SupportCaseRow['caseStatus'];
+  caseStatusLabel?: string | null;
   status: SupportCaseRow['status'];
+  statusLabel?: string | null;
   priority: SupportCaseRow['priority'];
+  priorityLabel?: string | null;
   owner: string;
   queue: string;
+  queueLabel?: string | null;
   risk: SupportCaseRow['risk'];
   createdAt: string;
   sla: string;
@@ -59,9 +65,12 @@ interface AdminOrderSupportCaseResponse {
   }>;
   timeline: TimelineItem[];
   initiatorRole: string;
+  initiatorRoleLabel?: string | null;
   waitingOnRole?: string;
+  waitingOnRoleLabel?: string | null;
   participants?: Array<{
     role: string;
+    roleLabel?: string | null;
     isInitiator: boolean;
     isAwaitingResponse: boolean;
     hasMessages: boolean;
@@ -71,9 +80,13 @@ interface AdminOrderSupportCaseResponse {
     id: string;
     action: string;
     messageType: string;
+    messageTypeLabel?: string | null;
     title: string;
+    localizedTitle?: string | null;
     body: string | null;
+    localizedBody?: string | null;
     authorRole: string;
+    authorRoleLabel?: string | null;
     visibleTo: string[];
     isInternalOnly: boolean;
     createdAt: string;
@@ -179,8 +192,10 @@ export class DisputesService {
     );
   }
 
-  resolveCase(id: string): Observable<SupportCaseRow> {
-    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/resolve`, {}).pipe(
+  resolveCase(id: string, note?: string): Observable<SupportCaseRow> {
+    return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/resolve`, {
+      note: note || undefined
+    }).pipe(
       map((response) => this.mapDispute(response)),
       tap((item) => this.upsertCache(item))
     );
@@ -293,6 +308,19 @@ export class DisputesService {
   }
 
   private mapDispute(item: AdminOrderSupportCaseResponse): SupportCaseRow {
+    const normalizedSettlementStatus = item.couponRedeemed
+      ? 'coupon_redeemed'
+      : item.settlementStatus ?? null;
+    const hasCompletedSettlement =
+      normalizedSettlementStatus === 'coupon_redeemed'
+      || normalizedSettlementStatus === 'cash_refunded';
+    const effectiveCaseStatus = hasCompletedSettlement
+      ? 'resolved'
+      : (item.caseStatus || 'submitted');
+    const effectiveCaseStatusLabel = hasCompletedSettlement
+      ? (item.caseStatusLabel ?? item.statusLabel ?? null)
+      : (item.caseStatusLabel ?? null);
+
     return {
       id: item.id,
       orderId: item.orderId,
@@ -302,13 +330,18 @@ export class DisputesService {
       customerInitials: this.buildInitials(item.customerName),
       merchantName: item.merchantName,
       type: item.type || 'complaint',
-      reason: item.reason,
+      typeLabel: item.typeLabel ?? null,
+      reason: item.reason || item.reasonCode || '',
       amount: item.amount,
-      caseStatus: item.caseStatus || 'submitted',
-      status: item.status || 'open',
+      caseStatus: effectiveCaseStatus,
+      caseStatusLabel: effectiveCaseStatusLabel,
+      status: hasCompletedSettlement ? 'resolved' : (item.status || 'open'),
+      statusLabel: hasCompletedSettlement ? (item.statusLabel ?? item.caseStatusLabel ?? null) : (item.statusLabel ?? null),
       priority: item.priority || 'medium',
+      priorityLabel: item.priorityLabel ?? null,
       owner: item.owner || 'Unassigned',
       queue: item.queue || 'General',
+      queueLabel: item.queueLabel ?? null,
       risk: item.risk || 'low',
       createdAt: item.createdAt,
       sla: item.sla,
@@ -318,7 +351,7 @@ export class DisputesService {
       customerSummary: item.customerSummary,
       merchantSummary: item.merchantSummary,
       compensationType: item.compensationType ?? null,
-      settlementStatus: item.settlementStatus ?? null,
+      settlementStatus: normalizedSettlementStatus,
       vendorRecoveryStatus: item.vendorRecoveryStatus ?? null,
       vendorRecoveredAmount: item.vendorRecoveredAmount ?? 0,
       vendorOutstandingAmount: item.vendorOutstandingAmount ?? 0,
@@ -328,11 +361,15 @@ export class DisputesService {
       evidence: item.evidence ? item.evidence.map((evidenceItem) => this.mapEvidence(evidenceItem)) : [],
       timeline: item.timeline ? item.timeline.map((timelineItem) => ({ ...timelineItem })) : [],
       initiatorRole: item.initiatorRole || 'customer',
+      initiatorRoleLabel: item.initiatorRoleLabel ?? null,
       waitingOnRole: item.waitingOnRole,
+      waitingOnRoleLabel: item.waitingOnRoleLabel ?? null,
       participants: item.participants ? item.participants.map((participant) => ({ ...participant })) : [],
       allowedActions: item.allowedActions ? [...item.allowedActions] : [],
       messages: item.messages ? item.messages.map((message) => ({
         ...message,
+        title: message.localizedTitle || message.title,
+        body: message.localizedBody || message.body,
         visibleTo: [...message.visibleTo],
         attachments: message.attachments.map((attachment) => ({ ...attachment }))
       })) : [],
@@ -348,7 +385,8 @@ export class DisputesService {
     return {
       type: isPdf ? 'pdf' : 'image',
       label: item.fileName,
-      preview: isPdf ? undefined : item.fileUrl
+      preview: isPdf ? undefined : item.fileUrl,
+      fileUrl: item.fileUrl
     };
   }
 
