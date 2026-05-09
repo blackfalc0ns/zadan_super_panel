@@ -76,6 +76,7 @@ interface CatalogBrandPayload {
   nameAr: string;
   nameEn: string;
   logoUrl?: string;
+  coverImageUrl?: string;
   categoryId?: string | null;
   isActive?: boolean;
 }
@@ -1465,6 +1466,7 @@ export class CatalogService {
       isActive: brand.isActive ?? true,
       masterProductsCount: brand.masterProductsCount ?? relatedProductsCount,
       logoUrl: brand.logoUrl || this.buildPlaceholderAsset(brand.nameEn || brand.nameAr || 'Brand', 'f3f4f6'),
+      coverImageUrl: brand.coverImageUrl || undefined,
       createdAtUtc,
       updatedAtUtc
     };

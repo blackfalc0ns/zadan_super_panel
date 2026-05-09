@@ -8,6 +8,9 @@ export type EmailSenderProfileStatus = 'primary' | 'secondary' | 'backup';
 export type EmailPreviewLocale = 'ar' | 'en';
 export type EmailBranchScopeMode = 'all_branches' | 'assigned_branch' | 'specific_branch';
 export type EmailSenderProfileLocale = 'bilingual' | 'arabic' | 'english';
+export type EmailAutomationState = 'live' | 'manual_only';
+export type EmailDispatchStatus = 'sent' | 'failed' | 'skipped';
+export type EmailDispatchSource = 'test_send' | 'vendor_automation_live' | 'vendor_automation_legacy' | string;
 export type EmailRecipientTargetId =
   | 'primary_account_email'
   | 'vendor_owner'
@@ -29,6 +32,7 @@ export interface EmailSenderProfile {
   locale: EmailSenderProfileLocale;
   isDefault: boolean;
   status: EmailSenderProfileStatus;
+  isReadOnly: boolean;
 }
 
 export interface EmailRecipientRoute {
@@ -60,6 +64,13 @@ export interface EmailTemplatePreview {
   variables: string[];
 }
 
+export interface EmailDispatchSummary {
+  status: EmailDispatchStatus;
+  source: EmailDispatchSource;
+  createdAtUtc: string;
+  failureReason: string | null;
+}
+
 export interface EmailWorkflowRule {
   id: string;
   titleKey: string;
@@ -77,12 +88,16 @@ export interface EmailWorkflowRule {
   recipientTargets: EmailRecipientTargetSelection;
   route: EmailRecipientRoute;
   template: EmailTemplatePreview;
+  automationState: EmailAutomationState;
+  eventKey: string | null;
+  lastDispatch: EmailDispatchSummary | null;
 }
 
 export interface EmailResolvedRecipients {
   to: string[];
   cc: string[];
   bcc: string[];
+  warnings: string[];
 }
 
 export interface EmailCenterKpiSnapshot {
@@ -91,4 +106,59 @@ export interface EmailCenterKpiSnapshot {
   senderProfiles: number;
   directoryDrivenRules: number;
   audienceCoverage: number;
+}
+
+export interface EmailScopeOption {
+  id: string;
+  name: string;
+}
+
+export interface EmailBranchOption {
+  id: string;
+  vendorId: string;
+  name: string;
+}
+
+export interface EmailCenterOverview {
+  senderProfiles: EmailSenderProfile[];
+  rules: EmailWorkflowRule[];
+  kpi: EmailCenterKpiSnapshot;
+  vendors: EmailScopeOption[];
+  branches: EmailBranchOption[];
+}
+
+export interface EmailDispatchLog {
+  id: string;
+  ruleId: string | null;
+  ruleLabel: string;
+  audienceType: DirectoryAudienceType | string;
+  source: EmailDispatchSource;
+  status: EmailDispatchStatus;
+  subject: string;
+  to: string[];
+  cc: string[];
+  bcc: string[];
+  provider: string | null;
+  providerMessageId: string | null;
+  failureReason: string | null;
+  eventKey: string | null;
+  isTestSend: boolean;
+  createdAtUtc: string;
+}
+
+export interface EmailTestSendResult {
+  dispatchId: string;
+  status: EmailDispatchStatus;
+  provider: string | null;
+  providerMessageId: string | null;
+  failureReason: string | null;
+  createdAtUtc: string;
+}
+
+export interface EmailDispatchFilters {
+  ruleId: string | null;
+  source: string | null;
+  status: string | null;
+  dateFrom: string | null;
+  dateTo: string | null;
 }

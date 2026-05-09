@@ -1,57 +1,157 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { provideAppTesting } from '../../../testing/testing.providers';
-import { EmailCenterService } from './email-center.service';
+import { AuthService } from '@core/services/auth.service';
+import { EmailCenterApiService } from './email-center.service';
+import {
+  EmailCenterOverview,
+  EmailDispatchFilters,
+  EmailWorkflowRule
+} from '../models/email-center.models';
 
-describe('EmailCenterService', () => {
-  let service: EmailCenterService;
+describe('EmailCenterApiService', () => {
+  let service: EmailCenterApiService;
+  let httpMock: HttpTestingController;
+
+  const overview: EmailCenterOverview = {
+    senderProfiles: [
+      {
+        id: 'ops-primary',
+        name: 'Operations Primary',
+        address: 'ops@zadana.sa',
+        replyTo: 'support@zadana.sa',
+        descriptionKey: 'EMAIL_CENTER.PROFILES.OPS_PRIMARY',
+        locale: 'bilingual',
+        isDefault: true,
+        status: 'primary',
+        isReadOnly: true
+      }
+    ],
+    rules: [
+      {
+        id: 'super-admin-access-invite',
+        titleKey: 'EMAIL_CENTER.EVENTS.SUPER_ADMIN_ACCESS_INVITE.TITLE',
+        subtitleKey: 'EMAIL_CENTER.EVENTS.SUPER_ADMIN_ACCESS_INVITE.SUBTITLE',
+        categoryKey: 'EMAIL_CENTER.CATEGORIES.ACCESS',
+        cadenceLabelKey: 'EMAIL_CENTER.CADENCE.INSTANT',
+        triggerNotesKey: 'EMAIL_CENTER.NOTES.SUPER_ADMIN_ACCESS_INVITE',
+        enabled: true,
+        senderProfileId: 'ops-primary',
+        audienceType: 'super_admin',
+        panelScope: 'super_admin_panel',
+        personaTargets: ['super_admin_manager'],
+        entityScope: {
+          entityId: 'user-1',
+          vendorId: null,
+          branchId: null
+        },
+        branchScopeMode: 'all_branches',
+        recipientTargets: {
+          to: ['primary_account_email'],
+          cc: ['assigned_super_admin_manager'],
+          bcc: []
+        },
+        route: {
+          staticTo: [],
+          staticCc: [],
+          staticBcc: [],
+          fallbackTo: [],
+          fallbackCc: [],
+          fallbackBcc: [],
+          owner: 'Access Control Desk',
+          escalation: 'Security Governance'
+        },
+        template: {
+          subject: { en: 'Subject', ar: 'عنوان' },
+          body: { en: 'Body', ar: 'محتوى' },
+          variables: ['{{full_name}}']
+        },
+        automationState: 'manual_only',
+        eventKey: null,
+        lastDispatch: null
+      }
+    ],
+    kpi: {
+      totalRules: 1,
+      enabledRules: 1,
+      senderProfiles: 1,
+      directoryDrivenRules: 1,
+      audienceCoverage: 1
+    },
+    vendors: [],
+    branches: []
+  };
 
   beforeEach(() => {
-    localStorage.removeItem('superadmin.email-center.v2');
-    localStorage.removeItem('superadmin.email-center.v1');
+    localStorage.setItem('admin_token', 'test-token');
     TestBed.configureTestingModule({
       providers: [...provideAppTesting()]
     });
-    service = TestBed.inject(EmailCenterService);
+
+    service = TestBed.inject(EmailCenterApiService);
+    httpMock = TestBed.inject(HttpTestingController);
+    TestBed.inject(AuthService);
   });
 
-  it('loads seed sender profiles and persona-aware workflow rules', () => {
-    expect(service.getSenderProfiles().length).toBeGreaterThan(0);
-    expect(service.getRules().length).toBeGreaterThan(0);
-    expect(service.getRules().some((rule) => rule.audienceType === 'vendor_network')).toBeTrue();
-    expect(service.getRules().some((rule) => rule.audienceType === 'drivers')).toBeTrue();
-    expect(service.getRules().some((rule) => rule.audienceType === 'customers')).toBeTrue();
+  afterEach(() => {
+    httpMock.verify();
+    localStorage.removeItem('admin_token');
   });
 
-  it('persists updates to a selected email rule', () => {
-    const rule = service.getRuleById('super-admin-access-invite');
+  it('loads overview from the backend', () => {
+    let result: EmailCenterOverview | undefined;
 
-    expect(rule).toBeTruthy();
+    service.getOverview().subscribe((response) => {
+      result = response;
+    });
 
-    if (!rule) {
-      return;
-    }
+    const request = httpMock.expectOne((req) => req.url.endsWith('/api/admin/email-center/overview'));
+    expect(request.request.method).toBe('GET');
+    expect(request.request.headers.get('Authorization')).toBe('Bearer test-token');
+    request.flush(overview);
 
-    rule.enabled = false;
-    rule.route.staticTo = ['new.route@zadana.sa'];
-    service.saveRule(rule);
-
-    const updated = service.getRuleById('super-admin-access-invite');
-    expect(updated?.enabled).toBeFalse();
-    expect(updated?.route.staticTo).toEqual(['new.route@zadana.sa']);
+    expect(result?.rules.length).toBe(1);
+    expect(result?.senderProfiles[0].isReadOnly).toBeTrue();
   });
 
-  it('resolves recipient targets through the access directory and falls back when needed', () => {
-    const rule = service.getRuleById('vendor-branch-invite');
+  it('sends the rule draft to update and resolve endpoints', () => {
+    const rule = overview.rules[0];
 
-    expect(rule).toBeTruthy();
+    service.updateRule(rule).subscribe();
+    const updateRequest = httpMock.expectOne((req) => req.url.endsWith(`/api/admin/email-center/rules/${rule.id}`));
+    expect(updateRequest.request.method).toBe('PUT');
+    expect(updateRequest.request.body.id).toBe(rule.id);
+    updateRequest.flush(rule);
 
-    if (!rule) {
-      return;
-    }
+    service.resolveRecipients(rule).subscribe();
+    const resolveRequest = httpMock.expectOne((req) => req.url.endsWith(`/api/admin/email-center/rules/${rule.id}/resolve-recipients`));
+    expect(resolveRequest.request.method).toBe('POST');
+    expect(resolveRequest.request.body.recipientTargets.to).toEqual(['primary_account_email']);
+    resolveRequest.flush({
+      to: ['admin@zadana.sa'],
+      cc: ['lead@zadana.sa'],
+      bcc: [],
+      warnings: []
+    });
+  });
 
-    const recipients = service.resolveRuleRecipients(rule);
+  it('applies history filters as query params', () => {
+    const filters: EmailDispatchFilters = {
+      ruleId: 'super-admin-access-invite',
+      source: 'test_send',
+      status: 'sent',
+      dateFrom: '2026-05-01',
+      dateTo: '2026-05-07'
+    };
 
-    expect(recipients.to.length).toBeGreaterThan(0);
-    expect(recipients.cc.length).toBeGreaterThan(0);
+    service.getDispatches(filters).subscribe();
+
+    const request = httpMock.expectOne((req) => req.url.endsWith('/api/admin/email-center/dispatches'));
+    expect(request.request.params.get('ruleId')).toBe(filters.ruleId);
+    expect(request.request.params.get('source')).toBe(filters.source);
+    expect(request.request.params.get('status')).toBe(filters.status);
+    expect(request.request.params.get('dateFrom')).toBe(filters.dateFrom);
+    expect(request.request.params.get('dateTo')).toBe(filters.dateTo);
+    request.flush([]);
   });
 });

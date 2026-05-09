@@ -879,7 +879,12 @@
         "NOTE_ADDED": "تمت إضافة الملاحظة بنجاح.",
         "DRIVER_REACTIVATED": "تمت إعادة تفعيل السائق.",
         "DRIVER_SUSPENDED": "تم إيقاف السائق.",
+        "DOCUMENT_APPROVED": "تمت الموافقة على المستند بنجاح.",
+        "DOCUMENT_REJECTED": "تم رفض المستند بنجاح.",
         "ACTION_FAILED": "تعذر تنفيذ الإجراء. حاول مرة أخرى.",
+        "APPROVAL_BLOCKED": "لا يمكن اعتماد المندوب نهائيًا قبل اكتمال كل المستندات والمتطلبات.",
+        "APPROVAL_BLOCKED_DOCUMENTS": "المستندات غير الجاهزة:",
+        "APPROVAL_BLOCKED_REQUIREMENTS": "المتطلبات غير المكتملة:",
         "OPENED_RELATED_SECTION": "تم فتح القسم المرتبط. هذا الإجراء لا يملك نقطة API تنفيذية مباشرة حاليًا.",
         "VERIFICATION_APPROVED": "تم اعتماد توثيق السائق.",
         "DOCUMENT_REQUEST_SUBMITTED": "تم طلب استكمال المستندات.",
@@ -1530,6 +1535,9 @@
         "TOTAL_FILES": "إجمالي الملفات",
         "DOCS_NEED_FOLLOW": "مستندات تحتاج متابعة",
         "DOC_EXPIRY": "تاريخ الانتهاء",
+        "DOC_NUMBER": "رقم المستند",
+        "DOC_REVIEWED_BY": "تمت المراجعة بواسطة",
+        "DOC_REJECTION_REASON": "سبب الرفض",
         "REASON_REQUIRED_HELPER": "يجب توضيح سبب عند طلب الاستكمال أو رفض السائق.",
         "FIELDS": {
           "FULL_NAME": "الاسم الكامل",
@@ -1550,6 +1558,34 @@
         "STATUS_COMPLETED": "مكتمل",
         "STATUS_NEEDS_REVIEW": "يتطلب مراجعة",
         "STATUS_REQUIRED": "مطلوب",
+        "BACKEND": {
+          "CHECKLIST": {
+            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
+            "VEHICLE_INFO": "بيانات المركبة مكتملة",
+            "NATIONAL_ID_DOCUMENT": "الهوية الوطنية متوفرة وصالحة",
+            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
+            "VEHICLE_DOCUMENT": "رخصة المركبة متوفرة وصالحة",
+            "PERSONAL_PHOTO": "الصورة الشخصية متوفرة",
+            "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
+          },
+          "CHECKLIST_NOTES": {
+            "MISSING_PERSONAL_INFO_NOTE": "معلومات الملف الأساسية غير مكتملة.",
+            "MISSING_VEHICLE_INFO_NOTE": "تفاصيل المركبة التشغيلية غير مكتملة.",
+            "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
+            "MISSING_ZONE_SELECTION_NOTE": "ما زالت منطقة التشغيل الأساسية مطلوبة.",
+            "EXPIRED_DOCUMENT_NOTE": "المستند المرفوع منتهي الصلاحية ويجب تجديده.",
+            "REJECTED_DOCUMENT_NOTE": "تم رفض هذا المستند ويحتاج إلى إعادة رفع صحيحة.",
+            "PENDING_DOCUMENT_REVIEW_NOTE": "تم رفع المستند وهو بانتظار مراجعة الإدارة."
+          },
+          "REJECTION_REASONS": {
+            "MISSING_PERSONAL_INFO": "نقص في البيانات الشخصية",
+            "MISSING_VEHICLE_INFO": "نقص في بيانات المركبة",
+            "MISSING_DOCUMENTS": "نقص في المستندات المطلوبة",
+            "MISSING_ZONE_SELECTION": "المنطقة الأساسية غير محددة",
+            "QUALITY_ISSUE": "مشكلة في جودة المستند",
+            "ZONE_MISSING": "المنطقة الأساسية مفقودة"
+          }
+        },
         "DYNAMIC": {
           "RECOMMENDATIONS": {
             "ACCEPT": "قبول التوثيق",
@@ -1590,6 +1626,7 @@
               "VALID": "صالح",
               "VALID_FEMININE": "صالحة",
               "EXPIRING": "تنتهي قريبًا",
+              "REJECTED": "مرفوض",
               "UNDER_REVIEW": "قيد المراجعة",
               "MATCHED": "مطابقة",
               "NEEDS_CONFIRMATION": "تحتاج تأكيد"
@@ -1597,8 +1634,7 @@
             "SUBTITLES": {
               "NATIONAL_ID": "آخر تحديث: 2026/03/12",
               "LICENSE": "تنتهي خلال 120 يوم",
-              "VEHICLE": "صورة المركبة متاحة للمراجعة",
-              "SELFIE": "مطابقة الوجه والهوية"
+              "VEHICLE": "صورة رخصة المركبة متاحة للمراجعة"
             },
             "EXPIRY": {
               "RECENT_CAPTURE": "تم الالتقاط مؤخرًا",
@@ -1907,8 +1943,9 @@
     "MODAL": {
       "ADD_TITLE": "إضافة علامة تجارية جديدة",
       "EDIT_TITLE": "تعديل بيانات العلامة التجارية",
-      "SUBTITLE": "أدخل تفاصيل الماركة والشعار الخاص بها.",
+      "SUBTITLE": "أدخل تفاصيل الماركة وأضف الشعار وصورة الغلاف الخاصة بها.",
       "LOGO": "شعار العلامة التجارية",
+      "COVER": "صورة غلاف العلامة التجارية",
       "NAME_AR": "الاسم (بالعربية)",
       "NAME_EN": "الاسم (بالإنجليزي)",
       "NAME_AR_PLACEHOLDER": "مثل: المراعي",
@@ -5506,7 +5543,8 @@
       "DESC": "هويات إرسال قابلة لإعادة الاستخدام للإشعارات الإدارية وسير العمل التشغيلي.",
       "REPLY_TO": "عنوان الرد",
       "LOCALE": "وضع اللغة",
-      "DEFAULT": "المرسل الافتراضي"
+      "DEFAULT": "المرسل الافتراضي",
+      "READ_ONLY": "مدار من الباك اند"
     },
     "PROFILES": {
       "OPS_PRIMARY": "المرسل الأساسي لرسائل الوصول والرسائل التشغيلية العامة على المنصة.",
@@ -5546,7 +5584,9 @@
     },
     "RESOLVED": {
       "BADGE": "المعاينة النهائية",
-      "EMPTY": "لا يوجد مستلمون مطابقون"
+      "EMPTY": "لا يوجد مستلمون مطابقون",
+      "REFRESHING": "جاري تحديث المعاينة",
+      "WARNINGS": "تنبيهات"
     },
     "BRANCH_SCOPE": {
       "ALL_BRANCHES": "كل الفروع",
@@ -5579,7 +5619,51 @@
       "DIRECTORY_BCC": "نسخ مخفية من الدليل"
     },
     "ACTIONS": {
-      "SAVE": "حفظ القاعدة"
+      "SAVE": "حفظ القاعدة",
+      "SAVING": "جاري الحفظ...",
+      "TEST_SEND": "إرسال تجريبي",
+      "SENDING_TEST": "جاري الإرسال التجريبي..."
+    },
+    "AUTOMATION": {
+      "LIVE": "أتمتة حية",
+      "MANUAL_ONLY": "يدوي فقط"
+    },
+    "LOADING": {
+      "TITLE": "جاري تحميل مركز البريد",
+      "DESC": "يتم الآن جلب القواعد وملفات الإرسال وسجل الإرسالات من الباك اند."
+    },
+    "TEST_SEND": {
+      "BADGE": "إرسال تجريبي",
+      "LAST_RESULT": "آخر نتيجة تجريبية"
+    },
+    "DISPATCH_STATUS": {
+      "SENT": "تم الإرسال",
+      "FAILED": "فشل",
+      "SKIPPED": "تم التخطي"
+    },
+    "SOURCES": {
+      "TEST_SEND": "إرسال تجريبي",
+      "VENDOR_AUTOMATION_LIVE": "أتمتة التاجر الحية",
+      "VENDOR_AUTOMATION_LEGACY": "أتمتة التاجر القديمة"
+    },
+    "HISTORY": {
+      "BADGE": "سجل الإرسالات",
+      "TITLE": "أحدث الإرسالات البريدية",
+      "DESC": "تابع الإرسال التجريبي والإرسال الحي مع سجل تدقيقي حقيقي من الباك اند.",
+      "RULE": "القاعدة",
+      "SOURCE": "المصدر",
+      "STATUS": "الحالة",
+      "DATE_FROM": "من تاريخ",
+      "DATE_TO": "إلى تاريخ",
+      "ALL_RULES": "كل القواعد",
+      "ALL_SOURCES": "كل المصادر",
+      "ALL_STATUSES": "كل الحالات",
+      "CLEAR_FILTERS": "مسح الفلاتر",
+      "LOADING": "جاري تحميل السجل...",
+      "EMPTY_TITLE": "لا توجد إرسالات مطابقة",
+      "EMPTY_DESC": "لا يوجد أي إرسال بريدي يطابق الفلاتر الحالية حتى الآن.",
+      "RECIPIENTS": "مستلمون",
+      "NO_DISPATCH": "لا يوجد إرسال بعد"
     },
     "PREVIEW": {
       "BADGE": "معاينة القالب",

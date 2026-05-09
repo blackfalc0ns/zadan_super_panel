@@ -1,7 +1,7 @@
 import { Driver, DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 
 export type DriverTripStatus = 'COMPLETED' | 'CANCELLED' | 'IN_PROGRESS';
-export type DriverDocumentStatus = 'valid' | 'expiring' | 'review';
+export type DriverDocumentStatus = 'valid' | 'expiring' | 'review' | 'rejected';
 export type DriverLifecycleStageState = 'completed' | 'current' | 'upcoming' | 'attention';
 export type DriverTaskStatus = 'IN_PROGRESS' | 'PREPARING' | 'WAITING_DRIVER' | 'COMPLETED' | 'FAILED';
 export type DriverSupportTicketStatus = 'WAITING' | 'IN_PROGRESS' | 'RESOLVED';
@@ -62,13 +62,19 @@ export interface DriverDocumentRecord {
   id: string;
   title: string;
   imageUrl?: string;
+  secondaryImageUrl?: string;
   fileUrl?: string;
   fileName?: string;
   contentType?: string;
   documentType?: string;
+  numberValue?: string;
   status: DriverDocumentStatus;
   statusLabel: string;
   expiryDate: string;
+  reviewDecision?: string;
+  rejectionReason?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
   subtitle?: string;
 }
 
@@ -300,6 +306,7 @@ export interface DriverVerificationSnapshot {
   decisionNote: string;
   internalNote: string;
   rejectionReasonOptions: string[];
+  allRequiredDocumentsApproved?: boolean;
 }
 
 export interface DriverDetailRecord extends Driver {
@@ -309,6 +316,10 @@ export interface DriverDetailRecord extends Driver {
   joinedAt: string;
   vehicleLabel: string;
   licenseNumber: string;
+  nationalIdExpiryDate?: string;
+  driverLicenseExpiryDate?: string;
+  vehicleLicenseNumber?: string;
+  vehicleLicenseExpiryDate?: string;
   zoneName?: string;
   liveZone: string;
   liveLatitude?: number | null;

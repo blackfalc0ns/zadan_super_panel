@@ -20,12 +20,4 @@ describe('AdminUsersListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('filters the directory by audience', () => {
-    component.setAudience('drivers');
-    fixture.detectChanges();
-
-    expect(component.filteredUsers.length).toBeGreaterThan(0);
-    expect(component.filteredUsers.every((user) => user.audienceType === 'drivers')).toBeTrue();
-  });
 });

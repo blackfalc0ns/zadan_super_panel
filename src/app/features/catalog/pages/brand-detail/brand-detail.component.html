@@ -20,6 +20,27 @@
     </app-detail-header>
 
     <div *ngIf="!isLoading && brand" class="relative z-10 mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-[110rem] flex-col space-y-8 transition-all">
+        <div class="relative overflow-hidden rounded-[2.5rem] border border-white/50 bg-slate-900 shadow-xl">
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-900/40 to-zadna-primary/30"></div>
+            <img
+                *ngIf="getCoverImageUrl()"
+                [src]="getCoverImageUrl()!"
+                [class.object-cover]="!isUsingLogoAsCover()"
+                [class.object-contain]="isUsingLogoAsCover()"
+                [class.p-8]="isUsingLogoAsCover()"
+                class="h-56 w-full opacity-70"
+                [alt]="brand.nameEn">
+            <div *ngIf="!getCoverImageUrl()" class="flex h-56 w-full items-center justify-center bg-gradient-to-br from-slate-900 via-zinc-800 to-zadna-primary/70">
+                <span class="text-4xl font-black tracking-tight text-white/90">{{ brand.nameAr }}</span>
+            </div>
+
+            <div class="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                <div class="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] text-white/85 backdrop-blur-md">
+                    {{ brand.nameEn }}
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
             <div class="lg:col-span-4">
                 <div class="group relative flex h-full min-h-[220px] items-center justify-center overflow-hidden rounded-[2rem] bg-white p-6 shadow-sm">

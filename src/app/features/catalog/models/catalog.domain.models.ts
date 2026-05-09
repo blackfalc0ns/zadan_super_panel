@@ -69,6 +69,7 @@ export interface Brand {
     nameAr: string;
     nameEn: string;
     logoUrl?: string;
+    coverImageUrl?: string;
     categoryId?: string | null;
     categoryNameAr?: string;
     categoryNameEn?: string;

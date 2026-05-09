@@ -301,6 +301,8 @@ export function getDocumentStatusKey(status: DriverDocumentRecord['status']): st
       return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.VALID';
     case 'expiring':
       return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.EXPIRING';
+    case 'rejected':
+      return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.REJECTED';
     default:
       return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.UNDER_REVIEW';
   }
@@ -310,7 +312,8 @@ export function getDocumentStatusVariant(status: DriverDocumentRecord['status'])
   const variants: Record<DriverDocumentRecord['status'], StatusPillVariant> = {
     valid: 'success',
     expiring: 'warning',
-    review: 'neutral'
+    review: 'neutral',
+    rejected: 'danger'
   };
 
   return variants[status];

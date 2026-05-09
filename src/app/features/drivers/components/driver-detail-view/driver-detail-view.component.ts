@@ -27,6 +27,7 @@ import {
 } from '../../utils/driver-ui.utils';
 import {
   DriverDetailRecord,
+  DriverDocumentRecord,
   DriverIncidentRecord,
   DriverTaskAssignment,
   DriverWorkflowActionId
@@ -83,6 +84,8 @@ export class DriverDetailViewComponent {
   @Output() internalReviewNoteChange = new EventEmitter<string>();
   @Output() selectedRejectionReasonChange = new EventEmitter<string>();
   @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
+  @Output() documentApprovalRequested = new EventEmitter<DriverDocumentRecord>();
+  @Output() documentRejectionRequested = new EventEmitter<{ document: DriverDocumentRecord; reason: string }>();
 
   @Output() taskPreviewRequested = new EventEmitter<DriverTaskAssignment>();
   @Output() incidentPreviewRequested = new EventEmitter<DriverIncidentRecord>();

@@ -24,6 +24,8 @@ export class DriverVerificationTabComponent implements OnInit {
   @Output() selectedRejectionReasonChange = new EventEmitter<string>();
   @Output() internalReviewNoteChange = new EventEmitter<string>();
   @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
+  @Output() documentApprovalRequested = new EventEmitter<DriverDocumentRecord>();
+  @Output() documentRejectionRequested = new EventEmitter<{ document: DriverDocumentRecord; reason: string }>();
 
   selectedDocumentPreview: DriverDocumentRecord | null = null;
   workspaceWindow: 'operations' | 'review' = 'review';
@@ -54,6 +56,10 @@ export class DriverVerificationTabComponent implements OnInit {
   }
 
   get rejectedDocumentsCount() {
+    return this.driver.documents.filter(d => d.status === 'rejected').length;
+  }
+
+  get expiringDocumentsCount() {
     return this.driver.documents.filter(d => d.status === 'expiring').length;
   }
 
@@ -160,10 +166,43 @@ export class DriverVerificationTabComponent implements OnInit {
 
   canSubmitAction(action: 'approve' | 'request-docs' | 'reject'): boolean {
     if (!this.requiresReason(action)) {
-      return true;
+      return this.driver.verification.allRequiredDocumentsApproved !== false
+        && this.driver.profileReadiness.isProfileComplete;
     }
 
     return Boolean(this.selectedRejectionReason.trim() || this.reviewerDecisionNote.trim() || this.internalReviewNote.trim());
+  }
+
+  canApproveSelectedDocument(): boolean {
+    return Boolean(
+      this.selectedDocumentPreview?.documentType
+      && this.hasDocumentFile(this.selectedDocumentPreview)
+      && this.selectedDocumentPreview.status !== 'valid'
+      && this.selectedDocumentPreview.status !== 'expiring'
+    );
+  }
+
+  canRejectSelectedDocument(): boolean {
+    return Boolean(
+      this.selectedDocumentPreview?.documentType
+      && this.hasDocumentFile(this.selectedDocumentPreview)
+      && this.documentRejectReason.trim()
+    );
+  }
+
+  approveSelectedDocument() {
+    if (this.selectedDocumentPreview) {
+      this.documentApprovalRequested.emit(this.selectedDocumentPreview);
+    }
+  }
+
+  rejectSelectedDocument() {
+    if (this.selectedDocumentPreview && this.documentRejectReason.trim()) {
+      this.documentRejectionRequested.emit({
+        document: this.selectedDocumentPreview,
+        reason: this.documentRejectReason.trim()
+      });
+    }
   }
 
   getVerificationRecommendationVariant() {

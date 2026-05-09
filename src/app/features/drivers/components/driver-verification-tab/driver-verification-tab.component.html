@@ -120,7 +120,7 @@
       <div class="absolute -right-3 -top-3 h-16 w-16 rounded-full bg-rose-100/50 transition-transform group-hover:scale-150"></div>
       <div class="relative">
         <p class="text-[9px] font-black tracking-[0.12em] text-rose-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tracking-tight text-rose-950">{{ rejectedDocumentsCount }}</p>
+        <p class="mt-1 text-2xl font-black tracking-tight text-rose-950">{{ expiringDocumentsCount }}</p>
         <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS_DESC' | translate }}</p>
       </div>
     </article>
@@ -166,10 +166,11 @@
           </div>
 
           <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 pt-2">
-            <button
-              type="button"
-              (click)="requestReviewAction('approve')"
-              class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 hover:-translate-y-0.5">
+              <button
+                type="button"
+                (click)="requestReviewAction('approve')"
+                [disabled]="!canSubmitAction('approve')"
+                class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 hover:-translate-y-0.5">
               <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">verified</span>
               {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE' | translate }}
             </button>
@@ -355,6 +356,12 @@
         <div class="rounded-xl bg-slate-50 p-3 border border-slate-100 mt-auto">
           <div class="grid gap-3 lg:grid-cols-[1fr_auto]">
             <div>
+              <div class="mb-2 grid gap-1 text-[11px] font-medium text-slate-600">
+                <p *ngIf="document.numberValue"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_NUMBER' | translate }}:</span> {{ document.numberValue }}</p>
+                <p *ngIf="document.expiryDate"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}:</span> {{ document.expiryDate }}</p>
+                <p *ngIf="document.reviewedBy"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REVIEWED_BY' | translate }}:</span> {{ document.reviewedBy }}</p>
+                <p *ngIf="document.rejectionReason" class="text-rose-600"><span class="font-black">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REJECTION_REASON' | translate }}:</span> {{ document.rejectionReason }}</p>
+              </div>
               <label class="text-[9px] font-black tracking-[0.1em] text-slate-500 block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES' | translate }}</label>
               <textarea
                 [(ngModel)]="documentRejectReason"
@@ -366,12 +373,16 @@
             <div class="flex flex-col gap-2 justify-end sm:flex-row lg:flex-col min-w-[120px]">
               <button
                 type="button"
+                (click)="approveSelectedDocument()"
+                [disabled]="!canApproveSelectedDocument()"
                 class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">
                 <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_up</span>
                 {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE_SHORT' | translate }}
               </button>
               <button
                 type="button"
+                (click)="rejectSelectedDocument()"
+                [disabled]="!canRejectSelectedDocument()"
                 class="flex h-9 items-center justify-center rounded-lg bg-white border border-rose-200 text-rose-600 px-3 text-[12px] font-black transition-all hover:bg-rose-50 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">
                 <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_down</span>
                 {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT_SHORT' | translate }}

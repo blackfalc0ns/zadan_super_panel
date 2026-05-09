@@ -12,6 +12,7 @@ import {
 } from '@drivers/services/drivers.api.service';
 import {
   DriverDetailRecord,
+  DriverDocumentRecord,
   DriverIncidentRecord,
   DriverTaskAssignment,
   DriverWorkflowActionId
@@ -169,9 +170,39 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (action === 'approve' && this.driver) {
+      const approvalBlockerMessage = this.buildApprovalBlockerMessage(this.driver);
+      if (approvalBlockerMessage) {
+        this.toastService.warning(approvalBlockerMessage);
+        return;
+      }
+    }
+
     this.runMutation(
       () => this.driverService.reviewDriver(this.driverId!, action, this.composeReviewNote()),
       this.getReviewSuccessMessage(action)
+    );
+  }
+
+  approveDocument(document: DriverDocumentRecord): void {
+    if (!this.driverId || this.isMutating || !document.documentType) {
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.approveDriverDocument(this.driverId!, document.documentType!),
+      this.t('DRIVERS.DETAIL.MESSAGES.DOCUMENT_APPROVED')
+    );
+  }
+
+  rejectDocument(event: { document: DriverDocumentRecord; reason: string }): void {
+    if (!this.driverId || this.isMutating || !event.document.documentType) {
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.rejectDriverDocument(this.driverId!, event.document.documentType!, event.reason),
+      this.t('DRIVERS.DETAIL.MESSAGES.DOCUMENT_REJECTED')
     );
   }
 
@@ -295,7 +326,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Driver mutation failed', err);
-        this.toastService.error(this.t('DRIVERS.DETAIL.MESSAGES.ACTION_FAILED'));
+        this.toastService.error(this.describeApiError(err));
       }
     });
   }
@@ -346,6 +377,36 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
   private t(key: string): string {
     return this.translate.instant(key);
+  }
+
+  private buildApprovalBlockerMessage(driver: DriverDetailRecord): string | null {
+    const invalidDocuments = driver.documents
+      .filter((document) => document.status !== 'valid')
+      .map((document) => this.t(document.title));
+
+    const incompleteChecklist = driver.verification.checklist
+      .filter((item) => !item.completed)
+      .map((item) => this.t(item.label));
+
+    if (!invalidDocuments.length && driver.profileReadiness.isProfileComplete) {
+      return null;
+    }
+
+    const documentSummary = invalidDocuments.length
+      ? `${this.t('DRIVERS.DETAIL.MESSAGES.APPROVAL_BLOCKED_DOCUMENTS')} ${invalidDocuments.join('، ')}.`
+      : '';
+
+    const checklistSummary = incompleteChecklist.length
+      ? `${this.t('DRIVERS.DETAIL.MESSAGES.APPROVAL_BLOCKED_REQUIREMENTS')} ${incompleteChecklist.join('، ')}.`
+      : '';
+
+    return [
+      this.t('DRIVERS.DETAIL.MESSAGES.APPROVAL_BLOCKED'),
+      documentSummary,
+      checklistSummary
+    ]
+      .filter(Boolean)
+      .join(' ');
   }
 
   private showNotificationResult(response: AdminDriverNotificationResponse): void {

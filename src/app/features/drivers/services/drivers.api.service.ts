@@ -66,12 +66,19 @@ interface AdminDriversListResponse {
 interface AdminDriverDocumentResponse {
   documentType: string;
   imageUrl?: string | null;
+  secondaryImageUrl?: string | null;
   fileUrl?: string | null;
   url?: string | null;
   fileName?: string | null;
   contentType?: string | null;
+  number?: string | null;
+  expiryDateUtc?: string | null;
   status: string;
   expiryInfo?: string | null;
+  reviewDecision?: string | null;
+  rejectionReason?: string | null;
+  reviewedAtUtc?: string | null;
+  reviewedByName?: string | null;
 }
 
 interface AdminDriverNoteResponse {
@@ -142,6 +149,10 @@ interface AdminDriverDetailResponse {
   lastOfferResponseAtUtc?: string | null;
   address?: string | null;
   licenseNumber?: string | null;
+  nationalIdExpiryDate?: string | null;
+  driverLicenseExpiryDate?: string | null;
+  vehicleLicenseNumber?: string | null;
+  vehicleLicenseExpiryDate?: string | null;
   zoneName?: string | null;
   primaryZoneId?: string | null;
   reviewedAtUtc?: string | null;
@@ -541,6 +552,16 @@ export class DriverService {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/reactivate`, {});
   }
 
+  approveDriverDocument(id: string, documentId: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/documents/${documentId}/approve`, {});
+  }
+
+  rejectDriverDocument(id: string, documentId: string, reason: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/documents/${documentId}/reject`, {
+      reason: reason.trim()
+    });
+  }
+
   sendTestNotification(
     id: string,
     request: AdminSendDriverNotificationRequest
@@ -645,6 +666,10 @@ export class DriverService {
       joinedAt: this.formatDate(response.joinedAt),
       vehicleLabel: driver.vehicleType ? this.mapVehicleLabel(driver.vehicleType) : 'COMMON.NOT_AVAILABLE',
       licenseNumber: response.overview.licenseNumber || response.licenseNumber || '',
+      nationalIdExpiryDate: response.nationalIdExpiryDate ? this.formatDate(response.nationalIdExpiryDate) : undefined,
+      driverLicenseExpiryDate: response.driverLicenseExpiryDate ? this.formatDate(response.driverLicenseExpiryDate) : undefined,
+      vehicleLicenseNumber: response.vehicleLicenseNumber || undefined,
+      vehicleLicenseExpiryDate: response.vehicleLicenseExpiryDate ? this.formatDate(response.vehicleLicenseExpiryDate) : undefined,
       zoneName: response.overview.zoneName || response.zoneName || undefined,
       liveZone: operationsArea,
       liveLatitude: response.operations.currentLatitude ?? null,
@@ -801,7 +826,8 @@ export class DriverService {
         checklist: this.mapVerificationChecklist(response.verification.checklist),
         decisionNote: response.verification.decisionNote || '',
         internalNote: response.verification.internalNote || '',
-        rejectionReasonOptions: response.verification.rejectionReasonOptions.map((reason) => this.mapRejectionReason(reason))
+        rejectionReasonOptions: response.verification.rejectionReasonOptions.map((reason) => this.mapRejectionReason(reason)),
+        allRequiredDocumentsApproved: documents.every((document) => document.status === 'valid')
       }
     };
   }
@@ -824,13 +850,19 @@ export class DriverService {
         id: `${document.documentType}-${index}`,
         title: this.mapDocumentTitle(document.documentType),
         imageUrl: documentUrl,
+        secondaryImageUrl: document.secondaryImageUrl || undefined,
         fileUrl: documentUrl,
         fileName: document.fileName || undefined,
         contentType: document.contentType || undefined,
         documentType: document.documentType,
+        numberValue: document.number || undefined,
         status: mappedStatus,
         statusLabel: this.mapDocumentStatusLabel(mappedStatus),
         expiryDate: document.expiryInfo || this.mapDocumentExpiryLabel(document.status),
+        reviewDecision: document.reviewDecision || undefined,
+        rejectionReason: document.rejectionReason || undefined,
+        reviewedAt: document.reviewedAtUtc ? this.formatDateTime(document.reviewedAtUtc) : undefined,
+        reviewedBy: document.reviewedByName || undefined,
         subtitle: this.mapDocumentSubtitle(document.documentType)
       };
     });
@@ -1183,12 +1215,10 @@ export class DriverService {
     switch (type) {
       case 'NationalId':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.TITLES.NATIONAL_ID';
-      case 'License':
+      case 'DriverLicense':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.TITLES.LICENSE';
-      case 'Vehicle':
+      case 'VehicleLicense':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.TITLES.VEHICLE';
-      case 'PersonalPhoto':
-        return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.TITLES.SELFIE';
       default:
         return type;
     }
@@ -1198,34 +1228,36 @@ export class DriverService {
     switch (type) {
       case 'NationalId':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.NATIONAL_ID';
-      case 'License':
+      case 'DriverLicense':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.LICENSE';
-      case 'Vehicle':
+      case 'VehicleLicense':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.VEHICLE';
-      case 'PersonalPhoto':
-        return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.SUBTITLES.SELFIE';
       default:
         return 'COMMON.NOT_AVAILABLE';
     }
   }
 
-  private mapDocumentStatus(status: string): 'valid' | 'expiring' | 'review' {
+  private mapDocumentStatus(status: string): 'valid' | 'expiring' | 'review' | 'rejected' {
     switch (status.toLowerCase()) {
       case 'valid':
         return 'valid';
       case 'expiring':
         return 'expiring';
+      case 'rejected':
+        return 'rejected';
       default:
         return 'review';
     }
   }
 
-  private mapDocumentStatusLabel(status: 'valid' | 'expiring' | 'review'): string {
+  private mapDocumentStatusLabel(status: 'valid' | 'expiring' | 'review' | 'rejected'): string {
     switch (status) {
       case 'valid':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.VALID';
       case 'expiring':
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.EXPIRING';
+      case 'rejected':
+        return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.REJECTED';
       default:
         return 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.STATUS.UNDER_REVIEW';
     }

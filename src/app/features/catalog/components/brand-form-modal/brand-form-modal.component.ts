@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,8 +13,8 @@ import { ModalShellComponent } from '../../../../shared/components/ui/modal-shel
   selector: 'app-brand-form-modal',
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
+    CommonModule,
+    ReactiveFormsModule,
     TranslateModule,
     AppButtonComponent,
     AppInputComponent,
@@ -33,7 +33,8 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
 
   form!: FormGroup;
   isSaving = false;
-  isUploading = false;
+  isUploadingLogo = false;
+  isUploadingCover = false;
   activeInputLang: 'ar' | 'en' = 'ar';
   leafCategories: Category[] = [];
 
@@ -54,10 +55,11 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       if (this.mode === 'edit' && this.brand) {
         this.form.patchValue({
           ...this.brand,
-          categoryId: this.brand.categoryId ?? null
+          categoryId: this.brand.categoryId ?? null,
+          coverImageUrl: this.brand.coverImageUrl ?? ''
         });
       } else {
-        this.form.reset({ isActive: true, categoryId: null });
+        this.form.reset({ isActive: true, categoryId: null, logoUrl: '', coverImageUrl: '' });
       }
     }
   }
@@ -68,6 +70,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       nameAr: ['', [Validators.required, Validators.maxLength(100)]],
       nameEn: ['', [Validators.required, Validators.maxLength(100)]],
       logoUrl: [''],
+      coverImageUrl: [''],
       categoryId: [null, [Validators.required]],
       isActive: [true]
     });
@@ -89,21 +92,28 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     this.activeInputLang = lang;
   }
 
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.isUploading = true;
-      this.catalogService.uploadFile(file, 'brands').subscribe({
-        next: (res) => {
-          this.form.patchValue({ logoUrl: res.url });
-          this.isUploading = false;
-        },
-        error: (err) => {
-          console.error('Upload failed', err);
-          this.isUploading = false;
-        }
-      });
+  onFileSelected(event: Event, field: 'logoUrl' | 'coverImageUrl'): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+    if (!file) {
+      return;
     }
+
+    this.setUploadingState(field, true);
+    this.catalogService.uploadFile(file, 'brands').subscribe({
+      next: (res) => {
+        this.form.patchValue({ [field]: res.url });
+        this.setUploadingState(field, false);
+      },
+      error: (err) => {
+        console.error('Upload failed', err);
+        this.setUploadingState(field, false);
+      }
+    });
+  }
+
+  getAssetValue(field: 'logoUrl' | 'coverImageUrl'): string {
+    return this.form.get(field)?.value || '';
   }
 
   onSubmit(): void {
@@ -144,7 +154,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   }
 
   onClose(): void {
-    this.form.reset({ isActive: true, categoryId: null });
+    this.form.reset({ isActive: true, categoryId: null, logoUrl: '', coverImageUrl: '' });
     this.close.emit();
   }
 
@@ -162,20 +172,27 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     ];
   }
 
+  private setUploadingState(field: 'logoUrl' | 'coverImageUrl', isUploading: boolean): void {
+    if (field === 'logoUrl') {
+      this.isUploadingLogo = isUploading;
+      return;
+    }
+
+    this.isUploadingCover = isUploading;
+  }
+
   private flattenLeafCategories(categories: Category[]): Category[] {
     const subCategories: Category[] = [];
 
     for (const category of categories) {
       const children = category.subCategories ?? [];
 
-      // Add children that are subcategories (have a parentCategoryId)
       for (const child of children) {
         if (child.parentCategoryId) {
           subCategories.push(child);
         }
       }
 
-      // Recurse into children to find deeper subcategories
       if (children.length > 0) {
         subCategories.push(...this.flattenLeafCategories(children));
       }
@@ -184,5 +201,3 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     return subCategories;
   }
 }
-
-

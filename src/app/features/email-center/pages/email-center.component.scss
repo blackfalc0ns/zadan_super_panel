@@ -69,7 +69,18 @@
   gap: 0.75rem;
 }
 
-.resolved-group p {
+.history-recipient-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: white;
+  padding: 1rem;
+}
+
+.resolved-group p,
+.history-recipient-card p {
   font-size: 0.625rem;
   font-weight: 900;
   letter-spacing: 0.16em;

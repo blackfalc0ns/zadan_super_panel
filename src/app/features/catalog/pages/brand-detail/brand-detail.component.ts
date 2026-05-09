@@ -130,4 +130,12 @@ export class BrandDetailComponent implements OnInit {
       ? (this.brand.categoryNameAr || this.brand.categoryNameEn || '-')
       : (this.brand.categoryNameEn || this.brand.categoryNameAr || '-');
   }
+
+  getCoverImageUrl(): string | null {
+    return this.brand?.coverImageUrl || this.brand?.logoUrl || null;
+  }
+
+  isUsingLogoAsCover(): boolean {
+    return !!this.brand?.logoUrl && !this.brand?.coverImageUrl;
+  }
 }

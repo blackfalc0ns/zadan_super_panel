@@ -879,7 +879,12 @@
         "NOTE_ADDED": "Note added successfully.",
         "DRIVER_REACTIVATED": "Driver reactivated successfully.",
         "DRIVER_SUSPENDED": "Driver suspended successfully.",
+        "DOCUMENT_APPROVED": "Document approved successfully.",
+        "DOCUMENT_REJECTED": "Document rejected successfully.",
         "ACTION_FAILED": "Action failed. Please try again.",
+        "APPROVAL_BLOCKED": "The driver cannot be finally approved until all documents and requirements are completed.",
+        "APPROVAL_BLOCKED_DOCUMENTS": "Documents not ready:",
+        "APPROVAL_BLOCKED_REQUIREMENTS": "Incomplete requirements:",
         "OPENED_RELATED_SECTION": "Opened the related section. This action does not have a direct API endpoint yet.",
         "VERIFICATION_APPROVED": "Driver verification approved.",
         "DOCUMENT_REQUEST_SUBMITTED": "Document request submitted.",
@@ -1540,6 +1545,9 @@
         "TOTAL_FILES": "Total Files",
         "DOCS_NEED_FOLLOW": "Docs Needing Follow-up",
         "DOC_EXPIRY": "Expiry Date",
+        "DOC_NUMBER": "Document Number",
+        "DOC_REVIEWED_BY": "Reviewed By",
+        "DOC_REJECTION_REASON": "Rejection Reason",
         "REASON_REQUIRED_HELPER": "A rejection or document request should include a reason or reviewer note.",
         "FIELDS": {
           "FULL_NAME": "Full Name",
@@ -1575,7 +1583,10 @@
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
             "MISSING_VEHICLE_INFO_NOTE": "Missing operational vehicle details.",
             "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
-            "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required."
+            "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required.",
+            "EXPIRED_DOCUMENT_NOTE": "The uploaded document is expired and must be renewed.",
+            "REJECTED_DOCUMENT_NOTE": "This document was rejected and needs a corrected re-upload.",
+            "PENDING_DOCUMENT_REVIEW_NOTE": "The document is uploaded and waiting for admin review."
           },
           "REJECTION_REASONS": {
             "MISSING_PERSONAL_INFO": "Missing personal information",
@@ -1626,6 +1637,7 @@
               "VALID": "Valid",
               "VALID_FEMININE": "Valid",
               "EXPIRING": "Expiring Soon",
+              "REJECTED": "Rejected",
               "UNDER_REVIEW": "Under Review",
               "MATCHED": "Matched",
               "NEEDS_CONFIRMATION": "Needs Confirmation"
@@ -1633,8 +1645,7 @@
             "SUBTITLES": {
               "NATIONAL_ID": "Last update: 2026/03/12",
               "LICENSE": "Expires within 120 days",
-              "VEHICLE": "Vehicle image is available for review",
-              "SELFIE": "Face and ID are matched"
+              "VEHICLE": "Vehicle license image is available for review"
             },
             "EXPIRY": {
               "RECENT_CAPTURE": "Captured recently",
@@ -1907,8 +1918,9 @@
     "MODAL": {
       "ADD_TITLE": "Add New Brand",
       "EDIT_TITLE": "Edit Brand Data",
-      "SUBTITLE": "Enter brand details and its logo.",
+      "SUBTITLE": "Enter brand details and add its logo and cover image.",
       "LOGO": "Brand Logo",
+      "COVER": "Brand Cover Image",
       "NAME_AR": "Name (Arabic)",
       "NAME_EN": "Name (English)",
       "NAME_AR_PLACEHOLDER": "Ex: Almarai",
@@ -5506,7 +5518,8 @@
       "DESC": "Reusable from-address identities for admin notifications and operational workflows.",
       "REPLY_TO": "Reply-to",
       "LOCALE": "Locale mode",
-      "DEFAULT": "Default sender"
+      "DEFAULT": "Default sender",
+      "READ_ONLY": "Backend-owned"
     },
     "PROFILES": {
       "OPS_PRIMARY": "Primary sender for platform-wide operational and access messages.",
@@ -5546,7 +5559,9 @@
     },
     "RESOLVED": {
       "BADGE": "Resolved preview",
-      "EMPTY": "No recipients resolved"
+      "EMPTY": "No recipients resolved",
+      "REFRESHING": "Refreshing preview",
+      "WARNINGS": "Warnings"
     },
     "BRANCH_SCOPE": {
       "ALL_BRANCHES": "All branches",
@@ -5579,7 +5594,51 @@
       "DIRECTORY_BCC": "Directory BCC"
     },
     "ACTIONS": {
-      "SAVE": "Save rule"
+      "SAVE": "Save rule",
+      "SAVING": "Saving...",
+      "TEST_SEND": "Test send",
+      "SENDING_TEST": "Sending test..."
+    },
+    "AUTOMATION": {
+      "LIVE": "Live automation",
+      "MANUAL_ONLY": "Manual only"
+    },
+    "LOADING": {
+      "TITLE": "Loading email center",
+      "DESC": "Fetching workflow rules, sender profiles, and dispatch history from the backend."
+    },
+    "TEST_SEND": {
+      "BADGE": "Test send",
+      "LAST_RESULT": "Last test result"
+    },
+    "DISPATCH_STATUS": {
+      "SENT": "Sent",
+      "FAILED": "Failed",
+      "SKIPPED": "Skipped"
+    },
+    "SOURCES": {
+      "TEST_SEND": "Test send",
+      "VENDOR_AUTOMATION_LIVE": "Vendor automation live",
+      "VENDOR_AUTOMATION_LEGACY": "Vendor automation legacy"
+    },
+    "HISTORY": {
+      "BADGE": "Dispatch history",
+      "TITLE": "Recent email dispatches",
+      "DESC": "Track test sends and live automation deliveries with backend-backed audit history.",
+      "RULE": "Rule",
+      "SOURCE": "Source",
+      "STATUS": "Status",
+      "DATE_FROM": "Date from",
+      "DATE_TO": "Date to",
+      "ALL_RULES": "All rules",
+      "ALL_SOURCES": "All sources",
+      "ALL_STATUSES": "All statuses",
+      "CLEAR_FILTERS": "Clear filters",
+      "LOADING": "Loading dispatch history...",
+      "EMPTY_TITLE": "No dispatches found",
+      "EMPTY_DESC": "No email dispatches match the current filters yet.",
+      "RECIPIENTS": "recipients",
+      "NO_DISPATCH": "No dispatch yet"
     },
     "PREVIEW": {
       "BADGE": "Template preview",

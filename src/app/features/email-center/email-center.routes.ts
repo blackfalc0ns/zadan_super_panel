@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
+import { apiSessionGuard } from '../../core/guards/api-session.guard';
 import { HasPermissionGuard } from '../../core/guards/has-permission.guard';
 
 export const EMAIL_CENTER_ROUTES: Routes = [
   {
     path: '',
-    canActivate: [HasPermissionGuard],
+    canActivate: [apiSessionGuard, HasPermissionGuard],
     data: {
       permission: 'email_center.view'
     },

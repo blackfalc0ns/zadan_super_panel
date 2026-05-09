@@ -82,7 +82,9 @@
           [(reviewerDecisionNote)]="reviewerDecisionNote"
           [(selectedRejectionReason)]="selectedRejectionReason"
           [(internalReviewNote)]="internalReviewNote"
-          (reviewActionRequested)="reviewActionRequested.emit($event)">
+          (reviewActionRequested)="reviewActionRequested.emit($event)"
+          (documentApprovalRequested)="documentApprovalRequested.emit($event)"
+          (documentRejectionRequested)="documentRejectionRequested.emit($event)">
         </app-driver-verification-tab>
       </ng-container>
     </div>

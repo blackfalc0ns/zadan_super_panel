@@ -161,6 +161,8 @@
     (selectedRejectionReasonChange)="selectedRejectionReason = $event"
     (internalReviewNoteChange)="internalReviewNote = $event"
     (reviewActionRequested)="requestReviewAction($event)"
+    (documentApprovalRequested)="approveDocument($event)"
+    (documentRejectionRequested)="rejectDocument($event)"
     (locationAccessActionRequested)="updateLocationAccess($event)"
     (taskPreviewRequested)="openTaskPreview($event)"
     (incidentPreviewRequested)="openIncidentPreview($event)"
