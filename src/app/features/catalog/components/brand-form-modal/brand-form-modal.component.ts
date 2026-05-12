@@ -9,6 +9,13 @@ import { AppInputComponent } from '../../../../shared/components/ui/form-control
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 
+interface BrandCategoryOption extends Category {
+  displayNameAr: string;
+  displayNameEn: string;
+  level: number;
+  isLeaf: boolean;
+}
+
 @Component({
   selector: 'app-brand-form-modal',
   standalone: true,
@@ -36,7 +43,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   isUploadingLogo = false;
   isUploadingCover = false;
   activeInputLang: 'ar' | 'en' = 'ar';
-  leafCategories: Category[] = [];
+  leafCategories: BrandCategoryOption[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -71,7 +78,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   loadLeafCategories(): void {
     this.catalogService.getCategories(undefined, true).subscribe({
       next: (categories) => {
-        this.leafCategories = this.flattenLeafCategories(categories ?? []);
+        this.leafCategories = this.flattenAllCategories(categories ?? []).filter((category) => category.isLeaf);
       },
       error: (err) => {
         console.error('Failed to load brand categories', err);
@@ -150,18 +157,17 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     this.close.emit();
   }
 
-  getLocalizedCategoryName(category: Category): string {
-    return this.translate.currentLang === 'ar' ? category.nameAr : category.nameEn;
+  getLocalizedCategoryName(category: BrandCategoryOption): string {
+    return this.translate.currentLang === 'ar'
+      ? category.displayNameAr || category.nameAr
+      : category.displayNameEn || category.nameEn;
   }
 
-  get leafCategoryOptions(): SearchableSelectOption<string | null>[] {
-    return [
-      { value: null, labelKey: 'BRANDS.MODAL.SELECT_SUB_CATEGORY_PLACEHOLDER' },
-      ...this.leafCategories.map((category) => ({
-        value: category.id,
-        label: this.getLocalizedCategoryName(category)
-      }))
-    ];
+  get leafCategoryOptions(): SearchableSelectOption<string>[] {
+    return this.leafCategories.map((category) => ({
+      value: category.id,
+      label: this.getLocalizedCategoryName(category)
+    }));
   }
 
   private setUploadingState(field: 'logoUrl' | 'coverImageUrl', isUploading: boolean): void {
@@ -194,21 +200,35 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     this.form.reset({ isActive: true, categoryId: null, logoUrl: '', coverImageUrl: '' });
   }
 
-  private flattenLeafCategories(categories: Category[]): Category[] {
-    const subCategories: Category[] = [];
+  private flattenAllCategories(
+    categories: Category[],
+    pathAr = '',
+    pathEn = '',
+    level = 0,
+    parentId: string | null = null
+  ): BrandCategoryOption[] {
+    let result: BrandCategoryOption[] = [];
 
     for (const category of categories) {
       const children = category.subCategories ?? [];
+      const separator = ' » ';
+      const currentPathAr = pathAr ? `${pathAr}${separator}${category.nameAr}` : category.nameAr;
+      const currentPathEn = pathEn ? `${pathEn}${separator}${category.nameEn}` : category.nameEn;
 
-      if (category.parentCategoryId && children.length === 0) {
-        subCategories.push(category);
-      }
+      result.push({
+        ...category,
+        parentCategoryId: parentId || category.parentCategoryId || null,
+        displayNameAr: currentPathAr,
+        displayNameEn: currentPathEn,
+        level,
+        isLeaf: level === 3
+      });
 
       if (children.length > 0) {
-        subCategories.push(...this.flattenLeafCategories(children));
+        result = result.concat(this.flattenAllCategories(children, currentPathAr, currentPathEn, level + 1, category.id));
       }
     }
 
-    return subCategories;
+    return result;
   }
 }

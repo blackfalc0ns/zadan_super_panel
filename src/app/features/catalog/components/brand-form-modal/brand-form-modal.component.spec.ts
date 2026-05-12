@@ -60,12 +60,12 @@ describe('BrandFormModalComponent', () => {
     }));
   });
 
-  it('shows only final sub-categories in the linked sub-category dropdown', () => {
+  it('shows the same base category level used by product creation', () => {
     const { component, catalogService } = createComponent();
     catalogService.getCategories.and.returnValue(of([
       {
         id: 'root',
-        nameAr: 'Root',
+        nameAr: 'Main',
         nameEn: 'Root',
         displayOrder: 1,
         isActive: true,
@@ -79,12 +79,22 @@ describe('BrandFormModalComponent', () => {
             isActive: true,
             subCategories: [
               {
-                id: 'leaf-sub',
-                nameAr: 'Leaf sub',
-                nameEn: 'Leaf sub',
+                id: 'leaf-level-2',
+                nameAr: 'Leaf level 2',
+                nameEn: 'Leaf level 2',
                 parentCategoryId: 'parent-sub',
                 displayOrder: 1,
-                isActive: true
+                isActive: true,
+                subCategories: [
+                  {
+                    id: 'base-category',
+                    nameAr: 'Base category',
+                    nameEn: 'Base category',
+                    parentCategoryId: 'leaf-level-2',
+                    displayOrder: 1,
+                    isActive: true
+                  }
+                ]
               }
             ]
           }
@@ -94,6 +104,12 @@ describe('BrandFormModalComponent', () => {
 
     component.ngOnInit();
 
-    expect(component.leafCategories.map((category) => category.id)).toEqual(['leaf-sub']);
+    expect(component.leafCategories.map((category) => category.id)).toEqual(['base-category']);
+    expect(component.leafCategoryOptions).toEqual([
+      jasmine.objectContaining({
+        value: 'base-category',
+        label: 'Main » Parent sub » Leaf level 2 » Base category'
+      })
+    ]);
   });
 });
