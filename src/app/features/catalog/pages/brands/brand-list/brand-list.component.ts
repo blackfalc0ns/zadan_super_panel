@@ -216,6 +216,14 @@ export class BrandListComponent implements OnInit {
   }
 
   getLocalizedCategoryName(brand: Brand): string {
+    if (brand.categories?.length) {
+      return brand.categories
+        .map((category) => this.activeLang === 'ar'
+          ? (category.categoryNameAr || category.categoryNameEn || category.categoryId)
+          : (category.categoryNameEn || category.categoryNameAr || category.categoryId))
+        .join('، ');
+    }
+
     return this.activeLang === 'ar'
       ? (brand.categoryNameAr || brand.categoryNameEn || '-')
       : (brand.categoryNameEn || brand.categoryNameAr || '-');

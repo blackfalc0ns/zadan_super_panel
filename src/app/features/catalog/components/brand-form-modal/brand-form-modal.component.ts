@@ -70,7 +70,8 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       nameEn: ['', [Validators.required, Validators.maxLength(100)]],
       logoUrl: [''],
       coverImageUrl: [''],
-      categoryId: [null, [Validators.required]],
+      categoryId: [null],
+      categoryIds: [[], [Validators.required, Validators.minLength(1)]],
       isActive: [true]
     });
   }
@@ -122,7 +123,12 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     }
 
     this.isSaving = true;
-    const payload = this.form.value;
+    const categoryIds = this.getSelectedCategoryIds();
+    const payload = {
+      ...this.form.value,
+      categoryIds,
+      categoryId: categoryIds[0] ?? null
+    };
 
     if (this.mode === 'create') {
       this.catalogService.createBrand(payload).subscribe({
@@ -153,7 +159,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   }
 
   onClose(): void {
-    this.form.reset({ isActive: true, categoryId: null, logoUrl: '', coverImageUrl: '' });
+    this.form.reset({ isActive: true, categoryId: null, categoryIds: [], logoUrl: '', coverImageUrl: '' });
     this.close.emit();
   }
 
@@ -168,6 +174,46 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       value: category.id,
       label: this.getLocalizedCategoryName(category)
     }));
+  }
+
+  get selectedCategories(): BrandCategoryOption[] {
+    const selectedIds = new Set(this.getSelectedCategoryIds());
+    return this.leafCategories.filter((category) => selectedIds.has(category.id));
+  }
+
+  isCategorySelected(categoryId: string): boolean {
+    return this.getSelectedCategoryIds().includes(categoryId);
+  }
+
+  toggleCategory(categoryId: string, checked: boolean): void {
+    const selectedIds = new Set(this.getSelectedCategoryIds());
+
+    if (checked) {
+      selectedIds.add(categoryId);
+    } else {
+      selectedIds.delete(categoryId);
+    }
+
+    const nextIds = this.leafCategories
+      .map((category) => category.id)
+      .filter((id) => selectedIds.has(id));
+
+    this.form.patchValue({
+      categoryIds: nextIds,
+      categoryId: nextIds[0] ?? null
+    });
+    this.form.get('categoryIds')?.markAsTouched();
+  }
+
+  removeCategory(categoryId: string): void {
+    this.toggleCategory(categoryId, false);
+  }
+
+  private getSelectedCategoryIds(): string[] {
+    const value = this.form.get('categoryIds')?.value;
+    return Array.isArray(value)
+      ? value.map((item) => String(item)).filter(Boolean)
+      : [];
   }
 
   private setUploadingState(field: 'logoUrl' | 'coverImageUrl', isUploading: boolean): void {
@@ -192,12 +238,13 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
         logoUrl: this.brand.logoUrl ?? '',
         coverImageUrl: this.brand.coverImageUrl ?? '',
         categoryId: this.brand.categoryId ?? null,
+        categoryIds: this.brand.categoryIds?.length ? this.brand.categoryIds : (this.brand.categoryId ? [this.brand.categoryId] : []),
         isActive: this.brand.isActive ?? true
       });
       return;
     }
 
-    this.form.reset({ isActive: true, categoryId: null, logoUrl: '', coverImageUrl: '' });
+    this.form.reset({ isActive: true, categoryId: null, categoryIds: [], logoUrl: '', coverImageUrl: '' });
   }
 
   private flattenAllCategories(

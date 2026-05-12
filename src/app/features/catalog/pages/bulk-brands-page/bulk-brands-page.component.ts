@@ -37,6 +37,11 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
         } @else {
           <div class="flex flex-col gap-4">
             <div class="max-w-full rounded-[24px] border border-slate-200/70 bg-white px-5 py-4 shadow-sm">
+              @if (lastSuccessMessage) {
+                <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-black text-emerald-700">
+                  {{ lastSuccessMessage }}
+                </div>
+              }
               <div class="grid gap-4 2xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.8fr)]">
                 <div class="rounded-[20px] border border-slate-200 bg-white p-4">
                   <div class="flex flex-wrap items-center justify-between gap-3">
@@ -318,6 +323,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   succeededRows = 0;
   failedRows = 0;
   currentPage = 1;
+  lastSuccessMessage = '';
   readonly pageSize = 25;
   readonly uploadingRowIds = new Set<string>();
   private pollingSubscription?: Subscription;
@@ -389,6 +395,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
 
     this.stage = 'review';
     this.isSubmitting = true;
+    this.lastSuccessMessage = '';
     this.operation = null;
     this.resultItems = [];
     this.processedRows = 0;
@@ -671,8 +678,14 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
 
           if (operation.status === 'Completed' || operation.status === 'CompletedWithErrors' || operation.status === 'Failed') {
             this.isSubmitting = false;
-            this.stage = 'done';
             this.pollingSubscription?.unsubscribe();
+
+            if (operation.status === 'Completed') {
+              this.resetDraftsAfterSuccess(operation);
+              return;
+            }
+
+            this.stage = 'done';
             this.catalogService.getBrandsBulkOperationItems(operationId).subscribe({
               next: (items) => {
                 this.resultItems = items;
@@ -689,6 +702,27 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
           this.pollingSubscription?.unsubscribe();
         }
       });
+  }
+
+  private resetDraftsAfterSuccess(operation: AdminBrandBulkOperation): void {
+    this.lastSuccessMessage = this.currentLang === 'ar'
+      ? `تمت إضافة ${operation.succeededRows} علامة تجارية بنجاح، وتم تفريغ الحقول.`
+      : `${operation.succeededRows} brands were added successfully. The form has been cleared.`;
+    this.stage = 'review';
+    this.operation = null;
+    this.resultItems = [];
+    this.submittedRowIds = [];
+    this.processedRows = 0;
+    this.succeededRows = 0;
+    this.failedRows = 0;
+    this.currentPage = 1;
+    this.defaults = {
+      categoryId: null,
+      logoUrl: null,
+      coverImageUrl: null,
+      isActive: true
+    };
+    this.rows = Array.from({ length: 25 }, () => this.createEmptyRow());
   }
 
   getStatusLabel(isActive: boolean): string {

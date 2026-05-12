@@ -82,15 +82,37 @@
             {{ 'BRANDS.MODAL.SELECT_SUB_CATEGORY' | translate }}
             <span class="text-rose-500">*</span>
           </label>
-          <app-searchable-select
-            class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-            formControlName="categoryId"
-            [options]="leafCategoryOptions"
-            [placeholder]="'BRANDS.MODAL.SELECT_SUB_CATEGORY_PLACEHOLDER' | translate"
-            [isTouched]="form.get('categoryId')?.touched || false"
-            [error]="form.get('categoryId')?.invalid && form.get('categoryId')?.touched ? ('BRANDS.MODAL.SUB_CATEGORY_REQUIRED' | translate) : ''">
-          </app-searchable-select>
-          <p *ngIf="form.get('categoryId')?.invalid && form.get('categoryId')?.touched" class="text-xs font-bold text-rose-500">
+          <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" [class.border-rose-300]="form.get('categoryIds')?.invalid && form.get('categoryIds')?.touched">
+            <div class="mb-3 flex flex-wrap gap-2" *ngIf="selectedCategories.length">
+              <button
+                type="button"
+                *ngFor="let category of selectedCategories"
+                (click)="removeCategory(category.id)"
+                class="inline-flex max-w-full items-center gap-2 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1.5 text-[0.72rem] font-black text-zadna-primary">
+                <span class="truncate">{{ getLocalizedCategoryName(category) }}</span>
+                <span class="material-symbols-outlined text-[14px]">close</span>
+              </button>
+            </div>
+
+            <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-100">
+              <label
+                *ngFor="let category of leafCategories"
+                class="flex cursor-pointer items-start gap-3 border-b border-slate-50 px-3 py-2.5 last:border-b-0 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  class="mt-1 h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary"
+                  [checked]="isCategorySelected(category.id)"
+                  (change)="toggleCategory(category.id, $any($event.target).checked)">
+                <span class="min-w-0 flex-1 text-[0.78rem] font-bold leading-5 text-slate-700">
+                  {{ getLocalizedCategoryName(category) }}
+                </span>
+              </label>
+            </div>
+            <div class="mt-2 text-[0.72rem] font-black text-slate-400">
+              {{ selectedCategories.length }} {{ translate.currentLang === 'ar' ? 'تصنيف محدد' : 'selected categories' }}
+            </div>
+          </div>
+          <p *ngIf="form.get('categoryIds')?.invalid && form.get('categoryIds')?.touched" class="text-xs font-bold text-rose-500">
             {{ 'BRANDS.MODAL.SUB_CATEGORY_REQUIRED' | translate }}
           </p>
         </div>

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
@@ -78,6 +78,7 @@ interface CatalogBrandPayload {
   logoUrl?: string;
   coverImageUrl?: string;
   categoryId?: string | null;
+  categoryIds?: string[];
   isActive?: boolean;
 }
 
@@ -800,7 +801,7 @@ export class CatalogService {
   private normalizeUnitsResponse(response: unknown, fallback: CatalogUnit[]): CatalogUnit[] {
     const units = this.extractArray<CatalogUnit>(response).map((unit, index) => ({
       id: unit.id || `UNIT-${index + 1}`,
-      nameAr: unit.nameAr || unit.nameEn || `وحدة ${index + 1}`,
+      nameAr: unit.nameAr || unit.nameEn || `ÙˆØ­Ø¯Ø© ${index + 1}`,
       nameEn: unit.nameEn || unit.nameAr || `Unit ${index + 1}`,
       isActive: unit.isActive ?? true
     }));
@@ -1089,7 +1090,7 @@ export class CatalogService {
         levels: this.buildCountFacets(
           filtered,
           (category) => String(category.level ?? 0),
-          (level) => ({ ar: `المستوى ${level}`, en: `Level ${level}` })
+          (level) => ({ ar: `Ø§Ù„Ù…Ø³ØªÙˆÙ‰ ${level}`, en: `Level ${level}` })
         ),
         activeCount: filtered.filter((category) => category.isActive).length,
         inactiveCount: filtered.filter((category) => !category.isActive).length,
@@ -1312,10 +1313,10 @@ export class CatalogService {
 
   private getProductStatusFacetLabels(status: string) {
     const labels: Record<string, { ar: string; en: string }> = {
-      Active: { ar: 'نشط', en: 'Active' },
-      Draft: { ar: 'مسودة', en: 'Draft' },
-      Inactive: { ar: 'غير نشط', en: 'Inactive' },
-      Discontinued: { ar: 'متوقف', en: 'Discontinued' }
+      Active: { ar: 'Ù†Ø´Ø·', en: 'Active' },
+      Draft: { ar: 'Ù…Ø³ÙˆØ¯Ø©', en: 'Draft' },
+      Inactive: { ar: 'ØºÙŠØ± Ù†Ø´Ø·', en: 'Inactive' },
+      Discontinued: { ar: 'Ù…ØªÙˆÙ‚Ù', en: 'Discontinued' }
     };
 
     return labels[status] ?? { ar: status, en: status };
@@ -1388,7 +1389,7 @@ export class CatalogService {
     const base: Category = {
       ...category,
       id: category.id || `CAT-${level}-${index + 1}`,
-      nameAr: category.nameAr || category.nameEn || `تصنيف ${index + 1}`,
+      nameAr: category.nameAr || category.nameEn || `ØªØµÙ†ÙŠÙ ${index + 1}`,
       nameEn: category.nameEn || category.nameAr || `Category ${index + 1}`,
       displayOrder: category.displayOrder ?? index + 1,
       parentCategoryId: category.parentCategoryId ?? parent?.id ?? null,
@@ -1417,7 +1418,7 @@ export class CatalogService {
     return {
       ...product,
       id: product.id || `PRD-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-      nameAr: product.nameAr || product.nameEn || 'منتج',
+      nameAr: product.nameAr || product.nameEn || 'Ù…Ù†ØªØ¬',
       nameEn: product.nameEn || product.nameAr || 'Product',
       descriptionAr: product.descriptionAr || '',
       descriptionEn: product.descriptionEn || '',
@@ -1511,7 +1512,7 @@ export class CatalogService {
     const id = stringValue('id', 'Id') || `BRD-${index + 1}`;
     const nameAr = stringValue('nameAr', 'name_ar', 'NameAr', 'arabicName', 'arabic_name', 'ArabicName', 'name', 'Name')
       || stringValue('nameEn', 'name_en', 'NameEn', 'englishName', 'english_name', 'EnglishName')
-      || `Ø¹Ù„Ø§Ù…Ø© ${index + 1}`;
+      || `Ã˜Â¹Ã™â€žÃ˜Â§Ã™â€¦Ã˜Â© ${index + 1}`;
     const nameEn = stringValue('nameEn', 'name_en', 'NameEn', 'englishName', 'english_name', 'EnglishName')
       || stringValue('nameAr', 'name_ar', 'NameAr', 'arabicName', 'arabic_name', 'ArabicName', 'name', 'Name')
       || `Brand ${index + 1}`;
@@ -1523,6 +1524,16 @@ export class CatalogService {
     const normalizedCategoryId = nullableStringValue('categoryId', 'category_id', 'CategoryId')
       || (this.fallbackProducts ?? []).find((product) => product.brandId === id)?.categoryId
       || null;
+    const rawCategoryIds = this.extractStringArray(
+      raw['categoryIds']
+      ?? raw['CategoryIds']
+      ?? raw['category_ids']
+    );
+    const normalizedCategoryIds = rawCategoryIds.length ? rawCategoryIds : (normalizedCategoryId ? [normalizedCategoryId] : []);
+    const normalizedCategories = this.normalizeBrandCategories(
+      raw['categories'] ?? raw['Categories'],
+      normalizedCategoryIds
+    );
     const normalizedCategory = normalizedCategoryId ? this.findFallbackCategoryById(normalizedCategoryId) : null;
     const logoUrl = stringValue('logoUrl', 'logo_url', 'LogoUrl', 'logo', 'Logo')
       || this.buildPlaceholderAsset(nameEn || nameAr || 'Brand', 'f3f4f6');
@@ -1534,6 +1545,8 @@ export class CatalogService {
       nameAr,
       nameEn,
       categoryId: normalizedCategoryId,
+      categoryIds: normalizedCategoryIds,
+      categories: normalizedCategories,
       categoryNameAr: stringValue('categoryNameAr', 'category_name_ar', 'CategoryNameAr') || normalizedCategory?.nameAr,
       categoryNameEn: stringValue('categoryNameEn', 'category_name_en', 'CategoryNameEn') || normalizedCategory?.nameEn,
       isActive: booleanValue('isActive', 'is_active', 'IsActive') ?? true,
@@ -1553,13 +1566,16 @@ export class CatalogService {
       || (this.fallbackProducts ?? []).find((product) => product.brandId === brand.id)?.categoryId
       || null;
     const normalizedCategory = normalizedCategoryId ? this.findFallbackCategoryById(normalizedCategoryId) : null;
+    const normalizedCategoryIds = brand.categoryIds?.length ? brand.categoryIds : (normalizedCategoryId ? [normalizedCategoryId] : []);
 
     return {
       ...brand,
       id: brand.id || `BRD-${index + 1}`,
-      nameAr: brand.nameAr || brand.nameEn || `علامة ${index + 1}`,
+      nameAr: brand.nameAr || brand.nameEn || `Ø¹Ù„Ø§Ù…Ø© ${index + 1}`,
       nameEn: brand.nameEn || brand.nameAr || `Brand ${index + 1}`,
       categoryId: normalizedCategoryId,
+      categoryIds: normalizedCategoryIds,
+      categories: brand.categories?.length ? brand.categories : this.normalizeBrandCategories(null, normalizedCategoryIds),
       categoryNameAr: brand.categoryNameAr || normalizedCategory?.nameAr,
       categoryNameEn: brand.categoryNameEn || normalizedCategory?.nameEn,
       isActive: brand.isActive ?? true,
@@ -1569,6 +1585,40 @@ export class CatalogService {
       createdAtUtc,
       updatedAtUtc
     };
+  }
+
+  private normalizeBrandCategories(value: unknown, fallbackCategoryIds: string[]): Brand['categories'] {
+    const rawCategories = this.extractArray<Record<string, unknown>>(value)
+      .map((category) => ({
+        categoryId: String(category['categoryId'] ?? category['CategoryId'] ?? category['category_id'] ?? '').trim(),
+        categoryNameAr: (category['categoryNameAr'] ?? category['CategoryNameAr'] ?? category['category_name_ar']) as string | null | undefined,
+        categoryNameEn: (category['categoryNameEn'] ?? category['CategoryNameEn'] ?? category['category_name_en']) as string | null | undefined
+      }))
+      .filter((category) => !!category.categoryId);
+
+    if (rawCategories.length) {
+      return rawCategories;
+    }
+
+    return fallbackCategoryIds.map((categoryId) => {
+      const category = this.findFallbackCategoryById(categoryId);
+      return {
+        categoryId,
+        categoryNameAr: category?.nameAr,
+        categoryNameEn: category?.nameEn
+      };
+    });
+  }
+
+  private extractStringArray(value: unknown): string[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+
+    return value
+      .map((item) => typeof item === 'string' ? item : String(item ?? ''))
+      .map((item) => item.trim())
+      .filter(Boolean);
   }
 
   private cloneCategories(categories: Category[]): Category[] {

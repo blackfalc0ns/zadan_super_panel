@@ -71,6 +71,12 @@ export interface Brand {
     logoUrl?: string;
     coverImageUrl?: string;
     categoryId?: string | null;
+    categoryIds?: string[];
+    categories?: Array<{
+        categoryId: string;
+        categoryNameAr?: string | null;
+        categoryNameEn?: string | null;
+    }>;
     categoryNameAr?: string;
     categoryNameEn?: string;
     isActive: boolean;

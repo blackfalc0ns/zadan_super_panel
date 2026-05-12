@@ -697,7 +697,10 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     const ancestorIds = this.getAncestorCategoryIds(categoryId);
     const matchIds = new Set([categoryId, ...ancestorIds]);
 
-    return this.brands.filter((brand) => !!brand.categoryId && matchIds.has(brand.categoryId));
+    return this.brands.filter((brand) => {
+      const brandCategoryIds = brand.categoryIds?.length ? brand.categoryIds : (brand.categoryId ? [brand.categoryId] : []);
+      return brandCategoryIds.some((brandCategoryId) => matchIds.has(brandCategoryId));
+    });
   }
 
   getBrandOptionsForCategory(categoryId: string | null | undefined): SearchableSelectOption<string | null>[] {

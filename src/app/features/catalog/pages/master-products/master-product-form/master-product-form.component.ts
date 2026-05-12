@@ -300,7 +300,10 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     const matchIds = new Set([categoryId, ...ancestorIds]);
 
     // Show brands that are linked to the selected category or any of its ancestors
-    this.availableBrands = this.allBrands.filter((brand) => brand.categoryId && matchIds.has(brand.categoryId));
+    this.availableBrands = this.allBrands.filter((brand) => {
+      const brandCategoryIds = brand.categoryIds?.length ? brand.categoryIds : (brand.categoryId ? [brand.categoryId] : []);
+      return brandCategoryIds.some((brandCategoryId) => matchIds.has(brandCategoryId));
+    });
 
     const selectedBrandId = this.productForm.get('brandId')?.value;
     const selectedBrandIsValid = this.availableBrands.some((brand) => brand.id === selectedBrandId);
