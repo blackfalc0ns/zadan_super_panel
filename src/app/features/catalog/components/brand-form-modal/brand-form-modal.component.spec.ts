@@ -59,4 +59,41 @@ describe('BrandFormModalComponent', () => {
       isActive: true
     }));
   });
+
+  it('shows only final sub-categories in the linked sub-category dropdown', () => {
+    const { component, catalogService } = createComponent();
+    catalogService.getCategories.and.returnValue(of([
+      {
+        id: 'root',
+        nameAr: 'Root',
+        nameEn: 'Root',
+        displayOrder: 1,
+        isActive: true,
+        subCategories: [
+          {
+            id: 'parent-sub',
+            nameAr: 'Parent sub',
+            nameEn: 'Parent sub',
+            parentCategoryId: 'root',
+            displayOrder: 1,
+            isActive: true,
+            subCategories: [
+              {
+                id: 'leaf-sub',
+                nameAr: 'Leaf sub',
+                nameEn: 'Leaf sub',
+                parentCategoryId: 'parent-sub',
+                displayOrder: 1,
+                isActive: true
+              }
+            ]
+          }
+        ]
+      }
+    ]));
+
+    component.ngOnInit();
+
+    expect(component.leafCategories.map((category) => category.id)).toEqual(['leaf-sub']);
+  });
 });

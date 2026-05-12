@@ -200,10 +200,8 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     for (const category of categories) {
       const children = category.subCategories ?? [];
 
-      for (const child of children) {
-        if (child.parentCategoryId) {
-          subCategories.push(child);
-        }
+      if (category.parentCategoryId && children.length === 0) {
+        subCategories.push(category);
       }
 
       if (children.length > 0) {
