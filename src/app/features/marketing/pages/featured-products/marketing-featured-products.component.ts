@@ -77,9 +77,12 @@ import { ToastService } from '@shared/services/toast.service';
         [data]="filteredPlacements"
         [columns]="tableColumns"
         [isLoading]="loading"
+        [emptyStateIcon]="'featured_play_list'"
+        [emptyStateActionLabel]="'إضافة أول منتج'"
         [emptyStateTitle]="'لا توجد منتجات مميزة'"
         [emptyStateMessage]="'لم يتم تخصيص أي منتج كمنتج مميز. يمكنك إضافة منتج للترويج له في الصفحة الرئيسية.'"
-        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'">
+        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
+        (emptyStateAction)="openCreate()">
 
           <ng-template #customColumn let-placement let-column="column">
             <ng-container *ngIf="column.key === 'target'">

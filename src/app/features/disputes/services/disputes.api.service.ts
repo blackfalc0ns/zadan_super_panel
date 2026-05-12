@@ -439,28 +439,9 @@ export class DisputesService {
     pageSize: number,
     search?: string
   ): { items: SupportCaseRow[]; totalCount: number } {
-    const normalizedSearch = search?.trim().toLowerCase() ?? '';
-    const source = this.getDisputesSnapshot();
-    const filtered = !normalizedSearch
-      ? source
-      : source.filter((item) =>
-          [
-            item.id,
-            item.orderId,
-            item.orderDisplayId,
-            item.customerName,
-            item.customerEmail,
-            item.merchantName,
-            item.reason
-          ]
-            .filter(Boolean)
-            .some((value) => value.toLowerCase().includes(normalizedSearch))
-        );
-
-    const startIndex = Math.max(0, (Math.max(1, page) - 1) * Math.max(1, pageSize));
     return {
-      items: filtered.slice(startIndex, startIndex + Math.max(1, pageSize)),
-      totalCount: filtered.length
+      items: [],
+      totalCount: 0
     };
   }
 }

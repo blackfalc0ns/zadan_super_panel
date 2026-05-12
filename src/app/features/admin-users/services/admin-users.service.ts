@@ -32,7 +32,7 @@ import {
   getRolePresetById
 } from '../models/admin-users.models';
 
-const STORAGE_KEY = 'superadmin.access-directory.v2';
+const STORAGE_KEY = 'superadmin.access-directory.v4';
 const LEGACY_STORAGE_KEY = 'superadmin.admin-users.v1';
 
 type LegacyAdminRecord = {
@@ -250,7 +250,10 @@ export class AdminUsersService {
   }
 
   getEffectivePermissions(user: AdminUserRecord): string[] {
-    const presetPermissions = new Set(getRolePresetById(user.rolePresetId).permissions);
+    const basePermissions = user.rolePermissions?.length
+      ? user.rolePermissions
+      : getRolePresetById(user.rolePresetId).permissions;
+    const presetPermissions = new Set(basePermissions);
     user.grantedPermissions.forEach((permission) => presetPermissions.add(permission));
     user.revokedPermissions.forEach((permission) => presetPermissions.delete(permission));
     return [...presetPermissions].sort();
@@ -384,35 +387,18 @@ export class AdminUsersService {
           .map((record) => this.normalizeUser(record));
       }
 
-      const migrated = this.migrateLegacyUsers();
-      const seeded = this.mergeWithSeedIdentities(migrated);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
-      return seeded;
+      localStorage.removeItem('superadmin.access-directory.v3');
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+      return [];
     } catch {
-      const seeded = this.mergeWithSeedIdentities([]);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
-      return seeded;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+      return [];
     }
   }
 
   private migrateLegacyUsers(): AdminUserRecord[] {
-    try {
-      const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
-      if (!raw) {
-        return this.createLegacySeedUsers().map((record) => this.normalizeUser(record));
-      }
-
-      const parsed = JSON.parse(raw) as unknown;
-      if (!Array.isArray(parsed)) {
-        throw new Error('Invalid legacy payload');
-      }
-
-      return parsed
-        .filter((item): item is LegacyAdminRecord => typeof item === 'object' && item !== null && 'id' in item)
-        .map((record) => this.migrateLegacyRecord(record));
-    } catch {
-      return this.createLegacySeedUsers().map((record) => this.normalizeUser(record));
-    }
+    return [];
   }
 
   private mergeWithSeedIdentities(migratedAdmins: AdminUserRecord[]): AdminUserRecord[] {
@@ -825,9 +811,14 @@ export class AdminUsersService {
       identityKind: 'operational',
       panelScope: 'super_admin_panel',
       rolePresetId: record.rolePresetId,
+      roleDefinitionId: null,
+      roleCode: record.rolePresetId,
+      roleName: record.rolePresetId,
+      rolePermissions: getRolePresetById(record.rolePresetId).permissions,
       accessLevel: record.accessLevel,
       status: record.status,
       inviteState: record.inviteState,
+      mustChangePassword: false,
       grantedPermissions: record.grantedPermissions,
       revokedPermissions: record.revokedPermissions,
       security: {
@@ -880,9 +871,14 @@ export class AdminUsersService {
       identityKind: getIdentityKindByPersona(personaType),
       panelScope: getPanelScopeByPersona(personaType),
       rolePresetId: preset.id,
+      roleDefinitionId: null,
+      roleCode: preset.id,
+      roleName: preset.id,
+      rolePermissions: preset.permissions,
       accessLevel: preset.accessLevel,
       status: 'invited',
       inviteState: 'draft',
+      mustChangePassword: true,
       grantedPermissions: [],
       revokedPermissions: [],
       security: {
@@ -949,7 +945,12 @@ export class AdminUsersService {
       identityKind,
       panelScope,
       rolePresetId: preset.id,
+      roleDefinitionId: record.roleDefinitionId ?? null,
+      roleCode: record.roleCode?.trim() || record.rolePresetId,
+      roleName: record.roleName?.trim() || preset.id,
+      rolePermissions: this.unique(record.rolePermissions ?? preset.permissions),
       accessLevel: identityKind === 'external' ? preset.accessLevel : (record.accessLevel || preset.accessLevel),
+      mustChangePassword: record.mustChangePassword ?? false,
       grantedPermissions: identityKind === 'external' ? [] : this.unique(record.grantedPermissions),
       revokedPermissions: identityKind === 'external' ? [] : this.unique(record.revokedPermissions),
       security: {
@@ -1056,9 +1057,14 @@ export class AdminUsersService {
       identityKind: seed.identityKind ?? getIdentityKindByPersona(seed.personaType),
       panelScope: seed.panelScope ?? getPanelScopeByPersona(seed.personaType),
       rolePresetId: seed.rolePresetId,
+      roleDefinitionId: seed.roleDefinitionId ?? null,
+      roleCode: seed.roleCode ?? seed.rolePresetId,
+      roleName: seed.roleName ?? preset.id,
+      rolePermissions: seed.rolePermissions ?? preset.permissions,
       accessLevel: seed.accessLevel ?? preset.accessLevel,
       status: seed.status,
       inviteState: seed.inviteState,
+      mustChangePassword: seed.mustChangePassword ?? false,
       grantedPermissions: seed.grantedPermissions ?? [],
       revokedPermissions: seed.revokedPermissions ?? [],
       security: seed.security ?? {
@@ -1117,131 +1123,17 @@ export class AdminUsersService {
   }
 
   private createLegacySeedUsers(): AdminUserRecord[] {
-    const legacySeedUsers: LegacyAdminRecord[] = [
-      {
-        id: 'admin-001',
-        fullName: 'Lina Alharbi',
-        email: 'lina.alharbi@zadana.sa',
-        phone: '+966500000111',
-        department: 'Executive Operations',
-        team: 'HQ Governance',
-        rolePresetId: 'super_admin',
-        accessLevel: 'full',
-        status: 'active',
-        inviteState: 'accepted',
-        grantedPermissions: [],
-        revokedPermissions: [],
-        security: {
-          mfaEnabled: true,
-          lastLoginAt: '2026-04-04 09:40 AM',
-          invitedBy: 'Platform Owner',
-          invitedAt: '2026-01-11 09:00 AM',
-          acceptedAt: '2026-01-11 09:15 AM'
-        },
-        avatarHue: '#127c8c'
-      },
-      {
-        id: 'admin-002',
-        fullName: 'Omar Alsuwailem',
-        email: 'omar.ops@zadana.sa',
-        phone: '+966500000222',
-        department: 'Marketplace Operations',
-        team: 'Vendor Success',
-        rolePresetId: 'operations_lead',
-        accessLevel: 'restricted',
-        status: 'active',
-        inviteState: 'accepted',
-        grantedPermissions: ['email_center.edit'],
-        revokedPermissions: ['vendors.export'],
-        security: {
-          mfaEnabled: true,
-          lastLoginAt: '2026-04-03 07:25 PM',
-          invitedBy: 'Lina Alharbi',
-          invitedAt: '2026-01-17 10:30 AM',
-          acceptedAt: '2026-01-17 11:05 AM'
-        },
-        avatarHue: '#2563eb'
-      },
-      {
-        id: 'admin-003',
-        fullName: 'Maha Alotaibi',
-        email: 'maha.risk@zadana.sa',
-        phone: '+966500000333',
-        department: 'Risk & Trust',
-        team: 'Dispute Command',
-        rolePresetId: 'risk_admin',
-        accessLevel: 'restricted',
-        status: 'active',
-        inviteState: 'accepted',
-        grantedPermissions: ['drivers.edit'],
-        revokedPermissions: [],
-        security: {
-          mfaEnabled: false,
-          lastLoginAt: '2026-04-02 03:10 PM',
-          invitedBy: 'Lina Alharbi',
-          invitedAt: '2026-02-01 08:00 AM',
-          acceptedAt: '2026-02-01 08:35 AM'
-        },
-        avatarHue: '#dc2626'
-      },
-      {
-        id: 'admin-004',
-        fullName: 'Raghad Almutairi',
-        email: 'finance.control@zadana.sa',
-        phone: '+966500000444',
-        department: 'Finance Control',
-        team: 'Settlements Desk',
-        rolePresetId: 'finance_admin',
-        accessLevel: 'restricted',
-        status: 'invited',
-        inviteState: 'pending',
-        grantedPermissions: [],
-        revokedPermissions: [],
-        security: {
-          mfaEnabled: false,
-          lastLoginAt: null,
-          invitedBy: 'Lina Alharbi',
-          invitedAt: '2026-04-02 01:15 PM',
-          acceptedAt: null
-        },
-        avatarHue: '#0f766e'
-      },
-      {
-        id: 'admin-005',
-        fullName: 'Yousef Alsharif',
-        email: 'support.command@zadana.sa',
-        phone: '+966500000555',
-        department: 'Customer Support',
-        team: 'Priority Care',
-        rolePresetId: 'support_admin',
-        accessLevel: 'observer',
-        status: 'suspended',
-        inviteState: 'accepted',
-        grantedPermissions: ['customers.export'],
-        revokedPermissions: ['orders.export'],
-        security: {
-          mfaEnabled: true,
-          lastLoginAt: '2026-03-30 05:20 PM',
-          invitedBy: 'Omar Alsuwailem',
-          invitedAt: '2026-02-12 11:10 AM',
-          acceptedAt: '2026-02-12 11:40 AM'
-        },
-        avatarHue: '#7c3aed'
-      }
-    ];
-
-    return legacySeedUsers.map((record) => this.migrateLegacyRecord(record));
+    return [];
   }
 
   private buildVendorBranches(vendor: VendorDetail): DirectoryBranchOption[] {
     const count = Math.max(1, Math.min(vendor.branchesCount || 1, 4));
-    const seedNames = ['Central Branch', 'North Branch', 'South Branch', 'Express Branch'];
 
     return Array.from({ length: count }, (_, index) => ({
       id: `${vendor.id}-branch-${index + 1}`,
       vendorId: vendor.id,
       vendorName: vendor.businessNameEn || vendor.businessNameAr,
-      name: seedNames[index] ?? `Branch ${index + 1}`,
+      name: `Branch ${index + 1}`,
       region: vendor.region ?? '',
       city: vendor.city ?? ''
     }));

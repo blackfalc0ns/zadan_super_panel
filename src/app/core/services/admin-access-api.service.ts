@@ -19,10 +19,31 @@ export interface RoleDefinitionDto {
   description: string | null;
   isSystem: boolean;
   isActive: boolean;
-  identityRole: number; // enum representation
-  panelScope: number; // enum representation
+  identityRole: number | string; // enum representation
+  panelScope: number | string; // enum representation
   permissions: string[];
   usersCount: number;
+}
+
+export interface PermissionDefinitionDto {
+  id: string;
+  key: string;
+  name: string;
+  domain: string;
+  action: string;
+  panelScope: number | string;
+  description: string | null;
+  isSensitive: boolean;
+}
+
+export interface UserEffectiveAccessDto {
+  userId: string;
+  roleCode: string;
+  roleName: string;
+  rolePermissions: string[];
+  grantedOverrides: string[];
+  revokedOverrides: string[];
+  effectivePermissions: string[];
 }
 
 export interface AdminUserRecordDto {
@@ -37,11 +58,16 @@ export interface AdminUserRecordDto {
   personaType: AdminUserRecord['personaType'];
   audienceType: AdminUserRecord['audienceType'];
   identityKind: AdminUserRecord['identityKind'];
-  panelScope: AdminUserRecord['panelScope'];
+  panelScope: AdminUserRecord['panelScope'] | number | string;
+  roleDefinitionId: string | null;
+  roleCode: string;
+  roleName: string;
+  rolePermissions: string[];
   rolePresetId: string;
   accessLevel: string;
   status: AdminUserRecord['status'];
   inviteState: AdminUserRecord['inviteState'];
+  mustChangePassword: boolean;
   grantedPermissions: string[];
   revokedPermissions: string[];
   security: Partial<AdminUserSecurity>;
@@ -51,6 +77,68 @@ export interface AdminUserRecordDto {
   featureToggles: string[];
   entityPath: string;
   tags: string[];
+}
+
+export interface CreateAdminAccessUserRequest {
+  fullName: string;
+  email: string;
+  phone: string;
+  password: string;
+  roleDefinitionId: string;
+  panelScope: number;
+  scopeType: number;
+  scopeEntityId?: string | null;
+  department?: string | null;
+  team?: string | null;
+  notes?: string | null;
+}
+
+export interface UpdateAdminAccessUserRequest {
+  fullName: string;
+  email: string;
+  phone: string;
+  roleDefinitionId: string;
+  panelScope: number;
+  scopeType: number;
+  scopeEntityId?: string | null;
+  department?: string | null;
+  team?: string | null;
+  status?: string | null;
+  notes?: string | null;
+  grantedPermissions: string[];
+  revokedPermissions: string[];
+}
+
+export interface PagedResultDto<T> {
+  items: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface AccessAuditLogDto {
+  id: string;
+  actorUserId: string | null;
+  actorFullName: string | null;
+  actorEmail: string | null;
+  targetUserId: string;
+  action: string;
+  summary: string;
+  beforeJson: string | null;
+  afterJson: string | null;
+  createdAtUtc: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+}
+
+export interface AdminUsersQuery {
+  pageNumber?: number;
+  pageSize?: number;
+  search?: string;
+  status?: string;
+  roleDefinitionId?: string;
+  panelScope?: number;
 }
 
 @Injectable({
@@ -65,10 +153,29 @@ export class AdminAccessApiService {
     return this.http.get<RoleDefinitionDto[]>(`${this.baseUrl}/roles`);
   }
 
-  getUsers(): Observable<AdminUserRecord[]> {
+  getUsers(query: AdminUsersQuery = {}): Observable<AdminUserRecord[]> {
+    return this.getUsersPage(query).pipe(map((page) => page.items));
+  }
+
+  getUsersPage(query: AdminUsersQuery = {}): Observable<PagedResultDto<AdminUserRecord>> {
+    const params = Object.fromEntries(
+      Object.entries(query)
+        .filter(([, value]) => value !== undefined && value !== null && value !== '')
+        .map(([key, value]) => [key, String(value)])
+    );
+
     return this.http
-      .get<AdminUserRecordDto[]>(`${this.baseUrl}/users`)
-      .pipe(map((users) => users.map((user) => this.mapUserRecord(user))));
+      .get<PagedResultDto<AdminUserRecordDto> | AdminUserRecordDto[]>(`${this.baseUrl}/users`, { params })
+      .pipe(map((response) => {
+        const page = Array.isArray(response)
+          ? { items: response, pageNumber: 1, pageSize: response.length, totalCount: response.length, totalPages: 1 }
+          : response;
+
+        return {
+          ...page,
+          items: page.items.map((user) => this.mapUserRecord(user))
+        };
+      }));
   }
 
   getUser(id: string): Observable<AdminUserRecord> {
@@ -89,8 +196,56 @@ export class AdminAccessApiService {
     return this.http.delete<void>(`${this.baseUrl}/roles/${id}`);
   }
 
+  getPermissions(): Observable<PermissionDefinitionDto[]> {
+    return this.http.get<PermissionDefinitionDto[]>(`${this.baseUrl}/permissions`);
+  }
+
+  createUser(data: CreateAdminAccessUserRequest): Observable<AdminUserRecord> {
+    return this.http
+      .post<AdminUserRecordDto>(`${this.baseUrl}/users`, data)
+      .pipe(map((user) => this.mapUserRecord(user)));
+  }
+
+  updateUser(userId: string, data: UpdateAdminAccessUserRequest): Observable<AdminUserRecord> {
+    return this.http
+      .put<AdminUserRecordDto>(`${this.baseUrl}/users/${userId}`, data)
+      .pipe(map((user) => this.mapUserRecord(user)));
+  }
+
+  resetTemporaryPassword(userId: string, temporaryPassword: string): Observable<AdminUserRecord> {
+    return this.http
+      .post<AdminUserRecordDto>(`${this.baseUrl}/users/${userId}/temporary-password`, { temporaryPassword })
+      .pipe(map((user) => this.mapUserRecord(user)));
+  }
+
+  updateUserScope(userId: string, data: {
+    roleDefinitionId: string;
+    panelScope: number;
+    scopeType: number;
+    scopeEntityId?: string | null;
+    notes?: string | null;
+  }): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/users/${userId}/scope`, data);
+  }
+
+  updateUserOverrides(userId: string, data: {
+    grantedPermissions: string[];
+    revokedPermissions: string[];
+  }): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/users/${userId}/overrides`, data);
+  }
+
+  getUserEffectiveAccess(userId: string): Observable<UserEffectiveAccessDto> {
+    return this.http.get<UserEffectiveAccessDto>(`${this.baseUrl}/users/${userId}/effective-access`);
+  }
+
+  getUserAudit(userId: string): Observable<AccessAuditLogDto[]> {
+    return this.http.get<AccessAuditLogDto[]>(`${this.baseUrl}/users/${userId}/audit`);
+  }
+
   private mapUserRecord(dto: AdminUserRecordDto): AdminUserRecord {
-    const rolePresetId = this.normalizeRolePresetId(dto.rolePresetId, dto.panelScope, dto.personaType);
+    const panelScope = this.normalizePanelScope(dto.panelScope);
+    const rolePresetId = this.normalizeRolePresetId(dto.rolePresetId, panelScope, dto.personaType);
     const preset = getRolePresetById(rolePresetId);
     const emailOptIn = this.buildEmailOptIn(dto.communication.emailOptIn);
 
@@ -101,16 +256,21 @@ export class AdminAccessApiService {
       fullName: dto.fullName,
       email: dto.email,
       phone: dto.phone,
-      department: dto.department || 'Operations',
-      team: dto.team || 'Core',
+      department: dto.department || '',
+      team: dto.team || '',
       personaType: dto.personaType,
       audienceType: dto.audienceType,
       identityKind: dto.identityKind,
-      panelScope: dto.panelScope,
+      panelScope,
+      roleDefinitionId: dto.roleDefinitionId ?? null,
+      roleCode: dto.roleCode || dto.rolePresetId,
+      roleName: dto.roleName || preset.id,
+      rolePermissions: dto.rolePermissions ?? preset.permissions,
       rolePresetId,
-      accessLevel: preset.accessLevel,
+      accessLevel: (dto.accessLevel as AdminUserRecord['accessLevel']) || preset.accessLevel,
       status: dto.status,
       inviteState: dto.inviteState,
+      mustChangePassword: Boolean(dto.mustChangePassword),
       grantedPermissions: dto.grantedPermissions ?? [],
       revokedPermissions: dto.revokedPermissions ?? [],
       security: {
@@ -187,6 +347,17 @@ export class AdminAccessApiService {
         }
         return 'operations_lead';
     }
+  }
+
+  private normalizePanelScope(scope: AdminUserRecordDto['panelScope']): AdminUserRecord['panelScope'] {
+    if (scope === 0 || scope === '0' || scope === 'SuperAdminPanel') return 'super_admin_panel';
+    if (scope === 1 || scope === '1' || scope === 'VendorPanel') return 'vendor_panel';
+    if (scope === 2 || scope === '2' || scope === 'DriverApp') return 'driver_app';
+    if (scope === 3 || scope === '3' || scope === 'CustomerApp') return 'customer_app';
+    if (scope === 'super_admin_panel' || scope === 'vendor_panel' || scope === 'driver_app' || scope === 'customer_app') {
+      return scope;
+    }
+    return 'super_admin_panel';
   }
 
   private buildEmailOptIn(source: unknown): DirectoryEmailOptIn {

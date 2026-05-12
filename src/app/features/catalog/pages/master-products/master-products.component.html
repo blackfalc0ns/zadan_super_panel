@@ -315,21 +315,16 @@
             </app-pagination>
         </div>
 
-        <!-- Extraordinary Empty State -->
-        <div *ngIf="!isLoading && products.length === 0" 
-             class="relative p-20 text-center animate-in zoom-in duration-700">
-            <div class="max-w-md mx-auto space-y-6">
-                <div class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl flex items-center justify-center mx-auto text-slate-100 relative group">
-                    <div class="absolute inset-0 bg-zadna-primary/5 rounded-[3rem] group-hover:scale-110 transition-transform duration-500"></div>
-                    <svg class="w-16 h-16 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                    </svg>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'PRODUCTS.NO_PRODUCTS' | translate }}</h3>
-                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ 'PRODUCTS.NO_PRODUCTS_DESC' | translate }}</p>
-                <div class="pt-6">
-                    <app-button variant="ghost" (btnClick)="resetFilters()" customClass="bg-slate-50 border border-slate-100 rounded-2xl px-8">{{ 'PRODUCTS.RESET_ALL_FILTERS' | translate }}</app-button>
-                </div>
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && products.length === 0" class="p-4 animate-in zoom-in duration-500">
+            <div class="min-h-[320px] rounded-[1.35rem] border border-dashed border-slate-200 bg-slate-50/35 px-6 py-16 text-center flex flex-col items-center justify-center">
+                <span class="material-symbols-outlined mb-5 text-[28px] leading-none text-[#8bbfca]">inventory_2</span>
+                <h3 class="text-[1.35rem] font-black text-slate-900 tracking-normal leading-tight">{{ 'PRODUCTS.NO_PRODUCTS' | translate }}</h3>
+                <p class="mt-3 max-w-md text-[0.86rem] font-extrabold text-slate-500 leading-6">{{ 'PRODUCTS.NO_PRODUCTS_DESC' | translate }}</p>
+                <button type="button" (click)="resetFilters()" class="mt-7 inline-flex h-12 items-center justify-center gap-2 rounded-[0.8rem] bg-zadna-primary px-6 text-[0.82rem] font-black text-white shadow-lg shadow-zadna-primary/20 transition hover:bg-teal-700 active:scale-95">
+                    <span class="material-symbols-outlined text-[20px]">refresh</span>
+                    <span>{{ 'PRODUCTS.RESET_ALL_FILTERS' | translate }}</span>
+                </button>
             </div>
         </div>
     </div>

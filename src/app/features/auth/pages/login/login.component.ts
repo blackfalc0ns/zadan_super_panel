@@ -43,7 +43,12 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.authService.login(this.loginForm.getRawValue() as LoginCredentials).subscribe({
-      next: () => {
+      next: (response) => {
+        if (response.user.mustChangePassword) {
+          this.router.navigate(['/change-temporary-password'], { queryParams: { returnUrl: this.returnUrl } });
+          return;
+        }
+
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (err: any) => {

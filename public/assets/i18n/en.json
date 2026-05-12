@@ -1,4 +1,4 @@
-﻿{
+{
   "COMMON": {
     "CANCEL": "Cancel",
     "CONFIRM_DELETE": "Confirm Delete",
@@ -36,6 +36,8 @@
     "ACTIVE_STATUS": "Activity Status",
     "CREATE": "Create",
     "SELECT": "Select",
+    "SELECT_OPTION": "Select an option",
+    "CLEAR_SELECTION": "Clear selection",
     "ACTIONS": "Actions",
     "SHOWING": "Showing",
     "OF": "of",
@@ -53,9 +55,11 @@
     "SELECTED_ITEMS": "Selected items",
     "CURRENCY_SAR": "SAR",
     "CURRENCY": "SAR",
+    "REGION": "Region",
     "BACK_TO_LIST": "Back to List",
     "NO_DATA": "No data",
     "OPEN": "Open",
+    "PAGE": "Page",
     "TODAY": "Today",
     "THIS_WEEK": "This week",
     "VIEW_ALL": "View all",
@@ -822,7 +826,8 @@
       "ONLINE": "Online",
       "OFFLINE": "Offline",
       "ONMISSION": "On mission",
-      "SUSPENDED": "Suspended"
+      "SUSPENDED": "Suspended",
+      "BANNED": "Banned"
     },
     "VERIFICATION": {
       "VERIFIED": "Verified",
@@ -878,7 +883,9 @@
         "WRITE_NOTE_FIRST": "Write a note before saving.",
         "NOTE_ADDED": "Note added successfully.",
         "DRIVER_REACTIVATED": "Driver reactivated successfully.",
+        "DRIVER_RESTRICTIONS_CLEARED": "Driver restrictions cleared successfully.",
         "DRIVER_SUSPENDED": "Driver suspended successfully.",
+        "DRIVER_BANNED": "Driver banned successfully.",
         "DOCUMENT_APPROVED": "Document approved successfully.",
         "DOCUMENT_REJECTED": "Document rejected successfully.",
         "ACTION_FAILED": "Action failed. Please try again.",
@@ -1005,6 +1012,15 @@
         "TABLE_STATUS": "Status",
         "TABLE_ASSIGNED_AT": "Assigned At",
         "TABLE_DURATION": "Duration",
+        "COMMITMENT_ACCESS": {
+          "KICKER": "Offer and cancellation access",
+          "BLOCKED_TITLE": "Temporarily blocked",
+          "ACTIVE_TITLE": "Offers are allowed",
+          "BLOCKED_DESC": "The driver reached today's rejection or delivery cancellation limit. The block clears tomorrow automatically, or you can clear it now after review.",
+          "ACTIVE_DESC": "The driver can receive offers. Keep monitoring rejections, timeouts, and delivery failures.",
+          "REJECTION_METRIC": "Today / week rejections",
+          "CLEAR_ACTION": "Clear block"
+        },
         "STATIC": {
           "ZONE_TITLE": "Current Zone",
           "CAPACITY": "Capacity",
@@ -1548,6 +1564,13 @@
         "DOC_NUMBER": "Document Number",
         "DOC_REVIEWED_BY": "Reviewed By",
         "DOC_REJECTION_REASON": "Rejection Reason",
+        "MISSING_EXPIRY_TITLE": "Missing expiry date",
+        "MISSING_EXPIRY_MESSAGE": "Add the document expiry date before approving this document.",
+        "DOCUMENT_IMAGES": {
+          "FRONT": "Front image",
+          "BACK": "Back image",
+          "IMAGE": "Document image"
+        },
         "REASON_REQUIRED_HELPER": "A rejection or document request should include a reason or reviewer note.",
         "FIELDS": {
           "FULL_NAME": "Full Name",
@@ -1656,6 +1679,7 @@
       },
       "WORKFLOW": {
         "STATE_LABELS": {
+          "BANNED": "Banned",
           "SUSPENDED": "Operationally Suspended",
           "VERIFICATION_REVIEW": "Verification Review",
           "PENDING_DOCUMENTS": "Pending Documents",
@@ -1666,6 +1690,7 @@
           "READY_TO_ACTIVATE": "Ready to Rejoin"
         },
         "SUMMARIES": {
+          "BANNED": "The driver is fully banned from operations. Review the case before lifting the ban or keeping the account blocked.",
           "SUSPENDED": "The driver is currently out of operation, so the required decision is to resolve the suspension reason first and then decide whether to reactivate or keep the account suspended.",
           "VERIFICATION_REVIEW": "The driver is still in the verification path and should not be considered operationally ready until approval is complete.",
           "PENDING_DOCUMENTS": "The driver is still in the verification path and should not be considered operationally ready until approval is complete.",
@@ -1676,6 +1701,7 @@
           "READY_TO_ACTIVATE": "The driver is verified but currently outside the schedule, and can be returned to operations after a quick check on operational and financial readiness."
         },
         "NEXT_STEPS": {
+          "BANNED": "Review the ban reason and only unban after compliance and document checks are clear.",
           "SUSPENDED": "Review the suspension reason first, then decide whether to reactivate or keep the account suspended.",
           "VERIFICATION_REVIEW": "Review the critical items and approve the final verification decision.",
           "PENDING_DOCUMENTS": "Request the missing or unclear documents, then return the profile for review.",
@@ -1686,6 +1712,7 @@
           "READY_TO_ACTIVATE": "Return the driver to the assignment queue after a quick review of the zone, balance, and open tickets."
         },
         "QUEUE_LABELS": {
+          "BANNED": "Ban Review Queue",
           "SUSPENDED": "Suspension & Reactivation Queue",
           "VERIFICATION_REVIEW": "Verification Approval Queue",
           "PENDING_DOCUMENTS": "Document Completion Queue",
@@ -1716,6 +1743,7 @@
         "ITEMS": {
           "VERIFICATION_PENDING": "The profile is not verified yet and should not be opened for assignment.",
           "ACCOUNT_SUSPENDED": "The account is currently suspended, so no new tasks or payouts should be assigned.",
+          "ACCOUNT_BANNED": "The account is banned and fully blocked from receiving new operational access.",
           "FINANCE_HOLD": "There is a financial hold or unresolved COD amount that must be cleared before any new payout.",
           "COMPLIANCE_CASE": "There is an open compliance case or report that requires a decision before normal operation can resume.",
           "DOCUMENTS_EXPIRING": "Some documents are close to expiry and should be followed up before they turn into a hard stop.",
@@ -1728,8 +1756,11 @@
           "APPROVE_VERIFICATION": "Approve Verification",
           "REQUEST_DOCUMENTS": "Request Documents",
           "CLEAR_FINANCE_HOLD": "Clear Financial Hold",
+          "CLEAR_DRIVER_RESTRICTIONS": "Clear All Restrictions",
           "SUSPEND_DRIVER": "Suspend Driver",
           "REACTIVATE_DRIVER": "Reactivate Driver",
+          "BAN_DRIVER": "Ban Driver",
+          "UNBAN_DRIVER": "Unban Driver",
           "MARK_READY_FOR_DISPATCH": "Return to Dispatch",
           "OPEN_OPERATIONS": "Open Operations",
           "OPEN_SUPPORT": "Open Support",
@@ -1740,8 +1771,11 @@
           "APPROVE_VERIFICATION": "Moves the driver to activation readiness instead of keeping the profile suspended.",
           "REQUEST_DOCUMENTS": "Keeps the driver outside operations until missing items are completed.",
           "CLEAR_FINANCE_HOLD": "Resets the local hold and returns the profile to a more stable state.",
+          "CLEAR_DRIVER_RESTRICTIONS": "Clears account, offer, and location restrictions when the driver is otherwise approved.",
           "SUSPEND_DRIVER": "Use only when there is a real operational or compliance risk.",
           "REACTIVATE_DRIVER": "Returns the driver to standby mode, not direct assignment.",
+          "BAN_DRIVER": "Fully blocks the driver from operational access until reviewed.",
+          "UNBAN_DRIVER": "Lifts the ban and returns the driver to standby when eligible.",
           "MARK_READY_FOR_DISPATCH": "Moves the driver back into operational readiness.",
           "OPEN_OPERATIONS": "Review current zone load and assignment context first.",
           "OPEN_SUPPORT": "Review open tickets and support context tied to the driver.",
@@ -1970,6 +2004,11 @@
     "EXPORT": "Export",
     "VIEW_ALL_LOGS": "View All Audit Logs",
     "TABS": {
+      "OVERVIEW": "Overview",
+      "VENDORS": "Vendors",
+      "DRIVERS": "Drivers",
+      "ORDERS": "Orders",
+      "FINANCE": "Finance",
       "DAY": "Day",
       "WEEK": "Week",
       "MONTH": "Month",
@@ -2168,7 +2207,9 @@
       "DRIVERS_LIMITED": "Drivers limited",
       "DRIVERS_BLOCKED": "Drivers blocked",
       "VENDOR_SPLIT": "Vendor readiness split",
-      "DRIVER_SPLIT": "Driver readiness split"
+      "VENDOR_READINESS": "Vendor Readiness & Onboarding",
+      "DRIVER_SPLIT": "Driver readiness split",
+      "DRIVER_READINESS": "Driver Readiness & Connection"
     },
     "CATALOG": {
       "PRODUCTS": "Products",
@@ -2218,7 +2259,40 @@
     "INSIGHTS": {
       "ORDER_DROP": "Orders dropped {{drop}}% in {{region}} while payment issues rose to {{paymentIssues}} active cases.",
       "VENDOR_PRESSURE": "{{vendor}} is driving {{complaintsShare}}% of complaint pressure from only {{gmvShare}}% of GMV share.",
-      "DRIVER_READINESS": "Driver readiness in {{region}} is down to {{readiness}}%, creating {{dispatches}} at-risk dispatches."
+      "DRIVER_READINESS": "Driver readiness in {{region}} is down to {{readiness}}%, creating {{dispatches}} at-risk dispatches.",
+      "REVENUE_TITLE": "Revenue quality",
+      "REVENUE_DESC": "Current-scope revenue compared to refund and dispute exposure.",
+      "FULFILLMENT_TITLE": "Fulfillment quality",
+      "FULFILLMENT_DESC": "Share of orders delivered inside the target service window.",
+      "SUPPLY_TITLE": "Supply capacity",
+      "SUPPLY_DESC": "Percentage of vendors and drivers fully ready to scale right now."
+    },
+    "REGION_PRESSURE": {
+      "TITLE": "Region operational pressure",
+      "LATE_ORDERS": "Late orders",
+      "PAYMENT_ISSUES": "Payment issues",
+      "DRIVER_GAP": "Driver gap",
+      "SCORE": "Pressure score"
+    },
+    "READINESS": {
+      "TITLE": "Supply readiness"
+    },
+    "ALERTS_PANEL": {
+      "TITLE": "Critical alerts",
+      "EMPTY": "No critical alerts right now"
+    },
+    "ATTENTION": {
+      "TITLE": "Needs decision",
+      "EMPTY": "No entities waiting for review"
+    },
+    "AUDIT_FEED": {
+      "TITLE": "Audit pulse",
+      "EMPTY": "No recent activity to display"
+    },
+    "ERROR_DESC": "We could not finish loading the dashboard data right now. Try refreshing shortly.",
+    "UNITS": {
+      "SAR": "SAR",
+      "%": "%"
     },
     "AUDIT": {
       "SYSTEM_MODE": "Platform mode",
@@ -2482,6 +2556,8 @@
       "MASTER_ITEMS": "Master Items",
       "CREATED": "Creation Date",
       "UPDATED": "Last Update",
+      "CREATED_AT": "Created at",
+      "UPDATED_AT": "Updated at",
       "NO_IMAGE": "No Image",
       "MGMT_TITLE": "Manage Master Directory",
       "MGMT_DESC": "Admins can modify visual assets and linguistic representations across the platform.",
@@ -2509,7 +2585,9 @@
       "SYNC_ACTIVE": "Sync Protocol Active",
       "OPEN": "Open",
       "RELATED_BRANDS": "Related Brands",
-      "NO_RELATED_BRANDS": "No brands are linked to this sub-category yet."
+      "NO_RELATED_BRANDS": "No brands are linked to this sub-category yet.",
+      "GRID_VIEW": "Grid view",
+      "TABLE_VIEW": "Table view"
     }
   },
   "ASSETS": {

@@ -17,7 +17,8 @@ export type DriverWorkflowState =
   | 'ACTIVE_DELIVERY'
   | 'FINANCE_HOLD'
   | 'COMPLIANCE_REVIEW'
-  | 'SUSPENDED';
+  | 'SUSPENDED'
+  | 'BANNED';
 export type DriverWorkflowReadiness = 'READY' | 'LIMITED' | 'BLOCKED';
 export type DriverWorkflowActionTone = 'primary' | 'success' | 'warning' | 'danger' | 'secondary';
 export type DriverWorkflowTargetTab =
@@ -33,8 +34,11 @@ export type DriverWorkflowActionId =
   | 'REQUEST_DOCUMENTS'
   | 'REJECT_VERIFICATION'
   | 'CLEAR_FINANCE_HOLD'
+  | 'CLEAR_DRIVER_RESTRICTIONS'
   | 'SUSPEND_DRIVER'
   | 'REACTIVATE_DRIVER'
+  | 'BAN_DRIVER'
+  | 'UNBAN_DRIVER'
   | 'MARK_READY_FOR_DISPATCH'
   | 'OPEN_OPERATIONS'
   | 'OPEN_SUPPORT'
@@ -73,6 +77,7 @@ export interface DriverDocumentRecord {
   expiryDate: string;
   reviewDecision?: string;
   rejectionReason?: string;
+  expiryDateUtc?: string;
   reviewedAt?: string;
   reviewedBy?: string;
   subtitle?: string;
@@ -334,6 +339,10 @@ export interface DriverDetailRecord extends Driver {
   totalEarnings: number;
   currentDueAmount: number;
   codCollectedAmount: number;
+  commitmentScore: number;
+  dailyRejections: number;
+  weeklyRejections: number;
+  enforcementLevel: string;
   complianceStatusLabel: string;
   complianceStatusVariant: 'success' | 'warning' | 'danger';
   complianceRiskPoints: number;

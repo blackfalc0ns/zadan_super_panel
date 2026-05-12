@@ -22,6 +22,7 @@ export class DriverOperationsTabComponent {
   @Input() isActionPending = false;
   @Output() taskPreviewRequested = new EventEmitter<DriverTaskAssignment>();
   @Output() locationAccessActionRequested = new EventEmitter<'block' | 'unblock'>();
+  @Output() clearRestrictionsRequested = new EventEmitter<void>();
 
   taskColumns: TableColumn[] = [
     { key: 'vendor', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.VENDOR', type: 'custom' },
@@ -145,6 +146,43 @@ export class DriverOperationsTabComponent {
     return this.driver.operations.locationUpdatesBlocked
       ? (this.isRTL ? 'فك الحظر الموقعي' : 'Unblock location updates')
       : (this.isRTL ? 'إيقاف تحديثات الموقع' : 'Block location updates');
+  }
+
+  get hasOfferOrCancellationRestriction(): boolean {
+    const level = (this.driver.enforcementLevel || '').toLowerCase();
+    return level === 'softblocked' || level === 'suspensioncandidate';
+  }
+
+  get commitmentAccessTone(): 'danger' | 'warning' | 'success' {
+    if (this.hasOfferOrCancellationRestriction) {
+      return 'danger';
+    }
+
+    return this.driver.dailyRejections > 0 || this.driver.weeklyRejections > 0 ? 'warning' : 'success';
+  }
+
+  get commitmentAccessTitleKey(): string {
+    return this.hasOfferOrCancellationRestriction
+      ? 'DRIVERS.DETAIL.OPERATIONS.COMMITMENT_ACCESS.BLOCKED_TITLE'
+      : 'DRIVERS.DETAIL.OPERATIONS.COMMITMENT_ACCESS.ACTIVE_TITLE';
+  }
+
+  get commitmentAccessDescriptionKey(): string {
+    return this.hasOfferOrCancellationRestriction
+      ? 'DRIVERS.DETAIL.OPERATIONS.COMMITMENT_ACCESS.BLOCKED_DESC'
+      : 'DRIVERS.DETAIL.OPERATIONS.COMMITMENT_ACCESS.ACTIVE_DESC';
+  }
+
+  get commitmentAccessMetric(): string {
+    return `${this.driver.dailyRejections} / ${this.driver.weeklyRejections}`;
+  }
+
+  requestClearRestrictions(): void {
+    if (this.isActionPending) {
+      return;
+    }
+
+    this.clearRestrictionsRequested.emit();
   }
 
   requestLocationAccessAction(): void {

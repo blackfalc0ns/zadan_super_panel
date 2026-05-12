@@ -114,13 +114,13 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
         <div actions class="flex items-center gap-3">
           <!-- مبدل الكيانات (Tabs) -->
           <div class="flex items-center bg-slate-100/80 p-1 rounded-xl border border-slate-200">
-            <button (click)="activeTab = 'vendor'"
+            <button (click)="setActiveTab('vendor')"
                     class="px-5 py-2 text-[12px] font-bold rounded-lg transition-all duration-200 flex items-center gap-2"
                     [ngClass]="activeTab === 'vendor' ? 'bg-white text-zadna-primary shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'">
               <span class="material-symbols-outlined text-[16px]">storefront</span>
               تسويات المتاجر
             </button>
-            <button (click)="activeTab = 'driver'"
+            <button (click)="setActiveTab('driver')"
                     class="px-5 py-2 text-[12px] font-bold rounded-lg transition-all duration-200 flex items-center gap-2"
                     [ngClass]="activeTab === 'driver' ? 'bg-white text-zadna-primary shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'">
               <span class="material-symbols-outlined text-[16px]">local_shipping</span>
@@ -325,24 +325,30 @@ export class SettlementsComponent implements OnInit {
         }
       });
 
-    this.financeService.getSettlements().pipe(take(1)).subscribe(data => {
+    this.loadSettlements();
+  }
+
+  loadSettlements(): void {
+    this.financeService.getSettlements({
+      entityType: this.activeTab,
+      entityId: this.scopedEntityId ?? undefined
+    }).pipe(take(1)).subscribe(data => {
       this.allSettlements = data;
     });
+  }
+
+  setActiveTab(tab: EntityType): void {
+    this.activeTab = tab;
+    this.loadSettlements();
   }
 
   openDetail(s: Settlement): void { this.selectedSettlement = s; }
   
   processSettlement(s: Settlement): void {
-    const paidAt = new Date().toISOString();
-    this.allSettlements = this.allSettlements.map((settlement) =>
-      settlement.id === s.id
-        ? { ...settlement, status: 'paid', paidAt }
-        : settlement
-    );
-
-    if (this.selectedSettlement?.id === s.id) {
-      this.selectedSettlement = { ...this.selectedSettlement, status: 'paid', paidAt };
-    }
+    this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe(() => {
+      this.selectedSettlement = null;
+      this.loadSettlements();
+    });
   }
   
   trackById(_: number, s: Settlement): string { return s.id; }

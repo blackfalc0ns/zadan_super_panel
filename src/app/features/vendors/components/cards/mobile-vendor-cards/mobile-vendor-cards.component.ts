@@ -78,16 +78,13 @@ export type { VendorCardData };
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && !showError && vendors.length === 0" class="md:hidden">
-      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
-        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-bold text-slate-900 mb-2">{{ 'COMMON.NO_RESULTS' | translate }}</h3>
-        <p class="text-slate-600 mb-4">{{ 'VENDORS.NO_VENDORS' | translate }}</p>
-        <button (click)="onRefresh()" 
-                class="px-4 py-2 bg-zadna-primary text-white rounded-lg font-medium hover:bg-zadna-primary/90 transition-colors">
+      <div class="min-h-[320px] rounded-[1.35rem] border border-dashed border-slate-200 bg-slate-50/35 px-6 py-16 text-center flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined mb-5 text-[28px] leading-none text-[#8bbfca]">storefront</span>
+        <h3 class="text-[1.35rem] font-black text-slate-900 tracking-normal leading-tight">{{ 'COMMON.NO_RESULTS' | translate }}</h3>
+        <p class="mt-3 max-w-md text-[0.86rem] font-extrabold text-slate-500 leading-6">{{ 'VENDORS.NO_VENDORS' | translate }}</p>
+        <button (click)="onRefresh()"
+                class="mt-7 inline-flex h-12 items-center justify-center gap-2 rounded-[0.8rem] bg-zadna-primary px-6 text-[0.82rem] font-black text-white shadow-lg shadow-zadna-primary/20 transition hover:bg-teal-700 active:scale-95">
+          <span class="material-symbols-outlined text-[20px]">refresh</span>
           {{ 'COMMON.REFRESH' | translate }}
         </button>
       </div>

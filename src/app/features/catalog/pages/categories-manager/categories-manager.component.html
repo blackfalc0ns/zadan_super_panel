@@ -1,269 +1,257 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans">
-    <app-page-header
-        [title]="'CATEGORIES.TITLE'"
-        [subtitle]="'CATEGORIES.DESCRIPTION'"
-        [showToolbar]="true"
-        [breadcrumbs]="[
-            { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
-            { label: 'CATEGORIES.CONTENT_MGMT' }
-        ]">
-        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">category</span>
+  <app-page-header
+    [title]="'CATEGORIES.TITLE'"
+    [subtitle]="'CATEGORIES.DESCRIPTION'"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
+      { label: 'CATEGORIES.TITLE' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">category</span>
 
-        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-            <app-button
-                variant="ghost"
-                (btnClick)="isCategoryRequestsModalOpen = true"
-                customClass="!rounded-[1.25rem] !bg-white/80 !border !border-slate-200/70 !text-slate-700 hover:!bg-white hover:!border-zadna-primary/40 hover:!text-zadna-primary !px-5 !py-3 shadow-sm">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">assignment</span>
-                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'CATALOG.CATEGORY_REQUESTS' | translate }}</span>
-                </div>
-            </app-button>
-
-            <app-button variant="primary" (btnClick)="openCreateModal()" 
-                customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:rotate-90 transition-transform duration-500">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
-                        </svg>
-                    </div>
-                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'CATEGORIES.ADD_NEW' | translate }}</span>
-                </div>
-            </app-button>
+    <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+      <app-button
+        variant="ghost"
+        (btnClick)="isCategoryRequestsModalOpen = true"
+        customClass="!rounded-[1.25rem] !bg-white/80 !border !border-slate-200/70 !text-slate-700 hover:!bg-white hover:!border-zadna-primary/40 hover:!text-zadna-primary !px-5 !py-3 shadow-sm">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">assignment</span>
+          <span class="text-[10px] font-black uppercase tracking-[0.1em] sm:text-xs">{{ 'CATALOG.CATEGORY_REQUESTS' | translate }}</span>
         </div>
-    </app-page-header>
+      </app-button>
 
-    <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
-        <div class="flex flex-col gap-3">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div class="w-full lg:w-[450px] group relative order-1">
-                    <div class="absolute inset-y-0 start-5 flex items-center pointer-events-none">
-                        <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
-                    </div>
-                    <input
-                        type="text"
-                        [ngModel]="searchTerm"
-                        (ngModelChange)="onSearchTermChange($event)"
-                        [placeholder]="'CATEGORIES.SEARCH_PLACEHOLDER' | translate"
-                        class="w-full py-4 ps-14 pe-6 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm" />
-                </div>
+      <app-button
+        variant="primary"
+        (btnClick)="openCreateModal()"
+        customClass="rounded-[1.5rem] shadow-2xl shadow-zadna-primary/20 hover:scale-105 transition-all transform px-8 py-3.5 group">
+        <div class="flex items-center gap-3">
+          <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 transition-transform duration-500 group-hover:rotate-90">
+            <span class="material-symbols-outlined text-[20px] text-white">add</span>
+          </div>
+          <span class="text-[10px] font-black uppercase tracking-[0.1em] sm:text-xs">{{ 'CATEGORIES.ADD_NEW' | translate }}</span>
+        </div>
+      </app-button>
+    </div>
+  </app-page-header>
 
-                <div class="flex items-center gap-4 order-2 self-stretch lg:self-auto">
-                    <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
-                        <div
-                            class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
-                            (click)="toggleFilters()"
-                            [class.bg-teal-50]="isFiltersExpanded">
-                            <span class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500" [class.rotate-180]="isFiltersExpanded">filter_list</span>
-                            <div class="flex flex-col">
-                                <span class="text-[13px] font-black text-slate-800">{{ 'MASTER_PRODUCTS.FILTERS_TITLE' | translate }}</span>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'MASTER_PRODUCTS.FILTERS_SUBTITLE' | translate }}</span>
-                            </div>
-                            <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform ms-2" [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
-                        </div>
-                    </div>
-
-                    <button
-                        *ngIf="hasActiveFilters"
-                        (click)="resetFilters()"
-                        class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
-                        <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
-                        <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.RESET_FILTERS' | translate }}</span>
-                    </button>
-                </div>
-            </div>
-
-            <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl">
-                <app-advanced-filter-panel
-                    [isExpanded]="true"
-                    [title]="'MASTER_PRODUCTS.FILTERS_TITLE'"
-                    [subtitle]="'MASTER_PRODUCTS.FILTERS_SUBTITLE'"
-                    [activeFiltersLabel]="'MASTER_PRODUCTS.ACTIVE_FILTERS'"
-                    [fields]="filterFields"
-                    [filters]="panelFilters"
-                    (filtersChange)="onFiltersChange($event)"
-                    (reset)="resetFilters()">
-                </app-advanced-filter-panel>
-            </div>
+  <main class="mx-auto w-full max-w-[120rem] flex-1 space-y-6 px-4 py-6 md:px-10">
+    <div class="flex flex-col gap-3">
+      <div class="flex flex-col items-center justify-between gap-6 lg:flex-row">
+        <div class="group relative order-1 w-full lg:w-[450px]">
+          <div class="pointer-events-none absolute inset-y-0 start-5 flex items-center">
+            <span class="material-symbols-outlined text-[22px] text-zadna-primary transition-transform duration-500 group-focus-within:scale-110">search</span>
+          </div>
+          <input
+            type="text"
+            [ngModel]="searchTerm"
+            (ngModelChange)="onSearchTermChange($event)"
+            [placeholder]="'CATEGORIES.SEARCH_PLACEHOLDER' | translate"
+            class="w-full rounded-[1.5rem] border border-slate-200/60 bg-white py-4 ps-14 pe-6 text-[13px] font-bold text-slate-700 shadow-sm transition-all placeholder:text-slate-300 focus:border-zadna-primary/50 focus:bg-white focus:ring-4 focus:ring-zadna-primary/5" />
         </div>
 
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
-            <div class="relative w-24 h-24">
-                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
-                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
-            </div>
+        <div class="order-2 flex items-center gap-4 self-stretch lg:self-auto">
+          <div class="flex h-[60px] items-center overflow-hidden rounded-full border border-slate-200/60 bg-white px-2 shadow-sm transition-all hover:shadow-md">
+            <button
+              type="button"
+              (click)="toggleFilters()"
+              class="group flex h-full items-center gap-3 px-6 transition-colors hover:bg-slate-50"
+              [class.bg-teal-50]="isFiltersExpanded">
+              <span class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500" [class.rotate-180]="isFiltersExpanded">filter_list</span>
+              <span class="flex flex-col text-start">
+                <span class="text-[13px] font-black text-slate-800">{{ 'MASTER_PRODUCTS.FILTERS_TITLE' | translate }}</span>
+                <span class="text-[9px] font-bold uppercase tracking-tight text-slate-400">{{ 'MASTER_PRODUCTS.FILTERS_SUBTITLE' | translate }}</span>
+              </span>
+              <span *ngIf="activeFiltersCount" class="rounded-full bg-zadna-primary px-2 py-0.5 text-[10px] font-black text-white">{{ activeFiltersCount }}</span>
+              <span class="material-symbols-outlined ms-2 text-[18px] text-slate-300 transition-transform group-hover:translate-y-0.5" [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+            </button>
+          </div>
+
+          <button
+            *ngIf="hasActiveFilters"
+            type="button"
+            (click)="resetFilters()"
+            class="group flex items-center gap-2 rounded-full bg-red-50 px-5 py-3 text-red-500 transition-all hover:bg-red-100">
+            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:rotate-90">close</span>
+            <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.RESET_FILTERS' | translate }}</span>
+          </button>
         </div>
-        
-        <div *ngIf="!isLoading && paginatedItems.length > 0" 
-             class="extraordinary-table-container w-full p-0 overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-1000">
-            <table class="w-full block sm:table sm:table-fixed border-separate border-spacing-y-0 px-2">
-                <thead class="hidden sm:table-header-group border-b border-slate-100/50">
-                    <tr class="sm:table-row">
-                        <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
-                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.IMAGE_LABEL' | translate }}</th>
-                        <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'COMMON.NAME' | translate }}</th>
-                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.INDUSTRY' | translate }}</th>
-                        <th class="text-center w-[17%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</th>
-                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.STATUS' | translate }}</th>
-                        <th class="text-center w-[18%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'COMMON.ACTIONS' | translate }}</th>
-                    </tr>
-                </thead>
-                <tbody class="block sm:table-row-group stagger-rows w-full">
-                    <tr *ngFor="let item of paginatedItems; let i = index" 
-                        class="table-row-object group flex flex-col sm:table-row bg-white/70 backdrop-blur-md sm:bg-white/50 rounded-[2rem] shadow-sm sm:shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-5 sm:p-0 mb-4 border border-white/80 sm:border-slate-100/60 relative w-full hover:bg-white transition-all duration-500"
-                        (click)="selectItem(item)">
-                        
-                        <!-- Col 1: Index -->
-                        <td class="hidden sm:table-cell text-center align-middle sm:w-[5%]">
-                            <span class="text-[10px] sm:text-[11px] font-black text-slate-300 transition-colors">{{ (currentPage - 1) * pageSize + i + 1 }}</span>
-                        </td>
+      </div>
 
-                        <!-- Col 2: Image & Name Mobile Fusion -->
-                        <td class="block sm:table-cell py-0 sm:py-4 align-middle sm:w-[10%] mb-4 sm:mb-0">
-                            <div class="flex flex-row sm:flex-col items-center gap-4 sm:gap-0 sm:justify-center">
-                                <div class="relative w-14 h-14 sm:w-12 sm:h-12 shrink-0 bg-[#f0f9fa]/80 rounded-[1.2rem] border border-[#e0f2f4] flex items-center justify-center transition-all group-hover:scale-105 group-hover:rotate-2 shadow-sm">
-                                    <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.nameEn" class="w-3/4 h-3/4 object-contain transition-transform duration-500 group-hover:scale-110">
-                                    <div *ngIf="!item.imageUrl" class="text-zadna-primary/40">
-                                        <svg class="w-6 h-6 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16m-7 6h7" />
-                                        </svg>
-                                    </div>
-                                    <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-white border-2 border-[#e0f2f4] rounded-full shadow-sm"></div>
-                                </div>
-                                <!-- Mobile Only Name -->
-                                <div class="flex flex-col text-start sm:hidden px-0">
-                                    <span class="text-[15px] font-black text-slate-900 leading-tight mb-0.5">
-                                        {{ activeLang === 'ar' ? item.nameAr : item.nameEn }}
-                                    </span>
-                                    <span class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest leading-none">
-                                        {{ activeLang === 'ar' ? item.nameEn : item.nameAr }}
-                                    </span>
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- Col 3: Name (Desktop Only) -->
-                        <td class="hidden sm:table-cell sm:table-cell border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[22%] px-2">
-                            <div class="flex flex-col text-start">
-                                <span class="text-[13px] sm:text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug">
-                                    {{ activeLang === 'ar' ? item.nameAr : item.nameEn }}
-                                </span>
-                                <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">
-                                    {{ activeLang === 'ar' ? item.nameEn : item.nameAr }}
-                                </span>
-                            </div>
-                        </td>
-
-                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[18%]">
-                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'CATEGORIES.INDUSTRY' | translate }}</span>
-                            <div class="flex items-center justify-end sm:justify-center">
-                                <span class="inline-flex items-center rounded-full bg-[#f0f9fa] px-2.5 py-1 text-[10px] font-black text-zadna-primary">
-                                    {{ 'CATEGORIES.INDUSTRY' | translate }}
-                                </span>
-                            </div>
-                        </td>
-
-                        <!-- Col 4: Count -->
-                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[17%]">
-                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</span>
-                            <div class="flex flex-wrap items-center justify-center gap-2">
-                                <div class="inline-flex items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-1.5 transition-all group-hover:border-zadna-primary/10 sm:py-1">
-                                    <span class="text-[11px] font-bold text-slate-500 sm:text-[10px]">{{ item.subCategories?.length || 0 }} {{ 'CATEGORIES.DETAILS.BRANCH_NODES' | translate }}</span>
-                                </div>
-                                <div class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50/70 px-3 py-1.5 sm:py-1">
-                                    <span class="text-[11px] font-bold text-emerald-700 sm:text-[10px]">{{ item.brandsCount || 0 }} {{ 'CATEGORIES.BRANDS_COUNT' | translate }}</span>
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- Col 5: Status -->
-                        <td class="flex sm:table-cell justify-between items-center sm:text-center py-3.5 sm:py-0 border-b border-dashed border-slate-100 sm:border-none align-middle sm:w-[18%]">
-                            <span class="sm:hidden text-[11px] font-black uppercase text-slate-400/80 tracking-widest">{{ 'COMMON.STATUS' | translate }}</span>
-                            <app-status-pill
-                                [label]="item.isActive ? 'CATEGORIES.STATUS_ACTIVE' : 'CATEGORIES.STATUS_DISABLED'"
-                                [variant]="getCategoryStatusVariant(item.isActive)"
-                                size="sm">
-                            </app-status-pill>
-                        </td>
-
-                        <!-- Col 6: Actions -->
-                        <td class="flex sm:table-cell justify-center items-center pt-4 sm:pt-0 mt-2 sm:mt-0 align-middle sm:w-[18%]">
-                            <div class="flex flex-row-reverse items-center justify-center gap-3 sm:gap-1.5 w-full sm:w-auto">
-                                <button (click)="viewDetails(item, $event)" class="w-9 h-9 sm:w-8 sm:h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-zadna-primary hover:text-white transition-all">
-                                    <svg class="w-4.5 h-4.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </button>
-                                <button (click)="openEditModal(item, $event)" class="w-9 h-9 sm:w-8 sm:h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-zadna-primary hover:text-white transition-all">
-                                    <svg class="w-4.5 h-4.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                    </svg>
-                                </button>
-                                <button (click)="openDeleteModal(item, $event)" class="w-9 h-9 sm:w-8 sm:h-8 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
-                                    <svg class="w-4.5 h-4.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Extraordinary Empty State -->
-        <div *ngIf="!isLoading && currentItems.length === 0" 
-             class="relative p-20 text-center animate-in zoom-in duration-700">
-            <div class="max-w-md mx-auto space-y-6">
-                <div class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl flex items-center justify-center mx-auto text-slate-100 relative group">
-                    <div class="absolute inset-0 bg-zadna-primary/5 rounded-[3rem] group-hover:scale-110 transition-transform duration-500"></div>
-                    <svg class="w-16 h-16 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                    </svg>
-                </div>
-                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ 'CATEGORIES.NO_ITEMS_FOUND' | translate }}</h3>
-                <p class="text-sm font-bold text-slate-400 leading-relaxed">{{ 'CATEGORIES.NO_ITEMS_DESC_ROOT' | translate }}</p>
-                <div class="pt-6">
-                    <app-button variant="primary" (btnClick)="openCreateModal()">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            <span>{{ 'CATEGORIES.CREATE_FIRST' | translate }}</span>
-                        </div>
-                    </app-button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Centralized Pagination -->
-        <app-pagination
-            *ngIf="!isLoading"
-            [currentPage]="currentPage"
-            [pageSize]="pageSize"
-            [totalItems]="totalItems"
-            (pageChange)="changePage($event)">
-        </app-pagination>
+      <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl duration-500">
+        <app-advanced-filter-panel
+          [isExpanded]="true"
+          [title]="'MASTER_PRODUCTS.FILTERS_TITLE'"
+          [subtitle]="'MASTER_PRODUCTS.FILTERS_SUBTITLE'"
+          [activeFiltersLabel]="'MASTER_PRODUCTS.ACTIVE_FILTERS'"
+          [fields]="filterFields"
+          [filters]="panelFilters"
+          (filtersChange)="onFiltersChange($event)"
+          (reset)="resetFilters()">
+        </app-advanced-filter-panel>
+      </div>
     </div>
 
-    <!-- Modern Standalone Modal Component -->
-    <app-category-form-modal [isOpen]="isModalOpen" [mode]="modalMode" [levelNameKey]="modalLevelKey"
-        [parentCategory]="parentCategoryForModal" [initialData]="categoryForm" (close)="closeCategoryModal()"
-        (saved)="handleSaved()">
-    </app-category-form-modal>
+    <section class="catalog-list-panel extraordinary-table-container">
+      <div *ngIf="isLoading" class="flex min-h-[24rem] flex-col items-center justify-center gap-4">
+        <div class="relative h-16 w-16">
+          <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+          <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-zadna-primary animate-spin"></div>
+        </div>
+        <p class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{{ 'COMMON.LOADING' | translate }}</p>
+      </div>
 
-    <!-- Delete Confirmation Modal -->
-    <app-delete-confirmation-modal [isOpen]="isDeleteModalOpen" [isLoading]="isDeleting" (confirm)="confirmDelete()"
-        (close)="closeDeleteModal()">
-    </app-delete-confirmation-modal>
+      <ng-container *ngIf="!isLoading">
+        <div *ngIf="paginatedItems.length > 0" class="hidden overflow-hidden rounded-2xl border border-slate-100 md:block">
+          <table class="w-full min-w-[68rem] border-collapse bg-white text-start">
+            <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+              <tr>
+                <th class="px-5 py-4 text-start">{{ 'COMMON.NAME' | translate }}</th>
+                <th class="px-5 py-4 text-start">{{ 'CATEGORIES.INDUSTRY' | translate }}</th>
+                <th class="px-5 py-4 text-start">{{ 'CATEGORIES.ITEM_COUNT' | translate }}</th>
+                <th class="px-5 py-4 text-start">{{ 'COMMON.STATUS' | translate }}</th>
+                <th class="px-5 py-4 text-end">{{ 'COMMON.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr *ngFor="let item of paginatedItems; let i = index" (click)="selectItem(item)" class="group cursor-pointer transition-colors hover:bg-slate-50/75">
+                <td class="px-5 py-4">
+                  <div class="flex min-w-0 items-center gap-3">
+                    <div class="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-50 p-2 ring-1 ring-slate-100">
+                      <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="getLocalizedCategoryName(item)" class="h-full w-full object-contain">
+                      <span *ngIf="!item.imageUrl" class="text-sm font-black text-zadna-primary">{{ getCategoryInitials(item) }}</span>
+                      <span class="absolute end-1 top-1 h-2.5 w-2.5 rounded-full border-2 border-white" [class.bg-emerald-500]="item.isActive" [class.bg-slate-300]="!item.isActive"></span>
+                    </div>
+                    <div class="min-w-0">
+                      <p class="truncate text-sm font-black text-slate-900 group-hover:text-zadna-primary">{{ getLocalizedCategoryName(item) }}</p>
+                      <p class="mt-1 truncate text-[11px] font-bold text-slate-400">{{ getSecondaryCategoryName(item) }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="max-w-[13rem]">
+                    <p class="truncate text-xs font-black text-slate-700">{{ getActivityName(item) }}</p>
+                    <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ getLevelNameKey(item.level || 0) | translate }}</p>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between gap-3 text-[11px] font-black text-slate-500">
+                      <span>{{ getChildrenCount(item) }} {{ 'CATEGORIES.DETAILS.BRANCH_NODES' | translate }}</span>
+                      <span>{{ getBrandsCount(item) }} {{ 'CATEGORIES.BRANDS_COUNT' | translate }}</span>
+                    </div>
+                    <div class="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                      <div class="h-full rounded-full bg-gradient-to-r from-zadna-primary to-zadna-accent" [style.width.%]="getHierarchyWidth(item)"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <app-status-pill [label]="item.isActive ? 'CATEGORIES.STATUS_ACTIVE' : 'CATEGORIES.STATUS_DISABLED'" [variant]="getCategoryStatusVariant(item.isActive)" size="sm"></app-status-pill>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex justify-end gap-1.5" (click)="$event.stopPropagation()">
+                    <button type="button" (click)="openEditModal(item, $event)" class="table-action text-slate-500" [title]="'COMMON.EDIT' | translate">
+                      <span class="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
+                    <button type="button" (click)="openDeleteModal(item, $event)" class="table-action text-red-500" [title]="'COMMON.DELETE' | translate">
+                      <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    <app-catalog-request-center-modal
-        [isOpen]="isCategoryRequestsModalOpen"
-        requestType="category"
-        (close)="isCategoryRequestsModalOpen = false"
-        (refreshed)="loadHierarchy()">
-    </app-catalog-request-center-modal>
+        <div *ngIf="paginatedItems.length > 0" class="grid gap-3 md:hidden">
+          <article *ngFor="let item of paginatedItems" (click)="selectItem(item)" class="mobile-category-card">
+            <div class="flex items-start gap-3">
+              <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-50 p-2 ring-1 ring-slate-100">
+                <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="getLocalizedCategoryName(item)" class="h-full w-full object-contain">
+                <span *ngIf="!item.imageUrl" class="text-sm font-black text-zadna-primary">{{ getCategoryInitials(item) }}</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="mb-2 flex items-center justify-between gap-2">
+                  <app-status-pill [label]="item.isActive ? 'CATEGORIES.STATUS_ACTIVE' : 'CATEGORIES.STATUS_DISABLED'" [variant]="getCategoryStatusVariant(item.isActive)" size="sm"></app-status-pill>
+                  <span class="text-[11px] font-black text-slate-300">#{{ item.displayOrder }}</span>
+                </div>
+                <h2 class="truncate text-base font-black text-slate-900">{{ getLocalizedCategoryName(item) }}</h2>
+                <p class="mt-1 truncate text-[11px] font-bold text-slate-400">{{ getSecondaryCategoryName(item) }}</p>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-3 gap-2">
+              <div class="mobile-stat">
+                <span>{{ getChildrenCount(item) }}</span>
+                <p>{{ 'CATEGORIES.DETAILS.BRANCH_NODES' | translate }}</p>
+              </div>
+              <div class="mobile-stat">
+                <span>{{ getBrandsCount(item) }}</span>
+                <p>{{ 'CATEGORIES.BRANDS_COUNT' | translate }}</p>
+              </div>
+              <div class="mobile-stat">
+                <span>{{ getProductsCount(item) }}</span>
+                <p>{{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}</p>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3" (click)="$event.stopPropagation()">
+              <span class="text-[10px] font-black uppercase tracking-widest text-slate-300">{{ 'COMMON.ACTIONS' | translate }}</span>
+              <div class="flex gap-2">
+                <button type="button" (click)="openEditModal(item, $event)" class="mobile-action text-slate-500">
+                  <span class="material-symbols-outlined text-[17px]">edit</span>
+                </button>
+                <button type="button" (click)="openDeleteModal(item, $event)" class="mobile-action text-red-500">
+                  <span class="material-symbols-outlined text-[17px]">delete</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div *ngIf="paginatedItems.length === 0" class="empty-list">
+          <span class="material-symbols-outlined text-[56px] text-zadna-primary/45">category</span>
+          <h2>{{ 'CATEGORIES.NO_ITEMS_FOUND' | translate }}</h2>
+          <p>{{ 'CATEGORIES.NO_ITEMS_DESC_ROOT' | translate }}</p>
+          <button type="button" (click)="openCreateModal()" class="mt-5 inline-flex items-center gap-2 rounded-xl bg-zadna-primary px-5 py-3 text-[12px] font-black text-white">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            {{ 'CATEGORIES.CREATE_FIRST' | translate }}
+          </button>
+        </div>
+      </ng-container>
+    </section>
+
+    <div class="mt-5">
+      <app-pagination
+        *ngIf="!isLoading"
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        [totalItems]="totalItems"
+        (pageChange)="changePage($event)">
+      </app-pagination>
+    </div>
+  </main>
+
+  <app-category-form-modal
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [levelNameKey]="modalLevelKey"
+    [parentCategory]="parentCategoryForModal"
+    [initialData]="categoryForm"
+    (close)="closeCategoryModal()"
+    (saved)="handleSaved()">
+  </app-category-form-modal>
+
+  <app-delete-confirmation-modal
+    [isOpen]="isDeleteModalOpen"
+    [isLoading]="isDeleting"
+    (confirm)="confirmDelete()"
+    (close)="closeDeleteModal()">
+  </app-delete-confirmation-modal>
+
+  <app-catalog-request-center-modal
+    [isOpen]="isCategoryRequestsModalOpen"
+    requestType="category"
+    (close)="isCategoryRequestsModalOpen = false"
+    (refreshed)="loadHierarchy()">
+  </app-catalog-request-center-modal>
 </div>

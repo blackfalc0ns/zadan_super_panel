@@ -1,443 +1,405 @@
-﻿<div class="min-h-screen bg-[#f8fafc] font-sans pb-12 animate-in fade-in duration-700">
-
-  <!-- Modern Header -->
-  <app-detail-header
-    *ngIf="category"
-    [breadcrumbs]="breadcrumbs"
-    actionButtonLabel="{{ 'COMMON.EDIT' | translate }}"
-    [containerClass]="'w-full max-w-[110rem] mx-auto mb-0 relative z-10'"
-    [headerClass]="'flex justify-between items-center px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6'"
-    actionButtonIcon="edit"
-    (backClick)="onBack()"
-    (actionClick)="onEdit()">
+<div class="catalog-detail-scope min-h-screen bg-[#f5f8fb] pb-12 font-sans">
+  <app-detail-header *ngIf="category" [breadcrumbs]="breadcrumbs" [actionButtonLabel]="getActionButtonLabel()"
+    [containerClass]="'w-full max-w-[118rem] mx-auto relative z-10'"
+    [headerClass]="'flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4 md:py-5'" actionButtonIcon="edit"
+    (backClick)="onBack()" (actionClick)="onEdit()">
   </app-detail-header>
 
-  <div class="w-full max-w-[110rem] mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="h-[60vh] flex flex-col items-center justify-center space-y-6">
-      <div class="relative">
-        <div class="w-16 h-16 rounded-full border-4 border-slate-100 border-t-zadna-primary animate-spin"></div>
-        <div class="absolute inset-0 flex items-center justify-center">
-          <div class="w-8 h-8 rounded-full bg-zadna-primary/10 animate-pulse"></div>
+  <div class="mx-auto w-full max-w-[118rem] px-4 sm:px-6 lg:px-8">
+    <div *ngIf="isLoading" class="flex min-h-[64vh] flex-col items-center justify-center gap-4">
+      <div class="relative h-16 w-16">
+        <div class="absolute inset-0 rounded-full border-4 border-white shadow-sm"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-zadna-primary animate-spin">
         </div>
       </div>
-      <p class="text-[12px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">{{
-        'CATEGORIES.DETAILS.SYNCING' | translate }}</p>
+      <p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">
+        {{ 'CATEGORIES.DETAILS.SYNCING' | translate }}
+      </p>
     </div>
 
-    <!-- Main Content -->
-    <div *ngIf="category && !isLoading" class="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 xl:gap-5">
-
-      <!-- Hero Section (order-1: always first) -->
-      <div class="lg:col-span-8 order-1">
-
-        <!-- Hero Glass Card: Compact & Enriched -->
+    <ng-container *ngIf="category && !isLoading">
+      <section
+        class="relative overflow-hidden rounded-[1.25rem] border border-white bg-white shadow-[0_16px_45px_rgba(15,23,42,0.06)]">
         <div
-          class="bg-white rounded-lg border border-slate-100 shadow-[0_4px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group animate-in fade-in slide-in-from-bottom-6 duration-700">
-          <div
-            class="absolute -top-16 -right-16 w-48 h-48 bg-zadna-primary/5 rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
-          </div>
-
-          <div class="p-2 sm:p-3 xl:p-4 pb-2 sm:pb-3 relative z-10 transition-all duration-300">
-            <div class="flex flex-row items-start lg:items-center gap-2 sm:gap-3 xl:gap-4">
-              <!-- Image Section -->
+          class="absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-zadna-primary via-[#158a91] to-zadna-accent opacity-95">
+        </div>
+        <div class="relative grid gap-4 p-4 pt-7 sm:p-5 sm:pt-8 lg:grid-cols-[minmax(0,1fr)_18.5rem] lg:p-5 lg:pt-8">
+          <div class="flex min-w-0 flex-col gap-4">
+            <div class="flex flex-col gap-4 md:flex-row md:items-end">
               <div class="relative shrink-0">
                 <div
-                  class="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 xl:w-20 xl:h-20 rounded-md sm:rounded-lg xl:rounded-xl bg-slate-50 flex items-center justify-center p-1.5 sm:p-2 xl:p-2.5 shadow-[inset_0_1px_5px_rgba(0,0,0,0.02)] border border-slate-100/60 group-hover:scale-105 transition-all duration-500">
-                  <img *ngIf="category.imageUrl" [src]="category.imageUrl"
-                    class="max-w-full max-h-full object-contain filter drop-shadow-xl" [alt]="category.nameEn">
-                  <div *ngIf="!category.imageUrl" class="text-slate-200">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-width="1.5"
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                      </path>
-                    </svg>
+                  class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-white/80 bg-white p-2 shadow-lg sm:h-24 sm:w-24">
+                  <img *ngIf="category.imageUrl" [src]="category.imageUrl" [alt]="getLocalizedCategoryName()"
+                    class="h-full w-full object-contain">
+                  <div *ngIf="!category.imageUrl"
+                    class="flex h-full w-full items-center justify-center rounded-xl bg-zadna-primary/10 text-xl font-black text-zadna-primary">
+                    {{ getCategoryInitials() }}
                   </div>
                 </div>
                 <div
-                  class="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white border-2 border-slate-50 flex items-center justify-center shadow-lg transform group-hover:-translate-y-1 transition-transform duration-500">
-                  <span class="text-[10px] sm:text-xs xl:text-sm font-black text-zadna-primary leading-none">#{{ category.displayOrder }}</span>
+                  class="absolute -bottom-2 start-3 rounded-lg border border-slate-100 bg-white px-2.5 py-0.5 text-[10px] font-black text-zadna-accent shadow-sm">
+                  #{{ category.displayOrder }}
                 </div>
               </div>
 
-              <!-- Content Section -->
-              <div class="flex-1 min-w-0 ltr:text-left rtl:text-right space-y-3 sm:space-y-4 pt-1 sm:pt-2">
-                <div class="space-y-1.5">
-                  <div class="flex items-center ltr:justify-start rtl:justify-start gap-2 flex-wrap">
-                    <app-badge [variant]="category.parentCategoryId ? 'neutral' : 'success'" size="sm"
-                      class="px-1.5 font-black text-[9px]">
+              <div class="min-w-0 flex-1 pt-16 text-slate-900 sm:pt-14 md:pt-16">
+                <div class="mb-1.5 flex min-w-0 flex-wrap items-center gap-2.5">
+                  <h1
+                    class="max-w-4xl truncate text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-[2rem]">
+                    {{ getLocalizedCategoryName() }}
+                  </h1>
+                  <div class="flex shrink-0 flex-wrap items-center gap-2">
+                    <span
+                      class="inline-flex items-center gap-1.5 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-zadna-primary">
+                      <span class="material-symbols-outlined text-[15px]">account_tree</span>
                       {{ getLevelNameKey(category.level || 0) | translate }}
-                    </app-badge>
-                    <ng-container *ngIf="category.level">
-                      <div class="h-0.5 w-0.5 rounded-full bg-slate-200"></div>
-                      <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">{{ 'CATEGORIES.DETAILS.LEVEL' | translate }} {{ category.level }}</span>
-                    </ng-container>
-                  </div>
-
-                  <div class="space-y-0 sm:space-y-0.5">
-                    <h2 class="text-sm sm:text-base lg:text-lg font-black text-slate-900 tracking-tight leading-none drop-shadow-sm">{{ category.nameAr }}</h2>
-                    <h3 class="text-[8px] sm:text-[9px] font-bold text-slate-400 tracking-[0.2em] uppercase">{{ category.nameEn }}</h3>
+                    </span>
+                    <span
+                      class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-slate-600">
+                      <span class="material-symbols-outlined text-[15px]">layers</span>
+                      {{ 'CATEGORIES.DETAILS.LEVEL' | translate }} {{ category.level || 0 }}
+                    </span>
                   </div>
                 </div>
+                <p class="mt-1 truncate text-xs font-bold text-slate-400 sm:text-sm">
+                  {{ getSecondaryCategoryName() }}
+                </p>
+              </div>
+            </div>
 
-                <div
-                  class="flex flex-wrap items-center ltr:justify-start rtl:justify-start gap-2.5 sm:gap-3 xl:gap-4 pt-3 sm:pt-4 border-t border-slate-100/60 mt-2 sm:mt-3">
-                  <app-status-pill
-                    [label]="category.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE'"
-                    [variant]="getCategoryStatusVariant(category.isActive)"
-                    [showDot]="false"
-                    [size]="'sm'">
-                  </app-status-pill>
-
-                  <div
-                    class="bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-xl border border-indigo-100/50 flex items-center gap-2">
-                    <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                    <span class="text-[10px] font-black uppercase tracking-widest">{{ category.masterProductsCount || 0
-                      }} {{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}</span>
-                  </div>
-
-                  <div
-                    class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-100/70 flex items-center gap-2">
-                    <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5V4H2v16h5m10 0v-8a2 2 0 00-2-2H9a2 2 0 00-2 2v8m10 0H7" />
-                    </svg>
-                    <span class="text-[10px] font-black uppercase tracking-widest">{{ category.brandsCount || 0 }} {{ 'CATEGORIES.BRANDS_COUNT' | translate }}</span>
-                  </div>
+            <div class="grid gap-3 sm:grid-cols-3">
+              <div class="metric-tile">
+                <span class="material-symbols-outlined metric-icon text-zadna-primary">inventory_2</span>
+                <div>
+                  <p>{{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}</p>
+                  <strong>{{ category.masterProductsCount || relatedProducts.length || 0 }}</strong>
+                </div>
+              </div>
+              <div class="metric-tile">
+                <span class="material-symbols-outlined metric-icon text-zadna-accent">storefront</span>
+                <div>
+                  <p>{{ 'CATEGORIES.BRANDS_COUNT' | translate }}</p>
+                  <strong>{{ category.brandsCount || relatedBrands.length || 0 }}</strong>
+                </div>
+              </div>
+              <div class="metric-tile">
+                <span class="material-symbols-outlined metric-icon text-indigo-600">schema</span>
+                <div>
+                  <p>{{ 'CATEGORIES.DETAILS.BRANCH_NODES' | translate }}</p>
+                  <strong>{{ totalSubCategories }}</strong>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Bottom Audit Bar -->
-          <div class="bg-slate-50/50 backdrop-blur-sm border-t border-slate-100 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-            <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
-              <div class="flex items-center gap-1.5 sm:gap-2">
-                <span class="text-[12px] font-black text-slate-400 uppercase tracking-widest">{{ 'COMMON.ID' | translate }}:</span>
-                <span
-                  class="font-mono text-[12px] font-bold text-slate-500 bg-white border border-slate-200 px-1.5 sm:px-2 py-0.5 rounded shadow-sm truncate max-w-[120px] sm:max-w-none">{{
-                  category.id.substring(0, 13) }}...</span>
-              </div>
-              <div class="h-3 w-px bg-slate-200 hidden sm:block"></div>
-              <div class="flex items-center gap-1.5 sm:gap-2">
-                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="text-[12px] font-black text-slate-500 uppercase tracking-widest">{{ category.createdAtUtc |
-                  date:'shortDate' }}</span>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2 opacity-60 hidden sm:flex">
-              <span class="text-[12px] font-black text-slate-400 uppercase tracking-widest italic">{{ 'CATEGORIES.DETAILS.SECURE_NODE' | translate }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sub-Categories Section (order-3: last on mobile) -->
-      <div class="lg:col-span-8 order-3 space-y-5 lg:space-y-6">
-        <div class="space-y-5 lg:space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
-          <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-4 sm:gap-5">
-            <app-section-header
-              [compact]="true"
-              icon="account_tree"
-              title="CATEGORIES.DETAILS.SUB_ITEMS"
-              [shouldTranslate]="true">
-              <span meta class="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
-                {{ category.subCategories?.length || 0 }} {{ 'CATEGORIES.DETAILS.BRANCH_NODES' | translate }}
-              </span>
-            </app-section-header>
-
-            <div class="flex items-center gap-1.5 bg-white border border-slate-100 p-1 rounded-lg sm:rounded-xl shadow-sm self-start xs:self-auto">
-              <button (click)="viewMode = 'grid'"
-                [class]="viewMode === 'grid' ? 'bg-zadna-primary text-white' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'"
-                class="w-7.5 h-7.5 flex items-center justify-center rounded-md transition-all duration-300">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="2"
-                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-                  </path>
-                </svg>
-              </button>
-              <button (click)="viewMode = 'table'"
-                [class]="viewMode === 'table' ? 'bg-zadna-primary text-white' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'"
-                class="w-7.5 h-7.5 flex items-center justify-center rounded-md transition-all duration-300">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                </svg>
-              </button>
-              <div class="w-px h-4 bg-slate-100 mx-1"></div>
-              <app-button variant="primary" size="sm" (btnClick)="openCreateModal()"
-                customClass="rounded-md px-3.5 h-7.5 text-[10px]">
-                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                </svg>
-                {{ 'CATEGORIES.DETAILS.ADD_CHILD' | translate }}
-              </app-button>
-            </div>
-          </div>
-
-          <!-- Compact Extraordinary Table -->
-          <div *ngIf="category.subCategories?.length && viewMode === 'table'" class="extraordinary-table-container w-full p-4 sm:p-0 animate-in fade-in slide-in-from-bottom-5 duration-500">
-            <table class="w-full block sm:table sm:table-fixed">
-              <thead class="hidden sm:table-header-group">
-                <tr class="sm:table-row">
-                  <th class="ltr:text-left rtl:text-right py-3">{{ 'CATEGORIES.NAME' | translate }}</th>
-                  <th class="ltr:text-left rtl:text-right py-3">{{ 'COMMON.ORDER' | translate }}</th>
-                  <th class="ltr:text-left rtl:text-right py-3">{{ 'PRODUCTS.TABLE.STATUS' | translate }}</th>
-                  <th class="text-center py-3">{{ 'COMMON.ACTIONS' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody class="block sm:table-row-group stagger-rows w-full">
-                <tr *ngFor="let sub of paginatedSubCategories" (click)="onSubNavigate(sub.id)"
-                  class="table-row-object group cursor-pointer flex flex-col sm:table-row bg-white sm:bg-transparent rounded-[2rem] sm:rounded-none shadow-sm sm:shadow-none p-4 sm:p-0 mb-4 sm:mb-0 border border-slate-100 sm:border-none relative w-full">
-                  <td class="block sm:table-cell py-3 sm:py-2 border-b border-dashed border-slate-100 sm:border-none">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                      <div class="relative w-7 h-7 sm:w-10 sm:h-10 shrink-0">
-                        <div class="table-image-preview bg-slate-50 p-1 flex items-center justify-center border-slate-100 w-full h-full rounded-sm">
-                          <img *ngIf="sub.imageUrl" [src]="sub.imageUrl" class="max-w-full max-h-full object-contain">
-                          <svg *ngIf="!sub.imageUrl" class="w-5 h-5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0"></path>
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="flex flex-col">
-                        <span class="text-sm font-black text-slate-900 group-hover:text-zadna-primary transition-colors ltr:text-left rtl:text-right sm:text-start">
-                          {{ activeLang === 'ar' ? sub.nameAr : sub.nameEn }}
-                        </span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 ltr:text-left rtl:text-right sm:text-start">
-                          {{ activeLang === 'ar' ? sub.nameEn : sub.nameAr }}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="flex sm:table-cell justify-between items-center py-3 sm:py-2 border-b border-dashed border-slate-100 sm:border-none">
-                    <span class="sm:hidden text-[10px] font-black uppercase text-slate-400 tracking-widest">{{ 'COMMON.ORDER' | translate }}</span>
-                    <span class="text-[12px] font-black text-slate-600">#{{ sub.displayOrder }}</span>
-                  </td>
-                  <td class="flex sm:table-cell justify-between items-center py-3 sm:py-2">
-                    <span class="sm:hidden text-[10px] font-black uppercase text-slate-400 tracking-widest">{{ 'PRODUCTS.TABLE.STATUS' | translate }}</span>
-                    <app-status-pill
-                      [label]="sub.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE'"
-                      [variant]="getCategoryStatusVariant(sub.isActive)"
-                      [showDot]="false"
-                      [size]="'sm'">
-                    </app-status-pill>
-                  </td>
-                  <td class="flex sm:table-cell justify-center items-center pt-3 sm:pt-2 mt-1 sm:mt-0 border-t border-slate-100 sm:border-none">
-                    <div class="flex items-center justify-center">
-                      <app-button variant="ghost" size="sm"
-                        customClass="rounded-lg w-8 h-8 p-0 hover:bg-zadna-primary/5 hover:text-zadna-primary">
-                        <svg class="w-3.5 h-3.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-width="3" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                      </app-button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Compact Rich Grid View -->
-          <div *ngIf="category.subCategories?.length && viewMode === 'grid'"
-            class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-5 xl:gap-6 animate-in fade-in zoom-in-95 duration-500">
-            <div *ngFor="let sub of paginatedSubCategories; let i = index" (click)="onSubNavigate(sub.id)"
-              class="group relative bg-white rounded-[1.25rem] sm:rounded-[1.5rem] border border-slate-100/80 p-4 sm:p-5 xl:p-6 hover:shadow-2xl hover:shadow-zadna-primary/10 hover:-translate-y-1 hover:border-zadna-primary/30 transition-all duration-300 cursor-pointer overflow-hidden">
-
-              <div
-                class="absolute -top-10 -right-10 w-24 h-24 bg-zadna-primary/5 rounded-full blur-2xl group-hover:bg-zadna-primary/10 transition-colors duration-500">
-              </div>
-
-              <div class="flex items-start gap-3 sm:gap-4 relative z-10">
-                <div
-                  class="w-7 h-7 sm:w-8 sm:h-8 xl:w-10 xl:h-10 rounded-sm bg-slate-50 border border-slate-100 p-1 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500">
-                  <img *ngIf="sub.imageUrl" [src]="sub.imageUrl" class="max-w-full max-h-full object-contain filter group-hover:drop-shadow-md transition-all">
-                  <svg *ngIf="!sub.imageUrl" class="w-5 h-5 sm:w-6 sm:h-6 text-slate-200" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0"></path>
-                  </svg>
-                </div>
-
-                <div class="flex-1 min-w-0 space-y-1.5">
-                  <div class="flex items-center justify-between">
-                    <app-status-pill
-                      [label]="sub.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE'"
-                      [variant]="getCategoryStatusVariant(sub.isActive)"
-                      [showDot]="false"
-                      [size]="'sm'">
-                    </app-status-pill>
-                    <span class="text-[12px] font-black text-slate-300 uppercase">#{{ i + 101 }}</span>
-                  </div>
-
-                  <div>
-                    <h4
-                      class="text-[12px] sm:text-[13px] xl:text-sm font-black text-slate-900 group-hover:text-zadna-primary transition-colors truncate">
-                      {{ activeLang === 'ar' ? sub.nameAr : sub.nameEn }}</h4>
-                    <p class="text-[10px] sm:text-[11px] xl:text-[12px] font-bold text-slate-400 uppercase tracking-widest truncate">{{ activeLang ===
-                      'ar' ? sub.nameEn : sub.nameAr }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="text-[12px] font-black text-slate-400 uppercase tracking-widest">ID: {{
-                    sub.id.substring(0, 5) }}</span>
-                </div>
-
-                <div
-                  class="flex items-center gap-1 text-zadna-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span class="text-[12px] font-black uppercase tracking-widest">{{ 'CATEGORIES.DETAILS.OPEN' | translate }}</span>
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-width="3" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sub-Category Pagination Controls -->
-          <div class="pt-4 border-t border-slate-50" *ngIf="totalSubCategories > pageSize">
-            <app-pagination [currentPage]="pageNumber" [pageSize]="pageSize" [totalItems]="totalSubCategories"
-              (pageChange)="onPageChange($event)">
-            </app-pagination>
-          </div>
-
-          <!-- Empty State -->
-          <div *ngIf="!category.subCategories?.length"
-            class="bg-white rounded-xl border border-slate-100 p-6 sm:p-8 flex flex-col items-center justify-center group shadow-sm">
-            <div class="mb-3">
-              <div
-                class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-200 border border-slate-100">
-                <svg *ngIf="category.level! < 3" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                <svg *ngIf="category.level! >= 3" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                </svg>
-              </div>
-            </div>
-            <h4 class="text-sm font-black text-slate-900 mb-0.5">
-              {{ (category.level === 3 ? 'PRODUCTS.TITLE' : 'CATEGORIES.DETAILS.NO_SUB_MODULES') | translate }}
-            </h4>
-            <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-4 text-center">
-              {{ (category.level === 3 ? 'PRODUCTS.NO_PRODUCTS' : 'CATEGORIES.DETAILS.NO_ITEMS_FOUND') | translate }}
-            </p>
-            <app-button variant="primary" size="sm"
-              (btnClick)="category.level === 3 ? onCreateProduct() : openCreateModal()"
-              customClass="rounded-lg px-6 h-8.5 text-[11px]">
-              {{ (category.level === 3 ? 'CATEGORIES.CREATE_PRODUCT' : 'CATEGORIES.DETAILS.ADD_CHILD') | translate }}
-            </app-button>
-          </div>
-
-          <div class="rounded-xl border border-slate-100 bg-white p-6 shadow-sm">
-            <div class="mb-5 flex items-center justify-between gap-3">
+          <aside class="rounded-2xl border border-slate-100 bg-white/95 p-3 shadow-sm backdrop-blur sm:p-4">
+            <div class="flex items-start justify-between gap-3">
               <div>
-                <h4 class="text-sm font-black text-slate-900">{{ 'CATEGORIES.DETAILS.RELATED_BRANDS' | translate }}</h4>
-                <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ relatedBrands.length }} {{ 'CATEGORIES.BRANDS_COUNT' | translate }}</p>
+                <p class="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'COMMON.STATUS' |
+                  translate }}</p>
+                <div class="mt-1.5">
+                  <app-status-pill [label]="category.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE'"
+                    [variant]="getCategoryStatusVariant(category.isActive)" [size]="'sm'">
+                  </app-status-pill>
+                </div>
               </div>
+              <button type="button" (click)="onDelete()"
+                class="flex h-8 w-8 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-red-500 transition-colors hover:bg-red-500 hover:text-white"
+                [title]="'COMMON.DELETE' | translate">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+              </button>
             </div>
 
-            <div *ngIf="relatedBrands.length > 0" class="grid grid-cols-1 gap-3 md:grid-cols-2">
-              <a
-                *ngFor="let brand of relatedBrands"
-                [routerLink]="['/catalog/brands/view', brand.id]"
-                class="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-3 transition-all hover:border-zadna-primary/30 hover:bg-white">
-                <div class="flex items-center gap-3">
-                  <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white p-2 shadow-sm">
-                    <img *ngIf="brand.logoUrl" [src]="brand.logoUrl" class="h-full w-full object-contain" [alt]="brand.nameEn">
-                    <span *ngIf="!brand.logoUrl" class="text-xs font-black text-zadna-primary">{{ getLocalizedBrandName(brand).slice(0, 1) }}</span>
+            <div class="mt-4 space-y-2.5">
+              <button *ngIf="!canCreateProduct()" type="button" (click)="openCreateModal()"
+                class="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-zadna-primary px-3 text-[11px] font-black text-white shadow-md shadow-zadna-primary/15 transition-colors hover:bg-zadna-primaryDark">
+                <span class="material-symbols-outlined text-[17px]">add</span>
+                {{ 'CATEGORIES.DETAILS.ADD_CHILD' | translate }}
+              </button>
+              <button *ngIf="canCreateProduct()" type="button" (click)="onCreateProduct()"
+                class="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-zadna-accent/20 bg-zadna-accent/10 px-3 text-[11px] font-black text-zadna-accent transition-colors hover:bg-zadna-accent hover:text-white">
+                <span class="material-symbols-outlined text-[17px]">add_shopping_cart</span>
+                {{ 'CATEGORIES.CREATE_PRODUCT' | translate }}
+              </button>
+            </div>
+
+            <div class="mt-4 border-t border-slate-100 pt-4">
+              <div class="mb-2 flex items-center justify-between text-[10px] font-black text-slate-500">
+                <span>{{ 'CATEGORIES.DETAILS.CONTEXTUAL_PATH' | translate }}</span>
+                <span>{{ getHierarchyProgress() }}%</span>
+              </div>
+              <div class="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div class="h-full rounded-full bg-gradient-to-r from-zadna-primary to-zadna-accent"
+                  [style.width.%]="getHierarchyProgress()"></div>
+              </div>
+              <button *ngIf="category.parentCategoryId" type="button"
+                (click)="onSubNavigate(category.parentCategoryId!)"
+                class="mt-3 flex w-full items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5 text-start transition-colors hover:border-zadna-primary/25 hover:bg-white">
+                <span
+                  class="material-symbols-outlined text-[18px] text-zadna-primary rtl:rotate-180">subdirectory_arrow_left</span>
+                <span class="min-w-0">
+                  <span class="block truncate text-xs font-black text-slate-800">{{ getLocalizedParentName() }}</span>
+                  <span class="block text-[9px] font-bold uppercase tracking-widest text-slate-400">{{
+                    'CATEGORIES.DETAILS.PARENT_NODE' | translate }}</span>
+                </span>
+              </button>
+              <div *ngIf="!category.parentCategoryId"
+                class="mt-3 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                {{ 'CATEGORIES.DETAILS.ROOT_ENTRY' | translate }}
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
+        <main class="min-w-0 space-y-6">
+          <section class="catalog-panel">
+            <div class="panel-head">
+              <app-section-header [compact]="true" [icon]="canCreateProduct() ? 'inventory_2' : 'account_tree'"
+                [title]="canCreateProduct() ? 'PRODUCTS.TITLE' : 'CATEGORIES.DETAILS.SUB_ITEMS'"
+                [shouldTranslate]="true">
+                <span meta class="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                  <ng-container *ngIf="canCreateProduct(); else subCategoryCount">
+                    {{ relatedProducts.length }} {{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}
+                  </ng-container>
+                  <ng-template #subCategoryCount>
+                    {{ totalSubCategories }} {{ 'CATEGORIES.DETAILS.BRANCH_NODES' | translate }}
+                  </ng-template>
+                </span>
+              </app-section-header>
+              <div class="flex items-center gap-2" *ngIf="!canCreateProduct()">
+                <div class="rounded-xl border border-slate-100 bg-slate-50 p-1">
+                  <button type="button" (click)="viewMode = 'grid'" class="view-toggle"
+                    [class.is-active]="viewMode === 'grid'" [title]="getGridViewLabel()">
+                    <span class="material-symbols-outlined text-[18px]">grid_view</span>
+                  </button>
+                  <button type="button" (click)="viewMode = 'table'" class="view-toggle"
+                    [class.is-active]="viewMode === 'table'" [title]="getTableViewLabel()">
+                    <span class="material-symbols-outlined text-[18px]">view_list</span>
+                  </button>
+                </div>
+                <button type="button" (click)="openCreateModal()"
+                  class="hidden rounded-xl bg-zadna-primary px-4 py-2.5 text-[11px] font-black text-white shadow-sm transition-colors hover:bg-zadna-primaryDark sm:inline-flex sm:items-center sm:gap-2">
+                  <span class="material-symbols-outlined text-[17px]">add</span>
+                  {{ 'CATEGORIES.DETAILS.ADD_CHILD' | translate }}
+                </button>
+              </div>
+              <button *ngIf="canCreateProduct()" type="button" (click)="onCreateProduct()"
+                class="inline-flex items-center gap-2 rounded-xl bg-zadna-primary px-4 py-2.5 text-[11px] font-black text-white shadow-sm transition-colors hover:bg-zadna-primaryDark">
+                <span class="material-symbols-outlined text-[17px]">add</span>
+                {{ 'CATEGORIES.CREATE_PRODUCT' | translate }}
+              </button>
+            </div>
+
+            <div *ngIf="canCreateProduct() && relatedProducts.length > 0"
+              class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <a *ngFor="let product of relatedProducts" [routerLink]="['/catalog/products/view', product.id]"
+                class="product-card group">
+                <div class="flex items-start gap-3">
+                  <div
+                    class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-50 p-2 ring-1 ring-slate-100">
+                    <img *ngIf="getProductImage(product)" [src]="getProductImage(product)!"
+                      [alt]="getLocalizedProductName(product)" class="h-full w-full object-contain">
+                    <span *ngIf="!getProductImage(product)"
+                      class="material-symbols-outlined text-[24px] text-zadna-primary/45">inventory_2</span>
                   </div>
-                  <div class="flex flex-col">
-                    <span class="text-sm font-black text-slate-900">{{ getLocalizedBrandName(brand) }}</span>
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ brand.masterProductsCount || 0 }} {{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}</span>
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                      <app-status-pill [label]="product.status" [shouldTranslate]="false"
+                        [variant]="getProductStatusVariant(product.status)" [showDot]="false" [size]="'sm'">
+                      </app-status-pill>
+                      <span
+                        class="material-symbols-outlined text-[17px] text-slate-300 rtl:rotate-180">arrow_forward</span>
+                    </div>
+                    <h3 class="truncate text-sm font-black text-slate-900 group-hover:text-zadna-primary">{{
+                      getLocalizedProductName(product) }}</h3>
+                    <p class="mt-1 truncate text-[11px] font-bold text-slate-400">
+                      {{ activeLang === 'ar' ? (product.brandNameAr || product.brandNameEn || '-') :
+                      (product.brandNameEn || product.brandNameAr || '-') }}
+                    </p>
                   </div>
                 </div>
-                <svg class="h-4 w-4 text-slate-300 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m9 5 7 7-7 7" />
-                </svg>
               </a>
             </div>
 
-            <div *ngIf="relatedBrands.length === 0" class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 px-4 py-8 text-center">
-              <p class="text-sm font-black text-slate-700">{{ 'CATEGORIES.DETAILS.NO_RELATED_BRANDS' | translate }}</p>
+            <div *ngIf="!canCreateProduct() && category.subCategories?.length && viewMode === 'grid'"
+              class="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+              <button *ngFor="let sub of paginatedSubCategories" type="button" (click)="onSubNavigate(sub.id)"
+                class="category-card group text-start">
+                <div class="flex items-start gap-3">
+                  <div
+                    class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-50 p-2 ring-1 ring-slate-100">
+                    <img *ngIf="sub.imageUrl" [src]="sub.imageUrl" [alt]="getLocalizedCategoryName(sub)"
+                      class="h-full w-full object-contain">
+                    <span *ngIf="!sub.imageUrl" class="text-sm font-black text-zadna-primary">{{
+                      getCategoryInitials(sub) }}</span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                      <app-status-pill [label]="sub.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE'"
+                        [variant]="getCategoryStatusVariant(sub.isActive)" [showDot]="false"
+                        [size]="'sm'"></app-status-pill>
+                      <span class="text-[11px] font-black text-slate-300">#{{ sub.displayOrder }}</span>
+                    </div>
+                    <h3 class="truncate text-sm font-black text-slate-900 group-hover:text-zadna-primary">{{
+                      getLocalizedCategoryName(sub) }}</h3>
+                    <p class="mt-1 truncate text-[11px] font-bold text-slate-400">{{ getSecondaryCategoryName(sub) }}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] font-black text-slate-400">
+                  <span>{{ getLevelNameKey(sub.level || 0) | translate }}</span>
+                  <span class="inline-flex items-center gap-1 text-zadna-primary">
+                    {{ 'CATEGORIES.DETAILS.OPEN' | translate }}
+                    <span class="material-symbols-outlined text-[16px] rtl:rotate-180">arrow_forward</span>
+                  </span>
+                </div>
+              </button>
             </div>
-          </div>
-        </div>
+
+            <div *ngIf="!canCreateProduct() && category.subCategories?.length && viewMode === 'table'"
+              class="overflow-hidden rounded-2xl border border-slate-100">
+              <table class="w-full min-w-[42rem] border-collapse bg-white text-start text-sm">
+                <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+                  <tr>
+                    <th class="px-4 py-4 text-start">{{ 'COMMON.NAME' | translate }}</th>
+                    <th class="px-4 py-4 text-start">{{ 'CATEGORIES.DETAILS.LEVEL' | translate }}</th>
+                    <th class="px-4 py-4 text-start">{{ 'COMMON.ORDER' | translate }}</th>
+                    <th class="px-4 py-4 text-start">{{ 'COMMON.STATUS' | translate }}</th>
+                    <th class="px-4 py-4 text-end">{{ 'COMMON.ACTIONS' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr *ngFor="let sub of paginatedSubCategories" (click)="onSubNavigate(sub.id)"
+                    class="cursor-pointer transition-colors hover:bg-slate-50/70">
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-3">
+                        <div
+                          class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-50 p-2 ring-1 ring-slate-100">
+                          <img *ngIf="sub.imageUrl" [src]="sub.imageUrl" [alt]="getLocalizedCategoryName(sub)"
+                            class="h-full w-full object-contain">
+                          <span *ngIf="!sub.imageUrl" class="text-xs font-black text-zadna-primary">{{
+                            getCategoryInitials(sub) }}</span>
+                        </div>
+                        <div class="min-w-0">
+                          <p class="truncate font-black text-slate-900">{{ getLocalizedCategoryName(sub) }}</p>
+                          <p class="truncate text-[11px] font-bold text-slate-400">{{ getSecondaryCategoryName(sub) }}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4 text-xs font-black text-slate-500">{{ getLevelNameKey(sub.level || 0) |
+                      translate }}</td>
+                    <td class="px-4 py-4 text-xs font-black text-slate-500">#{{ sub.displayOrder }}</td>
+                    <td class="px-4 py-4">
+                      <app-status-pill [label]="sub.isActive ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE'"
+                        [variant]="getCategoryStatusVariant(sub.isActive)" [showDot]="false"
+                        [size]="'sm'"></app-status-pill>
+                    </td>
+                    <td class="px-4 py-4 text-end">
+                      <span
+                        class="material-symbols-outlined text-[18px] text-slate-300 rtl:rotate-180">arrow_forward</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              *ngIf="(canCreateProduct() && relatedProducts.length === 0) || (!canCreateProduct() && !category.subCategories?.length)"
+              class="empty-panel">
+              <span class="material-symbols-outlined text-[42px] text-zadna-primary/45">{{ canCreateProduct() ?
+                'inventory_2' : 'account_tree' }}</span>
+              <h3>{{ (canCreateProduct() ? 'PRODUCTS.TITLE' : 'CATEGORIES.DETAILS.NO_SUB_MODULES') | translate }}</h3>
+              <p>{{ (canCreateProduct() ? 'PRODUCTS.NO_PRODUCTS' : 'CATEGORIES.DETAILS.NO_ITEMS_FOUND') | translate }}
+              </p>
+              <button type="button" (click)="canCreateProduct() ? onCreateProduct() : openCreateModal()"
+                class="mt-4 inline-flex items-center gap-2 rounded-xl bg-zadna-primary px-5 py-2.5 text-[12px] font-black text-white">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                {{ (canCreateProduct() ? 'CATEGORIES.CREATE_PRODUCT' : 'CATEGORIES.DETAILS.ADD_CHILD') | translate }}
+              </button>
+            </div>
+
+            <div *ngIf="totalSubCategories > pageSize" class="border-t border-slate-100 pt-4">
+              <app-pagination [currentPage]="pageNumber" [pageSize]="pageSize" [totalItems]="totalSubCategories"
+                (pageChange)="onPageChange($event)"></app-pagination>
+            </div>
+          </section>
+
+          <section class="catalog-panel">
+            <div class="panel-head">
+              <app-section-header [compact]="true" icon="storefront" title="CATEGORIES.DETAILS.RELATED_BRANDS"
+                [shouldTranslate]="true">
+                <span meta class="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                  {{ relatedBrands.length }} {{ 'CATEGORIES.BRANDS_COUNT' | translate }}
+                </span>
+              </app-section-header>
+            </div>
+            <div *ngIf="relatedBrands.length > 0" class="grid gap-3 md:grid-cols-2">
+              <a *ngFor="let brand of relatedBrands" [routerLink]="['/catalog/brands/view', brand.id]"
+                class="brand-row group">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-2 ring-1 ring-slate-100">
+                  <img *ngIf="brand.logoUrl" [src]="brand.logoUrl" [alt]="getLocalizedBrandName(brand)"
+                    class="h-full w-full object-contain">
+                  <span *ngIf="!brand.logoUrl" class="text-sm font-black text-zadna-primary">{{
+                    getLocalizedBrandName(brand).slice(0, 1) }}</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-black text-slate-900 group-hover:text-zadna-primary">{{
+                    getLocalizedBrandName(brand) }}</p>
+                  <p class="mt-1 text-[11px] font-bold text-slate-400">{{ brand.masterProductsCount || 0 }} {{
+                    'SIDEBAR.CATALOG_PRODUCTS' | translate }}</p>
+                </div>
+                <span class="material-symbols-outlined text-[18px] text-slate-300 rtl:rotate-180">arrow_forward</span>
+              </a>
+            </div>
+            <div *ngIf="relatedBrands.length === 0" class="empty-panel compact">
+              <span class="material-symbols-outlined text-[34px] text-slate-300">storefront</span>
+              <p>{{ 'CATEGORIES.DETAILS.NO_RELATED_BRANDS' | translate }}</p>
+            </div>
+          </section>
+        </main>
+
+        <aside class="space-y-6">
+          <section class="catalog-panel">
+            <div class="panel-title-row">
+              <span class="material-symbols-outlined text-[20px] text-zadna-primary">info</span>
+              <h2>{{ 'COMMON.DETAILS' | translate }}</h2>
+            </div>
+            <dl class="mt-4 space-y-3">
+              <div class="detail-row">
+                <dt>{{ 'COMMON.ID' | translate }}</dt>
+                <dd class="font-mono">{{ getSystemId() }}</dd>
+              </div>
+              <div class="detail-row">
+                <dt>{{ 'COMMON.ORDER' | translate }}</dt>
+                <dd>#{{ category.displayOrder }}</dd>
+              </div>
+              <div class="detail-row">
+                <dt>{{ 'CATEGORIES.DETAILS.LEVEL' | translate }}</dt>
+                <dd>{{ category.level || 0 }}</dd>
+              </div>
+              <div class="detail-row">
+                <dt>{{ 'CATEGORIES.DETAILS.CREATED_AT' | translate }}</dt>
+                <dd>{{ category.createdAtUtc ? (category.createdAtUtc | date:'mediumDate') : '-' }}</dd>
+              </div>
+              <div class="detail-row">
+                <dt>{{ 'CATEGORIES.DETAILS.UPDATED_AT' | translate }}</dt>
+                <dd>{{ category.updatedAtUtc ? (category.updatedAtUtc | date:'mediumDate') : '-' }}</dd>
+              </div>
+            </dl>
+          </section>
+
+        </aside>
       </div>
-
-      <!-- Sidebar (order-2: between hero and sub-cats on mobile) -->
-      <aside class="lg:col-span-4 space-y-5 lg:space-y-6 animate-in fade-in slide-in-from-right-6 duration-700 delay-300 order-2 lg:row-span-2">
-
-        <!-- Hierarchy Guide: Brand Identity (#e48215) -->
-        <div class="bg-[#e48215] rounded-xl p-3 sm:p-4 xl:p-5 shadow-xl shadow-[#e48215]/20 relative overflow-hidden group border border-white/10 transition-all duration-300">
-          <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/20 rounded-full blur-[40px]"></div>
-
-          <div class="relative z-10 space-y-3 sm:space-y-4 xl:space-y-4">
-            <div class="flex items-center gap-2 sm:gap-3">
-              <div class="w-6 h-6 sm:w-7 sm:h-7 xl:w-8 xl:h-8 rounded-lg bg-slate-900/10 flex items-center justify-center text-slate-900">
-                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="2.5"
-                    d="M9 20l-5.447-2.724A2 2 0 013 15.483V8.517a2 2 0 011.553-1.793L9 5m0 15l10-5m-10 5l-1-10m11-1V8.517a2 2 0 00-1.553-1.793L13 5m6 3l-6-3m6 3l-10 5m10-5l-1 10m-9-10l1 10">
-                  </path>
-                </svg>
-              </div>
-              <h4 class="text-[10px] sm:text-[11px] xl:text-xs font-black text-slate-900/60 uppercase tracking-[0.2em] xl:tracking-[0.25em]">{{ 'CATEGORIES.DETAILS.CONTEXTUAL_PATH' | translate }}</h4>
-            </div>
-
-            <div class="space-y-2 sm:space-y-3">
-              <div *ngIf="category.parentCategoryId" (click)="onSubNavigate(category.parentCategoryId!)"
-                class="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 bg-white/40 hover:bg-white/60 border border-white/20 rounded-xl cursor-pointer transition-all duration-300 group/item">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-900/10 flex items-center justify-center text-slate-900 group-hover/item:bg-slate-900 group-hover/item:text-amber-400 transition-colors">
-                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
-                  </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="font-black text-slate-900 text-[11px] sm:text-xs xl:text-sm truncate">{{ activeLang === 'ar' ? category.parentNameAr :
-                    category.parentNameEn }}</p>
-                  <p class="text-[8px] sm:text-[9px] font-extrabold text-slate-900/50 uppercase mt-0 sm:mt-0.5">{{ 'CATEGORIES.DETAILS.LEVEL' | translate }} {{ category.level! - 1 }} {{ 'CATEGORIES.DETAILS.NODES' | translate }}</p>
-                </div>
-                <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-900/20 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-width="3" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </div>
-
-              <div *ngIf="!category.parentCategoryId"
-                class="p-2 bg-white/20 border border-dashed border-white/40 rounded-xl text-center">
-                <span class="text-[10px] font-black text-slate-900/40 uppercase tracking-widest italic">{{ 'CATEGORIES.DETAILS.ROOT_ENTRY' | translate }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Connection Map -->
-        <div class="bg-white rounded-xl border border-slate-100 p-3 sm:p-4 shadow-sm transition-all duration-300">
-          <div class="flex items-center gap-1.5 mb-3 sm:mb-4">
-            <div class="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-indigo-500 animate-ping"></div>
-            <h4 class="text-[10px] sm:text-[11px] xl:text-xs font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'CATEGORIES.DETAILS.LIVE_FLOW' | translate }}</h4>
-          </div>
-
-          <div class="space-y-3 sm:space-y-4">
-            <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-black">
-              <span class="text-slate-400 uppercase">{{ 'CATEGORIES.DETAILS.PEERS' | translate }}</span>
-              <span class="text-slate-900 text-xs sm:text-sm">{{ category.subCategories?.length || 0 }}</span>
-            </div>
-            <div class="w-full h-1 sm:h-1.5 bg-slate-50 rounded-full overflow-hidden">
-              <div class="h-full bg-zadna-primary transition-all duration-1000"
-                [style.width]="(category.subCategories?.length || 0) * 10 + '%'"></div>
-            </div>
-            <p class="text-[9px] sm:text-[10px] font-bold text-slate-300 italic">{{ 'CATEGORIES.DETAILS.SYNC_ACTIVE' | translate }}</p>
-          </div>
-        </div>
-
-      </aside>
-    </div>
+    </ng-container>
   </div>
 
-  <!-- Modals -->
+
+
   <app-category-form-modal *ngIf="category" [isOpen]="isEditModalOpen" [mode]="'edit'"
     [levelNameKey]="getLevelNameKey(category.level || 0)" [initialData]="category" (close)="isEditModalOpen = false"
     (saved)="handleSaved()">
@@ -453,4 +415,3 @@
     (close)="closeDeleteModal()">
   </app-delete-confirmation-modal>
 </div>
-

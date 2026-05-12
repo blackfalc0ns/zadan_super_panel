@@ -1,0 +1,15 @@
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+  <article *ngFor="let insight of panels" class="bg-white rounded-xl border border-slate-100 p-4 flex items-start gap-3 hover:shadow-sm transition-shadow">
+    <div class="flex items-center justify-center w-9 h-9 rounded-lg shrink-0" [ngClass]="insight.iconClass">
+      <span class="material-symbols-outlined text-[16px]">{{ insight.icon }}</span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <h3 class="text-[11px] font-bold text-slate-700 uppercase tracking-wide">{{ insight.titleKey | translate }}</h3>
+      <p class="text-[10px] text-slate-500 mt-0.5 leading-relaxed">{{ insight.description | translate }}</p>
+      <div class="flex items-center gap-2 mt-2">
+        <span class="text-sm font-bold text-slate-800">{{ insight.value }}</span>
+        <span *ngIf="insight.trendLabel" class="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-50 text-slate-500 border border-slate-100">{{ insight.trendLabel }}</span>
+      </div>
+    </div>
+  </article>
+</section>

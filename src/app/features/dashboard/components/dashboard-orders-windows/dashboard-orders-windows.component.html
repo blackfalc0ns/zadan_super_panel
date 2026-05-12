@@ -1,0 +1,36 @@
+<section class="dashboard-orders-charts">
+  <article class="dashboard-order-window">
+    <div class="dashboard-order-window-header">
+      <h3>{{ 'DASHBOARD.REGION_PRESSURE.TITLE' | translate }}</h3>
+      <span>{{ 'DASHBOARD.REGION_PRESSURE.SCORE' | translate }}</span>
+    </div>
+    <div echarts [options]="regionPressureOptions" class="h-72 w-full"></div>
+  </article>
+
+  <article class="dashboard-order-window dashboard-risk-exceptions-panel">
+    <div class="dashboard-order-window-header">
+      <h3>
+        {{ 'DASHBOARD.RISK_QUEUES_TITLE' | translate }}
+        /
+        {{ 'DASHBOARD.WINDOW_EXCEPTIONS' | translate }}
+      </h3>
+      <span>{{ 'DASHBOARD.ALERTS_PANEL.TITLE' | translate }}</span>
+    </div>
+    <div class="dashboard-risk-exceptions-grid">
+      <div class="dashboard-risk-chart">
+        <div class="dashboard-chart-caption">
+          <span class="material-symbols-outlined">donut_large</span>
+          <strong>{{ 'DASHBOARD.CHARTS.SHARE' | translate }}</strong>
+        </div>
+        <div echarts [options]="queueMixOptions" class="h-64 w-full"></div>
+      </div>
+      <div class="dashboard-risk-chart">
+        <div class="dashboard-chart-caption">
+          <span class="material-symbols-outlined">stacked_bar_chart</span>
+          <strong>{{ 'DASHBOARD.WINDOW_EXCEPTIONS' | translate }}</strong>
+        </div>
+        <div echarts [options]="riskExceptionsOptions" class="h-64 w-full"></div>
+      </div>
+    </div>
+  </article>
+</section>

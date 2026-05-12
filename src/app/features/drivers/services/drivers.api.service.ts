@@ -409,22 +409,21 @@ export interface AdminDriverNotificationResponse {
 })
 export class DriverService {
   private readonly apiUrl = `${environment.apiUrl}/admin/drivers`;
-  private readonly cacheStorageKey = 'zadana.superadmin.drivers.cache.v1';
+  private readonly cacheStorageKey = 'zadana.superadmin.drivers.cache.v2';
   private readonly driversCache = new Map<string, Driver>();
 
   constructor(private readonly http: HttpClient) {
-    this.restoreCache();
+    this.clearLegacyCache();
     this.refreshCacheInBackground();
   }
 
   getDriverById(id: string): Observable<Driver | undefined> {
-    const cached = this.getDriverSnapshotById(id);
     const normalizedId = this.normalizeDriverId(id);
 
     return this.http.get<AdminDriverDetailResponse>(`${this.apiUrl}/${normalizedId}`).pipe(
       map((response) => this.mapDriverFromDetail(response)),
       tap((driver) => this.upsertCache(driver)),
-      catchError(() => of(cached))
+      catchError(() => of(undefined))
     );
   }
 
@@ -456,7 +455,7 @@ export class DriverService {
     return this.http.get<AdminDriversListResponse>(this.apiUrl, { params }).pipe(
       map((response) => response.items.map((item) => this.mapListItem(item))),
       tap((drivers) => this.replaceCache(drivers)),
-      catchError(() => of(this.getDriversSnapshot().slice(0, pageSize)))
+      catchError(() => of([]))
     );
   }
 
@@ -552,6 +551,22 @@ export class DriverService {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/reactivate`, {});
   }
 
+  banDriver(id: string, reason?: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/ban`, {
+      reason: reason?.trim() || null
+    });
+  }
+
+  unbanDriver(id: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/unban`, {});
+  }
+
+  clearDriverRestrictions(id: string, note?: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/restrictions/clear`, {
+      note: note?.trim() || null
+    });
+  }
+
   approveDriverDocument(id: string, documentId: string): Observable<DriverActionResponse> {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/documents/${documentId}/approve`, {});
   }
@@ -598,7 +613,7 @@ export class DriverService {
       firstName: item.firstName,
       lastName: item.lastName,
       phoneNumber: item.phoneNumber,
-      imageUrl: item.imageUrl || undefined,
+      imageUrl: this.withImageCacheBust(item.imageUrl),
       city: item.city || 'Unknown',
       status,
       verificationStatus,
@@ -658,6 +673,12 @@ export class DriverService {
       operationsArea
     );
 
+    const workflow = this.withClearRestrictionsAction(
+      response,
+      incidents,
+      this.mapWorkflow(response.workflow)
+    );
+
     return {
       ...driver,
       displayName: `${response.firstName} ${response.lastName}`.trim(),
@@ -684,6 +705,10 @@ export class DriverService {
       totalEarnings: response.finance.totalEarnings,
       currentDueAmount: response.financeDetails.dueAmount ?? response.finance.pendingBalance,
       codCollectedAmount: response.financeDetails.codCollected ?? response.finance.codCollected,
+      commitmentScore: Number(response.commitmentScore ?? response.performanceDetails.commitmentScore ?? 0),
+      dailyRejections: Number(response.dailyRejections ?? 0),
+      weeklyRejections: Number(response.weeklyRejections ?? 0),
+      enforcementLevel: response.enforcementLevel || '',
       complianceStatusLabel: this.mapComplianceStatusLabel(response.compliance.riskLevel),
       complianceStatusVariant: this.mapComplianceStatusVariant(response.compliance.riskLevel),
       complianceRiskPoints: this.mapComplianceRiskPoints(response.compliance),
@@ -703,7 +728,7 @@ export class DriverService {
       documents,
       recentTrips,
       lifecycleStages: this.mapLifecycleStages(response.workflow.lifecycleStages),
-      workflow: this.mapWorkflow(response.workflow),
+      workflow,
       operations: {
         zoneName: operationsArea,
         zoneCapacityLabel: this.buildZoneCapacityLabel(response.operations.activeDriversInCity, response.operations.cityCapacityLimit),
@@ -844,13 +869,14 @@ export class DriverService {
   private mapDriverDocuments(documents: AdminDriverDocumentResponse[]): DriverDocumentRecord[] {
     return documents.map((document, index) => {
       const mappedStatus = this.mapDocumentStatus(document.status);
-      const documentUrl = document.fileUrl || document.url || document.imageUrl || undefined;
+      const documentUrl = this.withImageCacheBust(document.fileUrl || document.url || document.imageUrl);
+      const secondaryImageUrl = this.withImageCacheBust(document.secondaryImageUrl);
 
       return {
         id: `${document.documentType}-${index}`,
         title: this.mapDocumentTitle(document.documentType),
         imageUrl: documentUrl,
-        secondaryImageUrl: document.secondaryImageUrl || undefined,
+        secondaryImageUrl,
         fileUrl: documentUrl,
         fileName: document.fileName || undefined,
         contentType: document.contentType || undefined,
@@ -858,9 +884,10 @@ export class DriverService {
         numberValue: document.number || undefined,
         status: mappedStatus,
         statusLabel: this.mapDocumentStatusLabel(mappedStatus),
-        expiryDate: document.expiryInfo || this.mapDocumentExpiryLabel(document.status),
+        expiryDate: document.expiryInfo || 'غير متاح',
         reviewDecision: document.reviewDecision || undefined,
         rejectionReason: document.rejectionReason || undefined,
+        expiryDateUtc: document.expiryDateUtc || undefined,
         reviewedAt: document.reviewedAtUtc ? this.formatDateTime(document.reviewedAtUtc) : undefined,
         reviewedBy: document.reviewedByName || undefined,
         subtitle: this.mapDocumentSubtitle(document.documentType)
@@ -882,6 +909,47 @@ export class DriverService {
       summary: incident.summary,
       evidenceImages: []
     }));
+  }
+
+  private withClearRestrictionsAction(
+    response: AdminDriverDetailResponse,
+    incidents: DriverIncidentRecord[],
+    workflow: DriverWorkflowSummary
+  ): DriverWorkflowSummary {
+    if (!this.hasClearableRestrictions(response, incidents)
+      || workflow.actions.some((action) => action.id === 'CLEAR_DRIVER_RESTRICTIONS')) {
+      return workflow;
+    }
+
+    return {
+      ...workflow,
+      actions: [
+        {
+          id: 'CLEAR_DRIVER_RESTRICTIONS',
+          label: 'DRIVERS.DETAIL.WORKFLOW.ACTION_LABELS.CLEAR_DRIVER_RESTRICTIONS',
+          helper: 'DRIVERS.DETAIL.WORKFLOW.ACTION_HELPERS.CLEAR_DRIVER_RESTRICTIONS',
+          icon: this.mapWorkflowActionIcon('CLEAR_DRIVER_RESTRICTIONS'),
+          tone: 'success',
+          targetTab: 'overview'
+        },
+        ...workflow.actions
+      ]
+    };
+  }
+
+  private hasClearableRestrictions(response: AdminDriverDetailResponse, incidents: DriverIncidentRecord[]): boolean {
+    if (response.verificationStatus !== 'Approved' || response.compliance.expiredDocuments > 0) {
+      return false;
+    }
+
+    const enforcementLevel = (response.enforcementLevel || '').toLowerCase();
+    const hasOfferRestriction = enforcementLevel === 'softblocked' || enforcementLevel === 'suspensioncandidate';
+    const hasOpenIncident = incidents.some((incident) => incident.status !== 'RESOLVED');
+
+    return response.status === 'Suspended' || response.status === 'Banned'
+      || hasOfferRestriction
+      || Boolean(response.operations.locationUpdatesBlocked)
+      || hasOpenIncident;
   }
 
   private mapOperationsTasks(assignments: AdminDriverOperationsTaskResponse[]): DriverTaskAssignment[] {
@@ -987,7 +1055,7 @@ export class DriverService {
       underReview: drivers.filter((driver) =>
         driver.verificationStatus === VerificationStatus.UnderReview ||
         driver.verificationStatus === VerificationStatus.Unverified).length,
-      suspended: drivers.filter((driver) => driver.status === 'Suspended').length,
+      suspended: drivers.filter((driver) => driver.status === 'Suspended' || driver.status === 'Banned').length,
       lowPerformance: drivers.filter((driver) => driver.performance === DriverPerformance.Low).length
     };
   }
@@ -1043,12 +1111,24 @@ export class DriverService {
     }
   }
 
+  private clearLegacyCache(): void {
+    this.driversCache.clear();
+    try {
+      localStorage.removeItem('zadana.superadmin.drivers.cache.v1');
+      localStorage.removeItem(this.cacheStorageKey);
+    } catch {
+      // Ignore storage errors and keep runtime cache empty.
+    }
+  }
+
   private mapDriverStatus(status: string): DriverStatus {
     switch (status) {
       case 'OnMission':
         return 'OnMission';
       case 'Suspended':
         return 'Suspended';
+      case 'Banned':
+        return 'Banned';
       case 'Offline':
         return 'Offline';
       default:
@@ -1057,7 +1137,7 @@ export class DriverService {
   }
 
   private mapVerificationStatus(status: string, driverStatus: DriverStatus): VerificationStatus {
-    if (driverStatus === 'Suspended') {
+    if (driverStatus === 'Suspended' || driverStatus === 'Banned') {
       return VerificationStatus.Suspended;
     }
 
@@ -1137,6 +1217,8 @@ export class DriverService {
         return activeTasks > 0 ? `${activeTasks} tasks in dispatch queue` : `Ready for dispatch · ${completedTasks} completed`;
       case 'Suspended':
         return 'Suspended pending operational review';
+      case 'Banned':
+        return 'Banned from receiving delivery offers';
       default:
         return completedTasks > 0 ? `${completedTasks} completed deliveries` : 'No recent activity';
     }
@@ -1551,6 +1633,7 @@ export class DriverService {
   private mapWorkflowState(state: string): DriverWorkflowSummary['state'] {
     switch (state) {
       case 'SUSPENDED':
+      case 'BANNED':
       case 'PENDING_DOCUMENTS':
       case 'VERIFICATION_REVIEW':
       case 'READY_TO_ACTIVATE':
@@ -1576,7 +1659,7 @@ export class DriverService {
 
   private mapWorkflowReadinessLabel(state: string, readiness: string): string {
     if (readiness === 'BLOCKED') {
-      return state === 'COMPLIANCE_REVIEW' || state === 'SUSPENDED'
+      return state === 'COMPLIANCE_REVIEW' || state === 'SUSPENDED' || state === 'BANNED'
         ? 'DRIVERS.DETAIL.WORKFLOW.READINESS_LABELS.BLOCKED_BY_COMPLIANCE'
         : 'DRIVERS.DETAIL.WORKFLOW.READINESS_LABELS.BLOCKED_UNTIL_APPROVAL';
     }
@@ -1601,6 +1684,7 @@ export class DriverService {
   private mapWorkflowOwnerTeam(state: string): string {
     switch (state) {
       case 'SUSPENDED':
+      case 'BANNED':
         return 'DRIVERS.DETAIL.WORKFLOW.OWNER_TEAMS.COMPLIANCE_AND_OPERATIONS';
       case 'PENDING_DOCUMENTS':
       case 'VERIFICATION_REVIEW':
@@ -1627,10 +1711,16 @@ export class DriverService {
         return 'cancel';
       case 'CLEAR_FINANCE_HOLD':
         return 'rule';
+      case 'CLEAR_DRIVER_RESTRICTIONS':
+        return 'lock_open';
       case 'SUSPEND_DRIVER':
         return 'block';
       case 'REACTIVATE_DRIVER':
         return 'play_circle';
+      case 'BAN_DRIVER':
+        return 'person_off';
+      case 'UNBAN_DRIVER':
+        return 'how_to_reg';
       case 'MARK_READY_FOR_DISPATCH':
         return 'published_with_changes';
       case 'OPEN_SUPPORT':
@@ -1686,6 +1776,8 @@ export class DriverService {
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.VERIFICATION_PENDING';
       case 'account_suspended':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.ACCOUNT_SUSPENDED';
+      case 'account_banned':
+        return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.ACCOUNT_BANNED';
       case 'support_followups':
       case 'support_followups_generic':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.SUPPORT_FOLLOWUPS_GENERIC';
@@ -1969,5 +2061,14 @@ export class DriverService {
     return status.toLowerCase() === 'valid'
       ? 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.EXPIRY.RECENT_CAPTURE'
       : 'DRIVERS.DETAIL.VERIFICATION.DYNAMIC.DOCUMENTS.EXPIRY.BIOMETRIC_CHECK';
+  }
+
+  private withImageCacheBust(url?: string | null): string | undefined {
+    if (!url?.trim()) {
+      return undefined;
+    }
+
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}v=${Date.now()}`;
   }
 }

@@ -24,7 +24,7 @@
       <button
         *ngIf="isOperationalIdentity"
         type="button"
-        class="px-4 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-[13px] font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary shadow-sm"
+        class="px-4 py-3 bg-white/70 backdrop-blur-md text-slate-500 border border-slate-200/60 rounded-2xl text-[13px] font-black flex items-center gap-2 hover:bg-white transition-all hover:text-zadna-primary shadow-sm"
         (click)="duplicateAsNewRole()">
         <span class="material-symbols-outlined text-[20px]">content_copy</span>
         {{ 'ADMIN_USERS.ACTIONS.DUPLICATE' | translate }}
@@ -32,7 +32,7 @@
 
       <button
         type="button"
-        class="px-4 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-[13px] font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary shadow-sm"
+        class="px-4 py-3 bg-white/70 backdrop-blur-md text-slate-500 border border-slate-200/60 rounded-2xl text-[13px] font-black flex items-center gap-2 hover:bg-white transition-all hover:text-zadna-primary shadow-sm"
         (click)="resetToPreset()">
         <span class="material-symbols-outlined text-[20px]">restart_alt</span>
         {{ 'ADMIN_USERS.ACTIONS.RESET_PRESET' | translate }}
@@ -40,7 +40,7 @@
 
       <button
         type="button"
-        class="px-4 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-[13px] font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary shadow-sm"
+        class="px-4 py-3 bg-white/70 backdrop-blur-md text-slate-500 border border-slate-200/60 rounded-2xl text-[13px] font-black flex items-center gap-2 hover:bg-white transition-all hover:text-zadna-primary shadow-sm"
         (click)="resendInvite()">
         <span class="material-symbols-outlined text-[20px]">forward_to_inbox</span>
         {{ 'ADMIN_USERS.ACTIONS.RESEND_INVITE' | translate }}
@@ -48,7 +48,7 @@
 
       <button
         type="button"
-        class="px-4 py-3 rounded-[1.2rem] text-[13px] font-black flex items-center gap-2 transition-all shadow-sm"
+        class="px-4 py-3 rounded-2xl text-[13px] font-black flex items-center gap-2 transition-all shadow-sm backdrop-blur-md"
         [ngClass]="user.status === 'suspended'
           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
           : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'"
@@ -61,7 +61,7 @@
 
       <button
         type="button"
-        class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-[14px] font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:shadow-zadna-primary/30 hover:-translate-y-0.5 transition-all"
+        class="px-6 py-3 bg-gradient-to-br from-zadna-primary to-teal-700 text-white rounded-2xl text-[14px] font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:shadow-zadna-primary/30 hover:-translate-y-0.5 transition-all"
         (click)="saveUser()">
         <span class="material-symbols-outlined text-[20px]">save</span>
         {{ 'ADMIN_USERS.ACTIONS.SAVE' | translate }}
@@ -70,7 +70,7 @@
   </app-page-header>
 
   <div *ngIf="isLoading" class="px-4 md:px-10 py-10 max-w-[120rem] mx-auto w-full">
-    <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-10 text-center shadow-sm">
+    <div class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-10 text-center shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)]">
       <div class="mx-auto mb-4 h-14 w-14 animate-spin rounded-full border-4 border-slate-200 border-t-zadna-primary"></div>
       <h2 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.TITLE' | translate }}</h2>
       <p class="mt-2 text-sm font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.SUBTITLE' | translate }}</p>
@@ -78,7 +78,7 @@
   </div>
 
   <div *ngIf="!isLoading && !user" class="px-4 md:px-10 py-10 max-w-[120rem] mx-auto w-full">
-    <div class="rounded-[2rem] border border-dashed border-slate-300 bg-white/80 p-10 text-center shadow-sm">
+    <div class="rounded-3xl border border-dashed border-slate-300 bg-white/70 backdrop-blur-xl p-10 text-center shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)]">
       <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-slate-400">
         <span class="material-symbols-outlined text-[28px]">person_off</span>
       </div>
@@ -131,10 +131,24 @@
             [class.hover:text-slate-600]="activeTab !== 'communication'">
             {{ 'ADMIN_USERS.DETAIL.COMMUNICATION_TITLE' | translate }}
           </button>
+          <button 
+            (click)="activeTab = 'audit'"
+            class="px-2 py-3 text-[15px] font-black border-b-2 transition-colors whitespace-nowrap"
+            [class.border-zadna-primary]="activeTab === 'audit'"
+            [class.text-zadna-primary]="activeTab === 'audit'"
+            [class.border-transparent]="activeTab !== 'audit'"
+            [class.text-slate-400]="activeTab !== 'audit'"
+            [class.hover:text-slate-600]="activeTab !== 'audit'">
+            Audit
+          </button>
         </div>
 
+        <p *ngIf="saveError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+          {{ saveError }}
+        </p>
+
         <!-- Profile -->
-        <div *ngIf="activeTab === 'general'" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 lg:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] relative overflow-hidden group animate-in fade-in duration-500">
+        <div *ngIf="activeTab === 'general'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] relative overflow-hidden group animate-in fade-in duration-500">
           <div class="absolute -right-16 -top-16 w-48 h-48 bg-slate-100/50 rounded-full blur-3xl pointer-events-none group-hover:bg-zadna-primary/5 transition-colors duration-700"></div>
           
           <div class="flex items-center justify-between gap-4 mb-8 relative z-10">
@@ -186,7 +200,7 @@
         </div>
 
         <!-- Assignment -->
-        <div *ngIf="activeTab === 'general'" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 lg:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] animate-in fade-in duration-500">
+        <div *ngIf="activeTab === 'general'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] animate-in fade-in duration-500">
           <div class="mb-8">
             <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.ASSIGNMENT_BADGE' | translate }}</p>
             <h3 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.ASSIGNMENT_TITLE' | translate }}</h3>
@@ -235,7 +249,7 @@
         </div>
 
         <!-- Access Control -->
-        <div *ngIf="activeTab === 'access'" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 lg:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] animate-in fade-in duration-500">
+        <div *ngIf="activeTab === 'access'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] animate-in fade-in duration-500">
           <div class="flex items-center justify-between gap-4 mb-8">
             <div>
               <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.ACCESS_BADGE' | translate }}</p>
@@ -251,7 +265,7 @@
             <label class="flex flex-col gap-2">
               <span class="text-[11px] font-black tracking-widest uppercase text-slate-500 ml-1">{{ 'ADMIN_USERS.FIELDS.ROLE_PRESET' | translate }}</span>
               <div class="h-12 rounded-2xl border-2 border-slate-200 bg-slate-50/50 focus-within:border-zadna-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-zadna-primary/10 transition-all">
-                <app-searchable-select [(ngModel)]="currentUser.rolePresetId" [searchable]="false" (ngModelChange)="onPresetChange($event)" [options]="rolePresetOptions" [placeholder]="'ADMIN_USERS.FIELDS.ROLE' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                <app-searchable-select [(ngModel)]="currentUser.roleDefinitionId" [searchable]="false" (ngModelChange)="onRoleDefinitionChange($event)" [options]="roleDefinitionOptions" [placeholder]="'ADMIN_USERS.FIELDS.ROLE' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
               </div>
             </label>
 
@@ -280,7 +294,7 @@
           <!-- Role Details Info -->
           <div class="mt-6 rounded-[1.25rem] border border-blue-200 bg-blue-50/50 p-5">
             <div class="flex flex-wrap items-center gap-3">
-              <app-status-pill [label]="selectedPreset.nameKey" variant="primary" size="sm"></app-status-pill>
+              <app-status-pill [label]="currentUser.roleName || selectedPreset.nameKey" variant="primary" [shouldTranslate]="!currentUser.roleName" size="sm"></app-status-pill>
               <app-status-pill
                 [label]="grantedOverrideCount + ' ' + ('ADMIN_USERS.DETAIL.GRANTED_OVERRIDES' | translate)"
                 variant="success"
@@ -299,13 +313,20 @@
                 [shouldTranslate]="false"
                 size="sm">
               </app-status-pill>
+              <app-status-pill
+                *ngIf="currentUser.mustChangePassword"
+                label="Temporary password"
+                variant="warning"
+                [shouldTranslate]="false"
+                size="sm">
+              </app-status-pill>
             </div>
             <p class="mt-3 text-[13px] font-bold text-slate-600 leading-relaxed">{{ selectedPreset.descriptionKey | translate }}</p>
           </div>
         </div>
 
         <!-- Communications -->
-        <div *ngIf="activeTab === 'communication'" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 lg:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] animate-in fade-in duration-500">
+        <div *ngIf="activeTab === 'communication'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] animate-in fade-in duration-500">
           <div class="mb-8">
             <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.COMMUNICATION_BADGE' | translate }}</p>
             <h3 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.COMMUNICATION_TITLE' | translate }}</h3>
@@ -355,7 +376,7 @@
         </div>
 
         <!-- Permissions -->
-        <div *ngIf="isOperationalIdentity && activeTab === 'access'" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 lg:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] animate-in fade-in duration-500">
+        <div *ngIf="isOperationalIdentity && activeTab === 'access'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] animate-in fade-in duration-500">
           <div class="mb-8">
             <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.PERMISSIONS_BADGE' | translate }}</p>
             <h3 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.PERMISSIONS_TITLE' | translate }}</h3>
@@ -363,20 +384,23 @@
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <article *ngFor="let group of permissionGroups" class="rounded-[1.5rem] border border-slate-200 bg-slate-50/50 p-5 hover:shadow-sm transition-all">
+            <article *ngFor="let group of permissionGroups" class="rounded-2xl border border-slate-200/60 bg-white/50 backdrop-blur-sm p-5 hover:shadow-md transition-all">
               <div class="flex items-start justify-between gap-4 mb-4 border-b border-slate-200/60 pb-4">
                 <div>
                   <h4 class="text-[14px] font-black text-slate-900">{{ group.labelKey | translate }}</h4>
                   <p class="mt-1 text-[11px] font-bold text-slate-500 leading-tight">{{ group.descriptionKey | translate }}</p>
                 </div>
                 <div class="rounded-full bg-white border border-slate-200 px-3 py-1 text-[11px] font-black text-slate-600 shrink-0">
-                  {{ getGroupEnabledCount(group) }}/{{ group.actions.length }}
+                  {{ getGroupEnabledCount(group) }}/{{ getGroupAvailableActions(group).length }}
                 </div>
               </div>
 
               <div class="space-y-2">
-                <label *ngFor="let action of group.actions" class="flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 text-[13px] font-bold text-slate-700 shadow-sm border border-slate-100 cursor-pointer hover:border-slate-300 transition-colors">
-                  <span>{{ permissionActionLabels[action] | translate }}</span>
+                <label *ngFor="let action of getGroupAvailableActions(group)" class="flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 text-[13px] font-bold text-slate-700 shadow-sm border border-slate-100 cursor-pointer hover:border-slate-300 transition-colors">
+                  <span class="inline-flex items-center gap-2">
+                    {{ permissionActionLabels[action] | translate }}
+                    <span *ngIf="isSensitivePermission(group.id, action)" class="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-700">Sensitive</span>
+                  </span>
                   <input
                     type="checkbox"
                     class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20 transition-all"
@@ -389,7 +413,7 @@
         </div>
 
         <!-- Features -->
-        <div *ngIf="!isOperationalIdentity && activeTab === 'access'" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 lg:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] animate-in fade-in duration-500">
+        <div *ngIf="!isOperationalIdentity && activeTab === 'access'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] animate-in fade-in duration-500">
           <div class="mb-8">
             <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.FEATURES_BADGE' | translate }}</p>
             <h3 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.FEATURES_TITLE' | translate }}</h3>
@@ -413,13 +437,49 @@
             </label>
           </div>
         </div>
+
+        <!-- Audit -->
+        <div *ngIf="activeTab === 'audit'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] animate-in fade-in duration-500">
+          <div class="mb-8">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">Audit log</p>
+            <h3 class="text-xl font-black text-slate-900">Access history</h3>
+            <p class="text-[13px] font-bold text-slate-400 mt-1">Recent role, scope, status, and permission changes.</p>
+          </div>
+
+          <div *ngIf="isAuditLoading" class="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-[13px] font-bold text-slate-500">
+            Loading audit...
+          </div>
+
+          <div *ngIf="!isAuditLoading && auditLogs.length === 0" class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-[13px] font-bold text-slate-500">
+            No access audit entries yet.
+          </div>
+
+          <div *ngIf="!isAuditLoading && auditLogs.length > 0" class="space-y-3">
+            <article *ngFor="let log of auditLogs" class="rounded-2xl border border-slate-200 bg-white p-4">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p class="text-[14px] font-black text-slate-900">{{ log.action }}</p>
+                  <p class="mt-1 text-[12px] font-bold text-slate-500">{{ log.summary }}</p>
+                  <p class="mt-1 text-[11px] font-bold text-slate-400">
+                    By {{ log.actorFullName || log.actorEmail || log.actorUserId || 'System' }}
+                  </p>
+                </div>
+                <time class="text-[11px] font-black uppercase tracking-widest text-slate-400">{{ log.createdAtUtc | date:'medium' }}</time>
+              </div>
+              <div *ngIf="log.beforeJson || log.afterJson" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <pre *ngIf="log.beforeJson" class="max-h-44 overflow-auto rounded-xl bg-slate-950 p-3 text-[11px] font-semibold text-slate-100">{{ log.beforeJson }}</pre>
+                <pre *ngIf="log.afterJson" class="max-h-44 overflow-auto rounded-xl bg-slate-950 p-3 text-[11px] font-semibold text-slate-100">{{ log.afterJson }}</pre>
+              </div>
+            </article>
+          </div>
+        </div>
       </section>
 
       <!-- Right Column -->
       <aside class="space-y-6">
         
         <!-- Security -->
-        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+        <div class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)]">
           <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.SECURITY_BADGE' | translate }}</p>
           <h3 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.SECURITY_TITLE' | translate }}</h3>
           <p class="text-[12px] font-bold text-slate-400 mt-1">{{ 'ADMIN_USERS.DETAIL.SECURITY_DESC' | translate }}</p>
@@ -460,11 +520,38 @@
               <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">{{ 'ADMIN_USERS.SECURITY.INVITED_BY' | translate }}</span>
               <strong class="text-[13px] font-black text-slate-900">{{ currentUser.security.invitedBy || '-' }}</strong>
             </div>
+
+            <div class="flex items-center justify-between gap-4 p-4 rounded-[1.25rem] bg-slate-50/80 border border-slate-100">
+              <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">Password state</span>
+              <strong class="text-[13px] font-black" [class.text-amber-600]="currentUser.mustChangePassword" [class.text-emerald-600]="!currentUser.mustChangePassword">
+                {{ currentUser.mustChangePassword ? 'Temporary' : 'Changed' }}
+              </strong>
+            </div>
+
+            <div class="rounded-[1.25rem] bg-slate-50/80 border border-slate-100 p-4">
+              <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">Reset temporary password</span>
+              <div class="mt-3 flex gap-2">
+                <input
+                  [(ngModel)]="temporaryPassword"
+                  type="password"
+                  dir="ltr"
+                  class="h-10 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-bold outline-none focus:border-zadna-primary"
+                  placeholder="Temporary password" />
+                <button
+                  type="button"
+                  (click)="resetTemporaryPassword()"
+                  [disabled]="isResettingPassword || !temporaryPassword"
+                  class="h-10 rounded-xl bg-zadna-primary px-4 text-[12px] font-black text-white disabled:opacity-50">
+                  Reset
+                </button>
+              </div>
+              <p *ngIf="resetPasswordError" class="mt-2 text-[11px] font-bold text-red-600">{{ resetPasswordError }}</p>
+            </div>
           </div>
         </div>
 
         <!-- Summary -->
-        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+        <div class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)]">
           <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.SUMMARY_BADGE' | translate }}</p>
           <h3 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.SUMMARY_TITLE' | translate }}</h3>
           <p class="text-[12px] font-bold text-slate-400 mt-1">{{ 'ADMIN_USERS.DETAIL.SUMMARY_DESC' | translate }}</p>

@@ -77,9 +77,12 @@ import { ToastService } from '@shared/services/toast.service';
         [data]="filteredBanners"
         [columns]="tableColumns"
         [isLoading]="loading"
+        [emptyStateIcon]="'ad_group'"
+        [emptyStateActionLabel]="'إضافة بنر جديد'"
         [emptyStateTitle]="'لا توجد بنرات حالياً'"
         [emptyStateMessage]="'لم يتم إضافة أي بنر تسويقي. يمكنك إضافة بنر جديد ليظهر في الصفحة الرئيسية.'"
-        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'">
+        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
+        (emptyStateAction)="openCreate()">
 
           <ng-template #customColumn let-banner let-column="column">
             <ng-container *ngIf="column.key === 'tag'">

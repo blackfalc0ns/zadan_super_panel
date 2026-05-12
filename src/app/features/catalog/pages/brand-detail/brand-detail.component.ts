@@ -2,10 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 import { DetailHeaderComponent } from '../../../../shared/components/ui/detail-header/detail-header.component';
 import { CatalogService } from '@catalog/services/catalog.api.service';
-import { Brand } from '@catalog/models/catalog.domain.models';
+import { Brand, MasterProduct } from '@catalog/models/catalog.domain.models';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { BrandFormModalComponent } from '../../components/brand-form-modal/brand-form-modal.component';
+
+type BrandDetailProduct = MasterProduct & {
+  categoryNameAr?: string;
+  categoryNameEn?: string;
+};
 
 @Component({
   selector: 'app-brand-detail',
@@ -15,15 +22,17 @@ import { StatusPillComponent, StatusPillVariant } from '../../../../shared/compo
     RouterModule,
     TranslateModule,
     DetailHeaderComponent,
-    StatusPillComponent
+    StatusPillComponent,
+    BrandFormModalComponent
   ],
   templateUrl: './brand-detail.component.html',
   styleUrl: './brand-detail.component.scss'
 })
 export class BrandDetailComponent implements OnInit {
   brand: Brand | null = null;
-  products: any[] = [];
+  products: BrandDetailProduct[] = [];
   isLoading = true;
+  isEditModalOpen = false;
   breadcrumbs: { label: string; action?: () => void }[] = [];
 
   constructor(
@@ -42,7 +51,10 @@ export class BrandDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadBrand(id);
+      return;
     }
+
+    this.isLoading = false;
   }
 
   setupBreadcrumbs(): void {
@@ -55,32 +67,34 @@ export class BrandDetailComponent implements OnInit {
 
   loadBrand(id: string): void {
     this.isLoading = true;
-    this.catalogService.getBrands().subscribe({
-      next: (brands) => {
-        this.brand = brands.find((item) => item.id === id) || null;
-        if (this.brand) {
-          this.loadBrandProducts(id);
-          return;
-        }
+    this.brand = null;
+    this.products = [];
 
+    this.catalogService.getBrandById(id).pipe(
+      switchMap((brand) =>
+        forkJoin({
+          brand: of(brand),
+          products: this.catalogService.getProducts(1, 100, undefined, undefined, id).pipe(
+            map((response) => (response.data || response.items || []) as BrandDetailProduct[]),
+            catchError((error) => {
+              console.error('Error loading products for brand', error);
+              return of([]);
+            })
+          )
+        })
+      ),
+      finalize(() => {
         this.isLoading = false;
+      })
+    ).subscribe({
+      next: ({ brand, products }) => {
+        this.brand = brand;
+        this.products = products;
       },
       error: (err) => {
         console.error('Error loading brand', err);
-        this.isLoading = false;
-      }
-    });
-  }
-
-  loadBrandProducts(brandId: string): void {
-    this.catalogService.getProducts(1, 100, undefined, undefined, brandId).subscribe({
-      next: (res) => {
-        this.products = res.data || res.items || res;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading products for brand', err);
-        this.isLoading = false;
+        this.brand = null;
+        this.products = [];
       }
     });
   }
@@ -90,8 +104,18 @@ export class BrandDetailComponent implements OnInit {
   }
 
   editBrand(): void {
-    if (this.brand?.id) {
-      this.router.navigate(['/catalog/brands/edit', this.brand.id]);
+    this.isEditModalOpen = !!this.brand;
+  }
+
+  onEditModalClosed(): void {
+    this.isEditModalOpen = false;
+  }
+
+  onBrandSaved(): void {
+    const id = this.brand?.id;
+    this.isEditModalOpen = false;
+    if (id) {
+      this.loadBrand(id);
     }
   }
 
@@ -129,6 +153,47 @@ export class BrandDetailComponent implements OnInit {
     return this.activeLang === 'ar'
       ? (this.brand.categoryNameAr || this.brand.categoryNameEn || '-')
       : (this.brand.categoryNameEn || this.brand.categoryNameAr || '-');
+  }
+
+  getBrandDisplayName(): string {
+    if (!this.brand) {
+      return '';
+    }
+
+    return this.activeLang === 'ar'
+      ? (this.brand.nameAr || this.brand.nameEn)
+      : (this.brand.nameEn || this.brand.nameAr);
+  }
+
+  getBrandSecondaryName(): string {
+    if (!this.brand) {
+      return '';
+    }
+
+    return this.activeLang === 'ar'
+      ? (this.brand.nameEn || this.brand.nameAr)
+      : (this.brand.nameAr || this.brand.nameEn);
+  }
+
+  getProductDisplayName(product: BrandDetailProduct): string {
+    return this.activeLang === 'ar'
+      ? (product.nameAr || product.nameEn)
+      : (product.nameEn || product.nameAr);
+  }
+
+  getProductCategoryName(product: BrandDetailProduct): string {
+    return this.activeLang === 'ar'
+      ? (product.categoryNameAr || product.categoryNameEn || '-')
+      : (product.categoryNameEn || product.categoryNameAr || '-');
+  }
+
+  getProductsCount(): number {
+    return this.brand?.masterProductsCount ?? this.products.length;
+  }
+
+  getBrandInitials(): string {
+    const name = this.getBrandDisplayName() || 'B';
+    return name.trim().slice(0, 2).toUpperCase();
   }
 
   getCoverImageUrl(): string | null {

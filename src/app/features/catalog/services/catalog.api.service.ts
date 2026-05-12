@@ -152,15 +152,15 @@ export class CatalogService {
   }
 
   getCategoryById(id: string): Observable<Category> {
-    const fallback = this.findFallbackCategoryById(id) ?? this.getFallbackCategories(undefined, true)[0];
-
-    if (this.shouldUseLocalReadFallback()) {
-      return of(fallback);
-    }
-
     return this.http.get<unknown>(`${this.apiUrl}/categories/${id}`, { headers: this.getHeaders() }).pipe(
-      map((response) => this.normalizeSingleCategory(response) ?? fallback),
-      catchError((error) => this.handleReadFallback('Catalog category detail', fallback, error))
+      map((response) => {
+        const category = this.normalizeSingleCategory(response);
+        if (!category) {
+          throw new Error(`Catalog category ${id} was not found.`);
+        }
+
+        return category;
+      })
     );
   }
 
@@ -259,15 +259,15 @@ export class CatalogService {
   }
 
   getProductById(id: string): Observable<CatalogProductRecord> {
-    const fallback = this.findFallbackProductById(id) ?? this.cloneProduct(this.fallbackProducts[0]);
-
-    if (this.shouldUseLocalReadFallback()) {
-      return of(fallback);
-    }
-
     return this.http.get<unknown>(`${this.apiUrl}/products/${id}`, { headers: this.getHeaders() }).pipe(
-      map((response) => this.normalizeSingleProduct(response) ?? fallback),
-      catchError((error) => this.handleReadFallback('Catalog product detail', fallback, error))
+      map((response) => {
+        const product = this.normalizeSingleProduct(response);
+        if (!product) {
+          throw new Error(`Catalog product ${id} was not found.`);
+        }
+
+        return product;
+      })
     );
   }
 
@@ -308,6 +308,28 @@ export class CatalogService {
       map((response) => this.normalizeBrandsResponse(response, includeInactive, fallback)),
       catchError((error) => allowFallback
         ? this.handleReadFallback('Catalog brands', fallback, error)
+        : throwError(() => error))
+    );
+  }
+
+  getBrandById(id: string, allowFallback: boolean = true): Observable<Brand> {
+    const fallback = this.findFallbackBrandById(id);
+
+    if (allowFallback && this.shouldUseLocalReadFallback() && fallback) {
+      return of(fallback);
+    }
+
+    return this.getBrands(true, false).pipe(
+      map((brands) => {
+        const brand = brands.find((item) => item.id === id);
+        if (!brand) {
+          throw new Error(`Catalog brand ${id} was not found.`);
+        }
+
+        return brand;
+      }),
+      catchError((error) => allowFallback && fallback
+        ? this.handleReadFallback('Catalog brand detail', fallback, error)
         : throwError(() => error))
     );
   }
@@ -492,40 +514,7 @@ export class CatalogService {
   }
 
   private buildMockProductRequests(): ProductRequest[] {
-    return [
-      {
-        id: 'REQ-001',
-        requestType: 'product',
-        suggestedNameAr: 'حليب كامل الدسم ١ لتر',
-        suggestedNameEn: 'Full Cream Milk 1L',
-        suggestedCategoryId: 'CAT-COLD-DRINKS',
-        suggestedDescriptionAr: 'حليب طبيعي طازج',
-        suggestedDescriptionEn: 'Fresh natural milk',
-        imageUrl: this.buildPlaceholderAsset('Milk', 'f3f4f6'),
-        status: 'Pending',
-        vendorId: 'VND-001',
-        vendorName: 'سوبر ماركت الهدى',
-        createdAtUtc: '2024-03-31T10:00:00Z',
-        categoryPathAr: 'البقالة > المشروبات > المشروبات الباردة',
-        categoryPathEn: 'Grocery > Beverages > Cold Drinks'
-      },
-      {
-        id: 'REQ-002',
-        requestType: 'product',
-        suggestedNameAr: 'قهوة اسبريسو مطحونة',
-        suggestedNameEn: 'Ground Espresso Coffee',
-        suggestedCategoryId: 'CAT-ARABIC-COFFEE',
-        suggestedDescriptionAr: 'بن برازيلي فاخر',
-        suggestedDescriptionEn: 'Premium Brazilian coffee',
-        imageUrl: this.buildPlaceholderAsset('Coffee', 'fef3c7'),
-        status: 'Pending',
-        vendorId: 'VND-002',
-        vendorName: 'بن الشروق',
-        createdAtUtc: '2024-03-31T11:30:00Z',
-        categoryPathAr: 'البقالة > المشروبات > المشروبات الساخنة > القهوة العربية',
-        categoryPathEn: 'Grocery > Beverages > Hot Drinks > Arabic Coffee'
-      }
-    ];
+    return [];
   }
 
   private mapCatalogRequest(item: any): ProductRequest {
@@ -569,25 +558,36 @@ export class CatalogService {
   }
 
   uploadFile(file: File, directory: string = 'catalog'): Observable<{ url: string }> {
-    const localPreview = { url: this.createObjectUrl(file) };
-
-    if (!this.authService.hasApiSession) {
-      return of(localPreview);
-    }
-
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('directory', directory);
+    formData.append('directory', this.resolveUploadDirectory(directory));
 
     return this.http.post<{ url?: string; Url?: string }>(`${this.filesUrl}/upload`, formData, {
       headers: this.getHeaders()
     }).pipe(
-      map((response) => ({ url: response.url ?? response.Url ?? localPreview.url })),
-      catchError((error) => {
-        console.warn('Catalog file upload API failed, using local preview URL.', error);
-        return of(localPreview);
+      map((response) => {
+        const url = (response.url ?? response.Url ?? '').trim();
+        if (!url || url.startsWith('blob:')) {
+          throw new Error('Catalog file upload did not return a valid cloud URL.');
+        }
+
+        return { url };
       })
     );
+  }
+
+  private resolveUploadDirectory(directory: string): string {
+    const normalized = (directory || '').replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+    const aliases: Record<string, string> = {
+      catalog: 'uploads/catalog/products',
+      brands: 'uploads/catalog/brands',
+      products: 'uploads/catalog/products',
+      categories: 'uploads/catalog/categories',
+      'brand-requests': 'uploads/catalog/brand-requests',
+      'category-requests': 'uploads/catalog/category-requests'
+    };
+
+    return aliases[normalized] ?? normalized;
   }
 
   private shouldUseLocalReadFallback(): boolean {
@@ -714,6 +714,15 @@ export class CatalogService {
     }
 
     return includeInactive ? brands : brands.filter((brand) => brand.isActive);
+  }
+
+  private normalizeSingleBrand(response: unknown): Brand | null {
+    if (!response || typeof response !== 'object') {
+      return null;
+    }
+
+    const brand = this.extractEntity<Brand>(response);
+    return brand ? this.normalizeBrand(brand, 0) : null;
   }
 
   private normalizeProductSearchResponse(
@@ -1447,6 +1456,95 @@ export class CatalogService {
   }
 
   private normalizeBrand(brand: Brand, index: number): Brand {
+    const raw = brand as Brand & Record<string, unknown>;
+    const stringValue = (...keys: string[]): string | undefined => {
+      for (const key of keys) {
+        const value = raw[key];
+        if (typeof value === 'string' && value.trim().length > 0) {
+          return value.trim();
+        }
+      }
+
+      return undefined;
+    };
+    const nullableStringValue = (...keys: string[]): string | null => stringValue(...keys) ?? null;
+    const booleanValue = (...keys: string[]): boolean | undefined => {
+      for (const key of keys) {
+        const value = raw[key];
+        if (typeof value === 'boolean') {
+          return value;
+        }
+
+        if (typeof value === 'string') {
+          const normalized = value.trim().toLowerCase();
+          if (normalized === 'true') {
+            return true;
+          }
+
+          if (normalized === 'false') {
+            return false;
+          }
+        }
+      }
+
+      return undefined;
+    };
+    const numberValue = (...keys: string[]): number | undefined => {
+      for (const key of keys) {
+        const value = raw[key];
+        if (typeof value === 'number' && Number.isFinite(value)) {
+          return value;
+        }
+
+        if (typeof value === 'string' && value.trim().length > 0) {
+          const parsed = Number(value);
+          if (Number.isFinite(parsed)) {
+            return parsed;
+          }
+        }
+      }
+
+      return undefined;
+    };
+
+    const id = stringValue('id', 'Id') || `BRD-${index + 1}`;
+    const nameAr = stringValue('nameAr', 'name_ar', 'NameAr', 'arabicName', 'arabic_name', 'ArabicName', 'name', 'Name')
+      || stringValue('nameEn', 'name_en', 'NameEn', 'englishName', 'english_name', 'EnglishName')
+      || `Ø¹Ù„Ø§Ù…Ø© ${index + 1}`;
+    const nameEn = stringValue('nameEn', 'name_en', 'NameEn', 'englishName', 'english_name', 'EnglishName')
+      || stringValue('nameAr', 'name_ar', 'NameAr', 'arabicName', 'arabic_name', 'ArabicName', 'name', 'Name')
+      || `Brand ${index + 1}`;
+    const relatedProductsCount = (this.fallbackProducts ?? []).filter((product) => product.brandId === id).length;
+    const createdAtUtc = stringValue('createdAtUtc', 'created_at_utc', 'CreatedAtUtc', 'createdAt', 'created_at', 'CreatedAt')
+      || new Date(Date.UTC(2025, 1, index + 1)).toISOString();
+    const updatedAtUtc = stringValue('updatedAtUtc', 'updated_at_utc', 'UpdatedAtUtc', 'updatedAt', 'updated_at', 'UpdatedAt')
+      || createdAtUtc;
+    const normalizedCategoryId = nullableStringValue('categoryId', 'category_id', 'CategoryId')
+      || (this.fallbackProducts ?? []).find((product) => product.brandId === id)?.categoryId
+      || null;
+    const normalizedCategory = normalizedCategoryId ? this.findFallbackCategoryById(normalizedCategoryId) : null;
+    const logoUrl = stringValue('logoUrl', 'logo_url', 'LogoUrl', 'logo', 'Logo')
+      || this.buildPlaceholderAsset(nameEn || nameAr || 'Brand', 'f3f4f6');
+    const coverImageUrl = stringValue('coverImageUrl', 'cover_image_url', 'CoverImageUrl', 'coverImage', 'cover_image', 'CoverImage');
+
+    return {
+      ...brand,
+      id,
+      nameAr,
+      nameEn,
+      categoryId: normalizedCategoryId,
+      categoryNameAr: stringValue('categoryNameAr', 'category_name_ar', 'CategoryNameAr') || normalizedCategory?.nameAr,
+      categoryNameEn: stringValue('categoryNameEn', 'category_name_en', 'CategoryNameEn') || normalizedCategory?.nameEn,
+      isActive: booleanValue('isActive', 'is_active', 'IsActive') ?? true,
+      masterProductsCount: numberValue('masterProductsCount', 'master_products_count', 'MasterProductsCount', 'productCount', 'product_count', 'ProductCount') ?? relatedProductsCount,
+      logoUrl,
+      coverImageUrl: coverImageUrl || undefined,
+      createdAtUtc,
+      updatedAtUtc
+    };
+  }
+
+  private normalizeLegacyBrand(brand: Brand, index: number): Brand {
     const relatedProductsCount = (this.fallbackProducts ?? []).filter((product) => product.brandId === brand.id).length;
     const createdAtUtc = brand.createdAtUtc || new Date(Date.UTC(2025, 1, index + 1)).toISOString();
     const updatedAtUtc = brand.updatedAtUtc || createdAtUtc;
@@ -1510,6 +1608,10 @@ export class CatalogService {
     return null;
   }
 
+  private findFallbackBrandById(brandId: string): Brand | null {
+    return this.fallbackBrands.find((brand) => brand.id === brandId) ?? null;
+  }
+
   private getDirectChildren(categories: Category[], parentId: string): Category[] {
     for (const category of categories) {
       if (category.id === parentId) {
@@ -1525,14 +1627,6 @@ export class CatalogService {
     }
 
     return [];
-  }
-
-  private createObjectUrl(file: File): string {
-    if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
-      return URL.createObjectURL(file);
-    }
-
-    return this.buildPlaceholderAsset(file.name || 'Upload', 'e2e8f0');
   }
 
   private buildSlug(value: string): string {
@@ -1555,466 +1649,18 @@ export class CatalogService {
   }
 
   private buildMockCategories(): Category[] {
-    return [
-      {
-        id: 'CAT-GROCERY',
-        nameAr: 'البقالة',
-        nameEn: 'Grocery',
-        imageUrl: this.buildPlaceholderAsset('Grocery', 'dff6f8'),
-        displayOrder: 1,
-        isActive: true,
-        subCategories: [
-          {
-            id: 'CAT-BEVERAGES',
-            nameAr: 'المشروبات',
-            nameEn: 'Beverages',
-            imageUrl: this.buildPlaceholderAsset('Beverages', 'e8f7da'),
-            parentCategoryId: 'CAT-GROCERY',
-            displayOrder: 1,
-            isActive: true,
-            subCategories: [
-              {
-                id: 'CAT-HOT-DRINKS',
-                nameAr: 'المشروبات الساخنة',
-                nameEn: 'Hot Drinks',
-                parentCategoryId: 'CAT-BEVERAGES',
-                displayOrder: 1,
-                isActive: true,
-                subCategories: [
-                  {
-                    id: 'CAT-ARABIC-COFFEE',
-                    nameAr: 'القهوة العربية',
-                    nameEn: 'Arabic Coffee',
-                    parentCategoryId: 'CAT-HOT-DRINKS',
-                    displayOrder: 1,
-                    isActive: true
-                  },
-                  {
-                    id: 'CAT-BLACK-TEA',
-                    nameAr: 'الشاي الأسود',
-                    nameEn: 'Black Tea',
-                    parentCategoryId: 'CAT-HOT-DRINKS',
-                    displayOrder: 2,
-                    isActive: true
-                  }
-                ]
-              },
-              {
-                id: 'CAT-COLD-DRINKS',
-                nameAr: 'المشروبات الباردة',
-                nameEn: 'Cold Drinks',
-                parentCategoryId: 'CAT-BEVERAGES',
-                displayOrder: 2,
-                isActive: true,
-                subCategories: [
-                  {
-                    id: 'CAT-JUICES',
-                    nameAr: 'العصائر',
-                    nameEn: 'Juices',
-                    parentCategoryId: 'CAT-COLD-DRINKS',
-                    displayOrder: 1,
-                    isActive: true
-                  },
-                  {
-                    id: 'CAT-SPARKLING-WATER',
-                    nameAr: 'المياه الغازية',
-                    nameEn: 'Sparkling Water',
-                    parentCategoryId: 'CAT-COLD-DRINKS',
-                    displayOrder: 2,
-                    isActive: true
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            id: 'CAT-PANTRY',
-            nameAr: 'المؤن الأساسية',
-            nameEn: 'Pantry Staples',
-            imageUrl: this.buildPlaceholderAsset('Pantry', 'fff3d6'),
-            parentCategoryId: 'CAT-GROCERY',
-            displayOrder: 2,
-            isActive: true,
-            subCategories: [
-              {
-                id: 'CAT-GRAINS',
-                nameAr: 'الحبوب',
-                nameEn: 'Grains',
-                parentCategoryId: 'CAT-PANTRY',
-                displayOrder: 1,
-                isActive: true,
-                subCategories: [
-                  {
-                    id: 'CAT-BASMATI-RICE',
-                    nameAr: 'أرز بسمتي',
-                    nameEn: 'Basmati Rice',
-                    parentCategoryId: 'CAT-GRAINS',
-                    displayOrder: 1,
-                    isActive: true
-                  },
-                  {
-                    id: 'CAT-PASTA',
-                    nameAr: 'المعكرونة',
-                    nameEn: 'Pasta',
-                    parentCategoryId: 'CAT-GRAINS',
-                    displayOrder: 2,
-                    isActive: true
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'CAT-FRESH',
-        nameAr: 'الأغذية الطازجة',
-        nameEn: 'Fresh Food',
-        imageUrl: this.buildPlaceholderAsset('Fresh Food', 'fee2e2'),
-        displayOrder: 2,
-        isActive: true,
-        subCategories: [
-          {
-            id: 'CAT-DAIRY-EGGS',
-            nameAr: 'الألبان والبيض',
-            nameEn: 'Dairy and Eggs',
-            parentCategoryId: 'CAT-FRESH',
-            displayOrder: 1,
-            isActive: true,
-            subCategories: [
-              {
-                id: 'CAT-DAIRY',
-                nameAr: 'الألبان',
-                nameEn: 'Dairy',
-                parentCategoryId: 'CAT-DAIRY-EGGS',
-                displayOrder: 1,
-                isActive: true,
-                subCategories: [
-                  {
-                    id: 'CAT-YOGURT',
-                    nameAr: 'الزبادي',
-                    nameEn: 'Yogurt',
-                    parentCategoryId: 'CAT-DAIRY',
-                    displayOrder: 1,
-                    isActive: true
-                  },
-                  {
-                    id: 'CAT-LABNEH',
-                    nameAr: 'اللبنة',
-                    nameEn: 'Labneh',
-                    parentCategoryId: 'CAT-DAIRY',
-                    displayOrder: 2,
-                    isActive: true
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            id: 'CAT-PRODUCE',
-            nameAr: 'الخضار والفواكه',
-            nameEn: 'Produce',
-            parentCategoryId: 'CAT-FRESH',
-            displayOrder: 2,
-            isActive: true,
-            subCategories: [
-              {
-                id: 'CAT-FRUITS',
-                nameAr: 'الفواكه الطازجة',
-                nameEn: 'Fresh Fruits',
-                parentCategoryId: 'CAT-PRODUCE',
-                displayOrder: 1,
-                isActive: true,
-                subCategories: [
-                  {
-                    id: 'CAT-BANANAS',
-                    nameAr: 'الموز',
-                    nameEn: 'Bananas',
-                    parentCategoryId: 'CAT-FRUITS',
-                    displayOrder: 1,
-                    isActive: true
-                  },
-                  {
-                    id: 'CAT-CITRUS',
-                    nameAr: 'الحمضيات',
-                    nameEn: 'Citrus',
-                    parentCategoryId: 'CAT-FRUITS',
-                    displayOrder: 2,
-                    isActive: false
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ];
+    return [];
   }
 
   private buildMockBrands(): Brand[] {
-    return [
-      {
-        id: 'BRD-ALMARAI',
-        nameAr: 'المراعي',
-        nameEn: 'Almarai',
-        logoUrl: this.buildPlaceholderAsset('Almarai', 'dbeafe'),
-        categoryId: 'CAT-YOGURT',
-        isActive: true,
-        createdAtUtc: '2025-08-01T09:00:00Z'
-      },
-      {
-        id: 'BRD-NADEC',
-        nameAr: 'نادك',
-        nameEn: 'NADEC',
-        logoUrl: this.buildPlaceholderAsset('NADEC', 'd1fae5'),
-        categoryId: 'CAT-LABNEH',
-        isActive: true,
-        createdAtUtc: '2025-08-04T09:00:00Z'
-      },
-      {
-        id: 'BRD-NESTLE',
-        nameAr: 'نستله',
-        nameEn: 'Nestle',
-        logoUrl: this.buildPlaceholderAsset('Nestle', 'fef3c7'),
-        categoryId: 'CAT-BLACK-TEA',
-        isActive: true,
-        createdAtUtc: '2025-08-08T09:00:00Z'
-      },
-      {
-        id: 'BRD-AMERICANA',
-        nameAr: 'أمريكانا',
-        nameEn: 'Americana',
-        logoUrl: this.buildPlaceholderAsset('Americana', 'fee2e2'),
-        categoryId: 'CAT-PASTA',
-        isActive: true,
-        createdAtUtc: '2025-08-11T09:00:00Z'
-      },
-      {
-        id: 'BRD-PRIVATE',
-        nameAr: 'منتجات مختارة',
-        nameEn: 'Selected Goods',
-        logoUrl: this.buildPlaceholderAsset('Selected Goods', 'ede9fe'),
-        categoryId: 'CAT-ARABIC-COFFEE',
-        isActive: false,
-        createdAtUtc: '2025-08-15T09:00:00Z'
-      }
-    ].map((brand, index) => this.normalizeBrand(brand, index));
+    return [];
   }
 
   private buildMockUnits(): CatalogUnit[] {
-    return [
-      { id: 'UNIT-PC', nameAr: 'قطعة', nameEn: 'Piece', isActive: true },
-      { id: 'UNIT-BTL', nameAr: 'زجاجة', nameEn: 'Bottle', isActive: true },
-      { id: 'UNIT-PCK', nameAr: 'عبوة', nameEn: 'Pack', isActive: true },
-      { id: 'UNIT-KG', nameAr: 'كيلوجرام', nameEn: 'Kilogram', isActive: true },
-      { id: 'UNIT-CUP', nameAr: 'كوب', nameEn: 'Cup', isActive: true }
-    ];
+    return [];
   }
 
   private buildMockProducts(): CatalogProductRecord[] {
-    const products: CatalogProductRecord[] = [
-      {
-        id: 'PRD-24001',
-        nameAr: 'قهوة عربية فاخرة',
-        nameEn: 'Premium Arabic Coffee',
-        slug: 'premium-arabic-coffee',
-        descriptionAr: 'خلطة محمصة مخصصة للتقديم السريع مع ثبات في الجودة.',
-        descriptionEn: 'Signature roasted blend prepared for quick-commerce operations.',
-        barcode: '628100000001',
-        categoryId: 'CAT-ARABIC-COFFEE',
-        brandId: 'BRD-PRIVATE',
-        unitOfMeasureId: 'UNIT-PCK',
-        status: 'Active',
-        images: [{
-          masterProductId: 'PRD-24001',
-          imageBankId: 'PRD-24001-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Arabic Coffee', 'f5efe0')
-        }]
-      },
-      {
-        id: 'PRD-24002',
-        nameAr: 'شاي أسود سيلاني',
-        nameEn: 'Ceylon Black Tea',
-        slug: 'ceylon-black-tea',
-        descriptionAr: 'أكياس شاي مناسبة للطلبات المتكررة والبيع عالي الدوران.',
-        descriptionEn: 'High-turnover tea bags suitable for routine replenishment.',
-        barcode: '628100000002',
-        categoryId: 'CAT-BLACK-TEA',
-        brandId: 'BRD-NESTLE',
-        unitOfMeasureId: 'UNIT-PCK',
-        status: 'Active',
-        images: [{
-          masterProductId: 'PRD-24002',
-          imageBankId: 'PRD-24002-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Black Tea', 'fef3c7')
-        }]
-      },
-      {
-        id: 'PRD-24003',
-        nameAr: 'عصير برتقال 1 لتر',
-        nameEn: 'Orange Juice 1L',
-        slug: 'orange-juice-1l',
-        descriptionAr: 'منتج أساسي في فئة العصائر مع معدل طلب يومي مرتفع.',
-        descriptionEn: 'Core SKU in the juice segment with strong daily demand.',
-        barcode: '628100000003',
-        categoryId: 'CAT-JUICES',
-        brandId: 'BRD-ALMARAI',
-        unitOfMeasureId: 'UNIT-BTL',
-        status: 'Active',
-        images: [{
-          masterProductId: 'PRD-24003',
-          imageBankId: 'PRD-24003-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Orange Juice', 'fed7aa')
-        }]
-      },
-      {
-        id: 'PRD-24004',
-        nameAr: 'مياه غازية ليمون',
-        nameEn: 'Lemon Sparkling Water',
-        slug: 'lemon-sparkling-water',
-        descriptionAr: 'صنف موسمي مناسب للعروض والباقات السريعة.',
-        descriptionEn: 'Seasonal sparkling SKU built for bundles and promotions.',
-        barcode: '628100000004',
-        categoryId: 'CAT-SPARKLING-WATER',
-        brandId: 'BRD-AMERICANA',
-        unitOfMeasureId: 'UNIT-BTL',
-        status: 'Draft',
-        images: [{
-          masterProductId: 'PRD-24004',
-          imageBankId: 'PRD-24004-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Sparkling Water', 'dbeafe')
-        }]
-      },
-      {
-        id: 'PRD-24005',
-        nameAr: 'أرز بسمتي 5 كجم',
-        nameEn: 'Basmati Rice 5kg',
-        slug: 'basmati-rice-5kg',
-        descriptionAr: 'حجم عائلي ضمن أكثر الأصناف استقرارًا في الطلب.',
-        descriptionEn: 'Family-size staple with consistent recurring demand.',
-        barcode: '628100000005',
-        categoryId: 'CAT-BASMATI-RICE',
-        brandId: 'BRD-PRIVATE',
-        unitOfMeasureId: 'UNIT-KG',
-        status: 'Active',
-        images: [{
-          masterProductId: 'PRD-24005',
-          imageBankId: 'PRD-24005-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Basmati Rice', 'fef9c3')
-        }]
-      },
-      {
-        id: 'PRD-24006',
-        nameAr: 'مكرونة بيني',
-        nameEn: 'Penne Pasta',
-        slug: 'penne-pasta',
-        descriptionAr: 'عبوة تجارية مناسبة للطلبات المنزلية المتكررة.',
-        descriptionEn: 'Retail-ready pasta pack for frequent household orders.',
-        barcode: '628100000006',
-        categoryId: 'CAT-PASTA',
-        brandId: 'BRD-AMERICANA',
-        unitOfMeasureId: 'UNIT-PCK',
-        status: 'Active',
-        images: [{
-          masterProductId: 'PRD-24006',
-          imageBankId: 'PRD-24006-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Pasta', 'fde68a')
-        }]
-      },
-      {
-        id: 'PRD-24007',
-        nameAr: 'زبادي طبيعي',
-        nameEn: 'Plain Yogurt',
-        slug: 'plain-yogurt',
-        descriptionAr: 'صنف سريع الدوران مع تغطية واسعة في المتاجر.',
-        descriptionEn: 'Fast-moving dairy product with broad availability.',
-        barcode: '628100000007',
-        categoryId: 'CAT-YOGURT',
-        brandId: 'BRD-ALMARAI',
-        unitOfMeasureId: 'UNIT-CUP',
-        status: 'Active',
-        images: [{
-          masterProductId: 'PRD-24007',
-          imageBankId: 'PRD-24007-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Yogurt', 'd1fae5')
-        }]
-      },
-      {
-        id: 'PRD-24008',
-        nameAr: 'لبنة كاملة الدسم',
-        nameEn: 'Full Fat Labneh',
-        slug: 'full-fat-labneh',
-        descriptionAr: 'منتج بارد يحتاج التزام سلسلة تبريد وتشغيل منضبط.',
-        descriptionEn: 'Chilled dairy SKU that depends on strict cold-chain handling.',
-        barcode: '628100000008',
-        categoryId: 'CAT-LABNEH',
-        brandId: 'BRD-NADEC',
-        unitOfMeasureId: 'UNIT-PCK',
-        status: 'Inactive',
-        images: [{
-          masterProductId: 'PRD-24008',
-          imageBankId: 'PRD-24008-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Labneh', 'e0f2fe')
-        }]
-      },
-      {
-        id: 'PRD-24009',
-        nameAr: 'موز طازج',
-        nameEn: 'Fresh Bananas',
-        slug: 'fresh-bananas',
-        descriptionAr: 'فاكهة يومية أساسية مع معدل ارتجاع منخفض.',
-        descriptionEn: 'Daily fresh fruit SKU with low return rates.',
-        barcode: '628100000009',
-        categoryId: 'CAT-BANANAS',
-        brandId: 'BRD-PRIVATE',
-        unitOfMeasureId: 'UNIT-KG',
-        status: 'Active',
-        images: [{
-          masterProductId: 'PRD-24009',
-          imageBankId: 'PRD-24009-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Bananas', 'fef08a')
-        }]
-      },
-      {
-        id: 'PRD-24010',
-        nameAr: 'برتقال فالنسيا',
-        nameEn: 'Valencia Oranges',
-        slug: 'valencia-oranges',
-        descriptionAr: 'منتج موسمي متوقف مؤقتًا لحين توافر التوريد.',
-        descriptionEn: 'Seasonal fresh item currently paused pending supply recovery.',
-        barcode: '628100000010',
-        categoryId: 'CAT-CITRUS',
-        brandId: 'BRD-PRIVATE',
-        unitOfMeasureId: 'UNIT-KG',
-        status: 'Discontinued',
-        images: [{
-          masterProductId: 'PRD-24010',
-          imageBankId: 'PRD-24010-1',
-          displayOrder: 1,
-          isPrimary: true,
-          url: this.buildPlaceholderAsset('Oranges', 'fdba74')
-        }]
-      }
-    ];
-
-    return products.map((product) => this.normalizeProduct(product));
+    return [];
   }
 }

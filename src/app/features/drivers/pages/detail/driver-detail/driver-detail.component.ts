@@ -211,9 +211,11 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.driver.status === 'Suspended') {
+    if (this.driver.status === 'Suspended' || this.driver.status === 'Banned') {
       this.runMutation(
-        () => this.driverService.reactivateDriver(this.driverId!),
+        () => this.driver!.status === 'Banned'
+          ? this.driverService.unbanDriver(this.driverId!)
+          : this.driverService.reactivateDriver(this.driverId!),
         this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_REACTIVATED')
       );
       return;
@@ -222,6 +224,36 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     this.runMutation(
       () => this.driverService.suspendDriver(this.driverId!, this.composeReviewNote()),
       this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_SUSPENDED')
+    );
+  }
+
+  banDriver(): void {
+    if (!this.driverId || !this.driver || this.isMutating) {
+      return;
+    }
+
+    if (this.driver.status === 'Banned') {
+      this.runMutation(
+        () => this.driverService.unbanDriver(this.driverId!),
+        this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_REACTIVATED')
+      );
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.banDriver(this.driverId!, this.composeReviewNote()),
+      this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_BANNED')
+    );
+  }
+
+  clearDriverRestrictions(): void {
+    if (!this.driverId || !this.driver || this.isMutating) {
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.clearDriverRestrictions(this.driverId!, this.composeReviewNote()),
+      this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_RESTRICTIONS_CLEARED')
     );
   }
 
@@ -256,6 +288,13 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       case 'SUSPEND_DRIVER':
       case 'REACTIVATE_DRIVER':
         this.toggleSuspension();
+        break;
+      case 'BAN_DRIVER':
+      case 'UNBAN_DRIVER':
+        this.banDriver();
+        break;
+      case 'CLEAR_DRIVER_RESTRICTIONS':
+        this.clearDriverRestrictions();
         break;
       default:
         this.openWorkflowContext(actionId);

@@ -1,34 +1,152 @@
-@use "sass:math";
+:host {
+  display: block;
+}
 
-// Custom Scrollbar
-.custom-scrollbar {
-  &::-webkit-scrollbar { width: 5px; height: 5px; }
-  &::-webkit-scrollbar-track { background: transparent; }
-  &::-webkit-scrollbar-thumb { 
-    background: #e2e8f0;
-    border-radius: 9999px;
-    &:hover { background: #cbd5e1; }
+.summary-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  border: 1px solid rgb(226 232 240 / 0.72);
+  border-radius: 1rem;
+  background: #fff;
+  min-height: 4.6rem;
+  padding: 0.8rem 0.95rem;
+  box-shadow: 0 8px 20px rgb(15 23 42 / 0.035);
+
+  > .material-symbols-outlined {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border-radius: 0.8rem;
+    background: rgb(248 250 252);
+    font-size: 1.15rem;
+  }
+
+  p {
+    color: rgb(100 116 139);
+    font-size: 0.61rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  strong {
+    display: block;
+    margin-top: 0.15rem;
+    color: rgb(15 23 42);
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1;
   }
 }
 
-// Animations
-@keyframes scale-in {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+.catalog-list-panel {
+  overflow: hidden;
+  border: 1px solid rgb(226 232 240 / 0.72);
+  border-radius: 1.15rem;
+  background: #fff;
+  box-shadow: 0 12px 30px rgb(15 23 42 / 0.04);
+  padding: 0.85rem;
+
+  @media (min-width: 640px) {
+    padding: 1rem;
+  }
 }
 
-.animate-scale-in {
-    animation: scale-in 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+.table-action,
+.mobile-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 0.75rem;
+  background: rgb(248 250 252);
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+
+  &:hover {
+    background: currentColor;
+    transform: translateY(-1px);
+
+    .material-symbols-outlined {
+      color: #fff;
+    }
+  }
 }
 
-@keyframes rowEntrance {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+.mobile-category-card {
+  cursor: pointer;
+  border: 1px solid rgb(226 232 240 / 0.74);
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, #fff, rgb(248 250 252 / 0.68));
+  padding: 1rem;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 0.045);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+
+  &:hover {
+    border-color: rgb(18 124 140 / 0.24);
+    box-shadow: 0 16px 34px rgb(18 124 140 / 0.08);
+    transform: translateY(-2px);
+  }
 }
 
-.animate-row {
-  animation: rowEntrance 0.3s ease-out forwards;
+.mobile-stat {
+  min-width: 0;
+  border: 1px solid rgb(241 245 249);
+  border-radius: 0.9rem;
+  background: #fff;
+  padding: 0.65rem 0.45rem;
+  text-align: center;
+
+  span {
+    display: block;
+    color: rgb(15 23 42);
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  p {
+    margin-top: 0.35rem;
+    overflow: hidden;
+    color: rgb(148 163 184);
+    font-size: 0.56rem;
+    font-weight: 900;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 }
 
-// Extraordinary Table Design and Row animations removed as they are now global in styles.scss
+.empty-list {
+  display: flex;
+  min-height: 25rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgb(203 213 225 / 0.82);
+  border-radius: 1.25rem;
+  background: rgb(248 250 252 / 0.72);
+  padding: 2rem;
+  text-align: center;
 
+  h2 {
+    margin-top: 0.85rem;
+    color: rgb(15 23 42);
+    font-size: 1.25rem;
+    font-weight: 900;
+  }
+
+  p {
+    margin-top: 0.45rem;
+    max-width: 30rem;
+    color: rgb(100 116 139);
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.8;
+  }
+}

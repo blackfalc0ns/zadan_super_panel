@@ -14,7 +14,8 @@ export function getDriverStatusKey(status: DriverStatus): string {
     Online: 'DRIVERS.STATUS.ONLINE',
     OnMission: 'DRIVERS.STATUS.ONMISSION',
     Offline: 'DRIVERS.STATUS.OFFLINE',
-    Suspended: 'DRIVERS.STATUS.SUSPENDED'
+    Suspended: 'DRIVERS.STATUS.SUSPENDED',
+    Banned: 'DRIVERS.STATUS.BANNED'
   };
 
   return keys[status];
@@ -48,7 +49,8 @@ export function getDriverStatusVariant(status: DriverStatus): StatusPillVariant 
     Online: 'success',
     OnMission: 'warning',
     Offline: 'neutral',
-    Suspended: 'danger'
+    Suspended: 'danger',
+    Banned: 'danger'
   };
 
   return variants[status];
@@ -59,7 +61,8 @@ export function getLifecycleDriverStatusVariant(status: DriverStatus): StatusPil
     Online: 'success',
     Offline: 'paused',
     OnMission: 'processing',
-    Suspended: 'danger'
+    Suspended: 'danger',
+    Banned: 'danger'
   };
 
   return variants[status];

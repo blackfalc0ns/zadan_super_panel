@@ -8,7 +8,7 @@ export interface Driver {
     phoneNumber: string;
     imageUrl?: string;
     city: string;
-    status: 'Online' | 'Offline' | 'OnMission' | 'Suspended';
+    status: 'Online' | 'Offline' | 'OnMission' | 'Suspended' | 'Banned';
     verificationStatus: VerificationStatus;
     tasks: {
         active: number;

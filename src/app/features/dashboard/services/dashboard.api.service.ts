@@ -122,11 +122,11 @@ export class SuperAdminDashboardService {
         refreshMode: 'manual'
       },
       filterOptions: {
-        dateRanges: this.mapFilterOptions(response.filters.dateRanges),
-        regions: this.mapFilterOptions(response.filters.regions),
-        vendors: this.mapFilterOptions(response.filters.vendors)
+        dateRanges: this.mapFilterOptions(response.filters.dateRanges, lang),
+        regions: this.mapFilterOptions(response.filters.regions, lang),
+        vendors: this.mapFilterOptions(response.filters.vendors, lang)
       },
-      headerSummary: response.meta.scopeSummary,
+      headerSummary: this.localizeDashboardText(response.meta.scopeSummary, lang),
       lastUpdatedLabel: this.formatDateTime(response.meta.generatedAtUtc, lang),
       systemMode: response.meta.mode,
       systemStatusLabelKey: response.meta.mode === 'live'
@@ -136,17 +136,25 @@ export class SuperAdminDashboardService {
         id: kpi.id,
         labelKey: kpi.labelKey,
         value: kpi.displayValue,
-        unitLabel: kpi.unit ?? undefined,
-        trendLabel: kpi.changeLabel,
+        unitLabel: this.localizeDashboardText(kpi.unit ?? undefined, lang) || undefined,
+        trendLabel: this.localizeDashboardText(kpi.changeLabel, lang),
         trendDirection: kpi.trendDirection,
         severity: kpi.severity,
         contextKey: kpi.contextKey
       })),
-      alerts: response.alerts,
-      queues: response.queues,
-      charts: response.charts,
-      attentionItems: response.attentionItems,
-      auditItems: response.auditFeed,
+      alerts: response.alerts.map((alert) => this.withNormalizedRoute(alert)),
+      queues: {
+        live: response.queues.live.map((queue) => this.withNormalizedRoute(queue)),
+        risk: response.queues.risk.map((queue) => this.withNormalizedRoute(queue))
+      },
+      charts: this.localizeCharts(response.charts, lang),
+      attentionItems: response.attentionItems.map((item) => this.withNormalizedRoute({
+        ...item,
+        entityName: this.localizeDashboardText(item.entityName, lang),
+        summary: this.localizeDashboardText(item.summary, lang),
+        owner: this.localizeDashboardText(item.owner, lang)
+      })),
+      auditItems: response.auditFeed.map((item) => this.withNormalizedRoute(item)),
       sections: [
         response.sections.systemHealth,
         response.sections.orderOps,
@@ -157,17 +165,277 @@ export class SuperAdminDashboardService {
         response.sections.catalogHealth,
         response.sections.marketingPulse,
         response.sections.accessSecurity
-      ]
+      ].map((section) => this.normalizeSection(section, lang))
     };
   }
 
-  private mapFilterOptions(options: Array<{ value: string; label: string; count?: number }>): DashboardFilterOption[] {
+  private normalizeSection(section: DashboardSection, lang: 'ar' | 'en'): DashboardSection {
+    return {
+      ...section,
+      route: this.normalizeDashboardRoute(section.route),
+      stats: section.stats.map((stat) => ({
+        ...stat,
+        displayValue: this.localizeDashboardText(stat.displayValue, lang),
+        unit: this.localizeDashboardText(stat.unit, lang) || undefined
+      })),
+      rankedLists: section.rankedLists.map((list) => ({
+        ...list,
+        rows: list.rows.map((row) => this.withNormalizedRoute({
+          ...row,
+          label: this.localizeDashboardText(row.label, lang),
+          value: this.localizeDashboardText(row.value, lang),
+          secondaryValue: this.localizeDashboardText(row.secondaryValue, lang) || undefined,
+          metaLabel: this.localizeDashboardText(row.metaLabel, lang) || undefined
+        }))
+      })),
+      exceptions: section.exceptions.map((exception) => this.withNormalizedRoute({
+        ...exception,
+        entityLabel: this.localizeDashboardText(exception.entityLabel, lang),
+        issueLabel: this.localizeDashboardText(exception.issueLabel, lang),
+        ownerLabel: this.localizeDashboardText(exception.ownerLabel, lang),
+        metricLabel: this.localizeDashboardText(exception.metricLabel, lang)
+      }))
+    };
+  }
+
+  private localizeCharts(charts: DashboardSnapshot['charts'], lang: 'ar' | 'en'): DashboardSnapshot['charts'] {
+    return {
+      ordersTrend: {
+        ...charts.ordersTrend,
+        series: charts.ordersTrend.series.map((series) => ({
+          ...series,
+          points: series.points.map((point) => ({
+            ...point,
+            label: this.localizeDashboardText(point.label, lang)
+          }))
+        }))
+      },
+      revenueTrend: {
+        ...charts.revenueTrend,
+        series: charts.revenueTrend.series.map((series) => ({
+          ...series,
+          points: series.points.map((point) => ({
+            ...point,
+            label: this.localizeDashboardText(point.label, lang)
+          }))
+        }))
+      },
+      regionPressure: charts.regionPressure.map((row) => this.withNormalizedRoute({
+        ...row,
+        regionLabel: this.localizeDashboardText(row.regionLabel, lang)
+      })),
+      vendorReadiness: charts.vendorReadiness,
+      driverReadiness: charts.driverReadiness
+    };
+  }
+
+  private withNormalizedRoute<T extends { route: string }>(item: T): T {
+    return {
+      ...item,
+      route: this.normalizeDashboardRoute(item.route)
+    };
+  }
+
+  private normalizeDashboardRoute(route: string | null | undefined): string {
+    const fallbackRoute = '/dashboard';
+    const trimmed = route?.trim();
+    if (!trimmed) return fallbackRoute;
+
+    const urlOnlyPath = trimmed.replace(/^https?:\/\/[^/]+/i, '');
+    const normalized = urlOnlyPath.startsWith('/') ? urlOnlyPath : `/${urlOnlyPath}`;
+    const [pathWithQuery, fragment = ''] = normalized.split('#');
+    const [path, query = ''] = pathWithQuery.split('?');
+    const suffix = `${query ? `?${query}` : ''}${fragment ? `#${fragment}` : ''}`;
+    const cleanPath = path.replace(/\/+$/, '') || fallbackRoute;
+
+    const orderCaseMatch = cleanPath.match(/^\/orders\/([^/]+)\/cases\/([^/]+)$/i);
+    if (orderCaseMatch) {
+      return `/disputes?focus=${encodeURIComponent(orderCaseMatch[2])}`;
+    }
+
+    const disputeDetailMatch = cleanPath.match(/^\/disputes\/([^/]+)$/i);
+    if (disputeDetailMatch) {
+      return `/disputes?focus=${encodeURIComponent(disputeDetailMatch[1])}`;
+    }
+
+    if (cleanPath === '/wallets') return `/finances/wallets${suffix}`;
+    if (cleanPath.startsWith('/wallets/')) return `/finances${cleanPath}${suffix}`;
+    if (cleanPath === '/notifications') return `/email-center${suffix}`;
+    if (cleanPath.startsWith('/notifications/')) return `/email-center${suffix}`;
+    if (cleanPath === '/catalog/product-requests') return `/catalog/requests${suffix}`;
+    if (cleanPath.startsWith('/catalog/product-requests/')) {
+      return `/catalog/requests/${cleanPath.split('/').pop()}${suffix}`;
+    }
+
+    const knownRoots = [
+      '/dashboard',
+      '/orders',
+      '/vendors',
+      '/drivers',
+      '/customers',
+      '/disputes',
+      '/finances',
+      '/catalog',
+      '/marketing',
+      '/admin-users',
+      '/email-center'
+    ];
+
+    if (knownRoots.some((root) => cleanPath === root || cleanPath.startsWith(`${root}/`))) {
+      return `${cleanPath}${suffix}`;
+    }
+
+    return fallbackRoute;
+  }
+
+  private mapFilterOptions(
+    options: Array<{ value: string; label: string; count?: number }>,
+    lang: 'ar' | 'en'
+  ): DashboardFilterOption[] {
     return options.map((option) => ({
       value: option.value,
-      label: option.label,
+      label: this.localizeDashboardText(option.label, lang),
       count: option.count
     }));
   }
+
+  private localizeDashboardText(value: string | number | null | undefined, lang: 'ar' | 'en'): string {
+    if (value === null || value === undefined) return '';
+    const text = `${value}`.trim();
+    if (!text || lang !== 'ar') return text;
+
+    const exact = this.dashboardArabicDictionary[text.toLowerCase()];
+    if (exact) return exact;
+
+    const queueMatch = text.match(/^Queue\s+(.+?)\s+still holds this case in\s+(.+)\.?$/i);
+    if (queueMatch) {
+      return `ما زالت قائمة ${this.localizeDashboardText(queueMatch[1], lang)} تحتفظ بهذه الحالة في مرحلة ${this.localizeDashboardText(queueMatch[2], lang)}.`;
+    }
+
+    const riskMatch = text.match(/^([\d,.]+)\s+risk$/i);
+    if (riskMatch) return `${riskMatch[1]} مخاطر`;
+
+    const criticalMatch = text.match(/^([\d,.]+)\s+critical$/i);
+    if (criticalMatch) return `${criticalMatch[1]} حرجة`;
+
+    const gapMatch = text.match(/^([\d,.]+)\s+gap$/i);
+    if (gapMatch) return `${gapMatch[1]} فجوة`;
+
+    const latePaymentMatch = text.match(/^([\d,.]+)\s+late\s*\/\s*([\d,.]+)\s+payment$/i);
+    if (latePaymentMatch) return `${latePaymentMatch[1]} متأخرة / ${latePaymentMatch[2]} دفع`;
+
+    const weekMatch = text.match(/^W(\d+)$/i);
+    if (weekMatch) return `الأسبوع ${weekMatch[1]}`;
+
+    const reviewMatch = text.match(/^Review #(.+)$/i);
+    if (reviewMatch) return `مراجعة #${reviewMatch[1]}`;
+
+    if (/^[\d,.]+\s+SAR$/i.test(text)) {
+      return text.replace(/\s*SAR$/i, ' ر.س');
+    }
+
+    return text
+      .replace(/\bSAR\b/g, 'ر.س')
+      .replace(/\bMon\b/g, 'الاثنين')
+      .replace(/\bTue\b/g, 'الثلاثاء')
+      .replace(/\bWed\b/g, 'الأربعاء')
+      .replace(/\bThu\b/g, 'الخميس')
+      .replace(/\bFri\b/g, 'الجمعة')
+      .replace(/\bSat\b/g, 'السبت')
+      .replace(/\bSun\b/g, 'الأحد');
+  }
+
+  private readonly dashboardArabicDictionary: Record<string, string> = {
+    'today': 'اليوم',
+    '7 days': 'آخر 7 أيام',
+    '30 days': 'آخر 30 يوم',
+    'all regions': 'كل المناطق',
+    'all vendors': 'كل التجار',
+    'all network': 'كل الشبكة',
+    'central region': 'المنطقة الوسطى',
+    'western region': 'المنطقة الغربية',
+    'eastern region': 'المنطقة الشرقية',
+    'northern region': 'المنطقة الشمالية',
+    'southern region': 'المنطقة الجنوبية',
+    'other regions': 'مناطق أخرى',
+    'vendor': 'تاجر',
+    'driver ops': 'عمليات السائقين',
+    'vendor desk': 'فريق التجار',
+    'driver finance': 'مالية السائقين',
+    'customer experience': 'تجربة العملاء',
+    'wallets': 'المحافظ',
+    'finances': 'المالية',
+    'catalog': 'الكتالوج',
+    'superadmin': 'مدير عام',
+    'admin': 'مشرف',
+    'vendor + driver': 'التجار + السائقين',
+    '+ healthy': '+ مستقر',
+    '- needs action': '- يحتاج إجراء',
+    '+0 payment': '+0 دفع',
+    '+1 payment': '+1 دفع',
+    '+2 payment': '+2 دفع',
+    '+3 payment': '+3 دفع',
+    'payment failure requires reviewer action.': 'فشل الدفع يحتاج إجراء من المراجع.',
+    'order is drifting outside the target delivery band.': 'الطلب خرج عن نطاق التسليم المستهدف.',
+    'vendor readiness is blocked and needs compliance or operational review.': 'جاهزية التاجر متوقفة وتحتاج مراجعة امتثال أو تشغيل.',
+    'driver availability is blocked by verification or account hold.': 'إتاحة السائق متوقفة بسبب التحقق أو تعليق الحساب.',
+    'payment failure': 'فشل الدفع',
+    'delivery flow outside target band': 'مسار التسليم خارج النطاق المستهدف',
+    'vendor blocked': 'التاجر محظور',
+    'orders currently disabled': 'استقبال الطلبات متوقف حاليًا',
+    'driver withdrawals': 'سحوبات السائقين',
+    'pending payout review': 'مراجعة صرف معلقة',
+    'processing payout batch': 'دفعة صرف قيد المعالجة',
+    'low rating without vendor reply': 'تقييم منخفض بدون رد من التاجر',
+    'failed payments': 'مدفوعات فاشلة',
+    'pending payments': 'مدفوعات معلقة',
+    'pending settlements': 'تسويات معلقة',
+    'failed settlements': 'تسويات فاشلة',
+    'wallet inflow': 'تدفق داخل للمحفظة',
+    'tracked inflow for selected window': 'تدفق داخل مرصود خلال الفترة المحددة',
+    'wallet outflow': 'تدفق خارج من المحفظة',
+    'tracked outflow for selected window': 'تدفق خارج مرصود خلال الفترة المحددة',
+    'refund operations': 'عمليات الاسترداد',
+    'refund cases created in selected window': 'حالات استرداد تم إنشاؤها خلال الفترة المحددة',
+    'product requests': 'طلبات المنتجات',
+    'pending catalog approvals': 'موافقات كتالوج معلقة',
+    'brand requests': 'طلبات العلامات التجارية',
+    'pending brand approvals': 'موافقات علامات تجارية معلقة',
+    'category requests': 'طلبات التصنيفات',
+    'pending category approvals': 'موافقات تصنيفات معلقة',
+    'unavailable vendor products': 'منتجات تجار غير متاحة',
+    'catalog entries not ready for selling': 'عناصر كتالوج غير جاهزة للبيع',
+    'recent notifications': 'إشعارات حديثة',
+    'unread notifications': 'إشعارات غير مقروءة',
+    'low reviews needing reply': 'تقييمات منخفضة تحتاج رد',
+    'admin accounts': 'حسابات المشرفين',
+    'locked admin accounts': 'حسابات مشرفين مقفلة',
+    'permission version overrides': 'تجاوزات إصدار الصلاحيات',
+    'admin login locked': 'تسجيل دخول المشرف مقفل',
+    'admin not active': 'المشرف غير نشط',
+    'Critical': 'حرجة',
+    'critical': 'حرجة',
+    'High': 'عالية',
+    'high': 'عالية',
+    'Medium': 'متوسطة',
+    'medium': 'متوسطة',
+    'Low': 'منخفضة',
+    'low': 'منخفضة',
+    'Submitted': 'مقدمة',
+    'submitted': 'مقدمة',
+    'InReview': 'قيد المراجعة',
+    'inreview': 'قيد المراجعة',
+    'Pending': 'معلق',
+    'pending': 'معلق',
+    'Processing': 'قيد المعالجة',
+    'processing': 'قيد المعالجة',
+    'Suspended': 'موقوف',
+    'suspended': 'موقوف',
+    'Active': 'نشط',
+    'active': 'نشط',
+    'Inactive': 'غير نشط',
+    'inactive': 'غير نشط'
+  };
 
   private formatDateTime(value: string, lang: 'ar' | 'en'): string {
     return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', {

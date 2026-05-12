@@ -360,6 +360,49 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       : 'MASTER_PRODUCTS.STATUS_DRAFT';
   }
 
+  get coreInfoComplete(): boolean {
+    return ['nameAr', 'nameEn', 'slug'].every((field) => this.hasControlValue(field));
+  }
+
+  get classificationComplete(): boolean {
+    return this.hasControlValue('categoryId');
+  }
+
+  get completionPercent(): number {
+    let score = 0;
+
+    if (this.hasControlValue('nameAr')) score += 18;
+    if (this.hasControlValue('nameEn')) score += 18;
+    if (this.hasControlValue('slug')) score += 14;
+    if (this.hasControlValue('categoryId')) score += 30;
+    if (this.hasControlValue('barcode')) score += 10;
+    if (this.hasControlValue('primaryImageUrl')) score += 10;
+
+    return Math.min(100, score);
+  }
+
+  get selectedCategoryLabel(): string {
+    const categoryId = this.productForm.get('categoryId')?.value;
+    const category = this.availableCategories.find((item) => item.id === categoryId);
+
+    if (!category) {
+      return '';
+    }
+
+    return this.activeLang === 'ar'
+      ? category.displayNameAr || category.nameAr || ''
+      : category.displayNameEn || category.nameEn || '';
+  }
+
+  isFieldTouched(fieldName: string): boolean {
+    return this.productForm.get(fieldName)?.touched || false;
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const control = this.productForm.get(fieldName);
+    return !!control && control.invalid && control.touched;
+  }
+
   get categoryOptions(): SearchableSelectOption<string>[] {
     return this.availableCategories.map((cat) => ({
       value: cat.id,
@@ -385,6 +428,11 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         label: this.activeLang === 'ar' ? unit.nameAr : unit.nameEn
       }))
     ];
+  }
+
+  private hasControlValue(fieldName: string): boolean {
+    const value = this.productForm.get(fieldName)?.value;
+    return value !== undefined && value !== null && String(value).trim().length > 0;
   }
 
   onCancel(): void {

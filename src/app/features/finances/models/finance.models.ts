@@ -2,7 +2,7 @@ import type { DriverCompensationRule } from '@finances/models/finance-rules.mode
 
 export type { DriverCompensationRule };
 
-export type FinanceCurrency = 'SAR';
+export type FinanceCurrency = 'SAR' | 'EGP';
 export type TrendDirection = 'up' | 'down' | 'flat';
 export type FinancePeriod = 'today' | 'week' | 'month' | 'quarter' | 'custom';
 export type EntityType = 'vendor' | 'driver' | 'order' | 'platform' | 'customer';

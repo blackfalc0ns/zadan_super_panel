@@ -9,16 +9,19 @@
         ]">
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">admin_panel_settings</span>
 
-        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+        <div actions class="flex items-center gap-3 animate-in slide-in-from-left-10 duration-700">
             <button
                 type="button"
                 (click)="openRolesManagement()"
-                class="px-5 py-3 bg-white text-slate-600 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-sm hover:text-zadna-primary hover:border-zadna-primary/20 hover:bg-slate-50 transition-all">
+                class="px-5 py-3 bg-white/70 backdrop-blur-md text-slate-600 border border-slate-200/60 rounded-2xl text-sm font-black flex items-center gap-2 shadow-sm hover:text-zadna-primary hover:border-zadna-primary/20 hover:bg-white transition-all">
                 <span class="material-symbols-outlined text-[20px]">shield</span>
                 {{ 'ADMIN_USERS.OPEN_ROLES_MANAGEMENT' | translate }}
             </button>
 
-            <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
+            <button
+                type="button"
+                (click)="openCreateUserModal()"
+                class="px-6 py-3 bg-gradient-to-br from-zadna-primary to-teal-700 text-white rounded-2xl text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:shadow-zadna-primary/30 hover:-translate-y-0.5 transition-all group">
                 <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
                 {{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}
             </button>
@@ -26,25 +29,29 @@
     </app-page-header>
 
     <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
-        
+
         <!-- 1. KPI Summary Cards -->
-        <app-kpi-cards 
-            [cards]="kpiCards" 
+        <app-kpi-cards
+            [cards]="kpiCards"
             (cardClick)="onKPICardClick($event)">
         </app-kpi-cards>
 
-        <section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-5 shadow-sm">
-            <div class="grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-5 items-stretch">
-                <div class="rounded-[1.7rem] border border-zadna-primary/10 bg-gradient-to-br from-zadna-primary/[0.08] via-white to-slate-50 p-5">
-                    <div class="flex flex-wrap items-start justify-between gap-4">
+        <!-- 2. Access Hub + Stats Bento -->
+        <section class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)]">
+            <div class="grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-6 items-stretch">
+
+                <!-- Hub Card -->
+                <div class="rounded-2xl border border-zadna-primary/10 bg-gradient-to-br from-zadna-primary/[0.06] via-white to-slate-50/80 p-6 relative overflow-hidden group">
+                    <div class="absolute -right-20 -top-20 w-56 h-56 bg-zadna-primary/5 rounded-full blur-3xl pointer-events-none group-hover:bg-zadna-primary/10 transition-colors duration-700"></div>
+                    <div class="flex flex-wrap items-start justify-between gap-4 relative z-10">
                         <div>
-                            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">
+                            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/10 inline-flex px-2.5 py-1 rounded-lg">
                                 {{ 'ADMIN_USERS.ACCESS_HUB.BADGE' | translate }}
                             </p>
-                            <h3 class="mt-2 text-xl font-black text-slate-900">
+                            <h3 class="mt-3 text-xl font-black text-slate-900">
                                 {{ 'ADMIN_USERS.ACCESS_HUB.TITLE' | translate }}
                             </h3>
-                            <p class="mt-2 max-w-2xl text-sm font-bold leading-6 text-slate-500">
+                            <p class="mt-2 max-w-2xl text-[13px] font-bold leading-6 text-slate-500">
                                 {{ 'ADMIN_USERS.ACCESS_HUB.DESC' | translate }}
                             </p>
                         </div>
@@ -52,102 +59,115 @@
                         <button
                             type="button"
                             (click)="openRolesManagement()"
-                            class="h-11 px-5 rounded-2xl bg-zadna-primary text-white text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all">
+                            class="h-11 px-5 rounded-2xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all">
                             <span class="material-symbols-outlined text-[18px]">open_in_new</span>
                             {{ 'ADMIN_USERS.ACCESS_HUB.OPEN' | translate }}
                         </button>
                     </div>
                 </div>
 
+                <!-- Stats Grid -->
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
-                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.ROLES' | translate }}</p>
-                        <p class="mt-2 text-2xl font-black text-slate-900">{{ totalRoles }}</p>
+                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-[16px] text-zadna-primary">verified_user</span>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.ROLES' | translate }}</p>
+                        </div>
+                        <p class="text-2xl font-black text-slate-900">{{ totalRoles }}</p>
                     </div>
 
-                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
-                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.PERMISSIONS' | translate }}</p>
-                        <p class="mt-2 text-2xl font-black text-slate-900">{{ permissionsCatalogCount }}</p>
+                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-[16px] text-amber-500">key</span>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.PERMISSIONS' | translate }}</p>
+                        </div>
+                        <p class="text-2xl font-black text-slate-900">{{ permissionsCatalogCount }}</p>
                     </div>
 
-                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
-                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.SYSTEM_ROLES' | translate }}</p>
-                        <p class="mt-2 text-2xl font-black text-emerald-600">{{ systemRolesCount }}</p>
+                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-[16px] text-emerald-500">shield</span>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.SYSTEM_ROLES' | translate }}</p>
+                        </div>
+                        <p class="text-2xl font-black text-emerald-600">{{ systemRolesCount }}</p>
                     </div>
 
-                    <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 px-4 py-4">
-                        <p class="text-[11px] font-black text-slate-400">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.CUSTOM_ROLES' | translate }}</p>
-                        <p class="mt-2 text-2xl font-black text-amber-600">{{ customRolesCount }}</p>
+                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-[16px] text-violet-500">tune</span>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.CUSTOM_ROLES' | translate }}</p>
+                        </div>
+                        <p class="text-2xl font-black text-amber-600">{{ customRolesCount }}</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 2. Search & Filter Section -->
-        <div class="flex flex-col gap-3">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
-                
-                <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
-                    <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                        <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
-                    </div>
-                    <input type="text" 
-                           [(ngModel)]="searchTerm" 
-                           (input)="onSearch()"
-                           [placeholder]="'ADMIN_USERS.SEARCH_PLACEHOLDER' | translate"
-                           class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm pl-14 pr-6">
+        <!-- 3. Search & Filter Section -->
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-5">
+            <div class="w-full lg:w-[480px] group relative">
+                <div class="absolute inset-y-0 start-5 flex items-center pointer-events-none">
+                    <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
                 </div>
+                <input type="text"
+                       [(ngModel)]="searchTerm"
+                       (input)="onSearch()"
+                       [placeholder]="'ADMIN_USERS.SEARCH_PLACEHOLDER' | translate"
+                       class="w-full py-4 bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-2xl text-[13px] font-bold text-slate-700 placeholder:text-slate-400 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm ps-14 pe-6">
+            </div>
 
-                <div class="flex items-center gap-4 order-2 lg:order-2">
-                    <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
-                        <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
-                             (click)="toggleFilters()">
-                            <span class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500" 
-                                  [class.rotate-180]="isFiltersExpanded">filter_list</span>
-                            <div class="flex flex-col">
-                                <span class="text-[13px] font-black text-slate-800">{{ 'VENDORS.FILTER_VENDORS' | translate }}</span>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'VENDORS.ADJUST_CRITERIA' | translate }}</span>
-                            </div>
-                            <span class="material-symbols-outlined text-[18px] text-slate-300 ml-2 group-hover:translate-y-0.5 transition-transform"
-                                  [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-2xl h-[56px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+                    <div class="flex items-center gap-3 px-5 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group rounded-xl"
+                         (click)="toggleFilters()">
+                        <span class="material-symbols-outlined text-[22px] text-zadna-primary transition-transform duration-500"
+                              [class.rotate-180]="isFiltersExpanded">filter_list</span>
+                        <div class="flex flex-col">
+                            <span class="text-[13px] font-black text-slate-800">{{ 'VENDORS.FILTER_VENDORS' | translate }}</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'VENDORS.ADJUST_CRITERIA' | translate }}</span>
                         </div>
+                        <span class="material-symbols-outlined text-[18px] text-slate-300 ms-2 group-hover:translate-y-0.5 transition-transform"
+                              [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Data Table -->
+        <!-- 4. Data Table -->
         <app-data-table
-            *ngIf="!isLoading && users.length > 0"
+            *ngIf="!isLoading"
             [data]="users"
             [columns]="tableColumns"
             [actions]="tableActions"
             [selectable]="true"
             [clickableRows]="true"
+            [emptyStateTitle]="'لم يتم العثور على عناصر'"
+            [emptyStateMessage]="'لا توجد أنشطة رئيسية مهيأة بعد.'"
+            [emptyStateIcon]="'admin_panel_settings'"
             [containerClass]="'extraordinary-table-container'"
             (rowClick)="onTableRowClick($event)"
             (actionClick)="onTableAction($event)">
-            
+
             <ng-template #customColumn let-user let-column="column">
-                
+
                 <ng-container *ngIf="column.key === 'identity'">
                     <div class="flex items-center gap-4">
-                        <div class="relative w-12 h-12 rounded-[1.2rem] flex items-center justify-center shrink-0 border border-zadna-primary/10"
+                        <div class="relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
                              [style.background]="getAvatarGradient(user)">
-                            <span class="text-lg font-black text-white mix-blend-overlay">
+                            <span class="text-sm font-black text-white">
                                 {{ getInitials(user) }}
                             </span>
                         </div>
                         <div class="flex flex-col text-start">
                             <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug">{{ user.fullName }}</span>
-                            <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">{{ user.email }}</span>
+                            <span class="text-[10px] font-bold text-slate-400 mt-0.5" dir="ltr">{{ user.email }}</span>
                         </div>
                     </div>
                 </ng-container>
 
                 <ng-container *ngIf="column.key === 'role'">
                     <div class="flex flex-col text-start">
-                        <span class="text-[13px] font-bold text-slate-700 tracking-tight">{{ getRoleNameKey(user) | translate }}</span>
+                        <span class="text-[13px] font-bold text-slate-700 tracking-tight">{{ getRoleDisplay(user) }}</span>
                         <span class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">{{ user.department }} • {{ user.team }}</span>
                     </div>
                 </ng-container>
@@ -171,8 +191,8 @@
             </ng-template>
         </app-data-table>
 
-        <!-- 4. Pagination -->
-        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+        <!-- 5. Pagination -->
+        <div class="pt-4 animate-in fade-in duration-1000 slide-in-from-bottom-5">
             <app-pagination
                 *ngIf="!isLoading && users.length > 0"
                 [currentPage]="pageNumber"
@@ -182,12 +202,90 @@
             </app-pagination>
         </div>
 
-        <!-- 5. Loading state -->
-        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
-            <div class="relative w-24 h-24">
-                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
-                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+        <!-- 6. Loading state -->
+        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40">
+            <div class="relative w-20 h-20">
+                <div class="absolute inset-0 rounded-full border-[5px] border-zadna-primary/10"></div>
+                <div class="absolute inset-0 rounded-full border-[5px] border-t-zadna-primary animate-spin"></div>
+            </div>
+            <p class="mt-6 text-sm font-black text-slate-400 animate-pulse">{{ 'ADMIN_USERS.TITLE' | translate }}...</p>
+        </div>
+    </div>
+
+    <div *ngIf="showCreateUserModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <button type="button" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="closeCreateUserModal()" aria-label="Close"></button>
+        <div class="relative z-10 w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between gap-4 border-b border-slate-100 p-6">
+                <div>
+                    <h2 class="text-lg font-black text-slate-900">{{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}</h2>
+                    <p class="mt-1 text-[12px] font-bold text-slate-400">Create login account and attach it to an access role</p>
+                </div>
+                <button type="button" (click)="closeCreateUserModal()" class="h-10 w-10 rounded-xl hover:bg-slate-100 text-slate-500">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 max-h-[70vh] overflow-y-auto">
+                <label class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.FULL_NAME' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.fullName" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                </label>
+                <label class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.EMAIL' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.email" type="email" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                </label>
+                <label class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.PHONE' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.phone" type="text" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                </label>
+                <label class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">Temporary password</span>
+                    <input [(ngModel)]="createUserForm.password" type="password" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                </label>
+                <label class="flex flex-col gap-2 md:col-span-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.ROLE' | translate }}</span>
+                    <select [(ngModel)]="createUserForm.roleDefinitionId" (ngModelChange)="onCreateRoleChange()" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary bg-white">
+                        <option *ngFor="let role of roles" [ngValue]="role.id">{{ getRoleOptionLabel(role) }}</option>
+                    </select>
+                </label>
+                <label class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.DEPARTMENT' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.department" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                </label>
+                <label class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.TEAM' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.team" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                </label>
+                <label *ngIf="shouldShowScopeEntityInput()" class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
+                    <select [(ngModel)]="createUserForm.scopeEntityId" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary bg-white">
+                        <option value="">{{ getCreateScopeHint() }}</option>
+                        <option *ngFor="let option of getCreateScopeOptions()" [ngValue]="option.value">{{ option.label }}</option>
+                    </select>
+                </label>
+                <div *ngIf="!shouldShowScopeEntityInput()" class="flex flex-col justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
+                    <span class="text-[13px] font-bold text-slate-500">{{ getCreateScopeHint() }}</span>
+                </div>
+                <label class="flex flex-col gap-2">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">Notes</span>
+                    <input [(ngModel)]="createUserForm.notes" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                </label>
+                <p *ngIf="createUserError" class="md:col-span-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+                    {{ createUserError }}
+                </p>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/70 p-5">
+                <button type="button" (click)="closeCreateUserModal()" class="h-11 px-5 rounded-xl border border-slate-200 bg-white text-[13px] font-black text-slate-600">
+                    {{ 'COMMON.CANCEL' | translate }}
+                </button>
+                <button type="button" (click)="createUser()" [disabled]="isCreatingUser || !createUserForm.fullName || !createUserForm.email || !createUserForm.password || !createUserForm.roleDefinitionId" class="h-11 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[13px] font-black disabled:opacity-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">person_add</span>
+                    {{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}
+                </button>
             </div>
         </div>
     </div>
+
 </div>

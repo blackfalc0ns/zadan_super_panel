@@ -77,6 +77,7 @@ export class DriverDetailViewComponent {
   @Output() editDriverRequested = new EventEmitter<void>();
   @Output() openTasksRequested = new EventEmitter<void>();
   @Output() toggleSuspensionRequested = new EventEmitter<void>();
+  @Output() toggleBanRequested = new EventEmitter<void>();
 
   @Output() quickNoteChange = new EventEmitter<string>();
   @Output() quickNoteAdded = new EventEmitter<void>();
@@ -86,6 +87,7 @@ export class DriverDetailViewComponent {
   @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
   @Output() documentApprovalRequested = new EventEmitter<DriverDocumentRecord>();
   @Output() documentRejectionRequested = new EventEmitter<{ document: DriverDocumentRecord; reason: string }>();
+  @Output() clearRestrictionsRequested = new EventEmitter<void>();
 
   @Output() taskPreviewRequested = new EventEmitter<DriverTaskAssignment>();
   @Output() incidentPreviewRequested = new EventEmitter<DriverIncidentRecord>();

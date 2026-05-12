@@ -1,14 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Category } from '@catalog/models/catalog.domain.models';
 
-import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
-import { AppTextareaComponent } from '../../../../shared/components/ui/form-controls/textarea/textarea.component';
 
 @Component({
     selector: 'app-category-form-modal',
@@ -17,9 +15,7 @@ import { AppTextareaComponent } from '../../../../shared/components/ui/form-cont
         CommonModule, 
         ReactiveFormsModule, 
         TranslateModule,
-        AppButtonComponent,
         AppInputComponent,
-        AppTextareaComponent,
         ModalShellComponent
     ],
     templateUrl: './category-form-modal.component.html',
@@ -147,7 +143,7 @@ export class CategoryFormModalComponent implements OnChanges {
         if (!file) return;
 
         this.isUploading = true;
-        this.catalogService.uploadFile(file, 'categories').subscribe({
+        this.catalogService.uploadFile(file, 'uploads/catalog/categories').subscribe({
             next: (res) => {
                 this.form.patchValue({ imageUrl: res.url });
                 this.isUploading = false;

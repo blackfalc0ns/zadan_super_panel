@@ -1,0 +1,10 @@
+export { DashboardHeaderComponent } from './dashboard-header/dashboard-header.component';
+export { DashboardKpiStripComponent } from './dashboard-kpi-strip/dashboard-kpi-strip.component';
+export { DashboardInsightsComponent } from './dashboard-insights/dashboard-insights.component';
+export type { InsightPanel } from './dashboard-insights/dashboard-insights.component';
+export { DashboardChartsComponent } from './dashboard-charts/dashboard-charts.component';
+export { DashboardOrdersWindowsComponent } from './dashboard-orders-windows/dashboard-orders-windows.component';
+export { DashboardRegionPressureComponent } from './dashboard-region-pressure/dashboard-region-pressure.component';
+export { DashboardAlertsPanelComponent } from './dashboard-alerts-panel/dashboard-alerts-panel.component';
+export { DashboardSectionsComponent } from './dashboard-sections/dashboard-sections.component';
+export { DashboardAuditFeedComponent } from './dashboard-audit-feed/dashboard-audit-feed.component';

@@ -1,384 +1,221 @@
-<div class="h-full flex flex-col overflow-hidden bg-slate-50 font-sans" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+<div class="h-full flex flex-col overflow-hidden bg-slate-50/80 font-sans" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
   <ng-container *ngIf="!isLoading && !loadError && dashboard as vm; else dashboardState">
-    
-    <!-- EXECUTIVE CONTROL RAIL -->
-    <header class="shrink-0 bg-white border-b border-slate-200 px-6 py-2.5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 z-[5000]">
-      <div class="flex flex-wrap items-center gap-4">
-        <div class="flex items-center gap-2">
-          <span class="relative flex h-2.5 w-2.5">
-            <span *ngIf="vm.systemMode === 'live'" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5" [ngClass]="vm.systemMode === 'live' ? 'bg-emerald-500' : 'bg-cyan-500'"></span>
-          </span>
-          <span class="text-[11px] font-black uppercase tracking-widest text-slate-800">
-            {{ vm.systemStatusLabelKey | translate }}
-          </span>
-        </div>
-        <div class="h-4 w-[1px] bg-slate-300 hidden sm:block"></div>
-        <span class="text-[10px] font-bold text-slate-500 flex items-center gap-1.5 uppercase">
-          <span class="material-symbols-outlined text-[13px]">schedule</span>
-          {{ vm.lastUpdatedLabel }}
-        </span>
-      </div>
 
-      <div class="flex flex-wrap items-center gap-2.5">
-        <div style="z-index: 100;" class="relative">
-          <app-searchable-select [(ngModel)]="filterState.dateRange" [searchable]="false" (ngModelChange)="onFilterChange()" [options]="dateRangeFilterOptions" [placeholder]="'DASHBOARD.FILTERS.DATE_RANGE' | translate" class="block w-32 h-9 text-[10px] font-bold"></app-searchable-select>
-        </div>
-        <div style="z-index: 90;" class="relative">
-          <app-searchable-select [(ngModel)]="filterState.region" [searchable]="false" (ngModelChange)="onFilterChange()" [options]="regionFilterOptions" [placeholder]="'DASHBOARD.FILTERS.REGION' | translate" class="block w-40 h-9 text-[10px] font-bold"></app-searchable-select>
-        </div>
-        <div style="z-index: 80;" class="relative">
-          <app-searchable-select [(ngModel)]="filterState.vendorId" [searchable]="true" (ngModelChange)="onFilterChange()" [options]="vendorFilterOptions" [placeholder]="'DASHBOARD.FILTERS.VENDOR' | translate" class="block w-48 h-9 text-[10px] font-bold"></app-searchable-select>
-        </div>
-        <button type="button" class="flex items-center justify-center h-9 w-9 bg-slate-100 hover:bg-slate-200 border-none rounded-lg text-slate-600 transition-colors" (click)="refreshDashboard()" [title]="'COMMON.REFRESH' | translate">
-          <span class="material-symbols-outlined text-[18px]">refresh</span>
-        </button>
-      </div>
-    </header>
+    <!-- HEADER -->
+    <app-dashboard-header
+      [dashboard]="vm"
+      [filterState]="filterState"
+      [isRTL]="isRTL"
+      [dateRangeOptions]="dateRangeFilterOptions"
+      [regionOptions]="regionFilterOptions"
+      [vendorOptions]="vendorFilterOptions"
+      (filterChanged)="onFilterChanged($event)"
+      (refreshRequested)="refreshDashboard()">
+    </app-dashboard-header>
 
-    <main class="flex-1 overflow-y-auto p-6 max-w-[140rem] w-full mx-auto space-y-5">
-      
-      <!-- HERO TITLE -->
-      <div class="flex items-center justify-between mb-1">
-        <h1 class="text-xl font-black text-slate-800 tracking-tight">{{ vm.headerSummary }}</h1>
-      </div>
+    <!-- SCROLLABLE CONTENT -->
+    <main class="flex-1 overflow-y-auto px-5 py-5 lg:px-8 max-w-[1600px] w-full mx-auto space-y-6">
 
-      <!-- 1. HERO KPI STRIP (6 Cards with Micro Charts) -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
-        <article *ngFor="let kpi of vm.kpis" 
-                 class="exec-card p-4 relative overflow-hidden"
-                 [ngClass]="getSeverityCardClasses(kpi.severity).replace('bg-', 'border-').replace('/80', '').replace('/60', '')">
-          
-          <div class="absolute top-0 left-0 right-0 h-1" [ngClass]="getSeverityCardClasses(kpi.severity)"></div>
-          
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500 truncate" [attr.title]="kpi.labelKey | translate">{{ kpi.labelKey | translate }}</h3>
-            <span class="material-symbols-outlined text-slate-300 text-[16px]">{{ getAlertIcon(kpi.severity) }}</span>
-          </div>
-          
-          <div class="flex items-baseline gap-1">
-            <span class="text-2xl font-black tracking-tighter text-slate-800">{{ kpi.value }}</span>
-            <span *ngIf="kpi.unitLabel" class="text-[9px] font-black text-slate-400 uppercase">{{ kpi.unitLabel | translate }}</span>
-          </div>
+      <!-- PAGE TITLE & TABS -->
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <h1 class="text-lg font-bold text-slate-800">{{ vm.headerSummary }}</h1>
 
-          <div class="flex items-center gap-2 mt-1 mb-2">
-            <div class="flex items-center gap-1 px-1.5 py-0.5 rounded border" [ngClass]="getTrendClasses(kpi.trendDirection)">
-              <span class="material-symbols-outlined text-[10px]">
-                {{ kpi.trendDirection === 'up' ? 'trending_up' : kpi.trendDirection === 'down' ? 'trending_down' : 'trending_flat' }}
-              </span>
-              <span class="text-[9px] font-black">{{ kpi.trendLabel }}</span>
-            </div>
-            <span class="text-[9px] font-bold text-slate-400 truncate">{{ kpi.contextKey | translate }}</span>
-          </div>
-
-          <!-- MICRO VISUALS -->
-          <div class="micro-chart-frame" [ngSwitch]="kpi.id">
-            
-            <!-- Sparkline (GMV & Orders) -->
-            <ng-container *ngSwitchCase="'gmv'">
-               <div class="w-full h-full" echarts [options]="heroMicroChartOptions['gmv']"></div>
-            </ng-container>
-            <ng-container *ngSwitchCase="'completed-orders'">
-               <div class="w-full h-full" echarts [options]="heroMicroChartOptions['completed-orders']"></div>
-            </ng-container>
-
-            <!-- Bullet Chart (On-Time Rate) -->
-            <ng-container *ngSwitchCase="'on-time-rate'">
-              <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1 relative overflow-hidden">
-                <div class="bg-blue-500 h-1.5 rounded-full" [style.width]="kpi.value"></div>
-                <div class="absolute top-0 bottom-0 border-l border-slate-400" [style.left]="'95%'" title="Target"></div>
-              </div>
-            </ng-container>
-
-            <!-- Severity Bars (Orders at Risk) -->
-            <ng-container *ngSwitchCase="'orders-at-risk'">
-              <div class="flex w-full gap-1 h-3 mb-1">
-                <div class="flex-1 bg-emerald-400 rounded-sm"></div>
-                <div class="flex-1 bg-emerald-400 rounded-sm"></div>
-                <div class="flex-1 bg-amber-400 rounded-sm"></div>
-                <div class="flex-1 bg-amber-400 rounded-sm opacity-20"></div>
-                <div class="flex-1 bg-rose-500 rounded-sm opacity-20"></div>
-              </div>
-            </ng-container>
-
-            <!-- Exposure Meter (Open Disputes) -->
-            <ng-container *ngSwitchCase="'open-dispute-exposure'">
-              <div class="w-full bg-slate-100 rounded h-2 mb-1 overflow-hidden flex">
-                <div class="bg-rose-500 h-full" [style.width]="'30%'"></div>
-                <div class="bg-amber-400 h-full" [style.width]="'40%'"></div>
-              </div>
-            </ng-container>
-
-            <!-- Split Visual (Supply Backlog) -->
-            <ng-container *ngSwitchCase="'supply-backlog'">
-              <div class="w-full bg-slate-100 rounded-full h-2 mb-1 flex overflow-hidden">
-                <div class="bg-purple-500 h-full" [style.width]="'60%'" title="Vendor Backlog"></div>
-                <div class="bg-indigo-400 h-full" [style.width]="'40%'" title="Driver Backlog"></div>
-              </div>
-            </ng-container>
-
-            <!-- Fallback generic bar -->
-            <ng-container *ngSwitchDefault>
-              <div class="w-full bg-slate-100 rounded-full h-1 mb-1 overflow-hidden">
-                <div class="bg-slate-300 h-full" [style.width]="'50%'"></div>
-              </div>
-            </ng-container>
-
-          </div>
-        </article>
-      </section>
-
-      <!-- 2. INSIGHT PANELS -->
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <article *ngFor="let insight of insightPanels" class="insight-panel group">
-          <div class="flex items-center justify-center w-10 h-10 rounded-full shrink-0 shadow-sm" [ngClass]="insight.iconClass">
-            <span class="material-symbols-outlined text-[18px]">{{ insight.icon }}</span>
-          </div>
-          <div class="flex-1 pt-0.5">
-            <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide group-hover:text-zadna-primary transition-colors">{{ insight.titleKey | translate }}</h3>
-            <p class="text-[10px] font-bold text-slate-500 mt-1 leading-snug">{{ insight.description | translate }}</p>
-            <div class="flex items-center gap-2 mt-2">
-              <span class="text-[14px] font-black text-slate-800">{{ insight.value }}</span>
-              <span *ngIf="insight.trendLabel" class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{{ insight.trendLabel }}</span>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <!-- 3. PRIMARY ANALYTICS -->
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <article class="exec-panel lg:col-span-2 h-[26rem] p-5">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h2 class="text-[14px] font-black text-slate-800 uppercase tracking-wide">{{ vm.charts.ordersTrend.titleKey | translate }}</h2>
-              <p class="text-[10px] font-bold text-slate-500 mt-0.5">{{ vm.charts.ordersTrend.descriptionKey | translate }}</p>
-            </div>
-          </div>
-          <div class="flex-1 w-full min-h-0" echarts [options]="ordersTrendOptions"></div>
-        </article>
-
-        <div class="flex flex-col gap-4 lg:col-span-1 h-[26rem]">
-          <article class="exec-panel p-5 flex-1">
-            <div class="flex items-center justify-between mb-2">
-              <h2 class="text-[13px] font-black text-slate-800 uppercase tracking-wide">{{ vm.charts.revenueTrend.titleKey | translate }}</h2>
-            </div>
-            <div class="flex-1 w-full min-h-0 -mt-2" echarts [options]="revenueTrendOptions"></div>
-          </article>
-          <article class="exec-panel p-5 flex-1 flex flex-col">
-            <div class="flex items-center justify-between mb-2">
-              <h2 class="text-[13px] font-black text-slate-800 uppercase tracking-wide">{{ 'DASHBOARD.READINESS.TITLE' | translate }}</h2>
-            </div>
-            <div class="flex-1 flex gap-2 w-full min-h-0 -mt-2">
-              <div class="flex-1 flex flex-col relative">
-                <span class="text-center text-[10px] font-bold text-slate-500 z-10">{{ 'COMMON.VENDORS' | translate }}</span>
-                <div class="flex-1 w-full min-h-0" echarts [options]="vendorReadinessOptions"></div>
-              </div>
-              <div class="w-px bg-slate-100 my-4"></div>
-              <div class="flex-1 flex flex-col relative">
-                <span class="text-center text-[10px] font-bold text-slate-500 z-10">{{ 'COMMON.DRIVERS' | translate }}</span>
-                <div class="flex-1 w-full min-h-0" echarts [options]="driverReadinessOptions"></div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- 4. OPERATIONAL SIGNALS -->
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <article class="exec-panel lg:col-span-2 h-[24rem]">
-          <div class="exec-panel-header">
-             <h2 class="text-[13px] font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
-               <span class="material-symbols-outlined text-rose-500 text-[16px]">map</span>
-               {{ 'DASHBOARD.REGION_PRESSURE.TITLE' | translate }}
-             </h2>
-          </div>
-          <div class="flex-1 overflow-auto p-0">
-             <table class="exec-table" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-               <thead>
-                 <tr>
-                   <th>{{ 'COMMON.REGION' | translate }}</th>
-                   <th class="text-center">{{ 'DASHBOARD.REGION_PRESSURE.LATE_ORDERS' | translate }}</th>
-                   <th class="text-center">{{ 'DASHBOARD.REGION_PRESSURE.PAYMENT_ISSUES' | translate }}</th>
-                   <th class="text-center">{{ 'DASHBOARD.REGION_PRESSURE.DRIVER_GAP' | translate }}</th>
-                   <th>{{ 'DASHBOARD.REGION_PRESSURE.SCORE' | translate }}</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 <tr *ngFor="let row of vm.charts.regionPressure" [routerLink]="row.route" class="cursor-pointer">
-                   <td class="font-black text-slate-800">{{ row.regionLabel }}</td>
-                   <td class="text-center font-bold text-rose-600">{{ row.lateOrders }}</td>
-                   <td class="text-center font-bold text-amber-600">{{ row.paymentIssues }}</td>
-                   <td class="text-center font-bold text-cyan-600">{{ row.driverGap }}</td>
-                   <td>
-                     <div class="flex items-center gap-2">
-                       <span class="font-black text-slate-700 w-6 text-end">{{ row.score }}</span>
-                       <div class="h-1.5 rounded-full bg-slate-100 flex-1 overflow-hidden">
-                         <div class="h-full rounded-full transition-all" [ngClass]="getRegionPressureTone(row.score)" [style.width.%]="getRegionPressureWidth(row.score)"></div>
-                       </div>
-                     </div>
-                   </td>
-                 </tr>
-                 <tr *ngIf="vm.charts.regionPressure.length === 0">
-                    <td colspan="5" class="p-8 text-center text-slate-400 font-bold">{{ 'COMMON.NO_DATA' | translate }}</td>
-                 </tr>
-               </tbody>
-             </table>
-          </div>
-        </article>
-
-        <div class="flex flex-col gap-4 lg:col-span-1 h-[24rem]">
-          <article class="exec-panel flex-1">
-            <div class="exec-panel-header !py-2.5">
-              <h2 class="text-[12px] font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
-                <span class="material-symbols-outlined text-rose-500 text-[14px]">warning</span>
-                {{ 'DASHBOARD.ALERTS.TITLE' | translate }}
-              </h2>
-              <span class="px-1.5 py-0.5 bg-rose-100 text-rose-700 rounded text-[9px] font-black">{{ vm.alerts.length }}</span>
-            </div>
-            <div class="flex-1 overflow-y-auto p-3 space-y-2">
-              <div *ngIf="vm.alerts.length === 0" class="h-full flex flex-col items-center justify-center text-slate-300">
-                <span class="material-symbols-outlined text-2xl mb-1">check_circle</span>
-                <p class="text-[10px] font-bold">{{ 'DASHBOARD.ALERTS.EMPTY' | translate }}</p>
-              </div>
-              <a *ngFor="let alert of vm.alerts" [routerLink]="alert.route" class="block p-3 rounded-lg border border-slate-100 hover:border-slate-300 transition-colors group" [ngClass]="getQueueToneClasses(alert.severity)">
-                <div class="flex items-start justify-between">
-                  <div>
-                    <h4 class="text-[11px] font-black text-slate-800 group-hover:text-zadna-primary transition-colors">{{ alert.titleKey | translate }}</h4>
-                    <p class="text-[9px] font-bold text-slate-500 mt-0.5">{{ alert.summaryKey | translate:alert.summaryParams }}</p>
-                  </div>
-                  <span class="flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded bg-white border border-slate-200 text-[10px] font-black text-slate-700 shadow-sm">
-                    {{ alert.count }}
-                  </span>
-                </div>
-              </a>
-            </div>
-          </article>
-
-          <article class="exec-panel flex-1">
-            <div class="exec-panel-header !py-2.5">
-              <h2 class="text-[12px] font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
-                <span class="material-symbols-outlined text-amber-500 text-[14px]">assignment_late</span>
-                {{ 'DASHBOARD.ATTENTION.TITLE' | translate }}
-              </h2>
-              <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-[9px] font-black">{{ vm.attentionItems.length }}</span>
-            </div>
-            <div class="flex-1 overflow-y-auto p-0">
-              <div *ngIf="vm.attentionItems.length === 0" class="h-full flex flex-col items-center justify-center text-slate-300">
-                <span class="material-symbols-outlined text-2xl mb-1">done_all</span>
-                <p class="text-[10px] font-bold">{{ 'DASHBOARD.ATTENTION.EMPTY' | translate }}</p>
-              </div>
-              <table class="w-full text-left border-collapse" *ngIf="vm.attentionItems.length > 0">
-                <tbody>
-                  <tr *ngFor="let item of vm.attentionItems" class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors group">
-                    <td class="p-3 align-top" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-                      <p class="text-[11px] font-black text-slate-800 group-hover:text-zadna-primary transition-colors">{{ item.entityLabelKey | translate }} #{{ item.entityName }}</p>
-                      <p class="text-[9px] font-bold text-slate-500 mt-0.5">{{ item.summary }}</p>
-                    </td>
-                    <td class="p-3 align-top text-end">
-                      <a [routerLink]="item.route" class="inline-flex items-center justify-center px-2 py-1 rounded bg-white border border-slate-200 text-slate-600 text-[9px] font-black hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm">
-                        {{ item.actionLabelKey | translate }}
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- 5. DOMAIN PERFORMANCE -->
-      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <article *ngFor="let section of primarySections" class="exec-card p-5 group cursor-pointer" [routerLink]="section.route">
-          <div class="flex items-start justify-between mb-4">
-            <div>
-              <h3 class="text-[12px] font-black text-slate-800 uppercase tracking-wider group-hover:text-zadna-primary transition-colors">{{ section.titleKey | translate }}</h3>
-              <p class="text-[9px] font-bold text-slate-400 mt-0.5">{{ section.descriptionKey | translate }}</p>
-            </div>
-            <span class="px-2 py-0.5 text-[9px] font-black rounded uppercase" [ngClass]="getPriorityBadgeClasses(section.status.severity)">
-              {{ section.status.summaryKey | translate }}
+        <div class="dashboard-tabs-shell" role="tablist" [attr.aria-label]="'DASHBOARD.TITLE' | translate">
+          <button *ngFor="let tab of dashboardTabs"
+                  type="button"
+                  role="tab"
+                  class="dashboard-tab"
+                  [class.is-active]="activeTab === tab.id"
+                  [class.has-signal]="tab.signalCount > 0"
+                  [style.--tab-accent]="getSeverityColor(tab.severity)"
+                  [attr.aria-selected]="activeTab === tab.id"
+                  (click)="setActiveTab(tab.id)">
+            <span class="dashboard-tab-icon">
+              <span class="material-symbols-outlined">{{ tab.icon }}</span>
             </span>
-          </div>
-          <div class="grid grid-cols-2 gap-2 mt-auto">
-            <div *ngFor="let stat of section.stats | slice:0:4" class="exec-stat-box">
-              <span class="text-[9px] font-black uppercase text-slate-500 mb-1 truncate">{{ stat.labelKey | translate }}</span>
-              <div class="flex items-baseline gap-1">
-                <span class="text-[16px] font-black text-slate-800 leading-none">{{ stat.displayValue }}</span>
-                <span *ngIf="stat.unit" class="text-[8px] font-bold text-slate-400 uppercase">{{ stat.unit | translate }}</span>
-              </div>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <article *ngFor="let section of secondarySections" class="exec-card p-3 group cursor-pointer" [routerLink]="section.route">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-[10px] font-black text-slate-700 uppercase tracking-wide group-hover:text-zadna-primary truncate pr-2" [attr.dir]="isRTL ? 'rtl' : 'ltr'">{{ section.titleKey | translate }}</h3>
-            <div class="w-2 h-2 rounded-full shrink-0" [ngClass]="getSeverityCardClasses(section.status.severity)"></div>
-          </div>
-          <div class="flex justify-between items-end">
-            <div class="flex flex-col">
-               <span class="text-[8px] font-bold text-slate-400 uppercase">{{ section.stats[0].labelKey | translate }}</span>
-               <span class="text-[14px] font-black text-slate-800 leading-tight">{{ section.stats[0].displayValue }}</span>
-            </div>
-            <span class="material-symbols-outlined text-[14px] text-slate-300 group-hover:text-zadna-primary transition-colors" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-              {{ isRTL ? 'arrow_back' : 'arrow_forward' }}
+            <span class="dashboard-tab-copy">
+              <span class="dashboard-tab-label">{{ tab.labelKey | translate }}</span>
+              <span class="dashboard-tab-helper" *ngIf="tab.helper">{{ tab.helper }}</span>
             </span>
-          </div>
-        </article>
-      </section>
+            <span class="dashboard-tab-metric">
+              {{ tab.metric }}
+              <span class="dashboard-tab-dot" *ngIf="tab.signalCount > 0"></span>
+            </span>
+          </button>
+        </div>
+      </div>
 
-      <!-- 6. AUDIT TIMELINE -->
-      <section>
-        <article class="exec-panel max-h-[20rem]">
-          <div class="exec-panel-header">
-             <h2 class="text-[13px] font-black text-slate-800 flex items-center gap-2 uppercase tracking-wide">
-               <span class="material-symbols-outlined text-slate-500 text-[16px]">history</span>
-               {{ 'DASHBOARD.AUDIT.TITLE' | translate }}
-             </h2>
-          </div>
-          <div class="flex-1 overflow-y-auto p-5">
-            <div *ngIf="vm.auditItems.length === 0" class="py-8 flex flex-col items-center justify-center text-slate-300">
-              <span class="material-symbols-outlined text-3xl mb-2">history_toggle_off</span>
-              <p class="text-[11px] font-bold">{{ 'DASHBOARD.AUDIT.EMPTY' | translate }}</p>
-            </div>
-            
-            <div class="space-y-5 relative before:absolute before:inset-0 before:mx-auto before:-translate-x-px md:before:mx-0 md:before:translate-x-0 before:h-full before:w-[2px] before:bg-slate-100"
-                 [ngClass]="isRTL ? 'before:right-2.5' : 'before:left-2.5'">
-              <div *ngFor="let audit of vm.auditItems | slice:0:20" class="relative flex items-start gap-3 group">
-                <div class="flex items-center justify-center w-5 h-5 rounded-full border-2 border-white bg-slate-100 text-slate-500 shadow-sm shrink-0 z-10" [ngClass]="getSeverityCardClasses(audit.severity)">
-                   <span class="material-symbols-outlined text-[10px]">{{ getAlertIcon(audit.severity) }}</span>
+      <ng-container [ngSwitch]="activeTab">
+        
+        <!-- OVERVIEW TAB -->
+        <div *ngSwitchCase="'overview'" class="space-y-6 animate-fade-in">
+          <app-dashboard-kpi-strip
+            [kpis]="vm.kpis"
+            [microChartOptions]="heroMicroChartOptions">
+          </app-dashboard-kpi-strip>
+
+          <app-dashboard-insights [panels]="insightPanels"></app-dashboard-insights>
+
+          <app-dashboard-charts
+            [ordersTrend]="vm.charts.ordersTrend"
+            [revenueTrend]="vm.charts.revenueTrend"
+            [ordersTrendOptions]="ordersTrendOptions"
+            [revenueTrendOptions]="revenueTrendOptions"
+            [ordersBarsOptions]="ordersBarsOptions"
+            [revenueBarsOptions]="revenueBarsOptions"
+            [vendorReadinessOptions]="vendorReadinessOptions"
+            [driverReadinessOptions]="driverReadinessOptions"
+            [vendorReadinessBarOptions]="vendorReadinessBarOptions"
+            [driverReadinessBarOptions]="driverReadinessBarOptions">
+          </app-dashboard-charts>
+
+        </div>
+
+        <!-- VENDORS TAB -->
+        <div *ngSwitchCase="'vendors'" class="space-y-6 animate-fade-in">
+          <app-dashboard-sections
+            [primarySections]="vendorSections"
+            [secondarySections]="[]"
+            [isRTL]="isRTL">
+            <div dashboard-section-rail class="dashboard-readiness-rail">
+              <div class="dashboard-readiness-header">
+                <div>
+                  <h3>{{ 'DASHBOARD.SUPPLY.VENDOR_SPLIT' | translate }}</h3>
+                  <p>{{ 'DASHBOARD.SUPPLY.VENDOR_READINESS' | translate }}</p>
                 </div>
-                <div class="flex-1 pt-0.5">
-                  <div class="flex items-center gap-3 mb-0.5">
-                    <span class="text-[9px] font-bold text-slate-400 whitespace-nowrap" [attr.dir]="'ltr'">{{ formatRelativeTime(audit.timestampUtc) }}</span>
-                    <h4 class="font-black text-[11px] text-slate-800">{{ audit.titleKey | translate:audit.titleParams }}</h4>
+                <span>{{ vm.charts.vendorReadiness.length }}</span>
+              </div>
+              <div echarts [options]="vendorReadinessOptions" class="dashboard-readiness-donut"></div>
+              <div echarts [options]="vendorReadinessBarOptions" class="dashboard-readiness-bars"></div>
+              <div class="dashboard-readiness-buckets">
+                <div *ngFor="let bucket of vm.charts.vendorReadiness" class="dashboard-readiness-row">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="h-2.5 w-2.5 rounded-full shrink-0" [style.background-color]="bucket.color"></span>
+                    <span class="truncate">{{ bucket.labelKey | translate }}</span>
                   </div>
-                  <p class="text-[10px] font-bold text-slate-500 leading-snug">{{ audit.subtitleKey | translate:audit.subtitleParams }}</p>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <span class="dashboard-bucket-count">{{ bucket.count }}</span>
+                    <span class="dashboard-bucket-badge" [ngClass]="getBucketToneClass(bucket.severity)">{{ bucket.share }}%</span>
+                  </div>
                 </div>
               </div>
             </div>
+          </app-dashboard-sections>
+        </div>
+
+        <!-- DRIVERS TAB -->
+        <div *ngSwitchCase="'drivers'" class="space-y-6 animate-fade-in">
+          <app-dashboard-sections
+            [primarySections]="driverSections"
+            [secondarySections]="[]"
+            [isRTL]="isRTL">
+            <div dashboard-section-rail class="dashboard-readiness-rail">
+              <div class="dashboard-readiness-header">
+                <div>
+                  <h3>{{ 'DASHBOARD.SUPPLY.DRIVER_SPLIT' | translate }}</h3>
+                  <p>{{ 'DASHBOARD.SUPPLY.DRIVER_READINESS' | translate }}</p>
+                </div>
+                <span>{{ vm.charts.driverReadiness.length }}</span>
+              </div>
+              <div echarts [options]="driverReadinessOptions" class="dashboard-readiness-donut"></div>
+              <div echarts [options]="driverReadinessBarOptions" class="dashboard-readiness-bars"></div>
+              <div class="dashboard-readiness-buckets">
+                <div *ngFor="let bucket of vm.charts.driverReadiness" class="dashboard-readiness-row">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="h-2.5 w-2.5 rounded-full shrink-0" [style.background-color]="bucket.color"></span>
+                    <span class="truncate">{{ bucket.labelKey | translate }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <span class="dashboard-bucket-count">{{ bucket.count }}</span>
+                    <span class="dashboard-bucket-badge" [ngClass]="getBucketToneClass(bucket.severity)">{{ bucket.share }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </app-dashboard-sections>
+        </div>
+
+        <!-- ORDERS TAB -->
+        <div *ngSwitchCase="'orders'" class="space-y-6 animate-fade-in">
+          <section class="dashboard-orders-stack">
+            <div class="dashboard-orders-insights">
+              <app-dashboard-orders-windows
+                [regionPressureOptions]="regionPressureOptions"
+                [queueMixOptions]="queueMixOptions"
+                [riskExceptionsOptions]="riskExceptionsOptions">
+              </app-dashboard-orders-windows>
+
+              <div class="dashboard-orders-alerts">
+                <app-dashboard-alerts-panel
+                  [alerts]="vm.alerts"
+                  [attentionItems]="vm.attentionItems"
+                  [liveQueues]="vm.queues.live"
+                  [riskQueues]="vm.queues.risk"
+                  [isRTL]="isRTL">
+                </app-dashboard-alerts-panel>
+              </div>
+            </div>
+          </section>
+          <app-dashboard-sections
+            [primarySections]="orderSections"
+            [secondarySections]="[]"
+            [isRTL]="isRTL">
+          </app-dashboard-sections>
+        </div>
+
+        <!-- FINANCE TAB -->
+        <div *ngSwitchCase="'finance'" class="space-y-6 animate-fade-in">
+          <section class="dashboard-detail-grid">
+            <article class="dashboard-detail-panel lg:col-span-2">
+              <div class="dashboard-detail-header">
+                <h3>{{ vm.charts.revenueTrend.titleKey | translate }}</h3>
+                <span>{{ 'DASHBOARD.CHARTS.NET_REVENUE' | translate }}</span>
+              </div>
+              <div echarts [options]="revenueTrendOptions" class="h-72 w-full"></div>
+            </article>
+            <article class="dashboard-detail-panel">
+              <div class="dashboard-detail-header">
+                <h3>{{ 'DASHBOARD.CHARTS.REVENUE_QUALITY' | translate }}</h3>
+                <span>{{ 'DASHBOARD.CHARTS.EXPOSURE_DESC' | translate }}</span>
+              </div>
+              <div echarts [options]="revenueBarsOptions" class="h-72 w-full"></div>
+            </article>
+          </section>
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div class="xl:col-span-2">
+              <app-dashboard-sections
+                [primarySections]="financeSections"
+                [secondarySections]="[]"
+                [isRTL]="isRTL">
+              </app-dashboard-sections>
+            </div>
+            <app-dashboard-audit-feed
+              [auditItems]="vm.auditItems"
+              [isRTL]="isRTL"
+              [currentLang]="currentLang">
+            </app-dashboard-audit-feed>
           </div>
-        </article>
-      </section>
+        </div>
+
+      </ng-container>
 
     </main>
   </ng-container>
 
+  <!-- LOADING / ERROR STATE -->
   <ng-template #dashboardState>
     <div class="flex flex-col items-center justify-center min-h-[70vh] gap-4">
-      <div *ngIf="isLoading" class="flex flex-col items-center gap-4">
-        <div class="h-8 w-8 border-4 border-zadna-primary/20 border-t-zadna-primary rounded-full animate-spin"></div>
-        <p class="text-[12px] font-bold text-slate-500 animate-pulse">{{ 'COMMON.LOADING' | translate }}</p>
+      <div *ngIf="isLoading" class="flex flex-col items-center gap-3">
+        <div class="h-7 w-7 border-3 border-zadna-primary/20 border-t-zadna-primary rounded-full animate-spin"></div>
+        <p class="text-[11px] font-medium text-slate-400 animate-pulse">{{ 'COMMON.LOADING' | translate }}</p>
       </div>
-      <div *ngIf="loadError" class="flex flex-col items-center gap-3 max-w-sm text-center">
-        <div class="h-12 w-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center">
-          <span class="material-symbols-outlined text-2xl">error</span>
+      <div *ngIf="loadError" class="flex flex-col items-center gap-3 max-w-xs text-center">
+        <div class="h-11 w-11 bg-red-50 text-red-400 rounded-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-xl">error</span>
         </div>
-        <h3 class="text-sm font-black text-slate-800">{{ 'COMMON.ERROR' | translate }}</h3>
-        <p class="text-[11px] font-bold text-slate-500">{{ 'DASHBOARD.ERROR_DESC' | translate }}</p>
-        <button class="mt-2 px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[11px] font-black transition-colors" (click)="loadDashboard()">
+        <h3 class="text-sm font-bold text-slate-700">{{ 'COMMON.ERROR' | translate }}</h3>
+        <p class="text-[10px] text-slate-400">{{ 'DASHBOARD.ERROR_DESC' | translate }}</p>
+        <button class="mt-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-[10px] font-bold transition-colors" (click)="loadDashboard()">
           {{ 'COMMON.RETRY' | translate }}
         </button>
       </div>

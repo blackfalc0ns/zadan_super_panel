@@ -89,13 +89,16 @@
 
         <!-- 4. Data Table (Desktop) -->
         <app-data-table
-            *ngIf="!isLoading && vendors.length > 0"
+            *ngIf="!isLoading"
             [data]="vendors"
             [columns]="tableColumns"
             [actions]="tableActions"
             [bulkActions]="bulkActions"
             [selectable]="true"
             [clickableRows]="true"
+            [emptyStateTitle]="'لم يتم العثور على عناصر'"
+            [emptyStateMessage]="'لا توجد أنشطة رئيسية مهيأة بعد.'"
+            [emptyStateIcon]="'storefront'"
             [containerClass]="'extraordinary-table-container'"
             (rowClick)="onTableRowClick($event)"
             (actionClick)="onTableAction($event)"

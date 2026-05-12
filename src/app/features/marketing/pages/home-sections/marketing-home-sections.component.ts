@@ -87,9 +87,12 @@ import { forkJoin } from 'rxjs';
         [data]="filteredSections"
         [columns]="tableColumns"
         [isLoading]="loading"
+        [emptyStateIcon]="'dashboard_customize'"
+        [emptyStateActionLabel]="'إنشاء أول قسم'"
         [emptyStateTitle]="'لا توجد أقسام للصفحة الرئيسية'"
         [emptyStateMessage]="'لم تقم بإضافة أي قسم ليظهر في الصفحة الرئيسية للتطبيق.'"
-        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'">
+        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
+        (emptyStateAction)="openCreate()">
 
           <ng-template #customColumn let-section let-column="column">
             <ng-container *ngIf="column.key === 'categoryNameEn'">

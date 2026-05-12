@@ -10,6 +10,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.LoginComponent)
   },
   {
+    path: 'change-temporary-password',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/auth/pages/change-temporary-password/change-temporary-password.component').then((m) => m.ChangeTemporaryPasswordComponent)
+  },
+  {
     path: '',
     component: LayoutComponent,
     canActivate: [authGuard],

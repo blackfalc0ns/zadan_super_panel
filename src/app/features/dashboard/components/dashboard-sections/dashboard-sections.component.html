@@ -1,0 +1,156 @@
+<div class="dashboard-window">
+
+  <div class="dashboard-window-tabs">
+    <div class="dashboard-window-tabs-scroll hide-scrollbar">
+      <div class="dashboard-window-tabs-track">
+        <button *ngFor="let tab of tabs; trackBy: trackByTab"
+                type="button"
+                (click)="setActiveTab(tab.id)"
+                class="dashboard-window-tab"
+                [class.is-active]="activeTabId === tab.id"
+                [style.--window-accent]="getSeverityColor(tab.severity)">
+          <span class="dashboard-window-tab-icon">
+            <span class="material-symbols-outlined">{{ tab.icon }}</span>
+          </span>
+          <span class="dashboard-window-tab-copy">
+            <span class="dashboard-window-tab-title">{{ tab.titleKey | translate }}</span>
+            <span class="dashboard-window-tab-meta">
+              {{ tab.statsCount }} / {{ tab.exceptionsCount }}
+            </span>
+          </span>
+          <span class="dashboard-window-tab-count" *ngIf="tab.signalCount > 0">
+            {{ tab.signalCount }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-window-body" *ngIf="activeSection as section">
+
+    <div class="dashboard-window-content-grid">
+      <div class="dashboard-window-main">
+        <div class="dashboard-window-header">
+          <div class="dashboard-window-heading">
+            <div class="dashboard-window-title-row">
+              <h2>{{ section.titleKey | translate }}</h2>
+              <span class="dashboard-window-status" [ngClass]="getPriorityBadgeClasses(section.status.severity)">
+                {{ section.status.summaryKey | translate:section.status.summaryParams }}
+              </span>
+            </div>
+            <p>{{ section.descriptionKey | translate }}</p>
+            <div class="dashboard-window-summary">
+              <span>
+                <strong>{{ section.stats.length }}</strong>
+                {{ 'DASHBOARD.WINDOWS_STATS' | translate }}
+              </span>
+              <span>
+                <strong>{{ section.rankedLists.length }}</strong>
+                {{ 'DASHBOARD.WINDOWS_CHART' | translate }}
+              </span>
+              <span>
+                <strong>{{ section.exceptions.length }}</strong>
+                {{ 'DASHBOARD.WINDOWS_EXCEPTIONS' | translate }}
+              </span>
+            </div>
+          </div>
+          <a [routerLink]="section.route" class="dashboard-window-action">
+            <span>{{ 'DASHBOARD.OPEN_MODULE' | translate }}</span>
+            <span class="material-symbols-outlined">{{ isRTL ? 'arrow_back' : 'arrow_forward' }}</span>
+          </a>
+        </div>
+
+        <div class="dashboard-window-stats" *ngIf="section.stats.length > 0">
+          <div *ngFor="let stat of section.stats"
+               class="dashboard-window-stat"
+               [ngClass]="getStatToneClass(stat.tone)"
+               [title]="stat.helperKey | translate">
+            <span class="dashboard-window-stat-label">{{ stat.labelKey | translate }}</span>
+            <div class="dashboard-window-stat-value">
+              <span>{{ stat.displayValue }}</span>
+              <small *ngIf="stat.unit">{{ stat.unit }}</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-window-lists" *ngIf="section.rankedLists.length > 0">
+          <div *ngFor="let list of section.rankedLists; trackBy: trackByList"
+               class="dashboard-window-list">
+            <div class="dashboard-window-list-header">
+              <div>
+                <h3>{{ list.titleKey | translate }}</h3>
+                <p>{{ list.descriptionKey | translate }}</p>
+              </div>
+              <span>{{ list.rows.length }}</span>
+            </div>
+            <div class="dashboard-window-list-body">
+              <div *ngIf="list.rows.length === 0" class="dashboard-window-empty compact">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>{{ 'COMMON.NO_DATA' | translate }}</span>
+              </div>
+              <div class="dashboard-window-list-rows">
+                <a *ngFor="let row of list.rows | slice:0:6; trackBy: trackByRankedRow"
+                   [routerLink]="row.route"
+                   class="dashboard-window-row">
+                  <div class="dashboard-window-row-main">
+                    <div class="dashboard-window-dot" [ngClass]="getSeverityDotClass(row.severity)"></div>
+                    <span>{{ row.label }}</span>
+                  </div>
+                  <div class="dashboard-window-row-meta">
+                    <strong>{{ row.value }}</strong>
+                    <span *ngIf="row.secondaryValue">{{ row.secondaryValue }}</span>
+                    <em *ngIf="row.metaLabel">{{ row.metaLabel }}</em>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="section.exceptions.length > 0"
+             class="dashboard-window-exceptions">
+          <div class="dashboard-window-exceptions-header">
+            <div>
+              <span class="material-symbols-outlined">report</span>
+              <h3>{{ 'DASHBOARD.WINDOW_EXCEPTIONS' | translate }}</h3>
+            </div>
+            <span>{{ section.exceptions.length }}</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="dashboard-window-table">
+              <thead>
+                <tr>
+                  <th>{{ 'DASHBOARD.TABLES.ENTITY' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLES.ISSUE' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLES.OWNER' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLES.METRIC' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let exc of section.exceptions | slice:0:8; trackBy: trackByException"
+                    class="cursor-pointer"
+                    [routerLink]="exc.route">
+                  <td>{{ exc.entityLabel }}</td>
+                  <td [ngClass]="getExceptionSeverityClass(exc.severity)">{{ exc.issueLabel }}</td>
+                  <td>{{ exc.ownerLabel }}</td>
+                  <td>{{ exc.metricLabel }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div *ngIf="section.stats.length === 0 && section.rankedLists.length === 0 && section.exceptions.length === 0"
+             class="dashboard-window-empty">
+          <span class="material-symbols-outlined">analytics</span>
+          <p>{{ 'COMMON.NO_DATA' | translate }}</p>
+        </div>
+      </div>
+
+      <aside class="dashboard-window-rail">
+        <ng-content select="[dashboard-section-rail]"></ng-content>
+      </aside>
+    </div>
+
+  </div>
+</div>

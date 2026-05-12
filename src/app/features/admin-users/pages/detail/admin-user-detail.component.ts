@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
-import { AdminAccessApiService } from '../../../../core/services/admin-access-api.service';
+import { AdminAccessApiService, AccessAuditLogDto, PermissionDefinitionDto, RoleDefinitionDto } from '../../../../core/services/admin-access-api.service';
 import {
   ADMIN_ROLE_PRESETS,
   AdminAccessLevel,
@@ -44,9 +44,19 @@ type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn']
 export class AdminUserDetailComponent implements OnInit {
   user: AdminUserRecord | null = null;
   isLoading = false;
-  activeTab: 'general' | 'access' | 'communication' = 'general';
+  isAuditLoading = false;
+  saveError = '';
+  activeTab: 'general' | 'access' | 'communication' | 'audit' = 'general';
   permissionGroups: PermissionGroup[] = [];
+  permissionDefinitions: PermissionDefinitionDto[] = [];
+  availablePermissionKeys = new Set<string>();
+  sensitivePermissionKeys = new Set<string>();
+  auditLogs: AccessAuditLogDto[] = [];
+  temporaryPassword = '';
+  isResettingPassword = false;
+  resetPasswordError = '';
   rolePresets: AdminRolePreset[] = [];
+  roleDefinitions: RoleDefinitionDto[] = [];
   featureToggleDefinitions: DirectoryFeatureToggleDefinition[] = [];
   readonly permissionActionLabels = PERMISSION_ACTION_LABELS;
   notificationEmailsText = '';
@@ -241,8 +251,36 @@ export class AdminUserDetailComponent implements OnInit {
     }
 
     this.applyCommunicationEditors();
-    this.user = this.adminUsersService.saveUser(this.user);
-    this.refreshSupportingData();
+    const panelScope = this.mapPanelScopeToNumber(this.user.panelScope);
+    this.saveError = '';
+    this.isLoading = true;
+    this.adminAccessApiService.updateUser(this.user.id, {
+      fullName: this.user.fullName,
+      email: this.user.email,
+      phone: this.user.phone,
+      roleDefinitionId: this.user.roleDefinitionId ?? '',
+      panelScope,
+      scopeType: this.resolveScopeType(panelScope, this.user),
+      scopeEntityId: this.resolveScopeEntityId(panelScope, this.user),
+      department: this.user.department || null,
+      team: this.user.team || null,
+      status: this.user.status,
+      notes: null,
+      grantedPermissions: this.user.grantedPermissions,
+      revokedPermissions: this.user.revokedPermissions
+    }).subscribe({
+      next: (updatedUser) => {
+        this.user = updatedUser;
+        this.isLoading = false;
+        this.refreshSupportingData();
+        this.loadAudit(updatedUser.id);
+      },
+      error: (err) => {
+        console.error('Failed to save access user', err);
+        this.saveError = err.error?.message || err.error?.title || 'Failed to save access changes.';
+        this.isLoading = false;
+      }
+    });
   }
 
   resetToPreset(): void {
@@ -250,8 +288,8 @@ export class AdminUserDetailComponent implements OnInit {
       return;
     }
 
-    const updated = this.adminUsersService.resetUserToPreset(this.user.id);
-    this.user = updated ?? this.user;
+    this.user.grantedPermissions = [];
+    this.user.revokedPermissions = [];
     this.refreshSupportingData();
   }
 
@@ -260,8 +298,11 @@ export class AdminUserDetailComponent implements OnInit {
       return;
     }
 
-    const updated = this.adminUsersService.resendInvite(this.user.id);
-    this.user = updated ?? this.user;
+    this.user.inviteState = 'pending';
+    if (this.user.status !== 'suspended') {
+      this.user.status = 'invited';
+    }
+    this.saveUser();
     this.refreshSupportingData();
   }
 
@@ -270,12 +311,31 @@ export class AdminUserDetailComponent implements OnInit {
       return;
     }
 
-    const updated = this.user.status === 'suspended'
-      ? this.adminUsersService.reactivateUser(this.user.id)
-      : this.adminUsersService.suspendUser(this.user.id);
+    this.user.status = this.user.status === 'suspended' ? 'active' : 'suspended';
+    this.saveUser();
+  }
 
-    this.user = updated ?? this.user;
-    this.refreshSupportingData();
+  resetTemporaryPassword(): void {
+    if (!this.user || !this.temporaryPassword.trim()) {
+      return;
+    }
+
+    this.isResettingPassword = true;
+    this.resetPasswordError = '';
+    this.adminAccessApiService.resetTemporaryPassword(this.user.id, this.temporaryPassword).subscribe({
+      next: (updatedUser) => {
+        this.user = updatedUser;
+        this.temporaryPassword = '';
+        this.isResettingPassword = false;
+        this.refreshSupportingData();
+        this.loadAudit(updatedUser.id);
+      },
+      error: (err) => {
+        console.error('Failed to reset temporary password', err);
+        this.resetPasswordError = err.error?.message || err.error?.title || 'Failed to reset temporary password.';
+        this.isResettingPassword = false;
+      }
+    });
   }
 
   duplicateAsNewRole(): void {
@@ -283,10 +343,7 @@ export class AdminUserDetailComponent implements OnInit {
       return;
     }
 
-    const duplicated = this.adminUsersService.duplicateUser(this.user.id);
-    if (duplicated) {
-      this.router.navigate(['/admin-users', duplicated.id]);
-    }
+    this.router.navigate(['/admin-users']);
   }
 
   onPresetChange(rolePresetId: AdminRolePresetId): void {
@@ -297,6 +354,28 @@ export class AdminUserDetailComponent implements OnInit {
     const preset = getRolePresetById(rolePresetId);
     this.user.rolePresetId = rolePresetId;
     this.user.accessLevel = preset.accessLevel;
+  }
+
+  onRoleDefinitionChange(roleDefinitionId: string): void {
+    if (!this.user) {
+      return;
+    }
+
+    const role = this.roleDefinitions.find((entry) => entry.id === roleDefinitionId);
+    if (!role) {
+      return;
+    }
+
+    this.user.roleDefinitionId = role.id;
+    this.user.roleCode = role.code;
+    this.user.roleName = role.name;
+    this.user.rolePermissions = role.permissions;
+    this.user.panelScope = this.mapPanelScopeToString(role.panelScope);
+    this.user.rolePresetId = this.mapRoleCodeToPreset(role.code);
+    this.user.accessLevel = getRolePresetById(this.user.rolePresetId).accessLevel;
+    this.user.grantedPermissions = [];
+    this.user.revokedPermissions = [];
+    this.refreshSupportingData();
   }
 
   onPersonaChange(personaType: DirectoryPersonaType): void {
@@ -363,7 +442,11 @@ export class AdminUserDetailComponent implements OnInit {
     }
 
     const key = buildPermissionKey(groupId, action);
-    const basePermissions = new Set(getRolePresetById(this.user.rolePresetId).permissions);
+    if (!this.availablePermissionKeys.has(key)) {
+      return;
+    }
+
+    const basePermissions = new Set(this.user.rolePermissions?.length ? this.user.rolePermissions : getRolePresetById(this.user.rolePresetId).permissions);
     const hasBasePermission = basePermissions.has(key);
 
     this.user.grantedPermissions = this.user.grantedPermissions.filter((permission) => permission !== key);
@@ -379,7 +462,19 @@ export class AdminUserDetailComponent implements OnInit {
   }
 
   getGroupEnabledCount(group: PermissionGroup): number {
-    return group.actions.filter((action) => this.hasPermission(group.id, action)).length;
+    return group.actions.filter((action) => this.isPermissionAvailable(group.id, action) && this.hasPermission(group.id, action)).length;
+  }
+
+  getGroupAvailableActions(group: PermissionGroup): PermissionActionId[] {
+    return group.actions.filter((action) => this.isPermissionAvailable(group.id, action));
+  }
+
+  isPermissionAvailable(groupId: PermissionGroup['id'], action: PermissionActionId): boolean {
+    return this.availablePermissionKeys.has(buildPermissionKey(groupId, action));
+  }
+
+  isSensitivePermission(groupId: PermissionGroup['id'], action: PermissionActionId): boolean {
+    return this.sensitivePermissionKeys.has(buildPermissionKey(groupId, action));
   }
 
   hasFeatureToggle(toggleId: DirectoryFeatureToggleId): boolean {
@@ -427,6 +522,9 @@ export class AdminUserDetailComponent implements OnInit {
         this.user = user;
         this.isLoading = false;
         this.refreshSupportingData();
+        this.loadRoles();
+        this.loadPermissions();
+        this.loadAudit(user.id);
       },
       error: () => {
         this.adminAccessApiService.getUsers().subscribe({
@@ -434,11 +532,17 @@ export class AdminUserDetailComponent implements OnInit {
             this.user = users.find((entry) => entry.id === id) ?? this.adminUsersService.getUserById(id) ?? null;
             this.isLoading = false;
             this.refreshSupportingData();
+            this.loadRoles();
+            this.loadPermissions();
+            if (this.user) this.loadAudit(this.user.id);
           },
           error: () => {
             this.user = this.adminUsersService.getUserById(id) ?? null;
             this.isLoading = false;
             this.refreshSupportingData();
+            this.loadRoles();
+            this.loadPermissions();
+            if (this.user) this.loadAudit(this.user.id);
           }
         });
       }
@@ -454,7 +558,9 @@ export class AdminUserDetailComponent implements OnInit {
     }
 
     this.rolePresets = this.adminUsersService.getAvailableRolePresets(this.user);
-    this.permissionGroups = this.adminUsersService.getPermissionGroups(this.user.panelScope, this.user.identityKind);
+    this.permissionGroups = this.adminUsersService
+      .getPermissionGroups(this.user.panelScope, this.user.identityKind)
+      .filter((group) => group.actions.some((action) => this.isPermissionAvailable(group.id, action)));
     this.featureToggleDefinitions = this.adminUsersService.getFeatureToggleDefinitions(this.user.personaType);
     this.notificationEmailsText = this.user.communication.notificationEmails.join(', ');
     this.escalationEmailsText = this.user.communication.escalationEmails.join(', ');
@@ -489,10 +595,121 @@ export class AdminUserDetailComponent implements OnInit {
     ];
   }
 
+  private loadRoles(): void {
+    this.adminAccessApiService.getRoles().subscribe({
+      next: (roles) => {
+        this.roleDefinitions = roles;
+      },
+      error: (err) => {
+        console.error('Failed to load role definitions', err);
+        this.roleDefinitions = [];
+      }
+    });
+  }
+
+  private loadPermissions(): void {
+    this.adminAccessApiService.getPermissions().subscribe({
+      next: (permissions) => {
+        this.permissionDefinitions = permissions;
+        this.availablePermissionKeys = new Set(permissions.map((permission) => permission.key));
+        this.sensitivePermissionKeys = new Set(permissions.filter((permission) => permission.isSensitive).map((permission) => permission.key));
+        this.refreshSupportingData();
+      },
+      error: (err) => {
+        console.error('Failed to load permission definitions', err);
+        this.permissionDefinitions = [];
+        this.availablePermissionKeys = new Set<string>();
+        this.sensitivePermissionKeys = new Set<string>();
+        this.refreshSupportingData();
+      }
+    });
+  }
+
+  private loadAudit(userId: string): void {
+    this.isAuditLoading = true;
+    this.adminAccessApiService.getUserAudit(userId).subscribe({
+      next: (logs) => {
+        this.auditLogs = logs;
+        this.isAuditLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load audit logs', err);
+        this.auditLogs = [];
+        this.isAuditLoading = false;
+      }
+    });
+  }
+
   get rolePresetOptions(): Array<{ value: AdminRolePresetId; labelKey: string }> {
     return this.rolePresets.map((preset) => ({
       value: preset.id,
       labelKey: preset.nameKey
     }));
+  }
+
+  get roleDefinitionOptions(): Array<{ value: string; label: string }> {
+    return this.roleDefinitions
+      .filter((role) => role.isActive && this.mapPanelScopeToString(role.panelScope) === this.user?.panelScope)
+      .map((role) => ({
+        value: role.id,
+        label: role.name
+      }));
+  }
+
+  private mapPanelScopeToNumber(scope: AdminUserRecord['panelScope']): number {
+    switch (scope) {
+      case 'vendor_panel': return 1;
+      case 'driver_app': return 2;
+      case 'customer_app': return 3;
+      default: return 0;
+    }
+  }
+
+  private mapPanelScopeToString(scope: RoleDefinitionDto['panelScope']): AdminUserRecord['panelScope'] {
+    if (scope === 1 || scope === '1' || scope === 'VendorPanel' || scope === 'vendor_panel') return 'vendor_panel';
+    if (scope === 2 || scope === '2' || scope === 'DriverApp' || scope === 'driver_app') return 'driver_app';
+    if (scope === 3 || scope === '3' || scope === 'CustomerApp' || scope === 'customer_app') return 'customer_app';
+    return 'super_admin_panel';
+  }
+
+  private resolveScopeType(panelScope: number, user: AdminUserRecord): number {
+    if (panelScope === 1) return user.assignment.branchId ? 2 : 1;
+    if (panelScope === 2) return 3;
+    if (panelScope === 3) return 4;
+    return 0;
+  }
+
+  private resolveScopeEntityId(panelScope: number, user: AdminUserRecord): string | null {
+    if (panelScope === 1) return user.assignment.branchId ?? user.assignment.vendorId ?? user.entityId ?? null;
+    if (panelScope === 2) return user.entityId ?? user.assignment.entityId ?? null;
+    return null;
+  }
+
+  private defaultScopeTypeForPanel(panelScope: number): number {
+    if (panelScope === 1) return 1;
+    if (panelScope === 2) return 3;
+    if (panelScope === 3) return 4;
+    return 0;
+  }
+
+  private mapRoleCodeToPreset(code: string): AdminRolePresetId {
+    switch (code) {
+      case 'super_admin_all': return 'super_admin';
+      case 'admin_operations': return 'operations_lead';
+      case 'vendor_branch_staff': return 'vendor_branch_employee';
+      case 'vendor_owner':
+      case 'vendor_company_manager':
+      case 'vendor_branch_manager':
+      case 'vendor_finance_manager':
+      case 'vendor_support_manager':
+      case 'driver_account':
+      case 'customer_account':
+      case 'risk_admin':
+      case 'finance_admin':
+      case 'support_admin':
+        return code;
+      default:
+        return this.user?.panelScope === 'vendor_panel' ? 'vendor_branch_employee' : 'operations_lead';
+    }
   }
 }

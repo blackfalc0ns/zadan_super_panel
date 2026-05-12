@@ -96,7 +96,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
 
               <div class="mt-4 space-y-2">
                 <div class="flex items-center gap-2">
-                  <input #defaultImagesInput type="file" accept="image/*" multiple class="hidden" (change)="onDefaultImagesSelected($event)">
+                  <input #defaultImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onDefaultImagesSelected($event)">
                   <button type="button" (click)="defaultImagesInput.click()" [disabled]="isUploadingDefaultImages" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-50">
                     {{ currentLang === 'ar' ? 'رفع صور افتراضية' : 'Upload default images' }}
                   </button>
@@ -209,7 +209,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
                   <td class="py-2.5">
                     <div class="space-y-2">
                       <div class="flex items-center gap-2">
-                        <input #rowImagesInput type="file" accept="image/*" multiple class="hidden" (change)="onRowImagesSelected(row, $event)">
+                        <input #rowImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onRowImagesSelected(row, $event)">
                         <button
                           type="button"
                           (click)="rowImagesInput.click()"

@@ -7,11 +7,10 @@ import { CatalogService } from '@catalog/services/catalog.api.service';
 import { CatalogSearchRequest, Category, CategorySearchFilters } from '@catalog/models/catalog.domain.models';
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
-import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
-import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
-import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
+import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { CatalogRequestCenterModalComponent } from '../../components/catalog-request-center-modal/catalog-request-center-modal.component';
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 
@@ -24,11 +23,10 @@ import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/co
     TranslateModule,
     CategoryFormModalComponent,
     DeleteConfirmationModalComponent,
-    AppButtonComponent,
-    AppBadgeComponent,
     AppPaginationComponent,
-    AppPageHeaderComponent,
     StatusPillComponent,
+    AppButtonComponent,
+    AppPageHeaderComponent,
     CatalogRequestCenterModalComponent,
     AdvancedFilterPanelComponent
   ],
@@ -69,6 +67,14 @@ export class CategoriesManagerComponent implements OnInit {
 
   get hasActiveFilters(): boolean {
     return !!(this.searchTerm || this.statusFilter != null || this.childrenFilter != null);
+  }
+
+  get activeFiltersCount(): number {
+    return [this.searchTerm, this.statusFilter, this.childrenFilter].filter((value) => value !== null && value !== '').length;
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.totalItems / this.pageSize));
   }
 
   constructor(
@@ -178,6 +184,35 @@ export class CategoriesManagerComponent implements OnInit {
     }
 
     return category.activityNameEn || category.parentNameEn || category.nameEn;
+  }
+
+  getLocalizedCategoryName(category: Category): string {
+    return this.activeLang === 'ar' ? (category.nameAr || category.nameEn) : (category.nameEn || category.nameAr);
+  }
+
+  getSecondaryCategoryName(category: Category): string {
+    return this.activeLang === 'ar' ? (category.nameEn || category.nameAr) : (category.nameAr || category.nameEn);
+  }
+
+  getCategoryInitials(category: Category): string {
+    const name = this.getLocalizedCategoryName(category).trim();
+    return name ? name.slice(0, 2).toUpperCase() : 'CA';
+  }
+
+  getChildrenCount(category: Category): number {
+    return category.subCategories?.length ?? 0;
+  }
+
+  getProductsCount(category: Category): number {
+    return category.masterProductsCount ?? 0;
+  }
+
+  getBrandsCount(category: Category): number {
+    return category.brandsCount ?? 0;
+  }
+
+  getHierarchyWidth(category: Category): number {
+    return Math.min(100, Math.max(8, this.getChildrenCount(category) * 12));
   }
 
   selectItem(item: Category) {

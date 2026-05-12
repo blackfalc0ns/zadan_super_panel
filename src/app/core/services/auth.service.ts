@@ -23,6 +23,7 @@ export interface AdminUser {
     email?: string | null;
     phone?: string | null;
     role: string;
+    mustChangePassword?: boolean;
     access?: EffectiveAccess | null;
 }
 
@@ -44,6 +45,7 @@ const DEV_ADMIN_USER: AdminUser = {
     fullName: 'Development Admin',
     email: 'dev@zadana.local',
     role: 'SuperAdmin',
+    mustChangePassword: false,
     access: {
         permissionVersion: 1,
         permissions: ['*'], // A wildcard or just let it pass development bypass
@@ -131,6 +133,21 @@ export class AuthService {
                     this.currentUserSubject.next(response.user);
                 })
             );
+    }
+
+    changeTemporaryPassword(currentPassword: string, newPassword: string): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/change-temporary-password`, { currentPassword, newPassword }).pipe(
+            tap(() => {
+                const currentUser = this.currentUserValue;
+                if (!currentUser) {
+                    return;
+                }
+
+                const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
+                localStorage.setItem('admin_user', JSON.stringify(updatedUser));
+                this.currentUserSubject.next(updatedUser);
+            })
+        );
     }
 
     logout(): Observable<void> {

@@ -51,16 +51,8 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['brand']) {
-      if (this.mode === 'edit' && this.brand) {
-        this.form.patchValue({
-          ...this.brand,
-          categoryId: this.brand.categoryId ?? null,
-          coverImageUrl: this.brand.coverImageUrl ?? ''
-        });
-      } else {
-        this.form.reset({ isActive: true, categoryId: null, logoUrl: '', coverImageUrl: '' });
-      }
+    if (changes['brand'] || changes['mode'] || changes['isOpen']) {
+      this.syncFormWithInputs();
     }
   }
 
@@ -179,6 +171,27 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     }
 
     this.isUploadingCover = isUploading;
+  }
+
+  private syncFormWithInputs(): void {
+    if (!this.isOpen) {
+      return;
+    }
+
+    if (this.mode === 'edit' && this.brand) {
+      this.form.reset({
+        id: this.brand.id ?? null,
+        nameAr: this.brand.nameAr ?? '',
+        nameEn: this.brand.nameEn ?? '',
+        logoUrl: this.brand.logoUrl ?? '',
+        coverImageUrl: this.brand.coverImageUrl ?? '',
+        categoryId: this.brand.categoryId ?? null,
+        isActive: this.brand.isActive ?? true
+      });
+      return;
+    }
+
+    this.form.reset({ isActive: true, categoryId: null, logoUrl: '', coverImageUrl: '' });
   }
 
   private flattenLeafCategories(categories: Category[]): Category[] {

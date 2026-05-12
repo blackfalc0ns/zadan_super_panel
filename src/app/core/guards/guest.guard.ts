@@ -10,6 +10,10 @@ export const guestGuard: CanActivateFn = (route, state) => {
     const authService = inject(AuthService);
 
     if (authService.hasApiSession) {
+        if (authService.currentUserValue?.mustChangePassword) {
+            return router.createUrlTree(['/change-temporary-password']);
+        }
+
         // User is already logged in, redirect to dashboard
         return router.createUrlTree(['/dashboard']);
     }

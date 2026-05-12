@@ -93,9 +93,12 @@ interface CouponFormValue {
         [data]="filteredCoupons"
         [columns]="tableColumns"
         [isLoading]="loading"
+        [emptyStateIcon]="'sell'"
+        [emptyStateActionLabel]="'إنشاء أول كوبون'"
         [emptyStateTitle]="'لا توجد كوبونات حالياً'"
         [emptyStateMessage]="'يمكنك إنشاء كوبون جديد وربطه بكل المتاجر أو بمجموعة محددة.'"
-        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'">
+        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
+        (emptyStateAction)="openCreate()">
         <ng-template #customColumn let-coupon let-column="column">
           <ng-container *ngIf="column.key === 'code'">
             <div class="flex flex-col text-start">

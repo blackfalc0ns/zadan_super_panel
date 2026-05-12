@@ -134,12 +134,34 @@ export class DriverVerificationTabComponent implements OnInit {
     return document?.fileUrl || document?.imageUrl || '';
   }
 
+  getDocumentUrls(document: DriverDocumentRecord | null): string[] {
+    const urls = [
+      document?.fileUrl,
+      document?.imageUrl,
+      document?.secondaryImageUrl
+    ]
+      .map((url) => url?.trim())
+      .filter((url): url is string => Boolean(url));
+
+    return [...new Set(urls)];
+  }
+
+  getDocumentImageLabel(document: DriverDocumentRecord, index: number): string {
+    if (document.documentType === 'NationalId') {
+      return index === 0
+        ? 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_IMAGES.FRONT'
+        : 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_IMAGES.BACK';
+    }
+
+    return 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_IMAGES.IMAGE';
+  }
+
   hasDocumentFile(document: DriverDocumentRecord | null): boolean {
-    return Boolean(this.getDocumentUrl(document).trim());
+    return this.getDocumentUrls(document).length > 0;
   }
 
   isImageDocument(document: DriverDocumentRecord | null): boolean {
-    const url = this.getDocumentUrl(document).toLowerCase().split('?')[0];
+    const url = this.getDocumentUrls(document)[0]?.toLowerCase().split('?')[0] || '';
     const contentType = document?.contentType?.toLowerCase() || '';
 
     return contentType.startsWith('image/')
@@ -147,7 +169,7 @@ export class DriverVerificationTabComponent implements OnInit {
   }
 
   isPdfDocument(document: DriverDocumentRecord | null): boolean {
-    const url = this.getDocumentUrl(document).toLowerCase().split('?')[0];
+    const url = this.getDocumentUrls(document)[0]?.toLowerCase().split('?')[0] || '';
     const contentType = document?.contentType?.toLowerCase() || '';
 
     return contentType.includes('pdf') || url.endsWith('.pdf');
@@ -177,9 +199,19 @@ export class DriverVerificationTabComponent implements OnInit {
     return Boolean(
       this.selectedDocumentPreview?.documentType
       && this.hasDocumentFile(this.selectedDocumentPreview)
+      && this.hasRequiredExpiryDate(this.selectedDocumentPreview)
       && this.selectedDocumentPreview.status !== 'valid'
       && this.selectedDocumentPreview.status !== 'expiring'
     );
+  }
+
+  hasRequiredExpiryDate(document: DriverDocumentRecord | null): boolean {
+    if (!document?.documentType) {
+      return false;
+    }
+
+    const requiresExpiry = ['NationalId', 'DriverLicense', 'VehicleLicense'].includes(document.documentType);
+    return !requiresExpiry || Boolean(document.expiryDateUtc);
   }
 
   canRejectSelectedDocument(): boolean {

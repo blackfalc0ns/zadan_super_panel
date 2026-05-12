@@ -1,0 +1,60 @@
+<article class="region-pressure-card">
+  <div class="region-pressure-header">
+    <div class="region-pressure-title">
+      <span class="material-symbols-outlined">map</span>
+      <div>
+        <h2>{{ 'DASHBOARD.REGION_PRESSURE.TITLE' | translate }}</h2>
+        <p>{{ 'DASHBOARD.REGION_PRESSURE.SCORE' | translate }}</p>
+      </div>
+    </div>
+    <div class="region-pressure-summary">
+      <span>{{ rows.length }}</span>
+      <strong>{{ totalPressureScore }}</strong>
+    </div>
+  </div>
+
+  <div class="region-pressure-list" *ngIf="rows.length > 0; else noRegionPressure">
+    <a *ngFor="let row of rows; trackBy: trackByRegion"
+       [routerLink]="row.route"
+       class="region-pressure-row"
+       [ngClass]="getRegionPressureCardTone(row.score)">
+      <div class="region-pressure-row-main">
+        <div class="region-pressure-region">
+          <span class="region-pressure-dot"></span>
+          <strong>{{ row.regionLabel }}</strong>
+        </div>
+        <div class="region-pressure-metrics">
+          <span class="is-late">
+            <em>{{ row.lateOrders }}</em>
+            {{ 'DASHBOARD.REGION_PRESSURE.LATE_ORDERS' | translate }}
+          </span>
+          <span class="is-payment">
+            <em>{{ row.paymentIssues }}</em>
+            {{ 'DASHBOARD.REGION_PRESSURE.PAYMENT_ISSUES' | translate }}
+          </span>
+          <span class="is-driver">
+            <em>{{ row.driverGap }}</em>
+            {{ 'DASHBOARD.REGION_PRESSURE.DRIVER_GAP' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="region-pressure-score">
+        <div class="region-pressure-score-copy">
+          <strong>{{ row.score }}</strong>
+          <span>{{ getTotalIncidents(row) }}</span>
+        </div>
+        <div class="region-pressure-bar">
+          <div [style.width.%]="getRegionPressureWidth(row.score)"></div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <ng-template #noRegionPressure>
+    <div class="region-pressure-empty">
+      <span class="material-symbols-outlined">check_circle</span>
+      <p>{{ 'COMMON.NO_DATA' | translate }}</p>
+    </div>
+  </ng-template>
+</article>

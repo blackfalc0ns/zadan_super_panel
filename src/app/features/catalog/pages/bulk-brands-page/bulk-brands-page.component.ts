@@ -71,7 +71,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     <div class="space-y-1">
                       <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'اللوجو الافتراضي' : 'Default logo' }}</span>
                     <div class="flex items-center gap-2">
-                      <input #defaultLogoInput type="file" accept="image/*" class="hidden" (change)="onDefaultsLogoSelected($event)">
+                      <input #defaultLogoInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onDefaultsLogoSelected($event)">
                       <button type="button" (click)="defaultLogoInput.click()" [disabled]="isUploadingDefaultLogo" class="rounded-xl border border-slate-200 px-3 py-2 text-[0.72rem] font-black text-slate-700 disabled:opacity-50">
                         {{ currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo' }}
                       </button>
@@ -178,7 +178,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                       <td class="py-2.5">
                         <div class="space-y-2">
                           <div class="flex items-center gap-2">
-                          <input #rowLogoInput type="file" accept="image/*" class="hidden" (change)="onRowLogoSelected(row, $event)">
+                          <input #rowLogoInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onRowLogoSelected(row, $event)">
                           <button type="button" (click)="rowLogoInput.click()" [disabled]="isSubmitting || uploadingRowIds.has(row.rowId)" class="rounded-lg border border-slate-200 px-2.5 py-2 text-[0.68rem] font-black text-slate-600 disabled:opacity-50">
                             {{ currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo' }}
                           </button>

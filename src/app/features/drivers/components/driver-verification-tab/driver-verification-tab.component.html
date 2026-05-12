@@ -1,23 +1,23 @@
-<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="space-y-4 animate-in slide-in-from-bottom-8 duration-700">
+<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
   <!-- Executive Header -->
-  <section class="relative overflow-hidden rounded-[1.25rem] bg-slate-950 p-5 shadow-lg sm:p-6">
-    <div class="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/20 blur-3xl"></div>
+  <section class="relative overflow-hidden rounded-3xl bg-slate-950 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.08)] sm:p-7">
+    <div class="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-zadna-primary/20 blur-3xl"></div>
     <div class="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl"></div>
     
-    <div class="relative flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-      <div class="flex items-start gap-3">
-        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-primary shadow-inner backdrop-blur-md">
-          <span class="material-symbols-outlined text-[22px]">shield_person</span>
+    <div class="relative flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+      <div class="flex items-start gap-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.1rem] border border-white/10 bg-white/5 text-zadna-primary shadow-inner backdrop-blur-md">
+          <span class="material-symbols-outlined text-[24px]">shield_person</span>
         </div>
         
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2 mb-0.5">
-            <p class="text-[9px] font-black tracking-[0.15em] text-slate-400">
+          <div class="flex items-center gap-2 mb-1">
+            <p class="text-[10px] font-black tracking-widest text-slate-400">
               {{ 'DRIVERS.DETAIL.VERIFICATION.COMMAND_CENTER' | translate }}
             </p>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <h1 class="text-lg font-black tracking-tight text-white">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h1 class="text-2xl font-black tracking-tight text-white">
               {{ 'DRIVERS.DETAIL.VERIFICATION.EXECUTIVE_REVIEW' | translate }}
             </h1>
             
@@ -30,148 +30,148 @@
             </app-status-pill>
           </div>
           
-          <p class="mt-1.5 max-w-2xl text-[11px] font-medium leading-relaxed text-slate-400">
+          <p class="mt-2 max-w-2xl text-[12px] font-semibold leading-relaxed text-slate-400">
             {{ 'DRIVERS.DETAIL.VERIFICATION.EXECUTIVE_REVIEW_DESC' | translate }}
           </p>
         </div>
       </div>
 
       <!-- Action Toggle Switch -->
-      <div class="flex shrink-0 rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-md">
+      <div class="flex shrink-0 rounded-[1.1rem] border border-white/10 bg-white/5 p-1 backdrop-blur-md">
         <button
           type="button"
           (click)="setWorkspaceWindow('operations')"
-          class="inline-flex h-8 items-center justify-center rounded-lg px-4 text-[11px] font-black transition-all duration-300"
+          class="inline-flex h-10 items-center justify-center rounded-xl px-5 text-[12px] font-black transition-all duration-300"
           [ngClass]="isWorkspaceWindowActive('operations') ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'">
-          <span class="material-symbols-outlined mr-1.5 text-[15px]">tune</span>
+          <span class="material-symbols-outlined mr-2 text-[18px]">tune</span>
           {{ 'DRIVERS.DETAIL.VERIFICATION.WINDOWS.OPERATIONS' | translate }}
         </button>
 
         <button
           type="button"
           (click)="setWorkspaceWindow('review')"
-          class="inline-flex h-8 items-center justify-center rounded-lg px-4 text-[11px] font-black transition-all duration-300"
+          class="inline-flex h-10 items-center justify-center rounded-xl px-5 text-[12px] font-black transition-all duration-300"
           [ngClass]="isWorkspaceWindowActive('review') ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'">
-          <span class="material-symbols-outlined mr-1.5 text-[15px]">preview</span>
+          <span class="material-symbols-outlined mr-2 text-[18px]">preview</span>
           {{ 'DRIVERS.DETAIL.VERIFICATION.WINDOWS.REVIEW' | translate }}
         </button>
       </div>
     </div>
     
     <!-- Readiness Banner -->
-    <div class="mt-4 rounded-xl border border-white/5 bg-white/5 p-3 backdrop-blur-sm">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
-             <span class="text-[11px] font-black text-white">{{ reviewCompletionPercent }}%</span>
+    <div class="mt-6 rounded-2xl border border-white/5 bg-white/5 p-4 backdrop-blur-sm">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-3">
+          <div class="relative flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
+             <span class="text-[12px] font-black text-white">{{ reviewCompletionPercent }}%</span>
              <svg class="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
                 <path class="text-slate-700/50" stroke-width="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-primary" stroke-width="2.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-zadna-primary" stroke-width="2.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
              </svg>
           </div>
           <div>
-            <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.APPROVAL_READINESS' | translate }}</p>
-            <p class="mt-0.5 text-[12px] font-bold text-white">
+            <p class="text-[10px] font-black tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.APPROVAL_READINESS' | translate }}</p>
+            <p class="mt-1 text-[13px] font-bold text-white">
               {{ reviewCompletionPercent === 100
                 ? ('DRIVERS.DETAIL.VERIFICATION.READINESS_READY' | translate)
                 : ('DRIVERS.DETAIL.VERIFICATION.READINESS_WAITING' | translate) }}
             </p>
           </div>
         </div>
-        <div class="h-6 w-[1px] hidden sm:block bg-white/10"></div>
+        <div class="h-8 w-px hidden sm:block bg-white/10"></div>
         <div>
-          <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}</p>
-          <p class="mt-0.5 text-[12px] font-bold text-white">{{ driver.verification.trustScore }}%</p>
+          <p class="text-[10px] font-black tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}</p>
+          <p class="mt-1 text-[13px] font-bold text-white">{{ driver.verification.trustScore }}%</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Metric Overview -->
-  <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-    <article class="group relative overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md backdrop-blur-md">
-      <div class="absolute -right-3 -top-3 h-16 w-16 rounded-full bg-slate-100/50 transition-transform group-hover:scale-150"></div>
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="group relative overflow-hidden rounded-3xl border border-slate-200/50 bg-white/80 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md backdrop-blur-xl">
+      <div class="absolute -right-3 -top-3 h-20 w-20 rounded-full bg-slate-100/50 transition-transform duration-700 group-hover:scale-150"></div>
       <div class="relative">
-        <p class="text-[9px] font-black tracking-[0.12em] text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.FILES_AVAILABLE' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tracking-tight text-slate-900">{{ driver.documents.length }}</p>
-        <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.TOTAL_DOCUMENTS' | translate }}</p>
+        <p class="text-[10px] font-black tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.VERIFICATION.FILES_AVAILABLE' | translate }}</p>
+        <p class="mt-2 text-3xl font-black tracking-tight text-slate-900">{{ driver.documents.length }}</p>
+        <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.TOTAL_DOCUMENTS' | translate }}</p>
       </div>
     </article>
 
-    <article class="group relative overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md backdrop-blur-md">
-      <div class="absolute -right-3 -top-3 h-16 w-16 rounded-full bg-emerald-100/50 transition-transform group-hover:scale-150"></div>
+    <article class="group relative overflow-hidden rounded-3xl border border-slate-200/50 bg-white/80 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md backdrop-blur-xl">
+      <div class="absolute -right-3 -top-3 h-20 w-20 rounded-full bg-emerald-100/50 transition-transform duration-700 group-hover:scale-150"></div>
       <div class="relative">
-        <p class="text-[9px] font-black tracking-[0.12em] text-emerald-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tracking-tight text-emerald-950">{{ validDocumentsCount }}</p>
-        <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS_DESC' | translate }}</p>
+        <p class="text-[10px] font-black tracking-widest text-emerald-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS' | translate }}</p>
+        <p class="mt-2 text-3xl font-black tracking-tight text-emerald-950">{{ validDocumentsCount }}</p>
+        <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS_DESC' | translate }}</p>
       </div>
     </article>
 
-    <article class="group relative overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md backdrop-blur-md">
-      <div class="absolute -right-3 -top-3 h-16 w-16 rounded-full bg-amber-100/50 transition-transform group-hover:scale-150"></div>
+    <article class="group relative overflow-hidden rounded-3xl border border-slate-200/50 bg-white/80 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md backdrop-blur-xl">
+      <div class="absolute -right-3 -top-3 h-20 w-20 rounded-full bg-amber-100/50 transition-transform duration-700 group-hover:scale-150"></div>
       <div class="relative">
-        <p class="text-[9px] font-black tracking-[0.12em] text-amber-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tracking-tight text-amber-950">{{ pendingDocumentsCount }}</p>
-        <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW_DESC' | translate }}</p>
+        <p class="text-[10px] font-black tracking-widest text-amber-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW' | translate }}</p>
+        <p class="mt-2 text-3xl font-black tracking-tight text-amber-950">{{ pendingDocumentsCount }}</p>
+        <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW_DESC' | translate }}</p>
       </div>
     </article>
 
-    <article class="group relative overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md backdrop-blur-md">
-      <div class="absolute -right-3 -top-3 h-16 w-16 rounded-full bg-rose-100/50 transition-transform group-hover:scale-150"></div>
+    <article class="group relative overflow-hidden rounded-3xl border border-slate-200/50 bg-white/80 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md backdrop-blur-xl">
+      <div class="absolute -right-3 -top-3 h-20 w-20 rounded-full bg-rose-100/50 transition-transform duration-700 group-hover:scale-150"></div>
       <div class="relative">
-        <p class="text-[9px] font-black tracking-[0.12em] text-rose-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tracking-tight text-rose-950">{{ expiringDocumentsCount }}</p>
-        <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS_DESC' | translate }}</p>
+        <p class="text-[10px] font-black tracking-widest text-rose-600/80">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS' | translate }}</p>
+        <p class="mt-2 text-3xl font-black tracking-tight text-rose-950">{{ expiringDocumentsCount }}</p>
+        <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS_DESC' | translate }}</p>
       </div>
     </article>
   </section>
 
   <!-- Operations Workspace -->
-  <section *ngIf="isWorkspaceWindowActive('operations')" class="animate-in fade-in slide-in-from-bottom-4 grid gap-5 xl:grid-cols-[minmax(350px,0.9fr)_minmax(0,1.1fr)]">
+  <section *ngIf="isWorkspaceWindowActive('operations')" class="animate-in fade-in slide-in-from-bottom-4 grid gap-6 xl:grid-cols-[minmax(350px,0.9fr)_minmax(0,1.1fr)]">
     
     <!-- Account Control Rail -->
-    <div class="flex flex-col gap-4">
-      <div class="rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm backdrop-blur-md">
-        <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-            <span class="material-symbols-outlined text-[16px]">tune</span>
+    <div class="flex flex-col gap-6">
+      <div class="rounded-3xl border border-slate-200/50 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1.1rem] bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/50">
+            <span class="material-symbols-outlined text-[20px]">tune</span>
           </div>
           <div>
-            <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_TITLE' | translate }}</h2>
-            <p class="text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_DESC' | translate }}</p>
+            <h2 class="text-[15px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_TITLE' | translate }}</h2>
+            <p class="text-[11px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_DESC' | translate }}</p>
           </div>
         </div>
 
-        <div class="space-y-3">
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black tracking-[0.1em] text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REJECTION_REASON_LABEL' | translate }}</label>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <label class="text-[10px] font-black tracking-widest text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REJECTION_REASON_LABEL' | translate }}</label>
             <select
               [ngModel]="selectedRejectionReason"
               (ngModelChange)="onSelectedRejectionReasonChange($event)"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20">
+              class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/50 p-3.5 text-[13px] font-semibold text-slate-700 shadow-sm outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10">
               <option value="" disabled>{{ 'COMMON.SELECT' | translate }}</option>
               <option *ngFor="let reason of driver.verification.rejectionReasonOptions" [value]="reason">{{ reason | translate }}</option>
             </select>
           </div>
 
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black tracking-[0.1em] text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_LABEL' | translate }}</label>
+          <div class="space-y-2">
+            <label class="text-[10px] font-black tracking-widest text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_LABEL' | translate }}</label>
             <textarea
               [ngModel]="reviewerDecisionNote"
               (ngModelChange)="onReviewerDecisionNoteChange($event)"
-              rows="2"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+              rows="3"
+              class="w-full rounded-2xl border border-slate-200/80 bg-slate-50/50 p-3.5 text-[13px] font-semibold text-slate-700 shadow-sm outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10"
               [placeholder]="'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_PLACEHOLDER' | translate">
             </textarea>
           </div>
 
-          <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 pt-2">
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 pt-2">
               <button
                 type="button"
                 (click)="requestReviewAction('approve')"
                 [disabled]="!canSubmitAction('approve')"
-                class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">verified</span>
+                class="group flex h-11 items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 px-5 text-[13px] font-black text-white shadow-sm transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 active:scale-95 disabled:active:scale-100 disabled:opacity-50">
+              <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">verified</span>
               {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE' | translate }}
             </button>
 
@@ -179,8 +179,8 @@
               type="button"
               [disabled]="!canSubmitAction('request-docs')"
               (click)="requestReviewAction('request-docs')"
-              class="flex h-10 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 text-[12px] font-black text-amber-700 transition-all hover:bg-amber-100 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">
-              <span class="material-symbols-outlined text-[16px]">upload_file</span>
+              class="flex h-11 items-center justify-center gap-2.5 rounded-2xl border border-amber-200/80 bg-amber-50/80 px-5 text-[13px] font-black text-amber-700 shadow-sm transition-all hover:bg-amber-100 hover:border-amber-300 active:scale-95 disabled:active:scale-100 disabled:cursor-not-allowed disabled:opacity-50">
+              <span class="material-symbols-outlined text-[18px]">upload_file</span>
               {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REQUEST_DOCUMENTS' | translate }}
             </button>
 
@@ -188,8 +188,8 @@
               type="button"
               [disabled]="!canSubmitAction('reject')"
               (click)="requestReviewAction('reject')"
-              class="flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 text-[12px] font-black text-rose-700 transition-all hover:bg-rose-100 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">
-              <span class="material-symbols-outlined text-[16px]">cancel</span>
+              class="flex h-11 items-center justify-center gap-2.5 rounded-2xl border border-rose-200/80 bg-rose-50/80 px-5 text-[13px] font-black text-rose-700 shadow-sm transition-all hover:bg-rose-100 hover:border-rose-300 active:scale-95 disabled:active:scale-100 disabled:cursor-not-allowed disabled:opacity-50">
+              <span class="material-symbols-outlined text-[18px]">cancel</span>
               {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT' | translate }}
             </button>
           </div>
@@ -198,59 +198,59 @@
     </div>
 
     <!-- Timeline and Checklist -->
-    <div class="rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm backdrop-blur-md">
-      <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-          <span class="material-symbols-outlined text-[16px]">overview</span>
+    <div class="rounded-3xl border border-slate-200/50 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl">
+      <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+        <div class="flex h-10 w-10 items-center justify-center rounded-[1.1rem] bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/50">
+          <span class="material-symbols-outlined text-[20px]">overview</span>
         </div>
         <div>
-          <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_TITLE' | translate }}</h2>
-          <p class="text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_DESC' | translate }}</p>
+          <h2 class="text-[15px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_TITLE' | translate }}</h2>
+          <p class="text-[11px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_DESC' | translate }}</p>
         </div>
       </div>
 
-      <div class="mb-4 rounded-xl bg-slate-50 p-3 border border-slate-100">
-        <label class="text-[9px] font-black tracking-[0.1em] text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.ADD_INTERNAL_NOTE' | translate }}</label>
-        <div class="mt-1.5 flex gap-2">
+      <div class="mb-5 rounded-2xl bg-slate-50/50 p-4 border border-slate-200/60 shadow-sm">
+        <label class="text-[10px] font-black tracking-widest text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.ADD_INTERNAL_NOTE' | translate }}</label>
+        <div class="mt-2 flex gap-2.5">
           <input
             [(ngModel)]="newNote"
             type="text"
-            class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+            class="flex-1 rounded-xl border border-slate-200/80 bg-white px-4 py-2.5 text-[13px] font-semibold text-slate-700 shadow-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10"
             [placeholder]="'DRIVERS.DETAIL.VERIFICATION.ADD_INTERNAL_NOTE_PLACEHOLDER' | translate" />
           <button
             type="button"
             (click)="onAddNote()"
-            class="flex items-center justify-center rounded-lg bg-slate-900 px-4 text-[12px] font-black text-white transition-all hover:bg-slate-800">
+            class="flex items-center justify-center rounded-xl bg-slate-900 px-5 text-[13px] font-black text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow-md active:scale-95">
             {{ 'COMMON.ADD' | translate }}
           </button>
         </div>
       </div>
 
-      <div class="flex rounded-lg bg-slate-100 p-1 mb-3">
+      <div class="flex rounded-xl bg-slate-100/80 p-1.5 mb-4 border border-slate-200/50">
         <button
           type="button"
           (click)="activeRailTab = 'checklist'"
-          class="flex-1 rounded-md px-3 py-1.5 text-[11px] font-black transition-all"
+          class="flex-1 rounded-lg px-4 py-2 text-[12px] font-black transition-all"
           [ngClass]="activeRailTab === 'checklist' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
           {{ 'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_TAB' | translate }}
-          <span *ngIf="getPendingChecklistCount() > 0" class="inline-flex items-center justify-center h-4 w-4 rounded-full bg-amber-100 text-amber-700 text-[9px] ml-1">{{ getPendingChecklistCount() }}</span>
+          <span *ngIf="getPendingChecklistCount() > 0" class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-amber-100 text-amber-700 text-[10px] ml-1.5 shadow-sm">{{ getPendingChecklistCount() }}</span>
         </button>
       </div>
 
-      <div *ngIf="activeRailTab === 'checklist'" class="max-h-[14rem] space-y-2 overflow-y-auto pr-1 custom-scrollbar">
+      <div *ngIf="activeRailTab === 'checklist'" class="max-h-[16rem] space-y-2.5 overflow-y-auto pr-2 custom-scrollbar">
         <div *ngFor="let item of driver.verification.checklist" 
-             class="rounded-xl border p-3 transition-all hover:shadow-sm" 
-             [ngClass]="item.completed ? 'border-emerald-200 bg-emerald-50/50' : item.critical ? 'border-rose-200 bg-rose-50/50' : 'border-slate-200 bg-slate-50/50'">
-          <div class="flex gap-2">
-            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white shadow-sm" 
+             class="rounded-2xl border p-4 transition-all duration-300 hover:shadow-sm" 
+             [ngClass]="item.completed ? 'border-emerald-200/80 bg-emerald-50/50' : item.critical ? 'border-rose-200/80 bg-rose-50/50' : 'border-slate-200/60 bg-slate-50/50'">
+          <div class="flex gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] text-white shadow-sm" 
                  [ngClass]="item.completed ? 'bg-emerald-500' : item.critical ? 'bg-rose-500' : 'bg-slate-400'">
-              <span class="material-symbols-outlined text-[16px]">{{ item.completed ? 'check' : item.critical ? 'priority_high' : 'schedule' }}</span>
+              <span class="material-symbols-outlined text-[20px]">{{ item.completed ? 'check' : item.critical ? 'priority_high' : 'schedule' }}</span>
             </div>
             <div>
-              <div class="flex items-center gap-1.5 mb-0.5">
-                <p class="text-[12px] font-black text-slate-900">{{ item.label | translate }}</p>
+              <div class="flex items-center gap-2 mb-1">
+                <p class="text-[13px] font-black text-slate-900">{{ item.label | translate }}</p>
               </div>
-              <p *ngIf="item.note" class="text-[11px] font-medium leading-relaxed text-slate-600">{{ item.note | translate }}</p>
+              <p *ngIf="item.note" class="text-[12px] font-semibold leading-relaxed text-slate-600">{{ item.note | translate }}</p>
             </div>
           </div>
         </div>
@@ -259,28 +259,28 @@
   </section>
 
   <!-- Review Workspace -->
-  <section *ngIf="isWorkspaceWindowActive('review')" class="animate-in fade-in slide-in-from-bottom-4 grid gap-5 xl:grid-cols-[minmax(350px,0.85fr)_minmax(0,1.15fr)]">
+  <section *ngIf="isWorkspaceWindowActive('review')" class="animate-in fade-in slide-in-from-bottom-4 grid gap-6 xl:grid-cols-[minmax(350px,0.85fr)_minmax(0,1.15fr)]">
     
     <!-- Document Board -->
-    <div class="rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm backdrop-blur-md">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-        <div class="flex items-center gap-2">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-            <span class="material-symbols-outlined text-[16px]">folder_managed</span>
+    <div class="rounded-3xl border border-slate-200/50 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1.1rem] bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/50">
+            <span class="material-symbols-outlined text-[20px]">folder_managed</span>
           </div>
           <div>
-            <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_BOARD' | translate }}</h2>
-            <p class="text-[10px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.FILES_IN_PACKET' | translate:{ count: driver.documents.length } }}</p>
+            <h2 class="text-[15px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_BOARD' | translate }}</h2>
+            <p class="text-[11px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.FILES_IN_PACKET' | translate:{ count: driver.documents.length } }}</p>
           </div>
         </div>
       </div>
 
-      <div class="max-h-[35rem] space-y-4 overflow-y-auto pr-1 custom-scrollbar xl:max-h-[calc(100vh-22rem)]">
-        <section *ngFor="let group of documentGroups" class="space-y-2">
-          <div class="flex items-center justify-between px-1">
-            <p class="text-[10px] font-black tracking-[0.1em] text-slate-500 uppercase">{{ group.title | translate }}</p>
+      <div class="max-h-[35rem] space-y-5 overflow-y-auto pr-2 custom-scrollbar xl:max-h-[calc(100vh-22rem)]">
+        <section *ngFor="let group of documentGroups" class="space-y-2.5">
+          <div class="flex items-center justify-between px-2">
+            <p class="text-[10px] font-black tracking-widest text-slate-500 uppercase">{{ group.title | translate }}</p>
             <div class="flex items-center gap-1">
-              <span class="rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-black text-slate-600">{{ group.documents.length }}</span>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-black text-slate-600">{{ group.documents.length }}</span>
             </div>
           </div>
 
@@ -288,19 +288,19 @@
             *ngFor="let document of group.documents"
             type="button"
             (click)="selectDocument(document)"
-            class="group w-full rounded-xl border p-3 text-start transition-all hover:-translate-y-0.5 hover:shadow-sm"
-            [ngClass]="selectedDocumentPreview?.id === document.id ? 'border-primary/30 bg-primary/5 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'">
-            <div class="flex items-start gap-2.5">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm border border-slate-100 bg-slate-50 text-slate-600 transition-transform group-hover:scale-105">
-                <span class="material-symbols-outlined text-[16px]">{{ getDocumentTypeIcon(document) }}</span>
+            class="group w-full rounded-2xl border p-4 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
+            [ngClass]="selectedDocumentPreview?.id === document.id ? 'border-zadna-primary/40 bg-zadna-primary/5 shadow-sm' : 'border-slate-200/60 bg-white hover:border-slate-300'">
+            <div class="flex items-start gap-3">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] shadow-sm border border-slate-100 bg-slate-50 text-slate-600 transition-transform group-hover:scale-110">
+                <span class="material-symbols-outlined text-[20px] group-hover:text-zadna-primary transition-colors">{{ getDocumentTypeIcon(document) }}</span>
               </div>
               <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5 mb-0.5">
-                  <p class="truncate text-[12px] font-black text-slate-900">{{ document.title | translate }}</p>
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="truncate text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors">{{ document.title | translate }}</p>
                 </div>
-                <p class="text-[10px] font-medium text-slate-500">{{ document.subtitle ? (document.subtitle | translate) : '' }}</p>
+                <p class="text-[11px] font-semibold text-slate-500">{{ document.subtitle ? (document.subtitle | translate) : '' }}</p>
                 
-                <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                <div class="mt-2.5 flex flex-wrap items-center gap-2">
                   <app-status-pill
                     [label]="getDocumentStatusKey(document.status)"
                     [variant]="getDocumentStatusVariant(document.status)"
@@ -317,74 +317,89 @@
     </div>
 
     <!-- Preview & Action -->
-    <div class="rounded-[1.25rem] border border-slate-200/60 bg-white/80 p-4 shadow-sm backdrop-blur-md flex flex-col">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-        <div class="flex items-center gap-2">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <span class="material-symbols-outlined text-[16px]">visibility</span>
+    <div class="rounded-3xl border border-slate-200/50 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-[1.1rem] bg-zadna-primary/10 text-zadna-primary shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">visibility</span>
           </div>
           <div>
-            <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_DECISION' | translate }}</h2>
-            <p class="text-[10px] font-medium text-slate-500">{{ selectedDocumentPreview ? (selectedDocumentPreview.title | translate) : ('DRIVERS.DETAIL.VERIFICATION.SELECT_DOCUMENT' | translate) }}</p>
+            <h2 class="text-[15px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_DECISION' | translate }}</h2>
+            <p class="text-[11px] font-semibold text-slate-500">{{ selectedDocumentPreview ? (selectedDocumentPreview.title | translate) : ('DRIVERS.DETAIL.VERIFICATION.SELECT_DOCUMENT' | translate) }}</p>
           </div>
         </div>
       </div>
 
       <ng-container *ngIf="selectedDocumentPreview as document; else emptyPreview">
         <!-- File Viewer Area -->
-        <div class="relative flex-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-inner flex flex-col mb-3 min-h-[250px]">
+        <div class="relative flex-1 overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/50 shadow-inner flex flex-col mb-4 min-h-[250px]">
           <div class="absolute right-3 top-3 z-10 flex gap-2">
-            <button (click)="openDocumentInNewTab(document)" class="flex h-8 items-center gap-1.5 rounded-lg bg-white/90 px-3 text-[10px] font-black text-slate-700 backdrop-blur-md transition-colors hover:bg-white border border-slate-200 shadow-sm">
-              <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+            <button (click)="openDocumentInNewTab(document)" class="flex h-9 items-center gap-2 rounded-[0.9rem] bg-white/90 px-4 text-[11px] font-black text-slate-700 backdrop-blur-md transition-all hover:bg-white hover:shadow-md border border-slate-200/80 shadow-sm active:scale-95">
+              <span class="material-symbols-outlined text-[16px]">open_in_new</span>
               {{ 'COMMON.OPEN' | translate }}
             </button>
           </div>
 
-          <div *ngIf="isImageDocument(document)" class="flex flex-1 items-center justify-center p-3">
-            <img [src]="getDocumentUrl(document)" class="max-h-[60vh] max-w-full rounded-lg object-contain shadow-sm" alt="" />
+          <div *ngIf="isImageDocument(document)" class="flex flex-1 items-center justify-center p-4">
+            <div
+              class="grid w-full gap-4"
+              [ngClass]="getDocumentUrls(document).length > 1 ? 'md:grid-cols-2' : 'grid-cols-1'">
+              <figure
+                *ngFor="let imageUrl of getDocumentUrls(document); let imageIndex = index"
+                class="flex min-h-[18rem] flex-col items-center justify-center gap-3 rounded-[1.25rem] border border-slate-200/80 bg-white p-3 shadow-sm">
+                <figcaption class="self-start rounded-lg bg-slate-100/80 px-2.5 py-1 text-[11px] font-black text-slate-600 border border-slate-200/50">
+                  {{ getDocumentImageLabel(document, imageIndex) | translate }}
+                </figcaption>
+                <img [src]="imageUrl" class="max-h-[55vh] max-w-full rounded-lg object-contain" alt="" />
+              </figure>
+            </div>
           </div>
 
-          <div *ngIf="!isImageDocument(document)" class="flex-1 p-5 flex flex-col items-center justify-center">
-            <div class="flex h-24 w-24 items-center justify-center rounded-xl bg-white text-slate-400 shadow-md border border-slate-200 mb-4">
-              <span class="material-symbols-outlined text-[48px]">{{ getDocumentTypeIcon(document) }}</span>
+          <div *ngIf="!isImageDocument(document)" class="flex-1 p-6 flex flex-col items-center justify-center">
+            <div class="flex h-28 w-28 items-center justify-center rounded-[1.5rem] bg-white text-slate-400 shadow-md border border-slate-200/80 mb-5">
+              <span class="material-symbols-outlined text-[56px]">{{ getDocumentTypeIcon(document) }}</span>
             </div>
-            <p class="text-[12px] font-bold text-slate-600">{{ 'DRIVERS.DETAIL.VERIFICATION.FILE_READY' | translate }}</p>
+            <p class="text-[13px] font-bold text-slate-600">{{ 'DRIVERS.DETAIL.VERIFICATION.FILE_READY' | translate }}</p>
           </div>
         </div>
 
         <!-- Decision Area -->
-        <div class="rounded-xl bg-slate-50 p-3 border border-slate-100 mt-auto">
-          <div class="grid gap-3 lg:grid-cols-[1fr_auto]">
+        <div class="rounded-2xl bg-slate-50/50 p-4 border border-slate-200/60 mt-auto shadow-sm">
+          <div class="grid gap-4 lg:grid-cols-[1fr_auto]">
             <div>
-              <div class="mb-2 grid gap-1 text-[11px] font-medium text-slate-600">
+              <div class="mb-3 grid gap-1.5 text-[12px] font-semibold text-slate-600">
                 <p *ngIf="document.numberValue"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_NUMBER' | translate }}:</span> {{ document.numberValue }}</p>
                 <p *ngIf="document.expiryDate"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}:</span> {{ document.expiryDate }}</p>
                 <p *ngIf="document.reviewedBy"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REVIEWED_BY' | translate }}:</span> {{ document.reviewedBy }}</p>
                 <p *ngIf="document.rejectionReason" class="text-rose-600"><span class="font-black">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REJECTION_REASON' | translate }}:</span> {{ document.rejectionReason }}</p>
+                <p *ngIf="!hasRequiredExpiryDate(document)" class="text-amber-600">
+                  <span class="font-black">{{ 'DRIVERS.DETAIL.VERIFICATION.MISSING_EXPIRY_TITLE' | translate }}:</span>
+                  {{ 'DRIVERS.DETAIL.VERIFICATION.MISSING_EXPIRY_MESSAGE' | translate }}
+                </p>
               </div>
-              <label class="text-[9px] font-black tracking-[0.1em] text-slate-500 block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES' | translate }}</label>
+              <label class="text-[10px] font-black tracking-widest text-slate-500 block mb-2">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES' | translate }}</label>
               <textarea
                 [(ngModel)]="documentRejectReason"
                 rows="2"
-                class="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-[12px] font-medium text-slate-700 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                class="w-full rounded-[1.1rem] border border-slate-200/80 bg-white p-3.5 text-[13px] font-semibold text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 shadow-sm"
                 [placeholder]="'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES_PLACEHOLDER' | translate">
               </textarea>
             </div>
-            <div class="flex flex-col gap-2 justify-end sm:flex-row lg:flex-col min-w-[120px]">
+            <div class="flex flex-col gap-2.5 justify-end sm:flex-row lg:flex-col min-w-[130px]">
               <button
                 type="button"
                 (click)="approveSelectedDocument()"
                 [disabled]="!canApproveSelectedDocument()"
-                class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">
-                <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_up</span>
+                class="flex h-11 items-center justify-center rounded-[1.1rem] bg-emerald-500 px-4 text-[13px] font-black text-white shadow-sm transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 active:scale-95 disabled:active:scale-100 disabled:opacity-50">
+                <span class="material-symbols-outlined mr-2 text-[18px]">thumb_up</span>
                 {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE_SHORT' | translate }}
               </button>
               <button
                 type="button"
                 (click)="rejectSelectedDocument()"
                 [disabled]="!canRejectSelectedDocument()"
-                class="flex h-9 items-center justify-center rounded-lg bg-white border border-rose-200 text-rose-600 px-3 text-[12px] font-black transition-all hover:bg-rose-50 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">
-                <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_down</span>
+                class="flex h-11 items-center justify-center rounded-[1.1rem] bg-white border border-rose-200/80 text-rose-600 px-4 text-[13px] font-black shadow-sm transition-all hover:bg-rose-50 hover:shadow-md active:scale-95 disabled:active:scale-100 disabled:opacity-50">
+                <span class="material-symbols-outlined mr-2 text-[18px]">thumb_down</span>
                 {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT_SHORT' | translate }}
               </button>
             </div>
@@ -395,12 +410,12 @@
   </section>
 
   <ng-template #emptyPreview>
-    <div class="flex flex-1 flex-col items-center justify-center rounded-[1.25rem] border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center min-h-[350px]">
-      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm mb-3">
-        <span class="material-symbols-outlined text-[28px] text-slate-300">task</span>
+    <div class="flex flex-1 flex-col items-center justify-center rounded-[1.5rem] border-2 border-dashed border-slate-200/80 bg-slate-50/50 p-10 text-center min-h-[350px]">
+      <div class="flex h-20 w-20 items-center justify-center rounded-[1.2rem] bg-white shadow-sm mb-4 border border-slate-100">
+        <span class="material-symbols-outlined text-[36px] text-slate-300">task</span>
       </div>
-      <h3 class="text-lg font-black text-slate-900 mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED' | translate }}</h3>
-      <p class="max-w-xs text-[12px] font-medium text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED_DESC' | translate }}</p>
+      <h3 class="text-xl font-black text-slate-900 mb-2">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED' | translate }}</h3>
+      <p class="max-w-sm text-[13px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED_DESC' | translate }}</p>
     </div>
   </ng-template>
 </div>

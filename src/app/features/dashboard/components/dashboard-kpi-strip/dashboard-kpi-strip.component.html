@@ -1,0 +1,62 @@
+<section class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+  <article *ngFor="let kpi of kpis"
+           class="bg-white rounded-xl border border-slate-100 border-l-[3px] p-4 flex flex-col hover:shadow-sm transition-shadow"
+           [ngClass]="getKpiCardBorderClass(kpi.severity)">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-[10px] font-bold uppercase tracking-wide text-slate-500 truncate">{{ kpi.labelKey | translate }}</h3>
+    </div>
+    <div class="flex items-baseline gap-1.5 mb-1.5">
+      <span class="text-xl font-bold text-slate-800 tracking-tight">{{ kpi.value }}</span>
+      <span *ngIf="kpi.unitLabel" class="text-[9px] font-semibold text-slate-400 uppercase">{{ kpi.unitLabel }}</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold" [ngClass]="getTrendClasses(kpi.trendDirection)">
+        <span class="material-symbols-outlined text-[10px]">
+          {{ kpi.trendDirection === 'up' ? 'trending_up' : kpi.trendDirection === 'down' ? 'trending_down' : 'trending_flat' }}
+        </span>
+        {{ kpi.trendLabel }}
+      </span>
+    </div>
+    <!-- Micro chart -->
+    <div class="w-full h-8 mt-2" [ngSwitch]="kpi.id">
+      <ng-container *ngSwitchCase="'gmv'">
+        <div class="w-full h-full" echarts [options]="microChartOptions['gmv']"></div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'completed-orders'">
+        <div class="w-full h-full" echarts [options]="microChartOptions['completed-orders']"></div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'on-time-rate'">
+        <div class="w-full bg-slate-100 rounded-full h-1.5 relative overflow-hidden">
+          <div class="bg-zadna-primary h-1.5 rounded-full transition-all" [style.width]="kpi.value"></div>
+          <div class="absolute top-0 bottom-0 w-px bg-slate-400/60" [style.left]="'95%'"></div>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'orders-at-risk'">
+        <div class="flex w-full gap-0.5 h-2">
+          <div class="flex-1 bg-emerald-300 rounded-sm"></div>
+          <div class="flex-1 bg-emerald-300 rounded-sm"></div>
+          <div class="flex-1 bg-amber-300 rounded-sm"></div>
+          <div class="flex-1 bg-amber-200 rounded-sm opacity-50"></div>
+          <div class="flex-1 bg-rose-300 rounded-sm opacity-40"></div>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'open-dispute-exposure'">
+        <div class="w-full bg-slate-100 rounded h-1.5 overflow-hidden flex">
+          <div class="bg-rose-400 h-full" [style.width]="'30%'"></div>
+          <div class="bg-amber-300 h-full" [style.width]="'40%'"></div>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'supply-backlog'">
+        <div class="w-full bg-slate-100 rounded-full h-1.5 flex overflow-hidden">
+          <div class="bg-purple-400 h-full" [style.width]="'60%'"></div>
+          <div class="bg-indigo-300 h-full" [style.width]="'40%'"></div>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchDefault>
+        <div class="w-full bg-slate-100 rounded-full h-1 overflow-hidden">
+          <div class="bg-slate-300 h-full" [style.width]="'50%'"></div>
+        </div>
+      </ng-container>
+    </div>
+  </article>
+</section>

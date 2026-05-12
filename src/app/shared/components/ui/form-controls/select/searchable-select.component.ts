@@ -27,12 +27,12 @@ export interface SearchableSelectOption<T = any> {
         {{ label | translate }} <span *ngIf="isRequired" class="text-rose-500">*</span>
       </label>
 
-      <div class="relative" [ngClass]="{'z-50': isOpen}" #dropdownContainer>
+      <div class="relative" [ngClass]="{'z-[9000]': isOpen}" #dropdownContainer>
         <button
           type="button"
           [disabled]="disabled || isDisabled"
           (click)="toggle()"
-          class="flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 text-[0.85rem] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+          class="searchable-select-trigger flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 text-[0.85rem] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
           [class.border-rose-500]="isTouched && error"
           [class.ring-1]="isTouched && error"
           [class.ring-rose-500]="isTouched && error"
@@ -45,7 +45,7 @@ export interface SearchableSelectOption<T = any> {
 
         @if (isOpen && !(disabled || isDisabled)) {
           <div
-            class="absolute start-0 top-full z-50 mt-2 w-full rounded-2xl border border-slate-200 bg-white p-3 shadow-xl origin-top animate-in fade-in zoom-in-95 duration-200"
+            class="searchable-select-panel absolute start-0 top-full z-[9000] mt-2 w-full min-w-[12rem] max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl shadow-slate-900/10 origin-top animate-in fade-in zoom-in-95 duration-200"
             [ngClass]="dropdownPanelClass">
             @if (searchable) {
               <div class="relative">
@@ -84,7 +84,7 @@ export interface SearchableSelectOption<T = any> {
                   [class.bg-slate-50]="option.value === value"
                   [class.text-slate-700]="option.value !== value"
                 >
-                  <span class="truncate transition-colors group-hover:text-zadna-primary">{{ getOptionLabel(option) }}</span>
+                  <span class="min-w-0 flex-1 whitespace-normal break-words leading-5 transition-colors group-hover:text-zadna-primary">{{ getOptionLabel(option) }}</span>
                   @if (option.value === value) {
                     <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>

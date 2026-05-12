@@ -1,116 +1,146 @@
 <div *ngIf="isOpen">
   <app-modal-shell
-    dir="rtl"
+    [dir]="translate.currentLang === 'ar' ? 'rtl' : 'ltr'"
     [title]="((mode === 'create' ? 'CATEGORIES.MODAL.ADD_TITLE' : 'CATEGORIES.MODAL.EDIT_TITLE') | translate: {level: (levelNameKey | translate)})"
     [subtitle]="levelNameKey | translate"
     [shouldTranslate]="false"
-    [maxWidthClass]="'max-w-2xl'"
-    [panelClass]="'rounded-[1.5rem]'"
-    [bodyClass]="'px-8 py-8 bg-slate-50/50'"
-    [footerClass]="'px-8 py-6 bg-white'"
-    [titleClass]="'text-xl font-black text-slate-900 tracking-tight'"
+    [maxWidthClass]="'max-w-3xl'"
+    [panelClass]="'rounded-2xl overflow-hidden shadow-2xl shadow-slate-950/10'"
+    [bodyClass]="'p-0 bg-slate-50'"
+    [footerClass]="'px-5 sm:px-6 py-4 bg-white border-t border-slate-100'"
+    [titleClass]="'text-lg sm:text-xl font-black text-slate-950 tracking-normal leading-tight'"
     [subtitleClass]="'text-[10px] font-bold uppercase tracking-widest text-slate-400'"
     (close)="onClose()">
-    <div header-prefix class="flex h-12 w-12 items-center justify-center rounded-2xl bg-zadna-primary/10 text-zadna-primary">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-      </svg>
+    <div header-prefix class="flex h-11 w-11 items-center justify-center rounded-2xl bg-zadna-primary/10 text-zadna-primary">
+      <span class="material-symbols-outlined text-[23px]">category</span>
     </div>
 
     <div modal-body>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
-        <div *ngIf="parentCategory" class="animate-in fade-in slide-in-top duration-500 flex items-center gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-indigo-600 shadow-sm">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-          </div>
-          <div>
-            <p class="text-[8px] font-black uppercase tracking-widest text-indigo-400">{{ 'CATEGORIES.MODAL.PARENT' | translate }}</p>
-            <p class="text-xs font-bold text-indigo-900">{{ (translate.currentLang === 'ar' ? parentCategory.nameAr : parentCategory.nameEn) }}</p>
-          </div>
-        </div>
-
-        <div class="flex flex-col items-center">
-          <label class="form-label-base mb-4 self-start">{{ 'CATEGORIES.MODAL.IMAGE' | translate }}</label>
-          <div class="group relative">
-            <div class="flex h-32 w-32 items-center justify-center overflow-hidden rounded-[2.5rem] border-2 border-dashed border-slate-200 bg-white shadow-inner transition-all group-hover:border-zadna-primary group-hover:shadow-xl group-hover:shadow-zadna-primary/5">
-              <img *ngIf="form.get('imageUrl')?.value" [src]="form.get('imageUrl')?.value" class="h-full w-full object-cover transition-transform group-hover:scale-110">
-              <div *ngIf="!form.get('imageUrl')?.value" class="flex flex-col items-center text-slate-300">
-                <svg class="mb-2 h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                <span class="text-[8px] font-black uppercase tracking-widest">{{ 'COMMON.UPLOAD' | translate }}</span>
-              </div>
-
-              <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-zadna-primary/10 opacity-0 transition-opacity group-hover:opacity-100">
-                <span class="rounded-full border border-zadna-primary/20 bg-white px-3 py-1.5 text-[8px] font-black text-zadna-primary shadow-sm">{{ 'COMMON.CHANGE' | translate }}</span>
-                <input type="file" class="hidden" (change)="onFileSelected($event)" accept="image/*">
-              </label>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="category-modal-form grid gap-0 lg:grid-cols-[17rem_minmax(0,1fr)]">
+        <aside class="category-modal-side bg-white p-5 lg:border-inline-end lg:border-slate-100">
+          <div *ngIf="parentCategory" class="mb-4 flex items-center gap-3 rounded-2xl border border-zadna-primary/10 bg-zadna-primary/5 p-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-zadna-primary shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">account_tree</span>
             </div>
-
-            <div *ngIf="isUploading" class="absolute inset-0 z-10 flex items-center justify-center rounded-[2.5rem] bg-white/80 backdrop-blur-sm">
-              <div class="h-6 w-6 animate-spin rounded-full border-2 border-zadna-primary border-t-transparent"></div>
+            <div class="min-w-0">
+              <p class="text-[9px] font-black uppercase tracking-widest text-zadna-primary/70">{{ 'CATEGORIES.MODAL.PARENT' | translate }}</p>
+              <p class="truncate text-sm font-black text-slate-900">{{ translate.currentLang === 'ar' ? parentCategory.nameAr : parentCategory.nameEn }}</p>
             </div>
           </div>
-        </div>
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <app-input 
-            formControlName="nameAr"
-            [label]="'CATEGORIES.MODAL.NAME_AR'"
-            [placeholder]="'CATEGORIES.MODAL.NAME_AR_PLACEHOLDER'"
-            dir="rtl"
-            [isRequired]="true"
-            [isTouched]="form.get('nameAr')?.touched || false"
-            [error]="form.get('nameAr')?.invalid && form.get('nameAr')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
-          </app-input>
+          <label class="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            {{ 'CATEGORIES.MODAL.IMAGE' | translate }}
+          </label>
 
-          <app-input 
-            formControlName="nameEn"
-            [label]="'CATEGORIES.MODAL.NAME_EN'"
-            [placeholder]="'CATEGORIES.MODAL.NAME_EN_PLACEHOLDER'"
-            dir="ltr"
-            [isRequired]="true"
-            [isTouched]="form.get('nameEn')?.touched || false"
-            [error]="form.get('nameEn')?.invalid && form.get('nameEn')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
-          </app-input>
-        </div>
-
-        <div class="flex flex-col gap-6 md:flex-row">
-          <div class="flex flex-1 items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-zadna-primary/20">
-            <div class="flex items-center gap-4">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-colors" [class.text-emerald-500]="form.get('isActive')?.value" [class.bg-emerald-50]="form.get('isActive')?.value">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              </div>
-              <div>
-                <p class="text-xs font-black tracking-tight text-slate-800">{{ 'COMMON.ACTIVE_STATUS' | translate }}</p>
-                <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">{{ (form.get('isActive')?.value ? 'COMMON.VISIBLE' : 'COMMON.HIDDEN') | translate }}</p>
-              </div>
+          <div class="group relative mx-auto aspect-square w-full max-w-[12.5rem] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-inner">
+            <img
+              *ngIf="form.get('imageUrl')?.value"
+              [src]="form.get('imageUrl')?.value"
+              class="h-full w-full object-contain p-4 transition-transform duration-300 group-hover:scale-105">
+            <div *ngIf="!form.get('imageUrl')?.value" class="flex h-full w-full flex-col items-center justify-center text-slate-300">
+              <span class="material-symbols-outlined text-[44px]">add_photo_alternate</span>
+              <span class="mt-2 text-[10px] font-black uppercase tracking-widest">{{ 'COMMON.UPLOAD' | translate }}</span>
             </div>
-            <label class="relative inline-flex cursor-pointer items-center">
-              <input type="checkbox" formControlName="isActive" class="peer sr-only">
-              <div class="h-6 w-12 rounded-full bg-slate-200 peer-focus:outline-none peer-checked:bg-zadna-primary peer-checked:after:border-white peer-checked:after:translate-x-full ltr:peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:absolute after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all ltr:after:left-[2px] rtl:after:right-[2px]"></div>
+
+            <label class="absolute inset-x-3 bottom-3 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-white/95 px-3 text-[11px] font-black text-zadna-primary shadow-md ring-1 ring-slate-100 transition-transform hover:-translate-y-0.5">
+              <span class="material-symbols-outlined text-[17px]">upload</span>
+              {{ (form.get('imageUrl')?.value ? 'COMMON.CHANGE' : 'COMMON.UPLOAD') | translate }}
+              <input type="file" class="hidden" (change)="onFileSelected($event)" accept=".jpg,.jpeg,.png,.webp">
             </label>
+
+            <div *ngIf="isUploading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+              <div class="h-8 w-8 animate-spin rounded-full border-4 border-zadna-primary/20 border-t-zadna-primary"></div>
+            </div>
           </div>
 
-          <div class="w-full md:w-32">
-            <app-input 
-              formControlName="displayOrder"
-              [type]="'number'"
-              [label]="'CATEGORIES.MODAL.ORDER'"
-              [placeholder]="'0'"
-              [isRequired]="true">
-            </app-input>
+        </aside>
+
+        <section class="space-y-4 p-5 sm:p-6">
+          <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-zadna-primary">translate</span>
+                <h3 class="text-sm font-black text-slate-900">{{ 'COMMON.NAME' | translate }}</h3>
+              </div>
+              <span class="rounded-full bg-slate-50 px-2.5 py-1 text-[10px] font-black text-slate-400">AR / EN</span>
+            </div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <app-input
+                formControlName="nameAr"
+                [label]="'CATEGORIES.MODAL.NAME_AR'"
+                [placeholder]="'CATEGORIES.MODAL.NAME_AR_PLACEHOLDER'"
+                dir="rtl"
+                [isRequired]="true"
+                customClass="category-modal-input"
+                inputClass="!h-11 !rounded-xl !bg-slate-50"
+                [isTouched]="form.get('nameAr')?.touched || false"
+                [error]="form.get('nameAr')?.invalid && form.get('nameAr')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
+              </app-input>
+
+              <app-input
+                formControlName="nameEn"
+                [label]="'CATEGORIES.MODAL.NAME_EN'"
+                [placeholder]="'CATEGORIES.MODAL.NAME_EN_PLACEHOLDER'"
+                dir="ltr"
+                [isRequired]="true"
+                customClass="category-modal-input"
+                inputClass="!h-11 !rounded-xl !bg-slate-50"
+                [isTouched]="form.get('nameEn')?.touched || false"
+                [error]="form.get('nameEn')?.invalid && form.get('nameEn')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
+              </app-input>
+            </div>
           </div>
-        </div>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,12rem)_minmax(0,1fr)]">
+            <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+              <div class="mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-zadna-accent">sort</span>
+                <h3 class="text-sm font-black text-slate-900">{{ 'CATEGORIES.MODAL.ORDER' | translate }}</h3>
+              </div>
+              <app-input
+                formControlName="displayOrder"
+                [type]="'number'"
+                [label]="'CATEGORIES.MODAL.ORDER'"
+                [placeholder]="'0'"
+                [isRequired]="true"
+                customClass="category-modal-input"
+                inputClass="!h-11 !rounded-xl !bg-slate-50">
+              </app-input>
+            </div>
+
+            <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+              <div class="mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[20px] text-zadna-primary">visibility</span>
+                <h3 class="text-sm font-black text-slate-900">{{ 'COMMON.ACTIVE_STATUS' | translate }}</h3>
+              </div>
+              <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 p-3">
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-black text-slate-900">
+                    {{ (form.get('isActive')?.value ? 'COMMON.VISIBLE' : 'COMMON.HIDDEN') | translate }}
+                  </p>
+                  <p class="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ 'COMMON.STATUS' | translate }}</p>
+                </div>
+                <label class="relative inline-flex cursor-pointer items-center">
+                  <input type="checkbox" formControlName="isActive" class="peer sr-only">
+                  <span class="h-7 w-14 rounded-full bg-slate-200 transition-colors peer-checked:bg-zadna-primary"></span>
+                  <span class="absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-transform ltr:left-1 ltr:peer-checked:translate-x-7 rtl:right-1 rtl:peer-checked:-translate-x-7"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
       </form>
     </div>
 
-    <div modal-footer class="flex items-center justify-end gap-4">
-      <app-button variant="ghost" (btnClick)="onClose()">
+    <div modal-footer class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+      <button type="button" (click)="onClose()" class="h-11 rounded-xl px-5 text-[12px] font-black text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700">
         {{ 'COMMON.CANCEL' | translate }}
-      </app-button>
-      <app-button variant="primary" [isLoading]="isSaving" (btnClick)="onSubmit()">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </button>
+      <button type="button" (click)="onSubmit()" [disabled]="isSaving" class="inline-flex h-11 min-w-28 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-5 text-[12px] font-black text-white shadow-lg shadow-zadna-primary/20 transition-colors hover:bg-zadna-primaryDark disabled:cursor-not-allowed disabled:opacity-60">
+        <span *ngIf="!isSaving" class="material-symbols-outlined text-[18px]">check</span>
+        <span *ngIf="isSaving" class="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
         {{ (mode === 'create' ? 'COMMON.CREATE' : 'COMMON.SAVE') | translate }}
-      </app-button>
+      </button>
     </div>
   </app-modal-shell>
 </div>

@@ -6,9 +6,11 @@
     <app-driver-hero 
       [driver]="driver" 
       [isRTL]="isRTL"
+      [isMutating]="isMutating"
       (editDriverRequested)="editDriverRequested.emit()"
       (openTasksRequested)="onTabChange('operations')"
       (toggleSuspensionRequested)="toggleSuspensionRequested.emit()"
+      (toggleBanRequested)="toggleBanRequested.emit()"
       (workflowActionRequested)="workflowActionRequested.emit($event)">
       
       <!-- Embedded Tabs Navigation -->
@@ -40,6 +42,7 @@
           [isRTL]="isRTL"
           [isActionPending]="isMutating"
           (locationAccessActionRequested)="locationAccessActionRequested.emit($event)"
+          (clearRestrictionsRequested)="clearRestrictionsRequested.emit()"
           (taskPreviewRequested)="taskPreviewRequested.emit($event)">
         </app-driver-operations-tab>
 

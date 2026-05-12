@@ -34,7 +34,7 @@
 
                 <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-zadna-primary/10 opacity-0 transition-opacity group-hover:opacity-100">
                   <span class="rounded-full border border-zadna-primary/20 bg-white px-3 py-1.5 text-[8px] font-black text-zadna-primary shadow-sm">{{ 'COMMON.CHANGE' | translate }}</span>
-                  <input type="file" class="hidden" (change)="onFileSelected($event, 'logoUrl')" accept="image/*">
+                  <input type="file" class="hidden" (change)="onFileSelected($event, 'logoUrl')" accept=".jpg,.jpeg,.png,.webp">
                 </label>
               </div>
 
@@ -58,7 +58,7 @@
 
                 <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-zadna-primary/10 opacity-0 transition-opacity group-hover:opacity-100">
                   <span class="rounded-full border border-zadna-primary/20 bg-white px-3 py-1.5 text-[8px] font-black text-zadna-primary shadow-sm">{{ 'COMMON.CHANGE' | translate }}</span>
-                  <input type="file" class="hidden" (change)="onFileSelected($event, 'coverImageUrl')" accept="image/*">
+                  <input type="file" class="hidden" (change)="onFileSelected($event, 'coverImageUrl')" accept=".jpg,.jpeg,.png,.webp">
                 </label>
               </div>
 

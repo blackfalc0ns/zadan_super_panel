@@ -31,7 +31,8 @@ export class DriversListComponent implements OnInit {
     { value: 'Online', label: 'DRIVERS.STATUS.ONLINE' },
     { value: 'OnMission', label: 'DRIVERS.STATUS.ONMISSION' },
     { value: 'Offline', label: 'DRIVERS.STATUS.OFFLINE' },
-    { value: 'Suspended', label: 'DRIVERS.STATUS.SUSPENDED' }
+    { value: 'Suspended', label: 'DRIVERS.STATUS.SUSPENDED' },
+    { value: 'Banned', label: 'DRIVERS.STATUS.BANNED' }
   ];
 
   readonly verificationOptions: SelectOption<VerificationStatus>[] = [
@@ -274,9 +275,8 @@ export class DriversListComponent implements OnInit {
   }
 
   private buildCityOptions(drivers: Driver[]): string[] {
-    const fallbackCities = ['الرياض', 'جدة', 'الدمام', 'الخبر', 'مكة', 'المدينة', 'الطائف', 'تبوك'];
     const cities = drivers.map((driver) => driver.city);
-    return Array.from(new Set([...cities, ...fallbackCities]));
+    return Array.from(new Set(cities));
   }
 }
 

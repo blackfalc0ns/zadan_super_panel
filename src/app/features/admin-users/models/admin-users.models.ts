@@ -147,9 +147,14 @@ export interface DirectoryIdentityRecord {
   identityKind: DirectoryIdentityKind;
   panelScope: DirectoryPanelScope;
   rolePresetId: DirectoryRolePresetId;
+  roleDefinitionId: string | null;
+  roleCode: string;
+  roleName: string;
+  rolePermissions: string[];
   accessLevel: AdminAccessLevel;
   status: AdminAccessStatus;
   inviteState: AdminInviteState;
+  mustChangePassword: boolean;
   grantedPermissions: string[];
   revokedPermissions: string[];
   security: AdminUserSecurity;

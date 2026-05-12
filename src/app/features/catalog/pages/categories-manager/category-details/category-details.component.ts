@@ -5,10 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Brand, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
-import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
-import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/badge.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
-import { AppCardComponent } from '../../../../../shared/components/ui/card/card.component';
 import { DetailHeaderComponent } from '../../../../../shared/components/ui/detail-header/detail-header.component';
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
@@ -24,9 +21,6 @@ import { DeleteConfirmationModalComponent } from '../../../../../shared/componen
     TranslateModule,
     CategoryFormModalComponent,
     DeleteConfirmationModalComponent,
-    AppButtonComponent,
-    AppBadgeComponent,
-    AppCardComponent,
     AppPaginationComponent,
     DetailHeaderComponent,
     SectionHeaderComponent,
@@ -67,6 +61,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(event => {
         this.activeLang = event.lang;
+        this.setupBreadcrumbs();
       });
   }
 
@@ -95,6 +90,18 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     ];
   }
 
+  getActionButtonLabel(): string {
+    return this.translate.instant('COMMON.EDIT');
+  }
+
+  getGridViewLabel(): string {
+    return this.translate.instant('CATEGORIES.DETAILS.GRID_VIEW');
+  }
+
+  getTableViewLabel(): string {
+    return this.translate.instant('CATEGORIES.DETAILS.TABLE_VIEW');
+  }
+
   getBreadcrumbs() {
     return [
       { label: 'SIDEBAR.CATALOG', url: '/catalog' },
@@ -109,6 +116,38 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     if (depth === 2) return 'CATEGORIES.CATEGORY';
     if (depth === 3) return 'CATEGORIES.SUB_CATEGORY';
     return 'CATEGORIES.ITEM';
+  }
+
+  getLocalizedCategoryName(category: Category | null = this.category): string {
+    if (!category) return '';
+    return this.activeLang === 'ar' ? (category.nameAr || category.nameEn) : (category.nameEn || category.nameAr);
+  }
+
+  getSecondaryCategoryName(category: Category | null = this.category): string {
+    if (!category) return '';
+    return this.activeLang === 'ar' ? (category.nameEn || category.nameAr) : (category.nameAr || category.nameEn);
+  }
+
+  getLocalizedParentName(): string {
+    if (!this.category) return '';
+    return this.activeLang === 'ar'
+      ? (this.category.parentNameAr || this.category.parentNameEn || '')
+      : (this.category.parentNameEn || this.category.parentNameAr || '');
+  }
+
+  getCategoryInitials(category: Category | null = this.category): string {
+    const name = this.getLocalizedCategoryName(category).trim();
+    return name ? name.slice(0, 2).toUpperCase() : 'CA';
+  }
+
+  getHierarchyProgress(): number {
+    const level = this.category?.level ?? 0;
+    return Math.min(100, Math.max(12, ((level + 1) / 4) * 100));
+  }
+
+  getSystemId(category: Category | null = this.category): string {
+    if (!category?.id) return '-';
+    return category.id.length > 16 ? `${category.id.slice(0, 8)}...${category.id.slice(-4)}` : category.id;
   }
 
   loadCategory(id: string): void {
@@ -150,7 +189,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   }
 
   loadCategoryProducts(categoryId: string): void {
-    this.catalogService.getProducts(1, 6, undefined, categoryId).subscribe({
+    this.catalogService.getProducts(1, 12, undefined, categoryId).subscribe({
       next: (response) => {
         const items = Array.isArray(response?.items)
           ? response.items
@@ -238,6 +277,10 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     this.isCreateModalOpen = true;
   }
 
+  canCreateProduct(): boolean {
+    return (this.category?.level ?? 0) >= 3;
+  }
+
   onCreateProduct(): void {
     if (this.category) {
       this.router.navigate(['/catalog/products/create'], { queryParams: { categoryId: this.category.id } });
@@ -245,11 +288,26 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   }
 
   getCategoryStatusVariant(isActive?: boolean): StatusPillVariant {
-    return isActive ? 'success' : 'neutral';
+    return isActive ? 'success' : 'paused';
   }
 
   getLocalizedBrandName(brand: Brand): string {
-    return this.activeLang === 'ar' ? brand.nameAr : brand.nameEn;
+    return this.activeLang === 'ar' ? (brand.nameAr || brand.nameEn) : (brand.nameEn || brand.nameAr);
+  }
+
+  getLocalizedProductName(product: MasterProduct): string {
+    return this.activeLang === 'ar' ? (product.nameAr || product.nameEn) : (product.nameEn || product.nameAr);
+  }
+
+  getProductImage(product: MasterProduct): string | null {
+    return product.images?.find((image) => image.isPrimary)?.url || product.images?.[0]?.url || null;
+  }
+
+  getProductStatusVariant(status: MasterProduct['status']): StatusPillVariant {
+    if (status === 'Active') return 'success';
+    if (status === 'Draft') return 'warning';
+    if (status === 'Discontinued') return 'danger';
+    return 'paused';
   }
 }
 

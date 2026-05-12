@@ -385,15 +385,12 @@ export class VendorService {
   }
 
   getVendorById(id: string): Observable<VendorDetail> {
-    const fallback = this.getFallbackVendorDetail(id);
-
     return this.http.get<AdminVendorDetailDto>(`${this.apiUrl}/${id}`).pipe(
       map((response) => {
-        const mappedVendor = this.mapApiVendorDetail(response, fallback);
+        const mappedVendor = this.mapApiVendorDetail(response);
         this.rememberVendorDetail(mappedVendor);
         return mappedVendor;
-      }),
-      catchError((error) => this.handleReadFallback('Vendor detail', this.clone(fallback), error))
+      })
     );
   }
 
@@ -429,7 +426,7 @@ export class VendorService {
   }
 
   getVendorSnapshotById(id: string): VendorDetail | undefined {
-    const vendor = this.apiVendorStore.get(id) ?? this.findVendor(id);
+    const vendor = this.apiVendorStore.get(id);
     return vendor ? this.clone(vendor) : undefined;
   }
 
@@ -438,7 +435,7 @@ export class VendorService {
       return Array.from(this.apiVendorStore.values()).map((vendor) => this.clone(vendor));
     }
 
-    return this.vendorStore.map((vendor) => this.clone(vendor));
+    return [];
   }
 
   getVendorKPIs(): Observable<VendorKPIs> {
@@ -1552,10 +1549,6 @@ export class VendorService {
     this.apiVendorStore.set(vendor.id, this.clone(vendor));
   }
 
-  private getFallbackVendorDetail(id: string): VendorDetail {
-    return this.getVendorSnapshotById(id) ?? this.clone(this.findVendorOrFallback(id));
-  }
-
   private createVendorDetailFromSummary(summary: Vendor): VendorDetail {
     const localVendor = this.findVendor(summary.id);
     const base = localVendor ? this.clone(localVendor) : this.clone(this.vendorStore[0]);
@@ -2159,320 +2152,16 @@ export class VendorService {
   }
 
   private findVendorOrFallback(id: string): VendorDetail {
-    return this.findVendor(id) ?? this.vendorStore[0];
+    const vendor = this.findVendor(id);
+    if (!vendor) {
+      throw new Error(`Vendor ${id} was not found in the local store.`);
+    }
+
+    return vendor;
   }
 
   private buildMockVendorStore(): VendorDetail[] {
-    const seeds: VendorSeed[] = [
-      {
-        id: 'VND-24001',
-        businessNameAr: 'لولو هايبر ماركت',
-        businessNameEn: 'LuLu Hypermarket',
-        businessType: 'Hypermarket',
-        ownerName: 'Mahmoud Karim',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-01-15T08:00:00Z',
-        reviewState: 'verified',
-        riskLevel: RiskLevel.Low,
-        payoutStatus: PayoutStatus.Active,
-        complaintsCount: 1,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 4.6,
-        assignedReviewer: 'Noura Al-Harbi',
-        reviewSubmittedAtUtc: '2026-03-02T10:30:00Z',
-        commissionRate: 12
-      },
-      {
-        id: 'VND-24002',
-        businessNameAr: 'بنده',
-        businessNameEn: 'Panda',
-        businessType: 'Supermarket',
-        ownerName: 'Rami Tarek',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-02-10T09:15:00Z',
-        reviewState: 'under_review',
-        riskLevel: RiskLevel.Medium,
-        payoutStatus: PayoutStatus.Pending,
-        complaintsCount: 2,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 4.1,
-        assignedReviewer: 'Noura Al-Harbi',
-        reviewSubmittedAtUtc: '2026-03-20T08:20:00Z',
-        commissionRate: 13
-      },
-      {
-        id: 'VND-24003',
-        businessNameAr: 'العثيم',
-        businessNameEn: 'Othaim Markets',
-        businessType: 'Supermarket',
-        ownerName: 'Nawaf Salem',
-        city: 'جدة',
-        region: 'Western',
-        createdAtUtc: '2025-03-18T11:00:00Z',
-        reviewState: 'changes_requested',
-        riskLevel: RiskLevel.Medium,
-        payoutStatus: PayoutStatus.Pending,
-        complaintsCount: 3,
-        hasFraudFlag: false,
-        isLowPerformance: true,
-        performanceRating: 3.8,
-        assignedReviewer: 'Majed Al-Qahtani',
-        reviewSubmittedAtUtc: '2026-03-18T11:40:00Z',
-        commissionRate: 12
-      },
-      {
-        id: 'VND-24004',
-        businessNameAr: 'كارفور',
-        businessNameEn: 'Carrefour',
-        businessType: 'Hypermarket',
-        ownerName: 'Khaled Sami',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-04-22T08:40:00Z',
-        reviewState: 'submitted',
-        riskLevel: RiskLevel.Low,
-        payoutStatus: PayoutStatus.Pending,
-        complaintsCount: 0,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 4.4,
-        assignedReviewer: null,
-        reviewSubmittedAtUtc: '2026-03-24T09:00:00Z',
-        commissionRate: 14
-      },
-      {
-        id: 'VND-24005',
-        businessNameAr: 'دانوب',
-        businessNameEn: 'Danube',
-        businessType: 'Supermarket',
-        ownerName: 'Ayman Fathi',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-05-11T07:10:00Z',
-        reviewState: 'awaiting_submission',
-        riskLevel: RiskLevel.Low,
-        payoutStatus: PayoutStatus.Pending,
-        complaintsCount: 0,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 4.3,
-        assignedReviewer: null,
-        reviewSubmittedAtUtc: null,
-        commissionRate: 12
-      },
-      {
-        id: 'VND-24006',
-        businessNameAr: 'تميمي ماركت',
-        businessNameEn: 'Tamimi Markets',
-        businessType: 'Supermarket',
-        ownerName: 'Hany Adel',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-06-02T13:00:00Z',
-        reviewState: 'verified',
-        riskLevel: RiskLevel.Low,
-        payoutStatus: PayoutStatus.Active,
-        complaintsCount: 1,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 4.7,
-        assignedReviewer: 'Amal Al-Mutairi',
-        reviewSubmittedAtUtc: '2026-03-01T12:10:00Z',
-        commissionRate: 11
-      },
-      {
-        id: 'VND-24007',
-        businessNameAr: 'مطاعم الرومانسية',
-        businessNameEn: 'Al Romansiah Restaurants',
-        businessType: 'Restaurant',
-        ownerName: 'Saad Fahmy',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-07-12T09:40:00Z',
-        reviewState: 'suspended',
-        riskLevel: RiskLevel.High,
-        payoutStatus: PayoutStatus.Blocked,
-        complaintsCount: 5,
-        hasFraudFlag: true,
-        isLowPerformance: true,
-        performanceRating: 3.2,
-        assignedReviewer: 'Risk & Compliance Desk',
-        reviewSubmittedAtUtc: '2026-03-10T15:25:00Z',
-        commissionRate: 14
-      },
-      {
-        id: 'VND-24008',
-        businessNameAr: 'هرفي العليا',
-        businessNameEn: 'Herfy - Olaya',
-        businessType: 'Restaurant',
-        ownerName: 'Mazen Ibrahim',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-08-21T10:05:00Z',
-        reviewState: 'rejected',
-        riskLevel: RiskLevel.High,
-        payoutStatus: PayoutStatus.Blocked,
-        complaintsCount: 4,
-        hasFraudFlag: false,
-        isLowPerformance: true,
-        performanceRating: 3.5,
-        assignedReviewer: 'Majed Al-Qahtani',
-        reviewSubmittedAtUtc: '2026-03-12T13:45:00Z',
-        commissionRate: 12
-      },
-      {
-        id: 'VND-24009',
-        businessNameAr: 'ماكدونالدز',
-        businessNameEn: "McDonald's",
-        businessType: 'Restaurant',
-        ownerName: 'Tariq Nabil',
-        city: 'جدة',
-        region: 'Western',
-        createdAtUtc: '2025-09-09T08:20:00Z',
-        reviewState: 'under_review',
-        riskLevel: RiskLevel.Critical,
-        payoutStatus: PayoutStatus.Blocked,
-        complaintsCount: 6,
-        hasFraudFlag: true,
-        isLowPerformance: true,
-        performanceRating: 3.1,
-        assignedReviewer: 'Risk & Compliance Desk',
-        reviewSubmittedAtUtc: '2026-03-22T14:00:00Z',
-        commissionRate: 13
-      },
-      {
-        id: 'VND-24010',
-        businessNameAr: 'Barns',
-        businessNameEn: 'Barns',
-        businessType: 'Cafe',
-        ownerName: 'Amr Hossam',
-        city: 'الخبر',
-        region: 'Eastern',
-        createdAtUtc: '2025-10-05T11:30:00Z',
-        reviewState: 'submitted',
-        riskLevel: RiskLevel.Low,
-        payoutStatus: PayoutStatus.Pending,
-        complaintsCount: 1,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 4.2,
-        assignedReviewer: null,
-        reviewSubmittedAtUtc: '2026-03-25T10:10:00Z',
-        commissionRate: 12
-      },
-      {
-        id: 'VND-24011',
-        businessNameAr: 'برغرايززر',
-        businessNameEn: 'Burgerizzr',
-        businessType: 'Restaurant',
-        ownerName: 'Yousef Adel',
-        city: 'الدمام',
-        region: 'Eastern',
-        createdAtUtc: '2025-11-08T09:55:00Z',
-        reviewState: 'changes_requested',
-        riskLevel: RiskLevel.Medium,
-        payoutStatus: PayoutStatus.Pending,
-        complaintsCount: 2,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 3.9,
-        assignedReviewer: 'Amal Al-Mutairi',
-        reviewSubmittedAtUtc: '2026-03-19T09:05:00Z',
-        commissionRate: 12
-      },
-      {
-        id: 'VND-9928',
-        businessNameAr: 'متجر التقنية الحديثة',
-        businessNameEn: 'Modern Tech Store',
-        businessType: 'Electronics',
-        ownerName: 'Abdullah Khaled',
-        city: 'الرياض',
-        region: 'Central',
-        createdAtUtc: '2025-12-03T07:35:00Z',
-        reviewState: 'under_review',
-        riskLevel: RiskLevel.Medium,
-        payoutStatus: PayoutStatus.Pending,
-        complaintsCount: 2,
-        hasFraudFlag: false,
-        isLowPerformance: false,
-        performanceRating: 4.0,
-        assignedReviewer: 'Noura Al-Harbi',
-        reviewSubmittedAtUtc: '2026-03-24T08:50:00Z',
-        commissionRate: 13
-      }
-    ];
-
-    return seeds.map((seed, index) => {
-      const documents = this.buildReviewDocuments(seed.reviewState);
-      const vendor: VendorDetail = {
-        id: seed.id,
-        businessNameAr: seed.businessNameAr,
-        businessNameEn: seed.businessNameEn,
-        businessType: seed.businessType,
-        status: VendorStatus.Pending,
-        ownerName: seed.ownerName,
-        contactPhone: `+966 50 000 ${String(index + 101).padStart(3, '0')}`,
-        createdAtUtc: seed.createdAtUtc,
-        contactEmail: `${seed.id.toLowerCase()}@zadana-vendors.sa`,
-        commissionRate: seed.commissionRate ?? 12,
-        city: seed.city,
-        region: seed.region,
-        onboardingStage: OnboardingStage.New,
-        verificationStatus: VerificationStatus.Unverified,
-        documentsStatus: DocumentsStatus.Incomplete,
-        riskLevel: seed.riskLevel,
-        payoutStatus: seed.payoutStatus,
-        lastActiveAtUtc: `2026-03-${String((index % 20) + 1).padStart(2, '0')}T12:30:00Z`,
-        performanceRating: seed.performanceRating,
-        documentsCompleteness: 0,
-        hasKYC: false,
-        hasPendingCompliance: false,
-        hasFraudFlag: seed.hasFraudFlag,
-        complaintsCount: seed.complaintsCount,
-        isLowPerformance: seed.isLowPerformance,
-        reviewState: seed.reviewState,
-        assignedReviewer: seed.assignedReviewer ?? null,
-        reviewSubmittedAtUtc: seed.reviewSubmittedAtUtc ?? null,
-        reviewUpdatedAtUtc: seed.reviewSubmittedAtUtc ?? seed.createdAtUtc,
-        commercialRegistrationNumber: `CR-${seed.id.replace(/\D+/g, '').padStart(10, '0')}`,
-        taxId: `3${seed.id.replace(/\D+/g, '').padStart(14, '0')}`,
-        rejectionReason: seed.reviewState === 'rejected'
-          ? 'Submitted data did not pass the latest compliance review.'
-          : null,
-        logoUrl: null,
-        commercialRegisterDocumentUrl: null,
-        approvedAtUtc: seed.reviewState === 'verified' ? '2026-03-01T10:30:00Z' : null,
-        approvedBy: seed.reviewState === 'verified' ? seed.assignedReviewer || 'Vendor Ops Desk' : null,
-        ownerEmail: `${seed.ownerName.toLowerCase().replace(/[^a-z0-9]+/g, '.')}@zadana.sa`,
-        ownerPhone: `+966 55 000 ${String(index + 201).padStart(3, '0')}`,
-        branchesCount: seed.reviewState === 'verified' || seed.reviewState === 'suspended' ? 3 : 1,
-        bankAccountsCount: 1,
-        reviewStartedAtUtc: seed.reviewState === 'under_review' || seed.reviewState === 'suspended'
-          ? seed.reviewSubmittedAtUtc ?? '2026-03-20T08:20:00Z'
-          : null,
-        reviewCompletedAtUtc: seed.reviewState === 'verified' || seed.reviewState === 'rejected'
-          ? '2026-03-25T11:15:00Z'
-          : null,
-        requestedChangesAtUtc: seed.reviewState === 'changes_requested'
-          ? '2026-03-23T10:45:00Z'
-          : null,
-        reviewDecisionReason: seed.reviewState === 'changes_requested'
-          ? 'Need a clearer municipal license and a matching tax certificate.'
-          : seed.reviewState === 'suspended'
-            ? 'Payouts are frozen until compliance closes the flagged cancellation pattern.'
-            : null,
-        reviewDocuments: documents,
-        reviewNotes: this.buildReviewNotes(seed),
-        riskIndicators: []
-      };
-
-      this.reconcileVendorState(vendor);
-      return vendor;
-    });
+    return [];
   }
 
   private buildReviewDocuments(reviewState: VendorReviewState): VendorReviewDocument[] {

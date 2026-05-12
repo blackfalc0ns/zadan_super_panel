@@ -1,0 +1,32 @@
+<header class="dashboard-header-shell shrink-0 border-b border-slate-200/80 bg-white/95 px-4 py-2.5 backdrop-blur-sm sm:px-6 overflow-visible">
+  <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <div class="dashboard-live-pill">
+      <span class="relative flex h-2.5 w-2.5">
+        <span *ngIf="dashboard.systemMode === 'live'" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex h-2.5 w-2.5 rounded-full ring-2 ring-white" [ngClass]="dashboard.systemMode === 'live' ? 'bg-emerald-500' : 'bg-cyan-500'"></span>
+      </span>
+      <div class="min-w-0">
+        <p class="text-[11px] font-black leading-4 text-slate-800">{{ dashboard.systemStatusLabelKey | translate }}</p>
+        <span class="mt-0.5 flex items-center gap-1 text-[10px] font-semibold text-slate-400">
+          <span class="material-symbols-outlined text-[13px]">schedule</span>
+          {{ dashboard.lastUpdatedLabel }}
+        </span>
+      </div>
+    </div>
+
+    <div class="dashboard-filter-bar">
+      <button type="button" class="dashboard-refresh-button" (click)="refreshRequested.emit()" [title]="'COMMON.REFRESH' | translate">
+        <span class="material-symbols-outlined text-[17px]">refresh</span>
+      </button>
+      <div class="dashboard-filter-field relative">
+        <app-searchable-select [ngModel]="filterState.vendorId" [searchable]="true" (ngModelChange)="onVendorChange($event)" [options]="vendorOptions" [placeholder]="'DASHBOARD.FILTERS.VENDOR' | translate" [dropdownPanelClass]="'min-w-72'" class="dashboard-header-select block w-60 text-[10px] font-semibold"></app-searchable-select>
+      </div>
+      <div class="dashboard-filter-field relative">
+        <app-searchable-select [ngModel]="filterState.region" [searchable]="false" (ngModelChange)="onRegionChange($event)" [options]="regionOptions" [placeholder]="'DASHBOARD.FILTERS.REGION' | translate" [dropdownPanelClass]="'min-w-56'" class="dashboard-header-select block w-52 text-[10px] font-semibold"></app-searchable-select>
+      </div>
+      <div class="dashboard-filter-field relative">
+        <app-searchable-select [ngModel]="filterState.dateRange" [searchable]="false" (ngModelChange)="onDateRangeChange($event)" [options]="dateRangeOptions" [placeholder]="'DASHBOARD.FILTERS.DATE_RANGE' | translate" [dropdownPanelClass]="'min-w-44'" class="dashboard-header-select block w-32 text-[10px] font-semibold"></app-searchable-select>
+      </div>
+    </div>
+  </div>
+</header>

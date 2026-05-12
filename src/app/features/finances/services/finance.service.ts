@@ -1,5 +1,5 @@
 import { Injectable, Injector, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
@@ -15,11 +15,15 @@ import {
   CodRecord,
   CodReconciliationSummary,
   DriverFinanceProfile,
+  EntityType,
   FinanceDashboardAlert,
   FinanceDashboardSnapshot,
+  FinanceCurrency,
   FinancePeriod,
   FinancialAdjustment,
   LedgerEntry,
+  LedgerDirection,
+  LedgerEntryType,
   LedgerFilter,
   OrderFinancialBreakdown,
   PricingRuleSet,
@@ -28,6 +32,7 @@ import {
   RefundStatus,
   Settlement,
   SettlementFilter,
+  SettlementStatus,
   VendorFinanceProfile,
   ZoneFinanceSettings
 } from '../models/finance.models';
@@ -90,6 +95,80 @@ interface DeliveryZoneApiModel {
   isActive: boolean;
 }
 
+interface AdminLedgerLineApiModel {
+  id: string;
+  accountCode: string;
+  ownerType: string | null;
+  ownerId: string | null;
+  debitAmount: number;
+  creditAmount: number;
+  currencyCode: string;
+  orderId: string | null;
+  settlementId: string | null;
+  payoutId: string | null;
+  memo: string | null;
+}
+
+interface AdminLedgerEntryApiModel {
+  id: string;
+  sequenceNumber: number;
+  status: string;
+  eventType: string;
+  correlationId: string;
+  idempotencyKey: string;
+  orderId: string | null;
+  settlementId: string | null;
+  payoutId: string | null;
+  refundId: string | null;
+  currencyCode: string;
+  postedAtUtc: string;
+  debitTotal: number;
+  creditTotal: number;
+  memo: string | null;
+  lines: AdminLedgerLineApiModel[];
+}
+
+interface AdminLedgerEntryListApiModel {
+  items: AdminLedgerEntryApiModel[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+interface AdminSettlementApiModel {
+  id: string;
+  ownerType: string;
+  ownerId: string;
+  status: string;
+  resolutionType: string;
+  periodFrom: string;
+  periodTo: string;
+  grossAmount: number;
+  commissionAmount: number;
+  refundAmount: number;
+  adjustmentAmount: number;
+  recoveryAmount: number;
+  netAmount: number;
+}
+
+interface AdminSettlementListApiModel {
+  items: AdminSettlementApiModel[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+interface AdminCodReconciliationApiModel {
+  items: Array<{
+    driverId: string;
+    driverName: string;
+    driverPhone: string;
+    codOwedBalance: number;
+    lastJournalSequence: number;
+  }>;
+  totalCodOwed: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FinanceService {
   private readonly injector = inject(Injector);
@@ -128,6 +207,7 @@ export class FinanceService {
 
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/admin/finances`;
+  private readonly settlementsApiUrl = `${environment.apiUrl}/admin/settlements`;
   private readonly deliveryPricingApiUrl = `${environment.apiUrl}/admin/delivery-pricing`;
   private readonly deliveryZonesApiUrl = `${environment.apiUrl}/admin/delivery-zones`;
 
@@ -148,25 +228,75 @@ export class FinanceService {
   }
 
   getLedgerEntries(filter?: LedgerFilter): Observable<LedgerEntry[]> {
-    return of(this.filterLedgerEntries(this.buildLedgerEntries(), filter));
+    let params = new HttpParams()
+      .set('page', '1')
+      .set('pageSize', '200');
+
+    if (filter?.orderId) {
+      params = params.set('orderId', filter.orderId);
+    }
+
+    return this.http.get<AdminLedgerEntryListApiModel>(`${this.apiUrl}/ledger`, { params }).pipe(
+      map((response) => this.filterLedgerEntries(this.mapLedgerEntries(response.items), filter)),
+      catchError((error) => {
+        console.error('Failed to load ledger entries from backend.', error);
+        return of<LedgerEntry[]>([]);
+      })
+    );
   }
 
   getSettlements(filter?: SettlementFilter): Observable<Settlement[]> {
-    return of(this.filterSettlements(this.buildSettlements(), filter));
+    let params = new HttpParams()
+      .set('page', '1')
+      .set('pageSize', '200');
+
+    const ownerType = this.toBackendOwnerType(filter?.entityType);
+    if (ownerType) {
+      params = params.set('ownerType', ownerType);
+    }
+    if (filter?.entityId) {
+      params = params.set('ownerId', filter.entityId);
+    }
+    const status = this.toBackendSettlementStatus(filter?.status);
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    return this.http.get<AdminSettlementListApiModel>(this.settlementsApiUrl, { params }).pipe(
+      map((response) => this.filterSettlements(response.items.map((item) => this.mapSettlement(item)), filter)),
+      catchError((error) => {
+        console.error('Failed to load settlements from backend.', error);
+        return of<Settlement[]>([]);
+      })
+    );
   }
 
   getCodRecords(filter?: CodFilter): Observable<{ summary: CodReconciliationSummary; records: CodRecord[] }> {
-    const data = this.buildCodData();
-    const records = this.filterCodRecords(data.records, filter);
-    const summary: CodReconciliationSummary = {
-      totalExpected: this.sum(records.map((record) => record.expectedAmount)),
-      totalCollected: this.sum(records.map((record) => record.collectedAmount)),
-      totalDelta: this.sum(records.map((record) => record.delta)),
-      overdueCases: records.filter((record) => record.status === 'overdue').length,
-      pendingCases: records.filter((record) => record.status === 'pending').length
-    };
+    return this.http.get<AdminCodReconciliationApiModel>(`${this.apiUrl}/cod-reconciliation`).pipe(
+      map((response) => {
+        const records = this.filterCodRecords(this.mapCodRecords(response), filter);
+        const summary: CodReconciliationSummary = {
+          totalExpected: this.sum(records.map((record) => record.expectedAmount)),
+          totalCollected: this.sum(records.map((record) => record.collectedAmount)),
+          totalDelta: this.sum(records.map((record) => record.delta)),
+          overdueCases: records.filter((record) => record.status === 'overdue').length,
+          pendingCases: records.filter((record) => record.status === 'pending').length
+        };
 
-    return of({ summary, records });
+        return { summary, records };
+      }),
+      catchError((error) => {
+        console.error('Failed to load COD reconciliation from backend.', error);
+        return of({
+          summary: { totalExpected: 0, totalCollected: 0, totalDelta: 0, overdueCases: 0, pendingCases: 0 },
+          records: []
+        });
+      })
+    );
+  }
+
+  approveSettlement(settlementId: string): Observable<void> {
+    return this.http.post<void>(`${this.settlementsApiUrl}/${settlementId}/approve`, { resolutionType: 'BankPayout' });
   }
 
   getRefundCases(filter?: RefundFilter): Observable<RefundCase[]> {
@@ -591,6 +721,149 @@ export class FinanceService {
       netMargin,
       marginPercent: this.round((netMargin / Math.max(order.total, 1)) * 100, 1)
     };
+  }
+
+  private mapLedgerEntries(entries: AdminLedgerEntryApiModel[]): LedgerEntry[] {
+    const rows = entries.flatMap((entry) =>
+      entry.lines
+        .filter((line) => Math.max(line.debitAmount, line.creditAmount) > 0)
+        .map((line) => this.mapLedgerLine(entry, line))
+    );
+
+    return this.withBalances(rows);
+  }
+
+  private mapLedgerLine(entry: AdminLedgerEntryApiModel, line: AdminLedgerLineApiModel): LedgerEntry {
+    const direction: LedgerDirection = line.creditAmount >= line.debitAmount ? 'credit' : 'debit';
+    const ownerType = this.toFrontendEntityType(line.ownerType);
+    const entityId = line.ownerId ?? entry.correlationId;
+
+    return {
+      id: line.id,
+      timestamp: entry.postedAtUtc,
+      entityType: ownerType,
+      entityId,
+      entityName: this.formatOwnerName(line.ownerType, line.ownerId, line.accountCode),
+      type: this.toLedgerEntryType(entry.eventType, line.accountCode),
+      direction,
+      amount: this.round(Math.max(line.debitAmount, line.creditAmount)),
+      currency: this.normalizeCurrency(line.currencyCode),
+      referenceId: entry.id,
+      description: line.memo ?? entry.memo ?? entry.eventType,
+      orderId: line.orderId ?? entry.orderId ?? undefined,
+      settlementId: line.settlementId ?? entry.settlementId ?? undefined
+    };
+  }
+
+  private mapSettlement(item: AdminSettlementApiModel): Settlement {
+    const entityType = this.toFrontendEntityType(item.ownerType);
+    const period = `${this.shortDate(item.periodFrom)} - ${this.shortDate(item.periodTo)}`;
+
+    return {
+      id: item.id,
+      settlementCode: `SET-${item.id.slice(0, 8).toUpperCase()}`,
+      entityType,
+      entityId: item.ownerId,
+      entityName: this.formatOwnerName(item.ownerType, item.ownerId),
+      period,
+      periodFrom: item.periodFrom,
+      periodTo: item.periodTo,
+      ordersCount: 0,
+      grossAmount: this.round(item.grossAmount),
+      deductions: this.round(item.commissionAmount + item.refundAmount + item.adjustmentAmount + item.recoveryAmount),
+      netAmount: this.round(item.netAmount),
+      status: this.toFrontendSettlementStatus(item.status),
+      createdAt: item.periodTo,
+      paidAt: item.status === 'PaidOut' ? item.periodTo : undefined,
+      failureReason: item.status === 'PayoutFailed' ? 'Payout failed' : undefined
+    };
+  }
+
+  private mapCodRecords(response: AdminCodReconciliationApiModel): CodRecord[] {
+    return response.items.map((item) => ({
+      id: `cod-${item.driverId}`,
+      orderId: item.driverId,
+      orderRef: `COD-${item.driverId.slice(0, 8).toUpperCase()}`,
+      driverId: item.driverId,
+      driverName: item.driverName,
+      vendorId: 'platform',
+      vendorName: 'Platform',
+      expectedAmount: this.round(item.codOwedBalance),
+      collectedAmount: 0,
+      delta: this.round(-item.codOwedBalance),
+      status: item.codOwedBalance > 0 ? 'pending' : 'collected',
+      notes: `Last journal sequence: ${item.lastJournalSequence}`
+    }));
+  }
+
+  private toLedgerEntryType(eventType: string, accountCode: string): LedgerEntryType {
+    if (eventType.includes('Payout')) return 'payout';
+    if (eventType.includes('Refund')) return 'refund';
+    if (eventType.includes('Cod') || accountCode === 'DriverCodReceivable') return 'cod_collection';
+    if (eventType.includes('Adjustment') || accountCode === 'ManualAdjustment') return 'adjustment';
+    if (accountCode === 'PlatformRevenue') return 'service_fee';
+    if (accountCode === 'VendorPayable' || accountCode === 'DriverPayable') return 'settlement';
+    return 'adjustment';
+  }
+
+  private toFrontendEntityType(ownerType: string | null | undefined): EntityType {
+    const normalized = ownerType?.toLowerCase();
+    if (normalized === 'vendor') return 'vendor';
+    if (normalized === 'driver') return 'driver';
+    if (normalized === 'customer') return 'customer';
+    return 'platform';
+  }
+
+  private toBackendOwnerType(entityType: EntityType | undefined): string | null {
+    if (entityType === 'vendor') return 'Vendor';
+    if (entityType === 'driver') return 'Driver';
+    return null;
+  }
+
+  private toFrontendSettlementStatus(status: string): SettlementStatus {
+    switch (status) {
+      case 'PaidOut':
+        return 'paid';
+      case 'Processing':
+        return 'processing';
+      case 'PayoutFailed':
+      case 'Rejected':
+        return 'failed';
+      case 'Disputed':
+        return 'disputed';
+      default:
+        return 'pending';
+    }
+  }
+
+  private toBackendSettlementStatus(status: SettlementStatus | undefined): string | null {
+    switch (status) {
+      case 'paid':
+        return 'PaidOut';
+      case 'processing':
+        return 'Processing';
+      case 'failed':
+        return 'PayoutFailed';
+      case 'disputed':
+        return 'Disputed';
+      case 'pending':
+        return 'PendingReview';
+      default:
+        return null;
+    }
+  }
+
+  private normalizeCurrency(value: string): FinanceCurrency {
+    return value === 'SAR' ? 'SAR' : 'EGP';
+  }
+
+  private formatOwnerName(ownerType: string | null | undefined, ownerId?: string | null, fallback?: string): string {
+    const prefix = ownerType && ownerType.trim().length > 0 ? ownerType : fallback ?? 'Platform';
+    return ownerId ? `${prefix} ${ownerId.slice(0, 8)}` : prefix;
+  }
+
+  private shortDate(value: string): string {
+    return new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
   }
 
   private buildSettlements(): Settlement[] {
@@ -1271,109 +1544,11 @@ export class FinanceService {
   }
 
   private buildInitialAdjustments(): FinancialAdjustment[] {
-    return [
-      {
-        id: 'adj-1001',
-        adjustmentRef: 'ADJ-1001',
-        entityType: 'vendor',
-        entityId: 'VND-24001',
-        entityName: 'LuLu Hypermarket',
-        direction: 'credit',
-        amount: 125,
-        currency: 'SAR',
-        reason: 'FINANCES.ADJUSTMENTS.REASONS.SYSTEM_DOWNTIME',
-        category: 'compensation',
-        adminId: 'adm-001',
-        adminName: 'FINANCES.ADMINS.FINANCE_ADMIN',
-        createdAt: '2026-03-14T09:30:00Z',
-        approvedAt: '2026-03-14T10:00:00Z',
-        approvedBy: 'FINANCES.ADMINS.SUPER_ADMIN',
-        status: 'approved'
-      },
-      {
-        id: 'adj-1002',
-        adjustmentRef: 'ADJ-1002',
-        entityType: 'driver',
-        entityId: '1',
-        entityName: 'Driver 1',
-        direction: 'debit',
-        amount: 48,
-        currency: 'SAR',
-        reason: 'FINANCES.ADJUSTMENTS.REASONS.COD_SHORTAGE',
-        category: 'cod_recovery',
-        adminId: 'adm-001',
-        adminName: 'FINANCES.ADMINS.FINANCE_ADMIN',
-        createdAt: '2026-03-18T11:15:00Z',
-        approvedAt: '2026-03-18T12:00:00Z',
-        approvedBy: 'FINANCES.ADMINS.SUPER_ADMIN',
-        status: 'approved'
-      },
-      {
-        id: 'adj-1003',
-        adjustmentRef: 'ADJ-1003',
-        entityType: 'driver',
-        entityId: '2',
-        entityName: 'Driver 2',
-        direction: 'credit',
-        amount: 85,
-        currency: 'SAR',
-        reason: 'FINANCES.ADJUSTMENTS.REASONS.ONBOARDING_BONUS',
-        category: 'promotion',
-        adminId: 'adm-002',
-        adminName: 'FINANCES.ADMINS.SUPER_ADMIN',
-        createdAt: '2026-03-22T08:45:00Z',
-        approvedAt: '2026-03-22T09:05:00Z',
-        approvedBy: 'FINANCES.ADMINS.SUPER_ADMIN',
-        status: 'approved'
-      }
-    ];
+    return [];
   }
 
   private buildInitialAuditLog(): AuditLogEntry[] {
-    return [
-      {
-        id: 'audit-1001',
-        timestamp: '2026-03-25T10:00:00Z',
-        adminId: 'adm-001',
-        adminName: 'FINANCES.ADMINS.SUPER_ADMIN',
-        adminRole: 'FINANCES.ROLES.SUPER_ADMIN',
-        action: 'FINANCES.AUDIT.ACTIONS.PRICING_UPDATED',
-        actionCategory: 'pricing',
-        entityType: 'platform',
-        entityId: 'platform',
-        entityName: 'Platform',
-        before: { vendorCommission: 5, driverBasePayout: 7.5 },
-        after: { vendorCommission: 5.5, driverBasePayout: 8 }
-      },
-      {
-        id: 'audit-1002',
-        timestamp: '2026-03-23T15:25:00Z',
-        adminId: 'adm-001',
-        adminName: 'FINANCES.ADMINS.FINANCE_ADMIN',
-        adminRole: 'FINANCES.ROLES.ADMIN',
-        action: 'FINANCES.AUDIT.ACTIONS.SETTLEMENT_PAID',
-        actionCategory: 'settlement',
-        entityType: 'vendor',
-        entityId: 'VND-24001',
-        entityName: 'LuLu Hypermarket',
-        after: { settlementCode: 'VND-SET-4001-202602', amount: 2190 }
-      },
-      {
-        id: 'audit-1003',
-        timestamp: '2026-03-21T12:10:00Z',
-        adminId: 'adm-002',
-        adminName: 'FINANCES.ADMINS.SUPER_ADMIN',
-        adminRole: 'FINANCES.ROLES.SUPER_ADMIN',
-        action: 'FINANCES.AUDIT.ACTIONS.REFUND_ESCALATED',
-        actionCategory: 'refund',
-        entityType: 'platform',
-        entityId: 'platform',
-        orderId: 'ZD-94818',
-        entityName: 'Platform',
-        before: { status: 'under_review' },
-        after: { status: 'escalated' }
-      }
-    ];
+    return [];
   }
 
   private withBalances(entries: LedgerEntry[]): LedgerEntry[] {

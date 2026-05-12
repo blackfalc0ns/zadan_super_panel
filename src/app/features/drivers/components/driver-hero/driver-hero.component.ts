@@ -20,10 +20,12 @@ import {
 export class DriverHeroComponent {
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() isRTL = true;
+  @Input() isMutating = false;
   
   @Output() editDriverRequested = new EventEmitter<void>();
   @Output() openTasksRequested = new EventEmitter<void>();
   @Output() toggleSuspensionRequested = new EventEmitter<void>();
+  @Output() toggleBanRequested = new EventEmitter<void>();
   @Output() workflowActionRequested = new EventEmitter<DriverWorkflowActionId>();
 
   get driverStatusLabel(): string {
@@ -71,5 +73,68 @@ export class DriverHeroComponent {
 
   get workflow() {
     return this.driver.workflow;
+  }
+
+  get primaryAction() {
+    return this.driver.workflow?.actions?.[0];
+  }
+
+  get suspensionActionLabel(): string {
+    if (this.driver.status === 'Banned') {
+      return 'DRIVERS.DETAIL.WORKFLOW.ACTION_LABELS.UNBAN_DRIVER';
+    }
+
+    return this.driver.status === 'Suspended'
+      ? 'DRIVERS.DETAIL.WORKFLOW.ACTION_LABELS.REACTIVATE_DRIVER'
+      : 'DRIVERS.DETAIL.WORKFLOW.ACTION_LABELS.SUSPEND_DRIVER';
+  }
+
+  get suspensionActionTitle(): string {
+    return this.driver.status === 'Suspended' || this.driver.status === 'Banned'
+      ? 'DRIVERS.DETAIL.MESSAGES.DRIVER_REACTIVATED'
+      : 'DRIVERS.DETAIL.MESSAGES.DRIVER_SUSPENDED';
+  }
+
+  get suspensionActionIcon(): string {
+    return this.driver.status === 'Banned'
+      ? 'how_to_reg'
+      : this.driver.status === 'Suspended'
+        ? 'play_arrow'
+        : 'block';
+  }
+
+  get isBlockedStatus(): boolean {
+    return this.driver.status === 'Suspended' || this.driver.status === 'Banned';
+  }
+
+  get banActionLabel(): string {
+    return this.driver.status === 'Banned'
+      ? 'DRIVERS.DETAIL.WORKFLOW.ACTION_LABELS.UNBAN_DRIVER'
+      : 'DRIVERS.DETAIL.WORKFLOW.ACTION_LABELS.BAN_DRIVER';
+  }
+
+  get banActionIcon(): string {
+    return this.driver.status === 'Banned' ? 'how_to_reg' : 'person_off';
+  }
+
+  get banActionClasses(): string {
+    return this.driver.status === 'Banned'
+      ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white'
+      : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-600 hover:text-white';
+  }
+
+  get primaryActionClasses(): string {
+    switch (this.primaryAction?.tone) {
+      case 'success':
+        return 'bg-emerald-600 text-white hover:bg-emerald-700';
+      case 'warning':
+        return 'bg-amber-500 text-white hover:bg-amber-600';
+      case 'danger':
+        return 'bg-rose-600 text-white hover:bg-rose-700';
+      case 'secondary':
+        return 'border border-slate-200 bg-white text-slate-700 hover:border-zadna-primary/30 hover:bg-slate-50 hover:text-zadna-primary';
+      default:
+        return 'bg-zadna-primary text-white hover:bg-zadna-primary/90';
+    }
   }
 }

@@ -1,0 +1,71 @@
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <!-- Orders Trend (2/3) -->
+  <article class="dashboard-panel lg:col-span-2 h-[22rem]">
+    <div class="dashboard-panel-header">
+      <div>
+        <h2 class="text-[13px] font-bold text-slate-800">{{ ordersTrend.titleKey | translate }}</h2>
+        <p class="text-[10px] text-slate-400 mt-0.5">{{ ordersTrend.descriptionKey | translate }}</p>
+      </div>
+    </div>
+    <div class="flex-1 w-full min-h-0 p-3" echarts [options]="ordersTrendOptions"></div>
+  </article>
+
+  <!-- Revenue + Readiness (1/3) -->
+  <div class="flex flex-col gap-4 lg:col-span-1 h-[22rem]">
+    <article class="dashboard-panel flex-1">
+      <div class="dashboard-panel-header">
+        <h2 class="text-[12px] font-bold text-slate-800">{{ revenueTrend.titleKey | translate }}</h2>
+      </div>
+      <div class="flex-1 w-full min-h-0 p-2" echarts [options]="revenueTrendOptions"></div>
+    </article>
+    <article class="dashboard-panel flex-1">
+      <div class="dashboard-panel-header">
+        <h2 class="text-[12px] font-bold text-slate-800">{{ 'DASHBOARD.READINESS.TITLE' | translate }}</h2>
+      </div>
+      <div class="flex-1 flex gap-1 w-full min-h-0 p-2">
+        <div class="flex-1 flex flex-col">
+          <span class="text-center text-[9px] font-semibold text-slate-400">{{ 'DASHBOARD.TABS.VENDORS' | translate }}</span>
+          <div class="flex-1 w-full min-h-0" echarts [options]="vendorReadinessOptions"></div>
+        </div>
+        <div class="w-px bg-slate-100 my-3"></div>
+        <div class="flex-1 flex flex-col">
+          <span class="text-center text-[9px] font-semibold text-slate-400">{{ 'DASHBOARD.TABS.DRIVERS' | translate }}</span>
+          <div class="flex-1 w-full min-h-0" echarts [options]="driverReadinessOptions"></div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <article class="dashboard-panel h-[16rem]">
+    <div class="dashboard-panel-header">
+      <div>
+        <h2 class="text-[12px] font-bold text-slate-800">{{ 'DASHBOARD.CHARTS.TOTAL_LOAD' | translate }}</h2>
+        <p class="text-[9px] text-slate-400 mt-0.5">{{ 'DASHBOARD.CHARTS.ORDER_VOLUME_DESC' | translate }}</p>
+      </div>
+    </div>
+    <div class="flex-1 w-full min-h-0 p-2" echarts [options]="ordersBarsOptions"></div>
+  </article>
+
+  <article class="dashboard-panel h-[16rem]">
+    <div class="dashboard-panel-header">
+      <div>
+        <h2 class="text-[12px] font-bold text-slate-800">{{ 'DASHBOARD.CHARTS.NET_REVENUE' | translate }}</h2>
+        <p class="text-[9px] text-slate-400 mt-0.5">{{ 'DASHBOARD.CHARTS.EXPOSURE_DESC' | translate }}</p>
+      </div>
+    </div>
+    <div class="flex-1 w-full min-h-0 p-2" echarts [options]="revenueBarsOptions"></div>
+  </article>
+
+  <article class="dashboard-panel h-[16rem]">
+    <div class="dashboard-panel-header">
+      <div>
+        <h2 class="text-[12px] font-bold text-slate-800">{{ 'DASHBOARD.SUPPLY_TITLE' | translate }}</h2>
+        <p class="text-[9px] text-slate-400 mt-0.5">{{ 'DASHBOARD.SUPPLY_DESC' | translate }}</p>
+      </div>
+    </div>
+    <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-h-0 p-2">
+      <div class="min-h-0" echarts [options]="vendorReadinessBarOptions"></div>
+      <div class="min-h-0" echarts [options]="driverReadinessBarOptions"></div>
+    </div>
+  </article>
+</section>
