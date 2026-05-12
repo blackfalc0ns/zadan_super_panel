@@ -173,6 +173,7 @@ export interface BulkBrandDraft {
     nameEn: string;
     categoryId?: string | null;
     logoUrl?: string | null;
+    coverImageUrl?: string | null;
     isActive: boolean;
     selected?: boolean;
 }
@@ -204,6 +205,7 @@ export interface AdminBrandBulkOperationItem {
     nameAr: string;
     nameEn: string;
     logoUrl?: string | null;
+    coverImageUrl?: string | null;
     categoryId: string;
     isActive: boolean;
     status: 'Pending' | 'Succeeded' | 'Failed' | 'Skipped';

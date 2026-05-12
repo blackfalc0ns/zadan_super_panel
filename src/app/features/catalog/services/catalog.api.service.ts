@@ -371,6 +371,7 @@ export class CatalogService {
         nameAr: item.nameAr,
         nameEn: item.nameEn,
         logoUrl: item.logoUrl || null,
+        coverImageUrl: item.coverImageUrl || null,
         categoryId: item.categoryId,
         isActive: item.isActive
       }))

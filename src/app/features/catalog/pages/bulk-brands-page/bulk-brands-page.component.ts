@@ -57,7 +57,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     </div>
                   </div>
 
-                  <div class="mt-4 grid gap-3 md:grid-cols-2">
+                  <div class="mt-4 grid gap-3 xl:grid-cols-[minmax(16rem,1fr)_minmax(12rem,0.7fr)_minmax(12rem,0.7fr)]">
                     <label class="space-y-1">
                       <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'التصنيف الافتراضي' : 'Default category' }}</span>
                       <select [(ngModel)]="defaults.categoryId" class="h-10 w-full rounded-xl border border-slate-200 px-3 text-xs font-bold outline-none focus:border-zadna-primary/40">
@@ -70,16 +70,34 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 
                     <div class="space-y-1">
                       <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'اللوجو الافتراضي' : 'Default logo' }}</span>
-                    <div class="flex items-center gap-2">
-                      <input #defaultLogoInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onDefaultsLogoSelected($event)">
-                      <button type="button" (click)="defaultLogoInput.click()" [disabled]="isUploadingDefaultLogo" class="rounded-xl border border-slate-200 px-3 py-2 text-[0.72rem] font-black text-slate-700 disabled:opacity-50">
-                        {{ currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo' }}
-                      </button>
-                    </div>
+                      <div class="flex items-center gap-2">
+                        <input #defaultLogoInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onDefaultsLogoSelected($event)">
+                        <button type="button" (click)="defaultLogoInput.click()" [disabled]="isUploadingDefaultLogo" class="rounded-xl border border-slate-200 px-3 py-2 text-[0.72rem] font-black text-slate-700 disabled:opacity-50">
+                          {{ currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo' }}
+                        </button>
+                      </div>
                       @if (defaults.logoUrl) {
                         <div class="flex items-center gap-2">
                           <img [src]="defaults.logoUrl" alt="Default logo" class="h-10 w-10 rounded-lg border border-slate-200 bg-white object-contain p-1">
                           <button type="button" (click)="defaults.logoUrl = null" class="text-[0.72rem] font-black text-rose-600">
+                            {{ currentLang === 'ar' ? 'إزالة' : 'Remove' }}
+                          </button>
+                        </div>
+                      }
+                    </div>
+
+                    <div class="space-y-1">
+                      <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'صورة الغلاف الافتراضية' : 'Default cover' }}</span>
+                      <div class="flex items-center gap-2">
+                        <input #defaultCoverInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onDefaultsCoverSelected($event)">
+                        <button type="button" (click)="defaultCoverInput.click()" [disabled]="isUploadingDefaultCover" class="rounded-xl border border-slate-200 px-3 py-2 text-[0.72rem] font-black text-slate-700 disabled:opacity-50">
+                          {{ currentLang === 'ar' ? 'رفع الغلاف' : 'Upload cover' }}
+                        </button>
+                      </div>
+                      @if (defaults.coverImageUrl) {
+                        <div class="flex items-center gap-2">
+                          <img [src]="defaults.coverImageUrl" alt="Default cover" class="h-10 w-16 rounded-lg border border-slate-200 bg-white object-cover">
+                          <button type="button" (click)="defaults.coverImageUrl = null" class="text-[0.72rem] font-black text-rose-600">
                             {{ currentLang === 'ar' ? 'إزالة' : 'Remove' }}
                           </button>
                         </div>
@@ -135,7 +153,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
             </div>
 
             <div class="max-w-full overflow-x-auto overflow-y-hidden rounded-[24px] border border-slate-200/70 bg-white px-4 py-4 shadow-sm md:px-5">
-              <table class="min-w-[1280px] w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-0">
+              <table class="min-w-[1480px] w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-0">
                 <thead>
                   <tr class="border-b border-slate-100 text-[0.62rem] uppercase tracking-[0.1em] text-slate-400">
                     <th class="w-10 px-1 pb-3 text-start"><input type="checkbox" [checked]="allRowsSelected" (change)="toggleAllRows($any($event.target).checked)"></th>
@@ -143,7 +161,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     <th class="w-44 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الاسم عربي' : 'Arabic name' }}</th>
                     <th class="w-44 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الاسم إنجليزي' : 'English name' }}</th>
                     <th class="w-40 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'التصنيف' : 'Category' }}</th>
-                    <th class="w-60 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'اللوجو' : 'Logo' }}</th>
+                    <th class="w-48 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'اللوجو' : 'Logo' }}</th>
+                    <th class="w-52 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الغلاف' : 'Cover' }}</th>
                     <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</th>
                     @if (stage === 'done') {
                       <th class="w-44 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'النتيجة' : 'Result' }}</th>
@@ -178,15 +197,33 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                       <td class="py-2.5">
                         <div class="space-y-2">
                           <div class="flex items-center gap-2">
-                          <input #rowLogoInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onRowLogoSelected(row, $event)">
-                          <button type="button" (click)="rowLogoInput.click()" [disabled]="isSubmitting || uploadingRowIds.has(row.rowId)" class="rounded-lg border border-slate-200 px-2.5 py-2 text-[0.68rem] font-black text-slate-600 disabled:opacity-50">
-                            {{ currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo' }}
-                          </button>
-                        </div>
+                            <input #rowLogoInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onRowLogoSelected(row, $event)">
+                            <button type="button" (click)="rowLogoInput.click()" [disabled]="isSubmitting || uploadingRowIds.has(row.rowId)" class="rounded-lg border border-slate-200 px-2.5 py-2 text-[0.68rem] font-black text-slate-600 disabled:opacity-50">
+                              {{ currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo' }}
+                            </button>
+                          </div>
                           @if (row.logoUrl) {
                             <div class="flex items-center gap-2">
                               <img [src]="row.logoUrl" alt="Brand logo" class="h-10 w-10 rounded-lg border border-slate-200 bg-white object-contain p-1">
                               <button type="button" (click)="row.logoUrl = null" [disabled]="isSubmitting" class="text-[0.68rem] font-black text-rose-600">
+                                {{ currentLang === 'ar' ? 'إزالة' : 'Remove' }}
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      </td>
+                      <td class="py-2.5">
+                        <div class="space-y-2">
+                          <div class="flex items-center gap-2">
+                            <input #rowCoverInput type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" (change)="onRowCoverSelected(row, $event)">
+                            <button type="button" (click)="rowCoverInput.click()" [disabled]="isSubmitting || uploadingRowIds.has(row.rowId)" class="rounded-lg border border-slate-200 px-2.5 py-2 text-[0.68rem] font-black text-slate-600 disabled:opacity-50">
+                              {{ currentLang === 'ar' ? 'رفع الغلاف' : 'Upload cover' }}
+                            </button>
+                          </div>
+                          @if (row.coverImageUrl) {
+                            <div class="flex items-center gap-2">
+                              <img [src]="row.coverImageUrl" alt="Brand cover" class="h-10 w-16 rounded-lg border border-slate-200 bg-white object-cover">
+                              <button type="button" (click)="row.coverImageUrl = null" [disabled]="isSubmitting" class="text-[0.68rem] font-black text-rose-600">
                                 {{ currentLang === 'ar' ? 'إزالة' : 'Remove' }}
                               </button>
                             </div>
@@ -275,6 +312,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   isLoading = true;
   isSubmitting = false;
   isUploadingDefaultLogo = false;
+  isUploadingDefaultCover = false;
   stage: 'review' | 'done' = 'review';
   processedRows = 0;
   succeededRows = 0;
@@ -284,9 +322,10 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   readonly uploadingRowIds = new Set<string>();
   private pollingSubscription?: Subscription;
 
-  defaults: Pick<BulkBrandDraft, 'categoryId' | 'logoUrl' | 'isActive'> = {
+  defaults: Pick<BulkBrandDraft, 'categoryId' | 'logoUrl' | 'coverImageUrl' | 'isActive'> = {
     categoryId: null,
     logoUrl: null,
+    coverImageUrl: null,
     isActive: true
   };
 
@@ -380,6 +419,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
           nameAr: row.nameAr,
           nameEn: row.nameEn,
           logoUrl: row.logoUrl || null,
+          coverImageUrl: row.coverImageUrl || null,
           categoryId: row.categoryId!,
           isActive: row.isActive,
           status: 'Failed',
@@ -411,6 +451,27 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  onDefaultsCoverSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    this.isUploadingDefaultCover = true;
+    this.catalogService.uploadFile(file, 'brands').subscribe({
+      next: (result) => {
+        this.defaults.coverImageUrl = result.url;
+        this.isUploadingDefaultCover = false;
+        input.value = '';
+      },
+      error: () => {
+        this.isUploadingDefaultCover = false;
+        input.value = '';
+      }
+    });
+  }
+
   onRowLogoSelected(row: BulkBrandDraft, event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -422,6 +483,27 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     this.catalogService.uploadFile(file, 'brands').subscribe({
       next: (result) => {
         row.logoUrl = result.url;
+        this.uploadingRowIds.delete(row.rowId);
+        input.value = '';
+      },
+      error: () => {
+        this.uploadingRowIds.delete(row.rowId);
+        input.value = '';
+      }
+    });
+  }
+
+  onRowCoverSelected(row: BulkBrandDraft, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    this.uploadingRowIds.add(row.rowId);
+    this.catalogService.uploadFile(file, 'brands').subscribe({
+      next: (result) => {
+        row.coverImageUrl = result.url;
         this.uploadingRowIds.delete(row.rowId);
         input.value = '';
       },
@@ -509,6 +591,10 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
       return this.currentLang === 'ar' ? 'رابط الشعار طويل جدًا.' : 'Logo URL is too long.';
     }
 
+    if ((row.coverImageUrl || '').trim().length > 2000) {
+      return this.currentLang === 'ar' ? 'رابط صورة الغلاف طويل جدًا.' : 'Cover image URL is too long.';
+    }
+
     return null;
   }
 
@@ -552,6 +638,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   private applyDefaults(row: BulkBrandDraft): void {
     row.categoryId = this.defaults.categoryId;
     row.logoUrl = this.defaults.logoUrl;
+    row.coverImageUrl = this.defaults.coverImageUrl;
     row.isActive = this.defaults.isActive;
   }
 
@@ -562,6 +649,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
       nameEn: '',
       categoryId: this.defaults.categoryId,
       logoUrl: this.defaults.logoUrl,
+      coverImageUrl: this.defaults.coverImageUrl,
       isActive: this.defaults.isActive,
       selected: false
     };
