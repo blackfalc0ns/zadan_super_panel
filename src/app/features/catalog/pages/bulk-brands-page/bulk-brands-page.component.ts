@@ -587,11 +587,11 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
       return this.currentLang === 'ar' ? 'التصنيف مطلوب.' : 'Category is required.';
     }
 
-    if ((row.logoUrl || '').trim().length > 2000) {
+    if ((row.logoUrl || '').trim().length > 1000) {
       return this.currentLang === 'ar' ? 'رابط الشعار طويل جدًا.' : 'Logo URL is too long.';
     }
 
-    if ((row.coverImageUrl || '').trim().length > 2000) {
+    if ((row.coverImageUrl || '').trim().length > 1000) {
       return this.currentLang === 'ar' ? 'رابط صورة الغلاف طويل جدًا.' : 'Cover image URL is too long.';
     }
 
