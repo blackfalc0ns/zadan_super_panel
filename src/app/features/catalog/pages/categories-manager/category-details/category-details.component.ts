@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { distinctUntilChanged, map, Subject, takeUntil } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Brand, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -48,6 +48,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   pageSize = 6;
 
   private destroy$ = new Subject<void>();
+  private activeCategoryId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -67,10 +68,13 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setupBreadcrumbs();
-    this.route.params
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
-        const id = params['id'];
+    this.route.paramMap
+      .pipe(
+        map(params => params.get('id')),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(id => {
         if (id) {
           this.loadCategory(id);
         }
@@ -151,16 +155,29 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   }
 
   loadCategory(id: string): void {
+    this.activeCategoryId = id;
     this.isLoading = true;
+    this.pageNumber = 1;
+    this.relatedProducts = [];
+    this.relatedBrands = [];
     this.catalogService.getCategoryById(id).subscribe({
       next: (data) => {
+        if (this.activeCategoryId !== id) {
+          return;
+        }
+
         this.category = data;
         this.loadRelatedBrands(id);
         this.loadCategoryProducts(id);
         this.isLoading = false;
       },
       error: (err) => {
+        if (this.activeCategoryId !== id) {
+          return;
+        }
+
         console.error('Failed to load category:', err);
+        this.category = null;
         this.relatedProducts = [];
         this.relatedBrands = [];
         this.isLoading = false;
@@ -179,9 +196,17 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
       }
     }).subscribe({
       next: (response) => {
+        if (this.activeCategoryId !== categoryId) {
+          return;
+        }
+
         this.relatedBrands = response.items ?? [];
       },
       error: (err) => {
+        if (this.activeCategoryId !== categoryId) {
+          return;
+        }
+
         console.error('Failed to load related brands:', err);
         this.relatedBrands = [];
       }
@@ -191,6 +216,10 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   loadCategoryProducts(categoryId: string): void {
     this.catalogService.getProducts(1, 12, undefined, categoryId).subscribe({
       next: (response) => {
+        if (this.activeCategoryId !== categoryId) {
+          return;
+        }
+
         const items = Array.isArray(response?.items)
           ? response.items
           : Array.isArray(response?.data)
@@ -201,6 +230,10 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
         this.relatedProducts = items;
       },
       error: (err) => {
+        if (this.activeCategoryId !== categoryId) {
+          return;
+        }
+
         console.error('Failed to load category products:', err);
         this.relatedProducts = [];
       }
