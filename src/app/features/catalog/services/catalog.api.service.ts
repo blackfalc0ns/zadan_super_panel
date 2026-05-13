@@ -1413,6 +1413,17 @@ export class CatalogService {
   }
 
   private normalizeProduct(product: CatalogProductRecord): CatalogProductRecord {
+    const raw = product as CatalogProductRecord & Record<string, unknown>;
+    const stringValue = (...keys: string[]): string | undefined => {
+      for (const key of keys) {
+        const value = raw[key];
+        if (typeof value === 'string' && value.trim().length > 0) {
+          return value.trim();
+        }
+      }
+
+      return undefined;
+    };
     const createdAtUtc = product.createdAtUtc || this.buildFallbackTimestampFromSeed(product.id || product.nameEn || product.nameAr || 'product', 0);
     const updatedAtUtc = product.updatedAtUtc || this.buildFallbackTimestampFromSeed(product.id || product.nameEn || product.nameAr || 'product', 21);
 
@@ -1423,13 +1434,13 @@ export class CatalogService {
       nameEn: product.nameEn || product.nameAr || 'Product',
       descriptionAr: product.descriptionAr || '',
       descriptionEn: product.descriptionEn || '',
-      categoryId: product.categoryId,
-      brandId: product.brandId,
-      brandNameAr: product.brandNameAr,
-      brandNameEn: product.brandNameEn,
-      unitOfMeasureId: product.unitOfMeasureId || product.unitId || undefined,
-      unitNameAr: product.unitNameAr,
-      unitNameEn: product.unitNameEn,
+      categoryId: stringValue('categoryId', 'CategoryId', 'category_id') || product.categoryId,
+      brandId: stringValue('brandId', 'BrandId', 'brand_id'),
+      brandNameAr: stringValue('brandNameAr', 'BrandNameAr', 'brand_name_ar'),
+      brandNameEn: stringValue('brandNameEn', 'BrandNameEn', 'brand_name_en'),
+      unitOfMeasureId: stringValue('unitOfMeasureId', 'UnitOfMeasureId', 'unitId', 'UnitId') || undefined,
+      unitNameAr: stringValue('unitNameAr', 'UnitNameAr', 'unit_name_ar'),
+      unitNameEn: stringValue('unitNameEn', 'UnitNameEn', 'unit_name_en'),
       status: product.status || 'Draft',
       slug: product.slug || this.buildSlug(product.nameEn || product.nameAr || product.id || 'product'),
       images: this.normalizeImages(product),

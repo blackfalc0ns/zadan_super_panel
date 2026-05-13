@@ -295,6 +295,13 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const selectedBrandId = this.productForm.get('brandId')?.value;
+
+    if (this.allBrands.length === 0) {
+      this.availableBrands = [];
+      return;
+    }
+
     // Get the selected category and all its ancestor IDs
     const ancestorIds = this.getAncestorCategoryIds(categoryId);
     const matchIds = new Set([categoryId, ...ancestorIds]);
@@ -305,8 +312,15 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       return brandCategoryIds.some((brandCategoryId) => matchIds.has(brandCategoryId));
     });
 
-    const selectedBrandId = this.productForm.get('brandId')?.value;
     const selectedBrandIsValid = this.availableBrands.some((brand) => brand.id === selectedBrandId);
+
+    if (!selectedBrandIsValid && selectedBrandId) {
+      const selectedBrand = this.allBrands.find((brand) => brand.id === selectedBrandId);
+      if (selectedBrand) {
+        this.availableBrands = [selectedBrand, ...this.availableBrands];
+        return;
+      }
+    }
 
     if (!selectedBrandIsValid) {
       this.productForm.patchValue({ brandId: null }, { emitEvent: false });
