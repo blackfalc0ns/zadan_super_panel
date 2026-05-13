@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, forwardRef, HostListener, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, forwardRef, HostBinding, HostListener, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -113,6 +113,11 @@ export interface SearchableSelectOption<T = any> {
   `]
 })
 export class SearchableSelectComponent implements ControlValueAccessor {
+  @HostBinding('class.relative') readonly hostRelativeClass = true;
+  @HostBinding('class.z-[10000]') get hostOpenClass(): boolean {
+    return this.isOpen;
+  }
+
   @Input() label = '';
   @Input() placeholder = 'COMMON.SELECT_OPTION';
   @Input() searchPlaceholder = 'COMMON.SEARCH';

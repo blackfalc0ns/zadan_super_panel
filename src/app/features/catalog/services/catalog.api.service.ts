@@ -374,6 +374,7 @@ export class CatalogService {
         logoUrl: item.logoUrl || null,
         coverImageUrl: item.coverImageUrl || null,
         categoryId: item.categoryId,
+        categoryIds: item.categoryIds?.length ? item.categoryIds : (item.categoryId ? [item.categoryId] : []),
         isActive: item.isActive
       }))
     };
@@ -801,7 +802,7 @@ export class CatalogService {
   private normalizeUnitsResponse(response: unknown, fallback: CatalogUnit[]): CatalogUnit[] {
     const units = this.extractArray<CatalogUnit>(response).map((unit, index) => ({
       id: unit.id || `UNIT-${index + 1}`,
-      nameAr: unit.nameAr || unit.nameEn || `ÙˆØ­Ø¯Ø© ${index + 1}`,
+      nameAr: unit.nameAr || unit.nameEn || `وحدة ${index + 1}`,
       nameEn: unit.nameEn || unit.nameAr || `Unit ${index + 1}`,
       isActive: unit.isActive ?? true
     }));
@@ -1090,7 +1091,7 @@ export class CatalogService {
         levels: this.buildCountFacets(
           filtered,
           (category) => String(category.level ?? 0),
-          (level) => ({ ar: `Ø§Ù„Ù…Ø³ØªÙˆÙ‰ ${level}`, en: `Level ${level}` })
+          (level) => ({ ar: `المستوى ${level}`, en: `Level ${level}` })
         ),
         activeCount: filtered.filter((category) => category.isActive).length,
         inactiveCount: filtered.filter((category) => !category.isActive).length,
@@ -1313,10 +1314,10 @@ export class CatalogService {
 
   private getProductStatusFacetLabels(status: string) {
     const labels: Record<string, { ar: string; en: string }> = {
-      Active: { ar: 'Ù†Ø´Ø·', en: 'Active' },
-      Draft: { ar: 'Ù…Ø³ÙˆØ¯Ø©', en: 'Draft' },
-      Inactive: { ar: 'ØºÙŠØ± Ù†Ø´Ø·', en: 'Inactive' },
-      Discontinued: { ar: 'Ù…ØªÙˆÙ‚Ù', en: 'Discontinued' }
+      Active: { ar: 'نشط', en: 'Active' },
+      Draft: { ar: 'مسودة', en: 'Draft' },
+      Inactive: { ar: 'غير نشط', en: 'Inactive' },
+      Discontinued: { ar: 'متوقف', en: 'Discontinued' }
     };
 
     return labels[status] ?? { ar: status, en: status };
@@ -1389,7 +1390,7 @@ export class CatalogService {
     const base: Category = {
       ...category,
       id: category.id || `CAT-${level}-${index + 1}`,
-      nameAr: category.nameAr || category.nameEn || `ØªØµÙ†ÙŠÙ ${index + 1}`,
+      nameAr: category.nameAr || category.nameEn || `تصنيف ${index + 1}`,
       nameEn: category.nameEn || category.nameAr || `Category ${index + 1}`,
       displayOrder: category.displayOrder ?? index + 1,
       parentCategoryId: category.parentCategoryId ?? parent?.id ?? null,
@@ -1418,7 +1419,7 @@ export class CatalogService {
     return {
       ...product,
       id: product.id || `PRD-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-      nameAr: product.nameAr || product.nameEn || 'Ù…Ù†ØªØ¬',
+      nameAr: product.nameAr || product.nameEn || 'منتج',
       nameEn: product.nameEn || product.nameAr || 'Product',
       descriptionAr: product.descriptionAr || '',
       descriptionEn: product.descriptionEn || '',
@@ -1512,7 +1513,7 @@ export class CatalogService {
     const id = stringValue('id', 'Id') || `BRD-${index + 1}`;
     const nameAr = stringValue('nameAr', 'name_ar', 'NameAr', 'arabicName', 'arabic_name', 'ArabicName', 'name', 'Name')
       || stringValue('nameEn', 'name_en', 'NameEn', 'englishName', 'english_name', 'EnglishName')
-      || `Ã˜Â¹Ã™â€žÃ˜Â§Ã™â€¦Ã˜Â© ${index + 1}`;
+      || `علامة ${index + 1}`;
     const nameEn = stringValue('nameEn', 'name_en', 'NameEn', 'englishName', 'english_name', 'EnglishName')
       || stringValue('nameAr', 'name_ar', 'NameAr', 'arabicName', 'arabic_name', 'ArabicName', 'name', 'Name')
       || `Brand ${index + 1}`;
@@ -1571,7 +1572,7 @@ export class CatalogService {
     return {
       ...brand,
       id: brand.id || `BRD-${index + 1}`,
-      nameAr: brand.nameAr || brand.nameEn || `Ø¹Ù„Ø§Ù…Ø© ${index + 1}`,
+      nameAr: brand.nameAr || brand.nameEn || `علامة ${index + 1}`,
       nameEn: brand.nameEn || brand.nameAr || `Brand ${index + 1}`,
       categoryId: normalizedCategoryId,
       categoryIds: normalizedCategoryIds,

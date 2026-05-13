@@ -63,15 +63,43 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                   </div>
 
                   <div class="mt-4 grid gap-3 xl:grid-cols-[minmax(16rem,1fr)_minmax(12rem,0.7fr)_minmax(12rem,0.7fr)]">
-                    <label class="space-y-1">
+                    <div class="space-y-1">
                       <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'التصنيف الافتراضي' : 'Default category' }}</span>
-                      <select [(ngModel)]="defaults.categoryId" class="h-10 w-full rounded-xl border border-slate-200 px-3 text-xs font-bold outline-none focus:border-zadna-primary/40">
-                        <option [ngValue]="null">{{ currentLang === 'ar' ? 'بدون' : 'None' }}</option>
-                        @for (category of leafCategories; track category.id) {
-                          <option [value]="category.id">{{ getCategoryLabel(category) }}</option>
+                      <div class="rounded-xl border border-slate-200 bg-white p-2">
+                        @if (selectedDefaultCategories.length) {
+                          <div class="mb-2 flex flex-wrap gap-1.5">
+                            @for (category of selectedDefaultCategories; track category.id) {
+                              <button type="button" (click)="toggleDefaultCategory(category.id, false)" class="inline-flex max-w-full items-center gap-1 rounded-full bg-zadna-primary/10 px-2 py-1 text-[0.65rem] font-black text-zadna-primary">
+                                <span class="truncate">{{ getCategoryLabel(category) }}</span>
+                                <span class="material-symbols-outlined text-[13px]">close</span>
+                              </button>
+                            }
+                          </div>
                         }
-                      </select>
-                    </label>
+                        <button type="button" (click)="toggleDefaultCategoryDropdown()" class="flex h-10 w-full items-center justify-between gap-2 rounded-lg border border-slate-200 px-2.5 text-start text-[0.7rem] font-black text-slate-700">
+                          <span class="truncate">{{ getDefaultCategorySummary() }}</span>
+                          <span class="material-symbols-outlined text-[18px] text-slate-400">expand_more</span>
+                        </button>
+                        @if (isDefaultCategoryDropdownOpen()) {
+                          <div class="mt-2 rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
+                            <label class="flex h-9 items-center gap-2 rounded-md border border-slate-200 px-2">
+                              <span class="material-symbols-outlined text-[16px] text-slate-400">search</span>
+                              <input [(ngModel)]="defaultCategorySearch" type="search" class="min-w-0 flex-1 border-0 bg-transparent text-[0.68rem] font-bold outline-none" [placeholder]="currentLang === 'ar' ? 'ابحث عن تصنيف' : 'Search category'">
+                            </label>
+                            <div class="mt-2 max-h-36 overflow-y-auto rounded-md border border-slate-100">
+                              @for (category of getFilteredDefaultCategories(); track category.id) {
+                                <label class="flex cursor-pointer items-start gap-2 border-b border-slate-50 px-2 py-1.5 last:border-b-0 hover:bg-slate-50">
+                                  <input type="checkbox" class="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary" [checked]="isDefaultCategorySelected(category.id)" (change)="toggleDefaultCategory(category.id, $any($event.target).checked)">
+                                  <span class="min-w-0 flex-1 text-[0.68rem] font-bold leading-4 text-slate-700">{{ getCategoryLabel(category) }}</span>
+                                </label>
+                              } @empty {
+                                <div class="px-2 py-3 text-center text-[0.68rem] font-bold text-slate-400">{{ currentLang === 'ar' ? 'لا توجد نتائج' : 'No results' }}</div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
 
                     <div class="space-y-1">
                       <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'اللوجو الافتراضي' : 'Default logo' }}</span>
@@ -158,14 +186,14 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
             </div>
 
             <div class="max-w-full overflow-x-auto overflow-y-hidden rounded-[24px] border border-slate-200/70 bg-white px-4 py-4 shadow-sm md:px-5">
-              <table class="min-w-[1480px] w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-0">
+              <table class="min-w-[1660px] w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-0">
                 <thead>
                   <tr class="border-b border-slate-100 text-[0.62rem] uppercase tracking-[0.1em] text-slate-400">
                     <th class="w-10 px-1 pb-3 text-start"><input type="checkbox" [checked]="allRowsSelected" (change)="toggleAllRows($any($event.target).checked)"></th>
                     <th class="w-10 px-1 pb-3 text-start">#</th>
                     <th class="w-44 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الاسم عربي' : 'Arabic name' }}</th>
                     <th class="w-44 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الاسم إنجليزي' : 'English name' }}</th>
-                    <th class="w-40 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'التصنيف' : 'Category' }}</th>
+                    <th class="w-64 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'التصنيف' : 'Category' }}</th>
                     <th class="w-48 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'اللوجو' : 'Logo' }}</th>
                     <th class="w-52 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الغلاف' : 'Cover' }}</th>
                     <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</th>
@@ -192,12 +220,40 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                         <input [(ngModel)]="row.nameEn" type="text" [disabled]="isSubmitting" class="h-10 w-full rounded-lg border border-slate-200 px-2.5 text-xs font-bold">
                       </td>
                       <td class="py-2.5">
-                        <select [(ngModel)]="row.categoryId" [disabled]="isSubmitting" class="h-10 w-full rounded-lg border border-slate-200 px-2.5 text-[0.7rem] font-bold">
-                          <option [ngValue]="null">{{ currentLang === 'ar' ? 'اختر التصنيف' : 'Select category' }}</option>
-                          @for (category of leafCategories; track category.id) {
-                            <option [value]="category.id">{{ getCategoryLabel(category) }}</option>
+                        <div class="rounded-lg border border-slate-200 bg-white p-2" [class.opacity-60]="isSubmitting">
+                          @if (getSelectedCategories(row).length) {
+                            <div class="mb-2 flex flex-wrap gap-1.5">
+                              @for (category of getSelectedCategories(row); track category.id) {
+                                <button type="button" (click)="removeRowCategory(row, category.id)" [disabled]="isSubmitting" class="inline-flex max-w-full items-center gap-1 rounded-full bg-zadna-primary/10 px-2 py-1 text-[0.62rem] font-black text-zadna-primary disabled:cursor-not-allowed">
+                                  <span class="truncate">{{ getCategoryLabel(category) }}</span>
+                                  <span class="material-symbols-outlined text-[12px]">close</span>
+                                </button>
+                              }
+                            </div>
                           }
-                        </select>
+                          <button type="button" (click)="toggleRowCategoryDropdown(row)" [disabled]="isSubmitting" class="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-slate-200 px-2 text-start text-[0.66rem] font-black text-slate-700 disabled:cursor-not-allowed disabled:opacity-60">
+                            <span class="truncate">{{ getRowCategorySummary(row) }}</span>
+                            <span class="material-symbols-outlined text-[17px] text-slate-400">expand_more</span>
+                          </button>
+                          @if (isRowCategoryDropdownOpen(row)) {
+                            <div class="mt-2 rounded-md border border-slate-200 bg-white p-2 shadow-sm">
+                              <label class="flex h-8 items-center gap-2 rounded-md border border-slate-200 px-2">
+                                <span class="material-symbols-outlined text-[15px] text-slate-400">search</span>
+                                <input [(ngModel)]="rowCategorySearch[row.rowId]" type="search" class="min-w-0 flex-1 border-0 bg-transparent text-[0.66rem] font-bold outline-none" [placeholder]="currentLang === 'ar' ? 'ابحث عن تصنيف' : 'Search category'">
+                              </label>
+                              <div class="mt-2 max-h-36 overflow-y-auto rounded-md border border-slate-100">
+                                @for (category of getFilteredRowCategories(row); track category.id) {
+                                  <label class="flex cursor-pointer items-start gap-2 border-b border-slate-50 px-2 py-1.5 last:border-b-0 hover:bg-slate-50">
+                                    <input type="checkbox" class="mt-0.5 h-3.5 w-3.5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary" [disabled]="isSubmitting" [checked]="isRowCategorySelected(row, category.id)" (change)="toggleRowCategory(row, category.id, $any($event.target).checked)">
+                                    <span class="min-w-0 flex-1 text-[0.66rem] font-bold leading-4 text-slate-700">{{ getCategoryLabel(category) }}</span>
+                                  </label>
+                                } @empty {
+                                  <div class="px-2 py-3 text-center text-[0.66rem] font-bold text-slate-400">{{ currentLang === 'ar' ? 'لا توجد نتائج' : 'No results' }}</div>
+                                }
+                              </div>
+                            </div>
+                          }
+                        </div>
                       </td>
                       <td class="py-2.5">
                         <div class="space-y-2">
@@ -324,12 +380,16 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   failedRows = 0;
   currentPage = 1;
   lastSuccessMessage = '';
+  defaultCategorySearch = '';
+  rowCategorySearch: Record<string, string> = {};
+  openCategoryDropdown: 'defaults' | string | null = null;
   readonly pageSize = 25;
   readonly uploadingRowIds = new Set<string>();
   private pollingSubscription?: Subscription;
 
-  defaults: Pick<BulkBrandDraft, 'categoryId' | 'logoUrl' | 'coverImageUrl' | 'isActive'> = {
+  defaults: Pick<BulkBrandDraft, 'categoryId' | 'categoryIds' | 'logoUrl' | 'coverImageUrl' | 'isActive'> = {
     categoryId: null,
+    categoryIds: [],
     logoUrl: null,
     coverImageUrl: null,
     isActive: true
@@ -403,7 +463,11 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     this.failedRows = 0;
     this.pollingSubscription?.unsubscribe();
 
-    const payload = this.submittableRows.map((row) => ({ ...row }));
+    const payload = this.submittableRows.map((row) => ({
+      ...row,
+      categoryIds: [...this.getRowCategoryIds(row)],
+      categoryId: this.getRowCategoryIds(row)[0] ?? null
+    }));
     this.submittedRowIds = payload.map((row) => row.rowId);
 
     this.catalogService.createBrandsBulk(payload).subscribe({
@@ -428,6 +492,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
           logoUrl: row.logoUrl || null,
           coverImageUrl: row.coverImageUrl || null,
           categoryId: row.categoryId!,
+          categoryIds: row.categoryIds,
           isActive: row.isActive,
           status: 'Failed',
           errorMessage,
@@ -530,24 +595,33 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   }
 
   duplicateRow(row: BulkBrandDraft): void {
-    this.rows = [...this.rows, { ...row, rowId: this.createRowId(), selected: false }];
+    this.rows = [...this.rows, { ...row, categoryIds: [...this.getRowCategoryIds(row)], rowId: this.createRowId(), selected: false }];
   }
 
   duplicateSelectedRows(): void {
     const selected = this.rows.filter((row) => row.selected);
     if (!selected.length) return;
-    this.rows = [...this.rows, ...selected.map((row) => ({ ...row, rowId: this.createRowId(), selected: false }))];
+    this.rows = [...this.rows, ...selected.map((row) => ({ ...row, categoryIds: [...this.getRowCategoryIds(row)], rowId: this.createRowId(), selected: false }))];
   }
 
   removeRow(rowId: string): void {
     this.rows = this.rows.filter((row) => row.rowId !== rowId);
+    delete this.rowCategorySearch[rowId];
+    if (this.openCategoryDropdown === rowId) {
+      this.openCategoryDropdown = null;
+    }
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
     }
   }
 
   removeSelectedRows(): void {
+    const removedRowIds = this.rows.filter((row) => row.selected).map((row) => row.rowId);
     this.rows = this.rows.filter((row) => !row.selected);
+    removedRowIds.forEach((rowId) => delete this.rowCategorySearch[rowId]);
+    if (this.openCategoryDropdown && removedRowIds.includes(this.openCategoryDropdown)) {
+      this.openCategoryDropdown = null;
+    }
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
     }
@@ -581,6 +655,91 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     return this.currentLang === 'ar' ? (category.nameAr || category.nameEn) : (category.nameEn || category.nameAr);
   }
 
+  get selectedDefaultCategories(): Category[] {
+    const selectedIds = new Set(this.getDefaultCategoryIds());
+    return this.leafCategories.filter((category) => selectedIds.has(category.id));
+  }
+
+  getDefaultCategorySummary(): string {
+    return this.getCategorySelectionSummary(this.selectedDefaultCategories);
+  }
+
+  toggleDefaultCategoryDropdown(): void {
+    this.openCategoryDropdown = this.openCategoryDropdown === 'defaults' ? null : 'defaults';
+  }
+
+  isDefaultCategoryDropdownOpen(): boolean {
+    return this.openCategoryDropdown === 'defaults';
+  }
+
+  getFilteredDefaultCategories(): Category[] {
+    return this.filterCategories(this.defaultCategorySearch);
+  }
+
+  isDefaultCategorySelected(categoryId: string): boolean {
+    return this.getDefaultCategoryIds().includes(categoryId);
+  }
+
+  toggleDefaultCategory(categoryId: string, checked: boolean): void {
+    const selectedIds = new Set(this.getDefaultCategoryIds());
+    if (checked) {
+      selectedIds.add(categoryId);
+    } else {
+      selectedIds.delete(categoryId);
+    }
+
+    const nextIds = this.sortCategoryIds([...selectedIds]);
+    this.defaults.categoryIds = nextIds;
+    this.defaults.categoryId = nextIds[0] ?? null;
+  }
+
+  getSelectedCategories(row: BulkBrandDraft): Category[] {
+    const selectedIds = new Set(this.getRowCategoryIds(row));
+    return this.leafCategories.filter((category) => selectedIds.has(category.id));
+  }
+
+  getRowCategorySummary(row: BulkBrandDraft): string {
+    return this.getCategorySelectionSummary(this.getSelectedCategories(row));
+  }
+
+  toggleRowCategoryDropdown(row: BulkBrandDraft): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
+    this.rowCategorySearch[row.rowId] ??= '';
+    this.openCategoryDropdown = this.openCategoryDropdown === row.rowId ? null : row.rowId;
+  }
+
+  isRowCategoryDropdownOpen(row: BulkBrandDraft): boolean {
+    return this.openCategoryDropdown === row.rowId;
+  }
+
+  getFilteredRowCategories(row: BulkBrandDraft): Category[] {
+    return this.filterCategories(this.rowCategorySearch[row.rowId] ?? '');
+  }
+
+  isRowCategorySelected(row: BulkBrandDraft, categoryId: string): boolean {
+    return this.getRowCategoryIds(row).includes(categoryId);
+  }
+
+  toggleRowCategory(row: BulkBrandDraft, categoryId: string, checked: boolean): void {
+    const selectedIds = new Set(this.getRowCategoryIds(row));
+    if (checked) {
+      selectedIds.add(categoryId);
+    } else {
+      selectedIds.delete(categoryId);
+    }
+
+    const nextIds = this.sortCategoryIds([...selectedIds]);
+    row.categoryIds = nextIds;
+    row.categoryId = nextIds[0] ?? null;
+  }
+
+  removeRowCategory(row: BulkBrandDraft, categoryId: string): void {
+    this.toggleRowCategory(row, categoryId, false);
+  }
+
   getRowError(row: BulkBrandDraft): string | null {
     if (!row.nameAr?.trim()) {
       return this.currentLang === 'ar' ? 'الاسم العربي مطلوب.' : 'Arabic name is required.';
@@ -590,7 +749,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
       return this.currentLang === 'ar' ? 'الاسم الإنجليزي مطلوب.' : 'English name is required.';
     }
 
-    if (!row.categoryId) {
+    if (!this.getRowCategoryIds(row).length) {
       return this.currentLang === 'ar' ? 'التصنيف مطلوب.' : 'Category is required.';
     }
 
@@ -643,7 +802,8 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   }
 
   private applyDefaults(row: BulkBrandDraft): void {
-    row.categoryId = this.defaults.categoryId;
+    row.categoryIds = [...this.getDefaultCategoryIds()];
+    row.categoryId = row.categoryIds[0] ?? null;
     row.logoUrl = this.defaults.logoUrl;
     row.coverImageUrl = this.defaults.coverImageUrl;
     row.isActive = this.defaults.isActive;
@@ -655,6 +815,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
       nameAr: '',
       nameEn: '',
       categoryId: this.defaults.categoryId,
+      categoryIds: [...this.getDefaultCategoryIds()],
       logoUrl: this.defaults.logoUrl,
       coverImageUrl: this.defaults.coverImageUrl,
       isActive: this.defaults.isActive,
@@ -718,6 +879,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.defaults = {
       categoryId: null,
+      categoryIds: [],
       logoUrl: null,
       coverImageUrl: null,
       isActive: true
@@ -732,4 +894,47 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
 
     return isActive ? 'Active' : 'Inactive';
   }
+
+  private getCategorySelectionSummary(categories: Category[]): string {
+    if (!categories.length) {
+      return this.currentLang === 'ar' ? 'اختر التصنيفات' : 'Select categories';
+    }
+
+    if (categories.length === 1) {
+      return this.getCategoryLabel(categories[0]);
+    }
+
+    return this.currentLang === 'ar'
+      ? `${categories.length} تصنيفات محددة`
+      : `${categories.length} categories selected`;
+  }
+
+  private filterCategories(searchTerm: string): Category[] {
+    const normalizedSearch = searchTerm.trim().toLocaleLowerCase();
+    if (!normalizedSearch) {
+      return this.leafCategories;
+    }
+
+    return this.leafCategories.filter((category) => {
+      const nameAr = (category.nameAr || '').toLocaleLowerCase();
+      const nameEn = (category.nameEn || '').toLocaleLowerCase();
+      return nameAr.includes(normalizedSearch) || nameEn.includes(normalizedSearch);
+    });
+  }
+
+  private getDefaultCategoryIds(): string[] {
+    return this.sortCategoryIds(this.defaults.categoryIds?.length ? this.defaults.categoryIds : (this.defaults.categoryId ? [this.defaults.categoryId] : []));
+  }
+
+  private getRowCategoryIds(row: BulkBrandDraft): string[] {
+    return this.sortCategoryIds(row.categoryIds?.length ? row.categoryIds : (row.categoryId ? [row.categoryId] : []));
+  }
+
+  private sortCategoryIds(categoryIds: string[]): string[] {
+    const selectedIds = new Set(categoryIds.filter(Boolean));
+    return this.leafCategories
+      .map((category) => category.id)
+      .filter((categoryId) => selectedIds.has(categoryId));
+  }
 }
+

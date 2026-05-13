@@ -34,6 +34,11 @@
                 </svg>
                 <span>{{ 'SIDEBAR.HOME' | translate }}</span>
             </button>
+
+            <button *appHasPermission="'admin_notifications.view'" type="button" (click)="navigateTo('/notifications')" [ngClass]="navItemClasses('/notifications')">
+                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100">notifications</span>
+                <span>Notifications</span>
+            </button>
         </div>
 
         <!-- Group: Global Catalog -->

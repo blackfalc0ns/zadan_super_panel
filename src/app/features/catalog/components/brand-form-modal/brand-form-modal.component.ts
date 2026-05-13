@@ -44,6 +44,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   isUploadingCover = false;
   activeInputLang: 'ar' | 'en' = 'ar';
   leafCategories: BrandCategoryOption[] = [];
+  categorySearch = '';
 
   constructor(
     private fb: FormBuilder,
@@ -159,6 +160,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   }
 
   onClose(): void {
+    this.categorySearch = '';
     this.form.reset({ isActive: true, categoryId: null, categoryIds: [], logoUrl: '', coverImageUrl: '' });
     this.close.emit();
   }
@@ -179,6 +181,19 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   get selectedCategories(): BrandCategoryOption[] {
     const selectedIds = new Set(this.getSelectedCategoryIds());
     return this.leafCategories.filter((category) => selectedIds.has(category.id));
+  }
+
+  get filteredLeafCategories(): BrandCategoryOption[] {
+    const search = this.categorySearch.trim().toLocaleLowerCase();
+    if (!search) {
+      return this.leafCategories;
+    }
+
+    return this.leafCategories.filter((category) => {
+      const nameAr = (category.displayNameAr || category.nameAr || '').toLocaleLowerCase();
+      const nameEn = (category.displayNameEn || category.nameEn || '').toLocaleLowerCase();
+      return nameAr.includes(search) || nameEn.includes(search);
+    });
   }
 
   isCategorySelected(categoryId: string): boolean {
@@ -229,6 +244,8 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     if (!this.isOpen) {
       return;
     }
+
+    this.categorySearch = '';
 
     if (this.mode === 'edit' && this.brand) {
       this.form.reset({

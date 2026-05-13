@@ -9,6 +9,10 @@ import { HeaderComponent } from './components/header/header.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ToastContainerComponent } from '../../shared/components/ui/toast-container/toast-container.component';
 import { environment } from '../../../environments/environment';
+import { AdminNotificationRealtimeService } from '../services/admin-notification-realtime.service';
+import { AdminNotificationsService } from '../services/admin-notifications.service';
+import { AdminOneSignalService } from '../services/admin-one-signal.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-layout',
@@ -33,7 +37,11 @@ export class LayoutComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private adminRealtimeService: AdminNotificationRealtimeService,
+    private adminNotificationsService: AdminNotificationsService,
+    private adminOneSignalService: AdminOneSignalService,
+    private toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
 
@@ -53,6 +61,24 @@ export class LayoutComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.isSidebarOpen = false;
+      });
+
+    this.adminNotificationsService.refreshRecent()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+
+    this.adminRealtimeService.startMonitoring();
+    this.adminOneSignalService.start();
+
+    this.adminRealtimeService.getNotifications()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((notification) => {
+        this.adminNotificationsService.mergeRealtimeNotification(notification);
+        this.toastService.info(
+          this.currentLang === 'ar' ? notification.bodyAr : notification.bodyEn,
+          this.currentLang === 'ar' ? notification.titleAr : notification.titleEn,
+          { duration: 7000 }
+        );
       });
   }
 
