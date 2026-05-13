@@ -47,6 +47,35 @@
           </button>
         </div>
       </header>
+
+      <div
+        *ngIf="shouldShowValidationSummary"
+        class="mx-auto mt-3 w-full max-w-[108rem] rounded-2xl border border-rose-200 bg-rose-50/95 p-4 text-rose-700 shadow-lg shadow-rose-900/5 backdrop-blur-xl"
+        role="alert">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-600 shadow-sm">
+            <span class="material-symbols-outlined text-[22px]">error</span>
+          </span>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-black text-rose-800">
+              {{ activeLang === 'ar' ? 'بيانات مطلوبة قبل الحفظ' : 'Required information before saving' }}
+            </p>
+            <p class="mt-1 text-xs font-bold leading-5 text-rose-600">
+              {{ activeLang === 'ar' ? 'كمّل الحقول التالية عشان نقدر نحفظ المنتج:' : 'Complete the following fields so the product can be saved:' }}
+            </p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button
+                *ngFor="let field of missingRequiredFields"
+                type="button"
+                (click)="scrollToField(field.key)"
+                class="inline-flex h-8 items-center gap-1.5 rounded-full border border-rose-200 bg-white px-3 text-[11px] font-black text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-100">
+                <span class="material-symbols-outlined text-[14px]">priority_high</span>
+                {{ field.label }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <section class="mb-8 grid gap-4 lg:grid-cols-4">
@@ -137,6 +166,7 @@
 
               <div class="space-y-5">
                 <app-input
+                  data-product-field="nameAr"
                   class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:backdrop-blur-sm [&_.form-input-base]:transition-all [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!bg-white [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10 [&_.form-input-base]:placeholder-slate-400"
                   formControlName="nameAr" [label]="'MASTER_PRODUCTS.NAME_AR_LABEL' | translate"
                   [placeholder]="'MASTER_PRODUCTS.NAME_AR_PLACEHOLDER' | translate" [isRequired]="true"
@@ -163,6 +193,7 @@
 
               <div class="space-y-5">
                 <app-input
+                  data-product-field="nameEn"
                   class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:backdrop-blur-sm [&_.form-input-base]:transition-all [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!bg-white [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10 [&_.form-input-base]:placeholder-slate-400"
                   formControlName="nameEn" [label]="'MASTER_PRODUCTS.NAME_EN_LABEL' | translate"
                   [placeholder]="'MASTER_PRODUCTS.NAME_EN_PLACEHOLDER' | translate" [isRequired]="true"
@@ -261,6 +292,7 @@
 
           <div class="mt-5 flex flex-col gap-5">
             <app-searchable-select
+              data-product-field="categoryId"
               class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
               formControlName="categoryId" [label]="'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate"
               [isRequired]="true" [isTouched]="isFieldTouched('categoryId')"
@@ -289,7 +321,7 @@
           </app-section-header>
 
           <div class="relative mt-5">
-            <input formControlName="slug" [placeholder]="'MASTER_PRODUCTS.SLUG_PLACEHOLDER' | translate"
+            <input formControlName="slug" data-product-field="slug" [placeholder]="'MASTER_PRODUCTS.SLUG_PLACEHOLDER' | translate"
               class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-5 pe-32 font-mono text-sm font-extrabold text-slate-900 outline-none shadow-sm backdrop-blur-sm transition-all focus:border-cyan-700/50 focus:bg-white focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400"
               [class.border-rose-500]="isFieldInvalid('slug')" />
             <button type="button" (click)="generateSlug(true)"

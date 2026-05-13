@@ -22,10 +22,13 @@ export interface MasterProduct {
     id: string;
     nameAr: string;
     nameEn: string;
+    slug?: string;
     descriptionAr?: string;
     descriptionEn?: string;
     barcode?: string;
     categoryId: string;
+    categoryNameAr?: string;
+    categoryNameEn?: string;
     brandId?: string;
     brandNameAr?: string;
     brandNameEn?: string;

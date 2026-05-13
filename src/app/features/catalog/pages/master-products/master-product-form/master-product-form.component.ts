@@ -40,6 +40,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
   isLoading = false;
   isUploading = false;
+  hasSubmitted = false;
   activeLang = 'ar';
   availableCategories: any[] = [];
   allFlatCategories: any[] = [];
@@ -417,7 +418,27 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
 
   isFieldInvalid(fieldName: string): boolean {
     const control = this.productForm.get(fieldName);
-    return !!control && control.invalid && control.touched;
+    return !!control && control.invalid && (control.touched || this.hasSubmitted);
+  }
+
+  get missingRequiredFields(): Array<{ key: string; label: string }> {
+    const labels: Record<string, { ar: string; en: string }> = {
+      nameAr: { ar: 'اسم المنتج بالعربية', en: 'Arabic product name' },
+      nameEn: { ar: 'اسم المنتج بالإنجليزية', en: 'English product name' },
+      slug: { ar: 'معرّف المنتج', en: 'Product slug' },
+      categoryId: { ar: 'التصنيف', en: 'Category' }
+    };
+
+    return Object.entries(labels)
+      .filter(([key]) => this.productForm.get(key)?.invalid)
+      .map(([key, value]) => ({
+        key,
+        label: this.activeLang === 'ar' ? value.ar : value.en
+      }));
+  }
+
+  get shouldShowValidationSummary(): boolean {
+    return this.hasSubmitted && this.productForm.invalid && this.missingRequiredFields.length > 0;
   }
 
   get categoryOptions(): SearchableSelectOption<string>[] {
@@ -463,8 +484,11 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.hasSubmitted = true;
+
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();
+      this.scrollToFirstInvalidField();
       return;
     }
 
@@ -510,6 +534,27 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  scrollToField(fieldName: string): void {
+    const fieldElement = document.querySelector<HTMLElement>(`[data-product-field="${fieldName}"]`);
+    fieldElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const focusTarget = fieldElement?.matches('input, textarea, button')
+      ? fieldElement
+      : fieldElement?.querySelector<HTMLElement>('input, textarea, button');
+    focusTarget?.focus();
+  }
+
+  private scrollToFirstInvalidField(): void {
+    const firstInvalidField = this.missingRequiredFields[0]?.key;
+    if (!firstInvalidField) {
+      return;
+    }
+
+    setTimeout(() => {
+      this.scrollToField(firstInvalidField);
+    });
   }
 }
 

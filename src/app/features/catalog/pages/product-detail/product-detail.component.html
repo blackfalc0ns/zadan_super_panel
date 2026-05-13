@@ -1,181 +1,221 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100/50 px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6">
-
+<div class="min-h-screen bg-[#f7fafb] px-3 py-4 text-slate-900 sm:px-5 md:px-7 lg:px-10">
     <app-detail-header
         [breadcrumbs]="breadcrumbs"
         [actionButtonLabel]="translate.instant('PRODUCTS.DETAIL.EDIT')"
-        [containerClass]="'w-full max-w-[110rem] mx-auto mb-0 relative z-10'"
-        [headerClass]="'flex justify-between items-center px-0 py-4 md:py-6'"
+        [containerClass]="'mx-auto w-full max-w-[112rem] relative z-10'"
+        [headerClass]="'flex justify-between items-center px-0 py-3 md:py-5'"
         actionButtonIcon="edit"
         (backClick)="goBack()"
         (actionClick)="editProduct()">
     </app-detail-header>
 
-    <div *ngIf="isLoading" class="flex items-center justify-center min-h-[400px]">
-        <div class="relative w-16 h-16">
-            <div class="absolute inset-0 rounded-full border-4 border-zadna-primary/20"></div>
-            <div class="absolute inset-0 rounded-full border-4 border-t-zadna-primary animate-spin"></div>
+    <div *ngIf="isLoading" class="mx-auto flex min-h-[28rem] w-full max-w-[112rem] items-center justify-center">
+        <div class="flex flex-col items-center gap-4">
+            <div class="relative h-14 w-14">
+                <div class="absolute inset-0 rounded-full border-4 border-zadna-primary/15"></div>
+                <div class="absolute inset-0 rounded-full border-4 border-t-zadna-primary animate-spin"></div>
+            </div>
+            <span class="text-xs font-black uppercase tracking-[0.18em] text-slate-400">{{ 'COMMON.LOADING' | translate }}</span>
         </div>
     </div>
 
-    <div *ngIf="!isLoading && product" class="w-full max-w-[110rem] mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <main *ngIf="!isLoading && product" class="mx-auto w-full max-w-[112rem] space-y-6">
+        <section class="grid items-start gap-7 xl:grid-cols-[minmax(22rem,32rem)_minmax(0,1fr)]">
+            <div class="xl:sticky xl:top-6">
+                <div class="aspect-[4/3] overflow-hidden rounded-[1.35rem] bg-white shadow-sm ring-1 ring-slate-200/80">
+                    <img
+                        [src]="getMainImage()"
+                        [alt]="displayName"
+                        class="h-full w-full object-contain p-5">
+                </div>
 
-            <div class="lg:col-span-1 lg:order-2">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-6">
-                    <div class="mb-4">
-                        <div class="aspect-square rounded-xl overflow-hidden bg-slate-50 border border-slate-100">
-                            <img [src]="getMainImage()"
-                                 [alt]="activeLang === 'ar' ? product.nameAr : product.nameEn"
-                                 class="w-full h-full object-cover">
-                        </div>
-                    </div>
-
-                    <div *ngIf="product.images && product.images.length > 1"
-                         class="grid grid-cols-4 gap-2">
-                        <div *ngFor="let image of product.images; let i = index"
-                             (click)="selectImage(i)"
-                             class="aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all"
-                             [class.border-zadna-primary]="selectedImageIndex === i"
-                             [class.border-slate-200]="selectedImageIndex !== i"
-                             [class.opacity-50]="selectedImageIndex !== i">
-                            <img [src]="image.url"
-                                 [alt]="('PRODUCTS.DETAIL.IMAGE_ALT' | translate) + ' ' + (i + 1)"
-                                 class="w-full h-full object-cover">
-                        </div>
-                    </div>
+                <div *ngIf="product.images && product.images.length > 1" class="mt-3 grid grid-cols-5 gap-2">
+                    <button
+                        *ngFor="let image of product.images; let i = index"
+                        type="button"
+                        (click)="selectImage(i)"
+                        class="aspect-square overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 transition focus:outline-none focus:ring-2 focus:ring-zadna-primary/30"
+                        [ngClass]="{ 'ring-2 ring-zadna-primary': selectedImageIndex === i }">
+                        <img
+                            [src]="image.url"
+                            [alt]="('PRODUCTS.DETAIL.IMAGE_ALT' | translate) + ' ' + (i + 1)"
+                            class="h-full w-full object-cover">
+                    </button>
                 </div>
             </div>
 
-            <div class="lg:col-span-2 lg:order-1 space-y-6">
-
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-1">
-                            <p class="text-xs text-slate-500 mb-1">{{ 'PRODUCTS.DETAIL.PRODUCT_NAME' | translate }}</p>
-                            <h2 class="text-xl font-bold text-slate-900 mb-1">
-                                {{ activeLang === 'ar' ? product.nameAr : product.nameEn }}
-                            </h2>
+            <section class="rounded-[1.35rem] bg-white p-5 shadow-sm ring-1 ring-slate-200/80 sm:p-6 lg:p-7">
+                <div class="flex flex-col gap-4 border-b border-slate-100 pb-5 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="min-w-0">
+                        <div class="mb-3 flex flex-wrap items-center gap-2">
+                            <app-status-pill
+                                [label]="getProductStatusLabel(product.status)"
+                                [variant]="getProductStatusVariant(product.status)">
+                            </app-status-pill>
+                            <span class="inline-flex h-8 max-w-full items-center rounded-full bg-slate-50 px-3 text-[11px] font-black text-slate-500 ring-1 ring-slate-200" dir="ltr">
+                                <span class="truncate">{{ product.id }}</span>
+                            </span>
                         </div>
-                        <app-status-pill
-                            [label]="getProductStatusLabel(product.status)"
-                            [variant]="getProductStatusVariant(product.status)">
-                        </app-status-pill>
-                    </div>
 
-                    <div *ngIf="product.descriptionAr || product.descriptionEn" class="mt-4 pt-4 border-t border-slate-100">
-                        <p class="text-xs text-slate-500 mb-2">{{ 'PRODUCTS.DETAIL.DESCRIPTION' | translate }}</p>
-                        <p class="text-sm text-slate-700 leading-relaxed">
-                            {{ activeLang === 'ar' ? product.descriptionAr : product.descriptionEn }}
+                        <p class="mb-2 text-[11px] font-black uppercase tracking-[0.14em] text-zadna-primary">
+                            {{ 'PRODUCTS.DETAIL.PRODUCT_NAME' | translate }}
+                        </p>
+                        <h1 class="text-[1.75rem] font-black leading-tight tracking-normal text-slate-950 sm:text-[2.15rem]">
+                            {{ displayName }}
+                        </h1>
+                        <p *ngIf="secondaryName && secondaryName !== displayName" class="mt-2 text-sm font-bold leading-6 text-slate-500">
+                            {{ secondaryName }}
                         </p>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                    <app-section-header
-                        [compact]="true"
-                        icon="info"
-                        title="COMMON.DETAILS">
-                    </app-section-header>
+                <div class="space-y-6 py-6">
+                    <div class="mx-auto max-w-4xl text-center">
+                        <p class="mb-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-400">
+                            {{ 'PRODUCTS.DETAIL.DESCRIPTION' | translate }}
+                        </p>
+                        <p class="text-sm font-bold leading-7 text-slate-600 sm:text-base" [class.text-slate-400]="!productDescription">
+                            {{ productDescription || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}
+                        </p>
+                    </div>
 
-                    <div class="mt-5">
-                        <app-key-value-grid
-                            [items]="detailItems"
-                            [columns]="2"
-                            [bordered]="true">
-                        </app-key-value-grid>
+                    <div class="mx-auto w-full max-w-5xl rounded-2xl bg-slate-50/70 p-4 text-center ring-1 ring-slate-200 sm:p-5">
+                        <div class="mb-4">
+                            <h2 class="text-sm font-black text-slate-950">{{ 'PRODUCTS.DETAIL.PRODUCT_DETAILS' | translate }}</h2>
+                            <p class="mt-1 text-[11px] font-bold text-slate-400">{{ 'PRODUCTS.DETAIL.PRODUCT_DETAILS_HINT' | translate }}</p>
+                        </div>
+
+                        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.SLUG' | translate }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800" dir="ltr">{{ product.slug || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.BARCODE' | translate }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800" dir="ltr">{{ displayBarcode }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.CATEGORY' | translate }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ resolvedCategoryName }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.BRAND' | translate }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ resolvedBrandName }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.UNIT' | translate }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ resolvedUnitName }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.CREATED_AT' | translate }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ (product.createdAtUtc | date:'mediumDate') || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80 sm:col-span-2 xl:col-span-3">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.UPDATED_AT' | translate }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ (product.updatedAtUtc | date:'mediumDate') || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </section>
+        </section>
 
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <div class="mb-4">
-                        <app-section-header
-                            [compact]="true"
-                            icon="storefront"
-                            title="PRODUCTS.DETAIL.VENDORS_TABLE">
-                        </app-section-header>
-                    </div>
+        <section class="rounded-[1.35rem] bg-white p-4 shadow-sm ring-1 ring-slate-200/80 sm:p-5 lg:p-6">
+            <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 class="text-base font-black text-slate-950">{{ 'PRODUCTS.DETAIL.VENDORS_TABLE' | translate }}</h2>
+                    <p class="mt-1 text-xs font-bold text-slate-400">Linked vendors and stock availability</p>
+                </div>
 
-                    <app-data-table
-                        [data]="vendorSnapshots"
-                        [columns]="vendorTableColumns"
-                        [containerClass]="'extraordinary-table-container'"
-                        [emptyStateTitle]="'PRODUCTS.DETAIL.NOT_FOUND'"
-                        [emptyStateMessage]="'PRODUCTS.DETAIL.NOT_FOUND_DESC'">
-                        <ng-template #customColumn let-vendor let-column="column">
-                            <ng-container *ngIf="column.key === 'vendor'">
-                                <div class="flex items-center gap-3 text-start">
-                                    <div class="w-2 h-2 rounded-full shrink-0" [class]="vendor.colorClass"></div>
-                                    <span class="text-sm font-medium text-slate-900 truncate">{{ getVendorName(vendor) }}</span>
+                <span class="inline-flex h-9 w-fit items-center rounded-full bg-slate-50 px-3 text-[11px] font-black text-slate-500 ring-1 ring-slate-200">
+                    {{ vendorCount }} vendors
+                </span>
+            </div>
+
+            <app-data-table
+                [data]="vendorSnapshots"
+                [columns]="vendorTableColumns"
+                [containerClass]="'extraordinary-table-container'"
+                emptyStateTitle="No vendors yet"
+                emptyStateMessage="This product is not linked to vendor stock yet.">
+                <ng-template #customColumn let-vendor let-column="column">
+                    <ng-container *ngIf="column.key === 'vendor'">
+                        <div class="flex items-center gap-3 text-start">
+                            <div class="h-9 w-9 shrink-0 rounded-xl bg-slate-100 grid place-items-center">
+                                <div class="h-2.5 w-2.5 rounded-full" [class]="vendor.colorClass"></div>
+                            </div>
+                            <span class="truncate text-sm font-black text-slate-900">{{ getVendorName(vendor) }}</span>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="column.key === 'quantity'">
+                        <div class="mx-auto flex max-w-[16rem] items-center gap-3">
+                            <span class="w-12 shrink-0 text-end text-sm font-black text-slate-800">{{ vendor.quantity | number:'1.0-0' }}</span>
+                            <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                                <div class="h-full rounded-full bg-zadna-primary" [style.width]="getVendorRatioWidth(vendor)"></div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="column.key === 'price'">
+                        <span class="text-sm font-black text-slate-900">{{ vendor.price | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                    </ng-container>
+
+                    <ng-container *ngIf="column.key === 'time'">
+                        <span class="inline-flex rounded-full bg-slate-50 px-3 py-1 text-[11px] font-black text-slate-500">{{ vendor.timeKey | translate }}</span>
+                    </ng-container>
+                </ng-template>
+
+                <ng-template #mobileCard let-vendor>
+                    <div class="space-y-4 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex min-w-0 items-center gap-3">
+                                <div class="h-9 w-9 shrink-0 rounded-xl bg-white grid place-items-center">
+                                    <div class="h-2.5 w-2.5 rounded-full" [class]="vendor.colorClass"></div>
                                 </div>
-                            </ng-container>
+                                <span class="truncate text-sm font-black text-slate-900">{{ getVendorName(vendor) }}</span>
+                            </div>
+                            <span class="shrink-0 text-[11px] font-bold text-slate-400">{{ vendor.timeKey | translate }}</span>
+                        </div>
 
-                            <ng-container *ngIf="column.key === 'quantity'">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-slate-700 w-10 text-end shrink-0">{{ vendor.quantity }}</span>
-                                    <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                        <div class="h-full bg-teal-600 rounded-full" [style.width]="getVendorRatioWidth(vendor)"></div>
-                                    </div>
-                                </div>
-                            </ng-container>
-
-                            <ng-container *ngIf="column.key === 'price'">
-                                <span class="text-sm font-semibold text-slate-900">{{ vendor.price }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                            </ng-container>
-
-                            <ng-container *ngIf="column.key === 'time'">
-                                <span class="text-xs text-slate-500">{{ vendor.timeKey | translate }}</span>
-                            </ng-container>
-                        </ng-template>
-
-                        <ng-template #mobileCard let-vendor>
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between gap-3">
-                                    <div class="flex items-center gap-2 min-w-0">
-                                        <div class="w-2 h-2 rounded-full shrink-0" [class]="vendor.colorClass"></div>
-                                        <span class="text-sm font-medium text-slate-900 truncate">{{ getVendorName(vendor) }}</span>
-                                    </div>
-                                    <span class="text-xs text-slate-500 shrink-0">{{ vendor.timeKey | translate }}</span>
-                                </div>
-
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between gap-3">
-                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
-                                        <div class="flex items-center gap-2 min-w-[8rem]">
-                                            <span class="text-sm font-bold text-slate-700 shrink-0">{{ vendor.quantity }}</span>
-                                            <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                                <div class="h-full bg-teal-600 rounded-full" [style.width]="getVendorRatioWidth(vendor)"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-center justify-between gap-3">
-                                        <span class="text-xs text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                        <span class="text-sm font-semibold text-slate-900">{{ vendor.price }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-xs font-bold text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
+                                <div class="flex min-w-[9rem] items-center gap-2">
+                                    <span class="shrink-0 text-sm font-black text-slate-800">{{ vendor.quantity | number:'1.0-0' }}</span>
+                                    <div class="h-2 flex-1 overflow-hidden rounded-full bg-white">
+                                        <div class="h-full rounded-full bg-zadna-primary" [style.width]="getVendorRatioWidth(vendor)"></div>
                                     </div>
                                 </div>
                             </div>
-                        </ng-template>
-                    </app-data-table>
-                </div>
 
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-xs font-bold text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
+                                <span class="text-sm font-black text-slate-900">{{ vendor.price | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </app-data-table>
+        </section>
+    </main>
+
+    <div *ngIf="!isLoading && !product" class="mx-auto flex min-h-[28rem] w-full max-w-[112rem] items-center justify-center">
+        <div class="rounded-[1.25rem] bg-white px-8 py-10 text-center shadow-sm ring-1 ring-slate-200">
+            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-slate-400">
+                <span class="material-symbols-outlined text-[32px]">inventory_2</span>
             </div>
-
-        </div>
-    </div>
-
-    <div *ngIf="!isLoading && !product" class="flex items-center justify-center min-h-[400px]">
-        <div class="text-center">
-            <div class="w-24 h-24 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">{{ 'PRODUCTS.DETAIL.NOT_FOUND' | translate }}</h3>
-            <p class="text-sm text-slate-500 mb-6">{{ 'PRODUCTS.DETAIL.NOT_FOUND_DESC' | translate }}</p>
+            <h3 class="mb-2 text-xl font-black text-slate-950">{{ 'PRODUCTS.DETAIL.NOT_FOUND' | translate }}</h3>
+            <p class="mb-6 text-sm font-bold text-slate-500">{{ 'PRODUCTS.DETAIL.NOT_FOUND_DESC' | translate }}</p>
             <app-button variant="primary" (btnClick)="goBack()">
                 {{ 'PRODUCTS.DETAIL.BACK_TO_PRODUCTS' | translate }}
             </app-button>
         </div>
     </div>
-
 </div>

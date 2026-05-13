@@ -1435,6 +1435,8 @@ export class CatalogService {
       descriptionAr: product.descriptionAr || '',
       descriptionEn: product.descriptionEn || '',
       categoryId: stringValue('categoryId', 'CategoryId', 'category_id') || product.categoryId,
+      categoryNameAr: stringValue('categoryNameAr', 'CategoryNameAr', 'category_name_ar'),
+      categoryNameEn: stringValue('categoryNameEn', 'CategoryNameEn', 'category_name_en'),
       brandId: stringValue('brandId', 'BrandId', 'brand_id'),
       brandNameAr: stringValue('brandNameAr', 'BrandNameAr', 'brand_name_ar'),
       brandNameEn: stringValue('brandNameEn', 'BrandNameEn', 'brand_name_en'),

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -57,6 +57,95 @@ export class ProductDetailComponent implements OnInit {
 
   get activeLang(): string {
     return this.translate.currentLang || 'ar';
+  }
+
+  get displayName(): string {
+    if (!this.product) {
+      return '';
+    }
+
+    return this.activeLang === 'ar'
+      ? (this.product.nameAr || this.product.nameEn || '')
+      : (this.product.nameEn || this.product.nameAr || '');
+  }
+
+  get secondaryName(): string {
+    if (!this.product) {
+      return '';
+    }
+
+    return this.activeLang === 'ar'
+      ? (this.product.nameEn || this.product.nameAr || '')
+      : (this.product.nameAr || this.product.nameEn || '');
+  }
+
+  get productDescription(): string {
+    if (!this.product) {
+      return '';
+    }
+
+    return this.activeLang === 'ar'
+      ? (this.product.descriptionAr || this.product.descriptionEn || '')
+      : (this.product.descriptionEn || this.product.descriptionAr || '');
+  }
+
+  get resolvedBrandName(): string {
+    const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+    if (!this.product) {
+      return fallback;
+    }
+
+    return this.brandName
+      || (this.activeLang === 'ar' ? this.product.brandNameAr : this.product.brandNameEn)
+      || this.product.brandId
+      || fallback;
+  }
+
+  get resolvedCategoryName(): string {
+    const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+    if (!this.product) {
+      return fallback;
+    }
+
+    return this.categoryName
+      || (this.activeLang === 'ar' ? this.product.categoryNameAr : this.product.categoryNameEn)
+      || fallback;
+  }
+
+  get resolvedUnitName(): string {
+    const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+    if (!this.product) {
+      return fallback;
+    }
+
+    return this.unitName
+      || (this.activeLang === 'ar' ? this.product.unitNameAr : this.product.unitNameEn)
+      || this.product.unitOfMeasureId
+      || fallback;
+  }
+
+  get displayBarcode(): string {
+    return this.product?.barcode || this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+  }
+
+  get imageCount(): number {
+    return this.product?.images?.length ?? 0;
+  }
+
+  get vendorCount(): number {
+    return this.vendorSnapshots.length;
+  }
+
+  get totalVendorStock(): number {
+    return this.vendorSnapshots.reduce((total, vendor) => total + vendor.quantity, 0);
+  }
+
+  get minVendorPrice(): number | null {
+    if (!this.vendorSnapshots.length) {
+      return null;
+    }
+
+    return Math.min(...this.vendorSnapshots.map((vendor) => vendor.price));
   }
 
   readonly vendorTableColumns: TableColumn[] = [
@@ -177,14 +266,15 @@ export class ProductDetailComponent implements OnInit {
   }
 
   getMainImage(): string {
-    if (!this.product?.images || this.product.images.length === 0) {
-      return this.buildPlaceholderImage(this.activeLang === 'ar' ? 'لا توجد صورة' : 'No Image');
+    const noImageLabel = 'No image';
+    const images = this.product?.images?.filter((image) => !!image.url) ?? [];
+    if (!images.length) {
+      return this.buildPlaceholderImage(noImageLabel);
     }
-    const selectedImage = this.product.images[this.selectedImageIndex];
-    if (selectedImage?.url) {
-      return selectedImage.url;
-    }
-    return this.product.images[0]?.url || this.buildPlaceholderImage(this.activeLang === 'ar' ? 'لا توجد صورة' : 'No Image');
+
+    const selectedAsset = images[this.selectedImageIndex];
+    return selectedAsset?.url || images[0]?.url || this.buildPlaceholderImage(noImageLabel);
+
   }
 
   goBack(): void {
@@ -213,17 +303,17 @@ export class ProductDetailComponent implements OnInit {
       },
       {
         label: 'PRODUCTS.DETAIL.UNIT',
-        value: this.unitName || this.product.unitOfMeasureId || notSpecified,
+        value: this.resolvedUnitName || notSpecified,
         translateValue: false
       },
       {
         label: 'PRODUCTS.DETAIL.CATEGORY',
-        value: this.categoryName || this.product.categoryId || notSpecified,
+        value: this.resolvedCategoryName || notSpecified,
         translateValue: false
       },
       {
         label: 'PRODUCTS.DETAIL.BRAND',
-        value: this.brandName || this.product.brandId || notSpecified,
+        value: this.resolvedBrandName || notSpecified,
         translateValue: false
       }
     ];
@@ -245,7 +335,7 @@ export class ProductDetailComponent implements OnInit {
       Active: 'PRODUCTS.DETAIL.STATUS_ACTIVE',
       Draft: 'PRODUCTS.DETAIL.STATUS_DRAFT',
       Inactive: 'PRODUCTS.DETAIL.STATUS_INACTIVE',
-      Discontinued: 'PRODUCTS.DETAIL.STATUS_INACTIVE'
+      Discontinued: 'MASTER_PRODUCTS.STATUS_DISCONTINUED'
     };
 
     return labels[status || ''] || status || '-';
