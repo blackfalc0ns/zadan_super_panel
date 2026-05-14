@@ -47,12 +47,19 @@ export class EditOwnerModalComponent implements OnChanges {
   };
 
   nationalityOptions = [
-    { value: 'Saudi', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.SAUDI' },
-    { value: 'Kuwaiti', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.KUWAITI' },
-    { value: 'Emirati', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.EMIRATI' },
-    { value: 'Bahraini', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.BAHRAINI' },
-    { value: 'Omani', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.OMANI' },
-    { value: 'Qatari', labelKey: 'MODALS.OWNER_EDIT.NATIONALITIES.QATARI' }
+    { value: 'Saudi', label: 'سعودي - Saudi' },
+    { value: 'Kuwaiti', label: 'كويتي - Kuwaiti' },
+    { value: 'Emirati', label: 'إماراتي - Emirati' },
+    { value: 'Bahraini', label: 'بحريني - Bahraini' },
+    { value: 'Omani', label: 'عماني - Omani' },
+    { value: 'Qatari', label: 'قطري - Qatari' },
+    { value: 'Egyptian', label: 'مصري - Egyptian' },
+    { value: 'Jordanian', label: 'أردني - Jordanian' },
+    { value: 'Syrian', label: 'سوري - Syrian' },
+    { value: 'Yemeni', label: 'يمني - Yemeni' },
+    { value: 'Pakistani', label: 'باكستاني - Pakistani' },
+    { value: 'Indian', label: 'هندي - Indian' },
+    { value: 'Other', label: 'أخرى - Other' }
   ];
 
   constructor(private translate: TranslateService) {}
@@ -64,7 +71,7 @@ export class EditOwnerModalComponent implements OnChanges {
         ownerEmail: this.ownerData.ownerEmail || '',
         ownerPhone: this.ownerData.ownerPhone || '',
         idNumber: this.ownerData.idNumber || '',
-        nationality: this.ownerData.nationality || ''
+        nationality: this.normalizeNationality(this.ownerData.nationality || '')
       };
     }
   }
@@ -140,6 +147,15 @@ export class EditOwnerModalComponent implements OnChanges {
 
   private isValidEmail(value: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  }
+
+  private normalizeNationality(value: string): string {
+    if (!value) return '';
+    const lower = value.trim().toLowerCase();
+    const match = this.nationalityOptions.find(
+      (opt) => opt.value.toLowerCase() === lower
+    );
+    return match ? match.value : value;
   }
 
   private text(arabic: string, english: string): string {

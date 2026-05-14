@@ -28,11 +28,11 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
     <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
       <!-- شريط الصفحة العلوي (Header) -->
-      <app-page-header title="طلبات سحب المناديب" subtitle="مراجعة واعتماد المبالغ المطلوبة للسحب من محافظ المناديب بشكل يومي">
+      <app-page-header [title]="'FINANCES.WITHDRAWALS.TITLE' | translate" [subtitle]="'FINANCES.WITHDRAWALS.SUBTITLE' | translate">
         <div actions class="flex items-center gap-3">
           <div class="rounded-xl border border-slate-200 bg-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm">
              <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-             <span class="text-[12px] font-bold text-slate-600 tabular-nums">{{ totalCount }} طلب مسجل</span>
+             <span class="text-[12px] font-bold text-slate-600 tabular-nums">{{ 'FINANCES.WITHDRAWALS.ACTIVE_COUNT' | translate: { count: totalCount } }}</span>
           </div>
         </div>
       </app-page-header>
@@ -47,7 +47,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
           [ngClass]="status === option.value
             ? 'bg-white text-zadna-primary shadow-sm border border-slate-200'
             : 'text-slate-500 hover:text-slate-800'">
-          {{ option.label }}
+          {{ option.labelKey | translate }}
         </button>
       </div>
 
@@ -59,8 +59,8 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
                <span class="material-symbols-outlined text-[18px]">payments</span>
              </div>
              <div>
-               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">سجل العمليات</h3>
-               <p class="text-[11px] font-bold text-slate-500 mt-0.5">معالجة الحوالات البنكية للمناديب</p>
+               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">{{ 'FINANCES.WITHDRAWALS.TABLE.TITLE' | translate }}</h3>
+               <p class="text-[11px] font-bold text-slate-500 mt-0.5">{{ 'FINANCES.WITHDRAWALS.TABLE.DESC' | translate }}</p>
              </div>
           </div>
         </div>
@@ -80,33 +80,33 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
                  </div>
                  <div>
                     <p class="text-[14px] font-black text-slate-900">{{ req.driverName }}</p>
-                    <p class="text-[11px] font-bold text-slate-500 font-mono mt-0.5" dir="ltr">{{ req.driverPhone || 'لا يوجد رقم' }}</p>
+                    <p class="text-[11px] font-bold text-slate-500 font-mono mt-0.5" dir="ltr">{{ req.driverPhone || ('FINANCES.WITHDRAWALS.TABLE.NO_PHONE' | translate) }}</p>
                  </div>
               </div>
 
               <!-- Date -->
               <div>
-                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">وقت الطلب</p>
+                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.WITHDRAWALS.TABLE.REQUEST_TIME' | translate }}</p>
                  <p class="text-[13px] font-bold text-slate-800 tabular-nums">{{ formatDate(req.createdAtUtc) }}</p>
                  <p class="text-[10px] font-bold text-slate-500 tabular-nums">{{ formatTime(req.createdAtUtc) }}</p>
               </div>
 
               <!-- Payout Method -->
               <div>
-                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">حساب التحويل</p>
+                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.WITHDRAWALS.TABLE.PAYOUT_ACCOUNT' | translate }}</p>
                  <ng-container *ngIf="req.payoutMethod; else noMethod">
                     <p class="text-[13px] font-bold text-slate-800 line-clamp-1">{{ req.payoutMethod.providerName || req.payoutMethod.methodType }}</p>
                     <p class="text-[10px] font-bold text-slate-500 truncate" [title]="req.payoutMethod.accountHolderName">{{ req.payoutMethod.accountHolderName }}</p>
                     <p class="text-[11px] font-black text-slate-600 font-mono mt-0.5">{{ req.payoutMethod.maskedLabel }}</p>
                  </ng-container>
                  <ng-template #noMethod>
-                    <span class="inline-flex px-2 py-1 rounded bg-slate-100 text-slate-500 text-[10px] font-bold">لا يوجد طريقة مفضلة</span>
+                    <span class="inline-flex px-2 py-1 rounded bg-slate-100 text-slate-500 text-[10px] font-bold">{{ 'FINANCES.WITHDRAWALS.TABLE.NO_METHOD' | translate }}</span>
                  </ng-template>
               </div>
 
               <!-- Status -->
               <div>
-                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">الحالة</p>
+                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.WITHDRAWALS.TABLE.STATUS' | translate }}</p>
                  <span class="inline-flex px-2 py-1 rounded-md text-[10px] font-black tracking-widest border" [ngClass]="getStatusBadgeClass(req.status)">
                     {{ getTranslatedStatus(req.status) }}
                  </span>
@@ -114,23 +114,23 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
                     Ref: {{ req.transferReference }}
                  </p>
                  <p *ngIf="req.failureReason" class="mt-1.5 text-[11px] font-bold text-red-500 line-clamp-2" [title]="req.failureReason">
-                    السبب: {{ req.failureReason }}
+                    {{ 'FINANCES.WITHDRAWALS.TABLE.FAILURE_REASON' | translate }}: {{ req.failureReason }}
                  </p>
               </div>
             </div>
 
             <div class="flex flex-col items-start xl:items-end gap-4 shrink-0 min-w-[200px] border-t xl:border-t-0 border-slate-100 pt-4 xl:pt-0 w-full xl:w-auto">
                <div class="text-right w-full xl:w-auto rtl:text-left text-left">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">المبلغ المطلوب</p>
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.WITHDRAWALS.TABLE.AMOUNT_REQUESTED' | translate }}</p>
                   <p class="text-xl font-black text-amber-700 tabular-nums leading-none tracking-tight">{{ formatNumber(req.amount) }} <span class="text-[12px] font-bold">SAR</span></p>
                </div>
 
                <div class="flex gap-2 w-full xl:w-auto" *ngIf="req.status === 'Pending' || req.status === 'Processing'">
                  <app-button variant="primary" size="sm" customClass="!rounded-xl flex-1 xl:flex-none shadow-sm !bg-emerald-600 hover:!bg-emerald-700" (btnClick)="openProcessModal(req, true)">
-                   قبول
+                   {{ 'FINANCES.WITHDRAWALS.TABLE.APPROVE' | translate }}
                  </app-button>
                  <app-button variant="outline" size="sm" customClass="!rounded-xl flex-1 xl:flex-none border-red-200 text-red-600 hover:bg-red-50" (btnClick)="openProcessModal(req, false)">
-                   رفض
+                   {{ 'FINANCES.WITHDRAWALS.TABLE.REJECT' | translate }}
                  </app-button>
                </div>
             </div>
@@ -142,8 +142,8 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
           <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
              <span class="material-symbols-outlined text-4xl text-slate-300">account_balance_wallet</span>
           </div>
-          <h3 class="text-[15px] font-black text-slate-800">لا توجد طلبات سحب</h3>
-          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">لم يتم العثور على أي طلبات سحب تطابق حالة الفلتر المحدد حالياً.</p>
+          <h3 class="text-[15px] font-black text-slate-800">{{ 'FINANCES.WITHDRAWALS.NO_DATA_TITLE' | translate }}</h3>
+          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">{{ 'FINANCES.WITHDRAWALS.NO_DATA_DESC' | translate }}</p>
         </div>
       </app-card>
 
@@ -169,10 +169,10 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
              <span class="material-symbols-outlined text-[28px]">{{ isApproving ? 'check_circle' : 'cancel' }}</span>
           </div>
           <h3 class="text-xl font-black mb-1">
-            {{ isApproving ? 'قبول طلب السحب' : 'رفض طلب السحب' }}
+            {{ (isApproving ? 'FINANCES.WITHDRAWALS.MODAL.TITLE_APPROVE' : 'FINANCES.WITHDRAWALS.MODAL.TITLE_REJECT') | translate }}
           </h3>
           <p class="text-sm font-medium text-white/90">
-            المندوب: {{ selectedRequest.driverName }} • المبلغ: {{ formatNumber(selectedRequest.amount) }} SAR
+            {{ 'FINANCES.WITHDRAWALS.MODAL.DRIVER' | translate }}: {{ selectedRequest.driverName }} • {{ 'FINANCES.WITHDRAWALS.MODAL.AMOUNT' | translate }}: {{ formatNumber(selectedRequest.amount) }} {{ 'FINANCES.CURRENCY' | translate }}
           </p>
         </div>
 
@@ -181,37 +181,37 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
           <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start gap-3">
              <span class="material-symbols-outlined text-slate-400 mt-0.5 text-[20px]">account_balance</span>
              <div>
-                <p class="text-[11px] font-bold text-slate-500">طريقة الدفع المسجلة</p>
-                <p class="text-[13px] font-black text-slate-800 mt-0.5">{{ selectedRequest.payoutMethod?.providerName || selectedRequest.payoutMethod?.methodType || 'غير متوفرة' }}</p>
+                <p class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.WITHDRAWALS.MODAL.PAYOUT_METHOD' | translate }}</p>
+                <p class="text-[13px] font-black text-slate-800 mt-0.5">{{ selectedRequest.payoutMethod?.providerName || selectedRequest.payoutMethod?.methodType || ('FINANCES.WITHDRAWALS.MODAL.NOT_AVAILABLE' | translate) }}</p>
                 <p class="text-[12px] font-bold text-slate-600 font-mono mt-0.5" dir="ltr">{{ selectedRequest.payoutMethod?.maskedLabel || 'N/A' }}</p>
              </div>
           </div>
 
           <div *ngIf="isApproving" class="space-y-2">
-            <label class="block text-[11px] font-bold text-slate-600">الرقم المرجعي للحوالة (Transfer Reference)</label>
+            <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.MODAL.TRANSFER_REF' | translate }}</label>
             <input type="text" [(ngModel)]="processForm.transferReference"
                    class="w-full bg-white border border-slate-200 rounded-xl text-[14px] font-black text-slate-900 py-3 px-4 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all placeholder:font-medium"
-                   placeholder="أدخل رقم الحوالة البنكية هنا...">
-            <p class="text-[11px] font-bold text-slate-400 mt-1">يُستخدم هذا الرقم كمرجع مالي لعملية الدفع لاحقاً.</p>
+                   [placeholder]="'FINANCES.WITHDRAWALS.MODAL.TRANSFER_REF_PLACEHOLDER' | translate">
+            <p class="text-[11px] font-bold text-slate-400 mt-1">{{ 'FINANCES.WITHDRAWALS.MODAL.TRANSFER_REF_HINT' | translate }}</p>
           </div>
 
           <div *ngIf="!isApproving" class="space-y-2">
-            <label class="block text-[11px] font-bold text-slate-600">سبب الرفض</label>
+            <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.MODAL.REJECT_REASON' | translate }}</label>
             <textarea [(ngModel)]="processForm.failureReason" rows="3"
                       class="w-full bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-900 py-3 px-4 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-all placeholder:font-medium resize-none"
-                      placeholder="اشرح للمندوب سبب رفض طلب السحب..."></textarea>
+                      [placeholder]="'FINANCES.WITHDRAWALS.MODAL.REJECT_REASON_PLACEHOLDER' | translate"></textarea>
           </div>
         </div>
 
         <div class="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50/50">
           <app-button variant="ghost" size="md" customClass="!rounded-xl flex-1 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50" (btnClick)="closeProcessModal()">
-            تراجع
+            {{ 'FINANCES.WITHDRAWALS.MODAL.CANCEL' | translate }}
           </app-button>
           <app-button variant="primary" size="md" customClass="!rounded-xl flex-1 shadow-md"
                       [ngClass]="isApproving ? '!bg-emerald-600 hover:!bg-emerald-700 shadow-emerald-600/20' : '!bg-red-600 hover:!bg-red-700 shadow-red-600/20'"
                       (btnClick)="submitProcess()"
                       [disabled]="isSubmitting || (isApproving && !processForm.transferReference.trim()) || (!isApproving && !processForm.failureReason.trim())">
-            {{ isSubmitting ? 'جاري التنفيذ...' : 'تأكيد العملية' }}
+            {{ isSubmitting ? ('FINANCES.WITHDRAWALS.MODAL.PROCESSING' | translate) : ('FINANCES.WITHDRAWALS.MODAL.CONFIRM' | translate) }}
           </app-button>
         </div>
       </div>
@@ -233,13 +233,13 @@ export class WithdrawalsQueueComponent implements OnInit {
   isSubmitting = false;
   selectedRequest: AdminDriverWithdrawalRequestDto | null = null;
 
-  readonly statusOptions: Array<{ label: string; value: string | null }> = [
-    { label: 'الكل', value: null },
-    { label: 'قيد الانتظار', value: 'Pending' },
-    { label: 'جاري المعالجة', value: 'Processing' },
-    { label: 'مكتملة (مدفوعة)', value: 'Paid' },
-    { label: 'فشلت', value: 'Failed' },
-    { label: 'ملغاة', value: 'Cancelled' }
+  readonly statusOptions: Array<{ labelKey: string; value: string | null }> = [
+    { labelKey: 'FINANCES.WITHDRAWALS.TABS.ALL', value: null },
+    { labelKey: 'FINANCES.WITHDRAWALS.TABS.PENDING', value: 'Pending' },
+    { labelKey: 'FINANCES.WITHDRAWALS.TABS.PROCESSING', value: 'Processing' },
+    { labelKey: 'FINANCES.WITHDRAWALS.TABS.PAID', value: 'Paid' },
+    { labelKey: 'FINANCES.WITHDRAWALS.TABS.FAILED', value: 'Failed' },
+    { labelKey: 'FINANCES.WITHDRAWALS.TABS.CANCELLED', value: 'Cancelled' }
   ];
 
   processForm = {
@@ -334,14 +334,7 @@ export class WithdrawalsQueueComponent implements OnInit {
   }
 
   getTranslatedStatus(status: string): string {
-     const map: Record<string, string> = {
-      Pending: 'قيد الانتظار',
-      Processing: 'معالجة',
-      Paid: 'مكتمل (دُفع)',
-      Failed: 'فشل التحويل',
-      Cancelled: 'ملغى'
-    };
-    return map[status] ?? status;
+    return `FINANCES.WITHDRAWALS.STATUS_LABELS.${status.toUpperCase()}`;
   }
 
   getStatusBadgeClass(status: string): string {

@@ -3,12 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CustomersService } from '@customers/services/customers.api.service';
+import { CustomersService, CustomerFilters } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page-header/page-header.component';
-import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
+import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../../models/customers.models';
 
@@ -23,7 +23,7 @@ import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../
     KpiCardsComponent,
     AppPaginationComponent,
     AppPageHeaderComponent,
-    SearchableSelectComponent,
+    AdvancedFilterPanelComponent,
     StatusPillComponent
   ],
   templateUrl: './customers-list.component.html',
@@ -33,25 +33,23 @@ export class CustomersListComponent implements OnInit {
   page = 1;
   pageSize = 15;
   searchTerm = '';
-  cityFilter = 'all';
-  statusFilter: 'all' | CustomerStatus = 'all';
-  spendRangeFilter: CustomerSpendRange = 'all';
+  isFiltersExpanded = false;
+  filters: CustomerFilters = {};
 
   customers: CustomerDetailRecord[] = [];
 
-  readonly statusOptions: Array<{ value: 'all' | CustomerStatus; labelKey: string }> = [
-    { value: 'all', labelKey: 'CUSTOMERS.FILTERS.ALL' },
-    { value: 'active', labelKey: 'CUSTOMERS.STATUS.ACTIVE' },
-    { value: 'low_activity', labelKey: 'CUSTOMERS.STATUS.LOW_ACTIVITY' },
-    { value: 'restricted', labelKey: 'CUSTOMERS.STATUS.RESTRICTED' },
-    { value: 'dormant', labelKey: 'CUSTOMERS.STATUS.DORMANT' }
-  ];
+  // City options — will be derived from data
+  cityOptions: Array<{ value: string; label: string }> = [];
 
-  readonly spendingOptions: Array<{ value: CustomerSpendRange; labelKey: string }> = [
-    { value: 'all', labelKey: 'CUSTOMERS.SPENDING.ALL' },
-    { value: 'lt_1000', labelKey: 'CUSTOMERS.SPENDING.LT_1000' },
-    { value: '1000_5000', labelKey: 'CUSTOMERS.SPENDING.BETWEEN_1000_5000' },
-    { value: 'gt_5000', labelKey: 'CUSTOMERS.SPENDING.GT_5000' }
+  // Filter fields configuration (same pattern as vendors)
+  filterFields: FilterField[] = [
+    { key: 'status', label: 'CUSTOMERS.FILTERS.STATUS', type: 'select', color: '#10b981', options: [] },
+    { key: 'city', label: 'CUSTOMERS.FILTERS.CITY', type: 'select', color: '#0ea5e9', options: [] },
+    { key: 'hasOrders', label: 'CUSTOMERS.FILTERS.HAS_ORDERS', type: 'select', color: '#8b5cf6', options: [] },
+    { key: 'isLocked', label: 'CUSTOMERS.FILTERS.ACCOUNT_LOCKED', type: 'select', color: '#ef4444', options: [] },
+    { key: 'minSpent', label: 'CUSTOMERS.FILTERS.MIN_SPENT', type: 'select', color: '#f59e0b', options: [] },
+    { key: 'maxSpent', label: 'CUSTOMERS.FILTERS.MAX_SPENT', type: 'select', color: '#6366f1', options: [] },
+    { key: 'sortBy', label: 'CUSTOMERS.FILTERS.SORT_BY', type: 'select', color: '#64748b', options: [] }
   ];
 
   readonly tableColumns: TableColumn[] = [
@@ -67,12 +65,18 @@ export class CustomersListComponent implements OnInit {
     private readonly router: Router,
     public readonly translate: TranslateService,
     private readonly customersService: CustomersService
-  ) {}
+  ) {
+    this.translate.onLangChange.subscribe(() => {
+      this.initializeFilterOptions();
+    });
+  }
 
   ngOnInit(): void {
+    this.initializeFilterOptions();
     this.customersService.getCustomers().subscribe({
       next: (customers) => {
         this.customers = customers;
+        this.updateCityOptions();
       },
       error: (error) => {
         console.error('Failed to load admin customers.', error);
@@ -81,9 +85,160 @@ export class CustomersListComponent implements OnInit {
     });
   }
 
-  get cityOptions(): string[] {
-    return [...new Set(this.customers.map((customer) => customer.city))];
+  // ── Filter Options ──
+
+  initializeFilterOptions(): void {
+    this.filterFields.forEach((field) => {
+      switch (field.key) {
+        case 'status':
+          field.options = [
+            { value: 'Active', label: this.translate.instant('CUSTOMERS.STATUS.ACTIVE') },
+            { value: 'Suspended', label: this.translate.instant('CUSTOMERS.STATUS.RESTRICTED') },
+            { value: 'Banned', label: this.translate.instant('CUSTOMERS.STATUS.DORMANT') }
+          ];
+          break;
+        case 'city':
+          field.options = this.cityOptions;
+          break;
+        case 'hasOrders':
+          field.options = [
+            { value: 'true', label: this.translate.instant('CUSTOMERS.FILTERS.WITH_ORDERS') },
+            { value: 'false', label: this.translate.instant('CUSTOMERS.FILTERS.NO_ORDERS') }
+          ];
+          break;
+        case 'isLocked':
+          field.options = [
+            { value: 'true', label: this.translate.instant('CUSTOMERS.FILTERS.LOCKED') },
+            { value: 'false', label: this.translate.instant('CUSTOMERS.FILTERS.UNLOCKED') }
+          ];
+          break;
+        case 'minSpent':
+          field.options = [
+            { value: '0', label: '0+' },
+            { value: '500', label: '500+' },
+            { value: '1000', label: '1,000+' },
+            { value: '5000', label: '5,000+' },
+            { value: '10000', label: '10,000+' },
+            { value: '20000', label: '20,000+' }
+          ];
+          break;
+        case 'maxSpent':
+          field.options = [
+            { value: '1000', label: this.translate.instant('CUSTOMERS.FILTERS.UPTO') + ' 1,000' },
+            { value: '5000', label: this.translate.instant('CUSTOMERS.FILTERS.UPTO') + ' 5,000' },
+            { value: '10000', label: this.translate.instant('CUSTOMERS.FILTERS.UPTO') + ' 10,000' },
+            { value: '50000', label: this.translate.instant('CUSTOMERS.FILTERS.UPTO') + ' 50,000' }
+          ];
+          break;
+        case 'sortBy':
+          field.options = [
+            { value: 'created', label: this.translate.instant('CUSTOMERS.FILTERS.SORT_OLDEST') },
+            { value: 'name', label: this.translate.instant('CUSTOMERS.FILTERS.SORT_NAME_ASC') },
+            { value: 'name_desc', label: this.translate.instant('CUSTOMERS.FILTERS.SORT_NAME_DESC') },
+            { value: 'last_login', label: this.translate.instant('CUSTOMERS.FILTERS.SORT_LAST_LOGIN') }
+          ];
+          break;
+      }
+    });
   }
+
+  private updateCityOptions(): void {
+    const cities = [...new Set(this.customers.map((c) => c.city).filter((c) => c && c !== '—'))];
+    this.cityOptions = cities.map((city) => ({ value: city, label: city }));
+    const cityField = this.filterFields.find((f) => f.key === 'city');
+    if (cityField) {
+      cityField.options = this.cityOptions;
+    }
+  }
+
+  // ── Filter Handlers (same pattern as vendors) ──
+
+  get hasActiveFilters(): boolean {
+    return Object.keys(this.filters).some((key) => {
+      const value = this.filters[key];
+      return value !== undefined && value !== null && value !== '';
+    });
+  }
+
+  get activeFilterCount(): number {
+    return Object.keys(this.filters).filter((key) => {
+      const value = this.filters[key];
+      return value !== undefined && value !== null && value !== '';
+    }).length + (this.searchTerm.trim().length > 0 ? 1 : 0);
+  }
+
+  toggleFilters(): void {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
+
+  onSearch(): void {
+    this.page = 1;
+    this.loadCustomers();
+  }
+
+  onFiltersChange(newFilters: CustomerFilters): void {
+    this.filters = { ...this.filters, ...newFilters };
+    this.page = 1;
+    this.loadCustomers();
+  }
+
+  onFilterReset(): void {
+    this.filters = {};
+    this.searchTerm = '';
+    this.page = 1;
+    this.loadCustomers();
+  }
+
+  onFilterSave(filters: CustomerFilters): void {
+    // placeholder for saved filter presets
+  }
+
+  resetFilters(): void {
+    this.filters = {};
+    this.searchTerm = '';
+    this.page = 1;
+    this.loadCustomers();
+  }
+
+  private loadCustomers(): void {
+    // Build the filters to send to backend
+    const backendFilters: CustomerFilters = {};
+
+    if (this.filters['status']) backendFilters.status = String(this.filters['status']);
+    if (this.filters['city']) backendFilters.city = String(this.filters['city']);
+    if (this.filters['isLocked'] != null) backendFilters.isLocked = String(this.filters['isLocked']) === 'true';
+    if (this.filters['hasOrders'] != null) backendFilters.hasOrders = String(this.filters['hasOrders']) === 'true';
+    if (this.filters['minSpent'] != null) backendFilters.minSpent = Number(this.filters['minSpent']);
+    if (this.filters['maxSpent'] != null) backendFilters.maxSpent = Number(this.filters['maxSpent']);
+    if (this.filters['sortBy']) backendFilters.sortBy = String(this.filters['sortBy']);
+
+    this.customersService.loadWithFilters(this.searchTerm, backendFilters);
+  }
+
+  // ── Pagination ──
+
+  get filteredCustomers(): CustomerDetailRecord[] {
+    return this.customers;
+  }
+
+  get paginatedCustomers(): CustomerDetailRecord[] {
+    const start = (this.page - 1) * this.pageSize;
+    return this.filteredCustomers.slice(start, start + this.pageSize);
+  }
+
+  get totalItems(): number {
+    return this.filteredCustomers.length;
+  }
+
+  changePage(newPage: number): void {
+    this.page = newPage;
+  }
+
+  openCustomerDetail(customer: CustomerDetailRecord): void {
+    this.router.navigate(['/customers', customer.id]);
+  }
+
+  // ── KPI Cards ──
 
   get activeCustomersCount(): number {
     return this.customers.filter((customer) => customer.status === 'active').length;
@@ -182,66 +337,13 @@ export class CustomersListComponent implements OnInit {
     ];
   }
 
-  get filteredCustomers(): CustomerDetailRecord[] {
-    return this.customers.filter((customer) => {
-      const search = this.searchTerm.trim().toLowerCase();
-      const matchesSearch = !search || [
-        customer.id,
-        customer.name,
-        customer.email,
-        customer.phone,
-        customer.city
-      ].some((value) => value.toLowerCase().includes(search));
+  // ── RTL ──
 
-      const matchesCity = this.cityFilter === 'all' || customer.city === this.cityFilter;
-      const matchesStatus = this.statusFilter === 'all' || customer.status === this.statusFilter;
-      const matchesSpendRange = this.matchesSpendRange(customer.totalSpent);
-
-      return matchesSearch && matchesCity && matchesStatus && matchesSpendRange;
-    });
+  get isRTL(): boolean {
+    return this.translate.currentLang === 'ar';
   }
 
-  get paginatedCustomers(): CustomerDetailRecord[] {
-    const start = (this.page - 1) * this.pageSize;
-    return this.filteredCustomers.slice(start, start + this.pageSize);
-  }
-
-  get totalFilteredItems(): number {
-    return this.filteredCustomers.length;
-  }
-
-  get totalItems(): number {
-    return this.totalFilteredItems;
-  }
-
-  get activeFilterCount(): number {
-    return [
-      this.cityFilter !== 'all',
-      this.statusFilter !== 'all',
-      this.spendRangeFilter !== 'all',
-      this.searchTerm.trim().length > 0
-    ].filter(Boolean).length;
-  }
-
-  clearFilters(): void {
-    this.searchTerm = '';
-    this.cityFilter = 'all';
-    this.statusFilter = 'all';
-    this.spendRangeFilter = 'all';
-    this.page = 1;
-  }
-
-  applyFilters(): void {
-    this.page = 1;
-  }
-
-  changePage(newPage: number): void {
-    this.page = newPage;
-  }
-
-  openCustomerDetail(customer: CustomerDetailRecord): void {
-    this.router.navigate(['/customers', customer.id]);
-  }
+  // ── Table Helpers ──
 
   getCustomerInitials(name: string): string {
     return name
@@ -314,26 +416,4 @@ export class CustomersListComponent implements OnInit {
   getPresenceDotClasses(customer: CustomerDetailRecord): string {
     return customer.isOnlineNow ? 'bg-emerald-500' : 'bg-slate-300';
   }
-
-  matchesSpendRange(totalSpent: number): boolean {
-    switch (this.spendRangeFilter) {
-      case 'lt_1000':
-        return totalSpent < 1000;
-      case '1000_5000':
-        return totalSpent >= 1000 && totalSpent <= 5000;
-      case 'gt_5000':
-        return totalSpent > 5000;
-      default:
-        return true;
-    }
-  }
-
-  get mappedCityOptions(): any[] {
-    return [
-      {value: 'all', labelKey: 'CUSTOMERS.FILTERS.ALL'},
-      ...this.cityOptions.map((c: string) => ({value: c, label: c}))
-    ];
-  }
 }
-
-

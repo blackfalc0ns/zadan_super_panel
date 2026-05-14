@@ -357,8 +357,25 @@
       "CITY": "المدينة",
       "STATUS": "الحالة",
       "SPEND_RANGE": "نطاق الإنفاق",
+      "SPEND": "الإنفاق",
       "APPLY": "تصفية",
-      "RESET": "إعادة ضبط"
+      "RESET": "إعادة ضبط",
+      "FILTER_CUSTOMERS": "تصفية العملاء",
+      "ADJUST_CRITERIA": "اضبط معايير البحث",
+      "HAS_ORDERS": "حالة الطلبات",
+      "WITH_ORDERS": "لديه طلبات",
+      "NO_ORDERS": "بدون طلبات",
+      "ACCOUNT_LOCKED": "قفل الحساب",
+      "LOCKED": "مقفل",
+      "UNLOCKED": "غير مقفل",
+      "MIN_SPENT": "الحد الأدنى للإنفاق",
+      "MAX_SPENT": "الحد الأقصى للإنفاق",
+      "UPTO": "حتى",
+      "SORT_BY": "الترتيب",
+      "SORT_OLDEST": "الأقدم أولاً",
+      "SORT_NAME_ASC": "الاسم (أ - ي)",
+      "SORT_NAME_DESC": "الاسم (ي - أ)",
+      "SORT_LAST_LOGIN": "آخر تسجيل دخول"
     },
     "TABLE": {
       "CUSTOMER": "العميل",
@@ -1585,28 +1602,25 @@
           "CHECKLIST": {
             "PERSONAL_INFO": "البيانات الشخصية مكتملة",
             "VEHICLE_INFO": "بيانات المركبة مكتملة",
-            "NATIONAL_ID_DOCUMENT": "الهوية الوطنية متوفرة وصالحة",
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
             "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-            "VEHICLE_DOCUMENT": "رخصة المركبة متوفرة وصالحة",
-            "PERSONAL_PHOTO": "الصورة الشخصية متوفرة",
+            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
             "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
           },
           "CHECKLIST_NOTES": {
-            "MISSING_PERSONAL_INFO_NOTE": "معلومات الملف الأساسية غير مكتملة.",
-            "MISSING_VEHICLE_INFO_NOTE": "تفاصيل المركبة التشغيلية غير مكتملة.",
+            "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
+            "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية للمركبة ناقصة.",
             "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
-            "MISSING_ZONE_SELECTION_NOTE": "ما زالت منطقة التشغيل الأساسية مطلوبة.",
-            "EXPIRED_DOCUMENT_NOTE": "المستند المرفوع منتهي الصلاحية ويجب تجديده.",
-            "REJECTED_DOCUMENT_NOTE": "تم رفض هذا المستند ويحتاج إلى إعادة رفع صحيحة.",
-            "PENDING_DOCUMENT_REVIEW_NOTE": "تم رفع المستند وهو بانتظار مراجعة الإدارة."
+            "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية."
           },
           "REJECTION_REASONS": {
             "MISSING_PERSONAL_INFO": "نقص في البيانات الشخصية",
             "MISSING_VEHICLE_INFO": "نقص في بيانات المركبة",
             "MISSING_DOCUMENTS": "نقص في المستندات المطلوبة",
-            "MISSING_ZONE_SELECTION": "المنطقة الأساسية غير محددة",
-            "QUALITY_ISSUE": "مشكلة في جودة المستند",
-            "ZONE_MISSING": "المنطقة الأساسية مفقودة"
+            "MISSING_ZONE_SELECTION": "لم يتم تحديد المنطقة الأساسية",
+            "QUALITY_ISSUE": "مشكلة في جودة المستندات",
+            "ZONE_MISSING": "المنطقة الأساسية غير محددة"
           }
         },
         "DYNAMIC": {
@@ -1663,31 +1677,6 @@
               "RECENT_CAPTURE": "تم الالتقاط مؤخرًا",
               "BIOMETRIC_CHECK": "تحقق حيوي"
             }
-          }
-        },
-        "BACKEND": {
-          "CHECKLIST": {
-            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
-            "VEHICLE_INFO": "بيانات المركبة مكتملة",
-            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
-            "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
-          },
-          "CHECKLIST_NOTES": {
-            "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
-            "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية للمركبة ناقصة.",
-            "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
-            "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية."
-          },
-          "REJECTION_REASONS": {
-            "MISSING_PERSONAL_INFO": "نقص في البيانات الشخصية",
-            "MISSING_VEHICLE_INFO": "نقص في بيانات المركبة",
-            "MISSING_DOCUMENTS": "نقص في المستندات المطلوبة",
-            "MISSING_ZONE_SELECTION": "لم يتم تحديد المنطقة الأساسية",
-            "QUALITY_ISSUE": "مشكلة في جودة المستندات",
-            "ZONE_MISSING": "المنطقة الأساسية غير محددة"
           }
         },
         "NO_RECOMMENDATION_REASON": "لم يتم إضافة سبب للتوصية بعد."
@@ -2028,17 +2017,17 @@
     "LOG_HISTORY": "تاريخ السجلات",
     "EXPORT": "تصدير",
     "VIEW_ALL_LOGS": "عرض جميع سجلات التدقيق",
-      "TABS": {
-        "OVERVIEW": "نظرة عامة",
-        "VENDORS": "الموردين",
-        "DRIVERS": "السائقين",
-        "ORDERS": "الطلبات",
-        "FINANCE": "المالية",
-        "DAY": "يوم",
-        "WEEK": "أسبوع",
-        "MONTH": "شهر",
-        "YEAR": "سنة"
-      },
+    "TABS": {
+      "OVERVIEW": "نظرة عامة",
+      "VENDORS": "الموردين",
+      "DRIVERS": "السائقين",
+      "ORDERS": "الطلبات",
+      "FINANCE": "المالية",
+      "DAY": "يوم",
+      "WEEK": "أسبوع",
+      "MONTH": "شهر",
+      "YEAR": "سنة"
+    },
     "METRICS": {
       "TRAFFIC": "نمو حركة الزوار",
       "CONVERSION": "معدل التحويل",
@@ -2059,9 +2048,42 @@
     "RUN_DIAGNOSTICS": "تشغيل التشخيص",
     "CATALOG_PULSE": "نبض الكتالوج",
     "STATS": {
-      "TOTAL_PRODUCTS": "المنتجات الرئيسية",
-      "ACTIVE_CATEGORIES": "فئات الكيانات",
-      "OUT_OF_STOCK": "نقص المخزون"
+      "ADMIN_USERS": "مستخدمو الأدمن",
+      "ACTIVE_USERS": "مستخدمون نشطون مؤخرًا",
+      "UNREAD_NOTIFICATIONS": "إشعارات غير مقروءة",
+      "PUSH_DEVICES": "أجهزة الإشعارات",
+      "TOTAL_ORDERS": "إجمالي الطلبات",
+      "LATE_ORDERS": "طلبات متأخرة",
+      "CANCELLATIONS": "طلبات ملغاة",
+      "AVG_BASKET": "متوسط السلة",
+      "ACTIVE_VENDORS": "تجار نشطون",
+      "PENDING_VENDORS": "تجار قيد المراجعة",
+      "BLOCKED_VENDORS": "تجار محجوبون",
+      "VENDOR_BRANCHES": "فروع التجار",
+      "READY_DRIVERS": "سائقون جاهزون",
+      "LIMITED_DRIVERS": "سائقون محدودون",
+      "BLOCKED_DRIVERS": "سائقون محجوبون",
+      "DRIVER_INCIDENTS": "حوادث مفتوحة",
+      "CUSTOMERS_TOTAL": "قاعدة العملاء",
+      "CUSTOMERS_NEW": "عملاء جدد",
+      "CUSTOMERS_ACTIVE": "عملاء نشطون",
+      "AVG_RATING": "متوسط التقييم",
+      "FINANCE_GMV": "إجمالي المبيعات للفترة",
+      "REFUNDS_TOTAL": "إجمالي الاستردادات",
+      "SETTLED_NET": "صافي التسويات",
+      "WALLETS_COUNT": "المحافظ",
+      "MASTER_PRODUCTS": "المنتجات الرئيسية",
+      "BRANDS": "العلامات التجارية",
+      "CATEGORIES": "التصنيفات",
+      "LOW_STOCK": "عناصر منخفضة المخزون",
+      "ACTIVE_COUPONS": "كوبونات نشطة",
+      "HOME_BANNERS": "بانرات الصفحة الرئيسية",
+      "FEATURED_PLACEMENTS": "مواضع مميزة",
+      "REVIEW_SCORE": "مستوى التقييم",
+      "ROLES_COUNT": "الأدوار",
+      "PERMISSIONS_COUNT": "الصلاحيات",
+      "ACCESS_SCOPES": "نطاقات الوصول",
+      "OVERRIDES_COUNT": "تجاوزات الصلاحيات"
     },
     "AUDIT_LOG": "سجل تدقيق النظام",
     "LOG": {
@@ -2392,44 +2414,6 @@
         "DESC": "شكل وصول الأدمن واتساع الصلاحيات ووضوح الحسابات المحجوبة.",
         "STATUS": "{{locked}} أدمنات محجوبة، {{inactive}} أدمنات غير نشطة"
       }
-    },
-    "STATS": {
-      "ADMIN_USERS": "مستخدمو الأدمن",
-      "ACTIVE_USERS": "مستخدمون نشطون مؤخرًا",
-      "UNREAD_NOTIFICATIONS": "إشعارات غير مقروءة",
-      "PUSH_DEVICES": "أجهزة الإشعارات",
-      "TOTAL_ORDERS": "إجمالي الطلبات",
-      "LATE_ORDERS": "طلبات متأخرة",
-      "CANCELLATIONS": "طلبات ملغاة",
-      "AVG_BASKET": "متوسط السلة",
-      "ACTIVE_VENDORS": "تجار نشطون",
-      "PENDING_VENDORS": "تجار قيد المراجعة",
-      "BLOCKED_VENDORS": "تجار محجوبون",
-      "VENDOR_BRANCHES": "فروع التجار",
-      "READY_DRIVERS": "سائقون جاهزون",
-      "LIMITED_DRIVERS": "سائقون محدودون",
-      "BLOCKED_DRIVERS": "سائقون محجوبون",
-      "DRIVER_INCIDENTS": "حوادث مفتوحة",
-      "CUSTOMERS_TOTAL": "قاعدة العملاء",
-      "CUSTOMERS_NEW": "عملاء جدد",
-      "CUSTOMERS_ACTIVE": "عملاء نشطون",
-      "AVG_RATING": "متوسط التقييم",
-      "FINANCE_GMV": "إجمالي المبيعات للفترة",
-      "REFUNDS_TOTAL": "إجمالي الاستردادات",
-      "SETTLED_NET": "صافي التسويات",
-      "WALLETS_COUNT": "المحافظ",
-      "MASTER_PRODUCTS": "المنتجات الرئيسية",
-      "BRANDS": "العلامات التجارية",
-      "CATEGORIES": "التصنيفات",
-      "LOW_STOCK": "عناصر منخفضة المخزون",
-      "ACTIVE_COUPONS": "كوبونات نشطة",
-      "HOME_BANNERS": "بانرات الصفحة الرئيسية",
-      "FEATURED_PLACEMENTS": "مواضع مميزة",
-      "REVIEW_SCORE": "مستوى التقييم",
-      "ROLES_COUNT": "الأدوار",
-      "PERMISSIONS_COUNT": "الصلاحيات",
-      "ACCESS_SCOPES": "نطاقات الوصول",
-      "OVERRIDES_COUNT": "تجاوزات الصلاحيات"
     },
     "STATS_HELPERS": {
       "ADMIN_USERS": "الحسابات التي تدير أسطح الإدارة الآن.",
@@ -2860,7 +2844,8 @@
       "EMPTY_TITLE": "لا توجد نزاعات",
       "EMPTY_MESSAGE": "لا توجد حالات دعم لهذا التاجر تطابق الفلاتر الحالية."
     }
-  },  "VENDOR_DETAIL": {
+  },
+  "VENDOR_DETAIL": {
     "TITLE": "تفاصيل التاجر",
     "STATUS_ACTIVE": "نشط",
     "STATUS_VERIFIED": "موثق",
@@ -4735,311 +4720,475 @@
     "STATUS_DELIVERED": "تم التسليم"
   },
   "FINANCES": {
-    "TITLE": "المالية",
-    "SUBTITLE": "التسعير والإيرادات والتسويات والنزاعات في مكان واحد",
-    "EXPORT": "تصدير",
-    "CONFIGURE": "إعداد",
-    "LAST_UPDATED": "آخر تحديث",
-    "TABS": {
-      "DASHBOARD": "لوحة التحكم",
-      "PRICING": "التسعير",
-      "LEDGER": "الدفتر المالي",
-      "SETTLEMENTS": "التسويات",
-      "COD": "الدفع عند الاستلام",
-      "REFUNDS": "الاستردادات",
-      "ADJUSTMENTS": "التعديلات",
-      "AUDIT": "التدقيق"
+    "SHELL": {
+      "TITLE": "المالية والحسابات",
+      "SUBTITLE": "الإدارة المركزية للتدفقات النقدية، التسويات، والمحافظ",
+      "EXPORT_REPORTS": "تصدير التقارير",
+      "CONNECTED": "متصل بالشبكة",
+      "COMING_SOON": "قريباً",
+      "GROUPS": {
+        "DASHBOARD": "نظرة عامة",
+        "ACCOUNTS": "المحافظ والسجلات",
+        "OPERATIONS": "العمليات والتسويات",
+        "DISPUTES": "المنازعات المالية",
+        "SETTINGS": "الرسوم والتدقيق"
+      },
+      "ROUTES": {
+        "OVERVIEW": {
+          "LABEL": "اللوحة الرئيسية",
+          "SUMMARY": "ملخص للإيرادات وحالة العمليات المفتوحة."
+        },
+        "WALLETS": {
+          "LABEL": "أرصدة المحافظ",
+          "SUMMARY": "إدارة المحافظ الافتراضية للمتاجر والمناديب وتتبع الأرصدة."
+        },
+        "LEDGER": {
+          "LABEL": "السجل المالي",
+          "SUMMARY": "سجل تدقيق يوضح جميع الحركات المالية الداخلة والخارجة."
+        },
+        "ADJUSTMENTS": {
+          "LABEL": "تسويات يدوية",
+          "SUMMARY": "القيام بإدخالات مالية يدوية وتصحيح الأرصدة."
+        },
+        "SETTLEMENTS": {
+          "LABEL": "التسويات الدورية",
+          "SUMMARY": "دفع المستحقات المالية الدورية للمتاجر والمناديب."
+        },
+        "WITHDRAWALS": {
+          "LABEL": "طلبات السحب",
+          "SUMMARY": "الطلبات المرفوعة من المناديب لسحب أرصدتهم النقدية."
+        },
+        "COD": {
+          "LABEL": "مطابقة COD",
+          "SUMMARY": "تتبع وتحصيل المبالغ النقدية الدفع عند الاستلام من المناديب."
+        },
+        "REFUNDS": {
+          "LABEL": "طلبات التعويض والمرتجعات",
+          "SUMMARY": "إدارة طلبات التعويض وتحديد الجهة المسؤولة عن الخسارة."
+        },
+        "PRICING": {
+          "LABEL": "هيكلة التسعير",
+          "SUMMARY": "تكوين عمولات المنصة، رسوم التوصيل، ونسب ضريبة القيمة المضافة."
+        },
+        "AUDIT": {
+          "LABEL": "سجل التدقيق",
+          "SUMMARY": "تتبع كافة التغييرات الحساسة التي تمت على النظام المالي."
+        }
+      }
+    },
+    "DASHBOARD": {
+      "TITLE": "اللوحة المالية",
+      "SUBTITLE": "مراقبة الأداء المالي، التدفقات النقدية، والتنبيهات التشغيلية.",
+      "LOAD_ERROR_TITLE": "فشل تحميل البيانات",
+      "LOAD_ERROR_MESSAGE": "حدث خطأ أثناء محاولة جلب البيانات المالية. يرجى المحاولة مرة أخرى.",
+      "RETRY": "إعادة المحاولة",
+      "NO_ALERTS_TITLE": "النظام المالي مستقر",
+      "NO_ALERTS_MESSAGE": "لا توجد تنبيهات مالية تتطلب تدخلاً فورياً حالياً."
     },
     "PERIODS": {
       "TODAY": "اليوم",
-      "WEEK": "أسبوع",
-      "MONTH": "شهر",
-      "QUARTER": "ربع سنة",
-      "THIS_WEEK": "هذا الأسبوع",
-      "THIS_MONTH": "هذا الشهر",
-      "THIS_QUARTER": "هذا الربع",
-      "MAR_2026": "مارس 2026"
+      "WEEK": "هذا الأسبوع",
+      "MONTH": "هذا الشهر",
+      "QUARTER": "الربع الحالي"
+    },
+    "CHART": {
+      "GMV_VS_REVENUE": "إجمالي القيمة مقابل صافي الإيرادات",
+      "LAST_7_MONTHS": "مقارنة الأداء خلال آخر 7 أشهر",
+      "COMPOSITION": "تكوين الإيرادات",
+      "REVENUE_BREAKDOWN": "توزيع مصادر الدخل التشغيلي",
+      "REFUND_TREND": "اتجاه المرتجعات",
+      "REFUND_RATE": "مراقبة نسبة الاستردادات المالية",
+      "SERIES_GMV": "إجمالي قيمة الطلبات (GMV)",
+      "SERIES_NET_REVENUE": "صافي إيرادات المنصة"
+    },
+    "ALERTS": {
+      "TITLE": "تنبيهات مالية"
+    },
+    "ACTIONS": {
+      "VIEW_ALL": "عرض الكل",
+      "OPEN": "فتح"
+    },
+    "NARRATIVES": {
+      "STABLE": "قاعدة أساسية مستقرة",
+      "IMPROVING": "الزخم يتحسن",
+      "ATTENTION": "يحتاج إلى اهتمام",
+      "STEADY": "ثابت ومستقر"
+    },
+    "MONTHS": {
+      "JAN": "يناير",
+      "FEB": "فبراير",
+      "MAR": "مارس",
+      "APR": "أبريل",
+      "MAY": "مايو",
+      "JUN": "يونيو",
+      "JUL": "يوليو",
+      "AUG": "أغسطس",
+      "SEP": "سبتمبر",
+      "OCT": "أكتوبر",
+      "NOV": "نوفمبر",
+      "DEC": "ديسمبر"
     },
     "COMMON": {
-      "ACTIONS": "الإجراءات",
-      "STATUS": "الحالة",
-      "CANCEL": "إلغاء",
       "VIEW": "عرض",
       "HIDE": "إخفاء",
-      "BEFORE": "قبل",
-      "AFTER": "بعد",
-      "TIMESTAMP": "الوقت",
+      "TIMESTAMP": "وقت العملية",
       "ENTITY": "الكيان",
-      "TYPE": "النوع",
-      "REFERENCE": "المرجع",
-      "AMOUNT": "المبلغ",
-      "DIRECTION": "الاتجاه"
+      "BEFORE": "قبل التعديل",
+      "AFTER": "بعد التعديل"
     },
     "TIME": {
       "JUST_NOW": "الآن",
       "MINUTES_AGO": "منذ {{count}} دقيقة",
       "HOURS_AGO": "منذ {{count}} ساعة"
     },
-    "DIRECTIONS": {
-      "CREDIT": "إضافة",
-      "DEBIT": "خصم"
-    },
-    "ENTITIES": {
-      "VENDOR": "مورّد",
-      "DRIVER": "سائق",
-      "ORDER": "طلب",
-      "PLATFORM": "المنصة",
-      "CUSTOMER": "عميل"
-    },
     "STATUS": {
       "PENDING": "قيد الانتظار",
       "PROCESSING": "قيد المعالجة",
-      "PAID": "مدفوع",
+      "PAID": "تم الدفع",
       "FAILED": "فشل",
       "DISPUTED": "متنازع عليه",
       "OPEN": "مفتوح",
       "UNDER_REVIEW": "قيد المراجعة",
       "APPROVED": "معتمد",
       "REJECTED": "مرفوض",
-      "ESCALATED": "تم التصعيد",
+      "ESCALATED": "مصعّد",
       "COLLECTED": "تم التحصيل",
       "OVERDUE": "متأخر",
-      "PENDING_APPROVAL": "بانتظار الموافقة",
-      "COMPLETED": "مكتمل",
-      "IN_PROGRESS": "قيد التنفيذ"
+      "PENDING_APPROVAL": "في انتظار الاعتماد"
     },
-    "CHART": {
-      "GMV_VS_REVENUE": "إجمالي قيمة البضائع مقابل صافي الإيراد",
-      "LAST_7_MONTHS": "آخر 7 أشهر",
-      "COMPOSITION": "التركيب",
-      "REVENUE_BREAKDOWN": "توزيع الإيرادات",
-      "REFUND_TREND": "اتجاه الاستردادات",
-      "REFUND_RATE": "نسبة الاسترداد",
-      "SERIES_GMV": "إجمالي قيمة البضائع",
-      "SERIES_NET_REVENUE": "صافي الإيراد"
-    },
-    "KPI": {
-      "GMV": "إجمالي قيمة البضائع",
-      "NET_REVENUE": "صافي الإيراد",
-      "VENDOR_COMMISSIONS": "عمولات المورّدين",
-      "DRIVER_PAYOUTS": "مستحقات السائقين",
-      "REFUND_RATIO": "نسبة الاسترداد",
-      "DISPUTE_EXPOSURE": "مخاطر النزاعات",
-      "VS_LAST_MONTH": "مقارنة بالشهر الماضي"
-    },
-    "COMPOSITION": {
-      "COMMISSIONS": "العمولات",
-      "DELIVERY_FEES": "رسوم التوصيل",
-      "SERVICE_FEES": "رسوم الخدمة",
-      "COD_FEES": "رسوم الدفع عند الاستلام",
-      "VAT": "ضريبة القيمة المضافة"
-    },
-    "ALERTS": {
-      "TITLE": "تنبيهات تحتاج متابعة",
-      "NEGATIVE_MARGIN": "هامش سلبي",
-      "NEGATIVE_MARGIN_DESC": "انخفض هامش الربح في أحد القطاعات بعد احتساب التوصيل والاستردادات.",
-      "HIGH_DISPUTE_VENDOR": "مورّد عالي النزاعات",
-      "HIGH_DISPUTE_VENDOR_DESC": "تجاوز أحد المورّدين حد النزاعات هذا الأسبوع ويحتاج إلى مراجعة مالية.",
-      "COD_OVERDUE": "تحصيلات COD متأخرة",
-      "COD_OVERDUE_DESC": "هناك تحصيلات دفع عند الاستلام لم تُسوَّ بعد ضمن المهلة المتوقعة.",
-      "SETTLEMENT_DUE": "تسوية مستحقة",
-      "SETTLEMENT_DUE_DESC": "بعض التسويات المعلّقة اقتربت من موعد الصرف."
-    },
-    "DASHBOARD": {
-      "LOAD_ERROR_TITLE": "بيانات اللوحة تحتاج إعادة تحميل",
-      "LOAD_ERROR_MESSAGE": "تعذر إكمال تحميل نظرة المالية العامة الآن. أعد المحاولة وستبقى بقية صفحات المركز المالي متاحة.",
-      "RETRY": "إعادة المحاولة",
-      "NO_ALERTS_TITLE": "لا توجد تنبيهات مالية حاليًا",
-      "NO_ALERTS_MESSAGE": "هوامش الربح والاستردادات وCOD والتسويات ضمن النطاق المتوقع حاليًا."
-    },
-    "ACTIONS": {
-      "VIEW_ALL": "عرض الكل",
-      "VIEW_VENDOR": "عرض المورّد",
-      "VIEW_REFUNDS": "عرض الاستردادات",
-      "VIEW_COD": "عرض الدفع عند الاستلام",
-      "VIEW_SETTLEMENTS": "عرض التسويات",
-      "APPROVE": "اعتماد",
-      "REJECT": "رفض",
-      "ESCALATE": "تصعيد",
-      "PROCESS": "معالجة"
-    },
-    "FILTERS": {
-      "TITLE": "تصفية المالية",
-      "SUBTITLE": "ابحث وعدّل نطاق العرض",
-      "ACTIVE": "الفلاتر النشطة",
-      "PERIOD": "الفترة",
-      "SEARCH_PLACEHOLDER": "ابحث بالطلب أو التسوية أو المرجع...",
-      "ALL": "الكل",
-      "ALL_PERIODS": "كل الفترات",
-      "ALL_ENTITIES": "كل الكيانات",
-      "ALL_TYPES": "كل الأنواع",
-      "CLEAR": "مسح"
+    "ENTITIES": {
+      "VENDOR": "متجر",
+      "DRIVER": "مندوب",
+      "ORDER": "طلب",
+      "PLATFORM": "المنصة",
+      "CUSTOMER": "عميل"
     },
     "LEDGER": {
-      "BALANCE_AFTER": "الرصيد بعد العملية",
-      "ENTRY_TITLE": "قيد الدفتر المالي",
+      "TITLE": "السجل المالي (Ledger)",
+      "SUBTITLE": "مراقبة شاملة لجميع التدفقات النقدية، التسويات، الرسوم، وحركات المحافظ",
+      "DETAIL_TITLE": "تفاصيل العملية المالية",
+      "DIRECTION_CREDIT": "إيداع (دائن)",
+      "DIRECTION_DEBIT": "خصم (مدين)",
+      "ENTITY_LINKED": "الكيان المرتبط",
+      "ENTRY_TYPE": "نوع العملية",
+      "PRIMARY_REF": "المرجع الأساسي",
       "ORDER_ID": "رقم الطلب",
-      "SETTLEMENT": "التسوية",
-      "EMPTY": {
-        "TITLE": "لا توجد قيود",
-        "MESSAGE": "جرّب تعديل الفلاتر لعرض المزيد من حركة الدفتر المالي."
-      },
-      "SUMMARY": {
-        "TOTAL_ENTRIES": "إجمالي القيود",
-        "TOTAL_CREDITS": "إجمالي الإضافات",
-        "TOTAL_DEBITS": "إجمالي الخصومات",
-        "NET_FLOW": "صافي الحركة"
-      },
-      "TYPES": {
-        "COMMISSION": "عمولة",
-        "PAYOUT": "دفعة",
-        "REFUND": "استرداد",
-        "SETTLEMENT": "تسوية",
-        "ADJUSTMENT": "تعديل",
-        "SERVICE_FEE": "رسوم خدمة",
-        "DELIVERY_FEE": "رسوم توصيل",
-        "VAT": "ضريبة القيمة المضافة",
-        "BONUS": "مكافأة",
-        "PENALTY": "غرامة",
-        "COD_COLLECTION": "تحصيل الدفع عند الاستلام"
-      },
-      "DESC": {
-        "COMMISSION": "عمولة المنصة المحسوبة على إيراد الطلب.",
-        "PAYOUT": "دفعة مصروفة إلى السائق أو المورّد.",
-        "REFUND": "استرداد مُعالج لطلب عميل.",
-        "SERVICE_FEE": "رسوم خدمة مُحصلة على الطلب.",
-        "DELIVERY_FEE": "رسوم توصيل مُحصلة على الطلب.",
-        "ADJUSTMENT": "تعديل يدوي على الرصيد بواسطة المسؤول.",
-        "SETTLEMENT": "دفعة تسوية تم ترحيلها إلى الدفتر المالي.",
-        "COD_COLLECTION": "مبلغ دفع عند الاستلام تم تحصيله.",
-        "VAT": "ضريبة قيمة مضافة مطبقة على الرسوم الخاضعة.",
-        "BONUS": "مكافأة تشغيلية أو ترويجية.",
-        "PENALTY": "غرامة مخصومة بسبب مخالفة سياسة."
-      },
-      "TITLE": "دفتر القيود المالية"
-    },
-    "SETTLEMENTS": {
-      "VENDORS": "المورّدون",
-      "DRIVERS": "السائقون",
-      "VENDOR_LIST": "تسويات المورّدين",
-      "DRIVER_LIST": "تسويات السائقين",
-      "NEW_SETTLEMENT": "تسوية جديدة",
-      "PROCESS_SETTLEMENT": "معالجة التسوية",
-      "DOWNLOAD_STATEMENT": "تنزيل الكشف",
-      "SUMMARY": {
-        "TOTAL_SETTLEMENTS": "إجمالي التسويات",
-        "PAID": "المدفوع",
-        "PENDING": "المعلّق",
-        "TOTAL_NET": "إجمالي صافي المستحقات"
+      "SETTLEMENT_ID": "رقم التسوية",
+      "BALANCE_AFTER": "الرصيد المتبقي",
+      "DATE_TIME": "التاريخ والوقت",
+      "EXPORT_CSV": "تصدير CSV",
+      "SCOPED_ORDER": "طلب محدد",
+      "VIEW_PROFILE": "عرض الملف",
+      "CLEAR_SCOPE": "مسح الفلتر",
+      "STATS": {
+        "TOTAL_ENTRIES": "إجمالي الحركات",
+        "TOTAL_CREDITS": "إجمالي الإيداعات (+)",
+        "TOTAL_DEBITS": "إجمالي الخصومات (-)",
+        "NET_FLOW": "صافي التدفق المالي"
       },
       "TABLE": {
-        "SETTLEMENT": "التسوية",
+        "DATE": "التاريخ",
         "ENTITY": "الكيان",
-        "PERIOD": "الفترة",
-        "ORDERS": "الطلبات",
-        "GROSS": "الإجمالي",
-        "DEDUCTIONS": "الاستقطاعات",
-        "NET_PAYOUT": "صافي المستحق"
+        "TYPE": "النوع",
+        "REF": "المرجع",
+        "AMOUNT": "المبلغ",
+        "DIRECTION": "الاتجاه",
+        "BALANCE": "الرصيد اللاحق"
       },
-      "DRAWER": {
-        "NET_PAYOUT": "صافي المستحق",
-        "GROSS_AMOUNT": "إجمالي المبلغ",
-        "DEDUCTIONS": "الاستقطاعات",
+      "NO_ENTRIES_TITLE": "لا توجد سجلات مطابقة",
+      "NO_ENTRIES_DESC": "لم نتمكن من العثور على أي حركات مالية تتطابق مع الفلاتر الحالية. جرب تغيير فلاتر البحث.",
+      "TYPES": {
+        "COMMISSION": "عمولة منصة",
+        "PAYOUT": "تسوية نقدية",
+        "REFUND": "مسترد",
+        "SETTLEMENT": "تسوية مالية",
+        "ADJUSTMENT": "تسوية يدوية",
+        "SERVICE_FEE": "رسوم خدمة",
+        "DELIVERY_FEE": "رسوم توصيل",
+        "VAT": "ضريبة (VAT)",
+        "BONUS": "مكافأة",
+        "PENALTY": "غرامة",
+        "COD_COLLECTION": "تحصيل كاش"
+      }
+    },
+    "SETTLEMENTS": {
+      "TITLE": "التسويات المالية (Settlements)",
+      "SUBTITLE": "إدارة عمليات الدفع وتحويل المستحقات للمتاجر والمناديب وتتبع حالتها",
+      "DETAIL_TITLE": "تفاصيل التسوية المالية",
+      "NET_DUE": "صافي المستحقات (للدفع)",
+      "GROSS_REVENUE": "إجمالي الإيرادات",
+      "DEDUCTIONS": "الاستقطاعات والعمولات",
+      "ORDERS_COUNT": "عدد الطلبات",
+      "ORDERS_COUNT_VAL": "{{count}} طلب",
+      "FINANCIAL_PERIOD": "الفترة المالية",
+      "PROCESS_PAYMENT": "تنفيذ التحويل (دفع)",
+      "ACCOUNT_STATEMENT": "كشف حساب",
+      "TABS": {
+        "VENDORS": "تسويات المتاجر",
+        "DRIVERS": "تسويات المناديب"
+      },
+      "SCOPED": {
+        "VENDOR": "تسويات متجر محدد",
+        "DRIVER": "تسويات مندوب محدد"
+      },
+      "STATS": {
+        "TOTAL": "إجمالي التسويات",
+        "PAID": "المدفوعة (مكتملة)",
+        "PENDING": "المعلقة (بانتظار الدفع)",
+        "TOTAL_AMOUNT": "إجمالي المبالغ"
+      },
+      "TABLE": {
+        "TITLE": "قائمة المستحقات المطلوبة",
+        "DESC": "تفاصيل الدفعات المعلقة والمكتملة",
+        "CREATE_EXTRA": "إنشاء تسوية استثنائية",
+        "CODE": "رقم التسوية",
+        "ENTITY": "الكيان المرتبط",
+        "PERIOD": "الفترة المالية",
         "ORDERS": "الطلبات",
-        "PERIOD": "الفترة"
+        "REVENUE": "الإيرادات",
+        "DEDUCTION": "الاستقطاع",
+        "NET_PAY": "صافي الدفع",
+        "STATUS": "الحالة",
+        "ACTIONS": "إجراءات",
+        "PAY_NOW": "دفع الآن"
+      },
+      "NO_DATA_TITLE": "لا توجد تسويات مالية",
+      "NO_DATA_DESC": "لا يوجد أي مستحقات مسجلة حالياً ضمن هذا التصنيف.",
+      "PERIODS": {
+        "WEEKLY": "أسبوعي",
+        "BI_WEEKLY": "كل أسبوعين",
+        "MONTHLY": "شهري",
+        "DAILY": "يومي"
       }
     },
     "COD": {
-      "TITLE": "مطابقة الدفع عند الاستلام",
-      "RECONCILE_ALL": "مطابقة الكل",
-      "RECONCILE": "مطابقة",
-      "DONE": "تم",
-      "MATCHED": "متطابق",
-      "SUMMARY": {
-        "EXPECTED": "المتوقع",
-        "COLLECTED": "المحصّل",
-        "DELTA": "الفرق",
-        "OVERDUE": "المتأخر",
-        "PENDING": "المعلّق"
+      "TITLE": "مطابقة الدفع عند الاستلام (COD)",
+      "SUBTITLE": "مراقبة ومطابقة المبالغ النقدية المحصلة من العملاء عبر المناديب وتسويتها",
+      "SETTLE_PENDING": "تسوية المبالغ المعلقة",
+      "SCOPED": {
+        "ORDER": "مطابقة طلب محدد",
+        "VENDOR": "مطابقة متجر محدد",
+        "DRIVER": "مطابقة مندوب محدد"
+      },
+      "STATS": {
+        "TOTAL_EXPECTED": "إجمالي المتوقع تحصيله",
+        "TOTAL_COLLECTED": "المُحصّل الفعلي وتمت تسويته",
+        "TOTAL_DELTA": "الفارق المالي (العجز / الزيادة)",
+        "OVERDUE_CASES": "مبالغ متأخرة التحصيل",
+        "PENDING_CASES": "بانتظار التسوية (معلق)",
+        "ORDER_UNIT": "طلب"
       },
       "TABLE": {
-        "ORDER": "الطلب",
-        "DRIVER": "السائق",
-        "VENDOR": "المورّد",
-        "EXPECTED": "المتوقع",
-        "COLLECTED": "المحصّل",
-        "DELTA": "الفرق"
+        "TITLE": "سجل المطابقات",
+        "DESC": "تفاصيل المبالغ لكل طلب وحالة التسوية الميدانية",
+        "ORDER_REF": "الطلب (المرجع)",
+        "COLLECTOR_DRIVER": "المندوب المُحصل",
+        "VENDOR": "المتجر",
+        "EXPECTED_AMOUNT": "المبلغ المطلوب تحصيله",
+        "ACTUAL_COLLECTED": "ما تم توريده فعلياً",
+        "FINANCIAL_DELTA": "الفارق المالي (العجز)",
+        "STATUS": "الحالة",
+        "ACTION": "الإجراء",
+        "MANUAL_SETTLE": "تسوية يدوية",
+        "SETTLED": "تمت التسوية",
+        "MATCHED": "متطابق"
+      },
+      "NO_DATA_TITLE": "لا يوجد بيانات مطابقة",
+      "NO_DATA_DESC": "جميع المبالغ المحصلة مسواة بالكامل أو لم يتم العثور على سجلات تطابق طلبك."
+    },
+    "DIRECTIONS": {
+      "CREDIT": "دائن (+)",
+      "DEBIT": "مدين (-)"
+    },
+    "PRICING": {
+      "TITLE": "إعدادات التسعير والرسوم",
+      "SUBTITLE": "إدارة رسوم التوصيل والضريبة ورسوم الدفع عند الاستلام لكل منطقة من البيانات الحقيقية في الباك إند.",
+      "CONFIRM_SAVE_TITLE": "تأكيد حفظ الإعدادات",
+      "CONFIRM_SAVE_MESSAGE": "سيتم حفظ إعدادات التسعير وضريبة القيمة المضافة ورسوم الدفع عند الاستلام للمنطقة المحددة.",
+      "SAVE_SUCCESS": "تم حفظ إعدادات المنطقة وربطها بالباك إند بنجاح.",
+      "LOAD_ZONES": "جاري تحميل المناطق...",
+      "UPDATE": "تحديث",
+      "DISCARD": "تجاهل التغييرات",
+      "SAVE_SETTINGS": "حفظ الإعدادات",
+      "SAVE_CHANGES": "حفظ التغييرات",
+      "AVAILABLE_ZONES": "المناطق المتاحة",
+      "SELECT_ZONE_DESC": "اختر المنطقة التي تريد تعديلها، ثم احفظ إعدادات التسعير والضريبة ورسوم الدفع عند الاستلام الخاصة بها.",
+      "ZONES_COUNT": "{{count}} منطقة",
+      "ZONES_COUNT_PLURAL": "{{count}} مناطق",
+      "ZONE_LIST_LABEL": "قائمة المناطق",
+      "ACTIVE": "نشطة",
+      "INACTIVE": "موقوفة",
+      "VAT_LABEL": "ضريبة {{percent}}%",
+      "COD_LABEL_PERCENT": "الدفع عند الاستلام {{percent}}%",
+      "COD_LABEL_FLAT": "الدفع عند الاستلام {{amount}} ر.س",
+      "NO_ZONES_TITLE": "لا توجد مناطق متاحة",
+      "NO_ZONES_DESC": "لم يتم العثور على مناطق تسعير قابلة للإدارة من الباك إند.",
+      "SELECTED_ZONE": "المنطقة المختارة",
+      "UNSAVED_CHANGES": "توجد تغييرات غير محفوظة لهذه المنطقة.",
+      "ALL_SAVED": "كل تغييرات هذه المنطقة محفوظة.",
+      "BASE_DELIVERY": "التسعير الأساسي للتوصيل",
+      "BASE_DELIVERY_DESC": "مرتبط مباشرة بقاعدة التسعير الخاصة بالمنطقة.",
+      "BASE_FEE": "الرسوم الأساسية",
+      "INCLUDED_KM": "المسافة المشمولة",
+      "EXTRA_KM_FEE": "رسوم الكيلومتر الإضافي",
+      "MIN_FEE": "الحد الأدنى للرسوم",
+      "MAX_FEE": "الحد الأقصى للرسوم",
+      "COD_FEE": "رسوم الدفع عند الاستلام",
+      "COD_FEE_DESC": "مطابقة تمامًا للهيكل المدعوم في الباك إند.",
+      "FEE_TYPE": "نوع الرسوم",
+      "FLAT_FEE": "رسوم ثابتة",
+      "PERCENTAGE": "نسبة مئوية",
+      "BACKEND_HINT": "الباك إند يدعم حاليًا نوعًا واحدًا فعالًا لكل منطقة: ثابت أو نسبة.",
+      "FLAT_AMOUNT": "الرسوم الثابتة",
+      "VAT_TITLE": "ضريبة القيمة المضافة",
+      "VAT_DESC": "تُستخدم مباشرة في حسابات الـ checkout.",
+      "CURRENT_PERCENT": "النسبة الحالية المطبقة على المنطقة المحددة"
+    },
+    "CURRENCY": "ر.س",
+    "AUDIT": {
+      "TITLE": "سجل المراجعة المالية (Audit Log)",
+      "ENTRIES": "عملية مسجلة",
+      "BANNER_TITLE": "نظام تتبع العمليات المالية",
+      "BANNER_DESC": "هذا السجل يعرض جميع الحركات التي قام بها فريق الإدارة على النظام المالي لضمان الشفافية.",
+      "TABLE": {
+        "ADMIN": "المسؤول",
+        "ACTION": "الإجراء",
+        "CHANGES": "التفاصيل"
       }
     },
-    "REFUNDS": {
-      "FILTERS": {
-        "ALL": "الكل"
+    "WALLETS": {
+      "TITLE": "مركز عمليات المحافظ",
+      "SUBTITLE": "إدارة محافظ المتاجر والمناديب، ومراقبة الأرصدة المعلقة والمتاحة للسحب",
+      "ACTIVE_COUNT": "{{count}} محفظة نشطة",
+      "TOTAL_PLATFORM_BALANCE": "إجمالي رصيد المنصة",
+      "PENDING_WITHDRAWALS": "السحوبات المعلقة",
+      "TOTAL_WALLETS": "إجمالي المحافظ",
+      "WALLET_UNIT": "محفظة",
+      "AVAILABLE_BALANCE": "الرصيد المتاح",
+      "PENDING_BALANCE": "الرصيد المعلق",
+      "NO_PHONE": "لا يوجد رقم",
+      "TABS": {
+        "ALL": "الكل",
+        "VENDORS": "متاجر",
+        "DRIVERS": "مناديب"
       },
-      "SUMMARY": {
-        "OPEN_CASES": "الحالات المفتوحة",
-        "TOTAL_EXPOSURE": "إجمالي التعرّض",
-        "APPROVED": "القيمة المعتمدة",
-        "ESCALATED": "الحالات المصعّدة",
-        "TOTAL_CASES": "إجمالي الحالات"
+      "NO_DATA_TITLE": "لا توجد محافظ مطابقة",
+      "NO_DATA_DESC": "جرب تغيير فلاتر البحث وعرض كل المحافظ بدلاً من المحافظ المحددة بنوع معين."
+    },
+    "WALLET_DETAILS": {
+      "TITLE": "تفاصيل المحفظة المالية",
+      "SUBTITLE": "مراجعة السجل المالي، الأرصدة المتاحة، وإنشاء التسويات اليدوية",
+      "MANUAL_ADJUST": "تسوية يدوية",
+      "NO_PHONE_REGISTERED": "لا يوجد هاتف مسجل",
+      "PENDING_BALANCE_LABEL": "الرصيد المعلق (قيد الانتظار)",
+      "AVAILABLE_BALANCE_LABEL": "الرصيد المتاح",
+      "TABLE": {
+        "TITLE": "سجل حركات المحفظة",
+        "DESC": "تفاصيل العمليات، التسويات والمبالغ المستردة",
+        "DATETIME": "التاريخ والوقت",
+        "TYPE": "النوع",
+        "DESCRIPTION": "البيان / الوصف",
+        "REFERENCE": "المرجع",
+        "AMOUNT": "المبلغ",
+        "NO_REFERENCE": "بدون مرجع"
+      },
+      "NO_TXNS_TITLE": "لا توجد حركات مالية",
+      "NO_TXNS_DESC": "لم يتم تسجيل أي عمليات إيداع أو سحب في هذه المحفظة حتى الآن.",
+      "MODAL": {
+        "TITLE": "تسوية مالية يدوية",
+        "DIRECTION": "نوع التسوية (الاتجاه)",
+        "IN": "إيداع / إضافة رصيد (Credit IN)",
+        "OUT": "سحب / خصم رصيد (Debit OUT)",
+        "AMOUNT": "المبلغ (SAR)",
+        "REASON": "وصف / سبب التسوية",
+        "REASON_PLACEHOLDER": "مثال: تعويض مالي عن خطأ في الطلب رقم 123...",
+        "CANCEL": "إلغاء",
+        "CONFIRM": "تأكيد التسوية",
+        "PROCESSING": "جاري التنفيذ..."
+      },
+      "TXN_TYPES": {
+        "PAYOUT": "تسوية نقدية",
+        "REFUND": "مسترد",
+        "SETTLEMENT": "تسوية",
+        "ADJUSTMENT": "تسوية يدوية",
+        "HOLD": "حجز مؤقت",
+        "RELEASE": "تحرير رصيد",
+        "CREDIT": "إيداع",
+        "DEBIT": "خصم"
+      }
+    },
+    "WITHDRAWALS": {
+      "TITLE": "طلبات سحب المناديب",
+      "SUBTITLE": "مراجعة واعتماد المبالغ المطلوبة للسحب من محافظ المناديب بشكل يومي",
+      "ACTIVE_COUNT": "{{count}} طلب مسجل",
+      "TABS": {
+        "ALL": "الكل",
+        "PENDING": "قيد الانتظار",
+        "PROCESSING": "جاري المعالجة",
+        "PAID": "مكتملة (مدفوعة)",
+        "FAILED": "فشلت",
+        "CANCELLED": "ملغاة"
       },
       "TABLE": {
-        "CASE": "الحالة",
-        "CUSTOMER_VENDOR": "العميل / المورّد",
-        "REQUESTED": "المبلغ المطلوب",
-        "RESPONSIBLE": "الجهة المسؤولة"
+        "TITLE": "سجل العمليات",
+        "DESC": "معالجة الحوالات البنكية للمناديب",
+        "REQUEST_TIME": "وقت الطلب",
+        "PAYOUT_ACCOUNT": "حساب التحويل",
+        "STATUS": "الحالة",
+        "AMOUNT_REQUESTED": "المبلغ المطلوب",
+        "NO_PHONE": "لا يوجد رقم",
+        "NO_METHOD": "لا يوجد طريقة مفضلة",
+        "REF": "المرجع",
+        "FAILURE_REASON": "السبب",
+        "APPROVE": "قبول",
+        "REJECT": "رفض"
       },
-      "EMPTY": {
-        "TITLE": "لا توجد حالات مطابقة",
-        "MESSAGE": "جرّب تعديل الفلاتر لعرض المزيد من حالات الاسترداد."
+      "NO_DATA_TITLE": "لا توجد طلبات سحب",
+      "NO_DATA_DESC": "لم يتم العثور على أي طلبات سحب تطابق حالة الفلتر المحدد حالياً.",
+      "MODAL": {
+        "TITLE_APPROVE": "قبول طلب السحب",
+        "TITLE_REJECT": "رفض طلب السحب",
+        "DRIVER": "المندوب",
+        "AMOUNT": "المبلغ",
+        "PAYOUT_METHOD": "طريقة الدفع المسجلة",
+        "NOT_AVAILABLE": "غير متوفرة",
+        "TRANSFER_REF": "الرقم المرجعي للحوالة (Transfer Reference)",
+        "TRANSFER_REF_HINT": "يُستخدم هذا الرقم كمرجع مالي لعملية الدفع لاحقاً.",
+        "TRANSFER_REF_PLACEHOLDER": "أدخل رقم الحوالة البنكية هنا...",
+        "REJECT_REASON": "سبب الرفض",
+        "REJECT_REASON_PLACEHOLDER": "اشرح للمندوب سبب رفض طلب السحب...",
+        "CANCEL": "تراجع",
+        "CONFIRM": "تأكيد العملية",
+        "PROCESSING": "جاري التنفيذ..."
       },
-      "DETAIL": {
-        "FINANCIAL_IMPACT": "الأثر المالي",
-        "RESPONSIBLE": "الجهة المسؤولة",
-        "CUSTOMER": "العميل",
-        "VENDOR": "المورّد",
-        "ORDER": "الطلب",
-        "REASON": "السبب",
-        "CREATED": "تاريخ الإنشاء",
-        "TIMELINE": "التسلسل الزمني",
-        "ADMIN_NOTE": "ملاحظة المسؤول",
-        "ADMIN_NOTE_PLACEHOLDER": "أضف ملاحظة للمراجع التالي..."
-      },
-      "REASONS": {
-        "WRONG_ITEM_DELIVERED": "تم تسليم منتج خاطئ",
-        "DAMAGED_PRODUCTS": "المنتجات تالفة",
-        "ORDER_NEVER_ARRIVED": "الطلب لم يصل",
-        "ITEM_QUALITY_ISSUE": "مشكلة في جودة المنتج",
-        "DUPLICATE_CHARGE": "تحصيل مكرر"
-      },
-      "NOTES": {
-        "CUSTOMER_SUBMITTED_REQUEST": "العميل قدّم طلب الاسترداد",
-        "ESCALATED_TO_FINANCE_REVIEW": "تم التصعيد إلى المراجعة المالية",
-        "FULL_REFUND_VENDOR_AT_FAULT": "استرداد كامل، والخطأ من المورّد",
-        "AWAITING_ADMIN_ASSIGNMENT": "بانتظار إسناد الحالة لمسؤول",
-        "INSUFFICIENT_EVIDENCE": "الأدلة غير كافية",
-        "PAYMENT_GATEWAY_ESCALATION": "تم التصعيد إلى بوابة الدفع"
+      "STATUS_LABELS": {
+        "PENDING": "قيد الانتظار",
+        "PROCESSING": "معالجة",
+        "PAID": "مكتمل (دُفع)",
+        "FAILED": "فشل التحويل",
+        "CANCELLED": "ملغى"
       }
     },
     "ADJUSTMENTS": {
       "FORM": {
-        "TITLE": "إنشاء تعديل مالي",
-        "SUBTITLE": "أضف قيدًا يدويًا دائنًا أو مدينًا مع معاينة فورية للأثر.",
-        "ENTITY_TYPE": "نوع الكيان",
-        "ENTITY_NAME": "اسم الكيان",
-        "ENTITY_PLACEHOLDER": "اكتب اسم المورّد أو السائق",
-        "DIRECTION": "الاتجاه",
+        "TITLE": "إنشاء تسوية مالية يدوية",
+        "SUBTITLE": "إضافة أو خصم مبالغ من محافظ المتاجر والمناديب لأسباب إدارية",
+        "ENTITY_TYPE": "نوع الحساب",
+        "ENTITY_NAME": "اسم المتجر أو المندوب",
+        "ENTITY_PLACEHOLDER": "أدخل الاسم للبحث أو التحديد...",
+        "DIRECTION": "نوع العملية",
         "AMOUNT": "المبلغ",
-        "CATEGORY": "الفئة",
-        "REASON": "السبب",
-        "REASON_PLACEHOLDER": "اشرح سبب هذا التعديل",
-        "REASON_HELPER": "سيظهر هذا السبب في الدفتر المالي وسجل التدقيق.",
-        "PREVIEW": "المعاينة",
+        "CATEGORY": "تصنيف التسوية",
+        "REASON": "سبب التسوية",
+        "REASON_PLACEHOLDER": "اشرح بالتفصيل سبب إجراء هذه التسوية المدوية...",
+        "REASON_HELPER": "سيظهر هذا الوصف في كشف حساب المحفظة للطرف الآخر.",
+        "PREVIEW": "معاينة العملية",
         "FOR": "لـ {{entity}}",
-        "SUBMIT": "إنشاء التعديل"
+        "SUBMIT": "تنفيذ التسوية"
       },
       "HISTORY": {
-        "TITLE": "آخر التعديلات",
-        "SUBTITLE": "تتبّع آخر القيود اليدوية عبر المورّدين والسائقين."
+        "TITLE": "سجل التسويات الإدارية",
+        "SUBTITLE": "قائمة بجميع العمليات المالية اليدوية التي تمت من خلال لوحة الإدارة"
       },
       "TABLE": {
         "REF": "المرجع",
@@ -5047,123 +5196,26 @@
         "BY": "بواسطة"
       },
       "CATEGORIES": {
-        "COMPENSATION": "تعويض",
-        "COD_RECOVERY": "استرداد COD",
-        "PROMOTION": "ترقية",
-        "PENALTY": "غرامة",
-        "CORRECTION": "تصحيح",
+        "COMPENSATION": "تعويض مالي",
+        "COD_RECOVERY": "تحصيل مبالغ نقدية (COD)",
+        "PROMOTION": "مكافأة / عرض ترويجي",
+        "PENALTY": "غرامة مالية",
+        "CORRECTION": "تصحيح خطأ محاسبي",
         "OTHER": "أخرى"
-      },
-      "REASONS": {
-        "SYSTEM_DOWNTIME": "تعويض عن توقف النظام",
-        "COD_SHORTAGE": "استرداد عجز COD",
-        "ONBOARDING_BONUS": "مكافأة انضمام"
       }
     },
-    "AUDIT": {
-      "BANNER_TITLE": "كل إجراء مالي قابل للتتبع",
-      "BANNER_DESC": "يتم تسجيل تغييرات التسعير وقرارات الاسترداد ومعالجة التسويات والتعديلات اليدوية هنا.",
-      "TITLE": "سجل التدقيق",
-      "ENTRIES": "إدخالات",
-      "TABLE": {
-        "ADMIN": "المسؤول",
-        "ACTION": "الإجراء",
-        "CHANGES": "التغييرات"
-      },
-      "ACTIONS": {
-        "ADJUSTMENT_APPROVED": "تم اعتماد تعديل مالي",
-        "ADJUSTMENT_CREATED": "تم إنشاء تعديل مالي",
-        "SETTLEMENT_PAID": "تم صرف تسوية",
-        "REFUND_ESCALATED": "تم تصعيد استرداد",
-        "REFUND_APPROVED": "تم اعتماد استرداد",
-        "REFUND_REJECTED": "تم رفض استرداد",
-        "PRICING_UPDATED": "تم تحديث قواعد التسعير"
-      }
-    },
-    "PRICING": {
-      "WARNING": "لديك تغييرات غير محفوظة على قواعد التسعير.",
-      "DISCARD_CHANGES": "تجاهل التغييرات",
-      "SAVE_RULES": "حفظ القواعد",
-      "CURRENT_RULESET": "مجموعة القواعد الحالية",
-      "EFFECTIVE_FROM": "سارية من",
-      "LAST_UPDATED": "آخر تحديث",
-      "BY": "بواسطة",
-      "CONFIRM_TITLE": "تأكيد تحديث التسعير",
-      "CONFIRM_MESSAGE": "هل تريد تطبيق قواعد التسعير هذه؟ ستؤثر على الطلبات والتسويات القادمة.",
-      "CONFIRM_UPDATE": "تأكيد التحديث",
-      "RULESET_NAME": "قواعد السوق الافتراضية",
-      "VENDOR_COMMISSION": {
-        "TITLE": "عمولة المورّد",
-        "SUBTITLE": "القواعد الأساسية للعمولة قبل أي تخصيصات خاصة بالمورّد.",
-        "DEFAULT_PERCENT": "النسبة الافتراضية",
-        "MIN_PERCENT": "الحد الأدنى",
-        "MAX_PERCENT": "الحد الأقصى",
-        "ALLOW_OVERRIDES": "السماح بتخصيصات للمورّدين"
-      },
-      "DRIVER_COMPENSATION": {
-        "TITLE": "مستحقات السائق",
-        "SUBTITLE": "الدفعة الأساسية وأجر المسافة والحوافز التشغيلية للسائقين.",
-        "BASE_PAYOUT": "الدفعة الأساسية",
-        "DISTANCE_RATE": "سعر المسافة / كم",
-        "PEAK_BONUS": "حافز الذروة",
-        "ZONE_BONUS": "حافز المنطقة",
-        "ALLOW_OVERRIDES": "السماح بتخصيصات للسائقين"
-      },
-      "DELIVERY": {
-        "TITLE": "رسوم التوصيل",
-        "SUBTITLE": "الرسم الأساسي والمسافة ومعاملات أوقات الذروة.",
-        "BASE_FEE": "الرسوم الأساسية",
-        "PER_KM": "لكل كيلومتر",
-        "PEAK_MULTIPLIER": "معامل الذروة",
-        "PEAK_START": "بداية الذروة",
-        "PEAK_END": "نهاية الذروة"
-      },
-      "SERVICE_FEE": {
-        "TITLE": "رسوم الخدمة",
-        "SUBTITLE": "الرسوم المطبقة على العميل عند إتمام الطلب.",
-        "PERCENT": "النسبة",
-        "CAP": "الحد الأقصى"
-      },
-      "COD_FEE": {
-        "TITLE": "رسوم الدفع عند الاستلام",
-        "SUBTITLE": "رسوم مناولة اختيارية لطلبات الدفع عند الاستلام.",
-        "PERCENT": "النسبة",
-        "FLAT_FEE": "رسوم ثابتة",
-        "USE_FLAT": "استخدام رسم ثابت"
-      },
-      "VAT": {
-        "TITLE": "ضريبة القيمة المضافة",
-        "SUBTITLE": "حدّد نسبة الضريبة والرسوم الخاضعة لها.",
-        "RATE": "النسبة",
-        "APPLY_TO": "تُطبق على",
-        "TARGETS": {
-          "SERVICE_FEE": "رسوم الخدمة",
-          "DELIVERY_FEE": "رسوم التوصيل",
-          "COMMISSION": "العمولة"
-        }
-      }
-    },
-    "MONTHS": {
-      "JAN": "ينا",
-      "FEB": "فبر",
-      "MAR": "مار",
-      "APR": "أبر",
-      "MAY": "ماي",
-      "JUN": "يون",
-      "JUL": "يول",
-      "AUG": "أغس",
-      "SEP": "سبت",
-      "OCT": "أكت",
-      "NOV": "نوف",
-      "DEC": "ديس"
-    },
-    "ADMINS": {
-      "SUPER_ADMIN": "مدير النظام",
-      "FINANCE_ADMIN": "مسؤول المالية"
-    },
-    "ROLES": {
-      "SUPER_ADMIN": "مدير النظام",
-      "ADMIN": "مسؤول"
+    "KPI": {
+      "GROSS_COLLECTIONS": "إجمالي التحصيلات",
+      "PLATFORM_NET_REVENUE": "صافي الإيرادات",
+      "COMMISSION_REVENUE": "إيرادات العمولات",
+      "DELIVERY_REVENUE": "إيرادات التوصيل",
+      "COD_FEES_COLLECTED": "رسوم الدفع عند الاستلام",
+      "VAT_COLLECTED": "ضريبة القيمة المضافة",
+      "DRIVER_PAYOUTS": "مدفوعات السائقين",
+      "REFUND_EXPOSURE": "التعرض للاسترداد",
+      "NET_REVENUE": "صافي الإيرادات",
+      "COD_FEES": "رسوم الدفع عند الاستلام",
+      "VS_LAST_MONTH": "مقارنة بالشهر الماضي"
     }
   },
   "ADMIN_USERS": {
@@ -5948,20 +6000,32 @@
   },
   "MARKETING": {
     "SHELL": {
+      "MAIN_TITLE": "إدارة التسويق والواجهة",
+      "MAIN_SUBTITLE": "مركز التحكم بالبنرات الإعلانية، المنتجات المميزة، وتنسيق الصفحة الرئيسية",
       "TITLE": "مركز التحكم التسويقي",
       "SUBTITLE": "إدارة المحتوى التسويقي المباشر عبر واجهات التسويق الخاصة بلوحة الإدارة"
     },
     "TABS": {
+      "COUPONS": "الكوبونات",
       "BANNERS": "اللافتات",
       "FEATURED_PRODUCTS": "المنتجات المميزة",
       "HOME_SECTIONS": "أقسام الصفحة الرئيسية",
       "HOME_VISIBILITY": "إظهار أقسام الرئيسية"
     },
+    "SUMMARIES": {
+      "COUPONS": "إدارة أكواد الخصم وتحديد المتاجر المستفيدة وفترات التفعيل.",
+      "BANNERS": "إدارة العروض الترويجية واللافتات الإعلانية النشطة.",
+      "FEATURED_PRODUCTS": "ترويج منتجات محددة على واجهة التطبيق.",
+      "HOME_SECTIONS": "التحكم في ترتيب وأقسام الواجهة الرئيسية.",
+      "HOME_VISIBILITY": "تفعيل أو إخفاء عناصر الصفحة الرئيسية."
+    },
     "ACTIONS": {
       "REFRESH": "تحديث",
       "ACTIVATE": "تفعيل",
       "DEACTIVATE": "إيقاف",
-      "SAVE_CHANGES": "حفظ التغييرات"
+      "SAVE_CHANGES": "حفظ التغييرات",
+      "EDIT": "تعديل",
+      "DELETE": "حذف"
     },
     "COMMON": {
       "WORKFLOW": "مسار العمل",
@@ -5993,9 +6057,13 @@
     },
     "BANNERS": {
       "DESCRIPTION": "أنشئ لافتات الصفحة الرئيسية ورتبها وجدولها وتحكم في تفعيلها من مكان واحد.",
+      "SEARCH_PLACEHOLDER": "بحث في البنرات...",
       "API_HINT": "مرتبط مباشرة بـ",
       "ACTIONS": {
-        "CREATE": "إنشاء لافتة"
+        "CREATE": "إنشاء لافتة",
+        "ADD_NEW": "إضافة بنر جديد",
+        "SAVE_CHANGES": "حفظ التغييرات",
+        "ADD_BANNER": "إضافة لافتة"
       },
       "KPI": {
         "TOTAL": "إجمالي اللافتات",
@@ -6010,7 +6078,26 @@
         "SUBTITLE_EN": "العنوان الفرعي بالإنجليزية",
         "ACTION_AR": "نص زر الإجراء بالعربية",
         "ACTION_EN": "نص زر الإجراء بالإنجليزية",
-        "IS_ACTIVE": "اللافتة مفعلة"
+        "IS_ACTIVE": "اللافتة مفعلة",
+        "IMAGE": "صورة اللافتة",
+        "UPLOAD_IMAGE": "رفع صورة",
+        "CHANGE_IMAGE": "تغيير الصورة",
+        "SELECT_IMAGE": "اختيار صورة",
+        "ORDER": "ترتيب العرض",
+        "ORDER_PLACEHOLDER": "1",
+        "ACTIVATE": "تفعيل اللافتة",
+        "STARTS_AT": "يبدأ في",
+        "ENDS_AT": "ينتهي في",
+        "TITLE_AR_PLACEHOLDER": "عنوان اللافتة بالعربية",
+        "TITLE_EN_PLACEHOLDER": "عنوان اللافتة بالإنجليزية",
+        "SUBTITLE_AR_PLACEHOLDER": "سطر داعم قصير بالعربية",
+        "SUBTITLE_EN_PLACEHOLDER": "سطر داعم قصير بالإنجليزية",
+        "TAG_AR_PLACEHOLDER": "عروض جديدة",
+        "TAG_EN_PLACEHOLDER": "New Offers",
+        "ACTION_LABEL_AR": "زر الإجراء (عربي)",
+        "ACTION_LABEL_EN": "زر الإجراء (إنجليزي)",
+        "ACTION_LABEL_AR_PLACEHOLDER": "تسوق الآن",
+        "ACTION_LABEL_EN_PLACEHOLDER": "Shop Now"
       },
       "PLACEHOLDERS": {
         "TAG": "عروض جديدة",
@@ -6023,7 +6110,11 @@
       },
       "TABLE": {
         "TAG": "الوسم",
-        "TITLE": "العنوان"
+        "TITLE": "العنوان",
+        "ORDER": "الترتيب",
+        "SCHEDULE": "تاريخ العرض",
+        "STATUS": "الحالة",
+        "ACTIONS": "إجراءات"
       },
       "MODAL": {
         "CREATE_TITLE": "إنشاء لافتة",
@@ -6036,7 +6127,7 @@
         "EMPTY_SUBTITLE": "أنشئ أول لافتة رئيسية لبدء إدارة المساحة البارزة في الصفحة الرئيسية.",
         "REQUIRED_FIELDS": "يرجى استكمال الحقول المطلوبة للافتة قبل الحفظ.",
         "DELETE_TITLE": "حذف اللافتة",
-        "DELETE_MESSAGE": "سيتم حذف هذه اللافتة من مخزون التسويق الإداري.",
+        "DELETE_MESSAGE": "هل أنت متأكد من رغبتك في حذف هذا البنر؟ لا يمكن التراجع عن هذا الإجراء.",
         "CREATED": "تم إنشاء اللافتة بنجاح.",
         "UPDATED": "تم تحديث اللافتة بنجاح.",
         "ACTIVATED": "تم تفعيل اللافتة.",
@@ -6044,11 +6135,91 @@
         "DELETED": "تم حذف اللافتة بنجاح."
       }
     },
+    "COUPONS": {
+      "DESCRIPTION": "إدارة أكواد الخصم وتحديد المتاجر المستفيدة وفترات التفعيل.",
+      "SEARCH_PLACEHOLDER": "ابحث بالكود أو عنوان الكوبون أو اسم المتجر",
+      "ACTIONS": {
+        "CREATE": "إضافة كوبون",
+        "ADD_NEW": "إضافة كوبون جديد",
+        "SAVE": "حفظ الكوبون",
+        "CANCEL": "إلغاء",
+        "SELECT_VISIBLE": "تحديد النتائج الظاهرة",
+        "CLEAR_SELECTION": "مسح التحديد",
+        "SEARCHING": "جاري الرفع..."
+      },
+      "STATUS_OPTIONS": {
+        "ALL": "كل الحالات",
+        "ACTIVE": "النشطة",
+        "INACTIVE": "غير النشطة"
+      },
+      "DISCOUNT_TYPES": {
+        "FIXED": "مبلغ ثابت",
+        "PERCENTAGE": "نسبة مئوية"
+      },
+      "FIELDS": {
+        "CODE": "كود الكوبون",
+        "TITLE": "عنوان الكوبون",
+        "DISCOUNT_TYPE": "نوع الخصم",
+        "DISCOUNT_VALUE": "قيمة الخصم",
+        "MIN_ORDER": "الحد الأدنى للطلب",
+        "MAX_DISCOUNT": "الحد الأقصى للخصم",
+        "STARTS_AT": "يبدأ في",
+        "ENDS_AT": "ينتهي في",
+        "USAGE_LIMIT": "حد الاستخدام الكلي",
+        "PER_USER_LIMIT": "حد الاستخدام لكل مستخدم",
+        "IS_ACTIVE": "الكوبون نشط وجاهز للاستخدام",
+        "APPLY_ALL_VENDORS": "تفعيل على كل المتاجر",
+        "APPLY_ALL_DESC": "عند تفعيل هذا الخيار يصبح الكوبون عامًا على المنصة بضغطة واحدة.",
+        "BENEFICIARY_VENDORS": "المتاجر المستفيدة",
+        "BENEFICIARY_DESC": "إذا تركت القائمة بدون تحديد، سيكون الكوبون عامًا على المنصة.",
+        "VENDOR_SEARCH": "ابحث باسم المتجر"
+      },
+      "TABLE": {
+        "COUPON": "الكوبون",
+        "DISCOUNT": "الخصم",
+        "VENDORS": "المتاجر",
+        "SCHEDULE": "فترة التفعيل",
+        "STATUS": "الحالة",
+        "ACTIONS": "إجراءات",
+        "MIN_ORDER": "أقل طلب",
+        "MAX_DISCOUNT": "حد أقصى",
+        "NO_CONSTRAINTS": "بدون قيود مالية",
+        "ALL_VENDORS": "عام على كل المتاجر",
+        "LAST_UPDATE": "آخر تحديث"
+      },
+      "MODAL": {
+        "CREATE_TITLE": "إضافة كوبون جديد",
+        "EDIT_TITLE": "تعديل الكوبون",
+        "SUBTITLE": "حدد الخصم، فترة التفعيل، والمتاجر المستفيدة."
+      },
+      "MESSAGES": {
+        "LOADING": "جاري تحميل الكوبونات...",
+        "EMPTY_TITLE": "لا توجد كوبونات حالياً",
+        "EMPTY_SUBTITLE": "يمكنك إنشاء كوبون جديد وربطه بكل المتاجر أو بمجموعة محددة.",
+        "DELETE_TITLE": "حذف الكوبون",
+        "DELETE_MESSAGE": "هل أنت متأكد من حذف هذا الكوبون؟ هذا الإجراء لا يمكن التراجع عنه.",
+        "CREATED": "تم إنشاء الكوبون بنجاح.",
+        "UPDATED": "تم تحديث الكوبون بنجاح.",
+        "ACTIVATED": "تم تفعيل الكوبون.",
+        "DEACTIVATED": "تم إيقاف الكوبون.",
+        "DELETED": "تم حذف الكوبون بنجاح.",
+        "NO_VENDORS_MATCH": "لا توجد متاجر مطابقة للبحث الحالي.",
+        "REQUIRED_CODE": "يرجى إدخال كود الكوبون.",
+        "REQUIRED_TITLE": "يرجى إدخال عنوان الكوبون.",
+        "DISCOUNT_GT_ZERO": "قيمة الخصم يجب أن تكون أكبر من صفر.",
+        "PERCENT_MAX": "نسبة الخصم لا يمكن أن تتجاوز 100%.",
+        "INVALID_DATE_RANGE": "تاريخ نهاية الكوبون يجب أن يكون بعد تاريخ البداية.",
+        "USAGE_LIMIT_GT_ZERO": "حد الاستخدام يجب أن يكون أكبر من صفر.",
+        "VENDORS_REQUIRED": "يرجى اختيار متجر واحد على الأقل أو تفعيل خيار جميع المتاجر.",
+        "DUPLICATE_CODE": "كود الكوبون مستخدم بالفعل. اختر كودًا آخر."
+      }
+    },
     "FEATURED": {
       "DESCRIPTION": "ثبّت منتجات التجار أو المنتجات الأساسية داخل مسارات العرض التسويقي في الصفحة الرئيسية للعملاء.",
       "API_HINT": "تتم إدارته بواسطة",
       "ACTIONS": {
-        "CREATE": "إضافة موضع"
+        "CREATE": "إضافة موضع",
+        "ADD_PRODUCT": "إضافة منتج"
       },
       "KPI": {
         "TOTAL": "إجمالي المواضع",
@@ -6056,14 +6227,23 @@
       },
       "TYPES": {
         "VENDOR_PRODUCT": "منتج تاجر",
-        "MASTER_PRODUCT": "منتج أساسي"
+        "MASTER_PRODUCT": "منتج أساسي",
+        "VENDOR_PRODUCT_DESC": "ترويج منتج خاص بمتجر معين",
+        "MASTER_PRODUCT_DESC": "ترويج منتج من الكتالوج الموحد"
       },
       "FIELDS": {
         "PLACEMENT_TYPE": "نوع الموضع",
         "VENDOR_PRODUCT_ID": "معرف منتج التاجر",
         "MASTER_PRODUCT_ID": "معرف المنتج الأساسي",
         "NOTE": "ملاحظة داخلية",
-        "IS_ACTIVE": "الموضع مفعل"
+        "IS_ACTIVE": "الموضع مفعل",
+        "TARGET_TYPE": "نوع الهدف",
+        "SELECT_VENDOR_PRODUCT": "اختر منتج التاجر",
+        "VENDOR_PRODUCT_SEARCH": "ابحث باسم المنتج...",
+        "SELECT_MASTER_PRODUCT": "اختر المنتج الأساسي",
+        "MASTER_PRODUCT_SEARCH": "ابحث باسم المنتج...",
+        "ACTIVATE": "تفعيل الموضع",
+        "NOTE_PLACEHOLDER": "سياق تسويقي اختياري"
       },
       "PLACEHOLDERS": {
         "NOTE": "سياق تسويقي اختياري"
@@ -6090,8 +6270,19 @@
         "UPDATED": "تم تحديث الموضع المميز.",
         "ACTIVATED": "تم تفعيل الموضع.",
         "DEACTIVATED": "تم إيقاف الموضع.",
-        "DELETED": "تم حذف الموضع المميز."
-      }
+        "DELETED": "تم حذف الموضع المميز.",
+        "REQUIRED_VENDOR_PRODUCT": "مواضع منتجات التجار تتطلب اختيار منتج تاجر.",
+        "REQUIRED_MASTER_PRODUCT": "مواضع المنتجات الأساسية تتطلب اختيار منتج أساسي."
+      },
+      "EMPTY": {
+        "ACTION": "إضافة أول منتج",
+        "TITLE": "لا توجد منتجات مميزة",
+        "MESSAGE": "لم يتم تخصيص أي منتج كمنتج مميز. يمكنك إضافة منتج للترويج له في الصفحة الرئيسية."
+      },
+      "TOAST_TITLE": "المنتجات المميزة",
+      "SEARCH_PLACEHOLDER": "بحث في المنتجات المميزة...",
+      "SEARCHING": "جاري البحث...",
+      "NO_RESULTS": "لا توجد نتائج"
     },
     "HOME_SECTIONS": {
       "DESCRIPTION": "اختر تصنيفًا فرعيًا من المستوى الثالث، وحدد واحدة من السمات المعتمدة، ويمكنك أيضًا جدولة وقت ظهور القسم.",
@@ -6168,6 +6359,66 @@
         "ACTIVATED": "تم تفعيل القسم.",
         "DEACTIVATED": "تم إيقاف القسم.",
         "SAVED": "تم حفظ حالة القسم."
+      }
+    }
+  },
+  "NOTIFICATIONS_CENTER": {
+    "TITLE": "مركز الإشعارات",
+    "SUBTITLE": "صندوق متابعة مباشر يجمع الاعتمادات والنزاعات والاستردادات والتسويات وكل التحديثات التشغيلية المهمة في مكان واحد.",
+    "MARK_ALL_READ": "تحديد الكل كمقروء",
+    "OPEN_CENTER": "فتح مركز الإشعارات",
+    "UNREAD_COUNT": "{{count}} غير مقروء",
+    "UNREAD_PILL": "غير مقروءة",
+    "LOADING": "جاري تحميل الإشعارات...",
+    "EMPTY_TITLE": "لا توجد إشعارات بعد",
+    "EMPTY_MESSAGE": "ستظهر هنا التحديثات التشغيلية الجديدة فور وصولها.",
+    "LOAD_MORE": "تحميل المزيد",
+    "LIST_TITLE": "آخر النشاطات",
+    "LIST_SUBTITLE": "افتح أي إشعار للوصول مباشرة إلى السجل أو الإجراء المرتبط به.",
+    "RESULTS_LABEL": "عنصر ظاهر",
+    "NEW_BADGE": "جديد",
+    "AUTH_REQUIRED": {
+      "TITLE": "يلزم تسجيل دخول فعلي",
+      "MESSAGE": "أنت الآن داخل وضع التطوير التجريبي. سجّل الدخول بحساب أدمن حقيقي لعرض الإشعارات المحفوظة داخل الباك إند."
+    },
+    "STATS": {
+      "TOTAL": "المعروض الآن",
+      "VISIBLE": "على الشاشة",
+      "UNREAD": "تحتاج مراجعة",
+      "URGENT": "حرجة",
+      "FILTER": "الفلتر الحالي",
+      "ACTIVE": "مفعّل"
+    },
+    "TABS": {
+      "ALL": "الكل",
+      "UNREAD": "غير المقروءة",
+      "URGENT": "عاجل",
+      "DRIVERS": "المندوبون",
+      "VENDORS": "التجار",
+      "CATALOG": "الكتالوج",
+      "DISPUTES": "النزاعات",
+      "REFUNDS": "الاستردادات",
+      "SETTLEMENTS": "التسويات",
+      "SUPPORT": "الدعم",
+      "SYSTEM": "النظام"
+    },
+    "SOUND": {
+      "TITLE": "نغمة التنبيه",
+      "SUBTITLE": "اختر النغمة التي تعمل عند وصول إشعار أدمن جديد بشكل فوري.",
+      "LABEL": "النغمة",
+      "LOADING": "جارٍ تحميل تفضيل النغمة...",
+      "HINT_DEVICE": "هذه النغمة مرتبطة بجهاز المتصفح الإداري النشط والمحفوظ داخل الباك إند.",
+      "HINT_LOCAL": "تسجيل متصفح OneSignal غير نشط حاليًا، لذلك سيتم الاحتفاظ بالاختيار محليًا على هذا المتصفح فقط.",
+      "STATUS_DEVICE": "محفوظة على الجهاز",
+      "STATUS_LOCAL": "حفظ محلي",
+      "PREVIEW": "تجربة",
+      "SAVE": "حفظ النغمة",
+      "OPTIONS": {
+        "CLASSIC": "كلاسيكية",
+        "CHIME": "جرس خفيف",
+        "SOFT": "هادئة",
+        "URGENT": "عاجلة",
+        "OFF": "بدون صوت"
       }
     }
   }

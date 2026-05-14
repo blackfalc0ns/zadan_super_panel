@@ -150,11 +150,11 @@
                   <span class="text-[11px] font-bold text-slate-400">{{ formatDateTime(entry.createdAtUtc) }}</span>
                 </div>
 
-                <p class="mt-1.5 text-[12px] font-semibold leading-5 text-slate-600">{{ entry.message }}</p>
+                <p class="mt-1.5 text-[12px] font-semibold leading-5 text-slate-600" [attr.dir]="detectTextDirection(entry.message)">{{ localizeMessage(entry.message) }}</p>
 
                 <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-500">
                   <span class="rounded-full bg-slate-100 px-2 py-0.5">{{ entry.actorName }}</span>
-                  <span>{{ entry.roleLabel }}</span>
+                  <span>{{ localizeRoleLabel(entry.roleLabel) }}</span>
                 </div>
               </div>
             </div>
@@ -248,7 +248,7 @@
                 {{ resolveSeverityLabel(note.tone) }}
               </span>
             </div>
-            <p class="mt-2 text-[12px] font-semibold leading-5 text-slate-600">{{ note.message || note.messageKey || '-' }}</p>
+            <p class="mt-2 text-[12px] font-semibold leading-5 text-slate-600">{{ localizeMessage(note.message || note.messageKey || '-') }}</p>
           </article>
 
           <div *ngIf="!internalNotes.length" class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-[12px] font-bold text-slate-500">

@@ -14,6 +14,17 @@ import {
 } from '../models/customers.models';
 import { refreshCustomerDetailRecord } from '../data/customers.mock';
 
+export interface CustomerFilters {
+  status?: string;
+  city?: string;
+  isLocked?: boolean;
+  hasOrders?: boolean;
+  minSpent?: number;
+  maxSpent?: number;
+  sortBy?: string;
+  [key: string]: unknown;
+}
+
 interface ApiPaginatedResponse<T> {
   items: T[];
   totalCount: number;
@@ -112,6 +123,40 @@ export class CustomersService {
     this.ensureCustomersLoaded();
     this.ensurePresenceConnection();
     return this.customersSubject.asObservable();
+  }
+
+  loadWithFilters(search?: string, filters?: CustomerFilters): void {
+    let params = new HttpParams()
+      .set('page', '1')
+      .set('pageSize', '250');
+
+    if (search?.trim()) {
+      params = params.set('search', search.trim());
+    }
+
+    if (filters) {
+      if (filters['status']) params = params.set('status', String(filters['status']));
+      if (filters['city']) params = params.set('city', String(filters['city']));
+      if (filters['isLocked'] != null) params = params.set('isLocked', String(filters['isLocked']));
+      if (filters['hasOrders'] != null) params = params.set('hasOrders', String(filters['hasOrders']));
+      if (filters['minSpent'] != null) params = params.set('minSpent', String(filters['minSpent']));
+      if (filters['maxSpent'] != null) params = params.set('maxSpent', String(filters['maxSpent']));
+      if (filters['sortBy']) params = params.set('sortBy', String(filters['sortBy']));
+    }
+
+    this.http.get<ApiPaginatedResponse<AdminCustomerListItemDto>>(this.apiUrl, { params }).pipe(
+      map((response) => response.items.map((item) => this.mapListItemToCustomer(item)))
+    ).subscribe({
+      next: (customers) => {
+        this.customerStore.clear();
+        customers.forEach((customer) => this.customerStore.set(customer.id, customer));
+        this.syncCustomersSubject();
+      },
+      error: (error) => {
+        console.error('Failed to load admin customers with filters.', error);
+        this.customersSubject.next([]);
+      }
+    });
   }
 
   getCustomersSnapshot(): CustomerDetailRecord[] {

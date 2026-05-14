@@ -18,6 +18,7 @@ export class HeaderComponent implements OnInit {
     @Input() unreadNotificationCount: number = 0;
     @Output() languageSwitch = new EventEmitter<void>();
     @Output() toggleSidebar = new EventEmitter<void>();
+    @Output() toggleNotificationsPanel = new EventEmitter<void>();
     notifications: AdminNotification[] = [];
     isNotificationsOpen = false;
     private readonly destroyRef = inject(DestroyRef);
@@ -59,11 +60,7 @@ export class HeaderComponent implements OnInit {
 
     toggleNotifications(): void {
         this.isNotificationsOpen = !this.isNotificationsOpen;
-        if (this.isNotificationsOpen) {
-            this.adminNotificationsService.refreshRecent()
-                .pipe(takeUntilDestroyed(this.destroyRef))
-                .subscribe();
-        }
+        this.toggleNotificationsPanel.emit();
     }
 
     markAllNotificationsRead(): void {
@@ -88,11 +85,15 @@ export class HeaderComponent implements OnInit {
     }
 
     displayTitle(notification: AdminNotification): string {
-        return this.currentLang === 'ar' ? notification.titleAr : notification.titleEn;
+        return this.adminNotificationsService.getLocalizedTitle(notification, this.currentLang);
     }
 
     displayBody(notification: AdminNotification): string {
-        return this.currentLang === 'ar' ? notification.bodyAr : notification.bodyEn;
+        return this.adminNotificationsService.getLocalizedBody(notification, this.currentLang);
+    }
+
+    priorityLabel(priority?: string | null): string {
+        return this.adminNotificationsService.getPriorityLabel(priority, this.currentLang);
     }
 
     priorityClasses(priority?: string | null): string {

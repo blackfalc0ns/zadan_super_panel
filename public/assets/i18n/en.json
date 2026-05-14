@@ -354,11 +354,28 @@
       "CITY": "City",
       "STATUS": "Status",
       "SPEND_RANGE": "Spend Range",
+      "SPEND": "Spend",
       "APPLY": "Apply Filters",
       "RESET": "Reset",
       "WATCHLIST_ONLY": "Watchlist Only",
       "CLEAR": "Reset",
-      "ACTIVE_COUNT": "active filters"
+      "ACTIVE_COUNT": "active filters",
+      "FILTER_CUSTOMERS": "Filter Customers",
+      "ADJUST_CRITERIA": "Adjust search criteria",
+      "HAS_ORDERS": "Order Status",
+      "WITH_ORDERS": "Has Orders",
+      "NO_ORDERS": "No Orders",
+      "ACCOUNT_LOCKED": "Account Lock",
+      "LOCKED": "Locked",
+      "UNLOCKED": "Unlocked",
+      "MIN_SPENT": "Min Spend",
+      "MAX_SPENT": "Max Spend",
+      "UPTO": "Up to",
+      "SORT_BY": "Sort By",
+      "SORT_OLDEST": "Oldest First",
+      "SORT_NAME_ASC": "Name (A–Z)",
+      "SORT_NAME_DESC": "Name (Z–A)",
+      "SORT_LAST_LOGIN": "Last Login"
     },
     "TABLE": {
       "CUSTOMER": "Customer",
@@ -2034,9 +2051,42 @@
     "RUN_DIAGNOSTICS": "Run Diagnostics",
     "CATALOG_PULSE": "Catalog Pulse",
     "STATS": {
-      "TOTAL_PRODUCTS": "Master Products",
-      "ACTIVE_CATEGORIES": "Entity Categories",
-      "OUT_OF_STOCK": "Low Stock"
+      "ADMIN_USERS": "Admin users",
+      "ACTIVE_USERS": "Recently active users",
+      "UNREAD_NOTIFICATIONS": "Unread notifications",
+      "PUSH_DEVICES": "Push devices",
+      "TOTAL_ORDERS": "Total orders",
+      "LATE_ORDERS": "Late orders",
+      "CANCELLATIONS": "Cancelled orders",
+      "AVG_BASKET": "Average basket",
+      "ACTIVE_VENDORS": "Active vendors",
+      "PENDING_VENDORS": "Pending vendors",
+      "BLOCKED_VENDORS": "Blocked vendors",
+      "VENDOR_BRANCHES": "Vendor branches",
+      "READY_DRIVERS": "Ready drivers",
+      "LIMITED_DRIVERS": "Limited drivers",
+      "BLOCKED_DRIVERS": "Blocked drivers",
+      "DRIVER_INCIDENTS": "Open incidents",
+      "CUSTOMERS_TOTAL": "Customer base",
+      "CUSTOMERS_NEW": "New customers",
+      "CUSTOMERS_ACTIVE": "Active customers",
+      "AVG_RATING": "Average rating",
+      "FINANCE_GMV": "Window GMV",
+      "REFUNDS_TOTAL": "Refund total",
+      "SETTLED_NET": "Settled net",
+      "WALLETS_COUNT": "Wallets",
+      "MASTER_PRODUCTS": "Master products",
+      "BRANDS": "Brands",
+      "CATEGORIES": "Categories",
+      "LOW_STOCK": "Low stock items",
+      "ACTIVE_COUPONS": "Active coupons",
+      "HOME_BANNERS": "Home banners",
+      "FEATURED_PLACEMENTS": "Featured placements",
+      "REVIEW_SCORE": "Review score",
+      "ROLES_COUNT": "Roles",
+      "PERMISSIONS_COUNT": "Permissions",
+      "ACCESS_SCOPES": "Access scopes",
+      "OVERRIDES_COUNT": "Permission overrides"
     },
     "AUDIT_LOG": "System Audit Log",
     "LOG": {
@@ -2367,44 +2417,6 @@
         "DESC": "Admin access shape, permission sprawl, and locked account visibility.",
         "STATUS": "{{locked}} locked admins, {{inactive}} inactive admins"
       }
-    },
-    "STATS": {
-      "ADMIN_USERS": "Admin users",
-      "ACTIVE_USERS": "Recently active users",
-      "UNREAD_NOTIFICATIONS": "Unread notifications",
-      "PUSH_DEVICES": "Push devices",
-      "TOTAL_ORDERS": "Total orders",
-      "LATE_ORDERS": "Late orders",
-      "CANCELLATIONS": "Cancelled orders",
-      "AVG_BASKET": "Average basket",
-      "ACTIVE_VENDORS": "Active vendors",
-      "PENDING_VENDORS": "Pending vendors",
-      "BLOCKED_VENDORS": "Blocked vendors",
-      "VENDOR_BRANCHES": "Vendor branches",
-      "READY_DRIVERS": "Ready drivers",
-      "LIMITED_DRIVERS": "Limited drivers",
-      "BLOCKED_DRIVERS": "Blocked drivers",
-      "DRIVER_INCIDENTS": "Open incidents",
-      "CUSTOMERS_TOTAL": "Customer base",
-      "CUSTOMERS_NEW": "New customers",
-      "CUSTOMERS_ACTIVE": "Active customers",
-      "AVG_RATING": "Average rating",
-      "FINANCE_GMV": "Window GMV",
-      "REFUNDS_TOTAL": "Refund total",
-      "SETTLED_NET": "Settled net",
-      "WALLETS_COUNT": "Wallets",
-      "MASTER_PRODUCTS": "Master products",
-      "BRANDS": "Brands",
-      "CATEGORIES": "Categories",
-      "LOW_STOCK": "Low stock items",
-      "ACTIVE_COUPONS": "Active coupons",
-      "HOME_BANNERS": "Home banners",
-      "FEATURED_PLACEMENTS": "Featured placements",
-      "REVIEW_SCORE": "Review score",
-      "ROLES_COUNT": "Roles",
-      "PERMISSIONS_COUNT": "Permissions",
-      "ACCESS_SCOPES": "Access scopes",
-      "OVERRIDES_COUNT": "Permission overrides"
     },
     "STATS_HELPERS": {
       "ADMIN_USERS": "Accounts operating the admin surface right now.",
@@ -2835,7 +2847,8 @@
       "EMPTY_TITLE": "No disputes found",
       "EMPTY_MESSAGE": "This vendor has no support cases matching the current filters."
     }
-  },  "VENDOR_DETAIL": {
+  },
+  "VENDOR_DETAIL": {
     "TITLE": "Vendor Details",
     "STATUS_ACTIVE": "Active",
     "STATUS_VERIFIED": "Verified",
@@ -4710,413 +4723,99 @@
     }
   },
   "FINANCES": {
-    "TITLE": "Finance",
-    "SUBTITLE": "Pricing, revenue, settlements, and disputes in one workspace",
-    "EXPORT": "Export",
-    "CONFIGURE": "Configure",
-    "LAST_UPDATED": "Last updated",
-    "TABS": {
-      "DASHBOARD": "Dashboard",
-      "PRICING": "Pricing",
-      "LEDGER": "Ledger",
-      "SETTLEMENTS": "Settlements",
-      "COD": "COD",
-      "REFUNDS": "Refunds",
-      "ADJUSTMENTS": "Adjustments",
-      "AUDIT": "Audit"
+    "SHELL": {
+      "TITLE": "Finance & Accounts",
+      "SUBTITLE": "Centralized management of cash flows, settlements, and wallets",
+      "EXPORT_REPORTS": "Export Reports",
+      "CONNECTED": "Online",
+      "COMING_SOON": "Soon",
+      "GROUPS": {
+        "DASHBOARD": "Overview",
+        "ACCOUNTS": "Wallets & Ledger",
+        "OPERATIONS": "Ops & Settlements",
+        "DISPUTES": "Financial Disputes",
+        "SETTINGS": "Fees & Audit"
+      },
+      "ROUTES": {
+        "OVERVIEW": {
+          "LABEL": "Main Dashboard",
+          "SUMMARY": "Summary of revenue and status of open operations."
+        },
+        "WALLETS": {
+          "LABEL": "Wallet Balances",
+          "SUMMARY": "Manage virtual wallets for vendors and drivers and track balances."
+        },
+        "LEDGER": {
+          "LABEL": "Financial Ledger",
+          "SUMMARY": "Audit log showing all incoming and outgoing financial movements."
+        },
+        "ADJUSTMENTS": {
+          "LABEL": "Manual Adjustments",
+          "SUMMARY": "Perform manual financial entries and correct balances."
+        },
+        "SETTLEMENTS": {
+          "LABEL": "Periodic Settlements",
+          "SUMMARY": "Pay periodic financial dues to vendors and drivers."
+        },
+        "WITHDRAWALS": {
+          "LABEL": "Withdrawal Requests",
+          "SUMMARY": "Requests submitted by drivers to withdraw their cash balances."
+        },
+        "COD": {
+          "LABEL": "COD Reconciliation",
+          "SUMMARY": "Track and collect Cash on Delivery amounts from drivers."
+        },
+        "REFUNDS": {
+          "LABEL": "Refunds & Claims",
+          "SUMMARY": "Manage claim requests and determine the party responsible for the loss."
+        },
+        "PRICING": {
+          "LABEL": "Pricing Structure",
+          "SUMMARY": "Configure platform commissions, delivery fees, and VAT percentages."
+        },
+        "AUDIT": {
+          "LABEL": "Audit Log",
+          "SUMMARY": "Track all sensitive changes made to the financial system."
+        }
+      }
+    },
+    "DASHBOARD": {
+      "TITLE": "Finance Dashboard",
+      "SUBTITLE": "Monitor financial performance, cash flows, and operational alerts.",
+      "LOAD_ERROR_TITLE": "Data load failed",
+      "LOAD_ERROR_MESSAGE": "An error occurred while trying to fetch financial data. Please try again.",
+      "RETRY": "Retry",
+      "NO_ALERTS_TITLE": "Financial system stable",
+      "NO_ALERTS_MESSAGE": "There are currently no financial alerts requiring immediate intervention."
     },
     "PERIODS": {
       "TODAY": "Today",
-      "WEEK": "Week",
-      "MONTH": "Month",
-      "QUARTER": "Quarter",
-      "THIS_WEEK": "This week",
-      "THIS_MONTH": "This month",
-      "THIS_QUARTER": "This quarter",
-      "MAR_2026": "Mar 2026"
-    },
-    "COMMON": {
-      "ACTIONS": "Actions",
-      "STATUS": "Status",
-      "CANCEL": "Cancel",
-      "VIEW": "View",
-      "HIDE": "Hide",
-      "BEFORE": "Before",
-      "AFTER": "After",
-      "TIMESTAMP": "Timestamp",
-      "ENTITY": "Entity",
-      "TYPE": "Type",
-      "REFERENCE": "Reference",
-      "AMOUNT": "Amount",
-      "DIRECTION": "Direction"
-    },
-    "TIME": {
-      "JUST_NOW": "Just now",
-      "MINUTES_AGO": "{{count}} min ago",
-      "HOURS_AGO": "{{count}} hr ago"
-    },
-    "DIRECTIONS": {
-      "CREDIT": "Credit",
-      "DEBIT": "Debit"
-    },
-    "ENTITIES": {
-      "VENDOR": "Vendor",
-      "DRIVER": "Driver",
-      "ORDER": "Order",
-      "PLATFORM": "Platform",
-      "CUSTOMER": "Customer"
-    },
-    "STATUS": {
-      "PENDING": "Pending",
-      "PROCESSING": "Processing",
-      "PAID": "Paid",
-      "FAILED": "Failed",
-      "DISPUTED": "Disputed",
-      "OPEN": "Open",
-      "UNDER_REVIEW": "Under review",
-      "APPROVED": "Approved",
-      "REJECTED": "Rejected",
-      "ESCALATED": "Escalated",
-      "COLLECTED": "Collected",
-      "OVERDUE": "Overdue",
-      "PENDING_APPROVAL": "Pending approval",
-      "COMPLETED": "Completed",
-      "IN_PROGRESS": "In progress"
+      "WEEK": "This Week",
+      "MONTH": "This Month",
+      "QUARTER": "Current Quarter"
     },
     "CHART": {
-      "GMV_VS_REVENUE": "GMV vs net revenue",
-      "LAST_7_MONTHS": "Last 7 months",
-      "COMPOSITION": "Composition",
-      "REVENUE_BREAKDOWN": "Revenue breakdown",
-      "REFUND_TREND": "Refund trend",
-      "REFUND_RATE": "Refund rate",
-      "SERIES_GMV": "GMV",
-      "SERIES_NET_REVENUE": "Net revenue"
-    },
-    "KPI": {
-      "GMV": "GMV",
-      "NET_REVENUE": "Net revenue",
-      "VENDOR_COMMISSIONS": "Vendor commissions",
-      "DRIVER_PAYOUTS": "Driver payouts",
-      "REFUND_RATIO": "Refund ratio",
-      "DISPUTE_EXPOSURE": "Dispute exposure",
-      "VS_LAST_MONTH": "vs last month"
-    },
-    "COMPOSITION": {
-      "COMMISSIONS": "Commissions",
-      "DELIVERY_FEES": "Delivery fees",
-      "SERVICE_FEES": "Service fees",
-      "COD_FEES": "COD fees",
-      "VAT": "VAT"
+      "GMV_VS_REVENUE": "Gross Value vs Net Revenue",
+      "LAST_7_MONTHS": "Performance comparison over the last 7 months",
+      "COMPOSITION": "Revenue Composition",
+      "REVENUE_BREAKDOWN": "Distribution of operational income sources",
+      "REFUND_TREND": "Refund Trend",
+      "REFUND_RATE": "Monitoring the percentage of financial refunds",
+      "SERIES_GMV": "Gross Merchandise Value (GMV)",
+      "SERIES_NET_REVENUE": "Net Platform Revenue"
     },
     "ALERTS": {
-      "TITLE": "Alerts requiring attention",
-      "NEGATIVE_MARGIN": "Negative margin",
-      "NEGATIVE_MARGIN_DESC": "One cluster slipped below target margin after delivery and refund costs.",
-      "HIGH_DISPUTE_VENDOR": "High-dispute vendor",
-      "HIGH_DISPUTE_VENDOR_DESC": "A vendor crossed the dispute threshold this week and needs finance review.",
-      "COD_OVERDUE": "Overdue COD",
-      "COD_OVERDUE_DESC": "Several COD collections are overdue for reconciliation.",
-      "SETTLEMENT_DUE": "Settlement due",
-      "SETTLEMENT_DUE_DESC": "Pending settlements are approaching their payout deadline."
-    },
-    "DASHBOARD": {
-      "LOAD_ERROR_TITLE": "Dashboard data needs a refresh",
-      "LOAD_ERROR_MESSAGE": "We could not finish loading the finance overview right now. Try again and the rest of the finance center will stay available.",
-      "RETRY": "Retry",
-      "NO_ALERTS_TITLE": "No finance alerts right now",
-      "NO_ALERTS_MESSAGE": "Margins, refunds, COD, and settlements are currently within the expected range."
+      "TITLE": "Financial Alerts"
     },
     "ACTIONS": {
-      "VIEW_ALL": "View all",
-      "VIEW_VENDOR": "View vendor",
-      "VIEW_REFUNDS": "View refunds",
-      "VIEW_COD": "View COD",
-      "VIEW_SETTLEMENTS": "View settlements",
-      "APPROVE": "Approve",
-      "REJECT": "Reject",
-      "ESCALATE": "Escalate",
-      "PROCESS": "Process"
+      "VIEW_ALL": "View All",
+      "OPEN": "Open"
     },
-    "FILTERS": {
-      "TITLE": "Finance filters",
-      "SUBTITLE": "Search and adjust the view",
-      "ACTIVE": "Active filters",
-      "PERIOD": "Period",
-      "SEARCH_PLACEHOLDER": "Search by order, settlement, or reference...",
-      "ALL": "All",
-      "ALL_PERIODS": "All periods",
-      "ALL_ENTITIES": "All entities",
-      "ALL_TYPES": "All types",
-      "CLEAR": "Clear"
-    },
-    "LEDGER": {
-      "BALANCE_AFTER": "Balance after",
-      "ENTRY_TITLE": "Ledger entry",
-      "ORDER_ID": "Order ID",
-      "SETTLEMENT": "Settlement",
-      "EMPTY": {
-        "TITLE": "No entries found",
-        "MESSAGE": "Try adjusting the filters to view more ledger activity."
-      },
-      "SUMMARY": {
-        "TOTAL_ENTRIES": "Total entries",
-        "TOTAL_CREDITS": "Total credits",
-        "TOTAL_DEBITS": "Total debits",
-        "NET_FLOW": "Net flow"
-      },
-      "TYPES": {
-        "COMMISSION": "Commission",
-        "PAYOUT": "Payout",
-        "REFUND": "Refund",
-        "SETTLEMENT": "Settlement",
-        "ADJUSTMENT": "Adjustment",
-        "SERVICE_FEE": "Service fee",
-        "DELIVERY_FEE": "Delivery fee",
-        "VAT": "VAT",
-        "BONUS": "Bonus",
-        "PENALTY": "Penalty",
-        "COD_COLLECTION": "COD collection"
-      },
-      "DESC": {
-        "COMMISSION": "Platform commission charged on order revenue.",
-        "PAYOUT": "Payout issued to the driver or vendor.",
-        "REFUND": "Refund processed for a customer order.",
-        "SERVICE_FEE": "Service fee collected from the order.",
-        "DELIVERY_FEE": "Delivery fee collected from the order.",
-        "ADJUSTMENT": "Manual balance adjustment by an admin.",
-        "SETTLEMENT": "Settlement batch posted to the ledger.",
-        "COD_COLLECTION": "Cash on delivery amount collected.",
-        "VAT": "VAT applied to taxable fees.",
-        "BONUS": "Promotional or operational bonus.",
-        "PENALTY": "Penalty deducted due to a policy breach."
-      },
-      "TITLE": "Financial ledger"
-    },
-    "SETTLEMENTS": {
-      "VENDORS": "Vendors",
-      "DRIVERS": "Drivers",
-      "VENDOR_LIST": "Vendor settlements",
-      "DRIVER_LIST": "Driver settlements",
-      "NEW_SETTLEMENT": "New settlement",
-      "PROCESS_SETTLEMENT": "Process settlement",
-      "DOWNLOAD_STATEMENT": "Download statement",
-      "SUMMARY": {
-        "TOTAL_SETTLEMENTS": "Total settlements",
-        "PAID": "Paid",
-        "PENDING": "Pending",
-        "TOTAL_NET": "Total net payout"
-      },
-      "TABLE": {
-        "SETTLEMENT": "Settlement",
-        "ENTITY": "Entity",
-        "PERIOD": "Period",
-        "ORDERS": "Orders",
-        "GROSS": "Gross",
-        "DEDUCTIONS": "Deductions",
-        "NET_PAYOUT": "Net payout"
-      },
-      "DRAWER": {
-        "NET_PAYOUT": "Net payout",
-        "GROSS_AMOUNT": "Gross amount",
-        "DEDUCTIONS": "Deductions",
-        "ORDERS": "Orders",
-        "PERIOD": "Period"
-      }
-    },
-    "COD": {
-      "TITLE": "COD reconciliation",
-      "RECONCILE_ALL": "Reconcile all",
-      "RECONCILE": "Reconcile",
-      "DONE": "Done",
-      "MATCHED": "Matched",
-      "SUMMARY": {
-        "EXPECTED": "Expected",
-        "COLLECTED": "Collected",
-        "DELTA": "Delta",
-        "OVERDUE": "Overdue",
-        "PENDING": "Pending"
-      },
-      "TABLE": {
-        "ORDER": "Order",
-        "DRIVER": "Driver",
-        "VENDOR": "Vendor",
-        "EXPECTED": "Expected",
-        "COLLECTED": "Collected",
-        "DELTA": "Delta"
-      }
-    },
-    "REFUNDS": {
-      "FILTERS": {
-        "ALL": "All"
-      },
-      "SUMMARY": {
-        "OPEN_CASES": "Open cases",
-        "TOTAL_EXPOSURE": "Total exposure",
-        "APPROVED": "Approved value",
-        "ESCALATED": "Escalated",
-        "TOTAL_CASES": "Total cases"
-      },
-      "TABLE": {
-        "CASE": "Case",
-        "CUSTOMER_VENDOR": "Customer / Vendor",
-        "REQUESTED": "Requested",
-        "RESPONSIBLE": "Responsible party"
-      },
-      "EMPTY": {
-        "TITLE": "No matching cases",
-        "MESSAGE": "Try changing the filters to see more refund cases."
-      },
-      "DETAIL": {
-        "FINANCIAL_IMPACT": "Financial impact",
-        "RESPONSIBLE": "Responsible party",
-        "CUSTOMER": "Customer",
-        "VENDOR": "Vendor",
-        "ORDER": "Order",
-        "REASON": "Reason",
-        "CREATED": "Created",
-        "TIMELINE": "Timeline",
-        "ADMIN_NOTE": "Admin note",
-        "ADMIN_NOTE_PLACEHOLDER": "Add a note for the next reviewer..."
-      },
-      "REASONS": {
-        "WRONG_ITEM_DELIVERED": "Wrong item delivered",
-        "DAMAGED_PRODUCTS": "Damaged products",
-        "ORDER_NEVER_ARRIVED": "Order never arrived",
-        "ITEM_QUALITY_ISSUE": "Item quality issue",
-        "DUPLICATE_CHARGE": "Duplicate charge"
-      },
-      "NOTES": {
-        "CUSTOMER_SUBMITTED_REQUEST": "Customer submitted request",
-        "ESCALATED_TO_FINANCE_REVIEW": "Escalated to finance review",
-        "FULL_REFUND_VENDOR_AT_FAULT": "Full refund, vendor at fault",
-        "AWAITING_ADMIN_ASSIGNMENT": "Awaiting admin assignment",
-        "INSUFFICIENT_EVIDENCE": "Insufficient evidence",
-        "PAYMENT_GATEWAY_ESCALATION": "Escalated to payment gateway"
-      }
-    },
-    "ADJUSTMENTS": {
-      "FORM": {
-        "TITLE": "Create financial adjustment",
-        "SUBTITLE": "Add a manual credit or debit with an instant impact preview.",
-        "ENTITY_TYPE": "Entity type",
-        "ENTITY_NAME": "Entity name",
-        "ENTITY_PLACEHOLDER": "Enter vendor or driver name",
-        "DIRECTION": "Direction",
-        "AMOUNT": "Amount",
-        "CATEGORY": "Category",
-        "REASON": "Reason",
-        "REASON_PLACEHOLDER": "Explain why this adjustment is needed",
-        "REASON_HELPER": "This reason will appear in the ledger and audit log.",
-        "PREVIEW": "Preview",
-        "FOR": "For {{entity}}",
-        "SUBMIT": "Create adjustment"
-      },
-      "HISTORY": {
-        "TITLE": "Recent adjustments",
-        "SUBTITLE": "Track the latest manual entries across vendors and drivers."
-      },
-      "TABLE": {
-        "REF": "Reference",
-        "REASON": "Reason",
-        "BY": "By"
-      },
-      "CATEGORIES": {
-        "COMPENSATION": "Compensation",
-        "COD_RECOVERY": "COD recovery",
-        "PROMOTION": "Promotion",
-        "PENALTY": "Penalty",
-        "CORRECTION": "Correction",
-        "OTHER": "Other"
-      },
-      "REASONS": {
-        "SYSTEM_DOWNTIME": "Compensation for system downtime",
-        "COD_SHORTAGE": "COD shortage recovery",
-        "ONBOARDING_BONUS": "Onboarding bonus"
-      }
-    },
-    "AUDIT": {
-      "BANNER_TITLE": "Every finance action is traceable",
-      "BANNER_DESC": "Pricing updates, refund decisions, settlement processing, and manual adjustments are recorded here.",
-      "TITLE": "Audit log",
-      "ENTRIES": "entries",
-      "TABLE": {
-        "ADMIN": "Admin",
-        "ACTION": "Action",
-        "CHANGES": "Changes"
-      },
-      "ACTIONS": {
-        "ADJUSTMENT_APPROVED": "Financial adjustment approved",
-        "ADJUSTMENT_CREATED": "Financial adjustment created",
-        "SETTLEMENT_PAID": "Settlement paid",
-        "REFUND_ESCALATED": "Refund escalated",
-        "REFUND_APPROVED": "Refund approved",
-        "REFUND_REJECTED": "Refund rejected",
-        "PRICING_UPDATED": "Pricing rules updated"
-      }
-    },
-    "PRICING": {
-      "WARNING": "You have unsaved pricing rule changes.",
-      "DISCARD_CHANGES": "Discard changes",
-      "SAVE_RULES": "Save rules",
-      "CURRENT_RULESET": "Current ruleset",
-      "EFFECTIVE_FROM": "Effective from",
-      "LAST_UPDATED": "Last updated",
-      "BY": "By",
-      "CONFIRM_TITLE": "Confirm pricing update",
-      "CONFIRM_MESSAGE": "Apply these pricing rules? They will affect future orders and settlements.",
-      "CONFIRM_UPDATE": "Confirm update",
-      "RULESET_NAME": "Default marketplace rules",
-      "VENDOR_COMMISSION": {
-        "TITLE": "Vendor commission",
-        "SUBTITLE": "Base commission rules before vendor-specific overrides.",
-        "DEFAULT_PERCENT": "Default percent",
-        "MIN_PERCENT": "Min percent",
-        "MAX_PERCENT": "Max percent",
-        "ALLOW_OVERRIDES": "Allow vendor overrides"
-      },
-      "DRIVER_COMPENSATION": {
-        "TITLE": "Driver compensation",
-        "SUBTITLE": "Base payout, distance pay, and operational incentives for drivers.",
-        "BASE_PAYOUT": "Base payout",
-        "DISTANCE_RATE": "Distance rate / km",
-        "PEAK_BONUS": "Peak bonus",
-        "ZONE_BONUS": "Zone bonus",
-        "ALLOW_OVERRIDES": "Allow driver overrides"
-      },
-      "DELIVERY": {
-        "TITLE": "Delivery fees",
-        "SUBTITLE": "Base fee, distance pricing, and peak-time multipliers.",
-        "BASE_FEE": "Base fee",
-        "PER_KM": "Per km",
-        "PEAK_MULTIPLIER": "Peak multiplier",
-        "PEAK_START": "Peak start",
-        "PEAK_END": "Peak end"
-      },
-      "SERVICE_FEE": {
-        "TITLE": "Service fee",
-        "SUBTITLE": "Customer-facing service fees applied at checkout.",
-        "PERCENT": "Percent",
-        "CAP": "Cap"
-      },
-      "COD_FEE": {
-        "TITLE": "COD fee",
-        "SUBTITLE": "Optional handling fees for cash-on-delivery orders.",
-        "PERCENT": "Percent",
-        "FLAT_FEE": "Flat fee",
-        "USE_FLAT": "Use flat fee"
-      },
-      "VAT": {
-        "TITLE": "VAT",
-        "SUBTITLE": "Set the VAT rate and choose which fees are taxable.",
-        "RATE": "Rate",
-        "APPLY_TO": "Apply to",
-        "TARGETS": {
-          "SERVICE_FEE": "Service fee",
-          "DELIVERY_FEE": "Delivery fee",
-          "COMMISSION": "Commission"
-        }
-      }
+    "NARRATIVES": {
+      "STABLE": "Stable baseline",
+      "IMPROVING": "Momentum improving",
+      "ATTENTION": "Needs attention",
+      "STEADY": "Holding steady"
     },
     "MONTHS": {
       "JAN": "Jan",
@@ -5132,13 +4831,394 @@
       "NOV": "Nov",
       "DEC": "Dec"
     },
-    "ADMINS": {
-      "SUPER_ADMIN": "Super Admin",
-      "FINANCE_ADMIN": "Finance Admin"
+    "COMMON": {
+      "VIEW": "View",
+      "HIDE": "Hide",
+      "TIMESTAMP": "Timestamp",
+      "ENTITY": "Entity",
+      "BEFORE": "Before",
+      "AFTER": "After"
     },
-    "ROLES": {
-      "SUPER_ADMIN": "Super Admin",
-      "ADMIN": "Admin"
+    "TIME": {
+      "JUST_NOW": "Just now",
+      "MINUTES_AGO": "{{count}} min ago",
+      "HOURS_AGO": "{{count}} hr ago"
+    },
+    "STATUS": {
+      "PENDING": "Pending",
+      "PROCESSING": "Processing",
+      "PAID": "Paid",
+      "FAILED": "Failed",
+      "DISPUTED": "Disputed",
+      "OPEN": "Open",
+      "UNDER_REVIEW": "Under Review",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "ESCALATED": "Escalated",
+      "COLLECTED": "Collected",
+      "OVERDUE": "Overdue",
+      "PENDING_APPROVAL": "Pending Approval"
+    },
+    "ENTITIES": {
+      "VENDOR": "Vendor",
+      "DRIVER": "Driver",
+      "ORDER": "Order",
+      "PLATFORM": "Platform",
+      "CUSTOMER": "Customer"
+    },
+    "LEDGER": {
+      "TITLE": "Financial Ledger",
+      "SUBTITLE": "Comprehensive monitoring of all cash flows, settlements, fees, and wallet movements.",
+      "DETAIL_TITLE": "Financial Entry Details",
+      "DIRECTION_CREDIT": "Credit (+)",
+      "DIRECTION_DEBIT": "Debit (-)",
+      "ENTITY_LINKED": "Linked Entity",
+      "ENTRY_TYPE": "Operation Type",
+      "PRIMARY_REF": "Primary Reference",
+      "ORDER_ID": "Order ID",
+      "SETTLEMENT_ID": "Settlement ID",
+      "BALANCE_AFTER": "Remaining Balance",
+      "DATE_TIME": "Date & Time",
+      "EXPORT_CSV": "Export CSV",
+      "SCOPED_ORDER": "Specific Order",
+      "VIEW_PROFILE": "View Profile",
+      "CLEAR_SCOPE": "Clear Filter",
+      "STATS": {
+        "TOTAL_ENTRIES": "Total Entries",
+        "TOTAL_CREDITS": "Total Credits (+)",
+        "TOTAL_DEBITS": "Total Debits (-)",
+        "NET_FLOW": "Net Financial Flow"
+      },
+      "TABLE": {
+        "DATE": "Date",
+        "ENTITY": "Entity",
+        "TYPE": "Type",
+        "REF": "Reference",
+        "AMOUNT": "Amount",
+        "DIRECTION": "Direction",
+        "BALANCE": "Balance After"
+      },
+      "NO_ENTRIES_TITLE": "No matching records",
+      "NO_ENTRIES_DESC": "We couldn't find any financial movements matching the current filters. Try changing the search filters.",
+      "TYPES": {
+        "COMMISSION": "Platform Commission",
+        "PAYOUT": "Cash Payout",
+        "REFUND": "Refund",
+        "SETTLEMENT": "Financial Settlement",
+        "ADJUSTMENT": "Manual Adjustment",
+        "SERVICE_FEE": "Service Fee",
+        "DELIVERY_FEE": "Delivery Fee",
+        "VAT": "VAT",
+        "BONUS": "Bonus",
+        "PENALTY": "Penalty",
+        "COD_COLLECTION": "Cash Collection"
+      }
+    },
+    "SETTLEMENTS": {
+      "TITLE": "Financial Settlements",
+      "SUBTITLE": "Manage payments, transfers to vendors and drivers, and track their status.",
+      "DETAIL_TITLE": "Settlement Details",
+      "NET_DUE": "Net Amount Due",
+      "GROSS_REVENUE": "Gross Revenue",
+      "DEDUCTIONS": "Deductions & Commissions",
+      "ORDERS_COUNT": "Orders Count",
+      "ORDERS_COUNT_VAL": "{{count}} Orders",
+      "FINANCIAL_PERIOD": "Financial Period",
+      "PROCESS_PAYMENT": "Process Payment",
+      "ACCOUNT_STATEMENT": "Account Statement",
+      "TABS": {
+        "VENDORS": "Vendor Settlements",
+        "DRIVERS": "Driver Settlements"
+      },
+      "SCOPED": {
+        "VENDOR": "Specific Vendor Settlements",
+        "DRIVER": "Specific Driver Settlements"
+      },
+      "STATS": {
+        "TOTAL": "Total Settlements",
+        "PAID": "Paid (Completed)",
+        "PENDING": "Pending (Awaiting Payment)",
+        "TOTAL_AMOUNT": "Total Amount"
+      },
+      "TABLE": {
+        "TITLE": "Required Dues List",
+        "DESC": "Details of pending and completed payments",
+        "CREATE_EXTRA": "Create Exceptional Settlement",
+        "CODE": "Settlement Code",
+        "ENTITY": "Linked Entity",
+        "PERIOD": "Financial Period",
+        "ORDERS": "Orders",
+        "REVENUE": "Revenue",
+        "DEDUCTION": "Deduction",
+        "NET_PAY": "Net Payment",
+        "STATUS": "Status",
+        "ACTIONS": "Actions",
+        "PAY_NOW": "Pay Now"
+      },
+      "NO_DATA_TITLE": "No Financial Settlements",
+      "NO_DATA_DESC": "There are currently no registered dues in this category.",
+      "PERIODS": {
+        "WEEKLY": "Weekly",
+        "BI_WEEKLY": "Bi-Weekly",
+        "MONTHLY": "Monthly",
+        "DAILY": "Daily"
+      }
+    },
+    "COD": {
+      "TITLE": "COD Reconciliation",
+      "SUBTITLE": "Monitor and reconcile cash amounts collected from customers via drivers and settle them.",
+      "SETTLE_PENDING": "Settle Pending Amounts",
+      "SCOPED": {
+        "ORDER": "Specific Order Reconciliation",
+        "VENDOR": "Specific Vendor Reconciliation",
+        "DRIVER": "Specific Driver Reconciliation"
+      },
+      "STATS": {
+        "TOTAL_EXPECTED": "Total Expected Collections",
+        "TOTAL_COLLECTED": "Actually Collected & Settled",
+        "TOTAL_DELTA": "Financial Delta (Shortage / Surplus)",
+        "OVERDUE_CASES": "Overdue Collections",
+        "PENDING_CASES": "Awaiting Settlement (Pending)",
+        "ORDER_UNIT": "Orders"
+      },
+      "TABLE": {
+        "TITLE": "Reconciliation Log",
+        "DESC": "Details of amounts per order and field settlement status",
+        "ORDER_REF": "Order (Ref)",
+        "COLLECTOR_DRIVER": "Collecting Driver",
+        "VENDOR": "Vendor",
+        "EXPECTED_AMOUNT": "Expected Collection",
+        "ACTUAL_COLLECTED": "Actually Received",
+        "FINANCIAL_DELTA": "Financial Delta",
+        "STATUS": "Status",
+        "ACTION": "Action",
+        "MANUAL_SETTLE": "Manual Settlement",
+        "SETTLED": "Settled",
+        "MATCHED": "Matched"
+      },
+      "NO_DATA_TITLE": "No matching data",
+      "NO_DATA_DESC": "All collected amounts are fully settled or no records match your request."
+    },
+    "DIRECTIONS": {
+      "CREDIT": "Credit (+)",
+      "DEBIT": "Debit (-)"
+    },
+    "PRICING": {
+      "TITLE": "Pricing & Fees Settings",
+      "SUBTITLE": "Manage delivery fees, taxes, and COD fees for each zone using live data from the backend.",
+      "CONFIRM_SAVE_TITLE": "Confirm Settings Save",
+      "CONFIRM_SAVE_MESSAGE": "Pricing settings, VAT, and COD fees for the selected zone will be saved.",
+      "SAVE_SUCCESS": "Zone settings saved and successfully linked to the backend.",
+      "LOAD_ZONES": "Loading zones...",
+      "UPDATE": "Update",
+      "DISCARD": "Discard Changes",
+      "SAVE_SETTINGS": "Save Settings",
+      "SAVE_CHANGES": "Save Changes",
+      "AVAILABLE_ZONES": "Available Zones",
+      "SELECT_ZONE_DESC": "Select the zone you want to edit, then save its pricing, tax, and COD settings.",
+      "ZONES_COUNT": "{{count}} zone",
+      "ZONES_COUNT_PLURAL": "{{count}} zones",
+      "ZONE_LIST_LABEL": "Zones List",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "VAT_LABEL": "VAT {{percent}}%",
+      "COD_LABEL_PERCENT": "COD {{percent}}%",
+      "COD_LABEL_FLAT": "COD {{amount}} SAR",
+      "NO_ZONES_TITLE": "No zones available",
+      "NO_ZONES_DESC": "No manageable pricing zones were found in the backend.",
+      "SELECTED_ZONE": "Selected Zone",
+      "UNSAVED_CHANGES": "There are unsaved changes for this zone.",
+      "ALL_SAVED": "All changes for this zone are saved.",
+      "BASE_DELIVERY": "Base Delivery Pricing",
+      "BASE_DELIVERY_DESC": "Directly linked to the zone's pricing rules.",
+      "BASE_FEE": "Base Fee",
+      "INCLUDED_KM": "Included Distance",
+      "EXTRA_KM_FEE": "Extra KM Fee",
+      "MIN_FEE": "Min Fee",
+      "MAX_FEE": "Max Fee",
+      "COD_FEE": "COD Fees",
+      "COD_FEE_DESC": "Precisely matched with the backend structure.",
+      "FEE_TYPE": "Fee Type",
+      "FLAT_FEE": "Flat Fee",
+      "PERCENTAGE": "Percentage",
+      "BACKEND_HINT": "The backend currently supports one active type per zone: flat or percentage.",
+      "FLAT_AMOUNT": "Flat Amount",
+      "VAT_TITLE": "VAT",
+      "VAT_DESC": "Used directly in checkout calculations.",
+      "CURRENT_PERCENT": "Current percentage applied to the selected zone"
+    },
+    "CURRENCY": "SAR",
+    "AUDIT": {
+      "TITLE": "Financial Audit Log",
+      "ENTRIES": "Registered Entries",
+      "BANNER_TITLE": "Financial Operations Tracking System",
+      "BANNER_DESC": "This log displays all actions performed by the administration team on the financial system to ensure transparency.",
+      "TABLE": {
+        "ADMIN": "Administrator",
+        "ACTION": "Action",
+        "CHANGES": "Changes"
+      }
+    },
+    "WALLETS": {
+      "TITLE": "Wallets Operations Center",
+      "SUBTITLE": "Manage vendor and driver wallets, monitor pending balances and available withdrawals.",
+      "ACTIVE_COUNT": "{{count}} Active Wallets",
+      "TOTAL_PLATFORM_BALANCE": "Total Platform Balance",
+      "PENDING_WITHDRAWALS": "Pending Withdrawals",
+      "TOTAL_WALLETS": "Total Wallets",
+      "WALLET_UNIT": "Wallets",
+      "AVAILABLE_BALANCE": "Available Balance",
+      "PENDING_BALANCE": "Pending Balance",
+      "NO_PHONE": "No Phone",
+      "TABS": {
+        "ALL": "All",
+        "VENDORS": "Vendors",
+        "DRIVERS": "Drivers"
+      },
+      "NO_DATA_TITLE": "No matching wallets found",
+      "NO_DATA_DESC": "Try changing the search filters to view all wallets instead of a specific type."
+    },
+    "WALLET_DETAILS": {
+      "TITLE": "Wallet Details",
+      "SUBTITLE": "Review financial log, available balances, and create manual adjustments.",
+      "MANUAL_ADJUST": "Manual Adjustment",
+      "NO_PHONE_REGISTERED": "No phone registered",
+      "PENDING_BALANCE_LABEL": "Pending Balance (On Hold)",
+      "AVAILABLE_BALANCE_LABEL": "Available Balance",
+      "TABLE": {
+        "TITLE": "Wallet Transactions Log",
+        "DESC": "Details of operations, settlements, and refunds",
+        "DATETIME": "Date & Time",
+        "TYPE": "Type",
+        "DESCRIPTION": "Statement / Description",
+        "REFERENCE": "Reference",
+        "AMOUNT": "Amount",
+        "NO_REFERENCE": "No Reference"
+      },
+      "NO_TXNS_TITLE": "No financial transactions",
+      "NO_TXNS_DESC": "No deposit or withdrawal operations have been recorded in this wallet yet.",
+      "MODAL": {
+        "TITLE": "Manual Financial Adjustment",
+        "DIRECTION": "Adjustment Type (Direction)",
+        "IN": "Deposit / Add Credit (Credit IN)",
+        "OUT": "Withdrawal / Deduct Credit (Debit OUT)",
+        "AMOUNT": "Amount (SAR)",
+        "REASON": "Description / Adjustment Reason",
+        "REASON_PLACEHOLDER": "Example: Financial compensation for error in order #123...",
+        "CANCEL": "Cancel",
+        "CONFIRM": "Confirm Adjustment",
+        "PROCESSING": "Processing..."
+      },
+      "TXN_TYPES": {
+        "PAYOUT": "Cash Payout",
+        "REFUND": "Refund",
+        "SETTLEMENT": "Settlement",
+        "ADJUSTMENT": "Manual Adjustment",
+        "HOLD": "Hold",
+        "RELEASE": "Release",
+        "CREDIT": "Credit",
+        "DEBIT": "Debit"
+      }
+    },
+    "WITHDRAWALS": {
+      "TITLE": "Drivers Withdrawals Queue",
+      "SUBTITLE": "Review and approve withdrawal requests from driver wallets on a daily basis.",
+      "ACTIVE_COUNT": "{{count}} Registered Requests",
+      "TABS": {
+        "ALL": "All",
+        "PENDING": "Pending",
+        "PROCESSING": "Processing",
+        "PAID": "Paid (Completed)",
+        "FAILED": "Failed",
+        "CANCELLED": "Cancelled"
+      },
+      "TABLE": {
+        "TITLE": "Operations Log",
+        "DESC": "Processing bank transfers for drivers",
+        "REQUEST_TIME": "Request Time",
+        "PAYOUT_ACCOUNT": "Transfer Account",
+        "STATUS": "Status",
+        "AMOUNT_REQUESTED": "Requested Amount",
+        "NO_PHONE": "No Phone",
+        "NO_METHOD": "No Preferred Method",
+        "REF": "Ref",
+        "FAILURE_REASON": "Reason",
+        "APPROVE": "Approve",
+        "REJECT": "Reject"
+      },
+      "NO_DATA_TITLE": "No withdrawal requests",
+      "NO_DATA_DESC": "No withdrawal requests found matching the current filter state.",
+      "MODAL": {
+        "TITLE_APPROVE": "Approve Withdrawal Request",
+        "TITLE_REJECT": "Reject Withdrawal Request",
+        "DRIVER": "Driver",
+        "AMOUNT": "Amount",
+        "PAYOUT_METHOD": "Registered Payout Method",
+        "NOT_AVAILABLE": "Not Available",
+        "TRANSFER_REF": "Transfer Reference Number",
+        "TRANSFER_REF_HINT": "This number is used as a financial reference for the payment later.",
+        "TRANSFER_REF_PLACEHOLDER": "Enter bank transfer reference here...",
+        "REJECT_REASON": "Rejection Reason",
+        "REJECT_REASON_PLACEHOLDER": "Explain to the driver the reason for rejecting the withdrawal request...",
+        "CANCEL": "Back",
+        "CONFIRM": "Confirm Operation",
+        "PROCESSING": "Processing..."
+      },
+      "STATUS_LABELS": {
+        "PENDING": "Pending",
+        "PROCESSING": "Processing",
+        "PAID": "Paid (Completed)",
+        "FAILED": "Transfer Failed",
+        "CANCELLED": "Cancelled"
+      }
+    },
+    "ADJUSTMENTS": {
+      "FORM": {
+        "TITLE": "Create Manual Financial Adjustment",
+        "SUBTITLE": "Add or deduct amounts from vendor and driver wallets for administrative reasons.",
+        "ENTITY_TYPE": "Account Type",
+        "ENTITY_NAME": "Vendor or Driver Name",
+        "ENTITY_PLACEHOLDER": "Enter name to search or select...",
+        "DIRECTION": "Operation Type",
+        "AMOUNT": "Amount",
+        "CATEGORY": "Adjustment Category",
+        "REASON": "Adjustment Reason",
+        "REASON_PLACEHOLDER": "Explain in detail the reason for this manual adjustment...",
+        "REASON_HELPER": "This description will appear in the wallet statement for the other party.",
+        "PREVIEW": "Operation Preview",
+        "FOR": "For {{entity}}",
+        "SUBMIT": "Execute Adjustment"
+      },
+      "HISTORY": {
+        "TITLE": "Administrative Adjustments Log",
+        "SUBTITLE": "List of all manual financial operations performed through the admin panel"
+      },
+      "TABLE": {
+        "REF": "Ref",
+        "REASON": "Reason",
+        "BY": "By"
+      },
+      "CATEGORIES": {
+        "COMPENSATION": "Financial Compensation",
+        "COD_RECOVERY": "Cash Collection (COD)",
+        "PROMOTION": "Reward / Promotion",
+        "PENALTY": "Financial Penalty",
+        "CORRECTION": "Accounting Correction",
+        "OTHER": "Other"
+      }
+    },
+    "KPI": {
+      "GROSS_COLLECTIONS": "Gross Collections",
+      "PLATFORM_NET_REVENUE": "Net Revenue",
+      "COMMISSION_REVENUE": "Commission Revenue",
+      "DELIVERY_REVENUE": "Delivery Revenue",
+      "COD_FEES_COLLECTED": "COD Fees",
+      "VAT_COLLECTED": "VAT Collected",
+      "DRIVER_PAYOUTS": "Driver Payouts",
+      "REFUND_EXPOSURE": "Refund Exposure",
+      "NET_REVENUE": "Net Revenue",
+      "COD_FEES": "COD Fees",
+      "VS_LAST_MONTH": "vs last month"
     }
   },
   "ADMIN_USERS": {
@@ -5923,20 +6003,32 @@
   },
   "MARKETING": {
     "SHELL": {
+      "MAIN_TITLE": "Marketing & UI Management",
+      "MAIN_SUBTITLE": "Control center for promotional banners, featured products, and home layout",
       "TITLE": "Marketing Control Center",
       "SUBTITLE": "Live merchandising powered by the admin marketing APIs"
     },
     "TABS": {
+      "COUPONS": "Coupons",
       "BANNERS": "Banners",
       "FEATURED_PRODUCTS": "Featured Products",
       "HOME_SECTIONS": "Home Sections",
       "HOME_VISIBILITY": "Home Visibility"
     },
+    "SUMMARIES": {
+      "COUPONS": "Manage discount codes, target stores, and activation periods.",
+      "BANNERS": "Manage active promotional banners and advertisements.",
+      "FEATURED_PRODUCTS": "Promote specific products on the application interface.",
+      "HOME_SECTIONS": "Control the order and sections of the home interface.",
+      "HOME_VISIBILITY": "Enable or hide home page elements."
+    },
     "ACTIONS": {
       "REFRESH": "Refresh",
       "ACTIVATE": "Activate",
       "DEACTIVATE": "Deactivate",
-      "SAVE_CHANGES": "Save changes"
+      "SAVE_CHANGES": "Save changes",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
     },
     "COMMON": {
       "WORKFLOW": "Workflow",
@@ -5968,9 +6060,13 @@
     },
     "BANNERS": {
       "DESCRIPTION": "Create, reorder, schedule, and toggle home banners from one place.",
+      "SEARCH_PLACEHOLDER": "Search banners...",
       "API_HINT": "Driven directly by",
       "ACTIONS": {
-        "CREATE": "Create banner"
+        "CREATE": "Create banner",
+        "ADD_NEW": "Add new banner",
+        "SAVE_CHANGES": "Save Changes",
+        "ADD_BANNER": "Add Banner"
       },
       "KPI": {
         "TOTAL": "Total banners",
@@ -5985,7 +6081,26 @@
         "SUBTITLE_EN": "English subtitle",
         "ACTION_AR": "Arabic CTA label",
         "ACTION_EN": "English CTA label",
-        "IS_ACTIVE": "Banner is active"
+        "IS_ACTIVE": "Banner is active",
+        "IMAGE": "Banner Image",
+        "UPLOAD_IMAGE": "Upload Image",
+        "CHANGE_IMAGE": "Change Image",
+        "SELECT_IMAGE": "Select Image",
+        "ORDER": "Display Order",
+        "ORDER_PLACEHOLDER": "1",
+        "ACTIVATE": "Activate Banner",
+        "STARTS_AT": "Starts At",
+        "ENDS_AT": "Ends At",
+        "TITLE_AR_PLACEHOLDER": "Banner title in Arabic",
+        "TITLE_EN_PLACEHOLDER": "Banner title in English",
+        "SUBTITLE_AR_PLACEHOLDER": "Short supporting line in Arabic",
+        "SUBTITLE_EN_PLACEHOLDER": "Short supporting line in English",
+        "TAG_AR_PLACEHOLDER": "New Offers",
+        "TAG_EN_PLACEHOLDER": "New Offers",
+        "ACTION_LABEL_AR": "Action Button (Arabic)",
+        "ACTION_LABEL_EN": "Action Button (English)",
+        "ACTION_LABEL_AR_PLACEHOLDER": "Shop Now",
+        "ACTION_LABEL_EN_PLACEHOLDER": "Shop Now"
       },
       "PLACEHOLDERS": {
         "TAG": "Fresh deals",
@@ -5998,7 +6113,11 @@
       },
       "TABLE": {
         "TAG": "Tag",
-        "TITLE": "Title"
+        "TITLE": "Title",
+        "ORDER": "Order",
+        "SCHEDULE": "Schedule",
+        "STATUS": "Status",
+        "ACTIONS": "Actions"
       },
       "MODAL": {
         "CREATE_TITLE": "Create banner",
@@ -6011,7 +6130,7 @@
         "EMPTY_SUBTITLE": "Create the first home banner to start managing the hero rail.",
         "REQUIRED_FIELDS": "Please complete the required banner fields before saving.",
         "DELETE_TITLE": "Delete banner",
-        "DELETE_MESSAGE": "This banner will be removed from the admin marketing inventory.",
+        "DELETE_MESSAGE": "Are you sure you want to delete this banner? This action cannot be undone.",
         "CREATED": "Banner created successfully.",
         "UPDATED": "Banner updated successfully.",
         "ACTIVATED": "Banner activated.",
@@ -6019,11 +6138,91 @@
         "DELETED": "Banner deleted successfully."
       }
     },
+    "COUPONS": {
+      "DESCRIPTION": "Manage discount codes, target stores, and activation periods.",
+      "SEARCH_PLACEHOLDER": "Search by code, title, or store name",
+      "ACTIONS": {
+        "CREATE": "Add coupon",
+        "ADD_NEW": "Add new coupon",
+        "SAVE": "Save coupon",
+        "CANCEL": "Cancel",
+        "SELECT_VISIBLE": "Select visible results",
+        "CLEAR_SELECTION": "Clear selection",
+        "SEARCHING": "Uploading..."
+      },
+      "STATUS_OPTIONS": {
+        "ALL": "All statuses",
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      },
+      "DISCOUNT_TYPES": {
+        "FIXED": "Fixed amount",
+        "PERCENTAGE": "Percentage"
+      },
+      "FIELDS": {
+        "CODE": "Coupon code",
+        "TITLE": "Coupon title",
+        "DISCOUNT_TYPE": "Discount type",
+        "DISCOUNT_VALUE": "Discount value",
+        "MIN_ORDER": "Min order amount",
+        "MAX_DISCOUNT": "Max discount amount",
+        "STARTS_AT": "Starts at",
+        "ENDS_AT": "Ends at",
+        "USAGE_LIMIT": "Usage limit",
+        "PER_USER_LIMIT": "Limit per user",
+        "IS_ACTIVE": "Coupon is active and ready for use",
+        "APPLY_ALL_VENDORS": "Apply to all vendors",
+        "APPLY_ALL_DESC": "When enabled, the coupon becomes global across the platform with one click.",
+        "BENEFICIARY_VENDORS": "Beneficiary vendors",
+        "BENEFICIARY_DESC": "If left unselected, the coupon will be global across the platform.",
+        "VENDOR_SEARCH": "Search by vendor name"
+      },
+      "TABLE": {
+        "COUPON": "Coupon",
+        "DISCOUNT": "Discount",
+        "VENDORS": "Vendors",
+        "SCHEDULE": "Schedule",
+        "STATUS": "Status",
+        "ACTIONS": "Actions",
+        "MIN_ORDER": "Min order",
+        "MAX_DISCOUNT": "Max discount",
+        "NO_CONSTRAINTS": "No financial constraints",
+        "ALL_VENDORS": "Global across all stores",
+        "LAST_UPDATE": "Last update"
+      },
+      "MODAL": {
+        "CREATE_TITLE": "Add new coupon",
+        "EDIT_TITLE": "Edit coupon",
+        "SUBTITLE": "Define the discount, activation period, and beneficiary vendors."
+      },
+      "MESSAGES": {
+        "LOADING": "Loading coupons...",
+        "EMPTY_TITLE": "No coupons yet",
+        "EMPTY_SUBTITLE": "You can create a new coupon and link it to all stores or a specific group.",
+        "DELETE_TITLE": "Delete coupon",
+        "DELETE_MESSAGE": "Are you sure you want to delete this coupon? This action cannot be undone.",
+        "CREATED": "Coupon created successfully.",
+        "UPDATED": "Coupon updated successfully.",
+        "ACTIVATED": "Coupon activated.",
+        "DEACTIVATED": "Coupon deactivated.",
+        "DELETED": "Coupon deleted successfully.",
+        "NO_VENDORS_MATCH": "No vendors match the current search.",
+        "REQUIRED_CODE": "Please enter the coupon code.",
+        "REQUIRED_TITLE": "Please enter the coupon title.",
+        "DISCOUNT_GT_ZERO": "Discount value must be greater than zero.",
+        "PERCENT_MAX": "Discount percentage cannot exceed 100%.",
+        "INVALID_DATE_RANGE": "The end date must be after the start date.",
+        "USAGE_LIMIT_GT_ZERO": "Usage limit must be greater than zero.",
+        "VENDORS_REQUIRED": "Please select at least one vendor or enable the 'Apply to all' option.",
+        "DUPLICATE_CODE": "The coupon code already exists. Please choose another one."
+      }
+    },
     "FEATURED": {
       "DESCRIPTION": "Pin vendor or master products into the customer home merchandising rails.",
       "API_HINT": "Controlled by",
       "ACTIONS": {
-        "CREATE": "Add placement"
+        "CREATE": "Add placement",
+        "ADD_PRODUCT": "Add Product"
       },
       "KPI": {
         "TOTAL": "Placements",
@@ -6031,14 +6230,23 @@
       },
       "TYPES": {
         "VENDOR_PRODUCT": "Vendor product",
-        "MASTER_PRODUCT": "Master product"
+        "MASTER_PRODUCT": "Master product",
+        "VENDOR_PRODUCT_DESC": "Promote a product specific to a vendor",
+        "MASTER_PRODUCT_DESC": "Promote a product from the unified catalog"
       },
       "FIELDS": {
         "PLACEMENT_TYPE": "Placement type",
         "VENDOR_PRODUCT_ID": "Vendor product ID",
         "MASTER_PRODUCT_ID": "Master product ID",
         "NOTE": "Internal note",
-        "IS_ACTIVE": "Placement is active"
+        "IS_ACTIVE": "Placement is active",
+        "TARGET_TYPE": "Target Type",
+        "SELECT_VENDOR_PRODUCT": "Select Vendor Product",
+        "VENDOR_PRODUCT_SEARCH": "Search by product name...",
+        "SELECT_MASTER_PRODUCT": "Select Master Product",
+        "MASTER_PRODUCT_SEARCH": "Search by product name...",
+        "ACTIVATE": "Activate Placement",
+        "NOTE_PLACEHOLDER": "Optional marketing context"
       },
       "PLACEHOLDERS": {
         "NOTE": "Optional merchandising context"
@@ -6065,8 +6273,19 @@
         "UPDATED": "Featured placement updated.",
         "ACTIVATED": "Placement activated.",
         "DEACTIVATED": "Placement deactivated.",
-        "DELETED": "Featured placement deleted."
-      }
+        "DELETED": "Featured placement deleted.",
+        "REQUIRED_VENDOR_PRODUCT": "Vendor product placements require a vendor product selection.",
+        "REQUIRED_MASTER_PRODUCT": "Master product placements require a master product selection."
+      },
+      "EMPTY": {
+        "ACTION": "Add First Product",
+        "TITLE": "No Featured Products",
+        "MESSAGE": "No product has been designated as featured. You can add a product to promote it on the home page."
+      },
+      "TOAST_TITLE": "Featured Products",
+      "SEARCH_PLACEHOLDER": "Search featured products...",
+      "SEARCHING": "Searching...",
+      "NO_RESULTS": "No results found"
     },
     "HOME_SECTIONS": {
       "DESCRIPTION": "Choose a level-3 subcategory, select one of the approved section themes, and optionally schedule when the section appears.",
@@ -6143,6 +6362,66 @@
         "ACTIVATED": "Section enabled.",
         "DEACTIVATED": "Section disabled.",
         "SAVED": "Section state saved."
+      }
+    }
+  },
+  "NOTIFICATIONS_CENTER": {
+    "TITLE": "Notification Center",
+    "SUBTITLE": "A live operations inbox to track approvals, disputes, refunds, settlements, and every critical update in one focused view.",
+    "MARK_ALL_READ": "Mark all as read",
+    "OPEN_CENTER": "Open notification center",
+    "UNREAD_COUNT": "{{count}} unread",
+    "UNREAD_PILL": "unread",
+    "LOADING": "Loading notifications...",
+    "EMPTY_TITLE": "No notifications yet",
+    "EMPTY_MESSAGE": "New operational updates will appear here as soon as they arrive.",
+    "LOAD_MORE": "Load more",
+    "LIST_TITLE": "Latest activity",
+    "LIST_SUBTITLE": "Open any notification to jump directly to the affected workflow or record.",
+    "RESULTS_LABEL": "items shown",
+    "NEW_BADGE": "New",
+    "AUTH_REQUIRED": {
+      "TITLE": "API session required",
+      "MESSAGE": "You are browsing in development bypass mode. Sign in with a real admin account to view the notifications saved in the backend."
+    },
+    "STATS": {
+      "TOTAL": "Visible now",
+      "VISIBLE": "On screen",
+      "UNREAD": "Need review",
+      "URGENT": "Critical",
+      "FILTER": "Current filter",
+      "ACTIVE": "Active"
+    },
+    "TABS": {
+      "ALL": "All",
+      "UNREAD": "Unread",
+      "URGENT": "Urgent",
+      "DRIVERS": "Drivers",
+      "VENDORS": "Vendors",
+      "CATALOG": "Catalog",
+      "DISPUTES": "Disputes",
+      "REFUNDS": "Refunds",
+      "SETTLEMENTS": "Settlements",
+      "SUPPORT": "Support",
+      "SYSTEM": "System"
+    },
+    "SOUND": {
+      "TITLE": "Alert sound",
+      "SUBTITLE": "Choose the tone that plays when a new admin notification arrives in real time.",
+      "LABEL": "Tone",
+      "LOADING": "Loading sound preference...",
+      "HINT_DEVICE": "This sound is synced with the active admin browser device saved in the backend.",
+      "HINT_LOCAL": "OneSignal browser registration is not active, so the selection is kept locally on this browser for now.",
+      "STATUS_DEVICE": "Saved to device",
+      "STATUS_LOCAL": "Local fallback",
+      "PREVIEW": "Preview",
+      "SAVE": "Save sound",
+      "OPTIONS": {
+        "CLASSIC": "Classic",
+        "CHIME": "Chime",
+        "SOFT": "Soft",
+        "URGENT": "Urgent",
+        "OFF": "Muted"
       }
     }
   }

@@ -1,4 +1,4 @@
-<header class="sticky top-4 sm:top-5 lg:top-3 z-30 mb-5 sm:mb-6 lg:mb-4 animate-puzzle-down">
+<header class="sticky top-4 sm:top-5 lg:top-3 z-[60] mb-5 sm:mb-6 lg:mb-4 animate-puzzle-down">
     <div class="premium-glass-light rounded-2xl sm:rounded-[2.5rem] p-3 sm:p-4 lg:p-2.5 flex items-center justify-between shadow-[0_15px_40px_rgba(0,0,0,0.035)]">
 
         <div class="flex items-center gap-2 sm:gap-4 flex-1">
@@ -75,48 +75,6 @@
                     </div>
                 </button>
 
-                <div *ngIf="isNotificationsOpen"
-                    class="absolute top-14 end-0 w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white shadow-2xl z-50 overflow-hidden">
-                    <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-100">
-                        <div>
-                            <p class="text-[12px] font-black text-slate-900">Notifications</p>
-                            <p class="text-[10px] font-bold text-slate-500">{{ unreadNotificationCount }} unread</p>
-                        </div>
-                        <button type="button" (click)="markAllNotificationsRead()"
-                            class="px-3 py-1.5 rounded-full bg-slate-100 text-[10px] font-black text-slate-700 hover:bg-slate-200 transition">
-                            Mark all read
-                        </button>
-                    </div>
-
-                    <div class="max-h-[24rem] overflow-y-auto">
-                        <button *ngFor="let notification of notifications; trackBy: trackByNotificationId" type="button"
-                            (click)="openNotification(notification)"
-                            class="w-full text-start px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition flex gap-3">
-                            <span class="mt-1 h-2.5 w-2.5 rounded-full shrink-0"
-                                [class.bg-zadna-accent]="!notification.isRead"
-                                [class.bg-slate-200]="notification.isRead"></span>
-                            <span class="min-w-0 flex-1">
-                                <span class="flex items-center gap-2 mb-1">
-                                    <span class="truncate text-[12px] font-black text-slate-900">{{ displayTitle(notification) }}</span>
-                                    <span class="shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase"
-                                        [ngClass]="priorityClasses(notification.priority)">
-                                        {{ notification.priority || 'normal' }}
-                                    </span>
-                                </span>
-                                <span class="line-clamp-2 text-[11px] font-semibold text-slate-500">{{ displayBody(notification) }}</span>
-                            </span>
-                        </button>
-
-                        <div *ngIf="notifications.length === 0" class="px-4 py-8 text-center">
-                            <p class="text-[12px] font-black text-slate-700">No notifications yet</p>
-                        </div>
-                    </div>
-
-                    <button type="button" (click)="openNotificationCenter()"
-                        class="w-full px-4 py-3 bg-slate-50 text-[11px] font-black text-zadna-primary hover:bg-zadna-primary/5 transition">
-                        Open notification center
-                    </button>
-                </div>
             </div>
  
             <!-- Live Ops Button (Shrinked) - Hidden on XS mobile -->

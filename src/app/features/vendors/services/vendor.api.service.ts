@@ -15,10 +15,12 @@ import {
   Vendor,
   VendorDetail,
   VendorKPIs,
+  VendorProfileReviewItem,
   VendorReviewDocument,
   VendorReviewNote,
   VendorReviewState,
   VendorRiskIndicator,
+  VendorRequiredAction,
   VendorStatus,
   VerificationStatus
 } from '@vendors/models/vendors.domain.models';
@@ -89,6 +91,8 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
   nationality?: string | null;
   payoutCycle?: string | null;
   financialLifecycleMode?: string | null;
+  primaryBranchLatitude?: number | null;
+  primaryBranchLongitude?: number | null;
   operationsSettings?: {
     acceptOrders: boolean;
     minimumOrderAmount?: number | null;
@@ -131,6 +135,21 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
     rejectionReason?: string | null;
     reviewedAtUtc?: string | null;
     reviewedByName?: string | null;
+  }> | null;
+  reviewItems?: Array<{
+    code: string;
+    status: string;
+    targetType?: string | null;
+    step?: number | null;
+    reviewerId?: string | null;
+    reviewerName?: string | null;
+    decisionNote?: string | null;
+    lastSubmittedAtUtc?: string | null;
+    reviewedAtUtc?: string | null;
+  }> | null;
+  requiredActions?: Array<{
+    code: string;
+    message: string;
   }> | null;
   primaryBankAccount?: VendorDetail['primaryBankAccount'];
   operatingHours?: Array<{
@@ -623,14 +642,13 @@ export class VendorService {
     const unauthorized = this.isUnauthorizedError(error);
     if (unauthorized) {
       this.unauthorizedReadToken = this.authService.getToken() ?? '__guest__';
+      return throwError(() => error);
     }
 
     if (!this.fallbackWarnings.has(context)) {
       this.fallbackWarnings.add(context);
       console.warn(
-        unauthorized
-          ? `${context} API returned 401/403, using local fallback data until authentication is refreshed.`
-          : `${context} API failed, using local fallback data.`,
+        `${context} API failed, using local fallback data.`,
         error
       );
     }
@@ -1062,6 +1080,44 @@ export class VendorService {
     );
   }
 
+  reviewVendorProfileFields(
+    id: string,
+    items: Array<{ code: string; decision: 'approved' | 'rejected'; reason?: string | null }>
+  ): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/profile-fields/review`, { items })
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.reviewItems = vendor.reviewItems ?? [];
+
+        items.forEach((item) => {
+          const existing = vendor.reviewItems.find((reviewItem) => reviewItem.code === item.code);
+          const next = {
+            code: item.code,
+            status: item.decision === 'approved' ? 'approved' : 'changes_requested',
+            targetType: existing?.targetType ?? (item.code.startsWith('step5.') ? 'document' : 'field'),
+            step: existing?.step ?? (Number(item.code.slice(4, 5)) || 1),
+            reviewerId: existing?.reviewerId ?? null,
+            reviewerName: 'Vendor Compliance Desk',
+            decisionNote: item.decision === 'rejected' ? (item.reason ?? null) : null,
+            lastSubmittedAtUtc: existing?.lastSubmittedAtUtc ?? this.timestamp(),
+            reviewedAtUtc: this.timestamp()
+          } as VendorProfileReviewItem;
+
+          if (existing) {
+            Object.assign(existing, next);
+          } else {
+            vendor.reviewItems.push(next);
+          }
+        });
+      }),
+      id
+    );
+  }
+
   updateVendorHours(
     id: string,
     payload: {
@@ -1309,17 +1365,22 @@ export class VendorService {
     if (response && Array.isArray(response.items)) {
       const items = response.items.map((vendor) => this.mapApiVendorSummary(vendor as AdminVendorListItemDto));
       items.forEach((vendor) => this.rememberVendorSummary(vendor));
+      const pagedResponse = response as PaginatedVendors & {
+        page?: number;
+        hasPrevious?: boolean;
+        hasNext?: boolean;
+      };
       const totalCount = response.totalCount ?? items.length;
       const totalPages = response.totalPages ?? Math.max(1, Math.ceil(totalCount / pageSize));
-      const safePage = response.pageNumber ?? Math.min(Math.max(1, pageNumber), totalPages);
+      const safePage = response.pageNumber ?? pagedResponse.page ?? Math.min(Math.max(1, pageNumber), totalPages);
 
       return {
         items,
         totalCount,
         totalPages,
         pageNumber: safePage,
-        hasPreviousPage: response.hasPreviousPage ?? safePage > 1,
-        hasNextPage: response.hasNextPage ?? safePage < totalPages
+        hasPreviousPage: response.hasPreviousPage ?? pagedResponse.hasPrevious ?? safePage > 1,
+        hasNextPage: response.hasNextPage ?? pagedResponse.hasNext ?? safePage < totalPages
       };
     }
 
@@ -1479,6 +1540,8 @@ export class VendorService {
       nationality: apiVendor.nationality ?? base.nationality ?? null,
       payoutCycle: apiVendor.payoutCycle ?? base.payoutCycle ?? null,
       financialLifecycleMode: apiVendor.financialLifecycleMode ?? base.financialLifecycleMode ?? null,
+      primaryBranchLatitude: apiVendor.primaryBranchLatitude ?? base.primaryBranchLatitude ?? null,
+      primaryBranchLongitude: apiVendor.primaryBranchLongitude ?? base.primaryBranchLongitude ?? null,
       operationsSettings: apiVendor.operationsSettings
         ? {
             acceptOrders: apiVendor.operationsSettings.acceptOrders,
@@ -1504,6 +1567,11 @@ export class VendorService {
       requestedChangesAtUtc: apiVendor.requestedChangesAtUtc ?? base.requestedChangesAtUtc ?? null,
       reviewDecisionReason: apiVendor.reviewDecisionReason ?? base.reviewDecisionReason ?? null,
       readyForFinalApproval: apiVendor.readyForFinalApproval ?? base.readyForFinalApproval ?? false,
+      reviewItems: this.mapProfileReviewItems(apiVendor.reviewItems, base.reviewItems),
+      requiredActions: (apiVendor.requiredActions?.map((action) => ({
+        code: action.code,
+        message: action.message
+      })) ?? base.requiredActions ?? []) as VendorRequiredAction[],
       primaryBankAccount,
       branchesCount: apiVendor.branchesCount ?? base.branchesCount ?? 0,
       bankAccountsCount: apiVendor.bankAccountsCount ?? base.bankAccountsCount ?? (primaryBankAccount ? 1 : 0),
@@ -1551,7 +1619,7 @@ export class VendorService {
 
   private createVendorDetailFromSummary(summary: Vendor): VendorDetail {
     const localVendor = this.findVendor(summary.id);
-    const base = localVendor ? this.clone(localVendor) : this.clone(this.vendorStore[0]);
+    const base = localVendor ? this.clone(localVendor) : {} as Partial<VendorDetail>;
 
     return this.clone({
       ...base,
@@ -1573,6 +1641,9 @@ export class VendorService {
       updatedAtUtc: summary.reviewUpdatedAtUtc ?? localVendor?.reviewUpdatedAtUtc ?? null,
       ownerEmail: localVendor?.ownerEmail ?? summary.contactEmail,
       ownerPhone: localVendor?.ownerPhone ?? summary.contactPhone,
+      idNumber: localVendor?.idNumber ?? null,
+      nationality: localVendor?.nationality ?? null,
+      payoutCycle: localVendor?.payoutCycle ?? null,
       financialLifecycleMode: localVendor?.financialLifecycleMode ?? null,
       operationsSettings: localVendor?.operationsSettings ?? {
         acceptOrders: true,
@@ -1585,6 +1656,8 @@ export class VendorService {
         newOrdersNotificationsEnabled: true
       },
       operatingHours: localVendor?.operatingHours ?? [],
+      primaryBranchLatitude: localVendor?.primaryBranchLatitude ?? null,
+      primaryBranchLongitude: localVendor?.primaryBranchLongitude ?? null,
       branchesCount: localVendor?.branchesCount ?? 0,
       bankAccountsCount: localVendor?.bankAccountsCount ?? 0,
       reviewStartedAtUtc: localVendor?.reviewStartedAtUtc ?? null,
@@ -1592,6 +1665,8 @@ export class VendorService {
       requestedChangesAtUtc: localVendor?.requestedChangesAtUtc ?? null,
       reviewDecisionReason: localVendor?.reviewDecisionReason ?? null,
       primaryBankAccount: localVendor?.primaryBankAccount ?? null,
+      reviewItems: localVendor?.reviewItems ?? [],
+      requiredActions: localVendor?.requiredActions ?? [],
       reviewDocuments: localVendor?.reviewDocuments ?? this.buildReviewDocuments(summary.reviewState ?? 'submitted'),
       reviewNotes: localVendor?.reviewNotes ?? [],
       riskIndicators: localVendor?.riskIndicators ?? []
@@ -1680,6 +1755,27 @@ export class VendorService {
     }
 
     return fallback.reviewDocuments;
+  }
+
+  private mapProfileReviewItems(
+    items?: AdminVendorDetailDto['reviewItems'] | null,
+    fallback?: VendorProfileReviewItem[]
+  ): VendorProfileReviewItem[] {
+    if (!items?.length) {
+      return fallback ?? [];
+    }
+
+    return items.map((item) => ({
+      code: item.code,
+      status: this.normalizeProfileReviewStatus(item.status),
+      targetType: item.targetType === 'document' ? 'document' : 'field',
+      step: item.step ?? 1,
+      reviewerId: item.reviewerId ?? null,
+      reviewerName: item.reviewerName ?? null,
+      decisionNote: item.decisionNote ?? null,
+      lastSubmittedAtUtc: item.lastSubmittedAtUtc ?? null,
+      reviewedAtUtc: item.reviewedAtUtc ?? null
+    }));
   }
 
   private normalizeStatus(status?: string | null): VendorStatus {
@@ -2040,6 +2136,19 @@ export class VendorService {
       || vendor.reviewState === 'changes_requested'
       || vendor.reviewState === 'awaiting_submission';
     vendor.riskIndicators = this.buildRiskIndicators(vendor);
+  }
+
+  private normalizeProfileReviewStatus(status?: string | null): VendorProfileReviewItem['status'] {
+    switch ((status || '').toLowerCase()) {
+      case 'approved':
+        return 'approved';
+      case 'changes_requested':
+        return 'changes_requested';
+      case 'pending_vendor':
+        return 'pending_vendor';
+      default:
+        return 'submitted';
+    }
   }
 
   private resolveDocumentsStatus(uploadedDocuments: number, missingDocuments: number): DocumentsStatus {
@@ -2504,6 +2613,10 @@ export class VendorService {
   }
 
   private clone<T>(value: T): T {
+    if (value === undefined || value === null) {
+      return value;
+    }
+
     return JSON.parse(JSON.stringify(value)) as T;
   }
 }

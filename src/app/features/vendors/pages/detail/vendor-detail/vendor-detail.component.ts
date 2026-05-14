@@ -405,8 +405,7 @@ export class VendorDetailComponent implements OnInit {
       this.row('رقم التواصل', 'Contact phone', vendor.contactPhone, 'ltr'),
       this.row('المدينة', 'City', vendor.city),
       this.row('المنطقة', 'Region', vendor.region),
-      this.row('العنوان الوطني', 'National address', vendor.nationalAddress),
-      this.row('رابط الشعار', 'Logo URL', vendor.logoUrl, 'ltr', true)
+      this.row('العنوان الوطني', 'National address', vendor.nationalAddress)
     ];
   }
 
@@ -423,11 +422,11 @@ export class VendorDetailComponent implements OnInit {
   private buildLegalBankingRows(vendor: VendorDetail): InfoRow[] {
     return [
       this.row('السجل التجاري', 'Commercial registration', vendor.commercialRegistrationNumber, 'ltr'),
-      this.row('تاريخ الانتهاء', 'Expiry date', this.formatDateValue(vendor.commercialRegistrationExpiryDate), 'ltr', false, true),
+      this.row('تاريخ الانتهاء', 'Expiry date', this.formatDateValue(vendor.commercialRegistrationExpiryDate), 'rtl', false, true),
       this.row('الرقم الضريبي', 'Tax ID', vendor.taxId, 'ltr'),
       this.row('رقم الرخصة', 'License number', vendor.licenseNumber, 'ltr'),
-      this.row('اسم البنك', 'Bank name', vendor.primaryBankAccount?.bankName),
-      this.row('اسم صاحب الحساب', 'Account holder', vendor.primaryBankAccount?.accountHolderName),
+      this.row('اسم البنك', 'Bank name', vendor.primaryBankAccount?.bankName, 'rtl'),
+      this.row('اسم صاحب الحساب', 'Account holder', vendor.primaryBankAccount?.accountHolderName, 'rtl'),
       this.row('IBAN', 'IBAN', this.formatIbanForDisplay(vendor.primaryBankAccount?.iban || ''), 'ltr'),
       this.row('SWIFT', 'SWIFT', vendor.primaryBankAccount?.swiftCode, 'ltr')
     ];

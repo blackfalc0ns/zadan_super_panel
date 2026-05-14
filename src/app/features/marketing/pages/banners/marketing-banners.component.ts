@@ -39,8 +39,7 @@ import { ToastService } from '@shared/services/toast.service';
         <div class="max-w-[24rem] w-full">
           <app-input
             [(ngModel)]="searchTerm"
-            [placeholder]="'بحث في البنرات...'"
-            dir="rtl"
+            [placeholder]="'MARKETING.BANNERS.SEARCH_PLACEHOLDER' | translate"
             [hasIcon]="true"
             [inputClass]="'!bg-transparent !border-0 !ring-0 !text-slate-900 !placeholder-slate-400'"
             [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-2xl overflow-hidden'">
@@ -55,7 +54,7 @@ import { ToastService } from '@shared/services/toast.service';
             [disabled]="loading"
             class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
             <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
-            تحديث
+            {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
 
           <button
@@ -63,7 +62,7 @@ import { ToastService } from '@shared/services/toast.service';
             (click)="openCreate()"
             class="h-11 px-5 rounded-2xl bg-zadna-primary text-white text-sm font-bold flex items-center gap-2 hover:bg-zadna-primary/90 hover:shadow-lg hover:shadow-zadna-primary/20 transition-all">
             <span class="material-symbols-outlined text-[18px]">add</span>
-            إضافة بنر جديد
+            {{ 'MARKETING.BANNERS.ACTIONS.ADD_NEW' | translate }}
           </button>
         </div>
       </div>
@@ -78,9 +77,9 @@ import { ToastService } from '@shared/services/toast.service';
         [columns]="tableColumns"
         [isLoading]="loading"
         [emptyStateIcon]="'ad_group'"
-        [emptyStateActionLabel]="'إضافة بنر جديد'"
-        [emptyStateTitle]="'لا توجد بنرات حالياً'"
-        [emptyStateMessage]="'لم يتم إضافة أي بنر تسويقي. يمكنك إضافة بنر جديد ليظهر في الصفحة الرئيسية.'"
+        [emptyStateActionLabel]="'MARKETING.BANNERS.ACTIONS.ADD_NEW' | translate"
+        [emptyStateTitle]="'MARKETING.BANNERS.MESSAGES.EMPTY_TITLE' | translate"
+        [emptyStateMessage]="'MARKETING.BANNERS.MESSAGES.EMPTY_SUBTITLE' | translate"
         [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
         (emptyStateAction)="openCreate()">
 
@@ -130,7 +129,7 @@ import { ToastService } from '@shared/services/toast.service';
             <ng-container *ngIf="column.key === 'status'">
               <div class="flex justify-start">
                 <app-status-pill
-                  [label]="banner.isActive ? 'نشط' : 'غير نشط'"
+                  [label]="(banner.isActive ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate"
                   [variant]="banner.isActive ? 'success' : 'neutral'"
                   size="sm">
                 </app-status-pill>
@@ -143,7 +142,7 @@ import { ToastService } from '@shared/services/toast.service';
                   type="button"
                   class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-zadna-primary/10 hover:text-zadna-primary transition-colors"
                   (click)="openEdit(banner.id)"
-                  title="تعديل">
+                  [title]="'MARKETING.PERMISSIONS.ACTIONS.EDIT' | translate">
                   <span class="material-symbols-outlined text-[18px]">edit</span>
                 </button>
 
@@ -152,7 +151,7 @@ import { ToastService } from '@shared/services/toast.service';
                   class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
                   [ngClass]="banner.isActive ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'"
                   (click)="toggleStatus(banner)"
-                  [title]="banner.isActive ? 'إيقاف' : 'تفعيل'">
+                  [title]="(banner.isActive ? 'MARKETING.ACTIONS.DEACTIVATE' : 'MARKETING.ACTIONS.ACTIVATE') | translate">
                   <span class="material-symbols-outlined text-[18px]">
                     {{ banner.isActive ? 'pause' : 'play_arrow' }}
                   </span>
@@ -162,7 +161,7 @@ import { ToastService } from '@shared/services/toast.service';
                   type="button"
                   class="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors"
                   (click)="promptDelete(banner)"
-                  title="حذف">
+                  [title]="'MARKETING.BANNERS.MESSAGES.DELETE_TITLE' | translate">
                   <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
               </div>
@@ -176,8 +175,8 @@ import { ToastService } from '@shared/services/toast.service';
     <app-delete-confirmation-modal
       [isOpen]="deleteTarget !== null"
       [isLoading]="deleting"
-      [title]="'حذف البنر'"
-      [message]="'هل أنت متأكد من رغبتك في حذف هذا البنر؟ لا يمكن التراجع عن هذا الإجراء.'"
+      [title]="'MARKETING.BANNERS.MESSAGES.DELETE_TITLE' | translate"
+      [message]="'MARKETING.BANNERS.MESSAGES.DELETE_MESSAGE' | translate"
       (close)="deleteTarget = null"
       (confirm)="confirmDelete()">
     </app-delete-confirmation-modal>
@@ -195,12 +194,12 @@ export class MarketingBannersComponent implements OnInit {
   deleteTarget: MarketingBanner | null = null;
 
   readonly tableColumns: TableColumn[] = [
-    { key: 'title', title: 'عنوان البنر', type: 'custom', width: '20rem', align: 'left' },
-    { key: 'tag', title: 'الوسم (Tag)', type: 'custom', width: '12rem', align: 'left' },
-    { key: 'displayOrder', title: 'الترتيب', type: 'custom', width: '6rem', align: 'center' },
-    { key: 'schedule', title: 'تاريخ العرض', type: 'custom', width: '14rem', align: 'left' },
-    { key: 'status', title: 'الحالة', type: 'custom', width: '8rem', align: 'left' },
-    { key: 'actions', title: 'إجراءات', type: 'custom', width: '10rem', align: 'right' }
+    { key: 'title', title: 'MARKETING.BANNERS.TABLE.TITLE', type: 'custom', width: '20rem', align: 'left' },
+    { key: 'tag', title: 'MARKETING.BANNERS.TABLE.TAG', type: 'custom', width: '12rem', align: 'left' },
+    { key: 'displayOrder', title: 'MARKETING.BANNERS.TABLE.ORDER', type: 'custom', width: '6rem', align: 'center' },
+    { key: 'schedule', title: 'MARKETING.BANNERS.TABLE.SCHEDULE', type: 'custom', width: '14rem', align: 'left' },
+    { key: 'status', title: 'MARKETING.BANNERS.TABLE.STATUS', type: 'custom', width: '8rem', align: 'left' },
+    { key: 'actions', title: 'MARKETING.BANNERS.TABLE.ACTIONS', type: 'custom', width: '10rem', align: 'right' }
   ];
 
   constructor(
@@ -259,7 +258,7 @@ export class MarketingBannersComponent implements OnInit {
       },
       error: (error) => {
         this.saving = false;
-        this.toastService.error(describeApiError(error), 'البنرات الإعلانية');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.BANNERS.TABS.BANNERS'));
       }
     });
   }
@@ -282,8 +281,10 @@ export class MarketingBannersComponent implements OnInit {
         this.closeModal();
         this.loadBanners();
         this.toastService.success(
-          this.selectedBanner ? 'تم تحديث البنر بنجاح' : 'تم إنشاء البنر بنجاح',
-          'التسويق'
+          this.selectedBanner 
+            ? this.translateService.instant('MARKETING.BANNERS.MESSAGES.UPDATED') 
+            : this.translateService.instant('MARKETING.BANNERS.MESSAGES.CREATED'),
+          this.translateService.instant('MARKETING.SHELL.TITLE')
         );
       },
       error: (error) => {
@@ -299,12 +300,14 @@ export class MarketingBannersComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.toastService.success(
-          banner.isActive ? 'تم إيقاف البنر' : 'تم تفعيل البنر',
-          'التسويق'
+          banner.isActive 
+            ? this.translateService.instant('MARKETING.BANNERS.MESSAGES.DEACTIVATED') 
+            : this.translateService.instant('MARKETING.BANNERS.MESSAGES.ACTIVATED'),
+          this.translateService.instant('MARKETING.SHELL.TITLE')
         );
         this.loadBanners();
       },
-      error: (error) => this.toastService.error(describeApiError(error), 'البنرات الإعلانية')
+      error: (error) => this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.BANNERS.TABS.BANNERS'))
     });
   }
 
@@ -322,12 +325,12 @@ export class MarketingBannersComponent implements OnInit {
       next: () => {
         this.deleting = false;
         this.deleteTarget = null;
-        this.toastService.success('تم حذف البنر', 'التسويق');
+        this.toastService.success(this.translateService.instant('MARKETING.BANNERS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadBanners();
       },
       error: (error) => {
         this.deleting = false;
-        this.toastService.error(describeApiError(error), 'البنرات الإعلانية');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.BANNERS.TABS.BANNERS'));
       }
     });
   }

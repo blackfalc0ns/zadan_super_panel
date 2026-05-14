@@ -14,6 +14,8 @@ import {
   CodFilter,
   CodRecord,
   CodReconciliationSummary,
+  CityDeliveryPricingSettings,
+  DeliveryPricingDefaults,
   DriverFinanceProfile,
   EntityType,
   FinanceDashboardAlert,
@@ -27,6 +29,7 @@ import {
   LedgerFilter,
   OrderFinancialBreakdown,
   PricingRuleSet,
+  RegionDeliveryPricingSettings,
   RefundCase,
   RefundFilter,
   RefundStatus,
@@ -210,6 +213,7 @@ export class FinanceService {
   private readonly settlementsApiUrl = `${environment.apiUrl}/admin/settlements`;
   private readonly deliveryPricingApiUrl = `${environment.apiUrl}/admin/delivery-pricing`;
   private readonly deliveryZonesApiUrl = `${environment.apiUrl}/admin/delivery-zones`;
+  private readonly geographyApiUrl = `${environment.apiUrl}/geography`;
 
   constructor() {
     this.adjustmentsStore = this.buildInitialAdjustments();
@@ -473,13 +477,6 @@ export class FinanceService {
           left.city.localeCompare(right.city) || left.zoneName.localeCompare(right.zoneName)
         );
       }),
-      switchMap((zones) => {
-        if (zones.length > 0) {
-          return of(zones);
-        }
-
-        return throwError(() => new Error('Unable to load delivery zones or pricing settings from the backend.'));
-      }),
       catchError((error) => {
         console.error('Failed to load zone pricing settings.', error);
         return throwError(() => error);
@@ -487,7 +484,93 @@ export class FinanceService {
     );
   }
 
+  getCityPricingSettings(): Observable<CityDeliveryPricingSettings[]> {
+    return this.http.get<CityDeliveryPricingSettings[]>(`${this.apiUrl}/city-pricing`).pipe(
+      catchError((error) => {
+        console.error('Failed to load city pricing settings.', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateCityPricingSettings(cityId: string, settings: Partial<CityDeliveryPricingSettings>): Observable<CityDeliveryPricingSettings> {
+    return this.http.put<CityDeliveryPricingSettings>(`${this.apiUrl}/city-pricing/${cityId}`, {
+      cityId,
+      baseDeliveryFee: settings.baseDeliveryFee ?? 0,
+      includedKm: settings.includedKm ?? 0,
+      extraKmFee: settings.extraKmFee ?? 0,
+      minDeliveryFee: settings.minDeliveryFee ?? 0,
+      maxDeliveryFee: settings.maxDeliveryFee ?? 0,
+      isPricingActive: settings.isPricingActive ?? false,
+      vatPercent: settings.vatPercent ?? 0,
+      codFeeType: settings.codFeeType ?? 'flat',
+      codFlatFee: settings.codFlatFee ?? 0,
+      codPercent: settings.codPercent ?? 0,
+      isVatActive: settings.isVatActive ?? true,
+      isCodFeeActive: settings.isCodFeeActive ?? false
+    }).pipe(
+      catchError((error) => {
+        console.error(`Failed to update city pricing settings for ${cityId}.`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getRegionPricingSettings(): Observable<RegionDeliveryPricingSettings[]> {
+    return this.http.get<RegionDeliveryPricingSettings[]>(`${this.apiUrl}/region-pricing`).pipe(
+      catchError((error) => {
+        console.error('Failed to load region pricing settings.', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateRegionPricingSettings(regionId: string, settings: Partial<RegionDeliveryPricingSettings>): Observable<RegionDeliveryPricingSettings> {
+    return this.http.put<RegionDeliveryPricingSettings>(`${this.apiUrl}/region-pricing/${regionId}`, {
+      regionId,
+      baseDeliveryFee: settings.baseDeliveryFee ?? 0,
+      includedKm: settings.includedKm ?? 0,
+      extraKmFee: settings.extraKmFee ?? 0,
+      minDeliveryFee: settings.minDeliveryFee ?? 0,
+      maxDeliveryFee: settings.maxDeliveryFee ?? 0,
+      isPricingActive: settings.isPricingActive ?? false,
+      vatPercent: settings.vatPercent ?? 0,
+      codFeeType: settings.codFeeType ?? 'flat',
+      codFlatFee: settings.codFlatFee ?? 0,
+      codPercent: settings.codPercent ?? 0,
+      isVatActive: settings.isVatActive ?? true,
+      isCodFeeActive: settings.isCodFeeActive ?? false
+    }).pipe(
+      catchError((error) => {
+        console.error(`Failed to update region pricing settings for ${regionId}.`, error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getDeliveryPricingDefaults(): Observable<DeliveryPricingDefaults> {
+    return this.http.get<DeliveryPricingDefaults>(`${this.apiUrl}/delivery-defaults`).pipe(
+      catchError((error) => {
+        console.error('Failed to load delivery pricing defaults.', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  updateDeliveryPricingDefaults(settings: DeliveryPricingDefaults): Observable<DeliveryPricingDefaults> {
+    return this.http.put<DeliveryPricingDefaults>(`${this.apiUrl}/delivery-defaults`, settings).pipe(
+      catchError((error) => {
+        console.error('Failed to update delivery pricing defaults.', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   updateZonePricingSettings(zoneId: string, settings: Partial<ZoneFinanceSettings>): Observable<ZoneFinanceSettings> {
+    if (!this.isGuid(zoneId)) {
+      return throwError(() => new Error('Zone pricing can only be saved for real delivery zones. Use city pricing for city-level settings.'));
+    }
+
     const normalized = this.normalizeZonePricingSettingsForSave(zoneId, settings);
     const deliveryRulePayload = this.buildDeliveryRulePayload(normalized);
     const financePayload = {
@@ -1956,6 +2039,14 @@ export class FinanceService {
 
   private normalizeCodFeeType(value: string | undefined): 'flat' | 'percent' {
     return value?.toLowerCase() === 'percent' ? 'percent' : 'flat';
+  }
+
+  private isGuid(value: string | null | undefined): boolean {
+    if (!value) {
+      return false;
+    }
+
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
   }
 
   private buildDeliveryRulePayload(zone: ZoneFinanceSettings): UpsertDeliveryPricingRulePayload {

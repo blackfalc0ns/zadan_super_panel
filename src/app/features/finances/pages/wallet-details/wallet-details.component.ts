@@ -31,11 +31,11 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
     <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
       <!-- شريط الصفحة العلوي (Header) -->
-      <app-page-header title="تفاصيل المحفظة المالية" subtitle="مراجعة السجل المالي، الأرصدة المتاحة، وإنشاء التسويات اليدوية" [showBack]="true" backUrl="/finances/wallets">
+      <app-page-header [title]="'FINANCES.WALLET_DETAILS.TITLE' | translate" [subtitle]="'FINANCES.WALLET_DETAILS.SUBTITLE' | translate" [showBack]="true" backUrl="/finances/wallets">
         <div actions class="flex items-center gap-3">
           <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" (btnClick)="isAdjustModalOpen = true" *ngIf="wallet">
             <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">edit_square</span>
-            تسوية يدوية
+            {{ 'FINANCES.WALLET_DETAILS.MANUAL_ADJUST' | translate }}
           </app-button>
         </div>
       </app-page-header>
@@ -54,22 +54,22 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                   <h2 class="text-xl font-black text-slate-900">{{ wallet.ownerName }}</h2>
                   <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border"
                         [ngClass]="wallet.ownerType === 'Vendor' ? 'bg-cyan-50 text-cyan-700 border-cyan-100' : 'bg-amber-50 text-amber-700 border-amber-100'">
-                    {{ wallet.ownerType === 'Vendor' ? 'متجر' : 'مندوب' }}
+                    {{ (wallet.ownerType === 'Vendor' ? 'FINANCES.ENTITIES.VENDOR' : 'FINANCES.ENTITIES.DRIVER') | translate }}
                   </span>
                 </div>
-                <p class="text-[12px] font-bold text-slate-500" dir="ltr">{{ wallet.ownerPhone || 'لا يوجد هاتف مسجل' }}</p>
+                <p class="text-[12px] font-bold text-slate-500" dir="ltr">{{ wallet.ownerPhone || ('FINANCES.WALLET_DETAILS.NO_PHONE_REGISTERED' | translate) }}</p>
                 <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase">ID: {{ wallet.id }}</p>
               </div>
             </div>
             
             <div class="flex gap-6 text-left rtl:text-right">
               <div class="px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-[11px] font-bold text-slate-500 mb-1">الرصيد المعلق (قيد الانتظار)</p>
-                <p class="text-xl font-black tabular-nums tracking-tight text-amber-600">{{ formatNumber(wallet.pendingBalance) }} <span class="text-sm font-bold text-amber-600/70">SAR</span></p>
+                <p class="text-[11px] font-bold text-slate-500 mb-1">{{ 'FINANCES.WALLET_DETAILS.PENDING_BALANCE_LABEL' | translate }}</p>
+                <p class="text-xl font-black tabular-nums tracking-tight text-amber-600">{{ formatNumber(wallet.pendingBalance) }} <span class="text-sm font-bold text-amber-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
               </div>
               <div class="px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <p class="text-[11px] font-bold text-slate-500 mb-1">الرصيد المتاح</p>
-                <p class="text-xl font-black tabular-nums tracking-tight text-emerald-600">{{ formatNumber(wallet.currentBalance) }} <span class="text-sm font-bold text-emerald-600/70">SAR</span></p>
+                <p class="text-[11px] font-bold text-slate-500 mb-1">{{ 'FINANCES.WALLET_DETAILS.AVAILABLE_BALANCE_LABEL' | translate }}</p>
+                <p class="text-xl font-black tabular-nums tracking-tight text-emerald-600">{{ formatNumber(wallet.currentBalance) }} <span class="text-sm font-bold text-emerald-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
               </div>
             </div>
           </div>
@@ -84,8 +84,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                <span class="material-symbols-outlined text-slate-600 text-[18px]">receipt_long</span>
              </div>
              <div>
-               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">سجل حركات المحفظة</h3>
-               <p class="text-[11px] font-bold text-slate-500 mt-0.5">تفاصيل العمليات، التسويات والمبالغ المستردة</p>
+               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">{{ 'FINANCES.WALLET_DETAILS.TABLE.TITLE' | translate }}</h3>
+               <p class="text-[11px] font-bold text-slate-500 mt-0.5">{{ 'FINANCES.WALLET_DETAILS.TABLE.DESC' | translate }}</p>
              </div>
           </div>
         </div>
@@ -94,11 +94,11 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
           <table class="w-full whitespace-nowrap text-right text-[13px]">
             <thead>
               <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">التاريخ والوقت</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">النوع</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left w-1/3">البيان / الوصف</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">المرجع</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">المبلغ</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.WALLET_DETAILS.TABLE.DATETIME' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.WALLET_DETAILS.TABLE.TYPE' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left w-1/3">{{ 'FINANCES.WALLET_DETAILS.TABLE.DESCRIPTION' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.WALLET_DETAILS.TABLE.REFERENCE' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.WALLET_DETAILS.TABLE.AMOUNT' | translate }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -116,7 +116,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                 <td class="px-6 py-4 align-middle">
                   <span class="inline-flex px-2.5 py-1 rounded-md text-[10px] font-black tracking-widest border"
                         [ngClass]="getTypeBadgeClass(txn.txnType)">
-                    {{ getTranslatedTxnType(txn.txnType) }}
+                    {{ getTranslatedTxnType(txn.txnType) | translate }}
                   </span>
                 </td>
 
@@ -126,7 +126,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 
                 <td class="px-6 py-4 align-middle">
                   <div class="flex flex-col gap-0.5">
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ txn.referenceType || 'بدون مرجع' }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ txn.referenceType ? ('FINANCES.LEDGER.' + txn.referenceType.toUpperCase()) : ('FINANCES.WALLET_DETAILS.TABLE.NO_REFERENCE' | translate) }}</span>
                     <span class="text-[11px] font-mono font-bold text-slate-600 truncate max-w-[120px]" [title]="txn.referenceId || ''">{{ txn.referenceId || '--' }}</span>
                   </div>
                 </td>
@@ -136,7 +136,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     [amount]="txn.amount"
                     [direction]="txn.direction === 'IN' ? 'credit' : 'debit'"
                     [showDirection]="true"
-                    currency="SAR"
+                    [currency]="'FINANCES.CURRENCY' | translate"
                     size="sm">
                   </app-money-badge>
                 </td>
@@ -151,8 +151,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
           <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
              <span class="material-symbols-outlined text-4xl text-slate-300">receipt_long</span>
           </div>
-          <p class="text-[15px] font-black text-slate-800">لا توجد حركات مالية</p>
-          <p class="text-[12px] font-medium text-slate-500 mt-1">لم يتم تسجيل أي عمليات إيداع أو سحب في هذه المحفظة حتى الآن.</p>
+          <p class="text-[15px] font-black text-slate-800">{{ 'FINANCES.WALLET_DETAILS.NO_TXNS_TITLE' | translate }}</p>
+          <p class="text-[12px] font-medium text-slate-500 mt-1">{{ 'FINANCES.WALLET_DETAILS.NO_TXNS_DESC' | translate }}</p>
         </div>
       </app-card>
 
@@ -172,7 +172,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
       <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="isAdjustModalOpen = false"></div>
       <div class="relative bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-7 animate-in zoom-in-95 duration-200">
         <div class="flex items-center justify-between mb-6">
-           <h3 class="text-xl font-black text-slate-900 tracking-tight">تسوية مالية يدوية</h3>
+           <h3 class="text-xl font-black text-slate-900 tracking-tight">{{ 'FINANCES.WALLET_DETAILS.MODAL.TITLE' | translate }}</h3>
            <button class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors" (click)="isAdjustModalOpen = false">
              <span class="material-symbols-outlined text-[20px]">close</span>
            </button>
@@ -180,33 +180,33 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
         
         <div class="space-y-5">
           <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold text-slate-600">نوع التسوية (الاتجاه)</label>
+            <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WALLET_DETAILS.MODAL.DIRECTION' | translate }}</label>
             <div class="relative">
               <select [(ngModel)]="adjustForm.direction" class="w-full appearance-none bg-white border border-slate-200 rounded-xl text-[14px] font-black text-slate-800 py-3 px-4 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all cursor-pointer">
-                <option value="IN">إيداع / إضافة رصيد (Credit IN)</option>
-                <option value="OUT">سحب / خصم رصيد (Debit OUT)</option>
+                <option value="IN">{{ 'FINANCES.WALLET_DETAILS.MODAL.IN' | translate }}</option>
+                <option value="OUT">{{ 'FINANCES.WALLET_DETAILS.MODAL.OUT' | translate }}</option>
               </select>
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
             </div>
           </div>
           <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold text-slate-600">المبلغ (SAR)</label>
+            <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WALLET_DETAILS.MODAL.AMOUNT' | translate }}</label>
             <div class="relative">
               <input type="number" [(ngModel)]="adjustForm.amount" min="0.01" class="w-full bg-white border border-slate-200 rounded-xl text-[15px] font-black text-slate-900 py-3 px-4 pl-12 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all tabular-nums" placeholder="0.00">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[12px] font-bold text-slate-400">SAR</span>
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[12px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
             </div>
           </div>
           <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold text-slate-600">وصف / سبب التسوية</label>
-            <textarea [(ngModel)]="adjustForm.description" rows="3" class="w-full bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-800 py-3 px-4 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all resize-none" placeholder="مثال: تعويض مالي عن خطأ في الطلب رقم 123..."></textarea>
+            <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WALLET_DETAILS.MODAL.REASON' | translate }}</label>
+            <textarea [(ngModel)]="adjustForm.description" rows="3" class="w-full bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-800 py-3 px-4 focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary outline-none transition-all resize-none" [placeholder]="'FINANCES.WALLET_DETAILS.MODAL.REASON_PLACEHOLDER' | translate"></textarea>
           </div>
         </div>
 
         <div class="flex gap-3 mt-8">
-          <app-button variant="ghost" size="md" customClass="!rounded-xl flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700" (btnClick)="isAdjustModalOpen = false">إلغاء</app-button>
+          <app-button variant="ghost" size="md" customClass="!rounded-xl flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700" (btnClick)="isAdjustModalOpen = false">{{ 'FINANCES.WALLET_DETAILS.MODAL.CANCEL' | translate }}</app-button>
           <app-button variant="primary" size="md" customClass="!rounded-xl flex-1 shadow-md shadow-zadna-primary/20" (btnClick)="submitAdjustment()" [disabled]="isSubmitting || adjustForm.amount <= 0 || !adjustForm.description">
             <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1" *ngIf="!isSubmitting">check_circle</span>
-            {{ isSubmitting ? 'جاري التنفيذ...' : 'تأكيد التسوية' }}
+            {{ isSubmitting ? ('FINANCES.WALLET_DETAILS.MODAL.PROCESSING' | translate) : ('FINANCES.WALLET_DETAILS.MODAL.CONFIRM' | translate) }}
           </app-button>
         </div>
       </div>
@@ -304,17 +304,7 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   getTranslatedTxnType(type: string): string {
-    const map: Record<string, string> = {
-      Payout: 'تسوية نقدية',
-      Refund: 'مسترد',
-      Settlement: 'تسوية',
-      Adjustment: 'تسوية يدوية',
-      Hold: 'حجز مؤقت',
-      Release: 'تحرير رصيد',
-      Credit: 'إيداع',
-      Debit: 'خصم',
-    };
-    return map[type] ?? type;
+    return `FINANCES.WALLET_DETAILS.TXN_TYPES.${type.toUpperCase()}`;
   }
 
   getTypeBadgeClass(type: string): string {

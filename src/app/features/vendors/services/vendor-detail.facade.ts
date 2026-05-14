@@ -330,6 +330,12 @@ export class VendorDetailFacade implements OnDestroy {
     return this.trackVendorMutation((vendorId) => this.vendorService.rejectVendorDocument(vendorId, documentId, reason));
   }
 
+  reviewVendorProfileFieldsRequest(
+    items: Array<{ code: string; decision: 'approved' | 'rejected'; reason?: string | null }>
+  ): Observable<VendorDetail> {
+    return this.trackVendorMutation((vendorId) => this.vendorService.reviewVendorProfileFields(vendorId, items));
+  }
+
   startVendorReview(): void {
     this.subscribeSilently(this.startVendorReviewRequest());
   }

@@ -428,6 +428,10 @@ export interface ZoneFinanceSettings {
   zoneId: string;
   zoneName: string;
   city: string;
+  regionId?: string | null;
+  regionCode?: string | null;
+  regionNameAr?: string | null;
+  regionNameEn?: string | null;
   pricingRuleId?: string | null;
   
   // Pricing Rule
@@ -446,4 +450,72 @@ export interface ZoneFinanceSettings {
   isVatActive: boolean;
   isCodFeeActive: boolean;
 }
+
+export interface CityDeliveryPricingSettings {
+  cityId: string;
+  cityCode: string;
+  cityNameAr: string;
+  cityNameEn: string;
+  regionId: string;
+  regionCode: string;
+  regionNameAr: string;
+  regionNameEn: string;
+  pricingScope: 'city';
+  baseDeliveryFee: number;
+  includedKm: number;
+  extraKmFee: number;
+  minDeliveryFee: number;
+  maxDeliveryFee: number;
+  isPricingActive: boolean;
+  vatPercent: number;
+  codFeeType: 'flat' | 'percent';
+  codFlatFee: number;
+  codPercent: number;
+  isVatActive: boolean;
+  isCodFeeActive: boolean;
+}
+
+export interface RegionDeliveryPricingSettings {
+  regionId: string;
+  regionCode: string;
+  regionNameAr: string;
+  regionNameEn: string;
+  pricingScope: 'region';
+  baseDeliveryFee: number;
+  includedKm: number;
+  extraKmFee: number;
+  minDeliveryFee: number;
+  maxDeliveryFee: number;
+  isPricingActive: boolean;
+  vatPercent: number;
+  codFeeType: 'flat' | 'percent';
+  codFlatFee: number;
+  codPercent: number;
+  isVatActive: boolean;
+  isCodFeeActive: boolean;
+}
+
+export interface DeliveryPricingDefaults {
+  id: string;
+  pricingScope: 'global';
+  baseDeliveryFee: number;
+  includedKm: number;
+  extraKmFee: number;
+  minDeliveryFee: number;
+  maxDeliveryFee: number;
+  isPricingActive: boolean;
+  vatPercent: number;
+  codFeeType: 'flat' | 'percent';
+  codFlatFee: number;
+  codPercent: number;
+  isVatActive: boolean;
+  isCodFeeActive: boolean;
+  minTotalDeliveryFee: number;
+  maxTotalDeliveryFee: number;
+  maxQuotedDistanceKm: number;
+  warningSubtotalRatioThreshold: number;
+}
+
+export type PricingScope = 'zone' | 'city' | 'region' | 'global';
+export type PricingSettingsItem = ZoneFinanceSettings | CityDeliveryPricingSettings | RegionDeliveryPricingSettings | DeliveryPricingDefaults;
 

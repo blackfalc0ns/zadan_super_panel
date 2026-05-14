@@ -116,7 +116,7 @@ import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance
                  [ngClass]="form.direction === 'credit' ? 'text-emerald-500' : 'text-red-500'">{{ 'FINANCES.ADJUSTMENTS.FORM.PREVIEW' | translate }}</p>
               <p class="text-xl font-black tabular-nums"
                  [ngClass]="form.direction === 'credit' ? 'text-emerald-700' : 'text-red-700'">
-                {{ form.direction === 'credit' ? '+' : '-' }}{{ formatNumber(form.amount) }} SAR
+                {{ form.direction === 'credit' ? '+' : '-' }}{{ formatNumber(form.amount) }} {{ 'FINANCES.CURRENCY' | translate }}
               </p>
               <p class="text-[10px] font-medium mt-0.5"
                  [ngClass]="form.direction === 'credit' ? 'text-emerald-500' : 'text-red-500'">
@@ -203,7 +203,7 @@ import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance
                 <td class="px-6 py-4 text-end">
                   <span class="text-sm font-black tabular-nums"
                         [ngClass]="adj.direction === 'credit' ? 'text-emerald-700' : 'text-red-700'">
-                    {{ adj.direction === 'credit' ? '+' : '-' }}{{ formatNumber(adj.amount) }} SAR
+                    {{ adj.direction === 'credit' ? '+' : '-' }}{{ formatNumber(adj.amount) }} {{ 'FINANCES.CURRENCY' | translate }}
                   </span>
                 </td>
 

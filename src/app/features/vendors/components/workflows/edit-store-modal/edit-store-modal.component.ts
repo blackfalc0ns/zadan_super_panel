@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CatalogService } from '../../../../catalog/services/catalog.api.service';
+import { GeographyService, SaudiRegionDto, SaudiCityDto } from '../../../../../shared/services/geography.service';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 export interface StoreData {
   businessNameAr: string;
@@ -22,7 +25,7 @@ export interface StoreData {
 @Component({
   selector: 'app-edit-store-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-store-modal.component.html'
 })
 export class EditStoreModalComponent implements OnChanges {
@@ -48,6 +51,19 @@ export class EditStoreModalComponent implements OnChanges {
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<StoreData>();
 
+  isUploading: 'logo' | 'document' | null = null;
+
+  businessTypeOptions: SearchableSelectOption[] = [
+    { value: 'RETAIL', label: 'تجزئة - Retail' },
+    { value: 'WHOLESALE', label: 'جملة - Wholesale' },
+    { value: 'MANUFACTURER', label: 'تصنيع - Manufacturer' },
+    { value: 'SERVICES', label: 'خدمات - Services' },
+    { value: 'OTHER', label: 'أخرى - Other' }
+  ];
+
+  regionOptions: SearchableSelectOption[] = [];
+  cityOptions: SearchableSelectOption[] = [];
+
   draftStoreData: StoreData = {
     businessNameAr: '',
     businessNameEn: '',
@@ -64,7 +80,13 @@ export class EditStoreModalComponent implements OnChanges {
     commercialRegistrationNumber: ''
   };
 
-  constructor(private translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    private catalogService: CatalogService,
+    private geographyService: GeographyService
+  ) {
+    this.loadRegions();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['storeData']) {
@@ -83,6 +105,19 @@ export class EditStoreModalComponent implements OnChanges {
         nationalAddress: this.storeData.nationalAddress || '',
         commercialRegistrationNumber: this.storeData.commercialRegistrationNumber || ''
       };
+
+      if (this.draftStoreData.region) {
+        this.loadCities(this.draftStoreData.region);
+      }
+    }
+  }
+
+  onRegionChange(value: string): void {
+    this.draftStoreData.region = value;
+    this.draftStoreData.city = '';
+    this.cityOptions = [];
+    if (value) {
+      this.loadCities(value);
     }
   }
 
@@ -195,8 +230,68 @@ export class EditStoreModalComponent implements OnChanges {
     }
   }
 
+  onLogoFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.isUploading = 'logo';
+    this.catalogService.uploadFile(file, 'vendors/logos').subscribe({
+      next: (result: { url: string }) => {
+        this.draftStoreData.logoUrl = result.url;
+        this.isUploading = null;
+      },
+      error: () => {
+        this.isUploading = null;
+      }
+    });
+
+    input.value = '';
+  }
+
+  onDocumentFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.isUploading = 'document';
+    this.catalogService.uploadFile(file, 'vendors/documents').subscribe({
+      next: (result: { url: string }) => {
+        this.draftStoreData.commercialRegisterDocumentUrl = result.url;
+        this.isUploading = null;
+      },
+      error: () => {
+        this.isUploading = null;
+      }
+    });
+
+    input.value = '';
+  }
+
   private isValidEmail(value: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  }
+
+  private loadRegions(): void {
+    this.geographyService.getRegions().subscribe({
+      next: (regions) => {
+        this.regionOptions = regions.map((r) => ({
+          value: r.code,
+          label: `${r.nameAr} - ${r.nameEn}`
+        }));
+      }
+    });
+  }
+
+  private loadCities(regionCode: string): void {
+    this.geographyService.getCities(regionCode).subscribe({
+      next: (cities) => {
+        this.cityOptions = cities.map((c) => ({
+          value: c.code,
+          label: `${c.nameAr} - ${c.nameEn}`
+        }));
+      }
+    });
   }
 
   private text(arabic: string, english: string): string {

@@ -132,6 +132,21 @@ export interface MarketingCategoryOption {
   nameEn: string;
   level: number;
   pathLabel: string;
+  isSelectable: boolean;
+}
+
+export interface MasterProductLookupOption {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+}
+
+export interface VendorProductLookupOption {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+  vendorNameAr: string;
+  vendorNameEn: string;
 }
 
 export interface MarketingCouponVendor {

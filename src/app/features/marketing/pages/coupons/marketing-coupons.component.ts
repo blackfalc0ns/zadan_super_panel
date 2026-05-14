@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   MarketingCoupon,
   MarketingCouponPayload,
@@ -52,13 +52,13 @@ interface CouponFormValue {
             <input
               [(ngModel)]="searchTerm"
               type="text"
-              placeholder="ابحث بالكود أو عنوان الكوبون أو اسم المتجر"
+              [placeholder]="'MARKETING.COUPONS.SEARCH_PLACEHOLDER' | translate"
               class="h-11 w-full rounded-xl border border-slate-200 bg-white pr-12 pl-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
           </div>
 
           <app-searchable-select
             [(ngModel)]="statusFilter"
-            [options]="statusOptions"
+            [options]="translatedStatusOptions"
             [searchable]="false"
             [allowClear]="false"
             customClass="min-w-[10rem]">
@@ -72,7 +72,7 @@ interface CouponFormValue {
             [disabled]="loading"
             class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60">
             <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
-            تحديث
+            {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
 
           <button
@@ -80,7 +80,7 @@ interface CouponFormValue {
             (click)="openCreate()"
             class="flex h-11 items-center gap-2 rounded-xl bg-zadna-primary px-5 text-sm font-bold text-white transition hover:bg-zadna-primary/90">
             <span class="material-symbols-outlined text-[18px]">add</span>
-            إضافة كوبون
+            {{ 'MARKETING.COUPONS.ACTIONS.ADD_NEW' | translate }}
           </button>
         </div>
       </div>
@@ -94,9 +94,9 @@ interface CouponFormValue {
         [columns]="tableColumns"
         [isLoading]="loading"
         [emptyStateIcon]="'sell'"
-        [emptyStateActionLabel]="'إنشاء أول كوبون'"
-        [emptyStateTitle]="'لا توجد كوبونات حالياً'"
-        [emptyStateMessage]="'يمكنك إنشاء كوبون جديد وربطه بكل المتاجر أو بمجموعة محددة.'"
+        [emptyStateActionLabel]="'MARKETING.COUPONS.ACTIONS.ADD_NEW' | translate"
+        [emptyStateTitle]="'MARKETING.COUPONS.MESSAGES.EMPTY_TITLE' | translate"
+        [emptyStateMessage]="'MARKETING.COUPONS.MESSAGES.EMPTY_SUBTITLE' | translate"
         [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
         (emptyStateAction)="openCreate()">
         <ng-template #customColumn let-coupon let-column="column">
@@ -124,14 +124,14 @@ interface CouponFormValue {
           <ng-container *ngIf="column.key === 'schedule'">
             <div class="flex flex-col text-start">
               <span class="text-[12px] font-bold text-slate-700">{{ formatSchedule(coupon) }}</span>
-              <span class="mt-1 text-[11px] font-bold text-slate-400">آخر تحديث {{ formatDateTimeLabel(coupon.updatedAtUtc) }}</span>
+              <span class="mt-1 text-[11px] font-bold text-slate-400">{{ 'MARKETING.COUPONS.TABLE.LAST_UPDATE' | translate }} {{ formatDateTimeLabel(coupon.updatedAtUtc) }}</span>
             </div>
           </ng-container>
 
           <ng-container *ngIf="column.key === 'status'">
             <div class="flex justify-start">
               <app-status-pill
-                [label]="coupon.isActive ? 'نشط' : 'غير نشط'"
+                [label]="(coupon.isActive ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate"
                 [variant]="coupon.isActive ? 'success' : 'neutral'"
                 size="sm">
               </app-status-pill>
@@ -144,7 +144,7 @@ interface CouponFormValue {
                 type="button"
                 class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-500 transition-colors hover:bg-zadna-primary/10 hover:text-zadna-primary"
                 (click)="openEdit(coupon.id)"
-                title="تعديل">
+                [title]="'MARKETING.PERMISSIONS.ACTIONS.EDIT' | translate">
                 <span class="material-symbols-outlined text-[18px]">edit</span>
               </button>
 
@@ -153,7 +153,7 @@ interface CouponFormValue {
                 class="flex h-9 w-9 items-center justify-center rounded-xl transition-colors"
                 [ngClass]="coupon.isActive ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'"
                 (click)="toggleStatus(coupon)"
-                [title]="coupon.isActive ? 'إيقاف' : 'تفعيل'">
+                [title]="(coupon.isActive ? 'MARKETING.ACTIONS.DEACTIVATE' : 'MARKETING.ACTIONS.ACTIVATE') | translate">
                 <span class="material-symbols-outlined text-[18px]">{{ coupon.isActive ? 'pause' : 'play_arrow' }}</span>
               </button>
 
@@ -161,7 +161,7 @@ interface CouponFormValue {
                 type="button"
                 class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-500 transition-colors hover:bg-red-100"
                 (click)="promptDelete(coupon)"
-                title="حذف">
+                [title]="'MARKETING.COUPONS.MESSAGES.DELETE_TITLE' | translate">
                 <span class="material-symbols-outlined text-[18px]">delete</span>
               </button>
             </div>
@@ -177,7 +177,7 @@ interface CouponFormValue {
               </div>
 
               <app-status-pill
-                [label]="coupon.isActive ? 'نشط' : 'غير نشط'"
+                [label]="(coupon.isActive ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate"
                 [variant]="coupon.isActive ? 'success' : 'neutral'"
                 size="sm">
               </app-status-pill>
@@ -185,12 +185,12 @@ interface CouponFormValue {
 
             <div class="grid grid-cols-2 gap-3 text-xs font-bold text-slate-600">
               <div class="rounded-2xl bg-slate-50 px-3 py-2">
-                <div class="text-[10px] text-slate-400">الخصم</div>
+                <div class="text-[10px] text-slate-400">{{ 'MARKETING.COUPONS.TABLE.DISCOUNT' | translate }}</div>
                 <div class="mt-1 text-slate-800">{{ formatDiscount(coupon) }}</div>
               </div>
 
               <div class="rounded-2xl bg-slate-50 px-3 py-2">
-                <div class="text-[10px] text-slate-400">المتاجر</div>
+                <div class="text-[10px] text-slate-400">{{ 'MARKETING.COUPONS.TABLE.VENDORS' | translate }}</div>
                 <div class="mt-1 text-slate-800">{{ coupon.assignedVendorsCount }}</div>
               </div>
             </div>
@@ -205,7 +205,7 @@ interface CouponFormValue {
                 type="button"
                 class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-black text-slate-700"
                 (click)="openEdit(coupon.id)">
-                تعديل
+                {{ 'MARKETING.PERMISSIONS.ACTIONS.EDIT' | translate }}
               </button>
 
               <button
@@ -213,14 +213,14 @@ interface CouponFormValue {
                 class="rounded-xl px-3 py-2 text-xs font-black"
                 [ngClass]="coupon.isActive ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'"
                 (click)="toggleStatus(coupon)">
-                {{ coupon.isActive ? 'إيقاف' : 'تفعيل' }}
+                {{ (coupon.isActive ? 'MARKETING.ACTIONS.DEACTIVATE' : 'MARKETING.ACTIONS.ACTIVATE') | translate }}
               </button>
 
               <button
                 type="button"
                 class="rounded-xl bg-red-100 px-3 py-2 text-xs font-black text-red-700"
                 (click)="promptDelete(coupon)">
-                حذف
+                {{ 'MARKETING.PERMISSIONS.ACTIONS.DELETE' | translate }}
               </button>
             </div>
           </div>
@@ -232,8 +232,8 @@ interface CouponFormValue {
       <div class="my-6 w-full max-w-5xl rounded-[2rem] bg-white shadow-2xl">
         <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
           <div>
-            <h3 class="text-xl font-black text-slate-900">{{ selectedCoupon ? 'تعديل الكوبون' : 'إضافة كوبون جديد' }}</h3>
-            <p class="mt-1 text-sm font-bold text-slate-500">حدد الخصم، فترة التفعيل، والمتاجر المستفيدة.</p>
+            <h3 class="text-xl font-black text-slate-900">{{ (selectedCoupon ? 'MARKETING.COUPONS.MODAL.EDIT_TITLE' : 'MARKETING.COUPONS.MODAL.CREATE_TITLE') | translate }}</h3>
+            <p class="mt-1 text-sm font-bold text-slate-500">{{ 'MARKETING.COUPONS.MODAL.SUBTITLE' | translate }}</p>
           </div>
 
           <button
@@ -247,65 +247,65 @@ interface CouponFormValue {
         <form (ngSubmit)="saveCoupon()" class="space-y-6 px-6 py-6">
           <div class="grid gap-5 lg:grid-cols-2">
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">كود الكوبون</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.CODE' | translate }}</span>
               <input [(ngModel)]="form.code" name="code" type="text" placeholder="WELCOME20"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">عنوان الكوبون</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.TITLE' | translate }}</span>
               <input [(ngModel)]="form.title" name="title" type="text" placeholder="خصم ترحيبي"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">نوع الخصم</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.DISCOUNT_TYPE' | translate }}</span>
               <app-searchable-select
                 [(ngModel)]="form.discountType"
-                [options]="discountTypeOptions"
+                [options]="translatedDiscountTypeOptions"
                 [searchable]="false"
                 [allowClear]="false">
               </app-searchable-select>
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">قيمة الخصم</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.DISCOUNT_VALUE' | translate }}</span>
               <input [(ngModel)]="form.discountValue" name="discountValue" type="number" min="0" step="0.01"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">الحد الأدنى للطلب</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.MIN_ORDER' | translate }}</span>
               <input [(ngModel)]="form.minOrderAmount" name="minOrderAmount" type="number" min="0" step="0.01"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">الحد الأقصى للخصم</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.MAX_DISCOUNT' | translate }}</span>
               <input [(ngModel)]="form.maxDiscountAmount" name="maxDiscountAmount" type="number" min="0" step="0.01" [disabled]="form.discountType !== 'Percentage'"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">يبدأ في</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.STARTS_AT' | translate }}</span>
               <input [(ngModel)]="form.startsAtLocal" name="startsAtLocal" type="datetime-local"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">ينتهي في</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.ENDS_AT' | translate }}</span>
               <input [(ngModel)]="form.endsAtLocal" name="endsAtLocal" type="datetime-local"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">حد الاستخدام الكلي</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.USAGE_LIMIT' | translate }}</span>
               <input [(ngModel)]="form.usageLimit" name="usageLimit" type="number" min="0" step="1"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
             <label class="space-y-2">
-              <span class="text-sm font-black text-slate-700">حد الاستخدام لكل مستخدم</span>
+              <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.PER_USER_LIMIT' | translate }}</span>
               <input [(ngModel)]="form.perUserLimit" name="perUserLimit" type="number" min="0" step="1"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
@@ -313,7 +313,7 @@ interface CouponFormValue {
 
           <label *ngIf="selectedCoupon" class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
             <input [(ngModel)]="form.isActive" name="isActive" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" />
-            <span class="text-sm font-black text-slate-700">الكوبون نشط وجاهز للاستخدام</span>
+            <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.IS_ACTIVE' | translate }}</span>
           </label>
 
           <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/70 p-5">
@@ -324,22 +324,22 @@ interface CouponFormValue {
                 type="checkbox"
                 class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" />
               <div>
-                <div class="text-sm font-black text-slate-800">تفعيل على كل المتاجر</div>
-                <div class="mt-1 text-xs font-bold text-slate-500">عند تفعيل هذا الخيار يصبح الكوبون عامًا على المنصة بضغطة واحدة.</div>
+                <div class="text-sm font-black text-slate-800">{{ 'MARKETING.COUPONS.FIELDS.APPLY_ALL_VENDORS' | translate }}</div>
+                <div class="mt-1 text-xs font-bold text-slate-500">{{ 'MARKETING.COUPONS.FIELDS.APPLY_ALL_DESC' | translate }}</div>
               </div>
             </label>
 
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h4 class="text-base font-black text-slate-900">المتاجر المستفيدة</h4>
-                <p class="mt-1 text-sm font-bold text-slate-500">إذا تركت القائمة بدون تحديد، سيكون الكوبون عامًا على المنصة.</p>
+                <h4 class="text-base font-black text-slate-900">{{ 'MARKETING.COUPONS.FIELDS.BENEFICIARY_VENDORS' | translate }}</h4>
+                <p class="mt-1 text-sm font-bold text-slate-500">{{ 'MARKETING.COUPONS.FIELDS.BENEFICIARY_DESC' | translate }}</p>
               </div>
 
               <input
                 [(ngModel)]="vendorSearchTerm"
                 name="vendorSearchTerm"
                 type="text"
-                placeholder="ابحث باسم المتجر"
+                [placeholder]="'MARKETING.COUPONS.FIELDS.VENDOR_SEARCH' | translate"
                 [disabled]="form.applyToAllVendors"
                 class="h-11 min-w-[14rem] rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </div>
@@ -357,7 +357,7 @@ interface CouponFormValue {
               </label>
 
               <div *ngIf="filteredVendors.length === 0" class="px-4 py-8 text-center text-sm font-bold text-slate-400">
-                لا توجد متاجر مطابقة للبحث الحالي.
+                {{ 'MARKETING.COUPONS.MESSAGES.NO_VENDORS_MATCH' | translate }}
               </div>
             </div>
 
@@ -367,7 +367,7 @@ interface CouponFormValue {
                 (click)="selectAllVisibleVendors()"
                 [disabled]="form.applyToAllVendors"
                 class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-600 transition hover:border-zadna-primary hover:text-zadna-primary">
-                تحديد النتائج الظاهرة
+                {{ 'MARKETING.COUPONS.ACTIONS.SELECT_VISIBLE' | translate }}
               </button>
 
               <button
@@ -375,7 +375,7 @@ interface CouponFormValue {
                 (click)="clearVendorSelection()"
                 [disabled]="form.applyToAllVendors"
                 class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-600 transition hover:border-red-200 hover:text-red-600">
-                مسح التحديد
+                {{ 'MARKETING.COUPONS.ACTIONS.CLEAR_SELECTION' | translate }}
               </button>
             </div>
           </div>
@@ -389,7 +389,7 @@ interface CouponFormValue {
               type="button"
               (click)="closeModal()"
               class="h-11 rounded-xl border border-slate-200 px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-50">
-              إلغاء
+              {{ 'MARKETING.COUPONS.ACTIONS.CANCEL' | translate }}
             </button>
 
             <button
@@ -397,7 +397,7 @@ interface CouponFormValue {
               [disabled]="saving"
               class="flex h-11 items-center gap-2 rounded-xl bg-zadna-primary px-5 text-sm font-bold text-white transition hover:bg-zadna-primary/90 disabled:cursor-not-allowed disabled:opacity-60">
               <span class="material-symbols-outlined text-[18px]" *ngIf="saving">progress_activity</span>
-              {{ saving ? 'جاري الحفظ...' : 'حفظ الكوبون' }}
+              {{ (saving ? 'MARKETING.ACTIONS.SAVING' : 'MARKETING.COUPONS.ACTIONS.SAVE') | translate }}
             </button>
           </div>
         </form>
@@ -407,8 +407,8 @@ interface CouponFormValue {
     <app-delete-confirmation-modal
       [isOpen]="deleteTarget !== null"
       [isLoading]="deleting"
-      [title]="'حذف الكوبون'"
-      [message]="'هل أنت متأكد من حذف هذا الكوبون؟ هذا الإجراء لا يمكن التراجع عنه.'"
+      [title]="'MARKETING.COUPONS.MESSAGES.DELETE_TITLE' | translate"
+      [message]="'MARKETING.COUPONS.MESSAGES.DELETE_MESSAGE' | translate"
       (close)="deleteTarget = null"
       (confirm)="confirmDelete()">
     </app-delete-confirmation-modal>
@@ -441,12 +441,12 @@ export class MarketingCouponsComponent implements OnInit {
   ];
 
   readonly tableColumns: TableColumn[] = [
-    { key: 'code', title: 'الكوبون', type: 'custom', width: '18rem', align: 'left' },
-    { key: 'discount', title: 'الخصم', type: 'custom', width: '14rem', align: 'left' },
-    { key: 'vendors', title: 'المتاجر', type: 'custom', width: '16rem', align: 'left' },
-    { key: 'schedule', title: 'فترة التفعيل', type: 'custom', width: '18rem', align: 'left' },
-    { key: 'status', title: 'الحالة', type: 'custom', width: '8rem', align: 'left' },
-    { key: 'actions', title: 'إجراءات', type: 'custom', width: '10rem', align: 'right' }
+    { key: 'code', title: 'MARKETING.COUPONS.TABLE.COUPON', type: 'custom', width: '18rem', align: 'left' },
+    { key: 'discount', title: 'MARKETING.COUPONS.TABLE.DISCOUNT', type: 'custom', width: '14rem', align: 'left' },
+    { key: 'vendors', title: 'MARKETING.COUPONS.TABLE.VENDORS', type: 'custom', width: '16rem', align: 'left' },
+    { key: 'schedule', title: 'MARKETING.COUPONS.TABLE.SCHEDULE', type: 'custom', width: '18rem', align: 'left' },
+    { key: 'status', title: 'MARKETING.COUPONS.TABLE.STATUS', type: 'custom', width: '8rem', align: 'left' },
+    { key: 'actions', title: 'MARKETING.COUPONS.TABLE.ACTIONS', type: 'custom', width: '10rem', align: 'right' }
   ];
 
   form: CouponFormValue = this.createEmptyForm();
@@ -454,8 +454,24 @@ export class MarketingCouponsComponent implements OnInit {
   constructor(
     private readonly marketingApi: MarketingApiService,
     private readonly vendorService: VendorService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly translateService: TranslateService
   ) {}
+
+  get translatedStatusOptions(): SearchableSelectOption[] {
+    return [
+      { label: this.translateService.instant('MARKETING.COUPONS.STATUS_OPTIONS.ALL'), value: 'all' },
+      { label: this.translateService.instant('MARKETING.COUPONS.STATUS_OPTIONS.ACTIVE'), value: 'active' },
+      { label: this.translateService.instant('MARKETING.COUPONS.STATUS_OPTIONS.INACTIVE'), value: 'inactive' }
+    ];
+  }
+
+  get translatedDiscountTypeOptions(): SearchableSelectOption[] {
+    return [
+      { label: this.translateService.instant('MARKETING.COUPONS.DISCOUNT_TYPES.FIXED'), value: 'Fixed' },
+      { label: this.translateService.instant('MARKETING.COUPONS.DISCOUNT_TYPES.PERCENTAGE'), value: 'Percentage' }
+    ];
+  }
 
   get filteredCoupons(): MarketingCoupon[] {
     const query = this.searchTerm.trim().toLocaleLowerCase();
@@ -564,7 +580,7 @@ export class MarketingCouponsComponent implements OnInit {
       },
       error: (error) => {
         this.saving = false;
-        this.toastService.error(this.getCouponErrorMessage(error), 'الكوبونات');
+        this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'));
       }
     });
   }
@@ -597,7 +613,12 @@ export class MarketingCouponsComponent implements OnInit {
         const wasEditing = Boolean(this.selectedCoupon);
         this.closeModal();
         this.loadCoupons();
-        this.toastService.success(wasEditing ? 'تم تحديث الكوبون بنجاح' : 'تم إنشاء الكوبون بنجاح', 'التسويق');
+        this.toastService.success(
+          wasEditing 
+            ? this.translateService.instant('MARKETING.COUPONS.MESSAGES.UPDATED') 
+            : this.translateService.instant('MARKETING.COUPONS.MESSAGES.CREATED'), 
+          this.translateService.instant('MARKETING.SHELL.TITLE')
+        );
       },
       error: (error) => {
         this.saving = false;
@@ -613,10 +634,15 @@ export class MarketingCouponsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
-        this.toastService.success(coupon.isActive ? 'تم إيقاف الكوبون' : 'تم تفعيل الكوبون', 'التسويق');
+        this.toastService.success(
+          coupon.isActive 
+            ? this.translateService.instant('MARKETING.COUPONS.MESSAGES.DEACTIVATED') 
+            : this.translateService.instant('MARKETING.COUPONS.MESSAGES.ACTIVATED'), 
+          this.translateService.instant('MARKETING.SHELL.TITLE')
+        );
         this.loadCoupons();
       },
-      error: (error) => this.toastService.error(this.getCouponErrorMessage(error), 'الكوبونات')
+      error: (error) => this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'))
     });
   }
 
@@ -634,12 +660,12 @@ export class MarketingCouponsComponent implements OnInit {
       next: () => {
         this.deleting = false;
         this.deleteTarget = null;
-        this.toastService.success('تم حذف الكوبون', 'التسويق');
+        this.toastService.success(this.translateService.instant('MARKETING.COUPONS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadCoupons();
       },
       error: (error) => {
         this.deleting = false;
-        this.toastService.error(this.getCouponErrorMessage(error), 'الكوبونات');
+        this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'));
       }
     });
   }
@@ -666,26 +692,27 @@ export class MarketingCouponsComponent implements OnInit {
   formatDiscount(coupon: MarketingCoupon): string {
     return coupon.discountType === 'Percentage'
       ? `${coupon.discountValue}%`
-      : `${coupon.discountValue.toFixed(2)} ر.س`;
+      : `${coupon.discountValue.toFixed(2)} ${this.translateService.currentLang === 'ar' ? 'ر.س' : 'SAR'}`;
   }
 
   formatOrderConstraint(coupon: MarketingCoupon): string {
     const parts: string[] = [];
+    const currency = this.translateService.currentLang === 'ar' ? 'ر.س' : 'SAR';
 
     if (coupon.minOrderAmount) {
-      parts.push(`أقل طلب ${coupon.minOrderAmount.toFixed(2)} ر.س`);
+      parts.push(`${this.translateService.instant('MARKETING.COUPONS.TABLE.MIN_ORDER')} ${coupon.minOrderAmount.toFixed(2)} ${currency}`);
     }
 
     if (coupon.discountType === 'Percentage' && coupon.maxDiscountAmount) {
-      parts.push(`حد أقصى ${coupon.maxDiscountAmount.toFixed(2)} ر.س`);
+      parts.push(`${this.translateService.instant('MARKETING.COUPONS.TABLE.MAX_DISCOUNT')} ${coupon.maxDiscountAmount.toFixed(2)} ${currency}`);
     }
 
-    return parts.join(' • ') || 'بدون قيود مالية';
+    return parts.join(' • ') || this.translateService.instant('MARKETING.COUPONS.TABLE.NO_CONSTRAINTS');
   }
 
   formatVendorNames(coupon: MarketingCoupon): string {
     if (coupon.applicableVendors.length === 0) {
-      return 'عام على كل المتاجر';
+      return this.translateService.instant('MARKETING.COUPONS.TABLE.ALL_VENDORS');
     }
 
     const names = coupon.applicableVendors
@@ -726,35 +753,35 @@ export class MarketingCouponsComponent implements OnInit {
     this.modalError = '';
 
     if (!this.form.code.trim()) {
-      return 'يرجى إدخال كود الكوبون.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.REQUIRED_CODE');
     }
 
     if (!this.form.title.trim()) {
-      return 'يرجى إدخال عنوان الكوبون.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.REQUIRED_TITLE');
     }
 
     if (!this.form.discountValue || this.form.discountValue <= 0) {
-      return 'قيمة الخصم يجب أن تكون أكبر من صفر.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.DISCOUNT_GT_ZERO');
     }
 
     if (this.form.discountType === 'Percentage' && this.form.discountValue > 100) {
-      return 'نسبة الخصم لا يمكن أن تتجاوز 100%.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.PERCENT_MAX');
     }
 
     if (this.form.startsAtLocal && this.form.endsAtLocal) {
       const start = new Date(this.form.startsAtLocal);
       const end = new Date(this.form.endsAtLocal);
       if (!Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime()) && end <= start) {
-        return 'تاريخ نهاية الكوبون يجب أن يكون بعد تاريخ البداية.';
+        return this.translateService.instant('MARKETING.COUPONS.MESSAGES.INVALID_DATE_RANGE');
       }
     }
 
     if (this.form.usageLimit != null && this.form.usageLimit <= 0) {
-      return 'عدد مرات الاستخدام الكلي يجب أن يكون أكبر من صفر.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.USAGE_LIMIT_GT_ZERO');
     }
 
     if (this.form.perUserLimit != null && this.form.perUserLimit <= 0) {
-      return 'عدد مرات الاستخدام لكل عميل يجب أن يكون أكبر من صفر.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.USAGE_LIMIT_GT_ZERO');
     }
 
     if (
@@ -766,7 +793,7 @@ export class MarketingCouponsComponent implements OnInit {
     }
 
     if (!this.form.applyToAllVendors && this.form.vendorIds.length === 0) {
-      return 'يرجى اختيار متجر واحد على الأقل أو تفعيل خيار جميع المتاجر.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.VENDORS_REQUIRED');
     }
 
     return '';
@@ -780,23 +807,23 @@ export class MarketingCouponsComponent implements OnInit {
       normalized.includes('coupon code already exists') ||
       normalized.includes('duplicate_coupon_code')
     ) {
-      return 'كود الكوبون مستخدم بالفعل. اختر كودًا آخر.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.DUPLICATE_CODE');
     }
 
     if (normalized.includes('required')) {
-      return 'يرجى استكمال الحقول المطلوبة قبل الحفظ.';
+      return this.translateService.instant('MARKETING.BANNERS.MESSAGES.REQUIRED_FIELDS');
     }
 
     if (normalized.includes('greater than zero')) {
-      return 'القيمة المدخلة يجب أن تكون أكبر من صفر.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.DISCOUNT_GT_ZERO');
     }
 
     if (normalized.includes('percentage') && normalized.includes('100')) {
-      return 'نسبة الخصم لا يمكن أن تتجاوز 100%.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.PERCENT_MAX');
     }
 
     if (normalized.includes('invalid date range')) {
-      return 'فترة التفعيل غير صحيحة. تأكد أن تاريخ النهاية بعد البداية.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.INVALID_DATE_RANGE');
     }
 
     if (normalized.includes('vendor') && normalized.includes('not found')) {

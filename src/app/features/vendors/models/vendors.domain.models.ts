@@ -129,6 +129,26 @@ export interface VendorReviewNote {
   isSystem?: boolean;
 }
 
+export type VendorProfileReviewItemStatus = 'approved' | 'submitted' | 'changes_requested' | 'pending_vendor';
+export type VendorProfileReviewTargetType = 'field' | 'document';
+
+export interface VendorProfileReviewItem {
+  code: string;
+  status: VendorProfileReviewItemStatus;
+  targetType: VendorProfileReviewTargetType;
+  step: number;
+  reviewerId?: string | null;
+  reviewerName?: string | null;
+  decisionNote?: string | null;
+  lastSubmittedAtUtc?: string | null;
+  reviewedAtUtc?: string | null;
+}
+
+export interface VendorRequiredAction {
+  code: string;
+  message: string;
+}
+
 export type VendorActivitySeverity = 'info' | 'success' | 'warning' | 'danger';
 
 export interface VendorActivityLogEntry {
@@ -196,6 +216,8 @@ export interface VendorDetail extends Vendor {
   notificationSettings?: VendorNotificationSettings | null;
   operatingHours?: VendorOperatingHour[];
   primaryBankAccount?: VendorBankAccount | null;
+  primaryBranchLatitude?: number | null;
+  primaryBranchLongitude?: number | null;
   branchesCount: number;
   bankAccountsCount: number;
   reviewStartedAtUtc: string | null;
@@ -203,6 +225,8 @@ export interface VendorDetail extends Vendor {
   requestedChangesAtUtc: string | null;
   reviewDecisionReason: string | null;
   readyForFinalApproval?: boolean;
+  reviewItems: VendorProfileReviewItem[];
+  requiredActions: VendorRequiredAction[];
   reviewDocuments: VendorReviewDocument[];
   reviewNotes: VendorReviewNote[];
   riskIndicators: VendorRiskIndicator[];

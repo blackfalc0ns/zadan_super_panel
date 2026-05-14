@@ -35,7 +35,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
       <div class="relative bg-white rounded-3xl shadow-xl w-full max-w-md animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[90vh]">
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div>
-            <h3 class="text-[15px] font-black text-slate-900">تفاصيل التسوية المالية</h3>
+            <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.SETTLEMENTS.DETAIL_TITLE' | translate }}</h3>
             <p class="text-[11px] font-bold text-slate-500 font-mono mt-0.5">{{ selectedSettlement.settlementCode }}</p>
           </div>
           <button class="w-8 h-8 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors" (click)="selectedSettlement = null">
@@ -55,15 +55,15 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                 <p class="text-[15px] font-black text-slate-900 leading-tight">{{ selectedSettlement.entityName }}</p>
                 <span class="inline-flex mt-1 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border"
                       [ngClass]="selectedSettlement.entityType === 'vendor' ? 'bg-cyan-50 text-cyan-700 border-cyan-100' : 'bg-amber-50 text-amber-700 border-amber-100'">
-                   {{ selectedSettlement.entityType === 'vendor' ? 'متجر' : 'مندوب' }}
+                   {{ (selectedSettlement.entityType === 'vendor' ? 'FINANCES.ENTITIES.VENDOR' : 'FINANCES.ENTITIES.DRIVER') | translate }}
                 </span>
              </div>
           </div>
 
           <div class="p-6 rounded-2xl text-center border bg-emerald-50 border-emerald-100">
-            <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest mb-2">صافي المستحقات (للدفع)</p>
+            <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest mb-2">{{ 'FINANCES.SETTLEMENTS.NET_DUE' | translate }}</p>
             <p class="text-4xl font-black tabular-nums tracking-tight text-emerald-700">
-               {{ formatNumber(selectedSettlement.netAmount) }} <span class="text-[15px] font-bold">SAR</span>
+               {{ formatNumber(selectedSettlement.netAmount) }} <span class="text-[15px] font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span>
             </p>
             <div class="mt-4 flex justify-center">
                <app-finance-status-badge [status]="selectedSettlement.status"></app-finance-status-badge>
@@ -72,19 +72,19 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 
           <div class="space-y-4">
             <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">إجمالي الإيرادات</span>
-               <span class="text-[13px] font-black text-slate-900 tabular-nums">{{ formatNumber(selectedSettlement.grossAmount) }} SAR</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.GROSS_REVENUE' | translate }}</span>
+               <span class="text-[13px] font-black text-slate-900 tabular-nums">{{ formatNumber(selectedSettlement.grossAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
             </div>
             <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">الاستقطاعات والعمولات</span>
-               <span class="text-[13px] font-black text-red-600 tabular-nums">-{{ formatNumber(selectedSettlement.deductions) }} SAR</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.DEDUCTIONS' | translate }}</span>
+               <span class="text-[13px] font-black text-red-600 tabular-nums">-{{ formatNumber(selectedSettlement.deductions) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
             </div>
             <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">عدد الطلبات</span>
-               <span class="text-[13px] font-black text-slate-800 tabular-nums">{{ formatNumber(selectedSettlement.ordersCount) }} طلب</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.ORDERS_COUNT' | translate }}</span>
+               <span class="text-[13px] font-black text-slate-800 tabular-nums">{{ 'FINANCES.SETTLEMENTS.ORDERS_COUNT_VAL' | translate: { count: selectedSettlement.ordersCount } }}</span>
             </div>
             <div class="flex justify-between items-center py-2">
-               <span class="text-[11px] font-bold text-slate-500">الفترة المالية</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.FINANCIAL_PERIOD' | translate }}</span>
                <span class="text-[12px] font-bold text-slate-700" dir="ltr">{{ formatDate(selectedSettlement.periodFrom) }} - {{ formatDate(selectedSettlement.periodTo) }}</span>
             </div>
           </div>
@@ -96,11 +96,11 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     customClass="!flex-1 !rounded-xl shadow-md shadow-zadna-primary/20"
                     (btnClick)="processSettlement(selectedSettlement)">
               <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">payments</span>
-              تنفيذ التحويل (دفع)
+              {{ 'FINANCES.SETTLEMENTS.PROCESS_PAYMENT' | translate }}
             </app-button>
             <app-button variant="outline" size="md" customClass="!flex-1 !rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50">
               <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">download</span>
-              كشف حساب
+              {{ 'FINANCES.SETTLEMENTS.ACCOUNT_STATEMENT' | translate }}
             </app-button>
           </div>
         </div>
@@ -110,7 +110,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
     <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
       <!-- شريط الصفحة العلوي (Header) -->
-      <app-page-header title="التسويات المالية (Settlements)" subtitle="إدارة عمليات الدفع وتحويل المستحقات للمتاجر والمناديب وتتبع حالتها">
+      <app-page-header [title]="'FINANCES.SETTLEMENTS.TITLE' | translate" [subtitle]="'FINANCES.SETTLEMENTS.SUBTITLE' | translate">
         <div actions class="flex items-center gap-3">
           <!-- مبدل الكيانات (Tabs) -->
           <div class="flex items-center bg-slate-100/80 p-1 rounded-xl border border-slate-200">
@@ -118,13 +118,13 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     class="px-5 py-2 text-[12px] font-bold rounded-lg transition-all duration-200 flex items-center gap-2"
                     [ngClass]="activeTab === 'vendor' ? 'bg-white text-zadna-primary shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'">
               <span class="material-symbols-outlined text-[16px]">storefront</span>
-              تسويات المتاجر
+              {{ 'FINANCES.SETTLEMENTS.TABS.VENDORS' | translate }}
             </button>
             <button (click)="setActiveTab('driver')"
                     class="px-5 py-2 text-[12px] font-bold rounded-lg transition-all duration-200 flex items-center gap-2"
                     [ngClass]="activeTab === 'driver' ? 'bg-white text-zadna-primary shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'">
               <span class="material-symbols-outlined text-[16px]">local_shipping</span>
-              تسويات المناديب
+              {{ 'FINANCES.SETTLEMENTS.TABS.DRIVERS' | translate }}
             </button>
           </div>
         </div>
@@ -133,29 +133,29 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
       <!-- بانر الإشعار للفلترة -->
       <app-inline-banner
         *ngIf="hasScope && scopedSettlement"
-        [title]="scopedSettlement.entityType === 'vendor' ? 'تسويات متجر محدد' : 'تسويات مندوب محدد'"
+        [title]="(scopedSettlement.entityType === 'vendor' ? 'FINANCES.SETTLEMENTS.SCOPED.VENDOR' : 'FINANCES.SETTLEMENTS.SCOPED.DRIVER') | translate"
         [message]="scopedSettlement.entityName"
         [shouldTranslate]="false"
         [icon]="scopedSettlement.entityType === 'vendor' ? 'storefront' : 'local_shipping'"
         variant="info">
         <div actions class="flex items-center gap-2">
           <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="openScopedProfile()">
-            عرض الملف
+            {{ 'FINANCES.LEDGER.VIEW_PROFILE' | translate }}
           </app-button>
           <app-button variant="ghost" size="sm" customClass="!rounded-xl !bg-slate-900 !text-white hover:!bg-slate-800" (btnClick)="clearScope()">
-            مسح الفلتر
+            {{ 'FINANCES.LEDGER.CLEAR_SCOPE' | translate }}
           </app-button>
         </div>
       </app-inline-banner>
 
       <!-- ملخص الأرقام (Summary Stats) -->
       <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200 shadow-sm overflow-hidden bg-white">
-        <div class="grid grid-cols-2 lg:grid-cols-4 divide-x rtl:divide-x-reverse divide-slate-100">
-           <div *ngFor="let stat of activeStats" class="px-6 py-5">
-             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ stat.label }}</p>
-             <p class="text-2xl font-black tabular-nums tracking-tight" [ngClass]="stat.color">{{ stat.value }}</p>
-           </div>
-        </div>
+          <div class="grid grid-cols-2 lg:grid-cols-4 divide-x rtl:divide-x-reverse divide-slate-100">
+             <div *ngFor="let stat of activeStats" class="px-6 py-5">
+               <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ stat.labelKey | translate }}</p>
+               <p class="text-2xl font-black tabular-nums tracking-tight" [ngClass]="stat.color">{{ stat.value }}</p>
+             </div>
+          </div>
       </app-card>
 
       <!-- جدول التسويات -->
@@ -166,14 +166,14 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                   [ngClass]="activeTab === 'vendor' ? 'bg-cyan-100 text-cyan-600' : 'bg-amber-100 text-amber-600'">
                <span class="material-symbols-outlined text-[18px]">{{ activeTab === 'vendor' ? 'storefront' : 'local_shipping' }}</span>
              </div>
-             <div>
-               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">قائمة المستحقات المطلوبة</h3>
-               <p class="text-[11px] font-bold text-slate-500 mt-0.5">تفاصيل الدفعات المعلقة والمكتملة</p>
-             </div>
+              <div>
+                <h3 class="text-[15px] font-black text-slate-900 tracking-tight">{{ 'FINANCES.SETTLEMENTS.TABLE.TITLE' | translate }}</h3>
+                <p class="text-[11px] font-bold text-slate-500 mt-0.5">{{ 'FINANCES.SETTLEMENTS.TABLE.DESC' | translate }}</p>
+              </div>
           </div>
           <app-button variant="outline" size="sm" customClass="!rounded-xl bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
             <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">add</span>
-            إنشاء تسوية استثنائية
+            {{ 'FINANCES.SETTLEMENTS.TABLE.CREATE_EXTRA' | translate }}
           </app-button>
         </div>
 
@@ -181,15 +181,15 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
           <table class="w-full whitespace-nowrap text-right text-[13px]">
             <thead>
               <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">رقم التسوية</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">الكيان المرتبط</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">الفترة المالية</th>
-                <th class="px-6 py-4 text-center">الطلبات</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">الإيرادات</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">الاستقطاع</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">صافي الدفع</th>
-                <th class="px-6 py-4 text-center">الحالة</th>
-                <th class="px-6 py-4 text-center">إجراءات</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.SETTLEMENTS.TABLE.CODE' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.SETTLEMENTS.TABLE.ENTITY' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.SETTLEMENTS.TABLE.PERIOD' | translate }}</th>
+                <th class="px-6 py-4 text-center">{{ 'FINANCES.SETTLEMENTS.TABLE.ORDERS' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.SETTLEMENTS.TABLE.REVENUE' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.SETTLEMENTS.TABLE.DEDUCTION' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.SETTLEMENTS.TABLE.NET_PAY' | translate }}</th>
+                <th class="px-6 py-4 text-center">{{ 'FINANCES.SETTLEMENTS.TABLE.STATUS' | translate }}</th>
+                <th class="px-6 py-4 text-center">{{ 'FINANCES.SETTLEMENTS.TABLE.ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -217,7 +217,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 
                 <td class="px-6 py-4 align-middle">
                   <div class="flex flex-col gap-0.5">
-                    <span class="text-[12px] font-bold text-slate-700">{{ getTranslatedPeriod(s.period) }}</span>
+                    <span class="text-[12px] font-bold text-slate-700">{{ getTranslatedPeriod(s.period) | translate }}</span>
                     <span class="text-[10px] font-bold text-slate-400" dir="ltr">{{ formatDate(s.periodFrom) }} - {{ formatDate(s.periodTo) }}</span>
                   </div>
                 </td>
@@ -227,15 +227,15 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                 </td>
 
                 <td class="px-6 py-4 align-middle text-left" dir="ltr">
-                  <span class="text-[13px] font-bold text-slate-600 tabular-nums">{{ formatNumber(s.grossAmount) }} SAR</span>
+                  <span class="text-[13px] font-bold text-slate-600 tabular-nums">{{ formatNumber(s.grossAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
                 </td>
 
                 <td class="px-6 py-4 align-middle text-left" dir="ltr">
-                  <span class="text-[13px] font-bold text-red-500 tabular-nums">-{{ formatNumber(s.deductions) }} SAR</span>
+                  <span class="text-[13px] font-bold text-red-500 tabular-nums">-{{ formatNumber(s.deductions) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
                 </td>
 
                 <td class="px-6 py-4 align-middle text-left" dir="ltr">
-                  <span class="text-[14px] font-black text-emerald-700 tabular-nums bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">{{ formatNumber(s.netAmount) }} SAR</span>
+                  <span class="text-[14px] font-black text-emerald-700 tabular-nums bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">{{ formatNumber(s.netAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
                 </td>
 
                 <td class="px-6 py-4 align-middle">
@@ -251,7 +251,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                             size="xs"
                             customClass="!rounded-lg shadow-sm"
                             (btnClick)="processSettlement(s)">
-                      دفع الآن
+                      {{ 'FINANCES.SETTLEMENTS.TABLE.PAY_NOW' | translate }}
                     </app-button>
                     <button class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors" (click)="openDetail(s)">
                       <span class="material-symbols-outlined text-[16px]">visibility</span>
@@ -268,8 +268,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
           <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
              <span class="material-symbols-outlined text-4xl text-slate-300">account_balance</span>
           </div>
-          <h3 class="text-[15px] font-black text-slate-800">لا توجد تسويات مالية</h3>
-          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">لا يوجد أي مستحقات مسجلة حالياً ضمن هذا التصنيف.</p>
+          <h3 class="text-[15px] font-black text-slate-800">{{ 'FINANCES.SETTLEMENTS.NO_DATA_TITLE' | translate }}</h3>
+          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">{{ 'FINANCES.SETTLEMENTS.NO_DATA_DESC' | translate }}</p>
         </div>
       </app-card>
 
@@ -307,10 +307,10 @@ export class SettlementsComponent implements OnInit {
     const paidNet = paid.reduce((sum, item) => sum + item.netAmount, 0);
 
     return [
-      { label: 'إجمالي التسويات', value: this.formatNumber(data.length), color: 'text-slate-900' },
-      { label: 'المدفوعة (مكتملة)', value: `${this.formatNumber(paid.length)} / ${this.formatNumber(paidNet)} SAR`, color: 'text-emerald-600' },
-      { label: 'المعلقة (بانتظار الدفع)', value: this.formatNumber(pending.length), color: 'text-amber-600' },
-      { label: 'إجمالي المبالغ', value: `${this.formatNumber(totalNet)} SAR`, color: 'text-zadna-primary' }
+      { labelKey: 'FINANCES.SETTLEMENTS.STATS.TOTAL', value: this.formatNumber(data.length), color: 'text-slate-900' },
+      { labelKey: 'FINANCES.SETTLEMENTS.STATS.PAID', value: `${this.formatNumber(paid.length)} / ${this.formatNumber(paidNet)} ${this.translate.instant('FINANCES.CURRENCY')}`, color: 'text-emerald-600' },
+      { labelKey: 'FINANCES.SETTLEMENTS.STATS.PENDING', value: this.formatNumber(pending.length), color: 'text-amber-600' },
+      { labelKey: 'FINANCES.SETTLEMENTS.STATS.TOTAL_AMOUNT', value: `${this.formatNumber(totalNet)} ${this.translate.instant('FINANCES.CURRENCY')}`, color: 'text-zadna-primary' }
     ];
   }
 
@@ -387,12 +387,6 @@ export class SettlementsComponent implements OnInit {
   }
   
   getTranslatedPeriod(period: string): string {
-    const map: Record<string, string> = {
-      'Weekly': 'أسبوعي',
-      'Bi-Weekly': 'كل أسبوعين',
-      'Monthly': 'شهري',
-      'Daily': 'يومي'
-    };
-    return map[period] ?? period;
+    return `FINANCES.SETTLEMENTS.PERIODS.${period.toUpperCase().replace('-', '_')}`;
   }
 }

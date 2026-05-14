@@ -34,9 +34,17 @@ import { AppCardComponent } from '../ui/card/card.component';
             <h3 class="text-2xl font-black text-slate-900 mb-2 leading-tight">
               {{ title | translate }}
             </h3>
-            <p class="text-slate-500 text-sm font-bold leading-relaxed mb-8">
+            <p class="text-slate-500 text-sm font-bold leading-relaxed" [class.mb-8]="!errorMessage" [class.mb-4]="errorMessage">
               {{ message | translate }}
             </p>
+
+            <!-- Error Message Banner -->
+            <div *ngIf="errorMessage" class="delete-modal-error mb-6">
+              <svg class="w-4 h-4 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="text-[13px] font-bold text-red-700 leading-snug">{{ errorMessage }}</span>
+            </div>
 
             <!-- Action Bar -->
             <div class="flex gap-4">
@@ -122,6 +130,18 @@ import { AppCardComponent } from '../ui/card/card.component';
     .animate-shake { 
       animation: shake 1s infinite; 
     }
+
+    .delete-modal-error {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      text-align: start;
+      animation: fadeIn 0.3s ease-out;
+    }
   `]
 })
 export class DeleteConfirmationModalComponent {
@@ -129,6 +149,7 @@ export class DeleteConfirmationModalComponent {
   @Input() title = 'COMMON.DELETE_CONFIRM_TITLE';
   @Input() message = 'COMMON.DELETE_CONFIRM_MSG';
   @Input() isLoading = false;
+  @Input() errorMessage: string | null = null;
 
   @Output() confirm = new EventEmitter<void>();
   @Output() close = new EventEmitter<void>();

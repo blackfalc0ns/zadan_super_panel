@@ -3,17 +3,24 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { distinctUntilChanged } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AdminNotificationSoundService } from './admin-notification-sound.service';
 import { AuthService } from './auth.service';
 
 type OneSignalSdk = {
   init(options: Record<string, unknown>): Promise<void>;
   login(externalId: string): Promise<void>;
+  Notifications?: {
+    isPushSupported?: () => boolean;
+    requestPermission?: () => Promise<boolean>;
+    permission?: boolean;
+  };
   User?: {
     PushSubscription?: {
       id?: string | null;
       token?: string | null;
       optedIn?: boolean;
       optIn?: () => Promise<void>;
+      addEventListener?: (event: 'change', listener: () => void) => void;
     };
   };
 };
@@ -31,17 +38,20 @@ export class AdminOneSignalService {
   private static readonly scriptId = 'admin-onesignal-web-sdk';
   private static readonly scriptUrl = 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';
   private readonly devicesUrl = `${environment.apiUrl}/admin/notifications/devices`;
+  private sdkInitialized = false;
   private initializedForUserId: string | null = null;
+  private lastRegisteredSubscriptionId: string | null = null;
   private scriptPromise?: Promise<void>;
 
   constructor(
     private readonly authService: AuthService,
     private readonly http: HttpClient,
+    private readonly notificationSoundService: AdminNotificationSoundService,
     @Inject(DOCUMENT) private readonly document: Document
   ) {}
 
   start(): void {
-    if (environment.skipAuthForDevelopment || !environment.oneSignalAdminAppId) {
+    if (!environment.oneSignalAdminAppId) {
       return;
     }
 
@@ -53,43 +63,82 @@ export class AdminOneSignalService {
           return;
         }
 
-        void this.initialize(user.id);
+        void this.initialize(user.id, false).catch((error) => this.logLoadFailure(error));
       });
   }
 
-  private async initialize(userId: string): Promise<void> {
-    if (this.initializedForUserId === userId) {
+  requestPermissionAndRegister(): void {
+    if (!environment.oneSignalAdminAppId) {
       return;
     }
 
-    const view = this.document.defaultView;
-    if (!view) return;
+    const userId = this.authService.currentUserValue?.id;
+    if (!userId || !this.authService.hasApiSession) {
+      return;
+    }
 
-    view.OneSignalDeferred = view.OneSignalDeferred || [];
-    view.OneSignalDeferred.push(async (oneSignal) => {
-      await oneSignal.init({
-        appId: environment.oneSignalAdminAppId,
-        allowLocalhostAsSecureOrigin: environment.oneSignalAllowLocalhost,
-        serviceWorkerPath: 'OneSignalSDKWorker.js',
-        serviceWorkerParam: { scope: '/' }
-      });
+    void this.initialize(userId, true).catch((error) => this.logLoadFailure(error));
+  }
 
-      await oneSignal.login(userId);
-      await oneSignal.User?.PushSubscription?.optIn?.();
+  private async initialize(userId: string, requestPermission: boolean): Promise<void> {
+    await this.runWhenReady(async (oneSignal) => {
+      if (!this.sdkInitialized) {
+        await oneSignal.init({
+          appId: environment.oneSignalAdminAppId,
+          allowLocalhostAsSecureOrigin: environment.oneSignalAllowLocalhost,
+          serviceWorkerPath: 'OneSignalSDKWorker.js',
+          serviceWorkerParam: { scope: '/' }
+        });
+
+        this.sdkInitialized = true;
+        oneSignal.User?.PushSubscription?.addEventListener?.('change', () => {
+          const currentUserId = this.authService.currentUserValue?.id;
+          if (currentUserId && this.authService.hasApiSession) {
+            this.registerDevice(oneSignal, currentUserId);
+          }
+        });
+      }
+
+      if (oneSignal.Notifications?.isPushSupported?.() === false) {
+        return;
+      }
+
+      if (this.initializedForUserId !== userId) {
+        await oneSignal.login(userId);
+        this.initializedForUserId = userId;
+        this.lastRegisteredSubscriptionId = null;
+        this.logStatus('OneSignal admin user logged in.', oneSignal);
+      }
+
+      if (requestPermission) {
+        await oneSignal.Notifications?.requestPermission?.();
+        this.logStatus('OneSignal admin permission requested.', oneSignal);
+      }
+
+      if (requestPermission || oneSignal.Notifications?.permission) {
+        await oneSignal.User?.PushSubscription?.optIn?.();
+        this.logStatus('OneSignal admin opt-in attempted.', oneSignal);
+      }
+
       this.initializedForUserId = userId;
       this.registerDevice(oneSignal, userId);
     });
-
-    await this.loadScript();
   }
 
   private registerDevice(oneSignal: OneSignalSdk, userId: string): void {
     const subscription = oneSignal.User?.PushSubscription;
-    const subscriptionId = subscription?.id ?? subscription?.token ?? userId;
+    const subscriptionId = subscription?.id ?? subscription?.token ?? null;
 
     if (!subscriptionId) {
+      this.logStatus('OneSignal admin subscription is not ready yet.', oneSignal);
       return;
     }
+
+    if (this.lastRegisteredSubscriptionId === subscriptionId && subscription?.optedIn !== false) {
+      return;
+    }
+
+    this.lastRegisteredSubscriptionId = subscriptionId;
 
     this.http.post(`${this.devicesUrl}/register`, {
       deviceToken: subscriptionId,
@@ -103,8 +152,47 @@ export class AdminOneSignalService {
       assignmentPushEnabled: true,
       supportPushEnabled: true,
       walletPushEnabled: true,
-      accountPushEnabled: true
-    }).subscribe({ error: () => undefined });
+      accountPushEnabled: true,
+      adminDriversPushEnabled: true,
+      adminVendorsPushEnabled: true,
+      adminCatalogPushEnabled: true,
+      adminDisputesPushEnabled: true,
+      adminRefundsPushEnabled: true,
+      adminSettlementsPushEnabled: true,
+      adminSupportPushEnabled: true,
+      adminSystemPushEnabled: true,
+      notificationSound: this.notificationSoundService.getCurrentSound()
+    }).subscribe({
+      next: () => this.logStatus('OneSignal admin device registered with API.', oneSignal),
+      error: () => {
+        this.lastRegisteredSubscriptionId = null;
+        this.logStatus('OneSignal admin device registration failed.', oneSignal);
+      }
+    });
+  }
+
+  private logStatus(message: string, oneSignal: OneSignalSdk): void {
+    if (environment.production) {
+      return;
+    }
+
+    const subscription = oneSignal.User?.PushSubscription;
+    console.info('[AdminOneSignal]', message, {
+      permission: oneSignal.Notifications?.permission,
+      subscriptionId: subscription?.id ?? null,
+      token: subscription?.token ? 'available' : null,
+      optedIn: subscription?.optedIn ?? null
+    });
+  }
+
+  private async runWhenReady(callback: (oneSignal: OneSignalSdk) => void | Promise<void>): Promise<void> {
+    const view = this.document.defaultView;
+    if (!view) return;
+
+    view.OneSignalDeferred = view.OneSignalDeferred || [];
+    view.OneSignalDeferred.push(callback);
+
+    await this.loadScript();
   }
 
   private loadScript(): Promise<void> {
@@ -127,5 +215,16 @@ export class AdminOneSignalService {
     });
 
     return this.scriptPromise;
+  }
+
+  private logLoadFailure(error: unknown): void {
+    if (environment.production) {
+      return;
+    }
+
+    console.warn(
+      '[AdminOneSignal] OneSignal SDK could not be loaded. Check browser extensions/ad blockers and allow cdn.onesignal.com for localhost:4300.',
+      error
+    );
   }
 }

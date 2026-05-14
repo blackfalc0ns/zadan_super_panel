@@ -95,6 +95,10 @@ export class AuthService {
         return this.hasApiSession || this.shouldUseDevelopmentBypass();
     }
 
+    public get isDevelopmentBypassActive(): boolean {
+        return this.shouldUseDevelopmentBypass();
+    }
+
     public get requiresFreshLogin(): boolean {
         return localStorage.getItem(this.loginRequiredStorageKey) === '1';
     }

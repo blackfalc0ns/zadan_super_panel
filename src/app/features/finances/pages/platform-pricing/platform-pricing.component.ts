@@ -2,9 +2,16 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
-import { take } from 'rxjs';
-import { ZoneFinanceSettings } from '../../models/finance.models';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Observable, take } from 'rxjs';
+import {
+  CityDeliveryPricingSettings,
+  DeliveryPricingDefaults,
+  PricingScope,
+  PricingSettingsItem,
+  RegionDeliveryPricingSettings,
+  ZoneFinanceSettings
+} from '../../models/finance.models';
 import { FinanceService } from '../../services/finance.service';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
@@ -19,7 +26,11 @@ type NumericZoneField =
   | 'maxDeliveryFee'
   | 'vatPercent'
   | 'codFlatFee'
-  | 'codPercent';
+  | 'codPercent'
+  | 'minTotalDeliveryFee'
+  | 'maxTotalDeliveryFee'
+  | 'maxQuotedDistanceKm'
+  | 'warningSubtotalRatioThreshold';
 
 @Component({
   selector: 'app-platform-pricing',
@@ -39,9 +50,9 @@ type NumericZoneField =
         <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-100 bg-amber-50">
           <span class="material-symbols-outlined text-[24px] text-amber-500">warning</span>
         </div>
-        <h3 class="mb-2 text-center text-lg font-black text-slate-900">تأكيد حفظ الإعدادات</h3>
+        <h3 class="mb-2 text-center text-lg font-black text-slate-900">{{ 'FINANCES.PRICING.CONFIRM_SAVE_TITLE' | translate }}</h3>
         <p class="mb-6 text-center text-[13px] font-medium leading-relaxed text-slate-500">
-          سيتم حفظ إعدادات التسعير وضريبة القيمة المضافة ورسوم الدفع عند الاستلام للمنطقة المحددة.
+          {{ 'FINANCES.PRICING.CONFIRM_SAVE_MESSAGE' | translate }}
         </p>
         <div class="flex gap-3">
           <app-button
@@ -50,7 +61,7 @@ type NumericZoneField =
             customClass="!flex-1 !rounded-xl !bg-slate-50 hover:!bg-slate-100"
             [disabled]="isSaving"
             (btnClick)="closeConfirm()">
-            إلغاء
+            {{ 'COMMON.CANCEL' | translate }}
           </app-button>
           <app-button
             variant="primary"
@@ -59,7 +70,7 @@ type NumericZoneField =
             [isLoading]="isSaving"
             [disabled]="!canSave"
             (btnClick)="savePricing()">
-            تأكيد الحفظ
+            {{ 'FINANCES.PRICING.SAVE_SETTINGS' | translate }}
           </app-button>
         </div>
       </div>
@@ -67,17 +78,37 @@ type NumericZoneField =
 
     <div class="flex flex-col gap-6">
       <app-page-header
-        title="إعدادات التسعير والرسوم"
-        subtitle="إدارة رسوم التوصيل والضريبة ورسوم الدفع عند الاستلام لكل منطقة من البيانات الحقيقية في الباك إند.">
+        [title]="'FINANCES.PRICING.TITLE' | translate"
+        [subtitle]="'FINANCES.PRICING.SUBTITLE' | translate">
         <div actions class="flex flex-wrap items-center gap-3">
+          <div class="inline-flex rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
+            <button type="button" (click)="changeScope('zone')" [ngClass]="scopeButtonClass('zone')" class="rounded-xl px-3 py-2 text-xs font-black">Zones</button>
+            <button type="button" (click)="changeScope('city')" [ngClass]="scopeButtonClass('city')" class="rounded-xl px-3 py-2 text-xs font-black">Cities</button>
+            <button type="button" (click)="changeScope('region')" [ngClass]="scopeButtonClass('region')" class="rounded-xl px-3 py-2 text-xs font-black">Regions</button>
+            <button type="button" (click)="changeScope('global')" [ngClass]="scopeButtonClass('global')" class="rounded-xl px-3 py-2 text-xs font-black">Global</button>
+          </div>
+
+          <div class="relative w-52" *ngIf="selectedScope !== 'global' && regionOptions.length">
+            <select
+              [(ngModel)]="selectedRegionFilter"
+              (ngModelChange)="applyFilters()"
+              class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
+              <option value="all">All regions</option>
+              <option *ngFor="let region of regionOptions" [value]="region.id">{{ region.label }}</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
+              expand_more
+            </span>
+          </div>
+
           <div class="relative w-64">
             <select
               *ngIf="zones.length"
               [(ngModel)]="selectedZoneId"
               (ngModelChange)="onZoneChange()"
               class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
-              <option *ngFor="let zone of zones" [value]="zone.zoneId">
-                {{ displayZoneName(zone.zoneName) }} ({{ displayCityName(zone.city) }})
+              <option *ngFor="let zone of zones" [value]="itemId(zone)">
+                {{ itemDisplayLabel(zone) }}
               </option>
             </select>
             <span class="material-symbols-outlined pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
@@ -87,7 +118,7 @@ type NumericZoneField =
 
           <div *ngIf="isLoading" class="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2">
             <div class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-zadna-primary"></div>
-            <span class="text-xs font-bold text-slate-500">جاري تحميل المناطق...</span>
+            <span class="text-xs font-bold text-slate-500">{{ 'FINANCES.PRICING.LOAD_ZONES' | translate }}</span>
           </div>
 
           <app-button
@@ -96,7 +127,7 @@ type NumericZoneField =
             customClass="!rounded-xl !bg-white hover:!bg-slate-50"
             [disabled]="isLoading || isSaving"
             (btnClick)="loadData()">
-            تحديث
+            {{ 'FINANCES.PRICING.UPDATE' | translate }}
           </app-button>
 
           <app-button
@@ -105,7 +136,7 @@ type NumericZoneField =
             customClass="!rounded-xl !bg-white hover:!bg-slate-50"
             [disabled]="!isDirty || isSaving"
             (btnClick)="resetChanges()">
-            تجاهل التغييرات
+            {{ 'FINANCES.PRICING.DISCARD' | translate }}
           </app-button>
 
           <app-button
@@ -116,7 +147,7 @@ type NumericZoneField =
             [isLoading]="isSaving"
             (btnClick)="confirmSave()">
             <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">save</span>
-            حفظ الإعدادات
+            {{ 'FINANCES.PRICING.SAVE_SETTINGS' | translate }}
           </app-button>
         </div>
       </app-page-header>
@@ -128,26 +159,26 @@ type NumericZoneField =
       <div *ngIf="zones.length" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
         <div class="mb-4 flex items-center justify-between gap-3">
           <div>
-            <h3 class="text-[15px] font-black text-slate-900">المناطق المتاحة</h3>
+            <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.PRICING.AVAILABLE_ZONES' | translate }}</h3>
             <p class="mt-1 text-[12px] font-medium text-slate-500">
-              اختر المنطقة التي تريد تعديلها، ثم احفظ إعدادات التسعير والضريبة ورسوم الدفع عند الاستلام الخاصة بها.
+              {{ 'FINANCES.PRICING.SELECT_ZONE_DESC' | translate }}
             </p>
           </div>
           <div class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-black text-slate-600">
-            {{ zones.length }} منطقة
+            {{ 'FINANCES.PRICING.ZONES_COUNT' | translate:{ count: zones.length } }}
           </div>
         </div>
 
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-end">
           <div class="space-y-2">
-            <label class="block text-[11px] font-bold text-slate-400">قائمة المناطق</label>
+            <label class="block text-[11px] font-bold text-slate-400">{{ 'FINANCES.PRICING.ZONE_LIST_LABEL' | translate }}</label>
             <div class="relative">
               <select
                 [(ngModel)]="selectedZoneId"
                 (ngModelChange)="onZoneChange()"
                 class="w-full appearance-none rounded-2xl border border-slate-200 bg-white px-4 py-3 pe-11 text-[14px] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
-                <option *ngFor="let zone of zones" [value]="zone.zoneId">
-                  {{ displayZoneName(zone.zoneName) }} ({{ displayCityName(zone.city) }})
+                <option *ngFor="let zone of zones" [value]="itemId(zone)">
+                  {{ itemDisplayLabel(zone) }}
                 </option>
               </select>
               <span class="material-symbols-outlined pointer-events-none absolute end-4 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
@@ -162,13 +193,18 @@ type NumericZoneField =
               [ngClass]="selectedZone.isPricingActive
                 ? 'bg-emerald-100 text-emerald-700'
                 : 'bg-slate-100 text-slate-500'">
-              {{ selectedZone.isPricingActive ? 'نشطة' : 'موقوفة' }}
+              {{ (selectedZone.isPricingActive ? 'FINANCES.PRICING.ACTIVE' : 'FINANCES.PRICING.INACTIVE') | translate }}
             </span>
             <span class="rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600">
-              ضريبة {{ selectedZone.vatPercent }}%
+              {{ 'FINANCES.PRICING.VAT_LABEL' | translate:{ percent: selectedZone.vatPercent } }}
             </span>
             <span class="rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600">
-              الدفع عند الاستلام {{ selectedZone.codFeeType === 'percent' ? (selectedZone.codPercent + '%') : (selectedZone.codFlatFee + ' SAR') }}
+              <ng-container *ngIf="selectedZone.codFeeType === 'percent'">
+                {{ 'FINANCES.PRICING.COD_LABEL_PERCENT' | translate:{ percent: selectedZone.codPercent } }}
+              </ng-container>
+              <ng-container *ngIf="selectedZone.codFeeType !== 'percent'">
+                {{ 'FINANCES.PRICING.COD_LABEL_FLAT' | translate:{ amount: selectedZone.codFlatFee } }}
+              </ng-container>
             </span>
           </div>
         </div>
@@ -178,16 +214,43 @@ type NumericZoneField =
         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-300">
           <span class="material-symbols-outlined text-[30px]">location_off</span>
         </div>
-        <h3 class="text-lg font-black text-slate-900">لا توجد مناطق متاحة</h3>
-        <p class="mt-2 text-sm font-medium text-slate-500">لم يتم العثور على مناطق تسعير قابلة للإدارة من الباك إند.</p>
+        <h3 class="text-lg font-black text-slate-900">{{ 'FINANCES.PRICING.NO_ZONES_TITLE' | translate }}</h3>
+        <p class="mt-2 text-sm font-medium text-slate-500">
+          {{ emptyStateMessage || ('FINANCES.PRICING.NO_ZONES_DESC' | translate) }}
+        </p>
+        <div class="mt-5 flex justify-center gap-3" *ngIf="selectedScope !== 'global'">
+          <app-button
+            *ngIf="selectedScope !== 'city'"
+            variant="outline"
+            size="sm"
+            customClass="!rounded-xl !bg-white hover:!bg-slate-50"
+            (btnClick)="changeScope('city')">
+            Cities
+          </app-button>
+          <app-button
+            *ngIf="selectedScope !== 'region'"
+            variant="outline"
+            size="sm"
+            customClass="!rounded-xl !bg-white hover:!bg-slate-50"
+            (btnClick)="changeScope('region')">
+            Regions
+          </app-button>
+          <app-button
+            variant="primary"
+            size="sm"
+            customClass="!rounded-xl"
+            (btnClick)="changeScope('global')">
+            Global
+          </app-button>
+        </div>
       </div>
 
       <div *ngIf="selectedZone" class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p class="text-[11px] font-bold text-slate-400">المنطقة المختارة</p>
-          <h3 class="mt-1 text-lg font-black text-slate-900">{{ displayZoneName(selectedZone.zoneName) }} <span class="text-slate-400">/</span> {{ displayCityName(selectedZone.city) }}</h3>
+          <p class="text-[11px] font-bold text-slate-400">{{ 'FINANCES.PRICING.SELECTED_ZONE' | translate }}</p>
+          <h3 class="mt-1 text-lg font-black text-slate-900">{{ itemDisplayLabel(selectedZone) }}</h3>
           <p class="mt-1 text-[12px] font-medium" [ngClass]="isDirty ? 'text-amber-600' : 'text-slate-500'">
-            {{ isDirty ? 'توجد تغييرات غير محفوظة لهذه المنطقة.' : 'كل تغييرات هذه المنطقة محفوظة.' }}
+            {{ (isDirty ? 'FINANCES.PRICING.UNSAVED_CHANGES' : 'FINANCES.PRICING.ALL_SAVED') | translate }}
           </p>
         </div>
 
@@ -198,7 +261,7 @@ type NumericZoneField =
             customClass="!rounded-xl !bg-white hover:!bg-slate-50"
             [disabled]="!isDirty || isSaving"
             (btnClick)="resetChanges()">
-            تجاهل التغييرات
+            {{ 'FINANCES.PRICING.DISCARD' | translate }}
           </app-button>
 
           <app-button
@@ -209,7 +272,7 @@ type NumericZoneField =
             [isLoading]="isSaving"
             (btnClick)="confirmSave()">
             <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">save</span>
-            حفظ التغييرات
+            {{ 'FINANCES.PRICING.SAVE_CHANGES' | translate }}
           </app-button>
         </div>
       </div>
@@ -222,8 +285,8 @@ type NumericZoneField =
                 <span class="material-symbols-outlined text-[20px] text-amber-500">local_shipping</span>
               </div>
               <div>
-                <h3 class="text-[15px] font-black text-slate-900">التسعير الأساسي للتوصيل</h3>
-                <p class="mt-0.5 text-[11px] font-bold text-slate-500">مرتبط مباشرة بقاعدة التسعير الخاصة بالمنطقة.</p>
+                <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.PRICING.BASE_DELIVERY' | translate }}</h3>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ 'FINANCES.PRICING.BASE_DELIVERY_DESC' | translate }}</p>
               </div>
             </div>
             <button
@@ -243,7 +306,7 @@ type NumericZoneField =
             [class.opacity-40]="!selectedZone.isPricingActive">
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-1.5">
-                <label class="block text-[11px] font-bold text-slate-600">الرسوم الأساسية</label>
+                <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.BASE_FEE' | translate }}</label>
                 <div class="relative">
                   <input
                     type="number"
@@ -251,11 +314,11 @@ type NumericZoneField =
                     (ngModelChange)="updateNumberField('baseDeliveryFee', $event)"
                     min="0"
                     class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
                 </div>
               </div>
               <div class="space-y-1.5">
-                <label class="block text-[11px] font-bold text-slate-600">المسافة المشمولة</label>
+                <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.INCLUDED_KM' | translate }}</label>
                 <div class="relative">
                   <input
                     type="number"
@@ -270,7 +333,7 @@ type NumericZoneField =
             </div>
 
             <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-600">رسوم الكيلومتر الإضافي</label>
+              <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.EXTRA_KM_FEE' | translate }}</label>
               <div class="relative">
                 <input
                   type="number"
@@ -279,13 +342,13 @@ type NumericZoneField =
                   min="0"
                   step="0.5"
                   class="w-full rounded-xl border border-slate-200 bg-white pl-16 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR/KM</span>
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}/KM</span>
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-1.5">
-                <label class="block text-[11px] font-bold text-slate-600">الحد الأدنى للرسوم</label>
+                <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.MIN_FEE' | translate }}</label>
                 <div class="relative">
                   <input
                     type="number"
@@ -293,11 +356,11 @@ type NumericZoneField =
                     (ngModelChange)="updateNumberField('minDeliveryFee', $event)"
                     min="0"
                     class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
                 </div>
               </div>
               <div class="space-y-1.5">
-                <label class="block text-[11px] font-bold text-slate-600">الحد الأقصى للرسوم</label>
+                <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.MAX_FEE' | translate }}</label>
                 <div class="relative">
                   <input
                     type="number"
@@ -305,7 +368,7 @@ type NumericZoneField =
                     (ngModelChange)="updateNumberField('maxDeliveryFee', $event)"
                     min="0"
                     class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
                 </div>
               </div>
             </div>
@@ -319,8 +382,8 @@ type NumericZoneField =
                 <span class="material-symbols-outlined text-[20px] text-indigo-500">local_atm</span>
               </div>
               <div>
-                <h3 class="text-[15px] font-black text-slate-900">رسوم الدفع عند الاستلام</h3>
-                <p class="mt-0.5 text-[11px] font-bold text-slate-500">مطابقة تمامًا للهيكل المدعوم في الباك إند.</p>
+                <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.PRICING.COD_FEE' | translate }}</h3>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ 'FINANCES.PRICING.COD_FEE_DESC' | translate }}</p>
               </div>
             </div>
             <button
@@ -339,25 +402,25 @@ type NumericZoneField =
             [class.pointer-events-none]="!selectedZone.isCodFeeActive"
             [class.opacity-40]="!selectedZone.isCodFeeActive">
             <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-600">نوع الرسوم</label>
+              <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.FEE_TYPE' | translate }}</label>
               <div class="relative">
                 <select
                   [(ngModel)]="selectedZone.codFeeType"
                   (ngModelChange)="markDirty()"
                   class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                  <option value="flat">رسوم ثابتة</option>
-                  <option value="percent">نسبة مئوية</option>
+                  <option value="flat">{{ 'FINANCES.PRICING.FLAT_FEE' | translate }}</option>
+                  <option value="percent">{{ 'FINANCES.PRICING.PERCENTAGE' | translate }}</option>
                 </select>
                 <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">unfold_more</span>
               </div>
               <p class="text-[11px] font-medium text-slate-400">
-                الباك إند يدعم حاليًا نوعًا واحدًا فعالًا لكل منطقة: ثابت أو نسبة.
+                {{ 'FINANCES.PRICING.BACKEND_HINT' | translate }}
               </p>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-1.5" [class.opacity-30]="selectedZone.codFeeType === 'flat'">
-                <label class="block text-[11px] font-bold text-slate-600">النسبة المئوية</label>
+                <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.PERCENTAGE' | translate }}</label>
                 <div class="relative">
                   <input
                     type="number"
@@ -372,7 +435,7 @@ type NumericZoneField =
                 </div>
               </div>
               <div class="space-y-1.5" [class.opacity-30]="selectedZone.codFeeType === 'percent'">
-                <label class="block text-[11px] font-bold text-slate-600">الرسوم الثابتة</label>
+                <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.FLAT_AMOUNT' | translate }}</label>
                 <div class="relative">
                   <input
                     type="number"
@@ -381,7 +444,7 @@ type NumericZoneField =
                     min="0"
                     [disabled]="selectedZone.codFeeType === 'percent'"
                     class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-50" />
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">SAR</span>
+                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
                 </div>
               </div>
             </div>
@@ -395,8 +458,8 @@ type NumericZoneField =
                 <span class="material-symbols-outlined text-[20px] text-purple-500">account_balance</span>
               </div>
               <div>
-                <h3 class="text-[15px] font-black text-slate-900">ضريبة القيمة المضافة</h3>
-                <p class="mt-0.5 text-[11px] font-bold text-slate-500">تُستخدم مباشرة في حسابات الـ checkout.</p>
+                <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.PRICING.VAT_TITLE' | translate }}</h3>
+                <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ 'FINANCES.PRICING.VAT_DESC' | translate }}</p>
               </div>
             </div>
             <button
@@ -418,7 +481,7 @@ type NumericZoneField =
               <div class="mb-2 text-4xl font-black text-purple-600 tabular-nums">
                 {{ selectedZone.vatPercent }}<span class="text-2xl text-purple-400">%</span>
               </div>
-              <p class="text-[11px] font-bold text-slate-500">النسبة الحالية المطبقة على المنطقة المحددة</p>
+              <p class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.PRICING.CURRENT_PERCENT' | translate }}</p>
             </div>
 
             <div class="w-full">
@@ -444,6 +507,8 @@ type NumericZoneField =
 export class PlatformPricingComponent implements OnInit {
   private readonly financeService = inject(FinanceService);
   private readonly toastService = inject(ToastService);
+  private readonly translate = inject(TranslateService);
+  private readonly scopeFallbackOrder: PricingScope[] = ['zone', 'city', 'region', 'global'];
   private readonly cityArabicMap: Record<string, string> = {
     riyadh: 'الرياض',
     jeddah: 'جدة',
@@ -483,9 +548,14 @@ export class PlatformPricingComponent implements OnInit {
     zone: 'المنطقة'
   };
 
-  zones: ZoneFinanceSettings[] = [];
+  selectedScope: PricingScope = 'zone';
+  allItems: PricingSettingsItem[] = [];
+  zones: PricingSettingsItem[] = [];
+  regionOptions: Array<{ id: string; label: string }> = [];
+  selectedRegionFilter = 'all';
   selectedZoneId: string | null = null;
-  selectedZone: ZoneFinanceSettings | null = null;
+  selectedZone: PricingSettingsItem | null = null;
+  emptyStateMessage = '';
 
   isLoading = false;
   isSaving = false;
@@ -504,32 +574,13 @@ export class PlatformPricingComponent implements OnInit {
   loadData(): void {
     this.isLoading = true;
     this.errorMessage = '';
+    this.emptyStateMessage = '';
 
-    this.financeService.getZonePricingSettings().pipe(take(1)).subscribe({
-      next: (zones) => {
-        this.zones = zones;
-        if (zones.length > 0) {
-          if (!this.selectedZoneId || !zones.some((zone) => zone.zoneId === this.selectedZoneId)) {
-            this.selectedZoneId = zones[0].zoneId;
-          }
-          this.onZoneChange();
-        } else {
-          this.selectedZone = null;
-        }
-        this.isDirty = false;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.errorMessage = this.describeApiError(error);
-        this.zones = [];
-        this.selectedZone = null;
-        this.isLoading = false;
-      }
-    });
+    this.loadScopeData();
   }
 
   onZoneChange(): void {
-    const zone = this.zones.find((item) => item.zoneId === this.selectedZoneId);
+    const zone = this.zones.find((item) => this.itemId(item) === this.selectedZoneId);
     this.selectedZone = zone ? this.clone(zone) : null;
     this.isDirty = false;
     this.showConfirm = false;
@@ -564,24 +615,7 @@ export class PlatformPricingComponent implements OnInit {
     this.isSaving = true;
     this.errorMessage = '';
 
-    this.financeService.updateZonePricingSettings(payload.zoneId, payload).pipe(take(1)).subscribe({
-      next: (savedZone) => {
-        const index = this.zones.findIndex((zone) => zone.zoneId === savedZone.zoneId);
-        if (index >= 0) {
-          this.zones[index] = this.clone(savedZone);
-        }
-        this.selectedZone = this.clone(savedZone);
-        this.isDirty = false;
-        this.isSaving = false;
-        this.showConfirm = false;
-        this.toastService.success('تم حفظ إعدادات المنطقة وربطها بالباك إند بنجاح.', 'التسعير');
-      },
-      error: (error) => {
-        this.isSaving = false;
-        this.errorMessage = this.describeApiError(error);
-        this.toastService.error(this.errorMessage, 'التسعير');
-      }
-    });
+    this.saveScopePayload(payload);
   }
 
   togglePricingActive(): void {
@@ -617,7 +651,7 @@ export class PlatformPricingComponent implements OnInit {
     }
 
     const numericValue = Number(value);
-    this.selectedZone[field] = Number.isFinite(numericValue)
+    ((this.selectedZone as unknown) as Record<string, number>)[field] = Number.isFinite(numericValue)
       ? Math.max(0, numericValue)
       : 0;
 
@@ -663,7 +697,75 @@ export class PlatformPricingComponent implements OnInit {
     return translated || zoneName;
   }
 
-  private buildSavePayload(zone: ZoneFinanceSettings): ZoneFinanceSettings {
+  changeScope(scope: PricingScope): void {
+    if (this.selectedScope === scope) {
+      return;
+    }
+
+    this.selectedScope = scope;
+    this.selectedRegionFilter = 'all';
+    this.selectedZoneId = null;
+    this.selectedZone = null;
+    this.showConfirm = false;
+    this.isDirty = false;
+    this.loadData();
+  }
+
+  scopeButtonClass(scope: PricingScope): string {
+    return this.selectedScope === scope
+      ? 'bg-zadna-primary text-white shadow-sm'
+      : 'text-slate-600 hover:bg-slate-50';
+  }
+
+  applyFilters(): void {
+    this.zones = this.allItems.filter((item) => this.matchesRegionFilter(item));
+    if (!this.zones.some((item) => this.itemId(item) === this.selectedZoneId)) {
+      this.selectedZoneId = this.zones[0] ? this.itemId(this.zones[0]) : null;
+    }
+    this.onZoneChange();
+  }
+
+  itemId(item: PricingSettingsItem): string {
+    if ('zoneId' in item) return item.zoneId;
+    if ('cityId' in item) return item.cityId;
+    if ('regionId' in item && item.pricingScope === 'region') return item.regionId;
+    return item.id;
+  }
+
+  itemPrimaryLabel(item: PricingSettingsItem): string {
+    if ('zoneName' in item) return this.displayZoneName(item.zoneName);
+    if ('cityNameAr' in item) return item.cityNameAr;
+    if ('regionNameAr' in item) return item.regionNameAr;
+    return this.translate.currentLang === 'ar' ? 'الإعدادات العامة' : 'Global defaults';
+  }
+
+  itemSecondaryLabel(item: PricingSettingsItem): string {
+    if ('city' in item) {
+      const city = this.displayCityName(item.city);
+      const region = item.regionNameAr?.trim();
+      return region ? `${city} - ${region}` : city;
+    }
+
+    if ('cityNameAr' in item) {
+      return item.regionNameAr;
+    }
+
+    return '';
+  }
+
+  itemDisplayLabel(item: PricingSettingsItem): string {
+    if ('zoneName' in item) {
+      const zoneName = this.displayZoneName(item.zoneName);
+      const city = this.displayCityName(item.city);
+      return city ? `${zoneName} - ${city}` : zoneName;
+    }
+
+    const primary = this.itemPrimaryLabel(item);
+    const secondary = this.itemSecondaryLabel(item);
+    return secondary ? `${primary} - ${secondary}` : primary;
+  }
+
+  private buildSavePayload(zone: PricingSettingsItem): PricingSettingsItem {
     const minDeliveryFee = Math.min(zone.minDeliveryFee, zone.maxDeliveryFee || zone.minDeliveryFee);
     const maxDeliveryFee = Math.max(zone.maxDeliveryFee, minDeliveryFee);
 
@@ -678,7 +780,144 @@ export class PlatformPricingComponent implements OnInit {
       codFlatFee: this.normalizeNumber(zone.codFlatFee),
       codPercent: this.normalizeNumber(zone.codPercent),
       codFeeType: zone.codFeeType === 'percent' ? 'percent' : 'flat'
-    };
+    } as PricingSettingsItem;
+  }
+
+  private loadScopeData(): void {
+    const source$: Observable<PricingSettingsItem[] | PricingSettingsItem> =
+      this.selectedScope === 'city' ? this.financeService.getCityPricingSettings()
+      : this.selectedScope === 'region' ? this.financeService.getRegionPricingSettings()
+      : this.selectedScope === 'global' ? this.financeService.getDeliveryPricingDefaults()
+      : this.financeService.getZonePricingSettings();
+
+    source$.subscribe({
+      next: (result: PricingSettingsItem[] | PricingSettingsItem) => {
+        this.allItems = Array.isArray(result) ? result : [result];
+        if (!this.allItems.length) {
+          this.tryFallbackScope();
+          return;
+        }
+
+        this.regionOptions = this.buildRegionOptions(this.allItems);
+        this.applyFilters();
+        this.emptyStateMessage = this.buildEmptyStateMessage();
+        this.isDirty = false;
+        this.isLoading = false;
+      },
+      error: (error: unknown) => {
+        this.errorMessage = this.describeApiError(error);
+        this.allItems = [];
+        this.zones = [];
+        this.selectedZone = null;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private tryFallbackScope(): void {
+    const currentIndex = this.scopeFallbackOrder.indexOf(this.selectedScope);
+    const nextScope = this.scopeFallbackOrder[currentIndex + 1];
+
+    if (nextScope) {
+      this.selectedScope = nextScope;
+      this.selectedRegionFilter = 'all';
+      this.selectedZoneId = null;
+      this.selectedZone = null;
+      this.loadScopeData();
+      return;
+    }
+
+    this.regionOptions = [];
+    this.zones = [];
+    this.selectedZoneId = null;
+    this.selectedZone = null;
+    this.emptyStateMessage = this.buildEmptyStateMessage();
+    this.isDirty = false;
+    this.isLoading = false;
+  }
+
+  private buildEmptyStateMessage(): string {
+    if (this.selectedScope === 'zone') {
+      return this.translate.currentLang === 'ar'
+        ? 'لم يتم العثور على مناطق توصيل فعلية. يمكنك إدارة التسعير من مستوى المدينة أو المنطقة أو الإعدادات العامة.'
+        : 'No delivery zones were found. You can manage pricing from cities, regions, or global defaults.';
+    }
+
+    if (this.selectedScope === 'city') {
+      return this.translate.currentLang === 'ar'
+        ? 'لا توجد مدن متاحة لهذا الفلتر حاليًا. جرّب المنطقة أو الإعدادات العامة.'
+        : 'No cities are available for the current filter. Try regions or global defaults.';
+    }
+
+    if (this.selectedScope === 'region') {
+      return this.translate.currentLang === 'ar'
+        ? 'لا توجد مناطق إدارية متاحة حاليًا. يمكنك استخدام الإعدادات العامة.'
+        : 'No administrative regions are available right now. You can use global defaults.';
+    }
+
+    return this.translate.currentLang === 'ar'
+      ? 'لا توجد إعدادات تسعير متاحة حاليًا.'
+      : 'No pricing settings are available right now.';
+  }
+
+  private saveScopePayload(payload: PricingSettingsItem): void {
+    const request$: Observable<PricingSettingsItem> =
+      this.selectedScope === 'city' && 'cityId' in payload
+        ? this.financeService.updateCityPricingSettings(payload.cityId, payload as CityDeliveryPricingSettings)
+      : this.selectedScope === 'region' && 'regionId' in payload
+        ? this.financeService.updateRegionPricingSettings(payload.regionId!, payload as RegionDeliveryPricingSettings)
+      : this.selectedScope === 'global' && 'id' in payload
+        ? this.financeService.updateDeliveryPricingDefaults(payload as DeliveryPricingDefaults)
+      : this.financeService.updateZonePricingSettings((payload as ZoneFinanceSettings).zoneId, payload as ZoneFinanceSettings);
+
+    request$.subscribe({
+      next: (savedItem: PricingSettingsItem) => {
+        const id = this.itemId(savedItem);
+        const allIndex = this.allItems.findIndex((item) => this.itemId(item) === id);
+        if (allIndex >= 0) {
+          this.allItems[allIndex] = this.clone(savedItem);
+        } else {
+          this.allItems = [this.clone(savedItem), ...this.allItems];
+        }
+
+        this.applyFilters();
+        this.selectedZone = this.clone(savedItem);
+        this.selectedZoneId = id;
+        this.isDirty = false;
+        this.isSaving = false;
+        this.showConfirm = false;
+        this.toastService.success(this.translate.instant('FINANCES.PRICING.SAVE_SUCCESS'), this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL'));
+      },
+      error: (error: unknown) => {
+        this.isSaving = false;
+        this.errorMessage = this.describeApiError(error);
+        this.toastService.error(this.errorMessage, this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL'));
+      }
+    });
+  }
+
+  private matchesRegionFilter(item: PricingSettingsItem): boolean {
+    if (this.selectedRegionFilter === 'all' || this.selectedScope === 'global') {
+      return true;
+    }
+
+    if ('regionId' in item && item.regionId) {
+      return item.regionId === this.selectedRegionFilter;
+    }
+
+    return false;
+  }
+
+  private buildRegionOptions(items: PricingSettingsItem[]): Array<{ id: string; label: string }> {
+    const map = new Map<string, string>();
+    items.forEach((item) => {
+      if ('regionId' in item && item.regionId) {
+        const label = ('regionNameAr' in item && item.regionNameAr ? item.regionNameAr : item.regionId) as string;
+        map.set(item.regionId, label);
+      }
+    });
+
+    return Array.from(map.entries()).map(([id, label]) => ({ id, label }));
   }
 
   private normalizeNumber(value: number): number {
@@ -692,19 +931,21 @@ export class PlatformPricingComponent implements OnInit {
   private describeApiError(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 0) {
-        return 'تعذر الاتصال بالباك إند الخاص بالتسعير. شغّل الـ API ثم أعد المحاولة.';
+        return this.translate.currentLang === 'ar' 
+          ? 'تعذر الاتصال بالباك إند الخاص بالتسعير. شغّل الـ API ثم أعد المحاولة.'
+          : 'Could not connect to the pricing backend. Please ensure the API is running.';
       }
-
+ 
       const apiMessage =
         (typeof error.error === 'string' && error.error) ||
         error.error?.message ||
         error.error?.title ||
         error.message;
-
-      return apiMessage || 'تعذر حفظ إعدادات التسعير حاليًا.';
+ 
+      return apiMessage || (this.translate.currentLang === 'ar' ? 'تعذر حفظ إعدادات التسعير حاليًا.' : 'Could not save pricing settings at this time.');
     }
-
-    return 'تعذر حفظ إعدادات التسعير حاليًا.';
+ 
+    return this.translate.currentLang === 'ar' ? 'تعذر حفظ إعدادات التسعير حاليًا.' : 'Could not save pricing settings at this time.';
   }
 
   private clone<T>(value: T): T {

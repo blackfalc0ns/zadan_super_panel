@@ -12,17 +12,17 @@ import {
 import { toDateTimeLocalInput, toNullableUtcIso } from '@marketing/utils/marketing-date.utils';
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
 import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-shell.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
 
 @Component({
   selector: 'app-home-section-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, ModalShellComponent, AppButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, ModalShellComponent, AppButtonComponent, SearchableSelectComponent],
   template: `
     <app-modal-shell
       *ngIf="isOpen"
-      dir="rtl"
-      [title]="section ? 'تعديل قسم الرئيسية' : 'إضافة قسم للرئيسية'"
-      [subtitle]="'حدد التصنيف ونمط العرض لإضافته كقسم في الصفحة الرئيسية للتطبيق.'"
+      [title]="(section ? 'MARKETING.HOME_SECTIONS.MODAL.EDIT_TITLE' : 'MARKETING.HOME_SECTIONS.MODAL.CREATE_TITLE') | translate"
+      [subtitle]="'MARKETING.HOME_SECTIONS.MODAL.SUBTITLE' | translate"
       [icon]="'grid_view'"
       [maxWidthClass]="'max-w-4xl'"
       [panelClass]="'rounded-[2rem] border-slate-200/90 shadow-[0_28px_80px_-24px_rgba(15,23,42,0.35)]'"
@@ -36,32 +36,26 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
         <div class="grid gap-6 md:grid-cols-2">
 
           <div class="md:col-span-2 space-y-3">
-            <label class="text-sm font-black text-slate-700">
-              التصنيف المستهدف
-              <span class="text-red-500">*</span>
-            </label>
-            <div class="relative">
-              <span class="absolute inset-y-0 right-4 flex items-center text-slate-400">
-                <span class="material-symbols-outlined text-[20px]">category</span>
-              </span>
-              <select
-                formControlName="categoryId"
-                class="min-h-[3.75rem] w-full rounded-2xl border border-slate-200 bg-slate-50 pl-4 pr-12 text-sm font-bold text-slate-800 outline-none transition-all hover:bg-white focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10">
-                <option value="" disabled>اختر التصنيف المراد عرضه...</option>
-                <option *ngFor="let option of categoryOptions" [value]="option.id">
-                  {{ option.pathLabel }}
-                </option>
-              </select>
-            </div>
+            <app-searchable-select
+              formControlName="categoryId"
+              [label]="'MARKETING.HOME_SECTIONS.FIELDS.TARGET_CATEGORY' | translate"
+              [placeholder]="'MARKETING.HOME_SECTIONS.FIELDS.TARGET_CATEGORY_PLACEHOLDER' | translate"
+              [searchPlaceholder]="'MARKETING.HOME_SECTIONS.FIELDS.CATEGORY_SEARCH' | translate"
+              [noResultsText]="'MARKETING.VISIBILITY.MESSAGES.EMPTY_TITLE' | translate"
+              [options]="selectableCategoryOptions"
+              [isRequired]="true"
+              [allowClear]="false"
+              [searchable]="true">
+            </app-searchable-select>
             <p *ngIf="!categoryOptions.length" class="text-sm font-bold text-amber-600 flex items-center gap-2 mt-2">
               <span class="material-symbols-outlined text-[16px]">warning</span>
-              لا توجد تصنيفات (Subcategories) متوفرة. يجب إضافة تصنيفات أولاً.
+              {{ 'MARKETING.HOME_SECTIONS.MESSAGES.NO_CATEGORIES' | translate }}
             </p>
           </div>
 
           <div class="space-y-3">
             <label class="text-sm font-black text-slate-700">
-              نمط العرض (Theme)
+              {{ 'MARKETING.HOME_SECTIONS.FIELDS.THEME' | translate }}
               <span class="text-red-500">*</span>
             </label>
             <div class="relative">
@@ -71,7 +65,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
               <select
                 formControlName="theme"
                 class="min-h-[3.75rem] w-full rounded-2xl border border-slate-200 bg-slate-50 pl-4 pr-12 text-sm font-bold text-slate-800 outline-none transition-all hover:bg-white focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10">
-                <option value="" disabled>اختر نمط العرض...</option>
+                <option value="" disabled>{{ 'MARKETING.HOME_SECTIONS.FIELDS.THEME_PLACEHOLDER' | translate }}</option>
                 <option *ngFor="let option of themeOptions" [value]="option.key">
                   {{ getThemeOptionLabel(option) }}
                 </option>
@@ -81,7 +75,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 
           <div class="space-y-3">
             <label class="text-sm font-black text-slate-700">
-              عدد المنتجات المعروضة
+              {{ 'MARKETING.HOME_SECTIONS.FIELDS.TAKE' | translate }}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -91,7 +85,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
               class="min-h-[3.75rem] w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-bold text-slate-800 outline-none transition-all hover:bg-white focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10"
               placeholder="مثال: 8" />
             <p class="text-[11px] font-bold text-slate-400">
-              الحد الأقصى لعدد المنتجات التي تظهر في هذا القسم.
+              {{ 'MARKETING.HOME_SECTIONS.FIELDS.TAKE_DESC' | translate }}
             </p>
           </div>
 
@@ -99,7 +93,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 
           <div class="space-y-3">
             <label class="text-sm font-black text-slate-700">
-              ترتيب العرض
+              {{ 'MARKETING.BANNERS.FIELDS.ORDER' | translate }}
               <span class="text-red-500">*</span>
             </label>
             <input
@@ -107,7 +101,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
               type="number"
               min="0"
               class="min-h-[3.75rem] w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-bold text-slate-800 outline-none transition-all hover:bg-white focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10"
-              placeholder="الترتيب بين الأقسام الأخرى" />
+              [placeholder]="'MARKETING.BANNERS.FIELDS.ORDER_PLACEHOLDER' | translate" />
           </div>
 
           <div class="flex items-end">
@@ -115,7 +109,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
               <label class="flex w-full cursor-pointer items-center justify-between gap-3 text-sm font-bold text-slate-700 select-none">
                 <div class="flex items-center gap-3">
                   <span class="material-symbols-outlined text-[20px] text-zadna-primary">visibility</span>
-                  <span>تفعيل القسم</span>
+                  <span>{{ 'MARKETING.HOME_SECTIONS.FIELDS.ACTIVATE' | translate }}</span>
                 </div>
                 <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                   <input type="checkbox" formControlName="isActive" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-slate-300 appearance-none cursor-pointer transition-all duration-300 checked:right-0 checked:border-zadna-primary focus:outline-none focus:ring-0 focus:ring-offset-0" style="right: 1.25rem;" [style.right]="form.get('isActive')?.value ? '0' : '1.25rem'" [style.borderColor]="form.get('isActive')?.value ? '#127c8c' : '#cbd5e1'"/>
@@ -131,19 +125,19 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
           <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div class="space-y-1">
               <h3 class="text-sm font-black text-slate-800">
-                جدولة العرض
+                {{ 'MARKETING.HOME_SECTIONS.FIELDS.SCHEDULE' | translate }}
               </h3>
               <p class="text-[11px] font-bold text-slate-500">
                 {{ form.controls.alwaysVisible.value
-                  ? 'القسم معروض بشكل دائم للمستخدمين.'
-                  : 'سيتم عرض القسم فقط خلال الفترة المحددة.' }}
+                  ? ('MARKETING.HOME_SECTIONS.FIELDS.ALWAYS_VISIBLE_DESC' | translate)
+                  : ('MARKETING.HOME_SECTIONS.FIELDS.SCHEDULED_DESC' | translate) }}
               </p>
             </div>
 
             <div class="flex items-center gap-2">
               <label class="flex cursor-pointer items-center gap-3 text-sm font-bold text-slate-700">
                 <input type="checkbox" formControlName="alwaysVisible" class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary" />
-                عرض دائم (بدون تاريخ انتهاء)
+                {{ 'MARKETING.HOME_SECTIONS.FIELDS.ALWAYS_VISIBLE' | translate }}
               </label>
             </div>
           </div>
@@ -151,7 +145,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
           <div class="grid gap-4 md:grid-cols-2 pt-2 border-t border-slate-200/60" [class.opacity-50]="form.controls.alwaysVisible.value">
             <div class="space-y-2">
               <label class="text-xs font-black text-slate-500">
-                تاريخ بداية العرض
+                {{ 'MARKETING.BANNERS.FIELDS.STARTS_AT' | translate }}
               </label>
               <input
                 formControlName="startsAtUtc"
@@ -165,7 +159,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 
             <div class="space-y-2">
               <label class="text-xs font-black text-slate-500">
-                تاريخ نهاية العرض
+                {{ 'MARKETING.BANNERS.FIELDS.ENDS_AT' | translate }}
               </label>
               <input
                 formControlName="endsAtUtc"
@@ -181,16 +175,16 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 
         <div *ngIf="submitAttempted && form.invalid" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 flex items-center gap-2">
           <span class="material-symbols-outlined text-[18px]">error</span>
-          يرجى تعبئة جميع الحقول المطلوبة بالشكل الصحيح.
+          {{ 'MARKETING.BANNERS.MESSAGES.REQUIRED_FIELDS' | translate }}
         </div>
       </form>
 
       <div modal-footer class="flex items-center justify-end gap-3 w-full bg-slate-50/80 p-4 border-t border-slate-200">
-        <app-button variant="ghost" size="sm" (btnClick)="close.emit()" customClass="!rounded-xl text-slate-600 hover:bg-slate-200 hover:text-slate-900">إلغاء</app-button>
+        <app-button variant="ghost" size="sm" (btnClick)="close.emit()" customClass="!rounded-xl text-slate-600 hover:bg-slate-200 hover:text-slate-900">{{ 'MARKETING.COUPONS.ACTIONS.CANCEL' | translate }}</app-button>
         <app-button variant="primary" size="sm" [isLoading]="isSaving" (btnClick)="submit()" customClass="!rounded-xl bg-zadna-primary hover:bg-zadna-primary/90 shadow-lg shadow-zadna-primary/20 text-white">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">save</span>
-            {{ section ? 'حفظ التغييرات' : 'إضافة القسم' }}
+            {{ (section ? 'MARKETING.BANNERS.ACTIONS.SAVE_CHANGES' : 'MARKETING.HOME_SECTIONS.ACTIONS.ADD_SECTION') | translate }}
           </div>
         </app-button>
       </div>
@@ -216,6 +210,15 @@ export class HomeSectionFormModalComponent implements OnChanges, OnInit {
 
   private readonly formBuilder = inject(FormBuilder);
   readonly translateService = inject(TranslateService);
+
+  get selectableCategoryOptions(): SearchableSelectOption<string>[] {
+    return this.categoryOptions
+      .filter(opt => opt.isSelectable)
+      .map(opt => ({
+        value: opt.id,
+        label: opt.pathLabel
+      }));
+  }
 
   readonly form = this.formBuilder.nonNullable.group({
     categoryId: ['', Validators.required],

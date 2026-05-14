@@ -55,7 +55,7 @@ export class AdminNotificationRealtimeService {
   ) {}
 
   startMonitoring(): void {
-    if (this.monitoringStarted || environment.skipAuthForDevelopment) {
+    if (this.monitoringStarted) {
       return;
     }
 
@@ -109,7 +109,10 @@ export class AdminNotificationRealtimeService {
       });
 
       this.hubConnection.onreconnecting?.(() => this.stateSubject.next('reconnecting'));
-      this.hubConnection.onreconnected?.(() => this.stateSubject.next('connected'));
+      this.hubConnection.onreconnected?.(() => {
+        this.stateSubject.next('connected');
+        this.reconnectAttempt = 0;
+      });
       this.hubConnection.onclose(() => {
         this.stateSubject.next('error');
         void this.reconnectWithBackoff();
@@ -120,6 +123,7 @@ export class AdminNotificationRealtimeService {
       this.stateSubject.next('connecting');
       await this.hubConnection.start();
       this.stateSubject.next('connected');
+      this.reconnectAttempt = 0;
     } catch (error) {
       console.error('Admin notification SignalR connection failed.', error);
       this.stateSubject.next('error');
@@ -127,13 +131,31 @@ export class AdminNotificationRealtimeService {
     }
   }
 
+  private reconnectAttempt = 0;
+  private static readonly MAX_RECONNECT_ATTEMPTS = 10;
+  private static readonly BACKOFF_DELAYS = [3000, 6000, 12000, 30000, 60000];
+
   private async reconnectWithBackoff(): Promise<void> {
     if (this.reconnecting || !this.authService.hasApiSession) return;
+    if (this.reconnectAttempt >= AdminNotificationRealtimeService.MAX_RECONNECT_ATTEMPTS) {
+      this.stateSubject.next('error');
+      return;
+    }
+
     this.reconnecting = true;
     this.stateSubject.next('reconnecting');
+
+    const delayIndex = Math.min(this.reconnectAttempt, AdminNotificationRealtimeService.BACKOFF_DELAYS.length - 1);
+    const delay = AdminNotificationRealtimeService.BACKOFF_DELAYS[delayIndex];
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      this.reconnectAttempt++;
       await this.ensureConnection();
+      // Reset on successful connection
+      this.reconnectAttempt = 0;
+    } catch {
+      // Will be retried on next cycle
     } finally {
       this.reconnecting = false;
     }

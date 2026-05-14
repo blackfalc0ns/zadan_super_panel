@@ -1,5 +1,6 @@
 ﻿import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription, forkJoin, interval, switchMap } from 'rxjs';
@@ -167,6 +168,12 @@ type BulkStage = 'review' | 'submitting' | 'done';
               }
             </div>
           </div>
+
+          @if (submitError) {
+            <div class="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-bold leading-5 text-rose-700">
+              {{ submitError }}
+            </div>
+          }
         </div>
 
         <div [ngClass]="embedded ? 'flex-1 overflow-auto px-5 py-4' : 'mt-2 max-w-full overflow-x-auto overflow-y-hidden rounded-[24px] border border-slate-200/70 bg-white px-4 py-4 shadow-sm md:px-5'">
@@ -337,6 +344,7 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
   rows: BulkMasterProductDraft[] = [];
   submittedRowIds: string[] = [];
   stage: BulkStage = 'review';
+  submitError = '';
   operation: AdminMasterProductBulkOperation | null = null;
   resultItems: AdminMasterProductBulkOperationItem[] = [];
   pollSub?: Subscription;
@@ -551,15 +559,30 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
 
     this.submittedRowIds = payload.map((row) => row.rowId);
     this.stage = 'submitting';
+    this.submitError = '';
     this.catalogService.createProductsBulk(payload).subscribe({
       next: (operation) => {
         this.operation = operation;
         this.startPolling(operation.id);
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
+        this.submitError = this.resolveSubmitError(error);
         this.stage = 'review';
       }
     });
+  }
+
+  private resolveSubmitError(error: HttpErrorResponse): string {
+    if (error.status === 401 || error.status === 403) {
+      return this.currentLang === 'ar'
+        ? 'انتهت الجلسة أو لا تملك صلاحية الإضافة الجماعية. سجل الدخول مرة أخرى ثم أعد المحاولة.'
+        : 'Your session expired or you do not have permission for bulk creation. Sign in again and retry.';
+    }
+
+    const detail = error.error?.detail || error.error?.title || error.message;
+    return detail || (this.currentLang === 'ar'
+      ? 'تعذر إرسال المنتجات الآن. راجع البيانات وحاول مرة أخرى.'
+      : 'Could not submit products right now. Review the data and try again.');
   }
 
   onDefaultImagesSelected(event: Event): void {

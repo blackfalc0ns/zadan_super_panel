@@ -29,7 +29,7 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
     <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
       <!-- شريط الصفحة العلوي (Header) -->
-      <app-page-header title="مطابقة الدفع عند الاستلام (COD)" subtitle="مراقبة ومطابقة المبالغ النقدية المحصلة من العملاء عبر المناديب وتسويتها">
+      <app-page-header [title]="'FINANCES.COD.TITLE' | translate" [subtitle]="'FINANCES.COD.SUBTITLE' | translate">
         <div actions>
           <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" *ngIf="summary && summary.pendingCases > 0">
             <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">done_all</span>
@@ -41,17 +41,17 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
       <!-- بانر الإشعار للفلترة -->
       <app-inline-banner
         *ngIf="hasScope && scopeTitle"
-        [title]="scopedOrderId ? 'مطابقة طلب محدد' : (scopedEntityType === 'vendor' ? 'مطابقة متجر محدد' : 'مطابقة مندوب محدد')"
+        [title]="(scopedOrderId ? 'FINANCES.COD.SCOPED.ORDER' : (scopedEntityType === 'vendor' ? 'FINANCES.COD.SCOPED.VENDOR' : 'FINANCES.COD.SCOPED.DRIVER')) | translate"
         [message]="scopeTitle"
         [shouldTranslate]="false"
         [icon]="scopedOrderId ? 'receipt_long' : scopedEntityType === 'vendor' ? 'storefront' : 'local_shipping'"
         variant="info">
         <div actions class="flex items-center gap-2">
           <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="openScopedProfile()">
-            عرض الملف
+            {{ 'FINANCES.LEDGER.VIEW_PROFILE' | translate }}
           </app-button>
           <app-button variant="ghost" size="sm" customClass="!rounded-xl !bg-slate-900 !text-white hover:!bg-slate-800" (btnClick)="clearScope()">
-            مسح الفلتر
+            {{ 'FINANCES.LEDGER.CLEAR_SCOPE' | translate }}
           </app-button>
         </div>
       </app-inline-banner>
@@ -60,45 +60,45 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
       <div *ngIf="summary" class="grid grid-cols-2 md:grid-cols-5 gap-4">
         <!-- إجمالي المتوقع -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm px-5 py-4">
-          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">إجمالي المتوقع تحصيله</p>
-          <p class="text-2xl font-black text-slate-800 tabular-nums">{{ formatNumber(summary.totalExpected) }} <span class="text-sm font-bold text-slate-400">SAR</span></p>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{{ 'FINANCES.COD.STATS.TOTAL_EXPECTED' | translate }}</p>
+          <p class="text-2xl font-black text-slate-800 tabular-nums">{{ formatNumber(summary.totalExpected) }} <span class="text-sm font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
         </div>
         
         <!-- المحصل الفعلي -->
         <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm px-5 py-4 relative overflow-hidden">
           <div class="absolute -right-6 -top-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl"></div>
-          <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1.5 relative z-10">المُحصّل الفعلي وتمت تسويته</p>
-          <p class="text-2xl font-black text-emerald-700 tabular-nums relative z-10">{{ formatNumber(summary.totalCollected) }} <span class="text-sm font-bold text-emerald-500/70">SAR</span></p>
+          <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1.5 relative z-10">{{ 'FINANCES.COD.STATS.TOTAL_COLLECTED' | translate }}</p>
+          <p class="text-2xl font-black text-emerald-700 tabular-nums relative z-10">{{ formatNumber(summary.totalCollected) }} <span class="text-sm font-bold text-emerald-500/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
         </div>
         
         <!-- الفارق المالي -->
         <div class="bg-white rounded-2xl border shadow-sm px-5 py-4"
              [ngClass]="summary.totalDelta < 0 ? 'border-red-200' : 'border-slate-200'">
           <p class="text-[10px] font-black uppercase tracking-widest mb-1.5"
-             [ngClass]="summary.totalDelta < 0 ? 'text-red-500' : 'text-slate-500'">الفارق المالي (العجز / الزيادة)</p>
+             [ngClass]="summary.totalDelta < 0 ? 'text-red-500' : 'text-slate-500'">{{ 'FINANCES.COD.STATS.TOTAL_DELTA' | translate }}</p>
           <p class="text-2xl font-black tabular-nums"
              [ngClass]="summary.totalDelta < 0 ? 'text-red-700' : 'text-slate-800'">
-            {{ formatNumber(summary.totalDelta) }} <span class="text-sm font-bold">SAR</span>
+            {{ formatNumber(summary.totalDelta) }} <span class="text-sm font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span>
           </p>
         </div>
 
         <!-- متأخرات -->
         <div class="bg-white rounded-2xl border border-red-200 shadow-sm px-5 py-4 relative overflow-hidden">
           <div class="absolute -right-6 -top-6 w-20 h-20 bg-red-500/10 rounded-full blur-xl"></div>
-          <p class="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1.5 relative z-10">مبالغ متأخرة التحصيل</p>
+          <p class="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1.5 relative z-10">{{ 'FINANCES.COD.STATS.OVERDUE_CASES' | translate }}</p>
           <div class="flex items-end gap-2 relative z-10">
              <p class="text-2xl font-black text-red-700 tabular-nums">{{ formatNumber(summary.overdueCases) }}</p>
-             <p class="text-[12px] font-bold text-red-500/70 mb-1">طلب</p>
+             <p class="text-[12px] font-bold text-red-500/70 mb-1">{{ 'FINANCES.COD.STATS.ORDER_UNIT' | translate }}</p>
           </div>
         </div>
 
         <!-- معلق -->
         <div class="bg-white rounded-2xl border border-amber-200 shadow-sm px-5 py-4 relative overflow-hidden">
           <div class="absolute -right-6 -top-6 w-20 h-20 bg-amber-500/10 rounded-full blur-xl"></div>
-          <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1.5 relative z-10">بانتظار التسوية (معلق)</p>
+          <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1.5 relative z-10">{{ 'FINANCES.COD.STATS.PENDING_CASES' | translate }}</p>
           <div class="flex items-end gap-2 relative z-10">
              <p class="text-2xl font-black text-amber-700 tabular-nums">{{ formatNumber(summary.pendingCases) }}</p>
-             <p class="text-[12px] font-bold text-amber-500/70 mb-1">طلب</p>
+             <p class="text-[12px] font-bold text-amber-500/70 mb-1">{{ 'FINANCES.COD.STATS.ORDER_UNIT' | translate }}</p>
           </div>
         </div>
       </div>
@@ -111,8 +111,8 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
                <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
              </div>
              <div>
-               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">سجل المطابقات</h3>
-               <p class="text-[11px] font-bold text-slate-500 mt-0.5">تفاصيل المبالغ لكل طلب وحالة التسوية الميدانية</p>
+               <h3 class="text-[15px] font-black text-slate-900 tracking-tight">{{ 'FINANCES.COD.TABLE.TITLE' | translate }}</h3>
+               <p class="text-[11px] font-bold text-slate-500 mt-0.5">{{ 'FINANCES.COD.TABLE.DESC' | translate }}</p>
              </div>
           </div>
         </div>
@@ -121,14 +121,14 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
           <table class="w-full whitespace-nowrap text-right text-[13px]">
             <thead>
               <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">الطلب (المرجع)</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">المندوب المُحصل</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">المتجر</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">المبلغ المطلوب تحصيله</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">ما تم توريده فعلياً</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">الفارق المالي (العجز)</th>
-                <th class="px-6 py-4 text-center">الحالة</th>
-                <th class="px-6 py-4 text-center">الإجراء</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COD.TABLE.ORDER_REF' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COD.TABLE.COLLECTOR_DRIVER' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COD.TABLE.VENDOR' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.EXPECTED_AMOUNT' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.ACTUAL_COLLECTED' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.FINANCIAL_DELTA' | translate }}</th>
+                <th class="px-6 py-4 text-center">{{ 'FINANCES.COD.TABLE.STATUS' | translate }}</th>
+                <th class="px-6 py-4 text-center">{{ 'FINANCES.COD.TABLE.ACTION' | translate }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -153,13 +153,13 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
                 </td>
 
                 <td class="px-6 py-4 align-middle text-left" dir="ltr">
-                  <span class="text-[13px] font-black text-slate-700 tabular-nums">{{ formatNumber(rec.expectedAmount) }} SAR</span>
+                  <span class="text-[13px] font-black text-slate-700 tabular-nums">{{ formatNumber(rec.expectedAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
                 </td>
 
                 <td class="px-6 py-4 align-middle text-left" dir="ltr">
                   <span class="text-[13px] font-black tabular-nums"
                         [ngClass]="rec.collectedAmount > 0 ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100' : 'text-slate-400'">
-                    {{ formatNumber(rec.collectedAmount) }} SAR
+                    {{ formatNumber(rec.collectedAmount) }} {{ 'FINANCES.CURRENCY' | translate }}
                   </span>
                 </td>
 
@@ -168,7 +168,7 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
                      <span class="material-symbols-outlined text-[14px]" *ngIf="rec.delta < 0">warning</span>
                      <span class="material-symbols-outlined text-[14px]" *ngIf="rec.delta === 0">check_circle</span>
                      <span class="text-[13px] font-black tabular-nums">
-                       {{ rec.delta === 0 ? 'متطابق' : formatNumber(rec.delta) + ' SAR' }}
+                       {{ rec.delta === 0 ? ('FINANCES.COD.TABLE.MATCHED' | translate) : formatNumber(rec.delta) + ' ' + ('FINANCES.CURRENCY' | translate) }}
                      </span>
                   </div>
                 </td>
@@ -184,9 +184,9 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
                     <button *ngIf="rec.status === 'overdue' || rec.status === 'pending'"
                             class="h-8 px-3 text-[10px] font-black text-white bg-slate-900 rounded-lg hover:bg-slate-800 shadow-sm transition-all flex items-center gap-1">
                       <span class="material-symbols-outlined text-[14px]">done_all</span>
-                      تسوية يدوية
+                      {{ 'FINANCES.COD.TABLE.MANUAL_SETTLE' | translate }}
                     </button>
-                    <span *ngIf="rec.status === 'collected'" class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">تمت التسوية</span>
+                    <span *ngIf="rec.status === 'collected'" class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">{{ 'FINANCES.COD.TABLE.SETTLED' | translate }}</span>
                   </div>
                 </td>
 
@@ -199,8 +199,8 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
           <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
              <span class="material-symbols-outlined text-4xl text-slate-300">task_alt</span>
           </div>
-          <h3 class="text-[15px] font-black text-slate-800">لا يوجد بيانات مطابقة</h3>
-          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">جميع المبالغ المحصلة مسواة بالكامل أو لم يتم العثور على سجلات تطابق طلبك.</p>
+          <h3 class="text-[15px] font-black text-slate-800">{{ 'FINANCES.COD.NO_DATA_TITLE' | translate }}</h3>
+          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">{{ 'FINANCES.COD.NO_DATA_DESC' | translate }}</p>
         </div>
       </app-card>
     </div>

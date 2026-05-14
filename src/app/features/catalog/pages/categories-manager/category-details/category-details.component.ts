@@ -40,6 +40,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   isCreateModalOpen = false;
   isDeleteModalOpen = false;
   isDeleting = false;
+  deleteErrorMessage: string | null = null;
   viewMode: 'grid' | 'table' = 'table';
   breadcrumbs: { label: string; action?: () => void }[] = [];
 
@@ -273,12 +274,14 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   }
 
   onDelete(): void {
+    this.deleteErrorMessage = null;
     this.isDeleteModalOpen = true;
   }
 
   confirmDelete(): void {
     if (!this.category) return;
     this.isDeleting = true;
+    this.deleteErrorMessage = null;
     this.catalogService.deleteCategory(this.category.id).subscribe({
       next: () => {
         this.isDeleting = false;
@@ -288,12 +291,16 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Delete failed:', err);
         this.isDeleting = false;
+        this.deleteErrorMessage = err?.error?.detail
+          || err?.error?.message
+          || this.translate.instant('CATEGORIES.DELETE_ERROR_GENERIC');
       }
     });
   }
 
   closeDeleteModal(): void {
     this.isDeleteModalOpen = false;
+    this.deleteErrorMessage = null;
   }
 
   handleSaved(): void {

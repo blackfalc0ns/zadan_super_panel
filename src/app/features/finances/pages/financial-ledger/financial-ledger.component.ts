@@ -41,7 +41,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
       <div class="relative bg-white rounded-3xl shadow-xl w-full max-w-md animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[90vh]">
         <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div>
-            <h3 class="text-[15px] font-black text-slate-900">تفاصيل العملية المالية</h3>
+            <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.LEDGER.DETAIL_TITLE' | translate }}</h3>
             <p class="text-[11px] font-bold text-slate-500 font-mono mt-0.5">{{ selectedEntry.referenceId }}</p>
           </div>
           <button class="w-8 h-8 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors" (click)="selectedEntry = null">
@@ -54,18 +54,18 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                [ngClass]="selectedEntry.direction === 'credit' ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'">
             <p class="text-[11px] font-black uppercase tracking-widest mb-2"
                [ngClass]="selectedEntry.direction === 'credit' ? 'text-emerald-600' : 'text-red-600'">
-               {{ selectedEntry.direction === 'credit' ? 'إيداع (دائن)' : 'خصم (مدين)' }}
+               {{ (selectedEntry.direction === 'credit' ? 'FINANCES.LEDGER.DIRECTION_CREDIT' : 'FINANCES.LEDGER.DIRECTION_DEBIT') | translate }}
             </p>
             <p class="text-4xl font-black tabular-nums tracking-tight"
                [ngClass]="selectedEntry.direction === 'credit' ? 'text-emerald-700' : 'text-red-700'">
                <span class="text-2xl font-bold">{{ selectedEntry.direction === 'credit' ? '+' : '-' }}</span>{{ formatNumber(selectedEntry.amount) }}
-               <span class="text-[15px] font-bold">SAR</span>
+               <span class="text-[15px] font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span>
             </p>
           </div>
 
           <div class="space-y-4">
             <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">الكيان المرتبط</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.ENTITY_LINKED' | translate }}</span>
                <div class="flex items-center gap-2">
                  <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase" [ngClass]="getEntityBadgeClass(selectedEntry.entityType)">{{ getTranslatedEntityType(selectedEntry.entityType) }}</span>
                  <span class="text-[13px] font-black text-slate-900">{{ selectedEntry.entityName }}</span>
@@ -73,32 +73,32 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
             </div>
             
             <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">نوع العملية</span>
-               <span class="text-[13px] font-black text-slate-900">{{ getTranslatedLedgerType(selectedEntry.type) }}</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.ENTRY_TYPE' | translate }}</span>
+               <span class="text-[13px] font-black text-slate-900">{{ getTranslatedLedgerType(selectedEntry.type) | translate }}</span>
             </div>
 
             <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">المرجع الأساسي</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.PRIMARY_REF' | translate }}</span>
                <span class="text-[12px] font-black text-slate-700 font-mono">{{ selectedEntry.referenceId }}</span>
             </div>
 
             <div *ngIf="selectedEntry.orderId" class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">رقم الطلب</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.ORDER_ID' | translate }}</span>
                <span class="text-[12px] font-black text-zadna-primary font-mono bg-zadna-primary/10 px-2 py-0.5 rounded-md">{{ selectedEntry.orderId }}</span>
             </div>
 
             <div *ngIf="selectedEntry.settlementId" class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">رقم التسوية</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.SETTLEMENT_ID' | translate }}</span>
                <span class="text-[12px] font-black text-indigo-600 font-mono bg-indigo-50 px-2 py-0.5 rounded-md">{{ selectedEntry.settlementId }}</span>
             </div>
 
             <div *ngIf="selectedEntry.balanceAfter !== undefined" class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
-               <span class="text-[11px] font-bold text-slate-500">الرصيد المتبقي</span>
-               <span class="text-[13px] font-black text-slate-800 tabular-nums">{{ formatNumber(selectedEntry.balanceAfter) }} SAR</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.BALANCE_AFTER' | translate }}</span>
+               <span class="text-[13px] font-black text-slate-800 tabular-nums">{{ formatNumber(selectedEntry.balanceAfter) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
             </div>
 
             <div class="flex justify-between items-center py-2">
-               <span class="text-[11px] font-bold text-slate-500">التاريخ والوقت</span>
+               <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.DATE_TIME' | translate }}</span>
                <span class="text-[13px] font-bold text-slate-700" dir="ltr">{{ formatTime(selectedEntry.timestamp) }} - {{ formatDate(selectedEntry.timestamp) }}</span>
             </div>
           </div>
@@ -109,11 +109,11 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
     <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
       <!-- شريط الصفحة العلوي (Header) -->
-      <app-page-header title="السجل المالي (Ledger)" subtitle="مراقبة شاملة لجميع التدفقات النقدية، التسويات، الرسوم، وحركات المحافظ">
+      <app-page-header [title]="'FINANCES.LEDGER.TITLE' | translate" [subtitle]="'FINANCES.LEDGER.SUBTITLE' | translate">
         <div actions>
           <app-button variant="outline" size="sm" customClass="!rounded-xl bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-sm" (btnClick)="onExport()">
             <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">download</span>
-            تصدير CSV
+            {{ 'FINANCES.LEDGER.EXPORT_CSV' | translate }}
           </app-button>
         </div>
       </app-page-header>
@@ -130,17 +130,17 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 
         <app-inline-banner
           *ngIf="hasScope"
-          [title]="scopedOrderId ? 'طلب محدد' : getTranslatedEntityType(scopedEntityType || 'platform')"
+          [title]="scopedOrderId ? ('FINANCES.LEDGER.SCOPED_ORDER' | translate) : (getTranslatedEntityType(scopedEntityType || 'platform') | translate)"
           [message]="scopeTitle"
           [shouldTranslate]="false"
           [icon]="scopedOrderId ? 'receipt_long' : scopedEntityType === 'vendor' ? 'storefront' : 'local_shipping'"
           variant="info">
           <div actions class="flex items-center gap-2">
             <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="openScopedProfile()">
-              عرض الملف
+              {{ 'FINANCES.LEDGER.VIEW_PROFILE' | translate }}
             </app-button>
             <app-button variant="ghost" size="sm" customClass="!rounded-xl !bg-slate-900 !text-white hover:!bg-slate-800" (btnClick)="clearScope()">
-              مسح الفلتر
+              {{ 'FINANCES.LEDGER.CLEAR_SCOPE' | translate }}
             </app-button>
           </div>
         </app-inline-banner>
@@ -150,7 +150,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
       <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200 shadow-sm overflow-hidden bg-white">
         <div class="grid grid-cols-2 lg:grid-cols-4 divide-x rtl:divide-x-reverse divide-slate-100">
            <div *ngFor="let stat of summaryStats" class="px-6 py-5">
-             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ stat.label }}</p>
+             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ stat.labelKey | translate }}</p>
              <p class="text-2xl font-black tabular-nums tracking-tight" [ngClass]="stat.color">{{ stat.value }}</p>
            </div>
         </div>
@@ -162,13 +162,13 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
           <table class="w-full whitespace-nowrap text-right text-[13px]">
             <thead>
               <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">التاريخ</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">الكيان</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">النوع</th>
-                <th class="px-6 py-4 rtl:text-right ltr:text-left">المرجع</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">المبلغ</th>
-                <th class="px-6 py-4 text-center w-16">الاتجاه</th>
-                <th class="px-6 py-4 rtl:text-left ltr:text-right">الرصيد اللاحق</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.LEDGER.TABLE.DATE' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.LEDGER.TABLE.ENTITY' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.LEDGER.TABLE.TYPE' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.LEDGER.TABLE.REF' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.LEDGER.TABLE.AMOUNT' | translate }}</th>
+                <th class="px-6 py-4 text-center w-16">{{ 'FINANCES.LEDGER.TABLE.DIRECTION' | translate }}</th>
+                <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.LEDGER.TABLE.BALANCE' | translate }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -194,7 +194,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     </div>
                     <div>
                       <p class="text-[13px] font-black text-slate-800 leading-tight">{{ entry.entityName }}</p>
-                      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{{ getTranslatedEntityType(entry.entityType) }}</p>
+                      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{{ getTranslatedEntityType(entry.entityType) | translate }}</p>
                     </div>
                   </div>
                 </td>
@@ -202,7 +202,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                 <td class="px-6 py-4 align-middle">
                   <span class="inline-flex px-2.5 py-1 rounded-md text-[10px] font-black tracking-widest border"
                         [ngClass]="getTypeBadgeClass(entry.type)">
-                    {{ getTranslatedLedgerType(entry.type) }}
+                    {{ getTranslatedLedgerType(entry.type) | translate }}
                   </span>
                 </td>
 
@@ -248,8 +248,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
           <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
              <span class="material-symbols-outlined text-4xl text-slate-300">receipt_long</span>
           </div>
-          <h3 class="text-[15px] font-black text-slate-800">لا توجد سجلات مطابقة</h3>
-          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">لم نتمكن من العثور على أي حركات مالية تتطابق مع الفلاتر الحالية. جرب تغيير فلاتر البحث.</p>
+          <h3 class="text-[15px] font-black text-slate-800">{{ 'FINANCES.LEDGER.NO_ENTRIES_TITLE' | translate }}</h3>
+          <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">{{ 'FINANCES.LEDGER.NO_ENTRIES_DESC' | translate }}</p>
         </div>
       </app-card>
 
@@ -306,10 +306,10 @@ export class FinancialLedgerComponent implements OnInit {
     const credits = this.filteredEntries.filter(e => e.direction === 'credit').reduce((s, e) => s + e.amount, 0);
     const debits = this.filteredEntries.filter(e => e.direction === 'debit').reduce((s, e) => s + e.amount, 0);
     return [
-      { label: 'إجمالي الحركات', value: this.formatNumber(this.filteredEntries.length), color: 'text-slate-900' },
-      { label: 'إجمالي الإيداعات (+)', value: `${this.formatNumber(credits)}`, color: 'text-emerald-600' },
-      { label: 'إجمالي الخصومات (-)', value: `${this.formatNumber(debits)}`, color: 'text-red-600' },
-      { label: 'صافي التدفق المالي', value: `${this.formatNumber(credits - debits)}`, color: (credits - debits) >= 0 ? 'text-emerald-600' : 'text-red-600' }
+      { labelKey: 'FINANCES.LEDGER.STATS.TOTAL_ENTRIES', value: this.formatNumber(this.filteredEntries.length), color: 'text-slate-900' },
+      { labelKey: 'FINANCES.LEDGER.STATS.TOTAL_CREDITS', value: `${this.formatNumber(credits)}`, color: 'text-emerald-600' },
+      { labelKey: 'FINANCES.LEDGER.STATS.TOTAL_DEBITS', value: `${this.formatNumber(debits)}`, color: 'text-red-600' },
+      { labelKey: 'FINANCES.LEDGER.STATS.NET_FLOW', value: `${this.formatNumber(credits - debits)}`, color: (credits - debits) >= 0 ? 'text-emerald-600' : 'text-red-600' }
     ];
   }
 
@@ -429,25 +429,11 @@ export class FinancialLedgerComponent implements OnInit {
   }
 
   getTranslatedLedgerType(type: string): string {
-    const map: Record<string, string> = {
-      commission: 'عمولة منصة',
-      payout: 'تسوية نقدية',
-      refund: 'مسترد',
-      settlement: 'تسوية مالية',
-      adjustment: 'تسوية يدوية',
-      service_fee: 'رسوم خدمة',
-      delivery_fee: 'رسوم توصيل',
-      vat: 'ضريبة (VAT)',
-      bonus: 'مكافأة',
-      penalty: 'غرامة',
-      cod_collection: 'تحصيل كاش'
-    };
-    return map[type] ?? type;
+    return `FINANCES.LEDGER.TYPES.${type.toUpperCase()}`;
   }
 
   getTranslatedEntityType(type: string): string {
-    const map: Record<string, string> = { vendor: 'متجر', driver: 'مندوب', customer: 'عميل', platform: 'منصة', order: 'طلب' };
-    return map[type] ?? type;
+    return `FINANCES.ENTITIES.${type.toUpperCase()}`;
   }
 
   getEntityIcon(type: string): string {

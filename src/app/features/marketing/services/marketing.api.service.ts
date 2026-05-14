@@ -20,7 +20,9 @@ import {
   MarketingCouponUpdatePayload,
   MarketingHomeSection,
   MarketingHomeSectionPayload,
-  MarketingHomeSectionUpdatePayload
+  MarketingHomeSectionUpdatePayload,
+  MasterProductLookupOption,
+  VendorProductLookupOption
 } from '@marketing/models/marketing.models';
 
 @Injectable({
@@ -99,6 +101,16 @@ export class MarketingApiService {
 
   deleteFeaturedPlacement(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/featured-products/${id}`, { headers: this.getHeaders() });
+  }
+
+  lookupMasterProducts(search?: string): Observable<MasterProductLookupOption[]> {
+    const params = search ? `?search=${encodeURIComponent(search)}` : '';
+    return this.http.get<MasterProductLookupOption[]>(`${this.apiUrl}/featured-products/lookup/master-products${params}`, { headers: this.getHeaders() });
+  }
+
+  lookupVendorProducts(search?: string): Observable<VendorProductLookupOption[]> {
+    const params = search ? `?search=${encodeURIComponent(search)}` : '';
+    return this.http.get<VendorProductLookupOption[]>(`${this.apiUrl}/featured-products/lookup/vendor-products${params}`, { headers: this.getHeaders() });
   }
 
   getCoupons(): Observable<MarketingCoupon[]> {

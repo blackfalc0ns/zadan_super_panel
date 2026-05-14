@@ -18,7 +18,7 @@ import { getFinanceLocale } from '../../utils/finance-i18n.utils';
       [hover]="true"
       [customClass]="getCardClasses()"
       (click)="onCardClick()">
-      <div class="relative overflow-hidden p-5 sm:p-6">
+      <div class="relative overflow-hidden p-4">
         <div class="absolute inset-x-0 top-0 h-1.5" [ngClass]="getAccentStripClass()"></div>
         <div class="absolute -right-8 top-4 h-24 w-24 rounded-full blur-3xl" [ngClass]="getGlowClass()"></div>
 
@@ -27,30 +27,30 @@ import { getFinanceLocale } from '../../utils/finance-i18n.utils';
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-3">
                 <div
-                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-105"
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-105"
                   [ngClass]="getIconBgClass()">
-                  <span class="material-symbols-outlined text-[22px]">{{ kpi.icon }}</span>
+                  <span class="material-symbols-outlined text-[18px]">{{ kpi.icon }}</span>
                 </div>
                 <div class="min-w-0">
-                  <p class="truncate text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                  <p class="truncate text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
                     {{ kpi.labelKey | translate }}
                   </p>
-                  <p class="mt-1 text-[12px] font-semibold text-slate-400">
-                    {{ getTrendNarrative() }}
+                  <p class="mt-0.5 text-[11px] font-semibold text-slate-400">
+                    {{ getTrendNarrative() | translate }}
                   </p>
                 </div>
               </div>
 
-              <div class="mt-6 flex items-end gap-2">
-                <span class="text-[2rem] font-black tracking-tight text-slate-950 tabular-nums sm:text-[2.2rem]">
+              <div class="mt-4 flex items-end gap-2">
+                <span class="text-[1.5rem] font-black tracking-tight text-slate-950 tabular-nums sm:text-[1.7rem]">
                   {{ getDisplayValue() }}
                 </span>
                 <span *ngIf="kpi.currency" class="pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">
-                  {{ kpi.currency }}
+                  {{ 'FINANCES.CURRENCY' | translate }}
                 </span>
               </div>
 
-              <div class="mt-5 flex flex-wrap items-center gap-2">
+              <div class="mt-3 flex flex-wrap items-center gap-2">
                 <span
                   class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-black"
                   [ngClass]="getTrendBadgeClass()">
@@ -66,8 +66,8 @@ import { getFinanceLocale } from '../../utils/finance-i18n.utils';
               </div>
             </div>
 
-            <div class="flex min-h-[112px] flex-col items-end justify-between">
-              <div *ngIf="kpi.sparkline?.length" class="h-14 w-24 opacity-90">
+            <div class="flex min-h-[80px] flex-col items-end justify-between">
+              <div *ngIf="kpi.sparkline?.length" class="h-10 w-20 opacity-90">
                 <svg viewBox="0 0 100 40" preserveAspectRatio="none" class="h-full w-full">
                   <defs>
                     <linearGradient [attr.id]="gradientId" x1="0" x2="0" y1="0" y2="1">
@@ -96,7 +96,7 @@ import { getFinanceLocale } from '../../utils/finance-i18n.utils';
               <div
                 *ngIf="kpi.clickRoute"
                 class="inline-flex items-center gap-1 rounded-full bg-slate-950 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white opacity-0 transition duration-300 group-hover:translate-x-1 group-hover:opacity-100">
-                Open
+                {{ 'FINANCES.ACTIONS.OPEN' | translate }}
                 <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
               </div>
             </div>
@@ -176,19 +176,15 @@ export class FinanceKpiCardComponent {
   }
 
   getTrendNarrative(): string {
-    if (!Number.isFinite(this.kpi.trendPercent)) {
-      return 'Stable baseline';
-    }
-
     if (this.kpi.trend === 'up') {
-      return 'Momentum improving';
+      return 'FINANCES.NARRATIVES.IMPROVING';
     }
 
     if (this.kpi.trend === 'down') {
-      return 'Needs attention';
+      return 'FINANCES.NARRATIVES.ATTENTION';
     }
 
-    return 'Holding steady';
+    return 'FINANCES.NARRATIVES.STEADY';
   }
 
   getSparklineColor(): string {

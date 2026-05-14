@@ -5,7 +5,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   FeaturedPlacement,
   FeaturedPlacementPayload,
-  FeaturedPlacementUpdatePayload
+  FeaturedPlacementUpdatePayload,
+  MasterProductLookupOption,
+  VendorProductLookupOption
 } from '@marketing/models/marketing.models';
 import { MarketingApiService } from '@marketing/services/marketing.api.service';
 import { describeApiError, formatDateRange, formatDateTime } from '@marketing/utils/marketing-date.utils';
@@ -39,8 +41,7 @@ import { ToastService } from '@shared/services/toast.service';
         <div class="max-w-[24rem] w-full">
           <app-input
             [(ngModel)]="searchTerm"
-            [placeholder]="'بحث في المنتجات...'"
-            dir="rtl"
+            [placeholder]="'MARKETING.FEATURED.SEARCH_PLACEHOLDER' | translate"
             [hasIcon]="true"
             [inputClass]="'!bg-transparent !border-0 !ring-0 !text-slate-900 !placeholder-slate-400'"
             [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-2xl overflow-hidden'">
@@ -55,7 +56,7 @@ import { ToastService } from '@shared/services/toast.service';
             [disabled]="loading"
             class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
             <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
-            تحديث
+            {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
 
           <button
@@ -63,7 +64,7 @@ import { ToastService } from '@shared/services/toast.service';
             (click)="openCreate()"
             class="h-11 px-5 rounded-2xl bg-zadna-primary text-white text-sm font-bold flex items-center gap-2 hover:bg-zadna-primary/90 hover:shadow-lg hover:shadow-zadna-primary/20 transition-all">
             <span class="material-symbols-outlined text-[18px]">add</span>
-            إضافة منتج مميز
+            {{ 'MARKETING.FEATURED.ACTIONS.CREATE' | translate }}
           </button>
         </div>
       </div>
@@ -78,9 +79,9 @@ import { ToastService } from '@shared/services/toast.service';
         [columns]="tableColumns"
         [isLoading]="loading"
         [emptyStateIcon]="'featured_play_list'"
-        [emptyStateActionLabel]="'إضافة أول منتج'"
-        [emptyStateTitle]="'لا توجد منتجات مميزة'"
-        [emptyStateMessage]="'لم يتم تخصيص أي منتج كمنتج مميز. يمكنك إضافة منتج للترويج له في الصفحة الرئيسية.'"
+        [emptyStateActionLabel]="'MARKETING.FEATURED.EMPTY.ACTION' | translate"
+        [emptyStateTitle]="'MARKETING.FEATURED.EMPTY.TITLE' | translate"
+        [emptyStateMessage]="'MARKETING.FEATURED.EMPTY.MESSAGE' | translate"
         [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
         (emptyStateAction)="openCreate()">
 
@@ -92,7 +93,7 @@ import { ToastService } from '@shared/services/toast.service';
                 </div>
                 <div class="min-w-0">
                   <div class="truncate text-[13px] font-black text-slate-900">
-                    {{ placement.displayNameAr || placement.displayNameEn || '--' }}
+                    {{ isAr ? (placement.displayNameAr || placement.displayNameEn || '--') : (placement.displayNameEn || placement.displayNameAr || '--') }}
                   </div>
                   <div class="mt-1 flex items-center gap-1.5 truncate text-[11px] font-bold text-slate-400">
                     <span class="material-symbols-outlined text-[12px]">fingerprint</span>
@@ -105,7 +106,7 @@ import { ToastService } from '@shared/services/toast.service';
             <ng-container *ngIf="column.key === 'placementType'">
               <div class="flex justify-center">
                 <app-status-pill
-                  [label]="placement.placementType === 'VendorProduct' ? 'منتج متجر' : 'منتج رئيسي'"
+                  [label]="(placement.placementType === 'VendorProduct' ? 'MARKETING.FEATURED.TYPES.VENDOR_PRODUCT' : 'MARKETING.FEATURED.TYPES.MASTER_PRODUCT') | translate"
                   [variant]="placement.placementType === 'VendorProduct' ? 'warning' : 'info'"
                   size="sm">
                 </app-status-pill>
@@ -130,7 +131,7 @@ import { ToastService } from '@shared/services/toast.service';
             <ng-container *ngIf="column.key === 'isActive'">
               <div class="flex justify-start">
                 <app-status-pill
-                  [label]="placement.isActive ? 'نشط' : 'غير نشط'"
+                  [label]="(placement.isActive ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate"
                   [variant]="placement.isActive ? 'success' : 'neutral'"
                   size="sm">
                 </app-status-pill>
@@ -149,7 +150,7 @@ import { ToastService } from '@shared/services/toast.service';
                   type="button"
                   class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-zadna-primary/10 hover:text-zadna-primary transition-colors"
                   (click)="openEdit(placement.id)"
-                  title="تعديل">
+                  [title]="'MARKETING.ACTIONS.EDIT' | translate">
                   <span class="material-symbols-outlined text-[18px]">edit</span>
                 </button>
 
@@ -158,7 +159,7 @@ import { ToastService } from '@shared/services/toast.service';
                   class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
                   [ngClass]="placement.isActive ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'"
                   (click)="toggleStatus(placement)"
-                  [title]="placement.isActive ? 'إيقاف' : 'تفعيل'">
+                  [title]="(placement.isActive ? 'MARKETING.ACTIONS.DEACTIVATE' : 'MARKETING.ACTIONS.ACTIVATE') | translate">
                   <span class="material-symbols-outlined text-[18px]">
                     {{ placement.isActive ? 'pause' : 'play_arrow' }}
                   </span>
@@ -168,7 +169,7 @@ import { ToastService } from '@shared/services/toast.service';
                   type="button"
                   class="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors"
                   (click)="promptDelete(placement)"
-                  title="حذف">
+                  [title]="'MARKETING.ACTIONS.DELETE' | translate">
                   <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
               </div>
@@ -177,13 +178,25 @@ import { ToastService } from '@shared/services/toast.service';
       </app-data-table>
     </div>
 
-    <app-featured-placement-form-modal [isOpen]="isModalOpen" [isSaving]="saving" [placement]="selectedPlacement" (close)="closeModal()" (save)="savePlacement($event)"></app-featured-placement-form-modal>
+    <app-featured-placement-form-modal
+      [isOpen]="isModalOpen"
+      [isSaving]="saving"
+      [placement]="selectedPlacement"
+      [masterProductOptions]="masterProductOptions"
+      [vendorProductOptions]="vendorProductOptions"
+      [masterProductsLoading]="masterProductsLoading"
+      [vendorProductsLoading]="vendorProductsLoading"
+      (close)="closeModal()"
+      (save)="savePlacement($event)"
+      (searchMasterProducts)="onSearchMasterProducts($event)"
+      (searchVendorProducts)="onSearchVendorProducts($event)">
+    </app-featured-placement-form-modal>
 
     <app-delete-confirmation-modal
       [isOpen]="deleteTarget !== null"
       [isLoading]="deleting"
-      [title]="'حذف المنتج المميز'"
-      [message]="'هل أنت متأكد من رغبتك في إزالة هذا المنتج من قائمة المنتجات المميزة؟ لا يمكن التراجع عن هذا الإجراء.'"
+      [title]="'MARKETING.FEATURED.MESSAGES.DELETE_TITLE' | translate"
+      [message]="'MARKETING.FEATURED.MESSAGES.DELETE_MESSAGE' | translate"
       (close)="deleteTarget = null"
       (confirm)="confirmDelete()">
     </app-delete-confirmation-modal>
@@ -200,14 +213,20 @@ export class MarketingFeaturedProductsComponent implements OnInit {
   selectedPlacement: FeaturedPlacement | null = null;
   deleteTarget: FeaturedPlacement | null = null;
 
+  // Lookup data
+  masterProductOptions: MasterProductLookupOption[] = [];
+  vendorProductOptions: VendorProductLookupOption[] = [];
+  masterProductsLoading = false;
+  vendorProductsLoading = false;
+
   readonly tableColumns: TableColumn[] = [
-    { key: 'target', title: 'المنتج المستهدف', type: 'custom', width: '20rem', align: 'left' },
-    { key: 'placementType', title: 'النوع', type: 'custom', width: '8rem', align: 'center' },
-    { key: 'displayOrder', title: 'الترتيب', type: 'custom', width: '6rem', align: 'center' },
-    { key: 'schedule', title: 'تاريخ العرض', type: 'custom', width: '13rem', align: 'left' },
-    { key: 'isActive', title: 'الحالة', type: 'custom', width: '7rem', align: 'left' },
-    { key: 'note', title: 'ملاحظات إضافية', type: 'custom', width: '12rem', align: 'left' },
-    { key: 'actions', title: 'إجراءات', type: 'custom', width: '10rem', align: 'right' }
+    { key: 'target', title: 'MARKETING.FEATURED.TABLE.TARGET', type: 'custom', width: '20rem', align: 'left' },
+    { key: 'placementType', title: 'MARKETING.FEATURED.TABLE.TYPE', type: 'custom', width: '8rem', align: 'center' },
+    { key: 'displayOrder', title: 'MARKETING.BANNERS.TABLE.ORDER', type: 'custom', width: '6rem', align: 'center' },
+    { key: 'schedule', title: 'MARKETING.BANNERS.TABLE.SCHEDULE', type: 'custom', width: '13rem', align: 'left' },
+    { key: 'isActive', title: 'MARKETING.BANNERS.TABLE.STATUS', type: 'custom', width: '7rem', align: 'left' },
+    { key: 'note', title: 'MARKETING.FEATURED.TABLE.NOTE', type: 'custom', width: '12rem', align: 'left' },
+    { key: 'actions', title: 'MARKETING.BANNERS.TABLE.ACTIONS', type: 'custom', width: '10rem', align: 'right' }
   ];
 
   constructor(
@@ -215,6 +234,10 @@ export class MarketingFeaturedProductsComponent implements OnInit {
     private readonly toastService: ToastService,
     readonly translateService: TranslateService
   ) {}
+
+  get isAr(): boolean {
+    return this.translateService.currentLang === 'ar';
+  }
 
   get filteredPlacements(): FeaturedPlacement[] {
     const query = this.searchTerm.trim().toLocaleLowerCase();
@@ -261,6 +284,8 @@ export class MarketingFeaturedProductsComponent implements OnInit {
   openCreate(): void {
     this.selectedPlacement = null;
     this.isModalOpen = true;
+    this.loadMasterProductLookup();
+    this.loadVendorProductLookup();
   }
 
   openEdit(id: string): void {
@@ -270,10 +295,12 @@ export class MarketingFeaturedProductsComponent implements OnInit {
         this.selectedPlacement = placement;
         this.isModalOpen = true;
         this.saving = false;
+        this.loadMasterProductLookup();
+        this.loadVendorProductLookup();
       },
       error: (error) => {
         this.saving = false;
-        this.toastService.error(describeApiError(error), 'المنتجات المميزة');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'));
       }
     });
   }
@@ -296,13 +323,15 @@ export class MarketingFeaturedProductsComponent implements OnInit {
         this.closeModal();
         this.loadPlacements();
         this.toastService.success(
-          this.selectedPlacement ? 'تم تحديث المنتج المميز' : 'تم إضافة منتج مميز جديد',
-          'التسويق'
+          this.selectedPlacement 
+            ? this.translateService.instant('MARKETING.FEATURED.MESSAGES.UPDATED') 
+            : this.translateService.instant('MARKETING.FEATURED.MESSAGES.CREATED'),
+          this.translateService.instant('MARKETING.SHELL.TITLE')
         );
       },
       error: (error) => {
         this.saving = false;
-        this.toastService.error(describeApiError(error), 'المنتجات المميزة');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'));
       }
     });
   }
@@ -315,12 +344,14 @@ export class MarketingFeaturedProductsComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.toastService.success(
-          placement.isActive ? 'تم إيقاف عرض المنتج' : 'تم تفعيل عرض المنتج',
-          'التسويق'
+          placement.isActive 
+            ? this.translateService.instant('MARKETING.FEATURED.MESSAGES.DEACTIVATED') 
+            : this.translateService.instant('MARKETING.FEATURED.MESSAGES.ACTIVATED'),
+          this.translateService.instant('MARKETING.SHELL.TITLE')
         );
         this.loadPlacements();
       },
-      error: (error) => this.toastService.error(describeApiError(error), 'المنتجات المميزة')
+      error: (error) => this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'))
     });
   }
 
@@ -338,12 +369,12 @@ export class MarketingFeaturedProductsComponent implements OnInit {
       next: () => {
         this.deleting = false;
         this.deleteTarget = null;
-        this.toastService.success('تم حذف المنتج المميز', 'التسويق');
+        this.toastService.success(this.translateService.instant('MARKETING.FEATURED.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadPlacements();
       },
       error: (error) => {
         this.deleting = false;
-        this.toastService.error(describeApiError(error), 'المنتجات المميزة');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'));
       }
     });
   }
@@ -354,6 +385,40 @@ export class MarketingFeaturedProductsComponent implements OnInit {
 
   formatDateTimeLabel(value: string): string {
     return formatDateTime(value);
+  }
+
+  loadMasterProductLookup(search?: string): void {
+    this.masterProductsLoading = true;
+    this.marketingApi.lookupMasterProducts(search).subscribe({
+      next: (options) => {
+        this.masterProductOptions = options;
+        this.masterProductsLoading = false;
+      },
+      error: () => {
+        this.masterProductsLoading = false;
+      }
+    });
+  }
+
+  loadVendorProductLookup(search?: string): void {
+    this.vendorProductsLoading = true;
+    this.marketingApi.lookupVendorProducts(search).subscribe({
+      next: (options) => {
+        this.vendorProductOptions = options;
+        this.vendorProductsLoading = false;
+      },
+      error: () => {
+        this.vendorProductsLoading = false;
+      }
+    });
+  }
+
+  onSearchMasterProducts(search: string): void {
+    this.loadMasterProductLookup(search);
+  }
+
+  onSearchVendorProducts(search: string): void {
+    this.loadVendorProductLookup(search);
   }
 }
 

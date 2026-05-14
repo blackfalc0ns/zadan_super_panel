@@ -411,7 +411,7 @@
     (close)="isCreateModalOpen = false" (saved)="handleSaved()">
   </app-category-form-modal>
 
-  <app-delete-confirmation-modal [isOpen]="isDeleteModalOpen" [isLoading]="isDeleting" (confirm)="confirmDelete()"
-    (close)="closeDeleteModal()">
+  <app-delete-confirmation-modal [isOpen]="isDeleteModalOpen" [isLoading]="isDeleting"
+    [errorMessage]="deleteErrorMessage" (confirm)="confirmDelete()" (close)="closeDeleteModal()">
   </app-delete-confirmation-modal>
 </div>

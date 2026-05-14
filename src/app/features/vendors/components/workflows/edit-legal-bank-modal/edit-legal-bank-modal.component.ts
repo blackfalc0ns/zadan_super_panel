@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CatalogService } from '../../../../catalog/services/catalog.api.service';
+import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 export interface LegalBankData {
   commercialRegistrationNumber: string;
@@ -20,7 +22,7 @@ export interface LegalBankData {
 @Component({
   selector: 'app-edit-legal-bank-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-legal-bank-modal.component.html'
 })
 export class EditLegalBankModalComponent implements OnChanges {
@@ -44,6 +46,21 @@ export class EditLegalBankModalComponent implements OnChanges {
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<LegalBankData>();
 
+  isUploading: 'cr' | 'tax' | 'license' | null = null;
+
+  bankOptions = [
+    { value: 'الراجحي', label: 'مصرف الراجحي - Al Rajhi Bank' },
+    { value: 'الأهلي', label: 'البنك الأهلي السعودي - SNB' },
+    { value: 'الإنماء', label: 'مصرف الإنماء - Alinma Bank' },
+    { value: 'الرياض', label: 'بنك الرياض - Riyad Bank' },
+    { value: 'ساب', label: 'بنك ساب - SABB' },
+    { value: 'الفرنسي', label: 'البنك السعودي الفرنسي - Banque Saudi Fransi' },
+    { value: 'العربي', label: 'البنك العربي الوطني - ANB' },
+    { value: 'البلاد', label: 'بنك البلاد - Bank Albilad' },
+    { value: 'الجزيرة', label: 'بنك الجزيرة - Bank AlJazira' },
+    { value: 'الاستثمار', label: 'البنك السعودي للاستثمار - SAIB' }
+  ];
+
   draftLegalBankData: LegalBankData = {
     commercialRegistrationNumber: '',
     commercialRegistrationExpiryDate: '',
@@ -58,18 +75,21 @@ export class EditLegalBankModalComponent implements OnChanges {
     licenseDocumentUrl: ''
   };
 
-  constructor(private translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    private catalogService: CatalogService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['legalBankData']) {
       this.draftLegalBankData = {
         commercialRegistrationNumber: this.legalBankData.commercialRegistrationNumber || '',
-        commercialRegistrationExpiryDate: this.legalBankData.commercialRegistrationExpiryDate || '',
+        commercialRegistrationExpiryDate: this.toDateInputValue(this.legalBankData.commercialRegistrationExpiryDate),
         taxId: this.legalBankData.taxId || '',
         licenseNumber: this.legalBankData.licenseNumber || '',
         bankName: this.legalBankData.bankName || '',
         accountHolderName: this.legalBankData.accountHolderName || '',
-        iban: this.legalBankData.iban || '',
+        iban: this.formatIbanForDisplay(this.legalBankData.iban || ''),
         swiftCode: this.legalBankData.swiftCode || '',
         commercialRegisterDocumentUrl: this.legalBankData.commercialRegisterDocumentUrl || '',
         taxDocumentUrl: this.legalBankData.taxDocumentUrl || '',
@@ -173,6 +193,37 @@ export class EditLegalBankModalComponent implements OnChanges {
     navigator.clipboard.writeText(this.normalizeIban(this.draftLegalBankData.iban));
   }
 
+  onCrFileSelected(event: Event): void {
+    this.uploadFile(event, 'cr', (url) => this.draftLegalBankData.commercialRegisterDocumentUrl = url);
+  }
+
+  onTaxFileSelected(event: Event): void {
+    this.uploadFile(event, 'tax', (url) => this.draftLegalBankData.taxDocumentUrl = url);
+  }
+
+  onLicenseFileSelected(event: Event): void {
+    this.uploadFile(event, 'license', (url) => this.draftLegalBankData.licenseDocumentUrl = url);
+  }
+
+  private uploadFile(event: Event, type: 'cr' | 'tax' | 'license', onSuccess: (url: string) => void): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.isUploading = type;
+    this.catalogService.uploadFile(file, 'vendors/documents').subscribe({
+      next: (result: { url: string }) => {
+        onSuccess(result.url);
+        this.isUploading = null;
+      },
+      error: () => {
+        this.isUploading = null;
+      }
+    });
+
+    input.value = '';
+  }
+
   private normalizeIban(value: string): string {
     const sanitized = (value || '').replace(/\s+/g, '').toUpperCase();
     if (!sanitized) {
@@ -180,6 +231,17 @@ export class EditLegalBankModalComponent implements OnChanges {
     }
 
     return sanitized.startsWith('SA') ? sanitized : `SA${sanitized}`;
+  }
+
+  private toDateInputValue(value?: string | null): string {
+    if (!value) return '';
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return value;
+    return date.toISOString().split('T')[0];
+  }
+
+  private formatIbanForDisplay(iban: string): string {
+    return (iban || '').replace(/\s+/g, '').replace(/(.{4})/g, '$1 ').trim();
   }
 
   private text(arabic: string, english: string): string {

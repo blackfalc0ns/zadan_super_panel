@@ -28,7 +28,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
     <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
       <!-- شريط الصفحة العلوي (Header) -->
-      <app-page-header title="مركز عمليات المحافظ" subtitle="إدارة محافظ المتاجر والمناديب، ومراقبة الأرصدة المعلقة والمتاحة للسحب">
+      <app-page-header [title]="'FINANCES.WALLETS.TITLE' | translate" [subtitle]="'FINANCES.WALLETS.SUBTITLE' | translate">
         <div actions class="flex flex-wrap items-center gap-3">
           <!-- أزرار الفلترة حسب نوع المالك -->
           <div class="flex items-center bg-slate-100/80 p-1 rounded-xl border border-slate-200">
@@ -38,12 +38,12 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                     [ngClass]="ownerType === option.value
                       ? 'bg-white text-zadna-primary shadow-sm border border-slate-200'
                       : 'text-slate-500 hover:text-slate-800'">
-              {{ option.label }}
+              {{ option.labelKey | translate }}
             </button>
           </div>
           <div class="rounded-xl border border-slate-200 bg-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm">
              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-             <span class="text-[12px] font-bold text-slate-600 tabular-nums">{{ totalCount }} محفظة نشطة</span>
+             <span class="text-[12px] font-bold text-slate-600 tabular-nums">{{ 'FINANCES.WALLETS.ACTIVE_COUNT' | translate: { count: totalCount } }}</span>
           </div>
         </div>
       </app-page-header>
@@ -54,30 +54,30 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
            <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100 shrink-0">
              <span class="material-symbols-outlined text-emerald-500 text-[24px]">account_balance</span>
            </div>
-           <div>
-             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">إجمالي رصيد المنصة</p>
-             <p class="text-2xl font-black text-slate-900 tabular-nums tracking-tight">{{ formatNumber(totalPlatformBalance) }} <span class="text-sm text-slate-400 font-bold">SAR</span></p>
-           </div>
+            <div>
+              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ 'FINANCES.WALLETS.TOTAL_PLATFORM_BALANCE' | translate }}</p>
+              <p class="text-2xl font-black text-slate-900 tabular-nums tracking-tight">{{ formatNumber(totalPlatformBalance) }} <span class="text-sm text-slate-400 font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
+            </div>
         </app-card>
 
         <app-card variant="default" rounded="2xl" padding="none" customClass="bg-white border-slate-200 shadow-sm overflow-hidden flex items-center p-5 gap-4 transition-all hover:shadow-md">
            <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center border border-amber-100 shrink-0">
              <span class="material-symbols-outlined text-amber-500 text-[24px]">payments</span>
            </div>
-           <div>
-             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">السحوبات المعلقة</p>
-             <p class="text-2xl font-black text-slate-900 tabular-nums tracking-tight">{{ formatNumber(totalPendingWithdrawals) }} <span class="text-sm text-slate-400 font-bold">SAR</span></p>
-           </div>
+            <div>
+              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ 'FINANCES.WALLETS.PENDING_WITHDRAWALS' | translate }}</p>
+              <p class="text-2xl font-black text-slate-900 tabular-nums tracking-tight">{{ formatNumber(totalPendingWithdrawals) }} <span class="text-sm text-slate-400 font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
+            </div>
         </app-card>
 
         <app-card variant="default" rounded="2xl" padding="none" customClass="bg-white border-slate-200 shadow-sm overflow-hidden flex items-center p-5 gap-4 transition-all hover:shadow-md">
            <div class="w-12 h-12 rounded-2xl bg-cyan-50 flex items-center justify-center border border-cyan-100 shrink-0">
              <span class="material-symbols-outlined text-cyan-600 text-[24px]">account_balance_wallet</span>
            </div>
-           <div>
-             <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">إجمالي المحافظ</p>
-             <p class="text-2xl font-black text-slate-900 tabular-nums tracking-tight">{{ formatNumber(totalCount) }} <span class="text-sm text-slate-400 font-bold">محفظة</span></p>
-           </div>
+            <div>
+              <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">{{ 'FINANCES.WALLETS.TOTAL_WALLETS' | translate }}</p>
+              <p class="text-2xl font-black text-slate-900 tabular-nums tracking-tight">{{ formatNumber(totalCount) }} <span class="text-sm text-slate-400 font-bold">{{ 'FINANCES.WALLETS.WALLET_UNIT' | translate }}</span></p>
+            </div>
         </app-card>
       </div>
 
@@ -104,9 +104,9 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                 <div class="flex items-center gap-2 mt-1">
                   <span class="inline-flex rounded-md px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest"
                         [ngClass]="wallet.ownerType === 'Vendor' ? 'bg-cyan-50 text-cyan-700' : 'bg-amber-50 text-amber-700'">
-                    {{ wallet.ownerType === 'Vendor' ? 'متجر' : 'مندوب' }}
+                    {{ (wallet.ownerType === 'Vendor' ? 'FINANCES.ENTITIES.VENDOR' : 'FINANCES.ENTITIES.DRIVER') | translate }}
                   </span>
-                  <p class="text-[11px] font-bold text-slate-500 truncate" dir="ltr">{{ wallet.ownerPhone || 'لا يوجد رقم' }}</p>
+                  <p class="text-[11px] font-bold text-slate-500 truncate" dir="ltr">{{ wallet.ownerPhone || ('FINANCES.WALLETS.NO_PHONE' | translate) }}</p>
                 </div>
               </div>
             </div>
@@ -115,12 +115,12 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 
           <div class="mt-auto grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
             <div>
-              <p class="text-[10px] font-bold text-slate-400 mb-1">الرصيد المتاح</p>
-              <p class="text-lg font-black text-emerald-600 tabular-nums leading-none tracking-tight">{{ formatNumber(wallet.currentBalance) }} <span class="text-[10px] text-emerald-600/70">SAR</span></p>
+              <p class="text-[10px] font-bold text-slate-400 mb-1">{{ 'FINANCES.WALLETS.AVAILABLE_BALANCE' | translate }}</p>
+              <p class="text-lg font-black text-emerald-600 tabular-nums leading-none tracking-tight">{{ formatNumber(wallet.currentBalance) }} <span class="text-[10px] text-emerald-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
             </div>
             <div>
-              <p class="text-[10px] font-bold text-slate-400 mb-1">الرصيد المعلق</p>
-              <p class="text-lg font-black text-amber-600 tabular-nums leading-none tracking-tight">{{ formatNumber(wallet.pendingBalance) }} <span class="text-[10px] text-amber-600/70">SAR</span></p>
+              <p class="text-[10px] font-bold text-slate-400 mb-1">{{ 'FINANCES.WALLETS.PENDING_BALANCE' | translate }}</p>
+              <p class="text-lg font-black text-amber-600 tabular-nums leading-none tracking-tight">{{ formatNumber(wallet.pendingBalance) }} <span class="text-[10px] text-amber-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
             </div>
           </div>
         </a>
@@ -131,9 +131,9 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
         <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
           <span class="material-symbols-outlined text-[40px] text-slate-300">account_balance_wallet</span>
         </div>
-        <h3 class="text-lg font-black text-slate-800">لا توجد محافظ مطابقة</h3>
+        <h3 class="text-lg font-black text-slate-800">{{ 'FINANCES.WALLETS.NO_DATA_TITLE' | translate }}</h3>
         <p class="mt-2 text-[13px] font-medium text-slate-500 max-w-sm">
-          جرب تغيير فلاتر البحث وعرض كل المحافظ بدلاً من المحافظ المحددة بنوع معين.
+          {{ 'FINANCES.WALLETS.NO_DATA_DESC' | translate }}
         </p>
       </div>
 
@@ -162,10 +162,10 @@ export class WalletsListComponent implements OnInit {
   totalPlatformBalance = 0;
   totalPendingWithdrawals = 0;
 
-  readonly ownerOptions: Array<{ label: string; value: string | null }> = [
-    { label: 'الكل', value: null },
-    { label: 'متاجر', value: 'Vendor' },
-    { label: 'مناديب', value: 'Driver' }
+  readonly ownerOptions: Array<{ labelKey: string; value: string | null }> = [
+    { labelKey: 'FINANCES.WALLETS.TABS.ALL', value: null },
+    { labelKey: 'FINANCES.WALLETS.TABS.VENDORS', value: 'Vendor' },
+    { labelKey: 'FINANCES.WALLETS.TABS.DRIVERS', value: 'Driver' }
   ];
 
   ngOnInit(): void {

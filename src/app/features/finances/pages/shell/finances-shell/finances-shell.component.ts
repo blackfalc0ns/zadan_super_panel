@@ -27,7 +27,7 @@ interface FinanceGroup {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule, DetailTabsNavComponent],
   template: `
-    <div class="finance-shell min-h-screen bg-slate-50/50" dir="rtl">
+    <div class="finance-shell min-h-screen bg-slate-50/50">
       
       <!-- Top Global Header -->
       <div class="bg-white border-b border-slate-200 shadow-sm relative z-20">
@@ -40,13 +40,13 @@ interface FinanceGroup {
                 <span class="material-symbols-outlined text-white text-[24px]">account_balance</span>
               </div>
               <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">المالية والحسابات</h1>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">{{ 'FINANCES.SHELL.TITLE' | translate }}</h1>
                 <div class="flex items-center gap-2 mt-1">
-                  <span class="text-[12px] font-bold text-slate-500">الإدارة المركزية للتدفقات النقدية، التسويات، والمحافظ</span>
+                  <span class="text-[12px] font-bold text-slate-500">{{ 'FINANCES.SHELL.SUBTITLE' | translate }}</span>
                   <div class="h-1 w-1 rounded-full bg-slate-300"></div>
                   <div class="flex items-center gap-1.5 bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 border border-emerald-100">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-[10px] font-black uppercase tracking-widest">متصل بالشبكة</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">{{ 'FINANCES.SHELL.CONNECTED' | translate }}</span>
                   </div>
                 </div>
               </div>
@@ -55,7 +55,7 @@ interface FinanceGroup {
             <div class="flex items-center gap-3">
                <button class="h-10 px-4 rounded-xl bg-slate-100 text-[13px] font-bold text-slate-700 hover:bg-slate-200 transition-all border border-slate-200/50 flex items-center gap-2">
                  <span class="material-symbols-outlined text-[18px]">download</span>
-                 تصدير التقارير
+                 {{ 'FINANCES.SHELL.EXPORT_REPORTS' | translate }}
                </button>
             </div>
           </div>
@@ -79,10 +79,10 @@ interface FinanceGroup {
                    (click)="navigate(route.route)"
                    class="px-4 py-2 rounded-lg text-[12px] font-black transition-all whitespace-nowrap flex items-center gap-2"
                    [ngClass]="activeRouteId() === route.id ? 'bg-slate-800 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'">
-             {{ route.label }}
+             {{ route.label | translate }}
              <span *ngIf="route.emphasis === 'warning'" class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
              <span *ngIf="route.emphasis === 'danger'" class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
-             <span *ngIf="route.dataMode === 'قيد التطوير'" class="bg-white/20 text-slate-300 px-1.5 py-0.5 rounded text-[9px] mr-1">قريباً</span>
+             <span *ngIf="route.dataMode === 'قيد التطوير'" class="bg-white/20 text-slate-300 px-1.5 py-0.5 rounded text-[9px] mr-1">{{ 'FINANCES.SHELL.COMING_SOON' | translate }}</span>
            </button>
         </div>
       </div>
@@ -91,9 +91,9 @@ interface FinanceGroup {
       <main class="mx-auto w-full max-w-[1680px] p-4 sm:p-6 lg:p-8">
          
          <div class="mb-5 flex flex-wrap items-center gap-2" *ngIf="activeGroupRoutes().length > 1">
-            <h2 class="text-xl font-black text-slate-800">{{ activeRoute().label }}</h2>
+            <h2 class="text-xl font-black text-slate-800">{{ activeRoute().label | translate }}</h2>
             <div class="h-4 w-px bg-slate-300 mx-2"></div>
-            <p class="text-[12px] font-medium text-slate-500">{{ activeRoute().summary }}</p>
+            <p class="text-[12px] font-medium text-slate-500">{{ activeRoute().summary | translate }}</p>
          </div>
 
          <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -118,47 +118,47 @@ export class FinancesShellComponent {
   readonly groups: FinanceGroup[] = [
     {
       id: 'dashboard',
-      label: 'نظرة عامة',
+      label: 'FINANCES.SHELL.GROUPS.DASHBOARD',
       icon: 'space_dashboard',
       routes: [
-        { id: 'overview', label: 'اللوحة الرئيسية', route: '/finances/overview', summary: 'ملخص للإيرادات وحالة العمليات المفتوحة.', dataMode: 'مفعل' }
+        { id: 'overview', label: 'FINANCES.SHELL.ROUTES.OVERVIEW.LABEL', route: '/finances/overview', summary: 'FINANCES.SHELL.ROUTES.OVERVIEW.SUMMARY', dataMode: 'مفعل' }
       ]
     },
     {
       id: 'accounts',
-      label: 'المحافظ والسجلات',
+      label: 'FINANCES.SHELL.GROUPS.ACCOUNTS',
       icon: 'account_balance_wallet',
       routes: [
-        { id: 'wallets', label: 'أرصدة المحافظ', route: '/finances/wallets', summary: 'إدارة المحافظ الافتراضية للمتاجر والمناديب وتتبع الأرصدة.', dataMode: 'مفعل' },
-        { id: 'ledger', label: 'السجل المالي', route: '/finances/ledger', summary: 'سجل تدقيق يوضح جميع الحركات المالية الداخلة والخارجة.', dataMode: 'مفعل' },
-        { id: 'adjustments', label: 'تسويات يدوية', route: '/finances/adjustments', summary: 'القيام بإدخالات مالية يدوية وتصحيح الأرصدة.', dataMode: 'قيد التطوير' }
+        { id: 'wallets', label: 'FINANCES.SHELL.ROUTES.WALLETS.LABEL', route: '/finances/wallets', summary: 'FINANCES.SHELL.ROUTES.WALLETS.SUMMARY', dataMode: 'مفعل' },
+        { id: 'ledger', label: 'FINANCES.SHELL.ROUTES.LEDGER.LABEL', route: '/finances/ledger', summary: 'FINANCES.SHELL.ROUTES.LEDGER.SUMMARY', dataMode: 'مفعل' },
+        { id: 'adjustments', label: 'FINANCES.SHELL.ROUTES.ADJUSTMENTS.LABEL', route: '/finances/adjustments', summary: 'FINANCES.SHELL.ROUTES.ADJUSTMENTS.SUMMARY', dataMode: 'قيد التطوير' }
       ]
     },
     {
       id: 'operations',
-      label: 'العمليات والتسويات',
+      label: 'FINANCES.SHELL.GROUPS.OPERATIONS',
       icon: 'sync_alt',
       routes: [
-        { id: 'settlements', label: 'التسويات الدورية', route: '/finances/settlements', summary: 'دفع المستحقات المالية الدورية للمتاجر والمناديب.', dataMode: 'مفعل' },
-        { id: 'withdrawals', label: 'طلبات السحب', route: '/finances/withdrawals', summary: 'الطلبات المرفوعة من المناديب لسحب أرصدتهم النقدية.', dataMode: 'مفعل', emphasis: 'warning' },
-        { id: 'cod', label: 'مطابقة COD', route: '/finances/cod', summary: 'تتبع وتحصيل المبالغ النقدية الدفع عند الاستلام من المناديب.', dataMode: 'مفعل', emphasis: 'warning' }
+        { id: 'settlements', label: 'FINANCES.SHELL.ROUTES.SETTLEMENTS.LABEL', route: '/finances/settlements', summary: 'FINANCES.SHELL.ROUTES.SETTLEMENTS.SUMMARY', dataMode: 'مفعل' },
+        { id: 'withdrawals', label: 'FINANCES.SHELL.ROUTES.WITHDRAWALS.LABEL', route: '/finances/withdrawals', summary: 'FINANCES.SHELL.ROUTES.WITHDRAWALS.SUMMARY', dataMode: 'مفعل', emphasis: 'warning' },
+        { id: 'cod', label: 'FINANCES.SHELL.ROUTES.COD.LABEL', route: '/finances/cod', summary: 'FINANCES.SHELL.ROUTES.COD.SUMMARY', dataMode: 'مفعل', emphasis: 'warning' }
       ]
     },
     {
       id: 'disputes',
-      label: 'المنازعات المالية',
+      label: 'FINANCES.SHELL.GROUPS.DISPUTES',
       icon: 'gavel',
       routes: [
-        { id: 'refunds', label: 'طلبات التعويض والمرتجعات', route: '/finances/refunds', summary: 'إدارة طلبات التعويض وتحديد الجهة المسؤولة عن الخسارة.', dataMode: 'مفعل', emphasis: 'danger' }
+        { id: 'refunds', label: 'FINANCES.SHELL.ROUTES.REFUNDS.LABEL', route: '/finances/refunds', summary: 'FINANCES.SHELL.ROUTES.REFUNDS.SUMMARY', dataMode: 'مفعل', emphasis: 'danger' }
       ]
     },
     {
       id: 'settings',
-      label: 'الرسوم والتدقيق',
+      label: 'FINANCES.SHELL.GROUPS.SETTINGS',
       icon: 'admin_panel_settings',
       routes: [
-        { id: 'pricing', label: 'هيكلة التسعير', route: '/finances/pricing', summary: 'تكوين عمولات المنصة، رسوم التوصيل، ونسب ضريبة القيمة المضافة.', dataMode: 'مفعل' },
-        { id: 'audit', label: 'سجل التدقيق', route: '/finances/audit', summary: 'تتبع كافة التغييرات الحساسة التي تمت على النظام المالي.', dataMode: 'قيد التطوير' }
+        { id: 'pricing', label: 'FINANCES.SHELL.ROUTES.PRICING.LABEL', route: '/finances/pricing', summary: 'FINANCES.SHELL.ROUTES.PRICING.SUMMARY', dataMode: 'مفعل' },
+        { id: 'audit', label: 'FINANCES.SHELL.ROUTES.AUDIT.LABEL', route: '/finances/audit', summary: 'FINANCES.SHELL.ROUTES.AUDIT.SUMMARY', dataMode: 'قيد التطوير' }
       ]
     }
   ];

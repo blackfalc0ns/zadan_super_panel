@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, switchMap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VendorService } from '@vendors/services/vendor.api.service';
@@ -277,9 +278,19 @@ export class VendorsListComponent implements OnInit {
           this.vendors = [];
           this.isLoading = false;
           this.showError = true;
-          this.errorMessage = this.translate.instant('VENDORS.LOAD_ERROR');
+          this.errorMessage = this.resolveLoadErrorMessage(err);
         }
       });
+  }
+
+  private resolveLoadErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+      return this.translate.currentLang === 'ar'
+        ? 'انتهت صلاحية الجلسة أو لا توجد صلاحية لعرض التجار. سجل الدخول مرة أخرى.'
+        : 'Your session expired or you do not have permission to view vendors. Sign in again.';
+    }
+
+    return this.translate.instant('VENDORS.LOAD_ERROR');
   }
 
   loadKPIs() {

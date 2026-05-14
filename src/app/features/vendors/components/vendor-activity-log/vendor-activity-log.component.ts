@@ -385,6 +385,89 @@ export class VendorActivityLogComponent {
     }).format(new Date(value));
   }
 
+  localizeRoleLabel(roleLabel: string): string {
+    if (!this.isRTL) {
+      return roleLabel;
+    }
+
+    const map: Record<string, string> = {
+      'Compliance Review': 'مراجعة الامتثال',
+      'Document Review': 'مراجعة المستندات',
+      'Risk & Compliance': 'المخاطر والامتثال',
+      'Security Review': 'مراجعة أمنية',
+      'Security Control': 'التحكم الأمني',
+      'Admin Action': 'إجراء إداري',
+      'Admin': 'المسؤول',
+      'Vendor Portal': 'بوابة التاجر',
+      'Vendor Review': 'مراجعة التاجر',
+      'Operations Console': 'لوحة التشغيل',
+      'Vendor Compliance Desk': 'مكتب امتثال التاجر',
+      'Risk & Compliance Desk': 'مكتب المخاطر والامتثال',
+      'Security Desk': 'مكتب الأمان',
+      'Operations Reviewer': 'مراجع العمليات'
+    };
+
+    return map[roleLabel] || roleLabel;
+  }
+
+  localizeMessage(message: string): string {
+    if (!this.isRTL) {
+      return message;
+    }
+
+    const staticMap: Record<string, string> = {
+      'Vendor review started.': 'بدأت مراجعة التاجر.',
+      'Vendor account reactivated and returned to active status.': 'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.',
+      'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
+      'Vendor password was reset by an administrator and all active sessions were revoked.': 'تمت إعادة تعيين كلمة مرور التاجر بواسطة المسؤول وتم إلغاء جميع الجلسات النشطة.',
+      'Please re-upload the required legal documents and confirm the latest vendor information.': 'يرجى إعادة رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
+      'Vendor updated banking and payout setup from Vendor Portal.': 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.',
+      'Vendor updated store profile details from Vendor Portal.': 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.',
+      'Vendor updated address and contact location details from Vendor Portal.': 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.',
+      'Vendor updated operating hours from Vendor Portal.': 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.',
+      'Vendor updated owner information from Vendor Portal.': 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.',
+      'Vendor updated notification preferences from Vendor Portal.': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
+      'Vendor updated operational settings from Vendor Portal.': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
+      'Vendor updated legal and compliance information from Vendor Portal.': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
+      'Vendor submitted the profile and required documents for compliance review.': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
+    };
+
+    if (staticMap[message]) {
+      return staticMap[message];
+    }
+
+    const docTypeAr = (type: string): string => {
+      const map: Record<string, string> = { 'Commercial': 'السجل التجاري', 'Tax': 'الضريبة', 'License': 'الرخصة', 'Identity': 'الهوية', 'Bank': 'البنك' };
+      return map[type] || type;
+    };
+
+    let match = message.match(/^Vendor approved with commission rate ([\d.]+)%\.$/);
+    if (match) return `تمت الموافقة على التاجر بنسبة عمولة ${match[1]}%.`;
+
+    match = message.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
+    if (match) return `تم قبول مستند ${docTypeAr(match[1])}.`;
+
+    match = message.match(/^(Commercial|Tax|License|Identity|Bank) document rejected\. (.+)$/);
+    if (match) return `تم رفض مستند ${docTypeAr(match[1])}. ${match[2]}`;
+
+    match = message.match(/^Vendor re-uploaded document\(s\): (.+)\. They are back in the review queue\.$/);
+    if (match) return `قام التاجر بإعادة رفع مستند(ات): ${match[1]}. تم إرجاعها لقائمة المراجعة.`;
+
+    match = message.match(/^Operations settings updated\. Accept orders: (enabled|disabled), minimum order: (.+), preparation time: (.+) minutes\.$/);
+    if (match) return `تم تحديث إعدادات التشغيل. قبول الطلبات: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الحد الأدنى: ${match[2] === 'not set' ? 'غير محدد' : match[2]}، وقت التحضير: ${match[3] === 'not set' ? 'غير محدد' : match[3]} دقيقة.`;
+
+    match = message.match(/^Notification settings updated\. Email: (enabled|disabled), SMS: (enabled|disabled), new orders: (enabled|disabled), sound: (.+)\.$/);
+    if (match) return `تم تحديث إعدادات الإشعارات. البريد: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الرسائل: ${match[2] === 'enabled' ? 'مفعّل' : 'معطّل'}، طلبات جديدة: ${match[3] === 'enabled' ? 'مفعّل' : 'معطّل'}، الصوت: ${match[4]}.`;
+
+    return message;
+  }
+
+  detectTextDirection(text: string): string {
+    if (!text) return this.isRTL ? 'rtl' : 'ltr';
+    const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+    return arabicRegex.test(text.charAt(0)) ? 'rtl' : 'ltr';
+  }
+
   private loadActivityLog(): void {
     this.vendorDetailFacade.loadVendorActivityLog({
       type: this.filterType === 'all' ? null : this.filterType,

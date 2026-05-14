@@ -39,8 +39,7 @@ const SECTION_ORDER: HomeContentSectionType[] = [
         <div class="max-w-[24rem] w-full">
           <app-input
             [(ngModel)]="searchTerm"
-            [placeholder]="'بحث في الإعدادات...'"
-            dir="rtl"
+            [placeholder]="'MARKETING.VISIBILITY.SEARCH_PLACEHOLDER' | translate"
             [hasIcon]="true"
             [inputClass]="'!bg-transparent !border-0 !ring-0 !text-slate-900 !placeholder-slate-400'"
             [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-2xl overflow-hidden'">
@@ -55,7 +54,7 @@ const SECTION_ORDER: HomeContentSectionType[] = [
             [disabled]="loading"
             class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
             <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
-            تحديث
+            {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
         </div>
       </div>
@@ -68,17 +67,17 @@ const SECTION_ORDER: HomeContentSectionType[] = [
         <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-[2rem] bg-slate-100 text-slate-300">
           <span class="material-symbols-outlined text-[34px]">visibility_off</span>
         </div>
-        <h3 class="mt-5 text-xl font-black text-slate-900">لا توجد نتائج</h3>
-        <p class="mt-2 text-sm font-bold text-slate-400">تحكم بظهور الأقسام والمكونات في الصفحة الرئيسية للتطبيق.</p>
+        <h3 class="mt-5 text-xl font-black text-slate-900">{{ 'MARKETING.VISIBILITY.MESSAGES.EMPTY_TITLE' | translate }}</h3>
+        <p class="mt-2 text-sm font-bold text-slate-400">{{ 'MARKETING.VISIBILITY.DESCRIPTION' | translate }}</p>
       </div>
 
       <!-- Settings List View -->
       <div *ngIf="filteredSettings.length" class="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         
         <div class="grid grid-cols-12 gap-4 px-6 py-4 bg-slate-50/80 border-b border-slate-200 text-xs font-black text-slate-500 uppercase tracking-widest">
-          <div class="col-span-8 md:col-span-6">القسم</div>
-          <div class="hidden md:block md:col-span-3 text-center">المعرف البرمجي (API Key)</div>
-          <div class="col-span-4 md:col-span-3 text-end">حالة الظهور</div>
+          <div class="col-span-8 md:col-span-6">{{ 'MARKETING.VISIBILITY.TABLE.SECTION' | translate }}</div>
+          <div class="hidden md:block md:col-span-3 text-center">{{ 'MARKETING.VISIBILITY.TABLE.API_KEY' | translate }}</div>
+          <div class="col-span-4 md:col-span-3 text-end">{{ 'MARKETING.VISIBILITY.TABLE.STATUS' | translate }}</div>
         </div>
 
         <div class="divide-y divide-slate-100">
@@ -97,10 +96,10 @@ const SECTION_ORDER: HomeContentSectionType[] = [
               </div>
               <div class="min-w-0">
                 <h3 class="text-[15px] font-black text-slate-900">
-                  {{ toTitle(setting.sectionType) }}
+                  {{ 'MARKETING.SECTION_TYPES.' + setting.sectionType | translate }}
                 </h3>
                 <p class="text-[12px] font-bold text-slate-500 mt-0.5 truncate max-w-[200px] sm:max-w-[300px]">
-                  تحكم بإظهار أو إخفاء هذا القسم من التطبيق
+                  {{ 'MARKETING.VISIBILITY.CARD_DESCRIPTION' | translate }}
                 </p>
               </div>
             </div>
@@ -115,7 +114,7 @@ const SECTION_ORDER: HomeContentSectionType[] = [
             <!-- Toggle Switch -->
             <div class="col-span-4 md:col-span-3 flex justify-end items-center gap-3">
               <span class="hidden sm:inline-block text-xs font-bold" [ngClass]="setting.isEnabled ? 'text-emerald-600' : 'text-slate-400'">
-                {{ setting.isEnabled ? 'ظاهر' : 'مخفي' }}
+                {{ (setting.isEnabled ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate }}
               </span>
               
               <div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
@@ -210,29 +209,22 @@ export class MarketingHomeVisibilityComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
-        this.finishMutation(setting.isEnabled ? 'تم إخفاء القسم بنجاح' : 'تم عرض القسم بنجاح');
+        this.finishMutation(
+          setting.isEnabled 
+            ? this.translateService.instant('MARKETING.VISIBILITY.MESSAGES.DEACTIVATED') 
+            : this.translateService.instant('MARKETING.VISIBILITY.MESSAGES.ACTIVATED')
+        );
       },
       error: (error) => {
         this.saving = false;
         this.pendingSection = null;
-        this.toastService.error(describeApiError(error), 'إعدادات الظهور');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_VISIBILITY'));
       }
     });
   }
 
   toTitle(sectionType: string): string {
-    const localizedNames: Record<string, string> = {
-      Banners: 'البنرات الإعلانية',
-      Categories: 'الأقسام والتصنيفات',
-      SpecialOffers: 'العروض الخاصة',
-      Recommended: 'المنتجات المقترحة',
-      BestSelling: 'الأكثر مبيعاً',
-      Brands: 'العلامات التجارية',
-      FeaturedProducts: 'المنتجات المميزة',
-      ExploreMore: 'اكتشف المزيد',
-      DynamicSections: 'الأقسام الديناميكية'
-    };
-    return localizedNames[sectionType] || humanizeSectionType(sectionType);
+    return this.translateService.instant('MARKETING.SECTION_TYPES.' + sectionType);
   }
 
   getSectionIcon(sectionType: HomeContentSectionType): string {
@@ -254,7 +246,7 @@ export class MarketingHomeVisibilityComponent implements OnInit {
   private finishMutation(message: string): void {
     this.saving = false;
     this.pendingSection = null;
-    this.toastService.success(message, 'التسويق');
+    this.toastService.success(message, this.translateService.instant('MARKETING.SHELL.TITLE'));
     this.loadSettings();
   }
 }

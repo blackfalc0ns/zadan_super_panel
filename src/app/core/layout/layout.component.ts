@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+﻿import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -10,9 +10,9 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { ToastContainerComponent } from '../../shared/components/ui/toast-container/toast-container.component';
 import { environment } from '../../../environments/environment';
 import { AdminNotificationRealtimeService } from '../services/admin-notification-realtime.service';
-import { AdminNotificationsService } from '../services/admin-notifications.service';
+import { AdminNotification, AdminNotificationsService } from '../services/admin-notifications.service';
+import { AdminNotificationSoundService } from '../services/admin-notification-sound.service';
 import { AdminOneSignalService } from '../services/admin-one-signal.service';
-import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-layout',
@@ -32,7 +32,11 @@ export class LayoutComponent {
   userName = 'Admin';
   currentLang = 'ar';
   isSidebarOpen = false;
+  isNotificationsPanelOpen = false;
+  recentNotifications: AdminNotification[] = [];
+  unreadNotificationCount = 0;
   private readonly destroyRef = inject(DestroyRef);
+  private notificationPermissionPromptArmed = false;
 
   constructor(
     private authService: AuthService,
@@ -40,8 +44,8 @@ export class LayoutComponent {
     private translate: TranslateService,
     private adminRealtimeService: AdminNotificationRealtimeService,
     private adminNotificationsService: AdminNotificationsService,
-    private adminOneSignalService: AdminOneSignalService,
-    private toastService: ToastService
+    private adminNotificationSoundService: AdminNotificationSoundService,
+    private adminOneSignalService: AdminOneSignalService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
 
@@ -67,6 +71,27 @@ export class LayoutComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
 
+    this.adminNotificationsService.getPreferences()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((preferences) => {
+        if (preferences.webDeviceCount > 0) {
+          this.adminNotificationSoundService.setSound(preferences.sound);
+        }
+      });
+
+    this.adminNotificationsService.recent$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((notifications) => {
+        this.recentNotifications = notifications;
+      });
+
+    this.adminNotificationsService.unreadCount$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((count) => {
+        this.unreadNotificationCount = count;
+      });
+
+    this.armDesktopNotificationPermission();
     this.adminRealtimeService.startMonitoring();
     this.adminOneSignalService.start();
 
@@ -74,11 +99,10 @@ export class LayoutComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((notification) => {
         this.adminNotificationsService.mergeRealtimeNotification(notification);
-        this.toastService.info(
-          this.currentLang === 'ar' ? notification.bodyAr : notification.bodyEn,
-          this.currentLang === 'ar' ? notification.titleAr : notification.titleEn,
-          { duration: 7000 }
-        );
+        const title = this.adminNotificationsService.getLocalizedTitle(notification, this.currentLang);
+        const body = this.adminNotificationsService.getLocalizedBody(notification, this.currentLang);
+        this.adminNotificationSoundService.playCurrent();
+        this.showDesktopNotification(notification, title, body);
       });
   }
 
@@ -91,6 +115,69 @@ export class LayoutComponent {
     this.translate.use(nextLang);
   }
 
+  toggleNotificationsPanel(): void {
+    this.isNotificationsPanelOpen = !this.isNotificationsPanelOpen;
+    if (this.isNotificationsPanelOpen) {
+      this.adminNotificationsService.refreshRecent()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe();
+    }
+  }
+
+  closeNotificationsPanel(): void {
+    this.isNotificationsPanelOpen = false;
+  }
+
+  markAllNotificationsRead(): void {
+    this.adminNotificationsService.markAllAsRead()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+  }
+
+  openNotification(notification: AdminNotification): void {
+    const targetUrl = this.adminNotificationsService.resolveTargetUrl(notification);
+    this.adminNotificationsService.markAsRead(notification.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.isNotificationsPanelOpen = false;
+        void this.router.navigateByUrl(targetUrl);
+      });
+  }
+
+  openNotificationCenter(): void {
+    this.isNotificationsPanelOpen = false;
+    void this.router.navigateByUrl('/notifications');
+  }
+
+  displayNotificationTitle(notification: AdminNotification): string {
+    return this.adminNotificationsService.getLocalizedTitle(notification, this.currentLang);
+  }
+
+  displayNotificationBody(notification: AdminNotification): string {
+    return this.adminNotificationsService.getLocalizedBody(notification, this.currentLang);
+  }
+
+  notificationPriorityLabel(priority?: string | null): string {
+    return this.adminNotificationsService.getPriorityLabel(priority, this.currentLang);
+  }
+
+  notificationPriorityClasses(priority?: string | null): string {
+    switch ((priority ?? '').toLowerCase()) {
+      case 'critical':
+        return 'bg-red-50 text-red-700 border-red-100';
+      case 'high':
+        return 'bg-amber-50 text-amber-700 border-amber-100';
+      case 'low':
+        return 'bg-slate-50 text-slate-500 border-slate-100';
+      default:
+        return 'bg-emerald-50 text-emerald-700 border-emerald-100';
+    }
+  }
+
+  trackByNotificationId(index: number, notification: AdminNotification): string {
+    return notification.id || index.toString();
+  }
+
   logout() {
     if (environment.skipAuthForDevelopment) {
       this.authService.forceLogout();
@@ -101,5 +188,64 @@ export class LayoutComponent {
     this.authService.logout().subscribe({
       next: () => this.router.navigate(['/login'])
     });
+  }
+
+  private armDesktopNotificationPermission(): void {
+    if (this.notificationPermissionPromptArmed) {
+      return;
+    }
+
+    this.notificationPermissionPromptArmed = true;
+    const requestPermission = async () => {
+      if ('Notification' in window && Notification.permission === 'default') {
+        await Notification.requestPermission();
+      }
+
+      this.adminOneSignalService.requestPermissionAndRegister();
+      window.removeEventListener('pointerdown', requestPermission);
+      window.removeEventListener('keydown', requestPermission);
+    };
+
+    window.addEventListener('pointerdown', requestPermission, { once: true });
+    window.addEventListener('keydown', requestPermission, { once: true });
+  }
+
+  private showDesktopNotification(notification: AdminNotification, title: string, body: string): void {
+    if (!('Notification' in window)) {
+      return;
+    }
+
+    const show = () => {
+      if (Notification.permission !== 'granted') {
+        return;
+      }
+
+      try {
+        const desktopNotification = new Notification(title, {
+          body,
+          icon: '/favicon.ico',
+          badge: '/favicon.ico',
+          requireInteraction: false,
+          tag: notification.id,
+          silent: false
+        });
+
+        desktopNotification.onclick = () => {
+          window.focus();
+          const targetUrl = this.adminNotificationsService.resolveTargetUrl(notification);
+          void this.router.navigateByUrl(targetUrl);
+          desktopNotification.close();
+        };
+      } catch {
+        // Desktop notifications can be blocked by browser or OS settings.
+      }
+    };
+
+    if (Notification.permission === 'default') {
+      void Notification.requestPermission().then(show);
+      return;
+    }
+
+    show();
   }
 }

@@ -44,8 +44,7 @@ import { forkJoin } from 'rxjs';
         <div class="max-w-[24rem] w-full">
           <app-input
             [(ngModel)]="searchTerm"
-            [placeholder]="'بحث في أقسام الرئيسية...'"
-            dir="rtl"
+            [placeholder]="'MARKETING.HOME_SECTIONS.SEARCH_PLACEHOLDER' | translate"
             [hasIcon]="true"
             [inputClass]="'!bg-transparent !border-0 !ring-0 !text-slate-900 !placeholder-slate-400'"
             [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-2xl overflow-hidden'">
@@ -60,7 +59,7 @@ import { forkJoin } from 'rxjs';
             [disabled]="loading"
             class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
             <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
-            تحديث
+            {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
 
           <button
@@ -69,7 +68,7 @@ import { forkJoin } from 'rxjs';
             [disabled]="!categoryOptions.length"
             class="h-11 px-5 rounded-2xl bg-zadna-primary text-white text-sm font-bold flex items-center gap-2 hover:bg-zadna-primary/90 hover:shadow-lg hover:shadow-zadna-primary/20 disabled:opacity-50 disabled:hover:shadow-none transition-all">
             <span class="material-symbols-outlined text-[18px]">add</span>
-            إضافة قسم جديد
+            {{ 'MARKETING.HOME_SECTIONS.ACTIONS.CREATE' | translate }}
           </button>
         </div>
       </div>
@@ -79,7 +78,7 @@ import { forkJoin } from 'rxjs';
       </div>
 
       <div *ngIf="!loading && !categoryOptions.length && !sections.length && !error" class="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
-        يجب إضافة أقسام (Categories) للمتجر أولاً لتتمكن من إنشاء أقسام للرئيسية.
+        {{ 'MARKETING.HOME_SECTIONS.MESSAGES.NO_SUBCATEGORIES' | translate }}
       </div>
 
       <!-- Data Table -->
@@ -141,7 +140,7 @@ import { forkJoin } from 'rxjs';
             <ng-container *ngIf="column.key === 'isActive'">
               <div class="flex justify-start">
                 <app-status-pill
-                  [label]="section.isActive ? 'نشط' : 'غير نشط'"
+                  [label]="(section.isActive ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate"
                   [variant]="section.isActive ? 'success' : 'neutral'"
                   size="sm">
                 </app-status-pill>
@@ -187,8 +186,8 @@ import { forkJoin } from 'rxjs';
     <app-delete-confirmation-modal
       [isOpen]="deleteTarget !== null"
       [isLoading]="deleting"
-      [title]="'حذف قسم الرئيسية'"
-      [message]="'هل أنت متأكد من رغبتك في إزالة هذا القسم من الصفحة الرئيسية للتطبيق؟ لا يمكن التراجع عن هذا الإجراء.'"
+      [title]="'MARKETING.HOME_SECTIONS.MESSAGES.DELETE_TITLE' | translate"
+      [message]="'MARKETING.HOME_SECTIONS.MESSAGES.DELETE_MESSAGE' | translate"
       (close)="deleteTarget = null"
       (confirm)="confirmDelete()">
     </app-delete-confirmation-modal>
@@ -208,13 +207,13 @@ export class MarketingHomeSectionsComponent implements OnInit {
   deleteTarget: MarketingHomeSection | null = null;
 
   readonly tableColumns: TableColumn[] = [
-    { key: 'categoryNameEn', title: 'التصنيف المعروض', type: 'custom', width: '20rem', align: 'left' },
-    { key: 'theme', title: 'نمط العرض', type: 'custom', width: '10rem', align: 'center' },
-    { key: 'productsTake', title: 'عدد المنتجات', type: 'custom', width: '8rem', align: 'center' },
-    { key: 'displayOrder', title: 'الترتيب', type: 'custom', width: '6rem', align: 'center' },
-    { key: 'schedule', title: 'تاريخ العرض', type: 'custom', width: '13rem', align: 'left' },
-    { key: 'isActive', title: 'الحالة', type: 'custom', width: '7rem', align: 'left' },
-    { key: 'actions', title: 'إجراءات', type: 'custom', width: '10rem', align: 'right' }
+    { key: 'categoryNameEn', title: 'MARKETING.HOME_SECTIONS.TABLE.SUBCATEGORY', type: 'custom', width: '20rem', align: 'left' },
+    { key: 'theme', title: 'MARKETING.HOME_SECTIONS.TABLE.THEME', type: 'custom', width: '10rem', align: 'center' },
+    { key: 'productsTake', title: 'MARKETING.HOME_SECTIONS.TABLE.TAKE', type: 'custom', width: '8rem', align: 'center' },
+    { key: 'displayOrder', title: 'MARKETING.BANNERS.TABLE.ORDER', type: 'custom', width: '6rem', align: 'center' },
+    { key: 'schedule', title: 'MARKETING.BANNERS.TABLE.SCHEDULE', type: 'custom', width: '13rem', align: 'left' },
+    { key: 'isActive', title: 'MARKETING.BANNERS.TABLE.STATUS', type: 'custom', width: '7rem', align: 'left' },
+    { key: 'actions', title: 'MARKETING.BANNERS.TABLE.ACTIONS', type: 'custom', width: '10rem', align: 'right' }
   ];
 
   constructor(
@@ -255,15 +254,7 @@ export class MarketingHomeSectionsComponent implements OnInit {
           (left, right) => left.displayOrder - right.displayOrder || right.updatedAtUtc.localeCompare(left.updatedAtUtc)
         );
         this.themeOptions = themes;
-        this.categoryOptions = flattenLevelThreeCategories(categories)
-          .map((category) => ({
-            id: category.id,
-            nameAr: category.nameAr,
-            nameEn: category.nameEn,
-            level: category.level ?? 0,
-            pathLabel: buildCategoryPath(category)
-          }))
-          .sort((left, right) => left.pathLabel.localeCompare(right.pathLabel));
+        this.categoryOptions = buildHierarchicalCategoryOptions(categories);
         this.loading = false;
       },
       error: (error) => {
@@ -288,7 +279,7 @@ export class MarketingHomeSectionsComponent implements OnInit {
       },
       error: (error) => {
         this.saving = false;
-        this.toastService.error(describeApiError(error), 'أقسام الرئيسية');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
       }
     });
   }
@@ -311,8 +302,10 @@ export class MarketingHomeSectionsComponent implements OnInit {
         this.closeModal();
         this.loadData();
         this.toastService.success(
-          this.selectedSection ? 'تم تحديث القسم' : 'تم إضافة القسم بنجاح',
-          'التسويق'
+          this.selectedSection 
+            ? this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.UPDATED') 
+            : this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.CREATED'),
+          this.translateService.instant('MARKETING.SHELL.TITLE')
         );
       },
       error: (error) => {
@@ -328,12 +321,14 @@ export class MarketingHomeSectionsComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.toastService.success(
-          section.isActive ? 'تم إيقاف عرض القسم' : 'تم تفعيل عرض القسم',
-          'التسويق'
+          section.isActive 
+            ? this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DEACTIVATED') 
+            : this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.ACTIVATED'),
+          this.translateService.instant('MARKETING.SHELL.TITLE')
         );
         this.loadData();
       },
-      error: (error) => this.toastService.error(describeApiError(error), 'أقسام الرئيسية')
+      error: (error) => this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'))
     });
   }
 
@@ -351,12 +346,12 @@ export class MarketingHomeSectionsComponent implements OnInit {
       next: () => {
         this.deleting = false;
         this.deleteTarget = null;
-        this.toastService.success('تم حذف القسم بنجاح', 'التسويق');
+        this.toastService.success(this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadData();
       },
       error: (error) => {
         this.deleting = false;
-        this.toastService.error(describeApiError(error), 'أقسام الرئيسية');
+        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
       }
     });
   }
@@ -379,17 +374,32 @@ function toCreatePayload(payload: MarketingHomeSectionUpdatePayload): MarketingH
   return createPayload;
 }
 
-function flattenLevelThreeCategories(categories: Category[]): Category[] {
-  const flattened = flattenCategories(categories);
-  return flattened.filter((category) => (category.level ?? 0) === 3);
-}
+function buildHierarchicalCategoryOptions(categories: Category[]): MarketingCategoryOption[] {
+  const result: MarketingCategoryOption[] = [];
 
-function flattenCategories(categories: Category[]): Category[] {
-  return categories.flatMap((category) => [category, ...flattenCategories(category.subCategories ?? [])]);
-}
+  const traverse = (cats: Category[], level: number, pathAr: string, pathEn: string) => {
+    for (const cat of cats) {
+      const currentPathAr = pathAr ? `${pathAr} » ${cat.nameAr}` : cat.nameAr;
+      const currentPathEn = pathEn ? `${pathEn} » ${cat.nameEn}` : cat.nameEn;
+      const hasChildren = !!(cat.subCategories?.length);
+      const indent = '—'.repeat(level);
+      const prefix = level > 0 ? `${indent} ` : '';
 
-function buildCategoryPath(category: Category): string {
-  const parents = [category.parentNameEn, category.nameEn].filter(Boolean).join(' / ');
-  const arabic = [category.parentNameAr, category.nameAr].filter(Boolean).join(' / ');
-  return arabic ? `${parents} | ${arabic}` : parents;
+      result.push({
+        id: cat.id,
+        nameAr: cat.nameAr,
+        nameEn: cat.nameEn,
+        level,
+        pathLabel: `${prefix}${currentPathAr}`,
+        isSelectable: !hasChildren && (cat.level ?? level) >= 3
+      });
+
+      if (hasChildren) {
+        traverse(cat.subCategories!, level + 1, currentPathAr, currentPathEn);
+      }
+    }
+  };
+
+  traverse(categories, 0, '', '');
+  return result;
 }
