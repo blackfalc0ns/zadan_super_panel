@@ -86,8 +86,16 @@ type BulkStage = 'review' | 'submitting' | 'done';
                   <app-searchable-select [(ngModel)]="defaults.brandId" [isDisabled]="!defaults.categoryId" [options]="getBrandOptionsForCategory(defaults.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
                 </label>
                 <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ 'MASTER_PRODUCTS.UNIT_LABEL' | translate }}</span>
-                  <app-searchable-select [(ngModel)]="defaults.unitId" [options]="unitSelectOptions" [placeholder]="'MASTER_PRODUCTS.STANDARD_UNIT' | translate"></app-searchable-select>
+                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'نوع العبوة' : 'Package type' }}</span>
+                  <app-searchable-select [(ngModel)]="defaults.packageTypeId" [options]="packageTypeOptions" [placeholder]="currentLang === 'ar' ? 'اختر العبوة' : 'Select package type'"></app-searchable-select>
+                </label>
+                <label class="space-y-1">
+                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</span>
+                  <input [(ngModel)]="defaults.measurementValue" type="number" min="0" step="0.01" class="h-10 w-full rounded-xl border border-slate-200 px-3 text-[0.75rem] font-black text-slate-700" [placeholder]="currentLang === 'ar' ? '50' : '50'">
+                </label>
+                <label class="space-y-1">
+                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'وحدة القياس' : 'Measurement unit' }}</span>
+                  <app-searchable-select [(ngModel)]="defaults.measurementUnitId" [options]="measurementUnitOptions" [placeholder]="currentLang === 'ar' ? 'جرام / مل' : 'g / ml'"></app-searchable-select>
                 </label>
                 <label class="space-y-1">
                   <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</span>
@@ -187,7 +195,9 @@ type BulkStage = 'review' | 'submitting' | 'done';
                 <th class="w-32 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الصور' : 'Images' }}</th>
                 <th class="w-32 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</th>
                 <th class="w-24 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</th>
-                <th class="w-24 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.UNIT_LABEL' | translate }}</th>
+                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'العبوة' : 'Package' }}</th>
+                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</th>
+                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الوحدة' : 'Unit' }}</th>
                 <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</th>
                 <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.DESC_AR_LABEL' | translate }}</th>
                 <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.DESC_EN_LABEL' | translate }}</th>
@@ -260,7 +270,13 @@ type BulkStage = 'review' | 'submitting' | 'done';
                     <app-searchable-select [(ngModel)]="row.brandId" [isDisabled]="stage !== 'review' || !row.categoryId" [options]="getBrandOptionsForCategory(row.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
                   </td>
                   <td class="py-2.5">
-                    <app-searchable-select [(ngModel)]="row.unitId" [isDisabled]="stage !== 'review'" [options]="unitSelectOptions" [placeholder]="'MASTER_PRODUCTS.STANDARD_UNIT' | translate"></app-searchable-select>
+                    <app-searchable-select [(ngModel)]="row.packageTypeId" [isDisabled]="stage !== 'review'" [options]="packageTypeOptions" [placeholder]="currentLang === 'ar' ? 'العبوة' : 'Package'"></app-searchable-select>
+                  </td>
+                  <td class="py-2.5">
+                    <input type="number" [(ngModel)]="row.measurementValue" [disabled]="stage !== 'review'" min="0" step="0.01" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-xs font-bold">
+                  </td>
+                  <td class="py-2.5">
+                    <app-searchable-select [(ngModel)]="row.measurementUnitId" [isDisabled]="stage !== 'review'" [options]="measurementUnitOptions" [placeholder]="currentLang === 'ar' ? 'الوحدة' : 'Unit'"></app-searchable-select>
                   </td>
                   <td class="py-2.5">
                     <app-searchable-select [(ngModel)]="row.status" [isDisabled]="stage !== 'review'" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
@@ -354,10 +370,14 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
   isUploadingDefaultImages = false;
   readonly uploadingRowIds = new Set<string>();
 
-  defaults: Pick<BulkMasterProductDraft, 'categoryId' | 'brandId' | 'unitId' | 'status' | 'images'> = {
+  defaults: Pick<BulkMasterProductDraft, 'categoryId' | 'brandId' | 'unitId' | 'packageTypeId' | 'measurementValue' | 'measurementUnitId' | 'variantGroupId' | 'status' | 'images'> = {
     categoryId: null,
     brandId: null,
     unitId: null,
+    packageTypeId: null,
+    measurementValue: null,
+    measurementUnitId: null,
+    variantGroupId: null,
     status: 'Draft',
     images: []
   };
@@ -421,13 +441,27 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     ];
   }
 
-  get unitSelectOptions(): SearchableSelectOption<string | null>[] {
+  get packageTypeOptions(): SearchableSelectOption<string | null>[] {
     return [
       { value: null, labelKey: 'MASTER_PRODUCTS.STANDARD_UNIT' },
-      ...this.units.map((unit) => ({
+      ...this.units
+        .filter((unit) => unit.kind === 'Packaging')
+        .map((unit) => ({
+          value: unit.id,
+          label: this.currentLang === 'ar' ? unit.nameAr : unit.nameEn
+        }))
+    ];
+  }
+
+  get measurementUnitOptions(): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'MASTER_PRODUCTS.STANDARD_UNIT' },
+      ...this.units
+        .filter((unit) => unit.kind === 'Measurement')
+        .map((unit) => ({
         value: unit.id,
         label: this.currentLang === 'ar' ? unit.nameAr : unit.nameEn
-      }))
+        }))
     ];
   }
 
@@ -492,6 +526,10 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     row.categoryId = this.defaults.categoryId;
     row.brandId = this.defaults.brandId;
     row.unitId = this.defaults.unitId;
+    row.packageTypeId = this.defaults.packageTypeId;
+    row.measurementValue = this.defaults.measurementValue;
+    row.measurementUnitId = this.defaults.measurementUnitId;
+    row.variantGroupId = this.defaults.variantGroupId;
     row.status = this.defaults.status;
     row.images = (this.defaults.images || []).map((image) => ({ ...image }));
     this.ensureBrandMatchesCategory(row);
@@ -542,6 +580,12 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
 
     if ((row.barcode || '').trim().length > 100) {
       return this.currentLang === 'ar' ? 'الباركود يجب ألا يتجاوز 100 حرف.' : 'Barcode must not exceed 100 characters.';
+    }
+
+    const hasMeasurementValue = row.measurementValue !== null && row.measurementValue !== undefined && `${row.measurementValue}`.trim() !== '';
+    const hasMeasurementUnit = !!row.measurementUnitId;
+    if (hasMeasurementValue !== hasMeasurementUnit) {
+      return this.currentLang === 'ar' ? 'الحجم ووحدة القياس لازم يتسجلوا معًا.' : 'Measurement value and unit must be provided together.';
     }
 
     return null;
@@ -765,6 +809,10 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
       categoryId: this.defaults.categoryId,
       brandId: this.defaults.brandId,
       unitId: this.defaults.unitId,
+      packageTypeId: this.defaults.packageTypeId,
+      measurementValue: this.defaults.measurementValue,
+      measurementUnitId: this.defaults.measurementUnitId,
+      variantGroupId: this.defaults.variantGroupId,
       status: this.defaults.status,
       descriptionAr: null,
       descriptionEn: null,

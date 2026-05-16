@@ -2770,7 +2770,7 @@
     "INVENTORY_TRACKING": "الباركود والمخزون",
     "INVENTORY_DESC": "أدخل رمز الباركود الخاص بالمنتج لتتبعه.",
     "UNIVERSAL_BARCODE_LABEL": "رمز الباركود (Barcode)",
-    "SCAN_AUTO_HINT": "جاري قراءة الرمز...",
+    "SCAN_AUTO_HINT": "أدخل الباركود أو استخدم زر التوليد التلقائي",
     "GENERATE": "توليد تلقائي",
     "PUBLISHING_STATUS": "حالة النشر",
     "PUBLISHING_DESC": "تحكم في ظهور المنتج وتوفره في النظام.",

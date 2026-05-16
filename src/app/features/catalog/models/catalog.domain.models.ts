@@ -35,11 +35,32 @@ export interface MasterProduct {
     unitOfMeasureId?: string;
     unitNameAr?: string;
     unitNameEn?: string;
+    packageTypeId?: string | null;
+    packageTypeNameAr?: string;
+    packageTypeNameEn?: string;
+    measurementValue?: number | null;
+    measurementUnitId?: string | null;
+    measurementUnitNameAr?: string;
+    measurementUnitNameEn?: string;
+    variantGroupId?: string;
+    displaySizeAr?: string;
+    displaySizeEn?: string;
     status: 'Draft' | 'Active' | 'Inactive' | 'Discontinued';
     isInVendorStore?: boolean;
     images?: MasterProductImage[];
+    variants?: MasterProductVariantOption[];
     createdAtUtc?: string;
     updatedAtUtc?: string;
+}
+
+export interface MasterProductVariantOption {
+    id: string;
+    defaultVendorProductId?: string | null;
+    nameAr: string;
+    nameEn: string;
+    displaySizeAr?: string;
+    displaySizeEn?: string;
+    isCurrent: boolean;
 }
 
 export interface MasterProductImage {
@@ -54,6 +75,7 @@ export interface CatalogUnit {
     id: string;
     nameAr: string;
     nameEn: string;
+    kind?: 'Packaging' | 'Measurement';
     isActive?: boolean;
 }
 
@@ -164,6 +186,10 @@ export interface BulkMasterProductDraft {
     categoryId?: string | null;
     brandId?: string | null;
     unitId?: string | null;
+    packageTypeId?: string | null;
+    measurementValue?: number | null;
+    measurementUnitId?: string | null;
+    variantGroupId?: string | null;
     status: MasterProduct['status'];
     descriptionAr?: string | null;
     descriptionEn?: string | null;
@@ -248,6 +274,10 @@ export interface AdminMasterProductBulkOperationItem {
     categoryId: string;
     brandId?: string | null;
     unitId?: string | null;
+    packageTypeId?: string | null;
+    measurementValue?: number | null;
+    measurementUnitId?: string | null;
+    variantGroupId?: string | null;
     statusValue: MasterProduct['status'];
     descriptionAr?: string | null;
     descriptionEn?: string | null;

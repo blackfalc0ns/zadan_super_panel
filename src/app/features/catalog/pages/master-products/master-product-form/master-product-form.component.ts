@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../../shared/components/ui/form-controls/input/input.component';
@@ -13,7 +13,7 @@ import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/bad
 import { DetailHeaderComponent } from '../../../../../shared/components/ui/detail-header/detail-header.component';
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
-import { Brand, Category } from '@catalog/models/catalog.domain.models';
+import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
 
 @Component({
   selector: 'app-master-product-form',
@@ -46,7 +46,9 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   allFlatCategories: any[] = [];
   availableBrands: Brand[] = [];
   allBrands: Brand[] = [];
-  availableUnits: any[] = [];
+  availableUnits: CatalogUnit[] = [];
+  linkedVariantSource: MasterProduct | null = null;
+  variantGroupSeedId: string | null = null;
   breadcrumbs: { label: string; action?: () => void }[] = [];
   private langSub?: Subscription;
 
@@ -83,6 +85,15 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     if (catId && !id) {
       this.productForm.patchValue({ categoryId: catId });
     }
+
+    const variantFrom = this.route.snapshot.queryParamMap.get('variantFrom');
+    if (variantFrom && !id) {
+      this.loadVariantSource(variantFrom);
+    }
+
+    if (!id && !variantFrom) {
+      this.ensurePrimaryBarcode();
+    }
   }
 
   setupBreadcrumbs(): void {
@@ -110,6 +121,11 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       categoryId: ['', [Validators.required]],
       brandId: [null],
       unitId: [null],
+      packageTypeId: [null],
+      measurementValue: [null],
+      measurementUnitId: [null],
+      variantGroupId: [null],
+      additionalVariants: this.fb.array([]),
       primaryImageUrl: [null],
       status: ['Draft'] // Status is visual, backend defaults to Draft initially
     });
@@ -194,9 +210,14 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
           categoryId: product.categoryId,
           brandId: product.brandId,
           unitId: product.unitOfMeasureId,
+          packageTypeId: product.packageTypeId || null,
+          measurementValue: product.measurementValue ?? null,
+          measurementUnitId: product.measurementUnitId || product.unitOfMeasureId || null,
+          variantGroupId: product.variantGroupId || null,
           status: product.status,
           primaryImageUrl: product.images?.find((img: any) => img.isPrimary)?.url
         });
+        this.variantGroupSeedId = product.variantGroupId || product.id || null;
         this.filterBrandsByCategory(product.categoryId);
         this.isLoading = false;
       },
@@ -383,7 +404,15 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   get classificationComplete(): boolean {
-    return this.hasControlValue('categoryId');
+    return this.hasControlValue('categoryId') && this.hasMeasurementSelectionConsistency;
+  }
+
+  get hasMeasurementSelectionConsistency(): boolean {
+    const measurementValue = this.productForm.get('measurementValue')?.value;
+    const measurementUnitId = this.productForm.get('measurementUnitId')?.value;
+    const hasValue = measurementValue !== null && measurementValue !== undefined && `${measurementValue}`.trim() !== '';
+    const hasUnit = !!measurementUnitId;
+    return hasValue === hasUnit;
   }
 
   get completionPercent(): number {
@@ -393,6 +422,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     if (this.hasControlValue('nameEn')) score += 18;
     if (this.hasControlValue('slug')) score += 14;
     if (this.hasControlValue('categoryId')) score += 30;
+    if (this.hasMeasurementSelectionConsistency) score += 10;
     if (this.hasControlValue('barcode')) score += 10;
     if (this.hasControlValue('primaryImageUrl')) score += 10;
 
@@ -458,14 +488,72 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     ];
   }
 
-  get unitOptions(): SearchableSelectOption<string | null>[] {
+  get packageTypeOptions(): SearchableSelectOption<string | null>[] {
     return [
       { value: null, labelKey: 'MASTER_PRODUCTS.STANDARD_UNIT' },
-      ...this.availableUnits.map((unit) => ({
+      ...this.availableUnits
+        .filter((unit) => unit.kind === 'Packaging')
+        .map((unit) => ({
+          value: unit.id,
+          label: this.activeLang === 'ar' ? unit.nameAr : unit.nameEn
+        }))
+    ];
+  }
+
+  get measurementUnitOptions(): SearchableSelectOption<string | null>[] {
+    return [
+      { value: null, labelKey: 'MASTER_PRODUCTS.STANDARD_UNIT' },
+      ...this.availableUnits
+        .filter((unit) => unit.kind === 'Measurement')
+        .map((unit) => ({
         value: unit.id,
         label: this.activeLang === 'ar' ? unit.nameAr : unit.nameEn
-      }))
+        }))
     ];
+  }
+
+  get displaySizePreview(): string {
+    const packageType = this.availableUnits.find((unit) => unit.id === this.productForm.get('packageTypeId')?.value);
+    const measurementUnit = this.availableUnits.find((unit) => unit.id === this.productForm.get('measurementUnitId')?.value);
+    const measurementValue = this.productForm.get('measurementValue')?.value;
+    const packageLabel = packageType ? (this.activeLang === 'ar' ? packageType.nameAr : packageType.nameEn) : '';
+    const measurementLabel = measurementUnit ? (this.activeLang === 'ar' ? measurementUnit.nameAr : measurementUnit.nameEn) : '';
+    const valueLabel = measurementValue !== null && measurementValue !== undefined && `${measurementValue}`.trim() !== ''
+      ? `${measurementValue}`
+      : '';
+
+    return [packageLabel, valueLabel, measurementLabel].filter(Boolean).join(' ').trim();
+  }
+
+  get isCreatingVariant(): boolean {
+    return !this.productForm.get('id')?.value && !!this.linkedVariantSource && !!this.productForm.get('variantGroupId')?.value;
+  }
+
+  get linkedVariantSourceName(): string {
+    if (!this.linkedVariantSource) {
+      return '';
+    }
+
+    return this.activeLang === 'ar'
+      ? (this.linkedVariantSource.nameAr || this.linkedVariantSource.nameEn || '')
+      : (this.linkedVariantSource.nameEn || this.linkedVariantSource.nameAr || '');
+  }
+
+  get linkedVariantGroupDisplay(): string {
+    const value = this.productForm.get('variantGroupId')?.value;
+    return typeof value === 'string' ? value : '';
+  }
+
+  get canCreateAnotherVariant(): boolean {
+    return !!this.getVariantSourceProductId();
+  }
+
+  get additionalVariants(): FormArray {
+    return this.productForm.get('additionalVariants') as FormArray;
+  }
+
+  get hasAdditionalVariants(): boolean {
+    return this.additionalVariants.length > 0;
   }
 
   private hasControlValue(fieldName: string): boolean {
@@ -479,12 +567,33 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
 
 
   generateQRCode(): void {
-    const random = Math.random().toString(36).substring(2, 10).toUpperCase();
-    this.productForm.patchValue({ barcode: 'ZD-' + random });
+    this.productForm.patchValue({ barcode: this.createBarcodeValue() });
+  }
+
+  clearVariantLink(): void {
+    this.linkedVariantSource = null;
+    this.variantGroupSeedId = null;
+    this.productForm.patchValue({
+      variantGroupId: null
+    });
+  }
+
+  createAnotherVariant(): void {
+    this.addAdditionalVariant();
   }
 
   onSubmit(): void {
     this.hasSubmitted = true;
+
+    const measurementValue = this.productForm.get('measurementValue')?.value;
+    const measurementUnitId = this.productForm.get('measurementUnitId')?.value;
+    const hasMeasurementValue = measurementValue !== null && measurementValue !== undefined && `${measurementValue}`.trim() !== '';
+    const hasMeasurementUnit = !!measurementUnitId;
+
+    if (hasMeasurementValue !== hasMeasurementUnit) {
+      this.productForm.get('measurementValue')?.markAsTouched();
+      this.productForm.get('measurementUnitId')?.markAsTouched();
+    }
 
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();
@@ -492,48 +601,16 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isLoading = true;
-    const val = this.productForm.value;
-    
-    // Prepare exact payload for Create/Update Command
-    const payload = {
-      id: val.id,
-      nameAr: val.nameAr,
-      nameEn: val.nameEn,
-      slug: val.slug,
-      descriptionAr: val.descriptionAr,
-      descriptionEn: val.descriptionEn,
-      barcode: val.barcode,
-      categoryId: val.categoryId,
-      brandId: val.brandId || null,
-      unitId: val.unitId || null,
-      status: val.status,
-      images: val.primaryImageUrl ? [{ url: val.primaryImageUrl, isPrimary: true, displayOrder: 1 }] : [] 
-    };
-
-    if (val.id) {
-      this.catalogService.updateProduct(val.id, payload).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.router.navigate(['/catalog/products']);
-        },
-        error: (err: any) => {
-          console.error('Update failed', err);
-          this.isLoading = false;
-        }
-      });
-    } else {
-      this.catalogService.createProduct(payload).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.router.navigate(['/catalog/products']);
-        },
-        error: (err: any) => {
-          console.error('Save failed', err);
-          this.isLoading = false;
-        }
-      });
+    if (hasMeasurementValue !== hasMeasurementUnit) {
+      this.scrollToField('measurementUnitId');
+      return;
     }
+
+    if (!this.validateAdditionalVariants()) {
+      return;
+    }
+
+    void this.saveProductWithAdditionalVariants();
   }
 
   scrollToField(fieldName: string): void {
@@ -554,6 +631,271 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.scrollToField(firstInvalidField);
+    });
+  }
+
+  private getVariantSourceProductId(): string | null {
+    if (this.linkedVariantSource?.id) {
+      return this.linkedVariantSource.id;
+    }
+
+    const currentProductId = this.productForm.get('id')?.value;
+    return typeof currentProductId === 'string' && currentProductId.trim().length > 0
+      ? currentProductId
+      : null;
+  }
+
+  addAdditionalVariant(): void {
+    this.additionalVariants.push(this.createAdditionalVariantGroup());
+  }
+
+  removeAdditionalVariant(index: number): void {
+    this.additionalVariants.removeAt(index);
+  }
+
+  getAdditionalVariantDisplayPreview(index: number): string {
+    const group = this.additionalVariants.at(index) as FormGroup | null;
+    if (!group) {
+      return '';
+    }
+
+    return this.buildDisplaySizePreview(
+      group.get('packageTypeId')?.value,
+      group.get('measurementValue')?.value,
+      group.get('measurementUnitId')?.value
+    );
+  }
+
+  private createAdditionalVariantGroup(): FormGroup {
+    return this.fb.group({
+      packageTypeId: [this.productForm.get('packageTypeId')?.value || null],
+      measurementValue: [null],
+      measurementUnitId: [this.productForm.get('measurementUnitId')?.value || null],
+      barcode: [''],
+      slug: ['']
+    });
+  }
+
+  private validateAdditionalVariants(): boolean {
+    for (let index = 0; index < this.additionalVariants.length; index += 1) {
+      const group = this.additionalVariants.at(index) as FormGroup;
+      const measurementValue = group.get('measurementValue')?.value;
+      const measurementUnitId = group.get('measurementUnitId')?.value;
+      const hasValue = measurementValue !== null && measurementValue !== undefined && `${measurementValue}`.trim() !== '';
+      const hasUnit = !!measurementUnitId;
+
+      if (hasValue !== hasUnit) {
+        group.get('measurementValue')?.markAsTouched();
+        group.get('measurementUnitId')?.markAsTouched();
+        this.scrollToField(`additionalVariant-${index}`);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private buildDisplaySizePreview(packageTypeId: string | null, measurementValue: unknown, measurementUnitId: string | null): string {
+    const packageType = this.availableUnits.find((unit) => unit.id === packageTypeId);
+    const measurementUnit = this.availableUnits.find((unit) => unit.id === measurementUnitId);
+    const packageLabel = packageType ? (this.activeLang === 'ar' ? packageType.nameAr : packageType.nameEn) : '';
+    const measurementLabel = measurementUnit ? (this.activeLang === 'ar' ? measurementUnit.nameAr : measurementUnit.nameEn) : '';
+    const valueLabel = measurementValue !== null && measurementValue !== undefined && `${measurementValue}`.trim() !== ''
+      ? `${measurementValue}`
+      : '';
+
+    return [packageLabel, valueLabel, measurementLabel].filter(Boolean).join(' ').trim();
+  }
+
+  private buildMainProductPayload(formValue: any, hasMeasurementValue: boolean) {
+    const effectiveSlug = this.buildPrimaryProductSlug(formValue);
+    const barcode = this.normalizeOptionalText(formValue.barcode) ?? this.createBarcodeValue();
+
+    return {
+      id: formValue.id,
+      nameAr: formValue.nameAr,
+      nameEn: formValue.nameEn,
+      slug: effectiveSlug,
+      descriptionAr: formValue.descriptionAr,
+      descriptionEn: formValue.descriptionEn,
+      barcode,
+      categoryId: formValue.categoryId,
+      brandId: formValue.brandId || null,
+      unitId: formValue.measurementUnitId || formValue.unitId || null,
+      packageTypeId: formValue.packageTypeId || null,
+      measurementValue: hasMeasurementValue ? Number(formValue.measurementValue) : null,
+      measurementUnitId: formValue.measurementUnitId || null,
+      variantGroupId: formValue.variantGroupId || null,
+      status: formValue.status,
+      images: formValue.primaryImageUrl ? [{ url: formValue.primaryImageUrl, isPrimary: true, displayOrder: 1 }] : []
+    };
+  }
+
+  private buildAdditionalVariantPayload(formValue: any, variant: any, variantGroupId: string, index: number) {
+    const measurementValue = variant.measurementValue;
+    const hasMeasurementValue = measurementValue !== null && measurementValue !== undefined && `${measurementValue}`.trim() !== '';
+    const generatedSlug = this.buildVariantSlug(
+      formValue.slug,
+      variant.slug,
+      this.buildDisplaySizePreview(variant.packageTypeId || null, measurementValue, variant.measurementUnitId || null),
+      index
+    );
+
+    return {
+      nameAr: formValue.nameAr,
+      nameEn: formValue.nameEn,
+      slug: generatedSlug,
+      descriptionAr: formValue.descriptionAr,
+      descriptionEn: formValue.descriptionEn,
+      barcode: this.normalizeOptionalText(variant.barcode) ?? this.createBarcodeValue(),
+      categoryId: formValue.categoryId,
+      brandId: formValue.brandId || null,
+      unitId: variant.measurementUnitId || null,
+      packageTypeId: variant.packageTypeId || null,
+      measurementValue: hasMeasurementValue ? Number(measurementValue) : null,
+      measurementUnitId: variant.measurementUnitId || null,
+      variantGroupId,
+      status: formValue.status,
+      images: formValue.primaryImageUrl ? [{ url: formValue.primaryImageUrl, isPrimary: true, displayOrder: 1 }] : []
+    };
+  }
+
+  private buildVariantSlug(baseSlug: string, customSlug: string, sizeLabel: string, index: number): string {
+    if (customSlug && customSlug.trim().length > 0) {
+      return customSlug.trim();
+    }
+
+    const suffixSource = sizeLabel || `variant-${index + 1}`;
+    const suffix = suffixSource
+      .toLowerCase()
+      .trim()
+      .replace(/[^\u0600-\u06FFa-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+
+    return suffix ? `${baseSlug}-${suffix}` : `${baseSlug}-variant-${index + 1}`;
+  }
+
+  private normalizeOptionalText(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return value ? String(value) : null;
+    }
+
+    const normalized = value.trim();
+    return normalized.length > 0 ? normalized : null;
+  }
+
+  private createBarcodeValue(): string {
+    const token = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase()
+      : `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
+
+    return `ZD-${token}`;
+  }
+
+  private ensurePrimaryBarcode(): void {
+    if (!this.normalizeOptionalText(this.productForm.get('barcode')?.value)) {
+      this.generateQRCode();
+    }
+  }
+
+  private buildPrimaryProductSlug(formValue: any): string {
+    const currentSlug = typeof formValue.slug === 'string' ? formValue.slug.trim() : '';
+    const linkedSourceSlug = this.linkedVariantSource?.slug?.trim();
+
+    if (formValue.id || !this.linkedVariantSource || !linkedSourceSlug) {
+      return currentSlug;
+    }
+
+    if (currentSlug && currentSlug !== linkedSourceSlug) {
+      return currentSlug;
+    }
+
+    return this.buildVariantSlug(
+      linkedSourceSlug,
+      '',
+      this.buildDisplaySizePreview(
+        formValue.packageTypeId || null,
+        formValue.measurementValue,
+        formValue.measurementUnitId || null
+      ),
+      0
+    );
+  }
+
+  private async saveProductWithAdditionalVariants(): Promise<void> {
+    this.isLoading = true;
+
+    try {
+      const formValue = this.productForm.getRawValue();
+      const hasMeasurementValue = formValue.measurementValue !== null
+        && formValue.measurementValue !== undefined
+        && `${formValue.measurementValue}`.trim() !== '';
+      const payload = this.buildMainProductPayload(formValue, hasMeasurementValue);
+
+      let variantGroupId = formValue.variantGroupId || null;
+
+      if (formValue.id) {
+        await firstValueFrom(this.catalogService.updateProduct(formValue.id, payload));
+        variantGroupId = variantGroupId || formValue.id;
+      } else {
+        const createdProductId = await firstValueFrom(this.catalogService.createProduct(payload));
+        variantGroupId = variantGroupId || (typeof createdProductId === 'string' ? createdProductId : null);
+      }
+
+      for (let index = 0; index < this.additionalVariants.length; index += 1) {
+        const additionalVariant = this.additionalVariants.at(index)?.value;
+        if (!additionalVariant || !variantGroupId) {
+          continue;
+        }
+
+        const additionalPayload = this.buildAdditionalVariantPayload(formValue, additionalVariant, variantGroupId, index);
+        await firstValueFrom(this.catalogService.createProduct(additionalPayload));
+      }
+
+      this.isLoading = false;
+      this.router.navigate(['/catalog/products']);
+    } catch (err) {
+      console.error('Save failed', {
+        error: err,
+        payload: this.productForm.getRawValue()
+      });
+      this.isLoading = false;
+    }
+  }
+
+  private loadVariantSource(productId: string): void {
+    this.isLoading = true;
+    this.catalogService.getProductById(productId).subscribe({
+      next: (product) => {
+        this.linkedVariantSource = product;
+        this.variantGroupSeedId = product.variantGroupId || product.id || null;
+        this.productForm.patchValue({
+          nameAr: product.nameAr || '',
+          nameEn: product.nameEn || '',
+          slug: '',
+          descriptionAr: product.descriptionAr || '',
+          descriptionEn: product.descriptionEn || '',
+          barcode: '',
+          categoryId: product.categoryId,
+          brandId: product.brandId || null,
+          packageTypeId: product.packageTypeId || null,
+          measurementValue: null,
+          measurementUnitId: product.measurementUnitId || product.unitOfMeasureId || null,
+          unitId: product.measurementUnitId || product.unitOfMeasureId || null,
+          variantGroupId: this.variantGroupSeedId,
+          primaryImageUrl: product.images?.find((img: any) => img.isPrimary)?.url || null,
+          status: 'Draft'
+        });
+        this.productForm.get('slug')?.markAsPristine();
+        this.generateSlug(true);
+        this.ensurePrimaryBarcode();
+        this.filterBrandsByCategory(product.categoryId);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load variant source product', err);
+        this.isLoading = false;
+      }
     });
   }
 }

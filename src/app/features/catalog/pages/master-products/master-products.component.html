@@ -161,6 +161,17 @@
                                         {{ (translate.currentLang === 'ar' ? product.unitNameAr : product.unitNameEn) || ('PRODUCTS.UNIT_PIECE' | translate) }}
                                     </span>
                                 </div>
+                                <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                    <span *ngIf="getProductPackageTypeLabel(product)" class="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                                        {{ getProductPackageTypeLabel(product) }}
+                                    </span>
+                                    <span *ngIf="product.measurementValue !== null && product.measurementValue !== undefined" class="text-[9px] font-black text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded-md">
+                                        {{ product.measurementValue }}
+                                    </span>
+                                    <span *ngIf="getProductMeasurementUnitLabel(product)" class="text-[9px] font-black text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded-md">
+                                        {{ getProductMeasurementUnitLabel(product) }}
+                                    </span>
+                                </div>
                             </div>
                         </td>
 
@@ -198,6 +209,13 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                     </svg>
+                                </button>
+                                <button (click)="$event.stopPropagation()" 
+                                        [routerLink]="['/catalog/products/create']"
+                                        [queryParams]="createVariantQueryParams(product)"
+                                        class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all"
+                                        [attr.aria-label]="translate.currentLang === 'ar' ? 'إضافة حجم جديد' : 'Add size variant'">
+                                    <span class="material-symbols-outlined text-[16px]">library_add</span>
                                 </button>
                                 <button (click)="$event.stopPropagation()" 
                                         [routerLink]="['/catalog/products/view', product.id]"
@@ -249,6 +267,17 @@
                                     {{ (translate.currentLang === 'ar' ? product.unitNameAr : product.unitNameEn) || ('PRODUCTS.UNIT_PIECE' | translate) }}
                                 </span>
                             </div>
+                            <div class="mt-1 flex flex-wrap items-center gap-1.5">
+                                <span *ngIf="getProductPackageTypeLabel(product)" class="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                                    {{ getProductPackageTypeLabel(product) }}
+                                </span>
+                                <span *ngIf="product.measurementValue !== null && product.measurementValue !== undefined" class="text-[9px] font-black text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded-md">
+                                    {{ product.measurementValue }}
+                                </span>
+                                <span *ngIf="getProductMeasurementUnitLabel(product)" class="text-[9px] font-black text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded-md">
+                                    {{ getProductMeasurementUnitLabel(product) }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     
@@ -273,6 +302,12 @@
                             {{ getSubcategoryName(product.categoryId) }}
                         </span>
                     </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-500">{{ translate.currentLang === 'ar' ? 'الحجم' : 'Size' }}</span>
+                        <span class="text-xs font-bold text-slate-700">
+                            {{ getProductSizeSummary(product) || (translate.currentLang === 'ar' ? 'غير محدد' : 'Not set') }}
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Actions -->
@@ -284,6 +319,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
                         {{ 'COMMON.EDIT' | translate }}
+                    </button>
+                    <button (click)="$event.stopPropagation()" 
+                            [routerLink]="['/catalog/products/create']"
+                            [queryParams]="createVariantQueryParams(product)"
+                            class="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-slate-50 text-slate-600 rounded-lg text-xs font-medium hover:bg-emerald-500 hover:text-white transition-all">
+                        <span class="material-symbols-outlined text-[16px]">library_add</span>
+                        {{ translate.currentLang === 'ar' ? 'إضافة حجم' : 'Add size' }}
                     </button>
                     <button (click)="$event.stopPropagation()" 
                             [routerLink]="['/catalog/products/view', product.id]"

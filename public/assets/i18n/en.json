@@ -2773,7 +2773,7 @@
     "INVENTORY_TRACKING": "Barcode & Inventory",
     "INVENTORY_DESC": "Enter product barcode for tracking.",
     "UNIVERSAL_BARCODE_LABEL": "Barcode",
-    "SCAN_AUTO_HINT": "Reading code...",
+    "SCAN_AUTO_HINT": "Enter barcode or use auto-generate",
     "GENERATE": "Auto-Generate",
     "PUBLISHING_STATUS": "Publishing Status",
     "PUBLISHING_DESC": "Control product visibility and availability in the system.",

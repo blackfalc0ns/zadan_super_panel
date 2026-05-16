@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
-import { MasterProduct } from '@catalog/models/catalog.domain.models';
+import { MasterProduct, MasterProductVariantOption } from '@catalog/models/catalog.domain.models';
+import { Subject, takeUntil } from 'rxjs';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { DetailHeaderComponent } from '../../../../shared/components/ui/detail-header/detail-header.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
@@ -47,6 +48,7 @@ export class ProductDetailComponent implements OnInit {
   unitName: string = '';
   breadcrumbs: { label: string; action?: () => void }[] = [];
   vendorSnapshots: ProductVendorSnapshot[] = [];
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
@@ -124,8 +126,62 @@ export class ProductDetailComponent implements OnInit {
       || fallback;
   }
 
+  get resolvedPackageTypeName(): string {
+    const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+    if (!this.product) {
+      return fallback;
+    }
+
+    return (this.activeLang === 'ar'
+      ? (this.product.packageTypeNameAr || this.product.packageTypeNameEn || '')
+      : (this.product.packageTypeNameEn || this.product.packageTypeNameAr || '')) || fallback;
+  }
+
+  get resolvedMeasurementUnitName(): string {
+    const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+    if (!this.product) {
+      return fallback;
+    }
+
+    return (this.activeLang === 'ar'
+      ? (this.product.measurementUnitNameAr || this.product.measurementUnitNameEn || this.product.unitNameAr || this.product.unitNameEn || '')
+      : (this.product.measurementUnitNameEn || this.product.measurementUnitNameAr || this.product.unitNameEn || this.product.unitNameAr || '')) || fallback;
+  }
+
+  get resolvedDisplaySize(): string {
+    const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+    if (!this.product) {
+      return fallback;
+    }
+
+    const localizedDisplaySize = this.activeLang === 'ar'
+      ? (this.product.displaySizeAr || this.product.displaySizeEn || '')
+      : (this.product.displaySizeEn || this.product.displaySizeAr || '');
+
+    if (localizedDisplaySize.trim()) {
+      return localizedDisplaySize;
+    }
+
+    const measurementValue = this.product.measurementValue !== null && this.product.measurementValue !== undefined
+      ? `${this.product.measurementValue}`
+      : '';
+    const measurementUnit = this.activeLang === 'ar'
+      ? (this.product.measurementUnitNameAr || this.product.measurementUnitNameEn || '')
+      : (this.product.measurementUnitNameEn || this.product.measurementUnitNameAr || '');
+
+    return [measurementValue, measurementUnit].filter(Boolean).join(' ').trim() || fallback;
+  }
+
   get displayBarcode(): string {
     return this.product?.barcode || this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+  }
+
+  get linkedVariants(): MasterProductVariantOption[] {
+    return this.product?.variants ?? [];
+  }
+
+  get hasLinkedVariants(): boolean {
+    return this.linkedVariants.length > 1;
   }
 
   get imageCount(): number {
@@ -157,10 +213,14 @@ export class ProductDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupBreadcrumbs();
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadProduct(id);
-    }
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        const id = params.get('id');
+        if (id) {
+          this.loadProduct(id);
+        }
+      });
   }
 
   setupBreadcrumbs(): void {
@@ -173,6 +233,12 @@ export class ProductDetailComponent implements OnInit {
 
   loadProduct(id: string): void {
     this.isLoading = true;
+    this.selectedImageIndex = 0;
+    this.vendorSnapshots = [];
+    this.categoryName = '';
+    this.brandName = '';
+    this.unitName = '';
+
     this.catalogService.getProductById(id).subscribe({
       next: (product) => {
         this.product = product;
@@ -182,6 +248,7 @@ export class ProductDetailComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading product', err);
+        this.product = null;
         this.isLoading = false;
       }
     });
@@ -287,6 +354,27 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
+  openVariantDetails(variant: MasterProductVariantOption): void {
+    if (!variant.id || variant.id === this.product?.id) {
+      return;
+    }
+
+    this.router.navigate(['/catalog/products/view', variant.id]);
+  }
+
+  getVariantLabel(variant: MasterProductVariantOption): string {
+    return this.activeLang === 'ar'
+      ? (variant.nameAr || variant.nameEn || '')
+      : (variant.nameEn || variant.nameAr || '');
+  }
+
+  getVariantSize(variant: MasterProductVariantOption): string {
+    const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
+    return (this.activeLang === 'ar'
+      ? (variant.displaySizeAr || variant.displaySizeEn || '')
+      : (variant.displaySizeEn || variant.displaySizeAr || '')).trim() || fallback;
+  }
+
   get detailItems(): KeyValueGridItem[] {
     if (!this.product) {
       return [];
@@ -347,6 +435,11 @@ export class ProductDetailComponent implements OnInit {
 
   getVendorRatioWidth(vendor: ProductVendorSnapshot): string {
     return `${Math.max(0, Math.min(100, vendor.ratio))}%`;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private buildPlaceholderImage(label: string): string {

@@ -110,14 +110,31 @@ export class AdminOneSignalService {
         this.logStatus('OneSignal admin user logged in.', oneSignal);
       }
 
-      if (requestPermission) {
-        await oneSignal.Notifications?.requestPermission?.();
-        this.logStatus('OneSignal admin permission requested.', oneSignal);
+      const browserPermission = this.document.defaultView?.Notification?.permission;
+      const canRequestPermission = requestPermission && browserPermission === 'default' && !oneSignal.Notifications?.permission;
+
+      if (canRequestPermission) {
+        try {
+          await oneSignal.Notifications?.requestPermission?.();
+          this.logStatus('OneSignal admin permission requested.', oneSignal);
+        } catch (error) {
+          this.logPermissionFailure('permission request', error, oneSignal);
+          return;
+        }
       }
 
-      if (requestPermission || oneSignal.Notifications?.permission) {
-        await oneSignal.User?.PushSubscription?.optIn?.();
-        this.logStatus('OneSignal admin opt-in attempted.', oneSignal);
+      if (browserPermission === 'denied') {
+        return;
+      }
+
+      if (requestPermission || oneSignal.Notifications?.permission || browserPermission === 'granted') {
+        try {
+          await oneSignal.User?.PushSubscription?.optIn?.();
+          this.logStatus('OneSignal admin opt-in attempted.', oneSignal);
+        } catch (error) {
+          this.logPermissionFailure('opt-in', error, oneSignal);
+          return;
+        }
       }
 
       this.initializedForUserId = userId;
@@ -226,5 +243,18 @@ export class AdminOneSignalService {
       '[AdminOneSignal] OneSignal SDK could not be loaded. Check browser extensions/ad blockers and allow cdn.onesignal.com for localhost:4300.',
       error
     );
+  }
+
+  private logPermissionFailure(step: string, error: unknown, oneSignal: OneSignalSdk): void {
+    if (environment.production) {
+      return;
+    }
+
+    console.warn(`[AdminOneSignal] OneSignal ${step} failed.`, {
+      error,
+      permission: oneSignal.Notifications?.permission,
+      subscriptionId: oneSignal.User?.PushSubscription?.id ?? null,
+      optedIn: oneSignal.User?.PushSubscription?.optedIn ?? null
+    });
   }
 }

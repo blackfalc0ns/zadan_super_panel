@@ -269,6 +269,36 @@ export class MasterProductsComponent implements OnInit {
       : (parent.nameEn || parent.nameAr || '');
   }
 
+  getProductPackageTypeLabel(product: MasterProduct): string {
+    return this.translate.currentLang === 'ar'
+      ? (product.packageTypeNameAr || product.packageTypeNameEn || '')
+      : (product.packageTypeNameEn || product.packageTypeNameAr || '');
+  }
+
+  getProductMeasurementUnitLabel(product: MasterProduct): string {
+    return this.translate.currentLang === 'ar'
+      ? (product.measurementUnitNameAr || product.measurementUnitNameEn || product.unitNameAr || product.unitNameEn || '')
+      : (product.measurementUnitNameEn || product.measurementUnitNameAr || product.unitNameEn || product.unitNameAr || '');
+  }
+
+  getProductSizeSummary(product: MasterProduct): string {
+    const displaySize = this.translate.currentLang === 'ar'
+      ? (product.displaySizeAr || product.displaySizeEn || '')
+      : (product.displaySizeEn || product.displaySizeAr || '');
+
+    if (displaySize.trim()) {
+      return displaySize;
+    }
+
+    const packageType = this.getProductPackageTypeLabel(product);
+    const measurementValue = product.measurementValue !== null && product.measurementValue !== undefined
+      ? `${product.measurementValue}`
+      : '';
+    const measurementUnit = this.getProductMeasurementUnitLabel(product);
+
+    return [packageType, measurementValue, measurementUnit].filter(Boolean).join(' ').trim();
+  }
+
   getPrimaryImage(product: MasterProduct): string {
     return product.images?.find(i => i.isPrimary)?.url || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="24" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
   }
@@ -458,6 +488,10 @@ export class MasterProductsComponent implements OnInit {
     };
 
     return labels[status || ''] || status || '-';
+  }
+
+  createVariantQueryParams(product: MasterProduct): Record<string, string> {
+    return { variantFrom: product.id };
   }
 
   private syncPanelFilters(): void {

@@ -197,8 +197,10 @@ export class LayoutComponent {
 
     this.notificationPermissionPromptArmed = true;
     const requestPermission = async () => {
-      if ('Notification' in window && Notification.permission === 'default') {
-        await Notification.requestPermission();
+      if ('Notification' in window && Notification.permission === 'denied') {
+        window.removeEventListener('pointerdown', requestPermission);
+        window.removeEventListener('keydown', requestPermission);
+        return;
       }
 
       this.adminOneSignalService.requestPermissionAndRegister();

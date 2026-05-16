@@ -19,6 +19,7 @@ import {
   CategorySearchFacets,
   CategorySearchFilters,
   MasterProduct,
+  MasterProductVariantOption,
   MasterProductImage,
   ProductSearchFacets,
   ProductSearchFilters,
@@ -62,6 +63,10 @@ interface CatalogProductPayload {
   brandId?: string | null;
   unitId?: string | null;
   unitOfMeasureId?: string | null;
+  packageTypeId?: string | null;
+  measurementValue?: number | null;
+  measurementUnitId?: string | null;
+  variantGroupId?: string | null;
   status?: MasterProduct['status'];
   images?: Array<{
     masterProductId?: string;
@@ -236,6 +241,10 @@ export class CatalogService {
         categoryId: item.categoryId,
         brandId: item.brandId || null,
         unitId: item.unitId || null,
+        packageTypeId: item.packageTypeId || null,
+        measurementValue: item.measurementValue ?? null,
+        measurementUnitId: item.measurementUnitId || item.unitId || null,
+        variantGroupId: item.variantGroupId || null,
         status: item.status,
         descriptionAr: item.descriptionAr || null,
         descriptionEn: item.descriptionEn || null,
@@ -804,6 +813,7 @@ export class CatalogService {
       id: unit.id || `UNIT-${index + 1}`,
       nameAr: unit.nameAr || unit.nameEn || `وحدة ${index + 1}`,
       nameEn: unit.nameEn || unit.nameAr || `Unit ${index + 1}`,
+      kind: unit.kind === 'Packaging' ? ('Packaging' as const) : ('Measurement' as const),
       isActive: unit.isActive ?? true
     }));
 
@@ -1441,14 +1451,63 @@ export class CatalogService {
       brandNameAr: stringValue('brandNameAr', 'BrandNameAr', 'brand_name_ar'),
       brandNameEn: stringValue('brandNameEn', 'BrandNameEn', 'brand_name_en'),
       unitOfMeasureId: stringValue('unitOfMeasureId', 'UnitOfMeasureId', 'unitId', 'UnitId') || undefined,
-      unitNameAr: stringValue('unitNameAr', 'UnitNameAr', 'unit_name_ar'),
-      unitNameEn: stringValue('unitNameEn', 'UnitNameEn', 'unit_name_en'),
+      unitNameAr: stringValue('unitNameAr', 'UnitNameAr', 'unit_name_ar', 'measurementUnitNameAr', 'MeasurementUnitNameAr')
+        || stringValue('displaySizeAr', 'DisplaySizeAr', 'display_size_ar'),
+      unitNameEn: stringValue('unitNameEn', 'UnitNameEn', 'unit_name_en', 'measurementUnitNameEn', 'MeasurementUnitNameEn')
+        || stringValue('displaySizeEn', 'DisplaySizeEn', 'display_size_en'),
+      packageTypeId: stringValue('packageTypeId', 'PackageTypeId', 'package_type_id') || null,
+      packageTypeNameAr: stringValue('packageTypeNameAr', 'PackageTypeNameAr', 'package_type_name_ar'),
+      packageTypeNameEn: stringValue('packageTypeNameEn', 'PackageTypeNameEn', 'package_type_name_en'),
+      measurementValue: this.extractNumber(raw, ['measurementValue', 'MeasurementValue', 'measurement_value']) ?? null,
+      measurementUnitId: stringValue('measurementUnitId', 'MeasurementUnitId', 'measurement_unit_id') || undefined,
+      measurementUnitNameAr: stringValue('measurementUnitNameAr', 'MeasurementUnitNameAr', 'measurement_unit_name_ar'),
+      measurementUnitNameEn: stringValue('measurementUnitNameEn', 'MeasurementUnitNameEn', 'measurement_unit_name_en'),
+      variantGroupId: stringValue('variantGroupId', 'VariantGroupId', 'variant_group_id'),
+      displaySizeAr: stringValue('displaySizeAr', 'DisplaySizeAr', 'display_size_ar'),
+      displaySizeEn: stringValue('displaySizeEn', 'DisplaySizeEn', 'display_size_en'),
       status: product.status || 'Draft',
       slug: product.slug || this.buildSlug(product.nameEn || product.nameAr || product.id || 'product'),
       images: this.normalizeImages(product),
+      variants: this.normalizeProductVariants(raw['variants'] ?? raw['Variants']),
       createdAtUtc,
       updatedAtUtc
     };
+  }
+
+  private normalizeProductVariants(value: unknown): MasterProductVariantOption[] {
+    return this.extractArray<Record<string, unknown>>(value).map((variant) => {
+      const readString = (...keys: string[]): string | undefined => {
+        for (const key of keys) {
+          const candidate = variant[key];
+          if (typeof candidate === 'string' && candidate.trim().length > 0) {
+            return candidate.trim();
+          }
+        }
+
+        return undefined;
+      };
+
+      const readBoolean = (...keys: string[]): boolean => {
+        for (const key of keys) {
+          const candidate = variant[key];
+          if (typeof candidate === 'boolean') {
+            return candidate;
+          }
+        }
+
+        return false;
+      };
+
+      return {
+        id: readString('id', 'Id') || '',
+        defaultVendorProductId: readString('defaultVendorProductId', 'DefaultVendorProductId') || null,
+        nameAr: readString('nameAr', 'NameAr') || readString('nameEn', 'NameEn') || '',
+        nameEn: readString('nameEn', 'NameEn') || readString('nameAr', 'NameAr') || '',
+        displaySizeAr: readString('displaySizeAr', 'DisplaySizeAr'),
+        displaySizeEn: readString('displaySizeEn', 'DisplaySizeEn'),
+        isCurrent: readBoolean('isCurrent', 'IsCurrent')
+      };
+    }).filter((variant) => !!variant.id);
   }
 
   private normalizeImages(product: CatalogProductRecord): MasterProductImage[] {

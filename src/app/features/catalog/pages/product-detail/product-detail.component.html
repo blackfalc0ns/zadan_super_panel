@@ -70,6 +70,58 @@
                 </div>
 
                 <div class="space-y-6 py-6">
+                    <div *ngIf="hasLinkedVariants" class="rounded-[1.25rem] border border-cyan-100 bg-cyan-50/70 p-4 text-start ring-1 ring-cyan-100/80 sm:p-5">
+                        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-700/80">
+                                    {{ activeLang === 'ar' ? 'مجموعة الأحجام' : 'Size group' }}
+                                </p>
+                                <h2 class="mt-1 text-base font-black text-slate-950">
+                                    {{ activeLang === 'ar' ? 'كل الأحجام المتاحة لنفس المنتج' : 'All available sizes for this product' }}
+                                </h2>
+                            </div>
+
+                            <span class="inline-flex h-9 w-fit items-center rounded-full bg-white px-3 text-[11px] font-black text-cyan-800 ring-1 ring-cyan-200">
+                                {{ linkedVariants.length }} {{ activeLang === 'ar' ? 'أحجام' : 'sizes' }}
+                            </span>
+                        </div>
+
+                        <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                            <button
+                                *ngFor="let variant of linkedVariants"
+                                type="button"
+                                (click)="openVariantDetails(variant)"
+                                class="rounded-2xl border px-4 py-4 text-start transition focus:outline-none focus:ring-4"
+                                [disabled]="variant.isCurrent"
+                                [ngClass]="variant.isCurrent
+                                    ? 'border-cyan-300 bg-white shadow-sm ring-2 ring-cyan-200/80'
+                                    : 'border-white/80 bg-white/80 hover:border-cyan-200 hover:bg-white focus:ring-cyan-200/70'">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <span class="block text-[11px] font-black uppercase tracking-[0.14em]"
+                                            [ngClass]="variant.isCurrent ? 'text-cyan-700' : 'text-slate-400'">
+                                            {{ variant.isCurrent
+                                                ? (activeLang === 'ar' ? 'الحجم الحالي' : 'Current size')
+                                                : (activeLang === 'ar' ? 'حجم مرتبط' : 'Linked size') }}
+                                        </span>
+                                        <span class="mt-2 block text-sm font-black text-slate-950">
+                                            {{ getVariantSize(variant) }}
+                                        </span>
+                                        <span class="mt-1 block truncate text-xs font-bold text-slate-500">
+                                            {{ getVariantLabel(variant) }}
+                                        </span>
+                                    </div>
+
+                                    <span
+                                        class="material-symbols-outlined shrink-0 text-[18px]"
+                                        [ngClass]="variant.isCurrent ? 'text-cyan-700' : 'text-slate-300'">
+                                        {{ variant.isCurrent ? 'task_alt' : 'arrow_forward' }}
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="mx-auto max-w-4xl text-center">
                         <p class="mb-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-400">
                             {{ 'PRODUCTS.DETAIL.DESCRIPTION' | translate }}
@@ -109,6 +161,21 @@
                             <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
                                 <span class="mb-2 block text-[11px] font-black text-slate-400">{{ 'PRODUCTS.DETAIL.UNIT' | translate }}</span>
                                 <span class="block truncate text-sm font-black text-slate-800">{{ resolvedUnitName }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ activeLang === 'ar' ? 'نوع العبوة' : 'Package type' }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ resolvedPackageTypeName }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ activeLang === 'ar' ? 'الحجم' : 'Size' }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ resolvedDisplaySize }}</span>
+                            </div>
+
+                            <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">
+                                <span class="mb-2 block text-[11px] font-black text-slate-400">{{ activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit' }}</span>
+                                <span class="block truncate text-sm font-black text-slate-800">{{ resolvedMeasurementUnitName }}</span>
                             </div>
 
                             <div class="min-w-0 rounded-2xl bg-white px-4 py-4 ring-1 ring-slate-200/80">

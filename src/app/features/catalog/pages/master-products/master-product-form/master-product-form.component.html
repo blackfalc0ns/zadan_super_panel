@@ -210,6 +210,140 @@
             </div>
 
 
+            <div *ngIf="false && hasAdditionalVariants" formArrayName="additionalVariants" class="space-y-3">
+              <div
+                *ngFor="let variant of additionalVariants.controls; let i = index"
+                [formGroupName]="i"
+                [attr.data-product-field]="'additionalVariant-' + i"
+                class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                <div class="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <span class="block text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">
+                      {{ activeLang === 'ar' ? 'حجم إضافي' : 'Additional size' }} {{ i + 1 }}
+                    </span>
+                    <span class="mt-1 block text-[0.76rem] font-black text-cyan-800">
+                      {{ getAdditionalVariantDisplayPreview(i) || (activeLang === 'ar' ? 'اختَر العبوة والحجم لهذا الخيار' : 'Choose package and size for this option') }}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    (click)="removeAdditionalVariant(i)"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                  </button>
+                </div>
+
+                <div class="space-y-3">
+                  <app-searchable-select
+                    class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+                    formControlName="packageTypeId"
+                    [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'"
+                    [options]="packageTypeOptions"
+                    [placeholder]="activeLang === 'ar' ? 'اختَر العبوة' : 'Select package type'">
+                  </app-searchable-select>
+
+                  <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
+                    <label class="flex flex-col gap-2">
+                      <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
+                      <input
+                        formControlName="measurementValue"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        [placeholder]="activeLang === 'ar' ? 'مثال 100' : 'e.g. 100'"
+                        class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
+                    </label>
+
+                    <app-searchable-select
+                      class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+                      formControlName="measurementUnitId"
+                      [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'"
+                      [options]="measurementUnitOptions"
+                      [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
+                    </app-searchable-select>
+                  </div>
+
+                  <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-3 text-[0.72rem] font-bold text-slate-500">
+                    {{ activeLang === 'ar'
+                      ? 'سيتم إنشاء الباركود والـ slug لهذا الحجم تلقائيًا عند الحفظ.'
+                      : 'Barcode and slug for this size will be generated automatically on save.' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="false && hasAdditionalVariants" formArrayName="additionalVariants" class="space-y-3">
+              <div
+                *ngFor="let variant of additionalVariants.controls; let i = index"
+                [formGroupName]="i"
+                [attr.data-product-field]="'additionalVariant-' + i"
+                class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                <div class="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <span class="block text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">
+                      {{ activeLang === 'ar' ? 'حجم إضافي' : 'Additional size' }} {{ i + 1 }}
+                    </span>
+                    <span class="mt-1 block text-[0.76rem] font-black text-cyan-800">
+                      {{ getAdditionalVariantDisplayPreview(i) || (activeLang === 'ar' ? 'اختَر العبوة والحجم لهذا الخيار' : 'Choose package and size for this option') }}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    (click)="removeAdditionalVariant(i)"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                  </button>
+                </div>
+
+                <div class="space-y-3">
+                  <app-searchable-select
+                    class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+                    formControlName="packageTypeId"
+                    [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'"
+                    [options]="packageTypeOptions"
+                    [placeholder]="activeLang === 'ar' ? 'اختَر العبوة' : 'Select package type'">
+                  </app-searchable-select>
+
+                  <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
+                    <label class="flex flex-col gap-2">
+                      <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
+                      <input
+                        formControlName="measurementValue"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        [placeholder]="activeLang === 'ar' ? 'مثال 100' : 'e.g. 100'"
+                        class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
+                    </label>
+
+                    <app-searchable-select
+                      class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+                      formControlName="measurementUnitId"
+                      [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'"
+                      [options]="measurementUnitOptions"
+                      [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
+                    </app-searchable-select>
+                  </div>
+
+                  <div class="grid gap-3 lg:grid-cols-2">
+                    <app-input
+                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
+                      formControlName="barcode"
+                      [label]="activeLang === 'ar' ? 'باركود اختياري' : 'Optional barcode'"
+                      [placeholder]="activeLang === 'ar' ? 'باركود لهذا الحجم' : 'Barcode for this size'">
+                    </app-input>
+
+                    <app-input
+                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
+                      formControlName="slug"
+                      [label]="activeLang === 'ar' ? 'Slug اختياري' : 'Optional slug'"
+                      [placeholder]="activeLang === 'ar' ? 'سيتم توليده تلقائيًا لو تركته فارغًا' : 'Auto-generated if left empty'">
+                    </app-input>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -307,10 +441,157 @@
             </app-searchable-select>
 
             <app-searchable-select
+              data-product-field="packageTypeId"
               class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-              formControlName="unitId" [label]="'MASTER_PRODUCTS.UNIT_LABEL' | translate" [options]="unitOptions"
-              [placeholder]="'MASTER_PRODUCTS.STANDARD_UNIT' | translate">
+              formControlName="packageTypeId" [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'" [options]="packageTypeOptions"
+              [placeholder]="activeLang === 'ar' ? 'اختر العبوة' : 'Select package type'">
             </app-searchable-select>
+
+            <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
+              <label data-product-field="measurementValue" class="flex flex-col gap-2">
+                <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
+                <input
+                  formControlName="measurementValue"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [placeholder]="activeLang === 'ar' ? 'مثال 50' : 'e.g. 50'"
+                  class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
+              </label>
+
+              <app-searchable-select
+                data-product-field="measurementUnitId"
+                class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+                formControlName="measurementUnitId" [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'" [options]="measurementUnitOptions"
+                [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
+              </app-searchable-select>
+            </div>
+
+            <div *ngIf="hasAdditionalVariants" formArrayName="additionalVariants" class="space-y-3">
+              <div
+                *ngFor="let variant of additionalVariants.controls; let i = index"
+                [formGroupName]="i"
+                [attr.data-product-field]="'additionalVariant-' + i"
+                class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                <div class="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <span class="block text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">
+                      {{ activeLang === 'ar' ? 'حجم إضافي' : 'Additional size' }} {{ i + 1 }}
+                    </span>
+                    <span class="mt-1 block text-[0.76rem] font-black text-cyan-800">
+                      {{ getAdditionalVariantDisplayPreview(i) || (activeLang === 'ar' ? 'اختَر العبوة والحجم لهذا الخيار' : 'Choose package and size for this option') }}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    (click)="removeAdditionalVariant(i)"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100">
+                    <span class="material-symbols-outlined text-[18px]">close</span>
+                  </button>
+                </div>
+
+                <div class="space-y-3">
+                  <app-searchable-select
+                    class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+                    formControlName="packageTypeId"
+                    [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'"
+                    [options]="packageTypeOptions"
+                    [placeholder]="activeLang === 'ar' ? 'اختَر العبوة' : 'Select package type'">
+                  </app-searchable-select>
+
+                  <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
+                    <label class="flex flex-col gap-2">
+                      <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
+                      <input
+                        formControlName="measurementValue"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        [placeholder]="activeLang === 'ar' ? 'مثال 100' : 'e.g. 100'"
+                        class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
+                    </label>
+
+                    <app-searchable-select
+                      class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+                      formControlName="measurementUnitId"
+                      [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'"
+                      [options]="measurementUnitOptions"
+                      [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
+                    </app-searchable-select>
+                  </div>
+
+                  <div class="grid gap-3 lg:grid-cols-2">
+                    <app-input
+                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
+                      formControlName="barcode"
+                      [label]="activeLang === 'ar' ? 'باركود اختياري' : 'Optional barcode'"
+                      [placeholder]="activeLang === 'ar' ? 'باركود لهذا الحجم' : 'Barcode for this size'">
+                    </app-input>
+
+                    <app-input
+                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
+                      formControlName="slug"
+                      [label]="activeLang === 'ar' ? 'Slug اختياري' : 'Optional slug'"
+                      [placeholder]="activeLang === 'ar' ? 'سيتم توليده تلقائيًا لو تركته فارغًا' : 'Auto-generated if left empty'">
+                    </app-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 text-[0.76rem] text-emerald-900 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <span class="block text-[0.65rem] font-black uppercase tracking-[0.18em] text-emerald-700/80">
+                    {{ activeLang === 'ar' ? 'ربط الأحجام' : 'Variant linking' }}
+                  </span>
+                  <ng-container *ngIf="isCreatingVariant; else standaloneVariantState">
+                    <p class="mt-1 font-black">
+                      {{ activeLang === 'ar' ? 'الحجم الجديد مرتبط بالمنتج:' : 'This new size is linked to:' }}
+                      <span class="text-emerald-700">{{ linkedVariantSourceName }}</span>
+                    </p>
+                    <p class="mt-1 break-all text-[0.7rem] font-bold text-emerald-800/80">
+                      {{ activeLang === 'ar' ? 'معرّف المجموعة:' : 'Group id:' }} {{ linkedVariantGroupDisplay }}
+                    </p>
+                  </ng-container>
+                  <ng-template #standaloneVariantState>
+                    <p class="mt-1 font-black" *ngIf="productForm.get('variantGroupId')?.value; else noVariantState">
+                      {{ activeLang === 'ar' ? 'المنتج مرتبط بمجموعة أحجام موجودة.' : 'This product is already linked to a size group.' }}
+                    </p>
+                    <p class="mt-1 break-all text-[0.7rem] font-bold text-emerald-800/80" *ngIf="productForm.get('variantGroupId')?.value">
+                      {{ activeLang === 'ar' ? 'معرّف المجموعة:' : 'Group id:' }} {{ linkedVariantGroupDisplay }}
+                    </p>
+                  </ng-template>
+                  <ng-template #noVariantState>
+                    <p class="mt-1 font-black text-emerald-900">
+                      {{ activeLang === 'ar' ? 'لو عايز تضيف حجم آخر لنفس المنتج، استخدم زر "إضافة حجم" من قائمة المنتجات.' : 'Use "Add size" from the products list to create another size for the same product.' }}
+                    </p>
+                  </ng-template>
+                </div>
+
+                <button
+                  *ngIf="isCreatingVariant"
+                  type="button"
+                  (click)="clearVariantLink()"
+                  class="shrink-0 rounded-xl border border-emerald-200 bg-white px-3 py-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100">
+                  {{ activeLang === 'ar' ? 'فك الربط' : 'Clear link' }}
+                </button>
+              </div>
+
+              <button
+                type="button"
+                (click)="createAnotherVariant()"
+                class="mt-3 inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-3.5 py-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">
+                <span class="material-symbols-outlined text-[16px]">library_add</span>
+                {{ activeLang === 'ar' ? 'إضافة حجم تاني' : 'Add another size' }}
+              </button>
+            </div>
+
+            <div class="rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3 text-[0.75rem] font-black text-cyan-800">
+              <span class="block text-[0.65rem] uppercase tracking-[0.18em] text-cyan-700/70">{{ activeLang === 'ar' ? 'معاينة العرض' : 'Display preview' }}</span>
+              <span class="mt-1 block">{{ displaySizePreview || (activeLang === 'ar' ? 'اختر العبوة والحجم ليظهر النص هنا' : 'Choose package and size to preview it here') }}</span>
+            </div>
           </div>
         </section>
 
