@@ -32,6 +32,9 @@ export const routes: Routes = [
       { path: 'marketing', loadChildren: () => import('./features/marketing/marketing.routes').then((m) => m.MARKETING_ROUTES) },
       { path: 'notifications', loadChildren: () => import('./features/notifications/notifications.routes').then((m) => m.NOTIFICATIONS_ROUTES) },
       { path: 'admin-users', loadChildren: () => import('./features/admin-users/admin-users.routes').then((m) => m.ADMIN_USERS_ROUTES) },
+      { path: 'profile', loadComponent: () => import('./features/profile/pages/admin-profile/admin-profile.component').then((m) => m.AdminProfileComponent) },
+      { path: 'live-ops', loadComponent: () => import('./features/live-ops/pages/live-ops.component').then((m) => m.LiveOpsComponent) },
+      { path: 'system-logs', loadComponent: () => import('./features/system-logs/pages/system-logs.component').then((m) => m.SystemLogsComponent) },
       { path: 'email-center', loadChildren: () => import('./features/email-center/email-center.routes').then((m) => m.EMAIL_CENTER_ROUTES) }
     ]
   },

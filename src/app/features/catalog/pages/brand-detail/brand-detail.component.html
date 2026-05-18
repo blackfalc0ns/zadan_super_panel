@@ -10,13 +10,23 @@
         (actionClick)="editBrand()">
     </app-detail-header>
 
-    <div *ngIf="isLoading" class="mx-auto flex min-h-[520px] w-full max-w-[110rem] items-center justify-center rounded-2xl border border-slate-200 bg-white">
-        <div class="flex flex-col items-center gap-4">
-            <div class="relative h-12 w-12">
-                <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
-                <div class="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-zadna-primary"></div>
+    <div *ngIf="isLoading" class="mx-auto w-full max-w-[110rem]">
+        <div class="admin-skeleton-detail">
+            <span class="admin-skeleton admin-skeleton-line rounded-2xl" style="height: 16rem"></span>
+            <div class="mt-5 flex flex-col gap-4 md:flex-row md:items-end">
+                <span class="admin-skeleton admin-skeleton-avatar" style="width: 5.5rem; height: 5.5rem"></span>
+                <div class="flex-1 space-y-3">
+                    <span class="admin-skeleton admin-skeleton-line lg w-1/2"></span>
+                    <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+                </div>
+                <span class="admin-skeleton admin-skeleton-chip"></span>
             </div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ 'BRANDS.DETAIL.TITLE' | translate }}</p>
+            <div class="admin-skeleton-detail-grid">
+                <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
+                    <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+                    <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -285,11 +285,11 @@
           </div>
 
           <button
-            *ngFor="let document of group.documents"
+            *ngFor="let document of group.documents; trackBy: trackByDocumentId"
             type="button"
             (click)="selectDocument(document)"
-            class="group w-full rounded-2xl border p-4 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
-            [ngClass]="selectedDocumentPreview?.id === document.id ? 'border-zadna-primary/40 bg-zadna-primary/5 shadow-sm' : 'border-slate-200/60 bg-white hover:border-slate-300'">
+            class="group w-full rounded-2xl border p-4 text-start transition-all duration-200"
+            [ngClass]="selectedDocumentPreview?.id === document.id ? 'border-zadna-primary bg-zadna-primary/5 shadow-md ring-2 ring-zadna-primary/20' : 'border-slate-200/60 bg-white hover:border-slate-300 hover:shadow-sm'">
             <div class="flex items-start gap-3">
               <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] shadow-sm border border-slate-100 bg-slate-50 text-slate-600 transition-transform group-hover:scale-110">
                 <span class="material-symbols-outlined text-[20px] group-hover:text-zadna-primary transition-colors">{{ getDocumentTypeIcon(document) }}</span>
@@ -317,7 +317,7 @@
     </div>
 
     <!-- Preview & Action -->
-    <div class="rounded-3xl border border-slate-200/50 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl flex flex-col">
+    <div id="document-preview-panel" class="rounded-3xl border border-slate-200/50 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-[1.1rem] bg-zadna-primary/10 text-zadna-primary shadow-sm">

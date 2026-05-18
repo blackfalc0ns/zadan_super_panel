@@ -167,6 +167,8 @@
     "NOTIFICATIONS": "Notifications",
     "REVIEWS": "Reviews",
     "ADMIN_USERS": "Access Directory",
+    "SYSTEM_LOGS": "System Logs",
+    "LIVE_OPS": "Live Ops",
     "EMAIL_CENTER": "Email Center",
     "SETTINGS": "Settings",
     "BRANDS": "Brands",
@@ -198,6 +200,83 @@
     "REALM_VALUE": "Headquarters â€¢ Global Ops",
     "USER_ROLE_ID": "Engineer â€¢ ID: 892",
     "LIVE_OPS": "Live Ops"
+  },
+  "HEADER_SEARCH": {
+    "TITLE": "Command Search",
+    "PLACEHOLDER": "Search orders, customers, vendors, products, or admins...",
+    "MIN_QUERY": "Type at least {{count}} characters to start searching.",
+    "SEARCHING": "Searching across the admin dashboard...",
+    "NO_RESULTS": "No matching results were found.",
+    "GROUPS": {
+      "NAVIGATION": "Pages",
+      "ORDERS": "Orders",
+      "CUSTOMERS": "Customers",
+      "VENDORS": "Vendors",
+      "PRODUCTS": "Products",
+      "ADMIN_USERS": "Admin Users"
+    }
+  },
+  "LIVE_OPS_PAGE": {
+    "TITLE": "Live Operations",
+    "SUBTITLE": "A detailed operational command room for queues, alerts, and action-required signals across the admin dashboard.",
+    "BREADCRUMB": "Live Operations",
+    "LOADING": "Loading live operations room...",
+    "ACTIONS": {
+      "REFRESH": "Refresh now"
+    },
+    "STATUS": {
+      "LIVE": "Auto refresh active",
+      "REFRESHING": "Refreshing now",
+      "AUTO_REFRESHING": "Auto refreshing",
+      "ERROR": "Refresh needs attention"
+    },
+    "SYSTEM_MODE": {
+      "LIVE": "Live",
+      "SNAPSHOT": "Snapshot"
+    },
+    "HERO": {
+      "BADGE": "Command Room",
+      "TITLE": "Live operational supervision across the marketplace",
+      "DESCRIPTION": "Track queues, critical signals, and action-required cases from one focused operating room without jumping between modules.",
+      "SIGNALS": "{{count}} active signals",
+      "METRICS": {
+        "SYSTEM_MODE": "System mode",
+        "CRITICAL_ALERTS": "Critical alerts",
+        "RISK_LOAD": "Risk queues",
+        "LIVE_LOAD": "Live queues"
+      }
+    },
+    "CRITICAL": {
+      "BADGE": "Critical signals",
+      "TITLE": "Alerts that need immediate visibility"
+    },
+    "ATTENTION": {
+      "BADGE": "Needs action",
+      "TITLE": "Cases that require follow-up now"
+    },
+    "LIVE": {
+      "BADGE": "Live queues",
+      "TITLE": "Operational queues in motion"
+    },
+    "RISK": {
+      "BADGE": "Risk queues",
+      "TITLE": "Backlogs and pressure points"
+    },
+    "SECTIONS": {
+      "BADGE": "Operational domains",
+      "TITLE": "Sections under watch"
+    },
+    "EMPTY": {
+      "CRITICAL": "No critical alerts are open right now.",
+      "ATTENTION": "No action-required cases are waiting right now.",
+      "LIVE": "No live queue pressure at the moment.",
+      "RISK": "No risk queues are currently active.",
+      "SECTIONS": "No highlighted sections are available right now."
+    },
+    "ERROR": {
+      "TITLE": "Unable to load the command room",
+      "SUBTITLE": "The latest operational snapshot could not be loaded right now. Try refreshing again."
+    }
   },
   "VENDORS": {
     "TITLE": "Vendors",
@@ -2752,6 +2831,9 @@
     "ACTIVE_FILTERS": "Active filters",
     "HAS_BRAND": "Has Brand",
     "ACTIVE_BRAND": "Brand Is Active",
+    "PACKAGE_TYPE": "Package type",
+    "MEASUREMENT_UNIT": "Measurement unit",
+    "SIZE_VALUE": "Size / quantity value",
     "SORT": "Sort",
     "SORT_NEWEST_UPDATED": "Newest Updated",
     "SORT_NEWEST_CREATED": "Newest Created",
@@ -5651,6 +5733,109 @@
       }
     }
   },
+  "SYSTEM_LOGS": {
+    "TITLE": "System Logs",
+    "SUBTITLE": "A unified operational ledger for critical actions across the API, apps, and admin panels.",
+    "FILTERS": {
+      "SEARCH": "Search",
+      "SEARCH_PLACEHOLDER": "Search actor, path, entity, or summary...",
+      "SOURCE": "Source",
+      "MODULE": "Module",
+      "STATUS": "Status",
+      "ALL": "All",
+      "FILTER_TITLE": "Filter Logs",
+      "FILTER_SUBTITLE": "Adjust criteria"
+    },
+    "ACTIONS": {
+      "APPLY": "Apply",
+      "RESET": "Reset",
+      "REFRESH": "Refresh now",
+      "EXPORT_CSV": "Export CSV",
+      "EXPORTING": "Exporting..."
+    },
+    "CARDS": {
+      "TOTAL": "Total logs",
+      "PAGE": "Current page",
+      "LAST_REFRESH": "Last refresh"
+    },
+    "TABLE": {
+      "KICKER": "Operational stream",
+      "TITLE": "Latest system activity",
+      "TIMESTAMP": "Timestamp",
+      "METHOD": "Method",
+      "SUMMARY": "Summary",
+      "STATUS_CODE": "Code"
+    },
+    "STATUS": {
+      "SUCCESS": "Success",
+      "FAILED": "Failed"
+    },
+    "STATES": {
+      "LOADING": "Loading system logs...",
+      "EMPTY": "No system logs matched the current filters.",
+      "ERROR": "Unable to load system logs right now."
+    },
+    "FIELDS": {
+      "ACTOR": "Actor",
+      "TARGET": "Target",
+      "NETWORK": "Network",
+      "ROLE": "Role",
+      "REQUEST_PAYLOAD": "Request payload",
+      "METADATA": "Metadata",
+      "SYSTEM": "System",
+      "NOT_AVAILABLE": "Not available"
+    },
+    "PAGINATION": {
+      "SUMMARY": "Page {{current}} of {{total}} ? {{count}} total logs",
+      "PREVIOUS": "Previous",
+      "NEXT": "Next"
+    },
+    "SOURCES": {
+      "SUPER_ADMIN_PANEL": "Super Admin Panel",
+      "VENDOR_PANEL": "Vendor Panel",
+      "CUSTOMER_APP": "Customer App",
+      "DRIVER_APP": "Driver App",
+      "PUBLIC_API": "Public API"
+    },
+    "MODULES": {
+      "IDENTITY": "Identity",
+      "VENDORS": "Vendors",
+      "CATALOG": "Catalog",
+      "ORDERS": "Orders",
+      "CUSTOMERS": "Customers",
+      "DRIVERS": "Drivers",
+      "MARKETING": "Marketing",
+      "NOTIFICATIONS": "Notifications",
+      "FINANCES": "Finances",
+      "WALLETS": "Wallets",
+      "DISPUTES": "Disputes",
+      "SYSTEM": "System",
+      "USER": "User",
+      "ORDER": "Order",
+      "VENDOR": "Vendor",
+      "CUSTOMER": "Customer",
+      "DRIVER": "Driver",
+      "CATALOG_ITEM": "Catalog Item",
+      "MARKETING_ASSET": "Marketing Asset",
+      "NOTIFICATION": "Notification"
+    },
+    "ROLES": {
+      "SUPERADMIN": "Super Admin",
+      "ADMIN": "Admin",
+      "VENDOR": "Vendor",
+      "VENDORSTAFF": "Vendor Staff",
+      "DRIVER": "Driver",
+      "CUSTOMER": "Customer"
+    },
+    "LIVE": {
+      "LABEL": "Auto-refresh",
+      "ON": "Live",
+      "OFF": "Paused",
+      "STATUS_ACTIVE": "Live stream active",
+      "STATUS_PAUSED": "Auto-refresh paused",
+      "NEW_ENTRIES": "{{count}} new"
+    }
+  },
   "EMAIL_CENTER": {
     "TITLE": "Email Center",
     "DESC": "Configure sender profiles, persona-based routing, recipient builders, and bilingual workflow previews.",
@@ -6423,6 +6608,79 @@
         "URGENT": "Urgent",
         "OFF": "Muted"
       }
+    }
+  },
+  "ADMIN_PROFILE": {
+    "TITLE": "My profile",
+    "SUBTITLE": "Manage your account details, access summary, and password from one place.",
+    "BREADCRUMB": "Profile",
+    "LOADING": "Loading your profile...",
+    "BADGE": "Admin account",
+    "ACTIONS": {
+      "SAVE": "Save changes"
+    },
+    "STATUS": {
+      "ACTIVE": "Account active",
+      "ACTION_REQUIRED": "Action required"
+    },
+    "STATS": {
+      "SCOPE": "Active scope",
+      "PASSWORD": "Password state"
+    },
+    "PERSONAL": {
+      "BADGE": "Identity",
+      "TITLE": "Personal information",
+      "SUBTITLE": "Keep your contact details up to date for secure account recovery and operations."
+    },
+    "FIELDS": {
+      "FULL_NAME": "Full name",
+      "EMAIL": "Email address",
+      "PHONE": "Phone number"
+    },
+    "ERRORS": {
+      "FULL_NAME": "Enter your full name.",
+      "EMAIL": "Enter a valid email address.",
+      "PHONE": "Enter a valid phone number."
+    },
+    "ACCESS": {
+      "BADGE": "Access",
+      "TITLE": "Access summary",
+      "SUBTITLE": "A concise view of your active role and current permissions.",
+      "ROLE": "Current role",
+      "ACTIVE_SCOPE": "Current scope",
+      "PERMISSIONS": "Effective permissions",
+      "GLOBAL_SCOPE": "Global admin scope",
+      "FULL_ACCESS": "Full platform access",
+      "PERMISSION_COUNT": "{{count}} permissions"
+    },
+    "SECURITY": {
+      "BADGE": "Security",
+      "TITLE": "Password and account security",
+      "SUBTITLE": "Update your password regularly and review your access state.",
+      "STATUS": "Security status",
+      "TEMPORARY": "Temporary password",
+      "UPDATED": "Password updated",
+      "MUST_CHANGE_PASSWORD": "This account still uses a temporary password. Update it before continuing to other workspaces.",
+      "CURRENT_PASSWORD": "Current password",
+      "NEW_PASSWORD": "New password",
+      "CONFIRM_PASSWORD": "Confirm password",
+      "CHANGE_PASSWORD": "Change password",
+      "SAVING_PASSWORD": "Saving...",
+      "PASSWORD_HINT": "Use at least 8 characters and avoid reusing weak passwords.",
+      "ACCESS_VERSION": "Permission version",
+      "GUIDANCE": "Security guidance",
+      "GUIDANCE_TEXT": "Keep your password unique, rotate it when team responsibilities change, and report unexpected access immediately."
+    },
+    "FALLBACKS": {
+      "NO_EMAIL": "No email on file",
+      "NOT_AVAILABLE": "Not available"
+    },
+    "MESSAGES": {
+      "PROFILE_UPDATED": "Profile updated successfully.",
+      "PROFILE_UPDATE_FAILED": "Could not save profile changes.",
+      "PASSWORD_MISMATCH": "New password and confirmation do not match.",
+      "PASSWORD_UPDATED": "Password changed successfully.",
+      "PASSWORD_UPDATE_FAILED": "Could not change password. Check the current password and try again."
     }
   }
 }

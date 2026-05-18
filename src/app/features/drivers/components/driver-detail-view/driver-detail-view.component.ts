@@ -121,6 +121,7 @@ export class DriverDetailViewComponent {
   }
 
   onTabChange(tabId: string) {
+    this.currentTab = tabId as DriverLifecycleTabId;
     this.tabChange.emit(tabId as DriverLifecycleTabId);
   }
 

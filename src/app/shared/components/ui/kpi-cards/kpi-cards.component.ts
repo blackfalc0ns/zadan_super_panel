@@ -22,7 +22,9 @@ export interface KPICard {
   standalone: true,
   imports: [CommonModule, TranslateModule],
   template: `
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 animate-in fade-in slide-in-from-top-5 duration-700">
+    <div
+      class="grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-5 duration-700 md:grid-cols-3"
+      [ngClass]="gridColumnClass">
       <div *ngFor="let card of cards"
            class="bg-white border border-slate-100 rounded-[1.3rem] px-4 py-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:shadow-slate-200/40 hover:-translate-y-0.5 shadow-sm"
            [class.border-r-4]="card.id === 'high-risk'"
@@ -71,6 +73,12 @@ export class KpiCardsComponent {
   @Output() cardClick = new EventEmitter<KPICard>();
 
   constructor(private readonly sanitizer: DomSanitizer) {}
+
+  get gridColumnClass(): string {
+    return this.cards.length > 5
+      ? 'lg:grid-cols-3 xl:grid-cols-6'
+      : 'lg:grid-cols-5';
+  }
 
   getSafeIcon(icon: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(icon);

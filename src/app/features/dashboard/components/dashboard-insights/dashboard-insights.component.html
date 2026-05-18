@@ -1,5 +1,5 @@
-<section class="grid grid-cols-1 lg:grid-cols-3 gap-3">
-  <article *ngFor="let insight of panels" class="bg-white rounded-xl border border-slate-100 p-4 flex items-start gap-3 hover:shadow-sm transition-shadow">
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-5 2xl:gap-6">
+  <article *ngFor="let insight of panels" class="bg-white rounded-2xl border border-slate-200/70 p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
     <div class="flex items-center justify-center w-9 h-9 rounded-lg shrink-0" [ngClass]="insight.iconClass">
       <span class="material-symbols-outlined text-[16px]">{{ insight.icon }}</span>
     </div>

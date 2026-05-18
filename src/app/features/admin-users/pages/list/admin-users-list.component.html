@@ -203,12 +203,18 @@
         </div>
 
         <!-- 6. Loading state -->
-        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40">
-            <div class="relative w-20 h-20">
-                <div class="absolute inset-0 rounded-full border-[5px] border-zadna-primary/10"></div>
-                <div class="absolute inset-0 rounded-full border-[5px] border-t-zadna-primary animate-spin"></div>
+        <div *ngIf="isLoading" class="admin-skeleton-table" style="--skeleton-columns: 6">
+            <div class="admin-skeleton-table-header">
+                <span *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton admin-skeleton-line sm"></span>
             </div>
-            <p class="mt-6 text-sm font-black text-slate-400 animate-pulse">{{ 'ADMIN_USERS.TITLE' | translate }}...</p>
+            <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
+                <span class="admin-skeleton admin-skeleton-avatar"></span>
+                <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+                <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+                <span class="admin-skeleton admin-skeleton-chip"></span>
+                <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
+                <span class="admin-skeleton admin-skeleton-chip"></span>
+            </div>
         </div>
     </div>
 

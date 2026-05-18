@@ -58,7 +58,7 @@ import { forkJoin } from 'rxjs';
             (click)="loadData()"
             [disabled]="loading"
             class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
-            <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
+            <span class="material-symbols-outlined text-[18px]" [class.opacity-40]="loading">refresh</span>
             {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
 

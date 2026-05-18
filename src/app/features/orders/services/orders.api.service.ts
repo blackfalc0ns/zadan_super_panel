@@ -93,6 +93,11 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
     total: number;
     icon: string;
     sku: string;
+    imageUrl?: string | null;
+    variantDisplaySize?: string | null;
+    packageTypeName?: string | null;
+    measurementValue?: number | null;
+    measurementUnitName?: string | null;
   }>;
   timeline: OrderTimelineItem[];
   activities: OrderActivity[];
@@ -315,7 +320,14 @@ export class OrdersService {
       subtotal: item.subtotal,
       deliveryFee: item.deliveryFee,
       tax: item.tax,
-      items: item.items,
+      items: item.items.map((orderItem) => ({
+        ...orderItem,
+        imageUrl: orderItem.imageUrl ?? undefined,
+        variantDisplaySize: orderItem.variantDisplaySize ?? undefined,
+        packageTypeName: orderItem.packageTypeName ?? undefined,
+        measurementValue: orderItem.measurementValue ?? undefined,
+        measurementUnitName: orderItem.measurementUnitName ?? undefined
+      })),
       timeline: item.timeline,
       activities: item.activities,
       driverCandidates: item.driverCandidates,

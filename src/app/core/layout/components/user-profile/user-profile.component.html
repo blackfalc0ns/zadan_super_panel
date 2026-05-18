@@ -1,7 +1,8 @@
 <!-- High-End Profile Module -->
 <div class="p-4 stagger-7">
     <div
-        class="p-4 bg-white shadow-2xl shadow-zadna-bgDark/5 rounded-[1.5rem] border border-zadna-bgLight relative group/profile overflow-hidden">
+        routerLink="/profile"
+        class="p-4 bg-white shadow-2xl shadow-zadna-bgDark/5 rounded-[1.5rem] border border-zadna-bgLight relative group/profile overflow-hidden cursor-pointer transition-transform duration-300 hover:-translate-y-0.5">
         <div
             class="absolute inset-0 bg-gradient-to-br from-zadna-primary/5 to-zadna-accent/5 opacity-0 group-hover/profile:opacity-100 transition-opacity duration-500">
         </div>
@@ -27,7 +28,7 @@
         </div>
 
         <div class="flex gap-2 relative z-10">
-            <button (click)="onLogout()"
+            <button type="button" (click)="$event.stopPropagation(); onLogout()"
                 class="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-50 text-red-500 rounded-xl text-[9px] font-black hover:bg-red-500 hover:text-white transition-all active:scale-95 group/logout">
                 <svg class="w-3.5 h-3.5 group-hover/logout:-translate-x-1 ltr:group-hover/logout:-translate-x-1 rtl:group-hover/logout:translate-x-1 rtl:rotate-180 transition-transform"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,6 +38,8 @@
                 {{ 'SIDEBAR.LOGOUT' | translate }}
             </button>
             <button
+                type="button"
+                (click)="$event.stopPropagation()"
                 class="w-14 flex items-center justify-center bg-zadna-bgLight/80 text-zadna-bgDark/40 rounded-2xl hover:bg-zadna-bgDark hover:text-white transition-all active:scale-95">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

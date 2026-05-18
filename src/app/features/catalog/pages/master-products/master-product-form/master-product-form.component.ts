@@ -13,6 +13,7 @@ import { AppBadgeComponent } from '../../../../../shared/components/ui/badge/bad
 import { DetailHeaderComponent } from '../../../../../shared/components/ui/detail-header/detail-header.component';
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
+import { VariantCardComponent } from './components/variant-card/variant-card.component';
 import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
 
 @Component({
@@ -30,7 +31,8 @@ import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/cat
     AppBadgeComponent,
     DetailHeaderComponent,
     SectionHeaderComponent,
-    StatusPillComponent
+    StatusPillComponent,
+    VariantCardComponent
   ],
 
   templateUrl: './master-product-form.component.html',
@@ -39,6 +41,7 @@ import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/cat
 export class MasterProductFormComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
   isLoading = false;
+  isInitialFormLoading = false;
   isUploading = false;
   hasSubmitted = false;
   activeLang = 'ar';
@@ -50,7 +53,10 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   linkedVariantSource: MasterProduct | null = null;
   variantGroupSeedId: string | null = null;
   breadcrumbs: { label: string; action?: () => void }[] = [];
+  deletingVariantIndexes = new Set<number>();
   private langSub?: Subscription;
+  private shouldGateInitialForm = false;
+  private pendingInitialFormLoads = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -68,6 +74,11 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    const variantFrom = this.route.snapshot.queryParamMap.get('variantFrom');
+
+    this.shouldGateInitialForm = !!id || !!variantFrom;
+    this.isInitialFormLoading = this.shouldGateInitialForm;
     this.setupBreadcrumbs();
     this.loadCategories();
     this.loadBrands();
@@ -75,7 +86,6 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.watchCategoryChanges();
 
     // Check for id in route params for editing
-    const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadProduct(id);
     }
@@ -86,7 +96,6 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       this.productForm.patchValue({ categoryId: catId });
     }
 
-    const variantFrom = this.route.snapshot.queryParamMap.get('variantFrom');
     if (variantFrom && !id) {
       this.loadVariantSource(variantFrom);
     }
@@ -196,34 +205,41 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   loadProduct(id: string): void {
+    this.beginInitialFormLoad();
     this.isLoading = true;
     this.catalogService.getProductById(id).subscribe({
-      next: (product) => {
-        this.productForm.patchValue({
-          id: product.id,
-          nameAr: product.nameAr || '',
-          nameEn: product.nameEn || '',
-          slug: product.slug || '',
-          descriptionAr: product.descriptionAr || '',
-          descriptionEn: product.descriptionEn || '',
-          barcode: product.barcode || '',
-          categoryId: product.categoryId,
-          brandId: product.brandId,
-          unitId: product.unitOfMeasureId,
-          packageTypeId: product.packageTypeId || null,
-          measurementValue: product.measurementValue ?? null,
-          measurementUnitId: product.measurementUnitId || product.unitOfMeasureId || null,
-          variantGroupId: product.variantGroupId || null,
-          status: product.status,
-          primaryImageUrl: product.images?.find((img: any) => img.isPrimary)?.url
-        });
-        this.variantGroupSeedId = product.variantGroupId || product.id || null;
-        this.filterBrandsByCategory(product.categoryId);
-        this.isLoading = false;
+      next: async (product) => {
+        try {
+          this.productForm.patchValue({
+            id: product.id,
+            nameAr: product.nameAr || '',
+            nameEn: product.nameEn || '',
+            slug: product.slug || '',
+            descriptionAr: product.descriptionAr || '',
+            descriptionEn: product.descriptionEn || '',
+            barcode: product.barcode || '',
+            categoryId: product.categoryId,
+            brandId: product.brandId,
+            unitId: product.unitOfMeasureId,
+            packageTypeId: product.packageTypeId || null,
+            measurementValue: product.measurementValue ?? null,
+            measurementUnitId: product.measurementUnitId || product.unitOfMeasureId || null,
+            variantGroupId: product.variantGroupId || null,
+            status: product.status,
+            primaryImageUrl: product.images?.find((img: any) => img.isPrimary)?.url
+          });
+          this.variantGroupSeedId = product.variantGroupId || product.id || null;
+          this.filterBrandsByCategory(product.categoryId);
+          await this.loadExistingVariants(product);
+        } finally {
+          this.isLoading = false;
+          this.completeInitialFormLoad();
+        }
       },
       error: (err) => {
         console.error('Failed to load product', err);
         this.isLoading = false;
+        this.completeInitialFormLoad();
       }
     });
   }
@@ -245,11 +261,41 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  onAdditionalVariantFileSelected(index: number, event: any): void {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const group = this.additionalVariants.at(index) as FormGroup | null;
+    if (!group) {
+      return;
+    }
+
+    this.isUploading = true;
+    this.catalogService.uploadFile(file, 'products').subscribe({
+      next: (res) => {
+        group.patchValue({ imageUrl: res.url });
+        this.isUploading = false;
+      },
+      error: (err) => {
+        console.error('Variant upload failed', err);
+        this.isUploading = false;
+      }
+    });
+  }
+
   removeImage(): void {
     this.productForm.patchValue({ primaryImageUrl: null });
   }
 
+  removeAdditionalVariantImage(index: number): void {
+    const group = this.additionalVariants.at(index) as FormGroup | null;
+    group?.patchValue({ imageUrl: null });
+  }
+
   loadCategories(): void {
+    this.beginInitialFormLoad();
     this.catalogService.getCategories(undefined, true).subscribe({
       next: (cats) => {
         this.allFlatCategories = this.flattenAllCategories(cats);
@@ -260,11 +306,13 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         if (catId && this.availableCategories.some(c => c.id === catId)) {
           this.productForm.patchValue({ categoryId: catId });
         }
+        this.completeInitialFormLoad();
       },
       error: (err) => {
         console.error('Failed to load categories', err);
         this.availableCategories = [];
         this.allFlatCategories = [];
+        this.completeInitialFormLoad();
       }
     });
   }
@@ -297,15 +345,18 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   loadBrands(): void {
+    this.beginInitialFormLoad();
     this.catalogService.getBrands(true, false).subscribe({
       next: (brands) => {
         this.allBrands = brands ?? [];
         this.filterBrandsByCategory(this.productForm.get('categoryId')?.value || null);
+        this.completeInitialFormLoad();
       },
       error: (err) => {
         console.error('Failed to load brands', err);
         this.allBrands = [];
         this.availableBrands = [];
+        this.completeInitialFormLoad();
       }
     });
   }
@@ -379,9 +430,16 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   loadUnits(): void {
+    this.beginInitialFormLoad();
     this.catalogService.getUnits().subscribe({
-      next: (units) => this.availableUnits = units,
-      error: () => this.availableUnits = [] // Ignore if endpoint not yet deployed
+      next: (units) => {
+        this.availableUnits = units;
+        this.completeInitialFormLoad();
+      },
+      error: () => {
+        this.availableUnits = []; // Ignore if endpoint not yet deployed
+        this.completeInitialFormLoad();
+      }
     });
   }
 
@@ -556,6 +614,21 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     return this.additionalVariants.length > 0;
   }
 
+  /** FormGroup representing the primary variant (the main product itself) for use in variant-card */
+  get primaryVariantGroup(): FormGroup {
+    return this.productForm as FormGroup;
+  }
+
+  /** Handles image upload for the primary variant card */
+  onPrimaryVariantImageUpload(event: Event): void {
+    this.onFileSelected(event);
+  }
+
+  /** Handles image removal for the primary variant card */
+  onPrimaryVariantImageRemove(): void {
+    this.removeImage();
+  }
+
   private hasControlValue(fieldName: string): boolean {
     const value = this.productForm.get(fieldName)?.value;
     return value !== undefined && value !== null && String(value).trim().length > 0;
@@ -653,6 +726,43 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.additionalVariants.removeAt(index);
   }
 
+  handleVariantRemove(index: number): void {
+    const group = this.additionalVariants.at(index) as FormGroup | null;
+    const variantId = group?.get('id')?.value;
+
+    if (!variantId) {
+      this.removeAdditionalVariant(index);
+      return;
+    }
+
+    const confirmed = window.confirm(
+      this.activeLang === 'ar'
+        ? 'هل تريد حذف هذا الحجم نهائيا؟'
+        : 'Do you want to permanently delete this size?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingVariantIndexes.add(index);
+    this.catalogService.deleteProduct(variantId).subscribe({
+      next: () => {
+        this.deletingVariantIndexes.delete(index);
+        this.removeAdditionalVariant(index);
+      },
+      error: (err) => {
+        console.error('Failed to delete variant', err);
+        this.deletingVariantIndexes.delete(index);
+        window.alert(
+          this.activeLang === 'ar'
+            ? 'تعذر حذف هذا الحجم حاليا.'
+            : 'Unable to delete this size right now.'
+        );
+      }
+    });
+  }
+
   getAdditionalVariantDisplayPreview(index: number): string {
     const group = this.additionalVariants.at(index) as FormGroup | null;
     if (!group) {
@@ -668,11 +778,13 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
 
   private createAdditionalVariantGroup(): FormGroup {
     return this.fb.group({
+      id: [null],
       packageTypeId: [this.productForm.get('packageTypeId')?.value || null],
       measurementValue: [null],
       measurementUnitId: [this.productForm.get('measurementUnitId')?.value || null],
       barcode: [''],
-      slug: ['']
+      slug: [''],
+      imageUrl: [null]
     });
   }
 
@@ -742,6 +854,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     );
 
     return {
+      id: variant.id || undefined,
       nameAr: formValue.nameAr,
       nameEn: formValue.nameEn,
       slug: generatedSlug,
@@ -756,7 +869,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       measurementUnitId: variant.measurementUnitId || null,
       variantGroupId,
       status: formValue.status,
-      images: formValue.primaryImageUrl ? [{ url: formValue.primaryImageUrl, isPrimary: true, displayOrder: 1 }] : []
+      images: variant.imageUrl ? [{ url: variant.imageUrl, isPrimary: true, displayOrder: 1 }] : []
     };
   }
 
@@ -849,7 +962,11 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         }
 
         const additionalPayload = this.buildAdditionalVariantPayload(formValue, additionalVariant, variantGroupId, index);
-        await firstValueFrom(this.catalogService.createProduct(additionalPayload));
+        if (additionalVariant.id) {
+          await firstValueFrom(this.catalogService.updateProduct(additionalVariant.id, additionalPayload));
+        } else {
+          await firstValueFrom(this.catalogService.createProduct(additionalPayload));
+        }
       }
 
       this.isLoading = false;
@@ -864,38 +981,95 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   private loadVariantSource(productId: string): void {
+    this.beginInitialFormLoad();
     this.isLoading = true;
     this.catalogService.getProductById(productId).subscribe({
       next: (product) => {
-        this.linkedVariantSource = product;
-        this.variantGroupSeedId = product.variantGroupId || product.id || null;
-        this.productForm.patchValue({
-          nameAr: product.nameAr || '',
-          nameEn: product.nameEn || '',
-          slug: '',
-          descriptionAr: product.descriptionAr || '',
-          descriptionEn: product.descriptionEn || '',
-          barcode: '',
-          categoryId: product.categoryId,
-          brandId: product.brandId || null,
-          packageTypeId: product.packageTypeId || null,
-          measurementValue: null,
-          measurementUnitId: product.measurementUnitId || product.unitOfMeasureId || null,
-          unitId: product.measurementUnitId || product.unitOfMeasureId || null,
-          variantGroupId: this.variantGroupSeedId,
-          primaryImageUrl: product.images?.find((img: any) => img.isPrimary)?.url || null,
-          status: 'Draft'
-        });
-        this.productForm.get('slug')?.markAsPristine();
-        this.generateSlug(true);
-        this.ensurePrimaryBarcode();
-        this.filterBrandsByCategory(product.categoryId);
-        this.isLoading = false;
+        try {
+          this.linkedVariantSource = product;
+          this.variantGroupSeedId = product.variantGroupId || product.id || null;
+          this.productForm.patchValue({
+            nameAr: product.nameAr || '',
+            nameEn: product.nameEn || '',
+            slug: '',
+            descriptionAr: product.descriptionAr || '',
+            descriptionEn: product.descriptionEn || '',
+            barcode: '',
+            categoryId: product.categoryId,
+            brandId: product.brandId || null,
+            packageTypeId: product.packageTypeId || null,
+            measurementValue: null,
+            measurementUnitId: product.measurementUnitId || product.unitOfMeasureId || null,
+            unitId: product.measurementUnitId || product.unitOfMeasureId || null,
+            variantGroupId: this.variantGroupSeedId,
+            primaryImageUrl: product.images?.find((img: any) => img.isPrimary)?.url || null,
+            status: 'Draft'
+          });
+          this.productForm.get('slug')?.markAsPristine();
+          this.generateSlug(true);
+          this.ensurePrimaryBarcode();
+          this.filterBrandsByCategory(product.categoryId);
+        } finally {
+          this.isLoading = false;
+          this.completeInitialFormLoad();
+        }
       },
       error: (err) => {
         console.error('Failed to load variant source product', err);
         this.isLoading = false;
+        this.completeInitialFormLoad();
       }
+    });
+  }
+
+  private beginInitialFormLoad(): void {
+    if (!this.shouldGateInitialForm) {
+      return;
+    }
+
+    this.pendingInitialFormLoads += 1;
+    this.isInitialFormLoading = true;
+  }
+
+  private completeInitialFormLoad(): void {
+    if (!this.shouldGateInitialForm) {
+      return;
+    }
+
+    this.pendingInitialFormLoads = Math.max(0, this.pendingInitialFormLoads - 1);
+    this.isInitialFormLoading = this.pendingInitialFormLoads > 0;
+  }
+
+  private async loadExistingVariants(product: MasterProduct): Promise<void> {
+    this.additionalVariants.clear();
+
+    const variantsToLoad = (product.variants ?? []).filter((variant) => variant.id && variant.id !== product.id);
+    if (variantsToLoad.length === 0) {
+      return;
+    }
+
+    try {
+      const variantProducts = await Promise.all(
+        variantsToLoad.map((variant) => firstValueFrom(this.catalogService.getProductById(variant.id)))
+      );
+
+      for (const variantProduct of variantProducts) {
+        this.additionalVariants.push(this.createAdditionalVariantGroupFromProduct(variantProduct));
+      }
+    } catch (err) {
+      console.error('Failed to load existing variants', err);
+    }
+  }
+
+  private createAdditionalVariantGroupFromProduct(product: MasterProduct): FormGroup {
+    return this.fb.group({
+      id: [product.id],
+      packageTypeId: [product.packageTypeId || null],
+      measurementValue: [product.measurementValue ?? null],
+      measurementUnitId: [product.measurementUnitId || product.unitOfMeasureId || null],
+      barcode: [product.barcode || ''],
+      slug: [product.slug || ''],
+      imageUrl: [product.images?.find((img: any) => img.isPrimary)?.url || null]
     });
   }
 }

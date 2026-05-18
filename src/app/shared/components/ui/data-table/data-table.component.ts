@@ -65,16 +65,25 @@ export interface BulkAction {
 
     <!-- Desktop Table Content -->
     <div [class]="'hidden md:block w-full overflow-x-auto relative ' + containerClass">
-      
-      <!-- Loading Overlay -->
-      <div *ngIf="isLoading" class="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in duration-300">
-         <div class="flex flex-col items-center gap-3">
-            <div class="h-10 w-10 border-4 border-slate-100 border-t-zadna-primary rounded-full animate-spin"></div>
-            <span class="text-[0.8rem] font-black text-slate-400 uppercase tracking-widest">{{ 'COMMON.LOADING' | translate }}</span>
-         </div>
+
+      <div
+        *ngIf="isLoading"
+        class="admin-skeleton-table animate-in fade-in duration-300"
+        [style.--skeleton-columns]="skeletonColumnCount">
+        <div class="admin-skeleton-table-header">
+          <span *ngFor="let col of skeletonColumnsArray" class="admin-skeleton admin-skeleton-line sm"></span>
+        </div>
+        <div *ngFor="let row of skeletonRowsArray" class="admin-skeleton-table-row">
+          <span *ngIf="selectable" class="admin-skeleton admin-skeleton-line sm !w-4"></span>
+          <span *ngFor="let col of columns; let i = index"
+                class="admin-skeleton admin-skeleton-line"
+                [class.lg]="i === 0"
+                [style.width.%]="getSkeletonLineWidth(i)">
+          </span>
+        </div>
       </div>
 
-      <table class="w-full border-separate border-spacing-y-0" style="min-width: 800px;">
+      <table *ngIf="!isLoading" class="w-full border-separate border-spacing-y-0" style="min-width: 800px;">
         <colgroup>
           <col *ngIf="selectable" [style.width]="selectionColumnWidth">
           <col *ngFor="let col of columns" [style.width]="getColumnWidth(col)">
@@ -172,18 +181,36 @@ export interface BulkAction {
 
     <!-- Mobile Cards -->
     <div class="md:hidden space-y-4 relative">
-      <!-- Loading Overlay (Mobile) -->
-      <div *ngIf="isLoading" class="absolute inset-0 z-20 bg-white/60 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in duration-300">
-         <div class="h-10 w-10 border-4 border-slate-100 border-t-zadna-primary rounded-full animate-spin"></div>
+      <div *ngIf="isLoading" class="space-y-3 animate-in fade-in duration-300">
+        <div *ngFor="let row of mobileSkeletonRowsArray" class="admin-skeleton-card">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex min-w-0 flex-1 items-center gap-3">
+              <span class="admin-skeleton admin-skeleton-avatar"></span>
+              <div class="min-w-0 flex-1 space-y-2">
+                <span class="admin-skeleton admin-skeleton-line lg w-3/4"></span>
+                <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+              </div>
+            </div>
+            <span class="admin-skeleton admin-skeleton-chip"></span>
+          </div>
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <span class="admin-skeleton admin-skeleton-line"></span>
+            <span class="admin-skeleton admin-skeleton-line"></span>
+            <span class="admin-skeleton admin-skeleton-line sm"></span>
+            <span class="admin-skeleton admin-skeleton-line sm"></span>
+          </div>
+        </div>
       </div>
 
-      <div *ngFor="let item of data" 
-           class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all"
-           [class.cursor-pointer]="clickableRows"
-           (click)="onRowClick(item)">
-        
-        <ng-container *ngTemplateOutlet="mobileCardTemplate; context: { $implicit: item }"></ng-container>
-      </div>
+      <ng-container *ngIf="!isLoading">
+        <div *ngFor="let item of data" 
+             class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all"
+             [class.cursor-pointer]="clickableRows"
+             (click)="onRowClick(item)">
+          
+          <ng-container *ngTemplateOutlet="mobileCardTemplate; context: { $implicit: item }"></ng-container>
+        </div>
+      </ng-container>
     </div>
 
     <!-- Empty State -->
@@ -234,6 +261,7 @@ export class DataTableComponent<T extends object = Record<string, unknown>> {
   @Input() emptyStateActionIcon = 'add';
   @Input() idField = 'id';
   @Input() isLoading = false;
+  @Input() skeletonRows = 6;
   @Input() containerClass = '';
 
   @Output() rowClick = new EventEmitter<T>();
@@ -248,6 +276,22 @@ export class DataTableComponent<T extends object = Record<string, unknown>> {
 
   selectedItems = new Set<unknown>();
   readonly selectionColumnWidth = '3.5rem';
+
+  get skeletonColumnCount(): number {
+    return Math.max(1, this.columns.length + (this.selectable ? 1 : 0));
+  }
+
+  get skeletonColumnsArray(): number[] {
+    return Array.from({ length: this.skeletonColumnCount }, (_, index) => index);
+  }
+
+  get skeletonRowsArray(): number[] {
+    return Array.from({ length: Math.max(1, this.skeletonRows) }, (_, index) => index);
+  }
+
+  get mobileSkeletonRowsArray(): number[] {
+    return Array.from({ length: Math.max(1, Math.min(this.skeletonRows, 5)) }, (_, index) => index);
+  }
 
   get allSelected(): boolean {
     return this.data.length > 0 && this.data.every((item) => this.selectedItems.has(this.getItemId(item)));
@@ -312,6 +356,11 @@ export class DataTableComponent<T extends object = Record<string, unknown>> {
 
   getColumnWidth(column: TableColumn): string | null {
     return column.width ?? null;
+  }
+
+  getSkeletonLineWidth(index: number): number {
+    const widths = [82, 58, 70, 48, 64, 52, 76, 44];
+    return widths[index % widths.length];
   }
 
   private getItemId(item: T): unknown {

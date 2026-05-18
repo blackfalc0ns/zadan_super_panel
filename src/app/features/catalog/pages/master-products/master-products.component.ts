@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
-import { Brand, CatalogSearchRequest, Category, MasterProduct, ProductSearchFilters } from '@catalog/models/catalog.domain.models';
+import { Brand, CatalogSearchRequest, CatalogUnit, Category, MasterProduct, ProductSearchFilters } from '@catalog/models/catalog.domain.models';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppBadgeComponent } from '../../../../shared/components/ui/badge/badge.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
@@ -83,11 +83,15 @@ export class MasterProductsComponent implements OnInit {
   categoryId: string | null = null;
   brandId: string | null = null;
   status: string | null = null;
+  packageTypeId: string | null = null;
+  measurementUnitId: string | null = null;
+  measurementValue: number | null = null;
   hasBrand: boolean | null = null;
   isActiveBrand: boolean | null = null;
   sortSelection = 'updatedAtUtc:desc';
   categories: Category[] = [];
   brands: Brand[] = [];
+  units: CatalogUnit[] = [];
   isFiltersExpanded = false;
   panelFilters: Record<string, string | null | undefined> = {};
   viewMode: 'table' | 'bento' = 'bento';
@@ -97,6 +101,9 @@ export class MasterProductsComponent implements OnInit {
     { key: 'categoryId', label: 'PRODUCTS.SUB_CATEGORY', type: 'select', color: '#127c8c', options: [] },
     { key: 'brandId', label: 'COMMON.BRAND', type: 'select', color: '#0f766e', options: [] },
     { key: 'status', label: 'PRODUCTS.STATUS', type: 'select', color: '#2563eb', options: [] },
+    { key: 'packageTypeId', label: 'MASTER_PRODUCTS.PACKAGE_TYPE', type: 'select', color: '#0d9488', options: [] },
+    { key: 'measurementUnitId', label: 'MASTER_PRODUCTS.MEASUREMENT_UNIT', type: 'select', color: '#0284c7', options: [] },
+    { key: 'measurementValue', label: 'MASTER_PRODUCTS.SIZE_VALUE', type: 'select', color: '#7c3aed', options: [] },
     { key: 'hasBrand', label: 'MASTER_PRODUCTS.HAS_BRAND', type: 'select', color: '#7c3aed', options: [] },
     { key: 'isActiveBrand', label: 'MASTER_PRODUCTS.ACTIVE_BRAND', type: 'select', color: '#db2777', options: [] },
     { key: 'sortSelection', label: 'MASTER_PRODUCTS.SORT', type: 'select', color: '#ea580c', options: [] }
@@ -129,12 +136,18 @@ export class MasterProductsComponent implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadBrands();
+    this.loadUnits();
     this.route.queryParams.subscribe(params => {
       this.categoryId = params['categoryId'] || null;
       this.brandId = params['brandId'] || null;
       this.status = params['status'] || null;
       this.searchTerm = params['search'] || '';
-      this.sortSelection = 'updatedAtUtc:desc';
+      this.packageTypeId = params['packageTypeId'] || null;
+      this.measurementUnitId = params['measurementUnitId'] || null;
+      this.measurementValue = this.toNullableNumber(params['measurementValue']);
+      this.hasBrand = this.toNullableBoolean(params['hasBrand']);
+      this.isActiveBrand = this.toNullableBoolean(params['isActiveBrand']);
+      this.sortSelection = params['sortSelection'] || 'updatedAtUtc:desc';
       this.syncPanelFilters();
       this.page = 1;
       this.loadProducts();
@@ -169,10 +182,27 @@ export class MasterProductsComponent implements OnInit {
     });
   }
 
+  loadUnits() {
+    this.catalogService.getUnits().subscribe({
+      next: (res) => {
+        this.units = Array.isArray(res) ? res : [];
+        this.initializeFilterOptions();
+      },
+      error: (err) => {
+        console.error('Failed to load units', err);
+        this.units = [];
+        this.initializeFilterOptions();
+      }
+    });
+  }
+
   initializeFilterOptions(): void {
     const categoryField = this.filterFields.find((field) => field.key === 'categoryId');
     const brandField = this.filterFields.find((field) => field.key === 'brandId');
     const statusField = this.filterFields.find((field) => field.key === 'status');
+    const packageTypeField = this.filterFields.find((field) => field.key === 'packageTypeId');
+    const measurementUnitField = this.filterFields.find((field) => field.key === 'measurementUnitId');
+    const measurementValueField = this.filterFields.find((field) => field.key === 'measurementValue');
 
     if (categoryField) {
       categoryField.options = this.getSelectableSubcategories().map((category) => ({
@@ -195,6 +225,44 @@ export class MasterProductsComponent implements OnInit {
         value: status,
         label: this.getProductStatusLabel(status)
       }));
+    }
+
+    if (packageTypeField) {
+      packageTypeField.options = this.units
+        .filter((unit) => unit.kind === 'Packaging')
+        .map((unit) => ({
+          value: unit.id,
+          label: this.translate.currentLang === 'ar'
+            ? (unit.nameAr || unit.nameEn || unit.id)
+            : (unit.nameEn || unit.nameAr || unit.id)
+        }));
+      packageTypeField.placeholder = 'MASTER_PRODUCTS.PACKAGE_TYPE';
+    }
+
+    if (measurementUnitField) {
+      measurementUnitField.options = this.units
+        .filter((unit) => unit.kind === 'Measurement')
+        .map((unit) => ({
+          value: unit.id,
+          label: this.translate.currentLang === 'ar'
+            ? (unit.nameAr || unit.nameEn || unit.id)
+            : (unit.nameEn || unit.nameAr || unit.id)
+        }));
+      measurementUnitField.placeholder = 'MASTER_PRODUCTS.MEASUREMENT_UNIT';
+    }
+
+    if (measurementValueField) {
+      const values = Array.from(new Set(
+        this.products
+          .map((product) => product.measurementValue)
+          .filter((value): value is number => typeof value === 'number')
+      )).sort((left, right) => left - right);
+
+      measurementValueField.options = values.map((value) => ({
+        value: String(value),
+        label: String(value)
+      }));
+      measurementValueField.placeholder = 'MASTER_PRODUCTS.SIZE_VALUE';
     }
 
     const hasBrandField = this.filterFields.find((field) => field.key === 'hasBrand');
@@ -235,6 +303,7 @@ export class MasterProductsComponent implements OnInit {
       next: (res) => {
         this.products = Array.isArray(res?.items) ? res.items : [];
         this.totalItems = typeof res?.totalCount === 'number' ? res.totalCount : this.products.length;
+        this.initializeFilterOptions();
         this.isLoading = false;
       },
       error: (err: any) => {
@@ -343,6 +412,9 @@ export class MasterProductsComponent implements OnInit {
       this.categoryId ||
       this.brandId ||
       this.status ||
+      this.packageTypeId ||
+      this.measurementUnitId ||
+      this.measurementValue != null ||
       this.hasBrand != null ||
       this.isActiveBrand != null
     );
@@ -356,6 +428,9 @@ export class MasterProductsComponent implements OnInit {
     this.categoryId = this.toNullableString(filters['categoryId']);
     this.brandId = this.toNullableString(filters['brandId']);
     this.status = this.toNullableString(filters['status']);
+    this.packageTypeId = this.toNullableString(filters['packageTypeId']);
+    this.measurementUnitId = this.toNullableString(filters['measurementUnitId']);
+    this.measurementValue = this.toNullableNumber(filters['measurementValue']);
     this.hasBrand = this.toNullableBoolean(filters['hasBrand']);
     this.isActiveBrand = this.toNullableBoolean(filters['isActiveBrand']);
     this.sortSelection = this.toNullableString(filters['sortSelection']) || 'updatedAtUtc:desc';
@@ -369,6 +444,9 @@ export class MasterProductsComponent implements OnInit {
     this.categoryId = null;
     this.brandId = null;
     this.status = null;
+    this.packageTypeId = null;
+    this.measurementUnitId = null;
+    this.measurementValue = null;
     this.hasBrand = null;
     this.isActiveBrand = null;
     this.sortSelection = 'updatedAtUtc:desc';
@@ -499,6 +577,9 @@ export class MasterProductsComponent implements OnInit {
       categoryId: this.categoryId,
       brandId: this.brandId,
       status: this.status,
+      packageTypeId: this.packageTypeId,
+      measurementUnitId: this.measurementUnitId,
+      measurementValue: this.measurementValue == null ? null : String(this.measurementValue),
       hasBrand: this.hasBrand == null ? null : String(this.hasBrand),
       isActiveBrand: this.isActiveBrand == null ? null : String(this.isActiveBrand),
       sortSelection: this.sortSelection
@@ -521,6 +602,19 @@ export class MasterProductsComponent implements OnInit {
     return null;
   }
 
+  private toNullableNumber(value: unknown): number | null {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === 'string' && value.trim().length > 0) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    return null;
+  }
+
   private buildProductSearchRequest(): CatalogSearchRequest<ProductSearchFilters> {
     const [field, direction] = this.sortSelection.split(':');
 
@@ -538,6 +632,9 @@ export class MasterProductsComponent implements OnInit {
         subcategoryIds: this.categoryId ? [this.categoryId] : undefined,
         brandIds: this.brandId ? [this.brandId] : undefined,
         statuses: this.status ? [this.status as MasterProduct['status']] : undefined,
+        packageTypeId: this.packageTypeId,
+        measurementUnitId: this.measurementUnitId,
+        measurementValue: this.measurementValue,
         hasBrand: this.hasBrand,
         isActiveBrand: this.isActiveBrand
       }

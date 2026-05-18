@@ -27,10 +27,19 @@ import { BulkMasterProductsModalComponent } from '../../components/bulk-master-p
 
       <div class="mx-auto flex w-full max-w-[120rem] flex-col overflow-x-hidden px-4 py-6 pb-8 md:px-8">
         @if (isLoading) {
-          <div class="flex min-h-[60vh] items-center justify-center rounded-[28px] border border-slate-200/70 bg-white">
-            <div class="flex flex-col items-center gap-4 text-slate-400">
-              <div class="h-14 w-14 animate-spin rounded-full border-4 border-zadna-primary/15 border-t-zadna-primary"></div>
-              <span class="text-sm font-black">{{ currentLang === 'ar' ? 'جارٍ تحميل البيانات...' : 'Loading data...' }}</span>
+          <div class="admin-skeleton-detail">
+            <div class="admin-skeleton-detail-hero">
+              <div class="space-y-3">
+                <span class="admin-skeleton admin-skeleton-line lg w-72"></span>
+                <span class="admin-skeleton admin-skeleton-line w-96 max-w-full"></span>
+              </div>
+              <span class="admin-skeleton admin-skeleton-chip"></span>
+            </div>
+            <div class="admin-skeleton-form mt-5">
+              <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-form-field">
+                <span class="admin-skeleton admin-skeleton-line sm w-1/3"></span>
+                <span class="admin-skeleton admin-skeleton-line lg"></span>
+              </div>
             </div>
           </div>
         } @else {

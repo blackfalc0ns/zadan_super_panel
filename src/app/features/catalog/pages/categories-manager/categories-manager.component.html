@@ -92,12 +92,17 @@
     </div>
 
     <section class="catalog-list-panel extraordinary-table-container">
-      <div *ngIf="isLoading" class="flex min-h-[24rem] flex-col items-center justify-center gap-4">
-        <div class="relative h-16 w-16">
-          <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
-          <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-zadna-primary animate-spin"></div>
+      <div *ngIf="isLoading" class="admin-skeleton-table" style="--skeleton-columns: 5">
+        <div class="admin-skeleton-table-header">
+          <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line sm"></span>
         </div>
-        <p class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{{ 'COMMON.LOADING' | translate }}</p>
+        <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
+          <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+          <span class="admin-skeleton admin-skeleton-chip"></span>
+          <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+          <span class="admin-skeleton admin-skeleton-chip"></span>
+          <span class="admin-skeleton admin-skeleton-chip"></span>
+        </div>
       </div>
 
       <ng-container *ngIf="!isLoading">

@@ -70,10 +70,23 @@
   </app-page-header>
 
   <div *ngIf="isLoading" class="px-4 md:px-10 py-10 max-w-[120rem] mx-auto w-full">
-    <div class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-10 text-center shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)]">
-      <div class="mx-auto mb-4 h-14 w-14 animate-spin rounded-full border-4 border-slate-200 border-t-zadna-primary"></div>
-      <h2 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.TITLE' | translate }}</h2>
-      <p class="mt-2 text-sm font-bold text-slate-400">{{ 'ADMIN_USERS.DETAIL.SUBTITLE' | translate }}</p>
+    <div class="admin-skeleton-detail">
+      <div class="admin-skeleton-detail-hero">
+        <div class="flex items-center gap-4">
+          <span class="admin-skeleton admin-skeleton-avatar"></span>
+          <div class="space-y-3">
+            <span class="admin-skeleton admin-skeleton-line lg w-64"></span>
+            <span class="admin-skeleton admin-skeleton-line w-80 max-w-full"></span>
+          </div>
+        </div>
+        <span class="admin-skeleton admin-skeleton-chip"></span>
+      </div>
+      <div class="admin-skeleton-detail-grid">
+        <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-card space-y-3">
+          <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+          <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -446,8 +459,12 @@
             <p class="text-[13px] font-bold text-slate-400 mt-1">Recent role, scope, status, and permission changes.</p>
           </div>
 
-          <div *ngIf="isAuditLoading" class="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-[13px] font-bold text-slate-500">
-            Loading audit...
+          <div *ngIf="isAuditLoading" class="admin-skeleton-table" style="--skeleton-columns: 3">
+            <div *ngFor="let item of [1,2,3]" class="admin-skeleton-table-row">
+              <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+              <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+              <span class="admin-skeleton admin-skeleton-chip"></span>
+            </div>
           </div>
 
           <div *ngIf="!isAuditLoading && auditLogs.length === 0" class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-[13px] font-bold text-slate-500">

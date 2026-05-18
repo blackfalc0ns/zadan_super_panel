@@ -64,6 +64,12 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Read initial tab from query params synchronously to avoid flash of default tab
+    const initialTab = this.route.snapshot.queryParamMap.get('tab') as DriverLifecycleTabId;
+    if (initialTab) {
+      this.activeTab = initialTab;
+    }
+
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
       this.driverId = params.get('id');
       if (this.driverId) {
@@ -116,10 +122,14 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
   setTab(tab: DriverLifecycleTabId): void {
     this.activeTab = tab;
+    // Update URL query param without blocking - use replaceUrl to avoid history entries
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    }).catch(() => {
+      // Navigation might fail silently - tab is already set above
     });
   }
 

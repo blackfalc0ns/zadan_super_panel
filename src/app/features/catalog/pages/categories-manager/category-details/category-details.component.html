@@ -6,15 +6,23 @@
   </app-detail-header>
 
   <div class="mx-auto w-full max-w-[118rem] px-4 sm:px-6 lg:px-8">
-    <div *ngIf="isLoading" class="flex min-h-[64vh] flex-col items-center justify-center gap-4">
-      <div class="relative h-16 w-16">
-        <div class="absolute inset-0 rounded-full border-4 border-white shadow-sm"></div>
-        <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-zadna-primary animate-spin">
+    <div *ngIf="isLoading" class="admin-skeleton-detail">
+      <div class="admin-skeleton-detail-hero">
+        <div class="flex items-center gap-4">
+          <span class="admin-skeleton admin-skeleton-avatar"></span>
+          <div class="space-y-3">
+            <span class="admin-skeleton admin-skeleton-line lg w-72"></span>
+            <span class="admin-skeleton admin-skeleton-line w-96 max-w-full"></span>
+          </div>
+        </div>
+        <span class="admin-skeleton admin-skeleton-chip"></span>
+      </div>
+      <div class="admin-skeleton-detail-grid">
+        <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-card space-y-3">
+          <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+          <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
         </div>
       </div>
-      <p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-400">
-        {{ 'CATEGORIES.DETAILS.SYNCING' | translate }}
-      </p>
     </div>
 
     <ng-container *ngIf="category && !isLoading">

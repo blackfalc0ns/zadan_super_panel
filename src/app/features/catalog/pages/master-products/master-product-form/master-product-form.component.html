@@ -1,6 +1,100 @@
 <div
   class="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-50 via-[#f6fafb] to-slate-100 px-3 pb-8 text-slate-900 sm:px-5 lg:px-8">
+  <ng-container *ngIf="isInitialFormLoading; else productFormContent">
+    <div class="mx-auto w-full max-w-[108rem] py-4">
+      <div class="sticky top-0 z-30 -mx-3 mb-6 px-3 pb-4 sm:-mx-5 sm:px-5 lg:-mx-8 lg:px-8 backdrop-blur-md">
+        <header
+          class="mx-auto flex w-full max-w-[108rem] flex-col gap-4 rounded-3xl border border-white/80 bg-white/70 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-xl xl:flex-row xl:items-center xl:justify-between">
+          <div class="flex min-w-0 items-start gap-4">
+            <span class="admin-skeleton admin-skeleton-avatar !h-11 !w-11 !rounded-2xl"></span>
+            <div class="min-w-0 flex-1 space-y-3">
+              <span class="admin-skeleton admin-skeleton-line sm w-48"></span>
+              <span class="admin-skeleton admin-skeleton-line lg w-80 max-w-full"></span>
+              <span class="admin-skeleton admin-skeleton-line w-[32rem] max-w-full"></span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <span class="admin-skeleton admin-skeleton-line h-12 w-28 rounded-2xl"></span>
+            <span class="admin-skeleton admin-skeleton-line h-12 w-36 rounded-2xl"></span>
+          </div>
+        </header>
+      </div>
+
+      <section class="mb-8 grid gap-4 lg:grid-cols-4">
+        <article *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card min-h-[5.5rem]">
+          <div class="flex items-center gap-4">
+            <span class="admin-skeleton admin-skeleton-avatar !h-12 !w-12 !rounded-2xl"></span>
+            <div class="min-w-0 flex-1 space-y-3">
+              <span class="admin-skeleton admin-skeleton-line sm w-2/3"></span>
+              <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
+        <main class="min-w-0 space-y-6">
+          <section class="overflow-hidden rounded-3xl border border-white/80 bg-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl">
+            <div class="border-b border-slate-200/50 bg-white/40 px-6 py-5">
+              <span class="admin-skeleton admin-skeleton-line lg w-56"></span>
+              <span class="admin-skeleton admin-skeleton-line mt-3 w-80 max-w-full"></span>
+            </div>
+            <div class="grid gap-6 p-6 lg:grid-cols-2">
+              <div *ngFor="let panel of [1,2]" class="rounded-3xl border border-white/60 bg-white/40 p-5 shadow-inner">
+                <div class="mb-5 flex items-center justify-between">
+                  <span class="admin-skeleton admin-skeleton-chip"></span>
+                  <span class="admin-skeleton admin-skeleton-line sm w-24"></span>
+                </div>
+                <div class="space-y-5">
+                  <div *ngFor="let field of [1,2]" class="space-y-2">
+                    <span class="admin-skeleton admin-skeleton-line sm w-28"></span>
+                    <span class="admin-skeleton admin-skeleton-line h-12 rounded-2xl"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="overflow-hidden rounded-3xl border border-white/80 bg-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl">
+            <div class="border-b border-slate-200/50 bg-white/40 px-6 py-5">
+              <span class="admin-skeleton admin-skeleton-line lg w-52"></span>
+              <span class="admin-skeleton admin-skeleton-line mt-3 w-96 max-w-full"></span>
+            </div>
+            <div class="space-y-4 p-6">
+              <div class="admin-skeleton-card">
+                <div class="grid gap-5 lg:grid-cols-[12rem_minmax(0,1fr)]">
+                  <span class="admin-skeleton admin-skeleton-media h-44 rounded-3xl"></span>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <div *ngFor="let field of [1,2,3,4]" class="space-y-2">
+                      <span class="admin-skeleton admin-skeleton-line sm w-24"></span>
+                      <span class="admin-skeleton admin-skeleton-line h-12 rounded-2xl"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span class="admin-skeleton admin-skeleton-line h-14 rounded-2xl"></span>
+              <span class="admin-skeleton admin-skeleton-line h-16 rounded-2xl"></span>
+            </div>
+          </section>
+        </main>
+
+        <aside class="min-w-0 space-y-6 xl:sticky xl:top-[8.5rem]">
+          <section *ngFor="let item of [1,2,3]" class="rounded-3xl border border-white/80 bg-white/60 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl">
+            <span class="admin-skeleton admin-skeleton-line lg w-52"></span>
+            <span class="admin-skeleton admin-skeleton-line mt-3 w-72 max-w-full"></span>
+            <div class="mt-5 space-y-4">
+              <span class="admin-skeleton admin-skeleton-line h-12 rounded-2xl"></span>
+              <span class="admin-skeleton admin-skeleton-line h-12 rounded-2xl"></span>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #productFormContent>
   <form *ngIf="productForm" [formGroup]="productForm" (ngSubmit)="onSubmit()" class="mx-auto w-full max-w-[108rem]">
+    <!-- Sticky Header -->
     <div class="sticky top-0 z-30 -mx-3 mb-6 px-3 pt-4 pb-4 sm:-mx-5 sm:px-5 lg:-mx-8 lg:px-8 backdrop-blur-md">
       <header
         class="mx-auto flex w-full max-w-[108rem] flex-col gap-4 rounded-3xl border border-white/80 bg-white/70 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-xl xl:flex-row xl:items-center xl:justify-between transition-all">
@@ -9,10 +103,8 @@
             class="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/60 bg-white/80 text-slate-500 shadow-sm backdrop-blur-sm transition hover:border-cyan-700/30 hover:bg-white hover:text-cyan-800 hover:shadow-md">
             <span class="material-symbols-outlined rtl:rotate-180">arrow_back</span>
           </button>
-
           <div class="min-w-0">
-            <nav
-              class="mb-1.5 flex flex-wrap items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-slate-400">
+            <nav class="mb-1.5 flex flex-wrap items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-slate-400">
               <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
                 <button type="button" class="transition" [class.text-cyan-800]="last"
                   [class.hover:text-cyan-800]="breadcrumb.action" (click)="breadcrumb.action && breadcrumb.action()">
@@ -21,18 +113,14 @@
                 <span *ngIf="!last" class="text-slate-300">/</span>
               </ng-container>
             </nav>
-
             <h1 class="truncate text-2xl font-black tracking-tight text-slate-950 lg:text-3xl">
-              {{ productForm.get('id')?.value ? ('MASTER_PRODUCTS.EDIT_TITLE' | translate) :
-              ('MASTER_PRODUCTS.ADD_TITLE' | translate) }}
+              {{ productForm.get('id')?.value ? ('MASTER_PRODUCTS.EDIT_TITLE' | translate) : ('MASTER_PRODUCTS.ADD_TITLE' | translate) }}
             </h1>
             <p class="mt-1.5 max-w-3xl text-xs font-bold leading-relaxed text-slate-500">
-              {{ activeLang === 'ar' ? 'جهز بيانات المنتج الأساسية والتصنيف والصور من شاشة واحدة واضحة.' : 'Prepare the
-              product identity, classification and media from one focused workspace.' }}
+              {{ activeLang === 'ar' ? 'جهز بيانات المنتج الأساسية والتصنيف والصور من شاشة واحدة واضحة.' : 'Prepare the product identity, classification and media from one focused workspace.' }}
             </p>
           </div>
         </div>
-
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <button type="button" (click)="onCancel()"
             class="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-white/60 bg-white/80 px-6 text-xs font-black text-slate-600 shadow-sm backdrop-blur-md transition hover:bg-white hover:shadow-md">
@@ -41,15 +129,14 @@
           <button type="submit" [disabled]="isLoading"
             class="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-transparent bg-gradient-to-r from-cyan-700 to-cyan-600 px-8 text-xs font-black text-white shadow-lg shadow-cyan-700/20 transition hover:from-cyan-800 hover:to-cyan-700 disabled:cursor-not-allowed disabled:opacity-60 hover:shadow-cyan-700/30">
             <span *ngIf="!isLoading" class="material-symbols-outlined text-[18px]">save</span>
-            <span *ngIf="isLoading"
-              class="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"></span>
+            <span *ngIf="isLoading" class="admin-skeleton admin-skeleton-line sm w-16"></span>
             {{ productForm.get('id')?.value ? ('COMMON.SAVE_EDIT' | translate) : ('COMMON.SAVE' | translate) }}
           </button>
         </div>
       </header>
 
-      <div
-        *ngIf="shouldShowValidationSummary"
+      <!-- Validation Summary -->
+      <div *ngIf="shouldShowValidationSummary"
         class="mx-auto mt-3 w-full max-w-[108rem] rounded-2xl border border-rose-200 bg-rose-50/95 p-4 text-rose-700 shadow-lg shadow-rose-900/5 backdrop-blur-xl"
         role="alert">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -64,10 +151,7 @@
               {{ activeLang === 'ar' ? 'كمّل الحقول التالية عشان نقدر نحفظ المنتج:' : 'Complete the following fields so the product can be saved:' }}
             </p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button
-                *ngFor="let field of missingRequiredFields"
-                type="button"
-                (click)="scrollToField(field.key)"
+              <button *ngFor="let field of missingRequiredFields" type="button" (click)="scrollToField(field.key)"
                 class="inline-flex h-8 items-center gap-1.5 rounded-full border border-rose-200 bg-white px-3 text-[11px] font-black text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-100">
                 <span class="material-symbols-outlined text-[14px]">priority_high</span>
                 {{ field.label }}
@@ -78,9 +162,9 @@
       </div>
     </div>
 
+    <!-- Progress Cards -->
     <section class="mb-8 grid gap-4 lg:grid-cols-4">
-      <div
-        class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+      <div class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
         [ngClass]="{'ring-1 ring-cyan-700/20': coreInfoComplete}">
         <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br transition-all"
           [class]="coreInfoComplete ? 'from-cyan-50 to-cyan-100/50 text-cyan-800 shadow-inner' : 'from-slate-50 to-white text-slate-400 shadow-sm border border-slate-100'">
@@ -88,16 +172,14 @@
         </span>
         <div class="min-w-0">
           <p class="truncate text-xs font-black text-slate-900">{{ 'MASTER_PRODUCTS.BASIC_INFO' | translate }}</p>
-          <p class="mt-0.5 flex items-center gap-1 text-[10px] font-bold"
-            [class]="coreInfoComplete ? 'text-cyan-700' : 'text-slate-400'">
+          <p class="mt-0.5 flex items-center gap-1 text-[10px] font-bold" [class]="coreInfoComplete ? 'text-cyan-700' : 'text-slate-400'">
             <span *ngIf="coreInfoComplete" class="material-symbols-outlined text-[12px]">check_circle</span>
             {{ coreInfoComplete ? 'Complete' : 'Required' }}
           </p>
         </div>
       </div>
 
-      <div
-        class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+      <div class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
         [ngClass]="{'ring-1 ring-cyan-700/20': classificationComplete}">
         <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br transition-all"
           [class]="classificationComplete ? 'from-cyan-50 to-cyan-100/50 text-cyan-800 shadow-inner' : 'from-slate-50 to-white text-slate-400 shadow-sm border border-slate-100'">
@@ -105,75 +187,63 @@
         </span>
         <div class="min-w-0">
           <p class="truncate text-xs font-black text-slate-900">{{ 'MASTER_PRODUCTS.CLASSIFICATION' | translate }}</p>
-          <p class="mt-0.5 flex items-center gap-1 text-[10px] font-bold"
-            [class]="classificationComplete ? 'text-cyan-700' : 'text-slate-400'">
+          <p class="mt-0.5 flex items-center gap-1 text-[10px] font-bold" [class]="classificationComplete ? 'text-cyan-700' : 'text-slate-400'">
             <span *ngIf="classificationComplete" class="material-symbols-outlined text-[12px]">check_circle</span>
             {{ classificationComplete ? 'Complete' : 'Required' }}
           </p>
         </div>
       </div>
 
-      <div
-        class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <span
-          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-white text-slate-400 shadow-sm border border-slate-100 transition-all group-hover:text-slate-600">
-          <span class="material-symbols-outlined text-[24px]">image</span>
+      <div class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-white text-slate-400 shadow-sm border border-slate-100 transition-all group-hover:text-slate-600">
+          <span class="material-symbols-outlined text-[24px]">inventory_2</span>
         </span>
         <div class="min-w-0">
-          <p class="truncate text-xs font-black text-slate-900">{{ 'MASTER_PRODUCTS.MEDIA_ASSETS' | translate }}</p>
-          <p class="mt-0.5 text-[10px] font-bold text-slate-400">{{ 'MASTER_PRODUCTS.OPTIONAL' | translate }}</p>
+          <p class="truncate text-xs font-black text-slate-900">{{ activeLang === 'ar' ? 'الأحجام والصور' : 'Sizes & Media' }}</p>
+          <p class="mt-0.5 text-[10px] font-bold text-slate-400">
+            {{ (hasAdditionalVariants ? (additionalVariants.length + 1) : 1) }} {{ activeLang === 'ar' ? 'حجم' : 'size(s)' }}
+          </p>
         </div>
       </div>
 
-      <div
-        class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <span
-          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-white text-slate-400 shadow-sm border border-slate-100 transition-all group-hover:text-slate-600">
+      <div class="group flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)] backdrop-blur-lg transition-all hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-50 to-white text-slate-400 shadow-sm border border-slate-100 transition-all group-hover:text-slate-600">
           <span class="material-symbols-outlined text-[24px]">verified</span>
         </span>
         <div class="min-w-0">
-          <p class="truncate text-xs font-black text-slate-900">{{ 'MASTER_PRODUCTS.PUBLISHING_STATUS' | translate }}
-          </p>
+          <p class="truncate text-xs font-black text-slate-900">{{ 'MASTER_PRODUCTS.PUBLISHING_STATUS' | translate }}</p>
           <p class="mt-0.5 text-[10px] font-bold text-slate-400">{{ publishingStatusLabel | translate }}</p>
         </div>
       </div>
     </section>
 
+    <!-- Main Content Grid -->
     <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
       <main class="min-w-0 space-y-6">
-        <section
-          class="overflow-hidden rounded-3xl border border-white/80 bg-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
-          <div
-            class="flex flex-col gap-4 border-b border-slate-200/50 bg-white/40 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
-            <app-section-header [compact]="true" icon="edit_note" title="MASTER_PRODUCTS.BASIC_INFO"
-              description="MASTER_PRODUCTS.BASIC_INFO_DESC">
-            </app-section-header>
-            <span
-              class="w-fit rounded-xl border border-orange-200/60 bg-gradient-to-r from-orange-50 to-orange-100/50 px-3.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-orange-700 shadow-sm">
+
+        <!-- Basic Info Section -->
+        <section class="overflow-hidden rounded-3xl border border-white/80 bg-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
+          <div class="flex flex-col gap-4 border-b border-slate-200/50 bg-white/40 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
+            <app-section-header [compact]="true" icon="edit_note" title="MASTER_PRODUCTS.BASIC_INFO" description="MASTER_PRODUCTS.BASIC_INFO_DESC"></app-section-header>
+            <span class="w-fit rounded-xl border border-orange-200/60 bg-gradient-to-r from-orange-50 to-orange-100/50 px-3.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-orange-700 shadow-sm">
               {{ activeLang === 'ar' ? 'مطلوب' : 'Required' }}
             </span>
           </div>
 
           <div class="grid gap-6 p-6 lg:grid-cols-2">
+            <!-- Arabic Panel -->
             <div class="rounded-3xl border border-white/60 bg-white/40 p-5 shadow-inner" dir="rtl">
               <div class="mb-5 flex items-center justify-between">
-                <span
-                  class="rounded-xl bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-cyan-800 shadow-sm ring-1 ring-slate-200/50">{{
-                  'MASTER_PRODUCTS.AR_SHORT' | translate }}</span>
-                <strong class="text-xs font-black text-slate-600">{{ activeLang === 'ar' ? 'العربية' : 'Arabic'
-                  }}</strong>
+                <span class="rounded-xl bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-cyan-800 shadow-sm ring-1 ring-slate-200/50">{{ 'MASTER_PRODUCTS.AR_SHORT' | translate }}</span>
+                <strong class="text-xs font-black text-slate-600">{{ activeLang === 'ar' ? 'العربية' : 'Arabic' }}</strong>
               </div>
-
               <div class="space-y-5">
-                <app-input
-                  data-product-field="nameAr"
+                <app-input data-product-field="nameAr"
                   class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:backdrop-blur-sm [&_.form-input-base]:transition-all [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!bg-white [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10 [&_.form-input-base]:placeholder-slate-400"
                   formControlName="nameAr" [label]="'MASTER_PRODUCTS.NAME_AR_LABEL' | translate"
                   [placeholder]="'MASTER_PRODUCTS.NAME_AR_PLACEHOLDER' | translate" [isRequired]="true"
-                  [isTouched]="isFieldTouched('nameAr')"
-                  [error]="isFieldInvalid('nameAr') ? ('COMMON.REQUIRED_FIELD' | translate) : ''">
+                  [isTouched]="isFieldTouched('nameAr')" [error]="isFieldInvalid('nameAr') ? ('COMMON.REQUIRED_FIELD' | translate) : ''">
                 </app-input>
-
                 <app-textarea
                   class="[&_textarea]:!rounded-2xl [&_textarea]:!border [&_textarea]:!border-slate-300 [&_textarea]:!bg-white [&_textarea]:!shadow-sm [&_textarea]:backdrop-blur-sm [&_textarea]:transition-all [&_textarea]:focus:!border-cyan-700/50 [&_textarea]:focus:!bg-white [&_textarea]:focus:!ring-4 [&_textarea]:focus:!ring-cyan-700/10 [&_textarea]:placeholder-slate-400"
                   formControlName="descriptionAr" [label]="'MASTER_PRODUCTS.DESC_AR_LABEL' | translate"
@@ -182,25 +252,19 @@
               </div>
             </div>
 
+            <!-- English Panel -->
             <div class="rounded-3xl border border-white/60 bg-white/40 p-5 shadow-inner" dir="ltr">
               <div class="mb-5 flex items-center justify-between">
-                <span
-                  class="rounded-xl bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-cyan-800 shadow-sm ring-1 ring-slate-200/50">{{
-                  'MASTER_PRODUCTS.EN_SHORT' | translate }}</span>
-                <strong class="text-xs font-black text-slate-600">{{ activeLang === 'ar' ? 'الإنجليزية' : 'English'
-                  }}</strong>
+                <span class="rounded-xl bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-cyan-800 shadow-sm ring-1 ring-slate-200/50">{{ 'MASTER_PRODUCTS.EN_SHORT' | translate }}</span>
+                <strong class="text-xs font-black text-slate-600">{{ activeLang === 'ar' ? 'الإنجليزية' : 'English' }}</strong>
               </div>
-
               <div class="space-y-5">
-                <app-input
-                  data-product-field="nameEn"
+                <app-input data-product-field="nameEn"
                   class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:backdrop-blur-sm [&_.form-input-base]:transition-all [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!bg-white [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10 [&_.form-input-base]:placeholder-slate-400"
                   formControlName="nameEn" [label]="'MASTER_PRODUCTS.NAME_EN_LABEL' | translate"
                   [placeholder]="'MASTER_PRODUCTS.NAME_EN_PLACEHOLDER' | translate" [isRequired]="true"
-                  [isTouched]="isFieldTouched('nameEn')"
-                  [error]="isFieldInvalid('nameEn') ? ('COMMON.REQUIRED_FIELD' | translate) : ''">
+                  [isTouched]="isFieldTouched('nameEn')" [error]="isFieldInvalid('nameEn') ? ('COMMON.REQUIRED_FIELD' | translate) : ''">
                 </app-input>
-
                 <app-textarea
                   class="[&_textarea]:!rounded-2xl [&_textarea]:!border [&_textarea]:!border-slate-300 [&_textarea]:!bg-white [&_textarea]:!shadow-sm [&_textarea]:backdrop-blur-sm [&_textarea]:transition-all [&_textarea]:focus:!border-cyan-700/50 [&_textarea]:focus:!bg-white [&_textarea]:focus:!ring-4 [&_textarea]:focus:!ring-cyan-700/10 [&_textarea]:placeholder-slate-400"
                   formControlName="descriptionEn" [label]="'MASTER_PRODUCTS.DESC_EN_LABEL' | translate"
@@ -208,338 +272,67 @@
                 </app-textarea>
               </div>
             </div>
-
-
-            <div *ngIf="false && hasAdditionalVariants" formArrayName="additionalVariants" class="space-y-3">
-              <div
-                *ngFor="let variant of additionalVariants.controls; let i = index"
-                [formGroupName]="i"
-                [attr.data-product-field]="'additionalVariant-' + i"
-                class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
-                <div class="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <span class="block text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">
-                      {{ activeLang === 'ar' ? 'حجم إضافي' : 'Additional size' }} {{ i + 1 }}
-                    </span>
-                    <span class="mt-1 block text-[0.76rem] font-black text-cyan-800">
-                      {{ getAdditionalVariantDisplayPreview(i) || (activeLang === 'ar' ? 'اختَر العبوة والحجم لهذا الخيار' : 'Choose package and size for this option') }}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    (click)="removeAdditionalVariant(i)"
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100">
-                    <span class="material-symbols-outlined text-[18px]">close</span>
-                  </button>
-                </div>
-
-                <div class="space-y-3">
-                  <app-searchable-select
-                    class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-                    formControlName="packageTypeId"
-                    [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'"
-                    [options]="packageTypeOptions"
-                    [placeholder]="activeLang === 'ar' ? 'اختَر العبوة' : 'Select package type'">
-                  </app-searchable-select>
-
-                  <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
-                    <label class="flex flex-col gap-2">
-                      <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
-                      <input
-                        formControlName="measurementValue"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        [placeholder]="activeLang === 'ar' ? 'مثال 100' : 'e.g. 100'"
-                        class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
-                    </label>
-
-                    <app-searchable-select
-                      class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-                      formControlName="measurementUnitId"
-                      [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'"
-                      [options]="measurementUnitOptions"
-                      [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
-                    </app-searchable-select>
-                  </div>
-
-                  <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-4 py-3 text-[0.72rem] font-bold text-slate-500">
-                    {{ activeLang === 'ar'
-                      ? 'سيتم إنشاء الباركود والـ slug لهذا الحجم تلقائيًا عند الحفظ.'
-                      : 'Barcode and slug for this size will be generated automatically on save.' }}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div *ngIf="false && hasAdditionalVariants" formArrayName="additionalVariants" class="space-y-3">
-              <div
-                *ngFor="let variant of additionalVariants.controls; let i = index"
-                [formGroupName]="i"
-                [attr.data-product-field]="'additionalVariant-' + i"
-                class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
-                <div class="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <span class="block text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">
-                      {{ activeLang === 'ar' ? 'حجم إضافي' : 'Additional size' }} {{ i + 1 }}
-                    </span>
-                    <span class="mt-1 block text-[0.76rem] font-black text-cyan-800">
-                      {{ getAdditionalVariantDisplayPreview(i) || (activeLang === 'ar' ? 'اختَر العبوة والحجم لهذا الخيار' : 'Choose package and size for this option') }}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    (click)="removeAdditionalVariant(i)"
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100">
-                    <span class="material-symbols-outlined text-[18px]">close</span>
-                  </button>
-                </div>
-
-                <div class="space-y-3">
-                  <app-searchable-select
-                    class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-                    formControlName="packageTypeId"
-                    [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'"
-                    [options]="packageTypeOptions"
-                    [placeholder]="activeLang === 'ar' ? 'اختَر العبوة' : 'Select package type'">
-                  </app-searchable-select>
-
-                  <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
-                    <label class="flex flex-col gap-2">
-                      <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
-                      <input
-                        formControlName="measurementValue"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        [placeholder]="activeLang === 'ar' ? 'مثال 100' : 'e.g. 100'"
-                        class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
-                    </label>
-
-                    <app-searchable-select
-                      class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-                      formControlName="measurementUnitId"
-                      [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'"
-                      [options]="measurementUnitOptions"
-                      [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
-                    </app-searchable-select>
-                  </div>
-
-                  <div class="grid gap-3 lg:grid-cols-2">
-                    <app-input
-                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
-                      formControlName="barcode"
-                      [label]="activeLang === 'ar' ? 'باركود اختياري' : 'Optional barcode'"
-                      [placeholder]="activeLang === 'ar' ? 'باركود لهذا الحجم' : 'Barcode for this size'">
-                    </app-input>
-
-                    <app-input
-                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
-                      formControlName="slug"
-                      [label]="activeLang === 'ar' ? 'Slug اختياري' : 'Optional slug'"
-                      [placeholder]="activeLang === 'ar' ? 'سيتم توليده تلقائيًا لو تركته فارغًا' : 'Auto-generated if left empty'">
-                    </app-input>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
-        <section
-          class="overflow-hidden rounded-3xl border border-white/80 bg-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
-          <div
-            class="flex flex-col gap-4 border-b border-slate-200/50 bg-white/40 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
-            <app-section-header [compact]="true" icon="image" title="MASTER_PRODUCTS.MEDIA_ASSETS"
-              description="MASTER_PRODUCTS.MEDIA_ASSETS_DESC">
+        <!-- ═══════════════════════════════════════════════════════════════════
+             VARIANT CARDS SECTION — Each card = one complete variant identity
+             ═══════════════════════════════════════════════════════════════════ -->
+        <section class="overflow-hidden rounded-3xl border border-white/80 bg-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
+          <div class="flex flex-col gap-4 border-b border-slate-200/50 bg-white/40 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
+            <app-section-header [compact]="true" icon="inventory_2"
+              [title]="activeLang === 'ar' ? 'الأحجام والصور' : 'Sizes & Media'"
+              [description]="activeLang === 'ar' ? 'كل حجم هو كيان مستقل بصورته وباركوده. أضف أحجام إضافية لنفس المنتج.' : 'Each size is an independent variant with its own image and barcode. Add more sizes for the same product.'">
             </app-section-header>
-            <app-badge variant="neutral" size="sm" class="[&_span]:!rounded-xl [&_span]:!shadow-sm">{{
-              'MASTER_PRODUCTS.OPTIONAL' | translate }}</app-badge>
+            <div class="flex items-center gap-3">
+              <span class="rounded-xl border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-cyan-800 shadow-sm">
+                {{ (hasAdditionalVariants ? (additionalVariants.length + 1) : 1) }} {{ activeLang === 'ar' ? 'حجم' : 'size(s)' }}
+              </span>
+            </div>
           </div>
 
-          <div class="grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
-            <input type="file" #fileInput hidden (change)="onFileSelected($event)" accept=".jpg,.jpeg,.png,.webp">
+          <div class="space-y-4 p-6">
+            <!-- Primary Variant Card (the main product itself) -->
+            <app-variant-card
+              [variantGroup]="productForm"
+              [index]="0"
+              [activeLang]="activeLang"
+              [displayPreview]="displaySizePreview"
+              [packageTypeOptions]="packageTypeOptions"
+              [measurementUnitOptions]="measurementUnitOptions"
+              [isPrimary]="true"
+              [isUploading]="isUploading"
+              [imageFieldName]="'primaryImageUrl'"
+              (uploadImage)="onPrimaryVariantImageUpload($event.event)"
+              (removeImage)="onPrimaryVariantImageRemove()">
+            </app-variant-card>
 
-            <button *ngIf="!productForm.get('primaryImageUrl')?.value" type="button" (click)="fileInput.click()"
-              class="group relative flex min-h-64 flex-col items-center justify-center overflow-hidden rounded-3xl border-2 border-dashed border-slate-300/60 bg-white/40 p-8 text-center transition-all duration-300 hover:border-cyan-700/50 hover:bg-cyan-50/50 hover:shadow-inner">
-              <span *ngIf="isUploading"
-                class="absolute inset-0 z-10 grid place-items-center bg-white/80 backdrop-blur-sm">
-                <span class="h-8 w-8 animate-spin rounded-full border-4 border-cyan-700/20 border-t-cyan-700"></span>
-              </span>
-              <span
-                class="mb-5 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-white to-slate-50 text-cyan-800 shadow-[0_8px_20px_rgb(0,0,0,0.04)] ring-1 ring-slate-200/60 transition-transform duration-300 group-hover:scale-110 group-hover:shadow-[0_8px_25px_rgb(18,124,140,0.15)] group-hover:ring-cyan-700/20">
-                <span class="material-symbols-outlined text-[36px]">add_photo_alternate</span>
-              </span>
-              <strong class="text-[15px] font-black text-slate-950">{{ 'MASTER_PRODUCTS.UPLOAD_IMAGES' | translate
-                }}</strong>
-              <small class="mt-2 max-w-sm text-xs font-bold leading-relaxed text-slate-500">{{
-                'MASTER_PRODUCTS.UPLOAD_HINT' | translate }}</small>
-              <span
-                class="mt-6 rounded-xl border border-slate-200/60 bg-white px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-cyan-800 shadow-sm transition group-hover:border-cyan-700/20 group-hover:bg-cyan-50/50">{{
-                'COMMON.BROWSE_FILES' | translate }}</span>
+            <!-- Additional Variant Cards -->
+            <ng-container *ngIf="hasAdditionalVariants" formArrayName="additionalVariants">
+              <app-variant-card
+                *ngFor="let variant of additionalVariants.controls; let i = index"
+                [variantGroup]="$any(variant)"
+                [index]="i"
+                [activeLang]="activeLang"
+                [displayPreview]="getAdditionalVariantDisplayPreview(i)"
+                [packageTypeOptions]="packageTypeOptions"
+                [measurementUnitOptions]="measurementUnitOptions"
+                [isPrimary]="false"
+                [isUploading]="isUploading || deletingVariantIndexes.has(i)"
+                (uploadImage)="onAdditionalVariantFileSelected($event.index, $event.event)"
+                (removeImage)="removeAdditionalVariantImage($event)"
+                (remove)="handleVariantRemove($event)">
+              </app-variant-card>
+            </ng-container>
+
+            <!-- Add Variant Button -->
+            <button *ngIf="canCreateAnotherVariant" type="button" (click)="createAnotherVariant()"
+              class="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300/60 bg-white/40 py-4 text-[0.72rem] font-black uppercase tracking-[0.12em] text-slate-500 transition-all hover:border-cyan-700/40 hover:bg-cyan-50/50 hover:text-cyan-800">
+              <span class="material-symbols-outlined text-[18px]">add_circle</span>
+              {{ activeLang === 'ar' ? 'إضافة حجم جديد' : 'Add another size' }}
             </button>
 
-            <div *ngIf="productForm.get('primaryImageUrl')?.value"
-              class="relative min-h-64 overflow-hidden rounded-3xl border border-white/80 bg-gradient-to-br from-slate-100/80 to-slate-50/50 shadow-inner">
-              <img class="h-full w-full object-contain p-6 mix-blend-multiply"
-                [src]="productForm.get('primaryImageUrl')?.value"
-                [alt]="productForm.get('nameAr')?.value || productForm.get('nameEn')?.value || 'Product image'">
-              <button type="button" (click)="removeImage()"
-                class="absolute end-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-500/20 bg-white/95 text-rose-600 shadow-md backdrop-blur-sm transition-all hover:bg-rose-50 hover:text-rose-700 hover:shadow-lg"
-                [attr.aria-label]="activeLang === 'ar' ? 'حذف الصورة' : 'Remove image'">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
-            </div>
-
-            <div class="flex min-w-0 flex-col gap-4">
-              <div
-                class="flex items-start gap-4 rounded-3xl border border-white/60 bg-white/50 p-5 text-xs font-bold leading-relaxed text-slate-600 shadow-sm backdrop-blur-sm">
-                <span
-                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-50/80 text-cyan-700 ring-1 ring-cyan-700/10">
-                  <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                </span>
-                <span class="pt-1.5">{{ activeLang === 'ar' ? 'صورة مربعة أو بخلفية نظيفة تظهر المنتج بوضوح.' : 'Use a
-                  square image or clean background that shows the product clearly.' }}</span>
-              </div>
-              <div
-                class="flex items-start gap-4 rounded-3xl border border-white/60 bg-white/50 p-5 text-xs font-bold leading-relaxed text-slate-600 shadow-sm backdrop-blur-sm">
-                <span
-                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-50/80 text-slate-500 ring-1 ring-slate-200/60">
-                  <span class="material-symbols-outlined text-[18px]">visibility</span>
-                </span>
-                <span class="pt-1.5">{{ activeLang === 'ar' ? 'الصورة اختيارية الآن، لكنها تحسن شكل المنتج في القوائم.'
-                  : 'Image is optional now, but improves product listings.' }}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <aside class="min-w-0 space-y-6 xl:sticky xl:top-[8.5rem]">
-
-        <section
-          class="relative z-30 overflow-visible rounded-3xl border border-white/80 bg-white/60 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
-          <app-section-header [compact]="true" icon="category" title="MASTER_PRODUCTS.CLASSIFICATION"
-            description="MASTER_PRODUCTS.CLASSIFICATION_DESC">
-          </app-section-header>
-
-          <div class="mt-5 flex flex-col gap-5">
-            <app-searchable-select
-              data-product-field="categoryId"
-              class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-              formControlName="categoryId" [label]="'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate"
-              [isRequired]="true" [isTouched]="isFieldTouched('categoryId')"
-              [error]="isFieldInvalid('categoryId') ? ('COMMON.REQUIRED_FIELD' | translate) : ''"
-              [options]="categoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate">
-            </app-searchable-select>
-
-            <app-searchable-select
-              class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-              formControlName="brandId" [label]="'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate"
-              [options]="brandOptions" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate">
-            </app-searchable-select>
-
-            <app-searchable-select
-              data-product-field="packageTypeId"
-              class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-              formControlName="packageTypeId" [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'" [options]="packageTypeOptions"
-              [placeholder]="activeLang === 'ar' ? 'اختر العبوة' : 'Select package type'">
-            </app-searchable-select>
-
-            <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
-              <label data-product-field="measurementValue" class="flex flex-col gap-2">
-                <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
-                <input
-                  formControlName="measurementValue"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  [placeholder]="activeLang === 'ar' ? 'مثال 50' : 'e.g. 50'"
-                  class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
-              </label>
-
-              <app-searchable-select
-                data-product-field="measurementUnitId"
-                class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-                formControlName="measurementUnitId" [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'" [options]="measurementUnitOptions"
-                [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
-              </app-searchable-select>
-            </div>
-
-            <div *ngIf="hasAdditionalVariants" formArrayName="additionalVariants" class="space-y-3">
-              <div
-                *ngFor="let variant of additionalVariants.controls; let i = index"
-                [formGroupName]="i"
-                [attr.data-product-field]="'additionalVariant-' + i"
-                class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
-                <div class="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <span class="block text-[0.65rem] font-black uppercase tracking-[0.18em] text-slate-500">
-                      {{ activeLang === 'ar' ? 'حجم إضافي' : 'Additional size' }} {{ i + 1 }}
-                    </span>
-                    <span class="mt-1 block text-[0.76rem] font-black text-cyan-800">
-                      {{ getAdditionalVariantDisplayPreview(i) || (activeLang === 'ar' ? 'اختَر العبوة والحجم لهذا الخيار' : 'Choose package and size for this option') }}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    (click)="removeAdditionalVariant(i)"
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100">
-                    <span class="material-symbols-outlined text-[18px]">close</span>
-                  </button>
-                </div>
-
-                <div class="space-y-3">
-                  <app-searchable-select
-                    class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-                    formControlName="packageTypeId"
-                    [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'"
-                    [options]="packageTypeOptions"
-                    [placeholder]="activeLang === 'ar' ? 'اختَر العبوة' : 'Select package type'">
-                  </app-searchable-select>
-
-                  <div class="grid grid-cols-[minmax(0,1fr)_10rem] gap-3">
-                    <label class="flex flex-col gap-2">
-                      <span class="text-[0.72rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم / الكمية' : 'Size / quantity' }}</span>
-                      <input
-                        formControlName="measurementValue"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        [placeholder]="activeLang === 'ar' ? 'مثال 100' : 'e.g. 100'"
-                        class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
-                    </label>
-
-                    <app-searchable-select
-                      class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
-                      formControlName="measurementUnitId"
-                      [label]="activeLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'"
-                      [options]="measurementUnitOptions"
-                      [placeholder]="activeLang === 'ar' ? 'جرام / مل' : 'g / ml'">
-                    </app-searchable-select>
-                  </div>
-
-                  <div class="grid gap-3 lg:grid-cols-2">
-                    <app-input
-                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
-                      formControlName="barcode"
-                      [label]="activeLang === 'ar' ? 'باركود اختياري' : 'Optional barcode'"
-                      [placeholder]="activeLang === 'ar' ? 'باركود لهذا الحجم' : 'Barcode for this size'">
-                    </app-input>
-
-                    <app-input
-                      class="[&_.form-input-base]:!h-12 [&_.form-input-base]:!rounded-2xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm [&_.form-input-base]:focus:!border-cyan-700/50 [&_.form-input-base]:focus:!ring-4 [&_.form-input-base]:focus:!ring-cyan-700/10"
-                      formControlName="slug"
-                      [label]="activeLang === 'ar' ? 'Slug اختياري' : 'Optional slug'"
-                      [placeholder]="activeLang === 'ar' ? 'سيتم توليده تلقائيًا لو تركته فارغًا' : 'Auto-generated if left empty'">
-                    </app-input>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            <!-- Variant Linking Info -->
             <div class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 text-[0.76rem] text-emerald-900 shadow-sm">
               <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0">
@@ -569,38 +362,48 @@
                     </p>
                   </ng-template>
                 </div>
-
-                <button
-                  *ngIf="isCreatingVariant"
-                  type="button"
-                  (click)="clearVariantLink()"
+                <button *ngIf="isCreatingVariant" type="button" (click)="clearVariantLink()"
                   class="shrink-0 rounded-xl border border-emerald-200 bg-white px-3 py-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100">
                   {{ activeLang === 'ar' ? 'فك الربط' : 'Clear link' }}
                 </button>
               </div>
-
-              <button
-                type="button"
-                (click)="createAnotherVariant()"
-                class="mt-3 inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-3.5 py-2 text-[0.68rem] font-black uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">
-                <span class="material-symbols-outlined text-[16px]">library_add</span>
-                {{ activeLang === 'ar' ? 'إضافة حجم تاني' : 'Add another size' }}
-              </button>
             </div>
 
+            <!-- Display Preview -->
             <div class="rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-3 text-[0.75rem] font-black text-cyan-800">
               <span class="block text-[0.65rem] uppercase tracking-[0.18em] text-cyan-700/70">{{ activeLang === 'ar' ? 'معاينة العرض' : 'Display preview' }}</span>
               <span class="mt-1 block">{{ displaySizePreview || (activeLang === 'ar' ? 'اختر العبوة والحجم ليظهر النص هنا' : 'Choose package and size to preview it here') }}</span>
             </div>
           </div>
         </section>
+      </main>
 
-        <section
-          class="relative z-0 rounded-3xl border border-white/80 bg-white/60 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
-          <app-section-header [compact]="true" icon="link" title="MASTER_PRODUCTS.SYSTEM_IDENTIFIER"
-            description="MASTER_PRODUCTS.SYSTEM_IDENTIFIER_DESC">
-          </app-section-header>
+      <!-- Sidebar -->
+      <aside class="min-w-0 space-y-6 xl:sticky xl:top-[8.5rem]">
 
+        <!-- Classification -->
+        <section class="relative z-30 overflow-visible rounded-3xl border border-white/80 bg-white/60 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
+          <app-section-header [compact]="true" icon="category" title="MASTER_PRODUCTS.CLASSIFICATION" description="MASTER_PRODUCTS.CLASSIFICATION_DESC"></app-section-header>
+          <div class="mt-5 flex flex-col gap-5">
+            <app-searchable-select data-product-field="categoryId"
+              class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+              formControlName="categoryId" [label]="'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate"
+              [isRequired]="true" [isTouched]="isFieldTouched('categoryId')"
+              [error]="isFieldInvalid('categoryId') ? ('COMMON.REQUIRED_FIELD' | translate) : ''"
+              [options]="categoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate">
+            </app-searchable-select>
+
+            <app-searchable-select
+              class="[&_.searchable-select-trigger]:!h-12 [&_.searchable-select-trigger]:!rounded-2xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm [&_.searchable-select-trigger]:backdrop-blur-sm [&_.searchable-select-trigger]:transition-all [&_.searchable-select-trigger]:focus:!border-cyan-700/50 [&_.searchable-select-trigger]:focus:!bg-white [&_.searchable-select-trigger]:focus:!ring-4 [&_.searchable-select-trigger]:focus:!ring-cyan-700/10"
+              formControlName="brandId" [label]="'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate"
+              [options]="brandOptions" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate">
+            </app-searchable-select>
+          </div>
+        </section>
+
+        <!-- Slug / System Identifier -->
+        <section class="relative z-0 rounded-3xl border border-white/80 bg-white/60 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
+          <app-section-header [compact]="true" icon="link" title="MASTER_PRODUCTS.SYSTEM_IDENTIFIER" description="MASTER_PRODUCTS.SYSTEM_IDENTIFIER_DESC"></app-section-header>
           <div class="relative mt-5">
             <input formControlName="slug" data-product-field="slug" [placeholder]="'MASTER_PRODUCTS.SLUG_PLACEHOLDER' | translate"
               class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-5 pe-32 font-mono text-sm font-extrabold text-slate-900 outline-none shadow-sm backdrop-blur-sm transition-all focus:border-cyan-700/50 focus:bg-white focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400"
@@ -611,37 +414,28 @@
               {{ 'MASTER_PRODUCTS.GENERATE' | translate }}
             </button>
           </div>
-          <p *ngIf="isFieldInvalid('slug')"
-            class="mt-2.5 flex items-center gap-1.5 text-[11px] font-extrabold text-rose-600">
+          <p *ngIf="isFieldInvalid('slug')" class="mt-2.5 flex items-center gap-1.5 text-[11px] font-extrabold text-rose-600">
             <span class="material-symbols-outlined text-[14px]">error</span>
             {{ 'COMMON.REQUIRED_FIELD' | translate }}
           </p>
         </section>
 
-
-        <section
-          class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0e5f6b] via-[#127c8c] to-[#0a4650] p-6 text-white shadow-[0_20px_40px_rgba(14,95,107,0.25)] ring-1 ring-white/10">
-          <!-- Decorative Glow -->
+        <!-- Publishing Status -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0e5f6b] via-[#127c8c] to-[#0a4650] p-6 text-white shadow-[0_20px_40px_rgba(14,95,107,0.25)] ring-1 ring-white/10">
           <div class="absolute -end-10 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
           <div class="absolute -bottom-10 -start-10 h-32 w-32 rounded-full bg-cyan-400/20 blur-2xl"></div>
-
           <div class="relative grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4">
-            <span
-              class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-inner backdrop-blur-md ring-1 ring-white/20">
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-inner backdrop-blur-md ring-1 ring-white/20">
               <span class="material-symbols-outlined text-[24px]">verified</span>
             </span>
             <div class="min-w-0">
-              <p class="text-[9px] font-black uppercase tracking-[0.15em] text-white/70">{{
-                'MASTER_PRODUCTS.PUBLISHING_STATUS' | translate }}</p>
+              <p class="text-[9px] font-black uppercase tracking-[0.15em] text-white/70">{{ 'MASTER_PRODUCTS.PUBLISHING_STATUS' | translate }}</p>
               <strong class="mt-1 block truncate text-[15px] font-black text-white">
-                {{ (productForm.get('status')?.value === 'Draft' ? 'MASTER_PRODUCTS.STAGING_HIDDEN' :
-                'MASTER_PRODUCTS.LIVE_STORE') | translate }}
+                {{ (productForm.get('status')?.value === 'Draft' ? 'MASTER_PRODUCTS.STAGING_HIDDEN' : 'MASTER_PRODUCTS.LIVE_STORE') | translate }}
               </strong>
             </div>
           </div>
-
-          <div
-            class="relative mt-6 grid grid-cols-2 gap-1.5 rounded-2xl border border-white/10 bg-black/20 p-1.5 shadow-inner backdrop-blur-sm">
+          <div class="relative mt-6 grid grid-cols-2 gap-1.5 rounded-2xl border border-white/10 bg-black/20 p-1.5 shadow-inner backdrop-blur-sm">
             <button type="button" (click)="setStatus('Draft')"
               class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all"
               [ngClass]="productForm.get('status')?.value === 'Draft' ? 'bg-white text-cyan-900 shadow-md' : 'text-white/70 hover:text-white'">
@@ -657,14 +451,9 @@
           </div>
         </section>
 
-
-
-        <section
-          class="rounded-3xl border border-white/80 bg-white/60 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
-          <app-section-header [compact]="true" icon="qr_code_2" title="MASTER_PRODUCTS.INVENTORY_TRACKING"
-            description="MASTER_PRODUCTS.INVENTORY_DESC">
-          </app-section-header>
-
+        <!-- Barcode / Inventory -->
+        <section class="rounded-3xl border border-white/80 bg-white/60 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl transition-all">
+          <app-section-header [compact]="true" icon="qr_code_2" title="MASTER_PRODUCTS.INVENTORY_TRACKING" description="MASTER_PRODUCTS.INVENTORY_DESC"></app-section-header>
           <div class="relative mt-5">
             <input formControlName="barcode" [placeholder]="'MASTER_PRODUCTS.SCAN_AUTO_HINT' | translate"
               class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-5 pe-32 text-sm font-extrabold tracking-widest text-slate-950 outline-none shadow-sm backdrop-blur-sm transition-all focus:border-cyan-700/50 focus:bg-white focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400" />
@@ -678,4 +467,5 @@
       </aside>
     </div>
   </form>
+  </ng-template>
 </div>

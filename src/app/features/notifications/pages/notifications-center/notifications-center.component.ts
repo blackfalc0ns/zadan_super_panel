@@ -3,8 +3,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AdminNotification, AdminNotificationFilters, AdminNotificationPreferences, AdminNotificationsService } from '../../../../core/services/admin-notifications.service';
-import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotificationSoundService } from '../../../../core/services/admin-notification-sound.service';
+import { AdminNotification, AdminNotificationFilters, AdminNotificationsService } from '../../../../core/services/admin-notifications.service';
 
 interface NotificationFilterTab {
   labelKey: string;
@@ -19,9 +18,60 @@ interface NotificationFilterTab {
   imports: [CommonModule, TranslateModule],
   template: `
     <div class="space-y-5 pb-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-      <section *ngIf="requiresApiSession" class="rounded-[24px] border border-amber-200 bg-gradient-to-r from-amber-50 to-white p-5 shadow-sm">
+      <ng-container *ngIf="initialLoading; else notificationsContent">
+        <section class="overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-[0_24px_80px_-56px_rgba(15,23,42,0.42)]">
+          <div class="p-5 sm:p-6">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div class="flex items-start gap-3">
+                <span class="admin-skeleton admin-skeleton-avatar"></span>
+                <div class="space-y-3">
+                  <span class="admin-skeleton admin-skeleton-line lg w-64"></span>
+                  <span class="admin-skeleton admin-skeleton-line w-96 max-w-full"></span>
+                </div>
+              </div>
+              <span class="admin-skeleton admin-skeleton-line h-11 w-40 rounded-2xl"></span>
+            </div>
+
+            <div class="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <article *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card min-h-[5.75rem] space-y-3">
+                <span class="admin-skeleton admin-skeleton-line sm w-32"></span>
+                <div class="flex items-end justify-between gap-3">
+                  <span class="admin-skeleton admin-skeleton-line lg w-16"></span>
+                  <span class="admin-skeleton admin-skeleton-chip"></span>
+                </div>
+              </article>
+            </div>
+
+            <div class="mt-5 flex gap-2 overflow-hidden">
+              <span *ngFor="let item of [1,2,3,4,5,6,7]" class="admin-skeleton admin-skeleton-chip"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_70px_-52px_rgba(15,23,42,0.7)]">
+          <div class="border-b border-slate-100 bg-slate-50/70 px-5 py-4">
+            <span class="admin-skeleton admin-skeleton-line lg w-44"></span>
+            <span class="admin-skeleton admin-skeleton-line mt-3 w-80 max-w-full"></span>
+          </div>
+          <div class="space-y-3 p-3 sm:p-4">
+            <div *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton-card">
+              <div class="flex items-start gap-4">
+                <span class="admin-skeleton admin-skeleton-avatar"></span>
+                <div class="min-w-0 flex-1 space-y-3">
+                  <span class="admin-skeleton admin-skeleton-line lg w-2/3"></span>
+                  <span class="admin-skeleton admin-skeleton-line w-full"></span>
+                  <span class="admin-skeleton admin-skeleton-line sm w-1/3"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ng-container>
+
+      <ng-template #notificationsContent>
+      <section *ngIf="requiresApiSession" class="rounded-[24px] border border-[#ffd9a3] bg-gradient-to-r from-[#fff7e8] to-white p-5 shadow-sm">
         <div class="flex items-start gap-3">
-          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#fff0d1] text-[#d26a00]">
             <span class="material-symbols-outlined text-[22px]">lock</span>
           </div>
           <div class="min-w-0 flex-1">
@@ -31,19 +81,20 @@ interface NotificationFilterTab {
         </div>
       </section>
 
-      <section class="overflow-hidden rounded-[28px] border border-slate-200/80 bg-gradient-to-br from-white via-rose-50/60 to-amber-50/70 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.55)]">
+      <section class="overflow-hidden rounded-[28px] border border-[#bde8e8]/80 bg-gradient-to-br from-white via-[#eafbfb]/80 to-[#fff5e4]/90 shadow-[0_24px_80px_-48px_rgba(8,127,144,0.42)]">
         <div class="relative p-5 sm:p-6">
-          <div class="pointer-events-none absolute inset-y-0 end-0 hidden w-48 bg-[radial-gradient(circle_at_center,_rgba(244,63,94,0.12),_transparent_68%)] sm:block"></div>
+          <div class="pointer-events-none absolute inset-y-0 end-0 hidden w-56 bg-[radial-gradient(circle_at_center,_rgba(8,127,144,0.16),_transparent_68%)] sm:block"></div>
+          <div class="pointer-events-none absolute -bottom-16 start-16 hidden h-40 w-40 rounded-full bg-[#f58b00]/10 blur-3xl lg:block"></div>
           <div class="relative flex flex-col gap-5">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div class="flex items-start gap-3">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-slate-950/15">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#087f90] to-[#006878] text-white shadow-lg shadow-[#087f90]/25">
                   <span class="material-symbols-outlined text-[22px]">notifications_active</span>
                 </div>
                 <div>
                   <div class="flex flex-wrap items-center gap-2">
                     <h1 class="text-[24px] font-black tracking-tight text-slate-950">{{ 'NOTIFICATIONS_CENTER.TITLE' | translate }}</h1>
-                    <span class="rounded-full border border-rose-200 bg-white/90 px-3 py-1 text-[11px] font-black text-rose-600 shadow-sm">
+                    <span class="rounded-full border border-[#ffd8a3] bg-white/90 px-3 py-1 text-[11px] font-black text-[#d26a00] shadow-sm">
                       {{ unreadCount }} {{ 'NOTIFICATIONS_CENTER.UNREAD_PILL' | translate }}
                     </span>
                   </div>
@@ -55,42 +106,42 @@ interface NotificationFilterTab {
                 type="button"
                 (click)="markAllRead()"
                 [disabled]="unreadCount === 0"
-                class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-[12px] font-black text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0">
+                class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#087f90] to-[#006878] px-5 text-[12px] font-black text-white shadow-lg shadow-[#087f90]/25 transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0">
                 <span class="material-symbols-outlined text-[18px]">done_all</span>
                 {{ 'NOTIFICATIONS_CENTER.MARK_ALL_READ' | translate }}
               </button>
             </div>
 
             <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <article class="rounded-2xl border border-white/80 bg-white/85 p-4 shadow-sm shadow-slate-200/60 backdrop-blur">
-                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-400">{{ 'NOTIFICATIONS_CENTER.STATS.TOTAL' | translate }}</p>
+              <article class="rounded-2xl border border-white/80 bg-white/85 p-4 shadow-sm shadow-[#087f90]/10 backdrop-blur">
+                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-[#087f90]/70">{{ 'NOTIFICATIONS_CENTER.STATS.TOTAL' | translate }}</p>
                 <div class="mt-3 flex items-end justify-between gap-3">
                   <strong class="text-[28px] font-black leading-none text-slate-950">{{ notifications.length }}</strong>
-                  <span class="rounded-xl bg-slate-100 px-2.5 py-1 text-[11px] font-black text-slate-600">{{ 'NOTIFICATIONS_CENTER.STATS.VISIBLE' | translate }}</span>
+                  <span class="rounded-xl bg-[#e7f7f7] px-2.5 py-1 text-[11px] font-black text-[#087f90]">{{ 'NOTIFICATIONS_CENTER.STATS.VISIBLE' | translate }}</span>
                 </div>
               </article>
 
-              <article class="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-4 shadow-sm shadow-rose-100/70">
-                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-rose-400">{{ 'NOTIFICATIONS_CENTER.STATS.UNREAD' | translate }}</p>
+              <article class="rounded-2xl border border-[#ffd9a3] bg-gradient-to-br from-[#fff4df] to-white p-4 shadow-sm shadow-[#f58b00]/10">
+                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-[#d26a00]/75">{{ 'NOTIFICATIONS_CENTER.STATS.UNREAD' | translate }}</p>
                 <div class="mt-3 flex items-end justify-between gap-3">
                   <strong class="text-[28px] font-black leading-none text-slate-950">{{ unreadCount }}</strong>
-                  <span class="rounded-xl bg-white px-2.5 py-1 text-[11px] font-black text-rose-600 shadow-sm">{{ 'NOTIFICATIONS_CENTER.NEW_BADGE' | translate }}</span>
+                  <span class="rounded-xl bg-white px-2.5 py-1 text-[11px] font-black text-[#d26a00] shadow-sm">{{ 'NOTIFICATIONS_CENTER.NEW_BADGE' | translate }}</span>
                 </div>
               </article>
 
-              <article class="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-4 shadow-sm shadow-amber-100/70">
-                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-amber-500">{{ 'NOTIFICATIONS_CENTER.STATS.URGENT' | translate }}</p>
+              <article class="rounded-2xl border border-[#ffd08a] bg-gradient-to-br from-[#fff0d1] to-white p-4 shadow-sm shadow-[#f58b00]/10">
+                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-[#c75d00]">{{ 'NOTIFICATIONS_CENTER.STATS.URGENT' | translate }}</p>
                 <div class="mt-3 flex items-end justify-between gap-3">
                   <strong class="text-[28px] font-black leading-none text-slate-950">{{ urgentCount }}</strong>
-                  <span class="rounded-xl bg-white px-2.5 py-1 text-[11px] font-black text-amber-600 shadow-sm">{{ 'NOTIFICATIONS_CENTER.TABS.URGENT' | translate }}</span>
+                  <span class="rounded-xl bg-white px-2.5 py-1 text-[11px] font-black text-[#c75d00] shadow-sm">{{ 'NOTIFICATIONS_CENTER.TABS.URGENT' | translate }}</span>
                 </div>
               </article>
 
-              <article class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-4 shadow-sm shadow-emerald-100/70">
-                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-emerald-500">{{ 'NOTIFICATIONS_CENTER.STATS.FILTER' | translate }}</p>
+              <article class="rounded-2xl border border-[#bde8e8] bg-gradient-to-br from-[#eafbfb] to-white p-4 shadow-sm shadow-[#087f90]/10">
+                <p class="text-[11px] font-black uppercase tracking-[0.16em] text-[#087f90]">{{ 'NOTIFICATIONS_CENTER.STATS.FILTER' | translate }}</p>
                 <div class="mt-3 flex items-end justify-between gap-3">
                   <strong class="text-[20px] font-black leading-tight text-slate-950">{{ selectedTab.labelKey | translate }}</strong>
-                  <span class="rounded-xl bg-white px-2.5 py-1 text-[11px] font-black text-emerald-600 shadow-sm">{{ 'NOTIFICATIONS_CENTER.STATS.ACTIVE' | translate }}</span>
+                  <span class="rounded-xl bg-white px-2.5 py-1 text-[11px] font-black text-[#087f90] shadow-sm">{{ 'NOTIFICATIONS_CENTER.STATS.ACTIVE' | translate }}</span>
                 </div>
               </article>
             </div>
@@ -99,8 +150,8 @@ interface NotificationFilterTab {
               <button *ngFor="let tab of tabs" type="button" (click)="selectTab(tab)"
                 class="shrink-0 rounded-full border px-4 py-2 text-[11px] font-black transition"
                 [ngClass]="selectedTab === tab
-                  ? 'border-slate-950 bg-slate-950 text-white shadow-lg shadow-slate-950/10'
-                  : 'border-white bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-white'">
+                  ? 'border-[#087f90] bg-[#087f90] text-white shadow-lg shadow-[#087f90]/15'
+                  : 'border-white bg-white/90 text-slate-600 hover:border-[#9ddada] hover:bg-[#f2fbfb] hover:text-[#087f90]'">
                 {{ tab.labelKey | translate }}
               </button>
             </div>
@@ -108,96 +159,37 @@ interface NotificationFilterTab {
         </div>
       </section>
 
-      <section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_70px_-52px_rgba(15,23,42,0.7)]">
-        <div class="border-b border-slate-100 bg-slate-50/70 px-5 py-4">
-          <div class="flex flex-col gap-1 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h2 class="text-[15px] font-black text-slate-900">{{ 'NOTIFICATIONS_CENTER.SOUND.TITLE' | translate }}</h2>
-              <p class="text-[12px] font-semibold text-slate-500">{{ 'NOTIFICATIONS_CENTER.SOUND.SUBTITLE' | translate }}</p>
-            </div>
-
-            <span class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-black"
-              [ngClass]="hasPersistentSoundPreference ? 'border-emerald-100 bg-emerald-50 text-emerald-700' : 'border-amber-100 bg-amber-50 text-amber-700'">
-              <span class="material-symbols-outlined text-[16px]">{{ hasPersistentSoundPreference ? 'cloud_done' : 'devices' }}</span>
-              {{ (hasPersistentSoundPreference ? 'NOTIFICATIONS_CENTER.SOUND.STATUS_DEVICE' : 'NOTIFICATIONS_CENTER.SOUND.STATUS_LOCAL') | translate }}
-            </span>
-          </div>
-        </div>
-
-        <div class="grid gap-5 p-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-          <div class="space-y-3">
-            <div *ngIf="preferencesLoading" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] font-bold text-slate-500">
-              <span class="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>
-              {{ 'NOTIFICATIONS_CENTER.SOUND.LOADING' | translate }}
-            </div>
-
-            <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-              <button
-                *ngFor="let option of soundOptions"
-                type="button"
-                (click)="selectedSound = option.value"
-                class="rounded-2xl border px-4 py-3 text-start transition"
-                [ngClass]="selectedSound === option.value
-                  ? 'border-slate-950 bg-slate-950 text-white shadow-lg shadow-slate-950/10'
-                  : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'">
-                <span class="block text-[11px] font-black uppercase tracking-[0.14em]" [ngClass]="selectedSound === option.value ? 'text-white/70' : 'text-slate-400'">
-                  {{ 'NOTIFICATIONS_CENTER.SOUND.LABEL' | translate }}
-                </span>
-                <span class="mt-2 block text-[13px] font-black">{{ option.labelKey | translate }}</span>
-              </button>
-            </div>
-
-            <p class="text-[12px] font-semibold leading-6"
-              [ngClass]="hasPersistentSoundPreference ? 'text-slate-500' : 'text-amber-700'">
-              {{ (hasPersistentSoundPreference ? 'NOTIFICATIONS_CENTER.SOUND.HINT_DEVICE' : 'NOTIFICATIONS_CENTER.SOUND.HINT_LOCAL') | translate }}
-            </p>
-          </div>
-
-          <div class="flex flex-col gap-2 sm:flex-row">
-            <button
-              type="button"
-              (click)="previewSound()"
-              class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-[12px] font-black text-slate-700 transition hover:bg-slate-50">
-              <span class="material-symbols-outlined text-[18px]">play_circle</span>
-              {{ 'NOTIFICATIONS_CENTER.SOUND.PREVIEW' | translate }}
-            </button>
-
-            <button
-              type="button"
-              (click)="saveSoundPreference()"
-              [disabled]="soundSaving"
-              class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-[12px] font-black text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0">
-              <span *ngIf="soundSaving" class="h-4 w-4 animate-spin rounded-full border-2 border-white/25 border-t-white"></span>
-              <span *ngIf="!soundSaving" class="material-symbols-outlined text-[18px]">music_note</span>
-              {{ 'NOTIFICATIONS_CENTER.SOUND.SAVE' | translate }}
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section class="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_22px_70px_-52px_rgba(15,23,42,0.7)]">
-        <div class="border-b border-slate-100 bg-slate-50/70 px-5 py-4">
+      <section class="overflow-hidden rounded-[28px] border border-[#d7eeee] bg-white shadow-[0_22px_70px_-52px_rgba(8,127,144,0.55)]">
+        <div class="border-b border-[#e3f4f4] bg-gradient-to-r from-[#f3fbfb] to-white px-5 py-4">
           <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 class="text-[15px] font-black text-slate-900">{{ 'NOTIFICATIONS_CENTER.LIST_TITLE' | translate }}</h2>
               <p class="text-[12px] font-semibold text-slate-500">{{ 'NOTIFICATIONS_CENTER.LIST_SUBTITLE' | translate }}</p>
             </div>
-            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-600">
-              <span class="material-symbols-outlined text-[16px] text-slate-400">tune</span>
+            <span class="inline-flex items-center gap-2 rounded-full border border-[#bde8e8] bg-white px-3 py-1.5 text-[11px] font-black text-[#087f90]">
+              <span class="material-symbols-outlined text-[16px] text-[#087f90]/70">tune</span>
               {{ notifications.length }} {{ 'NOTIFICATIONS_CENTER.RESULTS_LABEL' | translate }}
             </span>
           </div>
         </div>
 
-        <div *ngIf="loading" class="flex flex-col items-center gap-3 p-10 text-center">
-          <span class="material-symbols-outlined text-[28px] text-slate-300">hourglass_top</span>
-          <p class="text-[13px] font-bold text-slate-500">{{ 'NOTIFICATIONS_CENTER.LOADING' | translate }}</p>
+        <div *ngIf="loading" class="space-y-3 p-3 sm:p-4">
+          <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card">
+            <div class="flex items-start gap-4">
+              <span class="admin-skeleton admin-skeleton-avatar"></span>
+              <div class="min-w-0 flex-1 space-y-3">
+                <span class="admin-skeleton admin-skeleton-line lg w-2/3"></span>
+                <span class="admin-skeleton admin-skeleton-line w-full"></span>
+                <span class="admin-skeleton admin-skeleton-line sm w-1/3"></span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div *ngIf="!loading && notifications.length > 0" class="space-y-3 p-3 sm:p-4">
           <button *ngFor="let notification of notifications; trackBy: trackByNotificationId" type="button"
             (click)="open(notification)"
-            class="group flex w-full items-start gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-start transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50/70 hover:shadow-lg hover:shadow-slate-200/40">
+            class="group flex w-full items-start gap-4 rounded-2xl border border-[#dcefee] bg-white px-4 py-4 text-start transition hover:-translate-y-0.5 hover:border-[#9ddada] hover:bg-[#f6fcfc] hover:shadow-lg hover:shadow-[#087f90]/10">
             <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border text-[18px]"
               [ngClass]="categoryTone(notification.category)">
               <span class="material-symbols-outlined">{{ categoryIcon(notification.category) }}</span>
@@ -206,13 +198,13 @@ interface NotificationFilterTab {
             <span class="min-w-0 flex-1">
               <span class="flex flex-wrap items-center gap-2">
                 <span class="text-[14px] font-black leading-6 text-slate-950">{{ displayTitle(notification) }}</span>
-                <span *ngIf="!notification.isRead" class="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-black text-rose-700">
+                <span *ngIf="!notification.isRead" class="rounded-full bg-[#fff0d1] px-2 py-0.5 text-[10px] font-black text-[#d26a00]">
                   {{ 'NOTIFICATIONS_CENTER.NEW_BADGE' | translate }}
                 </span>
                 <span class="rounded-full border px-2 py-0.5 text-[10px] font-black uppercase" [ngClass]="priorityClasses(notification.priority)">
                   {{ priorityLabel(notification.priority) }}
                 </span>
-                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-black text-slate-600 uppercase">
+                <span class="rounded-full bg-[#eafbfb] px-2 py-0.5 text-[10px] font-black text-[#087f90] uppercase">
                   {{ categoryLabel(notification.category) }}
                 </span>
               </span>
@@ -231,14 +223,14 @@ interface NotificationFilterTab {
               </span>
             </span>
 
-            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-400 transition group-hover:border-slate-300 group-hover:bg-white group-hover:text-slate-700">
+            <span class="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#d7eeee] bg-[#f3fbfb] text-[#087f90]/60 transition group-hover:border-[#9ddada] group-hover:bg-white group-hover:text-[#087f90]">
               <span class="material-symbols-outlined text-[18px]">{{ isRTL ? 'arrow_back' : 'arrow_forward' }}</span>
             </span>
           </button>
         </div>
 
         <div *ngIf="!loading && notifications.length === 0" class="p-12 text-center">
-          <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-slate-400">
+          <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-[#eafbfb] text-[#087f90]">
             <span class="material-symbols-outlined text-[28px]">notifications_none</span>
           </div>
           <p class="mt-4 text-[16px] font-black text-slate-800">{{ 'NOTIFICATIONS_CENTER.EMPTY_TITLE' | translate }}</p>
@@ -247,12 +239,13 @@ interface NotificationFilterTab {
 
         <div *ngIf="hasMore && !loading" class="border-t border-slate-100 p-4 text-center">
           <button type="button" (click)="loadMore()"
-            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-2.5 text-[12px] font-black text-slate-700 transition hover:bg-slate-50">
+            class="inline-flex items-center gap-2 rounded-2xl border border-[#bde8e8] bg-white px-5 py-2.5 text-[12px] font-black text-[#087f90] transition hover:bg-[#f2fbfb]">
             <span class="material-symbols-outlined text-[17px]">expand_more</span>
             {{ 'NOTIFICATIONS_CENTER.LOAD_MORE' | translate }}
           </button>
         </div>
       </section>
+      </ng-template>
     </div>
   `
 })
@@ -272,26 +265,19 @@ export class NotificationsCenterComponent implements OnInit {
   ];
 
   selectedTab = this.tabs[0];
-  readonly soundOptions = [...ADMIN_NOTIFICATION_SOUND_OPTIONS];
   notifications: AdminNotification[] = [];
   loading = false;
-  preferencesLoading = false;
-  selectedSound: AdminNotificationSound;
-  soundSaving = false;
   hasMore = false;
   private page = 1;
   private readonly perPage = 20;
   private readonly destroyRef = inject(DestroyRef);
-  private preferences: AdminNotificationPreferences | null = null;
+  private notificationsLoadedOnce = false;
 
   constructor(
     private readonly notificationsService: AdminNotificationsService,
     private readonly router: Router,
-    private readonly translate: TranslateService,
-    private readonly notificationSoundService: AdminNotificationSoundService
-  ) {
-    this.selectedSound = this.notificationSoundService.getCurrentSound();
-  }
+    private readonly translate: TranslateService
+  ) {}
 
   get isRTL(): boolean {
     return (this.translate.currentLang || 'ar').startsWith('ar');
@@ -301,8 +287,8 @@ export class NotificationsCenterComponent implements OnInit {
     return this.notificationsService.requiresApiSession;
   }
 
-  get hasPersistentSoundPreference(): boolean {
-    return (this.preferences?.webDeviceCount ?? 0) > 0;
+  get initialLoading(): boolean {
+    return !this.notificationsLoadedOnce;
   }
 
   get unreadCount(): number {
@@ -315,7 +301,6 @@ export class NotificationsCenterComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
-    this.loadPreferences();
   }
 
   selectTab(tab: NotificationFilterTab): void {
@@ -364,13 +349,13 @@ export class NotificationsCenterComponent implements OnInit {
   priorityClasses(priority?: string | null): string {
     switch ((priority ?? '').toLowerCase()) {
       case 'critical':
-        return 'bg-red-50 text-red-700 border-red-100';
+        return 'bg-[#fff0d1] text-[#c75d00] border-[#ffd08a]';
       case 'high':
-        return 'bg-amber-50 text-amber-700 border-amber-100';
+        return 'bg-[#fff7e8] text-[#d26a00] border-[#ffd9a3]';
       case 'low':
         return 'bg-slate-50 text-slate-500 border-slate-100';
       default:
-        return 'bg-emerald-50 text-emerald-700 border-emerald-100';
+        return 'bg-[#eafbfb] text-[#087f90] border-[#bde8e8]';
     }
   }
 
@@ -398,58 +383,26 @@ export class NotificationsCenterComponent implements OnInit {
   categoryTone(category?: string | null): string {
     switch ((category ?? '').toLowerCase()) {
       case 'drivers':
-        return 'border-sky-100 bg-sky-50 text-sky-700';
+        return 'border-[#bde8e8] bg-[#eafbfb] text-[#087f90]';
       case 'vendors':
-        return 'border-violet-100 bg-violet-50 text-violet-700';
+        return 'border-[#a9dede] bg-[#eefafa] text-[#006878]';
       case 'catalog':
-        return 'border-emerald-100 bg-emerald-50 text-emerald-700';
+        return 'border-[#bde8e8] bg-white text-[#087f90]';
       case 'disputes':
-        return 'border-red-100 bg-red-50 text-red-700';
+        return 'border-[#ffd08a] bg-[#fff0d1] text-[#c75d00]';
       case 'refunds':
-        return 'border-amber-100 bg-amber-50 text-amber-700';
+        return 'border-[#ffd9a3] bg-[#fff7e8] text-[#d26a00]';
       case 'settlements':
-        return 'border-cyan-100 bg-cyan-50 text-cyan-700';
+        return 'border-[#bde8e8] bg-[#f3fbfb] text-[#087f90]';
       case 'support':
-        return 'border-orange-100 bg-orange-50 text-orange-700';
+        return 'border-[#ffd9a3] bg-white text-[#d26a00]';
       default:
-        return 'border-slate-100 bg-slate-50 text-slate-700';
+        return 'border-[#d7eeee] bg-[#f8fdfd] text-[#006878]';
     }
   }
 
   trackByNotificationId(index: number, notification: AdminNotification): string {
     return notification.id || index.toString();
-  }
-
-  previewSound(): void {
-    this.notificationSoundService.preview(this.selectedSound);
-  }
-
-  saveSoundPreference(): void {
-    this.notificationSoundService.setSound(this.selectedSound);
-
-    if (!this.preferences || this.requiresApiSession) {
-      return;
-    }
-
-    this.soundSaving = true;
-    this.notificationsService.updatePreferences({
-      ...this.preferences,
-      sound: this.selectedSound
-    })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (preferences) => {
-          this.preferences = preferences;
-          if (preferences.webDeviceCount > 0) {
-            this.selectedSound = preferences.sound;
-            this.notificationSoundService.setSound(preferences.sound);
-          }
-          this.soundSaving = false;
-        },
-        error: () => {
-          this.soundSaving = false;
-        }
-      });
   }
 
   private load(append = false): void {
@@ -468,31 +421,12 @@ export class NotificationsCenterComponent implements OnInit {
         next: (response) => {
           this.notifications = this.uniqueNotifications(append ? [...this.notifications, ...response.items] : response.items);
           this.hasMore = response.hasMore;
+          this.notificationsLoadedOnce = true;
           this.loading = false;
         },
         error: () => {
+          this.notificationsLoadedOnce = true;
           this.loading = false;
-        }
-      });
-  }
-
-  private loadPreferences(): void {
-    this.preferencesLoading = true;
-    this.notificationsService.getPreferences()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (preferences) => {
-          this.preferences = preferences;
-          if (preferences.webDeviceCount > 0) {
-            this.selectedSound = preferences.sound;
-            this.notificationSoundService.setSound(preferences.sound);
-          } else {
-            this.selectedSound = this.notificationSoundService.getCurrentSound();
-          }
-          this.preferencesLoading = false;
-        },
-        error: () => {
-          this.preferencesLoading = false;
         }
       });
   }

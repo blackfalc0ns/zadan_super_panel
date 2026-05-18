@@ -362,6 +362,11 @@ export interface AdminVendorNotificationResponse {
   emailReason?: string | null;
 }
 
+export interface AdminVendorStoreAvailabilityState {
+  manualMode: 'online' | 'offline';
+  manualReason?: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -369,6 +374,7 @@ export class VendorService {
   private readonly apiUrl = `${environment.apiUrl}/admin/vendors`;
   private readonly vendorStore = this.buildMockVendorStore();
   private readonly apiVendorStore = new Map<string, VendorDetail>();
+  private readonly vendorStoreAvailability = new Map<string, AdminVendorStoreAvailabilityState>();
   private readonly fallbackWarnings = new Set<string>();
   private unauthorizedReadToken: string | null = null;
 
@@ -1189,6 +1195,47 @@ export class VendorService {
         };
       }),
       id
+    );
+  }
+
+  getVendorStoreAvailabilityState(id: string): Observable<AdminVendorStoreAvailabilityState> {
+    if (!this.canUseApiMutations()) {
+      return of(this.getStoredVendorAvailabilityState(id));
+    }
+
+    return this.http.get<{
+      manual_mode?: string | null;
+      manualMode?: string | null;
+      manual_reason?: string | null;
+      manualReason?: string | null;
+    }>(`${this.apiUrl}/${id}/workspace-state/store-availability`).pipe(
+      map((response) => this.normalizeVendorStoreAvailabilityState(response)),
+      map((state) => this.rememberVendorAvailabilityState(id, state)),
+      catchError(() => of(this.getStoredVendorAvailabilityState(id)))
+    );
+  }
+
+  updateVendorStoreAvailabilityState(
+    id: string,
+    payload: AdminVendorStoreAvailabilityState
+  ): Observable<AdminVendorStoreAvailabilityState> {
+    const normalized = this.normalizeVendorStoreAvailabilityState(payload);
+
+    if (!this.canUseApiMutations()) {
+      return of(this.rememberVendorAvailabilityState(id, normalized));
+    }
+
+    return this.http.put<{
+      manual_mode?: string | null;
+      manualMode?: string | null;
+      manual_reason?: string | null;
+      manualReason?: string | null;
+    }>(`${this.apiUrl}/${id}/workspace-state/store-availability`, {
+      manual_mode: normalized.manualMode,
+      manual_reason: normalized.manualMode === 'offline' ? (normalized.manualReason ?? null) : null
+    }).pipe(
+      map((response) => this.normalizeVendorStoreAvailabilityState(response)),
+      map((state) => this.rememberVendorAvailabilityState(id, state))
     );
   }
 
@@ -2606,6 +2653,48 @@ export class VendorService {
     });
 
     return indicators;
+  }
+
+  private getStoredVendorAvailabilityState(id: string): AdminVendorStoreAvailabilityState {
+    return this.vendorStoreAvailability.get(id) ?? {
+      manualMode: 'online',
+      manualReason: null
+    };
+  }
+
+  private rememberVendorAvailabilityState(
+    id: string,
+    state: AdminVendorStoreAvailabilityState
+  ): AdminVendorStoreAvailabilityState {
+    this.vendorStoreAvailability.set(id, { ...state });
+    return { ...state };
+  }
+
+  private normalizeVendorStoreAvailabilityState(
+    value?: {
+      manual_mode?: string | null;
+      manualMode?: string | null;
+      manual_reason?: string | null;
+      manualReason?: string | null;
+    } | AdminVendorStoreAvailabilityState | null
+  ): AdminVendorStoreAvailabilityState {
+    const manualMode = ((value as { manual_mode?: string | null })?.manual_mode
+      ?? (value as { manualMode?: string | null })?.manualMode
+      ?? 'online')
+      .toString()
+      .trim()
+      .toLowerCase() === 'offline'
+      ? 'offline'
+      : 'online';
+
+    const rawReason = (value as { manual_reason?: string | null })?.manual_reason
+      ?? (value as { manualReason?: string | null })?.manualReason
+      ?? null;
+
+    return {
+      manualMode,
+      manualReason: typeof rawReason === 'string' && rawReason.trim() ? rawReason.trim() : null
+    };
   }
 
   private timestamp(): string {

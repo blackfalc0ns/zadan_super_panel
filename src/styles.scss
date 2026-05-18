@@ -257,6 +257,214 @@ body {
   @apply block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2;
 }
 
+.admin-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #edf4f5 0%, #f8fbfc 42%, #e3edf0 100%);
+  background-size: 220% 100%;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.admin-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.78), transparent);
+  animation: adminSkeletonSweep 1.45s ease-in-out infinite;
+}
+
+.admin-skeleton-line {
+  display: block;
+  height: 0.75rem;
+  min-width: 2rem;
+  border-radius: 999px;
+}
+
+.admin-skeleton-line.sm {
+  height: 0.5rem;
+}
+
+.admin-skeleton-line.lg {
+  height: 1rem;
+}
+
+.admin-skeleton-circle,
+.admin-skeleton-avatar {
+  display: block;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+.admin-skeleton-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+}
+
+.admin-skeleton-chip {
+  display: inline-flex;
+  width: 5.25rem;
+  height: 1.7rem;
+  border-radius: 999px;
+}
+
+.admin-skeleton-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 4rem;
+  border-radius: inherit;
+}
+
+.admin-skeleton-button-placeholder {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: min(7rem, 64%);
+  height: 0.72rem;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.25));
+  background-size: 220% 100%;
+  animation: adminSkeletonButton 1.25s ease-in-out infinite;
+}
+
+.admin-skeleton-table,
+.admin-skeleton-cards,
+.admin-skeleton-detail,
+.admin-skeleton-form {
+  border: 1px solid rgb(226 232 240 / 0.75);
+  border-radius: 2rem;
+  background: rgb(255 255 255 / 0.76);
+  box-shadow: 0 18px 44px rgb(15 23 42 / 0.045);
+}
+
+.admin-skeleton-table {
+  overflow: hidden;
+  padding: 0.85rem;
+}
+
+.admin-skeleton-table-header,
+.admin-skeleton-table-row {
+  display: grid;
+  grid-template-columns: repeat(var(--skeleton-columns, 5), minmax(4rem, 1fr));
+  gap: 1rem;
+  align-items: center;
+  min-width: 42rem;
+}
+
+.admin-skeleton-table-header {
+  border-bottom: 1px solid rgb(241 245 249 / 0.9);
+  padding: 0.9rem 1rem 1.1rem;
+}
+
+.admin-skeleton-table-row {
+  border-bottom: 1px solid rgb(241 245 249 / 0.72);
+  padding: 1.05rem 1rem;
+}
+
+.admin-skeleton-table-row:last-child {
+  border-bottom: 0;
+}
+
+.admin-skeleton-card {
+  border: 1px solid rgb(226 232 240 / 0.7);
+  border-radius: 1.5rem;
+  background: rgb(255 255 255 / 0.82);
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgb(15 23 42 / 0.035);
+}
+
+.admin-skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 1rem;
+}
+
+.admin-skeleton-detail {
+  padding: 1.25rem;
+}
+
+.admin-skeleton-detail-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  border-bottom: 1px solid rgb(241 245 249 / 0.85);
+  padding-bottom: 1.25rem;
+}
+
+.admin-skeleton-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.admin-skeleton-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.admin-skeleton-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+@keyframes adminSkeletonSweep {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes adminSkeletonButton {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.65;
+  }
+
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-skeleton-table {
+    border-radius: 1.35rem;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .admin-skeleton-table-header {
+    display: none;
+  }
+
+  .admin-skeleton-table-row {
+    min-width: 0;
+    grid-template-columns: 3rem minmax(0, 1fr) 4.5rem;
+    margin-bottom: 0.85rem;
+    border: 1px solid rgb(226 232 240 / 0.72);
+    border-radius: 1.35rem;
+    background: rgb(255 255 255 / 0.82);
+  }
+
+  .admin-skeleton-table-row .admin-skeleton-line:nth-child(n + 4) {
+    display: none;
+  }
+
+  .admin-skeleton-detail-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
 .shimmer-effect {
   animation: shimmer 2s infinite linear;
   background-size: 200% 100%;

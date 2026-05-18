@@ -48,8 +48,8 @@
               <input type="file" class="hidden" (change)="onFileSelected($event)" accept=".jpg,.jpeg,.png,.webp">
             </label>
 
-            <div *ngIf="isUploading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/80 backdrop-blur-sm">
-              <div class="h-8 w-8 animate-spin rounded-full border-4 border-zadna-primary/20 border-t-zadna-primary"></div>
+            <div *ngIf="isUploading" class="absolute inset-0 z-10 bg-white/90 p-4 backdrop-blur-sm">
+              <span class="admin-skeleton admin-skeleton-media rounded-xl"></span>
             </div>
           </div>
 
@@ -138,7 +138,7 @@
       </button>
       <button type="button" (click)="onSubmit()" [disabled]="isSaving" class="inline-flex h-11 min-w-28 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-5 text-[12px] font-black text-white shadow-lg shadow-zadna-primary/20 transition-colors hover:bg-zadna-primaryDark disabled:cursor-not-allowed disabled:opacity-60">
         <span *ngIf="!isSaving" class="material-symbols-outlined text-[18px]">check</span>
-        <span *ngIf="isSaving" class="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
+        <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-12"></span>
         {{ (mode === 'create' ? 'COMMON.CREATE' : 'COMMON.SAVE') | translate }}
       </button>
     </div>

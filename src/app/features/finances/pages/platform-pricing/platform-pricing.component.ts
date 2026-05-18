@@ -117,8 +117,7 @@ type NumericZoneField =
           </div>
 
           <div *ngIf="isLoading" class="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2">
-            <div class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-zadna-primary"></div>
-            <span class="text-xs font-bold text-slate-500">{{ 'FINANCES.PRICING.LOAD_ZONES' | translate }}</span>
+            <span class="admin-skeleton admin-skeleton-line sm w-36"></span>
           </div>
 
           <app-button

@@ -347,6 +347,92 @@
         width: 200px;
       }
     }
+
+    /* Clean white onboarding/splash screen */
+    html,
+    body {
+      background: #ffffff;
+    }
+
+    .splash-screen {
+      background: #ffffff !important;
+      overflow: hidden;
+      transition: opacity 420ms ease;
+    }
+
+    .splash-screen--hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .grid-bg,
+    .orb,
+    .particle,
+    .hex-frame,
+    .glow-ring,
+    .brand-text,
+    .tagline,
+    .progress-container {
+      display: none !important;
+    }
+
+    .splash-content {
+      gap: 0;
+      width: 100%;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-container {
+      display: flex;
+      width: clamp(110px, 15vw, 180px);
+      height: auto;
+      align-items: center;
+      justify-content: center;
+      animation: none !important;
+      perspective: none;
+      transform: none !important;
+    }
+
+    .logo-img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: none;
+      opacity: 1;
+      animation: zadnaLogoFlicker 1.8s ease-in-out infinite !important;
+    }
+
+    @keyframes zadnaLogoFlicker {
+      0% {
+        opacity: 0;
+        transform: scale(0.985);
+      }
+      18% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      58% {
+        opacity: 1;
+        transform: scale(1.018);
+      }
+      78% {
+        opacity: 0.18;
+        transform: scale(0.995);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.985);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .logo-container {
+        width: min(38vw, 130px);
+        height: auto;
+      }
+    }
   </style>
   <script>
     (function () {
@@ -368,43 +454,68 @@
 </head>
 
 <body class="icons-loading">
-  <app-root>
-    <div class="splash-screen">
-      <div class="grid-bg"></div>
-      
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-      
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      
-      <div class="splash-content">
-        <div class="logo-container">
-          <div class="hex-frame"></div>
-          <div class="glow-ring"></div>
-          <div class="glow-ring"></div>
-          <img src="favicon.ico" alt="Zadna" class="logo-img">
-        </div>
-        
-        <div class="brand-text">ZADNA</div>
-        <div class="tagline">__SPLASH_TAGLINE__</div>
-        
-        <div class="progress-container">
-          <div class="progress-bar"></div>
-        </div>
+  <div id="initial-splash" class="splash-screen">
+    <div class="grid-bg"></div>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <div class="splash-content">
+      <div class="logo-container">
+        <div class="hex-frame"></div>
+        <div class="glow-ring"></div>
+        <div class="glow-ring"></div>
+        <img src="assets/images/%D8%B4%D8%B9%D8%A7%D8%B1%202-20260305T104717Z-3-001/%D8%B4%D8%B9%D8%A7%D8%B1%202/%D8%B4%D9%81%D8%A7%D9%81%20%281%29.png" alt="Zadna" class="logo-img">
+      </div>
+
+      <div class="brand-text">ZADNA</div>
+      <div class="tagline">__SPLASH_TAGLINE__</div>
+
+      <div class="progress-container">
+        <div class="progress-bar"></div>
       </div>
     </div>
-  </app-root>
+  </div>
+
+  <app-root></app-root>
   <script>
     (function () {
       const splashTagline = document.querySelector('.tagline');
       if (splashTagline && window.__zadnaSplashCopy) {
         splashTagline.textContent = window.__zadnaSplashCopy.tagline;
       }
+
+      const splash = document.getElementById('initial-splash');
+      const minimumVisibleMs = 3600;
+      const startedAt = Date.now();
+      let hideScheduled = false;
+
+      const hideSplash = function () {
+        if (!splash || hideScheduled) {
+          return;
+        }
+
+        hideScheduled = true;
+        const remainingMs = Math.max(0, minimumVisibleMs - (Date.now() - startedAt));
+        window.setTimeout(function () {
+          splash.classList.add('splash-screen--hidden');
+          window.setTimeout(function () {
+            splash.remove();
+          }, 460);
+        }, remainingMs);
+      };
+
+      window.addEventListener('zadna:initial-content-ready', hideSplash, { once: true });
+
+      // Safety valve only: if Angular cannot emit readiness, do not trap users forever.
+      window.setTimeout(hideSplash, 12000);
     })();
   </script>
 </body>

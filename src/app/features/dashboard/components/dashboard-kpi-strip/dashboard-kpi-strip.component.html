@@ -1,6 +1,6 @@
-<section class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-5 2xl:gap-6">
   <article *ngFor="let kpi of kpis"
-           class="bg-white rounded-xl border border-slate-100 border-l-[3px] p-4 flex flex-col hover:shadow-sm transition-shadow"
+           class="bg-white rounded-2xl border border-slate-200/70 border-l-[3px] p-5 flex flex-col shadow-sm hover:shadow-md transition-shadow"
            [ngClass]="getKpiCardBorderClass(kpi.severity)">
     <div class="flex items-center justify-between mb-2">
       <h3 class="text-[10px] font-bold uppercase tracking-wide text-slate-500 truncate">{{ kpi.labelKey | translate }}</h3>

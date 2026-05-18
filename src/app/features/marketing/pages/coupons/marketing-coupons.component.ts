@@ -71,7 +71,7 @@ interface CouponFormValue {
             (click)="loadCoupons()"
             [disabled]="loading"
             class="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60">
-            <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
+            <span class="material-symbols-outlined text-[18px]" [class.opacity-40]="loading">refresh</span>
             {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
 
@@ -396,7 +396,7 @@ interface CouponFormValue {
               type="submit"
               [disabled]="saving"
               class="flex h-11 items-center gap-2 rounded-xl bg-zadna-primary px-5 text-sm font-bold text-white transition hover:bg-zadna-primary/90 disabled:cursor-not-allowed disabled:opacity-60">
-              <span class="material-symbols-outlined text-[18px]" *ngIf="saving">progress_activity</span>
+              <span *ngIf="saving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
               {{ (saving ? 'MARKETING.ACTIONS.SAVING' : 'MARKETING.COUPONS.ACTIONS.SAVE') | translate }}
             </button>
           </div>

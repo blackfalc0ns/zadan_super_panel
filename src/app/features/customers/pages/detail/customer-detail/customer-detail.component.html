@@ -96,7 +96,7 @@
             (click)="sendTestMobileNotification()">
             <span
               class="material-symbols-outlined text-[18px]"
-              [ngClass]="{ 'animate-spin': isSendingTestNotification }">
+              [ngClass]="{ 'opacity-40': isSendingTestNotification }">
               {{ isSendingTestNotification ? 'progress_activity' : 'notifications_active' }}
             </span>
             {{ isSendingTestNotification ? 'جاري إرسال إشعار الموبايل...' : 'تجربة إشعار الموبايل' }}

@@ -1,0 +1,136 @@
+<div
+  [formGroup]="variantGroup"
+  [attr.data-product-field]="'additionalVariant-' + index"
+  class="rounded-2xl border bg-white/90 shadow-sm transition-all hover:shadow-md"
+  [ngClass]="isPrimary ? 'border-cyan-200 ring-1 ring-cyan-100' : 'border-slate-200'">
+
+  <!-- Card Header -->
+  <div class="flex items-center justify-between gap-3 border-b px-5 py-3"
+    [ngClass]="isPrimary ? 'border-cyan-100 bg-cyan-50/40' : 'border-slate-100 bg-slate-50/40'">
+    <div class="flex items-center gap-3">
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg text-[14px]"
+        [ngClass]="cardBadgeClass">
+        <span class="material-symbols-outlined text-[16px]">{{ isPrimary ? 'star' : 'inventory_2' }}</span>
+      </span>
+      <div>
+        <span class="block text-[0.7rem] font-black uppercase tracking-[0.14em]"
+          [ngClass]="isPrimary ? 'text-cyan-800' : 'text-slate-600'">
+          {{ cardTitle }}
+        </span>
+        <span *ngIf="displayPreview" class="mt-0.5 block text-[0.78rem] font-bold text-slate-900">
+          {{ displayPreview }}
+        </span>
+        <span *ngIf="!displayPreview" class="mt-0.5 block text-[0.72rem] font-bold text-slate-400 italic">
+          {{ activeLang === 'ar' ? 'اختَر العبوة والحجم' : 'Choose package & size' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span *ngIf="variantId" class="rounded-md bg-slate-100 px-2 py-0.5 text-[0.6rem] font-bold text-slate-500 font-mono">
+        {{ variantId | slice:0:8 }}…
+      </span>
+      <button
+        *ngIf="!isPrimary"
+        type="button"
+        (click)="onRemoveVariant()"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 text-rose-600 transition hover:bg-rose-100"
+        [attr.aria-label]="activeLang === 'ar' ? 'حذف هذا الحجم' : 'Remove this size'">
+        <span class="material-symbols-outlined text-[16px]">close</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Card Body -->
+  <div class="grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_14rem]">
+    <!-- Left: Measurement & Identity -->
+    <div class="space-y-4">
+      <!-- Package & Measurement Row -->
+      <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_8rem_10rem]">
+        <app-searchable-select
+          class="[&_.searchable-select-trigger]:!h-11 [&_.searchable-select-trigger]:!rounded-xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm"
+          formControlName="packageTypeId"
+          [label]="activeLang === 'ar' ? 'نوع العبوة' : 'Package type'"
+          [options]="packageTypeOptions"
+          [placeholder]="activeLang === 'ar' ? 'اختَر العبوة' : 'Select package'">
+        </app-searchable-select>
+
+        <label class="flex flex-col gap-1.5">
+          <span class="text-[0.68rem] font-black text-slate-500">{{ activeLang === 'ar' ? 'الحجم' : 'Size' }}</span>
+          <input
+            formControlName="measurementValue"
+            type="number"
+            min="0"
+            step="0.01"
+            [placeholder]="activeLang === 'ar' ? '100' : '100'"
+            class="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-bold text-slate-900 outline-none shadow-sm transition-all focus:border-cyan-700/50 focus:ring-4 focus:ring-cyan-700/10 placeholder-slate-400">
+        </label>
+
+        <app-searchable-select
+          class="[&_.searchable-select-trigger]:!h-11 [&_.searchable-select-trigger]:!rounded-xl [&_.searchable-select-trigger]:!border-slate-300 [&_.searchable-select-trigger]:!bg-white [&_.searchable-select-trigger]:!shadow-sm"
+          formControlName="measurementUnitId"
+          [label]="activeLang === 'ar' ? 'الوحدة' : 'Unit'"
+          [options]="measurementUnitOptions"
+          [placeholder]="activeLang === 'ar' ? 'جم / مل' : 'g / ml'">
+        </app-searchable-select>
+      </div>
+
+      <!-- Barcode & Slug Row -->
+      <div class="grid gap-3 sm:grid-cols-2">
+        <app-input
+          class="[&_.form-input-base]:!h-11 [&_.form-input-base]:!rounded-xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm"
+          formControlName="barcode"
+          [label]="activeLang === 'ar' ? 'باركود' : 'Barcode'"
+          [placeholder]="activeLang === 'ar' ? 'باركود هذا الحجم' : 'Barcode for this size'">
+        </app-input>
+
+        <app-input
+          class="[&_.form-input-base]:!h-11 [&_.form-input-base]:!rounded-xl [&_.form-input-base]:!border-slate-300 [&_.form-input-base]:!bg-white [&_.form-input-base]:!shadow-sm"
+          formControlName="slug"
+          [label]="'Slug'"
+          [placeholder]="activeLang === 'ar' ? 'تلقائي لو فارغ' : 'Auto if empty'">
+        </app-input>
+      </div>
+    </div>
+
+    <!-- Right: Image Panel -->
+    <div class="flex flex-col items-center gap-3">
+      <span class="text-[0.65rem] font-black uppercase tracking-[0.14em] text-slate-500">
+        {{ activeLang === 'ar' ? 'صورة الحجم' : 'Size image' }}
+      </span>
+
+      <div *ngIf="imageUrl; else emptyImageState"
+        class="relative h-32 w-full overflow-hidden rounded-xl border border-white bg-white shadow-sm">
+        <img
+          class="h-full w-full object-contain p-2"
+          [src]="imageUrl"
+          [alt]="displayPreview || ('Variant ' + (index + 1))">
+        <button
+          type="button"
+          (click)="onRemoveImage()"
+          class="absolute end-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg border border-rose-200 bg-white/95 text-rose-600 shadow transition hover:bg-rose-50">
+          <span class="material-symbols-outlined text-[14px]">delete</span>
+        </button>
+      </div>
+
+      <ng-template #emptyImageState>
+        <div class="flex h-32 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 text-center">
+          <span class="material-symbols-outlined text-[24px] text-slate-300">image</span>
+          <span class="mt-1 text-[0.68rem] font-bold text-slate-400">
+            {{ activeLang === 'ar' ? 'لا صورة' : 'No image' }}
+          </span>
+        </div>
+      </ng-template>
+
+      <input type="file" #variantFileInput hidden (change)="onFileSelected($event)" accept=".jpg,.jpeg,.png,.webp">
+      <button
+        type="button"
+        (click)="onFileInputClick(variantFileInput)"
+        [disabled]="isUploading"
+        class="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl border border-cyan-200 bg-white text-[0.65rem] font-black uppercase tracking-[0.1em] text-cyan-800 shadow-sm transition hover:bg-cyan-50 disabled:opacity-50">
+        <span class="material-symbols-outlined text-[14px]">upload</span>
+        {{ activeLang === 'ar' ? 'رفع' : 'Upload' }}
+      </button>
+    </div>
+  </div>
+</div>

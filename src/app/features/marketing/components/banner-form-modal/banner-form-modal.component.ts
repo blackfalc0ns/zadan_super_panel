@@ -9,6 +9,13 @@ import { AppButtonComponent } from '@shared/components/ui/button/button.componen
 import { AppInputComponent } from '@shared/components/ui/form-controls/input/input.component';
 import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-shell.component';
 
+const IMAGE_ONLY_BANNER_DEFAULTS = {
+  tagAr: 'بانر',
+  tagEn: 'Banner',
+  titleAr: 'بانر رئيسي',
+  titleEn: 'Main Banner'
+} as const;
+
 @Component({
   selector: 'app-banner-form-modal',
   standalone: true,
@@ -63,31 +70,30 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
                   </label>
                 </div>
 
-                <div *ngIf="isUploading" class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm">
-                  <div class="flex flex-col items-center gap-2">
-                    <div class="h-8 w-8 animate-spin rounded-full border-2 border-zadna-primary border-t-transparent"></div>
-                    <span class="text-xs font-bold text-zadna-primary">{{ 'MARKETING.COUPONS.ACTIONS.SEARCHING' | translate }}</span>
-                  </div>
+                <div *ngIf="isUploading" class="absolute inset-0 z-10 rounded-2xl bg-white/90 p-4 backdrop-blur-sm">
+                  <span class="admin-skeleton admin-skeleton-media rounded-xl"></span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Title -->
-          <app-input formControlName="titleAr" [label]="'MARKETING.BANNERS.FIELDS.TITLE_AR' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.TITLE_AR_PLACEHOLDER' | translate" [isRequired]="true"></app-input>
-          <app-input formControlName="titleEn" [label]="'MARKETING.BANNERS.FIELDS.TITLE_EN' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.TITLE_EN_PLACEHOLDER' | translate" [isRequired]="true"></app-input>
-
-          <!-- Subtitle -->
-          <app-input formControlName="subtitleAr" [label]="'MARKETING.BANNERS.FIELDS.SUBTITLE_AR' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.SUBTITLE_AR_PLACEHOLDER' | translate"></app-input>
-          <app-input formControlName="subtitleEn" [label]="'MARKETING.BANNERS.FIELDS.SUBTITLE_EN' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.SUBTITLE_EN_PLACEHOLDER' | translate"></app-input>
-
-          <!-- Tag -->
-          <app-input formControlName="tagAr" [label]="'MARKETING.BANNERS.FIELDS.TAG_AR' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.TAG_AR_PLACEHOLDER' | translate" [isRequired]="true"></app-input>
-          <app-input formControlName="tagEn" [label]="'MARKETING.BANNERS.FIELDS.TAG_EN' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.TAG_EN_PLACEHOLDER' | translate" [isRequired]="true"></app-input>
-
-          <!-- Action Button -->
-          <app-input formControlName="actionLabelAr" [label]="'MARKETING.BANNERS.FIELDS.ACTION_LABEL_AR' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.ACTION_LABEL_AR_PLACEHOLDER' | translate"></app-input>
-          <app-input formControlName="actionLabelEn" [label]="'MARKETING.BANNERS.FIELDS.ACTION_LABEL_EN' | translate" [placeholder]="'MARKETING.BANNERS.FIELDS.ACTION_LABEL_EN_PLACEHOLDER' | translate"></app-input>
+          <div class="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+            <div class="flex items-start gap-3">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-zadna-primary shadow-sm">
+                <span class="material-symbols-outlined text-[20px]">image</span>
+              </div>
+              <div>
+                <p class="text-sm font-black text-slate-900">
+                  {{ translateService.currentLang === 'ar' ? 'بانر بصورة فقط' : 'Image-only banner' }}
+                </p>
+                <p class="mt-1 text-xs font-semibold leading-5 text-slate-500">
+                  {{ translateService.currentLang === 'ar'
+                    ? 'تم إخفاء حقول النص من هذه النافذة. النظام سيحفظ قيماً افتراضية داخليًا، وأنت تحتاج فقط إلى رفع الصورة وترتيب ظهورها.'
+                    : 'Text fields are hidden in this modal. The system saves internal defaults, so you only need to upload the image and choose its order.' }}
+                </p>
+              </div>
+            </div>
+          </div>
 
           <div class="md:col-span-2 h-px bg-slate-200 my-2"></div>
 
@@ -173,14 +179,14 @@ export class BannerFormModalComponent implements OnChanges {
       this.isUploading = false;
       const banner = this.banner;
       this.form.reset({
-        tagAr: banner?.tagAr ?? '',
-        tagEn: banner?.tagEn ?? '',
-        titleAr: banner?.titleAr ?? '',
-        titleEn: banner?.titleEn ?? '',
-        subtitleAr: banner?.subtitleAr ?? '',
-        subtitleEn: banner?.subtitleEn ?? '',
-        actionLabelAr: banner?.actionLabelAr ?? '',
-        actionLabelEn: banner?.actionLabelEn ?? '',
+        tagAr: banner?.tagAr ?? IMAGE_ONLY_BANNER_DEFAULTS.tagAr,
+        tagEn: banner?.tagEn ?? IMAGE_ONLY_BANNER_DEFAULTS.tagEn,
+        titleAr: banner?.titleAr ?? IMAGE_ONLY_BANNER_DEFAULTS.titleAr,
+        titleEn: banner?.titleEn ?? IMAGE_ONLY_BANNER_DEFAULTS.titleEn,
+        subtitleAr: '',
+        subtitleEn: '',
+        actionLabelAr: '',
+        actionLabelEn: '',
         imageUrl: banner?.imageUrl ?? '',
         displayOrder: String(banner?.displayOrder ?? 0),
         startsAtUtc: toDateTimeLocalInput(banner?.startsAtUtc),
@@ -199,14 +205,14 @@ export class BannerFormModalComponent implements OnChanges {
 
     const value = this.form.getRawValue();
     this.save.emit({
-      tagAr: value.tagAr.trim(),
-      tagEn: value.tagEn.trim(),
-      titleAr: value.titleAr.trim(),
-      titleEn: value.titleEn.trim(),
-      subtitleAr: normalizeOptional(value.subtitleAr),
-      subtitleEn: normalizeOptional(value.subtitleEn),
-      actionLabelAr: normalizeOptional(value.actionLabelAr),
-      actionLabelEn: normalizeOptional(value.actionLabelEn),
+      tagAr: normalizeRequired(value.tagAr, IMAGE_ONLY_BANNER_DEFAULTS.tagAr),
+      tagEn: normalizeRequired(value.tagEn, IMAGE_ONLY_BANNER_DEFAULTS.tagEn),
+      titleAr: normalizeRequired(value.titleAr, IMAGE_ONLY_BANNER_DEFAULTS.titleAr),
+      titleEn: normalizeRequired(value.titleEn, IMAGE_ONLY_BANNER_DEFAULTS.titleEn),
+      subtitleAr: null,
+      subtitleEn: null,
+      actionLabelAr: null,
+      actionLabelEn: null,
       imageUrl: value.imageUrl.trim(),
       displayOrder: Number(value.displayOrder) || 0,
       startsAtUtc: toNullableUtcIso(value.startsAtUtc),
@@ -245,4 +251,9 @@ export class BannerFormModalComponent implements OnChanges {
 function normalizeOptional(value: string | null): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
+}
+
+function normalizeRequired(value: string | null, fallback: string): string {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : fallback;
 }

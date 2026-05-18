@@ -40,10 +40,22 @@ export interface LoginCredentials {
     password: string;
 }
 
+export interface UpdateCurrentUserProfileRequest {
+    fullName: string;
+    email: string;
+    phone: string;
+}
+
+export interface ChangeCurrentPasswordRequest {
+    currentPassword: string;
+    newPassword: string;
+}
+
 const DEV_ADMIN_USER: AdminUser = {
     id: 'dev-super-admin',
     fullName: 'Development Admin',
     email: 'dev@zadana.local',
+    phone: '+201000000000',
     role: 'SuperAdmin',
     mustChangePassword: false,
     access: {
@@ -141,6 +153,30 @@ export class AuthService {
 
     changeTemporaryPassword(currentPassword: string, newPassword: string): Observable<void> {
         return this.http.post<void>(`${this.apiUrl}/change-temporary-password`, { currentPassword, newPassword }).pipe(
+            tap(() => {
+                const currentUser = this.currentUserValue;
+                if (!currentUser) {
+                    return;
+                }
+
+                const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
+                localStorage.setItem('admin_user', JSON.stringify(updatedUser));
+                this.currentUserSubject.next(updatedUser);
+            })
+        );
+    }
+
+    updateCurrentUserProfile(payload: UpdateCurrentUserProfileRequest): Observable<AdminUser> {
+        return this.http.put<AdminUser>(`${this.apiUrl}/me`, payload).pipe(
+            tap((user) => {
+                localStorage.setItem('admin_user', JSON.stringify(user));
+                this.currentUserSubject.next(user);
+            })
+        );
+    }
+
+    changePassword(payload: ChangeCurrentPasswordRequest): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/change-password`, payload).pipe(
             tap(() => {
                 const currentUser = this.currentUserValue;
                 if (!currentUser) {

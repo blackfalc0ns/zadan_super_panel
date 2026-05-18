@@ -14,7 +14,7 @@
     </app-dashboard-header>
 
     <!-- SCROLLABLE CONTENT -->
-    <main class="flex-1 overflow-y-auto px-5 py-5 lg:px-8 max-w-[1600px] w-full mx-auto space-y-6">
+    <main class="flex-1 overflow-y-auto px-5 py-6 sm:px-6 lg:px-10 max-w-[1600px] w-full mx-auto space-y-8">
 
       <!-- PAGE TITLE & TABS -->
       <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -48,7 +48,7 @@
       <ng-container [ngSwitch]="activeTab">
         
         <!-- OVERVIEW TAB -->
-        <div *ngSwitchCase="'overview'" class="space-y-6 animate-fade-in">
+        <div *ngSwitchCase="'overview'" class="space-y-8 animate-fade-in">
           <app-dashboard-kpi-strip
             [kpis]="vm.kpis"
             [microChartOptions]="heroMicroChartOptions">
@@ -72,7 +72,7 @@
         </div>
 
         <!-- VENDORS TAB -->
-        <div *ngSwitchCase="'vendors'" class="space-y-6 animate-fade-in">
+        <div *ngSwitchCase="'vendors'" class="space-y-8 animate-fade-in">
           <app-dashboard-sections
             [primarySections]="vendorSections"
             [secondarySections]="[]"
@@ -104,7 +104,7 @@
         </div>
 
         <!-- DRIVERS TAB -->
-        <div *ngSwitchCase="'drivers'" class="space-y-6 animate-fade-in">
+        <div *ngSwitchCase="'drivers'" class="space-y-8 animate-fade-in">
           <app-dashboard-sections
             [primarySections]="driverSections"
             [secondarySections]="[]"
@@ -136,7 +136,7 @@
         </div>
 
         <!-- ORDERS TAB -->
-        <div *ngSwitchCase="'orders'" class="space-y-6 animate-fade-in">
+        <div *ngSwitchCase="'orders'" class="space-y-8 animate-fade-in">
           <section class="dashboard-orders-stack">
             <div class="dashboard-orders-insights">
               <app-dashboard-orders-windows
@@ -164,7 +164,7 @@
         </div>
 
         <!-- FINANCE TAB -->
-        <div *ngSwitchCase="'finance'" class="space-y-6 animate-fade-in">
+        <div *ngSwitchCase="'finance'" class="space-y-8 animate-fade-in">
           <section class="dashboard-detail-grid">
             <article class="dashboard-detail-panel lg:col-span-2">
               <div class="dashboard-detail-header">
@@ -181,7 +181,7 @@
               <div echarts [options]="revenueBarsOptions" class="h-72 w-full"></div>
             </article>
           </section>
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="xl:col-span-2">
               <app-dashboard-sections
                 [primarySections]="financeSections"
@@ -204,12 +204,69 @@
 
   <!-- LOADING / ERROR STATE -->
   <ng-template #dashboardState>
-    <div class="flex flex-col items-center justify-center min-h-[70vh] gap-4">
-      <div *ngIf="isLoading" class="flex flex-col items-center gap-3">
-        <div class="h-7 w-7 border-3 border-zadna-primary/20 border-t-zadna-primary rounded-full animate-spin"></div>
-        <p class="text-[11px] font-medium text-slate-400 animate-pulse">{{ 'COMMON.LOADING' | translate }}</p>
-      </div>
-      <div *ngIf="loadError" class="flex flex-col items-center gap-3 max-w-xs text-center">
+    <div class="flex-1 overflow-y-auto bg-slate-50/80">
+      <main *ngIf="isLoading" class="w-full max-w-[1600px] mx-auto px-5 py-6 sm:px-6 lg:px-10 space-y-8">
+        <section class="rounded-[1.35rem] border border-slate-200/80 bg-white/90 p-4 shadow-sm">
+          <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div class="space-y-3">
+              <span class="admin-skeleton admin-skeleton-line lg w-52"></span>
+              <span class="admin-skeleton admin-skeleton-line w-72 max-w-full"></span>
+            </div>
+            <div class="grid w-full gap-3 sm:grid-cols-2 lg:w-auto lg:grid-cols-5">
+              <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line h-12 min-w-36 rounded-2xl"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-5 2xl:gap-6">
+          <article *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-card min-h-[10.5rem] space-y-5 p-5">
+            <div class="flex justify-end">
+              <span class="admin-skeleton admin-skeleton-line sm w-28"></span>
+            </div>
+            <span class="admin-skeleton admin-skeleton-line lg w-16"></span>
+            <span class="admin-skeleton admin-skeleton-chip"></span>
+            <span class="admin-skeleton admin-skeleton-line sm w-full"></span>
+          </article>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-5 2xl:gap-6">
+          <article *ngFor="let item of [1,2,3]" class="admin-skeleton-card min-h-[7.5rem] p-5">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1 space-y-3">
+                <span class="admin-skeleton admin-skeleton-line sm w-36"></span>
+                <span class="admin-skeleton admin-skeleton-line w-3/4"></span>
+                <span class="admin-skeleton admin-skeleton-line lg w-28"></span>
+              </div>
+              <span class="admin-skeleton admin-skeleton-circle"></span>
+            </div>
+          </article>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <article class="admin-skeleton-card min-h-[22rem] p-5 lg:col-span-2">
+            <div class="mb-6 space-y-3">
+              <span class="admin-skeleton admin-skeleton-line lg w-44"></span>
+              <span class="admin-skeleton admin-skeleton-line w-72 max-w-full"></span>
+            </div>
+            <span class="admin-skeleton admin-skeleton-line w-full" style="height: 15rem"></span>
+          </article>
+          <div class="grid min-h-[22rem] gap-6">
+            <article *ngFor="let item of [1,2]" class="admin-skeleton-card p-5">
+              <span class="admin-skeleton admin-skeleton-line lg w-40"></span>
+              <span class="admin-skeleton admin-skeleton-line mt-5 w-full" style="height: 6.5rem"></span>
+            </article>
+          </div>
+          <article *ngFor="let item of [1,2,3]" class="admin-skeleton-card min-h-[16rem] p-5">
+            <div class="mb-5 space-y-3">
+              <span class="admin-skeleton admin-skeleton-line lg w-40"></span>
+              <span class="admin-skeleton admin-skeleton-line w-64 max-w-full"></span>
+            </div>
+            <span class="admin-skeleton admin-skeleton-line w-full" style="height: 9rem"></span>
+          </article>
+        </section>
+      </main>
+
+      <div *ngIf="loadError" class="flex min-h-[70vh] flex-col items-center justify-center gap-3 px-5 text-center">
         <div class="h-11 w-11 bg-red-50 text-red-400 rounded-full flex items-center justify-center">
           <span class="material-symbols-outlined text-xl">error</span>
         </div>

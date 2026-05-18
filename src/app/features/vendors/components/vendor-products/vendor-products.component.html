@@ -100,12 +100,17 @@
   </div>
 
   <!-- Loading State -->
-  <section *ngIf="isLoading" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-slate-200/60 bg-white/80 py-16 text-center backdrop-blur-md shadow-sm">
-    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary/10 text-primary shadow-inner mb-4">
-      <span class="material-symbols-outlined animate-pulse text-[32px]">inventory_2</span>
+  <section *ngIf="isLoading" class="admin-skeleton-table" style="--skeleton-columns: 5">
+    <div class="admin-skeleton-table-header">
+      <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line sm"></span>
     </div>
-    <p class="text-[14px] font-black text-slate-900">{{ 'VENDOR_PRODUCTS.STATES.LOADING_TITLE' | translate }}</p>
-    <p class="mt-1 text-[12px] font-medium text-slate-500">{{ 'VENDOR_PRODUCTS.STATES.LOADING_MESSAGE' | translate }}</p>
+    <div *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton-table-row">
+      <span class="admin-skeleton admin-skeleton-avatar"></span>
+      <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+      <span class="admin-skeleton admin-skeleton-chip"></span>
+      <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+      <span class="admin-skeleton admin-skeleton-chip"></span>
+    </div>
   </section>
 
   <!-- Error State -->

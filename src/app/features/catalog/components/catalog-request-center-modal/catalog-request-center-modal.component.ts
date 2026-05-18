@@ -44,8 +44,11 @@ import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/st
             </button>
           </div>
 
-          <div *ngIf="isLoading" class="flex min-h-[260px] items-center justify-center">
-            <div class="h-10 w-10 animate-spin rounded-full border-4 border-zadna-primary/15 border-t-zadna-primary"></div>
+          <div *ngIf="isLoading" class="space-y-3">
+            <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
+              <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+              <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+            </div>
           </div>
 
           <div *ngIf="!isLoading && !requests.length" class="rounded-[1.25rem] border border-dashed border-slate-200 bg-white px-5 py-10 text-center">

@@ -285,12 +285,20 @@ import { InlineBannerComponent } from '@shared/components/ui/inline-banner/inlin
     </div>
 
     <ng-template #loadingTpl>
-      <div class="flex flex-col items-center justify-center py-32 animate-pulse">
-        <div class="relative h-16 w-16 mb-6">
-          <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
-          <div class="absolute inset-0 rounded-full border-4 border-t-zadna-primary animate-spin"></div>
+      <div class="admin-skeleton-detail">
+        <div class="admin-skeleton-detail-hero">
+          <div class="space-y-3">
+            <span class="admin-skeleton admin-skeleton-line lg w-72"></span>
+            <span class="admin-skeleton admin-skeleton-line w-96 max-w-full"></span>
+          </div>
+          <span class="admin-skeleton admin-skeleton-chip"></span>
         </div>
-        <p class="text-[0.85rem] font-black text-slate-400 uppercase tracking-[0.2em]">{{ 'COMMON.LOADING' | translate }}</p>
+        <div class="admin-skeleton-detail-grid">
+          <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-card space-y-3">
+            <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+            <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+          </div>
+        </div>
       </div>
     </ng-template>
   `,

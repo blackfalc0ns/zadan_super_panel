@@ -53,7 +53,7 @@ const SECTION_ORDER: HomeContentSectionType[] = [
             (click)="loadSettings()"
             [disabled]="loading"
             class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
-            <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="loading">refresh</span>
+            <span class="material-symbols-outlined text-[18px]" [class.opacity-40]="loading">refresh</span>
             {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
         </div>
@@ -85,8 +85,8 @@ const SECTION_ORDER: HomeContentSectionType[] = [
             *ngFor="let setting of filteredSettings"
             class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50/50 transition-colors relative">
             
-            <div *ngIf="pendingSection === setting.sectionType && saving" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-10 flex items-center justify-center">
-              <div class="h-6 w-6 animate-spin rounded-full border-2 border-zadna-primary border-t-transparent"></div>
+            <div *ngIf="pendingSection === setting.sectionType && saving" class="absolute inset-0 z-10 bg-white/75 p-4 backdrop-blur-[1px]">
+              <span class="admin-skeleton admin-skeleton-media rounded-xl"></span>
             </div>
 
             <!-- Section Info -->

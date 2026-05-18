@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
+import { AdminVendorStoreAvailabilityState } from '@vendors/services/vendor.api.service';
 
 type VendorSettingsDialog = 'reset-password' | 'suspend-account' | 'lock-login' | 'archive-account' | null;
 
@@ -30,11 +31,14 @@ export class VendorSettingsComponent {
   newOrdersNotificationsEnabled = true;
   notificationsSubmitting = false;
   operationsSubmitting = false;
+  storeAvailabilitySubmitting = false;
   pageError = '';
   pageSuccess = '';
   preparationTimeMinutes: number | null = null;
   resetPasswordQueued = false;
   smsNotificationsEnabled = false;
+  storeManualMode: 'online' | 'offline' = 'online';
+  storeManualReason = '';
   vendor: VendorDetail | null = null;
 
   private readonly destroyRef = inject(DestroyRef);
@@ -63,6 +67,13 @@ export class VendorSettingsComponent {
         this.emailNotificationsEnabled = vendor?.notificationSettings?.emailNotificationsEnabled ?? true;
         this.smsNotificationsEnabled = vendor?.notificationSettings?.smsNotificationsEnabled ?? false;
         this.newOrdersNotificationsEnabled = vendor?.notificationSettings?.newOrdersNotificationsEnabled ?? true;
+      });
+
+    this.vendorDetailFacade.storeAvailability$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((state) => {
+        this.storeManualMode = state.manualMode;
+        this.storeManualReason = state.manualReason ?? '';
       });
   }
 
@@ -256,6 +267,16 @@ export class VendorSettingsComponent {
     return this.text('كل إعداد في هذه الصفحة مرتبط مباشرة بالباك إند ويحدث بيانات التاجر بعد الحفظ.', 'Every setting on this page is connected to the backend and refreshes vendor data after saving.');
   }
 
+  get storeAvailabilityBadgeLabel(): string {
+    return this.isStoreOffline
+      ? this.text('أوفلاين في التطبيق', 'Offline in app')
+      : this.text('أونلاين في التطبيق', 'Online in app');
+  }
+
+  get isStoreOffline(): boolean {
+    return this.storeManualMode === 'offline';
+  }
+
   get showDialogSecondaryInput(): boolean {
     return this.activeDialog === 'reset-password';
   }
@@ -385,6 +406,40 @@ export class VendorSettingsComponent {
   onResetPassword(): void {
     this.clearFeedback();
     this.openDialog('reset-password');
+  }
+
+  saveStoreAvailability(): void {
+    if (!this.vendor || this.storeAvailabilitySubmitting) {
+      return;
+    }
+
+    this.clearFeedback();
+    this.storeAvailabilitySubmitting = true;
+
+    const payload: AdminVendorStoreAvailabilityState = {
+      manualMode: this.storeManualMode,
+      manualReason: this.storeManualMode === 'offline' ? (this.storeManualReason.trim() || null) : null
+    };
+
+    this.vendorDetailFacade.updateVendorStoreAvailabilityStateRequest(payload)
+      .pipe(take(1))
+      .subscribe({
+        next: () => this.setSuccess(this.text('تم حفظ حالة ظهور المتجر في التطبيق بنجاح.', 'Store app visibility was saved successfully.')),
+        error: () => {
+          this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ حالة ظهور المتجر الآن.', 'Unable to save store visibility right now.');
+          this.storeAvailabilitySubmitting = false;
+        },
+        complete: () => {
+          this.storeAvailabilitySubmitting = false;
+        }
+      });
+  }
+
+  setStoreManualMode(mode: 'online' | 'offline'): void {
+    this.storeManualMode = mode;
+    if (mode === 'online') {
+      this.storeManualReason = '';
+    }
   }
 
   saveNotificationSettings(): void {

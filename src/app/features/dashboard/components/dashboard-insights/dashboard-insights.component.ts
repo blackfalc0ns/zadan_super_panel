@@ -16,7 +16,8 @@ export interface InsightPanel {
   selector: 'app-dashboard-insights',
   standalone: true,
   imports: [CommonModule, TranslateModule],
-  templateUrl: './dashboard-insights.component.html'
+  templateUrl: './dashboard-insights.component.html',
+  styles: [':host { display: block; }']
 })
 export class DashboardInsightsComponent {
   @Input() panels: InsightPanel[] = [];

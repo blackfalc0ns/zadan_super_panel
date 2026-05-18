@@ -74,6 +74,67 @@
           </span>
         </div>
 
+        <div class="border-b border-slate-100 p-3">
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div class="max-w-2xl">
+                <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'ظهور المتجر في تطبيق العميل' : 'Store visibility in customer app' }}</p>
+                <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-500">
+                  {{ isRTL
+                    ? 'عند تحويل المتجر إلى أوفلاين ستختفي كل منتجاته من التطبيق حتى يعود أونلاين مرة أخرى.'
+                    : 'When the store is switched offline, all of its products are hidden from the customer app until it is turned online again.' }}
+                </p>
+              </div>
+
+              <span
+                class="rounded-full px-3 py-1.5 text-[11px] font-black"
+                [ngClass]="isStoreOffline ? 'border border-rose-200 bg-rose-50 text-rose-700' : 'border border-emerald-200 bg-emerald-50 text-emerald-700'">
+                {{ storeAvailabilityBadgeLabel }}
+              </span>
+            </div>
+
+            <div class="mt-3 grid gap-3 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
+              <div class="grid gap-3 md:grid-cols-2">
+                <button
+                  (click)="setStoreManualMode('online')"
+                  class="rounded-xl border px-3 py-3 text-start transition"
+                  [ngClass]="!isStoreOffline ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-700 hover:border-emerald-200 hover:bg-emerald-50/40'"
+                  type="button">
+                  <span class="block text-[12px] font-black">{{ isRTL ? 'أونلاين' : 'Online' }}</span>
+                  <span class="mt-1 block text-[11px] font-semibold">{{ isRTL ? 'إظهار المنتجات واستقبال الطلبات.' : 'Show products and keep orders flowing.' }}</span>
+                </button>
+
+                <button
+                  (click)="setStoreManualMode('offline')"
+                  class="rounded-xl border px-3 py-3 text-start transition"
+                  [ngClass]="isStoreOffline ? 'border-rose-300 bg-rose-50 text-rose-800' : 'border-slate-200 bg-white text-slate-700 hover:border-rose-200 hover:bg-rose-50/40'"
+                  type="button">
+                  <span class="block text-[12px] font-black">{{ isRTL ? 'أوفلاين' : 'Offline' }}</span>
+                  <span class="mt-1 block text-[11px] font-semibold">{{ isRTL ? 'إخفاء كل المنتجات من التطبيق مؤقتًا.' : 'Temporarily hide all products from the app.' }}</span>
+                </button>
+              </div>
+
+              <label *ngIf="isStoreOffline" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'سبب الإخفاء' : 'Offline reason' }}</span>
+                <input
+                  [(ngModel)]="storeManualReason"
+                  type="text"
+                  class="mt-1 w-full bg-transparent text-[14px] font-black text-slate-950 outline-none"
+                  [placeholder]="isRTL ? 'اختياري' : 'Optional'" />
+              </label>
+
+              <button
+                (click)="saveStoreAvailability()"
+                [disabled]="storeAvailabilitySubmitting"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+                type="button">
+                <span class="material-symbols-outlined text-[17px]">storefront</span>
+                {{ storeAvailabilitySubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ حالة المتجر' : 'Save store visibility') }}
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="grid gap-3 p-3 lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
           <label class="flex min-h-[72px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
             <div>

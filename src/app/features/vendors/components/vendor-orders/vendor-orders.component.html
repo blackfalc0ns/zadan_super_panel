@@ -93,14 +93,16 @@
     </div>
   </section>
 
-  <section *ngIf="isLoading"
-    class="grid min-h-[340px] place-items-center rounded-2xl border border-slate-200/70 bg-white/90 text-center shadow-sm backdrop-blur">
-    <div>
-      <div class="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-teal-50 text-teal-700">
-        <span class="material-symbols-outlined animate-pulse text-[26px]">receipt_long</span>
-      </div>
-      <p class="mt-3 text-[13px] font-black text-slate-900">{{ 'VENDOR_ORDERS.STATES.LOADING_TITLE' | translate }}</p>
-      <p class="mt-1 text-[12px] font-semibold text-slate-500">{{ 'VENDOR_ORDERS.STATES.LOADING_MESSAGE' | translate }}</p>
+  <section *ngIf="isLoading" class="admin-skeleton-table" style="--skeleton-columns: 5">
+    <div class="admin-skeleton-table-header">
+      <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line sm"></span>
+    </div>
+    <div *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton-table-row">
+      <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+      <span class="admin-skeleton admin-skeleton-chip"></span>
+      <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+      <span class="admin-skeleton admin-skeleton-chip"></span>
+      <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
     </div>
   </section>
 

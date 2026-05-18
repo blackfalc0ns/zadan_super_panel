@@ -9,7 +9,8 @@ import { DashboardKpiCard, DashboardSeverity } from '../../models/dashboard.mode
   selector: 'app-dashboard-kpi-strip',
   standalone: true,
   imports: [CommonModule, TranslateModule, NgxEchartsDirective],
-  templateUrl: './dashboard-kpi-strip.component.html'
+  templateUrl: './dashboard-kpi-strip.component.html',
+  styles: [':host { display: block; }']
 })
 export class DashboardKpiStripComponent {
   @Input() kpis: DashboardKpiCard[] = [];

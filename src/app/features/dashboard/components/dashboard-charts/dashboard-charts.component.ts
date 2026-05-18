@@ -9,7 +9,8 @@ import { DashboardSeriesChart } from '../../models/dashboard.models';
   selector: 'app-dashboard-charts',
   standalone: true,
   imports: [CommonModule, TranslateModule, NgxEchartsDirective],
-  templateUrl: './dashboard-charts.component.html'
+  templateUrl: './dashboard-charts.component.html',
+  styles: [':host { display: block; }']
 })
 export class DashboardChartsComponent {
   @Input() ordersTrend!: DashboardSeriesChart;

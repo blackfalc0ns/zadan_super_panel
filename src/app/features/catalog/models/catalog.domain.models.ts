@@ -61,6 +61,19 @@ export interface MasterProductVariantOption {
     displaySizeAr?: string;
     displaySizeEn?: string;
     isCurrent: boolean;
+    imageUrl?: string;
+    images?: string[];
+    barcode?: string;
+    slug?: string;
+    packageTypeNameAr?: string;
+    packageTypeNameEn?: string;
+    measurementValue?: number | null;
+    measurementUnitNameAr?: string;
+    measurementUnitNameEn?: string;
+    unit?: string;
+    price?: number | null;
+    oldPrice?: number | null;
+    isDiscounted?: boolean;
 }
 
 export interface MasterProductImage {
@@ -150,6 +163,9 @@ export interface ProductSearchFilters {
     subcategoryIds?: string[];
     brandIds?: string[];
     statuses?: Array<MasterProduct['status']>;
+    packageTypeId?: string | null;
+    measurementUnitId?: string | null;
+    measurementValue?: number | null;
     isActiveBrand?: boolean | null;
     hasBrand?: boolean | null;
 }

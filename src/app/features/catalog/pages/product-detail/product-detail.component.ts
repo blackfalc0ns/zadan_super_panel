@@ -22,6 +22,17 @@ interface ProductVendorSnapshot {
   timeKey: string;
 }
 
+interface ProductSizeCard {
+  id: string;
+  label: string;
+  size: string;
+  subtitle: string;
+  isCurrent: boolean;
+  imageUrl: string | null;
+  barcode: string | null;
+  slug: string | null;
+}
+
 @Component({
   selector: 'app-product-detail',
   standalone: true,
@@ -48,6 +59,8 @@ export class ProductDetailComponent implements OnInit {
   unitName: string = '';
   breadcrumbs: { label: string; action?: () => void }[] = [];
   vendorSnapshots: ProductVendorSnapshot[] = [];
+  /** Currently active variant ID — null means the loaded product itself is active */
+  activeVariantId: string | null = null;
   private readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -61,9 +74,29 @@ export class ProductDetailComponent implements OnInit {
     return this.translate.currentLang || 'ar';
   }
 
+  /** Returns the variant option object if a non-primary variant is selected, otherwise null */
+  get activeVariant(): MasterProductVariantOption | null {
+    if (!this.activeVariantId || !this.product?.variants) {
+      return null;
+    }
+    return this.product.variants.find(v => v.id === this.activeVariantId) ?? null;
+  }
+
+  /** Whether the currently displayed data is for the primary product (not a sibling variant) */
+  get isShowingPrimary(): boolean {
+    return !this.activeVariantId || this.activeVariantId === this.product?.id;
+  }
+
   get displayName(): string {
     if (!this.product) {
       return '';
+    }
+
+    const variant = this.activeVariant;
+    if (variant) {
+      return this.activeLang === 'ar'
+        ? (variant.nameAr || variant.nameEn || '')
+        : (variant.nameEn || variant.nameAr || '');
     }
 
     return this.activeLang === 'ar'
@@ -132,6 +165,14 @@ export class ProductDetailComponent implements OnInit {
       return fallback;
     }
 
+    const variant = this.activeVariant;
+    if (variant) {
+      const name = this.activeLang === 'ar'
+        ? (variant.packageTypeNameAr || variant.packageTypeNameEn || '')
+        : (variant.packageTypeNameEn || variant.packageTypeNameAr || '');
+      return name || fallback;
+    }
+
     return (this.activeLang === 'ar'
       ? (this.product.packageTypeNameAr || this.product.packageTypeNameEn || '')
       : (this.product.packageTypeNameEn || this.product.packageTypeNameAr || '')) || fallback;
@@ -143,6 +184,14 @@ export class ProductDetailComponent implements OnInit {
       return fallback;
     }
 
+    const variant = this.activeVariant;
+    if (variant) {
+      const name = this.activeLang === 'ar'
+        ? (variant.measurementUnitNameAr || variant.measurementUnitNameEn || '')
+        : (variant.measurementUnitNameEn || variant.measurementUnitNameAr || '');
+      return name || fallback;
+    }
+
     return (this.activeLang === 'ar'
       ? (this.product.measurementUnitNameAr || this.product.measurementUnitNameEn || this.product.unitNameAr || this.product.unitNameEn || '')
       : (this.product.measurementUnitNameEn || this.product.measurementUnitNameAr || this.product.unitNameEn || this.product.unitNameAr || '')) || fallback;
@@ -152,6 +201,14 @@ export class ProductDetailComponent implements OnInit {
     const fallback = this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
     if (!this.product) {
       return fallback;
+    }
+
+    const variant = this.activeVariant;
+    if (variant) {
+      const variantSize = this.activeLang === 'ar'
+        ? (variant.displaySizeAr || variant.displaySizeEn || '')
+        : (variant.displaySizeEn || variant.displaySizeAr || '');
+      return variantSize.trim() || fallback;
     }
 
     const localizedDisplaySize = this.activeLang === 'ar'
@@ -173,6 +230,10 @@ export class ProductDetailComponent implements OnInit {
   }
 
   get displayBarcode(): string {
+    const variant = this.activeVariant;
+    if (variant?.barcode) {
+      return variant.barcode;
+    }
     return this.product?.barcode || this.translate.instant('PRODUCTS.DETAIL.NOT_SPECIFIED');
   }
 
@@ -184,8 +245,63 @@ export class ProductDetailComponent implements OnInit {
     return this.linkedVariants.length > 1;
   }
 
+  get sizeCards(): ProductSizeCard[] {
+    if (!this.product) {
+      return [];
+    }
+
+    const cards: ProductSizeCard[] = [];
+    const currentActiveId = this.activeVariantId || this.product.id;
+
+    // Primary card — the loaded product itself
+    const primaryImageUrl = this.product.images?.find(img => img.isPrimary)?.url
+      || this.product.images?.[0]?.url
+      || null;
+
+    const primaryDisplaySize = this.activeLang === 'ar'
+      ? (this.product.displaySizeAr || this.product.displaySizeEn || '')
+      : (this.product.displaySizeEn || this.product.displaySizeAr || '');
+
+    cards.push({
+      id: this.product.id,
+      label: this.activeLang === 'ar'
+        ? (this.product.nameAr || this.product.nameEn || '')
+        : (this.product.nameEn || this.product.nameAr || ''),
+      size: primaryDisplaySize.trim() || (this.product.measurementValue ? `${this.product.measurementValue}` : '—'),
+      subtitle: this.activeLang === 'ar' ? 'الحجم الأساسي' : 'Primary size',
+      isCurrent: currentActiveId === this.product.id,
+      imageUrl: primaryImageUrl,
+      barcode: this.product.barcode || null,
+      slug: (this.product as any).slug || null
+    });
+
+    // Sibling variant cards
+    for (const variant of this.linkedVariants) {
+      if (!variant.id || variant.id === this.product.id) {
+        continue;
+      }
+
+      cards.push({
+        id: variant.id,
+        label: this.getVariantLabel(variant),
+        size: this.getVariantSize(variant),
+        subtitle: this.activeLang === 'ar' ? 'حجم مرتبط' : 'Linked size',
+        isCurrent: currentActiveId === variant.id,
+        imageUrl: variant.imageUrl || null,
+        barcode: variant.barcode || null,
+        slug: variant.slug || null
+      });
+    }
+
+    return cards;
+  }
+
+  get hasSizeCards(): boolean {
+    return this.sizeCards.length > 0;
+  }
+
   get imageCount(): number {
-    return this.product?.images?.length ?? 0;
+    return this.activeGalleryImages.length;
   }
 
   get vendorCount(): number {
@@ -234,6 +350,7 @@ export class ProductDetailComponent implements OnInit {
   loadProduct(id: string): void {
     this.isLoading = true;
     this.selectedImageIndex = 0;
+    this.activeVariantId = null;
     this.vendorSnapshots = [];
     this.categoryName = '';
     this.brandName = '';
@@ -243,7 +360,7 @@ export class ProductDetailComponent implements OnInit {
       next: (product) => {
         this.product = product;
         this.loadCategoryAndBrand();
-        this.loadLinkedVendors(id);
+        this.loadLinkedVendors(this.currentProductViewId);
         this.isLoading = false;
       },
       error: (err) => {
@@ -329,19 +446,19 @@ export class ProductDetailComponent implements OnInit {
   }
 
   selectImage(index: number): void {
-    this.selectedImageIndex = index;
+    const maxIndex = Math.max(0, this.activeGalleryImages.length - 1);
+    this.selectedImageIndex = Math.max(0, Math.min(index, maxIndex));
   }
 
   getMainImage(): string {
     const noImageLabel = 'No image';
-    const images = this.product?.images?.filter((image) => !!image.url) ?? [];
+
+    const images = this.activeGalleryImages;
     if (!images.length) {
       return this.buildPlaceholderImage(noImageLabel);
     }
 
-    const selectedAsset = images[this.selectedImageIndex];
-    return selectedAsset?.url || images[0]?.url || this.buildPlaceholderImage(noImageLabel);
-
+    return images[this.selectedImageIndex] || images[0] || this.buildPlaceholderImage(noImageLabel);
   }
 
   goBack(): void {
@@ -349,8 +466,9 @@ export class ProductDetailComponent implements OnInit {
   }
 
   editProduct(): void {
-    if (this.product?.id) {
-      this.router.navigate(['/catalog/products/edit', this.product.id]);
+    const editId = this.activeVariantId || this.product?.id;
+    if (editId) {
+      this.router.navigate(['/catalog/products/edit', editId]);
     }
   }
 
@@ -360,6 +478,31 @@ export class ProductDetailComponent implements OnInit {
     }
 
     this.router.navigate(['/catalog/products/view', variant.id]);
+  }
+
+  openSizeCard(id: string, isCurrent: boolean): void {
+    if (!id) {
+      return;
+    }
+
+    // Determine the currently active ID
+    const currentActiveId = this.activeVariantId || this.product?.id;
+    if (id === currentActiveId) {
+      return; // Already showing this variant
+    }
+
+    // Instant switch — no reload, just change the active variant
+    if (id === this.product?.id) {
+      this.activeVariantId = null; // back to the primary product
+    } else {
+      this.activeVariantId = id;
+    }
+    this.selectedImageIndex = 0;
+    this.loadLinkedVendors(this.currentProductViewId);
+  }
+
+  trackBySizeCard(index: number, card: ProductSizeCard): string {
+    return card.id;
   }
 
   getVariantLabel(variant: MasterProductVariantOption): string {
@@ -444,6 +587,25 @@ export class ProductDetailComponent implements OnInit {
 
   private buildPlaceholderImage(label: string): string {
     return `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="24" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3E${encodeURIComponent(label)}%3C/text%3E%3C/svg%3E`;
+  }
+
+  get currentProductViewId(): string {
+    return this.activeVariantId || this.product?.id || '';
+  }
+
+  get activeGalleryImages(): string[] {
+    const variant = this.activeVariant;
+    if (variant?.images?.length) {
+      return variant.images.filter(Boolean);
+    }
+
+    if (variant?.imageUrl) {
+      return [variant.imageUrl];
+    }
+
+    return (this.product?.images ?? [])
+      .map((image) => image.url?.trim() || '')
+      .filter(Boolean);
   }
 }
 

@@ -1,4 +1,4 @@
-<section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
   <!-- Orders Trend (2/3) -->
   <article class="dashboard-panel lg:col-span-2 h-[22rem]">
     <div class="dashboard-panel-header">
@@ -11,7 +11,7 @@
   </article>
 
   <!-- Revenue + Readiness (1/3) -->
-  <div class="flex flex-col gap-4 lg:col-span-1 h-[22rem]">
+  <div class="flex flex-col gap-6 lg:col-span-1 h-[22rem]">
     <article class="dashboard-panel flex-1">
       <div class="dashboard-panel-header">
         <h2 class="text-[12px] font-bold text-slate-800">{{ revenueTrend.titleKey | translate }}</h2>
@@ -63,7 +63,7 @@
         <p class="text-[9px] text-slate-400 mt-0.5">{{ 'DASHBOARD.SUPPLY_DESC' | translate }}</p>
       </div>
     </div>
-    <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 min-h-0 p-2">
+    <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-0 p-3">
       <div class="min-h-0" echarts [options]="vendorReadinessBarOptions"></div>
       <div class="min-h-0" echarts [options]="driverReadinessBarOptions"></div>
     </div>

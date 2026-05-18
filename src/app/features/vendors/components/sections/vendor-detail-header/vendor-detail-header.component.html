@@ -63,7 +63,7 @@
         <div class="flex flex-wrap items-center justify-center sm:justify-end gap-3 w-full lg:w-auto shrink-0">
           <button (click)="openMessageComposer()" type="button" [disabled]="isSendingTestNotification || !vendorId"
             class="group flex h-11 items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white px-4 text-xs font-black text-slate-700 backdrop-blur-md transition-all hover:border-zadna-primary/30 hover:bg-slate-50 hover:shadow-sm disabled:opacity-50">
-            <span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-zadna-primary" [class.animate-spin]="isSendingTestNotification">
+            <span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-zadna-primary" [class.opacity-40]="isSendingTestNotification">
               {{ isSendingTestNotification ? 'progress_activity' : 'notifications_active' }}
             </span>
             <span class="hidden sm:inline">{{ isSendingTestNotification ? sendingTestNotificationLabel : sendTestNotificationLabel }}</span>

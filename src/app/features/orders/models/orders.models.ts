@@ -43,6 +43,11 @@ export interface OrderItem {
   total: number;
   icon: string;
   sku: string;
+  imageUrl?: string;
+  variantDisplaySize?: string;
+  packageTypeName?: string;
+  measurementValue?: number | null;
+  measurementUnitName?: string;
 }
 
 export interface OrderTimelineItem {

@@ -125,6 +125,20 @@ export class CustomersService {
     return this.customersSubject.asObservable();
   }
 
+  searchCustomers(search: string, pageSize: number = 5): Observable<CustomerDetailRecord[]> {
+    let params = new HttpParams()
+      .set('page', '1')
+      .set('pageSize', String(pageSize));
+
+    if (search.trim()) {
+      params = params.set('search', search.trim());
+    }
+
+    return this.http.get<ApiPaginatedResponse<AdminCustomerListItemDto>>(this.apiUrl, { params }).pipe(
+      map((response) => response.items.map((item) => this.mapListItemToCustomer(item)))
+    );
+  }
+
   loadWithFilters(search?: string, filters?: CustomerFilters): void {
     let params = new HttpParams()
       .set('page', '1')

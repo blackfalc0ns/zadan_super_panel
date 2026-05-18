@@ -96,9 +96,12 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 
               <!-- Dropdown List -->
               <div *ngIf="showVendorDropdown" class="mt-2 w-full max-h-[12rem] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-lg">
-                <div *ngIf="vendorProductsLoading" class="flex items-center justify-center py-5 gap-2">
-                  <span class="material-symbols-outlined text-[18px] text-zadna-primary animate-spin">progress_activity</span>
-                  <span class="text-xs font-bold text-slate-500">{{ 'MARKETING.FEATURED.SEARCHING' | translate }}</span>
+                <div *ngIf="vendorProductsLoading" class="space-y-2 px-4 py-3">
+                  <div *ngFor="let item of [1,2,3]" class="flex items-center gap-3">
+                    <span class="admin-skeleton admin-skeleton-avatar !h-8 !w-8 rounded-lg"></span>
+                    <span class="admin-skeleton admin-skeleton-line flex-1"></span>
+                    <span class="admin-skeleton admin-skeleton-chip"></span>
+                  </div>
                 </div>
                 <div *ngIf="!vendorProductsLoading && filteredVendorProducts.length === 0" class="flex flex-col items-center justify-center py-5 gap-1">
                   <span class="material-symbols-outlined text-[24px] text-slate-300">search_off</span>
@@ -154,9 +157,12 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 
               <!-- Dropdown List -->
               <div *ngIf="showMasterDropdown" class="mt-2 w-full max-h-[12rem] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-lg">
-                <div *ngIf="masterProductsLoading" class="flex items-center justify-center py-5 gap-2">
-                  <span class="material-symbols-outlined text-[18px] text-zadna-primary animate-spin">progress_activity</span>
-                  <span class="text-xs font-bold text-slate-500">{{ 'MARKETING.FEATURED.SEARCHING' | translate }}</span>
+                <div *ngIf="masterProductsLoading" class="space-y-2 px-4 py-3">
+                  <div *ngFor="let item of [1,2,3]" class="flex items-center gap-3">
+                    <span class="admin-skeleton admin-skeleton-avatar !h-8 !w-8 rounded-lg"></span>
+                    <span class="admin-skeleton admin-skeleton-line flex-1"></span>
+                    <span class="admin-skeleton admin-skeleton-chip"></span>
+                  </div>
                 </div>
                 <div *ngIf="!masterProductsLoading && filteredMasterProducts.length === 0" class="flex flex-col items-center justify-center py-5 gap-1">
                   <span class="material-symbols-outlined text-[24px] text-slate-300">search_off</span>

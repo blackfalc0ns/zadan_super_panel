@@ -54,11 +54,15 @@
       </div>
     </header>
 
-    <section *ngIf="isLoading" class="grid min-h-[260px] place-items-center rounded-[1.35rem] border border-slate-200 bg-white p-6 text-center shadow-sm">
-      <div>
-        <span class="material-symbols-outlined animate-bounce text-[34px] text-[#0f7f8b]">monitoring</span>
-        <h2 class="mt-2 text-sm font-black text-slate-950">{{ 'VENDOR_ANALYTICS.STATES.LOADING_TITLE' | translate }}</h2>
-        <p class="mt-1 text-xs font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.LOADING_MESSAGE' | translate }}</p>
+    <section *ngIf="isLoading" class="admin-skeleton-detail">
+      <div class="admin-skeleton-detail-grid">
+        <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-card space-y-3">
+          <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+          <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+        </div>
+      </div>
+      <div class="admin-skeleton-card-grid mt-4">
+        <span *ngFor="let item of [1,2,3]" class="admin-skeleton admin-skeleton-media rounded-[1.35rem]" style="height: 10rem"></span>
       </div>
     </section>
 

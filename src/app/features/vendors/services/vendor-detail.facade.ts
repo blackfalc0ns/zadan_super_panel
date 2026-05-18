@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, Subscription, catchError, finalize, interv
 import { VendorActivityLogFilters, VendorActivityLogPage, VendorDetail } from '@vendors/models/vendors.domain.models';
 import {
   AdminSendVendorNotificationRequest,
+  AdminVendorStoreAvailabilityState,
   AdminVendorNotificationResponse,
   VendorService
 } from '@vendors/services/vendor.api.service';
@@ -12,6 +13,10 @@ import {
 export class VendorDetailFacade implements OnDestroy {
   private readonly vendorIdSubject = new BehaviorSubject<string | null>(null);
   private readonly vendorSubject = new BehaviorSubject<VendorDetail | null>(null);
+  private readonly storeAvailabilitySubject = new BehaviorSubject<AdminVendorStoreAvailabilityState>({
+    manualMode: 'online',
+    manualReason: null
+  });
   private readonly activityLogSubject = new BehaviorSubject<VendorActivityLogPage | null>(null);
   private readonly isLoadingSubject = new BehaviorSubject(false);
   private readonly isActivityLogLoadingSubject = new BehaviorSubject(false);
@@ -22,6 +27,7 @@ export class VendorDetailFacade implements OnDestroy {
 
   readonly vendorId$ = this.vendorIdSubject.asObservable();
   readonly vendor$ = this.vendorSubject.asObservable();
+  readonly storeAvailability$ = this.storeAvailabilitySubject.asObservable();
   readonly activityLog$ = this.activityLogSubject.asObservable();
   readonly isLoading$ = this.isLoadingSubject.asObservable();
   readonly isActivityLogLoading$ = this.isActivityLogLoadingSubject.asObservable();
@@ -88,6 +94,14 @@ export class VendorDetailFacade implements OnDestroy {
           this.isLoadingSubject.next(false);
         }
       });
+
+    this.vendorService
+      .getVendorStoreAvailabilityState(vendorId)
+      .pipe(take(1))
+      .subscribe({
+        next: (state) => this.storeAvailabilitySubject.next(state),
+        error: () => undefined
+      });
   }
 
   loadVendorActivityLog(filters: VendorActivityLogFilters = {}): void {
@@ -140,6 +154,14 @@ export class VendorDetailFacade implements OnDestroy {
         .pipe(take(1))
         .subscribe({
           next: (vendor) => this.vendorSubject.next(vendor),
+          error: () => undefined
+        });
+
+      this.vendorService
+        .getVendorStoreAvailabilityState(vendorId)
+        .pipe(take(1))
+        .subscribe({
+          next: (state) => this.storeAvailabilitySubject.next(state),
           error: () => undefined
         });
 
@@ -302,6 +324,34 @@ export class VendorDetailFacade implements OnDestroy {
     newOrdersNotificationsEnabled: boolean;
   }): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) => this.vendorService.updateVendorNotificationSettings(vendorId, payload));
+  }
+
+  updateVendorStoreAvailabilityStateRequest(
+    payload: AdminVendorStoreAvailabilityState
+  ): Observable<AdminVendorStoreAvailabilityState> {
+    const vendorId = this.vendorId;
+
+    if (!vendorId) {
+      return throwError(() => new Error('Vendor is not loaded.'));
+    }
+
+    this.isLoadingSubject.next(true);
+    this.mutationErrorSubject.next(null);
+
+    return this.vendorService.updateVendorStoreAvailabilityState(vendorId, payload).pipe(
+      take(1),
+      tap((state) => {
+        this.storeAvailabilitySubject.next(state);
+        this.refreshVendorActivityLog();
+      }),
+      catchError((error) => {
+        this.mutationErrorSubject.next(this.resolveErrorMessage(error));
+        return throwError(() => error);
+      }),
+      finalize(() => {
+        this.isLoadingSubject.next(false);
+      })
+    );
   }
 
   requestVendorDocuments(note?: string): void {

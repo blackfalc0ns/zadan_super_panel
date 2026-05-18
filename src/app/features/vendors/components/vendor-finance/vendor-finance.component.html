@@ -69,11 +69,20 @@
   </section>
 
   <!-- Loading State -->
-  <section *ngIf="isLoading" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-slate-200/60 bg-white/80 py-16 text-center backdrop-blur-md shadow-sm">
-    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary/10 text-primary shadow-inner mb-4">
-      <span class="material-symbols-outlined animate-spin text-[32px]">sync</span>
+  <section *ngIf="isLoading" class="admin-skeleton-detail">
+    <div class="admin-skeleton-detail-hero">
+      <div class="space-y-3">
+        <span class="admin-skeleton admin-skeleton-line lg w-72"></span>
+        <span class="admin-skeleton admin-skeleton-line w-96 max-w-full"></span>
+      </div>
+      <span class="admin-skeleton admin-skeleton-chip"></span>
     </div>
-    <p class="text-[14px] font-black text-slate-900">{{ isRTL ? 'جاري تحميل المشهد المالي...' : 'Loading finance workspace...' }}</p>
+    <div class="admin-skeleton-detail-grid">
+      <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
+        <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+        <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+      </div>
+    </div>
   </section>
 
   <!-- Error State -->
@@ -151,7 +160,8 @@
             (click)="saveLifecycleMode()"
             [disabled]="isSavingMode"
             class="group flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-[13px] font-black text-white transition-all hover:bg-slate-800 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
-            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110" [class.animate-spin]="isSavingMode">{{ isSavingMode ? 'progress_activity' : 'save' }}</span>
+            <span *ngIf="isSavingMode" class="admin-skeleton admin-skeleton-line sm w-16"></span>
+            <span *ngIf="!isSavingMode" class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">save</span>
             <span>{{ isRTL ? 'حفظ الدورة المالية' : 'Save finance lifecycle' }}</span>
           </button>
         </div>

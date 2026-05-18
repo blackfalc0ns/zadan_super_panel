@@ -181,11 +181,18 @@
             </app-pagination>
         </div>
 
-        <!-- 7. Loading state (Skeleton) placeholder if needed -->
-        <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 animate-pulse">
-            <div class="relative w-24 h-24">
-                <div class="absolute inset-0 rounded-full border-[6px] border-zadna-primary/10"></div>
-                <div class="absolute inset-0 rounded-full border-[6px] border-t-zadna-primary animate-spin"></div>
+        <!-- 7. Loading state -->
+        <div *ngIf="isLoading" class="hidden md:block admin-skeleton-table" style="--skeleton-columns: 6">
+            <div class="admin-skeleton-table-header">
+                <span *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton admin-skeleton-line sm"></span>
+            </div>
+            <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
+                <span class="admin-skeleton admin-skeleton-avatar"></span>
+                <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+                <span class="admin-skeleton admin-skeleton-chip"></span>
+                <span class="admin-skeleton admin-skeleton-line w-3/5"></span>
+                <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
+                <span class="admin-skeleton admin-skeleton-chip"></span>
             </div>
         </div>
     </div>
@@ -204,12 +211,28 @@
     (actionClick)="onPreviewAction($event)">
     
     <ng-template #content let-vendor>
-        <div *ngIf="previewLoading" class="py-24 flex flex-col items-center justify-center gap-4 text-slate-500">
-            <div class="relative w-16 h-16">
-                <div class="absolute inset-0 rounded-full border-4 border-zadna-primary/10"></div>
-                <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-zadna-primary animate-spin"></div>
+        <div *ngIf="previewLoading" class="space-y-4">
+            <div class="admin-skeleton-card">
+                <div class="flex items-center gap-3">
+                    <span class="admin-skeleton admin-skeleton-avatar"></span>
+                    <div class="flex-1 space-y-2">
+                        <span class="admin-skeleton admin-skeleton-line lg w-3/4"></span>
+                        <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <span class="admin-skeleton admin-skeleton-line"></span>
+                    <span class="admin-skeleton admin-skeleton-line"></span>
+                    <span class="admin-skeleton admin-skeleton-line sm"></span>
+                    <span class="admin-skeleton admin-skeleton-line sm"></span>
+                </div>
             </div>
-            <p class="text-sm font-bold">{{ 'VENDORS.PREVIEW.UPDATED_NOW' | translate }}</p>
+            <div class="admin-skeleton-card-grid">
+                <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
+                    <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+                    <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+                </div>
+            </div>
         </div>
 
         <div *ngIf="!previewLoading && previewError" class="rounded-[2rem] border border-red-100 bg-red-50 p-6 text-center space-y-2">

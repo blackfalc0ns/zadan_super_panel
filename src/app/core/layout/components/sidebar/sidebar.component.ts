@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IsActiveMatchOptions, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -15,6 +16,10 @@ export class SidebarComponent {
     @Input() currentLang: string = 'ar';
 
     private readonly router = inject(Router);
+    private readonly authService = inject(AuthService);
+    
+    readonly currentUser$ = this.authService.currentUser$;
+
     private readonly exactMatchOptions: IsActiveMatchOptions = {
         paths: 'exact',
         queryParams: 'ignored',

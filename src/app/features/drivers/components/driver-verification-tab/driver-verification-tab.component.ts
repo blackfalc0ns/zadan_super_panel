@@ -35,13 +35,17 @@ export class DriverVerificationTabComponent implements OnInit {
 
   get documentGroups() {
     // Group documents into a single group for now to match vendor UI structure
-    return [
-      {
-        title: 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_GROUPS.DRIVER_DOCUMENTS',
-        documents: this.driver.documents
-      }
-    ];
+    if (!this._cachedDocumentGroups || this._cachedDocumentGroups[0]?.documents !== this.driver.documents) {
+      this._cachedDocumentGroups = [
+        {
+          title: 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_GROUPS.DRIVER_DOCUMENTS',
+          documents: this.driver.documents
+        }
+      ];
+    }
+    return this._cachedDocumentGroups;
   }
+  private _cachedDocumentGroups: { title: string; documents: DriverDocumentRecord[] }[] | null = null;
 
   get reviewCompletionPercent() {
     return this.driver.verification.progressPercentage || 0;
@@ -69,6 +73,10 @@ export class DriverVerificationTabComponent implements OnInit {
     }
   }
 
+  trackByDocumentId(index: number, document: DriverDocumentRecord): string {
+    return document.id;
+  }
+
   setWorkspaceWindow(window: 'operations' | 'review') {
     this.workspaceWindow = window;
   }
@@ -77,9 +85,18 @@ export class DriverVerificationTabComponent implements OnInit {
     return this.workspaceWindow === window;
   }
 
-  selectDocument(document: DriverDocumentRecord) {
-    this.selectedDocumentPreview = document;
+  selectDocument(selectedDoc: DriverDocumentRecord) {
+    this.selectedDocumentPreview = selectedDoc;
     this.documentRejectReason = '';
+
+    // On smaller screens the preview panel is below the document list,
+    // scroll it into view so the user sees the change.
+    setTimeout(() => {
+      const previewEl = document.getElementById('document-preview-panel');
+      if (previewEl) {
+        previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
   onAddNote() {

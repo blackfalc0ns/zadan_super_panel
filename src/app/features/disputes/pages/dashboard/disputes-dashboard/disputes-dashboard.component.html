@@ -176,13 +176,9 @@
     </div>
 
     <div class="pt-1 md:pt-2">
-      <div *ngIf="isLoading"
-        class="mb-4 rounded-[1.4rem] border border-slate-200/70 bg-white px-4 py-6 text-center text-[12px] font-black text-slate-500 shadow-sm">
-        {{ getUiLabel('loadingDisputes') }}
-      </div>
-
       <app-data-table [data]="paginatedDisputes" [columns]="tableColumns" [actions]="tableActions"
         [bulkActions]="bulkActions" [selectable]="true" [clickableRows]="true"
+        [isLoading]="isLoading"
         [containerClass]="'extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
         [emptyStateTitle]="'DISPUTES_DASHBOARD.EMPTY.TITLE' | translate"
         [emptyStateMessage]="'DISPUTES_DASHBOARD.EMPTY.MESSAGE' | translate" (rowClick)="onTableRowClick($event)"

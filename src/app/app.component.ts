@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { AfterViewInit, Component, Inject, OnInit, Renderer2 } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { filter, take } from 'rxjs';
 import { AdminSupportCaseRealtimeService } from './core/services/admin-support-case-realtime.service';
 
 @Component({
@@ -11,15 +12,17 @@ import { AdminSupportCaseRealtimeService } from './core/services/admin-support-c
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'superadmin-panel';
   private readonly materialSymbolsDescriptor = '400 24px "Material Symbols Outlined"';
+  private initialContentReadySignaled = false;
 
   constructor(
     private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
-    private adminSupportCaseRealtime: AdminSupportCaseRealtimeService
+    private adminSupportCaseRealtime: AdminSupportCaseRealtimeService,
+    private router: Router
   ) {
     // Hide Material Symbols text until font loads
     this.loadMaterialSymbolsFont();
@@ -43,6 +46,20 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminSupportCaseRealtime.startMonitoring();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.router.navigated) {
+      this.signalInitialContentReady();
+      return;
+    }
+
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        take(1)
+      )
+      .subscribe(() => this.signalInitialContentReady());
   }
 
   private async loadMaterialSymbolsFont(): Promise<void> {
@@ -96,5 +113,22 @@ export class AppComponent implements OnInit {
       this.renderer.setAttribute(htmlTag, 'dir', 'ltr');
       this.renderer.setAttribute(htmlTag, 'lang', 'en');
     }
+  }
+
+  private signalInitialContentReady(): void {
+    if (this.initialContentReadySignaled) {
+      return;
+    }
+
+    this.initialContentReadySignaled = true;
+
+    // Wait for the routed component to paint before removing the first-open splash.
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('zadna:initial-content-ready'));
+        }, 80);
+      });
+    });
   }
 }

@@ -126,7 +126,7 @@ export class SuperAdminDashboardService {
         regions: this.mapFilterOptions(response.filters.regions, lang),
         vendors: this.mapFilterOptions(response.filters.vendors, lang)
       },
-      headerSummary: this.localizeDashboardText(response.meta.scopeSummary, lang),
+      headerSummary: this.localizeText(response.meta.scopeSummary, lang),
       lastUpdatedLabel: this.formatDateTime(response.meta.generatedAtUtc, lang),
       systemMode: response.meta.mode,
       systemStatusLabelKey: response.meta.mode === 'live'
@@ -136,8 +136,8 @@ export class SuperAdminDashboardService {
         id: kpi.id,
         labelKey: kpi.labelKey,
         value: kpi.displayValue,
-        unitLabel: this.localizeDashboardText(kpi.unit ?? undefined, lang) || undefined,
-        trendLabel: this.localizeDashboardText(kpi.changeLabel, lang),
+        unitLabel: this.localizeText(kpi.unit ?? undefined, lang) || undefined,
+        trendLabel: this.localizeText(kpi.changeLabel, lang),
         trendDirection: kpi.trendDirection,
         severity: kpi.severity,
         contextKey: kpi.contextKey
@@ -150,9 +150,9 @@ export class SuperAdminDashboardService {
       charts: this.localizeCharts(response.charts, lang),
       attentionItems: response.attentionItems.map((item) => this.withNormalizedRoute({
         ...item,
-        entityName: this.localizeDashboardText(item.entityName, lang),
-        summary: this.localizeDashboardText(item.summary, lang),
-        owner: this.localizeDashboardText(item.owner, lang)
+        entityName: this.localizeText(item.entityName, lang),
+        summary: this.localizeText(item.summary, lang),
+        owner: this.localizeText(item.owner, lang)
       })),
       auditItems: response.auditFeed.map((item) => this.withNormalizedRoute(item)),
       sections: [
@@ -175,25 +175,25 @@ export class SuperAdminDashboardService {
       route: this.normalizeDashboardRoute(section.route),
       stats: section.stats.map((stat) => ({
         ...stat,
-        displayValue: this.localizeDashboardText(stat.displayValue, lang),
-        unit: this.localizeDashboardText(stat.unit, lang) || undefined
+        displayValue: this.localizeText(stat.displayValue, lang),
+        unit: this.localizeText(stat.unit, lang) || undefined
       })),
       rankedLists: section.rankedLists.map((list) => ({
         ...list,
         rows: list.rows.map((row) => this.withNormalizedRoute({
           ...row,
-          label: this.localizeDashboardText(row.label, lang),
-          value: this.localizeDashboardText(row.value, lang),
-          secondaryValue: this.localizeDashboardText(row.secondaryValue, lang) || undefined,
-          metaLabel: this.localizeDashboardText(row.metaLabel, lang) || undefined
+          label: this.localizeText(row.label, lang),
+          value: this.localizeText(row.value, lang),
+          secondaryValue: this.localizeText(row.secondaryValue, lang) || undefined,
+          metaLabel: this.localizeText(row.metaLabel, lang) || undefined
         }))
       })),
       exceptions: section.exceptions.map((exception) => this.withNormalizedRoute({
         ...exception,
-        entityLabel: this.localizeDashboardText(exception.entityLabel, lang),
-        issueLabel: this.localizeDashboardText(exception.issueLabel, lang),
-        ownerLabel: this.localizeDashboardText(exception.ownerLabel, lang),
-        metricLabel: this.localizeDashboardText(exception.metricLabel, lang)
+        entityLabel: this.localizeText(exception.entityLabel, lang),
+        issueLabel: this.localizeText(exception.issueLabel, lang),
+        ownerLabel: this.localizeText(exception.ownerLabel, lang),
+        metricLabel: this.localizeText(exception.metricLabel, lang)
       }))
     };
   }
@@ -206,7 +206,7 @@ export class SuperAdminDashboardService {
           ...series,
           points: series.points.map((point) => ({
             ...point,
-            label: this.localizeDashboardText(point.label, lang)
+            label: this.localizeText(point.label, lang)
           }))
         }))
       },
@@ -216,13 +216,13 @@ export class SuperAdminDashboardService {
           ...series,
           points: series.points.map((point) => ({
             ...point,
-            label: this.localizeDashboardText(point.label, lang)
+            label: this.localizeText(point.label, lang)
           }))
         }))
       },
       regionPressure: charts.regionPressure.map((row) => this.withNormalizedRoute({
         ...row,
-        regionLabel: this.localizeDashboardText(row.regionLabel, lang)
+        regionLabel: this.localizeText(row.regionLabel, lang)
       })),
       vendorReadiness: charts.vendorReadiness,
       driverReadiness: charts.driverReadiness
@@ -294,12 +294,12 @@ export class SuperAdminDashboardService {
   ): DashboardFilterOption[] {
     return options.map((option) => ({
       value: option.value,
-      label: this.localizeDashboardText(option.label, lang),
+      label: this.localizeText(option.label, lang),
       count: option.count
     }));
   }
 
-  private localizeDashboardText(value: string | number | null | undefined, lang: 'ar' | 'en'): string {
+  localizeText(value: string | number | null | undefined, lang: 'ar' | 'en'): string {
     if (value === null || value === undefined) return '';
     const text = `${value}`.trim();
     if (!text || lang !== 'ar') return text;
@@ -309,7 +309,7 @@ export class SuperAdminDashboardService {
 
     const queueMatch = text.match(/^Queue\s+(.+?)\s+still holds this case in\s+(.+)\.?$/i);
     if (queueMatch) {
-      return `ما زالت قائمة ${this.localizeDashboardText(queueMatch[1], lang)} تحتفظ بهذه الحالة في مرحلة ${this.localizeDashboardText(queueMatch[2], lang)}.`;
+      return `ما زالت قائمة ${this.localizeText(queueMatch[1], lang)} تحتفظ بهذه الحالة في مرحلة ${this.localizeText(queueMatch[2], lang)}.`;
     }
 
     const riskMatch = text.match(/^([\d,.]+)\s+risk$/i);

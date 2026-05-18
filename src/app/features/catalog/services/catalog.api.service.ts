@@ -1505,7 +1505,20 @@ export class CatalogService {
         nameEn: readString('nameEn', 'NameEn') || readString('nameAr', 'NameAr') || '',
         displaySizeAr: readString('displaySizeAr', 'DisplaySizeAr'),
         displaySizeEn: readString('displaySizeEn', 'DisplaySizeEn'),
-        isCurrent: readBoolean('isCurrent', 'IsCurrent')
+        isCurrent: readBoolean('isCurrent', 'IsCurrent'),
+        imageUrl: readString('imageUrl', 'ImageUrl'),
+        images: this.extractArray<string>(variant['images'] ?? variant['Images'])
+          .map((value) => typeof value === 'string' ? value.trim() : '')
+          .filter(Boolean),
+        packageTypeNameAr: readString('packageTypeNameAr', 'PackageTypeNameAr'),
+        packageTypeNameEn: readString('packageTypeNameEn', 'PackageTypeNameEn'),
+        measurementValue: this.extractNumber(variant, ['measurementValue', 'MeasurementValue']) ?? null,
+        measurementUnitNameAr: readString('measurementUnitNameAr', 'MeasurementUnitNameAr'),
+        measurementUnitNameEn: readString('measurementUnitNameEn', 'MeasurementUnitNameEn'),
+        unit: readString('unit', 'Unit'),
+        price: this.extractNumber(variant, ['price', 'Price']) ?? null,
+        oldPrice: this.extractNumber(variant, ['oldPrice', 'OldPrice']) ?? null,
+        isDiscounted: readBoolean('isDiscounted', 'IsDiscounted')
       };
     }).filter((variant) => !!variant.id);
   }
