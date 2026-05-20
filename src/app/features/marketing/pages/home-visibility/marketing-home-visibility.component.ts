@@ -2,7 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { HomeContentSectionSetting, HomeContentSectionType } from '@marketing/models/marketing.models';
+import {
+  HomeContentSectionSetting,
+  HomeContentSectionType,
+  ProductCardPriceVisibilitySetting
+} from '@marketing/models/marketing.models';
 import { MarketingApiService } from '@marketing/services/marketing.api.service';
 import { describeApiError, humanizeSectionType } from '@marketing/utils/marketing-date.utils';
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
@@ -50,12 +54,65 @@ const SECTION_ORDER: HomeContentSectionType[] = [
         <div class="flex items-center gap-3">
           <button
             type="button"
-            (click)="loadSettings()"
-            [disabled]="loading"
+            (click)="refreshAll()"
+            [disabled]="loading || priceVisibilityLoading"
             class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
-            <span class="material-symbols-outlined text-[18px]" [class.opacity-40]="loading">refresh</span>
+            <span class="material-symbols-outlined text-[18px]" [class.opacity-40]="loading || priceVisibilityLoading">refresh</span>
             {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
           </button>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div class="flex items-start gap-4">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100">
+              <span class="material-symbols-outlined text-[24px]">{{ getPriceVisibilityStatusIcon() }}</span>
+            </div>
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="text-[16px] font-black text-slate-900">{{ 'MARKETING.PRICE_VISIBILITY.TITLE' | translate }}</h3>
+                <span class="rounded-full px-2.5 py-1 text-[11px] font-black"
+                      [ngClass]="getPriceVisibilityBadgeClass()">
+                  {{ getPriceVisibilityStatusLabel() | translate }}
+                </span>
+              </div>
+              <p class="mt-1 max-w-2xl text-[13px] font-bold text-slate-500">
+                {{ 'MARKETING.PRICE_VISIBILITY.DESCRIPTION' | translate }}
+              </p>
+
+              <div class="mt-4 flex flex-wrap gap-2 text-[12px] font-black">
+                <span class="rounded-xl bg-slate-50 px-3 py-2 text-slate-600">
+                  {{ 'MARKETING.PRICE_VISIBILITY.TOTAL' | translate }}:
+                  <span class="text-slate-900">{{ priceVisibility?.totalProducts ?? 0 }}</span>
+                </span>
+                <span class="rounded-xl bg-emerald-50 px-3 py-2 text-emerald-700">
+                  {{ 'MARKETING.PRICE_VISIBILITY.VISIBLE' | translate }}:
+                  <span>{{ priceVisibility?.visibleProducts ?? 0 }}</span>
+                </span>
+                <span class="rounded-xl bg-rose-50 px-3 py-2 text-rose-700">
+                  {{ 'MARKETING.PRICE_VISIBILITY.HIDDEN' | translate }}:
+                  <span>{{ priceVisibility?.hiddenProducts ?? 0 }}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            (click)="toggleAllProductCardPrices()"
+            [disabled]="priceVisibilitySaving || priceVisibilityLoading || !priceVisibility"
+            class="h-12 shrink-0 rounded-2xl px-5 text-sm font-black text-white shadow-sm transition-all disabled:cursor-not-allowed disabled:opacity-60"
+            [ngClass]="(priceVisibility?.showPriceOnCard ?? true) ? 'bg-rose-600 hover:bg-rose-700' : 'bg-zadna-primary hover:bg-zadna-primary/90'">
+            <span class="inline-flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">{{ getPriceVisibilityActionIcon() }}</span>
+              {{ getPriceVisibilityActionLabel() | translate }}
+            </span>
+          </button>
+        </div>
+
+        <div *ngIf="priceVisibilityError" class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+          {{ priceVisibilityError }}
         </div>
       </div>
 
@@ -148,6 +205,10 @@ export class MarketingHomeVisibilityComponent implements OnInit {
   error = '';
   searchTerm = '';
   pendingSection: HomeContentSectionType | null = null;
+  priceVisibility: ProductCardPriceVisibilitySetting | null = null;
+  priceVisibilityLoading = false;
+  priceVisibilitySaving = false;
+  priceVisibilityError = '';
 
   constructor(
     private readonly marketingApi: MarketingApiService,
@@ -177,7 +238,12 @@ export class MarketingHomeVisibilityComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.refreshAll();
+  }
+
+  refreshAll(): void {
     this.loadSettings();
+    this.loadPriceVisibility();
   }
 
   loadSettings(): void {
@@ -193,6 +259,22 @@ export class MarketingHomeVisibilityComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.error = describeApiError(error);
+      }
+    });
+  }
+
+  loadPriceVisibility(): void {
+    this.priceVisibilityLoading = true;
+    this.priceVisibilityError = '';
+
+    this.marketingApi.getProductCardPriceVisibility().subscribe({
+      next: (setting) => {
+        this.priceVisibility = setting;
+        this.priceVisibilityLoading = false;
+      },
+      error: (error) => {
+        this.priceVisibilityLoading = false;
+        this.priceVisibilityError = describeApiError(error);
       }
     });
   }
@@ -221,6 +303,80 @@ export class MarketingHomeVisibilityComponent implements OnInit {
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_VISIBILITY'));
       }
     });
+  }
+
+  toggleAllProductCardPrices(): void {
+    if (this.priceVisibilitySaving || this.priceVisibilityLoading || !this.priceVisibility) return;
+
+    const nextValue = !this.priceVisibility.showPriceOnCard;
+    this.priceVisibilitySaving = true;
+    this.priceVisibilityError = '';
+
+    this.marketingApi.setProductCardPriceVisibility(nextValue).subscribe({
+      next: (setting) => {
+        this.priceVisibility = setting;
+        this.priceVisibilitySaving = false;
+        this.toastService.success(
+          this.translateService.instant(
+            nextValue
+              ? 'MARKETING.PRICE_VISIBILITY.MESSAGES.SHOWN'
+              : 'MARKETING.PRICE_VISIBILITY.MESSAGES.HIDDEN'
+          ),
+          this.translateService.instant('MARKETING.PRICE_VISIBILITY.TITLE')
+        );
+      },
+      error: (error) => {
+        this.priceVisibilitySaving = false;
+        this.priceVisibilityError = describeApiError(error);
+        this.toastService.error(this.priceVisibilityError, this.translateService.instant('MARKETING.PRICE_VISIBILITY.TITLE'));
+      }
+    });
+  }
+
+  getPriceVisibilityStatusLabel(): string {
+    if (!this.priceVisibility) {
+      return 'MARKETING.PRICE_VISIBILITY.STATUS.LOADING';
+    }
+
+    if (this.priceVisibility.isMixed) {
+      return 'MARKETING.PRICE_VISIBILITY.STATUS.MIXED';
+    }
+
+    return this.priceVisibility.showPriceOnCard
+      ? 'MARKETING.PRICE_VISIBILITY.STATUS.VISIBLE'
+      : 'MARKETING.PRICE_VISIBILITY.STATUS.HIDDEN';
+  }
+
+  getPriceVisibilityBadgeClass(): string {
+    if (!this.priceVisibility || this.priceVisibilityLoading) {
+      return 'bg-slate-100 text-slate-500';
+    }
+
+    if (this.priceVisibility.isMixed) {
+      return 'bg-amber-100 text-amber-700';
+    }
+
+    return this.priceVisibility.showPriceOnCard
+      ? 'bg-emerald-100 text-emerald-700'
+      : 'bg-rose-100 text-rose-700';
+  }
+
+  getPriceVisibilityStatusIcon(): string {
+    if (!this.priceVisibility || this.priceVisibilityLoading) {
+      return 'hourglass_top';
+    }
+
+    return this.priceVisibility.showPriceOnCard ? 'visibility' : 'visibility_off';
+  }
+
+  getPriceVisibilityActionIcon(): string {
+    return (this.priceVisibility?.showPriceOnCard ?? true) ? 'visibility_off' : 'visibility';
+  }
+
+  getPriceVisibilityActionLabel(): string {
+    return (this.priceVisibility?.showPriceOnCard ?? true)
+      ? 'MARKETING.PRICE_VISIBILITY.ACTIONS.HIDE_ALL'
+      : 'MARKETING.PRICE_VISIBILITY.ACTIONS.SHOW_ALL';
   }
 
   toTitle(sectionType: string): string {

@@ -82,6 +82,37 @@ export interface AdminProcessWithdrawalRequest {
   failureReason?: string | null;
 }
 
+export interface AdminPlatformBankAccountDto {
+  id: string | null;
+  bankName: string;
+  accountHolderName: string;
+  iban: string;
+  accountNumber: string | null;
+  countryCode: string;
+  city: string;
+  isActive: boolean;
+  isBankTransferEnabled: boolean;
+  isMoyasarPayoutsEnabled: boolean;
+  moyasarPayoutSourceId: string | null;
+  notes: string | null;
+  updatedAtUtc: string | null;
+  canReceiveBankTransfers: boolean;
+  canSendMoyasarPayouts: boolean;
+}
+
+export interface AdminUpsertPlatformBankAccountRequest {
+  bankName: string;
+  accountHolderName: string;
+  iban: string;
+  accountNumber?: string | null;
+  countryCode?: string | null;
+  city?: string | null;
+  isBankTransferEnabled: boolean;
+  isMoyasarPayoutsEnabled: boolean;
+  moyasarPayoutSourceId?: string | null;
+  notes?: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -131,5 +162,13 @@ export class WalletsService {
 
   processWithdrawal(id: string, payload: AdminProcessWithdrawalRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/withdrawals/${id}/process`, payload);
+  }
+
+  getPlatformAccount(): Observable<AdminPlatformBankAccountDto> {
+    return this.http.get<AdminPlatformBankAccountDto>(`${this.apiUrl}/platform-account`);
+  }
+
+  updatePlatformAccount(payload: AdminUpsertPlatformBankAccountRequest): Observable<AdminPlatformBankAccountDto> {
+    return this.http.put<AdminPlatformBankAccountDto>(`${this.apiUrl}/platform-account`, payload);
   }
 }

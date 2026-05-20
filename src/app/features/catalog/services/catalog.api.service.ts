@@ -68,6 +68,7 @@ interface CatalogProductPayload {
   measurementUnitId?: string | null;
   variantGroupId?: string | null;
   status?: MasterProduct['status'];
+  showPriceOnCard?: boolean;
   images?: Array<{
     masterProductId?: string;
     imageBankId?: string;
@@ -299,6 +300,14 @@ export class CatalogService {
 
   updateProduct(id: string, payload: CatalogProductPayload): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/products/${id}`, payload, { headers: this.getHeaders() });
+  }
+
+  setProductCardPriceVisibility(id: string, showPriceOnCard: boolean): Observable<void> {
+    return this.http.patch<void>(
+      `${this.apiUrl}/products/${id}/card-price-visibility`,
+      { showPriceOnCard },
+      { headers: this.getHeaders() }
+    );
   }
 
   deleteProduct(id: string): Observable<void> {
@@ -1434,6 +1443,27 @@ export class CatalogService {
 
       return undefined;
     };
+    const booleanValue = (...keys: string[]): boolean | undefined => {
+      for (const key of keys) {
+        const value = raw[key];
+        if (typeof value === 'boolean') {
+          return value;
+        }
+
+        if (typeof value === 'string') {
+          const normalized = value.trim().toLowerCase();
+          if (normalized === 'true') {
+            return true;
+          }
+
+          if (normalized === 'false') {
+            return false;
+          }
+        }
+      }
+
+      return undefined;
+    };
     const createdAtUtc = product.createdAtUtc || this.buildFallbackTimestampFromSeed(product.id || product.nameEn || product.nameAr || 'product', 0);
     const updatedAtUtc = product.updatedAtUtc || this.buildFallbackTimestampFromSeed(product.id || product.nameEn || product.nameAr || 'product', 21);
 
@@ -1466,6 +1496,7 @@ export class CatalogService {
       displaySizeAr: stringValue('displaySizeAr', 'DisplaySizeAr', 'display_size_ar'),
       displaySizeEn: stringValue('displaySizeEn', 'DisplaySizeEn', 'display_size_en'),
       status: product.status || 'Draft',
+      showPriceOnCard: booleanValue('showPriceOnCard', 'ShowPriceOnCard', 'show_price_on_card') ?? product.showPriceOnCard ?? true,
       slug: product.slug || this.buildSlug(product.nameEn || product.nameAr || product.id || 'product'),
       images: this.normalizeImages(product),
       variants: this.normalizeProductVariants(raw['variants'] ?? raw['Variants']),

@@ -50,6 +50,10 @@ export const FINANCES_ROUTES: Routes = [
       {
         path: 'withdrawals',
         loadComponent: () => import('./pages/withdrawals-queue/withdrawals-queue.component').then(m => m.WithdrawalsQueueComponent)
+      },
+      {
+        path: 'platform-account',
+        loadComponent: () => import('./pages/platform-account/platform-account.component').then(m => m.PlatformAccountComponent)
       }
     ]
   }

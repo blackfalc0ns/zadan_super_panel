@@ -113,6 +113,7 @@ export class MasterProductsComponent implements OnInit {
   isDeleteModalOpen = false;
   productToDelete: MasterProduct | null = null;
   isDeleting = false;
+  togglingPriceVisibilityIds = new Set<string>();
 
   constructor(
     private route: ActivatedRoute,
@@ -570,6 +571,49 @@ export class MasterProductsComponent implements OnInit {
 
   createVariantQueryParams(product: MasterProduct): Record<string, string> {
     return { variantFrom: product.id };
+  }
+
+  isProductPriceVisible(product: MasterProduct): boolean {
+    return product.showPriceOnCard !== false;
+  }
+
+  getPriceVisibilityLabel(product: MasterProduct): string {
+    const isVisible = this.isProductPriceVisible(product);
+    if (this.translate.currentLang === 'ar') {
+      return isVisible ? 'إخفاء السعر من كارت العميل' : 'إظهار السعر في كارت العميل';
+    }
+
+    return isVisible ? 'Hide price on customer card' : 'Show price on customer card';
+  }
+
+  toggleProductPriceVisibility(product: MasterProduct, event: Event): void {
+    event.stopPropagation();
+
+    if (this.togglingPriceVisibilityIds.has(product.id)) {
+      return;
+    }
+
+    const nextValue = !this.isProductPriceVisible(product);
+    this.togglingPriceVisibilityIds.add(product.id);
+
+    this.catalogService.setProductCardPriceVisibility(product.id, nextValue).subscribe({
+      next: () => {
+        const productGroupId = product.variantGroupId || product.id;
+        this.products
+          .filter(item => item.id === product.id || item.variantGroupId === productGroupId)
+          .forEach(item => item.showPriceOnCard = nextValue);
+        this.togglingPriceVisibilityIds.delete(product.id);
+      },
+      error: (err) => {
+        console.error('Failed to update product card price visibility', err);
+        this.togglingPriceVisibilityIds.delete(product.id);
+        alert(
+          this.translate.currentLang === 'ar'
+            ? 'تعذر تحديث ظهور السعر حالياً.'
+            : 'Could not update price visibility right now.'
+        );
+      }
+    });
   }
 
   private syncPanelFilters(): void {

@@ -6548,6 +6548,27 @@
         "DEACTIVATED": "Section disabled.",
         "SAVED": "Section state saved."
       }
+    },
+    "PRICE_VISIBILITY": {
+      "TITLE": "Product Card Prices",
+      "DESCRIPTION": "One control for showing or hiding prices on every product card in the customer app. Product details pages still show prices normally.",
+      "TOTAL": "Total products",
+      "VISIBLE": "Prices visible",
+      "HIDDEN": "Prices hidden",
+      "STATUS": {
+        "LOADING": "Loading",
+        "VISIBLE": "Visible on all cards",
+        "HIDDEN": "Hidden on all cards",
+        "MIXED": "Mixed state"
+      },
+      "ACTIONS": {
+        "HIDE_ALL": "Hide all prices",
+        "SHOW_ALL": "Show all prices"
+      },
+      "MESSAGES": {
+        "SHOWN": "Prices are now visible on all product cards.",
+        "HIDDEN": "Prices are now hidden on all product cards."
+      }
     }
   },
   "NOTIFICATIONS_CENTER": {

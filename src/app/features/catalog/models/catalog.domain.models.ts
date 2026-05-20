@@ -46,6 +46,7 @@ export interface MasterProduct {
     displaySizeAr?: string;
     displaySizeEn?: string;
     status: 'Draft' | 'Active' | 'Inactive' | 'Discontinued';
+    showPriceOnCard?: boolean;
     isInVendorStore?: boolean;
     images?: MasterProductImage[];
     variants?: MasterProductVariantOption[];

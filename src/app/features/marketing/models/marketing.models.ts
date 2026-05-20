@@ -126,6 +126,14 @@ export interface HomeContentSectionSettingPayload {
   isEnabled: boolean;
 }
 
+export interface ProductCardPriceVisibilitySetting {
+  showPriceOnCard: boolean;
+  totalProducts: number;
+  visibleProducts: number;
+  hiddenProducts: number;
+  isMixed: boolean;
+}
+
 export interface MarketingCategoryOption {
   id: string;
   nameAr: string;

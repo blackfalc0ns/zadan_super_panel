@@ -22,6 +22,7 @@ import {
   MarketingHomeSectionPayload,
   MarketingHomeSectionUpdatePayload,
   MasterProductLookupOption,
+  ProductCardPriceVisibilitySetting,
   VendorProductLookupOption
 } from '@marketing/models/marketing.models';
 
@@ -179,6 +180,20 @@ export class MarketingApiService {
 
   getHomeContentSectionSettings(): Observable<HomeContentSectionSetting[]> {
     return this.http.get<HomeContentSectionSetting[]>(`${this.apiUrl}/home-content-sections`, { headers: this.getHeaders() });
+  }
+
+  getProductCardPriceVisibility(): Observable<ProductCardPriceVisibilitySetting> {
+    return this.http.get<ProductCardPriceVisibilitySetting>(`${this.apiUrl}/product-card-price-visibility`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  setProductCardPriceVisibility(showPriceOnCard: boolean): Observable<ProductCardPriceVisibilitySetting> {
+    return this.http.patch<ProductCardPriceVisibilitySetting>(
+      `${this.apiUrl}/product-card-price-visibility`,
+      { showPriceOnCard },
+      { headers: this.getHeaders() }
+    );
   }
 
   updateSectionVisibility(
