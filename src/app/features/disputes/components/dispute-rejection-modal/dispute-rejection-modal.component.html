@@ -38,7 +38,7 @@
                 </div>
                 <div>
                   <label class="mb-1 block text-[10px] font-semibold text-slate-400">{{ 'DISPUTES_DASHBOARD.REJECTION_MODAL.ORDER_ID' | translate }}</label>
-                  <p class="font-['Inter'] text-xs font-black text-slate-900">{{ dispute.orderId }}</p>
+                  <p class="font-['Inter'] text-xs font-black text-slate-900">{{ dispute.orderDisplayId || dispute.orderId }}</p>
                 </div>
                 <div>
                   <label class="mb-1 block text-[10px] font-semibold text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</label>

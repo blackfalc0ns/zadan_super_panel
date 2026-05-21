@@ -197,8 +197,8 @@
     "CLOUD_SERVICES": "Live Services: Active",
     "ADMIN_STATUS": "Main Hub",
     "REALM_LABEL": "Active Realm",
-    "REALM_VALUE": "Headquarters â€¢ Global Ops",
-    "USER_ROLE_ID": "Engineer â€¢ ID: 892",
+    "REALM_VALUE": "Headquarters - Global Ops",
+    "USER_ROLE_ID": "Engineer - ID: 892",
     "LIVE_OPS": "Live Ops"
   },
   "HEADER_SEARCH": {
@@ -995,7 +995,11 @@
         "TEST_NOTIFICATION_PUSH_SENT": "Driver test notification was sent to inbox and push.",
         "TEST_NOTIFICATION_INBOX_ONLY": "Driver test notification was saved to inbox. Push was skipped or unavailable.",
         "TEST_NOTIFICATION_FAILED": "Failed to send the driver test notification.",
-        "TEST_NOTIFICATION_UNCONFIRMED": "The request completed, but push delivery was not confirmed."
+        "TEST_NOTIFICATION_UNCONFIRMED": "The request completed, but push delivery was not confirmed.",
+        "LOCATION_UPDATES_BLOCKED": "Location updates were blocked for this driver.",
+        "LOCATION_UPDATES_UNBLOCKED": "Location updates were unblocked for this driver.",
+        "LOGIN_LOCKED": "Driver login was locked.",
+        "LOGIN_UNLOCKED": "Driver login was unlocked."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "Driver push lab",
@@ -1116,6 +1120,19 @@
           "ACTIVE_DESC": "The driver can receive offers. Keep monitoring rejections, timeouts, and delivery failures.",
           "REJECTION_METRIC": "Today / week rejections",
           "CLEAR_ACTION": "Clear block"
+        },
+        "LOCATION_ACCESS": {
+          "TITLE": "Location access control",
+          "STATUS_BLOCKED": "Location updates are blocked by admin",
+          "STATUS_ACTIVE": "Location updates are active",
+          "DESC_BLOCKED_WITH_REASON_AND_TIME": "Tracking was blocked on {{blockedAt}} because: {{reason}}",
+          "DESC_BLOCKED_WITH_REASON": "Tracking was blocked because: {{reason}}",
+          "DESC_BLOCKED_WITH_TIME": "Tracking was blocked on {{blockedAt}}.",
+          "DESC_BLOCKED": "The driver cannot send new GPS updates until access is restored.",
+          "DESC_LAST_LOCATION": "Last location update: {{lastLocation}}",
+          "DESC_NO_LOCATION": "No recent location ping has been recorded for this driver yet.",
+          "ACTION_UNBLOCK": "Unblock location updates",
+          "ACTION_BLOCK": "Block location updates"
         },
         "STATIC": {
           "ZONE_TITLE": "Current Zone",
@@ -1399,7 +1416,8 @@
           "SUBJECTS": {
             "WALLET_BALANCE": "Wallet balance issue after trip",
             "BEHAVIOR_REPORT": "Behavior report follow-up",
-            "LICENSE_UPDATE": "Driving license update request"
+            "LICENSE_UPDATE": "Driving license update request",
+            "DRIVER_ACCOUNT_APPEAL": "Driver account support"
           },
           "FOLLOWUPS": {
             "CUSTOMER_COMPLAINT": "Review customer complaint",
@@ -1908,10 +1926,13 @@
         "ACTION_REQUEST_DOCS": "Request Documents"
       },
       "ACTIONS": {
-        "TRACK_TASKS": "Track Tasks"
+        "TRACK_TASKS": "Track Tasks",
+        "LOCK_LOGIN": "Lock Login",
+        "UNLOCK_LOGIN": "Unlock Login"
       },
       "STATUS": {
-        "COMPLIANCE_ISSUE": "Compliance Issue"
+        "COMPLIANCE_ISSUE": "Compliance Issue",
+        "LOGIN_LOCKED": "Login locked"
       },
       "LOAD_ERROR_TITLE": "We couldn't load this driver profile",
       "LOAD_ERROR_DESC": "The driver detail page is now backend-first, so the page will only render after a valid admin response. Try again or go back to the drivers list.",
@@ -1933,7 +1954,11 @@
         "BLOCKERS": "Blockers",
         "ALERTS": "Alerts",
         "LIFECYCLE": "Lifecycle",
-        "OVERVIEW_GATE_DESC": "Readiness, review and finance state are calculated from the backend response."
+        "OVERVIEW_GATE_DESC": "Readiness, review and finance state are calculated from the backend response.",
+        "LOGIN_LOCK_NOTICE": "Driver login is locked.",
+        "LOGIN_LOCK_NOTICE_WITH_TIME": "Driver login is locked since {{lockedAt}}.",
+        "LOGIN_LOCK_NOTICE_WITH_REASON": "Driver login is locked: {{reason}}",
+        "LOGIN_LOCK_NOTICE_WITH_REASON_AND_TIME": "Driver login is locked since {{lockedAt}}: {{reason}}"
       },
       "OVERVIEW": {
         "PERSONAL_INFO_TITLE": "Personal Information",
@@ -2078,7 +2103,7 @@
     "ADMIN_HUB": "Zadana Management Center",
     "UPGRADE_TITLE": "Scale your business faster",
     "UPGRADE_BANNER": "Upgrade your plan to unlock advanced system features",
-    "VIEW_PLANS": "View Plans â†—",
+    "VIEW_PLANS": "View Plans",
     "LEARN_MORE": "Learn More",
     "PERFORMANCE": "Performance Overview",
     "REVENUE": "Revenue Details",
@@ -2905,6 +2930,7 @@
       "RETURN_REQUEST": "Return Request",
       "DRIVER_REPORT": "Driver Report",
       "DRIVER_DISPUTE": "Driver Dispute",
+      "DRIVER_ACCOUNT": "Driver account support",
       "OTHER": "Other"
     },
     "STATUS": {
@@ -3576,7 +3602,43 @@
       "COMPLAINT": "Complaint",
       "RETURN_REQUEST": "Return request",
       "DRIVER_REPORT": "Driver report",
-      "DRIVER_DISPUTE": "Driver dispute"
+      "DRIVER_DISPUTE": "Driver dispute",
+      "DRIVER_ACCOUNT": "Driver account support"
+    },
+    "TYPE_CLOSED": {
+      "COMPLAINT": "Closed complaint",
+      "RETURN_REQUEST": "Closed return request",
+      "DRIVER_REPORT": "Closed driver report",
+      "DRIVER_DISPUTE": "Closed driver dispute",
+      "DRIVER_ACCOUNT": "Closed driver account support"
+    },
+    "META": {
+      "CLOSED_AFTER_COUPON_REDEMPTION": "Closed after coupon redemption",
+      "CLOSED_AFTER_REFUND_COMPLETION": "Closed after refund completion",
+      "CLOSED_AFTER_COUPON_COMPENSATION": "Closed after coupon compensation",
+      "CLOSED_AFTER_COMPENSATION_APPROVAL": "Closed after compensation approval",
+      "CASE_CLOSED": "Case closed"
+    },
+    "UI_LABELS": {
+      "TYPE": "Type",
+      "PRIORITY": "Priority",
+      "QUEUE": "Queue",
+      "INITIATOR": "Initiator",
+      "VENDOR": "Vendor",
+      "DRIVER": "Driver",
+      "STATUS": "Status",
+      "VENDOR_RESPONSE": "Vendor response",
+      "DRIVER_RESPONSE": "Driver response",
+      "COMPENSATION_OUTCOME": "Compensation outcome",
+      "COUPON": "Coupon",
+      "EXPIRES": "Expires",
+      "REDEEMED": "Redeemed",
+      "NOT_REDEEMED_YET": "Not redeemed yet",
+      "VENDOR_RECOVERY": "Vendor recovery",
+      "RECOVERED": "Recovered",
+      "OUTSTANDING": "Outstanding",
+      "LOADING_DISPUTES": "Loading disputes...",
+      "REOPEN": "Reopen"
     },
     "INITIATOR": {
       "CUSTOMER": "Customer",
@@ -3812,7 +3874,7 @@
     },
     "REQUEST_INFO_MODAL": {
       "TITLE": "Request Additional Information",
-      "SUBTITLE": "Disputes and requests management â€¢ Case {{disputeId}}",
+      "SUBTITLE": "Disputes and requests management - Case {{disputeId}}",
       "SUMMARY_TITLE": "Target Case Summary",
       "CASE_ID": "Case ID",
       "ORDER_ID": "Order ID",
@@ -3823,6 +3885,7 @@
       "RESPONDER_LABEL": "Requested responder",
       "RESPONDER_CUSTOMER": "Customer ({{name}})",
       "RESPONDER_MERCHANT": "Merchant ({{name}})",
+      "RESPONDER_DRIVER": "Assigned driver",
       "RESPONDER_INTERNAL": "Internal Team (Logistics)",
       "RESPONDER_INTERNAL_TEAM": "Internal Team",
       "INFO_TYPE_LABEL": "Information type",
@@ -3851,6 +3914,7 @@
       "TEMPLATE_VERSION": "v2.4.0 Template",
       "PREVIEW_GREETING_CUSTOMER": "Dear customer,",
       "PREVIEW_GREETING_MERCHANT": "Dear merchant,",
+      "PREVIEW_GREETING_DRIVER": "Hello delivery partner,",
       "PREVIEW_GREETING_INTERNAL": "Dear internal team,",
       "PREVIEW_BODY": "Based on dispute {{disputeId}}, please provide {{infoType}} no later than {{dueDate}} to avoid delaying case processing.",
       "PREVIEW_BODY_CUSTOM": "Based on dispute {{disputeId}}, please provide the following: {{details}} no later than {{dueDate}} to avoid delaying case processing.",
@@ -4292,6 +4356,7 @@
       "NEEDS_INTERVENTION": "Needs Intervention",
       "OPERATIONAL_DESC": "Operational view focused on status, cancellation reason, and the next decision instead of raw order data only.",
       "UPDATE_STATUS": "Update Status",
+      "TRACK_DRIVER": "Track Driver",
       "OPEN_DISPUTE": "Open Dispute",
       "PRINT": "Print",
       "COPY_LINK": "Copy Link",

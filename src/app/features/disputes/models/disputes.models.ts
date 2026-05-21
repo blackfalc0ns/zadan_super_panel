@@ -1,5 +1,5 @@
 export type SupportCaseWorkflowStatus = 'submitted' | 'in_review' | 'awaiting_customer_evidence' | 'approved' | 'rejected' | 'resolved';
-export type SupportCaseType = 'complaint' | 'return_request' | 'driver_report' | 'driver_dispute';
+export type SupportCaseType = 'complaint' | 'return_request' | 'driver_report' | 'driver_dispute' | 'driver_account';
 export type SupportCaseActorRole = 'customer' | 'vendor' | 'driver' | 'admin';
 
 export type DisputeStatus = 'open' | 'review' | 'merchant' | 'resolved'; // legacy
@@ -63,7 +63,7 @@ export interface DisputeWorkflowContext {
 
 export interface SupportCaseRow {
   id: string;
-  orderId: string;
+  orderId: string | null;
   orderDisplayId: string;
   customerName: string;
   customerEmail: string;

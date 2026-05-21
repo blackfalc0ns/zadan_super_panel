@@ -213,7 +213,7 @@ export class DisputesDashboardComponent implements OnInit {
 
   get typeOptions(): Array<{ value: string; label: string }> {
     return [
-      { value: 'all', label: this.isRtl ? 'ÙƒÙ„ Ø§Ù„Ø£Ù†ÙˆØ§Ø¹' : 'All types' },
+      { value: 'all', label: this.isRtl ? 'كل الأنواع' : 'All types' },
       { value: 'return_request', label: this.getTypeLabel('return_request') },
       { value: 'complaint', label: this.getTypeLabel('complaint') },
       { value: 'driver_report', label: this.getTypeLabel('driver_report') },
@@ -223,7 +223,7 @@ export class DisputesDashboardComponent implements OnInit {
 
   get priorityOptions(): Array<{ value: string; label: string }> {
     return [
-      { value: 'all', label: this.isRtl ? 'ÙƒÙ„ Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ§Øª' : 'All priorities' },
+      { value: 'all', label: this.isRtl ? 'كل الأولويات' : 'All priorities' },
       { value: 'critical', label: this.getPriorityLabel('critical') },
       { value: 'high', label: this.getPriorityLabel('high') },
       { value: 'medium', label: this.getPriorityLabel('medium') },
@@ -233,19 +233,19 @@ export class DisputesDashboardComponent implements OnInit {
 
   get queueOptions(): Array<{ value: string; label: string }> {
     return [
-      { value: 'all', label: this.isRtl ? 'ÙƒÙ„ Ø§Ù„Ù…Ø³Ø§Ø±Ø§Øª' : 'All queues' },
-      { value: 'support', label: this.isRtl ? 'Ø§Ù„Ø¯Ø¹Ù…' : 'Support' },
-      { value: 'finance', label: this.isRtl ? 'Ø§Ù„Ù…Ø§Ù„ÙŠØ©' : 'Finance' },
-      { value: 'operations', label: this.isRtl ? 'Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª' : 'Operations' },
-      { value: 'risk', label: this.isRtl ? 'Ø§Ù„Ù…Ø®Ø§Ø·Ø±' : 'Risk' },
-      { value: 'legal', label: this.isRtl ? 'Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ' : 'Legal' },
-      { value: 'driverops', label: this.isRtl ? 'Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù…Ù†Ø¯ÙˆØ¨ÙŠÙ†' : 'Driver Ops' }
+      { value: 'all', label: this.isRtl ? 'كل المسارات' : 'All queues' },
+      { value: 'support', label: this.isRtl ? 'الدعم' : 'Support' },
+      { value: 'finance', label: this.isRtl ? 'المالية' : 'Finance' },
+      { value: 'operations', label: this.isRtl ? 'العمليات' : 'Operations' },
+      { value: 'risk', label: this.isRtl ? 'المخاطر' : 'Risk' },
+      { value: 'legal', label: this.isRtl ? 'القانوني' : 'Legal' },
+      { value: 'driverops', label: this.isRtl ? 'عمليات المندوبين' : 'Driver Ops' }
     ];
   }
 
   get initiatorRoleOptions(): Array<{ value: string; label: string }> {
     return [
-      { value: 'all', label: this.isRtl ? 'ÙƒÙ„ Ø§Ù„Ù…ØµØ§Ø¯Ø±' : 'All initiators' },
+      { value: 'all', label: this.isRtl ? 'كل المصادر' : 'All initiators' },
       { value: 'customer', label: this.getInitiatorRoleLabel('customer') },
       { value: 'vendor', label: this.getInitiatorRoleLabel('vendor') },
       { value: 'driver', label: this.getInitiatorRoleLabel('driver') },
@@ -449,7 +449,7 @@ export class DisputesDashboardComponent implements OnInit {
         next: (dispute) => {
           this.formDrafts.approval = null;
           this.closeApprovalModal();
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø§Ø³ØªØ±Ø¬Ø§Ø¹ Ø¨Ù†Ø¬Ø§Ø­.' : 'Return request approved successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم اعتماد الاسترجاع بنجاح.' : 'Return request approved successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to approve support case.')
       });
@@ -479,7 +479,7 @@ export class DisputesDashboardComponent implements OnInit {
         next: (dispute) => {
           this.formDrafts.escalation = null;
           this.closeEscalationModal();
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… ØªØµØ¹ÙŠØ¯ Ø§Ù„Ù†Ø²Ø§Ø¹ Ø¨Ù†Ø¬Ø§Ø­.' : 'Support case escalated successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم تصعيد النزاع بنجاح.' : 'Support case escalated successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to escalate support case.')
       });
@@ -509,7 +509,7 @@ export class DisputesDashboardComponent implements OnInit {
         next: (dispute) => {
           this.formDrafts.rejection = null;
           this.closeRejectionModal();
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø­Ø§Ù„Ø© Ø¨Ù†Ø¬Ø§Ø­.' : 'Support case rejected successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم رفض الحالة بنجاح.' : 'Support case rejected successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to reject support case.')
       });
@@ -539,7 +539,7 @@ export class DisputesDashboardComponent implements OnInit {
         next: (dispute) => {
           this.formDrafts.requestInfo = null;
           this.closeRequestInfoModal();
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ù„Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„Ø¥Ø¶Ø§ÙÙŠØ© Ø¨Ù†Ø¬Ø§Ø­.' : 'Additional information request sent successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم إرسال طلب المعلومات الإضافية بنجاح.' : 'Additional information request sent successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to request additional evidence.')
       });
@@ -692,10 +692,16 @@ export class DisputesDashboardComponent implements OnInit {
           return 'DISPUTES_DASHBOARD.TYPE.DRIVER_REPORT';
         case 'driver_dispute':
           return 'DISPUTES_DASHBOARD.TYPE.DRIVER_DISPUTE';
+        case 'driver_account':
+          return 'DISPUTES_DASHBOARD.TYPE.DRIVER_ACCOUNT';
         default:
           return 'DISPUTES_DASHBOARD.TYPE.COMPLAINT';
       }
     })();
+
+    if (!key.startsWith('DISPUTES_DASHBOARD.')) {
+      return key;
+    }
 
     return this.t(key);
   }
@@ -711,19 +717,17 @@ export class DisputesDashboardComponent implements OnInit {
       return baseLabel;
     }
 
-    if (!this.isRtl) {
-      return `Closed ${baseLabel.toLowerCase()}`;
-    }
-
     switch ((dispute.type || '').toLowerCase()) {
       case 'return_request':
-        return 'طلب إرجاع مغلق';
+        return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.RETURN_REQUEST');
       case 'driver_report':
-        return 'بلاغ مندوب مغلق';
+        return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.DRIVER_REPORT');
       case 'driver_dispute':
-        return 'نزاع مندوب مغلق';
+        return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.DRIVER_DISPUTE');
+      case 'driver_account':
+        return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.DRIVER_ACCOUNT');
       default:
-        return 'شكوى مغلقة';
+        return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.COMPLAINT');
     }
   }
 
@@ -734,23 +738,23 @@ export class DisputesDashboardComponent implements OnInit {
     const compensationType = (dispute.compensationType || '').toLowerCase();
 
     if (settlementStatus === 'coupon_redeemed') {
-      return this.isRtl ? 'أُغلقت بعد استخدام الكوبون' : 'Closed after coupon redemption';
+      return this.t('DISPUTES_DASHBOARD.META.CLOSED_AFTER_COUPON_REDEMPTION');
     }
 
     if (settlementStatus === 'cash_refunded') {
-      return this.isRtl ? 'أُغلقت بعد رد المبلغ للعميل' : 'Closed after refund completion';
+      return this.t('DISPUTES_DASHBOARD.META.CLOSED_AFTER_REFUND_COMPLETION');
     }
 
     if (dispute.caseStatus === 'resolved') {
       if (compensationType === 'coupon_compensation') {
-        return this.isRtl ? 'أُغلقت بعد إصدار تعويض بكوبون' : 'Closed after coupon compensation';
+        return this.t('DISPUTES_DASHBOARD.META.CLOSED_AFTER_COUPON_COMPENSATION');
       }
 
       if (compensationType === 'cash_refund') {
-        return this.isRtl ? 'أُغلقت بعد اعتماد التعويض' : 'Closed after compensation approval';
+        return this.t('DISPUTES_DASHBOARD.META.CLOSED_AFTER_COMPENSATION_APPROVAL');
       }
 
-      return this.isRtl ? 'تم إغلاق الحالة' : 'Case closed';
+      return this.t('DISPUTES_DASHBOARD.META.CASE_CLOSED');
     }
 
     return dispute.reason;
@@ -796,51 +800,29 @@ export class DisputesDashboardComponent implements OnInit {
       | 'loadingDisputes'
       | 'reopen'
   ): string {
-    const labels = this.isRtl
-      ? {
-          type: 'النوع',
-          priority: 'الأولوية',
-          queue: 'المسار',
-          initiator: 'المصدر',
-          vendor: 'التاجر',
-          driver: 'المندوب',
-          status: 'الحالة',
-          vendorResponse: 'رد التاجر',
-          driverResponse: 'رد المندوب',
-          compensationOutcome: 'نتيجة التعويض',
-          coupon: 'الكوبون',
-          expires: 'ينتهي في',
-          redeemed: 'تم الاستخدام',
-          notRedeemedYet: 'لم يتم الاستخدام بعد',
-          vendorRecovery: 'استرداد من التاجر',
-          recovered: 'تم التحصيل',
-          outstanding: 'المتبقي',
-          loadingDisputes: 'جاري تحميل النزاعات...',
-          reopen: 'إعادة فتح'
-        }
-      : {
-          type: 'Type',
-          priority: 'Priority',
-          queue: 'Queue',
-          initiator: 'Initiator',
-          vendor: 'Vendor',
-          driver: 'Driver',
-          status: 'Status',
-          vendorResponse: 'Vendor response',
-          driverResponse: 'Driver response',
-          compensationOutcome: 'Compensation outcome',
-          coupon: 'Coupon',
-          expires: 'Expires',
-          redeemed: 'Redeemed',
-          notRedeemedYet: 'Not redeemed yet',
-          vendorRecovery: 'Vendor recovery',
-          recovered: 'Recovered',
-          outstanding: 'Outstanding',
-          loadingDisputes: 'Loading disputes...',
-          reopen: 'Reopen'
-        } as const;
+    const labels = {
+      type: 'TYPE',
+      priority: 'PRIORITY',
+      queue: 'QUEUE',
+      initiator: 'INITIATOR',
+      vendor: 'VENDOR',
+      driver: 'DRIVER',
+      status: 'STATUS',
+      vendorResponse: 'VENDOR_RESPONSE',
+      driverResponse: 'DRIVER_RESPONSE',
+      compensationOutcome: 'COMPENSATION_OUTCOME',
+      coupon: 'COUPON',
+      expires: 'EXPIRES',
+      redeemed: 'REDEEMED',
+      notRedeemedYet: 'NOT_REDEEMED_YET',
+      vendorRecovery: 'VENDOR_RECOVERY',
+      recovered: 'RECOVERED',
+      outstanding: 'OUTSTANDING',
+      loadingDisputes: 'LOADING_DISPUTES',
+      reopen: 'REOPEN'
+    } as const;
 
-    return labels[key];
+    return this.t(`DISPUTES_DASHBOARD.UI_LABELS.${labels[key]}`);
   }
 
   getInitiatorRoleLabel(role: string): string {
@@ -1026,7 +1008,7 @@ export class DisputesDashboardComponent implements OnInit {
           this.applyFocusedSelection();
           this.buildUiConfig();
           this.loadError = this.isRtl
-            ? 'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù†Ø²Ø§Ø¹Ø§Øª Ø­Ø§Ù„ÙŠØ§Ù‹.'
+            ? 'تعذر تحميل النزاعات حاليا.'
             : 'Unable to load disputes right now.';
           this.isLoading = false;
         }
@@ -1065,12 +1047,12 @@ export class DisputesDashboardComponent implements OnInit {
 
     if (queueField) {
       queueField.options = [
-        { value: 'support', label: this.isRtl ? 'Ø§Ù„Ø¯Ø¹Ù…' : 'Support' },
-        { value: 'finance', label: this.isRtl ? 'Ø§Ù„Ù…Ø§Ù„ÙŠØ©' : 'Finance' },
-        { value: 'operations', label: this.isRtl ? 'Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª' : 'Operations' },
-        { value: 'risk', label: this.isRtl ? 'Ø§Ù„Ù…Ø®Ø§Ø·Ø±' : 'Risk' },
-        { value: 'legal', label: this.isRtl ? 'Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ' : 'Legal' },
-        { value: 'driverops', label: this.isRtl ? 'Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù…Ù†Ø¯ÙˆØ¨ÙŠÙ†' : 'Driver Ops' }
+        { value: 'support', label: this.isRtl ? 'الدعم' : 'Support' },
+        { value: 'finance', label: this.isRtl ? 'المالية' : 'Finance' },
+        { value: 'operations', label: this.isRtl ? 'العمليات' : 'Operations' },
+        { value: 'risk', label: this.isRtl ? 'المخاطر' : 'Risk' },
+        { value: 'legal', label: this.isRtl ? 'القانوني' : 'Legal' },
+        { value: 'driverops', label: this.isRtl ? 'عمليات المندوبين' : 'Driver Ops' }
       ];
       queueField.placeholder = 'DISPUTES_DASHBOARD.FILTER_FIELDS.ALL_QUEUES';
     }
@@ -1328,62 +1310,62 @@ export class DisputesDashboardComponent implements OnInit {
       case 'approve_complaint':
         return {
           type,
-          title: this.isRtl ? 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø´ÙƒÙˆÙ‰' : 'Approve complaint',
-          subtitle: this.isRtl ? 'Ø£Ø¯Ø®Ù„ Ù…Ù„Ø§Ø­Ø¸Ø§Øª Ø§Ù„Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠØ© ÙˆØ§Ù„Ø±Ø³Ø§Ù„Ø© Ø§Ù„Ø§Ø®ØªÙŠØ§Ø±ÙŠØ© Ù„Ù„Ø¹Ù…ÙŠÙ„.' : 'Add the internal approval note and optional customer message.',
+          title: this.isRtl ? 'اعتماد الشكوى' : 'Approve complaint',
+          subtitle: this.isRtl ? 'أدخل ملاحظات الموافقة الداخلية والرسالة الاختيارية للعميل.' : 'Add the internal approval note and optional customer message.',
           icon: 'check_circle',
-          confirmLabel: this.isRtl ? 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø´ÙƒÙˆÙ‰' : 'Approve complaint',
+          confirmLabel: this.isRtl ? 'اعتماد الشكوى' : 'Approve complaint',
           confirmClass: 'bg-emerald-600 hover:bg-emerald-700',
-          primaryLabel: this.isRtl ? 'Ù…Ù„Ø§Ø­Ø¸Ø§Øª Ø§Ù„Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠØ©' : 'Internal approval notes',
-          primaryPlaceholder: this.isRtl ? 'Ø§ÙƒØªØ¨ Ø³Ø¨Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø´ÙƒÙˆÙ‰...' : 'Write the internal reason for approval...',
+          primaryLabel: this.isRtl ? 'ملاحظات الموافقة الداخلية' : 'Internal approval notes',
+          primaryPlaceholder: this.isRtl ? 'اكتب سبب اعتماد الشكوى...' : 'Write the internal reason for approval...',
           primaryRequired: true,
-          secondaryLabel: this.isRtl ? 'Ø±Ø³Ø§Ù„Ø© Ø§Ù„Ø¹Ù…ÙŠÙ„ (Ø§Ø®ØªÙŠØ§Ø±ÙŠ)' : 'Customer message (optional)',
-          secondaryPlaceholder: this.isRtl ? 'Ø±Ø³Ø§Ù„Ø© Ø³ØªØ¸Ù‡Ø± Ù„Ù„Ø¹Ù…ÙŠÙ„ Ø¥Ø°Ø§ Ù„Ø²Ù… Ø§Ù„Ø£Ù…Ø±...' : 'Message shown to the customer if needed...'
+          secondaryLabel: this.isRtl ? 'رسالة العميل (اختياري)' : 'Customer message (optional)',
+          secondaryPlaceholder: this.isRtl ? 'رسالة تظهر للعميل إذا لزم الأمر...' : 'Message shown to the customer if needed...'
         };
       case 'resolve':
         return {
           type,
-          title: this.isRtl ? 'Ø­Ù„ Ø§Ù„Ø­Ø§Ù„Ø©' : 'Resolve case',
-          subtitle: this.isRtl ? 'ÙŠÙ…ÙƒÙ†Ùƒ Ø¥Ø¶Ø§ÙØ© Ù…Ù„Ø§Ø­Ø¸Ø© Ø®ØªØ§Ù…ÙŠØ© Ù‚Ø¨Ù„ Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ø­Ø§Ù„Ø©.' : 'You can add an optional closing note before resolving the case.',
+          title: this.isRtl ? 'حل الحالة' : 'Resolve case',
+          subtitle: this.isRtl ? 'يمكنك إضافة ملاحظة ختامية اختيارية قبل حل الحالة.' : 'You can add an optional closing note before resolving the case.',
           icon: 'done_all',
-          confirmLabel: this.isRtl ? 'Ø­Ù„ Ø§Ù„Ø­Ø§Ù„Ø©' : 'Resolve case',
+          confirmLabel: this.isRtl ? 'حل الحالة' : 'Resolve case',
           confirmClass: 'bg-emerald-600 hover:bg-emerald-700',
-          primaryLabel: this.isRtl ? 'Ù…Ù„Ø§Ø­Ø¸Ø© Ø®ØªØ§Ù…ÙŠØ© (Ø§Ø®ØªÙŠØ§Ø±ÙŠ)' : 'Closing note (optional)',
-          primaryPlaceholder: this.isRtl ? 'Ø§ÙƒØªØ¨ Ø£ÙŠ Ù…Ù„Ø§Ø­Ø¸Ø© Ø®ØªØ§Ù…ÙŠØ©...' : 'Write any closing note...'
+          primaryLabel: this.isRtl ? 'ملاحظة ختامية (اختياري)' : 'Closing note (optional)',
+          primaryPlaceholder: this.isRtl ? 'اكتب أي ملاحظة ختامية...' : 'Write any closing note...'
         };
       case 'reopen':
         return {
           type,
-          title: this.isRtl ? 'Ø¥Ø¹Ø§Ø¯Ø© ÙØªØ­ Ø§Ù„Ø­Ø§Ù„Ø©' : 'Reopen case',
-          subtitle: this.isRtl ? 'Ø£Ø¶Ù Ø³Ø¨Ø¨Ù‹Ø§ Ø£Ùˆ Ù…Ù„Ø§Ø­Ø¸Ø© Ù„Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ÙØªØ­.' : 'Add a reason or note for reopening the case.',
+          title: this.isRtl ? 'إعادة فتح الحالة' : 'Reopen case',
+          subtitle: this.isRtl ? 'أضف سببا أو ملاحظة لإعادة فتح الحالة.' : 'Add a reason or note for reopening the case.',
           icon: 'restart_alt',
-          confirmLabel: this.isRtl ? 'Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ÙØªØ­' : 'Reopen',
+          confirmLabel: this.isRtl ? 'إعادة الفتح' : 'Reopen',
           confirmClass: 'bg-amber-600 hover:bg-amber-700',
-          primaryLabel: this.isRtl ? 'Ù…Ù„Ø§Ø­Ø¸Ø© Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ÙØªØ­' : 'Reopen note',
-          primaryPlaceholder: this.isRtl ? 'Ø§ÙƒØªØ¨ Ø³Ø¨Ø¨ Ø¥Ø¹Ø§Ø¯Ø© ÙØªØ­ Ø§Ù„Ø­Ø§Ù„Ø©...' : 'Write the reason for reopening the case...'
+          primaryLabel: this.isRtl ? 'ملاحظة إعادة الفتح' : 'Reopen note',
+          primaryPlaceholder: this.isRtl ? 'اكتب سبب إعادة فتح الحالة...' : 'Write the reason for reopening the case...'
         };
       case 'add_note':
         return {
           type,
-          title: this.isRtl ? 'Ø¥Ø¶Ø§ÙØ© Ù…Ù„Ø§Ø­Ø¸Ø©' : 'Add note',
-          subtitle: this.isRtl ? 'Ù‡Ø°Ù‡ Ø§Ù„Ù…Ù„Ø§Ø­Ø¸Ø© Ø¯Ø§Ø®Ù„ÙŠØ© ÙˆØªÙØ­ÙØ¸ Ø¯Ø§Ø®Ù„ Ù…Ø³Ø§Ø± Ø§Ù„Ø­Ø§Ù„Ø©.' : 'This note is internal and saved to the case timeline.',
+          title: this.isRtl ? 'إضافة ملاحظة' : 'Add note',
+          subtitle: this.isRtl ? 'هذه الملاحظة داخلية ويتم حفظها داخل مسار الحالة.' : 'This note is internal and saved to the case timeline.',
           icon: 'note_add',
-          confirmLabel: this.isRtl ? 'Ø­ÙØ¸ Ø§Ù„Ù…Ù„Ø§Ø­Ø¸Ø©' : 'Save note',
+          confirmLabel: this.isRtl ? 'حفظ الملاحظة' : 'Save note',
           confirmClass: 'bg-slate-900 hover:bg-slate-800',
-          primaryLabel: this.isRtl ? 'Ù…Ù„Ø§Ø­Ø¸Ø© Ø§Ù„Ø­Ø§Ù„Ø©' : 'Case note',
-          primaryPlaceholder: this.isRtl ? 'Ø§ÙƒØªØ¨ Ù…Ù„Ø§Ø­Ø¸Ø© Ø§Ù„Ø­Ø§Ù„Ø©...' : 'Write the case note...',
+          primaryLabel: this.isRtl ? 'ملاحظة الحالة' : 'Case note',
+          primaryPlaceholder: this.isRtl ? 'اكتب ملاحظة الحالة...' : 'Write the case note...',
           primaryRequired: true
         };
       case 'send_message':
       default:
         return {
           type: 'send_message',
-          title: this.isRtl ? 'Ø¥Ø±Ø³Ø§Ù„ Ø±Ø³Ø§Ù„Ø©' : 'Send message',
-          subtitle: this.isRtl ? 'Ø§ÙƒØªØ¨ Ø§Ù„Ø±Ø³Ø§Ù„Ø© Ø§Ù„ØªÙŠ ØªØ±ÙŠØ¯ Ø¥Ø±Ø³Ø§Ù„Ù‡Ø§ Ø¥Ù„Ù‰ Ø§Ù„Ø£Ø·Ø±Ø§Ù Ø§Ù„Ù…Ø¹Ù†ÙŠØ©.' : 'Write the message you want to send to the relevant parties.',
+          title: this.isRtl ? 'إرسال رسالة' : 'Send message',
+          subtitle: this.isRtl ? 'اكتب الرسالة التي تريد إرسالها إلى الأطراف المعنية.' : 'Write the message you want to send to the relevant parties.',
           icon: 'send',
-          confirmLabel: this.isRtl ? 'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø³Ø§Ù„Ø©' : 'Send message',
+          confirmLabel: this.isRtl ? 'إرسال الرسالة' : 'Send message',
           confirmClass: 'bg-zadna-primary hover:bg-zadna-primaryDark',
-          primaryLabel: this.isRtl ? 'Ù†Øµ Ø§Ù„Ø±Ø³Ø§Ù„Ø©' : 'Message',
-          primaryPlaceholder: this.isRtl ? 'Ø§ÙƒØªØ¨ Ø§Ù„Ø±Ø³Ø§Ù„Ø© Ù‡Ù†Ø§...' : 'Write the message here...',
+          primaryLabel: this.isRtl ? 'نص الرسالة' : 'Message',
+          primaryPlaceholder: this.isRtl ? 'اكتب الرسالة هنا...' : 'Write the message here...',
           primaryRequired: true
         };
     }
@@ -1447,7 +1429,7 @@ export class DisputesDashboardComponent implements OnInit {
   private createEmptyDispute(): SupportCaseRow {
     return {
       id: '',
-      orderId: '',
+      orderId: null,
       orderDisplayId: '',
       customerName: '',
       customerEmail: '',
@@ -1501,7 +1483,7 @@ export class DisputesDashboardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (dispute) => {
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ø¨Ù†Ø¬Ø§Ø­.' : 'Complaint approved successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم اعتماد الشكوى بنجاح.' : 'Complaint approved successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to approve complaint.')
       });
@@ -1520,7 +1502,7 @@ export class DisputesDashboardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (dispute) => {
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… Ø­Ù„ Ø§Ù„Ø­Ø§Ù„Ø© Ø¨Ù†Ø¬Ø§Ø­.' : 'Support case resolved successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم حل الحالة بنجاح.' : 'Support case resolved successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to resolve case.')
       });
@@ -1532,7 +1514,7 @@ export class DisputesDashboardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (dispute) => {
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… Ø¥Ø³Ù†Ø§Ø¯ Ø§Ù„Ø­Ø§Ù„Ø© Ø¨Ù†Ø¬Ø§Ø­.' : 'Support case assigned successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم إسناد الحالة بنجاح.' : 'Support case assigned successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to assign case.')
       });
@@ -1551,7 +1533,7 @@ export class DisputesDashboardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (dispute) => {
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù„Ø§Ø­Ø¸Ø© Ø¨Ù†Ø¬Ø§Ø­.' : 'Case note added successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تمت إضافة الملاحظة بنجاح.' : 'Case note added successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to add note.')
       });
@@ -1571,7 +1553,7 @@ export class DisputesDashboardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (dispute) => {
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø³Ø§Ù„Ø© Ø¨Ù†Ø¬Ø§Ø­.' : 'Message sent successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تم إرسال الرسالة بنجاح.' : 'Message sent successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to send public message.')
       });
@@ -1611,7 +1593,7 @@ export class DisputesDashboardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (dispute) => {
-          this.handleMutationSuccess(dispute, this.isRtl ? 'ØªÙ…Øª Ø¥Ø¹Ø§Ø¯Ø© ÙØªØ­ Ø§Ù„Ø­Ø§Ù„Ø© Ø¨Ù†Ø¬Ø§Ø­.' : 'Support case reopened successfully.');
+          this.handleMutationSuccess(dispute, this.isRtl ? 'تمت إعادة فتح الحالة بنجاح.' : 'Support case reopened successfully.');
         },
         error: (error) => this.handleMutationError(error, 'Failed to reopen case.')
       });
@@ -1621,7 +1603,7 @@ export class DisputesDashboardComponent implements OnInit {
     this.applyDisputeUpdate(updated);
     this.focusedDisputeId = updated.id;
     this.modalState.isDetailsDrawerOpen = true;
-    this.toastService.success(message, this.isRtl ? 'Ø§Ù„Ù†Ø²Ø§Ø¹Ø§Øª ÙˆØ§Ù„Ø§Ø³ØªØ±Ø¬Ø§Ø¹Ø§Øª' : 'Disputes');
+    this.toastService.success(message, this.isRtl ? 'النزاعات والاسترجاعات' : 'Disputes');
     this.loadDisputes();
   }
 
@@ -1629,7 +1611,7 @@ export class DisputesDashboardComponent implements OnInit {
     console.error(logMessage, error);
     this.toastService.error(
       describeApiError(error),
-      this.isRtl ? 'Ø§Ù„Ù†Ø²Ø§Ø¹Ø§Øª ÙˆØ§Ù„Ø§Ø³ØªØ±Ø¬Ø§Ø¹Ø§Øª' : 'Disputes'
+      this.isRtl ? 'النزاعات والاسترجاعات' : 'Disputes'
     );
   }
 }

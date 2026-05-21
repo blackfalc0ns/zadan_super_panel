@@ -267,6 +267,20 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  toggleLoginLock(): void {
+    if (!this.driverId || !this.driver || this.isMutating) {
+      return;
+    }
+
+    const isLocked = this.driver.isLoginLocked;
+    this.runMutation(
+      () => isLocked
+        ? this.driverService.unlockDriverLogin(this.driverId!)
+        : this.driverService.lockDriverLogin(this.driverId!, this.composeReviewNote()),
+      this.getLoginLockSuccessMessage(isLocked ? 'unlock' : 'lock')
+    );
+  }
+
   updateLocationAccess(action: 'block' | 'unblock'): void {
     if (!this.driverId || !this.driver || this.isMutating) {
       return;
@@ -413,15 +427,15 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
   }
 
   private getLocationAccessSuccessMessage(action: 'block' | 'unblock'): string {
-    if (this.isRTL) {
-      return action === 'unblock'
-        ? 'تم فك الحظر الموقعي لهذا السائق'
-        : 'تم إيقاف تحديثات الموقع لهذا السائق';
-    }
+    return this.t(action === 'unblock'
+      ? 'DRIVERS.DETAIL.MESSAGES.LOCATION_UPDATES_UNBLOCKED'
+      : 'DRIVERS.DETAIL.MESSAGES.LOCATION_UPDATES_BLOCKED');
+  }
 
-    return action === 'unblock'
-      ? 'Location updates were unblocked for this driver'
-      : 'Location updates were blocked for this driver';
+  private getLoginLockSuccessMessage(action: 'lock' | 'unlock'): string {
+    return this.t(action === 'unlock'
+      ? 'DRIVERS.DETAIL.MESSAGES.LOGIN_UNLOCKED'
+      : 'DRIVERS.DETAIL.MESSAGES.LOGIN_LOCKED');
   }
 
   private t(key: string): string {

@@ -325,6 +325,9 @@ export interface DriverDetailRecord extends Driver {
   driverLicenseExpiryDate?: string;
   vehicleLicenseNumber?: string;
   vehicleLicenseExpiryDate?: string;
+  isLoginLocked: boolean;
+  lockedAtLabel?: string;
+  lockReason?: string;
   zoneName?: string;
   liveZone: string;
   liveLatitude?: number | null;

@@ -158,6 +158,9 @@ interface AdminDriverDetailResponse {
   reviewedAtUtc?: string | null;
   reviewNote?: string | null;
   suspensionReason?: string | null;
+  isLoginLocked?: boolean;
+  lockedAtUtc?: string | null;
+  lockReason?: string | null;
   profileReadiness: AdminDriverProfileReadinessResponse;
   documents: AdminDriverDocumentResponse[];
   notes: AdminDriverNoteResponse[];
@@ -567,6 +570,16 @@ export class DriverService {
     });
   }
 
+  lockDriverLogin(id: string, reason?: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/login-lock`, {
+      reason: reason?.trim() || null
+    });
+  }
+
+  unlockDriverLogin(id: string): Observable<DriverActionResponse> {
+    return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/login-unlock`, {});
+  }
+
   approveDriverDocument(id: string, documentId: string): Observable<DriverActionResponse> {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/documents/${documentId}/approve`, {});
   }
@@ -691,6 +704,9 @@ export class DriverService {
       driverLicenseExpiryDate: response.driverLicenseExpiryDate ? this.formatDate(response.driverLicenseExpiryDate) : undefined,
       vehicleLicenseNumber: response.vehicleLicenseNumber || undefined,
       vehicleLicenseExpiryDate: response.vehicleLicenseExpiryDate ? this.formatDate(response.vehicleLicenseExpiryDate) : undefined,
+      isLoginLocked: response.isLoginLocked ?? false,
+      lockedAtLabel: response.lockedAtUtc ? this.formatDateTime(response.lockedAtUtc) : undefined,
+      lockReason: response.lockReason || undefined,
       zoneName: response.overview.zoneName || response.zoneName || undefined,
       liveZone: operationsArea,
       liveLatitude: response.operations.currentLatitude ?? null,
@@ -884,7 +900,7 @@ export class DriverService {
         numberValue: document.number || undefined,
         status: mappedStatus,
         statusLabel: this.mapDocumentStatusLabel(mappedStatus),
-        expiryDate: document.expiryInfo || 'غير متاح',
+        expiryDate: document.expiryInfo || 'COMMON.NOT_AVAILABLE',
         reviewDecision: document.reviewDecision || undefined,
         rejectionReason: document.rejectionReason || undefined,
         expiryDateUtc: document.expiryDateUtc || undefined,
@@ -1915,6 +1931,8 @@ export class DriverService {
         return 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.SUBJECTS.BEHAVIOR_REPORT';
       case 'LICENSE_UPDATE':
         return 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.SUBJECTS.LICENSE_UPDATE';
+      case 'DRIVER_ACCOUNT_APPEAL':
+        return 'DRIVERS.DETAIL.SUPPORT.DYNAMIC.SUBJECTS.DRIVER_ACCOUNT_APPEAL';
       default:
         return subject;
     }
@@ -1923,6 +1941,7 @@ export class DriverService {
   private mapSupportTicketStatus(status: string): DriverDetailRecord['support']['tickets'][number]['status'] {
     switch (status.toUpperCase()) {
       case 'IN_PROGRESS':
+      case 'INREVIEW':
       case 'REVIEW':
         return 'IN_PROGRESS';
       case 'RESOLVED':

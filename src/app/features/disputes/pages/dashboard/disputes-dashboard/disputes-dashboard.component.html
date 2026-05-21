@@ -188,7 +188,7 @@
           <ng-container *ngIf="column.key === 'id'">
             <div class="flex flex-col text-start">
               <span class="font-['Inter'] text-[13px] font-black text-zadna-primary">{{ dispute.id }}</span>
-              <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderId }}</span>
+              <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</span>
             </div>
           </ng-container>
 
@@ -269,7 +269,7 @@
             <div class="flex items-start justify-between gap-3">
               <div>
                 <p class="font-['Inter'] text-[13px] font-black text-zadna-primary">{{ dispute.id }}</p>
-                <p class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderId }}</p>
+                <p class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</p>
               </div>
               <span class="inline-flex rounded-full border px-3 py-1.5 text-[10px] font-black"
                 [ngClass]="getPriorityClass(dispute.priority)">
@@ -342,7 +342,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <a class="btn-ghost !rounded-2xl !px-3 !py-3" [routerLink]="['/orders', selectedDispute.orderId]">
+            <a *ngIf="selectedDispute.orderId" class="btn-ghost !rounded-2xl !px-3 !py-3" [routerLink]="['/orders', selectedDispute.orderId]">
               <span class="material-symbols-outlined text-[18px]">open_in_new</span>
             </a>
             <button class="btn-ghost !rounded-2xl !px-3 !py-3" type="button" (click)="closeDetailsDrawer()">

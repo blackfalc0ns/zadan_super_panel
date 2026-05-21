@@ -86,13 +86,13 @@ export class DriverOperationsTabComponent {
   }
 
   get locationAccessTitle(): string {
-    return this.isRTL ? 'التحكم في التتبع الموقعي' : 'Location access control';
+    return 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.TITLE';
   }
 
   get locationAccessStatusText(): string {
     return this.driver.operations.locationUpdatesBlocked
-      ? (this.isRTL ? 'تحديثات الموقع متوقفة إداريًا' : 'Location updates are blocked by admin')
-      : (this.isRTL ? 'تحديثات الموقع فعالة الآن' : 'Location updates are active');
+      ? 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.STATUS_BLOCKED'
+      : 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.STATUS_ACTIVE';
   }
 
   get locationAccessDescription(): string {
@@ -100,52 +100,40 @@ export class DriverOperationsTabComponent {
       const blockedAt = this.driver.operations.locationBlockedAtLabel;
       const reason = this.driver.operations.locationBlockReason;
 
-      if (this.isRTL) {
-        if (reason && blockedAt) {
-          return `تم إيقاف التتبع بتاريخ ${blockedAt} بسبب: ${reason}`;
-        }
-
-        if (reason) {
-          return `تم إيقاف التتبع بسبب: ${reason}`;
-        }
-
-        if (blockedAt) {
-          return `تم إيقاف التتبع بتاريخ ${blockedAt}`;
-        }
-
-        return 'السائق لن يتمكن من إرسال أي تحديثات GPS جديدة حتى يتم فك الحظر.';
-      }
-
       if (reason && blockedAt) {
-        return `Tracking was blocked on ${blockedAt} because: ${reason}`;
+        return 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.DESC_BLOCKED_WITH_REASON_AND_TIME';
       }
 
       if (reason) {
-        return `Tracking was blocked because: ${reason}`;
+        return 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.DESC_BLOCKED_WITH_REASON';
       }
 
       if (blockedAt) {
-        return `Tracking was blocked on ${blockedAt}.`;
+        return 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.DESC_BLOCKED_WITH_TIME';
       }
 
-      return 'The driver cannot send new GPS updates until access is restored.';
+      return 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.DESC_BLOCKED';
     }
 
     if (this.driver.operations.lastLocationLabel) {
-      return this.isRTL
-        ? `آخر تحديث موقعي: ${this.driver.operations.lastLocationLabel}`
-        : `Last location update: ${this.driver.operations.lastLocationLabel}`;
+      return 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.DESC_LAST_LOCATION';
     }
 
-    return this.isRTL
-      ? 'لا يوجد Ping حديث محفوظ لهذا السائق حتى الآن.'
-      : 'No recent location ping has been recorded for this driver yet.';
+    return 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.DESC_NO_LOCATION';
+  }
+
+  get locationAccessParams(): Record<string, string> {
+    return {
+      blockedAt: this.driver.operations.locationBlockedAtLabel || '',
+      reason: this.driver.operations.locationBlockReason || '',
+      lastLocation: this.driver.operations.lastLocationLabel || ''
+    };
   }
 
   get locationAccessActionLabel(): string {
     return this.driver.operations.locationUpdatesBlocked
-      ? (this.isRTL ? 'فك الحظر الموقعي' : 'Unblock location updates')
-      : (this.isRTL ? 'إيقاف تحديثات الموقع' : 'Block location updates');
+      ? 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.ACTION_UNBLOCK'
+      : 'DRIVERS.DETAIL.OPERATIONS.LOCATION_ACCESS.ACTION_BLOCK';
   }
 
   get hasOfferOrCancellationRestriction(): boolean {

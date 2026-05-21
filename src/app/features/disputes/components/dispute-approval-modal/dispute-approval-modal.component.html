@@ -24,7 +24,7 @@
           </div>
           <div class="rounded-2xl bg-slate-50 p-4">
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.TABLE.ID' | translate }}</label>
-            <span class="font-['Inter'] text-sm font-bold">{{ dispute.orderId }}</span>
+            <span class="font-['Inter'] text-sm font-bold">{{ dispute.orderDisplayId || dispute.orderId }}</span>
           </div>
           <div class="rounded-2xl bg-slate-50 p-4">
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</label>

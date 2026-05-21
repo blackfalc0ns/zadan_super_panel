@@ -369,7 +369,7 @@
             <div>
               <div class="mb-3 grid gap-1.5 text-[12px] font-semibold text-slate-600">
                 <p *ngIf="document.numberValue"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_NUMBER' | translate }}:</span> {{ document.numberValue }}</p>
-                <p *ngIf="document.expiryDate"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}:</span> {{ document.expiryDate }}</p>
+                <p *ngIf="document.expiryDate"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}:</span> {{ document.expiryDate | translate }}</p>
                 <p *ngIf="document.reviewedBy"><span class="font-black text-slate-800">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REVIEWED_BY' | translate }}:</span> {{ document.reviewedBy }}</p>
                 <p *ngIf="document.rejectionReason" class="text-rose-600"><span class="font-black">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REJECTION_REASON' | translate }}:</span> {{ document.rejectionReason }}</p>
                 <p *ngIf="!hasRequiredExpiryDate(document)" class="text-amber-600">

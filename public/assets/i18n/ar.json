@@ -995,7 +995,11 @@
         "TEST_NOTIFICATION_PUSH_SENT": "تم إرسال إشعار الاختبار إلى صندوق الوارد والدفع الفوري للمندوب.",
         "TEST_NOTIFICATION_INBOX_ONLY": "تم حفظ إشعار الاختبار في صندوق الوارد فقط، وتم تخطي الدفع أو لم يكن متاحًا.",
         "TEST_NOTIFICATION_FAILED": "تعذر إرسال إشعار الاختبار للمندوب.",
-        "TEST_NOTIFICATION_UNCONFIRMED": "تم تنفيذ الطلب لكن لم يتم تأكيد وصول الـ push."
+        "TEST_NOTIFICATION_UNCONFIRMED": "تم تنفيذ الطلب لكن لم يتم تأكيد وصول الـ push.",
+        "LOCATION_UPDATES_BLOCKED": "تم إيقاف تحديثات الموقع لهذا المندوب.",
+        "LOCATION_UPDATES_UNBLOCKED": "تم فك حظر تحديثات الموقع لهذا المندوب.",
+        "LOGIN_LOCKED": "تم قفل تسجيل دخول المندوب.",
+        "LOGIN_UNLOCKED": "تم فك قفل تسجيل دخول المندوب."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "مختبر إشعارات المندوب",
@@ -1105,6 +1109,19 @@
           "ACTIVE_DESC": "السائق يمكنه استقبال العروض. تابع الرفض، انتهاء المهلة، وفشل التسليم.",
           "REJECTION_METRIC": "رفض اليوم / الأسبوع",
           "CLEAR_ACTION": "فك الحظر"
+        },
+        "LOCATION_ACCESS": {
+          "TITLE": "التحكم في التتبع الموقعي",
+          "STATUS_BLOCKED": "تحديثات الموقع متوقفة إداريًا",
+          "STATUS_ACTIVE": "تحديثات الموقع فعالة الآن",
+          "DESC_BLOCKED_WITH_REASON_AND_TIME": "تم إيقاف التتبع بتاريخ {{blockedAt}} بسبب: {{reason}}",
+          "DESC_BLOCKED_WITH_REASON": "تم إيقاف التتبع بسبب: {{reason}}",
+          "DESC_BLOCKED_WITH_TIME": "تم إيقاف التتبع بتاريخ {{blockedAt}}.",
+          "DESC_BLOCKED": "المندوب لن يتمكن من إرسال أي تحديثات GPS جديدة حتى يتم فك الحظر.",
+          "DESC_LAST_LOCATION": "آخر تحديث موقعي: {{lastLocation}}",
+          "DESC_NO_LOCATION": "لا يوجد Ping حديث محفوظ لهذا المندوب حتى الآن.",
+          "ACTION_UNBLOCK": "فك الحظر الموقعي",
+          "ACTION_BLOCK": "إيقاف تحديثات الموقع"
         },
         "TABLE_ZONE_MOBILE": "المنطقة",
         "NO_TASKS": "لا توجد مهام",
@@ -1370,7 +1387,8 @@
           "SUBJECTS": {
             "WALLET_BALANCE": "مشكلة في رصيد المحفظة بعد رحلة",
             "BEHAVIOR_REPORT": "متابعة بلاغ سلوكي",
-            "LICENSE_UPDATE": "طلب تحديث رخصة القيادة"
+            "LICENSE_UPDATE": "طلب تحديث رخصة القيادة",
+            "DRIVER_ACCOUNT_APPEAL": "دعم حساب المندوب"
           },
           "FOLLOWUPS": {
             "CUSTOMER_COMPLAINT": "مراجعة شكوى عميل",
@@ -1896,10 +1914,13 @@
       },
       "BTN_ACCESS_PROFILE": "فتح ملف الوصول",
       "ACTIONS": {
-        "TRACK_TASKS": "تتبع المهام"
+        "TRACK_TASKS": "تتبع المهام",
+        "LOCK_LOGIN": "قفل الدخول",
+        "UNLOCK_LOGIN": "فك قفل الدخول"
       },
       "STATUS": {
-        "COMPLIANCE_ISSUE": "مشكلة امتثال"
+        "COMPLIANCE_ISSUE": "مشكلة امتثال",
+        "LOGIN_LOCKED": "الدخول مقفول"
       },
       "LOAD_ERROR_TITLE": "تعذر تحميل ملف السائق",
       "LOAD_ERROR_DESC": "تعتمد صفحة السائق الآن على الباك إند بالكامل، لذلك لن تظهر أي بيانات حتى يصل رد صحيح من واجهة الإدارة. أعد المحاولة أو ارجع إلى قائمة السائقين.",
@@ -1921,7 +1942,11 @@
         "BLOCKERS": "الموانع",
         "ALERTS": "التنبيهات",
         "LIFECYCLE": "مسار التشغيل",
-        "OVERVIEW_GATE_DESC": "الجاهزية والمراجعة والمالية محسوبة من رد الباك إند."
+        "OVERVIEW_GATE_DESC": "الجاهزية والمراجعة والمالية محسوبة من رد الباك إند.",
+        "LOGIN_LOCK_NOTICE": "تسجيل دخول المندوب مقفول.",
+        "LOGIN_LOCK_NOTICE_WITH_TIME": "تسجيل دخول المندوب مقفول منذ {{lockedAt}}.",
+        "LOGIN_LOCK_NOTICE_WITH_REASON": "تسجيل دخول المندوب مقفول: {{reason}}",
+        "LOGIN_LOCK_NOTICE_WITH_REASON_AND_TIME": "تسجيل دخول المندوب مقفول منذ {{lockedAt}}: {{reason}}"
       },
       "OVERVIEW": {
         "PERSONAL_INFO_TITLE": "البيانات الشخصية",
@@ -2902,6 +2927,7 @@
       "RETURN_REQUEST": "طلب استرجاع",
       "DRIVER_REPORT": "تقرير سائق",
       "DRIVER_DISPUTE": "نزاع سائق",
+      "DRIVER_ACCOUNT": "دعم حساب المندوب",
       "OTHER": "أخرى"
     },
     "STATUS": {
@@ -3573,7 +3599,43 @@
       "COMPLAINT": "شكوى / نزاع",
       "RETURN_REQUEST": "استرجاع / تعويض",
       "DRIVER_REPORT": "بلاغ مندوب",
-      "DRIVER_DISPUTE": "نزاع مندوب"
+      "DRIVER_DISPUTE": "نزاع مندوب",
+      "DRIVER_ACCOUNT": "دعم حساب المندوب"
+    },
+    "TYPE_CLOSED": {
+      "COMPLAINT": "شكوى مغلقة",
+      "RETURN_REQUEST": "طلب إرجاع مغلق",
+      "DRIVER_REPORT": "بلاغ مندوب مغلق",
+      "DRIVER_DISPUTE": "نزاع مندوب مغلق",
+      "DRIVER_ACCOUNT": "دعم حساب مندوب مغلق"
+    },
+    "META": {
+      "CLOSED_AFTER_COUPON_REDEMPTION": "أُغلقت بعد استخدام الكوبون",
+      "CLOSED_AFTER_REFUND_COMPLETION": "أُغلقت بعد رد المبلغ للعميل",
+      "CLOSED_AFTER_COUPON_COMPENSATION": "أُغلقت بعد إصدار تعويض بكوبون",
+      "CLOSED_AFTER_COMPENSATION_APPROVAL": "أُغلقت بعد اعتماد التعويض",
+      "CASE_CLOSED": "تم إغلاق الحالة"
+    },
+    "UI_LABELS": {
+      "TYPE": "النوع",
+      "PRIORITY": "الأولوية",
+      "QUEUE": "المسار",
+      "INITIATOR": "المصدر",
+      "VENDOR": "التاجر",
+      "DRIVER": "المندوب",
+      "STATUS": "الحالة",
+      "VENDOR_RESPONSE": "رد التاجر",
+      "DRIVER_RESPONSE": "رد المندوب",
+      "COMPENSATION_OUTCOME": "نتيجة التعويض",
+      "COUPON": "الكوبون",
+      "EXPIRES": "ينتهي في",
+      "REDEEMED": "تم الاستخدام",
+      "NOT_REDEEMED_YET": "لم يتم الاستخدام بعد",
+      "VENDOR_RECOVERY": "استرداد من التاجر",
+      "RECOVERED": "تم التحصيل",
+      "OUTSTANDING": "المتبقي",
+      "LOADING_DISPUTES": "جاري تحميل النزاعات...",
+      "REOPEN": "إعادة فتح"
     },
     "INITIATOR": {
       "CUSTOMER": "العميل",
@@ -3820,6 +3882,7 @@
       "RESPONDER_LABEL": "المستجيب المطلوب",
       "RESPONDER_CUSTOMER": "العميل ({{name}})",
       "RESPONDER_MERCHANT": "المتجر ({{name}})",
+      "RESPONDER_DRIVER": "المندوب المسؤول",
       "RESPONDER_INTERNAL": "الفريق الداخلي (الخدمات اللوجستية)",
       "RESPONDER_INTERNAL_TEAM": "الفريق الداخلي",
       "INFO_TYPE_LABEL": "نوع المعلومات",
@@ -3848,6 +3911,7 @@
       "TEMPLATE_VERSION": "v2.4.0 Template",
       "PREVIEW_GREETING_CUSTOMER": "عزيزي العميل،",
       "PREVIEW_GREETING_MERCHANT": "عزيزي المتجر،",
+      "PREVIEW_GREETING_DRIVER": "مرحبًا بشريك التوصيل،",
       "PREVIEW_GREETING_INTERNAL": "عزيزي الفريق الداخلي،",
       "PREVIEW_BODY": "بناءً على الشكوى رقم {{disputeId}}، نرجو منكم تزويدنا بـ {{infoType}} في موعد أقصاه {{dueDate}} لتجنب تأخير معالجة الحالة.",
       "PREVIEW_BODY_CUSTOM": "بناءً على الشكوى رقم {{disputeId}}، نرجو منكم تزويدنا بما يلي: {{details}} في موعد أقصاه {{dueDate}} لتجنب تأخير معالجة الحالة.",
@@ -4287,6 +4351,7 @@
       "NEEDS_INTERVENTION": "يحتاج تدخل",
       "OPERATIONAL_DESC": "شاشة تشغيلية مركزة على الحالة، سبب الإلغاء، والقرار القادم بدل عرض بيانات الطلب فقط.",
       "UPDATE_STATUS": "تحديث الحالة",
+      "TRACK_DRIVER": "تتبع المندوب",
       "OPEN_DISPUTE": "فتح نزاع",
       "PRINT": "طباعة",
       "COPY_LINK": "نسخ الرابط",

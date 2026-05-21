@@ -1,7 +1,8 @@
-import { Component, HostListener, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subscription, interval, switchMap } from 'rxjs';
 import { OrderCancellationModalComponent } from '../../../components/order-cancellation-modal/order-cancellation-modal.component';
 import { OrderDriverAssignmentModalComponent } from '../../../components/order-driver-assignment-modal/order-driver-assignment-modal.component';
 import { OrderDisputeModalComponent } from '../../../components/order-dispute-modal/order-dispute-modal.component';
@@ -62,10 +63,13 @@ import {
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss']
 })
-export class OrderDetailsComponent implements OnInit {
+export class OrderDetailsComponent implements OnInit, OnDestroy {
   readonly orderId = signal<string | null>(null);
   readonly order = signal<OrderDetail | null>(null);
   readonly financialBreakdown = signal<OrderFinancialBreakdown | null>(null);
+  private readonly trackingPollIntervalMs = 5000;
+  private pollSub: Subscription | null = null;
+  private fragmentSub: Subscription | null = null;
 
   isLoading = false;
   errorMessage = '';
@@ -88,6 +92,17 @@ export class OrderDetailsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.orderId.set(id);
     this.loadOrderDetails();
+
+    this.fragmentSub = this.route.fragment.subscribe((fragment) => {
+      if (fragment === 'tracking') {
+        this.scrollToTracking();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
+    this.fragmentSub?.unsubscribe();
   }
 
   get orderStatusLabel(): string {
@@ -212,8 +227,8 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   get isOrderTerminal(): boolean {
-    const status = this.order()?.status;
-    return status === 'DELIVERED' || status === 'COMPLETED' || status === 'CANCELLED';
+    const currentOrder = this.order();
+    return currentOrder ? this.isTerminalStatus(currentOrder.status) : false;
   }
 
   get paymentInfoItems(): KeyValueGridItem[] {
@@ -278,9 +293,10 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.getOrderById(id).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.isLoading = false;
+        this.scrollToTrackingIfRequested();
       },
       error: (error) => {
         console.error('Failed to load order details', error);
@@ -288,7 +304,14 @@ export class OrderDetailsComponent implements OnInit {
         this.order.set(null);
         this.financialBreakdown.set(null);
         this.isLoading = false;
+        this.stopPolling();
       }
+    });
+  }
+
+  scrollToTracking(): void {
+    setTimeout(() => {
+      document.getElementById('tracking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 
@@ -441,7 +464,7 @@ export class OrderDetailsComponent implements OnInit {
     }
 
     this.ordersService.resolveOperationalCase(id).subscribe({
-      next: (order) => this.order.set(order)
+      next: (order) => this.setOrder(order)
     });
   }
 
@@ -457,7 +480,7 @@ export class OrderDetailsComponent implements OnInit {
     }
 
     this.ordersService.closeOperationalCase(id).subscribe({
-      next: (order) => this.order.set(order)
+      next: (order) => this.setOrder(order)
     });
   }
 
@@ -473,7 +496,7 @@ export class OrderDetailsComponent implements OnInit {
     }
 
     this.ordersService.reopenOperationalCase(id).subscribe({
-      next: (order) => this.order.set(order)
+      next: (order) => this.setOrder(order)
     });
   }
 
@@ -486,7 +509,7 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.updateOrderStatus(id, form).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeStatusModal();
       }
@@ -502,7 +525,7 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.assignDriver(id, form).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeDriverAssignmentModal();
       }
@@ -518,7 +541,7 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.recomputeDispatch(id).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
       }
     });
@@ -533,7 +556,7 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.cancelOrder(id, form).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeCancellationModal();
       }
@@ -554,7 +577,7 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.createRefund(id, form).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeRefundModal();
       }
@@ -575,7 +598,7 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.openDispute(id, form).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeDisputeModal();
       }
@@ -596,7 +619,7 @@ export class OrderDetailsComponent implements OnInit {
 
     this.ordersService.flagIssue(id, form).subscribe({
       next: (order) => {
-        this.order.set(order);
+        this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeIssueFlagModal();
       }
@@ -673,6 +696,49 @@ export class OrderDetailsComponent implements OnInit {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(value)} SAR`;
+  }
+
+  private setOrder(order: OrderDetail): void {
+    this.order.set(order);
+    this.startPollingIfNeeded();
+  }
+
+  private startPollingIfNeeded(): void {
+    this.stopPolling();
+
+    const currentOrder = this.order();
+    if (!currentOrder || this.isTerminalStatus(currentOrder.status)) {
+      return;
+    }
+
+    const orderId = currentOrder.id;
+    this.pollSub = interval(this.trackingPollIntervalMs).pipe(
+      switchMap(() => this.ordersService.getOrderById(orderId))
+    ).subscribe({
+      next: (updatedOrder) => {
+        this.order.set(updatedOrder);
+
+        if (this.isTerminalStatus(updatedOrder.status)) {
+          this.stopPolling();
+        }
+      },
+      error: () => this.stopPolling()
+    });
+  }
+
+  private stopPolling(): void {
+    this.pollSub?.unsubscribe();
+    this.pollSub = null;
+  }
+
+  private isTerminalStatus(status: OrderStatus): boolean {
+    return status === 'DELIVERED' || status === 'COMPLETED' || status === 'CANCELLED';
+  }
+
+  private scrollToTrackingIfRequested(): void {
+    if (this.route.snapshot.fragment === 'tracking') {
+      this.scrollToTracking();
+    }
   }
 
   private loadFinancialBreakdown(orderId: string): void {

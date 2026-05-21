@@ -299,7 +299,7 @@ export class VendorDisputesComponent {
     return {
       id: item.id,
       caseNumber: this.formatCaseIdentifier(item.id),
-      orderNumber: item.orderDisplayId || this.formatCaseIdentifier(item.orderId),
+      orderNumber: item.orderDisplayId || (item.orderId ? this.formatCaseIdentifier(item.orderId) : this.formatCaseIdentifier(item.id)),
       type: item.type,
       typeLabel: item.typeLabel?.trim() || this.translate.instant(this.getTypeLabelKey(item.type)),
       status: item.caseStatus || item.status,

@@ -64,15 +64,15 @@
                 <div class="min-w-0">
                   <p class="text-[10px] font-bold uppercase tracking-widest"
                      [ngClass]="driver.operations.locationUpdatesBlocked ? 'text-rose-600' : 'text-emerald-600'">
-                    {{ locationAccessTitle }}
+                    {{ locationAccessTitle | translate }}
                   </p>
                   <p class="mt-1 text-[15px] font-black"
                      [ngClass]="driver.operations.locationUpdatesBlocked ? 'text-rose-800' : 'text-emerald-800'">
-                    {{ locationAccessStatusText }}
+                    {{ locationAccessStatusText | translate }}
                   </p>
                   <p class="mt-2 text-[13px] font-semibold leading-relaxed"
                      [ngClass]="driver.operations.locationUpdatesBlocked ? 'text-rose-700/80' : 'text-emerald-700/80'">
-                    {{ locationAccessDescription }}
+                    {{ locationAccessDescription | translate: locationAccessParams }}
                   </p>
                 </div>
 
@@ -87,7 +87,7 @@
                   <span class="material-symbols-outlined text-[17px]">
                     {{ driver.operations.locationUpdatesBlocked ? 'lock_open' : 'block' }}
                   </span>
-                  {{ locationAccessActionLabel }}
+                  {{ locationAccessActionLabel | translate }}
                 </button>
               </div>
             </div>

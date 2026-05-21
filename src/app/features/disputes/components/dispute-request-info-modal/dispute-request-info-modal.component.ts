@@ -65,7 +65,7 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
     const labels: Record<RequestInfoTarget, string> = {
       customer: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_CUSTOMER'),
       vendor: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_MERCHANT'),
-      driver: this.isRtl ? 'مرحبًا بفريق التوصيل' : 'Hello delivery partner'
+      driver: this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.PREVIEW_GREETING_DRIVER')
     };
 
     return labels[this.form.target];
@@ -118,7 +118,7 @@ export class DisputeRequestInfoModalComponent implements OnChanges {
       case 'vendor':
         return this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_MERCHANT', { name: dispute.merchantName });
       default:
-        return this.isRtl ? 'المندوب المسؤول' : 'Assigned driver';
+        return this.t('DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.RESPONDER_DRIVER');
     }
   }
 

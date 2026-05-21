@@ -24,7 +24,7 @@ interface AdminOrderSupportCasesResponse {
 
 interface AdminOrderSupportCaseResponse {
   id: string;
-  orderId: string;
+  orderId?: string | null;
   orderDisplayId: string;
   customerName: string;
   customerEmail: string;
@@ -304,7 +304,7 @@ export class DisputesService {
     }
 
     const normalizedOrderId = this.normalizeId(orderId);
-    return this.getDisputesSnapshot().find((item) => this.normalizeId(item.orderId) === normalizedOrderId);
+    return this.getDisputesSnapshot().find((item) => item.orderId && this.normalizeId(item.orderId) === normalizedOrderId);
   }
 
   private mapDispute(item: AdminOrderSupportCaseResponse): SupportCaseRow {
@@ -323,8 +323,8 @@ export class DisputesService {
 
     return {
       id: item.id,
-      orderId: item.orderId,
-      orderDisplayId: item.orderDisplayId,
+      orderId: item.orderId ?? null,
+      orderDisplayId: item.orderDisplayId || item.orderId || item.id,
       customerName: item.customerName,
       customerEmail: item.customerEmail,
       customerInitials: this.buildInitials(item.customerName),

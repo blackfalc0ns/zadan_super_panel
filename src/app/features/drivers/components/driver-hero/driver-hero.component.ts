@@ -26,6 +26,7 @@ export class DriverHeroComponent {
   @Output() openTasksRequested = new EventEmitter<void>();
   @Output() toggleSuspensionRequested = new EventEmitter<void>();
   @Output() toggleBanRequested = new EventEmitter<void>();
+  @Output() toggleLoginLockRequested = new EventEmitter<void>();
   @Output() workflowActionRequested = new EventEmitter<DriverWorkflowActionId>();
 
   get driverStatusLabel(): string {
@@ -121,6 +122,52 @@ export class DriverHeroComponent {
     return this.driver.status === 'Banned'
       ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white'
       : 'border-red-200 bg-red-50 text-red-700 hover:bg-red-600 hover:text-white';
+  }
+
+  get loginLockActionLabel(): string {
+    return this.driver.isLoginLocked
+      ? 'DRIVERS.DETAIL.ACTIONS.UNLOCK_LOGIN'
+      : 'DRIVERS.DETAIL.ACTIONS.LOCK_LOGIN';
+  }
+
+  get loginLockActionIcon(): string {
+    return this.driver.isLoginLocked ? 'lock_open' : 'lock';
+  }
+
+  get loginLockActionClasses(): string {
+    return this.driver.isLoginLocked
+      ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white'
+      : 'border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white';
+  }
+
+  get loginLockNoticeKey(): string {
+    if (!this.driver.isLoginLocked) {
+      return '';
+    }
+
+    const hasLockedAt = Boolean(this.driver.lockedAtLabel);
+    const hasReason = Boolean(this.driver.lockReason);
+
+    if (hasLockedAt && hasReason) {
+      return 'DRIVERS.DETAIL.HERO.LOGIN_LOCK_NOTICE_WITH_REASON_AND_TIME';
+    }
+
+    if (hasReason) {
+      return 'DRIVERS.DETAIL.HERO.LOGIN_LOCK_NOTICE_WITH_REASON';
+    }
+
+    if (hasLockedAt) {
+      return 'DRIVERS.DETAIL.HERO.LOGIN_LOCK_NOTICE_WITH_TIME';
+    }
+
+    return 'DRIVERS.DETAIL.HERO.LOGIN_LOCK_NOTICE';
+  }
+
+  get loginLockNoticeParams(): Record<string, string> {
+    return {
+      lockedAt: this.driver.lockedAtLabel || '',
+      reason: this.driver.lockReason || ''
+    };
   }
 
   get primaryActionClasses(): string {

@@ -78,6 +78,7 @@ export class DriverDetailViewComponent {
   @Output() openTasksRequested = new EventEmitter<void>();
   @Output() toggleSuspensionRequested = new EventEmitter<void>();
   @Output() toggleBanRequested = new EventEmitter<void>();
+  @Output() toggleLoginLockRequested = new EventEmitter<void>();
 
   @Output() quickNoteChange = new EventEmitter<string>();
   @Output() quickNoteAdded = new EventEmitter<void>();

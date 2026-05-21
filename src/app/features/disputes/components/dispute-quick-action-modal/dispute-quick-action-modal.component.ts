@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { DisputeQuickActionFormValue, DisputeQuickActionModalConfig, createEmptyQuickActionFormValue } from '../../models/disputes.models';
 
 @Component({
   selector: 'app-dispute-quick-action-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalShellComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
   templateUrl: './dispute-quick-action-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
