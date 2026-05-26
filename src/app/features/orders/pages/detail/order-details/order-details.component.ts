@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,6 +17,12 @@ import { OrderTrackingMapComponent } from '../../../components/order-tracking-ma
 import { FinanceService, OrderFinancialBreakdown } from '@finances/public-api';
 import { OrdersService } from '@orders/services/orders.api.service';
 import { AccessService } from '../../../../../core/services/access.service';
+import { environment } from '../../../../../../environments/environment';
+import {
+  OrderTrackingDriverLocation,
+  OrderTrackingRealtimeService,
+  OrderTrackingStatusChangedPayload
+} from '@orders/services/order-tracking-realtime.service';
 import {
   DriverAssignmentForm,
   OrderCancellationForm,
@@ -70,6 +76,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   private readonly trackingPollIntervalMs = 5000;
   private pollSub: Subscription | null = null;
   private fragmentSub: Subscription | null = null;
+  private driverLocationSub: Subscription | null = null;
+  private statusChangeSub: Subscription | null = null;
+  private trackedOrderId: string | null = null;
 
   isLoading = false;
   errorMessage = '';
@@ -85,7 +94,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly ordersService: OrdersService,
     private readonly financeService: FinanceService,
-    private readonly accessService: AccessService
+    private readonly accessService: AccessService,
+    private readonly orderTrackingRealtime: OrderTrackingRealtimeService,
+    private readonly zone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -102,6 +113,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopPolling();
+    this.stopRealtimeTracking();
     this.fragmentSub?.unsubscribe();
   }
 
@@ -698,9 +710,94 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     }).format(value)} SAR`;
   }
 
+  resolveProductImageUrl(path: string | undefined): string {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const baseUrl = environment.apiUrl.replace(/\/api\/?$/, '');
+    return `${baseUrl}/${path.replace(/^\//, '')}`;
+  }
+
   private setOrder(order: OrderDetail): void {
     this.order.set(order);
     this.startPollingIfNeeded();
+    this.startRealtimeTracking(order.id);
+  }
+
+  private startRealtimeTracking(orderId: string): void {
+    if (this.trackedOrderId === orderId) {
+      return;
+    }
+
+    this.stopRealtimeTracking();
+    this.trackedOrderId = orderId;
+
+    this.driverLocationSub = this.orderTrackingRealtime
+      .driverLocations()
+      .subscribe((payload) => this.applyRealtimeDriverLocation(payload));
+
+    this.statusChangeSub = this.orderTrackingRealtime
+      .statusChanges()
+      .subscribe((payload) => this.applyRealtimeStatusChange(payload));
+
+    void this.orderTrackingRealtime.subscribe(orderId).catch((error) => {
+      console.warn('Admin order tracking subscription failed.', error);
+    });
+  }
+
+  private stopRealtimeTracking(): void {
+    this.driverLocationSub?.unsubscribe();
+    this.driverLocationSub = null;
+    this.statusChangeSub?.unsubscribe();
+    this.statusChangeSub = null;
+
+    if (this.trackedOrderId) {
+      void this.orderTrackingRealtime.unsubscribe(this.trackedOrderId);
+      this.trackedOrderId = null;
+    }
+  }
+
+  private applyRealtimeDriverLocation(payload: OrderTrackingDriverLocation): void {
+    const current = this.order();
+    console.log('[OrderTracking][component] applyRealtimeDriverLocation called', {
+      payloadOrderId: payload.orderId,
+      currentOrderId: current?.id,
+      match: payload.orderId === current?.id
+    });
+    if (!current || payload.orderId !== current.id) {
+      return;
+    }
+
+    // SignalR callbacks fire outside Angular's NgZone when the SDK is loaded
+    // dynamically from a CDN, so explicit re-entry is required for the signal
+    // update to trigger change detection on the tracking map.
+    this.zone.run(() => {
+      const stillCurrent = this.order();
+      if (!stillCurrent || payload.orderId !== stillCurrent.id) {
+        return;
+      }
+      this.order.set({
+        ...stillCurrent,
+        driverLiveLocation: {
+          latitude: Number(payload.latitude),
+          longitude: Number(payload.longitude),
+          accuracyMeters: payload.accuracyMeters ?? undefined,
+          recordedAtUtc: payload.recordedAtUtc
+        }
+      });
+      console.log('[OrderTracking][component] driverLiveLocation updated to', this.order()?.driverLiveLocation);
+    });
+  }
+
+  private applyRealtimeStatusChange(payload: OrderTrackingStatusChangedPayload): void {
+    const current = this.order();
+    if (!current || payload.orderId !== current.id) {
+      return;
+    }
+
+    this.zone.run(() => {
+      // Pull a fresh snapshot so derived state (timeline, payments, etc.) is in sync.
+      this.loadOrderDetails();
+    });
   }
 
   private startPollingIfNeeded(): void {

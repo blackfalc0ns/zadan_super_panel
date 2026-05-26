@@ -243,8 +243,11 @@
                 <tr *ngFor="let item of currentOrder.items" class="hover:bg-slate-50/50 transition-colors">
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[20px] text-zadna-primary">{{ item.icon }}</span>
+                      <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden">
+                        <img *ngIf="item.imageUrl; else fallbackIcon" [src]="resolveProductImageUrl(item.imageUrl)" class="w-full h-full object-cover" [alt]="item.name">
+                        <ng-template #fallbackIcon>
+                          <span class="material-symbols-outlined text-[20px] text-zadna-primary">{{ item.icon || 'shopping_basket' }}</span>
+                        </ng-template>
                       </div>
                       <div>
                         <p class="text-[13px] font-bold text-slate-800">{{ item.name }}</p>
