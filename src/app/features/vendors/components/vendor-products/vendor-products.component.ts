@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -30,12 +30,14 @@ interface Product {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-products',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, AppButtonComponent, AppInputComponent, SearchableSelectComponent, AppPaginationComponent],
   templateUrl: './vendor-products.component.html'
 })
 export class VendorProductsComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   vendorId = '';
   currentLang = 'ar';
   isRTL = true;
@@ -70,6 +72,7 @@ export class VendorProductsComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
       });
@@ -81,6 +84,7 @@ export class VendorProductsComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
+      this.cdr.markForCheck();
         this.currentPage = 1;
         this.loadProducts();
       });
@@ -88,6 +92,7 @@ export class VendorProductsComponent {
     this.vendorDetailFacade.vendorId$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendorId) => {
+      this.cdr.markForCheck();
         if (!vendorId) {
           return;
         }
@@ -225,11 +230,13 @@ export class VendorProductsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+        this.cdr.markForCheck();
           this.products = (response.items ?? []).map((product) => this.mapProduct(product));
           this.totalItems = response.totalCount ?? this.products.length;
           this.isLoading = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.products = [];
           this.totalItems = 0;
           this.hasError = true;

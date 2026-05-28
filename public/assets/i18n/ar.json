@@ -1,5 +1,7 @@
 {
   "COMMON": {
+    "NOT_AVAILABLE": "غير متوفر",
+    "LIVE_0_SETTLEMENTS_0_PAYOUTS": "0 تسويات نشطة · 0 مدفوعات",
     "CANCEL": "إلغاء",
     "CONFIRM_DELETE": "تأكيد الحذف",
     "DELETE_CONFIRM_TITLE": "تأكيد نهائي",
@@ -46,6 +48,8 @@
     "HIDE_INACTIVE": "إخفاء غير النشط",
     "SHOW_INACTIVE": "إظهار الكل",
     "RESET_FILTERS": "إعادة ضبط البحث",
+    "RESET": "إعادة ضبط",
+    "APPLY_FILTERS": "تطبيق الفلاتر",
     "CLEAR_FILTERS": "مسح الفلاتر",
     "SEARCH": "البحث عن...",
     "PREVIOUS": "السابق",
@@ -100,6 +104,12 @@
   "VALIDATION": {
     "REQUIRED": "هذا الحقل مطلوب"
   },
+  "UNAUTHORIZED": {
+    "TITLE": "غير مصرح بالوصول",
+    "MESSAGE": "ليس لديك الصلاحيات اللازمة لفتح هذه الصفحة. يمكنك العودة إلى لوحة التحكم أو طلب الصلاحية من المسؤول.",
+    "GO_DASHBOARD": "العودة للوحة التحكم",
+    "GO_PROFILE": "ملفي الشخصي"
+  },
   "LOGIN": {
     "WELCOME": "وصول المسؤول الرئيسي",
     "EMAIL": "البريد الإلكتروني للمسؤول",
@@ -120,7 +130,9 @@
     "ERR_EMAIL_REQUIRED": "البريد الإلكتروني مطلوب للمتابعة",
     "ERR_EMAIL_INVALID": "يرجى إدخال بريد إلكتروني إداري صحيح",
     "ERR_PASSWORD_REQUIRED": "مفتاح الوصول السري مطلوب للدخول",
-    "ERR_LOGIN_FAILED": "تعذر التحقق من الهوية. يرجى مراجعة مفتاح الوصول والبريد الإداري والمحاولة مرة أخرى."
+    "ERR_LOGIN_FAILED": "تعذر التحقق من الهوية. يرجى مراجعة مفتاح الوصول والبريد الإداري والمحاولة مرة أخرى.",
+    "ERR_SESSION_EXPIRED": "انتهت جلستك. يرجى تسجيل الدخول مجدداً.",
+    "FORGOT_PASSWORD_DISABLED_HINT": "تواصل مع مسؤول النظام لإعادة ضبط بيانات الوصول."
   },
   "WORKFLOW_LINKS": {
     "TITLE": "الربط التشغيلي",
@@ -179,6 +191,7 @@
     "PRODUCT_REQUESTS": "طلبات المنتجات",
     "VENDOR_DISPUTES": "نزاعات التاجر",
     "MARKETING": "التسويق",
+    "SUPPORT": "الدعم",
     "SYSTEM_LOGS": "سجلات النظام",
     "LIVE_OPS": "العمليات المباشرة"
   },
@@ -916,7 +929,8 @@
     },
     "ACTIONS": {
       "ADVANCED_FILTERS": "فلاتر متقدمة",
-      "EXPORT_CSV": "تصدير CSV"
+      "EXPORT_CSV": "تصدير CSV",
+      "VIEW_PROFILE": "عرض الملف"
     },
     "VERIFICATION": {
       "VERIFIED": "موثق",
@@ -1526,6 +1540,55 @@
         "NO_SETTLEMENTS": "لا توجد تسويات",
         "NO_STATEMENTS": "لا توجد قيود مالية",
         "NO_SETTLEMENTS_MSG": "لا توجد حركات مالية مرتبطة بهذا السائق.",
+        "PREVENTIVE_LIMIT_LABEL": "الحد الوقائي: {{limit}} ر.س",
+        "LIMIT_EXCEEDED": "تجاوز الحد الآمن!",
+        "SAFE_STATUS": "وضع آمن",
+        "PENDING_DEDUCTIONS_THIS_MONTH": "الخصومات المعلقة هذا الشهر:",
+        "FILTERS": {
+          "ALL": "الكل",
+          "SETTLED": "المسواة",
+          "PENDING": "المعلقة",
+          "FAILED": "الفاشلة"
+        },
+        "SEARCH_PLACEHOLDER": "ابحث برقم الحركة، النوع أو المرجع...",
+        "NO_MATCHING_STATEMENTS_DESC": "لا توجد حركات مالية مطابقة لخيارات التصفية أو البحث الحالي.",
+        "ENTRY_INFO_TITLE": "معلومات القيد المالي",
+        "ENTRY_ID": "رقم القيد (ID):",
+        "ENTRY_REFERENCE": "المرجع (Reference):",
+        "SETTLEMENT_METHOD": "طريقة التسوية:",
+        "FULL_ENTRY_DATE": "تاريخ القيد بالكامل:",
+        "ZADANA_LOGISTICS": "زادنا للخدمات اللوجستية",
+        "CERTIFIED_RECEIPT": "سند تسوية مالي معتمد",
+        "TOTAL_AMOUNT": "مجموع المبلغ:",
+        "CALCULATED_FEE": "الرسوم المحتسبة:",
+        "DOWNLOAD_RECEIPT": "تنزيل السند المالي",
+        "WALLET_OPERATIONS_SUB": "عمليات الحساب والمحفظة",
+        "POLICIES_TITLE": "السياسات والحدود المالية",
+        "POLICIES_SUB": "لوائح تسوية الأسطول",
+        "POLICY_1": "يتم صرف المستحقات الأسبوعية تلقائياً للمحفظة بعد مراجعة قيود التسويات.",
+        "POLICY_2": "الحد الأقصى المسموح به للمبالغ النقدية المحصلة (COD) هو 1,000 ر.س. في حال تجاوزه قد يتوقف إسناد المهام مؤقتاً حتى تتم تسوية الفارق.",
+        "POLICY_3": "الرسوم المحتسبة على المعاملات تعتمد بالكامل على البوابة المصرفية ونوع وسيلة التسوية المستخدمة.",
+        "MODAL_TITLE": "تسوية المستحقات المالية",
+        "MODAL_SUBTITLE": "تسجيل تسوية يدوية للرصيد الحالي",
+        "AUTO_REFERENCE_LABEL": "مرجع العملية التلقائي:",
+        "SETTLE_AMOUNT_LABEL": "مبلغ التسوية المطلوب (ر.س)",
+        "TOTAL_DUE_FOR_SETTLEMENT": "إجمالي الرصيد المستحق للتسوية حالياً: {{amount}} ر.س",
+        "SETTLE_METHOD_LABEL": "وسيلة التسوية المتبعة",
+        "METHODS": {
+          "BANKACCOUNT": "حساب بنكي",
+          "DEBITCARD": "بطاقة مدى",
+          "INSTANTTRANSFER": "تحويل فوري"
+        },
+        "NOTES_LABEL": "ملاحظات أو تعليقات",
+        "NOTES_PLACEHOLDER": "اكتب أي ملاحظات إدارية عن التسوية...",
+        "RECORDING_SETTLEMENT": "جاري تسجيل الدفعة...",
+        "SAVE_SETTLEMENT": "اعتماد وحفظ التسوية",
+        "SETTLEMENT_SUCCESS": "تمت عملية التسوية بنجاح!",
+        "SETTLEMENT_SUCCESS_DESC": "تم تحديث كشف الحساب المالي للمندوب بنجاح وتسجيل الحركة المرجعية مباشرة.",
+        "SETTLED_AMOUNT": "المبلغ المسوى:",
+        "TRANSACTION_REFERENCE": "الرقم المرجعي للعملية:",
+        "SETTLEMENT_METHOD_LABEL": "طريقة التسوية:",
+        "BACK_TO_STATEMENT": "العودة لكشف الحساب",
         "ACTIONS": {
           "SETTLE": "تسوية الرصيد",
           "DOWNLOAD_STATEMENT": "تنزيل كشف الحساب"
@@ -1548,6 +1611,7 @@
         "STATEMENTS_TITLE": "قيود الدفتر",
         "STATEMENTS_DESC": "سجل مالي حقيقي من المحفظة والتسويات القادمة من الباك إند.",
         "COLUMNS": {
+          "TRANSACTION_DETAILS": "تفاصيل العملية",
           "ID": "القيد",
           "TYPE": "النوع",
           "AMOUNT": "المبلغ",
@@ -1557,6 +1621,7 @@
         },
         "BACKEND": {
           "TYPES": {
+            "ORDERREVENUE": "إيراد طلب",
             "CREDIT": "إضافة",
             "DEBIT": "خصم",
             "HOLD": "حجز",
@@ -1568,6 +1633,7 @@
             "REFUND": "استرداد"
           },
           "METHODS": {
+            "WALLET": "محفظة النظام",
             "BANKACCOUNT": "حساب بنكي",
             "DEBITCARD": "بطاقة خصم",
             "INSTANTTRANSFER": "تحويل فوري"
@@ -1709,7 +1775,10 @@
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
             "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية للمركبة ناقصة.",
             "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
-            "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية."
+            "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية.",
+            "EXPIRED_DOCUMENT_NOTE": "المستند المرفوع منتهي الصلاحية ويجب تجديده.",
+            "REJECTED_DOCUMENT_NOTE": "تم رفض هذا المستند ويجب إعادة رفعه بشكل صحيح.",
+            "PENDING_DOCUMENT_REVIEW_NOTE": "تم رفع المستند وبانتظار مراجعة الإدارة."
           },
           "REJECTION_REASONS": {
             "MISSING_PERSONAL_INFO": "نقص في البيانات الشخصية",
@@ -1931,6 +2000,7 @@
         "ZONE": "المنطقة",
         "LICENSE": "الرخصة",
         "LAST_SEEN": "تاريخ الانضمام",
+        "JOINED_AT": "تاريخ الانضمام",
         "ACTIVE_TASKS": "نشط / مكتمل",
         "OPERATIONAL_GATE": "بوابة التشغيل",
         "PROFILE_COMPLETION": "اكتمال الملف",
@@ -2034,6 +2104,11 @@
     "WITHOUT_PRODUCTS": "بدون منتجات",
     "NO_RESULTS_DESC": "لا يوجد نتائج للبحث حالياً.",
     "SEARCH_PLACEHOLDER": "بحث عن العلامات التجارية...",
+    "CONFIRM_DELETE_TITLE": "تأكيد حذف العلامة التجارية",
+    "CONFIRM_DELETE_MSG": "هل أنت متأكد من حذف هذه العلامة التجارية؟ لا يمكن التراجع عن هذا الإجراء.",
+    "CONFIRM_BULK_DELETE_TITLE": "تأكيد حذف العلامات التجارية المحددة",
+    "CONFIRM_BULK_DELETE_MSG": "هل أنت متأكد من حذف العلامات التجارية المحددة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "DELETE_FAILED": "فشل حذف العلامة التجارية",
     "VAULT_INIT": "جاري تحميل قائمة الماركات...",
     "EMPTY_TITLE": "لا توجد ماركات حالياً",
     "EMPTY_MSG": "لم نجد أي علامات تجارية تطابق بحثك. جرب تغيير كلمات البحث.",
@@ -3810,6 +3885,7 @@
       "COST_BEARER_VENDOR": "البائع (Vendor)",
       "COST_BEARER_PLATFORM": "المنصة (Platform)",
       "COST_BEARER_SHARED": "مشترك (Shared)",
+      "COST_BEARER_DRIVER": "المندوب (Driver)",
       "FINANCIAL_PREVIEW": "معاينة التأثير المالي",
       "ORIGINAL_TOTAL": "إجمالي المبلغ الأصلي",
       "REQUESTED_REFUND": "المبلغ المراد استرداده (-)",
@@ -3830,7 +3906,10 @@
       "SAVE_REVIEW": "حفظ كمراجعة",
       "APPROVE_REFUND": "اعتماد الاسترجاع",
       "DEFAULT_APPROVAL_REASON": "مطابقة الطلب مع سياسة المنصة واعتماد الاسترجاع بعد مراجعة الأدلة.",
-      "DEFAULT_CUSTOMER_MESSAGE": "تمت الموافقة على طلب الاسترجاع وسيتم إشعارك عند بدء المعالجة المالية."
+      "DEFAULT_CUSTOMER_MESSAGE": "تمت الموافقة على طلب الاسترجاع وسيتم إشعارك عند بدء المعالجة المالية.",
+      "VALIDATION_AMOUNT_ZERO": "المبلغ يجب أن يكون أكبر من الصفر.",
+      "VALIDATION_AMOUNT_EXCEEDED": "المبلغ يجب ألا يتجاوز إجمالي قيمة الحالة.",
+      "VALIDATION_REASON_REQUIRED": "حقل سبب الاعتماد مطلوب ولا يمكن تركه فارغاً."
     },
     "REJECTION_MODAL": {
       "TITLE": "رفض الاسترجاع",
@@ -3938,6 +4017,7 @@
       "TARGET_RISK": "فريق المخاطر",
       "TARGET_OPERATIONS": "إدارة العمليات",
       "TARGET_SUPPORT": "دعم متقدم",
+      "TARGET_DRIVER_OPS": "عمليات المندوبين (Driver Ops)",
       "PRIORITY_LABEL": "مستوى الأولوية",
       "PRIORITY_MEDIUM": "متوسطة",
       "PRIORITY_HIGH": "عالية",
@@ -6143,7 +6223,14 @@
     "PRODUCT": "المنتج",
     "REJECT_VENDORS_MSG": "رفض هذا التاجر سيُبقي الحساب غير نشط حتى يتم استكمال الملاحظات المطلوبة.",
     "STATUS": "الحالة",
-    "TITLE": "الكتالوج"
+    "TITLE": "الكتالوج",
+    "RECYCLE_BIN": "سلة المحذوفات",
+    "RECYCLE_BIN_DESC": "استرجع المنتجات أو الماركات أو التصنيفات المحذوفة مؤخراً أو تصفح الأرشيف.",
+    "BACK_TO_CATALOG": "العودة للكتالوج",
+    "DELETION_DATE": "تاريخ الحذف",
+    "RESTORE": "استعادة",
+    "EMPTY_RECYCLE_BIN": "سلة المحذوفات فارغة",
+    "EMPTY_RECYCLE_BIN_DESC": "لا توجد عناصر محذوفة حالياً في هذا القسم."
   },
   "MARKETING": {
     "SHELL": {
@@ -6528,6 +6615,111 @@
         "SHOWN": "تم إظهار الأسعار على كل كروت المنتجات.",
         "HIDDEN": "تم إخفاء الأسعار من كل كروت المنتجات."
       }
+    }
+  },
+  "SUPPORT_ADMIN": {
+    "TITLE": "مركز الدعم",
+    "SUBTITLE": "دعم التجار والسواق هنا في مكان واحد بعيدًا عن طوابير النزاعات والاسترجاع.",
+    "RESULTS": "نتائج",
+    "ACTIONS": {
+      "SUPPORT_NOTIFICATIONS": "إشعارات الدعم",
+      "OPEN": "فتح",
+      "UPDATE_STATUS": "تحديث الحالة",
+      "ASSIGN_TO_ME": "إسناد لي",
+      "SEND_REPLY": "إرسال الرد"
+    },
+    "KPIS": {
+      "OPEN": "تذاكر تجار مفتوحة",
+      "WAITING_VENDOR": "بانتظار التاجر",
+      "DRIVER": "دعم السواق",
+      "LEGACY": "دعم قديم",
+      "RESOLVED": "تم الحل",
+      "SLA_BREACHED": "تم تجاوز SLA",
+      "AVG_RESOLUTION": "متوسط زمن الحل",
+      "HOURS": "ساعة"
+    },
+    "TABS": {
+      "VENDOR": "دعم التجار",
+      "DRIVER": "دعم السواق",
+      "LEGACY": "الشكاوى القديمة"
+    },
+    "FILTERS": {
+      "SEARCH": "ابحث في تذاكر الدعم...",
+      "ALL_STATUSES": "كل الحالات",
+      "ALL_PRIORITIES": "كل الأولويات",
+      "ALL_CATEGORIES": "كل التصنيفات"
+    },
+    "STATUS": {
+      "OPEN": "مفتوحة",
+      "IN_PROGRESS": "قيد المعالجة",
+      "WAITING_VENDOR": "بانتظار التاجر",
+      "RESOLVED": "تم الحل"
+    },
+    "PRIORITY": {
+      "CRITICAL": "حرجة",
+      "URGENT": "عاجلة",
+      "HIGH": "مرتفعة",
+      "MEDIUM": "متوسطة",
+      "LOW": "منخفضة"
+    },
+    "CASE_STATUS": {
+      "REVIEW": "قيد المراجعة",
+      "WAITING_RESPONSE": "بانتظار رد",
+      "APPROVED": "معتمدة",
+      "REJECTED": "مرفوضة"
+    },
+    "CATEGORY": {
+      "ORDERS": "الطلبات",
+      "PRODUCTS": "المنتجات",
+      "FINANCE": "المالية",
+      "OFFERS": "العروض",
+      "STAFF": "الفريق",
+      "PROFILE": "الملف",
+      "TECHNICAL": "تقني",
+      "GENERAL": "عام"
+    },
+    "VENDOR_TABLE": {
+      "TITLE": "تذاكر دعم التجار",
+      "REFERENCE": "المرجع",
+      "SUBJECT": "الموضوع",
+      "ORDER": "الطلب",
+      "PRIORITY": "الأولوية",
+      "UPDATED": "آخر تحديث",
+      "GENERAL": "تذكرة عامة"
+    },
+    "DRIVER_TABLE": {
+      "TITLE": "حالات دعم السواق",
+      "SUBTITLE": "دعم حساب السائق يظهر هنا بدون تغيير APIs أو إشعارات السواق الحالية.",
+      "CASE": "الحالة",
+      "DRIVER": "السائق",
+      "UNKNOWN_DRIVER": "حساب السائق"
+    },
+    "LEGACY_TABLE": {
+      "TITLE": "دعم الطلبات القديم",
+      "SUBTITLE": "الشكاوى القديمة تظهر هنا كسجل دعم وليست نزاعات نشطة.",
+      "ORDER": "الطلب",
+      "CUSTOMER": "العميل",
+      "VENDOR": "التاجر"
+    },
+    "EMPTY": {
+      "TITLE": "لا توجد تذاكر دعم للتجار",
+      "MESSAGE": "أي تذكرة دعم جديدة من التاجر ستظهر هنا.",
+      "DRIVER_TITLE": "لا توجد حالات دعم للسواق",
+      "DRIVER_MESSAGE": "طلبات دعم حساب السائق ستظهر هنا عند توفرها.",
+      "LEGACY_TITLE": "لا توجد شكاوى قديمة",
+      "LEGACY_MESSAGE": "سجلات الشكاوى القديمة ستظهر هنا عند توفرها."
+    },
+    "DETAIL": {
+      "REPLY_PLACEHOLDER": "اكتب رد الدعم للتاجر...",
+      "DRIVER_REPLY_PLACEHOLDER": "اكتب رد الدعم للسائق...",
+      "SUMMARY": "الملخص",
+      "CLOSED_BANNER_WARNING": "تنبيه: هذه التذكرة مغلقة. يجب تغيير الحالة لتتمكن من إرسال ردود أو إسناد التذكرة."
+    },
+    "FEEDBACK": {
+      "ASSIGNED": "تم إسناد التذكرة لك.",
+      "REPLY_SENT": "تم إرسال الرد بنجاح.",
+      "STATUS_UPDATED": "تم تحديث حالة التذكرة.",
+      "ACTION_FAILED": "تعذر تنفيذ الإجراء. حاول مرة أخرى."
     }
   },
   "NOTIFICATIONS_CENTER": {

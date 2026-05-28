@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '@core/services/auth.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-change-temporary-password',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
@@ -66,6 +67,7 @@ import { AuthService } from '@core/services/auth.service';
   `
 })
 export class ChangeTemporaryPasswordComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   isLoading = false;
   errorMessage = '';
   readonly form: FormGroup;
@@ -101,6 +103,7 @@ export class ChangeTemporaryPasswordComponent {
     this.authService.changeTemporaryPassword(value.currentPassword ?? '', value.newPassword ?? '').subscribe({
       next: () => this.router.navigateByUrl(this.returnUrl),
       error: (err) => {
+        this.cdr.markForCheck();
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Could not change password. Check the current password and try again.';
       }

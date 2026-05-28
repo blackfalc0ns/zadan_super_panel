@@ -1,50 +1,113 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import {
+    HttpErrorResponse,
+    HttpEvent,
+    HttpInterceptorFn,
+    HttpRequest
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { Observable, catchError, from, of, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from '../../../environments/environment';
+
+const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+const ADMIN_AUTH_LOGIN_PATH = '/admin/auth/login';
+const ADMIN_AUTH_LOGOUT_PATH = '/admin/auth/logout';
+const ADMIN_AUTH_REFRESH_PATH = '/admin/auth/refresh-token';
+const ADMIN_AUTH_CSRF_PATH = '/admin/auth/csrf';
+
+function getApiOrigin(): string | null {
+    try {
+        const apiBase = environment.apiUrl;
+        if (!apiBase) return null;
+        const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
+        return new URL(apiBase, base).origin.toLowerCase();
+    } catch {
+        return null;
+    }
+}
+
+function isOurApiRequest(req: HttpRequest<unknown>): boolean {
+    const apiOrigin = getApiOrigin();
+    if (!apiOrigin) return false;
+
+    let resolved: URL;
+    try {
+        const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
+        resolved = new URL(req.url, base);
+    } catch {
+        return false;
+    }
+    return resolved.origin.toLowerCase() === apiOrigin;
+}
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
     const router = inject(Router);
     const translate = inject(TranslateService);
-    const token = authService.getToken();
     const lang = translate.currentLang || translate.defaultLang || 'ar';
 
-    const isApiUrl = req.url.includes('/api/admin') || req.url.includes('/api/');
-
-    if (isApiUrl) {
-        req = req.clone({
-            setHeaders: {
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                'Accept-Language': lang
-            }
-        });
+    const isApiUrl = isOurApiRequest(req);
+    if (!isApiUrl) {
+        // Defensive: never let an Authorization header leak to a foreign URL
+        // if some service mistakenly attached one.
+        if (req.headers.has('Authorization')) {
+            req = req.clone({ headers: req.headers.delete('Authorization') });
+        }
+        return next(req);
     }
+
+    const token = authService.getToken();
+    const isStateChanging = STATE_CHANGING_METHODS.has(req.method);
+    const isAdminAuthRefresh = req.url.includes(ADMIN_AUTH_REFRESH_PATH);
+    const isAdminAuthLogin = req.url.includes(ADMIN_AUTH_LOGIN_PATH);
+    const isAdminAuthCsrf = req.url.includes(ADMIN_AUTH_CSRF_PATH);
+
+    const headers: Record<string, string> = {
+        'Accept-Language': lang
+    };
+    if (token && !isAdminAuthCsrf) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Attach CSRF token to every state-changing request to our API. This
+    // protects all admin POST/PUT/PATCH/DELETE endpoints regardless of
+    // whether the cookie auth was used (defence in depth).
+    if (isStateChanging && !isAdminAuthCsrf) {
+        const csrf = authService.getCsrfToken();
+        if (csrf) {
+            headers['X-XSRF-TOKEN'] = csrf;
+        }
+    }
+
+    // We must always send credentials (cookies) for our API so the refresh
+    // cookie travels and antiforgery cookies stay in sync.
+    req = req.clone({
+        setHeaders: headers,
+        withCredentials: true
+    });
 
     return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
+            // Antiforgery (CSRF) failure → re-acquire token and retry once.
+            if (error.status === 400 && isStateChanging && !isAdminAuthCsrf) {
+                const message = (error.error as { code?: string; message?: string } | undefined)?.message ?? '';
+                const looksLikeAntiforgery = /anti.?forgery|xsrf|csrf/i.test(message)
+                    || (error.error as { code?: string } | undefined)?.code === 'ANTIFORGERY';
+                if (looksLikeAntiforgery) {
+                    return retryAfterCsrfRefresh(req, next, authService);
+                }
+            }
+
             if (error.status === 401 || error.status === 403) {
-                const isAdminAuthRequest =
-                    req.url.includes('/api/admin/auth/login') ||
-                    req.url.includes('/api/admin/auth/logout');
-                const hasStoredSession = !!token || !!authService.getRefreshToken() || authService.requiresFreshLogin;
+                const isAdminAuthRequest = isAdminAuthLogin
+                    || req.url.includes(ADMIN_AUTH_LOGOUT_PATH)
+                    || isAdminAuthRefresh
+                    || isAdminAuthCsrf;
 
-                if (!isAdminAuthRequest && hasStoredSession) {
-                    authService.forceLogoutForExpiredSession();
-
-                    const returnUrl = router.url && !router.url.startsWith('/login')
-                        ? router.url
-                        : '/dashboard';
-
-                    void router.navigate(['/login'], {
-                        queryParams: {
-                            returnUrl,
-                            reason: 'session-expired'
-                        },
-                        replaceUrl: true
-                    });
+                if (!isAdminAuthRequest) {
+                    return tryRefreshAndRetry(req, next, authService, router);
                 }
             }
 
@@ -52,3 +115,64 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         })
     );
 };
+
+/**
+ * Attempts a silent refresh exactly once. If it succeeds, the original request
+ * is replayed with the new access token. If it fails, the user is sent to
+ * /login with reason=session-expired.
+ */
+function tryRefreshAndRetry(
+    req: HttpRequest<unknown>,
+    next: (r: HttpRequest<unknown>) => Observable<HttpEvent<unknown>>,
+    authService: AuthService,
+    router: Router
+): Observable<HttpEvent<unknown>> {
+    return authService.refreshAccessToken().pipe(
+        switchMap((response) => {
+            if (!response?.accessToken) {
+                authService.forceLogoutForExpiredSession();
+                redirectToLogin(router);
+                return throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' }));
+            }
+
+            const retried = req.clone({
+                setHeaders: { Authorization: `Bearer ${response.accessToken}` },
+                withCredentials: true
+            });
+            return next(retried);
+        }),
+        catchError((err) => {
+            authService.forceLogoutForExpiredSession();
+            redirectToLogin(router);
+            return throwError(() => err);
+        })
+    );
+}
+
+function retryAfterCsrfRefresh(
+    req: HttpRequest<unknown>,
+    next: (r: HttpRequest<unknown>) => Observable<HttpEvent<unknown>>,
+    authService: AuthService
+): Observable<HttpEvent<unknown>> {
+    return from(authService.acquireCsrfToken()).pipe(
+        switchMap((token) => {
+            if (!token) {
+                return throwError(() => new HttpErrorResponse({ status: 400, statusText: 'CSRF token unavailable' }));
+            }
+            const retried = req.clone({
+                setHeaders: { 'X-XSRF-TOKEN': token },
+                withCredentials: true
+            });
+            return next(retried);
+        }),
+        catchError(() => of() as unknown as Observable<HttpEvent<unknown>>)
+    );
+}
+
+function redirectToLogin(router: Router): void {
+    const returnUrl = router.url && !router.url.startsWith('/login') ? router.url : '/dashboard';
+    void router.navigate(['/login'], {
+        queryParams: { returnUrl, reason: 'session-expired' },
+        replaceUrl: true
+    });
+}

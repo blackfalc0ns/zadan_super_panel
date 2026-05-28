@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -21,12 +21,14 @@ type SelectOption<T> = {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-drivers-list',
   standalone: true,
   imports: [DriversListViewComponent],
   templateUrl: './drivers-list.component.html'
 })
 export class DriversListComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   readonly statusOptions: SelectOption<DriverStatus>[] = [
     { value: 'Online', label: 'DRIVERS.STATUS.ONLINE' },
     { value: 'OnMission', label: 'DRIVERS.STATUS.ONMISSION' },
@@ -145,6 +147,7 @@ export class DriversListComponent implements OnInit {
 
     this.driverService.getDrivers(this.pageNumber, this.pageSize, this.searchTerm, this.filters).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.drivers = response.items;
         this.totalCount = response.totalCount;
         this.cityOptions = this.buildCityOptions(response.items);
@@ -152,6 +155,7 @@ export class DriversListComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isLoading = false;
         this.showError = true;
         this.errorMessage = 'DRIVERS.LOAD_ERROR';
@@ -161,6 +165,7 @@ export class DriversListComponent implements OnInit {
 
   loadKPIs(): void {
     this.driverService.getDriverKPIs().subscribe((response) => {
+      this.cdr.markForCheck();
       this.kpis = response;
       this.kpiCards = [
         {

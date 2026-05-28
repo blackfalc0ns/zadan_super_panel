@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { AppInputComponent } from '../../../../shared/components/ui/form-control
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-category-form-modal',
     standalone: true,
     imports: [
@@ -22,6 +23,7 @@ import { ModalShellComponent } from '../../../../shared/components/ui/modal-shel
     styleUrl: './category-form-modal.component.scss'
 })
 export class CategoryFormModalComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
     @Input() isOpen = false;
     @Input() mode: 'create' | 'edit' = 'create';
     @Input() levelNameKey = '';
@@ -81,6 +83,7 @@ export class CategoryFormModalComponent implements OnChanges {
     private autoCalculateOrder() {
         const parentId = this.parentCategory?.id || undefined;
         this.catalogService.getCategories(parentId).subscribe(categories => {
+      this.cdr.markForCheck();
             if (categories && categories.length > 0) {
                 const maxOrder = Math.max(...categories.map(c => c.displayOrder || 0));
                 this.form.patchValue({ displayOrder: maxOrder + 1 });
@@ -98,11 +101,13 @@ export class CategoryFormModalComponent implements OnChanges {
             if (this.mode === 'create') {
                 this.catalogService.createCategory(data).subscribe({
                     next: (result: Category) => {
+        this.cdr.markForCheck();
                         this.isSaving = false;
                         this.saved.emit(result);
                         this.onClose();
                     },
                     error: (err: any) => {
+        this.cdr.markForCheck();
                         console.error('Create failed:', err);
                         this.isSaving = false;
                     }
@@ -110,11 +115,13 @@ export class CategoryFormModalComponent implements OnChanges {
             } else {
                 this.catalogService.updateCategory(data.id, data).subscribe({
                     next: () => {
+        this.cdr.markForCheck();
                         this.isSaving = false;
                         this.saved.emit(data as Category);
                         this.onClose();
                     },
                     error: (err: any) => {
+        this.cdr.markForCheck();
                         console.error('Update failed:', err);
                         this.isSaving = false;
                     }
@@ -145,10 +152,12 @@ export class CategoryFormModalComponent implements OnChanges {
         this.isUploading = true;
         this.catalogService.uploadFile(file, 'uploads/catalog/categories').subscribe({
             next: (res) => {
+        this.cdr.markForCheck();
                 this.form.patchValue({ imageUrl: res.url });
                 this.isUploading = false;
             },
             error: (err) => {
+        this.cdr.markForCheck();
                 console.error('Upload failed:', err);
                 this.isUploading = false;
             }

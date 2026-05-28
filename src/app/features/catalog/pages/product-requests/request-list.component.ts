@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/st
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-product-request-list',
   standalone: true,
   imports: [
@@ -196,6 +197,7 @@ import { AppButtonComponent } from '@shared/components/ui/button/button.componen
   `]
 })
 export class ProductRequestListComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   requests: ProductRequest[] = [];
   loading = true;
   submittingId: string | null = null;
@@ -241,6 +243,7 @@ export class ProductRequestListComponent implements OnInit {
     this.loading = true;
     this.catalogService.getProductRequests(this.currentStatusFilter || undefined).subscribe({
       next: (data) => {
+        this.cdr.markForCheck();
         this.requests = data;
         this.loading = false;
       },
@@ -274,6 +277,7 @@ export class ProductRequestListComponent implements OnInit {
     this.submittingId = req.id;
     this.catalogService.reviewProductRequest(req.id, 'Approved').subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.submittingId = null;
         this.loadRequests();
       },
@@ -298,6 +302,7 @@ export class ProductRequestListComponent implements OnInit {
     this.submittingId = this.selectedRequestForReject.id;
     this.catalogService.reviewProductRequest(this.selectedRequestForReject.id, 'Rejected', this.rejectionNotes).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.submittingId = null;
         this.closeRejectModal();
         this.loadRequests();

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import { KeyValueGridComponent, KeyValueGridItem } from '@shared/components/ui/k
 import { InlineBannerComponent } from '@shared/components/ui/inline-banner/inline-banner.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-product-request-detail',
   standalone: true,
   imports: [
@@ -310,6 +311,7 @@ import { InlineBannerComponent } from '@shared/components/ui/inline-banner/inlin
   `]
 })
 export class ProductRequestDetailComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   request: ProductRequest | null = null;
   loading = true;
   submitting = false;
@@ -361,10 +363,12 @@ export class ProductRequestDetailComponent implements OnInit {
     this.loading = true;
     this.catalogService.getProductRequestById(id).subscribe({
       next: (data) => {
+        this.cdr.markForCheck();
         this.request = data;
         this.loading = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.loading = false;
         this.router.navigate(['/catalog/product-requests']);
       }
@@ -377,6 +381,7 @@ export class ProductRequestDetailComponent implements OnInit {
     this.submitting = true;
     this.catalogService.reviewProductRequest(this.request.id, 'Approved').subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.submitting = false;
         this.loadDetail(this.request!.id);
       },
@@ -390,6 +395,7 @@ export class ProductRequestDetailComponent implements OnInit {
     this.submitting = true;
     this.catalogService.reviewProductRequest(this.request.id, 'Rejected', this.rejectionNotes).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.submitting = false;
         this.showRejectModal = false;
         this.rejectionNotes = '';

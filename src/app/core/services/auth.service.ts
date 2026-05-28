@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
+import { Injectable, NgZone } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, catchError, firstValueFrom, of, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface AccessScope {
@@ -27,12 +27,17 @@ export interface AdminUser {
     access?: EffectiveAccess | null;
 }
 
-export interface AuthResponse {
-    tokens: {
-        accessToken: string;
-        refreshToken: string;
-    };
+export interface AuthLoginResponse {
+    tokens: { accessToken: string; refreshToken?: string | null };
     user: AdminUser;
+}
+
+export interface RefreshResponse {
+    accessToken: string;
+}
+
+export interface CsrfResponse {
+    csrfToken: string;
 }
 
 export interface LoginCredentials {
@@ -60,22 +65,66 @@ const DEV_ADMIN_USER: AdminUser = {
     mustChangePassword: false,
     access: {
         permissionVersion: 1,
-        permissions: ['*'], // A wildcard or just let it pass development bypass
+        permissions: ['*'],
         activeScope: null
     }
 };
+
+const DEV_BYPASS_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
+
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const IDLE_ACTIVITY_EVENTS: ReadonlyArray<keyof WindowEventMap> = [
+    'mousemove',
+    'mousedown',
+    'keydown',
+    'touchstart',
+    'scroll'
+];
+
+const USER_PROFILE_STORAGE_KEY = 'admin_user';
+const LAST_ACTIVITY_STORAGE_KEY = 'admin_last_activity';
+const LOGIN_REQUIRED_STORAGE_KEY = 'admin_login_required';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
     private readonly apiUrl = `${environment.apiUrl}/admin/auth`;
-    private readonly loginRequiredStorageKey = 'admin_login_required';
+
+    /**
+     * Access token lives in memory only. We never persist it to localStorage —
+     * this materially reduces the blast radius of an XSS bug in any third-party
+     * dependency or rendered server payload, because there is no static
+     * credential for an attacker to exfiltrate via document.cookie or storage.
+     *
+     * On page reload, the SPA calls /admin/auth/refresh-token which uses the
+     * HttpOnly refresh-token cookie to mint a fresh access token.
+     */
+    private accessToken: string | null = null;
 
     private currentUserSubject = new BehaviorSubject<AdminUser | null>(null);
     public currentUser$ = this.currentUserSubject.asObservable();
 
-    constructor(private http: HttpClient) {
+    private idleTimerHandle: ReturnType<typeof setTimeout> | null = null;
+    private idleListenersBound = false;
+    private readonly devBypassEnabled: boolean;
+
+    /**
+     * Cached CSRF token. Refreshed when the server invalidates it (we receive
+     * a 400 with antiforgery validation failure) or on app startup.
+     */
+    private csrfToken: string | null = null;
+
+    constructor(private http: HttpClient, private ngZone: NgZone) {
+        this.devBypassEnabled = this.computeDevBypassEnabled();
+
+        if (this.devBypassEnabled) {
+            console.warn(
+                '%c[Zadana Admin] DEV AUTH BYPASS ACTIVE — do not deploy this build to production.',
+                'background:#7f1d1d;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;'
+            );
+        }
+
         if (this.shouldUseDevelopmentBypass()) {
             this.currentUserSubject.next(DEV_ADMIN_USER);
             return;
@@ -88,13 +137,23 @@ export class AuthService {
         return this.currentUserSubject.value;
     }
 
+    /**
+     * True when an in-memory access token is held AND it has not yet expired.
+     * Used by guards/interceptors to decide whether to attach Authorization
+     * headers and whether to redirect to /login.
+     */
     public get hasApiSession(): boolean {
-        const token = this.getToken();
-        if (!token) {
+        if (!this.accessToken) {
             return false;
         }
 
-        if (this.isTokenExpired(token)) {
+        if (this.isTokenExpired(this.accessToken)) {
+            this.markLoginRequired();
+            this.clearSession();
+            return false;
+        }
+
+        if (this.isIdleTimedOut()) {
             this.markLoginRequired();
             this.clearSession();
             return false;
@@ -112,7 +171,248 @@ export class AuthService {
     }
 
     public get requiresFreshLogin(): boolean {
-        return localStorage.getItem(this.loginRequiredStorageKey) === '1';
+        return this.safeLocalGet(LOGIN_REQUIRED_STORAGE_KEY) === '1';
+    }
+
+    public getToken(): string | null {
+        return this.accessToken;
+    }
+
+    public getCsrfToken(): string | null {
+        return this.csrfToken;
+    }
+
+    /**
+     * Bootstraps the auth state on application startup. Called from
+     * APP_INITIALIZER so guards can safely read currentUserValue on first
+     * navigation.
+     *
+     *  1. Acquire a CSRF token (always — required for all state-changing requests).
+     *  2. If the dev bypass is active, expose the synthetic admin user.
+     *  3. Otherwise attempt a silent refresh using the HttpOnly cookie.
+     *     If it succeeds, fetch /me. If it fails, the user lands on /login.
+     */
+    public async bootstrap(): Promise<AdminUser | null> {
+        await this.acquireCsrfToken().catch(() => undefined);
+
+        if (this.shouldUseDevelopmentBypass()) {
+            this.currentUserSubject.next(DEV_ADMIN_USER);
+            return DEV_ADMIN_USER;
+        }
+
+        if (this.requiresFreshLogin) {
+            return null;
+        }
+
+        try {
+            const response = await firstValueFrom(this.refreshAccessToken());
+            if (!response) {
+                return null;
+            }
+
+            const user = await firstValueFrom(this.fetchMe());
+            this.startIdleWatchdog();
+            return user;
+        } catch {
+            this.clearSession();
+            return null;
+        }
+    }
+
+    public login(credentials: LoginCredentials): Observable<AuthLoginResponse> {
+        return this.http
+            .post<AuthLoginResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true })
+            .pipe(
+                tap(response => {
+                    this.clearLoginRequired();
+                    this.accessToken = response.tokens?.accessToken ?? null;
+                    this.touchActivity();
+                    this.startIdleWatchdog();
+                    this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(response.user));
+                    this.currentUserSubject.next(response.user);
+                })
+            );
+    }
+
+    public refreshAccessToken(): Observable<RefreshResponse | null> {
+        return this.http
+            .post<RefreshResponse>(`${this.apiUrl}/refresh-token`, {}, { withCredentials: true })
+            .pipe(
+                tap(response => {
+                    if (response?.accessToken) {
+                        this.accessToken = response.accessToken;
+                        this.touchActivity();
+                    }
+                }),
+                catchError((err: HttpErrorResponse) => {
+                    if (err.status === 401 || err.status === 403) {
+                        this.clearSession();
+                        return of(null);
+                    }
+                    return throwError(() => err);
+                })
+            );
+    }
+
+    public changeTemporaryPassword(currentPassword: string, newPassword: string): Observable<void> {
+        if (this.shouldUseDevelopmentBypass()) {
+            const currentUser = this.currentUserValue;
+            if (currentUser) {
+                const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
+                this.currentUserSubject.next(updatedUser);
+            }
+            return of(void 0);
+        }
+
+        return this.http
+            .post<void>(
+                `${this.apiUrl}/change-temporary-password`,
+                { currentPassword, newPassword },
+                { withCredentials: true }
+            )
+            .pipe(
+                tap(() => {
+                    const currentUser = this.currentUserValue;
+                    if (!currentUser) return;
+                    const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
+                    this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(updatedUser));
+                    this.currentUserSubject.next(updatedUser);
+                })
+            );
+    }
+
+    public updateCurrentUserProfile(payload: UpdateCurrentUserProfileRequest): Observable<AdminUser> {
+        if (this.shouldUseDevelopmentBypass()) {
+            const currentUser = this.currentUserValue;
+            if (currentUser) {
+                const updatedUser: AdminUser = { ...currentUser, ...payload };
+                this.currentUserSubject.next(updatedUser);
+                return of(updatedUser);
+            }
+        }
+
+        return this.http
+            .put<AdminUser>(`${this.apiUrl}/me`, payload, { withCredentials: true })
+            .pipe(
+                tap((user) => {
+                    this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(user));
+                    this.currentUserSubject.next(user);
+                })
+            );
+    }
+
+    public changePassword(payload: ChangeCurrentPasswordRequest): Observable<void> {
+        if (this.shouldUseDevelopmentBypass()) {
+            const currentUser = this.currentUserValue;
+            if (currentUser) {
+                const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
+                this.currentUserSubject.next(updatedUser);
+            }
+            return of(void 0);
+        }
+
+        return this.http
+            .post<void>(`${this.apiUrl}/change-password`, payload, { withCredentials: true })
+            .pipe(
+                tap(() => {
+                    const currentUser = this.currentUserValue;
+                    if (!currentUser) return;
+                    const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
+                    this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(updatedUser));
+                    this.currentUserSubject.next(updatedUser);
+                })
+            );
+    }
+
+    public logout(): Observable<void> {
+        if (this.shouldUseDevelopmentBypass()) {
+            this.clearLoginRequired();
+            this.clearSession();
+            return of(void 0);
+        }
+
+        return this.http
+            .post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true })
+            .pipe(
+                catchError((err) => {
+                    console.warn('[Zadana Admin] logout request failed; clearing local session anyway.', err);
+                    return of(void 0);
+                }),
+                tap(() => {
+                    this.clearLoginRequired();
+                    this.clearSession();
+                })
+            );
+    }
+
+    public forceLogout(): void {
+        this.clearLoginRequired();
+        this.clearSession();
+    }
+
+    public forceLogoutForExpiredSession(): void {
+        this.markLoginRequired();
+        this.clearSession();
+    }
+
+    public touchActivity(): void {
+        this.safeLocalSet(LAST_ACTIVITY_STORAGE_KEY, Date.now().toString());
+    }
+
+    /**
+     * Acquires a fresh CSRF token from the server. The XSRF-TOKEN cookie is
+     * set automatically by the server (non-HttpOnly so we can read it).
+     */
+    public async acquireCsrfToken(): Promise<string | null> {
+        try {
+            const response = await firstValueFrom(
+                this.http.get<CsrfResponse>(`${this.apiUrl}/csrf`, { withCredentials: true })
+            );
+            this.csrfToken = response?.csrfToken ?? this.readCsrfFromCookie();
+            return this.csrfToken;
+        } catch {
+            this.csrfToken = this.readCsrfFromCookie();
+            return this.csrfToken;
+        }
+    }
+
+    public refreshCsrfFromCookie(): void {
+        const fromCookie = this.readCsrfFromCookie();
+        if (fromCookie) {
+            this.csrfToken = fromCookie;
+        }
+    }
+
+    private fetchMe(): Observable<AdminUser> {
+        if (this.shouldUseDevelopmentBypass()) {
+            return of(this.currentUserValue ?? DEV_ADMIN_USER);
+        }
+
+        const headers = new HttpHeaders({
+            ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {})
+        });
+        return this.http.get<AdminUser>(`${this.apiUrl}/me`, { headers, withCredentials: true }).pipe(
+            tap(user => {
+                this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(user));
+                this.currentUserSubject.next(user);
+            })
+        );
+    }
+
+    /**
+     * Public helper used by profile / settings screens to re-pull the current
+     * user from the server. Falls back to null on auth failures so callers can
+     * keep the cached value.
+     */
+    public refreshAccess(): Observable<AdminUser | null> {
+        return this.fetchMe().pipe(
+            catchError((err: HttpErrorResponse) => {
+                if (err.status === 401 || err.status === 403) {
+                    this.forceLogoutForExpiredSession();
+                }
+                return of(null);
+            })
+        );
     }
 
     private isTokenExpired(token: string): boolean {
@@ -130,148 +430,37 @@ export class AuthService {
         }
     }
 
-    public getToken(): string | null {
-        return localStorage.getItem('admin_token');
-    }
-
-    public getRefreshToken(): string | null {
-        return localStorage.getItem('admin_refresh_token');
-    }
-
-    login(credentials: LoginCredentials): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
-            .pipe(
-                tap(response => {
-                    this.clearLoginRequired();
-                    localStorage.setItem('admin_token', response.tokens.accessToken);
-                    localStorage.setItem('admin_refresh_token', response.tokens.refreshToken);
-                    localStorage.setItem('admin_user', JSON.stringify(response.user));
-                    this.currentUserSubject.next(response.user);
-                })
-            );
-    }
-
-    changeTemporaryPassword(currentPassword: string, newPassword: string): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/change-temporary-password`, { currentPassword, newPassword }).pipe(
-            tap(() => {
-                const currentUser = this.currentUserValue;
-                if (!currentUser) {
-                    return;
-                }
-
-                const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
-                localStorage.setItem('admin_user', JSON.stringify(updatedUser));
-                this.currentUserSubject.next(updatedUser);
-            })
-        );
-    }
-
-    updateCurrentUserProfile(payload: UpdateCurrentUserProfileRequest): Observable<AdminUser> {
-        return this.http.put<AdminUser>(`${this.apiUrl}/me`, payload).pipe(
-            tap((user) => {
-                localStorage.setItem('admin_user', JSON.stringify(user));
-                this.currentUserSubject.next(user);
-            })
-        );
-    }
-
-    changePassword(payload: ChangeCurrentPasswordRequest): Observable<void> {
-        return this.http.post<void>(`${this.apiUrl}/change-password`, payload).pipe(
-            tap(() => {
-                const currentUser = this.currentUserValue;
-                if (!currentUser) {
-                    return;
-                }
-
-                const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
-                localStorage.setItem('admin_user', JSON.stringify(updatedUser));
-                this.currentUserSubject.next(updatedUser);
-            })
-        );
-    }
-
-    logout(): Observable<void> {
-        const refreshToken = this.getRefreshToken();
-        if (!refreshToken) {
-            this.clearLoginRequired();
-            this.clearSession();
-            return of(void 0);
-        }
-
-        return this.http.post<void>(`${this.apiUrl}/logout`, { refreshToken }).pipe(
-            catchError(() => of(void 0)),
-            tap(() => {
-                this.clearLoginRequired();
-                this.clearSession();
-            })
-        );
-    }
-
-    forceLogout(): void {
-        this.clearLoginRequired();
-        this.clearSession();
-    }
-
-    forceLogoutForExpiredSession(): void {
-        this.markLoginRequired();
-        this.clearSession();
-    }
-
-    public bootstrap(): Observable<AdminUser | null> {
-        if (!this.hasApiSession && !this.shouldUseDevelopmentBypass()) {
-            return of(null);
-        }
-
-        if (this.shouldUseDevelopmentBypass()) {
-            this.currentUserSubject.next(DEV_ADMIN_USER);
-            return of(DEV_ADMIN_USER);
-        }
-
-        return this.fetchMe().pipe(
-            catchError(() => {
-                return of(this.currentUserValue);
-            })
-        );
-    }
-
-    public refreshAccess(): Observable<AdminUser | null> {
-        return this.fetchMe().pipe(
-            catchError((err) => {
-                if (err.status === 401 || err.status === 403) {
-                    this.forceLogoutForExpiredSession();
-                }
-                return of(null);
-            })
-        );
-    }
-
-    private fetchMe(): Observable<AdminUser> {
-        return this.http.get<AdminUser>(`${this.apiUrl}/me`).pipe(
-            tap(user => {
-                localStorage.setItem('admin_user', JSON.stringify(user));
-                this.currentUserSubject.next(user);
-            })
-        );
-    }
-
     private clearSession(): void {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_refresh_token');
-        localStorage.removeItem('admin_user');
+        this.accessToken = null;
+        this.safeLocalRemove(USER_PROFILE_STORAGE_KEY);
+        this.safeLocalRemove(LAST_ACTIVITY_STORAGE_KEY);
+        this.stopIdleWatchdog();
         this.currentUserSubject.next(null);
     }
 
-    private hasValidStoredSession(): boolean {
-        const token = this.getToken();
-        return !!token && !this.isTokenExpired(token);
+    private shouldUseDevelopmentBypass(): boolean {
+        return this.devBypassEnabled && !this.accessToken && !this.requiresFreshLogin;
     }
 
-    private shouldUseDevelopmentBypass(): boolean {
-        return environment.skipAuthForDevelopment && !this.hasValidStoredSession() && !this.requiresFreshLogin;
+    private computeDevBypassEnabled(): boolean {
+        if (!environment.skipAuthForDevelopment) {
+            return false;
+        }
+        if (environment.production) {
+            return false;
+        }
+        if (typeof window === 'undefined') {
+            return false;
+        }
+        const host = (window.location?.hostname || '').toLowerCase();
+        if (!host) {
+            return false;
+        }
+        return DEV_BYPASS_HOSTS.has(host) || host.endsWith('.localhost');
     }
 
     private loadUserFromStorage(): void {
-        const userJson = localStorage.getItem('admin_user');
+        const userJson = this.safeLocalGet(USER_PROFILE_STORAGE_KEY);
         if (!userJson) {
             if (this.shouldUseDevelopmentBypass()) {
                 this.currentUserSubject.next(DEV_ADMIN_USER);
@@ -287,10 +476,102 @@ export class AuthService {
     }
 
     private markLoginRequired(): void {
-        localStorage.setItem(this.loginRequiredStorageKey, '1');
+        this.safeLocalSet(LOGIN_REQUIRED_STORAGE_KEY, '1');
     }
 
     private clearLoginRequired(): void {
-        localStorage.removeItem(this.loginRequiredStorageKey);
+        this.safeLocalRemove(LOGIN_REQUIRED_STORAGE_KEY);
+    }
+
+    // --------------------------------------------------------------------
+    //  Idle session enforcement
+    // --------------------------------------------------------------------
+
+    private isIdleTimedOut(): boolean {
+        const raw = this.safeLocalGet(LAST_ACTIVITY_STORAGE_KEY);
+        if (!raw) {
+            this.touchActivity();
+            return false;
+        }
+        const last = Number(raw);
+        if (!Number.isFinite(last)) {
+            this.touchActivity();
+            return false;
+        }
+        return Date.now() - last > IDLE_TIMEOUT_MS;
+    }
+
+    private startIdleWatchdog(): void {
+        if (this.idleListenersBound || typeof window === 'undefined') {
+            return;
+        }
+        this.idleListenersBound = true;
+        this.touchActivity();
+
+        const handleActivity = () => this.touchActivity();
+
+        this.ngZone.runOutsideAngular(() => {
+            for (const evt of IDLE_ACTIVITY_EVENTS) {
+                window.addEventListener(evt, handleActivity, { passive: true });
+            }
+            if (typeof document !== 'undefined') {
+                document.addEventListener('visibilitychange', handleActivity, { passive: true });
+            }
+
+            const tick = () => {
+                if (!this.accessToken) {
+                    this.stopIdleWatchdog();
+                    return;
+                }
+                if (this.isIdleTimedOut()) {
+                    this.ngZone.run(() => this.forceLogoutForExpiredSession());
+                    return;
+                }
+                this.idleTimerHandle = setTimeout(tick, 60_000);
+            };
+            this.idleTimerHandle = setTimeout(tick, 60_000);
+        });
+    }
+
+    private stopIdleWatchdog(): void {
+        if (this.idleTimerHandle) {
+            clearTimeout(this.idleTimerHandle);
+            this.idleTimerHandle = null;
+        }
+    }
+
+    // --------------------------------------------------------------------
+    //  CSRF cookie reader
+    // --------------------------------------------------------------------
+
+    private readCsrfFromCookie(): string | null {
+        if (typeof document === 'undefined' || !document.cookie) {
+            return null;
+        }
+        const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+        if (!match) {
+            return null;
+        }
+        try {
+            return decodeURIComponent(match[1]);
+        } catch {
+            return null;
+        }
+    }
+
+    // --------------------------------------------------------------------
+    //  Defensive storage wrappers
+    // --------------------------------------------------------------------
+
+    private safeLocalGet(key: string): string | null {
+        try { return localStorage.getItem(key); } catch { return null; }
+    }
+
+    private safeLocalSet(key: string, value: string): void {
+        try { localStorage.setItem(key, value); } catch { /* ignore */ }
+    }
+
+    private safeLocalRemove(key: string): void {
+        try { localStorage.removeItem(key); } catch { /* ignore */ }
     }
 }

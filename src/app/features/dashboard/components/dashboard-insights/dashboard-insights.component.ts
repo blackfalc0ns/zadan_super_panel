@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -17,7 +17,8 @@ export interface InsightPanel {
   standalone: true,
   imports: [CommonModule, TranslateModule],
   templateUrl: './dashboard-insights.component.html',
-  styles: [':host { display: block; }']
+  styles: [':host { display: block; }'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardInsightsComponent {
   @Input() panels: InsightPanel[] = [];

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-cod-reconciliation',
   standalone: true,
   imports: [
@@ -207,6 +208,7 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
   `
 })
 export class CodReconciliationComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private financeService = inject(FinanceService);
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
@@ -236,6 +238,7 @@ export class CodReconciliationComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
+      this.cdr.markForCheck();
       const entityType = params.get('entityType');
       this.scopedEntityType = entityType === 'vendor' || entityType === 'driver' ? entityType : null;
       this.scopedEntityId = params.get('entityId');
@@ -251,6 +254,7 @@ export class CodReconciliationComponent implements OnInit {
       entityId: this.scopedEntityId ?? filter.entityId,
       orderId: this.scopedOrderId ?? filter.orderId
     }).pipe(take(1)).subscribe(({ summary, records }) => {
+      this.cdr.markForCheck();
       this.summary = summary;
       this.records = records;
     });

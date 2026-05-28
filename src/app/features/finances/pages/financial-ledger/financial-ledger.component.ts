@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -19,6 +19,7 @@ import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-financial-ledger',
   standalone: true,
   imports: [
@@ -267,6 +268,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
   `
 })
 export class FinancialLedgerComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private financeService = inject(FinanceService);
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
@@ -322,6 +324,7 @@ export class FinancialLedgerComponent implements OnInit {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
+      this.cdr.markForCheck();
         const entityType = params.get('entityType');
         this.scopedEntityType = entityType === 'vendor' || entityType === 'driver' || entityType === 'platform' || entityType === 'order' || entityType === 'customer'
           ? entityType
@@ -341,6 +344,7 @@ export class FinancialLedgerComponent implements OnInit {
       entityId: this.scopedEntityId ?? filter.entityId,
       orderId: this.scopedOrderId ?? filter.orderId
     }).pipe(take(1)).subscribe(entries => {
+      this.cdr.markForCheck();
       this.allEntries = entries;
       this.filteredEntries = entries;
       this.page = 1;

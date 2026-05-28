@@ -43,6 +43,16 @@
                     <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'PRODUCTS.BULK_ADD' | translate }}</span>
                 </div>
             </app-button>
+
+            <app-button
+                variant="ghost"
+                routerLink="/catalog/recycle-bin"
+                customClass="!rounded-[1.25rem] !bg-red-50/50 !border !border-red-200/70 !text-red-600 hover:!bg-red-50 hover:!border-red-500/40 hover:!text-red-700 !px-5 !py-3 shadow-sm">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-red-500">delete</span>
+                    <span class="font-black uppercase tracking-[0.1em] text-[10px] sm:text-xs">{{ 'CATALOG.RECYCLE_BIN' | translate }}</span>
+                </div>
+            </app-button>
         </div>
     </app-page-header>
 
@@ -83,6 +93,14 @@
                         <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
                         <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.RESET_FILTERS' | translate }}</span>
                     </button>
+
+                    <button
+                        *ngIf="selectedProductIds.size > 0"
+                        (click)="deleteSelectedProducts()"
+                        class="flex items-center gap-2 px-5 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all shadow-md">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.DELETE_SELECTED' | translate }} ({{ selectedProductIds.size }})</span>
+                    </button>
                 </div>
             </div>
 
@@ -122,6 +140,13 @@
             <table class="w-full table-fixed border-separate border-spacing-y-0">
                 <thead class="border-b border-slate-100/50">
                     <tr>
+                        <th class="text-center w-[4%] py-5">
+                            <input 
+                                type="checkbox" 
+                                [checked]="isAllSelected" 
+                                (change)="toggleAllSelection()"
+                                class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/30 w-4 h-4 cursor-pointer" />
+                        </th>
                         <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
                         <th class="text-center w-[8%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.IMAGE' | translate }}</th>
                         <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'PRODUCTS.PRODUCT' | translate }}</th>
@@ -135,6 +160,15 @@
                     <tr *ngFor="let product of products; let i = index" 
                         class="group bg-white/50 hover:bg-white transition-all duration-500 border-b border-slate-100/60 cursor-pointer"
                         [routerLink]="['/catalog/products/view', product.id]">
+                        
+                        <!-- Checkbox column -->
+                        <td class="text-center align-middle py-4 w-[4%]" (click)="$event.stopPropagation()">
+                            <input 
+                                type="checkbox" 
+                                [checked]="selectedProductIds.has(product.id)" 
+                                (change)="toggleProductSelection(product.id)"
+                                class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/30 w-4 h-4 cursor-pointer" />
+                        </td>
                         
                         <!-- Col 1: Index -->
                         <td class="text-center align-middle py-4 w-[5%]">

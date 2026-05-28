@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -74,12 +74,14 @@ interface HealthIndicator {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-overview',
   standalone: true,
   imports: [CommonModule, TranslateModule, InlineBannerComponent, SectionHeaderComponent, StatusPillComponent],
   templateUrl: './vendor-overview.component.html'
 })
 export class VendorOverviewComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   vendorId = '';
   vendorName = '';
   vendorLocation = '';
@@ -112,6 +114,7 @@ export class VendorOverviewComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
         this.rebuildViewModel();
@@ -120,6 +123,7 @@ export class VendorOverviewComponent {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         if (!vendor) {
           return;
         }
@@ -133,6 +137,7 @@ export class VendorOverviewComponent {
     this.vendorDetailFacade.mutationError$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((error) => {
+      this.cdr.markForCheck();
         this.mutationError = error ?? '';
       });
   }
@@ -678,10 +683,12 @@ export class VendorOverviewComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+        this.cdr.markForCheck();
           this.ordersData = response.items ?? [];
           this.rebuildViewModel();
         },
         error: () => {
+        this.cdr.markForCheck();
           this.ordersData = [];
           this.rebuildViewModel();
         }

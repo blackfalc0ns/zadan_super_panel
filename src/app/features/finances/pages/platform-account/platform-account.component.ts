@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -12,6 +12,7 @@ import {
 } from '../../services/wallets.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-platform-account',
   standalone: true,
   imports: [CommonModule, FormsModule, AppPageHeaderComponent],
@@ -153,6 +154,7 @@ import {
   `
 })
 export class PlatformAccountComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly walletsService = inject(WalletsService);
   private readonly translate = inject(TranslateService);
   private readonly toast = inject(ToastService);
@@ -185,6 +187,7 @@ export class PlatformAccountComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (account) => {
+        this.cdr.markForCheck();
           this.account = account;
           this.form = {
             bankName: account.bankName || '',
@@ -201,6 +204,7 @@ export class PlatformAccountComponent implements OnInit {
           this.isLoading = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.errorMessage = this.text('تعذر تحميل حساب المنصة.', 'Unable to load platform account.');
           this.isLoading = false;
         }
@@ -231,12 +235,14 @@ export class PlatformAccountComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (account) => {
+        this.cdr.markForCheck();
           this.account = account;
           this.isSaving = false;
           this.toast.success(this.text('تم حفظ حساب المنصة.', 'Platform account saved.'));
           this.load();
         },
         error: (error) => {
+        this.cdr.markForCheck();
           this.errorMessage = error?.error?.detail || error?.error?.message || this.text('تعذر حفظ حساب المنصة.', 'Unable to save platform account.');
           this.isSaving = false;
         }

@@ -1,5 +1,7 @@
 {
   "COMMON": {
+    "NOT_AVAILABLE": "Not Available",
+    "LIVE_0_SETTLEMENTS_0_PAYOUTS": "0 Active Settlements · 0 Payouts",
     "CANCEL": "Cancel",
     "CONFIRM_DELETE": "Confirm Delete",
     "DELETE_CONFIRM_TITLE": "Final Confirmation",
@@ -46,6 +48,8 @@
     "HIDE_INACTIVE": "Hide Inactive",
     "SHOW_INACTIVE": "Show All",
     "RESET_FILTERS": "Reset Search",
+    "RESET": "Reset",
+    "APPLY_FILTERS": "Apply filters",
     "CLEAR_FILTERS": "Clear filters",
     "SEARCH": "Search...",
     "PREVIOUS": "Previous",
@@ -100,6 +104,12 @@
   "VALIDATION": {
     "REQUIRED": "This field is required"
   },
+  "UNAUTHORIZED": {
+    "TITLE": "Access Denied",
+    "MESSAGE": "You do not have the required permissions to view this page. Return to the dashboard or request the permission from your administrator.",
+    "GO_DASHBOARD": "Back to Dashboard",
+    "GO_PROFILE": "My Profile"
+  },
   "LOGIN": {
     "WELCOME": "Super Admin Access",
     "EMAIL": "Admin Email",
@@ -120,7 +130,9 @@
     "ERR_EMAIL_REQUIRED": "Email is required to proceed",
     "ERR_EMAIL_INVALID": "Please enter a valid administrative email",
     "ERR_PASSWORD_REQUIRED": "Secret access key is required to login",
-    "ERR_LOGIN_FAILED": "Authentication failed. Please check your access key and admin email and try again."
+    "ERR_LOGIN_FAILED": "Authentication failed. Please check your access key and admin email and try again.",
+    "ERR_SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+    "FORGOT_PASSWORD_DISABLED_HINT": "Contact your system administrator to reset access credentials."
   },
   "WORKFLOW_LINKS": {
     "TITLE": "Related Workflow",
@@ -174,6 +186,7 @@
     "BRANDS": "Brands",
     "PRODUCT_REQUESTS": "Product Requests",
     "DISPUTES": "Disputes",
+    "SUPPORT": "Support",
     "VENDOR_DISPUTES": "Vendor Disputes",
     "LOGOUT": "Logout",
     "SEARCH": "Search email or order...",
@@ -916,7 +929,8 @@
     },
     "ACTIONS": {
       "ADVANCED_FILTERS": "Advanced Filters",
-      "EXPORT_CSV": "Export CSV"
+      "EXPORT_CSV": "Export CSV",
+      "VIEW_PROFILE": "View Profile"
     },
     "STATUS": {
       "ONLINE": "Online",
@@ -1536,6 +1550,7 @@
         "TABLE_METHOD": "Method",
         "TABLE_DATE": "Date",
         "COLUMNS": {
+          "TRANSACTION_DETAILS": "Transaction Details",
           "ID": "Entry",
           "TYPE": "Type",
           "AMOUNT": "Amount",
@@ -1546,12 +1561,62 @@
         "NO_SETTLEMENTS": "No Settlements",
         "NO_STATEMENTS": "No ledger entries",
         "NO_SETTLEMENTS_MSG": "There are no financial transactions linked to this driver.",
+        "PREVENTIVE_LIMIT_LABEL": "Preventive Limit: {{limit}} SAR",
+        "LIMIT_EXCEEDED": "Safe limit exceeded!",
+        "SAFE_STATUS": "Safe status",
+        "PENDING_DEDUCTIONS_THIS_MONTH": "Pending deductions this month:",
+        "FILTERS": {
+          "ALL": "All",
+          "SETTLED": "Settled",
+          "PENDING": "Pending",
+          "FAILED": "Failed"
+        },
+        "SEARCH_PLACEHOLDER": "Search by transaction ID, type or reference...",
+        "NO_MATCHING_STATEMENTS_DESC": "No financial transactions match the current filter or search criteria.",
+        "ENTRY_INFO_TITLE": "Ledger Entry Information",
+        "ENTRY_ID": "Entry ID:",
+        "ENTRY_REFERENCE": "Reference:",
+        "SETTLEMENT_METHOD": "Settlement Method:",
+        "FULL_ENTRY_DATE": "Full Entry Date:",
+        "ZADANA_LOGISTICS": "Zadana Logistics",
+        "CERTIFIED_RECEIPT": "Certified Settlement Receipt",
+        "TOTAL_AMOUNT": "Total Amount:",
+        "CALCULATED_FEE": "Calculated Fee:",
+        "DOWNLOAD_RECEIPT": "Download Receipt",
+        "WALLET_OPERATIONS_SUB": "Account & wallet operations",
+        "POLICIES_TITLE": "Financial Policies & Limits",
+        "POLICIES_SUB": "Fleet settlement regulations",
+        "POLICY_1": "Weekly dues are automatically paid out to the wallet after reviewing settlement entries.",
+        "POLICY_2": "The maximum allowed cash on delivery (COD) collected is 1,000 SAR. If exceeded, tasks assignment may be temporarily suspended until the difference is settled.",
+        "POLICY_3": "Fees charged on transactions depend entirely on the banking gateway and the type of settlement method used.",
+        "MODAL_TITLE": "Settle Financial Dues",
+        "MODAL_SUBTITLE": "Record a manual settlement for the current balance",
+        "AUTO_REFERENCE_LABEL": "Auto Transaction Reference:",
+        "SETTLE_AMOUNT_LABEL": "Requested Settlement Amount (SAR)",
+        "TOTAL_DUE_FOR_SETTLEMENT": "Total balance currently due for settlement: {{amount}} SAR",
+        "SETTLE_METHOD_LABEL": "Settlement Method Used",
+        "METHODS": {
+          "BANKACCOUNT": "Bank Account",
+          "DEBITCARD": "Mada Debit Card",
+          "INSTANTTRANSFER": "Instant Transfer"
+        },
+        "NOTES_LABEL": "Notes or Comments",
+        "NOTES_PLACEHOLDER": "Write any administrative notes about the settlement...",
+        "RECORDING_SETTLEMENT": "Recording payment...",
+        "SAVE_SETTLEMENT": "Approve & Save Settlement",
+        "SETTLEMENT_SUCCESS": "Settlement processed successfully!",
+        "SETTLEMENT_SUCCESS_DESC": "The driver's financial statement was updated successfully, and the reference transaction has been logged.",
+        "SETTLED_AMOUNT": "Settled Amount:",
+        "TRANSACTION_REFERENCE": "Transaction Reference:",
+        "SETTLEMENT_METHOD_LABEL": "Settlement Method:",
+        "BACK_TO_STATEMENT": "Back to Statement",
         "ACTIONS": {
           "SETTLE": "Settle balance",
           "DOWNLOAD_STATEMENT": "Download statement"
         },
         "BACKEND": {
           "TYPES": {
+            "ORDERREVENUE": "Order Revenue",
             "CREDIT": "Credit",
             "DEBIT": "Debit",
             "HOLD": "Hold",
@@ -1563,6 +1628,7 @@
             "REFUND": "Refund"
           },
           "METHODS": {
+            "WALLET": "System Wallet",
             "BANKACCOUNT": "Bank Account",
             "DEBITCARD": "Debit Card",
             "INSTANTTRANSFER": "Instant Transfer"
@@ -1943,6 +2009,7 @@
         "ZONE": "Zone",
         "LICENSE": "License",
         "LAST_SEEN": "Joined",
+        "JOINED_AT": "Joined At",
         "ACTIVE_TASKS": "Active / completed",
         "OPERATIONAL_GATE": "Operational gate",
         "PROFILE_COMPLETION": "Profile completion",
@@ -2037,6 +2104,11 @@
     "WITHOUT_PRODUCTS": "Without products",
     "NO_RESULTS_DESC": "There are no search results currently.",
     "SEARCH_PLACEHOLDER": "Search by keywords or name...",
+    "CONFIRM_DELETE_TITLE": "Confirm Delete Brand",
+    "CONFIRM_DELETE_MSG": "Are you sure you want to delete this brand? This action cannot be undone.",
+    "CONFIRM_BULK_DELETE_TITLE": "Confirm Delete Selected Brands",
+    "CONFIRM_BULK_DELETE_MSG": "Are you sure you want to delete the selected brands? This action cannot be undone.",
+    "DELETE_FAILED": "Failed to delete brand",
     "VAULT_INIT": "Loading brand list...",
     "EMPTY_TITLE": "No brands found",
     "EMPTY_MSG": "No brands matched your search. Try changing keywords.",
@@ -3813,6 +3885,7 @@
       "COST_BEARER_VENDOR": "Seller (Vendor)",
       "COST_BEARER_PLATFORM": "Platform",
       "COST_BEARER_SHARED": "Shared",
+      "COST_BEARER_DRIVER": "Driver",
       "FINANCIAL_PREVIEW": "Financial Impact Preview",
       "ORIGINAL_TOTAL": "Original total amount",
       "REQUESTED_REFUND": "Requested refund amount (-)",
@@ -3833,7 +3906,10 @@
       "SAVE_REVIEW": "Save as Review",
       "APPROVE_REFUND": "Approve Refund",
       "DEFAULT_APPROVAL_REASON": "The request matches platform policy and the refund was approved after reviewing the evidence.",
-      "DEFAULT_CUSTOMER_MESSAGE": "Your refund request has been approved and you will be notified once the financial processing begins."
+      "DEFAULT_CUSTOMER_MESSAGE": "Your refund request has been approved and you will be notified once the financial processing begins.",
+      "VALIDATION_AMOUNT_ZERO": "Amount must be greater than zero.",
+      "VALIDATION_AMOUNT_EXCEEDED": "Amount cannot exceed case total.",
+      "VALIDATION_REASON_REQUIRED": "Approval reason is required."
     },
     "REJECTION_MODAL": {
       "TITLE": "Reject Refund",
@@ -3941,6 +4017,7 @@
       "TARGET_RISK": "Risk Team",
       "TARGET_OPERATIONS": "Operations Management",
       "TARGET_SUPPORT": "Advanced Support",
+      "TARGET_DRIVER_OPS": "Driver Operations",
       "PRIORITY_LABEL": "Priority Level",
       "PRIORITY_MEDIUM": "Medium",
       "PRIORITY_HIGH": "High",
@@ -6249,7 +6326,14 @@
     "CATEGORY_REQUESTS_DESC": "Review new category requests and place them correctly within the catalog hierarchy.",
     "REJECT_VENDORS_MSG": "Rejecting this vendor will keep the account inactive until the required issues are resolved.",
     "STATUS": "Status",
-    "TITLE": "Catalog"
+    "TITLE": "Catalog",
+    "RECYCLE_BIN": "Recycle Bin",
+    "RECYCLE_BIN_DESC": "Restore recently deleted products, brands, or categories or browse the archive.",
+    "BACK_TO_CATALOG": "Back to Catalog",
+    "DELETION_DATE": "Deletion Date",
+    "RESTORE": "Restore",
+    "EMPTY_RECYCLE_BIN": "Recycle Bin is empty",
+    "EMPTY_RECYCLE_BIN_DESC": "There are currently no deleted items in this section."
   },
   "MARKETING": {
     "SHELL": {
@@ -6634,6 +6718,111 @@
         "SHOWN": "Prices are now visible on all product cards.",
         "HIDDEN": "Prices are now hidden on all product cards."
       }
+    }
+  },
+  "SUPPORT_ADMIN": {
+    "TITLE": "Support Center",
+    "SUBTITLE": "Vendor and driver support is handled here, away from dispute and refund queues.",
+    "RESULTS": "results",
+    "ACTIONS": {
+      "SUPPORT_NOTIFICATIONS": "Support notifications",
+      "OPEN": "Open",
+      "UPDATE_STATUS": "Update status",
+      "ASSIGN_TO_ME": "Assign to me",
+      "SEND_REPLY": "Send reply"
+    },
+    "KPIS": {
+      "OPEN": "Open vendor tickets",
+      "WAITING_VENDOR": "Waiting vendor",
+      "DRIVER": "Driver support",
+      "LEGACY": "Legacy support",
+      "RESOLVED": "Resolved",
+      "SLA_BREACHED": "SLA Breached",
+      "AVG_RESOLUTION": "Avg Resolution",
+      "HOURS": "hrs"
+    },
+    "TABS": {
+      "VENDOR": "Vendor support",
+      "DRIVER": "Driver support",
+      "LEGACY": "Legacy complaints"
+    },
+    "FILTERS": {
+      "SEARCH": "Search support tickets...",
+      "ALL_STATUSES": "All statuses",
+      "ALL_PRIORITIES": "All priorities",
+      "ALL_CATEGORIES": "All categories"
+    },
+    "STATUS": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "WAITING_VENDOR": "Waiting vendor",
+      "RESOLVED": "Resolved"
+    },
+    "PRIORITY": {
+      "CRITICAL": "Critical",
+      "URGENT": "Urgent",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "CASE_STATUS": {
+      "REVIEW": "In review",
+      "WAITING_RESPONSE": "Waiting response",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "CATEGORY": {
+      "ORDERS": "Orders",
+      "PRODUCTS": "Products",
+      "FINANCE": "Finance",
+      "OFFERS": "Offers",
+      "STAFF": "Staff",
+      "PROFILE": "Profile",
+      "TECHNICAL": "Technical",
+      "GENERAL": "General"
+    },
+    "VENDOR_TABLE": {
+      "TITLE": "Vendor support tickets",
+      "REFERENCE": "Reference",
+      "SUBJECT": "Subject",
+      "ORDER": "Order",
+      "PRIORITY": "Priority",
+      "UPDATED": "Updated",
+      "GENERAL": "General ticket"
+    },
+    "DRIVER_TABLE": {
+      "TITLE": "Driver support cases",
+      "SUBTITLE": "Driver account support is collected here without changing the existing driver APIs or notifications.",
+      "CASE": "Case",
+      "DRIVER": "Driver",
+      "UNKNOWN_DRIVER": "Driver account"
+    },
+    "LEGACY_TABLE": {
+      "TITLE": "Legacy order support",
+      "SUBTITLE": "Old complaint cases are shown as support history, not as active disputes.",
+      "ORDER": "Order",
+      "CUSTOMER": "Customer",
+      "VENDOR": "Vendor"
+    },
+    "EMPTY": {
+      "TITLE": "No vendor support tickets",
+      "MESSAGE": "New merchant support tickets will appear here.",
+      "DRIVER_TITLE": "No driver support cases",
+      "DRIVER_MESSAGE": "Driver account support cases will appear here.",
+      "LEGACY_TITLE": "No legacy complaints",
+      "LEGACY_MESSAGE": "Old complaint records will appear here when available."
+    },
+    "DETAIL": {
+      "REPLY_PLACEHOLDER": "Write a support reply to the vendor...",
+      "DRIVER_REPLY_PLACEHOLDER": "Write a support reply to the driver...",
+      "SUMMARY": "Summary",
+      "CLOSED_BANNER_WARNING": "Note: This ticket is closed. You must change the status to send replies or assign the ticket."
+    },
+    "FEEDBACK": {
+      "ASSIGNED": "Ticket assigned to you.",
+      "REPLY_SENT": "Reply sent successfully.",
+      "STATUS_UPDATED": "Ticket status updated.",
+      "ACTION_FAILED": "Action failed. Please try again."
     }
   },
   "NOTIFICATIONS_CENTER": {

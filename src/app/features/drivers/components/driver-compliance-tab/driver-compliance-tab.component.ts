@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
@@ -15,6 +15,7 @@ import {
 } from '../../utils/driver-ui.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-compliance-tab',
   standalone: true,
   imports: [CommonModule, TranslateModule, DataTableComponent, KpiCardsComponent, SectionHeaderComponent],

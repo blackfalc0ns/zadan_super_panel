@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService, type AdminUser } from '@core/services/auth.service';
@@ -9,6 +9,7 @@ import { AdminNotificationPreferences, AdminNotificationsService } from '@core/s
 import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotificationSoundService } from '@core/services/admin-notification-sound.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-profile',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, AppPageHeaderComponent, StatusPillComponent],
@@ -296,6 +297,7 @@ import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotifica
   `
 })
 export class AdminProfileComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   user: AdminUser | null = null;
   isLoading = true;
   isSavingProfile = false;
@@ -402,6 +404,7 @@ export class AdminProfileComponent implements OnInit {
     this.isSavingProfile = true;
     this.authService.updateCurrentUserProfile(this.profileForm.getRawValue()).subscribe({
       next: (user) => {
+        this.cdr.markForCheck();
         this.user = user;
         this.profileForm.patchValue({
           fullName: user.fullName ?? '',
@@ -413,9 +416,14 @@ export class AdminProfileComponent implements OnInit {
         this.profileMessage = this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATED');
       },
       error: (err) => {
+        this.cdr.markForCheck();
         this.isSavingProfile = false;
         this.profileMessageType = 'error';
-        this.profileMessage = err.error?.message || this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATE_FAILED');
+        const body = err.error;
+        const validationErrors = body?.errors
+          ? Object.values(body.errors).flat().join(' ')
+          : null;
+        this.profileMessage = validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATE_FAILED');
       }
     });
   }
@@ -440,6 +448,7 @@ export class AdminProfileComponent implements OnInit {
       newPassword: value.newPassword
     }).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.isChangingPassword = false;
         this.passwordMessageType = 'success';
         this.passwordMessage = this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATED');
@@ -450,9 +459,14 @@ export class AdminProfileComponent implements OnInit {
         });
       },
       error: (err) => {
+        this.cdr.markForCheck();
         this.isChangingPassword = false;
         this.passwordMessageType = 'error';
-        this.passwordMessage = err.error?.message || this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATE_FAILED');
+        const body = err.error;
+        const validationErrors = body?.errors
+          ? Object.values(body.errors).flat().join(' ')
+          : null;
+        this.passwordMessage = validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATE_FAILED');
       }
     });
   }
@@ -480,6 +494,7 @@ export class AdminProfileComponent implements OnInit {
       sound: this.selectedNotificationSound
     }).subscribe({
       next: (preferences) => {
+        this.cdr.markForCheck();
         this.notificationPreferences = preferences;
         if (preferences.webDeviceCount > 0) {
           this.selectedNotificationSound = preferences.sound;
@@ -494,6 +509,7 @@ export class AdminProfileComponent implements OnInit {
         );
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isSavingNotificationSound = false;
         this.notificationSoundMessageType = 'error';
         this.notificationSoundMessage = this.localMessage(
@@ -512,10 +528,12 @@ export class AdminProfileComponent implements OnInit {
 
     this.authService.refreshAccess().subscribe({
       next: (user) => {
+        this.cdr.markForCheck();
         this.setUser(user ?? fallbackUser);
         this.isLoading = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.setUser(fallbackUser);
         this.isLoading = false;
       }
@@ -526,6 +544,7 @@ export class AdminProfileComponent implements OnInit {
     this.isLoadingNotificationPreferences = true;
     this.notificationsService.getPreferences().subscribe({
       next: (preferences) => {
+        this.cdr.markForCheck();
         this.notificationPreferences = preferences;
         if (preferences.webDeviceCount > 0) {
           this.selectedNotificationSound = preferences.sound;
@@ -536,6 +555,7 @@ export class AdminProfileComponent implements OnInit {
         this.isLoadingNotificationPreferences = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.selectedNotificationSound = this.notificationSoundService.getCurrentSound();
         this.isLoadingNotificationPreferences = false;
       }

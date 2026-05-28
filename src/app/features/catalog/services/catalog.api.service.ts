@@ -175,6 +175,17 @@ export class CatalogService {
     return this.http.delete<void>(`${this.apiUrl}/categories/${id}`, { headers: this.getHeaders() });
   }
 
+  getDeletedCategories(page: number = 1, pageSize: number = 20): Observable<{ items: any[], total: number, pageNumber: number, pageSize: number, hasMore: boolean }> {
+    const params = new HttpParams()
+      .set('pageNumber', page.toString())
+      .set('pageSize', pageSize.toString());
+    return this.http.get<any>(`${this.apiUrl}/categories/deleted`, { headers: this.getHeaders(), params });
+  }
+
+  restoreCategory(id: string): Observable<{ message_ar: string, message_en: string, id: string }> {
+    return this.http.patch<any>(`${this.apiUrl}/categories/${id}/restore`, {}, { headers: this.getHeaders() });
+  }
+
   getProducts(
     page: number = 1,
     pageSize: number = 10,
@@ -314,6 +325,21 @@ export class CatalogService {
     return this.http.delete<void>(`${this.apiUrl}/products/${id}`, { headers: this.getHeaders() });
   }
 
+  getDeletedProducts(page: number = 1, pageSize: number = 20): Observable<{ items: any[], total: number, pageNumber: number, pageSize: number, hasMore: boolean }> {
+    const params = new HttpParams()
+      .set('pageNumber', page.toString())
+      .set('pageSize', pageSize.toString());
+    return this.http.get<any>(`${this.apiUrl}/products/deleted`, { headers: this.getHeaders(), params });
+  }
+
+  restoreProduct(id: string): Observable<{ message_ar: string, message_en: string, id: string }> {
+    return this.http.patch<any>(`${this.apiUrl}/products/${id}/restore`, {}, { headers: this.getHeaders() });
+  }
+
+  bulkDeleteProducts(ids: string[]): Observable<{ succeededCount: number, failedCount: number, failures: any[] }> {
+    return this.http.post<any>(`${this.apiUrl}/products/bulk-delete`, { ids }, { headers: this.getHeaders() });
+  }
+
   getBrands(includeInactive: boolean = false, allowFallback: boolean = true): Observable<Brand[]> {
     const fallback = this.getFallbackBrands(includeInactive);
 
@@ -416,6 +442,21 @@ export class CatalogService {
     return this.http.delete<void>(`${this.apiUrl}/brands/${id}`, { headers: this.getHeaders() });
   }
 
+  getDeletedBrands(page: number = 1, pageSize: number = 20): Observable<{ items: any[], total: number, pageNumber: number, pageSize: number, hasMore: boolean }> {
+    const params = new HttpParams()
+      .set('pageNumber', page.toString())
+      .set('pageSize', pageSize.toString());
+    return this.http.get<any>(`${this.apiUrl}/brands/deleted`, { headers: this.getHeaders(), params });
+  }
+
+  restoreBrand(id: string): Observable<{ message_ar: string, message_en: string, id: string }> {
+    return this.http.patch<any>(`${this.apiUrl}/brands/${id}/restore`, {}, { headers: this.getHeaders() });
+  }
+
+  bulkDeleteBrands(ids: string[]): Observable<{ succeededCount: number, failedCount: number, failures: any[] }> {
+    return this.http.post<any>(`${this.apiUrl}/brands/bulk-delete`, { ids }, { headers: this.getHeaders() });
+  }
+
   getUnits(): Observable<CatalogUnit[]> {
     const fallback = this.fallbackUnits.map((unit) => ({ ...unit }));
 
@@ -427,6 +468,14 @@ export class CatalogService {
       map((response) => this.normalizeUnitsResponse(response, fallback)),
       catchError((error) => this.handleReadFallback('Catalog units', fallback, error))
     );
+  }
+
+  getUnitById(id: string): Observable<CatalogUnit> {
+    return this.http.get<CatalogUnit>(`${this.apiUrl}/units/${id}`, { headers: this.getHeaders() });
+  }
+
+  deleteUnit(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/units/${id}`, { headers: this.getHeaders() });
   }
 
   getProductRequests(status?: ProductRequestStatus): Observable<ProductRequest[]> {

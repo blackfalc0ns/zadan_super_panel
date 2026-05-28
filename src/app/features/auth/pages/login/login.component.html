@@ -225,7 +225,7 @@
                                     </svg>
                                     {{ 'LOGIN.ERR_EMAIL_REQUIRED' | translate }}
                                 </span>
-                                <span *ngIf="loginForm.get('identifier')?.errors?.['email']"
+                                <span *ngIf="loginForm.get('identifier')?.errors?.['minlength'] || loginForm.get('identifier')?.errors?.['maxlength']"
                                     class="text-[10px] sm:text-xs font-bold text-red-500 flex items-center gap-1">
                                     <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
@@ -331,10 +331,9 @@
 
                     <!-- Recovery / Alt Area -->
                     <div class="mt-8 flex items-center justify-center text-xs font-bold text-gray-400">
-                        <a href="#"
-                            class="hover:text-zadna-primary transition-colors hover:underline underline-offset-4 decoration-2">
+                        <span class="cursor-not-allowed select-none opacity-70" [title]="'LOGIN.FORGOT_PASSWORD_DISABLED_HINT' | translate">
                             {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
-                        </a>
+                        </span>
                     </div>
 
                 </div>

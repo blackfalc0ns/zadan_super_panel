@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 type InlineBannerVariant = 'info' | 'success' | 'warning' | 'error' | 'critical';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-inline-banner',
   standalone: true,
   imports: [CommonModule, TranslateModule],

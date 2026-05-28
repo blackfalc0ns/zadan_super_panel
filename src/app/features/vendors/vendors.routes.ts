@@ -1,15 +1,20 @@
 import { Routes } from '@angular/router';
 import { VendorDetailShellComponent } from './pages/detail/vendor-detail-shell/vendor-detail-shell.component';
 import { VendorDetailFacade } from './services/vendor-detail.facade';
+import { HasPermissionGuard } from '../../core/guards/has-permission.guard';
 
 export const VENDORS_ROUTES: Routes = [
   {
     path: '',
+    canActivate: [HasPermissionGuard],
+    data: { permission: 'vendors.view' },
     loadComponent: () => import('./pages/list/vendors-list/vendors-list.component').then((m) => m.VendorsListComponent)
   },
   {
     path: ':id',
     component: VendorDetailShellComponent,
+    canActivate: [HasPermissionGuard],
+    data: { permission: 'vendors.view' },
     providers: [VendorDetailFacade],
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },

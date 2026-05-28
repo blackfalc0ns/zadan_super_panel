@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -12,6 +12,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-withdrawals-queue',
   standalone: true,
   imports: [
@@ -219,6 +220,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
   `
 })
 export class WithdrawalsQueueComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly walletsService = inject(WalletsService);
   private readonly translate = inject(TranslateService);
 
@@ -257,11 +259,13 @@ export class WithdrawalsQueueComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
+        this.cdr.markForCheck();
           this.withdrawals = data.items;
           this.totalCount = data.totalCount;
           this.isLoading = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.withdrawals = [];
           this.totalCount = 0;
           this.isLoading = false;
@@ -308,11 +312,13 @@ export class WithdrawalsQueueComponent implements OnInit {
       failureReason: !this.isApproving ? failureReason : undefined
     }).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.isSubmitting = false;
         this.isProcessModalOpen = false;
         this.loadData();
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isSubmitting = false;
       }
     });

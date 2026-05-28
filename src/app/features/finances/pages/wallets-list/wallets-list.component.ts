@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { AdminWalletSummaryDto, WalletsService } from '../../services/wallets.se
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-wallets-list',
   standalone: true,
   imports: [
@@ -150,6 +151,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
   `
 })
 export class WalletsListComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly walletsService = inject(WalletsService);
   private readonly translate = inject(TranslateService);
 
@@ -178,6 +180,7 @@ export class WalletsListComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
+        this.cdr.markForCheck();
           this.wallets = data.items;
           this.totalCount = data.totalCount;
           this.totalPlatformBalance = data.totalPlatformBalance;
@@ -185,6 +188,7 @@ export class WalletsListComponent implements OnInit {
           this.isLoading = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.wallets = [];
           this.isLoading = false;
         }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -32,6 +32,7 @@ import { QuickPreviewDrawerComponent, PreviewAction } from '../../../../../share
 import { MobileVendorCardsComponent, VendorCardData } from '@vendors/components/cards/mobile-vendor-cards/mobile-vendor-cards.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendors-list',
   standalone: true,
   imports: [
@@ -85,6 +86,7 @@ import { MobileVendorCardsComponent, VendorCardData } from '@vendors/components/
   `]
 })
 export class VendorsListComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   Math = Math;
 
   vendors: Vendor[] = [];
@@ -199,6 +201,7 @@ export class VendorsListComponent implements OnInit {
     private router: Router
   ) {
     this.translate.onLangChange.subscribe(() => {
+      this.cdr.markForCheck();
       this.initializeFilterOptions();
       this.updateKPICards();
     });
@@ -263,6 +266,7 @@ export class VendorsListComponent implements OnInit {
     this.vendorService.getVendors(this.pageNumber, this.pageSize, this.searchTerm, this.filters.status)
       .subscribe({
         next: (response) => {
+        this.cdr.markForCheck();
           this.vendors = (response.items ?? []).map(vendor => ({ ...vendor }));
           this.totalCount = response.totalCount ?? 0;
           this.totalPages = response.totalPages ?? Math.ceil(this.totalCount / this.pageSize);
@@ -274,6 +278,7 @@ export class VendorsListComponent implements OnInit {
           this.refreshPreviewVendor();
         },
         error: (err) => {
+        this.cdr.markForCheck();
           console.error('Error loading vendors', err);
           this.vendors = [];
           this.isLoading = false;
@@ -295,6 +300,7 @@ export class VendorsListComponent implements OnInit {
 
   loadKPIs() {
     this.vendorService.getVendorKPIs().subscribe((kpis) => {
+      this.cdr.markForCheck();
       this.kpis = kpis;
       this.updateKPICards();
     });
@@ -625,6 +631,7 @@ export class VendorsListComponent implements OnInit {
   private handleVendorMutation(request$: Observable<unknown>) {
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.showError = false;
         this.errorMessage = '';
         this.loadVendors();
@@ -633,6 +640,7 @@ export class VendorsListComponent implements OnInit {
         }
       },
       error: (error) => {
+        this.cdr.markForCheck();
         console.error('Vendor action failed', error);
         this.showError = true;
         this.errorMessage = error?.error?.message || this.translate.instant('VENDORS.LOAD_ERROR');
@@ -852,6 +860,7 @@ export class VendorsListComponent implements OnInit {
 
     this.vendorService.getVendorById(vendorId).subscribe({
       next: (vendorDetail) => {
+        this.cdr.markForCheck();
         if (this.previewVendor?.id !== vendorId) {
           return;
         }
@@ -860,6 +869,7 @@ export class VendorsListComponent implements OnInit {
         this.previewLoading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         console.error('Error loading preview vendor detail', error);
         if (this.previewVendor?.id !== vendorId) {
           return;

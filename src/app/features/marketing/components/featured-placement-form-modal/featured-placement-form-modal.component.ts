@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FeaturedPlacement, FeaturedPlacementType, FeaturedPlacementUpdatePayload, MasterProductLookupOption, VendorProductLookupOption } from '@marketing/models/marketing.models';
@@ -10,6 +10,7 @@ import { AppTextareaComponent } from '@shared/components/ui/form-controls/textar
 import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-shell.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-featured-placement-form-modal',
   standalone: true,
   imports: [

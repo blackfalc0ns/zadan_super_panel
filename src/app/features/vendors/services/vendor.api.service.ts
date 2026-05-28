@@ -998,6 +998,7 @@ export class VendorService {
       accountHolderName: string;
       iban: string;
       swiftCode?: string | null;
+      payoutCycle?: string | null;
       commercialRegisterDocumentUrl?: string | null;
       taxDocumentUrl?: string | null;
       licenseDocumentUrl?: string | null;
@@ -1017,6 +1018,7 @@ export class VendorService {
         vendor.commercialRegisterDocumentUrl = payload.commercialRegisterDocumentUrl ?? vendor.commercialRegisterDocumentUrl;
         vendor.taxDocumentUrl = payload.taxDocumentUrl ?? vendor.taxDocumentUrl;
         vendor.licenseDocumentUrl = payload.licenseDocumentUrl ?? vendor.licenseDocumentUrl;
+        vendor.payoutCycle = payload.payoutCycle ?? vendor.payoutCycle;
         vendor.primaryBankAccount = {
           id: vendor.primaryBankAccount?.id || 'draft-primary-bank-account',
           bankName: payload.bankName,
@@ -1028,6 +1030,20 @@ export class VendorService {
           rejectionReason: null,
           verifiedAtUtc: null
         };
+      }),
+      id
+    );
+  }
+
+  updateVendorCommissionRate(id: string, commissionRate: number): Observable<VendorDetail> {
+    const request$ = this.canUseApiMutations()
+      ? this.http.put(`${this.apiUrl}/${id}/commission-rate`, { commissionRate })
+      : null;
+
+    return this.executeVendorMutation(
+      request$,
+      () => this.updateVendor(id, (vendor) => {
+        vendor.commissionRate = commissionRate;
       }),
       id
     );

@@ -13,13 +13,20 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- Google Maps Platform Loader -->
+  <!-- Google Maps Platform Loader (no-op when API key is unset) -->
   <script>
-    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-      key: "YOUR_API_KEY",
-      v: "weekly",
-      internalUsageAttributionIds: "gmp_mcp_codeassist_v0.1_github"
-    });
+    (function () {
+      var apiKey = (window.__ZADNA_MAPS_KEY__ || "").trim();
+      if (!apiKey || apiKey === "YOUR_API_KEY") {
+        // Skip the loader entirely when no real key is configured. Map-using
+        // components must guard against the absence of google.maps.
+        return;
+      }
+      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: apiKey,
+        v: "weekly"
+      });
+    })();
   </script>
   
   <style>
@@ -436,9 +443,11 @@
   </style>
   <script>
     (function () {
-      const savedLang = localStorage.getItem('lang') || 'ar';
-      const isArabic = savedLang === 'ar';
-      const splashCopy = isArabic
+      var rawLang = null;
+      try { rawLang = localStorage.getItem('lang'); } catch (e) { rawLang = null; }
+      var savedLang = (rawLang === 'ar' || rawLang === 'en') ? rawLang : 'ar';
+      var isArabic = savedLang === 'ar';
+      var splashCopy = isArabic
         ? {
             title: '\u0632\u062f\u0646\u0627 | \u0644\u0648\u062d\u0629 \u0627\u0644\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0639\u0644\u064a\u0627',
             tagline: '\u0645\u0631\u0643\u0632 \u0627\u0644\u0642\u064a\u0627\u062f\u0629 \u0627\u0644\u0645\u0648\u062d\u062f'

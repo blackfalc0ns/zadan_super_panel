@@ -123,7 +123,9 @@ export interface DriverWorkflowSummary {
 export interface DriverTaskAssignment {
   id: string;
   vendor: string;
+  vendorAr?: string;
   zone: string;
+  zoneAr?: string;
   status: DriverTaskStatus;
   statusLabel: string;
   assignedAt: string;

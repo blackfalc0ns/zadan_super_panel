@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,6 +6,7 @@ import { AppInputComponent } from '../../../../../../../shared/components/ui/for
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-variant-card',
   standalone: true,
   imports: [

@@ -261,6 +261,7 @@ export class VendorDetailFacade implements OnDestroy {
     accountHolderName: string;
     iban: string;
     swiftCode?: string | null;
+    payoutCycle?: string | null;
     commercialRegisterDocumentUrl?: string | null;
     taxDocumentUrl?: string | null;
     licenseDocumentUrl?: string | null;
@@ -277,6 +278,7 @@ export class VendorDetailFacade implements OnDestroy {
     accountHolderName: string;
     iban: string;
     swiftCode?: string | null;
+    payoutCycle?: string | null;
     commercialRegisterDocumentUrl?: string | null;
     taxDocumentUrl?: string | null;
     licenseDocumentUrl?: string | null;
@@ -289,6 +291,14 @@ export class VendorDetailFacade implements OnDestroy {
     payoutCycle?: string | null;
   }): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) => this.vendorService.updateVendorFinanceSettings(vendorId, payload));
+  }
+
+  updateVendorCommissionRate(commissionRate: number): void {
+    this.subscribeSilently(this.updateVendorCommissionRateRequest(commissionRate));
+  }
+
+  updateVendorCommissionRateRequest(commissionRate: number): Observable<VendorDetail> {
+    return this.trackVendorMutation((vendorId) => this.vendorService.updateVendorCommissionRate(vendorId, commissionRate));
   }
 
   updateVendorContactRequest(payload: {

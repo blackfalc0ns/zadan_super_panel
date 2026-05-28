@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -29,6 +29,7 @@ import {
 } from '../../../data/orders.mock';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-orders-list',
   standalone: true,
   imports: [
@@ -46,6 +47,7 @@ import {
   styleUrls: ['./orders-list.component.scss']
 })
 export class OrdersListComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   readonly tableColumns: TableColumn[] = [
     { key: 'reference', title: 'ORDERS.TABLE.ID', width: '13%', align: 'left', type: 'custom' },
     { key: 'customer', title: 'ORDERS.TABLE.CUSTOMER', width: '15%', align: 'left', type: 'custom' },
@@ -102,6 +104,7 @@ export class OrdersListComponent implements OnInit {
   loadFilterOptions(): void {
     this.ordersService.getFilterOptions().subscribe({
       next: (options: OrderFilterOptions) => {
+        this.cdr.markForCheck();
         const statusField = this.filterFields.find(f => f.key === 'status');
         const paymentField = this.filterFields.find(f => f.key === 'paymentStatus');
         const fulfillmentField = this.filterFields.find(f => f.key === 'fulfillmentStatus');
@@ -125,6 +128,7 @@ export class OrdersListComponent implements OnInit {
         }
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load filter options', err);
       }
     });
@@ -144,11 +148,13 @@ export class OrdersListComponent implements OnInit {
       queueView: this.queueView
     }).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.orders = response.items;
         this.totalItems = response.totalCount;
         this.isLoading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         console.error('Failed to load orders', error);
         this.errorMessage = 'ORDERS.ERRORS.LOAD_LIST';
         this.orders = [];

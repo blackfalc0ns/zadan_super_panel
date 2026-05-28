@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Category } from '@catalog/models/catalog.domain.models';
@@ -23,6 +23,7 @@ import { ToastService } from '@shared/services/toast.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-marketing-home-sections',
   standalone: true,
   imports: [
@@ -194,6 +195,7 @@ import { forkJoin } from 'rxjs';
   `
 })
 export class MarketingHomeSectionsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   sections: MarketingHomeSection[] = [];
   categoryOptions: MarketingCategoryOption[] = [];
   themeOptions: HomeSectionThemeOption[] = [];
@@ -250,6 +252,7 @@ export class MarketingHomeSectionsComponent implements OnInit {
       themes: this.marketingApi.getHomeSectionThemes()
     }).subscribe({
       next: ({ sections, categories, themes }) => {
+        this.cdr.markForCheck();
         this.sections = [...sections].sort(
           (left, right) => left.displayOrder - right.displayOrder || right.updatedAtUtc.localeCompare(left.updatedAtUtc)
         );
@@ -258,6 +261,7 @@ export class MarketingHomeSectionsComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.loading = false;
         this.error = describeApiError(error);
       }
@@ -273,11 +277,13 @@ export class MarketingHomeSectionsComponent implements OnInit {
     this.saving = true;
     this.marketingApi.getHomeSectionById(id).subscribe({
       next: (section) => {
+        this.cdr.markForCheck();
         this.selectedSection = section;
         this.isModalOpen = true;
         this.saving = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
       }
@@ -298,6 +304,7 @@ export class MarketingHomeSectionsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.closeModal();
         this.loadData();
@@ -309,6 +316,7 @@ export class MarketingHomeSectionsComponent implements OnInit {
         );
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.toastService.error(describeApiError(error), 'أقسام الرئيسية');
       }
@@ -320,6 +328,7 @@ export class MarketingHomeSectionsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.toastService.success(
           section.isActive 
             ? this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DEACTIVATED') 
@@ -344,12 +353,14 @@ export class MarketingHomeSectionsComponent implements OnInit {
     this.deleting = true;
     this.marketingApi.deleteHomeSection(this.deleteTarget.id).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.deleteTarget = null;
         this.toastService.success(this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadData();
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
       }

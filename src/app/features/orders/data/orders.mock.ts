@@ -35,7 +35,7 @@ export function getWorkflowStageLabel(stage: OrderWorkflowStage): string {
 }
 
 export function getWorkflowStageKey(stage: OrderWorkflowStage): string {
-  return `ORDERS.WORKFLOW.STAGES.${String(stage).toUpperCase()}`;
+  return `ORDERS.WORKFLOW.STAGE.${String(stage).toUpperCase()}`;
 }
 
 export function getResolutionStateLabel(state: OrderResolutionState): string {
@@ -43,7 +43,7 @@ export function getResolutionStateLabel(state: OrderResolutionState): string {
 }
 
 export function getResolutionStateKey(state: OrderResolutionState): string {
-  return `ORDERS.WORKFLOW.RESOLUTION.${String(state).toUpperCase()}`;
+  return `ORDERS.RESOLUTION_STATE.${String(state).toUpperCase()}`;
 }
 
 export function getOrderStatusLabel(status: OrderStatus): string {

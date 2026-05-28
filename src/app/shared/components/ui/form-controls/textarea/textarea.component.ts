@@ -1,9 +1,10 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-textarea',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],

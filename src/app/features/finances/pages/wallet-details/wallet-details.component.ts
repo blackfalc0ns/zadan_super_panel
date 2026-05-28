@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-wallet-details',
   standalone: true,
   imports: [
@@ -214,6 +215,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
   `
 })
 export class WalletDetailsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private walletsService = inject(WalletsService);
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
@@ -256,6 +258,7 @@ export class WalletDetailsComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (data) => {
+        this.cdr.markForCheck();
           this.transactions = data.items;
           this.totalCount = data.totalCount;
           this.isLoadingTransactions = false;
@@ -277,6 +280,7 @@ export class WalletDetailsComponent implements OnInit {
       description: this.adjustForm.description
     }).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.isSubmitting = false;
         this.isAdjustModalOpen = false;
         this.adjustForm = { amount: 0, direction: 'IN', description: '' };

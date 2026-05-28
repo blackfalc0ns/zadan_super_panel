@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,6 +23,7 @@ interface FinanceGroup {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-finances-shell',
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule, DetailTabsNavComponent],
@@ -111,6 +112,7 @@ interface FinanceGroup {
   `]
 })
 export class FinancesShellComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currentUrl = signal(this.router.url);
@@ -205,6 +207,7 @@ export class FinancesShellComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((event) => {
+      this.cdr.markForCheck();
         const navigation = event as NavigationEnd;
         this.currentUrl.set(navigation.urlAfterRedirects || navigation.url);
       });

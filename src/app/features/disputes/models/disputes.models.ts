@@ -10,7 +10,7 @@ export type RejectionReason = 'policy' | 'evidence' | 'delivered' | 'expired' | 
 export type RequestInfoTarget = 'customer' | 'vendor' | 'driver';
 export type RequestInfoType = 'invoice' | 'photos' | 'statement' | 'proof';
 export type RequestInfoPriority = 'normal' | 'urgent';
-export type EscalationTarget = 'finance' | 'legal' | 'risk' | 'operations' | 'support';
+export type EscalationTarget = 'finance' | 'legal' | 'risk' | 'operations' | 'support' | 'driverops';
 export type EscalationPriority = 'medium' | 'high' | 'critical';
 export type EscalationReason = 'conflicting_evidence' | 'high_amount' | 'fraud' | 'legal_sensitivity' | 'repeat_issues' | 'other';
 export type DisputeModalKey = 'approval' | 'escalation' | 'rejection' | 'request_info';
@@ -152,7 +152,7 @@ export interface RefundDecisionForm {
   refundAmount: string;
   refundMethod: 'same_method' | 'coupon';
   approvalReason: string;
-  costBearer: 'vendor' | 'platform' | 'shared';
+  costBearer: 'vendor' | 'platform' | 'shared' | 'driver';
   internalNotes: string;
   customerMessage: string;
   notifyCustomer: boolean;

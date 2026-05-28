@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { DriverDetailRecord } from '../../models/drivers.models';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-performance-tab',
   standalone: true,
   imports: [CommonModule, TranslateModule, KpiCardsComponent, SectionHeaderComponent],

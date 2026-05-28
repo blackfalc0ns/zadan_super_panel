@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -20,6 +20,7 @@ import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pi
 import { ToastService } from '@shared/services/toast.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-marketing-featured-products',
   standalone: true,
   imports: [
@@ -203,6 +204,7 @@ import { ToastService } from '@shared/services/toast.service';
   `
 })
 export class MarketingFeaturedProductsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   placements: FeaturedPlacement[] = [];
   loading = false;
   saving = false;
@@ -269,12 +271,14 @@ export class MarketingFeaturedProductsComponent implements OnInit {
 
     this.marketingApi.getFeaturedPlacements().subscribe({
       next: (placements) => {
+        this.cdr.markForCheck();
         this.placements = [...placements].sort(
           (left, right) => left.displayOrder - right.displayOrder || right.updatedAtUtc.localeCompare(left.updatedAtUtc)
         );
         this.loading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.loading = false;
         this.error = describeApiError(error);
       }
@@ -292,6 +296,7 @@ export class MarketingFeaturedProductsComponent implements OnInit {
     this.saving = true;
     this.marketingApi.getFeaturedPlacementById(id).subscribe({
       next: (placement) => {
+        this.cdr.markForCheck();
         this.selectedPlacement = placement;
         this.isModalOpen = true;
         this.saving = false;
@@ -299,6 +304,7 @@ export class MarketingFeaturedProductsComponent implements OnInit {
         this.loadVendorProductLookup();
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'));
       }
@@ -319,6 +325,7 @@ export class MarketingFeaturedProductsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.closeModal();
         this.loadPlacements();
@@ -330,6 +337,7 @@ export class MarketingFeaturedProductsComponent implements OnInit {
         );
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'));
       }
@@ -343,6 +351,7 @@ export class MarketingFeaturedProductsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.toastService.success(
           placement.isActive 
             ? this.translateService.instant('MARKETING.FEATURED.MESSAGES.DEACTIVATED') 
@@ -367,12 +376,14 @@ export class MarketingFeaturedProductsComponent implements OnInit {
     this.deleting = true;
     this.marketingApi.deleteFeaturedPlacement(this.deleteTarget.id).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.deleteTarget = null;
         this.toastService.success(this.translateService.instant('MARKETING.FEATURED.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadPlacements();
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'));
       }
@@ -391,10 +402,12 @@ export class MarketingFeaturedProductsComponent implements OnInit {
     this.masterProductsLoading = true;
     this.marketingApi.lookupMasterProducts(search).subscribe({
       next: (options) => {
+        this.cdr.markForCheck();
         this.masterProductOptions = options;
         this.masterProductsLoading = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.masterProductsLoading = false;
       }
     });
@@ -404,10 +417,12 @@ export class MarketingFeaturedProductsComponent implements OnInit {
     this.vendorProductsLoading = true;
     this.marketingApi.lookupVendorProducts(search).subscribe({
       next: (options) => {
+        this.cdr.markForCheck();
         this.vendorProductOptions = options;
         this.vendorProductsLoading = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.vendorProductsLoading = false;
       }
     });

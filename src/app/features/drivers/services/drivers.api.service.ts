@@ -219,7 +219,9 @@ interface AdminDriverWorkflowResponse {
 interface AdminDriverOperationsTaskResponse {
   id: string;
   vendorName: string;
+  vendorNameAr?: string;
   cityLabel: string;
+  cityLabelAr?: string;
   status: string;
   assignedAtUtc: string;
   durationMinutes?: number | null;
@@ -972,7 +974,9 @@ export class DriverService {
     return assignments.map((assignment) => ({
       id: assignment.id,
       vendor: assignment.vendorName,
+      vendorAr: assignment.vendorNameAr,
       zone: assignment.cityLabel,
+      zoneAr: assignment.cityLabelAr,
       status: this.mapAssignmentStatus(assignment.status),
       statusLabel: this.mapAssignmentStatusLabel(assignment.status),
       assignedAt: this.formatDateTime(assignment.assignedAtUtc),

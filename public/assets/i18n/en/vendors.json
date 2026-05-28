@@ -1,0 +1,784 @@
+{
+  "VENDORS": {
+    "TITLE": "Vendors",
+    "RISK_LEVEL_TITLE": "Risk Level",
+    "DESC": "Manage vendors and business partners, track commissions and statuses",
+    "ADD_VENDOR": "Add New Vendor",
+    "SEARCH_PLACEHOLDER": "Search by vendor number, name, or email...",
+    "FILTER_VENDORS": "Filter Vendors",
+    "ADJUST_CRITERIA": "Adjust search criteria",
+    "RESET": "Reset",
+    "LOADING": "Loading...",
+    "LOAD_ERROR": "Failed to load vendors list",
+    "NO_VENDORS": "No vendors found",
+    "KPI": {
+      "PENDING_APPROVAL": "Pending Approval",
+      "MISSING_DOCS": "Missing Documents",
+      "HIGH_RISK": "High Risk",
+      "PAYOUT_BLOCKED": "Payout Blocked",
+      "SUSPENDED": "Suspended",
+      "TOTAL_VENDORS": "Total Vendors",
+      "THIS_WEEK": "this week"
+    },
+    "TABLE": {
+      "LOGO": "Logo",
+      "VENDOR": "Vendor",
+      "CONTACT": "Contact",
+      "DOCUMENTS": "Documents",
+      "RISK": "Risk",
+      "STATUS": "Status",
+      "ACTIONS": "Actions",
+      "VIEW": "View"
+    },
+    "ACTIONS": {
+      "VIEW": "View",
+      "APPROVE": "Approve",
+      "SUSPEND": "Suspend"
+    },
+    "RISK_LEVEL": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "CRITICAL": "Critical"
+    },
+    "PREVIEW": {
+      "HEALTH_SCORE": "Operational Health Score",
+      "UPDATED_NOW": "Updated Now",
+      "LOW_QUALITY": "Low Quality",
+      "IDEAL_PERFORMANCE": "Ideal Performance",
+      "STATUS_MATRIX": "Detailed Status Matrix",
+      "VERIFICATION_STATUS": "Verification Status",
+      "ONBOARDING_STAGE": "Onboarding Stage",
+      "RISK_LEVEL": "Risk Level",
+      "PAYOUT_STATUS": "Payout Status",
+      "PENDING_REQUIREMENTS": "Pending Requirements",
+      "IMPORTANT": "Important",
+      "UPDATE_CR": "Update Commercial Register",
+      "EXPIRY_DATE": "Expiry Date",
+      "VERIFY_BANK": "Verify Bank Account",
+      "PENDING_REVIEW": "Pending review",
+      "PERFORMANCE_INSIGHTS": "Performance Insights",
+      "RETURN_RATE": "Return Rate",
+      "PROCESSING_TIME": "Processing Time",
+      "CUSTOMER_RATING": "Customer Rating",
+      "DAYS": "days"
+    },
+    "FILTER_ALL": "All Statuses",
+    "STATUS_ACTIVE": "Active",
+    "STATUS_PENDING": "Pending Review",
+    "STATUS_SUSPENDED": "Suspended",
+    "STATUS_REJECTED": "Rejected",
+    "COL_BUSINESS": "Business Info",
+    "COL_CONTACT": "Contact Point",
+    "COL_COMMISSION": "Commission",
+    "COL_STATUS": "Status",
+    "COL_ACTIONS": "Actions",
+    "VIEW_DETAILS": "View Details",
+    "RESULTS": "results",
+    "PAGE_X_OF_Y": "Page {{current}} of {{total}}",
+    "STATUS": {
+      "ACTIVE": "Active",
+      "PENDING": "Pending Review",
+      "SUSPENDED": "Suspended",
+      "REJECTED": "Rejected"
+    },
+    "DETAIL": {
+      "BRANCHES": "Branches",
+      "BANK_ACCOUNTS": "Bank Accounts",
+      "COMMISSION": "Commission",
+      "BUSINESS_INFO": "Business Information",
+      "BUSINESS_NAME_AR": "Business Name (Arabic)",
+      "BUSINESS_NAME_EN": "Business Name (English)",
+      "COMMERCIAL_REG": "CR Number",
+      "TAX_ID": "Tax ID",
+      "CONTACT_INFO": "Contact Information",
+      "CONTACT_EMAIL": "Email",
+      "CONTACT_PHONE": "Phone Number",
+      "OWNER_INFO": "Owner Information",
+      "OWNER_NAME": "Owner Name",
+      "OWNER_EMAIL": "Owner Email",
+      "OWNER_PHONE": "Owner Phone",
+      "DOCUMENTS": "Documents",
+      "COMMERCIAL_REG_DOC": "CR Document",
+      "TIMELINE": "Timeline",
+      "CREATED_AT": "Registration Date",
+      "APPROVED_AT": "Approval Date",
+      "REJECTION_REASON": "Rejection Reason"
+    },
+    "APPLICATIONS": "Applications",
+    "APPLICATIONS_DESC": "Review vendor onboarding submissions, approvals, and required follow-up actions.",
+    "APPLICATIONS_TITLE": "Vendor applications",
+    "BUSINESS_NAME": "Business name",
+    "NO_APPLICATIONS": "No vendor applications found",
+    "NO_APPLICATIONS_DESC": "No applications match the current filters. Try adjusting the review state or search query.",
+    "NO_REASON": "No reason provided",
+    "OWNER": "Owner",
+    "REJECTED_TITLE": "Rejected application",
+    "REVIEW_STATE": {
+      "AWAITING": "Awaiting review",
+      "CHANGES_REQUESTED": "Changes requested",
+      "SUBMITTED": "Submitted",
+      "UNDER_REVIEW": "Under review"
+    },
+    "REVIEW_STATUS": "Review status",
+    "SUBMITTED_DATE": "Submitted date"
+  },
+  "VENDOR_DISPUTES": {
+    "TITLE": "Vendor Disputes",
+    "SUBTITLE": "Support cases linked to this vendor account",
+    "SEARCH_PLACEHOLDER": "Search by case ID, order number, or dispute type",
+    "TABLE_TITLE": "Disputes Board",
+    "TABLE_SUBTITLE": "Review dispute activity and open the full dispute workspace",
+    "KPI": {
+      "TOTAL": "Total Cases",
+      "OPEN": "Open Cases",
+      "RESOLVED": "Resolved",
+      "REJECTED": "Rejected"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "All statuses",
+      "ALL_PRIORITIES": "All priorities"
+    },
+    "TABLE": {
+      "CASE_ID": "Case ID",
+      "ORDER_NUMBER": "Order #",
+      "TYPE": "Type",
+      "STATUS": "Status",
+      "PRIORITY": "Priority",
+      "QUEUE": "Queue",
+      "CREATED": "Created",
+      "SLA": "SLA",
+      "OPEN": "Open",
+      "NO_SLA": "No SLA",
+      "UNASSIGNED_QUEUE": "Unassigned"
+    },
+    "TYPE": {
+      "COMPLAINT": "Complaint",
+      "RETURN_REQUEST": "Return Request",
+      "DRIVER_REPORT": "Driver Report",
+      "DRIVER_DISPUTE": "Driver Dispute",
+      "DRIVER_ACCOUNT": "Driver account support",
+      "OTHER": "Other"
+    },
+    "STATUS": {
+      "OPEN": "Open",
+      "IN_REVIEW": "In Review",
+      "AWAITING_EVIDENCE": "Awaiting Evidence",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "RESOLVED": "Resolved"
+    },
+    "PRIORITY": {
+      "CRITICAL": "Critical",
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "STATES": {
+      "LOADING_TITLE": "Loading disputes",
+      "LOADING_MESSAGE": "Fetching support cases linked to this vendor.",
+      "ERROR_TITLE": "Unable to load disputes",
+      "ERROR_MESSAGE": "Please try again in a moment.",
+      "EMPTY_TITLE": "No disputes found",
+      "EMPTY_MESSAGE": "This vendor has no support cases matching the current filters."
+    }
+  },
+  "VENDOR_DETAIL": {
+    "TITLE": "Vendor Details",
+    "STATUS_ACTIVE": "Active",
+    "STATUS_VERIFIED": "Verified",
+    "HEADER_TITLE": "Vendor Details - Modern Tech Store",
+    "REGISTERED_SINCE": "Registered since May 2, 2023",
+    "CATEGORY_VALUE": "Electronics & Technology",
+    "QUICK_CONTACT_FULL": "Quick Contact",
+    "QUICK_CONTACT_SHORT": "Contact",
+    "OPEN_ACCESS_DIRECTORY": "Access Directory",
+    "OPEN_EMAIL_ROUTING": "Email Routing",
+    "TAB_OVERVIEW": "Overview",
+    "TAB_BASIC_DATA": "Basic Data",
+    "TAB_PRODUCTS": "Products",
+    "TAB_ORDERS": "Orders",
+    "TAB_DISPUTES": "Disputes",
+    "TAB_FINANCE": "Finance",
+    "TAB_COMPLIANCE": "Review & Compliance",
+    "TAB_LOGS": "Logs & Notes",
+    "TAB_SETTINGS": "Settings",
+    "TAB_ANALYTICS": "Analytics & Performance",
+    "HEADER_METRICS": {
+      "PERFORMANCE": "Performance",
+      "RISK_LEVEL": "Risk Level",
+      "REVIEW_STATE": "Review State",
+      "NETWORK": "Network",
+      "BRANCHES": "Branches"
+    },
+    "MESSAGE_COMPOSER": {
+      "BADGE": "Vendor communication",
+      "TITLE": "Send vendor message",
+      "ARABIC_TITLE": "Arabic title",
+      "ENGLISH_TITLE": "English title",
+      "ARABIC_BODY": "Arabic body",
+      "ENGLISH_BODY": "English body",
+      "CHANNEL_INBOX": "Inbox",
+      "CHANNEL_PUSH": "Push",
+      "CHANNEL_EMAIL": "Email",
+      "SEND": "Send",
+      "SENDING": "Sending...",
+      "SEND_TEST_NOTIFICATION": "Send test notification",
+      "TOAST_TITLE": "Vendor notifications",
+      "TOAST_PUSH_SENT": "The notification was created and web push was sent to the vendor successfully.",
+      "TOAST_PUSH_FAILED": "The notification was created in-app, but web push delivery did not succeed.",
+      "TOAST_PUSH_SKIPPED": "The vendor inbox notification was created, but web push was skipped for this test.",
+      "TOAST_CREATED": "The vendor notification was created successfully.",
+      "ERROR_SEND_FAILED": "Unable to send the test notification right now."
+    },
+    "DATA_MANAGEMENT_SUMMARY": "Data Management Summary",
+    "COMPLETION_RATE": "Profile Completion",
+    "LAST_UPDATE": "Last Update",
+    "BY": "by",
+    "STORE_DATA": "Essential Store Data",
+    "STORE_NAME": "Store Name",
+    "CATEGORY": "Activity Type",
+    "STATUS": "Status",
+    "LOCATION_CITY": "City",
+    "SUBMITTED_DATE": "Submission Date",
+    "ADDRESS": "National Address",
+    "JOIN_DATE": "Registration Date",
+    "PROFILE_DATA": "Owner Data",
+    "OWNER_NAME": "Full Name",
+    "ID_RESIDENCE": "Nationality",
+    "ID_NUMBER": "ID Number",
+    "EMAIL": "Email",
+    "MOBILE": "Mobile Number",
+    "LEGAL_DATA": "Legal Data",
+    "COMMERCIAL_REG": "CR Number",
+    "TAX_ID": "Tax ID",
+    "LICENSE_NUMBER": "License Number",
+    "LEGAL_ENTITY": "Legal Entity",
+    "EXPIRY_DATE": "Expiry Date",
+    "BANKING_DATA": "Banking Data",
+    "ACCOUNT_HOLDER": "Account Holder Name",
+    "ACCOUNT_NUMBER": "Account Number",
+    "BANK_NAME": "Bank Name",
+    "PAYMENT_CYCLE": "Payment Cycle",
+    "SWIFT_CODE": "SWIFT Code",
+    "VERIFY_ACCOUNT": "Verify Account Now",
+    "VERIFIED": "Verified",
+    "UNDER_REVIEW": "Under Review",
+    "VIEW": "View",
+    "SAR": "SAR",
+    "SAMPLE_EDITOR_NAME": "Ahmed Mohamed",
+    "ACTIVITY_BANKING_UPDATE": "Banking data updated",
+    "ACTIVITY_NAME_UPDATE": "Trade name updated",
+    "TIME_HOUR_AGO": "1 hour ago",
+    "ACTIVITY_NAME_UPDATE_DATE": "25 September 2023",
+    "VIEW_DIGITAL_CR": "View digital commercial register",
+    "DOWNLOAD_ATTACHMENT": "Download attachment",
+    "LEGAL_ENTITY_VALUE": "Sole proprietorship",
+    "DETAILS": {
+      "LAST_REVIEWER": "Last reviewer"
+    }
+  },
+  "COMPLIANCE": {
+    "TITLE": "Review & Compliance",
+    "REGISTRATION_DATE": "Registration Date",
+    "ACCOUNT_STATUS": "Account Status",
+    "RISK_LEVEL": "Risk Level",
+    "VERIFICATION_MATRIX": "Verification Status Matrix",
+    "COMPLETED": "Completed",
+    "RISK_INDICATORS": "Risk Indicators",
+    "COMPLIANCE_NOTES": "Compliance Notes",
+    "ADD_NOTE_PLACEHOLDER": "Add new note...",
+    "ADD": "Add",
+    "REVIEWER_ACTIONS": "Reviewer Actions",
+    "DECISION_SUMMARY": "Decision Summary",
+    "CURRENT_REVIEW_STATUS": "Current Review Status",
+    "AWAITING_ACTION": "Awaiting Action (Processing)",
+    "LAST_REVIEWER": "Last Reviewer",
+    "INITIAL_REVIEW": "Initial Review",
+    "BLOCKING_ITEMS": "Items Blocking Approval",
+    "STATUS": {
+      "COMPLETED": "Completed",
+      "UNDER_REVIEW": "Under Review",
+      "MISSING": "Missing"
+    },
+    "VERIFICATION": {
+      "IDENTITY": "National ID / Residence",
+      "IDENTITY_DESC": "Verified automatically via Nafath",
+      "COMMERCIAL_REG": "Commercial Register",
+      "COMMERCIAL_DESC": "Valid until 2024/12/15",
+      "TAX_CERT": "Tax Certificate",
+      "TAX_DESC": "Attachment unclear",
+      "BANK_ACCOUNT": "Bank Account",
+      "BANK_DESC": "IBAN verified",
+      "MUNICIPAL_LICENSE": "Municipal License",
+      "LICENSE_DESC": "Awaiting upload from vendor"
+    },
+    "RISK": {
+      "HIGH_CANCELLATION": "High Cancellation Rate",
+      "HIGH_CANCELLATION_DESC": "Vendor cancellation rate reached 15% in last 30 days.",
+      "ADDRESS_MISMATCH": "Address Data Mismatch",
+      "ADDRESS_MISMATCH_DESC": "Registered address differs partially from manually entered address.",
+      "IBAN_CHANGES": "Frequent IBAN Changes",
+      "IBAN_CHANGES_DESC": "Bank account changed twice since registration.",
+      "MEDIUM": "Medium"
+    },
+    "SEVERITY": {
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "ACTIONS": {
+      "APPROVE_VENDOR": "Approve Vendor",
+      "REQUEST_DOCUMENTS": "Request Documents",
+      "SUSPEND_ACCOUNT": "Suspend Account",
+      "REJECT_VENDOR": "Reject Vendor",
+      "START_REVIEW": "Start Review"
+    },
+    "NOTES": {
+      "AUTHORS": {
+        "ABDULLAH_MOHAMMED": "Abdullah Mohammed",
+        "SARAH_FAHAD": "Sarah Fahad"
+      },
+      "ROLES": {
+        "REVIEW_TEAM": "Review Team",
+        "RISK_TEAM": "Risk Team"
+      },
+      "TIMESTAMPS": {
+        "TODAY_1030": "Today, 10:30 AM",
+        "YESTERDAY_0215": "Yesterday, 02:15 PM"
+      },
+      "MESSAGES": {
+        "TAX_CERTIFICATE_BLUR": "The attached tax certificate is unclear. Please request a higher-quality re-upload so the tax number can be matched with the register.",
+        "CANCELLATION_FOLLOWUP": "The vendor was contacted about the elevated cancellation rate and confirmed that an inventory integration issue was resolved."
+      }
+    },
+    "REVIEWER_INITIALS": "R.T",
+    "ROLES": {
+      "OPERATIONS": "Operations",
+      "COMPLIANCE_REVIEW": "Compliance Review",
+      "RISK_COMPLIANCE": "Risk & Compliance",
+      "VENDOR_REVIEW": "Vendor Review",
+      "RISK_TEAM": "Risk Team",
+      "REVIEW_TEAM": "Review Team"
+    },
+    "NO_BLOCKERS": "No active blockers"
+  },
+  "VENDOR_REVIEW": {
+    "STATE": {
+      "AWAITING_SUBMISSION": "Awaiting Vendor Submission",
+      "SUBMITTED": "Submitted",
+      "UNDER_REVIEW": "Under Review",
+      "CHANGES_REQUESTED": "Changes Requested",
+      "VERIFIED": "Verified",
+      "REJECTED": "Rejected",
+      "SUSPENDED": "Suspended",
+      "UNKNOWN": "Unknown"
+    },
+    "STATUS": {
+      "UNVERIFIED": "Unverified"
+    },
+    "SUMMARY": {
+      "ASSIGNED_REVIEWER": "Assigned Reviewer",
+      "SUBMITTED_AT": "Submitted At",
+      "WAITING_VENDOR": "The vendor still needs to finish the required uploads before the review queue can start.",
+      "READY_TO_VERIFY": "The submitted file is in the review queue and is ready for manual verification and approval.",
+      "CHANGES_REQUIRED": "The reviewer requested updates before the account can move to verified status.",
+      "VERIFIED_SUCCESS": "The account is verified and can operate normally with payouts and catalog access enabled.",
+      "REJECTED": "The latest submission was rejected and the vendor must correct the business data before another review.",
+      "SUSPENDED": "The account is suspended pending a higher-risk compliance decision."
+    },
+    "NOTES": {
+      "SUBMITTED": "The vendor submitted a fresh onboarding pack and the file moved into the review queue.",
+      "UNDER_REVIEW": "Manual review started and the uploaded business data is being validated against compliance rules.",
+      "CHANGES_REQUESTED": "Changes were requested from the vendor before approval can be completed.",
+      "APPROVED": "All required documents passed review and the vendor account was verified successfully.",
+      "REJECTED": "The current submission was rejected because the required legal and business evidence was not sufficient.",
+      "SUSPENDED": "The vendor account was suspended while the compliance team reviews the flagged risks."
+    }
+  },
+  "ACTIVITY_LOG": {
+    "INTERNAL_NOTES": "Internal Notes",
+    "ADD_NEW_NOTE": "Add New Note",
+    "PAGE_TITLE": "Operation Log",
+    "COL_ACTION": "Action",
+    "COL_EXECUTOR": "Executor",
+    "COL_DATETIME": "Date & Time",
+    "COL_DESCRIPTION": "Brief Description",
+    "SHOWING_ENTRIES": "Showing 1-7 of 124 logs",
+    "PREVIOUS": "Previous",
+    "NEXT": "Next",
+    "COLLABORATION_SUMMARY": "Collaboration Summary",
+    "LAST_INTERACTION": "Last Interaction",
+    "OPEN_NOTES": "Open Notes",
+    "WEEKLY_ACTIVITY": "Activity This Week",
+    "TIMELINE_TITLE": "Timeline",
+    "ACTION": {
+      "FINANCIAL_APPROVAL": "Financial Approval",
+      "BANK_DATA_EDIT": "Bank Data Modification",
+      "COMPLIANCE_WARNING": "Compliance Warning",
+      "API_UPDATE": "API Settings Update",
+      "LOGIN": "Login",
+      "PRODUCT_UPLOAD": "Product Upload",
+      "STORE_ACTIVATION": "Store Activation",
+      "MANUAL_NOTE": "Internal Note"
+    },
+    "TIMELINE": {
+      "COMPLIANCE_APPROVAL": "Compliance Approval",
+      "COMPLIANCE_APPROVAL_DESC": "Account fully verified and approved by compliance department.",
+      "DOCUMENTS_UPLOAD": "Documents Upload",
+      "DOCUMENTS_UPLOAD_DESC": "CR, ID, and Tax certificate received.",
+      "ACCOUNT_CREATION": "Account Creation",
+      "ACCOUNT_CREATION_DESC": "Initial registration in Zadana Vendor Platform."
+    },
+    "DEFAULT_INITIALS": "O.T",
+    "AUTHORS": {
+      "OPERATIONS_TEAM": "Operations Team"
+    },
+    "NOTES": {
+      "FOLLOW_UP_CREATED": "Created an internal follow-up note for vendor {{vendorId}}."
+    },
+    "EXPORT_HEADERS": {
+      "ACTION": "Action",
+      "EXECUTOR": "Executor",
+      "TIMESTAMP": "Timestamp",
+      "DESCRIPTION": "Description"
+    }
+  },
+  "VENDOR_PRODUCTS": {
+    "SUMMARY_TITLE": "Products Summary",
+    "TOTAL_PRODUCTS": "Total Products",
+    "OUT_OF_STOCK": "Out of Stock",
+    "UNDER_REVIEW": "Under Review",
+    "TOTAL_INVENTORY_VALUE": "Total Inventory Value",
+    "EDIT_DATA": "Edit Data",
+    "ADD_PRODUCT": "Add Product",
+    "SEARCH_PLACEHOLDER": "Search by SKU or Product Name...",
+    "ALL_CATEGORIES": "All Categories",
+    "ELECTRONICS": "Electronics",
+    "ACCESSORIES": "Accessories",
+    "PRODUCT_STATUS": "Product Status",
+    "PIECES": "Pieces",
+    "LOW": "Low",
+    "SHOWING_ENTRIES": "Showing 1 to 4 of 1,245 products",
+    "TABLE": {
+      "PRODUCT": "Product",
+      "CATEGORY": "Category",
+      "PRICE": "Price",
+      "STOCK": "Stock",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "OUT_OF_STOCK": "Sold Out",
+      "UNDER_REVIEW": "Review"
+    }
+  },
+  "VENDOR_ORDERS": {
+    "KPI": {
+      "TOTAL_ORDERS": "Total Orders",
+      "OPEN_ORDERS": "Open Orders",
+      "COMPLETED_ORDERS": "Completed Orders",
+      "CANCELLED_ORDERS": "Cancelled Orders",
+      "RETURNED_ORDERS": "Returned Orders",
+      "AVERAGE_ORDER": "Avg Order Value",
+      "INCREASE": "Increase",
+      "DECREASE": "Decrease"
+    },
+    "PAYMENT_STATUS": {
+      "PAID": "Paid",
+      "PENDING": "Pending",
+      "REFUNDED": "Refunded",
+      "FAILED": "Failed"
+    },
+    "SHIPPING_STATUS": {
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In Transit",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "GENERAL_STATUS": {
+      "NEW": "New",
+      "IN_PROGRESS": "Processing",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "FILTERS": {
+      "ALL_STATUSES": "All statuses",
+      "ALL_PAYMENT_STATES": "All payment states",
+      "PREPARING": "Preparing",
+      "ON_THE_WAY": "On the way",
+      "DELIVERED": "Delivered"
+    },
+    "ORDERS_TITLE": "Vendor Orders",
+    "ORDERS_SUBTITLE": "Review the vendor's operational orders, payment state, and fulfillment progress.",
+    "ORDERS_BOARD": "Orders board",
+    "ORDERS_BOARD_DESC": "Select any order to open its details.",
+    "SEARCH_PLACEHOLDER": "Search by order number or customer name...",
+    "FILTER": "Filter",
+    "DATE_RANGE": "Date Range",
+    "BULK_ACTIONS": "Bulk Actions",
+    "EXPORT": "Export",
+    "SHOWING_ENTRIES": "Showing 1 to 4 of 15,420 orders",
+    "SUMMARY_TITLE": "Operations Summary",
+    "TOTAL_SALES": "Total Sales",
+    "DELAYED_ORDERS": "Delayed Orders",
+    "OPEN_DISPUTES": "Open Disputes",
+    "CANCELLATION_RATE": "Cancellation Rate",
+    "ALERTS_TITLE": "Alerts",
+    "TABLE": {
+      "ORDER_NUMBER": "Order Number",
+      "CUSTOMER": "Customer",
+      "DATE": "Date",
+      "AMOUNT": "Amount",
+      "ITEMS": "Items",
+      "PAYMENT_STATUS": "Payment Status",
+      "SHIPPING_STATUS": "Shipping Status",
+      "GENERAL_STATUS": "General Status",
+      "OPEN": "Open"
+    },
+    "EXPORT_HEADERS": {
+      "ORDER_NUMBER": "Order Number",
+      "CUSTOMER": "Customer",
+      "DATE": "Date",
+      "TIME": "Time",
+      "AMOUNT": "Amount",
+      "STATUS": "Status",
+      "PAYMENT_STATUS": "Payment Status"
+    },
+    "STATES": {
+      "LOADING_TITLE": "Loading vendor orders",
+      "LOADING_MESSAGE": "Preparing the latest order records for this vendor.",
+      "ERROR_TITLE": "Could not load orders",
+      "ERROR_MESSAGE": "The vendor orders endpoint could not be loaded right now. Try refreshing the page.",
+      "EMPTY_ORDERS_TITLE": "No orders found",
+      "EMPTY_ORDERS_MESSAGE": "This vendor has no orders matching the current filters."
+    },
+    "ALERTS": {
+      "SHIPPING_DELAY": "3 orders exceeded the scheduled shipping window (48 hours).",
+      "LOW_STOCK": "Low inventory for 5 frequently sold products.",
+      "NEW_DISPUTE": "A new dispute requires review for order ORD-0988."
+    }
+  },
+  "VENDOR_FINANCE": {
+    "KPI": {
+      "TOTAL_SALES": "Total Sales",
+      "NET_SALES": "Net Sales",
+      "TOTAL_COMMISSIONS": "Total Commissions",
+      "AVAILABLE_BALANCE": "Available Balance",
+      "PENDING_BALANCE": "Pending Balance",
+      "LAST_PAYMENT": "Last Payment",
+      "FROM_LAST_MONTH": "Since last month",
+      "INCREASE": "Increase",
+      "DECREASE": "Decrease"
+    },
+    "FINANCIAL_SUMMARY": "Financial Summary",
+    "SALES": "Sales",
+    "RETURNS": "Returns",
+    "DISCOUNTS": "Discounts",
+    "PLATFORM_COMMISSIONS": "Platform Commissions",
+    "NET_TOTAL": "Net Total",
+    "TRANSFER_INFO": "Transfer Info",
+    "BANK": "Bank",
+    "IBAN": "IBAN",
+    "PAYMENT_CYCLE": "Payment Cycle",
+    "SETTLEMENTS": "Settlements",
+    "TABLE": {
+      "SETTLEMENT_ID": "Settlement ID",
+      "PERIOD": "Period",
+      "TOTAL": "Total",
+      "NET": "Net",
+      "STATUS": "Status",
+      "DATE": "Date"
+    },
+    "STATUS": {
+      "COMPLETED": "Completed",
+      "PENDING": "Pending"
+    },
+    "VIEW_MORE": "View More",
+    "FINANCIAL_ACTIONS": "Financial Actions",
+    "ACTIONS": {
+      "CREATE_SETTLEMENT": "Create Settlement",
+      "DOWNLOAD_STATEMENT": "Download Statement",
+      "REVIEW_PAYMENTS": "Review Payments"
+    },
+    "FINANCIAL_ALERTS": "Financial Alerts",
+    "ALERTS": {
+      "PENDING_PAYMENT": "Pending Payment",
+      "PENDING_PAYMENT_DESC": "Delay in transfer due to bank updates. Following up."
+    },
+    "INVOICES": "Invoices & Billing",
+    "INVOICE_STATUS": {
+      "PAID": "Paid",
+      "PENDING": "Awaiting Payment"
+    },
+    "VIEW_ALL_INVOICES": "View All Invoices",
+    "MOCK_VENDOR_NAME": "Zadana Premium Store",
+    "WEEKLY_CYCLE": "Weekly",
+    "GENERAL_STATUS": {
+      "NEW": "New"
+    }
+  },
+  "VENDOR_OVERVIEW": {
+    "STATUS": {
+      "ACTIVE_VERIFIED": "Active & Verified",
+      "VERIFIED": "Verified",
+      "UNDER_REVIEW": "Under Review"
+    },
+    "KPI": {
+      "TOTAL_SALES": "Total Sales",
+      "TOTAL_ORDERS": "Total Orders",
+      "RETURN_RATE": "Return Rate",
+      "ACTIVE_PRODUCTS": "Active Products",
+      "FROM_LAST_MONTH": "from last month",
+      "IMPROVEMENT": "Improvement",
+      "NEW_PRODUCTS": "New Products"
+    },
+    "STORE_INFO": "Activity Data",
+    "CATEGORY": "Category",
+    "REGISTRATION_DATE": "Registration Date",
+    "PHONE": "Contact Number",
+    "EMAIL": "Email",
+    "ESSENTIAL_DOCS": "Essential Documents",
+    "VIEW_ALL": "View All",
+    "DOCS": {
+      "COMMERCIAL_REG": "Commercial Register",
+      "TAX_CERT": "Tax Certificate",
+      "OWNER_ID": "Owner ID"
+    },
+    "RECENT_ORDERS": "Recent Orders",
+    "TABLE": {
+      "ORDER_NUMBER": "Order Number",
+      "CUSTOMER": "Customer",
+      "AMOUNT": "Amount",
+      "STATUS": "Status"
+    },
+    "ORDER_STATUS": {
+      "PROCESSING": "Processing",
+      "COMPLETED": "Completed",
+      "PENDING_PAYMENT": "Awaiting Payment",
+      "CANCELLED": "Cancelled"
+    },
+    "VIEW_ALL_ORDERS": "View All Orders",
+    "ALERTS_TITLE": "Alerts & Pending Actions",
+    "ALERTS": {
+      "BANK_NOT_VERIFIED": "Bank Account Not Verified",
+      "BANK_NOT_VERIFIED_DESC": "Please review the recently uploaded IBAN certificate for approval.",
+      "OWNER_ID_UPDATE": "Owner ID Update",
+      "OWNER_ID_UPDATE_DESC": "New ID uploaded, awaiting review."
+    },
+    "ADMIN_ACTIONS": "Admin Actions",
+    "ACTIONS": {
+      "APPROVE": "Approve Vendor",
+      "REQUEST_DOCS": "Request Additional Docs",
+      "SUSPEND": "Suspend Vendor Temporarily"
+    }
+  },
+  "VENDOR_SETTINGS": {
+    "ACCOUNT_SETTINGS": "Account Settings",
+    "ACCOUNT_STATUS": "Account Status",
+    "ACTIVE": "Active",
+    "ACCOUNT_TYPE": "Account Type",
+    "ACCOUNT_TYPE_VALUE": "Company (B2B/B2C)",
+    "DEFAULT_LANGUAGE": "Default Language",
+    "DEFAULT_LANGUAGE_VALUE": "Arabic",
+    "RESET_PASSWORD": "Reset Password",
+    "OPERATIONS_SETTINGS": "Operational Settings",
+    "ORDER_RECEPTION": "Order Reception",
+    "ORDER_RECEPTION_DESC": "Allow customers to place orders",
+    "WORKING_HOURS": "Working Hours",
+    "WORKING_HOURS_VALUE": "24/7 (Always Open)",
+    "MIN_ORDER": "Minimum Order",
+    "PREPARATION_TIME": "Estimated Preparation Time",
+    "PREPARATION_TIME_VALUE": "1-2 days",
+    "PERMISSIONS_ACCESS": "Permissions & Access",
+    "PRODUCT_MANAGEMENT": "Product Management",
+    "FULL_ACCESS": "Full",
+    "PRODUCT_MANAGEMENT_DESC": "Add, edit, and delete products",
+    "FINANCIAL_ACCESS": "Financial Access",
+    "FINANCIAL_ACCESS_DESC": "View reports and withdraw balance",
+    "SUB_USERS": "Sub Users",
+    "SUB_USERS_DESC": "Add employees to the store",
+    "API_SETTINGS": "API Integration Settings",
+    "CONNECTION_STATUS": "Connection Status",
+    "CONNECTED": "Connected",
+    "PAYMENT_GATEWAY": "Payment Gateway",
+    "LAST_SYNC": "Last Sync",
+    "CONTROL_ACTIONS": "Control Actions",
+    "SUSPEND_ACCOUNT": "Temporarily Suspend Account",
+    "LOCK_LOGIN": "Lock Login",
+    "ARCHIVE_ACCOUNT": "Archive Account",
+    "NOTIFICATIONS": "Notifications",
+    "EMAIL_NOTIFICATIONS": "Email",
+    "SMS_NOTIFICATIONS": "SMS Messages",
+    "NEW_ORDERS_NOTIFICATIONS": "New Orders",
+    "LAST_UPDATED_BY": "Last updated by",
+    "LAST_UPDATED_BY_VALUE": "Ahmed Mohamed (Admin)",
+    "OPERATIONS": {
+      "ORDER_RECEPTION": "Order reception",
+      "WORKING_HOURS": "Working hours"
+    }
+  },
+  "VENDOR_ANALYTICS": {
+    "TITLE": "Vendor Analytics",
+    "EXECUTIVE_BADGE": "Executive Summary",
+    "SUBTITLE": "Operational summary for {{ vendor }} based on a dedicated analytics API.",
+    "RANGE": {
+      "7D": "7 days",
+      "30D": "30 days",
+      "90D": "90 days"
+    },
+    "META": {
+      "PERIOD": "Reporting period",
+      "GENERATED": "Generated at"
+    },
+    "KPIS": {
+      "TOTAL_REVENUE": "Total revenue",
+      "TOTAL_ORDERS": "Total orders",
+      "AVERAGE_ORDER": "Average order",
+      "COMPLETION_RATE": "Completion rate",
+      "CANCELLATION_RATE": "Cancellation rate",
+      "STOCK_RISK": "Stock risk"
+    },
+    "CHARTS": {
+      "REVENUE_TITLE": "Revenue and orders trend",
+      "REVENUE_SUBTITLE": "Compact trend for the selected period without loading raw order pages.",
+      "STATUS_TITLE": "Order status mix",
+      "STATUS_SUBTITLE": "Executive view of the current operational mix.",
+      "REVENUE_SERIES": "Revenue",
+      "ORDERS_SERIES": "Orders"
+    },
+    "STATUS": {
+      "COMPLETED": "Completed",
+      "IN_PROGRESS": "In progress",
+      "AWAITING_ACTION": "Awaiting action",
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed"
+    },
+    "PRODUCT_HEALTH": {
+      "TITLE": "Product health",
+      "SUBTITLE": "Current catalog readiness",
+      "AVAILABLE": "Healthy stock",
+      "LOW_STOCK": "Low stock",
+      "OUT_OF_STOCK": "Out of stock",
+      "INACTIVE": "Inactive"
+    },
+    "TOP_PRODUCTS": {
+      "TITLE": "Top products",
+      "SUBTITLE": "Best performing products in the selected period.",
+      "ITEMS": "items",
+      "UNITS": "Units",
+      "ORDERS": "Orders"
+    },
+    "STATES": {
+      "LOADING_TITLE": "Loading analytics workspace",
+      "LOADING_MESSAGE": "Preparing executive metrics, trends, and stock signals.",
+      "ERROR_TITLE": "Failed to load analytics",
+      "ERROR_MESSAGE": "The analytics endpoint could not be loaded right now. Try refreshing the page.",
+      "EMPTY_TREND_TITLE": "No order trend in this period",
+      "EMPTY_TREND_MESSAGE": "The vendor has no operational orders in the selected range yet.",
+      "EMPTY_PRODUCTS_TITLE": "No product ranking yet",
+      "EMPTY_PRODUCTS_MESSAGE": "There is not enough completed demand in the selected range to rank products."
+    }
+  }
+}

@@ -267,17 +267,154 @@ export class AdminNotificationsService {
   }
 
   resolveTargetUrl(notification: AdminNotification): string {
-    const raw = notification.dataObject?.['targetUrl'];
-    if (typeof raw === 'string' && raw.trim()) {
-      return raw.trim();
+    const parsedData = this.tryParseData(notification.data);
+    const isDriverSupportCase = this.isDriverSupportCaseNotification(notification, parsedData);
+    const isSupport = this.isSupportNotification(notification, parsedData) || isDriverSupportCase;
+    if (isSupport) {
+      const isVendorSupportTicket = this.isVendorSupportTicketNotification(notification, parsedData);
+      const ticketId = this.extractString(notification.dataObject?.['ticketId'])
+        ?? this.extractString(parsedData?.['ticketId'])
+        ?? (isVendorSupportTicket ? this.extractString(notification.referenceId) : null);
+      const driverCaseId = this.extractString(notification.dataObject?.['caseId'])
+        ?? this.extractString(parsedData?.['caseId'])
+        ?? (isDriverSupportCase ? this.extractString(notification.referenceId) : null);
+      const legacyCaseId = this.extractString(notification.dataObject?.['caseId'])
+        ?? this.extractString(parsedData?.['caseId'])
+        ?? (!isVendorSupportTicket && !isDriverSupportCase ? this.extractString(notification.referenceId) : null);
+
+      if (ticketId) {
+        return `/support?tab=vendor&ticketId=${encodeURIComponent(ticketId)}`;
+      }
+
+      if (driverCaseId) {
+        return `/support?tab=driver&driverCaseId=${encodeURIComponent(driverCaseId)}`;
+      }
+
+      if (legacyCaseId) {
+        return `/support?tab=legacy&legacyCaseId=${encodeURIComponent(legacyCaseId)}`;
+      }
+
+      return '/support';
     }
 
-    if (notification.category === 'drivers' && notification.referenceId) return `/drivers/${notification.referenceId}`;
-    if (notification.category === 'vendors' && notification.referenceId) return `/vendors/${notification.referenceId}`;
+    const sanitizedExternal = this.sanitizeInternalPath(notification.dataObject?.['targetUrl']);
+    if (sanitizedExternal) {
+      return sanitizedExternal;
+    }
+
+    if (notification.category === 'drivers' && notification.referenceId) {
+      return `/drivers/${encodeURIComponent(notification.referenceId)}`;
+    }
+    if (notification.category === 'vendors' && notification.referenceId) {
+      return `/vendors/${encodeURIComponent(notification.referenceId)}`;
+    }
     if (notification.category === 'refunds') return '/finances/refunds';
     if (notification.category === 'settlements') return '/finances/settlements';
-    if (notification.category === 'disputes' || notification.category === 'support') return '/disputes';
+    if (notification.category === 'disputes') return '/disputes';
     return '/notifications';
+  }
+
+  /**
+   * Validates that a server-supplied targetUrl is a SAFE in-app navigation path.
+   *
+   * Rules:
+   *  - Must start with a single forward slash (in-app absolute path).
+   *  - Must NOT start with two slashes (protocol-relative URLs like //evil.com).
+   *  - Must NOT contain a scheme (e.g. javascript:, data:, vbscript:).
+   *  - Must NOT contain control characters.
+   *
+   * Anything else is rejected to prevent open-redirect / XSS via navigateByUrl.
+   */
+  private sanitizeInternalPath(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    if (!trimmed.startsWith('/')) {
+      return null;
+    }
+
+    if (trimmed.startsWith('//') || trimmed.startsWith('/\\')) {
+      return null;
+    }
+
+    if (/[\u0000-\u001F\u007F]/.test(trimmed)) {
+      return null;
+    }
+
+    if (/^\/[a-z][a-z0-9+.-]*:/i.test(trimmed)) {
+      return null;
+    }
+
+    return trimmed;
+  }
+
+  private isSupportNotification(
+    notification: AdminNotification,
+    parsedData?: Record<string, unknown> | null
+  ): boolean {
+    const category = (notification.category ?? '').toLowerCase();
+    const type = (notification.type ?? '').toLowerCase();
+    const source = `${notification.dataObject?.['source'] ?? ''} ${parsedData?.['source'] ?? ''}`.toLowerCase();
+    const targetUrl = `${notification.dataObject?.['targetUrl'] ?? ''} ${parsedData?.['targetUrl'] ?? ''}`.toLowerCase();
+
+    return category === 'support'
+      || type.startsWith('support.')
+      || type.includes('vendor_support_ticket')
+      || source.includes('vendor_support')
+      || targetUrl.includes('/support')
+      || targetUrl.includes('category=support');
+  }
+
+  private isVendorSupportTicketNotification(
+    notification: AdminNotification,
+    parsedData?: Record<string, unknown> | null
+  ): boolean {
+    const type = (notification.type ?? '').toLowerCase();
+    const source = `${notification.dataObject?.['source'] ?? ''} ${parsedData?.['source'] ?? ''}`.toLowerCase();
+    const targetUrl = `${notification.dataObject?.['targetUrl'] ?? ''} ${parsedData?.['targetUrl'] ?? ''}`.toLowerCase();
+
+    return type.includes('vendor_support_ticket')
+      || type === 'support.ticket_created'
+      || type === 'support.ticket_updated'
+      || source.includes('vendor_support')
+      || targetUrl.includes('/support/tickets/');
+  }
+
+  private isDriverSupportCaseNotification(
+    notification: AdminNotification,
+    parsedData?: Record<string, unknown> | null
+  ): boolean {
+    const type = `${notification.type ?? ''} ${notification.dataObject?.['type'] ?? ''} ${parsedData?.['type'] ?? ''}`.toLowerCase();
+    const targetUrl = `${notification.dataObject?.['targetUrl'] ?? ''} ${parsedData?.['targetUrl'] ?? ''}`.toLowerCase();
+
+    return type.includes('driver_account')
+      || type.includes('driver_report')
+      || targetUrl.includes('type=driver_account')
+      || targetUrl.includes('type=driver_report')
+      || targetUrl.includes('tab=driver');
+  }
+
+  private tryParseData(data?: string | null): Record<string, unknown> | null {
+    if (!data?.trim()) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(data);
+      return parsed && typeof parsed === 'object' ? parsed as Record<string, unknown> : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private extractString(value: unknown): string | null {
+    return typeof value === 'string' && value.trim() ? value.trim() : null;
   }
 
   private markLocalRead(id: string): void {
@@ -405,6 +542,22 @@ export class AdminNotificationsService {
       'support.critical_created': {
         title: { ar: 'حالة دعم حرجة', en: 'Critical support case' },
         body: { ar: 'توجد حالة دعم عالية الأولوية بانتظار المراجعة.', en: 'A high priority support case is waiting for review.' }
+      },
+      'support.created': {
+        title: { ar: 'حالة دعم جديدة', en: 'New support case' },
+        body: { ar: 'توجد حالة دعم جديدة بانتظار المراجعة.', en: 'A new support case is waiting for review.' }
+      },
+      'support.updated': {
+        title: { ar: 'تحديث على حالة دعم', en: 'Support case updated' },
+        body: { ar: 'تم تحديث حالة دعم وتحتاج إلى متابعة.', en: 'A support case was updated and may need follow-up.' }
+      },
+      'support.ticket_created': {
+        title: { ar: 'تذكرة دعم تاجر جديدة', en: 'New vendor support ticket' },
+        body: { ar: 'فتح تاجر تذكرة دعم جديدة بانتظار مراجعة الفريق.', en: 'A vendor opened a new support ticket for review.' }
+      },
+      'support.ticket_updated': {
+        title: { ar: 'رد جديد على دعم التاجر', en: 'Vendor support ticket updated' },
+        body: { ar: 'أضاف تاجر ردا جديدا على تذكرة دعم.', en: 'A vendor added a new reply to a support ticket.' }
       },
       'system.integration_failure': {
         title: { ar: 'فشل في تكامل النظام', en: 'System integration failure' },

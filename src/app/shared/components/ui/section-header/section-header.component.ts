@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 type SectionHeaderTone = 'primary' | 'neutral' | 'warning' | 'danger' | 'success';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-section-header',
   standalone: true,
   imports: [CommonModule, TranslateModule],

@@ -582,4 +582,16 @@
       <p class="max-w-xs text-[12px] font-medium text-slate-500">{{ isRTL ? 'اختر مستنداً من القائمة الجانبية لمعاينته واتخاذ القرار المناسب.' : 'Select a document from the board to preview it.' }}</p>
     </div>
   </ng-template>
+
+  <!-- Compliance Action Confirmation Modal -->
+  <app-delete-confirmation-modal
+      [isOpen]="isConfirmModalOpen"
+      [type]="confirmModalType"
+      [title]="confirmModalTitle"
+      [message]="confirmModalMessage"
+      [confirmText]="confirmModalConfirmText"
+      [cancelText]="confirmModalCancelText"
+      (confirm)="executeConfirmAction()"
+      (close)="cancelConfirmAction()">
+  </app-delete-confirmation-modal>
 </div>

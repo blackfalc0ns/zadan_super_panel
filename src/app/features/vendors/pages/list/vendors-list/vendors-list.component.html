@@ -88,75 +88,77 @@
         </div>
 
         <!-- 4. Data Table (Desktop) -->
-        <app-data-table
-            *ngIf="!isLoading"
-            [data]="vendors"
-            [columns]="tableColumns"
-            [actions]="tableActions"
-            [bulkActions]="bulkActions"
-            [selectable]="true"
-            [clickableRows]="true"
-            [emptyStateTitle]="isRTL ? 'لا يوجد تجار مطابقون' : 'No matching vendors'"
-            [emptyStateMessage]="isRTL ? 'راجع البحث أو الفلاتر، أو أعد تحميل الصفحة بعد إضافة تاجر جديد.' : 'Check search and filters, or refresh after adding a new vendor.'"
-            [emptyStateIcon]="'storefront'"
-            [containerClass]="'extraordinary-table-container'"
-            (rowClick)="onTableRowClick($event)"
-            (actionClick)="onTableAction($event)"
-            (bulkActionClick)="onBulkAction($event)">
-            
-            <!-- Custom Cell Templates -->
-            <ng-template #customColumn let-vendor let-column="column">
+        <div class="hidden md:block">
+            <app-data-table
+                *ngIf="!isLoading"
+                [data]="vendors"
+                [columns]="tableColumns"
+                [actions]="tableActions"
+                [bulkActions]="bulkActions"
+                [selectable]="true"
+                [clickableRows]="true"
+                [emptyStateTitle]="isRTL ? 'لا يوجد تجار مطابقون' : 'No matching vendors'"
+                [emptyStateMessage]="isRTL ? 'راجع البحث أو الفلاتر، أو أعد تحميل الصفحة بعد إضافة تاجر جديد.' : 'Check search and filters, or refresh after adding a new vendor.'"
+                [emptyStateIcon]="'storefront'"
+                [containerClass]="'extraordinary-table-container'"
+                (rowClick)="onTableRowClick($event)"
+                (actionClick)="onTableAction($event)"
+                (bulkActionClick)="onBulkAction($event)">
                 
-                <!-- Logo Template -->
-                <ng-container *ngIf="column.key === 'logo'">
-                    <div class="flex justify-center">
-                        <div class="relative w-11 h-11 bg-gradient-to-br from-zadna-primary/10 to-zadna-primary/5 rounded-[1.1rem] border border-zadna-primary/10 flex items-center justify-center transition-all group-hover:scale-105 shadow-sm overflow-hidden">
-                            <span class="text-lg font-black text-zadna-primary">
-                                {{ ((activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || 'V').charAt(0) | uppercase }}
+                <!-- Custom Cell Templates -->
+                <ng-template #customColumn let-vendor let-column="column">
+                    
+                    <!-- Logo Template -->
+                    <ng-container *ngIf="column.key === 'logo'">
+                        <div class="flex justify-center">
+                            <div class="relative w-11 h-11 bg-gradient-to-br from-zadna-primary/10 to-zadna-primary/5 rounded-[1.1rem] border border-zadna-primary/10 flex items-center justify-center transition-all group-hover:scale-105 shadow-sm overflow-hidden">
+                                <span class="text-lg font-black text-zadna-primary">
+                                    {{ ((activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || 'V').charAt(0) | uppercase }}
+                                </span>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Business Name Template -->
+                    <ng-container *ngIf="column.key === 'businessName'">
+                        <div class="flex flex-col text-start">
+                            <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
+                                {{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || vendor.contactEmail }}
+                            </span>
+                            <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
+                                {{ (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.contactEmail || vendor.businessType }}
                             </span>
                         </div>
-                    </div>
-                </ng-container>
+                    </ng-container>
 
-                <!-- Business Name Template -->
-                <ng-container *ngIf="column.key === 'businessName'">
-                    <div class="flex flex-col text-start">
-                        <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
-                            {{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || vendor.contactEmail }}
+                    <!-- Risk Level Template -->
+                    <ng-container *ngIf="column.key === 'riskLevel'">
+                        <span class="text-[10px] font-black uppercase px-2 py-1 rounded-lg bg-slate-50 border border-slate-100"
+                              [class]="getRiskLevelColor(vendor.riskLevel)">
+                            {{ getRiskLevelLabel(vendor.riskLevel) | translate }}
                         </span>
-                        <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
-                            {{ (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.contactEmail || vendor.businessType }}
-                        </span>
-                    </div>
-                </ng-container>
+                    </ng-container>
 
-                <!-- Risk Level Template -->
-                <ng-container *ngIf="column.key === 'riskLevel'">
-                    <span class="text-[10px] font-black uppercase px-2 py-1 rounded-lg bg-slate-50 border border-slate-100"
-                          [class]="getRiskLevelColor(vendor.riskLevel)">
-                        {{ getRiskLevelLabel(vendor.riskLevel) | translate }}
-                    </span>
-                </ng-container>
+                    <!-- Status Template -->
+                    <ng-container *ngIf="column.key === 'status'">
+                        <div class="flex justify-center">
+                            <app-status-pill
+                                [label]="getStatusLabel(vendor.status)"
+                                [variant]="getVendorStatusVariant(vendor.status)"
+                                size="sm">
+                            </app-status-pill>
+                        </div>
+                    </ng-container>
 
-                <!-- Status Template -->
-                <ng-container *ngIf="column.key === 'status'">
-                    <div class="flex justify-center">
-                        <app-status-pill
-                            [label]="getStatusLabel(vendor.status)"
-                            [variant]="getVendorStatusVariant(vendor.status)"
-                            size="sm">
-                        </app-status-pill>
-                    </div>
-                </ng-container>
-
-                <!-- Commission Template -->
-                <ng-container *ngIf="column.key === 'commissionRate'">
-                    <code class="text-[10px] font-bold text-zadna-primary bg-zadna-primary/5 px-2.5 py-1 rounded-xl border border-zadna-primary/5 uppercase tracking-wider">
-                        {{ getCommissionLabel(vendor) }}
-                    </code>
-                </ng-container>
-            </ng-template>
-        </app-data-table>
+                    <!-- Commission Template -->
+                    <ng-container *ngIf="column.key === 'commissionRate'">
+                        <code class="text-[10px] font-bold text-zadna-primary bg-zadna-primary/5 px-2.5 py-1 rounded-xl border border-zadna-primary/5 uppercase tracking-wider">
+                            {{ getCommissionLabel(vendor) }}
+                        </code>
+                    </ng-container>
+                </ng-template>
+            </app-data-table>
+        </div>
 
         <!-- 5. Mobile Cards View -->
         <app-mobile-vendor-cards

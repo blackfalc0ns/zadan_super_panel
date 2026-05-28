@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import {
   VendorDetail,
   VendorProfileReviewItem,
@@ -42,12 +43,14 @@ type ComplianceRailTab = 'timeline' | 'risks';
 type ComplianceWorkspaceWindow = 'operations' | 'review';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-compliance',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent],
   templateUrl: './vendor-compliance.component.html'
 })
 export class VendorComplianceComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   vendorId = '';
   currentLang = 'ar';
   isRTL = true;
@@ -63,6 +66,15 @@ export class VendorComplianceComponent {
   selectedProfileReviewCode: string | null = null;
   profileRejectReason = '';
 
+  // Custom confirm modal states
+  isConfirmModalOpen = false;
+  confirmModalType: 'danger' | 'warning' | 'success' | 'info' = 'warning';
+  confirmModalTitle = '';
+  confirmModalMessage = '';
+  confirmModalConfirmText = '';
+  confirmModalCancelText = '';
+  confirmAction: (() => void) | null = null;
+
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -76,6 +88,7 @@ export class VendorComplianceComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
       });
@@ -83,6 +96,7 @@ export class VendorComplianceComponent {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         if (!vendor) {
           return;
         }
@@ -107,6 +121,7 @@ export class VendorComplianceComponent {
     this.vendorDetailFacade.mutationError$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((message) => {
+      this.cdr.markForCheck();
         this.mutationError = message ?? '';
       });
   }
@@ -162,12 +177,45 @@ export class VendorComplianceComponent {
     return this.sortedReviewDocuments.filter((document) => !!document.fileUrl);
   }
 
+  /**
+   * Safe iframe URL for the selected compliance document. We only trust:
+   *  - Absolute https URLs (e.g. CDN/blob storage links).
+   *  - blob: and data:application/pdf URLs created locally.
+   *
+   * Anything else (javascript:, vbscript:, http on a non-local host, etc.) is
+   * rejected to prevent rendering attacker-controlled content inside the
+   * compliance preview iframe.
+   */
   get safePreviewUrl(): SafeResourceUrl | null {
-    if (!this.selectedDocument?.fileUrl) {
+    const fileUrl = this.selectedDocument?.fileUrl;
+    if (!fileUrl) {
       return null;
     }
 
-    return this.sanitizer.bypassSecurityTrustResourceUrl(this.selectedDocument.fileUrl);
+    if (!this.isAllowedDocumentUrl(fileUrl)) {
+      return null;
+    }
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl(fileUrl);
+  }
+
+  private isAllowedDocumentUrl(value: string): boolean {
+    const trimmed = (value ?? '').trim();
+    if (!trimmed) {
+      return false;
+    }
+
+    if (trimmed.startsWith('blob:') || trimmed.startsWith('data:application/pdf') || trimmed.startsWith('data:image/')) {
+      return true;
+    }
+
+    try {
+      const base = typeof window !== 'undefined' ? window.location.origin : 'https://zadana.local';
+      const url = new URL(trimmed, base);
+      return url.protocol === 'https:' || (url.protocol === 'http:' && (url.hostname === 'localhost' || url.hostname === '127.0.0.1'));
+    } catch {
+      return false;
+    }
   }
 
   get complianceNotes(): VendorReviewNote[] {
@@ -577,10 +625,12 @@ export class VendorComplianceComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.documentRejectReason = '';
           this.isSubmittingDocumentDecision = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.isSubmittingDocumentDecision = false;
         }
       });
@@ -603,10 +653,12 @@ export class VendorComplianceComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.actionReason = reason;
           this.isSubmittingDocumentDecision = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.isSubmittingDocumentDecision = false;
         }
       });
@@ -620,6 +672,7 @@ export class VendorComplianceComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.profileRejectReason = '';
         }
       });
@@ -664,17 +717,18 @@ export class VendorComplianceComponent {
       return;
     }
 
-    const confirmed = window.confirm(this.localize(
+    const title = this.localize('اعتماد التاجر', 'Approve Vendor');
+    const message = this.localize(
       'تم إقفال جميع المستندات المطلوبة. هل تريد اعتماد التاجر نهائيًا الآن؟',
       'All required documents are closed. Do you want to approve this vendor now?'
-    ));
+    );
+    const confirmText = this.localize('موافق', 'Approve');
+    const cancelText = this.localize('إلغاء', 'Cancel');
 
-    if (!confirmed) {
-      return;
-    }
-
-    this.vendorDetailFacade.clearMutationError();
-    this.vendorDetailFacade.approveVendorReview(this.vendorDetail.commissionRate ?? 13);
+    this.openConfirmModal(title, message, confirmText, cancelText, 'success', () => {
+      this.vendorDetailFacade.clearMutationError();
+      this.vendorDetailFacade.approveVendorReview(this.vendorDetail!.commissionRate ?? 13);
+    });
   }
 
   onRequestDocuments(): void {
@@ -710,17 +764,18 @@ export class VendorComplianceComponent {
       return;
     }
 
-    const confirmed = window.confirm(this.localize(
+    const title = this.localize('إعادة التشغيل', 'Reactivate Account');
+    const message = this.localize(
       'سيعود الحساب إلى حالة نشطة مباشرة. هل تريد متابعة إعادة التشغيل؟',
       'The account will return directly to active status. Do you want to continue?'
-    ));
+    );
+    const confirmText = this.localize('تأكيد إعادة التشغيل', 'Reactivate');
+    const cancelText = this.localize('إلغاء', 'Cancel');
 
-    if (!confirmed) {
-      return;
-    }
-
-    this.vendorDetailFacade.clearMutationError();
-    this.vendorDetailFacade.reactivateVendorAccount();
+    this.openConfirmModal(title, message, confirmText, cancelText, 'info', () => {
+      this.vendorDetailFacade.clearMutationError();
+      this.vendorDetailFacade.reactivateVendorAccount();
+    });
   }
 
   onRejectVendor(): void {
@@ -735,17 +790,48 @@ export class VendorComplianceComponent {
       return;
     }
 
-    const confirmed = window.confirm(this.localize(
+    const title = this.localize('رفض التاجر', 'Reject Vendor');
+    const message = this.localize(
       'سيتم رفض ملف التاجر قبل التشغيل ولن يستخدم هذا الإجراء كبديل للتعليق. هل تريد المتابعة؟',
       'The vendor onboarding file will be rejected before activation. Do you want to continue?'
-    ));
+    );
+    const confirmText = this.localize('رفض التاجر', 'Reject');
+    const cancelText = this.localize('إلغاء', 'Cancel');
 
-    if (!confirmed) {
-      return;
+    this.openConfirmModal(title, message, confirmText, cancelText, 'danger', () => {
+      this.vendorDetailFacade.clearMutationError();
+      this.vendorDetailFacade.rejectVendorReview(reason);
+    });
+  }
+
+  openConfirmModal(
+    title: string,
+    message: string,
+    confirmText: string,
+    cancelText: string,
+    type: 'danger' | 'warning' | 'success' | 'info',
+    action: () => void
+  ): void {
+    this.confirmModalTitle = title;
+    this.confirmModalMessage = message;
+    this.confirmModalConfirmText = confirmText;
+    this.confirmModalCancelText = cancelText;
+    this.confirmModalType = type;
+    this.confirmAction = action;
+    this.isConfirmModalOpen = true;
+  }
+
+  executeConfirmAction(): void {
+    if (this.confirmAction) {
+      this.confirmAction();
     }
+    this.isConfirmModalOpen = false;
+    this.confirmAction = null;
+  }
 
-    this.vendorDetailFacade.clearMutationError();
-    this.vendorDetailFacade.rejectVendorReview(reason);
+  cancelConfirmAction(): void {
+    this.isConfirmModalOpen = false;
+    this.confirmAction = null;
   }
 
   onAddNote(): void {

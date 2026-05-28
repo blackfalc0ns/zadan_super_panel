@@ -119,9 +119,16 @@
             <table class="w-full block sm:table sm:table-fixed border-separate border-spacing-y-0 px-2">
                 <thead class="hidden sm:table-header-group border-b border-slate-100/50">
                     <tr class="sm:table-row">
-                        <th class="text-center w-[5%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
+                        <th class="hidden sm:table-cell text-center w-[4%] py-5">
+                            <input 
+                                type="checkbox" 
+                                [checked]="isAllSelected" 
+                                (change)="toggleAllSelection()"
+                                class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/30 w-4 h-4 cursor-pointer" />
+                        </th>
+                        <th class="text-center w-[4%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
                         <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.LOGO' | translate }}</th>
-                        <th class="text-start w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'BRANDS.BRAND' | translate }}</th>
+                        <th class="text-start w-[22%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'BRANDS.BRAND' | translate }}</th>
                         <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.CODE' | translate }}</th>
                         <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.STATUS' | translate }}</th>
                         <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'BRANDS.ACTIONS' | translate }}</th>
@@ -132,8 +139,17 @@
                         class="table-row-object group flex flex-col sm:table-row bg-white/70 backdrop-blur-md sm:bg-white/50 rounded-[2rem] shadow-sm sm:shadow-[0_8px_30px_rgb(0,0,0,0.02)] p-5 sm:p-0 mb-4 border border-white/80 sm:border-slate-100/60 relative w-full hover:bg-white transition-all duration-500 cursor-pointer"
                         [routerLink]="['/catalog/brands/view', brand.id]">
                         
+                        <!-- Checkbox column -->
+                        <td class="hidden sm:table-cell text-center align-middle sm:w-[4%]" (click)="$event.stopPropagation()">
+                            <input 
+                                type="checkbox" 
+                                [checked]="selectedBrandIds.has(brand.id)" 
+                                (change)="toggleBrandSelection(brand.id)"
+                                class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/30 w-4 h-4 cursor-pointer" />
+                        </td>
+                        
                         <!-- Col 1: Index -->
-                        <td class="hidden sm:table-cell text-center align-middle sm:w-[5%]">
+                        <td class="hidden sm:table-cell text-center align-middle sm:w-[4%]">
                             <span class="text-[10px] sm:text-[11px] font-black text-slate-300 transition-colors">{{ (currentPage - 1) * pageSize + i + 1 }}</span>
                         </td>
 
@@ -262,3 +278,14 @@
     (close)="isBrandRequestsModalOpen = false"
     (refreshed)="loadBrands()">
 </app-catalog-request-center-modal>
+
+<!-- Delete Confirmation Modal -->
+<app-delete-confirmation-modal
+    [isOpen]="isDeleteModalOpen"
+    [title]="(isBulkDelete ? 'BRANDS.CONFIRM_BULK_DELETE_TITLE' : 'BRANDS.CONFIRM_DELETE_TITLE') | translate"
+    [message]="(isBulkDelete ? 'BRANDS.CONFIRM_BULK_DELETE_MSG' : 'BRANDS.CONFIRM_DELETE_MSG') | translate"
+    [isLoading]="isDeleting"
+    [errorMessage]="deleteErrorMessage"
+    (confirm)="confirmDelete()"
+    (close)="cancelDelete()">
+</app-delete-confirmation-modal>

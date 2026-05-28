@@ -42,7 +42,8 @@ export class DisputeApprovalModalComponent implements OnChanges {
   readonly costBearerOptions: SearchableSelectOption<RefundDecisionForm['costBearer']>[] = [
     { value: 'vendor', labelKey: 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_VENDOR' },
     { value: 'platform', labelKey: 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_PLATFORM' },
-    { value: 'shared', labelKey: 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_SHARED' }
+    { value: 'shared', labelKey: 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_SHARED' },
+    { value: 'driver', labelKey: 'DISPUTES_DASHBOARD.MODAL.COST_BEARER_DRIVER' }
   ];
 
   constructor(private readonly translate: TranslateService) {}
@@ -59,6 +60,31 @@ export class DisputeApprovalModalComponent implements OnChanges {
 
   get netDecisionValue(): number {
     return Math.max(this.refundAmountValue - this.nonRefundableDeliveryFee, 0);
+  }
+
+  get isRefundAmountZero(): boolean {
+    return this.refundAmountValue <= 0;
+  }
+
+  get isRefundAmountExceeded(): boolean {
+    return !!this.dispute && this.refundAmountValue > this.dispute.amount;
+  }
+
+  get isAmountValid(): boolean {
+    return !this.isRefundAmountZero && !this.isRefundAmountExceeded;
+  }
+
+  get isApprovalReasonValid(): boolean {
+    return !!this.form.approvalReason?.trim();
+  }
+
+  get isValid(): boolean {
+    return (
+      this.isAmountValid &&
+      !!this.form.costBearer &&
+      !!this.form.refundMethod &&
+      this.isApprovalReasonValid
+    );
   }
 
   get refundMethodOptions(): SearchableSelectOption<RefundDecisionForm['refundMethod']>[] {

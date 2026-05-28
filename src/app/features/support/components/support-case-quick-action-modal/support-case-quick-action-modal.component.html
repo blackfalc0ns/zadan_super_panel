@@ -1,0 +1,56 @@
+<div *ngIf="isOpen && config as config">
+  <app-modal-shell
+    [dir]="isRtl ? 'rtl' : 'ltr'"
+    [title]="config.title"
+    [subtitle]="config.subtitle"
+    [shouldTranslate]="false"
+    [maxWidthClass]="'max-w-2xl'"
+    [panelClass]="'rounded-[1.5rem]'"
+    [bodyClass]="'px-6 py-6'"
+    [footerClass]="'px-6 py-4'"
+    [titleClass]="'text-xl font-black text-slate-900'"
+    [subtitleClass]="'text-sm font-medium text-slate-500'"
+    (close)="close.emit()">
+    <div header-prefix class="flex h-11 w-11 items-center justify-center rounded-2xl bg-zadna-primary/10 text-zadna-primary">
+      <span class="material-symbols-outlined text-[22px]">{{ config.icon }}</span>
+    </div>
+
+    <div modal-body class="space-y-5">
+      <div *ngIf="config.primaryLabel" class="space-y-2">
+        <label class="block text-xs font-black text-slate-600">{{ config.primaryLabel }}</label>
+        <textarea
+          rows="4"
+          class="w-full rounded-[1rem] border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5"
+          [placeholder]="config.primaryPlaceholder || ''"
+          [(ngModel)]="value.primaryValue"></textarea>
+      </div>
+
+      <div *ngIf="config.secondaryLabel" class="space-y-2">
+        <label class="block text-xs font-black text-slate-600">{{ config.secondaryLabel }}</label>
+        <textarea
+          rows="4"
+          class="w-full rounded-[1rem] border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5"
+          [placeholder]="config.secondaryPlaceholder || ''"
+          [(ngModel)]="value.secondaryValue"></textarea>
+      </div>
+    </div>
+
+    <div modal-footer class="flex items-center justify-between gap-3">
+      <button
+        type="button"
+        class="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-black text-slate-500 transition hover:bg-slate-100"
+        (click)="close.emit()">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+
+      <button
+        type="button"
+        class="rounded-full px-6 py-2.5 text-sm font-black text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+        [ngClass]="config.confirmClass"
+        [disabled]="!canSubmit"
+        (click)="submit()">
+        {{ config.confirmLabel }}
+      </button>
+    </div>
+  </app-modal-shell>
+</div>

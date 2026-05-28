@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -66,7 +66,8 @@ interface DashboardWindowTab {
   ],
   providers: [provideEchartsCore({ echarts })],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
@@ -95,6 +96,7 @@ export class DashboardComponent implements OnInit {
       queryParams: { tab },
       queryParamsHandling: 'merge'
     });
+    this.cdr.markForCheck();
   }
 
   // Chart options
@@ -229,7 +231,8 @@ export class DashboardComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly dashboardService: SuperAdminDashboardService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -242,6 +245,7 @@ export class DashboardComponent implements OnInit {
         const tab = params.get('tab');
         if (this.isDashboardTabId(tab)) {
           this.activeTab = tab;
+          this.cdr.markForCheck();
         }
       });
 
@@ -249,6 +253,7 @@ export class DashboardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((user) => {
         this.userName = user?.fullName || 'Admin';
+        this.cdr.markForCheck();
       });
 
     this.translate.onLangChange
@@ -259,6 +264,7 @@ export class DashboardComponent implements OnInit {
         if (this.dashboard) {
           this.loadDashboard();
         }
+        this.cdr.markForCheck();
       });
 
     this.loadDashboard();
@@ -267,6 +273,7 @@ export class DashboardComponent implements OnInit {
   loadDashboard(): void {
     this.isLoading = true;
     this.loadError = false;
+    this.cdr.markForCheck();
 
     this.dashboardService.getDashboardSnapshot(this.filterState, this.currentLang)
       .pipe(take(1))
@@ -275,11 +282,13 @@ export class DashboardComponent implements OnInit {
           this.dashboard = dashboard;
           this.isLoading = false;
           this.buildCharts();
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Superadmin dashboard failed to load.', error);
           this.loadError = true;
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }

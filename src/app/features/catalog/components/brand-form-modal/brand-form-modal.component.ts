@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -17,6 +17,7 @@ interface BrandCategoryOption extends Category {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-brand-form-modal',
   standalone: true,
   imports: [
@@ -32,6 +33,7 @@ interface BrandCategoryOption extends Category {
   styleUrl: './brand-form-modal.component.scss'
 })
 export class BrandFormModalComponent implements OnInit, OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() isOpen = false;
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() brand: Brand | null = null;
@@ -80,9 +82,11 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   loadLeafCategories(): void {
     this.catalogService.getCategories(undefined, true).subscribe({
       next: (categories) => {
+        this.cdr.markForCheck();
         this.leafCategories = this.flattenAllCategories(categories ?? []).filter((category) => category.isLeaf);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load brand categories', err);
         this.leafCategories = [];
       }
@@ -103,10 +107,12 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     this.setUploadingState(field, true);
     this.catalogService.uploadFile(file, 'brands').subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         this.form.patchValue({ [field]: res.url });
         this.setUploadingState(field, false);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Upload failed', err);
         this.setUploadingState(field, false);
       }
@@ -134,11 +140,13 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     if (this.mode === 'create') {
       this.catalogService.createBrand(payload).subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.isSaving = false;
           this.saved.emit();
           this.onClose();
         },
         error: (err: unknown) => {
+        this.cdr.markForCheck();
           console.error('Save failed', err);
           this.isSaving = false;
         }
@@ -148,11 +156,13 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
 
     this.catalogService.updateBrand(payload.id, payload).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.isSaving = false;
         this.saved.emit();
         this.onClose();
       },
       error: (err: unknown) => {
+        this.cdr.markForCheck();
         console.error('Save failed', err);
         this.isSaving = false;
       }

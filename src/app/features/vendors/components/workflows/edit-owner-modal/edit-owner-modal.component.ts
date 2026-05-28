@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
@@ -13,6 +13,7 @@ export interface OwnerData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-edit-owner-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],

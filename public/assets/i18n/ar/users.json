@@ -1,0 +1,2102 @@
+{
+  "CUSTOMERS": {
+    "TITLE": "العملاء",
+    "DESC": "مراقبة قاعدة العملاء، نشاط الطلبات، المخاطر، والدعم من لوحة واحدة عالية الكثافة",
+    "EXPORT": "تصدير التقرير",
+    "SEARCH_PLACEHOLDER": "ابحث بالاسم، البريد، الجوال، أو رقم العميل...",
+    "EMPTY_TITLE": "لا يوجد عملاء مطابقون",
+    "EMPTY_MESSAGE": "لم نعثر على عملاء بهذه المعايير. جرّب تعديل البحث أو الفلاتر.",
+    "PRESENCE": {
+      "ONLINE_NOW": "متصل الآن"
+    },
+    "PROFILE": {
+      "PREFERRED_CHANNEL_APP": "تطبيق العميل"
+    },
+    "KPI": {
+      "TOTAL_CUSTOMERS": "إجمالي العملاء",
+      "VIP": "عملاء VIP",
+      "BUSINESS": "حسابات الأعمال",
+      "HIGH_RISK": "مخاطر مرتفعة",
+      "ACTIVE_30D": "نشطون خلال 30 يوم",
+      "WATCHLIST": "قائمة المراقبة",
+      "ACTIVE_CUSTOMERS": "العملاء النشطون",
+      "NEW_CUSTOMERS": "العملاء الجدد",
+      "COMPLAINT_CUSTOMERS": "عملاء بشكاوى",
+      "REPEAT_REFUNDS": "استرجاعات متكررة"
+    },
+    "FILTERS": {
+      "ALL": "الكل",
+      "WATCHLIST_ONLY": "قائمة المراقبة فقط",
+      "CLEAR": "إعادة تعيين",
+      "ACTIVE_COUNT": "فلاتر نشطة",
+      "SEARCH_LABEL": "البحث عن عميل",
+      "CITY": "المدينة",
+      "STATUS": "الحالة",
+      "SPEND_RANGE": "نطاق الإنفاق",
+      "SPEND": "الإنفاق",
+      "APPLY": "تصفية",
+      "RESET": "إعادة ضبط",
+      "FILTER_CUSTOMERS": "تصفية العملاء",
+      "ADJUST_CRITERIA": "اضبط معايير البحث",
+      "HAS_ORDERS": "حالة الطلبات",
+      "WITH_ORDERS": "لديه طلبات",
+      "NO_ORDERS": "بدون طلبات",
+      "ACCOUNT_LOCKED": "قفل الحساب",
+      "LOCKED": "مقفل",
+      "UNLOCKED": "غير مقفل",
+      "MIN_SPENT": "الحد الأدنى للإنفاق",
+      "MAX_SPENT": "الحد الأقصى للإنفاق",
+      "UPTO": "حتى",
+      "SORT_BY": "الترتيب",
+      "SORT_OLDEST": "الأقدم أولاً",
+      "SORT_NAME_ASC": "الاسم (أ - ي)",
+      "SORT_NAME_DESC": "الاسم (ي - أ)",
+      "SORT_LAST_LOGIN": "آخر تسجيل دخول"
+    },
+    "TABLE": {
+      "CUSTOMER": "العميل",
+      "SEGMENT": "التقسيم",
+      "ACTIVITY": "النشاط",
+      "VALUE": "القيمة",
+      "RISK": "المخاطر",
+      "SUPPORT": "الدعم",
+      "STATUS": "الحالة",
+      "ACTIONS": "الإجراءات",
+      "ID": "المعرف",
+      "CITY": "المدينة",
+      "ORDERS": "الطلبات",
+      "LAST_ORDER": "آخر طلب",
+      "PROFILE_RISK": "المستوى / المخاطر"
+    },
+    "ACTIONS": {
+      "VIEW": "عرض المعاينة"
+    },
+    "BULK": {
+      "ADD_WATCHLIST": "إضافة للمراقبة",
+      "FLAG_REVIEW": "تعليم للمراجعة",
+      "EXPORT": "تصدير"
+    },
+    "SEGMENTS": {
+      "VIP": "VIP",
+      "BUSINESS": "أعمال",
+      "NEW": "جديد",
+      "WATCHLIST": "مراقبة",
+      "DORMANT": "خامل"
+    },
+    "STATUS": {
+      "ACTIVE": "نشط",
+      "LOW_ACTIVITY": "نشاط منخفض",
+      "RESTRICTED": "مقيد",
+      "DORMANT": "خامل"
+    },
+    "RISK_LEVEL": {
+      "LOW": "منخفض",
+      "MEDIUM": "متوسط",
+      "HIGH": "عالٍ",
+      "CRITICAL": "حرج"
+    },
+    "SUPPORT": {
+      "VIP_PRIORITY": "أولوية VIP",
+      "HIGH_REFUND": "استرجاعات مرتفعة",
+      "FRAUD_SIGNAL": "إشارة احتيال",
+      "NEW_CUSTOMER": "عميل جديد",
+      "RETENTION_NEEDED": "يحتاج استبقاء",
+      "COMPLIANCE_REVIEW": "مراجعة امتثال",
+      "DORMANT_ACCOUNT": "حساب خامل",
+      "NO_FLAGS": "لا توجد إشارات مرتفعة"
+    },
+    "DRAWER": {
+      "LIFETIME_VALUE": "القيمة العمرية",
+      "ORDERS": "الطلبات",
+      "LOYALTY_SCORE": "نقاط الولاء",
+      "ACTIVE_DAYS": "نشاط 30 يوم",
+      "PHONE": "الجوال",
+      "CITY": "المدينة",
+      "JOINED": "تاريخ الانضمام",
+      "PREFERRED_CHANNEL": "القناة المفضلة",
+      "BEHAVIOR": "السلوك الشرائي",
+      "TOTAL_SPENT": "إجمالي الإنفاق",
+      "AVG_BASKET": "متوسط السلة",
+      "LAST_ORDER": "آخر طلب",
+      "SUPPORT_LOAD": "الضغط الدعمي",
+      "REFUNDS_DISPUTES": "استرجاعات / نزاعات",
+      "WATCH_FLAGS": "مؤشرات المتابعة",
+      "NOTES": "ملاحظات الفريق"
+    },
+    "SPENDING": {
+      "ALL": "الكل",
+      "LT_1000": "أقل من 1,000 ر.س",
+      "BETWEEN_1000_5000": "1,000 - 5,000 ر.س",
+      "GT_5000": "أكثر من 5,000 ر.س"
+    },
+    "PAGINATION": {
+      "SUMMARY": "عرض {{start}} - {{end}} من أصل {{total}} عميل"
+    },
+    "SECTIONS": {
+      "KPI_TITLE": "ملخص العملاء",
+      "KPI_DESC": "مؤشرات مكثفة عن حجم قاعدة العملاء وجودة نشاطهم.",
+      "FILTERS_TITLE": "البحث والتصفية",
+      "FILTERS_DESC": "تصفية قائمة العملاء حسب المدينة والحالة ومستوى الإنفاق.",
+      "TABLE_TITLE": "قائمة العملاء",
+      "TABLE_DESC": "عرض تشغيلي مكثف مع وصول سريع للمعاينة.",
+      "OVERVIEW_TITLE": "الملف الأساسي",
+      "OVERVIEW_DESC": "بيانات العميل الأساسية وقناة التواصل.",
+      "BEHAVIOR_TITLE": "الإنفاق والسلوك",
+      "BEHAVIOR_DESC": "إشارات الإنفاق وآخر الطلبات وحمل الدعم.",
+      "FLAGS_TITLE": "المؤشرات والملاحظات",
+      "FLAGS_DESC": "إشارات المتابعة والملاحظات الداخلية للفريق."
+    },
+    "DETAIL": {
+      "PAGE_TITLE": "تفاصيل العميل",
+      "PAGE_SUBTITLE": "الملف الشخصي والسلوك والدعم والاسترجاعات وإجراءات الإدارة",
+      "EDIT_ACCOUNT": "تعديل الحساب",
+      "TABS": {
+        "OVERVIEW": "نظرة عامة",
+        "WORKFLOW": "مسار العميل"
+      },
+      "REGISTERED_AT": "تاريخ التسجيل",
+      "ACTION_VIEW_ORDERS": "عرض الطلبات",
+      "ACTION_VIEW_CASES": "عرض الشكاوى",
+      "ACTION_FLAG_REVIEW": "تعليم للمراجعة",
+      "ACTION_ESCALATE_REVIEW": "تصعيد المراجعة",
+      "ACTION_CLEAR_REVIEW": "إغلاق المراجعة",
+      "ACTION_SUSPEND_ACCOUNT": "تعليق الحساب",
+      "ACTION_REACTIVATE_ACCOUNT": "إعادة التفعيل",
+      "ACTION_ADD_NOTE": "إضافة ملاحظة",
+      "REVIEW_FLAG_TITLE": "العميل معلّم للمراجعة",
+      "REVIEW_FLAG_MESSAGE": "هذا الملف تحت متابعة تشغيلية حالياً ويحتاج مراجعة داخلية في الطلبات القادمة.",
+      "REVIEW_FLAG_ESCALATED_TITLE": "العميل مصعّد إلى مراجعة ثقة",
+      "REVIEW_FLAG_ESCALATED_MESSAGE": "الحساب داخل مراجعة أعمق لدى فريق الثقة والمخاطر ويجب إبقاء التعامل التشغيلي معه تحت قيود أوضح حتى إقفال الملاحظات.",
+      "RISK_LOW": "مؤشر مخاطر منخفض",
+      "RISK_MEDIUM": "مؤشر مخاطر متوسط",
+      "RISK_HIGH": "مؤشر مخاطر مرتفع",
+      "RISK_CRITICAL": "مؤشر مخاطر حرج",
+      "WORKFLOW": {
+        "TITLE": "مسار العميل",
+        "NEXT_STEP_TITLE": "الخطوة التالية",
+        "CURRENT_BLOCKERS": "المعوّقات الحالية",
+        "FOLLOW_UP_ALERTS": "تنبيهات المتابعة",
+        "NO_BLOCKERS": "لا توجد معوّقات تشغيلية صلبة مفتوحة على الحساب حاليًا.",
+        "NO_ALERTS": "لا توجد تنبيهات متابعة خارج المراقبة الروتينية.",
+        "TABLE": {
+          "SUMMARY_TITLE": "ملخص المسار",
+          "FIELD": "الحقل",
+          "VALUE": "القيمة",
+          "QUEUE": "المسار",
+          "OWNER": "الفريق المسؤول",
+          "SUMMARY": "الملخص",
+          "EXCEPTIONS_TITLE": "المعوّقات والتنبيهات",
+          "TYPE": "النوع",
+          "COUNT": "العدد",
+          "DETAILS": "التفاصيل",
+          "LIFECYCLE_TITLE": "مراحل المسار",
+          "STAGE": "المرحلة",
+          "NOTE": "ملاحظة تشغيلية",
+          "ACTIONS_TITLE": "الإجراءات المتاحة",
+          "ACTION": "الإجراء",
+          "DESCRIPTION": "الوصف",
+          "EXECUTE": "التنفيذ",
+          "RUN": "تنفيذ"
+        },
+        "STATE": {
+          "HEALTHY": "مستقر",
+          "MONITORING": "تحت المراقبة",
+          "RETENTION": "يحتاج استبقاء",
+          "UNDER_REVIEW": "قيد المراجعة",
+          "SUSPENDED": "معلّق"
+        },
+        "OWNERS": {
+          "SUCCESS": "نجاح العملاء",
+          "MONITORING": "مكتب صحة العميل",
+          "RETENTION": "فريق الاستبقاء",
+          "RISK": "فريق الثقة والمخاطر"
+        },
+        "QUEUES": {
+          "GROWTH": "مسار النمو",
+          "MONITORING": "مسار المراقبة",
+          "RETENTION": "مسار الاستبقاء",
+          "TRUST_REVIEW": "طابور مراجعة الثقة",
+          "SUSPENSION": "مكتب التعليق"
+        },
+        "SUMMARY": {
+          "HEALTHY": "الحساب مستقر وموثوق ويمكن تشغيله مع مراقبة روتينية فقط.",
+          "MONITORING": "الحساب ما زال قابلاً للتشغيل، لكن إشارات الثقة والدفع تحتاج متابعة أقرب على الطلبات القادمة.",
+          "RETENTION": "المخاطر التشغيلية تحت السيطرة، لكن منحنى النشاط يهبط ويحتاج لمسة استبقاء قبل أن يصبح الحساب خاملاً.",
+          "UNDER_REVIEW": "الملف تحت مراجعة ثقة ويجب إبقاء بعض الصلاحيات التشغيلية محدودة حتى تنتهي الحالة.",
+          "SUSPENDED": "الحساب معلّق مؤقتًا إلى أن تُغلق ملاحظات الثقة والدفع."
+        },
+        "NEXT_STEP": {
+          "HEALTHY": "استمر في المراقبة الروتينية ووجّه أي شكوى جديدة إلى الدعم دون تغيير صلاحيات الحساب.",
+          "MONITORING": "راقب الطلبات القادمة ومحاولات الدفع والاسترجاعات قبل التصعيد إلى تقييد أقوى.",
+          "RETENTION": "نفّذ خطوة استبقاء وتحقق هل هبوط النشاط تجاري فقط أم مرتبط بتجربة دعم غير مغلقة.",
+          "UNDER_REVIEW": "أغلق مراجعة الثقة وراجع آخر الحالات، ثم قرر إما إعادة الحساب للوضع الطبيعي أو تصعيده إلى تعليق.",
+          "SUSPENDED": "أغلق ملاحظات الثقة وراجع الاسترجاعات الأخيرة ثم أعد تفعيل الحساب مع مراقبة محكومة."
+        },
+        "BLOCKERS": {
+          "ACCOUNT_SUSPENDED": "الحساب معلّق ولا يمكن إرجاعه للتشغيل الطبيعي قبل إقفال المراجعة.",
+          "ESCALATED_REVIEW": "هناك مراجعة ثقة مصعّدة ما زالت تحتاج قرارًا صريحًا.",
+          "TRUST_BLOCK": "ضوابط الثقة الحالية تمنع الحساب من العودة إلى وضع تشغيلي طبيعي.",
+          "PAYMENT_BLOCK": "سلوك الدفع محجوب مؤقتًا حتى مراجعة الاسترجاعات والنزاعات.",
+          "RESTRICTED_OPERATIONS": "الحساب ما زال في وضع تشغيل مقيّد ولا يجب اعتباره مستقرًا بالكامل."
+        },
+        "ALERTS": {
+          "ACTIVITY_DROP": "النشاط هبط بشكل واضح وقد يفقد الحساب تفاعله دون لمسة استبقاء.",
+          "PAYMENT_RETRIES": "محاولات الدفع أو ضغط الاسترجاعات تحتاج متابعة على الطلبات القادمة.",
+          "NEW_CUSTOMER": "رحلة العميل الجديدة ما زالت تحتاج متابعة onboarding خفيفة.",
+          "VIP_ATTENTION": "عميل VIP مع هبوط نشاط حديث ويحتاج متابعة استباقية.",
+          "SUPPORT_PATTERN": "الحالات الدعمية الأخيرة توحي بضرورة متابعة الطلب القادم عن قرب."
+        },
+        "ACTIONS": {
+          "OPEN_ORDERS": {
+            "LABEL": "فتح الطلبات",
+            "HELPER": "راجع نمط الطلبات الأخير، الإلغاءات، ونتائج التنفيذ الحديثة."
+          },
+          "OPEN_SUPPORT": {
+            "LABEL": "فتح الدعم",
+            "HELPER": "راجع الشكاوى والاسترجاعات وآخر التفاعلات قبل اتخاذ قرار الثقة."
+          },
+          "FLAG_REVIEW": {
+            "LABEL": "تعليم للمراجعة",
+            "HELPER": "يضع الحساب تحت متابعة تشغيلية بدون تقييد كامل."
+          },
+          "ESCALATE_REVIEW": {
+            "LABEL": "تصعيد المراجعة",
+            "HELPER": "ينقل الحساب إلى مراجعة ثقة أعمق مع ضوابط أشد."
+          },
+          "CLEAR_REVIEW": {
+            "LABEL": "إغلاق المراجعة",
+            "HELPER": "يغلق تعليم المراجعة ويعيد الحساب إلى المراقبة الروتينية."
+          },
+          "SUSPEND_ACCOUNT": {
+            "LABEL": "تعليق الحساب",
+            "HELPER": "يطبق إيقافًا مؤقتًا كاملًا حتى تُحل معوقات الثقة والدفع."
+          },
+          "REACTIVATE_ACCOUNT": {
+            "LABEL": "إعادة التفعيل",
+            "HELPER": "يعيد الحساب بعد إغلاق الملاحظات مع مراقبة محكومة."
+          }
+        }
+      },
+      "LIFECYCLE": {
+        "ACCOUNT": {
+          "LABEL": "حالة الحساب",
+          "VALUE": {
+            "ACTIVE": "نشط",
+            "UNDER_REVIEW": "قيد المراجعة",
+            "RESTRICTED": "مقيّد",
+            "SUSPENDED": "معلّق",
+            "DORMANT": "خامل"
+          },
+          "HINT": {
+            "SUCCESS": "مفتوح تشغيليًا وجاهز لتدفق الطلبات المعتاد.",
+            "WARNING": "يعمل تحت قيود مؤقتة حتى إغلاق المراجعة.",
+            "DANGER": "إيقاف صارم مطبق حتى يرفع الفريق المالك التعليق.",
+            "NEUTRAL": "لا يوجد نشاط حديث ويجب التعامل معه كحساب غير نشط."
+          }
+        },
+        "TRUST": {
+          "LABEL": "ضوابط الثقة",
+          "VALUE": {
+            "CLEAR": "سليم",
+            "WATCH": "مراقبة",
+            "BLOCKED": "محجوب"
+          },
+          "HINT": {
+            "SUCCESS": "لا توجد إشارة ثقة مرتفعة نشطة على هذا الحساب.",
+            "WARNING": "هناك متابعة وقائية خفيفة على الطلبات القادمة.",
+            "DANGER": "ضوابط الثقة تمنع الحساب من الوضع الطبيعي."
+          }
+        },
+        "PAYMENTS": {
+          "LABEL": "المدفوعات",
+          "VALUE": {
+            "HEALTHY": "سليمة",
+            "MONITORING": "تحت المراقبة",
+            "BLOCKED": "محجوبة"
+          },
+          "HINT": {
+            "SUCCESS": "الاسترجاعات وسلوك الدفع ضمن النطاق الطبيعي.",
+            "WARNING": "هناك ضغط استرجاعات يحتاج متابعة في العمليات القادمة.",
+            "DANGER": "السلوك المالي يحتاج حجبًا مؤقتًا حتى اكتمال المراجعة."
+          }
+        },
+        "ENGAGEMENT": {
+          "LABEL": "التفاعل",
+          "VALUE": {
+            "NEW": "جديد",
+            "GROWING": "ينمو",
+            "LOYAL": "وفي",
+            "AT_RISK": "مهدد",
+            "DORMANT": "خامل"
+          },
+          "HINT": {
+            "SUCCESS": "سلوك متكرر قوي ومؤشرات استبقاء ممتازة.",
+            "INFO": "منحنى نمو جيد وقابل للتطوير.",
+            "WARNING": "مستوى النشاط هبط ويحتاج خطوة استبقاء سريعة.",
+            "NEUTRAL": "الحساب بارد حاليًا ويحتاج خطة إعادة تنشيط."
+          }
+        }
+      },
+      "SECTIONS": {
+        "PROFILE": "ملف العميل",
+        "BEHAVIOR_RISK": "السلوك والمخاطر",
+        "RECENT_ORDERS": "آخر الطلبات",
+        "REFUNDS_DISPUTES": "الاسترجاعات والنزاعات",
+        "SUPPORT_CASES": "الدعم والشكاوى",
+        "INTERNAL_NOTES": "إجراءات الإدارة والملاحظات الداخلية"
+      },
+      "METRICS": {
+        "TOTAL_ORDERS": "إجمالي الطلبات",
+        "TOTAL_SPENT": "إجمالي الإنفاق",
+        "LAST_ORDER": "آخر طلب",
+        "COMPLAINTS": "عدد الشكاوى",
+        "REFUNDS": "عدد الاسترجاعات",
+        "RISK_SCORE": "مؤشر المخاطر"
+      },
+      "PROFILE_FIELDS": {
+        "FULL_NAME": "الاسم الكامل",
+        "PHONE": "رقم الجوال",
+        "EMAIL": "البريد الإلكتروني",
+        "CITY": "المدينة",
+        "LANGUAGE": "اللغة المفضلة",
+        "LAST_SEEN": "آخر ظهور",
+        "VERIFIED_ACCOUNT": "حساب موثق",
+        "UNVERIFIED_ACCOUNT": "يحتاج توثيق",
+        "LANGUAGE_VALUES": {
+          "ARABIC": "العربية",
+          "ENGLISH": "الإنجليزية"
+        },
+        "LAST_SEEN_VALUES": {
+          "ACTIVE": "نشط خلال الفترة الأخيرة",
+          "LOW_ACTIVITY": "نشاط منخفض مؤخرًا",
+          "RESTRICTED": "الوصول مقيّد مؤقتًا",
+          "DORMANT": "لا يوجد نشاط حديث"
+        }
+      },
+      "BEHAVIOR_FIELDS": {
+        "REFUND_RISK": "مخاطر تكرار الاسترجاع",
+        "SUSPICIOUS_LOGINS": "محاولات دخول مشبوهة",
+        "PAYMENT_FAILURES": "فشل الدفع المتكرر",
+        "COMPLAINT_FREQUENCY": "وتيرة تقديم الشكاوى",
+        "ANALYSIS_SUMMARY": "ملخص التحليل",
+        "SUSPICIOUS_LOGIN_VALUES": {
+          "NONE": "لا توجد إشارات مقلقة",
+          "TWO_RECENT": "محاولتان مشبوهتان مؤخرًا",
+          "FIVE_RECENT": "خمس محاولات أو أكثر مؤخرًا"
+        },
+        "COMPLAINT_FREQUENCY_VALUES": {
+          "LOW": "منخفضة",
+          "MEDIUM": "متوسطة",
+          "HIGH": "مرتفعة"
+        }
+      },
+      "ORDERS_TABLE": {
+        "ORDER_ID": "رقم الطلب",
+        "DATE": "التاريخ",
+        "AMOUNT": "القيمة",
+        "STATUS": "الحالة",
+        "VIEW_ALL": "عرض كل الطلبات"
+      },
+      "ORDER_STATUS": {
+        "DELIVERED": "تم التسليم",
+        "REFUNDED": "مسترجع",
+        "PROCESSING": "قيد التنفيذ"
+      },
+      "REFUNDS": {
+        "TOTAL_CASES": "حالات الاسترجاع",
+        "CASES_TOTAL": "إجمالاً",
+        "CLOSED": "مغلق",
+        "IN_PROGRESS": "قيد التنفيذ",
+        "TOTAL_AMOUNT": "إجمالي مبالغ الاسترجاع",
+        "VIEW_ALL": "عرض الاسترجاعات"
+      },
+      "SUPPORT": {
+        "COMPLAINTS_RECORDED": "الشكاوى المسجلة",
+        "RESOLVED": "تم الحل",
+        "NO_CASES": "لا توجد حالات",
+        "LAST_CONTACT": "آخر تواصل",
+        "OPEN_TICKET": "فتح تذكرة دعم",
+        "LAST_CONTACT_VALUES": {
+          "RECENT": "تم التواصل مؤخرًا",
+          "STALE": "آخر تواصل قديم نسبيًا",
+          "NONE": "لا يوجد تواصل حديث"
+        }
+      },
+      "ADMIN": {
+        "SUSPEND": "تعليق مؤقت",
+        "ESCALATE": "تصعيد للمراجعة",
+        "QUICK_NOTE_PLACEHOLDER": "إضافة ملاحظة داخلية سريعة...",
+        "SAVE": "حفظ",
+        "AUTHORS": {
+          "ADMIN_USER": "مسؤول النظام",
+          "OPERATIONS_DESK": "مكتب العمليات",
+          "RISK_TRUST_OPS": "عمليات الثقة والمخاطر",
+          "RISK_COMMITTEE": "لجنة المخاطر"
+        },
+        "NOTES": {
+          "FLAG_FOR_REVIEW": "تم تعليم الحساب للمراجعة التشغيلية ومتابعة الإشارات المرتبطة به.",
+          "CLEAR_REVIEW": "تم إغلاق تعليم المراجعة وإعادة الحساب إلى المتابعة الروتينية.",
+          "ESCALATE_REVIEW": "تم تصعيد الحالة إلى مراجعة ثقة أعمق مع ضوابط إضافية على الحساب.",
+          "SUSPEND_ACCOUNT": "تم تعليق الحساب مؤقتًا إلى حين إغلاق ملاحظات الثقة والدفع.",
+          "REACTIVATE_ACCOUNT": "تمت إعادة تفعيل الحساب مع استمرار المراقبة المحكومة بعد المراجعة."
+        }
+      },
+      "OPEN_ACCESS_PROFILE": "فتح ملف الوصول"
+    }
+  },
+  "DRIVERS": {
+    "TITLE": "السائقين",
+    "DESC": "إدارة السائقين وتتبع مهامهم وأدائهم",
+    "HEADER": {
+      "ADD_DRIVER": "إضافة سائق",
+      "EXPORT": "تصدير",
+      "ADJUST": "ضبط"
+    },
+    "KPI": {
+      "ONLINE_NOW": "المتصلون الآن",
+      "ON_MISSION": "في مهمة نشطة",
+      "UNDER_REVIEW": "قيد المراجعة",
+      "TOTAL_DRIVERS": "إجمالي السائقين",
+      "LIVE_NOW": "المتصلون الآن",
+      "ACTIVE_TASKS": "مهام نشطة",
+      "UNVERIFIED": "غير موثقين",
+      "SUSPENDED": "موقوفون",
+      "LOW_PERFORMANCE": "أداء منخفض"
+    },
+    "FILTERS": {
+      "SEARCH_LABEL": "الاسم أو المعرّف",
+      "SEARCH_PLACEHOLDER": "ابحث باسم السائق أو رقم الجوال أو المعرّف...",
+      "TITLE": "تصفية السائقين",
+      "ADJUST_CRITERIA": "اضبط معايير البحث",
+      "ACTIVE": "الفلاتر النشطة",
+      "STATUS": "حالة الاتصال",
+      "APPLY": "تطبيق",
+      "RESET": "إعادة ضبط",
+      "ALL": "الكل",
+      "CITY": "المدينة",
+      "VERIFICATION_STATUS": "حالة التوثيق",
+      "VEHICLE_TYPE": "نوع المركبة",
+      "PERFORMANCE": "الأداء"
+    },
+    "TABLE": {
+      "SUMMARY": "عرض {{start}} - {{end}} من {{total}} سائق",
+      "STATUS": "الحالة",
+      "PERFORMANCE": "الأداء",
+      "WALLET": "المحفظة",
+      "ISSUES": "المشكلات",
+      "NO_ACTIVITY": "لا يوجد نشاط",
+      "ACTIVITY_COUNT": "{{count}} نشاط",
+      "ACTIVE_DELIVERIES": "{{count}} نشط",
+      "COMPLETED_ORDERS": "{{count}} مكتمل",
+      "DRIVER": "السائق",
+      "DRIVER_ID": "معرف السائق",
+      "CITY": "المدينة",
+      "VERIFICATION_STATUS": "حالة التوثيق",
+      "TASKS": "المهام",
+      "ACCEPTANCE_RATE": "معدل القبول",
+      "COLLECTION_PAYMENT": "التحصيل/الدفع",
+      "LAST_SEEN": "آخر ظهور",
+      "ACTIONS": "إجراءات"
+    },
+    "TASK_SUBTITLES": {
+      "LAST_DELIVERY_10_MIN": "آخر تسليم قبل 10 دقائق",
+      "DELIVERY_IN_PROGRESS": "توصيل قيد التنفيذ",
+      "EASTERN_REGION_AVAILABLE": "متاح في المنطقة الشرقية",
+      "LAST_SEEN_6_HOURS": "آخر ظهور منذ 6 ساعات",
+      "CARRYING_3_ORDERS": "يشحن 3 طلبات حالياً",
+      "EXCELLENT_SERVICE_LEVEL": "مستوى خدمة ممتاز",
+      "DOCUMENTS_UNDER_REVIEW": "مستندات قيد المراجعة",
+      "SOUTH_DELIVERY_ZONE": "منطقة التسليم الجنوبية",
+      "READY_FOR_NEXT_PICKUP": "جاهز للاستلام القادم",
+      "SUSPENDED_PENDING_SETTLEMENT": "إيقاف لحين التسوية",
+      "BEST_ACCEPTANCE_RATE": "أفضل معدل قبول في المنطقة"
+    },
+    "ACTIONS": {
+      "ADVANCED_FILTERS": "فلاتر متقدمة",
+      "EXPORT_CSV": "تصدير CSV",
+      "VIEW_PROFILE": "عرض الملف"
+    },
+    "VERIFICATION": {
+      "VERIFIED": "موثق",
+      "UNVERIFIED": "غير موثق",
+      "SUSPENDED": "موقوف مؤقتا",
+      "UNDER_REVIEW": "قيد المراجعة"
+    },
+    "STATUS": {
+      "ONLINE": "متصل",
+      "OFFLINE": "غير متصل",
+      "ONMISSION": "في مهمة",
+      "SUSPENDED": "موقوف",
+      "BANNED": "محظور"
+    },
+    "PERFORMANCE": {
+      "LOW": "ضعيف",
+      "NEEDS_IMPROVEMENT": "يحتاج تحسين",
+      "BAD": "أداء منخفض",
+      "POOR": "يحتاج تحسين",
+      "GOOD": "أداء جيد",
+      "EXCELLENT": "أداء ممتاز"
+    },
+    "VEHICLES": {
+      "CAR": "سيارة",
+      "BIKE": "دراجة",
+      "SCOOTER": "سكوتر",
+      "VAN": "فان",
+      "BICYCLE": "دراجة هوائية",
+      "TRUCK": "شاحنة"
+    },
+    "ISSUES": {
+      "CLEAR": "سليم",
+      "WARNING": "تنبيه",
+      "PAYMENT": "تحصيل",
+      "LEGAL": "بلاغات"
+    },
+    "ALERTS": {
+      "HIGH_RISK": "مخاطر عالية",
+      "ACTIVE_REPORTS": "بلاغات نشطة"
+    },
+    "LOAD_ERROR": "تعذر تحميل قائمة السائقين.",
+    "EMPTY_TITLE": "لا يوجد سائقون",
+    "EMPTY_MESSAGE": "لم يتم العثور على نتائج مطابقة للفلاتر الحالية.",
+    "TABS": {
+      "OVERVIEW": "ملخص",
+      "OPERATIONS": "التشغيل",
+      "PERFORMANCE": "الأداء",
+      "SUPPORT": "الدعم",
+      "COMPLIANCE": "الامتثال",
+      "FINANCE": "المالية",
+      "VERIFICATION": "التوثيق"
+    },
+    "DETAIL": {
+      "PAGE_TITLE": "الملف التشغيلي الشامل للسائق",
+      "PAGE_SUBTITLE": "رحلة موحدة للسائق من التوثيق وحتى التشغيل والدعم والامتثال والتحصيل",
+      "MESSAGES": {
+        "INVALID_DRIVER_ID": "معرف السائق غير صالح.",
+        "DRIVER_NOT_FOUND": "لم يتم العثور على السائق.",
+        "LOAD_DETAILS_FAILED": "تعذر تحميل تفاصيل السائق.",
+        "WRITE_NOTE_FIRST": "اكتب ملاحظة قبل الحفظ.",
+        "NOTE_ADDED": "تمت إضافة الملاحظة بنجاح.",
+        "DRIVER_REACTIVATED": "تمت إعادة تفعيل السائق.",
+        "DRIVER_RESTRICTIONS_CLEARED": "تم فك كل الحظر عن السائق بنجاح.",
+        "DRIVER_SUSPENDED": "تم إيقاف السائق.",
+        "DRIVER_BANNED": "تم حظر السائق بنجاح.",
+        "DOCUMENT_APPROVED": "تمت الموافقة على المستند بنجاح.",
+        "DOCUMENT_REJECTED": "تم رفض المستند بنجاح.",
+        "ACTION_FAILED": "تعذر تنفيذ الإجراء. حاول مرة أخرى.",
+        "APPROVAL_BLOCKED": "لا يمكن اعتماد المندوب نهائيًا قبل اكتمال كل المستندات والمتطلبات.",
+        "APPROVAL_BLOCKED_DOCUMENTS": "المستندات غير الجاهزة:",
+        "APPROVAL_BLOCKED_REQUIREMENTS": "المتطلبات غير المكتملة:",
+        "OPENED_RELATED_SECTION": "تم فتح القسم المرتبط. هذا الإجراء لا يملك نقطة API تنفيذية مباشرة حاليًا.",
+        "VERIFICATION_APPROVED": "تم اعتماد توثيق السائق.",
+        "DOCUMENT_REQUEST_SUBMITTED": "تم طلب استكمال المستندات.",
+        "VERIFICATION_REJECTED": "تم رفض توثيق السائق.",
+        "TEST_NOTIFICATION_PUSH_SENT": "تم إرسال إشعار الاختبار إلى صندوق الوارد والدفع الفوري للمندوب.",
+        "TEST_NOTIFICATION_INBOX_ONLY": "تم حفظ إشعار الاختبار في صندوق الوارد فقط، وتم تخطي الدفع أو لم يكن متاحًا.",
+        "TEST_NOTIFICATION_FAILED": "تعذر إرسال إشعار الاختبار للمندوب.",
+        "TEST_NOTIFICATION_UNCONFIRMED": "تم تنفيذ الطلب لكن لم يتم تأكيد وصول الـ push.",
+        "LOCATION_UPDATES_BLOCKED": "تم إيقاف تحديثات الموقع لهذا المندوب.",
+        "LOCATION_UPDATES_UNBLOCKED": "تم فك حظر تحديثات الموقع لهذا المندوب.",
+        "LOGIN_LOCKED": "تم قفل تسجيل دخول المندوب.",
+        "LOGIN_UNLOCKED": "تم فك قفل تسجيل دخول المندوب."
+      },
+      "TEST_NOTIFICATION": {
+        "EYEBROW": "مختبر إشعارات المندوب",
+        "TITLE": "اختبر إشعار المندوب من لوحة الأدمن",
+        "DESCRIPTION": "استخدم هذه البطاقة للتحقق من صندوق الوارد داخل تطبيق المندوب، ووصول الـ push، وبيانات الـ deep link بدون مغادرة ملف السائق.",
+        "HELPER": "يمكنك ترك الحقول فارغة لاستخدام القيم الافتراضية من الباك إند لاختبار تطبيق المندوب.",
+        "QUICK_HELPER": "الزر الرئيسي يرسل إشعار موبايل تجريبي جاهز فورًا، تمامًا مثل تجربة العميل والتاجر.",
+        "TOAST_TITLE": "إشعارات المندوب",
+        "CTA": "إرسال إشعار تجريبي",
+        "QUICK_CTA": "تجربة إشعار الموبايل",
+        "ADVANCED_CTA": "خيارات متقدمة",
+        "SENDING": "جارٍ إرسال الإشعار التجريبي...",
+        "FOOTNOTE": "الطلب يذهب إلى endpoint اختبار السائق في الأدمن ويستهدف تطبيق OneSignal الخاص بالمندوب.",
+        "FIELDS": {
+          "TITLE": "عنوان إنجليزي بديل",
+          "TYPE": "نوع الإشعار",
+          "BODY": "نص إنجليزي بديل",
+          "TARGET_URL": "مسار الفتح",
+          "SEND_PUSH": "أرسل push أيضًا لتطبيق المندوب"
+        },
+        "PLACEHOLDERS": {
+          "TITLE": "Driver test notification",
+          "TYPE": "driver_test",
+          "BODY": "This is a test push for the driver app.",
+          "TARGET_URL": "/notifications"
+        }
+      },
+      "BTN_VERIFY": "التوثيق",
+      "BTN_OPERATIONS": "التشغيل",
+      "BTN_REACTIVATE": "إعادة تفعيل",
+      "BTN_SUSPEND": "تعليق",
+      "TRUST_SCORE": "نسبة الثقة",
+      "AVAILABLE_BALANCE": "الرصيد المتاح",
+      "CURRENT_REVIEWER": "المراجع الحالي",
+      "OPERATIONAL_STATUS": "الحالة التشغيلية",
+      "LIVE_MISSION": "المهمة الحالية",
+      "NEXT_STEP": "الخطوة التالية",
+      "CURRENT_BLOCKERS": "العوائق الحالية",
+      "FOLLOW_UP_ALERTS": "تنبيهات المتابعة",
+      "NO_BLOCKERS": "لا توجد عوائق حرجة حالياً، ويمكن إدارة السائق من طابور التشغيل المعتاد.",
+      "NO_ALERTS": "لا توجد تنبيهات متابعة مفتوحة خارج المراقبة الروتينية.",
+      "KPI": {
+        "ACTIVE_TASKS": "المهام النشطة",
+        "OPEN_TICKETS": "تذاكر الدعم المفتوحة",
+        "COMPLIANCE_CASES": "حالات الامتثال",
+        "DUE_AMOUNT": "مستحقات حالية",
+        "VERIFICATION_PROGRESS": "تقدم التوثيق",
+        "ROUTE_SCORE": "Route Score",
+        "BALANCE": "الرصيد المتاح",
+        "ACCEPTANCE_RATE": "معدل القبول",
+        "CITY": "المدينة",
+        "TRUST_SCORE": "مؤشر الثقة"
+      },
+      "PROFILE": {
+        "SECTION_TITLE": "الهوية الأساسية",
+        "PHONE": "رقم الجوال",
+        "EMAIL": "البريد الإلكتروني",
+        "CITY": "المدينة",
+        "ZONE": "المنطقة الحالية",
+        "VEHICLE": "المركبة",
+        "PLATE": "اللوحة"
+      },
+      "ACCOUNT": {
+        "SECTION_TITLE": "حوكمة الحساب",
+        "JOIN_DATE": "تاريخ التسجيل",
+        "REVIEWER": "المراجع الحالي",
+        "LAST_SUPPORT_UPDATE": "آخر تحديث دعم",
+        "NEXT_PAYOUT": "موعد الصرف القادم",
+        "CURRENT_RECOMMENDATION": "التوصية الحالية"
+      },
+      "LINKED_PATHS": {
+        "SECTION_TITLE": "المسارات المرتبطة",
+        "OPERATIONS_TITLE": "التشغيل والمناطق",
+        "OPERATIONS_SUB": "تحميل المنطقة الحالي",
+        "SUPPORT_TITLE": "الدعم والملاحظات",
+        "SUPPORT_SUB": "{{open}} تذكرة مفتوحة و{{pending}} متابعات معلقة",
+        "FINANCE_TITLE": "المالية والتحصيل",
+        "FINANCE_SUB": "المستحق الحالي"
+      },
+      "OPERATIONS": {
+        "MAP_SECTION": "مناطق السائقين والمهام",
+        "MAP_ALT": "معاينة منطقة السائق",
+        "TELEMETRY_DESC": "الموقع المباشر والنطاق وسياق المهمة الحالية.",
+        "METRICS_TITLE": "مؤشرات التشغيل",
+        "LIVE_BADGE": "مباشر",
+        "DRIVER_LOCATION": "موقع السائق",
+        "ZONE_CAPACITY": "السعة الحالية",
+        "OCCUPANCY_RATE": "معدل الإشغال",
+        "AVG_DELIVERY": "متوسط التسليم",
+        "ZONE_STATUS": "حالة النطاق",
+        "ZONE_SUMMARY": "ملخص المنطقة",
+        "ZONE_OCCUPANCY": "إشغال المنطقة",
+        "ACTIVE_DRIVERS": "السائقون النشطون بالنطاق",
+        "ASSIGNMENT_RULES": "قواعد التعيين",
+        "TASKS_SECTION": "المهام النشطة والتعيينات",
+        "TABLE_TASK_ID": "رقم المهمة",
+        "TABLE_VENDOR": "التاجر",
+        "TABLE_ZONE": "المنطقة",
+        "TABLE_STATUS": "الحالة",
+        "TABLE_ASSIGNED_AT": "وقت التعيين",
+        "TABLE_DURATION": "المدة",
+        "COMMITMENT_ACCESS": {
+          "KICKER": "حظر العروض والإلغاءات",
+          "BLOCKED_TITLE": "محظور مؤقتًا",
+          "ACTIVE_TITLE": "العروض مسموحة",
+          "BLOCKED_DESC": "السائق وصل لحد الرفض أو إلغاء/فشل التسليم اليومي. الحظر يُفك تلقائيًا غدًا، أو يمكنك فكه الآن بعد المراجعة.",
+          "ACTIVE_DESC": "السائق يمكنه استقبال العروض. تابع الرفض، انتهاء المهلة، وفشل التسليم.",
+          "REJECTION_METRIC": "رفض اليوم / الأسبوع",
+          "CLEAR_ACTION": "فك الحظر"
+        },
+        "LOCATION_ACCESS": {
+          "TITLE": "التحكم في التتبع الموقعي",
+          "STATUS_BLOCKED": "تحديثات الموقع متوقفة إداريًا",
+          "STATUS_ACTIVE": "تحديثات الموقع فعالة الآن",
+          "DESC_BLOCKED_WITH_REASON_AND_TIME": "تم إيقاف التتبع بتاريخ {{blockedAt}} بسبب: {{reason}}",
+          "DESC_BLOCKED_WITH_REASON": "تم إيقاف التتبع بسبب: {{reason}}",
+          "DESC_BLOCKED_WITH_TIME": "تم إيقاف التتبع بتاريخ {{blockedAt}}.",
+          "DESC_BLOCKED": "المندوب لن يتمكن من إرسال أي تحديثات GPS جديدة حتى يتم فك الحظر.",
+          "DESC_LAST_LOCATION": "آخر تحديث موقعي: {{lastLocation}}",
+          "DESC_NO_LOCATION": "لا يوجد Ping حديث محفوظ لهذا المندوب حتى الآن.",
+          "ACTION_UNBLOCK": "فك الحظر الموقعي",
+          "ACTION_BLOCK": "إيقاف تحديثات الموقع"
+        },
+        "TABLE_ZONE_MOBILE": "المنطقة",
+        "NO_TASKS": "لا توجد مهام",
+        "NO_TASKS_MSG": "لا توجد مهام نشطة لهذا السائق حالياً.",
+        "LIVE_LOCATION": "موقع GPS مباشر",
+        "OPEN_MAPS": "فتح في الخرائط",
+        "ACTIVE_MISSION": "المهمة الحالية",
+        "STABILITY": "استقرار التشغيل",
+        "NO_TASKS_TITLE": "لا توجد تعيينات من الباك إند",
+        "NO_TASKS_DESC": "لا يحتوي رد تفاصيل المندوب على مهام نشطة أو حديثة لهذا السائق.",
+        "BACKEND": {
+          "CHECKLIST": {
+            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
+            "VEHICLE_INFO": "بيانات المركبة مكتملة",
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
+            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
+            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
+            "ZONE_SELECTION": "تم اختيار منطقة التشغيل الأساسية"
+          },
+          "CHECKLIST_NOTES": {
+            "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
+            "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية ناقصة خاصة بالمركبة.",
+            "MISSING_DOCUMENT_NOTE": "يوجد مستند مطلوب مفقود أو ما زال تحت المراجعة.",
+            "MISSING_ZONE_SELECTION_NOTE": "ما زال اختيار منطقة التشغيل الأساسية مطلوبًا."
+          },
+          "REJECTION_REASONS": {
+            "MISSING_PERSONAL_INFO": "البيانات الشخصية ناقصة",
+            "MISSING_VEHICLE_INFO": "بيانات المركبة ناقصة",
+            "MISSING_DOCUMENTS": "المستندات المطلوبة غير مكتملة",
+            "MISSING_ZONE_SELECTION": "لم يتم اختيار منطقة التشغيل الأساسية"
+          }
+        },
+        "DYNAMIC": {
+          "STATUS": {
+            "IN_PROGRESS": "قيد التنفيذ",
+            "PREPARING": "قيد التجهيز",
+            "WAITING_DRIVER": "بانتظار سائق",
+            "COMPLETED": "مكتمل",
+            "FAILED": "فشل المهمة"
+          },
+          "STABILITY": {
+            "HIGH_LOAD": "ضغط مرتفع",
+            "STABLE": "مستقر"
+          },
+          "RULES": {
+            "MAX_TASKS": "الحد الأقصى للمهام: 8 مهام لكل سائق",
+            "ZONE_RADIUS": "تغطية نصف قطر 5 كم من مركز المنطقة",
+            "AUTO_REDISTRIBUTION": "إعادة التوزيع تلقائيًا عند تجاوز SLA"
+          },
+          "TABLE_TITLE": "لقطة التعيينات",
+          "TABLE_DESC": "مهام مباشرة وتعيينات تشغيلية حديثة من الباك إند.",
+          "COLUMNS": {
+            "ID": "التعيين",
+            "VENDOR": "التاجر",
+            "ZONE": "المنطقة",
+            "STATUS": "الحالة",
+            "ASSIGNED_AT": "وقت التعيين",
+            "DURATION": "المدة"
+          }
+        },
+        "MAP_UNAVAILABLE": "لا توجد معاينة خريطة مباشرة متاحة لهذا السائق.",
+        "STATIC": {
+          "ZONE_TITLE": "المنطقة الحالية",
+          "CAPACITY": "السعة",
+          "ACTIVE_DRIVERS": "السائقون النشطون",
+          "AVG_DELIVERY": "متوسط التوصيل"
+        }
+      },
+      "PERFORMANCE": {
+        "NO_METRICS_TITLE": "لا توجد مؤشرات أداء بعد",
+        "NO_METRICS_DESC": "تعرض الصفحة فقط المؤشرات المحسوبة من الباك إند، بدون رسوم أو أرقام مصطنعة.",
+        "NO_BENCHMARKS": "لا توجد مقارنات مرجعية من الباك إند لهذا السائق بعد.",
+        "NO_INSIGHTS": "لا توجد رؤى تشغيلية من الباك إند لهذا السائق بعد.",
+        "TREND_SECTION": "اتجاه الأداء عبر الزمن",
+        "BENCHMARK_SECTION": "مقارنة المنطقة والأسطول",
+        "COMPARISON_SECTION": "مقارنة المنطقة والأسطول",
+        "REGION_AVG": "متوسط المنطقة",
+        "REGION_AVERAGE": "متوسط المنطقة",
+        "AVG_LABEL": "المتوسط",
+        "FLEET_AVG": "متوسط الأسطول",
+        "DYNAMIC": {
+          "METRICS": {
+            "ACCEPTANCE": {
+              "TITLE": "معدل القبول",
+              "HELPER": "استجابة السائق للعروض"
+            },
+            "COMPLETION": {
+              "TITLE": "معدل الإكمال",
+              "HELPER": "نسبة الرحلات المكتملة"
+            },
+            "PICKUP": {
+              "TITLE": "زمن الاستلام",
+              "HELPER": "متوسط سرعة الوصول للاستلام"
+            },
+            "DELIVERY": {
+              "TITLE": "زمن التوصيل",
+              "HELPER": "متوسط مدة الرحلة"
+            },
+            "RATING": {
+              "TITLE": "تقييم العملاء",
+              "HELPER": "التقييم خلال آخر 30 يومًا"
+            },
+            "ROUTE_SCORE": {
+              "TITLE": "نقاط المسار",
+              "HELPER": "كفاءة المسار مقارنة بالمنطقة"
+            }
+          },
+          "BENCHMARKS": {
+            "OPERATIONAL_PERFORMANCE": {
+              "LABEL": "الأداء التشغيلي",
+              "INSIGHT": "يتفوق على متوسط المنطقة في الفترات الصباحية."
+            },
+            "DELIVERY_SPEED": {
+              "LABEL": "سرعة التوصيل",
+              "INSIGHT": "الهبوط يظهر بشكل أكبر خلال الذروة المسائية."
+            },
+            "CUSTOMER_SATISFACTION": {
+              "LABEL": "رضا العملاء",
+              "INSIGHT": "النتائج الأفضل مرتبطة بتواصل واضح مع العميل."
+            }
+          },
+          "INSIGHTS": {
+            "STRENGTHS": {
+              "TITLE": "نقاط القوة",
+              "ITEM_1": "التزام واضح بمواعيد الاستلام في الفترات الصباحية.",
+              "ITEM_2": "رضا جيد من العملاء المتكررين.",
+              "ITEM_3": "مرونة جيدة في التعامل مع ضغط المناطق."
+            },
+            "FOLLOW_UP": {
+              "TITLE": "يحتاج متابعة",
+              "LOW": {
+                "ITEM_1": "ينخفض القبول في نهاية اليوم.",
+                "ITEM_2": "تظهر تأخيرات متكررة في آخر الميل.",
+                "ITEM_3": "الاستجابة تصبح أقل ثباتًا تحت ضغط الطلبات."
+              },
+              "DEFAULT": {
+                "ITEM_1": "هناك مساحة لتحسين توازن المسارات وقت الذروة.",
+                "ITEM_2": "بعض الرحلات تتجاوز الهدف في آخر الميل.",
+                "ITEM_3": "الموازنة بين الاستلام والتسليم تحتاج ضبطًا أدق."
+              }
+            },
+            "RISK": {
+              "TITLE": "تنبيهات المخاطر",
+              "LEGAL": {
+                "ITEM_1": "يوجد بلاغ تشغيلي مفتوح يحتاج مستندات داعمة.",
+                "ITEM_2": "تجنب زيادة الحمل قبل إغلاق الحالة نهائيًا."
+              },
+              "DEFAULT": {
+                "ITEM_1": "لا توجد مخاطر حرجة حاليًا، فقط متابعات تشغيلية خفيفة."
+              }
+            },
+            "ACTIONS": {
+              "TITLE": "إجراءات مقترحة",
+              "ITEM_1": "أعد توزيع جزء من المسار إلى مناطق أقل ازدحامًا وقت الذروة.",
+              "ITEM_2": "نفّذ جلسة متابعة قصيرة على SLA وخدمة العميل.",
+              "ITEM_3": "راجع خطة التحصيل والالتزامات الأسبوعية."
+            }
+          }
+        },
+        "STATIC": {
+          "BENCHMARKS_TITLE": "المقارنات المرجعية",
+          "BENCHMARKS_DESC": "مقارنة السائق بمتوسطات التشغيل في المنطقة.",
+          "INSIGHTS_TITLE": "رؤى تشغيلية",
+          "INSIGHTS_DESC": "إشارات من الباك إند توضح نقاط القوة والمخاطر والخطوات التالية."
+        },
+        "BACKEND": {
+          "METRICS": {
+            "COMPLETED_TASKS": {
+              "TITLE": "المهام المكتملة",
+              "HELPER": "الطلبات المنفذة والمسجلة في السجل التشغيلي"
+            },
+            "COMMITMENT_SCORE": {
+              "TITLE": "نقاط الالتزام",
+              "HELPER": "مستوى التزام السائق بالعروض والاستجابة خلال نافذة المتابعة"
+            }
+          },
+          "INSIGHTS": {
+            "STRONG_ACCEPTANCE_RATE": "معدل القبول أعلى من المتوسط المرجعي للمنطقة.",
+            "STRONG_COMPLETION_RATE": "معدل الإكمال مستقر مقارنة بالأسطول النشط.",
+            "STRONG_COMMITMENT_SCORE": "نقاط الالتزام قوية ويمكن الاعتماد عليها تشغيليًا.",
+            "HIGH_COMMITMENT_SCORE": "الالتزام التشغيلي مستقر ويمكن الاعتماد عليه.",
+            "STABLE_BASELINE": "أداء السائق حاليًا ضمن خط تشغيلي مستقر.",
+            "HAS_OFFER_REJECTIONS": "هناك رفضات عروض حديثة تحتاج متابعة.",
+            "HAS_OFFER_TIMEOUTS": "انتهاء مهلة الرد على العروض يؤثر على جودة الإسناد.",
+            "FINANCE_HOLD_AFFECTS_READINESS": "يوجد تعليق مالي يؤثر على الجاهزية التشغيلية.",
+            "OPEN_COMPLIANCE_SIGNALS": "توجد إشارات امتثال مفتوحة تحتاج مراجعة قبل زيادة الضغط.",
+            "NO_CRITICAL_WATCHOUTS": "لا توجد ملاحظات حرجة حاليًا.",
+            "LOW_ACCEPTANCE_RATE": "معدل قبول العروض يحتاج متابعة قبل زيادة الضغط التشغيلي.",
+            "LOW_COMPLETION_RATE": "انخفض معدل الإكمال ويحتاج مراجعة تشغيلية.",
+            "LOW_COMMITMENT_SCORE": "نقاط الالتزام متأثرة بسبب رفضات أو انتهاء مهلة حديثة.",
+            "REVIEW_ZONE_LOAD": "راجع ضغط المنطقة قبل إضافة مهام جديدة.",
+            "COACH_OFFER_RESPONSE": "يحتاج السائق إلى تحسين سرعة الرد على العروض والانضباط في التوفر.",
+            "MONITOR_SUPPORT_RISK": "إشارات الدعم أو الامتثال تستدعي المتابعة قبل التوسع في الإسناد.",
+            "IMPROVE_OFFER_ACCEPTANCE": "حسّن معدل قبول العروض قبل توسيع الإسناد.",
+            "REDUCE_FAILED_ASSIGNMENTS": "قلّل المهام الفاشلة وراجع أسباب تعثر التسليم.",
+            "IMPROVE_COMMITMENT_DISCIPLINE": "عزّز الانضباط في الالتزام تجاه الرفضات وانتهاء المهلة.",
+            "MAINTAIN_CURRENT_OPERATING_BAND": "حافظ على المستوى التشغيلي الحالي مع استمرار المتابعة.",
+            "ABOVE_ZONE_AVERAGE": "هذا المؤشر أعلى حاليًا من متوسط المنطقة.",
+            "BELOW_ZONE_AVERAGE": "هذا المؤشر أقل حاليًا من متوسط المنطقة.",
+            "COMPLETION_STABLE": "معدل الإكمال مستقر مقارنة بالمنطقة التشغيلية.",
+            "COMPLETION_NEEDS_ATTENTION": "يوجد تراجع في الإكمال ويحتاج متابعة.",
+            "COMMITMENT_ABOVE_REGION": "الالتزام أعلى من المجموعة المرجعية داخل المنطقة.",
+            "COMMITMENT_BELOW_REGION": "الالتزام أقل من المجموعة المرجعية داخل المنطقة."
+          }
+        }
+      },
+      "SUPPORT": {
+        "PENDING_BANNER": "متابعات دعم معلقة",
+        "PENDING_BANNER_MSG": "يوجد {{count}} متابعات تتطلب ردًا أو إجراءً خلال نافذة SLA الحالية.",
+        "PENDING_FOLLOWUPS_TITLE": "متابعات دعم معلقة",
+        "PENDING_FOLLOWUPS_MSG": "يوجد {{count}} متابعات تتطلب ردًا أو إجراءً خلال نافذة SLA الحالية.",
+        "NOTES_SECTION": "سجل الملاحظات الداخلية",
+        "INTERNAL_NOTES": "سجل الملاحظات الداخلية",
+        "NOTE_PLACEHOLDER": "إضافة ملاحظة داخلية...",
+        "ADD_NOTE_PLACEHOLDER": "إضافة ملاحظة داخلية...",
+        "SAVE_NOTE": "حفظ",
+        "CHAT_SECTION": "آخر التفاعلات مع السائق",
+        "DRIVERS_INTERACTIONS": "آخر التفاعلات مع السائق",
+        "REVIEWER_SECTION": "المراجع المسؤول",
+        "RESPONSIBLE_REVIEWER": "المراجع المسؤول",
+        "TAGS_SECTION": "تصنيفات السائق",
+        "DRIVER_TAGS": "تصنيفات السائق",
+        "TICKETS_SECTION": "التذاكر المرتبطة",
+        "LINKED_TICKETS": "التذاكر المرتبطة",
+        "TABLE_TICKET_ID": "رقم التذكرة",
+        "TABLE_SUBJECT": "الموضوع",
+        "TABLE_STATUS": "الحالة",
+        "TABLE_PRIORITY": "الأولوية",
+        "TABLE_REVIEWER": "المراجع",
+        "TABLE_UPDATED": "آخر تحديث",
+        "NO_TICKETS": "لا توجد تذاكر",
+        "NO_TICKETS_MSG": "لا توجد تذاكر مرتبطة بهذا السائق.",
+        "DYNAMIC": {
+          "ADMIN_USER": "مستخدم الإدارة",
+          "STATUS": {
+            "WAITING": "بانتظار رد",
+            "IN_PROGRESS": "قيد المعالجة",
+            "RESOLVED": "مكتمل"
+          },
+          "PRIORITY": {
+            "NORMAL": "عادية",
+            "HIGH": "مرتفعة",
+            "CRITICAL": "حرجة"
+          },
+          "TAGS": {
+            "HIGH_RISK": "مخاطر مرتفعة",
+            "ACTIVE_SUPPORT": "دعم نشط",
+            "PAYMENT_ISSUE": "مشكلة مالية",
+            "STABLE_WALLET": "محفظة مستقرة",
+            "ON_MISSION": "في مهمة",
+            "DRIVER_FOLLOW_UP": "متابعة السائق"
+          },
+          "ROLES": {
+            "FLEET_SUPERVISOR": "مشرف الأسطول",
+            "OPERATIONS_SUPERVISOR": "مشرف العمليات"
+          },
+          "LAST_UPDATE": {
+            "NOW": "الآن",
+            "TEN_MIN_AGO": "قبل 10 دقائق",
+            "HOUR_AGO": "قبل ساعة"
+          },
+          "SUBJECTS": {
+            "WALLET_BALANCE": "مشكلة في رصيد المحفظة بعد رحلة",
+            "BEHAVIOR_REPORT": "متابعة بلاغ سلوكي",
+            "LICENSE_UPDATE": "طلب تحديث رخصة القيادة",
+            "DRIVER_ACCOUNT_APPEAL": "دعم حساب المندوب"
+          },
+          "FOLLOWUPS": {
+            "CUSTOMER_COMPLAINT": "مراجعة شكوى عميل",
+            "INSURANCE_DOCS": "تحديث وثائق التأمين"
+          }
+        },
+        "ACTIVE_TICKETS_TITLE": "تذاكر الدعم النشطة",
+        "ACTIVE_TICKETS_DESC": "عناصر دعم مرتبطة بالباك إند مع سياق التصعيد.",
+        "RECENT_COMMS_TITLE": "أحدث رسائل الدعم",
+        "INTERNAL_NOTES_TITLE": "الملاحظات الداخلية",
+        "QUICK_NOTE_PLACEHOLDER": "اكتب ملاحظة داخلية في ملف السائق...",
+        "ADD_NOTE_BTN": "إضافة ملاحظة",
+        "LAST_UPDATE": "آخر تحديث",
+        "DRIVER": "السائق",
+        "SUPPORT_TEAM": "فريق الدعم",
+        "REVIEWER_OPERATIONS": "مراجع العمليات",
+        "NO_ACTIVITY": "لا يوجد نشاط دعم حتى الآن.",
+        "NO_MESSAGES": "لا توجد رسائل دعم حتى الآن.",
+        "BACKEND": {
+          "FOLLOWUPS": {
+            "COMPLETE_MISSING_DOCUMENTS": "استكمال المستندات الناقصة",
+            "REVIEW_OPEN_INCIDENT": "مراجعة الحالة المفتوحة",
+            "CLEAR_FINANCE_HOLD": "إزالة التعليق المالي"
+          }
+        }
+      },
+      "COMPLIANCE": {
+        "CRITICAL_BANNER": "تنبيه امتثال حرج",
+        "CRITICAL_BANNER_MSG": "يوجد {{count}} حالات حرجة تحتاج مراجعة فورية لتجنب خرق SLA أو إيقاف موسع.",
+        "CRITICAL_ALERT_TITLE": "تنبيه امتثال حرج",
+        "CRITICAL_ALERT_MSG": "يوجد {{count}} حالات حرجة تحتاج مراجعة فورية لتجنب خرق SLA أو إيقاف موسع.",
+        "OPEN_CASES": "الحالات المفتوحة",
+        "CRITICAL_CASES": "الحالات الحرجة",
+        "SAFETY_ALERTS": "تنبيهات السلامة",
+        "DOCS_NEED_FOLLOW": "مستندات تحتاج متابعة",
+        "DOCS_FOLLOWUP": "مستندات تحتاج متابعة",
+        "RISK_LEVEL": "مستوى المخاطر",
+        "INCIDENTS_SECTION": "الحوادث والحالات المرتبطة",
+        "TABLE_CASE_ID": "رقم الحالة",
+        "TABLE_TYPE": "النوع",
+        "TABLE_SEVERITY": "الأهمية",
+        "TABLE_STATUS": "الحالة",
+        "TABLE_REVIEWER": "المراجع",
+        "TABLE_CREATED": "تاريخ الإنشاء",
+        "NO_CASES": "لا توجد حالات",
+        "NO_CASES_MSG": "لا توجد حالات امتثال مرتبطة بهذا السائق.",
+        "DOC_HEALTH": {
+          "TITLE": "صحة المستندات",
+          "VALID": "صالحة",
+          "VALID_DESC": "المستندات التي اجتازت المراجعة.",
+          "EXPIRING": "تنتهي قريبًا",
+          "EXPIRING_DESC": "مستندات تحتاج تجديدًا استباقيًا.",
+          "REVIEW": "قيد المراجعة",
+          "REVIEW_DESC": "مستندات لا تزال تنتظر التحقق اليدوي."
+        },
+        "NO_INCIDENTS": "لا توجد حوادث",
+        "NO_INCIDENTS_DESC": "لا توجد حوادث امتثال مرتبطة بهذا السائق.",
+        "DOCS_HEALTH": "صحة المستندات",
+        "DOC_VALID": "صالحة",
+        "VALID": "صالحة",
+        "DOC_EXPIRING": "تنتهي قريبًا",
+        "EXPIRING_SOON": "تنتهي قريبًا",
+        "DOC_REVIEW": "قيد المراجعة",
+        "UNDER_REVIEW": "قيد المراجعة",
+        "RISK_INDICATOR": "مؤشر المخاطر",
+        "RISK_INDEX": "مؤشر المخاطر",
+        "CURRENT_POINTS": "النقاط الحالية",
+        "DYNAMIC": {
+          "RISK": {
+            "HIGH": "مرتفع",
+            "MEDIUM": "متوسط",
+            "LOW": "منخفض"
+          },
+          "STATUS": {
+            "NEW": "جديد",
+            "REVIEW": "قيد المراجعة",
+            "WAITING_DOCS": "بانتظار مستندات",
+            "RESOLVED": "تم الإغلاق"
+          },
+          "SEVERITY": {
+            "MEDIUM": "متوسطة",
+            "HIGH": "عالية",
+            "CRITICAL": "حرجة"
+          },
+          "TYPES": {
+            "TRAFFIC_ACCIDENT": "حادث مروري",
+            "FRAUD_SUSPECTED": "اشتباه احتيال",
+            "REPEATED_DELAY": "تأخير متكرر"
+          },
+          "SUMMARIES": {
+            "TRAFFIC_ACCIDENT": "حادث بسيط أثناء التسليم يحتاج استكمال تقرير المرور والصور الميدانية.",
+            "FRAUD_SUSPECTED": "مطابقة غير مكتملة بين قيمة COD وإثبات التحصيل وتتطلب مراجعة فريق المالية.",
+            "REPEATED_DELAY": "تم إغلاق الحالة بعد إعادة توزيع المنطقة وتحسن الأداء خلال 48 ساعة."
+          }
+        },
+        "KPIS": {
+          "OPEN_CASES": "الحالات المفتوحة",
+          "CRITICAL_CASES": "الحالات الحرجة",
+          "EXPIRED_DOCS": "المستندات المنتهية"
+        },
+        "INCIDENTS": {
+          "TITLE": "الحوادث والحالات المرتبطة",
+          "DESC": "حوادث تشغيلية ومراجعات امتثال مرتبطة بهذا السائق.",
+          "COLUMNS": {
+            "ID": "رقم الحالة",
+            "TYPE": "النوع",
+            "SEVERITY": "الخطورة",
+            "STATUS": "الحالة",
+            "DATE": "التاريخ"
+          }
+        }
+      },
+      "FINANCE": {
+        "BALANCE_SECTION": "الرصيد والتحصيل",
+        "AVAILABLE_WITHDRAW": "المتاح للسحب",
+        "AVAILABLE_BALANCE": "الرصيد المتاح",
+        "COD_COLLECTED": "COD المحصل",
+        "COLLECTED_COD": "المحصل نقدًا",
+        "DUE_AMOUNT": "مستحقات حالية",
+        "DUE_AMOUNT_LABEL": "المستحقات الحالية",
+        "CURRENT_DUE": "المستحق الحالي",
+        "SETTLEMENTS_SECTION": "ملخص التسويات",
+        "SETTLEMENTS_SUMMARY": "ملخص التسويات",
+        "PENDING_DEDUCTIONS": "الخصومات المعلقة",
+        "NEXT_PAYOUT": "موعد الصرف القادم",
+        "PAYOUT_METHOD": "وسيلة الصرف",
+        "LEDGER_SECTION": "سجل التسويات المالية",
+        "SETTLEMENTS_HISTORY": "سجل التسويات المالية",
+        "TABLE_REFERENCE": "المرجع",
+        "TABLE_TYPE": "العملية",
+        "TABLE_AMOUNT": "القيمة",
+        "TABLE_STATUS": "الحالة",
+        "TABLE_METHOD": "الوسيلة",
+        "TABLE_DATE": "التاريخ",
+        "NO_SETTLEMENTS": "لا توجد تسويات",
+        "NO_STATEMENTS": "لا توجد قيود مالية",
+        "NO_SETTLEMENTS_MSG": "لا توجد حركات مالية مرتبطة بهذا السائق.",
+        "PREVENTIVE_LIMIT_LABEL": "الحد الوقائي: {{limit}} ر.س",
+        "LIMIT_EXCEEDED": "تجاوز الحد الآمن!",
+        "SAFE_STATUS": "وضع آمن",
+        "PENDING_DEDUCTIONS_THIS_MONTH": "الخصومات المعلقة هذا الشهر:",
+        "FILTERS": {
+          "ALL": "الكل",
+          "SETTLED": "المسواة",
+          "PENDING": "المعلقة",
+          "FAILED": "الفاشلة"
+        },
+        "SEARCH_PLACEHOLDER": "ابحث برقم الحركة، النوع أو المرجع...",
+        "NO_MATCHING_STATEMENTS_DESC": "لا توجد حركات مالية مطابقة لخيارات التصفية أو البحث الحالي.",
+        "ENTRY_INFO_TITLE": "معلومات القيد المالي",
+        "ENTRY_ID": "رقم القيد (ID):",
+        "ENTRY_REFERENCE": "المرجع (Reference):",
+        "SETTLEMENT_METHOD": "طريقة التسوية:",
+        "FULL_ENTRY_DATE": "تاريخ القيد بالكامل:",
+        "ZADANA_LOGISTICS": "زادنا للخدمات اللوجستية",
+        "CERTIFIED_RECEIPT": "سند تسوية مالي معتمد",
+        "TOTAL_AMOUNT": "مجموع المبلغ:",
+        "CALCULATED_FEE": "الرسوم المحتسبة:",
+        "DOWNLOAD_RECEIPT": "تنزيل السند المالي",
+        "WALLET_OPERATIONS_SUB": "عمليات الحساب والمحفظة",
+        "POLICIES_TITLE": "السياسات والحدود المالية",
+        "POLICIES_SUB": "لوائح تسوية الأسطول",
+        "POLICY_1": "يتم صرف المستحقات الأسبوعية تلقائياً للمحفظة بعد مراجعة قيود التسويات.",
+        "POLICY_2": "الحد الأقصى المسموح به للمبالغ النقدية المحصلة (COD) هو 1,000 ر.س. في حال تجاوزه قد يتوقف إسناد المهام مؤقتاً حتى تتم تسوية الفارق.",
+        "POLICY_3": "الرسوم المحتسبة على المعاملات تعتمد بالكامل على البوابة المصرفية ونوع وسيلة التسوية المستخدمة.",
+        "MODAL_TITLE": "تسوية المستحقات المالية",
+        "MODAL_SUBTITLE": "تسجيل تسوية يدوية للرصيد الحالي",
+        "AUTO_REFERENCE_LABEL": "مرجع العملية التلقائي:",
+        "SETTLE_AMOUNT_LABEL": "مبلغ التسوية المطلوب (ر.س)",
+        "TOTAL_DUE_FOR_SETTLEMENT": "إجمالي الرصيد المستحق للتسوية حالياً: {{amount}} ر.س",
+        "SETTLE_METHOD_LABEL": "وسيلة التسوية المتبعة",
+        "METHODS": {
+          "BANKACCOUNT": "حساب بنكي",
+          "DEBITCARD": "بطاقة مدى",
+          "INSTANTTRANSFER": "تحويل فوري"
+        },
+        "NOTES_LABEL": "ملاحظات أو تعليقات",
+        "NOTES_PLACEHOLDER": "اكتب أي ملاحظات إدارية عن التسوية...",
+        "RECORDING_SETTLEMENT": "جاري تسجيل الدفعة...",
+        "SAVE_SETTLEMENT": "اعتماد وحفظ التسوية",
+        "SETTLEMENT_SUCCESS": "تمت عملية التسوية بنجاح!",
+        "SETTLEMENT_SUCCESS_DESC": "تم تحديث كشف الحساب المالي للمندوب بنجاح وتسجيل الحركة المرجعية مباشرة.",
+        "SETTLED_AMOUNT": "المبلغ المسوى:",
+        "TRANSACTION_REFERENCE": "الرقم المرجعي للعملية:",
+        "SETTLEMENT_METHOD_LABEL": "طريقة التسوية:",
+        "BACK_TO_STATEMENT": "العودة لكشف الحساب",
+        "ACTIONS": {
+          "SETTLE": "تسوية الرصيد",
+          "DOWNLOAD_STATEMENT": "تنزيل كشف الحساب"
+        },
+        "DYNAMIC": {
+          "STATUS": {
+            "SETTLED": "تم الدفع",
+            "PENDING": "قيد التسوية",
+            "FAILED": "فشل التحويل"
+          },
+          "TYPES": {
+            "WEEKLY_EARNINGS_TRANSFER": "تحويل أرباح أسبوعي",
+            "BANK_TRANSFER": "تحويل بنكي",
+            "DELAYED_COD_SETTLEMENT": "تسوية COD متأخرة"
+          },
+          "METHODS": {
+            "WEEKLY_STC_PAY": "تحويل أسبوعي إلى STC Pay"
+          }
+        },
+        "STATEMENTS_TITLE": "قيود الدفتر",
+        "STATEMENTS_DESC": "سجل مالي حقيقي من المحفظة والتسويات القادمة من الباك إند.",
+        "COLUMNS": {
+          "TRANSACTION_DETAILS": "تفاصيل العملية",
+          "ID": "القيد",
+          "TYPE": "النوع",
+          "AMOUNT": "المبلغ",
+          "FEE": "الرسوم",
+          "STATUS": "الحالة",
+          "DATE": "التاريخ"
+        },
+        "BACKEND": {
+          "TYPES": {
+            "ORDERREVENUE": "إيراد طلب",
+            "CREDIT": "إضافة",
+            "DEBIT": "خصم",
+            "HOLD": "حجز",
+            "RELEASE": "إفراج",
+            "ADJUSTMENT": "تسوية",
+            "PAYOUT": "صرف",
+            "CASHCOLLECTED": "تحصيل نقدي",
+            "SETTLEMENT": "تسوية مالية",
+            "REFUND": "استرداد"
+          },
+          "METHODS": {
+            "WALLET": "محفظة النظام",
+            "BANKACCOUNT": "حساب بنكي",
+            "DEBITCARD": "بطاقة خصم",
+            "INSTANTTRANSFER": "تحويل فوري"
+          },
+          "PAYOUT_METHODS": {
+            "BANKACCOUNT": "حساب بنكي",
+            "DEBITCARD": "بطاقة خصم",
+            "INSTANTTRANSFER": "تحويل فوري"
+          }
+        }
+      },
+      "VERIFICATION": {
+        "SECTION_TITLE": "مراجعة وتوثيق السائق",
+        "COMMAND_CENTER": "مركز أوامر التوثيق",
+        "EXECUTIVE_REVIEW": "مراجعة تنفيذية",
+        "EXECUTIVE_REVIEW_DESC": "مساحة مركزة لمراجعة المستندات وإدارة قرار الحساب وسجل الامتثال.",
+        "WINDOWS": {
+          "OPERATIONS": "الإدارة والسجل",
+          "REVIEW": "المستندات والمعاينة"
+        },
+        "APPROVAL_READINESS": "جاهزية الاعتماد",
+        "READINESS_READY": "جاهز للاعتماد النهائي",
+        "READINESS_WAITING": "بانتظار استكمال المستندات",
+        "FILES_AVAILABLE": "الملفات المتاحة",
+        "TOTAL_DOCUMENTS": "إجمالي المستندات",
+        "VALID_DOCUMENTS": "المستندات الصالحة",
+        "VALID_DOCUMENTS_DESC": "مستندات سارية المفعول",
+        "UNDER_REVIEW": "قيد المراجعة",
+        "UNDER_REVIEW_DESC": "ملفات بانتظار الحسم",
+        "EXPIRING_ITEMS": "عناصر على وشك الانتهاء",
+        "EXPIRING_ITEMS_DESC": "عناصر تحتاج تجديدًا",
+        "ACCOUNT_CONTROL_TITLE": "لوحة إدارة الحساب",
+        "ACCOUNT_CONTROL_DESC": "إدارة حالة السائق وقرارات الحساب",
+        "REQUIREMENTS_TITLE": "متطلبات الاعتماد",
+        "REQUIREMENTS_DESC": "قائمة التحقق والملاحظات",
+        "ADD_INTERNAL_NOTE": "إضافة ملاحظة داخلية",
+        "ADD_INTERNAL_NOTE_PLACEHOLDER": "ملاحظة داخلية للمراجعين...",
+        "CHECKLIST_TAB": "قائمة التحقق",
+        "DOCUMENT_BOARD": "لوحة المستندات",
+        "FILES_IN_PACKET": "{{count}} ملف في الحزمة",
+        "PREVIEW_DECISION": "المعاينة والقرار",
+        "SELECT_DOCUMENT": "اختر مستندًا",
+        "FILE_READY": "ملف جاهز للتحميل والمعاينة",
+        "PREVIEW_NOTES": "ملاحظات المعاينة",
+        "PREVIEW_NOTES_PLACEHOLDER": "تفاصيل القرار أو سبب الرفض...",
+        "NO_DOCUMENT_SELECTED": "لا يوجد مستند محدد",
+        "NO_DOCUMENT_SELECTED_DESC": "اختر مستندًا من اللوحة لمعاينته واتخاذ القرار المناسب.",
+        "DOCUMENT_GROUPS": {
+          "DRIVER_DOCUMENTS": "مستندات السائق"
+        },
+        "APP_ID": "رقم الطلب",
+        "APP_NUMBER": "رقم الطلب",
+        "SUBMITTED_AT": "تاريخ التقديم",
+        "SUBMIT_DATE": "تاريخ التقديم",
+        "PROGRESS": "نسبة التقدم",
+        "PROGRESS_RATE": "نسبة التقدم",
+        "CRITICAL_NOTES": "ملاحظات حرجة",
+        "READINESS_SECTION": "ملخص الجاهزية",
+        "READINESS_SUMMARY": "ملخص الجاهزية",
+        "PERSONAL_INFO_TITLE": "بيانات مقدم الطلب",
+        "PERSONAL_INFO_DESC": "البيانات الأساسية ووسائل التواصل التي رفعها السائق.",
+        "VEHICLE_INFO_TITLE": "بيانات المركبة والمنطقة",
+        "VEHICLE_INFO_DESC": "تفاصيل تشغيلية تستخدم لتحديد جاهزية السائق للإسناد.",
+        "FILE_COMPLETION": "تقدم استكمال الملف",
+        "FILE_PROGRESS": "تقدم استكمال الملف",
+        "TRUST_SCORE": "نسبة الثقة",
+        "COMPLETED_ITEMS": "عناصر مكتملة",
+        "CURRENT_REVIEWER": "المراجع الحالي",
+        "PENDING_ITEMS": "عناصر معلقة",
+        "PENDING_ITEMS_COUNT": "عناصر معلقة",
+        "APP_ID_SHORT": "رقم الطلب",
+        "APP_NUMBER_LABEL": "رقم الطلب",
+        "CHECKLIST_TITLE": "Checklist المراجعة",
+        "CHECKLIST_SUB": "راجع العناصر الأساسية قبل اعتماد قرار التوثيق.",
+        "CHECKLIST_DESC": "راجع العناصر الأساسية قبل اعتماد قرار التوثيق.",
+        "COMPLETED": "مكتمل",
+        "PENDING": "معلق",
+        "DECISION_TITLE": "ملاحظات القرار",
+        "DECISION_SUB": "اكتب ملخص القرار وأي ملاحظات داخلية مرتبطة به.",
+        "DECISION_LABEL": "ملخص قرار المراجعة",
+        "DECISION_PLACEHOLDER": "اكتب القرار النهائي أو الملاحظات التي ستعتمد عليها...",
+        "DECISION_NOTES_TITLE": "ملاحظات القرار",
+        "DECISION_NOTES_DESC": "اكتب ملخص القرار وأي ملاحظات داخلية مرتبطة به.",
+        "REVIEW_SUMMARY_LABEL": "ملخص قرار المراجعة",
+        "REVIEW_SUMMARY_PLACEHOLDER": "اكتب القرار النهائي أو الملاحظات التي ستعتمد عليها...",
+        "REJECTION_LABEL": "سبب الرفض أو طلب الاستكمال",
+        "REJECTION_REASON_LABEL": "سبب الرفض أو طلب الاستكمال",
+        "REVIEWER_LABEL": "المراجع",
+        "INTERNAL_NOTES_LABEL": "ملاحظات داخلية",
+        "INTERNAL_NOTES_PLACEHOLDER": "هذه الملاحظات داخلية ولن تظهر خارج المراجعة.",
+        "DOCS_SECTION": "مراجعة المستندات الثبوتية",
+        "DOCUMENT_PREVIEW": "معاينة المستند",
+        "DOCUMENT_STATUS": "حالة المستند",
+        "DOCUMENT_NOTE": "ملاحظة المراجعة",
+        "TOTAL_FILES": "إجمالي الملفات",
+        "DOCS_NEED_FOLLOW": "مستندات تحتاج متابعة",
+        "DOC_EXPIRY": "تاريخ الانتهاء",
+        "DOC_NUMBER": "رقم المستند",
+        "DOC_REVIEWED_BY": "تمت المراجعة بواسطة",
+        "DOC_REJECTION_REASON": "سبب الرفض",
+        "MISSING_EXPIRY_TITLE": "تاريخ الانتهاء غير موجود",
+        "MISSING_EXPIRY_MESSAGE": "أضف تاريخ انتهاء المستند قبل اعتماده.",
+        "DOCUMENT_IMAGES": {
+          "FRONT": "الصورة الأمامية",
+          "BACK": "الصورة الخلفية",
+          "IMAGE": "صورة المستند"
+        },
+        "REASON_REQUIRED_HELPER": "يجب توضيح سبب عند طلب الاستكمال أو رفض السائق.",
+        "FIELDS": {
+          "FULL_NAME": "الاسم الكامل",
+          "PHONE": "رقم الجوال",
+          "EMAIL": "البريد الإلكتروني",
+          "ADDRESS": "العنوان الوطني",
+          "VEHICLE_TYPE": "نوع المركبة",
+          "LICENSE_NUMBER": "رقم الرخصة",
+          "ZONE": "المنطقة الأساسية"
+        },
+        "ACTIONS": {
+          "APPROVE": "اعتماد السائق",
+          "REQUEST_DOCUMENTS": "طلب استكمال المستندات",
+          "REJECT": "رفض السائق",
+          "APPROVE_SHORT": "موافق",
+          "REJECT_SHORT": "رفض"
+        },
+        "STATUS_COMPLETED": "مكتمل",
+        "STATUS_NEEDS_REVIEW": "يتطلب مراجعة",
+        "STATUS_REQUIRED": "مطلوب",
+        "BACKEND": {
+          "CHECKLIST": {
+            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
+            "VEHICLE_INFO": "بيانات المركبة مكتملة",
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
+            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
+            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
+            "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
+          },
+          "CHECKLIST_NOTES": {
+            "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
+            "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية للمركبة ناقصة.",
+            "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
+            "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية.",
+            "EXPIRED_DOCUMENT_NOTE": "المستند المرفوع منتهي الصلاحية ويجب تجديده.",
+            "REJECTED_DOCUMENT_NOTE": "تم رفض هذا المستند ويجب إعادة رفعه بشكل صحيح.",
+            "PENDING_DOCUMENT_REVIEW_NOTE": "تم رفع المستند وبانتظار مراجعة الإدارة."
+          },
+          "REJECTION_REASONS": {
+            "MISSING_PERSONAL_INFO": "نقص في البيانات الشخصية",
+            "MISSING_VEHICLE_INFO": "نقص في بيانات المركبة",
+            "MISSING_DOCUMENTS": "نقص في المستندات المطلوبة",
+            "MISSING_ZONE_SELECTION": "لم يتم تحديد المنطقة الأساسية",
+            "QUALITY_ISSUE": "مشكلة في جودة المستندات",
+            "ZONE_MISSING": "المنطقة الأساسية غير محددة"
+          }
+        },
+        "DYNAMIC": {
+          "RECOMMENDATIONS": {
+            "ACCEPT": "قبول التوثيق",
+            "CONDITIONAL": "قبول بشروط",
+            "COMPLETE": "طلب استكمال"
+          },
+          "REASONS": {
+            "ACCEPT": "المستندات مكتملة والهوية والمركبة متطابقتان مع متطلبات التشغيل.",
+            "CONDITIONAL": "الملف جاهز تشغيليًا لكن توجد نقاط بسيطة تحتاج متابعة قبل الاعتماد النهائي.",
+            "COMPLETE": "لا يزال الملف يحتاج استكمال مستندات أو توضيحات قبل التفعيل."
+          },
+          "CHECKLIST": {
+            "BASIC_DATA_COMPLETE": "اكتمال البيانات الأساسية",
+            "VEHICLE_MATCH": "تطابق بيانات المركبة",
+            "NATIONAL_ID_CLEAR": "وضوح صورة الهوية الوطنية",
+            "LICENSE_VALID": "سريان صلاحية الرخصة",
+            "VEHICLE_PHOTOS_CLEAR": "وضوح صور المركبة",
+            "SELFIE_MATCH": "تطابق الصورة الشخصية للواقع"
+          },
+          "CHECKLIST_NOTES": {
+            "LICENSE_EXPIRING": "تنتهي قريبًا وتحتاج تأكيد",
+            "SELFIE_REVIEW": "يحتاج اعتماد المراجع"
+          },
+          "REJECTION_REASONS": {
+            "DOCUMENTS_UNCLEAR": "المستندات غير واضحة",
+            "DOCUMENTS_EXPIRED": "انتهاء صلاحية المستندات",
+            "IMAGES_MISMATCH": "عدم تطابق الصور",
+            "VEHICLE_DATA_INVALID": "بيانات المركبة غير صحيحة"
+          },
+          "DOCUMENTS": {
+            "TITLES": {
+              "NATIONAL_ID": "الهوية الوطنية",
+              "LICENSE": "رخصة القيادة",
+              "VEHICLE": "صورة المركبة",
+              "SELFIE": "صورة التحقق الشخصي"
+            },
+            "STATUS": {
+              "VALID": "صالح",
+              "VALID_FEMININE": "صالحة",
+              "EXPIRING": "تنتهي قريبًا",
+              "REJECTED": "مرفوض",
+              "UNDER_REVIEW": "قيد المراجعة",
+              "MATCHED": "مطابقة",
+              "NEEDS_CONFIRMATION": "تحتاج تأكيد"
+            },
+            "SUBTITLES": {
+              "NATIONAL_ID": "آخر تحديث: 2026/03/12",
+              "LICENSE": "تنتهي خلال 120 يوم",
+              "VEHICLE": "صورة رخصة المركبة متاحة للمراجعة"
+            },
+            "EXPIRY": {
+              "RECENT_CAPTURE": "تم الالتقاط مؤخرًا",
+              "BIOMETRIC_CHECK": "تحقق حيوي"
+            }
+          }
+        },
+        "NO_RECOMMENDATION_REASON": "لم يتم إضافة سبب للتوصية بعد."
+      },
+      "WORKFLOW": {
+        "STATE_LABELS": {
+          "BANNED": "محظور",
+          "SUSPENDED": "موقوف تشغيليًا",
+          "VERIFICATION_REVIEW": "مراجعة توثيق",
+          "PENDING_DOCUMENTS": "استكمال مستندات",
+          "COMPLIANCE_REVIEW": "مراجعة امتثال",
+          "FINANCE_HOLD": "تعليق مالي",
+          "ACTIVE_DELIVERY": "نشط في مهمة",
+          "READY_FOR_DISPATCH": "جاهز للإسناد",
+          "READY_TO_ACTIVATE": "جاهز لإعادة الإدراج"
+        },
+        "SUMMARIES": {
+          "BANNED": "السائق محظور بالكامل من التشغيل. راجع الحالة قبل فك الحظر أو إبقاء الحساب محجوبًا.",
+          "SUSPENDED": "السائق خارج التشغيل حاليًا، والقرار المطلوب هو حسم سبب الإيقاف ثم تقرير إعادة التفعيل أو استمرار التعليق.",
+          "VERIFICATION_REVIEW": "السائق ما زال في مسار التوثيق ولا ينبغي اعتباره جاهزًا للتشغيل حتى اكتمال الاعتماد.",
+          "PENDING_DOCUMENTS": "السائق ما زال في مسار التوثيق ولا ينبغي اعتباره جاهزًا للتشغيل حتى اكتمال الاعتماد.",
+          "COMPLIANCE_REVIEW": "الملف لديه حالة امتثال أو بلاغ مفتوح، ويجب حسمه قبل توسيع الإسناد أو إعادة التفعيل الكامل.",
+          "FINANCE_HOLD": "يوجد تعليق مالي أو عدم تسوية في COD، ويجب إنهاؤه قبل صرف جديد أو إعادة الثقة التشغيلية الكاملة.",
+          "ACTIVE_DELIVERY": "السائق داخل مهمة حية الآن، والتركيز الحالي يجب أن يكون على مراقبة التنفيذ وSLA والدعم السريع فقط.",
+          "READY_FOR_DISPATCH": "السائق مفعّل وجاهز حاليًا، ودور المشرف هنا هو المراقبة والتأكد من بقاء الجاهزية بدون عوائق.",
+          "READY_TO_ACTIVATE": "السائق موثق لكن خارج الجدول الآن، ويمكن إعادته للتشغيل بعد التحقق من آخر جاهزية تشغيلية ومالية."
+        },
+        "NEXT_STEPS": {
+          "BANNED": "راجع سبب الحظر ولا تفك الحظر إلا بعد وضوح الامتثال والمستندات.",
+          "SUSPENDED": "راجع سبب الإيقاف أولًا ثم قرر إعادة التفعيل أو إبقاء الحساب معلقًا.",
+          "VERIFICATION_REVIEW": "راجع العناصر الحرجة واعتمد القرار النهائي للتوثيق.",
+          "PENDING_DOCUMENTS": "اطلب المستندات الناقصة أو غير الواضحة ثم أعد الملف للمراجعة.",
+          "COMPLIANCE_REVIEW": "راجع الحالة المفتوحة وحدد هل تكفي المراقبة أم يلزم تعليق أو تصعيد.",
+          "FINANCE_HOLD": "راجع المالية أولًا ثم أزل التعليق إذا كانت التسوية مكتملة.",
+          "ACTIVE_DELIVERY": "تابع المهمة الحالية وافتح الدعم فقط عند وجود تأخير أو شكوى فعلية.",
+          "READY_FOR_DISPATCH": "لا يوجد إجراء عاجل الآن، راقب المنطقة ووزع المهام عند الحاجة.",
+          "READY_TO_ACTIVATE": "أعد السائق إلى طابور الإسناد بعد مراجعة سريعة للمنطقة والرصيد والتذاكر المفتوحة."
+        },
+        "QUEUE_LABELS": {
+          "BANNED": "طابور مراجعة الحظر",
+          "SUSPENDED": "طابور الإيقاف وإعادة التفعيل",
+          "VERIFICATION_REVIEW": "طابور اعتماد التوثيق",
+          "PENDING_DOCUMENTS": "طابور استكمال المستندات",
+          "COMPLIANCE_REVIEW": "طابور الحوادث والبلاغات",
+          "FINANCE_HOLD": "طابور COD والتسويات",
+          "ACTIVE_DELIVERY": "طابور المراقبة المباشرة",
+          "READY_FOR_DISPATCH": "طابور السائقين الجاهزين",
+          "READY_TO_ACTIVATE": "طابور التفعيل والتجهيز"
+        },
+        "READINESS_LABELS": {
+          "FULLY_STOPPED": "متوقف بالكامل",
+          "BLOCKED_UNTIL_APPROVAL": "محجوب حتى الاعتماد",
+          "BLOCKED_BY_COMPLIANCE": "محجوب بالامتثال",
+          "PARTIALLY_READY": "جاهز جزئيًا",
+          "WORKING_NOW": "يعمل الآن",
+          "FULLY_READY": "جاهز بالكامل",
+          "READY_TO_REJOIN": "جاهز للإدراج",
+          "READY_WITH_MONITORING": "جاهز مع متابعة"
+        },
+        "OWNER_TEAMS": {
+          "COMPLIANCE_AND_OPERATIONS": "الامتثال + العمليات",
+          "VERIFICATION_TEAM": "فريق التوثيق",
+          "COMPLIANCE_TEAM": "فريق الامتثال",
+          "FINANCE_AND_OPERATIONS": "المالية + العمليات",
+          "LIVE_OPERATIONS": "العمليات الحية",
+          "OPERATIONS": "العمليات"
+        },
+        "ITEMS": {
+          "VERIFICATION_PENDING": "الملف لم يحصل على اعتماد التوثيق بعد، ولا يجب فتح السائق للإسناد.",
+          "ACCOUNT_SUSPENDED": "الحساب موقوف حاليًا ولا يمكن إسناد مهام أو صرف مستحقات جديدة.",
+          "ACCOUNT_BANNED": "الحساب محظور وممنوع بالكامل من أي وصول تشغيلي جديد.",
+          "FINANCE_HOLD": "يوجد تعليق مالي أو COD غير مسوى ويحتاج حسم قبل أي صرف جديد.",
+          "COMPLIANCE_CASE": "هناك حالة امتثال أو بلاغ مفتوح يحتاج قرارًا قبل العودة للتشغيل الطبيعي.",
+          "DOCUMENTS_EXPIRING": "بعض المستندات تقترب من الانتهاء وتحتاج متابعة قبل أن تتحول إلى إيقاف.",
+          "DOCUMENT_UNDER_REVIEW": "يوجد مستند أو صورة هوية تحت المراجعة اليدوية.",
+          "PERFORMANCE_ALERT": "أداء السائق يحتاج متابعة قبل زيادة الحمل التشغيلي عليه.",
+          "SUPPORT_FOLLOWUPS": "هناك {{count}} متابعات دعم معلقة على هذا السائق.",
+          "SUPPORT_FOLLOWUPS_GENERIC": "هناك متابعات دعم مفتوحة على هذا السائق."
+        },
+        "ACTION_LABELS": {
+          "APPROVE_VERIFICATION": "اعتماد التوثيق",
+          "REQUEST_DOCUMENTS": "طلب مستندات",
+          "CLEAR_FINANCE_HOLD": "إزالة التعليق المالي",
+          "CLEAR_DRIVER_RESTRICTIONS": "فك كل الحظر",
+          "SUSPEND_DRIVER": "تعليق السائق",
+          "REACTIVATE_DRIVER": "إعادة التفعيل",
+          "BAN_DRIVER": "حظر السائق",
+          "UNBAN_DRIVER": "فك الحظر",
+          "MARK_READY_FOR_DISPATCH": "إعادته للإسناد",
+          "OPEN_OPERATIONS": "فتح التشغيل",
+          "OPEN_SUPPORT": "فتح الدعم",
+          "OPEN_FINANCE": "فتح المالية",
+          "REVIEW_COMPLIANCE": "مراجعة الامتثال"
+        },
+        "ACTION_HELPERS": {
+          "APPROVE_VERIFICATION": "يحرك السائق إلى جاهزية التفعيل بدلاً من بقائه معلقًا.",
+          "REQUEST_DOCUMENTS": "يبقي السائق خارج التشغيل لحين استكمال النواقص.",
+          "CLEAR_FINANCE_HOLD": "يصفّر الحجز المحلي ويعيد الملف لوضع أكثر استقرارًا.",
+          "CLEAR_DRIVER_RESTRICTIONS": "يفك قيود الحساب والعروض والموقع عندما يكون السائق معتمدًا.",
+          "SUSPEND_DRIVER": "يُستخدم فقط عند وجود خطر تشغيلي أو امتثالي فعلي.",
+          "REACTIVATE_DRIVER": "يعيد السائق إلى وضع الاستعداد وليس الإسناد المباشر.",
+          "BAN_DRIVER": "يحجب السائق بالكامل عن التشغيل حتى تتم المراجعة.",
+          "UNBAN_DRIVER": "يفك الحظر ويعيد السائق إلى وضع الاستعداد عند استيفاء الشروط.",
+          "MARK_READY_FOR_DISPATCH": "يحوّل السائق إلى وضع الجاهزية التشغيلية.",
+          "OPEN_OPERATIONS": "راجع الحمل الحالي وتوزيع المنطقة قبل الإجراء.",
+          "OPEN_SUPPORT": "راجع التذاكر المفتوحة وسياق الدعم المرتبط بالسائق.",
+          "OPEN_FINANCE": "راجع الرصيد والمستحقات والسجلات الفاشلة قبل الإجراء.",
+          "REVIEW_COMPLIANCE": "افتح الحالات والأدلة قبل اتخاذ القرار."
+        }
+      },
+      "ACTION_NOTES": {
+        "MANUAL_SUSPEND": "تم تعليق السائق يدويًا من لوحة المشرف لحين مراجعة الحالة.",
+        "REVIEW_REACTIVATE": "تمت إعادة السائق إلى وضع الاستعداد بعد مراجعة أولية للملف.",
+        "VERIFICATION_APPROVED": "تم اعتماد التوثيق وإعادة السائق إلى طابور الجاهزية التشغيلية.",
+        "DOCUMENTS_REQUESTED": "تم إرجاع الملف لاستكمال مستندات إضافية قبل الاعتماد النهائي.",
+        "FINANCE_HOLD_CLEARED": "تمت تسوية التعليق المالي محليًا وإعادة الملف للمراجعة التشغيلية.",
+        "DRIVER_SUSPENDED": "تم تعليق السائق تشغيليًا لحين مراجعة الحالة المفتوحة.",
+        "ACCOUNT_REACTIVATED": "تمت إعادة تفعيل الحساب وإرجاع السائق إلى وضع الاستعداد بدل الإسناد المباشر.",
+        "READY_FOR_DISPATCH": "تم نقل السائق إلى طابور الجاهزية التشغيلية ويمكن إسناد مهام جديدة له."
+      },
+      "PREVIEW": {
+        "TASK_TITLE": "تفاصيل المهمة {{id}}",
+        "INCIDENT_TITLE": "تفاصيل الحالة {{id}}",
+        "TASK_SUMMARY": "ملخص المهمة",
+        "TASK_VENDOR": "التاجر",
+        "TASK_ZONE": "المنطقة",
+        "TASK_DURATION": "المدة",
+        "TASK_COD": "COD",
+        "PICKUP": "الاستلام",
+        "TRANSIT": "أثناء الرحلة",
+        "DELAY": "تأخير:",
+        "EVIDENCE_ALT": "دليل الحالة",
+        "ACTION_REASSIGN": "إعادة تعيين المهمة",
+        "ACTION_ESCALATE": "تصعيد عاجل",
+        "ACTION_RESOLVE": "إغلاق الحالة كـ محلولة",
+        "ACTION_SUSPEND": "إيقاف السائق",
+        "ACTION_REQUEST_DOCS": "طلب مستندات"
+      },
+      "BTN_ACCESS_PROFILE": "فتح ملف الوصول",
+      "ACTIONS": {
+        "TRACK_TASKS": "تتبع المهام",
+        "LOCK_LOGIN": "قفل الدخول",
+        "UNLOCK_LOGIN": "فك قفل الدخول"
+      },
+      "STATUS": {
+        "COMPLIANCE_ISSUE": "مشكلة امتثال",
+        "LOGIN_LOCKED": "الدخول مقفول"
+      },
+      "LOAD_ERROR_TITLE": "تعذر تحميل ملف السائق",
+      "LOAD_ERROR_DESC": "تعتمد صفحة السائق الآن على الباك إند بالكامل، لذلك لن تظهر أي بيانات حتى يصل رد صحيح من واجهة الإدارة. أعد المحاولة أو ارجع إلى قائمة السائقين.",
+      "BACK_TO_DRIVERS": "العودة إلى السائقين",
+      "HERO": {
+        "BACKEND_FIRST": "ملف مندوب من الباك إند",
+        "PHONE": "الجوال",
+        "ZONE": "المنطقة",
+        "LICENSE": "الرخصة",
+        "LAST_SEEN": "تاريخ الانضمام",
+        "JOINED_AT": "تاريخ الانضمام",
+        "ACTIVE_TASKS": "نشط / مكتمل",
+        "OPERATIONAL_GATE": "بوابة التشغيل",
+        "PROFILE_COMPLETION": "اكتمال الملف",
+        "MISSING_REQUIREMENTS": "نواقص مطلوبة",
+        "NO_BLOCKERS": "لا توجد موانع حرجة",
+        "NO_BLOCKERS_DESC": "جاهزية الباك إند لا تعرض أي مانع مطلوب لهذا الملف.",
+        "REVIEW_NOTE": "ملاحظة المراجعة",
+        "NEXT_STEP": "الخطوة التالية",
+        "BLOCKERS": "الموانع",
+        "ALERTS": "التنبيهات",
+        "LIFECYCLE": "مسار التشغيل",
+        "OVERVIEW_GATE_DESC": "الجاهزية والمراجعة والمالية محسوبة من رد الباك إند.",
+        "LOGIN_LOCK_NOTICE": "تسجيل دخول المندوب مقفول.",
+        "LOGIN_LOCK_NOTICE_WITH_TIME": "تسجيل دخول المندوب مقفول منذ {{lockedAt}}.",
+        "LOGIN_LOCK_NOTICE_WITH_REASON": "تسجيل دخول المندوب مقفول: {{reason}}",
+        "LOGIN_LOCK_NOTICE_WITH_REASON_AND_TIME": "تسجيل دخول المندوب مقفول منذ {{lockedAt}}: {{reason}}"
+      },
+      "OVERVIEW": {
+        "PERSONAL_INFO_TITLE": "البيانات الشخصية",
+        "PERSONAL_INFO_DESC": "الهوية الأساسية وبيانات التواصل القادمة مباشرة من الباك إند.",
+        "VEHICLE_INFO_TITLE": "بيانات المركبة والجاهزية التشغيلية",
+        "VEHICLE_INFO_DESC": "نعرض فقط البيانات التشغيلية الحقيقية المرتبطة بالمركبة والرخصة والمنطقة.",
+        "QUICK_LINKS": "روابط سريعة",
+        "FULL_NAME": "الاسم الكامل",
+        "PHONE_NUMBER": "رقم الجوال",
+        "EMAIL": "البريد الإلكتروني",
+        "CITY": "المدينة",
+        "JOINED_AT": "تاريخ الانضمام",
+        "VEHICLE_TYPE": "نوع المركبة",
+        "LICENSE_NUMBER": "رقم الرخصة",
+        "ZONE": "المنطقة الأساسية",
+        "NO_RECENT_NOTES": "لا توجد ملاحظات حديثة.",
+        "QUICK_SUMMARY_TITLE": "ملخص السائق",
+        "QUICK_SUMMARY_DESC": "لقطة تشغيلية من أحدث بيانات ملف السائق.",
+        "SIGNALS": "المؤشرات",
+        "ALERTS_TITLE": "التنبيهات وملاحظات المراجعة",
+        "ALERTS_DESC": "العوائق المفتوحة وإشارات المتابعة الخاصة بهذا السائق.",
+        "NO_ALERTS": "لا توجد تنبيهات نشطة",
+        "NO_ALERTS_DESC": "هذا الملف سليم خارج المتابعة الروتينية.",
+        "NOTES_HISTORY": "سجل الملاحظات"
+      },
+      "LIFECYCLE": {
+        "APPLICATION": {
+          "LABEL": "الطلب",
+          "DESCRIPTION": "استقبال الطلب وإنشاء الملف",
+          "METRIC": "تم استلام الملف"
+        },
+        "VERIFICATION": {
+          "LABEL": "التوثيق",
+          "DESCRIPTION": "الوثائق والتحقق من الهوية"
+        },
+        "ACTIVATION": {
+          "LABEL": "التفعيل",
+          "DESCRIPTION": "جاهزية الحساب والمركبة",
+          "METRIC_ACTIVE": "تم التفعيل",
+          "METRIC_PENDING": "بانتظار الاعتماد"
+        },
+        "OPERATIONS": {
+          "LABEL": "التشغيل",
+          "DESCRIPTION": "المهام اليومية والمناطق",
+          "METRIC_ON_MISSION": "في مهمة",
+          "METRIC_ACTIVE": "نشط",
+          "METRIC_PAUSED": "متوقف مؤقتًا",
+          "METRIC_SUSPENDED": "موقوف"
+        },
+        "FINANCE": {
+          "LABEL": "المالية والامتثال",
+          "DESCRIPTION": "التحصيل والنقاط المالية ومؤشرات المخاطر",
+          "METRIC_URGENT": "تدخل عاجل",
+          "METRIC_MONITORING": "تحتاج متابعة",
+          "METRIC_HEALTHY": "سليم"
+        }
+      },
+      "TABS": {
+        "OVERVIEW": "نظرة عامة",
+        "OPERATIONS": "التشغيل",
+        "PERFORMANCE": "الأداء",
+        "SUPPORT": "الدعم",
+        "COMPLIANCE": "الامتثال",
+        "FINANCE": "المالية",
+        "VERIFICATION": "التوثيق"
+      }
+    }
+  },
+  "ADMIN_USERS": {
+    "TITLE": "دليل الصلاحيات",
+    "DESC": "إدارة مسؤولي المنصة وفرق التجار والسائقين والعملاء من دليل موحّد للوصول والتواصل.",
+    "OPEN_EMAIL_CENTER": "مركز البريد",
+    "OPEN_ROLES_MANAGEMENT": "إدارة الأدوار",
+    "ACCESS_HUB": {
+      "BADGE": "الصلاحيات والأدوار",
+      "TITLE": "افتح إدارة الصلاحيات من صفحة المستخدمين",
+      "DESC": "راجع قوالب الأدوار، وعدد الصلاحيات، والأدوار النظامية أو المخصصة من هنا ثم افتح شاشة الإدارة الكاملة عند الحاجة.",
+      "OPEN": "افتح إدارة الأدوار",
+      "STATS": {
+        "ROLES": "إجمالي الأدوار",
+        "PERMISSIONS": "إجمالي الصلاحيات",
+        "SYSTEM_ROLES": "أدوار نظامية",
+        "CUSTOM_ROLES": "أدوار مخصصة"
+      }
+    },
+    "ADD_ADMIN": "دعوة مسؤول",
+    "ADD_IDENTITY": "إضافة هوية",
+    "SEARCH_PLACEHOLDER": "ابحث بالاسم أو البريد أو الفريق أو القسم...",
+    "EMPTY_TITLE": "لا توجد هويات مطابقة",
+    "EMPTY_MESSAGE": "جرّب إزالة الفلاتر النشطة أو أنشئ سجل وصول جديدًا.",
+    "KPI": {
+      "TOTAL": "إجمالي الهويات",
+      "ACTIVE": "الصلاحيات النشطة",
+      "INVITED": "الدعوات المعلقة",
+      "SUSPENDED": "الصلاحيات الموقوفة",
+      "MFA_GAPS": "حسابات بدون مصادقة متعددة العوامل",
+      "CUSTOM_ACCESS": "صلاحيات مخصصة",
+      "OPERATIONAL": "هويات تشغيلية",
+      "VENDOR_PANEL": "هويات لوحة التاجر",
+      "EXTERNAL": "حسابات خارجية"
+    },
+    "AUDIENCE": {
+      "ALL": "كل الشرائح",
+      "SUPER_ADMIN": "الإدارة العليا",
+      "VENDOR_NETWORK": "شبكة التجار",
+      "DRIVERS": "السائقون",
+      "CUSTOMERS": "العملاء"
+    },
+    "FILTERS": {
+      "ALL": "الكل",
+      "STATUS": "الحالة",
+      "ACCESS_LEVEL": "مستوى الصلاحية",
+      "ROLE": "القالب الوظيفي",
+      "TEAM": "الفريق",
+      "PANEL": "نطاق اللوحة",
+      "PERSONA": "نوع الشخصية",
+      "VENDOR": "التاجر",
+      "BRANCH": "الفرع",
+      "ACTIVE_COUNT": "فلاتر نشطة",
+      "RESET": "إعادة ضبط الفلاتر"
+    },
+    "TABLE": {
+      "ADMIN": "المسؤول",
+      "IDENTITY": "الهوية",
+      "PERSONA": "الشخصية",
+      "ROLE": "الدور",
+      "TEAM": "الفريق",
+      "SCOPE": "النطاق",
+      "LAST_LOGIN": "آخر دخول",
+      "STATUS": "الحالة",
+      "SECURITY": "الأمان",
+      "CUSTOM_ACCESS": "مخصص"
+    },
+    "STATUS": {
+      "ACTIVE": "نشط",
+      "INVITED": "مدعو",
+      "SUSPENDED": "موقوف",
+      "INACTIVE": "غير نشط"
+    },
+    "INVITE": {
+      "DRAFT": "مسودة",
+      "PENDING": "قيد الانتظار",
+      "ACCEPTED": "تم القبول",
+      "EXPIRED": "منتهية"
+    },
+    "ACCESS_LEVEL": {
+      "FULL": "تحكم كامل",
+      "RESTRICTED": "مقيد",
+      "OBSERVER": "مراقب"
+    },
+    "FIELDS": {
+      "FULL_NAME": "الاسم الكامل",
+      "EMAIL": "البريد الإلكتروني",
+      "PHONE": "رقم الجوال",
+      "DEPARTMENT": "القسم",
+      "TEAM": "الفريق",
+      "ROLE_PRESET": "القالب الوظيفي",
+      "ACCESS_LEVEL": "مستوى الصلاحية",
+      "STATUS": "الحالة",
+      "INVITE_STATE": "حالة الدعوة",
+      "MFA": "التحقق متعدد العوامل",
+      "PERSONA": "نوع الشخصية",
+      "PANEL_SCOPE": "نطاق اللوحة",
+      "ENTITY_ID": "معرّف الكيان",
+      "VENDOR": "التاجر",
+      "BRANCH": "الفرع",
+      "REGION": "المنطقة",
+      "CITY": "المدينة",
+      "REPLY_TO": "عنوان الرد",
+      "PREFERRED_LOCALE": "اللغة المفضلة",
+      "NOTIFICATION_EMAILS": "بريد الإشعارات",
+      "ESCALATION_EMAILS": "بريد التصعيد"
+    },
+    "ACTIONS": {
+      "RESET_PRESET": "إعادة القالب الافتراضي",
+      "RESEND_INVITE": "إعادة إرسال الدعوة",
+      "REACTIVATE": "إعادة التفعيل",
+      "SUSPEND": "تعليق الصلاحية",
+      "SAVE": "حفظ التعديلات",
+      "BACK_TO_LIST": "العودة إلى الدليل",
+      "DUPLICATE": "نسخ الدور"
+    },
+    "SECURITY": {
+      "MFA_ON": "المصادقة متعددة العوامل مفعلة",
+      "MFA_OFF": "المصادقة متعددة العوامل غير مكتملة",
+      "LAST_LOGIN": "آخر دخول",
+      "INVITED_BY": "تمت الدعوة بواسطة",
+      "INVITED_AT": "تاريخ الدعوة",
+      "ACCEPTED_AT": "تاريخ القبول",
+      "NEVER": "أبدًا",
+      "VERIFICATION": "التحقق"
+    },
+    "ROLES_MANAGEMENT": {
+      "TITLE": "إدارة الأدوار والصلاحيات",
+      "SUBTITLE": "أنشئ أدوار الوصول وعدّلها وحدد صلاحيات كل دور داخل النظام.",
+      "BADGES": {
+        "SYSTEM": "نظامي",
+        "CUSTOM": "مخصص"
+      },
+      "CARDS": {
+        "PERMISSIONS": "صلاحية",
+        "USERS": "مستخدم",
+        "LEVEL": "المستوى",
+        "SCOPE": "النطاق:"
+      },
+      "MATRIX": {
+        "SECTION": "القسم"
+      },
+      "CREATE": {
+        "TITLE": "إنشاء دور مخصص جديد",
+        "SUBTITLE": "حدد اسم الدور ومستوى الوصول ثم عدّل الصلاحيات من مصفوفة الصلاحيات.",
+        "NAME": "اسم الدور",
+        "NAME_PLACEHOLDER": "مثال: مدير المحتوى",
+        "DESCRIPTION": "الوصف",
+        "DESCRIPTION_PLACEHOLDER": "وصف مختصر للدور...",
+        "ACCESS_LEVEL": "مستوى الوصول",
+        "PANEL_SCOPE": "نطاق اللوحة"
+      },
+      "ACTIONS": {
+        "CREATE_ROLE": "إنشاء دور جديد",
+        "DELETE_ROLE": "حذف الدور",
+        "SAVE_CHANGES": "حفظ التغييرات",
+        "CLOSE": "إغلاق",
+        "CANCEL": "إلغاء"
+      }
+    },
+    "DETAIL": {
+      "TITLE": "ملف الهوية والصلاحية",
+      "SUBTITLE": "بيانات الهوية، الارتباطات، إعدادات التواصل، وتصميم الصلاحيات حسب نوع الحساب.",
+      "BREADCRUMB": "ملف الصلاحية",
+      "NOT_FOUND": "الهوية غير موجودة",
+      "NOT_FOUND_DESC": "السجل المطلوب غير متوفر داخل دليل الصلاحيات المحلي.",
+      "NEW_USER": "هوية جديدة",
+      "EMAIL_PENDING": "البريد غير محدد بعد",
+      "IDENTITY_BADGE": "الهوية",
+      "IDENTITY_TITLE": "الملف التعريفي",
+      "IDENTITY_DESC": "بيانات التواصل الأساسية، تبعية القسم، وتصنيف الشخصية.",
+      "ASSIGNMENT_BADGE": "الارتباطات",
+      "ASSIGNMENT_TITLE": "ربط الكيان والفرع",
+      "ASSIGNMENT_DESC": "اربط الهوية بالتاجر أو الفرع أو نطاق الحساب الخارجي الصحيح.",
+      "ACCESS_BADGE": "نموذج الصلاحية",
+      "ACCESS_TITLE": "الدور والحالة ونمط الوصول",
+      "ACCESS_DESC": "استخدم القوالب مع التخصيص عند الحاجة للمشغلين، أو ملفات خفيفة للحسابات الخارجية.",
+      "COMMUNICATION_BADGE": "ملف التواصل",
+      "COMMUNICATION_TITLE": "توجيه البريد والإشعارات",
+      "COMMUNICATION_DESC": "اضبط الردود وجهات التصعيد وخيارات الاشتراك في الإشعارات لكل هوية.",
+      "PERMISSIONS_BADGE": "مصفوفة الصلاحيات",
+      "PERMISSIONS_TITLE": "مصفوفة الصلاحيات التشغيلية",
+      "PERMISSIONS_DESC": "ترث مجموعات الصلاحيات من القالب المحدد، ثم يمكن تعديل إجراءات بعينها.",
+      "FEATURES_BADGE": "صلاحيات المزايا",
+      "FEATURES_TITLE": "مفاتيح مزايا الحساب",
+      "FEATURES_DESC": "الحسابات الخارجية تعتمد على مفاتيح المنتج والتواصل بدل مصفوفة الصلاحيات الإدارية الكاملة.",
+      "SECURITY_BADGE": "الحالة الأمنية",
+      "SECURITY_TITLE": "نقاط التحقق الأمنية",
+      "SECURITY_DESC": "تابع جاهزية المصادقة متعددة العوامل وسجل الدعوات وآخر النشاطات.",
+      "SUMMARY_BADGE": "ملخص التخصيص",
+      "SUMMARY_TITLE": "ملخص الصلاحية الفعالة",
+      "SUMMARY_DESC": "نظرة سريعة على القالب الحالي ومدى الانحراف الناتج عن التخصيص.",
+      "EFFECTIVE_PERMISSIONS": "صلاحيات فعّالة",
+      "GRANTED_OVERRIDES": "استثناءات ممنوحة",
+      "REVOKED_OVERRIDES": "استثناءات مسحوبة",
+      "CUSTOM_TOTAL": "تعديلات مخصصة",
+      "NOTIFICATION_RECIPIENTS": "مستلمو الإشعارات",
+      "MFA_HINT": "استخدم هذا الحقل لتحديد ما إذا كان المسؤول أكمل التسجيل الآمن."
+    },
+    "SCOPE": {
+      "GLOBAL": "لوحة عامة",
+      "DIRECTORY": "مرتبط بكيان"
+    },
+    "PANELS": {
+      "SUPER_ADMIN_PANEL": "لوحة الإدارة العليا",
+      "VENDOR_PANEL": "لوحة التاجر",
+      "DRIVER_APP": "تطبيق السائق",
+      "CUSTOMER_APP": "تطبيق العميل"
+    },
+    "PERSONAS": {
+      "SUPER_ADMIN_MANAGER": "مدير إدارة عليا",
+      "SUPER_ADMIN_STAFF": "موظف إدارة عليا",
+      "VENDOR_OWNER": "مالك التاجر",
+      "VENDOR_COMPANY_MANAGER": "مدير شركة التاجر",
+      "VENDOR_BRANCH_MANAGER": "مدير فرع التاجر",
+      "VENDOR_BRANCH_EMPLOYEE": "موظف فرع التاجر",
+      "VENDOR_FINANCE": "مالية التاجر",
+      "VENDOR_SUPPORT": "دعم التاجر",
+      "DRIVER": "حساب سائق",
+      "CUSTOMER": "حساب عميل"
+    },
+    "VERIFICATION": {
+      "VERIFIED": "موثّق",
+      "PENDING": "قيد الانتظار",
+      "UNDER_REVIEW": "قيد المراجعة",
+      "SUSPENDED": "موقوف",
+      "NOT_REQUIRED": "غير مطلوب"
+    },
+    "LOCALE": {
+      "AR": "العربية",
+      "EN": "الإنجليزية",
+      "BILINGUAL": "ثنائي اللغة"
+    },
+    "COMMUNICATION_FLAGS": {
+      "ACCESS_INVITES": {
+        "LABEL": "دعوات الوصول",
+        "DESC": "رسائل الدعوة وإعادة تفعيل الوصول للحسابات التشغيلية."
+      },
+      "BRANCH_ALERTS": {
+        "LABEL": "تنبيهات الفروع",
+        "DESC": "تحديثات التشغيل وتغييرات تغطية الفروع وصلاحيات الموظفين."
+      },
+      "DISPATCH_NOTIFICATIONS": {
+        "LABEL": "تنبيهات التوجيه",
+        "DESC": "تغييرات إسناد السائقين، المهمات، وإشعارات التوجيه المباشر."
+      },
+      "COMPLIANCE_EMAILS": {
+        "LABEL": "رسائل الامتثال",
+        "DESC": "متابعة التحقق وطلبات المستندات والتصعيدات المرتبطة بالامتثال."
+      },
+      "FINANCE_DIGESTS": {
+        "LABEL": "ملخصات المالية",
+        "DESC": "ملخصات التسويات والتنبيهات المالية ومراجعات الأرصدة."
+      },
+      "SUPPORT_ESCALATIONS": {
+        "LABEL": "تصعيدات الدعم",
+        "DESC": "توجيه حالات الدعم عالية الأولوية ومتابعات استعادة الخدمة."
+      },
+      "ORDER_UPDATES": {
+        "LABEL": "تحديثات مشاكل الطلبات",
+        "DESC": "إشعارات مشكلات الطلبات والاستردادات وتحديثات الحالات."
+      },
+      "MARKETING_OPT_IN": {
+        "LABEL": "الاشتراك التسويقي",
+        "DESC": "السماح برسائل التسويق وإعادة التنشيط لحسابات العملاء."
+      }
+    },
+    "FEATURE_TOGGLES": {
+      "DRIVER_DISPATCH": {
+        "LABEL": "تنبيهات التوجيه",
+        "DESC": "السماح بإشعارات الإسناد وتغييرات المهمات وجهوزية الاستلام."
+      },
+      "DRIVER_COMPLIANCE": {
+        "LABEL": "تذكيرات الامتثال",
+        "DESC": "إرسال تنبيهات انتهاء المستندات ومتابعات التحقق."
+      },
+      "DRIVER_FINANCE": {
+        "LABEL": "ملخصات المالية",
+        "DESC": "تفعيل ملخصات السداد والدفع عند الاستلام لحسابات السائقين."
+      },
+      "CUSTOMER_MARKETING": {
+        "LABEL": "التواصل التسويقي",
+        "DESC": "السماح بالرسائل التسويقية ورسائل دورة الحياة لحساب العميل."
+      },
+      "CUSTOMER_ESCALATION": {
+        "LABEL": "تصعيدات الدعم",
+        "DESC": "إرسال تحديثات الدعم المصعّد ورسائل استعادة الخدمة."
+      },
+      "CUSTOMER_ISSUES": {
+        "LABEL": "تحديثات المشاكل",
+        "DESC": "إشعار العميل بتقدم الاستردادات والنزاعات ومشاكل الطلبات."
+      }
+    },
+    "PERMISSIONS": {
+      "ACTIONS": {
+        "VIEW": "عرض",
+        "CREATE": "إنشاء",
+        "EDIT": "تعديل",
+        "APPROVE": "اعتماد",
+        "EXPORT": "تصدير",
+        "MANAGE_SETTINGS": "إدارة الإعدادات"
+      },
+      "GROUPS": {
+        "DASHBOARD": {
+          "TITLE": "لوحة المؤشرات",
+          "DESC": "الرؤى التنفيذية وبطاقات المؤشرات وتقارير الصحة التشغيلية."
+        },
+        "VENDORS": {
+          "TITLE": "التجار",
+          "DESC": "مراجعة التجار وإجراءات الانضمام ومتابعات الامتثال."
+        },
+        "CATALOG": {
+          "TITLE": "الكتالوج",
+          "DESC": "البيانات الرئيسية والتحكم بالعلامات التجارية وحوكمة التصنيفات."
+        },
+        "ORDERS": {
+          "TITLE": "الطلبات",
+          "DESC": "الإشراف على الطلبات والاستثناءات ومسارات الحل."
+        },
+        "CUSTOMERS": {
+          "TITLE": "العملاء",
+          "DESC": "صحة العملاء ومؤشرات الثقة ورؤية الاستبقاء."
+        },
+        "DRIVERS": {
+          "TITLE": "السائقون",
+          "DESC": "جاهزية السائقين والتحقق وصلاحيات الإجراء التشغيلي."
+        },
+        "DISPUTES": {
+          "TITLE": "النزاعات",
+          "DESC": "مراجعة الحالات والتصعيد وسلطات الاعتماد."
+        },
+        "FINANCES": {
+          "TITLE": "المالية",
+          "DESC": "التسويات والضوابط المالية وتغييرات السياسات."
+        },
+        "USERS_ACCESS": {
+          "TITLE": "المستخدمون والصلاحيات",
+          "DESC": "دورة حياة الهويات وقوالب الأدوار وضوابط الوصول."
+        },
+        "EMAIL_CENTER": {
+          "TITLE": "مركز البريد",
+          "DESC": "توجيه البريد التشغيلي والقوالب وملفات الإرسال."
+        },
+        "SYSTEM": {
+          "TITLE": "النظام",
+          "DESC": "إعدادات المنصة العامة ونقاط التحكم الحساسة."
+        },
+        "VENDOR_DASHBOARD": {
+          "TITLE": "لوحة التاجر",
+          "DESC": "رؤية المؤشرات للفروع والشركة لمشغلي التاجر."
+        },
+        "VENDOR_ORDERS": {
+          "TITLE": "طلبات التاجر",
+          "DESC": "تدفق الطلبات من جهة التاجر والاعتمادات والتصدير."
+        },
+        "VENDOR_CATALOG": {
+          "TITLE": "كتالوج التاجر",
+          "DESC": "التشكيلة المملوكة للتاجر وتعديلات المنتجات والنشر."
+        },
+        "VENDOR_BRANCH_TEAM": {
+          "TITLE": "فريق الفرع",
+          "DESC": "إدارة طاقم الفرع وصلاحياته وإعداداته المحلية."
+        },
+        "VENDOR_FINANCE": {
+          "TITLE": "مالية التاجر",
+          "DESC": "محفظة التاجر والتسويات وإعدادات المالية."
+        },
+        "VENDOR_SUPPORT": {
+          "TITLE": "دعم التاجر",
+          "DESC": "التعامل مع المشاكل وسجل الدعم وتصدير التذاكر."
+        },
+        "VENDOR_SETTINGS": {
+          "TITLE": "إعدادات التاجر",
+          "DESC": "إعدادات لوحة التاجر والتفضيلات التشغيلية والتهيئة."
+        }
+      }
+    },
+    "PRESETS": {
+      "SUPER_ADMIN": {
+        "NAME": "مدير نظام",
+        "DESC": "صلاحية كاملة على كل نطاقات المنصة بما فيها الصلاحيات وإعدادات النظام."
+      },
+      "OPERATIONS_LEAD": {
+        "NAME": "قائد العمليات",
+        "DESC": "تحكم تشغيلي واسع عبر التجار والطلبات والعملاء والسائقين."
+      },
+      "RISK_ADMIN": {
+        "NAME": "مسؤول المخاطر",
+        "DESC": "صلاحيات مركزة للنزاعات والاعتمادات والقرارات الحساسة للثقة."
+      },
+      "FINANCE_ADMIN": {
+        "NAME": "مسؤول المالية",
+        "DESC": "رؤية مالية متقدمة وصلاحيات اعتماد للتسويات وضوابط التسعير."
+      },
+      "SUPPORT_ADMIN": {
+        "NAME": "مسؤول الدعم",
+        "DESC": "وصول موجه للدعم مع تدخلات محدودة في العملاء والطلبات."
+      },
+      "VENDOR_OWNER": {
+        "NAME": "مالك التاجر",
+        "DESC": "تحكم كامل في لوحة التاجر على مستوى الشركة والمالية والفروع."
+      },
+      "VENDOR_COMPANY_MANAGER": {
+        "NAME": "مدير شركة التاجر",
+        "DESC": "تحكم تشغيلي على مستوى الشركة للفروع والطلبات وتنفيذ الكتالوج."
+      },
+      "VENDOR_BRANCH_MANAGER": {
+        "NAME": "مدير فرع التاجر",
+        "DESC": "إدارة محلية للفرع والموظفين والطلبات وجودة الخدمة."
+      },
+      "VENDOR_BRANCH_EMPLOYEE": {
+        "NAME": "موظف فرع التاجر",
+        "DESC": "مشغل فرع بصلاحيات محدودة ودون وصول لإعدادات الشركة."
+      },
+      "VENDOR_FINANCE_MANAGER": {
+        "NAME": "مدير مالية التاجر",
+        "DESC": "رؤية مالية للتاجر مع ضوابط التسويات ونطاق تشغيلي محدود."
+      },
+      "VENDOR_SUPPORT_MANAGER": {
+        "NAME": "مدير دعم التاجر",
+        "DESC": "شخصية دعم للتذاكر والتصعيدات ومتابعات الخدمة."
+      },
+      "DRIVER_ACCOUNT": {
+        "NAME": "حساب سائق",
+        "DESC": "هوية خارجية تعتمد على تفضيلات التواصل ومفاتيح المزايا."
+      },
+      "CUSTOMER_ACCOUNT": {
+        "NAME": "حساب عميل",
+        "DESC": "هوية خارجية تركز على توجيه التواصل وإتاحة خدمات دورة الحياة."
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SettlementStatus, RefundStatus, CodStatus } from '../../models/finance.models';
@@ -13,6 +13,7 @@ interface StatusConfig {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-finance-status-badge',
   standalone: true,
   imports: [CommonModule, TranslateModule],

@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IsActiveMatchOptions, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,6 +6,7 @@ import { HasPermissionDirective } from '../../../../shared/directives/has-permis
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-sidebar',
     standalone: true,
     imports: [CommonModule, TranslateModule, HasPermissionDirective],
@@ -14,6 +15,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 })
 export class SidebarComponent {
     @Input() currentLang: string = 'ar';
+    @Input() isCollapsed = false;
+    @Output() toggleCollapse = new EventEmitter<void>();
 
     private readonly router = inject(Router);
     private readonly authService = inject(AuthService);
@@ -53,10 +56,11 @@ export class SidebarComponent {
 
     navItemClasses(route: string, exact = false): string[] {
         return [
-            'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-start text-[13px] font-bold transition-colors group',
+            'flex w-full items-center rounded-xl py-2.5 text-start text-[13px] font-bold transition-all duration-500 group relative overflow-hidden',
+            this.isCollapsed ? 'justify-center px-0' : 'gap-3 px-3',
             this.isActive(route, exact)
-                ? 'bg-white/15 text-white font-black shadow-inner'
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
+                ? 'bg-gradient-to-r from-white/15 to-transparent border-s-2 border-zadna-accent text-white shadow-[inset_10px_0_20px_-10px_rgba(255,255,255,0.15)]'
+                : 'text-white/60 hover:bg-white/10 hover:text-white hover:translate-x-1 border-s-2 border-transparent'
         ];
     }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription, interval, switchMap } from 'rxjs';
@@ -9,6 +9,7 @@ import { AdminBrandBulkOperation, AdminBrandBulkOperationItem, BulkBrandDraft, C
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bulk-brands-page',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, AppPageHeaderComponent],
@@ -373,6 +374,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
   `
 })
 export class BulkBrandsPageComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
   categories: Category[] = [];
   leafCategories: Category[] = [];
   rows: BulkBrandDraft[] = [];
@@ -481,6 +483,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
 
     this.catalogService.createBrandsBulk(payload).subscribe({
       next: (operation) => {
+        this.cdr.markForCheck();
         this.operation = operation;
         this.processedRows = operation.processedRows;
         this.succeededRows = operation.succeededRows;
@@ -488,6 +491,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
         this.startPolling(operation.id);
       },
       error: (error) => {
+        this.cdr.markForCheck();
         const errorMessage = error?.error?.message || error?.message || (this.currentLang === 'ar' ? 'فشل بدء الرفع الجماعي.' : 'Failed to start bulk upload.');
         this.isSubmitting = false;
         this.processedRows = payload.length;
@@ -521,11 +525,13 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     this.isUploadingDefaultLogo = true;
     this.catalogService.uploadFile(file, 'brands').subscribe({
       next: (result) => {
+        this.cdr.markForCheck();
         this.defaults.logoUrl = result.url;
         this.isUploadingDefaultLogo = false;
         input.value = '';
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isUploadingDefaultLogo = false;
         input.value = '';
       }
@@ -542,11 +548,13 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     this.isUploadingDefaultCover = true;
     this.catalogService.uploadFile(file, 'brands').subscribe({
       next: (result) => {
+        this.cdr.markForCheck();
         this.defaults.coverImageUrl = result.url;
         this.isUploadingDefaultCover = false;
         input.value = '';
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isUploadingDefaultCover = false;
         input.value = '';
       }
@@ -563,11 +571,13 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     this.uploadingRowIds.add(row.rowId);
     this.catalogService.uploadFile(file, 'brands').subscribe({
       next: (result) => {
+        this.cdr.markForCheck();
         row.logoUrl = result.url;
         this.uploadingRowIds.delete(row.rowId);
         input.value = '';
       },
       error: () => {
+        this.cdr.markForCheck();
         this.uploadingRowIds.delete(row.rowId);
         input.value = '';
       }
@@ -584,11 +594,13 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
     this.uploadingRowIds.add(row.rowId);
     this.catalogService.uploadFile(file, 'brands').subscribe({
       next: (result) => {
+        this.cdr.markForCheck();
         row.coverImageUrl = result.url;
         this.uploadingRowIds.delete(row.rowId);
         input.value = '';
       },
       error: () => {
+        this.cdr.markForCheck();
         this.uploadingRowIds.delete(row.rowId);
         input.value = '';
       }
@@ -776,12 +788,14 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
   private loadCategories(): void {
     this.catalogService.getCategories(undefined, true).subscribe({
       next: (categories) => {
+        this.cdr.markForCheck();
         this.categories = Array.isArray(categories) ? categories : [];
         this.leafCategories = this.flattenLeafCategories(this.categories);
         this.addRows(25);
         this.isLoading = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.categories = [];
         this.leafCategories = [];
         this.addRows(25);
@@ -841,6 +855,7 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
       .pipe(switchMap(() => this.catalogService.getBrandsBulkOperation(operationId)))
       .subscribe({
         next: (operation) => {
+        this.cdr.markForCheck();
           this.operation = operation;
           this.processedRows = operation.processedRows;
           this.succeededRows = operation.succeededRows;
@@ -858,15 +873,18 @@ export class BulkBrandsPageComponent implements OnInit, OnDestroy {
             this.stage = 'done';
             this.catalogService.getBrandsBulkOperationItems(operationId).subscribe({
               next: (items) => {
+        this.cdr.markForCheck();
                 this.resultItems = items;
               },
               error: () => {
+        this.cdr.markForCheck();
                 this.resultItems = [];
               }
             });
           }
         },
         error: () => {
+        this.cdr.markForCheck();
           this.isSubmitting = false;
           this.stage = 'done';
           this.pollingSubscription?.unsubscribe();

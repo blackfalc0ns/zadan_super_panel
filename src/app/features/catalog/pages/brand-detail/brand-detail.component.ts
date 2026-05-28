@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ type BrandDetailProduct = MasterProduct & {
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-brand-detail',
   standalone: true,
   imports: [
@@ -29,6 +30,7 @@ type BrandDetailProduct = MasterProduct & {
   styleUrl: './brand-detail.component.scss'
 })
 export class BrandDetailComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   brand: Brand | null = null;
   products: BrandDetailProduct[] = [];
   isLoading = true;
@@ -88,10 +90,12 @@ export class BrandDetailComponent implements OnInit {
       })
     ).subscribe({
       next: ({ brand, products }) => {
+        this.cdr.markForCheck();
         this.brand = brand;
         this.products = products;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Error loading brand', err);
         this.brand = null;
         this.products = [];

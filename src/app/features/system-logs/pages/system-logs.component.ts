@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -15,6 +15,7 @@ import { SystemLogEntryDto, SystemLogsApiService, SystemLogsQuery } from '../../
 type LogStatusFilter = boolean | '';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-system-logs',
   standalone: true,
   imports: [
@@ -32,6 +33,7 @@ type LogStatusFilter = boolean | '';
   `]
 })
 export class SystemLogsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   logs: SystemLogEntryDto[] = [];
   isLoading = false;
   isExporting = false;
@@ -96,7 +98,10 @@ export class SystemLogsComponent implements OnInit {
   ngOnInit(): void {
     // We populate the localized options at runtime so they react to language changes if needed
     // The shared AdvancedFilterPanelComponent expects an array of { label, value }
-    this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.updateFilterOptions());
+    this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.cdr.markForCheck();
+      this.updateFilterOptions();
+    });
     this.updateFilterOptions();
     this.loadLogs();
   }
@@ -127,6 +132,7 @@ export class SystemLogsComponent implements OnInit {
 
     this.api.getLogs(query).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.logs = response.items;
         this.page = {
           pageNumber: response.pageNumber, pageSize: response.pageSize,
@@ -137,6 +143,7 @@ export class SystemLogsComponent implements OnInit {
         this.updateKpiCards();
       },
       error: () => {
+        this.cdr.markForCheck();
         this.errorMessage = this.translate.instant('SYSTEM_LOGS.STATES.ERROR');
         this.logs = [];
         this.isLoading = false;
@@ -205,6 +212,7 @@ export class SystemLogsComponent implements OnInit {
     this.liveSubscription = interval(15000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
+      this.cdr.markForCheck();
         if (this.page.pageNumber === 1 && !this.isLoading) {
           this.silentRefresh();
         }
@@ -227,6 +235,7 @@ export class SystemLogsComponent implements OnInit {
 
     this.api.getLogs(query).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         const oldFirstId = this.logs.length > 0 ? this.logs[0].id : null;
         const newItems = response.items;
         if (oldFirstId && newItems.length > 0 && newItems[0].id !== oldFirstId) {
@@ -255,6 +264,7 @@ export class SystemLogsComponent implements OnInit {
 
     this.api.exportCsv(query).subscribe({
       next: (blob) => {
+        this.cdr.markForCheck();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -263,7 +273,8 @@ export class SystemLogsComponent implements OnInit {
         URL.revokeObjectURL(url);
         this.isExporting = false;
       },
-      error: () => { this.isExporting = false; }
+      error: () => {
+        this.cdr.markForCheck(); this.isExporting = false; }
     });
   }
 

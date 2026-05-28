@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MobileVendorCardComponent, VendorCardData } from '../mobile-vendor-card/mobile-vendor-card.component';
@@ -7,6 +7,7 @@ import { MobileVendorCardComponent, VendorCardData } from '../mobile-vendor-card
 export type { VendorCardData };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-mobile-vendor-cards',
   standalone: true,
   imports: [CommonModule, MobileVendorCardComponent, TranslateModule],

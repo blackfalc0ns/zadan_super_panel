@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FeaturePlaceholderPageComponent } from '@shared/components/ui/feature-placeholder-page/feature-placeholder-page.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bank-account-verification',
   standalone: true,
   imports: [FeaturePlaceholderPageComponent],

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -25,6 +25,7 @@ import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
 echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-finance-dashboard',
   standalone: true,
   imports: [CommonModule, TranslateModule, FinanceKpiCardComponent, AppCardComponent, AppButtonComponent, SectionHeaderComponent, InlineBannerComponent, StatusPillComponent, NgxEchartsDirective],
@@ -202,6 +203,7 @@ echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, Leg
   `
 })
 export class FinanceDashboardComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private financeService = inject(FinanceService);
   private router = inject(Router);
   private translate = inject(TranslateService);
@@ -226,6 +228,7 @@ export class FinanceDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadData();
     this.translate.onLangChange.subscribe(() => {
+      this.cdr.markForCheck();
       if (this.snapshot) {
         this.buildCharts();
       }
@@ -248,6 +251,7 @@ export class FinanceDashboardComponent implements OnInit {
         this.isLoading = false;
       })
     ).subscribe((data) => {
+      this.cdr.markForCheck();
       this.snapshot = data;
       if (data) {
         this.buildCharts();

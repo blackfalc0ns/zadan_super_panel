@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { DriverLifecycleStage, DriverWorkflowActionId, DriverWorkflowSummary } from '../../models/drivers.models';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-command-center',
   standalone: true,
   imports: [CommonModule, TranslateModule, StatusPillComponent],

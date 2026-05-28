@@ -1,0 +1,253 @@
+<div class="h-full flex flex-col bg-slate-50/50 font-sans">
+    <!-- Header -->
+    <app-page-header
+        [title]="'CATALOG.RECYCLE_BIN'"
+        [subtitle]="'CATALOG.RECYCLE_BIN_DESC'"
+        [showToolbar]="true"
+        [breadcrumbs]="[
+            { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
+            { label: 'CATALOG.RECYCLE_BIN' }
+        ]">
+        <span title-prefix class="material-symbols-outlined text-[28px] text-red-500">delete</span>
+
+        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+            <app-button
+                routerLink="/catalog/products"
+                variant="outline"
+                customClass="!rounded-full !bg-white !border !border-zadna-primary/30 !text-zadna-primary hover:!bg-zadna-primary/5 hover:!border-zadna-primary !px-5 !py-2.5 transition-all shadow-sm">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-[11px] sm:text-xs">{{ 'CATALOG.BACK_TO_CATALOG' | translate }}</span>
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                </div>
+            </app-button>
+        </div>
+    </app-page-header>
+
+    <div class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[120rem] mx-auto w-full space-y-6">
+        <!-- Feedback Alerts -->
+        <div *ngIf="successMessage" class="p-4 bg-emerald-50 border border-emerald-200 rounded-[1.25rem] flex items-center gap-3 text-emerald-700 animate-in fade-in duration-300">
+            <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+            <span class="text-[13px] font-bold">{{ successMessage }}</span>
+        </div>
+        <div *ngIf="errorMessage" class="p-4 bg-red-50 border border-red-200 rounded-[1.25rem] flex items-center gap-3 text-red-700 animate-in fade-in duration-300">
+            <span class="material-symbols-outlined text-red-600">error</span>
+            <span class="text-[13px] font-bold">{{ errorMessage }}</span>
+        </div>
+
+        <!-- Premium Tabs -->
+        <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm p-1.5 max-w-md">
+            <button 
+                (click)="switchTab('products')" 
+                [class.bg-zadna-primary]="activeTab === 'products'"
+                [class.text-white]="activeTab === 'products'"
+                [class.text-slate-500]="activeTab !== 'products'"
+                class="flex-1 h-full rounded-full text-xs font-black transition-all duration-300 uppercase tracking-wider">
+                {{ 'PRODUCTS.TITLE' | translate }}
+            </button>
+            <button 
+                (click)="switchTab('brands')" 
+                [class.bg-zadna-primary]="activeTab === 'brands'"
+                [class.text-white]="activeTab === 'brands'"
+                [class.text-slate-500]="activeTab !== 'brands'"
+                class="flex-1 h-full rounded-full text-xs font-black transition-all duration-300 uppercase tracking-wider">
+                {{ 'BRANDS.TITLE' | translate }}
+            </button>
+            <button 
+                (click)="switchTab('categories')" 
+                [class.bg-zadna-primary]="activeTab === 'categories'"
+                [class.text-white]="activeTab === 'categories'"
+                [class.text-slate-500]="activeTab !== 'categories'"
+                class="flex-1 h-full rounded-full text-xs font-black transition-all duration-300 uppercase tracking-wider">
+                {{ 'CATEGORIES.TITLE' | translate }}
+            </button>
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div *ngIf="isLoading" class="admin-skeleton-table" style="--skeleton-columns: 5">
+            <div class="admin-skeleton-table-header">
+                <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line sm"></span>
+            </div>
+            <div *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton-table-row">
+                <span class="admin-skeleton admin-skeleton-line sm w-1/3"></span>
+                <span class="admin-skeleton admin-skeleton-line lg w-1/2"></span>
+                <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+                <span class="admin-skeleton admin-skeleton-chip"></span>
+                <span class="admin-skeleton admin-skeleton-chip"></span>
+            </div>
+        </div>
+
+        <!-- Desktop View Tables -->
+        <div *ngIf="!isLoading && totalItems > 0" class="extraordinary-table-container w-full overflow-x-auto animate-in fade-in slide-in-from-bottom-10 duration-1000">
+            <!-- Tab: Products -->
+            <table *ngIf="activeTab === 'products'" class="w-full table-fixed border-separate border-spacing-y-0">
+                <thead class="border-b border-slate-100/50">
+                    <tr>
+                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
+                        <th class="text-start w-[40%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'PRODUCTS.PRODUCT' | translate }}</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.BARCODE' | translate }}</th>
+                        <th class="text-center w-[20%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATALOG.DELETION_DATE' | translate }}</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.ACTIONS' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of deletedProducts; let i = index" class="group bg-white/50 hover:bg-white transition-all duration-500 border-b border-slate-100/60">
+                        <td class="text-center align-middle py-4">
+                            <span class="text-[11px] font-black text-slate-300">{{ (currentPage - 1) * pageSize + i + 1 }}</span>
+                        </td>
+                        <td class="align-middle py-4 px-2">
+                            <div class="flex flex-col text-start">
+                                <span class="text-[13px] font-black text-slate-900 leading-snug">
+                                    {{ translate.currentLang === 'ar' ? item.nameAr : item.nameEn }}
+                                </span>
+                                <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">
+                                    {{ translate.currentLang === 'ar' ? item.nameEn : item.nameAr }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-center align-middle py-4">
+                            <code class="text-[10px] font-bold text-indigo-500 bg-indigo-50/50 px-3 py-1 rounded-xl">
+                                {{ item.slug || '-' }}
+                            </code>
+                        </td>
+                        <td class="text-center align-middle py-4">
+                            <span class="text-xs font-bold text-slate-500">
+                                {{ item.deletedAtUtc | date:'short' }}
+                            </span>
+                        </td>
+                        <td class="text-center align-middle py-4">
+                            <div class="flex justify-center">
+                                <app-button 
+                                    (btnClick)="restoreItem(item)" 
+                                    variant="ghost" 
+                                    customClass="!text-emerald-600 hover:!bg-emerald-50 !rounded-xl !px-3 !py-1.5 shadow-sm">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[16px]">restore</span>
+                                        <span class="text-[10px] font-black uppercase tracking-wider">{{ 'CATALOG.RESTORE' | translate }}</span>
+                                    </div>
+                                </app-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Tab: Brands -->
+            <table *ngIf="activeTab === 'brands'" class="w-full table-fixed border-separate border-spacing-y-0">
+                <thead class="border-b border-slate-100/50">
+                    <tr>
+                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
+                        <th class="text-start w-[50%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'BRANDS.BRAND' | translate }}</th>
+                        <th class="text-center w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATALOG.DELETION_DATE' | translate }}</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.ACTIONS' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of deletedBrands; let i = index" class="group bg-white/50 hover:bg-white transition-all duration-500 border-b border-slate-100/60">
+                        <td class="text-center align-middle py-4">
+                            <span class="text-[11px] font-black text-slate-300">{{ (currentPage - 1) * pageSize + i + 1 }}</span>
+                        </td>
+                        <td class="align-middle py-4 px-2">
+                            <div class="flex flex-row items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-50 border rounded-xl flex items-center justify-center overflow-hidden">
+                                    <img *ngIf="item.logoUrl" [src]="item.logoUrl" class="w-3/4 h-3/4 object-contain">
+                                </div>
+                                <div class="flex flex-col text-start">
+                                    <span class="text-[13px] font-black text-slate-900 leading-snug">
+                                        {{ translate.currentLang === 'ar' ? item.nameAr : item.nameEn }}
+                                    </span>
+                                    <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">
+                                        {{ translate.currentLang === 'ar' ? item.nameEn : item.nameAr }}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center align-middle py-4">
+                            <span class="text-xs font-bold text-slate-500">
+                                {{ item.deletedAtUtc | date:'short' }}
+                            </span>
+                        </td>
+                        <td class="text-center align-middle py-4">
+                            <div class="flex justify-center">
+                                <app-button 
+                                    (btnClick)="restoreItem(item)" 
+                                    variant="ghost" 
+                                    customClass="!text-emerald-600 hover:!bg-emerald-50 !rounded-xl !px-3 !py-1.5 shadow-sm">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[16px]">restore</span>
+                                        <span class="text-[10px] font-black uppercase tracking-wider">{{ 'CATALOG.RESTORE' | translate }}</span>
+                                    </div>
+                                </app-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Tab: Categories -->
+            <table *ngIf="activeTab === 'categories'" class="w-full table-fixed border-separate border-spacing-y-0">
+                <thead class="border-b border-slate-100/50">
+                    <tr>
+                        <th class="text-center w-[10%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">#</th>
+                        <th class="text-start w-[50%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter px-2">{{ 'CATEGORIES.NAME' | translate }}</th>
+                        <th class="text-center w-[25%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'CATALOG.DELETION_DATE' | translate }}</th>
+                        <th class="text-center w-[15%] py-5 text-[10px] font-black uppercase text-slate-400/70 tracking-tighter">{{ 'PRODUCTS.ACTIONS' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of deletedCategories; let i = index" class="group bg-white/50 hover:bg-white transition-all duration-500 border-b border-slate-100/60">
+                        <td class="text-center align-middle py-4">
+                            <span class="text-[11px] font-black text-slate-300">{{ (currentPage - 1) * pageSize + i + 1 }}</span>
+                        </td>
+                        <td class="align-middle py-4 px-2">
+                            <div class="flex flex-col text-start">
+                                <span class="text-[13px] font-black text-slate-900 leading-snug">
+                                    {{ translate.currentLang === 'ar' ? item.nameAr : item.nameEn }}
+                                </span>
+                                <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">
+                                    {{ translate.currentLang === 'ar' ? item.nameEn : item.nameAr }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="text-center align-middle py-4">
+                            <span class="text-xs font-bold text-slate-500">
+                                {{ item.deletedAtUtc | date:'short' }}
+                            </span>
+                        </td>
+                        <td class="text-center align-middle py-4">
+                            <div class="flex justify-center">
+                                <app-button 
+                                    (btnClick)="restoreItem(item)" 
+                                    variant="ghost" 
+                                    customClass="!text-emerald-600 hover:!bg-emerald-50 !rounded-xl !px-3 !py-1.5 shadow-sm">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-[16px]">restore</span>
+                                        <span class="text-[10px] font-black uppercase tracking-wider">{{ 'CATALOG.RESTORE' | translate }}</span>
+                                    </div>
+                                </app-button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="!isLoading && totalItems > 0" class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+            <app-pagination
+                [currentPage]="currentPage"
+                [pageSize]="pageSize"
+                [totalItems]="totalItems"
+                (pageChange)="changePage($event)">
+            </app-pagination>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && totalItems === 0" class="p-4 animate-in zoom-in duration-500">
+            <div class="min-h-[320px] rounded-[1.35rem] border border-dashed border-slate-200 bg-slate-50/35 px-6 py-16 text-center flex flex-col items-center justify-center">
+                <span class="material-symbols-outlined mb-5 text-[32px] leading-none text-slate-300">delete</span>
+                <h3 class="text-[1.25rem] font-black text-slate-900 tracking-normal leading-tight">{{ 'CATALOG.EMPTY_RECYCLE_BIN' | translate }}</h3>
+                <p class="mt-3 max-w-md text-[0.86rem] font-bold text-slate-400 leading-6">{{ 'CATALOG.EMPTY_RECYCLE_BIN_DESC' | translate }}</p>
+            </div>
+        </div>
+    </div>
+</div>

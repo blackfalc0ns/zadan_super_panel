@@ -176,6 +176,45 @@
 
       <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
+          <div class="flex items-center gap-3">
+            <div class="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-emerald-100 bg-emerald-50 text-emerald-700">
+              <span class="material-symbols-outlined text-[16px]">percent</span>
+            </div>
+            <div>
+              <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'عمولة المنصة والنسب المستقطعة' : 'Platform commission and rates' }}</h2>
+              <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
+                {{ isRTL ? 'ضبط نسبة عمولة المنصة المستقطعة من كل عملية بيع للتاجر.' : 'Set the platform commission rate deducted from each sale.' }}
+              </p>
+            </div>
+          </div>
+
+          <span class="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1.5 text-[11px] font-black text-emerald-700">
+            {{ commissionRate !== null ? commissionRate + '%' : (isRTL ? 'غير محدد' : 'Not set') }}
+          </span>
+        </div>
+
+        <div class="grid gap-3 p-3 lg:grid-cols-[1fr_auto] lg:items-end">
+          <label class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
+            <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'نسبة عمولة المنصة' : 'Platform commission rate' }}</span>
+            <div class="mt-1 flex items-center gap-2 rounded-lg border border-white bg-white px-3 py-2">
+              <input [(ngModel)]="commissionRate" type="number" min="0" max="100" class="w-full bg-transparent text-[14px] font-black text-slate-950 outline-none">
+              <span class="text-[11px] font-black text-slate-400">%</span>
+            </div>
+          </label>
+
+          <button
+            (click)="saveCommissionRate()"
+            [disabled]="commissionSubmitting"
+            class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+            type="button">
+            <span class="material-symbols-outlined text-[17px]">percent</span>
+            {{ commissionSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ نسبة العمولة' : 'Save commission rate') }}
+          </button>
+        </div>
+      </article>
+
+      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
           <div>
             <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'إدارة الإشعارات' : 'Notification controls' }}</h2>
             <p class="mt-0.5 text-[11px] font-semibold text-slate-500">

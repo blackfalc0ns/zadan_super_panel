@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
@@ -8,6 +8,7 @@ import { DriverDetailRecord } from '../../models/drivers.models';
 import { getSupportStatusVariant, getSupportStatusKey, getPriorityVariant, getPriorityKey } from '../../utils/driver-ui.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-support-tab',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, SectionHeaderComponent],

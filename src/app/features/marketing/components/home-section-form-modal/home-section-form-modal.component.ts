@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -15,6 +15,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-home-section-form-modal',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, ModalShellComponent, AppButtonComponent, SearchableSelectComponent],
@@ -197,6 +198,7 @@ import { SearchableSelectComponent, SearchableSelectOption } from '@shared/compo
   `]
 })
 export class HomeSectionFormModalComponent implements OnChanges, OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() isOpen = false;
   @Input() isSaving = false;
   @Input() section: MarketingHomeSection | null = null;
@@ -232,7 +234,10 @@ export class HomeSectionFormModalComponent implements OnChanges, OnInit {
   });
 
   ngOnInit(): void {
-    this.form.controls.alwaysVisible.valueChanges.subscribe(() => this.toggleScheduleInputs());
+    this.form.controls.alwaysVisible.valueChanges.subscribe(() => {
+      this.cdr.markForCheck();
+      this.toggleScheduleInputs();
+    });
     this.toggleScheduleInputs();
   }
 

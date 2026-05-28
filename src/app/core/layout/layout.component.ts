@@ -1,4 +1,4 @@
-﻿import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -8,13 +8,13 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ToastContainerComponent } from '../../shared/components/ui/toast-container/toast-container.component';
-import { environment } from '../../../environments/environment';
 import { AdminNotificationRealtimeService } from '../services/admin-notification-realtime.service';
 import { AdminNotification, AdminNotificationsService } from '../services/admin-notifications.service';
 import { AdminNotificationSoundService } from '../services/admin-notification-sound.service';
 import { AdminOneSignalService } from '../services/admin-one-signal.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-layout',
   standalone: true,
   imports: [
@@ -29,9 +29,11 @@ import { AdminOneSignalService } from '../services/admin-one-signal.service';
   templateUrl: './layout.component.html'
 })
 export class LayoutComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   userName = 'Admin';
   currentLang = 'ar';
   isSidebarOpen = false;
+  isSidebarCollapsed = false;
   isNotificationsPanelOpen = false;
   recentNotifications: AdminNotification[] = [];
   unreadNotificationCount = 0;
@@ -52,18 +54,21 @@ export class LayoutComponent {
     this.authService.currentUser$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((user) => {
+      this.cdr.markForCheck();
         this.userName = user?.fullName || 'Admin';
       });
 
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event: LangChangeEvent) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
       });
 
     this.router.events
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
+      this.cdr.markForCheck();
         this.isSidebarOpen = false;
       });
 
@@ -74,6 +79,7 @@ export class LayoutComponent {
     this.adminNotificationsService.getPreferences()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((preferences) => {
+      this.cdr.markForCheck();
         if (preferences.webDeviceCount > 0) {
           this.adminNotificationSoundService.setSound(preferences.sound);
         }
@@ -82,12 +88,14 @@ export class LayoutComponent {
     this.adminNotificationsService.recent$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((notifications) => {
+      this.cdr.markForCheck();
         this.recentNotifications = notifications;
       });
 
     this.adminNotificationsService.unreadCount$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((count) => {
+      this.cdr.markForCheck();
         this.unreadNotificationCount = count;
       });
 
@@ -98,6 +106,7 @@ export class LayoutComponent {
     this.adminRealtimeService.getNotifications()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((notification) => {
+      this.cdr.markForCheck();
         this.adminNotificationsService.mergeRealtimeNotification(notification);
         const title = this.adminNotificationsService.getLocalizedTitle(notification, this.currentLang);
         const body = this.adminNotificationsService.getLocalizedBody(notification, this.currentLang);
@@ -108,6 +117,10 @@ export class LayoutComponent {
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  toggleSidebarCollapse() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
   switchLanguage() {
@@ -139,6 +152,7 @@ export class LayoutComponent {
     this.adminNotificationsService.markAsRead(notification.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
+      this.cdr.markForCheck();
         this.isNotificationsPanelOpen = false;
         void this.router.navigateByUrl(targetUrl);
       });
@@ -179,15 +193,15 @@ export class LayoutComponent {
   }
 
   logout() {
-    if (environment.skipAuthForDevelopment) {
-      this.authService.forceLogout();
-      this.router.navigate(['/login']);
-      return;
-    }
+    // Always clear local session and navigate immediately.
+    // The server-side logout (revoke refresh token) runs in the background.
+    this.authService.forceLogout();
+    this.router.navigate(['/login']);
 
-    this.authService.logout().subscribe({
-      next: () => this.router.navigate(['/login'])
-    });
+    // Fire-and-forget: tell the server to revoke the refresh token cookie.
+    if (!this.authService.isDevelopmentBypassActive) {
+      this.authService.logout().subscribe();
+    }
   }
 
   private armDesktopNotificationPermission(): void {

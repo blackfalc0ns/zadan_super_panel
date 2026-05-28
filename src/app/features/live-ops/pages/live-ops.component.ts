@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -38,6 +38,7 @@ interface LiveOpsViewModel {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-live-ops',
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule, AppPageHeaderComponent],
@@ -337,6 +338,7 @@ interface LiveOpsViewModel {
   `
 })
 export class LiveOpsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly autoRefreshMs = 30000;
 
@@ -369,6 +371,7 @@ export class LiveOpsComponent implements OnInit {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang as 'ar' | 'en';
         this.isRTL = this.currentLang === 'ar';
         if (this.viewModel) {
@@ -428,6 +431,7 @@ export class LiveOpsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (snapshot) => {
+        this.cdr.markForCheck();
           this.viewModel = this.buildViewModel(snapshot);
           this.isLoading = false;
           this.loadError = false;
@@ -436,6 +440,7 @@ export class LiveOpsComponent implements OnInit {
           this.refreshState = 'idle';
         },
         error: () => {
+        this.cdr.markForCheck();
           this.isLoading = false;
           this.isRefreshing = false;
           this.isAutoRefreshing = false;

@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
+import { OrderTrackingMapComponent } from '../../../orders/components/order-tracking-map/order-tracking-map.component';
 import { DriverDetailRecord, DriverTaskAssignment } from '../../models/drivers.models';
 import { getTaskStatusKey, getTaskStatusVariant } from '../../utils/driver-ui.utils';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-operations-tab',
   standalone: true,
-  imports: [CommonModule, TranslateModule, DataTableComponent, SectionHeaderComponent, AppPaginationComponent],
+  imports: [CommonModule, TranslateModule, DataTableComponent, SectionHeaderComponent, AppPaginationComponent, OrderTrackingMapComponent],
   templateUrl: './driver-operations-tab.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
@@ -25,11 +27,11 @@ export class DriverOperationsTabComponent {
   @Output() clearRestrictionsRequested = new EventEmitter<void>();
 
   taskColumns: TableColumn[] = [
-    { key: 'vendor', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.VENDOR', type: 'custom' },
-    { key: 'zone', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.ZONE' },
-    { key: 'status', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.STATUS', type: 'custom' },
-    { key: 'assignedAt', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.ASSIGNED_AT' },
-    { key: 'duration', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.DURATION', type: 'custom' }
+    { key: 'vendor', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.VENDOR', type: 'custom', align: 'left' },
+    { key: 'zone', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.ZONE', type: 'custom', align: 'left' },
+    { key: 'status', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.STATUS', type: 'custom', align: 'center' },
+    { key: 'assignedAt', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.ASSIGNED_AT', align: 'center' },
+    { key: 'duration', title: 'DRIVERS.DETAIL.OPERATIONS.DYNAMIC.COLUMNS.DURATION', type: 'custom', align: 'right' }
   ];
 
   currentPage = 1;
@@ -62,20 +64,12 @@ export class DriverOperationsTabComponent {
     return this.driver.liveLatitude != null && this.driver.liveLongitude != null;
   }
 
-  get mapCenterLat(): number {
-    return this.driver?.liveLatitude ?? 24.7136; // Default to Riyadh
-  }
-
-  get mapCenterLng(): number {
-    return this.driver?.liveLongitude ?? 46.6753; // Default to Riyadh
-  }
-
-  get mapsUrl(): string | null {
-    if (!this.hasCoordinates) {
-      return null;
-    }
-
-    return `https://www.google.com/maps?q=${this.driver.liveLatitude},${this.driver.liveLongitude}`;
+  get driverGeoLocation() {
+    if (!this.hasCoordinates) return null;
+    return {
+      latitude: this.driver.liveLatitude!,
+      longitude: this.driver.liveLongitude!
+    };
   }
 
   get activeMissionLabel(): string {

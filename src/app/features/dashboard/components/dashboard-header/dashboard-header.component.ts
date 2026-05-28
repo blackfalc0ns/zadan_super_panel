@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,7 +9,8 @@ import { DashboardFilterState, DashboardSnapshot } from '../../models/dashboard.
   selector: 'app-dashboard-header',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
-  templateUrl: './dashboard-header.component.html'
+  templateUrl: './dashboard-header.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardHeaderComponent {
   @Input() dashboard!: DashboardSnapshot;

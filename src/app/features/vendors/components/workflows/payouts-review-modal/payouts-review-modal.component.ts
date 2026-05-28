@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaymentDetail, PaymentDetailModalComponent } from '../payment-detail-modal/payment-detail-modal.component';
@@ -23,6 +23,7 @@ export interface PayoutTransaction {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-payouts-review-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, PaymentDetailModalComponent, SearchableSelectComponent],

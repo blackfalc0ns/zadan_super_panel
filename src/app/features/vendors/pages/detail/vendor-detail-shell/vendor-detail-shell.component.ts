@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -12,6 +12,7 @@ import {
 } from '@vendors/utils/vendor-route.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-detail-shell',
   standalone: true,
   imports: [CommonModule, RouterModule, VendorDetailHeaderComponent],
@@ -27,6 +28,7 @@ import {
   `
 })
 export class VendorDetailShellComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   activeTab = DEFAULT_VENDOR_DETAIL_TAB;
   private readonly destroyRef = inject(DestroyRef);
 
@@ -42,6 +44,7 @@ export class VendorDetailShellComponent implements OnInit {
     this.route.paramMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
+      this.cdr.markForCheck();
         const vendorId = params.get('id');
 
         if (vendorId) {
@@ -54,7 +57,10 @@ export class VendorDetailShellComponent implements OnInit {
         filter((event) => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => this.syncActiveTab());
+      .subscribe(() => {
+      this.cdr.markForCheck();
+      this.syncActiveTab();
+    });
   }
 
   onTabChange(tabId: string): void {

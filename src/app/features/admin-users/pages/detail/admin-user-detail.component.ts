@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,6 +35,7 @@ import { AdminUsersService } from '../../services/admin-users.service';
 type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn'];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-user-detail',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, AppPageHeaderComponent, SearchableSelectComponent, StatusPillComponent],
@@ -42,6 +43,7 @@ type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn']
   styleUrl: './admin-user-detail.component.scss'
 })
 export class AdminUserDetailComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   user: AdminUserRecord | null = null;
   isLoading = false;
   isAuditLoading = false;
@@ -270,12 +272,14 @@ export class AdminUserDetailComponent implements OnInit {
       revokedPermissions: this.user.revokedPermissions
     }).subscribe({
       next: (updatedUser) => {
+        this.cdr.markForCheck();
         this.user = updatedUser;
         this.isLoading = false;
         this.refreshSupportingData();
         this.loadAudit(updatedUser.id);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to save access user', err);
         this.saveError = err.error?.message || err.error?.title || 'Failed to save access changes.';
         this.isLoading = false;
@@ -324,6 +328,7 @@ export class AdminUserDetailComponent implements OnInit {
     this.resetPasswordError = '';
     this.adminAccessApiService.resetTemporaryPassword(this.user.id, this.temporaryPassword).subscribe({
       next: (updatedUser) => {
+        this.cdr.markForCheck();
         this.user = updatedUser;
         this.temporaryPassword = '';
         this.isResettingPassword = false;
@@ -331,6 +336,7 @@ export class AdminUserDetailComponent implements OnInit {
         this.loadAudit(updatedUser.id);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to reset temporary password', err);
         this.resetPasswordError = err.error?.message || err.error?.title || 'Failed to reset temporary password.';
         this.isResettingPassword = false;
@@ -519,6 +525,7 @@ export class AdminUserDetailComponent implements OnInit {
     this.isLoading = true;
     this.adminAccessApiService.getUser(id).subscribe({
       next: (user) => {
+        this.cdr.markForCheck();
         this.user = user;
         this.isLoading = false;
         this.refreshSupportingData();
@@ -527,8 +534,10 @@ export class AdminUserDetailComponent implements OnInit {
         this.loadAudit(user.id);
       },
       error: () => {
+        this.cdr.markForCheck();
         this.adminAccessApiService.getUsers().subscribe({
           next: (users) => {
+        this.cdr.markForCheck();
             this.user = users.find((entry) => entry.id === id) ?? this.adminUsersService.getUserById(id) ?? null;
             this.isLoading = false;
             this.refreshSupportingData();
@@ -537,6 +546,7 @@ export class AdminUserDetailComponent implements OnInit {
             if (this.user) this.loadAudit(this.user.id);
           },
           error: () => {
+        this.cdr.markForCheck();
             this.user = this.adminUsersService.getUserById(id) ?? null;
             this.isLoading = false;
             this.refreshSupportingData();
@@ -598,9 +608,11 @@ export class AdminUserDetailComponent implements OnInit {
   private loadRoles(): void {
     this.adminAccessApiService.getRoles().subscribe({
       next: (roles) => {
+        this.cdr.markForCheck();
         this.roleDefinitions = roles;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load role definitions', err);
         this.roleDefinitions = [];
       }
@@ -610,12 +622,14 @@ export class AdminUserDetailComponent implements OnInit {
   private loadPermissions(): void {
     this.adminAccessApiService.getPermissions().subscribe({
       next: (permissions) => {
+        this.cdr.markForCheck();
         this.permissionDefinitions = permissions;
         this.availablePermissionKeys = new Set(permissions.map((permission) => permission.key));
         this.sensitivePermissionKeys = new Set(permissions.filter((permission) => permission.isSensitive).map((permission) => permission.key));
         this.refreshSupportingData();
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load permission definitions', err);
         this.permissionDefinitions = [];
         this.availablePermissionKeys = new Set<string>();
@@ -629,10 +643,12 @@ export class AdminUserDetailComponent implements OnInit {
     this.isAuditLoading = true;
     this.adminAccessApiService.getUserAudit(userId).subscribe({
       next: (logs) => {
+        this.cdr.markForCheck();
         this.auditLogs = logs;
         this.isAuditLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load audit logs', err);
         this.auditLogs = [];
         this.isAuditLoading = false;

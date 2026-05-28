@@ -39,7 +39,8 @@ export class DisputeEscalationModalComponent implements OnChanges {
     { value: 'legal', labelKey: 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_LEGAL' },
     { value: 'risk', labelKey: 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_RISK' },
     { value: 'operations', labelKey: 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_OPERATIONS' },
-    { value: 'support', labelKey: 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_SUPPORT' }
+    { value: 'support', labelKey: 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_SUPPORT' },
+    { value: 'driverops', labelKey: 'DISPUTES_DASHBOARD.ESCALATION_MODAL.TARGET_DRIVER_OPS' }
   ];
 
   readonly priorityOptions: Array<{ value: EscalationPriority; labelKey: string; activeClass: string }> = [

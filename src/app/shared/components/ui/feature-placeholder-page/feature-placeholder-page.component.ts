@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AppCardComponent } from '../card/card.component';
 import { AppPageHeaderComponent } from '../page-header/page-header.component';
@@ -7,6 +7,7 @@ import { AppPageHeaderComponent } from '../page-header/page-header.component';
 type RouteTarget = string | Array<string | number>;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-feature-placeholder-page',
   standalone: true,
   imports: [CommonModule, RouterModule, AppPageHeaderComponent, AppCardComponent],

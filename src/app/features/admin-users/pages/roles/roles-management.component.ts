@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -34,6 +34,7 @@ interface CustomRole {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-roles-management',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent],
@@ -57,6 +58,7 @@ interface CustomRole {
   ]
 })
 export class RolesManagementComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   roles: CustomRole[] = [];
   selectedRole: CustomRole | null = null;
   editingPermissions = false;
@@ -135,10 +137,12 @@ export class RolesManagementComponent implements OnInit {
   loadPermissions(): void {
     this.accessApi.getPermissions().subscribe({
       next: (permissions) => {
+        this.cdr.markForCheck();
         this.permissionDefinitions = permissions;
         this.availablePermissionKeys = new Set(permissions.map((permission) => permission.key));
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Error loading permissions', err);
         this.permissionDefinitions = [];
         this.availablePermissionKeys = new Set<string>();
@@ -151,11 +155,13 @@ export class RolesManagementComponent implements OnInit {
 
     this.accessApi.getRoles().subscribe({
       next: (dtoRoles) => {
+        this.cdr.markForCheck();
         this.customRoles = dtoRoles.map((dto) => this.mapDtoToCustomRole(dto));
         this.roles = [...this.customRoles];
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Error loading roles', err);
         this.isLoading = false;
       }
@@ -312,6 +318,7 @@ export class RolesManagementComponent implements OnInit {
 
     this.accessApi.updateRole(this.selectedRole.id, payload).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         const updatedRole = this.mapDtoToCustomRole(response);
         const index = this.customRoles.findIndex((role) => role.id === updatedRole.id);
         if (index >= 0) this.customRoles[index] = updatedRole;
@@ -321,6 +328,7 @@ export class RolesManagementComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Error saving role', err);
         this.isLoading = false;
       }
@@ -349,6 +357,7 @@ export class RolesManagementComponent implements OnInit {
 
     this.accessApi.createRole(payload).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         const newRole = this.mapDtoToCustomRole(response);
         newRole.email = this.newRoleEmail.trim();
         this.customRoles.push(newRole);
@@ -359,6 +368,7 @@ export class RolesManagementComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Error creating role', err);
         this.isLoading = false;
       }
@@ -370,6 +380,7 @@ export class RolesManagementComponent implements OnInit {
     this.isLoading = true;
     this.accessApi.deleteRole(role.id).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.customRoles = this.customRoles.filter((entry) => entry.id !== role.id);
         this.roles = [...this.customRoles];
         this.selectedRole = null;
@@ -377,6 +388,7 @@ export class RolesManagementComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Error deleting role', err);
         this.isLoading = false;
       }

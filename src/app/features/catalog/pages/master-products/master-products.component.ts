@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -17,6 +17,7 @@ import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/co
 import { CatalogRequestCenterModalComponent } from '../../components/catalog-request-center-modal/catalog-request-center-modal.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-master-products',
   standalone: true,
   imports: [
@@ -73,6 +74,7 @@ import { CatalogRequestCenterModalComponent } from '../../components/catalog-req
   `]
 })
 export class MasterProductsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   isLoading = false;
   products: MasterProduct[] = [];
   page = 1;
@@ -114,6 +116,7 @@ export class MasterProductsComponent implements OnInit {
   productToDelete: MasterProduct | null = null;
   isDeleting = false;
   togglingPriceVisibilityIds = new Set<string>();
+  selectedProductIds = new Set<string>();
 
   constructor(
     private route: ActivatedRoute,
@@ -121,6 +124,7 @@ export class MasterProductsComponent implements OnInit {
     public translate: TranslateService
   ) {
     this.translate.onLangChange.subscribe(() => {
+      this.cdr.markForCheck();
       this.initializeFilterOptions();
     });
 
@@ -128,6 +132,7 @@ export class MasterProductsComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe((term: string) => {
+      this.cdr.markForCheck();
       this.searchTerm = term;
       this.page = 1;
       this.loadProducts();
@@ -139,6 +144,7 @@ export class MasterProductsComponent implements OnInit {
     this.loadBrands();
     this.loadUnits();
     this.route.queryParams.subscribe(params => {
+      this.cdr.markForCheck();
       this.categoryId = params['categoryId'] || null;
       this.brandId = params['brandId'] || null;
       this.status = params['status'] || null;
@@ -158,10 +164,12 @@ export class MasterProductsComponent implements OnInit {
   loadCategories() {
     this.catalogService.getCategories(undefined, false, false).subscribe({
       next: (res: Category[]) => {
+        this.cdr.markForCheck();
         this.categories = Array.isArray(res) ? res : [];
         this.initializeFilterOptions();
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load categories', err);
         this.categories = [];
         this.initializeFilterOptions();
@@ -172,10 +180,12 @@ export class MasterProductsComponent implements OnInit {
   loadBrands() {
     this.catalogService.getBrands(true, false).subscribe({
       next: (res: Brand[]) => {
+        this.cdr.markForCheck();
         this.brands = Array.isArray(res) ? res : [];
         this.initializeFilterOptions();
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load brands', err);
         this.brands = [];
         this.initializeFilterOptions();
@@ -186,10 +196,12 @@ export class MasterProductsComponent implements OnInit {
   loadUnits() {
     this.catalogService.getUnits().subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         this.units = Array.isArray(res) ? res : [];
         this.initializeFilterOptions();
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load units', err);
         this.units = [];
         this.initializeFilterOptions();
@@ -300,14 +312,17 @@ export class MasterProductsComponent implements OnInit {
 
   loadProducts() {
     this.isLoading = true;
+    this.selectedProductIds.clear();
     this.catalogService.searchProducts(this.buildProductSearchRequest(), false).subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         this.products = Array.isArray(res?.items) ? res.items : [];
         this.totalItems = typeof res?.totalCount === 'number' ? res.totalCount : this.products.length;
         this.initializeFilterOptions();
         this.isLoading = false;
       },
       error: (err: any) => {
+        this.cdr.markForCheck();
         console.error(err);
         this.products = [];
         this.totalItems = 0;
@@ -522,23 +537,70 @@ export class MasterProductsComponent implements OnInit {
   }
 
   confirmDelete() {
-    if (!this.productToDelete) return;
-    
     this.isDeleting = true;
     
-    this.catalogService.deleteProduct(this.productToDelete.id).subscribe({
-      next: () => {
-        this.isDeleting = false;
-        this.closeDeleteModal();
-        this.loadProducts();
-      },
-      error: (err) => {
-        console.error('Failed to delete product', err);
-        this.isDeleting = false;
-        alert(this.translate.instant('MASTER_PRODUCTS.DELETE_FAILED'));
+    if (this.productToDelete) {
+      this.catalogService.deleteProduct(this.productToDelete.id).subscribe({
+        next: () => {
+        this.cdr.markForCheck();
+          this.isDeleting = false;
+          this.closeDeleteModal();
+          this.loadProducts();
+        },
+        error: (err) => {
+        this.cdr.markForCheck();
+          console.error('Failed to delete product', err);
+          this.isDeleting = false;
+          alert(this.translate.instant('MASTER_PRODUCTS.DELETE_FAILED'));
+        }
+      });
+    } else if (this.selectedProductIds.size > 0) {
+      const ids = Array.from(this.selectedProductIds);
+      this.catalogService.bulkDeleteProducts(ids).subscribe({
+        next: () => {
+        this.cdr.markForCheck();
+          this.isDeleting = false;
+          this.selectedProductIds.clear();
+          this.closeDeleteModal();
+          this.loadProducts();
+        },
+        error: (err) => {
+        this.cdr.markForCheck();
+          console.error('Failed bulk delete products', err);
+          this.isDeleting = false;
+          alert(this.translate.instant('MASTER_PRODUCTS.DELETE_FAILED'));
+        }
+      });
+    }
+  }
 
-      }
-    });
+  toggleProductSelection(productId: string, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.selectedProductIds.has(productId)) {
+      this.selectedProductIds.delete(productId);
+    } else {
+      this.selectedProductIds.add(productId);
+    }
+  }
+
+  toggleAllSelection(): void {
+    if (this.isAllSelected) {
+      this.products.forEach(p => this.selectedProductIds.delete(p.id));
+    } else {
+      this.products.forEach(p => this.selectedProductIds.add(p.id));
+    }
+  }
+
+  get isAllSelected(): boolean {
+    return this.products.length > 0 && this.products.every(p => this.selectedProductIds.has(p.id));
+  }
+
+  deleteSelectedProducts(): void {
+    if (this.selectedProductIds.size === 0) return;
+    this.productToDelete = null;
+    this.isDeleteModalOpen = true;
   }
 
   closeDeleteModal() {
@@ -598,6 +660,7 @@ export class MasterProductsComponent implements OnInit {
 
     this.catalogService.setProductCardPriceVisibility(product.id, nextValue).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         const productGroupId = product.variantGroupId || product.id;
         this.products
           .filter(item => item.id === product.id || item.variantGroupId === productGroupId)
@@ -605,6 +668,7 @@ export class MasterProductsComponent implements OnInit {
         this.togglingPriceVisibilityIds.delete(product.id);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to update product card price visibility', err);
         this.togglingPriceVisibilityIds.delete(product.id);
         alert(

@@ -1,9 +1,10 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { forkJoin, map } from 'rxjs';
 import { AccessService } from '../../../../../core/services/access.service';
 import { AdminSupportCaseRealtimeService } from '../../../../../core/services/admin-support-case-realtime.service';
 import { DisputesService } from '@disputes/services/disputes.api.service';
@@ -45,6 +46,17 @@ import {
   TimelineItem
 } from '../../../models/disputes.models';
 
+type DisputeListCaseType = 'return_request' | 'driver_dispute';
+type DisputeServerFilters = {
+  status?: string;
+  priority?: string;
+  queue?: string;
+  type?: string;
+  initiatorRole?: string;
+  vendorId?: string;
+  driverId?: string;
+};
+
 @Component({
   selector: 'app-disputes-dashboard',
   standalone: true,
@@ -70,6 +82,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DisputesDashboardComponent implements OnInit {
+  private readonly disputeListCaseTypes: DisputeListCaseType[] = ['return_request', 'driver_dispute'];
+
   disputes: SupportCaseRow[] = [];
   dashboardAlerts = buildDisputeDashboardAlerts();
   totalCount = 0;
@@ -132,7 +146,7 @@ export class DisputesDashboardComponent implements OnInit {
       .subscribe((params) => {
         this.searchTerm = params.get('search')?.trim() ?? '';
         this.activeFilter = this.isValidFilter(params.get('status')) ? params.get('status') as DisputeFilterId : 'all';
-        this.typeFilter = params.get('type')?.trim() ?? 'all';
+        this.typeFilter = this.normalizeDisputeTypeFilter(params.get('type')?.trim() ?? 'all');
         this.priorityFilter = params.get('priority')?.trim() ?? 'all';
         this.queueFilter = params.get('queue')?.trim() ?? 'all';
         this.initiatorRoleFilter = params.get('initiatorRole')?.trim() ?? 'all';
@@ -215,8 +229,6 @@ export class DisputesDashboardComponent implements OnInit {
     return [
       { value: 'all', label: this.isRtl ? 'كل الأنواع' : 'All types' },
       { value: 'return_request', label: this.getTypeLabel('return_request') },
-      { value: 'complaint', label: this.getTypeLabel('complaint') },
-      { value: 'driver_report', label: this.getTypeLabel('driver_report') },
       { value: 'driver_dispute', label: this.getTypeLabel('driver_dispute') }
     ];
   }
@@ -374,7 +386,7 @@ export class DisputesDashboardComponent implements OnInit {
   }
 
   onPanelFiltersChange(filters: Record<string, unknown>): void {
-    this.typeFilter = this.toNullableFilterValue(filters['type']) ?? 'all';
+    this.typeFilter = this.normalizeDisputeTypeFilter(this.toNullableFilterValue(filters['type']) ?? 'all');
     this.priorityFilter = this.toNullableFilterValue(filters['priority']) ?? 'all';
     this.queueFilter = this.toNullableFilterValue(filters['queue']) ?? 'all';
     this.initiatorRoleFilter = this.toNullableFilterValue(filters['initiatorRole']) ?? 'all';
@@ -693,6 +705,7 @@ export class DisputesDashboardComponent implements OnInit {
         case 'driver_dispute':
           return 'DISPUTES_DASHBOARD.TYPE.DRIVER_DISPUTE';
         case 'driver_account':
+        case 'driveraccountappeal':
           return 'DISPUTES_DASHBOARD.TYPE.DRIVER_ACCOUNT';
         default:
           return 'DISPUTES_DASHBOARD.TYPE.COMPLAINT';
@@ -725,6 +738,7 @@ export class DisputesDashboardComponent implements OnInit {
       case 'driver_dispute':
         return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.DRIVER_DISPUTE');
       case 'driver_account':
+      case 'driveraccountappeal':
         return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.DRIVER_ACCOUNT');
       default:
         return this.t('DISPUTES_DASHBOARD.TYPE_CLOSED.COMPLAINT');
@@ -980,18 +994,7 @@ export class DisputesDashboardComponent implements OnInit {
     this.isLoading = true;
     this.loadError = '';
 
-    this.disputesService.getDisputes(
-      this.page,
-      this.pageSize,
-      this.searchTerm,
-      filters.status,
-      filters.priority,
-      filters.queue,
-      filters.type,
-      filters.initiatorRole,
-      filters.vendorId,
-      filters.driverId
-    )
+    this.getDisputesPage(filters)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -1015,6 +1018,71 @@ export class DisputesDashboardComponent implements OnInit {
       });
   }
 
+  private getDisputesPage(filters: DisputeServerFilters) {
+    if (filters.type) {
+      return this.disputesService.getDisputes(
+        this.page,
+        this.pageSize,
+        this.searchTerm,
+        filters.status,
+        filters.priority,
+        filters.queue,
+        filters.type,
+        filters.initiatorRole,
+        filters.vendorId,
+        filters.driverId
+      );
+    }
+
+    const safePage = Math.max(1, this.page);
+    const requestPageSize = Math.max(this.pageSize * safePage, this.pageSize);
+
+    return forkJoin(this.disputeListCaseTypes.map((type) => this.disputesService.getDisputes(
+      1,
+      requestPageSize,
+      this.searchTerm,
+      filters.status,
+      filters.priority,
+      filters.queue,
+      type,
+      filters.initiatorRole,
+      filters.vendorId,
+      filters.driverId
+    ))).pipe(
+      map((responses) => {
+        const mergedItems = responses
+          .flatMap((response) => response.items)
+          .filter((item) => this.isVisibleDisputeCase(item))
+          .sort((left, right) => this.caseTimestamp(right) - this.caseTimestamp(left));
+        const startIndex = (safePage - 1) * this.pageSize;
+
+        return {
+          items: mergedItems.slice(startIndex, startIndex + this.pageSize),
+          totalCount: responses.reduce((total, response) => total + response.totalCount, 0)
+        };
+      })
+    );
+  }
+
+  private isVisibleDisputeCase(supportCase: SupportCaseRow): boolean {
+    return this.disputeListCaseTypes.includes(supportCase.type as DisputeListCaseType);
+  }
+
+  private caseTimestamp(supportCase: SupportCaseRow): number {
+    const timestamp = Date.parse(supportCase.createdAt || '');
+    return Number.isNaN(timestamp) ? 0 : timestamp;
+  }
+
+  private normalizeDisputeTypeFilter(value: string): string {
+    const normalized = value.trim();
+
+    if (!normalized || normalized === 'complaint' || normalized === 'driver_report' || normalized === 'driver_account' || normalized === 'driveraccountappeal') {
+      return 'all';
+    }
+
+    return normalized;
+  }
+
   private resetToFirstPage(): void {
     this.page = 1;
   }
@@ -1028,8 +1096,6 @@ export class DisputesDashboardComponent implements OnInit {
     if (typeField) {
       typeField.options = [
         { value: 'return_request', label: this.t('DISPUTES_DASHBOARD.TYPE.RETURN_REQUEST') },
-        { value: 'complaint', label: this.t('DISPUTES_DASHBOARD.TYPE.COMPLAINT') },
-        { value: 'driver_report', label: this.t('DISPUTES_DASHBOARD.TYPE.DRIVER_REPORT') },
         { value: 'driver_dispute', label: this.t('DISPUTES_DASHBOARD.TYPE.DRIVER_DISPUTE') }
       ];
       typeField.placeholder = 'DISPUTES_DASHBOARD.FILTER_FIELDS.ALL_TYPES';
@@ -1206,7 +1272,7 @@ export class DisputesDashboardComponent implements OnInit {
       || value === 'vendor';
   }
 
-  private resolveServerFilters(): { status?: string; priority?: string; queue?: string; type?: string; initiatorRole?: string; vendorId?: string; driverId?: string } {
+  private resolveServerFilters(): DisputeServerFilters {
     const baseFilters = {
       type: this.typeFilter !== 'all' ? this.typeFilter : undefined,
       priority: this.priorityFilter !== 'all' ? this.priorityFilter : undefined,

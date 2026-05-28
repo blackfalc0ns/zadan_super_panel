@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -40,6 +40,7 @@ interface CouponFormValue {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-marketing-coupons',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent, DataTableComponent, SearchableSelectComponent],
@@ -415,6 +416,7 @@ interface CouponFormValue {
   `
 })
 export class MarketingCouponsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   coupons: MarketingCoupon[] = [];
   vendors: Vendor[] = [];
   loading = false;
@@ -521,10 +523,12 @@ export class MarketingCouponsComponent implements OnInit {
 
     this.marketingApi.getCoupons().subscribe({
       next: (coupons) => {
+        this.cdr.markForCheck();
         this.coupons = [...coupons].sort((left, right) => right.updatedAtUtc.localeCompare(left.updatedAtUtc));
         this.loading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.loading = false;
         this.error = this.getCouponErrorMessage(error);
       }
@@ -534,11 +538,13 @@ export class MarketingCouponsComponent implements OnInit {
   loadVendors(): void {
     this.vendorService.getVendors(1, 200).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.vendors = [...response.items].sort((left, right) =>
           (left.businessNameAr || left.businessNameEn).localeCompare(right.businessNameAr || right.businessNameEn)
         );
       },
       error: () => {
+        this.cdr.markForCheck();
         this.vendors = [];
       }
     });
@@ -558,6 +564,7 @@ export class MarketingCouponsComponent implements OnInit {
 
     this.marketingApi.getCouponById(id).subscribe({
       next: (coupon) => {
+        this.cdr.markForCheck();
         this.selectedCoupon = coupon;
         this.form = {
           code: coupon.code,
@@ -579,6 +586,7 @@ export class MarketingCouponsComponent implements OnInit {
         this.saving = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'));
       }
@@ -609,6 +617,7 @@ export class MarketingCouponsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.saving = false;
         const wasEditing = Boolean(this.selectedCoupon);
         this.closeModal();
@@ -621,6 +630,7 @@ export class MarketingCouponsComponent implements OnInit {
         );
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.modalError = this.getCouponErrorMessage(error);
       }
@@ -634,6 +644,7 @@ export class MarketingCouponsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.toastService.success(
           coupon.isActive 
             ? this.translateService.instant('MARKETING.COUPONS.MESSAGES.DEACTIVATED') 
@@ -658,12 +669,14 @@ export class MarketingCouponsComponent implements OnInit {
     this.deleting = true;
     this.marketingApi.deleteCoupon(this.deleteTarget.id).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.deleteTarget = null;
         this.toastService.success(this.translateService.instant('MARKETING.COUPONS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadCoupons();
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'));
       }

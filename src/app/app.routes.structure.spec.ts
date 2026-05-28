@@ -20,6 +20,7 @@ describe('App Route Structure', () => {
       'orders',
       'customers',
       'drivers',
+      'support',
       'disputes',
       'finances',
       'marketing',

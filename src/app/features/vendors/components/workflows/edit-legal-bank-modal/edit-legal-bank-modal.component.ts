@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '../../../../catalog/services/catalog.api.service';
@@ -20,12 +20,14 @@ export interface LegalBankData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-edit-legal-bank-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-legal-bank-modal.component.html'
 })
 export class EditLegalBankModalComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() isOpen = false;
   @Input() isSaving = false;
   @Input() errorMessage = '';
@@ -213,10 +215,12 @@ export class EditLegalBankModalComponent implements OnChanges {
     this.isUploading = type;
     this.catalogService.uploadFile(file, 'vendors/documents').subscribe({
       next: (result: { url: string }) => {
+        this.cdr.markForCheck();
         onSuccess(result.url);
         this.isUploading = null;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isUploading = null;
       }
     });

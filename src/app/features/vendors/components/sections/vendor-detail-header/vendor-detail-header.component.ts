@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,6 +18,7 @@ interface Tab {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-detail-header',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, DetailTabsNavComponent, HasPermissionDirective],
@@ -25,6 +26,7 @@ interface Tab {
   styleUrls: ['./vendor-detail-header.component.scss']
 })
 export class VendorDetailHeaderComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
   @Output() tabChanged = new EventEmitter<string>();
   @Input() activeTab = 'overview';
 
@@ -79,6 +81,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
         this.updateHeaderContent();
@@ -87,6 +90,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         this.vendor = vendor;
         this.updateHeaderContent();
       });
@@ -182,10 +186,12 @@ export class VendorDetailHeaderComponent implements OnChanges {
       sendEmail: true
     }).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.isSendingTestNotification = false;
         this.showTestNotificationResult(response);
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.isSendingTestNotification = false;
         this.toastService.error(
           this.resolveApiError(error),
@@ -235,11 +241,13 @@ export class VendorDetailHeaderComponent implements OnChanges {
       sendEmail: this.messageSendEmail
     }).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.isSendingTestNotification = false;
         this.isMessageComposerOpen = false;
         this.showTestNotificationResult(response);
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.isSendingTestNotification = false;
         this.toastService.error(
           this.resolveApiError(error),

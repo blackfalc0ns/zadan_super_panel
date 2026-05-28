@@ -1,0 +1,2102 @@
+{
+  "CUSTOMERS": {
+    "TITLE": "Customers",
+    "DESC": "Monitor the customer base, order activity, risk, and support signals from one high-density workspace",
+    "EXPORT": "Export Report",
+    "SEARCH_PLACEHOLDER": "Search by name, email, phone, or customer ID...",
+    "EMPTY_TITLE": "No matching customers",
+    "EMPTY_MESSAGE": "No customers matched the current search and filters. Try adjusting your criteria.",
+    "PRESENCE": {
+      "ONLINE_NOW": "Online now"
+    },
+    "PROFILE": {
+      "PREFERRED_CHANNEL_APP": "Customer app"
+    },
+    "KPI": {
+      "TOTAL_CUSTOMERS": "Total Customers",
+      "ACTIVE_CUSTOMERS": "Active Customers",
+      "NEW_CUSTOMERS": "New Customers",
+      "VIP": "VIP Customers",
+      "BUSINESS": "Business Accounts",
+      "HIGH_RISK": "High Risk",
+      "COMPLAINT_CUSTOMERS": "Customers with Complaints",
+      "REPEAT_REFUNDS": "Repeat Refunds",
+      "ACTIVE_30D": "Active in 30 Days",
+      "WATCHLIST": "Watchlist"
+    },
+    "FILTERS": {
+      "ALL": "All",
+      "SEARCH_LABEL": "Search Customer",
+      "CITY": "City",
+      "STATUS": "Status",
+      "SPEND_RANGE": "Spend Range",
+      "SPEND": "Spend",
+      "APPLY": "Apply Filters",
+      "RESET": "Reset",
+      "WATCHLIST_ONLY": "Watchlist Only",
+      "CLEAR": "Reset",
+      "ACTIVE_COUNT": "active filters",
+      "FILTER_CUSTOMERS": "Filter Customers",
+      "ADJUST_CRITERIA": "Adjust search criteria",
+      "HAS_ORDERS": "Order Status",
+      "WITH_ORDERS": "Has Orders",
+      "NO_ORDERS": "No Orders",
+      "ACCOUNT_LOCKED": "Account Lock",
+      "LOCKED": "Locked",
+      "UNLOCKED": "Unlocked",
+      "MIN_SPENT": "Min Spend",
+      "MAX_SPENT": "Max Spend",
+      "UPTO": "Up to",
+      "SORT_BY": "Sort By",
+      "SORT_OLDEST": "Oldest First",
+      "SORT_NAME_ASC": "Name (A–Z)",
+      "SORT_NAME_DESC": "Name (Z–A)",
+      "SORT_LAST_LOGIN": "Last Login"
+    },
+    "TABLE": {
+      "CUSTOMER": "Customer",
+      "ID": "ID",
+      "CITY": "City",
+      "ORDERS": "Orders",
+      "SEGMENT": "Segment",
+      "ACTIVITY": "Activity",
+      "VALUE": "Value",
+      "LAST_ORDER": "Last Order",
+      "PROFILE_RISK": "Profile / Risk",
+      "RISK": "Risk",
+      "SUPPORT": "Support",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
+    },
+    "ACTIONS": {
+      "VIEW": "Open Preview"
+    },
+    "BULK": {
+      "ADD_WATCHLIST": "Add to Watchlist",
+      "FLAG_REVIEW": "Flag for Review",
+      "EXPORT": "Export"
+    },
+    "SEGMENTS": {
+      "VIP": "VIP",
+      "BUSINESS": "Business",
+      "NEW": "New",
+      "WATCHLIST": "Watchlist",
+      "DORMANT": "Dormant"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "LOW_ACTIVITY": "Low Activity",
+      "RESTRICTED": "Restricted",
+      "DORMANT": "Dormant"
+    },
+    "RISK_LEVEL": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "CRITICAL": "Critical"
+    },
+    "SUPPORT": {
+      "VIP_PRIORITY": "VIP Priority",
+      "HIGH_REFUND": "High Refund Load",
+      "FRAUD_SIGNAL": "Fraud Signal",
+      "NEW_CUSTOMER": "New Customer",
+      "RETENTION_NEEDED": "Needs Retention",
+      "COMPLIANCE_REVIEW": "Compliance Review",
+      "DORMANT_ACCOUNT": "Dormant Account",
+      "NO_FLAGS": "No elevated flags"
+    },
+    "SPENDING": {
+      "ALL": "All",
+      "LT_1000": "Below 1,000 SAR",
+      "BETWEEN_1000_5000": "1,000 - 5,000 SAR",
+      "GT_5000": "Above 5,000 SAR"
+    },
+    "PAGINATION": {
+      "SUMMARY": "Showing {{start}} - {{end}} of {{total}} customers"
+    },
+    "DRAWER": {
+      "LIFETIME_VALUE": "Lifetime Value",
+      "ORDERS": "Orders",
+      "LOYALTY_SCORE": "Loyalty Score",
+      "ACTIVE_DAYS": "30-Day Activity",
+      "PHONE": "Phone",
+      "CITY": "City",
+      "JOINED": "Joined",
+      "PREFERRED_CHANNEL": "Preferred Channel",
+      "BEHAVIOR": "Purchase Behavior",
+      "TOTAL_SPENT": "Total Spend",
+      "AVG_BASKET": "Avg Basket",
+      "LAST_ORDER": "Last Order",
+      "SUPPORT_LOAD": "Support Load",
+      "REFUNDS_DISPUTES": "Refunds / Disputes",
+      "WATCH_FLAGS": "Watch Flags",
+      "NOTES": "Team Notes"
+    },
+    "SECTIONS": {
+      "KPI_TITLE": "Customer Overview",
+      "KPI_DESC": "High-density executive metrics for customer health and value.",
+      "FILTERS_TITLE": "Search & Filters",
+      "FILTERS_DESC": "Narrow the list by city, status, and spending behavior.",
+      "TABLE_TITLE": "Customer List",
+      "TABLE_DESC": "Operational customer view with quick access to preview and actions.",
+      "OVERVIEW_TITLE": "Core Profile",
+      "OVERVIEW_DESC": "Primary customer identity and contact details.",
+      "BEHAVIOR_TITLE": "Spend & Behavior",
+      "BEHAVIOR_DESC": "Commercial signals, last order activity, and support pressure.",
+      "FLAGS_TITLE": "Flags & Notes",
+      "FLAGS_DESC": "Watch indicators and internal team notes."
+    },
+    "DETAIL": {
+      "PAGE_TITLE": "Customer Details",
+      "PAGE_SUBTITLE": "Profile, behavior, support, refunds, and internal admin actions",
+      "EDIT_ACCOUNT": "Edit Account",
+      "OPEN_ACCESS_PROFILE": "Open Access Profile",
+      "TABS": {
+        "OVERVIEW": "Overview",
+        "WORKFLOW": "Workflow"
+      },
+      "REGISTERED_AT": "Registered",
+      "ACTION_VIEW_ORDERS": "View Orders",
+      "ACTION_VIEW_CASES": "View Cases",
+      "ACTION_FLAG_REVIEW": "Flag for Review",
+      "ACTION_ESCALATE_REVIEW": "Escalate Review",
+      "ACTION_CLEAR_REVIEW": "Clear Review",
+      "ACTION_SUSPEND_ACCOUNT": "Suspend Account",
+      "ACTION_REACTIVATE_ACCOUNT": "Reactivate Account",
+      "ACTION_ADD_NOTE": "Add Note",
+      "REVIEW_FLAG_TITLE": "Customer flagged for review",
+      "REVIEW_FLAG_MESSAGE": "This profile is currently marked for operational follow-up and internal monitoring.",
+      "REVIEW_FLAG_ESCALATED_TITLE": "Customer escalated to trust review",
+      "REVIEW_FLAG_ESCALATED_MESSAGE": "The account is under a deeper trust review and should stay on a tighter operational leash until the blockers are closed.",
+      "RISK_LOW": "Low Risk",
+      "RISK_MEDIUM": "Medium Risk",
+      "RISK_HIGH": "High Risk",
+      "RISK_CRITICAL": "Critical Risk",
+      "WORKFLOW": {
+        "TITLE": "Customer Workflow",
+        "NEXT_STEP_TITLE": "Next Step",
+        "CURRENT_BLOCKERS": "Current Blockers",
+        "FOLLOW_UP_ALERTS": "Follow-up Alerts",
+        "NO_BLOCKERS": "No hard blockers are open on this account right now.",
+        "NO_ALERTS": "No follow-up alerts outside routine monitoring.",
+        "TABLE": {
+          "SUMMARY_TITLE": "Workflow Snapshot",
+          "FIELD": "Field",
+          "VALUE": "Value",
+          "QUEUE": "Queue",
+          "OWNER": "Owner Team",
+          "SUMMARY": "Summary",
+          "EXCEPTIONS_TITLE": "Blockers & Alerts",
+          "TYPE": "Type",
+          "COUNT": "Count",
+          "DETAILS": "Details",
+          "LIFECYCLE_TITLE": "Lifecycle Stages",
+          "STAGE": "Stage",
+          "NOTE": "Operational Note",
+          "ACTIONS_TITLE": "Available Actions",
+          "ACTION": "Action",
+          "DESCRIPTION": "Description",
+          "EXECUTE": "Execute",
+          "RUN": "Run"
+        },
+        "STATE": {
+          "HEALTHY": "Stable",
+          "MONITORING": "Monitoring",
+          "RETENTION": "Needs Retention",
+          "UNDER_REVIEW": "Under Review",
+          "SUSPENDED": "Suspended"
+        },
+        "OWNERS": {
+          "SUCCESS": "Customer Success",
+          "MONITORING": "Customer Health Desk",
+          "RETENTION": "Retention Team",
+          "RISK": "Risk & Trust Ops"
+        },
+        "QUEUES": {
+          "GROWTH": "Growth Queue",
+          "MONITORING": "Behavior Monitoring",
+          "RETENTION": "Retention Queue",
+          "TRUST_REVIEW": "Trust Review Queue",
+          "SUSPENSION": "Suspension Desk"
+        },
+        "SUMMARY": {
+          "HEALTHY": "The account is healthy, trusted, and can keep operating with routine monitoring only.",
+          "MONITORING": "The account is still operational, but trust and payment signals need a closer eye on the next orders.",
+          "RETENTION": "Operational risk is controlled, but the engagement curve is dropping and needs a retention touch before the account goes dormant.",
+          "UNDER_REVIEW": "The profile is under trust review and some operational permissions should stay limited until the case is resolved.",
+          "SUSPENDED": "The account is temporarily suspended until trust and payment blockers are cleared."
+        },
+        "NEXT_STEP": {
+          "HEALTHY": "Keep routine monitoring and route any new complaint to the support desk without changing account permissions.",
+          "MONITORING": "Watch the next orders, payment retries, and support contacts before escalating to a stronger restriction.",
+          "RETENTION": "Run a retention touchpoint and verify whether the activity drop is commercial only or tied to unresolved support pain.",
+          "UNDER_REVIEW": "Finish the trust review, validate the latest cases, then either clear the account or escalate to suspension.",
+          "SUSPENDED": "Close the trust blockers, review recent refunds, then reactivate the account with guarded monitoring."
+        },
+        "BLOCKERS": {
+          "ACCOUNT_SUSPENDED": "The account is suspended and cannot return to normal operations until the review is closed.",
+          "ESCALATED_REVIEW": "There is an escalated trust review that still needs an explicit decision.",
+          "TRUST_BLOCK": "Trust controls are currently blocking a normal operating state for this customer.",
+          "PAYMENT_BLOCK": "Payment behavior is blocked until refunds and disputes are reviewed.",
+          "RESTRICTED_OPERATIONS": "The account is still on restricted operations and should not be treated as fully healthy."
+        },
+        "ALERTS": {
+          "ACTIVITY_DROP": "Activity has dropped sharply and the account may churn without a retention touch.",
+          "PAYMENT_RETRIES": "Payment retries or refund pressure should be monitored on the next orders.",
+          "NEW_CUSTOMER": "New customer journey still needs light-touch onboarding follow-up.",
+          "VIP_ATTENTION": "VIP priority customer with a recent dip in activity needs a proactive check-in.",
+          "SUPPORT_PATTERN": "Recent support cases suggest the next order should be watched more closely."
+        },
+        "ACTIONS": {
+          "OPEN_ORDERS": {
+            "LABEL": "Open Orders",
+            "HELPER": "Review the latest order pattern, cancellations, and recent fulfillment outcomes."
+          },
+          "OPEN_SUPPORT": {
+            "LABEL": "Open Support",
+            "HELPER": "Check complaints, refunds, and the latest interactions before making a trust decision."
+          },
+          "FLAG_REVIEW": {
+            "LABEL": "Flag Review",
+            "HELPER": "Marks the account for operational follow-up without fully restricting it."
+          },
+          "ESCALATE_REVIEW": {
+            "LABEL": "Escalate Review",
+            "HELPER": "Moves the account into a deeper trust review with tighter controls."
+          },
+          "CLEAR_REVIEW": {
+            "LABEL": "Clear Review",
+            "HELPER": "Closes the review flag and returns the account to routine monitoring."
+          },
+          "SUSPEND_ACCOUNT": {
+            "LABEL": "Suspend Account",
+            "HELPER": "Applies a temporary hard stop until trust and payment blockers are resolved."
+          },
+          "REACTIVATE_ACCOUNT": {
+            "LABEL": "Reactivate",
+            "HELPER": "Restores the account after the blockers are cleared, with guarded monitoring."
+          }
+        }
+      },
+      "LIFECYCLE": {
+        "ACCOUNT": {
+          "LABEL": "Account State",
+          "VALUE": {
+            "ACTIVE": "Active",
+            "UNDER_REVIEW": "Under Review",
+            "RESTRICTED": "Restricted",
+            "SUSPENDED": "Suspended",
+            "DORMANT": "Dormant"
+          },
+          "HINT": {
+            "SUCCESS": "Operationally open and ready for normal order flow.",
+            "WARNING": "Operating with temporary restrictions until review closes.",
+            "DANGER": "Hard stop applied until the owning team clears the account.",
+            "NEUTRAL": "No recent activity and should be handled as an inactive account."
+          }
+        },
+        "TRUST": {
+          "LABEL": "Trust Controls",
+          "VALUE": {
+            "CLEAR": "Clear",
+            "WATCH": "Watchlist",
+            "BLOCKED": "Blocked"
+          },
+          "HINT": {
+            "SUCCESS": "No elevated trust signal is active on this account.",
+            "WARNING": "Soft trust monitoring is active on upcoming orders.",
+            "DANGER": "Trust controls are blocking a normal customer posture."
+          }
+        },
+        "PAYMENTS": {
+          "LABEL": "Payments",
+          "VALUE": {
+            "HEALTHY": "Healthy",
+            "MONITORING": "Monitoring",
+            "BLOCKED": "Blocked"
+          },
+          "HINT": {
+            "SUCCESS": "Refunds and payment behavior are within the normal range.",
+            "WARNING": "Refund pressure exists and needs review on the next transactions.",
+            "DANGER": "Payment behavior requires a hard block until review is finished."
+          }
+        },
+        "ENGAGEMENT": {
+          "LABEL": "Engagement",
+          "VALUE": {
+            "NEW": "New",
+            "GROWING": "Growing",
+            "LOYAL": "Loyal",
+            "AT_RISK": "At Risk",
+            "DORMANT": "Dormant"
+          },
+          "HINT": {
+            "SUCCESS": "Strong recurring behavior with healthy retention signals.",
+            "INFO": "Healthy growth curve with room to deepen the relationship.",
+            "WARNING": "The activity level has fallen and needs a retention touch.",
+            "NEUTRAL": "The account has gone cold and requires reactivation planning."
+          }
+        }
+      },
+      "SECTIONS": {
+        "PROFILE": "Customer Profile",
+        "BEHAVIOR_RISK": "Behavior & Risk",
+        "RECENT_ORDERS": "Recent Orders",
+        "REFUNDS_DISPUTES": "Refunds & Disputes",
+        "SUPPORT_CASES": "Support & Complaints",
+        "INTERNAL_NOTES": "Internal Notes & Admin Actions"
+      },
+      "METRICS": {
+        "TOTAL_ORDERS": "Total Orders",
+        "TOTAL_SPENT": "Total Spend",
+        "LAST_ORDER": "Last Order",
+        "COMPLAINTS": "Complaints",
+        "REFUNDS": "Refunds",
+        "RISK_SCORE": "Risk Score"
+      },
+      "PROFILE_FIELDS": {
+        "FULL_NAME": "Full Name",
+        "PHONE": "Phone",
+        "EMAIL": "Email",
+        "CITY": "City",
+        "LANGUAGE": "Preferred Language",
+        "LAST_SEEN": "Last Seen",
+        "VERIFIED_ACCOUNT": "Verified Account",
+        "UNVERIFIED_ACCOUNT": "Needs Verification",
+        "LANGUAGE_VALUES": {
+          "ARABIC": "Arabic",
+          "ENGLISH": "English"
+        },
+        "LAST_SEEN_VALUES": {
+          "ACTIVE": "Active recently",
+          "LOW_ACTIVITY": "Low activity recently",
+          "RESTRICTED": "Access temporarily restricted",
+          "DORMANT": "No recent activity"
+        }
+      },
+      "BEHAVIOR_FIELDS": {
+        "REFUND_RISK": "Refund Repeat Risk",
+        "SUSPICIOUS_LOGINS": "Suspicious Login Attempts",
+        "PAYMENT_FAILURES": "Repeated Payment Failure",
+        "COMPLAINT_FREQUENCY": "Complaint Frequency",
+        "ANALYSIS_SUMMARY": "Analysis Summary",
+        "SUSPICIOUS_LOGIN_VALUES": {
+          "NONE": "No concerning signals",
+          "TWO_RECENT": "Two recent suspicious attempts",
+          "FIVE_RECENT": "Five or more recent attempts"
+        },
+        "COMPLAINT_FREQUENCY_VALUES": {
+          "LOW": "Low",
+          "MEDIUM": "Medium",
+          "HIGH": "High"
+        }
+      },
+      "ORDERS_TABLE": {
+        "ORDER_ID": "Order ID",
+        "DATE": "Date",
+        "AMOUNT": "Amount",
+        "STATUS": "Status",
+        "VIEW_ALL": "View All Orders"
+      },
+      "ORDER_STATUS": {
+        "DELIVERED": "Delivered",
+        "REFUNDED": "Refunded",
+        "PROCESSING": "Processing"
+      },
+      "REFUNDS": {
+        "TOTAL_CASES": "Refund Cases",
+        "CASES_TOTAL": "total",
+        "CLOSED": "closed",
+        "IN_PROGRESS": "in progress",
+        "TOTAL_AMOUNT": "Total Refund Amount",
+        "VIEW_ALL": "View Refund Cases"
+      },
+      "SUPPORT": {
+        "COMPLAINTS_RECORDED": "Recorded Complaints",
+        "RESOLVED": "Resolved",
+        "NO_CASES": "No Cases",
+        "LAST_CONTACT": "Last Contact",
+        "OPEN_TICKET": "Open Support Ticket",
+        "LAST_CONTACT_VALUES": {
+          "RECENT": "Contacted recently",
+          "STALE": "Last contact is aging",
+          "NONE": "No recent contact"
+        }
+      },
+      "ADMIN": {
+        "SUSPEND": "Temporary Suspend",
+        "ESCALATE": "Escalate Review",
+        "QUICK_NOTE_PLACEHOLDER": "Add a quick internal note...",
+        "SAVE": "Save",
+        "AUTHORS": {
+          "ADMIN_USER": "Admin User",
+          "OPERATIONS_DESK": "Operations Desk",
+          "RISK_TRUST_OPS": "Risk & Trust Ops",
+          "RISK_COMMITTEE": "Risk Committee"
+        },
+        "NOTES": {
+          "FLAG_FOR_REVIEW": "The account was flagged for operational review and closer signal monitoring.",
+          "CLEAR_REVIEW": "The review flag was cleared and the account returned to routine monitoring.",
+          "ESCALATE_REVIEW": "The case was escalated to a deeper trust review with additional controls.",
+          "SUSPEND_ACCOUNT": "The account was temporarily suspended until trust and payment blockers are closed.",
+          "REACTIVATE_ACCOUNT": "The account was reactivated with guarded monitoring after review completion."
+        }
+      }
+    }
+  },
+  "DRIVERS": {
+    "TITLE": "Drivers",
+    "DESC": "Monitor drivers, operational availability, verification, performance, and delivery-related issues",
+    "HEADER": {
+      "ADD_DRIVER": "Add Driver",
+      "EXPORT": "Export",
+      "ADJUST": "Adjust"
+    },
+    "KPI": {
+      "TOTAL_DRIVERS": "Total Drivers",
+      "ONLINE_NOW": "Online Now",
+      "ON_MISSION": "On Active Mission",
+      "UNDER_REVIEW": "Under Review",
+      "SUSPENDED": "Suspended",
+      "LOW_PERFORMANCE": "Low Performance",
+      "LIVE_NOW": "Live now",
+      "ACTIVE_TASKS": "Active tasks",
+      "UNVERIFIED": "Unverified"
+    },
+    "FILTERS": {
+      "SEARCH_LABEL": "Name or ID",
+      "SEARCH_PLACEHOLDER": "Search by driver name, phone number, or ID...",
+      "TITLE": "Filter Drivers",
+      "ADJUST_CRITERIA": "Adjust search criteria",
+      "ACTIVE": "Active filters",
+      "ALL": "All",
+      "CITY": "City",
+      "STATUS": "Connection Status",
+      "VERIFICATION_STATUS": "Verification",
+      "VEHICLE_TYPE": "Vehicle Type",
+      "PERFORMANCE": "Performance",
+      "APPLY": "Apply",
+      "RESET": "Reset"
+    },
+    "TABLE": {
+      "SUMMARY": "Showing {{start}} - {{end}} of {{total}} drivers",
+      "DRIVER": "Driver",
+      "DRIVER_ID": "Driver ID",
+      "CITY": "City",
+      "STATUS": "Status",
+      "VERIFICATION_STATUS": "Verification",
+      "TASKS": "Tasks",
+      "PERFORMANCE": "Performance",
+      "WALLET": "Wallet",
+      "ISSUES": "Issues",
+      "ACTIONS": "Actions",
+      "NO_ACTIVITY": "No activity",
+      "ACTIVITY_COUNT": "{{count}} active",
+      "ACTIVE_DELIVERIES": "{{count}} active",
+      "COMPLETED_ORDERS": "{{count}} completed",
+      "ACCEPTANCE_RATE": "Acceptance rate",
+      "COLLECTION_PAYMENT": "Collection / Payment",
+      "LAST_SEEN": "Last seen"
+    },
+    "TASK_SUBTITLES": {
+      "LAST_DELIVERY_10_MIN": "Last delivery was 10 minutes ago",
+      "DELIVERY_IN_PROGRESS": "Delivery in progress",
+      "EASTERN_REGION_AVAILABLE": "Available in the Eastern region",
+      "LAST_SEEN_6_HOURS": "Last seen 6 hours ago",
+      "CARRYING_3_ORDERS": "Carrying 3 orders now",
+      "EXCELLENT_SERVICE_LEVEL": "Excellent service level",
+      "DOCUMENTS_UNDER_REVIEW": "Documents under review",
+      "SOUTH_DELIVERY_ZONE": "Southern delivery zone",
+      "READY_FOR_NEXT_PICKUP": "Ready for the next pickup",
+      "SUSPENDED_PENDING_SETTLEMENT": "Suspended pending settlement",
+      "BEST_ACCEPTANCE_RATE": "Best acceptance rate in the region"
+    },
+    "ACTIONS": {
+      "ADVANCED_FILTERS": "Advanced Filters",
+      "EXPORT_CSV": "Export CSV",
+      "VIEW_PROFILE": "View Profile"
+    },
+    "STATUS": {
+      "ONLINE": "Online",
+      "OFFLINE": "Offline",
+      "ONMISSION": "On mission",
+      "SUSPENDED": "Suspended",
+      "BANNED": "Banned"
+    },
+    "VERIFICATION": {
+      "VERIFIED": "Verified",
+      "UNVERIFIED": "Unverified",
+      "SUSPENDED": "Temporarily Suspended",
+      "UNDER_REVIEW": "Under Review"
+    },
+    "PERFORMANCE": {
+      "LOW": "Low",
+      "NEEDS_IMPROVEMENT": "Needs Improvement",
+      "GOOD": "Good",
+      "EXCELLENT": "Excellent",
+      "BAD": "Bad",
+      "POOR": "Poor"
+    },
+    "VEHICLES": {
+      "CAR": "Car",
+      "BIKE": "Bike",
+      "SCOOTER": "Scooter",
+      "VAN": "Van",
+      "BICYCLE": "Bicycle",
+      "TRUCK": "Truck"
+    },
+    "ISSUES": {
+      "CLEAR": "Clear",
+      "WARNING": "Warning",
+      "PAYMENT": "Collection",
+      "LEGAL": "Reports"
+    },
+    "ALERTS": {
+      "HIGH_RISK": "High Risk",
+      "ACTIVE_REPORTS": "Active Reports"
+    },
+    "LOAD_ERROR": "Failed to load the drivers list.",
+    "EMPTY_TITLE": "No drivers found",
+    "EMPTY_MESSAGE": "No drivers matched the current filters.",
+    "TABS": {
+      "OVERVIEW": "Overview",
+      "OPERATIONS": "Operations",
+      "PERFORMANCE": "Performance",
+      "SUPPORT": "Support",
+      "COMPLIANCE": "Compliance",
+      "FINANCE": "Finance",
+      "VERIFICATION": "Verification"
+    },
+    "DETAIL": {
+      "PAGE_TITLE": "Comprehensive Driver Operational Profile",
+      "PAGE_SUBTITLE": "Unified driver journey from documentation to operation, support, compliance, and collection",
+      "MESSAGES": {
+        "INVALID_DRIVER_ID": "Invalid driver ID.",
+        "DRIVER_NOT_FOUND": "Driver not found.",
+        "LOAD_DETAILS_FAILED": "Failed to load driver details.",
+        "WRITE_NOTE_FIRST": "Write a note before saving.",
+        "NOTE_ADDED": "Note added successfully.",
+        "DRIVER_REACTIVATED": "Driver reactivated successfully.",
+        "DRIVER_RESTRICTIONS_CLEARED": "Driver restrictions cleared successfully.",
+        "DRIVER_SUSPENDED": "Driver suspended successfully.",
+        "DRIVER_BANNED": "Driver banned successfully.",
+        "DOCUMENT_APPROVED": "Document approved successfully.",
+        "DOCUMENT_REJECTED": "Document rejected successfully.",
+        "ACTION_FAILED": "Action failed. Please try again.",
+        "APPROVAL_BLOCKED": "The driver cannot be finally approved until all documents and requirements are completed.",
+        "APPROVAL_BLOCKED_DOCUMENTS": "Documents not ready:",
+        "APPROVAL_BLOCKED_REQUIREMENTS": "Incomplete requirements:",
+        "OPENED_RELATED_SECTION": "Opened the related section. This action does not have a direct API endpoint yet.",
+        "VERIFICATION_APPROVED": "Driver verification approved.",
+        "DOCUMENT_REQUEST_SUBMITTED": "Document request submitted.",
+        "VERIFICATION_REJECTED": "Driver verification rejected.",
+        "TEST_NOTIFICATION_PUSH_SENT": "Driver test notification was sent to inbox and push.",
+        "TEST_NOTIFICATION_INBOX_ONLY": "Driver test notification was saved to inbox. Push was skipped or unavailable.",
+        "TEST_NOTIFICATION_FAILED": "Failed to send the driver test notification.",
+        "TEST_NOTIFICATION_UNCONFIRMED": "The request completed, but push delivery was not confirmed.",
+        "LOCATION_UPDATES_BLOCKED": "Location updates were blocked for this driver.",
+        "LOCATION_UPDATES_UNBLOCKED": "Location updates were unblocked for this driver.",
+        "LOGIN_LOCKED": "Driver login was locked.",
+        "LOGIN_UNLOCKED": "Driver login was unlocked."
+      },
+      "TEST_NOTIFICATION": {
+        "EYEBROW": "Driver push lab",
+        "TITLE": "Test the driver notification from admin",
+        "DESCRIPTION": "Use this panel to verify the driver app inbox flow, push delivery, and deep-link payload without leaving the admin profile.",
+        "HELPER": "Leave the fields empty to use the backend defaults for the driver app test notification.",
+        "QUICK_HELPER": "The main button sends a ready-made mobile test notification immediately, just like the customer and vendor admin flows.",
+        "TOAST_TITLE": "Driver notifications",
+        "CTA": "Send test notification",
+        "QUICK_CTA": "Test mobile notification",
+        "ADVANCED_CTA": "Advanced options",
+        "SENDING": "Sending test notification...",
+        "FOOTNOTE": "The request hits the admin driver test endpoint and targets the dedicated driver OneSignal app.",
+        "FIELDS": {
+          "TITLE": "English title override",
+          "TYPE": "Notification type",
+          "BODY": "English body override",
+          "TARGET_URL": "Target route",
+          "SEND_PUSH": "Also send push to the driver app"
+        },
+        "PLACEHOLDERS": {
+          "TITLE": "Driver test notification",
+          "TYPE": "driver_test",
+          "BODY": "This is a test push for the driver app.",
+          "TARGET_URL": "/notifications"
+        }
+      },
+      "BTN_VERIFY": "Verification",
+      "BTN_ACCESS_PROFILE": "Access Profile",
+      "BTN_OPERATIONS": "Operations",
+      "BTN_REACTIVATE": "Reactivate",
+      "BTN_SUSPEND": "Suspend",
+      "TRUST_SCORE": "Trust Score",
+      "AVAILABLE_BALANCE": "Available Balance",
+      "CURRENT_REVIEWER": "Current Reviewer",
+      "OPERATIONAL_STATUS": "Operational Status",
+      "LIVE_MISSION": "Current Mission",
+      "NEXT_STEP": "Next Step",
+      "CURRENT_BLOCKERS": "Current Blockers",
+      "FOLLOW_UP_ALERTS": "Follow-up Alerts",
+      "NO_BLOCKERS": "No critical blockers currently, driver can be managed from the regular operational queue.",
+      "NO_ALERTS": "No open follow-up alerts outside routine monitoring.",
+      "TABS": {
+        "OVERVIEW": "Overview",
+        "OPERATIONS": "Operations",
+        "PERFORMANCE": "Performance",
+        "SUPPORT": "Support",
+        "COMPLIANCE": "Compliance",
+        "FINANCE": "Finance",
+        "VERIFICATION": "Verification"
+      },
+      "KPI": {
+        "BALANCE": "Available Balance",
+        "ACCEPTANCE_RATE": "Acceptance Rate",
+        "CITY": "City",
+        "TRUST_SCORE": "Trust Score",
+        "ACTIVE_TASKS": "Active Tasks",
+        "OPEN_TICKETS": "Open Support Tickets",
+        "COMPLIANCE_CASES": "Compliance Cases",
+        "DUE_AMOUNT": "Current Dues",
+        "VERIFICATION_PROGRESS": "Verification Progress",
+        "ROUTE_SCORE": "Route Score"
+      },
+      "PROFILE": {
+        "SECTION_TITLE": "Core Identity",
+        "PHONE": "Phone Number",
+        "EMAIL": "Email Address",
+        "CITY": "City",
+        "ZONE": "Current Zone",
+        "VEHICLE": "Vehicle",
+        "PLATE": "Plate Number"
+      },
+      "ACCOUNT": {
+        "SECTION_TITLE": "Account Governance",
+        "JOIN_DATE": "Registration Date",
+        "REVIEWER": "Current Reviewer",
+        "LAST_SUPPORT_UPDATE": "Last Support Update",
+        "NEXT_PAYOUT": "Next Payout Date",
+        "CURRENT_RECOMMENDATION": "Current Recommendation"
+      },
+      "LINKED_PATHS": {
+        "SECTION_TITLE": "Linked Paths",
+        "OPERATIONS_TITLE": "Operations & Zones",
+        "OPERATIONS_SUB": "Current zone load",
+        "SUPPORT_TITLE": "Support & Notes",
+        "SUPPORT_SUB": "{{open}} open tickets and {{pending}} pending follow-ups",
+        "FINANCE_TITLE": "Finance & Collection",
+        "FINANCE_SUB": "Current due"
+      },
+      "OPERATIONS": {
+        "MAP_SECTION": "Driver Zones & Tasks",
+        "MAP_ALT": "Driver zone preview",
+        "MAP_UNAVAILABLE": "No live map preview is available for this driver.",
+        "TELEMETRY_DESC": "Live position, zone, and current assignment context.",
+        "METRICS_TITLE": "Operations Metrics",
+        "LIVE_BADGE": "Live",
+        "DRIVER_LOCATION": "Driver Location",
+        "ZONE_CAPACITY": "Current Capacity",
+        "OCCUPANCY_RATE": "Occupancy Rate",
+        "AVG_DELIVERY": "Avg Delivery Time",
+        "ZONE_STATUS": "Zone Status",
+        "ZONE_SUMMARY": "Zone Summary",
+        "ZONE_OCCUPANCY": "Zone Occupancy",
+        "ACTIVE_DRIVERS": "Active Drivers in Zone",
+        "ASSIGNMENT_RULES": "Assignment Rules",
+        "TASKS_SECTION": "Active Tasks & Assignments",
+        "TABLE_TASK_ID": "Task ID",
+        "TABLE_VENDOR": "Vendor",
+        "TABLE_ZONE": "Zone",
+        "TABLE_STATUS": "Status",
+        "TABLE_ASSIGNED_AT": "Assigned At",
+        "TABLE_DURATION": "Duration",
+        "COMMITMENT_ACCESS": {
+          "KICKER": "Offer and cancellation access",
+          "BLOCKED_TITLE": "Temporarily blocked",
+          "ACTIVE_TITLE": "Offers are allowed",
+          "BLOCKED_DESC": "The driver reached today's rejection or delivery cancellation limit. The block clears tomorrow automatically, or you can clear it now after review.",
+          "ACTIVE_DESC": "The driver can receive offers. Keep monitoring rejections, timeouts, and delivery failures.",
+          "REJECTION_METRIC": "Today / week rejections",
+          "CLEAR_ACTION": "Clear block"
+        },
+        "LOCATION_ACCESS": {
+          "TITLE": "Location access control",
+          "STATUS_BLOCKED": "Location updates are blocked by admin",
+          "STATUS_ACTIVE": "Location updates are active",
+          "DESC_BLOCKED_WITH_REASON_AND_TIME": "Tracking was blocked on {{blockedAt}} because: {{reason}}",
+          "DESC_BLOCKED_WITH_REASON": "Tracking was blocked because: {{reason}}",
+          "DESC_BLOCKED_WITH_TIME": "Tracking was blocked on {{blockedAt}}.",
+          "DESC_BLOCKED": "The driver cannot send new GPS updates until access is restored.",
+          "DESC_LAST_LOCATION": "Last location update: {{lastLocation}}",
+          "DESC_NO_LOCATION": "No recent location ping has been recorded for this driver yet.",
+          "ACTION_UNBLOCK": "Unblock location updates",
+          "ACTION_BLOCK": "Block location updates"
+        },
+        "STATIC": {
+          "ZONE_TITLE": "Current Zone",
+          "CAPACITY": "Capacity",
+          "ACTIVE_DRIVERS": "Active Drivers",
+          "AVG_DELIVERY": "Avg Delivery"
+        },
+        "DYNAMIC": {
+          "TABLE_TITLE": "Assignments Snapshot",
+          "TABLE_DESC": "Live tasks and recent operational assignments from the backend.",
+          "COLUMNS": {
+            "ID": "Assignment",
+            "VENDOR": "Vendor",
+            "ZONE": "Zone",
+            "STATUS": "Status",
+            "ASSIGNED_AT": "Assigned At",
+            "DURATION": "Duration"
+          },
+          "STATUS": {
+            "IN_PROGRESS": "In Progress",
+            "PREPARING": "Preparing",
+            "WAITING_DRIVER": "Waiting for Driver",
+            "COMPLETED": "Completed",
+            "FAILED": "Task Failed"
+          },
+          "STABILITY": {
+            "HIGH_LOAD": "High Load",
+            "STABLE": "Stable"
+          },
+          "RULES": {
+            "MAX_TASKS": "Maximum load: 8 tasks per driver",
+            "ZONE_RADIUS": "Cover a 5 km radius from the zone center",
+            "AUTO_REDISTRIBUTION": "Auto-redistribute once SLA is exceeded"
+          }
+        },
+        "TABLE_ZONE_MOBILE": "Zone",
+        "NO_TASKS": "No Tasks",
+        "NO_TASKS_MSG": "There are no active tasks for this driver currently.",
+        "LIVE_LOCATION": "Live GPS location",
+        "OPEN_MAPS": "Open in Maps",
+        "ACTIVE_MISSION": "Active mission",
+        "STABILITY": "Operational stability",
+        "NO_TASKS_TITLE": "No assignments from the backend",
+        "NO_TASKS_DESC": "This driver has no active or recent task assignments in the admin detail payload.",
+        "BACKEND": {
+          "CHECKLIST": {
+            "PERSONAL_INFO": "Personal information is complete",
+            "VEHICLE_INFO": "Vehicle information is complete",
+            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
+            "LICENSE_DOCUMENT": "Driving license is available and valid",
+            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
+            "PERSONAL_PHOTO": "Personal verification photo is available",
+            "ZONE_SELECTION": "Primary zone is selected"
+          },
+          "CHECKLIST_NOTES": {
+            "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
+            "MISSING_VEHICLE_INFO_NOTE": "Missing operational vehicle details.",
+            "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
+            "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required."
+          },
+          "REJECTION_REASONS": {
+            "MISSING_PERSONAL_INFO": "Missing personal information",
+            "MISSING_VEHICLE_INFO": "Missing vehicle information",
+            "MISSING_DOCUMENTS": "Missing required documents",
+            "MISSING_ZONE_SELECTION": "Primary zone is not selected"
+          }
+        }
+      },
+      "PERFORMANCE": {
+        "STATIC": {
+          "BENCHMARKS_TITLE": "Benchmarks",
+          "BENCHMARKS_DESC": "Compare the driver against regional operating baselines.",
+          "INSIGHTS_TITLE": "Operational Insights",
+          "INSIGHTS_DESC": "Backend signals that explain strengths, risks, and next actions."
+        },
+        "NO_METRICS_TITLE": "No performance metrics yet",
+        "NO_METRICS_DESC": "The page will only show metrics that are calculated by the backend. No synthetic charts are rendered.",
+        "NO_BENCHMARKS": "No backend benchmarks are available for this driver yet.",
+        "NO_INSIGHTS": "No backend insights are available for this driver yet.",
+        "TREND_SECTION": "Performance Trend Over Time",
+        "BENCHMARK_SECTION": "Region & Fleet Comparison",
+        "COMPARISON_SECTION": "Region & Fleet Comparison",
+        "REGION_AVG": "Region Average",
+        "REGION_AVERAGE": "Region Average",
+        "AVG_LABEL": "Avg",
+        "FLEET_AVG": "Fleet Average",
+        "BACKEND": {
+          "METRICS": {
+            "COMPLETED_TASKS": {
+              "TITLE": "Completed Tasks",
+              "HELPER": "Fulfilled orders captured in the backend history"
+            },
+            "COMMITMENT_SCORE": {
+              "TITLE": "Commitment Score",
+              "HELPER": "Offer compliance score over the rolling observation window"
+            }
+          },
+          "INSIGHTS": {
+            "STRONG_ACCEPTANCE_RATE": "Acceptance is stronger than the regional benchmark.",
+            "STRONG_COMPLETION_RATE": "Completion is consistently healthy against the active fleet.",
+            "STRONG_COMMITMENT_SCORE": "Commitment score is strong and operationally reliable.",
+            "HIGH_COMMITMENT_SCORE": "Commitment is stable and operationally reliable.",
+            "STABLE_BASELINE": "The driver is operating within a stable baseline.",
+            "HAS_OFFER_REJECTIONS": "Recent offer rejections need follow-up.",
+            "HAS_OFFER_TIMEOUTS": "Offer response timeouts are affecting dispatch quality.",
+            "FINANCE_HOLD_AFFECTS_READINESS": "A finance hold is affecting operational readiness.",
+            "OPEN_COMPLIANCE_SIGNALS": "Open compliance signals should be reviewed before increasing load.",
+            "NO_CRITICAL_WATCHOUTS": "No critical watchouts are currently flagged.",
+            "LOW_ACCEPTANCE_RATE": "Offer acceptance needs follow-up before increasing load.",
+            "LOW_COMPLETION_RATE": "Completion ratio dropped and needs operational review.",
+            "LOW_COMMITMENT_SCORE": "Commitment is under pressure because of recent rejects or timeouts.",
+            "REVIEW_ZONE_LOAD": "Review zone load and active shift pressure before assigning more work.",
+            "COACH_OFFER_RESPONSE": "Coach the driver on faster offer response and better availability hygiene.",
+            "MONITOR_SUPPORT_RISK": "Support or compliance signals should be watched before increasing exposure.",
+            "IMPROVE_OFFER_ACCEPTANCE": "Improve offer acceptance before increasing dispatch exposure.",
+            "REDUCE_FAILED_ASSIGNMENTS": "Reduce failed assignments and review delivery breakdown causes.",
+            "IMPROVE_COMMITMENT_DISCIPLINE": "Strengthen commitment discipline around rejections and timeouts.",
+            "MAINTAIN_CURRENT_OPERATING_BAND": "Maintain the current operating band and continue monitoring.",
+            "ABOVE_ZONE_AVERAGE": "This metric is currently above the zone average.",
+            "BELOW_ZONE_AVERAGE": "This metric is currently below the zone average.",
+            "COMPLETION_STABLE": "Completion remains stable compared with the operating zone.",
+            "COMPLETION_NEEDS_ATTENTION": "Completion drift is visible and should be reviewed.",
+            "COMMITMENT_ABOVE_REGION": "Commitment is stronger than the regional peer group.",
+            "COMMITMENT_BELOW_REGION": "Commitment is below the regional peer group."
+          }
+        },
+        "DYNAMIC": {
+          "METRICS": {
+            "ACCEPTANCE": {
+              "TITLE": "Acceptance Rate",
+              "HELPER": "Offer response rate"
+            },
+            "COMPLETION": {
+              "TITLE": "Completion Rate",
+              "HELPER": "Share of all trips completed"
+            },
+            "PICKUP": {
+              "TITLE": "Pickup Time",
+              "HELPER": "Average pickup response speed"
+            },
+            "DELIVERY": {
+              "TITLE": "Delivery Time",
+              "HELPER": "Average trip duration"
+            },
+            "RATING": {
+              "TITLE": "Customer Rating",
+              "HELPER": "Ratings over the last 30 days"
+            },
+            "ROUTE_SCORE": {
+              "TITLE": "Route Score",
+              "HELPER": "Efficiency compared with the zone"
+            }
+          },
+          "BENCHMARKS": {
+            "OPERATIONAL_PERFORMANCE": {
+              "LABEL": "Operational Performance",
+              "INSIGHT": "Above the regional average during the morning window."
+            },
+            "DELIVERY_SPEED": {
+              "LABEL": "Delivery Speed",
+              "INSIGHT": "Drop appears mainly during evening peak hours."
+            },
+            "CUSTOMER_SATISFACTION": {
+              "LABEL": "Customer Satisfaction",
+              "INSIGHT": "Strong ratings are linked to consistent customer communication."
+            }
+          },
+          "INSIGHTS": {
+            "STRENGTHS": {
+              "TITLE": "Strengths",
+              "ITEM_1": "Clear commitment to pickup timing during the morning window.",
+              "ITEM_2": "High satisfaction from repeat customers.",
+              "ITEM_3": "Good flexibility in handling zone pressure."
+            },
+            "FOLLOW_UP": {
+              "TITLE": "Needs Follow-up",
+              "LOW": {
+                "ITEM_1": "Acceptance rate drops at the end of the day.",
+                "ITEM_2": "Repeated delays appear in the last mile.",
+                "ITEM_3": "Response becomes inconsistent under order pressure."
+              },
+              "DEFAULT": {
+                "ITEM_1": "There is room to improve route balancing during peak times.",
+                "ITEM_2": "Some trips exceed the target in the last mile.",
+                "ITEM_3": "Pickup-to-delivery balancing needs finer tuning."
+              }
+            },
+            "RISK": {
+              "TITLE": "Risk Alerts",
+              "LEGAL": {
+                "ITEM_1": "There is an open operational report that still needs supporting documents.",
+                "ITEM_2": "Avoid increasing operational load before final closure."
+              },
+              "DEFAULT": {
+                "ITEM_1": "No critical risks right now, only light collection and follow-up alerts."
+              }
+            },
+            "ACTIONS": {
+              "TITLE": "Suggested Actions",
+              "ITEM_1": "Shift part of the route toward lower congestion zones during peak hours.",
+              "ITEM_2": "Run a short follow-up session on SLA and customer service.",
+              "ITEM_3": "Review collection plan and weekly commitments."
+            }
+          }
+        }
+      },
+      "SUPPORT": {
+        "ACTIVE_TICKETS_TITLE": "Active Support Tickets",
+        "ACTIVE_TICKETS_DESC": "Backend-linked support items and escalation context.",
+        "RECENT_COMMS_TITLE": "Recent Support Messages",
+        "INTERNAL_NOTES_TITLE": "Internal Notes",
+        "QUICK_NOTE_PLACEHOLDER": "Write an internal note for the driver profile...",
+        "ADD_NOTE_BTN": "Add Note",
+        "LAST_UPDATE": "Last Update",
+        "DRIVER": "Driver",
+        "SUPPORT_TEAM": "Support Team",
+        "REVIEWER_OPERATIONS": "Operations Reviewer",
+        "NO_ACTIVITY": "No support activity yet.",
+        "NO_MESSAGES": "No support messages yet.",
+        "PENDING_BANNER": "Pending Support Follow-ups",
+        "PENDING_BANNER_MSG": "There are {{count}} follow-ups requiring a response or action within the current SLA window.",
+        "PENDING_FOLLOWUPS_TITLE": "Pending Support Follow-ups",
+        "PENDING_FOLLOWUPS_MSG": "There are {{count}} follow-ups requiring a response or action within the current SLA window.",
+        "NOTES_SECTION": "Internal Notes Log",
+        "INTERNAL_NOTES": "Internal Notes Log",
+        "NOTE_PLACEHOLDER": "Add an internal note...",
+        "ADD_NOTE_PLACEHOLDER": "Add an internal note...",
+        "SAVE_NOTE": "Save",
+        "CHAT_SECTION": "Latest Interactions with Driver",
+        "DRIVERS_INTERACTIONS": "Latest Interactions with Driver",
+        "REVIEWER_SECTION": "Responsible Reviewer",
+        "RESPONSIBLE_REVIEWER": "Responsible Reviewer",
+        "TAGS_SECTION": "Driver Tags",
+        "DRIVER_TAGS": "Driver Tags",
+        "TICKETS_SECTION": "Linked Tickets",
+        "LINKED_TICKETS": "Linked Tickets",
+        "TABLE_TICKET_ID": "Ticket ID",
+        "TABLE_SUBJECT": "Subject",
+        "TABLE_STATUS": "Status",
+        "TABLE_PRIORITY": "Priority",
+        "TABLE_REVIEWER": "Reviewer",
+        "TABLE_UPDATED": "Last Updated",
+        "NO_TICKETS": "No Tickets",
+        "NO_TICKETS_MSG": "There are no tickets linked to this driver.",
+        "BACKEND": {
+          "FOLLOWUPS": {
+            "COMPLETE_MISSING_DOCUMENTS": "Complete missing documents",
+            "REVIEW_OPEN_INCIDENT": "Review the open incident",
+            "CLEAR_FINANCE_HOLD": "Clear the finance hold"
+          }
+        },
+        "DYNAMIC": {
+          "ADMIN_USER": "Admin User",
+          "STATUS": {
+            "WAITING": "Waiting for Reply",
+            "IN_PROGRESS": "In Progress",
+            "RESOLVED": "Completed"
+          },
+          "PRIORITY": {
+            "NORMAL": "Normal",
+            "HIGH": "High",
+            "CRITICAL": "Critical"
+          },
+          "TAGS": {
+            "HIGH_RISK": "High Risk",
+            "ACTIVE_SUPPORT": "Active Support",
+            "PAYMENT_ISSUE": "Payment Issue",
+            "STABLE_WALLET": "Stable Wallet",
+            "ON_MISSION": "On Mission",
+            "DRIVER_FOLLOW_UP": "Driver Follow-up"
+          },
+          "ROLES": {
+            "FLEET_SUPERVISOR": "Fleet Supervisor",
+            "OPERATIONS_SUPERVISOR": "Operations Supervisor"
+          },
+          "LAST_UPDATE": {
+            "NOW": "Now",
+            "TEN_MIN_AGO": "10 min ago",
+            "HOUR_AGO": "1 hour ago"
+          },
+          "SUBJECTS": {
+            "WALLET_BALANCE": "Wallet balance issue after trip",
+            "BEHAVIOR_REPORT": "Behavior report follow-up",
+            "LICENSE_UPDATE": "Driving license update request",
+            "DRIVER_ACCOUNT_APPEAL": "Driver account support"
+          },
+          "FOLLOWUPS": {
+            "CUSTOMER_COMPLAINT": "Review customer complaint",
+            "INSURANCE_DOCS": "Update insurance documents"
+          }
+        }
+      },
+      "COMPLIANCE": {
+        "KPIS": {
+          "OPEN_CASES": "Open Cases",
+          "CRITICAL_CASES": "Critical Cases",
+          "EXPIRED_DOCS": "Expired Documents"
+        },
+        "INCIDENTS": {
+          "TITLE": "Incidents & Linked Cases",
+          "DESC": "Operational incidents and compliance reviews tied to this driver.",
+          "COLUMNS": {
+            "ID": "Case ID",
+            "TYPE": "Type",
+            "SEVERITY": "Severity",
+            "STATUS": "Status",
+            "DATE": "Date"
+          }
+        },
+        "DOC_HEALTH": {
+          "TITLE": "Document Health",
+          "VALID": "Valid",
+          "VALID_DESC": "Files currently pass review.",
+          "EXPIRING": "Expiring Soon",
+          "EXPIRING_DESC": "Documents that need proactive renewal.",
+          "REVIEW": "Under Review",
+          "REVIEW_DESC": "Files still waiting for manual verification."
+        },
+        "NO_INCIDENTS": "No incidents",
+        "NO_INCIDENTS_DESC": "There are no compliance incidents linked to this driver.",
+        "CRITICAL_BANNER": "Critical Compliance Alert",
+        "CRITICAL_BANNER_MSG": "There are {{count}} critical cases requiring immediate review to avoid SLA breach or extended suspension.",
+        "CRITICAL_ALERT_TITLE": "Critical Compliance Alert",
+        "CRITICAL_ALERT_MSG": "There are {{count}} critical cases requiring immediate review to avoid SLA breach or extended suspension.",
+        "OPEN_CASES": "Open Cases",
+        "CRITICAL_CASES": "Critical Cases",
+        "SAFETY_ALERTS": "Safety Alerts",
+        "DOCS_NEED_FOLLOW": "Docs Needing Follow-up",
+        "DOCS_FOLLOWUP": "Docs Needing Follow-up",
+        "RISK_LEVEL": "Risk Level",
+        "INCIDENTS_SECTION": "Incidents & Linked Cases",
+        "TABLE_CASE_ID": "Case ID",
+        "TABLE_TYPE": "Type",
+        "TABLE_SEVERITY": "Severity",
+        "TABLE_STATUS": "Status",
+        "TABLE_REVIEWER": "Reviewer",
+        "TABLE_CREATED": "Creation Date",
+        "NO_CASES": "No Cases",
+        "NO_CASES_MSG": "There are no compliance cases linked to this driver.",
+        "DOCS_HEALTH": "Document Health",
+        "DOC_VALID": "Valid",
+        "VALID": "Valid",
+        "DOC_EXPIRING": "Expiring Soon",
+        "EXPIRING_SOON": "Expiring Soon",
+        "DOC_REVIEW": "Under Review",
+        "UNDER_REVIEW": "Under Review",
+        "RISK_INDICATOR": "Risk Indicator",
+        "RISK_INDEX": "Risk Indicator",
+        "CURRENT_POINTS": "Current Points",
+        "DYNAMIC": {
+          "RISK": {
+            "HIGH": "High",
+            "MEDIUM": "Medium",
+            "LOW": "Low"
+          },
+          "STATUS": {
+            "NEW": "New",
+            "REVIEW": "Under Review",
+            "WAITING_DOCS": "Waiting for Documents",
+            "RESOLVED": "Closed"
+          },
+          "SEVERITY": {
+            "MEDIUM": "Medium",
+            "HIGH": "High",
+            "CRITICAL": "Critical"
+          },
+          "TYPES": {
+            "TRAFFIC_ACCIDENT": "Traffic Incident",
+            "FRAUD_SUSPECTED": "Suspected Fraud",
+            "REPEATED_DELAY": "Repeated Delay"
+          },
+          "SUMMARIES": {
+            "TRAFFIC_ACCIDENT": "A minor incident happened during delivery and still requires the traffic report and field photos.",
+            "FRAUD_SUSPECTED": "There is an incomplete match between the COD amount and the collection proof, so finance review is still required.",
+            "REPEATED_DELAY": "The case was closed after the zone was redistributed and performance improved within 48 hours."
+          }
+        }
+      },
+      "FINANCE": {
+        "BALANCE_SECTION": "Balance & Collection",
+        "AVAILABLE_WITHDRAW": "Available for Withdrawal",
+        "AVAILABLE_BALANCE": "Available Balance",
+        "COD_COLLECTED": "Collected COD",
+        "COLLECTED_COD": "Collected COD",
+        "DUE_AMOUNT": "Current Dues",
+        "DUE_AMOUNT_LABEL": "Current Dues",
+        "CURRENT_DUE": "Current Dues",
+        "STATEMENTS_TITLE": "Ledger Entries",
+        "STATEMENTS_DESC": "Real wallet and settlement entries from the backend ledger.",
+        "SETTLEMENTS_SECTION": "Settlements Summary",
+        "SETTLEMENTS_SUMMARY": "Settlements Summary",
+        "PENDING_DEDUCTIONS": "Pending Deductions",
+        "NEXT_PAYOUT": "Next Payout Date",
+        "PAYOUT_METHOD": "Payout Method",
+        "LEDGER_SECTION": "Financial Settlements Ledger",
+        "SETTLEMENTS_HISTORY": "Financial Settlements Ledger",
+        "TABLE_REFERENCE": "Reference",
+        "TABLE_TYPE": "Operation Type",
+        "TABLE_AMOUNT": "Amount",
+        "TABLE_STATUS": "Status",
+        "TABLE_METHOD": "Method",
+        "TABLE_DATE": "Date",
+        "COLUMNS": {
+          "TRANSACTION_DETAILS": "Transaction Details",
+          "ID": "Entry",
+          "TYPE": "Type",
+          "AMOUNT": "Amount",
+          "FEE": "Fee",
+          "STATUS": "Status",
+          "DATE": "Date"
+        },
+        "NO_SETTLEMENTS": "No Settlements",
+        "NO_STATEMENTS": "No ledger entries",
+        "NO_SETTLEMENTS_MSG": "There are no financial transactions linked to this driver.",
+        "PREVENTIVE_LIMIT_LABEL": "Preventive Limit: {{limit}} SAR",
+        "LIMIT_EXCEEDED": "Safe limit exceeded!",
+        "SAFE_STATUS": "Safe status",
+        "PENDING_DEDUCTIONS_THIS_MONTH": "Pending deductions this month:",
+        "FILTERS": {
+          "ALL": "All",
+          "SETTLED": "Settled",
+          "PENDING": "Pending",
+          "FAILED": "Failed"
+        },
+        "SEARCH_PLACEHOLDER": "Search by transaction ID, type or reference...",
+        "NO_MATCHING_STATEMENTS_DESC": "No financial transactions match the current filter or search criteria.",
+        "ENTRY_INFO_TITLE": "Ledger Entry Information",
+        "ENTRY_ID": "Entry ID:",
+        "ENTRY_REFERENCE": "Reference:",
+        "SETTLEMENT_METHOD": "Settlement Method:",
+        "FULL_ENTRY_DATE": "Full Entry Date:",
+        "ZADANA_LOGISTICS": "Zadana Logistics",
+        "CERTIFIED_RECEIPT": "Certified Settlement Receipt",
+        "TOTAL_AMOUNT": "Total Amount:",
+        "CALCULATED_FEE": "Calculated Fee:",
+        "DOWNLOAD_RECEIPT": "Download Receipt",
+        "WALLET_OPERATIONS_SUB": "Account & wallet operations",
+        "POLICIES_TITLE": "Financial Policies & Limits",
+        "POLICIES_SUB": "Fleet settlement regulations",
+        "POLICY_1": "Weekly dues are automatically paid out to the wallet after reviewing settlement entries.",
+        "POLICY_2": "The maximum allowed cash on delivery (COD) collected is 1,000 SAR. If exceeded, tasks assignment may be temporarily suspended until the difference is settled.",
+        "POLICY_3": "Fees charged on transactions depend entirely on the banking gateway and the type of settlement method used.",
+        "MODAL_TITLE": "Settle Financial Dues",
+        "MODAL_SUBTITLE": "Record a manual settlement for the current balance",
+        "AUTO_REFERENCE_LABEL": "Auto Transaction Reference:",
+        "SETTLE_AMOUNT_LABEL": "Requested Settlement Amount (SAR)",
+        "TOTAL_DUE_FOR_SETTLEMENT": "Total balance currently due for settlement: {{amount}} SAR",
+        "SETTLE_METHOD_LABEL": "Settlement Method Used",
+        "METHODS": {
+          "BANKACCOUNT": "Bank Account",
+          "DEBITCARD": "Mada Debit Card",
+          "INSTANTTRANSFER": "Instant Transfer"
+        },
+        "NOTES_LABEL": "Notes or Comments",
+        "NOTES_PLACEHOLDER": "Write any administrative notes about the settlement...",
+        "RECORDING_SETTLEMENT": "Recording payment...",
+        "SAVE_SETTLEMENT": "Approve & Save Settlement",
+        "SETTLEMENT_SUCCESS": "Settlement processed successfully!",
+        "SETTLEMENT_SUCCESS_DESC": "The driver's financial statement was updated successfully, and the reference transaction has been logged.",
+        "SETTLED_AMOUNT": "Settled Amount:",
+        "TRANSACTION_REFERENCE": "Transaction Reference:",
+        "SETTLEMENT_METHOD_LABEL": "Settlement Method:",
+        "BACK_TO_STATEMENT": "Back to Statement",
+        "ACTIONS": {
+          "SETTLE": "Settle balance",
+          "DOWNLOAD_STATEMENT": "Download statement"
+        },
+        "BACKEND": {
+          "TYPES": {
+            "ORDERREVENUE": "Order Revenue",
+            "CREDIT": "Credit",
+            "DEBIT": "Debit",
+            "HOLD": "Hold",
+            "RELEASE": "Release",
+            "ADJUSTMENT": "Adjustment",
+            "PAYOUT": "Payout",
+            "CASHCOLLECTED": "Cash Collected",
+            "SETTLEMENT": "Settlement",
+            "REFUND": "Refund"
+          },
+          "METHODS": {
+            "WALLET": "System Wallet",
+            "BANKACCOUNT": "Bank Account",
+            "DEBITCARD": "Debit Card",
+            "INSTANTTRANSFER": "Instant Transfer"
+          },
+          "PAYOUT_METHODS": {
+            "BANKACCOUNT": "Bank Account",
+            "DEBITCARD": "Debit Card",
+            "INSTANTTRANSFER": "Instant Transfer"
+          }
+        },
+        "DYNAMIC": {
+          "STATUS": {
+            "SETTLED": "Paid",
+            "PENDING": "In Settlement",
+            "FAILED": "Transfer Failed"
+          },
+          "TYPES": {
+            "WEEKLY_EARNINGS_TRANSFER": "Weekly Earnings Transfer",
+            "BANK_TRANSFER": "Bank Transfer",
+            "DELAYED_COD_SETTLEMENT": "Delayed COD Settlement"
+          },
+          "METHODS": {
+            "WEEKLY_STC_PAY": "Weekly transfer to STC Pay"
+          }
+        }
+      },
+      "VERIFICATION": {
+        "SECTION_TITLE": "Driver Verification & Review",
+        "COMMAND_CENTER": "Verification Command Center",
+        "EXECUTIVE_REVIEW": "Executive Review",
+        "EXECUTIVE_REVIEW_DESC": "Focused workspace for document review, account control, and compliance records.",
+        "WINDOWS": {
+          "OPERATIONS": "Operations & Timeline",
+          "REVIEW": "Documents & Preview"
+        },
+        "APPROVAL_READINESS": "Approval Readiness",
+        "READINESS_READY": "Ready for final approval",
+        "READINESS_WAITING": "Waiting for document completion",
+        "FILES_AVAILABLE": "Files available",
+        "TOTAL_DOCUMENTS": "Total documents",
+        "VALID_DOCUMENTS": "Valid documents",
+        "VALID_DOCUMENTS_DESC": "Valid and active documents",
+        "UNDER_REVIEW": "Under Review",
+        "UNDER_REVIEW_DESC": "Files waiting for review",
+        "EXPIRING_ITEMS": "Expiring items",
+        "EXPIRING_ITEMS_DESC": "Items needing renewal",
+        "ACCOUNT_CONTROL_TITLE": "Account Control Rail",
+        "ACCOUNT_CONTROL_DESC": "Manage driver status and decisions",
+        "REQUIREMENTS_TITLE": "Verification Requirements",
+        "REQUIREMENTS_DESC": "Checklist and notes",
+        "ADD_INTERNAL_NOTE": "Add internal note",
+        "ADD_INTERNAL_NOTE_PLACEHOLDER": "Internal note for reviewers...",
+        "CHECKLIST_TAB": "Checklist",
+        "DOCUMENT_BOARD": "Document Board",
+        "FILES_IN_PACKET": "{{count}} files in packet",
+        "PREVIEW_DECISION": "Preview & Decision",
+        "SELECT_DOCUMENT": "Select a document",
+        "FILE_READY": "File ready for download and preview",
+        "PREVIEW_NOTES": "Preview Notes",
+        "PREVIEW_NOTES_PLACEHOLDER": "Decision details...",
+        "NO_DOCUMENT_SELECTED": "No Document Selected",
+        "NO_DOCUMENT_SELECTED_DESC": "Select a document from the board to preview it.",
+        "DOCUMENT_GROUPS": {
+          "DRIVER_DOCUMENTS": "Driver Documents"
+        },
+        "APP_ID": "Application Number",
+        "APP_NUMBER": "Application Number",
+        "SUBMITTED_AT": "Submission Date",
+        "SUBMIT_DATE": "Submission Date",
+        "PROGRESS": "Progress Rate",
+        "PROGRESS_RATE": "Progress Rate",
+        "CRITICAL_NOTES": "Critical Notes",
+        "READINESS_SECTION": "Readiness Summary",
+        "READINESS_SUMMARY": "Readiness Summary",
+        "PERSONAL_INFO_TITLE": "Applicant Information",
+        "PERSONAL_INFO_DESC": "Core identity and contact details submitted by the driver.",
+        "VEHICLE_INFO_TITLE": "Vehicle and Zone Details",
+        "VEHICLE_INFO_DESC": "Operational details used to verify dispatch readiness.",
+        "FILE_COMPLETION": "File Completion Progress",
+        "FILE_PROGRESS": "File Completion Progress",
+        "TRUST_SCORE": "Trust Score",
+        "COMPLETED_ITEMS": "Completed Items",
+        "CURRENT_REVIEWER": "Current Reviewer",
+        "PENDING_ITEMS": "Pending Items",
+        "PENDING_ITEMS_COUNT": "Pending Items",
+        "APP_ID_SHORT": "App ID",
+        "APP_NUMBER_LABEL": "App ID",
+        "CHECKLIST_TITLE": "Review Checklist",
+        "CHECKLIST_SUB": "Review the essential items before approving the verification decision.",
+        "CHECKLIST_DESC": "Review the essential items before approving the verification decision.",
+        "COMPLETED": "Completed",
+        "PENDING": "Pending",
+        "DECISION_TITLE": "Decision Notes",
+        "DECISION_SUB": "Write the decision summary and any internal notes related to it.",
+        "DECISION_LABEL": "Review Decision Summary",
+        "DECISION_PLACEHOLDER": "Write the final decision or notes you will rely on...",
+        "DECISION_NOTES_TITLE": "Decision Notes",
+        "DECISION_NOTES_DESC": "Write the decision summary and any internal notes related to it.",
+        "REVIEW_SUMMARY_LABEL": "Review Decision Summary",
+        "REVIEW_SUMMARY_PLACEHOLDER": "Write the final decision or notes you will rely on...",
+        "REJECTION_LABEL": "Reason for Rejection or Request for Completion",
+        "REJECTION_REASON_LABEL": "Reason for Rejection or Request for Completion",
+        "REVIEWER_LABEL": "Reviewer",
+        "INTERNAL_NOTES_LABEL": "Internal Notes",
+        "INTERNAL_NOTES_PLACEHOLDER": "These notes are internal and will not appear outside the review.",
+        "DOCS_SECTION": "Identity Documents Review",
+        "DOCUMENT_PREVIEW": "Document Preview",
+        "DOCUMENT_STATUS": "Document Status",
+        "DOCUMENT_NOTE": "Review Note",
+        "TOTAL_FILES": "Total Files",
+        "DOCS_NEED_FOLLOW": "Docs Needing Follow-up",
+        "DOC_EXPIRY": "Expiry Date",
+        "DOC_NUMBER": "Document Number",
+        "DOC_REVIEWED_BY": "Reviewed By",
+        "DOC_REJECTION_REASON": "Rejection Reason",
+        "MISSING_EXPIRY_TITLE": "Missing expiry date",
+        "MISSING_EXPIRY_MESSAGE": "Add the document expiry date before approving this document.",
+        "DOCUMENT_IMAGES": {
+          "FRONT": "Front image",
+          "BACK": "Back image",
+          "IMAGE": "Document image"
+        },
+        "REASON_REQUIRED_HELPER": "A rejection or document request should include a reason or reviewer note.",
+        "FIELDS": {
+          "FULL_NAME": "Full Name",
+          "PHONE": "Phone Number",
+          "EMAIL": "Email Address",
+          "ADDRESS": "National Address",
+          "VEHICLE_TYPE": "Vehicle Type",
+          "LICENSE_NUMBER": "License Number",
+          "ZONE": "Primary Zone"
+        },
+        "ACTIONS": {
+          "APPROVE": "Approve Driver",
+          "REQUEST_DOCUMENTS": "Request Missing Documents",
+          "REJECT": "Reject Driver",
+          "APPROVE_SHORT": "Approve",
+          "REJECT_SHORT": "Reject"
+        },
+        "NO_RECOMMENDATION_REASON": "No recommendation reason was provided yet.",
+        "STATUS_COMPLETED": "Completed",
+        "STATUS_NEEDS_REVIEW": "Needs Review",
+        "STATUS_REQUIRED": "Required",
+        "BACKEND": {
+          "CHECKLIST": {
+            "PERSONAL_INFO": "Personal information is complete",
+            "VEHICLE_INFO": "Vehicle information is complete",
+            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
+            "LICENSE_DOCUMENT": "Driving license is available and valid",
+            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
+            "PERSONAL_PHOTO": "Personal verification photo is available",
+            "ZONE_SELECTION": "Primary zone is selected"
+          },
+          "CHECKLIST_NOTES": {
+            "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
+            "MISSING_VEHICLE_INFO_NOTE": "Missing operational vehicle details.",
+            "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
+            "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required.",
+            "EXPIRED_DOCUMENT_NOTE": "The uploaded document is expired and must be renewed.",
+            "REJECTED_DOCUMENT_NOTE": "This document was rejected and needs a corrected re-upload.",
+            "PENDING_DOCUMENT_REVIEW_NOTE": "The document is uploaded and waiting for admin review."
+          },
+          "REJECTION_REASONS": {
+            "MISSING_PERSONAL_INFO": "Missing personal information",
+            "MISSING_VEHICLE_INFO": "Missing vehicle information",
+            "MISSING_DOCUMENTS": "Missing required documents",
+            "MISSING_ZONE_SELECTION": "Primary zone is not selected",
+            "QUALITY_ISSUE": "Document quality issue",
+            "ZONE_MISSING": "Primary zone is missing"
+          }
+        },
+        "DYNAMIC": {
+          "RECOMMENDATIONS": {
+            "ACCEPT": "Verification Accepted",
+            "CONDITIONAL": "Conditional Acceptance",
+            "COMPLETE": "Request Completion"
+          },
+          "REASONS": {
+            "ACCEPT": "The documents are complete, and both identity and vehicle match the operational requirements.",
+            "CONDITIONAL": "The profile is operationally close to ready, but there are still minor points that need follow-up before final approval.",
+            "COMPLETE": "The profile still needs additional documents or clarifications before activation."
+          },
+          "CHECKLIST": {
+            "BASIC_DATA_COMPLETE": "Core profile data is complete",
+            "VEHICLE_MATCH": "Vehicle details are matched",
+            "NATIONAL_ID_CLEAR": "National ID image is clear",
+            "LICENSE_VALID": "Driving license is still valid",
+            "VEHICLE_PHOTOS_CLEAR": "Vehicle photos are clear",
+            "SELFIE_MATCH": "Selfie matches the applicant"
+          },
+          "CHECKLIST_NOTES": {
+            "LICENSE_EXPIRING": "It expires soon and needs confirmation",
+            "SELFIE_REVIEW": "Reviewer approval is still required"
+          },
+          "REJECTION_REASONS": {
+            "DOCUMENTS_UNCLEAR": "Documents are unclear",
+            "DOCUMENTS_EXPIRED": "Documents are expired",
+            "IMAGES_MISMATCH": "Images do not match",
+            "VEHICLE_DATA_INVALID": "Vehicle data is incorrect"
+          },
+          "DOCUMENTS": {
+            "TITLES": {
+              "NATIONAL_ID": "National ID",
+              "LICENSE": "Driving License",
+              "VEHICLE": "Vehicle Photo",
+              "SELFIE": "Identity Verification Selfie"
+            },
+            "STATUS": {
+              "VALID": "Valid",
+              "VALID_FEMININE": "Valid",
+              "EXPIRING": "Expiring Soon",
+              "REJECTED": "Rejected",
+              "UNDER_REVIEW": "Under Review",
+              "MATCHED": "Matched",
+              "NEEDS_CONFIRMATION": "Needs Confirmation"
+            },
+            "SUBTITLES": {
+              "NATIONAL_ID": "Last update: 2026/03/12",
+              "LICENSE": "Expires within 120 days",
+              "VEHICLE": "Vehicle license image is available for review"
+            },
+            "EXPIRY": {
+              "RECENT_CAPTURE": "Captured recently",
+              "BIOMETRIC_CHECK": "Biometric check"
+            }
+          }
+        }
+      },
+      "WORKFLOW": {
+        "STATE_LABELS": {
+          "BANNED": "Banned",
+          "SUSPENDED": "Operationally Suspended",
+          "VERIFICATION_REVIEW": "Verification Review",
+          "PENDING_DOCUMENTS": "Pending Documents",
+          "COMPLIANCE_REVIEW": "Compliance Review",
+          "FINANCE_HOLD": "Financial Hold",
+          "ACTIVE_DELIVERY": "Active Delivery",
+          "READY_FOR_DISPATCH": "Ready for Dispatch",
+          "READY_TO_ACTIVATE": "Ready to Rejoin"
+        },
+        "SUMMARIES": {
+          "BANNED": "The driver is fully banned from operations. Review the case before lifting the ban or keeping the account blocked.",
+          "SUSPENDED": "The driver is currently out of operation, so the required decision is to resolve the suspension reason first and then decide whether to reactivate or keep the account suspended.",
+          "VERIFICATION_REVIEW": "The driver is still in the verification path and should not be considered operationally ready until approval is complete.",
+          "PENDING_DOCUMENTS": "The driver is still in the verification path and should not be considered operationally ready until approval is complete.",
+          "COMPLIANCE_REVIEW": "This profile has an open compliance case or report, and it must be resolved before widening assignment or fully reactivating the account.",
+          "FINANCE_HOLD": "There is a financial hold or unresolved COD amount that must be cleared before a new payout or full operational trust can be restored.",
+          "ACTIVE_DELIVERY": "The driver is inside a live task right now, so the current focus should remain on execution monitoring, SLA, and fast support only.",
+          "READY_FOR_DISPATCH": "The driver is active and currently ready, and the supervisor's role here is mainly monitoring and preserving readiness without new blockers.",
+          "READY_TO_ACTIVATE": "The driver is verified but currently outside the schedule, and can be returned to operations after a quick check on operational and financial readiness."
+        },
+        "NEXT_STEPS": {
+          "BANNED": "Review the ban reason and only unban after compliance and document checks are clear.",
+          "SUSPENDED": "Review the suspension reason first, then decide whether to reactivate or keep the account suspended.",
+          "VERIFICATION_REVIEW": "Review the critical items and approve the final verification decision.",
+          "PENDING_DOCUMENTS": "Request the missing or unclear documents, then return the profile for review.",
+          "COMPLIANCE_REVIEW": "Review the open case and decide whether monitoring is enough or whether suspension or escalation is needed.",
+          "FINANCE_HOLD": "Review finance first, then clear the hold if settlement is complete.",
+          "ACTIVE_DELIVERY": "Monitor the current task and open support only when there is an actual delay or complaint.",
+          "READY_FOR_DISPATCH": "No urgent action is needed now; monitor the zone and assign tasks as needed.",
+          "READY_TO_ACTIVATE": "Return the driver to the assignment queue after a quick review of the zone, balance, and open tickets."
+        },
+        "QUEUE_LABELS": {
+          "BANNED": "Ban Review Queue",
+          "SUSPENDED": "Suspension & Reactivation Queue",
+          "VERIFICATION_REVIEW": "Verification Approval Queue",
+          "PENDING_DOCUMENTS": "Document Completion Queue",
+          "COMPLIANCE_REVIEW": "Incidents & Reports Queue",
+          "FINANCE_HOLD": "COD & Settlements Queue",
+          "ACTIVE_DELIVERY": "Live Monitoring Queue",
+          "READY_FOR_DISPATCH": "Ready Drivers Queue",
+          "READY_TO_ACTIVATE": "Activation & Preparation Queue"
+        },
+        "READINESS_LABELS": {
+          "FULLY_STOPPED": "Fully Stopped",
+          "BLOCKED_UNTIL_APPROVAL": "Blocked Until Approval",
+          "BLOCKED_BY_COMPLIANCE": "Blocked by Compliance",
+          "PARTIALLY_READY": "Partially Ready",
+          "WORKING_NOW": "Working Now",
+          "FULLY_READY": "Fully Ready",
+          "READY_TO_REJOIN": "Ready to Rejoin",
+          "READY_WITH_MONITORING": "Ready with Monitoring"
+        },
+        "OWNER_TEAMS": {
+          "COMPLIANCE_AND_OPERATIONS": "Compliance + Operations",
+          "VERIFICATION_TEAM": "Verification Team",
+          "COMPLIANCE_TEAM": "Compliance Team",
+          "FINANCE_AND_OPERATIONS": "Finance + Operations",
+          "LIVE_OPERATIONS": "Live Operations",
+          "OPERATIONS": "Operations"
+        },
+        "ITEMS": {
+          "VERIFICATION_PENDING": "The profile is not verified yet and should not be opened for assignment.",
+          "ACCOUNT_SUSPENDED": "The account is currently suspended, so no new tasks or payouts should be assigned.",
+          "ACCOUNT_BANNED": "The account is banned and fully blocked from receiving new operational access.",
+          "FINANCE_HOLD": "There is a financial hold or unresolved COD amount that must be cleared before any new payout.",
+          "COMPLIANCE_CASE": "There is an open compliance case or report that requires a decision before normal operation can resume.",
+          "DOCUMENTS_EXPIRING": "Some documents are close to expiry and should be followed up before they turn into a hard stop.",
+          "DOCUMENT_UNDER_REVIEW": "There is a document or identity image under manual review.",
+          "PERFORMANCE_ALERT": "Driver performance needs follow-up before increasing operational load.",
+          "SUPPORT_FOLLOWUPS": "There are {{count}} support follow-ups pending on this driver.",
+          "SUPPORT_FOLLOWUPS_GENERIC": "There are open support follow-ups pending on this driver."
+        },
+        "ACTION_LABELS": {
+          "APPROVE_VERIFICATION": "Approve Verification",
+          "REQUEST_DOCUMENTS": "Request Documents",
+          "CLEAR_FINANCE_HOLD": "Clear Financial Hold",
+          "CLEAR_DRIVER_RESTRICTIONS": "Clear All Restrictions",
+          "SUSPEND_DRIVER": "Suspend Driver",
+          "REACTIVATE_DRIVER": "Reactivate Driver",
+          "BAN_DRIVER": "Ban Driver",
+          "UNBAN_DRIVER": "Unban Driver",
+          "MARK_READY_FOR_DISPATCH": "Return to Dispatch",
+          "OPEN_OPERATIONS": "Open Operations",
+          "OPEN_SUPPORT": "Open Support",
+          "OPEN_FINANCE": "Open Finance",
+          "REVIEW_COMPLIANCE": "Review Compliance"
+        },
+        "ACTION_HELPERS": {
+          "APPROVE_VERIFICATION": "Moves the driver to activation readiness instead of keeping the profile suspended.",
+          "REQUEST_DOCUMENTS": "Keeps the driver outside operations until missing items are completed.",
+          "CLEAR_FINANCE_HOLD": "Resets the local hold and returns the profile to a more stable state.",
+          "CLEAR_DRIVER_RESTRICTIONS": "Clears account, offer, and location restrictions when the driver is otherwise approved.",
+          "SUSPEND_DRIVER": "Use only when there is a real operational or compliance risk.",
+          "REACTIVATE_DRIVER": "Returns the driver to standby mode, not direct assignment.",
+          "BAN_DRIVER": "Fully blocks the driver from operational access until reviewed.",
+          "UNBAN_DRIVER": "Lifts the ban and returns the driver to standby when eligible.",
+          "MARK_READY_FOR_DISPATCH": "Moves the driver back into operational readiness.",
+          "OPEN_OPERATIONS": "Review current zone load and assignment context first.",
+          "OPEN_SUPPORT": "Review open tickets and support context tied to the driver.",
+          "OPEN_FINANCE": "Review balances, dues, and failed records before acting.",
+          "REVIEW_COMPLIANCE": "Open incidents and evidence before making the decision."
+        }
+      },
+      "ACTION_NOTES": {
+        "MANUAL_SUSPEND": "The driver was manually suspended from the admin panel until the case is reviewed.",
+        "REVIEW_REACTIVATE": "The driver was returned to standby after an initial profile review.",
+        "VERIFICATION_APPROVED": "Verification was approved and the driver was returned to the operational readiness queue.",
+        "DOCUMENTS_REQUESTED": "The profile was sent back for extra documents before final approval.",
+        "FINANCE_HOLD_CLEARED": "The financial hold was cleared locally and the profile was returned to operational review.",
+        "DRIVER_SUSPENDED": "The driver was operationally suspended until the open case is reviewed.",
+        "ACCOUNT_REACTIVATED": "The account was reactivated and the driver was returned to standby instead of direct assignment.",
+        "READY_FOR_DISPATCH": "The driver was moved to the operational readiness queue and can receive new tasks."
+      },
+      "PREVIEW": {
+        "TASK_TITLE": "Task Details {{id}}",
+        "INCIDENT_TITLE": "Case Details {{id}}",
+        "TASK_SUMMARY": "Task Summary",
+        "TASK_VENDOR": "Vendor",
+        "TASK_ZONE": "Zone",
+        "TASK_DURATION": "Duration",
+        "TASK_COD": "COD",
+        "PICKUP": "Pickup",
+        "TRANSIT": "Transit",
+        "DELAY": "Delay:",
+        "EVIDENCE_ALT": "Incident evidence",
+        "ACTION_REASSIGN": "Reassign Task",
+        "ACTION_ESCALATE": "Urgent Escalation",
+        "ACTION_RESOLVE": "Close Case as Resolved",
+        "ACTION_SUSPEND": "Suspend Driver",
+        "ACTION_REQUEST_DOCS": "Request Documents"
+      },
+      "ACTIONS": {
+        "TRACK_TASKS": "Track Tasks",
+        "LOCK_LOGIN": "Lock Login",
+        "UNLOCK_LOGIN": "Unlock Login"
+      },
+      "STATUS": {
+        "COMPLIANCE_ISSUE": "Compliance Issue",
+        "LOGIN_LOCKED": "Login locked"
+      },
+      "LOAD_ERROR_TITLE": "We couldn't load this driver profile",
+      "LOAD_ERROR_DESC": "The driver detail page is now backend-first, so the page will only render after a valid admin response. Try again or go back to the drivers list.",
+      "BACK_TO_DRIVERS": "Back to Drivers",
+      "HERO": {
+        "BACKEND_FIRST": "Backend-first driver file",
+        "PHONE": "Phone",
+        "ZONE": "Zone",
+        "LICENSE": "License",
+        "LAST_SEEN": "Joined",
+        "JOINED_AT": "Joined At",
+        "ACTIVE_TASKS": "Active / completed",
+        "OPERATIONAL_GATE": "Operational gate",
+        "PROFILE_COMPLETION": "Profile completion",
+        "MISSING_REQUIREMENTS": "Missing requirements",
+        "NO_BLOCKERS": "No hard blockers",
+        "NO_BLOCKERS_DESC": "Backend readiness shows no required blocker for this profile.",
+        "REVIEW_NOTE": "Review note",
+        "NEXT_STEP": "Next step",
+        "BLOCKERS": "Blockers",
+        "ALERTS": "Alerts",
+        "LIFECYCLE": "Lifecycle",
+        "OVERVIEW_GATE_DESC": "Readiness, review and finance state are calculated from the backend response.",
+        "LOGIN_LOCK_NOTICE": "Driver login is locked.",
+        "LOGIN_LOCK_NOTICE_WITH_TIME": "Driver login is locked since {{lockedAt}}.",
+        "LOGIN_LOCK_NOTICE_WITH_REASON": "Driver login is locked: {{reason}}",
+        "LOGIN_LOCK_NOTICE_WITH_REASON_AND_TIME": "Driver login is locked since {{lockedAt}}: {{reason}}"
+      },
+      "OVERVIEW": {
+        "PERSONAL_INFO_TITLE": "Personal Information",
+        "PERSONAL_INFO_DESC": "Core identity and contact details pulled from the backend profile.",
+        "VEHICLE_INFO_TITLE": "Vehicle & Operations Readiness",
+        "VEHICLE_INFO_DESC": "Operationally relevant vehicle, license, and zone data only.",
+        "QUICK_LINKS": "Quick Links",
+        "FULL_NAME": "Full Name",
+        "PHONE_NUMBER": "Phone Number",
+        "EMAIL": "Email Address",
+        "CITY": "City",
+        "JOINED_AT": "Joined At",
+        "VEHICLE_TYPE": "Vehicle Type",
+        "LICENSE_NUMBER": "License Number",
+        "ZONE": "Primary Zone",
+        "NO_RECENT_NOTES": "No recent notes.",
+        "QUICK_SUMMARY_TITLE": "Driver Summary",
+        "QUICK_SUMMARY_DESC": "Operational snapshot from the latest driver profile data.",
+        "SIGNALS": "Signals",
+        "ALERTS_TITLE": "Alerts & Review Notes",
+        "ALERTS_DESC": "Open blockers and follow-up signals for this driver.",
+        "NO_ALERTS": "No active alerts",
+        "NO_ALERTS_DESC": "This profile is clear outside routine monitoring.",
+        "NOTES_HISTORY": "Notes History"
+      },
+      "LIFECYCLE": {
+        "APPLICATION": {
+          "LABEL": "Application",
+          "DESCRIPTION": "Request intake and profile creation",
+          "METRIC": "Profile received"
+        },
+        "VERIFICATION": {
+          "LABEL": "Verification",
+          "DESCRIPTION": "Documents and identity checks"
+        },
+        "ACTIVATION": {
+          "LABEL": "Activation",
+          "DESCRIPTION": "Account and vehicle readiness",
+          "METRIC_ACTIVE": "Activated",
+          "METRIC_PENDING": "Pending approval"
+        },
+        "OPERATIONS": {
+          "LABEL": "Operations",
+          "DESCRIPTION": "Daily tasks and zones",
+          "METRIC_ON_MISSION": "On mission",
+          "METRIC_ACTIVE": "Active",
+          "METRIC_PAUSED": "Temporarily paused",
+          "METRIC_SUSPENDED": "Suspended"
+        },
+        "FINANCE": {
+          "LABEL": "Finance & Compliance",
+          "DESCRIPTION": "COD, risk, and alerts",
+          "METRIC_URGENT": "Urgent intervention",
+          "METRIC_MONITORING": "Needs follow-up",
+          "METRIC_HEALTHY": "Healthy"
+        }
+      }
+    }
+  },
+  "ADMIN_USERS": {
+    "TITLE": "Access Directory",
+    "DESC": "Manage super admin staff, vendor teams, drivers, and customers from one local access and communication directory.",
+    "OPEN_EMAIL_CENTER": "Email Center",
+    "OPEN_ROLES_MANAGEMENT": "Roles Management",
+    "ACCESS_HUB": {
+      "BADGE": "Roles and permissions",
+      "TITLE": "Open permission management from the users page",
+      "DESC": "Review role presets, permission coverage, and system versus custom roles here, then jump into the full management screen when needed.",
+      "OPEN": "Open Roles Management",
+      "STATS": {
+        "ROLES": "Total roles",
+        "PERMISSIONS": "Total permissions",
+        "SYSTEM_ROLES": "System roles",
+        "CUSTOM_ROLES": "Custom roles"
+      }
+    },
+    "ADD_ADMIN": "Invite Admin",
+    "ADD_IDENTITY": "Add Identity",
+    "SEARCH_PLACEHOLDER": "Search by name, email, team, or department...",
+    "EMPTY_TITLE": "No admin users found",
+    "EMPTY_MESSAGE": "Try clearing the active filters or create a new admin access record.",
+    "KPI": {
+      "TOTAL": "Total Admins",
+      "ACTIVE": "Active Access",
+      "INVITED": "Pending Invites",
+      "SUSPENDED": "Suspended Access",
+      "MFA_GAPS": "MFA Gaps",
+      "CUSTOM_ACCESS": "Custom Access",
+      "OPERATIONAL": "Operational Identities",
+      "VENDOR_PANEL": "Vendor Panel Identities",
+      "EXTERNAL": "External Accounts"
+    },
+    "AUDIENCE": {
+      "ALL": "All audiences",
+      "SUPER_ADMIN": "Super admin",
+      "VENDOR_NETWORK": "Vendor network",
+      "DRIVERS": "Drivers",
+      "CUSTOMERS": "Customers"
+    },
+    "FILTERS": {
+      "ALL": "All",
+      "STATUS": "Status",
+      "ACCESS_LEVEL": "Access level",
+      "ROLE": "Role preset",
+      "TEAM": "Team",
+      "PANEL": "Panel scope",
+      "PERSONA": "Persona",
+      "VENDOR": "Vendor",
+      "BRANCH": "Branch",
+      "ACTIVE_COUNT": "active filters",
+      "RESET": "Reset filters"
+    },
+    "TABLE": {
+      "ADMIN": "Admin",
+      "IDENTITY": "Identity",
+      "PERSONA": "Persona",
+      "ROLE": "Role",
+      "TEAM": "Team",
+      "SCOPE": "Scope",
+      "LAST_LOGIN": "Last login",
+      "STATUS": "Status",
+      "SECURITY": "Security",
+      "CUSTOM_ACCESS": "custom"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "INVITED": "Invited",
+      "SUSPENDED": "Suspended",
+      "INACTIVE": "Inactive"
+    },
+    "INVITE": {
+      "DRAFT": "Draft",
+      "PENDING": "Pending",
+      "ACCEPTED": "Accepted",
+      "EXPIRED": "Expired"
+    },
+    "ACCESS_LEVEL": {
+      "FULL": "Full control",
+      "RESTRICTED": "Restricted",
+      "OBSERVER": "Observer"
+    },
+    "FIELDS": {
+      "FULL_NAME": "Full name",
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "DEPARTMENT": "Department",
+      "TEAM": "Team",
+      "ROLE_PRESET": "Role preset",
+      "ACCESS_LEVEL": "Access level",
+      "STATUS": "Status",
+      "INVITE_STATE": "Invite state",
+      "MFA": "Multi-factor authentication",
+      "PERSONA": "Persona type",
+      "PANEL_SCOPE": "Panel scope",
+      "ENTITY_ID": "Entity ID",
+      "VENDOR": "Vendor",
+      "BRANCH": "Branch",
+      "REGION": "Region",
+      "CITY": "City",
+      "REPLY_TO": "Reply-to",
+      "PREFERRED_LOCALE": "Preferred locale",
+      "NOTIFICATION_EMAILS": "Notification emails",
+      "ESCALATION_EMAILS": "Escalation emails"
+    },
+    "ACTIONS": {
+      "RESET_PRESET": "Reset to preset",
+      "RESEND_INVITE": "Resend invite",
+      "REACTIVATE": "Reactivate",
+      "SUSPEND": "Suspend access",
+      "SAVE": "Save changes",
+      "BACK_TO_LIST": "Back to directory",
+      "DUPLICATE": "Duplicate role"
+    },
+    "SECURITY": {
+      "MFA_ON": "MFA enabled",
+      "MFA_OFF": "MFA missing",
+      "LAST_LOGIN": "Last login",
+      "INVITED_BY": "Invited by",
+      "INVITED_AT": "Invited at",
+      "ACCEPTED_AT": "Accepted at",
+      "NEVER": "Never",
+      "VERIFICATION": "Verification"
+    },
+    "ROLES_MANAGEMENT": {
+      "TITLE": "Roles & Permissions Management",
+      "SUBTITLE": "Create and update access roles and define each role's permissions across the system.",
+      "BADGES": {
+        "SYSTEM": "System",
+        "CUSTOM": "Custom"
+      },
+      "CARDS": {
+        "PERMISSIONS": "Permissions",
+        "USERS": "Users",
+        "LEVEL": "Level",
+        "SCOPE": "Scope:"
+      },
+      "MATRIX": {
+        "SECTION": "Section"
+      },
+      "CREATE": {
+        "TITLE": "Create a new custom role",
+        "SUBTITLE": "Choose the role name and access level, then refine permissions from the permission matrix.",
+        "NAME": "Role name",
+        "NAME_PLACEHOLDER": "Example: Content Manager",
+        "DESCRIPTION": "Description",
+        "DESCRIPTION_PLACEHOLDER": "A short role description...",
+        "ACCESS_LEVEL": "Access level",
+        "PANEL_SCOPE": "Panel scope"
+      },
+      "ACTIONS": {
+        "CREATE_ROLE": "Create role",
+        "DELETE_ROLE": "Delete role",
+        "SAVE_CHANGES": "Save changes",
+        "CLOSE": "Close",
+        "CANCEL": "Cancel"
+      }
+    },
+    "DETAIL": {
+      "TITLE": "Identity Access Profile",
+      "SUBTITLE": "Identity, assignments, communication controls, and persona-aware access design.",
+      "BREADCRUMB": "Access profile",
+      "NOT_FOUND": "Identity not found",
+      "NOT_FOUND_DESC": "The requested directory record is not available in the local access registry.",
+      "NEW_USER": "New identity",
+      "EMAIL_PENDING": "Email not set yet",
+      "IDENTITY_BADGE": "Identity",
+      "IDENTITY_TITLE": "Identity profile",
+      "IDENTITY_DESC": "Primary contact details, department ownership, and persona classification.",
+      "ASSIGNMENT_BADGE": "Assignments",
+      "ASSIGNMENT_TITLE": "Entity and branch assignment",
+      "ASSIGNMENT_DESC": "Connect the identity to the correct vendor, branch, or external account scope.",
+      "ACCESS_BADGE": "Access model",
+      "ACCESS_TITLE": "Role, status, and access posture",
+      "ACCESS_DESC": "Use hybrid presets with custom overrides for operators, or lightweight profiles for external accounts.",
+      "COMMUNICATION_BADGE": "Communication profile",
+      "COMMUNICATION_TITLE": "Email routing and notification posture",
+      "COMMUNICATION_DESC": "Control reply-to behavior, escalation contacts, and notification opt-in flags for each identity.",
+      "PERMISSIONS_BADGE": "Permission matrix",
+      "PERMISSIONS_TITLE": "Operational permission matrix",
+      "PERMISSIONS_DESC": "Permission domains inherit from the selected preset, then override specific actions as needed.",
+      "FEATURES_BADGE": "Feature access",
+      "FEATURES_TITLE": "Account feature toggles",
+      "FEATURES_DESC": "External identities use product and communication toggles instead of the full admin permission matrix.",
+      "SECURITY_BADGE": "Security posture",
+      "SECURITY_TITLE": "Security checkpoints",
+      "SECURITY_DESC": "Track MFA readiness, invitation history, and recent activity.",
+      "SUMMARY_BADGE": "Override summary",
+      "SUMMARY_TITLE": "Effective access summary",
+      "SUMMARY_DESC": "A fast snapshot of the current preset and custom access drift.",
+      "EFFECTIVE_PERMISSIONS": "effective permissions",
+      "GRANTED_OVERRIDES": "granted overrides",
+      "REVOKED_OVERRIDES": "revoked overrides",
+      "CUSTOM_TOTAL": "custom changes",
+      "NOTIFICATION_RECIPIENTS": "notification recipients",
+      "MFA_HINT": "Use this to reflect whether the admin completed secure enrollment."
+    },
+    "SCOPE": {
+      "GLOBAL": "Global panel",
+      "DIRECTORY": "Entity-linked"
+    },
+    "PANELS": {
+      "SUPER_ADMIN_PANEL": "Super admin panel",
+      "VENDOR_PANEL": "Vendor panel",
+      "DRIVER_APP": "Driver app",
+      "CUSTOMER_APP": "Customer app"
+    },
+    "PERSONAS": {
+      "SUPER_ADMIN_MANAGER": "Super admin manager",
+      "SUPER_ADMIN_STAFF": "Super admin staff",
+      "VENDOR_OWNER": "Vendor owner",
+      "VENDOR_COMPANY_MANAGER": "Vendor company manager",
+      "VENDOR_BRANCH_MANAGER": "Vendor branch manager",
+      "VENDOR_BRANCH_EMPLOYEE": "Vendor branch employee",
+      "VENDOR_FINANCE": "Vendor finance",
+      "VENDOR_SUPPORT": "Vendor support",
+      "DRIVER": "Driver account",
+      "CUSTOMER": "Customer account"
+    },
+    "VERIFICATION": {
+      "VERIFIED": "Verified",
+      "PENDING": "Pending",
+      "UNDER_REVIEW": "Under review",
+      "SUSPENDED": "Suspended",
+      "NOT_REQUIRED": "Not required"
+    },
+    "LOCALE": {
+      "AR": "Arabic",
+      "EN": "English",
+      "BILINGUAL": "Bilingual"
+    },
+    "COMMUNICATION_FLAGS": {
+      "ACCESS_INVITES": {
+        "LABEL": "Access invites",
+        "DESC": "Invitation and access reset traffic for operational identities."
+      },
+      "BRANCH_ALERTS": {
+        "LABEL": "Branch alerts",
+        "DESC": "Operational updates, branch coverage changes, and staff access changes."
+      },
+      "DISPATCH_NOTIFICATIONS": {
+        "LABEL": "Dispatch notifications",
+        "DESC": "Driver dispatch status changes, assignment updates, and live routing notices."
+      },
+      "COMPLIANCE_EMAILS": {
+        "LABEL": "Compliance emails",
+        "DESC": "Verification follow-up, document requests, and compliance escalations."
+      },
+      "FINANCE_DIGESTS": {
+        "LABEL": "Finance digests",
+        "DESC": "Settlement summaries, payout alerts, and balance reviews."
+      },
+      "SUPPORT_ESCALATIONS": {
+        "LABEL": "Support escalations",
+        "DESC": "High-priority support routing and service recovery follow-up."
+      },
+      "ORDER_UPDATES": {
+        "LABEL": "Order issue updates",
+        "DESC": "Order issues, refund progress, and case-level communication updates."
+      },
+      "MARKETING_OPT_IN": {
+        "LABEL": "Marketing opt-in",
+        "DESC": "Allow marketing and reactivation communication for customer accounts."
+      }
+    },
+    "FEATURE_TOGGLES": {
+      "DRIVER_DISPATCH": {
+        "LABEL": "Dispatch notifications",
+        "DESC": "Allow route dispatch, mission changes, and pickup readiness notifications."
+      },
+      "DRIVER_COMPLIANCE": {
+        "LABEL": "Compliance reminders",
+        "DESC": "Deliver document expiry reminders and verification follow-up emails."
+      },
+      "DRIVER_FINANCE": {
+        "LABEL": "Finance digests",
+        "DESC": "Enable payout and COD summary digests for driver accounts."
+      },
+      "CUSTOMER_MARKETING": {
+        "LABEL": "Marketing outreach",
+        "DESC": "Allow campaign and lifecycle marketing messages for the customer account."
+      },
+      "CUSTOMER_ESCALATION": {
+        "LABEL": "Support escalations",
+        "DESC": "Send escalated support updates and service recovery communication."
+      },
+      "CUSTOMER_ISSUES": {
+        "LABEL": "Order issue updates",
+        "DESC": "Notify the customer about refunds, disputes, and order issue progress."
+      }
+    },
+    "PERMISSIONS": {
+      "ACTIONS": {
+        "VIEW": "View",
+        "CREATE": "Create",
+        "EDIT": "Edit",
+        "APPROVE": "Approve",
+        "EXPORT": "Export",
+        "MANAGE_SETTINGS": "Manage settings"
+      },
+      "GROUPS": {
+        "DASHBOARD": {
+          "TITLE": "Dashboard",
+          "DESC": "Executive insights, KPI cards, and operational health reporting."
+        },
+        "VENDORS": {
+          "TITLE": "Vendors",
+          "DESC": "Vendor review, onboarding actions, and compliance follow-up."
+        },
+        "CATALOG": {
+          "TITLE": "Catalog",
+          "DESC": "Master data, brand controls, and category governance."
+        },
+        "ORDERS": {
+          "TITLE": "Orders",
+          "DESC": "Order supervision, exceptions, and resolution workflows."
+        },
+        "CUSTOMERS": {
+          "TITLE": "Customers",
+          "DESC": "Customer health, trust flags, and retention visibility."
+        },
+        "DRIVERS": {
+          "TITLE": "Drivers",
+          "DESC": "Driver readiness, verification, and operational action rights."
+        },
+        "DISPUTES": {
+          "TITLE": "Disputes",
+          "DESC": "Case review, escalation, and approval authority."
+        },
+        "FINANCES": {
+          "TITLE": "Finances",
+          "DESC": "Reconciliation, settlements, finance controls, and policy changes."
+        },
+        "USERS_ACCESS": {
+          "TITLE": "Users & Access",
+          "DESC": "Admin user lifecycle, role presets, and access controls."
+        },
+        "EMAIL_CENTER": {
+          "TITLE": "Email Center",
+          "DESC": "Operational email routing, templates, and sender profiles."
+        },
+        "SYSTEM": {
+          "TITLE": "System",
+          "DESC": "Platform-wide configuration and sensitive control surfaces."
+        },
+        "VENDOR_DASHBOARD": {
+          "TITLE": "Vendor dashboard",
+          "DESC": "Branch and company KPI views for vendor operators."
+        },
+        "VENDOR_ORDERS": {
+          "TITLE": "Vendor orders",
+          "DESC": "Vendor-side order flow, approvals, and operational exports."
+        },
+        "VENDOR_CATALOG": {
+          "TITLE": "Vendor catalog",
+          "DESC": "Vendor-owned assortment, listing edits, and item publishing."
+        },
+        "VENDOR_BRANCH_TEAM": {
+          "TITLE": "Branch team",
+          "DESC": "Branch roster management, staffing access, and local settings."
+        },
+        "VENDOR_FINANCE": {
+          "TITLE": "Vendor finance",
+          "DESC": "Vendor wallet, settlement visibility, and finance settings."
+        },
+        "VENDOR_SUPPORT": {
+          "TITLE": "Vendor support",
+          "DESC": "Issue handling, support visibility, and ticket exports."
+        },
+        "VENDOR_SETTINGS": {
+          "TITLE": "Vendor settings",
+          "DESC": "Vendor panel settings, operational preferences, and configuration."
+        }
+      }
+    },
+    "PRESETS": {
+      "SUPER_ADMIN": {
+        "NAME": "Super Admin",
+        "DESC": "Full platform authority across every domain, including access and system settings."
+      },
+      "OPERATIONS_LEAD": {
+        "NAME": "Operations Lead",
+        "DESC": "Strong operational control across vendors, orders, customers, and drivers."
+      },
+      "RISK_ADMIN": {
+        "NAME": "Risk Admin",
+        "DESC": "Focused access for disputes, approvals, and trust-sensitive decisions."
+      },
+      "FINANCE_ADMIN": {
+        "NAME": "Finance Admin",
+        "DESC": "Finance-first visibility and approval power for settlements and pricing controls."
+      },
+      "SUPPORT_ADMIN": {
+        "NAME": "Support Admin",
+        "DESC": "Read-heavy support access with limited customer and order interventions."
+      },
+      "VENDOR_OWNER": {
+        "NAME": "Vendor Owner",
+        "DESC": "Top-level vendor panel control across company scope, finance visibility, and branch access."
+      },
+      "VENDOR_COMPANY_MANAGER": {
+        "NAME": "Vendor Company Manager",
+        "DESC": "Company-wide operational control for branches, orders, and catalog execution."
+      },
+      "VENDOR_BRANCH_MANAGER": {
+        "NAME": "Vendor Branch Manager",
+        "DESC": "Branch-scoped management over local staff, orders, and service delivery."
+      },
+      "VENDOR_BRANCH_EMPLOYEE": {
+        "NAME": "Vendor Branch Employee",
+        "DESC": "Local branch operator with limited edits and no company-level settings access."
+      },
+      "VENDOR_FINANCE_MANAGER": {
+        "NAME": "Vendor Finance Manager",
+        "DESC": "Vendor finance visibility with settlement controls and restricted operational scope."
+      },
+      "VENDOR_SUPPORT_MANAGER": {
+        "NAME": "Vendor Support Manager",
+        "DESC": "Support-first vendor persona for tickets, escalations, and service follow-up."
+      },
+      "DRIVER_ACCOUNT": {
+        "NAME": "Driver Account",
+        "DESC": "External driver identity using communication preferences and feature toggles."
+      },
+      "CUSTOMER_ACCOUNT": {
+        "NAME": "Customer Account",
+        "DESC": "External customer identity focused on communication routing and lifecycle access."
+      }
+    }
+  }
+}

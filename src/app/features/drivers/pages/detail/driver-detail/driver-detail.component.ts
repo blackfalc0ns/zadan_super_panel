@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -22,12 +22,14 @@ import { DriverDetailViewComponent } from '@drivers/components/driver-detail-vie
 import { ToastService } from '@shared/services/toast.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-detail',
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, DriverDetailViewComponent],
   templateUrl: './driver-detail.component.html'
 })
 export class DriverDetailComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
   driverId: string | null = null;
   driver: DriverDetailRecord | null = null;
   isLoading = true;
@@ -71,6 +73,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     }
 
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      this.cdr.markForCheck();
       this.driverId = params.get('id');
       if (this.driverId) {
         this.loadDriver(this.driverId);
@@ -81,6 +84,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     });
 
     this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      this.cdr.markForCheck();
       const tab = params.get('tab') as DriverLifecycleTabId;
       if (tab) {
         this.activeTab = tab;
@@ -103,6 +107,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (data) => {
+        this.cdr.markForCheck();
         if (data) {
           this.driver = data;
         } else {
@@ -112,6 +117,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load driver', err);
         this.driver = null;
         this.error = this.t('DRIVERS.DETAIL.MESSAGES.LOAD_DETAILS_FAILED');
@@ -350,9 +356,11 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.showNotificationResult(response);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Driver test notification failed', err);
         this.toastService.error(
           this.describeApiError(err),
@@ -383,11 +391,13 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         afterSuccess?.();
         this.toastService.success(successMessage);
         this.loadDriver(this.driverId!, false);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Driver mutation failed', err);
         this.toastService.error(this.describeApiError(err));
       }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -35,6 +35,7 @@ const WORKFLOW_STATE_KEYS: Record<NonNullable<CustomerDetailRecord['workflow']>[
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-customer-detail',
   standalone: true,
   imports: [
@@ -53,6 +54,7 @@ const WORKFLOW_STATE_KEYS: Record<NonNullable<CustomerDetailRecord['workflow']>[
   styleUrl: './customer-detail.component.scss'
 })
 export class CustomerDetailComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   @ViewChild('quickNoteInput') quickNoteInput?: ElementRef<HTMLInputElement>;
 
   customer: CustomerDetailRecord | null = null;
@@ -78,6 +80,7 @@ export class CustomerDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
+      this.cdr.markForCheck();
       this.currentTab = this.normalizeTab(params.get('tab'));
     });
 
@@ -85,9 +88,11 @@ export class CustomerDetailComponent implements OnInit {
       switchMap((params) => this.customersService.getCustomerById(params.get('id')))
     ).subscribe({
       next: (customer) => {
+        this.cdr.markForCheck();
         this.customer = customer ?? null;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         console.error('Failed to load admin customer detail.', error);
         this.customer = null;
       }
@@ -465,9 +470,11 @@ export class CustomerDetailComponent implements OnInit {
       })
     ).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.showNotificationResult(response);
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.toastService.error(
           this.describeApiError(error),
           'إشعارات العميل'

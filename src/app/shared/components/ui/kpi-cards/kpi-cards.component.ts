@@ -1,6 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 
 export interface KPICard {
@@ -17,7 +16,15 @@ export interface KPICard {
   clickable?: boolean;
 }
 
+/**
+ * Pattern that matches a valid Material Symbols icon name. Allows only
+ * lowercase letters, digits and underscores. Anything else is rejected to
+ * defend against arbitrary HTML injection.
+ */
+const VALID_ICON_NAME = /^[a-z][a-z0-9_]*$/;
+
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-kpi-cards',
   standalone: true,
   imports: [CommonModule, TranslateModule],
@@ -54,9 +61,8 @@ export interface KPICard {
 
            <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500"
                 [style.background-color]="card.color + '10'">
-                <div [innerHTML]="getSafeIcon(card.icon)"
-                    class="w-5 h-5 flex items-center justify-center"
-                    [style.color]="card.color"></div>
+                <span class="material-symbols-outlined text-[20px] flex items-center justify-center"
+                      [style.color]="card.color">{{ getIconName(card.icon) }}</span>
            </div>
         </div>
       </div>
@@ -72,16 +78,37 @@ export class KpiCardsComponent {
   @Input() cards: KPICard[] = [];
   @Output() cardClick = new EventEmitter<KPICard>();
 
-  constructor(private readonly sanitizer: DomSanitizer) {}
-
   get gridColumnClass(): string {
     return this.cards.length > 5
       ? 'lg:grid-cols-3 xl:grid-cols-6'
       : 'lg:grid-cols-5';
   }
 
-  getSafeIcon(icon: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(icon);
+  /**
+   * Extracts a safe Material Symbols icon name from either:
+   *   - a bare name like "pending_actions", or
+   *   - a legacy HTML wrapper like "<span class=...>pending_actions</span>".
+   *
+   * Anything that does not match the strict whitelist is replaced with a
+   * neutral fallback so we never inject untrusted HTML.
+   */
+  getIconName(value: string | undefined | null): string {
+    if (!value) {
+      return 'circle';
+    }
+
+    const trimmed = value.trim();
+
+    if (VALID_ICON_NAME.test(trimmed)) {
+      return trimmed;
+    }
+
+    const innerMatch = trimmed.match(/>\s*([a-z][a-z0-9_]*)\s*</i);
+    if (innerMatch && VALID_ICON_NAME.test(innerMatch[1].toLowerCase())) {
+      return innerMatch[1].toLowerCase();
+    }
+
+    return 'circle';
   }
 
   onCardClick(card: KPICard) {

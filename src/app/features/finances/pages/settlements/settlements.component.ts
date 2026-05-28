@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-settlements',
   standalone: true,
   imports: [
@@ -277,6 +278,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
   `
 })
 export class SettlementsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private financeService = inject(FinanceService);
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);
@@ -318,6 +320,7 @@ export class SettlementsComponent implements OnInit {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
+      this.cdr.markForCheck();
         const entityType = params.get('entityType');
         this.scopedEntityId = params.get('entityId');
         if (entityType === 'vendor' || entityType === 'driver') {
@@ -333,6 +336,7 @@ export class SettlementsComponent implements OnInit {
       entityType: this.activeTab,
       entityId: this.scopedEntityId ?? undefined
     }).pipe(take(1)).subscribe(data => {
+      this.cdr.markForCheck();
       this.allSettlements = data;
     });
   }
@@ -346,6 +350,7 @@ export class SettlementsComponent implements OnInit {
   
   processSettlement(s: Settlement): void {
     this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe(() => {
+      this.cdr.markForCheck();
       this.selectedSettlement = null;
       this.loadSettlements();
     });

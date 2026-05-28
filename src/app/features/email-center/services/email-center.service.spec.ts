@@ -83,19 +83,19 @@ describe('EmailCenterApiService', () => {
   };
 
   beforeEach(() => {
-    localStorage.setItem('admin_token', 'test-token');
     TestBed.configureTestingModule({
       providers: [...provideAppTesting()]
     });
 
     service = TestBed.inject(EmailCenterApiService);
     httpMock = TestBed.inject(HttpTestingController);
-    TestBed.inject(AuthService);
+    const authService = TestBed.inject(AuthService);
+    // Inject a synthetic in-memory access token for HTTP request expectations.
+    (authService as unknown as { accessToken: string }).accessToken = 'test-token';
   });
 
   afterEach(() => {
     httpMock.verify();
-    localStorage.removeItem('admin_token');
   });
 
   it('loads overview from the backend', () => {

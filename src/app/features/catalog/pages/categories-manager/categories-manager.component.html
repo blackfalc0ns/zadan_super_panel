@@ -31,6 +31,16 @@
           <span class="text-[10px] font-black uppercase tracking-[0.1em] sm:text-xs">{{ 'CATEGORIES.ADD_NEW' | translate }}</span>
         </div>
       </app-button>
+
+      <app-button
+        variant="ghost"
+        routerLink="/catalog/recycle-bin"
+        customClass="!rounded-[1.25rem] !bg-red-50/50 !border !border-red-200/70 !text-red-600 hover:!bg-red-50 hover:!border-red-500/40 hover:!text-red-700 !px-5 !py-3 shadow-sm">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px] text-red-500">delete</span>
+          <span class="text-[10px] font-black uppercase tracking-[0.1em] sm:text-xs">{{ 'CATALOG.RECYCLE_BIN' | translate }}</span>
+        </div>
+      </app-button>
     </div>
   </app-page-header>
 

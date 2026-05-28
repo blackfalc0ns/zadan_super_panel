@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -20,7 +20,8 @@ interface SectionTab {
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './dashboard-sections.component.html',
-  styleUrl: './dashboard-sections.component.scss'
+  styleUrl: './dashboard-sections.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardSectionsComponent implements OnChanges {
   @Input() primarySections: DashboardSection[] = [];

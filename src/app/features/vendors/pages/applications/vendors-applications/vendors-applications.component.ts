@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { DataTableComponent, TableColumn } from '@shared/components/ui/data-tabl
 import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pill.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendors-applications',
   standalone: true,
   imports: [
@@ -87,6 +88,7 @@ import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pi
   `
 })
 export class VendorsApplicationsComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   applications: Vendor[] = [];
   loading = true;
   currentLang = 'ar';
@@ -116,6 +118,7 @@ export class VendorsApplicationsComponent implements OnInit {
     // status=Pending will give us the ones needing review
     this.vendorService.getVendors(1, 50, undefined, VendorStatus.Pending).subscribe({
       next: (data) => {
+        this.cdr.markForCheck();
         this.applications = data.items;
         this.loading = false;
       },

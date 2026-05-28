@@ -1,5 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,6 +19,7 @@ import { CatalogService } from '../../services/catalog.api.service';
 type BulkStage = 'review' | 'submitting' | 'done';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bulk-master-products-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
@@ -349,6 +350,7 @@ type BulkStage = 'review' | 'submitting' | 'done';
   `
 })
 export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() categories: Category[] = [];
   @Input() brands: Brand[] = [];
   @Input() units: CatalogUnit[] = [];
@@ -606,10 +608,12 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     this.submitError = '';
     this.catalogService.createProductsBulk(payload).subscribe({
       next: (operation) => {
+        this.cdr.markForCheck();
         this.operation = operation;
         this.startPolling(operation.id);
       },
       error: (error: HttpErrorResponse) => {
+        this.cdr.markForCheck();
         this.submitError = this.resolveSubmitError(error);
         this.stage = 'review';
       }
@@ -639,11 +643,13 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     this.isUploadingDefaultImages = true;
     forkJoin(files.map((file) => this.catalogService.uploadFile(file, 'products'))).subscribe({
       next: (results) => {
+        this.cdr.markForCheck();
         this.defaults.images = this.mapUploadedImages(results.map((result) => result.url));
         this.isUploadingDefaultImages = false;
         input.value = '';
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isUploadingDefaultImages = false;
         input.value = '';
       }
@@ -660,11 +666,13 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     this.uploadingRowIds.add(row.rowId);
     forkJoin(files.map((file) => this.catalogService.uploadFile(file, 'products'))).subscribe({
       next: (results) => {
+        this.cdr.markForCheck();
         row.images = this.mapUploadedImages(results.map((result) => result.url));
         this.uploadingRowIds.delete(row.rowId);
         input.value = '';
       },
       error: () => {
+        this.cdr.markForCheck();
         this.uploadingRowIds.delete(row.rowId);
         input.value = '';
       }
@@ -689,10 +697,12 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
       .pipe(switchMap(() => this.catalogService.getProductsBulkOperation(operationId)))
       .subscribe({
         next: (operation) => {
+        this.cdr.markForCheck();
           this.operation = operation;
           if (operation.status !== 'Pending' && operation.status !== 'Processing') {
             this.catalogService.getProductsBulkOperationItems(operationId).subscribe({
               next: (items) => {
+        this.cdr.markForCheck();
                 this.resultItems = items;
                 this.stage = 'done';
                 this.pollSub?.unsubscribe();

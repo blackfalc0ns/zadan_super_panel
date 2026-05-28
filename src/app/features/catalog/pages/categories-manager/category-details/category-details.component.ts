@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -26,9 +26,9 @@ import { DeleteConfirmationModalComponent } from '../../../../../shared/componen
     SectionHeaderComponent,
     StatusPillComponent
   ],
-
   templateUrl: './category-details.component.html',
-  styleUrls: ['./category-details.component.scss']
+  styleUrls: ['./category-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoryDetailsComponent implements OnInit, OnDestroy {
   category: Category | null = null;
@@ -56,7 +56,8 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     private catalogService: CatalogService,
     private translate: TranslateService,
-    private location: Location
+    private location: Location,
+    private cdr: ChangeDetectorRef
   ) {
     this.activeLang = this.translate.currentLang || 'ar';
     this.translate.onLangChange
@@ -64,6 +65,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
       .subscribe(event => {
         this.activeLang = event.lang;
         this.setupBreadcrumbs();
+        this.cdr.markForCheck();
       });
   }
 
@@ -161,6 +163,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     this.pageNumber = 1;
     this.relatedProducts = [];
     this.relatedBrands = [];
+    this.cdr.markForCheck();
     this.catalogService.getCategoryById(id).subscribe({
       next: (data) => {
         if (this.activeCategoryId !== id) {
@@ -171,6 +174,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
         this.loadRelatedBrands(id);
         this.loadCategoryProducts(id);
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         if (this.activeCategoryId !== id) {
@@ -182,6 +186,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
         this.relatedProducts = [];
         this.relatedBrands = [];
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -202,6 +207,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
         }
 
         this.relatedBrands = response.items ?? [];
+        this.cdr.markForCheck();
       },
       error: (err) => {
         if (this.activeCategoryId !== categoryId) {
@@ -210,6 +216,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
         console.error('Failed to load related brands:', err);
         this.relatedBrands = [];
+        this.cdr.markForCheck();
       }
     });
   }
@@ -229,6 +236,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
               ? response
               : [];
         this.relatedProducts = items;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         if (this.activeCategoryId !== categoryId) {
@@ -237,6 +245,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
         console.error('Failed to load category products:', err);
         this.relatedProducts = [];
+        this.cdr.markForCheck();
       }
     });
   }
@@ -256,13 +265,13 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
     const end = start + this.pageSize;
     return this.category.subCategories.slice(start, end);
   }
-
   get totalSubCategories(): number {
     return this.category?.subCategories?.length || 0;
   }
 
   onPageChange(page: number): void {
     this.pageNumber = page;
+    this.cdr.markForCheck();
   }
 
   onBack(): void {
@@ -271,21 +280,25 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
   onEdit(): void {
     this.isEditModalOpen = true;
+    this.cdr.markForCheck();
   }
 
   onDelete(): void {
     this.deleteErrorMessage = null;
     this.isDeleteModalOpen = true;
+    this.cdr.markForCheck();
   }
 
   confirmDelete(): void {
     if (!this.category) return;
     this.isDeleting = true;
     this.deleteErrorMessage = null;
+    this.cdr.markForCheck();
     this.catalogService.deleteCategory(this.category.id).subscribe({
       next: () => {
         this.isDeleting = false;
         this.isDeleteModalOpen = false;
+        this.cdr.markForCheck();
         this.onBack();
       },
       error: (err) => {
@@ -294,6 +307,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
         this.deleteErrorMessage = err?.error?.detail
           || err?.error?.message
           || this.translate.instant('CATEGORIES.DELETE_ERROR_GENERIC');
+        this.cdr.markForCheck();
       }
     });
   }
@@ -301,6 +315,7 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
   closeDeleteModal(): void {
     this.isDeleteModalOpen = false;
     this.deleteErrorMessage = null;
+    this.cdr.markForCheck();
   }
 
   handleSaved(): void {
@@ -315,12 +330,12 @@ export class CategoryDetailsComponent implements OnInit, OnDestroy {
 
   openCreateModal(): void {
     this.isCreateModalOpen = true;
+    this.cdr.markForCheck();
   }
 
   canCreateProduct(): boolean {
     return (this.category?.level ?? 0) >= 3;
   }
-
   onCreateProduct(): void {
     if (this.category) {
       this.router.navigate(['/catalog/products/create'], { queryParams: { categoryId: this.category.id } });

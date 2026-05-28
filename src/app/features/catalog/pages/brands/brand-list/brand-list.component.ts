@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,8 +15,10 @@ import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { CatalogRequestCenterModalComponent } from '../../../components/catalog-request-center-modal/catalog-request-center-modal.component';
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
+import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-brand-list',
   standalone: true,
   imports: [
@@ -32,14 +34,17 @@ import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared
     AppPageHeaderComponent,
     StatusPillComponent,
     CatalogRequestCenterModalComponent,
-    AdvancedFilterPanelComponent
+    AdvancedFilterPanelComponent,
+    DeleteConfirmationModalComponent
   ],
   templateUrl: './brand-list.component.html',
   styleUrl: './brand-list.component.scss'
 })
 export class BrandListComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   isLoading = false;
   brands: Brand[] = [];
+  selectedBrandIds = new Set<string>();
   isModalOpen = false;
   modalMode: 'create' | 'edit' = 'create';
   selectedBrand: Brand | null = null;
@@ -52,6 +57,13 @@ export class BrandListComponent implements OnInit {
   productsFilter: boolean | null = null;
   isFiltersExpanded = false;
   panelFilters: Record<string, string | null | undefined> = {};
+
+  // Custom delete modal states
+  isDeleteModalOpen = false;
+  brandToDelete: Brand | null = null;
+  isBulkDelete = false;
+  isDeleting = false;
+  deleteErrorMessage: string | null = null;
 
   currentPage = 1;
   pageSize = 10;
@@ -76,12 +88,16 @@ export class BrandListComponent implements OnInit {
     private catalogService: CatalogService,
     public translate: TranslateService
   ) {
-    this.translate.onLangChange.subscribe(() => this.initializeFilterOptions());
+    this.translate.onLangChange.subscribe(() => {
+      this.cdr.markForCheck();
+      this.initializeFilterOptions();
+    });
 
     this.searchSubject.pipe(
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe((term: string) => {
+      this.cdr.markForCheck();
       this.searchTerm = term;
       this.currentPage = 1;
       this.loadBrands();
@@ -91,6 +107,7 @@ export class BrandListComponent implements OnInit {
   ngOnInit(): void {
     this.loadLeafCategories();
     this.route.queryParams.subscribe((params) => {
+      this.cdr.markForCheck();
       this.searchTerm = params['search'] || '';
       this.currentPage = 1;
       this.syncPanelFilters();
@@ -100,13 +117,16 @@ export class BrandListComponent implements OnInit {
 
   loadBrands(): void {
     this.isLoading = true;
+    this.selectedBrandIds.clear();
     this.catalogService.searchBrands(this.buildSearchRequest()).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.brands = response.items ?? [];
         this.totalItems = response.totalCount ?? this.brands.length;
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load brands', err);
         this.brands = [];
         this.totalItems = 0;
@@ -118,10 +138,12 @@ export class BrandListComponent implements OnInit {
   loadLeafCategories(): void {
     this.catalogService.getCategories(undefined, true).subscribe({
       next: (categories) => {
+        this.cdr.markForCheck();
         this.leafCategories = this.flattenLeafCategories(categories ?? []);
         this.initializeFilterOptions();
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load brand filter categories', err);
         this.leafCategories = [];
         this.initializeFilterOptions();
@@ -205,10 +227,91 @@ export class BrandListComponent implements OnInit {
   }
 
   deleteBrand(brand: Brand): void {
-    this.catalogService.deleteBrand(brand.id).subscribe({
-      next: () => this.loadBrands(),
-      error: (err) => console.error('Failed to delete brand', err)
-    });
+    this.brandToDelete = brand;
+    this.isBulkDelete = false;
+    this.isDeleteModalOpen = true;
+    this.deleteErrorMessage = null;
+    this.isDeleting = false;
+  }
+
+  confirmDelete(): void {
+    this.isDeleting = true;
+    this.deleteErrorMessage = null;
+
+    if (this.isBulkDelete) {
+      const ids = Array.from(this.selectedBrandIds);
+      this.catalogService.bulkDeleteBrands(ids).subscribe({
+        next: () => {
+        this.cdr.markForCheck();
+          this.isDeleting = false;
+          this.isDeleteModalOpen = false;
+          this.selectedBrandIds.clear();
+          this.loadBrands();
+        },
+        error: (err) => {
+        this.cdr.markForCheck();
+          console.error('Failed bulk delete brands', err);
+          this.isDeleting = false;
+          this.deleteErrorMessage = this.translate.instant('BRANDS.DELETE_FAILED') || 'Failed to delete brands';
+        }
+      });
+    } else if (this.brandToDelete) {
+      this.catalogService.deleteBrand(this.brandToDelete.id).subscribe({
+        next: () => {
+        this.cdr.markForCheck();
+          this.isDeleting = false;
+          this.isDeleteModalOpen = false;
+          this.brandToDelete = null;
+          this.loadBrands();
+        },
+        error: (err) => {
+        this.cdr.markForCheck();
+          console.error('Failed to delete brand', err);
+          this.isDeleting = false;
+          this.deleteErrorMessage = this.translate.instant('BRANDS.DELETE_FAILED') || 'Failed to delete brand';
+        }
+      });
+    }
+  }
+
+  cancelDelete(): void {
+    this.isDeleteModalOpen = false;
+    this.brandToDelete = null;
+    this.isBulkDelete = false;
+    this.deleteErrorMessage = null;
+    this.isDeleting = false;
+  }
+
+  toggleBrandSelection(brandId: string, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (this.selectedBrandIds.has(brandId)) {
+      this.selectedBrandIds.delete(brandId);
+    } else {
+      this.selectedBrandIds.add(brandId);
+    }
+  }
+
+  toggleAllSelection(): void {
+    if (this.isAllSelected) {
+      this.brands.forEach(b => this.selectedBrandIds.delete(b.id));
+    } else {
+      this.brands.forEach(b => this.selectedBrandIds.add(b.id));
+    }
+  }
+
+  get isAllSelected(): boolean {
+    return this.brands.length > 0 && this.brands.every(b => this.selectedBrandIds.has(b.id));
+  }
+
+  deleteSelectedBrands(): void {
+    if (this.selectedBrandIds.size === 0) return;
+    this.isBulkDelete = true;
+    this.brandToDelete = null;
+    this.isDeleteModalOpen = true;
+    this.deleteErrorMessage = null;
+    this.isDeleting = false;
   }
 
   getBrandStatusVariant(isActive: boolean): StatusPillVariant {

@@ -468,4 +468,15 @@
     </div>
   </form>
   </ng-template>
+
+  <!-- Delete Confirmation Modal for Variants -->
+  <app-delete-confirmation-modal
+      [isOpen]="isDeleteModalOpen"
+      [title]="(activeLang === 'ar' ? 'تأكيد حذف الحجم' : 'Confirm Size Deletion')"
+      [message]="(activeLang === 'ar' ? 'هل تريد حذف هذا الحجم نهائياً؟ لا يمكن التراجع عن هذا الإجراء.' : 'Do you want to permanently delete this size? This action cannot be undone.')"
+      [isLoading]="isDeletingVariant"
+      [errorMessage]="deleteVariantErrorMessage"
+      (confirm)="confirmDeleteVariant()"
+      (close)="cancelDeleteVariant()">
+  </app-delete-confirmation-modal>
 </div>

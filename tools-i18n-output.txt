@@ -1,0 +1,405 @@
+i18n check failed:
+
+- Referenced in code but missing in en.json: ADMIN_USERS.PERMISSIONS.GROUPS.MARKETING.TITLE
+- Referenced in code but missing in ar.json: ADMIN_USERS.PERMISSIONS.GROUPS.MARKETING.TITLE
+- Referenced in code but missing in en.json: ADMIN_USERS.PERMISSIONS.GROUPS.MARKETING.DESC
+- Referenced in code but missing in ar.json: ADMIN_USERS.PERMISSIONS.GROUPS.MARKETING.DESC
+- Referenced in code but missing in en.json: ADMIN_USERS.FIELDS.ROLE
+- Referenced in code but missing in ar.json: ADMIN_USERS.FIELDS.ROLE
+- Referenced in code but missing in en.json: ADMIN_USERS.FIELDS.LOCALE
+- Referenced in code but missing in ar.json: ADMIN_USERS.FIELDS.LOCALE
+- Referenced in code but missing in en.json: SIDEBAR.SYSTEM
+- Referenced in code but missing in ar.json: SIDEBAR.SYSTEM
+- Referenced in code but missing in en.json: ADMIN_USERS.ACTIONS.ADD_USER
+- Referenced in code but missing in ar.json: ADMIN_USERS.ACTIONS.ADD_USER
+- Referenced in code but missing in en.json: ADMIN_USERS.TABLE.ACTIONS
+- Referenced in code but missing in ar.json: ADMIN_USERS.TABLE.ACTIONS
+- Referenced in code but missing in en.json: ADMIN_USERS.ACTIONS.VIEW
+- Referenced in code but missing in ar.json: ADMIN_USERS.ACTIONS.VIEW
+- Referenced in code but missing in en.json: ADMIN_USERS.ACTIONS.EDIT_ROLE
+- Referenced in code but missing in ar.json: ADMIN_USERS.ACTIONS.EDIT_ROLE
+- Referenced in code but missing in en.json: ADMIN_USERS.STATS.TOTAL
+- Referenced in code but missing in ar.json: ADMIN_USERS.STATS.TOTAL
+- Referenced in code but missing in en.json: ADMIN_USERS.STATS.ACTIVE
+- Referenced in code but missing in ar.json: ADMIN_USERS.STATS.ACTIVE
+- Referenced in code but missing in en.json: ADMIN_USERS.STATS.LOCKED
+- Referenced in code but missing in ar.json: ADMIN_USERS.STATS.LOCKED
+- Referenced in code but missing in en.json: CATEGORIES.DELETE_ERROR_GENERIC
+- Referenced in code but missing in ar.json: CATEGORIES.DELETE_ERROR_GENERIC
+- Referenced in code but missing in en.json: MASTER_PRODUCTS.SYSTEM_IDENTIFIER_DESC
+- Referenced in code but missing in ar.json: MASTER_PRODUCTS.SYSTEM_IDENTIFIER_DESC
+- Referenced in code but missing in en.json: DISPUTES_DASHBOARD.STATUS.AWAITING_CUSTOMER
+- Referenced in code but missing in ar.json: DISPUTES_DASHBOARD.STATUS.AWAITING_CUSTOMER
+- Referenced in code but missing in en.json: DISPUTES_DASHBOARD.STATUS.APPROVED
+- Referenced in code but missing in ar.json: DISPUTES_DASHBOARD.STATUS.APPROVED
+- Referenced in code but missing in en.json: DISPUTES_DASHBOARD.STATUS.REJECTED
+- Referenced in code but missing in ar.json: DISPUTES_DASHBOARD.STATUS.REJECTED
+- Referenced in code but missing in en.json: DRIVERS.DETAIL.HERO.JOINED_AT
+- Referenced in code but missing in ar.json: DRIVERS.DETAIL.HERO.JOINED_AT
+- Referenced in code but missing in en.json: DRIVERS.ACTIONS.VIEW_PROFILE
+- Referenced in code but missing in ar.json: DRIVERS.ACTIONS.VIEW_PROFILE
+- Referenced in code but missing in en.json: EMAIL_CENTER.SENDER_PROFILE
+- Referenced in code but missing in ar.json: EMAIL_CENTER.SENDER_PROFILE
+- Referenced in code but missing in en.json: FINANCES.FILTERS.SEARCH_PLACEHOLDER
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.SEARCH_PLACEHOLDER
+- Referenced in code but missing in en.json: FINANCES.FILTERS.TITLE
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.TITLE
+- Referenced in code but missing in en.json: FINANCES.FILTERS.SUBTITLE
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.SUBTITLE
+- Referenced in code but missing in en.json: FINANCES.FILTERS.CLEAR
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.CLEAR
+- Referenced in code but missing in en.json: FINANCES.EXPORT
+- Referenced in code but missing in ar.json: FINANCES.EXPORT
+- Referenced in code but missing in en.json: FINANCES.FILTERS.ACTIVE
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.ACTIVE
+- Referenced in code but missing in en.json: FINANCES.PERIODS.THIS_WEEK
+- Referenced in code but missing in ar.json: FINANCES.PERIODS.THIS_WEEK
+- Referenced in code but missing in en.json: FINANCES.PERIODS.THIS_MONTH
+- Referenced in code but missing in ar.json: FINANCES.PERIODS.THIS_MONTH
+- Referenced in code but missing in en.json: FINANCES.PERIODS.THIS_QUARTER
+- Referenced in code but missing in ar.json: FINANCES.PERIODS.THIS_QUARTER
+- Referenced in code but missing in en.json: FINANCES.FILTERS.PERIOD
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.PERIOD
+- Referenced in code but missing in en.json: FINANCES.FILTERS.ALL_PERIODS
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.ALL_PERIODS
+- Referenced in code but missing in en.json: FINANCES.FILTERS.ALL_ENTITIES
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.ALL_ENTITIES
+- Referenced in code but missing in en.json: FINANCES.COMMON.TYPE
+- Referenced in code but missing in ar.json: FINANCES.COMMON.TYPE
+- Referenced in code but missing in en.json: FINANCES.FILTERS.ALL_TYPES
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.ALL_TYPES
+- Referenced in code but missing in en.json: FINANCES.COMMON.DIRECTION
+- Referenced in code but missing in ar.json: FINANCES.COMMON.DIRECTION
+- Referenced in code but missing in en.json: FINANCES.FILTERS.ALL
+- Referenced in code but missing in ar.json: FINANCES.FILTERS.ALL
+- Referenced in code but missing in en.json: FINANCES.COMMON.CANCEL
+- Referenced in code but missing in ar.json: FINANCES.COMMON.CANCEL
+- Referenced in code but missing in en.json: FINANCES.COMMON.AMOUNT
+- Referenced in code but missing in ar.json: FINANCES.COMMON.AMOUNT
+- Referenced in code but missing in en.json: FINANCES.COMMON.STATUS
+- Referenced in code but missing in ar.json: FINANCES.COMMON.STATUS
+- Referenced in code but missing in en.json: FINANCES.ADMINS.SUPER_ADMIN
+- Referenced in code but missing in ar.json: FINANCES.ADMINS.SUPER_ADMIN
+- Referenced in code but missing in en.json: FINANCES.PRICING.RULESET_NAME
+- Referenced in code but missing in ar.json: FINANCES.PRICING.RULESET_NAME
+- Referenced in code but missing in en.json: FINANCES.ROLES.SUPER_ADMIN
+- Referenced in code but missing in ar.json: FINANCES.ROLES.SUPER_ADMIN
+- Referenced in code but missing in en.json: FINANCES.AUDIT.ACTIONS.REFUND_APPROVED
+- Referenced in code but missing in ar.json: FINANCES.AUDIT.ACTIONS.REFUND_APPROVED
+- Referenced in code but missing in en.json: FINANCES.AUDIT.ACTIONS.REFUND_REJECTED
+- Referenced in code but missing in ar.json: FINANCES.AUDIT.ACTIONS.REFUND_REJECTED
+- Referenced in code but missing in en.json: FINANCES.AUDIT.ACTIONS.REFUND_ESCALATED
+- Referenced in code but missing in ar.json: FINANCES.AUDIT.ACTIONS.REFUND_ESCALATED
+- Referenced in code but missing in en.json: FINANCES.ADJUSTMENTS.REASONS.SYSTEM_DOWNTIME
+- Referenced in code but missing in ar.json: FINANCES.ADJUSTMENTS.REASONS.SYSTEM_DOWNTIME
+- Referenced in code but missing in en.json: FINANCES.AUDIT.ACTIONS.ADJUSTMENT_CREATED
+- Referenced in code but missing in ar.json: FINANCES.AUDIT.ACTIONS.ADJUSTMENT_CREATED
+- Referenced in code but missing in en.json: FINANCES.AUDIT.ACTIONS.PRICING_UPDATED
+- Referenced in code but missing in ar.json: FINANCES.AUDIT.ACTIONS.PRICING_UPDATED
+- Referenced in code but missing in en.json: FINANCES.ALERTS.COD_OVERDUE_DESC
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.COD_OVERDUE_DESC
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.COMMISSION
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.COMMISSION
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.PAYOUT
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.PAYOUT
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.SERVICE_FEE
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.SERVICE_FEE
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.DELIVERY_FEE
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.DELIVERY_FEE
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.VAT
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.VAT
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.REFUND
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.REFUND
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.COD_COLLECTION
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.COD_COLLECTION
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.SETTLEMENT
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.SETTLEMENT
+- Referenced in code but missing in en.json: FINANCES.LEDGER.DESC.ADJUSTMENT
+- Referenced in code but missing in ar.json: FINANCES.LEDGER.DESC.ADJUSTMENT
+- Referenced in code but missing in en.json: FINANCES.ALERTS.NEGATIVE_MARGIN
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.NEGATIVE_MARGIN
+- Referenced in code but missing in en.json: FINANCES.ALERTS.NEGATIVE_MARGIN_DESC
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.NEGATIVE_MARGIN_DESC
+- Referenced in code but missing in en.json: FINANCES.ALERTS.HIGH_DISPUTE_VENDOR
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.HIGH_DISPUTE_VENDOR
+- Referenced in code but missing in en.json: FINANCES.ALERTS.HIGH_DISPUTE_VENDOR_DESC
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.HIGH_DISPUTE_VENDOR_DESC
+- Referenced in code but missing in en.json: FINANCES.ACTIONS.VIEW_VENDOR
+- Referenced in code but missing in ar.json: FINANCES.ACTIONS.VIEW_VENDOR
+- Referenced in code but missing in en.json: FINANCES.ALERTS.COD_OVERDUE
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.COD_OVERDUE
+- Referenced in code but missing in en.json: FINANCES.ACTIONS.VIEW_COD
+- Referenced in code but missing in ar.json: FINANCES.ACTIONS.VIEW_COD
+- Referenced in code but missing in en.json: FINANCES.ALERTS.SETTLEMENT_DUE
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.SETTLEMENT_DUE
+- Referenced in code but missing in en.json: FINANCES.ALERTS.SETTLEMENT_DUE_DESC
+- Referenced in code but missing in ar.json: FINANCES.ALERTS.SETTLEMENT_DUE_DESC
+- Referenced in code but missing in en.json: FINANCES.ACTIONS.VIEW_SETTLEMENTS
+- Referenced in code but missing in ar.json: FINANCES.ACTIONS.VIEW_SETTLEMENTS
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.NOTES.CUSTOMER_SUBMITTED_REQUEST
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.NOTES.CUSTOMER_SUBMITTED_REQUEST
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.NOTES.ESCALATED_TO_FINANCE_REVIEW
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.NOTES.ESCALATED_TO_FINANCE_REVIEW
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.NOTES.AWAITING_ADMIN_ASSIGNMENT
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.NOTES.AWAITING_ADMIN_ASSIGNMENT
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.NOTES.FULL_REFUND_VENDOR_AT_FAULT
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.NOTES.FULL_REFUND_VENDOR_AT_FAULT
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.NOTES.INSUFFICIENT_EVIDENCE
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.NOTES.INSUFFICIENT_EVIDENCE
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.REASONS.DUPLICATE_CHARGE
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.REASONS.DUPLICATE_CHARGE
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.REASONS.ORDER_NEVER_ARRIVED
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.REASONS.ORDER_NEVER_ARRIVED
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.REASONS.ITEM_QUALITY_ISSUE
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.REASONS.ITEM_QUALITY_ISSUE
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.REASONS.WRONG_ITEM_DELIVERED
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.REASONS.WRONG_ITEM_DELIVERED
+- Referenced in code but missing in en.json: FINANCES.REFUNDS.REASONS.DAMAGED_PRODUCTS
+- Referenced in code but missing in ar.json: FINANCES.REFUNDS.REASONS.DAMAGED_PRODUCTS
+- Referenced in code but missing in en.json: FINANCES.COMPOSITION.COMMISSIONS
+- Referenced in code but missing in ar.json: FINANCES.COMPOSITION.COMMISSIONS
+- Referenced in code but missing in en.json: FINANCES.COMPOSITION.DELIVERY_FEES
+- Referenced in code but missing in ar.json: FINANCES.COMPOSITION.DELIVERY_FEES
+- Referenced in code but missing in en.json: FINANCES.COMPOSITION.SERVICE_FEES
+- Referenced in code but missing in ar.json: FINANCES.COMPOSITION.SERVICE_FEES
+- Referenced in code but missing in en.json: FINANCES.COMPOSITION.COD_FEES
+- Referenced in code but missing in ar.json: FINANCES.COMPOSITION.COD_FEES
+- Referenced in code but missing in en.json: FINANCES.COMPOSITION.VAT
+- Referenced in code but missing in ar.json: FINANCES.COMPOSITION.VAT
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.TARGET_CATEGORY
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.TARGET_CATEGORY
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.TARGET_CATEGORY_PLACEHOLDER
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.TARGET_CATEGORY_PLACEHOLDER
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.CATEGORY_SEARCH
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.CATEGORY_SEARCH
+- Referenced in code but missing in en.json: MARKETING.VISIBILITY.MESSAGES.EMPTY_TITLE
+- Referenced in code but missing in ar.json: MARKETING.VISIBILITY.MESSAGES.EMPTY_TITLE
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.MESSAGES.NO_CATEGORIES
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.MESSAGES.NO_CATEGORIES
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.THEME_PLACEHOLDER
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.THEME_PLACEHOLDER
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.TAKE
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.TAKE
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.TAKE_DESC
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.TAKE_DESC
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.ACTIVATE
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.ACTIVATE
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.SCHEDULE
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.SCHEDULE
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.ALWAYS_VISIBLE_DESC
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.ALWAYS_VISIBLE_DESC
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.FIELDS.SCHEDULED_DESC
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.FIELDS.SCHEDULED_DESC
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.ACTIONS.ADD_SECTION
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.ACTIONS.ADD_SECTION
+- Referenced in code but missing in en.json: MARKETING.PERMISSIONS.ACTIONS.EDIT
+- Referenced in code but missing in ar.json: MARKETING.PERMISSIONS.ACTIONS.EDIT
+- Referenced in code but missing in en.json: MARKETING.BANNERS.TABS.BANNERS
+- Referenced in code but missing in ar.json: MARKETING.BANNERS.TABS.BANNERS
+- Referenced in code but missing in en.json: MARKETING.PERMISSIONS.ACTIONS.DELETE
+- Referenced in code but missing in ar.json: MARKETING.PERMISSIONS.ACTIONS.DELETE
+- Referenced in code but missing in en.json: MARKETING.ACTIONS.SAVING
+- Referenced in code but missing in ar.json: MARKETING.ACTIONS.SAVING
+- Referenced in code but missing in en.json: MARKETING.COUPONS.TABS.COUPONS
+- Referenced in code but missing in ar.json: MARKETING.COUPONS.TABS.COUPONS
+- Referenced in code but missing in en.json: MARKETING.HOME_SECTIONS.SEARCH_PLACEHOLDER
+- Referenced in code but missing in ar.json: MARKETING.HOME_SECTIONS.SEARCH_PLACEHOLDER
+- Referenced in code but missing in en.json: MARKETING.VISIBILITY.SEARCH_PLACEHOLDER
+- Referenced in code but missing in ar.json: MARKETING.VISIBILITY.SEARCH_PLACEHOLDER
+- Referenced in code but missing in en.json: MARKETING.VISIBILITY.TABLE.SECTION
+- Referenced in code but missing in ar.json: MARKETING.VISIBILITY.TABLE.SECTION
+- Referenced in code but missing in en.json: MARKETING.VISIBILITY.TABLE.API_KEY
+- Referenced in code but missing in ar.json: MARKETING.VISIBILITY.TABLE.API_KEY
+- Referenced in code but missing in en.json: MARKETING.VISIBILITY.TABLE.STATUS
+- Referenced in code but missing in ar.json: MARKETING.VISIBILITY.TABLE.STATUS
+- Referenced in code but missing in en.json: ORDERS.WORKFLOW.NEXT_ACTIONS.MONITOR_PREPARATION
+- Referenced in code but missing in ar.json: ORDERS.WORKFLOW.NEXT_ACTIONS.MONITOR_PREPARATION
+- Referenced in code but missing in en.json: ORDERS.WORKFLOW.NEXT_ACTIONS.ASSIGN_DRIVER
+- Referenced in code but missing in ar.json: ORDERS.WORKFLOW.NEXT_ACTIONS.ASSIGN_DRIVER
+- Referenced in code but missing in en.json: ORDERS.WORKFLOW.NEXT_ACTIONS.CLOSE_ORDER
+- Referenced in code but missing in ar.json: ORDERS.WORKFLOW.NEXT_ACTIONS.CLOSE_ORDER
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.CATALOG_TITLE
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.CATALOG_TITLE
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.CATALOG_SUBTITLE
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.CATALOG_SUBTITLE
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.ACTIVE_PRODUCTS
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.ACTIVE_PRODUCTS
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.LOW_STOCK
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.LOW_STOCK
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.STATES.ERROR_TITLE
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.STATES.ERROR_TITLE
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.STATES.ERROR_MESSAGE
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.STATES.ERROR_MESSAGE
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_TITLE
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_TITLE
+- Referenced in code but missing in en.json: VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_MESSAGE
+- Referenced in code but missing in ar.json: VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_MESSAGE
+- Hardcoded template text in src/app/features/admin-users/pages/detail/admin-user-detail.component.html: Audit log
+- Hardcoded template text in src/app/features/admin-users/pages/detail/admin-user-detail.component.html: Access history
+- Hardcoded template text in src/app/features/admin-users/pages/detail/admin-user-detail.component.html: No access audit entries yet.
+- Hardcoded template text in src/app/features/admin-users/pages/detail/admin-user-detail.component.html: Password state
+- Hardcoded template text in src/app/features/admin-users/pages/detail/admin-user-detail.component.html: Reset temporary password
+- Hardcoded template text in src/app/features/admin-users/pages/list/admin-users-list.component.html: Create login account and attach it to an access role
+- Hardcoded template text in src/app/features/admin-users/pages/list/admin-users-list.component.html: Temporary password
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: إدارة الأدوار والصلاحيات
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: إنشاء دور جديد
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: القسم
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: الكل
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: حفظ الصلاحيات
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: البريد الإلكتروني الرئيسي
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: البريد الافتراضي لكل مراسلات هذا الدور
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: إيميلات الإشعارات
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: افصل بين الإيميلات بفاصلة — تستقبل كل التنبيهات
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: مسندين لهذا الدور حالياً
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: حذف الدور
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: إنشاء دور جديد
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: أدخل جميع البيانات الأساسية للدور
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: اسم الدور
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: البريد الإلكتروني
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: الوصف
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: مستوى الوصول
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: نطاق اللوحة
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: إيميلات الإشعارات
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: افصل بين الإيميلات بفاصلة — ستستقبل كل التنبيهات الخاصة بالدور
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: إلغاء
+- Hardcoded template text in src/app/features/admin-users/pages/roles/roles-management.component.html: إنشاء الدور
+- Bilingual ternary in src/app/features/catalog/components/brand-form-modal/brand-form-modal.component.html: translate.currentLang === 'ar' ? 'ابحث عن تصنيف' : 'Search category'
+- Bilingual ternary in src/app/features/catalog/components/brand-form-modal/brand-form-modal.component.html: translate.currentLang === 'ar' ? 'لا توجد نتائج' : 'No results'
+- Bilingual ternary in src/app/features/catalog/components/brand-form-modal/brand-form-modal.component.html: translate.currentLang === 'ar' ? 'تصنيف محدد' : 'selected categories'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk Create Product Bank Items'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'أضف عددًا كبيرًا من المنتجات مع توليد تلقائي للـ slug والباركود عند الحاجة.' : 'Create many master products with aut
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'إجراءات سريعة' : 'Quick actions'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'إضافة 25 صفًا' : 'Add 25 rows'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'إضافة 100 صف' : 'Add 100 rows'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'نسخ المحدد' : 'Duplicate selected'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'حذف المحدد' : 'Remove selected'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'نوع العبوة' : 'Package type'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'اختر العبوة' : 'Select package type'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الحجم' : 'Size'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'وحدة القياس' : 'Measurement unit'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'جرام / مل' : 'g / ml'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الحالة' : 'Status'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الحالة' : 'Status'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'رفع صور افتراضية' : 'Upload default images'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'عدد الصور' : 'Images'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'تطبيق على المحدد' : 'Apply to selected'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'تطبيق على الكل' : 'Apply to all'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'ملخص' : 'Summary'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'إجمالي الصفوف' : 'Rows'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'المحدد' : 'Selected'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الصالحة للإرسال' : 'Ready to submit'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'بها أخطاء' : 'With errors'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'نجح' : 'Succeeded'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'فشل' : 'Failed'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'نسخ الأخطاء' : 'Copy errors'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'تنزيل الأخطاء' : 'Download errors'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الصور' : 'Images'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'العبوة' : 'Package'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الحجم' : 'Size'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الوحدة' : 'Unit'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الحالة' : 'Status'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'النتيجة' : 'Result'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'إجراء' : 'Action'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'رفع صور' : 'Upload images'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'العدد' : 'Count'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'رئيسية' : 'Primary'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'العبوة' : 'Package'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الوحدة' : 'Unit'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الحالة' : 'Status'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'نسخ' : 'Duplicate'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'حذف' : 'Remove'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الصفوف' : 'Rows'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الصالحة' : 'Valid'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الصفحة' : 'Page'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'إرسال الإضافة الجماعية' : 'Submit bulk create'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'تحديث القائمة' : 'Refresh list'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الاسم العربي مطلوب.' : 'Arabic name is required.'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الاسم الإنجليزي مطلوب.' : 'English name is required.'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'التصنيف مطلوب.' : 'Category is required.'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'قيمة slug يجب ألا تتجاوز 250 حرفًا.' : 'Slug must not exceed 250 characters.'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الباركود يجب ألا يتجاوز 100 حرف.' : 'Barcode must not exceed 100 characters.'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'الحجم ووحدة القياس لازم يتسجلوا معًا.' : 'Measurement value and unit must be provided together.'
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'انتهت الجلسة أو لا تملك صلاحية الإضافة الجماعية. سجل الدخول مرة أخرى ثم أعد المحاولة.' : 'Your session expired or yo
+- Bilingual ternary in src/app/features/catalog/components/bulk-master-products-modal/bulk-master-products-modal.component.ts: currentLang === 'ar' ? 'تعذر إرسال المنتجات الآن. راجع البيانات وحاول مرة أخرى.' : 'Could not submit products right now. Review the data and
+- Hardcoded template text in src/app/features/catalog/components/category-form-modal/category-form-modal.component.html: AR / EN
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إجراءات سريعة' : 'Quick actions'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إضافة 25 صف' : 'Add 25 rows'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إضافة 100 صف' : 'Add 100 rows'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'نسخ المحدد' : 'Duplicate selected'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'حذف المحدد' : 'Remove selected'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'التصنيف الافتراضي' : 'Default category'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'ابحث عن تصنيف' : 'Search category'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'لا توجد نتائج' : 'No results'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'اللوجو الافتراضي' : 'Default logo'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إزالة' : 'Remove'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'صورة الغلاف الافتراضية' : 'Default cover'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'رفع الغلاف' : 'Upload cover'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إزالة' : 'Remove'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'نشط' : 'Active'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'تطبيق على المحدد' : 'Apply to selected'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'تطبيق على الكل' : 'Apply to all'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'ملخص' : 'Summary'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الصفوف' : 'Rows'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'المحدد' : 'Selected'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'جاهزة للإرسال' : 'Ready to submit'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'بها أخطاء' : 'With errors'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'نجح' : 'Succeeded'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'فشل' : 'Failed'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الاسم عربي' : 'Arabic name'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الاسم إنجليزي' : 'English name'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'التصنيف' : 'Category'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'اللوجو' : 'Logo'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الغلاف' : 'Cover'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الحالة' : 'Status'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'النتيجة' : 'Result'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إجراء' : 'Action'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'ابحث عن تصنيف' : 'Search category'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'لا توجد نتائج' : 'No results'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'رفع اللوجو' : 'Upload logo'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إزالة' : 'Remove'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'رفع الغلاف' : 'Upload cover'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إزالة' : 'Remove'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'نسخ' : 'Duplicate'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'حذف' : 'Remove'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الصفوف' : 'Rows'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الصالحة' : 'Valid'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الصفحة' : 'Page'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'رجوع' : 'Back'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'إرسال الرفع الجماعي' : 'Submit bulk upload'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'العودة للقائمة' : 'Back to list'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'فشل بدء الرفع الجماعي.' : 'Failed to start bulk upload.'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الاسم العربي مطلوب.' : 'Arabic name is required.'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'الاسم الإنجليزي مطلوب.' : 'English name is required.'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'التصنيف مطلوب.' : 'Category is required.'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'رابط الشعار طويل جدًا.' : 'Logo URL is too long.'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'رابط صورة الغلاف طويل جدًا.' : 'Cover image URL is too long.'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? `تمت إضافة ${operation.succeededRows} علامة تجارية بنجاح، وتم تفريغ الحقول.` : `${operation.succeededRows} brands wer
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? 'اختر التصنيفات' : 'Select categories'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-brands-page/bulk-brands-page.component.ts: currentLang === 'ar' ? `${categories.length} تصنيفات محددة` : `${categories.length} categories selected`
+- Bilingual ternary in src/app/features/catalog/pages/bulk-master-products-page/bulk-master-products-page.component.ts: currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk Create Product Bank Items'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-master-products-page/bulk-master-products-page.component.ts: currentLang === 'ar' ? 'أنشئ عددًا كبيرًا من منتجات بنك المنتجات من صفحة مستقلة.' : 'Create many product bank items from a dedicated page.'
+- Bilingual ternary in src/app/features/catalog/pages/bulk-master-products-page/bulk-master-products-page.component.ts: currentLang === 'ar' ? 'إضافة جماعية' : 'Bulk Create'
+- Bilingual ternary in src/app/features/catalog/pages/master-products/master-products.component.html: translate.currentLang === 'ar' ? 'إضافة حجم جديد' : 'Add size variant'
+- Bilingual ternary in src/app/features/catalog/pages/master-products/master-products.component.html: translate.currentLang === 'ar' ? 'الحجم' : 'Size'
+- Bilingual ternary in src/app/features/catalog/pages/master-products/master-products.component.html: translate.currentLang === 'ar' ? 'غير محدد' : 'Not set'
+- Bilingual ternary in src/app/features/catalog/pages/master-products/master-products.component.html: translate.currentLang === 'ar' ? 'إضافة حجم' : 'Add size'
+- Bilingual ternary in src/app/features/catalog/pages/master-products/master-products.component.ts: translate.currentLang === 'ar' ? 'تعذر تحديث ظهور السعر حالياً.' : 'Could not update price visibility right now.'
+- Hardcoded template text in src/app/features/disputes/components/dispute-approval-modal/dispute-approval-modal.component.html: Payment method
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'الإعدادات العامة' : 'Global defaults'
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'لم يتم العثور على مناطق توصيل فعلية. يمكنك إدارة التسعير من مستوى المدينة أو المنطقة أو الإعدادات العامة.'
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'لا توجد مدن متاحة لهذا الفلتر حاليًا. جرّب المنطقة أو الإعدادات العامة.' : 'No cities are available for th
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'لا توجد مناطق إدارية متاحة حاليًا. يمكنك استخدام الإعدادات العامة.' : 'No administrative regions are avail
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'لا توجد إعدادات تسعير متاحة حاليًا.' : 'No pricing settings are available right now.'
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'تعذر الاتصال بالباك إند الخاص بالتسعير. شغّل الـ API ثم أعد المحاولة.' : 'Could not connect to the pricing
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'تعذر حفظ إعدادات التسعير حاليًا.' : 'Could not save pricing settings at this time.'
+- Bilingual ternary in src/app/features/finances/pages/platform-pricing/platform-pricing.component.ts: translate.currentLang === 'ar' ? 'تعذر حفظ إعدادات التسعير حاليًا.' : 'Could not save pricing settings at this time.'
+- Hardcoded template text in src/app/features/finances/pages/wallet-details/wallet-details.component.html: wallet-details works!
+- Hardcoded template text in src/app/features/finances/pages/wallets-list/wallets-list.component.html: wallets-list works!
+- Hardcoded template text in src/app/features/finances/pages/withdrawals-queue/withdrawals-queue.component.html: withdrawals-queue works!
+- Bilingual ternary in src/app/features/marketing/components/banner-form-modal/banner-form-modal.component.ts: currentLang === 'ar' ? 'بانر بصورة فقط' : 'Image-only banner'
+- Bilingual ternary in src/app/features/marketing/components/banner-form-modal/banner-form-modal.component.ts: currentLang === 'ar' ? 'تم إخفاء حقول النص من هذه النافذة. النظام سيحفظ قيماً افتراضية داخليًا، وأنت تحتاج فقط إلى رفع الصورة وترتيب ظهورها.
+- Bilingual ternary in src/app/features/marketing/pages/coupons/marketing-coupons.component.ts: currentLang === 'ar' ? 'ر.س' : 'SAR'
+- Bilingual ternary in src/app/features/marketing/pages/coupons/marketing-coupons.component.ts: currentLang === 'ar' ? 'ر.س' : 'SAR'
+- Bilingual ternary in src/app/features/vendors/pages/list/vendors-list/vendors-list.component.ts: translate.currentLang === 'ar' ? 'انتهت صلاحية الجلسة أو لا توجد صلاحية لعرض التجار. سجل الدخول مرة أخرى.' : 'Your session expired or you do
+- Bilingual ternary in src/app/features/vendors/pages/list/vendors-list/vendors-list.component.ts: translate.currentLang === 'ar' ? 'لا يمكن اعتماد التاجر الآن. أكمل مراجعة المستندات المطلوبة أولًا أو افتح تبويب الامتثال.' : 'This vendor c

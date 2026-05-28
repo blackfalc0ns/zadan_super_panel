@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -34,6 +34,7 @@ interface ProductSizeCard {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-product-detail',
   standalone: true,
   imports: [
@@ -51,6 +52,7 @@ interface ProductSizeCard {
   styles: []
 })
 export class ProductDetailComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   product: MasterProduct | null = null;
   isLoading = true;
   selectedImageIndex = 0;
@@ -332,6 +334,7 @@ export class ProductDetailComponent implements OnInit {
     this.route.paramMap
       .pipe(takeUntil(this.destroy$))
       .subscribe((params) => {
+      this.cdr.markForCheck();
         const id = params.get('id');
         if (id) {
           this.loadProduct(id);
@@ -358,12 +361,14 @@ export class ProductDetailComponent implements OnInit {
 
     this.catalogService.getProductById(id).subscribe({
       next: (product) => {
+        this.cdr.markForCheck();
         this.product = product;
         this.loadCategoryAndBrand();
         this.loadLinkedVendors(this.currentProductViewId);
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Error loading product', err);
         this.product = null;
         this.isLoading = false;
@@ -374,6 +379,7 @@ export class ProductDetailComponent implements OnInit {
   loadLinkedVendors(id: string): void {
     this.catalogService.getProductVendors(id).subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         const maxQty = Math.max(1, ...res.items.map(i => i.quantity));
         const colors = [
           'bg-emerald-500', 'bg-red-500', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500',
@@ -414,6 +420,7 @@ export class ProductDetailComponent implements OnInit {
     if (this.product?.categoryId) {
       this.catalogService.getCategoryById(this.product.categoryId).subscribe({
         next: (category) => {
+        this.cdr.markForCheck();
           this.categoryName = this.activeLang === 'ar' ? category.nameAr : category.nameEn;
         },
         error: (err) => console.error('Error loading category', err)
@@ -423,6 +430,7 @@ export class ProductDetailComponent implements OnInit {
     if (this.product?.brandId) {
       this.catalogService.getBrands().subscribe({
         next: (brands) => {
+        this.cdr.markForCheck();
           const brand = brands.find(b => b.id === this.product?.brandId);
           if (brand) {
             this.brandName = this.activeLang === 'ar' ? brand.nameAr : brand.nameEn;
@@ -435,6 +443,7 @@ export class ProductDetailComponent implements OnInit {
     if (this.product?.unitOfMeasureId) {
       this.catalogService.getUnits().subscribe({
         next: (units) => {
+        this.cdr.markForCheck();
           const unit = units.find(u => u.id === this.product?.unitOfMeasureId);
           if (unit) {
             this.unitName = this.activeLang === 'ar' ? unit.nameAr : unit.nameEn;

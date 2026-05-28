@@ -55,7 +55,7 @@
         <!-- Period Selection -->
         <div class="space-y-3">
           <label class="text-sm font-semibold text-slate-700">{{ 'MODALS.CREATE_SETTLEMENT.SETTLEMENT_PERIOD' | translate }}</label>
-          <div class="flex gap-2 items-center">
+          <div class="flex flex-wrap gap-3 items-center">
             <div class="relative flex-1">
               <span class="absolute top-2.5 text-slate-400 text-xs" [ngClass]="isRTL ? 'right-3' : 'left-3'">{{ 'MODALS.CREATE_SETTLEMENT.FROM' | translate }}</span>
               <input [(ngModel)]="config.periodFrom" class="w-full py-2 text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary" [ngClass]="isRTL ? 'pr-10 pl-3' : 'pl-10 pr-3'" type="date"/>
@@ -73,7 +73,7 @@
         <!-- Settings Row -->
         <div class="space-y-3">
           <label class="text-sm font-semibold text-slate-700">{{ 'MODALS.CREATE_SETTLEMENT.SETTINGS_PRIORITY' | translate }}</label>
-          <div class="flex gap-2 items-center">
+          <div class="flex flex-wrap gap-3 items-center">
             <select [(ngModel)]="config.settlementType" class="flex-1 text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary py-2">
               <option value="manual">{{ 'MODALS.CREATE_SETTLEMENT.MANUAL' | translate }}</option>
               <option value="auto">{{ 'MODALS.CREATE_SETTLEMENT.AUTO' | translate }}</option>
@@ -104,7 +104,7 @@
             </button>
           </div>
         </div>
-        <div class="p-5 grid grid-cols-5 gap-4">
+        <div class="p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           <div class="space-y-2">
             <label class="text-[11px] text-slate-500 uppercase font-bold tracking-wider block text-center">{{ 'MODALS.CREATE_SETTLEMENT.TOTAL_SALES' | translate }}</label>
             <div class="bg-white rounded-lg p-3 border border-slate-200 text-center">

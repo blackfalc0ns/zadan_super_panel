@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -18,6 +18,7 @@ import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pi
 import { ToastService } from '@shared/services/toast.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-marketing-banners',
   standalone: true,
   imports: [
@@ -183,6 +184,7 @@ import { ToastService } from '@shared/services/toast.service';
   `
 })
 export class MarketingBannersComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   banners: MarketingBanner[] = [];
   loading = false;
   saving = false;
@@ -231,12 +233,14 @@ export class MarketingBannersComponent implements OnInit {
 
     this.marketingApi.getBanners().subscribe({
       next: (banners) => {
+        this.cdr.markForCheck();
         this.banners = [...banners].sort(
           (left, right) => left.displayOrder - right.displayOrder || right.updatedAtUtc.localeCompare(left.updatedAtUtc)
         );
         this.loading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.loading = false;
         this.error = describeApiError(error);
       }
@@ -252,11 +256,13 @@ export class MarketingBannersComponent implements OnInit {
     this.saving = true;
     this.marketingApi.getBannerById(id).subscribe({
       next: (banner) => {
+        this.cdr.markForCheck();
         this.selectedBanner = banner;
         this.isModalOpen = true;
         this.saving = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.BANNERS.TABS.BANNERS'));
       }
@@ -277,6 +283,7 @@ export class MarketingBannersComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.closeModal();
         this.loadBanners();
@@ -288,6 +295,7 @@ export class MarketingBannersComponent implements OnInit {
         );
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.toastService.error(describeApiError(error), 'البنرات الإعلانية');
       }
@@ -299,6 +307,7 @@ export class MarketingBannersComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.toastService.success(
           banner.isActive 
             ? this.translateService.instant('MARKETING.BANNERS.MESSAGES.DEACTIVATED') 
@@ -323,12 +332,14 @@ export class MarketingBannersComponent implements OnInit {
     this.deleting = true;
     this.marketingApi.deleteBanner(this.deleteTarget.id).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.deleteTarget = null;
         this.toastService.success(this.translateService.instant('MARKETING.BANNERS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
         this.loadBanners();
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.deleting = false;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.BANNERS.TABS.BANNERS'));
       }

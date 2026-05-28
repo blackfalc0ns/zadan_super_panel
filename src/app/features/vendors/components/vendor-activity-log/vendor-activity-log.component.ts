@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
@@ -24,6 +24,7 @@ interface TimelineEvent {
 type SidePanel = 'notes' | 'timeline';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-activity-log',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
@@ -31,6 +32,7 @@ type SidePanel = 'notes' | 'timeline';
   styleUrls: ['./vendor-activity-log.component.scss']
 })
 export class VendorActivityLogComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   currentLang = 'ar';
   filterDateFrom = '';
   filterDateTo = '';
@@ -66,6 +68,7 @@ export class VendorActivityLogComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
         this.timeline = this.vendorDetail ? this.buildTimeline(this.vendorDetail) : [];
@@ -74,6 +77,7 @@ export class VendorActivityLogComponent {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         this.vendorDetail = vendor;
         this.timeline = vendor ? this.buildTimeline(vendor) : [];
 
@@ -87,6 +91,7 @@ export class VendorActivityLogComponent {
     this.vendorDetailFacade.activityLog$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((page) => {
+      this.cdr.markForCheck();
         this.activityEntries = page?.items ?? [];
         this.totalActivityCount = page?.totalCount ?? 0;
         this.totalActivityPages = page?.totalPages ?? 1;
@@ -97,12 +102,14 @@ export class VendorActivityLogComponent {
     this.vendorDetailFacade.isActivityLogLoading$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((loading) => {
+      this.cdr.markForCheck();
         this.isActivityLoading = loading;
       });
 
     this.vendorDetailFacade.activityLogError$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((error) => {
+      this.cdr.markForCheck();
         this.activityError = error || '';
       });
   }
@@ -229,11 +236,13 @@ export class VendorActivityLogComponent {
       .pipe(take(1))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.noteDraft = '';
           this.noteSubmitting = false;
           this.selectedSidePanel = 'notes';
         },
         error: () => {
+        this.cdr.markForCheck();
           this.noteError = this.vendorDetailFacade.mutationError || (this.isRTL ? 'تعذر إضافة الملاحظة الآن.' : 'Unable to add the note right now.');
           this.noteSubmitting = false;
         }

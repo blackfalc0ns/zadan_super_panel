@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as echarts from 'echarts/core';
@@ -47,6 +47,7 @@ interface AnalyticsStatusLegendItem {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-analytics',
   standalone: true,
   imports: [CommonModule, TranslateModule, NgxEchartsDirective],
@@ -55,6 +56,7 @@ interface AnalyticsStatusLegendItem {
   styleUrl: './vendor-analytics.component.scss'
 })
 export class VendorAnalyticsComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly rangeOptions: AnalyticsRangeOption[] = [
@@ -99,6 +101,7 @@ export class VendorAnalyticsComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
         this.rebuildView();
@@ -107,6 +110,7 @@ export class VendorAnalyticsComponent {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         if (!vendor) {
           return;
         }
@@ -278,12 +282,14 @@ export class VendorAnalyticsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (analytics) => {
+        this.cdr.markForCheck();
           this.analytics = analytics;
           this.hasLoaded = true;
           this.isLoading = false;
           this.rebuildView();
         },
         error: () => {
+        this.cdr.markForCheck();
           this.analytics = null;
           this.kpiCards = [];
           this.statusLegendItems = [];

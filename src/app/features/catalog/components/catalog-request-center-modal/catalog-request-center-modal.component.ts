@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Category, CategoryRequestKind, CatalogRequestType, ProductRequest, ProductRequestStatus } from '@catalog/models/catalog.domain.models';
@@ -9,6 +9,7 @@ import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-she
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-catalog-request-center-modal',
   standalone: true,
   imports: [
@@ -256,6 +257,7 @@ import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/st
   `
 })
 export class CatalogRequestCenterModalComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly fallbackTranslations: Record<string, { ar: string; en: string }> = {
     'CATALOG.REQUESTS_MODAL_SUBTITLE': {
       ar: 'راجع طلبات الإضافة المرسلة من التجار واعتمدها أو ارفضها من نفس الشاشة.',
@@ -434,6 +436,7 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
     this.rejectionNotes = '';
     this.catalogService.getCatalogRequestById(request.id, this.requestType).subscribe({
       next: detail => {
+        this.cdr.markForCheck();
         this.selectedRequest = detail;
         this.resetApprovalPlacement(detail);
       }
@@ -553,6 +556,7 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
       status: this.selectedStatus
     }).subscribe({
       next: requests => {
+        this.cdr.markForCheck();
         this.requests = requests;
         this.selectedRequest = requests[0] ?? null;
         if (this.selectedRequest) {
@@ -561,6 +565,7 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
         this.isLoading = false;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isLoading = false;
       }
     });
@@ -572,6 +577,7 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
     }
 
     this.catalogService.getCategories(undefined, true).subscribe(categories => {
+      this.cdr.markForCheck();
       this.categories = categories;
       this.flatCategories = this.flattenCategories(categories);
     });
@@ -620,6 +626,7 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.isSubmitting = false;
         this.pendingAction = null;
         this.showRejectForm = false;
@@ -628,6 +635,7 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
         this.refreshed.emit();
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isSubmitting = false;
         this.pendingAction = null;
       }

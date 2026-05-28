@@ -1,0 +1,654 @@
+{
+  "EMAIL_CENTER": {
+    "TITLE": "Email Center",
+    "DESC": "Configure sender profiles, persona-based routing, recipient builders, and bilingual workflow previews.",
+    "OPEN_ADMIN_USERS": "Access Directory",
+    "KPI": {
+      "TOTAL_RULES": "Workflow rules",
+      "ENABLED": "Enabled rules",
+      "SENDER_PROFILES": "Sender profiles",
+      "ROUTED_RULES": "Routed rules",
+      "DIRECTORY_DRIVEN": "Directory-driven rules",
+      "AUDIENCE_COVERAGE": "Audience coverage"
+    },
+    "AUDIENCE": {
+      "BADGE": "Audience routing",
+      "TITLE": "Persona-aware workflow coverage",
+      "DESC": "Switch between super admin, vendor, driver, and customer routing scenarios.",
+      "ALL": "All audiences"
+    },
+    "STATUS": {
+      "PRIMARY": "Primary",
+      "SECONDARY": "Secondary",
+      "BACKUP": "Backup"
+    },
+    "LOCALE": {
+      "BILINGUAL": "Bilingual",
+      "ARABIC": "Arabic",
+      "ENGLISH": "English"
+    },
+    "SENDER_PROFILES": {
+      "BADGE": "Sender profiles",
+      "TITLE": "Operational sender stack",
+      "DESC": "Reusable from-address identities for admin notifications and operational workflows.",
+      "REPLY_TO": "Reply-to",
+      "LOCALE": "Locale mode",
+      "DEFAULT": "Default sender",
+      "READ_ONLY": "Backend-owned"
+    },
+    "PROFILES": {
+      "OPS_PRIMARY": "Primary sender for platform-wide operational and access messages.",
+      "RISK_DESK": "Dedicated sender for risk, compliance, and escalation workflows.",
+      "VENDOR_NETWORK": "Dedicated sender for vendor network onboarding, branch access, and routing updates.",
+      "FINANCE_DIGEST": "Finance-safe sender for settlement summaries and reconciliation digests."
+    },
+    "WORKFLOWS": {
+      "BADGE": "Workflow rules",
+      "TITLE": "Persona-based email workflows",
+      "DESC": "Review enabled rules, audience scope, sender profile, and routing strategy from one place.",
+      "ENABLED": "Enabled",
+      "DISABLED": "Disabled"
+    },
+    "CONFIG": {
+      "BADGE": "Rule configuration"
+    },
+    "PERSONAS": {
+      "BADGE": "Persona scope",
+      "TITLE": "Persona targeting",
+      "DESC": "Limit each rule to the personas that should receive or influence the workflow."
+    },
+    "RECIPIENTS": {
+      "BADGE": "Recipient builder",
+      "TITLE": "Directory recipient targets",
+      "DESC": "Build To, CC, and BCC groups from access-directory identities instead of hardcoded emails."
+    },
+    "STATIC_RECIPIENTS": {
+      "BADGE": "Static recipients",
+      "TITLE": "Manual recipients",
+      "DESC": "Always include these fixed recipients in addition to directory-driven routing."
+    },
+    "FALLBACK": {
+      "BADGE": "Fallback routing",
+      "TITLE": "Fallback recipients",
+      "DESC": "Use fallback contacts when no directory target is resolved for the selected scope."
+    },
+    "RESOLVED": {
+      "BADGE": "Resolved preview",
+      "EMPTY": "No recipients resolved",
+      "REFRESHING": "Refreshing preview",
+      "WARNINGS": "Warnings"
+    },
+    "BRANCH_SCOPE": {
+      "ALL_BRANCHES": "All branches",
+      "ASSIGNED_BRANCH": "Assigned branch",
+      "SPECIFIC_BRANCH": "Specific branch"
+    },
+    "FILTERS": {
+      "ALL_VENDORS": "All vendors",
+      "ALL_BRANCHES": "All branches"
+    },
+    "FIELDS": {
+      "ENABLED": "Rule state",
+      "SENDER_PROFILE": "Sender profile",
+      "TO": "Static To",
+      "CC": "Static CC",
+      "BCC": "Static BCC",
+      "OWNER": "Workflow owner",
+      "ESCALATION": "Escalation owner",
+      "AUDIENCE": "Audience",
+      "PANEL_SCOPE": "Panel scope",
+      "ENTITY_ID": "Entity ID",
+      "VENDOR": "Vendor",
+      "BRANCH": "Branch",
+      "BRANCH_SCOPE": "Branch scope mode",
+      "FALLBACK_TO": "Fallback To",
+      "FALLBACK_CC": "Fallback CC",
+      "FALLBACK_BCC": "Fallback BCC",
+      "DIRECTORY_TO": "Directory To",
+      "DIRECTORY_CC": "Directory CC",
+      "DIRECTORY_BCC": "Directory BCC"
+    },
+    "ACTIONS": {
+      "SAVE": "Save rule",
+      "SAVING": "Saving...",
+      "TEST_SEND": "Test send",
+      "SENDING_TEST": "Sending test..."
+    },
+    "AUTOMATION": {
+      "LIVE": "Live automation",
+      "MANUAL_ONLY": "Manual only"
+    },
+    "LOADING": {
+      "TITLE": "Loading email center",
+      "DESC": "Fetching workflow rules, sender profiles, and dispatch history from the backend."
+    },
+    "TEST_SEND": {
+      "BADGE": "Test send",
+      "LAST_RESULT": "Last test result"
+    },
+    "DISPATCH_STATUS": {
+      "SENT": "Sent",
+      "FAILED": "Failed",
+      "SKIPPED": "Skipped"
+    },
+    "SOURCES": {
+      "TEST_SEND": "Test send",
+      "VENDOR_AUTOMATION_LIVE": "Vendor automation live",
+      "VENDOR_AUTOMATION_LEGACY": "Vendor automation legacy"
+    },
+    "HISTORY": {
+      "BADGE": "Dispatch history",
+      "TITLE": "Recent email dispatches",
+      "DESC": "Track test sends and live automation deliveries with backend-backed audit history.",
+      "RULE": "Rule",
+      "SOURCE": "Source",
+      "STATUS": "Status",
+      "DATE_FROM": "Date from",
+      "DATE_TO": "Date to",
+      "ALL_RULES": "All rules",
+      "ALL_SOURCES": "All sources",
+      "ALL_STATUSES": "All statuses",
+      "CLEAR_FILTERS": "Clear filters",
+      "LOADING": "Loading dispatch history...",
+      "EMPTY_TITLE": "No dispatches found",
+      "EMPTY_DESC": "No email dispatches match the current filters yet.",
+      "RECIPIENTS": "recipients",
+      "NO_DISPATCH": "No dispatch yet"
+    },
+    "PREVIEW": {
+      "BADGE": "Template preview",
+      "TITLE": "Live bilingual preview",
+      "DESC": "Review subjects, body copy, and dynamic variables without opening a template builder.",
+      "ENGLISH": "English",
+      "ARABIC": "Arabic",
+      "SUBJECT": "Subject",
+      "BODY": "Body",
+      "VARIABLES": "Available variables",
+      "SENDER": "Current sender"
+    },
+    "CATEGORIES": {
+      "ACCESS": "Access control",
+      "OPERATIONS": "Operations",
+      "RISK": "Risk & trust",
+      "FINANCE": "Finance",
+      "VENDOR_NETWORK": "Vendor network",
+      "DRIVER_NETWORK": "Driver operations",
+      "CUSTOMER_CARE": "Customer care"
+    },
+    "CADENCE": {
+      "INSTANT": "Instant",
+      "BATCH_15": "15-minute batch",
+      "DAILY": "Daily digest"
+    },
+    "NOTES": {
+      "ADMIN_INVITE": "Send immediately when a new admin user is invited into the control center.",
+      "ACCESS_RESET": "Used when administrative access is reset or reissued.",
+      "VENDOR_REVIEW": "Routes new vendor review cases to the governance queue.",
+      "DISPUTE_ESCALATION": "Escalates SLA breaches and sensitive disputes to risk leadership.",
+      "SETTLEMENT_DIGEST": "Daily finance digest for payout, reconciliation, and blocked exposure review.",
+      "SUPER_ADMIN_ACCESS_INVITE": "Notify invited super admin identities and their owning managers when access is provisioned.",
+      "VENDOR_BRANCH_INVITE": "Trigger when a branch operator or branch manager receives a new vendor-panel invitation.",
+      "BRANCH_PASSWORD_RESET": "Used for secure reset and re-activation of vendor branch credentials.",
+      "VENDOR_FINANCE_DIGEST": "Delivers vendor payout, settlement, and balance summaries to finance stakeholders.",
+      "DRIVER_VERIFICATION_UPDATE": "Routes verification state updates for driver identities and compliance teams.",
+      "DRIVER_PAYOUT_ALERT": "Summarizes payout readiness, COD exposure, and balance movement for driver accounts.",
+      "CUSTOMER_SUPPORT_ESCALATION": "Alerts customer, support, and oversight teams when a high-touch support case escalates.",
+      "CUSTOMER_ACCOUNT_RECOVERY": "Secure recovery workflow for customer account access and follow-up support."
+    },
+    "EVENTS": {
+      "ADMIN_INVITE": {
+        "TITLE": "Admin invite",
+        "SUBTITLE": "Onboarding invitation for new control-center admins."
+      },
+      "ACCESS_RESET": {
+        "TITLE": "Access reset",
+        "SUBTITLE": "Secure reset and re-issue workflow for admin credentials."
+      },
+      "VENDOR_REVIEW": {
+        "TITLE": "Vendor onboarding review",
+        "SUBTITLE": "Triggered when vendor approval needs operational follow-up."
+      },
+      "DISPUTE_ESCALATION": {
+        "TITLE": "Dispute escalation",
+        "SUBTITLE": "Escalation workflow for high-risk or SLA-breached disputes."
+      },
+      "SETTLEMENT_DIGEST": {
+        "TITLE": "Settlement digest",
+        "SUBTITLE": "Finance digest for payout and reconciliation oversight."
+      },
+      "SUPER_ADMIN_ACCESS_INVITE": {
+        "TITLE": "Super admin access invite",
+        "SUBTITLE": "Provision and route new super admin access invitations."
+      },
+      "VENDOR_BRANCH_INVITE": {
+        "TITLE": "Vendor branch invite",
+        "SUBTITLE": "Onboarding workflow for vendor branch teams and managers."
+      },
+      "BRANCH_PASSWORD_RESET": {
+        "TITLE": "Branch password reset",
+        "SUBTITLE": "Secure reset flow for vendor panel branch credentials."
+      },
+      "VENDOR_FINANCE_DIGEST": {
+        "TITLE": "Vendor finance digest",
+        "SUBTITLE": "Daily finance digest for vendor owners and finance roles."
+      },
+      "DRIVER_VERIFICATION_UPDATE": {
+        "TITLE": "Driver verification update",
+        "SUBTITLE": "Verification state, document follow-up, and readiness communication."
+      },
+      "DRIVER_PAYOUT_ALERT": {
+        "TITLE": "Driver payout alert",
+        "SUBTITLE": "Driver payout and COD readiness digest."
+      },
+      "CUSTOMER_SUPPORT_ESCALATION": {
+        "TITLE": "Customer support escalation",
+        "SUBTITLE": "Escalated support workflow for sensitive customer cases."
+      },
+      "CUSTOMER_ACCOUNT_RECOVERY": {
+        "TITLE": "Customer account recovery",
+        "SUBTITLE": "Recovery flow for customer access and secure re-entry."
+      }
+    },
+    "RECIPIENT_TARGETS": {
+      "PRIMARY_ACCOUNT_EMAIL": "Primary account email",
+      "VENDOR_OWNER": "Vendor owner",
+      "VENDOR_COMPANY_MANAGER": "Vendor company manager",
+      "BRANCH_MANAGER": "Branch manager",
+      "BRANCH_STAFF": "Branch staff",
+      "VENDOR_FINANCE": "Vendor finance",
+      "VENDOR_SUPPORT": "Vendor support",
+      "ASSIGNED_SUPER_ADMIN_MANAGER": "Assigned super admin manager",
+      "DRIVER_ACCOUNT": "Driver account",
+      "CUSTOMER_ACCOUNT": "Customer account"
+    },
+    "EMPTY": {
+      "TITLE": "No routing rules found",
+      "MESSAGE": "No email rules match the current filters."
+    }
+  },
+  "MARKETING": {
+    "SHELL": {
+      "MAIN_TITLE": "Marketing & UI Management",
+      "MAIN_SUBTITLE": "Control center for promotional banners, featured products, and home layout",
+      "TITLE": "Marketing Control Center",
+      "SUBTITLE": "Live merchandising powered by the admin marketing APIs"
+    },
+    "TABS": {
+      "COUPONS": "Coupons",
+      "BANNERS": "Banners",
+      "FEATURED_PRODUCTS": "Featured Products",
+      "HOME_SECTIONS": "Home Sections",
+      "HOME_VISIBILITY": "Home Visibility"
+    },
+    "SUMMARIES": {
+      "COUPONS": "Manage discount codes, target stores, and activation periods.",
+      "BANNERS": "Manage active promotional banners and advertisements.",
+      "FEATURED_PRODUCTS": "Promote specific products on the application interface.",
+      "HOME_SECTIONS": "Control the order and sections of the home interface.",
+      "HOME_VISIBILITY": "Enable or hide home page elements."
+    },
+    "ACTIONS": {
+      "REFRESH": "Refresh",
+      "ACTIVATE": "Activate",
+      "DEACTIVATE": "Deactivate",
+      "SAVE_CHANGES": "Save changes",
+      "EDIT": "Edit",
+      "DELETE": "Delete"
+    },
+    "COMMON": {
+      "WORKFLOW": "Workflow",
+      "FIELDS": {
+        "IMAGE_URL": "Image URL",
+        "STARTS_AT": "Starts at",
+        "ENDS_AT": "Ends at"
+      },
+      "PLACEHOLDERS": {
+        "URL": "https://...",
+        "GUID": "GUID",
+        "ORDER": "1"
+      },
+      "TABLE": {
+        "SCHEDULE": "Schedule",
+        "UPDATED": "Updated"
+      }
+    },
+    "SECTION_TYPES": {
+      "Banners": "Banners",
+      "Categories": "Categories",
+      "SpecialOffers": "Special Offers",
+      "Recommended": "Recommended",
+      "BestSelling": "Best Selling",
+      "Brands": "Brands",
+      "FeaturedProducts": "Featured Products",
+      "ExploreMore": "Explore More",
+      "DynamicSections": "Dynamic Sections"
+    },
+    "BANNERS": {
+      "DESCRIPTION": "Create, reorder, schedule, and toggle home banners from one place.",
+      "SEARCH_PLACEHOLDER": "Search banners...",
+      "API_HINT": "Driven directly by",
+      "ACTIONS": {
+        "CREATE": "Create banner",
+        "ADD_NEW": "Add new banner",
+        "SAVE_CHANGES": "Save Changes",
+        "ADD_BANNER": "Add Banner"
+      },
+      "KPI": {
+        "TOTAL": "Total banners",
+        "ACTIVE": "Active now"
+      },
+      "FIELDS": {
+        "TAG_AR": "Arabic tag",
+        "TAG_EN": "English tag",
+        "TITLE_AR": "Arabic title",
+        "TITLE_EN": "English title",
+        "SUBTITLE_AR": "Arabic subtitle",
+        "SUBTITLE_EN": "English subtitle",
+        "ACTION_AR": "Arabic CTA label",
+        "ACTION_EN": "English CTA label",
+        "IS_ACTIVE": "Banner is active",
+        "IMAGE": "Banner Image",
+        "UPLOAD_IMAGE": "Upload Image",
+        "CHANGE_IMAGE": "Change Image",
+        "SELECT_IMAGE": "Select Image",
+        "ORDER": "Display Order",
+        "ORDER_PLACEHOLDER": "1",
+        "ACTIVATE": "Activate Banner",
+        "STARTS_AT": "Starts At",
+        "ENDS_AT": "Ends At",
+        "TITLE_AR_PLACEHOLDER": "Banner title in Arabic",
+        "TITLE_EN_PLACEHOLDER": "Banner title in English",
+        "SUBTITLE_AR_PLACEHOLDER": "Short supporting line in Arabic",
+        "SUBTITLE_EN_PLACEHOLDER": "Short supporting line in English",
+        "TAG_AR_PLACEHOLDER": "New Offers",
+        "TAG_EN_PLACEHOLDER": "New Offers",
+        "ACTION_LABEL_AR": "Action Button (Arabic)",
+        "ACTION_LABEL_EN": "Action Button (English)",
+        "ACTION_LABEL_AR_PLACEHOLDER": "Shop Now",
+        "ACTION_LABEL_EN_PLACEHOLDER": "Shop Now"
+      },
+      "PLACEHOLDERS": {
+        "TAG": "Fresh deals",
+        "TITLE_AR": "Banner title in Arabic",
+        "TITLE_EN": "Banner title",
+        "SUBTITLE_AR": "Short Arabic supporting line",
+        "SUBTITLE_EN": "Short supporting line",
+        "ACTION_AR": "Shop now in Arabic",
+        "ACTION_EN": "Shop now"
+      },
+      "TABLE": {
+        "TAG": "Tag",
+        "TITLE": "Title",
+        "ORDER": "Order",
+        "SCHEDULE": "Schedule",
+        "STATUS": "Status",
+        "ACTIONS": "Actions"
+      },
+      "MODAL": {
+        "CREATE_TITLE": "Create banner",
+        "EDIT_TITLE": "Edit banner",
+        "SUBTITLE": "Manage the hero card content that appears in the customer home feed."
+      },
+      "MESSAGES": {
+        "LOADING": "Loading banners...",
+        "EMPTY_TITLE": "No banners configured yet.",
+        "EMPTY_SUBTITLE": "Create the first home banner to start managing the hero rail.",
+        "REQUIRED_FIELDS": "Please complete the required banner fields before saving.",
+        "DELETE_TITLE": "Delete banner",
+        "DELETE_MESSAGE": "Are you sure you want to delete this banner? This action cannot be undone.",
+        "CREATED": "Banner created successfully.",
+        "UPDATED": "Banner updated successfully.",
+        "ACTIVATED": "Banner activated.",
+        "DEACTIVATED": "Banner deactivated.",
+        "DELETED": "Banner deleted successfully."
+      }
+    },
+    "COUPONS": {
+      "DESCRIPTION": "Manage discount codes, target stores, and activation periods.",
+      "SEARCH_PLACEHOLDER": "Search by code, title, or store name",
+      "ACTIONS": {
+        "CREATE": "Add coupon",
+        "ADD_NEW": "Add new coupon",
+        "SAVE": "Save coupon",
+        "CANCEL": "Cancel",
+        "SELECT_VISIBLE": "Select visible results",
+        "CLEAR_SELECTION": "Clear selection",
+        "SEARCHING": "Uploading..."
+      },
+      "STATUS_OPTIONS": {
+        "ALL": "All statuses",
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      },
+      "DISCOUNT_TYPES": {
+        "FIXED": "Fixed amount",
+        "PERCENTAGE": "Percentage"
+      },
+      "FIELDS": {
+        "CODE": "Coupon code",
+        "TITLE": "Coupon title",
+        "DISCOUNT_TYPE": "Discount type",
+        "DISCOUNT_VALUE": "Discount value",
+        "MIN_ORDER": "Min order amount",
+        "MAX_DISCOUNT": "Max discount amount",
+        "STARTS_AT": "Starts at",
+        "ENDS_AT": "Ends at",
+        "USAGE_LIMIT": "Usage limit",
+        "PER_USER_LIMIT": "Limit per user",
+        "IS_ACTIVE": "Coupon is active and ready for use",
+        "APPLY_ALL_VENDORS": "Apply to all vendors",
+        "APPLY_ALL_DESC": "When enabled, the coupon becomes global across the platform with one click.",
+        "BENEFICIARY_VENDORS": "Beneficiary vendors",
+        "BENEFICIARY_DESC": "If left unselected, the coupon will be global across the platform.",
+        "VENDOR_SEARCH": "Search by vendor name"
+      },
+      "TABLE": {
+        "COUPON": "Coupon",
+        "DISCOUNT": "Discount",
+        "VENDORS": "Vendors",
+        "SCHEDULE": "Schedule",
+        "STATUS": "Status",
+        "ACTIONS": "Actions",
+        "MIN_ORDER": "Min order",
+        "MAX_DISCOUNT": "Max discount",
+        "NO_CONSTRAINTS": "No financial constraints",
+        "ALL_VENDORS": "Global across all stores",
+        "LAST_UPDATE": "Last update"
+      },
+      "MODAL": {
+        "CREATE_TITLE": "Add new coupon",
+        "EDIT_TITLE": "Edit coupon",
+        "SUBTITLE": "Define the discount, activation period, and beneficiary vendors."
+      },
+      "MESSAGES": {
+        "LOADING": "Loading coupons...",
+        "EMPTY_TITLE": "No coupons yet",
+        "EMPTY_SUBTITLE": "You can create a new coupon and link it to all stores or a specific group.",
+        "DELETE_TITLE": "Delete coupon",
+        "DELETE_MESSAGE": "Are you sure you want to delete this coupon? This action cannot be undone.",
+        "CREATED": "Coupon created successfully.",
+        "UPDATED": "Coupon updated successfully.",
+        "ACTIVATED": "Coupon activated.",
+        "DEACTIVATED": "Coupon deactivated.",
+        "DELETED": "Coupon deleted successfully.",
+        "NO_VENDORS_MATCH": "No vendors match the current search.",
+        "REQUIRED_CODE": "Please enter the coupon code.",
+        "REQUIRED_TITLE": "Please enter the coupon title.",
+        "DISCOUNT_GT_ZERO": "Discount value must be greater than zero.",
+        "PERCENT_MAX": "Discount percentage cannot exceed 100%.",
+        "INVALID_DATE_RANGE": "The end date must be after the start date.",
+        "USAGE_LIMIT_GT_ZERO": "Usage limit must be greater than zero.",
+        "VENDORS_REQUIRED": "Please select at least one vendor or enable the 'Apply to all' option.",
+        "DUPLICATE_CODE": "The coupon code already exists. Please choose another one."
+      }
+    },
+    "FEATURED": {
+      "DESCRIPTION": "Pin vendor or master products into the customer home merchandising rails.",
+      "API_HINT": "Controlled by",
+      "ACTIONS": {
+        "CREATE": "Add placement",
+        "ADD_PRODUCT": "Add Product"
+      },
+      "KPI": {
+        "TOTAL": "Placements",
+        "VENDOR_LINKED": "Vendor-linked"
+      },
+      "TYPES": {
+        "VENDOR_PRODUCT": "Vendor product",
+        "MASTER_PRODUCT": "Master product",
+        "VENDOR_PRODUCT_DESC": "Promote a product specific to a vendor",
+        "MASTER_PRODUCT_DESC": "Promote a product from the unified catalog"
+      },
+      "FIELDS": {
+        "PLACEMENT_TYPE": "Placement type",
+        "VENDOR_PRODUCT_ID": "Vendor product ID",
+        "MASTER_PRODUCT_ID": "Master product ID",
+        "NOTE": "Internal note",
+        "IS_ACTIVE": "Placement is active",
+        "TARGET_TYPE": "Target Type",
+        "SELECT_VENDOR_PRODUCT": "Select Vendor Product",
+        "VENDOR_PRODUCT_SEARCH": "Search by product name...",
+        "SELECT_MASTER_PRODUCT": "Select Master Product",
+        "MASTER_PRODUCT_SEARCH": "Search by product name...",
+        "ACTIVATE": "Activate Placement",
+        "NOTE_PLACEHOLDER": "Optional marketing context"
+      },
+      "PLACEHOLDERS": {
+        "NOTE": "Optional merchandising context"
+      },
+      "TABLE": {
+        "TARGET": "Target",
+        "TYPE": "Type",
+        "NOTE": "Note"
+      },
+      "MODAL": {
+        "CREATE_TITLE": "Create featured placement",
+        "EDIT_TITLE": "Edit featured placement",
+        "SUBTITLE": "Attach a vendor product or master product directly to the home merchandising rail."
+      },
+      "MESSAGES": {
+        "LOADING": "Loading featured placements...",
+        "EMPTY_TITLE": "No featured placements yet.",
+        "EMPTY_SUBTITLE": "Create the first placement and point it to a vendor product or a master product GUID.",
+        "VENDOR_ID_REQUIRED": "Vendor product placements require a vendor product ID.",
+        "MASTER_ID_REQUIRED": "Master product placements require a master product ID.",
+        "DELETE_TITLE": "Delete featured placement",
+        "DELETE_MESSAGE": "This merchandising placement will be removed from the featured products rail.",
+        "CREATED": "Featured placement created.",
+        "UPDATED": "Featured placement updated.",
+        "ACTIVATED": "Placement activated.",
+        "DEACTIVATED": "Placement deactivated.",
+        "DELETED": "Featured placement deleted.",
+        "REQUIRED_VENDOR_PRODUCT": "Vendor product placements require a vendor product selection.",
+        "REQUIRED_MASTER_PRODUCT": "Master product placements require a master product selection."
+      },
+      "EMPTY": {
+        "ACTION": "Add First Product",
+        "TITLE": "No Featured Products",
+        "MESSAGE": "No product has been designated as featured. You can add a product to promote it on the home page."
+      },
+      "TOAST_TITLE": "Featured Products",
+      "SEARCH_PLACEHOLDER": "Search featured products...",
+      "SEARCHING": "Searching...",
+      "NO_RESULTS": "No results found"
+    },
+    "HOME_SECTIONS": {
+      "DESCRIPTION": "Choose a level-3 subcategory, select one of the approved section themes, and optionally schedule when the section appears.",
+      "API_HINT": "Backed by",
+      "ACTIONS": {
+        "CREATE": "Create section"
+      },
+      "KPI": {
+        "TOTAL": "Dynamic sections",
+        "SUBCATEGORIES": "Available subcategories"
+      },
+      "FIELDS": {
+        "SUBCATEGORY": "Subcategory",
+        "THEME": "Theme",
+        "PRODUCTS_TAKE": "Products to show",
+        "ALWAYS_VISIBLE": "Always visible",
+        "IS_ACTIVE": "Section is active"
+      },
+      "PLACEHOLDERS": {
+        "SUBCATEGORY": "Select a level-3 category",
+        "THEME": "Select theme",
+        "PRODUCTS_TAKE": "8"
+      },
+      "THEMES": {
+        "soft-blue": "Theme 1",
+        "fresh-orange": "Theme 2",
+        "bold-dark": "Theme 3"
+      },
+      "HELPERS": {
+        "PRODUCTS_TAKE": "This controls how many products the home feed will render in this section.",
+        "SCHEDULE_ALWAYS": "This section will stay visible all the time until you disable it.",
+        "SCHEDULE_WINDOW": "You can set a start date, an end date, or leave one side open."
+      },
+      "TABLE": {
+        "SUBCATEGORY": "Subcategory",
+        "THEME": "Theme",
+        "TAKE": "Take"
+      },
+      "MODAL": {
+        "CREATE_TITLE": "Create home section",
+        "EDIT_TITLE": "Edit home section",
+        "SUBTITLE": "Pick a level-3 subcategory, choose the card theme, and define how many products the home feed should render."
+      },
+      "MESSAGES": {
+        "LOADING": "Loading home sections...",
+        "EMPTY_TITLE": "No dynamic home sections yet.",
+        "EMPTY_SUBTITLE": "Create one and bind it to a level-3 subcategory like Bakery or Meat.",
+        "NO_SUBCATEGORIES": "No level-3 catalog categories are available yet. Add subcategories first.",
+        "REQUIRED_FIELDS": "Please choose a subcategory and complete the required section fields.",
+        "DELETE_TITLE": "Delete home section",
+        "DELETE_MESSAGE": "This dynamic section will disappear from the admin marketing inventory and the home feed.",
+        "CREATED": "Home section created.",
+        "UPDATED": "Home section updated.",
+        "ACTIVATED": "Home section activated.",
+        "DEACTIVATED": "Home section deactivated.",
+        "DELETED": "Home section deleted."
+      }
+    },
+    "VISIBILITY": {
+      "DESCRIPTION": "Toggle fixed home sections without redeploying the customer app or touching hardcoded flags.",
+      "API_HINT": "These flags come from",
+      "CARD_DESCRIPTION": "Controls whether the customer home endpoint should expose this fixed section.",
+      "ENABLED": "Enabled",
+      "DISABLED": "Disabled",
+      "KPI": {
+        "MANAGED": "Managed sections",
+        "ENABLED": "Enabled now"
+      },
+      "ACTIONS": {
+        "SAVE_STATE": "Save explicit state"
+      },
+      "MESSAGES": {
+        "LOADING": "Loading home visibility settings...",
+        "ACTIVATED": "Section enabled.",
+        "DEACTIVATED": "Section disabled.",
+        "SAVED": "Section state saved."
+      }
+    },
+    "PRICE_VISIBILITY": {
+      "TITLE": "Product Card Prices",
+      "DESCRIPTION": "One control for showing or hiding prices on every product card in the customer app. Product details pages still show prices normally.",
+      "TOTAL": "Total products",
+      "VISIBLE": "Prices visible",
+      "HIDDEN": "Prices hidden",
+      "STATUS": {
+        "LOADING": "Loading",
+        "VISIBLE": "Visible on all cards",
+        "HIDDEN": "Hidden on all cards",
+        "MIXED": "Mixed state"
+      },
+      "ACTIONS": {
+        "HIDE_ALL": "Hide all prices",
+        "SHOW_ALL": "Show all prices"
+      },
+      "MESSAGES": {
+        "SHOWN": "Prices are now visible on all product cards.",
+        "HIDDEN": "Prices are now hidden on all product cards."
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, HostListener, NgZone, OnDestroy, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -48,6 +48,7 @@ import {
 } from '../../../data/orders.mock';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-order-details',
   standalone: true,
   imports: [
@@ -70,6 +71,7 @@ import {
   styleUrls: ['./order-details.component.scss']
 })
 export class OrderDetailsComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
   readonly orderId = signal<string | null>(null);
   readonly order = signal<OrderDetail | null>(null);
   readonly financialBreakdown = signal<OrderFinancialBreakdown | null>(null);
@@ -105,6 +107,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     this.loadOrderDetails();
 
     this.fragmentSub = this.route.fragment.subscribe((fragment) => {
+      this.cdr.markForCheck();
       if (fragment === 'tracking') {
         this.scrollToTracking();
       }
@@ -305,12 +308,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.getOrderById(id).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.isLoading = false;
         this.scrollToTrackingIfRequested();
       },
       error: (error) => {
+        this.cdr.markForCheck();
         console.error('Failed to load order details', error);
         this.errorMessage = 'ORDERS.ERRORS.LOAD_DETAIL';
         this.order.set(null);
@@ -521,6 +526,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.updateOrderStatus(id, form).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeStatusModal();
@@ -537,6 +543,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.assignDriver(id, form).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeDriverAssignmentModal();
@@ -553,6 +560,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.recomputeDispatch(id).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
       }
@@ -568,6 +576,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.cancelOrder(id, form).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeCancellationModal();
@@ -589,6 +598,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.createRefund(id, form).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeRefundModal();
@@ -610,6 +620,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.openDispute(id, form).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeDisputeModal();
@@ -631,6 +642,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     this.ordersService.flagIssue(id, form).subscribe({
       next: (order) => {
+        this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeIssueFlagModal();
@@ -813,6 +825,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
       switchMap(() => this.ordersService.getOrderById(orderId))
     ).subscribe({
       next: (updatedOrder) => {
+        this.cdr.markForCheck();
         this.order.set(updatedOrder);
 
         if (this.isTerminalStatus(updatedOrder.status)) {
@@ -840,6 +853,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   private loadFinancialBreakdown(orderId: string): void {
     this.financeService.getOrderFinancialBreakdown(orderId).subscribe((breakdown) => {
+      this.cdr.markForCheck();
       this.financialBreakdown.set(breakdown);
     });
   }

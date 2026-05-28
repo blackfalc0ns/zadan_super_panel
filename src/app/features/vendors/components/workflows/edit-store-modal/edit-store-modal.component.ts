@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '../../../../catalog/services/catalog.api.service';
@@ -23,12 +23,14 @@ export interface StoreData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-edit-store-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-store-modal.component.html'
 })
 export class EditStoreModalComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() isOpen = false;
   @Input() isSaving = false;
   @Input() errorMessage = '';
@@ -238,10 +240,12 @@ export class EditStoreModalComponent implements OnChanges {
     this.isUploading = 'logo';
     this.catalogService.uploadFile(file, 'vendors/logos').subscribe({
       next: (result: { url: string }) => {
+        this.cdr.markForCheck();
         this.draftStoreData.logoUrl = result.url;
         this.isUploading = null;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isUploading = null;
       }
     });
@@ -257,10 +261,12 @@ export class EditStoreModalComponent implements OnChanges {
     this.isUploading = 'document';
     this.catalogService.uploadFile(file, 'vendors/documents').subscribe({
       next: (result: { url: string }) => {
+        this.cdr.markForCheck();
         this.draftStoreData.commercialRegisterDocumentUrl = result.url;
         this.isUploading = null;
       },
       error: () => {
+        this.cdr.markForCheck();
         this.isUploading = null;
       }
     });
@@ -275,6 +281,7 @@ export class EditStoreModalComponent implements OnChanges {
   private loadRegions(): void {
     this.geographyService.getRegions().subscribe({
       next: (regions) => {
+        this.cdr.markForCheck();
         this.regionOptions = regions.map((r) => ({
           value: r.code,
           label: `${r.nameAr} - ${r.nameEn}`
@@ -286,6 +293,7 @@ export class EditStoreModalComponent implements OnChanges {
   private loadCities(regionCode: string): void {
     this.geographyService.getCities(regionCode).subscribe({
       next: (cities) => {
+        this.cdr.markForCheck();
         this.cityOptions = cities.map((c) => ({
           value: c.code,
           label: `${c.nameAr} - ${c.nameEn}`

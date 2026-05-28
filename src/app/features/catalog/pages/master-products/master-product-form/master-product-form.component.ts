@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -15,8 +15,10 @@ import { SectionHeaderComponent } from '../../../../../shared/components/ui/sect
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { VariantCardComponent } from './components/variant-card/variant-card.component';
 import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
+import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-master-product-form',
   standalone: true,
   imports: [
@@ -32,13 +34,15 @@ import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/cat
     DetailHeaderComponent,
     SectionHeaderComponent,
     StatusPillComponent,
-    VariantCardComponent
+    VariantCardComponent,
+    DeleteConfirmationModalComponent
   ],
 
   templateUrl: './master-product-form.component.html',
   styleUrl: './master-product-form.component.scss'
 })
 export class MasterProductFormComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
   productForm!: FormGroup;
   isLoading = false;
   isInitialFormLoading = false;
@@ -58,6 +62,12 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   private shouldGateInitialForm = false;
   private pendingInitialFormLoads = 0;
 
+  // Custom delete modal states for variants
+  isDeleteModalOpen = false;
+  variantIndexToDelete: number | null = null;
+  isDeletingVariant = false;
+  deleteVariantErrorMessage: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private catalogService: CatalogService,
@@ -68,6 +78,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   ) {
     this.activeLang = this.translate.currentLang || 'ar';
     this.langSub = this.translate.onLangChange.subscribe(event => {
+      this.cdr.markForCheck();
       this.activeLang = event.lang;
     });
     this.initForm();
@@ -174,6 +185,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
 
   private watchCategoryChanges(): void {
     this.productForm.get('categoryId')?.valueChanges.subscribe((categoryId: string | null) => {
+      this.cdr.markForCheck();
       this.filterBrandsByCategory(categoryId);
     });
   }
@@ -237,6 +249,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load product', err);
         this.isLoading = false;
         this.completeInitialFormLoad();
@@ -250,10 +263,12 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       this.isUploading = true;
       this.catalogService.uploadFile(file, 'products').subscribe({
         next: (res) => {
+        this.cdr.markForCheck();
           this.productForm.patchValue({ primaryImageUrl: res.url });
           this.isUploading = false;
         },
         error: (err) => {
+        this.cdr.markForCheck();
           console.error('Upload failed', err);
           this.isUploading = false;
         }
@@ -275,10 +290,12 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.isUploading = true;
     this.catalogService.uploadFile(file, 'products').subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         group.patchValue({ imageUrl: res.url });
         this.isUploading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Variant upload failed', err);
         this.isUploading = false;
       }
@@ -298,6 +315,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.beginInitialFormLoad();
     this.catalogService.getCategories(undefined, true).subscribe({
       next: (cats) => {
+        this.cdr.markForCheck();
         this.allFlatCategories = this.flattenAllCategories(cats);
         this.availableCategories = this.allFlatCategories.filter(c => c.isLeaf);
         
@@ -309,6 +327,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         this.completeInitialFormLoad();
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load categories', err);
         this.availableCategories = [];
         this.allFlatCategories = [];
@@ -348,11 +367,13 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.beginInitialFormLoad();
     this.catalogService.getBrands(true, false).subscribe({
       next: (brands) => {
+        this.cdr.markForCheck();
         this.allBrands = brands ?? [];
         this.filterBrandsByCategory(this.productForm.get('categoryId')?.value || null);
         this.completeInitialFormLoad();
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load brands', err);
         this.allBrands = [];
         this.availableBrands = [];
@@ -433,10 +454,12 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.beginInitialFormLoad();
     this.catalogService.getUnits().subscribe({
       next: (units) => {
+        this.cdr.markForCheck();
         this.availableUnits = units;
         this.completeInitialFormLoad();
       },
       error: () => {
+        this.cdr.markForCheck();
         this.availableUnits = []; // Ignore if endpoint not yet deployed
         this.completeInitialFormLoad();
       }
@@ -735,32 +758,56 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const confirmed = window.confirm(
-      this.activeLang === 'ar'
-        ? 'هل تريد حذف هذا الحجم نهائيا؟'
-        : 'Do you want to permanently delete this size?'
-    );
+    this.variantIndexToDelete = index;
+    this.isDeleteModalOpen = true;
+    this.deleteVariantErrorMessage = null;
+    this.isDeletingVariant = false;
+  }
 
-    if (!confirmed) {
+  confirmDeleteVariant(): void {
+    if (this.variantIndexToDelete === null) return;
+
+    const index = this.variantIndexToDelete;
+    const group = this.additionalVariants.at(index) as FormGroup | null;
+    const variantId = group?.get('id')?.value;
+
+    if (!variantId) {
+      this.removeAdditionalVariant(index);
+      this.isDeleteModalOpen = false;
+      this.variantIndexToDelete = null;
       return;
     }
 
+    this.isDeletingVariant = true;
+    this.deleteVariantErrorMessage = null;
     this.deletingVariantIndexes.add(index);
+
     this.catalogService.deleteProduct(variantId).subscribe({
       next: () => {
+        this.cdr.markForCheck();
+        this.isDeletingVariant = false;
+        this.isDeleteModalOpen = false;
         this.deletingVariantIndexes.delete(index);
         this.removeAdditionalVariant(index);
+        this.variantIndexToDelete = null;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to delete variant', err);
+        this.isDeletingVariant = false;
         this.deletingVariantIndexes.delete(index);
-        window.alert(
-          this.activeLang === 'ar'
-            ? 'تعذر حذف هذا الحجم حاليا.'
-            : 'Unable to delete this size right now.'
-        );
+        this.deleteVariantErrorMessage = this.activeLang === 'ar'
+          ? 'تعذر حذف هذا الحجم حاليا.'
+          : 'Unable to delete this size right now.';
       }
     });
+  }
+
+  cancelDeleteVariant(): void {
+    this.isDeleteModalOpen = false;
+    this.variantIndexToDelete = null;
+    this.deleteVariantErrorMessage = null;
+    this.isDeletingVariant = false;
   }
 
   getAdditionalVariantDisplayPreview(index: number): string {
@@ -985,6 +1032,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.catalogService.getProductById(productId).subscribe({
       next: (product) => {
+        this.cdr.markForCheck();
         try {
           this.linkedVariantSource = product;
           this.variantGroupSeedId = product.variantGroupId || product.id || null;
@@ -1015,6 +1063,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load variant source product', err);
         this.isLoading = false;
         this.completeInitialFormLoad();

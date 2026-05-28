@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 export type StatusPillVariant =
@@ -15,6 +15,7 @@ export type StatusPillVariant =
   | 'overdue';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-status-pill',
   standalone: true,
   imports: [CommonModule, TranslateModule],

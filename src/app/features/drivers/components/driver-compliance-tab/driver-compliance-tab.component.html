@@ -1,127 +1,168 @@
-<div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+<div class="space-y-8 animate-in slide-in-from-bottom-8 duration-700">
   
+  <!-- Top KPI Cards -->
   <div *ngIf="complianceKpis.length > 0">
     <app-kpi-cards [cards]="complianceKpis"></app-kpi-cards>
   </div>
 
-  <div class="grid gap-6 lg:grid-cols-12">
+  <div class="grid gap-8 lg:grid-cols-12">
     
     <!-- Incidents Table Command Panel -->
-    <section class="lg:col-span-8 rounded-3xl border border-slate-200/50 bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col overflow-hidden">
-      <div class="border-b border-slate-100 p-6 px-6 bg-slate-50/50 flex items-center justify-between">
+    <section class="lg:col-span-8 rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/40 flex flex-col overflow-hidden relative">
+      <!-- Decorative ambient background -->
+      <div class="absolute top-0 right-0 w-full h-32 bg-gradient-to-b from-slate-50 to-transparent pointer-events-none"></div>
+
+      <div class="border-b border-slate-100 p-5 px-6 bg-transparent relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="flex h-12 w-12 items-center justify-center rounded-[1.1rem] bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/50">
-            <span class="material-symbols-outlined text-[24px]">gavel</span>
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 text-indigo-600 shadow-sm border border-indigo-100/50">
+            <span class="material-symbols-outlined text-[20px]">gavel</span>
           </div>
           <div>
-            <h2 class="text-xl font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.INCIDENTS.TITLE' | translate }}</h2>
-            <p class="text-[13px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.COMPLIANCE.INCIDENTS.DESC' | translate }}</p>
+            <h2 class="text-lg font-black text-slate-900 tracking-tight">{{ 'DRIVERS.DETAIL.COMPLIANCE.INCIDENTS.TITLE' | translate }}</h2>
+            <p class="text-[11.5px] font-bold text-slate-400 mt-0.5">{{ 'DRIVERS.DETAIL.COMPLIANCE.INCIDENTS.DESC' | translate }}</p>
           </div>
+        </div>
+        <!-- Table Action Buttons -->
+        <div class="flex items-center gap-2.5 self-end sm:self-auto">
+           <button class="flex items-center justify-center w-8 h-8 rounded-lg bg-white text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-all border border-slate-200/80 shadow-sm active:scale-95">
+             <span class="material-symbols-outlined text-[18px]">filter_list</span>
+           </button>
+           <button class="flex items-center justify-center w-8 h-8 rounded-lg bg-white text-slate-400 hover:bg-slate-50 hover:text-indigo-600 transition-all border border-slate-200/80 shadow-sm active:scale-95">
+             <span class="material-symbols-outlined text-[18px]">more_vert</span>
+           </button>
         </div>
       </div>
       
-      <div class="p-0 overflow-x-auto custom-scrollbar flex-1">
+      <div class="p-0 flex-1 relative z-10 w-full overflow-hidden">
         <app-data-table
           [data]="driver.compliance.incidents"
           [columns]="incidentColumns"
           (rowClick)="incidentPreviewRequested.emit($event)">
-          <ng-template #cellTemplate let-item let-column="column">
+          <ng-template #customColumn let-item let-column="column">
             <ng-container [ngSwitch]="column.key">
-              <div *ngSwitchCase="'id'" class="font-mono text-[13px] font-black text-slate-900" dir="ltr">{{ item.id }}</div>
-              <div *ngSwitchCase="'type'" class="text-[14px] font-bold text-slate-800">{{ getIncidentTypeKey(item.type) | translate }}</div>
+              <!-- Custom ID Badge -->
+              <div *ngSwitchCase="'id'" class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                <span class="font-mono text-[12.5px] font-black text-slate-700 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100/80 shadow-sm" dir="ltr">#{{ item.id }}</span>
+              </div>
+              
+              <!-- Custom Type Cell -->
+              <div *ngSwitchCase="'type'" class="text-[13.5px] font-black text-slate-800 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[16px] text-slate-400">gavel</span>
+                {{ getIncidentTypeKey(item.type) | translate }}
+              </div>
+              
+              <!-- Custom Severity Badge -->
               <div *ngSwitchCase="'severity'">
-                <span class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-sm"
+                <span class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[10.5px] font-black uppercase tracking-widest shadow-sm"
                   [ngClass]="{
                     'bg-red-50 text-red-700 border border-red-100': getIncidentSeverityVariant(item.severity) === 'danger',
                     'bg-amber-50 text-amber-700 border border-amber-100': getIncidentSeverityVariant(item.severity) === 'warning',
                     'bg-emerald-50 text-emerald-700 border border-emerald-100': getIncidentSeverityVariant(item.severity) === 'success'
                   }">
+                  <span class="w-1.5 h-1.5 rounded-full"
+                        [ngClass]="{
+                          'bg-red-500': getIncidentSeverityVariant(item.severity) === 'danger',
+                          'bg-amber-500': getIncidentSeverityVariant(item.severity) === 'warning',
+                          'bg-emerald-500': getIncidentSeverityVariant(item.severity) === 'success'
+                        }"></span>
                   {{ getIncidentSeverityKey(item.severity) | translate }}
                 </span>
               </div>
+              
+              <!-- Custom Status Badge -->
               <div *ngSwitchCase="'status'">
-                <span class="inline-flex items-center rounded-lg px-2.5 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-sm"
+                <span class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[10.5px] font-black uppercase tracking-widest shadow-sm"
                   [ngClass]="{
                     'bg-emerald-50 text-emerald-700 border border-emerald-100': getIncidentStatusVariant(item.status) === 'success',
                     'bg-amber-50 text-amber-700 border border-amber-100': getIncidentStatusVariant(item.status) === 'warning',
                     'bg-sky-50 text-sky-700 border border-sky-100': getIncidentStatusVariant(item.status) === 'processing',
                     'bg-slate-50 text-slate-600 border border-slate-200': getIncidentStatusVariant(item.status) === 'neutral'
                   }">
+                  <span class="material-symbols-outlined text-[12px]" *ngIf="getIncidentStatusVariant(item.status) === 'success'">check</span>
+                  <span class="material-symbols-outlined text-[12px]" *ngIf="getIncidentStatusVariant(item.status) === 'processing'">sync</span>
+                  <span class="material-symbols-outlined text-[12px]" *ngIf="getIncidentStatusVariant(item.status) === 'warning'">error</span>
                   {{ getIncidentStatusKey(item.status) | translate }}
                 </span>
               </div>
-              <div *ngSwitchDefault class="text-[14px] font-semibold text-slate-600">{{ item[column.key] }}</div>
+              
+              <!-- Default Cells (like Date) -->
+              <div *ngSwitchDefault class="text-[13px] font-bold text-slate-500">{{ item[column.key] }}</div>
             </ng-container>
           </ng-template>
         </app-data-table>
 
-        <div *ngIf="driver.compliance.incidents.length === 0" class="flex flex-col items-center justify-center py-14 text-center h-full bg-slate-50/30">
-          <div class="flex h-16 w-16 items-center justify-center rounded-[1.2rem] bg-white text-slate-400 border border-slate-200/60 shadow-sm">
-            <span class="material-symbols-outlined text-[32px]">task_alt</span>
+        <div *ngIf="driver.compliance.incidents.length === 0" class="flex flex-col items-center justify-center py-14 text-center bg-slate-50/30">
+          <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-emerald-500 border border-slate-200/60 shadow-sm mb-5">
+            <span class="material-symbols-outlined text-[30px]">workspace_premium</span>
           </div>
-          <h3 class="mt-4 text-[15px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.NO_INCIDENTS' | translate }}</h3>
-          <p class="mt-2 max-w-sm text-[13px] font-semibold text-slate-500 leading-relaxed">{{ 'DRIVERS.DETAIL.COMPLIANCE.NO_INCIDENTS_DESC' | translate }}</p>
+          <h3 class="text-[15px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.NO_INCIDENTS' | translate }}</h3>
+          <p class="mt-1.5 max-w-sm text-[12px] font-semibold text-slate-500 leading-relaxed">{{ 'DRIVERS.DETAIL.COMPLIANCE.NO_INCIDENTS_DESC' | translate }}</p>
         </div>
       </div>
     </section>
 
     <!-- Document Health Command Panel -->
-    <div class="lg:col-span-4 flex flex-col gap-6">
-      <section class="rounded-3xl border border-slate-200/50 bg-white/80 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <div class="flex items-center gap-4 border-b border-slate-100 pb-5 mb-5">
-          <div class="flex h-12 w-12 items-center justify-center rounded-[1.1rem] bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/50">
-            <span class="material-symbols-outlined text-[24px]">health_and_safety</span>
+    <div class="lg:col-span-4 flex flex-col gap-6 self-start">
+      <section class="rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/40 p-5 px-6 relative overflow-hidden">
+        <!-- Ambient Glow -->
+        <div class="absolute -top-32 -right-32 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex items-center gap-3.5 border-b border-slate-100 pb-4 mb-4 relative z-10">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/60">
+            <span class="material-symbols-outlined text-[20px]">health_and_safety</span>
           </div>
           <div>
-            <h2 class="text-xl font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.TITLE' | translate }}</h2>
+            <h2 class="text-[15px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.TITLE' | translate }}</h2>
+            <p class="text-[11px] font-semibold text-slate-400 mt-0.5">Real-time status overview</p>
           </div>
         </div>
 
-        <div class="flex flex-col gap-3.5">
+        <div class="flex flex-col gap-3 relative z-10">
           <!-- Valid -->
-          <div class="group flex items-center justify-between rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4.5 px-5 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-emerald-200">
-            <div class="flex items-center gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-emerald-50 text-emerald-600 shadow-sm border border-emerald-100 group-hover:bg-emerald-100 transition-colors">
-                <span class="material-symbols-outlined text-[22px]">check_circle</span>
+          <div class="group flex items-center justify-between rounded-xl border border-slate-200/60 bg-slate-50/50 p-3.5 px-4 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-emerald-200 cursor-default">
+            <div class="flex items-center gap-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 shadow-sm border border-emerald-100 group-hover:bg-emerald-100 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">check_circle</span>
               </div>
               <div>
-                <p class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.VALID' | translate }}</p>
-                <p class="text-[11px] font-bold text-slate-500 mt-1">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.VALID_DESC' | translate }}</p>
+                <p class="text-[12.5px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.VALID' | translate }}</p>
+                <p class="text-[10px] font-bold text-slate-500 mt-0.5">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.VALID_DESC' | translate }}</p>
               </div>
             </div>
-            <span class="text-3xl font-black tracking-tight text-emerald-600">{{ driver.compliance.documentHealth.valid }}</span>
+            <span class="text-xl font-black tracking-tight text-emerald-600">{{ driver.compliance.documentHealth.valid }}</span>
           </div>
           
           <!-- Expiring -->
-          <div class="group flex items-center justify-between rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4.5 px-5 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-amber-200">
-            <div class="flex items-center gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-amber-50 text-amber-600 shadow-sm border border-amber-100 group-hover:bg-amber-100 transition-colors">
-                <span class="material-symbols-outlined text-[22px]">warning</span>
+          <div class="group flex items-center justify-between rounded-xl border border-slate-200/60 bg-slate-50/50 p-3.5 px-4 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-amber-200 cursor-default">
+            <div class="flex items-center gap-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600 shadow-sm border border-amber-100 group-hover:bg-amber-100 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">warning</span>
               </div>
               <div>
-                <p class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.EXPIRING' | translate }}</p>
-                <p class="text-[11px] font-bold text-slate-500 mt-1">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.EXPIRING_DESC' | translate }}</p>
+                <p class="text-[12.5px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.EXPIRING' | translate }}</p>
+                <p class="text-[10px] font-bold text-slate-500 mt-0.5">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.EXPIRING_DESC' | translate }}</p>
               </div>
             </div>
-            <span class="text-3xl font-black tracking-tight text-amber-600">{{ driver.compliance.documentHealth.expiring }}</span>
+            <span class="text-xl font-black tracking-tight text-amber-600">{{ driver.compliance.documentHealth.expiring }}</span>
           </div>
 
           <!-- Under Review -->
-          <div class="group flex items-center justify-between rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4.5 px-5 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
-            <div class="flex items-center gap-4">
-              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-slate-100 text-slate-600 shadow-sm border border-slate-200 group-hover:bg-slate-200 transition-colors">
-                <span class="material-symbols-outlined text-[22px]">pending_actions</span>
+          <div class="group flex items-center justify-between rounded-xl border border-slate-200/60 bg-slate-50/50 p-3.5 px-4 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300 cursor-default">
+            <div class="flex items-center gap-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 shadow-sm border border-slate-200 group-hover:bg-slate-200 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">pending_actions</span>
               </div>
               <div>
-                <p class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.REVIEW' | translate }}</p>
-                <p class="text-[11px] font-bold text-slate-500 mt-1">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.REVIEW_DESC' | translate }}</p>
+                <p class="text-[12.5px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.REVIEW' | translate }}</p>
+                <p class="text-[10px] font-bold text-slate-500 mt-0.5">{{ 'DRIVERS.DETAIL.COMPLIANCE.DOC_HEALTH.REVIEW_DESC' | translate }}</p>
               </div>
             </div>
-            <span class="text-3xl font-black tracking-tight text-slate-700">{{ driver.compliance.documentHealth.review }}</span>
+            <span class="text-xl font-black tracking-tight text-slate-700">{{ driver.compliance.documentHealth.review }}</span>
           </div>
         </div>
       </section>
     </div>
-
   </div>
 </div>

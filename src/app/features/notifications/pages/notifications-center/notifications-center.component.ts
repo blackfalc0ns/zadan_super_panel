@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,6 +13,7 @@ interface NotificationFilterTab {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-notifications-center',
   standalone: true,
   imports: [CommonModule, TranslateModule],
@@ -250,6 +251,7 @@ interface NotificationFilterTab {
   `
 })
 export class NotificationsCenterComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   readonly tabs: NotificationFilterTab[] = [
     { labelKey: 'NOTIFICATIONS_CENTER.TABS.ALL' },
     { labelKey: 'NOTIFICATIONS_CENTER.TABS.UNREAD', isRead: false },
@@ -319,6 +321,7 @@ export class NotificationsCenterComponent implements OnInit {
     this.notificationsService.markAllAsRead()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
+      this.cdr.markForCheck();
         this.notifications = this.notifications.map((item) => ({ ...item, isRead: true }));
       });
   }
@@ -419,12 +422,14 @@ export class NotificationsCenterComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+        this.cdr.markForCheck();
           this.notifications = this.uniqueNotifications(append ? [...this.notifications, ...response.items] : response.items);
           this.hasMore = response.hasMore;
           this.notificationsLoadedOnce = true;
           this.loading = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.notificationsLoadedOnce = true;
           this.loading = false;
         }

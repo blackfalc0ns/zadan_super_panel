@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,6 +13,7 @@ import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/co
 import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../../models/customers.models';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-customers-list',
   standalone: true,
   imports: [
@@ -30,6 +31,7 @@ import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../
   styleUrl: './customers-list.component.scss'
 })
 export class CustomersListComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   page = 1;
   pageSize = 15;
   searchTerm = '';
@@ -67,6 +69,7 @@ export class CustomersListComponent implements OnInit {
     private readonly customersService: CustomersService
   ) {
     this.translate.onLangChange.subscribe(() => {
+      this.cdr.markForCheck();
       this.initializeFilterOptions();
     });
   }
@@ -75,10 +78,12 @@ export class CustomersListComponent implements OnInit {
     this.initializeFilterOptions();
     this.customersService.getCustomers().subscribe({
       next: (customers) => {
+        this.cdr.markForCheck();
         this.customers = customers;
         this.updateCityOptions();
       },
       error: (error) => {
+        this.cdr.markForCheck();
         console.error('Failed to load admin customers.', error);
         this.customers = [];
       }

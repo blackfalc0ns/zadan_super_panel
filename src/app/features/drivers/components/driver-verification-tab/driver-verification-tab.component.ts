@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
@@ -8,6 +8,7 @@ import { DriverDetailRecord, DriverDocumentRecord, DriverVerificationChecklistIt
 import { getDocumentStatusKey, getDocumentStatusVariant } from '../../utils/driver-ui.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-verification-tab',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, SectionHeaderComponent],
@@ -32,6 +33,8 @@ export class DriverVerificationTabComponent implements OnInit {
   activeRailTab: 'checklist' | 'notes' = 'checklist';
   newNote = '';
   documentRejectReason = '';
+  zoomScale = 1;
+  rotationAngle = 0;
 
   get documentGroups() {
     // Group documents into a single group for now to match vendor UI structure
@@ -85,9 +88,31 @@ export class DriverVerificationTabComponent implements OnInit {
     return this.workspaceWindow === window;
   }
 
+  zoomIn() {
+    if (this.zoomScale < 3) {
+      this.zoomScale = Math.min(3, this.zoomScale + 0.2);
+    }
+  }
+
+  zoomOut() {
+    if (this.zoomScale > 0.5) {
+      this.zoomScale = Math.max(0.5, this.zoomScale - 0.2);
+    }
+  }
+
+  rotateRight() {
+    this.rotationAngle = (this.rotationAngle + 90) % 360;
+  }
+
+  resetTransforms() {
+    this.zoomScale = 1;
+    this.rotationAngle = 0;
+  }
+
   selectDocument(selectedDoc: DriverDocumentRecord) {
     this.selectedDocumentPreview = selectedDoc;
     this.documentRejectReason = '';
+    this.resetTransforms();
 
     // On smaller screens the preview panel is below the document list,
     // scroll it into view so the user sees the change.

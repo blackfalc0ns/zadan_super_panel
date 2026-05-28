@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -35,6 +35,7 @@ interface FinanceSummaryCard {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-finance',
   standalone: true,
   imports: [
@@ -50,6 +51,7 @@ interface FinanceSummaryCard {
   templateUrl: './vendor-finance.component.html'
 })
 export class VendorFinanceComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   vendorId = '';
   vendorName = '';
   vendorDetail: VendorDetail | null = null;
@@ -84,6 +86,7 @@ export class VendorFinanceComponent implements OnInit {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang.startsWith('ar');
       });
@@ -93,6 +96,7 @@ export class VendorFinanceComponent implements OnInit {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         if (!vendor) {
           return;
         }
@@ -105,12 +109,14 @@ export class VendorFinanceComponent implements OnInit {
     this.vendorDetailFacade.mutationError$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((error) => {
+      this.cdr.markForCheck();
         this.mutationError = error ?? '';
       });
 
     this.vendorDetailFacade.vendorId$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendorId) => {
+      this.cdr.markForCheck();
         if (!vendorId) {
           return;
         }
@@ -311,12 +317,14 @@ export class VendorFinanceComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (vendor) => {
+        this.cdr.markForCheck();
           this.vendorDetail = vendor;
           this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
           this.modeSuccess = this.text('تم تحديث دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.');
           this.isSavingMode = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.modeError = this.vendorDetailFacade.mutationError || this.text('تعذر تحديث دورة الحياة المالية الآن.', 'Unable to update the finance lifecycle right now.');
           this.isSavingMode = false;
         }
@@ -341,10 +349,12 @@ export class VendorFinanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.showCreateSettlementModal = false;
           this.loadFinanceData();
         },
         error: () => {
+        this.cdr.markForCheck();
           this.showCreateSettlementModal = false;
         }
       });
@@ -414,12 +424,14 @@ export class VendorFinanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ orders, settlements, payouts }) => {
+        this.cdr.markForCheck();
           this.orders = orders.items ?? [];
           this.settlements = settlements.items ?? [];
           this.payouts = payouts.items ?? [];
           this.isLoading = false;
         },
         error: () => {
+        this.cdr.markForCheck();
           this.orders = [];
           this.settlements = [];
           this.payouts = [];

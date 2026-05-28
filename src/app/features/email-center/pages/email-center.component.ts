@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -83,6 +83,7 @@ const RECIPIENT_OPTIONS: Record<DirectoryAudienceType, Array<{ id: EmailRecipien
 };
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-email-center',
   standalone: true,
   imports: [
@@ -98,6 +99,7 @@ const RECIPIENT_OPTIONS: Record<DirectoryAudienceType, Array<{ id: EmailRecipien
   styleUrl: './email-center.component.scss'
 })
 export class EmailCenterComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   senderProfiles: EmailSenderProfile[] = [];
   rules: EmailWorkflowRule[] = [];
   vendorOptions: EmailScopeOption[] = [];
@@ -169,6 +171,7 @@ export class EmailCenterComponent implements OnInit {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
+      this.cdr.markForCheck();
         this.selectedAudience = this.normalizeAudience(params.get('audience'));
         this.routeVendorId = params.get('vendor');
         this.routeEntityId = params.get('entityId');
@@ -203,6 +206,7 @@ export class EmailCenterComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((resolved) => {
+      this.cdr.markForCheck();
         this.resolvedRecipients = resolved;
       });
 
@@ -387,6 +391,7 @@ export class EmailCenterComponent implements OnInit {
       )
       .subscribe({
         next: (saved) => {
+        this.cdr.markForCheck();
           this.replaceRule(saved);
           this.kpiSnapshot = this.recalculateKpiSnapshot();
           this.syncRecipientsFromSelectedRule();
@@ -395,6 +400,7 @@ export class EmailCenterComponent implements OnInit {
           this.toastService.success('تم حفظ إعدادات القاعدة وربطها بالباك اند.', 'مركز البريد');
         },
         error: (error) => {
+        this.cdr.markForCheck();
           this.toastService.error(describeApiError(error), 'مركز البريد');
         }
       });
@@ -417,6 +423,7 @@ export class EmailCenterComponent implements OnInit {
       )
       .subscribe({
         next: (result) => {
+        this.cdr.markForCheck();
           this.lastTestSendResult = result;
           this.updateRuleLastDispatch(this.selectedRuleId, {
             status: result.status,
@@ -435,6 +442,7 @@ export class EmailCenterComponent implements OnInit {
           }
         },
         error: (error) => {
+        this.cdr.markForCheck();
           this.toastService.error(describeApiError(error), 'مركز البريد');
         }
       });
@@ -600,6 +608,7 @@ export class EmailCenterComponent implements OnInit {
       )
       .subscribe({
         next: (overview) => {
+        this.cdr.markForCheck();
           this.senderProfiles = overview.senderProfiles;
           this.rules = overview.rules;
           this.vendorOptions = overview.vendors;
@@ -613,6 +622,7 @@ export class EmailCenterComponent implements OnInit {
           this.loadDispatchHistory();
         },
         error: (error) => {
+        this.cdr.markForCheck();
           this.pageError = describeApiError(error);
         }
       });
@@ -630,9 +640,11 @@ export class EmailCenterComponent implements OnInit {
       )
       .subscribe({
         next: (dispatches) => {
+        this.cdr.markForCheck();
           this.dispatches = dispatches;
         },
         error: (error) => {
+        this.cdr.markForCheck();
           this.dispatches = [];
           this.toastService.error(describeApiError(error), 'سجل البريد');
         }

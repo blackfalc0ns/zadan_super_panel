@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -7,6 +7,7 @@ import { AuditLogEntry } from '../../models/finance.models';
 import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance-i18n.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-audit-log',
   standalone: true,
   imports: [CommonModule, TranslateModule],
@@ -27,89 +28,92 @@ import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance
           <span class="text-[10px] font-bold text-slate-400">{{ entries.length }} {{ 'FINANCES.AUDIT.ENTRIES' | translate }}</span>
         </div>
 
-        <table class="w-full">
-          <thead>
-            <tr class="bg-slate-50/80 border-b border-slate-100">
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.TIMESTAMP' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.AUDIT.TABLE.ADMIN' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.AUDIT.TABLE.ACTION' | translate }}</th>
-              <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.ENTITY' | translate }}</th>
-              <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.AUDIT.TABLE.CHANGES' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-50">
-            <tr *ngFor="let entry of entries; trackBy: trackById"
-                class="group hover:bg-slate-50/60 transition-all duration-200 table-row-object cursor-pointer"
-                (click)="toggleExpand(entry.id)">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-slate-50/80 border-b border-slate-100">
+                <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.TIMESTAMP' | translate }}</th>
+                <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.AUDIT.TABLE.ADMIN' | translate }}</th>
+                <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.AUDIT.TABLE.ACTION' | translate }}</th>
+                <th class="px-6 py-4 text-start text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.COMMON.ENTITY' | translate }}</th>
+                <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ 'FINANCES.AUDIT.TABLE.CHANGES' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <tr *ngFor="let entry of entries; trackBy: trackById"
+                  class="group hover:bg-slate-50/60 transition-all duration-200 table-row-object cursor-pointer"
+                  (click)="toggleExpand(entry.id)">
 
-              <td class="px-6 py-4">
-                <div>
-                  <p class="text-xs font-bold text-slate-700 tabular-nums">{{ formatDate(entry.timestamp) }}</p>
-                  <p class="text-[9px] font-medium text-slate-400 tabular-nums">{{ formatTime(entry.timestamp) }}</p>
-                </div>
-              </td>
-
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-zadna-primary to-zadna-primaryLight flex items-center justify-center shrink-0">
-                    <span class="text-white text-[10px] font-black">{{ getInitials(entry.adminName) }}</span>
-                  </div>
+                <td class="px-6 py-4">
                   <div>
-                    <p class="text-xs font-bold text-slate-800">{{ entry.adminName | translate }}</p>
-                    <p class="text-[9px] font-bold text-slate-400">{{ entry.adminRole | translate }}</p>
+                    <p class="text-xs font-bold text-slate-700 tabular-nums">{{ formatDate(entry.timestamp) }}</p>
+                    <p class="text-[9px] font-medium text-slate-400 tabular-nums">{{ formatTime(entry.timestamp) }}</p>
                   </div>
-                </div>
-              </td>
+                </td>
 
-              <td class="px-6 py-4">
-                <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black border"
-                      [ngClass]="getCategoryClass(entry.actionCategory)">
-                  {{ entry.action | translate }}
-                </span>
-              </td>
-
-              <td class="px-6 py-4">
-                <div *ngIf="entry.entityName">
-                  <p class="text-xs font-bold text-slate-700">{{ entry.entityName | translate }}</p>
-                  <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">{{ getEntityLabelKey(entry.entityType) | translate }}</p>
-                </div>
-                <span *ngIf="!entry.entityName" class="text-[10px] text-slate-300">&mdash;</span>
-              </td>
-
-              <td class="px-6 py-4">
-                <div class="flex justify-center items-center gap-1">
-                  <button class="h-7 px-2.5 text-[9px] font-black text-slate-600 bg-slate-100 rounded-lg border border-slate-200 hover:bg-slate-200 transition-all flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[12px]">{{ expandedId === entry.id ? 'expand_less' : 'expand_more' }}</span>
-                    {{ expandedId === entry.id ? ('FINANCES.COMMON.HIDE' | translate) : ('FINANCES.COMMON.VIEW' | translate) }}
-                  </button>
-                </div>
-              </td>
-
-            </tr>
-
-            <tr *ngFor="let entry of entries; trackBy: trackById"
-                [ngClass]="{ 'hidden': expandedId !== entry.id }">
-              <td colspan="5" class="px-6 py-5 bg-slate-50/80">
-                <div class="grid grid-cols-2 gap-4">
-                  <div *ngIf="entry.before" class="p-4 bg-red-50 border border-red-100 rounded-xl">
-                    <p class="text-[9px] font-black text-red-400 uppercase tracking-widest mb-2">{{ 'FINANCES.COMMON.BEFORE' | translate }}</p>
-                    <pre class="text-[10px] font-mono text-red-700 whitespace-pre-wrap">{{ entry.before | json }}</pre>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-zadna-primary to-zadna-primaryLight flex items-center justify-center shrink-0">
+                      <span class="text-white text-[10px] font-black">{{ getInitials(entry.adminName) }}</span>
+                    </div>
+                    <div>
+                      <p class="text-xs font-bold text-slate-800">{{ entry.adminName | translate }}</p>
+                      <p class="text-[9px] font-bold text-slate-400">{{ entry.adminRole | translate }}</p>
+                    </div>
                   </div>
-                  <div *ngIf="entry.after" class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-                    <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-2">{{ 'FINANCES.COMMON.AFTER' | translate }}</p>
-                    <pre class="text-[10px] font-mono text-emerald-700 whitespace-pre-wrap">{{ entry.after | json }}</pre>
-                  </div>
-                </div>
-              </td>
-            </tr>
+                </td>
 
-          </tbody>
-        </table>
+                <td class="px-6 py-4">
+                  <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black border"
+                        [ngClass]="getCategoryClass(entry.actionCategory)">
+                    {{ entry.action | translate }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-4">
+                  <div *ngIf="entry.entityName">
+                    <p class="text-xs font-bold text-slate-700">{{ entry.entityName | translate }}</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">{{ getEntityLabelKey(entry.entityType) | translate }}</p>
+                  </div>
+                  <span *ngIf="!entry.entityName" class="text-[10px] text-slate-300">&mdash;</span>
+                </td>
+
+                <td class="px-6 py-4">
+                  <div class="flex justify-center items-center gap-1">
+                    <button class="h-7 px-2.5 text-[9px] font-black text-slate-600 bg-slate-100 rounded-lg border border-slate-200 hover:bg-slate-200 transition-all flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[12px]">{{ expandedId === entry.id ? 'expand_less' : 'expand_more' }}</span>
+                      {{ expandedId === entry.id ? ('FINANCES.COMMON.HIDE' | translate) : ('FINANCES.COMMON.VIEW' | translate) }}
+                    </button>
+                  </div>
+                </td>
+
+              </tr>
+
+              <tr *ngFor="let entry of entries; trackBy: trackById"
+                  [ngClass]="{ 'hidden': expandedId !== entry.id }">
+                <td colspan="5" class="px-6 py-5 bg-slate-50/80">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div *ngIf="entry.before" class="p-4 bg-red-50 border border-red-100 rounded-xl">
+                      <p class="text-[9px] font-black text-red-400 uppercase tracking-widest mb-2">{{ 'FINANCES.COMMON.BEFORE' | translate }}</p>
+                      <pre class="text-[10px] font-mono text-red-700 whitespace-pre-wrap">{{ entry.before | json }}</pre>
+                    </div>
+                    <div *ngIf="entry.after" class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                      <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-2">{{ 'FINANCES.COMMON.AFTER' | translate }}</p>
+                      <pre class="text-[10px] font-mono text-emerald-700 whitespace-pre-wrap">{{ entry.after | json }}</pre>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   `
 })
 export class AuditLogComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private financeService = inject(FinanceService);
   private translate = inject(TranslateService);
 
@@ -118,6 +122,7 @@ export class AuditLogComponent implements OnInit {
 
   ngOnInit(): void {
     this.financeService.getAuditLog().pipe(take(1)).subscribe(data => {
+      this.cdr.markForCheck();
       this.entries = data;
     });
   }

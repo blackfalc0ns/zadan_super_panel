@@ -97,49 +97,51 @@
           <!-- TAB: Permissions -->
           <div *ngIf="activeDetailTab === 'permissions'" class="p-5">
             <div class="rounded-xl border border-slate-200/60 overflow-hidden bg-white">
-              <table class="w-full text-sm">
-                <thead class="bg-slate-50/80 border-b border-slate-200/60">
-                  <tr>
-                    <th class="text-start px-5 py-3 text-[11px] font-black text-slate-500 uppercase tracking-wider w-[260px]">القسم</th>
-                    <th *ngFor="let action of permissionActions" class="text-center px-2 py-3 w-[80px]">
-                      <div class="flex flex-col items-center gap-1">
-                        <span class="material-symbols-outlined text-[16px] text-slate-400">{{ getActionIcon(action) }}</span>
-                        <span class="text-[9px] font-black text-slate-400">{{ getActionLabel(action) | translate }}</span>
-                      </div>
-                    </th>
-                    <th *ngIf="!role.isSystem" class="text-center px-2 py-3 w-[60px]">
-                      <span class="text-[9px] font-black text-zadna-primary">الكل</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100/80">
-                  <tr *ngFor="let group of getFilteredGroups()" class="hover:bg-zadna-primary/[0.015] transition-colors">
-                    <td class="px-5 py-3">
-                      <p class="text-[13px] font-black text-slate-800">{{ group.labelKey | translate }}</p>
-                      <p class="text-[10px] text-slate-400 mt-0.5">{{ getGroupEnabledCount(group) }}/{{ getAvailableGroupActionCount(group) }}</p>
-                    </td>
-                    <td *ngFor="let action of permissionActions" class="text-center px-2 py-3">
-                      <ng-container *ngIf="group.actions.includes(action) && isPermissionAvailable(group.id, action); else noAction">
-                        <label class="inline-flex cursor-pointer" [class.pointer-events-none]="role.isSystem">
-                          <input type="checkbox" [checked]="hasPermission(group.id, action)" (change)="togglePermission(group.id, action)" [disabled]="role.isSystem" class="sr-only peer" />
-                          <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
-                               [ngClass]="hasPermission(group.id, action) ? 'bg-zadna-primary border-zadna-primary shadow-sm shadow-zadna-primary/20' : 'border-slate-300'">
-                            <span *ngIf="hasPermission(group.id, action)" class="material-symbols-outlined text-[13px] text-white">check</span>
-                          </div>
-                        </label>
-                      </ng-container>
-                      <ng-template #noAction><div class="w-1.5 h-1.5 rounded-full bg-slate-200 mx-auto"></div></ng-template>
-                    </td>
-                    <td *ngIf="!role.isSystem" class="text-center px-2 py-3">
-                      <button (click)="toggleAllGroupPermissions(group)" class="w-7 h-7 rounded-md flex items-center justify-center transition-all"
-                        [disabled]="getAvailableGroupActionCount(group) === 0"
-                        [ngClass]="isGroupFullyEnabled(group) ? 'bg-zadna-primary/10 text-zadna-primary' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'">
-                        <span class="material-symbols-outlined text-[15px]">{{ isGroupFullyEnabled(group) ? 'check_box' : 'select_all' }}</span>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="bg-slate-50/80 border-b border-slate-200/60">
+                    <tr>
+                      <th class="text-start px-5 py-3 text-[11px] font-black text-slate-500 uppercase tracking-wider w-[260px]">القسم</th>
+                      <th *ngFor="let action of permissionActions" class="text-center px-2 py-3 w-[80px]">
+                        <div class="flex flex-col items-center gap-1">
+                          <span class="material-symbols-outlined text-[16px] text-slate-400">{{ getActionIcon(action) }}</span>
+                          <span class="text-[9px] font-black text-slate-400">{{ getActionLabel(action) | translate }}</span>
+                        </div>
+                      </th>
+                      <th *ngIf="!role.isSystem" class="text-center px-2 py-3 w-[60px]">
+                        <span class="text-[9px] font-black text-zadna-primary">الكل</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100/80">
+                    <tr *ngFor="let group of getFilteredGroups()" class="hover:bg-zadna-primary/[0.015] transition-colors">
+                      <td class="px-5 py-3">
+                        <p class="text-[13px] font-black text-slate-800">{{ group.labelKey | translate }}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">{{ getGroupEnabledCount(group) }}/{{ getAvailableGroupActionCount(group) }}</p>
+                      </td>
+                      <td *ngFor="let action of permissionActions" class="text-center px-2 py-3">
+                        <ng-container *ngIf="group.actions.includes(action) && isPermissionAvailable(group.id, action); else noAction">
+                          <label class="inline-flex cursor-pointer" [class.pointer-events-none]="role.isSystem">
+                            <input type="checkbox" [checked]="hasPermission(group.id, action)" (change)="togglePermission(group.id, action)" [disabled]="role.isSystem" class="sr-only peer" />
+                            <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
+                                 [ngClass]="hasPermission(group.id, action) ? 'bg-zadna-primary border-zadna-primary shadow-sm shadow-zadna-primary/20' : 'border-slate-300'">
+                              <span *ngIf="hasPermission(group.id, action)" class="material-symbols-outlined text-[13px] text-white">check</span>
+                            </div>
+                          </label>
+                        </ng-container>
+                        <ng-template #noAction><div class="w-1.5 h-1.5 rounded-full bg-slate-200 mx-auto"></div></ng-template>
+                      </td>
+                      <td *ngIf="!role.isSystem" class="text-center px-2 py-3">
+                        <button (click)="toggleAllGroupPermissions(group)" class="w-7 h-7 rounded-md flex items-center justify-center transition-all"
+                          [disabled]="getAvailableGroupActionCount(group) === 0"
+                          [ngClass]="isGroupFullyEnabled(group) ? 'bg-zadna-primary/10 text-zadna-primary' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'">
+                          <span class="material-symbols-outlined text-[15px]">{{ isGroupFullyEnabled(group) ? 'check_box' : 'select_all' }}</span>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <!-- Save button -->
             <div *ngIf="!role.isSystem" class="flex justify-end mt-4">
@@ -239,7 +241,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">مستوى الوصول <span class="text-red-500">*</span></label>
-            <div class="grid grid-cols-3 gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button *ngFor="let lvl of accessLevelOptions" type="button" (click)="newRoleAccessLevel = lvl.value"
                 class="h-10 rounded-lg text-[11px] font-black border transition-all flex items-center justify-center gap-1.5"
                 [ngClass]="newRoleAccessLevel === lvl.value ? 'bg-zadna-primary/10 border-zadna-primary/30 text-zadna-primary' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'">
@@ -250,7 +252,7 @@
           </div>
           <div>
             <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">نطاق اللوحة <span class="text-red-500">*</span></label>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button *ngFor="let scope of panelScopeOptions" type="button" (click)="newRolePanelScope = scope.value"
                 class="h-10 rounded-lg text-[11px] font-black border transition-all flex items-center justify-center gap-1.5"
                 [ngClass]="newRolePanelScope === scope.value ? 'bg-zadna-primary/10 border-zadna-primary/30 text-zadna-primary' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'">

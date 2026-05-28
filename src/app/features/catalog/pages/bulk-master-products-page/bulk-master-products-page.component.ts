@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
@@ -8,6 +8,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 import { BulkMasterProductsModalComponent } from '../../components/bulk-master-products-modal/bulk-master-products-modal.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bulk-master-products-page',
   standalone: true,
   imports: [CommonModule, TranslateModule, AppPageHeaderComponent, BulkMasterProductsModalComponent],
@@ -58,6 +59,7 @@ import { BulkMasterProductsModalComponent } from '../../components/bulk-master-p
   `
 })
 export class BulkMasterProductsPageComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   categories: Category[] = [];
   brands: Brand[] = [];
   units: CatalogUnit[] = [];
@@ -97,10 +99,12 @@ export class BulkMasterProductsPageComponent implements OnInit {
 
     this.catalogService.getCategories(undefined, false, false).subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         this.categories = Array.isArray(res) ? res : [];
         finish();
       },
       error: () => {
+        this.cdr.markForCheck();
         this.categories = [];
         finish();
       }
@@ -108,10 +112,12 @@ export class BulkMasterProductsPageComponent implements OnInit {
 
     this.catalogService.getBrands(true, false).subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         this.brands = Array.isArray(res) ? res : [];
         finish();
       },
       error: () => {
+        this.cdr.markForCheck();
         this.brands = [];
         finish();
       }
@@ -119,10 +125,12 @@ export class BulkMasterProductsPageComponent implements OnInit {
 
     this.catalogService.getUnits().subscribe({
       next: (res) => {
+        this.cdr.markForCheck();
         this.units = Array.isArray(res) ? res : [];
         finish();
       },
       error: () => {
+        this.cdr.markForCheck();
         this.units = [];
         finish();
       }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Observable, take } from 'rxjs';
@@ -12,12 +12,14 @@ import { AdminVendorStoreAvailabilityState } from '@vendors/services/vendor.api.
 type VendorSettingsDialog = 'reset-password' | 'suspend-account' | 'lock-login' | 'archive-account' | null;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-settings',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent],
   templateUrl: './vendor-settings.component.html'
 })
 export class VendorSettingsComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
   activeDialog: VendorSettingsDialog = null;
   acceptOrders = true;
   currentLang = 'ar';
@@ -40,6 +42,8 @@ export class VendorSettingsComponent {
   storeManualMode: 'online' | 'offline' = 'online';
   storeManualReason = '';
   vendor: VendorDetail | null = null;
+  commissionRate: number | null = null;
+  commissionSubmitting = false;
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -53,6 +57,7 @@ export class VendorSettingsComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
       });
@@ -60,6 +65,7 @@ export class VendorSettingsComponent {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         this.vendor = vendor;
         this.acceptOrders = vendor?.operationsSettings?.acceptOrders ?? true;
         this.minimumOrderAmount = vendor?.operationsSettings?.minimumOrderAmount ?? null;
@@ -67,11 +73,13 @@ export class VendorSettingsComponent {
         this.emailNotificationsEnabled = vendor?.notificationSettings?.emailNotificationsEnabled ?? true;
         this.smsNotificationsEnabled = vendor?.notificationSettings?.smsNotificationsEnabled ?? false;
         this.newOrdersNotificationsEnabled = vendor?.notificationSettings?.newOrdersNotificationsEnabled ?? true;
+        this.commissionRate = vendor?.commissionRate ?? null;
       });
 
     this.vendorDetailFacade.storeAvailability$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
+      this.cdr.markForCheck();
         this.storeManualMode = state.manualMode;
         this.storeManualReason = state.manualReason ?? '';
       });
@@ -342,11 +350,13 @@ export class VendorSettingsComponent {
         .pipe(take(1))
         .subscribe({
           next: () => {
+        this.cdr.markForCheck();
             this.setSuccess(this.text('تمت إعادة تعيين كلمة المرور بنجاح.', 'Password reset succeeded.'));
             this.dialogSubmitting = false;
             this.closeDialog();
           },
           error: () => {
+        this.cdr.markForCheck();
             this.dialogError = this.vendorDetailFacade.mutationError || this.text('تعذر تحديث كلمة المرور الآن.', 'Unable to reset vendor password right now.');
             this.dialogSubmitting = false;
             this.resetPasswordQueued = false;
@@ -426,6 +436,7 @@ export class VendorSettingsComponent {
       .subscribe({
         next: () => this.setSuccess(this.text('تم حفظ حالة ظهور المتجر في التطبيق بنجاح.', 'Store app visibility was saved successfully.')),
         error: () => {
+        this.cdr.markForCheck();
           this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ حالة ظهور المتجر الآن.', 'Unable to save store visibility right now.');
           this.storeAvailabilitySubmitting = false;
         },
@@ -458,6 +469,7 @@ export class VendorSettingsComponent {
       .subscribe({
         next: () => this.setSuccess(this.text('تم حفظ إعدادات الإشعارات بنجاح.', 'Notification settings were saved successfully.')),
         error: () => {
+        this.cdr.markForCheck();
           this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات الإشعارات الآن.', 'Unable to save vendor notification settings right now.');
           this.notificationsSubmitting = false;
         },
@@ -483,11 +495,42 @@ export class VendorSettingsComponent {
       .subscribe({
         next: () => this.setSuccess(this.text('تم حفظ إعدادات التشغيل بنجاح.', 'Operations settings were saved successfully.')),
         error: () => {
+        this.cdr.markForCheck();
           this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات التشغيل الآن.', 'Unable to save vendor operations settings right now.');
           this.operationsSubmitting = false;
         },
         complete: () => {
           this.operationsSubmitting = false;
+        }
+      });
+  }
+
+  saveCommissionRate(): void {
+    if (!this.vendor || this.commissionSubmitting) {
+      return;
+    }
+
+    if (this.commissionRate === null || this.commissionRate === undefined || this.commissionRate < 0 || this.commissionRate > 100) {
+      this.pageError = this.text(
+        'يرجى إدخال نسبة عمولة صالحة بين 0 و 100.',
+        'Please enter a valid commission rate between 0 and 100.'
+      );
+      return;
+    }
+
+    this.clearFeedback();
+    this.commissionSubmitting = true;
+    this.vendorDetailFacade.updateVendorCommissionRateRequest(this.commissionRate)
+      .pipe(take(1))
+      .subscribe({
+        next: () => this.setSuccess(this.text('تم حفظ نسبة العمولة بنجاح.', 'Commission rate was saved successfully.')),
+        error: () => {
+        this.cdr.markForCheck();
+          this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ نسبة العمولة الآن.', 'Unable to save commission rate right now.');
+          this.commissionSubmitting = false;
+        },
+        complete: () => {
+          this.commissionSubmitting = false;
         }
       });
   }
@@ -505,6 +548,7 @@ export class VendorSettingsComponent {
         .subscribe({
           next: () => this.setSuccess(this.text('تم فتح تسجيل الدخول بنجاح.', 'Vendor login unlocked successfully.')),
           error: () => {
+        this.cdr.markForCheck();
             this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر فتح تسجيل الدخول الآن.', 'Unable to unlock vendor login right now.');
             this.dialogSubmitting = false;
           },
@@ -532,6 +576,7 @@ export class VendorSettingsComponent {
         .subscribe({
           next: () => this.setSuccess(this.text('تمت إعادة تشغيل الحساب بنجاح.', 'Vendor account reactivated successfully.')),
           error: () => {
+        this.cdr.markForCheck();
             this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر إعادة تشغيل الحساب الآن.', 'Unable to reactivate the vendor account right now.');
             this.dialogSubmitting = false;
           },
@@ -580,11 +625,13 @@ export class VendorSettingsComponent {
       .pipe(take(1))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.setSuccess(successMessage);
           this.dialogSubmitting = false;
           this.closeDialog();
         },
         error: () => {
+        this.cdr.markForCheck();
           this.dialogError = this.vendorDetailFacade.mutationError || fallbackMessage;
           this.dialogSubmitting = false;
         },

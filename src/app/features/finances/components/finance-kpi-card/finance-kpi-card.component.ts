@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
@@ -7,6 +7,7 @@ import { FinanceKPI } from '../../models/finance.models';
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-finance-kpi-card',
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule, AppCardComponent],

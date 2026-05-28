@@ -56,18 +56,24 @@
 
           <app-dashboard-insights [panels]="insightPanels"></app-dashboard-insights>
 
-          <app-dashboard-charts
-            [ordersTrend]="vm.charts.ordersTrend"
-            [revenueTrend]="vm.charts.revenueTrend"
-            [ordersTrendOptions]="ordersTrendOptions"
-            [revenueTrendOptions]="revenueTrendOptions"
-            [ordersBarsOptions]="ordersBarsOptions"
-            [revenueBarsOptions]="revenueBarsOptions"
-            [vendorReadinessOptions]="vendorReadinessOptions"
-            [driverReadinessOptions]="driverReadinessOptions"
-            [vendorReadinessBarOptions]="vendorReadinessBarOptions"
-            [driverReadinessBarOptions]="driverReadinessBarOptions">
-          </app-dashboard-charts>
+          @defer (on idle) {
+            <app-dashboard-charts
+              [ordersTrend]="vm.charts.ordersTrend"
+              [revenueTrend]="vm.charts.revenueTrend"
+              [ordersTrendOptions]="ordersTrendOptions"
+              [revenueTrendOptions]="revenueTrendOptions"
+              [ordersBarsOptions]="ordersBarsOptions"
+              [revenueBarsOptions]="revenueBarsOptions"
+              [vendorReadinessOptions]="vendorReadinessOptions"
+              [driverReadinessOptions]="driverReadinessOptions"
+              [vendorReadinessBarOptions]="vendorReadinessBarOptions"
+              [driverReadinessBarOptions]="driverReadinessBarOptions">
+            </app-dashboard-charts>
+          } @placeholder {
+            <div class="h-96 bg-slate-50 border border-slate-100 rounded-[24px] animate-pulse flex items-center justify-center text-slate-400 text-sm">
+              Loading charts...
+            </div>
+          }
 
         </div>
 
@@ -85,8 +91,14 @@
                 </div>
                 <span>{{ vm.charts.vendorReadiness.length }}</span>
               </div>
-              <div echarts [options]="vendorReadinessOptions" class="dashboard-readiness-donut"></div>
-              <div echarts [options]="vendorReadinessBarOptions" class="dashboard-readiness-bars"></div>
+              @defer (on idle) {
+                <div echarts [options]="vendorReadinessOptions" class="dashboard-readiness-donut"></div>
+                <div echarts [options]="vendorReadinessBarOptions" class="dashboard-readiness-bars"></div>
+              } @placeholder {
+                <div class="h-64 bg-slate-50 rounded-2xl animate-pulse flex items-center justify-center text-slate-400 text-xs">
+                  Loading readiness charts...
+                </div>
+              }
               <div class="dashboard-readiness-buckets">
                 <div *ngFor="let bucket of vm.charts.vendorReadiness" class="dashboard-readiness-row">
                   <div class="flex items-center gap-2 min-w-0">
@@ -117,8 +129,14 @@
                 </div>
                 <span>{{ vm.charts.driverReadiness.length }}</span>
               </div>
-              <div echarts [options]="driverReadinessOptions" class="dashboard-readiness-donut"></div>
-              <div echarts [options]="driverReadinessBarOptions" class="dashboard-readiness-bars"></div>
+              @defer (on idle) {
+                <div echarts [options]="driverReadinessOptions" class="dashboard-readiness-donut"></div>
+                <div echarts [options]="driverReadinessBarOptions" class="dashboard-readiness-bars"></div>
+              } @placeholder {
+                <div class="h-64 bg-slate-50 rounded-2xl animate-pulse flex items-center justify-center text-slate-400 text-xs">
+                  Loading readiness charts...
+                </div>
+              }
               <div class="dashboard-readiness-buckets">
                 <div *ngFor="let bucket of vm.charts.driverReadiness" class="dashboard-readiness-row">
                   <div class="flex items-center gap-2 min-w-0">

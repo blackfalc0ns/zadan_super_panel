@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,7 +9,8 @@ import { DashboardAlert, DashboardAttentionItem, DashboardQueue, DashboardSeveri
   standalone: true,
   imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './dashboard-alerts-panel.component.html',
-  styleUrl: './dashboard-alerts-panel.component.scss'
+  styleUrl: './dashboard-alerts-panel.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardAlertsPanelComponent {
   @Input() alerts: DashboardAlert[] = [];

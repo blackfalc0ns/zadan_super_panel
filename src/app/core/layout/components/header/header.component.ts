@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { AdminNotification, AdminNotificationsService } from '../../../services/
 import { AdminGlobalSearchGroup, AdminGlobalSearchResult, AdminGlobalSearchService } from '../../../services/admin-global-search.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-header',
     standalone: true,
     imports: [CommonModule, FormsModule, TranslateModule],
@@ -16,6 +17,7 @@ import { AdminGlobalSearchGroup, AdminGlobalSearchResult, AdminGlobalSearchServi
     styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
     @ViewChild('searchContainer') searchContainer?: ElementRef<HTMLElement>;
     @Input() currentLang: string = 'ar';
     @Input() isSidebarOpen: boolean = false;
@@ -45,12 +47,14 @@ export class HeaderComponent implements OnInit {
         this.adminNotificationsService.unreadCount$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((count) => {
+      this.cdr.markForCheck();
                 this.unreadNotificationCount = count;
             });
 
         this.adminNotificationsService.recent$
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe((notifications) => {
+      this.cdr.markForCheck();
                 this.notifications = notifications;
             });
 
@@ -84,6 +88,7 @@ export class HeaderComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef)
             )
             .subscribe((groups) => {
+      this.cdr.markForCheck();
                 this.isSearchLoading = false;
                 this.searchGroups = groups;
                 this.rebuildFlatResults(groups);
@@ -118,6 +123,7 @@ export class HeaderComponent implements OnInit {
         this.adminNotificationsService.markAsRead(notification.id)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
+      this.cdr.markForCheck();
                 this.isNotificationsOpen = false;
                 void this.router.navigateByUrl(targetUrl);
             });

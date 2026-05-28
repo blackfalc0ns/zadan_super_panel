@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -26,6 +26,7 @@ const SECTION_ORDER: HomeContentSectionType[] = [
 ];
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-marketing-home-visibility',
   standalone: true,
   imports: [
@@ -199,6 +200,7 @@ const SECTION_ORDER: HomeContentSectionType[] = [
   `]
 })
 export class MarketingHomeVisibilityComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   settings: HomeContentSectionSetting[] = [];
   loading = false;
   saving = false;
@@ -252,11 +254,13 @@ export class MarketingHomeVisibilityComponent implements OnInit {
 
     this.marketingApi.getHomeContentSectionSettings().subscribe({
       next: (settings) => {
+        this.cdr.markForCheck();
         const ranked = new Map<HomeContentSectionType, number>(SECTION_ORDER.map((value, index) => [value, index]));
         this.settings = [...settings].sort((left, right) => (ranked.get(left.sectionType) ?? 99) - (ranked.get(right.sectionType) ?? 99));
         this.loading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.loading = false;
         this.error = describeApiError(error);
       }
@@ -269,10 +273,12 @@ export class MarketingHomeVisibilityComponent implements OnInit {
 
     this.marketingApi.getProductCardPriceVisibility().subscribe({
       next: (setting) => {
+        this.cdr.markForCheck();
         this.priceVisibility = setting;
         this.priceVisibilityLoading = false;
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.priceVisibilityLoading = false;
         this.priceVisibilityError = describeApiError(error);
       }
@@ -291,6 +297,7 @@ export class MarketingHomeVisibilityComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.finishMutation(
           setting.isEnabled 
             ? this.translateService.instant('MARKETING.VISIBILITY.MESSAGES.DEACTIVATED') 
@@ -298,6 +305,7 @@ export class MarketingHomeVisibilityComponent implements OnInit {
         );
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.saving = false;
         this.pendingSection = null;
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_VISIBILITY'));
@@ -314,6 +322,7 @@ export class MarketingHomeVisibilityComponent implements OnInit {
 
     this.marketingApi.setProductCardPriceVisibility(nextValue).subscribe({
       next: (setting) => {
+        this.cdr.markForCheck();
         this.priceVisibility = setting;
         this.priceVisibilitySaving = false;
         this.toastService.success(
@@ -326,6 +335,7 @@ export class MarketingHomeVisibilityComponent implements OnInit {
         );
       },
       error: (error) => {
+        this.cdr.markForCheck();
         this.priceVisibilitySaving = false;
         this.priceVisibilityError = describeApiError(error);
         this.toastService.error(this.priceVisibilityError, this.translateService.instant('MARKETING.PRICE_VISIBILITY.TITLE'));

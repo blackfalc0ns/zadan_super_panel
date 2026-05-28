@@ -1,10 +1,11 @@
-import { Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { LedgerDirection } from '../../models/finance.models';
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-money-badge',
   standalone: true,
   imports: [CommonModule],

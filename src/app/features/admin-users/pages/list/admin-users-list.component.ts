@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,6 +21,7 @@ import { DataTableComponent, TableColumn, TableAction } from '../../../../shared
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-admin-users-list',
   standalone: true,
   imports: [
@@ -71,6 +72,7 @@ import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi
   `]
 })
 export class AdminUsersListComponent implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
   users: AdminUserRecord[] = [];
   roles: RoleDefinitionDto[] = [];
   isLoading = false;
@@ -189,6 +191,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       search: this.searchTerm.trim() || undefined
     }).subscribe({
       next: (page) => {
+        this.cdr.markForCheck();
         this.users = page.items;
         this.totalCount = page.totalCount;
         this.totalPages = page.totalPages;
@@ -196,6 +199,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load admin users', err);
         this.isLoading = false;
       }
@@ -206,12 +210,14 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   loadRolesSummary() {
     const rolesSub = this.adminAccessApi.getRoles().subscribe({
       next: (roles) => {
+        this.cdr.markForCheck();
         this.roles = roles;
         if (!this.createUserForm.roleDefinitionId && roles.length > 0) {
           this.createUserForm.roleDefinitionId = roles[0].id;
         }
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to load roles summary', err);
         this.roles = [];
       }
@@ -312,6 +318,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       notes: this.createUserForm.notes.trim() || null
     }).subscribe({
       next: (user) => {
+        this.cdr.markForCheck();
         this.users = [user, ...this.users.filter((entry) => entry.id !== user.id)];
         this.totalCount += 1;
         this.totalPages = Math.ceil(this.totalCount / this.pageSize);
@@ -321,6 +328,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
         this.router.navigate(['/admin-users', user.id]);
       },
       error: (err) => {
+        this.cdr.markForCheck();
         console.error('Failed to create admin user', err);
         this.createUserError = err.error?.message || err.error?.title || 'Failed to create account. Please review the role and scope.';
         this.isCreatingUser = false;

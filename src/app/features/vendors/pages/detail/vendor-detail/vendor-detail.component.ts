@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -24,6 +24,7 @@ interface InfoRow {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-detail',
   standalone: true,
   imports: [
@@ -38,6 +39,7 @@ interface InfoRow {
   styleUrl: './vendor-detail.component.scss'
 })
 export class VendorDetailComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   currentLang = 'ar';
   isRTL = true;
   vendorId = '';
@@ -131,6 +133,7 @@ export class VendorDetailComponent implements OnInit {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
+      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
 
@@ -144,12 +147,14 @@ export class VendorDetailComponent implements OnInit {
     this.vendorDetailFacade.isLoading$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isLoading) => {
+      this.cdr.markForCheck();
         this.isMutating = isLoading;
       });
 
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
+      this.cdr.markForCheck();
         if (!vendor) {
           return;
         }
@@ -184,11 +189,13 @@ export class VendorDetailComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.showEditOwnerModal = false;
           this.modalError = '';
           this.setFeedback(this.text('تم تحديث بيانات المالك بنجاح.', 'Owner record updated successfully.'), 'success');
         },
         error: () => {
+        this.cdr.markForCheck();
           this.modalError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ بيانات المالك الآن.', 'Unable to save owner data right now.');
           this.setFeedback(
             this.modalError,
@@ -206,11 +213,13 @@ export class VendorDetailComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.showEditLegalBankModal = false;
           this.modalError = '';
           this.setFeedback(this.text('تم تحديث البيانات القانونية والبنكية بنجاح.', 'Legal and banking data updated successfully.'), 'success');
         },
         error: () => {
+        this.cdr.markForCheck();
           this.modalError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ البيانات القانونية والبنكية الآن.', 'Unable to save legal and banking data right now.');
           this.setFeedback(
             this.modalError,
@@ -228,11 +237,13 @@ export class VendorDetailComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: () => {
+        this.cdr.markForCheck();
           this.showEditStoreModal = false;
           this.modalError = '';
           this.setFeedback(this.text('تم تحديث هوية المتجر بنجاح.', 'Store identity updated successfully.'), 'success');
         },
         error: () => {
+        this.cdr.markForCheck();
           this.modalError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ بيانات المتجر الآن.', 'Unable to save store data right now.');
           this.setFeedback(
             this.modalError,
@@ -494,6 +505,7 @@ export class VendorDetailComponent implements OnInit {
     accountHolderName: string;
     iban: string;
     swiftCode?: string | null;
+    payoutCycle?: string | null;
     commercialRegisterDocumentUrl?: string | null;
     taxDocumentUrl?: string | null;
     licenseDocumentUrl?: string | null;
@@ -507,6 +519,7 @@ export class VendorDetailComponent implements OnInit {
       accountHolderName: data.accountHolderName.trim(),
       iban: this.normalizeIban(data.iban),
       swiftCode: this.nullIfEmpty(data.swiftCode),
+      payoutCycle: this.vendorDetail?.payoutCycle ?? null,
       commercialRegisterDocumentUrl: this.nullIfEmpty(data.commercialRegisterDocumentUrl),
       taxDocumentUrl: this.nullIfEmpty(data.taxDocumentUrl),
       licenseDocumentUrl: this.nullIfEmpty(data.licenseDocumentUrl)

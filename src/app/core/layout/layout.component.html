@@ -18,17 +18,20 @@
 
     <!-- Sidebar with status sync -->
     <app-sidebar [currentLang]="currentLang"
+        [isCollapsed]="isSidebarCollapsed"
+        (toggleCollapse)="toggleSidebarCollapse()"
         class="fixed inset-y-0 start-0 z-50 transform transition-transform duration-500 lg:translate-x-0 lg:p-4 lg:pe-0"
         [class.translate-x-0]="isSidebarOpen" [class.-translate-x-full]="!isSidebarOpen && currentLang === 'en'"
         [class.translate-x-full]="!isSidebarOpen && currentLang === 'ar'">
         <!-- User Profile Integrated in Sidebar -->
-        <app-user-profile [userName]="userName" (logout)="logout()">
+        <app-user-profile [userName]="userName" (logout)="logout()" [isCollapsed]="isSidebarCollapsed">
         </app-user-profile>
     </app-sidebar>
 
     <!-- Main Content Prism Arena -->
     <main
-        class="flex-1 flex flex-col h-screen px-4 sm:px-6 ltr:lg:pl-[312px] rtl:lg:pr-[312px] ltr:lg:pr-4 rtl:lg:pl-4 py-4 sm:py-5 lg:py-4 transition-all duration-700 relative z-10 w-full overflow-x-hidden overflow-y-auto">
+        class="flex-1 flex flex-col h-screen px-4 sm:px-6 ltr:lg:pr-4 rtl:lg:pl-4 py-4 sm:py-5 lg:py-4 transition-all duration-500 ease-out relative z-10 w-full overflow-x-hidden overflow-y-auto"
+        [ngClass]="isSidebarCollapsed ? 'ltr:lg:pl-[120px] rtl:lg:pr-[120px]' : 'ltr:lg:pl-[312px] rtl:lg:pr-[312px]'">
 
         <app-header class="z-50 block w-full" [currentLang]="currentLang" [isSidebarOpen]="isSidebarOpen" (languageSwitch)="switchLanguage()"
             (toggleSidebar)="toggleSidebar()" (toggleNotificationsPanel)="toggleNotificationsPanel()">

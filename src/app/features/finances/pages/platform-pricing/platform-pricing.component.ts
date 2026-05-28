@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
@@ -33,6 +33,7 @@ type NumericZoneField =
   | 'warningSubtotalRatioThreshold';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-platform-pricing',
   standalone: true,
   imports: [
@@ -504,6 +505,7 @@ type NumericZoneField =
   `
 })
 export class PlatformPricingComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly financeService = inject(FinanceService);
   private readonly toastService = inject(ToastService);
   private readonly translate = inject(TranslateService);
@@ -791,6 +793,7 @@ export class PlatformPricingComponent implements OnInit {
 
     source$.subscribe({
       next: (result: PricingSettingsItem[] | PricingSettingsItem) => {
+        this.cdr.markForCheck();
         this.allItems = Array.isArray(result) ? result : [result];
         if (!this.allItems.length) {
           this.tryFallbackScope();
@@ -804,6 +807,7 @@ export class PlatformPricingComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error: unknown) => {
+        this.cdr.markForCheck();
         this.errorMessage = this.describeApiError(error);
         this.allItems = [];
         this.zones = [];
@@ -871,6 +875,7 @@ export class PlatformPricingComponent implements OnInit {
 
     request$.subscribe({
       next: (savedItem: PricingSettingsItem) => {
+        this.cdr.markForCheck();
         const id = this.itemId(savedItem);
         const allIndex = this.allItems.findIndex((item) => this.itemId(item) === id);
         if (allIndex >= 0) {
@@ -888,6 +893,7 @@ export class PlatformPricingComponent implements OnInit {
         this.toastService.success(this.translate.instant('FINANCES.PRICING.SAVE_SUCCESS'), this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL'));
       },
       error: (error: unknown) => {
+        this.cdr.markForCheck();
         this.isSaving = false;
         this.errorMessage = this.describeApiError(error);
         this.toastService.error(this.errorMessage, this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL'));

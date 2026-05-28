@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { DashboardAuditItem } from '../../models/dashboard.models';
@@ -7,7 +7,8 @@ import { DashboardAuditItem } from '../../models/dashboard.models';
   selector: 'app-dashboard-audit-feed',
   standalone: true,
   imports: [CommonModule, TranslateModule],
-  templateUrl: './dashboard-audit-feed.component.html'
+  templateUrl: './dashboard-audit-feed.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardAuditFeedComponent {
   @Input() auditItems: DashboardAuditItem[] = [];

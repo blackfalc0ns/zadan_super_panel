@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MarketingBanner, MarketingBannerUpdatePayload } from '@marketing/models/marketing.models';
@@ -17,6 +17,7 @@ const IMAGE_ONLY_BANNER_DEFAULTS = {
 } as const;
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-banner-form-modal',
   standalone: true,
   imports: [
@@ -143,6 +144,7 @@ const IMAGE_ONLY_BANNER_DEFAULTS = {
   `]
 })
 export class BannerFormModalComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
   @Input() isOpen = false;
   @Input() isSaving = false;
   @Input() banner: MarketingBanner | null = null;
@@ -233,6 +235,7 @@ export class BannerFormModalComponent implements OnChanges {
 
     this.marketingApi.uploadBannerImage(file).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.form.patchValue({ imageUrl: response.url });
         this.form.get('imageUrl')?.markAsDirty();
         this.form.get('imageUrl')?.markAsTouched();
@@ -240,6 +243,7 @@ export class BannerFormModalComponent implements OnChanges {
         input.value = '';
       },
       error: (error) => {
+        this.cdr.markForCheck();
         console.error('Banner image upload failed', error);
         this.isUploading = false;
         input.value = '';

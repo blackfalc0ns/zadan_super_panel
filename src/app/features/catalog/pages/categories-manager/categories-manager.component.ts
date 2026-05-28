@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { CatalogSearchRequest, Category, CategorySearchFilters } from '@catalog/models/catalog.domain.models';
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
@@ -15,12 +15,14 @@ import { CatalogRequestCenterModalComponent } from '../../components/catalog-req
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-categories-manager',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     TranslateModule,
+    RouterModule,
     CategoryFormModalComponent,
     DeleteConfirmationModalComponent,
     AppPaginationComponent,
@@ -34,6 +36,7 @@ import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/co
   styleUrl: './categories-manager.component.scss'
 })
 export class CategoriesManagerComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   isLoading = true;
   currentItems: Category[] = [];
   searchTerm = '';
@@ -83,12 +86,16 @@ export class CategoriesManagerComponent implements OnInit {
     public translate: TranslateService,
     private router: Router
   ) {
-    this.translate.onLangChange.subscribe(() => this.initializeFilterOptions());
+    this.translate.onLangChange.subscribe(() => {
+      this.cdr.markForCheck();
+      this.initializeFilterOptions();
+    });
   }
 
   ngOnInit() {
     this.initializeFilterOptions();
     this.route.queryParams.subscribe((params) => {
+      this.cdr.markForCheck();
       this.searchTerm = params['search'] || '';
       this.currentPage = 1;
       this.syncPanelFilters();
@@ -100,11 +107,13 @@ export class CategoriesManagerComponent implements OnInit {
     this.isLoading = true;
     this.catalogService.searchCategories(this.buildSearchRequest()).subscribe({
       next: (response) => {
+        this.cdr.markForCheck();
         this.currentItems = response.items ?? [];
         this.totalItems = response.totalCount ?? this.currentItems.length;
         this.isLoading = false;
       },
       error: (err: any) => {
+        this.cdr.markForCheck();
         console.error(err);
         this.currentItems = [];
         this.totalItems = 0;
@@ -277,11 +286,13 @@ export class CategoriesManagerComponent implements OnInit {
     this.isDeleting = true;
     this.catalogService.deleteCategory(this.itemToDelete.id).subscribe({
       next: () => {
+        this.cdr.markForCheck();
         this.isDeleting = false;
         this.closeDeleteModal();
         this.loadHierarchy();
       },
       error: (err: any) => {
+        this.cdr.markForCheck();
         console.error('Deletion failed:', err);
         this.isDeleting = false;
       }

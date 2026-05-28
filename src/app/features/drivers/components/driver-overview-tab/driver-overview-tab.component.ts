@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { KeyValueGridComponent } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
@@ -7,6 +7,7 @@ import { DriverDetailRecord } from '../../models/drivers.models';
 import { getVehicleTypeKey } from '../../utils/driver-ui.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-overview-tab',
   standalone: true,
   imports: [CommonModule, TranslateModule, KeyValueGridComponent, SectionHeaderComponent],

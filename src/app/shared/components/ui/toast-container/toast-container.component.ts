@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { ToastService } from '../../../services/toast.service';
 import { ToastNotificationComponent, ToastConfig } from '../toast-notification/toast-notification.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-toast-container',
   standalone: true,
   imports: [CommonModule, ToastNotificationComponent],

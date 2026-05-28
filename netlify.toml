@@ -2,6 +2,40 @@
   command = "npm run build"
   publish = "dist/superadmin-panel/browser"
 
+# ---------------------------------------------------------------------------
+# Security headers — applied to every response.
+#
+# Notes:
+#  * `script-src` keeps 'unsafe-inline' because the Angular splash + Google
+#    Maps loader rely on a small bootstrap inline script. Ideally these are
+#    migrated to a nonce-based policy in a future hardening pass.
+#  * `connect-src` whitelists our backend (REST + WebSockets) and OneSignal.
+# ---------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://*.gstatic.com https://cdn.onesignal.com https://*.onesignal.com; script-src-elem 'self' 'unsafe-inline' https://maps.googleapis.com https://*.gstatic.com https://cdn.onesignal.com https://*.onesignal.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://zadana.runasp.net wss://zadana.runasp.net https://*.onesignal.com https://onesignal.com https://maps.googleapis.com https://*.gstatic.com; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; frame-src 'self' https://*.onesignal.com; upgrade-insecure-requests"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self), payment=(), usb=(), magnetometer=(), gyroscope=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Resource-Policy = "same-origin"
+    X-Permitted-Cross-Domain-Policies = "none"
+    X-DNS-Prefetch-Control = "off"
+
+# Allow long cache for hashed Angular assets
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

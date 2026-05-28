@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,6 +6,7 @@ import { filter, take } from 'rxjs';
 import { AdminSupportCaseRealtimeService } from './core/services/admin-support-case-realtime.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet],
@@ -13,6 +14,7 @@ import { AdminSupportCaseRealtimeService } from './core/services/admin-support-c
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   title = 'superadmin-panel';
   private readonly materialSymbolsDescriptor = '400 24px "Material Symbols Outlined"';
   private initialContentReadySignaled = false;
@@ -27,8 +29,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     // Hide Material Symbols text until font loads
     this.loadMaterialSymbolsFont();
 
-    // Determine language from localStorage or default to 'ar'
-    const savedLang = localStorage.getItem('lang') || 'ar';
+    // Determine language from localStorage or default to 'ar'.
+    // Whitelist accepted values to prevent injection of arbitrary attribute values
+    // when the document direction/lang attributes are set later.
+    const ALLOWED_LANGS = ['ar', 'en'] as const;
+    const rawLang = (() => {
+      try {
+        return localStorage.getItem('lang');
+      } catch {
+        return null;
+      }
+    })();
+    const savedLang = ALLOWED_LANGS.includes(rawLang as typeof ALLOWED_LANGS[number])
+      ? (rawLang as typeof ALLOWED_LANGS[number])
+      : 'ar';
 
     this.translate.addLangs(['en', 'ar']);
     this.translate.setDefaultLang('ar');
@@ -39,6 +53,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     // Listen to language changes
     this.translate.onLangChange.subscribe((event) => {
+      this.cdr.markForCheck();
       this.setDocumentDirection(event.lang);
       localStorage.setItem('lang', event.lang);
     });
@@ -59,7 +74,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         take(1)
       )
-      .subscribe(() => this.signalInitialContentReady());
+      .subscribe(() => {
+      this.cdr.markForCheck();
+      this.signalInitialContentReady();
+    });
   }
 
   private async loadMaterialSymbolsFont(): Promise<void> {

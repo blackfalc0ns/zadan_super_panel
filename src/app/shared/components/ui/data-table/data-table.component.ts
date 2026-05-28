@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, TemplateRef, ContentChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, TemplateRef, ContentChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -29,6 +29,7 @@ export interface BulkAction {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-data-table',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
@@ -97,7 +98,7 @@ export interface BulkAction {
                      class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20">
             </th>
             <th *ngFor="let col of columns" 
-                class="px-5 py-7 align-middle text-[10px] font-black uppercase text-slate-400/80 tracking-tighter"
+                class="px-5 py-4 align-middle text-[10px] font-black uppercase text-slate-400/80 tracking-tighter"
                 [class.text-center]="col.align === 'center'"
                 [class.text-start]="col.align === 'left'"
                 [class.text-end]="col.align === 'right'"
@@ -112,7 +113,7 @@ export interface BulkAction {
               [class.cursor-pointer]="clickableRows"
               (click)="onRowClick(item)">
             
-            <td *ngIf="selectable" class="w-12 px-3 py-6 text-center align-middle" (click)="$event.stopPropagation()">
+            <td *ngIf="selectable" class="w-12 px-3 py-3 text-center align-middle" (click)="$event.stopPropagation()">
               <input type="checkbox" 
                      [checked]="isSelected(item)" 
                      (change)="toggleSelectItem(item)"
@@ -120,7 +121,7 @@ export interface BulkAction {
             </td>
 
             <td *ngFor="let col of columns" 
-                class="px-5 py-6 align-middle overflow-hidden"
+                class="px-5 py-3 align-middle overflow-hidden"
                 [class.text-center]="col.align === 'center'"
                 [class.text-start]="col.align === 'left'"
                 [class.text-end]="col.align === 'right'">
@@ -203,13 +204,83 @@ export interface BulkAction {
       </div>
 
       <ng-container *ngIf="!isLoading">
-        <div *ngFor="let item of data" 
-             class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all"
-             [class.cursor-pointer]="clickableRows"
-             (click)="onRowClick(item)">
-          
-          <ng-container *ngTemplateOutlet="mobileCardTemplate; context: { $implicit: item }"></ng-container>
-        </div>
+        <ng-container *ngIf="mobileCardTemplate; else defaultMobileCards">
+          <div *ngFor="let item of data" 
+               class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all"
+               [class.cursor-pointer]="clickableRows"
+               (click)="onRowClick(item)">
+            <ng-container *ngTemplateOutlet="mobileCardTemplate; context: { $implicit: item }"></ng-container>
+          </div>
+        </ng-container>
+
+        <ng-template #defaultMobileCards>
+          <div *ngFor="let item of data" 
+               class="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-all flex flex-col gap-3"
+               [class.cursor-pointer]="clickableRows"
+               (click)="onRowClick(item)">
+            
+            <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <input *ngIf="selectable" type="checkbox" 
+                       [checked]="isSelected(item)" 
+                       (change)="toggleSelectItem(item); $event.stopPropagation()"
+                       class="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20 shrink-0">
+                
+                <div class="min-w-0 flex flex-col text-start">
+                  <ng-container *ngIf="columns.length > 0">
+                    <div class="text-sm font-black text-slate-900 leading-snug">
+                      <ng-container *ngIf="columns[0].type === 'custom' && customColumnTemplate; else plainFirstCol">
+                        <ng-container *ngTemplateOutlet="customColumnTemplate; context: { $implicit: item, column: columns[0] }"></ng-container>
+                      </ng-container>
+                      <ng-template #plainFirstCol>
+                        {{ getColumnValue(item, columns[0].key) }}
+                      </ng-template>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-[11px] py-1">
+              <ng-container *ngFor="let col of columns; let idx = index">
+                <div *ngIf="idx > 0 && col.type !== 'actions'" class="flex flex-col gap-1 min-w-0">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-tight">{{ col.title | translate }}</span>
+                  <div class="font-bold text-slate-700 truncate">
+                    <ng-container *ngIf="col.type === 'custom' && customColumnTemplate; else standardCell">
+                      <ng-container *ngTemplateOutlet="customColumnTemplate; context: { $implicit: item, column: col }"></ng-container>
+                    </ng-container>
+                    <ng-template #standardCell>
+                      <div *ngIf="col.type === 'progress'" class="flex items-center gap-1.5">
+                        <div class="w-12 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                          <div class="h-full rounded-full bg-primary" [style.width.%]="getProgressValue(item, col.key)"></div>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-500">{{ getProgressValue(item, col.key) }}%</span>
+                      </div>
+                      
+                      <span *ngIf="col.type === 'badge'" class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full border border-slate-50 bg-white shadow-sm text-[10px] font-black">
+                        {{ getColumnValue(item, col.key) | translate }}
+                      </span>
+                      
+                      <span *ngIf="col.type !== 'progress' && col.type !== 'badge'">
+                        {{ getColumnValue(item, col.key) }}
+                      </span>
+                    </ng-template>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+
+            <div *ngIf="actions.length > 0" class="flex items-center justify-end gap-2 border-t border-slate-100 pt-3" (click)="$event.stopPropagation()">
+              <button *ngFor="let action of getItemActions(item)" 
+                      (click)="onAction(action, item)"
+                      class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200/60 hover:bg-primary hover:text-white transition-all text-xs font-black text-slate-500">
+                <span class="material-symbols-outlined text-[16px]">{{ action.icon }}</span>
+                {{ action.label | translate }}
+              </button>
+            </div>
+
+          </div>
+        </ng-template>
       </ng-container>
     </div>
 

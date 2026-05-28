@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,6 +11,7 @@ import {
 } from '../../utils/finance-i18n.utils';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-finance-filter-bar',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, AdvancedFilterPanelComponent],

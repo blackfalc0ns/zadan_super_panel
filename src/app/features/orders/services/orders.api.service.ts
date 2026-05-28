@@ -475,16 +475,16 @@ export class OrdersService {
       return 'ORDERS.WORKFLOW.NEXT_ACTIONS.COMPLETE_REFUND_REVIEW';
     }
     if (fulfillmentStatus === 'QUEUED' || fulfillmentStatus === 'PREPARING') {
-      return 'ORDERS.WORKFLOW.NEXT_ACTIONS.MONITOR_PREPARATION';
+      return 'ORDERS.WORKFLOW.NEXT_ACTIONS.FOLLOW_PREPARATION';
     }
     if (fulfillmentStatus === 'READY_FOR_PICKUP') {
-      return 'ORDERS.WORKFLOW.NEXT_ACTIONS.ASSIGN_DRIVER';
+      return 'ORDERS.WORKFLOW.NEXT_ACTIONS.ASSIGN_OR_START_PICKUP';
     }
     if (fulfillmentStatus === 'DRIVER_ASSIGNED' || fulfillmentStatus === 'PICKED_UP' || fulfillmentStatus === 'ON_ROUTE') {
       return 'ORDERS.WORKFLOW.NEXT_ACTIONS.MONITOR_DELIVERY';
     }
     return status === 'DELIVERED'
-      ? 'ORDERS.WORKFLOW.NEXT_ACTIONS.CLOSE_ORDER'
+      ? 'ORDERS.WORKFLOW.NEXT_ACTIONS.CLOSE_AFTER_CONFIRMATION'
       : 'ORDERS.WORKFLOW.NEXT_ACTIONS.NO_OPEN_ACTION';
   }
 
