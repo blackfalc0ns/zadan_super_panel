@@ -1,4 +1,4 @@
-﻿import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -260,7 +260,8 @@ export class AdminNotificationsService {
       refunds: { ar: 'الاستردادات', en: 'Refunds' },
       settlements: { ar: 'التسويات', en: 'Settlements' },
       support: { ar: 'الدعم', en: 'Support' },
-      system: { ar: 'النظام', en: 'System' }
+      system: { ar: 'النظام', en: 'System' },
+      delivery: { ar: 'التوصيل', en: 'Delivery' }
     };
 
     return labels[key]?.[this.resolveLang(lang)] ?? (category || labels['system'][this.resolveLang(lang)]);

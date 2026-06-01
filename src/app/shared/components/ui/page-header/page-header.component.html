@@ -1,58 +1,68 @@
-<header class="bg-white border-b border-slate-200 px-6 lg:px-8 py-4 flex flex-col lg:flex-row items-center gap-5 transition-all relative z-10 w-full min-h-[72px]">
+<header class="premium-glass-light relative overflow-hidden rounded-[2rem] px-6 py-5.5 shadow-[0_20px_40px_-20px_rgba(15,23,42,0.06),0_1px_3px_0_rgba(15,23,42,0.02)] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 transition-all relative z-10 w-full mb-6">
+    <!-- Ambient Aurora Glow Effects -->
+    <div class="absolute -right-20 -top-20 w-44 h-44 rounded-full bg-zadna-primary/[0.04] blur-3xl pointer-events-none z-0"></div>
+    <div class="absolute -left-20 -bottom-20 w-44 h-44 rounded-full bg-cyan-500/[0.04] blur-3xl pointer-events-none z-0"></div>
+
     <!-- Title & Breadcrumbs -->
     <div class="flex items-center gap-3 relative z-10 w-full lg:w-auto shrink-0">
         <!-- Back Button -->
         <button *ngIf="showBack" type="button" 
                 [routerLink]="backUrl" 
                 (click)="onBack()"
-                class="w-10 h-10 shrink-0 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors focus:ring-2 focus:ring-slate-200 focus:outline-none"
+                class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-white/90 text-slate-500 shadow-sm transition-all hover:border-zadna-primary/20 hover:bg-slate-50 hover:text-zadna-primary active:scale-[0.96] focus:ring-2 focus:ring-slate-200 focus:outline-none"
                 title="Go Back">
             <span class="material-symbols-outlined text-[20px] rtl:rotate-180">arrow_back</span>
         </button>
 
-        <div class="min-w-0">
-            <nav *ngIf="breadcrumbs.length" class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 mb-1">
+        <div class="min-w-0 flex-1">
+            <!-- Breadcrumbs -->
+            <nav *ngIf="breadcrumbs.length" class="flex items-center flex-wrap gap-1 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
                 <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
-                    <a *ngIf="breadcrumb.url && !last" [routerLink]="breadcrumb.url" class="hover:text-slate-900 transition-colors">
+                    <a *ngIf="breadcrumb.url && !last" [routerLink]="breadcrumb.url" class="hover:text-zadna-primary transition-colors duration-200">
                         {{ breadcrumb.label | translate }}
                     </a>
-                    <span *ngIf="!breadcrumb.url || last" [class.text-slate-900]="last">
+                    <span *ngIf="!breadcrumb.url || last" [class.text-slate-700]="last" [class.font-extrabold]="last">
                         {{ breadcrumb.label | translate }}
                     </span>
-                    <span *ngIf="!last" class="material-symbols-outlined text-[14px] text-slate-300 opacity-70 rtl:rotate-180">chevron_right</span>
+                    <span *ngIf="!last" class="material-symbols-outlined text-[12px] text-slate-300 opacity-80 rtl:rotate-180 select-none">chevron_right</span>
                 </ng-container>
             </nav>
 
-            <div class="flex items-center gap-2">
-                <ng-content select="[title-prefix]"></ng-content>
-                <h1 *ngIf="title" class="text-xl font-black text-slate-900 tracking-tight leading-none">
+            <!-- Title, Prefix & Extra content -->
+            <div class="flex items-center gap-2.5">
+                <div class="title-prefix-container empty-hide flex items-center justify-center w-11 h-11 rounded-2xl bg-zadna-primary/[0.08] text-zadna-primary border border-zadna-primary/10 shadow-[0_4px_12px_rgba(18,124,140,0.06)] shrink-0 transition-transform duration-300 hover:scale-105">
+                    <ng-content select="[title-prefix]"></ng-content>
+                </div>
+                <h1 *ngIf="title" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-none">
                     {{ title | translate }}
                 </h1>
                 <ng-content select="[title-extra]"></ng-content>
             </div>
-            <p *ngIf="subtitle" class="text-xs font-medium text-slate-500 mt-1">{{ subtitle | translate }}</p>
+            <p *ngIf="subtitle" class="text-xs sm:text-[13px] font-medium text-slate-400/90 mt-1.5 leading-relaxed max-w-2xl">{{ subtitle | translate }}</p>
         </div>
     </div>
 
     <!-- Controls: Search (grows) → Filters → View Switcher → Add Button -->
-    <div *ngIf="showToolbar" class="flex flex-1 flex-wrap lg:flex-nowrap items-center gap-3 w-full lg:w-auto relative z-10">
+    <div *ngIf="showToolbar" class="flex flex-1 flex-wrap lg:flex-nowrap items-center justify-end gap-3 w-full lg:w-auto relative z-10">
         
         <!-- Search grows to fill available space -->
-        <div class="flex-1 min-w-[180px]">
+        <div class="flex-grow min-w-[180px] empty-hide">
             <ng-content select="[search]"></ng-content>
         </div>
 
-        <div class="shrink-0">
+        <div class="shrink-0 empty-hide">
             <ng-content select="[filters]"></ng-content>
         </div>
 
-        <div class="shrink-0">
+        <div class="shrink-0 empty-hide">
             <ng-content select="[view-switcher]"></ng-content>
         </div>
 
-        <div class="shrink-0">
+        <div class="shrink-0 empty-hide">
             <ng-content select="[actions]"></ng-content>
         </div>
         
     </div>
 </header>
+
+

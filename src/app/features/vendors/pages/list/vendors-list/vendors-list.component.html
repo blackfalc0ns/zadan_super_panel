@@ -2,19 +2,12 @@
     <app-page-header
         [title]="'VENDORS.TITLE'"
         [subtitle]="'VENDORS.DESC'"
-        [showToolbar]="true"
+        [showToolbar]="false"
         [breadcrumbs]="[
             { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
             { label: 'VENDORS.TITLE' }
         ]">
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">storefront</span>
-
-        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-            <button class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
-                <span class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
-                {{ 'VENDORS.ADD_VENDOR' | translate }}
-            </button>
-        </div>
     </app-page-header>
 
     <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">

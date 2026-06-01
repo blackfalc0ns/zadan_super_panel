@@ -702,11 +702,15 @@ app-dashboard-header .dashboard-filter-field:focus-within {
 }
 
 app-dashboard-header .dashboard-live-pill {
-  @apply inline-flex min-w-0 items-center gap-3 self-start rounded-2xl border border-slate-200/80 bg-slate-50/70 px-3.5 py-2 shadow-sm lg:self-auto;
+  @apply inline-flex min-w-0 items-center gap-3 self-start rounded-2xl border border-emerald-500/10 bg-emerald-500/[0.03] px-4 py-2 shadow-sm transition-all duration-300 lg:self-auto hover:bg-emerald-500/[0.06] hover:border-emerald-500/20;
+  
+  &.is-offline {
+    @apply border-cyan-500/10 bg-cyan-500/[0.03] hover:bg-cyan-500/[0.06] hover:border-cyan-500/20;
+  }
 }
 
 app-dashboard-header .dashboard-filter-bar {
-  @apply flex flex-wrap items-center gap-1.5 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-1 shadow-sm;
+  @apply flex flex-wrap items-center gap-2 rounded-2xl border border-white/60 bg-white/40 p-1.5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)] backdrop-blur-md;
 }
 
 app-dashboard-header .dashboard-header-select .space-y-2 {
@@ -714,15 +718,23 @@ app-dashboard-header .dashboard-header-select .space-y-2 {
 }
 
 app-dashboard-header .dashboard-header-select .searchable-select-trigger {
-  @apply h-9 rounded-xl border-slate-200 bg-white px-3 text-[11px] shadow-sm hover:border-zadna-primary/40 hover:bg-white focus:ring-2 focus:ring-zadna-primary/10;
+  @apply h-9 rounded-xl border-slate-200/60 bg-white px-4 text-[11px] font-extrabold text-slate-700 shadow-sm hover:border-zadna-primary/40 hover:bg-white focus:ring-2 focus:ring-zadna-primary/10 transition-all duration-300;
 }
 
 app-dashboard-header .dashboard-header-select .searchable-select-panel {
-  @apply rounded-xl border-slate-200 p-2 shadow-2xl;
+  @apply rounded-xl border-slate-200/80 p-2 shadow-2xl backdrop-blur-xl bg-white/95 border border-white/60;
 }
 
 app-dashboard-header .dashboard-refresh-button {
-  @apply flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary focus:outline-none focus:ring-2 focus:ring-zadna-primary/10;
+  @apply flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/60 bg-white text-slate-500 shadow-sm transition-all duration-300 hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary focus:outline-none focus:ring-2 focus:ring-zadna-primary/10 active:scale-95;
+  
+  span {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  &:hover span {
+    transform: rotate(180deg);
+  }
 }
 
 @media (max-width: 640px) {

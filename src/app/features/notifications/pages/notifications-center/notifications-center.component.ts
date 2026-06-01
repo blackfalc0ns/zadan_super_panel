@@ -18,7 +18,7 @@ interface NotificationFilterTab {
   standalone: true,
   imports: [CommonModule, TranslateModule],
   template: `
-    <div class="space-y-5 pb-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+    <div class="px-4 md:px-10 pt-4 md:pt-6 pb-8 max-w-[120rem] mx-auto w-full space-y-5" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
       <ng-container *ngIf="initialLoading; else notificationsContent">
         <section class="overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-[0_24px_80px_-56px_rgba(15,23,42,0.42)]">
           <div class="p-5 sm:p-6">
@@ -365,6 +365,7 @@ export class NotificationsCenterComponent implements OnInit {
   categoryIcon(category?: string | null): string {
     switch ((category ?? '').toLowerCase()) {
       case 'drivers':
+      case 'delivery':
         return 'delivery_dining';
       case 'vendors':
         return 'storefront';
@@ -386,6 +387,7 @@ export class NotificationsCenterComponent implements OnInit {
   categoryTone(category?: string | null): string {
     switch ((category ?? '').toLowerCase()) {
       case 'drivers':
+      case 'delivery':
         return 'border-[#bde8e8] bg-[#eafbfb] text-[#087f90]';
       case 'vendors':
         return 'border-[#a9dede] bg-[#eefafa] text-[#006878]';

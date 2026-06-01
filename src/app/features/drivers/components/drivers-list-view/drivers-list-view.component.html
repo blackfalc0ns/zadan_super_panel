@@ -2,19 +2,12 @@
   <app-page-header
     [title]="'DRIVERS.TITLE'"
     [subtitle]="'DRIVERS.DESC'"
-    [showToolbar]="true"
+    [showToolbar]="false"
     [breadcrumbs]="[
       { label: 'SIDEBAR.HOME', url: '/dashboard' },
       { label: 'SIDEBAR.DRIVERS', url: '/drivers' }
     ]">
     <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">directions_car</span>
-
-    <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-      <app-button variant="primary" size="md" customClass="!rounded-[1.2rem] !text-sm !font-extrabold shadow-xl shadow-zadna-primary/20 hover:scale-[1.02] transition-transform duration-300">
-        <span class="material-symbols-outlined text-[20px]">add</span>
-        {{ 'DRIVERS.HEADER.ADD_DRIVER' | translate }}
-      </app-button>
-    </div>
   </app-page-header>
 
   <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
