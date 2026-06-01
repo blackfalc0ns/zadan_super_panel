@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, firstValueFrom, of, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, firstValueFrom, from, map, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface AccessScope {
@@ -210,11 +210,14 @@ export class AuthService {
                 return null;
             }
 
+            // Refresh the CSRF token now that we have the access token!
+            await this.acquireCsrfToken().catch(() => undefined);
+
             const user = await firstValueFrom(this.fetchMe());
             this.startIdleWatchdog();
             return user;
         } catch {
-            this.clearSession();
+            this.forceLogoutForExpiredSession();
             return null;
         }
     }
@@ -223,13 +226,17 @@ export class AuthService {
         return this.http
             .post<AuthLoginResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true })
             .pipe(
-                tap(response => {
+                switchMap(response => {
                     this.clearLoginRequired();
                     this.accessToken = response.tokens?.accessToken ?? null;
                     this.touchActivity();
                     this.startIdleWatchdog();
                     this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(response.user));
                     this.currentUserSubject.next(response.user);
+                    return from(this.acquireCsrfToken()).pipe(
+                        catchError(() => of(null)),
+                        map(() => response)
+                    );
                 })
             );
     }
@@ -242,11 +249,13 @@ export class AuthService {
                     if (response?.accessToken) {
                         this.accessToken = response.accessToken;
                         this.touchActivity();
+                        // Proactively fetch a fresh CSRF token since the old one was deleted upon token refresh.
+                        void this.acquireCsrfToken().catch(() => undefined);
                     }
                 }),
                 catchError((err: HttpErrorResponse) => {
                     if (err.status === 401 || err.status === 403) {
-                        this.clearSession();
+                        this.forceLogoutForExpiredSession();
                         return of(null);
                     }
                     return throwError(() => err);

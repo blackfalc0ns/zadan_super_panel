@@ -4,6 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { concat, of, Observable } from 'rxjs';
+import { switchMap, toArray } from 'rxjs/operators';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import {
@@ -250,6 +252,12 @@ export class VendorComplianceComponent {
     return this.requiredDocuments.filter((document) => !document.isUploaded || document.reviewDecision !== 'approved').length;
   }
 
+  get totalPendingItemsCount(): number {
+    const docs = this.reviewDocuments.filter((d) => d.isUploaded && d.reviewDecision === 'pending').length;
+    const fields = this.profileReviewItems.filter((f) => f.status === 'submitted').length;
+    return docs + fields;
+  }
+
   get rejectedProfileItemsCount(): number {
     return this.profileReviewItems.filter((item) => item.status === 'changes_requested').length;
   }
@@ -329,12 +337,24 @@ export class VendorComplianceComponent {
       && !this.vendorDetail.isLoginLocked;
   }
 
+  get isCrExpired(): boolean {
+    if (!this.vendorDetail?.commercialRegistrationExpiryDate) {
+      return false;
+    }
+    const expiry = new Date(this.vendorDetail.commercialRegistrationExpiryDate);
+    expiry.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return expiry.getTime() < today.getTime();
+  }
+
   get canReactivateVendor(): boolean {
     if (!this.vendorDetail) {
       return false;
     }
 
     return this.vendorDetail.status === VendorStatus.Suspended
+      && !this.isCrExpired
       && !this.vendorDetail.archivedAtUtc
       && !this.vendorDetail.isLoginLocked;
   }
@@ -436,6 +456,10 @@ export class VendorComplianceComponent {
   }
 
   get operationsHeadline(): string {
+    if (this.isCrExpired) {
+      return this.localize('السجل التجاري منتهي الصلاحية', 'Commercial Registration is expired');
+    }
+
     if (this.canApproveVendor) {
       return this.localize('الملف جاهز للاعتماد النهائي', 'The file is ready for final approval');
     }
@@ -456,8 +480,15 @@ export class VendorComplianceComponent {
   }
 
   get operationsHint(): string {
-    if (this.isVendorAlreadyApproved) {
+    if (this.isVendorAlreadyApproved && !this.isCrExpired) {
       return this.localize('الاعتماد تم بالفعل، لذلك هذه الشاشة مخصصة الآن للمتابعة التشغيلية والأرشفة.', 'Approval is already complete, so this workspace now serves operational follow-up and record keeping.');
+    }
+
+    if (this.isCrExpired) {
+      return this.localize(
+        'الحساب موقوف تلقائيًا بسبب انتهاء صلاحية السجل التجاري. يجب تحديث تاريخ انتهاء السجل التجاري ورفع مستند ساري المفعول أولاً لإعادة تنشيط الحساب.',
+        'The account is automatically suspended because the Commercial Registration has expired. The CR expiry date must be updated and a valid document uploaded first to reactivate the account.'
+      );
     }
 
     if (this.canApproveVendor) {
@@ -485,6 +516,13 @@ export class VendorComplianceComponent {
   get operationsBlockedMessage(): string {
     if (!this.vendorDetail) {
       return '';
+    }
+
+    if (this.isCrExpired) {
+      return this.localize(
+        'لا يمكن إعادة تفعيل الحساب لأن السجل التجاري منتهي الصلاحية. يرجى مراجعة وتعديل بيانات السجل أولاً.',
+        'Cannot reactivate the account because the Commercial Registration is expired. Please review and update the CR details first.'
+      );
     }
 
     if (this.isVendorAlreadyApproved) {
@@ -612,6 +650,56 @@ export class VendorComplianceComponent {
 
   setWorkspaceWindow(window: ComplianceWorkspaceWindow): void {
     this.activeWorkspaceWindow = window;
+  }
+
+  onApproveAllPending(): void {
+    const docsToApprove = this.reviewDocuments.filter((d) => d.isUploaded && d.reviewDecision === 'pending');
+    const fieldsToApprove = this.profileReviewItems.filter((f) => f.status === 'submitted');
+
+    if (docsToApprove.length === 0 && fieldsToApprove.length === 0) {
+      return;
+    }
+
+    const title = this.localize('اعتماد جميع العناصر المعلقة', 'Approve All Pending Items');
+    const message = this.localize(
+      `هل تريد اعتماد جميع العناصر المعلقة دفعة واحدة؟ (${docsToApprove.length} مستندات، و ${fieldsToApprove.length} حقول بيانات)`,
+      `Do you want to approve all pending items in bulk? (${docsToApprove.length} documents, and ${fieldsToApprove.length} profile fields)`
+    );
+    const confirmText = this.localize('موافق، اعتماد الكل', 'Yes, Approve All');
+    const cancelText = this.localize('إلغاء', 'Cancel');
+
+    this.openConfirmModal(title, message, confirmText, cancelText, 'success', () => {
+      this.vendorDetailFacade.clearMutationError();
+      this.isSubmittingDocumentDecision = true;
+      this.cdr.markForCheck();
+
+      const fieldsObs$: Observable<any> = fieldsToApprove.length > 0
+        ? this.vendorDetailFacade.reviewVendorProfileFieldsRequest(
+            fieldsToApprove.map((f) => ({ code: f.code, decision: 'approved' }))
+          )
+        : of(null);
+
+      fieldsObs$.pipe(
+        switchMap(() => {
+          if (docsToApprove.length === 0) {
+            return of([]);
+          }
+          const docRequests = docsToApprove.map((doc) =>
+            this.vendorDetailFacade.approveVendorDocumentRequest(doc.id)
+          );
+          return concat(...docRequests).pipe(toArray());
+        })
+      ).subscribe({
+        next: () => {
+          this.isSubmittingDocumentDecision = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.isSubmittingDocumentDecision = false;
+          this.cdr.markForCheck();
+        }
+      });
+    });
   }
 
   onApproveDocument(document: VendorReviewDocument): void {
@@ -844,6 +932,18 @@ export class VendorComplianceComponent {
     this.newNote = '';
   }
 
+  getIndicatorTitle(indicator: VendorRiskIndicator): string {
+    if (this.currentLang === 'ar' && indicator.titleAr) return indicator.titleAr;
+    if (this.currentLang === 'en' && indicator.titleEn) return indicator.titleEn;
+    return this.translate.instant(indicator.titleKey);
+  }
+
+  getIndicatorDescription(indicator: VendorRiskIndicator): string {
+    if (this.currentLang === 'ar' && indicator.descriptionAr) return indicator.descriptionAr;
+    if (this.currentLang === 'en' && indicator.descriptionEn) return indicator.descriptionEn;
+    return this.translate.instant(indicator.descriptionKey);
+  }
+
   getDecisionVariant(decision: VendorReviewDecision): StatusPillVariant {
     switch (decision) {
       case 'approved':
@@ -889,6 +989,94 @@ export class VendorComplianceComponent {
     return this.localize('مرفوع', 'Uploaded');
   }
 
+  formatExpiryDateOnly(dateVal: string | Date | null | undefined): string {
+    if (!dateVal) return '—';
+    try {
+      const date = new Date(dateVal);
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}/${m}/${d}`;
+    } catch {
+      return String(dateVal);
+    }
+  }
+
+  getDocumentDescription(document: VendorReviewDocument): string {
+    const vendor = this.vendorDetail;
+    if (!vendor) {
+      return '';
+    }
+
+    switch (document.type) {
+      case 'identity':
+        if (vendor.idNumber) {
+          return this.localize(
+            `رقم الهوية: ${vendor.idNumber} | ${this.getLocalizedNationality(vendor.nationality)}`,
+            `ID: ${vendor.idNumber} | ${this.getLocalizedNationality(vendor.nationality)}`
+          );
+        }
+        return this.localize('تم التحقق آلياً عبر نفاذ', 'Verified automatically via Nafath');
+
+      case 'commercial':
+        if (vendor.commercialRegistrationExpiryDate) {
+          const dateStr = this.formatExpiryDateOnly(vendor.commercialRegistrationExpiryDate);
+          if (this.isCrExpired) {
+            return this.localize(
+              `منتهي الصلاحية (${dateStr})`,
+              `Expired (${dateStr})`
+            );
+          } else {
+            return this.localize(
+              `ساري حتى ${dateStr}`,
+              `Valid until ${dateStr}`
+            );
+          }
+        }
+        if (vendor.commercialRegistrationNumber) {
+          return this.localize(
+            `رقم السجل: ${vendor.commercialRegistrationNumber}`,
+            `CR Number: ${vendor.commercialRegistrationNumber}`
+          );
+        }
+        return this.localize('لا يوجد بيانات سجل مسجلة', 'No commercial registration data registered');
+
+      case 'tax':
+        if (vendor.taxId) {
+          return this.localize(
+            `الرقم الضريبي: ${vendor.taxId}`,
+            `Tax ID: ${vendor.taxId}`
+          );
+        }
+        return this.localize('لا يوجد رقم ضريبي مسجل', 'No tax ID registered');
+
+      case 'bank':
+        if (vendor.primaryBankAccount?.iban) {
+          const bankName = vendor.primaryBankAccount.bankName || '';
+          const iban = vendor.primaryBankAccount.iban;
+          const maskedIban = iban.length > 8 
+            ? iban.substring(0, 4) + '...' + iban.substring(iban.length - 4) 
+            : iban;
+          return bankName 
+            ? `${bankName} | SA ${maskedIban.replace(/^SA/i, '').trim()}`
+            : iban;
+        }
+        return this.localize('لم يتم تحديد الحساب البنكي', 'No bank account specified');
+
+      case 'license':
+        if (vendor.licenseNumber) {
+          return this.localize(
+            `رقم الرخصة: ${vendor.licenseNumber}`,
+            `License: ${vendor.licenseNumber}`
+          );
+        }
+        return this.localize('بانتظار الرفع من التاجر', 'Awaiting upload from the vendor');
+
+      default:
+        return document.descriptionKey ? this.localize(document.descriptionKey, document.descriptionKey) : '';
+    }
+  }
+
   getDocumentQueueSummary(document: VendorReviewDocument): string {
     if (!document.isUploaded) {
       return this.localize('ناقص ويحتاج رفعًا من التاجر.', 'Missing and requires vendor upload.');
@@ -920,7 +1108,7 @@ export class VendorComplianceComponent {
     }
   }
 
-  getProfileItemLabel(item: VendorProfileReviewItem): string {
+  getProfileItemLabelByCode(code: string): string {
     const labels: Record<string, { ar: string; en: string }> = {
       'step1.businessNameAr': { ar: 'اسم المتجر بالعربية', en: 'Store name (AR)' },
       'step1.businessNameEn': { ar: 'اسم المتجر بالإنجليزية', en: 'Store name (EN)' },
@@ -948,8 +1136,12 @@ export class VendorComplianceComponent {
       'step5.logo': { ar: 'شعار المتجر', en: 'Store logo' }
     };
 
-    const label = labels[item.code];
-    return label ? this.localize(label.ar, label.en) : item.code;
+    const label = labels[code];
+    return label ? this.localize(label.ar, label.en) : code;
+  }
+
+  getProfileItemLabel(item: VendorProfileReviewItem): string {
+    return this.getProfileItemLabelByCode(item.code);
   }
 
   getProfileItemValue(item: VendorProfileReviewItem): string {
@@ -1052,7 +1244,7 @@ export class VendorComplianceComponent {
         return [
           { label: this.localize('اسم المالك', 'Owner name'), value: vendor.ownerName || '—' },
           { label: this.localize('رقم الهوية', 'Identity number'), value: vendor.idNumber || '—', direction: 'ltr' },
-          { label: this.localize('الجنسية', 'Nationality'), value: vendor.nationality || '—' },
+          { label: this.localize('الجنسية', 'Nationality'), value: this.getLocalizedNationality(vendor.nationality) },
           { label: this.localize('جوال المالك', 'Owner phone'), value: vendor.ownerPhone || '—', direction: 'ltr' }
         ];
       case 'commercial':
@@ -1077,8 +1269,8 @@ export class VendorComplianceComponent {
       case 'license':
         return [
           { label: this.localize('رقم الرخصة', 'License number'), value: vendor.licenseNumber || '—', direction: 'ltr' },
-          { label: this.localize('المدينة', 'City'), value: vendor.city || '—' },
-          { label: this.localize('المنطقة', 'Region'), value: vendor.region || '—' }
+          { label: this.localize('المدينة', 'City'), value: this.getLocalizedCity(vendor.city) },
+          { label: this.localize('المنطقة', 'Region'), value: this.getLocalizedRegion(vendor.region) }
         ];
       default:
         return [];
@@ -1090,7 +1282,7 @@ export class VendorComplianceComponent {
       return '—';
     }
 
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',
@@ -1099,9 +1291,10 @@ export class VendorComplianceComponent {
   }
 
   localizeNoteMessage(message: string | undefined): string {
-    if (!message || !this.isRTL) return message || '';
+    if (!message) return '';
+    const cleanMsg = message.trim();
 
-    const staticMap: Record<string, string> = {
+    const enToAr: Record<string, string> = {
       'Vendor review started.': 'بدأت مراجعة التاجر.',
       'Vendor account reactivated and returned to active status.': 'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.',
       'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
@@ -1115,31 +1308,112 @@ export class VendorComplianceComponent {
       'Vendor updated notification preferences from Vendor Portal.': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
       'Vendor updated operational settings from Vendor Portal.': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
       'Vendor updated legal and compliance information from Vendor Portal.': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
-      'Vendor submitted the profile and required documents for compliance review.': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
+      'Vendor submitted the profile and required documents for compliance review.': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.',
+      'Vendor updated banking and payout setup from Vendor Portal. ': 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.',
+      'Vendor updated store profile details from Vendor Portal. ': 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.',
+      'Vendor updated address and contact location details from Vendor Portal. ': 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.',
+      'Vendor updated operating hours from Vendor Portal. ': 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.',
+      'Vendor updated owner information from Vendor Portal. ': 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.',
+      'Vendor updated notification preferences from Vendor Portal. ': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
+      'Vendor updated operational settings from Vendor Portal. ': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
+      'Vendor updated legal and compliance information from Vendor Portal. ': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
+      'Vendor submitted the profile and required documents for compliance review. ': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
     };
 
-    if (staticMap[message]) return staticMap[message];
+    const arToEnSpecial: Record<string, string> = {
+      'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.': 'Vendor updated banking and payout setup from Vendor Portal.',
+      'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.': 'Vendor updated store profile details from Vendor Portal.',
+      'قام التاجر بتحديث ساعات العمل من بوابة التاجر.': 'Vendor updated operating hours from Vendor Portal.',
+      'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.': 'Vendor updated legal and compliance information from Vendor Portal.',
+      'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.': 'Vendor updated notification preferences from Vendor Portal.',
+      'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.': 'Vendor updated operational settings from Vendor Portal.',
+      'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.': 'Vendor updated address and contact location details from Vendor Portal.',
+      'قام التاجر بتحديث بيانات المالك من بوابة التاجر.': 'Vendor updated owner information from Vendor Portal.'
+    };
 
-    const docTypeAr = (t: string) => ({ Commercial: 'السجل التجاري', Tax: 'الضريبة', License: 'الرخصة', Identity: 'الهوية', Bank: 'البنك' }[t] || t);
+    const arToEn: Record<string, string> = { ...arToEnSpecial };
+    for (const key of Object.keys(enToAr)) {
+      arToEn[enToAr[key].trim()] = key;
+    }
 
-    let m = message.match(/^Vendor approved with commission rate ([\d.]+)%\.$/);
-    if (m) return `تمت الموافقة على التاجر بنسبة عمولة ${m[1]}%.`;
+    const docTypes: Record<string, string> = {
+      Commercial: 'السجل التجاري',
+      Tax: 'الضريبة',
+      License: 'الرخصة',
+      Identity: 'الهوية',
+      Bank: 'البنك'
+    };
 
-    m = message.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
-    if (m) return `تم قبول مستند ${docTypeAr(m[1])}.`;
+    const docTypesReverse: Record<string, string> = {};
+    for (const key of Object.keys(docTypes)) {
+      docTypesReverse[docTypes[key]] = key;
+    }
 
-    m = message.match(/^(Commercial|Tax|License|Identity|Bank) document rejected\. (.+)$/);
-    if (m) return `تم رفض مستند ${docTypeAr(m[1])}. ${m[2]}`;
+    // Check for dynamic profile field reviews (e.g. "تم قبول العنصر step1.businessNameAr.", "Accepted field step1.businessNameAr.")
+    const fieldMatch = cleanMsg.match(/^(Accepted field|Rejected field|تم قبول العنصر|تم رفض العنصر)\s+([a-zA-Z0-9_.]+)(?:\.|\b)(.*)$/);
+    if (fieldMatch) {
+      const actionRaw = fieldMatch[1];
+      const fieldCode = fieldMatch[2];
+      const reasonRaw = fieldMatch[3] ? fieldMatch[3].trim() : '';
+      
+      const isApproved = actionRaw.includes('Accepted') || actionRaw.includes('قبول');
+      const fieldLabel = this.getProfileItemLabelByCode(fieldCode);
 
-    m = message.match(/^Vendor re-uploaded document\(s\): (.+)\. They are back in the review queue\.$/);
-    if (m) return `قام التاجر بإعادة رفع مستند(ات): ${m[1]}. تم إرجاعها لقائمة المراجعة.`;
+      if (this.isRTL) {
+        if (isApproved) {
+          return `تم قبول العنصر ${fieldLabel}.`;
+        } else {
+          return `تم رفض العنصر ${fieldLabel}.${reasonRaw ? ' ' + reasonRaw : ''}`;
+        }
+      } else {
+        if (isApproved) {
+          return `Accepted field ${fieldLabel}.`;
+        } else {
+          return `Rejected field ${fieldLabel}.${reasonRaw ? ' ' + reasonRaw : ''}`;
+        }
+      }
+    }
 
-    return message;
+    if (this.isRTL) {
+      if (enToAr[cleanMsg]) return enToAr[cleanMsg];
+
+      let m = cleanMsg.match(/^Vendor approved with commission rate ([\d.]+)%\.$/);
+      if (m) return `تمت الموافقة على التاجر بنسبة عمولة ${m[1]}%.`;
+
+      m = cleanMsg.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
+      if (m) return `تم قبول مستند ${docTypes[m[1]] || m[1]}.`;
+
+      m = cleanMsg.match(/^(Commercial|Tax|License|Identity|Bank) document rejected\. (.+)$/);
+      if (m) return `تم رفض مستند ${docTypes[m[1]] || m[1]}. ${m[2]}`;
+
+      m = cleanMsg.match(/^Vendor re-uploaded document\(s\): (.+)\. They are back in the review queue\.$/);
+      if (m) return `قام التاجر بإعادة رفع مستند(ات): ${m[1]}. تم إرجاعها لقائمة المراجعة.`;
+
+      return cleanMsg;
+    } else {
+      if (arToEn[cleanMsg]) return arToEn[cleanMsg];
+
+      let m = cleanMsg.match(/^تمت الموافقة على التاجر بنسبة عمولة ([\d.]+)%\.$/);
+      if (m) return `Vendor approved with commission rate ${m[1]}%.`;
+
+      m = cleanMsg.match(/^تم قبول مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\.$/);
+      if (m) return `${docTypesReverse[m[1]] || m[1]} document approved.`;
+
+      m = cleanMsg.match(/^تم رفض مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\. (.+)$/);
+      if (m) return `${docTypesReverse[m[1]] || m[1]} document rejected. ${m[2]}`;
+
+      m = cleanMsg.match(/^قام التاجر بإعادة رفع مستند\(ات\): (.+)\. تم إرجاعها لقائمة المراجعة\.$/);
+      if (m) return `Vendor re-uploaded document(s): ${m[1]}. They are back in the review queue.`;
+
+      return cleanMsg;
+    }
   }
 
   localizeRoleLabel(roleLabel: string): string {
-    if (!this.isRTL) return roleLabel;
-    const map: Record<string, string> = {
+    if (!roleLabel) return '';
+    const cleanLabel = roleLabel.trim();
+
+    const enToAr: Record<string, string> = {
       'Compliance Review': 'مراجعة الامتثال',
       'Document Review': 'مراجعة المستندات',
       'Risk & Compliance': 'المخاطر والامتثال',
@@ -1151,13 +1425,25 @@ export class VendorComplianceComponent {
       'Vendor Review': 'مراجعة التاجر',
       'Operations Console': 'لوحة التشغيل',
       'Vendor Compliance Desk': 'مكتب امتثال التاجر',
-      'Operations Reviewer': 'مراجع العمليات'
+      'Operations Reviewer': 'مراجع العمليات',
+      'Risk Team': 'فريق المخاطر',
+      'Review Team': 'فريق المراجعة'
     };
-    return map[roleLabel] || roleLabel;
+
+    const arToEn: Record<string, string> = {};
+    for (const key of Object.keys(enToAr)) {
+      arToEn[enToAr[key]] = key;
+    }
+
+    if (this.isRTL) {
+      return enToAr[cleanLabel] || cleanLabel;
+    } else {
+      return arToEn[cleanLabel] || cleanLabel;
+    }
   }
 
   formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US').format(value);
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US').format(value);
   }
 
   trackByDocument = (_: number, document: VendorReviewDocument) => document.id;
@@ -1197,6 +1483,36 @@ export class VendorComplianceComponent {
     }
 
     return 3;
+  }
+
+  private getLocalizedCity(city?: string | null): string {
+    if (!city) {
+      return '—';
+    }
+    const clean = city.trim();
+    const key = `COMMON.CITIES.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
+  }
+
+  private getLocalizedRegion(region?: string | null): string {
+    if (!region) {
+      return '—';
+    }
+    const clean = region.trim();
+    const key = `COMMON.REGIONS.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
+  }
+
+  private getLocalizedNationality(nationality?: string | null): string {
+    if (!nationality) {
+      return '—';
+    }
+    const clean = nationality.trim();
+    const key = `MODALS.OWNER_EDIT.NATIONALITIES.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
   }
 
   private localize(ar: string, en: string): string {

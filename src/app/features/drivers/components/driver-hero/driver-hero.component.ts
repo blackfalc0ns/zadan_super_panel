@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject, ChangeDetectorRef } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
@@ -19,9 +19,24 @@ import {
   templateUrl: './driver-hero.component.html'
 })
 export class DriverHeroComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
+  copiedFields: Record<string, boolean> = {};
+
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() isRTL = true;
   @Input() isMutating = false;
+
+  copyToClipboard(field: string, text: string) {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      this.copiedFields[field] = true;
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copiedFields[field] = false;
+        this.cdr.markForCheck();
+      }, 2000);
+    });
+  }
   
   @Output() editDriverRequested = new EventEmitter<void>();
   @Output() openTasksRequested = new EventEmitter<void>();

@@ -966,15 +966,16 @@ export class AdminUsersService {
         escalationEmails,
         preferredLocale: record.communication?.preferredLocale ?? 'bilingual',
         emailOptIn: {
-          accessInvites: Boolean(record.communication?.emailOptIn?.accessInvites),
-          branchAlerts: Boolean(record.communication?.emailOptIn?.branchAlerts),
-          dispatchNotifications: Boolean(record.communication?.emailOptIn?.dispatchNotifications),
-          complianceEmails: Boolean(record.communication?.emailOptIn?.complianceEmails),
-          financeDigests: Boolean(record.communication?.emailOptIn?.financeDigests),
-          supportEscalations: Boolean(record.communication?.emailOptIn?.supportEscalations),
-          orderIssueUpdates: Boolean(record.communication?.emailOptIn?.orderIssueUpdates),
-          marketingOptIn: Boolean(record.communication?.emailOptIn?.marketingOptIn)
-        }
+          accessInvites: record.communication?.emailOptIn?.accessInvites !== false,
+          branchAlerts: record.communication?.emailOptIn?.branchAlerts !== false,
+          dispatchNotifications: record.communication?.emailOptIn?.dispatchNotifications !== false,
+          complianceEmails: record.communication?.emailOptIn?.complianceEmails !== false,
+          financeDigests: record.communication?.emailOptIn?.financeDigests !== false,
+          supportEscalations: record.communication?.emailOptIn?.supportEscalations !== false,
+          orderIssueUpdates: record.communication?.emailOptIn?.orderIssueUpdates !== false,
+          marketingOptIn: record.communication?.emailOptIn?.marketingOptIn !== false
+        },
+        rawEmailOptInKeys: record.communication?.emailOptIn ? Object.keys(record.communication.emailOptIn) : []
       },
       featureToggles: this.unique(record.featureToggles).filter((toggle): toggle is DirectoryFeatureToggleId =>
         DIRECTORY_FEATURE_TOGGLES.some((item) => item.id === toggle)
@@ -1110,15 +1111,16 @@ export class AdminUsersService {
         .filter(Boolean)),
       preferredLocale: config.preferredLocale ?? 'bilingual',
       emailOptIn: {
-        accessInvites: Boolean(config.emailOptIn?.accessInvites),
-        branchAlerts: Boolean(config.emailOptIn?.branchAlerts),
-        dispatchNotifications: Boolean(config.emailOptIn?.dispatchNotifications),
-        complianceEmails: Boolean(config.emailOptIn?.complianceEmails),
-        financeDigests: Boolean(config.emailOptIn?.financeDigests),
-        supportEscalations: Boolean(config.emailOptIn?.supportEscalations),
-        orderIssueUpdates: Boolean(config.emailOptIn?.orderIssueUpdates),
-        marketingOptIn: Boolean(config.emailOptIn?.marketingOptIn)
-      }
+        accessInvites: config.emailOptIn?.accessInvites !== false,
+        branchAlerts: config.emailOptIn?.branchAlerts !== false,
+        dispatchNotifications: config.emailOptIn?.dispatchNotifications !== false,
+        complianceEmails: config.emailOptIn?.complianceEmails !== false,
+        financeDigests: config.emailOptIn?.financeDigests !== false,
+        supportEscalations: config.emailOptIn?.supportEscalations !== false,
+        orderIssueUpdates: config.emailOptIn?.orderIssueUpdates !== false,
+        marketingOptIn: config.emailOptIn?.marketingOptIn !== false
+      },
+      rawEmailOptInKeys: config.emailOptIn ? Object.keys(config.emailOptIn) : []
     };
   }
 

@@ -431,14 +431,21 @@
           "ADMIN_USER": "مسؤول النظام",
           "OPERATIONS_DESK": "مكتب العمليات",
           "RISK_TRUST_OPS": "عمليات الثقة والمخاطر",
-          "RISK_COMMITTEE": "لجنة المخاطر"
+          "RISK_COMMITTEE": "لجنة المخاطر",
+          "IDENTITY_SERVICE": "خدمة الهوية",
+          "CUSTOMER_APP": "تطبيق العميل",
+          "MONITORING": "المراقبة",
+          "ADMIN_POLICY": "سياسة الإدارة"
         },
         "NOTES": {
           "FLAG_FOR_REVIEW": "تم تعليم الحساب للمراجعة التشغيلية ومتابعة الإشارات المرتبطة به.",
           "CLEAR_REVIEW": "تم إغلاق تعليم المراجعة وإعادة الحساب إلى المتابعة الروتينية.",
           "ESCALATE_REVIEW": "تم تصعيد الحالة إلى مراجعة ثقة أعمق مع ضوابط إضافية على الحساب.",
           "SUSPEND_ACCOUNT": "تم تعليق الحساب مؤقتًا إلى حين إغلاق ملاحظات الثقة والدفع.",
-          "REACTIVATE_ACCOUNT": "تمت إعادة تفعيل الحساب مع استمرار المراقبة المحكومة بعد المراجعة."
+          "REACTIVATE_ACCOUNT": "تمت إعادة تفعيل الحساب مع استمرار المراقبة المحكومة بعد المراجعة.",
+          "SYNCED_FROM_APP": "تم مزامنة حساب العميل من تطبيق العميل.",
+          "MANUAL_MONITORING_REQUIRED": "نشاط العميل يتطلب مراقبة يدوية بسبب طلبات الاسترجاع أو قيود الحساب.",
+          "LOGIN_RESTRICTED": "صلاحية تسجيل الدخول مقيدة حالياً لحساب العميل هذا."
         }
       },
       "OPEN_ACCESS_PROFILE": "فتح ملف الوصول"
@@ -1774,7 +1781,8 @@
       "REPLY_TO": "عنوان الرد",
       "PREFERRED_LOCALE": "اللغة المفضلة",
       "NOTIFICATION_EMAILS": "بريد الإشعارات",
-      "ESCALATION_EMAILS": "بريد التصعيد"
+      "ESCALATION_EMAILS": "بريد التصعيد",
+      "NOTES": "ملاحظات"
     },
     "ACTIONS": {
       "RESET_PRESET": "إعادة القالب الافتراضي",
@@ -1783,7 +1791,9 @@
       "SUSPEND": "تعليق الصلاحية",
       "SAVE": "حفظ التعديلات",
       "BACK_TO_LIST": "العودة إلى الدليل",
-      "DUPLICATE": "نسخ الدور"
+      "DUPLICATE": "نسخ الدور",
+      "CREATE_USER_DESC": "أنشئ حساب تسجيل دخول واربطه بدور وصول محدد",
+      "ADD_USER": "إضافة مستخدم"
     },
     "SECURITY": {
       "MFA_ON": "المصادقة متعددة العوامل مفعلة",
@@ -1793,7 +1803,13 @@
       "INVITED_AT": "تاريخ الدعوة",
       "ACCEPTED_AT": "تاريخ القبول",
       "NEVER": "أبدًا",
-      "VERIFICATION": "التحقق"
+      "VERIFICATION": "التحقق",
+      "PASSWORD_STATE": "حالة كلمة المرور",
+      "PASSWORD_TEMPORARY": "مؤقتة",
+      "PASSWORD_CHANGED": "معدّلة",
+      "RESET_TEMPORARY_PASSWORD": "إعادة تعيين كلمة مرور مؤقتة",
+      "RESET_PASSWORD_PLACEHOLDER": "كلمة المرور المؤقتة الجديدة",
+      "RESET_BUTTON": "إعادة تعيين"
     },
     "ROLES_MANAGEMENT": {
       "TITLE": "إدارة الأدوار والصلاحيات",
@@ -1865,8 +1881,18 @@
       "GRANTED_OVERRIDES": "استثناءات ممنوحة",
       "REVOKED_OVERRIDES": "استثناءات مسحوبة",
       "CUSTOM_TOTAL": "تعديلات مخصصة",
+      "ACTIVE_ACCESS_POSTURE": "حالة الوصول النشطة",
+      "TEMPORARY_PASSWORD": "كلمة مرور مؤقتة",
+      "VERIFIED_PASSWORD": "كلمة مرور مؤكدة",
       "NOTIFICATION_RECIPIENTS": "مستلمو الإشعارات",
-      "MFA_HINT": "استخدم هذا الحقل لتحديد ما إذا كان المسؤول أكمل التسجيل الآمن."
+      "MFA_HINT": "استخدم هذا الحقل لتحديد ما إذا كان المسؤول أكمل التسجيل الآمن.",
+      "AUDIT": "سجل العمليات",
+      "AUDIT_BADGE": "سجل التدقيق",
+      "AUDIT_TITLE": "سجل الوصول",
+      "AUDIT_DESC": "آخر التعديلات على الأدوار والنطاقات والحالات والصلاحيات.",
+      "AUDIT_EMPTY": "لا توجد أي سجلات تدقيق للوصول بعد.",
+      "AUDIT_BY": "بواسطة {{name}}",
+      "AUDIT_SYSTEM": "النظام"
     },
     "SCOPE": {
       "GLOBAL": "لوحة عامة",

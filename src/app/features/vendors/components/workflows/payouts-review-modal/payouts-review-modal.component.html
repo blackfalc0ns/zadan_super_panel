@@ -1,5 +1,5 @@
-<div *ngIf="isOpen" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" (click)="onClose()">
-  <div class="relative w-full max-w-7xl bg-slate-50 rounded-2xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden" [attr.dir]="isRTL ? 'rtl' : 'ltr'" (click)="$event.stopPropagation()">
+<div *ngIf="isOpen" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-300" (click)="onClose()">
+  <div class="relative w-full max-w-7xl bg-white/80 rounded-[24px] shadow-2xl flex flex-col max-h-[92vh] overflow-hidden border border-white/40 backdrop-blur-2xl transition-all duration-500 transform scale-100 ease-out animate-in zoom-in-95" [attr.dir]="isRTL ? 'rtl' : 'ltr'" (click)="$event.stopPropagation()">
     
     <!-- Payment Detail Modal -->
     <app-payment-detail-modal
@@ -12,45 +12,48 @@
     </app-payment-detail-modal>
     
     <!-- Header -->
-    <header class="glass-effect p-6 border-b border-slate-200 flex justify-between items-center sticky top-0 z-20 backdrop-blur-md bg-white/85">
-      <div [ngClass]="isRTL ? 'text-right' : 'text-left'">
-        <h1 class="text-2xl font-bold text-slate-800">{{ 'MODALS.PAYOUTS_REVIEW.TITLE' | translate }}</h1>
-        <p class="text-slate-500 text-sm mt-1">{{ 'MODALS.PAYOUTS_REVIEW.SUBTITLE' | translate }}</p>
+    <header class="px-8 py-6 border-b border-slate-200/50 flex justify-between items-center sticky top-0 z-20 bg-white/40">
+      <div [ngClass]="isRTL ? 'text-right' : 'text-left'" class="space-y-1">
+        <h1 class="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-2xl">rule</span>
+          {{ 'MODALS.PAYOUTS_REVIEW.TITLE' | translate }}
+        </h1>
+        <p class="text-[13px] font-medium text-slate-500">{{ 'MODALS.PAYOUTS_REVIEW.SUBTITLE' | translate }}</p>
       </div>
       <div class="flex items-center gap-6">
-        <div class="hidden md:flex flex-col" [ngClass]="isRTL ? 'items-start border-r border-slate-200 pr-6' : 'items-end border-l border-slate-200 pl-6'">
-          <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ 'MODALS.PAYOUTS_REVIEW.AVAILABLE_BALANCE' | translate }}</span>
-          <span class="text-lg font-bold text-primary">{{ availableBalance | number:'1.0-0' }} <span class="text-xs font-normal">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></span>
+        <div class="hidden md:flex flex-col" [ngClass]="isRTL ? 'items-start border-r border-slate-200/60 pr-6' : 'items-end border-l border-slate-200/60 pl-6'">
+          <span class="text-[10px] text-slate-400 font-black uppercase tracking-wider">{{ 'MODALS.PAYOUTS_REVIEW.AVAILABLE_BALANCE' | translate }}</span>
+          <span class="text-lg font-black text-primary">{{ availableBalance | number:'1.2-2' }} <span class="text-xs font-bold text-primary/80">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></span>
         </div>
-        <button (click)="onClose()" aria-label="Close" class="p-2 hover:bg-slate-200 rounded-full transition-colors">
-          <span class="material-symbols-outlined text-slate-400">close</span>
+        <button (click)="onClose()" aria-label="Close" class="p-2 hover:bg-slate-100/80 hover:rotate-90 rounded-xl transition-all duration-300 cursor-pointer select-none">
+          <span class="material-symbols-outlined text-slate-400 font-bold">close</span>
         </button>
       </div>
     </header>
 
-    <div class="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col">
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col custom-scrollbar">
       
       <!-- Filter Bar -->
-      <section class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+      <section class="rounded-2xl p-5 border border-slate-900/5 bg-white/50 shadow-sm backdrop-blur-sm">
         <div class="flex flex-wrap items-end gap-4">
-          <div class="flex-1 min-w-[180px]">
-            <label class="block text-xs font-bold text-slate-600 mb-2" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.REFERENCE' | translate }}</label>
-            <input [(ngModel)]="filters.reference" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3" [placeholder]="'MODALS.PAYOUTS_REVIEW.REFERENCE_PLACEHOLDER' | translate" type="text"/>
+          <div class="flex-1 min-w-[180px] space-y-2">
+            <label class="block text-[11px] font-black text-slate-500 uppercase tracking-wider" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.REFERENCE' | translate }}</label>
+            <input [(ngModel)]="filters.reference" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2 text-sm font-medium text-slate-900 shadow-sm transition-all focus:outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10" [placeholder]="'MODALS.PAYOUTS_REVIEW.REFERENCE_PLACEHOLDER' | translate" type="text"/>
           </div>
-          <div class="flex-1 min-w-[180px]">
-            <label class="block text-xs font-bold text-slate-600 mb-2" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.STATUS' | translate }}</label>
+          <div class="flex-1 min-w-[180px] space-y-2">
+            <label class="block text-[11px] font-black text-slate-500 uppercase tracking-wider" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.STATUS' | translate }}</label>
             <app-searchable-select [(ngModel)]="filters.status" [searchable]="false" [options]="statusOptions" [placeholder]="'MODALS.PAYOUTS_REVIEW.STATUS' | translate"></app-searchable-select>
           </div>
-          <div class="flex-1 min-w-[180px]">
-            <label class="block text-xs font-bold text-slate-600 mb-2" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.DATE' | translate }}</label>
-            <input [(ngModel)]="filters.date" class="w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary h-10 px-3" type="date"/>
+          <div class="flex-1 min-w-[180px] space-y-2">
+            <label class="block text-[11px] font-black text-slate-500 uppercase tracking-wider" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.DATE' | translate }}</label>
+            <input [(ngModel)]="filters.date" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2 text-sm font-medium text-slate-900 shadow-sm transition-all focus:outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 h-[38px]" type="date"/>
           </div>
-          <div class="flex-1 min-w-[180px]">
-            <label class="block text-xs font-bold text-slate-600 mb-2" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.BANK' | translate }}</label>
+          <div class="flex-1 min-w-[180px] space-y-2">
+            <label class="block text-[11px] font-black text-slate-500 uppercase tracking-wider" [ngClass]="isRTL ? 'mr-1' : 'ml-1'">{{ 'MODALS.PAYOUTS_REVIEW.BANK' | translate }}</label>
             <app-searchable-select [(ngModel)]="filters.bank" [searchable]="false" [options]="bankOptions" [placeholder]="'MODALS.PAYOUTS_REVIEW.BANK' | translate"></app-searchable-select>
           </div>
           <div class="w-full lg:w-auto">
-            <button (click)="resetFilters()" class="w-full lg:px-6 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-bold transition-colors border border-slate-200">
+            <button (click)="resetFilters()" class="w-full lg:px-6 h-[38px] bg-slate-100 hover:bg-slate-200/80 text-slate-700 rounded-xl text-xs font-bold transition-all duration-200 border border-slate-200 active:scale-98">
               {{ 'MODALS.PAYOUTS_REVIEW.RESET' | translate }}
             </button>
           </div>
@@ -58,14 +61,14 @@
       </section>
 
       <!-- Main Table and Detail View -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0">
         
         <!-- Payments Table -->
-        <div class="lg:col-span-8 xl:col-span-9 flex flex-col overflow-hidden bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div class="lg:col-span-8 xl:col-span-9 flex flex-col overflow-hidden bg-white/60 rounded-2xl border border-slate-900/5 shadow-sm backdrop-blur-sm">
           <div class="overflow-x-auto flex-1">
             <table class="w-full table-fixed border-collapse" [ngClass]="isRTL ? 'text-right' : 'text-left'">
               <thead>
-                <tr class="bg-slate-50/80 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0 z-10">
+                <tr class="bg-slate-50/50 text-slate-500 text-[10px] font-black uppercase tracking-wider border-b border-slate-200/60 sticky top-0 z-10">
                   <th class="p-4">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.PAYMENT_NUMBER' | translate }}</th>
                   <th class="p-4">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.DATE' | translate }}</th>
                   <th class="p-4">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.AMOUNT' | translate }}</th>
@@ -75,39 +78,39 @@
                   <th class="p-4 text-center">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.ACTIONS' | translate }}</th>
                 </tr>
               </thead>
-              <tbody class="text-sm divide-y divide-slate-100">
-                <tr *ngFor="let transaction of filteredTransactions" (click)="selectTransaction(transaction)" [ngClass]="getRowClass(transaction)" class="cursor-pointer">
+              <tbody class="text-xs divide-y divide-slate-100/60">
+                <tr *ngFor="let transaction of filteredTransactions" (click)="selectTransaction(transaction)" [ngClass]="getRowClass(transaction)" class="cursor-pointer hover:bg-slate-50/50 transition-colors border-b border-slate-100/60">
                   <td class="p-4 font-bold text-slate-700">{{ transaction.paymentNumber }}</td>
                   <td class="p-4 text-slate-500">
-                    {{ transaction.date }}<br/>
-                    <span class="text-[10px] opacity-70">{{ transaction.time }}</span>
+                    <span class="font-semibold">{{ transaction.date }}</span><br/>
+                    <span class="text-[10px] text-slate-400 font-medium">{{ transaction.time }}</span>
                   </td>
-                  <td class="p-4 font-bold text-slate-900">{{ transaction.amount | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</td>
-                  <td class="p-4 text-slate-600">{{ formatBankDestination(transaction) }}</td>
+                  <td class="p-4 font-black text-slate-900 text-sm">{{ transaction.amount | number:'1.2-2' }} <span class="text-[10px] text-slate-400 font-bold">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></td>
+                  <td class="p-4 text-slate-600 font-medium">{{ formatBankDestination(transaction) }}</td>
                   <td class="p-4">
-                    <span [ngClass]="getStatusClass(transaction.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border">
+                    <span [ngClass]="getStatusClass(transaction.status)" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border">
                       {{ getStatusLabel(transaction.status) }}
                     </span>
                   </td>
-                  <td class="p-4 font-mono text-xs" [ngClass]="transaction.status === 'failed' ? 'text-rose-500' : 'text-slate-400'">
+                  <td class="p-4 font-mono text-[11px]" [ngClass]="transaction.status === 'failed' ? 'text-rose-500 font-bold' : 'text-slate-400 font-medium'">
                     {{ transaction.reference }}
                   </td>
                   <td class="p-4">
-                    <div class="flex items-center justify-center gap-2">
-                      <button *ngIf="transaction.status === 'failed'" (click)="selectTransaction(transaction); onRetryPayment(); $event.stopPropagation()" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-md transition-colors">
+                    <div class="flex items-center justify-center gap-1.5">
+                      <button *ngIf="transaction.status === 'failed'" (click)="selectTransaction(transaction); onRetryPayment(); $event.stopPropagation()" class="p-1.5 text-rose-600 hover:bg-rose-100/80 rounded-lg transition-colors" title="{{ 'MODALS.PAYOUTS_REVIEW.ACTIONS.RETRY' | translate }}">
                         <span class="material-symbols-outlined text-base">refresh</span>
                       </button>
-                      <button (click)="viewTransactionDetails(transaction); $event.stopPropagation()" class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded transition-colors">
+                      <button (click)="viewTransactionDetails(transaction); $event.stopPropagation()" class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="{{ 'MODALS.PAYOUTS_REVIEW.TABLE.ACTIONS' | translate }}">
                         <span class="material-symbols-outlined text-base">visibility</span>
                       </button>
-                      <button *ngIf="transaction.status === 'success'" (click)="selectTransaction(transaction); onDownloadReceipt(); $event.stopPropagation()" class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded transition-colors">
+                      <button *ngIf="transaction.status === 'success'" (click)="selectTransaction(transaction); onDownloadReceipt(); $event.stopPropagation()" class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="{{ 'MODALS.PAYOUTS_REVIEW.EXPORT_RECORD' | translate }}">
                         <span class="material-symbols-outlined text-base">content_copy</span>
                       </button>
                     </div>
                   </td>
                 </tr>
                 <tr *ngIf="filteredTransactions.length === 0">
-                  <td colspan="7" class="p-8 text-center text-sm font-medium text-slate-500">
+                  <td colspan="7" class="p-8 text-center text-sm font-bold text-slate-400 bg-white/20">
                     {{ 'COMMON.NO_RESULTS' | translate }}
                   </td>
                 </tr>
@@ -116,14 +119,14 @@
           </div>
 
           <!-- Table Footer / Pagination -->
-          <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-            <span class="text-xs text-slate-500">{{ 'MODALS.PAYOUTS_REVIEW.SHOWING_RESULTS' | translate }}</span>
+          <div class="p-4 bg-slate-50/50 border-t border-slate-100/60 flex items-center justify-between shrink-0">
+            <span class="text-xs font-bold text-slate-500">{{ 'MODALS.PAYOUTS_REVIEW.SHOWING_RESULTS' | translate }}</span>
             <div class="flex gap-2">
-              <button class="p-1 text-slate-400 hover:text-primary disabled:opacity-30" disabled>
-                <span class="material-symbols-outlined">chevron_left</span>
+              <button class="p-1.5 text-slate-400 hover:text-primary disabled:opacity-30 rounded-lg transition-all" disabled>
+                <span class="material-symbols-outlined text-lg">chevron_left</span>
               </button>
-              <button class="p-1 text-slate-400 hover:text-primary">
-                <span class="material-symbols-outlined">chevron_right</span>
+              <button class="p-1.5 text-slate-400 hover:text-primary rounded-lg transition-all">
+                <span class="material-symbols-outlined text-lg">chevron_right</span>
               </button>
             </div>
           </div>
@@ -131,40 +134,60 @@
 
         <!-- Detail Panel -->
         <aside *ngIf="selectedTransaction" class="lg:col-span-4 xl:col-span-3 flex flex-col">
-          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 h-full flex flex-col">
-            <h3 class="text-sm font-bold text-slate-800 border-b border-slate-100 pb-4 mb-4 flex items-center gap-2">
-              <span *ngIf="selectedTransaction.status === 'failed'" class="material-symbols-outlined text-rose-500 text-base">warning</span>
-              <span *ngIf="selectedTransaction.status === 'pending'" class="material-symbols-outlined text-amber-500 text-base">schedule</span>
-              <span *ngIf="selectedTransaction.status === 'reviewing'" class="material-symbols-outlined text-blue-500 text-base">pending</span>
-              <span *ngIf="selectedTransaction.status === 'success'" class="material-symbols-outlined text-emerald-500 text-base">check_circle</span>
-              {{ 'MODALS.PAYOUTS_REVIEW.TRANSACTION_DETAILS' | translate }} {{ getStatusLabel(selectedTransaction.status) }}
+          <div class="bg-white/60 rounded-2xl border border-slate-900/5 shadow-sm p-5 h-full flex flex-col backdrop-blur-sm">
+            <h3 class="text-sm font-black text-slate-800 border-b border-slate-100 pb-4 mb-4 flex items-center gap-2">
+              <span *ngIf="selectedTransaction.status === 'failed'" class="material-symbols-outlined text-rose-500 text-lg">warning</span>
+              <span *ngIf="selectedTransaction.status === 'pending'" class="material-symbols-outlined text-amber-500 text-lg">schedule</span>
+              <span *ngIf="selectedTransaction.status === 'reviewing'" class="material-symbols-outlined text-blue-500 text-lg">pending</span>
+              <span *ngIf="selectedTransaction.status === 'success'" class="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+              {{ 'MODALS.PAYOUTS_REVIEW.TRANSACTION_DETAILS' | translate }}
             </h3>
 
-            <div class="flex-1 space-y-5">
+            <div class="flex-1 flex flex-col justify-between space-y-5">
               <!-- Failure Reason (if failed) -->
-              <div *ngIf="selectedTransaction.status === 'failed' && selectedTransaction.failureReason" class="bg-rose-50 p-4 rounded-lg border border-rose-100/50">
-                <p class="text-xs text-rose-800 font-bold mb-1.5 flex items-center gap-1.5">
+              <div *ngIf="selectedTransaction.status === 'failed' && selectedTransaction.failureReason" class="bg-rose-50/80 p-4 rounded-xl border border-rose-100/50">
+                <p class="text-xs text-rose-800 font-black mb-1.5 flex items-center gap-1.5">
                   <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
                   {{ 'MODALS.PAYMENT_DETAIL.FAILURE_REASON' | translate }}
                 </p>
-                <p class="text-xs text-rose-600 leading-relaxed">{{ selectedTransaction.failureReason }}</p>
+                <p class="text-xs font-medium text-rose-600 leading-relaxed">{{ selectedTransaction.failureReason }}</p>
+              </div>
+
+              <!-- Details Info List -->
+              <div class="space-y-3 bg-white/40 p-3 rounded-xl border border-slate-100">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400 font-bold">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.PAYMENT_NUMBER' | translate }}:</span>
+                  <span class="text-slate-700 font-black">{{ selectedTransaction.paymentNumber }}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400 font-bold">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.AMOUNT' | translate }}:</span>
+                  <span class="text-slate-900 font-black">{{ selectedTransaction.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400 font-bold">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.REFERENCE' | translate }}:</span>
+                  <span class="text-slate-700 font-mono text-[11px] truncate max-w-[120px]" dir="ltr">{{ selectedTransaction.reference }}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400 font-bold">{{ 'MODALS.PAYOUTS_REVIEW.TABLE.DATE' | translate }}:</span>
+                  <span class="text-slate-600 font-semibold">{{ selectedTransaction.date }}</span>
+                </div>
               </div>
 
               <!-- Actions -->
               <div class="space-y-3">
-                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-2">{{ 'MODALS.PAYOUTS_REVIEW.MANAGER_ACTIONS' | translate }}</p>
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-wider mb-2">{{ 'MODALS.PAYOUTS_REVIEW.MANAGER_ACTIONS' | translate }}</p>
                 
-                <button *ngIf="selectedTransaction.status === 'failed'" (click)="onRetryPayment()" class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white py-2.5 rounded-lg text-xs font-bold shadow-md shadow-primary/10 transition-all">
+                <button *ngIf="selectedTransaction.status === 'failed'" (click)="onRetryPayment()" class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/95 text-white py-2.5 rounded-xl text-xs font-black shadow-md shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 cursor-pointer select-none">
                   <span class="material-symbols-outlined text-sm">refresh</span>
                   {{ 'MODALS.PAYOUTS_REVIEW.ACTIONS.RETRY' | translate }}
                 </button>
 
                 <div class="grid grid-cols-2 gap-2">
-                  <button (click)="onSuspendPayment()" class="flex items-center justify-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 py-2.5 rounded-lg text-[11px] font-bold transition-all">
+                  <button (click)="onSuspendPayment()" class="flex items-center justify-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 py-2.5 rounded-xl text-[11px] font-bold transition-all active:scale-98">
                     <span class="material-symbols-outlined text-sm">pause_circle</span>
                     {{ 'MODALS.PAYOUTS_REVIEW.ACTIONS.SUSPEND' | translate }}
                   </button>
-                  <button (click)="onEscalatePayment()" class="flex items-center justify-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 py-2.5 rounded-lg text-[11px] font-bold transition-all">
+                  <button (click)="onEscalatePayment()" class="flex items-center justify-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 py-2.5 rounded-xl text-[11px] font-bold transition-all active:scale-98">
                     <span class="material-symbols-outlined text-sm">mail</span>
                     {{ 'MODALS.PAYOUTS_REVIEW.ACTIONS.ESCALATE' | translate }}
                   </button>
@@ -172,9 +195,9 @@
               </div>
 
               <!-- Internal Notes -->
-              <div class="pt-4 border-t border-slate-100 mt-auto">
-                <label class="text-[10px] text-slate-400 font-bold mb-2 block uppercase">{{ 'MODALS.PAYOUTS_REVIEW.INTERNAL_NOTES' | translate }}</label>
-                <textarea [(ngModel)]="internalNotes" class="w-full text-xs border-slate-200 rounded-lg h-28 resize-none placeholder:text-slate-300 focus:ring-primary focus:border-primary p-3" [placeholder]="'MODALS.PAYOUTS_REVIEW.INTERNAL_NOTES_PLACEHOLDER' | translate"></textarea>
+              <div class="pt-4 border-t border-slate-200/50 mt-auto">
+                <label class="text-[10px] text-slate-400 font-black mb-2 block uppercase tracking-wider">{{ 'MODALS.PAYOUTS_REVIEW.INTERNAL_NOTES' | translate }}</label>
+                <textarea [(ngModel)]="internalNotes" class="w-full text-xs border border-slate-900/12 bg-white/60 rounded-xl h-24 resize-none placeholder:text-slate-300 focus:ring-primary/20 focus:ring-4 focus:outline-none focus:border-primary focus:bg-white p-3 font-medium transition-all duration-200" [placeholder]="'MODALS.PAYOUTS_REVIEW.INTERNAL_NOTES_PLACEHOLDER' | translate"></textarea>
               </div>
             </div>
           </div>
@@ -183,17 +206,17 @@
     </div>
 
     <!-- Footer -->
-    <footer class="p-6 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 z-20">
+    <footer class="p-6 bg-slate-50/90 border-t border-slate-200/50 flex flex-col sm:flex-row justify-between items-center gap-4 z-20">
       <div class="flex items-center gap-3 w-full sm:w-auto">
-        <button (click)="onClose()" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-100 transition-all shadow-sm">
+        <button (click)="onClose()" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all shadow-sm active:scale-98">
           {{ 'MODALS.PAYOUTS_REVIEW.CLOSE' | translate }}
         </button>
-        <button (click)="onDownloadReceipt()" [disabled]="!selectedTransaction" class="px-6 py-2.5 bg-white border border-primary/30 text-primary rounded-lg text-sm font-bold hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button (click)="onDownloadReceipt()" [disabled]="!selectedTransaction" class="px-6 py-2.5 bg-white border border-primary/30 text-primary rounded-xl text-xs font-bold hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-98">
           <span class="material-symbols-outlined text-base">download</span>
           {{ 'MODALS.PAYOUTS_REVIEW.EXPORT_RECORD' | translate }}
         </button>
       </div>
-      <button (click)="onViewActivityLog()" [disabled]="!selectedTransaction" class="w-full sm:w-auto px-10 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed">
+      <button (click)="onViewActivityLog()" [disabled]="!selectedTransaction" class="w-full sm:w-auto px-10 py-2.5 bg-primary hover:bg-primary/95 text-white rounded-xl text-xs font-black transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed active:scale-98 hover:-translate-y-0.5 active:translate-y-0">
         {{ 'MODALS.PAYOUTS_REVIEW.SAVE_UPDATE' | translate }}
       </button>
     </footer>

@@ -182,19 +182,32 @@ export class VendorFinanceComponent implements OnInit {
     });
   }
 
+  get latestPayout(): AdminVendorPayoutItem | null {
+    return this.payouts[0] ?? null;
+  }
+
   get latestDirectPayout(): AdminVendorPayoutItem | null {
     return this.directPayouts[0] ?? null;
   }
 
   get availableBalance(): number {
-    return this.directPayouts
+    return this.payouts
       .filter((item) => item.status.toLowerCase() === 'paid')
       .reduce((sum, item) => sum + item.amount, 0);
   }
 
   get pendingBalance(): number {
-    return this.deliveredOrdersAwaitingPayout
+    const ordersBalance = this.deliveredOrdersAwaitingPayout
       .reduce((sum, order) => sum + Math.max(order.totalAmount - order.commissionAmount, 0), 0);
+
+    const pendingSettlementsBalance = this.settlements
+      .filter((s) => {
+        const status = s.status.toLowerCase();
+        return status !== 'settled' && status !== 'paidout' && status !== 'rejected' && status !== 'failed' && status !== 'reversed';
+      })
+      .reduce((sum, s) => sum + s.netAmount, 0);
+
+    return ordersBalance + pendingSettlementsBalance;
   }
 
   get pendingGrossAmount(): number {
@@ -216,9 +229,11 @@ export class VendorFinanceComponent implements OnInit {
         icon: 'account_balance_wallet'
       },
       {
-        label: this.text('آخر تحويل مباشر', 'Last direct payout'),
-        value: this.latestDirectPayout
-          ? this.formatDate(this.latestDirectPayout.processedAtUtc || this.latestDirectPayout.createdAtUtc)
+        label: this.isDirectMode
+          ? this.text('آخر تحويل مباشر', 'Last direct payout')
+          : this.text('آخر تحويل مجمع', 'Last batch payout'),
+        value: this.latestPayout
+          ? this.formatDate(this.latestPayout.processedAtUtc || this.latestPayout.createdAtUtc)
           : this.emptyValue(),
         tone: 'success',
         icon: 'payments'
@@ -274,14 +289,28 @@ export class VendorFinanceComponent implements OnInit {
   get payoutTransactions(): PayoutTransaction[] {
     return this.payouts.map((item) => {
       const eventDate = item.processedAtUtc || item.createdAtUtc;
+      let datePart = '—';
+      let timePart = '—';
+      try {
+        if (eventDate) {
+          const d = new Date(eventDate);
+          if (!isNaN(d.getTime())) {
+            datePart = d.toISOString().slice(0, 10);
+            timePart = d.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          }
+        }
+      } catch {
+        // Fallback to defaults
+      }
+
       return {
         id: item.id,
         paymentNumber: item.payoutNumber,
-        date: new Date(eventDate).toISOString().slice(0, 10),
-        time: new Date(eventDate).toLocaleTimeString(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
+        date: datePart,
+        time: timePart,
         createdAtUtc: item.createdAtUtc,
         processedAtUtc: item.processedAtUtc ?? undefined,
         amount: item.amount,

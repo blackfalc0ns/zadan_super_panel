@@ -68,16 +68,13 @@
         </div>
 
         <!-- Embedded Tabs Navigation -->
-        <div class="rounded-[2rem] border border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm px-4 py-2">
-          <app-detail-tabs-nav
-            [tabs]="navItems"
-            [activeTab]="currentTab"
-            (tabChange)="onTabChange($event)">
-          </app-detail-tabs-nav>
-        </div>
+        <app-detail-tabs-nav
+          [tabs]="navItems"
+          [activeTab]="currentTab"
+          (tabChange)="onTabChange($event)">
+        </app-detail-tabs-nav>
 
         <!-- Tab Contents -->
-        <div class="rounded-[2rem] border border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm p-6 sm:p-8 min-h-[500px]">
           <ng-container [ngSwitch]="currentTab">
             <!-- Overview -->
             <app-driver-overview-tab 
@@ -143,7 +140,6 @@
               (documentRejectionRequested)="documentRejectionRequested.emit($event)">
             </app-driver-verification-tab>
           </ng-container>
-        </div>
       </div>
     </div>
 

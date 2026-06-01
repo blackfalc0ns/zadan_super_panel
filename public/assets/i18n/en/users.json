@@ -432,14 +432,21 @@
           "ADMIN_USER": "Admin User",
           "OPERATIONS_DESK": "Operations Desk",
           "RISK_TRUST_OPS": "Risk & Trust Ops",
-          "RISK_COMMITTEE": "Risk Committee"
+          "RISK_COMMITTEE": "Risk Committee",
+          "IDENTITY_SERVICE": "Identity Service",
+          "CUSTOMER_APP": "Customer App",
+          "MONITORING": "Monitoring",
+          "ADMIN_POLICY": "Admin Policy"
         },
         "NOTES": {
           "FLAG_FOR_REVIEW": "The account was flagged for operational review and closer signal monitoring.",
           "CLEAR_REVIEW": "The review flag was cleared and the account returned to routine monitoring.",
           "ESCALATE_REVIEW": "The case was escalated to a deeper trust review with additional controls.",
           "SUSPEND_ACCOUNT": "The account was temporarily suspended until trust and payment blockers are closed.",
-          "REACTIVATE_ACCOUNT": "The account was reactivated with guarded monitoring after review completion."
+          "REACTIVATE_ACCOUNT": "The account was reactivated with guarded monitoring after review completion.",
+          "SYNCED_FROM_APP": "Customer account synced from the user app.",
+          "MANUAL_MONITORING_REQUIRED": "Customer activity requires manual monitoring due to refunds or account restrictions.",
+          "LOGIN_RESTRICTED": "Login access is currently restricted for this customer account."
         }
       }
     }
@@ -1774,7 +1781,8 @@
       "REPLY_TO": "Reply-to",
       "PREFERRED_LOCALE": "Preferred locale",
       "NOTIFICATION_EMAILS": "Notification emails",
-      "ESCALATION_EMAILS": "Escalation emails"
+      "ESCALATION_EMAILS": "Escalation emails",
+      "NOTES": "Notes"
     },
     "ACTIONS": {
       "RESET_PRESET": "Reset to preset",
@@ -1783,7 +1791,9 @@
       "SUSPEND": "Suspend access",
       "SAVE": "Save changes",
       "BACK_TO_LIST": "Back to directory",
-      "DUPLICATE": "Duplicate role"
+      "DUPLICATE": "Duplicate role",
+      "CREATE_USER_DESC": "Create a login account and attach it to an access role",
+      "ADD_USER": "Add User"
     },
     "SECURITY": {
       "MFA_ON": "MFA enabled",
@@ -1793,7 +1803,13 @@
       "INVITED_AT": "Invited at",
       "ACCEPTED_AT": "Accepted at",
       "NEVER": "Never",
-      "VERIFICATION": "Verification"
+      "VERIFICATION": "Verification",
+      "PASSWORD_STATE": "Password state",
+      "PASSWORD_TEMPORARY": "Temporary",
+      "PASSWORD_CHANGED": "Changed",
+      "RESET_TEMPORARY_PASSWORD": "Reset temporary password",
+      "RESET_PASSWORD_PLACEHOLDER": "New temporary password",
+      "RESET_BUTTON": "Reset"
     },
     "ROLES_MANAGEMENT": {
       "TITLE": "Roles & Permissions Management",
@@ -1865,8 +1881,18 @@
       "GRANTED_OVERRIDES": "granted overrides",
       "REVOKED_OVERRIDES": "revoked overrides",
       "CUSTOM_TOTAL": "custom changes",
+      "ACTIVE_ACCESS_POSTURE": "Active Access Posture",
+      "TEMPORARY_PASSWORD": "Temporary password",
+      "VERIFIED_PASSWORD": "Verified password",
       "NOTIFICATION_RECIPIENTS": "notification recipients",
-      "MFA_HINT": "Use this to reflect whether the admin completed secure enrollment."
+      "MFA_HINT": "Use this to reflect whether the admin completed secure enrollment.",
+      "AUDIT": "Audit Log",
+      "AUDIT_BADGE": "Audit log",
+      "AUDIT_TITLE": "Access history",
+      "AUDIT_DESC": "Recent role, scope, status, and permission changes.",
+      "AUDIT_EMPTY": "No access audit entries yet.",
+      "AUDIT_BY": "By {{name}}",
+      "AUDIT_SYSTEM": "System"
     },
     "SCOPE": {
       "GLOBAL": "Global panel",

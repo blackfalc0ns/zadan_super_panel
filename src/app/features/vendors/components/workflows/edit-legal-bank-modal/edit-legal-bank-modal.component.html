@@ -1,22 +1,22 @@
 <div
   *ngIf="isOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300"
   (click)="onBackdropClick($event)">
   <div
-    class="relative z-10 flex w-full max-w-4xl flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-2xl"
+    class="relative z-10 flex w-full max-w-4xl flex-col overflow-hidden rounded-[24px] border border-white/40 bg-white/80 shadow-2xl backdrop-blur-2xl transition-all duration-500 transform scale-100 ease-out animate-in zoom-in-95"
     [attr.dir]="isRTL ? 'rtl' : 'ltr'"
     (click)="$event.stopPropagation()">
 
-    <header class="flex items-start justify-between gap-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-5">
+    <header class="flex items-center justify-between gap-4 border-b border-slate-200/50 bg-white/40 px-8 py-6">
       <div class="flex items-center gap-4">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-zadna-primaryLight/20 to-zadna-primaryLight/5 text-zadna-primary shadow-inner border border-zadna-primaryLight/20">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-inner border border-primary/10">
           <span class="material-symbols-outlined text-[22px]">account_balance</span>
         </div>
-        <div class="space-y-1">
+        <div class="space-y-0.5 text-start">
           <h2 class="text-lg font-black text-slate-900">
             {{ isRTL ? 'تعديل البيانات القانونية والبنكية' : 'Edit legal and banking data' }}
           </h2>
-          <p class="text-sm font-medium text-slate-500">
+          <p class="text-xs font-bold text-slate-500">
             {{ isRTL ? 'تحديث السجل التجاري والحساب البنكي الرئيسي.' : 'Update the commercial record and primary bank account.' }}
           </p>
         </div>
@@ -25,42 +25,42 @@
         type="button"
         (click)="onClose()"
         [disabled]="isSaving"
-        class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40">
-        <span class="material-symbols-outlined text-[20px]">close</span>
+        class="p-2 hover:bg-slate-100/80 hover:rotate-90 rounded-xl transition-all duration-300 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-40">
+        <span class="material-symbols-outlined text-slate-400 font-bold">close</span>
       </button>
     </header>
 
-    <div class="max-h-[72vh] overflow-y-auto px-6 py-5">
+    <div class="max-h-[70vh] overflow-y-auto px-8 py-6 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
       <fieldset class="space-y-6" [disabled]="isSaving">
 
         <!-- Legal Data Section -->
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px] text-primary">gavel</span>
-            <p class="text-xs font-black uppercase tracking-wider text-slate-400" [class.text-right]="isRTL">
+            <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
               {{ isRTL ? 'البيانات القانونية' : 'Legal data' }}
             </p>
           </div>
 
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'السجل التجاري' : 'Commercial registration' }} <span class="text-rose-400">*</span></label>
-              <input type="text" dir="ltr" name="commercialRegistrationNumber" [(ngModel)]="draftLegalBankData.commercialRegistrationNumber" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left font-mono text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'السجل التجاري' : 'Commercial registration' }} <span class="text-rose-400">*</span></label>
+              <input type="text" dir="ltr" name="commercialRegistrationNumber" [(ngModel)]="draftLegalBankData.commercialRegistrationNumber" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'تاريخ انتهاء السجل' : 'CR expiry date' }}</label>
-              <input type="date" dir="ltr" name="commercialRegistrationExpiryDate" [(ngModel)]="draftLegalBankData.commercialRegistrationExpiryDate" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'تاريخ انتهاء السجل' : 'CR expiry date' }}</label>
+              <input type="date" dir="ltr" name="commercialRegistrationExpiryDate" [(ngModel)]="draftLegalBankData.commercialRegistrationExpiryDate" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start">
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'الرقم الضريبي' : 'Tax ID' }}</label>
-              <input type="text" dir="ltr" name="taxId" [(ngModel)]="draftLegalBankData.taxId" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left font-mono text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'الرقم الضريبي' : 'Tax ID' }}</label>
+              <input type="text" dir="ltr" name="taxId" [(ngModel)]="draftLegalBankData.taxId" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'رقم الرخصة' : 'License number' }}</label>
-              <input type="text" dir="ltr" name="licenseNumber" [(ngModel)]="draftLegalBankData.licenseNumber" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left font-mono text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'رقم الرخصة' : 'License number' }}</label>
+              <input type="text" dir="ltr" name="licenseNumber" [(ngModel)]="draftLegalBankData.licenseNumber" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
             </div>
           </div>
         </div>
@@ -69,65 +69,65 @@
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px] text-primary">folder_open</span>
-            <p class="text-xs font-black uppercase tracking-wider text-slate-400">
+            <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
               {{ isRTL ? 'المرفقات القانونية' : 'Legal attachments' }}
             </p>
           </div>
 
           <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
             <!-- CR Document -->
-            <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-3.5">
-              <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500">{{ isRTL ? 'السجل التجاري' : 'CR document' }}</p>
+            <div class="rounded-2xl border border-slate-900/5 bg-slate-50/50 p-4 shadow-sm">
+              <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500 text-start">{{ isRTL ? 'السجل التجاري' : 'CR document' }}</p>
               <div class="flex items-center gap-3">
                 <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white">
-                  <a *ngIf="draftLegalBankData.commercialRegisterDocumentUrl" [href]="draftLegalBankData.commercialRegisterDocumentUrl" target="_blank" class="text-primary"><span class="material-symbols-outlined text-[22px]">picture_as_pdf</span></a>
+                  <a *ngIf="draftLegalBankData.commercialRegisterDocumentUrl" [href]="draftLegalBankData.commercialRegisterDocumentUrl" target="_blank" class="text-primary hover:bg-primary/5 transition-colors"><span class="material-symbols-outlined text-[22px]">picture_as_pdf</span></a>
                   <span *ngIf="!draftLegalBankData.commercialRegisterDocumentUrl" class="material-symbols-outlined text-[22px] text-slate-300">note_add</span>
                 </div>
-                <div class="min-w-0 flex-1">
-                  <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[10px] font-black text-primary hover:bg-primary/10">
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <label class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[10px] font-black text-primary hover:bg-primary/10 w-fit select-none">
                     <span class="material-symbols-outlined text-[14px]">upload</span>
                     {{ isUploading === 'cr' ? (isRTL ? 'رفع...' : '...') : (isRTL ? 'رفع' : 'Upload') }}
                     <input type="file" class="hidden" accept=".pdf,image/*" (change)="onCrFileSelected($event)" [disabled]="isUploading === 'cr'">
                   </label>
-                  <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftLegalBankData.commercialRegisterDocumentUrl" placeholder="URL" class="mt-1.5 h-7 w-full rounded-md border border-slate-200 px-2 text-[10px] font-mono text-slate-500 outline-none focus:border-primary">
+                  <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftLegalBankData.commercialRegisterDocumentUrl" placeholder="URL" class="w-full border border-slate-900/12 bg-white/60 rounded-lg px-2 py-1 text-[10px] font-mono text-slate-500 shadow-sm outline-none focus:border-primary">
                 </div>
               </div>
             </div>
 
             <!-- Tax Document -->
-            <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-3.5">
-              <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500">{{ isRTL ? 'الملف الضريبي' : 'Tax document' }}</p>
+            <div class="rounded-2xl border border-slate-900/5 bg-slate-50/50 p-4 shadow-sm">
+              <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500 text-start">{{ isRTL ? 'الملف الضريبي' : 'Tax document' }}</p>
               <div class="flex items-center gap-3">
                 <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white">
-                  <a *ngIf="draftLegalBankData.taxDocumentUrl" [href]="draftLegalBankData.taxDocumentUrl" target="_blank" class="text-primary"><span class="material-symbols-outlined text-[22px]">picture_as_pdf</span></a>
+                  <a *ngIf="draftLegalBankData.taxDocumentUrl" [href]="draftLegalBankData.taxDocumentUrl" target="_blank" class="text-primary hover:bg-primary/5 transition-colors"><span class="material-symbols-outlined text-[22px]">picture_as_pdf</span></a>
                   <span *ngIf="!draftLegalBankData.taxDocumentUrl" class="material-symbols-outlined text-[22px] text-slate-300">note_add</span>
                 </div>
-                <div class="min-w-0 flex-1">
-                  <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[10px] font-black text-primary hover:bg-primary/10">
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <label class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[10px] font-black text-primary hover:bg-primary/10 w-fit select-none">
                     <span class="material-symbols-outlined text-[14px]">upload</span>
                     {{ isUploading === 'tax' ? (isRTL ? 'رفع...' : '...') : (isRTL ? 'رفع' : 'Upload') }}
                     <input type="file" class="hidden" accept=".pdf,image/*" (change)="onTaxFileSelected($event)" [disabled]="isUploading === 'tax'">
                   </label>
-                  <input type="text" dir="ltr" name="taxDocumentUrl" [(ngModel)]="draftLegalBankData.taxDocumentUrl" placeholder="URL" class="mt-1.5 h-7 w-full rounded-md border border-slate-200 px-2 text-[10px] font-mono text-slate-500 outline-none focus:border-primary">
+                  <input type="text" dir="ltr" name="taxDocumentUrl" [(ngModel)]="draftLegalBankData.taxDocumentUrl" placeholder="URL" class="w-full border border-slate-900/12 bg-white/60 rounded-lg px-2 py-1 text-[10px] font-mono text-slate-500 shadow-sm outline-none focus:border-primary">
                 </div>
               </div>
             </div>
 
             <!-- License Document -->
-            <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-3.5">
-              <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500">{{ isRTL ? 'ملف الرخصة' : 'License document' }}</p>
+            <div class="rounded-2xl border border-slate-900/5 bg-slate-50/50 p-4 shadow-sm">
+              <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500 text-start">{{ isRTL ? 'ملف الرخصة' : 'License document' }}</p>
               <div class="flex items-center gap-3">
                 <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white">
-                  <a *ngIf="draftLegalBankData.licenseDocumentUrl" [href]="draftLegalBankData.licenseDocumentUrl" target="_blank" class="text-primary"><span class="material-symbols-outlined text-[22px]">picture_as_pdf</span></a>
+                  <a *ngIf="draftLegalBankData.licenseDocumentUrl" [href]="draftLegalBankData.licenseDocumentUrl" target="_blank" class="text-primary hover:bg-primary/5 transition-colors"><span class="material-symbols-outlined text-[22px]">picture_as_pdf</span></a>
                   <span *ngIf="!draftLegalBankData.licenseDocumentUrl" class="material-symbols-outlined text-[22px] text-slate-300">note_add</span>
                 </div>
-                <div class="min-w-0 flex-1">
-                  <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[10px] font-black text-primary hover:bg-primary/10">
+                <div class="min-w-0 flex-1 flex flex-col gap-1.5">
+                  <label class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1.5 text-[10px] font-black text-primary hover:bg-primary/10 w-fit select-none">
                     <span class="material-symbols-outlined text-[14px]">upload</span>
                     {{ isUploading === 'license' ? (isRTL ? 'رفع...' : '...') : (isRTL ? 'رفع' : 'Upload') }}
                     <input type="file" class="hidden" accept=".pdf,image/*" (change)="onLicenseFileSelected($event)" [disabled]="isUploading === 'license'">
                   </label>
-                  <input type="text" dir="ltr" name="licenseDocumentUrl" [(ngModel)]="draftLegalBankData.licenseDocumentUrl" placeholder="URL" class="mt-1.5 h-7 w-full rounded-md border border-slate-200 px-2 text-[10px] font-mono text-slate-500 outline-none focus:border-primary">
+                  <input type="text" dir="ltr" name="licenseDocumentUrl" [(ngModel)]="draftLegalBankData.licenseDocumentUrl" placeholder="URL" class="w-full border border-slate-900/12 bg-white/60 rounded-lg px-2 py-1 text-[10px] font-mono text-slate-500 shadow-sm outline-none focus:border-primary">
                 </div>
               </div>
             </div>
@@ -138,14 +138,14 @@
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px] text-primary">account_balance</span>
-            <p class="text-xs font-black uppercase tracking-wider text-slate-400">
+            <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
               {{ isRTL ? 'بيانات الحساب البنكي' : 'Bank account data' }}
             </p>
           </div>
 
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'اسم البنك' : 'Bank name' }} <span class="text-rose-400">*</span></label>
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'اسم البنك' : 'Bank name' }} <span class="text-rose-400">*</span></label>
               <app-searchable-select
                 [(ngModel)]="draftLegalBankData.bankName"
                 name="bankName"
@@ -154,27 +154,27 @@
               </app-searchable-select>
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'اسم صاحب الحساب' : 'Account holder name' }} <span class="text-rose-400">*</span></label>
-              <input type="text" dir="rtl" name="accountHolderName" [(ngModel)]="draftLegalBankData.accountHolderName" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-right text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'اسم صاحب الحساب' : 'Account holder name' }} <span class="text-rose-400">*</span></label>
+              <input type="text" dir="auto" name="accountHolderName" [(ngModel)]="draftLegalBankData.accountHolderName" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start">
             </div>
 
-            <div class="space-y-1.5 md:col-span-2">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">IBAN <span class="text-rose-400">*</span></label>
+            <div class="space-y-1.5 md:col-span-2 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">IBAN <span class="text-rose-400">*</span></label>
               <div class="relative">
-                <div class="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                <div class="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10">
                   <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-500">SA</span>
                 </div>
-                <input type="text" dir="ltr" name="iban" [(ngModel)]="draftLegalBankData.iban" class="h-12 w-full rounded-xl border border-slate-200 ps-14 pe-12 text-left font-mono text-[15px] font-bold tracking-[0.15em] text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5" placeholder="0000 0000 0000 0000 0000 0000">
+                <input type="text" dir="ltr" name="iban" [(ngModel)]="draftLegalBankData.iban" class="h-12 w-full border border-slate-900/12 bg-white/60 rounded-xl ps-14 pe-12 text-start font-mono text-[15px] font-bold tracking-[0.15em] text-slate-900 outline-none transition-all focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10" placeholder="0000 0000 0000 0000 0000 0000">
                 <button type="button" (click)="copyIban()" [disabled]="isSaving" class="absolute end-3 top-1/2 -translate-y-1/2 rounded-lg bg-slate-100 p-1.5 text-slate-500 transition-all hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40">
                   <span class="material-symbols-outlined text-[16px]">content_copy</span>
                 </button>
               </div>
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">SWIFT</label>
-              <input type="text" dir="ltr" name="swiftCode" [(ngModel)]="draftLegalBankData.swiftCode" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left font-mono text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">SWIFT</label>
+              <input type="text" dir="ltr" name="swiftCode" [(ngModel)]="draftLegalBankData.swiftCode" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
             </div>
           </div>
         </div>
@@ -196,15 +196,15 @@
       </fieldset>
     </div>
 
-    <footer class="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-6 py-4">
+    <footer class="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/90 px-8 py-4 shrink-0">
       <p class="text-[11px] font-bold text-slate-400">
         {{ isRTL ? 'الحقول المطلوبة مميزة بـ *' : 'Required fields marked with *' }}
       </p>
       <div class="flex items-center gap-3">
-        <button type="button" (click)="onClose()" [disabled]="isSaving" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">
+        <button type="button" (click)="onClose()" [disabled]="isSaving" class="px-6 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-sm font-bold transition-all active:scale-98 disabled:cursor-not-allowed disabled:opacity-40">
           {{ isRTL ? 'إلغاء' : 'Cancel' }}
         </button>
-        <button type="button" (click)="onSave()" [disabled]="!isFormValid || isSaving" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50">
+        <button type="button" (click)="onSave()" [disabled]="!isFormValid || isSaving" class="px-8 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white text-sm font-bold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-98 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-50">
           <span class="flex items-center gap-2">
             <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
             {{ isSaving ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
@@ -214,4 +214,3 @@
     </footer>
   </div>
 </div>
- 

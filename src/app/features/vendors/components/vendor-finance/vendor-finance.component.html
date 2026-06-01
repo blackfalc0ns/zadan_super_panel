@@ -275,9 +275,15 @@
           </div>
 
           <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50 p-4 transition-colors hover:border-slate-200">
-            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-2">{{ isRTL ? 'آخر تحويل مباشر' : 'Latest direct payout' }}</p>
-            <p class="text-[13px] font-black text-slate-900">{{ latestDirectPayout ? formatDate(latestDirectPayout.processedAtUtc || latestDirectPayout.createdAtUtc) : '—' }}</p>
-            <p class="mt-0.5 text-[11px] font-bold text-slate-500">{{ latestDirectPayout?.payoutNumber || (isRTL ? 'لا يوجد' : 'None') }}</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-2">
+              {{ isDirectMode ? (isRTL ? 'آخر تحويل مباشر' : 'Latest direct payout') : (isRTL ? 'آخر تحويل مجمع' : 'Latest batch payout') }}
+            </p>
+            <p class="text-[13px] font-black text-slate-900">
+              {{ latestPayout ? formatDate(latestPayout.processedAtUtc || latestPayout.createdAtUtc) : '—' }}
+            </p>
+            <p class="mt-0.5 text-[11px] font-bold text-slate-500">
+              {{ latestPayout?.payoutNumber || (isRTL ? 'لا يوجد' : 'None') }}
+            </p>
           </div>
 
           <div class="rounded-[1.25rem] border border-emerald-200 bg-emerald-50/50 p-4 transition-colors hover:border-emerald-300">

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   Driver,
   DriverFilters,
@@ -47,7 +47,44 @@ import {
   styleUrl: './drivers-list-view.component.scss'
 })
 export class DriversListViewComponent {
+  private readonly translate = inject(TranslateService);
+
   @Input() isRTL = true;
+
+  getTranslatedCity(city?: string): string {
+    if (!city) return '';
+    
+    const normalized = city.trim().toUpperCase();
+    const cityMap: Record<string, string> = {
+      'RIYADH': 'RIYADH',
+      'الرياض': 'RIYADH',
+      'JEDDAH': 'JEDDAH',
+      'جدة': 'JEDDAH',
+      'DAMMAM': 'DAMMAM',
+      'الدمام': 'DAMMAM',
+      'MAKKAH': 'MAKKAH',
+      'MECCA': 'MAKKAH',
+      'مكة': 'MAKKAH',
+      'MADINAH': 'MADINAH',
+      'MEDINA': 'MADINAH',
+      'المدينة': 'MADINAH',
+      'TAIF': 'TAIF',
+      'الطائف': 'TAIF',
+      'TABUK': 'TABUK',
+      'تبوك': 'TABUK',
+      'ABHA': 'ABHA',
+      'أبها': 'ABHA',
+      'KHOBAR': 'KHOBAR',
+      'الخبر': 'KHOBAR',
+      'QATIF': 'QATIF',
+      'القطيف': 'QATIF'
+    };
+
+    const keyToken = cityMap[normalized] || normalized;
+    const key = `COMMON.CITIES.${keyToken}`;
+    const translated = this.translate.instant(key);
+    return translated === key ? city : translated;
+  }
   @Input() searchTerm = '';
   @Input() drivers: Driver[] = [];
   @Input() filters: DriverFilters = {};
@@ -148,6 +185,7 @@ export class DriversListViewComponent {
     }
 
     const subtitleKeys: Record<string, string> = {
+      // Arabic keys
       'آخر تسليم قبل 10 دقائق': 'DRIVERS.TASK_SUBTITLES.LAST_DELIVERY_10_MIN',
       'توصيل قيد التنفيذ': 'DRIVERS.TASK_SUBTITLES.DELIVERY_IN_PROGRESS',
       'لا يوجد نشاط': 'DRIVERS.TABLE.NO_ACTIVITY',
@@ -159,10 +197,37 @@ export class DriversListViewComponent {
       'منطقة التسليم الجنوبية': 'DRIVERS.TASK_SUBTITLES.SOUTH_DELIVERY_ZONE',
       'جاهز للاستلام القادم': 'DRIVERS.TASK_SUBTITLES.READY_FOR_NEXT_PICKUP',
       'إيقاف لحين التسوية': 'DRIVERS.TASK_SUBTITLES.SUSPENDED_PENDING_SETTLEMENT',
-      'أفضل معدل قبول في المنطقة': 'DRIVERS.TASK_SUBTITLES.BEST_ACCEPTANCE_RATE'
+      'أفضل معدل قبول في المنطقة': 'DRIVERS.TASK_SUBTITLES.BEST_ACCEPTANCE_RATE',
+      
+      // English keys
+      'Last delivery was 10 minutes ago': 'DRIVERS.TASK_SUBTITLES.LAST_DELIVERY_10_MIN',
+      'Last delivery 10 minutes ago': 'DRIVERS.TASK_SUBTITLES.LAST_DELIVERY_10_MIN',
+      'Delivery in progress': 'DRIVERS.TASK_SUBTITLES.DELIVERY_IN_PROGRESS',
+      'No activity': 'DRIVERS.TABLE.NO_ACTIVITY',
+      'Available in the Eastern region': 'DRIVERS.TASK_SUBTITLES.EASTERN_REGION_AVAILABLE',
+      'Last seen 6 hours ago': 'DRIVERS.TASK_SUBTITLES.LAST_SEEN_6_HOURS',
+      'Carrying 3 orders now': 'DRIVERS.TASK_SUBTITLES.CARRYING_3_ORDERS',
+      'Excellent service level': 'DRIVERS.TASK_SUBTITLES.EXCELLENT_SERVICE_LEVEL',
+      'Documents under review': 'DRIVERS.TASK_SUBTITLES.DOCUMENTS_UNDER_REVIEW',
+      'Southern delivery zone': 'DRIVERS.TASK_SUBTITLES.SOUTH_DELIVERY_ZONE',
+      'Ready for the next pickup': 'DRIVERS.TASK_SUBTITLES.READY_FOR_NEXT_PICKUP',
+      'Suspended pending settlement': 'DRIVERS.TASK_SUBTITLES.SUSPENDED_PENDING_SETTLEMENT',
+      'Best acceptance rate in the region': 'DRIVERS.TASK_SUBTITLES.BEST_ACCEPTANCE_RATE'
     };
 
-    return subtitleKeys[subtitle] ?? subtitle;
+    const trimmed = subtitle.trim();
+    if (subtitleKeys[trimmed]) {
+      return subtitleKeys[trimmed];
+    }
+    
+    const lower = trimmed.toLowerCase();
+    for (const [key, value] of Object.entries(subtitleKeys)) {
+      if (key.toLowerCase() === lower) {
+        return value;
+      }
+    }
+
+    return subtitle;
   }
 
   getIssueIcon(issue: string): string {

@@ -123,8 +123,8 @@
                         <span class="material-symbols-outlined text-[22px] text-zadna-primary transition-transform duration-500"
                               [class.rotate-180]="isFiltersExpanded">filter_list</span>
                         <div class="flex flex-col">
-                            <span class="text-[13px] font-black text-slate-800">{{ 'VENDORS.FILTER_VENDORS' | translate }}</span>
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'VENDORS.ADJUST_CRITERIA' | translate }}</span>
+                            <span class="text-[13px] font-black text-slate-800">{{ 'COMMON.APPLY_FILTERS' | translate }}</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate }}</span>
                         </div>
                         <span class="material-symbols-outlined text-[18px] text-slate-300 ms-2 group-hover:translate-y-0.5 transition-transform"
                               [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
@@ -132,6 +132,19 @@
                 </div>
             </div>
         </div>
+
+        <!-- Advanced Filters Component -->
+        <app-advanced-filter-panel
+            [isExpanded]="isFiltersExpanded"
+            [fields]="filterFields"
+            [(filters)]="filters"
+            (filtersChange)="onFilterChange()"
+            (reset)="resetFilters()"
+            [title]="'ADMIN_USERS.ROLES_MANAGEMENT.TITLE' | translate"
+            [subtitle]="'ADMIN_USERS.ROLES_MANAGEMENT.SUBTITLE' | translate"
+            [resetLabel]="'ADMIN_USERS.FILTERS.RESET' | translate"
+            [activeFiltersLabel]="'ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate">
+        </app-advanced-filter-panel>
 
         <!-- 4. Data Table -->
         <app-data-table
@@ -168,7 +181,9 @@
                 <ng-container *ngIf="column.key === 'role'">
                     <div class="flex flex-col text-start">
                         <span class="text-[13px] font-bold text-slate-700 tracking-tight">{{ getRoleDisplay(user) }}</span>
-                        <span class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">{{ user.department }} • {{ user.team }}</span>
+                        <span *ngIf="user.department || user.team" class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5">
+                            {{ user.department }}{{ user.department && user.team ? ' • ' : '' }}{{ user.team }}
+                        </span>
                     </div>
                 </ng-container>
 
@@ -220,73 +235,65 @@
 
     <div *ngIf="showCreateUserModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <button type="button" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="closeCreateUserModal()" aria-label="Close"></button>
-        <div class="relative z-10 w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden">
+        <div class="relative z-10 w-full max-w-3xl rounded-[2rem] bg-white/95 backdrop-blur-xl border border-slate-200/60 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
             <div class="flex items-center justify-between gap-4 border-b border-slate-100 p-6">
                 <div>
                     <h2 class="text-lg font-black text-slate-900">{{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}</h2>
-                    <p class="mt-1 text-[12px] font-bold text-slate-400">Create login account and attach it to an access role</p>
+                    <p class="mt-1 text-[12px] font-bold text-slate-400">{{ 'ADMIN_USERS.ACTIONS.CREATE_USER_DESC' | translate }}</p>
                 </div>
-                <button type="button" (click)="closeCreateUserModal()" class="h-10 w-10 rounded-xl hover:bg-slate-100 text-slate-500">
+                <button type="button" (click)="closeCreateUserModal()" class="h-10 w-10 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors flex items-center justify-center">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 max-h-[70vh] overflow-y-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 p-6 max-h-[70vh] overflow-y-auto z-20 relative no-scrollbar">
                 <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.FULL_NAME' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.fullName" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.FULL_NAME' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.fullName" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
                 </label>
                 <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.EMAIL' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.email" type="email" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.EMAIL' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.email" type="email" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
                 </label>
                 <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.PHONE' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.phone" type="text" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.PHONE' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.phone" type="text" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
                 </label>
                 <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">Temporary password</span>
-                    <input [(ngModel)]="createUserForm.password" type="password" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.DETAIL.TEMPORARY_PASSWORD' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.password" type="password" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
                 </label>
                 <label class="flex flex-col gap-2 md:col-span-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.ROLE' | translate }}</span>
-                    <select [(ngModel)]="createUserForm.roleDefinitionId" (ngModelChange)="onCreateRoleChange()" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary bg-white">
-                        <option *ngFor="let role of roles" [ngValue]="role.id">{{ getRoleOptionLabel(role) }}</option>
-                    </select>
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.ROLE' | translate }}</span>
+                    <div class="h-12 rounded-2xl border-2 border-slate-200 bg-slate-50/50 focus-within:border-zadna-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-zadna-primary/10 transition-all">
+                        <app-searchable-select [(ngModel)]="createUserForm.roleDefinitionId" [searchable]="false" (ngModelChange)="onCreateRoleChange()" [options]="mappedRolesOptions" [placeholder]="'ADMIN_USERS.FIELDS.ROLE' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                    </div>
                 </label>
-                <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.DEPARTMENT' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.department" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
-                </label>
-                <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.TEAM' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.team" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
-                </label>
+
                 <label *ngIf="shouldShowScopeEntityInput()" class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
-                    <select [(ngModel)]="createUserForm.scopeEntityId" dir="ltr" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary bg-white">
-                        <option value="">{{ getCreateScopeHint() }}</option>
-                        <option *ngFor="let option of getCreateScopeOptions()" [ngValue]="option.value">{{ option.label }}</option>
-                    </select>
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
+                    <div class="h-12 rounded-2xl border-2 border-slate-200 bg-slate-50/50 focus-within:border-zadna-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-zadna-primary/10 transition-all">
+                        <app-searchable-select [(ngModel)]="createUserForm.scopeEntityId" [options]="mappedScopeEntityOptions" [placeholder]="getCreateScopeHint()" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                    </div>
                 </label>
-                <div *ngIf="!shouldShowScopeEntityInput()" class="flex flex-col justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
+                <div *ngIf="!shouldShowScopeEntityInput()" class="flex flex-col justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 py-3">
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
                     <span class="text-[13px] font-bold text-slate-500">{{ getCreateScopeHint() }}</span>
                 </div>
                 <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest">Notes</span>
-                    <input [(ngModel)]="createUserForm.notes" type="text" class="h-12 rounded-2xl border-2 border-slate-200 px-4 text-[14px] font-bold outline-none focus:border-zadna-primary" />
+                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.NOTES' | translate }}</span>
+                    <input [(ngModel)]="createUserForm.notes" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
                 </label>
-                <p *ngIf="createUserError" class="md:col-span-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+                <p *ngIf="createUserError" class="md:col-span-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700 animate-in fade-in duration-300">
                     {{ createUserError }}
                 </p>
             </div>
 
-            <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/70 p-5">
-                <button type="button" (click)="closeCreateUserModal()" class="h-11 px-5 rounded-xl border border-slate-200 bg-white text-[13px] font-black text-slate-600">
+            <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/70 p-5 relative z-10">
+                <button type="button" (click)="closeCreateUserModal()" class="h-11 px-5 rounded-xl border border-slate-200 bg-white text-[13px] font-black text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
                     {{ 'COMMON.CANCEL' | translate }}
                 </button>
-                <button type="button" (click)="createUser()" [disabled]="isCreatingUser || !createUserForm.fullName || !createUserForm.email || !createUserForm.password || !createUserForm.roleDefinitionId" class="h-11 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[13px] font-black disabled:opacity-50 flex items-center gap-2">
+                <button type="button" (click)="createUser()" [disabled]="isCreatingUser || !createUserForm.fullName || !createUserForm.email || !createUserForm.password || !createUserForm.roleDefinitionId" class="h-11 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[13px] font-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all">
                     <span class="material-symbols-outlined text-[18px]">person_add</span>
                     {{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}
                 </button>

@@ -128,6 +128,10 @@ export class VendorSettingsComponent {
       return this.text('الدخول مقفل. افتح تسجيل الدخول قبل أي تشغيل يومي.', 'Login is locked. Unlock access before daily operations.');
     }
 
+    if (this.isCrExpired) {
+      return this.text('السجل التجاري منتهي الصلاحية. يجب تحديث تاريخ السجل أولاً.', 'The Commercial Registration is expired. The CR date must be updated first.');
+    }
+
     if (this.canReactivateAccount) {
       return this.text('الإجراء الصحيح الآن هو إعادة تشغيل الحساب إلى Active.', 'The correct next action is reactivating the account to Active.');
     }
@@ -226,8 +230,19 @@ export class VendorSettingsComponent {
     return !!this.vendor?.isLoginLocked;
   }
 
+  get isCrExpired(): boolean {
+    if (!this.vendor?.commercialRegistrationExpiryDate) {
+      return false;
+    }
+    const expiry = new Date(this.vendor.commercialRegistrationExpiryDate);
+    expiry.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return expiry.getTime() < today.getTime();
+  }
+
   get canReactivateAccount(): boolean {
-    return !!this.vendor && !this.isArchived && !this.isLoginLocked && this.vendor.status === 'Suspended';
+    return !!this.vendor && !this.isCrExpired && !this.isArchived && !this.isLoginLocked && this.vendor.status === 'Suspended';
   }
 
   get canSuspendAccount(): boolean {
@@ -266,6 +281,10 @@ export class VendorSettingsComponent {
 
     if (this.isLoginLocked) {
       return this.text('الحساب مقفل حاليا. إعدادات التشغيل محفوظة لكن الدخول متوقف.', 'The account is locked. Operations settings are preserved, but login is blocked.');
+    }
+
+    if (this.isCrExpired) {
+      return this.text('الحساب موقوف تلقائيًا بسبب انتهاء السجل التجاري. يرجى مراجعة وتحديث تاريخ انتهاء السجل أولاً.', 'The account is automatically suspended because the Commercial Registration has expired. Please review and update the CR expiry date first.');
     }
 
     if (this.isAccountSuspended) {
@@ -331,16 +350,19 @@ export class VendorSettingsComponent {
     if (this.activeDialog === 'reset-password') {
       if (!primaryValue) {
         this.dialogError = this.text('أدخل كلمة المرور الجديدة.', 'Enter the new password.');
+        this.cdr.markForCheck();
         return;
       }
 
       if (primaryValue.length < 8) {
         this.dialogError = this.text('كلمة المرور يجب ألا تقل عن 8 أحرف.', 'Password must be at least 8 characters.');
+        this.cdr.markForCheck();
         return;
       }
 
       if (primaryValue !== secondaryValue) {
         this.dialogError = this.text('تأكيد كلمة المرور غير مطابق.', 'Password confirmation does not match.');
+        this.cdr.markForCheck();
         return;
       }
 
@@ -350,13 +372,13 @@ export class VendorSettingsComponent {
         .pipe(take(1))
         .subscribe({
           next: () => {
-        this.cdr.markForCheck();
+            this.cdr.markForCheck();
             this.setSuccess(this.text('تمت إعادة تعيين كلمة المرور بنجاح.', 'Password reset succeeded.'));
             this.dialogSubmitting = false;
             this.closeDialog();
           },
           error: () => {
-        this.cdr.markForCheck();
+            this.cdr.markForCheck();
             this.dialogError = this.vendorDetailFacade.mutationError || this.text('تعذر تحديث كلمة المرور الآن.', 'Unable to reset vendor password right now.');
             this.dialogSubmitting = false;
             this.resetPasswordQueued = false;
@@ -364,6 +386,7 @@ export class VendorSettingsComponent {
           complete: () => {
             this.dialogSubmitting = false;
             this.resetPasswordQueued = false;
+            this.cdr.markForCheck();
           }
         });
       return;
@@ -371,6 +394,7 @@ export class VendorSettingsComponent {
 
     if (!primaryValue) {
       this.dialogError = this.text('هذا الحقل مطلوب.', 'This field is required.');
+      this.cdr.markForCheck();
       return;
     }
 
@@ -436,12 +460,13 @@ export class VendorSettingsComponent {
       .subscribe({
         next: () => this.setSuccess(this.text('تم حفظ حالة ظهور المتجر في التطبيق بنجاح.', 'Store app visibility was saved successfully.')),
         error: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ حالة ظهور المتجر الآن.', 'Unable to save store visibility right now.');
           this.storeAvailabilitySubmitting = false;
         },
         complete: () => {
           this.storeAvailabilitySubmitting = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -469,12 +494,13 @@ export class VendorSettingsComponent {
       .subscribe({
         next: () => this.setSuccess(this.text('تم حفظ إعدادات الإشعارات بنجاح.', 'Notification settings were saved successfully.')),
         error: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات الإشعارات الآن.', 'Unable to save vendor notification settings right now.');
           this.notificationsSubmitting = false;
         },
         complete: () => {
           this.notificationsSubmitting = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -495,12 +521,13 @@ export class VendorSettingsComponent {
       .subscribe({
         next: () => this.setSuccess(this.text('تم حفظ إعدادات التشغيل بنجاح.', 'Operations settings were saved successfully.')),
         error: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات التشغيل الآن.', 'Unable to save vendor operations settings right now.');
           this.operationsSubmitting = false;
         },
         complete: () => {
           this.operationsSubmitting = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -515,6 +542,7 @@ export class VendorSettingsComponent {
         'يرجى إدخال نسبة عمولة صالحة بين 0 و 100.',
         'Please enter a valid commission rate between 0 and 100.'
       );
+      this.cdr.markForCheck();
       return;
     }
 
@@ -525,12 +553,13 @@ export class VendorSettingsComponent {
       .subscribe({
         next: () => this.setSuccess(this.text('تم حفظ نسبة العمولة بنجاح.', 'Commission rate was saved successfully.')),
         error: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ نسبة العمولة الآن.', 'Unable to save commission rate right now.');
           this.commissionSubmitting = false;
         },
         complete: () => {
           this.commissionSubmitting = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -548,12 +577,13 @@ export class VendorSettingsComponent {
         .subscribe({
           next: () => this.setSuccess(this.text('تم فتح تسجيل الدخول بنجاح.', 'Vendor login unlocked successfully.')),
           error: () => {
-        this.cdr.markForCheck();
+            this.cdr.markForCheck();
             this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر فتح تسجيل الدخول الآن.', 'Unable to unlock vendor login right now.');
             this.dialogSubmitting = false;
           },
           complete: () => {
             this.dialogSubmitting = false;
+            this.cdr.markForCheck();
           }
         });
       return;
@@ -576,12 +606,13 @@ export class VendorSettingsComponent {
         .subscribe({
           next: () => this.setSuccess(this.text('تمت إعادة تشغيل الحساب بنجاح.', 'Vendor account reactivated successfully.')),
           error: () => {
-        this.cdr.markForCheck();
+            this.cdr.markForCheck();
             this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر إعادة تشغيل الحساب الآن.', 'Unable to reactivate the vendor account right now.');
             this.dialogSubmitting = false;
           },
           complete: () => {
             this.dialogSubmitting = false;
+            this.cdr.markForCheck();
           }
         });
       return;
@@ -590,6 +621,7 @@ export class VendorSettingsComponent {
     if (!this.canSuspendAccount) {
       this.pageSuccess = '';
       this.pageError = this.text('لا يمكن تعليق الحساب إلا إذا كان نشطا حاليا.', 'The account can only be suspended while it is active.');
+      this.cdr.markForCheck();
       return;
     }
 
@@ -600,10 +632,11 @@ export class VendorSettingsComponent {
   private clearFeedback(): void {
     this.pageError = '';
     this.pageSuccess = '';
+    this.cdr.markForCheck();
   }
 
   private formatDateTime(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: '2-digit',
@@ -625,18 +658,19 @@ export class VendorSettingsComponent {
       .pipe(take(1))
       .subscribe({
         next: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.setSuccess(successMessage);
           this.dialogSubmitting = false;
           this.closeDialog();
         },
         error: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.dialogError = this.vendorDetailFacade.mutationError || fallbackMessage;
           this.dialogSubmitting = false;
         },
         complete: () => {
           this.dialogSubmitting = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -644,6 +678,7 @@ export class VendorSettingsComponent {
   private setSuccess(message: string): void {
     this.pageError = '';
     this.pageSuccess = message;
+    this.cdr.markForCheck();
   }
 
   private text(ar: string, en: string): string {

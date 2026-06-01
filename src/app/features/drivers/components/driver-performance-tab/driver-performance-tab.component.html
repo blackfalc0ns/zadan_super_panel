@@ -1,32 +1,80 @@
-<div class="space-y-5 animate-in slide-in-from-bottom-8 duration-700">
+<div class="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
   
-  <div *ngIf="performanceKpis.length > 0; else emptyPerformanceKpis">
-    <app-kpi-cards [cards]="performanceKpis"></app-kpi-cards>
+  <!-- Custom Metrics Grid -->
+  <div *ngIf="driver.performanceSnapshot.metricCards.length > 0; else emptyPerformanceKpis" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div *ngFor="let metric of driver.performanceSnapshot.metricCards" 
+         class="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-sm border border-slate-200/50 relative overflow-hidden group hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+      
+      <!-- Ambient subtle glow based on tone -->
+      <div class="absolute -right-16 -top-16 h-36 w-36 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700 pointer-events-none"
+           [ngClass]="{
+             'bg-gradient-to-br from-emerald-500/10 to-teal-500/10': metric.tone === 'success',
+             'bg-gradient-to-br from-rose-500/10 to-red-500/10': metric.tone === 'danger',
+             'bg-gradient-to-br from-amber-500/10 to-orange-500/10': metric.tone === 'warning',
+             'bg-gradient-to-br from-cyan-500/10 to-blue-500/10': metric.tone !== 'success' && metric.tone !== 'danger' && metric.tone !== 'warning'
+           }"></div>
+
+      <div class="relative z-10 flex flex-col justify-between h-full min-h-[120px]">
+        <div class="flex justify-between items-start gap-2">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ metric.title | translate }}</p>
+            <h3 class="text-3xl font-black tracking-tight text-slate-900 mt-1.5" dir="ltr">
+              {{ metric.value }}
+            </h3>
+          </div>
+          
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm border transition-all duration-300"
+               [ngClass]="{
+                 'bg-emerald-50 text-emerald-600 border-emerald-100/60 dark:bg-emerald-950/20 dark:text-emerald-400': metric.tone === 'success',
+                 'bg-rose-50 text-rose-600 border-rose-100/60 dark:bg-rose-950/20 dark:text-rose-400': metric.tone === 'danger',
+                 'bg-amber-50 text-amber-600 border-amber-100/60 dark:bg-amber-950/20 dark:text-amber-400': metric.tone === 'warning',
+                 'bg-cyan-50 text-cyan-600 border-cyan-100/60 dark:bg-cyan-950/20 dark:text-cyan-400': metric.tone !== 'success' && metric.tone !== 'danger' && metric.tone !== 'warning'
+               }">
+            <span class="material-symbols-outlined text-[20px]">{{ getMetricIcon(metric.id) }}</span>
+          </div>
+        </div>
+
+        <!-- Delta indicator at the bottom -->
+        <div class="mt-4 flex items-center justify-between">
+          <div *ngIf="metric.deltaLabel" class="flex items-center gap-1.5 rounded-lg px-2 py-0.5 text-[11px] font-black border"
+               [ngClass]="{
+                 'bg-emerald-50/50 text-emerald-700 border-emerald-100/60': metric.deltaLabel.startsWith('+'),
+                 'bg-rose-50/50 text-rose-700 border-rose-100/60': metric.deltaLabel.startsWith('-')
+               }" dir="ltr">
+            <span class="material-symbols-outlined text-[14px]">
+              {{ metric.deltaLabel.startsWith('+') ? 'trending_up' : 'trending_down' }}
+            </span>
+            <span>{{ metric.deltaLabel }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <ng-template #emptyPerformanceKpis>
-    <section class="rounded-2xl border border-dashed border-slate-200/80 bg-slate-50/50 p-8 text-center">
-      <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 shadow-sm">
-        <span class="material-symbols-outlined text-[20px]">analytics</span>
+    <section class="rounded-3xl border-2 border-dashed border-slate-200/80 bg-white/40 backdrop-blur-sm p-8 text-center shadow-inner">
+      <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-white border border-slate-100 text-slate-400 shadow-sm">
+        <span class="material-symbols-outlined text-[22px]">analytics</span>
       </div>
       <h3 class="mt-3 text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_METRICS_TITLE' | translate }}</h3>
-      <p class="mx-auto mt-1 max-w-sm text-[12px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_METRICS_DESC' | translate }}</p>
+      <p class="mx-auto mt-1.5 max-w-sm text-[12px] font-semibold text-slate-500 leading-relaxed">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_METRICS_DESC' | translate }}</p>
     </section>
   </ng-template>
 
   <!-- Performance Command Center Grid -->
-  <div class="grid gap-5 lg:grid-cols-12">
+  <div class="grid gap-6 lg:grid-cols-12">
     
     <!-- Left Column: Benchmarks -->
-    <div class="flex flex-col gap-5 lg:col-span-7">
-      <section class="rounded-[1.5rem] border border-slate-200/80 bg-white shadow-lg shadow-slate-200/40 p-5 relative overflow-hidden h-full flex flex-col">
+    <div class="flex flex-col gap-6 lg:col-span-7">
+      <section class="rounded-3xl border border-slate-200/50 bg-white/80 backdrop-blur-xl p-6 shadow-sm relative overflow-hidden flex flex-col">
         <!-- Ambient subtle glow -->
-        <div class="absolute -top-32 -right-32 w-64 h-64 bg-slate-50/50 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -top-32 -right-32 w-64 h-64 bg-zadna-primary/5 rounded-full blur-3xl pointer-events-none"></div>
 
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 relative z-10">
+        <div class="flex items-center justify-between border-b border-slate-100/60 pb-4 mb-5 relative z-10">
           <div class="flex items-center gap-3.5">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/60">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-white to-slate-100 text-zadna-primary shadow-sm border border-slate-200/40">
               <span class="material-symbols-outlined text-[20px]">leaderboard</span>
             </div>
             <div>
@@ -36,10 +84,10 @@
           </div>
         </div>
 
-        <div *ngIf="driver.performanceSnapshot.benchmarks.length > 0; else emptyBenchmarks" class="flex-1 space-y-3 relative z-10">
-          <div *ngFor="let benchmark of driver.performanceSnapshot.benchmarks" class="group rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300 cursor-default">
+        <div *ngIf="driver.performanceSnapshot.benchmarks.length > 0; else emptyBenchmarks" class="space-y-4 relative z-10">
+          <div *ngFor="let benchmark of driver.performanceSnapshot.benchmarks" class="group rounded-2xl border border-slate-200/40 bg-white/40 backdrop-blur-sm p-5 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-md hover:border-zadna-primary/30 cursor-default">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-[12.5px] font-black text-slate-800">{{ benchmark.label | translate }}</span>
+              <span class="text-[13px] font-black text-slate-800">{{ benchmark.label | translate }}</span>
               <span class="text-[13px] font-black tracking-tight" 
                 [ngClass]="{
                   'text-emerald-600': benchmark.driverValue >= benchmark.regionValue,
@@ -48,36 +96,36 @@
                 }" dir="ltr">{{ benchmark.driverValue }}{{ benchmark.unit }}</span>
             </div>
             
-            <div class="relative h-1.5 w-full rounded-full bg-slate-200/50 overflow-hidden my-2.5">
+            <div class="relative h-2.5 w-full rounded-full bg-slate-200/60 shadow-inner overflow-hidden my-3">
               <!-- Region Average Marker -->
               <div class="absolute top-0 bottom-0 z-10 w-1 bg-slate-400/80 rounded-full shadow-sm" 
-                   [style.left.%]="isRTL ? null : (benchmark.regionValue / 100) * 100"
-                   [style.right.%]="isRTL ? (benchmark.regionValue / 100) * 100 : null"
+                   [style.left.%]="isRTL ? null : getRegionMarkerPosition(benchmark.regionValue)"
+                   [style.right.%]="isRTL ? getRegionMarkerPosition(benchmark.regionValue) : null"
                    [attr.title]="'DRIVERS.DETAIL.PERFORMANCE.REGION_AVERAGE' | translate">
               </div>
               <!-- Driver Progress -->
               <div class="absolute top-0 bottom-0 rounded-full transition-all duration-1000 shadow-[inset_0_-1px_2px_rgba(0,0,0,0.1)]"
                    [ngClass]="{
-                     'bg-emerald-500': benchmark.driverValue >= benchmark.regionValue,
-                     'bg-amber-500': benchmark.driverValue < benchmark.regionValue && benchmark.driverValue >= benchmark.regionValue * 0.8,
-                     'bg-rose-500': benchmark.driverValue < benchmark.regionValue * 0.8,
+                     'bg-gradient-to-r from-emerald-400 to-emerald-500': benchmark.driverValue >= benchmark.regionValue,
+                     'bg-gradient-to-r from-amber-400 to-amber-500': benchmark.driverValue < benchmark.regionValue && benchmark.driverValue >= benchmark.regionValue * 0.8,
+                     'bg-gradient-to-r from-rose-400 to-rose-500': benchmark.driverValue < benchmark.regionValue * 0.8,
                      'left-0': !isRTL,
                      'right-0': isRTL
                    }"
-                   [style.width.%]="(benchmark.driverValue / Math.max(100, benchmark.regionValue * 1.2)) * 100">
+                   [style.width.%]="getDriverWidth(benchmark.driverValue, benchmark.regionValue)">
               </div>
             </div>
             
-            <div class="mt-2.5 flex items-center justify-between text-[10.5px] font-bold">
+            <div class="mt-2.5 flex items-center justify-between text-[11px] font-bold">
               <span class="text-slate-500">{{ benchmark.insight | translate }}</span>
-              <span class="text-slate-400 bg-white/50 px-2 py-0.5 rounded-lg border border-slate-100/50" dir="ltr">{{ 'DRIVERS.DETAIL.PERFORMANCE.AVG_LABEL' | translate }}: {{ benchmark.regionValue }}{{ benchmark.unit }}</span>
+              <span class="text-slate-400 bg-white/70 backdrop-blur-sm px-2.5 py-1 rounded-xl border border-slate-200/50 shadow-sm" dir="ltr">{{ 'DRIVERS.DETAIL.PERFORMANCE.AVG_LABEL' | translate }}: {{ benchmark.regionValue }}{{ benchmark.unit }}</span>
             </div>
           </div>
         </div>
         
         <ng-template #emptyBenchmarks>
-          <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200/80 bg-slate-50/50 py-10 text-center relative z-10">
-             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-slate-400 mb-3 shadow-sm border border-slate-100">
+          <div class="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200/80 bg-white/40 backdrop-blur-sm py-10 text-center relative z-10">
+             <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 mb-3 shadow-sm border border-slate-100">
                <span class="material-symbols-outlined text-[20px]">trending_up</span>
              </div>
             <p class="text-[13px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.PERFORMANCE.NO_BENCHMARKS' | translate }}</p>
@@ -87,15 +135,15 @@
     </div>
 
     <!-- Right Column: Insights -->
-    <div class="flex flex-col gap-5 lg:col-span-5">
-      <section class="rounded-[1.5rem] border border-slate-200/80 bg-white shadow-lg shadow-slate-200/40 p-5 relative overflow-hidden h-full flex flex-col">
+    <div class="flex flex-col gap-6 lg:col-span-5">
+      <section class="rounded-3xl border border-slate-200/50 bg-white/80 backdrop-blur-xl p-6 shadow-sm relative overflow-hidden flex flex-col">
         <!-- Ambient subtle glow -->
-        <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-slate-50/50 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-zadna-primary/5 rounded-full blur-3xl pointer-events-none"></div>
 
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 relative z-10">
+        <div class="flex items-center justify-between border-b border-slate-100/60 pb-4 mb-5 relative z-10">
           <div class="flex items-center gap-3.5">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 text-slate-700 shadow-sm border border-slate-200/60">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-white to-slate-100 text-zadna-primary shadow-sm border border-slate-200/40">
               <span class="material-symbols-outlined text-[20px]">lightbulb</span>
             </div>
             <div>
@@ -105,28 +153,28 @@
           </div>
         </div>
 
-        <div *ngIf="driver.performanceSnapshot.insightGroups.length > 0; else emptyInsights" class="flex-1 space-y-3 relative z-10">
+        <div *ngIf="driver.performanceSnapshot.insightGroups.length > 0; else emptyInsights" class="space-y-4 relative z-10">
           <div *ngFor="let group of driver.performanceSnapshot.insightGroups" 
-               class="rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
+               class="rounded-2xl border p-5 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-md"
                [ngClass]="{
-                 'border-emerald-200/60 bg-emerald-50/40 hover:bg-emerald-50/80': group.tone === 'success',
-                 'border-amber-200/60 bg-amber-50/40 hover:bg-amber-50/80': group.tone === 'warning',
-                 'border-rose-200/60 bg-rose-50/40 hover:bg-rose-50/80': group.tone === 'danger',
-                 'border-sky-200/60 bg-sky-50/40 hover:bg-sky-50/80': group.tone === 'primary'
+                 'border-emerald-200/60 bg-emerald-50/30 hover:border-emerald-400/50 shadow-sm': group.tone === 'success',
+                 'border-amber-200/60 bg-amber-50/30 hover:border-amber-400/50 shadow-sm': group.tone === 'warning',
+                 'border-rose-200/60 bg-rose-50/30 hover:border-rose-400/50 shadow-sm': group.tone === 'danger',
+                 'border-sky-200/60 bg-sky-50/30 hover:border-sky-400/50 shadow-sm': group.tone === 'primary'
                }">
-            <div class="flex items-center gap-2 mb-3"
+            <div class="flex items-center gap-2 mb-3.5"
                  [ngClass]="{
                    'text-emerald-700': group.tone === 'success',
                    'text-amber-700': group.tone === 'warning',
                    'text-rose-700': group.tone === 'danger',
                    'text-sky-700': group.tone === 'primary'
                  }">
-              <span class="material-symbols-outlined text-[18px]">{{ group.icon }}</span>
-              <h4 class="text-[12px] font-black uppercase tracking-widest">{{ group.title | translate }}</h4>
+              <span class="material-symbols-outlined text-[20px]">{{ group.icon }}</span>
+              <h4 class="text-[12px] font-black uppercase tracking-wider">{{ group.title | translate }}</h4>
             </div>
             <ul class="space-y-2.5">
               <li *ngFor="let item of group.items" class="flex items-start gap-2.5 text-[12.5px] font-semibold text-slate-700 leading-relaxed">
-                <span class="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full opacity-60"
+                <span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full opacity-70"
                   [ngClass]="{
                      'bg-emerald-500': group.tone === 'success',
                      'bg-amber-500': group.tone === 'warning',

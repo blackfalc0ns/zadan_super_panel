@@ -116,6 +116,10 @@ export interface VendorRiskIndicator {
   severity: 'high' | 'medium' | 'low';
   severityLabelKey: string;
   icon: string;
+  titleAr?: string | null;
+  titleEn?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
 }
 
 export interface VendorReviewNote {

@@ -124,6 +124,7 @@ export interface DirectoryCommunicationProfile {
   escalationEmails: string[];
   preferredLocale: DirectoryPreferredLocale;
   emailOptIn: DirectoryEmailOptIn;
+  rawEmailOptInKeys?: string[];
 }
 
 export interface DirectoryFeatureToggleDefinition {

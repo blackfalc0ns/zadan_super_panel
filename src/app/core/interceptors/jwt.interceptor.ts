@@ -4,7 +4,7 @@ import {
     HttpInterceptorFn,
     HttpRequest
 } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, catchError, from, of, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
@@ -46,6 +46,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
     const router = inject(Router);
     const translate = inject(TranslateService);
+    const ngZone = inject(NgZone);
     const lang = translate.currentLang || translate.defaultLang || 'ar';
 
     const isApiUrl = isOurApiRequest(req);
@@ -67,7 +68,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     const headers: Record<string, string> = {
         'Accept-Language': lang
     };
-    if (token && !isAdminAuthCsrf) {
+    if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
@@ -94,7 +95,8 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
             if (error.status === 400 && isStateChanging && !isAdminAuthCsrf) {
                 const message = (error.error as { code?: string; message?: string } | undefined)?.message ?? '';
                 const looksLikeAntiforgery = /anti.?forgery|xsrf|csrf/i.test(message)
-                    || (error.error as { code?: string } | undefined)?.code === 'ANTIFORGERY';
+                    || (error.error as { code?: string } | undefined)?.code === 'ANTIFORGERY'
+                    || (error.error as { code?: string } | undefined)?.code === 'INVALID_CSRF_TOKEN';
                 if (looksLikeAntiforgery) {
                     return retryAfterCsrfRefresh(req, next, authService);
                 }
@@ -107,7 +109,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
                     || isAdminAuthCsrf;
 
                 if (!isAdminAuthRequest) {
-                    return tryRefreshAndRetry(req, next, authService, router);
+                    return tryRefreshAndRetry(req, next, authService, router, ngZone);
                 }
             }
 
@@ -125,13 +127,14 @@ function tryRefreshAndRetry(
     req: HttpRequest<unknown>,
     next: (r: HttpRequest<unknown>) => Observable<HttpEvent<unknown>>,
     authService: AuthService,
-    router: Router
+    router: Router,
+    ngZone: NgZone
 ): Observable<HttpEvent<unknown>> {
     return authService.refreshAccessToken().pipe(
         switchMap((response) => {
             if (!response?.accessToken) {
                 authService.forceLogoutForExpiredSession();
-                redirectToLogin(router);
+                redirectToLogin(router, ngZone);
                 return throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' }));
             }
 
@@ -143,7 +146,7 @@ function tryRefreshAndRetry(
         }),
         catchError((err) => {
             authService.forceLogoutForExpiredSession();
-            redirectToLogin(router);
+            redirectToLogin(router, ngZone);
             return throwError(() => err);
         })
     );
@@ -169,10 +172,12 @@ function retryAfterCsrfRefresh(
     );
 }
 
-function redirectToLogin(router: Router): void {
+function redirectToLogin(router: Router, ngZone: NgZone): void {
     const returnUrl = router.url && !router.url.startsWith('/login') ? router.url : '/dashboard';
-    void router.navigate(['/login'], {
-        queryParams: { returnUrl, reason: 'session-expired' },
-        replaceUrl: true
+    ngZone.run(() => {
+        void router.navigate(['/login'], {
+            queryParams: { returnUrl, reason: 'session-expired' },
+            replaceUrl: true
+        });
     });
 }

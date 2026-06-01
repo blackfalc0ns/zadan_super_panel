@@ -317,7 +317,7 @@ export class VendorDetailComponent implements OnInit {
   }
 
   getLocalizedValue(row: InfoRow): string {
-    return this.isRTL ? this.toArabicDigits(row.value) : row.value;
+    return row.value;
   }
 
   getSectionStateLabel(missingCount: number): string {
@@ -414,8 +414,8 @@ export class VendorDetailComponent implements OnInit {
       this.row('النشاط', 'Business type', this.getDisplayBusinessType(vendor.businessType)),
       this.row('بريد التواصل', 'Contact email', vendor.contactEmail, 'ltr'),
       this.row('رقم التواصل', 'Contact phone', vendor.contactPhone, 'ltr'),
-      this.row('المدينة', 'City', vendor.city),
-      this.row('المنطقة', 'Region', vendor.region),
+      this.row('المدينة', 'City', this.getLocalizedCity(vendor.city)),
+      this.row('المنطقة', 'Region', this.getLocalizedRegion(vendor.region)),
       this.row('العنوان الوطني', 'National address', vendor.nationalAddress)
     ];
   }
@@ -426,7 +426,7 @@ export class VendorDetailComponent implements OnInit {
       this.row('البريد الإلكتروني', 'Email', vendor.ownerEmail, 'ltr'),
       this.row('رقم الجوال', 'Phone', vendor.ownerPhone, 'ltr'),
       this.row('رقم الهوية', 'ID number', vendor.idNumber, 'ltr'),
-      this.row('الجنسية', 'Nationality', vendor.nationality)
+      this.row('الجنسية', 'Nationality', this.getLocalizedNationality(vendor.nationality))
     ];
   }
 
@@ -590,7 +590,7 @@ export class VendorDetailComponent implements OnInit {
       return this.emptyValue();
     }
 
-    const formatted = new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US').format(value);
+    const formatted = new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US').format(value);
     return `${formatted}%`;
   }
 
@@ -599,7 +599,7 @@ export class VendorDetailComponent implements OnInit {
       return this.emptyValue();
     }
 
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US').format(value);
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US').format(value);
   }
 
   private resolveLastUpdate(vendor: VendorDetail): string {
@@ -621,7 +621,7 @@ export class VendorDetailComponent implements OnInit {
       return value;
     }
 
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -672,6 +672,36 @@ export class VendorDetailComponent implements OnInit {
   private toArabicDigits(value: string): string {
     const arabicDigits = ['\u0660', '\u0661', '\u0662', '\u0663', '\u0664', '\u0665', '\u0666', '\u0667', '\u0668', '\u0669'];
     return value.replace(/\d/g, (digit) => arabicDigits[Number(digit)]);
+  }
+
+  private getLocalizedCity(city?: string | null): string {
+    if (!city) {
+      return this.emptyValue();
+    }
+    const clean = city.trim();
+    const key = `COMMON.CITIES.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
+  }
+
+  private getLocalizedRegion(region?: string | null): string {
+    if (!region) {
+      return this.emptyValue();
+    }
+    const clean = region.trim();
+    const key = `COMMON.REGIONS.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
+  }
+
+  private getLocalizedNationality(nationality?: string | null): string {
+    if (!nationality) {
+      return this.emptyValue();
+    }
+    const clean = nationality.trim();
+    const key = `MODALS.OWNER_EDIT.NATIONALITIES.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
   }
 
   private emptyValue(): string {

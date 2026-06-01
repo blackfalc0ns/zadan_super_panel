@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+<div class="h-full flex flex-col bg-slate-50/30 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
   <app-page-header
     [title]="'DRIVERS.TITLE'"
     [subtitle]="'DRIVERS.DESC'"
@@ -10,7 +10,7 @@
     <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">directions_car</span>
 
     <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-      <app-button variant="primary" size="md" customClass="!rounded-[1.2rem] !text-sm !font-extrabold shadow-xl shadow-zadna-primary/20">
+      <app-button variant="primary" size="md" customClass="!rounded-[1.2rem] !text-sm !font-extrabold shadow-xl shadow-zadna-primary/20 hover:scale-[1.02] transition-transform duration-300">
         <span class="material-symbols-outlined text-[20px]">add</span>
         {{ 'DRIVERS.HEADER.ADD_DRIVER' | translate }}
       </app-button>
@@ -18,33 +18,73 @@
   </app-page-header>
 
   <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
-    <app-kpi-cards [cards]="kpiCards" (cardClick)="onKPICardClick($event)"></app-kpi-cards>
+    
+    <!-- Redesigned Custom Glassmorphic KPI Cards Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div 
+        *ngFor="let card of kpiCards"
+        (click)="onKPICardClick(card)"
+        class="relative flex flex-col p-5 rounded-3xl border bg-white/60 backdrop-blur-md border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:border-white/70 transition-all duration-300 cursor-pointer group overflow-hidden">
+        
+        <!-- Gradient Border Highlight on Hover -->
+        <div class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+             [ngClass]="{
+               'from-teal-400 to-emerald-400': card.id === 'total',
+               'from-teal-400 to-cyan-400': card.id === 'online',
+               'from-amber-400 to-orange-400': card.id === 'mission',
+               'from-red-400 to-rose-500': card.id === 'review',
+               'from-rose-500 to-red-600': card.id === 'suspended',
+               'from-orange-400 to-red-400': card.id === 'low-performance'
+             }"></div>
 
+        <!-- Icon with dynamic HSL-tailored background -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-110 duration-300"
+               [ngClass]="{
+                 'bg-teal-500/10 text-teal-600': card.id === 'total',
+                 'bg-cyan-500/10 text-cyan-600': card.id === 'online',
+                 'bg-amber-500/10 text-amber-600': card.id === 'mission',
+                 'bg-rose-500/10 text-rose-600': card.id === 'review',
+                 'bg-red-500/10 text-red-600': card.id === 'suspended',
+                 'bg-orange-500/10 text-orange-600': card.id === 'low-performance'
+               }">
+            <div [innerHTML]="card.icon" class="flex items-center justify-center"></div>
+          </div>
+        </div>
+
+        <!-- Label & Value -->
+        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1 truncate leading-relaxed">
+          {{ card.title | translate }}
+        </span>
+        <span class="text-2xl font-black text-slate-800 tracking-tight font-['Inter'] leading-none">
+          {{ card.value }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Search and Filters Bar -->
     <div class="flex flex-col gap-3">
-      <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-2">
         <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
           <div class="absolute inset-y-0 flex items-center pointer-events-none" [ngClass]="isRTL ? 'right-5' : 'left-5'">
-            <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+            <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-300">search</span>
           </div>
           <input
             type="text"
             [(ngModel)]="searchTerm"
             (ngModelChange)="onSearchTermInput($event)"
             [placeholder]="'DRIVERS.FILTERS.SEARCH_PLACEHOLDER' | translate"
-            class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
+            class="w-full py-4 bg-white/70 backdrop-blur-md border border-slate-200/50 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/40 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
             [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
         </div>
 
         <div class="flex items-center gap-4 order-2 lg:order-2">
-          <div class="flex items-center bg-white border border-slate-200/70 rounded-full h-[60px] shadow-[0_2px_12px_-4px_rgba(15,23,42,0.03)] px-2 transition-all hover:shadow-md hover:border-slate-300/60 overflow-hidden">
-            <div
-              class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group rounded-[1.2rem]"
-              (click)="toggleFilters()"
-              [class.bg-teal-50]="isFiltersExpanded">
+          <div class="flex items-center bg-white/70 backdrop-blur-md border border-slate-200/50 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md hover:border-slate-300/40 overflow-hidden">
+            <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50/50 transition-colors group rounded-[1.2rem]" (click)="toggleFilters()" [ngClass]="{ 'bg-teal-500/5': isFiltersExpanded }">
               <span
                 class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500"
                 [class.rotate-180]="isFiltersExpanded">filter_list</span>
-              <div class="flex flex-col">
+              <div class="flex flex-col text-start">
                 <span class="text-[13px] font-extrabold text-slate-800">{{ 'DRIVERS.FILTERS.TITLE' | translate }}</span>
                 <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'DRIVERS.FILTERS.ADJUST_CRITERIA' | translate }}</span>
               </div>
@@ -58,14 +98,15 @@
           <button
             *ngIf="hasActiveFilters"
             (click)="resetFilters()"
-            class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+            class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100/80 transition-all group border border-red-100">
             <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
             <span class="text-[11px] font-extrabold uppercase tracking-widest">{{ 'DRIVERS.FILTERS.RESET' | translate }}</span>
           </button>
         </div>
       </div>
 
-      <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6">
+      <!-- Advanced Filter Panel Container -->
+      <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/50 shadow-xl mb-6">
         <app-advanced-filter-panel
           [isExpanded]="true"
           [title]="'DRIVERS.FILTERS.TITLE'"
@@ -79,13 +120,14 @@
       </div>
     </div>
 
+    <!-- Redesigned High-Density Glassmorphic Data Table -->
     <app-data-table
       *ngIf="!isLoading && !showError"
       [data]="drivers"
       [columns]="tableColumns"
       [selectable]="true"
       [clickableRows]="true"
-      [containerClass]="'drivers-table-container rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/50 overflow-hidden bg-white/80 backdrop-blur-xl relative'"
+      [containerClass]="'drivers-table-container rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.015)] border border-slate-200/50 overflow-hidden bg-white/70 backdrop-blur-md relative'"
       [emptyStateTitle]="'DRIVERS.EMPTY_TITLE'"
       [emptyStateMessage]="'DRIVERS.EMPTY_MESSAGE'"
       [emptyStateIcon]="'directions_car'"
@@ -93,12 +135,12 @@
 
       <ng-template #customColumn let-driver let-column="column">
         
-        <!-- Driver Info (Combined Avatar, Name, Phone) -->
+        <!-- Driver Info (Avatar with Premium Ring, Name, Phone) -->
         <ng-container *ngIf="column.key === 'driver'">
           <div class="flex items-center gap-4 py-2">
-            <div class="h-11 w-11 rounded-[1.1rem] bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden shrink-0 shadow-sm ring-1 ring-slate-900/5 relative group-hover:shadow-md transition-shadow">
+            <div class="h-11 w-11 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden shrink-0 shadow-sm ring-1 ring-slate-900/5 relative group-hover:shadow-md transition-shadow">
               <img *ngIf="driver.imageUrl" [src]="driver.imageUrl" [alt]="driver.firstName" class="w-full h-full object-cover">
-              <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-sm font-bold text-slate-600">
+              <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-xs font-extrabold bg-gradient-to-br from-teal-500/10 to-emerald-500/10 text-zadna-primary">
                 {{ driver.firstName.charAt(0) }}{{ driver.lastName.charAt(0) }}
               </div>
               <div class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-[2.5px] border-white shadow-sm"
@@ -109,36 +151,36 @@
                    }"></div>
             </div>
             <div class="flex flex-col text-start min-w-0 justify-center">
-              <span class="text-[13px] font-bold text-slate-900 group-hover:text-zadna-primary transition-colors leading-tight truncate">
+              <span class="text-[13px] font-extrabold text-slate-800 group-hover:text-zadna-primary transition-colors leading-tight truncate">
                 {{ driver.firstName }} {{ driver.lastName }}
               </span>
-              <span class="text-[11px] font-medium text-slate-500 tracking-wide mt-0.5 truncate" dir="ltr">
+              <span class="text-[10px] font-semibold text-slate-400 mt-1 truncate" dir="ltr">
                 {{ driver.phoneNumber }}
               </span>
             </div>
           </div>
         </ng-container>
 
-        <!-- Driver ID -->
+        <!-- Driver ID Badge -->
         <ng-container *ngIf="column.key === 'driverId'">
           <div class="flex justify-center">
-            <span class="inline-flex items-center rounded-xl bg-slate-50/80 px-2.5 py-1 text-[11px] font-semibold text-slate-600 border border-slate-200/60 shadow-sm font-['Inter']" dir="ltr">
+            <span class="inline-flex items-center rounded-xl bg-slate-100/50 px-2.5 py-1 text-[11px] font-bold text-slate-600 border border-slate-200/40 shadow-sm font-['Inter']" dir="ltr">
               #{{ driver.driverId }}
             </span>
           </div>
         </ng-container>
 
-        <!-- City -->
+        <!-- City Location Badge -->
         <ng-container *ngIf="column.key === 'city'">
           <div class="flex justify-center">
-            <span class="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-700 bg-white border border-slate-200/60 shadow-sm px-2.5 py-1 rounded-xl">
-              <span class="material-symbols-outlined text-[14px] text-zadna-primary/70">location_on</span>
-              {{ driver.city }}
+            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold text-slate-700 bg-white/80 border border-slate-200/50 shadow-sm px-2.5 py-1 rounded-xl">
+              <span class="material-symbols-outlined text-[13px] text-zadna-primary">location_on</span>
+              {{ getTranslatedCity(driver.city) }}
             </span>
           </div>
         </ng-container>
 
-        <!-- Status -->
+        <!-- Connection Status -->
         <ng-container *ngIf="column.key === 'status'">
           <div class="flex justify-center">
             <app-status-pill
@@ -149,7 +191,7 @@
           </div>
         </ng-container>
 
-        <!-- Verification -->
+        <!-- Verification Status -->
         <ng-container *ngIf="column.key === 'verificationStatus'">
           <div class="flex justify-center">
             <app-status-pill
@@ -160,32 +202,34 @@
           </div>
         </ng-container>
 
-        <!-- Tasks -->
+        <!-- Redesigned Active Tasks (Glowing dynamic indicator) -->
         <ng-container *ngIf="column.key === 'tasks'">
-          <div class="flex flex-col items-center gap-1.5">
-            <span class="inline-flex h-7 w-7 items-center justify-center rounded-[0.8rem] bg-gradient-to-b from-slate-50 to-slate-100 text-[12px] font-bold text-slate-700 font-['Inter'] shadow-sm border border-slate-200/50">
+          <div class="flex flex-col items-center gap-1">
+            <span 
+              class="inline-flex h-8 w-8 items-center justify-center rounded-xl text-[12px] font-black font-['Inter'] shadow-sm border transition-transform duration-300 hover:scale-110"
+              [ngClass]="driver.tasks.active > 0 ? 'bg-amber-500/10 text-amber-700 border-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200/60'">
               {{ driver.tasks.active }}
             </span>
-            <span class="text-[10px] font-medium text-slate-500 max-w-[110px] leading-tight text-center truncate" [title]="getTaskSubtitle(driver.tasks.subtitle) | translate">
+            <span class="text-[9px] font-extrabold text-slate-400 max-w-[110px] leading-tight text-center truncate" [title]="getTaskSubtitle(driver.tasks.subtitle) | translate">
               {{ getTaskSubtitle(driver.tasks.subtitle) | translate }}
             </span>
           </div>
         </ng-container>
 
-        <!-- Performance -->
+        <!-- Performance / Progress Indicator -->
         <ng-container *ngIf="column.key === 'performance'">
           <div class="flex flex-col gap-1.5 w-full max-w-[110px] mx-auto">
-            <div class="flex justify-between items-center w-full text-[10px] font-semibold">
+            <div class="flex justify-between items-center w-full text-[10px] font-bold">
               <span class="text-slate-500 truncate max-w-[60px]">{{ getPerformanceLabel(driver.performance) | translate }}</span>
-              <span class="text-slate-900 font-['Inter'] shrink-0 font-bold">{{ driver.acceptanceRate }}%</span>
+              <span class="text-slate-800 font-['Inter'] shrink-0 font-extrabold">{{ driver.acceptanceRate }}%</span>
             </div>
-            <div class="w-full h-1.5 rounded-full bg-slate-100/80 overflow-hidden relative shadow-inner" dir="ltr">
+            <div class="w-full h-1.5 rounded-full bg-slate-100/50 overflow-hidden relative border border-slate-200/30" dir="ltr">
               <div
                 class="h-full rounded-full transition-all duration-700 shadow-sm"
                 [ngClass]="{
-                  'bg-gradient-to-r from-emerald-400 to-emerald-500': driver.acceptanceRate >= 85,
-                  'bg-gradient-to-r from-amber-400 to-amber-500': driver.acceptanceRate >= 60 && driver.acceptanceRate < 85,
-                  'bg-gradient-to-r from-rose-400 to-rose-500': driver.acceptanceRate < 60
+                  'bg-gradient-to-r from-emerald-400 to-teal-500': driver.acceptanceRate >= 85,
+                  'bg-gradient-to-r from-amber-400 to-orange-400': driver.acceptanceRate >= 60 && driver.acceptanceRate < 85,
+                  'bg-gradient-to-r from-rose-400 to-red-500': driver.acceptanceRate < 60
                 }"
                 [style.width.%]="driver.acceptanceRate">
               </div>
@@ -193,85 +237,73 @@
           </div>
         </ng-container>
 
-        <!-- Wallet -->
+        <!-- Wallet Balance Card Badge -->
         <ng-container *ngIf="column.key === 'wallet'">
-          <div class="flex flex-col justify-center items-center px-2.5 py-1.5 rounded-xl border w-fit mx-auto shadow-sm transition-colors"
+          <div class="flex flex-col justify-center items-center px-3 py-1 rounded-2xl border w-fit mx-auto shadow-sm transition-all hover:scale-[1.02]"
             [ngClass]="{
-              'bg-amber-50/50 border-amber-200/60': driver.walletBalance > 1000,
-              'bg-rose-50/50 border-rose-200/60': driver.walletBalance < 0,
-              'bg-slate-50/50 border-slate-200/60': driver.walletBalance >= 0 && driver.walletBalance <= 1000
+              'bg-amber-500/5 border-amber-200 text-amber-700': driver.walletBalance > 1000,
+              'bg-rose-500/5 border-rose-200 text-rose-700': driver.walletBalance < 0,
+              'bg-slate-50/50 border-slate-200/50 text-slate-600': driver.walletBalance >= 0 && driver.walletBalance <= 1000
             }">
-            <div class="flex items-baseline gap-1">
-              <span
-                class="text-[13px] font-bold font-['Inter']"
-                [ngClass]="{
-                  'text-amber-700': driver.walletBalance > 1000,
-                  'text-rose-700': driver.walletBalance < 0,
-                  'text-slate-700': driver.walletBalance >= 0 && driver.walletBalance <= 1000
-                }">
+            <div class="flex items-baseline gap-0.5">
+              <span class="text-[12px] font-black font-['Inter'] leading-none">
                 {{ driver.walletBalance | number:'1.0-0' }}
               </span>
-              <span
-                class="text-[9px] font-semibold"
-                [ngClass]="{
-                  'text-rose-600/80': driver.walletBalance < 0,
-                  'text-amber-600/80': driver.walletBalance > 1000,
-                  'text-slate-400': driver.walletBalance >= 0 && driver.walletBalance <= 1000
-                }">
+              <span class="text-[8px] font-extrabold opacity-80 leading-none">
                 {{ 'COMMON.CURRENCY_SAR' | translate }}
               </span>
             </div>
           </div>
         </ng-container>
 
-        <!-- Issues -->
+        <!-- Issues Icons (Glassmorphic circular highlights) -->
         <ng-container *ngIf="column.key === 'issues'">
           <div class="flex justify-center gap-1.5 flex-wrap">
             <ng-container *ngIf="driver.issues && driver.issues.length > 0; else noIssues">
               <span
                 *ngFor="let issue of driver.issues"
-                class="inline-flex h-7 w-7 items-center justify-center rounded-[0.75rem] border shadow-sm transition-transform hover:scale-110 cursor-help"
+                class="inline-flex h-7 w-7 items-center justify-center rounded-full border shadow-sm transition-transform hover:scale-110 cursor-help"
                 [ngClass]="{
-                  'border-emerald-200 bg-emerald-50 text-emerald-600': getIssueVariant(issue) === 'success',
-                  'border-amber-200 bg-amber-50 text-amber-600': getIssueVariant(issue) === 'warning',
-                  'border-rose-200 bg-rose-50 text-rose-600': getIssueVariant(issue) === 'danger'
+                  'border-emerald-200 bg-emerald-500/10 text-emerald-600': getIssueVariant(issue) === 'success',
+                  'border-amber-200 bg-amber-500/10 text-amber-600': getIssueVariant(issue) === 'warning',
+                  'border-rose-200 bg-rose-500/10 text-rose-600': getIssueVariant(issue) === 'danger'
                 }"
                 [title]="getIssueLabel(issue) | translate">
-                <span class="material-symbols-outlined text-[15px]">{{ getIssueIcon(issue) }}</span>
+                <span class="material-symbols-outlined text-[14px]">{{ getIssueIcon(issue) }}</span>
               </span>
             </ng-container>
             <ng-template #noIssues>
-              <span class="text-[12px] font-black text-slate-200">-</span>
+              <span class="text-[12px] font-bold text-slate-300">-</span>
             </ng-template>
           </div>
         </ng-container>
 
-        <!-- Actions -->
+        <!-- Redesigned Actions Navigation Button -->
         <ng-container *ngIf="column.key === 'actions'">
-          <div class="flex justify-center">
+          <div class="flex justify-center group-hover:scale-105 transition-transform duration-300">
             <button 
-              class="w-8 h-8 rounded-[0.8rem] flex items-center justify-center text-slate-400 hover:bg-zadna-primary hover:text-white transition-all shadow-sm bg-white border border-slate-200/60"
+              class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:bg-zadna-primary hover:text-white transition-all shadow-sm bg-white border border-slate-200/50"
               (click)="onTableRowClick(driver); $event.stopPropagation()">
-              <span class="material-symbols-outlined text-[18px]">more_vert</span>
+              <span class="material-symbols-outlined text-[18px] transition-transform duration-300" [ngClass]="isRTL ? 'rotate-180 hover:-translate-x-0.5' : 'hover:translate-x-0.5'">chevron_right</span>
             </button>
           </div>
         </ng-container>
       </ng-template>
 
-      <!-- Mobile Card Layout -->
+      <!-- Redesigned Mobile Card Layout -->
       <ng-template #mobileCard let-driver>
         <div class="space-y-4">
-          <div class="flex items-center justify-between gap-3 border-b border-slate-100/80 pb-3">
+          <div class="flex items-center justify-between gap-3 border-b border-slate-100/60 pb-3">
             <div class="flex items-center gap-3">
-              <div class="h-12 w-12 rounded-[1.2rem] bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden ring-1 ring-slate-900/5 shadow-sm relative">
+              <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden ring-1 ring-slate-900/5 shadow-sm relative">
                 <img *ngIf="driver.imageUrl" [src]="driver.imageUrl" [alt]="driver.firstName" class="w-full h-full object-cover">
-                <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-sm font-bold text-slate-600">
+                <div *ngIf="!driver.imageUrl" class="w-full h-full flex items-center justify-center text-sm font-extrabold bg-gradient-to-br from-teal-500/10 to-emerald-500/10 text-zadna-primary">
                   {{ driver.firstName.charAt(0) }}{{ driver.lastName.charAt(0) }}
                 </div>
               </div>
-              <div>
-                <p class="text-[14px] font-bold text-slate-900">{{ driver.firstName }} {{ driver.lastName }}</p>
-                <p class="text-[12px] font-medium text-slate-500 mt-0.5" dir="ltr">{{ driver.phoneNumber }}</p>
+              <div class="text-start">
+                <p class="text-[14px] font-extrabold text-slate-900 leading-tight">{{ driver.firstName }} {{ driver.lastName }}</p>
+                <p class="text-[11px] font-semibold text-slate-400 mt-1" dir="ltr">{{ driver.phoneNumber }}</p>
               </div>
             </div>
             <app-status-pill
@@ -282,21 +314,21 @@
           </div>
 
           <div class="grid grid-cols-2 gap-3">
-            <div class="rounded-2xl bg-slate-50/50 px-4 py-3 border border-slate-100">
-              <p class="text-[10px] font-semibold text-slate-500">{{ 'DRIVERS.TABLE.DRIVER_ID' | translate }}</p>
-              <p class="mt-1 font-['Inter'] text-[13px] font-bold text-slate-800" dir="ltr">#{{ driver.driverId }}</p>
+            <div class="rounded-2xl bg-slate-50/50 px-4 py-3 border border-slate-100/60">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.TABLE.DRIVER_ID' | translate }}</p>
+              <p class="mt-1 font-['Inter'] text-[13px] font-black text-slate-800" dir="ltr">#{{ driver.driverId }}</p>
             </div>
-            <div class="rounded-2xl bg-slate-50/50 px-4 py-3 border border-slate-100">
-              <p class="text-[10px] font-semibold text-slate-500">{{ 'DRIVERS.TABLE.CITY' | translate }}</p>
-              <p class="mt-1 text-[13px] font-bold text-slate-800 flex items-center gap-1.5">
+            <div class="rounded-2xl bg-slate-50/50 px-4 py-3 border border-slate-100/60">
+              <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.TABLE.CITY' | translate }}</p>
+              <p class="mt-1 text-[13px] font-black text-slate-800 flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[15px] text-zadna-primary">location_on</span>
-                {{ driver.city }}
+                {{ getTranslatedCity(driver.city) }}
               </p>
             </div>
           </div>
           
           <button 
-            class="w-full flex items-center justify-center gap-2 py-3 bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-50 hover:text-zadna-primary text-[13px] font-bold rounded-2xl transition-all shadow-sm"
+            class="w-full flex items-center justify-center gap-2 py-3 bg-white border border-slate-200/50 text-slate-700 hover:bg-slate-50 hover:text-zadna-primary text-[13px] font-extrabold rounded-2xl transition-all shadow-sm"
             (click)="onTableRowClick(driver)">
             <span class="material-symbols-outlined text-[18px]">visibility</span>
             {{ 'DRIVERS.ACTIONS.VIEW_PROFILE' | translate }}
@@ -305,6 +337,7 @@
       </ng-template>
     </app-data-table>
 
+    <!-- Pagination controls -->
     <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
       <app-pagination
         *ngIf="!isLoading && drivers.length > 0"
@@ -315,22 +348,24 @@
       </app-pagination>
     </div>
 
-    <div *ngIf="isLoading" class="admin-skeleton-table" style="--skeleton-columns: 7">
-      <div class="admin-skeleton-table-header">
-        <span *ngFor="let item of [1,2,3,4,5,6,7]" class="admin-skeleton admin-skeleton-line sm"></span>
+    <!-- Redesigned loading skeletons -->
+    <div *ngIf="isLoading" class="admin-skeleton-table bg-white/70 backdrop-blur-md rounded-3xl border border-slate-200/50 p-6" style="--skeleton-columns: 7">
+      <div class="admin-skeleton-table-header border-b border-slate-100 pb-4 mb-4">
+        <span *ngFor="let item of [1,2,3,4,5,6,7]" class="admin-skeleton admin-skeleton-line sm bg-slate-100/80"></span>
       </div>
-      <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
-        <span class="admin-skeleton admin-skeleton-avatar"></span>
-        <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
-        <span class="admin-skeleton admin-skeleton-chip"></span>
-        <span class="admin-skeleton admin-skeleton-chip"></span>
-        <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
-        <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
-        <span class="admin-skeleton admin-skeleton-chip"></span>
+      <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row py-3 flex items-center justify-between border-b border-slate-50 last:border-b-0">
+        <span class="admin-skeleton admin-skeleton-avatar bg-slate-100/80"></span>
+        <span class="admin-skeleton admin-skeleton-line lg w-4/5 bg-slate-100/80"></span>
+        <span class="admin-skeleton admin-skeleton-chip bg-slate-100/80"></span>
+        <span class="admin-skeleton admin-skeleton-chip bg-slate-100/80"></span>
+        <span class="admin-skeleton admin-skeleton-line w-2/3 bg-slate-100/80"></span>
+        <span class="admin-skeleton admin-skeleton-line w-1/2 bg-slate-100/80"></span>
+        <span class="admin-skeleton admin-skeleton-chip bg-slate-100/80"></span>
       </div>
     </div>
 
-    <div *ngIf="showError" class="rounded-[1.25rem] border border-red-100 bg-red-50 px-5 py-4 text-sm font-extrabold text-red-600">
+    <!-- Error state layout -->
+    <div *ngIf="showError" class="rounded-[1.25rem] border border-red-100 bg-red-50/50 backdrop-blur-sm px-5 py-4 text-sm font-extrabold text-red-600 shadow-sm">
       {{ errorMessage | translate }}
     </div>
   </div>

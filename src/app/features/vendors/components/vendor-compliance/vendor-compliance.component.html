@@ -51,18 +51,18 @@
         <button
           type="button"
           (click)="setWorkspaceWindow('operations')"
-          class="inline-flex h-8 items-center justify-center rounded-lg px-4 text-[11px] font-black transition-all duration-300"
+          class="inline-flex h-8 items-center justify-center rounded-lg px-4 text-[11px] font-black transition-all duration-300 gap-1.5 hover:shadow-sm"
           [ngClass]="isWorkspaceWindowActive('operations') ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'">
-          <span class="material-symbols-outlined mr-1.5 text-[15px]">tune</span>
+          <span class="material-symbols-outlined text-[15px]">tune</span>
           {{ isRTL ? 'الإدارة والسجل' : 'Operations & Timeline' }}
         </button>
 
         <button
           type="button"
           (click)="setWorkspaceWindow('review')"
-          class="inline-flex h-8 items-center justify-center rounded-lg px-4 text-[11px] font-black transition-all duration-300"
+          class="inline-flex h-8 items-center justify-center rounded-lg px-4 text-[11px] font-black transition-all duration-300 gap-1.5 hover:shadow-sm"
           [ngClass]="isWorkspaceWindowActive('review') ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'">
-          <span class="material-symbols-outlined mr-1.5 text-[15px]">preview</span>
+          <span class="material-symbols-outlined text-[15px]">preview</span>
           {{ isRTL ? 'المستندات والمعاينة' : 'Documents & Preview' }}
         </button>
       </div>
@@ -71,30 +71,43 @@
     <!-- Readiness Banner -->
     <div class="mt-4 rounded-xl border border-white/5 bg-white/5 p-3 backdrop-blur-sm">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
-             <span class="text-[11px] font-black text-white">{{ formatNumber(reviewCompletionPercent) }}%</span>
-             <svg class="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
-                <path class="text-slate-700/50" stroke-width="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-primary" stroke-width="2.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-             </svg>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2.5">
+            <div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+               <span class="text-[11px] font-black text-white">{{ formatNumber(reviewCompletionPercent) }}%</span>
+               <svg class="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
+                  <path class="text-slate-700/50" stroke-width="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-primary" stroke-width="2.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+               </svg>
+            </div>
+            <div>
+              <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'جاهزية الاعتماد' : 'Approval Readiness' }}</p>
+              <p class="mt-0.5 text-[12px] font-bold text-white">
+                {{ complianceReadyForFinalApproval
+                  ? (isRTL ? 'جاهز للاعتماد النهائي' : 'Ready for final approval')
+                  : isRTL
+                    ? 'بانتظار إغلاق ' + formatNumber(pendingRequiredDocumentsCount) + ' عناصر'
+                    : 'Waiting for ' + formatNumber(pendingRequiredDocumentsCount) + ' open items' }}
+              </p>
+            </div>
           </div>
+          <div class="h-6 w-[1px] hidden sm:block bg-white/10"></div>
           <div>
-            <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'جاهزية الاعتماد' : 'Approval Readiness' }}</p>
-            <p class="mt-0.5 text-[12px] font-bold text-white">
-              {{ complianceReadyForFinalApproval
-                ? (isRTL ? 'جاهز للاعتماد النهائي' : 'Ready for final approval')
-                : isRTL
-                  ? 'بانتظار إغلاق ' + formatNumber(pendingRequiredDocumentsCount) + ' عناصر'
-                  : 'Waiting for ' + formatNumber(pendingRequiredDocumentsCount) + ' open items' }}
-            </p>
+            <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'التوجيه الحالي' : 'Current Guidance' }}</p>
+            <p class="mt-0.5 text-[12px] font-bold text-white">{{ operationsHint }}</p>
           </div>
         </div>
-        <div class="h-6 w-[1px] hidden sm:block bg-white/10"></div>
-        <div>
-          <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'التوجيه الحالي' : 'Current Guidance' }}</p>
-          <p class="mt-0.5 text-[12px] font-bold text-white">{{ operationsHint }}</p>
-        </div>
+
+        <button
+          *ngIf="totalPendingItemsCount > 0"
+          type="button"
+          (click)="onApproveAllPending()"
+          [disabled]="isSubmittingDocumentDecision"
+          class="flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 hover:shadow-lg hover:shadow-emerald-500/20 active:scale-95 transition-all px-4 text-[12px] font-black text-white disabled:opacity-50 shrink-0">
+          <span class="material-symbols-outlined text-[18px] animate-spin" *ngIf="isSubmittingDocumentDecision">sync</span>
+          <span class="material-symbols-outlined text-[18px]" *ngIf="!isSubmittingDocumentDecision">done_all</span>
+          {{ isRTL ? 'اعتماد جميع المعلق (' + formatNumber(totalPendingItemsCount) + ')' : 'Approve all pending (' + formatNumber(totalPendingItemsCount) + ')' }}
+        </button>
       </div>
     </div>
   </section>
@@ -324,9 +337,9 @@
             </div>
             <div>
               <div class="flex items-center gap-1.5 mb-0.5">
-                <p class="text-[12px] font-black text-slate-900">{{ indicator.titleKey | translate }}</p>
+                <p class="text-[12px] font-black text-slate-900">{{ getIndicatorTitle(indicator) }}</p>
               </div>
-              <p class="text-[11px] font-medium leading-relaxed text-slate-600">{{ indicator.descriptionKey | translate }}</p>
+              <p class="text-[11px] font-medium leading-relaxed text-slate-600">{{ getIndicatorDescription(indicator) }}</p>
             </div>
           </div>
         </div>
@@ -370,8 +383,9 @@
             *ngFor="let item of sortedProfileReviewItems; trackBy: trackByProfileItem"
             type="button"
             (click)="selectProfileReviewItem(item)"
-            class="group w-full rounded-xl border p-3 text-start transition-all hover:-translate-y-0.5 hover:shadow-sm"
+            class="group relative overflow-hidden w-full rounded-xl border p-3 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
             [ngClass]="selectedProfileReviewItem?.code === item.code ? 'border-primary/30 bg-primary/5 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'">
+            <div *ngIf="selectedProfileReviewItem?.code === item.code" class="absolute top-0 bottom-0 w-1 bg-primary ltr:left-0 rtl:right-0"></div>
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
                 <p class="truncate text-[12px] font-black text-slate-900">{{ getProfileItemLabel(item) }}</p>
@@ -401,11 +415,12 @@
             *ngFor="let document of group.documents; trackBy: trackByDocument"
             type="button"
             (click)="selectDocument(document)"
-            class="group w-full rounded-xl border p-3 text-start transition-all hover:-translate-y-0.5 hover:shadow-sm"
-            [ngClass]="selectedDocument?.id === document.id ? 'border-primary/30 bg-primary/5 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'">
+            class="group relative overflow-hidden w-full rounded-xl border p-3 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
+            [ngClass]="selectedDocument?.id === document.id ? 'border-primary/30 bg-primary/5 shadow-sm' : (document.type === 'commercial' && isCrExpired ? 'border-rose-200 bg-rose-50/20 hover:border-rose-300' : 'border-slate-100 bg-white hover:border-slate-200')">
+            <div *ngIf="selectedDocument?.id === document.id" class="absolute top-0 bottom-0 w-1 bg-primary ltr:left-0 rtl:right-0"></div>
             <div class="flex items-start gap-2.5">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm transition-transform group-hover:scale-105" [ngClass]="document.iconBgClass">
-                <span class="material-symbols-outlined text-[16px]">{{ document.icon }}</span>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm transition-transform group-hover:scale-105" [ngClass]="document.type === 'commercial' && isCrExpired ? 'bg-rose-100 text-rose-600' : document.iconBgClass">
+                <span class="material-symbols-outlined text-[16px]">{{ document.type === 'commercial' && isCrExpired ? 'warning' : document.icon }}</span>
               </div>
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-1.5 mb-0.5">
@@ -413,8 +428,15 @@
                   <span *ngIf="document.isRequired" class="shrink-0 rounded-full bg-rose-50 px-1.5 py-0.5 text-[8px] font-black tracking-widest text-rose-600">
                     {{ isRTL ? 'إلزامي' : 'REQ' }}
                   </span>
+                  <span *ngIf="document.type === 'commercial' && isCrExpired" class="shrink-0 rounded-full bg-rose-100 px-1.5 py-0.5 text-[8px] font-black tracking-wider text-rose-700 animate-pulse">
+                    {{ isRTL ? 'منتهي' : 'EXPIRED' }}
+                  </span>
                 </div>
-                <p class="text-[10px] font-medium text-slate-500">{{ document.descriptionKey | translate }}</p>
+                <p class="text-[10px] font-medium text-slate-500">{{ getDocumentDescription(document) }}</p>
+                <div *ngIf="document.type === 'commercial' && isCrExpired" class="mt-1 flex items-center gap-1 text-[9px] font-bold text-rose-600">
+                  <span class="material-symbols-outlined text-[11px]">warning</span>
+                  <span>{{ isRTL ? 'انتهاء صلاحية السجل التجاري' : 'Commercial registration has expired' }}</span>
+                </div>
                 
                 <div class="mt-2 flex flex-wrap items-center gap-1.5">
                   <app-status-pill
@@ -426,8 +448,8 @@
                   </app-status-pill>
 
                   <app-status-pill
-                    [label]="getDecisionLabel(document.reviewDecision)"
-                    [variant]="getDecisionVariant(document.reviewDecision)"
+                    [label]="document.type === 'commercial' && isCrExpired ? (isRTL ? 'منتهي الصلاحية' : 'Expired') : getDecisionLabel(document.reviewDecision)"
+                    [variant]="document.type === 'commercial' && isCrExpired ? 'danger' : getDecisionVariant(document.reviewDecision)"
                     [showDot]="true"
                     [shouldTranslate]="false"
                     size="sm">
@@ -455,6 +477,17 @@
       </div>
 
       <ng-container *ngIf="selectedDocument as document; else emptyPreview">
+        <!-- Expired CR Alert -->
+        <div *ngIf="document.type === 'commercial' && isCrExpired" class="mb-3 rounded-xl bg-rose-50 border border-rose-200 p-3 text-start flex items-start gap-2.5 shadow-sm">
+          <span class="material-symbols-outlined text-rose-600 shrink-0 text-[20px]">warning</span>
+          <div class="min-w-0 flex-1">
+            <h4 class="text-[11.5px] font-black text-rose-900 leading-normal">{{ isRTL ? 'السجل التجاري منتهي الصلاحية' : 'Commercial Registration has expired' }}</h4>
+            <p class="text-[10px] font-medium text-rose-700 leading-normal mt-0.5">
+              {{ isRTL ? 'الحساب موقوف تلقائيًا بسبب انتهاء صلاحية السجل التجاري. يجب تحديث تاريخ انتهاء السجل التجاري ورفع مستند ساري المفعول أولاً لإعادة تنشيط الحساب.' : 'The account is automatically suspended because the Commercial Registration has expired. The CR expiry date must be updated and a valid document uploaded first to reactivate the account.' }}
+            </p>
+          </div>
+        </div>
+
         <!-- File Viewer Area -->
         <div class="relative flex-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-inner flex flex-col mb-3 min-h-[250px]">
           <div class="absolute right-3 top-3 z-10 flex gap-2">
@@ -503,18 +536,18 @@
             <div class="flex flex-col gap-2 justify-end sm:flex-row lg:flex-col min-w-[120px]">
               <button
                 type="button"
-                [disabled]="isSubmittingDocumentDecision || !document.isUploaded || document.reviewDecision === 'approved'"
+                [disabled]="isSubmittingDocumentDecision || !document.isUploaded || document.reviewDecision === 'approved' || (document.type === 'commercial' && isCrExpired)"
                 (click)="onApproveDocument(document)"
-                class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none">
-                <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_up</span>
+                class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all duration-300 hover:bg-emerald-600 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">thumb_up</span>
                 {{ isRTL ? 'موافق' : 'Approve' }}
               </button>
               <button
                 type="button"
                 [disabled]="isSubmittingDocumentDecision || !document.isUploaded"
                 (click)="onRejectDocument(document)"
-                class="flex h-9 items-center justify-center rounded-lg bg-white border border-rose-200 text-rose-600 px-3 text-[12px] font-black transition-all hover:bg-rose-50 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none">
-                <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_down</span>
+                class="flex h-9 items-center justify-center rounded-lg bg-white border border-rose-200 text-rose-600 px-3 text-[12px] font-black transition-all duration-300 hover:bg-rose-50 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">thumb_down</span>
                 {{ isRTL ? 'رفض' : 'Reject' }}
               </button>
             </div>
@@ -554,15 +587,15 @@
             <button
               type="button"
               (click)="onApproveProfileItem(item)"
-              class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all hover:bg-emerald-600">
-              <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_up</span>
+              class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all duration-300 hover:bg-emerald-600 hover:shadow-sm hover:-translate-y-0.5 gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">thumb_up</span>
               {{ isRTL ? 'موافق' : 'Approve' }}
             </button>
             <button
               type="button"
               (click)="onRejectProfileItem(item)"
-              class="flex h-9 items-center justify-center rounded-lg border border-rose-200 bg-white px-3 text-[12px] font-black text-rose-600 transition-all hover:bg-rose-50">
-              <span class="material-symbols-outlined mr-1.5 text-[16px]">thumb_down</span>
+              class="flex h-9 items-center justify-center rounded-lg border border-rose-200 bg-white px-3 text-[12px] font-black text-rose-600 transition-all duration-300 hover:bg-rose-50 hover:shadow-sm hover:-translate-y-0.5 gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">thumb_down</span>
               {{ isRTL ? 'رفض' : 'Reject' }}
             </button>
           </div>
@@ -574,12 +607,12 @@
   </section>
 
   <ng-template #emptyPreview>
-    <div class="flex flex-1 flex-col items-center justify-center rounded-[1.25rem] border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center min-h-[350px]">
-      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm mb-3">
-        <span class="material-symbols-outlined text-[28px] text-slate-300">task</span>
+    <div class="flex flex-1 flex-col items-center justify-center rounded-[1.25rem] border-2 border-dashed border-slate-200/80 bg-slate-50/20 p-8 text-center min-h-[350px] shadow-inner backdrop-blur-sm">
+      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-white to-slate-50/50 shadow-md shadow-slate-100/60 mb-4 text-slate-350 transition-transform hover:scale-105 duration-300">
+        <span class="material-symbols-outlined text-[30px]">task</span>
       </div>
-      <h3 class="text-lg font-black text-slate-900 mb-1.5">{{ isRTL ? 'لا يوجد مستند محدد' : 'No Document Selected' }}</h3>
-      <p class="max-w-xs text-[12px] font-medium text-slate-500">{{ isRTL ? 'اختر مستنداً من القائمة الجانبية لمعاينته واتخاذ القرار المناسب.' : 'Select a document from the board to preview it.' }}</p>
+      <h3 class="text-[15px] font-black text-slate-900 mb-2">{{ isRTL ? 'لا يوجد مستند محدد' : 'No Document Selected' }}</h3>
+      <p class="max-w-xs text-[11px] leading-relaxed font-semibold text-slate-450">{{ isRTL ? 'اختر مستنداً من القائمة الجانبية لمعاينته واتخاذ القرار المناسب.' : 'Select a document from the board to preview it.' }}</p>
     </div>
   </ng-template>
 

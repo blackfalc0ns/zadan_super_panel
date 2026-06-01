@@ -654,6 +654,6 @@ export class VendorAnalyticsComponent {
   }
 
   private get locale(): string {
-    return this.currentLang === 'ar' ? 'ar-EG' : 'en-US';
+    return this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US';
   }
 }

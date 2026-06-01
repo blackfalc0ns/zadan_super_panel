@@ -2,48 +2,6 @@
   display: block;
 }
 
-.vendor-log-page {
-  --vendor-brand: #127c8c;
-  --vendor-brand-dark: #0e5f6b;
-  --vendor-accent: #e48215;
-}
-
-.summary-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 0.85rem;
-  background: #ffffff;
-  padding: 0.65rem 0.75rem;
-}
-
-.summary-card.attention {
-  border-color: #fed7aa;
-  background: #fff7ed;
-}
-
-.summary-card.notes {
-  border-color: rgba(18, 124, 140, 0.2);
-  background: rgba(18, 124, 140, 0.08);
-}
-
-.summary-label {
-  font-size: 0.625rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #64748b;
-}
-
-.summary-value {
-  margin-top: 0.25rem;
-  font-size: 1.08rem;
-  font-weight: 900;
-  color: #020617;
-}
-
-.event-row {
-  box-shadow: 0 12px 28px -26px rgba(15, 23, 42, 0.48);
-}
-
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(18, 124, 140, 0.35) transparent;

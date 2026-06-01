@@ -112,18 +112,31 @@
 
         <div class="grid gap-3 sm:grid-cols-2">
           <ng-container *ngFor="let item of personalInfoItems">
-            <div class="flex items-center gap-3 rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white">
+            <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white"
+                 [class.cursor-pointer]="item.copyable"
+                 (click)="item.copyable && copyToClipboard(item.key, item.value)">
               <div class="min-w-0 flex-1">
                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500" [class.text-right]="isRTL" [class.text-left]="!isRTL">{{ item.label | translate }}</p>
                 <p class="mt-1 truncate text-[14px] font-black text-slate-900"
                    [class.text-right]="isRTL" [class.text-left]="!isRTL" [attr.dir]="item.direction || (isRTL ? 'rtl' : 'ltr')">
-                  {{ item.value }}
+                  <ng-container *ngIf="item.isCity; else regularVal">
+                    {{ getTranslatedCity(item.value) }}
+                  </ng-container>
+                  <ng-template #regularVal>
+                    {{ item.value }}
+                  </ng-template>
                 </p>
               </div>
+              <span *ngIf="item.copyable" class="material-symbols-outlined text-[18px] transition-colors"
+                    [ngClass]="copiedFields[item.key] ? 'text-emerald-500' : 'text-slate-300 hover:text-slate-600'">
+                {{ copiedFields[item.key] ? 'check_circle' : 'content_copy' }}
+              </span>
             </div>
           </ng-container>
           <ng-container *ngFor="let item of vehicleInfoItems">
-            <div class="flex items-center gap-3 rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white">
+            <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/60 bg-slate-50/50 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white"
+                 [class.cursor-pointer]="item.copyable"
+                 (click)="item.copyable && copyToClipboard(item.key, item.value)">
               <div class="min-w-0 flex-1">
                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500" [class.text-right]="isRTL" [class.text-left]="!isRTL">{{ item.label | translate }}</p>
                 <p class="mt-1 truncate text-[14px] font-black text-slate-900"
@@ -131,6 +144,10 @@
                   {{ item.translateValue ? (item.value | translate) : item.value }}
                 </p>
               </div>
+              <span *ngIf="item.copyable" class="material-symbols-outlined text-[18px] transition-colors"
+                    [ngClass]="copiedFields[item.key] ? 'text-emerald-500' : 'text-slate-300 hover:text-slate-600'">
+                {{ copiedFields[item.key] ? 'check_circle' : 'content_copy' }}
+              </span>
             </div>
           </ng-container>
         </div>

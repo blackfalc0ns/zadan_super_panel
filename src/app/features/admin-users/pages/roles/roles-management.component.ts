@@ -15,6 +15,7 @@ import {
   buildPermissionKey
 } from '../../models/admin-users.models';
 import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pill.component';
+import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { AdminAccessApiService, PermissionDefinitionDto, RoleDefinitionDto } from '../../../../core/services/admin-access-api.service';
 
 interface CustomRole {
@@ -37,7 +38,7 @@ interface CustomRole {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-roles-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent],
   templateUrl: './roles-management.component.html',
   styles: [
     `
@@ -63,6 +64,10 @@ export class RolesManagementComponent implements OnInit {
   selectedRole: CustomRole | null = null;
   editingPermissions = false;
   showModal = false;
+  isDeleteModalOpen = false;
+  roleToDelete: CustomRole | null = null;
+  isDeleting = false;
+  deleteError = '';
   activeDetailTab: 'permissions' | 'email' | 'users' = 'permissions';
 
   detailTabs = [
@@ -377,22 +382,39 @@ export class RolesManagementComponent implements OnInit {
 
   deleteRole(role: CustomRole): void {
     if (role.isSystem) return;
-    this.isLoading = true;
-    this.accessApi.deleteRole(role.id).subscribe({
+    this.roleToDelete = role;
+    this.deleteError = '';
+    this.isDeleteModalOpen = true;
+  }
+
+  confirmDelete(): void {
+    if (!this.roleToDelete) return;
+    this.isDeleting = true;
+    this.deleteError = '';
+    this.accessApi.deleteRole(this.roleToDelete.id).subscribe({
       next: () => {
         this.cdr.markForCheck();
-        this.customRoles = this.customRoles.filter((entry) => entry.id !== role.id);
+        this.customRoles = this.customRoles.filter((entry) => entry.id !== this.roleToDelete!.id);
         this.roles = [...this.customRoles];
         this.selectedRole = null;
         this.editingPermissions = false;
-        this.isLoading = false;
+        this.isDeleting = false;
+        this.isDeleteModalOpen = false;
+        this.roleToDelete = null;
       },
       error: (err) => {
         this.cdr.markForCheck();
         console.error('Error deleting role', err);
-        this.isLoading = false;
+        this.deleteError = err.error?.message || err.error?.title || 'فشل حذف الدور. يرجى المحاولة مرة أخرى.';
+        this.isDeleting = false;
       }
     });
+  }
+
+  cancelDelete(): void {
+    this.isDeleteModalOpen = false;
+    this.roleToDelete = null;
+    this.deleteError = '';
   }
 
   goBack(): void {

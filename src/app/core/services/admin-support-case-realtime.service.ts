@@ -86,7 +86,7 @@ export class AdminSupportCaseRealtimeService {
     this.authService.currentUser$
       .pipe(distinctUntilChanged((previous, current) => previous?.id === current?.id))
       .subscribe((user) => {
-        if (!user?.id || !this.authService.hasApiSession) {
+        if (!user?.id || !this.authService.hasApiSession || user.mustChangePassword) {
           this.stateSubject.next('idle');
           void this.disconnect();
           return;

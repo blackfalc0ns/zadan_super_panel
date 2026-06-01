@@ -12,7 +12,7 @@
     <div actions class="flex items-center gap-3 animate-in slide-in-from-left-10 duration-700">
       <button
         type="button"
-        class="px-5 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary"
+        class="px-5 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary focus:outline-none"
         (click)="openAccessDirectory()">
         <span class="material-symbols-outlined text-[20px]">shield_person</span>
         {{ 'EMAIL_CENTER.OPEN_ADMIN_USERS' | translate }}
@@ -23,11 +23,19 @@
   <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
     <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
 
+    <!-- Error state banner -->
     <section *ngIf="pageError && !isLoading" class="rounded-[1.6rem] border border-red-200 bg-red-50 px-5 py-4 text-sm font-bold text-red-600">
       {{ pageError }}
     </section>
 
-    <section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
+    <!-- Collapsible Sender Profiles -->
+    <app-email-sender-profiles
+      *ngIf="!isLoading && senderProfiles.length > 0"
+      [senderProfiles]="senderProfiles">
+    </app-email-sender-profiles>
+
+    <!-- Audience Selection Tabs -->
+    <section *ngIf="!isLoading" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
         <div>
           <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.AUDIENCE.BADGE' | translate }}</p>
@@ -39,7 +47,7 @@
           <button
             *ngFor="let audience of audienceTabs"
             type="button"
-            class="rounded-full px-4 py-2.5 text-xs font-black transition-all"
+            class="rounded-full px-4 py-2.5 text-xs font-black transition-all focus:outline-none"
             [ngClass]="selectedAudience === audience.value
               ? 'bg-zadna-primary text-white shadow-lg shadow-zadna-primary/15'
               : 'bg-slate-100 text-slate-500 hover:bg-slate-200/80'"
@@ -50,53 +58,7 @@
       </div>
     </section>
 
-    <section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-      <div class="flex items-center justify-between gap-4 mb-5">
-        <div>
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.SENDER_PROFILES.BADGE' | translate }}</p>
-          <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.SENDER_PROFILES.TITLE' | translate }}</h2>
-          <p class="text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.SENDER_PROFILES.DESC' | translate }}</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <article *ngFor="let profile of senderProfiles" class="rounded-[1.7rem] border border-slate-200 bg-slate-50/80 p-5 shadow-sm">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <h3 class="text-sm font-black text-slate-900">{{ profile.name }}</h3>
-              <p class="mt-1 text-[11px] font-bold text-slate-400" dir="ltr">{{ profile.address }}</p>
-            </div>
-            <app-status-pill
-              [label]="'EMAIL_CENTER.STATUS.' + profile.status.toUpperCase()"
-              [variant]="getSenderProfileVariant(profile.status)"
-              size="sm">
-            </app-status-pill>
-          </div>
-
-          <p class="mt-4 text-[11px] font-bold text-slate-500">{{ profile.descriptionKey | translate }}</p>
-
-          <div class="mt-4 space-y-2 text-[11px] font-bold text-slate-500">
-            <div class="flex items-center justify-between gap-3">
-              <span>{{ 'EMAIL_CENTER.SENDER_PROFILES.REPLY_TO' | translate }}</span>
-              <strong class="text-slate-700" dir="ltr">{{ profile.replyTo }}</strong>
-            </div>
-            <div class="flex items-center justify-between gap-3">
-              <span>{{ 'EMAIL_CENTER.SENDER_PROFILES.LOCALE' | translate }}</span>
-              <strong class="text-slate-700">{{ ('EMAIL_CENTER.LOCALE.' + profile.locale.toUpperCase()) | translate }}</strong>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <div *ngIf="profile.isDefault" class="inline-flex rounded-full bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary">
-                {{ 'EMAIL_CENTER.SENDER_PROFILES.DEFAULT' | translate }}
-              </div>
-              <div *ngIf="profile.isReadOnly" class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-500">
-                {{ 'EMAIL_CENTER.SENDER_PROFILES.READ_ONLY' | translate }}
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
+    <!-- Skeleton Loaders -->
     <div *ngIf="isLoading" class="admin-skeleton-detail">
       <div class="admin-skeleton-detail-hero">
         <div class="space-y-3">
@@ -115,555 +77,40 @@
       </div>
     </div>
 
-    <div *ngIf="!isLoading" class="grid grid-cols-1 xl:grid-cols-[0.92fr_1.4fr] gap-6">
-      <section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-        <div class="mb-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.WORKFLOWS.BADGE' | translate }}</p>
-          <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.WORKFLOWS.TITLE' | translate }}</h2>
-          <p class="text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.WORKFLOWS.DESC' | translate }}</p>
-        </div>
+    <!-- Main Workspace -->
+    <div *ngIf="!isLoading" class="grid grid-cols-1 xl:grid-cols-[0.92fr_1.4fr] gap-6 items-start">
+      <!-- Rules Sidebar -->
+      <app-email-rules-list
+        [rules]="filteredRules"
+        [selectedRuleId]="selectedRuleId"
+        (ruleSelected)="selectRule($event)">
+      </app-email-rules-list>
 
-        <div *ngIf="filteredRules.length === 0" class="rounded-[1.6rem] border border-dashed border-slate-300 bg-slate-50/70 px-5 py-10 text-center">
-          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-white text-slate-400 shadow-sm">
-            <span class="material-symbols-outlined text-[26px]">mail_off</span>
-          </div>
-          <h3 class="mt-4 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.EMPTY.TITLE' | translate }}</h3>
-          <p class="mt-2 text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.EMPTY.MESSAGE' | translate }}</p>
-        </div>
-
-        <div class="space-y-3">
-          <button
-            *ngFor="let rule of filteredRules"
-            type="button"
-            class="w-full rounded-[1.6rem] border px-4 py-4 text-start transition-all"
-            [ngClass]="rule.id === selectedRuleId
-              ? 'border-zadna-primary/25 bg-zadna-primary/[0.05] shadow-sm'
-              : 'border-slate-200 bg-slate-50/70 hover:border-zadna-primary/20 hover:bg-white'"
-            (click)="selectRule(rule.id)">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-sm font-black text-slate-900">{{ rule.titleKey | translate }}</p>
-                <p class="mt-1 text-[11px] font-bold text-slate-400">{{ rule.subtitleKey | translate }}</p>
-              </div>
-              <app-status-pill
-                [label]="rule.enabled ? 'EMAIL_CENTER.WORKFLOWS.ENABLED' : 'EMAIL_CENTER.WORKFLOWS.DISABLED'"
-                [variant]="rule.enabled ? 'success' : 'neutral'"
-                size="sm">
-              </app-status-pill>
-            </div>
-
-            <div class="mt-4 flex flex-wrap items-center gap-2">
-              <app-status-pill [label]="rule.categoryKey" variant="info" size="sm"></app-status-pill>
-              <app-status-pill [label]="rule.cadenceLabelKey" variant="warning" size="sm"></app-status-pill>
-              <app-status-pill [label]="getPanelLabelKey(rule.panelScope)" variant="neutral" size="sm"></app-status-pill>
-              <app-status-pill
-                [label]="rule.automationState === 'live' ? 'EMAIL_CENTER.AUTOMATION.LIVE' : 'EMAIL_CENTER.AUTOMATION.MANUAL_ONLY'"
-                [variant]="getAutomationVariant(rule.automationState)"
-                size="sm">
-              </app-status-pill>
-            </div>
-
-            <div class="mt-4 flex flex-wrap items-center gap-2">
-              <app-status-pill
-                [label]="getLastDispatchLabelKey(rule)"
-                [variant]="rule.lastDispatch ? getDispatchStatusVariant(rule.lastDispatch.status) : 'neutral'"
-                size="sm">
-              </app-status-pill>
-              <span *ngIf="rule.lastDispatch" class="text-[10px] font-black text-slate-400">
-                {{ rule.lastDispatch.createdAtUtc | date:'medium' }}
-              </span>
-            </div>
-          </button>
-        </div>
-      </section>
-
-      <section *ngIf="selectedRule" class="space-y-6">
-        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.CONFIG.BADGE' | translate }}</p>
-              <h2 class="mt-2 text-lg font-black text-slate-900">{{ selectedRule.titleKey | translate }}</h2>
-              <p class="text-xs font-bold text-slate-400">{{ selectedRule.triggerNotesKey | translate }}</p>
-
-              <div class="mt-4 flex flex-wrap gap-2">
-                <app-status-pill
-                  [label]="selectedRule.automationState === 'live' ? 'EMAIL_CENTER.AUTOMATION.LIVE' : 'EMAIL_CENTER.AUTOMATION.MANUAL_ONLY'"
-                  [variant]="getAutomationVariant(selectedRule.automationState)"
-                  size="sm">
-                </app-status-pill>
-                <app-status-pill
-                  [label]="getLastDispatchLabelKey(selectedRule)"
-                  [variant]="selectedRule.lastDispatch ? getDispatchStatusVariant(selectedRule.lastDispatch.status) : 'neutral'"
-                  size="sm">
-                </app-status-pill>
-                <span *ngIf="selectedRule.lastDispatch" class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-500">
-                  {{ selectedRule.lastDispatch.createdAtUtc | date:'medium' }}
-                </span>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap gap-3">
-              <button
-                type="button"
-                class="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-600"
-                [disabled]="!canEdit || isTestingSend"
-                (click)="testSendSelectedRule()">
-                {{ isTestingSend ? ('EMAIL_CENTER.ACTIONS.SENDING_TEST' | translate) : ('EMAIL_CENTER.ACTIONS.TEST_SEND' | translate) }}
-              </button>
-
-              <button
-                type="button"
-                class="rounded-full bg-zadna-primary px-5 py-3 text-sm font-black text-white shadow-lg shadow-zadna-primary/20"
-                [disabled]="!canEdit || isSaving"
-                (click)="saveSelectedRule()">
-                {{ isSaving ? ('EMAIL_CENTER.ACTIONS.SAVING' | translate) : ('EMAIL_CENTER.ACTIONS.SAVE' | translate) }}
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.ENABLED' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="selectedRule.enabled"
-                [searchable]="false"
-                [isDisabled]="!canEdit"
-                [options]="enabledOptions"
-                [placeholder]="'EMAIL_CENTER.WORKFLOWS.ENABLED' | translate"
-                (ngModelChange)="onRuleDraftChanged()">
-              </app-searchable-select>
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.SENDER_PROFILE' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="selectedRule.senderProfileId"
-                [searchable]="false"
-                [isDisabled]="!canEdit"
-                [options]="senderProfileOptions"
-                [placeholder]="'EMAIL_CENTER.SENDER_PROFILE' | translate"
-                (ngModelChange)="onRuleDraftChanged()">
-              </app-searchable-select>
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.AUDIENCE' | translate }}</span>
-              <div class="readonly-card">{{ ('ADMIN_USERS.AUDIENCE.' + selectedRule.audienceType.toUpperCase()) | translate }}</div>
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.PANEL_SCOPE' | translate }}</span>
-              <div class="readonly-card">{{ getPanelLabelKey(selectedRule.panelScope) | translate }}</div>
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.OWNER' | translate }}</span>
-              <input [(ngModel)]="selectedRule.route.owner" type="text" [disabled]="!canEdit" (ngModelChange)="onRuleDraftChanged()" />
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.ESCALATION' | translate }}</span>
-              <input [(ngModel)]="selectedRule.route.escalation" type="text" [disabled]="!canEdit" (ngModelChange)="onRuleDraftChanged()" />
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.ENTITY_ID' | translate }}</span>
-              <input [(ngModel)]="selectedRule.entityScope.entityId" type="text" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRuleDraftChanged()" />
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH_SCOPE' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="selectedRule.branchScopeMode"
-                [searchable]="false"
-                [isDisabled]="!canEdit"
-                (ngModelChange)="onBranchScopeModeChange($event)"
-                [options]="branchScopeOptions"
-                [placeholder]="'EMAIL_CENTER.BRANCH_SCOPE' | translate">
-              </app-searchable-select>
-            </label>
-
-            <label *ngIf="selectedRule.audienceType === 'vendor_network'" class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.VENDOR' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="selectedRule.entityScope.vendorId"
-                [isDisabled]="!canEdit"
-                (ngModelChange)="onVendorChange($event)"
-                [options]="mappedVendorOptions"
-                [placeholder]="'EMAIL_CENTER.FILTERS.ALL_VENDORS' | translate">
-              </app-searchable-select>
-            </label>
-
-            <label *ngIf="selectedRule.audienceType === 'vendor_network' && selectedRule.branchScopeMode === 'specific_branch'" class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="selectedRule.entityScope.branchId"
-                [isDisabled]="!canEdit"
-                [options]="mappedBranchOptions"
-                [placeholder]="'EMAIL_CENTER.FILTERS.ALL_BRANCHES' | translate"
-                (ngModelChange)="onRuleDraftChanged()">
-              </app-searchable-select>
-            </label>
-          </div>
-
-          <div class="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-5">
-            <div class="rounded-[1.6rem] border border-slate-200 bg-slate-50/80 p-5">
-              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.PERSONAS.BADGE' | translate }}</p>
-              <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.PERSONAS.TITLE' | translate }}</h3>
-              <p class="mt-1 text-[11px] font-bold text-slate-400">{{ 'EMAIL_CENTER.PERSONAS.DESC' | translate }}</p>
-
-              <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label *ngFor="let persona of availablePersonaOptions" class="target-option-card">
-                  <div>
-                    <p class="text-sm font-black text-slate-800">{{ persona.labelKey | translate }}</p>
-                    <p class="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ getPanelLabelKey(selectedRule.panelScope) | translate }}</p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
-                    [checked]="hasPersonaTarget(persona.value)"
-                    [disabled]="!canEdit"
-                    (change)="togglePersonaTarget(persona.value, $any($event.target).checked)" />
-                </label>
-              </div>
-            </div>
-
-            <div class="rounded-[1.6rem] border border-slate-200 bg-slate-50/80 p-5">
-              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.RECIPIENTS.BADGE' | translate }}</p>
-              <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.RECIPIENTS.TITLE' | translate }}</h3>
-              <p class="mt-1 text-[11px] font-bold text-slate-400">{{ 'EMAIL_CENTER.RECIPIENTS.DESC' | translate }}</p>
-
-              <div class="mt-4 space-y-4">
-                <div *ngFor="let channel of recipientChannels" class="space-y-3">
-                  <div class="flex items-center justify-between gap-3">
-                    <p class="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">{{ channel.labelKey | translate }}</p>
-                    <span class="text-[10px] font-black text-slate-400">{{ selectedRule.recipientTargets[channel.value].length }}</span>
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <label *ngFor="let option of availableRecipientTargets" class="target-option-card">
-                      <div>
-                        <p class="text-sm font-black text-slate-800">{{ option.labelKey | translate }}</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20"
-                        [checked]="hasRecipientTarget(channel.value, option.id)"
-                        [disabled]="!canEdit"
-                        (change)="toggleRecipientTarget(channel.value, option.id, $any($event.target).checked)" />
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-5">
-            <div class="rounded-[1.6rem] border border-slate-200 bg-white p-5">
-              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.STATIC_RECIPIENTS.BADGE' | translate }}</p>
-              <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.STATIC_RECIPIENTS.TITLE' | translate }}</h3>
-              <p class="mt-1 text-[11px] font-bold text-slate-400">{{ 'EMAIL_CENTER.STATIC_RECIPIENTS.DESC' | translate }}</p>
-
-              <div class="mt-4 grid grid-cols-1 gap-4">
-                <label class="field-card">
-                  <span>{{ 'EMAIL_CENTER.FIELDS.TO' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.staticTo" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-                </label>
-                <label class="field-card">
-                  <span>{{ 'EMAIL_CENTER.FIELDS.CC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.staticCc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-                </label>
-                <label class="field-card">
-                  <span>{{ 'EMAIL_CENTER.FIELDS.BCC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.staticBcc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-                </label>
-              </div>
-            </div>
-
-            <div class="rounded-[1.6rem] border border-slate-200 bg-white p-5">
-              <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.FALLBACK.BADGE' | translate }}</p>
-              <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.FALLBACK.TITLE' | translate }}</h3>
-              <p class="mt-1 text-[11px] font-bold text-slate-400">{{ 'EMAIL_CENTER.FALLBACK.DESC' | translate }}</p>
-
-              <div class="mt-4 grid grid-cols-1 gap-4">
-                <label class="field-card">
-                  <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_TO' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.fallbackTo" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-                </label>
-                <label class="field-card">
-                  <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_CC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.fallbackCc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-                </label>
-                <label class="field-card">
-                  <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_BCC' | translate }}</span>
-                  <textarea [(ngModel)]="recipientEditor.fallbackBcc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.PREVIEW.BADGE' | translate }}</p>
-              <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.PREVIEW.TITLE' | translate }}</h2>
-              <p class="text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.PREVIEW.DESC' | translate }}</p>
-            </div>
-
-            <div class="flex items-center gap-2 rounded-full bg-slate-100 p-1">
-              <button
-                type="button"
-                class="rounded-full px-4 py-2 text-xs font-black transition-all"
-                [ngClass]="previewLocale === 'en' ? 'bg-white text-zadna-primary shadow-sm' : 'text-slate-500'"
-                (click)="setPreviewLocale('en')">
-                {{ 'EMAIL_CENTER.PREVIEW.ENGLISH' | translate }}
-              </button>
-              <button
-                type="button"
-                class="rounded-full px-4 py-2 text-xs font-black transition-all"
-                [ngClass]="previewLocale === 'ar' ? 'bg-white text-zadna-primary shadow-sm' : 'text-slate-500'"
-                (click)="setPreviewLocale('ar')">
-                {{ 'EMAIL_CENTER.PREVIEW.ARABIC' | translate }}
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-6 grid grid-cols-1 xl:grid-cols-[1.25fr_0.95fr] gap-6">
-            <div class="space-y-5">
-              <div class="rounded-[1.7rem] border border-slate-200 bg-slate-50/80 p-5">
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'EMAIL_CENTER.PREVIEW.SUBJECT' | translate }}</p>
-                <p class="mt-3 text-sm font-black text-slate-900" [dir]="previewLocale === 'ar' ? 'rtl' : 'ltr'">
-                  {{ selectedRule.template.subject[previewLocale] }}
-                </p>
-              </div>
-
-              <div class="rounded-[1.7rem] border border-slate-200 bg-slate-50/80 p-5">
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'EMAIL_CENTER.PREVIEW.BODY' | translate }}</p>
-                <p class="mt-3 whitespace-pre-line text-sm font-bold leading-7 text-slate-700" [dir]="previewLocale === 'ar' ? 'rtl' : 'ltr'">
-                  {{ selectedRule.template.body[previewLocale] }}
-                </p>
-              </div>
-
-              <div class="rounded-[1.7rem] border border-dashed border-zadna-primary/20 bg-zadna-primary/[0.03] p-5">
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-zadna-primary">{{ 'EMAIL_CENTER.PREVIEW.VARIABLES' | translate }}</p>
-                <div class="mt-3 flex flex-wrap gap-2">
-                  <span *ngFor="let variable of selectedRule.template.variables" class="rounded-full bg-white px-3 py-1.5 text-[11px] font-black text-slate-600 shadow-sm" dir="ltr">
-                    {{ variable }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="space-y-5">
-              <div class="rounded-[1.7rem] border border-slate-200 bg-white p-5">
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'EMAIL_CENTER.PREVIEW.SENDER' | translate }}</p>
-                <p class="mt-3 text-sm font-black text-slate-900">{{ getSenderProfileName(selectedRule.senderProfileId) }}</p>
-                <p class="mt-2 text-[11px] font-bold text-slate-400">{{ selectedRule.triggerNotesKey | translate }}</p>
-                <div *ngIf="lastTestSendResult" class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                  <div class="flex items-center justify-between gap-3">
-                    <p class="text-[11px] font-black text-slate-700">{{ 'EMAIL_CENTER.TEST_SEND.LAST_RESULT' | translate }}</p>
-                    <app-status-pill
-                      [label]="getDispatchStatusLabelKey(lastTestSendResult.status)"
-                      [variant]="getDispatchStatusVariant(lastTestSendResult.status)"
-                      size="sm">
-                    </app-status-pill>
-                  </div>
-                  <p class="mt-2 text-[11px] font-bold text-slate-500">{{ lastTestSendResult.createdAtUtc | date:'medium' }}</p>
-                  <p *ngIf="lastTestSendResult.failureReason" class="mt-2 text-[11px] font-bold text-amber-600">
-                    {{ lastTestSendResult.failureReason }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="rounded-[1.7rem] border border-slate-200 bg-white p-5">
-                <div class="flex items-center justify-between gap-3">
-                  <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'EMAIL_CENTER.RESOLVED.BADGE' | translate }}</p>
-                  <div class="flex items-center gap-3">
-                    <span *ngIf="isResolvingRecipients" class="text-[10px] font-black text-zadna-primary">{{ 'EMAIL_CENTER.RESOLVED.REFRESHING' | translate }}</span>
-                    <span class="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-500">{{ resolvedRecipients.to.length + resolvedRecipients.cc.length + resolvedRecipients.bcc.length }}</span>
-                  </div>
-                </div>
-
-                <div *ngIf="resolvedRecipients.warnings.length > 0" class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
-                  <p class="text-[10px] font-black uppercase tracking-[0.14em] text-amber-700">{{ 'EMAIL_CENTER.RESOLVED.WARNINGS' | translate }}</p>
-                  <div class="mt-2 space-y-2">
-                    <p *ngFor="let warning of resolvedRecipients.warnings" class="text-[11px] font-bold text-amber-700">
-                      {{ warning }}
-                    </p>
-                  </div>
-                </div>
-
-                <div class="mt-4 space-y-4">
-                  <div class="resolved-group">
-                    <p>{{ 'EMAIL_CENTER.FIELDS.TO' | translate }}</p>
-                    <div class="resolved-list">
-                      <span *ngFor="let email of resolvedRecipients.to" dir="ltr">{{ email }}</span>
-                      <span *ngIf="resolvedRecipients.to.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                    </div>
-                  </div>
-
-                  <div class="resolved-group">
-                    <p>{{ 'EMAIL_CENTER.FIELDS.CC' | translate }}</p>
-                    <div class="resolved-list">
-                      <span *ngFor="let email of resolvedRecipients.cc" dir="ltr">{{ email }}</span>
-                      <span *ngIf="resolvedRecipients.cc.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                    </div>
-                  </div>
-
-                  <div class="resolved-group">
-                    <p>{{ 'EMAIL_CENTER.FIELDS.BCC' | translate }}</p>
-                    <div class="resolved-list">
-                      <span *ngFor="let email of resolvedRecipients.bcc" dir="ltr">{{ email }}</span>
-                      <span *ngIf="resolvedRecipients.bcc.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.HISTORY.BADGE' | translate }}</p>
-              <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.HISTORY.TITLE' | translate }}</h2>
-              <p class="text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.HISTORY.DESC' | translate }}</p>
-            </div>
-
-            <button
-              type="button"
-              class="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-600"
-              (click)="clearHistoryFilters()">
-              {{ 'EMAIL_CENTER.HISTORY.CLEAR_FILTERS' | translate }}
-            </button>
-          </div>
-
-          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.HISTORY.RULE' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="historyFilters.ruleId"
-                [options]="historyRuleOptions"
-                [isDisabled]="isHistoryLoading"
-                [placeholder]="'EMAIL_CENTER.HISTORY.ALL_RULES' | translate"
-                (ngModelChange)="onHistoryFiltersChanged()">
-              </app-searchable-select>
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.HISTORY.SOURCE' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="historyFilters.source"
-                [options]="historySourceOptions"
-                [isDisabled]="isHistoryLoading"
-                [placeholder]="'EMAIL_CENTER.HISTORY.ALL_SOURCES' | translate"
-                (ngModelChange)="onHistoryFiltersChanged()">
-              </app-searchable-select>
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.HISTORY.STATUS' | translate }}</span>
-              <app-searchable-select
-                [(ngModel)]="historyFilters.status"
-                [options]="historyStatusOptions"
-                [isDisabled]="isHistoryLoading"
-                [placeholder]="'EMAIL_CENTER.HISTORY.ALL_STATUSES' | translate"
-                (ngModelChange)="onHistoryFiltersChanged()">
-              </app-searchable-select>
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.HISTORY.DATE_FROM' | translate }}</span>
-              <input [(ngModel)]="historyFilters.dateFrom" type="date" [disabled]="isHistoryLoading" (ngModelChange)="onHistoryFiltersChanged()" />
-            </label>
-
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.HISTORY.DATE_TO' | translate }}</span>
-              <input [(ngModel)]="historyFilters.dateTo" type="date" [disabled]="isHistoryLoading" (ngModelChange)="onHistoryFiltersChanged()" />
-            </label>
-          </div>
-
-          <div *ngIf="isHistoryLoading" class="admin-skeleton-table mt-6" style="--skeleton-columns: 3">
-            <div *ngFor="let item of [1,2,3]" class="admin-skeleton-table-row">
-              <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
-              <span class="admin-skeleton admin-skeleton-chip"></span>
-              <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
-            </div>
-          </div>
-
-          <div *ngIf="!isHistoryLoading && dispatches.length === 0" class="mt-6 rounded-[1.6rem] border border-dashed border-slate-300 bg-slate-50/70 px-5 py-10 text-center">
-            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-white text-slate-400 shadow-sm">
-              <span class="material-symbols-outlined text-[26px]">history_toggle_off</span>
-            </div>
-            <h3 class="mt-4 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.HISTORY.EMPTY_TITLE' | translate }}</h3>
-            <p class="mt-2 text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.HISTORY.EMPTY_DESC' | translate }}</p>
-          </div>
-
-          <div *ngIf="!isHistoryLoading && dispatches.length > 0" class="mt-6 space-y-3">
-            <article *ngFor="let dispatch of dispatches" class="rounded-[1.6rem] border border-slate-200 bg-slate-50/70 p-5">
-              <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                <div class="space-y-2">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <h3 class="text-sm font-black text-slate-900">{{ dispatch.ruleLabel }}</h3>
-                    <app-status-pill
-                      [label]="getDispatchStatusLabelKey(dispatch.status)"
-                      [variant]="getDispatchStatusVariant(dispatch.status)"
-                      size="sm">
-                    </app-status-pill>
-                    <app-status-pill
-                      [label]="getDispatchSourceLabelKey(dispatch.source)"
-                      variant="neutral"
-                      size="sm">
-                    </app-status-pill>
-                    <app-status-pill
-                      *ngIf="dispatch.isTestSend"
-                      label="EMAIL_CENTER.TEST_SEND.BADGE"
-                      variant="info"
-                      size="sm">
-                    </app-status-pill>
-                  </div>
-
-                  <p class="text-[11px] font-bold text-slate-500">{{ dispatch.createdAtUtc | date:'medium' }}</p>
-                  <p class="text-sm font-black text-slate-800">{{ dispatch.subject }}</p>
-                  <p *ngIf="dispatch.failureReason" class="text-[11px] font-bold text-amber-700">{{ dispatch.failureReason }}</p>
-                </div>
-
-                <div class="rounded-full bg-white px-4 py-2 text-[11px] font-black text-slate-500 shadow-sm">
-                  {{ getDispatchRecipientCount(dispatch) }} {{ 'EMAIL_CENTER.HISTORY.RECIPIENTS' | translate }}
-                </div>
-              </div>
-
-              <div class="mt-4 grid grid-cols-1 xl:grid-cols-3 gap-4">
-                <div class="history-recipient-card">
-                  <p>{{ 'EMAIL_CENTER.FIELDS.TO' | translate }}</p>
-                  <div class="resolved-list">
-                    <span *ngFor="let email of dispatch.to" dir="ltr">{{ email }}</span>
-                    <span *ngIf="dispatch.to.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                  </div>
-                </div>
-
-                <div class="history-recipient-card">
-                  <p>{{ 'EMAIL_CENTER.FIELDS.CC' | translate }}</p>
-                  <div class="resolved-list">
-                    <span *ngFor="let email of dispatch.cc" dir="ltr">{{ email }}</span>
-                    <span *ngIf="dispatch.cc.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                  </div>
-                </div>
-
-                <div class="history-recipient-card">
-                  <p>{{ 'EMAIL_CENTER.FIELDS.BCC' | translate }}</p>
-                  <div class="resolved-list">
-                    <span *ngFor="let email of dispatch.bcc" dir="ltr">{{ email }}</span>
-                    <span *ngIf="dispatch.bcc.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
+      <!-- Rule Configurations & Tabs -->
+      <app-email-rule-config
+        *ngIf="selectedRule"
+        [rule]="selectedRule"
+        [senderProfiles]="senderProfiles"
+        [vendorOptions]="vendorOptions"
+        [branchDirectory]="branchDirectory"
+        [resolvedRecipients]="resolvedRecipients"
+        [lastTestSendResult]="lastTestSendResult"
+        [canEdit]="canEdit"
+        [isSaving]="isSaving"
+        [isTestingSend]="isTestingSend"
+        [isResolvingRecipients]="isResolvingRecipients"
+        [dispatches]="dispatches"
+        [rules]="rules"
+        [isHistoryLoading]="isHistoryLoading"
+        [historyFilters]="historyFilters"
+        (save)="saveSelectedRule()"
+        (testSend)="testSendSelectedRule()"
+        (draftChange)="onRuleDraftChanged()"
+        (vendorChange)="onVendorChange($event)"
+        (branchScopeModeChange)="onBranchScopeModeChange($event)"
+        (historyFiltersChange)="onHistoryFiltersChange($event)"
+        (clearHistoryFilters)="clearHistoryFilters()">
+      </app-email-rule-config>
     </div>
   </div>
 </div>

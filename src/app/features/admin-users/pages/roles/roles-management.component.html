@@ -281,4 +281,17 @@
       </div>
     </div>
   </div>
+
+  <!-- Delete Confirmation Modal -->
+  <app-delete-confirmation-modal
+      [isOpen]="isDeleteModalOpen"
+      [title]="'COMMON.DELETE_CONFIRM_TITLE'"
+      [message]="'COMMON.DELETE_CONFIRM_MSG'"
+      [confirmText]="'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.DELETE_ROLE'"
+      [cancelText]="'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.CANCEL'"
+      [isLoading]="isDeleting"
+      [errorMessage]="deleteError"
+      (confirm)="confirmDelete()"
+      (close)="cancelDelete()">
+  </app-delete-confirmation-modal>
 </div>

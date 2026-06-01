@@ -1,0 +1,56 @@
+<section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm transition-all duration-300">
+  <div class="flex items-center justify-between gap-4" [ngClass]="{'mb-5': !isCollapsed}">
+    <div>
+      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.SENDER_PROFILES.BADGE' | translate }}</p>
+      <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.SENDER_PROFILES.TITLE' | translate }}</h2>
+      <p *ngIf="!isCollapsed" class="text-xs font-bold text-slate-400 mt-1 animate-in fade-in duration-200">{{ 'EMAIL_CENTER.SENDER_PROFILES.DESC' | translate }}</p>
+    </div>
+
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 hover:text-zadna-primary hover:bg-slate-50 transition-all shadow-sm focus:outline-none"
+      (click)="toggleCollapse()"
+      [title]="(isCollapsed ? 'EMAIL_CENTER.ACTIONS.EXPAND' : 'EMAIL_CENTER.ACTIONS.COLLAPSE') | translate">
+      <span class="material-symbols-outlined transition-transform duration-300" [ngClass]="{'rotate-180': isCollapsed}">
+        keyboard_arrow_up
+      </span>
+    </button>
+  </div>
+
+  <div *ngIf="!isCollapsed" class="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+    <article *ngFor="let profile of senderProfiles" class="rounded-[1.7rem] border border-slate-200 bg-slate-50/80 p-5 shadow-sm hover:border-zadna-primary/25 transition-all">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="text-sm font-black text-slate-900">{{ getProfileName(profile) }}</h3>
+          <p class="mt-1 text-[11px] font-bold text-slate-400" dir="ltr">{{ profile.address }}</p>
+        </div>
+        <app-status-pill
+          [label]="'EMAIL_CENTER.STATUS.' + profile.status.toUpperCase()"
+          [variant]="getSenderProfileVariant(profile.status)"
+          size="sm">
+        </app-status-pill>
+      </div>
+
+      <p class="mt-4 text-[11px] font-bold text-slate-500">{{ profile.descriptionKey | translate }}</p>
+
+      <div class="mt-4 space-y-2 text-[11px] font-bold text-slate-500">
+        <div class="flex items-center justify-between gap-3">
+          <span>{{ 'EMAIL_CENTER.SENDER_PROFILES.REPLY_TO' | translate }}</span>
+          <strong class="text-slate-700" dir="ltr">{{ profile.replyTo }}</strong>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <span>{{ 'EMAIL_CENTER.SENDER_PROFILES.LOCALE' | translate }}</span>
+          <strong class="text-slate-700">{{ ('EMAIL_CENTER.LOCALE.' + profile.locale.toUpperCase()) | translate }}</strong>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <div *ngIf="profile.isDefault" class="inline-flex rounded-full bg-zadna-primary/10 px-3 py-1 text-[10px] font-black text-zadna-primary">
+            {{ 'EMAIL_CENTER.SENDER_PROFILES.DEFAULT' | translate }}
+          </div>
+          <div *ngIf="profile.isReadOnly" class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-500">
+            {{ 'EMAIL_CENTER.SENDER_PROFILES.READ_ONLY' | translate }}
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

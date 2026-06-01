@@ -1,70 +1,70 @@
 <div
   *ngIf="isOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300"
   (click)="onBackdropClick($event)">
   <div
-    class="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-2xl"
+    class="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-[24px] border border-white/40 bg-white/80 shadow-2xl backdrop-blur-2xl transition-all duration-500 transform scale-100 ease-out animate-in zoom-in-95"
     [attr.dir]="isRTL ? 'rtl' : 'ltr'"
     (click)="$event.stopPropagation()">
 
-    <header class="flex items-start justify-between gap-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-6 py-5">
+    <header class="flex items-center justify-between gap-4 border-b border-slate-200/50 bg-white/40 px-8 py-6">
       <div class="flex items-center gap-4">
         <!-- Logo Preview in Header -->
-        <div class="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-slate-200 bg-slate-100 shadow-inner">
+        <div class="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-inner">
           <img *ngIf="draftStoreData.logoUrl" [src]="draftStoreData.logoUrl" alt="Logo" class="h-full w-full object-cover" />
-          <span *ngIf="!draftStoreData.logoUrl" class="flex h-full w-full items-center justify-center text-slate-400">
+          <span *ngIf="!draftStoreData.logoUrl" class="flex h-full w-full items-center justify-center text-slate-400 bg-slate-100/50">
             <span class="material-symbols-outlined text-[24px]">storefront</span>
           </span>
         </div>
-        <div class="space-y-1">
+        <div class="space-y-0.5 text-start">
           <h2 class="text-lg font-black text-slate-900">
             {{ isRTL ? 'تعديل هوية المتجر' : 'Edit store identity' }}
           </h2>
-          <p class="text-sm font-medium text-slate-500">
+          <p class="text-xs font-bold text-slate-500">
             {{ isRTL ? 'تحديث الاسم التجاري والنشاط وقنوات التواصل والعنوان.' : 'Update the business identity, activity, contact channels, and address.' }}
           </p>
         </div>
       </div>
-      <button type="button" (click)="onClose()" [disabled]="isSaving" class="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-40">
-        <span class="material-symbols-outlined text-[20px]">close</span>
+      <button type="button" (click)="onClose()" [disabled]="isSaving" class="p-2 hover:bg-slate-100/80 hover:rotate-90 rounded-xl transition-all duration-300 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-40">
+        <span class="material-symbols-outlined text-slate-400 font-bold">close</span>
       </button>
     </header>
 
-    <div class="max-h-[72vh] overflow-y-auto px-6 py-5">
+    <div class="max-h-[70vh] overflow-y-auto px-8 py-6 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
       <fieldset class="space-y-6" [disabled]="isSaving">
 
         <!-- Logo & Document Upload Section -->
         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
           <!-- Logo Upload -->
-          <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
-            <p class="mb-3 text-xs font-black uppercase tracking-wider text-slate-500">
+          <div class="rounded-2xl border border-slate-900/5 bg-slate-50/50 p-5 shadow-sm">
+            <p class="mb-3 text-[11px] font-black uppercase tracking-wider text-slate-400 text-start">
               {{ isRTL ? 'شعار المتجر' : 'Store logo' }}
             </p>
             <div class="flex items-center gap-4">
-              <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-white shadow-sm">
+              <div class="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm flex items-center justify-center">
                 <img *ngIf="draftStoreData.logoUrl" [src]="draftStoreData.logoUrl" alt="Logo" class="h-full w-full object-cover" />
-                <span *ngIf="!draftStoreData.logoUrl" class="flex h-full w-full items-center justify-center text-slate-300">
+                <span *ngIf="!draftStoreData.logoUrl" class="text-slate-300">
                   <span class="material-symbols-outlined text-[32px]">add_photo_alternate</span>
                 </span>
               </div>
-              <div class="flex flex-col gap-2">
-                <label class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3.5 py-2 text-[12px] font-black text-primary transition-all hover:bg-primary/10">
+              <div class="flex-1 flex flex-col gap-2 min-w-0">
+                <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-black text-primary transition-all hover:bg-primary/10 w-fit select-none">
                   <span class="material-symbols-outlined text-[16px]">upload</span>
                   {{ isUploading === 'logo' ? (isRTL ? 'جاري الرفع...' : 'Uploading...') : (isRTL ? 'رفع شعار' : 'Upload logo') }}
                   <input type="file" class="hidden" accept="image/*" (change)="onLogoFileSelected($event)" [disabled]="isUploading === 'logo'">
                 </label>
-                <input type="text" dir="ltr" name="logoUrl" [(ngModel)]="draftStoreData.logoUrl" placeholder="https://..." class="h-9 w-full rounded-lg border border-slate-200 px-3 text-[11px] font-mono text-slate-600 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/10">
+                <input type="text" dir="ltr" name="logoUrl" [(ngModel)]="draftStoreData.logoUrl" placeholder="https://..." class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-600 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
               </div>
             </div>
           </div>
 
           <!-- CR Document Upload -->
-          <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
-            <p class="mb-3 text-xs font-black uppercase tracking-wider text-slate-500">
+          <div class="rounded-2xl border border-slate-900/5 bg-slate-50/50 p-5 shadow-sm">
+            <p class="mb-3 text-[11px] font-black uppercase tracking-wider text-slate-400 text-start">
               {{ isRTL ? 'مرفق السجل التجاري' : 'CR document' }}
             </p>
             <div class="flex items-center gap-4">
-              <div class="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-white shadow-sm">
+              <div class="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <a *ngIf="draftStoreData.commercialRegisterDocumentUrl" [href]="draftStoreData.commercialRegisterDocumentUrl" target="_blank" class="flex h-full w-full items-center justify-center text-primary hover:bg-primary/5 transition-colors">
                   <span class="material-symbols-outlined text-[32px]">picture_as_pdf</span>
                 </a>
@@ -72,13 +72,13 @@
                   <span class="material-symbols-outlined text-[32px]">note_add</span>
                 </span>
               </div>
-              <div class="flex flex-col gap-2">
-                <label class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3.5 py-2 text-[12px] font-black text-primary transition-all hover:bg-primary/10">
+              <div class="flex-1 flex flex-col gap-2 min-w-0">
+                <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-black text-primary transition-all hover:bg-primary/10 w-fit select-none">
                   <span class="material-symbols-outlined text-[16px]">upload</span>
                   {{ isUploading === 'document' ? (isRTL ? 'جاري الرفع...' : 'Uploading...') : (isRTL ? 'رفع ملف' : 'Upload file') }}
                   <input type="file" class="hidden" accept=".pdf,image/*" (change)="onDocumentFileSelected($event)" [disabled]="isUploading === 'document'">
                 </label>
-                <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftStoreData.commercialRegisterDocumentUrl" placeholder="https://..." class="h-9 w-full rounded-lg border border-slate-200 px-3 text-[11px] font-mono text-slate-600 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/10">
+                <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftStoreData.commercialRegisterDocumentUrl" placeholder="https://..." class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-600 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
               </div>
             </div>
           </div>
@@ -86,22 +86,22 @@
 
         <!-- Business Identity -->
         <div class="space-y-3">
-          <p class="text-xs font-black uppercase tracking-wider text-slate-400" [class.text-right]="isRTL">
+          <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
             {{ isRTL ? 'الهوية التجارية' : 'Business identity' }}
           </p>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'الاسم التجاري بالعربية' : 'Business name (Arabic)' }} <span class="text-rose-400">*</span></label>
-              <input type="text" dir="rtl" name="businessNameAr" [(ngModel)]="draftStoreData.businessNameAr" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-right text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5" placeholder="مثال: متجر زادنا">
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'الاسم التجاري بالعربية' : 'Business name (Arabic)' }} <span class="text-rose-400">*</span></label>
+              <input type="text" dir="rtl" name="businessNameAr" [(ngModel)]="draftStoreData.businessNameAr" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start" placeholder="مثال: متجر زادنا">
             </div>
 
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'الاسم التجاري بالإنجليزية' : 'Business name (English)' }} <span class="text-rose-400">*</span></label>
-              <input type="text" dir="ltr" name="businessNameEn" [(ngModel)]="draftStoreData.businessNameEn" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5" placeholder="e.g. Zadna Store">
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'الاسم التجاري بالإنجليزية' : 'Business name (English)' }} <span class="text-rose-400">*</span></label>
+              <input type="text" dir="ltr" name="businessNameEn" [(ngModel)]="draftStoreData.businessNameEn" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start" placeholder="e.g. Zadna Store">
             </div>
 
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'نوع النشاط' : 'Business type' }} <span class="text-rose-400">*</span></label>
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'نوع النشاط' : 'Business type' }} <span class="text-rose-400">*</span></label>
               <app-searchable-select
                 [(ngModel)]="draftStoreData.businessType"
                 name="businessType"
@@ -110,31 +110,31 @@
               </app-searchable-select>
             </div>
 
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'رقم السجل التجاري' : 'Commercial registration number' }}</label>
-              <input type="text" dir="ltr" name="commercialRegistrationNumber" [(ngModel)]="draftStoreData.commercialRegistrationNumber" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left font-mono text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'رقم السجل التجاري' : 'Commercial registration number' }}</label>
+              <input type="text" dir="ltr" name="commercialRegistrationNumber" [(ngModel)]="draftStoreData.commercialRegistrationNumber" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
             </div>
           </div>
         </div>
 
         <!-- Contact & Communication -->
         <div class="space-y-3">
-          <p class="text-xs font-black uppercase tracking-wider text-slate-400" [class.text-right]="isRTL">
+          <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
             {{ isRTL ? 'التواصل والعنوان' : 'Contact & address' }}
           </p>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'بريد التواصل' : 'Contact email' }} <span class="text-rose-400">*</span></label>
-              <input type="email" dir="ltr" name="contactEmail" [(ngModel)]="draftStoreData.contactEmail" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left font-mono text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5" placeholder="store@example.com">
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'بريد التواصل' : 'Contact email' }} <span class="text-rose-400">*</span></label>
+              <input type="email" dir="ltr" name="contactEmail" [(ngModel)]="draftStoreData.contactEmail" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono" placeholder="store@example.com">
             </div>
 
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'رقم التواصل' : 'Contact phone' }} <span class="text-rose-400">*</span></label>
-              <input type="text" dir="ltr" name="contactPhone" [(ngModel)]="draftStoreData.contactPhone" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-left font-mono text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5" placeholder="+966 5x xxx xxxx">
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'رقم التواصل' : 'Contact phone' }} <span class="text-rose-400">*</span></label>
+              <input type="text" dir="ltr" name="contactPhone" [(ngModel)]="draftStoreData.contactPhone" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono" placeholder="+966 5x xxx xxxx">
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'المنطقة' : 'Region' }}</label>
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'المنطقة' : 'Region' }}</label>
               <app-searchable-select
                 [ngModel]="draftStoreData.region"
                 (ngModelChange)="onRegionChange($event)"
@@ -144,8 +144,8 @@
               </app-searchable-select>
             </div>
 
-            <div class="space-y-1.5">
-              <label class="block text-[11px] font-bold text-slate-500" [class.text-right]="isRTL">{{ isRTL ? 'المدينة' : 'City' }}</label>
+            <div class="space-y-1.5 text-start">
+              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'المدينة' : 'City' }}</label>
               <app-searchable-select
                 [(ngModel)]="draftStoreData.city"
                 name="city"
@@ -154,27 +154,27 @@
               </app-searchable-select>
             </div>
 
-            <div class="space-y-1.5 md:col-span-2">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'العنوان الوطني' : 'National address' }}</label>
-              <input type="text" dir="rtl" name="nationalAddress" [(ngModel)]="draftStoreData.nationalAddress" class="h-11 w-full rounded-xl border border-slate-200 px-4 text-right text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5">
+            <div class="space-y-1.5 md:col-span-2 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'العنوان الوطني' : 'National address' }}</label>
+              <input type="text" dir="auto" name="nationalAddress" [(ngModel)]="draftStoreData.nationalAddress" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start">
             </div>
           </div>
         </div>
 
         <!-- Descriptions -->
         <div class="space-y-3">
-          <p class="text-xs font-black uppercase tracking-wider text-slate-400" [class.text-right]="isRTL">
+          <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
             {{ isRTL ? 'الوصف' : 'Description' }}
           </p>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'الوصف بالعربية' : 'Description (Arabic)' }}</label>
-              <textarea dir="rtl" name="descriptionAr" rows="3" [(ngModel)]="draftStoreData.descriptionAr" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-right text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5" [placeholder]="isRTL ? 'وصف المتجر بالعربية...' : 'Store description in Arabic...'"></textarea>
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'الوصف بالعربية' : 'Description (Arabic)' }}</label>
+              <textarea dir="rtl" name="descriptionAr" rows="3" [(ngModel)]="draftStoreData.descriptionAr" class="w-full border border-slate-900/12 bg-white/60 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start" [placeholder]="isRTL ? 'وصف المتجر بالعربية...' : 'Store description in Arabic...'"></textarea>
             </div>
 
-            <div class="space-y-1.5">
-              <label class="text-[11px] font-bold text-slate-500" [class.text-right]="isRTL" [class.block]="true">{{ isRTL ? 'الوصف بالإنجليزية' : 'Description (English)' }}</label>
-              <textarea dir="ltr" name="descriptionEn" rows="3" [(ngModel)]="draftStoreData.descriptionEn" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-900 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/5" placeholder="Store description in English..."></textarea>
+            <div class="space-y-1.5 text-start">
+              <label class="text-[11px] font-bold text-slate-500 block">{{ isRTL ? 'الوصف بالإنجليزية' : 'Description (English)' }}</label>
+              <textarea dir="ltr" name="descriptionEn" rows="3" [(ngModel)]="draftStoreData.descriptionEn" class="w-full border border-slate-900/12 bg-white/60 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start" placeholder="Store description in English..."></textarea>
             </div>
           </div>
         </div>
@@ -196,15 +196,15 @@
       </fieldset>
     </div>
 
-    <footer class="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/50 px-6 py-4">
+    <footer class="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/90 px-8 py-4 shrink-0">
       <p class="text-[11px] font-bold text-slate-400">
         {{ isRTL ? 'الحقول المطلوبة مميزة بـ *' : 'Required fields marked with *' }}
       </p>
       <div class="flex items-center gap-3">
-        <button type="button" (click)="onClose()" [disabled]="isSaving" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">
+        <button type="button" (click)="onClose()" [disabled]="isSaving" class="px-6 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-sm font-bold transition-all active:scale-98 disabled:cursor-not-allowed disabled:opacity-40">
           {{ isRTL ? 'إلغاء' : 'Cancel' }}
         </button>
-        <button type="button" (click)="onSave()" [disabled]="!isFormValid || isSaving" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50">
+        <button type="button" (click)="onSave()" [disabled]="!isFormValid || isSaving" class="px-8 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white text-sm font-bold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-98 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-50">
           <span class="flex items-center gap-2">
             <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
             {{ isSaving ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}

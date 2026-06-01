@@ -350,8 +350,8 @@ export class VendorOrdersComponent {
       id: order.id,
       orderNumber: order.orderNumber,
       customer: order.customerName,
-      date: placedAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US'),
-      time: placedAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+      date: placedAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US'),
+      time: placedAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
         hour: '2-digit',
         minute: '2-digit'
       }),
@@ -427,7 +427,7 @@ export class VendorOrdersComponent {
   }
 
   private formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(value);

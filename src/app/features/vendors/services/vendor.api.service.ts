@@ -160,6 +160,18 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
   }> | null;
   branchesCount?: number | null;
   bankAccountsCount?: number | null;
+  riskIndicators?: Array<{
+    id: string;
+    titleKey: string;
+    descriptionKey: string;
+    severity: 'high' | 'medium' | 'low' | string;
+    severityLabelKey: string;
+    icon: string;
+    titleAr?: string | null;
+    titleEn?: string | null;
+    descriptionAr?: string | null;
+    descriptionEn?: string | null;
+  }> | null;
 }
 
 interface ApiPaginatedResponse<T> {
@@ -1653,7 +1665,18 @@ export class VendorService {
         tone: this.normalizeReviewTone(note.tone),
         isSystem: note.isSystem ?? false
       })) ?? base.reviewNotes ?? []),
-      riskIndicators: base.riskIndicators ?? []
+      riskIndicators: (apiVendor.riskIndicators?.map((risk) => ({
+        id: risk.id,
+        titleKey: risk.titleKey,
+        descriptionKey: risk.descriptionKey,
+        severity: risk.severity as 'high' | 'medium' | 'low',
+        severityLabelKey: risk.severityLabelKey,
+        icon: risk.icon,
+        titleAr: risk.titleAr,
+        titleEn: risk.titleEn,
+        descriptionAr: risk.descriptionAr,
+        descriptionEn: risk.descriptionEn
+      })) ?? base.riskIndicators ?? [])
     });
 
     vendor.reviewState = this.resolveDetailReviewState(vendor);
@@ -1663,7 +1686,6 @@ export class VendorService {
       ?? vendor.reviewStartedAtUtc
       ?? summary.reviewUpdatedAtUtc
       ?? vendor.createdAtUtc;
-    vendor.riskIndicators = this.buildRiskIndicators(vendor);
     return vendor;
   }
 
@@ -2202,7 +2224,7 @@ export class VendorService {
       || vendor.reviewState === 'under_review'
       || vendor.reviewState === 'changes_requested'
       || vendor.reviewState === 'awaiting_submission';
-    vendor.riskIndicators = this.buildRiskIndicators(vendor);
+    vendor.riskIndicators = vendor.riskIndicators ?? [];
   }
 
   private normalizeProfileReviewStatus(status?: string | null): VendorProfileReviewItem['status'] {
@@ -2550,130 +2572,9 @@ export class VendorService {
     }
   }
 
-  private buildReviewNotes(seed: VendorSeed): VendorReviewNote[] {
-    const notes: VendorReviewNote[] = [];
 
-    if (seed.reviewState === 'submitted' || seed.reviewState === 'under_review') {
-      notes.push({
-        id: 'note-1',
-        authorName: seed.assignedReviewer || 'Vendor Intake Queue',
-        roleLabel: 'Compliance Review',
-        createdAtUtc: seed.reviewSubmittedAtUtc || seed.createdAtUtc,
-        messageKey: 'VENDOR_REVIEW.NOTES.SUBMITTED',
-        tone: 'info',
-        isSystem: true
-      });
-    }
 
-    if (seed.reviewState === 'changes_requested') {
-      notes.push({
-        id: 'note-1',
-        authorName: seed.assignedReviewer || 'Vendor Compliance Desk',
-        roleLabel: 'Compliance Review',
-        createdAtUtc: '2026-03-23T10:45:00Z',
-        messageKey: 'VENDOR_REVIEW.NOTES.CHANGES_REQUESTED',
-        tone: 'warning',
-        isSystem: true
-      });
-    }
 
-    if (seed.reviewState === 'verified') {
-      notes.push({
-        id: 'note-1',
-        authorName: seed.assignedReviewer || 'Vendor Compliance Desk',
-        roleLabel: 'Compliance Review',
-        createdAtUtc: '2026-03-25T11:15:00Z',
-        messageKey: 'VENDOR_REVIEW.NOTES.APPROVED',
-        tone: 'success',
-        isSystem: true
-      });
-    }
-
-    if (seed.reviewState === 'rejected') {
-      notes.push({
-        id: 'note-1',
-        authorName: seed.assignedReviewer || 'Vendor Compliance Desk',
-        roleLabel: 'Compliance Review',
-        createdAtUtc: '2026-03-25T12:10:00Z',
-        messageKey: 'VENDOR_REVIEW.NOTES.REJECTED',
-        tone: 'danger',
-        isSystem: true
-      });
-    }
-
-    if (seed.reviewState === 'suspended') {
-      notes.push({
-        id: 'note-1',
-        authorName: seed.assignedReviewer || 'Risk & Compliance Desk',
-        roleLabel: 'Risk & Compliance',
-        createdAtUtc: '2026-03-24T15:20:00Z',
-        messageKey: 'VENDOR_REVIEW.NOTES.SUSPENDED',
-        tone: 'danger',
-        isSystem: true
-      });
-    }
-
-    notes.push({
-      id: `note-${notes.length + 1}`,
-      authorName: 'Sarah Fahad',
-      roleLabel: 'Risk Team',
-      createdAtUtc: '2026-03-22T14:15:00Z',
-      messageKey: 'COMPLIANCE.NOTES.MESSAGES.CANCELLATION_FOLLOWUP',
-      tone: 'warning',
-      isSystem: true
-    });
-
-    if (seed.reviewState !== 'verified' && seed.reviewState !== 'suspended') {
-      notes.push({
-        id: `note-${notes.length + 1}`,
-        authorName: 'Abdullah Mohammed',
-        roleLabel: 'Review Team',
-        createdAtUtc: '2026-03-22T10:30:00Z',
-        messageKey: 'COMPLIANCE.NOTES.MESSAGES.TAX_CERTIFICATE_BLUR',
-        tone: 'info',
-        isSystem: true
-      });
-    }
-
-    return notes.sort((left, right) => right.createdAtUtc.localeCompare(left.createdAtUtc));
-  }
-
-  private buildRiskIndicators(vendor: VendorDetail): VendorRiskIndicator[] {
-    const indicators: VendorRiskIndicator[] = [];
-
-    if (vendor.riskLevel === RiskLevel.High || vendor.riskLevel === RiskLevel.Critical || vendor.hasFraudFlag) {
-      indicators.push({
-        id: 'cancellation',
-        titleKey: 'COMPLIANCE.RISK.HIGH_CANCELLATION',
-        descriptionKey: 'COMPLIANCE.RISK.HIGH_CANCELLATION_DESC',
-        severity: vendor.riskLevel === RiskLevel.Critical ? 'high' : 'medium',
-        severityLabelKey: vendor.riskLevel === RiskLevel.Critical ? 'COMPLIANCE.SEVERITY.HIGH' : 'COMPLIANCE.SEVERITY.MEDIUM',
-        icon: 'error'
-      });
-    }
-
-    if (vendor.reviewState === 'changes_requested' || vendor.reviewState === 'awaiting_submission') {
-      indicators.push({
-        id: 'address',
-        titleKey: 'COMPLIANCE.RISK.ADDRESS_MISMATCH',
-        descriptionKey: 'COMPLIANCE.RISK.ADDRESS_MISMATCH_DESC',
-        severity: 'medium',
-        severityLabelKey: 'COMPLIANCE.SEVERITY.MEDIUM',
-        icon: 'report_problem'
-      });
-    }
-
-    indicators.push({
-      id: 'iban',
-      titleKey: 'COMPLIANCE.RISK.IBAN_CHANGES',
-      descriptionKey: 'COMPLIANCE.RISK.IBAN_CHANGES_DESC',
-      severity: vendor.payoutStatus === PayoutStatus.Blocked ? 'high' : 'low',
-      severityLabelKey: vendor.payoutStatus === PayoutStatus.Blocked ? 'COMPLIANCE.SEVERITY.HIGH' : 'COMPLIANCE.SEVERITY.LOW',
-      icon: 'info'
-    });
-
-    return indicators;
-  }
 
   private getStoredVendorAvailabilityState(id: string): AdminVendorStoreAvailabilityState {
     return this.vendorStoreAvailability.get(id) ?? {

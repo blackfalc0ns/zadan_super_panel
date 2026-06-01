@@ -276,13 +276,14 @@ export class VendorDetailHeaderComponent implements OnChanges {
     return this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.TOAST_TITLE');
   }
 
+
   private updateHeaderContent(): void {
     this.title = this.vendor
       ? this.getDisplayStoreName(this.vendor)
       : this.translate.instant('VENDOR_DETAIL.HEADER_TITLE');
     this.vendorId = this.vendor?.id ?? '';
     this.registrationDate = this.vendor?.createdAtUtc
-      ? new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+      ? new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
           day: '2-digit',
           month: 'short',
           year: 'numeric'

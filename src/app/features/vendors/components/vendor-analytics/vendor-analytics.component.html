@@ -1,59 +1,73 @@
-<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto max-w-[1500px] bg-[#f4f8f8] px-2 py-2 md:px-3">
-  <section class="space-y-2">
-    <header class="overflow-hidden rounded-[1.6rem] border border-[#0f7f8b]/15 bg-white shadow-sm">
-      <div class="grid gap-0 xl:grid-cols-[minmax(0,1fr)_560px]">
-        <div class="relative overflow-hidden bg-[#0f7f8b] p-5 text-white">
-          <div class="absolute inset-y-0 end-0 w-52 rounded-s-full bg-white/10"></div>
-          <div class="relative max-w-2xl">
-            <span class="inline-flex rounded-full bg-white/15 px-3 py-1 text-[10px] font-black tracking-[0.16em]">
-              {{ isRTL ? 'لوحة تحليلات تشغيلية' : 'Operational analytics board' }}
-            </span>
-            <h1 class="mt-3 text-2xl font-black leading-tight md:text-3xl">{{ 'VENDOR_ANALYTICS.TITLE' | translate }}</h1>
-            <p class="mt-2 max-w-xl text-[12px] font-bold leading-6 text-white/80">
-              {{ 'VENDOR_ANALYTICS.SUBTITLE' | translate:{ vendor: vendorDisplayName } }}
-            </p>
+<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto max-w-[1520px] bg-slate-50/40 px-4 py-6 md:px-6 lg:px-8 space-y-6">
+  <section class="space-y-6">
+    <!-- Header Board -->
+    <header class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <!-- Title Area -->
+        <div class="space-y-2 text-start">
+          <div class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
+            <span class="material-symbols-outlined text-[14px]">analytics</span>
+            {{ isRTL ? 'لوحة تحليلات تشغيلية' : 'Operational analytics board' }}
           </div>
+          <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">
+            {{ 'VENDOR_ANALYTICS.TITLE' | translate }}
+          </h1>
+          <p class="text-[13px] font-medium leading-relaxed text-slate-500">
+            {{ 'VENDOR_ANALYTICS.SUBTITLE' | translate:{ vendor: vendorDisplayName } }}
+          </p>
         </div>
 
-        <div class="grid gap-2 bg-white p-3 sm:grid-cols-[220px_minmax(0,1fr)]">
-          <div class="rounded-2xl border border-[#0f7f8b]/20 bg-[#e8f4f5] p-3">
-            <div class="flex items-center justify-between gap-3">
-              <span class="text-[11px] font-black text-[#0f7f8b]">{{ isRTL ? 'مؤشر الأداء' : 'Performance score' }}</span>
-              <strong class="text-2xl font-black text-slate-950">{{ performanceScoreLabel }}</strong>
-            </div>
-            <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-white">
-              <div class="h-full rounded-full bg-[#0f7f8b]" [style.width.%]="performanceScore * 100"></div>
-            </div>
-            <p class="mt-2 truncate text-[11px] font-black text-[#0f7f8b]">{{ operationsSignalLabel }}</p>
+        <!-- Controls Area -->
+        <div class="flex flex-wrap items-center gap-4">
+          <!-- Range Buttons -->
+          <div class="inline-flex items-center rounded-2xl bg-slate-100 p-1">
+            <button
+              *ngFor="let option of rangeOptions; trackBy: trackByRange"
+              type="button"
+              (click)="selectRange(option.value)"
+              class="h-9 rounded-xl px-4 text-[12px] font-bold transition-all"
+              [ngClass]="option.value === selectedRange ? 'bg-primary text-white shadow-sm' : 'text-slate-600 hover:text-primary'">
+              {{ option.labelKey | translate }}
+            </button>
           </div>
 
-          <div class="grid gap-2">
-            <div class="inline-flex w-fit rounded-full border border-slate-200 bg-slate-50 p-1">
-              <button
-                *ngFor="let option of rangeOptions; trackBy: trackByRange"
-                type="button"
-                (click)="selectRange(option.value)"
-                class="h-8 rounded-full px-4 text-[11px] font-black transition"
-                [ngClass]="option.value === selectedRange ? 'bg-[#0f7f8b] text-white shadow-sm' : 'text-slate-600 hover:bg-white hover:text-[#0f7f8b]'">
-                {{ option.labelKey | translate }}
-              </button>
+          <!-- Period Info -->
+          <div class="flex items-center gap-3">
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 px-4 py-2 text-start">
+              <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">{{ 'VENDOR_ANALYTICS.META.PERIOD' | translate }}</span>
+              <span class="text-[12px] font-semibold text-slate-800">{{ periodLabel }}</span>
             </div>
+            <div class="rounded-2xl border border-slate-200/60 bg-slate-50 px-4 py-2 text-start">
+              <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">{{ 'VENDOR_ANALYTICS.META.GENERATED' | translate }}</span>
+              <span class="text-[12px] font-semibold text-slate-800">{{ generatedAtLabel }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="grid grid-cols-2 gap-2">
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5">
-                <p class="text-[9px] font-black uppercase tracking-widest text-slate-400">{{ 'VENDOR_ANALYTICS.META.PERIOD' | translate }}</p>
-                <p class="mt-1 truncate text-[12px] font-black text-slate-900">{{ periodLabel }}</p>
-              </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5">
-                <p class="text-[9px] font-black uppercase tracking-widest text-slate-400">{{ 'VENDOR_ANALYTICS.META.GENERATED' | translate }}</p>
-                <p class="mt-1 truncate text-[12px] font-black text-slate-900">{{ generatedAtLabel }}</p>
-              </div>
+      <!-- Performance Bar inside Header -->
+      <div class="mt-6 border-t border-slate-100 pt-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+              <span class="material-symbols-outlined text-[20px]">speed</span>
             </div>
+            <div class="text-start">
+              <h4 class="text-xs font-bold text-slate-400">{{ isRTL ? 'مؤشر الأداء العام للتاجر' : 'Overall Performance Index' }}</h4>
+              <p class="text-[13px] font-bold text-slate-700">{{ operationsSignalLabel }}</p>
+            </div>
+          </div>
+          <div class="flex flex-1 max-w-md items-center gap-3">
+            <div class="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div class="h-full rounded-full bg-gradient-to-r from-primary/80 to-primary transition-all duration-500" [style.width.%]="performanceScore * 100"></div>
+            </div>
+            <span class="text-base font-extrabold text-slate-900">{{ performanceScoreLabel }}</span>
           </div>
         </div>
       </div>
     </header>
 
+    <!-- Skeleton Loader -->
     <section *ngIf="isLoading" class="admin-skeleton-detail">
       <div class="admin-skeleton-detail-grid">
         <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-card space-y-3">
@@ -66,28 +80,31 @@
       </div>
     </section>
 
-    <section *ngIf="!isLoading && hasError" class="grid min-h-[260px] place-items-center rounded-[1.35rem] border border-rose-200 bg-white p-6 text-center shadow-sm">
-      <div>
-        <span class="material-symbols-outlined text-[34px] text-rose-600">warning</span>
-        <h2 class="mt-2 text-sm font-black text-rose-950">{{ 'VENDOR_ANALYTICS.STATES.ERROR_TITLE' | translate }}</h2>
-        <p class="mt-1 text-xs font-bold text-rose-600">{{ 'VENDOR_ANALYTICS.STATES.ERROR_MESSAGE' | translate }}</p>
+    <!-- Error State -->
+    <section *ngIf="!isLoading && hasError" class="grid min-h-[260px] place-items-center rounded-3xl border border-rose-200 bg-white p-6 text-center shadow-sm">
+      <div class="space-y-2">
+        <span class="material-symbols-outlined text-[42px] text-rose-600">warning</span>
+        <h2 class="text-sm font-black text-rose-950">{{ 'VENDOR_ANALYTICS.STATES.ERROR_TITLE' | translate }}</h2>
+        <p class="text-xs font-bold text-rose-600">{{ 'VENDOR_ANALYTICS.STATES.ERROR_MESSAGE' | translate }}</p>
       </div>
     </section>
 
+    <!-- Dashboard Content -->
     <ng-container *ngIf="!isLoading && !hasError && analytics as vm">
-      <section class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <!-- KPI Cards Grid -->
+      <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <article
           *ngFor="let card of kpiCards"
-          class="rounded-[1.15rem] border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-[#0f7f8b]/30 hover:shadow-md">
+          class="group rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5">
           <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <p class="truncate text-[9px] font-black uppercase tracking-widest text-slate-400">{{ card.labelKey | translate }}</p>
-              <p class="mt-2 truncate text-lg font-black text-slate-950">{{ card.value }}</p>
+            <div class="min-w-0 space-y-2 text-start">
+              <p class="truncate text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ card.labelKey | translate }}</p>
+              <p class="truncate text-xl font-extrabold text-slate-900 group-hover:text-primary transition-colors">{{ card.value }}</p>
             </div>
             <span
-              class="material-symbols-outlined grid h-9 w-9 shrink-0 place-items-center rounded-2xl text-[17px]"
+              class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-[18px] transition-transform duration-300 group-hover:scale-110"
               [ngClass]="{
-                'bg-[#0f7f8b]/10 text-[#0f7f8b]': card.tone === 'primary',
+                'bg-primary/10 text-primary': card.tone === 'primary',
                 'bg-emerald-50 text-emerald-700': card.tone === 'success',
                 'bg-amber-50 text-amber-700': card.tone === 'warning'
               }">
@@ -97,174 +114,192 @@
         </article>
       </section>
 
-      <section class="grid items-start gap-2 xl:grid-cols-[minmax(0,1fr)_370px]">
-        <main class="grid gap-2">
-          <article class="rounded-[1.35rem] border border-slate-200 bg-white p-4 shadow-sm">
-            <div class="mb-3 flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-[#0f7f8b]">{{ isRTL ? 'المسار المالي' : 'Financial motion' }}</p>
-                <h2 class="mt-1 text-lg font-black text-slate-950">{{ 'VENDOR_ANALYTICS.CHARTS.REVENUE_TITLE' | translate }}</h2>
-                <p class="mt-1 text-[12px] font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.CHARTS.REVENUE_SUBTITLE' | translate }}</p>
+      <!-- Main Charts and Right Sidebar -->
+      <section class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_380px]">
+        <!-- Charts Main Column -->
+        <main class="grid gap-6">
+          <!-- Revenue Trend Chart -->
+          <article class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="text-start">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ isRTL ? 'المسار المالي والطلبات' : 'Financial & Order Trends' }}</span>
+                <h2 class="mt-1 text-lg font-extrabold text-slate-900">{{ 'VENDOR_ANALYTICS.CHARTS.REVENUE_TITLE' | translate }}</h2>
+                <p class="mt-1 text-[13px] font-medium text-slate-500">{{ 'VENDOR_ANALYTICS.CHARTS.REVENUE_SUBTITLE' | translate }}</p>
               </div>
-              <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-black text-slate-600">{{ vm.meta.range }}</span>
+              <span class="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-[11px] font-semibold text-slate-600">{{ vm.meta.range }}</span>
             </div>
 
             <ng-container *ngIf="vm.summary.totalOrders > 0; else noTrendState">
-              <div class="overflow-hidden rounded-[1.1rem] border border-slate-200 bg-slate-50">
-                <div echarts [options]="salesTrendOptions" class="h-[245px] w-full xl:h-[275px]"></div>
+              <div class="relative w-full">
+                <div echarts [options]="salesTrendOptions" class="h-[280px] w-full xl:h-[320px]"></div>
               </div>
             </ng-container>
 
             <ng-template #noTrendState>
-              <div class="grid h-[245px] place-items-center rounded-[1.1rem] border border-dashed border-slate-300 bg-slate-50 p-4 text-center xl:h-[275px]">
-                <div>
-                  <span class="material-symbols-outlined text-[30px] text-slate-400">analytics</span>
-                  <h3 class="mt-2 text-sm font-black text-slate-950">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_TREND_TITLE' | translate }}</h3>
-                  <p class="mt-1 text-xs font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_TREND_MESSAGE' | translate }}</p>
+              <div class="grid h-[280px] place-items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center xl:h-[320px]">
+                <div class="space-y-2">
+                  <span class="material-symbols-outlined text-[34px] text-slate-400">analytics</span>
+                  <h3 class="text-sm font-black text-slate-950">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_TREND_TITLE' | translate }}</h3>
+                  <p class="text-xs font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_TREND_MESSAGE' | translate }}</p>
                 </div>
               </div>
             </ng-template>
           </article>
 
-          <article class="rounded-[1.35rem] border border-slate-200 bg-white p-4 shadow-sm">
-            <div class="mb-3 flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-[#0f7f8b]">{{ isRTL ? 'محركات الدخل' : 'Revenue engines' }}</p>
-                <h2 class="mt-1 text-lg font-black text-slate-950">{{ isRTL ? 'المنتجات الأعلى دخلًا' : 'Top revenue products' }}</h2>
-                <p class="mt-1 truncate text-[12px] font-bold text-slate-500">
+          <!-- Top Revenue Products Chart -->
+          <article class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="text-start">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ isRTL ? 'محركات الدخل والسلع' : 'Top Performing Sku' }}</span>
+                <h2 class="mt-1 text-lg font-extrabold text-slate-900">{{ isRTL ? 'المنتجات الأعلى دخلًا' : 'Top revenue products' }}</h2>
+                <p class="mt-1 text-[13px] font-medium text-slate-500">
                   {{ isRTL ? 'يوضح الرسم المنتجات التي تصنع الجزء الأكبر من دخل التاجر.' : 'Shows the products carrying most of the vendor revenue.' }}
                 </p>
               </div>
-              <b class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-black text-slate-600">
+              <b class="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-[11px] font-semibold text-slate-600">
                 {{ formatNumber(vm.topProducts.length) }} {{ 'VENDOR_ANALYTICS.TOP_PRODUCTS.ITEMS' | translate }}
               </b>
             </div>
 
             <ng-container *ngIf="vm.topProducts.length > 0; else noTopProductsChart">
-              <div class="overflow-hidden rounded-[1.1rem] border border-slate-200 bg-slate-50">
-                <div echarts [options]="topProductsOptions" class="h-[250px] w-full"></div>
+              <div class="relative w-full">
+                <div echarts [options]="topProductsOptions" class="h-[280px] w-full"></div>
               </div>
             </ng-container>
 
             <ng-template #noTopProductsChart>
-              <div class="grid h-[220px] place-items-center rounded-[1.1rem] border border-dashed border-slate-300 bg-slate-50 p-4 text-center">
-                <div>
-                  <span class="material-symbols-outlined text-[30px] text-slate-400">bar_chart</span>
-                  <h3 class="mt-2 text-sm font-black text-slate-950">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_PRODUCTS_TITLE' | translate }}</h3>
-                  <p class="mt-1 text-xs font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_PRODUCTS_MESSAGE' | translate }}</p>
+              <div class="grid h-[250px] place-items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center">
+                <div class="space-y-2">
+                  <span class="material-symbols-outlined text-[34px] text-slate-400">bar_chart</span>
+                  <h3 class="text-sm font-black text-slate-950">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_PRODUCTS_TITLE' | translate }}</h3>
+                  <p class="text-xs font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.STATES.EMPTY_PRODUCTS_MESSAGE' | translate }}</p>
                 </div>
               </div>
             </ng-template>
           </article>
         </main>
 
-        <aside class="grid gap-2 xl:sticky xl:top-3 xl:max-h-[calc(100vh-1.5rem)] xl:overflow-y-auto xl:pr-1">
-          <article class="rounded-[1.35rem] border border-slate-200 bg-white p-4 shadow-sm">
-            <div class="mb-3 flex items-start justify-between gap-3">
-              <div>
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-[#0f7f8b]">{{ isRTL ? 'حالة الطلبات' : 'Order state' }}</p>
-                <h2 class="mt-1 text-lg font-black text-slate-950">{{ 'VENDOR_ANALYTICS.CHARTS.STATUS_TITLE' | translate }}</h2>
+        <!-- Right Column Sidebar -->
+        <aside class="grid gap-6 xl:sticky xl:top-6 xl:max-h-[calc(100vh-1.5rem)] xl:overflow-y-auto xl:pr-1">
+          <!-- Order Status Breakdown Card -->
+          <article class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex items-center justify-between gap-3">
+              <div class="text-start">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ isRTL ? 'حالة الطلبات' : 'Order state' }}</span>
+                <h2 class="mt-1 text-lg font-extrabold text-slate-900">{{ 'VENDOR_ANALYTICS.CHARTS.STATUS_TITLE' | translate }}</h2>
               </div>
-              <span class="material-symbols-outlined grid h-9 w-9 place-items-center rounded-2xl bg-[#0f7f8b]/10 text-[20px] text-[#0f7f8b]">donut_small</span>
+              <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-[20px] text-primary">donut_small</span>
             </div>
 
-            <div class="grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)] xl:grid-cols-1">
-              <div class="mx-auto h-[140px] w-[140px]">
+            <div class="flex flex-col gap-5">
+              <div class="mx-auto h-[160px] w-[160px] relative">
                 <div echarts [options]="statusBreakdownOptions" class="h-full w-full"></div>
               </div>
 
               <div class="grid gap-2">
                 <div
                   *ngFor="let item of statusLegendItems"
-                  class="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 rounded-xl border px-3 py-2"
+                  class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 p-3 transition-all duration-200 hover:bg-slate-50"
                   [ngClass]="getStatusToneClass(item.key)">
-                  <span class="h-2.5 w-2.5 rounded-full" [style.backgroundColor]="item.color"></span>
-                  <b class="truncate text-[11px] font-black">{{ item.labelKey | translate }}</b>
-                  <strong class="text-[11px] font-black">{{ item.count }}</strong>
-                  <small class="text-[11px] font-black">{{ item.percentage }}</small>
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="h-2.5 w-2.5 shrink-0 rounded-full" [style.backgroundColor]="item.color"></span>
+                    <span class="truncate text-[12px] font-bold text-slate-700">{{ item.labelKey | translate }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[12px] font-extrabold text-slate-900">{{ item.count }}</span>
+                    <span class="text-[11px] font-bold text-slate-400 bg-slate-100/50 px-2 py-0.5 rounded-lg">{{ item.percentage }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </article>
 
-          <article class="rounded-[1.35rem] border border-slate-200 bg-white p-4 shadow-sm">
-            <div class="mb-3 flex items-center justify-between gap-3">
-              <div>
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-[#0f7f8b]">{{ isRTL ? 'المخزون' : 'Inventory' }}</p>
-                <h2 class="mt-1 text-lg font-black text-slate-950">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.TITLE' | translate }}</h2>
+          <!-- Product Stock/Availability Health Card -->
+          <article class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="mb-5 flex items-center justify-between gap-3">
+              <div class="text-start">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ isRTL ? 'المخزون والجاهزية' : 'Inventory & Availability' }}</span>
+                <h2 class="mt-1 text-lg font-extrabold text-slate-900">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.TITLE' | translate }}</h2>
               </div>
-              <b class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-black text-slate-600">{{ formatNumber(totalProductHealthCount) }}</b>
+              <b class="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-[11px] font-semibold text-slate-600">{{ formatNumber(totalProductHealthCount) }}</b>
             </div>
 
-            <div class="grid grid-cols-2 gap-2.5">
-              <div class="rounded-2xl border border-[#0f7f8b]/20 bg-[#0f7f8b]/10 p-3">
-                <span class="text-[10px] font-black text-[#0f7f8b]">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.AVAILABLE' | translate }}</span>
-                <strong class="mt-1 block text-lg font-black text-slate-950">{{ formatNumber(vm.productHealth.available) }}</strong>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-4 text-start">
+                <span class="text-[11px] font-bold text-emerald-800">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.AVAILABLE' | translate }}</span>
+                <strong class="mt-1 block text-2xl font-extrabold text-emerald-900">{{ formatNumber(vm.productHealth.available) }}</strong>
               </div>
-              <div class="rounded-2xl border border-amber-200 bg-amber-50 p-3">
-                <span class="text-[10px] font-black text-amber-700">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.LOW_STOCK' | translate }}</span>
-                <strong class="mt-1 block text-lg font-black text-amber-700">{{ formatNumber(vm.productHealth.lowStock) }}</strong>
+              <div class="rounded-2xl border border-amber-100 bg-amber-50/40 p-4 text-start">
+                <span class="text-[11px] font-bold text-amber-800">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.LOW_STOCK' | translate }}</span>
+                <strong class="mt-1 block text-2xl font-extrabold text-amber-900">{{ formatNumber(vm.productHealth.lowStock) }}</strong>
               </div>
-              <div class="rounded-2xl border border-rose-200 bg-rose-50 p-3">
-                <span class="text-[10px] font-black text-rose-700">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.OUT_OF_STOCK' | translate }}</span>
-                <strong class="mt-1 block text-lg font-black text-rose-700">{{ formatNumber(vm.productHealth.outOfStock) }}</strong>
+              <div class="rounded-2xl border border-rose-100 bg-rose-50/40 p-4 text-start">
+                <span class="text-[11px] font-bold text-rose-800">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.OUT_OF_STOCK' | translate }}</span>
+                <strong class="mt-1 block text-2xl font-extrabold text-rose-900">{{ formatNumber(vm.productHealth.outOfStock) }}</strong>
               </div>
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                <span class="text-[10px] font-black text-slate-500">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.INACTIVE' | translate }}</span>
-                <strong class="mt-1 block text-lg font-black text-slate-800">{{ formatNumber(vm.productHealth.inactive) }}</strong>
+              <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-start">
+                <span class="text-[11px] font-bold text-slate-500">{{ 'VENDOR_ANALYTICS.PRODUCT_HEALTH.INACTIVE' | translate }}</span>
+                <strong class="mt-1 block text-2xl font-extrabold text-slate-800">{{ formatNumber(vm.productHealth.inactive) }}</strong>
               </div>
             </div>
           </article>
 
-          <article class="rounded-[1.35rem] border border-slate-200 bg-white p-4 shadow-sm">
-            <div class="mb-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.14em] text-[#0f7f8b]">{{ isRTL ? 'ملخص القرار' : 'Decision brief' }}</p>
-              <h2 class="mt-1 text-lg font-black text-slate-950">{{ isRTL ? 'ما الذي يحتاج انتباه؟' : 'What needs attention?' }}</h2>
+          <!-- Decision Brief (What needs attention?) -->
+          <article class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="mb-5 text-start">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ isRTL ? 'ملخص القرار والامتثال' : 'Decision brief' }}</span>
+              <h2 class="mt-1 text-lg font-extrabold text-slate-900">{{ isRTL ? 'ما الذي يحتاج انتباه؟' : 'What needs attention?' }}</h2>
             </div>
 
-            <div class="grid gap-2.5">
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                <div class="flex items-start justify-between gap-2">
-                  <div>
-                    <p class="text-[10px] font-black text-slate-500">{{ isRTL ? 'ضغط الطلبات' : 'Workload pressure' }}</p>
-                    <strong class="mt-1 block text-lg font-black text-slate-950">{{ formatNumber(activeWorkloadCount) }}</strong>
+            <div class="grid gap-3">
+              <!-- Workload -->
+              <div class="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 text-start transition-all hover:bg-slate-50 hover:border-primary/20">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="space-y-1">
+                    <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'ضغط الطلبات النشطة' : 'Workload pressure' }}</span>
+                    <strong class="block text-2xl font-extrabold text-slate-950">{{ formatNumber(activeWorkloadCount) }}</strong>
+                    <p class="text-[11px] font-medium text-slate-500">{{ isRTL ? 'طلبات تحتاج متابعة تشغيلية عاجلة.' : 'Orders needing urgent operational follow-up.' }}</p>
                   </div>
-                  <span class="material-symbols-outlined text-[19px] text-[#0f7f8b]">local_shipping</span>
+                  <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-[18px] text-primary">local_shipping</span>
                 </div>
-                <small class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'طلبات تحتاج متابعة تشغيلية.' : 'Orders needing operational follow-up.' }}</small>
               </div>
 
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="min-w-0">
-                    <p class="text-[10px] font-black text-slate-500">{{ isRTL ? 'أقوى منتج' : 'Dominant product' }}</p>
-                    <strong class="mt-1 block truncate text-lg font-black text-slate-950">{{ dominantProductName }}</strong>
+              <!-- Dominant Sku -->
+              <div class="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 text-start transition-all hover:bg-slate-50 hover:border-primary/20">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="space-y-1 min-w-0 flex-1">
+                    <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'المنتج الأقوى مبيعًا' : 'Dominant product' }}</span>
+                    <strong class="block truncate text-lg font-extrabold text-slate-950">{{ dominantProductName }}</strong>
+                    <p class="text-[11px] font-medium text-slate-500">{{ formatPercent(topProductRevenueShare * 100) }} {{ isRTL ? 'من إجمالي الدخل.' : 'of total revenue.' }}</p>
                   </div>
-                  <span class="material-symbols-outlined text-[19px] text-[#0f7f8b]">workspace_premium</span>
+                  <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-[18px] text-primary">workspace_premium</span>
                 </div>
-                <small class="text-[11px] font-bold text-slate-500">{{ formatPercent(topProductRevenueShare * 100) }} {{ isRTL ? 'من إجمالي الدخل' : 'of total revenue' }}</small>
               </div>
 
-              <div class="rounded-2xl border p-3" [ngClass]="inventoryRiskRatio > 0.3 ? 'border-rose-200 bg-rose-50' : 'border-slate-200 bg-slate-50'">
-                <div class="flex items-start justify-between gap-2">
-                  <div>
-                    <p class="text-[10px] font-black" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700' : 'text-slate-500'">{{ isRTL ? 'خطر المخزون' : 'Inventory risk' }}</p>
-                    <strong class="mt-1 block text-lg font-black" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700' : 'text-slate-950'">{{ formatPercent(inventoryRiskRatio * 100) }}</strong>
+              <!-- Inventory Risk -->
+              <div class="rounded-2xl border p-4 text-start transition-all hover:bg-slate-50"
+                   [ngClass]="inventoryRiskRatio > 0.3 ? 'border-rose-100 bg-rose-50/30 hover:border-rose-200' : 'border-slate-100 bg-slate-50/50 hover:border-primary/20'">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="space-y-1">
+                    <span class="text-[11px] font-bold" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700' : 'text-slate-400'">{{ isRTL ? 'خطر نفاذ المخزون' : 'Inventory risk' }}</span>
+                    <strong class="block text-2xl font-extrabold" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-800' : 'text-slate-950'">{{ formatPercent(inventoryRiskRatio * 100) }}</strong>
+                    <p class="text-[11px] font-medium" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700/80' : 'text-slate-500'">{{ isRTL ? 'نسبة المنتجات القليلة أو النافدة.' : 'Ratio of low or out-of-stock products.' }}</p>
                   </div>
-                  <span class="material-symbols-outlined text-[19px]" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700' : 'text-[#0f7f8b]'">inventory_2</span>
+                  <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl text-[18px]"
+                        [ngClass]="inventoryRiskRatio > 0.3 ? 'bg-rose-100 text-rose-700' : 'bg-primary/10 text-primary'">inventory_2</span>
                 </div>
-                <small class="text-[11px] font-bold" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700/80' : 'text-slate-500'">{{ isRTL ? 'منتجات قليلة أو نافدة.' : 'Low or out-of-stock products.' }}</small>
               </div>
 
-              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                <div class="flex items-start justify-between gap-2">
-                  <div>
-                    <p class="text-[10px] font-black text-slate-500">{{ isRTL ? 'إيقاع الدخل' : 'Revenue rhythm' }}</p>
-                    <strong class="mt-1 block text-lg font-black text-[#0f7f8b]">{{ formatCurrency(dailyAverageRevenue) }}</strong>
+              <!-- Daily Average -->
+              <div class="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 text-start transition-all hover:bg-slate-50 hover:border-primary/20">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="space-y-1">
+                    <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'إيقاع الدخل اليومي' : 'Revenue rhythm' }}</span>
+                    <strong class="block text-2xl font-extrabold text-primary">{{ formatCurrency(dailyAverageRevenue) }}</strong>
+                    <p class="text-[11px] font-medium text-slate-500">{{ isRTL ? 'متوسط المبيعات اليومي للفترة.' : 'Daily average revenue for period.' }}</p>
                   </div>
-                  <span class="material-symbols-outlined text-[19px] text-[#0f7f8b]">payments</span>
+                  <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-[18px] text-primary">payments</span>
                 </div>
-                <small class="text-[11px] font-bold text-slate-500">{{ isRTL ? 'متوسط يومي للفترة المحددة.' : 'Daily average for selected period.' }}</small>
               </div>
             </div>
           </article>

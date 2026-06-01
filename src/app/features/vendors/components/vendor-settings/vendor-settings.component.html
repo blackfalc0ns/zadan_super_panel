@@ -1,373 +1,441 @@
-<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-4 md:px-6">
-  <div *ngIf="pageError" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[12px] font-bold text-red-700 shadow-sm">
-    {{ pageError }}
+<div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-6 md:px-6">
+  <!-- Feedback Banners -->
+  <div *ngIf="pageError" class="flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50/80 p-4 text-[13px] font-bold text-red-800 shadow-sm backdrop-blur animate-in fade-in duration-300">
+    <span class="material-symbols-outlined text-[20px] text-red-600">error</span>
+    <span>{{ pageError }}</span>
   </div>
 
-  <div *ngIf="pageSuccess" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[12px] font-bold text-emerald-700 shadow-sm">
-    {{ pageSuccess }}
+  <div *ngIf="pageSuccess" class="flex items-center gap-3 rounded-2xl border border-emerald-250 bg-emerald-50/80 p-4 text-[13px] font-bold text-emerald-800 shadow-sm backdrop-blur animate-in fade-in duration-300">
+    <span class="material-symbols-outlined text-[20px] text-emerald-600">check_circle</span>
+    <span>{{ pageSuccess }}</span>
   </div>
 
-  <section class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-    <div class="flex flex-col gap-3 border-b border-slate-100 px-4 py-3 xl:flex-row xl:items-center xl:justify-between">
-      <div class="flex min-w-0 items-center gap-3">
-        <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-cyan-100 bg-cyan-50 text-cyan-700">
-          <span class="material-symbols-outlined text-[20px]">tune</span>
+  <!-- Header Section -->
+  <header class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300">
+    <div class="flex flex-col gap-4 border-b border-slate-100 p-6 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex items-center gap-4 text-start">
+        <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-white shadow-lg shadow-primary/20">
+          <span class="material-symbols-outlined text-[24px]">tune</span>
         </div>
 
-        <div class="min-w-0">
-          <p class="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
-            {{ isRTL ? 'نافذة التشغيل' : 'Operations console' }}
+        <div class="space-y-1">
+          <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+            {{ isRTL ? 'نافذة التشغيل والتحكم' : 'Operations & Control Console' }}
           </p>
-          <h1 class="mt-1 text-[18px] font-black leading-tight text-slate-950">
+          <h1 class="text-xl font-extrabold tracking-tight text-slate-900 md:text-2xl">
             {{ isRTL ? 'إعدادات التشغيل والتحكم' : 'Vendor settings and control desk' }}
           </h1>
-          <p class="mt-1 max-w-3xl text-[12px] font-semibold leading-5 text-slate-500">
+          <p class="text-[12px] font-medium leading-relaxed text-slate-500 max-w-3xl">
             {{ settingsHealthLabel }}
           </p>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <app-status-pill [label]="accountStatusLabel" [variant]="accountStatusVariant" [showDot]="false" [size]="'sm'"></app-status-pill>
-        <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-black text-slate-600">
+      <div class="flex flex-wrap items-center gap-3">
+        <app-status-pill [label]="accountStatusLabel" [variant]="accountStatusVariant" [showDot]="true" [size]="'sm'"></app-status-pill>
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-[11px] font-bold text-slate-650">
+          <span class="material-symbols-outlined text-[14px] text-slate-400">update</span>
           {{ isRTL ? 'آخر تحديث' : 'Last sync' }}: {{ lastUpdatedAtLabel }}
         </span>
       </div>
     </div>
 
-    <div class="grid gap-2 p-3 sm:grid-cols-2 xl:grid-cols-4">
-      <article class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
-        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{{ isRTL ? 'حالة الحساب' : 'Account state' }}</p>
-        <p class="mt-1 text-[16px] font-black text-slate-950">{{ accountStatusLabel }}</p>
+    <!-- Quick Stats Grid -->
+    <div class="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4 bg-slate-50/30">
+      <article class="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-md">
+        <div class="flex items-center justify-between gap-3 text-start">
+          <div class="space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-450">{{ isRTL ? 'حالة الحساب' : 'Account state' }}</span>
+            <strong class="text-base font-extrabold text-slate-900 group-hover:text-primary transition-colors block">{{ accountStatusLabel }}</strong>
+          </div>
+          <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-[18px] text-slate-500">manage_accounts</span>
+        </div>
       </article>
 
-      <article class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
-        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{{ isRTL ? 'ساعات التشغيل' : 'Working hours' }}</p>
-        <p class="mt-1 truncate text-[16px] font-black text-slate-950">{{ workingHoursLabel }}</p>
+      <article class="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-md">
+        <div class="flex items-center justify-between gap-3 text-start">
+          <div class="space-y-1 min-w-0">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-450">{{ isRTL ? 'ساعات التشغيل' : 'Working hours' }}</span>
+            <strong class="text-base font-extrabold text-slate-900 truncate block group-hover:text-primary transition-colors">{{ workingHoursLabel }}</strong>
+          </div>
+          <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-[18px] text-slate-500">schedule</span>
+        </div>
       </article>
 
-      <article class="rounded-xl border border-violet-100 bg-violet-50/40 px-3 py-2.5">
-        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-violet-600/80">{{ isRTL ? 'قنوات الإشعار' : 'Notification channels' }}</p>
-        <p class="mt-1 text-[16px] font-black text-slate-950">{{ activeNotificationChannelsCount }}/3</p>
+      <article class="group rounded-2xl border border-primary/20 bg-primary/5 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md">
+        <div class="flex items-center justify-between gap-3 text-start">
+          <div class="space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-primary block">{{ isRTL ? 'قنوات الإشعار' : 'Notification channels' }}</span>
+            <strong class="text-base font-extrabold text-primary block">{{ activeNotificationChannelsCount }}/3</strong>
+          </div>
+          <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/25 text-[18px] text-primary">notifications_active</span>
+        </div>
       </article>
 
-      <article class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
-        <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{{ isRTL ? 'المسؤول' : 'Owner' }}</p>
-        <p class="mt-1 truncate text-[16px] font-black text-slate-950">{{ lastUpdatedByLabel }}</p>
+      <article class="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-md">
+        <div class="flex items-center justify-between gap-3 text-start">
+          <div class="space-y-1 min-w-0">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-450">{{ isRTL ? 'آخر تعديل بواسطة' : 'Last modified by' }}</span>
+            <strong class="text-base font-extrabold text-slate-900 truncate block group-hover:text-primary transition-colors">{{ lastUpdatedByLabel }}</strong>
+          </div>
+          <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-[18px] text-slate-500">person</span>
+        </div>
       </article>
     </div>
-  </section>
+  </header>
 
-  <section class="grid gap-4 xl:grid-cols-12">
-    <div class="space-y-4 xl:col-span-8">
-      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
-          <div>
-            <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'ضبط التشغيل اليومي' : 'Operational controls' }}</h2>
-            <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
-              {{ isRTL ? 'استقبال الطلبات والحد الأدنى وزمن التحضير.' : 'Order intake, minimum amount and preparation time.' }}
+  <!-- Main Settings Layout -->
+  <section class="grid gap-6 xl:grid-cols-12">
+    <!-- Left Area: Core Configuration Panels -->
+    <div class="space-y-6 xl:col-span-8">
+      <!-- Operational Controls Card -->
+      <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+          <div class="text-start">
+            <h2 class="text-base font-extrabold text-slate-900">{{ isRTL ? 'ضبط التشغيل اليومي' : 'Operational controls' }}</h2>
+            <p class="text-[12px] font-medium text-slate-500">
+              {{ isRTL ? 'استقبل الطلبات، الحد الأدنى، وزمن التحضير للمتجر.' : 'Order intake settings, minimum amount and preparation time.' }}
             </p>
           </div>
 
-          <span class="rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1.5 text-[11px] font-black text-cyan-700">
-            {{ acceptOrders ? (isRTL ? 'يستقبل الطلبات' : 'Accepting orders') : (isRTL ? 'متوقف' : 'Paused') }}
+          <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold"
+                [ngClass]="acceptOrders ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-rose-50 border border-rose-200 text-rose-700'">
+            <span class="h-1.5 w-1.5 rounded-full" [ngClass]="acceptOrders ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+            {{ acceptOrders ? (isRTL ? 'يستقبل الطلبات' : 'Accepting orders') : (isRTL ? 'متوقف مؤقتًا' : 'Paused') }}
           </span>
         </div>
 
-        <div class="border-b border-slate-100 p-3">
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
-            <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-              <div class="max-w-2xl">
-                <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'ظهور المتجر في تطبيق العميل' : 'Store visibility in customer app' }}</p>
-                <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-500">
+        <!-- Store Visibility Sub-panel -->
+        <div class="border-b border-slate-100 p-5 bg-slate-50/20">
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-sm text-start">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div class="space-y-1">
+                <p class="text-[13px] font-extrabold text-slate-900">{{ isRTL ? 'ظهور المتجر في تطبيق العميل' : 'Store visibility in customer app' }}</p>
+                <p class="text-[11px] font-medium leading-relaxed text-slate-500 max-w-xl">
                   {{ isRTL
                     ? 'عند تحويل المتجر إلى أوفلاين ستختفي كل منتجاته من التطبيق حتى يعود أونلاين مرة أخرى.'
                     : 'When the store is switched offline, all of its products are hidden from the customer app until it is turned online again.' }}
                 </p>
               </div>
 
-              <span
-                class="rounded-full px-3 py-1.5 text-[11px] font-black"
-                [ngClass]="isStoreOffline ? 'border border-rose-200 bg-rose-50 text-rose-700' : 'border border-emerald-200 bg-emerald-50 text-emerald-700'">
+              <span class="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-[11px] font-extrabold shrink-0"
+                [ngClass]="isStoreOffline ? 'border border-rose-250 bg-rose-50 text-rose-700' : 'border border-emerald-250 bg-emerald-50 text-emerald-700'">
+                <span class="material-symbols-outlined text-[14px]">{{ isStoreOffline ? 'cloud_off' : 'cloud_done' }}</span>
                 {{ storeAvailabilityBadgeLabel }}
               </span>
             </div>
 
-            <div class="mt-3 grid gap-3 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
-              <div class="grid gap-3 md:grid-cols-2">
+            <!-- Manual online/offline toggler -->
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end pt-2 w-full">
+              <div class="grid gap-3 sm:grid-cols-2 flex-1 w-full">
                 <button
                   (click)="setStoreManualMode('online')"
-                  class="rounded-xl border px-3 py-3 text-start transition"
-                  [ngClass]="!isStoreOffline ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-700 hover:border-emerald-200 hover:bg-emerald-50/40'"
+                  class="flex flex-col items-start gap-1.5 rounded-2xl border p-4 text-start transition-all duration-300 active:scale-[0.98] w-full"
+                  [ngClass]="!isStoreOffline ? 'border-emerald-500 bg-emerald-50/30 text-emerald-950 shadow-sm shadow-emerald-100 ring-2 ring-emerald-500/10' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-350 hover:bg-slate-50/50'"
                   type="button">
-                  <span class="block text-[12px] font-black">{{ isRTL ? 'أونلاين' : 'Online' }}</span>
-                  <span class="mt-1 block text-[11px] font-semibold">{{ isRTL ? 'إظهار المنتجات واستقبال الطلبات.' : 'Show products and keep orders flowing.' }}</span>
+                  <span class="inline-flex items-center gap-1.5 text-[13px] font-extrabold">
+                    <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
+                    {{ isRTL ? 'أونلاين (نشط)' : 'Online (Active)' }}
+                  </span>
+                  <span class="text-[11px] font-medium text-slate-500 leading-relaxed text-start">{{ isRTL ? 'إظهار المنتجات واستقبال الطلبات.' : 'Show products and keep orders flowing.' }}</span>
                 </button>
 
                 <button
                   (click)="setStoreManualMode('offline')"
-                  class="rounded-xl border px-3 py-3 text-start transition"
-                  [ngClass]="isStoreOffline ? 'border-rose-300 bg-rose-50 text-rose-800' : 'border-slate-200 bg-white text-slate-700 hover:border-rose-200 hover:bg-rose-50/40'"
+                  class="flex flex-col items-start gap-1.5 rounded-2xl border p-4 text-start transition-all duration-300 active:scale-[0.98] w-full"
+                  [ngClass]="isStoreOffline ? 'border-rose-500 bg-rose-50/30 text-rose-955 shadow-sm shadow-rose-100 ring-2 ring-rose-500/10' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-355 hover:bg-slate-50/50'"
                   type="button">
-                  <span class="block text-[12px] font-black">{{ isRTL ? 'أوفلاين' : 'Offline' }}</span>
-                  <span class="mt-1 block text-[11px] font-semibold">{{ isRTL ? 'إخفاء كل المنتجات من التطبيق مؤقتًا.' : 'Temporarily hide all products from the app.' }}</span>
+                  <span class="inline-flex items-center gap-1.5 text-[13px] font-extrabold">
+                    <span class="material-symbols-outlined text-[18px] text-rose-600">cancel</span>
+                    {{ isRTL ? 'أوفلاين (مخفي)' : 'Offline (Hidden)' }}
+                  </span>
+                  <span class="text-[11px] font-medium text-slate-500 leading-relaxed text-start">{{ isRTL ? 'إخفاء كل المنتجات من التطبيق مؤقتًا.' : 'Temporarily hide all products from the app.' }}</span>
                 </button>
               </div>
 
-              <label *ngIf="isStoreOffline" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
-                <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'سبب الإخفاء' : 'Offline reason' }}</span>
-                <input
-                  [(ngModel)]="storeManualReason"
-                  type="text"
-                  class="mt-1 w-full bg-transparent text-[14px] font-black text-slate-950 outline-none"
-                  [placeholder]="isRTL ? 'اختياري' : 'Optional'" />
-              </label>
+              <!-- Offline Reason Input -->
+              <div *ngIf="isStoreOffline" class="flex-1 w-full">
+                <label class="block space-y-1.5 text-start">
+                  <span class="block text-[11px] font-bold text-slate-400 px-1">{{ isRTL ? 'سبب الإخفاء' : 'Offline reason' }}</span>
+                  <div class="flex h-11 items-center rounded-xl border border-slate-200 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+                    <input
+                      [(ngModel)]="storeManualReason"
+                      type="text"
+                      class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none"
+                      [placeholder]="isRTL ? 'اكتب سبب الإيقاف (اختياري)' : 'Specify reason (optional)'" />
+                  </div>
+                </label>
+              </div>
 
               <button
                 (click)="saveStoreAvailability()"
                 [disabled]="storeAvailabilitySubmitting"
-                class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+                [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+                class="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 text-[12px] font-bold text-white transition hover:bg-slate-800 active:scale-95 disabled:opacity-60 shadow-sm shrink-0"
                 type="button">
-                <span class="material-symbols-outlined text-[17px]">storefront</span>
-                {{ storeAvailabilitySubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ حالة المتجر' : 'Save store visibility') }}
+                <span class="material-symbols-outlined text-[18px]">publish</span>
+                {{ storeAvailabilitySubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ حالة الظهور' : 'Save visibility') }}
               </button>
             </div>
           </div>
         </div>
 
-        <div class="grid gap-3 p-3 lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
-          <label class="flex min-h-[72px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <div>
-              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'استقبال الطلبات' : 'Order reception' }}</p>
-              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تشغيل أو إيقاف الطلبات الجديدة.' : 'Enable or pause new orders.' }}</p>
+        <!-- Form fields: Reception, min amount, prep time -->
+        <div class="grid gap-4 p-5 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_auto] lg:items-end">
+          <div class="flex h-[72px] items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/40 p-4 text-start">
+            <div class="space-y-0.5">
+              <p class="text-[12px] font-extrabold text-slate-955">{{ isRTL ? 'استقبال الطلبات' : 'Order reception' }}</p>
+              <p class="text-[10px] font-medium text-slate-500 leading-tight">{{ isRTL ? 'تشغيل أو إيقاف الطلبات الجديدة.' : 'Enable/disable new orders.' }}</p>
             </div>
-            <span class="relative inline-flex cursor-pointer items-center">
+            <label class="relative inline-flex cursor-pointer items-center">
               <input [(ngModel)]="acceptOrders" type="checkbox" class="peer sr-only">
-              <span class="h-6 w-11 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-cyan-700 peer-checked:after:translate-x-full peer-checked:after:border-white"></span>
-            </span>
-          </label>
+              <span class="h-6 w-11 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white"></span>
+            </label>
+          </div>
 
-          <label class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'الحد الأدنى للطلب' : 'Minimum order' }}</span>
-            <div class="mt-1 flex items-center gap-2 rounded-lg border border-white bg-white px-3 py-2">
-              <input [(ngModel)]="minimumOrderAmount" type="number" min="0" class="w-full bg-transparent text-[14px] font-black text-slate-950 outline-none">
-              <span class="text-[11px] font-black text-slate-400">{{ isRTL ? 'ر.س' : 'SAR' }}</span>
+          <div class="space-y-1.5 text-start">
+            <span class="text-[11px] font-bold text-slate-400 px-1">{{ isRTL ? 'الحد الأدنى للطلب' : 'Minimum order' }}</span>
+            <div class="flex h-11 items-center gap-2 rounded-2xl border border-slate-250 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+              <input [(ngModel)]="minimumOrderAmount" type="number" min="0" class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none">
+              <span class="text-[11px] font-extrabold text-slate-400 shrink-0">{{ isRTL ? 'ر.س' : 'SAR' }}</span>
             </div>
-          </label>
+          </div>
 
-          <label class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'زمن التحضير' : 'Preparation time' }}</span>
-            <div class="mt-1 flex items-center gap-2 rounded-lg border border-white bg-white px-3 py-2">
-              <input [(ngModel)]="preparationTimeMinutes" type="number" min="0" class="w-full bg-transparent text-[14px] font-black text-slate-950 outline-none">
-              <span class="text-[11px] font-black text-slate-400">{{ isRTL ? 'دقيقة' : 'min' }}</span>
+          <div class="space-y-1.5 text-start">
+            <span class="text-[11px] font-bold text-slate-400 px-1">{{ isRTL ? 'زمن التحضير' : 'Preparation time' }}</span>
+            <div class="flex h-11 items-center gap-2 rounded-2xl border border-slate-250 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+              <input [(ngModel)]="preparationTimeMinutes" type="number" min="0" class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none">
+              <span class="text-[11px] font-extrabold text-slate-400 shrink-0">{{ isRTL ? 'دقيقة' : 'min' }}</span>
             </div>
-          </label>
+          </div>
 
           <button
             (click)="saveOperationsSettings()"
             [disabled]="operationsSubmitting"
-            class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+            [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+            class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-[12px] font-bold text-white transition hover:bg-slate-800 active:scale-95 disabled:opacity-60 shadow-sm"
             type="button">
-            <span class="material-symbols-outlined text-[17px]">save</span>
-            {{ operationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ' : 'Save') }}
+            <span class="material-symbols-outlined text-[18px]">save</span>
+            {{ operationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ الضبط' : 'Save controls') }}
           </button>
         </div>
       </article>
 
-      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
-          <div class="flex items-center gap-3">
-            <div class="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-emerald-100 bg-emerald-50 text-emerald-700">
-              <span class="material-symbols-outlined text-[16px]">percent</span>
+      <!-- Platform Commission Card -->
+      <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+          <div class="flex items-center gap-3 text-start">
+            <div class="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700">
+              <span class="material-symbols-outlined text-[18px]">percent</span>
             </div>
             <div>
-              <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'عمولة المنصة والنسب المستقطعة' : 'Platform commission and rates' }}</h2>
-              <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
+              <h2 class="text-base font-extrabold text-slate-900">{{ isRTL ? 'عمولة المنصة والنسب المستقطعة' : 'Platform commission and rates' }}</h2>
+              <p class="text-[12px] font-medium text-slate-500">
                 {{ isRTL ? 'ضبط نسبة عمولة المنصة المستقطعة من كل عملية بيع للتاجر.' : 'Set the platform commission rate deducted from each sale.' }}
               </p>
             </div>
           </div>
 
-          <span class="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1.5 text-[11px] font-black text-emerald-700">
+          <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold bg-emerald-50 border border-emerald-200 text-emerald-700">
             {{ commissionRate !== null ? commissionRate + '%' : (isRTL ? 'غير محدد' : 'Not set') }}
           </span>
         </div>
 
-        <div class="grid gap-3 p-3 lg:grid-cols-[1fr_auto] lg:items-end">
-          <label class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'نسبة عمولة المنصة' : 'Platform commission rate' }}</span>
-            <div class="mt-1 flex items-center gap-2 rounded-lg border border-white bg-white px-3 py-2">
-              <input [(ngModel)]="commissionRate" type="number" min="0" max="100" class="w-full bg-transparent text-[14px] font-black text-slate-950 outline-none">
-              <span class="text-[11px] font-black text-slate-400">%</span>
+        <div class="grid gap-4 p-5 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div class="space-y-1.5 text-start">
+            <span class="text-[11px] font-bold text-slate-400 px-1">{{ isRTL ? 'نسبة عمولة المنصة' : 'Platform commission rate' }}</span>
+            <div class="flex h-11 items-center gap-2 rounded-2xl border border-slate-255 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+              <input [(ngModel)]="commissionRate" type="number" min="0" max="100" class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none">
+              <span class="text-[12px] font-extrabold text-slate-400 shrink-0">%</span>
             </div>
-          </label>
+          </div>
 
           <button
             (click)="saveCommissionRate()"
             [disabled]="commissionSubmitting"
-            class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+            [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+            class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-6 text-[12px] font-bold text-white transition hover:bg-slate-800 active:scale-95 disabled:opacity-60 shadow-sm"
             type="button">
-            <span class="material-symbols-outlined text-[17px]">percent</span>
+            <span class="material-symbols-outlined text-[18px]">percent</span>
             {{ commissionSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ نسبة العمولة' : 'Save commission rate') }}
           </button>
         </div>
       </article>
 
-      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
-          <div>
-            <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'إدارة الإشعارات' : 'Notification controls' }}</h2>
-            <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
-              {{ isRTL ? 'قنوات التنبيه اليومية للتاجر.' : 'Daily vendor alert channels.' }}
+      <!-- Notification Controls Card -->
+      <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+          <div class="text-start">
+            <h2 class="text-base font-extrabold text-slate-900">{{ isRTL ? 'قنوات الإشعار والتنبيه' : 'Notification controls' }}</h2>
+            <p class="text-[12px] font-medium text-slate-500">
+              {{ isRTL ? 'تفعيل أو تعطيل قنوات الإشعار اليومية للتاجر.' : 'Enable or disable daily vendor alert channels.' }}
             </p>
           </div>
 
-          <span class="rounded-full border border-violet-100 bg-violet-50 px-3 py-1.5 text-[11px] font-black text-violet-700">
+          <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold bg-violet-50 border border-violet-200 text-violet-700">
             {{ activeNotificationChannelsCount }}/3
           </span>
         </div>
 
-        <div class="grid gap-3 p-3 md:grid-cols-3">
-          <label class="flex min-h-[78px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <div>
-              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'البريد الإلكتروني' : 'Email' }}</p>
-              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تنبيهات إدارية ورسائل متابعة.' : 'Admin and follow-up alerts.' }}</p>
+        <div class="grid gap-4 p-5 sm:grid-cols-3">
+          <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-250 bg-slate-50/40 p-4 text-start">
+            <div class="space-y-0.5">
+              <p class="text-[12px] font-extrabold text-slate-955">{{ isRTL ? 'البريد الإلكتروني' : 'Email alerts' }}</p>
+              <p class="text-[10px] font-medium text-slate-500 leading-tight">{{ isRTL ? 'تنبيهات إدارية ورسائل دورية.' : 'Admin alerts and newsletters.' }}</p>
             </div>
-            <input [(ngModel)]="emailNotificationsEnabled" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-500">
-          </label>
+            <label class="relative inline-flex cursor-pointer items-center shrink-0">
+              <input [(ngModel)]="emailNotificationsEnabled" type="checkbox" class="peer sr-only">
+              <span class="h-5 w-9 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white"></span>
+            </label>
+          </div>
 
-          <label class="flex min-h-[78px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <div>
-              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'الرسائل النصية' : 'SMS' }}</p>
-              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'قناة الرسائل الحساسة.' : 'High-priority text channel.' }}</p>
+          <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-250 bg-slate-50/40 p-4 text-start">
+            <div class="space-y-0.5">
+              <p class="text-[12px] font-extrabold text-slate-955">{{ isRTL ? 'الرسائل النصية' : 'SMS alerts' }}</p>
+              <p class="text-[10px] font-medium text-slate-500 leading-tight">{{ isRTL ? 'إشعارات التسوية الهامة.' : 'High-priority billing SMS.' }}</p>
             </div>
-            <input [(ngModel)]="smsNotificationsEnabled" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-500">
-          </label>
+            <label class="relative inline-flex cursor-pointer items-center shrink-0">
+              <input [(ngModel)]="smsNotificationsEnabled" type="checkbox" class="peer sr-only">
+              <span class="h-5 w-9 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white"></span>
+            </label>
+          </div>
 
-          <label class="flex min-h-[78px] items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <div>
-              <p class="text-[12px] font-black text-slate-950">{{ isRTL ? 'طلبات جديدة' : 'New orders' }}</p>
-              <p class="mt-1 text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تنبيه فوري عند وصول الطلب.' : 'Instant alert when an order arrives.' }}</p>
+          <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-250 bg-slate-50/40 p-4 text-start">
+            <div class="space-y-0.5">
+              <p class="text-[12px] font-extrabold text-slate-955">{{ isRTL ? 'طلبات جديدة' : 'New orders' }}</p>
+              <p class="text-[10px] font-medium text-slate-500 leading-tight">{{ isRTL ? 'رنين فوري للطلبات الواردة.' : 'Instant ring for new sales.' }}</p>
             </div>
-            <input [(ngModel)]="newOrdersNotificationsEnabled" type="checkbox" class="h-5 w-5 rounded border-slate-300 text-cyan-700 focus:ring-cyan-500">
-          </label>
+            <label class="relative inline-flex cursor-pointer items-center shrink-0">
+              <input [(ngModel)]="newOrdersNotificationsEnabled" type="checkbox" class="peer sr-only">
+              <span class="h-5 w-9 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white"></span>
+            </label>
+          </div>
         </div>
 
-        <div class="border-t border-slate-100 bg-slate-50/60 px-3 py-3">
+        <div class="border-t border-slate-100 bg-slate-50/30 p-4">
           <button
             (click)="saveNotificationSettings()"
             [disabled]="notificationsSubmitting"
-            class="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+            [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+            class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 text-[12px] font-bold text-white transition hover:bg-slate-800 active:scale-[0.99] disabled:opacity-60 shadow-sm"
             type="button">
-            <span class="material-symbols-outlined text-[17px]">notifications</span>
-            {{ notificationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ إعدادات الإشعارات' : 'Save notification settings') }}
+            <span class="material-symbols-outlined text-[18px]">notifications</span>
+            {{ notificationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ قنوات التنبيه' : 'Save notification settings') }}
           </button>
         </div>
       </article>
 
-      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-        <div class="border-b border-slate-100 px-4 py-3">
-          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'سياق مباشر' : 'Live context' }}</h2>
+      <!-- Live Context Panel -->
+      <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-100 p-5 text-start">
+          <h2 class="text-base font-extrabold text-slate-900">{{ isRTL ? 'سياق مباشر' : 'Live operational context' }}</h2>
         </div>
 
-        <div class="grid gap-3 p-3 md:grid-cols-3">
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'اسم النشاط' : 'Business name' }}</p>
-            <p class="mt-1 truncate text-[12px] font-black text-slate-950">{{ vendor?.businessNameAr || vendor?.businessNameEn || '-' }}</p>
+        <div class="grid gap-4 p-5 sm:grid-cols-3 text-start">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{{ isRTL ? 'اسم النشاط' : 'Business name' }}</span>
+            <strong class="mt-1 block text-[13px] font-extrabold text-slate-900 truncate">{{ vendor?.businessNameAr || vendor?.businessNameEn || '-' }}</strong>
           </div>
 
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'الحساب البنكي' : 'Primary bank' }}</p>
-            <p class="mt-1 truncate text-[12px] font-black text-slate-950">{{ vendor?.primaryBankAccount?.bankName || (isRTL ? 'غير متوفر' : 'Unavailable') }}</p>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{{ isRTL ? 'الحساب البنكي' : 'Primary bank' }}</span>
+            <strong class="mt-1 block text-[13px] font-extrabold text-slate-900 truncate">{{ vendor?.primaryBankAccount?.bankName || (isRTL ? 'غير متوفر' : 'Unavailable') }}</strong>
           </div>
 
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'آخر ملاحظة' : 'Latest note' }}</p>
-            <p class="mt-1 line-clamp-1 text-[12px] font-black text-slate-950">{{ latestNotePreview }}</p>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{{ isRTL ? 'آخر ملاحظة معتمدة' : 'Latest verified note' }}</span>
+            <strong class="mt-1 block text-[13px] font-extrabold text-slate-900 truncate" [title]="latestNotePreview">{{ latestNotePreview }}</strong>
           </div>
         </div>
       </article>
     </div>
 
-    <aside class="space-y-4 xl:col-span-4 xl:sticky xl:top-4 xl:self-start">
-      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-        <div class="border-b border-slate-100 px-4 py-3">
-          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'لوحة التحكم بالحساب' : 'Account control desk' }}</h2>
-          <p class="mt-1 text-[11px] font-semibold leading-5 text-slate-500">{{ accountControlHint }}</p>
+    <!-- Right Sidebar Area: Advanced Controls & Identity -->
+    <aside class="space-y-6 xl:col-span-4 xl:sticky xl:top-6 xl:self-start">
+      <!-- Account Control Actions Panel -->
+      <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-100 p-5 text-start">
+          <h2 class="text-base font-extrabold text-slate-900">{{ isRTL ? 'لوحة التحكم بالحساب' : 'Account control desk' }}</h2>
+          <p class="text-[12px] font-medium text-slate-500 mt-1 leading-relaxed">{{ accountControlHint }}</p>
         </div>
 
-        <div class="space-y-2 p-3">
+        <div class="space-y-3 p-4">
+          <!-- Reset password button -->
           <button
             (click)="onResetPassword()"
             [disabled]="resetPasswordQueued || dialogSubmitting"
-            class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-start transition hover:border-cyan-200 hover:bg-cyan-50/50 disabled:opacity-60"
+            class="group flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/40 p-4 text-start transition duration-200 hover:border-primary/20 hover:bg-primary/5 active:scale-[0.98] disabled:opacity-60"
             type="button">
-            <span>
-              <span class="block text-[12px] font-black text-slate-950">{{ isRTL ? 'إعادة كلمة المرور' : 'Reset password' }}</span>
-              <span class="mt-0.5 block text-[11px] font-semibold text-slate-500">{{ isRTL ? 'إجراء أمني مسجل.' : 'Logged security action.' }}</span>
+            <span class="space-y-0.5">
+              <span class="block text-[13px] font-extrabold text-slate-900 group-hover:text-primary transition-colors">{{ isRTL ? 'إعادة تعيين كلمة المرور' : 'Reset password' }}</span>
+              <span class="block text-[11px] font-medium text-slate-500">{{ isRTL ? 'إجراء أمني مسجل بالسجل.' : 'Logged security action.' }}</span>
             </span>
-            <span class="material-symbols-outlined text-[18px] text-slate-400">lock_reset</span>
+            <span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-primary transition-colors">lock_reset</span>
           </button>
 
+          <!-- Toggle Suspended state button -->
           <button
             (click)="toggleSuspended()"
             [disabled]="dialogSubmitting || (!canSuspendAccount && !canReactivateAccount)"
-            class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-start transition hover:border-cyan-200 hover:bg-cyan-50/50 disabled:opacity-60"
+            class="group flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/40 p-4 text-start transition duration-200 hover:border-primary/20 hover:bg-primary/5 active:scale-[0.98] disabled:opacity-60"
             type="button">
-            <span>
-              <span class="block text-[12px] font-black text-slate-950">{{ suspensionActionLabel }}</span>
-              <span class="mt-0.5 block text-[11px] font-semibold text-slate-500">{{ isRTL ? 'تعليق أو إعادة تشغيل.' : 'Suspend or reactivate.' }}</span>
+            <span class="space-y-0.5">
+              <span class="block text-[13px] font-extrabold text-slate-900 group-hover:text-primary transition-colors">{{ suspensionActionLabel }}</span>
+              <span class="block text-[11px] font-medium text-slate-500">{{ isRTL ? 'تعليق أو إعادة تشغيل حساب التاجر.' : 'Suspend or reactivate account.' }}</span>
             </span>
-            <span class="material-symbols-outlined text-[18px] text-slate-400">pause_circle</span>
+            <span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-primary transition-colors">pause_circle</span>
           </button>
 
+          <!-- Lock/unlock login toggle button -->
           <button
             (click)="toggleLoginLock()"
             [disabled]="dialogSubmitting"
-            class="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-start transition hover:border-cyan-200 hover:bg-cyan-50/50 disabled:opacity-60"
+            class="group flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/40 p-4 text-start transition duration-200 hover:border-primary/20 hover:bg-primary/5 active:scale-[0.98] disabled:opacity-60"
             type="button">
-            <span>
-              <span class="block text-[12px] font-black text-slate-950">{{ loginActionLabel }}</span>
-              <span class="mt-0.5 block text-[11px] font-semibold text-slate-500">{{ isRTL ? 'قفل أو فتح الوصول.' : 'Lock or restore access.' }}</span>
+            <span class="space-y-0.5">
+              <span class="block text-[13px] font-extrabold text-slate-900 group-hover:text-primary transition-colors">{{ loginActionLabel }}</span>
+              <span class="block text-[11px] font-medium text-slate-500">{{ isRTL ? 'قفل أو استعادة صلاحيات الدخول.' : 'Lock or restore login access.' }}</span>
             </span>
-            <span class="material-symbols-outlined text-[18px] text-slate-400">vpn_key</span>
+            <span class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-primary transition-colors">vpn_key</span>
           </button>
 
+          <!-- Archive account button -->
           <button
             (click)="onArchiveAccount()"
             [disabled]="isArchived || dialogSubmitting"
-            class="flex w-full items-center justify-between rounded-xl border border-red-200 bg-red-50/70 px-3 py-2.5 text-start transition hover:bg-red-100/80 disabled:opacity-60"
+            class="group flex w-full items-center justify-between rounded-2xl border border-rose-200 bg-rose-50/30 p-4 text-start transition duration-200 hover:border-rose-300 hover:bg-rose-50 active:scale-[0.98] disabled:opacity-60"
             type="button">
-            <span>
-              <span class="block text-[12px] font-black text-red-700">{{ isRTL ? 'أرشفة الحساب' : 'Archive account' }}</span>
-              <span class="mt-0.5 block text-[11px] font-semibold text-red-600">{{ isRTL ? 'إيقاف نهائي محفوظ بالسجل.' : 'Final shutdown with audit.' }}</span>
+            <span class="space-y-0.5">
+              <span class="block text-[13px] font-extrabold text-rose-800 group-hover:text-rose-955 transition-colors">{{ isRTL ? 'أرشفة الحساب نهائيًا' : 'Archive account' }}</span>
+              <span class="block text-[11px] font-medium text-rose-600">{{ isRTL ? 'إيقاف نهائي ومسح دائم مسجل.' : 'Final shutdown with permanent audit.' }}</span>
             </span>
-            <span class="material-symbols-outlined text-[18px] text-red-500">archive</span>
+            <span class="material-symbols-outlined text-[20px] text-rose-500 group-hover:scale-105 transition-transform">archive</span>
           </button>
         </div>
       </article>
 
-      <article class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
-        <div class="border-b border-slate-100 px-4 py-3">
-          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'هوية تشغيلية' : 'Operational identity' }}</h2>
+      <!-- Operational Identity Card -->
+      <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-100 p-5 text-start">
+          <h2 class="text-base font-extrabold text-slate-900">{{ isRTL ? 'هوية تشغيلية سريعة' : 'Operational identity' }}</h2>
         </div>
 
-        <div class="grid gap-2 p-3 text-[12px]">
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'البريد' : 'Email' }}</p>
-            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.contactEmail || '-' }}</p>
+        <div class="grid gap-3 p-4 text-[12px] text-start">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/40 p-3.5">
+            <span class="text-[10px] font-bold text-slate-400 block">{{ isRTL ? 'البريد الإلكتروني للاتصال' : 'Contact Email' }}</span>
+            <strong class="mt-1 block font-extrabold text-slate-955 truncate select-all">{{ vendor?.contactEmail || '-' }}</strong>
           </div>
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'الهاتف' : 'Phone' }}</p>
-            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.contactPhone || '-' }}</p>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/40 p-3.5">
+            <span class="text-[10px] font-bold text-slate-400 block">{{ isRTL ? 'هاتف التواصل' : 'Contact Phone' }}</span>
+            <strong class="mt-1 block font-extrabold text-slate-955 truncate select-all">{{ vendor?.contactPhone || '-' }}</strong>
           </div>
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'صاحب الحساب' : 'Owner' }}</p>
-            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.ownerName || '-' }}</p>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/40 p-3.5">
+            <span class="text-[10px] font-bold text-slate-400 block">{{ isRTL ? 'المالك المعتمد للمتجر' : 'Authorized Owner' }}</span>
+            <strong class="mt-1 block font-extrabold text-slate-950 truncate">{{ vendor?.ownerName || '-' }}</strong>
           </div>
-          <div class="rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5">
-            <p class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'المدينة والمنطقة' : 'City and region' }}</p>
-            <p class="mt-1 truncate font-black text-slate-950">{{ vendor?.city || '-' }}{{ vendor?.region ? ' - ' + vendor?.region : '' }}</p>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/40 p-3.5">
+            <span class="text-[10px] font-bold text-slate-400 block">{{ isRTL ? 'المدينة والمنطقة' : 'City and region' }}</span>
+            <strong class="mt-1 block font-extrabold text-slate-955 truncate">{{ vendor?.city || '-' }}{{ vendor?.region ? ' - ' + vendor?.region : '' }}</strong>
           </div>
         </div>
       </article>
@@ -375,49 +443,58 @@
   </section>
 </div>
 
-<div *ngIf="isDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <div class="w-full max-w-md rounded-2xl border border-white/70 bg-white p-4 shadow-2xl">
-    <div>
-      <h3 class="text-[16px] font-black text-slate-950">{{ dialogTitle }}</h3>
-      <p class="mt-2 text-[12px] font-semibold leading-6 text-slate-500">{{ dialogDescription }}</p>
+<!-- Premium Glassmorphic Confirmation Modal Dialog -->
+<div *ngIf="isDialogOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm animate-in fade-in duration-300" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <div class="w-full max-w-md rounded-3xl border border-white/60 bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+    <div class="text-start">
+      <h3 class="text-[16px] font-extrabold text-slate-900">{{ dialogTitle }}</h3>
+      <p class="mt-2 text-[12px] font-medium leading-relaxed text-slate-500">{{ dialogDescription }}</p>
     </div>
 
-    <div class="mt-4 space-y-3">
-      <label class="block">
-        <span class="mb-1.5 block text-[12px] font-black text-slate-700">{{ dialogPrimaryLabel }}</span>
-        <input
-          [(ngModel)]="dialogPrimaryValue"
-          class="h-10 w-full rounded-xl border border-slate-200 px-3 text-[12px] font-semibold outline-none transition focus:border-cyan-500"
-          [type]="dialogPrimaryInputType"
-          [placeholder]="dialogPrimaryPlaceholder" />
+    <!-- Modal Inputs Panel -->
+    <div class="mt-4 space-y-4 text-start">
+      <label class="block space-y-1.5">
+        <span class="block text-[12px] font-bold text-slate-700 px-1">{{ dialogPrimaryLabel }}</span>
+        <div class="flex h-11 items-center rounded-2xl border border-slate-200 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+          <input
+            [(ngModel)]="dialogPrimaryValue"
+            class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none"
+            [type]="dialogPrimaryInputType"
+            [placeholder]="dialogPrimaryPlaceholder" />
+        </div>
       </label>
 
-      <label *ngIf="showDialogSecondaryInput" class="block">
-        <span class="mb-1.5 block text-[12px] font-black text-slate-700">{{ dialogSecondaryLabel }}</span>
-        <input
-          [(ngModel)]="dialogSecondaryValue"
-          class="h-10 w-full rounded-xl border border-slate-200 px-3 text-[12px] font-semibold outline-none transition focus:border-cyan-500"
-          type="password"
-          [placeholder]="dialogSecondaryPlaceholder" />
+      <label *ngIf="showDialogSecondaryInput" class="block space-y-1.5">
+        <span class="block text-[12px] font-bold text-slate-700 px-1">{{ dialogSecondaryLabel }}</span>
+        <div class="flex h-11 items-center rounded-2xl border border-slate-200 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+          <input
+            [(ngModel)]="dialogSecondaryValue"
+            class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none"
+            type="password"
+            [placeholder]="dialogSecondaryPlaceholder" />
+        </div>
       </label>
 
-      <p *ngIf="dialogError" class="rounded-xl bg-red-50 px-3 py-2 text-[12px] font-bold text-red-600">
-        {{ dialogError }}
-      </p>
+      <!-- Modal Localized Error Banner -->
+      <div *ngIf="dialogError" class="flex items-center gap-2 rounded-2xl bg-red-50 p-3 text-[12px] font-bold text-red-700 border border-red-100">
+        <span class="material-symbols-outlined text-[18px] text-red-600">error</span>
+        <span>{{ dialogError }}</span>
+      </div>
     </div>
 
-    <div class="mt-5 flex items-center justify-end gap-2">
+    <!-- Actions Area -->
+    <div class="mt-6 flex items-center justify-end gap-2.5">
       <button
         (click)="closeDialog()"
         [disabled]="dialogSubmitting"
-        class="h-9 rounded-xl border border-slate-200 px-4 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+        class="h-10 rounded-2xl border border-slate-250 bg-white px-5 text-[12px] font-bold text-slate-700 transition hover:bg-slate-50 active:scale-95 disabled:opacity-60"
         type="button">
         {{ isRTL ? 'إلغاء' : 'Cancel' }}
       </button>
       <button
         (click)="confirmDialog()"
         [disabled]="dialogSubmitting"
-        class="h-9 rounded-xl bg-slate-950 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+        class="h-10 rounded-2xl bg-slate-955 px-5 text-[12px] font-bold text-white transition hover:bg-slate-800 active:scale-95 disabled:opacity-60 shadow-sm"
         type="button">
         {{ dialogConfirmLabel }}
       </button>

@@ -1,25 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import {
-  DIRECTORY_AUDIENCE_LABELS,
-  DIRECTORY_PANEL_LABELS,
-  DIRECTORY_PERSONA_LABELS,
-  DirectoryAudienceType,
-  DirectoryPanelScope,
-  DirectoryPersonaType
-} from '@admin-users/public-api';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AccessService } from '@core/services/access.service';
 import { describeApiError } from '@marketing/utils/marketing-date.utils';
 import { KpiCardsComponent, KPICard } from '@shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
-import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
-import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import { ToastService } from '@shared/services/toast.service';
 import { Subject, catchError, debounceTime, finalize, of, switchMap } from 'rxjs';
+import {
+  DIRECTORY_AUDIENCE_LABELS,
+  DirectoryAudienceType
+} from '@admin-users/public-api';
 import {
   EmailAutomationState,
   EmailBranchOption,
@@ -27,20 +20,18 @@ import {
   EmailCenterKpiSnapshot,
   EmailDispatchFilters,
   EmailDispatchLog,
-  EmailDispatchStatus,
-  EmailPreviewLocale,
-  EmailRecipientTargetId,
   EmailResolvedRecipients,
   EmailScopeOption,
   EmailSenderProfile,
-  EmailSenderProfileStatus,
   EmailTestSendResult,
   EmailWorkflowRule
 } from '../models/email-center.models';
 import { EmailCenterApiService } from '../services/email-center.service';
+import { EmailSenderProfilesComponent } from '../components/email-sender-profiles/email-sender-profiles.component';
+import { EmailRulesListComponent } from '../components/email-rules-list/email-rules-list.component';
+import { EmailRuleConfigComponent } from '../components/email-rule-config/email-rule-config.component';
 
 type EmailAudienceFilter = 'all' | DirectoryAudienceType;
-type RecipientChannel = 'to' | 'cc' | 'bcc';
 
 const EMPTY_KPI: EmailCenterKpiSnapshot = {
   totalRules: 0,
@@ -57,49 +48,25 @@ const EMPTY_RECIPIENTS: EmailResolvedRecipients = {
   warnings: []
 };
 
-const RECIPIENT_OPTIONS: Record<DirectoryAudienceType, Array<{ id: EmailRecipientTargetId; labelKey: string }>> = {
-  super_admin: [
-    { id: 'primary_account_email', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.PRIMARY_ACCOUNT_EMAIL' },
-    { id: 'assigned_super_admin_manager', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.ASSIGNED_SUPER_ADMIN_MANAGER' }
-  ],
-  vendor_network: [
-    { id: 'primary_account_email', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.PRIMARY_ACCOUNT_EMAIL' },
-    { id: 'vendor_owner', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.VENDOR_OWNER' },
-    { id: 'vendor_company_manager', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.VENDOR_COMPANY_MANAGER' },
-    { id: 'branch_manager', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.BRANCH_MANAGER' },
-    { id: 'branch_staff', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.BRANCH_STAFF' },
-    { id: 'vendor_finance', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.VENDOR_FINANCE' },
-    { id: 'vendor_support', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.VENDOR_SUPPORT' },
-    { id: 'assigned_super_admin_manager', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.ASSIGNED_SUPER_ADMIN_MANAGER' }
-  ],
-  drivers: [
-    { id: 'driver_account', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.DRIVER_ACCOUNT' },
-    { id: 'assigned_super_admin_manager', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.ASSIGNED_SUPER_ADMIN_MANAGER' }
-  ],
-  customers: [
-    { id: 'customer_account', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.CUSTOMER_ACCOUNT' },
-    { id: 'assigned_super_admin_manager', labelKey: 'EMAIL_CENTER.RECIPIENT_TARGETS.ASSIGNED_SUPER_ADMIN_MANAGER' }
-  ]
-};
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-email-center',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     TranslateModule,
     AppPageHeaderComponent,
     KpiCardsComponent,
-    SearchableSelectComponent,
-    StatusPillComponent
+    EmailSenderProfilesComponent,
+    EmailRulesListComponent,
+    EmailRuleConfigComponent
   ],
   templateUrl: './email-center.component.html',
   styleUrl: './email-center.component.scss'
 })
 export class EmailCenterComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
   senderProfiles: EmailSenderProfile[] = [];
   rules: EmailWorkflowRule[] = [];
   vendorOptions: EmailScopeOption[] = [];
@@ -109,7 +76,6 @@ export class EmailCenterComponent implements OnInit {
   kpiSnapshot: EmailCenterKpiSnapshot = { ...EMPTY_KPI };
   selectedRuleId = '';
   selectedAudience: EmailAudienceFilter = 'all';
-  previewLocale: EmailPreviewLocale = 'en';
   isLoading = true;
   isSaving = false;
   isResolvingRecipients = false;
@@ -117,14 +83,6 @@ export class EmailCenterComponent implements OnInit {
   isHistoryLoading = false;
   pageError = '';
   lastTestSendResult: EmailTestSendResult | null = null;
-  recipientEditor = {
-    staticTo: '',
-    staticCc: '',
-    staticBcc: '',
-    fallbackTo: '',
-    fallbackCc: '',
-    fallbackBcc: ''
-  };
 
   historyFilters: EmailDispatchFilters = {
     ruleId: null,
@@ -140,18 +98,6 @@ export class EmailCenterComponent implements OnInit {
       value: value as DirectoryAudienceType,
       labelKey
     }))
-  ];
-
-  readonly branchScopeOptions: Array<{ value: EmailBranchScopeMode; labelKey: string }> = [
-    { value: 'all_branches', labelKey: 'EMAIL_CENTER.BRANCH_SCOPE.ALL_BRANCHES' },
-    { value: 'assigned_branch', labelKey: 'EMAIL_CENTER.BRANCH_SCOPE.ASSIGNED_BRANCH' },
-    { value: 'specific_branch', labelKey: 'EMAIL_CENTER.BRANCH_SCOPE.SPECIFIC_BRANCH' }
-  ];
-
-  readonly recipientChannels: Array<{ value: RecipientChannel; labelKey: string }> = [
-    { value: 'to', labelKey: 'EMAIL_CENTER.FIELDS.DIRECTORY_TO' },
-    { value: 'cc', labelKey: 'EMAIL_CENTER.FIELDS.DIRECTORY_CC' },
-    { value: 'bcc', labelKey: 'EMAIL_CENTER.FIELDS.DIRECTORY_BCC' }
   ];
 
   private readonly destroyRef = inject(DestroyRef);
@@ -171,7 +117,7 @@ export class EmailCenterComponent implements OnInit {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
-      this.cdr.markForCheck();
+        this.cdr.markForCheck();
         this.selectedAudience = this.normalizeAudience(params.get('audience'));
         this.routeVendorId = params.get('vendor');
         this.routeEntityId = params.get('entityId');
@@ -191,7 +137,8 @@ export class EmailCenterComponent implements OnInit {
           }
 
           this.isResolvingRecipients = true;
-          return this.emailCenterApi.resolveRecipients(this.buildRuleDraft(rule)).pipe(
+          this.cdr.markForCheck();
+          return this.emailCenterApi.resolveRecipients(rule).pipe(
             catchError((error) =>
               of({
                 ...EMPTY_RECIPIENTS,
@@ -200,13 +147,14 @@ export class EmailCenterComponent implements OnInit {
             ),
             finalize(() => {
               this.isResolvingRecipients = false;
+              this.cdr.markForCheck();
             })
           );
         }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((resolved) => {
-      this.cdr.markForCheck();
+        this.cdr.markForCheck();
         this.resolvedRecipients = resolved;
       });
 
@@ -263,86 +211,8 @@ export class EmailCenterComponent implements OnInit {
     return this.rules.find((rule) => rule.id === this.selectedRuleId);
   }
 
-  get availableRecipientTargets(): Array<{ id: EmailRecipientTargetId; labelKey: string }> {
-    return this.selectedRule ? RECIPIENT_OPTIONS[this.selectedRule.audienceType] : [];
-  }
-
-  get availablePersonaOptions(): Array<{ value: DirectoryPersonaType; labelKey: string }> {
-    if (!this.selectedRule) {
-      return [];
-    }
-
-    return Object.entries(DIRECTORY_PERSONA_LABELS)
-      .filter(([persona]) => this.mapPersonaToAudience(persona as DirectoryPersonaType) === this.selectedRule?.audienceType)
-      .map(([value, labelKey]) => ({
-        value: value as DirectoryPersonaType,
-        labelKey
-      }));
-  }
-
-  get branchOptions(): EmailBranchOption[] {
-    const vendorId = this.selectedRule?.entityScope.vendorId;
-    return vendorId ? this.branchDirectory.filter((branch) => branch.vendorId === vendorId) : [];
-  }
-
   get canEdit(): boolean {
     return this.accessService.hasPermission('email_center.edit');
-  }
-
-  get mappedVendorOptions(): SearchableSelectOption<string | null>[] {
-    return [
-      { value: null, labelKey: 'EMAIL_CENTER.FILTERS.ALL_VENDORS' },
-      ...this.vendorOptions.map((vendor) => ({ value: vendor.id, label: vendor.name }))
-    ];
-  }
-
-  get mappedBranchOptions(): SearchableSelectOption<string | null>[] {
-    return [
-      { value: null, labelKey: 'EMAIL_CENTER.FILTERS.ALL_BRANCHES' },
-      ...this.branchOptions.map((branch) => ({ value: branch.id, label: branch.name }))
-    ];
-  }
-
-  get enabledOptions(): SearchableSelectOption<boolean>[] {
-    return [
-      { value: true, labelKey: 'EMAIL_CENTER.WORKFLOWS.ENABLED' },
-      { value: false, labelKey: 'EMAIL_CENTER.WORKFLOWS.DISABLED' }
-    ];
-  }
-
-  get senderProfileOptions(): SearchableSelectOption<string>[] {
-    return this.senderProfiles.map((profile) => ({
-      value: profile.id,
-      label: profile.name
-    }));
-  }
-
-  get historyRuleOptions(): SearchableSelectOption<string | null>[] {
-    return [
-      { value: null, labelKey: 'EMAIL_CENTER.HISTORY.ALL_RULES' },
-      ...this.rules.map((rule) => ({
-        value: rule.id,
-        labelKey: rule.titleKey
-      }))
-    ];
-  }
-
-  get historySourceOptions(): SearchableSelectOption<string | null>[] {
-    return [
-      { value: null, labelKey: 'EMAIL_CENTER.HISTORY.ALL_SOURCES' },
-      { value: 'test_send', labelKey: 'EMAIL_CENTER.SOURCES.TEST_SEND' },
-      { value: 'vendor_automation_live', labelKey: 'EMAIL_CENTER.SOURCES.VENDOR_AUTOMATION_LIVE' },
-      { value: 'vendor_automation_legacy', labelKey: 'EMAIL_CENTER.SOURCES.VENDOR_AUTOMATION_LEGACY' }
-    ];
-  }
-
-  get historyStatusOptions(): SearchableSelectOption<string | null>[] {
-    return [
-      { value: null, labelKey: 'EMAIL_CENTER.HISTORY.ALL_STATUSES' },
-      { value: 'sent', labelKey: 'EMAIL_CENTER.DISPATCH_STATUS.SENT' },
-      { value: 'failed', labelKey: 'EMAIL_CENTER.DISPATCH_STATUS.FAILED' },
-      { value: 'skipped', labelKey: 'EMAIL_CENTER.DISPATCH_STATUS.SKIPPED' }
-    ];
   }
 
   openAccessDirectory(): void {
@@ -354,7 +224,6 @@ export class EmailCenterComponent implements OnInit {
   setAudience(audience: EmailAudienceFilter): void {
     this.selectedAudience = audience;
     this.ensureSelectedRule();
-    this.syncRecipientsFromSelectedRule();
     this.historyFilters.ruleId = this.selectedRuleId || null;
     this.scheduleRecipientResolution();
     this.loadDispatchHistory();
@@ -367,7 +236,6 @@ export class EmailCenterComponent implements OnInit {
 
   selectRule(id: string): void {
     this.selectedRuleId = id;
-    this.syncRecipientsFromSelectedRule();
     this.historyFilters.ruleId = id;
     this.lastTestSendResult = null;
     this.scheduleRecipientResolution();
@@ -379,29 +247,34 @@ export class EmailCenterComponent implements OnInit {
       return;
     }
 
-    const draft = this.buildRuleDraft(this.selectedRule);
     this.isSaving = true;
 
-    this.emailCenterApi.updateRule(draft)
+    this.emailCenterApi.updateRule(this.selectedRule)
       .pipe(
         finalize(() => {
           this.isSaving = false;
+          this.cdr.markForCheck();
         }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
         next: (saved) => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.replaceRule(saved);
           this.kpiSnapshot = this.recalculateKpiSnapshot();
-          this.syncRecipientsFromSelectedRule();
           this.scheduleRecipientResolution();
           this.loadDispatchHistory();
-          this.toastService.success('تم حفظ إعدادات القاعدة وربطها بالباك اند.', 'مركز البريد');
+          this.toastService.success(
+            this.translate.instant('EMAIL_CENTER.MESSAGES.SAVE_SUCCESS'),
+            this.translate.instant('EMAIL_CENTER.TITLE')
+          );
         },
         error: (error) => {
-        this.cdr.markForCheck();
-          this.toastService.error(describeApiError(error), 'مركز البريد');
+          this.cdr.markForCheck();
+          this.toastService.error(
+            describeApiError(error),
+            this.translate.instant('EMAIL_CENTER.TITLE')
+          );
         }
       });
   }
@@ -411,19 +284,19 @@ export class EmailCenterComponent implements OnInit {
       return;
     }
 
-    const draft = this.buildRuleDraft(this.selectedRule);
     this.isTestingSend = true;
 
-    this.emailCenterApi.testSend(draft)
+    this.emailCenterApi.testSend(this.selectedRule)
       .pipe(
         finalize(() => {
           this.isTestingSend = false;
+          this.cdr.markForCheck();
         }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
         next: (result) => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.lastTestSendResult = result;
           this.updateRuleLastDispatch(this.selectedRuleId, {
             status: result.status,
@@ -433,31 +306,35 @@ export class EmailCenterComponent implements OnInit {
           });
           this.loadDispatchHistory();
 
+          const title = this.translate.instant('EMAIL_CENTER.TITLE');
           if (result.status === 'sent') {
-            this.toastService.success('تم تنفيذ Test Send وتسجيله في السجل.', 'مركز البريد');
+            this.toastService.success(
+              this.translate.instant('EMAIL_CENTER.MESSAGES.TEST_SEND_SUCCESS'),
+              title
+            );
           } else if (result.status === 'skipped') {
-            this.toastService.warning(result.failureReason ?? 'تم تسجيل العملية بدون إرسال فعلي.', 'مركز البريد');
+            this.toastService.warning(
+              result.failureReason ?? 'تم تسجيل العملية بدون إرسال فعلي.',
+              title
+            );
           } else {
-            this.toastService.error(result.failureReason ?? 'فشل Test Send.', 'مركز البريد');
+            this.toastService.error(
+              result.failureReason ?? 'فشل Test Send.',
+              title
+            );
           }
         },
         error: (error) => {
-        this.cdr.markForCheck();
-          this.toastService.error(describeApiError(error), 'مركز البريد');
+          this.cdr.markForCheck();
+          this.toastService.error(
+            describeApiError(error),
+            this.translate.instant('EMAIL_CENTER.TITLE')
+          );
         }
       });
   }
 
-  setPreviewLocale(locale: EmailPreviewLocale): void {
-    this.previewLocale = locale;
-  }
-
   onRuleDraftChanged(): void {
-    this.scheduleRecipientResolution();
-  }
-
-  onRecipientEditorChanged(): void {
-    this.syncDraftRouteFromEditor();
     this.scheduleRecipientResolution();
   }
 
@@ -479,15 +356,12 @@ export class EmailCenterComponent implements OnInit {
       return;
     }
 
-    this.selectedRule.branchScopeMode = branchScopeMode;
-    if (branchScopeMode !== 'specific_branch') {
-      this.selectedRule.entityScope.branchId = null;
-    }
-
+    this.ruleBranchScopeModeSync(branchScopeMode);
     this.scheduleRecipientResolution();
   }
 
-  onHistoryFiltersChanged(): void {
+  onHistoryFiltersChange(filters: EmailDispatchFilters): void {
+    this.historyFilters = filters;
     this.loadDispatchHistory();
   }
 
@@ -502,99 +376,6 @@ export class EmailCenterComponent implements OnInit {
     this.loadDispatchHistory();
   }
 
-  hasRecipientTarget(channel: RecipientChannel, targetId: EmailRecipientTargetId): boolean {
-    return Boolean(this.selectedRule?.recipientTargets[channel].includes(targetId));
-  }
-
-  toggleRecipientTarget(channel: RecipientChannel, targetId: EmailRecipientTargetId, enabled: boolean): void {
-    if (!this.canEdit || !this.selectedRule) {
-      return;
-    }
-
-    const current = new Set(this.selectedRule.recipientTargets[channel]);
-    if (enabled) {
-      current.add(targetId);
-    } else {
-      current.delete(targetId);
-    }
-
-    this.selectedRule.recipientTargets[channel] = [...current];
-    this.scheduleRecipientResolution();
-  }
-
-  hasPersonaTarget(personaType: DirectoryPersonaType): boolean {
-    return Boolean(this.selectedRule?.personaTargets.includes(personaType));
-  }
-
-  togglePersonaTarget(personaType: DirectoryPersonaType, enabled: boolean): void {
-    if (!this.canEdit || !this.selectedRule) {
-      return;
-    }
-
-    const current = new Set(this.selectedRule.personaTargets);
-    if (enabled) {
-      current.add(personaType);
-    } else {
-      current.delete(personaType);
-    }
-
-    this.selectedRule.personaTargets = [...current];
-    this.scheduleRecipientResolution();
-  }
-
-  getSenderProfileName(id: string): string {
-    return this.senderProfiles.find((profile) => profile.id === id)?.name ?? '-';
-  }
-
-  getSenderProfileVariant(status: EmailSenderProfileStatus): StatusPillVariant {
-    const variants: Record<EmailSenderProfileStatus, StatusPillVariant> = {
-      primary: 'success',
-      secondary: 'info',
-      backup: 'warning'
-    };
-
-    return variants[status];
-  }
-
-  getPanelLabelKey(panelScope: DirectoryPanelScope): string {
-    return DIRECTORY_PANEL_LABELS[panelScope];
-  }
-
-  getAutomationVariant(state: EmailAutomationState): StatusPillVariant {
-    return state === 'live' ? 'success' : 'neutral';
-  }
-
-  getDispatchStatusVariant(status: EmailDispatchStatus | string): StatusPillVariant {
-    switch (status) {
-      case 'sent':
-        return 'success';
-      case 'failed':
-        return 'danger';
-      case 'skipped':
-        return 'warning';
-      default:
-        return 'neutral';
-    }
-  }
-
-  getDispatchStatusLabelKey(status: EmailDispatchStatus | string): string {
-    return `EMAIL_CENTER.DISPATCH_STATUS.${status.toUpperCase()}`;
-  }
-
-  getDispatchSourceLabelKey(source: string): string {
-    return `EMAIL_CENTER.SOURCES.${source.toUpperCase()}`;
-  }
-
-  getDispatchRecipientCount(dispatch: EmailDispatchLog): number {
-    return dispatch.to.length + dispatch.cc.length + dispatch.bcc.length;
-  }
-
-  getLastDispatchLabelKey(rule: EmailWorkflowRule): string {
-    return rule.lastDispatch
-      ? this.getDispatchStatusLabelKey(rule.lastDispatch.status)
-      : 'EMAIL_CENTER.HISTORY.NO_DISPATCH';
-  }
-
   private loadOverview(): void {
     this.isLoading = true;
     this.pageError = '';
@@ -603,12 +384,13 @@ export class EmailCenterComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.isLoading = false;
+          this.cdr.markForCheck();
         }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
         next: (overview) => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.senderProfiles = overview.senderProfiles;
           this.rules = overview.rules;
           this.vendorOptions = overview.vendors;
@@ -617,12 +399,11 @@ export class EmailCenterComponent implements OnInit {
           this.ensureSelectedRule();
           this.applyRouteContext();
           this.historyFilters.ruleId = this.selectedRuleId || null;
-          this.syncRecipientsFromSelectedRule();
           this.scheduleRecipientResolution();
           this.loadDispatchHistory();
         },
         error: (error) => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.pageError = describeApiError(error);
         }
       });
@@ -635,18 +416,22 @@ export class EmailCenterComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.isHistoryLoading = false;
+          this.cdr.markForCheck();
         }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
         next: (dispatches) => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.dispatches = dispatches;
         },
         error: (error) => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.dispatches = [];
-          this.toastService.error(describeApiError(error), 'سجل البريد');
+          this.toastService.error(
+            describeApiError(error),
+            this.translate.instant('EMAIL_CENTER.HISTORY.BADGE')
+          );
         }
       });
   }
@@ -654,7 +439,6 @@ export class EmailCenterComponent implements OnInit {
   private applyRouteContext(): void {
     this.ensureSelectedRule();
     this.applyQueryScope(this.routeVendorId, this.routeEntityId);
-    this.syncRecipientsFromSelectedRule();
   }
 
   private applyQueryScope(vendorId: string | null, entityId: string | null): void {
@@ -681,39 +465,8 @@ export class EmailCenterComponent implements OnInit {
     this.selectedRuleId = this.filteredRules[0]?.id ?? '';
   }
 
-  private syncRecipientsFromSelectedRule(): void {
-    const rule = this.selectedRule;
-    this.recipientEditor = {
-      staticTo: rule?.route.staticTo.join(', ') ?? '',
-      staticCc: rule?.route.staticCc.join(', ') ?? '',
-      staticBcc: rule?.route.staticBcc.join(', ') ?? '',
-      fallbackTo: rule?.route.fallbackTo.join(', ') ?? '',
-      fallbackCc: rule?.route.fallbackCc.join(', ') ?? '',
-      fallbackBcc: rule?.route.fallbackBcc.join(', ') ?? ''
-    };
-  }
-
-  private syncDraftRouteFromEditor(): void {
-    const rule = this.selectedRule;
-    if (!rule) {
-      return;
-    }
-
-    rule.route.staticTo = this.parseRecipients(this.recipientEditor.staticTo);
-    rule.route.staticCc = this.parseRecipients(this.recipientEditor.staticCc);
-    rule.route.staticBcc = this.parseRecipients(this.recipientEditor.staticBcc);
-    rule.route.fallbackTo = this.parseRecipients(this.recipientEditor.fallbackTo);
-    rule.route.fallbackCc = this.parseRecipients(this.recipientEditor.fallbackCc);
-    rule.route.fallbackBcc = this.parseRecipients(this.recipientEditor.fallbackBcc);
-  }
-
   private scheduleRecipientResolution(): void {
     this.resolvePreview$.next();
-  }
-
-  private buildRuleDraft(rule: EmailWorkflowRule): EmailWorkflowRule {
-    this.syncDraftRouteFromEditor();
-    return this.clone(rule);
   }
 
   private replaceRule(rule: EmailWorkflowRule): void {
@@ -748,36 +501,11 @@ export class EmailCenterComponent implements OnInit {
     return 'all';
   }
 
-  private parseRecipients(value: string): string[] {
-    return [...new Set(
-      value
-        .split(',')
-        .map((entry) => entry.trim().toLowerCase())
-        .filter(Boolean)
-    )];
-  }
-
-  private mapPersonaToAudience(personaType: DirectoryPersonaType): DirectoryAudienceType {
-    switch (personaType) {
-      case 'super_admin_manager':
-      case 'super_admin_staff':
-        return 'super_admin';
-      case 'vendor_owner':
-      case 'vendor_company_manager':
-      case 'vendor_branch_manager':
-      case 'vendor_branch_employee':
-      case 'vendor_finance':
-      case 'vendor_support':
-        return 'vendor_network';
-      case 'driver':
-        return 'drivers';
-      case 'customer':
-      default:
-        return 'customers';
+  private ruleBranchScopeModeSync(branchScopeMode: EmailBranchScopeMode): void {
+    if (!this.selectedRule) return;
+    this.selectedRule.branchScopeMode = branchScopeMode;
+    if (branchScopeMode !== 'specific_branch') {
+      this.selectedRule.entityScope.branchId = null;
     }
-  }
-
-  private clone<T>(value: T): T {
-    return JSON.parse(JSON.stringify(value)) as T;
   }
 }

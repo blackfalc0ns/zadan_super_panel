@@ -47,6 +47,7 @@ export class AdminUserDetailComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   user: AdminUserRecord | null = null;
   isLoading = false;
+  isSaving = false;
   isAuditLoading = false;
   saveError = '';
   activeTab: 'general' | 'access' | 'communication' | 'audit' = 'general';
@@ -285,8 +286,13 @@ export class AdminUserDetailComponent implements OnInit {
   get visibleCommunicationFlags(): Array<{ id: CommunicationFlagKey; labelKey: string; descriptionKey: string }> {
     const currentUser = this.user;
 
-    if (!currentUser) {
+    if (!currentUser || !currentUser.communication) {
       return [];
+    }
+
+    const backendKeys = currentUser.communication.rawEmailOptInKeys ?? [];
+    if (backendKeys.length > 0) {
+      return this.communicationFlagOptions.filter((flag) => backendKeys.includes(flag.id));
     }
 
     return this.communicationFlagOptions.filter((flag) => {
@@ -310,7 +316,23 @@ export class AdminUserDetailComponent implements OnInit {
     this.applyCommunicationEditors();
     const panelScope = this.mapPanelScopeToNumber(this.user.panelScope);
     this.saveError = '';
-    this.isLoading = true;
+    this.isSaving = true;
+
+    const visibleKeys = this.visibleCommunicationFlags.map(f => f.id);
+    const filteredEmailOptIn: Record<string, boolean> = {};
+    for (const key of visibleKeys) {
+      filteredEmailOptIn[key] = this.user.communication.emailOptIn[key] ?? false;
+    }
+
+    const cleanCommunication = {
+      primaryEmail: this.user.communication.primaryEmail,
+      notificationEmails: this.user.communication.notificationEmails,
+      replyTo: this.user.communication.replyTo,
+      escalationEmails: this.user.communication.escalationEmails,
+      preferredLocale: this.user.communication.preferredLocale,
+      emailOptIn: filteredEmailOptIn as any
+    };
+
     this.adminAccessApiService.updateUser(this.user.id, {
       fullName: this.user.fullName,
       email: this.user.email,
@@ -325,12 +347,12 @@ export class AdminUserDetailComponent implements OnInit {
       notes: null,
       grantedPermissions: this.user.grantedPermissions,
       revokedPermissions: this.user.revokedPermissions,
-      communication: this.user.communication
+      communication: cleanCommunication
     }).subscribe({
       next: (updatedUser) => {
         this.cdr.markForCheck();
         this.user = updatedUser;
-        this.isLoading = false;
+        this.isSaving = false;
         this.refreshSupportingData();
         this.loadAudit(updatedUser.id);
       },
@@ -338,7 +360,7 @@ export class AdminUserDetailComponent implements OnInit {
         this.cdr.markForCheck();
         console.error('Failed to save access user', err);
         this.saveError = err.error?.message || err.error?.title || 'Failed to save access changes.';
-        this.isLoading = false;
+        this.isSaving = false;
       }
     });
   }
@@ -630,23 +652,35 @@ export class AdminUserDetailComponent implements OnInit {
     return this.sensitivePermissionKeys.has(buildPermissionKey(groupId, action));
   }
 
+  private readonly featureToggleToCommunicationMap: Record<DirectoryFeatureToggleId, CommunicationFlagKey> = {
+    'driver.dispatch_notifications': 'dispatchNotifications',
+    'driver.compliance_emails': 'complianceEmails',
+    'driver.finance_digests': 'financeDigests',
+    'customer.marketing_opt_in': 'marketingOptIn',
+    'customer.support_escalations': 'supportEscalations',
+    'customer.order_issue_updates': 'orderIssueUpdates'
+  };
+
   hasFeatureToggle(toggleId: DirectoryFeatureToggleId): boolean {
-    return Boolean(this.user?.featureToggles.includes(toggleId));
+    if (!this.user || !this.user.communication || !this.user.communication.emailOptIn) {
+      return false;
+    }
+    const commKey = this.featureToggleToCommunicationMap[toggleId];
+    return commKey ? Boolean(this.user.communication.emailOptIn[commKey]) : false;
   }
 
   toggleFeatureToggle(toggleId: DirectoryFeatureToggleId, enabled: boolean): void {
-    if (!this.user) {
+    if (!this.user || !this.user.communication || !this.user.communication.emailOptIn) {
       return;
     }
-
-    const current = new Set(this.user.featureToggles);
-    if (enabled) {
-      current.add(toggleId);
-    } else {
-      current.delete(toggleId);
+    const commKey = this.featureToggleToCommunicationMap[toggleId];
+    if (commKey) {
+      this.user.communication.emailOptIn[commKey] = enabled;
+      const backendKeys = this.user.communication.rawEmailOptInKeys ?? [];
+      if (!backendKeys.includes(commKey)) {
+        this.user.communication.rawEmailOptInKeys = [...backendKeys, commKey];
+      }
     }
-
-    this.user.featureToggles = [...current];
   }
 
   toggleCommunicationFlag(flag: CommunicationFlagKey, enabled: boolean): void {

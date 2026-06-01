@@ -1,272 +1,370 @@
-<div class="vendor-log-page mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-4 md:px-6" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <div class="flex flex-col gap-3 border-b border-slate-100 px-4 py-3 xl:flex-row xl:items-center xl:justify-between">
-      <div class="flex min-w-0 items-center gap-3">
-        <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary text-white">
-          <span class="material-symbols-outlined text-[20px]">history</span>
+<div class="vendor-log-page mx-auto flex max-w-[1520px] flex-col gap-6 px-4 py-6 md:px-6 lg:px-8 bg-slate-50/40" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+  <!-- Header Card -->
+  <header class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      <!-- Title Area -->
+      <div class="space-y-2 text-start">
+        <div class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
+          <span class="material-symbols-outlined text-[14px]">history</span>
+          {{ 'ACTIVITY_LOG.UNIFIED_AUDIT_STREAM' | translate }}
         </div>
-
-        <div class="min-w-0">
-          <div class="flex flex-wrap items-center gap-2">
-            <p class="text-[11px] font-black uppercase tracking-[0.14em] text-slate-400">
-              {{ isRTL ? 'سجل تشغيلي' : 'Hybrid audit' }}
-            </p>
-            <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-black text-slate-600">
-              {{ showingRangeLabel }}
-            </span>
-          </div>
-          <h1 class="mt-1 text-[18px] font-black leading-tight text-slate-950">
-            {{ isRTL ? 'سجل النشاط والملاحظات' : 'Vendor audit and internal notes' }}
-          </h1>
-        </div>
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">
+          {{ 'ACTIVITY_LOG.PAGE_HEADER_TITLE' | translate }}
+        </h1>
+        <p class="text-[13px] font-medium leading-relaxed text-slate-500">
+          {{ 'ACTIVITY_LOG.PAGE_HEADER_DESC' | translate }}
+        </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
+      <!-- Actions Area -->
+      <div class="flex items-center gap-3">
         <button
           (click)="onResetFilters()"
-          class="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700 transition hover:bg-slate-50"
+          class="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[12px] font-bold text-slate-700 transition hover:bg-slate-50"
           type="button">
           <span class="material-symbols-outlined text-[16px]">restart_alt</span>
-          {{ isRTL ? 'إعادة ضبط' : 'Reset' }}
+          {{ 'ACTIVITY_LOG.RESET' | translate }}
         </button>
 
         <button
           (click)="onExportLog()"
-          class="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[11px] font-black text-white shadow-sm transition hover:bg-slate-800"
+          class="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-[12px] font-bold text-white shadow-sm transition hover:bg-slate-800"
           type="button">
           <span class="material-symbols-outlined text-[16px]">download</span>
-          {{ isRTL ? 'تصدير CSV' : 'Export CSV' }}
+          {{ 'ACTIVITY_LOG.EXPORT_CSV' | translate }}
         </button>
       </div>
     </div>
+  </header>
 
-    <div class="grid gap-2 border-b border-slate-100 bg-slate-50 p-3 md:grid-cols-2 xl:grid-cols-[1fr_0.85fr_0.85fr_0.85fr_auto] xl:items-end">
-      <label class="rounded-xl border border-slate-200 bg-white px-3 py-2">
-        <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'نوع الحدث' : 'Event type' }}</span>
-        <select [(ngModel)]="filterType" class="mt-1 w-full bg-transparent text-[12px] font-black text-slate-900 outline-none">
-          <option *ngFor="let option of typeOptions" [ngValue]="option">{{ resolveTypeLabel(option) }}</option>
-        </select>
-      </label>
+  <!-- KPI summary cards grid -->
+  <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <!-- Total Events -->
+    <article class="group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md">
+      <div class="flex items-start justify-between gap-3 text-start">
+        <div class="space-y-1 min-w-0">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{{ 'ACTIVITY_LOG.TOTAL_EVENTS' | translate }}</span>
+          <strong class="text-2xl font-extrabold text-slate-900 group-hover:text-primary transition-colors block">{{ auditCount }}</strong>
+        </div>
+        <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-[18px] text-primary">history</span>
+      </div>
+    </article>
 
-      <label class="rounded-xl border border-slate-200 bg-white px-3 py-2">
-        <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'درجة الحدث' : 'Severity' }}</span>
-        <select [(ngModel)]="filterSeverity" class="mt-1 w-full bg-transparent text-[12px] font-black text-slate-900 outline-none">
-          <option value="all">{{ isRTL ? 'كل الدرجات' : 'All severities' }}</option>
-          <option value="info">{{ resolveSeverityLabel('info') }}</option>
-          <option value="success">{{ resolveSeverityLabel('success') }}</option>
-          <option value="warning">{{ resolveSeverityLabel('warning') }}</option>
-          <option value="danger">{{ resolveSeverityLabel('danger') }}</option>
-        </select>
-      </label>
+    <!-- Critical Events -->
+    <article class="group rounded-3xl border border-rose-200 bg-rose-50/20 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-300 hover:shadow-md">
+      <div class="flex items-start justify-between gap-3 text-start">
+        <div class="space-y-1 min-w-0">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-rose-700 block">{{ 'ACTIVITY_LOG.NEEDS_ATTENTION' | translate }}</span>
+          <strong class="text-2xl font-extrabold text-rose-800 group-hover:text-rose-950 transition-colors block">{{ criticalCount }}</strong>
+        </div>
+        <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-rose-100 text-[18px] text-rose-700">warning</span>
+      </div>
+    </article>
 
-      <label class="rounded-xl border border-slate-200 bg-white px-3 py-2">
-        <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'من تاريخ' : 'Date from' }}</span>
-        <input [(ngModel)]="filterDateFrom" type="date" class="mt-1 w-full bg-transparent text-[12px] font-black text-slate-900 outline-none">
-      </label>
+    <!-- Internal Notes -->
+    <article class="group rounded-3xl border border-primary/20 bg-primary/5 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md">
+      <div class="flex items-start justify-between gap-3 text-start">
+        <div class="space-y-1 min-w-0">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-primary block">{{ 'ACTIVITY_LOG.INTERNAL_NOTES' | translate }}</span>
+          <strong class="text-2xl font-extrabold text-primary group-hover:text-[#0b5c66] transition-colors block">{{ notesCount }}</strong>
+        </div>
+        <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/20 text-[18px] text-primary">sticky_note_2</span>
+      </div>
+    </article>
 
-      <label class="rounded-xl border border-slate-200 bg-white px-3 py-2">
-        <span class="text-[11px] font-bold text-slate-400">{{ isRTL ? 'إلى تاريخ' : 'Date to' }}</span>
-        <input [(ngModel)]="filterDateTo" type="date" class="mt-1 w-full bg-transparent text-[12px] font-black text-slate-900 outline-none">
-      </label>
-
-      <button
-        (click)="onApplyFilters()"
-        class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-[12px] font-black text-white shadow-sm transition hover:bg-primary/90"
-        type="button">
-        <span class="material-symbols-outlined text-[17px]">filter_alt</span>
-        {{ isRTL ? 'تطبيق' : 'Apply' }}
-      </button>
-    </div>
-
-    <div class="grid gap-2 p-3 sm:grid-cols-2 xl:grid-cols-4">
-      <article class="summary-card">
-        <p class="summary-label">{{ isRTL ? 'إجمالي الأحداث' : 'Audit events' }}</p>
-        <p class="summary-value">{{ auditCount }}</p>
-      </article>
-
-      <article class="summary-card attention">
-        <p class="summary-label">{{ isRTL ? 'تحتاج متابعة' : 'Needs attention' }}</p>
-        <p class="summary-value">{{ criticalCount }}</p>
-      </article>
-
-      <article class="summary-card notes">
-        <p class="summary-label">{{ isRTL ? 'ملاحظات داخلية' : 'Internal notes' }}</p>
-        <p class="summary-value">{{ notesCount }}</p>
-      </article>
-
-      <article class="summary-card">
-        <p class="summary-label">{{ isRTL ? 'آخر نشاط' : 'Last activity' }}</p>
-        <p class="mt-1 truncate text-[13px] font-black text-slate-950">{{ lastActivityLabel }}</p>
-      </article>
-    </div>
+    <!-- Last Activity -->
+    <article class="group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md">
+      <div class="flex items-start justify-between gap-3 text-start">
+        <div class="space-y-1 min-w-0 flex-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{{ 'ACTIVITY_LOG.LAST_ACTIVITY' | translate }}</span>
+          <strong class="text-[13px] font-extrabold text-slate-900 group-hover:text-primary transition-colors block truncate mt-2">{{ lastActivityLabel }}</strong>
+        </div>
+        <span class="material-symbols-outlined flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-[18px] text-primary">schedule</span>
+      </div>
+    </article>
   </section>
 
-  <section class="grid items-start gap-4 xl:grid-cols-12">
-    <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:col-span-8">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
-        <div>
-          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'سجل الأحداث' : 'Audit stream' }}</h2>
-          <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
-            {{ isRTL ? 'الأوامر الإدارية والتغييرات التشغيلية الخاصة بالتاجر.' : 'Admin actions and operational changes for this vendor.' }}
+  <!-- Main Content Grid -->
+  <section class="grid items-start gap-6 xl:grid-cols-12">
+    <!-- Left Column: Audit Stream -->
+    <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm xl:col-span-8">
+      <!-- Stream Header -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+        <div class="text-start">
+          <h2 class="text-base font-extrabold text-slate-900">{{ 'ACTIVITY_LOG.AUDIT_STREAM' | translate }}</h2>
+          <p class="text-[12px] font-medium text-slate-500">
+            {{ 'ACTIVITY_LOG.AUDIT_STREAM_DESC' | translate }}
           </p>
         </div>
 
-        <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-black text-slate-600">
-          {{ isRTL ? 'صفحة' : 'Page' }} {{ page }} / {{ totalActivityPages }}
+        <span class="rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1 text-[11px] font-bold text-slate-600">
+          {{ 'ACTIVITY_LOG.PAGE' | translate }} {{ page }} / {{ totalActivityPages }}
         </span>
       </div>
 
-      <div *ngIf="activityError" class="border-b border-red-200 bg-red-50 px-4 py-3 text-[12px] font-bold text-red-700">
+      <!-- Integrated Filter Bar -->
+      <div class="grid gap-3 border-b border-slate-100 bg-slate-50/50 p-4 sm:grid-cols-2 lg:grid-cols-5 items-end">
+        <div class="flex flex-col gap-1 text-start relative">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ 'ACTIVITY_LOG.EVENT_TYPE' | translate }}</span>
+          <div class="relative w-full">
+            <button
+              type="button"
+              (click)="toggleDropdown('type')"
+              class="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[12px] font-semibold text-slate-800 transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <span class="truncate">{{ resolveTypeLabel(filterType) }}</span>
+              <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200" [class.rotate-180]="isDropdownOpen('type')">
+                keyboard_arrow_down
+              </span>
+            </button>
+            <div
+              *ngIf="isDropdownOpen('type')"
+              class="absolute inset-x-0 top-full z-50 mt-1 max-h-60 overflow-y-auto rounded-xl border border-slate-200 bg-white py-1 shadow-lg custom-scrollbar">
+              <button
+                *ngFor="let option of typeOptions"
+                type="button"
+                (click)="selectType(option)"
+                class="flex w-full items-center justify-between px-3 py-2 text-start text-[12px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                [ngClass]="{
+                  'bg-primary/5 text-primary': filterType === option
+                }">
+                <span class="truncate">{{ resolveTypeLabel(option) }}</span>
+                <span *ngIf="filterType === option" class="material-symbols-outlined text-[16px] text-emerald-500">check</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1 text-start relative">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ 'ACTIVITY_LOG.SEVERITY' | translate }}</span>
+          <div class="relative w-full">
+            <button
+              type="button"
+              (click)="toggleDropdown('severity')"
+              class="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[12px] font-semibold text-slate-800 transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <span class="truncate">{{ filterSeverity === 'all' ? ('ACTIVITY_LOG.ALL_SEVERITIES' | translate) : resolveSeverityLabel(filterSeverity) }}</span>
+              <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform duration-200" [class.rotate-180]="isDropdownOpen('severity')">
+                keyboard_arrow_down
+              </span>
+            </button>
+            <div
+              *ngIf="isDropdownOpen('severity')"
+              class="absolute inset-x-0 top-full z-50 mt-1 rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+              <button
+                type="button"
+                (click)="selectSeverity('all')"
+                class="flex w-full items-center justify-between px-3 py-2 text-start text-[12px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                [ngClass]="{
+                  'bg-primary/5 text-primary': filterSeverity === 'all'
+                }">
+                <span>{{ 'ACTIVITY_LOG.ALL_SEVERITIES' | translate }}</span>
+                <span *ngIf="filterSeverity === 'all'" class="material-symbols-outlined text-[16px] text-emerald-500">check</span>
+              </button>
+              <button
+                *ngFor="let option of severityOptions"
+                type="button"
+                (click)="selectSeverity(option)"
+                class="flex w-full items-center justify-between px-3 py-2 text-start text-[12px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                [ngClass]="{
+                  'bg-primary/5 text-primary': filterSeverity === option
+                }">
+                <span>{{ resolveSeverityLabel(option) }}</span>
+                <span *ngIf="filterSeverity === option" class="material-symbols-outlined text-[16px] text-emerald-500">check</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1 text-start">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ 'ACTIVITY_LOG.DATE_FROM' | translate }}</span>
+          <input [(ngModel)]="filterDateFrom" type="date" class="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[12px] font-semibold text-slate-800 outline-none focus:border-primary">
+        </div>
+
+        <div class="flex flex-col gap-1 text-start">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ 'ACTIVITY_LOG.DATE_TO' | translate }}</span>
+          <input [(ngModel)]="filterDateTo" type="date" class="h-9 w-full rounded-lg border border-slate-200 bg-white px-3 text-[12px] font-semibold text-slate-800 outline-none focus:border-primary">
+        </div>
+
+        <button
+          (click)="onApplyFilters()"
+          class="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-[12px] font-bold text-white shadow-sm transition hover:bg-primary/95"
+          type="button">
+          <span class="material-symbols-outlined text-[16px]">filter_alt</span>
+          {{ 'ACTIVITY_LOG.APPLY_FILTER' | translate }}
+        </button>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="activityError" class="border-b border-red-200 bg-red-50 px-4 py-3 text-[12px] font-bold text-red-700 text-start">
         {{ activityError }}
       </div>
 
+      <!-- Loading State -->
       <div *ngIf="isActivityLoading" class="grid min-h-[220px] place-items-center px-4 py-8 text-center">
-        <div>
+        <div class="space-y-3">
           <div class="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary">
             <span class="material-symbols-outlined animate-pulse text-[24px]">history</span>
           </div>
-          <p class="mt-3 text-[12px] font-black text-slate-600">{{ isRTL ? 'جاري تحميل السجل...' : 'Loading activity log...' }}</p>
+          <p class="text-[12px] font-bold text-slate-500">{{ 'ACTIVITY_LOG.LOADING_STREAM' | translate }}</p>
         </div>
       </div>
 
+      <!-- Logs Stream Content -->
       <div *ngIf="!isActivityLoading" class="flex flex-col">
-        <div *ngIf="auditEntries.length; else emptyAudit" class="custom-scrollbar max-h-[460px] overflow-y-auto px-3 py-3">
+        <div *ngIf="auditEntries.length; else emptyAudit" class="custom-scrollbar max-h-[500px] overflow-y-auto px-4 py-4 space-y-3 bg-slate-50/20">
           <article
             *ngFor="let entry of auditEntries"
-            class="event-row group mb-2.5 rounded-xl border border-slate-200 bg-white p-3 transition hover:border-primary/30 hover:bg-primary/5">
-            <div class="flex items-start gap-3">
-              <div class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border" [ngClass]="resolveSeverityBadge(entry.severity)">
-                <span class="material-symbols-outlined text-[17px]">{{ resolveSeverityIcon(entry.severity) }}</span>
+            class="event-row group rounded-2xl border border-slate-200 bg-white p-4 transition duration-200 hover:border-primary/20 hover:shadow-md hover:shadow-primary/5">
+            <div class="flex items-start gap-4">
+              <!-- Severity Badge -->
+              <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border transition-colors duration-300" [ngClass]="resolveSeverityBadge(entry.severity)">
+                <span class="material-symbols-outlined text-[18px]">{{ resolveSeverityIcon(entry.severity) }}</span>
               </div>
 
-              <div class="min-w-0 flex-1">
+              <!-- Message Details -->
+              <div class="min-w-0 flex-1 space-y-2 text-start">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <div class="flex flex-wrap items-center gap-2">
-                    <h3 class="text-[13px] font-black text-slate-950">{{ resolveTypeLabel(entry.type) }}</h3>
-                    <span class="rounded-full border px-2 py-0.5 text-[10px] font-black" [ngClass]="resolveSeverityBadge(entry.severity)">
+                    <h3 class="text-[14px] font-extrabold text-slate-900 group-hover:text-primary transition-colors">{{ resolveTypeLabel(entry.type) }}</h3>
+                    <span class="rounded-full border px-2.5 py-0.5 text-[10px] font-bold" [ngClass]="resolveSeverityBadge(entry.severity)">
                       {{ resolveSeverityLabel(entry.severity) }}
                     </span>
                   </div>
-                  <span class="text-[11px] font-bold text-slate-400">{{ formatDateTime(entry.createdAtUtc) }}</span>
+                  <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">{{ formatDateTime(entry.createdAtUtc) }}</span>
                 </div>
 
-                <p class="mt-1.5 text-[12px] font-semibold leading-5 text-slate-600" [attr.dir]="detectTextDirection(entry.message)">{{ localizeMessage(entry.message) }}</p>
+                <p class="text-[13px] font-medium leading-relaxed text-slate-650" [attr.dir]="detectTextDirection(entry.message)">
+                  {{ localizeMessage(entry.message) }}
+                </p>
 
-                <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-500">
-                  <span class="rounded-full bg-slate-100 px-2 py-0.5">{{ entry.actorName }}</span>
-                  <span>{{ localizeRoleLabel(entry.roleLabel) }}</span>
+                <!-- Actor details -->
+                <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-400 pt-1">
+                  <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-600">{{ entry.actorName }}</span>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[13px]">shield</span>
+                    {{ localizeRoleLabel(entry.roleLabel) }}
+                  </span>
                 </div>
               </div>
             </div>
           </article>
         </div>
 
+        <!-- Empty State -->
         <ng-template #emptyAudit>
           <div class="grid min-h-[220px] place-items-center px-4 py-8 text-center text-[13px] font-bold text-slate-500">
-            {{ isRTL ? 'لا توجد أحداث مطابقة للفلاتر الحالية.' : 'No audit events match the current filters.' }}
+            {{ 'ACTIVITY_LOG.NO_MATCHING_EVENTS' | translate }}
           </div>
         </ng-template>
 
-        <div class="flex items-center justify-between gap-2 border-t border-slate-100 bg-slate-50 px-4 py-3">
+        <!-- Pagination Bar -->
+        <div class="flex items-center justify-between gap-2 border-t border-slate-100 bg-slate-50/50 px-5 py-4">
           <button
             (click)="onPreviousPage()"
             [disabled]="!hasPreviousActivityPage"
-            class="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+            class="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[12px] font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
             type="button">
             <span class="material-symbols-outlined text-[16px]">{{ isRTL ? 'chevron_right' : 'chevron_left' }}</span>
-            {{ isRTL ? 'السابق' : 'Previous' }}
+            {{ 'ACTIVITY_LOG.PREVIOUS' | translate }}
           </button>
 
-          <span class="text-[11px] font-black text-slate-500">{{ showingRangeLabel }}</span>
+          <span class="text-[12px] font-bold text-slate-500">{{ showingRangeLabel }}</span>
 
           <button
             (click)="onNextPage()"
             [disabled]="!hasNextActivityPage"
-            class="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+            class="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[12px] font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
             type="button">
-            {{ isRTL ? 'التالي' : 'Next' }}
+            {{ 'ACTIVITY_LOG.NEXT' | translate }}
             <span class="material-symbols-outlined text-[16px]">{{ isRTL ? 'chevron_left' : 'chevron_right' }}</span>
           </button>
         </div>
       </div>
     </article>
 
-    <aside class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:col-span-4">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
-        <div>
-          <h2 class="text-[14px] font-black text-slate-950">{{ isRTL ? 'الملاحظات والخط الزمني' : 'Notes and timeline' }}</h2>
-          <p class="mt-0.5 text-[11px] font-semibold text-slate-500">
-            {{ isRTL ? 'سياق داخلي سريع بجانب السجل.' : 'Quick internal context beside the stream.' }}
+    <!-- Right Column Sidebar: Internal Notes and Timeline -->
+    <aside class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm xl:col-span-4">
+      <!-- Sidebar Header -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+        <div class="text-start">
+          <h2 class="text-base font-extrabold text-slate-900">{{ 'ACTIVITY_LOG.NOTES_AND_TIMELINE' | translate }}</h2>
+          <p class="text-[11px] font-medium text-slate-500">
+            {{ 'ACTIVITY_LOG.SIDEBAR_DESC' | translate }}
           </p>
         </div>
 
+        <!-- Panel Toggle -->
         <div class="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1">
           <button
             (click)="selectSidePanel('notes')"
             [class]="selectedSidePanel === 'notes' ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-600'"
-            class="rounded-lg px-3 py-1.5 text-[11px] font-black transition"
+            class="rounded-lg px-3 py-1.5 text-[11px] font-bold transition"
             type="button">
-            {{ isRTL ? 'ملاحظات' : 'Notes' }}
+            {{ 'ACTIVITY_LOG.NOTES_TAB' | translate }}
           </button>
           <button
             (click)="selectSidePanel('timeline')"
             [class]="selectedSidePanel === 'timeline' ? 'bg-slate-950 text-white shadow-sm' : 'text-slate-600'"
-            class="rounded-lg px-3 py-1.5 text-[11px] font-black transition"
+            class="rounded-lg px-3 py-1.5 text-[11px] font-bold transition"
             type="button">
-            {{ isRTL ? 'زمني' : 'Timeline' }}
+            {{ 'ACTIVITY_LOG.TIMELINE_TAB' | translate }}
           </button>
         </div>
       </div>
 
-      <div *ngIf="selectedSidePanel === 'notes'" class="p-3">
-        <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <label class="mb-2 block text-[12px] font-black text-slate-900">{{ isRTL ? 'إضافة ملاحظة داخلية' : 'Add internal note' }}</label>
+      <!-- Notes View Panel -->
+      <div *ngIf="selectedSidePanel === 'notes'" class="p-4 space-y-4">
+        <!-- Add New Note Form -->
+        <div class="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 space-y-3">
+          <label class="block text-[12px] font-bold text-slate-900 text-start">{{ 'ACTIVITY_LOG.ADD_INTERNAL_NOTE' | translate }}</label>
           <textarea
             [(ngModel)]="noteDraft"
             rows="3"
-            class="w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-[12px] font-semibold text-slate-700 outline-none transition focus:border-primary"
-            [placeholder]="isRTL ? 'اكتب ملاحظة تظهر في السجل الداخلي...' : 'Write a note for the internal log...'"></textarea>
-          <p *ngIf="noteError" class="mt-2 rounded-xl bg-red-50 px-3 py-2 text-[12px] font-bold text-red-600">{{ noteError }}</p>
+            class="w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-[12px] font-medium text-slate-700 outline-none transition focus:border-primary"
+            [placeholder]="'ACTIVITY_LOG.NOTE_PLACEHOLDER' | translate"></textarea>
+          <p *ngIf="noteError" class="rounded-xl bg-red-50 px-3 py-2 text-[12px] font-bold text-red-650 text-start">{{ noteError }}</p>
           <button
             (click)="onAddNote()"
             [disabled]="noteSubmitting"
-            class="mt-2 inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+            class="inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-3 text-[12px] font-bold text-white transition hover:bg-slate-800 disabled:opacity-60"
             type="button">
             <span class="material-symbols-outlined text-[17px]">add_notes</span>
-            {{ noteSubmitting ? (isRTL ? 'جاري الإضافة...' : 'Adding...') : (isRTL ? 'إضافة الملاحظة' : 'Add note') }}
+            {{ noteSubmitting ? ('ACTIVITY_LOG.ADDING_NOTE' | translate) : ('ACTIVITY_LOG.ADD_NOTE_BTN' | translate) }}
           </button>
         </div>
 
-        <div class="custom-scrollbar mt-3 max-h-[456px] space-y-2 overflow-y-auto">
-          <article *ngFor="let note of internalNotes" class="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
-            <div class="flex items-start justify-between gap-2">
+        <!-- Notes Stream -->
+        <div class="custom-scrollbar max-h-[420px] space-y-3 overflow-y-auto pr-1">
+          <article *ngFor="let note of internalNotes" class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2 text-start transition duration-200 hover:border-primary/20">
+            <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
-                <p class="truncate text-[12px] font-black text-slate-950">{{ note.authorName }}</p>
-                <p class="mt-1 text-[11px] font-bold text-slate-400">{{ formatDateTime(note.createdAtUtc) }}</p>
+                <p class="truncate text-[13px] font-extrabold text-slate-900">{{ note.authorName }}</p>
+                <p class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg inline-block mt-1">{{ formatDateTime(note.createdAtUtc) }}</p>
               </div>
-              <span class="rounded-full border px-2 py-0.5 text-[10px] font-black" [ngClass]="resolveSeverityBadge(note.tone)">
+              <span class="rounded-full border px-2.5 py-0.5 text-[10px] font-bold shrink-0" [ngClass]="resolveSeverityBadge(note.tone)">
                 {{ resolveSeverityLabel(note.tone) }}
               </span>
             </div>
-            <p class="mt-2 text-[12px] font-semibold leading-5 text-slate-600">{{ localizeMessage(note.message || note.messageKey || '-') }}</p>
+            <p class="text-[12px] font-semibold leading-relaxed text-slate-650">{{ localizeMessage(note.message || note.messageKey || '-') }}</p>
           </article>
 
-          <div *ngIf="!internalNotes.length" class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-[12px] font-bold text-slate-500">
-            {{ isRTL ? 'لا توجد ملاحظات داخلية حتى الآن.' : 'No internal notes yet.' }}
+          <!-- Empty Notes State -->
+          <div *ngIf="!internalNotes.length" class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 px-4 py-8 text-center text-[12px] font-bold text-slate-500">
+            {{ 'ACTIVITY_LOG.NO_INTERNAL_NOTES' | translate }}
           </div>
         </div>
       </div>
 
-      <div *ngIf="selectedSidePanel === 'timeline'" class="custom-scrollbar max-h-[650px] overflow-y-auto p-3">
+      <!-- Timeline Panel -->
+      <div *ngIf="selectedSidePanel === 'timeline'" class="custom-scrollbar max-h-[650px] overflow-y-auto p-4">
         <div class="relative">
-          <div *ngFor="let item of timeline" class="timeline-row relative pb-4 ps-9">
-            <div class="absolute top-0 z-10 grid h-7 w-7 place-items-center rounded-full border-4 border-white text-white shadow-sm" [ngClass]="item.toneClass">
-              <span class="material-symbols-outlined text-[14px]">{{ item.icon }}</span>
+          <div *ngFor="let item of timeline" class="timeline-row relative pb-5 ps-10 text-start">
+            <div class="absolute top-0 z-10 grid h-8 w-8 place-items-center rounded-full border-4 border-white text-white shadow-sm" [ngClass]="item.toneClass">
+              <span class="material-symbols-outlined text-[13px]">{{ item.icon }}</span>
             </div>
-            <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
-              <h3 class="text-[12px] font-black text-slate-950">{{ item.title }}</h3>
-              <p class="mt-1.5 text-[12px] font-semibold leading-5 text-slate-600">{{ item.description }}</p>
-              <span class="mt-2 block text-[11px] font-bold text-slate-400">{{ item.date }}</span>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 space-y-1">
+              <h3 class="text-[13px] font-extrabold text-slate-950">{{ item.title }}</h3>
+              <p class="text-[12px] font-medium leading-relaxed text-slate-600">{{ item.description }}</p>
+              <span class="block text-[11px] font-bold text-slate-400 mt-2 bg-white inline-block px-2 py-0.5 rounded-lg border border-slate-100">{{ item.date }}</span>
             </div>
           </div>
         </div>

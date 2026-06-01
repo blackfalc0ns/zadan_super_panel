@@ -38,9 +38,13 @@
     },
     "PROFILES": {
       "OPS_PRIMARY": "Primary sender for platform-wide operational and access messages.",
+      "OPS_PRIMARY_NAME": "Operations Primary",
       "RISK_DESK": "Dedicated sender for risk, compliance, and escalation workflows.",
+      "RISK_DESK_NAME": "Risk Desk",
       "VENDOR_NETWORK": "Dedicated sender for vendor network onboarding, branch access, and routing updates.",
-      "FINANCE_DIGEST": "Finance-safe sender for settlement summaries and reconciliation digests."
+      "VENDOR_NETWORK_NAME": "Vendor Network",
+      "FINANCE_DIGEST": "Finance-safe sender for settlement summaries and reconciliation digests.",
+      "FINANCE_DIGEST_NAME": "Finance Digest"
     },
     "WORKFLOWS": {
       "BADGE": "Workflow rules",
@@ -112,7 +116,13 @@
       "SAVE": "Save rule",
       "SAVING": "Saving...",
       "TEST_SEND": "Test send",
-      "SENDING_TEST": "Sending test..."
+      "SENDING_TEST": "Sending test...",
+      "EXPAND": "Expand",
+      "COLLAPSE": "Collapse"
+    },
+    "MESSAGES": {
+      "SAVE_SUCCESS": "Rule settings saved successfully and synced with the backend.",
+      "TEST_SEND_SUCCESS": "Test Send executed successfully and logged."
     },
     "AUTOMATION": {
       "LIVE": "Live automation",
@@ -133,6 +143,7 @@
     },
     "SOURCES": {
       "TEST_SEND": "Test send",
+      "SYSTEM_EVENT": "System events",
       "VENDOR_AUTOMATION_LIVE": "Vendor automation live",
       "VENDOR_AUTOMATION_LEGACY": "Vendor automation legacy"
     },
@@ -164,7 +175,8 @@
       "SUBJECT": "Subject",
       "BODY": "Body",
       "VARIABLES": "Available variables",
-      "SENDER": "Current sender"
+      "SENDER": "Current sender",
+      "NO_VARIABLES": "No variables used in this template."
     },
     "CATEGORIES": {
       "ACCESS": "Access control",
@@ -173,12 +185,18 @@
       "FINANCE": "Finance",
       "VENDOR_NETWORK": "Vendor network",
       "DRIVER_NETWORK": "Driver operations",
-      "CUSTOMER_CARE": "Customer care"
+      "DRIVERS": "Driver operations",
+      "CUSTOMER_CARE": "Customer care",
+      "CUSTOMER_ORDERS": "Customer Orders",
+      "VENDOR_ORDERS": "Vendor Orders",
+      "VENDOR_LIFECYCLE": "Vendor Lifecycle",
+      "SUPPORT": "Support & cases"
     },
     "CADENCE": {
       "INSTANT": "Instant",
       "BATCH_15": "15-minute batch",
-      "DAILY": "Daily digest"
+      "DAILY": "Daily digest",
+      "WEEKLY": "Weekly"
     },
     "NOTES": {
       "ADMIN_INVITE": "Send immediately when a new admin user is invited into the control center.",
@@ -193,7 +211,15 @@
       "DRIVER_VERIFICATION_UPDATE": "Routes verification state updates for driver identities and compliance teams.",
       "DRIVER_PAYOUT_ALERT": "Summarizes payout readiness, COD exposure, and balance movement for driver accounts.",
       "CUSTOMER_SUPPORT_ESCALATION": "Alerts customer, support, and oversight teams when a high-touch support case escalates.",
-      "CUSTOMER_ACCOUNT_RECOVERY": "Secure recovery workflow for customer account access and follow-up support."
+      "CUSTOMER_ACCOUNT_RECOVERY": "Secure recovery workflow for customer account access and follow-up support.",
+      "CUSTOMER_ORDER_CONFIRMED": "Sends only when an order is confirmed after payment/COD placement.",
+      "CUSTOMER_ORDER_OUT_FOR_DELIVERY": "Sends only when an order reaches OnTheWay status.",
+      "CUSTOMER_DRIVER_ARRIVED_AT_DELIVERY": "Sends only when the driver marks arrived at customer.",
+      "CUSTOMER_ORDER_IMPORTANT_UPDATE": "Sends only for major order/payment changes.",
+      "VENDOR_ORDER_ACTION_REQUIRED": "Sends only for PendingVendorAcceptance orders.",
+      "VENDOR_WEEKLY_SUMMARY": "Sends Mondays at 09:00 Africa/Cairo when the vendor had order activity last week.",
+      "VENDOR_APPROVED": "Automatically dispatches when the vendor account is approved.",
+      "VENDOR_PASSWORD_RESET": "Automatically dispatches when a vendor password reset is triggered."
     },
     "EVENTS": {
       "ADMIN_INVITE": {
@@ -247,6 +273,38 @@
       "CUSTOMER_ACCOUNT_RECOVERY": {
         "TITLE": "Customer account recovery",
         "SUBTITLE": "Recovery flow for customer access and secure re-entry."
+      },
+      "CUSTOMER_ORDER_CONFIRMED": {
+        "TITLE": "Order confirmed",
+        "SUBTITLE": "Receipt and order confirmation for customers."
+      },
+      "CUSTOMER_ORDER_OUT_FOR_DELIVERY": {
+        "TITLE": "Order out for delivery",
+        "SUBTITLE": "Customer update when an order is on the way."
+      },
+      "CUSTOMER_DRIVER_ARRIVED_AT_DELIVERY": {
+        "TITLE": "Driver arrived at delivery location",
+        "SUBTITLE": "Customer email when the driver arrives at the delivery address."
+      },
+      "CUSTOMER_ORDER_IMPORTANT_UPDATE": {
+        "TITLE": "Important order update",
+        "SUBTITLE": "Customer email for cancellation, refund, delivery failure, or payment failure."
+      },
+      "VENDOR_ORDER_ACTION_REQUIRED": {
+        "TITLE": "New order needs action",
+        "SUBTITLE": "Vendor email only when an order is waiting for acceptance/preparation."
+      },
+      "VENDOR_WEEKLY_SUMMARY": {
+        "TITLE": "Weekly vendor summary",
+        "SUBTITLE": "Weekly digest of vendor sales, orders, cancellations, and top products."
+      },
+      "VENDOR_APPROVED": {
+        "TITLE": "Vendor approved",
+        "SUBTITLE": "Live automation for vendor approval."
+      },
+      "VENDOR_PASSWORD_RESET": {
+        "TITLE": "Vendor password reset",
+        "SUBTITLE": "Live automation for vendor password reset."
       }
     },
     "RECIPIENT_TARGETS": {

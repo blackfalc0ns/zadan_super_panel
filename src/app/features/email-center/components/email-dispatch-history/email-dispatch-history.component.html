@@ -1,0 +1,141 @@
+<div class="space-y-6 animate-in fade-in duration-300">
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div>
+      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.HISTORY.BADGE' | translate }}</p>
+      <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.HISTORY.TITLE' | translate }}</h2>
+      <p class="text-xs font-bold text-slate-400 mt-1">{{ 'EMAIL_CENTER.HISTORY.DESC' | translate }}</p>
+    </div>
+
+    <button
+      type="button"
+      class="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all focus:outline-none"
+      (click)="onClearFilters()">
+      {{ 'EMAIL_CENTER.HISTORY.CLEAR_FILTERS' | translate }}
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 bg-slate-50/50 p-4 rounded-[1.6rem] border border-slate-200/50">
+    <label class="field-card">
+      <span>{{ 'EMAIL_CENTER.HISTORY.RULE' | translate }}</span>
+      <app-searchable-select
+        [(ngModel)]="filters.ruleId"
+        [options]="historyRuleOptions"
+        [isDisabled]="isHistoryLoading"
+        [placeholder]="'EMAIL_CENTER.HISTORY.ALL_RULES' | translate"
+        (ngModelChange)="onFilterChange()">
+      </app-searchable-select>
+    </label>
+
+    <label class="field-card">
+      <span>{{ 'EMAIL_CENTER.HISTORY.SOURCE' | translate }}</span>
+      <app-searchable-select
+        [(ngModel)]="filters.source"
+        [options]="historySourceOptions"
+        [isDisabled]="isHistoryLoading"
+        [placeholder]="'EMAIL_CENTER.HISTORY.ALL_SOURCES' | translate"
+        (ngModelChange)="onFilterChange()">
+      </app-searchable-select>
+    </label>
+
+    <label class="field-card">
+      <span>{{ 'EMAIL_CENTER.HISTORY.STATUS' | translate }}</span>
+      <app-searchable-select
+        [(ngModel)]="filters.status"
+        [options]="historyStatusOptions"
+        [isDisabled]="isHistoryLoading"
+        [placeholder]="'EMAIL_CENTER.HISTORY.ALL_STATUSES' | translate"
+        (ngModelChange)="onFilterChange()">
+      </app-searchable-select>
+    </label>
+
+    <label class="field-card">
+      <span>{{ 'EMAIL_CENTER.HISTORY.DATE_FROM' | translate }}</span>
+      <input [(ngModel)]="filters.dateFrom" type="date" class="w-full" [disabled]="isHistoryLoading" (ngModelChange)="onFilterChange()" />
+    </label>
+
+    <label class="field-card">
+      <span>{{ 'EMAIL_CENTER.HISTORY.DATE_TO' | translate }}</span>
+      <input [(ngModel)]="filters.dateTo" type="date" class="w-full" [disabled]="isHistoryLoading" (ngModelChange)="onFilterChange()" />
+    </label>
+  </div>
+
+  <div *ngIf="isHistoryLoading" class="admin-skeleton-table mt-6" style="--skeleton-columns: 3">
+    <div *ngFor="let item of [1,2,3]" class="admin-skeleton-table-row">
+      <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+      <span class="admin-skeleton admin-skeleton-chip"></span>
+      <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+    </div>
+  </div>
+
+  <div *ngIf="!isHistoryLoading && dispatches.length === 0" class="mt-6 rounded-[1.6rem] border border-dashed border-slate-300 bg-slate-50/70 px-5 py-10 text-center">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-white text-slate-400 shadow-sm">
+      <span class="material-symbols-outlined text-[26px]">history_toggle_off</span>
+    </div>
+    <h3 class="mt-4 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.HISTORY.EMPTY_TITLE' | translate }}</h3>
+    <p class="mt-2 text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.HISTORY.EMPTY_DESC' | translate }}</p>
+  </div>
+
+  <div *ngIf="!isHistoryLoading && dispatches.length > 0" class="mt-6 space-y-4">
+    <article *ngFor="let dispatch of dispatches" class="rounded-[1.6rem] border border-slate-200 bg-slate-50/70 p-5 hover:border-slate-300 transition-all">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 border-b border-slate-100 pb-4">
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <h3 class="text-sm font-black text-slate-900">
+              {{ getDispatchRuleLabel(dispatch) ? (getDispatchRuleLabel(dispatch) | translate) : dispatch.ruleLabel }}
+            </h3>
+            <app-status-pill
+              [label]="getDispatchStatusLabelKey(dispatch.status)"
+              [variant]="getDispatchStatusVariant(dispatch.status)"
+              size="sm">
+            </app-status-pill>
+            <app-status-pill
+              [label]="getDispatchSourceLabelKey(dispatch.source)"
+              variant="neutral"
+              size="sm">
+            </app-status-pill>
+            <app-status-pill
+              *ngIf="dispatch.isTestSend"
+              label="EMAIL_CENTER.TEST_SEND.BADGE"
+              variant="info"
+              size="sm">
+            </app-status-pill>
+          </div>
+
+          <p class="text-[11px] font-bold text-slate-500">{{ dispatch.createdAtUtc | date:'medium' }}</p>
+          <p class="text-sm font-black text-slate-800">{{ dispatch.subject }}</p>
+          <p *ngIf="dispatch.failureReason" class="text-[11px] font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200 inline-block">{{ dispatch.failureReason }}</p>
+        </div>
+
+        <div class="rounded-full bg-white px-4 py-2 text-[11px] font-black text-slate-500 shadow-sm border border-slate-150 flex-shrink-0 align-self-start lg:align-self-auto">
+          {{ getDispatchRecipientCount(dispatch) }} {{ 'EMAIL_CENTER.HISTORY.RECIPIENTS' | translate }}
+        </div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <div class="history-recipient-card">
+          <p>{{ 'EMAIL_CENTER.FIELDS.TO' | translate }}</p>
+          <div class="resolved-list">
+            <span *ngFor="let email of dispatch.to" dir="ltr">{{ email }}</span>
+            <span *ngIf="dispatch.to.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="history-recipient-card">
+          <p>{{ 'EMAIL_CENTER.FIELDS.CC' | translate }}</p>
+          <div class="resolved-list">
+            <span *ngFor="let email of dispatch.cc" dir="ltr">{{ email }}</span>
+            <span *ngIf="dispatch.cc.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="history-recipient-card">
+          <p>{{ 'EMAIL_CENTER.FIELDS.BCC' | translate }}</p>
+          <div class="resolved-list">
+            <span *ngFor="let email of dispatch.bcc" dir="ltr">{{ email }}</span>
+            <span *ngIf="dispatch.bcc.length === 0" class="empty-chip">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

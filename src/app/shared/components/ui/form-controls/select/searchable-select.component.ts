@@ -165,8 +165,13 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   }
 
   getOptionLabel(option: SearchableSelectOption): string {
+    if (option.labelKey) {
+      const translated = this.translate.instant(option.labelKey);
+      if (translated !== option.labelKey) {
+        return translated;
+      }
+    }
     if (option.label) return option.label;
-    if (option.labelKey) return this.translate.instant(option.labelKey);
     return String(option.value);
   }
 

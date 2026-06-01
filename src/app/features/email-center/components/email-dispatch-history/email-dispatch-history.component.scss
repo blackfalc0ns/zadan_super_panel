@@ -1,0 +1,71 @@
+.field-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(248, 250, 252, 0.85);
+  padding: 1rem 1.1rem;
+}
+
+.field-card span:first-child {
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(148 163 184);
+}
+
+.field-card input {
+  border-radius: 1rem;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  background: white;
+  padding: 0.9rem 0.95rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgb(51 65 85);
+  outline: none;
+}
+
+.field-card input:focus {
+  border-color: rgba(18, 124, 140, 0.4);
+  box-shadow: 0 0 0 4px rgba(18, 124, 140, 0.08);
+}
+
+.history-recipient-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: white;
+  padding: 1rem;
+}
+
+.history-recipient-card p {
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(148 163 184);
+}
+
+.resolved-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.resolved-list span {
+  border-radius: 9999px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 0.45rem 0.8rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: rgb(71 85 105);
+}
+
+.resolved-list .empty-chip {
+  color: rgb(148 163 184);
+}

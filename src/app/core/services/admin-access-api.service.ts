@@ -299,7 +299,8 @@ export class AdminAccessApiService {
         replyTo: dto.communication.replyTo ?? dto.email,
         escalationEmails: dto.communication.escalationEmails ?? [],
         preferredLocale: (dto.communication.preferredLocale as DirectoryCommunicationProfile['preferredLocale']) ?? 'ar',
-        emailOptIn
+        emailOptIn,
+        rawEmailOptInKeys: dto.communication.emailOptIn ? Object.keys(dto.communication.emailOptIn) : []
       },
       featureToggles: (dto.featureToggles ?? []) as DirectoryFeatureToggleId[],
       entityPath: dto.entityPath,
@@ -364,14 +365,14 @@ export class AdminAccessApiService {
   private buildEmailOptIn(source: unknown): DirectoryEmailOptIn {
     const raw = (source ?? {}) as Partial<DirectoryEmailOptIn>;
     return {
-      accessInvites: Boolean(raw.accessInvites),
-      branchAlerts: Boolean(raw.branchAlerts),
-      dispatchNotifications: Boolean(raw.dispatchNotifications),
-      complianceEmails: Boolean(raw.complianceEmails),
-      financeDigests: Boolean(raw.financeDigests),
-      supportEscalations: Boolean(raw.supportEscalations),
-      orderIssueUpdates: Boolean(raw.orderIssueUpdates),
-      marketingOptIn: Boolean(raw.marketingOptIn)
+      accessInvites: raw.accessInvites !== false,
+      branchAlerts: raw.branchAlerts !== false,
+      dispatchNotifications: raw.dispatchNotifications !== false,
+      complianceEmails: raw.complianceEmails !== false,
+      financeDigests: raw.financeDigests !== false,
+      supportEscalations: raw.supportEscalations !== false,
+      orderIssueUpdates: raw.orderIssueUpdates !== false,
+      marketingOptIn: raw.marketingOptIn !== false
     };
   }
 }

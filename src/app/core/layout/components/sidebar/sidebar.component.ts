@@ -4,6 +4,7 @@ import { IsActiveMatchOptions, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { AuthService } from '../../../../core/services/auth.service';
+import { AccessService } from '../../../../core/services/access.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +21,7 @@ export class SidebarComponent {
 
     private readonly router = inject(Router);
     private readonly authService = inject(AuthService);
+    private readonly accessService = inject(AccessService);
     
     readonly currentUser$ = this.authService.currentUser$;
 
@@ -36,6 +38,10 @@ export class SidebarComponent {
         matrixParams: 'ignored',
         fragment: 'ignored'
     };
+
+    hasAnyPermission(permissions: string[]): boolean {
+        return this.accessService.hasAnyPermission(permissions);
+    }
 
     navigateTo(route: string): void {
         if (this.router.url === route) {

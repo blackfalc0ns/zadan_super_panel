@@ -5,10 +5,11 @@
 
 .detail-card {
   border-radius: 1.5rem;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
   padding: 1.75rem;
-  box-shadow: 0 4px 24px -4px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04), 0 1px 2px 0 rgba(15, 23, 42, 0.02);
 }
 
 .detail-card--p0 {
@@ -126,4 +127,53 @@
 
 :host ::ng-deep .customer-orders-table table td {
   padding-block: 0.95rem !important;
+}
+
+/* Glassmorphic KPI Card styles */
+.kpi-glass-card {
+  position: relative;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  padding: 1.25rem;
+  box-shadow: 0 8px 30px -4px rgba(15, 23, 42, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  .kpi-glass-card-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    transition: background 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 12px 35px -4px rgba(15, 23, 42, 0.06), 0 0 20px -2px rgba(18, 124, 140, 0.05);
+    border-color: rgba(18, 124, 140, 0.15);
+
+    .kpi-glass-card-border {
+      background: linear-gradient(90deg, #127c8c, #0ea5e9);
+    }
+  }
+
+  .kpi-glass-card-title {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .kpi-glass-card-value {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #1e293b;
+    line-height: 1;
+  }
 }

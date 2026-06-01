@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef, HostListener, ElementRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
@@ -33,11 +33,14 @@ type SidePanel = 'notes' | 'timeline';
 })
 export class VendorActivityLogComponent {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly elementRef = inject(ElementRef);
+  openDropdown: 'type' | 'severity' | null = null;
   currentLang = 'ar';
   filterDateFrom = '';
   filterDateTo = '';
   filterSeverity: 'all' | VendorActivitySeverity = 'all';
   filterType = 'all';
+  severityOptions: VendorActivitySeverity[] = ['info', 'success', 'warning', 'danger'];
   isActivityLoading = false;
   isRTL = true;
   noteDraft = '';
@@ -197,6 +200,7 @@ export class VendorActivityLogComponent {
     this.filterDateTo = '';
     this.filterSeverity = 'all';
     this.filterType = 'all';
+    this.openDropdown = null;
     this.page = 1;
     this.loadActivityLog();
   }
@@ -254,9 +258,9 @@ export class VendorActivityLogComponent {
       this.resolveTypeLabel(entry.type),
       this.resolveSeverityLabel(entry.severity),
       entry.actorName,
-      entry.roleLabel,
+      this.localizeRoleLabel(entry.roleLabel),
       this.formatDateTime(entry.createdAtUtc),
-      entry.message.replace(/,/g, ' ')
+      this.localizeMessage(entry.message).replace(/,/g, ' ')
     ].join(','));
 
     const headers = [
@@ -371,13 +375,21 @@ export class VendorActivityLogComponent {
         return this.isRTL ? 'تحديث الإشعارات' : 'Notification settings updated';
       case 'password-reset':
         return this.isRTL ? 'إعادة تعيين كلمة المرور' : 'Password reset';
+      case 'document-approved':
+        return this.isRTL ? 'مستند معتمد' : 'Document approved';
+      case 'document-rejected':
+        return this.isRTL ? 'مستند مرفوض' : 'Document rejected';
+      case 'profile-field-approved':
+        return this.isRTL ? 'اعتماد حقل بالملف' : 'Profile field approved';
+      case 'profile-field-rejected':
+        return this.isRTL ? 'رفض حقل بالملف' : 'Profile field rejected';
       default:
         return normalized || (this.isRTL ? 'حدث' : 'Event');
     }
   }
 
   formatDateTime(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -387,7 +399,7 @@ export class VendorActivityLogComponent {
   }
 
   formatDate(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
@@ -395,11 +407,9 @@ export class VendorActivityLogComponent {
   }
 
   localizeRoleLabel(roleLabel: string): string {
-    if (!this.isRTL) {
-      return roleLabel;
-    }
+    if (!roleLabel) return '';
 
-    const map: Record<string, string> = {
+    const enToAr: Record<string, string> = {
       'Compliance Review': 'مراجعة الامتثال',
       'Document Review': 'مراجعة المستندات',
       'Risk & Compliance': 'المخاطر والامتثال',
@@ -416,65 +426,274 @@ export class VendorActivityLogComponent {
       'Operations Reviewer': 'مراجع العمليات'
     };
 
-    return map[roleLabel] || roleLabel;
+    const arToEn: Record<string, string> = {
+      'مراجعة الامتثال': 'Compliance Review',
+      'مراجعة المستندات': 'Document Review',
+      'المخاطر والامتثال': 'Risk & Compliance',
+      'مراجعة أمنية': 'Security Review',
+      'التحكم الأمني': 'Security Control',
+      'إجراء إداري': 'Admin Action',
+      'المسؤول': 'Admin',
+      'بوابة التاجر': 'Vendor Portal',
+      'مراجعة التاجر': 'Vendor Review',
+      'لوحة التشغيل': 'Operations Console',
+      'مكتب امتثال التاجر': 'Vendor Compliance Desk',
+      'مكتب المخاطر والامتثال': 'Risk & Compliance Desk',
+      'مكتب الأمان': 'Security Desk',
+      'مراجع العمليات': 'Operations Reviewer',
+      'مراجعة بيانات التاجر': 'Vendor Profile Review'
+    };
+
+    if (this.isRTL) {
+      return enToAr[roleLabel] || roleLabel;
+    } else {
+      return arToEn[roleLabel] || roleLabel;
+    }
+  }
+
+  getProfileItemLabelByCode(code: string): string {
+    const labels: Record<string, { ar: string; en: string }> = {
+      'step1.businessNameAr': { ar: 'اسم المتجر بالعربية', en: 'Store name (AR)' },
+      'step1.businessNameEn': { ar: 'اسم المتجر بالإنجليزية', en: 'Store name (EN)' },
+      'step1.businessType': { ar: 'نوع النشاط', en: 'Business type' },
+      'step1.contactPhone': { ar: 'هاتف المتجر', en: 'Store phone' },
+      'step1.description': { ar: 'وصف المتجر', en: 'Store description' },
+      'step1.ownerName': { ar: 'اسم المالك', en: 'Owner name' },
+      'step1.ownerEmail': { ar: 'بريد المالك', en: 'Owner email' },
+      'step1.ownerPhone': { ar: 'جوال المالك', en: 'Owner phone' },
+      'step2.region': { ar: 'المنطقة', en: 'Region' },
+      'step2.city': { ar: 'المدينة', en: 'City' },
+      'step2.nationalAddress': { ar: 'العنوان الوطني', en: 'National address' },
+      'step2.branchLatitude': { ar: 'خط العرض', en: 'Latitude' },
+      'step2.branchLongitude': { ar: 'خط الطول', en: 'Longitude' },
+      'step3.idNumber': { ar: 'رقم الهوية', en: 'ID number' },
+      'step3.nationality': { ar: 'الجنسية', en: 'Nationality' },
+      'step3.commercialRegistrationNumber': { ar: 'رقم السجل', en: 'CR number' },
+      'step3.expiryDate': { ar: 'تاريخ الانتهاء', en: 'Expiry date' },
+      'step3.taxId': { ar: 'الرقم الضريبي', en: 'Tax ID' },
+      'step3.licenseNumber': { ar: 'رقم الرخصة', en: 'License number' },
+      'step4.bankName': { ar: 'اسم البنك', en: 'Bank name' },
+      'step4.paymentCycle': { ar: 'دورة التسوية', en: 'Payment cycle' },
+      'step4.iban': { ar: 'الآيبان', en: 'IBAN' },
+      'step4.swiftCode': { ar: 'سويفت', en: 'SWIFT code' },
+      'step5.logo': { ar: 'شعار المتجر', en: 'Store logo' }
+    };
+
+    const label = labels[code];
+    if (!label) return code;
+    return this.isRTL ? label.ar : label.en;
   }
 
   localizeMessage(message: string): string {
-    if (!this.isRTL) {
+    if (!message) return '';
+
+    // Bilingual document type mapping
+    const docTypeEnToAr: Record<string, string> = {
+      'Commercial': 'السجل التجاري',
+      'Tax': 'الضريبة',
+      'License': 'الرخصة',
+      'Identity': 'الهوية',
+      'Bank': 'البنك'
+    };
+
+    const docTypeArToEn: Record<string, string> = {
+      'السجل التجاري': 'Commercial',
+      'الضريبة': 'Tax',
+      'الرخصة': 'License',
+      'الهوية': 'Identity',
+      'البنك': 'Bank'
+    };
+
+    const translateDocTypesList = (text: string, toAr: boolean): string => {
+      let result = text;
+      const map = toAr ? docTypeEnToAr : docTypeArToEn;
+      for (const [key, val] of Object.entries(map)) {
+        result = result.replace(new RegExp(key, 'g'), val);
+      }
+      // Clean up delimiters
+      if (!toAr) {
+        result = result.replace(/،/g, ',');
+      } else {
+        result = result.replace(/,/g, '،');
+      }
+      return result;
+    };
+
+    if (this.isRTL) {
+      // ENGLISH to ARABIC translations
+      const englishToArabicMap: Record<string, string> = {
+        'Vendor review started.': 'بدأت مراجعة التاجر.',
+        'Vendor account reactivated and returned to active status.': 'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.',
+        'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
+        'Vendor password was reset by an administrator and all active sessions were revoked.': 'تمت إعادة تعيين كلمة مرور التاجر بواسطة المسؤول وتم إلغاء جميع الجلسات النشطة.',
+        'Please re-upload the required legal documents and confirm the latest vendor information.': 'يرجى إعادة رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
+        'Vendor updated banking and payout setup from Vendor Portal.': 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.',
+        'Vendor updated store profile details from Vendor Portal.': 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.',
+        'Vendor updated address and contact location details from Vendor Portal.': 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.',
+        'Vendor updated operating hours from Vendor Portal.': 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.',
+        'Vendor updated owner information from Vendor Portal.': 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.',
+        'Vendor updated notification preferences from Vendor Portal.': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
+        'Vendor updated operational settings from Vendor Portal.': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
+        'Vendor updated legal and compliance information from Vendor Portal.': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
+        'Vendor submitted the profile and required documents for compliance review.': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
+      };
+
+      if (englishToArabicMap[message]) {
+        return englishToArabicMap[message];
+      }
+
+      // Dynamic English templates -> Arabic
+      let match = message.match(/^Vendor approved with commission rate ([\d.]+)%\.$/);
+      if (match) return `تمت الموافقة على التاجر بنسبة عمولة ${match[1]}%.`;
+
+      match = message.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
+      if (match) return `تم قبول مستند ${docTypeEnToAr[match[1]] || match[1]}.`;
+
+      match = message.match(/^(Commercial|Tax|License|Identity|Bank) document rejected\. (.+)$/);
+      if (match) return `تم رفض مستند ${docTypeEnToAr[match[1]] || match[1]}. ${match[2]}`;
+
+      match = message.match(/^Vendor re-uploaded document\(s\): (.+)\. They are back in the review queue\.$/);
+      if (match) {
+        return `قام التاجر بإعادة رفع مستند(ات): ${translateDocTypesList(match[1], true)}. تم إرجاعها لقائمة المراجعة.`;
+      }
+
+      match = message.match(/^Operations settings updated\. Accept orders: (enabled|disabled), minimum order: (.+), preparation time: (.+) minutes\.$/);
+      if (match) {
+        return `تم تحديث إعدادات التشغيل. قبول الطلبات: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الحد الأدنى للطلب: ${match[2] === 'not set' ? 'غير محدد' : match[2]}، وقت التحضير: ${match[3] === 'not set' ? 'غير حدد' : match[3]} دقيقة.`;
+      }
+
+      match = message.match(/^Notification settings updated\. Email: (enabled|disabled), SMS: (enabled|disabled), new orders: (enabled|disabled), sound: (.+)\.$/);
+      if (match) {
+        return `تم تحديث إعدادات الإشعارات. البريد: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الرسائل: ${match[2] === 'enabled' ? 'مفعّل' : 'معطّل'}، طلبات جديدة: ${match[3] === 'enabled' ? 'مفعّل' : 'معطّل'}، الصوت: ${match[4]}.`;
+      }
+
+      // Dynamic field logs -> Arabic
+      match = message.match(/^تم (قبول|رفض) العنصر (.+)\. (.+)$/);
+      if (match) {
+        const decision = match[1];
+        const fieldLabel = this.getProfileItemLabelByCode(match[2]);
+        return `تم ${decision} العنصر ${fieldLabel}. ${match[3]}`;
+      }
+
+      match = message.match(/^تم (قبول|رفض) العنصر (.+)\.$/);
+      if (match) {
+        const decision = match[1];
+        const fieldLabel = this.getProfileItemLabelByCode(match[2]);
+        return `تم ${decision} العنصر ${fieldLabel}.`;
+      }
+
+      return message;
+    } else {
+      // ARABIC to ENGLISH translations
+      const arabicToEnglishMap: Record<string, string> = {
+        'بدأت مراجعة التاجر.': 'Vendor review started.',
+        'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.': 'Vendor account reactivated and returned to active status.',
+        'تم فتح دخول التاجر واستعادة الوصول للحساب.': 'Vendor login was unlocked and account access was restored.',
+        'تمت إعادة تعيين كلمة مرور التاجر بواسطة المسؤول وتم إلغاء جميع الجلسات النشطة.': 'Vendor password was reset by an administrator and all active sessions were revoked.',
+        'يرجى إعادة رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.': 'Please re-upload the required legal documents and confirm the latest vendor information.',
+        'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.': 'Vendor updated banking and payout setup from Vendor Portal.',
+        'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.': 'Vendor updated store profile details from Vendor Portal.',
+        'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.': 'Vendor updated address and contact location details from Vendor Portal.',
+        'قام التاجر بتحديث ساعات العمل من بوابة التاجر.': 'Vendor updated operating hours from Vendor Portal.',
+        'قام التاجر بتحديث بيانات المالك من بوابة التاجر.': 'Vendor updated owner information from Vendor Portal.',
+        'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.': 'Vendor updated notification preferences from Vendor Portal.',
+        'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.': 'Vendor updated operational settings from Vendor Portal.',
+        'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.': 'Vendor updated legal and compliance information from Vendor Portal.',
+        'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.': 'Vendor submitted the profile and required documents for compliance review.'
+      };
+
+      if (arabicToEnglishMap[message]) {
+        return arabicToEnglishMap[message];
+      }
+
+      // Dynamic Arabic templates -> English
+      let match = message.match(/^تمت الموافقة على التاجر بنسبة عمولة ([\d.]+)%\.$/);
+      if (match) return `Vendor approved with commission rate ${match[1]}%.`;
+
+      match = message.match(/^تم قبول مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\.$/);
+      if (match) return `${docTypeArToEn[match[1]] || match[1]} document approved.`;
+
+      match = message.match(/^تم رفض مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\. (.+)$/);
+      if (match) return `${docTypeArToEn[match[1]] || match[1]} document rejected. ${match[2]}`;
+
+      match = message.match(/^قام التاجر بإعادة رفع مستند\(ات\): (.+)\. تم إرجاعها لقائمة المراجعة\.$/);
+      if (match) {
+        return `Vendor re-uploaded document(s): ${translateDocTypesList(match[1], false)}. They are back in the review queue.`;
+      }
+
+      match = message.match(/^تم تحديث إعدادات التشغيل\. قبول الطلبات: (مفعّل|معطّل)، (الحد الأدنى للطلب|الحد الأدنى): (.+)، وقت التجهيز: (.+) دقيقة\.$/);
+      if (match) {
+        const acceptOrders = match[1] === 'مفعّل' ? 'enabled' : 'disabled';
+        const minOrder = match[3] === 'غير محدد' ? 'not set' : match[3];
+        const prepTime = match[4] === 'غير محدد' ? 'not set' : match[4];
+        return `Operations settings updated. Accept orders: ${acceptOrders}, minimum order: ${minOrder}, preparation time: ${prepTime} minutes.`;
+      }
+
+      match = message.match(/^تم تحديث إعدادات الإشعارات\. البريد: (مفعّل|معطّل)، الرسائل: (مفعّل|معطّل)، طلبات جديدة: (مفعّل|معطّل)، الصوت: (.+)\.$/);
+      if (match) {
+        const email = match[1] === 'مفعّل' ? 'enabled' : 'disabled';
+        const sms = match[2] === 'مفعّل' ? 'enabled' : 'disabled';
+        const newOrders = match[3] === 'مفعّل' ? 'enabled' : 'disabled';
+        return `Notification settings updated. Email: ${email}, SMS: ${sms}, new orders: ${newOrders}, sound: ${match[4]}.`;
+      }
+
+      match = message.match(/^تم (قبول|رفض) العنصر (.+)\. (.+)$/);
+      if (match) {
+        const decision = match[1] === 'قبول' ? 'approved' : 'rejected';
+        const fieldLabel = this.getProfileItemLabelByCode(match[2]);
+        return `Profile item ${fieldLabel} was ${decision}. Reason: ${match[3]}`;
+      }
+
+      match = message.match(/^تم (قبول|رفض) العنصر (.+)\.$/);
+      if (match) {
+        const decision = match[1] === 'قبول' ? 'approved' : 'rejected';
+        const fieldLabel = this.getProfileItemLabelByCode(match[2]);
+        return `Profile item ${fieldLabel} was ${decision}.`;
+      }
+
       return message;
     }
-
-    const staticMap: Record<string, string> = {
-      'Vendor review started.': 'بدأت مراجعة التاجر.',
-      'Vendor account reactivated and returned to active status.': 'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.',
-      'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
-      'Vendor password was reset by an administrator and all active sessions were revoked.': 'تمت إعادة تعيين كلمة مرور التاجر بواسطة المسؤول وتم إلغاء جميع الجلسات النشطة.',
-      'Please re-upload the required legal documents and confirm the latest vendor information.': 'يرجى إعادة رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
-      'Vendor updated banking and payout setup from Vendor Portal.': 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.',
-      'Vendor updated store profile details from Vendor Portal.': 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.',
-      'Vendor updated address and contact location details from Vendor Portal.': 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.',
-      'Vendor updated operating hours from Vendor Portal.': 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.',
-      'Vendor updated owner information from Vendor Portal.': 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.',
-      'Vendor updated notification preferences from Vendor Portal.': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
-      'Vendor updated operational settings from Vendor Portal.': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
-      'Vendor updated legal and compliance information from Vendor Portal.': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
-      'Vendor submitted the profile and required documents for compliance review.': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
-    };
-
-    if (staticMap[message]) {
-      return staticMap[message];
-    }
-
-    const docTypeAr = (type: string): string => {
-      const map: Record<string, string> = { 'Commercial': 'السجل التجاري', 'Tax': 'الضريبة', 'License': 'الرخصة', 'Identity': 'الهوية', 'Bank': 'البنك' };
-      return map[type] || type;
-    };
-
-    let match = message.match(/^Vendor approved with commission rate ([\d.]+)%\.$/);
-    if (match) return `تمت الموافقة على التاجر بنسبة عمولة ${match[1]}%.`;
-
-    match = message.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
-    if (match) return `تم قبول مستند ${docTypeAr(match[1])}.`;
-
-    match = message.match(/^(Commercial|Tax|License|Identity|Bank) document rejected\. (.+)$/);
-    if (match) return `تم رفض مستند ${docTypeAr(match[1])}. ${match[2]}`;
-
-    match = message.match(/^Vendor re-uploaded document\(s\): (.+)\. They are back in the review queue\.$/);
-    if (match) return `قام التاجر بإعادة رفع مستند(ات): ${match[1]}. تم إرجاعها لقائمة المراجعة.`;
-
-    match = message.match(/^Operations settings updated\. Accept orders: (enabled|disabled), minimum order: (.+), preparation time: (.+) minutes\.$/);
-    if (match) return `تم تحديث إعدادات التشغيل. قبول الطلبات: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الحد الأدنى: ${match[2] === 'not set' ? 'غير محدد' : match[2]}، وقت التحضير: ${match[3] === 'not set' ? 'غير محدد' : match[3]} دقيقة.`;
-
-    match = message.match(/^Notification settings updated\. Email: (enabled|disabled), SMS: (enabled|disabled), new orders: (enabled|disabled), sound: (.+)\.$/);
-    if (match) return `تم تحديث إعدادات الإشعارات. البريد: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الرسائل: ${match[2] === 'enabled' ? 'مفعّل' : 'معطّل'}، طلبات جديدة: ${match[3] === 'enabled' ? 'مفعّل' : 'معطّل'}، الصوت: ${match[4]}.`;
-
-    return message;
   }
 
   detectTextDirection(text: string): string {
     if (!text) return this.isRTL ? 'rtl' : 'ltr';
     const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
     return arabicRegex.test(text.charAt(0)) ? 'rtl' : 'ltr';
+  }
+
+  toggleDropdown(dropdown: 'type' | 'severity'): void {
+    this.openDropdown = this.openDropdown === dropdown ? null : dropdown;
+  }
+
+  isDropdownOpen(dropdown: 'type' | 'severity'): boolean {
+    return this.openDropdown === dropdown;
+  }
+
+  selectType(type: string): void {
+    this.filterType = type;
+    this.openDropdown = null;
+  }
+
+  selectSeverity(severity: 'all' | VendorActivitySeverity): void {
+    this.filterSeverity = severity;
+    this.openDropdown = null;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target;
+    if (!(target instanceof Node)) {
+      return;
+    }
+
+    if (!this.elementRef.nativeElement.contains(target)) {
+      this.openDropdown = null;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.openDropdown = null;
   }
 
   private loadActivityLog(): void {

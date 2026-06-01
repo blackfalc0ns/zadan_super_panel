@@ -98,9 +98,24 @@ export class VendorOverviewComponent {
   documents: DocumentCard[] = [];
   recentOrders: OrderRow[] = [];
   alerts: AlertCard[] = [];
+  copiedFields = new Map<string, boolean>();
 
   private ordersData: AdminVendorOrderItem[] = [];
   private readonly destroyRef = inject(DestroyRef);
+
+  copyToClipboard(fieldId: string, text: string): void {
+    if (!text || text === '-') {
+      return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      this.copiedFields.set(fieldId, true);
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copiedFields.set(fieldId, false);
+        this.cdr.markForCheck();
+      }, 2000);
+    }).catch(() => undefined);
+  }
 
   constructor(
     private readonly translate: TranslateService,
@@ -223,12 +238,24 @@ export class VendorOverviewComponent {
       && !this.vendorDetail.archivedAtUtc;
   }
 
+  get isCrExpired(): boolean {
+    if (!this.vendorDetail?.commercialRegistrationExpiryDate) {
+      return false;
+    }
+    const expiry = new Date(this.vendorDetail.commercialRegistrationExpiryDate);
+    expiry.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return expiry.getTime() < today.getTime();
+  }
+
   get canReactivateVendor(): boolean {
     if (!this.vendorDetail) {
       return false;
     }
 
     return this.vendorDetail.status === 'Suspended'
+      && !this.isCrExpired
       && !this.vendorDetail.isLoginLocked
       && !this.vendorDetail.archivedAtUtc;
   }
@@ -702,7 +729,7 @@ export class VendorOverviewComponent {
     }
 
     this.vendorName = this.getDisplayStoreName(vendor);
-    this.vendorLocation = [vendor.city, vendor.region].filter(Boolean).join(this.isRTL ? '، ' : ', ');
+    this.vendorLocation = [this.getLocalizedCity(vendor.city), this.getLocalizedRegion(vendor.region)].filter(Boolean).join(this.isRTL ? '، ' : ', ');
 
     this.heroFacts = [
       {
@@ -932,6 +959,26 @@ export class VendorOverviewComponent {
     return this.currentLang === 'ar' ? ar : en;
   }
 
+  private getLocalizedCity(city?: string | null): string {
+    if (!city) {
+      return '';
+    }
+    const clean = city.trim();
+    const key = `COMMON.CITIES.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
+  }
+
+  private getLocalizedRegion(region?: string | null): string {
+    if (!region) {
+      return '';
+    }
+    const clean = region.trim();
+    const key = `COMMON.REGIONS.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
+  }
+
   private getDisplayStoreName(vendor: VendorDetail): string {
     const preferred = this.currentLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn;
     const alternate = this.currentLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr;
@@ -1072,7 +1119,7 @@ export class VendorOverviewComponent {
       return '-';
     }
 
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
@@ -1080,7 +1127,7 @@ export class VendorOverviewComponent {
   }
 
   private formatCurrency(value: number): string {
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA-u-nu-latn' : 'en-US', {
       style: 'currency',
       currency: 'SAR',
       maximumFractionDigits: 0
@@ -1088,7 +1135,7 @@ export class VendorOverviewComponent {
   }
 
   private formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA-u-nu-latn' : 'en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(value);

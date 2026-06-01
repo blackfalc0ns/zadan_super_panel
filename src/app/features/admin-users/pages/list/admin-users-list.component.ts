@@ -19,6 +19,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { DataTableComponent, TableColumn, TableAction } from '../../../../shared/components/ui/data-table/data-table.component';
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
+import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,7 +34,9 @@ import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi
     AppPaginationComponent,
     DataTableComponent,
     KpiCardsComponent,
-    StatusPillComponent
+    StatusPillComponent,
+    AdvancedFilterPanelComponent,
+    SearchableSelectComponent
   ],
   templateUrl: './admin-users-list.component.html',
   styles: [`
@@ -81,6 +85,12 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   createUserError = '';
   searchTerm = '';
   isFiltersExpanded = false;
+  filters: Record<string, any> = {
+    status: '',
+    roleDefinitionId: '',
+    panelScope: ''
+  };
+  filterFields: FilterField[] = [];
   createUserForm = {
     fullName: '',
     email: '',
@@ -101,6 +111,20 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   get isRTL(): boolean {
     return this.translate.currentLang === 'ar';
+  }
+
+  get mappedRolesOptions(): SearchableSelectOption[] {
+    return this.roles.map(r => ({
+      value: r.id,
+      label: this.getRoleOptionLabel(r)
+    }));
+  }
+
+  get mappedScopeEntityOptions(): SearchableSelectOption[] {
+    return this.getCreateScopeOptions().map(opt => ({
+      value: opt.value,
+      label: opt.label
+    }));
   }
 
   kpiCards: KPICard[] = [];
@@ -126,9 +150,24 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     private router: Router,
     private vendorService: VendorService,
     private driverService: DriverService
-  ) {}
+  ) {
+    this.subscriptions.add(
+      this.translate.onLangChange.subscribe(() => {
+        this.cdr.markForCheck();
+        this.initializeFilterFields();
+        const roleField = this.filterFields.find(f => f.key === 'roleDefinitionId');
+        if (roleField && this.roles.length > 0) {
+          roleField.options = this.roles.map(r => ({
+            value: r.id,
+            label: this.getRoleOptionLabel(r)
+          }));
+        }
+      })
+    );
+  }
 
   ngOnInit() {
+    this.initializeFilterFields();
     this.updateKPICards();
     this.loadUsers();
     this.loadRolesSummary();
@@ -136,6 +175,44 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+  }
+
+  initializeFilterFields() {
+    this.filterFields = [
+      {
+        key: 'status',
+        label: 'ADMIN_USERS.FILTERS.STATUS',
+        type: 'select',
+        color: '#10b981',
+        placeholder: 'ADMIN_USERS.FILTERS.ALL',
+        options: [
+          { value: 'active', label: this.translate.instant('ADMIN_USERS.STATUS.ACTIVE') },
+          { value: 'suspended', label: this.translate.instant('ADMIN_USERS.STATUS.SUSPENDED') },
+          { value: 'inactive', label: this.translate.instant('ADMIN_USERS.STATUS.INACTIVE') }
+        ]
+      },
+      {
+        key: 'roleDefinitionId',
+        label: 'ADMIN_USERS.FILTERS.ROLE',
+        type: 'select',
+        color: '#0ea5e9',
+        placeholder: 'ADMIN_USERS.FILTERS.ALL',
+        options: []
+      },
+      {
+        key: 'panelScope',
+        label: 'ADMIN_USERS.FILTERS.PANEL',
+        type: 'select',
+        color: '#8b5cf6',
+        placeholder: 'ADMIN_USERS.FILTERS.ALL',
+        options: [
+          { value: '0', label: this.translate.instant('ADMIN_USERS.PANELS.SUPER_ADMIN_PANEL') },
+          { value: '1', label: this.translate.instant('ADMIN_USERS.PANELS.VENDOR_PANEL') },
+          { value: '2', label: this.translate.instant('ADMIN_USERS.PANELS.DRIVER_APP') },
+          { value: '3', label: this.translate.instant('ADMIN_USERS.PANELS.CUSTOMER_APP') }
+        ]
+      }
+    ];
   }
 
   get totalRoles(): number {
@@ -188,7 +265,10 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     const usersSub = this.adminAccessApi.getUsersPage({
       pageNumber: this.pageNumber,
       pageSize: this.pageSize,
-      search: this.searchTerm.trim() || undefined
+      search: this.searchTerm.trim() || undefined,
+      status: this.filters['status'] || undefined,
+      roleDefinitionId: this.filters['roleDefinitionId'] || undefined,
+      panelScope: this.filters['panelScope'] !== undefined && this.filters['panelScope'] !== '' ? Number(this.filters['panelScope']) : undefined
     }).subscribe({
       next: (page) => {
         this.cdr.markForCheck();
@@ -212,6 +292,13 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       next: (roles) => {
         this.cdr.markForCheck();
         this.roles = roles;
+        const roleField = this.filterFields.find(f => f.key === 'roleDefinitionId');
+        if (roleField) {
+          roleField.options = roles.map(r => ({
+            value: r.id,
+            label: this.getRoleOptionLabel(r)
+          }));
+        }
         if (!this.createUserForm.roleDefinitionId && roles.length > 0) {
           this.createUserForm.roleDefinitionId = roles[0].id;
         }
@@ -239,6 +326,22 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   toggleFilters() {
     this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
+
+  onFilterChange() {
+    this.pageNumber = 1;
+    this.loadUsers();
+  }
+
+  resetFilters() {
+    this.filters = {
+      status: '',
+      roleDefinitionId: '',
+      panelScope: ''
+    };
+    this.searchTerm = '';
+    this.pageNumber = 1;
+    this.loadUsers();
   }
 
   onKPICardClick(card: KPICard) {

@@ -61,6 +61,30 @@ export class CustomerDetailComponent implements OnInit {
   currentTab: CustomerDetailTabId = 'overview';
   quickNote = '';
   isSendingTestNotification = false;
+  copiedFields = new Map<string, boolean>();
+
+  copyToClipboard(fieldId: string, text: string): void {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      this.copiedFields.set(fieldId, true);
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copiedFields.set(fieldId, false);
+        this.cdr.markForCheck();
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy to clipboard', err);
+    });
+  }
+
+  getCustomerInitials(name?: string): string {
+    if (!name) return '';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 0) return '';
+    const first = parts[0][0] || '';
+    const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+    return `${first} ${last}`.trim().toUpperCase();
+  }
 
   readonly recentOrdersColumns: TableColumn[] = [
     { key: 'id', title: 'CUSTOMERS.DETAIL.ORDERS_TABLE.ORDER_ID', width: '26%', align: 'left', type: 'custom' },
@@ -393,7 +417,13 @@ export class CustomerDetailComponent implements OnInit {
           ? this.customersService.escalateReview(this.customer.id)
           : this.customersService.clearReview(this.customer.id);
 
-    this.customer = nextCustomer ?? this.customer;
+    if (nextCustomer) {
+      this.customer = nextCustomer;
+      this.toastService.success(
+        this.translate.currentLang === 'ar' ? 'تم تحديث حالة المراجعة بنجاح' : 'Review status updated successfully',
+        this.translate.currentLang === 'ar' ? 'إجراءات الإدارة' : 'Admin Actions'
+      );
+    }
   }
 
   handleAccountAction(): void {
@@ -406,7 +436,13 @@ export class CustomerDetailComponent implements OnInit {
         ? this.customersService.reactivateAccount(this.customer.id)
         : this.customersService.suspendAccount(this.customer.id);
 
-    this.customer = nextCustomer ?? this.customer;
+    if (nextCustomer) {
+      this.customer = nextCustomer;
+      this.toastService.success(
+        this.translate.currentLang === 'ar' ? 'تم تحديث حالة الحساب بنجاح' : 'Account status updated successfully',
+        this.translate.currentLang === 'ar' ? 'إجراءات الإدارة' : 'Admin Actions'
+      );
+    }
   }
 
   handleWorkflowAction(actionId: CustomerWorkflowActionId): void {
@@ -445,7 +481,14 @@ export class CustomerDetailComponent implements OnInit {
       return;
     }
 
-    this.customer = this.customersService.addInternalNote(this.customer.id, note) ?? this.customer;
+    const nextCustomer = this.customersService.addInternalNote(this.customer.id, note);
+    if (nextCustomer) {
+      this.customer = nextCustomer;
+      this.toastService.success(
+        this.translate.currentLang === 'ar' ? 'تم حفظ الملاحظة الداخلية بنجاح' : 'Internal note saved successfully',
+        this.translate.currentLang === 'ar' ? 'إجراءات الإدارة' : 'Admin Actions'
+      );
+    }
     this.quickNote = '';
   }
 

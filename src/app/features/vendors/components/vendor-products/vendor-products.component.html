@@ -147,7 +147,7 @@
               <div class="flex items-center gap-4">
                 <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-slate-200 bg-slate-50 transition-transform group-hover:scale-105">
                   <ng-container *ngIf="product.imageUrl; else fallbackImage">
-                    <img [src]="product.imageUrl" [alt]="product.nameAr" class="h-full w-full object-cover" />
+                    <img [src]="product.imageUrl" [alt]="currentLang === 'ar' ? product.nameAr : (product.nameEn || product.nameAr)" class="h-full w-full object-cover" />
                   </ng-container>
                   <ng-template #fallbackImage>
                     <span class="material-symbols-outlined text-[20px] text-slate-400">image</span>
@@ -155,7 +155,7 @@
                 </div>
 
                 <div class="min-w-0">
-                  <p class="truncate text-[13px] font-black text-slate-900 group-hover:text-primary transition-colors">{{ product.nameAr }}</p>
+                  <p class="truncate text-[13px] font-black text-slate-900 group-hover:text-primary transition-colors">{{ currentLang === 'ar' ? product.nameAr : (product.nameEn || product.nameAr) }}</p>
                   <p class="mt-0.5 truncate text-[11px] font-bold text-slate-500">{{ product.variant }}</p>
                 </div>
               </div>

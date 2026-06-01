@@ -40,7 +40,8 @@
 
       <button
         type="button"
-        class="px-4 py-3 bg-white/70 backdrop-blur-md text-slate-500 border border-slate-200/60 rounded-2xl text-[13px] font-black flex items-center gap-2 hover:bg-white transition-all hover:text-zadna-primary shadow-sm"
+        [disabled]="isSaving"
+        class="px-4 py-3 bg-white/70 backdrop-blur-md text-slate-500 border border-slate-200/60 rounded-2xl text-[13px] font-black flex items-center gap-2 hover:bg-white transition-all hover:text-zadna-primary shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         (click)="resendInvite()">
         <span class="material-symbols-outlined text-[20px]">forward_to_inbox</span>
         {{ 'ADMIN_USERS.ACTIONS.RESEND_INVITE' | translate }}
@@ -48,7 +49,8 @@
 
       <button
         type="button"
-        class="px-4 py-3 rounded-2xl text-[13px] font-black flex items-center gap-2 transition-all shadow-sm backdrop-blur-md"
+        [disabled]="isSaving"
+        class="px-4 py-3 rounded-2xl text-[13px] font-black flex items-center gap-2 transition-all shadow-sm backdrop-blur-md disabled:opacity-50 disabled:cursor-not-allowed"
         [ngClass]="user.status === 'suspended'
           ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
           : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'"
@@ -61,9 +63,14 @@
 
       <button
         type="button"
-        class="px-6 py-3 bg-gradient-to-br from-zadna-primary to-teal-700 text-white rounded-2xl text-[14px] font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:shadow-zadna-primary/30 hover:-translate-y-0.5 transition-all"
+        [disabled]="isSaving"
+        class="px-6 py-3 bg-gradient-to-br from-zadna-primary to-teal-700 text-white rounded-2xl text-[14px] font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:shadow-zadna-primary/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         (click)="saveUser()">
-        <span class="material-symbols-outlined text-[20px]">save</span>
+        <span *ngIf="!isSaving" class="material-symbols-outlined text-[20px]">save</span>
+        <svg *ngIf="isSaving" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
         {{ 'ADMIN_USERS.ACTIONS.SAVE' | translate }}
       </button>
     </div>
@@ -149,7 +156,7 @@
         </p>
 
         <!-- Profile -->
-        <div *ngIf="activeTab === 'general'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] relative overflow-hidden group animate-in fade-in duration-500">
+        <div *ngIf="activeTab === 'general'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] relative group animate-in fade-in duration-500">
           <div class="absolute -right-16 -top-16 w-48 h-48 bg-slate-100/50 rounded-full blur-3xl pointer-events-none group-hover:bg-zadna-primary/5 transition-colors duration-700"></div>
           
           <div class="flex items-center justify-between gap-4 mb-8 relative z-10">
@@ -282,7 +289,7 @@
         </div>
 
         <!-- Access Control -->
-        <div *ngIf="activeTab === 'access' && accessSubTab === 'role'" class="rounded-[2rem] border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 lg:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.03)] animate-in fade-in duration-500 relative overflow-hidden group">
+        <div *ngIf="activeTab === 'access' && accessSubTab === 'role'" class="rounded-[2rem] border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 lg:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.03)] animate-in fade-in duration-500 relative group">
           <div class="absolute -right-16 -top-16 w-48 h-48 bg-slate-100/30 rounded-full blur-3xl pointer-events-none group-hover:bg-zadna-primary/5 transition-colors duration-700"></div>
           
           <div class="flex flex-wrap items-center justify-between gap-4 mb-8 relative z-10">
@@ -297,7 +304,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-10">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 relative z-20">
             <!-- Role Preset Selector Card -->
             <div class="p-4 bg-white/40 border border-slate-200/60 rounded-2xl flex items-start gap-3.5 transition-all hover:bg-white hover:shadow-md">
               <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-500 shrink-0 border border-slate-200/20">
@@ -355,12 +362,15 @@
           <div class="mt-6 rounded-[2rem] border border-slate-200/60 bg-slate-50/60 p-6 relative z-10 overflow-hidden shadow-inner">
             <div class="flex flex-col gap-4">
               <div class="flex items-center gap-3">
-                <span class="text-[11px] font-black tracking-widest uppercase text-slate-400 block">Active Access Posture</span>
+                <span class="text-[11px] font-black tracking-widest uppercase text-slate-400 block">{{ 'ADMIN_USERS.DETAIL.ACTIVE_ACCESS_POSTURE' | translate }}</span>
                 <div class="h-[1px] bg-slate-200/80 flex-1"></div>
               </div>
               
               <div class="flex flex-wrap items-center gap-2.5">
-                <app-status-pill [label]="currentUser.roleName || selectedPreset.nameKey" variant="primary" [shouldTranslate]="!currentUser.roleName" size="sm"></app-status-pill>
+                <div class="rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-[11px] font-black text-indigo-700 flex items-center gap-1 shadow-sm">
+                  <span class="material-symbols-outlined text-[13px] text-indigo-600 font-bold">shield</span>
+                  {{ currentUser.roleDefinitionId ? currentUser.roleName : (selectedPreset.nameKey | translate) }}
+                </div>
                 
                 <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-black text-emerald-700 flex items-center gap-1 shadow-sm">
                   <span class="material-symbols-outlined text-[13px] text-emerald-600 font-bold">add_circle</span>
@@ -368,7 +378,7 @@
                 </div>
                 
                 <div class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-black text-amber-700 flex items-center gap-1 shadow-sm">
-                  <span class="material-symbols-outlined text-[13px] text-amber-600 font-bold">do_not_distribute</span>
+                  <span class="material-symbols-outlined text-[13px] text-amber-600 font-bold">remove_circle</span>
                   {{ revokedOverrideCount }} {{ 'ADMIN_USERS.DETAIL.REVOKED_OVERRIDES' | translate }}
                 </div>
                 
@@ -379,11 +389,11 @@
                 
                 <div *ngIf="currentUser.mustChangePassword" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-[11px] font-black text-rose-700 flex items-center gap-1 shadow-sm">
                   <span class="material-symbols-outlined text-[13px] text-rose-600 font-bold">lock_open</span>
-                  Temporary password
+                  {{ 'ADMIN_USERS.DETAIL.TEMPORARY_PASSWORD' | translate }}
                 </div>
                 <div *ngIf="!currentUser.mustChangePassword" class="rounded-xl border border-teal-200 bg-teal-50 px-3 py-1.5 text-[11px] font-black text-teal-700 flex items-center gap-1 shadow-sm">
                   <span class="material-symbols-outlined text-[13px] text-teal-600 font-bold">verified</span>
-                  Verified password
+                  {{ 'ADMIN_USERS.DETAIL.VERIFIED_PASSWORD' | translate }}
                 </div>
               </div>
               
@@ -586,12 +596,12 @@
         <!-- Audit -->
         <div *ngIf="activeTab === 'audit'" class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 lg:p-8 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] animate-in fade-in duration-500">
           <div class="mb-8">
-            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">Audit log</p>
-            <h3 class="text-xl font-black text-slate-900">Access history</h3>
-            <p class="text-[13px] font-bold text-slate-400 mt-1">Recent role, scope, status, and permission changes.</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/5 inline-flex px-2 py-1 rounded-md mb-2">{{ 'ADMIN_USERS.DETAIL.AUDIT_BADGE' | translate }}</p>
+            <h3 class="text-xl font-black text-slate-900">{{ 'ADMIN_USERS.DETAIL.AUDIT_TITLE' | translate }}</h3>
+            <p class="text-[13px] font-bold text-slate-400 mt-1">{{ 'ADMIN_USERS.DETAIL.AUDIT_DESC' | translate }}</p>
           </div>
 
-          <div *ngIf="isAuditLoading" class="admin-skeleton-table" style="--skeleton-columns: 3">
+          <div class="admin-skeleton-table" *ngIf="isAuditLoading" style="--skeleton-columns: 3">
             <div *ngFor="let item of [1,2,3]" class="admin-skeleton-table-row">
               <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
               <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
@@ -600,7 +610,7 @@
           </div>
 
           <div *ngIf="!isAuditLoading && auditLogs.length === 0" class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-[13px] font-bold text-slate-500">
-            No access audit entries yet.
+            {{ 'ADMIN_USERS.DETAIL.AUDIT_EMPTY' | translate }}
           </div>
 
           <div *ngIf="!isAuditLoading && auditLogs.length > 0" class="space-y-3">
@@ -610,7 +620,7 @@
                   <p class="text-[14px] font-black text-slate-900">{{ log.action }}</p>
                   <p class="mt-1 text-[12px] font-bold text-slate-500">{{ log.summary }}</p>
                   <p class="mt-1 text-[11px] font-bold text-slate-400">
-                    By {{ log.actorFullName || log.actorEmail || log.actorUserId || 'System' }}
+                    {{ 'ADMIN_USERS.DETAIL.AUDIT_BY' | translate:{ name: log.actorFullName || log.actorEmail || log.actorUserId || ('ADMIN_USERS.DETAIL.AUDIT_SYSTEM' | translate) } }}
                   </p>
                 </div>
                 <time class="text-[11px] font-black uppercase tracking-widest text-slate-400">{{ log.createdAtUtc | date:'medium' }}</time>
@@ -662,36 +672,36 @@
 
             <div class="flex items-center justify-between gap-4 p-4 rounded-[1.25rem] bg-slate-50/80 border border-slate-100">
               <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">{{ 'ADMIN_USERS.SECURITY.LAST_LOGIN' | translate }}</span>
-              <strong class="text-[13px] font-black text-slate-900">{{ currentUser.security.lastLoginAt || ('ADMIN_USERS.SECURITY.NEVER' | translate) }}</strong>
+              <strong class="text-[13px] font-black text-slate-900">{{ currentUser.security.lastLoginAt ? (currentUser.security.lastLoginAt | date:'medium') : ('ADMIN_USERS.SECURITY.NEVER' | translate) }}</strong>
             </div>
 
             <div class="flex items-center justify-between gap-4 p-4 rounded-[1.25rem] bg-slate-50/80 border border-slate-100">
               <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">{{ 'ADMIN_USERS.SECURITY.INVITED_BY' | translate }}</span>
-              <strong class="text-[13px] font-black text-slate-900">{{ currentUser.security.invitedBy || '-' }}</strong>
+              <strong class="text-[13px] font-black text-slate-900">{{ (currentUser.security.invitedBy.toLowerCase() === 'system') ? ('ADMIN_USERS.DETAIL.AUDIT_SYSTEM' | translate) : (currentUser.security.invitedBy || '-') }}</strong>
             </div>
 
             <div class="flex items-center justify-between gap-4 p-4 rounded-[1.25rem] bg-slate-50/80 border border-slate-100">
-              <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">Password state</span>
+              <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">{{ 'ADMIN_USERS.SECURITY.PASSWORD_STATE' | translate }}</span>
               <strong class="text-[13px] font-black" [class.text-amber-600]="currentUser.mustChangePassword" [class.text-emerald-600]="!currentUser.mustChangePassword">
-                {{ currentUser.mustChangePassword ? 'Temporary' : 'Changed' }}
+                {{ currentUser.mustChangePassword ? ('ADMIN_USERS.SECURITY.PASSWORD_TEMPORARY' | translate) : ('ADMIN_USERS.SECURITY.PASSWORD_CHANGED' | translate) }}
               </strong>
             </div>
 
             <div class="rounded-[1.25rem] bg-slate-50/80 border border-slate-100 p-4">
-              <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">Reset temporary password</span>
+              <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">{{ 'ADMIN_USERS.SECURITY.RESET_TEMPORARY_PASSWORD' | translate }}</span>
               <div class="mt-3 flex gap-2">
                 <input
                   [(ngModel)]="temporaryPassword"
                   type="password"
                   dir="ltr"
                   class="h-10 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-bold outline-none focus:border-zadna-primary"
-                  placeholder="Temporary password" />
+                  [placeholder]="'ADMIN_USERS.SECURITY.RESET_PASSWORD_PLACEHOLDER' | translate" />
                 <button
                   type="button"
                   (click)="resetTemporaryPassword()"
                   [disabled]="isResettingPassword || !temporaryPassword"
                   class="h-10 rounded-xl bg-zadna-primary px-4 text-[12px] font-black text-white disabled:opacity-50">
-                  Reset
+                  {{ 'ADMIN_USERS.SECURITY.RESET_BUTTON' | translate }}
                 </button>
               </div>
               <p *ngIf="resetPasswordError" class="mt-2 text-[11px] font-bold text-red-600">{{ resetPasswordError }}</p>

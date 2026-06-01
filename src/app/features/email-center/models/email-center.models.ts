@@ -10,7 +10,7 @@ export type EmailBranchScopeMode = 'all_branches' | 'assigned_branch' | 'specifi
 export type EmailSenderProfileLocale = 'bilingual' | 'arabic' | 'english';
 export type EmailAutomationState = 'live' | 'manual_only';
 export type EmailDispatchStatus = 'sent' | 'failed' | 'skipped';
-export type EmailDispatchSource = 'test_send' | 'vendor_automation_live' | 'vendor_automation_legacy' | string;
+export type EmailDispatchSource = 'test_send' | 'system_event' | 'vendor_automation_live' | 'vendor_automation_legacy' | string;
 export type EmailRecipientTargetId =
   | 'primary_account_email'
   | 'vendor_owner'

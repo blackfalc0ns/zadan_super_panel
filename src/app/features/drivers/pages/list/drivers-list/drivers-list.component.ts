@@ -115,7 +115,10 @@ export class DriversListComponent implements OnInit {
         label: 'DRIVERS.FILTERS.CITY',
         type: 'select',
         color: '#0ea5e9',
-        options: this.cityOptions.map((city) => ({ value: city, label: city }))
+        options: this.cityOptions.map((city) => ({
+          value: city,
+          label: this.getCityTranslationKey(city)
+        }))
       },
       {
         key: 'status',
@@ -280,8 +283,39 @@ export class DriversListComponent implements OnInit {
   }
 
   private buildCityOptions(drivers: Driver[]): string[] {
-    const cities = drivers.map((driver) => driver.city);
+    const cities = drivers.map((driver) => driver.city).filter((c) => !!c);
     return Array.from(new Set(cities));
+  }
+
+  getCityTranslationKey(city: string): string {
+    if (!city) return 'COMMON.CITIES.ALL';
+    const normalized = city.trim().toUpperCase();
+    const cityMap: Record<string, string> = {
+      'RIYADH': 'RIYADH',
+      'الرياض': 'RIYADH',
+      'JEDDAH': 'JEDDAH',
+      'جدة': 'JEDDAH',
+      'DAMMAM': 'DAMMAM',
+      'الدمام': 'DAMMAM',
+      'MAKKAH': 'MAKKAH',
+      'MECCA': 'MAKKAH',
+      'مكة': 'MAKKAH',
+      'MADINAH': 'MADINAH',
+      'MEDINA': 'MADINAH',
+      'المدينة': 'MADINAH',
+      'TAIF': 'TAIF',
+      'الطائف': 'TAIF',
+      'TABUK': 'TABUK',
+      'تبوك': 'TABUK',
+      'ABHA': 'ABHA',
+      'أبها': 'ABHA',
+      'KHOBAR': 'KHOBAR',
+      'الخبر': 'KHOBAR',
+      'QATIF': 'QATIF',
+      'القطيف': 'QATIF'
+    };
+    const keyToken = cityMap[normalized] || normalized;
+    return `COMMON.CITIES.${keyToken}`;
   }
 }
 

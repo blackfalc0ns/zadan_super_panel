@@ -359,6 +359,7 @@ export class CustomersService {
 
     mutate(customer);
     refreshCustomerDetailRecord(customer);
+    this.saveCustomerStateToLocalStorage(customer);
     this.setCustomer(customer);
     return this.clone(customer);
   }
@@ -371,6 +372,9 @@ export class CustomersService {
     customer.isOnlineNow = item.isOnlineNow;
     customer.lastSeenAtUtc = item.lastSeenAtUtc ?? item.lastLoginAtUtc ?? item.lastOrderAtUtc;
     customer.lastSeenAt = this.formatPresenceLabel(customer.isOnlineNow, customer.lastSeenAtUtc);
+    
+    this.loadCustomerStateFromLocalStorage(customer);
+    
     refreshCustomerDetailRecord(customer);
     return customer;
   }
@@ -397,6 +401,8 @@ export class CustomersService {
     if (item.addressLine) {
       customer.notes = `${item.addressLine}${item.city ? ` - ${item.city}` : ''}`;
     }
+
+    this.loadCustomerStateFromLocalStorage(customer);
 
     refreshCustomerDetailRecord(customer);
     customer.recentOrders = item.recentOrders.map((order) => ({
@@ -618,10 +624,10 @@ export class CustomersService {
   ): CustomerInternalNote[] {
     const notes: CustomerInternalNote[] = [
       {
-        author: 'Zadana Identity',
-        role: 'Customer App',
+        authorKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.IDENTITY_SERVICE',
+        roleKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.CUSTOMER_APP',
         createdAt: this.formatAuditDate(item.createdAtUtc),
-        message: 'Customer account synced from the user app.',
+        messageKey: 'CUSTOMERS.DETAIL.ADMIN.NOTES.SYNCED_FROM_APP',
         tone: 'info',
         isSystem: true
       }
@@ -629,10 +635,10 @@ export class CustomersService {
 
     if (item.refundedOrdersCount >= 3 || accountState === 'under_review') {
       notes.unshift({
-        author: 'Risk & Trust Ops',
-        role: 'Monitoring',
+        authorKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.RISK_TRUST_OPS',
+        roleKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.MONITORING',
         createdAt: this.formatAuditDate(new Date().toISOString()),
-        message: 'Customer activity requires manual monitoring due to refunds or account restrictions.',
+        messageKey: 'CUSTOMERS.DETAIL.ADMIN.NOTES.MANUAL_MONITORING_REQUIRED',
         tone: 'warning',
         isSystem: true
       });
@@ -640,10 +646,10 @@ export class CustomersService {
 
     if (item.accountStatus === 'Suspended' || item.isLoginLocked) {
       notes.unshift({
-        author: 'Admin Policy',
-        role: 'Risk Committee',
+        authorKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.ADMIN_POLICY',
+        roleKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.RISK_COMMITTEE',
         createdAt: this.formatAuditDate(new Date().toISOString()),
-        message: 'Login access is currently restricted for this customer account.',
+        messageKey: 'CUSTOMERS.DETAIL.ADMIN.NOTES.LOGIN_RESTRICTED',
         tone: 'danger',
         isSystem: true
       });
@@ -859,5 +865,46 @@ export class CustomersService {
     customer.lastSeenAtUtc = update.lastSeenAtUtc ?? customer.lastSeenAtUtc ?? null;
     customer.lastSeenAt = this.formatPresenceLabel(customer.isOnlineNow, customer.lastSeenAtUtc);
     this.setCustomer(customer);
+  }
+
+  private loadCustomerStateFromLocalStorage(customer: CustomerDetailRecord): void {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return;
+    }
+    try {
+      const savedStr = localStorage.getItem(`admin_customer_state_${customer.id}`);
+      if (savedStr) {
+        const saved = JSON.parse(savedStr);
+        if (saved) {
+          if (saved.accountState) customer.accountState = saved.accountState;
+          if (saved.reviewState) customer.reviewState = saved.reviewState;
+          if (saved.trustState) customer.trustState = saved.trustState;
+          if (saved.paymentState) customer.paymentState = saved.paymentState;
+          if (saved.internalNotes) {
+            customer.internalNotes = saved.internalNotes;
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load customer state from localStorage', e);
+    }
+  }
+
+  private saveCustomerStateToLocalStorage(customer: CustomerDetailRecord): void {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return;
+    }
+    try {
+      const state = {
+        accountState: customer.accountState,
+        reviewState: customer.reviewState,
+        trustState: customer.trustState,
+        paymentState: customer.paymentState,
+        internalNotes: customer.internalNotes
+      };
+      localStorage.setItem(`admin_customer_state_${customer.id}`, JSON.stringify(state));
+    } catch (e) {
+      console.error('Failed to save customer state to localStorage', e);
+    }
   }
 }

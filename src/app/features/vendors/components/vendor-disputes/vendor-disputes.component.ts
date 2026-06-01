@@ -315,8 +315,8 @@ export class VendorDisputesComponent {
       priorityLabel: item.priorityLabel?.trim() || this.translate.instant(this.getPriorityLabelKey(item.priority)),
       queue: item.queue,
       queueLabel: item.queueLabel?.trim() || this.humanizeLabel(item.queue),
-      createdDate: createdAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US'),
-      createdTime: createdAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+      createdDate: createdAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US'),
+      createdTime: createdAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
         hour: '2-digit',
         minute: '2-digit'
       }),
@@ -418,7 +418,7 @@ export class VendorDisputesComponent {
   }
 
   private formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(value);

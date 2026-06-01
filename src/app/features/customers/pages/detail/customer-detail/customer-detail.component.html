@@ -28,56 +28,70 @@
     </div>
   </app-page-header>
 
-  <div *ngIf="customer as currentCustomer" class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[100rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
-    <section class="relative overflow-hidden rounded-[1.75rem] border border-slate-200/60 bg-white p-6 shadow-sm">
+  <div *ngIf="customer as currentCustomer" class="flex-1 min-h-0 px-4 md:px-10 py-6 max-w-[115rem] mx-auto w-full space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+    <section class="relative overflow-hidden rounded-[1.75rem] border border-white/50 bg-white/70 backdrop-blur-md p-6 shadow-xl shadow-slate-200/40">
       <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-zadna-primary/5 to-transparent"></div>
       <div class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-zadna-primary/10 blur-[50px]"></div>
       <div class="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-zadna-accent/10 blur-[50px]"></div>
       
-      <div class="relative z-10 flex flex-col xl:flex-row xl:items-end justify-between gap-6">
-        <div class="space-y-3">
-          <div class="flex flex-wrap items-center gap-3">
-            <h2 class="text-2xl font-extrabold text-slate-800">{{ currentCustomer.name }}</h2>
-            <span class="inline-flex items-center rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1 text-[10px] font-extrabold text-zadna-primary" dir="ltr">
-              {{ currentCustomer.id }}
-            </span>
+      <div class="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+          <!-- Circular initials avatar with primary gradient & shadow glow -->
+          <div class="w-24 h-24 shrink-0 rounded-full bg-gradient-to-br from-zadna-primary to-teal-500 text-white flex items-center justify-center text-3xl font-black shadow-[0_8px_24px_-4px_rgba(18,124,140,0.35)] border-2 border-white/40 tracking-wider">
+            {{ getCustomerInitials(currentCustomer.name) }}
           </div>
 
-          <div class="flex flex-wrap items-center gap-3 text-xs font-bold">
-            <span
-              class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5"
-              [ngClass]="currentCustomer.isOnlineNow
-                ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
-                : 'border border-slate-200 bg-white text-slate-500'">
-              <span class="h-2 w-2 rounded-full" [ngClass]="currentCustomer.isOnlineNow ? 'bg-emerald-500' : 'bg-slate-300'"></span>
-              <ng-container *ngIf="currentCustomer.isOnlineNow; else offlinePresence">
-                {{ 'CUSTOMERS.PRESENCE.ONLINE_NOW' | translate }}
-              </ng-container>
-              <ng-template #offlinePresence>
-                {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN' | translate }}: {{ currentCustomer.lastSeenAt }}
-              </ng-template>
-            </span>
+          <div class="space-y-3 text-center sm:text-start">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+              <h2 class="text-3xl font-extrabold text-slate-800">{{ currentCustomer.name }}</h2>
+              <!-- Interactive copyable Customer ID badge -->
+              <button type="button" 
+                      (click)="copyToClipboard('id', currentCustomer.id)" 
+                      class="inline-flex items-center gap-1.5 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1.5 text-[10px] font-extrabold text-zadna-primary hover:bg-zadna-primary/20 hover:shadow-sm transition-all" 
+                      dir="ltr">
+                <span>{{ currentCustomer.id }}</span>
+                <span class="material-symbols-outlined text-[12px] opacity-75">
+                  {{ copiedFields.get('id') ? 'check' : 'content_copy' }}
+                </span>
+              </button>
+            </div>
 
-            <app-status-pill
-              [label]="'CUSTOMERS.STATUS.' + currentCustomer.status.toUpperCase()"
-              [variant]="statusVariant"
-              size="sm">
-            </app-status-pill>
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs font-bold">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5"
+                [ngClass]="currentCustomer.isOnlineNow
+                  ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
+                  : 'border border-slate-200 bg-white text-slate-500'">
+                <span class="h-2 w-2 rounded-full" [ngClass]="currentCustomer.isOnlineNow ? 'bg-emerald-500' : 'bg-slate-300'"></span>
+                <ng-container *ngIf="currentCustomer.isOnlineNow; else offlinePresence">
+                  {{ 'CUSTOMERS.PRESENCE.ONLINE_NOW' | translate }}
+                </ng-container>
+                <ng-template #offlinePresence>
+                  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN' | translate }}: {{ currentCustomer.lastSeenAt }}
+                </ng-template>
+              </span>
 
-            <app-status-pill
-              [label]="currentCustomer.riskSummary"
-              [variant]="riskVariant"
-              size="sm">
-            </app-status-pill>
+              <app-status-pill
+                [label]="'CUSTOMERS.STATUS.' + currentCustomer.status.toUpperCase()"
+                [variant]="statusVariant"
+                size="sm">
+              </app-status-pill>
 
-            <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-500">
-              <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-              {{ 'CUSTOMERS.DETAIL.REGISTERED_AT' | translate }}: {{ currentCustomer.registrationDate }}
-            </span>
+              <app-status-pill
+                [label]="currentCustomer.riskSummary"
+                [variant]="riskVariant"
+                size="sm">
+              </app-status-pill>
+
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-500">
+                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                {{ 'CUSTOMERS.DETAIL.REGISTERED_AT' | translate }}: {{ currentCustomer.registrationDate }}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-wrap items-center justify-center xl:justify-end gap-3">
           <button type="button" class="detail-action-btn" (click)="openOrdersList()">
             <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
             {{ 'CUSTOMERS.DETAIL.ACTION_VIEW_ORDERS' | translate }}
@@ -158,7 +172,103 @@
       </div>
     </section>
 
-    <app-kpi-cards *ngIf="currentTab === 'overview'" [cards]="kpiCards"></app-kpi-cards>
+    <!-- Custom Glassmorphic KPI Cards Grid -->
+    <div *ngIf="currentTab === 'overview'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+      
+      <!-- Total Orders Card -->
+      <div class="kpi-glass-card group">
+        <div class="kpi-glass-card-border"></div>
+        <div class="flex items-center justify-between">
+          <span class="kpi-glass-card-title">{{ 'CUSTOMERS.DETAIL.METRICS.TOTAL_ORDERS' | translate }}</span>
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+          </div>
+        </div>
+        <div class="mt-4">
+          <span class="kpi-glass-card-value font-['Inter']">{{ currentCustomer.totalOrders }}</span>
+        </div>
+      </div>
+
+      <!-- Total Spent Card -->
+      <div class="kpi-glass-card group">
+        <div class="kpi-glass-card-border"></div>
+        <div class="flex items-center justify-between">
+          <span class="kpi-glass-card-title">{{ 'CUSTOMERS.DETAIL.METRICS.TOTAL_SPENT' | translate }}</span>
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="material-symbols-outlined text-[22px]">payments</span>
+          </div>
+        </div>
+        <div class="mt-4 flex items-baseline gap-1">
+          <span class="kpi-glass-card-value font-['Inter']">{{ currentCustomer.totalSpent | number:'1.0-2' }}</span>
+          <span class="text-xs font-bold text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+        </div>
+      </div>
+
+      <!-- Last Order Card -->
+      <div class="kpi-glass-card group">
+        <div class="kpi-glass-card-border"></div>
+        <div class="flex items-center justify-between">
+          <span class="kpi-glass-card-title">{{ 'CUSTOMERS.DETAIL.METRICS.LAST_ORDER' | translate }}</span>
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="material-symbols-outlined text-[22px]">schedule</span>
+          </div>
+        </div>
+        <div class="mt-4">
+          <span class="text-sm font-extrabold text-slate-800 block truncate" [title]="currentCustomer.lastOrderAt">{{ currentCustomer.lastOrderAt }}</span>
+        </div>
+      </div>
+
+      <!-- Complaints Card -->
+      <div class="kpi-glass-card group">
+        <div class="kpi-glass-card-border"></div>
+        <div class="flex items-center justify-between">
+          <span class="kpi-glass-card-title">{{ 'CUSTOMERS.DETAIL.METRICS.COMPLAINTS' | translate }}</span>
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="material-symbols-outlined text-[22px]">support_agent</span>
+          </div>
+        </div>
+        <div class="mt-4">
+          <span class="kpi-glass-card-value font-['Inter']" [ngClass]="currentCustomer.disputesCount > 0 ? 'text-amber-600' : 'text-slate-800'">
+            {{ currentCustomer.disputesCount }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Refunds Card -->
+      <div class="kpi-glass-card group">
+        <div class="kpi-glass-card-border"></div>
+        <div class="flex items-center justify-between">
+          <span class="kpi-glass-card-title">{{ 'CUSTOMERS.DETAIL.METRICS.REFUNDS' | translate }}</span>
+          <div class="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="material-symbols-outlined text-[22px]">keyboard_return</span>
+          </div>
+        </div>
+        <div class="mt-4">
+          <span class="kpi-glass-card-value font-['Inter']" [ngClass]="currentCustomer.refundsCount > 0 ? 'text-red-600' : 'text-slate-800'">
+            {{ currentCustomer.refundsCount }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Risk Score Card -->
+      <div class="kpi-glass-card group">
+        <div class="kpi-glass-card-border"></div>
+        <div class="flex items-center justify-between">
+          <span class="kpi-glass-card-title">{{ 'CUSTOMERS.DETAIL.METRICS.RISK_SCORE' | translate }}</span>
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="material-symbols-outlined text-[22px]">verified_user</span>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <span class="kpi-glass-card-value font-['Inter']">{{ currentCustomer.riskScore }}%</span>
+          <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full" 
+                [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'">
+            {{ currentCustomer.riskSummary | translate }}
+          </span>
+        </div>
+      </div>
+
+    </div>
 
     <div class="grid grid-cols-12 gap-6">
       <div [ngClass]="currentTab === 'workflow' ? 'col-span-12 space-y-6' : 'col-span-12 lg:col-span-4 space-y-6'">
@@ -318,7 +428,14 @@
                     <tr *ngFor="let stage of lifecycleStages">
                       <td class="px-4 py-4 text-[12px] font-extrabold text-slate-800">{{ stage.labelKey | translate }}</td>
                       <td class="px-4 py-4">
-                        <span class="inline-flex rounded-full bg-slate-50 px-3 py-1.5 text-[11px] font-extrabold" [ngClass]="getLifecycleValueClasses(stage)">
+                        <span class="inline-flex rounded-full px-3 py-1.5 text-[11px] font-extrabold border" 
+                              [ngClass]="{
+                                'bg-emerald-50 text-emerald-700 border-emerald-100': stage.tone === 'success',
+                                'bg-amber-50 text-amber-700 border-amber-100': stage.tone === 'warning',
+                                'bg-red-50 text-red-700 border-red-100': stage.tone === 'danger',
+                                'bg-cyan-50 text-cyan-700 border-cyan-100': stage.tone === 'info',
+                                'bg-slate-50 text-slate-600 border-slate-200': stage.tone === 'neutral' || !stage.tone
+                              }">
                           {{ stage.valueKey | translate }}
                         </span>
                       </td>
@@ -329,48 +446,47 @@
               </div>
             </section>
 
-            <section class="overflow-hidden rounded-[1.25rem] border border-slate-200/60 bg-white shadow-sm hover:shadow-md transition-all">
-              <div class="border-b border-slate-100 bg-slate-50/50 px-5 py-3.5">
-                <h4 class="text-[13px] font-extrabold text-zadna-primary">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.ACTIONS_TITLE' | translate }}</h4>
+            <!-- Available Actions Cards Grid -->
+            <section class="space-y-4">
+              <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+                <h4 class="text-[14px] font-extrabold text-slate-800">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.ACTIONS_TITLE' | translate }}</h4>
               </div>
 
-              <div class="overflow-x-auto p-1">
-                <table class="min-w-full text-start">
-                  <thead class="bg-white/80">
-                    <tr>
-                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.ACTION' | translate }}</th>
-                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.DESCRIPTION' | translate }}</th>
-                      <th class="px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.EXECUTE' | translate }}</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-200/70">
-                    <tr *ngFor="let action of workflowActions">
-                      <td class="px-4 py-4">
-                        <div class="flex items-center gap-3">
-                          <span class="inline-flex h-9 w-9 items-center justify-center rounded-[0.9rem] bg-slate-100 text-slate-600">
-                            <span class="material-symbols-outlined text-[18px]">{{ action.icon }}</span>
-                          </span>
-                          <span class="text-[12px] font-extrabold text-slate-800">{{ action.labelKey | translate }}</span>
-                        </div>
-                      </td>
-                      <td class="px-4 py-4 text-[12px] leading-6 text-slate-600">{{ action.helperKey | translate }}</td>
-                      <td class="px-4 py-4">
-                        <button
-                          type="button"
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div *ngFor="let action of workflowActions" 
+                     class="p-4 rounded-2xl border border-slate-100 bg-slate-50/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md hover:border-zadna-primary/10 transition-all duration-300">
+                  <div class="flex items-start gap-3.5 min-w-0">
+                    <!-- Icon container styled by action tone -->
+                    <div class="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center border" 
+                         [ngClass]="{
+                           'bg-emerald-50 text-emerald-600 border-emerald-100/60': action.tone === 'success',
+                           'bg-amber-50 text-amber-600 border-amber-100/60': action.tone === 'warning',
+                           'bg-red-50 text-red-600 border-red-100/60': action.tone === 'danger',
+                           'bg-cyan-50 text-cyan-600 border-cyan-100/60': action.tone === 'primary',
+                           'bg-slate-50 text-slate-500 border-slate-200/60': action.tone === 'neutral' || !action.tone
+                         }">
+                      <span class="material-symbols-outlined text-[22px]">{{ action.icon }}</span>
+                    </div>
+
+                    <div class="space-y-1 min-w-0">
+                      <h5 class="text-[13px] font-extrabold text-slate-800 truncate">{{ action.labelKey | translate }}</h5>
+                      <p class="text-[11px] font-medium leading-relaxed text-slate-500 break-words">{{ action.helperKey | translate }}</p>
+                    </div>
+                  </div>
+
+                  <button type="button" 
                           [class]="getWorkflowActionRunClasses(action)"
-                          (click)="handleWorkflowAction(action.id)">
-                          {{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.RUN' | translate }}
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                          (click)="handleWorkflowAction(action.id)"
+                          class="shrink-0 min-w-[5.5rem] self-end sm:self-center">
+                    {{ 'CUSTOMERS.DETAIL.WORKFLOW.TABLE.RUN' | translate }}
+                  </button>
+                </div>
               </div>
             </section>
           </div>
         </section>
 
-        <section *ngIf="currentTab === 'overview'" class="detail-card">
+        <section *ngIf="currentTab === 'overview'" class="detail-card relative overflow-hidden bg-white/80 border border-white/40 backdrop-blur-md">
           <app-section-header
             [title]="'CUSTOMERS.DETAIL.SECTIONS.PROFILE'"
             icon="person"
@@ -383,12 +499,90 @@
             </app-status-pill>
           </app-section-header>
 
+          <!-- Custom high-fidelity profile field grid with Copy Buttons -->
           <div class="mt-5">
-            <app-key-value-grid [items]="profileItems" [columns]="2" [dense]="true" [bordered]="true"></app-key-value-grid>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <!-- Full Name -->
+              <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.FULL_NAME' | translate }}
+                </span>
+                <span class="text-base font-extrabold text-slate-800 mt-1">{{ currentCustomer.name }}</span>
+              </div>
+
+              <!-- Phone -->
+              <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[5rem]">
+                <div class="flex flex-col">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                    {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.PHONE' | translate }}
+                  </span>
+                  <span class="text-base font-extrabold text-slate-800 mt-1" dir="ltr">{{ currentCustomer.phone }}</span>
+                </div>
+                <button type="button" 
+                        (click)="copyToClipboard('phone', currentCustomer.phone)" 
+                        class="p-2 rounded-lg border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center"
+                        [title]="'CUSTOMERS.DETAIL.ACTION_COPY' | translate">
+                  <span class="material-symbols-outlined text-[18px]">
+                    {{ copiedFields.get('phone') ? 'check' : 'content_copy' }}
+                  </span>
+                </button>
+              </div>
+
+              <!-- Email -->
+              <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[5rem]">
+                <div class="flex flex-col min-w-0">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                    {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.EMAIL' | translate }}
+                  </span>
+                  <span class="text-base font-extrabold text-slate-800 mt-1 truncate" dir="ltr">{{ currentCustomer.email }}</span>
+                </div>
+                <button type="button" 
+                        (click)="copyToClipboard('email', currentCustomer.email)" 
+                        class="p-2 rounded-lg border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center shrink-0"
+                        [title]="'CUSTOMERS.DETAIL.ACTION_COPY' | translate">
+                  <span class="material-symbols-outlined text-[18px]">
+                    {{ copiedFields.get('email') ? 'check' : 'content_copy' }}
+                  </span>
+                </button>
+              </div>
+
+              <!-- City -->
+              <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.CITY' | translate }}
+                </span>
+                <span class="text-base font-extrabold text-slate-800 mt-1">{{ currentCustomer.city }}</span>
+              </div>
+
+              <!-- Language -->
+              <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE' | translate }}
+                </span>
+                <span class="text-base font-extrabold text-slate-800 mt-1">
+                  {{ (currentCustomer.preferredLanguage === 'en' ? 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ENGLISH' : 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ARABIC') | translate }}
+                </span>
+              </div>
+
+              <!-- Last Seen -->
+              <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN' | translate }}
+                </span>
+                <span class="text-base font-extrabold text-slate-800 mt-1">
+                  <ng-container *ngIf="currentCustomer.isOnlineNow; else offlineText">
+                    {{ 'CUSTOMERS.PRESENCE.ONLINE_NOW' | translate }}
+                  </ng-container>
+                  <ng-template #offlineText>
+                    {{ currentCustomer.lastSeenAt }}
+                  </ng-template>
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section *ngIf="currentTab === 'overview'" class="detail-card">
+        <section *ngIf="currentTab === 'overview'" class="detail-card relative overflow-hidden bg-white/80 border border-white/40 backdrop-blur-md">
           <app-section-header
             [title]="'CUSTOMERS.DETAIL.SECTIONS.BEHAVIOR_RISK'"
             icon="analytics"
@@ -401,8 +595,66 @@
             </app-status-pill>
           </app-section-header>
 
+          <!-- Custom high-fidelity behavior field grid -->
           <div class="mt-5">
-            <app-key-value-grid [items]="behaviorItems" [columns]="1" [dense]="true" [bordered]="true"></app-key-value-grid>
+            <div class="grid grid-cols-1 gap-4">
+              <!-- Refund Risk -->
+              <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[4.5rem]">
+                <div class="flex flex-col">
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.REFUND_RISK' | translate }}
+                  </span>
+                  <span class="text-sm font-extrabold mt-1" [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'text-red-600' : 'text-teal-600'">
+                    {{ currentCustomer.riskSummary | translate }}
+                  </span>
+                </div>
+                <span class="inline-flex h-2.5 w-2.5 rounded-full" [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'bg-red-500 animate-pulse' : 'bg-teal-500'"></span>
+              </div>
+
+              <!-- Suspicious Logins -->
+              <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[4.5rem]">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGINS' | translate }}
+                </span>
+                <span class="text-sm font-extrabold text-slate-800 mt-1">
+                  <ng-container *ngIf="currentCustomer.trustState === 'blocked'">
+                    {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.FIVE_RECENT' | translate }}
+                  </ng-container>
+                  <ng-container *ngIf="currentCustomer.trustState === 'watch'">
+                    {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.TWO_RECENT' | translate }}
+                  </ng-container>
+                  <ng-container *ngIf="currentCustomer.trustState !== 'blocked' && currentCustomer.trustState !== 'watch'">
+                    {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.NONE' | translate }}
+                  </ng-container>
+                </span>
+              </div>
+
+              <!-- Payment Failures -->
+              <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[4.5rem]">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.PAYMENT_FAILURES' | translate }}
+                </span>
+                <span class="text-sm font-extrabold text-slate-800 mt-1" dir="ltr">{{ currentCustomer.repeatedPaymentFailureRate }}</span>
+              </div>
+
+              <!-- Complaint Frequency -->
+              <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[4.5rem]">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY' | translate }}
+                </span>
+                <span class="text-sm font-extrabold text-slate-800 mt-1">
+                  <ng-container *ngIf="currentCustomer.disputesCount >= 3 || currentCustomer.refundsCount >= 4">
+                    {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.HIGH' | translate }}
+                  </ng-container>
+                  <ng-container *ngIf="(currentCustomer.disputesCount > 0 || currentCustomer.refundsCount > 1) && !(currentCustomer.disputesCount >= 3 || currentCustomer.refundsCount >= 4)">
+                    {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.MEDIUM' | translate }}
+                  </ng-container>
+                  <ng-container *ngIf="!(currentCustomer.disputesCount >= 3 || currentCustomer.refundsCount >= 4) && !(currentCustomer.disputesCount > 0 || currentCustomer.refundsCount > 1)">
+                    {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW' | translate }}
+                  </ng-container>
+                </span>
+              </div>
+            </div>
           </div>
 
           <app-inline-banner
