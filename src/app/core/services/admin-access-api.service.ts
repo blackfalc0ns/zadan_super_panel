@@ -107,6 +107,7 @@ export interface UpdateAdminAccessUserRequest {
   notes?: string | null;
   grantedPermissions: string[];
   revokedPermissions: string[];
+  communication?: Partial<DirectoryCommunicationProfile>;
 }
 
 export interface PagedResultDto<T> {

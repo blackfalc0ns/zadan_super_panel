@@ -1010,6 +1010,8 @@
         "TEST_NOTIFICATION_INBOX_ONLY": "Driver test notification was saved to inbox. Push was skipped or unavailable.",
         "TEST_NOTIFICATION_FAILED": "Failed to send the driver test notification.",
         "TEST_NOTIFICATION_UNCONFIRMED": "The request completed, but push delivery was not confirmed.",
+        "TEST_NOTIFICATION_PUSH_CONFIG_MISSING": "Driver push is not configured on the API. Set OneSignal__DriverAppId and OneSignal__DriverRestApiKey, then restart the backend.",
+        "TEST_NOTIFICATION_NO_PUSH_DEVICE": "No active push-enabled driver device was found. Ask the driver to open the app, allow notifications, and sign in again.",
         "LOCATION_UPDATES_BLOCKED": "Location updates were blocked for this driver.",
         "LOCATION_UPDATES_UNBLOCKED": "Location updates were unblocked for this driver.",
         "LOGIN_LOCKED": "Driver login was locked.",
@@ -5613,6 +5615,7 @@
       "EMAIL_PENDING": "Email not set yet",
       "IDENTITY_BADGE": "Identity",
       "IDENTITY_TITLE": "Identity profile",
+      "AUDIT": "Audit logs",
       "IDENTITY_DESC": "Primary contact details, department ownership, and persona classification.",
       "ASSIGNMENT_BADGE": "Assignments",
       "ASSIGNMENT_TITLE": "Entity and branch assignment",
@@ -5640,7 +5643,13 @@
       "REVOKED_OVERRIDES": "revoked overrides",
       "CUSTOM_TOTAL": "custom changes",
       "NOTIFICATION_RECIPIENTS": "notification recipients",
-      "MFA_HINT": "Use this to reflect whether the admin completed secure enrollment."
+      "MFA_HINT": "Use this to reflect whether the admin completed secure enrollment.",
+      "PERMISSIONS_SEARCH_PLACEHOLDER": "Search permissions by name or domain...",
+      "SUBTAB_ROLE": "Role & Status",
+      "SUBTAB_PERMISSIONS": "Permissions Matrix",
+      "SUBTAB_FEATURES": "Feature Access",
+      "EXPAND_ALL": "Expand all",
+      "COLLAPSE_ALL": "Collapse all"
     },
     "SCOPE": {
       "GLOBAL": "Global panel",

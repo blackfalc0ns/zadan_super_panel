@@ -31,6 +31,7 @@ import {
   getRolePresetById
 } from '../../models/admin-users.models';
 import { AdminUsersService } from '../../services/admin-users.service';
+import { VendorService } from '../../../vendors/services/vendor.api.service';
 
 type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn'];
 
@@ -49,6 +50,9 @@ export class AdminUserDetailComponent implements OnInit {
   isAuditLoading = false;
   saveError = '';
   activeTab: 'general' | 'access' | 'communication' | 'audit' = 'general';
+  accessSubTab: 'role' | 'permissions' | 'features' = 'role';
+  expandedGroups = new Set<string>();
+  permissionSearchQuery = '';
   permissionGroups: PermissionGroup[] = [];
   permissionDefinitions: PermissionDefinitionDto[] = [];
   availablePermissionKeys = new Set<string>();
@@ -63,6 +67,8 @@ export class AdminUserDetailComponent implements OnInit {
   readonly permissionActionLabels = PERMISSION_ACTION_LABELS;
   notificationEmailsText = '';
   escalationEmailsText = '';
+  apiVendorOptions: Array<{ id: string; name: string }> = [];
+  apiBranchOptions: Array<{ id: string; name: string }> = [];
 
   readonly statusOptions: Array<{ value: AdminAccessStatus; labelKey: string }> = [
     { value: 'active', labelKey: 'ADMIN_USERS.STATUS.ACTIVE' },
@@ -141,11 +147,61 @@ export class AdminUserDetailComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly adminAccessApiService: AdminAccessApiService,
-    private readonly adminUsersService: AdminUsersService
+    private readonly adminUsersService: AdminUsersService,
+    private readonly vendorService: VendorService
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        const nextTab = params['tab'] as any;
+        if (nextTab !== this.activeTab) {
+          this.accessSubTab = 'role';
+        }
+        this.activeTab = nextTab;
+        if (this.activeTab === 'audit' && this.user && this.auditLogs.length === 0) {
+          this.loadAudit(this.user.id);
+        }
+      }
+    });
+
     this.loadUser();
+    this.loadVendors();
+  }
+
+  setTab(tab: string): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  private loadVendors(): void {
+    this.vendorService.getVendors(1, 200).subscribe({
+      next: (response) => {
+        const items = Array.isArray(response) ? response : response.items;
+        this.apiVendorOptions = items.map(v => ({ id: v.id, name: v.businessNameEn || v.businessNameAr }));
+        this.cdr.markForCheck();
+      },
+      error: (err) => console.error('Failed to load vendors', err)
+    });
+  }
+
+  private loadBranches(vendorId: string | null): void {
+    if (!vendorId) {
+      this.apiBranchOptions = [];
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.vendorService.getVendorBranches(vendorId).subscribe({
+      next: (branches) => {
+        this.apiBranchOptions = branches;
+        this.cdr.markForCheck();
+      },
+      error: (err) => console.error('Failed to load branches', err)
+    });
   }
 
   get selectedPreset(): AdminRolePreset {
@@ -219,12 +275,11 @@ export class AdminUserDetailComponent implements OnInit {
   }
 
   get vendorOptions(): Array<{ id: string; name: string }> {
-    return this.adminUsersService.getVendorOptions().map((vendor) => ({ id: vendor.id, name: vendor.name }));
+    return this.apiVendorOptions;
   }
 
   get branchOptions(): Array<{ id: string; name: string }> {
-    return this.adminUsersService.getBranchOptions(this.user?.assignment.vendorId ?? null)
-      .map((branch) => ({ id: branch.id, name: branch.name }));
+    return this.apiBranchOptions;
   }
 
   get visibleCommunicationFlags(): Array<{ id: CommunicationFlagKey; labelKey: string; descriptionKey: string }> {
@@ -269,7 +324,8 @@ export class AdminUserDetailComponent implements OnInit {
       status: this.user.status,
       notes: null,
       grantedPermissions: this.user.grantedPermissions,
-      revokedPermissions: this.user.revokedPermissions
+      revokedPermissions: this.user.revokedPermissions,
+      communication: this.user.communication
     }).subscribe({
       next: (updatedUser) => {
         this.cdr.markForCheck();
@@ -409,13 +465,13 @@ export class AdminUserDetailComponent implements OnInit {
       return;
     }
 
-    const vendor = this.adminUsersService.getVendorOptions().find((entry) => entry.id === vendorId);
+    const vendor = this.vendorOptions.find((entry) => entry.id === vendorId);
     this.user.assignment.vendorId = vendorId || null;
     this.user.assignment.vendorName = vendor?.name ?? '';
-    this.user.assignment.region = vendor?.region ?? this.user.assignment.region;
-    this.user.assignment.city = vendor?.city ?? this.user.assignment.city;
     this.user.assignment.branchId = null;
     this.user.assignment.branchName = '';
+    
+    this.loadBranches(vendorId);
   }
 
   onBranchChange(branchId: string): void {
@@ -423,13 +479,10 @@ export class AdminUserDetailComponent implements OnInit {
       return;
     }
 
-    const branch = this.adminUsersService.getBranchOptions(this.user.assignment.vendorId)
-      .find((entry) => entry.id === branchId);
+    const branch = this.branchOptions.find((entry) => entry.id === branchId);
 
     this.user.assignment.branchId = branchId || null;
     this.user.assignment.branchName = branch?.name ?? '';
-    this.user.assignment.region = branch?.region ?? this.user.assignment.region;
-    this.user.assignment.city = branch?.city ?? this.user.assignment.city;
   }
 
   hasPermission(groupId: PermissionGroup['id'], action: PermissionActionId): boolean {
@@ -468,11 +521,105 @@ export class AdminUserDetailComponent implements OnInit {
   }
 
   getGroupEnabledCount(group: PermissionGroup): number {
-    return group.actions.filter((action) => this.isPermissionAvailable(group.id, action) && this.hasPermission(group.id, action)).length;
+    const originalGroup = this.permissionGroups.find(g => g.id === group.id);
+    if (!originalGroup) return 0;
+    return originalGroup.actions.filter((action) => this.isPermissionAvailable(group.id, action) && this.hasPermission(group.id, action)).length;
+  }
+
+  getGroupTotalAvailableCount(group: PermissionGroup): number {
+    const originalGroup = this.permissionGroups.find(g => g.id === group.id);
+    if (!originalGroup) return 0;
+    return originalGroup.actions.filter((action) => this.isPermissionAvailable(group.id, action)).length;
+  }
+
+  toggleGroupExpand(groupId: string): void {
+    if (this.expandedGroups.has(groupId)) {
+      this.expandedGroups.delete(groupId);
+    } else {
+      this.expandedGroups.add(groupId);
+    }
+  }
+
+  isGroupExpanded(groupId: string): boolean {
+    if (this.permissionSearchQuery.trim()) {
+      return true; // Auto-expand all matching groups during search queries
+    }
+    return this.expandedGroups.has(groupId);
+  }
+
+  expandAllGroups(): void {
+    this.permissionGroups.forEach(group => this.expandedGroups.add(group.id));
+  }
+
+  collapseAllGroups(): void {
+    this.expandedGroups.clear();
+  }
+
+  areAllGroupsExpanded(): boolean {
+    if (!this.permissionGroups || this.permissionGroups.length === 0) {
+      return false;
+    }
+    return this.permissionGroups.every(group => this.expandedGroups.has(group.id));
   }
 
   getGroupAvailableActions(group: PermissionGroup): PermissionActionId[] {
     return group.actions.filter((action) => this.isPermissionAvailable(group.id, action));
+  }
+
+  get filteredPermissionGroups(): PermissionGroup[] {
+    if (!this.permissionGroups) {
+      return [];
+    }
+    const query = this.permissionSearchQuery.toLowerCase().trim();
+    return this.permissionGroups.map(group => {
+      const availableActions = group.actions.filter(action => this.isPermissionAvailable(group.id, action));
+      if (query) {
+        const matchesGroup = this.matchGroupText(group.id, query);
+        const filteredActions = matchesGroup ? availableActions : availableActions.filter(action => {
+          const actionLabelKey = this.permissionActionLabels[action] || '';
+          return this.matchPermissionActionText(action, query) || actionLabelKey.toLowerCase().includes(query);
+        });
+        return { ...group, actions: filteredActions };
+      }
+      return { ...group, actions: availableActions };
+    }).filter(group => group.actions.length > 0);
+  }
+
+  private matchPermissionActionText(action: PermissionActionId, query: string): boolean {
+    const actionMap: Record<PermissionActionId, string[]> = {
+      view: ['view', 'read', 'عرض', 'قراءة', 'شاهد', 'مشاهدة'],
+      create: ['create', 'add', 'new', 'إنشاء', 'اضافة', 'إضافة', 'جديد'],
+      edit: ['edit', 'update', 'modify', 'write', 'تعديل', 'تحديث', 'كتابة', 'تغيير'],
+      approve: ['approve', 'accept', 'confirm', 'موافقة', 'قبول', 'اعتماد', 'تأكيد'],
+      export: ['export', 'download', 'csv', 'excel', 'تصدير', 'تحميل'],
+      manage_settings: ['settings', 'manage', 'config', 'setup', 'إعدادات', 'اعدادات', 'ضبط', 'تهيئة', 'إدارة']
+    };
+    return (actionMap[action] || []).some(keyword => keyword.toLowerCase().includes(query) || query.includes(keyword));
+  }
+
+  private matchGroupText(groupId: string, query: string): boolean {
+    const groupMap: Record<string, string[]> = {
+      dashboard: ['dashboard', 'home', 'stats', 'لوحة', 'التحكم', 'الرئيسية', 'إحصائيات'],
+      vendors: ['vendors', 'merchant', 'stores', 'التجار', 'تاجر', 'متاجر', 'المحلات'],
+      catalog: ['catalog', 'products', 'items', 'brands', 'الكتالوج', 'المنتجات', 'المنتج', 'أصناف', 'علامات'],
+      orders: ['orders', 'sales', 'الطلبات', 'طلبات', 'طلب', 'مبيعات'],
+      customers: ['customers', 'clients', 'users', 'العملاء', 'عملاء', 'عميل', 'مستخدمين'],
+      drivers: ['drivers', 'couriers', 'delivery', 'السائقين', 'سائقين', 'سائق', 'توصيل'],
+      disputes: ['disputes', 'complaints', 'tickets', 'النزاعات', 'نزاع', 'شكاوى', 'تذاكر', 'دعم'],
+      finances: ['finances', 'money', 'payouts', 'transactions', 'المالية', 'أموال', 'حسابات', 'دفعات', 'معاملات'],
+      users_access: ['users', 'access', 'roles', 'permissions', 'الصلاحيات', 'أدوار', 'مستخدمين', 'وصول'],
+      email_center: ['email', 'mail', 'center', 'notifications', 'البريد', 'رسائل', 'إشعارات'],
+      system: ['system', 'settings', 'logs', 'النظام', 'إعدادات', 'سجلات', 'لوج'],
+      marketing: ['marketing', 'banners', 'promotions', 'التسويق', 'إعلانات', 'عروض'],
+      vendor_dashboard: ['dashboard', 'stats', 'لوحة', 'التاجر', 'إحصائيات'],
+      vendor_orders: ['orders', 'sales', 'الطلبات', 'طلبات', 'التاجر'],
+      vendor_catalog: ['catalog', 'products', 'الكتالوج', 'المنتجات', 'التاجر'],
+      vendor_branch_team: ['team', 'staff', 'branches', 'الفريق', 'الموظفين', 'الفروع'],
+      vendor_finance: ['finance', 'money', 'المالية', 'التاجر', 'حسابات'],
+      vendor_support: ['support', 'help', 'الدعم', 'المساعدة', 'التاجر'],
+      vendor_settings: ['settings', 'config', 'الإعدادات', 'الضبط', 'التاجر']
+    };
+    return (groupMap[groupId] || []).some(keyword => keyword.toLowerCase().includes(query) || query.includes(keyword));
   }
 
   isPermissionAvailable(groupId: PermissionGroup['id'], action: PermissionActionId): boolean {
@@ -531,7 +678,12 @@ export class AdminUserDetailComponent implements OnInit {
         this.refreshSupportingData();
         this.loadRoles();
         this.loadPermissions();
-        this.loadAudit(user.id);
+        if (this.activeTab === 'audit') {
+          this.loadAudit(user.id);
+        }
+        if (user.assignment.vendorId) {
+          this.loadBranches(user.assignment.vendorId);
+        }
       },
       error: () => {
         this.cdr.markForCheck();
@@ -543,7 +695,14 @@ export class AdminUserDetailComponent implements OnInit {
             this.refreshSupportingData();
             this.loadRoles();
             this.loadPermissions();
-            if (this.user) this.loadAudit(this.user.id);
+            if (this.user) {
+              if (this.activeTab === 'audit') {
+                this.loadAudit(this.user.id);
+              }
+              if (this.user.assignment.vendorId) {
+                this.loadBranches(this.user.assignment.vendorId);
+              }
+            }
           },
           error: () => {
         this.cdr.markForCheck();
@@ -552,7 +711,14 @@ export class AdminUserDetailComponent implements OnInit {
             this.refreshSupportingData();
             this.loadRoles();
             this.loadPermissions();
-            if (this.user) this.loadAudit(this.user.id);
+            if (this.user) {
+              if (this.activeTab === 'audit') {
+                this.loadAudit(this.user.id);
+              }
+              if (this.user.assignment.vendorId) {
+                this.loadBranches(this.user.assignment.vendorId);
+              }
+            }
           }
         });
       }

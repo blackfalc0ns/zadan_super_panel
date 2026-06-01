@@ -594,6 +594,8 @@
         "TEST_NOTIFICATION_INBOX_ONLY": "Driver test notification was saved to inbox. Push was skipped or unavailable.",
         "TEST_NOTIFICATION_FAILED": "Failed to send the driver test notification.",
         "TEST_NOTIFICATION_UNCONFIRMED": "The request completed, but push delivery was not confirmed.",
+        "TEST_NOTIFICATION_PUSH_CONFIG_MISSING": "Driver push is not configured on the API. Set OneSignal__DriverAppId and OneSignal__DriverRestApiKey, then restart the backend.",
+        "TEST_NOTIFICATION_NO_PUSH_DEVICE": "No active push-enabled driver device was found. Ask the driver to open the app, allow notifications, and sign in again.",
         "LOCATION_UPDATES_BLOCKED": "Location updates were blocked for this driver.",
         "LOCATION_UPDATES_UNBLOCKED": "Location updates were unblocked for this driver.",
         "LOGIN_LOCKED": "Driver login was locked.",

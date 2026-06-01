@@ -484,6 +484,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
   private showNotificationResult(response: AdminDriverNotificationResponse): void {
     const title = this.t('DRIVERS.DETAIL.TEST_NOTIFICATION.TOAST_TITLE');
+    const pushReason = this.describePushReason(response.pushReason);
 
     if (response.pushSent) {
       this.toastService.success(
@@ -495,16 +496,39 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
     if (response.pushSkipped) {
       this.toastService.warning(
-        response.pushReason?.trim() || this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_INBOX_ONLY'),
+        pushReason || this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_INBOX_ONLY'),
         title
       );
       return;
     }
 
     this.toastService.warning(
-      response.pushReason?.trim() || this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_UNCONFIRMED'),
+      pushReason || this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_UNCONFIRMED'),
       title
     );
+  }
+
+  private describePushReason(reason?: string | null): string {
+    const normalizedReason = reason?.trim();
+    if (!normalizedReason) {
+      return '';
+    }
+
+    if (
+      normalizedReason.includes('Driver OneSignal AppId or RestApiKey is not configured')
+      || normalizedReason.includes('OneSignal AppId or RestApiKey is not configured')
+    ) {
+      return this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_PUSH_CONFIG_MISSING');
+    }
+
+    if (
+      normalizedReason.includes('No active push-enabled devices')
+      || normalizedReason.includes('No eligible OneSignal recipients')
+    ) {
+      return this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_NO_PUSH_DEVICE');
+    }
+
+    return normalizedReason;
   }
 
   private describeApiError(error: unknown): string {

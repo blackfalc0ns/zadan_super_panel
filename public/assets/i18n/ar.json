@@ -1010,6 +1010,8 @@
         "TEST_NOTIFICATION_INBOX_ONLY": "تم حفظ إشعار الاختبار في صندوق الوارد فقط، وتم تخطي الدفع أو لم يكن متاحًا.",
         "TEST_NOTIFICATION_FAILED": "تعذر إرسال إشعار الاختبار للمندوب.",
         "TEST_NOTIFICATION_UNCONFIRMED": "تم تنفيذ الطلب لكن لم يتم تأكيد وصول الـ push.",
+        "TEST_NOTIFICATION_PUSH_CONFIG_MISSING": "إشعارات المندوب غير مفعلة في الـ API. اضبط OneSignal__DriverAppId و OneSignal__DriverRestApiKey ثم أعد تشغيل الباكند.",
+        "TEST_NOTIFICATION_NO_PUSH_DEVICE": "لا يوجد جهاز مندوب نشط ومفعل لاستقبال الإشعارات. افتح تطبيق المندوب، اسمح بالإشعارات، ثم سجل الدخول مرة أخرى.",
         "LOCATION_UPDATES_BLOCKED": "تم إيقاف تحديثات الموقع لهذا المندوب.",
         "LOCATION_UPDATES_UNBLOCKED": "تم فك حظر تحديثات الموقع لهذا المندوب.",
         "LOGIN_LOCKED": "تم قفل تسجيل دخول المندوب.",
@@ -5613,6 +5615,7 @@
       "EMAIL_PENDING": "البريد غير محدد بعد",
       "IDENTITY_BADGE": "الهوية",
       "IDENTITY_TITLE": "الملف التعريفي",
+      "AUDIT": "سجل المراجعة",
       "IDENTITY_DESC": "بيانات التواصل الأساسية، تبعية القسم، وتصنيف الشخصية.",
       "ASSIGNMENT_BADGE": "الارتباطات",
       "ASSIGNMENT_TITLE": "ربط الكيان والفرع",
@@ -5640,7 +5643,13 @@
       "REVOKED_OVERRIDES": "استثناءات مسحوبة",
       "CUSTOM_TOTAL": "تعديلات مخصصة",
       "NOTIFICATION_RECIPIENTS": "مستلمو الإشعارات",
-      "MFA_HINT": "استخدم هذا الحقل لتحديد ما إذا كان المسؤول أكمل التسجيل الآمن."
+      "MFA_HINT": "استخدم هذا الحقل لتحديد ما إذا كان المسؤول أكمل التسجيل الآمن.",
+      "PERMISSIONS_SEARCH_PLACEHOLDER": "ابحث في الصلاحيات بالاسم أو النطاق...",
+      "SUBTAB_ROLE": "الدور والحالة",
+      "SUBTAB_PERMISSIONS": "مصفوفة الصلاحيات",
+      "SUBTAB_FEATURES": "مفاتيح المزايا",
+      "EXPAND_ALL": "توسيع الكل",
+      "COLLAPSE_ALL": "طي الكل"
     },
     "SCOPE": {
       "GLOBAL": "لوحة عامة",

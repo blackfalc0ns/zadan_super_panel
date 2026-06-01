@@ -594,6 +594,8 @@
         "TEST_NOTIFICATION_INBOX_ONLY": "تم حفظ إشعار الاختبار في صندوق الوارد فقط، وتم تخطي الدفع أو لم يكن متاحًا.",
         "TEST_NOTIFICATION_FAILED": "تعذر إرسال إشعار الاختبار للمندوب.",
         "TEST_NOTIFICATION_UNCONFIRMED": "تم تنفيذ الطلب لكن لم يتم تأكيد وصول الـ push.",
+        "TEST_NOTIFICATION_PUSH_CONFIG_MISSING": "إشعارات المندوب غير مفعلة في الـ API. اضبط OneSignal__DriverAppId و OneSignal__DriverRestApiKey ثم أعد تشغيل الباكند.",
+        "TEST_NOTIFICATION_NO_PUSH_DEVICE": "لا يوجد جهاز مندوب نشط ومفعل لاستقبال الإشعارات. افتح تطبيق المندوب، اسمح بالإشعارات، ثم سجل الدخول مرة أخرى.",
         "LOCATION_UPDATES_BLOCKED": "تم إيقاف تحديثات الموقع لهذا المندوب.",
         "LOCATION_UPDATES_UNBLOCKED": "تم فك حظر تحديثات الموقع لهذا المندوب.",
         "LOGIN_LOCKED": "تم قفل تسجيل دخول المندوب.",

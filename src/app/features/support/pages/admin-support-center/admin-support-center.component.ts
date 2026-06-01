@@ -7,6 +7,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable } from 'rxjs';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
+import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
+import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
+import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { SupportCasesService } from '../../services/support-cases.api.service';
 import {
   SupportCaseRow,
@@ -57,7 +60,10 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
     SupportCaseRejectionModalComponent,
     SupportCaseEscalationModalComponent,
     SupportCaseRequestInfoModalComponent,
-    SupportCaseQuickActionModalComponent
+    SupportCaseQuickActionModalComponent,
+    KpiCardsComponent,
+    DataTableComponent,
+    AdvancedFilterPanelComponent
   ],
   template: `
     <div class="h-full overflow-y-auto bg-slate-50/60 pb-10" [dir]="isRtl ? 'rtl' : 'ltr'">
@@ -93,27 +99,7 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
           {{ toastMessage }}
         </div>
 
-        <section class="grid gap-3 md:grid-cols-4">
-          <div class="rounded-[1.35rem] border border-slate-200 bg-white p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{{ 'SUPPORT_ADMIN.KPIS.OPEN' | translate }}</p>
-            <p class="mt-3 text-[28px] font-black text-slate-950">{{ totalOpenCount }}</p>
-          </div>
-          <div class="rounded-[1.35rem] border border-rose-200 bg-rose-50 p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-rose-600/75">{{ 'SUPPORT_ADMIN.KPIS.SLA_BREACHED' | translate }}</p>
-            <p class="mt-3 text-[28px] font-black text-rose-700">{{ stats?.slaBreachedCount ?? 0 }}</p>
-          </div>
-          <div class="rounded-[1.35rem] border border-sky-200 bg-sky-50 p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-sky-600/75">{{ 'SUPPORT_ADMIN.KPIS.AVG_RESOLUTION' | translate }}</p>
-            <p class="mt-3 text-[28px] font-black text-sky-700">
-              {{ stats?.avgResolutionHours ?? 0 }}
-              <span class="text-[14px] font-bold text-sky-600/75 lowercase">{{ 'SUPPORT_ADMIN.KPIS.HOURS' | translate }}</span>
-            </p>
-          </div>
-          <div class="rounded-[1.35rem] border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
-            <p class="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-600/75">{{ 'SUPPORT_ADMIN.KPIS.RESOLVED' | translate }}</p>
-            <p class="mt-3 text-[28px] font-black text-emerald-700">{{ resolvedCount }}</p>
-          </div>
-        </section>
+        <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
 
         <section class="rounded-[1.6rem] border border-slate-200 bg-white p-3 shadow-sm">
           <div class="flex flex-wrap items-center gap-2">
@@ -144,47 +130,64 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
           </div>
         </section>
 
-        <section class="rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-sm">
-          <div class="grid gap-3 lg:grid-cols-[minmax(220px,1.5fr)_repeat(3,minmax(150px,1fr))_auto]">
-            <label class="relative">
-              <span class="material-symbols-outlined pointer-events-none absolute top-1/2 text-[20px] text-zadna-primary"
-                [ngClass]="isRtl ? 'right-4' : 'left-4'">search</span>
-              <input
-                [(ngModel)]="searchTerm"
-                (keyup.enter)="reloadActiveTab()"
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-1">
+            <div class="w-full lg:w-[450px] group relative">
+              <div class="absolute inset-y-0 flex items-center pointer-events-none"
+                [ngClass]="isRtl ? 'right-5' : 'left-5'">
+                <span
+                  class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+              </div>
+              <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
                 [placeholder]="'SUPPORT_ADMIN.FILTERS.SEARCH' | translate"
-                class="h-12 w-full rounded-[1rem] border border-slate-200 bg-slate-50 text-[12px] font-bold text-slate-800 outline-none transition focus:border-zadna-primary/30 focus:bg-white focus:ring-4 focus:ring-zadna-primary/5"
-                [ngClass]="isRtl ? 'pr-12 pl-4' : 'pl-12 pr-4'">
-            </label>
+                class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
+                [ngClass]="isRtl ? 'pr-14 pl-6' : 'pl-14 pr-6'">
+            </div>
 
-            <select [(ngModel)]="statusFilter" (ngModelChange)="resetAndReload()" class="h-12 rounded-[1rem] border border-slate-200 bg-slate-50 px-4 text-[12px] font-black text-slate-700 outline-none">
-              <option value="all">{{ 'SUPPORT_ADMIN.FILTERS.ALL_STATUSES' | translate }}</option>
-              <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
+            <div class="flex items-center gap-4">
+              <div
+                class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+                <div
+                  class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+                  (click)="toggleFiltersPanel()" [class.bg-teal-50]="isFiltersExpanded">
+                  <span class="material-symbols-outlined text-[24px] transition-transform duration-500 text-zadna-primary"
+                    [class.rotate-180]="isFiltersExpanded">filter_list</span>
+                  <div class="flex flex-col text-start">
+                    <span class="text-[13px] font-black text-slate-800">{{ 'DISPUTES_DASHBOARD.FILTER_PANEL.TITLE' | translate }}</span>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'DISPUTES_DASHBOARD.FILTER_PANEL.SUBTITLE' | translate }}</span>
+                  </div>
+                  <span
+                    class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
+                    [ngClass]="isRtl ? 'mr-2' : 'ml-2'" [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+                </div>
+              </div>
 
-            <select [(ngModel)]="priorityFilter" (ngModelChange)="resetAndReload()" class="h-12 rounded-[1rem] border border-slate-200 bg-slate-50 px-4 text-[12px] font-black text-slate-700 outline-none">
-              <option value="all">{{ 'SUPPORT_ADMIN.FILTERS.ALL_PRIORITIES' | translate }}</option>
-              <option *ngFor="let option of priorityOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-            </select>
-
-            <select *ngIf="activeTab === 'vendor'" [(ngModel)]="categoryFilter" (ngModelChange)="resetAndReload()" class="h-12 rounded-[1rem] border border-slate-200 bg-slate-50 px-4 text-[12px] font-black text-slate-700 outline-none">
-              <option value="all">{{ 'SUPPORT_ADMIN.FILTERS.ALL_CATEGORIES' | translate }}</option>
-              <option *ngFor="let category of categoryOptions" [value]="category">{{ categoryLabel(category) }}</option>
-            </select>
-            <div *ngIf="activeTab !== 'vendor'" class="hidden lg:block"></div>
-
-            <div class="flex gap-2">
-              <button type="button" (click)="reloadActiveTab()" class="inline-flex h-12 flex-1 items-center justify-center rounded-[1rem] bg-zadna-primary px-4 text-[12px] font-black text-white transition hover:bg-teal-700">
-                {{ 'COMMON.APPLY_FILTERS' | translate }}
-              </button>
-              <button type="button" (click)="clearFilters()" class="inline-flex h-12 items-center justify-center rounded-[1rem] border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-600 transition hover:bg-slate-50">
-                {{ 'COMMON.RESET' | translate }}
+              <button *ngIf="hasActiveFilters" type="button" (click)="clearFilters()"
+                class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+                <span
+                  class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+                <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.RESET_FILTERS' | translate }}</span>
               </button>
             </div>
           </div>
-        </section>
 
-        <section *ngIf="activeTab === 'vendor'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm">
+          <div *ngIf="isFiltersExpanded"
+            class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6 bg-white">
+            <app-advanced-filter-panel
+              [isExpanded]="true"
+              [title]="'DISPUTES_DASHBOARD.FILTER_PANEL.TITLE'"
+              [subtitle]="'DISPUTES_DASHBOARD.FILTER_PANEL.SUBTITLE'"
+              [activeFiltersLabel]="'DISPUTES_DASHBOARD.FILTER_PANEL.ACTIVE_FILTERS'"
+              [fields]="filterFields"
+              [filters]="panelFilters"
+              (filtersChange)="onPanelFiltersChange($event)"
+              (reset)="clearFilters()">
+            </app-advanced-filter-panel>
+          </div>
+        </div>
+
+        <!-- Vendor Tickets Tab -->
+        <section *ngIf="activeTab === 'vendor'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white/70 backdrop-blur-3xl shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
             <div>
               <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.TITLE' | translate }}</h2>
@@ -193,65 +196,63 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
             <span *ngIf="isLoadingVendor" class="text-[12px] font-black text-zadna-primary">{{ 'COMMON.LOADING' | translate }}</span>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full min-w-[980px] text-start">
-              <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
-                <tr>
-                  <th class="px-5 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.REFERENCE' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.SUBJECT' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.ORDER' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'COMMON.STATUS' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.PRIORITY' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.UPDATED' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'COMMON.ACTIONS' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100">
-                <tr *ngFor="let ticket of vendorTickets; trackBy: trackByTicketId" class="transition hover:bg-slate-50/70">
-                  <td class="px-5 py-4">
-                    <button type="button" (click)="openTicket(ticket)" class="text-start text-[13px] font-black text-zadna-primary hover:text-teal-700" dir="ltr">
-                      {{ ticket.reference }}
-                    </button>
-                    <p class="mt-1 text-[11px] font-bold text-slate-400">{{ categoryLabel(ticket.category) }}</p>
-                  </td>
-                  <td class="px-4 py-4">
-                    <p class="max-w-[260px] truncate text-[13px] font-black text-slate-900">{{ localized(ticket.subject) }}</p>
-                    <p class="mt-1 max-w-[300px] truncate text-[11px] font-semibold text-slate-500">{{ localized(ticket.summary) }}</p>
-                  </td>
-                  <td class="px-4 py-4">
-                    <a *ngIf="ticket.orderId; else noOrder" [routerLink]="['/orders', ticket.orderId]" class="text-[12px] font-black text-slate-700 hover:text-zadna-primary">
-                      #{{ ticket.orderNumber || ticket.orderId }}
-                    </a>
-                    <ng-template #noOrder>
-                      <span class="text-[12px] font-bold text-slate-400">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.GENERAL' | translate }}</span>
-                    </ng-template>
-                  </td>
-                  <td class="px-4 py-4">
-                    <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="statusClass(ticket.status)">
-                      {{ statusLabel(ticket.status) }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-4">
-                    <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="priorityClass(ticket.priority)">
-                      {{ priorityLabel(ticket.priority) }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-4 text-[12px] font-bold text-slate-500">{{ formatDateTime(ticket.updatedAt) }}</td>
-                  <td class="px-4 py-4">
-                    <button type="button" (click)="openTicket(ticket)" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
-                      {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <app-data-table
+            [data]="vendorTickets"
+            [columns]="vendorColumns"
+            [isLoading]="isLoadingVendor"
+            [clickableRows]="true"
+            [emptyStateTitle]="'SUPPORT_ADMIN.EMPTY.TITLE' | translate"
+            [emptyStateMessage]="'SUPPORT_ADMIN.EMPTY.MESSAGE' | translate"
+            [emptyStateIcon]="'support_agent'"
+            (rowClick)="openTicket($event)">
+            
+            <ng-template #customColumn let-ticket let-column="column">
+              <ng-container [ngSwitch]="column.key">
+                <ng-container *ngSwitchCase="'reference'">
+                  <button type="button" (click)="openTicket(ticket); $event.stopPropagation()" class="text-start text-[13px] font-black text-zadna-primary hover:text-teal-700" dir="ltr">
+                    {{ ticket.reference }}
+                  </button>
+                  <p class="mt-1 text-[11px] font-bold text-slate-400">{{ categoryLabel(ticket.category) }}</p>
+                </ng-container>
 
-          <div *ngIf="!isLoadingVendor && vendorTickets.length === 0" class="px-6 py-14 text-center">
-            <span class="material-symbols-outlined text-[30px] text-slate-300">support_agent</span>
-            <p class="mt-3 text-[15px] font-black text-slate-800">{{ 'SUPPORT_ADMIN.EMPTY.TITLE' | translate }}</p>
-            <p class="mt-1 text-[12px] font-semibold text-slate-500">{{ 'SUPPORT_ADMIN.EMPTY.MESSAGE' | translate }}</p>
-          </div>
+                <ng-container *ngSwitchCase="'subject'">
+                  <p class="max-w-[260px] truncate text-[13px] font-black text-slate-900">{{ localized(ticket.subject) }}</p>
+                  <p class="mt-1 max-w-[300px] truncate text-[11px] font-semibold text-slate-500">{{ localized(ticket.summary) }}</p>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'orderId'">
+                  <a *ngIf="ticket.orderId; else noOrder" [routerLink]="['/orders', ticket.orderId]" (click)="$event.stopPropagation()" class="text-[12px] font-black text-slate-700 hover:text-zadna-primary">
+                    #{{ ticket.orderNumber || ticket.orderId }}
+                  </a>
+                  <ng-template #noOrder>
+                    <span class="text-[12px] font-bold text-slate-400">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.GENERAL' | translate }}</span>
+                  </ng-template>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'status'">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="statusClass(ticket.status)">
+                    {{ statusLabel(ticket.status) }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'priority'">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="priorityClass(ticket.priority)">
+                    {{ priorityLabel(ticket.priority) }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'updatedAt'">
+                  <span class="text-[12px] font-bold text-slate-500">{{ formatDateTime(ticket.updatedAt) }}</span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'actions'">
+                  <button type="button" (click)="openTicket(ticket); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
+                    {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
+                  </button>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+          </app-data-table>
 
           <div *ngIf="vendorTotal > 0" class="border-t border-slate-100 px-5">
             <app-pagination
@@ -263,7 +264,8 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
           </div>
         </section>
 
-        <section *ngIf="activeTab === 'driver'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm">
+        <!-- Driver Cases Tab -->
+        <section *ngIf="activeTab === 'driver'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white/70 backdrop-blur-3xl shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
             <div>
               <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.DRIVER_TABLE.TITLE' | translate }}</h2>
@@ -272,61 +274,59 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
             <span *ngIf="isLoadingDriver" class="text-[12px] font-black text-zadna-primary">{{ 'COMMON.LOADING' | translate }}</span>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full min-w-[940px] text-start">
-              <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
-                <tr>
-                  <th class="px-5 py-4 text-start">{{ 'SUPPORT_ADMIN.DRIVER_TABLE.CASE' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.DRIVER_TABLE.DRIVER' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'COMMON.STATUS' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.PRIORITY' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.UPDATED' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'COMMON.ACTIONS' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100">
-                <tr *ngFor="let driverCase of driverCases; trackBy: trackBySupportCaseId" class="transition hover:bg-slate-50/70">
-                  <td class="px-5 py-4">
-                    <button type="button" (click)="openDriverCase(driverCase)" class="text-start text-[13px] font-black text-zadna-primary hover:text-teal-700" dir="ltr">
-                      #{{ shortId(driverCase.id) }}
-                    </button>
-                    <p class="mt-1 max-w-[320px] truncate text-[11px] font-bold text-slate-500">{{ driverCase.reason || driverCase.typeLabel }}</p>
-                  </td>
-                  <td class="px-4 py-4">
-                    <a *ngIf="driverCaseDriverId(driverCase); else driverCaseNoDriver" [routerLink]="['/drivers', driverCaseDriverId(driverCase)]" [queryParams]="{ tab: 'support' }" class="text-[12px] font-black text-slate-700 hover:text-zadna-primary">
-                      {{ driverCaseDriverLabel(driverCase) }}
-                    </a>
-                    <ng-template #driverCaseNoDriver>
-                      <span class="text-[12px] font-bold text-slate-500">{{ driverCaseDriverLabel(driverCase) }}</span>
-                    </ng-template>
-                    <p class="mt-1 text-[11px] font-bold text-slate-400">{{ driverCase.queueLabel || driverCase.queue }}</p>
-                  </td>
-                  <td class="px-4 py-4">
-                    <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="legacyStatusClass(driverCase.caseStatus)">
-                      {{ driverCase.caseStatusLabel || supportCaseStatusLabel(driverCase.caseStatus) }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-4">
-                    <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="priorityClass(driverCase.priority)">
-                      {{ driverCase.priorityLabel || priorityLabel(driverCase.priority) }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-4 text-[12px] font-bold text-slate-500">{{ formatDateTime(driverCase.createdAt) }}</td>
-                  <td class="px-4 py-4">
-                    <button type="button" (click)="openDriverCase(driverCase)" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
-                      {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <app-data-table
+            [data]="driverCases"
+            [columns]="driverColumns"
+            [isLoading]="isLoadingDriver"
+            [clickableRows]="true"
+            [emptyStateTitle]="'SUPPORT_ADMIN.EMPTY.DRIVER_TITLE' | translate"
+            [emptyStateMessage]="'SUPPORT_ADMIN.EMPTY.DRIVER_MESSAGE' | translate"
+            [emptyStateIcon]="'delivery_dining'"
+            (rowClick)="openDriverCase($event)">
 
-          <div *ngIf="!isLoadingDriver && driverCases.length === 0" class="px-6 py-14 text-center">
-            <span class="material-symbols-outlined text-[30px] text-slate-300">delivery_dining</span>
-            <p class="mt-3 text-[15px] font-black text-slate-800">{{ 'SUPPORT_ADMIN.EMPTY.DRIVER_TITLE' | translate }}</p>
-            <p class="mt-1 text-[12px] font-semibold text-slate-500">{{ 'SUPPORT_ADMIN.EMPTY.DRIVER_MESSAGE' | translate }}</p>
-          </div>
+            <ng-template #customColumn let-driverCase let-column="column">
+              <ng-container [ngSwitch]="column.key">
+                <ng-container *ngSwitchCase="'case'">
+                  <button type="button" (click)="openDriverCase(driverCase); $event.stopPropagation()" class="text-start text-[13px] font-black text-zadna-primary hover:text-teal-700" dir="ltr">
+                    #{{ shortId(driverCase.id) }}
+                  </button>
+                  <p class="mt-1 max-w-[320px] truncate text-[11px] font-bold text-slate-500">{{ driverCase.reason || driverCase.typeLabel }}</p>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'driver'">
+                  <a *ngIf="driverCaseDriverId(driverCase); else driverCaseNoDriver" [routerLink]="['/drivers', driverCaseDriverId(driverCase)]" [queryParams]="{ tab: 'support' }" (click)="$event.stopPropagation()" class="text-[12px] font-black text-slate-777 hover:text-zadna-primary">
+                    {{ driverCaseDriverLabel(driverCase) }}
+                  </a>
+                  <ng-template #driverCaseNoDriver>
+                    <span class="text-[12px] font-bold text-slate-500">{{ driverCaseDriverLabel(driverCase) }}</span>
+                  </ng-template>
+                  <p class="mt-1 text-[11px] font-bold text-slate-400">{{ driverCase.queueLabel || driverCase.queue }}</p>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'status'">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="legacyStatusClass(driverCase.caseStatus)">
+                    {{ driverCase.caseStatusLabel || supportCaseStatusLabel(driverCase.caseStatus) }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'priority'">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="priorityClass(driverCase.priority)">
+                    {{ driverCase.priorityLabel || priorityLabel(driverCase.priority) }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'updatedAt'">
+                  <span class="text-[12px] font-bold text-slate-500">{{ formatDateTime(driverCase.createdAt) }}</span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'actions'">
+                  <button type="button" (click)="openDriverCase(driverCase); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
+                    {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
+                  </button>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+          </app-data-table>
 
           <div *ngIf="driverTotal > 0" class="border-t border-slate-100 px-5">
             <app-pagination
@@ -338,7 +338,8 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
           </div>
         </section>
 
-        <section *ngIf="activeTab === 'legacy'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm">
+        <!-- Legacy Cases Tab -->
+        <section *ngIf="activeTab === 'legacy'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white/70 backdrop-blur-3xl shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
             <div>
               <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.LEGACY_TABLE.TITLE' | translate }}</h2>
@@ -347,58 +348,60 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
             <span *ngIf="isLoadingLegacy" class="text-[12px] font-black text-zadna-primary">{{ 'COMMON.LOADING' | translate }}</span>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full min-w-[900px] text-start">
-              <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
-                <tr>
-                  <th class="px-5 py-4 text-start">{{ 'SUPPORT_ADMIN.LEGACY_TABLE.ORDER' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.LEGACY_TABLE.CUSTOMER' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.LEGACY_TABLE.VENDOR' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'COMMON.STATUS' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.PRIORITY' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.UPDATED' | translate }}</th>
-                  <th class="px-4 py-4 text-start">{{ 'COMMON.ACTIONS' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100">
-                <tr *ngFor="let legacyCase of legacyCases; trackBy: trackByLegacyId" class="transition hover:bg-slate-50/70">
-                  <td class="px-5 py-4">
-                    <a *ngIf="legacyCase.orderId; else noLegacyOrder" [routerLink]="['/orders', legacyCase.orderId]" class="text-[13px] font-black text-zadna-primary hover:text-teal-700">
-                      #{{ legacyCase.orderDisplayId }}
-                    </a>
-                    <ng-template #noLegacyOrder>
-                      <span class="text-[13px] font-black text-slate-700">#{{ legacyCase.orderDisplayId }}</span>
-                    </ng-template>
-                    <p class="mt-1 text-[11px] font-bold text-slate-400">{{ legacyCase.reason }}</p>
-                  </td>
-                  <td class="px-4 py-4 text-[12px] font-bold text-slate-700">{{ legacyCase.customerName }}</td>
-                  <td class="px-4 py-4 text-[12px] font-bold text-slate-700">{{ legacyCase.merchantName }}</td>
-                  <td class="px-4 py-4">
-                    <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="legacyStatusClass(legacyCase.caseStatus)">
-                      {{ legacyCase.caseStatusLabel || legacyCase.caseStatus }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-4">
-                    <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="priorityClass(legacyCase.priority)">
-                      {{ legacyCase.priorityLabel || priorityLabel(legacyCase.priority) }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-4 text-[12px] font-bold text-slate-500">{{ formatDateTime(legacyCase.createdAt) }}</td>
-                  <td class="px-4 py-4">
-                    <button type="button" (click)="openLegacyCase(legacyCase)" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
-                      {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <app-data-table
+            [data]="legacyCases"
+            [columns]="legacyColumns"
+            [isLoading]="isLoadingLegacy"
+            [clickableRows]="true"
+            [emptyStateTitle]="'SUPPORT_ADMIN.EMPTY.LEGACY_TITLE' | translate"
+            [emptyStateMessage]="'SUPPORT_ADMIN.EMPTY.LEGACY_MESSAGE' | translate"
+            [emptyStateIcon]="'support'"
+            (rowClick)="openLegacyCase($event)">
 
-          <div *ngIf="!isLoadingLegacy && legacyCases.length === 0" class="px-6 py-14 text-center">
-            <span class="material-symbols-outlined text-[30px] text-slate-300">support</span>
-            <p class="mt-3 text-[15px] font-black text-slate-800">{{ 'SUPPORT_ADMIN.EMPTY.LEGACY_TITLE' | translate }}</p>
-            <p class="mt-1 text-[12px] font-semibold text-slate-500">{{ 'SUPPORT_ADMIN.EMPTY.LEGACY_MESSAGE' | translate }}</p>
-          </div>
+            <ng-template #customColumn let-legacyCase let-column="column">
+              <ng-container [ngSwitch]="column.key">
+                <ng-container *ngSwitchCase="'order'">
+                  <a *ngIf="legacyCase.orderId; else noLegacyOrder" [routerLink]="['/orders', legacyCase.orderId]" (click)="$event.stopPropagation()" class="text-[13px] font-black text-zadna-primary hover:text-teal-700">
+                    #{{ legacyCase.orderDisplayId }}
+                  </a>
+                  <ng-template #noLegacyOrder>
+                    <span class="text-[13px] font-black text-slate-700">#{{ legacyCase.orderDisplayId }}</span>
+                  </ng-template>
+                  <p class="mt-1 text-[11px] font-bold text-slate-400">{{ legacyCase.reason }}</p>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'customer'">
+                  <span class="text-[12px] font-bold text-slate-700">{{ legacyCase.customerName }}</span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'vendor'">
+                  <span class="text-[12px] font-bold text-slate-700">{{ legacyCase.merchantName }}</span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'status'">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="legacyStatusClass(legacyCase.caseStatus)">
+                    {{ legacyCase.caseStatusLabel || legacyCase.caseStatus }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'priority'">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[11px] font-black" [ngClass]="priorityClass(legacyCase.priority)">
+                    {{ legacyCase.priorityLabel || priorityLabel(legacyCase.priority) }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'updatedAt'">
+                  <span class="text-[12px] font-bold text-slate-500">{{ formatDateTime(legacyCase.createdAt) }}</span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'actions'">
+                  <button type="button" (click)="openLegacyCase(legacyCase); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
+                    {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
+                  </button>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+          </app-data-table>
 
           <div *ngIf="legacyTotal > 0" class="border-t border-slate-100 px-5">
             <app-pagination
@@ -411,9 +414,56 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
         </section>
       </main>
 
+      <!-- Support Modals -->
+      <app-support-case-approval-modal
+        [isOpen]="isApprovalModalOpen"
+        [dispute]="activeSupportCase"
+        [draft]="formDrafts.approval"
+        (close)="closeApprovalModal()"
+        (saveDraft)="saveApprovalDraft($event)"
+        (submitDecision)="submitApproval($event)">
+      </app-support-case-approval-modal>
+
+      <app-support-case-rejection-modal
+        [isOpen]="isRejectionModalOpen"
+        [isRtl]="isRtl"
+        [dispute]="activeSupportCase"
+        (close)="closeRejectionModal()"
+        (saveDraft)="saveRejectionDraft($event)"
+        (submitDecision)="submitRejection($event)">
+      </app-support-case-rejection-modal>
+
+      <app-support-case-escalation-modal
+        [isOpen]="isEscalationModalOpen"
+        [isRtl]="isRtl"
+        [dispute]="activeSupportCase"
+        [draft]="formDrafts.escalation"
+        (close)="closeEscalationModal()"
+        (saveDraft)="saveEscalationDraft($event)"
+        (submitEscalation)="submitEscalation($event)">
+      </app-support-case-escalation-modal>
+
+      <app-support-case-request-info-modal
+        [isOpen]="isRequestInfoModalOpen"
+        [isRtl]="isRtl"
+        [supportCase]="activeSupportCase"
+        [draft]="formDrafts.requestInfo"
+        (close)="closeRequestInfoModal()"
+        (saveDraft)="saveRequestInfoDraft($event)"
+        (submitRequest)="submitRequestInfo($event)">
+      </app-support-case-request-info-modal>
+
+      <app-support-case-quick-action-modal
+        [isOpen]="isQuickActionModalOpen"
+        [isRtl]="isRtl"
+        [config]="quickActionConfig"
+        [value]="quickActionValue"
+        (close)="closeQuickActionModal()"
+        (submitAction)="submitQuickAction($event)">
+      </app-support-case-quick-action-modal>
+
       <aside *ngIf="selectedTicket"
-        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm"
-        [ngClass]="isRtl ? 'justify-start' : 'justify-end'">
+        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm justify-end">
         <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()"></button>
         <section class="relative flex h-full w-full max-w-[44rem] flex-col overflow-hidden bg-white shadow-2xl">
           <header class="border-b border-slate-100 px-6 py-5">
@@ -495,8 +545,7 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
       </aside>
 
       <aside *ngIf="selectedDriverCase"
-        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm"
-        [ngClass]="isRtl ? 'justify-start' : 'justify-end'">
+        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm justify-end">
         <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()"></button>
         <section class="relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden bg-white shadow-2xl">
           <header class="border-b border-slate-100 px-6 py-5">
@@ -605,8 +654,7 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
       </aside>
 
       <aside *ngIf="selectedLegacyCase"
-        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm"
-        [ngClass]="isRtl ? 'justify-start' : 'justify-end'">
+        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm justify-end">
         <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()"></button>
         <section class="relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden bg-white shadow-2xl">
           <header class="border-b border-slate-100 px-6 py-5">
@@ -766,6 +814,149 @@ export class AdminSupportCenterComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   activeTab: AdminSupportTab = 'vendor';
+
+  readonly vendorColumns: TableColumn[] = [
+    { key: 'reference', title: 'SUPPORT_ADMIN.VENDOR_TABLE.REFERENCE', type: 'custom', align: 'left' },
+    { key: 'subject', title: 'SUPPORT_ADMIN.VENDOR_TABLE.SUBJECT', type: 'custom', align: 'left' },
+    { key: 'orderId', title: 'SUPPORT_ADMIN.VENDOR_TABLE.ORDER', type: 'custom', align: 'left' },
+    { key: 'status', title: 'COMMON.STATUS', type: 'custom', align: 'center' },
+    { key: 'priority', title: 'SUPPORT_ADMIN.VENDOR_TABLE.PRIORITY', type: 'custom', align: 'center' },
+    { key: 'updatedAt', title: 'SUPPORT_ADMIN.VENDOR_TABLE.UPDATED', type: 'custom', align: 'left' },
+    { key: 'actions', title: 'COMMON.ACTIONS', type: 'custom', align: 'center' }
+  ];
+
+  readonly driverColumns: TableColumn[] = [
+    { key: 'case', title: 'SUPPORT_ADMIN.DRIVER_TABLE.CASE', type: 'custom', align: 'left' },
+    { key: 'driver', title: 'SUPPORT_ADMIN.DRIVER_TABLE.DRIVER', type: 'custom', align: 'left' },
+    { key: 'status', title: 'COMMON.STATUS', type: 'custom', align: 'center' },
+    { key: 'priority', title: 'SUPPORT_ADMIN.VENDOR_TABLE.PRIORITY', type: 'custom', align: 'center' },
+    { key: 'updatedAt', title: 'SUPPORT_ADMIN.VENDOR_TABLE.UPDATED', type: 'custom', align: 'left' },
+    { key: 'actions', title: 'COMMON.ACTIONS', type: 'custom', align: 'center' }
+  ];
+
+  readonly legacyColumns: TableColumn[] = [
+    { key: 'order', title: 'SUPPORT_ADMIN.LEGACY_TABLE.ORDER', type: 'custom', align: 'left' },
+    { key: 'customer', title: 'SUPPORT_ADMIN.LEGACY_TABLE.CUSTOMER', type: 'custom', align: 'left' },
+    { key: 'vendor', title: 'SUPPORT_ADMIN.LEGACY_TABLE.VENDOR', type: 'custom', align: 'left' },
+    { key: 'status', title: 'COMMON.STATUS', type: 'custom', align: 'center' },
+    { key: 'priority', title: 'SUPPORT_ADMIN.VENDOR_TABLE.PRIORITY', type: 'custom', align: 'center' },
+    { key: 'updatedAt', title: 'SUPPORT_ADMIN.VENDOR_TABLE.UPDATED', type: 'custom', align: 'left' },
+    { key: 'actions', title: 'COMMON.ACTIONS', type: 'custom', align: 'center' }
+  ];
+
+  panelFilters: Record<string, any> = {};
+  isFiltersExpanded = false;
+
+  get filterFields(): FilterField[] {
+    const fields: FilterField[] = [
+      {
+        key: 'status',
+        label: 'COMMON.STATUS',
+        type: 'select',
+        color: '#127c8c',
+        placeholder: 'SUPPORT_ADMIN.FILTERS.ALL_STATUSES',
+        options: this.statusOptions.map(opt => ({ value: opt.value, label: opt.labelKey }))
+      },
+      {
+        key: 'priority',
+        label: 'SUPPORT_ADMIN.VENDOR_TABLE.PRIORITY',
+        type: 'select',
+        color: '#f97316',
+        placeholder: 'SUPPORT_ADMIN.FILTERS.ALL_PRIORITIES',
+        options: this.priorityOptions.map(opt => ({ value: opt.value, label: opt.labelKey }))
+      }
+    ];
+
+    if (this.activeTab === 'vendor') {
+      fields.push({
+        key: 'category',
+        label: 'CATALOG.CATEGORY',
+        type: 'select',
+        color: '#8b5cf6',
+        placeholder: 'SUPPORT_ADMIN.FILTERS.ALL_CATEGORIES',
+        options: this.categoryOptions.map(cat => ({ value: cat, label: 'SUPPORT_ADMIN.CATEGORY.' + cat.toUpperCase() }))
+      });
+    }
+
+    return fields;
+  }
+
+  toggleFiltersPanel(): void {
+    this.isFiltersExpanded = !this.isFiltersExpanded;
+  }
+
+  get hasActiveFilters(): boolean {
+    return this.statusFilter !== 'all'
+      || this.priorityFilter !== 'all'
+      || this.categoryFilter !== 'all'
+      || this.searchTerm.trim().length > 0;
+  }
+
+  onPanelFiltersChange(filters: Record<string, any>): void {
+    this.statusFilter = filters['status'] || 'all';
+    this.priorityFilter = filters['priority'] || 'all';
+    this.categoryFilter = filters['category'] || 'all';
+    this.syncPanelFilters();
+    this.resetAndReload();
+  }
+
+  syncPanelFilters(): void {
+    this.panelFilters = {
+      status: this.statusFilter !== 'all' ? this.statusFilter : null,
+      priority: this.priorityFilter !== 'all' ? this.priorityFilter : null,
+      category: this.categoryFilter !== 'all' ? this.categoryFilter : null
+    };
+  }
+
+  onSearchChange(): void {
+    this.resetAndReload();
+  }
+
+  get kpiCards(): KPICard[] {
+    return [
+      {
+        id: 'open-tickets',
+        title: 'SUPPORT_ADMIN.KPIS.OPEN',
+        value: this.totalOpenCount,
+        icon: 'storefront',
+        color: '#127c8c'
+      },
+      {
+        id: 'waiting-vendor',
+        title: 'SUPPORT_ADMIN.KPIS.WAITING_VENDOR',
+        value: this.waitingVendorCount,
+        icon: 'pending_actions',
+        color: '#f59e0b'
+      },
+      {
+        id: 'sla-breached',
+        title: 'SUPPORT_ADMIN.KPIS.SLA_BREACHED',
+        value: this.stats?.slaBreachedCount ?? 0,
+        icon: 'priority_high',
+        color: '#ef4444'
+      },
+      {
+        id: 'avg-resolution',
+        title: 'SUPPORT_ADMIN.KPIS.AVG_RESOLUTION',
+        value: (this.stats?.avgResolutionHours ?? 0).toFixed(1),
+        icon: 'hourglass_empty',
+        color: '#6366f1',
+        trend: {
+          value: 0,
+          isPositive: true,
+          label: this.translate.instant('SUPPORT_ADMIN.KPIS.HOURS')
+        }
+      },
+      {
+        id: 'resolved-tickets',
+        title: 'SUPPORT_ADMIN.KPIS.RESOLVED',
+        value: this.resolvedCount,
+        icon: 'check_circle',
+        color: '#10b981'
+      }
+    ];
+  }
+
   vendorTickets: AdminVendorSupportTicket[] = [];
   driverCases: SupportCaseRow[] = [];
   legacyCases: SupportCaseRow[] = [];
@@ -1255,6 +1446,7 @@ export class AdminSupportCenterComponent implements OnInit {
         const tab = params.get('tab');
         this.activeTab = tab === 'legacy' || tab === 'driver' ? tab : 'vendor';
         this.searchTerm = params.get('search') ?? this.searchTerm;
+        this.syncPanelFilters();
 
         const ticketId = params.get('ticketId');
         const driverCaseId = params.get('driverCaseId');
@@ -1349,6 +1541,7 @@ export class AdminSupportCenterComponent implements OnInit {
     this.statusFilter = 'all';
     this.priorityFilter = 'all';
     this.categoryFilter = 'all';
+    this.syncPanelFilters();
     this.selectedTicket = null;
     this.selectedDriverCase = null;
     this.selectedLegacyCase = null;
@@ -1398,6 +1591,7 @@ export class AdminSupportCenterComponent implements OnInit {
     this.statusFilter = 'all';
     this.priorityFilter = 'all';
     this.categoryFilter = 'all';
+    this.syncPanelFilters();
     this.resetAndReload();
   }
 

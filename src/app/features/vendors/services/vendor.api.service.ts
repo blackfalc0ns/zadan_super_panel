@@ -419,6 +419,10 @@ export class VendorService {
     );
   }
 
+  getVendorBranches(vendorId: string): Observable<Array<{ id: string, name: string }>> {
+    return this.http.get<Array<{ id: string, name: string }>>(`${this.apiUrl}/${vendorId}/branches`);
+  }
+
   getVendorActivityLog(vendorId: string, filters: VendorActivityLogFilters = {}): Observable<VendorActivityLogPage> {
     const fallback = this.buildFallbackVendorActivityLog(vendorId, filters);
     const page = filters.page ?? 1;

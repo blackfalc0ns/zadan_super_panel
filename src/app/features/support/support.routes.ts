@@ -6,7 +6,7 @@ export const SUPPORT_ROUTES: Routes = [
     path: '',
     canActivate: [HasPermissionGuard],
     data: {
-      permission: 'vendor_support.view'
+      anyPermissions: ['orders.view', 'disputes.view', 'vendors.view']
     },
     loadComponent: () => import('./pages/admin-support-center/admin-support-center.component').then((m) => m.AdminSupportCenterComponent)
   }
