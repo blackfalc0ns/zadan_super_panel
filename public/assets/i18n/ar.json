@@ -375,7 +375,9 @@
       "REFERENCE_PLACEHOLDER": "ابحث برقم الحوالة أو مرجع الصرف",
       "RESET": "إعادة التعيين",
       "SAVE_UPDATE": "حفظ التحديث",
-      "SHOWING_RESULTS": "عرض النتائج"
+      "SHOWING_RESULTS": "عرض النتائج",
+      "STATS_TOTAL": "إجمالي الدفعات",
+      "SHOWING_COUNT": "{{ shown }} من {{ total }}"
     },
     "PAYMENT_DETAIL": {
       "TITLE": "تفاصيل الدفعة",
@@ -4136,7 +4138,10 @@
       "INVALID_ID": "رقم الطلب غير صالح."
     },
     "STATUS_READY_FOR_PICKUP": "جاهز للاستلام",
-    "STATUS_DELIVERED": "تم التسليم"
+    "STATUS_DELIVERED": "تم التسليم",
+    "DISPATCH_REASON": {
+      "DRIVER_ACCEPTED": "وافق السائق على عرض التوصيل."
+    }
   },
   "SUPPORT_ADMIN": {
     "TITLE": "مركز الدعم",
@@ -4985,13 +4990,13 @@
         "NO_TASKS_DESC": "لا يحتوي رد تفاصيل المندوب على مهام نشطة أو حديثة لهذا السائق.",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
-            "VEHICLE_INFO": "بيانات المركبة مكتملة",
-            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
-            "ZONE_SELECTION": "تم اختيار منطقة التشغيل الأساسية"
+            "PERSONAL_INFO": "البيانات الشخصية",
+            "VEHICLE_INFO": "بيانات المركبة",
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية",
+            "LICENSE_DOCUMENT": "رخصة القيادة",
+            "VEHICLE_DOCUMENT": "مستند المركبة",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي",
+            "ZONE_SELECTION": "منطقة التشغيل الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
@@ -5600,13 +5605,13 @@
         "STATUS_REQUIRED": "مطلوب",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
-            "VEHICLE_INFO": "بيانات المركبة مكتملة",
-            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
-            "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
+            "PERSONAL_INFO": "البيانات الشخصية",
+            "VEHICLE_INFO": "بيانات المركبة",
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية",
+            "LICENSE_DOCUMENT": "رخصة القيادة",
+            "VEHICLE_DOCUMENT": "مستند المركبة",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي",
+            "ZONE_SELECTION": "منطقة التشغيل الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
@@ -7080,5 +7085,15 @@
         "HIDDEN": "تم إخفاء الأسعار من كل كروت المنتجات."
       }
     }
-  }
+  },
+  "Driver accepted delivery offer.": "وافق السائق على عرض التوصيل.",
+  "Driver accepted delivery offer": "وافق السائق على عرض التوصيل.",
+  "driver accepted delivery offer.": "وافق السائق على عرض التوصيل.",
+  "الطلب انتقل إلى DriverAssignmentInProgress": "الطلب انتقل إلى جاري البحث عن سائق",
+  "الطلب انتقل إلى DriverAssigned": "الطلب انتقل إلى تم تعيين السائق",
+  "الطلب انتقل إلى PickedUp": "الطلب انتقل إلى تم الاستلام",
+  "الطلب انتقل إلى OnTheWay": "الطلب انتقل إلى في الطريق",
+  "الطلب انتقل إلى Delivered": "الطلب انتقل إلى تم التوصيل",
+  "حالة الدفع: Paid": "حالة الدفع: مدفوع",
+  "CashOnDelivery": "الدفع عند الاستلام"
 }

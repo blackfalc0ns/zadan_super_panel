@@ -37,7 +37,7 @@
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px] text-primary">gavel</span>
-            <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
+            <p class="text-xs font-black tracking-wider text-slate-400 text-start" [class.uppercase]="!isRTL">
               {{ isRTL ? 'البيانات القانونية' : 'Legal data' }}
             </p>
           </div>
@@ -45,7 +45,7 @@
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="space-y-1.5 text-start">
               <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'السجل التجاري' : 'Commercial registration' }} <span class="text-rose-400">*</span></label>
-              <input type="text" dir="ltr" name="commercialRegistrationNumber" [(ngModel)]="draftLegalBankData.commercialRegistrationNumber" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
+              <input type="text" dir="ltr" name="commercialRegistrationNumber" [(ngModel)]="draftLegalBankData.commercialRegistrationNumber" class="w-full rounded-xl border border-slate-900/12 bg-white/60 px-3.5 py-2.5 text-left text-sm font-semibold tabular-nums text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
             </div>
 
             <div class="space-y-1.5 text-start">
@@ -55,12 +55,12 @@
 
             <div class="space-y-1.5 text-start">
               <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'الرقم الضريبي' : 'Tax ID' }}</label>
-              <input type="text" dir="ltr" name="taxId" [(ngModel)]="draftLegalBankData.taxId" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
+              <input type="text" dir="ltr" name="taxId" [(ngModel)]="draftLegalBankData.taxId" class="w-full rounded-xl border border-slate-900/12 bg-white/60 px-3.5 py-2.5 text-left text-sm font-semibold tabular-nums text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
             </div>
 
             <div class="space-y-1.5 text-start">
               <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'رقم الرخصة' : 'License number' }}</label>
-              <input type="text" dir="ltr" name="licenseNumber" [(ngModel)]="draftLegalBankData.licenseNumber" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
+              <input type="text" dir="ltr" name="licenseNumber" [(ngModel)]="draftLegalBankData.licenseNumber" class="w-full rounded-xl border border-slate-900/12 bg-white/60 px-3.5 py-2.5 text-left text-sm font-semibold tabular-nums text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px] text-primary">folder_open</span>
-            <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
+            <p class="text-xs font-black tracking-wider text-slate-400 text-start" [class.uppercase]="!isRTL">
               {{ isRTL ? 'المرفقات القانونية' : 'Legal attachments' }}
             </p>
           </div>
@@ -89,7 +89,7 @@
                     {{ isUploading === 'cr' ? (isRTL ? 'رفع...' : '...') : (isRTL ? 'رفع' : 'Upload') }}
                     <input type="file" class="hidden" accept=".pdf,image/*" (change)="onCrFileSelected($event)" [disabled]="isUploading === 'cr'">
                   </label>
-                  <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftLegalBankData.commercialRegisterDocumentUrl" placeholder="URL" class="w-full border border-slate-900/12 bg-white/60 rounded-lg px-2 py-1 text-[10px] font-mono text-slate-500 shadow-sm outline-none focus:border-primary">
+                  <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftLegalBankData.commercialRegisterDocumentUrl" placeholder="URL" class="w-full rounded-lg border border-slate-900/12 bg-white/60 px-2 py-1 text-left text-[10px] text-slate-500 shadow-sm outline-none focus:border-primary">
                 </div>
               </div>
             </div>
@@ -108,7 +108,7 @@
                     {{ isUploading === 'tax' ? (isRTL ? 'رفع...' : '...') : (isRTL ? 'رفع' : 'Upload') }}
                     <input type="file" class="hidden" accept=".pdf,image/*" (change)="onTaxFileSelected($event)" [disabled]="isUploading === 'tax'">
                   </label>
-                  <input type="text" dir="ltr" name="taxDocumentUrl" [(ngModel)]="draftLegalBankData.taxDocumentUrl" placeholder="URL" class="w-full border border-slate-900/12 bg-white/60 rounded-lg px-2 py-1 text-[10px] font-mono text-slate-500 shadow-sm outline-none focus:border-primary">
+                  <input type="text" dir="ltr" name="taxDocumentUrl" [(ngModel)]="draftLegalBankData.taxDocumentUrl" placeholder="URL" class="w-full rounded-lg border border-slate-900/12 bg-white/60 px-2 py-1 text-left text-[10px] text-slate-500 shadow-sm outline-none focus:border-primary">
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@
                     {{ isUploading === 'license' ? (isRTL ? 'رفع...' : '...') : (isRTL ? 'رفع' : 'Upload') }}
                     <input type="file" class="hidden" accept=".pdf,image/*" (change)="onLicenseFileSelected($event)" [disabled]="isUploading === 'license'">
                   </label>
-                  <input type="text" dir="ltr" name="licenseDocumentUrl" [(ngModel)]="draftLegalBankData.licenseDocumentUrl" placeholder="URL" class="w-full border border-slate-900/12 bg-white/60 rounded-lg px-2 py-1 text-[10px] font-mono text-slate-500 shadow-sm outline-none focus:border-primary">
+                  <input type="text" dir="ltr" name="licenseDocumentUrl" [(ngModel)]="draftLegalBankData.licenseDocumentUrl" placeholder="URL" class="w-full rounded-lg border border-slate-900/12 bg-white/60 px-2 py-1 text-left text-[10px] text-slate-500 shadow-sm outline-none focus:border-primary">
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px] text-primary">account_balance</span>
-            <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
+            <p class="text-xs font-black tracking-wider text-slate-400 text-start" [class.uppercase]="!isRTL">
               {{ isRTL ? 'بيانات الحساب البنكي' : 'Bank account data' }}
             </p>
           </div>
@@ -161,12 +161,12 @@
 
             <div class="space-y-1.5 md:col-span-2 text-start">
               <label class="block text-[11px] font-bold text-slate-500">IBAN <span class="text-rose-400">*</span></label>
-              <div class="relative">
-                <div class="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10">
+              <div class="relative" dir="ltr">
+                <div class="pointer-events-none absolute left-4 top-1/2 z-10 flex -translate-y-1/2 items-center gap-1.5">
                   <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-black text-slate-500">SA</span>
                 </div>
-                <input type="text" dir="ltr" name="iban" [(ngModel)]="draftLegalBankData.iban" class="h-12 w-full border border-slate-900/12 bg-white/60 rounded-xl ps-14 pe-12 text-start font-mono text-[15px] font-bold tracking-[0.15em] text-slate-900 outline-none transition-all focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10" placeholder="0000 0000 0000 0000 0000 0000">
-                <button type="button" (click)="copyIban()" [disabled]="isSaving" class="absolute end-3 top-1/2 -translate-y-1/2 rounded-lg bg-slate-100 p-1.5 text-slate-500 transition-all hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40">
+                <input type="text" dir="ltr" name="iban" [(ngModel)]="draftLegalBankData.iban" class="h-12 w-full rounded-xl border border-slate-900/12 bg-white/60 pl-14 pr-12 text-left text-[15px] font-bold tabular-nums text-slate-900 outline-none transition-all focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10" placeholder="0000 0000 0000 0000 0000 0000">
+                <button type="button" (click)="copyIban()" [disabled]="isSaving" class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg bg-slate-100 p-1.5 text-slate-500 transition-all hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40">
                   <span class="material-symbols-outlined text-[16px]">content_copy</span>
                 </button>
               </div>
@@ -174,7 +174,7 @@
 
             <div class="space-y-1.5 text-start">
               <label class="block text-[11px] font-bold text-slate-500">SWIFT</label>
-              <input type="text" dir="ltr" name="swiftCode" [(ngModel)]="draftLegalBankData.swiftCode" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide">
+              <input type="text" dir="ltr" name="swiftCode" [(ngModel)]="draftLegalBankData.swiftCode" class="w-full rounded-xl border border-slate-900/12 bg-white/60 px-3.5 py-2.5 text-left text-sm font-semibold tabular-nums text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
             </div>
           </div>
         </div>

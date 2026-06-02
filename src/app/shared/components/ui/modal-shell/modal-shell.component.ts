@@ -44,18 +44,15 @@ export class ModalShellComponent {
   }
 
   get headerContentClasses(): string {
-    const base = 'flex min-w-0 flex-1 items-start gap-4';
-    return `${base} ${this.isRtl ? 'flex-row-reverse' : ''}`.trim();
+    return 'flex min-w-0 flex-1 items-start gap-4';
   }
 
   get titleWrapperClasses(): string {
-    const base = 'min-w-0 flex-1 flex flex-col';
-    return `${base} ${this.isRtl ? 'items-end text-right' : 'items-start text-left'}`.trim();
+    return 'min-w-0 flex-1 flex flex-col items-start text-start';
   }
 
   get titleRowClasses(): string {
-    const base = 'inline-flex max-w-full min-w-0 items-center gap-2';
-    return `${base} ${this.isRtl ? 'flex-row-reverse justify-end' : 'flex-row justify-start'}`.trim();
+    return 'inline-flex max-w-full min-w-0 items-center gap-2 justify-start';
   }
 
   get bodyClasses(): string {

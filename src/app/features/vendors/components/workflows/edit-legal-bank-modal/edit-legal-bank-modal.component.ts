@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '../../../../catalog/services/catalog.api.service';
@@ -26,8 +27,9 @@ export interface LegalBankData {
   imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
   templateUrl: './edit-legal-bank-modal.component.html'
 })
-export class EditLegalBankModalComponent implements OnChanges {
+export class EditLegalBankModalComponent implements OnChanges, OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   @Input() isOpen = false;
   @Input() isSaving = false;
   @Input() errorMessage = '';
@@ -78,9 +80,15 @@ export class EditLegalBankModalComponent implements OnChanges {
   };
 
   constructor(
-    private translate: TranslateService,
-    private catalogService: CatalogService
+    private readonly translate: TranslateService,
+    private readonly catalogService: CatalogService
   ) {}
+
+  ngOnInit(): void {
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.cdr.markForCheck());
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['legalBankData']) {

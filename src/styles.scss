@@ -62,9 +62,19 @@ body {
   height: 100%;
 }
 
+@layer base {
+  html {
+    @apply font-sans antialiased;
+  }
+
+  :where(input, textarea, select, button, optgroup) {
+    font-family: inherit;
+  }
+}
+
 body {
   margin: 0;
-  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans Arabic', sans-serif;
+  font-family: 'Cairo', ui-sans-serif, system-ui, sans-serif;
   background-color: #f3f4f6;
   /* light gray default background */
   -webkit-font-smoothing: antialiased;
@@ -475,27 +485,6 @@ body {
     transform: translateX(-100%);
   }
 
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Basic Utility Animations */
-.animate-in {
-  animation-fill-mode: both;
-}
-
-.fade-in {
-  animation-name: fadeIn;
-}
-
-.duration-700 {
-  animation-duration: 700ms;
-}
-
-@keyframes pulse-slow {
-
-  0%,
   100% {
     opacity: 0.5;
     transform: scale(1);

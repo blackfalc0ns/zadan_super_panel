@@ -147,6 +147,8 @@ export interface DriverOperationsSnapshot {
   lastLocationLabel?: string;
   rules: string[];
   taskAssignments: DriverTaskAssignment[];
+  region?: string | null;
+  city?: string | null;
 }
 
 export interface DriverPerformanceMetricCard {
@@ -323,6 +325,7 @@ export interface DriverDetailRecord extends Driver {
   joinedAt: string;
   vehicleLabel: string;
   licenseNumber: string;
+  nationalId?: string;
   nationalIdExpiryDate?: string;
   driverLicenseExpiryDate?: string;
   vehicleLicenseNumber?: string;

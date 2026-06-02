@@ -1,4 +1,4 @@
-<div *ngIf="isOpen && supportCase as supportCase">
+﻿<div *ngIf="isOpen && supportCase as supportCase">
   <app-modal-shell
     [dir]="isRtl ? 'rtl' : 'ltr'"
     [title]="'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.TITLE' | translate"
@@ -26,11 +26,11 @@
           <div class="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
             <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
               <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.CASE_ID' | translate }}</p>
-              <p class="font-['Inter'] text-xs font-black text-zadna-primary">{{ supportCase.id }}</p>
+              <p class="font-sans text-xs font-black text-zadna-primary">{{ supportCase.id }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
               <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.ORDER_ID' | translate }}</p>
-              <p class="font-['Inter'] text-xs font-black text-slate-800">{{ supportCase.orderDisplayId || supportCase.orderId }}</p>
+              <p class="font-sans text-xs font-black text-slate-800">{{ supportCase.orderDisplayId || supportCase.orderId }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
               <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</p>
@@ -50,7 +50,7 @@
             </div>
             <div class="rounded-2xl border border-slate-200/60 bg-slate-50 p-3">
               <p class="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.UPDATED_AT' | translate }}</p>
-              <p class="font-['Inter'] text-[11px] font-bold text-slate-500">{{ supportCase.createdAt }}</p>
+              <p class="font-sans text-[11px] font-bold text-slate-500">{{ supportCase.createdAt }}</p>
             </div>
           </div>
         </section>
@@ -203,7 +203,7 @@
                 <div class="relative space-y-3">
                   <div class="flex items-center justify-between gap-3">
                     <span class="rounded-full bg-zadna-primary/10 px-2 py-1 text-[10px] font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.SYSTEM_NOTICE' | translate }}</span>
-                    <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.TEMPLATE_VERSION' | translate }}</span>
+                    <span class="font-sans text-[10px] font-bold text-slate-400">{{ 'DISPUTES_DASHBOARD.REQUEST_INFO_MODAL.TEMPLATE_VERSION' | translate }}</span>
                   </div>
 
                   <div class="space-y-2">

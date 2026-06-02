@@ -1,0 +1,65 @@
+:host {
+  display: block;
+}
+
+.vendor-settings-card {
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgb(226 232 240 / 0.85);
+  background: white;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+}
+
+.vendor-settings-card-header {
+  border-bottom: 1px solid rgb(241 245 249);
+  padding: 1rem 1.25rem;
+}
+
+.vendor-settings-card-body {
+  padding: 1rem 1.25rem;
+}
+
+.vendor-settings-save-btn {
+  display: inline-flex;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  @apply bg-primary;
+  padding-inline: 1.25rem;
+  font-size: 12px;
+  font-weight: 800;
+  color: white;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+.vendor-settings-action-btn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(226 232 240);
+  background: rgb(248 250 252 / 0.6);
+  padding: 0.875rem 1rem;
+  text-align: start;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: rgb(13 148 136 / 0.25);
+    background: rgb(13 148 136 / 0.05);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+  }
+}

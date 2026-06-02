@@ -1,16 +1,48 @@
-.custom-scrollbar {
+:host {
+  display: block;
+}
+
+.vendor-compliance-page {
+  font-family: inherit;
+}
+
+.vendor-compliance-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225) transparent;
+
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+
   &::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.3);
-    border-radius: 10px;
+    border-radius: 999px;
+    background: rgb(203 213 225);
   }
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(148, 163, 184, 0.5);
+}
+
+.vendor-compliance-card {
+  min-height: 0;
+}
+
+.vendor-compliance-doc-board {
+  display: flex;
+  flex-direction: column;
+  max-height: min(42rem, calc(100vh - 14rem));
+}
+
+.vendor-compliance-preview {
+  min-height: min(28rem, 60vh);
+}
+
+.vendor-compliance-tabs {
+  width: 100%;
+
+  @media (min-width: 1280px) {
+    width: auto;
   }
+}
+
+.vendor-compliance-ring svg {
+  overflow: visible;
 }

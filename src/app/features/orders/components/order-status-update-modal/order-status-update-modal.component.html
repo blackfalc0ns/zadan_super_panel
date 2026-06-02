@@ -1,4 +1,4 @@
-<div *ngIf="isOpen && order as order">
+﻿<div *ngIf="isOpen && order as order">
   <app-modal-shell
     [dir]="'SIDEBAR.DIR' | translate"
     title="ORDERS.DETAIL.STATUS_MODAL.TITLE"
@@ -18,7 +18,7 @@
         <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
           <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
             <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.ORDER_ID' | translate }}</span>
-            <span class="block font-['Inter'] text-sm font-black text-zadna-primary">{{ order.id }}</span>
+            <span class="block font-sans text-sm font-black text-zadna-primary">{{ order.id }}</span>
           </div>
           <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
             <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</span>
@@ -30,7 +30,7 @@
           </div>
           <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
             <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
-            <span class="block font-['Inter'] text-sm font-black text-amber-600">{{ order.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            <span class="block font-sans text-sm font-black text-amber-600">{{ order.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
           </div>
           <div class="rounded-lg border border-slate-200/60 bg-slate-50 p-3">
             <span class="mb-1 block text-[10px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.PAYMENT_STATUS' | translate }}</span>
@@ -87,7 +87,7 @@
           <label class="px-1 text-[11px] font-black text-slate-500">{{ 'ORDERS.DETAIL.STATUS_MODAL.EXPECTED_DELIVERY' | translate }}</label>
           <div class="relative modal-datetime-field">
             <input
-              class="modal-field-control modal-datetime-control w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 font-['Inter'] text-sm font-bold outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+              class="modal-field-control modal-datetime-control w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 font-sans text-sm font-bold outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
               type="datetime-local"
               [(ngModel)]="form.expectedDeliveryTime" />
             <span class="modal-field-icon modal-datetime-icon material-symbols-outlined pointer-events-none absolute top-1/2 -translate-y-1/2 text-zadna-primary/40">calendar_month</span>

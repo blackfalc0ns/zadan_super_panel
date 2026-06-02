@@ -16,7 +16,8 @@ type VendorSettingsDialog = 'reset-password' | 'suspend-account' | 'lock-login' 
   selector: 'app-vendor-settings',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent],
-  templateUrl: './vendor-settings.component.html'
+  templateUrl: './vendor-settings.component.html',
+  styleUrls: ['./vendor-settings.component.scss']
 })
 export class VendorSettingsComponent {
   private readonly cdr = inject(ChangeDetectorRef);
@@ -83,6 +84,13 @@ export class VendorSettingsComponent {
         this.storeManualMode = state.manualMode;
         this.storeManualReason = state.manualReason ?? '';
       });
+  }
+
+  get vendorDisplayName(): string {
+    if (!this.vendor) {
+      return '';
+    }
+    return this.vendor.businessNameAr || this.vendor.businessNameEn || this.vendor.ownerName || '';
   }
 
   get activeNotificationChannelsCount(): number {

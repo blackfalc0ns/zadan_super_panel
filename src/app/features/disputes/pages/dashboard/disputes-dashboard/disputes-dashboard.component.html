@@ -187,8 +187,8 @@
         <ng-template #customColumn let-dispute let-column="column">
           <ng-container *ngIf="column.key === 'id'">
             <div class="flex flex-col text-start">
-              <span class="font-['Inter'] text-[13px] font-black text-zadna-primary">{{ dispute.id }}</span>
-              <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</span>
+              <span class="font-sans text-[13px] font-black text-zadna-primary">{{ dispute.id }}</span>
+              <span class="font-sans text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</span>
             </div>
           </ng-container>
 
@@ -233,7 +233,7 @@
           </ng-container>
 
           <ng-container *ngIf="column.key === 'amount'">
-            <span class="font-['Inter'] text-[13px] font-black text-slate-900">
+            <span class="font-sans text-[13px] font-black text-slate-900">
               {{ dispute.amount | number:'1.0-0' }}
               <span class="text-[10px] text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
             </span>
@@ -268,8 +268,8 @@
           <div class="space-y-4 text-start">
             <div class="flex items-start justify-between gap-3">
               <div>
-                <p class="font-['Inter'] text-[13px] font-black text-zadna-primary">{{ dispute.id }}</p>
-                <p class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</p>
+                <p class="font-sans text-[13px] font-black text-zadna-primary">{{ dispute.id }}</p>
+                <p class="font-sans text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</p>
               </div>
               <span class="inline-flex rounded-full border px-3 py-1.5 text-[10px] font-black"
                 [ngClass]="getPriorityClass(dispute.priority)">
@@ -297,7 +297,7 @@
               <div class="rounded-2xl bg-slate-50 p-3">
                 <p class="text-[9px] font-black uppercase tracking-tight text-slate-400">{{
                   'DISPUTES_DASHBOARD.TABLE.AMOUNT' | translate }}</p>
-                <p class="mt-1 font-['Inter'] text-[12px] font-black text-slate-900">{{ dispute.amount | number:'1.0-0'
+                <p class="mt-1 font-sans text-[12px] font-black text-slate-900">{{ dispute.amount | number:'1.0-0'
                   }} <span class="text-[10px] text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
               </div>
             </div>
@@ -371,7 +371,7 @@
                 {{ getDisputeInitiatorRoleLabel(selectedDispute) }}
               </span>
             </div>
-            <p class="mt-2 font-['Inter'] text-[2rem] font-black">{{ selectedDispute.amount | number:'1.0-0' }} <span
+            <p class="mt-2 font-sans text-[2rem] font-black">{{ selectedDispute.amount | number:'1.0-0' }} <span
                 class="text-base text-white/50">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
             <div class="mt-4 flex items-center justify-between text-[11px] font-bold text-white/70">
               <span>{{ 'ORDERS.DETAIL.PAYMENT_METHOD' | translate }}</span>

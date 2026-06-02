@@ -1,575 +1,584 @@
-<div class="h-full flex flex-col font-sans pb-12 overflow-y-auto px-4 md:px-8 lg:px-10 py-6 max-w-[1400px] mx-auto w-full" [dir]="'SIDEBAR.DIR' | translate">
-  <nav class="flex items-center gap-2 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-6 animate-in slide-in-from-right-5 duration-700">
-    <a routerLink="/" class="hover:text-zadna-primary transition-colors">{{ 'SIDEBAR.HOME' | translate }}</a>
-    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-    <a routerLink="/orders" class="hover:text-zadna-primary transition-colors">{{ 'ORDERS.TITLE' | translate }}</a>
-    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+<div
+  class="flex flex-col bg-[#f6f9fb] font-sans bg-[radial-gradient(circle_at_top_right,rgba(18,124,140,0.04)_0%,transparent_42%),radial-gradient(circle_at_bottom_left,rgba(20,184,166,0.03)_0%,transparent_38%)]"
+  [dir]="'SIDEBAR.DIR' | translate">
+
+  <!-- Breadcrumb -->
+  <nav class="mx-auto flex w-full max-w-[1400px] flex-wrap items-center gap-2 px-4 pt-6 text-[11px] font-extrabold uppercase tracking-widest text-slate-400 md:px-8 lg:px-10">
+    <a routerLink="/" class="transition-colors hover:text-zadna-primary">{{ 'SIDEBAR.HOME' | translate }}</a>
+    <span class="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true"></span>
+    <a routerLink="/orders" class="transition-colors hover:text-zadna-primary">{{ 'ORDERS.TITLE' | translate }}</a>
+    <span class="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true"></span>
     <span class="text-zadna-primary">{{ 'ORDERS.DETAIL.TITLE' | translate }}</span>
   </nav>
 
-  <div *ngIf="errorMessage" class="rounded-[1.4rem] border border-red-100 bg-red-50/80 px-5 py-4 text-sm font-bold text-red-700">
+  <!-- Error -->
+  <div *ngIf="errorMessage" class="mx-4 mt-4 max-w-[1400px] rounded-2xl border border-red-100 bg-red-50 px-5 py-4 text-sm font-bold text-red-700 md:mx-auto md:px-8 lg:px-10">
     {{ errorMessage | translate }}
   </div>
 
-  <div *ngIf="isLoading" class="space-y-4">
-    <div *ngFor="let skeleton of [1,2,3,4,5]" class="h-28 rounded-[1.6rem] border border-slate-200/60 bg-white/70 animate-pulse"></div>
+  <!-- Loader -->
+  <div *ngIf="isLoading" class="mx-4 mt-6 max-w-[1400px] space-y-4 md:mx-auto md:px-8 lg:px-10">
+    <div class="h-36 animate-pulse rounded-3xl border border-slate-200/60 bg-white"></div>
+    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div *ngFor="let skeleton of [1,2,3,4]" class="h-24 animate-pulse rounded-2xl border border-slate-200/60 bg-white/80"></div>
+    </div>
+    <div *ngFor="let skeleton of [1,2,3]" class="h-52 animate-pulse rounded-3xl border border-slate-200/60 bg-white/70"></div>
   </div>
 
   <ng-container *ngIf="!isLoading && order() as currentOrder">
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 animate-in fade-in duration-700">
-      <div>
-        <div class="flex items-center gap-3 mb-2">
-          <h1 class="text-2xl font-extrabold text-zadna-primary leading-tight">{{ 'ORDERS.DETAIL.TITLE' | translate }}</h1>
-          <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-bold font-mono text-slate-600">
-            {{ currentOrder.displayId }}
-          </span>
-          <span *ngIf="currentOrder.hasActiveIssue" class="px-3 py-1 bg-red-50 text-red-600 border border-red-100 rounded-full text-[11px] font-extrabold">
-            {{ 'ORDERS.DETAIL.NEEDS_INTERVENTION' | translate }}
-          </span>
-        </div>
-        <p class="text-sm text-slate-400 max-w-2xl">{{ 'ORDERS.DETAIL.OPERATIONAL_DESC' | translate }}</p>
+    <div class="mx-auto w-full max-w-[1400px] space-y-5 px-4 pt-4 pb-5 md:px-8 lg:px-10">
 
-        <div class="flex flex-wrap gap-2 mt-4">
-          <app-status-pill
-            [label]="orderStatusLabel"
-            [variant]="getOrderStatusVariant(currentOrder.status)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="paymentStatusLabel"
-            [variant]="getPaymentStatusVariant(currentOrder.paymentStatus)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="fulfillmentStatusLabel"
-            [variant]="getFulfillmentStatusVariant(currentOrder.fulfillmentStatus)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="workflowStageLabel"
-            variant="neutral"
-            [shouldTranslate]="true">
-          </app-status-pill>
-          <app-status-pill
-            [label]="resolutionStateLabel"
-            [variant]="getResolutionStateVariant(currentOrder.resolutionState)"
-            [shouldTranslate]="true">
-          </app-status-pill>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap gap-2">
-        <a
-          [routerLink]="['/orders', currentOrder.id]"
-          fragment="tracking"
-          (click)="scrollToTracking()"
-          class="bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-zadna-primary hover:bg-slate-50 transition-all inline-flex items-center gap-2">
-          <span class="material-symbols-outlined text-sm">share_location</span>
-          {{ 'ORDERS.DETAIL.TRACK_DRIVER' | translate }}
-        </a>
-        <button
-          *ngIf="!isOrderTerminal"
-          class="bg-zadna-primary text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:scale-95 transition-transform" type="button" (click)="openStatusModal()">
-          <span class="material-symbols-outlined text-sm">edit</span> {{ 'ORDERS.DETAIL.UPDATE_STATUS' | translate }}
-        </button>
-        <button
-          *ngIf="canOpenRefund"
-          class="bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-zadna-primary hover:bg-slate-50 transition-all"
-          type="button"
-          (click)="openRefundModal()">
-          {{ 'ORDERS.DETAIL.OPEN_REFUND' | translate }}
-        </button>
-        <button
-          *ngIf="currentOrder.status !== 'CANCELLED' && currentOrder.status !== 'COMPLETED' && currentOrder.status !== 'DELIVERED'"
-          class="bg-red-50 border border-red-200 px-4 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-100 transition-all"
-          type="button"
-          (click)="openCancellationModal()">
-          {{ 'ORDERS.DETAIL.CANCEL_ORDER' | translate }}
-        </button>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-2 lg:grid-cols-7 gap-3 mb-8 animate-in slide-in-from-bottom-5 duration-700">
-      <div class="kpi-card">
-        <span class="text-[10px] text-slate-400 font-bold mb-1.5">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
-        <span class="text-sm font-extrabold font-mono text-zadna-primary">{{ currentOrder.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-      </div>
-      <div class="kpi-card">
-        <span class="text-[10px] text-slate-400 font-bold mb-1.5">{{ 'ORDERS.DETAIL.PAYMENT' | translate }}</span>
-        <span class="text-sm font-bold text-slate-700">{{ paymentStatusLabel | translate }}</span>
-      </div>
-      <div class="kpi-card">
-        <span class="text-[10px] text-slate-400 font-bold mb-1.5">{{ 'ORDERS.DETAIL.NEXT_ACTION' | translate }}</span>
-        <span class="text-[11px] font-bold text-slate-700 leading-snug">{{ currentOrder.nextActionLabel | translate }}</span>
-      </div>
-      <div class="kpi-card">
-        <span class="text-[10px] text-slate-400 font-bold mb-1.5">{{ 'ORDERS.DETAIL.FULFILLMENT_STATUS' | translate }}</span>
-        <span class="text-sm font-bold text-slate-700">{{ fulfillmentStatusLabel | translate }}</span>
-      </div>
-      <div class="kpi-card">
-        <span class="text-[10px] text-slate-400 font-bold mb-1.5">{{ 'ORDERS.DETAIL.LAST_UPDATED' | translate }}</span>
-        <span class="text-sm font-bold text-slate-700">{{ currentOrder.lastUpdatedAt }}</span>
-      </div>
-      <div class="kpi-card">
-        <span class="text-[10px] text-slate-400 font-bold mb-1.5">{{ 'ORDERS.DETAIL.SLA_LABEL' | translate }}</span>
-        <span class="text-sm font-extrabold font-mono" [ngClass]="currentOrder.isLate ? 'text-amber-600' : 'text-emerald-600'">{{ currentOrder.slaScore || 0 }}%</span>
-      </div>
-      <div class="kpi-card" [ngClass]="currentOrder.hasActiveIssue ? 'border-red-100 bg-red-50/50' : 'border-emerald-100 bg-emerald-50/50'">
-        <span class="text-[10px] text-slate-400 font-bold mb-1.5">{{ 'ORDERS.DETAIL.CURRENT_ALERT' | translate }}</span>
-        <span class="text-[11px] font-bold" [ngClass]="currentOrder.hasActiveIssue ? 'text-red-600' : 'text-emerald-600'">{{ currentOrder.alertLabel }}</span>
-      </div>
-    </div>
-
-    <div *ngIf="currentOrder.cancellationSummary as cancellation" class="mb-8 space-y-4">
-      <app-inline-banner
-        variant="critical"
-        [shouldTranslate]="false"
-        [title]="'ORDERS.DETAIL.CANCELLATION.BANNER_TITLE' | translate"
-        [message]="'ORDERS.DETAIL.CANCELLATION.BANNER_MESSAGE' | translate:{ reason: cancellation.reasonLabel, details: cancellation.details }">
-      </app-inline-banner>
-
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.REASON' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ cancellation.reasonLabel }}</p>
-        </div>
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.REFUND_TYPE' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ ('ORDERS.DETAIL.CANCEL_MODAL.REFUND_' + cancellation.refundType.toUpperCase()) | translate }}</p>
-        </div>
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.COST_BEARER' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ ('ORDERS.DETAIL.CANCEL_MODAL.COST_' + cancellation.costBearer.toUpperCase()) | translate }}</p>
-        </div>
-        <div class="rounded-2xl border border-red-100 bg-white p-4">
-          <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CANCELLATION.CLOSED_BY' | translate }}</p>
-          <p class="text-sm font-extrabold text-slate-800">{{ cancellation.cancelledBy }}</p>
-          <p class="text-[10px] font-bold text-slate-400 mt-1">{{ cancellation.cancelledAt }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-12 gap-6 animate-in slide-in-from-bottom-10 duration-1000">
-      <!-- Left Column (Operational & Details) -->
-      <div class="col-span-12 xl:col-span-8 space-y-6">
-        
-        <!-- Location Delivery -->
-        <section id="tracking" class="bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col md:flex-row min-h-[320px] scroll-mt-24">
-          <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center border-l border-slate-50">
-            <app-section-header class="mb-6" [compact]="true" icon="location_on" title="ORDERS.DETAIL.LOCATION_DELIVERY"></app-section-header>
-            <div class="space-y-6">
-              <div>
-                <label class="text-[10px] font-extrabold text-slate-400 block mb-1">{{ 'ORDERS.DETAIL.DELIVERY_ADDRESS' | translate }}</label>
-                <p class="text-[13px] font-semibold text-slate-800 leading-relaxed">{{ currentOrder.customerAddress }}</p>
-              </div>
-              <app-key-value-grid [items]="deliveryInfoItems" [columns]="2"></app-key-value-grid>
-              <app-inline-banner
-                variant="warning"
-                [shouldTranslate]="false"
-                [title]="'ORDERS.DETAIL.SUPPORT_SUMMARY' | translate"
-                [message]="currentOrder.supportSummary">
-              </app-inline-banner>
-            </div>
-          </div>
-
-          <div class="w-full md:w-1/2 relative overflow-hidden min-h-[320px] bg-slate-50">
-            <app-order-tracking-map
-              [merchantGeo]="currentOrder.merchantGeo"
-              [customerGeo]="currentOrder.customerGeo"
-              [driverLocation]="currentOrder.driverLiveLocation"
-              [merchantLabel]="('ORDERS.DETAIL.MERCHANT_BRANCH' | translate)"
-              [customerLabel]="('ORDERS.DETAIL.DELIVERY_ADDRESS' | translate)"
-              [driverLabel]="('ORDERS.DETAIL.DRIVER' | translate)">
-            </app-order-tracking-map>
-          </div>
-        </section>
-
-        <!-- Timeline -->
-        <section class="bg-white border border-slate-100 rounded-2xl p-6 relative">
-          <app-section-header class="mb-8" [compact]="true" icon="timeline" title="ORDERS.DETAIL.TIMELINE"></app-section-header>
-
-          <div class="space-y-6 relative mr-2">
-            <div class="absolute right-[11px] top-2 bottom-2 w-0.5 bg-slate-200/50"></div>
-
-            <div *ngFor="let step of currentOrder.timeline" class="relative pr-8" [class.opacity-40]="step.status === 'PENDING'">
-              <div *ngIf="step.status === 'COMPLETED'" class="absolute right-0 top-1 w-[22px] h-[22px] rounded-full bg-zadna-primary flex items-center justify-center z-10 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.03)] border-2 border-white">
-                <span class="material-symbols-outlined text-white text-[12px] font-extrabold">check</span>
-              </div>
-
-              <div *ngIf="step.status === 'IN_PROGRESS'" class="absolute right-0 top-1 w-[22px] h-[22px] rounded-full bg-amber-500 ring-4 ring-amber-500/20 flex items-center justify-center z-10">
-                <span class="material-symbols-outlined text-white text-[12px] animate-spin-slow">autorenew</span>
-              </div>
-
-              <div *ngIf="step.status === 'PENDING'" class="absolute right-0 top-1 w-[22px] h-[22px] rounded-full bg-slate-200 flex items-center justify-center z-10 border-2 border-white shadow-[0_4px_24px_-4px_rgba(15,23,42,0.03)]">
-                <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
-              </div>
-
-              <div class="flex justify-between items-start mb-1">
-                <h4 class="text-[13px] font-bold"
-                    [ngClass]="{
-                      'text-slate-800': step.status === 'COMPLETED' || step.status === 'PENDING',
-                      'text-amber-500': step.status === 'IN_PROGRESS'
-                    }">
-                  {{ step.title }}
-                </h4>
-                <span class="text-[10px] font-mono text-slate-400">{{ step.time }}</span>
-              </div>
-              <p class="text-[10px] text-slate-400">{{ step.subtitle }}</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Ordered Items -->
-        <section class="bg-white border border-slate-100 rounded-2xl overflow-hidden">
-          <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-            <app-section-header [compact]="true" icon="shopping_basket" title="ORDERS.DETAIL.ORDERED_ITEMS">
-              <span meta class="rounded-md bg-slate-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                {{ currentOrder.items.length }} {{ 'ORDERS.DETAIL.ITEMS_COUNT' | translate }}
+      <!-- Hero -->
+      <section class="rounded-3xl border border-white/90 bg-white/90 p-5 shadow-lg shadow-slate-200/40 backdrop-blur-md md:p-6">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div class="min-w-0 flex-1">
+            <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-500">{{ 'ORDERS.DETAIL.TITLE' | translate }}</p>
+            <div class="mt-1 flex flex-wrap items-center gap-2">
+              <h1 class="text-2xl font-black text-slate-900 md:text-3xl" dir="ltr">#{{ currentOrder.displayId }}</h1>
+              <span *ngIf="currentOrder.hasActiveIssue" class="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-extrabold text-red-600">
+                {{ 'ORDERS.DETAIL.NEEDS_INTERVENTION' | translate }}
               </span>
-            </app-section-header>
+            </div>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">{{ 'ORDERS.DETAIL.OPERATIONAL_DESC' | translate }}</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <app-status-pill [label]="orderStatusLabel" [variant]="getOrderStatusVariant(currentOrder.status)" [shouldTranslate]="true"></app-status-pill>
+              <app-status-pill [label]="paymentStatusLabel" [variant]="getPaymentStatusVariant(currentOrder.paymentStatus)" [shouldTranslate]="true"></app-status-pill>
+              <app-status-pill [label]="fulfillmentStatusLabel" [variant]="getFulfillmentStatusVariant(currentOrder.fulfillmentStatus)" [shouldTranslate]="true"></app-status-pill>
+            </div>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full table-fixed text-right">
-              <thead>
-                <tr class="bg-slate-50/50">
-                  <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.ITEM' | translate }}</th>
-                  <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.SKU' | translate }}</th>
-                  <th class="px-6 py-4 text-[11px] font-bold text-slate-400 text-center">{{ 'ORDERS.DETAIL.QUANTITY' | translate }}</th>
-                  <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.PRICE' | translate }}</th>
-                  <th class="px-6 py-4 text-[11px] font-bold text-slate-400">{{ 'ORDERS.DETAIL.SUBTOTAL' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100/50">
-                <tr *ngFor="let item of currentOrder.items" class="hover:bg-slate-50/50 transition-colors">
-                  <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden">
-                        <img *ngIf="item.imageUrl; else fallbackIcon" [src]="resolveProductImageUrl(item.imageUrl)" class="w-full h-full object-cover" [alt]="item.name">
-                        <ng-template #fallbackIcon>
-                          <span class="material-symbols-outlined text-[20px] text-zadna-primary">{{ item.icon || 'shopping_basket' }}</span>
-                        </ng-template>
-                      </div>
-                      <div>
-                        <p class="text-[13px] font-bold text-slate-800">{{ item.name }}</p>
-                        <p class="text-[10px] text-slate-400">{{ item.brand }} - {{ item.quantity }}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 text-[10px] font-mono text-slate-400">{{ item.sku }}</td>
-                  <td class="px-6 py-4 text-[12px] font-bold text-center font-mono text-slate-600">{{ item.quantity }}</td>
-                  <td class="px-6 py-4 text-[12px] font-bold font-mono text-slate-600">{{ item.price | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</td>
-                  <td class="px-6 py-4 text-[12px] font-bold font-mono text-zadna-primary">{{ item.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</td>
-                </tr>
-              </tbody>
-            </table>
+
+          <div class="shrink-0 rounded-2xl border border-zadna-primary/15 bg-gradient-to-br from-zadna-primary/10 to-teal-500/5 px-5 py-4 text-center lg:text-start">
+            <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
+            <p class="mt-1 text-2xl font-black tabular-nums text-zadna-primary md:text-3xl" dir="ltr">
+              {{ currentOrder.total | number:'1.2-2' }}
+              <span class="text-xs font-extrabold text-slate-500">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            </p>
+            <span class="mt-1 block text-[11px] font-bold text-slate-400">{{ currentOrder.lastUpdatedAt }}</span>
           </div>
-        </section>
+        </div>
 
-        <!-- Finances -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <section class="bg-white border border-slate-100 rounded-2xl p-6 flex flex-col">
-            <app-section-header class="mb-6" [compact]="true" icon="account_balance_wallet" title="ORDERS.DETAIL.PAYMENT_SUMMARY"></app-section-header>
-            <div class="space-y-4 flex-1">
-              <app-key-value-grid [items]="paymentInfoItems" [columns]="1"></app-key-value-grid>
-
-              <div class="mt-4 p-4 rounded-xl bg-zadna-primary/5 border border-zadna-primary/10">
-                <p class="text-[11px] font-extrabold text-zadna-primary mb-2">{{ 'ORDERS.DETAIL.PAYMENT_NOTE' | translate }}</p>
-                <p class="text-sm font-bold text-slate-700">{{ currentOrder.paymentStatusNote }}</p>
-              </div>
-
-              <div class="mt-4 p-4 rounded-xl bg-white border border-slate-100">
-                <p class="text-[11px] font-extrabold text-slate-500 mb-2">{{ 'ORDERS.DETAIL.FULFILLMENT_NOTE' | translate }}</p>
-                <p class="text-sm font-bold text-slate-700">{{ currentOrder.fulfillmentStatusNote }}</p>
-              </div>
+        <!-- Insights -->
+        <div class="mt-5 grid grid-cols-1 gap-2 border-t border-dashed border-slate-200 pt-5 sm:grid-cols-3">
+          <div
+            class="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50 p-3"
+            [ngClass]="currentOrder.isLate ? 'border-amber-200 bg-amber-50' : ''">
+            <span class="material-symbols-outlined text-lg" [ngClass]="currentOrder.isLate ? 'text-amber-600' : 'text-zadna-primary'">speed</span>
+            <div>
+              <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.SLA_LABEL' | translate }}</span>
+              <span class="mt-0.5 block text-sm font-extrabold tabular-nums" [ngClass]="currentOrder.isLate ? 'text-amber-700' : 'text-slate-700'" dir="ltr">{{ currentOrder.slaScore || 0 }}%</span>
             </div>
-          </section>
-
-          <section *ngIf="financialBreakdown() as finance" class="bg-white border border-slate-100 rounded-2xl p-6 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-              <div>
-                <app-section-header [compact]="true" icon="query_stats" title="ORDERS.DETAIL.FINANCE_CARD.TITLE"></app-section-header>
-                <p class="mt-1 text-[11px] font-medium text-slate-500">{{ 'ORDERS.DETAIL.FINANCE_CARD.SUBTITLE' | translate }}</p>
-              </div>
+          </div>
+          <div
+            class="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50 p-3"
+            [ngClass]="currentOrder.hasActiveIssue ? 'border-red-200 bg-red-50' : ''">
+            <span class="material-symbols-outlined text-lg" [ngClass]="currentOrder.hasActiveIssue ? 'text-red-600' : 'text-zadna-primary'">{{ currentOrder.hasActiveIssue ? 'error' : 'check_circle' }}</span>
+            <div class="min-w-0">
+              <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CURRENT_ALERT' | translate }}</span>
+              <span class="mt-0.5 block truncate text-sm font-extrabold" [ngClass]="currentOrder.hasActiveIssue ? 'text-red-700' : 'text-slate-700'">{{ currentOrder.alertLabel }}</span>
             </div>
-
-            <div class="space-y-1.5 flex-1">
-              <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.VENDOR_COMMISSION' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.vendorCommission | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-              </div>
-              <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.DRIVER_PAYOUT' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.driverPayout | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-              </div>
-              <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.SERVICE_FEE' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.serviceFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-              </div>
-              <div class="flex justify-between items-center py-2 border-b border-slate-100">
-                <span class="text-[11px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.FINANCE_CARD.VAT' | translate }}</span>
-                <span class="text-[13px] font-extrabold text-slate-800">{{ finance.vat | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-              </div>
-              <div class="flex justify-between items-center py-3 px-3 mt-4 rounded-xl" [ngClass]="finance.netMargin >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'">
-                <span class="text-[11px] font-extrabold">{{ 'ORDERS.DETAIL.FINANCE_CARD.NET_MARGIN' | translate }} ({{ finance.marginPercent | number:'1.1-1' }}%)</span>
-                <span class="text-[14px] font-extrabold">{{ finance.netMargin | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-              </div>
+          </div>
+          <div class="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <span class="material-symbols-outlined text-lg text-zadna-primary">next_plan</span>
+            <div class="min-w-0">
+              <span class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.NEXT_ACTION' | translate }}</span>
+              <span class="mt-0.5 block text-sm font-extrabold text-slate-700">{{ currentOrder.nextActionLabel | translate }}</span>
             </div>
+          </div>
+        </div>
 
-            <div class="mt-5 pt-4 flex gap-2 border-t border-slate-100">
-              <a [routerLink]="['/finances/ledger']" [queryParams]="{ orderId: currentOrder.id }" class="flex-1 inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-2 text-[11px] font-extrabold text-slate-700 hover:bg-slate-50">
-                <span class="material-symbols-outlined text-[16px]">receipt_long</span> {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_LEDGER' | translate }}
-              </a>
-              <a [routerLink]="['/disputes']" [queryParams]="{ type: 'return_request', search: currentOrder.id }" class="flex-1 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-zadna-primary px-2 text-[11px] font-extrabold text-white hover:bg-zadna-primaryDark">
-                <span class="material-symbols-outlined text-[16px]">undo</span> {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_REFUNDS' | translate }}
-              </a>
-            </div>
-          </section>
+        <!-- Actions -->
+        <div class="mt-5 flex flex-wrap gap-2 border-t border-dashed border-slate-200 pt-5">
+          <button type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('tracking')">
+            <span class="material-symbols-outlined text-base">share_location</span>
+            {{ 'ORDERS.DETAIL.TRACK_DRIVER' | translate }}
+          </button>
+          <button *ngIf="!isOrderTerminal" type="button" class="btn-premium inline-flex items-center gap-1.5 px-4 py-2.5 text-xs" (click)="openStatusModal()">
+            <span class="material-symbols-outlined text-base">edit</span>
+            {{ 'ORDERS.DETAIL.UPDATE_STATUS' | translate }}
+          </button>
+          <button *ngIf="canOpenRefund" type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="openRefundModal()">
+            {{ 'ORDERS.DETAIL.OPEN_REFUND' | translate }}
+          </button>
+          <button
+            *ngIf="currentOrder.status !== 'CANCELLED' && currentOrder.status !== 'COMPLETED' && currentOrder.status !== 'DELIVERED'"
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs font-extrabold text-red-600 transition hover:bg-red-100"
+            (click)="openCancellationModal()">
+            {{ 'ORDERS.DETAIL.CANCEL_ORDER' | translate }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Quick nav -->
+      <nav class="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" [attr.aria-label]="'ORDERS.DETAIL.TITLE' | translate">
+        <button type="button" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/25 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('tracking')">
+          <span class="material-symbols-outlined text-base text-zadna-primary">location_on</span>
+          {{ 'ORDERS.DETAIL.LOCATION_DELIVERY' | translate }}
+        </button>
+        <button type="button" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/25 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('timeline')">
+          <span class="material-symbols-outlined text-base text-zadna-primary">timeline</span>
+          {{ 'ORDERS.DETAIL.TIMELINE' | translate }}
+        </button>
+        <button type="button" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/25 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('items')">
+          <span class="material-symbols-outlined text-base text-zadna-primary">shopping_basket</span>
+          {{ 'ORDERS.DETAIL.ORDERED_ITEMS' | translate }}
+        </button>
+        <button type="button" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/25 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('finances')">
+          <span class="material-symbols-outlined text-base text-zadna-primary">payments</span>
+          {{ 'ORDERS.DETAIL.PAYMENT_SUMMARY' | translate }}
+        </button>
+        <button type="button" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/25 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('parties')">
+          <span class="material-symbols-outlined text-base text-zadna-primary">groups</span>
+          {{ 'ORDERS.DETAIL.CUSTOMER_INFO' | translate }}
+        </button>
+        <button type="button" class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/25 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('support')">
+          <span class="material-symbols-outlined text-base text-zadna-primary">support_agent</span>
+          {{ 'ORDERS.DETAIL.SUPPORT_DISPUTES' | translate }}
+        </button>
+      </nav>
+
+      <!-- Metrics -->
+      <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">credit_card</span>
+          <div class="min-w-0">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.PAYMENT' | translate }}</p>
+            <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ paymentStatusLabel | translate }}</p>
+          </div>
+        </article>
+        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">local_shipping</span>
+          <div class="min-w-0">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.FULFILLMENT_STATUS' | translate }}</p>
+            <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ fulfillmentStatusLabel | translate }}</p>
+          </div>
+        </article>
+        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">alt_route</span>
+          <div class="min-w-0">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CURRENT_STAGE' | translate }}</p>
+            <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ workflowStageLabel | translate }}</p>
+          </div>
+        </article>
+        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">gavel</span>
+          <div class="min-w-0">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.RESOLUTION_STATUS' | translate }}</p>
+            <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ resolutionStateLabel | translate }}</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Cancellation -->
+      <div *ngIf="currentOrder.cancellationSummary as cancellation" class="space-y-4">
+        <app-inline-banner variant="critical" [shouldTranslate]="false" [title]="'ORDERS.DETAIL.CANCELLATION.BANNER_TITLE' | translate" [message]="'ORDERS.DETAIL.CANCELLATION.BANNER_MESSAGE' | translate:{ reason: cancellation.reasonLabel, details: cancellation.details }"></app-inline-banner>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CANCELLATION.REASON' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-slate-800">{{ cancellation.reasonLabel }}</p>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CANCELLATION.REFUND_TYPE' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-slate-800">{{ ('ORDERS.DETAIL.CANCEL_MODAL.REFUND_' + cancellation.refundType.toUpperCase()) | translate }}</p>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CANCELLATION.COST_BEARER' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-slate-800">{{ ('ORDERS.DETAIL.CANCEL_MODAL.COST_' + cancellation.costBearer.toUpperCase()) | translate }}</p>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CANCELLATION.CLOSED_BY' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-slate-800">{{ cancellation.cancelledBy }}</p>
+            <p class="mt-0.5 text-[11px] font-semibold text-slate-400">{{ cancellation.cancelledAt }}</p>
+          </div>
         </div>
       </div>
 
-      <!-- Right Column (Stakeholders & Support) -->
-      <div class="col-span-12 xl:col-span-4 space-y-6">
-        
-        <!-- Driver Details -->
-        <section class="bg-white border-t-4 border-amber-400 border-x border-b border-slate-100 rounded-2xl p-6">
-          <app-section-header class="mb-5" [compact]="true" icon="local_shipping" title="ORDERS.DETAIL.DRIVER_DETAILS"></app-section-header>
-          <div class="space-y-3 text-[11px] mb-5 p-3 rounded-xl bg-slate-50 border border-slate-100">
-            <div class="flex justify-between items-center">
-              <span class="text-slate-500 font-bold">{{ 'ORDERS.DETAIL.DRIVER' | translate }}</span>
-              <span class="font-extrabold text-slate-800">{{ currentOrder.driverName }}</span>
-            </div>
-            <div class="flex justify-between items-center border-t border-slate-100 pt-2">
-              <span class="text-slate-500 font-bold">{{ 'ORDERS.DETAIL.PHONE' | translate }}</span>
-              <span class="font-extrabold font-mono text-slate-800" dir="ltr">{{ currentOrder.driverPhone }}</span>
-            </div>
-            <div class="flex justify-between items-center border-t border-slate-100 pt-2">
-              <span class="text-slate-500 font-bold">{{ 'ORDERS.DETAIL.VEHICLE' | translate }}</span>
-              <span class="font-extrabold text-slate-800">{{ currentOrder.driverVehicleLabel }}</span>
-            </div>
-            <div class="flex justify-between items-center border-t border-slate-100 pt-2">
-              <span class="text-slate-500 font-bold">{{ 'ORDERS.DETAIL.PLATE' | translate }}</span>
-              <span class="font-extrabold font-mono text-slate-800" dir="ltr">{{ currentOrder.driverPlateNumber }}</span>
-            </div>
-          </div>
-          <div class="space-y-2" *ngIf="!isOrderTerminal">
-            <button class="w-full py-2.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl text-[11px] font-extrabold hover:bg-amber-100 transition-colors" type="button" (click)="openDriverAssignmentModal()">
-              {{ 'ORDERS.DETAIL.CHANGE_DRIVER' | translate }}
-            </button>
-            <button *ngIf="canRecomputeDispatch" class="w-full py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-[11px] font-extrabold hover:bg-slate-50 transition-colors" type="button" (click)="recomputeDispatch()">
-              {{ 'ORDERS.DETAIL.RECOMPUTE_DISPATCH' | translate }}
-            </button>
-          </div>
-        </section>
+      <!-- Layout -->
+      <div class="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_22rem] 2xl:grid-cols-[minmax(0,1fr)_24rem]">
 
-        <!-- Customer Details -->
-        <section class="bg-white border border-slate-100 rounded-2xl p-6">
-          <div class="flex justify-between items-start mb-6">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center border border-slate-200/60">
-                <span class="material-symbols-outlined text-zadna-primary text-xl">person</span>
+        <!-- Main -->
+        <div class="min-w-0 space-y-5">
+
+          <!-- Tracking -->
+          <section id="tracking" class="scroll-mt-28 overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm">
+            <div class="border-b border-slate-100 px-4 py-4 md:px-5">
+              <app-section-header [compact]="true" icon="location_on" [title]="'ORDERS.DETAIL.LOCATION_DELIVERY' | translate" [shouldTranslate]="false"></app-section-header>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+              <div class="space-y-4 border-b border-slate-100 p-4 md:p-5 lg:border-b-0 lg:border-e">
+                <div>
+                  <label class="mb-1 block text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{{ 'ORDERS.DETAIL.DELIVERY_ADDRESS' | translate }}</label>
+                  <p class="text-sm font-semibold leading-relaxed text-slate-800">{{ currentOrder.customerAddress }}</p>
+                </div>
+                <app-key-value-grid [items]="deliveryInfoItems" [columns]="2" [bordered]="true"></app-key-value-grid>
+                <app-inline-banner variant="warning" [shouldTranslate]="false" [title]="'ORDERS.DETAIL.SUPPORT_SUMMARY' | translate" [message]="currentOrder.supportSummary"></app-inline-banner>
               </div>
+              <div class="min-h-[300px] bg-slate-100 lg:min-h-[360px]">
+                <app-order-tracking-map
+                  [merchantGeo]="currentOrder.merchantGeo"
+                  [customerGeo]="currentOrder.customerGeo"
+                  [driverLocation]="currentOrder.driverLiveLocation"
+                  [merchantLabel]="('ORDERS.DETAIL.MERCHANT_BRANCH' | translate)"
+                  [customerLabel]="('ORDERS.DETAIL.DELIVERY_ADDRESS' | translate)"
+                  [driverLabel]="('ORDERS.DETAIL.DRIVER' | translate)">
+                </app-order-tracking-map>
+              </div>
+            </div>
+          </section>
+
+          <!-- Items -->
+          <section id="items" class="scroll-mt-28 rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-5">
+            <app-section-header [compact]="true" icon="shopping_basket" [title]="'ORDERS.DETAIL.ORDERED_ITEMS' | translate" [shouldTranslate]="false">
+              <span meta class="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-extrabold text-slate-500">{{ currentOrder.items.length }} {{ 'ORDERS.DETAIL.ITEMS_COUNT' | translate }}</span>
+            </app-section-header>
+
+            <div class="mt-4 hidden gap-3 px-3 pb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 md:grid md:grid-cols-[minmax(0,1fr)_5rem_7rem]">
+              <span>{{ 'ORDERS.DETAIL.ITEM' | translate }}</span>
+              <span class="text-center">{{ 'ORDERS.DETAIL.QUANTITY' | translate }}</span>
+              <span class="text-end">{{ 'ORDERS.DETAIL.SUBTOTAL' | translate }}</span>
+            </div>
+
+            <article
+              *ngFor="let item of currentOrder.items"
+              class="mb-2 grid grid-cols-1 gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-3 transition hover:bg-white hover:shadow-md md:grid-cols-[minmax(0,1fr)_5rem_7rem] md:items-center md:gap-4">
+              <div class="flex min-w-0 items-center gap-3">
+                <div class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  <img *ngIf="item.imageUrl; else fallbackIcon" [src]="resolveProductImageUrl(item.imageUrl)" class="h-full w-full object-cover" [alt]="item.name">
+                  <ng-template #fallbackIcon>
+                    <span class="material-symbols-outlined text-[22px] text-zadna-primary/50">{{ item.icon || 'shopping_basket' }}</span>
+                  </ng-template>
+                </div>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-extrabold text-slate-900">{{ currentLang === 'ar' ? (item.nameAr || item.name) : (item.nameEn || item.name) }}</p>
+                  <div class="mt-0.5 flex flex-wrap gap-2 text-[11px] font-bold text-slate-400">
+                    <span *ngIf="item.brand">{{ item.brand }}</span>
+                    <span class="font-mono" dir="ltr">{{ item.sku }}</span>
+                  </div>
+                </div>
+              </div>
+              <p class="text-center text-base font-black tabular-nums text-slate-700 md:text-sm" dir="ltr">×{{ item.quantity }}</p>
+              <div class="flex flex-col md:items-end md:text-end" dir="ltr">
+                <strong class="text-base font-black tabular-nums text-zadna-primary">{{ item.total | number:'1.2-2' }}</strong>
+                <small class="text-[11px] font-bold text-slate-400">{{ item.price | number:'1.2-2' }} / {{ 'ORDERS.DETAIL.ITEM' | translate }}</small>
+              </div>
+            </article>
+          </section>
+
+          <!-- Delivery breakdown -->
+          <section *ngIf="currentOrder.deliveryBreakdown as breakdown" class="scroll-mt-28 rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-5">
+            <app-section-header [compact]="true" icon="map" [title]="'ORDERS.DETAIL.DELIVERY_BREAKDOWN.TITLE' | translate" [shouldTranslate]="false">
+              <span meta class="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-[10px] font-extrabold text-slate-500" dir="ltr">v{{ breakdown.quoteVersion }}</span>
+            </app-section-header>
+            <p class="mt-2 text-xs leading-relaxed text-slate-500">{{ 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.SUBTITLE' | translate }}</p>
+
+            <div *ngIf="breakdown.hasAnomalyWarning" class="mt-4 flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/80 p-4">
+              <span class="material-symbols-outlined text-xl text-red-500">warning</span>
               <div>
-                <h4 class="text-sm font-extrabold text-slate-800">{{ currentOrder.customerName }}</h4>
-                <span class="text-[9px] px-2 py-0.5 mt-1 inline-block bg-slate-100 text-slate-500 border border-slate-200 rounded font-extrabold">{{ currentOrder.city }}</span>
+                <h5 class="text-xs font-extrabold text-red-700">{{ 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.ANOMALY_WARNING' | translate }}</h5>
+                <p class="mt-0.5 text-[11px] text-red-600/90">{{ 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.ANOMALY_WARNING_DESC' | translate }}</p>
               </div>
             </div>
-          </div>
-          <div class="space-y-3 pt-2">
-            <div class="flex items-center gap-3 text-[13px]">
-              <span class="material-symbols-outlined text-slate-400 text-[18px]">call</span>
-              <span class="font-mono text-slate-700 font-semibold" dir="ltr">{{ currentOrder.customerPhone }}</span>
-            </div>
-            <div class="flex items-center gap-3 text-[13px]">
-              <span class="material-symbols-outlined text-slate-400 text-[18px]">mail</span>
-              <span class="font-mono text-slate-700 font-semibold" dir="ltr">{{ currentOrder.customerEmail }}</span>
-            </div>
-          </div>
-        </section>
 
-        <!-- Merchant Branch -->
-        <section class="bg-white border border-slate-100 rounded-2xl p-6">
-          <app-section-header class="mb-5" [compact]="true" icon="storefront" title="ORDERS.DETAIL.MERCHANT_BRANCH"></app-section-header>
-          <div class="space-y-3">
-            <div>
-              <p class="text-sm font-extrabold text-slate-800">{{ currentOrder.merchantName }}</p>
-              <p class="text-[10px] font-bold text-slate-400 mt-1">{{ currentOrder.merchantBranch }}</p>
-            </div>
-            <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <p class="text-[10px] font-extrabold text-slate-400 mb-1">{{ 'ORDERS.DETAIL.MERCHANT_LOCATION' | translate }}</p>
-              <p class="text-sm font-bold text-slate-700">{{ currentOrder.merchantLocation }}</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Workflow Section -->
-        <section class="bg-white border border-slate-100 rounded-2xl p-6">
-          <app-section-header class="mb-5" [compact]="true" icon="alt_route" title="ORDERS.DETAIL.WORKFLOW_SECTION"></app-section-header>
-          <div class="space-y-4">
-            <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
-              <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.CURRENT_STAGE' | translate }}</p>
-              <app-status-pill
-                [label]="workflowStageLabel"
-                variant="neutral"
-                [shouldTranslate]="true"
-                size="sm">
-              </app-status-pill>
-              <p class="text-[10px] font-bold text-slate-500 mt-3">{{ 'ORDERS.DETAIL.NEXT_ACTION' | translate }}</p>
-              <p class="text-sm font-extrabold text-slate-800 mt-1">{{ currentOrder.nextActionLabel | translate }}</p>
-            </div>
-            <div class="rounded-2xl border border-slate-100 bg-white p-4">
-              <p class="text-[10px] font-extrabold text-slate-400 mb-2">{{ 'ORDERS.DETAIL.RESOLUTION_STATUS' | translate }}</p>
-              <app-status-pill
-                [label]="resolutionStateLabel"
-                [variant]="getResolutionStateVariant(currentOrder.resolutionState)"
-                [shouldTranslate]="true"
-                size="sm">
-              </app-status-pill>
-            </div>
-
-            <div *ngIf="operationalCase as caseItem" class="rounded-2xl border border-slate-100 bg-white p-4 space-y-3">
-              <div class="flex items-center justify-between gap-2">
-                <p class="text-[10px] font-extrabold text-slate-400">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.TITLE' | translate }}</p>
-                <app-status-pill
-                  [label]="operationalCaseStatusLabel"
-                  [variant]="getOperationalCaseStatusVariant(caseItem.status)"
-                  [shouldTranslate]="true"
-                  size="sm">
-                </app-status-pill>
+            <div class="my-5 flex flex-col items-stretch justify-between gap-5 rounded-3xl border border-slate-200/80 bg-slate-50/80 p-5 md:flex-row md:items-center md:p-6">
+              <div class="flex flex-1 flex-col items-center text-center">
+                <div class="flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/60 bg-amber-50 text-amber-600">
+                  <span class="material-symbols-outlined text-xl">two_wheeler</span>
+                </div>
+                <h5 class="mt-2 text-[11px] font-extrabold uppercase text-slate-800">{{ 'ORDERS.DETAIL.DRIVER' | translate }}</h5>
               </div>
-              <p class="text-sm font-extrabold text-slate-800">{{ operationalCaseTypeLabel | translate }}</p>
-              <p class="text-[11px] font-bold text-slate-600">{{ caseItem.title }}</p>
-              <div class="flex items-center justify-between text-[10px] font-bold text-slate-400">
-                <span>{{ caseItem.queueLabel }}</span>
-                <span>{{ caseItem.lastUpdatedAt }}</span>
+              <div class="relative flex min-h-[40px] flex-[2] flex-col items-center justify-center px-2">
+                <div class="absolute start-0 end-0 top-1/2 hidden h-0.5 -translate-y-1/2 bg-gradient-to-r from-amber-300/60 to-zadna-primary/50 md:block rtl:bg-gradient-to-l"></div>
+                <div class="relative z-10 rounded-full border border-slate-100 bg-white px-3 py-1 text-center shadow-sm">
+                  <p class="text-[11px] font-extrabold font-mono text-slate-700" dir="ltr">{{ formatDistance(breakdown.driverToVendorDistanceKm) }}</p>
+                  <p class="text-[10px] font-extrabold font-mono text-zadna-primary" dir="ltr">{{ breakdown.driverToVendorFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
+                </div>
               </div>
+              <div class="flex flex-1 flex-col items-center text-center">
+                <div class="flex h-11 w-11 items-center justify-center rounded-full border border-zadna-primary/30 bg-zadna-primary/10 text-zadna-primary">
+                  <span class="material-symbols-outlined text-xl">storefront</span>
+                </div>
+                <h5 class="mt-2 text-[11px] font-extrabold uppercase text-slate-800">{{ 'ORDERS.DETAIL.MERCHANT_BRANCH' | translate }}</h5>
+              </div>
+              <div class="relative flex min-h-[40px] flex-[2] flex-col items-center justify-center px-2">
+                <div class="absolute start-0 end-0 top-1/2 hidden h-0.5 -translate-y-1/2 bg-gradient-to-r from-zadna-primary/50 to-teal-400/50 md:block rtl:bg-gradient-to-l"></div>
+                <div class="relative z-10 rounded-full border border-slate-100 bg-white px-3 py-1 text-center shadow-sm">
+                  <p class="text-[11px] font-extrabold font-mono text-slate-700" dir="ltr">{{ formatDistance(breakdown.vendorToCustomerDistanceKm) }}</p>
+                  <p class="text-[10px] font-extrabold font-mono text-zadna-primary" dir="ltr">{{ breakdown.vendorToCustomerFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
+                </div>
+              </div>
+              <div class="flex flex-1 flex-col items-center text-center">
+                <div class="flex h-11 w-11 items-center justify-center rounded-full border border-teal-200/60 bg-teal-50 text-teal-600">
+                  <span class="material-symbols-outlined text-xl">person_pin_circle</span>
+                </div>
+                <h5 class="mt-2 text-[11px] font-extrabold uppercase text-slate-800">{{ 'ORDERS.DETAIL.CUSTOMER_INFO' | translate }}</h5>
+              </div>
+            </div>
 
-              <div class="flex flex-wrap gap-2 pt-1">
-                <button
-                  *ngIf="canResolveOperationalCaseAction"
-                  class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] font-extrabold text-emerald-700 hover:bg-emerald-100 transition-colors"
-                  type="button"
-                  (click)="resolveOperationalCase()">
-                  {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.RESOLVE' | translate }}
-                </button>
-                <button
-                  *ngIf="canCloseOperationalCaseAction"
-                  class="rounded-xl border border-zadna-primary/20 bg-zadna-primary/10 px-3 py-2 text-[11px] font-extrabold text-zadna-primary hover:bg-zadna-primary/15 transition-colors"
-                  type="button"
-                  (click)="closeOperationalCase()">
-                  {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.CLOSE' | translate }}
-                </button>
-                <button
-                  *ngIf="canReopenOperationalCaseAction"
-                  class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-extrabold text-amber-700 hover:bg-amber-100 transition-colors"
-                  type="button"
-                  (click)="reopenOperationalCase()">
-                  {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.REOPEN' | translate }}
-                </button>
-                <a
-                  *ngIf="canViewDisputesCenter"
-                  [routerLink]="['/disputes']"
-                  [queryParams]="supportCenterQueryParams"
-                  class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-extrabold text-slate-700 hover:bg-slate-50 transition-colors">
-                  {{ 'SIDEBAR.DISPUTES' | translate }}
+            <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
+              <div class="grid gap-3 sm:grid-cols-2 lg:col-span-2">
+                <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+                  <span class="material-symbols-outlined text-slate-400">calculate</span>
+                  <div>
+                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.PRICING_MODE' | translate }}</p>
+                    <p class="text-sm font-extrabold text-slate-800">{{ 'ORDERS.DETAIL.DELIVERY_BREAKDOWN_VALUES.' + (breakdown.pricingMode | uppercase) | translate }}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+                  <span class="material-symbols-outlined text-slate-400">assignment_turned_in</span>
+                  <div>
+                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.ESTIMATED_DRIVER_PRICING' | translate }}</p>
+                    <p class="text-sm font-extrabold text-slate-800">{{ (breakdown.usedEstimatedDriverPricing ? 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.YES' : 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.NO') | translate }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col justify-between rounded-xl border border-zadna-primary/15 bg-gradient-to-br from-zadna-primary/10 to-teal-500/5 p-4">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.DELIVERY_BREAKDOWN.TOTAL_DELIVERY_FEE' | translate }}</p>
+                <p class="text-xl font-black font-mono text-zadna-primary" dir="ltr">{{ breakdown.totalDeliveryFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Finances -->
+          <div id="finances" class="scroll-mt-28 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <section class="rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-5">
+              <app-section-header class="mb-4" [compact]="true" icon="account_balance_wallet" [title]="'ORDERS.DETAIL.PAYMENT_SUMMARY' | translate" [shouldTranslate]="false"></app-section-header>
+              <app-key-value-grid [items]="paymentInfoItems" [columns]="2" [dense]="true" [bordered]="false"></app-key-value-grid>
+              <div class="mt-4 rounded-xl border border-zadna-primary/10 bg-zadna-primary/5 p-4">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.PAYMENT_NOTE' | translate }}</p>
+                <p class="mt-1 text-sm font-extrabold text-slate-800">{{ currentOrder.paymentStatusNote }}</p>
+              </div>
+            </section>
+
+            <section *ngIf="financialBreakdown() as finance" class="rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-5">
+              <app-section-header class="mb-2" [compact]="true" icon="query_stats" [title]="'ORDERS.DETAIL.FINANCE_CARD.TITLE' | translate" [shouldTranslate]="false"></app-section-header>
+              <p class="mb-4 text-xs text-slate-500">{{ 'ORDERS.DETAIL.FINANCE_CARD.SUBTITLE' | translate }}</p>
+              <div class="space-y-0">
+                <div class="flex justify-between gap-3 border-b border-dashed border-slate-200 py-2.5 text-xs font-bold text-slate-500">
+                  <span>{{ 'ORDERS.DETAIL.FINANCE_CARD.VENDOR_COMMISSION' | translate }}</span>
+                  <span class="font-extrabold tabular-nums text-slate-800" dir="ltr">{{ finance.vendorCommission | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="flex justify-between gap-3 border-b border-dashed border-slate-200 py-2.5 text-xs font-bold text-slate-500">
+                  <span>{{ 'ORDERS.DETAIL.FINANCE_CARD.DRIVER_PAYOUT' | translate }}</span>
+                  <span class="font-extrabold tabular-nums text-slate-800" dir="ltr">{{ finance.driverPayout | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="flex justify-between gap-3 border-b border-dashed border-slate-200 py-2.5 text-xs font-bold text-slate-500">
+                  <span>{{ 'ORDERS.DETAIL.FINANCE_CARD.SERVICE_FEE' | translate }}</span>
+                  <span class="font-extrabold tabular-nums text-slate-800" dir="ltr">{{ finance.serviceFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div class="flex justify-between gap-3 border-b border-dashed border-slate-200 py-2.5 text-xs font-bold text-slate-500">
+                  <span>{{ 'ORDERS.DETAIL.FINANCE_CARD.VAT' | translate }}</span>
+                  <span class="font-extrabold tabular-nums text-slate-800" dir="ltr">{{ finance.vat | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                </div>
+                <div
+                  class="mt-3 flex items-center justify-between gap-3 rounded-xl border px-4 py-3"
+                  [ngClass]="finance.netMargin >= 0 ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100/50' : 'border-red-200 bg-gradient-to-r from-red-50 to-red-100/50'">
+                  <div>
+                    <span class="block text-[10px] font-extrabold uppercase tracking-wider" [ngClass]="finance.netMargin >= 0 ? 'text-emerald-700' : 'text-red-700'">{{ 'ORDERS.DETAIL.FINANCE_CARD.NET_MARGIN' | translate }}</span>
+                    <small class="text-[11px] font-bold" [ngClass]="finance.netMargin >= 0 ? 'text-emerald-600' : 'text-red-600'">{{ finance.marginPercent | number:'1.1-1' }}%</small>
+                  </div>
+                  <strong class="text-lg font-black tabular-nums" [ngClass]="finance.netMargin >= 0 ? 'text-emerald-800' : 'text-red-800'" dir="ltr">{{ finance.netMargin | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</strong>
+                </div>
+              </div>
+              <div class="mt-5 flex flex-col gap-2 sm:flex-row">
+                <a [routerLink]="['/finances/ledger']" [queryParams]="{ orderId: currentOrder.id }" class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary">
+                  <span class="material-symbols-outlined text-base">receipt_long</span>
+                  {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_LEDGER' | translate }}
+                </a>
+                <a [routerLink]="['/disputes']" [queryParams]="{ type: 'return_request', search: currentOrder.id }" class="btn-premium inline-flex flex-1 items-center justify-center gap-1.5 px-3.5 py-2.5 text-xs">
+                  <span class="material-symbols-outlined text-base">undo</span>
+                  {{ 'ORDERS.DETAIL.FINANCE_CARD.OPEN_REFUNDS' | translate }}
                 </a>
               </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="min-w-0 space-y-5">
+
+          <!-- Parties -->
+          <section id="parties" class="scroll-mt-28 rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-5">
+            <app-section-header class="mb-4" [compact]="true" icon="groups" [title]="'ORDERS.DETAIL.CUSTOMER_INFO' | translate" [shouldTranslate]="false"></app-section-header>
+
+            <div class="flex gap-3 border-b border-slate-100 py-3">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-zadna-primary to-teal-500 text-sm font-black text-white">{{ currentOrder.customerName.charAt(0) }}</div>
+              <div class="min-w-0">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CUSTOMER_INFO' | translate }}</p>
+                <p class="font-extrabold text-slate-900">{{ currentOrder.customerName }}</p>
+                <p class="text-xs font-bold text-slate-600" dir="ltr">{{ currentOrder.customerPhone }}</p>
+                <p class="truncate text-xs text-slate-400" dir="ltr">{{ currentOrder.customerEmail }}</p>
+              </div>
             </div>
-          </div>
-        </section>
 
-        <!-- Support Disputes -->
-        <section class="bg-red-50/40 border border-red-100 rounded-2xl p-6">
-          <div class="flex items-center justify-between mb-5">
-            <app-section-header [compact]="true" tone="danger" icon="report" title="ORDERS.DETAIL.SUPPORT_DISPUTES"></app-section-header>
-          </div>
-          <div *ngIf="canOpenIssueTools && (canOpenIssueCase || canOpenDisputeCase || canViewDisputesCenter); else activeCaseNotice" class="flex gap-2">
-            <button *ngIf="canOpenIssueCase" class="flex-1 py-2.5 bg-white rounded-xl text-[11px] font-extrabold border border-red-100 text-slate-700 hover:shadow-md transition-shadow" type="button" (click)="openIssueFlagModal()">{{ 'ORDERS.DETAIL.FLAG_ISSUE' | translate }}</button>
-            <button *ngIf="canOpenDisputeCase" class="flex-1 py-2.5 bg-red-600 text-white rounded-xl text-[11px] font-extrabold hover:bg-red-700 transition-colors" type="button" (click)="openDisputeModal()">{{ 'ORDERS.DETAIL.ESCALATE' | translate }}</button>
-            <a *ngIf="canViewDisputesCenter" [routerLink]="['/disputes']" [queryParams]="supportCenterQueryParams" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-red-100 bg-white px-3 py-2.5 text-[11px] font-extrabold text-slate-700 hover:shadow-md transition-shadow">
-              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
-              {{ 'SIDEBAR.DISPUTES' | translate }}
-            </a>
-          </div>
-          <ng-template #activeCaseNotice>
-            <div class="rounded-xl border border-red-100 bg-white px-4 py-3 text-[11px] font-bold text-slate-600 space-y-3">
-              <p>{{ 'ORDERS.DETAIL.ACTIVE_CASE_NOTICE' | translate }}</p>
-              <a
-                *ngIf="canViewDisputesCenter"
-                [routerLink]="['/disputes']"
-                [queryParams]="supportCenterQueryParams"
-                class="inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-[11px] font-extrabold text-red-700 hover:bg-red-100">
-                <span class="material-symbols-outlined text-[15px]">open_in_new</span>
-                {{ 'SIDEBAR.DISPUTES' | translate }}
-              </a>
+            <div class="flex gap-3 border-b border-slate-100 py-3">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+                <span class="material-symbols-outlined">store</span>
+              </div>
+              <div class="min-w-0">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.MERCHANT_BRANCH' | translate }}</p>
+                <p class="font-extrabold text-slate-900">{{ currentOrder.merchantName }}</p>
+                <p class="text-xs font-bold text-zadna-primary">{{ currentOrder.merchantBranch }}</p>
+                <p class="text-xs leading-relaxed text-slate-400">{{ currentOrder.merchantLocation }}</p>
+              </div>
             </div>
-          </ng-template>
-        </section>
 
-        <!-- Activity Log -->
-        <section class="bg-white border border-slate-100 rounded-2xl p-6">
-          <app-section-header class="mb-5" [compact]="true" icon="history" title="ORDERS.DETAIL.ACTIVITY_LOG"></app-section-header>
-          <div class="space-y-5 relative">
-            <div class="absolute right-[3px] top-2 bottom-2 w-[1px] bg-slate-100"></div>
+            <div *ngIf="currentOrder.driverName; else noDriver" class="flex gap-3 py-3">
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                <span class="material-symbols-outlined">two_wheeler</span>
+              </div>
+              <div class="min-w-0">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_DETAILS' | translate }}</p>
+                <p class="font-extrabold text-slate-900">{{ currentOrder.driverName }}</p>
+                <p class="text-xs font-bold text-slate-600" dir="ltr">{{ currentOrder.driverPhone }}</p>
+                <p class="text-xs text-slate-400">
+                  {{ getVehicleTypeLabel(currentOrder.driverVehicleLabel) | translate }} · <span dir="ltr">{{ currentOrder.driverPlateNumber }}</span>
+                </p>
+              </div>
+            </div>
+            <ng-template #noDriver>
+              <div class="flex flex-col items-center gap-1 rounded-xl border border-dashed border-slate-200 bg-slate-50 py-5 text-center text-xs font-bold text-slate-400">
+                <span class="material-symbols-outlined text-2xl">person_off</span>
+                <p>{{ 'ORDERS.DETAIL.NO_DRIVER_ASSIGNED' | translate }}</p>
+              </div>
+            </ng-template>
 
-            <div *ngFor="let activity of currentOrder.activities" class="relative flex gap-3 z-10">
-              <div class="w-2 h-2 mt-1.5 rounded-full ring-4 ring-white" [ngClass]="getActivityDotClass(activity.tone)"></div>
-              <div class="flex-1">
-                <p class="text-[11px] font-extrabold text-slate-800">{{ activity.title }}</p>
-                <div class="flex items-center justify-between w-full mt-1">
-                  <span class="text-[9px] font-bold text-slate-400">{{ activity.actor }}</span>
-                  <span class="text-[9px] font-mono text-slate-400 bg-slate-50 px-1.5 rounded">{{ activity.time }}</span>
+            <div *ngIf="!isOrderTerminal" class="mt-4 flex flex-col gap-2">
+              <button type="button" class="btn-premium flex w-full items-center justify-center gap-1.5 py-2.5 text-xs" (click)="openDriverAssignmentModal()">
+                <span class="material-symbols-outlined text-base">swap_horiz</span>
+                {{ (currentOrder.driverName ? 'ORDERS.DETAIL.CHANGE_DRIVER' : 'ORDERS.DETAIL.ASSIGN_DRIVER') | translate }}
+              </button>
+              <button *ngIf="canRecomputeDispatch" type="button" class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="recomputeDispatch()">
+                {{ 'ORDERS.DETAIL.RECOMPUTE_DISPATCH' | translate }}
+              </button>
+            </div>
+          </section>
+
+          <!-- Timeline -->
+          <section id="timeline" class="scroll-mt-28 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm md:p-4">
+            <app-section-header class="mb-2" [compact]="true" icon="timeline" [title]="'ORDERS.DETAIL.TIMELINE' | translate" [shouldTranslate]="false"></app-section-header>
+            <div class="order-timeline-scroll relative max-h-52 overflow-y-auto overscroll-contain pe-1 ps-0.5">
+              <div class="absolute bottom-1 start-[13px] top-1 w-px bg-gradient-to-b from-zadna-primary/50 via-zadna-primary/20 to-slate-200"></div>
+              <article
+                *ngFor="let step of currentOrder.timeline"
+                class="relative flex gap-2.5 pb-2.5 last:pb-0"
+                [class.opacity-50]="step.status === 'PENDING'">
+                <div
+                  class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-white shadow-md"
+                  [ngClass]="{
+                    'bg-gradient-to-br from-zadna-primary to-teal-600 text-white shadow-zadna-primary/25': step.status === 'COMPLETED',
+                    'bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-amber-500/30 ring-2 ring-amber-200/80': step.status === 'IN_PROGRESS',
+                    'border-slate-200 bg-slate-50 text-slate-400 shadow-sm': step.status === 'PENDING'
+                  }">
+                  <span
+                    *ngIf="step.status === 'IN_PROGRESS'"
+                    class="pointer-events-none absolute -inset-1 rounded-full border border-amber-300/70 animate-ping"
+                    aria-hidden="true"></span>
+                  <span
+                    class="material-symbols-outlined relative text-[15px] leading-none"
+                    [style.fontVariationSettings]="timelineStepIconFilled(step) ? '\'FILL\' 1, \'wght\' 600' : '\'FILL\' 0, \'wght\' 500'">
+                    {{ timelineStepIcon(step) }}
+                  </span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-start justify-between gap-1.5">
+                    <div class="min-w-0">
+                      <h4 class="text-[11px] font-extrabold leading-snug text-slate-800">{{ translateTimelineText(step.title) }}</h4>
+                      <span
+                        class="mt-0.5 inline-flex rounded px-1 py-px text-[8px] font-extrabold uppercase tracking-wide"
+                        [ngClass]="{
+                          'bg-emerald-50 text-emerald-700': step.status === 'COMPLETED',
+                          'bg-amber-50 text-amber-700': step.status === 'IN_PROGRESS',
+                          'bg-slate-100 text-slate-500': step.status === 'PENDING'
+                        }">
+                        {{ translateTimelineStepStatus(step.status) }}
+                      </span>
+                    </div>
+                    <time class="shrink-0 text-[10px] font-bold tabular-nums text-slate-400" dir="ltr">{{ step.time }}</time>
+                  </div>
+                  <p *ngIf="step.subtitle" class="mt-0.5 line-clamp-2 text-[10px] font-semibold leading-snug text-slate-500">{{ translateTimelineText(step.subtitle) }}</p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Workflow -->
+          <section class="rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-5">
+            <app-section-header class="mb-4" [compact]="true" icon="alt_route" [title]="'ORDERS.DETAIL.WORKFLOW_SECTION' | translate" [shouldTranslate]="false"></app-section-header>
+            <div class="space-y-3">
+              <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CURRENT_STAGE' | translate }}</p>
+                <div class="mt-2"><app-status-pill [label]="workflowStageLabel" variant="neutral" [shouldTranslate]="true" size="sm"></app-status-pill></div>
+              </div>
+              <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.NEXT_ACTION' | translate }}</p>
+                <p class="mt-1 text-sm font-extrabold text-slate-800">{{ currentOrder.nextActionLabel | translate }}</p>
+              </div>
+              <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/80 p-3.5">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.RESOLUTION_STATUS' | translate }}</p>
+                <app-status-pill [label]="resolutionStateLabel" [variant]="getResolutionStateVariant(currentOrder.resolutionState)" [shouldTranslate]="true" size="sm"></app-status-pill>
+              </div>
+
+              <div *ngIf="operationalCase as caseItem" class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div class="mb-3 flex items-center justify-between gap-2">
+                  <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.TITLE' | translate }}</p>
+                  <app-status-pill [label]="operationalCaseStatusLabel" [variant]="getOperationalCaseStatusVariant(caseItem.status)" [shouldTranslate]="true" size="sm"></app-status-pill>
+                </div>
+                <p class="text-sm font-extrabold text-slate-800">{{ operationalCaseTypeLabel | translate }}</p>
+                <p class="mt-1 text-xs text-slate-500">{{ caseItem.title }}</p>
+                <div class="mt-3 flex flex-col gap-2">
+                  <button *ngIf="canResolveOperationalCaseAction" type="button" class="inline-flex w-full items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 py-2.5 text-xs font-extrabold text-emerald-700 hover:bg-emerald-100" (click)="resolveOperationalCase()">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.RESOLVE' | translate }}</button>
+                  <button *ngIf="canCloseOperationalCaseAction" type="button" class="btn-premium w-full py-2.5 text-xs" (click)="closeOperationalCase()">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.CLOSE' | translate }}</button>
+                  <button *ngIf="canReopenOperationalCaseAction" type="button" class="inline-flex w-full items-center justify-center rounded-xl border border-amber-200 bg-amber-50 py-2.5 text-xs font-extrabold text-amber-700 hover:bg-amber-100" (click)="reopenOperationalCase()">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.REOPEN' | translate }}</button>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          <!-- Support -->
+          <section id="support" class="scroll-mt-28 rounded-3xl border border-red-200/60 bg-gradient-to-b from-red-50/40 to-white p-4 shadow-sm md:p-5">
+            <app-section-header class="mb-4" [compact]="true" tone="danger" icon="report" [title]="'ORDERS.DETAIL.SUPPORT_DISPUTES' | translate" [shouldTranslate]="false"></app-section-header>
+            <div *ngIf="canOpenIssueTools && (canOpenIssueCase || canOpenDisputeCase || canViewDisputesCenter); else activeCaseNotice" class="flex flex-col gap-2">
+              <button *ngIf="canOpenIssueCase" type="button" class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-red-100 bg-white py-2.5 text-xs font-extrabold text-slate-700 shadow-sm hover:shadow-md" (click)="openIssueFlagModal()">
+                <span class="material-symbols-outlined text-base text-red-500">flag</span>
+                {{ 'ORDERS.DETAIL.FLAG_ISSUE' | translate }}
+              </button>
+              <div class="flex gap-2">
+                <button *ngIf="canOpenDisputeCase" type="button" class="inline-flex flex-1 items-center justify-center rounded-xl bg-red-600 py-2.5 text-xs font-extrabold text-white hover:bg-red-700" (click)="openDisputeModal()">{{ 'ORDERS.DETAIL.ESCALATE' | translate }}</button>
+                <a *ngIf="canViewDisputesCenter" [routerLink]="['/disputes']" [queryParams]="supportCenterQueryParams" class="inline-flex flex-1 items-center justify-center rounded-xl border border-red-200 bg-white py-2.5 text-xs font-extrabold text-slate-700 hover:bg-red-50">{{ 'SIDEBAR.DISPUTES' | translate }}</a>
+              </div>
+            </div>
+            <ng-template #activeCaseNotice>
+              <p class="text-xs font-semibold leading-relaxed text-slate-600">{{ 'ORDERS.DETAIL.ACTIVE_CASE_NOTICE' | translate }}</p>
+              <a *ngIf="canViewDisputesCenter" [routerLink]="['/disputes']" [queryParams]="supportCenterQueryParams" class="mt-3 inline-flex w-full items-center justify-center rounded-xl border border-red-100 bg-red-50 py-2.5 text-xs font-extrabold text-red-700 hover:bg-red-100">{{ 'SIDEBAR.DISPUTES' | translate }}</a>
+            </ng-template>
+          </section>
+
+          <!-- Activity -->
+          <section class="rounded-3xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-5">
+            <app-section-header class="mb-4" [compact]="true" icon="history" [title]="'ORDERS.DETAIL.ACTIVITY_LOG' | translate" [shouldTranslate]="false"></app-section-header>
+            <div class="max-h-80 space-y-3 overflow-y-auto pe-1">
+              <article *ngFor="let activity of currentOrder.activities" class="flex gap-2.5">
+                <div class="mt-1.5 h-2 w-2 shrink-0 rounded-full" [ngClass]="getActivityDotClass(activity.tone)"></div>
+                <div class="flex-1 rounded-xl border border-slate-100 bg-slate-50/80 p-3">
+                  <p class="text-xs font-extrabold leading-snug text-slate-800"><bdi [dir]="'auto'">{{ activity.title | translate }}</bdi></p>
+                  <div class="mt-1.5 flex items-center justify-between gap-2 text-[10px] font-bold text-slate-400">
+                    <span><bdi [dir]="'auto'">{{ activity.actor | translate }}</bdi></span>
+                    <time class="rounded bg-slate-100 px-1.5 py-0.5 font-mono tabular-nums text-slate-500" dir="ltr">{{ activity.time }}</time>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+        </aside>
       </div>
     </div>
 
-    <app-order-status-update-modal
-      [isOpen]="isStatusModalOpen"
-      [order]="order()"
-      (close)="closeStatusModal()"
-      (submitStatusUpdate)="submitStatusUpdate($event)">
-    </app-order-status-update-modal>
-
-    <app-order-driver-assignment-modal
-      [isOpen]="isDriverAssignmentModalOpen"
-      [order]="order()"
-      [drivers]="order()?.driverCandidates || []"
-      (close)="closeDriverAssignmentModal()"
-      (submitAssignment)="submitDriverAssignment($event)">
-    </app-order-driver-assignment-modal>
-
-    <app-order-cancellation-modal
-      [isOpen]="isCancellationModalOpen"
-      [order]="order()"
-      (close)="closeCancellationModal()"
-      (submitCancellation)="submitCancellation($event)">
-    </app-order-cancellation-modal>
-
-    <app-order-refund-modal
-      [isOpen]="isRefundModalOpen"
-      [order]="order()"
-      (close)="closeRefundModal()"
-      (saveDraft)="saveRefundDraft($event)"
-      (submitRefund)="submitRefund($event)">
-    </app-order-refund-modal>
-
-    <app-order-dispute-modal
-      [isOpen]="isDisputeModalOpen"
-      [order]="order()"
-      (close)="closeDisputeModal()"
-      (saveDraft)="saveDisputeDraft($event)"
-      (submitDispute)="submitDispute($event)">
-    </app-order-dispute-modal>
-
-    <app-order-issue-flag-modal
-      [isOpen]="isIssueFlagModalOpen"
-      [order]="order()"
-      (close)="closeIssueFlagModal()"
-      (saveNote)="saveIssueNote($event)"
-      (submitIssue)="submitIssueFlag($event)">
-    </app-order-issue-flag-modal>
+    <!-- Modals -->
+    <app-order-status-update-modal [isOpen]="isStatusModalOpen" [order]="order()" (close)="closeStatusModal()" (submitStatusUpdate)="submitStatusUpdate($event)"></app-order-status-update-modal>
+    <app-order-driver-assignment-modal [isOpen]="isDriverAssignmentModalOpen" [order]="order()" [drivers]="order()?.driverCandidates || []" (close)="closeDriverAssignmentModal()" (submitAssignment)="submitDriverAssignment($event)"></app-order-driver-assignment-modal>
+    <app-order-cancellation-modal [isOpen]="isCancellationModalOpen" [order]="order()" (close)="closeCancellationModal()" (submitCancellation)="submitCancellation($event)"></app-order-cancellation-modal>
+    <app-order-refund-modal [isOpen]="isRefundModalOpen" [order]="order()" (close)="closeRefundModal()" (saveDraft)="saveRefundDraft($event)" (submitRefund)="submitRefund($event)"></app-order-refund-modal>
+    <app-order-dispute-modal [isOpen]="isDisputeModalOpen" [isSubmitting]="isSubmittingDispute" [order]="order()" (close)="closeDisputeModal()" (saveDraft)="saveDisputeDraft($event)" (submitDispute)="submitDispute($event)"></app-order-dispute-modal>
+    <app-order-issue-flag-modal [isOpen]="isIssueFlagModalOpen" [order]="order()" (close)="closeIssueFlagModal()" (saveNote)="saveIssueNote($event)" (submitIssue)="submitIssueFlag($event)"></app-order-issue-flag-modal>
   </ng-container>
 </div>

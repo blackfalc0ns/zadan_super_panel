@@ -2,12 +2,12 @@
   display: block;
 }
 
-.vendor-analytics-sidebar {
+.vendor-products-table-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgb(203 213 225) transparent;
 
   &::-webkit-scrollbar {
-    width: 6px;
+    height: 6px;
   }
 
   &::-webkit-scrollbar-thumb {

@@ -10,6 +10,31 @@ import { catchError, map } from 'rxjs/operators';
 
 import { routes } from './app.routes';
 
+export function deepMerge(target: any, source: any): any {
+  if (!source) return target;
+  if (!target) return source;
+
+  if (typeof target !== 'object' || target === null || Array.isArray(target) ||
+      typeof source !== 'object' || source === null || Array.isArray(source)) {
+    return source;
+  }
+
+  const output = { ...target };
+  
+  for (const key of Object.keys(source)) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (key in target && typeof target[key] === 'object' && target[key] !== null && !Array.isArray(target[key])) {
+        output[key] = deepMerge(target[key], source[key]);
+      } else {
+        output[key] = source[key];
+      }
+    } else {
+      output[key] = source[key];
+    }
+  }
+  return output;
+}
+
 export class MultiTranslateHttpLoader implements TranslateLoader {
   private readonly files = [
     'common',
@@ -25,7 +50,7 @@ export class MultiTranslateHttpLoader implements TranslateLoader {
 
   getTranslation(lang: string): Observable<any> {
     const requests = this.files.map((file) =>
-      this.http.get(`assets/i18n/${lang}/${file}.json`).pipe(
+      this.http.get(`assets/i18n/${lang}/${file}.json?v=${new Date().getTime()}`).pipe(
         catchError((err) => {
           console.error(`Failed to load translation file: ${lang}/${file}.json`, err);
           return of({});
@@ -35,7 +60,7 @@ export class MultiTranslateHttpLoader implements TranslateLoader {
 
     return forkJoin(requests).pipe(
       map((jsonArray) => {
-        return jsonArray.reduce((acc, current) => ({ ...acc, ...current }), {});
+        return jsonArray.reduce((acc, current) => deepMerge(acc, current), {});
       })
     );
   }

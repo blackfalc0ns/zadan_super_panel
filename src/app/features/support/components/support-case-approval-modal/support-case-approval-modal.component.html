@@ -1,4 +1,4 @@
-<div *ngIf="isOpen && dispute as dispute">
+﻿<div *ngIf="isOpen && dispute as dispute">
   <app-modal-shell
     dir="rtl"
     title="DISPUTES_DASHBOARD.MODAL.TITLE"
@@ -20,11 +20,11 @@
         <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
           <div class="rounded-2xl bg-slate-50 p-4">
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.CASE_ID' | translate }}</label>
-            <span class="font-['Inter'] text-sm font-bold">{{ dispute.id }}</span>
+            <span class="font-sans text-sm font-bold">{{ dispute.id }}</span>
           </div>
           <div class="rounded-2xl bg-slate-50 p-4">
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.TABLE.ID' | translate }}</label>
-            <span class="font-['Inter'] text-sm font-bold">{{ dispute.orderDisplayId || dispute.orderId }}</span>
+            <span class="font-sans text-sm font-bold">{{ dispute.orderDisplayId || dispute.orderId }}</span>
           </div>
           <div class="rounded-2xl bg-slate-50 p-4">
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</label>
@@ -40,7 +40,7 @@
           </div>
           <div class="rounded-2xl bg-slate-50 p-4">
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</label>
-            <span class="font-['Inter'] text-sm font-bold text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+            <span class="font-sans text-sm font-bold text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
           </div>
           <div class="rounded-2xl bg-slate-50 p-4">
             <label class="mb-1 block text-[11px] font-semibold text-slate-500">{{ 'DISPUTES_DASHBOARD.MODAL.PAYMENT_STATUS' | translate }}</label>
@@ -127,23 +127,23 @@
             <div class="space-y-3">
               <div class="flex items-center justify-between text-xs text-slate-500">
                 <span>{{ 'DISPUTES_DASHBOARD.MODAL.ORIGINAL_TOTAL' | translate }}</span>
-                <span class="font-['Inter'] font-medium">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="font-sans font-medium">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
               <div class="flex items-center justify-between text-xs font-medium text-red-500">
                 <span>{{ 'DISPUTES_DASHBOARD.MODAL.REQUESTED_REFUND' | translate }}</span>
-                <span class="font-['Inter']">{{ refundAmountValue | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="font-sans">{{ refundAmountValue | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
               <div class="flex items-center justify-between text-xs text-slate-500">
                 <span>{{ 'DISPUTES_DASHBOARD.MODAL.NON_REFUNDABLE_DELIVERY' | translate }}</span>
-                <span class="font-['Inter'] font-medium">{{ nonRefundableDeliveryFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="font-sans font-medium">{{ nonRefundableDeliveryFee | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
               <div class="flex items-center justify-between text-xs text-slate-500">
                 <span>{{ 'DISPUTES_DASHBOARD.MODAL.APPLIED_DISCOUNTS' | translate }}</span>
-                <span class="font-['Inter'] font-medium">0.00 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="font-sans font-medium">0.00 {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
               <div class="mt-3 flex items-center justify-between border-t border-slate-200 pt-3">
                 <span class="text-sm font-black text-zadna-primary">{{ 'DISPUTES_DASHBOARD.MODAL.NET_DECISION' | translate }}</span>
-                <span class="font-['Inter'] text-lg font-black text-zadna-primary">{{ netDecisionValue | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+                <span class="font-sans text-lg font-black text-zadna-primary">{{ netDecisionValue | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
               </div>
             </div>
           </div>

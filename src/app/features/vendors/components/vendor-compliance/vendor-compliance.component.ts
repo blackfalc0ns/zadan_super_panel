@@ -49,7 +49,8 @@ type ComplianceWorkspaceWindow = 'operations' | 'review';
   selector: 'app-vendor-compliance',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent],
-  templateUrl: './vendor-compliance.component.html'
+  templateUrl: './vendor-compliance.component.html',
+  styleUrls: ['./vendor-compliance.component.scss']
 })
 export class VendorComplianceComponent {
   private readonly cdr = inject(ChangeDetectorRef);
@@ -126,6 +127,14 @@ export class VendorComplianceComponent {
       this.cdr.markForCheck();
         this.mutationError = message ?? '';
       });
+  }
+
+  get vendorDisplayName(): string {
+    const vendor = this.vendorDetail;
+    if (!vendor) {
+      return '';
+    }
+    return vendor.businessNameAr || vendor.businessNameEn || vendor.ownerName || '';
   }
 
   get reviewDocuments(): VendorReviewDocument[] {
@@ -650,6 +659,7 @@ export class VendorComplianceComponent {
 
   setWorkspaceWindow(window: ComplianceWorkspaceWindow): void {
     this.activeWorkspaceWindow = window;
+    this.cdr.markForCheck();
   }
 
   onApproveAllPending(): void {

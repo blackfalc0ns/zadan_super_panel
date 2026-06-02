@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
+import { GeographyService } from '../../../../shared/services/geography.service';
 import { DriverDetailRecord, DriverDocumentRecord, DriverVerificationChecklistItem } from '../../models/drivers.models';
 import { getDocumentStatusKey, getDocumentStatusVariant } from '../../utils/driver-ui.utils';
 
@@ -14,7 +15,7 @@ import { getDocumentStatusKey, getDocumentStatusVariant } from '../../utils/driv
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, SectionHeaderComponent],
   templateUrl: './driver-verification-tab.component.html'
 })
-export class DriverVerificationTabComponent implements OnInit {
+export class DriverVerificationTabComponent implements OnInit, OnChanges {
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() reviewerDecisionNote = '';
   @Input() selectedRejectionReason = '';
@@ -27,14 +28,35 @@ export class DriverVerificationTabComponent implements OnInit {
   @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
   @Output() documentApprovalRequested = new EventEmitter<DriverDocumentRecord>();
   @Output() documentRejectionRequested = new EventEmitter<{ document: DriverDocumentRecord; reason: string }>();
+  @Output() updateProfileRequested = new EventEmitter<any>();
+
+  private readonly geographyService = inject(GeographyService);
 
   selectedDocumentPreview: DriverDocumentRecord | null = null;
   workspaceWindow: 'operations' | 'review' = 'review';
-  activeRailTab: 'checklist' | 'notes' = 'checklist';
+  activeRailTab: 'checklist' | 'notes' | 'edit-profile' = 'checklist';
   newNote = '';
   documentRejectReason = '';
   zoomScale = 1;
   rotationAngle = 0;
+
+  regions: any[] = [];
+  cities: any[] = [];
+  editForm = {
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    address: '',
+    vehicleType: '',
+    nationalId: '',
+    licenseNumber: '',
+    vehicleLicenseNumber: '',
+    nationalIdExpiryDate: '',
+    driverLicenseExpiryDate: '',
+    vehicleLicenseExpiryDate: '',
+    region: '',
+    city: ''
+  };
 
   get documentGroups() {
     // Group documents into a single group for now to match vendor UI structure
@@ -74,6 +96,81 @@ export class DriverVerificationTabComponent implements OnInit {
     if (this.driver.documents && this.driver.documents.length > 0) {
       this.selectedDocumentPreview = this.driver.documents[0];
     }
+    this.initEditForm();
+    this.geographyService.getRegions().subscribe({
+      next: (regs) => {
+        this.regions = regs;
+        if (this.editForm.region) {
+          this.loadCities(this.editForm.region);
+        }
+      },
+      error: (err) => console.error('Failed to load regions', err)
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['driver'] && !changes['driver'].firstChange) {
+      this.initEditForm();
+    }
+  }
+
+  initEditForm() {
+    if (!this.driver) return;
+    const nationalIdDoc = this.driver.documents?.find(d => d.documentType === 'NationalId');
+    const driverLicenseDoc = this.driver.documents?.find(d => d.documentType === 'DriverLicense');
+    const vehicleLicenseDoc = this.driver.documents?.find(d => d.documentType === 'VehicleLicense');
+
+    this.editForm = {
+      fullName: this.driver.displayName || '',
+      email: this.driver.email || '',
+      phoneNumber: this.driver.phoneNumber || '',
+      address: this.driver.address || '',
+      vehicleType: this.driver.vehicleType || '',
+      nationalId: this.driver.nationalId || nationalIdDoc?.numberValue || '',
+      licenseNumber: this.driver.licenseNumber || driverLicenseDoc?.numberValue || '',
+      vehicleLicenseNumber: this.driver.vehicleLicenseNumber || vehicleLicenseDoc?.numberValue || '',
+      nationalIdExpiryDate: this.formatDateForInput(this.driver.nationalIdExpiryDate || nationalIdDoc?.expiryDateUtc),
+      driverLicenseExpiryDate: this.formatDateForInput(this.driver.driverLicenseExpiryDate || driverLicenseDoc?.expiryDateUtc),
+      vehicleLicenseExpiryDate: this.formatDateForInput(this.driver.vehicleLicenseExpiryDate || vehicleLicenseDoc?.expiryDateUtc),
+      region: this.driver.operations?.region || '',
+      city: this.driver.city || ''
+    };
+
+    if (this.editForm.region) {
+      this.loadCities(this.editForm.region);
+    }
+  }
+
+  formatDateForInput(dateStr: any): string {
+    if (!dateStr) return '';
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return '';
+      return date.toISOString().substring(0, 10);
+    } catch {
+      return '';
+    }
+  }
+
+  onRegionChange(regionCode: string) {
+    this.editForm.city = '';
+    this.cities = [];
+    if (regionCode) {
+      this.loadCities(regionCode);
+    }
+  }
+
+  loadCities(regionCode: string) {
+    this.geographyService.getCities(regionCode).subscribe({
+      next: (cts) => {
+        this.cities = cts;
+      },
+      error: (err) => console.error('Failed to load cities', err)
+    });
+  }
+
+  saveProfile() {
+    this.updateProfileRequested.emit(this.editForm);
   }
 
   trackByDocumentId(index: number, document: DriverDocumentRecord): string {

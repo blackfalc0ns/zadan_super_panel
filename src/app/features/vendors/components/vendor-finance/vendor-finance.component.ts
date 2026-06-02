@@ -6,33 +6,17 @@ import { forkJoin } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
-import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
-import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { CreateSettlementModalComponent, SettlementConfig } from '@vendors/components/workflows/create-settlement-modal/create-settlement-modal.component';
 import { PayoutsReviewModalComponent, PayoutTransaction } from '@vendors/components/workflows/payouts-review-modal/payouts-review-modal.component';
 import { VendorDetail, VendorFinancialLifecycleMode } from '@vendors/models/vendors.domain.models';
 import {
-  AdminVendorOrderItem,
+  AdminVendorFinanceSummary,
   AdminVendorPayoutItem,
   AdminVendorSettlementItem,
   VendorService
 } from '@vendors/services/vendor.api.service';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
-
-interface FinanceHeroMetric {
-  label: string;
-  value: string;
-  tone: 'primary' | 'success' | 'warning' | 'danger';
-  icon: string;
-}
-
-interface FinanceSummaryCard {
-  id: string;
-  label: string;
-  value: string;
-  hint: string;
-  variant: StatusPillVariant;
-}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,12 +27,11 @@ interface FinanceSummaryCard {
     FormsModule,
     TranslateModule,
     SearchableSelectComponent,
-    AppButtonComponent,
-    StatusPillComponent,
     CreateSettlementModalComponent,
     PayoutsReviewModalComponent
   ],
-  templateUrl: './vendor-finance.component.html'
+  templateUrl: './vendor-finance.component.html',
+  styleUrls: ['./vendor-finance.component.scss']
 })
 export class VendorFinanceComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
@@ -65,7 +48,7 @@ export class VendorFinanceComponent implements OnInit {
   modeError = '';
   modeSuccess = '';
 
-  orders: AdminVendorOrderItem[] = [];
+  financeSummary: AdminVendorFinanceSummary | null = null;
   settlements: AdminVendorSettlementItem[] = [];
   payouts: AdminVendorPayoutItem[] = [];
 
@@ -86,7 +69,7 @@ export class VendorFinanceComponent implements OnInit {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
-      this.cdr.markForCheck();
+        this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang.startsWith('ar');
       });
@@ -96,28 +79,34 @@ export class VendorFinanceComponent implements OnInit {
     this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendor) => {
-      this.cdr.markForCheck();
+        this.cdr.markForCheck();
         if (!vendor) {
           return;
         }
 
+        const vendorChanged = vendor.id !== this.vendorId;
         this.vendorDetail = vendor;
         this.vendorName = vendor.businessNameAr || vendor.businessNameEn || vendor.ownerName || 'Vendor';
         this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
+
+        if (vendorChanged) {
+          this.vendorId = vendor.id;
+          this.loadFinanceData();
+        }
       });
 
     this.vendorDetailFacade.mutationError$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((error) => {
-      this.cdr.markForCheck();
+        this.cdr.markForCheck();
         this.mutationError = error ?? '';
       });
 
     this.vendorDetailFacade.vendorId$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vendorId) => {
-      this.cdr.markForCheck();
-        if (!vendorId) {
+        this.cdr.markForCheck();
+        if (!vendorId || vendorId === this.vendorId) {
           return;
         }
 
@@ -147,143 +136,45 @@ export class VendorFinanceComponent implements OnInit {
     return this.selectedLifecycleMode === 'per_order_direct_payout';
   }
 
-  get deliveredOrders(): AdminVendorOrderItem[] {
-    return this.orders.filter((order) => order.status.toLowerCase() === 'delivered');
-  }
-
-  get settledSourceOrderIds(): Set<string> {
-    return new Set(
-      this.settlements
-        .map((item) => item.sourceOrderId)
-        .filter((value): value is string => !!value)
-    );
-  }
-
-  get deliveredOrdersAwaitingPayout(): AdminVendorOrderItem[] {
-    return this.deliveredOrders.filter((order) => !this.settledSourceOrderIds.has(order.id));
-  }
-
-  get directSettlements(): AdminVendorSettlementItem[] {
-    return this.settlements.filter((item) => item.origin.toLowerCase() === 'directperorder');
-  }
-
-  get batchSettlements(): AdminVendorSettlementItem[] {
-    return this.settlements.filter((item) => item.origin.toLowerCase() !== 'directperorder');
-  }
-
-  get directPayouts(): AdminVendorPayoutItem[] {
-    return this.payouts.filter((item) => item.origin.toLowerCase() === 'directperorder');
-  }
-
-  get failedPayouts(): AdminVendorPayoutItem[] {
-    return this.payouts.filter((item) => {
-      const status = item.status.toLowerCase();
-      return status === 'failed' || status === 'cancelled';
-    });
-  }
-
-  get latestPayout(): AdminVendorPayoutItem | null {
-    return this.payouts[0] ?? null;
-  }
-
-  get latestDirectPayout(): AdminVendorPayoutItem | null {
-    return this.directPayouts[0] ?? null;
-  }
-
   get availableBalance(): number {
-    return this.payouts
-      .filter((item) => item.status.toLowerCase() === 'paid')
-      .reduce((sum, item) => sum + item.amount, 0);
+    return this.financeSummary?.availableBalance ?? 0;
   }
 
   get pendingBalance(): number {
-    const ordersBalance = this.deliveredOrdersAwaitingPayout
-      .reduce((sum, order) => sum + Math.max(order.totalAmount - order.commissionAmount, 0), 0);
-
-    const pendingSettlementsBalance = this.settlements
-      .filter((s) => {
-        const status = s.status.toLowerCase();
-        return status !== 'settled' && status !== 'paidout' && status !== 'rejected' && status !== 'failed' && status !== 'reversed';
-      })
-      .reduce((sum, s) => sum + s.netAmount, 0);
-
-    return ordersBalance + pendingSettlementsBalance;
+    return (this.financeSummary?.pendingSettlement ?? 0) + (this.financeSummary?.pendingOrdersNet ?? 0);
   }
 
   get pendingGrossAmount(): number {
-    return this.deliveredOrdersAwaitingPayout
-      .reduce((sum, order) => sum + order.totalAmount, 0);
+    return this.financeSummary?.pendingOrdersGross ?? 0;
   }
 
   get pendingCommissionAmount(): number {
-    return this.deliveredOrdersAwaitingPayout
-      .reduce((sum, order) => sum + order.commissionAmount, 0);
+    return this.financeSummary?.pendingOrdersCommission ?? 0;
   }
 
-  get heroMetrics(): FinanceHeroMetric[] {
-    return [
-      {
-        label: this.text('الوضع المالي الحالي', 'Current finance mode'),
-        value: this.getLifecycleModeLabel(this.selectedLifecycleMode),
-        tone: 'primary',
-        icon: 'account_balance_wallet'
-      },
-      {
-        label: this.isDirectMode
-          ? this.text('آخر تحويل مباشر', 'Last direct payout')
-          : this.text('آخر تحويل مجمع', 'Last batch payout'),
-        value: this.latestPayout
-          ? this.formatDate(this.latestPayout.processedAtUtc || this.latestPayout.createdAtUtc)
-          : this.emptyValue(),
-        tone: 'success',
-        icon: 'payments'
-      },
-      {
-        label: this.text('طلبات مسلمة تنتظر التحويل', 'Delivered orders awaiting payout'),
-        value: this.formatNumber(this.deliveredOrdersAwaitingPayout.length),
-        tone: 'warning',
-        icon: 'schedule_send'
-      },
-      {
-        label: this.text('تحويلات فاشلة تحتاج مراجعة', 'Failed payouts requiring review'),
-        value: this.formatNumber(this.failedPayouts.length),
-        tone: 'danger',
-        icon: 'error'
-      }
-    ];
+  get totalPaidOut(): number {
+    return this.financeSummary?.totalPaidOut ?? 0;
   }
 
-  get summaryCards(): FinanceSummaryCard[] {
-    return [
-      {
-        id: 'available',
-        label: this.text('إجمالي المدفوع للتاجر', 'Total paid to vendor'),
-        value: this.formatCurrency(this.availableBalance),
-        hint: this.text('تحويلات مكتملة فعليًا إلى الحساب البنكي', 'Successfully completed bank transfers'),
-        variant: 'success'
-      },
-      {
-        id: 'pending',
-        label: this.text('رصيد بانتظار الإنشاء أو التحويل', 'Balance awaiting creation or payout'),
-        value: this.formatCurrency(this.pendingBalance),
-        hint: this.text('طلبات مسلمة لم تتحول بعد إلى payout', 'Delivered orders not yet converted into payouts'),
-        variant: 'warning'
-      },
-      {
-        id: 'direct',
-        label: this.text('طلبات سُويت تلقائيًا', 'Automatically settled orders'),
-        value: this.formatNumber(this.directSettlements.length),
-        hint: this.text('تم إنشاء تسوية وتحويل مباشر لها تلقائيًا', 'Auto-created settlement and direct payout flow'),
-        variant: 'primary'
-      },
-      {
-        id: 'manual',
-        label: this.text('تسويات مجمعة', 'Batch settlements'),
-        value: this.formatNumber(this.batchSettlements.length),
-        hint: this.text('تسويات يدوية أو مجمعة على دورة السداد', 'Manual or grouped settlement cycles'),
-        variant: 'neutral'
-      }
-    ];
+  get holdAmount(): number {
+    return this.financeSummary?.holdAmount ?? 0;
+  }
+
+  get pendingOrdersCount(): number {
+    return this.financeSummary?.pendingOrdersCount ?? 0;
+  }
+
+  get failedPayoutsCount(): number {
+    return this.financeSummary?.failedPayoutsCount ?? 0;
+  }
+
+  get latestPayoutLabel(): string {
+    const at = this.financeSummary?.latestPayoutAtUtc;
+    return at ? this.formatDate(at) : this.emptyValue();
+  }
+
+  get latestPayoutNumber(): string {
+    return this.financeSummary?.latestPayoutNumber || this.payouts[0]?.payoutNumber || this.emptyValue();
   }
 
   get payoutTransactions(): PayoutTransaction[] {
@@ -291,19 +182,16 @@ export class VendorFinanceComponent implements OnInit {
       const eventDate = item.processedAtUtc || item.createdAtUtc;
       let datePart = '—';
       let timePart = '—';
-      try {
-        if (eventDate) {
-          const d = new Date(eventDate);
-          if (!isNaN(d.getTime())) {
-            datePart = d.toISOString().slice(0, 10);
-            timePart = d.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
-              hour: '2-digit',
-              minute: '2-digit'
-            });
-          }
+
+      if (eventDate) {
+        const date = new Date(eventDate);
+        if (!Number.isNaN(date.getTime())) {
+          datePart = date.toISOString().slice(0, 10);
+          timePart = date.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
         }
-      } catch {
-        // Fallback to defaults
       }
 
       return {
@@ -346,15 +234,15 @@ export class VendorFinanceComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (vendor) => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.vendorDetail = vendor;
           this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
           this.modeSuccess = this.text('تم تحديث دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.');
           this.isSavingMode = false;
         },
         error: () => {
-        this.cdr.markForCheck();
-          this.modeError = this.vendorDetailFacade.mutationError || this.text('تعذر تحديث دورة الحياة المالية الآن.', 'Unable to update the finance lifecycle right now.');
+          this.cdr.markForCheck();
+          this.modeError = this.vendorDetailFacade.mutationError || this.text('تعذر تحديث دورة الحياة المالية الآن.', 'Unable to update the lifecycle right now.');
           this.isSavingMode = false;
         }
       });
@@ -378,12 +266,12 @@ export class VendorFinanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.showCreateSettlementModal = false;
           this.loadFinanceData();
         },
         error: () => {
-        this.cdr.markForCheck();
+          this.cdr.markForCheck();
           this.showCreateSettlementModal = false;
         }
       });
@@ -419,81 +307,8 @@ export class VendorFinanceComponent implements OnInit {
       .subscribe({ next: () => this.loadFinanceData(), error: () => undefined });
   }
 
-  getLifecycleBadgeVariant(mode: VendorFinancialLifecycleMode): StatusPillVariant {
-    return mode === 'per_order_direct_payout' ? 'success' : 'processing';
-  }
-
-  getPayoutStatusVariant(status: string): StatusPillVariant {
-    switch (status.toLowerCase()) {
-      case 'paid':
-        return 'success';
-      case 'processing':
-        return 'processing';
-      case 'failed':
-      case 'cancelled':
-        return 'danger';
-      default:
-        return 'warning';
-    }
-  }
-
-  trackById(_: number, item: { id: string }): string {
-    return item.id;
-  }
-
-  private loadFinanceData(): void {
-    this.isLoading = true;
-    this.hasError = false;
-
-    forkJoin({
-      orders: this.vendorService.getVendorOrders(this.vendorId, { page: 1, pageSize: 200 }),
-      settlements: this.vendorService.getVendorSettlements(this.vendorId, 1, 100),
-      payouts: this.vendorService.getVendorPayouts(this.vendorId, 1, 100)
-    })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: ({ orders, settlements, payouts }) => {
-        this.cdr.markForCheck();
-          this.orders = orders.items ?? [];
-          this.settlements = settlements.items ?? [];
-          this.payouts = payouts.items ?? [];
-          this.isLoading = false;
-        },
-        error: () => {
-        this.cdr.markForCheck();
-          this.orders = [];
-          this.settlements = [];
-          this.payouts = [];
-          this.isLoading = false;
-          this.hasError = true;
-        }
-      });
-  }
-
-  private resolveLifecycleMode(vendor: VendorDetail): VendorFinancialLifecycleMode {
-    const explicitMode = (vendor.financialLifecycleMode || '').trim().toLowerCase();
-    if (explicitMode === 'perorderdirectpayout' || explicitMode === 'per_order_direct_payout') {
-      return 'per_order_direct_payout';
-    }
-
-    if (explicitMode === 'biweekly') {
-      return 'biweekly';
-    }
-
-    if (explicitMode === 'monthly') {
-      return 'monthly';
-    }
-
-    const legacy = (vendor.payoutCycle || '').trim().toLowerCase();
-    if (legacy === 'biweekly') {
-      return 'biweekly';
-    }
-
-    if (legacy === 'monthly') {
-      return 'monthly';
-    }
-
-    return 'weekly';
+  loadFinanceDataRetry(): void {
+    this.loadFinanceData();
   }
 
   getLifecycleModeLabel(mode: VendorFinancialLifecycleMode): string {
@@ -509,6 +324,99 @@ export class VendorFinanceComponent implements OnInit {
     }
   }
 
+  getPayoutStatusVariant(status: string): StatusPillVariant {
+    switch (status.toLowerCase()) {
+      case 'paid':
+        return 'success';
+      case 'processing':
+      case 'queued':
+        return 'processing';
+      case 'failed':
+      case 'cancelled':
+        return 'danger';
+      default:
+        return 'warning';
+    }
+  }
+
+  getSettlementStatusVariant(status: string): StatusPillVariant {
+    const normalized = status.toLowerCase();
+    if (normalized.includes('paid') || normalized.includes('settled')) {
+      return 'success';
+    }
+    if (normalized.includes('fail') || normalized.includes('reject')) {
+      return 'danger';
+    }
+    if (normalized.includes('process') || normalized.includes('review') || normalized.includes('hold')) {
+      return 'processing';
+    }
+    return 'warning';
+  }
+
+  isDirectSettlement(origin: string): boolean {
+    return origin.toLowerCase().includes('direct');
+  }
+
+  trackById(_: number, item: { id: string }): string {
+    return item.id;
+  }
+
+  private loadFinanceData(): void {
+    if (!this.vendorId) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.hasError = false;
+
+    forkJoin({
+      summary: this.vendorService.getVendorFinanceSummary(this.vendorId),
+      settlements: this.vendorService.getVendorSettlements(this.vendorId, 1, 12),
+      payouts: this.vendorService.getVendorPayouts(this.vendorId, 1, 12)
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ summary, settlements, payouts }) => {
+          this.cdr.markForCheck();
+          this.financeSummary = summary;
+          this.settlements = settlements.items ?? [];
+          this.payouts = payouts.items ?? [];
+          this.isLoading = false;
+        },
+        error: () => {
+          this.cdr.markForCheck();
+          this.financeSummary = null;
+          this.settlements = [];
+          this.payouts = [];
+          this.isLoading = false;
+          this.hasError = true;
+        }
+      });
+  }
+
+  private resolveLifecycleMode(vendor: VendorDetail): VendorFinancialLifecycleMode {
+    const explicitMode = (vendor.financialLifecycleMode || '').trim().toLowerCase();
+    if (explicitMode === 'perorderdirectpayout' || explicitMode === 'per_order_direct_payout') {
+      return 'per_order_direct_payout';
+    }
+    if (explicitMode === 'biweekly') {
+      return 'biweekly';
+    }
+    if (explicitMode === 'monthly') {
+      return 'monthly';
+    }
+
+    const legacy = (vendor.payoutCycle || '').trim().toLowerCase();
+    if (legacy === 'biweekly') {
+      return 'biweekly';
+    }
+    if (legacy === 'monthly') {
+      return 'monthly';
+    }
+
+    return 'weekly';
+  }
+
   private mapPayoutStatus(status: string): 'success' | 'failed' | 'pending' | 'reviewing' {
     switch (status.toLowerCase()) {
       case 'paid':
@@ -517,6 +425,7 @@ export class VendorFinanceComponent implements OnInit {
       case 'cancelled':
         return 'failed';
       case 'processing':
+      case 'queued':
         return 'reviewing';
       default:
         return 'pending';
@@ -529,25 +438,82 @@ export class VendorFinanceComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
-    const formatted = new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+    return `${this.formatAmount(value)} ${this.translate.instant('COMMON.CURRENCY_SAR')}`;
+  }
+
+  formatAmount(value: number): string {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(value);
-    return this.isRTL ? `${formatted} ر.س` : `SAR ${formatted}`;
+  }
+
+  formatLedgerId(value: string): string {
+    const normalized = (value || '').trim();
+    if (normalized.length <= 14) {
+      return normalized;
+    }
+    return `${normalized.slice(0, 8)}…${normalized.slice(-4)}`;
   }
 
   formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       maximumFractionDigits: 0
     }).format(value);
   }
 
   formatDate(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-SA-u-ca-gregory' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     }).format(new Date(value));
+  }
+
+  formatDateShort(value: string): string {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+      month: 'short',
+      day: 'numeric'
+    }).format(new Date(value));
+  }
+
+  formatStatusLabel(status: string): string {
+    const key = this.normalizeStatusKey(status);
+    const labels: Record<string, { ar: string; en: string }> = {
+      paid: { ar: 'مدفوع', en: 'Paid' },
+      settled: { ar: 'مسوّى', en: 'Settled' },
+      paid_out: { ar: 'تم الصرف', en: 'Paid out' },
+      processing: { ar: 'قيد المعالجة', en: 'Processing' },
+      queued: { ar: 'بالانتظار', en: 'Queued' },
+      pending: { ar: 'معلق', en: 'Pending' },
+      pending_review: { ar: 'مراجعة', en: 'In review' },
+      approved: { ar: 'معتمد', en: 'Approved' },
+      on_hold: { ar: 'محجوز', en: 'On hold' },
+      payout_failed: { ar: 'فشل الصرف', en: 'Payout failed' },
+      failed: { ar: 'فاشل', en: 'Failed' },
+      cancelled: { ar: 'ملغى', en: 'Cancelled' },
+      reversed: { ar: 'معكوس', en: 'Reversed' },
+      rejected: { ar: 'مرفوض', en: 'Rejected' },
+      disputed: { ar: 'نزاع', en: 'Disputed' },
+      draft: { ar: 'مسودة', en: 'Draft' },
+      open: { ar: 'مفتوح', en: 'Open' },
+      closed: { ar: 'مغلق', en: 'Closed' }
+    };
+
+    const match = labels[key];
+    if (match) {
+      return this.isRTL ? match.ar : match.en;
+    }
+
+    return this.text('غير معروف', 'Unknown');
+  }
+
+  private normalizeStatusKey(status: string): string {
+    return (status || '')
+      .trim()
+      .replace(/([a-z])([A-Z])/g, '$1_$2')
+      .toLowerCase()
+      .replace(/[\s-]+/g, '_');
   }
 
   private text(arabic: string, english: string): string {

@@ -279,6 +279,19 @@
     }
   },
   "COMPLIANCE": {
+    "WORKSPACE": {
+      "BADGE": "Compliance review",
+      "SUBTITLE": "Review {{ vendor }} documents and manage the approval decision.",
+      "READINESS": "Approval readiness",
+      "GUIDANCE": "Current guidance",
+      "TAB_REVIEW": "Documents & preview",
+      "TAB_OPERATIONS": "Operations & timeline",
+      "APPROVE_ALL": "Approve all",
+      "FILES": "Previewable files",
+      "CLOSED": "Closed",
+      "OPEN": "Open",
+      "REJECTED": "Rejected"
+    },
     "TITLE": "Review & Compliance",
     "REGISTRATION_DATE": "Registration Date",
     "ACCOUNT_STATUS": "Account Status",
@@ -475,7 +488,13 @@
   "VENDOR_PRODUCTS": {
     "SUMMARY_TITLE": "Products Summary",
     "CATALOG_TITLE": "Product Catalog",
-    "CATALOG_SUBTITLE": "Browse this vendor's product catalog, stock availability, and selling prices.",
+    "CATALOG_SUBTITLE": "Browse {{ vendor }} products, stock levels, and selling prices.",
+    "CATALOG_BADGE": "Vendor catalog",
+    "FILTERS_TITLE": "Filter & search",
+    "PAGE_METRICS_HINT": "Current page metrics",
+    "SHOWING_LABEL": "Showing",
+    "VIEW_PRODUCT": "View details",
+    "TABLE_SKU": "SKU",
     "TOTAL_PRODUCTS": "Total Products",
     "ACTIVE_PRODUCTS": "Active Products",
     "LOW_STOCK": "Low Stock",
@@ -599,6 +618,42 @@
     }
   },
   "VENDOR_FINANCE": {
+    "WORKSPACE": {
+      "TITLE": "Finance & settlements",
+      "SUBTITLE": "Manage {{ vendor }} funds from order delivery to bank payout.",
+      "BADGE": "Finance mode",
+      "AVAILABLE": "Available balance",
+      "PENDING": "Pending settlement",
+      "PAID_OUT": "Total paid out",
+      "ON_HOLD": "On hold",
+      "AWAITING_ORDERS": "Orders awaiting settlement",
+      "FAILED_PAYOUTS": "Failed payouts",
+      "DIRECT_SETTLEMENTS": "Direct settlements",
+      "BATCH_SETTLEMENTS": "Batch settlements",
+      "LIFECYCLE_TITLE": "Financial lifecycle",
+      "LIFECYCLE_DESC": "Controls how settlements and payouts are generated for this vendor.",
+      "FLOW_TITLE": "Money flow",
+      "OPS_TITLE": "Quick actions",
+      "REVIEW_PAYOUTS": "Review payouts",
+      "CREATE_SETTLEMENT": "Create settlement",
+      "BANK_ACCOUNT": "Primary bank account",
+      "LATEST_PAYOUT": "Latest payout",
+      "SETTLEMENTS_TITLE": "Recent settlements",
+      "PAYOUTS_TITLE": "Recent payouts",
+      "TABLE_SETTLEMENT": "Settlement",
+      "TABLE_NET": "Net",
+      "TABLE_ORDERS": "Orders",
+      "TABLE_DATE": "Date",
+      "TABLE_PAYOUT": "Payout",
+      "TABLE_AMOUNT": "Amount",
+      "TABLE_REFERENCE": "Reference",
+      "EMPTY_SETTLEMENTS": "No settlements recorded yet.",
+      "EMPTY_PAYOUTS": "No payouts recorded yet.",
+      "ERROR_TITLE": "Unable to load finance data",
+      "ERROR_MESSAGE": "Check your connection and try again.",
+      "DIRECT_MODE": "Direct payout",
+      "BATCH_MODE": "Batch settlement"
+    },
     "KPI": {
       "TOTAL_SALES": "Total Sales",
       "NET_SALES": "Net Sales",
@@ -713,6 +768,16 @@
     }
   },
   "VENDOR_SETTINGS": {
+    "WORKSPACE": {
+      "BADGE": "Operations settings",
+      "TITLE": "Vendor settings",
+      "SUBTITLE": "Manage {{ vendor }} operations and account controls in one place.",
+      "LAST_SYNC": "Last sync",
+      "ACCOUNT": "Account status",
+      "HOURS": "Working hours",
+      "NOTIFICATIONS": "Notification channels",
+      "MODIFIED_BY": "Last modified by"
+    },
     "ACCOUNT_SETTINGS": "Account Settings",
     "ACCOUNT_STATUS": "Account Status",
     "ACTIVE": "Active",
@@ -768,7 +833,32 @@
     },
     "META": {
       "PERIOD": "Reporting period",
-      "GENERATED": "Generated at"
+      "GENERATED": "Generated at",
+      "RANGE_LABEL": "Range"
+    },
+    "PERFORMANCE": {
+      "TITLE": "Overall performance index",
+      "ORDERS_CENTER": "orders"
+    },
+    "SECTIONS": {
+      "FINANCIAL_EYEBROW": "Financial & order trends",
+      "TOP_PRODUCTS_EYEBROW": "Revenue drivers",
+      "TOP_PRODUCTS_TITLE": "Top revenue products",
+      "TOP_PRODUCTS_DESC": "Products carrying the largest share of vendor revenue in the selected period.",
+      "ORDER_STATE_EYEBROW": "Order state",
+      "INVENTORY_EYEBROW": "Inventory & availability",
+      "DECISION_EYEBROW": "Decision brief",
+      "ATTENTION_TITLE": "What needs attention?"
+    },
+    "INSIGHTS": {
+      "WORKLOAD_TITLE": "Active workload pressure",
+      "WORKLOAD_DESC": "Orders needing urgent operational follow-up.",
+      "DOMINANT_TITLE": "Dominant product",
+      "DOMINANT_SHARE": "of total revenue.",
+      "INVENTORY_RISK_TITLE": "Inventory risk",
+      "INVENTORY_RISK_DESC": "Ratio of low or out-of-stock products.",
+      "REVENUE_RHYTHM_TITLE": "Daily revenue rhythm",
+      "REVENUE_RHYTHM_DESC": "Daily average revenue for the period."
     },
     "KPIS": {
       "TOTAL_REVENUE": "Total revenue",

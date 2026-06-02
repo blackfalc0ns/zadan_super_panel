@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-slate-50/30 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+﻿<div class="h-full flex flex-col bg-slate-50/30 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
   <app-page-header
     [title]="'DRIVERS.TITLE'"
     [subtitle]="'DRIVERS.DESC'"
@@ -49,7 +49,7 @@
         <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1 truncate leading-relaxed">
           {{ card.title | translate }}
         </span>
-        <span class="text-2xl font-black text-slate-800 tracking-tight font-['Inter'] leading-none">
+        <span class="text-2xl font-black text-slate-800 tracking-tight font-sans leading-none">
           {{ card.value }}
         </span>
       </div>
@@ -157,7 +157,7 @@
         <!-- Driver ID Badge -->
         <ng-container *ngIf="column.key === 'driverId'">
           <div class="flex justify-center">
-            <span class="inline-flex items-center rounded-xl bg-slate-100/50 px-2.5 py-1 text-[11px] font-bold text-slate-600 border border-slate-200/40 shadow-sm font-['Inter']" dir="ltr">
+            <span class="inline-flex items-center rounded-xl bg-slate-100/50 px-2.5 py-1 text-[11px] font-bold text-slate-600 border border-slate-200/40 shadow-sm font-sans" dir="ltr">
               #{{ driver.driverId }}
             </span>
           </div>
@@ -199,7 +199,7 @@
         <ng-container *ngIf="column.key === 'tasks'">
           <div class="flex flex-col items-center gap-1">
             <span 
-              class="inline-flex h-8 w-8 items-center justify-center rounded-xl text-[12px] font-black font-['Inter'] shadow-sm border transition-transform duration-300 hover:scale-110"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-xl text-[12px] font-black font-sans shadow-sm border transition-transform duration-300 hover:scale-110"
               [ngClass]="driver.tasks.active > 0 ? 'bg-amber-500/10 text-amber-700 border-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200/60'">
               {{ driver.tasks.active }}
             </span>
@@ -214,7 +214,7 @@
           <div class="flex flex-col gap-1.5 w-full max-w-[110px] mx-auto">
             <div class="flex justify-between items-center w-full text-[10px] font-bold">
               <span class="text-slate-500 truncate max-w-[60px]">{{ getPerformanceLabel(driver.performance) | translate }}</span>
-              <span class="text-slate-800 font-['Inter'] shrink-0 font-extrabold">{{ driver.acceptanceRate }}%</span>
+              <span class="text-slate-800 font-sans shrink-0 font-extrabold">{{ driver.acceptanceRate }}%</span>
             </div>
             <div class="w-full h-1.5 rounded-full bg-slate-100/50 overflow-hidden relative border border-slate-200/30" dir="ltr">
               <div
@@ -239,7 +239,7 @@
               'bg-slate-50/50 border-slate-200/50 text-slate-600': driver.walletBalance >= 0 && driver.walletBalance <= 1000
             }">
             <div class="flex items-baseline gap-0.5">
-              <span class="text-[12px] font-black font-['Inter'] leading-none">
+              <span class="text-[12px] font-black font-sans leading-none">
                 {{ driver.walletBalance | number:'1.0-0' }}
               </span>
               <span class="text-[8px] font-extrabold opacity-80 leading-none">
@@ -309,7 +309,7 @@
           <div class="grid grid-cols-2 gap-3">
             <div class="rounded-2xl bg-slate-50/50 px-4 py-3 border border-slate-100/60">
               <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.TABLE.DRIVER_ID' | translate }}</p>
-              <p class="mt-1 font-['Inter'] text-[13px] font-black text-slate-800" dir="ltr">#{{ driver.driverId }}</p>
+              <p class="mt-1 font-sans text-[13px] font-black text-slate-800" dir="ltr">#{{ driver.driverId }}</p>
             </div>
             <div class="rounded-2xl bg-slate-50/50 px-4 py-3 border border-slate-100/60">
               <p class="text-[10px] font-extrabold text-slate-400">{{ 'DRIVERS.TABLE.CITY' | translate }}</p>

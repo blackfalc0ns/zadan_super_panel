@@ -322,6 +322,26 @@ export interface AdminVendorSettlementItem {
   sourceOrderNumber?: string | null;
 }
 
+export interface AdminVendorFinanceSummary {
+  availableBalance: number;
+  pendingSettlement: number;
+  holdAmount: number;
+  totalPaidOut: number;
+  pendingOrdersNet: number;
+  pendingOrdersGross: number;
+  pendingOrdersCommission: number;
+  pendingOrdersCount: number;
+  failedPayoutsCount: number;
+  totalSettlementsCount: number;
+  directSettlementsCount: number;
+  batchSettlementsCount: number;
+  totalPayoutsCount: number;
+  latestPayoutAtUtc?: string | null;
+  latestPayoutNumber?: string | null;
+  latestPayoutAmount?: number | null;
+  latestPayoutStatus?: string | null;
+}
+
 export interface AdminVendorPayoutItem {
   id: string;
   settlementId: string;
@@ -567,20 +587,30 @@ export class VendorService {
     });
   }
 
+  getVendorFinanceSummary(vendorId: string): Observable<AdminVendorFinanceSummary> {
+    return this.http
+      .get<AdminVendorFinanceSummary | Record<string, unknown>>(`${this.apiUrl}/${vendorId}/finance-summary`)
+      .pipe(map((response) => this.normalizeFinanceSummary(response)));
+  }
+
   getVendorSettlements(vendorId: string, page: number = 1, pageSize: number = 20): Observable<ApiPaginatedResponse<AdminVendorSettlementItem>> {
-    return this.http.get<ApiPaginatedResponse<AdminVendorSettlementItem>>(`${this.apiUrl}/${vendorId}/settlements`, {
-      params: new HttpParams()
-        .set('page', page.toString())
-        .set('pageSize', pageSize.toString())
-    });
+    return this.http
+      .get<ApiPaginatedResponse<AdminVendorSettlementItem> | Record<string, unknown>>(`${this.apiUrl}/${vendorId}/settlements`, {
+        params: new HttpParams()
+          .set('page', page.toString())
+          .set('pageSize', pageSize.toString())
+      })
+      .pipe(map((response) => this.normalizeAdminPaginated<AdminVendorSettlementItem>(response)));
   }
 
   getVendorPayouts(vendorId: string, page: number = 1, pageSize: number = 20): Observable<ApiPaginatedResponse<AdminVendorPayoutItem>> {
-    return this.http.get<ApiPaginatedResponse<AdminVendorPayoutItem>>(`${this.apiUrl}/${vendorId}/payouts`, {
-      params: new HttpParams()
-        .set('page', page.toString())
-        .set('pageSize', pageSize.toString())
-    });
+    return this.http
+      .get<ApiPaginatedResponse<AdminVendorPayoutItem> | Record<string, unknown>>(`${this.apiUrl}/${vendorId}/payouts`, {
+        params: new HttpParams()
+          .set('page', page.toString())
+          .set('pageSize', pageSize.toString())
+      })
+      .pipe(map((response) => this.normalizeAdminPaginated<AdminVendorPayoutItem>(response)));
   }
 
   createVendorSettlement(
@@ -2615,6 +2645,51 @@ export class VendorService {
     return {
       manualMode,
       manualReason: typeof rawReason === 'string' && rawReason.trim() ? rawReason.trim() : null
+    };
+  }
+
+  private normalizeFinanceSummary(response: AdminVendorFinanceSummary | Record<string, unknown>): AdminVendorFinanceSummary {
+    const raw = response as Record<string, unknown>;
+    const num = (key: string, alt: string) => Number(raw[key] ?? raw[alt] ?? 0);
+
+    return {
+      availableBalance: num('availableBalance', 'AvailableBalance'),
+      pendingSettlement: num('pendingSettlement', 'PendingSettlement'),
+      holdAmount: num('holdAmount', 'HoldAmount'),
+      totalPaidOut: num('totalPaidOut', 'TotalPaidOut'),
+      pendingOrdersNet: num('pendingOrdersNet', 'PendingOrdersNet'),
+      pendingOrdersGross: num('pendingOrdersGross', 'PendingOrdersGross'),
+      pendingOrdersCommission: num('pendingOrdersCommission', 'PendingOrdersCommission'),
+      pendingOrdersCount: num('pendingOrdersCount', 'PendingOrdersCount'),
+      failedPayoutsCount: num('failedPayoutsCount', 'FailedPayoutsCount'),
+      totalSettlementsCount: num('totalSettlementsCount', 'TotalSettlementsCount'),
+      directSettlementsCount: num('directSettlementsCount', 'DirectSettlementsCount'),
+      batchSettlementsCount: num('batchSettlementsCount', 'BatchSettlementsCount'),
+      totalPayoutsCount: num('totalPayoutsCount', 'TotalPayoutsCount'),
+      latestPayoutAtUtc: (raw['latestPayoutAtUtc'] ?? raw['LatestPayoutAtUtc'] ?? null) as string | null,
+      latestPayoutNumber: (raw['latestPayoutNumber'] ?? raw['LatestPayoutNumber'] ?? null) as string | null,
+      latestPayoutAmount: Number(raw['latestPayoutAmount'] ?? raw['LatestPayoutAmount'] ?? 0) || null,
+      latestPayoutStatus: (raw['latestPayoutStatus'] ?? raw['LatestPayoutStatus'] ?? null) as string | null
+    };
+  }
+
+  private normalizeAdminPaginated<T>(response: ApiPaginatedResponse<T> | Record<string, unknown> | null | undefined): ApiPaginatedResponse<T> {
+    if (!response) {
+      return { items: [], totalCount: 0 };
+    }
+
+    const raw = response as ApiPaginatedResponse<T> & Record<string, unknown>;
+    const items = (raw.items ?? raw['Items'] ?? []) as T[];
+    const totalCount = Number(raw.totalCount ?? raw['TotalCount'] ?? items.length);
+
+    return {
+      items,
+      totalCount,
+      page: Number(raw.page ?? raw['Page'] ?? 1),
+      pageSize: Number(raw.pageSize ?? raw['PageSize'] ?? items.length),
+      totalPages: Number(raw.totalPages ?? raw['TotalPages'] ?? 1),
+      hasPrevious: Boolean(raw.hasPrevious ?? raw['HasPrevious'] ?? false),
+      hasNext: Boolean(raw.hasNext ?? raw['HasNext'] ?? false)
     };
   }
 

@@ -1,9 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaymentDetail, PaymentDetailModalComponent } from '../payment-detail-modal/payment-detail-modal.component';
-import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 type PayoutBankCode = 'alrajhi' | 'alahli' | 'alinma' | 'wallet' | 'bank';
 
@@ -31,6 +41,8 @@ export interface PayoutTransaction {
   styleUrls: ['./payouts-review-modal.component.scss']
 })
 export class PayoutsReviewModalComponent implements OnChanges {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   @Input() isOpen = false;
   @Input() availableBalance = 0;
   @Input() vendorName = '';
@@ -52,9 +64,7 @@ export class PayoutsReviewModalComponent implements OnChanges {
 
   filters = {
     reference: '',
-    status: 'all',
-    date: '',
-    bank: 'all'
+    status: 'all'
   };
 
   internalNotes = '';
@@ -67,26 +77,15 @@ export class PayoutsReviewModalComponent implements OnChanges {
     { value: 'reviewing', labelKey: 'MODALS.PAYOUTS_REVIEW.REVIEWING' }
   ];
 
-  readonly bankOptions = [
-    { value: 'all', labelKey: 'MODALS.PAYOUTS_REVIEW.ALL_BANKS' },
-    { value: 'alrajhi', labelKey: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALRAJHI' },
-    { value: 'alinma', labelKey: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALINMA' },
-    { value: 'alahli', labelKey: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALAHLI' }
-  ];
-
-  constructor(private translate: TranslateService) {}
+  constructor(private readonly translate: TranslateService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['transactions']) {
-      const selectedId = this.selectedTransaction?.id ?? null;
-      this.selectedTransaction = this.filteredTransactions.find((transaction) => transaction.id === selectedId)
-        ?? this.filteredTransactions.find((transaction) => transaction.status === 'failed')
-        ?? this.filteredTransactions[0]
-        ?? null;
-
+    if (changes['transactions'] || changes['isOpen']) {
+      this.syncSelection();
       if (this.showPaymentDetailModal && this.selectedTransaction) {
         this.selectedPaymentDetail = this.buildPaymentDetail(this.selectedTransaction);
       }
+      this.cdr.markForCheck();
     }
   }
 
@@ -95,91 +94,122 @@ export class PayoutsReviewModalComponent implements OnChanges {
     return lang.startsWith('ar');
   }
 
-  get filteredTransactions(): PayoutTransaction[] {
-    return this.transactions.filter((transaction) => {
-      const matchesReference = !this.filters.reference.trim()
-        || transaction.reference.toLowerCase().includes(this.filters.reference.trim().toLowerCase())
-        || transaction.paymentNumber.toLowerCase().includes(this.filters.reference.trim().toLowerCase());
-      const matchesStatus = this.filters.status === 'all' || transaction.status === this.filters.status;
-      const matchesDate = !this.filters.date || transaction.date === this.filters.date;
-      const matchesBank = this.filters.bank === 'all' || transaction.bankCode === this.filters.bank;
+  get statusSelectOptions(): SearchableSelectOption<string>[] {
+    return this.statusOptions.map((option) => ({
+      value: option.value,
+      label: this.translate.instant(option.labelKey)
+    }));
+  }
 
-      return matchesReference && matchesStatus && matchesDate && matchesBank;
+  get filteredTransactions(): PayoutTransaction[] {
+    const query = this.filters.reference.trim().toLowerCase();
+    return this.transactions.filter((transaction) => {
+      const matchesReference = !query
+        || transaction.reference.toLowerCase().includes(query)
+        || transaction.paymentNumber.toLowerCase().includes(query);
+      const matchesStatus = this.filters.status === 'all' || transaction.status === this.filters.status;
+      return matchesReference && matchesStatus;
     });
   }
 
-  onClose() {
+  get stats(): { total: number; success: number; pending: number; failed: number } {
+    return {
+      total: this.transactions.length,
+      success: this.transactions.filter((t) => t.status === 'success').length,
+      pending: this.transactions.filter((t) => t.status === 'pending' || t.status === 'reviewing').length,
+      failed: this.transactions.filter((t) => t.status === 'failed').length
+    };
+  }
+
+  get resultsSummaryLabel(): string {
+    const key = 'MODALS.PAYOUTS_REVIEW.SHOWING_COUNT';
+    const translated = this.translate.instant(key, {
+      shown: this.filteredTransactions.length,
+      total: this.transactions.length
+    });
+    return translated === key
+      ? `${this.filteredTransactions.length} / ${this.transactions.length}`
+      : translated;
+  }
+
+  onClose(): void {
     this.close.emit();
   }
 
-  selectTransaction(transaction: PayoutTransaction) {
+  selectTransaction(transaction: PayoutTransaction): void {
     this.selectedTransaction = transaction;
+    this.cdr.markForCheck();
   }
 
-  viewTransactionDetails(transaction: PayoutTransaction) {
+  viewTransactionDetails(transaction: PayoutTransaction | null): void {
+    if (!transaction) {
+      return;
+    }
     this.selectedTransaction = transaction;
     this.selectedPaymentDetail = this.buildPaymentDetail(transaction);
     this.showPaymentDetailModal = true;
+    this.cdr.markForCheck();
   }
 
-  onRetryPayment() {
+  onRetryPayment(): void {
     if (this.selectedTransaction) {
       this.retryPayment.emit(this.selectedTransaction.id);
     }
   }
 
-  onSuspendPayment() {
+  onSuspendPayment(): void {
     if (this.selectedTransaction) {
       this.suspendPayment.emit(this.selectedTransaction.id);
     }
   }
 
-  onEscalatePayment() {
+  onEscalatePayment(): void {
     if (this.selectedTransaction) {
       this.escalatePayment.emit(this.selectedTransaction.id);
     }
   }
 
-  onDownloadReceipt() {
+  onDownloadReceipt(): void {
     if (this.selectedTransaction) {
       this.downloadReceipt.emit(this.selectedTransaction.id);
     }
   }
 
-  onViewActivityLog() {
+  onViewActivityLog(): void {
     if (this.selectedTransaction) {
       this.viewActivityLog.emit(this.selectedTransaction.id);
     }
   }
 
-  resetFilters() {
-    this.filters = {
-      reference: '',
-      status: 'all',
-      date: '',
-      bank: 'all'
-    };
-
-    this.selectedTransaction = this.filteredTransactions[0] ?? null;
+  resetFilters(): void {
+    this.filters = { reference: '', status: 'all' };
+    this.syncSelection();
+    this.cdr.markForCheck();
   }
 
-  getStatusClass(status: string): string {
-    const classes: { [key: string]: string } = {
-      success: 'bg-emerald-100 text-emerald-800 border-emerald-200/50',
-      failed: 'bg-rose-100 text-rose-800 border-rose-200/50',
-      pending: 'bg-amber-100 text-amber-800 border-amber-200/50',
-      reviewing: 'bg-blue-100 text-blue-800 border-blue-200/50'
-    };
-    return classes[status] || '';
+  onFiltersChange(): void {
+    this.syncSelection();
+    this.cdr.markForCheck();
   }
 
-  getRowClass(transaction: PayoutTransaction): string {
-    if (this.selectedTransaction?.id === transaction.id) {
-      return transaction.status === 'failed'
-        ? 'bg-rose-50/40 ring-1 ring-inset ring-rose-200'
-        : 'bg-blue-50/40 ring-1 ring-inset ring-blue-200';
+  trackById(_: number, item: PayoutTransaction): string {
+    return item.id;
+  }
+
+  formatCurrency(value: number): string {
+    const formatted = new Intl.NumberFormat(this.isRTL ? 'ar-EG-u-nu-latn' : 'en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(value);
+    return `${formatted} ${this.translate.instant('COMMON.CURRENCY_SAR')}`;
+  }
+
+  maskIban(value: string): string {
+    const normalized = value.replace(/\s+/g, '');
+    if (normalized.length <= 8) {
+      return normalized;
     }
-    return 'hover:bg-slate-50 transition-colors';
+    return `•••• ${normalized.slice(-4)}`;
   }
 
   getStatusLabel(status: PayoutTransaction['status']): string {
@@ -189,11 +219,14 @@ export class PayoutsReviewModalComponent implements OnChanges {
       pending: 'MODALS.PAYOUTS_REVIEW.PENDING',
       reviewing: 'MODALS.PAYOUTS_REVIEW.REVIEWING'
     };
-
     return this.translate.instant(keys[status]);
   }
 
   getBankLabel(bankCode: PayoutBankCode): string {
+    if (bankCode === 'bank' && this.bankName) {
+      return this.bankName;
+    }
+
     const keys: Record<PayoutBankCode, string> = {
       alrajhi: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALRAJHI',
       alahli: 'MODALS.PAYOUTS_REVIEW.BANK_OPTIONS.ALAHLI',
@@ -203,24 +236,26 @@ export class PayoutsReviewModalComponent implements OnChanges {
     };
 
     const translated = keys[bankCode] ? this.translate.instant(keys[bankCode]) : '';
-    return translated || this.bankName || '-';
+    return translated || this.bankName || '—';
   }
 
   formatBankDestination(transaction: PayoutTransaction): string {
     const bankLabel = this.getBankLabel(transaction.bankCode);
-    return transaction.accountMask ? `${bankLabel} - ${transaction.accountMask}` : bankLabel;
+    return transaction.accountMask ? `${bankLabel} · ${transaction.accountMask}` : bankLabel;
+  }
+
+  private syncSelection(): void {
+    const selectedId = this.selectedTransaction?.id ?? null;
+    this.selectedTransaction = this.filteredTransactions.find((t) => t.id === selectedId)
+      ?? this.filteredTransactions.find((t) => t.status === 'failed')
+      ?? this.filteredTransactions[0]
+      ?? null;
   }
 
   private buildPaymentDetail(transaction: PayoutTransaction): PaymentDetail {
-    const createdAt = transaction.createdAtUtc
-      ? new Date(transaction.createdAtUtc)
-      : null;
-    const processedAt = transaction.processedAtUtc
-      ? new Date(transaction.processedAtUtc)
-      : null;
-    const createdLabel = createdAt
-      ? `${transaction.date} - ${transaction.time}`
-      : transaction.date;
+    const createdAt = transaction.createdAtUtc ? new Date(transaction.createdAtUtc) : null;
+    const processedAt = transaction.processedAtUtc ? new Date(transaction.processedAtUtc) : null;
+    const createdLabel = createdAt ? `${transaction.date} - ${transaction.time}` : transaction.date;
     const processingLabel = transaction.status === 'pending' ? '-' : createdLabel;
     const completedLabel = processedAt
       ? processedAt.toLocaleString(this.isRTL ? 'ar-SA' : 'en-US')

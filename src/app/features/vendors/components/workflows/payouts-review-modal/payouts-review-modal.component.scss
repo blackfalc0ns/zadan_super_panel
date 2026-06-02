@@ -1,1 +1,126 @@
-/* Payouts Review Modal SCSS - Empty as it is styled entirely with Tailwind CSS */
+.payouts-review-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225) transparent;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgb(203 213 225);
+  }
+}
+
+.payouts-review-table-wrap {
+  max-height: min(22rem, 42vh);
+}
+
+.payouts-review-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 0.35rem 0.5rem;
+    background: rgb(248 250 252);
+    font-size: 9px;
+    font-weight: 800;
+    color: rgb(100 116 139);
+    border-bottom: 1px solid rgb(241 245 249);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 0.35rem 0.5rem;
+    font-size: 11px;
+    line-height: 1.25;
+    vertical-align: middle;
+    border-bottom: 1px solid rgb(248 250 252);
+    cursor: pointer;
+  }
+
+  tbody tr:hover td {
+    background: rgb(248 250 252);
+  }
+
+  tbody tr.is-selected td {
+    background: rgb(239 246 255);
+  }
+
+  tbody tr.is-selected.is-failed td {
+    background: rgb(255 241 242);
+  }
+
+  tbody td p:first-child {
+    font-size: 11px;
+  }
+
+  tbody td p:last-child {
+    margin-top: 1px;
+    font-size: 9px;
+    font-weight: 600;
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 30%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 22%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 22%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 16%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 10%;
+  }
+}
+
+.payouts-review-status {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.payouts-review-status--success {
+  background: rgb(236 253 245);
+  color: rgb(5 150 105);
+}
+
+.payouts-review-status--pending {
+  background: rgb(255 251 235);
+  color: rgb(180 83 9);
+}
+
+.payouts-review-status--reviewing {
+  background: rgb(239 246 255);
+  color: rgb(37 99 235);
+}
+
+.payouts-review-status--failed {
+  background: rgb(255 241 242);
+  color: rgb(190 18 60);
+}

@@ -606,7 +606,8 @@
         "LOCATION_UPDATES_BLOCKED": "تم إيقاف تحديثات الموقع لهذا المندوب.",
         "LOCATION_UPDATES_UNBLOCKED": "تم فك حظر تحديثات الموقع لهذا المندوب.",
         "LOGIN_LOCKED": "تم قفل تسجيل دخول المندوب.",
-        "LOGIN_UNLOCKED": "تم فك قفل تسجيل دخول المندوب."
+        "LOGIN_UNLOCKED": "تم فك قفل تسجيل دخول المندوب.",
+        "PROFILE_UPDATED": "تم تحديث بيانات ملف المندوب بنجاح."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "مختبر إشعارات المندوب",
@@ -633,6 +634,14 @@
           "BODY": "This is a test push for the driver app.",
           "TARGET_URL": "/notifications"
         }
+      },
+      "VEHICLE_TYPES": {
+        "CAR": "سيارة",
+        "MOTORCYCLE": "دراجة نارية",
+        "SCOOTER": "سكوتر",
+        "VAN": "فان",
+        "BICYCLE": "دراجة هوائية",
+        "TRUCK": "شاحنة"
       },
       "BTN_VERIFY": "التوثيق",
       "BTN_OPERATIONS": "التشغيل",
@@ -741,13 +750,13 @@
         "NO_TASKS_DESC": "لا يحتوي رد تفاصيل المندوب على مهام نشطة أو حديثة لهذا السائق.",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
-            "VEHICLE_INFO": "بيانات المركبة مكتملة",
-            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
-            "ZONE_SELECTION": "تم اختيار منطقة التشغيل الأساسية"
+            "PERSONAL_INFO": "البيانات الشخصية",
+            "VEHICLE_INFO": "بيانات المركبة",
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية",
+            "LICENSE_DOCUMENT": "رخصة القيادة",
+            "VEHICLE_DOCUMENT": "مستند المركبة",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي",
+            "ZONE_SELECTION": "منطقة التشغيل الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
@@ -1264,6 +1273,23 @@
         "REQUIREMENTS_DESC": "قائمة التحقق والملاحظات",
         "ADD_INTERNAL_NOTE": "إضافة ملاحظة داخلية",
         "ADD_INTERNAL_NOTE_PLACEHOLDER": "ملاحظة داخلية للمراجعين...",
+        "EDIT_PROFILE_TAB": "تعديل البيانات",
+        "PERSONAL_SECTION": "البيانات الشخصية",
+        "FULL_NAME": "الاسم الكامل",
+        "EMAIL": "البريد الإلكتروني",
+        "PHONE": "رقم الجوال",
+        "ADDRESS": "العنوان الوطني",
+        "IDENTITY_SECTION": "الهوية والقيادة",
+        "NATIONAL_ID": "رقم الهوية الوطنية / الإقامة",
+        "EXPIRY_DATE": "تاريخ انتهاء المستند",
+        "LICENSE_NUMBER": "رقم رخصة القيادة",
+        "VEHICLE_SECTION": "بيانات المركبة",
+        "VEHICLE_TYPE": "نوع المركبة",
+        "PLATE_NUMBER": "رقم اللوحة",
+        "OPERATING_SECTION": "منطقة التشغيل",
+        "REGION": "المنطقة",
+        "CITY": "المدينة",
+        "SAVE_CHANGES": "حفظ التعديلات",
         "CHECKLIST_TAB": "قائمة التحقق",
         "DOCUMENT_BOARD": "لوحة المستندات",
         "FILES_IN_PACKET": "{{count}} ملف في الحزمة",
@@ -1356,13 +1382,13 @@
         "STATUS_REQUIRED": "مطلوب",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "البيانات الشخصية مكتملة",
-            "VEHICLE_INFO": "بيانات المركبة مكتملة",
-            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية متوفر وصالح",
-            "LICENSE_DOCUMENT": "رخصة القيادة متوفرة وصالحة",
-            "VEHICLE_DOCUMENT": "مستند المركبة متوفر وصالح",
-            "PERSONAL_PHOTO": "صورة التحقق الشخصي متوفرة",
-            "ZONE_SELECTION": "تم اختيار المنطقة الأساسية"
+            "PERSONAL_INFO": "البيانات الشخصية",
+            "VEHICLE_INFO": "بيانات المركبة",
+            "NATIONAL_ID_DOCUMENT": "مستند الهوية الوطنية",
+            "LICENSE_DOCUMENT": "رخصة القيادة",
+            "VEHICLE_DOCUMENT": "مستند المركبة",
+            "PERSONAL_PHOTO": "صورة التحقق الشخصي",
+            "ZONE_SELECTION": "منطقة التشغيل الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",

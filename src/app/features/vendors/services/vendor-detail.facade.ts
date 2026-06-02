@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subscription, catchError, finalize, interval, map, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, catchError, combineLatest, finalize, interval, map, take, tap, throwError } from 'rxjs';
 import { VendorActivityLogFilters, VendorActivityLogPage, VendorDetail } from '@vendors/models/vendors.domain.models';
 import {
   AdminSendVendorNotificationRequest,
@@ -33,6 +33,14 @@ export class VendorDetailFacade implements OnDestroy {
   readonly isActivityLogLoading$ = this.isActivityLogLoadingSubject.asObservable();
   readonly mutationError$ = this.mutationErrorSubject.asObservable();
   readonly activityLogError$ = this.activityLogErrorSubject.asObservable();
+  /** True until vendor profile is available (initial load or id change). Hidden after load error. */
+  readonly isVendorWorkspaceLoading$ = combineLatest([
+    this.vendorId$,
+    this.vendor$,
+    this.mutationError$
+  ]).pipe(
+    map(([vendorId, vendor, error]) => !!vendorId && vendor == null && !error)
+  );
 
   constructor(private readonly vendorService: VendorService) {}
 
@@ -67,6 +75,9 @@ export class VendorDetailFacade implements OnDestroy {
     }
 
     this.vendorIdSubject.next(vendorId);
+    this.vendorSubject.next(null);
+    this.isLoadingSubject.next(true);
+    this.mutationErrorSubject.next(null);
     this.refreshVendor();
     this.refreshVendorActivityLog();
     this.ensureLiveRefresh();

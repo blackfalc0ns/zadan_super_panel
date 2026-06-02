@@ -375,7 +375,9 @@
       "REFERENCE_PLACEHOLDER": "ابحث برقم الحوالة أو مرجع الصرف",
       "RESET": "إعادة التعيين",
       "SAVE_UPDATE": "حفظ التحديث",
-      "SHOWING_RESULTS": "عرض النتائج"
+      "SHOWING_RESULTS": "عرض النتائج",
+      "STATS_TOTAL": "إجمالي الدفعات",
+      "SHOWING_COUNT": "{{ shown }} من {{ total }}"
     },
     "PAYMENT_DETAIL": {
       "TITLE": "تفاصيل الدفعة",

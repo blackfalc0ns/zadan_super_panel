@@ -1,59 +1,76 @@
-<div class="mx-auto flex max-w-[1520px] flex-col gap-6 px-4 py-6 md:px-6 lg:px-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  
-  <!-- Main Header & Top Cards -->
-  <section class="group relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:shadow-md">
-    <div class="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-primary/5 transition-transform duration-700 group-hover:scale-[2] pointer-events-none"></div>
-    
-    <div class="relative z-10 flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-      <div class="min-w-0 flex-1">
-        <div class="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
-          
-          <div class="flex items-center gap-4">
-            <div class="flex h-14 w-14 items-center justify-center rounded-[1rem] border border-primary/10 bg-primary/5 text-primary shadow-inner backdrop-blur-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-              <span class="material-symbols-outlined text-[24px]">inventory_2</span>
-            </div>
-            <div>
-              <h1 class="text-xl font-black tracking-tight text-slate-900">{{ 'VENDOR_PRODUCTS.CATALOG_TITLE' | translate }}</h1>
-              <p class="mt-0.5 text-[12px] font-medium text-slate-500">
-                {{ 'VENDOR_PRODUCTS.CATALOG_SUBTITLE' | translate }}
-              </p>
-            </div>
-          </div>
+<div class="mx-auto max-w-[1520px] space-y-5 px-4 py-5 pb-6 md:px-6 lg:px-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
 
-          <div class="grid gap-3 sm:grid-cols-2 xl:w-[46rem] xl:grid-cols-4">
-            <!-- Total Products -->
-            <div class="flex flex-col justify-center rounded-[1.25rem] border border-slate-100 bg-white p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-200">
-              <p class="text-[10px] font-black uppercase tracking-[0.08em] text-slate-400">{{ 'VENDOR_PRODUCTS.TOTAL_PRODUCTS' | translate }}</p>
-              <p class="mt-1.5 text-xl font-black text-slate-900">{{ formatNumber(totalProducts) }}</p>
-            </div>
+  <!-- Hero -->
+  <header class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-white via-white to-primary/[0.06] p-5 shadow-sm md:p-6">
+    <div class="pointer-events-none absolute -end-14 -top-14 h-44 w-44 rounded-full bg-primary/10 blur-2xl"></div>
 
-            <!-- Active Products -->
-            <div class="flex flex-col justify-center rounded-[1.25rem] border border-emerald-100 bg-emerald-50/50 p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-200">
-              <p class="text-[10px] font-black uppercase tracking-[0.08em] text-emerald-600">{{ 'VENDOR_PRODUCTS.ACTIVE_PRODUCTS' | translate }}</p>
-              <p class="mt-1.5 text-xl font-black text-emerald-700">{{ formatNumber(activeProducts) }}</p>
-            </div>
+    <div class="relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+      <div class="min-w-0 space-y-2 text-start">
+        <div class="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/10 px-3 py-1 text-[11px] font-extrabold text-primary">
+          <span class="material-symbols-outlined text-[15px]">inventory_2</span>
+          {{ 'VENDOR_PRODUCTS.CATALOG_BADGE' | translate }}
+        </div>
+        <h1 class="text-2xl font-black tracking-tight text-slate-900 md:text-[1.65rem]">
+          {{ 'VENDOR_PRODUCTS.CATALOG_TITLE' | translate }}
+        </h1>
+        <p class="max-w-2xl text-[13px] font-semibold leading-relaxed text-slate-500">
+          {{ 'VENDOR_PRODUCTS.CATALOG_SUBTITLE' | translate:{ vendor: vendorDisplayName || '—' } }}
+        </p>
+      </div>
 
-            <!-- Low Stock Products -->
-            <div class="flex flex-col justify-center rounded-[1.25rem] border border-amber-100 bg-amber-50/50 p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-amber-200">
-              <p class="text-[10px] font-black uppercase tracking-[0.08em] text-amber-600">{{ 'VENDOR_PRODUCTS.LOW_STOCK' | translate }}</p>
-              <p class="mt-1.5 text-xl font-black text-amber-700">{{ formatNumber(lowStockProducts) }}</p>
-            </div>
-
-            <!-- Inventory Value -->
-            <div class="flex flex-col justify-center rounded-[1.25rem] border border-blue-100 bg-blue-50/50 p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-200">
-              <p class="text-[10px] font-black uppercase tracking-[0.08em] text-blue-600">{{ 'VENDOR_PRODUCTS.TOTAL_INVENTORY_VALUE' | translate }}</p>
-              <p class="mt-1.5 text-xl font-black text-blue-700">{{ formatCurrency(totalInventoryValue) }}</p>
-            </div>
-          </div>
-          
+      <div class="grid w-full gap-2.5 sm:grid-cols-2 lg:max-w-[42rem] lg:grid-cols-4">
+        <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-3.5 shadow-sm">
+          <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TOTAL_PRODUCTS' | translate }}</p>
+          <p class="mt-1 text-2xl font-black tabular-nums text-slate-900">{{ formatNumber(totalProducts) }}</p>
+        </div>
+        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3.5 shadow-sm">
+          <p class="text-[10px] font-bold text-emerald-700" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.ACTIVE_PRODUCTS' | translate }}</p>
+          <p class="mt-1 text-2xl font-black tabular-nums text-emerald-800">{{ formatNumber(activeProducts) }}</p>
+        </div>
+        <div class="rounded-2xl border border-amber-100 bg-amber-50/60 p-3.5 shadow-sm">
+          <p class="text-[10px] font-bold text-amber-700" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.LOW_STOCK' | translate }}</p>
+          <p class="mt-1 text-2xl font-black tabular-nums text-amber-800">{{ formatNumber(lowStockProducts) }}</p>
+        </div>
+        <div class="rounded-2xl border border-primary/20 bg-primary/[0.06] p-3.5 shadow-sm">
+          <p class="text-[10px] font-bold text-primary" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TOTAL_INVENTORY_VALUE' | translate }}</p>
+          <p class="mt-1 text-lg font-black tabular-nums text-primary md:text-xl">{{ formatCurrency(totalInventoryValue) }}</p>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Filters & Search Controls -->
-  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-    <div class="w-full xl:w-[26rem]">
+    <p class="relative mt-4 border-t border-slate-100/90 pt-3 text-[11px] font-semibold text-slate-400 text-start">
+      <span class="material-symbols-outlined me-1 align-middle text-[14px]">info</span>
+      {{ 'VENDOR_PRODUCTS.PAGE_METRICS_HINT' | translate }}
+    </p>
+  </header>
+
+  <!-- Filters toolbar -->
+  <section class="rounded-[1.25rem] border border-slate-200/70 bg-white p-4 shadow-sm md:p-5">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2 text-start">
+        <span class="material-symbols-outlined text-[20px] text-primary">tune</span>
+        <h2 class="text-sm font-black text-slate-900">{{ 'VENDOR_PRODUCTS.FILTERS_TITLE' | translate }}</h2>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-extrabold text-slate-600">
+          <span class="material-symbols-outlined text-[16px] text-primary">filter_list</span>
+          {{ activeFilterCount }}
+        </span>
+        <span class="inline-flex items-center rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-[11px] font-extrabold tabular-nums text-primary">
+          {{ 'VENDOR_PRODUCTS.SHOWING_LABEL' | translate }}: {{ showingCountLabel }}
+        </span>
+        <button
+          *ngIf="hasActiveFilters"
+          type="button"
+          (click)="clearFilters()"
+          class="inline-flex h-9 items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-3 text-[12px] font-extrabold text-slate-700 transition-colors hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[16px]">close</span>
+          {{ 'COMMON.CLEAR_FILTERS' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(220px,0.8fr)]">
       <app-input
         [(ngModel)]="searchQuery"
         (ngModelChange)="onSearchChange()"
@@ -62,49 +79,29 @@
         [dir]="isRTL ? 'rtl' : 'ltr'"
         [hasIcon]="true"
         [customClass]="'w-full'"
-        [inputClass]="'h-11 rounded-[1rem] text-[13px] font-medium shadow-sm border-slate-200 focus:border-primary'">
+        [inputClass]="'h-11 rounded-xl text-[13px] font-semibold shadow-sm border-slate-200 focus:border-primary'">
         <span icon class="material-symbols-outlined text-[18px]">search</span>
       </app-input>
+
+      <app-searchable-select
+        [(ngModel)]="selectedStatus"
+        (ngModelChange)="onStatusChange()"
+        [label]="'VENDOR_PRODUCTS.PRODUCT_STATUS'"
+        [searchable]="false"
+        [allowClear]="false"
+        [options]="statusOptions"
+        [placeholder]="'VENDOR_PRODUCTS.PRODUCT_STATUS'"
+        [customClass]="'w-full'">
+      </app-searchable-select>
     </div>
+  </section>
 
-    <div class="flex flex-1 flex-col gap-3 lg:flex-row lg:items-end lg:gap-4">
-      <div class="min-w-[14rem] flex-1 lg:max-w-[18rem]">
-        <app-searchable-select
-          [(ngModel)]="selectedStatus"
-          (ngModelChange)="onStatusChange()"
-          [label]="'VENDOR_PRODUCTS.PRODUCT_STATUS'"
-          [searchable]="false"
-          [allowClear]="false"
-          [options]="statusOptions"
-          [placeholder]="'VENDOR_PRODUCTS.PRODUCT_STATUS'"
-          [customClass]="'w-full'">
-        </app-searchable-select>
-      </div>
-
-      <div class="lg:ms-auto flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div class="inline-flex h-11 items-center rounded-xl bg-white border border-slate-200 px-4 text-[12px] font-black text-slate-500 shadow-sm">
-          <span class="material-symbols-outlined me-2 text-[18px] text-primary">filter_list</span>
-          <span>{{ activeFilterCount }}</span>
-          <span class="mx-2 text-slate-300">|</span>
-          <span>{{ showingCountLabel }}</span>
-        </div>
-
-        <button
-          *ngIf="hasActiveFilters"
-          (click)="clearFilters()"
-          class="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-[12px] font-black text-slate-700 transition-colors hover:bg-slate-100 w-full sm:w-auto">
-          {{ 'COMMON.CLEAR_FILTERS' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Loading State -->
-  <section *ngIf="isLoading" class="admin-skeleton-table" style="--skeleton-columns: 5">
+  <!-- Loading -->
+  <section *ngIf="isLoading" class="admin-skeleton-table rounded-[1.25rem] border border-slate-200/70 bg-white p-4" style="--skeleton-columns: 5">
     <div class="admin-skeleton-table-header">
       <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line sm"></span>
     </div>
-    <div *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton-table-row">
+    <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
       <span class="admin-skeleton admin-skeleton-avatar"></span>
       <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
       <span class="admin-skeleton admin-skeleton-chip"></span>
@@ -113,100 +110,105 @@
     </div>
   </section>
 
-  <!-- Error State -->
-  <section *ngIf="!isLoading && hasError" class="flex flex-col items-center justify-center rounded-[1.5rem] border border-rose-200 bg-rose-50/50 py-16 text-center shadow-sm">
-    <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-rose-100 text-rose-600 shadow-inner mb-4">
-      <span class="material-symbols-outlined text-[32px]">warning</span>
+  <!-- Error -->
+  <section *ngIf="!isLoading && hasError" class="grid min-h-[280px] place-items-center rounded-[1.5rem] border border-rose-200/80 bg-gradient-to-b from-rose-50/80 to-white p-8 text-center shadow-sm">
+    <div class="max-w-md space-y-3">
+      <span class="material-symbols-outlined text-[48px] text-rose-500">error</span>
+      <h2 class="text-base font-black text-rose-950">{{ 'VENDOR_PRODUCTS.STATES.ERROR_TITLE' | translate }}</h2>
+      <p class="text-sm font-semibold text-rose-600">{{ 'VENDOR_PRODUCTS.STATES.ERROR_MESSAGE' | translate }}</p>
+      <button type="button" (click)="loadProductsRetry()" class="mt-2 inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-extrabold text-white shadow-md shadow-primary/20">
+        <span class="material-symbols-outlined text-[18px]">refresh</span>
+        {{ 'COMMON.RETRY' | translate }}
+      </button>
     </div>
-    <p class="text-[14px] font-black text-rose-900">{{ 'VENDOR_PRODUCTS.STATES.ERROR_TITLE' | translate }}</p>
-    <p class="mt-1 text-[12px] font-medium text-rose-700/80">{{ 'VENDOR_PRODUCTS.STATES.ERROR_MESSAGE' | translate }}</p>
   </section>
 
-  <!-- Data Table -->
-  <section *ngIf="!isLoading && !hasError && hasProducts" class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 shadow-sm backdrop-blur-md overflow-hidden">
-    <div class="overflow-x-auto custom-scrollbar">
+  <!-- Table -->
+  <section *ngIf="!isLoading && !hasError && hasProducts" class="overflow-hidden rounded-[1.5rem] border border-slate-200/70 bg-white shadow-sm">
+    <div class="vendor-products-table-scroll overflow-x-auto">
       <table class="min-w-full border-collapse">
         <thead>
-          <tr class="border-b border-slate-200 bg-slate-50/80">
-            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.PRODUCT' | translate }}</th>
-            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">SKU</th>
-            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.PRICE' | translate }}</th>
-            <th class="px-5 py-4 text-start text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.STOCK' | translate }}</th>
-            <th class="px-5 py-4 text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{{ 'VENDOR_PRODUCTS.TABLE.STATUS' | translate }}</th>
+          <tr class="border-b border-slate-200 bg-slate-50/90">
+            <th class="px-5 py-3.5 text-start text-[10px] font-extrabold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TABLE.PRODUCT' | translate }}</th>
+            <th class="px-5 py-3.5 text-start text-[10px] font-extrabold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TABLE_SKU' | translate }}</th>
+            <th class="px-5 py-3.5 text-start text-[10px] font-extrabold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TABLE.PRICE' | translate }}</th>
+            <th class="px-5 py-3.5 text-start text-[10px] font-extrabold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TABLE.STOCK' | translate }}</th>
+            <th class="px-5 py-3.5 text-center text-[10px] font-extrabold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TABLE.STATUS' | translate }}</th>
+            <th class="px-4 py-3.5 text-center text-[10px] font-extrabold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_PRODUCTS.TABLE.ACTIONS' | translate }}</th>
           </tr>
         </thead>
 
         <tbody class="divide-y divide-slate-100">
           <tr
-            *ngFor="let product of filteredProducts"
-            class="group cursor-pointer bg-white transition-colors hover:bg-slate-50/80"
-            [ngClass]="{ 'bg-rose-50/10': product.status === 'out_of_stock' }"
+            *ngFor="let product of filteredProducts; trackBy: trackProduct"
+            class="group cursor-pointer bg-white transition-colors hover:bg-slate-50/90"
+            [ngClass]="{ 'bg-rose-50/30': product.status === 'out_of_stock' }"
             (click)="onViewProduct(product.masterProductId)">
-            
-            <td class="px-5 py-4">
-              <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-slate-200 bg-slate-50 transition-transform group-hover:scale-105">
-                  <ng-container *ngIf="product.imageUrl; else fallbackImage">
-                    <img [src]="product.imageUrl" [alt]="currentLang === 'ar' ? product.nameAr : (product.nameEn || product.nameAr)" class="h-full w-full object-cover" />
-                  </ng-container>
-                  <ng-template #fallbackImage>
-                    <span class="material-symbols-outlined text-[20px] text-slate-400">image</span>
-                  </ng-template>
-                </div>
 
-                <div class="min-w-0">
-                  <p class="truncate text-[13px] font-black text-slate-900 group-hover:text-primary transition-colors">{{ currentLang === 'ar' ? product.nameAr : (product.nameEn || product.nameAr) }}</p>
-                  <p class="mt-0.5 truncate text-[11px] font-bold text-slate-500">{{ product.variant }}</p>
+            <td class="px-5 py-3.5">
+              <div class="flex items-center gap-3">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 transition-transform group-hover:scale-105">
+                  <img *ngIf="product.imageUrl" [src]="product.imageUrl" [alt]="getProductName(product)" class="h-full w-full object-cover" />
+                  <span *ngIf="!product.imageUrl" class="material-symbols-outlined text-[20px] text-slate-400">image</span>
+                </div>
+                <div class="min-w-0 text-start">
+                  <p class="truncate text-[13px] font-extrabold text-slate-900 transition-colors group-hover:text-primary">{{ getProductName(product) }}</p>
+                  <p *ngIf="product.variant" class="mt-0.5 truncate text-[11px] font-semibold text-slate-500">{{ product.variant }}</p>
                 </div>
               </div>
             </td>
 
-            <td class="px-5 py-4 text-[13px] font-bold text-slate-600">
-              <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[14px] text-slate-400">tag</span>
+            <td class="px-5 py-3.5">
+              <span class="inline-flex max-w-[12rem] items-center gap-1 truncate rounded-lg bg-slate-50 px-2.5 py-1 text-[12px] font-bold text-slate-600" dir="ltr">
+                <span class="material-symbols-outlined shrink-0 text-[14px] text-slate-400">tag</span>
                 {{ product.sku }}
-              </div>
-            </td>
-            
-            <td class="px-5 py-4">
-              <span class="rounded-md bg-slate-100 px-2.5 py-1 text-[13px] font-black text-slate-900">{{ formatCurrency(product.price) }}</span>
+              </span>
             </td>
 
-            <td class="px-5 py-4">
-              <div class="min-w-[10rem] max-w-[14rem] space-y-2">
-                <div class="flex items-center justify-between gap-3 text-[11px] font-black">
-                  <span [ngClass]="getStockColorClass(product.stockStatus)">
+            <td class="px-5 py-3.5">
+              <span class="inline-flex rounded-lg border border-slate-200/80 bg-white px-2.5 py-1 text-[13px] font-extrabold tabular-nums text-slate-900" dir="ltr">
+                {{ formatCurrency(product.price) }}
+              </span>
+            </td>
+
+            <td class="px-5 py-3.5">
+              <div class="min-w-[9.5rem] max-w-[13rem] space-y-1.5">
+                <div class="flex items-center justify-between gap-2 text-[11px] font-extrabold">
+                  <span class="tabular-nums" [ngClass]="getStockColorClass(product.stockStatus)">
                     {{ formatNumber(product.stock) }} {{ 'VENDOR_PRODUCTS.PIECES' | translate }}
                   </span>
-                  <span *ngIf="product.stockStatus === 'low'" class="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-black tracking-wider text-amber-700">
+                  <span *ngIf="product.stockStatus === 'low'" class="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-black text-amber-800">
                     {{ 'VENDOR_PRODUCTS.LOW' | translate }}
                   </span>
+                  <span *ngIf="product.stockStatus === 'out'" class="rounded-md bg-rose-100 px-1.5 py-0.5 text-[9px] font-black text-rose-700">
+                    {{ 'VENDOR_PRODUCTS.OUT_OF_STOCK' | translate }}
+                  </span>
                 </div>
-
-                <div class="h-1.5 overflow-hidden rounded-full bg-slate-100 inset-shadow-sm">
-                  <div
-                    class="h-full rounded-full transition-all duration-500"
-                    [ngClass]="getStockBarClass(product.stockStatus)"
-                    [style.width.%]="product.stockPercentage"></div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div class="h-full rounded-full transition-all duration-500" [ngClass]="getStockBarClass(product.stockStatus)" [style.width.%]="product.stockPercentage"></div>
                 </div>
               </div>
             </td>
 
-            <td class="px-5 py-4 text-center">
-              <app-status-pill
-                [label]="product.statusKey"
-                [showDot]="false"
-                [size]="'sm'"
-                [variant]="getProductStatusVariant(product.status)">
-              </app-status-pill>
+            <td class="px-5 py-3.5 text-center">
+              <app-status-pill [label]="product.statusKey" [showDot]="true" [size]="'sm'" [variant]="getProductStatusVariant(product.status)"></app-status-pill>
+            </td>
+
+            <td class="px-4 py-3.5 text-center">
+              <button
+                type="button"
+                (click)="onViewProductClick($event, product)"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:border-primary hover:bg-primary hover:text-white focus:opacity-100"
+                [attr.title]="'VENDOR_PRODUCTS.VIEW_PRODUCT' | translate">
+                <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Pagination Footer -->
-    <div class="border-t border-slate-200 bg-slate-50/50 px-5 py-4">
+    <div class="border-t border-slate-200 bg-slate-50/60 px-4 py-3.5 md:px-5">
       <app-pagination
         [currentPage]="currentPage"
         [pageSize]="pageSize"
@@ -216,10 +218,19 @@
     </div>
   </section>
 
-  <!-- Empty State -->
-  <section *ngIf="!isLoading && !hasError && !hasProducts" class="min-h-[320px] rounded-[1.35rem] border border-dashed border-slate-200 bg-slate-50/35 px-6 py-16 text-center flex flex-col items-center justify-center">
-    <span class="material-symbols-outlined mb-5 text-[28px] leading-none text-[#8bbfca]">inventory_2</span>
-    <p class="text-[1.35rem] font-black text-slate-900 tracking-normal leading-tight">{{ 'VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_TITLE' | translate }}</p>
-    <p class="mt-3 max-w-md text-[0.86rem] font-extrabold text-slate-500 leading-6">{{ 'VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_MESSAGE' | translate }}</p>
+  <!-- Empty -->
+  <section *ngIf="!isLoading && !hasError && !hasProducts" class="grid min-h-[300px] place-items-center rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
+    <div class="max-w-md space-y-3">
+      <span class="material-symbols-outlined text-[52px] text-primary/40">inventory_2</span>
+      <h2 class="text-lg font-black text-slate-900">{{ 'VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_TITLE' | translate }}</h2>
+      <p class="text-sm font-semibold text-slate-500">{{ 'VENDOR_PRODUCTS.STATES.EMPTY_PRODUCTS_MESSAGE' | translate }}</p>
+      <button
+        *ngIf="hasActiveFilters"
+        type="button"
+        (click)="clearFilters()"
+        class="mt-2 inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-extrabold text-slate-700 hover:bg-slate-50">
+        {{ 'COMMON.CLEAR_FILTERS' | translate }}
+      </button>
+    </div>
   </section>
 </div>

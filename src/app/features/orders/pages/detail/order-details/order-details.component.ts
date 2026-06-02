@@ -1,7 +1,7 @@
 import { Component, HostListener, NgZone, OnDestroy, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, interval, switchMap } from 'rxjs';
 import { OrderCancellationModalComponent } from '../../../components/order-cancellation-modal/order-cancellation-modal.component';
 import { OrderDriverAssignmentModalComponent } from '../../../components/order-driver-assignment-modal/order-driver-assignment-modal.component';
@@ -35,7 +35,8 @@ import {
   OrderResolutionState,
   OrderRefundForm,
   OrderStatus,
-  OrderStatusUpdateForm
+  OrderStatusUpdateForm,
+  OrderTimelineItem
 } from '../../../models/orders.models';
 import {
   getFulfillmentStatusKey,
@@ -46,6 +47,7 @@ import {
   getResolutionStateKey,
   getWorkflowStageKey
 } from '../../../data/orders.mock';
+import { resolveOrderTimelineStepIcon, resolveOrderTimelineTextKey } from '../../../utils/order-timeline-i18n';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,6 +93,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   isRefundModalOpen = false;
   isDisputeModalOpen = false;
   isIssueFlagModalOpen = false;
+  isSubmittingDispute = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -98,8 +101,13 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     private readonly financeService: FinanceService,
     private readonly accessService: AccessService,
     private readonly orderTrackingRealtime: OrderTrackingRealtimeService,
-    private readonly zone: NgZone
+    private readonly zone: NgZone,
+    private readonly translate: TranslateService
   ) {}
+
+  get currentLang(): string {
+    return this.translate.currentLang || 'ar';
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -143,6 +151,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   get resolutionStateLabel(): string {
     const currentOrder = this.order();
     return currentOrder ? getResolutionStateKey(currentOrder.resolutionState) : '';
+  }
+
+  getVehicleTypeLabel(label: string | undefined): string {
+    if (!label) return '';
+    if (/[\u0600-\u06FF]/.test(label)) {
+      return label;
+    }
+    const cleanKey = label.trim().toUpperCase().replace(/\s+/g, '_');
+    return `ORDERS.DETAIL.VEHICLE_TYPES.${cleanKey}`;
+  }
+
+  getCityLabel(city: string | undefined): string {
+    if (!city) return '';
+    if (/[\u0600-\u06FF]/.test(city)) {
+      return city;
+    }
+    const cleanKey = city.trim().toUpperCase();
+    return `COMMON.CITIES.${cleanKey}`;
   }
 
   get operationalCase(): OrderOperationalCase | null {
@@ -268,6 +294,38 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     ];
   }
 
+  getDispatchReasonItem(reason: string | undefined): { value: string; translate: boolean } | null {
+    if (!reason) return null;
+    
+    if (reason.startsWith('ORDERS.DISPATCH_REASON.')) {
+      return { value: reason.replace('ORDERS.DISPATCH_REASON.', 'ORDERS.DETAIL.DISPATCH_REASON.'), translate: true };
+    }
+    
+    const lower = reason.toLowerCase();
+    
+    if (lower.includes('driver accepted')) {
+      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.DRIVER_ACCEPTED', translate: true };
+    }
+    if (lower.includes('driver rejected')) {
+      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.DRIVER_REJECTED', translate: true };
+    }
+    if (lower.includes('delivery offer sent')) {
+      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.OFFER_SENT', translate: true };
+    }
+    if (lower.includes('searching for drivers')) {
+      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.SEARCHING', translate: true };
+    }
+    if (lower.includes('no drivers available')) {
+      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.NO_DRIVERS', translate: true };
+    }
+    
+    if (reason.startsWith('ORDERS.')) {
+      return { value: reason, translate: true };
+    }
+    
+    return { value: reason, translate: false };
+  }
+
   get deliveryInfoItems(): KeyValueGridItem[] {
     const currentOrder = this.order();
 
@@ -284,10 +342,17 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         translateValue: true
       },
       ...(currentOrder.dispatchState
-        ? [{ label: 'ORDERS.DETAIL.DISPATCH_STATE', value: currentOrder.dispatchState, valueDir: 'ltr' as const }]
+        ? [{ label: 'ORDERS.DETAIL.DISPATCH_STATE', value: 'ORDERS.STATUS.' + currentOrder.dispatchState, translateValue: true }]
         : []),
       ...(currentOrder.dispatchReason
-        ? [{ label: 'ORDERS.DETAIL.DISPATCH_NOTE', value: currentOrder.dispatchReason }]
+        ? (() => {
+            const item = this.getDispatchReasonItem(currentOrder.dispatchReason);
+            return item ? [{ 
+              label: 'ORDERS.DETAIL.DISPATCH_NOTE', 
+              value: item.value, 
+              translateValue: item.translate
+            }] : [];
+          })()
         : []),
       { label: 'ORDERS.DETAIL.LAST_UPDATED', value: currentOrder.lastUpdatedAt },
       { label: 'ORDERS.DETAIL.SLA_LABEL', value: `${currentOrder.slaScore || 0}%`, valueDir: 'ltr', valueTone: currentOrder.isLate ? 'warning' : 'accent' }
@@ -326,10 +391,42 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  scrollToTracking(): void {
+  scrollToSection(sectionId: string): void {
     setTimeout(() => {
-      document.getElementById('tracking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+  }
+
+  scrollToTracking(): void {
+    this.scrollToSection('tracking');
+  }
+
+  translateTimelineText(text: string | null | undefined): string {
+    if (!text?.trim()) {
+      return '';
+    }
+
+    const key = resolveOrderTimelineTextKey(text);
+    if (key) {
+      const translated = this.translate.instant(key);
+      if (translated && translated !== key) {
+        return translated;
+      }
+    }
+
+    return text;
+  }
+
+  translateTimelineStepStatus(status: OrderTimelineItem['status']): string {
+    return this.translate.instant(`ORDERS.DETAIL.TIMELINE_STEP_STATUS.${status}`);
+  }
+
+  timelineStepIcon(step: OrderTimelineItem): string {
+    return resolveOrderTimelineStepIcon(step.title, step.subtitle);
+  }
+
+  timelineStepIconFilled(step: OrderTimelineItem): boolean {
+    return step.status === 'COMPLETED';
   }
 
   getOrderStatusVariant(status: OrderStatus): StatusPillVariant {
@@ -614,16 +711,25 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   submitDispute(form: OrderDisputeForm): void {
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingDispute) {
       return;
     }
 
+    this.isSubmittingDispute = true;
+    this.cdr.markForCheck();
+
     this.ordersService.openDispute(id, form).subscribe({
       next: (order) => {
+        this.isSubmittingDispute = false;
         this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeDisputeModal();
+      },
+      error: (error) => {
+        this.isSubmittingDispute = false;
+        this.cdr.markForCheck();
+        console.error('Failed to submit dispute', error);
       }
     });
   }
@@ -720,6 +826,34 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(value)} SAR`;
+  }
+
+  formatDistance(value: number | undefined | null): string {
+    if (value === undefined || value === null) return `0.00 ${this.currentLang === 'ar' ? 'كم' : 'km'}`;
+    return `${value.toFixed(2)} ${this.currentLang === 'ar' ? 'كم' : 'km'}`;
+  }
+
+  formatDateTime(value: string | null | undefined): string {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return value;
+    }
+
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    }).format(parsed);
+  }
+
+  getDeliverySourceLabel(source: string | undefined | null): string {
+    if (!source) return 'ORDERS.DETAIL.PRICING_SOURCES.UNKNOWN';
+    const clean = source.trim().toUpperCase().replace(/\s+/g, '_');
+    return `ORDERS.DETAIL.PRICING_SOURCES.${clean}`;
   }
 
   resolveProductImageUrl(path: string | undefined): string {

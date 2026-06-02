@@ -1,4 +1,4 @@
-<div *ngIf="isOpen && order as order">
+﻿<div *ngIf="isOpen && order as order">
   <app-modal-shell
     [dir]="'SIDEBAR.DIR' | translate"
     title="ORDERS.DETAIL.DRIVER_MODAL.TITLE"
@@ -17,7 +17,7 @@
         <div class="relative grid grid-cols-1 gap-5 md:grid-cols-4">
           <div class="border-slate-200/70 md:border-l md:pl-4">
             <span class="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_MODAL.ORDER_ID' | translate }}</span>
-            <span class="block font-['Inter'] text-lg font-black text-zadna-primary">{{ order.id }}</span>
+            <span class="block font-sans text-lg font-black text-zadna-primary">{{ order.id }}</span>
             <div class="mt-2 flex items-center gap-2 text-[11px] font-bold text-amber-600">
               <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
               <span>{{ 'ORDERS.STATUS.' + order.status | translate }}</span>
@@ -35,7 +35,7 @@
 
             <div>
               <span class="mb-1 block text-[10px] font-black text-slate-400">{{ 'ORDERS.DETAIL.DRIVER_MODAL.SLA' | translate }}</span>
-              <div class="flex items-center gap-1 font-['Inter'] text-sm font-black text-zadna-primary">
+              <div class="flex items-center gap-1 font-sans text-sm font-black text-zadna-primary">
                 <span>{{ order.slaScore }}%</span>
                 <span class="material-symbols-outlined text-sm">trending_up</span>
               </div>
@@ -132,7 +132,7 @@
                     </div>
                     <div>
                       <p class="text-sm font-black text-slate-800">{{ driver.name }}</p>
-                      <p class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ driver.code }}</p>
+                      <p class="font-sans text-[10px] font-bold text-slate-400">{{ driver.code }}</p>
                     </div>
                   </div>
                 </td>
@@ -146,15 +146,15 @@
                   </div>
                 </td>
 
-                <td class="px-5 py-4 text-center font-['Inter'] text-xs font-bold text-slate-700">{{ driver.distanceKm | number:'1.1-1' }} {{ 'ORDERS.DETAIL.DRIVER_MODAL.UNIT_KM' | translate }}</td>
-                <td class="px-5 py-4 text-center font-['Inter'] text-xs font-bold text-slate-700">{{ driver.activeOrders }}</td>
+                <td class="px-5 py-4 text-center font-sans text-xs font-bold text-slate-700">{{ driver.distanceKm | number:'1.1-1' }} {{ 'ORDERS.DETAIL.DRIVER_MODAL.UNIT_KM' | translate }}</td>
+                <td class="px-5 py-4 text-center font-sans text-xs font-bold text-slate-700">{{ driver.activeOrders }}</td>
                 <td class="px-5 py-4 text-center">
-                  <div class="flex items-center justify-center gap-1 font-['Inter'] text-xs font-black text-zadna-primary">
+                  <div class="flex items-center justify-center gap-1 font-sans text-xs font-black text-zadna-primary">
                     <span>{{ driver.rating | number:'1.1-1' }}</span>
                     <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
                   </div>
                 </td>
-                <td class="px-5 py-4 text-center font-['Inter'] text-xs font-black" [ngClass]="driver.lowPerformance ? 'text-red-500' : 'text-slate-700'">{{ driver.rejectionRate }}%</td>
+                <td class="px-5 py-4 text-center font-sans text-xs font-black" [ngClass]="driver.lowPerformance ? 'text-red-500' : 'text-slate-700'">{{ driver.rejectionRate }}%</td>
                 <td class="px-5 py-4 text-xs font-bold text-slate-500">{{ driver.lastActivity }}</td>
                 <td class="px-5 py-4 text-left">
                   <input

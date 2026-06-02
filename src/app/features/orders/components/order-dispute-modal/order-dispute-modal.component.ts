@@ -19,6 +19,7 @@ type DisputeTypeOption = { value: OrderDisputeForm['disputeType']; icon: string 
 })
 export class OrderDisputeModalComponent implements OnChanges {
   @Input() isOpen = false;
+  @Input() isSubmitting = false;
   @Input() order: OrderDetail | null = null;
 
   @Output() close = new EventEmitter<void>();

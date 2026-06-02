@@ -375,7 +375,9 @@
       "REFERENCE_PLACEHOLDER": "Search by transfer or payout reference",
       "RESET": "Reset",
       "SAVE_UPDATE": "Save update",
-      "SHOWING_RESULTS": "Showing results"
+      "SHOWING_RESULTS": "Showing results",
+      "STATS_TOTAL": "Total payouts",
+      "SHOWING_COUNT": "{{ shown }} of {{ total }}"
     },
     "PAYMENT_DETAIL": {
       "TITLE": "Payment Details",

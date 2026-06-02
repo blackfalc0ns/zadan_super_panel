@@ -10,7 +10,7 @@ import { EditStoreModalComponent, StoreData } from '@vendors/components/workflow
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
-type FieldDirection = 'rtl' | 'ltr';
+type FieldDirection = 'rtl' | 'ltr' | 'auto';
 type FeedbackTone = 'success' | 'error';
 
 interface InfoRow {
@@ -320,6 +320,20 @@ export class VendorDetailComponent implements OnInit {
     return row.value;
   }
 
+  getRowDir(row: InfoRow): 'rtl' | 'ltr' | 'auto' {
+    if (row.direction === 'auto') {
+      return 'auto';
+    }
+    if (row.direction === 'ltr') {
+      return 'ltr';
+    }
+    return this.isRTL ? 'rtl' : 'ltr';
+  }
+
+  getRowValueAlignClass(row: InfoRow): string {
+    return row.direction === 'ltr' ? 'text-end' : 'text-start';
+  }
+
   getSectionStateLabel(missingCount: number): string {
     if (missingCount <= 0) {
       return this.text('مكتمل', 'Complete');
@@ -436,8 +450,8 @@ export class VendorDetailComponent implements OnInit {
       this.row('تاريخ الانتهاء', 'Expiry date', this.formatDateValue(vendor.commercialRegistrationExpiryDate), 'rtl', false, true),
       this.row('الرقم الضريبي', 'Tax ID', vendor.taxId, 'ltr'),
       this.row('رقم الرخصة', 'License number', vendor.licenseNumber, 'ltr'),
-      this.row('اسم البنك', 'Bank name', vendor.primaryBankAccount?.bankName, 'rtl'),
-      this.row('اسم صاحب الحساب', 'Account holder', vendor.primaryBankAccount?.accountHolderName, 'rtl'),
+      this.row('اسم البنك', 'Bank name', vendor.primaryBankAccount?.bankName, 'auto'),
+      this.row('اسم صاحب الحساب', 'Account holder', vendor.primaryBankAccount?.accountHolderName, 'auto'),
       this.row('IBAN', 'IBAN', this.formatIbanForDisplay(vendor.primaryBankAccount?.iban || ''), 'ltr'),
       this.row('SWIFT', 'SWIFT', vendor.primaryBankAccount?.swiftCode, 'ltr')
     ];

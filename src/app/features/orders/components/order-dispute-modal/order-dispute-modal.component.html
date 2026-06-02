@@ -5,79 +5,75 @@
     subtitle="ORDERS.DETAIL.DISPUTE_MODAL.SUBTITLE"
     icon="gavel"
     [maxWidthClass]="'max-w-4xl'"
-    [panelClass]="'rounded-[1rem] bg-white/88'"
-    [bodyClass]="'p-6'"
-    [footerClass]="'p-6'"
-    [titleClass]="'text-2xl font-black text-zadna-primary'"
+    [panelClass]="'dispute-premium-shell rounded-[2rem] overflow-hidden'"
+    [bodyClass]="'p-6 md:p-8'"
+    [footerClass]="'p-6 bg-slate-50/50 border-t border-slate-200/50 backdrop-blur-md'"
+    [titleClass]="'text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-zadna-primary to-teal-600 drop-shadow-sm'"
     (close)="close.emit()">
+    
     <div modal-body class="space-y-8">
+      <!-- Order Summary Strip -->
       <section>
-        <div class="grid grid-cols-2 gap-4 rounded-xl border border-slate-200/70 bg-slate-50/90 p-4 md:grid-cols-4">
-          <div class="space-y-1">
-            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.ORDER_ID' | translate }}</span>
-            <p class="font-['Inter'] text-sm font-black text-zadna-primary">{{ order.id }}</p>
+        <div class="grid grid-cols-2 gap-4 rounded-[1.2rem] border border-slate-200/60 bg-gradient-to-br from-slate-50/90 to-white/90 p-5 md:grid-cols-4 shadow-sm relative overflow-hidden">
+          <!-- Decorative Blur -->
+          <div class="absolute -right-10 -top-10 w-32 h-32 bg-zadna-primary/5 rounded-full blur-2xl"></div>
+
+          <div class="space-y-1.5 relative z-10">
+            <span class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.ORDER_ID' | translate }}</span>
+            <p class="font-mono text-sm font-black text-zadna-primary drop-shadow-sm">{{ order.displayId || order.id }}</p>
           </div>
-          <div class="space-y-1">
-            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</span>
-            <p class="text-sm font-black text-slate-900">{{ order.customerName }}</p>
+          <div class="space-y-1.5 relative z-10">
+            <span class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</span>
+            <p class="text-sm font-black text-slate-800">{{ order.customerName }}</p>
           </div>
-          <div class="space-y-1">
-            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.MERCHANT' | translate }}</span>
-            <p class="text-sm font-black text-slate-900">{{ order.merchantName }}</p>
+          <div class="space-y-1.5 relative z-10">
+            <span class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.STATUS_MODAL.MERCHANT' | translate }}</span>
+            <p class="text-sm font-black text-slate-800">{{ order.merchantName }}</p>
           </div>
-          <div class="space-y-1">
-            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
-            <p class="font-['Inter'] text-sm font-black text-amber-600">{{ order.total | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
-          </div>
-          <div class="space-y-1">
-            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.DRIVER' | translate }}</span>
-            <p class="text-sm font-black text-slate-900">{{ order.driverName }}</p>
-          </div>
-          <div class="space-y-1">
-            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'COMMON.STATUS' | translate }}</span>
-            <span class="inline-flex items-center rounded-full bg-zadna-primary/10 px-2 py-0.5 text-[10px] font-black text-zadna-primary">{{ 'ORDERS.STATUS.' + order.status | translate }}</span>
-          </div>
-          <div class="space-y-1">
-            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.PAYMENT' | translate }}</span>
-            <div class="flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs text-zadna-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
-              <p class="text-sm font-black text-slate-900">{{ paymentStatusLabel }}</p>
-            </div>
+          <div class="space-y-1.5 relative z-10">
+            <span class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{{ 'ORDERS.DETAIL.ORDER_TOTAL' | translate }}</span>
+            <p class="font-mono text-sm font-black text-emerald-600 drop-shadow-sm">{{ order.total | number:'1.2-2' }} <span class="text-[10px]">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></p>
           </div>
         </div>
       </section>
 
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <section class="space-y-4">
-          <label class="flex items-center gap-2 text-sm font-black text-slate-900">
-            <span class="material-symbols-outlined text-lg text-zadna-primary">category</span>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-12">
+        <!-- Dispute Type -->
+        <section class="space-y-4 md:col-span-7">
+          <label class="flex items-center gap-2 text-sm font-black text-slate-800 tracking-wide">
+            <div class="w-7 h-7 rounded-full bg-zadna-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[16px] text-zadna-primary">category</span>
+            </div>
             {{ 'ORDERS.DETAIL.DISPUTE_MODAL.TYPE_TITLE' | translate }}
           </label>
 
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
             <button
               *ngFor="let option of disputeTypeOptions"
-              class="flex items-center justify-center gap-2 rounded-lg border p-3 text-right text-xs font-black transition-all"
+              class="dispute-type-card flex flex-col items-center justify-center gap-2 rounded-xl border p-4 text-center transition-all"
               type="button"
-              [ngClass]="getTypeCardClasses(option.value)"
+              [ngClass]="form.disputeType === option.value ? 'type-card-active' : (option.value === 'fraud' ? 'border-red-100 text-slate-600 hover:border-red-300 hover:bg-red-50/50 hover:text-red-600' : 'border-slate-200 text-slate-600 hover:border-zadna-primary/30 hover:bg-slate-50')"
               (click)="form.disputeType = option.value">
-              <span class="material-symbols-outlined text-lg" [ngClass]="getTypeIconClasses(option.value)">{{ option.icon }}</span>
-              {{ ('ORDERS.DETAIL.DISPUTE_MODAL.TYPES.' + option.value.toUpperCase()) | translate }}
+              <span class="type-icon material-symbols-outlined text-[22px]" [ngClass]="option.value === 'fraud' && form.disputeType !== 'fraud' ? 'text-red-400' : (form.disputeType === option.value ? 'text-zadna-primary drop-shadow-sm' : 'text-slate-400')">{{ option.icon }}</span>
+              <span class="text-[11px] font-extrabold leading-tight">{{ ('ORDERS.DETAIL.DISPUTE_MODAL.TYPES.' + option.value.toUpperCase()) | translate }}</span>
             </button>
           </div>
         </section>
 
-        <section class="space-y-6">
-          <div class="space-y-3">
-            <label class="flex items-center gap-2 text-sm font-black text-slate-900">
-              <span class="material-symbols-outlined text-lg text-zadna-primary">priority_high</span>
+        <!-- Priority & Routing -->
+        <section class="space-y-6 md:col-span-5 bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
+          <div class="space-y-4">
+            <label class="flex items-center gap-2 text-sm font-black text-slate-800 tracking-wide">
+              <div class="w-7 h-7 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[16px] text-amber-600">priority_high</span>
+              </div>
               {{ 'ORDERS.DETAIL.DISPUTE_MODAL.PRIORITY_TITLE' | translate }}
             </label>
 
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2.5">
               <button
                 *ngFor="let priority of priorityOptions"
-                class="rounded-full border px-4 py-1.5 text-[11px] font-black transition-all"
+                class="priority-pill rounded-full border px-4 py-2 text-[11px] font-extrabold transition-all"
                 type="button"
                 [ngClass]="getPriorityButtonClasses(priority)"
                 (click)="form.priority = priority">
@@ -86,9 +82,11 @@
             </div>
           </div>
 
-          <div class="space-y-3">
-            <label class="flex items-center gap-2 text-sm font-black text-slate-900">
-              <span class="material-symbols-outlined text-lg text-zadna-primary">route</span>
+          <div class="space-y-3 pt-4 border-t border-slate-200/60">
+            <label class="flex items-center gap-2 text-sm font-black text-slate-800 tracking-wide">
+              <div class="w-7 h-7 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[16px] text-blue-600">route</span>
+              </div>
               {{ 'ORDERS.DETAIL.DISPUTE_MODAL.ROUTING_TITLE' | translate }}
             </label>
 
@@ -103,66 +101,68 @@
 
       <section class="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div class="space-y-3">
-          <label class="text-sm font-black text-slate-900">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.DESCRIPTION' | translate }}</label>
+          <label class="text-xs font-black text-slate-800 tracking-widest uppercase">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.DESCRIPTION' | translate }}</label>
           <textarea
-            class="h-32 w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+            class="premium-input h-[140px] w-full resize-none rounded-[1.2rem] border border-slate-200 bg-white p-4 text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400"
             [placeholder]="'ORDERS.DETAIL.DISPUTE_MODAL.DESCRIPTION_PLACEHOLDER' | translate"
             [(ngModel)]="form.description"></textarea>
         </div>
 
         <div class="space-y-3">
-          <label class="text-sm font-black text-slate-900">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE' | translate }}</label>
-          <div class="group flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-white transition-all hover:border-zadna-primary hover:bg-zadna-primary/5">
-            <span class="material-symbols-outlined text-3xl text-slate-400 transition-colors group-hover:text-zadna-primary">cloud_upload</span>
-            <span class="text-xs font-medium text-slate-400">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE_HINT' | translate }}</span>
+          <label class="text-xs font-black text-slate-800 tracking-widest uppercase">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE' | translate }}</label>
+          <div class="evidence-box flex h-[140px] cursor-pointer flex-col items-center justify-center gap-3 rounded-[1.2rem] border-2 border-dashed border-slate-300">
+            <div class="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
+              <span class="cloud-icon material-symbols-outlined text-[24px] text-slate-400">cloud_upload</span>
+            </div>
+            <span class="text-xs font-bold text-slate-500">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE_HINT' | translate }}</span>
           </div>
         </div>
       </section>
 
       <section class="space-y-6">
         <div class="space-y-3">
-          <label class="text-sm font-black text-slate-900">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.INTERNAL_NOTES' | translate }}</label>
+          <label class="text-xs font-black text-slate-800 tracking-widest uppercase">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.INTERNAL_NOTES' | translate }}</label>
           <input
-            class="w-full rounded-lg border border-slate-200 bg-slate-50/70 p-2.5 text-sm outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/5"
+            class="premium-input w-full rounded-[1.2rem] border border-slate-200 bg-white p-3.5 text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400"
             type="text"
             [placeholder]="'ORDERS.DETAIL.DISPUTE_MODAL.INTERNAL_NOTES_PLACEHOLDER' | translate"
             [(ngModel)]="form.internalNotes" />
         </div>
 
-        <div class="rounded-xl border border-slate-200/60 bg-white/60 p-4">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label class="group flex cursor-pointer items-center gap-3">
-              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyReviewer" />
-              <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.NOTIFY_REVIEWER' | translate }}</span>
+        <div class="rounded-[1.2rem] border border-slate-200/80 bg-slate-50/50 p-5 shadow-inner">
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <label class="group flex cursor-pointer items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm transition-all hover:border-zadna-primary/30 hover:shadow-md">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20 transition-all" type="checkbox" [(ngModel)]="form.notifyReviewer" />
+              <span class="text-[11px] font-extrabold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.NOTIFY_REVIEWER' | translate }}</span>
             </label>
-            <label class="group flex cursor-pointer items-center gap-3">
-              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.addToLog" />
-              <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.ADD_TO_LOG' | translate }}</span>
+            <label class="group flex cursor-pointer items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm transition-all hover:border-zadna-primary/30 hover:shadow-md">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20 transition-all" type="checkbox" [(ngModel)]="form.addToLog" />
+              <span class="text-[11px] font-extrabold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.ADD_TO_LOG' | translate }}</span>
             </label>
-            <label class="group flex cursor-pointer items-center gap-3">
-              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.markHighRisk" />
-              <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.MARK_HIGH_RISK' | translate }}</span>
+            <label class="group flex cursor-pointer items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm transition-all hover:border-red-300 hover:shadow-md">
+              <input class="h-4 w-4 rounded border-slate-300 text-red-500 focus:ring-red-500/20 transition-all" type="checkbox" [(ngModel)]="form.markHighRisk" />
+              <span class="text-[11px] font-extrabold text-slate-700 transition-colors group-hover:text-red-600">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.MARK_HIGH_RISK' | translate }}</span>
             </label>
-            <label class="group flex cursor-pointer items-center gap-3">
-              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyStakeholders" />
-              <span class="text-xs font-medium text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.NOTIFY_STAKEHOLDERS' | translate }}</span>
+            <label class="group flex cursor-pointer items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm transition-all hover:border-zadna-primary/30 hover:shadow-md">
+              <input class="h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20 transition-all" type="checkbox" [(ngModel)]="form.notifyStakeholders" />
+              <span class="text-[11px] font-extrabold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.NOTIFY_STAKEHOLDERS' | translate }}</span>
             </label>
           </div>
         </div>
       </section>
     </div>
 
-    <div modal-footer class="flex items-center justify-between">
-      <button class="px-6 py-2.5 text-sm font-black text-slate-500 transition-all hover:text-slate-800" type="button" (click)="close.emit()">
+    <div modal-footer class="flex items-center justify-between w-full">
+      <button class="px-6 py-3 text-[13px] font-black text-slate-500 transition-all hover:text-slate-800 hover:bg-slate-200/50 rounded-xl" type="button" (click)="close.emit()" [disabled]="isSubmitting">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
 
       <div class="flex flex-row-reverse gap-3">
-        <button class="flex items-center gap-2 rounded-lg bg-zadna-primary px-6 py-2.5 text-sm font-black text-white transition-all hover:shadow-lg hover:shadow-zadna-primary/20" type="button" (click)="onSubmit()">
+        <button class="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-zadna-primary to-teal-600 px-8 py-3 text-[13px] font-black text-white transition-all hover:shadow-lg hover:shadow-zadna-primary/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none" type="button" (click)="onSubmit()" [disabled]="isSubmitting" [ngClass]="{'btn-loading': isSubmitting}">
           <span>{{ 'ORDERS.DETAIL.DISPUTE_MODAL.CREATE' | translate }}</span>
-          <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">send</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;" *ngIf="!isSubmitting">send</span>
         </button>
-        <button class="rounded-lg bg-slate-200 px-6 py-2.5 text-sm font-black text-slate-700 transition-all hover:bg-slate-300" type="button" (click)="onSaveDraft()">
+        <button class="rounded-xl border border-slate-200 bg-white px-6 py-3 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:shadow-sm" type="button" (click)="onSaveDraft()" [disabled]="isSubmitting">
           {{ 'COMMON.SAVE_DRAFT' | translate }}
         </button>
       </div>

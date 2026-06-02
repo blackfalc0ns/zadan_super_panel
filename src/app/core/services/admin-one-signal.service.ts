@@ -80,6 +80,17 @@ export class AdminOneSignalService {
     void this.initialize(userId, true).catch((error) => this.logLoadFailure(error));
   }
 
+  updateLocaleAndReRegister(): void {
+    if (!environment.oneSignalAdminAppId) return;
+    const userId = this.authService.currentUserValue?.id;
+    if (!userId || !this.authService.hasApiSession) return;
+    
+    this.lastRegisteredSubscriptionId = null;
+    void this.runWhenReady((oneSignal) => {
+      this.registerDevice(oneSignal, userId);
+    });
+  }
+
   private async initialize(userId: string, requestPermission: boolean): Promise<void> {
     await this.runWhenReady(async (oneSignal) => {
       if (!this.sdkInitialized) {

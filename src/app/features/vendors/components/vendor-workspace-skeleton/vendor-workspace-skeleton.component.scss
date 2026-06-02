@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.vendor-workspace-skeleton {
+  animation: vendorWorkspaceSkeletonFade 0.2s ease-out;
+}
+
+@keyframes vendorWorkspaceSkeletonFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

@@ -25,7 +25,8 @@ import {
   OrderTimelineItem,
   OrderWorkflowStage,
   OrderResolutionState,
-  PaginatedOrdersResponse
+  PaginatedOrdersResponse,
+  OrderDeliveryBreakdown
 } from '../models/orders.models';
 
 interface AdminOrdersListResponse {
@@ -87,6 +88,8 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
   tax: number;
   items: Array<{
     name: string;
+    nameAr?: string;
+    nameEn?: string;
     brand: string;
     quantity: string;
     price: number;
@@ -107,6 +110,7 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
   customerGeo?: { latitude: number; longitude: number } | null;
   merchantGeo?: { latitude: number; longitude: number } | null;
   driverLiveLocation?: { latitude: number; longitude: number; accuracyMeters?: number; recordedAtUtc?: string } | null;
+  deliveryBreakdown?: OrderDeliveryBreakdown;
 }
 
 @Injectable({
@@ -270,18 +274,18 @@ export class OrdersService {
     return {
       id: item.id,
       displayId: item.displayId,
-      customerName: item.customerName,
+      customerName: this.fixEncoding(item.customerName),
       customerPhone: item.customerPhone,
-      merchantName: item.merchantName,
-      merchantBranch: item.merchantBranch,
+      merchantName: this.fixEncoding(item.merchantName),
+      merchantBranch: this.fixEncoding(item.merchantBranch),
       date: item.date,
       time: item.time,
       status: item.status,
       paymentStatus: item.paymentStatus,
       fulfillmentStatus: item.fulfillmentStatus,
       dispatchState: item.dispatchState,
-      dispatchReason: item.dispatchReason,
-      paymentMethodLabel: item.paymentMethodLabel,
+      dispatchReason: this.fixEncoding(item.dispatchReason),
+      paymentMethodLabel: this.fixEncoding(item.paymentMethodLabel),
       workflowStage: this.deriveWorkflowStage(item.status, item.paymentStatus, item.fulfillmentStatus, item.hasActiveIssue, item.operationalCase),
       nextActionLabel: this.deriveNextAction(item.status, item.paymentStatus, item.fulfillmentStatus, item.operationalCase, item.cancellationReason),
       resolutionState: this.deriveResolutionState(item.status, item.isLate, item.hasActiveIssue, item.paymentStatus, item.fulfillmentStatus, item.operationalCase),
@@ -300,33 +304,37 @@ export class OrdersService {
     return {
       ...listItem,
       customerEmail: item.customerEmail,
-      customerAddress: item.customerAddress,
-      merchantLocation: item.merchantLocation,
-      driverName: item.driverName,
+      customerAddress: this.fixEncoding(item.customerAddress),
+      merchantLocation: this.fixEncoding(item.merchantLocation),
+      driverName: this.fixEncoding(item.driverName),
       driverPhone: item.driverPhone,
-      driverVehicleLabel: item.driverVehicleLabel,
+      driverVehicleLabel: this.fixEncoding(item.driverVehicleLabel),
       driverPlateNumber: item.driverPlateNumber,
-      city: item.city,
-      district: item.district,
+      city: this.fixEncoding(item.city),
+      district: this.fixEncoding(item.district),
       slaScore: item.slaScore,
       expectedDeliveryWindow: item.expectedDeliveryWindow,
       transactionRef: item.transactionRef,
-      paymentStatusNote: item.paymentStatusNote,
-      fulfillmentStatusNote: item.fulfillmentStatusNote,
+      paymentStatusNote: this.fixEncoding(item.paymentStatusNote),
+      fulfillmentStatusNote: this.fixEncoding(item.fulfillmentStatusNote),
       dispatchState: item.dispatchState,
-      dispatchReason: item.dispatchReason,
-      supportSummary: item.supportSummary,
-      alertLabel: item.alertLabel,
+      dispatchReason: this.fixEncoding(item.dispatchReason),
+      supportSummary: this.fixEncoding(item.supportSummary),
+      alertLabel: this.fixEncoding(item.alertLabel),
       subtotal: item.subtotal,
       deliveryFee: item.deliveryFee,
       tax: item.tax,
       items: item.items.map((orderItem) => ({
         ...orderItem,
+        name: this.fixEncoding(orderItem.name),
+        nameAr: this.fixEncoding(orderItem.nameAr),
+        nameEn: this.fixEncoding(orderItem.nameEn),
+        brand: this.fixEncoding(orderItem.brand),
         imageUrl: orderItem.imageUrl ?? undefined,
-        variantDisplaySize: orderItem.variantDisplaySize ?? undefined,
-        packageTypeName: orderItem.packageTypeName ?? undefined,
+        variantDisplaySize: this.fixEncoding(orderItem.variantDisplaySize ?? undefined),
+        packageTypeName: this.fixEncoding(orderItem.packageTypeName ?? undefined),
         measurementValue: orderItem.measurementValue ?? undefined,
-        measurementUnitName: orderItem.measurementUnitName ?? undefined
+        measurementUnitName: this.fixEncoding(orderItem.measurementUnitName ?? undefined)
       })),
       timeline: item.timeline,
       activities: item.activities,
@@ -335,7 +343,8 @@ export class OrdersService {
       cancellationSummary: item.cancellationSummary,
       customerGeo: item.customerGeo ?? null,
       merchantGeo: item.merchantGeo ?? null,
-      driverLiveLocation: item.driverLiveLocation ?? null
+      driverLiveLocation: item.driverLiveLocation ?? null,
+      deliveryBreakdown: item.deliveryBreakdown
     };
   }
 
@@ -358,8 +367,8 @@ export class OrdersService {
       fulfillmentStatusNote: '',
       dispatchState: item.dispatchState,
       dispatchReason: item.dispatchReason,
-      supportSummary: item.hasActiveIssue ? 'Order needs operational review.' : 'No active support case.',
-      alertLabel: item.operationalCase?.title || (item.isLate ? 'Order is running behind SLA' : 'Order flow is healthy'),
+      supportSummary: item.hasActiveIssue ? 'الطلب بحاجة إلى مراجعة تشغيلية.' : 'لا توجد حالة دعم نشطة.',
+      alertLabel: item.operationalCase?.title || (item.isLate ? 'الطلب متأخر عن وقت التسليم' : 'مسار الطلب سليم'),
       subtotal: item.total,
       deliveryFee: 0,
       tax: 0,
@@ -373,11 +382,39 @@ export class OrdersService {
   }
 
   private buildFallbackTimeline(item: OrderListItem): OrderTimelineItem[] {
+    const closureSubtitleKey = item.status === 'CANCELLED'
+      ? 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.CANCELLED'
+      : 'ORDERS.DETAIL.TIMELINE_STEPS.SUBTITLES.AWAITING_CLOSURE';
+
     return [
-      { title: 'تم إنشاء الطلب', subtitle: item.customerName, time: item.time, status: 'COMPLETED', current: false },
-      { title: 'الدفع', subtitle: item.paymentMethodLabel, time: item.time, status: item.paymentStatus === 'PENDING' ? 'IN_PROGRESS' : 'COMPLETED', current: item.paymentStatus === 'PENDING' },
-      { title: 'التنفيذ', subtitle: item.fulfillmentStatus, time: item.lastUpdatedAt, status: item.status === 'CANCELLED' ? 'PENDING' : 'IN_PROGRESS', current: item.status !== 'COMPLETED' && item.status !== 'CANCELLED' },
-      { title: 'الإغلاق', subtitle: item.status === 'CANCELLED' ? 'ملغي' : 'بانتظار الإغلاق', time: item.lastUpdatedAt, status: item.status === 'COMPLETED' ? 'COMPLETED' : 'PENDING', current: false }
+      {
+        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.ORDER_CREATED',
+        subtitle: item.customerName,
+        time: item.time,
+        status: 'COMPLETED',
+        current: false
+      },
+      {
+        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.PAYMENT',
+        subtitle: item.paymentMethodLabel,
+        time: item.time,
+        status: item.paymentStatus === 'PENDING' ? 'IN_PROGRESS' : 'COMPLETED',
+        current: item.paymentStatus === 'PENDING'
+      },
+      {
+        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.FULFILLMENT',
+        subtitle: `ORDERS.FULFILLMENT_STATUS.${item.fulfillmentStatus}`,
+        time: item.lastUpdatedAt,
+        status: item.status === 'CANCELLED' ? 'PENDING' : 'IN_PROGRESS',
+        current: item.status !== 'COMPLETED' && item.status !== 'CANCELLED'
+      },
+      {
+        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.CLOSURE',
+        subtitle: closureSubtitleKey,
+        time: item.lastUpdatedAt,
+        status: item.status === 'COMPLETED' ? 'COMPLETED' : 'PENDING',
+        current: false
+      }
     ];
   }
 
@@ -540,5 +577,21 @@ export class OrdersService {
       hasActiveIssue: false,
       cancellationReason: null
     });
+  }
+
+  private fixEncoding(text: string | null | undefined): string {
+    if (!text) return '';
+    try {
+      if (/[\u0080-\u00FF]/.test(text)) {
+        const bytes = new Uint8Array(text.length);
+        for (let i = 0; i < text.length; i++) {
+          bytes[i] = text.charCodeAt(i);
+        }
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+      return text;
+    } catch {
+      return text;
+    }
   }
 }

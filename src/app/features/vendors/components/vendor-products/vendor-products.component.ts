@@ -5,12 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { AdminVendorProductItem, VendorService } from '@vendors/services/vendor.api.service';
+import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 interface Product {
@@ -33,12 +33,14 @@ interface Product {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-vendor-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, AppButtonComponent, AppInputComponent, SearchableSelectComponent, AppPaginationComponent],
-  templateUrl: './vendor-products.component.html'
+  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, AppInputComponent, SearchableSelectComponent, AppPaginationComponent],
+  templateUrl: './vendor-products.component.html',
+  styleUrl: './vendor-products.component.scss'
 })
 export class VendorProductsComponent {
   private readonly cdr = inject(ChangeDetectorRef);
   vendorId = '';
+  vendorDetail: VendorDetail | null = null;
   currentLang = 'ar';
   isRTL = true;
   searchQuery = '';
@@ -89,18 +91,50 @@ export class VendorProductsComponent {
         this.loadProducts();
       });
 
-    this.vendorDetailFacade.vendorId$
+    this.vendorDetailFacade.vendor$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((vendorId) => {
-      this.cdr.markForCheck();
-        if (!vendorId) {
+      .subscribe((vendor) => {
+        this.cdr.markForCheck();
+        if (!vendor) {
           return;
         }
 
-        this.vendorId = vendorId;
+        const vendorChanged = vendor.id !== this.vendorId;
+        this.vendorDetail = vendor;
+
+        if (!vendorChanged && this.vendorId) {
+          return;
+        }
+
+        this.vendorId = vendor.id;
         this.currentPage = 1;
         this.loadProducts();
       });
+  }
+
+  get vendorDisplayName(): string {
+    if (!this.vendorDetail) {
+      return '';
+    }
+
+    return this.currentLang === 'ar'
+      ? (this.vendorDetail.businessNameAr || this.vendorDetail.businessNameEn || '')
+      : (this.vendorDetail.businessNameEn || this.vendorDetail.businessNameAr || '');
+  }
+
+  getProductName(product: Product): string {
+    return this.currentLang === 'ar'
+      ? (product.nameAr || product.nameEn)
+      : (product.nameEn || product.nameAr);
+  }
+
+  trackProduct(_: number, product: Product): string {
+    return product.id;
+  }
+
+  onViewProductClick(event: Event, product: Product): void {
+    event.stopPropagation();
+    this.onViewProduct(product.masterProductId);
   }
 
   get totalProducts(): number {
@@ -183,6 +217,10 @@ export class VendorProductsComponent {
     }
 
     this.currentPage = page;
+    this.loadProducts();
+  }
+
+  loadProductsRetry(): void {
     this.loadProducts();
   }
 
@@ -285,7 +323,7 @@ export class VendorProductsComponent {
   }
 
   formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.NumberFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
       maximumFractionDigits: 0
     }).format(value);
   }

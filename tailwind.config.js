@@ -6,7 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Cairo', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Cairo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['Cairo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         primary: "#127C8C",

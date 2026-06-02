@@ -37,6 +37,8 @@ export type OrderOperationalCaseStatus = 'OPEN' | 'RESOLVED' | 'CLOSED';
 
 export interface OrderItem {
   name: string;
+  nameAr?: string;
+  nameEn?: string;
   brand: string;
   quantity: string;
   price: number;
@@ -130,6 +132,26 @@ export interface OrderListItem {
   cancellationReason?: string | null;
 }
 
+export interface OrderDeliveryBreakdown {
+  driverToVendorDistanceKm: number;
+  vendorToCustomerDistanceKm: number;
+  driverToVendorFee: number;
+  vendorToCustomerFee: number;
+  totalDeliveryFee: number;
+  driverToVendorPricingSource: string;
+  vendorToCustomerPricingSource: string;
+  pricingMode: string;
+  usedEstimatedDriverPricing: boolean;
+  deliveryQuoteStatus: string;
+  pricingOriginType?: string | null;
+  pricingOriginDriverId?: string | null;
+  quoteLockedAtUtc?: string | null;
+  quoteVersion: number;
+  hasAnomalyWarning: boolean;
+  actualAssignedDriverPickupDistanceKm?: number | null;
+  actualDispatchDeviationPercent?: number | null;
+}
+
 export interface OrderDetail extends OrderListItem {
   customerEmail: string;
   customerAddress: string;
@@ -159,6 +181,7 @@ export interface OrderDetail extends OrderListItem {
   customerGeo?: { latitude: number; longitude: number } | null;
   merchantGeo?: { latitude: number; longitude: number } | null;
   driverLiveLocation?: { latitude: number; longitude: number; accuracyMeters?: number; recordedAtUtc?: string } | null;
+  deliveryBreakdown?: OrderDeliveryBreakdown;
 }
 
 export interface OrderStatusUpdateForm {
@@ -197,7 +220,7 @@ export interface OrderCancellationForm {
 }
 
 export interface OrderRefundForm {
-  refundType: 'full' | 'partial';
+  refundType: 'products' | 'full' | 'custom';
   refundAmount: string;
   reason: 'delivery_delay' | 'missing_item' | 'quality_issue' | 'other';
   refundMethod: 'same_method' | 'wallet' | 'manual';

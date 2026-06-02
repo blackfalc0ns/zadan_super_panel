@@ -225,6 +225,32 @@ export class VendorAnalyticsComponent {
     return this.analytics?.topProducts[0]?.productName ?? '-';
   }
 
+  get performanceRingStyle(): string {
+    const degrees = Math.round(this.performanceScore * 360);
+    return `conic-gradient(#127c8c ${degrees}deg, #e2e8f0 ${degrees}deg)`;
+  }
+
+  get performanceScoreTone(): 'success' | 'warning' | 'danger' {
+    if (this.performanceScore >= 0.75) {
+      return 'success';
+    }
+    if (this.performanceScore >= 0.5) {
+      return 'warning';
+    }
+    return 'danger';
+  }
+
+  getProductHealthShare(kind: 'available' | 'lowStock' | 'outOfStock' | 'inactive'): number {
+    const total = this.totalProductHealthCount;
+    if (!this.analytics || total === 0) {
+      return 0;
+    }
+
+    const health = this.analytics.productHealth;
+    const value = health[kind];
+    return (value / total) * 100;
+  }
+
   get operationsSignalLabel(): string {
     if (!this.analytics) return '-';
 
@@ -469,8 +495,8 @@ export class VendorAnalyticsComponent {
       series: [
         {
           type: 'pie',
-          radius: ['58%', '76%'],
-          center: ['50%', '48%'],
+          radius: ['62%', '80%'],
+          center: ['50%', '50%'],
           avoidLabelOverlap: false,
           label: { show: false },
           labelLine: { show: false },

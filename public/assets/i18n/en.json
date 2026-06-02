@@ -375,7 +375,9 @@
       "REFERENCE_PLACEHOLDER": "Search by transfer or payout reference",
       "RESET": "Reset",
       "SAVE_UPDATE": "Save update",
-      "SHOWING_RESULTS": "Showing results"
+      "SHOWING_RESULTS": "Showing results",
+      "STATS_TOTAL": "Total payouts",
+      "SHOWING_COUNT": "{{ shown }} of {{ total }}"
     },
     "PAYMENT_DETAIL": {
       "TITLE": "Payment Details",
@@ -5030,13 +5032,13 @@
         "NO_TASKS_DESC": "This driver has no active or recent task assignments in the admin detail payload.",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "Personal information is complete",
-            "VEHICLE_INFO": "Vehicle information is complete",
-            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
-            "LICENSE_DOCUMENT": "Driving license is available and valid",
-            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
-            "PERSONAL_PHOTO": "Personal verification photo is available",
-            "ZONE_SELECTION": "Primary zone is selected"
+            "PERSONAL_INFO": "Personal information",
+            "VEHICLE_INFO": "Vehicle details",
+            "NATIONAL_ID_DOCUMENT": "National ID document",
+            "LICENSE_DOCUMENT": "Driving license",
+            "VEHICLE_DOCUMENT": "Vehicle document",
+            "PERSONAL_PHOTO": "Personal photo",
+            "ZONE_SELECTION": "Primary operating zone"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
@@ -5611,13 +5613,13 @@
         "STATUS_REQUIRED": "Required",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "Personal information is complete",
-            "VEHICLE_INFO": "Vehicle information is complete",
-            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
-            "LICENSE_DOCUMENT": "Driving license is available and valid",
-            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
-            "PERSONAL_PHOTO": "Personal verification photo is available",
-            "ZONE_SELECTION": "Primary zone is selected"
+            "PERSONAL_INFO": "Personal information",
+            "VEHICLE_INFO": "Vehicle details",
+            "NATIONAL_ID_DOCUMENT": "National ID document",
+            "LICENSE_DOCUMENT": "Driving license",
+            "VEHICLE_DOCUMENT": "Vehicle document",
+            "PERSONAL_PHOTO": "Personal photo",
+            "ZONE_SELECTION": "Primary operating zone"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",

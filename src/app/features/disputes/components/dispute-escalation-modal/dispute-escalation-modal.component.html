@@ -1,4 +1,4 @@
-<div *ngIf="isOpen && dispute as dispute">
+﻿<div *ngIf="isOpen && dispute as dispute">
   <app-modal-shell
     [dir]="isRtl ? 'rtl' : 'ltr'"
     title="DISPUTES_DASHBOARD.ESCALATION_MODAL.TITLE"
@@ -18,11 +18,11 @@
           <div class="relative grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-4">
             <div class="space-y-1">
               <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.CASE_ID' | translate }}</span>
-              <span class="font-['Inter'] text-sm font-semibold text-slate-900">{{ dispute.id }}</span>
+              <span class="font-sans text-sm font-semibold text-slate-900">{{ dispute.id }}</span>
             </div>
             <div class="space-y-1">
               <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.ORDER_ID' | translate }}</span>
-              <span class="font-['Inter'] text-sm font-semibold text-slate-900">{{ dispute.orderDisplayId || dispute.orderId }}</span>
+              <span class="font-sans text-sm font-semibold text-slate-900">{{ dispute.orderDisplayId || dispute.orderId }}</span>
             </div>
             <div class="space-y-1">
               <span class="block text-[10px] font-medium text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</span>
@@ -38,7 +38,7 @@
             </div>
             <div class="space-y-1">
               <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.AMOUNT' | translate }}</span>
-              <span class="font-['Inter'] text-sm font-semibold text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+              <span class="font-sans text-sm font-semibold text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</span>
             </div>
             <div class="space-y-1">
               <span class="block text-[10px] font-medium text-slate-400">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.CURRENT_STATUS' | translate }}</span>
@@ -143,7 +143,7 @@
 
             <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-600 shadow-sm">
               <span class="material-symbols-outlined text-sm text-slate-400">folder</span>
-              <span class="font-['Inter']">{{ dispute.evidence.length }}</span>
+              <span class="font-sans">{{ dispute.evidence.length }}</span>
             </span>
           </div>
 
@@ -151,7 +151,7 @@
             <div class="rounded-[1rem] border border-slate-200/70 bg-white p-4 shadow-sm">
               <div class="flex items-center justify-between gap-2">
                 <h4 class="text-[11px] font-black text-slate-700">{{ 'DISPUTES_DASHBOARD.ESCALATION_MODAL.ATTACHMENTS_TITLE' | translate }}</h4>
-                <span class="font-['Inter'] text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</span>
+                <span class="font-sans text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</span>
               </div>
 
               <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -170,7 +170,7 @@
                       <ng-template #evidencePreviewFallback>
                         <div class="flex h-full w-full flex-col items-center justify-center gap-1 bg-slate-50 text-slate-400">
                           <span class="material-symbols-outlined text-[26px]">{{ getEvidenceIcon(file) }}</span>
-                          <span class="font-['Inter'] text-[10px] font-black tracking-[0.18em] text-slate-500">{{ getEvidenceTypeToken(file) }}</span>
+                          <span class="font-sans text-[10px] font-black tracking-[0.18em] text-slate-500">{{ getEvidenceTypeToken(file) }}</span>
                         </div>
                       </ng-template>
                     </div>
@@ -178,7 +178,7 @@
                     <div class="flex items-center justify-between gap-3 px-3 py-2.5">
                       <div class="min-w-0 text-right">
                         <p class="truncate text-[11px] font-black text-slate-700">{{ file.label }}</p>
-                        <p class="mt-0.5 font-['Inter'] text-[10px] font-medium uppercase tracking-[0.14em] text-slate-400">{{ getEvidenceTypeToken(file) }}</p>
+                        <p class="mt-0.5 font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-slate-400">{{ getEvidenceTypeToken(file) }}</p>
                       </div>
 
                       <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-colors group-hover:border-zadna-primary/30 group-hover:text-zadna-primary">

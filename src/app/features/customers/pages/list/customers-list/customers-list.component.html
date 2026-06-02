@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+﻿<div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
   <app-page-header
     [title]="'CUSTOMERS.TITLE'"
     [subtitle]="'CUSTOMERS.DESC'"
@@ -199,7 +199,7 @@
             </div>
             <div class="rounded-2xl bg-slate-50 px-3 py-2.5">
               <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.TABLE.VALUE' | translate }}</p>
-              <p class="font-['Inter']" [ngClass]="getCustomerValueClasses(customer)" dir="ltr">
+              <p class="font-sans" [ngClass]="getCustomerValueClasses(customer)" dir="ltr">
                 {{ customer.totalSpent | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}
               </p>
             </div>

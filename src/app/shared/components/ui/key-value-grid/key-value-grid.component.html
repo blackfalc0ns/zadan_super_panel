@@ -5,8 +5,10 @@
       <span>{{ item.translateLabel !== false ? (item.label | translate) : item.label }}</span>
     </div>
 
-    <p [class]="getValueClasses(item)" [dir]="item.valueDir || 'auto'">
-      {{ item.translateValue ? (item.value | translate) : item.value }}
+    <p [class]="getValueClasses(item)">
+      <bdi [dir]="item.valueDir || 'auto'">
+        {{ item.translateValue ? (item.value | translate) : item.value }}
+      </bdi>
     </p>
 
     <p *ngIf="item.helper" class="mt-2 text-[11px] font-medium leading-5 text-slate-500">

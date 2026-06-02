@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-slate-50/50 pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
+﻿<div class="h-full flex flex-col bg-slate-50/50 pb-10 overflow-y-auto" [dir]="'SIDEBAR.DIR' | translate">
   <app-page-header
     [title]="'CUSTOMERS.DETAIL.PAGE_TITLE'"
     [subtitle]="'CUSTOMERS.DETAIL.PAGE_SUBTITLE'"
@@ -185,7 +185,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <span class="kpi-glass-card-value font-['Inter']">{{ currentCustomer.totalOrders }}</span>
+          <span class="kpi-glass-card-value font-sans">{{ currentCustomer.totalOrders }}</span>
         </div>
       </div>
 
@@ -199,7 +199,7 @@
           </div>
         </div>
         <div class="mt-4 flex items-baseline gap-1">
-          <span class="kpi-glass-card-value font-['Inter']">{{ currentCustomer.totalSpent | number:'1.0-2' }}</span>
+          <span class="kpi-glass-card-value font-sans">{{ currentCustomer.totalSpent | number:'1.0-2' }}</span>
           <span class="text-xs font-bold text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
         </div>
       </div>
@@ -228,7 +228,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <span class="kpi-glass-card-value font-['Inter']" [ngClass]="currentCustomer.disputesCount > 0 ? 'text-amber-600' : 'text-slate-800'">
+          <span class="kpi-glass-card-value font-sans" [ngClass]="currentCustomer.disputesCount > 0 ? 'text-amber-600' : 'text-slate-800'">
             {{ currentCustomer.disputesCount }}
           </span>
         </div>
@@ -244,7 +244,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <span class="kpi-glass-card-value font-['Inter']" [ngClass]="currentCustomer.refundsCount > 0 ? 'text-red-600' : 'text-slate-800'">
+          <span class="kpi-glass-card-value font-sans" [ngClass]="currentCustomer.refundsCount > 0 ? 'text-red-600' : 'text-slate-800'">
             {{ currentCustomer.refundsCount }}
           </span>
         </div>
@@ -260,7 +260,7 @@
           </div>
         </div>
         <div class="mt-4 flex items-center justify-between">
-          <span class="kpi-glass-card-value font-['Inter']">{{ currentCustomer.riskScore }}%</span>
+          <span class="kpi-glass-card-value font-sans">{{ currentCustomer.riskScore }}%</span>
           <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full" 
                 [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'">
             {{ currentCustomer.riskSummary | translate }}
@@ -701,7 +701,7 @@
                 </ng-container>
 
                 <ng-container *ngIf="column.key === 'total'">
-                  <span class="font-['Inter'] text-[12px] font-extrabold text-slate-800">
+                  <span class="font-sans text-[12px] font-extrabold text-slate-800">
                     {{ order.total | number:'1.0-0' }}
                     <span class="text-[10px] text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
                   </span>
@@ -740,7 +740,7 @@
                     </div>
                     <div class="rounded-xl bg-slate-50 px-3 py-2">
                       <p class="text-slate-400 mb-1">{{ 'CUSTOMERS.DETAIL.ORDERS_TABLE.AMOUNT' | translate }}</p>
-                      <p class="font-['Inter'] text-slate-800">{{ order.total | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
+                      <p class="font-sans text-slate-800">{{ order.total | number:'1.0-0' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
                     </div>
                   </div>
                 </div>
@@ -773,7 +773,7 @@
 
               <div class="flex items-center justify-between text-sm font-bold bg-white rounded-xl p-4 border border-slate-100 shadow-sm hover:border-red-100 transition-colors">
                 <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_AMOUNT' | translate }}</span>
-                <span class="font-['Inter'] text-red-600 text-base">{{ currentCustomer.refundsTotalAmount | number:'1.0-0' }} <span class="text-xs text-slate-400 font-bold">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></span>
+                <span class="font-sans text-red-600 text-base">{{ currentCustomer.refundsTotalAmount | number:'1.0-0' }} <span class="text-xs text-slate-400 font-bold">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></span>
               </div>
 
               <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary/10 text-zadna-primary text-[11px] font-extrabold hover:bg-zadna-primary/15 transition-all" (click)="openCasesList()">
@@ -828,7 +828,7 @@
                   <span class="text-[11px] font-extrabold text-zadna-primary">{{ note.authorKey ? (note.authorKey | translate) : note.author }}</span>
                   <span class="text-[10px] font-bold text-slate-400">{{ note.roleKey ? (note.roleKey | translate) : note.role }}</span>
                 </div>
-                <span class="text-[10px] font-bold text-slate-400 font-['Inter']">{{ note.createdAt }}</span>
+                <span class="text-[10px] font-bold text-slate-400 font-sans">{{ note.createdAt }}</span>
               </div>
               <p class="mt-2 text-[12px] leading-6 font-medium text-slate-600">{{ note.messageKey ? (note.messageKey | translate) : note.message }}</p>
             </div>

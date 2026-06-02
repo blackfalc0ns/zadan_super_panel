@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { AuthService } from '../services/auth.service';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { ToastService } from '../../shared/services/toast.service';
 import { ToastContainerComponent } from '../../shared/components/ui/toast-container/toast-container.component';
 import { AdminNotificationRealtimeService } from '../services/admin-notification-realtime.service';
 import { AdminNotification, AdminNotificationsService } from '../services/admin-notifications.service';
@@ -30,6 +31,7 @@ import { AdminOneSignalService } from '../services/admin-one-signal.service';
 })
 export class LayoutComponent {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly document = inject(DOCUMENT);
   userName = 'Admin';
   currentLang = 'ar';
   isSidebarOpen = false;
@@ -47,7 +49,8 @@ export class LayoutComponent {
     private adminRealtimeService: AdminNotificationRealtimeService,
     private adminNotificationsService: AdminNotificationsService,
     private adminNotificationSoundService: AdminNotificationSoundService,
-    private adminOneSignalService: AdminOneSignalService
+    private adminOneSignalService: AdminOneSignalService,
+    private toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
 
@@ -61,8 +64,11 @@ export class LayoutComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event: LangChangeEvent) => {
-      this.cdr.markForCheck();
+        this.cdr.markForCheck();
         this.currentLang = event.lang;
+        this.document.documentElement.lang = event.lang;
+        this.document.documentElement.dir = event.lang === 'ar' ? 'rtl' : 'ltr';
+        this.adminOneSignalService.updateLocaleAndReRegister();
       });
 
     this.router.events
@@ -106,7 +112,7 @@ export class LayoutComponent {
     this.adminRealtimeService.getNotifications()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((notification) => {
-      this.cdr.markForCheck();
+        this.cdr.markForCheck();
         this.adminNotificationsService.mergeRealtimeNotification(notification);
         const title = this.adminNotificationsService.getLocalizedTitle(notification, this.currentLang);
         const body = this.adminNotificationsService.getLocalizedBody(notification, this.currentLang);
@@ -226,6 +232,8 @@ export class LayoutComponent {
     window.addEventListener('keydown', requestPermission, { once: true });
   }
 
+
+
   private showDesktopNotification(notification: AdminNotification, title: string, body: string): void {
     if (!('Notification' in window)) {
       return;
@@ -243,7 +251,9 @@ export class LayoutComponent {
           badge: '/favicon.ico',
           requireInteraction: false,
           tag: notification.id,
-          silent: false
+          silent: false,
+          dir: this.currentLang === 'ar' ? 'rtl' : 'ltr',
+          lang: this.currentLang
         });
 
         desktopNotification.onclick = () => {

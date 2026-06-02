@@ -1,80 +1,33 @@
-/* Custom scrollbar for details area if needed */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.05);
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,0.1);
-}
-
 :host {
   display: block;
-  height: 100%;
 }
 
-/* Smooth section entrance */
-section {
-  animation: sectionFadeIn 0.5s ease-out both;
-}
-
-@for $i from 1 through 12 {
-  section:nth-child(#{$i}) {
-    animation-delay: #{$i * 0.06}s;
-  }
-}
-
-@keyframes sectionFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* KPI Cards breathable spacing */
-.kpi-card {
-  @apply bg-white border border-slate-100 p-5 rounded-2xl flex flex-col items-center justify-center text-center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  &:hover {
-    box-shadow: 0 8px 25px -6px rgba(15, 23, 42, 0.06);
-    border-color: rgba(18, 124, 140, 0.15);
-  }
-}
-
-/* Map section polish */
+/* Map child component sizing only — layout handled via Tailwind in template */
 app-order-tracking-map {
   display: block;
   width: 100%;
   height: 100%;
-  min-height: 320px;
+  min-height: 300px;
 }
 
-/* Timeline subtle connector */
-.timeline-connector {
-  position: absolute;
-  right: 11px;
-  top: 8px;
-  bottom: 8px;
-  width: 2px;
-  background: linear-gradient(to bottom, rgba(18, 124, 140, 0.15), rgba(203, 213, 225, 0.3));
-  border-radius: 2px;
-}
+.order-timeline-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(18, 124, 140, 0.35) transparent;
 
-/* Activity dot pulse */
-.activity-dot-active {
-  animation: dotPulse 2s ease-in-out infinite;
-}
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
 
-@keyframes dotPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(18, 124, 140, 0.2); }
-  50% { box-shadow: 0 0 0 4px rgba(18, 124, 140, 0.05); }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(18, 124, 140, 0.25);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(18, 124, 140, 0.45);
+  }
 }

@@ -1,4 +1,4 @@
-<div *ngIf="isOpen && dispute as dispute">
+﻿<div *ngIf="isOpen && dispute as dispute">
   <app-modal-shell
     [dir]="isRtl ? 'rtl' : 'ltr'"
     [title]="'DISPUTES_DASHBOARD.REJECTION_MODAL.TITLE' | translate"
@@ -34,11 +34,11 @@
               <div class="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-4">
                 <div>
                   <label class="mb-1 block text-[10px] font-semibold text-slate-400">{{ 'DISPUTES_DASHBOARD.REJECTION_MODAL.CASE_ID' | translate }}</label>
-                  <p class="font-['Inter'] text-xs font-black text-slate-900">{{ dispute.id }}</p>
+                  <p class="font-sans text-xs font-black text-slate-900">{{ dispute.id }}</p>
                 </div>
                 <div>
                   <label class="mb-1 block text-[10px] font-semibold text-slate-400">{{ 'DISPUTES_DASHBOARD.REJECTION_MODAL.ORDER_ID' | translate }}</label>
-                  <p class="font-['Inter'] text-xs font-black text-slate-900">{{ dispute.orderDisplayId || dispute.orderId }}</p>
+                  <p class="font-sans text-xs font-black text-slate-900">{{ dispute.orderDisplayId || dispute.orderId }}</p>
                 </div>
                 <div>
                   <label class="mb-1 block text-[10px] font-semibold text-slate-400">{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</label>
@@ -50,7 +50,7 @@
                 </div>
                 <div>
                   <label class="mb-1 block text-[10px] font-semibold text-slate-400">{{ 'DISPUTES_DASHBOARD.REJECTION_MODAL.AMOUNT' | translate }}</label>
-                  <p class="font-['Inter'] text-xs font-black text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
+                  <p class="font-sans text-xs font-black text-zadna-primary">{{ dispute.amount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</p>
                 </div>
                 <div>
                   <label class="mb-1 block text-[10px] font-semibold text-slate-400">{{ 'DISPUTES_DASHBOARD.REJECTION_MODAL.TYPE' | translate }}</label>

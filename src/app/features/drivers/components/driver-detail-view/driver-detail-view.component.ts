@@ -80,6 +80,7 @@ export class DriverDetailViewComponent {
   @Output() toggleSuspensionRequested = new EventEmitter<void>();
   @Output() toggleBanRequested = new EventEmitter<void>();
   @Output() toggleLoginLockRequested = new EventEmitter<void>();
+  @Output() locationAccessActionRequested = new EventEmitter<'block' | 'unblock'>();
 
   @Output() quickNoteChange = new EventEmitter<string>();
   @Output() quickNoteAdded = new EventEmitter<void>();
@@ -89,13 +90,13 @@ export class DriverDetailViewComponent {
   @Output() reviewActionRequested = new EventEmitter<'approve' | 'request-docs' | 'reject'>();
   @Output() documentApprovalRequested = new EventEmitter<DriverDocumentRecord>();
   @Output() documentRejectionRequested = new EventEmitter<{ document: DriverDocumentRecord; reason: string }>();
+  @Output() updateProfileRequested = new EventEmitter<any>();
   @Output() clearRestrictionsRequested = new EventEmitter<void>();
 
   @Output() taskPreviewRequested = new EventEmitter<DriverTaskAssignment>();
   @Output() incidentPreviewRequested = new EventEmitter<DriverIncidentRecord>();
   @Output() previewClosed = new EventEmitter<void>();
   @Output() previewActionClick = new EventEmitter<PreviewAction>();
-  @Output() locationAccessActionRequested = new EventEmitter<'block' | 'unblock'>();
 
   previewTitle = '';
   previewSubtitle = '';

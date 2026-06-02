@@ -149,6 +149,7 @@ interface AdminDriverDetailResponse {
   lastOfferResponseAtUtc?: string | null;
   address?: string | null;
   licenseNumber?: string | null;
+  nationalId?: string | null;
   nationalIdExpiryDate?: string | null;
   driverLicenseExpiryDate?: string | null;
   vehicleLicenseNumber?: string | null;
@@ -546,6 +547,10 @@ export class DriverService {
     });
   }
 
+  updateDriverProfile(id: string, details: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${this.normalizeDriverId(id)}/profile`, details);
+  }
+
   suspendDriver(id: string, reason?: string): Observable<DriverActionResponse> {
     return this.http.post<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/suspend`, {
       reason: reason?.trim() || null
@@ -702,6 +707,7 @@ export class DriverService {
       joinedAt: this.formatDate(response.joinedAt),
       vehicleLabel: driver.vehicleType ? this.mapVehicleLabel(driver.vehicleType) : 'COMMON.NOT_AVAILABLE',
       licenseNumber: response.overview.licenseNumber || response.licenseNumber || '',
+      nationalId: response.nationalId || undefined,
       nationalIdExpiryDate: response.nationalIdExpiryDate ? this.formatDate(response.nationalIdExpiryDate) : undefined,
       driverLicenseExpiryDate: response.driverLicenseExpiryDate ? this.formatDate(response.driverLicenseExpiryDate) : undefined,
       vehicleLicenseNumber: response.vehicleLicenseNumber || undefined,
@@ -763,7 +769,9 @@ export class DriverService {
           ? this.formatDateTime(response.operations.lastLocationAtUtc)
           : undefined,
         rules: [],
-        taskAssignments
+        taskAssignments,
+        region: response.operations.region,
+        city: response.operations.city
       },
       performanceSnapshot: {
         routeScore: Number(response.performanceDetails.commitmentScore || response.overview.commitmentScore || 0),

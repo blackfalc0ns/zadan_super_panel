@@ -273,6 +273,17 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  updateDriverProfile(details: any): void {
+    if (!this.driverId || this.isMutating) {
+      return;
+    }
+
+    this.runMutation(
+      () => this.driverService.updateDriverProfile(this.driverId!, details),
+      this.t('DRIVERS.DETAIL.MESSAGES.PROFILE_UPDATED')
+    );
+  }
+
   toggleLoginLock(): void {
     if (!this.driverId || !this.driver || this.isMutating) {
       return;

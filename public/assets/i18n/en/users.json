@@ -606,7 +606,8 @@
         "LOCATION_UPDATES_BLOCKED": "Location updates were blocked for this driver.",
         "LOCATION_UPDATES_UNBLOCKED": "Location updates were unblocked for this driver.",
         "LOGIN_LOCKED": "Driver login was locked.",
-        "LOGIN_UNLOCKED": "Driver login was unlocked."
+        "LOGIN_UNLOCKED": "Driver login was unlocked.",
+        "PROFILE_UPDATED": "Driver profile details updated successfully."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "Driver push lab",
@@ -633,6 +634,14 @@
           "BODY": "This is a test push for the driver app.",
           "TARGET_URL": "/notifications"
         }
+      },
+      "VEHICLE_TYPES": {
+        "CAR": "Car",
+        "MOTORCYCLE": "Motorcycle",
+        "SCOOTER": "Scooter",
+        "VAN": "Van",
+        "BICYCLE": "Bicycle",
+        "TRUCK": "Truck"
       },
       "BTN_VERIFY": "Verification",
       "BTN_ACCESS_PROFILE": "Access Profile",
@@ -786,13 +795,13 @@
         "NO_TASKS_DESC": "This driver has no active or recent task assignments in the admin detail payload.",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "Personal information is complete",
-            "VEHICLE_INFO": "Vehicle information is complete",
-            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
-            "LICENSE_DOCUMENT": "Driving license is available and valid",
-            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
-            "PERSONAL_PHOTO": "Personal verification photo is available",
-            "ZONE_SELECTION": "Primary zone is selected"
+            "PERSONAL_INFO": "Personal information",
+            "VEHICLE_INFO": "Vehicle details",
+            "NATIONAL_ID_DOCUMENT": "National ID document",
+            "LICENSE_DOCUMENT": "Driving license",
+            "VEHICLE_DOCUMENT": "Vehicle document",
+            "PERSONAL_PHOTO": "Personal photo",
+            "ZONE_SELECTION": "Primary operating zone"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
@@ -1274,6 +1283,23 @@
         "REQUIREMENTS_DESC": "Checklist and notes",
         "ADD_INTERNAL_NOTE": "Add internal note",
         "ADD_INTERNAL_NOTE_PLACEHOLDER": "Internal note for reviewers...",
+        "EDIT_PROFILE_TAB": "Edit Profile",
+        "PERSONAL_SECTION": "Personal Info",
+        "FULL_NAME": "Full Name",
+        "EMAIL": "Email Address",
+        "PHONE": "Phone Number",
+        "ADDRESS": "National Address",
+        "IDENTITY_SECTION": "Identity & Driving License",
+        "NATIONAL_ID": "National ID / Iqama Number",
+        "EXPIRY_DATE": "Expiry Date",
+        "LICENSE_NUMBER": "Driver's License Number",
+        "VEHICLE_SECTION": "Vehicle Details",
+        "VEHICLE_TYPE": "Vehicle Type",
+        "PLATE_NUMBER": "License Plate Number",
+        "OPERATING_SECTION": "Operating Area",
+        "REGION": "Region",
+        "CITY": "City",
+        "SAVE_CHANGES": "Save Changes",
         "CHECKLIST_TAB": "Checklist",
         "DOCUMENT_BOARD": "Document Board",
         "FILES_IN_PACKET": "{{count}} files in packet",
@@ -1367,13 +1393,13 @@
         "STATUS_REQUIRED": "Required",
         "BACKEND": {
           "CHECKLIST": {
-            "PERSONAL_INFO": "Personal information is complete",
-            "VEHICLE_INFO": "Vehicle information is complete",
-            "NATIONAL_ID_DOCUMENT": "National ID document is available and valid",
-            "LICENSE_DOCUMENT": "Driving license is available and valid",
-            "VEHICLE_DOCUMENT": "Vehicle document is available and valid",
-            "PERSONAL_PHOTO": "Personal verification photo is available",
-            "ZONE_SELECTION": "Primary zone is selected"
+            "PERSONAL_INFO": "Personal information",
+            "VEHICLE_INFO": "Vehicle details",
+            "NATIONAL_ID_DOCUMENT": "National ID document",
+            "LICENSE_DOCUMENT": "Driving license",
+            "VEHICLE_DOCUMENT": "Vehicle document",
+            "PERSONAL_PHOTO": "Personal photo",
+            "ZONE_SELECTION": "Primary operating zone"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",

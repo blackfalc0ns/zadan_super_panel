@@ -66,6 +66,8 @@ export class VendorDetailHeaderComponent implements OnChanges {
   ];
 
   vendor: VendorDetail | null = null;
+  isWorkspaceLoading = false;
+  routeVendorId = '';
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(
@@ -93,6 +95,20 @@ export class VendorDetailHeaderComponent implements OnChanges {
       this.cdr.markForCheck();
         this.vendor = vendor;
         this.updateHeaderContent();
+      });
+
+    this.vendorDetailFacade.isVendorWorkspaceLoading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((loading) => {
+        this.isWorkspaceLoading = loading;
+        this.cdr.markForCheck();
+      });
+
+    this.vendorDetailFacade.vendorId$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((vendorId) => {
+        this.routeVendorId = vendorId ?? '';
+        this.cdr.markForCheck();
       });
   }
 

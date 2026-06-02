@@ -279,6 +279,19 @@
     "DOWNLOAD_ATTACHMENT": "تنزيل المرفق"
   },
   "COMPLIANCE": {
+    "WORKSPACE": {
+      "BADGE": "الامتثال والمراجعة",
+      "SUBTITLE": "مراجعة مستندات {{ vendor }} وإدارة قرار الاعتماد.",
+      "READINESS": "جاهزية الاعتماد",
+      "GUIDANCE": "التوجيه الحالي",
+      "TAB_REVIEW": "المستندات والمعاينة",
+      "TAB_OPERATIONS": "الإدارة والسجل",
+      "APPROVE_ALL": "اعتماد الكل",
+      "FILES": "ملفات قابلة للمعاينة",
+      "CLOSED": "مغلقة",
+      "OPEN": "مفتوحة",
+      "REJECTED": "مرفوضة"
+    },
     "TITLE": "المراجعة والامتثال",
     "REGISTRATION_DATE": "تاريخ التسجيل",
     "ACCOUNT_STATUS": "حالة الحساب",
@@ -475,7 +488,13 @@
   "VENDOR_PRODUCTS": {
     "SUMMARY_TITLE": "ملخص المنتجات",
     "CATALOG_TITLE": "كتالوج المنتجات",
-    "CATALOG_SUBTITLE": "استعرض قائمة منتجات هذا المورد وحالتها وتوفر مخزونها وأسعار البيع.",
+    "CATALOG_SUBTITLE": "استعرض منتجات {{ vendor }} وحالة المخزون والأسعار.",
+    "CATALOG_BADGE": "كتالوج المورد",
+    "FILTERS_TITLE": "تصفية وبحث",
+    "PAGE_METRICS_HINT": "مؤشرات الصفحة الحالية",
+    "SHOWING_LABEL": "معروض",
+    "VIEW_PRODUCT": "عرض التفاصيل",
+    "TABLE_SKU": "رمز SKU",
     "TOTAL_PRODUCTS": "إجمالي المنتجات",
     "ACTIVE_PRODUCTS": "المنتجات النشطة",
     "LOW_STOCK": "مخزون منخفض",
@@ -599,6 +618,42 @@
     }
   },
   "VENDOR_FINANCE": {
+    "WORKSPACE": {
+      "TITLE": "المالية والتسويات",
+      "SUBTITLE": "إدارة أموال {{ vendor }} من الطلب حتى التحويل البنكي.",
+      "BADGE": "الوضع المالي",
+      "AVAILABLE": "الرصيد المتاح",
+      "PENDING": "معلق للتسوية",
+      "PAID_OUT": "إجمالي المدفوع",
+      "ON_HOLD": "محجوز",
+      "AWAITING_ORDERS": "طلبات بانتظار التسوية",
+      "FAILED_PAYOUTS": "تحويلات فاشلة",
+      "DIRECT_SETTLEMENTS": "تسويات مباشرة",
+      "BATCH_SETTLEMENTS": "تسويات مجمعة",
+      "LIFECYCLE_TITLE": "دورة الحياة المالية",
+      "LIFECYCLE_DESC": "يحدد هذا الإعداد آلية التسوية والتحويل للتاجر.",
+      "FLOW_TITLE": "مسار الأموال",
+      "OPS_TITLE": "إجراءات سريعة",
+      "REVIEW_PAYOUTS": "مراجعة التحويلات",
+      "CREATE_SETTLEMENT": "إنشاء تسوية",
+      "BANK_ACCOUNT": "الحساب البنكي",
+      "LATEST_PAYOUT": "آخر تحويل",
+      "SETTLEMENTS_TITLE": "آخر التسويات",
+      "PAYOUTS_TITLE": "آخر التحويلات",
+      "TABLE_SETTLEMENT": "التسوية",
+      "TABLE_NET": "الصافي",
+      "TABLE_ORDERS": "الطلبات",
+      "TABLE_DATE": "التاريخ",
+      "TABLE_PAYOUT": "التحويل",
+      "TABLE_AMOUNT": "المبلغ",
+      "TABLE_REFERENCE": "المرجع",
+      "EMPTY_SETTLEMENTS": "لا توجد تسويات مسجلة بعد.",
+      "EMPTY_PAYOUTS": "لا توجد تحويلات مسجلة بعد.",
+      "ERROR_TITLE": "تعذر تحميل البيانات المالية",
+      "ERROR_MESSAGE": "تحقق من الاتصال بالخادم وحاول مرة أخرى.",
+      "DIRECT_MODE": "تحويل مباشر",
+      "BATCH_MODE": "تسوية مجمعة"
+    },
     "KPI": {
       "TOTAL_SALES": "إجمالي المبيعات",
       "NET_SALES": "صافي المبيعات",
@@ -713,6 +768,16 @@
     }
   },
   "VENDOR_SETTINGS": {
+    "WORKSPACE": {
+      "BADGE": "إعدادات التشغيل",
+      "TITLE": "إعدادات التاجر",
+      "SUBTITLE": "ضبط تشغيل {{ vendor }} والتحكم بالحساب من مكان واحد.",
+      "LAST_SYNC": "آخر تحديث",
+      "ACCOUNT": "حالة الحساب",
+      "HOURS": "ساعات العمل",
+      "NOTIFICATIONS": "قنوات الإشعار",
+      "MODIFIED_BY": "آخر تعديل"
+    },
     "ACCOUNT_SETTINGS": "إعدادات الحساب",
     "ACCOUNT_STATUS": "حالة الحساب",
     "ACTIVE": "مفعل",
@@ -768,7 +833,32 @@
     },
     "META": {
       "PERIOD": "الفترة",
-      "GENERATED": "وقت التوليد"
+      "GENERATED": "وقت التوليد",
+      "RANGE_LABEL": "النطاق"
+    },
+    "PERFORMANCE": {
+      "TITLE": "مؤشر الأداء العام",
+      "ORDERS_CENTER": "طلب"
+    },
+    "SECTIONS": {
+      "FINANCIAL_EYEBROW": "المسار المالي والطلبات",
+      "TOP_PRODUCTS_EYEBROW": "محركات الدخل",
+      "TOP_PRODUCTS_TITLE": "المنتجات الأعلى دخلًا",
+      "TOP_PRODUCTS_DESC": "المنتجات التي تحمل الجزء الأكبر من إيراد التاجر في الفترة المحددة.",
+      "ORDER_STATE_EYEBROW": "حالة الطلبات",
+      "INVENTORY_EYEBROW": "المخزون والجاهزية",
+      "DECISION_EYEBROW": "ملخص القرار",
+      "ATTENTION_TITLE": "ما الذي يحتاج انتباه؟"
+    },
+    "INSIGHTS": {
+      "WORKLOAD_TITLE": "ضغط الطلبات النشطة",
+      "WORKLOAD_DESC": "طلبات تحتاج متابعة تشغيلية عاجلة.",
+      "DOMINANT_TITLE": "المنتج الأقوى مبيعًا",
+      "DOMINANT_SHARE": "من إجمالي الدخل.",
+      "INVENTORY_RISK_TITLE": "خطر نفاذ المخزون",
+      "INVENTORY_RISK_DESC": "نسبة المنتجات القليلة أو النافدة.",
+      "REVENUE_RHYTHM_TITLE": "إيقاع الدخل اليومي",
+      "REVENUE_RHYTHM_DESC": "متوسط المبيعات اليومي للفترة."
     },
     "KPIS": {
       "TOTAL_REVENUE": "إجمالي الإيراد",
