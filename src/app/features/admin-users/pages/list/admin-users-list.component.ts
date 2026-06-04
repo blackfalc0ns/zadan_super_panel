@@ -10,9 +10,13 @@ import {
   DIRECTORY_PANEL_LABELS,
   getRolePresetById
 } from '../../models/admin-users.models';
-import { Subscription } from 'rxjs';
-import { VendorService } from '@vendors/public-api';
-import { DriverService } from '@drivers/public-api';
+import {
+  ADMIN_DEPARTMENT_STRUCTURE,
+  findAdminDepartmentByValue,
+  findAdminTeamByValue,
+  resolveAdminOrgDefaultsForRoleCode
+} from '../../models/admin-org-structure';
+import { forkJoin, Subscription } from 'rxjs';
 
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
@@ -39,41 +43,7 @@ import { SearchableSelectComponent, SearchableSelectOption } from '@shared/compo
     SearchableSelectComponent
   ],
   templateUrl: './admin-users-list.component.html',
-  styles: [`
-    table {
-      border-collapse: separate !important;
-      border-spacing: 0 !important;
-      table-layout: fixed !important;
-    }
-
-    thead th {
-      position: sticky;
-      top: 0;
-      background: white;
-      z-index: 10;
-    }
-
-    tbody tr {
-      background: rgba(255, 255, 255, 0.5);
-    }
-
-    tbody tr:hover {
-      background: white;
-    }
-
-    td, th {
-      vertical-align: middle !important;
-      text-align: center !important;
-    }
-
-    td:first-child, th:first-child {
-      text-align: center !important;
-    }
-
-    td:nth-child(2), th:nth-child(2) {
-      text-align: start !important;
-    }
-  `]
+  styleUrl: './admin-users-list.component.scss'
 })
 export class AdminUsersListComponent implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
@@ -99,7 +69,6 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     roleDefinitionId: '',
     department: '',
     team: '',
-    scopeEntityId: '',
     notes: ''
   };
 
@@ -108,23 +77,56 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   pageSize = 10;
   totalCount = 0;
   totalPages = 0;
+  statsActiveCount = 0;
+  statsSuspendedCount = 0;
 
   get isRTL(): boolean {
     return this.translate.currentLang === 'ar';
   }
 
+  get adminCreateRoles(): RoleDefinitionDto[] {
+    return this.roles.filter((role) => this.isSuperAdminPanelRole(role));
+  }
+
   get mappedRolesOptions(): SearchableSelectOption[] {
-    return this.roles.map(r => ({
-      value: r.id,
-      label: this.getRoleOptionLabel(r)
+    return this.adminCreateRoles.map((role) => ({
+      value: role.id,
+      label: this.getRoleOptionLabel(role)
     }));
   }
 
-  get mappedScopeEntityOptions(): SearchableSelectOption[] {
-    return this.getCreateScopeOptions().map(opt => ({
-      value: opt.value,
-      label: opt.label
+  get mappedDepartmentOptions(): SearchableSelectOption[] {
+    return ADMIN_DEPARTMENT_STRUCTURE.map((department) => ({
+      value: department.value,
+      label: this.translate.instant(department.labelKey)
     }));
+  }
+
+  get mappedTeamOptions(): SearchableSelectOption[] {
+    const department = findAdminDepartmentByValue(this.createUserForm.department);
+    if (!department) {
+      return [];
+    }
+
+    return department.teams.map((team) => ({
+      value: team.value,
+      label: this.translate.instant(team.labelKey)
+    }));
+  }
+
+  get selectedCreateRole(): RoleDefinitionDto | null {
+    return this.adminCreateRoles.find((entry) => entry.id === this.createUserForm.roleDefinitionId) ?? null;
+  }
+
+  get canSubmitCreateUser(): boolean {
+    if (!this.createUserForm.fullName.trim()
+      || !this.createUserForm.email.trim()
+      || !this.createUserForm.password.trim()
+      || !this.createUserForm.roleDefinitionId) {
+      return false;
+    }
+
+    return this.adminCreateRoles.length > 0;
   }
 
   kpiCards: KPICard[] = [];
@@ -139,7 +141,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   tableActions: TableAction[] = [
     { id: 'view', label: 'ADMIN_USERS.ACTIONS.VIEW', icon: 'visibility' },
-    { id: 'edit', label: 'ADMIN_USERS.ACTIONS.EDIT_ROLE', icon: 'edit' }
+    { id: 'edit', label: 'ADMIN_USERS.ACTIONS.EDIT_USER', icon: 'edit' }
   ];
 
   private readonly subscriptions = new Subscription();
@@ -147,14 +149,15 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   constructor(
     private adminAccessApi: AdminAccessApiService,
     private translate: TranslateService,
-    private router: Router,
-    private vendorService: VendorService,
-    private driverService: DriverService
+    private router: Router
   ) {
     this.subscriptions.add(
       this.translate.onLangChange.subscribe(() => {
         this.cdr.markForCheck();
         this.initializeFilterFields();
+        if (this.showCreateUserModal) {
+          this.cdr.markForCheck();
+        }
         const roleField = this.filterFields.find(f => f.key === 'roleDefinitionId');
         if (roleField && this.roles.length > 0) {
           roleField.options = this.roles.map(r => ({
@@ -170,7 +173,26 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     this.initializeFilterFields();
     this.updateKPICards();
     this.loadUsers();
+    this.loadUserStats();
     this.loadRolesSummary();
+  }
+
+  get activeFilterCount(): number {
+    let count = 0;
+    if (this.searchTerm.trim()) count += 1;
+    if (this.filters['status']) count += 1;
+    if (this.filters['roleDefinitionId']) count += 1;
+    if (this.filters['panelScope'] !== undefined && this.filters['panelScope'] !== '') count += 1;
+    return count;
+  }
+
+  get activeFilterCountLabel(): string {
+    return this.translate.instant('ADMIN_USERS.FILTERS.ACTIVE_COUNT_VALUE', { count: this.activeFilterCount });
+  }
+
+  get quickStatusFilter(): '' | 'active' | 'suspended' {
+    const status = this.filters['status'];
+    return status === 'active' || status === 'suspended' ? status : '';
   }
 
   ngOnDestroy() {
@@ -235,29 +257,50 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     this.kpiCards = [
       {
         id: 'total',
-        title: 'ADMIN_USERS.STATS.TOTAL',
-        value: this.users.length,
-        icon: '<span class="material-symbols-outlined text-[20px]">group</span>',
+        title: 'ADMIN_USERS.KPI.TOTAL',
+        value: this.totalCount,
+        icon: 'group',
         color: '#127c8c',
-        clickable: false
+        clickable: true
       },
       {
         id: 'active',
-        title: 'ADMIN_USERS.STATS.ACTIVE',
-        value: this.users.filter(u => u.status === 'active').length,
-        icon: '<span class="material-symbols-outlined text-[20px]">check_circle</span>',
+        title: 'ADMIN_USERS.KPI.ACTIVE',
+        value: this.statsActiveCount,
+        icon: 'check_circle',
         color: '#10b981',
         clickable: true
       },
       {
         id: 'suspended',
-        title: 'ADMIN_USERS.STATS.LOCKED',
-        value: this.users.filter(u => u.status === 'suspended').length,
-        icon: '<span class="material-symbols-outlined text-[20px]">lock</span>',
+        title: 'ADMIN_USERS.KPI.SUSPENDED',
+        value: this.statsSuspendedCount,
+        icon: 'lock',
         color: '#ef4444',
         clickable: true
       }
     ];
+  }
+
+  loadUserStats(): void {
+    const statsSub = forkJoin({
+      active: this.adminAccessApi.getUsersPage({ pageNumber: 1, pageSize: 1, status: 'active' }),
+      suspended: this.adminAccessApi.getUsersPage({ pageNumber: 1, pageSize: 1, status: 'suspended' })
+    }).subscribe({
+      next: ({ active, suspended }) => {
+        this.cdr.markForCheck();
+        this.statsActiveCount = active.totalCount;
+        this.statsSuspendedCount = suspended.totalCount;
+        this.updateKPICards();
+      },
+      error: () => {
+        this.cdr.markForCheck();
+        this.statsActiveCount = 0;
+        this.statsSuspendedCount = 0;
+        this.updateKPICards();
+      }
+    });
+    this.subscriptions.add(statsSub);
   }
 
   loadUsers() {
@@ -282,6 +325,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
         console.error('Failed to load admin users', err);
         this.isLoading = false;
+        this.users = [];
       }
     });
     this.subscriptions.add(usersSub);
@@ -299,8 +343,9 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
             label: this.getRoleOptionLabel(r)
           }));
         }
-        if (!this.createUserForm.roleDefinitionId && roles.length > 0) {
-          this.createUserForm.roleDefinitionId = roles[0].id;
+        const adminRoles = roles.filter((role) => this.isSuperAdminPanelRole(role));
+        if (!this.createUserForm.roleDefinitionId && adminRoles.length > 0) {
+          this.createUserForm.roleDefinitionId = adminRoles[0].id;
         }
       },
       error: (err) => {
@@ -345,7 +390,28 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   }
 
   onKPICardClick(card: KPICard) {
-    // Handle KPI clicks
+    if (card.id === 'total') {
+      this.applyQuickStatusFilter('');
+      return;
+    }
+
+    if (card.id === 'active') {
+      this.applyQuickStatusFilter('active');
+      return;
+    }
+
+    if (card.id === 'suspended') {
+      this.applyQuickStatusFilter('suspended');
+    }
+  }
+
+  applyQuickStatusFilter(status: '' | 'active' | 'suspended'): void {
+    this.filters = {
+      ...this.filters,
+      status
+    };
+    this.pageNumber = 1;
+    this.loadUsers();
   }
 
   onTableRowClick(user: AdminUserRecord) {
@@ -356,7 +422,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     if (event.action.id === 'view') {
       this.router.navigate(['/admin-users', event.item.id]);
     } else if (event.action.id === 'edit') {
-      this.openRolesManagement();
+      this.router.navigate(['/admin-users', event.item.id]);
     }
   }
 
@@ -365,7 +431,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   }
 
   openCreateUserModal(): void {
-    const firstRole = this.roles[0];
+    const firstRole = this.adminCreateRoles[0];
     this.createUserForm = {
       fullName: '',
       email: '',
@@ -374,11 +440,12 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       roleDefinitionId: firstRole?.id ?? '',
       department: '',
       team: '',
-      scopeEntityId: '',
       notes: ''
     };
     this.createUserError = '';
     this.showCreateUserModal = true;
+    this.applyRoleOrgDefaults();
+    this.cdr.markForCheck();
   }
 
   closeCreateUserModal(): void {
@@ -388,20 +455,45 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   }
 
   onCreateRoleChange(): void {
-    this.createUserForm.scopeEntityId = '';
     this.createUserError = '';
+    this.applyRoleOrgDefaults();
+    this.cdr.markForCheck();
   }
 
-  createUser(): void {
-    const role = this.roles.find((entry) => entry.id === this.createUserForm.roleDefinitionId);
-    if (!role || !this.createUserForm.fullName.trim() || !this.createUserForm.email.trim() || !this.createUserForm.password.trim()) {
+  onCreateDepartmentChange(): void {
+    const department = findAdminDepartmentByValue(this.createUserForm.department);
+    const team = findAdminTeamByValue(department, this.createUserForm.team);
+    if (!team && department?.teams.length) {
+      this.createUserForm.team = department.teams[0].value;
+    }
+    this.cdr.markForCheck();
+  }
+
+  private applyRoleOrgDefaults(): void {
+    const role = this.selectedCreateRole;
+    const defaults = resolveAdminOrgDefaultsForRoleCode(role?.code);
+    if (!defaults) {
       return;
     }
 
-    const panelScope = this.mapPanelScopeToNumber(role.panelScope);
-    const scopeEntityId = this.resolveCreateScopeEntityId(panelScope);
-    if (scopeEntityId === undefined) {
-      this.createUserError = 'Vendor and driver accounts must be linked to an existing entity id.';
+    this.createUserForm.department = defaults.department.value;
+    this.createUserForm.team = defaults.team.value;
+  }
+
+  generateTemporaryPassword(): void {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+    let password = '';
+    for (let i = 0; i < 12; i += 1) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    this.createUserForm.password = password;
+    this.cdr.markForCheck();
+  }
+
+  createUser(): void {
+    const role = this.selectedCreateRole;
+    if (!role || !this.canSubmitCreateUser || !this.isSuperAdminPanelRole(role)) {
+      this.createUserError = this.translate.instant('ADMIN_USERS.CREATE.VALIDATION_REQUIRED');
       return;
     }
 
@@ -413,9 +505,9 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       phone: this.createUserForm.phone.trim(),
       password: this.createUserForm.password,
       roleDefinitionId: role.id,
-      panelScope,
-      scopeType: this.defaultScopeTypeForPanel(panelScope),
-      scopeEntityId,
+      panelScope: 0,
+      scopeType: 0,
+      scopeEntityId: null,
       department: this.createUserForm.department.trim() || null,
       team: this.createUserForm.team.trim() || null,
       notes: this.createUserForm.notes.trim() || null
@@ -428,12 +520,13 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
         this.updateKPICards();
         this.isCreatingUser = false;
         this.showCreateUserModal = false;
+        this.loadUserStats();
         this.router.navigate(['/admin-users', user.id]);
       },
       error: (err) => {
         this.cdr.markForCheck();
         console.error('Failed to create admin user', err);
-        this.createUserError = err.error?.message || err.error?.title || 'Failed to create account. Please review the role and scope.';
+        this.createUserError = this.resolveCreateUserError(err);
         this.isCreatingUser = false;
       }
     });
@@ -441,7 +534,16 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   }
 
   getInitials(user: AdminUserRecord): string {
-    return user.fullName.charAt(0).toUpperCase();
+    const parts = user.fullName.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) {
+      return 'AD';
+    }
+
+    return parts.slice(0, 2).map((part) => part[0]).join('').toUpperCase();
+  }
+
+  getStatusLabelKey(status: string): string {
+    return `ADMIN_USERS.STATUS.${status.toUpperCase()}`;
   }
 
   getAvatarGradient(user: AdminUserRecord): string {
@@ -501,45 +603,42 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   getRoleOptionLabel(role: RoleDefinitionDto): string {
     const preset = getRolePresetById(this.adminAccessApiRoleCodeToPreset(role.code));
-    return role.isSystem ? this.translate.instant(preset.nameKey) : role.name;
+    const roleName = role.isSystem ? this.translate.instant(preset.nameKey) : role.name;
+    const panelKey = this.getPanelLabelKeyForRole(role);
+    return `${roleName} · ${this.translate.instant(panelKey)}`;
   }
 
-  getCreateScopeHint(): string {
-    const panelScope = this.selectedCreatePanelScopeNumber();
-    if (panelScope === 1) return 'Required: existing vendor or branch id';
-    if (panelScope === 2) return 'Required: existing driver id';
-    if (panelScope === 3) return 'Customer scope will be linked to the created user automatically';
-    return 'Global scope';
+  getPanelLabelKeyForRole(role: RoleDefinitionDto): string {
+    const panelScope = this.mapPanelScopeToNumber(role.panelScope);
+    const keys: Record<number, string> = {
+      0: DIRECTORY_PANEL_LABELS.super_admin_panel,
+      1: DIRECTORY_PANEL_LABELS.vendor_panel,
+      2: DIRECTORY_PANEL_LABELS.driver_app,
+      3: DIRECTORY_PANEL_LABELS.customer_app
+    };
+    return keys[panelScope] ?? DIRECTORY_PANEL_LABELS.super_admin_panel;
   }
 
-  shouldShowScopeEntityInput(): boolean {
-    const panelScope = this.selectedCreatePanelScopeNumber();
-    return panelScope === 1 || panelScope === 2;
-  }
-
-  getCreateScopeOptions(): Array<{ value: string; label: string }> {
-    const panelScope = this.selectedCreatePanelScopeNumber();
-    if (panelScope === 1) {
-      return this.vendorService.getVendorsSnapshot().map((vendor) => ({
-        value: vendor.id,
-        label: `${vendor.businessNameEn || vendor.businessNameAr} - ${vendor.id}`
-      }));
+  private resolveCreateUserError(err: { error?: { code?: string; message?: string; title?: string } }): string {
+    const code = err.error?.code;
+    if (code) {
+      const key = `ADMIN_USERS.CREATE.ERRORS.${code}`;
+      const translated = this.translate.instant(key);
+      if (translated !== key) {
+        return translated;
+      }
     }
 
-    if (panelScope === 2) {
-      return this.driverService.getDriversSnapshot().map((driver) => ({
-        value: driver.id,
-        label: `${driver.firstName} ${driver.lastName} - ${driver.driverId || driver.id}`
-      }));
-    }
-
-    return [];
+    return err.error?.message || err.error?.title || this.translate.instant('ADMIN_USERS.CREATE.FAILED');
   }
 
   private adminAccessApiRoleCodeToPreset(code: string): any {
     switch (code) {
       case 'super_admin_all': return 'super_admin';
       case 'admin_operations': return 'operations_lead';
+      case 'risk_admin': return 'risk_admin';
+      case 'finance_admin': return 'finance_admin';
+      case 'support_admin': return 'support_admin';
       case 'vendor_branch_staff': return 'vendor_branch_employee';
       default: return code;
     }
@@ -553,24 +652,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  private defaultScopeTypeForPanel(panelScope: number): number {
-    if (panelScope === 1) return 1;
-    if (panelScope === 2) return 3;
-    if (panelScope === 3) return 4;
-    return 0;
-  }
-
-  private selectedCreatePanelScopeNumber(): number {
-    const role = this.roles.find((entry) => entry.id === this.createUserForm.roleDefinitionId);
-    return role ? this.mapPanelScopeToNumber(role.panelScope) : 0;
-  }
-
-  private resolveCreateScopeEntityId(panelScope: number): string | null | undefined {
-    if (panelScope === 1 || panelScope === 2) {
-      const value = this.createUserForm.scopeEntityId.trim();
-      return value || undefined;
-    }
-
-    return null;
+  private isSuperAdminPanelRole(role: RoleDefinitionDto): boolean {
+    return this.mapPanelScopeToNumber(role.panelScope) === 0;
   }
 }

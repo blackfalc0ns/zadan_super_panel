@@ -129,7 +129,7 @@
         </div>
 
         <!-- Group: Operations & Commerce -->
-        <div *ngIf="hasAnyPermission(['orders.view', 'disputes.view', 'finances.view', 'marketing.view'])" class="flex flex-col space-y-1">
+        <div *ngIf="hasAnyPermission(['orders.view', 'disputes.view', 'finances.view', 'marketing.view', 'vendors.view'])" class="flex flex-col space-y-1">
             <div class="px-3 mb-1.5">
                 <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.COMMERCE' | translate }}</span>
             </div>
@@ -144,6 +144,12 @@
             <button *appHasPermission="'disputes.view'" type="button" (click)="navigateTo('/disputes')" [ngClass]="navItemClasses('/disputes')" [title]="'SIDEBAR.DISPUTES' | translate">
                 <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">gavel</span>
                 <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.DISPUTES' | translate }}</span>
+            </button>
+
+            <button *ngIf="hasAnyPermission(['orders.view', 'disputes.view', 'vendors.view'])" type="button"
+                (click)="navigateTo('/support')" [ngClass]="navItemClasses('/support')" [title]="'SIDEBAR.SUPPORT' | translate">
+                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">support_agent</span>
+                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.SUPPORT' | translate }}</span>
             </button>
 
             <button *appHasPermission="'finances.view'" type="button" (click)="navigateTo('/finances')" [ngClass]="navItemClasses('/finances')" [title]="'SIDEBAR.FINANCES' | translate">

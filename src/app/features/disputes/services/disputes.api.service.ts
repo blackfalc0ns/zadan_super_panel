@@ -1,16 +1,27 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { AuthService } from '../../../core/services/auth.service';
 import {
   SupportCaseRow,
   EscalationDecisionForm,
   RefundDecisionForm,
   RejectionDecisionForm,
   RequestInfoForm,
-  TimelineItem
+  TimelineItem,
+  AdminOrderCaseStats
 } from '../models/disputes.models';
+
+interface AdminOrderCaseStatsResponse {
+  totalOpen: number;
+  slaBreachedCount: number;
+  avgResolutionHours: number;
+  byStatus: Array<{ label: string; count: number }>;
+  byPriority: Array<{ label: string; count: number }>;
+  byQueue: Array<{ label: string; count: number }>;
+  byType: Array<{ label: string; count: number }>;
+}
 
 interface AdminOrderSupportCasesResponse {
   items: AdminOrderSupportCaseResponse[];
@@ -108,7 +119,7 @@ export class DisputesService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly authService: AuthService
+    private readonly translate: TranslateService
   ) {}
 
   getDisputes(
@@ -123,12 +134,6 @@ export class DisputesService {
     vendorId?: string,
     driverId?: string
   ): Observable<{ items: SupportCaseRow[]; totalCount: number }> {
-    const fallback = this.buildFallbackDisputesPage(page, pageSize, search);
-
-    if (this.shouldUseLocalReadFallback()) {
-      return of(fallback);
-    }
-
     let params = new HttpParams()
       .set('page', String(Math.max(1, page)))
       .set('pageSize', String(Math.max(1, pageSize)));
@@ -148,7 +153,22 @@ export class DisputesService {
         this.replaceCache(items);
         return { items, totalCount: response.totalCount };
       }),
-      catchError(() => of(fallback))
+      catchError((error) => throwError(() => error))
+    );
+  }
+
+  getStats(): Observable<AdminOrderCaseStats> {
+    return this.http.get<AdminOrderCaseStatsResponse>(`${this.apiUrl}/stats`).pipe(
+      map((response) => ({
+        totalOpen: response.totalOpen ?? 0,
+        slaBreachedCount: response.slaBreachedCount ?? 0,
+        avgResolutionHours: response.avgResolutionHours ?? 0,
+        byStatus: response.byStatus ?? [],
+        byPriority: response.byPriority ?? [],
+        byQueue: response.byQueue ?? [],
+        byType: response.byType ?? []
+      })),
+      catchError((error) => throwError(() => error))
     );
   }
 
@@ -324,7 +344,7 @@ export class DisputesService {
     return {
       id: item.id,
       orderId: item.orderId ?? null,
-      orderDisplayId: item.orderDisplayId || item.orderId || item.id,
+      orderDisplayId: this.resolveOrderDisplayLabel(item.orderDisplayId),
       customerName: item.customerName,
       customerEmail: item.customerEmail,
       customerInitials: this.buildInitials(item.customerName),
@@ -339,7 +359,7 @@ export class DisputesService {
       statusLabel: hasCompletedSettlement ? (item.statusLabel ?? item.caseStatusLabel ?? null) : (item.statusLabel ?? null),
       priority: item.priority || 'medium',
       priorityLabel: item.priorityLabel ?? null,
-      owner: item.owner || 'Unassigned',
+      owner: this.resolveOwnerLabel(item.owner),
       queue: item.queue || 'General',
       queueLabel: item.queueLabel ?? null,
       risk: item.risk || 'low',
@@ -430,18 +450,38 @@ export class DisputesService {
     return value.trim().toLowerCase();
   }
 
-  private shouldUseLocalReadFallback(): boolean {
-    return environment.skipAuthForDevelopment && !this.authService.hasApiSession;
+  private resolveOrderDisplayLabel(displayId?: string | null): string {
+    const value = displayId?.trim() ?? '';
+    if (!value) {
+      return '';
+    }
+
+    if (value.startsWith('driver-account:')) {
+      return this.translate.instant('DISPUTES_DASHBOARD.TABLE.DRIVER_ACCOUNT');
+    }
+
+    if (this.isGuid(value)) {
+      return '';
+    }
+
+    return value;
   }
 
-  private buildFallbackDisputesPage(
-    page: number,
-    pageSize: number,
-    search?: string
-  ): { items: SupportCaseRow[]; totalCount: number } {
-    return {
-      items: [],
-      totalCount: 0
-    };
+  private isGuid(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value.trim());
   }
+
+  private resolveOwnerLabel(owner?: string | null): string {
+    const value = owner?.trim() ?? '';
+    if (!value) {
+      return this.translate.instant('DISPUTES_DASHBOARD.TABLE.UNASSIGNED');
+    }
+
+    if (value === 'Assigned admin') {
+      return this.translate.instant('DISPUTES_DASHBOARD.TABLE.ASSIGNED_ADMIN');
+    }
+
+    return value;
+  }
+
 }

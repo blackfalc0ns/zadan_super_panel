@@ -1195,7 +1195,13 @@
       "PROFILE_UPDATE_FAILED": "تعذر حفظ تعديلات الملف الشخصي.",
       "PASSWORD_MISMATCH": "كلمة المرور الجديدة والتأكيد غير متطابقين.",
       "PASSWORD_UPDATED": "تم تغيير كلمة المرور بنجاح.",
-      "PASSWORD_UPDATE_FAILED": "تعذر تغيير كلمة المرور. تأكد من كلمة المرور الحالية وحاول مرة أخرى."
+      "PASSWORD_UPDATE_FAILED": "تعذر تغيير كلمة المرور. تأكد من كلمة المرور الحالية وحاول مرة أخرى.",
+      "CSRF_SESSION_EXPIRED": "انتهت صلاحية جلسة الأمان. حدّث الصفحة ثم أعد المحاولة.",
+      "TEMP_PASSWORD_BEFORE_PROFILE": "يجب تغيير كلمة المرور المؤقتة أولاً قبل تعديل بيانات الحساب.",
+      "TEMP_PASSWORD_BEFORE_PASSWORD": "يجب تغيير كلمة المرور المؤقتة من قسم الأمان في هذه الصفحة.",
+      "NOTIFICATION_SOUND_SAVED_LOCAL": "تم حفظ نغمة الإشعار محليًا على هذا المتصفح.",
+      "NOTIFICATION_SOUND_SAVED": "تم حفظ نغمة الإشعار.",
+      "NOTIFICATION_SOUND_SAVE_FAILED": "تعذر حفظ نغمة الإشعار الآن."
     }
   },
   "LIVE_OPS_PAGE": {
@@ -3292,14 +3298,17 @@
       "MESSAGE": "جرّب تعديل البحث أو إزالة التصفية الحالية"
     },
     "TABLE": {
-      "ID": "معرف النزاع",
+      "ID": "الطلب",
+      "DRIVER_ACCOUNT": "حساب مندوب",
       "CUSTOMER": "العميل",
       "MERCHANT": "التاجر",
       "TYPE_REASON": "النوع / السبب",
       "AMOUNT": "المبلغ",
       "STATUS": "الحالة",
       "PRIORITY": "الأولوية",
-      "OWNER": "المراجع"
+      "OWNER": "المراجع",
+      "ASSIGNED_ADMIN": "مراجع مسند",
+      "UNASSIGNED": "غير مسند"
     },
     "STATUS": {
       "OPEN": "مفتوح",

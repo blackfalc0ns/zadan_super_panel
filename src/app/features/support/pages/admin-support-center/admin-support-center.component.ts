@@ -65,8 +65,9 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
     DataTableComponent,
     AdvancedFilterPanelComponent
   ],
+  styleUrl: './admin-support-center.component.scss',
   template: `
-    <div class="h-full overflow-y-auto bg-slate-50/60 pb-10" [dir]="isRtl ? 'rtl' : 'ltr'">
+    <div class="h-full flex flex-col overflow-y-auto bg-slate-50/50 pb-10 font-sans" [dir]="isRtl ? 'rtl' : 'ltr'">
       <app-page-header
         [title]="'SUPPORT_ADMIN.TITLE'"
         [subtitle]="'SUPPORT_ADMIN.SUBTITLE'"
@@ -77,18 +78,24 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
         ]">
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">support_agent</span>
 
-        <div actions class="flex flex-wrap items-center gap-3">
+        <div actions class="flex flex-wrap items-center gap-3 animate-in slide-in-from-left-10 duration-700">
+          <a
+            routerLink="/disputes"
+            class="inline-flex items-center gap-2 rounded-[1.2rem] border border-slate-200 bg-white px-5 py-3 text-[12px] font-black text-slate-600 shadow-sm transition hover:border-zadna-primary/25 hover:text-zadna-primary">
+            <span class="material-symbols-outlined text-[19px]">gavel</span>
+            {{ 'SUPPORT_ADMIN.ACTIONS.DISPUTES_QUEUE' | translate }}
+          </a>
           <a
             routerLink="/notifications"
             [queryParams]="{ category: 'support' }"
-            class="inline-flex items-center gap-2 rounded-[1.1rem] border border-slate-200 bg-white px-5 py-3 text-[12px] font-black text-slate-600 shadow-sm transition hover:border-zadna-primary/25 hover:text-zadna-primary">
+            class="inline-flex items-center gap-2 rounded-[1.2rem] border border-slate-200 bg-white px-5 py-3 text-[12px] font-black text-slate-600 shadow-sm transition hover:border-zadna-primary/25 hover:text-zadna-primary">
             <span class="material-symbols-outlined text-[19px]">notifications_active</span>
             {{ 'SUPPORT_ADMIN.ACTIONS.SUPPORT_NOTIFICATIONS' | translate }}
           </a>
         </div>
       </app-page-header>
 
-      <main class="mx-auto flex w-full max-w-[120rem] flex-col gap-5 px-4 pt-3 md:px-10">
+      <main class="mx-auto flex w-full max-w-[120rem] flex-1 flex-col gap-5 px-4 pt-3 md:gap-6 md:px-10 animate-in slide-in-from-bottom-10 duration-700">
         <div *ngIf="toastMessage"
           class="rounded-[1.25rem] border px-4 py-3 text-[12px] font-black shadow-sm"
           [ngClass]="toastTone === 'success'
@@ -101,32 +108,38 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
 
         <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
 
-        <section class="rounded-[1.6rem] border border-slate-200 bg-white p-3 shadow-sm">
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              (click)="setActiveTab('vendor')"
-              class="inline-flex items-center gap-2 rounded-[1.1rem] px-4 py-2.5 text-[12px] font-black transition"
-              [ngClass]="activeTab === 'vendor' ? 'bg-zadna-primary text-white shadow-lg shadow-zadna-primary/15' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'">
-              <span class="material-symbols-outlined text-[18px]">storefront</span>
-              {{ 'SUPPORT_ADMIN.TABS.VENDOR' | translate }}
-            </button>
-            <button
-              type="button"
-              (click)="setActiveTab('driver')"
-              class="inline-flex items-center gap-2 rounded-[1.1rem] px-4 py-2.5 text-[12px] font-black transition"
-              [ngClass]="activeTab === 'driver' ? 'bg-zadna-primary text-white shadow-lg shadow-zadna-primary/15' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'">
-              <span class="material-symbols-outlined text-[18px]">delivery_dining</span>
-              {{ 'SUPPORT_ADMIN.TABS.DRIVER' | translate }}
-            </button>
-            <button
-              type="button"
-              (click)="setActiveTab('legacy')"
-              class="inline-flex items-center gap-2 rounded-[1.1rem] px-4 py-2.5 text-[12px] font-black transition"
-              [ngClass]="activeTab === 'legacy' ? 'bg-zadna-primary text-white shadow-lg shadow-zadna-primary/15' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'">
-              <span class="material-symbols-outlined text-[18px]">support</span>
-              {{ 'SUPPORT_ADMIN.TABS.LEGACY' | translate }}
-            </button>
+        <section class="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.35)]">
+          <div class="flex flex-col gap-4 border-b border-slate-100 bg-gradient-to-b from-slate-50/90 to-white px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
+            <div class="min-w-0">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-zadna-primary">{{ 'SUPPORT_ADMIN.WORKSPACE_LABEL' | translate }}</p>
+              <p class="mt-1 text-[13px] font-bold leading-relaxed text-slate-500">{{ activeTabHintKey | translate }}</p>
+            </div>
+            <div class="flex flex-wrap gap-2 rounded-[1.35rem] bg-slate-100/80 p-1.5">
+              <button type="button" (click)="setActiveTab('vendor')"
+                class="support-tab-btn inline-flex items-center gap-2 rounded-[1.15rem] px-4 py-2.5 text-[12px] font-black"
+                [ngClass]="activeTab === 'vendor' ? 'support-tab-btn--active bg-zadna-primary text-white' : 'text-slate-600 hover:bg-white/80'">
+                <span class="material-symbols-outlined text-[18px]">storefront</span>
+                <span>{{ 'SUPPORT_ADMIN.TABS.VENDOR' | translate }}</span>
+                <span class="rounded-full px-2 py-0.5 text-[10px] font-black"
+                  [ngClass]="activeTab === 'vendor' ? 'bg-white/20 text-white' : 'bg-white text-slate-600'">{{ tabBadgeCount('vendor') }}</span>
+              </button>
+              <button type="button" (click)="setActiveTab('driver')"
+                class="support-tab-btn inline-flex items-center gap-2 rounded-[1.15rem] px-4 py-2.5 text-[12px] font-black"
+                [ngClass]="activeTab === 'driver' ? 'support-tab-btn--active bg-zadna-primary text-white' : 'text-slate-600 hover:bg-white/80'">
+                <span class="material-symbols-outlined text-[18px]">delivery_dining</span>
+                <span>{{ 'SUPPORT_ADMIN.TABS.DRIVER' | translate }}</span>
+                <span class="rounded-full px-2 py-0.5 text-[10px] font-black"
+                  [ngClass]="activeTab === 'driver' ? 'bg-white/20 text-white' : 'bg-white text-slate-600'">{{ tabBadgeCount('driver') }}</span>
+              </button>
+              <button type="button" (click)="setActiveTab('legacy')"
+                class="support-tab-btn inline-flex items-center gap-2 rounded-[1.15rem] px-4 py-2.5 text-[12px] font-black"
+                [ngClass]="activeTab === 'legacy' ? 'support-tab-btn--active bg-zadna-primary text-white' : 'text-slate-600 hover:bg-white/80'">
+                <span class="material-symbols-outlined text-[18px]">support</span>
+                <span>{{ 'SUPPORT_ADMIN.TABS.LEGACY' | translate }}</span>
+                <span class="rounded-full px-2 py-0.5 text-[10px] font-black"
+                  [ngClass]="activeTab === 'legacy' ? 'bg-white/20 text-white' : 'bg-white text-slate-600'">{{ tabBadgeCount('legacy') }}</span>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -187,13 +200,21 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
         </div>
 
         <!-- Vendor Tickets Tab -->
-        <section *ngIf="activeTab === 'vendor'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white/70 backdrop-blur-3xl shadow-sm">
-          <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-            <div>
-              <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.TITLE' | translate }}</h2>
-              <p class="mt-1 text-[12px] font-semibold text-slate-500">{{ vendorTotal }} {{ 'SUPPORT_ADMIN.RESULTS' | translate }}</p>
+        <section *ngIf="activeTab === 'vendor'" class="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-white via-slate-50/50 to-white px-5 py-4 md:px-6">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-zadna-primary/10 text-zadna-primary">
+                <span class="material-symbols-outlined text-[22px]">storefront</span>
+              </span>
+              <div class="min-w-0">
+                <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.VENDOR_TABLE.TITLE' | translate }}</h2>
+                <p class="mt-0.5 text-[12px] font-bold text-slate-500">{{ vendorTotal }} {{ 'SUPPORT_ADMIN.RESULTS' | translate }}</p>
+              </div>
             </div>
-            <span *ngIf="isLoadingVendor" class="text-[12px] font-black text-zadna-primary">{{ 'COMMON.LOADING' | translate }}</span>
+            <span *ngIf="isLoadingVendor" class="inline-flex items-center gap-2 rounded-full bg-zadna-primary/10 px-3 py-1.5 text-[11px] font-black text-zadna-primary">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-zadna-primary"></span>
+              {{ 'COMMON.LOADING' | translate }}
+            </span>
           </div>
 
           <app-data-table
@@ -246,15 +267,36 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'actions'">
-                  <button type="button" (click)="openTicket(ticket); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
+                  <button type="button" (click)="openTicket(ticket); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 shadow-sm transition hover:border-zadna-primary/20 hover:bg-zadna-primary/5 hover:text-zadna-primary">
                     {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
                   </button>
                 </ng-container>
               </ng-container>
             </ng-template>
+
+            <ng-template #mobileCard let-ticket>
+              <div class="space-y-3 text-start">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <p class="text-[13px] font-black text-zadna-primary" dir="ltr">{{ ticket.reference }}</p>
+                    <p class="mt-1 text-[10px] font-bold text-slate-400">{{ categoryLabel(ticket.category) }}</p>
+                  </div>
+                  <span class="inline-flex shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="priorityClass(ticket.priority)">
+                    {{ priorityLabel(ticket.priority) }}
+                  </span>
+                </div>
+                <p class="text-[12px] font-black text-slate-900 line-clamp-2">{{ localized(ticket.subject) }}</p>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="statusClass(ticket.status)">
+                    {{ statusLabel(ticket.status) }}
+                  </span>
+                  <span class="text-[10px] font-bold text-slate-400">{{ formatDateTime(ticket.updatedAt) }}</span>
+                </div>
+              </div>
+            </ng-template>
           </app-data-table>
 
-          <div *ngIf="vendorTotal > 0" class="border-t border-slate-100 px-5">
+          <div *ngIf="vendorTotal > 0" class="border-t border-slate-100 px-5 md:px-6">
             <app-pagination
               [currentPage]="vendorPage"
               [pageSize]="pageSize"
@@ -265,13 +307,21 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
         </section>
 
         <!-- Driver Cases Tab -->
-        <section *ngIf="activeTab === 'driver'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white/70 backdrop-blur-3xl shadow-sm">
-          <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-            <div>
-              <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.DRIVER_TABLE.TITLE' | translate }}</h2>
-              <p class="mt-1 text-[12px] font-semibold text-slate-500">{{ 'SUPPORT_ADMIN.DRIVER_TABLE.SUBTITLE' | translate }}</p>
+        <section *ngIf="activeTab === 'driver'" class="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-white via-indigo-50/40 to-white px-5 py-4 md:px-6">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600">
+                <span class="material-symbols-outlined text-[22px]">delivery_dining</span>
+              </span>
+              <div class="min-w-0">
+                <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.DRIVER_TABLE.TITLE' | translate }}</h2>
+                <p class="mt-0.5 text-[12px] font-bold text-slate-500">{{ driverTotal }} {{ 'SUPPORT_ADMIN.RESULTS' | translate }}</p>
+              </div>
             </div>
-            <span *ngIf="isLoadingDriver" class="text-[12px] font-black text-zadna-primary">{{ 'COMMON.LOADING' | translate }}</span>
+            <span *ngIf="isLoadingDriver" class="inline-flex items-center gap-2 rounded-full bg-indigo-500/10 px-3 py-1.5 text-[11px] font-black text-indigo-600">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-indigo-500"></span>
+              {{ 'COMMON.LOADING' | translate }}
+            </span>
           </div>
 
           <app-data-table
@@ -287,14 +337,14 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
             <ng-template #customColumn let-driverCase let-column="column">
               <ng-container [ngSwitch]="column.key">
                 <ng-container *ngSwitchCase="'case'">
-                  <button type="button" (click)="openDriverCase(driverCase); $event.stopPropagation()" class="text-start text-[13px] font-black text-zadna-primary hover:text-teal-700" dir="ltr">
-                    #{{ shortId(driverCase.id) }}
+                  <button type="button" (click)="openDriverCase(driverCase); $event.stopPropagation()" class="text-start text-[13px] font-black text-zadna-primary hover:text-teal-700">
+                    {{ driverCasePrimaryLabel(driverCase) }}
                   </button>
                   <p class="mt-1 max-w-[320px] truncate text-[11px] font-bold text-slate-500">{{ driverCase.reason || driverCase.typeLabel }}</p>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'driver'">
-                  <a *ngIf="driverCaseDriverId(driverCase); else driverCaseNoDriver" [routerLink]="['/drivers', driverCaseDriverId(driverCase)]" [queryParams]="{ tab: 'support' }" (click)="$event.stopPropagation()" class="text-[12px] font-black text-slate-777 hover:text-zadna-primary">
+                  <a *ngIf="driverCaseDriverId(driverCase); else driverCaseNoDriver" [routerLink]="['/drivers', driverCaseDriverId(driverCase)]" [queryParams]="{ tab: 'support' }" (click)="$event.stopPropagation()" class="text-[12px] font-black text-slate-700 hover:text-zadna-primary">
                     {{ driverCaseDriverLabel(driverCase) }}
                   </a>
                   <ng-template #driverCaseNoDriver>
@@ -320,15 +370,31 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'actions'">
-                  <button type="button" (click)="openDriverCase(driverCase); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
+                  <button type="button" (click)="openDriverCase(driverCase); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 shadow-sm transition hover:border-zadna-primary/20 hover:bg-zadna-primary/5 hover:text-zadna-primary">
                     {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
                   </button>
                 </ng-container>
               </ng-container>
             </ng-template>
+
+            <ng-template #mobileCard let-driverCase>
+              <div class="space-y-3 text-start">
+                <p class="text-[13px] font-black text-zadna-primary">{{ driverCasePrimaryLabel(driverCase) }}</p>
+                <p class="text-[12px] font-black text-slate-800">{{ driverCaseDriverLabel(driverCase) }}</p>
+                <p class="text-[11px] font-bold text-slate-500 line-clamp-2">{{ driverCase.reason || driverCase.typeLabel }}</p>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="legacyStatusClass(driverCase.caseStatus)">
+                    {{ driverCase.caseStatusLabel || supportCaseStatusLabel(driverCase.caseStatus) }}
+                  </span>
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="priorityClass(driverCase.priority)">
+                    {{ driverCase.priorityLabel || priorityLabel(driverCase.priority) }}
+                  </span>
+                </div>
+              </div>
+            </ng-template>
           </app-data-table>
 
-          <div *ngIf="driverTotal > 0" class="border-t border-slate-100 px-5">
+          <div *ngIf="driverTotal > 0" class="border-t border-slate-100 px-5 md:px-6">
             <app-pagination
               [currentPage]="driverPage"
               [pageSize]="pageSize"
@@ -339,13 +405,21 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
         </section>
 
         <!-- Legacy Cases Tab -->
-        <section *ngIf="activeTab === 'legacy'" class="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white/70 backdrop-blur-3xl shadow-sm">
-          <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-            <div>
-              <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.LEGACY_TABLE.TITLE' | translate }}</h2>
-              <p class="mt-1 text-[12px] font-semibold text-slate-500">{{ 'SUPPORT_ADMIN.LEGACY_TABLE.SUBTITLE' | translate }}</p>
+        <section *ngIf="activeTab === 'legacy'" class="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-white via-amber-50/35 to-white px-5 py-4 md:px-6">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600">
+                <span class="material-symbols-outlined text-[22px]">support</span>
+              </span>
+              <div class="min-w-0">
+                <h2 class="text-[15px] font-black text-slate-900">{{ 'SUPPORT_ADMIN.LEGACY_TABLE.TITLE' | translate }}</h2>
+                <p class="mt-0.5 text-[12px] font-bold text-slate-500">{{ legacyTotal }} {{ 'SUPPORT_ADMIN.RESULTS' | translate }}</p>
+              </div>
             </div>
-            <span *ngIf="isLoadingLegacy" class="text-[12px] font-black text-zadna-primary">{{ 'COMMON.LOADING' | translate }}</span>
+            <span *ngIf="isLoadingLegacy" class="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1.5 text-[11px] font-black text-amber-700">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-amber-500"></span>
+              {{ 'COMMON.LOADING' | translate }}
+            </span>
           </div>
 
           <app-data-table
@@ -362,10 +436,10 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
               <ng-container [ngSwitch]="column.key">
                 <ng-container *ngSwitchCase="'order'">
                   <a *ngIf="legacyCase.orderId; else noLegacyOrder" [routerLink]="['/orders', legacyCase.orderId]" (click)="$event.stopPropagation()" class="text-[13px] font-black text-zadna-primary hover:text-teal-700">
-                    #{{ legacyCase.orderDisplayId }}
+                    {{ legacyCasePrimaryLabel(legacyCase) }}
                   </a>
                   <ng-template #noLegacyOrder>
-                    <span class="text-[13px] font-black text-slate-700">#{{ legacyCase.orderDisplayId }}</span>
+                    <span class="text-[13px] font-black text-slate-700">{{ legacyCasePrimaryLabel(legacyCase) }}</span>
                   </ng-template>
                   <p class="mt-1 text-[11px] font-bold text-slate-400">{{ legacyCase.reason }}</p>
                 </ng-container>
@@ -395,15 +469,29 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
                 </ng-container>
 
                 <ng-container *ngSwitchCase="'actions'">
-                  <button type="button" (click)="openLegacyCase(legacyCase); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
+                  <button type="button" (click)="openLegacyCase(legacyCase); $event.stopPropagation()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 shadow-sm transition hover:border-zadna-primary/20 hover:bg-zadna-primary/5 hover:text-zadna-primary">
                     {{ 'SUPPORT_ADMIN.ACTIONS.OPEN' | translate }}
                   </button>
                 </ng-container>
               </ng-container>
             </ng-template>
+
+            <ng-template #mobileCard let-legacyCase>
+              <div class="space-y-3 text-start">
+                <p class="text-[13px] font-black text-zadna-primary">{{ legacyCasePrimaryLabel(legacyCase) }}</p>
+                <p class="text-[12px] font-black text-slate-800">{{ legacyCase.customerName }}</p>
+                <p class="text-[11px] font-bold text-slate-500">{{ legacyCase.merchantName }}</p>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="legacyStatusClass(legacyCase.caseStatus)">
+                    {{ legacyCase.caseStatusLabel || legacyCase.caseStatus }}
+                  </span>
+                  <span class="text-[10px] font-bold text-slate-400">{{ formatDateTime(legacyCase.createdAt) }}</span>
+                </div>
+              </div>
+            </ng-template>
           </app-data-table>
 
-          <div *ngIf="legacyTotal > 0" class="border-t border-slate-100 px-5">
+          <div *ngIf="legacyTotal > 0" class="border-t border-slate-100 px-5 md:px-6">
             <app-pagination
               [currentPage]="legacyPage"
               [pageSize]="pageSize"
@@ -463,9 +551,9 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
       </app-support-case-quick-action-modal>
 
       <aside *ngIf="selectedTicket"
-        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm justify-end">
-        <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()"></button>
-        <section class="relative flex h-full w-full max-w-[44rem] flex-col overflow-hidden bg-white shadow-2xl">
+        class="fixed inset-0 z-50 flex bg-slate-950/40 backdrop-blur-sm justify-end">
+        <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()" [attr.aria-label]="'COMMON.CLOSE' | translate"></button>
+        <section class="support-drawer relative flex h-full w-full max-w-[44rem] flex-col overflow-hidden rounded-s-[2rem] bg-white shadow-2xl">
           <header class="border-b border-slate-100 px-6 py-5">
             <div class="flex items-start justify-between gap-4">
               <div>
@@ -545,9 +633,9 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
       </aside>
 
       <aside *ngIf="selectedDriverCase"
-        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm justify-end">
-        <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()"></button>
-        <section class="relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden bg-white shadow-2xl">
+        class="fixed inset-0 z-50 flex bg-slate-950/40 backdrop-blur-sm justify-end">
+        <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()" [attr.aria-label]="'COMMON.CLOSE' | translate"></button>
+        <section class="support-drawer relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden rounded-s-[2rem] bg-white shadow-2xl">
           <header class="border-b border-slate-100 px-6 py-5">
             <div class="flex items-start justify-between gap-4">
               <div>
@@ -654,14 +742,14 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
       </aside>
 
       <aside *ngIf="selectedLegacyCase"
-        class="fixed inset-0 z-50 flex bg-slate-950/35 backdrop-blur-sm justify-end">
-        <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()"></button>
-        <section class="relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden bg-white shadow-2xl">
+        class="fixed inset-0 z-50 flex bg-slate-950/40 backdrop-blur-sm justify-end">
+        <button type="button" class="absolute inset-0 cursor-default" (click)="closeDetails()" [attr.aria-label]="'COMMON.CLOSE' | translate"></button>
+        <section class="support-drawer relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden rounded-s-[2rem] bg-white shadow-2xl">
           <header class="border-b border-slate-100 px-6 py-5">
             <div class="flex items-start justify-between gap-4">
               <div>
                 <p class="text-[11px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'SUPPORT_ADMIN.TABS.LEGACY' | translate }}</p>
-                <h2 class="mt-2 text-[20px] font-black text-slate-950">#{{ selectedLegacyCase.orderDisplayId }}</h2>
+                <h2 class="mt-2 text-[20px] font-black text-slate-950">{{ legacyCasePrimaryLabel(selectedLegacyCase) }}</h2>
                 <p class="mt-1 text-[12px] font-semibold leading-6 text-slate-500">{{ selectedLegacyCase.customerSummary || selectedLegacyCase.note }}</p>
               </div>
               <button type="button" (click)="closeDetails()" class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:bg-slate-50">
@@ -1902,6 +1990,50 @@ export class AdminSupportCenterComponent implements OnInit {
 
   driverCaseSummary(driverCase: SupportCaseRow): string {
     return driverCase.customerSummary || driverCase.note || driverCase.driverResponse || driverCase.reason || '';
+  }
+
+  get activeTabHintKey(): string {
+    switch (this.activeTab) {
+      case 'driver':
+        return 'SUPPORT_ADMIN.TABS_HINT.DRIVER';
+      case 'legacy':
+        return 'SUPPORT_ADMIN.TABS_HINT.LEGACY';
+      default:
+        return 'SUPPORT_ADMIN.TABS_HINT.VENDOR';
+    }
+  }
+
+  tabBadgeCount(tab: AdminSupportTab): number {
+    switch (tab) {
+      case 'driver':
+        return this.driverTotal;
+      case 'legacy':
+        return this.legacyTotal;
+      default:
+        return this.vendorTotal;
+    }
+  }
+
+  driverCasePrimaryLabel(driverCase: SupportCaseRow): string {
+    const orderRef = driverCase.orderDisplayId?.trim();
+    if (orderRef && !this.isGuid(orderRef) && !orderRef.startsWith('driver-account:')) {
+      return orderRef.startsWith('#') ? orderRef : `#${orderRef}`;
+    }
+
+    return driverCase.typeLabel?.trim() || driverCase.reason?.trim() || driverCase.type;
+  }
+
+  legacyCasePrimaryLabel(legacyCase: SupportCaseRow): string {
+    const orderRef = legacyCase.orderDisplayId?.trim();
+    if (orderRef && !this.isGuid(orderRef)) {
+      return orderRef.startsWith('#') ? orderRef : `#${orderRef}`;
+    }
+
+    return legacyCase.typeLabel?.trim() || this.translate.instant('SUPPORT_ADMIN.LEGACY_TABLE.ORDER');
+  }
+
+  private isGuid(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value.trim());
   }
 
   shortId(value: string): string {

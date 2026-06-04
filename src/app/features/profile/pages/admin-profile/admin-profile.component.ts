@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService, type AdminUser } from '@core/services/auth.service';
@@ -7,6 +8,19 @@ import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-h
 import { StatusPillComponent, type StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import { AdminNotificationPreferences, AdminNotificationsService } from '@core/services/admin-notifications.service';
 import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotificationSoundService } from '@core/services/admin-notification-sound.service';
+import {
+  ADMIN_ROLE_PRESETS,
+  DIRECTORY_PANEL_LABELS,
+  type DirectoryPanelScope,
+  type DirectoryRolePreset
+} from '../../../admin-users/public-api';
+
+const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
+  SuperAdminPanel: 'super_admin_panel',
+  VendorPanel: 'vendor_panel',
+  DriverApp: 'driver_app',
+  CustomerApp: 'customer_app'
+};
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -78,10 +92,16 @@ import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotifica
                   <div class="mt-4 flex flex-wrap items-center gap-2">
                     <app-status-pill [label]="accountStatusLabelKey" [variant]="accountStatusVariant" size="sm"></app-status-pill>
                     <span class="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-[11px] font-black text-slate-600">
-                      {{ roleDisplay }}
+                      <ng-container *ngIf="roleLabelKey; else rawRoleName">{{ roleLabelKey | translate }}</ng-container>
+                      <ng-template #rawRoleName>{{ rawRoleName }}</ng-template>
                     </span>
                     <span class="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-[11px] font-black text-slate-600">
-                      {{ permissionSummary }}
+                      <ng-container *ngIf="hasFullAccess; else permissionCountBadge">
+                        {{ 'ADMIN_PROFILE.ACCESS.FULL_ACCESS' | translate }}
+                      </ng-container>
+                      <ng-template #permissionCountBadge>
+                        {{ 'ADMIN_PROFILE.ACCESS.PERMISSION_COUNT' | translate: { count: permissionCount } }}
+                      </ng-template>
                     </span>
                   </div>
                 </div>
@@ -90,7 +110,16 @@ import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotifica
               <div class="grid grid-cols-2 gap-3 sm:min-w-[18rem]">
                 <div class="rounded-2xl border border-slate-200/70 bg-white/80 p-4">
                   <p class="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{{ 'ADMIN_PROFILE.STATS.SCOPE' | translate }}</p>
-                  <p class="mt-2 text-[13px] font-black text-slate-900">{{ activeScopeLabel }}</p>
+                  <p class="mt-2 text-[13px] font-black text-slate-900">
+                    <ng-container *ngIf="activeScope; else globalScopeLabel">
+                      <ng-container *ngIf="roleLabelKey; else rawScopeRole">{{ roleLabelKey | translate }}</ng-container>
+                      <ng-template #rawScopeRole>{{ rawRoleName }}</ng-template>
+                      <span> - </span>
+                      <ng-container *ngIf="panelLabelKey; else rawPanelScope">{{ panelLabelKey | translate }}</ng-container>
+                      <ng-template #rawPanelScope>{{ activeScope.panelScope }}</ng-template>
+                    </ng-container>
+                    <ng-template #globalScopeLabel>{{ 'ADMIN_PROFILE.ACCESS.GLOBAL_SCOPE' | translate }}</ng-template>
+                  </p>
                 </div>
                 <div class="rounded-2xl border border-slate-200/70 bg-white/80 p-4">
                   <p class="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{{ 'ADMIN_PROFILE.STATS.PASSWORD' | translate }}</p>
@@ -150,17 +179,36 @@ import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotifica
               <div class="space-y-3">
                 <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
                   <p class="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{{ 'ADMIN_PROFILE.ACCESS.ROLE' | translate }}</p>
-                  <p class="mt-2 text-[14px] font-black text-slate-900">{{ roleDisplay }}</p>
+                  <p class="mt-2 text-[14px] font-black text-slate-900">
+                    <ng-container *ngIf="roleLabelKey; else accessRawRole">{{ roleLabelKey | translate }}</ng-container>
+                    <ng-template #accessRawRole>{{ rawRoleName }}</ng-template>
+                  </p>
                 </div>
 
                 <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
                   <p class="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{{ 'ADMIN_PROFILE.ACCESS.ACTIVE_SCOPE' | translate }}</p>
-                  <p class="mt-2 text-[14px] font-black text-slate-900">{{ activeScopeLabel }}</p>
+                  <p class="mt-2 text-[14px] font-black text-slate-900">
+                    <ng-container *ngIf="activeScope; else accessGlobalScope">
+                      <ng-container *ngIf="roleLabelKey; else accessScopeRole">{{ roleLabelKey | translate }}</ng-container>
+                      <ng-template #accessScopeRole>{{ rawRoleName }}</ng-template>
+                      <span> - </span>
+                      <ng-container *ngIf="panelLabelKey; else accessRawPanel">{{ panelLabelKey | translate }}</ng-container>
+                      <ng-template #accessRawPanel>{{ activeScope.panelScope }}</ng-template>
+                    </ng-container>
+                    <ng-template #accessGlobalScope>{{ 'ADMIN_PROFILE.ACCESS.GLOBAL_SCOPE' | translate }}</ng-template>
+                  </p>
                 </div>
 
                 <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
                   <p class="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">{{ 'ADMIN_PROFILE.ACCESS.PERMISSIONS' | translate }}</p>
-                  <p class="mt-2 text-[14px] font-black text-slate-900">{{ permissionSummary }}</p>
+                  <p class="mt-2 text-[14px] font-black text-slate-900">
+                    <ng-container *ngIf="hasFullAccess; else accessPermissionCount">
+                      {{ 'ADMIN_PROFILE.ACCESS.FULL_ACCESS' | translate }}
+                    </ng-container>
+                    <ng-template #accessPermissionCount>
+                      {{ 'ADMIN_PROFILE.ACCESS.PERMISSION_COUNT' | translate: { count: permissionCount } }}
+                    </ng-template>
+                  </p>
                 </div>
               </div>
             </section>
@@ -298,6 +346,7 @@ import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotifica
 })
 export class AdminProfileComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   user: AdminUser | null = null;
   isLoading = true;
   isSavingProfile = false;
@@ -339,6 +388,10 @@ export class AdminProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.cdr.markForCheck());
+
     this.loadProfile();
     this.loadNotificationPreferences();
   }
@@ -353,26 +406,29 @@ export class AdminProfileComponent implements OnInit {
     return parts.slice(0, 2).map((part) => part[0]).join('').toUpperCase();
   }
 
-  get roleDisplay(): string {
+  get activeScope() {
+    return this.user?.access?.activeScope ?? null;
+  }
+
+  get roleLabelKey(): string | null {
+    return resolveRoleLabelKey(this.user);
+  }
+
+  get panelLabelKey(): string | null {
+    const scope = this.activeScope;
+    return scope ? resolvePanelLabelKey(scope.panelScope) : null;
+  }
+
+  get rawRoleName(): string {
     return this.user?.access?.activeScope?.roleName || this.user?.role || '-';
   }
 
-  get activeScopeLabel(): string {
-    const scope = this.user?.access?.activeScope;
-    if (!scope) {
-      return this.text('ADMIN_PROFILE.ACCESS.GLOBAL_SCOPE');
-    }
-
-    return `${scope.roleName} - ${scope.panelScope}`;
+  get hasFullAccess(): boolean {
+    return (this.user?.access?.permissions ?? []).includes('*');
   }
 
-  get permissionSummary(): string {
-    const permissions = this.user?.access?.permissions ?? [];
-    if (permissions.includes('*')) {
-      return this.text('ADMIN_PROFILE.ACCESS.FULL_ACCESS');
-    }
-
-    return this.text('ADMIN_PROFILE.ACCESS.PERMISSION_COUNT', { count: permissions.length });
+  get permissionCount(): number {
+    return this.user?.access?.permissions?.length ?? 0;
   }
 
   get accountStatusVariant(): StatusPillVariant {
@@ -419,11 +475,7 @@ export class AdminProfileComponent implements OnInit {
         this.cdr.markForCheck();
         this.isSavingProfile = false;
         this.profileMessageType = 'error';
-        const body = err.error;
-        const validationErrors = body?.errors
-          ? Object.values(body.errors).flat().join(' ')
-          : null;
-        this.profileMessage = validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATE_FAILED');
+        this.profileMessage = this.resolveProfileErrorMessage(err);
       }
     });
   }
@@ -462,11 +514,7 @@ export class AdminProfileComponent implements OnInit {
         this.cdr.markForCheck();
         this.isChangingPassword = false;
         this.passwordMessageType = 'error';
-        const body = err.error;
-        const validationErrors = body?.errors
-          ? Object.values(body.errors).flat().join(' ')
-          : null;
-        this.passwordMessage = validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATE_FAILED');
+        this.passwordMessage = this.resolvePasswordErrorMessage(err);
       }
     });
   }
@@ -481,10 +529,7 @@ export class AdminProfileComponent implements OnInit {
 
     if (!this.notificationPreferences || this.notificationsService.requiresApiSession) {
       this.notificationSoundMessageType = 'success';
-      this.notificationSoundMessage = this.localMessage(
-        'تم حفظ نغمة الإشعار محليًا على هذا المتصفح.',
-        'Notification sound saved locally on this browser.'
-      );
+      this.notificationSoundMessage = this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVED_LOCAL');
       return;
     }
 
@@ -503,19 +548,13 @@ export class AdminProfileComponent implements OnInit {
 
         this.isSavingNotificationSound = false;
         this.notificationSoundMessageType = 'success';
-        this.notificationSoundMessage = this.localMessage(
-          'تم حفظ نغمة الإشعار.',
-          'Notification sound saved.'
-        );
+        this.notificationSoundMessage = this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVED');
       },
       error: () => {
         this.cdr.markForCheck();
         this.isSavingNotificationSound = false;
         this.notificationSoundMessageType = 'error';
-        this.notificationSoundMessage = this.localMessage(
-          'تعذر حفظ نغمة الإشعار الآن.',
-          'Unable to save notification sound right now.'
-        );
+        this.notificationSoundMessage = this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVE_FAILED');
       }
     });
   }
@@ -575,7 +614,69 @@ export class AdminProfileComponent implements OnInit {
     return this.translate.instant(key, params);
   }
 
-  private localMessage(ar: string, en: string): string {
-    return (this.translate.currentLang || 'ar').startsWith('ar') ? ar : en;
+  private resolveProfileErrorMessage(err: { status?: number; error?: { code?: string; message?: string; detail?: string; errors?: Record<string, string[] | string> } }): string {
+    const body = err.error;
+    if (body?.code === 'TEMP_PASSWORD_CHANGE_REQUIRED') {
+      return this.text('ADMIN_PROFILE.MESSAGES.TEMP_PASSWORD_BEFORE_PROFILE');
+    }
+
+    if (body?.code === 'INVALID_CSRF_TOKEN') {
+      return this.text('ADMIN_PROFILE.MESSAGES.CSRF_SESSION_EXPIRED');
+    }
+
+    const validationErrors = body?.errors
+      ? Object.values(body.errors).flat().join(' ')
+      : null;
+
+    return validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATE_FAILED');
   }
+
+  private resolvePasswordErrorMessage(err: { status?: number; error?: { code?: string; message?: string; detail?: string; errors?: Record<string, string[] | string> } }): string {
+    const body = err.error;
+    if (body?.code === 'TEMP_PASSWORD_CHANGE_REQUIRED') {
+      return this.text('ADMIN_PROFILE.MESSAGES.TEMP_PASSWORD_BEFORE_PASSWORD');
+    }
+
+    const validationErrors = body?.errors
+      ? Object.values(body.errors).flat().join(' ')
+      : null;
+
+    return validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATE_FAILED');
+  }
+}
+
+function resolvePanelLabelKey(panelScope: string): string | null {
+  const normalized = API_PANEL_SCOPE_MAP[panelScope];
+  if (normalized) {
+    return DIRECTORY_PANEL_LABELS[normalized];
+  }
+
+  const snake = panelScope
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .replace(/-/g, '_')
+    .toLowerCase() as DirectoryPanelScope;
+
+  return DIRECTORY_PANEL_LABELS[snake] ?? null;
+}
+
+function resolveRoleLabelKey(user: AdminUser | null): string | null {
+  if (!user) {
+    return null;
+  }
+
+  const roleCode = (user.access?.activeScope?.roleCode ?? user.role ?? '').toLowerCase();
+  const preset = ADMIN_ROLE_PRESETS.find((entry: DirectoryRolePreset) =>
+    roleCode === entry.id
+    || roleCode.startsWith(`${entry.id}_`)
+    || roleCode.includes(entry.id));
+
+  if (preset) {
+    return preset.nameKey;
+  }
+
+  if (roleCode.includes('super_admin') || user.role === 'SuperAdmin') {
+    return 'ADMIN_USERS.PRESETS.SUPER_ADMIN.NAME';
+  }
+
+  return null;
 }

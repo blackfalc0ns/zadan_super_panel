@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep app-data-table table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: fixed !important;
+}
+
+:host ::ng-deep app-data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+}
+
+:host ::ng-deep app-data-table tbody tr {
+  background: rgba(255, 255, 255, 0.55);
+  transition: background 160ms ease, box-shadow 160ms ease;
+}
+
+:host ::ng-deep app-data-table tbody tr:hover {
+  background: white;
+  box-shadow: inset 3px 0 0 rgb(18 124 140);
+}
+
+:host ::ng-deep app-data-table td,
+:host ::ng-deep app-data-table th {
+  vertical-align: middle !important;
+}
+
+.support-tab-btn {
+  transition:
+    background 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.support-tab-btn--active {
+  box-shadow:
+    0 12px 28px -12px rgba(18, 124, 140, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+}
+
+.support-drawer {
+  animation: support-drawer-in 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes support-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(1.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+[dir='rtl'] .support-drawer {
+  animation-name: support-drawer-in-rtl;
+}
+
+@keyframes support-drawer-in-rtl {
+  from {
+    opacity: 0;
+    transform: translateX(-1.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

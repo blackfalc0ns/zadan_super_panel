@@ -143,8 +143,9 @@ export class AdminOneSignalService {
           await oneSignal.User?.PushSubscription?.optIn?.();
           this.logStatus('OneSignal admin opt-in attempted.', oneSignal);
         } catch (error) {
-          this.logPermissionFailure('opt-in', error, oneSignal);
-          return;
+          if (!this.isBenignPushRegistrationError(error)) {
+            this.logPermissionFailure('opt-in', error, oneSignal);
+          }
         }
       }
 
@@ -155,7 +156,7 @@ export class AdminOneSignalService {
 
   private registerDevice(oneSignal: OneSignalSdk, userId: string): void {
     const subscription = oneSignal.User?.PushSubscription;
-    const subscriptionId = subscription?.id ?? subscription?.token ?? null;
+    const subscriptionId = subscription?.id ?? null;
 
     if (!subscriptionId) {
       this.logStatus('OneSignal admin subscription is not ready yet.', oneSignal);
@@ -257,7 +258,7 @@ export class AdminOneSignalService {
   }
 
   private logPermissionFailure(step: string, error: unknown, oneSignal: OneSignalSdk): void {
-    if (environment.production) {
+    if (environment.production || this.isBenignPushRegistrationError(error)) {
       return;
     }
 
@@ -267,5 +268,19 @@ export class AdminOneSignalService {
       subscriptionId: oneSignal.User?.PushSubscription?.id ?? null,
       optedIn: oneSignal.User?.PushSubscription?.optedIn ?? null
     });
+  }
+
+  private isBenignPushRegistrationError(error: unknown): boolean {
+    if (!error) {
+      return false;
+    }
+
+    const name = error instanceof Error ? error.name : '';
+    const message = error instanceof Error ? error.message : String(error);
+    const combined = `${name} ${message}`.toLowerCase();
+
+    return combined.includes('aborterror')
+      || combined.includes('push service error')
+      || combined.includes('registration failed');
   }
 }

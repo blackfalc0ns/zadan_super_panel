@@ -1195,7 +1195,13 @@
       "PROFILE_UPDATE_FAILED": "Could not save profile changes.",
       "PASSWORD_MISMATCH": "New password and confirmation do not match.",
       "PASSWORD_UPDATED": "Password changed successfully.",
-      "PASSWORD_UPDATE_FAILED": "Could not change password. Check the current password and try again."
+      "PASSWORD_UPDATE_FAILED": "Could not change password. Check the current password and try again.",
+      "CSRF_SESSION_EXPIRED": "Your security session expired. Refresh the page and try again.",
+      "TEMP_PASSWORD_BEFORE_PROFILE": "You must change your temporary password before updating profile details.",
+      "TEMP_PASSWORD_BEFORE_PASSWORD": "Change your temporary password using the security section on this page.",
+      "NOTIFICATION_SOUND_SAVED_LOCAL": "Notification sound saved locally on this browser.",
+      "NOTIFICATION_SOUND_SAVED": "Notification sound saved.",
+      "NOTIFICATION_SOUND_SAVE_FAILED": "Unable to save notification sound right now."
     }
   },
   "LIVE_OPS_PAGE": {
@@ -3292,14 +3298,17 @@
       "MESSAGE": "Try adjusting the search or clearing the current filter"
     },
     "TABLE": {
-      "ID": "Dispute ID",
+      "ID": "Order",
+      "DRIVER_ACCOUNT": "Driver account",
       "CUSTOMER": "Customer",
       "MERCHANT": "Merchant",
       "TYPE_REASON": "Type / Reason",
       "AMOUNT": "Amount",
       "STATUS": "Status",
       "PRIORITY": "Priority",
-      "OWNER": "Reviewer"
+      "OWNER": "Reviewer",
+      "ASSIGNED_ADMIN": "Assigned admin",
+      "UNASSIGNED": "Unassigned"
     },
     "STATUS": {
       "OPEN": "Open",

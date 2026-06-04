@@ -17,337 +17,15 @@ import {
 import { CatalogService } from '../../services/catalog.api.service';
 
 type BulkStage = 'review' | 'submitting' | 'done';
+type BulkRowFilter = 'all' | 'ready' | 'errors';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bulk-master-products-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, SearchableSelectComponent],
-  template: `
-    <div
-      [dir]="currentLang === 'ar' ? 'rtl' : 'ltr'"
-      [ngClass]="embedded
-        ? 'fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm'
-        : 'flex w-full max-w-full flex-col gap-4 overflow-x-hidden pb-4'">
-      <div
-        [ngClass]="embedded
-          ? 'flex h-full max-h-[94vh] w-full max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[26px] bg-white shadow-2xl shadow-slate-900/20 2xl:max-w-[90rem]'
-          : 'flex w-full max-w-full flex-col overflow-visible rounded-none border-0 bg-transparent shadow-none'">
-        @if (embedded) {
-        <div class="border-b border-slate-100 px-5 py-4">
-          <div class="flex items-start justify-between gap-4">
-            <div class="min-w-0 flex-1">
-              <h2 class="text-lg font-black text-slate-900">
-                {{ currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk Create Product Bank Items' }}
-              </h2>
-              <p class="mt-1 max-w-3xl text-xs font-bold leading-5 text-slate-500">
-                {{ currentLang === 'ar' ? 'أضف عددًا كبيرًا من المنتجات مع توليد تلقائي للـ slug والباركود عند الحاجة.' : 'Create many master products with automatic slug and barcode generation when needed.' }}
-              </p>
-            </div>
-            @if (embedded) {
-              <button
-                type="button"
-                (click)="onClose()"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-slate-200">
-                <span class="text-base font-black">×</span>
-              </button>
-            }
-          </div>
-        </div>
-        }
-
-        <div [ngClass]="embedded ? 'border-b border-slate-100 bg-slate-50/70 px-5 py-3' : 'mb-6 max-w-full rounded-[24px] border border-slate-200/70 bg-white px-5 py-4 shadow-sm'">
-          <div class="grid gap-4 2xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.8fr)]">
-            <div class="rounded-[20px] border border-slate-200 bg-white p-4">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <h3 class="text-xs font-black text-slate-900">{{ currentLang === 'ar' ? 'إجراءات سريعة' : 'Quick actions' }}</h3>
-                <div class="flex flex-wrap gap-2">
-                  <button type="button" (click)="addRows(25)" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                    {{ currentLang === 'ar' ? 'إضافة 25 صفًا' : 'Add 25 rows' }}
-                  </button>
-                  <button type="button" (click)="addRows(100)" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                    {{ currentLang === 'ar' ? 'إضافة 100 صف' : 'Add 100 rows' }}
-                  </button>
-                  <button type="button" (click)="duplicateSelectedRows()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                    {{ currentLang === 'ar' ? 'نسخ المحدد' : 'Duplicate selected' }}
-                  </button>
-                  <button type="button" (click)="removeSelectedRows()" class="rounded-xl border border-rose-200 px-3 py-1.5 text-[0.7rem] font-black text-rose-600">
-                    {{ currentLang === 'ar' ? 'حذف المحدد' : 'Remove selected' }}
-                  </button>
-                </div>
-              </div>
-
-              <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</span>
-                  <app-searchable-select [(ngModel)]="defaults.categoryId" (selectionChange)="onDefaultsCategoryChanged($event)" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
-                </label>
-                <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</span>
-                  <app-searchable-select [(ngModel)]="defaults.brandId" [isDisabled]="!defaults.categoryId" [options]="getBrandOptionsForCategory(defaults.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
-                </label>
-                <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'نوع العبوة' : 'Package type' }}</span>
-                  <app-searchable-select [(ngModel)]="defaults.packageTypeId" [options]="packageTypeOptions" [placeholder]="currentLang === 'ar' ? 'اختر العبوة' : 'Select package type'"></app-searchable-select>
-                </label>
-                <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</span>
-                  <input [(ngModel)]="defaults.measurementValue" type="number" min="0" step="0.01" class="h-10 w-full rounded-xl border border-slate-200 px-3 text-[0.75rem] font-black text-slate-700" [placeholder]="currentLang === 'ar' ? '50' : '50'">
-                </label>
-                <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'وحدة القياس' : 'Measurement unit' }}</span>
-                  <app-searchable-select [(ngModel)]="defaults.measurementUnitId" [options]="measurementUnitOptions" [placeholder]="currentLang === 'ar' ? 'جرام / مل' : 'g / ml'"></app-searchable-select>
-                </label>
-                <label class="space-y-1">
-                  <span class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</span>
-                  <app-searchable-select [(ngModel)]="defaults.status" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
-                </label>
-              </div>
-
-              <div class="mt-4 space-y-2">
-                <div class="flex items-center gap-2">
-                  <input #defaultImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onDefaultImagesSelected($event)">
-                  <button type="button" (click)="defaultImagesInput.click()" [disabled]="isUploadingDefaultImages" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-50">
-                    {{ currentLang === 'ar' ? 'رفع صور افتراضية' : 'Upload default images' }}
-                  </button>
-                  @if (defaults.images?.length) {
-                    <span class="text-[0.72rem] font-black text-slate-500">
-                      {{ currentLang === 'ar' ? 'عدد الصور' : 'Images' }}: {{ defaults.images?.length }}
-                    </span>
-                  }
-                </div>
-                @if (defaults.images?.length) {
-                  <div class="flex flex-wrap gap-2">
-                    @for (image of defaults.images; track image.url; let imageIndex = $index) {
-                      <div class="relative">
-                        <img [src]="image.url" alt="Default product image" class="h-12 w-12 rounded-lg border border-slate-200 bg-white object-cover">
-                        <button type="button" (click)="removeDefaultImage(imageIndex)" class="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-black text-white">×</button>
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-
-              <div class="mt-4 flex flex-wrap items-center gap-3">
-                <button type="button" (click)="applyDefaultsToSelected()" class="rounded-xl bg-zadna-primary px-3 py-1.5 text-[0.7rem] font-black text-white shadow-lg shadow-zadna-primary/20">
-                  {{ currentLang === 'ar' ? 'تطبيق على المحدد' : 'Apply to selected' }}
-                </button>
-                <button type="button" (click)="applyDefaultsToAll()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                  {{ currentLang === 'ar' ? 'تطبيق على الكل' : 'Apply to all' }}
-                </button>
-              </div>
-            </div>
-
-            <div class="rounded-[20px] border border-slate-200 bg-white p-4">
-              <h3 class="text-xs font-black text-slate-900">{{ currentLang === 'ar' ? 'ملخص' : 'Summary' }}</h3>
-              <div class="mt-3 grid gap-2.5 sm:grid-cols-2">
-                <div class="rounded-xl bg-slate-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'إجمالي الصفوف' : 'Rows' }}</div>
-                  <div class="mt-1 text-lg font-black text-slate-900">{{ rows.length }}</div>
-                </div>
-                <div class="rounded-xl bg-slate-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-slate-500">{{ currentLang === 'ar' ? 'المحدد' : 'Selected' }}</div>
-                  <div class="mt-1 text-lg font-black text-slate-900">{{ selectedCount }}</div>
-                </div>
-                <div class="rounded-xl bg-emerald-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-emerald-600">{{ currentLang === 'ar' ? 'الصالحة للإرسال' : 'Ready to submit' }}</div>
-                  <div class="mt-1 text-lg font-black text-emerald-700">{{ submittableRows.length }}</div>
-                </div>
-                <div class="rounded-xl bg-rose-50 p-2.5">
-                  <div class="text-[0.72rem] font-black text-rose-600">{{ currentLang === 'ar' ? 'بها أخطاء' : 'With errors' }}</div>
-                  <div class="mt-1 text-lg font-black text-rose-700">{{ invalidRowsCount }}</div>
-                </div>
-              </div>
-
-              @if (stage === 'done' && operation) {
-                <div class="mt-4 rounded-2xl bg-slate-50 p-4">
-                  <div class="text-sm font-black text-slate-900">{{ operation.status }}</div>
-                  <div class="mt-2 text-xs font-bold text-slate-500">{{ operation.processedRows }} / {{ operation.totalRows }}</div>
-                  <div class="mt-1 text-xs font-bold text-emerald-600">{{ currentLang === 'ar' ? 'نجح' : 'Succeeded' }}: {{ operation.succeededRows }}</div>
-                  <div class="text-xs font-bold text-rose-600">{{ currentLang === 'ar' ? 'فشل' : 'Failed' }}: {{ operation.failedRows }}</div>
-                  <div class="mt-3 flex flex-wrap gap-2">
-                    <button type="button" (click)="copyErrors()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.72rem] font-black text-slate-700">
-                      {{ currentLang === 'ar' ? 'نسخ الأخطاء' : 'Copy errors' }}
-                    </button>
-                    <button type="button" (click)="downloadErrors()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.72rem] font-black text-slate-700">
-                      {{ currentLang === 'ar' ? 'تنزيل الأخطاء' : 'Download errors' }}
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-
-          @if (submitError) {
-            <div class="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-bold leading-5 text-rose-700">
-              {{ submitError }}
-            </div>
-          }
-        </div>
-
-        <div [ngClass]="embedded ? 'flex-1 overflow-auto px-5 py-4' : 'mt-2 max-w-full overflow-x-auto overflow-y-hidden rounded-[24px] border border-slate-200/70 bg-white px-4 py-4 shadow-sm md:px-5'">
-          <table class="min-w-[1260px] w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-0">
-            <thead>
-              <tr class="border-b border-slate-100 text-[0.62rem] uppercase tracking-[0.1em] text-slate-400">
-                <th class="w-10 px-1 pb-3 text-start"><input type="checkbox" [checked]="allRowsSelected" (change)="toggleAllRows($any($event.target).checked)"></th>
-                <th class="w-10 px-1 pb-3 text-start">#</th>
-                <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.NAME_AR_LABEL' | translate }}</th>
-                <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.NAME_EN_LABEL' | translate }}</th>
-                <th class="w-32 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الصور' : 'Images' }}</th>
-                <th class="w-32 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</th>
-                <th class="w-24 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</th>
-                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'العبوة' : 'Package' }}</th>
-                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</th>
-                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الوحدة' : 'Unit' }}</th>
-                <th class="w-24 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</th>
-                <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.DESC_AR_LABEL' | translate }}</th>
-                <th class="w-36 px-2 pb-3 text-start">{{ 'MASTER_PRODUCTS.DESC_EN_LABEL' | translate }}</th>
-                @if (stage === 'done') {
-                  <th class="w-40 px-2 pb-3 text-start">{{ currentLang === 'ar' ? 'النتيجة' : 'Result' }}</th>
-                }
-                <th class="w-32 px-2 pb-3 text-end">{{ currentLang === 'ar' ? 'إجراء' : 'Action' }}</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50">
-              @for (row of pagedRows; track row.rowId; let visibleIndex = $index) {
-                <tr class="align-top">
-                  <td class="py-2.5"><input type="checkbox" [(ngModel)]="row.selected"></td>
-                  <td class="py-2.5 text-xs font-black text-slate-500">{{ ((currentPage - 1) * pageSize) + visibleIndex + 1 }}</td>
-                  <td class="py-2.5">
-                    <div class="space-y-1">
-                      <input type="text" [(ngModel)]="row.nameAr" [disabled]="stage !== 'review'" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-xs font-bold">
-                      @if (stage === 'review' && getRowError(row)) {
-                        <div class="text-[0.68rem] font-bold leading-4 text-rose-600">{{ getRowError(row) }}</div>
-                      }
-                    </div>
-                  </td>
-                  <td class="py-2.5">
-                    <input type="text" [(ngModel)]="row.nameEn" [disabled]="stage !== 'review'" (blur)="ensureGeneratedValues(row)" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-xs font-bold">
-                  </td>
-                  <td class="py-2.5">
-                    <div class="space-y-2">
-                      <div class="flex items-center gap-2">
-                        <input #rowImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onRowImagesSelected(row, $event)">
-                        <button
-                          type="button"
-                          (click)="rowImagesInput.click()"
-                          [disabled]="stage !== 'review' || uploadingRowIds.has(row.rowId)"
-                          class="rounded-lg border border-slate-200 px-2.5 py-1.5 text-[0.68rem] font-black text-slate-600 disabled:opacity-50">
-                          {{ currentLang === 'ar' ? 'رفع صور' : 'Upload images' }}
-                        </button>
-                        @if (row.images?.length) {
-                          <span class="text-[0.68rem] font-bold text-slate-500">
-                            {{ currentLang === 'ar' ? 'العدد' : 'Count' }}: {{ row.images?.length }}
-                          </span>
-                        }
-                      </div>
-                      @if (row.images?.length) {
-                        <div class="flex flex-wrap gap-2">
-                          @for (image of row.images; track image.url; let imageIndex = $index) {
-                            <div class="relative">
-                              <img [src]="image.url" alt="Product image" class="h-11 w-11 rounded-lg border border-slate-200 bg-white object-cover">
-                              @if (image.isPrimary) {
-                                <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-zadna-primary px-1.5 py-0.5 text-[9px] font-black text-white">
-                                  {{ currentLang === 'ar' ? 'رئيسية' : 'Primary' }}
-                                </span>
-                              }
-                              <button
-                                type="button"
-                                (click)="removeRowImage(row, imageIndex)"
-                                [disabled]="stage !== 'review'"
-                                class="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-black text-white disabled:opacity-50">
-                                ×
-                              </button>
-                            </div>
-                          }
-                        </div>
-                      }
-                    </div>
-                  </td>
-                  <td class="py-2.5">
-                    <app-searchable-select [(ngModel)]="row.categoryId" (selectionChange)="onRowCategoryChanged(row, $event)" [isDisabled]="stage !== 'review'" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
-                  </td>
-                  <td class="py-2.5">
-                    <app-searchable-select [(ngModel)]="row.brandId" [isDisabled]="stage !== 'review' || !row.categoryId" [options]="getBrandOptionsForCategory(row.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
-                  </td>
-                  <td class="py-2.5">
-                    <app-searchable-select [(ngModel)]="row.packageTypeId" [isDisabled]="stage !== 'review'" [options]="packageTypeOptions" [placeholder]="currentLang === 'ar' ? 'العبوة' : 'Package'"></app-searchable-select>
-                  </td>
-                  <td class="py-2.5">
-                    <input type="number" [(ngModel)]="row.measurementValue" [disabled]="stage !== 'review'" min="0" step="0.01" class="h-9 w-full rounded-lg border border-slate-200 px-2.5 text-xs font-bold">
-                  </td>
-                  <td class="py-2.5">
-                    <app-searchable-select [(ngModel)]="row.measurementUnitId" [isDisabled]="stage !== 'review'" [options]="measurementUnitOptions" [placeholder]="currentLang === 'ar' ? 'الوحدة' : 'Unit'"></app-searchable-select>
-                  </td>
-                  <td class="py-2.5">
-                    <app-searchable-select [(ngModel)]="row.status" [isDisabled]="stage !== 'review'" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
-                  </td>
-                  <td class="py-2.5"><textarea [(ngModel)]="row.descriptionAr" [disabled]="stage !== 'review'" rows="2" class="w-full resize-none rounded-lg border border-slate-200 px-2.5 py-2 text-[0.7rem] font-bold"></textarea></td>
-                  <td class="py-2.5"><textarea [(ngModel)]="row.descriptionEn" [disabled]="stage !== 'review'" rows="2" class="w-full resize-none rounded-lg border border-slate-200 px-2.5 py-2 text-[0.7rem] font-bold"></textarea></td>
-                  @if (stage === 'done') {
-                    <td class="py-2.5">
-                      @if (resultMap[row.rowId]) {
-                        <div>
-                          <span
-                            class="rounded-full px-3 py-1 text-[0.68rem] font-black"
-                            [ngClass]="resultMap[row.rowId].status === 'Succeeded' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
-                            {{ resultMap[row.rowId].status }}
-                          </span>
-                          @if (resultMap[row.rowId].errorMessage) {
-                            <div class="mt-2 max-w-[220px] text-[0.72rem] font-bold text-rose-600">{{ resultMap[row.rowId].errorMessage }}</div>
-                          }
-                        </div>
-                      }
-                    </td>
-                  }
-                  <td class="w-32 px-2 py-2.5 text-end">
-                    @if (stage === 'review') {
-                      <div class="flex flex-nowrap justify-end gap-2 whitespace-nowrap">
-                        <button type="button" (click)="duplicateRow(row)" class="shrink-0 rounded-lg border border-slate-200 px-2.5 py-1.5 text-[0.68rem] font-black text-slate-600">
-                          {{ currentLang === 'ar' ? 'نسخ' : 'Duplicate' }}
-                        </button>
-                        <button type="button" (click)="removeRow(row.rowId)" class="shrink-0 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[0.68rem] font-black text-rose-600">
-                          {{ currentLang === 'ar' ? 'حذف' : 'Remove' }}
-                        </button>
-                      </div>
-                    }
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-
-        <div [ngClass]="embedded ? 'border-t border-slate-100 px-5 py-3' : 'max-w-full rounded-[24px] border border-slate-200/70 bg-white px-5 py-3 shadow-sm'">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-2 text-xs font-black text-slate-600">
-              <span>{{ currentLang === 'ar' ? 'الصفوف' : 'Rows' }}: {{ rows.length }}</span>
-              <span>•</span>
-              <span>{{ currentLang === 'ar' ? 'الصالحة' : 'Valid' }}: {{ submittableRows.length }}</span>
-              <span>•</span>
-              <span>{{ currentLang === 'ar' ? 'الصفحة' : 'Page' }} {{ currentPage }} / {{ totalPages }}</span>
-            </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <button type="button" (click)="previousPage()" [disabled]="currentPage === 1" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-40">‹</button>
-              <button type="button" (click)="nextPage()" [disabled]="currentPage === totalPages" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700 disabled:opacity-40">›</button>
-              <button type="button" (click)="onClose()" class="rounded-xl border border-slate-200 px-3 py-1.5 text-[0.7rem] font-black text-slate-700">
-                {{ currentLang === 'ar' ? (embedded ? 'إغلاق' : 'رجوع') : (embedded ? 'Close' : 'Back') }}
-              </button>
-              @if (stage === 'review') {
-                <button type="button" (click)="submit()" [disabled]="submittableRows.length === 0" class="rounded-xl bg-zadna-primary px-4 py-2 text-[0.72rem] font-black text-white shadow-lg shadow-zadna-primary/20 disabled:opacity-40">
-                  {{ currentLang === 'ar' ? 'إرسال الإضافة الجماعية' : 'Submit bulk create' }}
-                </button>
-              } @else if (stage === 'done') {
-                <button type="button" (click)="emitCompleted()" class="rounded-xl bg-zadna-primary px-4 py-2 text-[0.72rem] font-black text-white shadow-lg shadow-zadna-primary/20">
-                  {{ currentLang === 'ar' ? 'تحديث القائمة' : 'Refresh list' }}
-                </button>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
+  templateUrl: './bulk-master-products-modal.component.html',
+  styleUrls: ['./bulk-master-products-modal.component.scss']
 })
 export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
@@ -368,6 +46,9 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
   pollSub?: Subscription;
   currentPage = 1;
   readonly pageSize = 25;
+  rowFilter: BulkRowFilter = 'all';
+  rowSearch = '';
+  defaultsExpanded = true;
   readonly statusOptions: MasterProduct['status'][] = ['Draft', 'Active', 'Inactive', 'Discontinued'];
   isUploadingDefaultImages = false;
   readonly uploadingRowIds = new Set<string>();
@@ -398,21 +79,40 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     return this.flattenCategories(this.categories).filter((category) => !category.subCategories?.length && !!category.parentCategoryId);
   }
 
+  get filteredRows(): BulkMasterProductDraft[] {
+    let list = this.rows;
+
+    if (this.rowFilter === 'ready') {
+      list = list.filter((row) => !this.validateRow(row));
+    } else if (this.rowFilter === 'errors') {
+      list = list.filter((row) => !!this.validateRow(row));
+    }
+
+    const query = this.rowSearch.trim().toLowerCase();
+    if (query) {
+      list = list.filter((row) =>
+        (row.nameAr || '').toLowerCase().includes(query) ||
+        (row.nameEn || '').toLowerCase().includes(query));
+    }
+
+    return list;
+  }
+
   get pagedRows(): BulkMasterProductDraft[] {
     const start = (this.currentPage - 1) * this.pageSize;
-    return this.rows.slice(start, start + this.pageSize);
+    return this.filteredRows.slice(start, start + this.pageSize);
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.rows.length / this.pageSize));
+    return Math.max(1, Math.ceil(this.filteredRows.length / this.pageSize));
   }
 
   get selectedCount(): number {
     return this.rows.filter((row) => row.selected).length;
   }
 
-  get allRowsSelected(): boolean {
-    return this.rows.length > 0 && this.rows.every((row) => row.selected);
+  get allFilteredRowsSelected(): boolean {
+    return this.filteredRows.length > 0 && this.filteredRows.every((row) => row.selected);
   }
 
   get invalidRowsCount(): number {
@@ -421,6 +121,14 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
 
   get submittableRows(): BulkMasterProductDraft[] {
     return this.rows.filter((row) => !this.validateRow(row));
+  }
+
+  get submitProgressPercent(): number {
+    if (!this.operation?.totalRows) {
+      return 0;
+    }
+
+    return Math.min(100, Math.round((this.operation.processedRows / this.operation.totalRows) * 100));
   }
 
   get resultMap(): Record<string, AdminMasterProductBulkOperationItem> {
@@ -474,6 +182,31 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     }));
   }
 
+  setRowFilter(filter: BulkRowFilter): void {
+    this.rowFilter = filter;
+    this.currentPage = 1;
+    this.cdr.markForCheck();
+  }
+
+  onRowSearchChange(): void {
+    this.currentPage = 1;
+    this.cdr.markForCheck();
+  }
+
+  globalRowIndex(visibleIndex: number): number {
+    return (this.currentPage - 1) * this.pageSize + visibleIndex + 1;
+  }
+
+  toggleAllFilteredRows(checked: boolean): void {
+    const visibleIds = new Set(this.filteredRows.map((row) => row.rowId));
+    this.rows.forEach((row) => {
+      if (visibleIds.has(row.rowId)) {
+        row.selected = checked;
+      }
+    });
+    this.cdr.markForCheck();
+  }
+
   onClose(): void {
     this.close.emit();
   }
@@ -485,17 +218,20 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
   addRows(count: number): void {
     const nextRows = Array.from({ length: count }, () => this.createEmptyRow());
     this.rows = [...this.rows, ...nextRows];
+    this.cdr.markForCheck();
   }
 
   duplicateRow(row: BulkMasterProductDraft): void {
     const duplicated = { ...row, rowId: this.createRowId(), selected: false };
     this.rows = [...this.rows, duplicated];
+    this.cdr.markForCheck();
   }
 
   duplicateSelectedRows(): void {
     const selected = this.rows.filter((row) => row.selected);
     if (!selected.length) return;
     this.rows = [...this.rows, ...selected.map((row) => ({ ...row, rowId: this.createRowId(), selected: false }))];
+    this.cdr.markForCheck();
   }
 
   removeRow(rowId: string): void {
@@ -503,6 +239,7 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
     }
+    this.cdr.markForCheck();
   }
 
   removeSelectedRows(): void {
@@ -510,18 +247,22 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
     }
+    this.cdr.markForCheck();
   }
 
   toggleAllRows(checked: boolean): void {
     this.rows.forEach((row) => row.selected = checked);
+    this.cdr.markForCheck();
   }
 
   applyDefaultsToSelected(): void {
     this.rows.filter((row) => row.selected).forEach((row) => this.applyDefaults(row));
+    this.cdr.markForCheck();
   }
 
   applyDefaultsToAll(): void {
     this.rows.forEach((row) => this.applyDefaults(row));
+    this.cdr.markForCheck();
   }
 
   applyDefaults(row: BulkMasterProductDraft): void {
@@ -541,12 +282,14 @@ export class BulkMasterProductsModalComponent implements OnInit, OnDestroy {
     this.rows.filter((row) => row.selected).forEach((row) => {
       row.slug = this.generateSlug(row.nameEn || row.nameAr || `product-${row.rowId}`);
     });
+    this.cdr.markForCheck();
   }
 
   generateBarcodesForSelected(): void {
     this.rows.filter((row) => row.selected && !row.barcode).forEach((row) => {
       row.barcode = this.generateBarcode();
     });
+    this.cdr.markForCheck();
   }
 
   ensureGeneratedValues(row: BulkMasterProductDraft): void {

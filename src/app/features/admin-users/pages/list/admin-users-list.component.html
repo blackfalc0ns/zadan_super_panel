@@ -4,7 +4,7 @@
         [subtitle]="'ADMIN_USERS.DESC'"
         [showToolbar]="true"
         [breadcrumbs]="[
-            { label: 'SIDEBAR.SYSTEM' },
+            { label: 'SIDEBAR.HOME', url: '/dashboard' },
             { label: 'ADMIN_USERS.TITLE' }
         ]">
         <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">admin_panel_settings</span>
@@ -68,7 +68,7 @@
 
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                    <div class="admin-users-hub-stat rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4">
                         <div class="flex items-center gap-2 mb-2">
                             <span class="material-symbols-outlined text-[16px] text-zadna-primary">verified_user</span>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.ROLES' | translate }}</p>
@@ -76,7 +76,7 @@
                         <p class="text-2xl font-black text-slate-900">{{ totalRoles }}</p>
                     </div>
 
-                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                    <div class="admin-users-hub-stat rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4">
                         <div class="flex items-center gap-2 mb-2">
                             <span class="material-symbols-outlined text-[16px] text-amber-500">key</span>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.PERMISSIONS' | translate }}</p>
@@ -84,7 +84,7 @@
                         <p class="text-2xl font-black text-slate-900">{{ permissionsCatalogCount }}</p>
                     </div>
 
-                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                    <div class="admin-users-hub-stat rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4">
                         <div class="flex items-center gap-2 mb-2">
                             <span class="material-symbols-outlined text-[16px] text-emerald-500">shield</span>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.SYSTEM_ROLES' | translate }}</p>
@@ -92,7 +92,7 @@
                         <p class="text-2xl font-black text-emerald-600">{{ systemRolesCount }}</p>
                     </div>
 
-                    <div class="rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4 hover:shadow-sm transition-all">
+                    <div class="admin-users-hub-stat rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-4">
                         <div class="flex items-center gap-2 mb-2">
                             <span class="material-symbols-outlined text-[16px] text-violet-500">tune</span>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">{{ 'ADMIN_USERS.ACCESS_HUB.STATS.CUSTOM_ROLES' | translate }}</p>
@@ -103,7 +103,34 @@
             </div>
         </section>
 
-        <!-- 3. Search & Filter Section -->
+        <!-- 3. Toolbar + Search -->
+        <section class="admin-users-toolbar">
+            <div class="flex flex-col gap-1 min-w-0">
+                <p class="text-[13px] font-black text-slate-800">
+                    {{ 'ADMIN_USERS.LIST.RESULTS' | translate: { shown: users.length, total: totalCount } }}
+                </p>
+                <p *ngIf="activeFilterCount > 0" class="text-[11px] font-bold text-zadna-primary">
+                    {{ activeFilterCountLabel }}
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" class="admin-users-chip" [class.is-active]="quickStatusFilter === ''" (click)="applyQuickStatusFilter('')">
+                    {{ 'ADMIN_USERS.LIST.QUICK_ALL' | translate }}
+                </button>
+                <button type="button" class="admin-users-chip" [class.is-active]="quickStatusFilter === 'active'" (click)="applyQuickStatusFilter('active')">
+                    <span class="material-symbols-outlined text-[16px] text-emerald-500">check_circle</span>
+                    {{ 'ADMIN_USERS.LIST.QUICK_ACTIVE' | translate }}
+                    <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-black text-emerald-700">{{ statsActiveCount }}</span>
+                </button>
+                <button type="button" class="admin-users-chip" [class.is-active]="quickStatusFilter === 'suspended'" (click)="applyQuickStatusFilter('suspended')">
+                    <span class="material-symbols-outlined text-[16px] text-red-500">lock</span>
+                    {{ 'ADMIN_USERS.LIST.QUICK_SUSPENDED' | translate }}
+                    <span class="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-black text-red-700">{{ statsSuspendedCount }}</span>
+                </button>
+            </div>
+        </section>
+
         <div class="flex flex-col lg:flex-row items-center justify-between gap-5">
             <div class="w-full lg:w-[480px] group relative">
                 <div class="absolute inset-y-0 start-5 flex items-center pointer-events-none">
@@ -124,7 +151,11 @@
                               [class.rotate-180]="isFiltersExpanded">filter_list</span>
                         <div class="flex flex-col">
                             <span class="text-[13px] font-black text-slate-800">{{ 'COMMON.APPLY_FILTERS' | translate }}</span>
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate }}</span>
+                            <span class="text-[9px] font-bold uppercase tracking-tight"
+                                  [class.text-zadna-primary]="activeFilterCount > 0"
+                                  [class.text-slate-400]="activeFilterCount === 0">
+                                {{ activeFilterCount > 0 ? activeFilterCountLabel : ('ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate) }}
+                            </span>
                         </div>
                         <span class="material-symbols-outlined text-[18px] text-slate-300 ms-2 group-hover:translate-y-0.5 transition-transform"
                               [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
@@ -140,24 +171,24 @@
             [(filters)]="filters"
             (filtersChange)="onFilterChange()"
             (reset)="resetFilters()"
-            [title]="'ADMIN_USERS.ROLES_MANAGEMENT.TITLE' | translate"
-            [subtitle]="'ADMIN_USERS.ROLES_MANAGEMENT.SUBTITLE' | translate"
+            [title]="'ADMIN_USERS.FILTERS.TITLE' | translate"
+            [subtitle]="'ADMIN_USERS.FILTERS.SUBTITLE' | translate"
             [resetLabel]="'ADMIN_USERS.FILTERS.RESET' | translate"
             [activeFiltersLabel]="'ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate">
         </app-advanced-filter-panel>
 
-        <!-- 4. Data Table -->
+        <!-- 4. Data Table (desktop) -->
+        <div *ngIf="!isLoading" class="admin-users-table-wrap hidden lg:block">
         <app-data-table
-            *ngIf="!isLoading"
             [data]="users"
             [columns]="tableColumns"
             [actions]="tableActions"
             [selectable]="true"
             [clickableRows]="true"
-            [emptyStateTitle]="'لم يتم العثور على عناصر'"
-            [emptyStateMessage]="'لا توجد أنشطة رئيسية مهيأة بعد.'"
+            [emptyStateTitle]="'ADMIN_USERS.EMPTY_TITLE'"
+            [emptyStateMessage]="'ADMIN_USERS.EMPTY_MESSAGE'"
             [emptyStateIcon]="'admin_panel_settings'"
-            [containerClass]="'extraordinary-table-container'"
+            [containerClass]="'extraordinary-table-container border-0 shadow-none'"
             (rowClick)="onTableRowClick($event)"
             (actionClick)="onTableAction($event)">
 
@@ -188,16 +219,21 @@
                 </ng-container>
 
                 <ng-container *ngIf="column.key === 'scope'">
-                    <div class="flex flex-col text-start items-center">
-                        <span class="text-[11px] font-black text-slate-700">{{ getAudienceLabelKey(user) | translate }}</span>
-                        <span class="text-[9px] font-bold text-slate-400 tracking-widest mt-0.5">{{ getPanelLabelKey(user) | translate }}</span>
+                    <div class="flex justify-center">
+                        <div class="admin-users-scope-badge" [ngClass]="getScopeBadgeClasses(user)">
+                            <span class="material-symbols-outlined text-[15px]">{{ getScopeIcon(user) }}</span>
+                            <div class="flex flex-col text-start leading-tight">
+                                <span>{{ getAudienceLabelKey(user) | translate }}</span>
+                                <span class="text-[9px] font-bold opacity-80">{{ getPanelLabelKey(user) | translate }}</span>
+                            </div>
+                        </div>
                     </div>
                 </ng-container>
 
                 <ng-container *ngIf="column.key === 'status'">
                     <div class="flex justify-center">
                         <app-status-pill
-                            [label]="user.status"
+                            [label]="getStatusLabelKey(user.status)"
                             [variant]="getStatusVariant(user.status)"
                             size="sm">
                         </app-status-pill>
@@ -205,6 +241,44 @@
                 </ng-container>
             </ng-template>
         </app-data-table>
+        </div>
+
+        <!-- Mobile cards -->
+        <div *ngIf="!isLoading" class="grid gap-3 lg:hidden">
+            <article *ngFor="let user of users"
+                     class="admin-users-mobile-card cursor-pointer"
+                     (click)="onTableRowClick(user)">
+                <div class="flex items-start gap-3">
+                    <div class="relative w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
+                         [style.background]="getAvatarGradient(user)">
+                        <span class="text-sm font-black text-white">{{ getInitials(user) }}</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <p class="text-[14px] font-black text-slate-900 truncate">{{ user.fullName }}</p>
+                                <p class="text-[11px] font-bold text-slate-400 truncate" dir="ltr">{{ user.email }}</p>
+                            </div>
+                            <app-status-pill
+                                [label]="getStatusLabelKey(user.status)"
+                                [variant]="getStatusVariant(user.status)"
+                                size="sm">
+                            </app-status-pill>
+                        </div>
+                        <p class="mt-2 text-[12px] font-bold text-slate-700">{{ getRoleDisplay(user) }}</p>
+                        <p class="mt-1 text-[10px] font-black text-slate-500">
+                            {{ getAudienceLabelKey(user) | translate }} · {{ getPanelLabelKey(user) | translate }}
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <div *ngIf="users.length === 0" class="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-10 text-center">
+                <span class="material-symbols-outlined text-[40px] text-slate-300">group_off</span>
+                <p class="mt-3 text-[15px] font-black text-slate-800">{{ 'ADMIN_USERS.EMPTY_TITLE' | translate }}</p>
+                <p class="mt-1 text-[12px] font-bold text-slate-500">{{ 'ADMIN_USERS.EMPTY_MESSAGE' | translate }}</p>
+            </div>
+        </div>
 
         <!-- 5. Pagination -->
         <div class="pt-4 animate-in fade-in duration-1000 slide-in-from-bottom-5">
@@ -233,69 +307,128 @@
         </div>
     </div>
 
-    <div *ngIf="showCreateUserModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <button type="button" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="closeCreateUserModal()" aria-label="Close"></button>
-        <div class="relative z-10 w-full max-w-3xl rounded-[2rem] bg-white/95 backdrop-blur-xl border border-slate-200/60 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div class="flex items-center justify-between gap-4 border-b border-slate-100 p-6">
-                <div>
-                    <h2 class="text-lg font-black text-slate-900">{{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}</h2>
-                    <p class="mt-1 text-[12px] font-bold text-slate-400">{{ 'ADMIN_USERS.ACTIONS.CREATE_USER_DESC' | translate }}</p>
+    <div *ngIf="showCreateUserModal" class="admin-users-modal-root fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <button type="button" class="absolute inset-0 bg-slate-900/45 backdrop-blur-sm" (click)="closeCreateUserModal()" [attr.aria-label]="'COMMON.CANCEL' | translate"></button>
+
+        <div class="admin-users-modal-panel relative z-10 flex w-full max-h-[94vh] flex-col overflow-hidden rounded-t-[2rem] sm:max-w-4xl sm:rounded-[2rem] border border-slate-200/70 bg-white shadow-2xl">
+            <div class="relative overflow-hidden border-b border-slate-100 px-6 py-5">
+                <div class="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-zadna-primary/10 blur-3xl pointer-events-none"></div>
+                <div class="relative flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary bg-zadna-primary/10 inline-flex px-2.5 py-1 rounded-lg">
+                            {{ 'ADMIN_USERS.CREATE.MODAL_BADGE' | translate }}
+                        </p>
+                        <h2 class="mt-2 text-xl font-black text-slate-900">{{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}</h2>
+                        <p class="mt-1 max-w-xl text-[12px] font-bold leading-6 text-slate-500">{{ 'ADMIN_USERS.ACTIONS.CREATE_USER_DESC' | translate }}</p>
+                    </div>
+                    <button type="button" (click)="closeCreateUserModal()" class="h-10 w-10 shrink-0 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
                 </div>
-                <button type="button" (click)="closeCreateUserModal()" class="h-10 w-10 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors flex items-center justify-center">
-                    <span class="material-symbols-outlined text-[20px]">close</span>
-                </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 p-6 max-h-[70vh] overflow-y-auto z-20 relative no-scrollbar">
-                <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.FULL_NAME' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.fullName" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                </label>
-                <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.EMAIL' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.email" type="email" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                </label>
-                <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.PHONE' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.phone" type="text" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                </label>
-                <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.DETAIL.TEMPORARY_PASSWORD' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.password" type="password" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                </label>
-                <label class="flex flex-col gap-2 md:col-span-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.ROLE' | translate }}</span>
-                    <div class="h-12 rounded-2xl border-2 border-slate-200 bg-slate-50/50 focus-within:border-zadna-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-zadna-primary/10 transition-all">
-                        <app-searchable-select [(ngModel)]="createUserForm.roleDefinitionId" [searchable]="false" (ngModelChange)="onCreateRoleChange()" [options]="mappedRolesOptions" [placeholder]="'ADMIN_USERS.FIELDS.ROLE' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <section class="admin-users-modal-section">
+                    <div class="mb-4">
+                        <h3 class="text-[13px] font-black text-slate-900">{{ 'ADMIN_USERS.CREATE.SECTION_IDENTITY' | translate }}</h3>
+                        <p class="mt-1 text-[12px] font-bold text-slate-400">{{ 'ADMIN_USERS.CREATE.SECTION_IDENTITY_HINT' | translate }}</p>
                     </div>
-                </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="admin-users-field">
+                            <span>{{ 'ADMIN_USERS.FIELDS.FULL_NAME' | translate }}</span>
+                            <input [(ngModel)]="createUserForm.fullName" type="text" autocomplete="name" />
+                        </label>
+                        <label class="admin-users-field">
+                            <span>{{ 'ADMIN_USERS.FIELDS.EMAIL' | translate }}</span>
+                            <input [(ngModel)]="createUserForm.email" type="email" dir="ltr" autocomplete="email" />
+                        </label>
+                        <label class="admin-users-field">
+                            <span>{{ 'ADMIN_USERS.FIELDS.PHONE' | translate }}</span>
+                            <input [(ngModel)]="createUserForm.phone" type="tel" dir="ltr" autocomplete="tel" />
+                        </label>
+                        <label class="admin-users-field">
+                            <span>{{ 'ADMIN_USERS.DETAIL.TEMPORARY_PASSWORD' | translate }}</span>
+                            <div class="flex gap-2">
+                                <input [(ngModel)]="createUserForm.password" type="text" dir="ltr" autocomplete="new-password" class="flex-1" />
+                                <button type="button" (click)="generateTemporaryPassword()" class="admin-users-modal-secondary-btn shrink-0">
+                                    <span class="material-symbols-outlined text-[18px]">key</span>
+                                    <span class="hidden sm:inline">{{ 'ADMIN_USERS.CREATE.GENERATE_PASSWORD' | translate }}</span>
+                                </button>
+                            </div>
+                            <p class="mt-1 text-[11px] font-semibold text-slate-400">{{ 'ADMIN_USERS.CREATE.PASSWORD_HINT' | translate }}</p>
+                        </label>
+                        <label class="admin-users-field">
+                            <span>{{ 'ADMIN_USERS.FIELDS.DEPARTMENT' | translate }} ({{ 'ADMIN_USERS.FIELDS.OPTIONAL' | translate }})</span>
+                            <div class="admin-users-select-shell">
+                                <app-searchable-select [(ngModel)]="createUserForm.department" [searchable]="true" (ngModelChange)="onCreateDepartmentChange()" [options]="mappedDepartmentOptions" [placeholder]="'ADMIN_USERS.CREATE.DEPARTMENT_PLACEHOLDER' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                            </div>
+                            <p class="text-[11px] font-semibold leading-5 text-slate-400">{{ 'ADMIN_USERS.CREATE.DEPARTMENT_ROLE_HINT' | translate }}</p>
+                        </label>
+                        <label class="admin-users-field">
+                            <span>{{ 'ADMIN_USERS.FIELDS.TEAM' | translate }} ({{ 'ADMIN_USERS.FIELDS.OPTIONAL' | translate }})</span>
+                            <div class="admin-users-select-shell" [class.opacity-50]="!createUserForm.department">
+                                <app-searchable-select [(ngModel)]="createUserForm.team" [searchable]="true" [options]="mappedTeamOptions" [placeholder]="'ADMIN_USERS.CREATE.TEAM_PLACEHOLDER' | translate" [disabled]="!createUserForm.department" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                            </div>
+                            <p class="text-[11px] font-semibold leading-5 text-slate-400">{{ 'ADMIN_USERS.CREATE.TEAM_ROLE_HINT' | translate }}</p>
+                        </label>
+                    </div>
+                </section>
 
-                <label *ngIf="shouldShowScopeEntityInput()" class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
-                    <div class="h-12 rounded-2xl border-2 border-slate-200 bg-slate-50/50 focus-within:border-zadna-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-zadna-primary/10 transition-all">
-                        <app-searchable-select [(ngModel)]="createUserForm.scopeEntityId" [options]="mappedScopeEntityOptions" [placeholder]="getCreateScopeHint()" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                <section class="admin-users-modal-section">
+                    <div class="mb-4">
+                        <h3 class="text-[13px] font-black text-slate-900">{{ 'ADMIN_USERS.CREATE.SECTION_ACCESS' | translate }}</h3>
+                        <p class="mt-1 text-[12px] font-bold text-slate-400">{{ 'ADMIN_USERS.CREATE.SECTION_ACCESS_HINT' | translate }}</p>
                     </div>
-                </label>
-                <div *ngIf="!shouldShowScopeEntityInput()" class="flex flex-col justify-center gap-2 rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 py-3">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.ENTITY_ID' | translate }}</span>
-                    <span class="text-[13px] font-bold text-slate-500">{{ getCreateScopeHint() }}</span>
-                </div>
-                <label class="flex flex-col gap-2">
-                    <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ 'ADMIN_USERS.FIELDS.NOTES' | translate }}</span>
-                    <input [(ngModel)]="createUserForm.notes" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                </label>
-                <p *ngIf="createUserError" class="md:col-span-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700 animate-in fade-in duration-300">
+
+                    <label class="admin-users-field mb-4">
+                        <span>{{ 'ADMIN_USERS.FIELDS.ROLE' | translate }}</span>
+                        <div class="admin-users-select-shell">
+                            <app-searchable-select [(ngModel)]="createUserForm.roleDefinitionId" [searchable]="true" (ngModelChange)="onCreateRoleChange()" [options]="mappedRolesOptions" [placeholder]="'ADMIN_USERS.FIELDS.ROLE' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                        </div>
+                    </label>
+
+                    <div *ngIf="selectedCreateRole as role" class="admin-users-role-preview mb-4">
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'ADMIN_USERS.CREATE.ROLE_PREVIEW' | translate }}</p>
+                                <p class="mt-1 text-[15px] font-black text-slate-900">{{ getRoleOptionLabel(role) }}</p>
+                            </div>
+                            <span class="rounded-full bg-slate-900 px-3 py-1 text-[10px] font-black text-white">
+                                {{ 'ADMIN_USERS.CREATE.PERMISSIONS_COUNT' | translate: { count: role.permissions.length } }}
+                            </span>
+                        </div>
+                        <p class="mt-3 text-[12px] font-bold text-slate-600">
+                            <span class="text-slate-400">{{ 'ADMIN_USERS.CREATE.PANEL_SCOPE' | translate }}:</span>
+                            {{ 'ADMIN_USERS.PANELS.SUPER_ADMIN_PANEL' | translate }}
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50/70 px-4 py-3">
+                        <p class="text-[12px] font-bold text-emerald-800">{{ 'ADMIN_USERS.CREATE.SCOPE_GLOBAL' | translate }}</p>
+                        <p class="mt-2 text-[11px] font-semibold leading-5 text-emerald-900/80">{{ 'ADMIN_USERS.CREATE.ADMIN_ONLY_HINT' | translate }}</p>
+                    </div>
+
+                    <label class="admin-users-field mt-4">
+                        <span>{{ 'ADMIN_USERS.FIELDS.NOTES' | translate }}</span>
+                        <input [(ngModel)]="createUserForm.notes" type="text" />
+                    </label>
+                </section>
+
+                <p *ngIf="createUserError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
                     {{ createUserError }}
                 </p>
             </div>
 
-            <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/70 p-5 relative z-10">
-                <button type="button" (click)="closeCreateUserModal()" class="h-11 px-5 rounded-xl border border-slate-200 bg-white text-[13px] font-black text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
+            <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/80 p-5 sm:flex-row sm:items-center sm:justify-end">
+                <button type="button" (click)="closeCreateUserModal()" [disabled]="isCreatingUser" class="admin-users-modal-secondary-btn h-11 px-5 justify-center">
                     {{ 'COMMON.CANCEL' | translate }}
                 </button>
-                <button type="button" (click)="createUser()" [disabled]="isCreatingUser || !createUserForm.fullName || !createUserForm.email || !createUserForm.password || !createUserForm.roleDefinitionId" class="h-11 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[13px] font-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all">
-                    <span class="material-symbols-outlined text-[18px]">person_add</span>
-                    {{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}
+                <button type="button" (click)="createUser()" [disabled]="isCreatingUser || !canSubmitCreateUser" class="h-11 px-6 rounded-2xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[13px] font-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all">
+                    <span *ngIf="isCreatingUser" class="admin-skeleton admin-skeleton-line sm w-16"></span>
+                    <ng-container *ngIf="!isCreatingUser">
+                        <span class="material-symbols-outlined text-[18px]">person_add</span>
+                        {{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}
+                    </ng-container>
                 </button>
             </div>
         </div>

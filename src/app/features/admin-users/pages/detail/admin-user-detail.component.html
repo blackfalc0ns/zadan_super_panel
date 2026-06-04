@@ -195,15 +195,32 @@
               </div>
             </label>
 
-            <label class="flex flex-col gap-2">
-              <span class="text-[11px] font-black tracking-widest uppercase text-slate-500 ml-1">{{ 'ADMIN_USERS.FIELDS.DEPARTMENT' | translate }}</span>
-              <input [(ngModel)]="currentUser.department" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-            </label>
+            <ng-container *ngIf="isSuperAdminDirectoryUser; else legacyDepartmentTeam">
+              <label class="flex flex-col gap-2">
+                <span class="text-[11px] font-black tracking-widest uppercase text-slate-500 ml-1">{{ 'ADMIN_USERS.FIELDS.DEPARTMENT' | translate }}</span>
+                <div class="h-12 rounded-2xl border-2 border-slate-200 bg-slate-50/50 focus-within:border-zadna-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-zadna-primary/10 transition-all">
+                  <app-searchable-select [(ngModel)]="currentUser.department" [searchable]="true" (ngModelChange)="onDepartmentChange()" [options]="mappedDepartmentOptions" [placeholder]="'ADMIN_USERS.CREATE.DEPARTMENT_PLACEHOLDER' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                </div>
+              </label>
 
-            <label class="flex flex-col gap-2">
-              <span class="text-[11px] font-black tracking-widest uppercase text-slate-500 ml-1">{{ 'ADMIN_USERS.FIELDS.TEAM' | translate }}</span>
-              <input [(ngModel)]="currentUser.team" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-            </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-[11px] font-black tracking-widest uppercase text-slate-500 ml-1">{{ 'ADMIN_USERS.FIELDS.TEAM' | translate }}</span>
+                <div class="h-12 rounded-2xl border-2 border-slate-200 bg-slate-50/50 focus-within:border-zadna-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-zadna-primary/10 transition-all" [class.opacity-50]="!currentUser.department">
+                  <app-searchable-select [(ngModel)]="currentUser.team" [searchable]="true" [options]="mappedTeamOptions" [disabled]="!currentUser.department" [placeholder]="'ADMIN_USERS.CREATE.TEAM_PLACEHOLDER' | translate" class="block w-full h-full [&>div]:border-0 [&>div]:bg-transparent [&>div]:h-full"></app-searchable-select>
+                </div>
+              </label>
+            </ng-container>
+            <ng-template #legacyDepartmentTeam>
+              <label class="flex flex-col gap-2">
+                <span class="text-[11px] font-black tracking-widest uppercase text-slate-500 ml-1">{{ 'ADMIN_USERS.FIELDS.DEPARTMENT' | translate }}</span>
+                <input [(ngModel)]="currentUser.department" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
+              </label>
+
+              <label class="flex flex-col gap-2">
+                <span class="text-[11px] font-black tracking-widest uppercase text-slate-500 ml-1">{{ 'ADMIN_USERS.FIELDS.TEAM' | translate }}</span>
+                <input [(ngModel)]="currentUser.team" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
+              </label>
+            </ng-template>
           </div>
         </div>
 

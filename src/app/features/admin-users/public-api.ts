@@ -16,6 +16,14 @@ export {
   getPanelScopeByPersona,
   getRolePresetById
 } from './models/admin-users.models';
+export {
+  ADMIN_DEPARTMENT_STRUCTURE,
+  ADMIN_ROLE_ORG_DEFAULTS,
+  findAdminDepartmentByValue,
+  findAdminTeamByValue,
+  resolveAdminOrgDefaultsForRoleCode
+} from './models/admin-org-structure';
+export type { AdminDepartmentDefinition, AdminDepartmentId, AdminTeamDefinition } from './models/admin-org-structure';
 export type {
   AdminAccessLevel,
   AdminAccessStatus,

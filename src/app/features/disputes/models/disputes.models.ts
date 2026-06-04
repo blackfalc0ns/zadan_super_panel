@@ -116,10 +116,23 @@ export type DisputeRow = SupportCaseRow;
 
 export interface DisputeDashboardAlertCard {
   id: string;
-  titleKey: string;
-  descriptionKey: string;
+  titleKey?: string;
+  title?: string;
+  descriptionKey?: string;
+  description?: string;
   metaKey?: string;
+  meta?: string;
   tone: DisputeDashboardAlertTone;
+}
+
+export interface AdminOrderCaseStats {
+  totalOpen: number;
+  slaBreachedCount: number;
+  avgResolutionHours: number;
+  byStatus: Array<{ label: string; count: number }>;
+  byPriority: Array<{ label: string; count: number }>;
+  byQueue: Array<{ label: string; count: number }>;
+  byType: Array<{ label: string; count: number }>;
 }
 
 export interface DisputeModalState {
@@ -224,29 +237,16 @@ export function createEmptyFormDrafts(): DisputeFormDrafts {
   };
 }
 
-export function buildDisputeDashboardAlerts(): DisputeDashboardAlertCard[] {
-  return [
-    {
-      id: 'operational-alert',
-      titleKey: 'DISPUTES_DASHBOARD.INFO.OPERATIONAL_ALERT',
-      descriptionKey: 'DISPUTES_DASHBOARD.INFO.OPERATIONAL_ALERT_DESC',
-      tone: 'teal'
-    },
-    {
-      id: 'highest-risk-vendor',
-      titleKey: 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR',
-      descriptionKey: 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR_NAME',
-      metaKey: 'DISPUTES_DASHBOARD.INFO.HIGHEST_RISK_VENDOR_DESC',
-      tone: 'amber'
-    },
-    {
-      id: 'team-capacity',
-      titleKey: 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY',
-      descriptionKey: 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY_DESC',
-      metaKey: 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY_META',
-      tone: 'violet'
-    }
-  ];
+export function createEmptyAdminOrderCaseStats(): AdminOrderCaseStats {
+  return {
+    totalOpen: 0,
+    slaBreachedCount: 0,
+    avgResolutionHours: 0,
+    byStatus: [],
+    byPriority: [],
+    byQueue: [],
+    byType: []
+  };
 }
 
 export function createDefaultRefundDecisionForm(

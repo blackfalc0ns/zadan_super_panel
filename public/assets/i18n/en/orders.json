@@ -135,14 +135,17 @@
       "MESSAGE": "Try adjusting the search or clearing the current filter"
     },
     "TABLE": {
-      "ID": "Dispute ID",
+      "ID": "Order",
+      "DRIVER_ACCOUNT": "Driver account",
       "CUSTOMER": "Customer",
       "MERCHANT": "Merchant",
       "TYPE_REASON": "Type / Reason",
       "AMOUNT": "Amount",
       "STATUS": "Status",
       "PRIORITY": "Priority",
-      "OWNER": "Reviewer"
+      "OWNER": "Reviewer",
+      "ASSIGNED_ADMIN": "Assigned admin",
+      "UNASSIGNED": "Unassigned"
     },
     "STATUS": {
       "OPEN": "Open",
@@ -1140,6 +1143,7 @@
     "RESULTS": "results",
     "ACTIONS": {
       "SUPPORT_NOTIFICATIONS": "Support notifications",
+      "DISPUTES_QUEUE": "Disputes queue",
       "OPEN": "Open",
       "UPDATE_STATUS": "Update status",
       "ASSIGN_TO_ME": "Assign to me",
@@ -1155,10 +1159,16 @@
       "AVG_RESOLUTION": "Avg Resolution",
       "HOURS": "hrs"
     },
+    "WORKSPACE_LABEL": "Workspace",
     "TABS": {
       "VENDOR": "Vendor support",
       "DRIVER": "Driver support",
       "LEGACY": "Legacy complaints"
+    },
+    "TABS_HINT": {
+      "VENDOR": "Vendor tickets and operational inquiries",
+      "DRIVER": "Driver accounts and field reports",
+      "LEGACY": "Customer complaints linked to orders"
     },
     "FILTERS": {
       "SEARCH": "Search support tickets...",

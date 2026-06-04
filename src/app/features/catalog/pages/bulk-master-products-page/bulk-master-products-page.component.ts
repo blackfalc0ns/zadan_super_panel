@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Brand, CatalogUnit, Category } from '@catalog/models/catalog.domain.models';
@@ -11,22 +11,33 @@ import { BulkMasterProductsModalComponent } from '../../components/bulk-master-p
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bulk-master-products-page',
   standalone: true,
-  imports: [CommonModule, TranslateModule, AppPageHeaderComponent, BulkMasterProductsModalComponent],
+  imports: [CommonModule, TranslateModule, RouterModule, AppPageHeaderComponent, BulkMasterProductsModalComponent],
   template: `
-    <div class="flex min-h-full flex-col overflow-x-hidden bg-slate-50/50">
+    <div class="bulk-create-page flex min-h-full flex-col overflow-x-hidden bg-slate-50/60">
       <app-page-header
-        [title]="currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk Create Product Bank Items'"
-        [subtitle]="currentLang === 'ar' ? 'أنشئ عددًا كبيرًا من منتجات بنك المنتجات من صفحة مستقلة.' : 'Create many product bank items from a dedicated page.'"
+        [title]="currentLang === 'ar' ? 'إضافة جماعية' : 'Bulk create'"
+        [subtitle]="currentLang === 'ar' ? 'مساحة عمل لإدخال ومراجعة وإرسال دفعة منتجات.' : 'Workspace to enter, review, and submit a product batch.'"
+        [showBack]="true"
+        [backUrl]="['/catalog/products']"
         [showToolbar]="true"
         [breadcrumbs]="[
           { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
           { label: 'PRODUCTS.TITLE', url: '/catalog/products' },
-          { label: currentLang === 'ar' ? 'إضافة جماعية' : 'Bulk Create' }
-        ]">
-        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">post_add</span>
+          { label: currentLang === 'ar' ? 'إضافة جماعية' : 'Bulk create' }
+        ]"
+        (backClick)="goBack()">
+        <span title-prefix class="material-symbols-outlined text-[26px] text-zadna-primary">post_add</span>
+        <div actions class="flex flex-wrap items-center gap-2">
+          <a
+            routerLink="/catalog/products"
+            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-extrabold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50">
+            <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+            {{ currentLang === 'ar' ? 'قائمة المنتجات' : 'Product list' }}
+          </a>
+        </div>
       </app-page-header>
 
-      <div class="mx-auto flex w-full max-w-[120rem] flex-col overflow-x-hidden px-4 py-6 pb-8 md:px-8">
+      <div class="mx-auto flex w-full max-w-[120rem] flex-col overflow-x-hidden px-3 py-4 pb-6 md:px-6 md:py-5">
         @if (isLoading) {
           <div class="admin-skeleton-detail">
             <div class="admin-skeleton-detail-hero">

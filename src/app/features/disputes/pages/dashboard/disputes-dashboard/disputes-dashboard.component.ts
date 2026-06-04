@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostListener, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { forkJoin, map } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { AccessService } from '../../../../../core/services/access.service';
 import { AdminSupportCaseRealtimeService } from '../../../../../core/services/admin-support-case-realtime.service';
 import { DisputesService } from '@disputes/services/disputes.api.service';
@@ -22,12 +22,14 @@ import { DisputeRejectionModalComponent } from '../../../components/dispute-reje
 import { DisputeRequestInfoModalComponent } from '../../../components/dispute-request-info-modal/dispute-request-info-modal.component';
 import { describeApiError } from '../../../../marketing/utils/marketing-date.utils';
 import {
-  buildDisputeDashboardAlerts,
+  AdminOrderCaseStats,
+  createEmptyAdminOrderCaseStats,
   createEmptyQuickActionFormValue,
   createEmptyFormDrafts,
   createEmptyModalState,
   DisputeFilterId,
   DisputeFormDrafts,
+  DisputeDashboardAlertCard,
   DisputeDashboardAlertTone,
   DisputeModalKey,
   DisputeModalState,
@@ -46,7 +48,6 @@ import {
   TimelineItem
 } from '../../../models/disputes.models';
 
-type DisputeListCaseType = 'return_request' | 'driver_dispute';
 type DisputeServerFilters = {
   status?: string;
   priority?: string;
@@ -82,10 +83,12 @@ type DisputeServerFilters = {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DisputesDashboardComponent implements OnInit {
-  private readonly disputeListCaseTypes: DisputeListCaseType[] = ['return_request', 'driver_dispute'];
+  private readonly disputeListTypesQuery = 'return_request,driver_dispute';
+  private readonly cdr = inject(ChangeDetectorRef);
 
   disputes: SupportCaseRow[] = [];
-  dashboardAlerts = buildDisputeDashboardAlerts();
+  caseStats: AdminOrderCaseStats = createEmptyAdminOrderCaseStats();
+  dashboardAlerts: DisputeDashboardAlertCard[] = [];
   totalCount = 0;
   isLoading = false;
   loadError = '';
@@ -155,7 +158,7 @@ export class DisputesDashboardComponent implements OnInit {
         this.focusedDisputeId = params.get('focus')?.trim() ?? null;
         this.syncPanelFilters();
         this.resetToFirstPage();
-        this.applyFocusedSelection();
+        this.loadDisputes();
       });
 
     this.adminSupportCaseRealtime.getEvents()
@@ -167,7 +170,6 @@ export class DisputesDashboardComponent implements OnInit {
       });
 
     this.initializeFilterOptions();
-    this.loadDisputes();
   }
 
   get hasActiveFilters(): boolean {
@@ -723,6 +725,24 @@ export class DisputesDashboardComponent implements OnInit {
     return dispute.typeLabel?.trim() || this.getTypeLabel(dispute.type);
   }
 
+  getDisputeListPrimaryLabel(dispute: SupportCaseRow): string {
+    const orderReference = dispute.orderDisplayId?.trim();
+    if (orderReference) {
+      return orderReference;
+    }
+
+    return this.getDisputeTypeLabel(dispute);
+  }
+
+  getDisputeListSecondaryLabel(dispute: SupportCaseRow): string {
+    const orderReference = dispute.orderDisplayId?.trim();
+    if (orderReference) {
+      return dispute.createdAt;
+    }
+
+    return dispute.merchantName;
+  }
+
   getDisputeDisplayTypeLabel(dispute: Pick<SupportCaseRow, 'type' | 'typeLabel' | 'caseStatus'>): string {
     const baseLabel = this.getDisputeTypeLabel(dispute);
 
@@ -988,58 +1008,63 @@ export class DisputesDashboardComponent implements OnInit {
       .toLocaleString('en-US');
   }
 
+  private countStatsByLabels(
+    groups: Array<{ label: string; count: number }>,
+    ...labels: string[]
+  ): number {
+    const normalized = new Set(labels.map((label) => label.trim().toLowerCase()));
+    return groups
+      .filter((group) => normalized.has(group.label.trim().toLowerCase()))
+      .reduce((sum, group) => sum + group.count, 0);
+  }
+
   private loadDisputes(): void {
     const filters = this.resolveServerFilters();
 
     this.isLoading = true;
     this.loadError = '';
 
-    this.getDisputesPage(filters)
+    forkJoin({
+      list: this.getDisputesPage(filters),
+      stats: this.disputesService.getStats().pipe(
+        catchError(() => of(createEmptyAdminOrderCaseStats()))
+      )
+    })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
-          this.disputes = response.items;
-          this.totalCount = response.totalCount;
+        next: ({ list, stats }) => {
+          this.disputes = list.items;
+          this.totalCount = list.totalCount;
+          this.caseStats = stats;
           this.applyFocusedSelection();
           this.normalizeCurrentPage();
+          this.buildDashboardAlerts();
           this.buildUiConfig();
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: () => {
           this.disputes = [];
           this.totalCount = 0;
+          this.caseStats = createEmptyAdminOrderCaseStats();
+          this.dashboardAlerts = [];
           this.applyFocusedSelection();
           this.buildUiConfig();
           this.loadError = this.isRtl
-            ? 'تعذر تحميل النزاعات حاليا.'
-            : 'Unable to load disputes right now.';
+            ? 'تعذر تحميل النزاعات من الخادم. تحقق من تسجيل الدخول ثم أعد المحاولة.'
+            : 'Unable to load disputes from the server. Check your session and try again.';
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
 
   private getDisputesPage(filters: DisputeServerFilters) {
-    if (filters.type) {
-      return this.disputesService.getDisputes(
-        this.page,
-        this.pageSize,
-        this.searchTerm,
-        filters.status,
-        filters.priority,
-        filters.queue,
-        filters.type,
-        filters.initiatorRole,
-        filters.vendorId,
-        filters.driverId
-      );
-    }
+    const type = filters.type ?? this.disputeListTypesQuery;
 
-    const safePage = Math.max(1, this.page);
-    const requestPageSize = Math.max(this.pageSize * safePage, this.pageSize);
-
-    return forkJoin(this.disputeListCaseTypes.map((type) => this.disputesService.getDisputes(
-      1,
-      requestPageSize,
+    return this.disputesService.getDisputes(
+      this.page,
+      this.pageSize,
       this.searchTerm,
       filters.status,
       filters.priority,
@@ -1048,29 +1073,7 @@ export class DisputesDashboardComponent implements OnInit {
       filters.initiatorRole,
       filters.vendorId,
       filters.driverId
-    ))).pipe(
-      map((responses) => {
-        const mergedItems = responses
-          .flatMap((response) => response.items)
-          .filter((item) => this.isVisibleDisputeCase(item))
-          .sort((left, right) => this.caseTimestamp(right) - this.caseTimestamp(left));
-        const startIndex = (safePage - 1) * this.pageSize;
-
-        return {
-          items: mergedItems.slice(startIndex, startIndex + this.pageSize),
-          totalCount: responses.reduce((total, response) => total + response.totalCount, 0)
-        };
-      })
     );
-  }
-
-  private isVisibleDisputeCase(supportCase: SupportCaseRow): boolean {
-    return this.disputeListCaseTypes.includes(supportCase.type as DisputeListCaseType);
-  }
-
-  private caseTimestamp(supportCase: SupportCaseRow): number {
-    const timestamp = Date.parse(supportCase.createdAt || '');
-    return Number.isNaN(timestamp) ? 0 : timestamp;
   }
 
   private normalizeDisputeTypeFilter(value: string): string {
@@ -1154,51 +1157,88 @@ export class DisputesDashboardComponent implements OnInit {
     this.page = Math.min(this.page, totalPages);
   }
 
+  private buildDashboardAlerts(): void {
+    const stats = this.caseStats;
+    const alerts: DisputeDashboardAlertCard[] = [];
+
+    if (stats.slaBreachedCount > 0) {
+      alerts.push({
+        id: 'sla-breach',
+        titleKey: 'DISPUTES_DASHBOARD.INFO.OPERATIONAL_ALERT',
+        description: this.isRtl
+          ? `${stats.slaBreachedCount} قضية تجاوزت موعد SLA أو تقترب منه.`
+          : `${stats.slaBreachedCount} case(s) breached or are close to breaching SLA.`,
+        tone: 'amber'
+      });
+    }
+
+    alerts.push({
+      id: 'open-cases',
+      titleKey: 'DISPUTES_DASHBOARD.INFO.TEAM_CAPACITY',
+      description: this.isRtl
+        ? `${stats.totalOpen} قضية مفتوحة حالياً على النظام.`
+        : `${stats.totalOpen} open case(s) in the system right now.`,
+      meta: this.isRtl
+        ? `متوسط زمن الحل: ${stats.avgResolutionHours} ساعة`
+        : `Average resolution time: ${stats.avgResolutionHours}h`,
+      tone: 'teal'
+    });
+
+    const driverCases = this.countStatsByLabels(stats.byType, 'DriverDispute', 'driver_dispute');
+    if (driverCases > 0) {
+      alerts.push({
+        id: 'driver-cases',
+        title: this.isRtl ? 'نزاعات المناديب' : 'Driver disputes',
+        description: this.isRtl ? `${driverCases} قضية من هذا النوع.` : `${driverCases} case(s) of this type.`,
+        tone: 'violet'
+      });
+    }
+
+    this.dashboardAlerts = alerts.slice(0, 3);
+  }
+
   private buildUiConfig(): void {
+    const stats = this.caseStats;
+
     this.kpiCards = [
       {
         id: 'active',
         title: this.t('DISPUTES_DASHBOARD.KPI.ACTIVE'),
-        value: this.disputes.filter((item) => item.caseStatus !== 'resolved' && item.caseStatus !== 'rejected').length,
+        value: stats.totalOpen,
         color: '#127c8c',
         icon: '<span class="material-symbols-outlined text-[20px]">gavel</span>',
-        trend: { value: 6, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.ACTIVE_TREND') },
         clickable: true
       },
       {
         id: 'critical',
         title: this.t('DISPUTES_DASHBOARD.KPI.CRITICAL'),
-        value: this.disputes.filter((item) => item.priority === 'critical').length,
+        value: this.countStatsByLabels(stats.byPriority, 'Critical', 'critical'),
         color: '#ef4444',
         icon: '<span class="material-symbols-outlined text-[20px]">priority_high</span>',
-        trend: { value: 0, isPositive: false, label: this.t('DISPUTES_DASHBOARD.KPI.CRITICAL_TREND') },
         clickable: true
       },
       {
         id: 'in_review',
         title: this.t('DISPUTES_DASHBOARD.KPI.REVIEW'),
-        value: this.disputes.filter((item) => item.caseStatus === 'in_review').length,
+        value: this.countStatsByLabels(stats.byStatus, 'InReview', 'in_review'),
         color: '#f59e0b',
         icon: '<span class="material-symbols-outlined text-[20px]">fact_check</span>',
-        trend: { value: 0, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.REVIEW_TREND') },
         clickable: true
       },
       {
         id: 'awaiting_customer_evidence',
         title: this.t('DISPUTES_DASHBOARD.KPI.MERCHANT'),
-        value: this.disputes.filter((item) => item.caseStatus === 'awaiting_customer_evidence').length,
+        value: this.countStatsByLabels(stats.byStatus, 'AwaitingCustomerEvidence', 'awaiting_customer_evidence'),
         color: '#8b5cf6',
         icon: '<span class="material-symbols-outlined text-[20px]">storefront</span>',
-        trend: { value: 0, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.MERCHANT_TREND') },
         clickable: true
       },
       {
         id: 'resolved',
         title: this.t('DISPUTES_DASHBOARD.KPI.RESOLVED'),
-        value: this.disputes.filter((item) => item.caseStatus === 'resolved').length,
+        value: this.countStatsByLabels(stats.byStatus, 'Resolved', 'resolved'),
         color: '#10b981',
         icon: '<span class="material-symbols-outlined text-[20px]">check_circle</span>',
-        trend: { value: 91, isPositive: true, label: this.t('DISPUTES_DASHBOARD.KPI.RESOLVED_TREND') },
         clickable: true
       },
       {
@@ -1207,21 +1247,18 @@ export class DisputesDashboardComponent implements OnInit {
         value: this.getTotalDisputeValue(),
         color: '#0f172a',
         icon: '<span class="material-symbols-outlined text-[20px]">payments</span>',
-        trend: { value: 0, isPositive: true, label: this.t('COMMON.CURRENCY_SAR') },
         clickable: false
       }
     ];
 
-    // Add driver cases KPI if any exist
-    const driverCases = this.disputes.filter((item) => item.initiatorRole === 'driver');
-    if (driverCases.length > 0) {
+    const driverInitiated = this.disputes.filter((item) => item.initiatorRole === 'driver').length;
+    if (driverInitiated > 0) {
       this.kpiCards.splice(4, 0, {
-        id: 'driver' as string,
-        title: 'Driver Cases',
-        value: driverCases.length,
+        id: 'driver',
+        title: this.isRtl ? 'قضايا المندوب (الصفحة)' : 'Driver cases (page)',
+        value: driverInitiated,
         color: '#6366f1',
         icon: '<span class="material-symbols-outlined text-[20px]">local_shipping</span>',
-        trend: { value: 0, isPositive: true, label: 'Driver-initiated' },
         clickable: true
       });
     }

@@ -295,19 +295,16 @@ export class AuthService {
             const currentUser = this.currentUserValue;
             if (currentUser) {
                 const updatedUser: AdminUser = { ...currentUser, ...payload };
-                this.currentUserSubject.next(updatedUser);
+                this.persistCurrentUser(updatedUser);
                 return of(updatedUser);
             }
         }
 
-        return this.http
-            .put<AdminUser>(`${this.apiUrl}/me`, payload, { withCredentials: true })
-            .pipe(
-                tap((user) => {
-                    this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(user));
-                    this.currentUserSubject.next(user);
-                })
-            );
+        return from(this.acquireCsrfToken()).pipe(
+            switchMap(() => this.http.put<AdminUser>(`${this.apiUrl}/me`, payload, { withCredentials: true })),
+            map((user) => this.normalizeAdminUser(user)),
+            tap((user) => this.persistCurrentUser(user))
+        );
     }
 
     public changePassword(payload: ChangeCurrentPasswordRequest): Observable<void> {
@@ -315,22 +312,29 @@ export class AuthService {
             const currentUser = this.currentUserValue;
             if (currentUser) {
                 const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
-                this.currentUserSubject.next(updatedUser);
+                this.persistCurrentUser(updatedUser);
             }
             return of(void 0);
         }
 
-        return this.http
-            .post<void>(`${this.apiUrl}/change-password`, payload, { withCredentials: true })
-            .pipe(
-                tap(() => {
-                    const currentUser = this.currentUserValue;
-                    if (!currentUser) return;
-                    const updatedUser: AdminUser = { ...currentUser, mustChangePassword: false };
-                    this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(updatedUser));
-                    this.currentUserSubject.next(updatedUser);
-                })
-            );
+        const endpoint = this.currentUserValue?.mustChangePassword
+            ? `${this.apiUrl}/change-temporary-password`
+            : `${this.apiUrl}/change-password`;
+
+        return from(this.acquireCsrfToken()).pipe(
+            switchMap(() => this.http.post<void>(endpoint, {
+                currentPassword: payload.currentPassword,
+                newPassword: payload.newPassword
+            }, { withCredentials: true })),
+            tap(() => {
+                const currentUser = this.currentUserValue;
+                if (!currentUser) {
+                    return;
+                }
+
+                this.persistCurrentUser({ ...currentUser, mustChangePassword: false });
+            })
+        );
     }
 
     public logout(): Observable<void> {
@@ -401,11 +405,23 @@ export class AuthService {
             ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {})
         });
         return this.http.get<AdminUser>(`${this.apiUrl}/me`, { headers, withCredentials: true }).pipe(
-            tap(user => {
-                this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(user));
-                this.currentUserSubject.next(user);
-            })
+            map((user) => this.normalizeAdminUser(user)),
+            tap((user) => this.persistCurrentUser(user))
         );
+    }
+
+    private normalizeAdminUser(user: AdminUser): AdminUser {
+        return {
+            ...user,
+            id: user?.id != null ? String(user.id) : '',
+            phone: user?.phone ?? (user as AdminUser & { phoneNumber?: string }).phoneNumber ?? null
+        };
+    }
+
+    private persistCurrentUser(user: AdminUser): void {
+        const normalized = this.normalizeAdminUser(user);
+        this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(normalized));
+        this.currentUserSubject.next(normalized);
     }
 
     /**

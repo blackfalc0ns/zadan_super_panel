@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
@@ -30,6 +30,12 @@ import {
   getPanelScopeByPersona,
   getRolePresetById
 } from '../../models/admin-users.models';
+import {
+  ADMIN_DEPARTMENT_STRUCTURE,
+  findAdminDepartmentByValue,
+  findAdminTeamByValue,
+  resolveAdminOrgDefaultsForRoleCode
+} from '../../models/admin-org-structure';
 import { AdminUsersService } from '../../services/admin-users.service';
 import { VendorService } from '../../../vendors/services/vendor.api.service';
 
@@ -45,6 +51,7 @@ type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn']
 })
 export class AdminUserDetailComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
   user: AdminUserRecord | null = null;
   isLoading = false;
   isSaving = false;
@@ -207,6 +214,40 @@ export class AdminUserDetailComponent implements OnInit {
 
   get selectedPreset(): AdminRolePreset {
     return this.user ? getRolePresetById(this.user.rolePresetId) : ADMIN_ROLE_PRESETS[0];
+  }
+
+  get isSuperAdminDirectoryUser(): boolean {
+    return this.user?.panelScope === 'super_admin_panel';
+  }
+
+  get mappedDepartmentOptions(): Array<{ value: string; label: string }> {
+    const options = ADMIN_DEPARTMENT_STRUCTURE.map((department) => ({
+      value: department.value,
+      label: this.translate.instant(department.labelKey)
+    }));
+    const current = this.user?.department?.trim();
+    if (current && !findAdminDepartmentByValue(current)) {
+      return [{ value: current, label: current }, ...options];
+    }
+    return options;
+  }
+
+  get mappedTeamOptions(): Array<{ value: string; label: string }> {
+    const department = findAdminDepartmentByValue(this.user?.department);
+    if (!department) {
+      const current = this.user?.team?.trim();
+      return current ? [{ value: current, label: current }] : [];
+    }
+
+    const options = department.teams.map((team) => ({
+      value: team.value,
+      label: this.translate.instant(team.labelKey)
+    }));
+    const current = this.user?.team?.trim();
+    if (current && !findAdminTeamByValue(department, current)) {
+      return [{ value: current, label: current }, ...options];
+    }
+    return options;
   }
 
   get effectivePermissionCount(): number {
@@ -459,7 +500,37 @@ export class AdminUserDetailComponent implements OnInit {
     this.user.accessLevel = getRolePresetById(this.user.rolePresetId).accessLevel;
     this.user.grantedPermissions = [];
     this.user.revokedPermissions = [];
+    if (this.isSuperAdminDirectoryUser) {
+      this.applyRoleOrgDefaults(role.code);
+    }
     this.refreshSupportingData();
+  }
+
+  onDepartmentChange(): void {
+    if (!this.user) {
+      return;
+    }
+
+    const department = findAdminDepartmentByValue(this.user.department);
+    const team = findAdminTeamByValue(department, this.user.team);
+    if (!team && department?.teams.length) {
+      this.user.team = department.teams[0].value;
+    }
+    this.cdr.markForCheck();
+  }
+
+  private applyRoleOrgDefaults(roleCode: string | undefined): void {
+    if (!this.user) {
+      return;
+    }
+
+    const defaults = resolveAdminOrgDefaultsForRoleCode(roleCode);
+    if (!defaults) {
+      return;
+    }
+
+    this.user.department = defaults.department.value;
+    this.user.team = defaults.team.value;
   }
 
   onPersonaChange(personaType: DirectoryPersonaType): void {

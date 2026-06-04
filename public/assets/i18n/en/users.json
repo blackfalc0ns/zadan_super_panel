@@ -1746,6 +1746,8 @@
     },
     "FILTERS": {
       "ALL": "All",
+      "TITLE": "Filter access directory",
+      "SUBTITLE": "Narrow the list by status, role preset, or panel scope.",
       "STATUS": "Status",
       "ACCESS_LEVEL": "Access level",
       "ROLE": "Role preset",
@@ -1755,7 +1757,14 @@
       "VENDOR": "Vendor",
       "BRANCH": "Branch",
       "ACTIVE_COUNT": "active filters",
+      "ACTIVE_COUNT_VALUE": "{{count}} active",
       "RESET": "Reset filters"
+    },
+    "LIST": {
+      "RESULTS": "Showing {{shown}} of {{total}} identities",
+      "QUICK_ALL": "All",
+      "QUICK_ACTIVE": "Active",
+      "QUICK_SUSPENDED": "Suspended"
     },
     "TABLE": {
       "ADMIN": "Admin",
@@ -1767,7 +1776,8 @@
       "LAST_LOGIN": "Last login",
       "STATUS": "Status",
       "SECURITY": "Security",
-      "CUSTOM_ACCESS": "custom"
+      "CUSTOM_ACCESS": "custom",
+      "ACTIONS": "Actions"
     },
     "STATUS": {
       "ACTIVE": "Active",
@@ -1791,7 +1801,10 @@
       "EMAIL": "Email",
       "PHONE": "Phone",
       "DEPARTMENT": "Department",
+      "DEPARTMENT_HINT": "Optional internal org label (e.g. Operations, Finance, Support). Does not change permissions.",
       "TEAM": "Team",
+      "TEAM_HINT": "Optional team or unit within the department (e.g. Disputes desk).",
+      "OPTIONAL": "Optional",
       "ROLE_PRESET": "Role preset",
       "ACCESS_LEVEL": "Access level",
       "STATUS": "Status",
@@ -1810,6 +1823,31 @@
       "ESCALATION_EMAILS": "Escalation emails",
       "NOTES": "Notes"
     },
+    "ORG": {
+      "DEPARTMENTS": {
+        "EXECUTIVE": "Executive",
+        "OPERATIONS": "Operations",
+        "RISK_COMPLIANCE": "Risk & Compliance",
+        "FINANCE": "Finance",
+        "SUPPORT": "Customer Support",
+        "TECHNOLOGY": "Technology"
+      },
+      "TEAMS": {
+        "PLATFORM_LEADERSHIP": "Platform Leadership",
+        "ADMINISTRATION": "Administration",
+        "OPERATIONS_CORE": "Core Operations",
+        "VENDOR_OPERATIONS": "Vendor Operations",
+        "FLEET_OPERATIONS": "Fleet & Drivers",
+        "RISK_DESK": "Risk Desk",
+        "DISPUTES_REVIEW": "Disputes Review",
+        "FINANCE_OPS": "Finance Operations",
+        "SETTLEMENTS": "Settlements",
+        "SUPPORT_DESK": "Support Desk",
+        "EMAIL_CENTER": "Email Center",
+        "PLATFORM_ENGINEERING": "Platform Engineering",
+        "DATA_ANALYTICS": "Data & Analytics"
+      }
+    },
     "ACTIONS": {
       "RESET_PRESET": "Reset to preset",
       "RESEND_INVITE": "Resend invite",
@@ -1818,8 +1856,62 @@
       "SAVE": "Save changes",
       "BACK_TO_LIST": "Back to directory",
       "DUPLICATE": "Duplicate role",
-      "CREATE_USER_DESC": "Create a login account and attach it to an access role",
-      "ADD_USER": "Add User"
+      "CREATE_USER_DESC": "Create a super admin panel staff account with global access",
+      "ADD_USER": "Add admin user",
+      "VIEW": "Open profile",
+      "EDIT_USER": "Edit access"
+    },
+    "CREATE": {
+      "MODAL_BADGE": "New admin account",
+      "SECTION_IDENTITY": "Identity",
+      "SECTION_IDENTITY_HINT": "Login credentials and contact details for the new admin staff account.",
+      "SECTION_ACCESS": "Role & access",
+      "SECTION_ACCESS_HINT": "Choose an internal super admin panel role. Vendor, driver, and customer accounts are created from their own modules.",
+      "ADMIN_ONLY_HINT": "Driver, vendor, and customer logins are not created here. Use Drivers, Vendors, or Customers workflows instead.",
+      "ROLE_PREVIEW": "Selected role",
+      "PANEL_SCOPE": "Panel scope",
+      "PERMISSIONS_COUNT": "{{count}} permissions",
+      "GENERATE_PASSWORD": "Generate secure password",
+      "PASSWORD_HINT": "The user must change this password on first login.",
+      "DEPARTMENT_PLACEHOLDER": "Select department",
+      "TEAM_PLACEHOLDER": "Select team",
+      "DEPARTMENT_ROLE_HINT": "Suggested from the selected role. You can change it if the staff sits in another unit.",
+      "TEAM_ROLE_HINT": "Teams are filtered by department. Changing the role updates the suggested team.",
+      "SCOPE_GLOBAL": "Global scope — no entity link required",
+      "SCOPE_VENDOR": "Link this account to an existing vendor company",
+      "SCOPE_DRIVER": "Select the driver, then set a temporary password and role for their existing login",
+      "DRIVER_PROVISION_MODE": "This grants access on the driver's existing account (same UserId as the driver profile). Profile fields below update that account.",
+      "VENDOR_OWNER_PROVISION_MODE": "The email matches the vendor owner. Access will be provisioned on the owner's existing account, not a new duplicate user.",
+      "PROVISION_ACCESS": "Provision access",
+      "PROVISION_EMAIL_LOCKED": "Email is tied to the existing account for this provision flow.",
+      "SCOPE_CUSTOMER": "Customer scope links to the created user automatically",
+      "SCOPE_ENTITY_LABEL": "Scope entity",
+      "SCOPE_ENTITY_LABEL_VENDOR": "Link to vendor account",
+      "SCOPE_ENTITY_LABEL_DRIVER": "Link to driver profile",
+      "SCOPE_ENTITY_DRIVER_HINT": "This does not create a new driver. Pick an existing driver from the drivers list — the login will be tied to that driver app profile.",
+      "SCOPE_ENTITY_VENDOR_HINT": "Pick an existing vendor on the platform. The login will be scoped to that vendor company or branch in the vendor panel.",
+      "SCOPE_ENTITY_PLACEHOLDER": "Select vendor or driver",
+      "SCOPE_ENTITY_PLACEHOLDER_VENDOR": "Select vendor from list",
+      "SCOPE_ENTITY_PLACEHOLDER_DRIVER": "Select driver from list",
+      "SCOPE_ENTITY_MANUAL": "Or paste entity ID (GUID)",
+      "SCOPE_ENTITY_MANUAL_HINT": "Use this when the list is empty or you already know the entity ID.",
+      "LOADING_ENTITIES": "Loading available entities...",
+      "NO_ENTITIES_VENDOR": "No vendors loaded. Enter a vendor ID manually or open the vendors page first.",
+      "NO_ENTITIES_DRIVER": "No drivers loaded. Enter a driver ID manually or open the drivers page first.",
+      "ENTITY_REQUIRED": "Vendor and driver accounts must be linked to an existing entity.",
+      "VALIDATION_REQUIRED": "Complete all required fields before creating the account.",
+      "FAILED": "Could not create the account. Review the role and scope, then try again.",
+      "ERRORS": {
+        "USER_ALREADY_EXISTS": "Email or phone number is already in use.",
+        "INVALID_SCOPE_ENTITY": "The selected scope entity does not exist.",
+        "ROLE_SCOPE_MISMATCH": "The selected role does not match the requested panel scope.",
+        "ROLE_INACTIVE": "The selected role is inactive.",
+        "IDENTITY_CREATE_FAILED": "Identity provider rejected the account creation.",
+        "IDENTITY_UPDATE_FAILED": "Could not update the existing account profile.",
+        "IDENTITY_ROLE_UPDATE_FAILED": "Could not assign the selected role to the account.",
+        "IDENTITY_PASSWORD_RESET_FAILED": "Could not set the temporary password.",
+        "ADMIN_PANEL_CREATE_ONLY": "Only super admin panel accounts can be created from this screen."
+      }
     },
     "SECURITY": {
       "MFA_ON": "MFA enabled",

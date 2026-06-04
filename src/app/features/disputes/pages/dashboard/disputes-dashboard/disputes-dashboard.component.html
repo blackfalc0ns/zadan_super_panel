@@ -167,10 +167,15 @@
       <div class="grid gap-3 md:gap-4 md:grid-cols-3">
         <div *ngFor="let alert of dashboardAlerts" class="rounded-[1.4rem] border p-4 shadow-sm"
           [ngClass]="alertCardClass(alert.tone)">
-          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ alert.titleKey | translate }}
+          <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+            {{ alert.title || (alert.titleKey | translate) }}
           </p>
-          <p class="mt-2 text-sm font-black text-slate-900">{{ alert.descriptionKey | translate }}</p>
-          <p *ngIf="alert.metaKey" class="mt-1 text-[11px] font-bold text-slate-400">{{ alert.metaKey | translate }}</p>
+          <p class="mt-2 text-sm font-black text-slate-900">
+            {{ alert.description || (alert.descriptionKey | translate) }}
+          </p>
+          <p *ngIf="alert.meta || alert.metaKey" class="mt-1 text-[11px] font-bold text-slate-400">
+            {{ alert.meta || (alert.metaKey | translate) }}
+          </p>
         </div>
       </div>
     </div>
@@ -187,8 +192,8 @@
         <ng-template #customColumn let-dispute let-column="column">
           <ng-container *ngIf="column.key === 'id'">
             <div class="flex flex-col text-start">
-              <span class="font-sans text-[13px] font-black text-zadna-primary">{{ dispute.id }}</span>
-              <span class="font-sans text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</span>
+              <span class="font-sans text-[13px] font-black text-zadna-primary">{{ getDisputeListPrimaryLabel(dispute) }}</span>
+              <span class="font-sans text-[10px] font-bold text-slate-400">{{ getDisputeListSecondaryLabel(dispute) }}</span>
             </div>
           </ng-container>
 
@@ -268,8 +273,8 @@
           <div class="space-y-4 text-start">
             <div class="flex items-start justify-between gap-3">
               <div>
-                <p class="font-sans text-[13px] font-black text-zadna-primary">{{ dispute.id }}</p>
-                <p class="font-sans text-[10px] font-bold text-slate-400">{{ dispute.orderDisplayId || dispute.orderId }}</p>
+                <p class="font-sans text-[13px] font-black text-zadna-primary">{{ getDisputeListPrimaryLabel(dispute) }}</p>
+                <p class="font-sans text-[10px] font-bold text-slate-400">{{ getDisputeListSecondaryLabel(dispute) }}</p>
               </div>
               <span class="inline-flex rounded-full border px-3 py-1.5 text-[10px] font-black"
                 [ngClass]="getPriorityClass(dispute.priority)">

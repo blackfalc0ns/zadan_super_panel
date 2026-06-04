@@ -168,7 +168,7 @@ function retryAfterCsrfRefresh(
             });
             return next(retried);
         }),
-        catchError(() => of() as unknown as Observable<HttpEvent<unknown>>)
+        catchError((err) => throwError(() => err))
     );
 }
 
