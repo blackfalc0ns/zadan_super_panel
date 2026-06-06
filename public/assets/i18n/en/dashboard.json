@@ -96,6 +96,8 @@
       "DRIVERS": "Drivers",
       "ORDERS": "Orders",
       "FINANCE": "Finance",
+      "COVERAGE": "Geography coverage",
+      "COVERAGE_HELPER": "Customers, vendors, and drivers per city",
       "DAY": "Day",
       "WEEK": "Week",
       "MONTH": "Month",
@@ -393,6 +395,58 @@
       "PAYMENT_ISSUES": "Payment issues",
       "DRIVER_GAP": "Driver gap",
       "SCORE": "Pressure score"
+    },
+    "COVERAGE": {
+      "PAGE_TITLE": "Geographic coverage",
+      "PAGE_DESC": "Track customers, vendors, drivers, and supply gaps for every official city",
+      "LOADING": "Loading geography coverage...",
+      "ERROR": "Could not load geography coverage",
+      "ACTIONS": {
+        "REFRESH": "Refresh"
+      },
+      "FILTERS": {
+        "REGION": "Region",
+        "ALL_REGIONS": "All regions",
+        "SEARCH": "Search city",
+        "SEARCH_PLACEHOLDER": "City name or code",
+        "GAPS_ONLY": "Cities with gaps only",
+        "CLEAR": "Clear filters"
+      },
+      "SUMMARY": {
+        "CITIES_WITH_GAPS": "Cities with coverage gaps",
+        "NO_VENDOR": "Customers without active vendor",
+        "NO_DRIVER": "Customers without ready driver",
+        "UNMAPPED": "Unmapped addresses"
+      },
+      "TABLE": {
+        "TITLE": "Coverage by city",
+        "SUBTITLE": "Active customers, vendors, and ready drivers for each official city",
+        "CITY": "City",
+        "REGION": "Region",
+        "CUSTOMERS": "Customers",
+        "VENDORS": "Active vendors",
+        "DRIVERS": "Ready drivers",
+        "DRIVERS_HINT": "Ready now / verified active (second number)",
+        "DRIVERS_VERIFIED_HINT": "Verified active drivers in this city (including offline)",
+        "GAPS": "Gaps",
+        "ACTIONS": "Drill down",
+        "COUNT_GAPS_HINT": "Shown cities / official cities total",
+        "NO_FILTER_MATCH": "No cities match the current filters"
+      },
+      "LINKS": {
+        "CUSTOMERS": "Customers",
+        "VENDORS": "Vendors",
+        "DRIVERS": "Drivers"
+      },
+      "GAPS": {
+        "NONE": "Covered",
+        "NoVendor": "No vendor",
+        "NoDriver": "No driver",
+        "NoSupply": "Supply gap",
+        "DemandWithoutBoth": "Demand without vendor or driver",
+        "NoActivity": "No activity",
+        "SupplyWithoutDemand": "Supply without demand"
+      }
     },
     "READINESS": {
       "TITLE": "Supply readiness"

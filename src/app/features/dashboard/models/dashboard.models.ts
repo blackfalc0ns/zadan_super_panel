@@ -159,6 +159,63 @@ export interface DashboardSection {
   exceptions: DashboardExceptionRow[];
 }
 
+export type GeographyCoverageGapFlag =
+  | 'NoVendor'
+  | 'NoDriver'
+  | 'NoSupply'
+  | 'DemandWithoutBoth'
+  | 'NoActivity'
+  | 'SupplyWithoutDemand';
+
+export interface GeographyCoverageRoutes {
+  customers: string;
+  vendors: string;
+  drivers: string;
+}
+
+export interface GeographyCoverageCityRow {
+  cityCode: string;
+  regionCode: string;
+  cityNameAr: string;
+  cityNameEn: string;
+  customerCount: number;
+  activeVendorCount: number;
+  readyDriverCount: number;
+  verifiedDriverCount: number;
+  activeBranchCount: number;
+  gapFlags: GeographyCoverageGapFlag[];
+  routes: GeographyCoverageRoutes;
+}
+
+export interface GeographyCoverageSummary {
+  officialCityCount: number;
+  citiesWithGaps: number;
+  customersWithoutVendor: number;
+  customersWithoutDriver: number;
+  unmappedCustomers: number;
+  topDemandGaps: Array<{
+    cityCode: string;
+    cityNameAr: string;
+    cityNameEn: string;
+    customerCount: number;
+    gapFlags: GeographyCoverageGapFlag[];
+  }>;
+}
+
+export interface GeographyCoverageSnapshot {
+  summary: GeographyCoverageSummary;
+  cities: GeographyCoverageCityRow[];
+  regionRollup: Array<{
+    regionCode: string;
+    regionNameAr: string;
+    regionNameEn: string;
+    customerCount: number;
+    activeVendorCount: number;
+    readyDriverCount: number;
+    citiesWithGaps: number;
+  }>;
+}
+
 export interface DashboardSnapshot {
   filterState: DashboardFilterState;
   filterOptions: {

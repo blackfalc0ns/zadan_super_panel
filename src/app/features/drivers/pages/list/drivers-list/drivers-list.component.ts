@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Driver,
@@ -87,6 +87,7 @@ export class DriversListComponent implements OnInit {
   constructor(
     private readonly driverService: DriverService,
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
     public readonly translate: TranslateService
   ) {}
 
@@ -104,6 +105,11 @@ export class DriversListComponent implements OnInit {
   ngOnInit(): void {
     this.cityOptions = this.buildCityOptions([]);
     this.initializeFilterOptions();
+    const city = this.route.snapshot.queryParamMap.get('city');
+    if (city) {
+      this.filters = { ...this.filters, city };
+      this.isFiltersExpanded = true;
+    }
     this.loadDrivers();
     this.loadKPIs();
   }

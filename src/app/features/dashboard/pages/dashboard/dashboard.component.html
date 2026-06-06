@@ -215,6 +215,17 @@
           </div>
         </div>
 
+        <!-- GEOGRAPHY COVERAGE TAB -->
+        <div *ngSwitchCase="'coverage'" class="space-y-8 animate-fade-in">
+          @defer (on immediate) {
+            <app-dashboard-geography-coverage [isRTL]="isRTL"></app-dashboard-geography-coverage>
+          } @placeholder {
+            <div class="h-96 bg-slate-50 border border-slate-100 rounded-[24px] animate-pulse flex items-center justify-center text-slate-400 text-sm">
+              {{ 'DASHBOARD.COVERAGE.LOADING' | translate }}
+            </div>
+          }
+        </div>
+
       </ng-container>
 
     </main>

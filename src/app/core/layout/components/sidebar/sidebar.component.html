@@ -97,7 +97,7 @@
                 <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.ECOSYSTEM' | translate }}</span>
             </div>
 
-            <button *appHasPermission="'vendors.view'" type="button" (click)="navigateTo('/vendors')" [ngClass]="navItemClasses('/vendors')" [title]="'SIDEBAR.VENDORS' | translate">
+            <button *appHasPermission="'vendors.view'" type="button" (click)="navigateTo('/vendors')" [ngClass]="navItemClasses('/vendors', false)" [title]="'SIDEBAR.VENDORS' | translate">
                 <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
@@ -105,9 +105,9 @@
             </button>
 
             <ng-container *appHasPermission="'disputes.view'">
-                <button *ngIf="isInsideVendorDetail && currentVendorDisputesRoute" type="button"
-                    (click)="navigateTo(currentVendorDisputesRoute)"
-                    [ngClass]="navItemClasses(currentVendorDisputesRoute, true)" [title]="'SIDEBAR.VENDOR_DISPUTES' | translate">
+                <button *ngIf="isInsideVendorDetail && currentVendorDisputesRoute as vendorDisputesRoute" type="button"
+                    (click)="navigateTo(vendorDisputesRoute)"
+                    [ngClass]="navItemClasses(vendorDisputesRoute, true)" [title]="'SIDEBAR.VENDOR_DISPUTES' | translate">
                     <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">gavel</span>
                     <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.VENDOR_DISPUTES' | translate }}</span>
                 </button>

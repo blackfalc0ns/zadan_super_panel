@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, switchMap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -106,6 +106,7 @@ export class VendorsListComponent implements OnInit {
   searchTerm = '';
   filters: VendorFilters = {};
   isFiltersExpanded = false;
+  private pendingCityCodeFilter: string | null = null;
   
   // Options
   statusOptions = Object.values(VendorStatus);
@@ -198,7 +199,8 @@ export class VendorsListComponent implements OnInit {
   constructor(
     private vendorService: VendorService,
     public translate: TranslateService,
-    private router: Router
+    private router: Router,
+    private readonly route: ActivatedRoute
   ) {
     this.translate.onLangChange.subscribe(() => {
       this.cdr.markForCheck();
@@ -216,6 +218,15 @@ export class VendorsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeFilterOptions();
+    const cityCode = this.route.snapshot.queryParamMap.get('cityCode');
+    if (cityCode) {
+      this.pendingCityCodeFilter = cityCode.trim().toUpperCase();
+      this.isFiltersExpanded = true;
+      const cityLabel = this.resolveCityLabelForCode(this.pendingCityCodeFilter);
+      if (cityLabel) {
+        this.filters = { ...this.filters, city: cityLabel };
+      }
+    }
     this.loadVendors();
     this.loadKPIs();
   }
@@ -258,6 +269,26 @@ export class VendorsListComponent implements OnInit {
     });
   }
 
+  private resolveCityLabelForCode(cityCode: string): string | null {
+    const key = `COMMON.CITIES.${cityCode}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : null;
+  }
+
+  private matchesVendorCityCode(vendor: Vendor, cityCode: string): boolean {
+    const rawCity = (vendor.city ?? '').trim();
+    if (!rawCity) {
+      return false;
+    }
+
+    if (rawCity.toUpperCase() === cityCode) {
+      return true;
+    }
+
+    const localized = this.resolveCityLabelForCode(cityCode);
+    return !!localized && (rawCity === localized || rawCity.includes(localized));
+  }
+
   // Data Loading
   loadVendors() {
     this.isLoading = true;
@@ -267,8 +298,12 @@ export class VendorsListComponent implements OnInit {
       .subscribe({
         next: (response) => {
         this.cdr.markForCheck();
-          this.vendors = (response.items ?? []).map(vendor => ({ ...vendor }));
-          this.totalCount = response.totalCount ?? 0;
+          let vendors = (response.items ?? []).map(vendor => ({ ...vendor }));
+          if (this.pendingCityCodeFilter) {
+            vendors = vendors.filter((vendor) => this.matchesVendorCityCode(vendor, this.pendingCityCodeFilter!));
+          }
+          this.vendors = vendors;
+          this.totalCount = this.pendingCityCodeFilter ? vendors.length : (response.totalCount ?? 0);
           this.totalPages = response.totalPages ?? Math.ceil(this.totalCount / this.pageSize);
           this.pageNumber = response.pageNumber ?? this.pageNumber;
           this.hasPreviousPage = response.hasPreviousPage ?? this.pageNumber > 1;
@@ -517,7 +552,7 @@ export class VendorsListComponent implements OnInit {
     if (!this.previewVendor) return;
     switch (action.id) {
       case 'view-details': 
-        this.router.navigate(['/vendors', this.previewVendor.id]); 
+        this.router.navigate(['/vendors', this.previewVendor.id, 'overview']); 
         break;
       case 'approve': this.quickApprove(this.previewVendor, new Event('click')); break;
       case 'documents': this.quickRequestDocuments(this.previewVendor, new Event('click')); break;

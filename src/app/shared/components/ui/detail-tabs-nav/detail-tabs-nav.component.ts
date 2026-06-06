@@ -25,11 +25,10 @@ export interface DetailTabNavItem {
           <a
             *ngIf="tab.route"
             [routerLink]="tab.route"
-            (click)="onTabClick(tab.id)"
-            class="relative px-4 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[13px] font-black transition-all duration-300 rounded-[1rem] whitespace-nowrap z-10 shrink-0 flex items-center justify-center tracking-wide group/tab cursor-pointer"
-            [ngClass]="isActive(tab.id)
-              ? 'text-zadna-primary bg-white shadow-sm ring-1 ring-slate-100'
-              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'"
+            routerLinkActive="text-zadna-primary bg-white shadow-sm ring-1 ring-slate-100"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="relative px-4 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[13px] font-black transition-all duration-300 rounded-[1rem] whitespace-nowrap z-10 shrink-0 flex items-center justify-center tracking-wide group/tab cursor-pointer text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+            [attr.aria-current]="isActive(tab.id) ? 'page' : null"
             [attr.aria-label]="tab.labelKey | translate">
 
             <div class="flex items-center gap-2 px-1 relative z-10 w-full h-full justify-center pointer-events-none">

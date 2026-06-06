@@ -29,7 +29,11 @@ export class DashboardHeaderComponent {
   }
 
   onRegionChange(value: string): void {
-    this.filterState = { ...this.filterState, region: value };
+    this.filterState = {
+      ...this.filterState,
+      region: value,
+      vendorId: 'all'
+    };
     this.filterChanged.emit(this.filterState);
   }
 

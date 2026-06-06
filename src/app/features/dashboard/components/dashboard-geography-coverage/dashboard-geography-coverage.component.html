@@ -1,0 +1,255 @@
+<section class="coverage-shell animate-fade-in">
+  <header class="coverage-hero">
+    <div class="coverage-hero-copy">
+      <div class="coverage-hero-icon" aria-hidden="true">
+        <span class="material-symbols-outlined">public</span>
+      </div>
+      <div>
+        <h1>{{ 'DASHBOARD.COVERAGE.PAGE_TITLE' | translate }}</h1>
+        <p>{{ 'DASHBOARD.COVERAGE.PAGE_DESC' | translate }}</p>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="coverage-refresh-primary"
+      (click)="reloadCoverage()"
+      [disabled]="isRefreshing">
+      <span class="material-symbols-outlined" [class.animate-spin]="isRefreshing">refresh</span>
+      {{ 'DASHBOARD.COVERAGE.ACTIONS.REFRESH' | translate }}
+    </button>
+  </header>
+
+  <div class="coverage-toolbar" [class.is-disabled]="isRefreshing">
+    <div class="coverage-toolbar-filters">
+      <div class="coverage-field coverage-field-region">
+        <span class="coverage-field-label">
+          <span class="material-symbols-outlined">map</span>
+          {{ 'DASHBOARD.COVERAGE.FILTERS.REGION' | translate }}
+        </span>
+        <app-searchable-select
+          [ngModel]="selectedRegion"
+          (ngModelChange)="onRegionChange($event)"
+          [searchable]="false"
+          [options]="regionFilterOptions"
+          [placeholder]="'DASHBOARD.COVERAGE.FILTERS.REGION' | translate"
+          [isDisabled]="isRefreshing"
+          dropdownPanelClass="min-w-56"
+          class="coverage-region-select block w-full min-w-[12rem]">
+        </app-searchable-select>
+      </div>
+
+      <label class="coverage-field coverage-field-search">
+        <span class="coverage-field-label">
+          <span class="material-symbols-outlined">search</span>
+          {{ 'DASHBOARD.COVERAGE.FILTERS.SEARCH' | translate }}
+        </span>
+        <input
+          type="search"
+          [(ngModel)]="citySearch"
+          (ngModelChange)="onCitySearchChange()"
+          [placeholder]="'DASHBOARD.COVERAGE.FILTERS.SEARCH_PLACEHOLDER' | translate"
+          [disabled]="isRefreshing" />
+      </label>
+
+      <label class="coverage-switch">
+        <input
+          type="checkbox"
+          [checked]="gapsOnly"
+          (change)="onGapsOnlyChange($any($event.target).checked)"
+          [disabled]="isRefreshing" />
+        <span class="coverage-switch-track" aria-hidden="true"></span>
+        <span class="coverage-switch-text">{{ 'DASHBOARD.COVERAGE.FILTERS.GAPS_ONLY' | translate }}</span>
+      </label>
+
+      <button
+        *ngIf="hasActiveFilters"
+        type="button"
+        class="coverage-clear-filters"
+        (click)="clearFilters()"
+        [disabled]="isRefreshing">
+        <span class="material-symbols-outlined">filter_alt_off</span>
+        {{ 'DASHBOARD.COVERAGE.FILTERS.CLEAR' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="coverage-state">
+    <span class="material-symbols-outlined animate-spin">progress_activity</span>
+    <p>{{ 'DASHBOARD.COVERAGE.LOADING' | translate }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && loadError" class="coverage-state is-error">
+    <span class="material-symbols-outlined">error</span>
+    <p>{{ 'DASHBOARD.COVERAGE.ERROR' | translate }}</p>
+    <button type="button" (click)="reloadCoverage()">{{ 'COMMON.RETRY' | translate }}</button>
+  </div>
+
+  <ng-container *ngIf="!isLoading && !loadError && coverage as vm">
+    <div class="coverage-summary-grid" [class.is-refreshing]="isRefreshing">
+      <article class="coverage-summary-card tone-gap">
+        <div class="coverage-summary-icon">
+          <span class="material-symbols-outlined">crisis_alert</span>
+        </div>
+        <div class="coverage-summary-body">
+          <span>{{ 'DASHBOARD.COVERAGE.SUMMARY.CITIES_WITH_GAPS' | translate }}</span>
+          <strong>{{ vm.summary.citiesWithGaps | number }}</strong>
+        </div>
+      </article>
+      <article class="coverage-summary-card tone-warning">
+        <div class="coverage-summary-icon">
+          <span class="material-symbols-outlined">storefront</span>
+        </div>
+        <div class="coverage-summary-body">
+          <span>{{ 'DASHBOARD.COVERAGE.SUMMARY.NO_VENDOR' | translate }}</span>
+          <strong>{{ vm.summary.customersWithoutVendor | number }}</strong>
+        </div>
+      </article>
+      <article class="coverage-summary-card tone-warning">
+        <div class="coverage-summary-icon">
+          <span class="material-symbols-outlined">local_shipping</span>
+        </div>
+        <div class="coverage-summary-body">
+          <span>{{ 'DASHBOARD.COVERAGE.SUMMARY.NO_DRIVER' | translate }}</span>
+          <strong>{{ vm.summary.customersWithoutDriver | number }}</strong>
+        </div>
+      </article>
+      <article class="coverage-summary-card tone-muted">
+        <div class="coverage-summary-icon">
+          <span class="material-symbols-outlined">wrong_location</span>
+        </div>
+        <div class="coverage-summary-body">
+          <span>{{ 'DASHBOARD.COVERAGE.SUMMARY.UNMAPPED' | translate }}</span>
+          <strong>{{ vm.summary.unmappedCustomers | number }}</strong>
+        </div>
+      </article>
+    </div>
+
+    <article class="coverage-table-card" [class.is-refreshing]="isRefreshing">
+      <div class="coverage-table-header">
+        <div class="coverage-table-heading">
+          <h2>
+            <span class="material-symbols-outlined">location_city</span>
+            {{ 'DASHBOARD.COVERAGE.TABLE.TITLE' | translate }}
+          </h2>
+          <p>{{ 'DASHBOARD.COVERAGE.TABLE.SUBTITLE' | translate }}</p>
+        </div>
+        <div class="coverage-table-meta">
+          <span class="coverage-table-count" [title]="gapsOnly ? ('DASHBOARD.COVERAGE.TABLE.COUNT_GAPS_HINT' | translate) : ''">
+            {{ tableCountLabel }}
+          </span>
+          <span class="coverage-table-official" *ngIf="vm.summary.officialCityCount > 0">
+            / {{ vm.summary.officialCityCount | number }}
+          </span>
+        </div>
+      </div>
+
+      <div class="coverage-table-wrap" *ngIf="filteredCities.length > 0; else noCoverageRows">
+        <table class="coverage-table">
+          <thead>
+            <tr>
+              <th>{{ 'DASHBOARD.COVERAGE.TABLE.CITY' | translate }}</th>
+              <th>{{ 'DASHBOARD.COVERAGE.TABLE.REGION' | translate }}</th>
+              <th class="is-numeric">{{ 'DASHBOARD.COVERAGE.TABLE.CUSTOMERS' | translate }}</th>
+              <th class="is-numeric">{{ 'DASHBOARD.COVERAGE.TABLE.VENDORS' | translate }}</th>
+              <th class="is-numeric" [title]="'DASHBOARD.COVERAGE.TABLE.DRIVERS_HINT' | translate">
+                {{ 'DASHBOARD.COVERAGE.TABLE.DRIVERS' | translate }}
+              </th>
+              <th>{{ 'DASHBOARD.COVERAGE.TABLE.GAPS' | translate }}</th>
+              <th class="is-actions">{{ 'DASHBOARD.COVERAGE.TABLE.ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let city of paginatedCities; trackBy: trackByCity"
+              [class.has-gap]="hasOperationalGap(city)"
+              [class.is-unmapped]="isUnmappedCity(city)">
+              <td class="coverage-city-cell">
+                <div class="coverage-city-avatar" [class.is-unmapped]="isUnmappedCity(city)">
+                  <span class="material-symbols-outlined">{{ isUnmappedCity(city) ? 'help' : 'location_city' }}</span>
+                </div>
+                <div class="coverage-city-copy">
+                  <strong>{{ cityLabel(city) }}</strong>
+                  <small *ngIf="!isUnmappedCity(city)">{{ city.cityCode }}</small>
+                </div>
+              </td>
+              <td>
+                <span class="coverage-region-tag" *ngIf="city.regionCode; else noRegion">
+                  {{ regionLabel(city.regionCode) }}
+                </span>
+                <ng-template #noRegion>—</ng-template>
+              </td>
+              <td class="is-numeric">
+                <span class="coverage-metric" [ngClass]="metricTone(city.customerCount)">{{ city.customerCount | number }}</span>
+              </td>
+              <td class="is-numeric">
+                <span class="coverage-metric" [ngClass]="metricTone(city.activeVendorCount)">{{ city.activeVendorCount | number }}</span>
+              </td>
+              <td class="is-numeric coverage-driver-counts">
+                <span class="coverage-metric" [ngClass]="metricTone(city.readyDriverCount)">{{ city.readyDriverCount | number }}</span>
+                <span class="coverage-driver-verified" [title]="'DASHBOARD.COVERAGE.TABLE.DRIVERS_VERIFIED_HINT' | translate">
+                  / {{ city.verifiedDriverCount | number }}
+                </span>
+              </td>
+              <td>
+                <div class="coverage-gap-badges" *ngIf="!isFullyCovered(city); else coveredOk">
+                  <span *ngFor="let gap of city.gapFlags" class="coverage-gap-badge" [ngClass]="gapTone(gap)">
+                    {{ gapLabel(gap) | translate }}
+                  </span>
+                </div>
+                <ng-template #coveredOk>
+                  <span class="coverage-gap-ok">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    {{ 'DASHBOARD.COVERAGE.GAPS.NONE' | translate }}
+                  </span>
+                </ng-template>
+              </td>
+              <td class="is-actions">
+                <div class="coverage-row-actions">
+                  <a [routerLink]="['/customers']" [queryParams]="customerQuery(city)" class="coverage-action-chip">
+                    <span class="material-symbols-outlined">groups</span>
+                    {{ 'DASHBOARD.COVERAGE.LINKS.CUSTOMERS' | translate }}
+                  </a>
+                  <a
+                    *ngIf="!isUnmappedCity(city)"
+                    [routerLink]="['/vendors']"
+                    [queryParams]="vendorQuery(city)"
+                    class="coverage-action-chip">
+                    <span class="material-symbols-outlined">store</span>
+                    {{ 'DASHBOARD.COVERAGE.LINKS.VENDORS' | translate }}
+                  </a>
+                  <a
+                    *ngIf="!isUnmappedCity(city)"
+                    [routerLink]="['/drivers']"
+                    [queryParams]="driverQuery(city)"
+                    class="coverage-action-chip">
+                    <span class="material-symbols-outlined">local_shipping</span>
+                    {{ 'DASHBOARD.COVERAGE.LINKS.DRIVERS' | translate }}
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="coverage-pagination" *ngIf="totalFilteredCities > 0">
+        <app-pagination
+          [currentPage]="effectivePage"
+          [pageSize]="pageSize"
+          [totalItems]="totalFilteredCities"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+
+      <ng-template #noCoverageRows>
+        <div class="coverage-state coverage-state-inline">
+          <span class="material-symbols-outlined">travel_explore</span>
+          <p *ngIf="hasActiveFilters; else noDataAtAll">{{ 'DASHBOARD.COVERAGE.TABLE.NO_FILTER_MATCH' | translate }}</p>
+          <ng-template #noDataAtAll>
+            <p>{{ 'COMMON.NO_DATA' | translate }}</p>
+          </ng-template>
+        </div>
+      </ng-template>
+    </article>
+  </ng-container>
+</section>

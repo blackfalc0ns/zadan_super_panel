@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CustomersService, CustomerFilters } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
@@ -65,6 +65,7 @@ export class CustomersListComponent implements OnInit {
 
   constructor(
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
     public readonly translate: TranslateService,
     private readonly customersService: CustomersService
   ) {
@@ -76,6 +77,13 @@ export class CustomersListComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeFilterOptions();
+    const city = this.route.snapshot.queryParamMap.get('city');
+    if (city) {
+      this.filters = { ...this.filters, city };
+      this.isFiltersExpanded = true;
+      this.loadCustomers();
+    }
+
     this.customersService.getCustomers().subscribe({
       next: (customers) => {
         this.cdr.markForCheck();

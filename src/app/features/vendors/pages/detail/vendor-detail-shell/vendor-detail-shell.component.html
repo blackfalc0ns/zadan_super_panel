@@ -1,7 +1,5 @@
 <section class="vendor-brand-scope">
-  <app-vendor-detail-header
-    [activeTab]="activeTab"
-    (tabChanged)="onTabChange($event)">
+  <app-vendor-detail-header [activeTab]="activeTab">
   </app-vendor-detail-header>
 
   @if (workspaceLoadError && !isWorkspaceLoading) {

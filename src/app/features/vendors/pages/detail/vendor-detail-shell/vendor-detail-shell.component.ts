@@ -96,10 +96,6 @@ export class VendorDetailShellComponent implements OnInit {
       });
   }
 
-  onTabChange(tabId: string): void {
-    this.router.navigate([tabId], { relativeTo: this.route });
-  }
-
   private syncActiveTab(): void {
     const currentChildTab = getVendorRouteChildTab(this.route);
     const legacyTab = getLegacyVendorDetailTab(this.route.snapshot.queryParamMap.get('tab'));

@@ -5,6 +5,7 @@ export type { InsightPanel } from './dashboard-insights/dashboard-insights.compo
 export { DashboardChartsComponent } from './dashboard-charts/dashboard-charts.component';
 export { DashboardOrdersWindowsComponent } from './dashboard-orders-windows/dashboard-orders-windows.component';
 export { DashboardRegionPressureComponent } from './dashboard-region-pressure/dashboard-region-pressure.component';
+export { DashboardGeographyCoverageComponent } from './dashboard-geography-coverage/dashboard-geography-coverage.component';
 export { DashboardAlertsPanelComponent } from './dashboard-alerts-panel/dashboard-alerts-panel.component';
 export { DashboardSectionsComponent } from './dashboard-sections/dashboard-sections.component';
 export { DashboardAuditFeedComponent } from './dashboard-audit-feed/dashboard-audit-feed.component';

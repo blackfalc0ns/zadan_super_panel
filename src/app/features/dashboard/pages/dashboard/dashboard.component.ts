@@ -31,12 +31,13 @@ import {
   DashboardAlertsPanelComponent,
   DashboardSectionsComponent,
   DashboardAuditFeedComponent,
+  DashboardGeographyCoverageComponent,
   InsightPanel
 } from '../../components';
 
 echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
-type DashboardTabId = 'overview' | 'vendors' | 'drivers' | 'orders' | 'finance';
+type DashboardTabId = 'overview' | 'vendors' | 'drivers' | 'orders' | 'finance' | 'coverage';
 
 interface DashboardWindowTab {
   id: DashboardTabId;
@@ -62,6 +63,7 @@ interface DashboardWindowTab {
     DashboardAlertsPanelComponent,
     DashboardSectionsComponent,
     DashboardAuditFeedComponent,
+    DashboardGeographyCoverageComponent,
     NgxEchartsDirective
   ],
   providers: [provideEchartsCore({ echarts })],
@@ -87,7 +89,7 @@ export class DashboardComponent implements OnInit {
 
   dashboard: DashboardSnapshot | null = null;
   activeTab: DashboardTabId = 'overview';
-  private readonly dashboardTabIds: DashboardTabId[] = ['overview', 'vendors', 'drivers', 'orders', 'finance'];
+  private readonly dashboardTabIds: DashboardTabId[] = ['overview', 'vendors', 'drivers', 'orders', 'finance', 'coverage'];
 
   setActiveTab(tab: DashboardTabId): void {
     this.activeTab = tab;
@@ -127,15 +129,23 @@ export class DashboardComponent implements OnInit {
   get regionFilterOptions(): SearchableSelectOption[] {
     return (this.dashboard?.filterOptions.regions ?? []).map((option) => ({
       value: option.value,
-      label: option.count ? `${option.label} (${option.count})` : option.label
+      label: this.formatFilterOptionLabel(option.label, option.count)
     }));
   }
 
   get vendorFilterOptions(): SearchableSelectOption[] {
     return (this.dashboard?.filterOptions.vendors ?? []).map((option) => ({
       value: option.value,
-      label: option.label
+      label: this.formatFilterOptionLabel(option.label, option.count)
     }));
+  }
+
+  private formatFilterOptionLabel(label: string, count?: number): string {
+    if (count === undefined || count === null) {
+      return label;
+    }
+
+    return `${label} (${count})`;
   }
 
   get primarySections(): DashboardSection[] {
@@ -222,6 +232,15 @@ export class DashboardComponent implements OnInit {
         helper: disputeExposure?.unitLabel ?? gmv?.unitLabel ?? '',
         severity: disputeExposure?.severity ?? gmv?.severity ?? 'neutral',
         signalCount: this.dashboard?.queues.risk.filter(queue => queue.count > 0).length ?? 0
+      },
+      {
+        id: 'coverage',
+        labelKey: 'DASHBOARD.TABS.COVERAGE',
+        icon: 'public',
+        metric: '—',
+        helper: this.translate.instant('DASHBOARD.TABS.COVERAGE_HELPER'),
+        severity: 'info',
+        signalCount: 0
       }
     ];
   }
@@ -280,6 +299,7 @@ export class DashboardComponent implements OnInit {
       .subscribe({
         next: (dashboard) => {
           this.dashboard = dashboard;
+          this.filterState = dashboard.filterState;
           this.isLoading = false;
           this.buildCharts();
           this.cdr.markForCheck();

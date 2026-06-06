@@ -36,3 +36,17 @@ export function getVendorRouteChildTab(route: ActivatedRoute): VendorDetailTabId
 
   return childPath ? normalizeVendorDetailTab(childPath) : null;
 }
+
+export function buildVendorDetailPath(
+  vendorId: string,
+  tab: VendorDetailTabId = DEFAULT_VENDOR_DETAIL_TAB
+): string[] {
+  return ['/vendors', vendorId, tab];
+}
+
+export function buildVendorDetailUrl(
+  vendorId: string,
+  tab: VendorDetailTabId = DEFAULT_VENDOR_DETAIL_TAB
+): string {
+  return `/vendors/${vendorId}/${tab}`;
+}

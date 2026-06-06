@@ -13,7 +13,8 @@ import {
   DashboardSection,
   DashboardSeriesChart,
   DashboardSnapshot,
-  DashboardSupplyBucket
+  DashboardSupplyBucket,
+  GeographyCoverageSnapshot
 } from '../models/dashboard.models';
 
 interface AdminDashboardOverviewDto {
@@ -90,6 +91,124 @@ interface AdminDashboardOverviewDto {
 })
 export class SuperAdminDashboardService {
   constructor(private readonly http: HttpClient) {}
+
+  getGeographyCoverage(region = 'all', gapsOnly = false): Observable<GeographyCoverageSnapshot> {
+    let params = new HttpParams().set('region', region);
+    if (gapsOnly) {
+      params = params.set('gapsOnly', 'true');
+    }
+    return this.http
+      .get<Record<string, unknown>>(`${environment.apiUrl}/admin/geography/coverage`, { params })
+      .pipe(map((response) => this.mapGeographyCoverageResponse(response)));
+  }
+
+  private mapGeographyCoverageResponse(response: Record<string, unknown>): GeographyCoverageSnapshot {
+    const summary = this.readRecord(response, 'summary') ?? this.readRecord(response, 'Summary');
+    const cities = this.readArray(response, 'cities') ?? this.readArray(response, 'Cities') ?? [];
+
+    return {
+      summary: {
+        officialCityCount: this.readNumber(summary, 'officialCityCount', 'OfficialCityCount'),
+        citiesWithGaps: this.readNumber(summary, 'citiesWithGaps', 'CitiesWithGaps'),
+        customersWithoutVendor: this.readNumber(summary, 'customersWithoutVendor', 'CustomersWithoutVendor'),
+        customersWithoutDriver: this.readNumber(summary, 'customersWithoutDriver', 'CustomersWithoutDriver'),
+        unmappedCustomers: this.readNumber(summary, 'unmappedCustomers', 'UnmappedCustomers'),
+        topDemandGaps: this.readTopDemandGaps(summary)
+      },
+      cities: cities.map((city) => this.mapCoverageCity(city)),
+      regionRollup: (this.readArray(response, 'regionRollup') ?? this.readArray(response, 'RegionRollup') ?? []).map(
+        (row) => {
+          const region = row as Record<string, unknown>;
+          return {
+            regionCode: this.readString(region, 'regionCode', 'RegionCode'),
+            regionNameAr: this.readString(region, 'regionNameAr', 'RegionNameAr'),
+            regionNameEn: this.readString(region, 'regionNameEn', 'RegionNameEn'),
+            customerCount: this.readNumber(region, 'customerCount', 'CustomerCount'),
+            activeVendorCount: this.readNumber(region, 'activeVendorCount', 'ActiveVendorCount'),
+            readyDriverCount: this.readNumber(region, 'readyDriverCount', 'ReadyDriverCount'),
+            citiesWithGaps: this.readNumber(region, 'citiesWithGaps', 'CitiesWithGaps')
+          };
+        }
+      )
+    };
+  }
+
+  private mapCoverageCity(city: unknown): GeographyCoverageSnapshot['cities'][number] {
+    const row = city as Record<string, unknown>;
+    const routes = this.readRecord(row, 'routes') ?? this.readRecord(row, 'Routes');
+
+    return {
+      cityCode: this.readString(row, 'cityCode', 'CityCode'),
+      regionCode: this.readString(row, 'regionCode', 'RegionCode'),
+      cityNameAr: this.readString(row, 'cityNameAr', 'CityNameAr'),
+      cityNameEn: this.readString(row, 'cityNameEn', 'CityNameEn'),
+      customerCount: this.readNumber(row, 'customerCount', 'CustomerCount'),
+      activeVendorCount: this.readNumber(row, 'activeVendorCount', 'ActiveVendorCount'),
+            readyDriverCount: this.readNumber(row, 'readyDriverCount', 'ReadyDriverCount'),
+            verifiedDriverCount: this.readNumber(row, 'verifiedDriverCount', 'VerifiedDriverCount'),
+      activeBranchCount: this.readNumber(row, 'activeBranchCount', 'ActiveBranchCount'),
+      gapFlags: (this.readArray(row, 'gapFlags') ?? this.readArray(row, 'GapFlags') ?? []) as GeographyCoverageSnapshot['cities'][number]['gapFlags'],
+      routes: {
+        customers: this.readString(routes, 'customers', 'Customers') || '/customers',
+        vendors: this.readString(routes, 'vendors', 'Vendors') || '/vendors',
+        drivers: this.readString(routes, 'drivers', 'Drivers') || '/drivers'
+      }
+    };
+  }
+
+  private readTopDemandGaps(summary: Record<string, unknown> | null): GeographyCoverageSnapshot['summary']['topDemandGaps'] {
+    const rows = this.readArray(summary, 'topDemandGaps') ?? this.readArray(summary, 'TopDemandGaps') ?? [];
+    return rows.map((row) => {
+      const item = row as Record<string, unknown>;
+      return {
+        cityCode: this.readString(item, 'cityCode', 'CityCode'),
+        cityNameAr: this.readString(item, 'cityNameAr', 'CityNameAr'),
+        cityNameEn: this.readString(item, 'cityNameEn', 'CityNameEn'),
+        customerCount: this.readNumber(item, 'customerCount', 'CustomerCount'),
+        gapFlags: (this.readArray(item, 'gapFlags') ?? this.readArray(item, 'GapFlags') ?? []) as GeographyCoverageSnapshot['summary']['topDemandGaps'][number]['gapFlags']
+      };
+    });
+  }
+
+  private readRecord(source: Record<string, unknown> | null, key: string): Record<string, unknown> | null {
+    const value = source?.[key];
+    return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+  }
+
+  private readArray(source: Record<string, unknown> | null, key: string): unknown[] | null {
+    const value = source?.[key];
+    return Array.isArray(value) ? value : null;
+  }
+
+  private readString(source: Record<string, unknown> | null | undefined, ...keys: string[]): string {
+    if (!source) {
+      return '';
+    }
+
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === 'string') {
+        return value;
+      }
+    }
+
+    return '';
+  }
+
+  private readNumber(source: Record<string, unknown> | null | undefined, ...keys: string[]): number {
+    if (!source) {
+      return 0;
+    }
+
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === 'number') {
+        return value;
+      }
+    }
+
+    return 0;
+  }
 
   getDashboardSnapshot(
     filterState: DashboardFilterState,

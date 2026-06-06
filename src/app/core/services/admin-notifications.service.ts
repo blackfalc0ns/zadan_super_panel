@@ -307,7 +307,7 @@ export class AdminNotificationsService {
       return `/drivers/${encodeURIComponent(notification.referenceId)}`;
     }
     if (notification.category === 'vendors' && notification.referenceId) {
-      return `/vendors/${encodeURIComponent(notification.referenceId)}`;
+      return `/vendors/${encodeURIComponent(notification.referenceId)}/overview`;
     }
     if (notification.category === 'refunds') return '/finances/refunds';
     if (notification.category === 'settlements') return '/finances/settlements';

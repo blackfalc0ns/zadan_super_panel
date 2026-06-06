@@ -149,6 +149,6 @@ export class VendorsApplicationsComponent implements OnInit {
   }
 
   viewDetails(vendor: Vendor): void {
-    this.router.navigate(['/vendors/view', vendor.id]);
+    this.router.navigate(['/vendors', vendor.id, 'overview']);
   }
 }

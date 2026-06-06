@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Input, Output, EventEmitter, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { IsActiveMatchOptions, Router } from '@angular/router';
+import { IsActiveMatchOptions, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -20,10 +22,21 @@ export class SidebarComponent {
     @Output() toggleCollapse = new EventEmitter<void>();
 
     private readonly router = inject(Router);
+    private readonly cdr = inject(ChangeDetectorRef);
+    private readonly destroyRef = inject(DestroyRef);
     private readonly authService = inject(AuthService);
     private readonly accessService = inject(AccessService);
     
     readonly currentUser$ = this.authService.currentUser$;
+
+    constructor() {
+        this.router.events
+            .pipe(
+                filter((event) => event instanceof NavigationEnd),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe(() => this.cdr.markForCheck());
+    }
 
     private readonly exactMatchOptions: IsActiveMatchOptions = {
         paths: 'exact',
@@ -51,13 +64,23 @@ export class SidebarComponent {
         void this.router.navigateByUrl(route);
     }
 
+    get currentVendorId(): string | null {
+        const match = this.router.url.match(/^\/vendors\/([^/?#]+)/);
+        const candidate = match?.[1]?.trim();
+        return candidate && candidate !== 'view' ? candidate : null;
+    }
+
     get currentVendorDisputesRoute(): string | null {
-        const match = this.router.url.match(/^\/vendors\/([^\/?#]+)(?:\/|$)/);
-        return match ? `/vendors/${match[1]}/disputes` : null;
+        return this.currentVendorId ? `/vendors/${this.currentVendorId}/disputes` : null;
     }
 
     get isInsideVendorDetail(): boolean {
-        return this.currentVendorDisputesRoute !== null;
+        return this.currentVendorId !== null;
+    }
+
+    get isVendorDisputesActive(): boolean {
+        const route = this.currentVendorDisputesRoute;
+        return route ? this.isActive(route, true) : false;
     }
 
     navItemClasses(route: string, exact = false): string[] {

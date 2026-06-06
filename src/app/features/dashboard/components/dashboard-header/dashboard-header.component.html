@@ -27,7 +27,7 @@
           <app-searchable-select [ngModel]="filterState.vendorId" [searchable]="true" (ngModelChange)="onVendorChange($event)" [options]="vendorOptions" [placeholder]="'DASHBOARD.FILTERS.VENDOR' | translate" [dropdownPanelClass]="'min-w-72'" class="dashboard-header-select block w-60 text-[10px] font-semibold"></app-searchable-select>
         </div>
         <div class="dashboard-filter-field relative">
-          <app-searchable-select [ngModel]="filterState.region" [searchable]="false" (ngModelChange)="onRegionChange($event)" [options]="regionOptions" [placeholder]="'DASHBOARD.FILTERS.REGION' | translate" [dropdownPanelClass]="'min-w-56'" class="dashboard-header-select block w-52 text-[10px] font-semibold"></app-searchable-select>
+          <app-searchable-select [ngModel]="filterState.region" [searchable]="true" (ngModelChange)="onRegionChange($event)" [options]="regionOptions" [placeholder]="'DASHBOARD.FILTERS.REGION' | translate" [dropdownPanelClass]="'min-w-56'" class="dashboard-header-select block w-52 text-[10px] font-semibold"></app-searchable-select>
         </div>
         <div class="dashboard-filter-field relative">
           <app-searchable-select [ngModel]="filterState.dateRange" [searchable]="false" (ngModelChange)="onDateRangeChange($event)" [options]="dateRangeOptions" [placeholder]="'DASHBOARD.FILTERS.DATE_RANGE' | translate" [dropdownPanelClass]="'min-w-44'" class="dashboard-header-select block w-32 text-[10px] font-semibold"></app-searchable-select>

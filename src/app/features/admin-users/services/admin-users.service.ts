@@ -472,7 +472,7 @@ export class AdminUsersService {
             acceptedAt: operationalStatus === 'active' ? '2026-02-11 09:35 AM' : null,
             verificationState: 'verified'
           },
-          entityPath: `/vendors/${vendor.id}`,
+          entityPath: `/vendors/${vendor.id}/overview`,
           tags: [vendor.reviewState ?? 'submitted', vendor.payoutStatus ?? 'Pending']
         })),
         this.normalizeUser(this.buildIdentity({
@@ -509,7 +509,7 @@ export class AdminUsersService {
             acceptedAt: operationalStatus === 'active' ? '2026-02-14 10:55 AM' : null,
             verificationState: vendor.reviewState === 'verified' ? 'verified' : 'pending'
           },
-          entityPath: `/vendors/${vendor.id}`,
+          entityPath: `/vendors/${vendor.id}/overview`,
           tags: [vendor.businessType, vendor.region ?? '']
         })),
         this.normalizeUser(this.buildIdentity({
@@ -545,7 +545,7 @@ export class AdminUsersService {
             acceptedAt: operationalStatus === 'active' ? '2026-02-18 11:22 AM' : null,
             verificationState: 'verified'
           },
-          entityPath: `/vendors/${vendor.id}`,
+          entityPath: `/vendors/${vendor.id}/overview`,
           tags: ['finance', vendor.payoutStatus ?? 'Pending']
         })),
         this.normalizeUser(this.buildIdentity({
@@ -581,7 +581,7 @@ export class AdminUsersService {
             acceptedAt: operationalStatus === 'active' ? '2026-02-19 09:15 AM' : null,
             verificationState: 'verified'
           },
-          entityPath: `/vendors/${vendor.id}`,
+          entityPath: `/vendors/${vendor.id}/overview`,
           tags: ['support']
         }))
       ];
@@ -626,7 +626,7 @@ export class AdminUsersService {
             acceptedAt: operationalStatus === 'active' ? '2026-02-21 12:40 PM' : null,
             verificationState: 'verified'
           },
-          entityPath: `/vendors/${vendor.id}`,
+          entityPath: `/vendors/${vendor.id}/overview`,
           tags: [branch.name, 'branch']
         })));
 
@@ -668,7 +668,7 @@ export class AdminUsersService {
             acceptedAt: operationalStatus === 'active' ? '2026-02-22 08:37 AM' : null,
             verificationState: 'verified'
           },
-          entityPath: `/vendors/${vendor.id}`,
+          entityPath: `/vendors/${vendor.id}/overview`,
           tags: [branch.name, 'branch']
         })));
       });

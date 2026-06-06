@@ -81,8 +81,8 @@
                 <span>{{ registrationDate }}</span>
               </div>
               <div class="flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-slate-50/80 px-3 py-1.5 text-xs font-bold text-slate-700 backdrop-blur-md">
-                <span class="material-symbols-outlined text-[16px] text-zadna-accent">category</span>
-                <span>{{ category }}</span>
+                <span class="material-symbols-outlined text-[16px] text-zadna-accent">location_on</span>
+                <span>{{ cityLabel }}</span>
               </div>
             </div>
           </div>
@@ -179,8 +179,7 @@
       <app-detail-tabs-nav
         class="block w-full"
         [tabs]="navTabs"
-        [activeTab]="activeTab"
-        (tabChange)="onTabClick($event)">
+        [activeTab]="activeTab">
       </app-detail-tabs-nav>
     </div>
 

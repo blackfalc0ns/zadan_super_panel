@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, DestroyRef, Input, OnChanges, SimpleChanges, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -27,7 +27,6 @@ interface Tab {
 })
 export class VendorDetailHeaderComponent implements OnChanges {
   private readonly cdr = inject(ChangeDetectorRef);
-  @Output() tabChanged = new EventEmitter<string>();
   @Input() activeTab = 'overview';
 
   currentLang = 'ar';
@@ -36,7 +35,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
   title = '';
   vendorId = '';
   registrationDate = '';
-  category = '';
+  cityLabel = '';
   statusLabelKey = 'VENDORS.STATUS.PENDING';
   verificationLabelKey = 'VENDORS.STATUS.PENDING';
   performanceRating = 0;
@@ -118,13 +117,6 @@ export class VendorDetailHeaderComponent implements OnChanges {
         tab.active = tab.id === changes['activeTab'].currentValue;
       });
     }
-  }
-
-  onTabClick(tabId: string): void {
-    this.tabs.forEach((tab) => {
-      tab.active = tab.id === tabId;
-    });
-    this.tabChanged.emit(tabId);
   }
 
   onShare(): void {
@@ -276,7 +268,8 @@ export class VendorDetailHeaderComponent implements OnChanges {
   get navTabs(): DetailTabNavItem[] {
     return this.tabs.map((tab) => ({
       id: tab.id,
-      labelKey: tab.labelKey
+      labelKey: tab.labelKey,
+      route: tab.id
     }));
   }
 
@@ -298,14 +291,8 @@ export class VendorDetailHeaderComponent implements OnChanges {
       ? this.getDisplayStoreName(this.vendor)
       : this.translate.instant('VENDOR_DETAIL.HEADER_TITLE');
     this.vendorId = this.vendor?.id ?? '';
-    this.registrationDate = this.vendor?.createdAtUtc
-      ? new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        }).format(new Date(this.vendor.createdAtUtc))
-      : this.translate.instant('VENDOR_DETAIL.REGISTERED_SINCE');
-    this.category = this.getDisplayBusinessType(this.vendor?.businessType) || this.translate.instant('VENDOR_DETAIL.CATEGORY_VALUE');
+    this.registrationDate = this.formatRegistrationDate(this.vendor?.createdAtUtc);
+    this.cityLabel = this.getLocalizedCity(this.vendor?.city) || this.translate.instant('VENDOR_DETAIL.CITY_NOT_SET');
     this.statusLabelKey = this.resolveStatusLabelKey(this.vendor);
     this.verificationLabelKey = this.resolveVerificationLabelKey(this.vendor);
     this.riskLevelLabelKey = this.resolveRiskLevelLabelKey(this.vendor);
@@ -342,28 +329,40 @@ export class VendorDetailHeaderComponent implements OnChanges {
     return preferred?.trim() || alternate?.trim() || vendor.ownerName?.trim() || vendor.contactEmail?.trim() || this.translate.instant('VENDOR_DETAIL.HEADER_TITLE');
   }
 
-  private getDisplayBusinessType(businessType?: string | null): string {
-    const normalized = (businessType || '').trim();
-    if (!normalized) {
+  private getLocalizedCity(city?: string | null): string {
+    if (!city?.trim()) {
       return '';
     }
 
-    const keyMap: Record<string, string> = {
-      electronics: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.ELECTRONICS',
-      food: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FOOD',
-      grocery: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FOOD',
-      fashion: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.FASHION',
-      home: 'MODALS.STORE_EDIT.ACTIVITY_TYPES.HOME'
-    };
+    const clean = city.trim();
+    const key = `COMMON.CITIES.${clean.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : clean;
+  }
 
-    const translatedKey = keyMap[normalized.toLowerCase()];
-    if (translatedKey) {
-      return this.translate.instant(translatedKey);
+  private formatRegistrationDate(value?: string | null): string {
+    const parsed = this.parseUtcDate(value);
+    if (!parsed) {
+      return this.translate.instant('VENDOR_DETAIL.REGISTERED_SINCE');
     }
 
-    return normalized
-      .replace(/[_-]+/g, ' ')
-      .replace(/\b\w/g, (value) => value.toUpperCase());
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC'
+    }).format(parsed);
+  }
+
+  private parseUtcDate(value?: string | null): Date | null {
+    if (!value?.trim()) {
+      return null;
+    }
+
+    const trimmed = value.trim();
+    const normalized = /(?:Z|[+-]\d{2}:\d{2})$/i.test(trimmed) ? trimmed : `${trimmed}Z`;
+    const date = new Date(normalized);
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 
   private resolveStatusLabelKey(vendor: VendorDetail | null): string {
