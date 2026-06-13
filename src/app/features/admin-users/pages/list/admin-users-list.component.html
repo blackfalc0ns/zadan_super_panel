@@ -177,6 +177,10 @@
             [activeFiltersLabel]="'ADMIN_USERS.FILTERS.ACTIVE_COUNT' | translate">
         </app-advanced-filter-panel>
 
+        <div *ngIf="pageError && !isLoading" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+            {{ pageError }}
+        </div>
+
         <!-- 4. Data Table (desktop) -->
         <div *ngIf="!isLoading" class="admin-users-table-wrap hidden lg:block">
         <app-data-table
@@ -424,11 +428,8 @@
                     {{ 'COMMON.CANCEL' | translate }}
                 </button>
                 <button type="button" (click)="createUser()" [disabled]="isCreatingUser || !canSubmitCreateUser" class="h-11 px-6 rounded-2xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[13px] font-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all">
-                    <span *ngIf="isCreatingUser" class="admin-skeleton admin-skeleton-line sm w-16"></span>
-                    <ng-container *ngIf="!isCreatingUser">
-                        <span class="material-symbols-outlined text-[18px]">person_add</span>
-                        {{ 'ADMIN_USERS.ACTIONS.ADD_USER' | translate }}
-                    </ng-container>
+                    <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isCreatingUser">{{ isCreatingUser ? 'progress_activity' : 'person_add' }}</span>
+                    {{ (isCreatingUser ? 'ADMIN_USERS.ACTIONS.ADDING_USER' : 'ADMIN_USERS.ACTIONS.ADD_USER') | translate }}
                 </button>
             </div>
         </div>

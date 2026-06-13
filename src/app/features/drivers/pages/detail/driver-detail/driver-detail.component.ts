@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
@@ -20,6 +19,7 @@ import {
 import { DriverLifecycleTabId, DriverPreviewType } from '@drivers/models/driver-view.types';
 import { DriverDetailViewComponent } from '@drivers/components/driver-detail-view/driver-detail-view.component';
 import { ToastService } from '@shared/services/toast.service';
+import { describeApiError } from '@shared/utils/api-error.util';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -374,7 +374,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
         console.error('Driver test notification failed', err);
         this.toastService.error(
-          this.describeApiError(err),
+          describeApiError(err, this.translate, { fallbackKey: 'DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_FAILED' }),
           this.t('DRIVERS.DETAIL.TEST_NOTIFICATION.TOAST_TITLE')
         );
       }
@@ -410,7 +410,9 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.cdr.markForCheck();
         console.error('Driver mutation failed', err);
-        this.toastService.error(this.describeApiError(err));
+        this.toastService.error(
+          describeApiError(err, this.translate, { fallbackKey: 'DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_FAILED' })
+        );
       }
     });
   }
@@ -542,31 +544,4 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     return normalizedReason;
   }
 
-  private describeApiError(error: unknown): string {
-    if (error instanceof HttpErrorResponse) {
-      const validation = error.error?.errors as Record<string, string[]> | undefined;
-      if (validation) {
-        const firstKey = Object.keys(validation)[0];
-        const firstMessage = firstKey ? validation[firstKey]?.[0] : null;
-        if (firstMessage) {
-          return firstMessage;
-        }
-      }
-
-      const detail = error.error?.detail ?? error.error?.title ?? error.error?.message;
-      if (typeof detail === 'string' && detail.trim()) {
-        return detail.trim();
-      }
-
-      if (typeof error.message === 'string' && error.message.trim()) {
-        return error.message.trim();
-      }
-    }
-
-    if (error instanceof Error && error.message.trim()) {
-      return error.message.trim();
-    }
-
-    return this.t('DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_FAILED');
-  }
 }

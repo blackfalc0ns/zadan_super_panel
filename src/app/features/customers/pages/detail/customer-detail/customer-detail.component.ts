@@ -9,6 +9,7 @@ import {
   CustomersService
 } from '@customers/services/customers.api.service';
 import { ToastService } from '@shared/services/toast.service';
+import { describeApiError } from '@shared/utils/api-error.util';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { InlineBannerComponent } from '../../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../../shared/components/ui/key-value-grid/key-value-grid.component';
@@ -519,7 +520,7 @@ export class CustomerDetailComponent implements OnInit {
       error: (error) => {
         this.cdr.markForCheck();
         this.toastService.error(
-          this.describeApiError(error),
+          describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' }),
           'إشعارات العميل'
         );
       }
@@ -706,40 +707,6 @@ export class CustomerDetailComponent implements OnInit {
     }
 
     return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW';
-  }
-
-  private describeApiError(error: unknown): string {
-    if (typeof error !== 'object' || error === null) {
-      return 'تعذر إرسال الإشعار الآن. حاول مرة أخرى.';
-    }
-
-    const candidate = error as {
-      status?: number;
-      error?: {
-        detail?: string;
-        title?: string;
-        errors?: Record<string, string[]>;
-      };
-      message?: string;
-    };
-
-    if (candidate.status === 401 || candidate.status === 403) {
-      return 'الجلسة الحالية لا تسمح بتنفيذ هذا الإجراء.';
-    }
-
-    const validation = candidate.error?.errors;
-    if (validation) {
-      const firstKey = Object.keys(validation)[0];
-      const firstMessage = firstKey ? validation[firstKey]?.[0] : null;
-      if (firstMessage) {
-        return firstMessage;
-      }
-    }
-
-    return candidate.error?.detail
-      ?? candidate.error?.title
-      ?? candidate.message
-      ?? 'تعذر إرسال الإشعار الآن. حاول مرة أخرى.';
   }
 
   getLastSupportContactKey(): string {

@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Brand, Category } from '@catalog/models/catalog.domain.models';
+import { ToastService } from '@shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.util';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
@@ -47,11 +49,13 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   activeInputLang: 'ar' | 'en' = 'ar';
   leafCategories: BrandCategoryOption[] = [];
   categorySearch = '';
+  saveErrorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private catalogService: CatalogService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private toastService: ToastService
   ) {
     this.initForm();
   }
@@ -87,7 +91,7 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Failed to load brand categories', err);
+        console.error('Failed to load brand categories', buildSafeApiErrorLog(err));
         this.leafCategories = [];
       }
     });
@@ -113,7 +117,10 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Upload failed', err);
+        console.error('Brand asset upload failed', buildSafeApiErrorLog(err));
+        const message = describeApiError(err, this.translate, { fallbackKey: 'BRANDS.UPLOAD_FAILED', codePrefix: 'BRANDS.ERROR_CODES' });
+        this.saveErrorMessage = message;
+        this.toastService.error(message, this.translate.instant('BRANDS.TOAST_TITLE'));
         this.setUploadingState(field, false);
       }
     });
@@ -124,6 +131,12 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   }
 
   onSubmit(): void {
+    if (this.isSaving || this.isUploadingLogo || this.isUploadingCover) {
+      return;
+    }
+
+    this.saveErrorMessage = null;
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -136,18 +149,25 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       categoryIds,
       categoryId: categoryIds[0] ?? null
     };
+    const successKey = this.mode === 'create' ? 'BRANDS.SAVE_CREATED' : 'BRANDS.SAVE_UPDATED';
 
     if (this.mode === 'create') {
       this.catalogService.createBrand(payload).subscribe({
         next: () => {
         this.cdr.markForCheck();
           this.isSaving = false;
+          this.toastService.success(
+            this.translate.instant(successKey),
+            this.translate.instant('BRANDS.TOAST_TITLE')
+          );
           this.saved.emit();
           this.onClose();
         },
         error: (err: unknown) => {
         this.cdr.markForCheck();
-          console.error('Save failed', err);
+          console.error('Brand create failed', buildSafeApiErrorLog(err));
+          this.saveErrorMessage = describeApiError(err, this.translate, { fallbackKey: 'BRANDS.SAVE_FAILED', codePrefix: 'BRANDS.ERROR_CODES' });
+          this.toastService.error(this.saveErrorMessage, this.translate.instant('BRANDS.TOAST_TITLE'));
           this.isSaving = false;
         }
       });
@@ -158,12 +178,18 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
       next: () => {
         this.cdr.markForCheck();
         this.isSaving = false;
+        this.toastService.success(
+          this.translate.instant(successKey),
+          this.translate.instant('BRANDS.TOAST_TITLE')
+        );
         this.saved.emit();
         this.onClose();
       },
       error: (err: unknown) => {
         this.cdr.markForCheck();
-        console.error('Save failed', err);
+        console.error('Brand update failed', buildSafeApiErrorLog(err));
+        this.saveErrorMessage = describeApiError(err, this.translate, { fallbackKey: 'BRANDS.SAVE_FAILED', codePrefix: 'BRANDS.ERROR_CODES' });
+        this.toastService.error(this.saveErrorMessage, this.translate.instant('BRANDS.TOAST_TITLE'));
         this.isSaving = false;
       }
     });
@@ -171,6 +197,8 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
 
   onClose(): void {
     this.categorySearch = '';
+    this.saveErrorMessage = null;
+    this.isSaving = false;
     this.form.reset({ isActive: true, categoryId: null, categoryIds: [], logoUrl: '', coverImageUrl: '' });
     this.close.emit();
   }
@@ -256,6 +284,8 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     }
 
     this.categorySearch = '';
+    this.saveErrorMessage = null;
+    this.isSaving = false;
 
     if (this.mode === 'edit' && this.brand) {
       this.form.reset({
@@ -305,4 +335,5 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
 
     return result;
   }
+
 }

@@ -11,6 +11,8 @@ import { DataTableComponent, TableColumn } from '@shared/components/ui/data-tabl
 import { AppPaginationComponent } from '@shared/components/ui/pagination/pagination.component';
 import { AdvancedFilterPanelComponent, FilterField } from '@shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { SystemLogEntryDto, SystemLogsApiService, SystemLogsQuery } from '../../../core/services/system-logs-api.service';
+import { ToastService } from '@shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.util';
 
 type LogStatusFilter = boolean | '';
 
@@ -106,6 +108,8 @@ export class SystemLogsComponent implements OnInit {
     this.loadLogs();
   }
 
+  constructor(private readonly toastService: ToastService) {}
+
   private updateFilterOptions(): void {
     this.filterFields[0].options = [
       { label: 'SYSTEM_LOGS.FILTERS.ALL', value: '' },
@@ -142,9 +146,12 @@ export class SystemLogsComponent implements OnInit {
         this.isLoading = false;
         this.updateKpiCards();
       },
-      error: () => {
+      error: (error) => {
         this.cdr.markForCheck();
-        this.errorMessage = this.translate.instant('SYSTEM_LOGS.STATES.ERROR');
+        console.error('Failed to load system logs', buildSafeApiErrorLog(error));
+        this.errorMessage = describeApiError(error, this.translate, {
+          fallbackKey: 'SYSTEM_LOGS.STATES.ERROR'
+        });
         this.logs = [];
         this.isLoading = false;
       }
@@ -272,9 +279,21 @@ export class SystemLogsComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
         this.isExporting = false;
+        this.toastService.success(
+          this.translate.instant('SYSTEM_LOGS.MESSAGES.EXPORT_SUCCESS'),
+          this.translate.instant('SYSTEM_LOGS.TITLE')
+        );
       },
-      error: () => {
-        this.cdr.markForCheck(); this.isExporting = false; }
+      error: (error) => {
+        this.cdr.markForCheck();
+        this.isExporting = false;
+        this.toastService.error(
+          describeApiError(error, this.translate, {
+            fallbackKey: 'SYSTEM_LOGS.MESSAGES.EXPORT_FAILED'
+          }),
+          this.translate.instant('SYSTEM_LOGS.TITLE')
+        );
+      }
     });
   }
 

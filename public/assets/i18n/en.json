@@ -98,7 +98,17 @@
     "REJECTED": "Rejected",
     "RETRY": "Retry",
     "DOWNLOAD": "Download",
-    "UPLOAD": "Upload"
+    "UPLOAD": "Upload",
+    "API_ERRORS": {
+      "NETWORK": "Could not connect to the server. Please check that the API is running and try again.",
+      "UNAUTHORIZED": "You are not authorized to complete this action. Sign in again or request access.",
+      "CONFLICT": "This change conflicts with existing data. Review the values and try again.",
+      "UNKNOWN": "Something went wrong while saving. Please try again."
+    },
+    "API_ERROR_CODES": {
+      "INVALID_CSRF_TOKEN": "Your security session expired. Refresh the page and try again.",
+      "TEMP_PASSWORD_CHANGE_REQUIRED": "You must change your temporary password before continuing."
+    }
   },
   "VALIDATION": {
     "REQUIRED": "This field is required"
@@ -853,6 +863,7 @@
       "CONFIRM_SAVE_TITLE": "Confirm Settings Save",
       "CONFIRM_SAVE_MESSAGE": "Pricing settings, VAT, and COD fees for the selected zone will be saved.",
       "SAVE_SUCCESS": "Zone settings saved and successfully linked to the backend.",
+      "SAVE_FAILED": "Could not save pricing settings at this time.",
       "LOAD_ZONES": "Loading zones...",
       "UPDATE": "Update",
       "DISCARD": "Discard Changes",
@@ -1132,7 +1143,8 @@
     "LOADING": "Loading your profile...",
     "BADGE": "Admin account",
     "ACTIONS": {
-      "SAVE": "Save changes"
+      "SAVE": "Save changes",
+      "SAVING": "Saving..."
     },
     "STATUS": {
       "ACTIVE": "Account active",
@@ -1202,6 +1214,13 @@
       "NOTIFICATION_SOUND_SAVED_LOCAL": "Notification sound saved locally on this browser.",
       "NOTIFICATION_SOUND_SAVED": "Notification sound saved.",
       "NOTIFICATION_SOUND_SAVE_FAILED": "Unable to save notification sound right now."
+    },
+    "ERROR_CODES": {
+      "INVALID_CSRF_TOKEN": "Your security session expired. Refresh the page and try again.",
+      "TEMP_PASSWORD_CHANGE_REQUIRED": "You must change your temporary password before updating profile details.",
+      "CURRENT_PASSWORD_INVALID": "The current password is not correct.",
+      "PasswordMismatch": "The current password is not correct.",
+      "ValidationFailed": "Review the highlighted fields and try again."
     }
   },
   "LIVE_OPS_PAGE": {
@@ -1775,7 +1794,8 @@
       "RESET": "Reset",
       "REFRESH": "Refresh now",
       "EXPORT_CSV": "Export CSV",
-      "EXPORTING": "Exporting..."
+      "EXPORTING": "Exporting...",
+      "REFRESHING": "Refreshing..."
     },
     "CARDS": {
       "TOTAL": "Total logs",
@@ -1858,6 +1878,10 @@
       "STATUS_ACTIVE": "Live stream active",
       "STATUS_PAUSED": "Auto-refresh paused",
       "NEW_ENTRIES": "{{count}} new"
+    },
+    "MESSAGES": {
+      "EXPORT_SUCCESS": "System logs exported successfully.",
+      "EXPORT_FAILED": "Unable to export system logs right now."
     }
   },
   "VENDORS": {
@@ -2703,6 +2727,21 @@
     "CONFIRM_DELETE_MSG": "Are you sure you want to delete this brand? This action cannot be undone.",
     "CONFIRM_BULK_DELETE_TITLE": "Confirm Delete Selected Brands",
     "CONFIRM_BULK_DELETE_MSG": "Are you sure you want to delete the selected brands? This action cannot be undone.",
+    "SAVING": "Saving...",
+    "TOAST_TITLE": "Brands",
+    "SAVE_CREATED": "Brand saved successfully.",
+    "SAVE_UPDATED": "Brand changes saved successfully.",
+    "SAVE_FAILED_TITLE": "Unable to save brand",
+    "SAVE_FAILED": "We could not save the brand right now. Please review the data and try again.",
+    "UPLOAD_FAILED": "We could not upload the brand image right now. Please try again.",
+    "ERROR_NETWORK": "Connection to the server failed. Check your connection and try again.",
+    "ERROR_UNAUTHORIZED": "Your admin session is not authorized to save this brand.",
+    "ERROR_CONFLICT": "A brand with the same name already exists. Please update the duplicated value.",
+    "ERROR_CODES": {
+      "DuplicateBrand": "A brand with the same name already exists.",
+      "DuplicateName": "A brand with the same name already exists.",
+      "CategoryNotFound": "One of the selected categories is no longer available."
+    },
     "DELETE_FAILED": "Failed to delete brand",
     "VAULT_INIT": "Loading brand list...",
     "EMPTY_TITLE": "No brands found",
@@ -2821,6 +2860,21 @@
     "IMAGE": "Item Image",
     "IMAGE_SELECT": "Select Professional Image",
     "IMAGE_DESC": "Prefer using transparent images (PNG) or high-quality images with uniform background.",
+    "SAVING": "Saving...",
+    "TOAST_TITLE": "Categories",
+    "SAVE_CREATED": "Category saved successfully.",
+    "SAVE_UPDATED": "Category changes saved successfully.",
+    "SAVE_FAILED_TITLE": "Unable to save category",
+    "SAVE_FAILED": "We could not save the category right now. Please review the data and try again.",
+    "UPLOAD_FAILED": "We could not upload the category image right now. Please try again.",
+    "ERROR_NETWORK": "Connection to the server failed. Check your connection and try again.",
+    "ERROR_UNAUTHORIZED": "Your admin session is not authorized to save this category.",
+    "ERROR_CONFLICT": "A category with the same name or order already exists at this level.",
+    "ERROR_CODES": {
+      "DuplicateCategory": "A category with the same name already exists at this level.",
+      "DuplicateName": "A category with the same name already exists at this level.",
+      "ParentCategoryNotFound": "The selected parent category is no longer available."
+    },
     "MODAL": {
       "ADD_TITLE": "Add New {{level}}",
       "EDIT_TITLE": "Edit {{level}}",
@@ -3068,6 +3122,22 @@
     "SYSTEM_IDENTIFIER": "Technical System ID",
     "SLUG_LABEL": "Slug *",
     "SLUG_PLACEHOLDER": "Ex: milk-almarai-1l",
+    "SAVING": "Saving...",
+    "TOAST_TITLE": "Master catalog",
+    "SAVE_CREATED": "Product saved successfully in the master catalog.",
+    "SAVE_UPDATED": "Product changes saved successfully.",
+    "SAVE_FAILED_TITLE": "Unable to save product",
+    "SAVE_FAILED": "We could not save the product right now. Please review the data and try again.",
+    "ERROR_NETWORK": "Connection to the server failed. Check your connection and try again.",
+    "ERROR_UNAUTHORIZED": "Your admin session is not authorized to save this product.",
+    "ERROR_CONFLICT": "A product with the same slug or barcode already exists. Please update the duplicated value.",
+    "ERROR_CODES": {
+      "DuplicateSlug": "A product with this slug already exists.",
+      "DuplicateBarcode": "A product with this barcode already exists.",
+      "CategoryNotFound": "The selected category is no longer available.",
+      "BrandNotFound": "The selected brand is no longer available.",
+      "UnitNotFound": "The selected unit is no longer available."
+    },
     "DELETE_FAILED": "Failed to delete product",
     "STATUS_INACTIVE": "Inactive",
     "STATUS_DISCONTINUED": "Discontinued"
@@ -6048,7 +6118,8 @@
       "BACK_TO_LIST": "Back to directory",
       "DUPLICATE": "Duplicate role",
       "CREATE_USER_DESC": "Create a login account and attach it to an access role",
-      "ADD_USER": "Add User"
+      "ADD_USER": "Add User",
+      "ADDING_USER": "Adding user..."
     },
     "SECURITY": {
       "MFA_ON": "MFA enabled",
@@ -6090,14 +6161,30 @@
         "DESCRIPTION": "Description",
         "DESCRIPTION_PLACEHOLDER": "A short role description...",
         "ACCESS_LEVEL": "Access level",
-        "PANEL_SCOPE": "Panel scope"
+        "PANEL_SCOPE": "Panel scope",
+        "CREATE_ROLE": "Create role"
       },
       "ACTIONS": {
         "CREATE_ROLE": "Create role",
         "DELETE_ROLE": "Delete role",
         "SAVE_CHANGES": "Save changes",
         "CLOSE": "Close",
-        "CANCEL": "Cancel"
+        "CANCEL": "Cancel",
+        "SAVING": "Saving...",
+        "CREATING_ROLE": "Creating role..."
+      },
+      "MESSAGES": {
+        "LOAD_ROLES_FAILED": "Unable to load roles right now.",
+        "LOAD_PERMISSIONS_FAILED": "Unable to load permissions right now.",
+        "SAVE_SUCCESS": "Role permissions saved successfully.",
+        "SAVE_FAILED": "Unable to save role permissions right now.",
+        "CREATE_SUCCESS": "Role created successfully.",
+        "CREATE_FAILED": "Unable to create the role right now.",
+        "DELETE_FAILED": "Unable to delete the role right now."
+      },
+      "ERROR_CODES": {
+        "ROLE_NAME_ALREADY_EXISTS": "This role name is already in use.",
+        "ROLE_IN_USE": "This role cannot be deleted because it is currently assigned."
       }
     },
     "DETAIL": {
@@ -6379,6 +6466,18 @@
       "CUSTOMER_ACCOUNT": {
         "NAME": "Customer Account",
         "DESC": "External customer identity focused on communication routing and lifecycle access."
+      }
+    },
+    "MESSAGES": {
+      "LOAD_FAILED": "Unable to load admin users right now.",
+      "LOAD_ROLES_FAILED": "Unable to load available roles right now.",
+      "CREATE_USER_SUCCESS": "Admin user created successfully."
+    },
+    "CREATE": {
+      "ERROR_CODES": {
+        "DUPLICATE_EMAIL": "This email address is already in use.",
+        "EMAIL_ALREADY_EXISTS": "This email address is already in use.",
+        "INVALID_ROLE": "The selected role is invalid."
       }
     }
   },

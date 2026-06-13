@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -17,6 +16,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { describeApiError } from '../../../../shared/utils/api-error.util';
 
 type NumericZoneField =
   | 'baseDeliveryFee'
@@ -808,7 +808,7 @@ export class PlatformPricingComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.cdr.markForCheck();
-        this.errorMessage = this.describeApiError(error);
+        this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.SAVE_FAILED' });
         this.allItems = [];
         this.zones = [];
         this.selectedZone = null;
@@ -895,7 +895,7 @@ export class PlatformPricingComponent implements OnInit {
       error: (error: unknown) => {
         this.cdr.markForCheck();
         this.isSaving = false;
-        this.errorMessage = this.describeApiError(error);
+        this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.SAVE_FAILED' });
         this.toastService.error(this.errorMessage, this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL'));
       }
     });
@@ -931,26 +931,6 @@ export class PlatformPricingComponent implements OnInit {
     }
 
     return Math.max(0, Math.round((value + Number.EPSILON) * 100) / 100);
-  }
-
-  private describeApiError(error: unknown): string {
-    if (error instanceof HttpErrorResponse) {
-      if (error.status === 0) {
-        return this.translate.currentLang === 'ar' 
-          ? 'تعذر الاتصال بالباك إند الخاص بالتسعير. شغّل الـ API ثم أعد المحاولة.'
-          : 'Could not connect to the pricing backend. Please ensure the API is running.';
-      }
- 
-      const apiMessage =
-        (typeof error.error === 'string' && error.error) ||
-        error.error?.message ||
-        error.error?.title ||
-        error.message;
- 
-      return apiMessage || (this.translate.currentLang === 'ar' ? 'تعذر حفظ إعدادات التسعير حاليًا.' : 'Could not save pricing settings at this time.');
-    }
- 
-    return this.translate.currentLang === 'ar' ? 'تعذر حفظ إعدادات التسعير حاليًا.' : 'Could not save pricing settings at this time.';
   }
 
   private clone<T>(value: T): T {

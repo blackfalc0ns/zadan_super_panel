@@ -23,8 +23,8 @@
                 (click)="loadLogs()"
                 [disabled]="isLoading"
                 class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group disabled:opacity-60">
-                <span class="material-symbols-outlined text-[20px] group-hover:rotate-180 transition-transform duration-500" [class.opacity-40]="isLoading">refresh</span>
-                {{ 'SYSTEM_LOGS.ACTIONS.REFRESH' | translate }}
+                <span class="material-symbols-outlined text-[20px] transition-transform duration-500" [class.animate-spin]="isLoading" [class.opacity-40]="isLoading">{{ isLoading ? 'progress_activity' : 'refresh' }}</span>
+                {{ (isLoading ? 'SYSTEM_LOGS.ACTIONS.REFRESHING' : 'SYSTEM_LOGS.ACTIONS.REFRESH') | translate }}
             </button>
         </div>
     </app-page-header>

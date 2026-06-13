@@ -23,6 +23,10 @@
   <div class="flex-1 overflow-y-auto">
     <div class="max-w-[100rem] mx-auto px-6 lg:px-8 py-6 space-y-5">
 
+      <div *ngIf="pageError && !isLoading" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+        {{ pageError }}
+      </div>
+
       <!-- Roles List — Each card shows ALL info -->
       <div *ngFor="let role of roles; trackBy: trackByRoleId"
            class="rounded-2xl border bg-white/80 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-lg group"
@@ -145,9 +149,9 @@
             </div>
             <!-- Save button -->
             <div *ngIf="!role.isSystem" class="flex justify-end mt-4">
-              <button (click)="savePermissions()" class="h-10 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[12px] font-black shadow-lg shadow-zadna-primary/20 flex items-center gap-2 hover:-translate-y-0.5 transition-all">
-                <span class="material-symbols-outlined text-[16px]">save</span>
-                حفظ الصلاحيات
+              <button (click)="savePermissions()" [disabled]="isSavingPermissions" class="h-10 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[12px] font-black shadow-lg shadow-zadna-primary/20 flex items-center gap-2 hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined text-[16px]" [class.animate-spin]="isSavingPermissions">{{ isSavingPermissions ? 'progress_activity' : 'save' }}</span>
+                {{ (isSavingPermissions ? 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.SAVING' : 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.SAVE_CHANGES') | translate }}
               </button>
             </div>
           </div>
@@ -269,14 +273,18 @@
           <input type="text" [(ngModel)]="newRoleNotificationEmails" dir="ltr" placeholder="alerts@zadana.sa, ops@zadana.sa" class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all" />
           <p class="text-[10px] text-slate-400 mt-1.5">افصل بين الإيميلات بفاصلة — ستستقبل كل التنبيهات الخاصة بالدور</p>
         </div>
+
+        <div *ngIf="createRoleError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+          {{ createRoleError }}
+        </div>
       </div>
 
       <!-- Modal Footer -->
       <div class="p-5 border-t border-slate-100 flex gap-3 bg-slate-50/50">
-        <button (click)="showModal = false" class="flex-1 h-11 rounded-xl border border-slate-300 text-slate-700 font-black hover:bg-slate-50 transition-colors text-[13px]">إلغاء</button>
-        <button (click)="createRole()" [disabled]="!newRoleName.trim()" class="flex-1 h-11 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white font-black disabled:opacity-50 hover:shadow-lg transition-all text-[13px] flex items-center justify-center gap-2">
-          <span class="material-symbols-outlined text-[16px]">add</span>
-          إنشاء الدور
+        <button (click)="showModal = false" [disabled]="isCreatingRole" class="flex-1 h-11 rounded-xl border border-slate-300 text-slate-700 font-black hover:bg-slate-50 transition-colors text-[13px] disabled:opacity-60 disabled:cursor-not-allowed">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button (click)="createRole()" [disabled]="!newRoleName.trim() || isCreatingRole" class="flex-1 h-11 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white font-black disabled:opacity-50 hover:shadow-lg transition-all text-[13px] flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[16px]" [class.animate-spin]="isCreatingRole">{{ isCreatingRole ? 'progress_activity' : 'add' }}</span>
+          {{ (isCreatingRole ? 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.CREATING_ROLE' : 'ADMIN_USERS.ROLES_MANAGEMENT.CREATE.CREATE_ROLE') | translate }}
         </button>
       </div>
     </div>

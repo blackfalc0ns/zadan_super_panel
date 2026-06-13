@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Observable, take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { ToastService } from '@shared/services/toast.service';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { AdminVendorStoreAvailabilityState } from '@vendors/services/vendor.api.service';
@@ -50,7 +51,8 @@ export class VendorSettingsComponent {
 
   constructor(
     private readonly translate: TranslateService,
-    private readonly vendorDetailFacade: VendorDetailFacade
+    private readonly vendorDetailFacade: VendorDetailFacade,
+    private readonly toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -387,7 +389,7 @@ export class VendorSettingsComponent {
           },
           error: () => {
             this.cdr.markForCheck();
-            this.dialogError = this.vendorDetailFacade.mutationError || this.text('تعذر تحديث كلمة المرور الآن.', 'Unable to reset vendor password right now.');
+            this.setDialogError(this.vendorDetailFacade.mutationError || this.text('تعذر تحديث كلمة المرور الآن.', 'Unable to reset vendor password right now.'));
             this.dialogSubmitting = false;
             this.resetPasswordQueued = false;
           },
@@ -469,7 +471,7 @@ export class VendorSettingsComponent {
         next: () => this.setSuccess(this.text('تم حفظ حالة ظهور المتجر في التطبيق بنجاح.', 'Store app visibility was saved successfully.')),
         error: () => {
           this.cdr.markForCheck();
-          this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ حالة ظهور المتجر الآن.', 'Unable to save store visibility right now.');
+          this.setPageError(this.vendorDetailFacade.mutationError || this.text('تعذر حفظ حالة ظهور المتجر الآن.', 'Unable to save store visibility right now.'));
           this.storeAvailabilitySubmitting = false;
         },
         complete: () => {
@@ -503,7 +505,7 @@ export class VendorSettingsComponent {
         next: () => this.setSuccess(this.text('تم حفظ إعدادات الإشعارات بنجاح.', 'Notification settings were saved successfully.')),
         error: () => {
           this.cdr.markForCheck();
-          this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات الإشعارات الآن.', 'Unable to save vendor notification settings right now.');
+          this.setPageError(this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات الإشعارات الآن.', 'Unable to save vendor notification settings right now.'));
           this.notificationsSubmitting = false;
         },
         complete: () => {
@@ -530,7 +532,7 @@ export class VendorSettingsComponent {
         next: () => this.setSuccess(this.text('تم حفظ إعدادات التشغيل بنجاح.', 'Operations settings were saved successfully.')),
         error: () => {
           this.cdr.markForCheck();
-          this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات التشغيل الآن.', 'Unable to save vendor operations settings right now.');
+          this.setPageError(this.vendorDetailFacade.mutationError || this.text('تعذر حفظ إعدادات التشغيل الآن.', 'Unable to save vendor operations settings right now.'));
           this.operationsSubmitting = false;
         },
         complete: () => {
@@ -562,7 +564,7 @@ export class VendorSettingsComponent {
         next: () => this.setSuccess(this.text('تم حفظ نسبة العمولة بنجاح.', 'Commission rate was saved successfully.')),
         error: () => {
           this.cdr.markForCheck();
-          this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ نسبة العمولة الآن.', 'Unable to save commission rate right now.');
+          this.setPageError(this.vendorDetailFacade.mutationError || this.text('تعذر حفظ نسبة العمولة الآن.', 'Unable to save commission rate right now.'));
           this.commissionSubmitting = false;
         },
         complete: () => {
@@ -586,7 +588,7 @@ export class VendorSettingsComponent {
           next: () => this.setSuccess(this.text('تم فتح تسجيل الدخول بنجاح.', 'Vendor login unlocked successfully.')),
           error: () => {
             this.cdr.markForCheck();
-            this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر فتح تسجيل الدخول الآن.', 'Unable to unlock vendor login right now.');
+            this.setPageError(this.vendorDetailFacade.mutationError || this.text('تعذر فتح تسجيل الدخول الآن.', 'Unable to unlock vendor login right now.'));
             this.dialogSubmitting = false;
           },
           complete: () => {
@@ -615,7 +617,7 @@ export class VendorSettingsComponent {
           next: () => this.setSuccess(this.text('تمت إعادة تشغيل الحساب بنجاح.', 'Vendor account reactivated successfully.')),
           error: () => {
             this.cdr.markForCheck();
-            this.pageError = this.vendorDetailFacade.mutationError || this.text('تعذر إعادة تشغيل الحساب الآن.', 'Unable to reactivate the vendor account right now.');
+            this.setPageError(this.vendorDetailFacade.mutationError || this.text('تعذر إعادة تشغيل الحساب الآن.', 'Unable to reactivate the vendor account right now.'));
             this.dialogSubmitting = false;
           },
           complete: () => {
@@ -673,7 +675,7 @@ export class VendorSettingsComponent {
         },
         error: () => {
           this.cdr.markForCheck();
-          this.dialogError = this.vendorDetailFacade.mutationError || fallbackMessage;
+          this.setDialogError(this.vendorDetailFacade.mutationError || fallbackMessage);
           this.dialogSubmitting = false;
         },
         complete: () => {
@@ -686,6 +688,20 @@ export class VendorSettingsComponent {
   private setSuccess(message: string): void {
     this.pageError = '';
     this.pageSuccess = message;
+    this.toastService.success(message, this.text('إعدادات المورد', 'Vendor settings'));
+    this.cdr.markForCheck();
+  }
+
+  private setPageError(message: string): void {
+    this.pageSuccess = '';
+    this.pageError = message;
+    this.toastService.error(message, this.text('إعدادات المورد', 'Vendor settings'));
+    this.cdr.markForCheck();
+  }
+
+  private setDialogError(message: string): void {
+    this.dialogError = message;
+    this.toastService.error(message, this.text('إعدادات المورد', 'Vendor settings'));
     this.cdr.markForCheck();
   }
 

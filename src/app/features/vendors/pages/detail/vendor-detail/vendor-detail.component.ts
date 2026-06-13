@@ -9,6 +9,7 @@ import { EditOwnerModalComponent, OwnerData } from '@vendors/components/workflow
 import { EditStoreModalComponent, StoreData } from '@vendors/components/workflows/edit-store-modal/edit-store-modal.component';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
+import { ToastService } from '@shared/services/toast.service';
 
 type FieldDirection = 'rtl' | 'ltr' | 'auto';
 type FeedbackTone = 'success' | 'error';
@@ -125,7 +126,8 @@ export class VendorDetailComponent implements OnInit {
 
   constructor(
     private readonly translate: TranslateService,
-    private readonly vendorDetailFacade: VendorDetailFacade
+    private readonly vendorDetailFacade: VendorDetailFacade,
+    private readonly toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -192,15 +194,15 @@ export class VendorDetailComponent implements OnInit {
         this.cdr.markForCheck();
           this.showEditOwnerModal = false;
           this.modalError = '';
-          this.setFeedback(this.text('تم تحديث بيانات المالك بنجاح.', 'Owner record updated successfully.'), 'success');
+          const message = this.text('تم تحديث بيانات المالك بنجاح.', 'Owner record updated successfully.');
+          this.setFeedback(message, 'success');
+          this.toastService.success(message, this.text('بيانات المورد', 'Vendor profile'));
         },
         error: () => {
         this.cdr.markForCheck();
           this.modalError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ بيانات المالك الآن.', 'Unable to save owner data right now.');
-          this.setFeedback(
-            this.modalError,
-            'error'
-          );
+          this.setFeedback(this.modalError, 'error');
+          this.toastService.error(this.modalError, this.text('بيانات المورد', 'Vendor profile'));
         }
       });
   }
@@ -216,15 +218,15 @@ export class VendorDetailComponent implements OnInit {
         this.cdr.markForCheck();
           this.showEditLegalBankModal = false;
           this.modalError = '';
-          this.setFeedback(this.text('تم تحديث البيانات القانونية والبنكية بنجاح.', 'Legal and banking data updated successfully.'), 'success');
+          const message = this.text('تم تحديث البيانات القانونية والبنكية بنجاح.', 'Legal and banking data updated successfully.');
+          this.setFeedback(message, 'success');
+          this.toastService.success(message, this.text('بيانات المورد', 'Vendor profile'));
         },
         error: () => {
         this.cdr.markForCheck();
           this.modalError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ البيانات القانونية والبنكية الآن.', 'Unable to save legal and banking data right now.');
-          this.setFeedback(
-            this.modalError,
-            'error'
-          );
+          this.setFeedback(this.modalError, 'error');
+          this.toastService.error(this.modalError, this.text('بيانات المورد', 'Vendor profile'));
         }
       });
   }
@@ -240,15 +242,15 @@ export class VendorDetailComponent implements OnInit {
         this.cdr.markForCheck();
           this.showEditStoreModal = false;
           this.modalError = '';
-          this.setFeedback(this.text('تم تحديث هوية المتجر بنجاح.', 'Store identity updated successfully.'), 'success');
+          const message = this.text('تم تحديث هوية المتجر بنجاح.', 'Store identity updated successfully.');
+          this.setFeedback(message, 'success');
+          this.toastService.success(message, this.text('بيانات المورد', 'Vendor profile'));
         },
         error: () => {
         this.cdr.markForCheck();
           this.modalError = this.vendorDetailFacade.mutationError || this.text('تعذر حفظ بيانات المتجر الآن.', 'Unable to save store data right now.');
-          this.setFeedback(
-            this.modalError,
-            'error'
-          );
+          this.setFeedback(this.modalError, 'error');
+          this.toastService.error(this.modalError, this.text('بيانات المورد', 'Vendor profile'));
         }
       });
   }

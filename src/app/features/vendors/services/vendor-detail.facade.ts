@@ -1,7 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, Subscription, catchError, combineLatest, finalize, interval, map, take, tap, throwError } from 'rxjs';
 import { VendorActivityLogFilters, VendorActivityLogPage, VendorDetail } from '@vendors/models/vendors.domain.models';
+import { describeApiError } from '@shared/utils/api-error.util';
 import {
   AdminSendVendorNotificationRequest,
   AdminVendorStoreAvailabilityState,
@@ -42,7 +44,10 @@ export class VendorDetailFacade implements OnDestroy {
     map(([vendorId, vendor, error]) => !!vendorId && vendor == null && !error)
   );
 
-  constructor(private readonly vendorService: VendorService) {}
+  constructor(
+    private readonly vendorService: VendorService,
+    private readonly translate: TranslateService
+  ) {}
 
   ngOnDestroy(): void {
     this.liveRefreshSubscription?.unsubscribe();
@@ -578,6 +583,10 @@ export class VendorDetailFacade implements OnDestroy {
   }
 
   private resolveErrorMessage(error: unknown): string {
+    const helperMessage = describeApiError(error, this.translate, {
+      fallbackKey: 'COMMON.API_ERRORS.UNKNOWN'
+    });
+
     if (error instanceof HttpErrorResponse) {
       const detail = error.error?.detail ?? error.error?.title ?? error.error?.message;
       if (typeof detail === 'string' && detail.trim()) {
@@ -593,7 +602,7 @@ export class VendorDetailFacade implements OnDestroy {
       return this.resolveLocalizedMessage(error.message.trim());
     }
 
-    return 'Unable to complete the request right now.';
+    return this.resolveLocalizedMessage(helperMessage);
   }
 
   private resolveLocalizedMessage(message: string): string {

@@ -4,10 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AccessService } from '@core/services/access.service';
-import { describeApiError } from '@marketing/utils/marketing-date.utils';
 import { KpiCardsComponent, KPICard } from '@shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { ToastService } from '@shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.util';
 import { Subject, catchError, debounceTime, finalize, of, switchMap } from 'rxjs';
 import {
   DIRECTORY_AUDIENCE_LABELS,
@@ -142,7 +142,7 @@ export class EmailCenterComponent implements OnInit {
             catchError((error) =>
               of({
                 ...EMPTY_RECIPIENTS,
-                warnings: [describeApiError(error)]
+                warnings: [describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' })]
               })
             ),
             finalize(() => {
@@ -271,10 +271,10 @@ export class EmailCenterComponent implements OnInit {
         },
         error: (error) => {
           this.cdr.markForCheck();
-          this.toastService.error(
-            describeApiError(error),
-            this.translate.instant('EMAIL_CENTER.TITLE')
-          );
+            this.toastService.error(
+              describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' }),
+              this.translate.instant('EMAIL_CENTER.TITLE')
+            );
         }
       });
   }
@@ -326,10 +326,10 @@ export class EmailCenterComponent implements OnInit {
         },
         error: (error) => {
           this.cdr.markForCheck();
-          this.toastService.error(
-            describeApiError(error),
-            this.translate.instant('EMAIL_CENTER.TITLE')
-          );
+            this.toastService.error(
+              describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' }),
+              this.translate.instant('EMAIL_CENTER.TITLE')
+            );
         }
       });
   }
@@ -404,7 +404,10 @@ export class EmailCenterComponent implements OnInit {
         },
         error: (error) => {
           this.cdr.markForCheck();
-          this.pageError = describeApiError(error);
+          console.error('Failed to load email center overview', buildSafeApiErrorLog(error));
+          this.pageError = describeApiError(error, this.translate, {
+            fallbackKey: 'COMMON.API_ERRORS.UNKNOWN'
+          });
         }
       });
   }
@@ -429,7 +432,7 @@ export class EmailCenterComponent implements OnInit {
           this.cdr.markForCheck();
           this.dispatches = [];
           this.toastService.error(
-            describeApiError(error),
+            describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' }),
             this.translate.instant('EMAIL_CENTER.HISTORY.BADGE')
           );
         }

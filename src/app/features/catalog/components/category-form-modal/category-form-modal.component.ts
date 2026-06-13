@@ -4,6 +4,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Category } from '@catalog/models/catalog.domain.models';
+import { ToastService } from '@shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.util';
 
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
@@ -37,11 +39,13 @@ export class CategoryFormModalComponent implements OnChanges {
     activeInputLang: 'ar' | 'en' = 'ar';
     isUploading = false;
     isSaving = false;
+    saveErrorMessage: string | null = null;
 
     constructor(
         private fb: FormBuilder, 
         private catalogService: CatalogService,
-        public translate: TranslateService
+        public translate: TranslateService,
+        private toastService: ToastService
     ) {
         this.form = this.fb.group({
             id: [''],
@@ -73,6 +77,8 @@ export class CategoryFormModalComponent implements OnChanges {
     }
 
     private resetForm() {
+        this.saveErrorMessage = null;
+        this.isSaving = false;
         this.form.reset({
             displayOrder: 1,
             isActive: true,
@@ -94,21 +100,34 @@ export class CategoryFormModalComponent implements OnChanges {
     }
 
     onSubmit() {
+        if (this.isSaving || this.isUploading) {
+            return;
+        }
+
+        this.saveErrorMessage = null;
+
         if (this.form.valid) {
             this.isSaving = true;
             const data = this.form.value;
+            const successKey = this.mode === 'create' ? 'CATEGORIES.SAVE_CREATED' : 'CATEGORIES.SAVE_UPDATED';
             
             if (this.mode === 'create') {
                 this.catalogService.createCategory(data).subscribe({
                     next: (result: Category) => {
         this.cdr.markForCheck();
                         this.isSaving = false;
+                        this.toastService.success(
+                            this.translate.instant(successKey),
+                            this.translate.instant('CATEGORIES.TOAST_TITLE')
+                        );
                         this.saved.emit(result);
                         this.onClose();
                     },
-                    error: (err: any) => {
+                    error: (err: unknown) => {
         this.cdr.markForCheck();
-                        console.error('Create failed:', err);
+                        console.error('Category create failed:', buildSafeApiErrorLog(err));
+                        this.saveErrorMessage = describeApiError(err, this.translate, { fallbackKey: 'CATEGORIES.SAVE_FAILED', codePrefix: 'CATEGORIES.ERROR_CODES' });
+                        this.toastService.error(this.saveErrorMessage, this.translate.instant('CATEGORIES.TOAST_TITLE'));
                         this.isSaving = false;
                     }
                 });
@@ -117,12 +136,18 @@ export class CategoryFormModalComponent implements OnChanges {
                     next: () => {
         this.cdr.markForCheck();
                         this.isSaving = false;
+                        this.toastService.success(
+                            this.translate.instant(successKey),
+                            this.translate.instant('CATEGORIES.TOAST_TITLE')
+                        );
                         this.saved.emit(data as Category);
                         this.onClose();
                     },
-                    error: (err: any) => {
+                    error: (err: unknown) => {
         this.cdr.markForCheck();
-                        console.error('Update failed:', err);
+                        console.error('Category update failed:', buildSafeApiErrorLog(err));
+                        this.saveErrorMessage = describeApiError(err, this.translate, { fallbackKey: 'CATEGORIES.SAVE_FAILED', codePrefix: 'CATEGORIES.ERROR_CODES' });
+                        this.toastService.error(this.saveErrorMessage, this.translate.instant('CATEGORIES.TOAST_TITLE'));
                         this.isSaving = false;
                     }
                 });
@@ -158,11 +183,15 @@ export class CategoryFormModalComponent implements OnChanges {
             },
             error: (err) => {
         this.cdr.markForCheck();
-                console.error('Upload failed:', err);
+                console.error('Category image upload failed:', buildSafeApiErrorLog(err));
+                const message = describeApiError(err, this.translate, { fallbackKey: 'CATEGORIES.UPLOAD_FAILED', codePrefix: 'CATEGORIES.ERROR_CODES' });
+                this.saveErrorMessage = message;
+                this.toastService.error(message, this.translate.instant('CATEGORIES.TOAST_TITLE'));
                 this.isUploading = false;
             }
         });
     }
+
 }
 
 

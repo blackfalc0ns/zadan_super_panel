@@ -8,6 +8,8 @@ import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-h
 import { StatusPillComponent, type StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import { AdminNotificationPreferences, AdminNotificationsService } from '@core/services/admin-notifications.service';
 import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotificationSoundService } from '@core/services/admin-notification-sound.service';
+import { describeApiError } from '@shared/utils/api-error.util';
+import { ToastService } from '@shared/services/toast.service';
 import {
   ADMIN_ROLE_PRESETS,
   DIRECTORY_PANEL_LABELS,
@@ -48,7 +50,7 @@ const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
             [disabled]="isSavingProfile || profileForm.invalid"
             class="px-6 py-3 bg-gradient-to-br from-zadna-primary to-teal-700 text-white rounded-2xl text-[14px] font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:shadow-zadna-primary/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0">
             <span class="material-symbols-outlined text-[20px]">save</span>
-            {{ 'ADMIN_PROFILE.ACTIONS.SAVE' | translate }}
+            {{ (isSavingProfile ? 'ADMIN_PROFILE.ACTIONS.SAVING' : 'ADMIN_PROFILE.ACTIONS.SAVE') | translate }}
           </button>
         </div>
       </app-page-header>
@@ -370,7 +372,8 @@ export class AdminProfileComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly translate: TranslateService,
     private readonly notificationsService: AdminNotificationsService,
-    private readonly notificationSoundService: AdminNotificationSoundService
+    private readonly notificationSoundService: AdminNotificationSoundService,
+    private readonly toastService: ToastService
   ) {
     this.selectedNotificationSound = this.notificationSoundService.getCurrentSound();
 
@@ -470,12 +473,14 @@ export class AdminProfileComponent implements OnInit {
         this.isSavingProfile = false;
         this.profileMessageType = 'success';
         this.profileMessage = this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATED');
+        this.toastService.success(this.profileMessage, this.text('ADMIN_PROFILE.TITLE'));
       },
       error: (err) => {
         this.cdr.markForCheck();
         this.isSavingProfile = false;
         this.profileMessageType = 'error';
         this.profileMessage = this.resolveProfileErrorMessage(err);
+        this.toastService.error(this.profileMessage, this.text('ADMIN_PROFILE.TITLE'));
       }
     });
   }
@@ -504,6 +509,7 @@ export class AdminProfileComponent implements OnInit {
         this.isChangingPassword = false;
         this.passwordMessageType = 'success';
         this.passwordMessage = this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATED');
+        this.toastService.success(this.passwordMessage, this.text('ADMIN_PROFILE.TITLE'));
         this.passwordForm.reset({
           currentPassword: '',
           newPassword: '',
@@ -515,6 +521,7 @@ export class AdminProfileComponent implements OnInit {
         this.isChangingPassword = false;
         this.passwordMessageType = 'error';
         this.passwordMessage = this.resolvePasswordErrorMessage(err);
+        this.toastService.error(this.passwordMessage, this.text('ADMIN_PROFILE.TITLE'));
       }
     });
   }
@@ -614,34 +621,18 @@ export class AdminProfileComponent implements OnInit {
     return this.translate.instant(key, params);
   }
 
-  private resolveProfileErrorMessage(err: { status?: number; error?: { code?: string; message?: string; detail?: string; errors?: Record<string, string[] | string> } }): string {
-    const body = err.error;
-    if (body?.code === 'TEMP_PASSWORD_CHANGE_REQUIRED') {
-      return this.text('ADMIN_PROFILE.MESSAGES.TEMP_PASSWORD_BEFORE_PROFILE');
-    }
-
-    if (body?.code === 'INVALID_CSRF_TOKEN') {
-      return this.text('ADMIN_PROFILE.MESSAGES.CSRF_SESSION_EXPIRED');
-    }
-
-    const validationErrors = body?.errors
-      ? Object.values(body.errors).flat().join(' ')
-      : null;
-
-    return validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATE_FAILED');
+  private resolveProfileErrorMessage(err: unknown): string {
+    return describeApiError(err, this.translate, {
+      fallbackKey: 'ADMIN_PROFILE.MESSAGES.PROFILE_UPDATE_FAILED',
+      codePrefix: 'ADMIN_PROFILE.ERROR_CODES'
+    });
   }
 
-  private resolvePasswordErrorMessage(err: { status?: number; error?: { code?: string; message?: string; detail?: string; errors?: Record<string, string[] | string> } }): string {
-    const body = err.error;
-    if (body?.code === 'TEMP_PASSWORD_CHANGE_REQUIRED') {
-      return this.text('ADMIN_PROFILE.MESSAGES.TEMP_PASSWORD_BEFORE_PASSWORD');
-    }
-
-    const validationErrors = body?.errors
-      ? Object.values(body.errors).flat().join(' ')
-      : null;
-
-    return validationErrors || body?.detail || body?.message || this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATE_FAILED');
+  private resolvePasswordErrorMessage(err: unknown): string {
+    return describeApiError(err, this.translate, {
+      fallbackKey: 'ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATE_FAILED',
+      codePrefix: 'ADMIN_PROFILE.ERROR_CODES'
+    });
   }
 }
 

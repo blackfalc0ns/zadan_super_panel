@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Input, OnChanges, SimpleChanges, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { HasPermissionDirective } from '@shared/directives/has-permission.directive';
 import { DetailTabNavItem, DetailTabsNavComponent } from '@shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 import { ToastService } from '@shared/services/toast.service';
+import { describeApiError } from '@shared/utils/api-error.util';
 import { VendorDetail } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
@@ -202,7 +202,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
         this.cdr.markForCheck();
         this.isSendingTestNotification = false;
         this.toastService.error(
-          this.resolveApiError(error),
+          describeApiError(error, this.translate, { fallbackKey: 'VENDOR_DETAIL.MESSAGE_COMPOSER.ERROR_SEND_FAILED' }),
           this.notificationToastTitle
         );
       }
@@ -258,7 +258,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
         this.cdr.markForCheck();
         this.isSendingTestNotification = false;
         this.toastService.error(
-          this.resolveApiError(error),
+          describeApiError(error, this.translate, { fallbackKey: 'VENDOR_DETAIL.MESSAGE_COMPOSER.ERROR_SEND_FAILED' }),
           this.notificationToastTitle
         );
       }
@@ -423,24 +423,6 @@ export class VendorDetailHeaderComponent implements OnChanges {
     );
   }
 
-  private resolveApiError(error: unknown): string {
-    if (error instanceof HttpErrorResponse) {
-      const detail = error.error?.detail ?? error.error?.title ?? error.error?.message;
-      if (typeof detail === 'string' && detail.trim()) {
-        return detail.trim();
-      }
-
-      if (typeof error.message === 'string' && error.message.trim()) {
-        return error.message.trim();
-      }
-    }
-
-    if (error instanceof Error && error.message.trim()) {
-      return error.message.trim();
-    }
-
-    return this.translate.instant('VENDOR_DETAIL.MESSAGE_COMPOSER.ERROR_SEND_FAILED');
-  }
 }
 
 

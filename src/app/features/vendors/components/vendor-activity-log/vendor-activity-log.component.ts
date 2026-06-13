@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ToastService } from '@shared/services/toast.service';
 import {
   VendorActivityLogEntry,
   VendorActivitySeverity,
@@ -63,7 +64,8 @@ export class VendorActivityLogComponent {
 
   constructor(
     private readonly translate: TranslateService,
-    private readonly vendorDetailFacade: VendorDetailFacade
+    private readonly vendorDetailFacade: VendorDetailFacade,
+    private readonly toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang === 'ar';
@@ -244,10 +246,18 @@ export class VendorActivityLogComponent {
           this.noteDraft = '';
           this.noteSubmitting = false;
           this.selectedSidePanel = 'notes';
+          this.toastService.success(
+            this.isRTL ? 'تمت إضافة الملاحظة الداخلية بنجاح.' : 'Internal note added successfully.',
+            this.isRTL ? 'سجل النشاط' : 'Activity log'
+          );
         },
         error: () => {
         this.cdr.markForCheck();
           this.noteError = this.vendorDetailFacade.mutationError || (this.isRTL ? 'تعذر إضافة الملاحظة الآن.' : 'Unable to add the note right now.');
+          this.toastService.error(
+            this.noteError,
+            this.isRTL ? 'سجل النشاط' : 'Activity log'
+          );
           this.noteSubmitting = false;
         }
       });

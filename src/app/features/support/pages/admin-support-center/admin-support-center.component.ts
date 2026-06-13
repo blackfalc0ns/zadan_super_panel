@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable } from 'rxjs';
+import { describeApiError } from '@shared/utils/api-error.util';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
@@ -1215,7 +1216,7 @@ export class AdminSupportCenterComponent implements OnInit {
         this.cdr.markForCheck();
           this.isMutatingTicket = false;
           console.error(err);
-          this.showCustomToast(this.isRtl ? 'فشل اعتماد الاسترجاع.' : 'Failed to approve return request.', 'error');
+          this.showCustomToast(this.describeSupportError(err, this.isRtl ? 'فشل اعتماد الاسترجاع.' : 'Failed to approve return request.'), 'error');
         }
       });
   }
@@ -1252,7 +1253,7 @@ export class AdminSupportCenterComponent implements OnInit {
         this.cdr.markForCheck();
           this.isMutatingTicket = false;
           console.error(err);
-          this.showCustomToast(this.isRtl ? 'فشل تصعيد الحالة.' : 'Failed to escalate support case.', 'error');
+          this.showCustomToast(this.describeSupportError(err, this.isRtl ? 'فشل تصعيد الحالة.' : 'Failed to escalate support case.'), 'error');
         }
       });
   }
@@ -1289,7 +1290,7 @@ export class AdminSupportCenterComponent implements OnInit {
         this.cdr.markForCheck();
           this.isMutatingTicket = false;
           console.error(err);
-          this.showCustomToast(this.isRtl ? 'فشل رفض الحالة.' : 'Failed to reject support case.', 'error');
+          this.showCustomToast(this.describeSupportError(err, this.isRtl ? 'فشل رفض الحالة.' : 'Failed to reject support case.'), 'error');
         }
       });
   }
@@ -1326,7 +1327,7 @@ export class AdminSupportCenterComponent implements OnInit {
         this.cdr.markForCheck();
           this.isMutatingTicket = false;
           console.error(err);
-          this.showCustomToast(this.isRtl ? 'فشل إرسال طلب المعلومات.' : 'Failed to request additional information.', 'error');
+          this.showCustomToast(this.describeSupportError(err, this.isRtl ? 'فشل إرسال طلب المعلومات.' : 'Failed to request additional information.'), 'error');
         }
       });
   }
@@ -1383,7 +1384,7 @@ export class AdminSupportCenterComponent implements OnInit {
         this.cdr.markForCheck();
           this.isMutatingTicket = false;
           console.error(err);
-          this.showCustomToast(errorMessage, 'error');
+          this.showCustomToast(this.describeSupportError(err, errorMessage), 'error');
         }
       });
   }
@@ -1405,7 +1406,7 @@ export class AdminSupportCenterComponent implements OnInit {
         this.cdr.markForCheck();
           this.isMutatingTicket = false;
           console.error(err);
-          this.showCustomToast(this.isRtl ? 'فشل إسناد الحالة.' : 'Failed to assign support case.', 'error');
+          this.showCustomToast(this.describeSupportError(err, this.isRtl ? 'فشل إسناد الحالة.' : 'Failed to assign support case.'), 'error');
         }
       });
   }
@@ -1513,6 +1514,13 @@ export class AdminSupportCenterComponent implements OnInit {
         this.toastMessage = '';
       }
     }, 2800);
+  }
+
+  private describeSupportError(error: unknown, fallbackMessage: string): string {
+    const message = describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' }).trim();
+    return message && message !== this.translate.instant('COMMON.API_ERRORS.UNKNOWN')
+      ? message
+      : fallbackMessage;
   }
 
   private applySupportCaseUpdate(updated: SupportCaseRow): void {

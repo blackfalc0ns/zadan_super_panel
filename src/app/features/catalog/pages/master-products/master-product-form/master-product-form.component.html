@@ -126,14 +126,29 @@
             class="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-white/60 bg-white/80 px-6 text-xs font-black text-slate-600 shadow-sm backdrop-blur-md transition hover:bg-white hover:shadow-md">
             {{ 'COMMON.CANCEL' | translate }}
           </button>
-          <button type="submit" [disabled]="isLoading"
+          <button type="submit" [disabled]="isSaving || isUploading"
             class="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-transparent bg-gradient-to-r from-cyan-700 to-cyan-600 px-8 text-xs font-black text-white shadow-lg shadow-cyan-700/20 transition hover:from-cyan-800 hover:to-cyan-700 disabled:cursor-not-allowed disabled:opacity-60 hover:shadow-cyan-700/30">
-            <span *ngIf="!isLoading" class="material-symbols-outlined text-[18px]">save</span>
-            <span *ngIf="isLoading" class="admin-skeleton admin-skeleton-line sm w-16"></span>
-            {{ productForm.get('id')?.value ? ('COMMON.SAVE_EDIT' | translate) : ('COMMON.SAVE' | translate) }}
+            <span *ngIf="!isSaving" class="material-symbols-outlined text-[18px]">save</span>
+            <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
+            {{ isSaving ? ('MASTER_PRODUCTS.SAVING' | translate) : (productForm.get('id')?.value ? ('COMMON.SAVE_EDIT' | translate) : ('COMMON.SAVE' | translate)) }}
           </button>
         </div>
       </header>
+
+      <!-- Save Error -->
+      <div *ngIf="saveErrorMessage"
+        class="mx-auto mt-3 w-full max-w-[108rem] rounded-2xl border border-rose-200 bg-rose-50/95 p-4 text-rose-700 shadow-lg shadow-rose-900/5 backdrop-blur-xl"
+        role="alert">
+        <div class="flex items-start gap-3">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-600 shadow-sm">
+            <span class="material-symbols-outlined text-[22px]">error</span>
+          </span>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-black text-rose-800">{{ 'MASTER_PRODUCTS.SAVE_FAILED_TITLE' | translate }}</p>
+            <p class="mt-1 text-xs font-bold leading-5 text-rose-600">{{ saveErrorMessage }}</p>
+          </div>
+        </div>
+      </div>
 
       <!-- Validation Summary -->
       <div *ngIf="shouldShowValidationSummary"

@@ -1,3 +1,5 @@
+import { extractApiValidationMessages } from '@shared/utils/api-error.util';
+
 export function toDateTimeLocalInput(value?: string | null): string {
   if (!value) {
     return '';
@@ -47,45 +49,70 @@ export function formatDateTime(value?: string | null): string {
 
 export function formatDateRange(startsAtUtc?: string | null, endsAtUtc?: string | null): string {
   if (!startsAtUtc && !endsAtUtc) {
-    return 'نشط دائمًا';
+    return isArabic() ? 'نشط دائمًا' : 'Always active';
   }
 
   if (startsAtUtc && endsAtUtc) {
     return `${formatDateTime(startsAtUtc)} - ${formatDateTime(endsAtUtc)}`;
   }
 
-  return startsAtUtc ? `من ${formatDateTime(startsAtUtc)}` : `حتى ${formatDateTime(endsAtUtc)}`;
+  return startsAtUtc
+    ? `${isArabic() ? 'من' : 'From'} ${formatDateTime(startsAtUtc)}`
+    : `${isArabic() ? 'حتى' : 'Until'} ${formatDateTime(endsAtUtc)}`;
 }
 
 export function describeApiError(error: unknown): string {
+  const fallback = text(
+    'حدث خطأ ما. حاول مرة أخرى.',
+    'Something went wrong. Please try again.'
+  );
+
   if (typeof error !== 'object' || error === null) {
-    return 'حدث خطأ ما. حاول مرة أخرى.';
+    return fallback;
   }
 
   const candidate = error as {
     status?: number;
     error?: {
       detail?: string;
+      message?: string;
       title?: string;
-      errors?: Record<string, string[]>;
+      errors?: Record<string, string[] | string>;
     };
     message?: string;
   };
 
+  if (candidate.status === 0) {
+    return text(
+      'تعذر الاتصال بالسيرفر. تأكد أن الـ API يعمل ثم حاول مرة أخرى.',
+      'Could not connect to the server. Please ensure the API is running and try again.'
+    );
+  }
+
   if (candidate.status === 401 || candidate.status === 403) {
-    return 'جلسة الأدمن الحالية غير مخولة لتنفيذ هذا الإجراء.';
+    return text(
+      'جلسة الأدمن الحالية غير مخولة لتنفيذ هذا الإجراء.',
+      'Your current admin session is not authorized to perform this action.'
+    );
   }
 
-  const validation = candidate.error?.errors;
-  if (validation) {
-    const firstKey = Object.keys(validation)[0];
-    const firstMessage = firstKey ? validation[firstKey]?.[0] : null;
-    if (firstMessage) {
-      return firstMessage;
-    }
+  if (candidate.status === 409) {
+    return text(
+      'هذا التغيير يتعارض مع بيانات موجودة. راجع القيم ثم حاول مرة أخرى.',
+      'This change conflicts with existing data. Review the values and try again.'
+    );
   }
 
-  return candidate.error?.detail ?? candidate.error?.title ?? candidate.message ?? 'حدث خطأ ما. حاول مرة أخرى.';
+  const validationMessages = extractApiValidationMessages(error);
+  if (validationMessages.length) {
+    return validationMessages.join(' ');
+  }
+
+  return candidate.error?.detail
+    ?? candidate.error?.message
+    ?? candidate.error?.title
+    ?? candidate.message
+    ?? fallback;
 }
 
 export function humanizeSectionType(sectionType: string): string {
@@ -93,4 +120,14 @@ export function humanizeSectionType(sectionType: string): string {
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/_/g, ' ')
     .trim();
+}
+
+function text(ar: string, en: string): string {
+  return isArabic() ? ar : en;
+}
+
+function isArabic(): boolean {
+  return (localStorage.getItem('lang') || localStorage.getItem('vendor_lang') || 'ar')
+    .toLowerCase()
+    .startsWith('ar');
 }

@@ -17,6 +17,8 @@ import {
 import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pill.component';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { AdminAccessApiService, PermissionDefinitionDto, RoleDefinitionDto } from '../../../../core/services/admin-access-api.service';
+import { ToastService } from '@shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.util';
 
 interface CustomRole {
   id: string;
@@ -67,7 +69,11 @@ export class RolesManagementComponent implements OnInit {
   isDeleteModalOpen = false;
   roleToDelete: CustomRole | null = null;
   isDeleting = false;
+  isSavingPermissions = false;
+  isCreatingRole = false;
   deleteError = '';
+  pageError = '';
+  createRoleError = '';
   activeDetailTab: 'permissions' | 'email' | 'users' = 'permissions';
 
   detailTabs = [
@@ -123,7 +129,8 @@ export class RolesManagementComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly accessApi: AdminAccessApiService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly toastService: ToastService
   ) {}
 
   get isRTL(): boolean {
@@ -148,15 +155,22 @@ export class RolesManagementComponent implements OnInit {
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Error loading permissions', err);
+        console.error('Error loading permissions', buildSafeApiErrorLog(err));
         this.permissionDefinitions = [];
         this.availablePermissionKeys = new Set<string>();
+        this.toastService.error(
+          describeApiError(err, this.translate, {
+            fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.LOAD_PERMISSIONS_FAILED'
+          }),
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.TITLE')
+        );
       }
     });
   }
 
   loadRoles(): void {
     this.isLoading = true;
+    this.pageError = '';
 
     this.accessApi.getRoles().subscribe({
       next: (dtoRoles) => {
@@ -167,7 +181,10 @@ export class RolesManagementComponent implements OnInit {
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Error loading roles', err);
+        console.error('Error loading roles', buildSafeApiErrorLog(err));
+        this.pageError = describeApiError(err, this.translate, {
+          fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.LOAD_ROLES_FAILED'
+        });
         this.isLoading = false;
       }
     });
@@ -311,7 +328,7 @@ export class RolesManagementComponent implements OnInit {
 
   savePermissions(): void {
     if (!this.selectedRole || this.selectedRole.isSystem) return;
-    this.isLoading = true;
+    this.isSavingPermissions = true;
     const payload = {
       id: this.selectedRole.id,
       name: this.selectedRole.name,
@@ -330,12 +347,23 @@ export class RolesManagementComponent implements OnInit {
         this.roles = [...this.customRoles];
         this.selectedRole = updatedRole;
         this.editingPermissions = false;
-        this.isLoading = false;
+        this.isSavingPermissions = false;
+        this.toastService.success(
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.SAVE_SUCCESS'),
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.TITLE')
+        );
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Error saving role', err);
-        this.isLoading = false;
+        console.error('Error saving role', buildSafeApiErrorLog(err));
+        this.isSavingPermissions = false;
+        this.toastService.error(
+          describeApiError(err, this.translate, {
+            fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.SAVE_FAILED',
+            codePrefix: 'ADMIN_USERS.ROLES_MANAGEMENT.ERROR_CODES'
+          }),
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.TITLE')
+        );
       }
     });
   }
@@ -346,12 +374,14 @@ export class RolesManagementComponent implements OnInit {
     this.newRoleEmail = '';
     this.newRoleAccessLevel = 'restricted';
     this.newRolePanelScope = 'super_admin_panel';
+    this.createRoleError = '';
     this.showModal = true;
   }
 
   createRole(): void {
     if (!this.newRoleName.trim()) return;
-    this.isLoading = true;
+    this.isCreatingRole = true;
+    this.createRoleError = '';
     const payload = {
       name: this.newRoleName.trim(),
       description: this.newRoleDescription.trim(),
@@ -370,12 +400,24 @@ export class RolesManagementComponent implements OnInit {
         this.selectedRole = newRole;
         this.editingPermissions = true;
         this.showModal = false;
-        this.isLoading = false;
+        this.isCreatingRole = false;
+        this.toastService.success(
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.CREATE_SUCCESS'),
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.TITLE')
+        );
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Error creating role', err);
-        this.isLoading = false;
+        console.error('Error creating role', buildSafeApiErrorLog(err));
+        this.createRoleError = describeApiError(err, this.translate, {
+          fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.CREATE_FAILED',
+          codePrefix: 'ADMIN_USERS.ROLES_MANAGEMENT.ERROR_CODES'
+        });
+        this.isCreatingRole = false;
+        this.toastService.error(
+          this.createRoleError,
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.CREATE.CREATE_ROLE')
+        );
       }
     });
   }
@@ -404,8 +446,11 @@ export class RolesManagementComponent implements OnInit {
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Error deleting role', err);
-        this.deleteError = err.error?.message || err.error?.title || 'فشل حذف الدور. يرجى المحاولة مرة أخرى.';
+        console.error('Error deleting role', buildSafeApiErrorLog(err));
+        this.deleteError = describeApiError(err, this.translate, {
+          fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.DELETE_FAILED',
+          codePrefix: 'ADMIN_USERS.ROLES_MANAGEMENT.ERROR_CODES'
+        });
         this.isDeleting = false;
       }
     });

@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { describeApiError } from '../../../../shared/utils/api-error.util';
 import {
   AdminPlatformBankAccountDto,
   AdminUpsertPlatformBankAccountRequest,
@@ -203,9 +204,10 @@ export class PlatformAccountComponent implements OnInit {
           };
           this.isLoading = false;
         },
-        error: () => {
+        error: (error) => {
         this.cdr.markForCheck();
-          this.errorMessage = this.text('تعذر تحميل حساب المنصة.', 'Unable to load platform account.');
+          this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'COMMON.FAILED_TO_LOAD' });
+          this.toast.error(this.errorMessage, this.text('حساب المنصة', 'Platform account'));
           this.isLoading = false;
         }
       });
@@ -243,7 +245,8 @@ export class PlatformAccountComponent implements OnInit {
         },
         error: (error) => {
         this.cdr.markForCheck();
-          this.errorMessage = error?.error?.detail || error?.error?.message || this.text('تعذر حفظ حساب المنصة.', 'Unable to save platform account.');
+          this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' });
+          this.toast.error(this.errorMessage, this.text('حساب المنصة', 'Platform account'));
           this.isSaving = false;
         }
       });

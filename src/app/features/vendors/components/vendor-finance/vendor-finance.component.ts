@@ -7,6 +7,7 @@ import { take } from 'rxjs/operators';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { ToastService } from '@shared/services/toast.service';
 import { CreateSettlementModalComponent, SettlementConfig } from '@vendors/components/workflows/create-settlement-modal/create-settlement-modal.component';
 import { PayoutsReviewModalComponent, PayoutTransaction } from '@vendors/components/workflows/payouts-review-modal/payouts-review-modal.component';
 import { VendorDetail, VendorFinancialLifecycleMode } from '@vendors/models/vendors.domain.models';
@@ -61,7 +62,8 @@ export class VendorFinanceComponent implements OnInit {
   constructor(
     private readonly translate: TranslateService,
     private readonly vendorService: VendorService,
-    private readonly vendorDetailFacade: VendorDetailFacade
+    private readonly vendorDetailFacade: VendorDetailFacade,
+    private readonly toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.isRTL = this.currentLang.startsWith('ar');
@@ -238,11 +240,13 @@ export class VendorFinanceComponent implements OnInit {
           this.vendorDetail = vendor;
           this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
           this.modeSuccess = this.text('تم تحديث دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.');
+          this.toastService.success(this.modeSuccess, this.text('المالية', 'Finance'));
           this.isSavingMode = false;
         },
         error: () => {
           this.cdr.markForCheck();
           this.modeError = this.vendorDetailFacade.mutationError || this.text('تعذر تحديث دورة الحياة المالية الآن.', 'Unable to update the lifecycle right now.');
+          this.toastService.error(this.modeError, this.text('المالية', 'Finance'));
           this.isSavingMode = false;
         }
       });
@@ -268,11 +272,19 @@ export class VendorFinanceComponent implements OnInit {
         next: () => {
           this.cdr.markForCheck();
           this.showCreateSettlementModal = false;
+          this.toastService.success(
+            this.text('تم إنشاء التسوية بنجاح.', 'Settlement created successfully.'),
+            this.text('المالية', 'Finance')
+          );
           this.loadFinanceData();
         },
         error: () => {
           this.cdr.markForCheck();
           this.showCreateSettlementModal = false;
+          this.toastService.error(
+            this.text('تعذر إنشاء التسوية الآن.', 'Unable to create the settlement right now.'),
+            this.text('المالية', 'Finance')
+          );
         }
       });
   }
@@ -284,7 +296,21 @@ export class VendorFinanceComponent implements OnInit {
 
     this.vendorService.retryVendorPayout(this.vendorId, payoutId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: () => this.loadFinanceData(), error: () => undefined });
+      .subscribe({
+        next: () => {
+          this.toastService.success(
+            this.text('تمت إعادة محاولة الدفعة بنجاح.', 'Payout retry triggered successfully.'),
+            this.text('المالية', 'Finance')
+          );
+          this.loadFinanceData();
+        },
+        error: () => {
+          this.toastService.error(
+            this.text('تعذر إعادة محاولة الدفعة الآن.', 'Unable to retry the payout right now.'),
+            this.text('المالية', 'Finance')
+          );
+        }
+      });
   }
 
   onSuspendPayment(payoutId: string): void {
@@ -294,7 +320,21 @@ export class VendorFinanceComponent implements OnInit {
 
     this.vendorService.suspendVendorPayout(this.vendorId, payoutId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: () => this.loadFinanceData(), error: () => undefined });
+      .subscribe({
+        next: () => {
+          this.toastService.success(
+            this.text('تم تعليق الدفعة بنجاح.', 'Payout suspended successfully.'),
+            this.text('المالية', 'Finance')
+          );
+          this.loadFinanceData();
+        },
+        error: () => {
+          this.toastService.error(
+            this.text('تعذر تعليق الدفعة الآن.', 'Unable to suspend the payout right now.'),
+            this.text('المالية', 'Finance')
+          );
+        }
+      });
   }
 
   onEscalatePayment(payoutId: string): void {
@@ -304,7 +344,21 @@ export class VendorFinanceComponent implements OnInit {
 
     this.vendorService.escalateVendorPayout(this.vendorId, payoutId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: () => this.loadFinanceData(), error: () => undefined });
+      .subscribe({
+        next: () => {
+          this.toastService.success(
+            this.text('تم تصعيد الدفعة بنجاح.', 'Payout escalated successfully.'),
+            this.text('المالية', 'Finance')
+          );
+          this.loadFinanceData();
+        },
+        error: () => {
+          this.toastService.error(
+            this.text('تعذر تصعيد الدفعة الآن.', 'Unable to escalate the payout right now.'),
+            this.text('المالية', 'Finance')
+          );
+        }
+      });
   }
 
   loadFinanceDataRetry(): void {

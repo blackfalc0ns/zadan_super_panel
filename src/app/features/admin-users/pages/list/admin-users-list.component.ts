@@ -25,6 +25,8 @@ import { DataTableComponent, TableColumn, TableAction } from '../../../../shared
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '../../../../shared/utils/api-error.util';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +55,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   isCreatingUser = false;
   showCreateUserModal = false;
   createUserError = '';
+  pageError = '';
   searchTerm = '';
   isFiltersExpanded = false;
   filters: Record<string, any> = {
@@ -149,7 +152,8 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   constructor(
     private adminAccessApi: AdminAccessApiService,
     private translate: TranslateService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.subscriptions.add(
       this.translate.onLangChange.subscribe(() => {
@@ -305,6 +309,7 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   loadUsers() {
     this.isLoading = true;
+    this.pageError = '';
     const usersSub = this.adminAccessApi.getUsersPage({
       pageNumber: this.pageNumber,
       pageSize: this.pageSize,
@@ -323,9 +328,12 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Failed to load admin users', err);
+        console.error('Failed to load admin users', buildSafeApiErrorLog(err));
         this.isLoading = false;
         this.users = [];
+        this.pageError = describeApiError(err, this.translate, {
+          fallbackKey: 'ADMIN_USERS.MESSAGES.LOAD_FAILED'
+        });
       }
     });
     this.subscriptions.add(usersSub);
@@ -350,8 +358,14 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Failed to load roles summary', err);
+        console.error('Failed to load roles summary', buildSafeApiErrorLog(err));
         this.roles = [];
+        this.toastService.error(
+          describeApiError(err, this.translate, {
+            fallbackKey: 'ADMIN_USERS.MESSAGES.LOAD_ROLES_FAILED'
+          }),
+          this.translate.instant('ADMIN_USERS.TITLE')
+        );
       }
     });
     this.subscriptions.add(rolesSub);
@@ -521,12 +535,23 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
         this.isCreatingUser = false;
         this.showCreateUserModal = false;
         this.loadUserStats();
+        this.toastService.success(
+          this.translate.instant('ADMIN_USERS.MESSAGES.CREATE_USER_SUCCESS'),
+          this.translate.instant('ADMIN_USERS.TITLE')
+        );
         this.router.navigate(['/admin-users', user.id]);
       },
       error: (err) => {
         this.cdr.markForCheck();
-        console.error('Failed to create admin user', err);
-        this.createUserError = this.resolveCreateUserError(err);
+        console.error('Failed to create admin user', buildSafeApiErrorLog(err));
+        this.createUserError = describeApiError(err, this.translate, {
+          fallbackKey: 'ADMIN_USERS.CREATE.FAILED',
+          codePrefix: 'ADMIN_USERS.CREATE.ERROR_CODES'
+        });
+        this.toastService.error(
+          this.createUserError,
+          this.translate.instant('ADMIN_USERS.ACTIONS.ADD_USER')
+        );
         this.isCreatingUser = false;
       }
     });
@@ -617,19 +642,6 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       3: DIRECTORY_PANEL_LABELS.customer_app
     };
     return keys[panelScope] ?? DIRECTORY_PANEL_LABELS.super_admin_panel;
-  }
-
-  private resolveCreateUserError(err: { error?: { code?: string; message?: string; title?: string } }): string {
-    const code = err.error?.code;
-    if (code) {
-      const key = `ADMIN_USERS.CREATE.ERRORS.${code}`;
-      const translated = this.translate.instant(key);
-      if (translated !== key) {
-        return translated;
-      }
-    }
-
-    return err.error?.message || err.error?.title || this.translate.instant('ADMIN_USERS.CREATE.FAILED');
   }
 
   private adminAccessApiRoleCodeToPreset(code: string): any {

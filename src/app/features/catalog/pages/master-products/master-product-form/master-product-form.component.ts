@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
+import { ToastService } from '@shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.util';
 import { AppButtonComponent } from '../../../../../shared/components/ui/button/button.component';
 import { AppInputComponent } from '../../../../../shared/components/ui/form-controls/input/input.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
@@ -45,9 +47,11 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   productForm!: FormGroup;
   isLoading = false;
+  isSaving = false;
   isInitialFormLoading = false;
   isUploading = false;
   hasSubmitted = false;
+  saveErrorMessage: string | null = null;
   activeLang = 'ar';
   availableCategories: any[] = [];
   allFlatCategories: any[] = [];
@@ -74,7 +78,8 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private toastService: ToastService
   ) {
     this.activeLang = this.translate.currentLang || 'ar';
     this.langSub = this.translate.onLangChange.subscribe(event => {
@@ -679,7 +684,12 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    if (this.isSaving || this.isUploading) {
+      return;
+    }
+
     this.hasSubmitted = true;
+    this.saveErrorMessage = null;
 
     const measurementValue = this.productForm.get('measurementValue')?.value;
     const measurementUnitId = this.productForm.get('measurementUnitId')?.value;
@@ -983,10 +993,13 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   }
 
   private async saveProductWithAdditionalVariants(): Promise<void> {
-    this.isLoading = true;
+    this.isSaving = true;
+    this.saveErrorMessage = null;
+    this.cdr.markForCheck();
 
     try {
       const formValue = this.productForm.getRawValue();
+      const isEditMode = !!formValue.id;
       const hasMeasurementValue = formValue.measurementValue !== null
         && formValue.measurementValue !== undefined
         && `${formValue.measurementValue}`.trim() !== '';
@@ -1016,14 +1029,19 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
         }
       }
 
-      this.isLoading = false;
+      this.toastService.success(
+        this.translate.instant(isEditMode ? 'MASTER_PRODUCTS.SAVE_UPDATED' : 'MASTER_PRODUCTS.SAVE_CREATED'),
+        this.translate.instant('MASTER_PRODUCTS.TOAST_TITLE')
+      );
+      this.isSaving = false;
       this.router.navigate(['/catalog/products']);
     } catch (err) {
-      console.error('Save failed', {
-        error: err,
-        payload: this.productForm.getRawValue()
-      });
-      this.isLoading = false;
+      console.error('Master product save failed', buildSafeApiErrorLog(err));
+      const message = describeApiError(err, this.translate, { fallbackKey: 'MASTER_PRODUCTS.SAVE_FAILED', codePrefix: 'MASTER_PRODUCTS.ERROR_CODES' });
+      this.saveErrorMessage = message;
+      this.toastService.error(message, this.translate.instant('MASTER_PRODUCTS.TOAST_TITLE'));
+      this.isSaving = false;
+      this.cdr.markForCheck();
     }
   }
 
