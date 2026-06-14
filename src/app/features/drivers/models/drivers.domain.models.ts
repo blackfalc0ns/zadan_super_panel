@@ -23,6 +23,12 @@ export interface Driver {
     performance: DriverPerformance;
     vehicleType?: DriverVehicleType;
     alerts?: string[];
+    enforcementLevel?: string;
+    dailyRejections?: number;
+    weeklyRejections?: number;
+    canReceiveOffers?: boolean;
+    isLoginLocked?: boolean;
+    locationUpdatesBlocked?: boolean;
     compensationOverride?: DriverCompensationRule;
 }
 

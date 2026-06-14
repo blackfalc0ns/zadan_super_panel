@@ -4862,7 +4862,10 @@
       "OFFLINE": "غير متصل",
       "ONMISSION": "في مهمة",
       "SUSPENDED": "موقوف",
-      "BANNED": "محظور"
+      "BANNED": "محظور",
+      "OFFER_RESTRICTED": "محظور مؤقتًا (عروض)",
+      "LOCATION_BLOCKED": "موقع محظور",
+      "LOGIN_LOCKED": "تسجيل الدخول مقفل"
     },
     "PERFORMANCE": {
       "LOW": "ضعيف",
@@ -4884,7 +4887,10 @@
       "CLEAR": "سليم",
       "WARNING": "تنبيه",
       "PAYMENT": "تحصيل",
-      "LEGAL": "بلاغات"
+      "LEGAL": "بلاغات",
+      "DISPATCH": "حظر عروض",
+      "COMPLIANCE": "امتثال",
+      "LOCATION": "موقع"
     },
     "ALERTS": {
       "HIGH_RISK": "مخاطر عالية",

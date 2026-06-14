@@ -21,6 +21,68 @@ export function getDriverStatusKey(status: DriverStatus): string {
   return keys[status];
 }
 
+export function isOfferRestrictedLevel(enforcementLevel?: string | null): boolean {
+  const level = (enforcementLevel || '').toLowerCase();
+  return level === 'softblocked' || level === 'suspensioncandidate';
+}
+
+export function hasDriverOperationalRestriction(driver: {
+  status: DriverStatus;
+  enforcementLevel?: string | null;
+  issues?: string[];
+  isLoginLocked?: boolean;
+  canReceiveOffers?: boolean;
+  operations?: { locationUpdatesBlocked?: boolean };
+}): boolean {
+  if (driver.status === 'Suspended' || driver.status === 'Banned') {
+    return true;
+  }
+
+  if (driver.isLoginLocked) {
+    return true;
+  }
+
+  if (driver.operations?.locationUpdatesBlocked) {
+    return true;
+  }
+
+  if (driver.canReceiveOffers === false || isOfferRestrictedLevel(driver.enforcementLevel)) {
+    return true;
+  }
+
+  const issues = driver.issues ?? [];
+  return issues.includes('dispatch') || issues.includes('location') || issues.includes('legal');
+}
+
+export function getDriverRestrictionLabelKey(driver: {
+  status: DriverStatus;
+  enforcementLevel?: string | null;
+  issues?: string[];
+  isLoginLocked?: boolean;
+  canReceiveOffers?: boolean;
+  operations?: { locationUpdatesBlocked?: boolean };
+}): string | null {
+  if (driver.status === 'Banned' || driver.status === 'Suspended') {
+    return null;
+  }
+
+  if (driver.isLoginLocked) {
+    return 'DRIVERS.STATUS.LOGIN_LOCKED';
+  }
+
+  if (driver.operations?.locationUpdatesBlocked || (driver.issues ?? []).includes('location')) {
+    return 'DRIVERS.STATUS.LOCATION_BLOCKED';
+  }
+
+  if (driver.canReceiveOffers === false
+    || isOfferRestrictedLevel(driver.enforcementLevel)
+    || (driver.issues ?? []).includes('dispatch')) {
+    return 'DRIVERS.STATUS.OFFER_RESTRICTED';
+  }
+
+  return null;
+}
+
 export function getDriverStatusLabel(status: DriverStatus): string {
   return getDriverStatusKey(status);
 }
@@ -127,6 +189,12 @@ export function getIssueIcon(issue: string): string {
       return 'credit_card_off';
     case 'legal':
       return 'gavel';
+    case 'dispatch':
+      return 'block';
+    case 'compliance':
+      return 'description';
+    case 'location':
+      return 'location_off';
     default:
       return 'check';
   }
@@ -140,6 +208,12 @@ export function getIssueKey(issue: string): string {
       return 'DRIVERS.ISSUES.PAYMENT';
     case 'legal':
       return 'DRIVERS.ISSUES.LEGAL';
+    case 'dispatch':
+      return 'DRIVERS.ISSUES.DISPATCH';
+    case 'compliance':
+      return 'DRIVERS.ISSUES.COMPLIANCE';
+    case 'location':
+      return 'DRIVERS.ISSUES.LOCATION';
     default:
       return 'DRIVERS.ISSUES.CLEAR';
   }
@@ -152,9 +226,12 @@ export function getIssueLabel(issue: string): string {
 export function getIssueVariant(issue: string): 'success' | 'warning' | 'danger' {
   switch (issue) {
     case 'warning':
+    case 'compliance':
       return 'warning';
     case 'payment':
     case 'legal':
+    case 'dispatch':
+    case 'location':
       return 'danger';
     default:
       return 'success';

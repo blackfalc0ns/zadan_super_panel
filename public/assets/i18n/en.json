@@ -4853,7 +4853,10 @@
       "OFFLINE": "Offline",
       "ONMISSION": "On mission",
       "SUSPENDED": "Suspended",
-      "BANNED": "Banned"
+      "BANNED": "Banned",
+      "OFFER_RESTRICTED": "Temporarily restricted (offers)",
+      "LOCATION_BLOCKED": "Location blocked",
+      "LOGIN_LOCKED": "Login locked"
     },
     "VERIFICATION": {
       "VERIFIED": "Verified",
@@ -4881,7 +4884,10 @@
       "CLEAR": "Clear",
       "WARNING": "Warning",
       "PAYMENT": "Collection",
-      "LEGAL": "Reports"
+      "LEGAL": "Reports",
+      "DISPATCH": "Offer block",
+      "COMPLIANCE": "Compliance",
+      "LOCATION": "Location"
     },
     "ALERTS": {
       "HIGH_RISK": "High Risk",

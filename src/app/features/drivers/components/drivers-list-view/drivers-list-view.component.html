@@ -175,10 +175,17 @@
 
         <!-- Connection Status -->
         <ng-container *ngIf="column.key === 'status'">
-          <div class="flex justify-center">
+          <div class="flex flex-col items-center gap-1">
             <app-status-pill
               [label]="getDriverStatusLabel(driver.status)"
               [variant]="getDriverStatusVariant(driver.status)"
+              size="sm">
+            </app-status-pill>
+            <app-status-pill
+              *ngIf="getDriverRestrictionLabel(driver) as restrictionLabel"
+              [label]="restrictionLabel"
+              variant="danger"
+              [shouldTranslate]="true"
               size="sm">
             </app-status-pill>
           </div>
@@ -299,11 +306,20 @@
                 <p class="text-[11px] font-semibold text-slate-400 mt-1" dir="ltr">{{ driver.phoneNumber }}</p>
               </div>
             </div>
-            <app-status-pill
-              [label]="getDriverStatusLabel(driver.status)"
-              [variant]="getDriverStatusVariant(driver.status)"
-              size="sm">
-            </app-status-pill>
+            <div class="flex flex-col items-end gap-1">
+              <app-status-pill
+                [label]="getDriverStatusLabel(driver.status)"
+                [variant]="getDriverStatusVariant(driver.status)"
+                size="sm">
+              </app-status-pill>
+              <app-status-pill
+                *ngIf="getDriverRestrictionLabel(driver) as restrictionLabel"
+                [label]="restrictionLabel"
+                variant="danger"
+                [shouldTranslate]="true"
+                size="sm">
+              </app-status-pill>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">

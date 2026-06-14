@@ -53,6 +53,10 @@ interface AdminDriverListItemResponse {
   issues: string[];
   collectionPaymentStatus: 'good' | 'warning' | 'critical';
   alerts?: string[] | null;
+  enforcementLevel?: string;
+  dailyRejections?: number;
+  weeklyRejections?: number;
+  canReceiveOffers?: boolean;
 }
 
 interface AdminDriversListResponse {
@@ -649,8 +653,17 @@ export class DriverService {
       lastSeenAt: this.parseDate(item.lastSeenAt),
       performance: this.mapPerformance(item.performance),
       vehicleType: this.mapVehicleType(item.vehicleType),
-      alerts: item.alerts?.length ? [...item.alerts] : undefined
+      alerts: item.alerts?.length ? [...item.alerts] : undefined,
+      enforcementLevel: item.enforcementLevel || 'Healthy',
+      dailyRejections: item.dailyRejections ?? 0,
+      weeklyRejections: item.weeklyRejections ?? 0,
+      canReceiveOffers: item.canReceiveOffers ?? !this.isOfferRestrictedLevel(item.enforcementLevel)
     };
+  }
+
+  private isOfferRestrictedLevel(enforcementLevel?: string | null): boolean {
+    const level = (enforcementLevel || '').toLowerCase();
+    return level === 'softblocked' || level === 'suspensioncandidate';
   }
 
   private mapDriverFromDetail(response: AdminDriverDetailResponse): Driver {
@@ -673,7 +686,11 @@ export class DriverService {
       lastSeenAt: response.lastSeenAt,
       issues: response.issues,
       collectionPaymentStatus: response.collectionPaymentStatus,
-      alerts: response.alerts
+      alerts: response.alerts,
+      enforcementLevel: response.enforcementLevel,
+      dailyRejections: response.dailyRejections,
+      weeklyRejections: response.weeklyRejections,
+      canReceiveOffers: !this.isOfferRestrictedLevel(response.enforcementLevel)
     });
   }
 
@@ -733,6 +750,8 @@ export class DriverService {
       dailyRejections: Number(response.dailyRejections ?? 0),
       weeklyRejections: Number(response.weeklyRejections ?? 0),
       enforcementLevel: response.enforcementLevel || '',
+      canReceiveOffers: !this.isOfferRestrictedLevel(response.enforcementLevel),
+      locationUpdatesBlocked: response.operations.locationUpdatesBlocked ?? false,
       complianceStatusLabel: this.mapComplianceStatusLabel(response.compliance.riskLevel),
       complianceStatusVariant: this.mapComplianceStatusVariant(response.compliance.riskLevel),
       complianceRiskPoints: this.mapComplianceRiskPoints(response.compliance),

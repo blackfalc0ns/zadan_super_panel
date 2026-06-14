@@ -6,9 +6,11 @@ import { StatusPillComponent, StatusPillVariant } from '../../../../shared/compo
 import { DriverDetailRecord, DriverWorkflowActionId } from '../../models/drivers.models';
 import {
   getDriverStatusKey,
+  getDriverRestrictionLabelKey,
   getVerificationKey,
   getVerificationVariant,
-  getComplianceVariant
+  getComplianceVariant,
+  hasDriverOperationalRestriction
 } from '../../utils/driver-ui.utils';
 
 @Component({
@@ -121,7 +123,15 @@ export class DriverHeroComponent {
   }
 
   get isBlockedStatus(): boolean {
-    return this.driver.status === 'Suspended' || this.driver.status === 'Banned';
+    return hasDriverOperationalRestriction(this.driver);
+  }
+
+  get restrictionStatusLabel(): string | null {
+    return getDriverRestrictionLabelKey(this.driver);
+  }
+
+  get showConnectionStatus(): boolean {
+    return !this.isBlockedStatus;
   }
 
   get banActionLabel(): string {

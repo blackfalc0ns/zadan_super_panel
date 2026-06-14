@@ -19,6 +19,7 @@ import { StatusPillComponent } from '../../../../shared/components/ui/status-pil
 import {
   getDriverStatusKey,
   getDriverStatusVariant as getDriverStatusPillVariant,
+  getDriverRestrictionLabelKey,
   getIssueIcon as getIssueIconName,
   getIssueKey,
   getIssueVariant as getIssueTone,
@@ -165,6 +166,10 @@ export class DriversListViewComponent {
 
   getDriverStatusLabel(status: DriverStatus): string {
     return getDriverStatusKey(status);
+  }
+
+  getDriverRestrictionLabel(driver: Driver): string | null {
+    return getDriverRestrictionLabelKey(driver);
   }
 
   getVerificationStatusVariant(status: VerificationStatus) {
