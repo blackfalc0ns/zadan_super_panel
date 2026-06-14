@@ -17,6 +17,9 @@ export type DriverWorkflowState =
   | 'ACTIVE_DELIVERY'
   | 'FINANCE_HOLD'
   | 'COMPLIANCE_REVIEW'
+  | 'OFFER_RESTRICTED'
+  | 'LOCATION_RESTRICTED'
+  | 'LOGIN_LOCKED'
   | 'SUSPENDED'
   | 'BANNED';
 export type DriverWorkflowReadiness = 'READY' | 'LIMITED' | 'BLOCKED';

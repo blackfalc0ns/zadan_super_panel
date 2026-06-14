@@ -5791,7 +5791,10 @@
           "FINANCE_HOLD": "Financial Hold",
           "ACTIVE_DELIVERY": "Active Delivery",
           "READY_FOR_DISPATCH": "Ready for Dispatch",
-          "READY_TO_ACTIVATE": "Ready to Rejoin"
+          "READY_TO_ACTIVATE": "Ready to Rejoin",
+          "OFFER_RESTRICTED": "Temporarily Restricted (Offers)",
+          "LOCATION_RESTRICTED": "GPS Location Blocked",
+          "LOGIN_LOCKED": "Login Locked"
         },
         "SUMMARIES": {
           "BANNED": "The driver is fully banned from operations. Review the case before lifting the ban or keeping the account blocked.",
@@ -5802,7 +5805,10 @@
           "FINANCE_HOLD": "There is a financial hold or unresolved COD amount that must be cleared before a new payout or full operational trust can be restored.",
           "ACTIVE_DELIVERY": "The driver is inside a live task right now, so the current focus should remain on execution monitoring, SLA, and fast support only.",
           "READY_FOR_DISPATCH": "The driver is active and currently ready, and the supervisor's role here is mainly monitoring and preserving readiness without new blockers.",
-          "READY_TO_ACTIVATE": "The driver is verified but currently outside the schedule, and can be returned to operations after a quick check on operational and financial readiness."
+          "READY_TO_ACTIVATE": "The driver is verified but currently outside the schedule, and can be returned to operations after a quick check on operational and financial readiness.",
+          "OFFER_RESTRICTED": "The driver is temporarily blocked from receiving offers after exceeding rejection or cancellation limits. The driver app shows a blocked screen.",
+          "LOCATION_RESTRICTED": "GPS location updates are administratively blocked. The driver cannot receive new offers until unblocked.",
+          "LOGIN_LOCKED": "Driver login is locked. Review the lock reason in Support or unlock from profile actions."
         },
         "NEXT_STEPS": {
           "BANNED": "Review the ban reason and only unban after compliance and document checks are clear.",
@@ -5813,7 +5819,10 @@
           "FINANCE_HOLD": "Review finance first, then clear the hold if settlement is complete.",
           "ACTIVE_DELIVERY": "Monitor the current task and open support only when there is an actual delay or complaint.",
           "READY_FOR_DISPATCH": "No urgent action is needed now; monitor the zone and assign tasks as needed.",
-          "READY_TO_ACTIVATE": "Return the driver to the assignment queue after a quick review of the zone, balance, and open tickets."
+          "READY_TO_ACTIVATE": "Return the driver to the assignment queue after a quick review of the zone, balance, and open tickets.",
+          "OFFER_RESTRICTED": "Review the restriction in Operations, then clear all restrictions if appropriate.",
+          "LOCATION_RESTRICTED": "Open Operations and unblock location updates after verifying the reason.",
+          "LOGIN_LOCKED": "Review the lock reason, then unlock login from profile actions."
         },
         "QUEUE_LABELS": {
           "BANNED": "Ban Review Queue",
@@ -5824,12 +5833,18 @@
           "FINANCE_HOLD": "COD & Settlements Queue",
           "ACTIVE_DELIVERY": "Live Monitoring Queue",
           "READY_FOR_DISPATCH": "Ready Drivers Queue",
-          "READY_TO_ACTIVATE": "Activation & Preparation Queue"
+          "READY_TO_ACTIVATE": "Activation & Preparation Queue",
+          "OFFER_RESTRICTED": "Offer Restriction Queue",
+          "LOCATION_RESTRICTED": "Location Block Queue",
+          "LOGIN_LOCKED": "Login Lock Queue"
         },
         "READINESS_LABELS": {
           "FULLY_STOPPED": "Fully Stopped",
           "BLOCKED_UNTIL_APPROVAL": "Blocked Until Approval",
           "BLOCKED_BY_COMPLIANCE": "Blocked by Compliance",
+          "BLOCKED_BY_OFFERS": "Temporarily Restricted (Offers)",
+          "BLOCKED_BY_LOCATION": "GPS Location Blocked",
+          "BLOCKED_BY_LOGIN_LOCK": "Login Locked",
           "PARTIALLY_READY": "Partially Ready",
           "WORKING_NOW": "Working Now",
           "FULLY_READY": "Fully Ready",
@@ -5854,7 +5869,17 @@
           "DOCUMENT_UNDER_REVIEW": "There is a document or identity image under manual review.",
           "PERFORMANCE_ALERT": "Driver performance needs follow-up before increasing operational load.",
           "SUPPORT_FOLLOWUPS": "There are {{count}} support follow-ups pending on this driver.",
-          "SUPPORT_FOLLOWUPS_GENERIC": "There are open support follow-ups pending on this driver."
+          "SUPPORT_FOLLOWUPS_GENERIC": "There are open support follow-ups pending on this driver.",
+          "MISSING_DOCUMENTS": "Required documents are missing or unclear.",
+          "OFFER_RESTRICTED": "The driver is temporarily blocked from receiving offers after exceeding rejection or cancellation limits.",
+          "LOCATION_UPDATES_BLOCKED": "GPS location updates are administratively blocked and new offers cannot be assigned.",
+          "LOGIN_LOCKED": "Driver login is locked until the case is reviewed."
+        },
+        "ALERTS": {
+          "OFFER_RESTRICTION_ACTIVE": "Offer restriction active — driver app shows blocked state.",
+          "READY_FOR_DISPATCH": "Driver is ready to receive new tasks.",
+          "DRIVER_ON_ACTIVE_MISSION": "Driver is on an active mission now.",
+          "DRIVER_OFFLINE_BUT_APPROVED": "Driver is verified but currently offline."
         },
         "ACTION_LABELS": {
           "APPROVE_VERIFICATION": "Approve Verification",

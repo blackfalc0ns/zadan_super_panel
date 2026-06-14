@@ -32,6 +32,7 @@ export function hasDriverOperationalRestriction(driver: {
   issues?: string[];
   isLoginLocked?: boolean;
   canReceiveOffers?: boolean;
+  locationUpdatesBlocked?: boolean;
   operations?: { locationUpdatesBlocked?: boolean };
 }): boolean {
   if (driver.status === 'Suspended' || driver.status === 'Banned') {
@@ -42,7 +43,7 @@ export function hasDriverOperationalRestriction(driver: {
     return true;
   }
 
-  if (driver.operations?.locationUpdatesBlocked) {
+  if (driver.operations?.locationUpdatesBlocked || driver.locationUpdatesBlocked) {
     return true;
   }
 
@@ -60,6 +61,7 @@ export function getDriverRestrictionLabelKey(driver: {
   issues?: string[];
   isLoginLocked?: boolean;
   canReceiveOffers?: boolean;
+  locationUpdatesBlocked?: boolean;
   operations?: { locationUpdatesBlocked?: boolean };
 }): string | null {
   if (driver.status === 'Banned' || driver.status === 'Suspended') {
@@ -70,7 +72,9 @@ export function getDriverRestrictionLabelKey(driver: {
     return 'DRIVERS.STATUS.LOGIN_LOCKED';
   }
 
-  if (driver.operations?.locationUpdatesBlocked || (driver.issues ?? []).includes('location')) {
+  if (driver.operations?.locationUpdatesBlocked
+    || driver.locationUpdatesBlocked
+    || (driver.issues ?? []).includes('location')) {
     return 'DRIVERS.STATUS.LOCATION_BLOCKED';
   }
 

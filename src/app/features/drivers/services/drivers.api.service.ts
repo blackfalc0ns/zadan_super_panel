@@ -57,6 +57,8 @@ interface AdminDriverListItemResponse {
   dailyRejections?: number;
   weeklyRejections?: number;
   canReceiveOffers?: boolean;
+  isLoginLocked?: boolean;
+  locationUpdatesBlocked?: boolean;
 }
 
 interface AdminDriversListResponse {
@@ -657,7 +659,9 @@ export class DriverService {
       enforcementLevel: item.enforcementLevel || 'Healthy',
       dailyRejections: item.dailyRejections ?? 0,
       weeklyRejections: item.weeklyRejections ?? 0,
-      canReceiveOffers: item.canReceiveOffers ?? !this.isOfferRestrictedLevel(item.enforcementLevel)
+      canReceiveOffers: item.canReceiveOffers ?? !this.isOfferRestrictedLevel(item.enforcementLevel),
+      isLoginLocked: item.isLoginLocked ?? false,
+      locationUpdatesBlocked: item.locationUpdatesBlocked ?? (item.issues ?? []).includes('location')
     };
   }
 
@@ -690,7 +694,9 @@ export class DriverService {
       enforcementLevel: response.enforcementLevel,
       dailyRejections: response.dailyRejections,
       weeklyRejections: response.weeklyRejections,
-      canReceiveOffers: !this.isOfferRestrictedLevel(response.enforcementLevel)
+      canReceiveOffers: response.canReceiveOffers ?? !this.isOfferRestrictedLevel(response.enforcementLevel),
+      isLoginLocked: response.isLoginLocked ?? false,
+      locationUpdatesBlocked: response.operations.locationUpdatesBlocked ?? false
     });
   }
 
@@ -1688,6 +1694,9 @@ export class DriverService {
       case 'ACTIVE_DELIVERY':
       case 'FINANCE_HOLD':
       case 'COMPLIANCE_REVIEW':
+      case 'OFFER_RESTRICTED':
+      case 'LOCATION_RESTRICTED':
+      case 'LOGIN_LOCKED':
         return state;
       default:
         return 'READY_FOR_DISPATCH';
@@ -1706,6 +1715,18 @@ export class DriverService {
 
   private mapWorkflowReadinessLabel(state: string, readiness: string): string {
     if (readiness === 'BLOCKED') {
+      if (state === 'OFFER_RESTRICTED') {
+        return 'DRIVERS.DETAIL.WORKFLOW.READINESS_LABELS.BLOCKED_BY_OFFERS';
+      }
+
+      if (state === 'LOCATION_RESTRICTED') {
+        return 'DRIVERS.DETAIL.WORKFLOW.READINESS_LABELS.BLOCKED_BY_LOCATION';
+      }
+
+      if (state === 'LOGIN_LOCKED') {
+        return 'DRIVERS.DETAIL.WORKFLOW.READINESS_LABELS.BLOCKED_BY_LOGIN_LOCK';
+      }
+
       return state === 'COMPLIANCE_REVIEW' || state === 'SUSPENDED' || state === 'BANNED'
         ? 'DRIVERS.DETAIL.WORKFLOW.READINESS_LABELS.BLOCKED_BY_COMPLIANCE'
         : 'DRIVERS.DETAIL.WORKFLOW.READINESS_LABELS.BLOCKED_UNTIL_APPROVAL';
@@ -1733,6 +1754,10 @@ export class DriverService {
       case 'SUSPENDED':
       case 'BANNED':
         return 'DRIVERS.DETAIL.WORKFLOW.OWNER_TEAMS.COMPLIANCE_AND_OPERATIONS';
+      case 'OFFER_RESTRICTED':
+      case 'LOCATION_RESTRICTED':
+      case 'LOGIN_LOCKED':
+        return 'DRIVERS.DETAIL.WORKFLOW.OWNER_TEAMS.OPERATIONS';
       case 'PENDING_DOCUMENTS':
       case 'VERIFICATION_REVIEW':
       case 'READY_TO_ACTIVATE':
@@ -1816,15 +1841,33 @@ export class DriverService {
       case 'finance_hold':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.FINANCE_HOLD';
       case 'compliance_case':
+      case 'open_compliance_case':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.COMPLIANCE_CASE';
       case 'performance_alert':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.PERFORMANCE_ALERT';
       case 'verification_pending':
+      case 'verification_in_progress':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.VERIFICATION_PENDING';
+      case 'missing_documents':
+        return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.MISSING_DOCUMENTS';
       case 'account_suspended':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.ACCOUNT_SUSPENDED';
       case 'account_banned':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.ACCOUNT_BANNED';
+      case 'offer_restricted':
+        return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.OFFER_RESTRICTED';
+      case 'location_updates_blocked':
+        return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.LOCATION_UPDATES_BLOCKED';
+      case 'login_locked':
+        return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.LOGIN_LOCKED';
+      case 'offer_restriction_active':
+        return 'DRIVERS.DETAIL.WORKFLOW.ALERTS.OFFER_RESTRICTION_ACTIVE';
+      case 'ready_for_dispatch':
+        return 'DRIVERS.DETAIL.WORKFLOW.ALERTS.READY_FOR_DISPATCH';
+      case 'driver_on_active_mission':
+        return 'DRIVERS.DETAIL.WORKFLOW.ALERTS.DRIVER_ON_ACTIVE_MISSION';
+      case 'driver_offline_but_approved':
+        return 'DRIVERS.DETAIL.WORKFLOW.ALERTS.DRIVER_OFFLINE_BUT_APPROVED';
       case 'support_followups':
       case 'support_followups_generic':
         return 'DRIVERS.DETAIL.WORKFLOW.ITEMS.SUPPORT_FOLLOWUPS_GENERIC';
