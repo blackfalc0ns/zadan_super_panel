@@ -225,6 +225,7 @@ export interface AdminVendorProductItem {
   id: string;
   vendorId: string;
   masterProductId: string;
+  vendorBranchId?: string | null;
   sellingPrice: number;
   compareAtPrice?: number | null;
   stockQuantity: number;
@@ -451,8 +452,8 @@ export class VendorService {
     );
   }
 
-  getVendorBranches(vendorId: string): Observable<Array<{ id: string, name: string }>> {
-    return this.http.get<Array<{ id: string, name: string }>>(`${this.apiUrl}/${vendorId}/branches`);
+  getVendorBranches(vendorId: string): Observable<Array<{ id: string, name: string, city?: string | null, region?: string | null }>> {
+    return this.http.get<Array<{ id: string, name: string, city?: string | null, region?: string | null }>>(`${this.apiUrl}/${vendorId}/branches`);
   }
 
   getVendorActivityLog(vendorId: string, filters: VendorActivityLogFilters = {}): Observable<VendorActivityLogPage> {
@@ -559,6 +560,7 @@ export class VendorService {
       pageSize?: number;
       search?: string;
       status?: string;
+      branchId?: string | null;
     }
   ): Observable<ApiPaginatedResponse<AdminVendorProductItem>> {
     const page = options?.page ?? 1;
@@ -574,6 +576,10 @@ export class VendorService {
 
     if (options?.status?.trim()) {
       params = params.set('status', options.status.trim());
+    }
+
+    if (options?.branchId?.trim()) {
+      params = params.set('branchId', options.branchId.trim());
     }
 
     return this.http.get<ApiPaginatedResponse<AdminVendorProductItem>>(`${this.apiUrl}/${vendorId}/products`, {

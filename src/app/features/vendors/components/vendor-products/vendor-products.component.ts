@@ -16,6 +16,8 @@ import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 interface Product {
   id: string;
   masterProductId: string;
+  vendorBranchId: string | null;
+  branchLabel: string;
   nameAr: string;
   nameEn: string;
   variant: string;
@@ -45,6 +47,7 @@ export class VendorProductsComponent {
   isRTL = true;
   searchQuery = '';
   selectedStatus = '';
+  selectedBranchId = '';
   isLoading = false;
   hasError = false;
   currentPage = 1;
@@ -54,6 +57,10 @@ export class VendorProductsComponent {
   private readonly searchSubject = new Subject<string>();
 
   products: Product[] = [];
+  branchOptions: SearchableSelectOption<string>[] = [
+    { value: '', labelKey: 'VENDOR_PRODUCTS.ALL_BRANCHES' }
+  ];
+  private branchLabelById = new Map<string, string>();
 
   readonly statusOptions: SearchableSelectOption<string>[] = [
     { value: '', labelKey: 'VENDOR_PRODUCTS.PRODUCT_STATUS' },
@@ -74,9 +81,10 @@ export class VendorProductsComponent {
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
-      this.cdr.markForCheck();
         this.currentLang = event.lang;
         this.isRTL = event.lang === 'ar';
+        this.relabelProducts();
+        this.cdr.markForCheck();
       });
 
     this.searchSubject
@@ -86,9 +94,9 @@ export class VendorProductsComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
-      this.cdr.markForCheck();
         this.currentPage = 1;
         this.loadProducts();
+        this.cdr.markForCheck();
       });
 
     this.vendorDetailFacade.vendor$
@@ -108,6 +116,7 @@ export class VendorProductsComponent {
 
         this.vendorId = vendor.id;
         this.currentPage = 1;
+        this.loadBranches();
         this.loadProducts();
       });
   }
@@ -170,7 +179,7 @@ export class VendorProductsComponent {
   }
 
   get hasActiveFilters(): boolean {
-    return !!this.searchQuery.trim() || !!this.selectedStatus;
+    return !!this.searchQuery.trim() || !!this.selectedStatus || !!this.selectedBranchId;
   }
 
   get activeFilterCount(): number {
@@ -181,6 +190,10 @@ export class VendorProductsComponent {
     }
 
     if (this.selectedStatus) {
+      count += 1;
+    }
+
+    if (this.selectedBranchId) {
       count += 1;
     }
 
@@ -200,13 +213,19 @@ export class VendorProductsComponent {
     this.loadProducts();
   }
 
+  onBranchChange(): void {
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
   clearFilters(): void {
-    if (!this.searchQuery && !this.selectedStatus) {
+    if (!this.searchQuery && !this.selectedStatus && !this.selectedBranchId) {
       return;
     }
 
     this.searchQuery = '';
     this.selectedStatus = '';
+    this.selectedBranchId = '';
     this.currentPage = 1;
     this.loadProducts();
   }
@@ -263,22 +282,23 @@ export class VendorProductsComponent {
       page: this.currentPage,
       pageSize: this.pageSize,
       search: this.searchQuery,
-      status: this.selectedStatus
+      status: this.selectedStatus,
+      branchId: this.selectedBranchId
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-        this.cdr.markForCheck();
           this.products = (response.items ?? []).map((product) => this.mapProduct(product));
           this.totalItems = response.totalCount ?? this.products.length;
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: () => {
-        this.cdr.markForCheck();
           this.products = [];
           this.totalItems = 0;
           this.hasError = true;
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -292,6 +312,8 @@ export class VendorProductsComponent {
     return {
       id: product.id,
       masterProductId: product.masterProductId,
+      vendorBranchId: product.vendorBranchId ?? null,
+      branchLabel: this.resolveBranchLabel(product.vendorBranchId),
       nameAr: product.masterProduct.nameAr,
       nameEn: product.masterProduct.nameEn,
       variant: product.masterProduct.barcode || product.masterProduct.slug,
@@ -320,6 +342,66 @@ export class VendorProductsComponent {
     }
 
     return 'active';
+  }
+
+  private loadBranches(): void {
+    if (!this.vendorId) {
+      this.branchOptions = [{ value: '', labelKey: 'VENDOR_PRODUCTS.ALL_BRANCHES' }];
+      this.branchLabelById.clear();
+      return;
+    }
+
+    this.vendorService.getVendorBranches(this.vendorId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (branches) => {
+          this.branchLabelById = new Map(
+            branches.map((branch) => [
+              branch.id,
+              this.formatBranchLabel(branch.name, branch.city, branch.region)
+            ])
+          );
+          this.branchOptions = [
+            { value: '', labelKey: 'VENDOR_PRODUCTS.ALL_BRANCHES' },
+            ...branches.map((branch) => ({
+              value: branch.id,
+              label: this.formatBranchLabel(branch.name, branch.city, branch.region)
+            }))
+          ];
+          this.relabelProducts();
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.branchLabelById.clear();
+          this.branchOptions = [{ value: '', labelKey: 'VENDOR_PRODUCTS.ALL_BRANCHES' }];
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  private relabelProducts(): void {
+    if (!this.products.length) {
+      return;
+    }
+
+    this.products = this.products.map((product) => ({
+      ...product,
+      branchLabel: this.resolveBranchLabel(product.vendorBranchId)
+    }));
+  }
+
+  private resolveBranchLabel(branchId?: string | null): string {
+    if (!branchId) {
+      return this.translate.instant('VENDOR_PRODUCTS.GLOBAL_BRANCH_INVENTORY');
+    }
+
+    return this.branchLabelById.get(branchId) ?? branchId;
+  }
+
+  private formatBranchLabel(name: string, city?: string | null, region?: string | null): string {
+    return [name, city, region]
+      .filter((part): part is string => !!part?.trim())
+      .join(' - ');
   }
 
   formatNumber(value: number): string {

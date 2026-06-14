@@ -496,6 +496,10 @@
     "SHOWING_LABEL": "Showing",
     "VIEW_PRODUCT": "View details",
     "TABLE_SKU": "SKU",
+    "ALL_BRANCHES": "All branches",
+    "BRANCH_FILTER": "Branch",
+    "GLOBAL_BRANCH_INVENTORY": "Store-wide inventory",
+    "UNIFIED_PRICE_HINT": "Unified across branches",
     "TOTAL_PRODUCTS": "Total Products",
     "ACTIVE_PRODUCTS": "Active Products",
     "LOW_STOCK": "Low Stock",
@@ -515,6 +519,7 @@
     "TABLE": {
       "PRODUCT": "Product",
       "CATEGORY": "Category",
+      "BRANCH": "Branch",
       "PRICE": "Price",
       "STOCK": "Stock",
       "STATUS": "Status",
