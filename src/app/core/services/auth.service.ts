@@ -223,10 +223,9 @@ export class AuthService {
     }
 
     public login(credentials: LoginCredentials): Observable<AuthLoginResponse> {
-        return this.http
-            .post<AuthLoginResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true })
-            .pipe(
-                switchMap(response => {
+        return from(this.acquireCsrfToken()).pipe(
+            switchMap(() => this.http.post<AuthLoginResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true })),
+            switchMap(response => {
                     this.clearLoginRequired();
                     this.accessToken = response.tokens?.accessToken ?? null;
                     this.touchActivity();
