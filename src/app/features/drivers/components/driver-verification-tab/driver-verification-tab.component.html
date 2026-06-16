@@ -98,7 +98,7 @@
   </section>
 
   <!-- Metric Overview Cards -->
-  <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+  <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
     <!-- Card 1: Total Documents -->
     <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-slate-200">
       <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-slate-400 rounded-full"></div>
@@ -144,16 +144,31 @@
       </div>
     </article>
 
-    <!-- Card 4: Expiring Soon -->
+    <!-- Card 4: Rejected Documents -->
     <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-rose-200">
       <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-rose-500 rounded-full"></div>
       <div class="relative flex items-center justify-between">
         <div>
-          <p class="text-[10px] font-black tracking-widest text-rose-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS' | translate }}</p>
-          <p class="mt-2 text-3xl font-black tracking-tight text-rose-950">{{ expiringDocumentsCount }}</p>
-          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS_DESC' | translate }}</p>
+          <p class="text-[10px] font-black tracking-widest text-rose-600 uppercase">{{ isRTL ? 'ملفات مرفوضة' : 'Rejected files' }}</p>
+          <p class="mt-2 text-3xl font-black tracking-tight text-rose-950">{{ rejectedDocumentsCount }}</p>
+          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ isRTL ? 'تحتاج سبب رفض ورفع جديد' : 'Need a reason and re-upload' }}</p>
         </div>
         <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 transition-transform duration-300 group-hover:scale-110">
+          <span class="material-symbols-outlined text-[24px]">cancel</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 5: Expiring Soon -->
+    <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-rose-200">
+      <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-orange-500 rounded-full"></div>
+      <div class="relative flex items-center justify-between">
+        <div>
+          <p class="text-[10px] font-black tracking-widest text-orange-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS' | translate }}</p>
+          <p class="mt-2 text-3xl font-black tracking-tight text-orange-950">{{ expiringDocumentsCount }}</p>
+          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS_DESC' | translate }}</p>
+        </div>
+        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 transition-transform duration-300 group-hover:scale-110">
           <span class="material-symbols-outlined text-[24px]">gpp_maybe</span>
         </div>
       </div>
@@ -214,7 +229,7 @@
           type="button"
           (click)="selectDocument(document)"
           class="group w-full rounded-2xl border p-4 text-start transition-all duration-300 relative overflow-hidden"
-          [ngClass]="selectedDocumentPreview?.id === document.id ? 'border-primary bg-primary/[0.03] shadow-md ring-2 ring-primary/10' : 'border-slate-150 bg-white hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-sm'">
+          [ngClass]="getDocumentCardClasses(document)">
           
           <!-- Highlight line for selected state -->
           <div *ngIf="selectedDocumentPreview?.id === document.id" class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1 bg-primary rounded-full"></div>
@@ -242,7 +257,26 @@
                   [shouldTranslate]="true"
                   size="sm">
                 </app-status-pill>
+
+                <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-black"
+                      [ngClass]="getDocumentLifecycleBadgeClasses(document)">
+                  <span class="material-symbols-outlined text-[14px]">{{ getDocumentLifecycleIcon(document) }}</span>
+                  {{ getDocumentLifecycleLabel(document) }}
+                </span>
               </div>
+
+              <p class="mt-2 text-[10.5px] font-semibold leading-relaxed text-slate-500">
+                {{ getDocumentLifecycleHint(document) }}
+              </p>
+
+              <div *ngIf="document.rejectionReason" class="mt-2 rounded-xl border border-rose-200 bg-white/70 px-3 py-2 text-[10.5px] font-bold leading-relaxed text-rose-700">
+                <span class="font-black">{{ isRTL ? 'سبب الرفض:' : 'Rejection reason:' }}</span>
+                {{ document.rejectionReason }}
+              </div>
+
+              <p *ngIf="document.status !== 'review' && getDocumentReviewMeta(document)" class="mt-2 text-[9.5px] font-bold text-slate-400">
+                {{ isRTL ? 'آخر مراجعة:' : 'Last review:' }} {{ getDocumentReviewMeta(document) }}
+              </p>
             </div>
           </div>
         </button>
@@ -271,6 +305,25 @@
     </div>
 
     <ng-container *ngIf="selectedDocumentPreview as document; else emptyPreview">
+      <div class="mb-4 rounded-2xl border p-4 shadow-sm"
+           [ngClass]="getDocumentLifecycleBadgeClasses(document)">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">{{ getDocumentLifecycleIcon(document) }}</span>
+            <div>
+              <p class="text-[12.5px] font-black">{{ getDocumentLifecycleLabel(document) }}</p>
+              <p class="mt-0.5 text-[10.5px] font-semibold leading-relaxed opacity-85">{{ getDocumentLifecycleHint(document) }}</p>
+            </div>
+          </div>
+          <span *ngIf="getDocumentReviewMeta(document)" class="rounded-full bg-white/70 px-3 py-1 text-[10px] font-black shadow-sm">
+            {{ getDocumentReviewMeta(document) }}
+          </span>
+        </div>
+        <div *ngIf="document.rejectionReason" class="mt-3 rounded-xl border border-rose-200 bg-white/80 px-3 py-2 text-[11px] font-bold leading-relaxed text-rose-700">
+          <span class="font-black">{{ isRTL ? 'سبب الرفض:' : 'Rejection reason:' }}</span>
+          {{ document.rejectionReason }}
+        </div>
+      </div>
       
       <!-- Interactive Visual Inspector Area -->
       <div class="relative flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-900/5 shadow-inner flex flex-col mb-4 min-h-[350px]">

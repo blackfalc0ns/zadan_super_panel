@@ -321,6 +321,102 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
     return 'description';
   }
 
+  getDocumentCardClasses(document: DriverDocumentRecord): string {
+    if (this.selectedDocumentPreview?.id === document.id) {
+      return 'border-primary bg-primary/[0.03] shadow-md ring-2 ring-primary/10';
+    }
+
+    switch (document.status) {
+      case 'review':
+        return 'border-amber-200 bg-amber-50/35 hover:border-amber-300 hover:bg-amber-50/60 hover:shadow-sm';
+      case 'valid':
+        return 'border-emerald-200 bg-emerald-50/25 hover:border-emerald-300 hover:bg-emerald-50/45 hover:shadow-sm';
+      case 'expiring':
+        return 'border-orange-200 bg-orange-50/25 hover:border-orange-300 hover:bg-orange-50/45 hover:shadow-sm';
+      case 'rejected':
+        return 'border-rose-200 bg-rose-50/35 hover:border-rose-300 hover:bg-rose-50/60 hover:shadow-sm';
+      default:
+        return 'border-slate-150 bg-white hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-sm';
+    }
+  }
+
+  getDocumentLifecycleBadgeClasses(document: DriverDocumentRecord): string {
+    switch (document.status) {
+      case 'review':
+        return 'border-amber-200 bg-amber-100 text-amber-800';
+      case 'valid':
+        return 'border-emerald-200 bg-emerald-100 text-emerald-800';
+      case 'expiring':
+        return 'border-orange-200 bg-orange-100 text-orange-800';
+      case 'rejected':
+        return 'border-rose-200 bg-rose-100 text-rose-800';
+      default:
+        return 'border-slate-200 bg-slate-100 text-slate-700';
+    }
+  }
+
+  getDocumentLifecycleIcon(document: DriverDocumentRecord): string {
+    switch (document.status) {
+      case 'review':
+        return 'hourglass_top';
+      case 'valid':
+        return 'verified';
+      case 'expiring':
+        return 'event_busy';
+      case 'rejected':
+        return 'cancel';
+      default:
+        return 'info';
+    }
+  }
+
+  getDocumentLifecycleLabel(document: DriverDocumentRecord): string {
+    switch (document.status) {
+      case 'review':
+        return this.isRTL ? 'محدث وتحت المراجعة' : 'Updated, under review';
+      case 'valid':
+        return this.isRTL ? 'مقبول' : 'Accepted';
+      case 'expiring':
+        return this.isRTL ? 'مقبول وقرب الانتهاء' : 'Accepted, expiring soon';
+      case 'rejected':
+        return this.isRTL ? 'مرفوض' : 'Rejected';
+      default:
+        return this.isRTL ? 'غير محدد' : 'Unknown';
+    }
+  }
+
+  getDocumentLifecycleHint(document: DriverDocumentRecord): string {
+    switch (document.status) {
+      case 'review':
+        return this.isRTL
+          ? 'الملف الجديد محفوظ كمراجعة ولن يعتمد قبل موافقة الأدمن.'
+          : 'The new file is pending admin approval before it becomes active.';
+      case 'valid':
+        return this.isRTL
+          ? 'الملف معتمد ويمكن الاعتماد عليه في قبول المندوب.'
+          : 'This file is approved and can be used for driver approval.';
+      case 'expiring':
+        return this.isRTL
+          ? 'الملف معتمد حاليا لكنه يحتاج متابعة لقرب تاريخ الانتهاء.'
+          : 'This file is approved but needs follow-up because it expires soon.';
+      case 'rejected':
+        return this.isRTL
+          ? 'الملف مرفوض ويجب رفع نسخة جديدة بعد معالجة سبب الرفض.'
+          : 'This file was rejected; a corrected copy is required.';
+      default:
+        return this.isRTL ? 'حالة الملف غير واضحة.' : 'The document state is not clear.';
+    }
+  }
+
+  getDocumentReviewMeta(document: DriverDocumentRecord): string {
+    const parts = [
+      document.reviewedBy,
+      document.reviewedAt
+    ].filter(Boolean);
+
+    return parts.join(' - ');
+  }
+
   requiresReason(action: 'approve' | 'request-docs' | 'reject'): boolean {
     return action !== 'approve';
   }
