@@ -15,71 +15,6 @@
   </div>
 
   <section *ngIf="driverId" class="mx-auto max-w-[1600px] px-4 pb-2 sm:px-6 lg:px-8">
-    <div class="mb-4 rounded-[1.75rem] border border-amber-200/70 bg-amber-50/80 p-5 shadow-sm backdrop-blur">
-      <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div class="min-w-0">
-          <p class="text-[11px] font-black uppercase tracking-[0.22em] text-amber-700">
-            {{ isRTL ? 'اعتماد تعديلات المندوب' : 'Driver change approvals' }}
-          </p>
-          <h2 class="mt-2 text-lg font-black text-slate-950">
-            {{ isRTL ? 'التعديلات الحساسة بانتظار قرار الأدمن' : 'Sensitive changes waiting for admin decision' }}
-          </h2>
-          <p class="mt-2 text-sm font-semibold leading-7 text-slate-600">
-            {{ isRTL ? 'راجع البيانات والمستندات المطلوبة قبل تطبيقها على حساب المندوب.' : 'Review requested data and documents before applying them to this driver.' }}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          (click)="loadDriverApprovals()"
-          [disabled]="isApprovalsLoading"
-          class="inline-flex items-center justify-center gap-2 rounded-2xl border border-amber-200 bg-white px-5 py-3 text-sm font-black text-amber-700 shadow-sm transition-all hover:bg-amber-100 disabled:opacity-60">
-          <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isApprovalsLoading">
-            {{ isApprovalsLoading ? 'progress_activity' : 'refresh' }}
-          </span>
-          {{ isRTL ? 'تحديث الطلبات' : 'Refresh requests' }}
-        </button>
-      </div>
-
-      <div *ngIf="isApprovalsLoading" class="mt-4 grid gap-3 md:grid-cols-2">
-        <div *ngFor="let item of [1,2]" class="h-24 animate-pulse rounded-2xl bg-white/70"></div>
-      </div>
-
-      <div *ngIf="!isApprovalsLoading && driverApprovals.length === 0" class="mt-4 rounded-2xl border border-dashed border-amber-200 bg-white/70 px-4 py-3 text-sm font-bold text-amber-800">
-        {{ isRTL ? 'لا توجد تعديلات معلقة لهذا المندوب حاليا.' : 'No pending changes for this driver right now.' }}
-      </div>
-
-      <div *ngIf="!isApprovalsLoading && driverApprovals.length > 0" class="mt-4 grid gap-3 lg:grid-cols-2">
-        <article
-          *ngFor="let approval of driverApprovals; trackBy: trackApproval"
-          class="rounded-2xl border border-white bg-white/90 p-4 shadow-sm">
-          <div class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h3 class="text-sm font-black text-slate-950">{{ getApprovalActionLabel(approval.action) }}</h3>
-              <p class="mt-1 text-xs font-bold leading-6 text-slate-500">{{ approval.summary }}</p>
-            </div>
-            <span class="rounded-full bg-amber-100 px-3 py-1 text-[11px] font-black text-amber-800">
-              {{ isRTL ? 'معلق' : 'Pending' }}
-            </span>
-          </div>
-
-          <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <p class="text-[11px] font-bold text-slate-500">
-              {{ isRTL ? 'حقول متغيرة:' : 'Changed fields:' }}
-              <strong class="text-slate-900">{{ getApprovalChangedCount(approval) }}</strong>
-            </p>
-            <button
-              type="button"
-              (click)="openApprovalReview(approval)"
-              class="inline-flex h-10 items-center gap-2 rounded-xl bg-zadna-primary px-4 text-xs font-black text-white shadow-lg shadow-zadna-primary/20 transition hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[17px]">visibility</span>
-              {{ isRTL ? 'مراجعة واعتماد' : 'Review and decide' }}
-            </button>
-          </div>
-        </article>
-      </div>
-    </div>
-
     <div class="mb-4 flex flex-wrap items-center justify-end gap-3">
       <button
         type="button"
@@ -216,6 +151,8 @@
     [selectedIncident]="selectedIncident"
     [isRTL]="isRTL"
     [isMutating]="isMutating"
+    [driverApprovals]="driverApprovals"
+    [isApprovalsLoading]="isApprovalsLoading"
     (tabChange)="setTab($event)"
     (workflowActionRequested)="executeWorkflowAction($event)"
     (openTasksRequested)="setTab('operations')"
@@ -230,6 +167,8 @@
     (reviewActionRequested)="requestReviewAction($event)"
     (documentApprovalRequested)="approveDocument($event)"
     (documentRejectionRequested)="rejectDocument($event)"
+    (approvalRefreshRequested)="loadDriverApprovals()"
+    (approvalReviewRequested)="openApprovalReview($event)"
     (clearRestrictionsRequested)="clearDriverRestrictions()"
     (updateProfileRequested)="updateDriverProfile($event)"
     (locationAccessActionRequested)="updateLocationAccess($event)"

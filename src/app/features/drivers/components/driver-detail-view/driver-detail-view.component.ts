@@ -7,6 +7,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DetailTabsNavComponent, DetailTabNavItem } from '../../../../shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
 import { QuickPreviewDrawerComponent, PreviewAction } from '../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { AccessApprovalRequestDto } from '../../../../core/services/admin-access-api.service';
 
 import { DriverHeroComponent } from '../driver-hero/driver-hero.component';
 import { DriverCommandCenterComponent } from '../driver-command-center/driver-command-center.component';
@@ -71,6 +72,8 @@ export class DriverDetailViewComponent {
   @Input() selectedIncident: DriverIncidentRecord | null = null;
   @Input() isRTL = true;
   @Input() isMutating = false;
+  @Input() driverApprovals: AccessApprovalRequestDto[] = [];
+  @Input() isApprovalsLoading = false;
 
   @Output() tabChange = new EventEmitter<DriverLifecycleTabId>();
   @Output() workflowActionRequested = new EventEmitter<DriverWorkflowActionId>();
@@ -91,6 +94,8 @@ export class DriverDetailViewComponent {
   @Output() documentApprovalRequested = new EventEmitter<DriverDocumentRecord>();
   @Output() documentRejectionRequested = new EventEmitter<{ document: DriverDocumentRecord; reason: string }>();
   @Output() updateProfileRequested = new EventEmitter<any>();
+  @Output() approvalRefreshRequested = new EventEmitter<void>();
+  @Output() approvalReviewRequested = new EventEmitter<AccessApprovalRequestDto>();
   @Output() clearRestrictionsRequested = new EventEmitter<void>();
 
   @Output() taskPreviewRequested = new EventEmitter<DriverTaskAssignment>();

@@ -132,12 +132,16 @@
               *ngSwitchCase="'verification'" 
               [driver]="driver" 
               [isRTL]="isRTL"
+              [driverApprovals]="driverApprovals"
+              [isApprovalsLoading]="isApprovalsLoading"
               [(reviewerDecisionNote)]="reviewerDecisionNote"
               [(selectedRejectionReason)]="selectedRejectionReason"
               [(internalReviewNote)]="internalReviewNote"
               (reviewActionRequested)="reviewActionRequested.emit($event)"
               (documentApprovalRequested)="documentApprovalRequested.emit($event)"
               (documentRejectionRequested)="documentRejectionRequested.emit($event)"
+              (approvalRefreshRequested)="approvalRefreshRequested.emit()"
+              (approvalReviewRequested)="approvalReviewRequested.emit($event)"
               (updateProfileRequested)="updateProfileRequested.emit($event)">
             </app-driver-verification-tab>
           </ng-container>

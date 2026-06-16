@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { GeographyService } from '../../../../shared/services/geography.service';
+import { AccessApprovalRequestDto } from '../../../../core/services/admin-access-api.service';
 import { DriverDetailRecord, DriverDocumentRecord, DriverVerificationChecklistItem } from '../../models/drivers.models';
 import { getDocumentStatusKey, getDocumentStatusVariant } from '../../utils/driver-ui.utils';
 
@@ -21,6 +22,8 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
   @Input() selectedRejectionReason = '';
   @Input() internalReviewNote = '';
   @Input() isRTL = true;
+  @Input() driverApprovals: AccessApprovalRequestDto[] = [];
+  @Input() isApprovalsLoading = false;
 
   @Output() reviewerDecisionNoteChange = new EventEmitter<string>();
   @Output() selectedRejectionReasonChange = new EventEmitter<string>();
@@ -29,6 +32,8 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
   @Output() documentApprovalRequested = new EventEmitter<DriverDocumentRecord>();
   @Output() documentRejectionRequested = new EventEmitter<{ document: DriverDocumentRecord; reason: string }>();
   @Output() updateProfileRequested = new EventEmitter<any>();
+  @Output() approvalRefreshRequested = new EventEmitter<void>();
+  @Output() approvalReviewRequested = new EventEmitter<AccessApprovalRequestDto>();
 
   private readonly geographyService = inject(GeographyService);
 
@@ -175,6 +180,10 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
 
   trackByDocumentId(index: number, document: DriverDocumentRecord): string {
     return document.id;
+  }
+
+  trackApproval(_: number, approval: AccessApprovalRequestDto): string {
+    return approval.id;
   }
 
   setWorkspaceWindow(window: 'operations' | 'review') {
@@ -415,6 +424,33 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
     ].filter(Boolean);
 
     return parts.join(' - ');
+  }
+
+  getApprovalActionLabel(action: string): string {
+    const labels: Record<string, { ar: string; en: string }> = {
+      'driver.profile.personal': { ar: 'تعديل البيانات الشخصية', en: 'Personal data change' },
+      'driver.profile.vehicle': { ar: 'تعديل الهوية والمركبة', en: 'Identity and vehicle change' },
+      'driver.profile.documents': { ar: 'تعديل المستندات', en: 'Documents change' },
+      'driver.payout_method.create': { ar: 'إضافة طريقة سحب', en: 'Create payout method' },
+      'driver.payout_method.update': { ar: 'تعديل طريقة سحب', en: 'Update payout method' },
+      'driver.payout_method.make_primary': { ar: 'تعيين طريقة السحب الأساسية', en: 'Set primary payout method' },
+      'driver.payout_method.delete': { ar: 'حذف طريقة سحب', en: 'Delete payout method' }
+    };
+
+    const label = labels[action];
+    return label ? (this.isRTL ? label.ar : label.en) : action;
+  }
+
+  getApprovalChangedCount(approval: AccessApprovalRequestDto): number {
+    return approval.reviewDetails?.fields.filter((field) => field.isChanged).length ?? 0;
+  }
+
+  requestApprovalRefresh(): void {
+    this.approvalRefreshRequested.emit();
+  }
+
+  openApprovalReview(approval: AccessApprovalRequestDto): void {
+    this.approvalReviewRequested.emit(approval);
   }
 
   requiresReason(action: 'approve' | 'request-docs' | 'reject'): boolean {
