@@ -152,6 +152,7 @@ interface AdminDriverDetailResponse {
   dailyRejections?: number;
   weeklyRejections?: number;
   enforcementLevel?: string;
+  canReceiveOffers?: boolean;
   lastOfferResponseAtUtc?: string | null;
   address?: string | null;
   licenseNumber?: string | null;

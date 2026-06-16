@@ -15,6 +15,71 @@
   </div>
 
   <section *ngIf="driverId" class="mx-auto max-w-[1600px] px-4 pb-2 sm:px-6 lg:px-8">
+    <div class="mb-4 rounded-[1.75rem] border border-amber-200/70 bg-amber-50/80 p-5 shadow-sm backdrop-blur">
+      <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div class="min-w-0">
+          <p class="text-[11px] font-black uppercase tracking-[0.22em] text-amber-700">
+            {{ isRTL ? 'اعتماد تعديلات المندوب' : 'Driver change approvals' }}
+          </p>
+          <h2 class="mt-2 text-lg font-black text-slate-950">
+            {{ isRTL ? 'التعديلات الحساسة بانتظار قرار الأدمن' : 'Sensitive changes waiting for admin decision' }}
+          </h2>
+          <p class="mt-2 text-sm font-semibold leading-7 text-slate-600">
+            {{ isRTL ? 'راجع البيانات والمستندات المطلوبة قبل تطبيقها على حساب المندوب.' : 'Review requested data and documents before applying them to this driver.' }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="loadDriverApprovals()"
+          [disabled]="isApprovalsLoading"
+          class="inline-flex items-center justify-center gap-2 rounded-2xl border border-amber-200 bg-white px-5 py-3 text-sm font-black text-amber-700 shadow-sm transition-all hover:bg-amber-100 disabled:opacity-60">
+          <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isApprovalsLoading">
+            {{ isApprovalsLoading ? 'progress_activity' : 'refresh' }}
+          </span>
+          {{ isRTL ? 'تحديث الطلبات' : 'Refresh requests' }}
+        </button>
+      </div>
+
+      <div *ngIf="isApprovalsLoading" class="mt-4 grid gap-3 md:grid-cols-2">
+        <div *ngFor="let item of [1,2]" class="h-24 animate-pulse rounded-2xl bg-white/70"></div>
+      </div>
+
+      <div *ngIf="!isApprovalsLoading && driverApprovals.length === 0" class="mt-4 rounded-2xl border border-dashed border-amber-200 bg-white/70 px-4 py-3 text-sm font-bold text-amber-800">
+        {{ isRTL ? 'لا توجد تعديلات معلقة لهذا المندوب حاليا.' : 'No pending changes for this driver right now.' }}
+      </div>
+
+      <div *ngIf="!isApprovalsLoading && driverApprovals.length > 0" class="mt-4 grid gap-3 lg:grid-cols-2">
+        <article
+          *ngFor="let approval of driverApprovals; trackBy: trackApproval"
+          class="rounded-2xl border border-white bg-white/90 p-4 shadow-sm">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-black text-slate-950">{{ getApprovalActionLabel(approval.action) }}</h3>
+              <p class="mt-1 text-xs font-bold leading-6 text-slate-500">{{ approval.summary }}</p>
+            </div>
+            <span class="rounded-full bg-amber-100 px-3 py-1 text-[11px] font-black text-amber-800">
+              {{ isRTL ? 'معلق' : 'Pending' }}
+            </span>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-[11px] font-bold text-slate-500">
+              {{ isRTL ? 'حقول متغيرة:' : 'Changed fields:' }}
+              <strong class="text-slate-900">{{ getApprovalChangedCount(approval) }}</strong>
+            </p>
+            <button
+              type="button"
+              (click)="openApprovalReview(approval)"
+              class="inline-flex h-10 items-center gap-2 rounded-xl bg-zadna-primary px-4 text-xs font-black text-white shadow-lg shadow-zadna-primary/20 transition hover:-translate-y-0.5">
+              <span class="material-symbols-outlined text-[17px]">visibility</span>
+              {{ isRTL ? 'مراجعة واعتماد' : 'Review and decide' }}
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+
     <div class="mb-4 flex flex-wrap items-center justify-end gap-3">
       <button
         type="button"
@@ -172,4 +237,160 @@
     (incidentPreviewRequested)="openIncidentPreview($event)"
     (previewClosed)="closePreview()">
   </app-driver-detail-view>
+
+  <div
+    *ngIf="selectedApproval as approval"
+    class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-950/45 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+    (click)="closeApprovalReview()">
+    <div
+      class="flex max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-t-[2rem] border border-slate-200 bg-white shadow-2xl sm:rounded-[2rem]"
+      (click)="$event.stopPropagation()">
+      <header class="border-b border-slate-100 px-6 py-5">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-zadna-primary">
+              {{ isRTL ? 'مراجعة تعديل مندوب' : 'Driver change review' }}
+            </p>
+            <h2 class="mt-2 text-xl font-black text-slate-950">{{ getApprovalActionLabel(approval.action) }}</h2>
+            <p class="mt-1 text-sm font-bold leading-6 text-slate-500">{{ approval.summary }}</p>
+          </div>
+          <button
+            type="button"
+            (click)="closeApprovalReview()"
+            [disabled]="isApprovalDeciding"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto px-6 py-5">
+        <div class="mb-5 grid gap-3 md:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ isRTL ? 'مقدم الطلب' : 'Requested by' }}</span>
+            <p class="mt-1 truncate text-sm font-black text-slate-900">{{ approval.requestedByFullName || approval.requestedByEmail || approval.requestedByUserId }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ isRTL ? 'تاريخ الطلب' : 'Created at' }}</span>
+            <p class="mt-1 text-sm font-black text-slate-900">{{ approval.createdAtUtc | date:'medium' }}</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ isRTL ? 'الحقول المتغيرة' : 'Changed fields' }}</span>
+            <p class="mt-1 text-sm font-black text-slate-900">{{ getApprovalChangedCount(approval) }}</p>
+          </div>
+        </div>
+
+        <ng-container *ngIf="approval.reviewDetails; else rawApprovalPayload">
+          <section *ngIf="selectedApprovalChangedFields.length > 0" class="mb-5">
+            <h3 class="mb-3 text-sm font-black text-slate-950">{{ isRTL ? 'البيانات التي ستتغير' : 'Values that will change' }}</h3>
+            <ng-container *ngTemplateOutlet="approvalFieldsTable; context: { fields: selectedApprovalChangedFields }"></ng-container>
+          </section>
+
+          <section *ngIf="selectedApprovalUnchangedFields.length > 0">
+            <h3 class="mb-3 text-sm font-black text-slate-500">{{ isRTL ? 'بيانات مرفقة بدون تغيير واضح' : 'Included values without visible change' }}</h3>
+            <ng-container *ngTemplateOutlet="approvalFieldsTable; context: { fields: selectedApprovalUnchangedFields }"></ng-container>
+          </section>
+        </ng-container>
+
+        <ng-template #rawApprovalPayload>
+          <pre class="max-h-72 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs font-semibold text-slate-100">{{ approval.payloadJson }}</pre>
+        </ng-template>
+
+        <label class="mt-5 flex flex-col gap-2">
+          <span class="text-[11px] font-black uppercase tracking-widest text-slate-500">{{ isRTL ? 'ملاحظة القرار' : 'Decision note' }}</span>
+          <textarea
+            [(ngModel)]="approvalDecisionNote"
+            rows="3"
+            class="w-full resize-none rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-900 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10"
+            [placeholder]="isRTL ? 'اختياري: سبب الموافقة أو الرفض' : 'Optional approval or rejection note'"></textarea>
+        </label>
+      </div>
+
+      <footer class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <button
+          type="button"
+          (click)="closeApprovalReview()"
+          [disabled]="isApprovalDeciding"
+          class="h-11 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-black text-slate-600 transition hover:bg-slate-100 disabled:opacity-60">
+          {{ isRTL ? 'إغلاق' : 'Close' }}
+        </button>
+
+        <div class="flex flex-col-reverse gap-3 sm:flex-row">
+          <button
+            type="button"
+            (click)="rejectSelectedApproval()"
+            [disabled]="isApprovalDeciding"
+            class="h-11 rounded-2xl border border-red-200 bg-red-50 px-5 text-sm font-black text-red-700 transition hover:bg-red-100 disabled:opacity-60">
+            {{ isRTL ? 'رفض التعديل' : 'Reject change' }}
+          </button>
+          <button
+            type="button"
+            (click)="approveSelectedApproval()"
+            [disabled]="isApprovalDeciding"
+            class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-zadna-primary px-6 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition hover:-translate-y-0.5 disabled:opacity-60">
+            <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isApprovalDeciding">
+              {{ isApprovalDeciding ? 'progress_activity' : 'check_circle' }}
+            </span>
+            {{ isRTL ? 'اعتماد وتطبيق' : 'Approve and apply' }}
+          </button>
+        </div>
+      </footer>
+    </div>
+  </div>
 </section>
+
+<ng-template #approvalFieldsTable let-fields="fields">
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div class="hidden grid-cols-[1.1fr_1fr_1fr_auto] gap-3 border-b border-slate-100 bg-slate-50 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-slate-400 md:grid">
+      <span>{{ isRTL ? 'الحقل' : 'Field' }}</span>
+      <span>{{ isRTL ? 'الحالي' : 'Current' }}</span>
+      <span>{{ isRTL ? 'المطلوب' : 'Requested' }}</span>
+      <span>{{ isRTL ? 'الحالة' : 'State' }}</span>
+    </div>
+
+    <div
+      *ngFor="let field of fields; trackBy: trackApprovalField"
+      class="grid gap-3 border-b border-slate-100 px-4 py-4 last:border-b-0 md:grid-cols-[1.1fr_1fr_1fr_auto]">
+      <div class="min-w-0">
+        <p class="text-sm font-black text-slate-900">{{ getApprovalFieldLabel(field) }}</p>
+        <div class="mt-1 flex flex-wrap gap-1.5">
+          <span *ngIf="field.isSensitive" class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-black text-amber-700">{{ isRTL ? 'حساس' : 'Sensitive' }}</span>
+          <span *ngIf="field.isDocument" class="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-black text-blue-700">{{ isRTL ? 'مستند' : 'Document' }}</span>
+        </div>
+      </div>
+
+      <div class="min-w-0 overflow-wrap-anywhere rounded-xl bg-slate-50 p-3 text-xs font-bold leading-6 text-slate-700">
+        <span class="mb-1 block text-[10px] font-black uppercase tracking-widest text-slate-400 md:hidden">{{ isRTL ? 'الحالي' : 'Current' }}</span>
+        <a *ngIf="field.isDocument && isApprovalUrl(field.currentValue); else currentApprovalText"
+           [href]="field.currentValue"
+           target="_blank"
+           rel="noopener"
+           class="text-zadna-primary underline underline-offset-4">
+          {{ isRTL ? 'فتح المستند الحالي' : 'Open current document' }}
+        </a>
+        <ng-template #currentApprovalText>{{ formatApprovalValue(field.currentValue) }}</ng-template>
+      </div>
+
+      <div class="min-w-0 overflow-wrap-anywhere rounded-xl p-3 text-xs font-bold leading-6"
+           [ngClass]="field.isChanged ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-50 text-slate-700'">
+        <span class="mb-1 block text-[10px] font-black uppercase tracking-widest text-slate-400 md:hidden">{{ isRTL ? 'المطلوب' : 'Requested' }}</span>
+        <a *ngIf="field.isDocument && isApprovalUrl(field.requestedValue); else requestedApprovalText"
+           [href]="field.requestedValue"
+           target="_blank"
+           rel="noopener"
+           class="text-zadna-primary underline underline-offset-4">
+          {{ isRTL ? 'فتح المستند المطلوب' : 'Open requested document' }}
+        </a>
+        <ng-template #requestedApprovalText>{{ formatApprovalValue(field.requestedValue) }}</ng-template>
+      </div>
+
+      <div class="flex items-center md:justify-end">
+        <span
+          class="rounded-full px-2.5 py-1 text-[10px] font-black"
+          [ngClass]="field.isChanged ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+          {{ field.isChanged ? (isRTL ? 'متغير' : 'Changed') : (isRTL ? 'بدون تغيير' : 'Same') }}
+        </span>
+      </div>
+    </div>
+  </div>
+</ng-template>

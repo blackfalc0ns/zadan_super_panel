@@ -133,6 +133,48 @@ export interface AccessAuditLogDto {
   userAgent: string | null;
 }
 
+export interface AccessApprovalReviewFieldDto {
+  key: string;
+  labelAr: string;
+  labelEn: string;
+  currentValue: unknown;
+  requestedValue: unknown;
+  isChanged: boolean;
+  isDocument: boolean;
+  isSensitive: boolean;
+}
+
+export interface AccessApprovalReviewDetailsDto {
+  entityType: string;
+  entityId: string;
+  action: string;
+  operation: string;
+  fields: AccessApprovalReviewFieldDto[];
+}
+
+export interface AccessApprovalRequestDto {
+  id: string;
+  requestedByUserId: string;
+  requestedByFullName: string | null;
+  requestedByEmail: string | null;
+  targetUserId: string | null;
+  targetFullName: string | null;
+  targetEmail: string | null;
+  action: string;
+  summary: string;
+  payloadHash: string;
+  payloadJson: string;
+  status: string;
+  createdAtUtc: string;
+  decidedByUserId: string | null;
+  decidedByFullName: string | null;
+  decidedByEmail: string | null;
+  decidedAtUtc: string | null;
+  decisionNote: string | null;
+  consumedAtUtc: string | null;
+  reviewDetails: AccessApprovalReviewDetailsDto | null;
+}
+
 export interface AdminUsersQuery {
   pageNumber?: number;
   pageSize?: number;
@@ -242,6 +284,33 @@ export class AdminAccessApiService {
 
   getUserAudit(userId: string): Observable<AccessAuditLogDto[]> {
     return this.http.get<AccessAuditLogDto[]>(`${this.baseUrl}/users/${userId}/audit`);
+  }
+
+  getApprovals(query: {
+    status?: string;
+    requestedByUserId?: string;
+    targetUserId?: string;
+    pageSize?: number;
+  } = {}): Observable<AccessApprovalRequestDto[]> {
+    const params = Object.fromEntries(
+      Object.entries(query)
+        .filter(([, value]) => value !== undefined && value !== null && value !== '')
+        .map(([key, value]) => [key, String(value)])
+    );
+
+    return this.http.get<AccessApprovalRequestDto[]>(`${this.baseUrl}/approvals`, { params });
+  }
+
+  approveApproval(id: string, note?: string | null): Observable<AccessApprovalRequestDto> {
+    return this.http.post<AccessApprovalRequestDto>(`${this.baseUrl}/approvals/${id}/approve`, {
+      note: note?.trim() || null
+    });
+  }
+
+  rejectApproval(id: string, note?: string | null): Observable<AccessApprovalRequestDto> {
+    return this.http.post<AccessApprovalRequestDto>(`${this.baseUrl}/approvals/${id}/reject`, {
+      note: note?.trim() || null
+    });
   }
 
   private mapUserRecord(dto: AdminUserRecordDto): AdminUserRecord {

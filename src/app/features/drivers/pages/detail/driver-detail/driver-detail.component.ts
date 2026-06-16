@@ -10,6 +10,11 @@ import {
   DriverService
 } from '@drivers/services/drivers.api.service';
 import {
+  AccessApprovalRequestDto,
+  AccessApprovalReviewFieldDto,
+  AdminAccessApiService
+} from '../../../../../core/services/admin-access-api.service';
+import {
   DriverDetailRecord,
   DriverDocumentRecord,
   DriverIncidentRecord,
@@ -32,8 +37,12 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   driverId: string | null = null;
   driver: DriverDetailRecord | null = null;
+  driverApprovals: AccessApprovalRequestDto[] = [];
+  selectedApproval: AccessApprovalRequestDto | null = null;
   isLoading = true;
   isMutating = false;
+  isApprovalsLoading = false;
+  isApprovalDeciding = false;
   isSendingTestNotification = false;
   error: string | null = null;
   activeTab: DriverLifecycleTabId = 'overview';
@@ -41,6 +50,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
   reviewerDecisionNote = '';
   internalReviewNote = '';
   selectedRejectionReason = '';
+  approvalDecisionNote = '';
   showTestNotificationComposer = false;
   testNotificationTitle = '';
   testNotificationBody = '';
@@ -57,12 +67,21 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly driverService: DriverService,
+    private readonly adminAccessApiService: AdminAccessApiService,
     private readonly translate: TranslateService,
     private readonly toastService: ToastService
   ) {}
 
   get isRTL(): boolean {
     return this.translate.currentLang !== 'en';
+  }
+
+  get selectedApprovalChangedFields(): AccessApprovalReviewFieldDto[] {
+    return this.selectedApproval?.reviewDetails?.fields.filter((field) => field.isChanged) ?? [];
+  }
+
+  get selectedApprovalUnchangedFields(): AccessApprovalReviewFieldDto[] {
+    return this.selectedApproval?.reviewDetails?.fields.filter((field) => !field.isChanged) ?? [];
   }
 
   ngOnInit(): void {
@@ -110,8 +129,10 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
         if (data) {
           this.driver = data;
+          this.loadDriverApprovals(id);
         } else {
           this.driver = null;
+          this.driverApprovals = [];
           this.error = this.t('DRIVERS.DETAIL.MESSAGES.DRIVER_NOT_FOUND');
         }
         this.isLoading = false;
@@ -120,6 +141,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
         console.error('Failed to load driver', err);
         this.driver = null;
+        this.driverApprovals = [];
         this.error = this.t('DRIVERS.DETAIL.MESSAGES.LOAD_DETAILS_FAILED');
         this.isLoading = false;
       }
@@ -159,6 +181,118 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
     this.previewType = null;
     this.selectedTask = null;
     this.selectedIncident = null;
+  }
+
+  loadDriverApprovals(driverId = this.driverId): void {
+    if (!driverId) {
+      this.driverApprovals = [];
+      return;
+    }
+
+    this.isApprovalsLoading = true;
+    this.adminAccessApiService.getApprovals({ status: 'Pending', pageSize: 100 }).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
+        this.isApprovalsLoading = false;
+      })
+    ).subscribe({
+      next: (approvals) => {
+        this.cdr.markForCheck();
+        this.driverApprovals = approvals.filter((approval) => this.isApprovalForDriver(approval, driverId));
+      },
+      error: (err) => {
+        this.cdr.markForCheck();
+        console.error('Failed to load driver approvals', err);
+        this.driverApprovals = [];
+      }
+    });
+  }
+
+  openApprovalReview(approval: AccessApprovalRequestDto): void {
+    this.selectedApproval = approval;
+    this.approvalDecisionNote = '';
+  }
+
+  closeApprovalReview(): void {
+    if (this.isApprovalDeciding) {
+      return;
+    }
+
+    this.selectedApproval = null;
+    this.approvalDecisionNote = '';
+  }
+
+  approveSelectedApproval(): void {
+    if (!this.selectedApproval || this.isApprovalDeciding) {
+      return;
+    }
+
+    this.decideSelectedApproval(
+      () => this.adminAccessApiService.approveApproval(this.selectedApproval!.id, this.approvalDecisionNote),
+      this.isRTL ? 'تم اعتماد تعديل المندوب وتطبيقه' : 'Driver change approved and applied'
+    );
+  }
+
+  rejectSelectedApproval(): void {
+    if (!this.selectedApproval || this.isApprovalDeciding) {
+      return;
+    }
+
+    this.decideSelectedApproval(
+      () => this.adminAccessApiService.rejectApproval(this.selectedApproval!.id, this.approvalDecisionNote),
+      this.isRTL ? 'تم رفض تعديل المندوب' : 'Driver change rejected'
+    );
+  }
+
+  getApprovalActionLabel(action: string): string {
+    const labels: Record<string, { ar: string; en: string }> = {
+      'driver.profile.personal': { ar: 'تعديل البيانات الشخصية', en: 'Personal data change' },
+      'driver.profile.vehicle': { ar: 'تعديل الهوية والمركبة', en: 'Identity and vehicle change' },
+      'driver.profile.documents': { ar: 'تعديل المستندات', en: 'Documents change' },
+      'driver.payout_method.create': { ar: 'إضافة طريقة سحب', en: 'Create payout method' },
+      'driver.payout_method.update': { ar: 'تعديل طريقة سحب', en: 'Update payout method' },
+      'driver.payout_method.make_primary': { ar: 'تعيين طريقة السحب الأساسية', en: 'Set primary payout method' },
+      'driver.payout_method.delete': { ar: 'حذف طريقة سحب', en: 'Delete payout method' }
+    };
+
+    const label = labels[action];
+    return label ? (this.isRTL ? label.ar : label.en) : action;
+  }
+
+  getApprovalFieldLabel(field: AccessApprovalReviewFieldDto): string {
+    return this.isRTL ? field.labelAr : field.labelEn;
+  }
+
+  getApprovalChangedCount(approval: AccessApprovalRequestDto): number {
+    return approval.reviewDetails?.fields.filter((field) => field.isChanged).length ?? 0;
+  }
+
+  formatApprovalValue(value: unknown): string {
+    if (value === null || value === undefined || value === '') {
+      return '-';
+    }
+
+    if (typeof value === 'boolean') {
+      return value ? (this.isRTL ? 'نعم' : 'Yes') : (this.isRTL ? 'لا' : 'No');
+    }
+
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+
+    return String(value);
+  }
+
+  isApprovalUrl(value: unknown): value is string {
+    return typeof value === 'string' && /^https?:\/\//i.test(value);
+  }
+
+  trackApproval(_: number, approval: AccessApprovalRequestDto): string {
+    return approval.id;
+  }
+
+  trackApprovalField(_: number, field: AccessApprovalReviewFieldDto): string {
+    return field.key;
   }
 
   addQuickNote(): void {
@@ -463,6 +597,54 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
   private t(key: string): string {
     return this.translate.instant(key);
+  }
+
+  private decideSelectedApproval(
+    requestFactory: () => ReturnType<AdminAccessApiService['approveApproval']>,
+    successMessage: string
+  ): void {
+    if (!this.selectedApproval || !this.driverId) {
+      return;
+    }
+
+    this.isApprovalDeciding = true;
+    requestFactory().pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
+        this.isApprovalDeciding = false;
+      })
+    ).subscribe({
+      next: () => {
+        this.cdr.markForCheck();
+        this.toastService.success(successMessage);
+        this.selectedApproval = null;
+        this.approvalDecisionNote = '';
+        this.loadDriver(this.driverId!, false);
+        this.loadDriverApprovals(this.driverId!);
+      },
+      error: (err) => {
+        this.cdr.markForCheck();
+        console.error('Driver approval decision failed', err);
+        this.toastService.error(describeApiError(err, this.translate));
+      }
+    });
+  }
+
+  private isApprovalForDriver(approval: AccessApprovalRequestDto, driverId: string): boolean {
+    if (!approval.action.startsWith('driver.')) {
+      return false;
+    }
+
+    if (approval.reviewDetails?.entityType === 'driver' && approval.reviewDetails.entityId === driverId) {
+      return true;
+    }
+
+    try {
+      const payload = JSON.parse(approval.payloadJson || '{}') as { driverId?: string };
+      return payload.driverId === driverId;
+    } catch {
+      return false;
+    }
   }
 
   private buildApprovalBlockerMessage(driver: DriverDetailRecord): string | null {
