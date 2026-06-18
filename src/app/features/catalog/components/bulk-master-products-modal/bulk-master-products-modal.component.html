@@ -341,7 +341,7 @@
                 <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.DESC_EN_LABEL' | translate }}</span>
                 <textarea [(ngModel)]="row.descriptionEn" [disabled]="stage !== 'review'" rows="2" class="bulk-textarea"></textarea>
               </div>
-              @if (stage === 'done' && resultMap[row.rowId]?.errorMessage) {
+              @if (stage === 'done' && resultMap[row.rowId].errorMessage) {
                 <div class="bulk-field bulk-field--span-12">
                   <p class="text-[0.72rem] font-bold text-rose-600">{{ resultMap[row.rowId].errorMessage }}</p>
                 </div>
