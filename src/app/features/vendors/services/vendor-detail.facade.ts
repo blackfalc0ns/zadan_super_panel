@@ -158,7 +158,7 @@ export class VendorDetailFacade implements OnDestroy {
       return;
     }
 
-    this.liveRefreshSubscription = interval(15000).subscribe(() => {
+    this.liveRefreshSubscription = interval(60000).subscribe(() => {
       const vendorId = this.vendorId;
 
       if (!vendorId) {

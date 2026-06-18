@@ -48,7 +48,7 @@ interface LiveOpsViewModel {
 export class LiveOpsComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly autoRefreshMs = 30000;
+  private readonly autoRefreshMs = 60000;
 
   currentLang: 'ar' | 'en' = 'ar';
   isRTL = true;

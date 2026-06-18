@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 import { inject, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, from, of, switchMap, throwError } from 'rxjs';
+import { Observable, catchError, from, retry, switchMap, throwError, timer } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
@@ -90,6 +90,16 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     });
 
     return next(req).pipe(
+        retry({
+            count: req.method === 'GET' ? 2 : 0,
+            delay: (error: unknown, retryCount: number) => {
+                if (!isTransientReadError(error)) {
+                    return throwError(() => error);
+                }
+
+                return timer(250 * (2 ** (retryCount - 1)));
+            }
+        }),
         catchError((error: HttpErrorResponse) => {
             // Antiforgery (CSRF) failure → re-acquire token and retry once.
             if (error.status === 400 && isStateChanging && !isAdminAuthCsrf) {
@@ -150,6 +160,15 @@ function tryRefreshAndRetry(
             return throwError(() => err);
         })
     );
+}
+
+function isTransientReadError(error: unknown): boolean {
+    return error instanceof HttpErrorResponse &&
+        (error.status === 0 ||
+            error.status === 429 ||
+            error.status === 502 ||
+            error.status === 503 ||
+            error.status === 504);
 }
 
 function retryAfterCsrfRefresh(

@@ -77,7 +77,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   readonly orderId = signal<string | null>(null);
   readonly order = signal<OrderDetail | null>(null);
   readonly financialBreakdown = signal<OrderFinancialBreakdown | null>(null);
-  private readonly trackingPollIntervalMs = 5000;
+  // SignalR supplies immediate changes; this is only a resilience fallback.
+  private readonly trackingPollIntervalMs = 30000;
   private pollSub: Subscription | null = null;
   private fragmentSub: Subscription | null = null;
   private driverLocationSub: Subscription | null = null;
@@ -904,11 +905,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   private applyRealtimeDriverLocation(payload: OrderTrackingDriverLocation): void {
     const current = this.order();
-    console.log('[OrderTracking][component] applyRealtimeDriverLocation called', {
-      payloadOrderId: payload.orderId,
-      currentOrderId: current?.id,
-      match: payload.orderId === current?.id
-    });
     if (!current || payload.orderId !== current.id) {
       return;
     }
@@ -930,7 +926,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
           recordedAtUtc: payload.recordedAtUtc
         }
       });
-      console.log('[OrderTracking][component] driverLiveLocation updated to', this.order()?.driverLiveLocation);
     });
   }
 

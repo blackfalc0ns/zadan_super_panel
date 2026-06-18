@@ -216,7 +216,7 @@ export class SystemLogsComponent implements OnInit {
 
   private startLivePolling(): void {
     this.stopLivePolling();
-    this.liveSubscription = interval(15000)
+    this.liveSubscription = interval(30000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
       this.cdr.markForCheck();
