@@ -18,6 +18,8 @@ import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/co
 import { VariantCardComponent } from './components/variant-card/variant-card.component';
 import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
+import { UploadProgressComponent } from '../../../../../shared/components/ui/upload-progress/upload-progress.component';
+import { ImageUploadPhase } from '../../../../../shared/utils/image-upload-optimizer';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +39,8 @@ import { DeleteConfirmationModalComponent } from '@shared/components/delete-conf
     SectionHeaderComponent,
     StatusPillComponent,
     VariantCardComponent,
-    DeleteConfirmationModalComponent
+    DeleteConfirmationModalComponent,
+    UploadProgressComponent
   ],
 
   templateUrl: './master-product-form.component.html',
@@ -50,6 +53,8 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
   isSaving = false;
   isInitialFormLoading = false;
   isUploading = false;
+  uploadProgress = 0;
+  uploadPhase: ImageUploadPhase = 'preparing';
   hasSubmitted = false;
   saveErrorMessage: string | null = null;
   activeLang = 'ar';
@@ -266,7 +271,13 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     const file = event.target.files[0];
     if (file) {
       this.isUploading = true;
-      this.catalogService.uploadFile(file, 'products').subscribe({
+      this.uploadProgress = 0;
+      this.uploadPhase = 'preparing';
+      this.catalogService.uploadFile(file, 'products', (progress) => {
+        this.uploadProgress = progress.percent;
+        this.uploadPhase = progress.phase;
+        this.cdr.markForCheck();
+      }).subscribe({
         next: (res) => {
         this.cdr.markForCheck();
           this.productForm.patchValue({ primaryImageUrl: res.url });
@@ -293,7 +304,13 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
     }
 
     this.isUploading = true;
-    this.catalogService.uploadFile(file, 'products').subscribe({
+    this.uploadProgress = 0;
+    this.uploadPhase = 'preparing';
+    this.catalogService.uploadFile(file, 'products', (progress) => {
+      this.uploadProgress = progress.percent;
+      this.uploadPhase = progress.phase;
+      this.cdr.markForCheck();
+    }).subscribe({
       next: (res) => {
         this.cdr.markForCheck();
         group.patchValue({ imageUrl: res.url });

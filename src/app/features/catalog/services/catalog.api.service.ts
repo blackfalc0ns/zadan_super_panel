@@ -1,6 +1,6 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, throwError } from 'rxjs';
+import { Observable, catchError, filter, from, map, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
   AdminBrandBulkOperation,
@@ -27,6 +27,11 @@ import {
   ProductRequestStatus
 } from '@catalog/models/catalog.domain.models';
 import { AuthService } from '@core/services/auth.service';
+import {
+  optimizeImageForUpload,
+  shouldOptimizeImageForUpload,
+  ImageUploadProgress
+} from '../../../shared/utils/image-upload-optimizer';
 
 export interface ProductVendorSnapshotDto {
   vendorId: string;
@@ -627,14 +632,45 @@ export class CatalogService {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   }
 
-  uploadFile(file: File, directory: string = 'catalog'): Observable<{ url: string }> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('directory', this.resolveUploadDirectory(directory));
+  uploadFile(
+    file: File,
+    directory: string = 'catalog',
+    onProgress?: (progress: ImageUploadProgress) => void
+  ): Observable<{ url: string }> {
+    onProgress?.({ percent: 3, phase: 'preparing' });
+    const preparedFile$ = shouldOptimizeImageForUpload(file)
+      ? from(optimizeImageForUpload(file))
+      : of(file);
 
-    return this.http.post<{ url?: string; Url?: string }>(`${this.filesUrl}/upload`, formData, {
-      headers: this.getHeaders()
-    }).pipe(
+    return preparedFile$.pipe(
+      switchMap((preparedFile) => {
+        onProgress?.({ percent: 15, phase: 'uploading' });
+        const formData = new FormData();
+        formData.append('file', preparedFile);
+        formData.append('directory', this.resolveUploadDirectory(directory));
+
+        return this.http.post<{ url?: string; Url?: string }>(`${this.filesUrl}/upload`, formData, {
+          headers: this.getHeaders(),
+          observe: 'events',
+          reportProgress: true
+        }).pipe(
+          tap((event) => {
+            if (event.type === HttpEventType.UploadProgress) {
+              const uploadPercent = event.total ? event.loaded / event.total : 0;
+              onProgress?.({
+                percent: Math.min(99, 15 + Math.round(uploadPercent * 84)),
+                phase: 'uploading'
+              });
+            }
+          }),
+          filter((event): event is HttpResponse<{ url?: string; Url?: string }> =>
+            event.type === HttpEventType.Response),
+          map((event) => {
+            onProgress?.({ percent: 100, phase: 'uploading' });
+            return event.body ?? {};
+          })
+        );
+      }),
       map((response) => {
         const url = (response.url ?? response.Url ?? '').trim();
         if (!url || url.startsWith('blob:')) {

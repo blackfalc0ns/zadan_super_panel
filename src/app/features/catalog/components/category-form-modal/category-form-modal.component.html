@@ -49,7 +49,9 @@
             </label>
 
             <div *ngIf="isUploading" class="absolute inset-0 z-10 bg-white/90 p-4 backdrop-blur-sm">
-              <span class="admin-skeleton admin-skeleton-media rounded-xl"></span>
+              <div class="flex h-full items-center">
+                <app-upload-progress [progress]="uploadProgress" [phase]="uploadPhase"></app-upload-progress>
+              </div>
             </div>
           </div>
 

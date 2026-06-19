@@ -10,6 +10,8 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
+import { UploadProgressComponent } from '../../../../shared/components/ui/upload-progress/upload-progress.component';
+import { ImageUploadPhase } from '../../../../shared/utils/image-upload-optimizer';
 
 interface BrandCategoryOption extends Category {
   displayNameAr: string;
@@ -29,7 +31,8 @@ interface BrandCategoryOption extends Category {
     AppButtonComponent,
     AppInputComponent,
     SearchableSelectComponent,
-    ModalShellComponent
+    ModalShellComponent,
+    UploadProgressComponent
   ],
   templateUrl: './brand-form-modal.component.html',
   styleUrl: './brand-form-modal.component.scss'
@@ -46,6 +49,10 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
   isSaving = false;
   isUploadingLogo = false;
   isUploadingCover = false;
+  logoUploadProgress = 0;
+  coverUploadProgress = 0;
+  logoUploadPhase: ImageUploadPhase = 'preparing';
+  coverUploadPhase: ImageUploadPhase = 'preparing';
   activeInputLang: 'ar' | 'en' = 'ar';
   leafCategories: BrandCategoryOption[] = [];
   categorySearch = '';
@@ -109,7 +116,11 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     }
 
     this.setUploadingState(field, true);
-    this.catalogService.uploadFile(file, 'brands').subscribe({
+    this.setUploadProgress(field, 0, 'preparing');
+    this.catalogService.uploadFile(file, 'brands', (progress) => {
+      this.setUploadProgress(field, progress.percent, progress.phase);
+      this.cdr.markForCheck();
+    }).subscribe({
       next: (res) => {
         this.cdr.markForCheck();
         this.form.patchValue({ [field]: res.url });
@@ -276,6 +287,21 @@ export class BrandFormModalComponent implements OnInit, OnChanges {
     }
 
     this.isUploadingCover = isUploading;
+  }
+
+  private setUploadProgress(
+    field: 'logoUrl' | 'coverImageUrl',
+    percent: number,
+    phase: ImageUploadPhase
+  ): void {
+    if (field === 'logoUrl') {
+      this.logoUploadProgress = percent;
+      this.logoUploadPhase = phase;
+      return;
+    }
+
+    this.coverUploadProgress = percent;
+    this.coverUploadPhase = phase;
   }
 
   private syncFormWithInputs(): void {

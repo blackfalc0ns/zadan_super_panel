@@ -307,6 +307,10 @@
           </div>
 
           <div class="space-y-4 p-6">
+            <div *ngIf="isUploading" class="rounded-2xl border border-cyan-100 bg-cyan-50/60 p-4">
+              <app-upload-progress [progress]="uploadProgress" [phase]="uploadPhase"></app-upload-progress>
+            </div>
+
             <!-- Primary Variant Card (the main product itself) -->
             <app-variant-card
               [variantGroup]="productForm"

@@ -9,6 +9,8 @@ import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.
 
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
+import { UploadProgressComponent } from '../../../../shared/components/ui/upload-progress/upload-progress.component';
+import { ImageUploadPhase } from '../../../../shared/utils/image-upload-optimizer';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +21,8 @@ import { ModalShellComponent } from '../../../../shared/components/ui/modal-shel
         ReactiveFormsModule, 
         TranslateModule,
         AppInputComponent,
-        ModalShellComponent
+        ModalShellComponent,
+        UploadProgressComponent
     ],
     templateUrl: './category-form-modal.component.html',
     styleUrl: './category-form-modal.component.scss'
@@ -38,6 +41,8 @@ export class CategoryFormModalComponent implements OnChanges {
     form: FormGroup;
     activeInputLang: 'ar' | 'en' = 'ar';
     isUploading = false;
+    uploadProgress = 0;
+    uploadPhase: ImageUploadPhase = 'preparing';
     isSaving = false;
     saveErrorMessage: string | null = null;
 
@@ -175,7 +180,13 @@ export class CategoryFormModalComponent implements OnChanges {
         if (!file) return;
 
         this.isUploading = true;
-        this.catalogService.uploadFile(file, 'uploads/catalog/categories').subscribe({
+        this.uploadProgress = 0;
+        this.uploadPhase = 'preparing';
+        this.catalogService.uploadFile(file, 'uploads/catalog/categories', (progress) => {
+            this.uploadProgress = progress.percent;
+            this.uploadPhase = progress.phase;
+            this.cdr.markForCheck();
+        }).subscribe({
             next: (res) => {
         this.cdr.markForCheck();
                 this.form.patchValue({ imageUrl: res.url });

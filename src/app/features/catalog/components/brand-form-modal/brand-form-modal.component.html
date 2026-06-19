@@ -49,7 +49,9 @@
               </div>
 
               <div *ngIf="isUploadingLogo" class="absolute inset-0 z-10 rounded-[2.5rem] bg-white/90 p-4 backdrop-blur-sm">
-                <span class="admin-skeleton admin-skeleton-media rounded-[2rem]"></span>
+                <div class="flex h-full items-center">
+                  <app-upload-progress [progress]="logoUploadProgress" [phase]="logoUploadPhase"></app-upload-progress>
+                </div>
               </div>
             </div>
           </div>
@@ -73,7 +75,9 @@
               </div>
 
               <div *ngIf="isUploadingCover" class="absolute inset-0 z-10 rounded-[2rem] bg-white/90 p-4 backdrop-blur-sm">
-                <span class="admin-skeleton admin-skeleton-media rounded-[1.5rem]"></span>
+                <div class="flex h-full items-center">
+                  <app-upload-progress [progress]="coverUploadProgress" [phase]="coverUploadPhase"></app-upload-progress>
+                </div>
               </div>
             </div>
           </div>
