@@ -343,7 +343,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         translateValue: true
       },
       ...(currentOrder.dispatchState
-        ? [{ label: 'ORDERS.DETAIL.DISPATCH_STATE', value: 'ORDERS.STATUS.' + currentOrder.dispatchState, translateValue: true }]
+        ? [{
+            label: 'ORDERS.DETAIL.DISPATCH_STATE',
+            value: 'ORDERS.DETAIL.DISPATCH_STATE_VALUES.' + currentOrder.dispatchState,
+            translateValue: true
+          }]
         : []),
       ...(currentOrder.dispatchReason
         ? (() => {
