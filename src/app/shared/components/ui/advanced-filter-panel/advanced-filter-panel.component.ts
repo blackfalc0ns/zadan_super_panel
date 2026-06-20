@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 type FilterValue = unknown;
 
@@ -19,6 +19,8 @@ export interface FilterField {
   placeholder?: string;
   color?: string;
   icon?: string;
+  /** When false, option labels are shown as-is (e.g. bilingual text from API). Defaults to true. */
+  localizeOptions?: boolean;
 }
 
 export interface FilterPreset {
@@ -77,7 +79,7 @@ export interface FilterPreset {
               class="relative z-10 flex w-full items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-[11px] font-bold text-slate-700 transition-all duration-200 hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-primary-20 focus:border-primary"
               [attr.aria-expanded]="isDropdownOpen(field.key)">
               <span class="truncate">
-                {{ getSelectDisplayLabel(field) | translate }}
+                {{ getSelectDisplayLabel(field) }}
               </span>
               <svg
                 class="h-3 w-3 shrink-0 text-slate-400 transition-transform duration-200"
@@ -111,7 +113,7 @@ export interface FilterPreset {
                   [ngClass]="{
                     'bg-zadna-primary/5 text-zadna-primary': isOptionSelected(field.key, option.value)
                   }">
-                  <span class="truncate">{{ option.label | translate }}</span>
+                  <span class="truncate">{{ getOptionLabel(field, option.label) }}</span>
                   <svg *ngIf="isOptionSelected(field.key, option.value)" class="h-4 w-4 shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
@@ -131,7 +133,7 @@ export interface FilterPreset {
                   [style.background-color]="(field.color || '#6366f1') + '08'"
                   [style.border-color]="(field.color || '#6366f1') + '20'"
                   [style.color]="field.color || '#6366f1'">
-              {{ getFilterDisplayValue(field, getFilterValue(field.key)) | translate }}
+              {{ getOptionLabel(field, getFilterDisplayValue(field, getFilterValue(field.key))) }}
               <button (click)="removeFilter(field.key)" class="hover:scale-110 transition-transform">
                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -153,6 +155,7 @@ export interface FilterPreset {
 })
 export class AdvancedFilterPanelComponent<TFilters extends object = Record<string, FilterValue>> implements OnInit {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly translate = inject(TranslateService);
 
   @Input() isExpanded = false;
   @Input() title = 'VENDORS.FILTER_VENDORS';
@@ -234,10 +237,10 @@ export class AdvancedFilterPanelComponent<TFilters extends object = Record<strin
   getSelectDisplayLabel(field: FilterField): string {
     const value = this.getFilterValue(field.key);
     if (value === undefined || value === null || value === '') {
-      return field.placeholder || 'COMMON.HIDE_INACTIVE';
+      return this.translateLabel(field.placeholder || 'COMMON.HIDE_INACTIVE');
     }
 
-    return this.getFilterDisplayValue(field, value);
+    return this.getOptionLabel(field, this.getFilterDisplayValue(field, value));
   }
 
   getFilterDisplayValue(field: FilterField, value: FilterValue): string {
@@ -246,6 +249,19 @@ export class AdvancedFilterPanelComponent<TFilters extends object = Record<strin
       return option ? option.label : String(value ?? '');
     }
     return String(value ?? '');
+  }
+
+  getOptionLabel(field: FilterField, label: string): string {
+    if (field.localizeOptions === false) {
+      return label;
+    }
+
+    return this.translateLabel(label);
+  }
+
+  private translateLabel(label: string): string {
+    const translated = this.translate.instant(label);
+    return translated || label;
   }
 
   getFilterValue(key: string): FilterValue {

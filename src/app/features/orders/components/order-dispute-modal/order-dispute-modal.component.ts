@@ -97,11 +97,25 @@ export class OrderDisputeModalComponent implements OnChanges {
   }
 
   onSaveDraft(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.saveDraft.emit({ ...this.form });
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.submitDispute.emit({ ...this.form });
+  }
+
+  onCloseRequest(): void {
+    if (!this.isSubmitting) {
+      this.close.emit();
+    }
   }
 
   private createDefaultForm(): OrderDisputeForm {

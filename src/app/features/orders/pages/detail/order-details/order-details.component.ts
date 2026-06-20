@@ -96,6 +96,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   isIssueFlagModalOpen = false;
   isSubmittingDispute = false;
   isSubmittingDriverAssignment = false;
+  isSubmittingCancellation = false;
+  isSubmittingStatusUpdate = false;
+  isSubmittingRefund = false;
+  isSubmittingIssueFlag = false;
+  isSubmittingOperationalCase = false;
   isRecomputingDispatch = false;
 
   constructor(
@@ -550,6 +555,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   closeStatusModal(): void {
+    if (this.isSubmittingStatusUpdate) {
+      return;
+    }
+
     this.isStatusModalOpen = false;
   }
 
@@ -562,18 +571,34 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   closeCancellationModal(): void {
+    if (this.isSubmittingCancellation) {
+      return;
+    }
+
     this.isCancellationModalOpen = false;
   }
 
   closeRefundModal(): void {
+    if (this.isSubmittingRefund) {
+      return;
+    }
+
     this.isRefundModalOpen = false;
   }
 
   closeDisputeModal(): void {
+    if (this.isSubmittingDispute) {
+      return;
+    }
+
     this.isDisputeModalOpen = false;
   }
 
   closeIssueFlagModal(): void {
+    if (this.isSubmittingIssueFlag) {
+      return;
+    }
+
     this.isIssueFlagModalOpen = false;
   }
 
@@ -584,12 +609,23 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingOperationalCase) {
       return;
     }
 
+    this.isSubmittingOperationalCase = true;
+    this.cdr.markForCheck();
+
     this.ordersService.resolveOperationalCase(id).subscribe({
-      next: (order) => this.setOrder(order)
+      next: (order) => {
+        this.isSubmittingOperationalCase = false;
+        this.cdr.markForCheck();
+        this.setOrder(order);
+      },
+      error: () => {
+        this.isSubmittingOperationalCase = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -600,12 +636,23 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingOperationalCase) {
       return;
     }
 
+    this.isSubmittingOperationalCase = true;
+    this.cdr.markForCheck();
+
     this.ordersService.closeOperationalCase(id).subscribe({
-      next: (order) => this.setOrder(order)
+      next: (order) => {
+        this.isSubmittingOperationalCase = false;
+        this.cdr.markForCheck();
+        this.setOrder(order);
+      },
+      error: () => {
+        this.isSubmittingOperationalCase = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -616,28 +663,47 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingOperationalCase) {
       return;
     }
 
+    this.isSubmittingOperationalCase = true;
+    this.cdr.markForCheck();
+
     this.ordersService.reopenOperationalCase(id).subscribe({
-      next: (order) => this.setOrder(order)
+      next: (order) => {
+        this.isSubmittingOperationalCase = false;
+        this.cdr.markForCheck();
+        this.setOrder(order);
+      },
+      error: () => {
+        this.isSubmittingOperationalCase = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
   submitStatusUpdate(form: OrderStatusUpdateForm): void {
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingStatusUpdate) {
       return;
     }
 
+    this.isSubmittingStatusUpdate = true;
+    this.cdr.markForCheck();
+
     this.ordersService.updateOrderStatus(id, form).subscribe({
       next: (order) => {
+        this.isSubmittingStatusUpdate = false;
         this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeStatusModal();
+      },
+      error: () => {
+        this.isSubmittingStatusUpdate = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -694,16 +760,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   submitCancellation(form: OrderCancellationForm): void {
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingCancellation) {
       return;
     }
 
+    this.isSubmittingCancellation = true;
+    this.cdr.markForCheck();
+
     this.ordersService.cancelOrder(id, form).subscribe({
       next: (order) => {
+        this.isSubmittingCancellation = false;
         this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeCancellationModal();
+      },
+      error: () => {
+        this.isSubmittingCancellation = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -716,16 +790,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   submitRefund(form: OrderRefundForm): void {
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingRefund) {
       return;
     }
 
+    this.isSubmittingRefund = true;
+    this.cdr.markForCheck();
+
     this.ordersService.createRefund(id, form).subscribe({
       next: (order) => {
+        this.isSubmittingRefund = false;
         this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeRefundModal();
+      },
+      error: () => {
+        this.isSubmittingRefund = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -769,16 +851,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   submitIssueFlag(form: OrderIssueFlagForm): void {
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingIssueFlag) {
       return;
     }
 
+    this.isSubmittingIssueFlag = true;
+    this.cdr.markForCheck();
+
     this.ordersService.flagIssue(id, form).subscribe({
       next: (order) => {
+        this.isSubmittingIssueFlag = false;
         this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeIssueFlagModal();
+      },
+      error: () => {
+        this.isSubmittingIssueFlag = false;
+        this.cdr.markForCheck();
       }
     });
   }

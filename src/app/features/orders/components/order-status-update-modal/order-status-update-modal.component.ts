@@ -17,6 +17,7 @@ import { getFulfillmentStatusKey, getPaymentStatusKey } from '../../data/orders.
 })
 export class OrderStatusUpdateModalComponent implements OnChanges {
   @Input() isOpen = false;
+  @Input() isSubmitting = false;
   @Input() order: OrderDetail | null = null;
 
   @Output() close = new EventEmitter<void>();
@@ -145,12 +146,26 @@ export class OrderStatusUpdateModalComponent implements OnChanges {
   }
 
   onBackdropClick(event: MouseEvent): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     if (event.target === event.currentTarget) {
       this.close.emit();
     }
   }
 
+  onCloseRequest(): void {
+    if (!this.isSubmitting) {
+      this.close.emit();
+    }
+  }
+
   onSubmit(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.submitStatusUpdate.emit({ ...this.form });
   }
 

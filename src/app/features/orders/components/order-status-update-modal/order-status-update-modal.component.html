@@ -7,7 +7,7 @@
     [panelClass]="'rounded-[1.25rem]'"
     [bodyClass]="'px-6 py-6'"
     [footerClass]="'px-6 py-4'"
-    (close)="close.emit()">
+    (close)="onCloseRequest()">
     <div modal-body class="space-y-6">
       <section class="space-y-3">
         <div class="flex items-center gap-2 text-sm font-bold text-zadna-primary">
@@ -143,11 +143,16 @@
     </div>
 
     <div modal-footer class="flex items-center justify-between gap-3">
-      <button class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-zadna-primary py-3 text-sm font-bold text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700" type="button" (click)="onSubmit()">
-        <span class="material-symbols-outlined text-lg">check_circle</span>
-        <span>{{ 'ORDERS.DETAIL.STATUS_MODAL.CONFIRM' | translate }}</span>
+      <button
+        class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-zadna-primary py-3 text-sm font-bold text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+        [ngClass]="{ 'btn-loading': isSubmitting }"
+        type="button"
+        [disabled]="isSubmitting"
+        (click)="onSubmit()">
+        <span class="material-symbols-outlined text-lg" [class.animate-spin]="isSubmitting">{{ isSubmitting ? 'progress_activity' : 'check_circle' }}</span>
+        <span>{{ isSubmitting ? ('COMMON.LOADING' | translate) : ('ORDERS.DETAIL.STATUS_MODAL.CONFIRM' | translate) }}</span>
       </button>
-      <button class="flex-1 rounded-lg bg-slate-200 py-3 text-sm font-bold text-slate-700 transition-all hover:bg-slate-300" type="button" (click)="close.emit()">
+      <button class="flex-1 rounded-lg bg-slate-200 py-3 text-sm font-bold text-slate-700 transition-all hover:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-60" type="button" (click)="onCloseRequest()" [disabled]="isSubmitting">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
     </div>

@@ -9,7 +9,7 @@
     [bodyClass]="'p-6 md:p-8'"
     [footerClass]="'p-6 bg-slate-50/50 border-t border-slate-200/50 backdrop-blur-md'"
     [titleClass]="'text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-zadna-primary to-teal-600 drop-shadow-sm'"
-    (close)="close.emit()">
+    (close)="onCloseRequest()">
     
     <div modal-body class="space-y-8">
       <!-- Order Summary Strip -->
@@ -153,14 +153,14 @@
     </div>
 
     <div modal-footer class="flex items-center justify-between w-full">
-      <button class="px-6 py-3 text-[13px] font-black text-slate-500 transition-all hover:text-slate-800 hover:bg-slate-200/50 rounded-xl" type="button" (click)="close.emit()" [disabled]="isSubmitting">
+      <button class="px-6 py-3 text-[13px] font-black text-slate-500 transition-all hover:text-slate-800 hover:bg-slate-200/50 rounded-xl" type="button" (click)="onCloseRequest()" [disabled]="isSubmitting">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
 
       <div class="flex flex-row-reverse gap-3">
         <button class="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-zadna-primary to-teal-600 px-8 py-3 text-[13px] font-black text-white transition-all hover:shadow-lg hover:shadow-zadna-primary/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none" type="button" (click)="onSubmit()" [disabled]="isSubmitting" [ngClass]="{'btn-loading': isSubmitting}">
-          <span>{{ 'ORDERS.DETAIL.DISPUTE_MODAL.CREATE' | translate }}</span>
-          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;" *ngIf="!isSubmitting">send</span>
+          <span>{{ isSubmitting ? ('COMMON.LOADING' | translate) : ('ORDERS.DETAIL.DISPUTE_MODAL.CREATE' | translate) }}</span>
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;" [class.animate-spin]="isSubmitting">{{ isSubmitting ? 'progress_activity' : 'send' }}</span>
         </button>
         <button class="rounded-xl border border-slate-200 bg-white px-6 py-3 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:shadow-sm" type="button" (click)="onSaveDraft()" [disabled]="isSubmitting">
           {{ 'COMMON.SAVE_DRAFT' | translate }}

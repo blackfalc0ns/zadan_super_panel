@@ -19,6 +19,7 @@ export class OrderRefundModalComponent implements OnChanges {
   private readonly cdr = inject(ChangeDetectorRef);
 
   @Input() isOpen = false;
+  @Input() isSubmitting = false;
   @Input() order: OrderDetail | null = null;
 
   @Output() close = new EventEmitter<void>();
@@ -78,7 +79,7 @@ export class OrderRefundModalComponent implements OnChanges {
   }
 
   onRefundTypeChange(refundType: OrderRefundForm['refundType']): void {
-    if (!this.order) {
+    if (!this.order || this.isSubmitting) {
       return;
     }
 
@@ -123,11 +124,25 @@ export class OrderRefundModalComponent implements OnChanges {
       : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50';
   }
 
+  onCloseRequest(): void {
+    if (!this.isSubmitting) {
+      this.close.emit();
+    }
+  }
+
   onSaveDraft(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.saveDraft.emit(this.buildSubmitForm());
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.submitRefund.emit(this.buildSubmitForm());
   }
 

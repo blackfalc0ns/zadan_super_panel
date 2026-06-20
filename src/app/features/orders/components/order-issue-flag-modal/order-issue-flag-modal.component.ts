@@ -18,6 +18,7 @@ type IssueOption = { value: OrderIssueFlagForm['issueType'] };
 })
 export class OrderIssueFlagModalComponent implements OnChanges {
   @Input() isOpen = false;
+  @Input() isSubmitting = false;
   @Input() order: OrderDetail | null = null;
 
   @Output() close = new EventEmitter<void>();
@@ -62,7 +63,17 @@ export class OrderIssueFlagModalComponent implements OnChanges {
   }
 
   onBackdropClick(event: MouseEvent): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     if (event.target === event.currentTarget) {
+      this.close.emit();
+    }
+  }
+
+  onCloseRequest(): void {
+    if (!this.isSubmitting) {
       this.close.emit();
     }
   }
@@ -91,10 +102,18 @@ export class OrderIssueFlagModalComponent implements OnChanges {
   }
 
   onSaveNote(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.saveNote.emit({ ...this.form });
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.submitIssue.emit({ ...this.form });
   }
 

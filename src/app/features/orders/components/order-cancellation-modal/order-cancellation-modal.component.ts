@@ -15,6 +15,7 @@ import { OrderCancellationForm, OrderDetail } from '../../models/orders.models';
 })
 export class OrderCancellationModalComponent implements OnChanges {
   @Input() isOpen = false;
+  @Input() isSubmitting = false;
   @Input() order: OrderDetail | null = null;
 
   @Output() close = new EventEmitter<void>();
@@ -50,16 +51,34 @@ export class OrderCancellationModalComponent implements OnChanges {
   }
 
   onBackdropClick(event: MouseEvent): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     if (event.target === event.currentTarget) {
       this.close.emit();
     }
   }
 
+  onCloseRequest(): void {
+    if (!this.isSubmitting) {
+      this.close.emit();
+    }
+  }
+
   onRefundTypeChange(refundType: OrderCancellationForm['refundType']): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.form.refundType = refundType;
   }
 
   onSubmit(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     this.submitCancellation.emit({ ...this.form });
   }
 

@@ -527,9 +527,18 @@
                 <p class="text-sm font-extrabold text-slate-800">{{ operationalCaseTypeLabel | translate }}</p>
                 <p class="mt-1 text-xs text-slate-500">{{ caseItem.title }}</p>
                 <div class="mt-3 flex flex-col gap-2">
-                  <button *ngIf="canResolveOperationalCaseAction" type="button" class="inline-flex w-full items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 py-2.5 text-xs font-extrabold text-emerald-700 hover:bg-emerald-100" (click)="resolveOperationalCase()">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.RESOLVE' | translate }}</button>
-                  <button *ngIf="canCloseOperationalCaseAction" type="button" class="btn-premium w-full py-2.5 text-xs" (click)="closeOperationalCase()">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.CLOSE' | translate }}</button>
-                  <button *ngIf="canReopenOperationalCaseAction" type="button" class="inline-flex w-full items-center justify-center rounded-xl border border-amber-200 bg-amber-50 py-2.5 text-xs font-extrabold text-amber-700 hover:bg-amber-100" (click)="reopenOperationalCase()">{{ 'ORDERS.DETAIL.OPERATIONAL_CASE.REOPEN' | translate }}</button>
+                  <button *ngIf="canResolveOperationalCaseAction" type="button" class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 py-2.5 text-xs font-extrabold text-emerald-700 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="isSubmittingOperationalCase" (click)="resolveOperationalCase()">
+                    <span class="material-symbols-outlined text-base" [class.animate-spin]="isSubmittingOperationalCase">sync</span>
+                    {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.RESOLVE' | translate }}
+                  </button>
+                  <button *ngIf="canCloseOperationalCaseAction" type="button" class="btn-premium flex w-full items-center justify-center gap-1.5 py-2.5 text-xs disabled:cursor-not-allowed disabled:opacity-60" [disabled]="isSubmittingOperationalCase" (click)="closeOperationalCase()">
+                    <span class="material-symbols-outlined text-base" [class.animate-spin]="isSubmittingOperationalCase">sync</span>
+                    {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.CLOSE' | translate }}
+                  </button>
+                  <button *ngIf="canReopenOperationalCaseAction" type="button" class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 py-2.5 text-xs font-extrabold text-amber-700 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="isSubmittingOperationalCase" (click)="reopenOperationalCase()">
+                    <span class="material-symbols-outlined text-base" [class.animate-spin]="isSubmittingOperationalCase">sync</span>
+                    {{ 'ORDERS.DETAIL.OPERATIONAL_CASE.REOPEN' | translate }}
+                  </button>
                 </div>
               </div>
             </div>
@@ -575,11 +584,11 @@
     </div>
 
     <!-- Modals -->
-    <app-order-status-update-modal [isOpen]="isStatusModalOpen" [order]="order()" (close)="closeStatusModal()" (submitStatusUpdate)="submitStatusUpdate($event)"></app-order-status-update-modal>
+    <app-order-status-update-modal [isOpen]="isStatusModalOpen" [order]="order()" [isSubmitting]="isSubmittingStatusUpdate" (close)="closeStatusModal()" (submitStatusUpdate)="submitStatusUpdate($event)"></app-order-status-update-modal>
     <app-order-driver-assignment-modal [isOpen]="isDriverAssignmentModalOpen" [order]="order()" [drivers]="order()?.driverCandidates || []" [isSubmitting]="isSubmittingDriverAssignment" (close)="closeDriverAssignmentModal()" (submitAssignment)="submitDriverAssignment($event)"></app-order-driver-assignment-modal>
-    <app-order-cancellation-modal [isOpen]="isCancellationModalOpen" [order]="order()" (close)="closeCancellationModal()" (submitCancellation)="submitCancellation($event)"></app-order-cancellation-modal>
-    <app-order-refund-modal [isOpen]="isRefundModalOpen" [order]="order()" (close)="closeRefundModal()" (saveDraft)="saveRefundDraft($event)" (submitRefund)="submitRefund($event)"></app-order-refund-modal>
+    <app-order-cancellation-modal [isOpen]="isCancellationModalOpen" [order]="order()" [isSubmitting]="isSubmittingCancellation" (close)="closeCancellationModal()" (submitCancellation)="submitCancellation($event)"></app-order-cancellation-modal>
+    <app-order-refund-modal [isOpen]="isRefundModalOpen" [order]="order()" [isSubmitting]="isSubmittingRefund" (close)="closeRefundModal()" (saveDraft)="saveRefundDraft($event)" (submitRefund)="submitRefund($event)"></app-order-refund-modal>
     <app-order-dispute-modal [isOpen]="isDisputeModalOpen" [isSubmitting]="isSubmittingDispute" [order]="order()" (close)="closeDisputeModal()" (saveDraft)="saveDisputeDraft($event)" (submitDispute)="submitDispute($event)"></app-order-dispute-modal>
-    <app-order-issue-flag-modal [isOpen]="isIssueFlagModalOpen" [order]="order()" (close)="closeIssueFlagModal()" (saveNote)="saveIssueNote($event)" (submitIssue)="submitIssueFlag($event)"></app-order-issue-flag-modal>
+    <app-order-issue-flag-modal [isOpen]="isIssueFlagModalOpen" [order]="order()" [isSubmitting]="isSubmittingIssueFlag" (close)="closeIssueFlagModal()" (saveNote)="saveIssueNote($event)" (submitIssue)="submitIssueFlag($event)"></app-order-issue-flag-modal>
   </ng-container>
 </div>

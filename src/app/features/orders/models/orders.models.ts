@@ -285,7 +285,8 @@ export interface PaginatedOrdersResponse {
 
 export interface FilterOptionItem {
   value: string;
-  label: string;
+  labelAr: string;
+  labelEn: string;
 }
 
 export interface OrderFilterOptions {

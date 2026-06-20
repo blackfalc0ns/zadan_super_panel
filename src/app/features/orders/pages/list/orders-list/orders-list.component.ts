@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -18,7 +18,8 @@ import {
   OrderStatus,
   OrderWorkflowStage,
   OrdersSummary,
-  OrderFilterOptions
+  OrderFilterOptions,
+  FilterOptionItem
 } from '../../../models/orders.models';
 import {
   getFulfillmentStatusKey,
@@ -46,8 +47,10 @@ import {
   templateUrl: './orders-list.component.html',
   styleUrls: ['./orders-list.component.scss']
 })
-export class OrdersListComponent implements OnInit {
+export class OrdersListComponent implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
+  private filterOptionsRaw: OrderFilterOptions | null = null;
+  private langChangeSub?: { unsubscribe(): void };
   readonly tableColumns: TableColumn[] = [
     { key: 'reference', title: 'ORDERS.TABLE.ID', width: '13%', align: 'left', type: 'custom' },
     { key: 'customer', title: 'ORDERS.TABLE.CUSTOMER', width: '15%', align: 'left', type: 'custom' },
@@ -76,10 +79,10 @@ export class OrdersListComponent implements OnInit {
   panelFilters: Record<string, string | null | undefined> = {};
 
   filterFields: FilterField[] = [
-    { key: 'status', label: 'ORDERS.FILTERS.ORDER_STATUS', type: 'select', color: '#127c8c', options: [] },
-    { key: 'paymentStatus', label: 'ORDERS.FILTERS.PAYMENT_STATUS', type: 'select', color: '#0f766e', options: [] },
-    { key: 'fulfillmentStatus', label: 'ORDERS.FILTERS.FULFILLMENT_STATUS', type: 'select', color: '#2563eb', options: [] },
-    { key: 'queueView', label: 'ORDERS.CURRENT_VIEW', type: 'select', color: '#7c3aed', options: [] }
+    { key: 'status', label: 'ORDERS.FILTERS.ORDER_STATUS', type: 'select', color: '#127c8c', localizeOptions: false, options: [] },
+    { key: 'paymentStatus', label: 'ORDERS.FILTERS.PAYMENT_STATUS', type: 'select', color: '#0f766e', localizeOptions: false, options: [] },
+    { key: 'fulfillmentStatus', label: 'ORDERS.FILTERS.FULFILLMENT_STATUS', type: 'select', color: '#2563eb', localizeOptions: false, options: [] },
+    { key: 'queueView', label: 'ORDERS.CURRENT_VIEW', type: 'select', color: '#7c3aed', localizeOptions: false, options: [] }
   ];
 
   page = 1;
@@ -97,41 +100,72 @@ export class OrdersListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.langChangeSub = this.translate.onLangChange.subscribe(() => {
+      this.applyFilterOptionLabels();
+      this.cdr.markForCheck();
+    });
+
     this.loadFilterOptions();
     this.loadOrders();
+  }
+
+  ngOnDestroy(): void {
+    this.langChangeSub?.unsubscribe();
   }
 
   loadFilterOptions(): void {
     this.ordersService.getFilterOptions().subscribe({
       next: (options: OrderFilterOptions) => {
+        this.filterOptionsRaw = options;
+        this.applyFilterOptionLabels();
         this.cdr.markForCheck();
-        const statusField = this.filterFields.find(f => f.key === 'status');
-        const paymentField = this.filterFields.find(f => f.key === 'paymentStatus');
-        const fulfillmentField = this.filterFields.find(f => f.key === 'fulfillmentStatus');
-        const queueField = this.filterFields.find(f => f.key === 'queueView');
-
-        if (statusField) {
-          statusField.options = options.orderStatuses.map(s => ({ value: s.value, label: s.label }));
-          statusField.placeholder = 'ORDERS.FILTERS.ORDER_STATUS_ALL';
-        }
-        if (paymentField) {
-          paymentField.options = options.paymentStatuses.map(s => ({ value: s.value, label: s.label }));
-          paymentField.placeholder = 'ORDERS.FILTERS.PAYMENT_STATUS_ALL';
-        }
-        if (fulfillmentField) {
-          fulfillmentField.options = options.fulfillmentStatuses.map(s => ({ value: s.value, label: s.label }));
-          fulfillmentField.placeholder = 'ORDERS.FILTERS.FULFILLMENT_STATUS_ALL';
-        }
-        if (queueField) {
-          queueField.options = options.queueViews.map(s => ({ value: s.value, label: s.label }));
-          queueField.placeholder = 'ORDERS.QUEUE_VIEW.ALL';
-        }
       },
       error: (err) => {
         this.cdr.markForCheck();
         console.error('Failed to load filter options', err);
       }
     });
+  }
+
+  private applyFilterOptionLabels(): void {
+    if (!this.filterOptionsRaw) {
+      return;
+    }
+
+    const options = this.filterOptionsRaw;
+    const statusField = this.filterFields.find(f => f.key === 'status');
+    const paymentField = this.filterFields.find(f => f.key === 'paymentStatus');
+    const fulfillmentField = this.filterFields.find(f => f.key === 'fulfillmentStatus');
+    const queueField = this.filterFields.find(f => f.key === 'queueView');
+
+    if (statusField) {
+      statusField.options = this.mapFilterOptions(options.orderStatuses);
+      statusField.placeholder = 'ORDERS.FILTERS.ORDER_STATUS_ALL';
+    }
+    if (paymentField) {
+      paymentField.options = this.mapFilterOptions(options.paymentStatuses);
+      paymentField.placeholder = 'ORDERS.FILTERS.PAYMENT_STATUS_ALL';
+    }
+    if (fulfillmentField) {
+      fulfillmentField.options = this.mapFilterOptions(options.fulfillmentStatuses);
+      fulfillmentField.placeholder = 'ORDERS.FILTERS.FULFILLMENT_STATUS_ALL';
+    }
+    if (queueField) {
+      queueField.options = this.mapFilterOptions(options.queueViews);
+      queueField.placeholder = 'ORDERS.QUEUE_VIEW.ALL';
+    }
+  }
+
+  private mapFilterOptions(items: FilterOptionItem[]) {
+    return items.map((item) => ({
+      value: item.value,
+      label: this.resolveFilterLabel(item)
+    }));
+  }
+
+  private resolveFilterLabel(item: FilterOptionItem): string {
+    const lang = (this.translate.currentLang || this.translate.defaultLang || 'ar').toLowerCase();
+    return lang.startsWith('ar') ? item.labelAr : item.labelEn;
   }
 
   loadOrders(): void {

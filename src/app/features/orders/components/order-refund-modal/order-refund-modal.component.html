@@ -9,7 +9,7 @@
     [footerClass]="'px-5 py-4 sm:px-6 border-t border-slate-100 bg-slate-50/80'"
     [headerClass]="'px-5 py-5 sm:px-6 border-b border-slate-100'"
     [titleClass]="'text-xl font-black text-zadna-primary'"
-    (close)="close.emit()">
+    (close)="onCloseRequest()">
 
     <div modal-body class="space-y-5">
       <!-- Order summary -->
@@ -165,15 +165,21 @@
     </div>
 
     <div modal-footer class="flex flex-wrap items-center justify-between gap-3">
-      <button class="text-sm font-bold text-slate-500 transition hover:text-red-600" type="button" (click)="close.emit()">
+      <button class="text-sm font-bold text-slate-500 transition hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-60" type="button" (click)="onCloseRequest()" [disabled]="isSubmitting">
         {{ 'ORDERS.DETAIL.REFUND_MODAL.CANCEL_PROCESS' | translate }}
       </button>
       <div class="flex flex-wrap gap-2">
-        <button class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50" type="button" (click)="onSaveDraft()">
+        <button class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60" type="button" (click)="onSaveDraft()" [disabled]="isSubmitting">
           {{ 'COMMON.SAVE_DRAFT' | translate }}
         </button>
-        <button class="rounded-xl bg-zadna-primary px-5 py-2.5 text-sm font-extrabold text-white shadow-md shadow-zadna-primary/25 transition hover:brightness-105" type="button" (click)="onSubmit()">
-          {{ 'ORDERS.DETAIL.REFUND_MODAL.CREATE_REQUEST' | translate }}
+        <button
+          class="flex items-center gap-2 rounded-xl bg-zadna-primary px-5 py-2.5 text-sm font-extrabold text-white shadow-md shadow-zadna-primary/25 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+          [ngClass]="{ 'btn-loading': isSubmitting }"
+          type="button"
+          [disabled]="isSubmitting"
+          (click)="onSubmit()">
+          <span class="material-symbols-outlined text-base" [class.animate-spin]="isSubmitting">{{ isSubmitting ? 'progress_activity' : 'payments' }}</span>
+          <span>{{ isSubmitting ? ('COMMON.LOADING' | translate) : ('ORDERS.DETAIL.REFUND_MODAL.CREATE_REQUEST' | translate) }}</span>
         </button>
       </div>
     </div>

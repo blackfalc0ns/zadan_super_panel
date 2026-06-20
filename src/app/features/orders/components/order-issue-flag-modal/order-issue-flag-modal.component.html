@@ -9,7 +9,7 @@
     [footerClass]="'px-8 py-6'"
     [headerClass]="'px-8 py-6'"
     [titleClass]="'text-2xl font-black leading-none text-zadna-primary'"
-    (close)="close.emit()">
+    (close)="onCloseRequest()">
     <div modal-body class="space-y-8">
       <section>
         <div class="relative overflow-hidden rounded-xl border border-slate-200/80 bg-slate-50/80 p-4">
@@ -141,17 +141,22 @@
     </div>
 
     <div modal-footer class="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
-      <button class="w-full rounded-xl px-8 py-2.5 text-sm font-black text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-800 sm:w-auto" type="button" (click)="close.emit()">
+      <button class="w-full rounded-xl px-8 py-2.5 text-sm font-black text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" type="button" (click)="onCloseRequest()" [disabled]="isSubmitting">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
 
       <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-        <button class="rounded-xl bg-amber-400 px-6 py-2.5 text-sm font-black text-slate-900 shadow-md transition-all hover:bg-amber-300" type="button" (click)="onSaveNote()">
+        <button class="rounded-xl bg-amber-400 px-6 py-2.5 text-sm font-black text-slate-900 shadow-md transition-all hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-60" type="button" (click)="onSaveNote()" [disabled]="isSubmitting">
           {{ 'ORDERS.DETAIL.ISSUE_MODAL.SAVE_NOTE' | translate }}
         </button>
-        <button class="flex items-center justify-center gap-2 rounded-xl bg-zadna-primary px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700" type="button" (click)="onSubmit()">
-          <span class="material-symbols-outlined text-lg">report</span>
-          {{ 'ORDERS.DETAIL.ISSUE_MODAL.SUBMIT' | translate }}
+        <button
+          class="flex items-center justify-center gap-2 rounded-xl bg-zadna-primary px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+          [ngClass]="{ 'btn-loading': isSubmitting }"
+          type="button"
+          [disabled]="isSubmitting"
+          (click)="onSubmit()">
+          <span class="material-symbols-outlined text-lg" [class.animate-spin]="isSubmitting">{{ isSubmitting ? 'progress_activity' : 'report' }}</span>
+          <span>{{ isSubmitting ? ('COMMON.LOADING' | translate) : ('ORDERS.DETAIL.ISSUE_MODAL.SUBMIT' | translate) }}</span>
         </button>
       </div>
     </div>

@@ -9,7 +9,7 @@
     [footerClass]="'p-6 bg-white/70'"
     [titleClass]="'text-xl font-black text-slate-900'"
     [closeButtonClass]="'rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600'"
-    (close)="close.emit()">
+    (close)="onCloseRequest()">
     <div modal-body class="space-y-6">
       <section *ngIf="showDeliveryWarning" class="flex items-start gap-4 rounded-xl border border-red-200 bg-red-50/70 p-4">
         <div class="rounded-lg bg-red-600 p-2 text-white shadow-sm">
@@ -64,14 +64,15 @@
           </h3>
 
           <div class="space-y-3">
-            <select class="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.reason">
+            <select class="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5 disabled:cursor-not-allowed disabled:opacity-60" [(ngModel)]="form.reason" [disabled]="isSubmitting">
               <option *ngFor="let reason of reasonOptions" [value]="reason">{{ ('ORDERS.DETAIL.CANCEL_MODAL.REASONS.' + reason.toUpperCase()) | translate }}</option>
             </select>
 
             <textarea
               class="min-h-[92px] w-full resize-none rounded-lg border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
               [placeholder]="'ORDERS.DETAIL.CANCEL_MODAL.DETAILS_PLACEHOLDER' | translate"
-              [(ngModel)]="form.details"></textarea>
+              [(ngModel)]="form.details"
+              [disabled]="isSubmitting"></textarea>
           </div>
         </section>
       </div>
@@ -89,13 +90,13 @@
             <div class="space-y-2">
               <span class="block text-[11px] font-bold text-slate-500">{{ 'ORDERS.DETAIL.CANCEL_MODAL.REFUND_TYPE' | translate }}</span>
               <div class="grid grid-cols-3 gap-2">
-                <button class="rounded-lg border px-3 py-2 text-[11px] font-black transition-all" type="button" [ngClass]="getRefundButtonClasses('full')" (click)="onRefundTypeChange('full')">
+                <button class="rounded-lg border px-3 py-2 text-[11px] font-black transition-all disabled:cursor-not-allowed disabled:opacity-60" type="button" [ngClass]="getRefundButtonClasses('full')" [disabled]="isSubmitting" (click)="onRefundTypeChange('full')">
                   {{ 'ORDERS.DETAIL.CANCEL_MODAL.REFUND_FULL' | translate }}
                 </button>
-                <button class="rounded-lg border px-3 py-2 text-[11px] font-black transition-all" type="button" [ngClass]="getRefundButtonClasses('partial')" (click)="onRefundTypeChange('partial')">
+                <button class="rounded-lg border px-3 py-2 text-[11px] font-black transition-all disabled:cursor-not-allowed disabled:opacity-60" type="button" [ngClass]="getRefundButtonClasses('partial')" [disabled]="isSubmitting" (click)="onRefundTypeChange('partial')">
                   {{ 'ORDERS.DETAIL.CANCEL_MODAL.REFUND_PARTIAL' | translate }}
                 </button>
-                <button class="rounded-lg border px-3 py-2 text-[11px] font-black transition-all" type="button" [ngClass]="getRefundButtonClasses('none')" (click)="onRefundTypeChange('none')">
+                <button class="rounded-lg border px-3 py-2 text-[11px] font-black transition-all disabled:cursor-not-allowed disabled:opacity-60" type="button" [ngClass]="getRefundButtonClasses('none')" [disabled]="isSubmitting" (click)="onRefundTypeChange('none')">
                   {{ 'ORDERS.DETAIL.CANCEL_MODAL.REFUND_NONE' | translate }}
                 </button>
               </div>
@@ -105,12 +106,12 @@
               <span class="block text-[11px] font-bold text-slate-500">{{ 'ORDERS.DETAIL.CANCEL_MODAL.COST_BEARER' | translate }}</span>
               <div class="grid grid-cols-2 gap-2">
                 <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-transparent bg-slate-100/80 p-3 transition-colors hover:border-zadna-primary/20">
-                  <input class="h-4 w-4 border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" name="costBearer" type="radio" value="platform" [(ngModel)]="form.costBearer" />
+                  <input class="h-4 w-4 border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" name="costBearer" type="radio" value="platform" [(ngModel)]="form.costBearer" [disabled]="isSubmitting" />
                   <span class="text-xs font-medium text-slate-700">{{ 'ORDERS.DETAIL.CANCEL_MODAL.COST_PLATFORM' | translate }}</span>
                 </label>
 
                 <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-transparent bg-slate-100/80 p-3 transition-colors hover:border-zadna-primary/20">
-                  <input class="h-4 w-4 border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" name="costBearer" type="radio" value="merchant" [(ngModel)]="form.costBearer" />
+                  <input class="h-4 w-4 border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" name="costBearer" type="radio" value="merchant" [(ngModel)]="form.costBearer" [disabled]="isSubmitting" />
                   <span class="text-xs font-medium text-slate-700">{{ 'ORDERS.DETAIL.CANCEL_MODAL.COST_MERCHANT' | translate }}</span>
                 </label>
               </div>
@@ -127,17 +128,17 @@
           <div class="rounded-xl bg-slate-100/80 p-4">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <label class="flex cursor-pointer items-center gap-2">
-                <input class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCustomer" />
+                <input class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCustomer" [disabled]="isSubmitting" />
                 <span class="text-[11px] font-bold text-slate-700">{{ 'ORDERS.DETAIL.CANCEL_MODAL.NOTIFY_CUSTOMER' | translate }}</span>
               </label>
 
               <label class="flex cursor-pointer items-center gap-2">
-                <input class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyMerchant" />
+                <input class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyMerchant" [disabled]="isSubmitting" />
                 <span class="text-[11px] font-bold text-slate-700">{{ 'ORDERS.DETAIL.CANCEL_MODAL.NOTIFY_MERCHANT' | translate }}</span>
               </label>
 
               <label class="flex cursor-pointer items-center gap-2">
-                <input class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyDriver" />
+                <input class="rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyDriver" [disabled]="isSubmitting" />
                 <span class="text-[11px] font-bold text-slate-700">{{ 'ORDERS.DETAIL.CANCEL_MODAL.NOTIFY_DRIVER' | translate }}</span>
               </label>
             </div>
@@ -147,7 +148,8 @@
               <textarea
                 class="min-h-[72px] w-full rounded-lg border border-slate-200 bg-white p-3 text-xs font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
                 [placeholder]="'ORDERS.DETAIL.CANCEL_MODAL.CUSTOMER_MESSAGE_PLACEHOLDER' | translate"
-                [(ngModel)]="form.customerMessage"></textarea>
+                [(ngModel)]="form.customerMessage"
+                [disabled]="isSubmitting"></textarea>
             </div>
           </div>
         </section>
@@ -163,19 +165,25 @@
           class="w-full rounded-lg border border-transparent bg-slate-100/80 px-3 py-2.5 text-xs font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/5"
           type="text"
           [placeholder]="'ORDERS.DETAIL.CANCEL_MODAL.INTERNAL_NOTE_PLACEHOLDER' | translate"
-          [(ngModel)]="form.internalNote" />
+          [(ngModel)]="form.internalNote"
+          [disabled]="isSubmitting" />
       </section>
     </div>
 
     <div modal-footer class="flex items-center justify-between gap-4">
-      <button class="rounded-full px-8 py-3 text-sm font-bold text-slate-500 transition-all hover:bg-slate-100" type="button" (click)="close.emit()">
+      <button class="rounded-full px-8 py-3 text-sm font-bold text-slate-500 transition-all hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60" type="button" (click)="onCloseRequest()" [disabled]="isSubmitting">
         {{ 'COMMON.BACK' | translate }}
       </button>
 
       <div class="flex gap-3">
-        <button class="flex items-center gap-2 rounded-full bg-red-600 px-10 py-3 text-sm font-black text-white shadow-[0_4px_12px_rgba(186,26,26,0.3)] transition-all hover:bg-red-700" type="button" (click)="onSubmit()">
-          <span class="material-symbols-outlined text-lg">cancel</span>
-          <span>{{ 'ORDERS.DETAIL.CANCEL_MODAL.CONFIRM' | translate }}</span>
+        <button
+          class="flex items-center gap-2 rounded-full bg-red-600 px-10 py-3 text-sm font-black text-white shadow-[0_4px_12px_rgba(186,26,26,0.3)] transition-all hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+          [ngClass]="{ 'btn-loading': isSubmitting }"
+          type="button"
+          [disabled]="isSubmitting"
+          (click)="onSubmit()">
+          <span class="material-symbols-outlined text-lg" [class.animate-spin]="isSubmitting">{{ isSubmitting ? 'progress_activity' : 'cancel' }}</span>
+          <span>{{ isSubmitting ? ('COMMON.LOADING' | translate) : ('ORDERS.DETAIL.CANCEL_MODAL.CONFIRM' | translate) }}</span>
         </button>
       </div>
     </div>
