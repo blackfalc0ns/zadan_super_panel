@@ -6,6 +6,8 @@ export const apiSessionGuard: CanActivateFn = (_route, state) => {
   const router = inject(Router);
   const authService = inject(AuthService);
 
+  authService.validateActiveSession();
+
   if (authService.hasApiSession) {
     return true;
   }

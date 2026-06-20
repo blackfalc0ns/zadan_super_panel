@@ -6,6 +6,8 @@ function checkAuth(stateUrl: string) {
     const router = inject(Router);
     const authService = inject(AuthService);
 
+    authService.validateActiveSession();
+
     if (authService.isAuthenticated) {
         if (authService.currentUserValue?.mustChangePassword && !stateUrl.startsWith('/change-temporary-password')) {
             return router.createUrlTree(['/change-temporary-password'], { queryParams: { returnUrl: stateUrl } });

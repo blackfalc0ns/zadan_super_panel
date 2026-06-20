@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, catchError, firstValueFrom, from, map, of, switchMap, tap, throwError, timeout } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { BehaviorSubject, Observable, catchError, filter, firstValueFrom, from, map, of, switchMap, take, tap, throwError, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface AccessScope {
@@ -154,17 +154,29 @@ export class AuthService {
             return false;
         }
 
-        if (this.isTokenExpired(this.accessToken)) {
-            this.forceLogoutForExpiredSession();
-            return false;
+        return !this.isTokenExpired(this.accessToken) && !this.isIdleTimedOut();
+    }
+
+    /**
+     * Validates the active session and logs out when the token is missing,
+     * expired, or idle-timed-out. Guards and layout call this because route
+     * guards alone do not re-run while the user stays on the same page.
+     */
+    public validateActiveSession(): void {
+        if (this.shouldUseDevelopmentBypass()) {
+            return;
         }
 
-        if (this.isIdleTimedOut()) {
-            this.forceLogoutForExpiredSession();
-            return false;
+        if (!this.accessToken) {
+            if (this.currentUserValue || this.safeLocalGet(USER_PROFILE_STORAGE_KEY)) {
+                this.forceLogoutForExpiredSession();
+            }
+            return;
         }
 
-        return true;
+        if (this.isTokenExpired(this.accessToken) || this.isIdleTimedOut()) {
+            this.forceLogoutForExpiredSession();
+        }
     }
 
     public get isAuthenticated(): boolean {
@@ -206,12 +218,14 @@ export class AuthService {
         }
 
         if (this.requiresFreshLogin) {
+            this.clearStaleUnauthenticatedState();
             return null;
         }
 
         try {
             const response = await this.firstValueFromWithBootstrapTimeout(this.refreshAccessToken());
-            if (!response) {
+            if (!response?.accessToken) {
+                this.clearStaleUnauthenticatedState();
                 return null;
             }
 
@@ -498,32 +512,68 @@ export class AuthService {
     }
 
     private redirectToLoginForExpiredSession(): void {
-        // During APP_INITIALIZER the router has not performed its first
-        // navigation yet. The auth guard will route to /login once bootstrap
-        // completes, so avoid starting a competing navigation here.
-        if (!this.router.navigated || this.sessionExpiryRedirectPending) {
-            return;
-        }
+        const performRedirect = (): void => {
+            if (this.sessionExpiryRedirectPending) {
+                return;
+            }
 
-        const currentUrl = this.router.url;
-        if (!currentUrl || currentUrl.startsWith('/login')) {
-            return;
-        }
+            const currentUrl = this.router.url || '/';
+            if (currentUrl.startsWith('/login')) {
+                return;
+            }
 
-        this.sessionExpiryRedirectPending = true;
-        const returnUrl = currentUrl.startsWith('/') ? currentUrl : '/dashboard';
+            this.sessionExpiryRedirectPending = true;
+            const returnUrl = currentUrl.startsWith('/') ? currentUrl : '/dashboard';
+            const queryParams = {
+                returnUrl,
+                reason: 'session-expired'
+            };
 
-        this.ngZone.run(() => {
-            void this.router.navigate(['/login'], {
-                queryParams: {
-                    returnUrl,
-                    reason: 'session-expired'
-                },
-                replaceUrl: true
-            }).finally(() => {
-                this.sessionExpiryRedirectPending = false;
+            this.ngZone.run(() => {
+                void this.router.navigate(['/login'], {
+                    queryParams,
+                    replaceUrl: true
+                }).then((success) => {
+                    if (!success) {
+                        this.hardRedirectToLogin(queryParams);
+                    }
+                }).catch(() => {
+                    this.hardRedirectToLogin(queryParams);
+                }).finally(() => {
+                    this.sessionExpiryRedirectPending = false;
+                });
             });
-        });
+        };
+
+        // During APP_INITIALIZER the router has not navigated yet — defer until
+        // the first NavigationEnd, then send the user to /login.
+        if (!this.router.navigated) {
+            this.router.events.pipe(
+                filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+                take(1)
+            ).subscribe(() => performRedirect());
+            return;
+        }
+
+        performRedirect();
+    }
+
+    private hardRedirectToLogin(queryParams: Record<string, string>): void {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const params = new URLSearchParams(queryParams);
+        window.location.assign(`/login?${params.toString()}`);
+    }
+
+    private clearStaleUnauthenticatedState(): void {
+        if (this.accessToken || this.shouldUseDevelopmentBypass()) {
+            return;
+        }
+
+        this.safeLocalRemove(USER_PROFILE_STORAGE_KEY);
+        this.currentUserSubject.next(null);
     }
 
     private shouldUseDevelopmentBypass(): boolean {
@@ -603,18 +653,29 @@ export class AuthService {
                 window.addEventListener(evt, handleActivity, { passive: true });
             }
             if (typeof document !== 'undefined') {
-                document.addEventListener('visibilitychange', handleActivity, { passive: true });
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        this.ngZone.run(() => this.validateActiveSession());
+                        return;
+                    }
+
+                    handleActivity();
+                }, { passive: true });
             }
 
             const tick = () => {
                 if (!this.accessToken) {
+                    this.ngZone.run(() => this.validateActiveSession());
                     this.stopIdleWatchdog();
                     return;
                 }
-                if (this.isTokenExpired(this.accessToken) || this.isIdleTimedOut()) {
-                    this.ngZone.run(() => this.forceLogoutForExpiredSession());
+
+                this.ngZone.run(() => this.validateActiveSession());
+                if (!this.accessToken) {
+                    this.stopIdleWatchdog();
                     return;
                 }
+
                 this.idleTimerHandle = setTimeout(tick, 60_000);
             };
             this.idleTimerHandle = setTimeout(tick, 60_000);

@@ -61,7 +61,10 @@ export class LayoutComponent {
       .subscribe((user) => {
       this.cdr.markForCheck();
         this.userName = user?.fullName || 'Admin';
+        this.redirectToLoginIfSessionEnded();
       });
+
+    this.authService.validateActiveSession();
 
     this.translate.onLangChange
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -220,6 +223,24 @@ export class LayoutComponent {
     if (!this.authService.isDevelopmentBypassActive) {
       this.authService.logout().subscribe();
     }
+  }
+
+  private redirectToLoginIfSessionEnded(): void {
+    if (this.authService.isAuthenticated) {
+      return;
+    }
+
+    const currentUrl = this.router.url || '/';
+    if (currentUrl.startsWith('/login')) {
+      return;
+    }
+
+    const queryParams: Record<string, string> = { returnUrl: currentUrl };
+    if (this.authService.requiresFreshLogin) {
+      queryParams['reason'] = 'session-expired';
+    }
+
+    void this.router.navigate(['/login'], { queryParams, replaceUrl: true });
   }
 
   private armDesktopNotificationPermission(): void {
