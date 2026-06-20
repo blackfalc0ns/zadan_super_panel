@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 import { AdminNotificationSound, normalizeAdminNotificationSound } from './admin-notification-sound.service';
+import { resolveAdminNotificationTargetUrl, sanitizeAdminNotificationInternalPath } from '../utils/admin-notification-routing.utils';
 
 export type AdminNotificationPriority = 'low' | 'normal' | 'high' | 'critical' | string;
 export type AdminNotificationCategory =
@@ -268,51 +269,7 @@ export class AdminNotificationsService {
   }
 
   resolveTargetUrl(notification: AdminNotification): string {
-    const parsedData = this.tryParseData(notification.data);
-    const isDriverSupportCase = this.isDriverSupportCaseNotification(notification, parsedData);
-    const isSupport = this.isSupportNotification(notification, parsedData) || isDriverSupportCase;
-    if (isSupport) {
-      const isVendorSupportTicket = this.isVendorSupportTicketNotification(notification, parsedData);
-      const ticketId = this.extractString(notification.dataObject?.['ticketId'])
-        ?? this.extractString(parsedData?.['ticketId'])
-        ?? (isVendorSupportTicket ? this.extractString(notification.referenceId) : null);
-      const driverCaseId = this.extractString(notification.dataObject?.['caseId'])
-        ?? this.extractString(parsedData?.['caseId'])
-        ?? (isDriverSupportCase ? this.extractString(notification.referenceId) : null);
-      const legacyCaseId = this.extractString(notification.dataObject?.['caseId'])
-        ?? this.extractString(parsedData?.['caseId'])
-        ?? (!isVendorSupportTicket && !isDriverSupportCase ? this.extractString(notification.referenceId) : null);
-
-      if (ticketId) {
-        return `/support?tab=vendor&ticketId=${encodeURIComponent(ticketId)}`;
-      }
-
-      if (driverCaseId) {
-        return `/support?tab=driver&driverCaseId=${encodeURIComponent(driverCaseId)}`;
-      }
-
-      if (legacyCaseId) {
-        return `/support?tab=legacy&legacyCaseId=${encodeURIComponent(legacyCaseId)}`;
-      }
-
-      return '/support';
-    }
-
-    const sanitizedExternal = this.sanitizeInternalPath(notification.dataObject?.['targetUrl']);
-    if (sanitizedExternal) {
-      return sanitizedExternal;
-    }
-
-    if (notification.category === 'drivers' && notification.referenceId) {
-      return `/drivers/${encodeURIComponent(notification.referenceId)}`;
-    }
-    if (notification.category === 'vendors' && notification.referenceId) {
-      return `/vendors/${encodeURIComponent(notification.referenceId)}/overview`;
-    }
-    if (notification.category === 'refunds') return '/finances/refunds';
-    if (notification.category === 'settlements') return '/finances/settlements';
-    if (notification.category === 'disputes') return '/disputes';
-    return '/notifications';
+    return resolveAdminNotificationTargetUrl(notification);
   }
 
   /**
@@ -327,78 +284,7 @@ export class AdminNotificationsService {
    * Anything else is rejected to prevent open-redirect / XSS via navigateByUrl.
    */
   private sanitizeInternalPath(value: unknown): string | null {
-    if (typeof value !== 'string') {
-      return null;
-    }
-
-    const trimmed = value.trim();
-    if (!trimmed) {
-      return null;
-    }
-
-    if (!trimmed.startsWith('/')) {
-      return null;
-    }
-
-    if (trimmed.startsWith('//') || trimmed.startsWith('/\\')) {
-      return null;
-    }
-
-    if (/[\u0000-\u001F\u007F]/.test(trimmed)) {
-      return null;
-    }
-
-    if (/^\/[a-z][a-z0-9+.-]*:/i.test(trimmed)) {
-      return null;
-    }
-
-    return trimmed;
-  }
-
-  private isSupportNotification(
-    notification: AdminNotification,
-    parsedData?: Record<string, unknown> | null
-  ): boolean {
-    const category = (notification.category ?? '').toLowerCase();
-    const type = (notification.type ?? '').toLowerCase();
-    const source = `${notification.dataObject?.['source'] ?? ''} ${parsedData?.['source'] ?? ''}`.toLowerCase();
-    const targetUrl = `${notification.dataObject?.['targetUrl'] ?? ''} ${parsedData?.['targetUrl'] ?? ''}`.toLowerCase();
-
-    return category === 'support'
-      || type.startsWith('support.')
-      || type.includes('vendor_support_ticket')
-      || source.includes('vendor_support')
-      || targetUrl.includes('/support')
-      || targetUrl.includes('category=support');
-  }
-
-  private isVendorSupportTicketNotification(
-    notification: AdminNotification,
-    parsedData?: Record<string, unknown> | null
-  ): boolean {
-    const type = (notification.type ?? '').toLowerCase();
-    const source = `${notification.dataObject?.['source'] ?? ''} ${parsedData?.['source'] ?? ''}`.toLowerCase();
-    const targetUrl = `${notification.dataObject?.['targetUrl'] ?? ''} ${parsedData?.['targetUrl'] ?? ''}`.toLowerCase();
-
-    return type.includes('vendor_support_ticket')
-      || type === 'support.ticket_created'
-      || type === 'support.ticket_updated'
-      || source.includes('vendor_support')
-      || targetUrl.includes('/support/tickets/');
-  }
-
-  private isDriverSupportCaseNotification(
-    notification: AdminNotification,
-    parsedData?: Record<string, unknown> | null
-  ): boolean {
-    const type = `${notification.type ?? ''} ${notification.dataObject?.['type'] ?? ''} ${parsedData?.['type'] ?? ''}`.toLowerCase();
-    const targetUrl = `${notification.dataObject?.['targetUrl'] ?? ''} ${parsedData?.['targetUrl'] ?? ''}`.toLowerCase();
-
-    return type.includes('driver_account')
-      || type.includes('driver_report')
-      || targetUrl.includes('type=driver_account')
-      || targetUrl.includes('type=driver_report')
-      || targetUrl.includes('tab=driver');
+    return sanitizeAdminNotificationInternalPath(value);
   }
 
   private tryParseData(data?: string | null): Record<string, unknown> | null {
@@ -425,8 +311,12 @@ export class AdminNotificationsService {
   }
 
   private normalizeNotification(notification: AdminNotification): AdminNotification {
+    const parsedData = this.tryParseData(notification.data);
+    const dataObject = notification.dataObject ?? parsedData ?? null;
+
     return {
       ...notification,
+      dataObject,
       titleAr: notification.titleAr || this.resolveLocalizedNotificationText(notification, 'ar', 'title'),
       titleEn: notification.titleEn || this.resolveLocalizedNotificationText(notification, 'en', 'title'),
       bodyAr: notification.bodyAr || this.resolveLocalizedNotificationText(notification, 'ar', 'body'),
