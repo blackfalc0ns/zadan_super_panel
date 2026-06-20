@@ -73,7 +73,7 @@ const DEV_ADMIN_USER: AdminUser = {
 
 const DEV_BYPASS_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
 
-const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const IDLE_TIMEOUT_MS = 10 * 60 * 60 * 1000; // 10 hours
 const IDLE_ACTIVITY_EVENTS: ReadonlyArray<keyof WindowEventMap> = [
     'mousemove',
     'mousedown',
