@@ -210,7 +210,8 @@
     "ADMIN_STATUS": "Main Hub",
     "REALM_LABEL": "Active Realm",
     "REALM_VALUE": "Headquarters - Global Ops",
-    "USER_ROLE_ID": "Engineer - ID: 892",
+    "USER_ID": "ID {{id}}",
+    "SETTINGS": "Settings",
     "LIVE_OPS": "Live Ops"
   },
   "HEADER_SEARCH": {

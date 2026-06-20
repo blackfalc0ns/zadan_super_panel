@@ -24,7 +24,7 @@
         [class.translate-x-0]="isSidebarOpen" [class.-translate-x-full]="!isSidebarOpen && currentLang === 'en'"
         [class.translate-x-full]="!isSidebarOpen && currentLang === 'ar'">
         <!-- User Profile Integrated in Sidebar -->
-        <app-user-profile [userName]="userName" (logout)="logout()" [isCollapsed]="isSidebarCollapsed">
+        <app-user-profile (logout)="logout()" [isCollapsed]="isSidebarCollapsed">
         </app-user-profile>
     </app-sidebar>
 

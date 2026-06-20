@@ -210,7 +210,8 @@
     "ADMIN_STATUS": "المركز الرئيسي",
     "REALM_LABEL": "المجال النشط",
     "REALM_VALUE": "المقر • العمليات العالمية",
-    "USER_ROLE_ID": "مهندس • معرف: 892",
+    "USER_ID": "معرف {{id}}",
+    "SETTINGS": "الإعدادات",
     "LIVE_OPS": "العمليات المباشرة"
   },
   "HEADER_SEARCH": {

@@ -34,7 +34,6 @@ import { environment } from '../../../environments/environment';
 export class LayoutComponent {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly document = inject(DOCUMENT);
-  userName = 'Admin';
   currentLang = 'ar';
   isSidebarOpen = false;
   isSidebarCollapsed = false;
@@ -58,9 +57,8 @@ export class LayoutComponent {
 
     this.authService.currentUser$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((user) => {
+      .subscribe(() => {
       this.cdr.markForCheck();
-        this.userName = user?.fullName || 'Admin';
         this.redirectToLoginIfSessionEnded();
       });
 

@@ -25,6 +25,7 @@ export interface AdminUser {
     phone?: string | null;
     role: string;
     mustChangePassword?: boolean;
+    profilePhotoUrl?: string | null;
     access?: EffectiveAccess | null;
 }
 
@@ -462,7 +463,8 @@ export class AuthService {
         return {
             ...user,
             id: user?.id != null ? String(user.id) : '',
-            phone: user?.phone ?? (user as AdminUser & { phoneNumber?: string }).phoneNumber ?? null
+            phone: user?.phone ?? (user as AdminUser & { phoneNumber?: string }).phoneNumber ?? null,
+            profilePhotoUrl: user?.profilePhotoUrl ?? (user as AdminUser & { ProfilePhotoUrl?: string }).ProfilePhotoUrl ?? null
         };
     }
 
