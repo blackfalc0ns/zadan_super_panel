@@ -1,36 +1,66 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
+import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { DriverDetailRecord, DriverFinanceEntry } from '../../models/drivers.models';
+import { DriverService } from '../../services/drivers.api.service';
 import { getFinanceStatusVariant, getFinanceStatusKey } from '../../utils/driver-ui.utils';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-driver-finance-tab',
   standalone: true,
-  imports: [CommonModule, TranslateModule, DataTableComponent, SectionHeaderComponent, FormsModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    DataTableComponent,
+    SectionHeaderComponent,
+    FormsModule,
+    AppPaginationComponent
+  ],
   templateUrl: './driver-finance-tab.component.html'
 })
-export class DriverFinanceTabComponent {
+export class DriverFinanceTabComponent implements OnInit, OnChanges {
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() isRTL = true;
 
-  // Active filters
-  activeFilter: string = 'ALL';
-  searchQuery: string = '';
+  private readonly driversApi = inject(DriverService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly searchChanges$ = new Subject<string>();
+
+  activeFilter = 'ALL';
+  searchQuery = '';
   expandedRowId: string | null = null;
 
-  // Settlement Modal Form state
-  showSettleModal: boolean = false;
-  settleAmount: number = 0;
-  settleMethod: string = 'BANKACCOUNT';
-  settleReference: string = '';
-  settleNotes: string = '';
-  isSettling: boolean = false;
-  settleSuccess: boolean = false;
+  ledgerEntries: DriverFinanceEntry[] = [];
+  currentPage = 1;
+  pageSize = 10;
+  totalItems = 0;
+  isLedgerLoading = false;
+
+  showSettleModal = false;
+  settleAmount = 0;
+  settleMethod = 'BANKACCOUNT';
+  settleReference = '';
+  settleNotes = '';
+  isSettling = false;
+  settleSuccess = false;
 
   financeColumns: TableColumn[] = [
     { key: 'id', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.ID' },
@@ -40,6 +70,24 @@ export class DriverFinanceTabComponent {
     { key: 'status', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.STATUS', type: 'custom' },
     { key: 'date', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.DATE' }
   ];
+
+  ngOnInit(): void {
+    this.searchChanges$
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.currentPage = 1;
+        this.loadLedgerEntries();
+      });
+
+    this.loadLedgerEntries();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['driver'] && !changes['driver'].firstChange) {
+      this.currentPage = 1;
+      this.loadLedgerEntries();
+    }
+  }
 
   getFinanceStatusVariant(status: string) {
     return getFinanceStatusVariant(status as any);
@@ -52,41 +100,24 @@ export class DriverFinanceTabComponent {
   setFilter(filter: string) {
     this.activeFilter = filter;
     this.expandedRowId = null;
+    this.currentPage = 1;
+    this.loadLedgerEntries();
+  }
+
+  onSearchChange(value: string) {
+    this.searchQuery = value;
+    this.expandedRowId = null;
+    this.searchChanges$.next(value);
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.expandedRowId = null;
+    this.loadLedgerEntries();
   }
 
   toggleRow(rowId: string) {
-    if (this.expandedRowId === rowId) {
-      this.expandedRowId = null;
-    } else {
-      this.expandedRowId = rowId;
-    }
-  }
-
-  getFilteredEntries(): DriverFinanceEntry[] {
-    if (!this.driver?.finance?.entries) {
-      return [];
-    }
-
-    return this.driver.finance.entries.filter(entry => {
-      // 1. Filter by status tabs
-      let statusMatches = true;
-      if (this.activeFilter !== 'ALL') {
-        statusMatches = entry.status === this.activeFilter;
-      }
-
-      // 2. Search query matches reference or type or date
-      let searchMatches = true;
-      if (this.searchQuery.trim()) {
-        const query = this.searchQuery.toLowerCase().trim();
-        const refMatches = entry.reference?.toLowerCase().includes(query) || entry.id?.toLowerCase().includes(query);
-        const typeMatches = entry.type?.toLowerCase().includes(query);
-        const methodMatches = entry.method?.toLowerCase().includes(query);
-        const dateMatches = entry.date?.includes(query);
-        searchMatches = !!(refMatches || typeMatches || methodMatches || dateMatches);
-      }
-
-      return statusMatches && searchMatches;
-    });
+    this.expandedRowId = this.expandedRowId === rowId ? null : rowId;
   }
 
   getTransactionIcon(type: string): string {
@@ -142,7 +173,7 @@ export class DriverFinanceTabComponent {
     this.settleNotes = '';
     const randomNum = Math.floor(100000 + Math.random() * 900000);
     this.settleReference = `TXN-${randomNum}`;
-    
+
     this.showSettleModal = true;
     this.settleSuccess = false;
     this.isSettling = false;
@@ -153,37 +184,59 @@ export class DriverFinanceTabComponent {
   }
 
   submitSettlement() {
-    if (this.settleAmount <= 0) return;
-    
+    if (this.settleAmount <= 0) {
+      return;
+    }
+
     this.isSettling = true;
-    
+
     setTimeout(() => {
       this.isSettling = false;
       this.settleSuccess = true;
-      
+
       const amountPaid = this.settleAmount;
-      
-      // Update model data
+
       this.driver.finance.dueAmount = Math.max(0, this.driver.finance.dueAmount - amountPaid);
       this.driver.finance.availableBalance = Math.max(0, this.driver.finance.availableBalance - amountPaid);
-      
-      const today = new Date();
-      const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`;
-      
-      const newEntry: DriverFinanceEntry = {
-        id: `ENT-${Math.floor(10000 + Math.random() * 90000)}`,
-        reference: this.settleReference,
-        type: 'SETTLEMENT',
-        status: 'SETTLED',
-        statusLabel: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.SETTLED',
-        amount: -amountPaid,
-        fee: 0,
-        method: this.settleMethod,
-        date: formattedDate
-      };
-      
-      this.driver.finance.entries = [newEntry, ...this.driver.finance.entries];
+
+      this.currentPage = 1;
+      this.loadLedgerEntries();
+      this.cdr.markForCheck();
     }, 1500);
   }
-}
 
+  private loadLedgerEntries(): void {
+    if (!this.driver?.id) {
+      return;
+    }
+
+    this.isLedgerLoading = true;
+    this.cdr.markForCheck();
+
+    this.driversApi
+      .getDriverFinanceEntries(
+        this.driver.id,
+        this.currentPage,
+        this.pageSize,
+        this.activeFilter,
+        this.searchQuery
+      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.ledgerEntries = response.items;
+          this.totalItems = response.totalCount;
+          this.currentPage = response.pageNumber;
+          this.pageSize = response.pageSize;
+          this.isLedgerLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.ledgerEntries = [];
+          this.totalItems = 0;
+          this.isLedgerLoading = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+}

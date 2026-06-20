@@ -353,6 +353,13 @@ interface AdminDriverFinanceEntryResponse {
   createdAtUtc: string;
 }
 
+interface AdminDriverFinanceEntriesListResponse {
+  items: AdminDriverFinanceEntryResponse[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+}
+
 interface AdminDriverFinanceDetailsResponse {
   availableBalance: number;
   dueAmount: number;
@@ -445,6 +452,40 @@ export class DriverService {
       map((response) => this.mapDriverDetailRecord(response)),
       tap((detail) => this.upsertCache(detail)),
       catchError(() => of(undefined))
+    );
+  }
+
+  getDriverFinanceEntries(
+    driverId: string,
+    page = 1,
+    pageSize = 10,
+    status?: string,
+    search?: string
+  ): Observable<{ items: DriverFinanceEntry[]; totalCount: number; pageNumber: number; pageSize: number }> {
+    let params = new HttpParams()
+      .set('page', String(Math.max(1, page)))
+      .set('pageSize', String(Math.max(1, Math.min(pageSize, 50))));
+
+    if (status && status !== 'ALL') {
+      params = params.set('status', status);
+    }
+
+    const normalizedSearch = search?.trim();
+    if (normalizedSearch) {
+      params = params.set('search', normalizedSearch);
+    }
+
+    return this.http.get<AdminDriverFinanceEntriesListResponse>(
+      `${this.apiUrl}/${this.normalizeDriverId(driverId)}/finance/entries`,
+      { params }
+    ).pipe(
+      map((response) => ({
+        items: this.mapFinanceEntries(response.items ?? []),
+        totalCount: response.totalCount ?? 0,
+        pageNumber: response.pageNumber ?? page,
+        pageSize: response.pageSize ?? pageSize
+      })),
+      catchError(() => of({ items: [], totalCount: 0, pageNumber: page, pageSize }))
     );
   }
 
