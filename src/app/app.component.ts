@@ -78,6 +78,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.cdr.markForCheck();
       this.signalInitialContentReady();
     });
+
+    // Never leave the splash overlay up if routing stalls during a hard refresh.
+    window.setTimeout(() => this.signalInitialContentReady(), 8000);
   }
 
   private async loadMaterialSymbolsFont(): Promise<void> {

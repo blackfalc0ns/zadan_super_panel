@@ -412,25 +412,13 @@
     }
 
     @keyframes zadnaLogoFlicker {
-      0% {
-        opacity: 0;
-        transform: scale(0.985);
-      }
-      18% {
+      0%, 100% {
         opacity: 1;
         transform: scale(1);
       }
-      58% {
-        opacity: 1;
-        transform: scale(1.018);
-      }
-      78% {
-        opacity: 0.18;
-        transform: scale(0.995);
-      }
-      100% {
-        opacity: 0;
-        transform: scale(0.985);
+      50% {
+        opacity: 0.72;
+        transform: scale(1.015);
       }
     }
 
@@ -502,7 +490,9 @@
       }
 
       const splash = document.getElementById('initial-splash');
-      const minimumVisibleMs = 3600;
+      const navEntry = performance.getEntriesByType('navigation')[0];
+      const isReload = navEntry && navEntry.type === 'reload';
+      const minimumVisibleMs = isReload ? 500 : 1800;
       const startedAt = Date.now();
       let hideScheduled = false;
 
@@ -524,7 +514,7 @@
       window.addEventListener('zadna:initial-content-ready', hideSplash, { once: true });
 
       // Safety valve only: if Angular cannot emit readiness, do not trap users forever.
-      window.setTimeout(hideSplash, 12000);
+      window.setTimeout(hideSplash, isReload ? 8000 : 12000);
     })();
   </script>
 </body>

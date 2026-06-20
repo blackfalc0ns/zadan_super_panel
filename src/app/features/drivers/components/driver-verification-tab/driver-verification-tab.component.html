@@ -535,6 +535,12 @@
           </div>
 
           <!-- Bottom Action Buttons for Single Document -->
+          <div *ngIf="hasPendingDocumentChange(selectedDocumentPreview)" class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-bold leading-6 text-amber-800">
+            {{ isRTL
+              ? 'يوجد تعديل مستند معلق. استخدم "اعتماد وتطبيق" من قائمة التعديلات المعلقة قبل اعتماد المستند مباشرة.'
+              : 'A pending document change exists. Use "Approve and apply" from the pending changes list before approving this document directly.' }}
+          </div>
+
           <div class="flex sm:flex-col md:flex-row gap-3 justify-end items-end pt-2">
             <button
               type="button"

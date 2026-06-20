@@ -473,7 +473,33 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
       && this.hasRequiredExpiryDate(this.selectedDocumentPreview)
       && this.selectedDocumentPreview.status !== 'valid'
       && this.selectedDocumentPreview.status !== 'expiring'
+      && !this.hasPendingDocumentChange(this.selectedDocumentPreview)
     );
+  }
+
+  hasPendingDocumentChange(document: DriverDocumentRecord | null): boolean {
+    if (!document?.documentType) {
+      return false;
+    }
+
+    const fieldKeysByType: Record<string, string[]> = {
+      NationalId: ['nationalIdFrontImageUrl', 'nationalIdBackImageUrl'],
+      DriverLicense: ['licenseImageUrl'],
+      VehicleLicense: ['vehicleImageUrl']
+    };
+    const keys = fieldKeysByType[document.documentType] ?? [];
+    if (keys.length === 0) {
+      return false;
+    }
+
+    return this.driverApprovals.some((approval) => {
+      if (approval.action !== 'driver.profile.documents') {
+        return false;
+      }
+
+      const fields = approval.reviewDetails?.fields ?? [];
+      return fields.some((field) => field.isChanged && keys.includes(field.key));
+    });
   }
 
   hasRequiredExpiryDate(document: DriverDocumentRecord | null): boolean {

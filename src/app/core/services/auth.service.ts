@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, catchError, firstValueFrom, from, map, of, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, firstValueFrom, from, map, of, switchMap, tap, throwError, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface AccessScope {
@@ -85,6 +85,7 @@ const IDLE_ACTIVITY_EVENTS: ReadonlyArray<keyof WindowEventMap> = [
 const USER_PROFILE_STORAGE_KEY = 'admin_user';
 const LAST_ACTIVITY_STORAGE_KEY = 'admin_last_activity';
 const LOGIN_REQUIRED_STORAGE_KEY = 'admin_login_required';
+const BOOTSTRAP_REQUEST_TIMEOUT_MS = 10_000;
 
 @Injectable({
     providedIn: 'root'
@@ -197,7 +198,7 @@ export class AuthService {
      *     If it succeeds, fetch /me. If it fails, the user lands on /login.
      */
     public async bootstrap(): Promise<AdminUser | null> {
-        await this.acquireCsrfToken().catch(() => undefined);
+        await this.acquireCsrfTokenWithTimeout().catch(() => undefined);
 
         if (this.shouldUseDevelopmentBypass()) {
             this.currentUserSubject.next(DEV_ADMIN_USER);
@@ -209,15 +210,19 @@ export class AuthService {
         }
 
         try {
-            const response = await firstValueFrom(this.refreshAccessToken());
+            const response = await this.firstValueFromWithBootstrapTimeout(this.refreshAccessToken());
             if (!response) {
                 return null;
             }
 
             // Refresh the CSRF token now that we have the access token!
-            await this.acquireCsrfToken().catch(() => undefined);
+            await this.acquireCsrfTokenWithTimeout().catch(() => undefined);
 
-            const user = await firstValueFrom(this.fetchMe());
+            const user = await this.firstValueFromWithBootstrapTimeout(this.fetchMe());
+            if (!user) {
+                return null;
+            }
+
             this.startIdleWatchdog();
             return user;
         } catch {
@@ -391,6 +396,30 @@ export class AuthService {
         } catch {
             this.csrfToken = this.readCsrfFromCookie();
             return this.csrfToken;
+        }
+    }
+
+    private acquireCsrfTokenWithTimeout(): Promise<string | null> {
+        return this.firstValueFromWithBootstrapTimeout(
+            this.http.get<CsrfResponse>(`${this.apiUrl}/csrf`, { withCredentials: true }).pipe(
+                tap((response) => {
+                    this.csrfToken = response?.csrfToken ?? this.readCsrfFromCookie();
+                }),
+                map(() => this.csrfToken)
+            )
+        ).then((token) => token ?? this.readCsrfFromCookie());
+    }
+
+    private async firstValueFromWithBootstrapTimeout<T>(source: Observable<T>): Promise<T | null> {
+        try {
+            return await firstValueFrom(
+                source.pipe(
+                    timeout(BOOTSTRAP_REQUEST_TIMEOUT_MS),
+                    catchError(() => of(null as T | null))
+                )
+            );
+        } catch {
+            return null;
         }
     }
 
