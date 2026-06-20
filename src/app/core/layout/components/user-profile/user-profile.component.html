@@ -51,17 +51,11 @@
         <p class="text-[13px] font-black text-white tracking-tight truncate leading-none mb-1.5 drop-shadow-md">
           {{ displayName }}
         </p>
-        <p class="text-[10px] font-black uppercase tracking-[0.14em] truncate mb-1"
+        <p class="text-[10px] font-black uppercase tracking-[0.14em] truncate"
           [class.text-amber-300]="isActionRequired"
           [class.text-zadna-accent]="!isActionRequired">
           <ng-container *ngIf="roleLabelKey; else rawRole">{{ roleLabelKey | translate }}</ng-container>
           <ng-template #rawRole>{{ roleDisplayName }}</ng-template>
-        </p>
-        <p *ngIf="contactLine" class="text-[10px] font-semibold text-white/55 truncate" dir="ltr">
-          {{ contactLine }}
-        </p>
-        <p class="text-[9px] font-bold text-white/35 uppercase tracking-[0.18em] mt-1">
-          {{ 'SIDEBAR_EXTRA.USER_ID' | translate: { id: shortUserId } }}
         </p>
       </div>
     </div>

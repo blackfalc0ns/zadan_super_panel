@@ -5,9 +5,7 @@ import { RouterModule } from '@angular/router';
 import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminUser, AuthService } from '../../../services/auth.service';
 import {
-  getAdminUserContactLine,
   getAdminUserInitials,
-  getAdminUserShortId,
   getAdminRoleDisplayName,
   resolveAdminRoleLabelKey
 } from '../../../utils/admin-user-display.utils';
@@ -58,14 +56,6 @@ export class UserProfileComponent implements OnInit {
 
   get roleDisplayName(): string {
     return getAdminRoleDisplayName(this.user);
-  }
-
-  get contactLine(): string | null {
-    return getAdminUserContactLine(this.user);
-  }
-
-  get shortUserId(): string {
-    return getAdminUserShortId(this.user?.id);
   }
 
   get profilePhotoUrl(): string | null {
