@@ -95,6 +95,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   isDisputeModalOpen = false;
   isIssueFlagModalOpen = false;
   isSubmittingDispute = false;
+  isSubmittingDriverAssignment = false;
+  isRecomputingDispatch = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -552,6 +554,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   closeDriverAssignmentModal(): void {
+    if (this.isSubmittingDriverAssignment) {
+      return;
+    }
+
     this.isDriverAssignmentModalOpen = false;
   }
 
@@ -639,16 +645,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   submitDriverAssignment(form: DriverAssignmentForm): void {
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isSubmittingDriverAssignment) {
       return;
     }
 
+    this.isSubmittingDriverAssignment = true;
+    this.cdr.markForCheck();
+
     this.ordersService.assignDriver(id, form).subscribe({
       next: (order) => {
+        this.isSubmittingDriverAssignment = false;
         this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
         this.closeDriverAssignmentModal();
+      },
+      error: () => {
+        this.isSubmittingDriverAssignment = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -656,15 +670,23 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   recomputeDispatch(): void {
     const id = this.orderId();
 
-    if (!id) {
+    if (!id || this.isRecomputingDispatch) {
       return;
     }
 
+    this.isRecomputingDispatch = true;
+    this.cdr.markForCheck();
+
     this.ordersService.recomputeDispatch(id).subscribe({
       next: (order) => {
+        this.isRecomputingDispatch = false;
         this.cdr.markForCheck();
         this.setOrder(order);
         this.loadFinancialBreakdown(id);
+      },
+      error: () => {
+        this.isRecomputingDispatch = false;
+        this.cdr.markForCheck();
       }
     });
   }

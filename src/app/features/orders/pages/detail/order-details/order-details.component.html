@@ -443,11 +443,12 @@
             </ng-template>
 
             <div *ngIf="!isOrderTerminal" class="mt-4 flex flex-col gap-2">
-              <button type="button" class="btn-premium flex w-full items-center justify-center gap-1.5 py-2.5 text-xs" (click)="openDriverAssignmentModal()">
-                <span class="material-symbols-outlined text-base">swap_horiz</span>
+              <button type="button" class="btn-premium flex w-full items-center justify-center gap-1.5 py-2.5 text-xs disabled:opacity-60" [disabled]="isSubmittingDriverAssignment || isRecomputingDispatch" (click)="openDriverAssignmentModal()">
+                <span class="material-symbols-outlined text-base" [class.animate-spin]="isSubmittingDriverAssignment">swap_horiz</span>
                 {{ (currentOrder.driverName ? 'ORDERS.DETAIL.CHANGE_DRIVER' : 'ORDERS.DETAIL.ASSIGN_DRIVER') | translate }}
               </button>
-              <button *ngIf="canRecomputeDispatch" type="button" class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="recomputeDispatch()">
+              <button *ngIf="canRecomputeDispatch" type="button" class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary disabled:cursor-not-allowed disabled:opacity-60" [disabled]="isRecomputingDispatch || isSubmittingDriverAssignment" (click)="recomputeDispatch()">
+                <span class="material-symbols-outlined text-base" [class.animate-spin]="isRecomputingDispatch">autorenew</span>
                 {{ 'ORDERS.DETAIL.RECOMPUTE_DISPATCH' | translate }}
               </button>
             </div>
@@ -575,7 +576,7 @@
 
     <!-- Modals -->
     <app-order-status-update-modal [isOpen]="isStatusModalOpen" [order]="order()" (close)="closeStatusModal()" (submitStatusUpdate)="submitStatusUpdate($event)"></app-order-status-update-modal>
-    <app-order-driver-assignment-modal [isOpen]="isDriverAssignmentModalOpen" [order]="order()" [drivers]="order()?.driverCandidates || []" (close)="closeDriverAssignmentModal()" (submitAssignment)="submitDriverAssignment($event)"></app-order-driver-assignment-modal>
+    <app-order-driver-assignment-modal [isOpen]="isDriverAssignmentModalOpen" [order]="order()" [drivers]="order()?.driverCandidates || []" [isSubmitting]="isSubmittingDriverAssignment" (close)="closeDriverAssignmentModal()" (submitAssignment)="submitDriverAssignment($event)"></app-order-driver-assignment-modal>
     <app-order-cancellation-modal [isOpen]="isCancellationModalOpen" [order]="order()" (close)="closeCancellationModal()" (submitCancellation)="submitCancellation($event)"></app-order-cancellation-modal>
     <app-order-refund-modal [isOpen]="isRefundModalOpen" [order]="order()" (close)="closeRefundModal()" (saveDraft)="saveRefundDraft($event)" (submitRefund)="submitRefund($event)"></app-order-refund-modal>
     <app-order-dispute-modal [isOpen]="isDisputeModalOpen" [isSubmitting]="isSubmittingDispute" [order]="order()" (close)="closeDisputeModal()" (saveDraft)="saveDisputeDraft($event)" (submitDispute)="submitDispute($event)"></app-order-dispute-modal>

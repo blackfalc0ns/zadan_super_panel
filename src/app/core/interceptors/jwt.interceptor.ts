@@ -4,8 +4,7 @@ import {
     HttpInterceptorFn,
     HttpRequest
 } from '@angular/common/http';
-import { inject, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { inject } from '@angular/core';
 import { Observable, catchError, from, retry, switchMap, throwError, timer } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,9 +43,7 @@ function isOurApiRequest(req: HttpRequest<unknown>): boolean {
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
-    const router = inject(Router);
     const translate = inject(TranslateService);
-    const ngZone = inject(NgZone);
     const lang = translate.currentLang || translate.defaultLang || 'ar';
 
     const isApiUrl = isOurApiRequest(req);
@@ -112,14 +109,14 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
                 }
             }
 
-            if (error.status === 401 || error.status === 403) {
+            if (error.status === 401) {
                 const isAdminAuthRequest = isAdminAuthLogin
                     || req.url.includes(ADMIN_AUTH_LOGOUT_PATH)
                     || isAdminAuthRefresh
                     || isAdminAuthCsrf;
 
                 if (!isAdminAuthRequest) {
-                    return tryRefreshAndRetry(req, next, authService, router, ngZone);
+                    return tryRefreshAndRetry(req, next, authService);
                 }
             }
 
@@ -136,15 +133,12 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 function tryRefreshAndRetry(
     req: HttpRequest<unknown>,
     next: (r: HttpRequest<unknown>) => Observable<HttpEvent<unknown>>,
-    authService: AuthService,
-    router: Router,
-    ngZone: NgZone
+    authService: AuthService
 ): Observable<HttpEvent<unknown>> {
     return authService.refreshAccessToken().pipe(
         switchMap((response) => {
             if (!response?.accessToken) {
                 authService.forceLogoutForExpiredSession();
-                redirectToLogin(router, ngZone);
                 return throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' }));
             }
 
@@ -156,7 +150,6 @@ function tryRefreshAndRetry(
         }),
         catchError((err) => {
             authService.forceLogoutForExpiredSession();
-            redirectToLogin(router, ngZone);
             return throwError(() => err);
         })
     );
@@ -189,14 +182,4 @@ function retryAfterCsrfRefresh(
         }),
         catchError((err) => throwError(() => err))
     );
-}
-
-function redirectToLogin(router: Router, ngZone: NgZone): void {
-    const returnUrl = router.url && !router.url.startsWith('/login') ? router.url : '/dashboard';
-    ngZone.run(() => {
-        void router.navigate(['/login'], {
-            queryParams: { returnUrl, reason: 'session-expired' },
-            replaceUrl: true
-        });
-    });
 }

@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, catchError, firstValueFrom, from, map, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -107,6 +108,7 @@ export class AuthService {
 
     private idleTimerHandle: ReturnType<typeof setTimeout> | null = null;
     private idleListenersBound = false;
+    private sessionExpiryRedirectPending = false;
     private readonly devBypassEnabled: boolean;
 
     /**
@@ -115,7 +117,11 @@ export class AuthService {
      */
     private csrfToken: string | null = null;
 
-    constructor(private http: HttpClient, private ngZone: NgZone) {
+    constructor(
+        private http: HttpClient,
+        private ngZone: NgZone,
+        private router: Router
+    ) {
         this.devBypassEnabled = this.computeDevBypassEnabled();
 
         if (this.devBypassEnabled) {
@@ -148,14 +154,12 @@ export class AuthService {
         }
 
         if (this.isTokenExpired(this.accessToken)) {
-            this.markLoginRequired();
-            this.clearSession();
+            this.forceLogoutForExpiredSession();
             return false;
         }
 
         if (this.isIdleTimedOut()) {
-            this.markLoginRequired();
-            this.clearSession();
+            this.forceLogoutForExpiredSession();
             return false;
         }
 
@@ -227,6 +231,7 @@ export class AuthService {
             switchMap(() => this.http.post<AuthLoginResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true })),
             switchMap(response => {
                     this.clearLoginRequired();
+                    this.sessionExpiryRedirectPending = false;
                     this.accessToken = response.tokens?.accessToken ?? null;
                     this.touchActivity();
                     this.startIdleWatchdog();
@@ -365,6 +370,7 @@ export class AuthService {
     public forceLogoutForExpiredSession(): void {
         this.markLoginRequired();
         this.clearSession();
+        this.redirectToLoginForExpiredSession();
     }
 
     public touchActivity(): void {
@@ -462,6 +468,35 @@ export class AuthService {
         this.currentUserSubject.next(null);
     }
 
+    private redirectToLoginForExpiredSession(): void {
+        // During APP_INITIALIZER the router has not performed its first
+        // navigation yet. The auth guard will route to /login once bootstrap
+        // completes, so avoid starting a competing navigation here.
+        if (!this.router.navigated || this.sessionExpiryRedirectPending) {
+            return;
+        }
+
+        const currentUrl = this.router.url;
+        if (!currentUrl || currentUrl.startsWith('/login')) {
+            return;
+        }
+
+        this.sessionExpiryRedirectPending = true;
+        const returnUrl = currentUrl.startsWith('/') ? currentUrl : '/dashboard';
+
+        this.ngZone.run(() => {
+            void this.router.navigate(['/login'], {
+                queryParams: {
+                    returnUrl,
+                    reason: 'session-expired'
+                },
+                replaceUrl: true
+            }).finally(() => {
+                this.sessionExpiryRedirectPending = false;
+            });
+        });
+    }
+
     private shouldUseDevelopmentBypass(): boolean {
         return this.devBypassEnabled && !this.accessToken && !this.requiresFreshLogin;
     }
@@ -547,7 +582,7 @@ export class AuthService {
                     this.stopIdleWatchdog();
                     return;
                 }
-                if (this.isIdleTimedOut()) {
+                if (this.isTokenExpired(this.accessToken) || this.isIdleTimedOut()) {
                     this.ngZone.run(() => this.forceLogoutForExpiredSession());
                     return;
                 }

@@ -17,6 +17,7 @@ export class OrderDriverAssignmentModalComponent implements OnChanges {
   @Input() isOpen = false;
   @Input() order: OrderDetail | null = null;
   @Input() drivers: DriverCandidate[] = [];
+  @Input() isSubmitting = false;
 
   @Output() close = new EventEmitter<void>();
   @Output() submitAssignment = new EventEmitter<DriverAssignmentForm>();
@@ -78,7 +79,17 @@ export class OrderDriverAssignmentModalComponent implements OnChanges {
   }
 
   onBackdropClick(event: MouseEvent): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
     if (event.target === event.currentTarget) {
+      this.close.emit();
+    }
+  }
+
+  onCloseRequest(): void {
+    if (!this.isSubmitting) {
       this.close.emit();
     }
   }
@@ -101,7 +112,7 @@ export class OrderDriverAssignmentModalComponent implements OnChanges {
   }
 
   onSubmit(): void {
-    if (!this.form.selectedDriverId) {
+    if (!this.form.selectedDriverId || this.isSubmitting) {
       return;
     }
 

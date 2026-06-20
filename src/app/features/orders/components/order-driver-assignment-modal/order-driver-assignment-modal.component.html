@@ -9,7 +9,7 @@
     [footerClass]="'px-6 py-4 md:px-8'"
     [titleClass]="'text-xl font-black tracking-tight text-zadna-primary'"
     [subtitleClass]="'text-xs font-medium text-slate-500'"
-    (close)="close.emit()">
+    (close)="onCloseRequest()">
     <div modal-body class="space-y-6">
       <section class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/60 bg-slate-50/90 p-5">
         <div class="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-zadna-primary/8 blur-3xl"></div>
@@ -75,26 +75,27 @@
             class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-4 pr-10 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
             type="text"
             [placeholder]="'ORDERS.DETAIL.DRIVER_MODAL.SEARCH_PLACEHOLDER' | translate"
-            [(ngModel)]="form.searchQuery" />
+            [(ngModel)]="form.searchQuery"
+            [disabled]="isSubmitting" />
         </div>
 
-        <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.city">
+        <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.city" [disabled]="isSubmitting">
           <option value="all">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_CITY_ALL' | translate }}</option>
           <option *ngFor="let city of cityOptions" [value]="city">{{ city }}</option>
         </select>
 
-        <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.availability">
+        <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.availability" [disabled]="isSubmitting">
           <option value="all">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_AVAILABILITY_ALL' | translate }}</option>
           <option value="available">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_AVAILABILITY_AVAILABLE' | translate }}</option>
           <option value="busy">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_AVAILABILITY_BUSY' | translate }}</option>
         </select>
 
-        <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.verification">
+        <select class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 outline-none transition-all focus:border-zadna-primary" [(ngModel)]="form.verification" [disabled]="isSubmitting">
           <option value="all">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_VERIFICATION_ALL' | translate }}</option>
           <option value="verified">{{ 'ORDERS.DETAIL.DRIVER_MODAL.FILTER_VERIFICATION_VERIFIED' | translate }}</option>
         </select>
 
-        <button class="flex items-center gap-1 rounded-xl px-4 py-2.5 text-xs font-black text-zadna-primary transition-colors hover:bg-zadna-primary/5" type="button" (click)="resetFilters()">
+        <button class="flex items-center gap-1 rounded-xl px-4 py-2.5 text-xs font-black text-zadna-primary transition-colors hover:bg-zadna-primary/5 disabled:opacity-50" type="button" (click)="resetFilters()" [disabled]="isSubmitting">
           <span class="material-symbols-outlined text-sm">filter_alt_off</span>
           {{ 'ORDERS.DETAIL.DRIVER_MODAL.RESET_FILTERS' | translate }}
         </button>
@@ -124,7 +125,7 @@
                   'bg-zadna-primary/5': form.selectedDriverId === driver.id,
                   'bg-red-50/40': driver.lowPerformance && form.selectedDriverId !== driver.id
                 }"
-                (click)="selectDriver(driver.id)">
+                (click)="!isSubmitting && selectDriver(driver.id)">
                 <td class="px-5 py-4">
                   <div class="flex items-center gap-3">
                     <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br text-sm font-black text-white shadow-sm" [ngClass]="driver.avatarTone">
@@ -162,6 +163,7 @@
                     name="driver-select"
                     type="radio"
                     [checked]="form.selectedDriverId === driver.id"
+                    [disabled]="isSubmitting"
                     (click)="$event.stopPropagation()"
                     (change)="selectDriver(driver.id)" />
                 </td>
@@ -181,7 +183,7 @@
         <div class="space-y-4">
           <div>
             <label class="mb-2 block text-xs font-black text-slate-700">{{ 'ORDERS.DETAIL.DRIVER_MODAL.REASON_LABEL' | translate }}</label>
-            <select class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.assignmentReason">
+            <select class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5" [(ngModel)]="form.assignmentReason" [disabled]="isSubmitting">
               <option *ngFor="let reason of assignmentReasons" [value]="reason">{{ ('ORDERS.DETAIL.DRIVER_MODAL.REASONS.' + reason.toUpperCase()) | translate }}</option>
             </select>
           </div>
@@ -191,7 +193,8 @@
             <textarea
               class="min-h-[110px] w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
               [placeholder]="'ORDERS.DETAIL.DRIVER_MODAL.INTERNAL_NOTES_PLACEHOLDER' | translate"
-              [(ngModel)]="form.internalNotes"></textarea>
+              [(ngModel)]="form.internalNotes"
+              [disabled]="isSubmitting"></textarea>
           </div>
         </div>
 
@@ -203,17 +206,17 @@
 
           <div class="space-y-4">
             <label class="flex cursor-pointer items-center gap-3">
-              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyDriver" />
+              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyDriver" [disabled]="isSubmitting" />
               <span class="text-xs font-medium text-slate-600">{{ 'ORDERS.DETAIL.DRIVER_MODAL.NOTIFY_DRIVER' | translate }}</span>
             </label>
 
             <label class="flex cursor-pointer items-center gap-3">
-              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyMerchant" />
+              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyMerchant" [disabled]="isSubmitting" />
               <span class="text-xs font-medium text-slate-600">{{ 'ORDERS.DETAIL.DRIVER_MODAL.NOTIFY_MERCHANT' | translate }}</span>
             </label>
 
             <label class="flex cursor-pointer items-center gap-3">
-              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCustomer" />
+              <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.notifyCustomer" [disabled]="isSubmitting" />
               <span class="text-xs font-medium text-slate-600">{{ 'ORDERS.DETAIL.DRIVER_MODAL.NOTIFY_CUSTOMER' | translate }}</span>
             </label>
           </div>
@@ -238,15 +241,18 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <button class="rounded-xl px-6 py-3 text-sm font-bold text-slate-500 transition-colors hover:bg-slate-100" type="button" (click)="close.emit()">
+        <button class="rounded-xl px-6 py-3 text-sm font-bold text-slate-500 transition-colors hover:bg-slate-100 disabled:opacity-50" type="button" (click)="onCloseRequest()" [disabled]="isSubmitting">
           {{ 'COMMON.CANCEL' | translate }}
         </button>
         <button
           class="flex items-center gap-2 rounded-xl bg-zadna-primary px-8 py-3 text-sm font-black text-white shadow-lg shadow-zadna-primary/20 transition-all hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+          [ngClass]="{ 'btn-loading': isSubmitting }"
           type="button"
-          [disabled]="!form.selectedDriverId"
+          [disabled]="!form.selectedDriverId || isSubmitting"
           (click)="onSubmit()">
-          <span class="material-symbols-outlined text-lg">check_circle</span>
+          <span class="material-symbols-outlined text-lg" [class.animate-spin]="isSubmitting">
+            {{ isSubmitting ? 'progress_activity' : 'check_circle' }}
+          </span>
           <span>{{ 'ORDERS.DETAIL.DRIVER_MODAL.CONFIRM' | translate }}</span>
         </button>
       </div>
