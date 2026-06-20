@@ -14,6 +14,17 @@ import {
 } from '../models/customers.models';
 import { refreshCustomerDetailRecord } from '../data/customers.mock';
 
+export interface CustomerFilterOptionItem {
+  value: string;
+  labelAr: string;
+  labelEn: string;
+}
+
+export interface CustomerFilterOptions {
+  statuses: CustomerFilterOptionItem[];
+  cities: CustomerFilterOptionItem[];
+}
+
 export interface CustomerFilters {
   status?: string;
   city?: string;
@@ -38,6 +49,9 @@ interface AdminCustomerListItemDto {
   email?: string | null;
   phone?: string | null;
   city?: string | null;
+  cityCode?: string | null;
+  cityAr?: string | null;
+  cityEn?: string | null;
   area?: string | null;
   accountStatus: string;
   isLoginLocked: boolean;
@@ -123,6 +137,10 @@ export class CustomersService {
     this.ensureCustomersLoaded();
     this.ensurePresenceConnection();
     return this.customersSubject.asObservable();
+  }
+
+  getFilterOptions(): Observable<CustomerFilterOptions> {
+    return this.http.get<CustomerFilterOptions>(`${this.apiUrl}/filter-options`);
   }
 
   searchCustomers(search: string, pageSize: number = 5): Observable<CustomerDetailRecord[]> {
@@ -417,12 +435,18 @@ export class CustomersService {
   }
 
   private createBaseRecord(item: AdminCustomerListItemDto): CustomerRecord {
+    const cityAr = item.cityAr ?? item.city ?? undefined;
+    const cityEn = item.cityEn ?? item.city ?? undefined;
+
     return {
       id: item.id,
       name: item.fullName,
       email: item.email ?? '-',
       phone: item.phone ?? '-',
-      city: item.city ?? item.area ?? '—',
+      city: cityAr ?? cityEn ?? item.area ?? '—',
+      cityCode: item.cityCode ?? undefined,
+      cityAr,
+      cityEn,
       isOnlineNow: item.isOnlineNow,
       segment: this.deriveSegment(item),
       status: this.deriveStatus(item),

@@ -205,7 +205,7 @@ export class CustomerDetailComponent implements OnInit {
       },
       {
         label: 'CUSTOMERS.DETAIL.PROFILE_FIELDS.CITY',
-        value: this.customer.city,
+        value: this.resolveCityLabel(this.customer),
         translateValue: false
       },
       {
@@ -675,6 +675,13 @@ export class CustomerDetailComponent implements OnInit {
 
   private shouldTranslateLastSeenValue(): boolean {
     return this.customer?.isOnlineNow ?? true;
+  }
+
+  resolveCityLabel(customer: CustomerDetailRecord): string {
+    const lang = (this.translate.currentLang || this.translate.defaultLang || 'ar').toLowerCase();
+    const primary = lang.startsWith('ar') ? customer.cityAr : customer.cityEn;
+    const fallback = lang.startsWith('ar') ? customer.cityEn : customer.cityAr;
+    return (primary || fallback || customer.city || '—').trim();
   }
 
   private getSuspiciousLoginsKey(): string {

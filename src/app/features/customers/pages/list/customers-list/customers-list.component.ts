@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject }
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CustomersService, CustomerFilters } from '@customers/services/customers.api.service';
+import { CustomersService, CustomerFilterOptionItem, CustomerFilterOptions, CustomerFilters } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -39,14 +39,12 @@ export class CustomersListComponent implements OnInit {
   filters: CustomerFilters = {};
 
   customers: CustomerDetailRecord[] = [];
-
-  // City options — will be derived from data
-  cityOptions: Array<{ value: string; label: string }> = [];
+  private filterOptionsRaw: CustomerFilterOptions | null = null;
 
   // Filter fields configuration (same pattern as vendors)
   filterFields: FilterField[] = [
     { key: 'status', label: 'CUSTOMERS.FILTERS.STATUS', type: 'select', color: '#10b981', options: [] },
-    { key: 'city', label: 'CUSTOMERS.FILTERS.CITY', type: 'select', color: '#0ea5e9', options: [] },
+    { key: 'city', label: 'CUSTOMERS.FILTERS.CITY', type: 'select', color: '#0ea5e9', options: [], localizeOptions: false },
     { key: 'hasOrders', label: 'CUSTOMERS.FILTERS.HAS_ORDERS', type: 'select', color: '#8b5cf6', options: [] },
     { key: 'isLocked', label: 'CUSTOMERS.FILTERS.ACCOUNT_LOCKED', type: 'select', color: '#ef4444', options: [] },
     { key: 'minSpent', label: 'CUSTOMERS.FILTERS.MIN_SPENT', type: 'select', color: '#f59e0b', options: [] },
@@ -71,12 +69,12 @@ export class CustomersListComponent implements OnInit {
   ) {
     this.translate.onLangChange.subscribe(() => {
       this.cdr.markForCheck();
-      this.initializeFilterOptions();
+      this.applyFilterOptionLabels();
     });
   }
 
   ngOnInit(): void {
-    this.initializeFilterOptions();
+    this.loadFilterOptions();
     const city = this.route.snapshot.queryParamMap.get('city');
     if (city) {
       this.filters = { ...this.filters, city };
@@ -88,7 +86,6 @@ export class CustomersListComponent implements OnInit {
       next: (customers) => {
         this.cdr.markForCheck();
         this.customers = customers;
-        this.updateCityOptions();
       },
       error: (error) => {
         this.cdr.markForCheck();
@@ -100,18 +97,62 @@ export class CustomersListComponent implements OnInit {
 
   // ── Filter Options ──
 
-  initializeFilterOptions(): void {
+  private loadFilterOptions(): void {
+    this.customersService.getFilterOptions().subscribe({
+      next: (options) => {
+        this.cdr.markForCheck();
+        this.filterOptionsRaw = options;
+        this.applyFilterOptionLabels();
+      },
+      error: (error) => {
+        console.error('Failed to load customer filter options.', error);
+        this.initializeStaticFilterOptions();
+      }
+    });
+  }
+
+  private applyFilterOptionLabels(): void {
+    if (this.filterOptionsRaw) {
+      const statusField = this.filterFields.find((field) => field.key === 'status');
+      const cityField = this.filterFields.find((field) => field.key === 'city');
+
+      if (statusField) {
+        statusField.options = this.mapFilterOptions(this.filterOptionsRaw.statuses);
+      }
+
+      if (cityField) {
+        cityField.options = this.mapFilterOptions(this.filterOptionsRaw.cities);
+      }
+    }
+
+    this.initializeStaticFilterOptions();
+  }
+
+  private mapFilterOptions(items: CustomerFilterOptionItem[]) {
+    return items.map((item) => ({
+      value: item.value,
+      label: this.resolveFilterLabel(item)
+    }));
+  }
+
+  private resolveFilterLabel(item: CustomerFilterOptionItem): string {
+    const lang = (this.translate.currentLang || this.translate.defaultLang || 'ar').toLowerCase();
+    return lang.startsWith('ar') ? item.labelAr : item.labelEn;
+  }
+
+  initializeStaticFilterOptions(): void {
     this.filterFields.forEach((field) => {
       switch (field.key) {
         case 'status':
-          field.options = [
-            { value: 'Active', label: this.translate.instant('CUSTOMERS.STATUS.ACTIVE') },
-            { value: 'Suspended', label: this.translate.instant('CUSTOMERS.STATUS.RESTRICTED') },
-            { value: 'Banned', label: this.translate.instant('CUSTOMERS.STATUS.DORMANT') }
-          ];
+          if (!field.options?.length) {
+            field.options = [
+              { value: 'Active', label: this.translate.instant('CUSTOMERS.STATUS.ACTIVE') },
+              { value: 'Suspended', label: this.translate.instant('CUSTOMERS.STATUS.RESTRICTED') },
+              { value: 'Banned', label: this.translate.instant('CUSTOMERS.STATUS.DORMANT') }
+            ];
+          }
           break;
         case 'city':
-          field.options = this.cityOptions;
           break;
         case 'hasOrders':
           field.options = [
@@ -155,13 +196,11 @@ export class CustomersListComponent implements OnInit {
     });
   }
 
-  private updateCityOptions(): void {
-    const cities = [...new Set(this.customers.map((c) => c.city).filter((c) => c && c !== '—'))];
-    this.cityOptions = cities.map((city) => ({ value: city, label: city }));
-    const cityField = this.filterFields.find((f) => f.key === 'city');
-    if (cityField) {
-      cityField.options = this.cityOptions;
-    }
+  resolveCityLabel(customer: CustomerDetailRecord): string {
+    const lang = (this.translate.currentLang || this.translate.defaultLang || 'ar').toLowerCase();
+    const primary = lang.startsWith('ar') ? customer.cityAr : customer.cityEn;
+    const fallback = lang.startsWith('ar') ? customer.cityEn : customer.cityAr;
+    return (primary || fallback || customer.city || '—').trim();
   }
 
   // ── Filter Handlers (same pattern as vendors) ──

@@ -967,7 +967,35 @@
         "HOLD": "حجز مؤقت",
         "RELEASE": "تحرير رصيد",
         "CREDIT": "إيداع",
-        "DEBIT": "خصم"
+        "DEBIT": "خصم",
+        "CASHCOLLECTED": "تحصيل نقدي",
+        "ORDERREVENUE": "إيرادات الطلب",
+        "UNKNOWN": "حركة مالية"
+      },
+      "REFERENCE_TYPES": {
+        "JOURNALLINE": "قيد يومية",
+        "DRIVERWITHDRAWALREQUEST": "طلب سحب مندوب",
+        "DRIVERWITHDRAWAL": "سحب مندوب",
+        "SETTLEMENT": "تسوية",
+        "VENDORHOLDRECOVERY": "استرداد حجز متجر",
+        "ORDER": "طلب",
+        "UNKNOWN": "مرجع"
+      },
+      "MEMOS": {
+        "PAYOUT_PAID": "تم دفع التسوية {{id}}",
+        "PLATFORM_CASH_PAYOUT": "تسوية نقدية للمنصة {{id}}",
+        "COD_RECEIVABLE": "ذمم COD متوقعة للطلب {{order}}",
+        "CUSTOMER_ADVANCE_CLEARING": "تسوية سلفة العميل للطلب {{order}}",
+        "REVENUE_RECONCILIATION_DELTA": "فرق مطابقة الإيرادات للطلب {{order}}",
+        "GATEWAY_RECEIVABLE": "ذمم بوابة الدفع عند التحصيل للطلب {{order}}",
+        "CUSTOMER_ADVANCE_RECOGNISED": "اعتراف بسلفة العميل للطلب {{order}}",
+        "COD_CASH_COLLECTED": "تحصيل نقدي COD للطلب {{order}}",
+        "CUSTOMER_ADVANCE_CLEARED": "تصفية سلفة العميل للطلب {{order}}",
+        "VENDOR_PAYABLE": "مستحقات المتجر للطلب {{order}}",
+        "DRIVER_PAYABLE": "مستحقات المندوب للطلب {{order}}",
+        "PLATFORM_REVENUE": "إيرادات المنصة للطلب {{order}}",
+        "TAX_PAYABLE": "ضريبة مستحقة للطلب {{order}}",
+        "DRIVER_WITHDRAWAL_APPROVED": "تم اعتماد سحب المندوب للتحويل"
       }
     },
     "WITHDRAWALS": {

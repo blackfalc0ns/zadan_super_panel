@@ -967,7 +967,35 @@
         "HOLD": "Hold",
         "RELEASE": "Release",
         "CREDIT": "Credit",
-        "DEBIT": "Debit"
+        "DEBIT": "Debit",
+        "CASHCOLLECTED": "Cash Collected",
+        "ORDERREVENUE": "Order Revenue",
+        "UNKNOWN": "Transaction"
+      },
+      "REFERENCE_TYPES": {
+        "JOURNALLINE": "Journal Entry",
+        "DRIVERWITHDRAWALREQUEST": "Driver Withdrawal Request",
+        "DRIVERWITHDRAWAL": "Driver Withdrawal",
+        "SETTLEMENT": "Settlement",
+        "VENDORHOLDRECOVERY": "Vendor Hold Recovery",
+        "ORDER": "Order",
+        "UNKNOWN": "Reference"
+      },
+      "MEMOS": {
+        "PAYOUT_PAID": "Payout paid {{id}}",
+        "PLATFORM_CASH_PAYOUT": "Platform cash payout {{id}}",
+        "COD_RECEIVABLE": "Expected COD receivable for order {{order}}",
+        "CUSTOMER_ADVANCE_CLEARING": "Expected customer advance clearing for order {{order}}",
+        "REVENUE_RECONCILIATION_DELTA": "Revenue reconciliation delta for order {{order}}",
+        "GATEWAY_RECEIVABLE": "Gateway receivable on payment captured for order {{order}}",
+        "CUSTOMER_ADVANCE_RECOGNISED": "Customer advance recognised for order {{order}}",
+        "COD_CASH_COLLECTED": "COD cash collected for order {{order}}",
+        "CUSTOMER_ADVANCE_CLEARED": "Customer advance cleared for order {{order}}",
+        "VENDOR_PAYABLE": "Vendor payable for order {{order}}",
+        "DRIVER_PAYABLE": "Driver payable for order {{order}}",
+        "PLATFORM_REVENUE": "Platform revenue for order {{order}}",
+        "TAX_PAYABLE": "Tax payable for order {{order}}",
+        "DRIVER_WITHDRAWAL_APPROVED": "Driver withdrawal approved for transfer"
       }
     },
     "WITHDRAWALS": {

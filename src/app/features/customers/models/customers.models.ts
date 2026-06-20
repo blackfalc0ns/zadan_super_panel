@@ -25,6 +25,9 @@ export interface CustomerRecord {
   email: string;
   phone: string;
   city: string;
+  cityCode?: string;
+  cityAr?: string;
+  cityEn?: string;
   isOnlineNow?: boolean;
   segment: CustomerSegment;
   status: CustomerStatus;

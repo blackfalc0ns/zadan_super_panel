@@ -10,7 +10,8 @@ import { AppCardComponent } from '../../../../shared/components/ui/card/card.com
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { MoneyBadgeComponent } from '../../components/money-badge/money-badge.component';
-import { getFinanceLocale } from '../../utils/finance-i18n.utils';
+import { getFinanceLocale, resolveWalletOwnerEntityLabel, resolveWalletReferenceTypeLabel, resolveWalletTxnTypeLabel } from '../../utils/finance-i18n.utils';
+import { resolveWalletMemo } from '../../utils/wallet-memo-i18n';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
@@ -47,15 +48,15 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
           <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4 bg-slate-50/50">
             <div class="flex items-center gap-4">
               <div class="w-14 h-14 rounded-2xl flex items-center justify-center border shrink-0"
-                   [ngClass]="wallet.ownerType === 'Vendor' ? 'bg-cyan-50 text-cyan-600 border-cyan-100' : 'bg-amber-50 text-amber-600 border-amber-100'">
-                <span class="material-symbols-outlined text-[28px]">{{ wallet.ownerType === 'Vendor' ? 'storefront' : 'local_shipping' }}</span>
+                   [ngClass]="getOwnerIconClass(wallet.ownerType)">
+                <span class="material-symbols-outlined text-[28px]">{{ getOwnerIcon(wallet.ownerType) }}</span>
               </div>
               <div>
                 <div class="flex items-center gap-2 mb-1">
                   <h2 class="text-xl font-black text-slate-900">{{ wallet.ownerName }}</h2>
                   <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border"
-                        [ngClass]="wallet.ownerType === 'Vendor' ? 'bg-cyan-50 text-cyan-700 border-cyan-100' : 'bg-amber-50 text-amber-700 border-amber-100'">
-                    {{ (wallet.ownerType === 'Vendor' ? 'FINANCES.ENTITIES.VENDOR' : 'FINANCES.ENTITIES.DRIVER') | translate }}
+                        [ngClass]="getOwnerBadgeClass(wallet.ownerType)">
+                    {{ resolveWalletOwnerEntityLabel(wallet.ownerType) | translate }}
                   </span>
                 </div>
                 <p class="text-[12px] font-bold text-slate-500" dir="ltr">{{ wallet.ownerPhone || ('FINANCES.WALLET_DETAILS.NO_PHONE_REGISTERED' | translate) }}</p>
@@ -122,12 +123,19 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
                 </td>
 
                 <td class="px-6 py-4 align-middle whitespace-normal min-w-[200px]">
-                  <span class="font-bold text-slate-700 leading-tight">{{ txn.description || '--' }}</span>
+                  <ng-container *ngIf="resolveWalletMemo(txn.description) as memo; else rawDescription">
+                    <span class="font-bold text-slate-700 leading-tight">{{ memo.key | translate: memo.params }}</span>
+                  </ng-container>
+                  <ng-template #rawDescription>
+                    <span class="font-bold text-slate-700 leading-tight">{{ txn.description || '--' }}</span>
+                  </ng-template>
                 </td>
 
                 <td class="px-6 py-4 align-middle">
                   <div class="flex flex-col gap-0.5">
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">{{ txn.referenceType ? ('FINANCES.LEDGER.' + txn.referenceType.toUpperCase()) : ('FINANCES.WALLET_DETAILS.TABLE.NO_REFERENCE' | translate) }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                      {{ txn.referenceType ? (resolveWalletReferenceTypeLabel(txn.referenceType) | translate) : ('FINANCES.WALLET_DETAILS.TABLE.NO_REFERENCE' | translate) }}
+                    </span>
                     <span class="text-[11px] font-mono font-bold text-slate-600 truncate max-w-[120px]" [title]="txn.referenceId || ''">{{ txn.referenceId || '--' }}</span>
                   </div>
                 </td>
@@ -249,7 +257,10 @@ export class WalletDetailsComponent implements OnInit {
   loadWallet(): void {
     this.walletsService.getWallet(this.walletId)
       .pipe(take(1))
-      .subscribe(data => this.wallet = data);
+      .subscribe(data => {
+        this.wallet = data;
+        this.cdr.markForCheck();
+      });
   }
 
   loadTransactions(): void {
@@ -263,7 +274,10 @@ export class WalletDetailsComponent implements OnInit {
           this.totalCount = data.totalCount;
           this.isLoadingTransactions = false;
         },
-        error: () => this.isLoadingTransactions = false
+        error: () => {
+          this.isLoadingTransactions = false;
+          this.cdr.markForCheck();
+        }
       });
   }
 
@@ -288,7 +302,10 @@ export class WalletDetailsComponent implements OnInit {
         this.page = 1;
         this.loadTransactions();
       },
-      error: () => this.isSubmitting = false
+      error: () => {
+        this.isSubmitting = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -308,7 +325,38 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   getTranslatedTxnType(type: string): string {
-    return `FINANCES.WALLET_DETAILS.TXN_TYPES.${type.toUpperCase()}`;
+    return resolveWalletTxnTypeLabel(type);
+  }
+
+  resolveWalletMemo = resolveWalletMemo;
+  resolveWalletReferenceTypeLabel = resolveWalletReferenceTypeLabel;
+  resolveWalletOwnerEntityLabel = resolveWalletOwnerEntityLabel;
+
+  getOwnerIcon(ownerType: string): string {
+    const map: Record<string, string> = {
+      Vendor: 'storefront',
+      Driver: 'local_shipping',
+      Platform: 'hub'
+    };
+    return map[ownerType] ?? 'account_balance_wallet';
+  }
+
+  getOwnerIconClass(ownerType: string): string {
+    const map: Record<string, string> = {
+      Vendor: 'bg-cyan-50 text-cyan-600 border-cyan-100',
+      Driver: 'bg-amber-50 text-amber-600 border-amber-100',
+      Platform: 'bg-purple-50 text-purple-600 border-purple-100'
+    };
+    return map[ownerType] ?? 'bg-slate-50 text-slate-600 border-slate-100';
+  }
+
+  getOwnerBadgeClass(ownerType: string): string {
+    const map: Record<string, string> = {
+      Vendor: 'bg-cyan-50 text-cyan-700 border-cyan-100',
+      Driver: 'bg-amber-50 text-amber-700 border-amber-100',
+      Platform: 'bg-purple-50 text-purple-700 border-purple-100'
+    };
+    return map[ownerType] ?? 'bg-slate-50 text-slate-700 border-slate-100';
   }
 
   getTypeBadgeClass(type: string): string {
@@ -321,6 +369,8 @@ export class WalletDetailsComponent implements OnInit {
       Release: 'bg-sky-50 text-sky-700 border-sky-200',
       Credit: 'bg-green-50 text-green-700 border-green-200',
       Debit: 'bg-slate-100 text-slate-700 border-slate-200',
+      CashCollected: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+      OrderRevenue: 'bg-teal-50 text-teal-700 border-teal-200',
     };
     return map[type] ?? 'bg-slate-100 text-slate-600 border-slate-200';
   }

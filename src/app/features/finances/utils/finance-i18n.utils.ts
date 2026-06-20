@@ -45,6 +45,43 @@ export const FINANCE_DIRECTION_LABEL_KEYS: Record<string, string> = {
   debit: 'FINANCES.DIRECTIONS.DEBIT'
 };
 
+export const FINANCE_WALLET_TXN_TYPE_LABEL_KEYS: Record<string, string> = {
+  credit: 'FINANCES.WALLET_DETAILS.TXN_TYPES.CREDIT',
+  debit: 'FINANCES.WALLET_DETAILS.TXN_TYPES.DEBIT',
+  hold: 'FINANCES.WALLET_DETAILS.TXN_TYPES.HOLD',
+  release: 'FINANCES.WALLET_DETAILS.TXN_TYPES.RELEASE',
+  adjustment: 'FINANCES.WALLET_DETAILS.TXN_TYPES.ADJUSTMENT',
+  payout: 'FINANCES.WALLET_DETAILS.TXN_TYPES.PAYOUT',
+  cashcollected: 'FINANCES.WALLET_DETAILS.TXN_TYPES.CASHCOLLECTED',
+  settlement: 'FINANCES.WALLET_DETAILS.TXN_TYPES.SETTLEMENT',
+  refund: 'FINANCES.WALLET_DETAILS.TXN_TYPES.REFUND',
+  orderrevenue: 'FINANCES.WALLET_DETAILS.TXN_TYPES.ORDERREVENUE'
+};
+
+export const FINANCE_WALLET_REFERENCE_TYPE_LABEL_KEYS: Record<string, string> = {
+  journalline: 'FINANCES.WALLET_DETAILS.REFERENCE_TYPES.JOURNALLINE',
+  driverwithdrawalrequest: 'FINANCES.WALLET_DETAILS.REFERENCE_TYPES.DRIVERWITHDRAWALREQUEST',
+  driverwithdrawal: 'FINANCES.WALLET_DETAILS.REFERENCE_TYPES.DRIVERWITHDRAWAL',
+  settlement: 'FINANCES.WALLET_DETAILS.REFERENCE_TYPES.SETTLEMENT',
+  vendorholdrecovery: 'FINANCES.WALLET_DETAILS.REFERENCE_TYPES.VENDORHOLDRECOVERY',
+  order: 'FINANCES.WALLET_DETAILS.REFERENCE_TYPES.ORDER'
+};
+
+export function resolveWalletTxnTypeLabel(type: string): string {
+  const normalized = type.replace(/\s+/g, '').replace(/_/g, '').toLowerCase();
+  return FINANCE_WALLET_TXN_TYPE_LABEL_KEYS[normalized] ?? 'FINANCES.WALLET_DETAILS.TXN_TYPES.UNKNOWN';
+}
+
+export function resolveWalletReferenceTypeLabel(referenceType: string): string {
+  const normalized = referenceType.replace(/\s+/g, '').replace(/_/g, '').replace(/-/g, '').toLowerCase();
+  return FINANCE_WALLET_REFERENCE_TYPE_LABEL_KEYS[normalized] ?? 'FINANCES.WALLET_DETAILS.REFERENCE_TYPES.UNKNOWN';
+}
+
+export function resolveWalletOwnerEntityLabel(ownerType: string): string {
+  const normalized = ownerType.replace(/\s+/g, '').toLowerCase();
+  return FINANCE_ENTITY_LABEL_KEYS[normalized] ?? 'FINANCES.ENTITIES.PLATFORM';
+}
+
 export const FINANCE_MONTH_LABEL_KEYS: Record<string, string> = {
   Jan: 'FINANCES.MONTHS.JAN',
   Feb: 'FINANCES.MONTHS.FEB',
