@@ -41,6 +41,11 @@ interface ComplianceDocumentGroup {
   documents: VendorReviewDocument[];
 }
 
+interface ComplianceReviewSection extends ComplianceDocumentGroup {
+  profileFields: VendorProfileReviewItem[];
+  profileFieldCodes: string[];
+}
+
 type ComplianceRailTab = 'timeline' | 'risks';
 type ComplianceWorkspaceWindow = 'operations' | 'review';
 
@@ -63,11 +68,13 @@ export class VendorComplianceComponent {
   mutationError = '';
   vendorDetail: VendorDetail | null = null;
   selectedDocumentId: string | null = null;
+  selectedSectionId: string | null = null;
   activeRailTab: ComplianceRailTab = 'timeline';
   activeWorkspaceWindow: ComplianceWorkspaceWindow = 'review';
   isSubmittingDocumentDecision = false;
   selectedProfileReviewCode: string | null = null;
   profileRejectReason = '';
+  sectionRejectReason = '';
 
   // Custom confirm modal states
   isConfirmModalOpen = false;
@@ -107,12 +114,20 @@ export class VendorComplianceComponent {
         this.vendorId = vendor.id;
         this.vendorDetail = vendor;
 
-        if (!this.selectedDocumentId && vendor.reviewDocuments.length > 0) {
-          this.selectedDocumentId = this.sortedReviewDocuments[0]?.id ?? null;
+        if (!this.selectedSectionId && this.reviewSections.length > 0) {
+          this.selectedSectionId = this.reviewSections[0]?.id ?? null;
+        }
+
+        if (!this.selectedDocumentId && this.selectedSection?.documents.length) {
+          this.selectedDocumentId = this.selectedSection.documents[0]?.id ?? null;
         }
 
         if (!this.selectedProfileReviewCode && this.profileReviewItems.length > 0) {
           this.selectedProfileReviewCode = this.profileReviewItems[0].code;
+        }
+
+        if (this.selectedSectionId && !this.reviewSections.some((section) => section.id === this.selectedSectionId)) {
+          this.selectedSectionId = this.reviewSections[0]?.id ?? null;
         }
 
         this.documentRejectReason = this.selectedDocument?.reviewDecision === 'rejected'
@@ -599,40 +614,110 @@ export class VendorComplianceComponent {
     ];
   }
 
-  get documentGroups(): ComplianceDocumentGroup[] {
-    const groups: Array<Omit<ComplianceDocumentGroup, 'documents'> & { types: VendorReviewDocument['type'][] }> = [
+  private readonly sectionDefinitions: Array<{
+    id: string;
+    title: string;
+    hint: string;
+    accentClass: string;
+    types: VendorReviewDocument['type'][];
+    profileFieldCodes: string[];
+  }> = [
+    {
+      id: 'official',
+      title: '',
+      hint: '',
+      accentClass: 'border-sky-200 bg-sky-50/70 text-sky-700',
+      types: ['commercial', 'tax', 'license'],
+      profileFieldCodes: [
+        'step1.businessNameAr',
+        'step1.businessNameEn',
+        'step1.businessType',
+        'step1.contactPhone',
+        'step3.commercialRegistrationNumber',
+        'step3.expiryDate',
+        'step3.taxId',
+        'step3.licenseNumber'
+      ]
+    },
+    {
+      id: 'owner',
+      title: '',
+      hint: '',
+      accentClass: 'border-violet-200 bg-violet-50/70 text-violet-700',
+      types: ['identity'],
+      profileFieldCodes: [
+        'step1.ownerName',
+        'step1.ownerEmail',
+        'step1.ownerPhone',
+        'step3.idNumber',
+        'step3.nationality',
+        'step2.region',
+        'step2.city',
+        'step2.nationalAddress'
+      ]
+    },
+    {
+      id: 'financial',
+      title: '',
+      hint: '',
+      accentClass: 'border-emerald-200 bg-emerald-50/70 text-emerald-700',
+      types: ['bank'],
+      profileFieldCodes: [
+        'step4.bankName',
+        'step4.paymentCycle',
+        'step4.iban',
+        'step4.swiftCode'
+      ]
+    }
+  ];
+
+  get reviewSections(): ComplianceReviewSection[] {
+    const localizedSections = [
       {
         id: 'official',
-        title: this.localize('المستندات الرسمية الأساسية', 'Official compliance documents'),
-        hint: this.localize('السجل التجاري والضريبة والرخصة هي أساس قرار الاعتماد النهائي.', 'Commercial, tax, and license files drive the final approval decision.'),
-        accentClass: 'border-sky-200 bg-sky-50/70 text-sky-700',
-        types: ['commercial', 'tax', 'license']
+        title: this.localize('القسم القانوني والمستندات الرسمية', 'Legal and official documents'),
+        hint: this.localize('بيانات المنشأة والسجل والضريبة والرخصة — يُعتمد القسم كاملاً.', 'Business, CR, tax, and license data — approve the whole section at once.')
       },
       {
         id: 'owner',
-        title: this.localize('بيانات المالك والهوية', 'Owner and identity data'),
-        hint: this.localize('بيانات مرجعية للتأكد من هوية صاحب النشاط.', 'Reference data used to validate the business owner identity.'),
-        accentClass: 'border-violet-200 bg-violet-50/70 text-violet-700',
-        types: ['identity']
+        title: this.localize('قسم المالك والهوية', 'Owner and identity section'),
+        hint: this.localize('هوية المالك والموقع — يُعتمد القسم كاملاً.', 'Owner identity and location — approve the whole section at once.')
       },
       {
         id: 'financial',
-        title: this.localize('البيانات البنكية', 'Banking data'),
-        hint: this.localize('مرجع التحويلات والحساب المستفيد المستخدم للتسوية.', 'Reference banking data used for payout and settlement.'),
-        accentClass: 'border-emerald-200 bg-emerald-50/70 text-emerald-700',
-        types: ['bank']
+        title: this.localize('قسم البيانات البنكية', 'Banking section'),
+        hint: this.localize('حساب التسوية والتحويلات — يُعتمد القسم كاملاً.', 'Settlement account and payout details — approve the whole section at once.')
       }
     ];
 
-    return groups
-      .map((group) => ({
-        id: group.id,
-        title: group.title,
-        hint: group.hint,
-        accentClass: group.accentClass,
-        documents: this.sortedReviewDocuments.filter((document) => group.types.includes(document.type))
-      }))
-      .filter((group) => group.documents.length > 0);
+    return this.sectionDefinitions
+      .map((definition) => {
+        const localized = localizedSections.find((section) => section.id === definition.id);
+        const profileFieldCodes = definition.profileFieldCodes;
+        return {
+          id: definition.id,
+          title: localized?.title ?? definition.id,
+          hint: localized?.hint ?? '',
+          accentClass: definition.accentClass,
+          profileFieldCodes,
+          profileFields: this.buildSectionProfileFields(profileFieldCodes),
+          documents: this.sortedReviewDocuments.filter((document) => definition.types.includes(document.type))
+        };
+      })
+      .filter((section) => section.documents.length > 0 || section.profileFields.length > 0);
+  }
+
+  /** @deprecated Use reviewSections */
+  get documentGroups(): ComplianceDocumentGroup[] {
+    return this.reviewSections;
+  }
+
+  get selectedSection(): ComplianceReviewSection | null {
+    if (!this.selectedSectionId) {
+      return this.reviewSections[0] ?? null;
+    }
+
+    return this.reviewSections.find((section) => section.id === this.selectedSectionId) ?? this.reviewSections[0] ?? null;
   }
 
   getGroupApprovedCount(group: ComplianceDocumentGroup): number {
@@ -647,9 +732,224 @@ export class VendorComplianceComponent {
     return group.documents.filter((document) => document.reviewDecision === 'rejected').length;
   }
 
+  getSectionPendingCount(section: ComplianceReviewSection): number {
+    return this.getSectionPendingDocuments(section).length + this.getSectionPendingProfileFields(section).length;
+  }
+
+  getSectionApprovedCount(section: ComplianceReviewSection): number {
+    const approvedDocs = section.documents.filter((document) => document.reviewDecision === 'approved').length;
+    const approvedFields = section.profileFields.filter((field) => field.status === 'approved').length;
+    return approvedDocs + approvedFields;
+  }
+
+  getSectionTotalCount(section: ComplianceReviewSection): number {
+    return section.documents.length + section.profileFields.length;
+  }
+
+  getSectionStatusVariant(section: ComplianceReviewSection): StatusPillVariant {
+    if (this.getSectionPendingCount(section) > 0) {
+      return 'warning';
+    }
+
+    if (section.documents.some((document) => document.reviewDecision === 'rejected') ||
+        section.profileFields.some((field) => field.status === 'changes_requested')) {
+      return 'danger';
+    }
+
+    if (this.getSectionApprovedCount(section) === this.getSectionTotalCount(section) && this.getSectionTotalCount(section) > 0) {
+      return 'success';
+    }
+
+    return 'neutral';
+  }
+
+  getSectionStatusLabel(section: ComplianceReviewSection): string {
+    const pending = this.getSectionPendingCount(section);
+    if (pending > 0) {
+      return this.localize(`${pending} بانتظار المراجعة`, `${pending} pending review`);
+    }
+
+    if (section.documents.some((document) => document.reviewDecision === 'rejected') ||
+        section.profileFields.some((field) => field.status === 'changes_requested')) {
+      return this.localize('يحتاج تصحيح', 'Needs correction');
+    }
+
+    if (this.getSectionApprovedCount(section) === this.getSectionTotalCount(section) && this.getSectionTotalCount(section) > 0) {
+      return this.localize('معتمد', 'Approved');
+    }
+
+    return this.localize('غير مكتمل', 'Incomplete');
+  }
+
+  canApproveSection(section: ComplianceReviewSection): boolean {
+    return this.getSectionPendingDocuments(section).length > 0 || this.getSectionPendingProfileFields(section).length > 0;
+  }
+
+  canRejectSection(section: ComplianceReviewSection): boolean {
+    return section.documents.some((document) => document.isUploaded && document.reviewDecision !== 'rejected')
+      || section.profileFields.some((field) => field.status === 'submitted' || field.status === 'approved');
+  }
+
+  selectSection(section: ComplianceReviewSection): void {
+    this.selectedSectionId = section.id;
+    this.sectionRejectReason = '';
+    this.selectedDocumentId = section.documents[0]?.id ?? null;
+    this.documentRejectReason = section.documents[0]?.rejectionReason ?? '';
+    this.cdr.markForCheck();
+  }
+
   selectDocument(document: VendorReviewDocument): void {
     this.selectedDocumentId = document.id;
     this.documentRejectReason = document.rejectionReason ?? '';
+    const owningSection = this.reviewSections.find((section) => section.documents.some((item) => item.id === document.id));
+    if (owningSection) {
+      this.selectedSectionId = owningSection.id;
+    }
+  }
+
+  onApproveSection(section: ComplianceReviewSection): void {
+    const docsToApprove = this.getSectionPendingDocuments(section);
+    const fieldsToApprove = this.getSectionPendingProfileFields(section);
+
+    if (docsToApprove.length === 0 && fieldsToApprove.length === 0) {
+      return;
+    }
+
+    const title = this.localize('اعتماد القسم', 'Approve section');
+    const message = this.localize(
+      `هل تريد اعتماد "${section.title}" بالكامل؟ (${docsToApprove.length} مستندات، ${fieldsToApprove.length} حقول بيانات)`,
+      `Approve "${section.title}" in full? (${docsToApprove.length} documents, ${fieldsToApprove.length} data fields)`
+    );
+
+    this.openConfirmModal(
+      title,
+      message,
+      this.localize('اعتماد القسم', 'Approve section'),
+      this.localize('إلغاء', 'Cancel'),
+      'success',
+      () => this.runSectionDecision(section, 'approve')
+    );
+  }
+
+  onRejectSection(section: ComplianceReviewSection): void {
+    const reason = this.sectionRejectReason.trim();
+    if (!reason) {
+      this.mutationError = this.localize('أدخل سببًا واضحًا قبل رفض القسم.', 'Enter a clear reason before rejecting the section.');
+      return;
+    }
+
+    const title = this.localize('رفض القسم', 'Reject section');
+    const message = this.localize(
+      `سيتم رفض كل العناصر المفتوحة في "${section.title}" وإرجاعها للتاجر للتصحيح. هل تريد المتابعة؟`,
+      `All open items in "${section.title}" will be rejected and sent back to the vendor. Continue?`
+    );
+
+    this.openConfirmModal(
+      title,
+      message,
+      this.localize('رفض القسم', 'Reject section'),
+      this.localize('إلغاء', 'Cancel'),
+      'danger',
+      () => this.runSectionDecision(section, 'reject', reason)
+    );
+  }
+
+  private runSectionDecision(section: ComplianceReviewSection, decision: 'approve' | 'reject', reason = ''): void {
+    const docs = decision === 'approve'
+      ? this.getSectionPendingDocuments(section)
+      : section.documents.filter((document) => document.isUploaded && document.reviewDecision !== 'rejected');
+    const fields = decision === 'approve'
+      ? this.getSectionPendingProfileFields(section)
+      : section.profileFields.filter((field) => field.status === 'submitted' || field.status === 'approved');
+
+    if (docs.length === 0 && fields.length === 0) {
+      return;
+    }
+
+    this.vendorDetailFacade.clearMutationError();
+    this.isSubmittingDocumentDecision = true;
+    this.cdr.markForCheck();
+
+    const fieldsObs$: Observable<unknown> = fields.length > 0
+      ? this.vendorDetailFacade.reviewVendorProfileFieldsRequest(
+          fields.map((field) => ({
+            code: field.code,
+            decision: decision === 'approve' ? 'approved' : 'rejected',
+            ...(decision === 'reject' ? { reason } : {})
+          }))
+        )
+      : of(null);
+
+    fieldsObs$.pipe(
+      switchMap(() => {
+        if (docs.length === 0) {
+          return of([]);
+        }
+
+        const docRequests = docs.map((document) =>
+          decision === 'approve'
+            ? this.vendorDetailFacade.approveVendorDocumentRequest(document.id)
+            : this.vendorDetailFacade.rejectVendorDocumentRequest(document.id, reason)
+        );
+        return concat(...docRequests).pipe(toArray());
+      })
+    ).subscribe({
+      next: () => {
+        this.isSubmittingDocumentDecision = false;
+        this.sectionRejectReason = '';
+        this.documentRejectReason = decision === 'reject' ? reason : '';
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.isSubmittingDocumentDecision = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  private getSectionPendingDocuments(section: ComplianceReviewSection): VendorReviewDocument[] {
+    return section.documents.filter((document) =>
+      document.isUploaded &&
+      document.reviewDecision === 'pending' &&
+      !(document.type === 'commercial' && this.isCrExpired)
+    );
+  }
+
+  private getSectionPendingProfileFields(section: ComplianceReviewSection): VendorProfileReviewItem[] {
+    return section.profileFields.filter((field) => field.status === 'submitted');
+  }
+
+  private buildSectionProfileFields(codes: string[]): VendorProfileReviewItem[] {
+    const reviewLookup = new Map(this.profileReviewItems.map((item) => [item.code, item]));
+
+    return codes.map((code) => {
+      const existing = reviewLookup.get(code);
+      if (existing) {
+        return existing;
+      }
+
+      const value = this.getProfileItemValueByCode(code);
+      const hasValue = value !== '—';
+      return {
+        code,
+        step: this.resolveProfileStep(code),
+        targetType: 'field',
+        status: hasValue ? 'submitted' : 'pending_vendor',
+        decisionNote: null,
+        reviewedAtUtc: null,
+        reviewerName: null
+      } as VendorProfileReviewItem;
+    });
+  }
+
+  private getProfileItemValueByCode(code: string): string {
+    const syntheticItem = { code } as VendorProfileReviewItem;
+    return this.getProfileItemValue(syntheticItem);
+  }
+
+  private resolveProfileStep(code: string): number {
+    const match = /^step(\d+)\./.exec(code);
+    return match ? Number(match[1]) : 0;
   }
 
   selectProfileReviewItem(item: VendorProfileReviewItem): void {
@@ -1458,6 +1758,7 @@ export class VendorComplianceComponent {
 
   trackByDocument = (_: number, document: VendorReviewDocument) => document.id;
   trackByGroup = (_: number, group: ComplianceDocumentGroup) => group.id;
+  trackBySection = (_: number, section: ComplianceReviewSection) => section.id;
   trackByNote = (_: number, note: VendorReviewNote) => note.id;
   trackByRisk = (_: number, risk: VendorRiskIndicator) => risk.id;
   trackByProfileItem = (_: number, item: VendorProfileReviewItem) => item.code;

@@ -300,255 +300,208 @@
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
         <div class="flex items-center gap-2">
           <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-            <span class="material-symbols-outlined text-[16px]">folder_managed</span>
+            <span class="material-symbols-outlined text-[16px]">view_module</span>
           </div>
           <div>
-            <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'لوحة المستندات' : 'Document Board' }}</h2>
-            <p class="text-[10px] font-medium text-slate-500">{{ formatNumber(reviewDocuments.length) }} {{ isRTL ? 'ملف في الحزمة' : 'files in packet' }}</p>
+            <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'أقسام الامتثال' : 'Compliance sections' }}</h2>
+            <p class="text-[10px] font-medium text-slate-500">{{ formatNumber(reviewSections.length) }} {{ isRTL ? 'قسم للمراجعة' : 'sections to review' }}</p>
           </div>
         </div>
       </div>
 
-      <div class="vendor-compliance-scroll max-h-[min(32rem,70vh)] space-y-4 overflow-y-auto">
-        <section *ngIf="sortedProfileReviewItems.length > 0" class="space-y-2">
-          <div class="flex items-center justify-between px-1">
-            <p class="text-[10px] font-black tracking-[0.1em] text-slate-500 uppercase">{{ isRTL ? 'حقول الملف' : 'Profile fields' }}</p>
-            <span class="rounded-full bg-rose-50 px-1.5 py-0.5 text-[9px] font-black text-rose-600">{{ formatNumber(rejectedProfileItemsCount) }}</span>
+      <div class="vendor-compliance-scroll max-h-[min(32rem,70vh)] space-y-3 overflow-y-auto">
+        <button
+          *ngFor="let section of reviewSections; trackBy: trackBySection"
+          type="button"
+          (click)="selectSection(section)"
+          class="group relative w-full overflow-hidden rounded-2xl border p-4 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
+          [ngClass]="selectedSection?.id === section.id ? 'border-primary/30 bg-primary/5 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'">
+          <div *ngIf="selectedSection?.id === section.id" class="absolute top-0 bottom-0 w-1 bg-primary ltr:left-0 rtl:right-0"></div>
+
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-[13px] font-black text-slate-900">{{ section.title }}</p>
+              <p class="mt-1 text-[10px] font-medium leading-relaxed text-slate-500">{{ section.hint }}</p>
+            </div>
+            <app-status-pill
+              [label]="getSectionStatusLabel(section)"
+              [variant]="getSectionStatusVariant(section)"
+              [showDot]="true"
+              [shouldTranslate]="false"
+              size="sm">
+            </app-status-pill>
           </div>
 
-          <button
-            *ngFor="let item of sortedProfileReviewItems; trackBy: trackByProfileItem"
-            type="button"
-            (click)="selectProfileReviewItem(item)"
-            class="group relative overflow-hidden w-full rounded-xl border p-3 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
-            [ngClass]="selectedProfileReviewItem?.code === item.code ? 'border-primary/30 bg-primary/5 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'">
-            <div *ngIf="selectedProfileReviewItem?.code === item.code" class="absolute top-0 bottom-0 w-1 bg-primary ltr:left-0 rtl:right-0"></div>
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <p class="truncate text-[12px] font-black text-slate-900">{{ getProfileItemLabel(item) }}</p>
-                <p class="mt-0.5 truncate text-[10px] font-medium text-slate-500">{{ getProfileItemValue(item) }}</p>
-              </div>
-
-              <app-status-pill
-                [label]="getProfileItemDecisionLabel(item)"
-                [variant]="getProfileItemDecisionVariant(item)"
-                [showDot]="true"
-                [shouldTranslate]="false"
-                size="sm">
-              </app-status-pill>
-            </div>
-          </button>
-        </section>
-
-        <section *ngFor="let group of documentGroups; trackBy: trackByGroup" class="space-y-2">
-          <div class="flex items-center justify-between px-1">
-            <p class="text-[10px] font-black tracking-[0.1em] text-slate-500 uppercase">{{ group.title }}</p>
-            <div class="flex items-center gap-1">
-              <span class="rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-black text-slate-600">{{ formatNumber(group.documents.length) }}</span>
-            </div>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="rounded-full px-2.5 py-1 text-[9px] font-black" [ngClass]="section.accentClass">
+              {{ formatNumber(section.profileFields.length) }} {{ isRTL ? 'حقول' : 'fields' }}
+            </span>
+            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-black text-slate-600">
+              {{ formatNumber(section.documents.length) }} {{ isRTL ? 'مستندات' : 'documents' }}
+            </span>
+            <span *ngIf="getSectionPendingCount(section) > 0" class="rounded-full bg-amber-100 px-2.5 py-1 text-[9px] font-black text-amber-700">
+              {{ formatNumber(getSectionPendingCount(section)) }} {{ isRTL ? 'معلق' : 'pending' }}
+            </span>
           </div>
-
-          <button
-            *ngFor="let document of group.documents; trackBy: trackByDocument"
-            type="button"
-            (click)="selectDocument(document)"
-            class="group relative overflow-hidden w-full rounded-xl border p-3 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
-            [ngClass]="selectedDocument?.id === document.id ? 'border-primary/30 bg-primary/5 shadow-sm' : (document.type === 'commercial' && isCrExpired ? 'border-rose-200 bg-rose-50/20 hover:border-rose-300' : 'border-slate-100 bg-white hover:border-slate-200')">
-            <div *ngIf="selectedDocument?.id === document.id" class="absolute top-0 bottom-0 w-1 bg-primary ltr:left-0 rtl:right-0"></div>
-            <div class="flex items-start gap-2.5">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm transition-transform group-hover:scale-105" [ngClass]="document.type === 'commercial' && isCrExpired ? 'bg-rose-100 text-rose-600' : document.iconBgClass">
-                <span class="material-symbols-outlined text-[16px]">{{ document.type === 'commercial' && isCrExpired ? 'warning' : document.icon }}</span>
-              </div>
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5 mb-0.5">
-                  <p class="truncate text-[12px] font-black text-slate-900">{{ document.titleKey | translate }}</p>
-                  <span *ngIf="document.isRequired" class="shrink-0 rounded-full bg-rose-50 px-1.5 py-0.5 text-[8px] font-black tracking-widest text-rose-600">
-                    {{ isRTL ? 'إلزامي' : 'REQ' }}
-                  </span>
-                  <span *ngIf="document.type === 'commercial' && isCrExpired" class="shrink-0 rounded-full bg-rose-100 px-1.5 py-0.5 text-[8px] font-black tracking-wider text-rose-700 animate-pulse">
-                    {{ isRTL ? 'منتهي' : 'EXPIRED' }}
-                  </span>
-                </div>
-                <p class="text-[10px] font-medium text-slate-500">{{ getDocumentDescription(document) }}</p>
-                <div *ngIf="document.type === 'commercial' && isCrExpired" class="mt-1 flex items-center gap-1 text-[9px] font-bold text-rose-600">
-                  <span class="material-symbols-outlined text-[11px]">warning</span>
-                  <span>{{ isRTL ? 'انتهاء صلاحية السجل التجاري' : 'Commercial registration has expired' }}</span>
-                </div>
-                
-                <div class="mt-2 flex flex-wrap items-center gap-1.5">
-                  <app-status-pill
-                    [label]="getUploadStatusLabel(document)"
-                    [variant]="getUploadStatusVariant(document.status)"
-                    [showDot]="true"
-                    [shouldTranslate]="false"
-                    size="sm">
-                  </app-status-pill>
-
-                  <app-status-pill
-                    [label]="document.type === 'commercial' && isCrExpired ? (isRTL ? 'منتهي الصلاحية' : 'Expired') : getDecisionLabel(document.reviewDecision)"
-                    [variant]="document.type === 'commercial' && isCrExpired ? 'danger' : getDecisionVariant(document.reviewDecision)"
-                    [showDot]="true"
-                    [shouldTranslate]="false"
-                    size="sm">
-                  </app-status-pill>
-                </div>
-              </div>
-            </div>
-          </button>
-        </section>
+        </button>
       </div>
     </article>
 
     <article class="vendor-compliance-card vendor-compliance-preview rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm flex flex-col xl:sticky xl:top-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-        <div class="flex items-center gap-2">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <span class="material-symbols-outlined text-[16px]">visibility</span>
+      <ng-container *ngIf="selectedSection as section; else emptySectionPreview">
+        <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
+          <div class="min-w-0">
+            <p class="text-[10px] font-black tracking-[0.12em] text-primary">{{ isRTL ? 'تفاصيل القسم' : 'Section details' }}</p>
+            <h2 class="mt-1 text-[16px] font-black text-slate-900">{{ section.title }}</h2>
+            <p class="mt-1 text-[11px] font-medium text-slate-500">{{ section.hint }}</p>
           </div>
-          <div>
-            <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'المعاينة والقرار' : 'Preview & Decision' }}</h2>
-            <p class="text-[10px] font-medium text-slate-500">{{ selectedDocument ? (selectedDocument.titleKey | translate) : (isRTL ? 'اختر مستنداً' : 'Select a document') }}</p>
-          </div>
-        </div>
-      </div>
-
-      <ng-container *ngIf="selectedDocument as document; else emptyPreview">
-        <!-- Expired CR Alert -->
-        <div *ngIf="document.type === 'commercial' && isCrExpired" class="mb-3 rounded-xl bg-rose-50 border border-rose-200 p-3 text-start flex items-start gap-2.5 shadow-sm">
-          <span class="material-symbols-outlined text-rose-600 shrink-0 text-[20px]">warning</span>
-          <div class="min-w-0 flex-1">
-            <h4 class="text-[11.5px] font-black text-rose-900 leading-normal">{{ isRTL ? 'السجل التجاري منتهي الصلاحية' : 'Commercial Registration has expired' }}</h4>
-            <p class="text-[10px] font-medium text-rose-700 leading-normal mt-0.5">
-              {{ isRTL ? 'الحساب موقوف تلقائيًا بسبب انتهاء صلاحية السجل التجاري. يجب تحديث تاريخ انتهاء السجل التجاري ورفع مستند ساري المفعول أولاً لإعادة تنشيط الحساب.' : 'The account is automatically suspended because the Commercial Registration has expired. The CR expiry date must be updated and a valid document uploaded first to reactivate the account.' }}
-            </p>
-          </div>
-        </div>
-
-        <!-- File Viewer Area -->
-        <div class="relative flex-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-inner flex flex-col mb-3 min-h-[250px]">
-          <div class="absolute right-3 top-3 z-10 flex gap-2">
-            <span class="rounded-lg bg-slate-900/80 px-2.5 py-1 text-[9px] font-black tracking-widest text-white backdrop-blur-md">
-              {{ getPreviewKindLabel(document) | uppercase }}
-            </span>
-          </div>
-
-          <div *ngIf="document.previewKind === 'image' && document.fileUrl" class="flex flex-1 items-center justify-center p-3">
-            <img [src]="document.fileUrl" class="max-h-full max-w-full rounded-lg object-contain shadow-sm" alt="" />
-          </div>
-
-          <div *ngIf="document.previewKind === 'pdf' && safePreviewUrl" class="flex-1 h-full w-full">
-            <iframe [src]="safePreviewUrl" class="h-full w-full rounded-xl bg-white"></iframe>
-          </div>
-
-          <div *ngIf="document.previewKind === 'structured' || !document.fileUrl" class="flex-1 p-5 flex flex-col justify-center">
-            <div *ngIf="!document.fileUrl" class="mb-4 rounded-xl bg-amber-50 p-3 text-center border border-amber-100">
-              <span class="material-symbols-outlined text-amber-500 mb-1.5 text-[24px]">note_alt</span>
-              <p class="text-[11px] font-bold text-amber-800">
-                {{ isRTL ? 'هذا المستند لا يتطلب رفع ملف. تم سحب البيانات التالية آلياً للتحقق.' : 'No file upload required. Extract data verified.' }}
-              </p>
-            </div>
-            
-            <div class="grid gap-3 sm:grid-cols-2">
-              <div *ngFor="let row of selectedDocumentStructuredRows" class="rounded-xl border border-slate-100 bg-white p-3 shadow-sm transition-all hover:border-slate-200 hover:shadow-md">
-                <p class="text-[9px] font-black tracking-[0.1em] text-slate-400 mb-0.5">{{ row.label }}</p>
-                <p class="text-[13px] font-black text-slate-900" [attr.dir]="row.direction || (isRTL ? 'rtl' : 'ltr')">{{ row.value }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Decision Area -->
-        <div class="rounded-xl bg-slate-50 p-3 border border-slate-100 mt-auto">
-          <div class="grid gap-3 lg:grid-cols-[1fr_auto]">
-            <div>
-              <label class="text-[9px] font-black tracking-[0.1em] text-slate-500 block mb-1.5">{{ isRTL ? 'ملاحظات المعاينة (اختياري للقبول، إلزامي للرفض)' : 'Preview Notes' }}</label>
-              <textarea
-                [(ngModel)]="documentRejectReason"
-                rows="2"
-                class="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-[12px] font-medium text-slate-700 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-                [placeholder]="isRTL ? 'تفاصيل القرار أو سبب الرفض...' : 'Decision details...'">
-              </textarea>
-            </div>
-            <div class="flex flex-col gap-2 justify-end sm:flex-row lg:flex-col min-w-[120px]">
-              <button
-                type="button"
-                [disabled]="isSubmittingDocumentDecision || !document.isUploaded || document.reviewDecision === 'approved' || (document.type === 'commercial' && isCrExpired)"
-                (click)="onApproveDocument(document)"
-                class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all duration-300 hover:bg-emerald-600 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none gap-1.5">
-                <span class="material-symbols-outlined text-[16px]">thumb_up</span>
-                {{ isRTL ? 'موافق' : 'Approve' }}
-              </button>
-              <button
-                type="button"
-                [disabled]="isSubmittingDocumentDecision || !document.isUploaded"
-                (click)="onRejectDocument(document)"
-                class="flex h-9 items-center justify-center rounded-lg bg-white border border-rose-200 text-rose-600 px-3 text-[12px] font-black transition-all duration-300 hover:bg-rose-50 hover:shadow-sm hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:transform-none gap-1.5">
-                <span class="material-symbols-outlined text-[16px]">thumb_down</span>
-                {{ isRTL ? 'رفض' : 'Reject' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-
-      <div *ngIf="selectedProfileReviewItem as item" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-        <div class="flex items-center justify-between gap-3">
-          <div>
-            <p class="text-[10px] font-black tracking-[0.1em] text-slate-500">{{ isRTL ? 'قرار حقل' : 'Field decision' }}</p>
-            <p class="mt-1 text-[13px] font-black text-slate-900">{{ getProfileItemLabel(item) }}</p>
-            <p class="mt-1 text-[11px] font-medium text-slate-600">{{ getProfileItemValue(item) }}</p>
-          </div>
-
           <app-status-pill
-            [label]="getProfileItemDecisionLabel(item)"
-            [variant]="getProfileItemDecisionVariant(item)"
+            [label]="getSectionStatusLabel(section)"
+            [variant]="getSectionStatusVariant(section)"
             [showDot]="true"
             [shouldTranslate]="false"
             size="sm">
           </app-status-pill>
         </div>
 
-        <div class="mt-3 grid gap-3 lg:grid-cols-[1fr_auto]">
-          <div>
-            <label class="text-[9px] font-black tracking-[0.1em] text-slate-500 block mb-1.5">{{ isRTL ? 'ملاحظة الحقل' : 'Field note' }}</label>
-            <textarea
-              [(ngModel)]="profileRejectReason"
-              rows="2"
-              class="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-[12px] font-medium text-slate-700 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-              [placeholder]="isRTL ? 'سبب الرفض أو الملاحظة...' : 'Reason for rejection or note...'">
-            </textarea>
-          </div>
+        <div class="vendor-compliance-scroll flex-1 space-y-4 overflow-y-auto pe-1">
+          <section class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+            <div class="mb-3 flex items-center justify-between gap-2">
+              <h3 class="text-[12px] font-black text-slate-900">{{ isRTL ? 'بيانات القسم' : 'Section data' }}</h3>
+              <span class="text-[10px] font-bold text-slate-400">{{ formatNumber(section.profileFields.length) }} {{ isRTL ? 'حقل' : 'fields' }}</span>
+            </div>
 
-          <div class="flex flex-col gap-2 justify-end sm:flex-row lg:flex-col min-w-[120px]">
+            <div class="grid gap-2 sm:grid-cols-2">
+              <div
+                *ngFor="let field of section.profileFields; trackBy: trackByProfileItem"
+                class="rounded-xl border border-white bg-white p-3 shadow-sm">
+                <div class="flex items-start justify-between gap-2">
+                  <p class="text-[10px] font-black text-slate-400">{{ getProfileItemLabel(field) }}</p>
+                  <app-status-pill
+                    [label]="getProfileItemDecisionLabel(field)"
+                    [variant]="getProfileItemDecisionVariant(field)"
+                    [showDot]="true"
+                    [shouldTranslate]="false"
+                    size="sm">
+                  </app-status-pill>
+                </div>
+                <p class="mt-1 text-[13px] font-black text-slate-900 break-words">{{ getProfileItemValue(field) }}</p>
+                <p *ngIf="field.decisionNote" class="mt-1 text-[10px] font-medium text-rose-600">{{ field.decisionNote }}</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-100 bg-white p-4">
+            <div class="mb-3 flex items-center justify-between gap-2">
+              <h3 class="text-[12px] font-black text-slate-900">{{ isRTL ? 'مستندات القسم' : 'Section documents' }}</h3>
+              <span class="text-[10px] font-bold text-slate-400">{{ formatNumber(section.documents.length) }} {{ isRTL ? 'ملف' : 'files' }}</span>
+            </div>
+
+            <div class="space-y-3">
+              <div
+                *ngFor="let document of section.documents; trackBy: trackByDocument"
+                class="rounded-2xl border p-3 transition-all"
+                [ngClass]="selectedDocument?.id === document.id ? 'border-primary/30 bg-primary/5' : 'border-slate-100 bg-slate-50/60'">
+                <button type="button" (click)="selectDocument(document)" class="w-full text-start">
+                  <div class="flex items-start gap-3">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm">
+                      <span class="material-symbols-outlined text-[18px]">{{ document.icon }}</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <p class="text-[12px] font-black text-slate-900">{{ document.titleKey | translate }}</p>
+                        <app-status-pill
+                          [label]="getDecisionLabel(document.reviewDecision)"
+                          [variant]="getDecisionVariant(document.reviewDecision)"
+                          [showDot]="true"
+                          [shouldTranslate]="false"
+                          size="sm">
+                        </app-status-pill>
+                      </div>
+                      <p class="mt-1 text-[10px] font-medium text-slate-500">{{ getDocumentDescription(document) }}</p>
+                    </div>
+                  </div>
+                </button>
+
+                <div *ngIf="selectedDocument?.id === document.id" class="mt-3 space-y-3 border-t border-slate-100 pt-3">
+                  <div *ngIf="document.type === 'commercial' && isCrExpired" class="rounded-xl border border-rose-200 bg-rose-50 p-3 text-[10px] font-bold text-rose-700">
+                    {{ isRTL ? 'السجل التجاري منتهي — لا يمكن اعتماد هذا القسم قبل التحديث.' : 'Commercial registration expired — update before approving this section.' }}
+                  </div>
+
+                  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    <div *ngIf="document.previewKind === 'image' && document.fileUrl" class="flex items-center justify-center p-3">
+                      <img [src]="document.fileUrl" class="max-h-56 rounded-lg object-contain" alt="" />
+                    </div>
+                    <div *ngIf="document.previewKind === 'pdf' && safePreviewUrl && selectedDocument?.id === document.id" class="h-56">
+                      <iframe [src]="safePreviewUrl" class="h-full w-full"></iframe>
+                    </div>
+                    <div *ngIf="document.previewKind === 'structured' || !document.fileUrl" class="grid gap-2 p-3 sm:grid-cols-2">
+                      <div *ngFor="let row of getStructuredPreviewRows(document)" class="rounded-lg bg-slate-50 p-2.5">
+                        <p class="text-[9px] font-black text-slate-400">{{ row.label }}</p>
+                        <p class="text-[12px] font-black text-slate-900" [attr.dir]="row.direction || (isRTL ? 'rtl' : 'ltr')">{{ row.value }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      *ngIf="document.fileUrl"
+                      type="button"
+                      (click)="onOpenDocumentFile(document)"
+                      class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700">
+                      <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                      {{ isRTL ? 'فتح الملف' : 'Open file' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <label class="text-[10px] font-black tracking-[0.1em] text-slate-500 block mb-2">
+            {{ isRTL ? 'ملاحظة القرار على القسم (إلزامية للرفض)' : 'Section decision note (required for rejection)' }}
+          </label>
+          <textarea
+            [(ngModel)]="sectionRejectReason"
+            rows="2"
+            class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+            [placeholder]="isRTL ? 'اكتب ملاحظة موحدة للقسم عند الرفض...' : 'Write one note for the whole section when rejecting...'">
+          </textarea>
+
+          <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
             <button
               type="button"
-              (click)="onApproveProfileItem(item)"
-              class="flex h-9 items-center justify-center rounded-lg bg-emerald-500 px-3 text-[12px] font-black text-white transition-all duration-300 hover:bg-emerald-600 hover:shadow-sm hover:-translate-y-0.5 gap-1.5">
-              <span class="material-symbols-outlined text-[16px]">thumb_up</span>
-              {{ isRTL ? 'موافق' : 'Approve' }}
+              [disabled]="isSubmittingDocumentDecision || !canRejectSection(section)"
+              (click)="onRejectSection(section)"
+              class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white px-4 text-[12px] font-black text-rose-700 transition hover:bg-rose-50 disabled:opacity-50">
+              <span class="material-symbols-outlined text-[18px]">block</span>
+              {{ isRTL ? 'رفض القسم' : 'Reject section' }}
             </button>
             <button
               type="button"
-              (click)="onRejectProfileItem(item)"
-              class="flex h-9 items-center justify-center rounded-lg border border-rose-200 bg-white px-3 text-[12px] font-black text-rose-600 transition-all duration-300 hover:bg-rose-50 hover:shadow-sm hover:-translate-y-0.5 gap-1.5">
-              <span class="material-symbols-outlined text-[16px]">thumb_down</span>
-              {{ isRTL ? 'رفض' : 'Reject' }}
+              [disabled]="isSubmittingDocumentDecision || !canApproveSection(section)"
+              (click)="onApproveSection(section)"
+              class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-[12px] font-black text-white shadow-md shadow-emerald-500/20 transition hover:bg-emerald-600 disabled:opacity-50">
+              <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isSubmittingDocumentDecision">
+                {{ isSubmittingDocumentDecision ? 'progress_activity' : 'task_alt' }}
+              </span>
+              {{ isRTL ? 'اعتماد القسم' : 'Approve section' }}
             </button>
           </div>
         </div>
-
-        <p *ngIf="item.decisionNote" class="mt-2 text-[11px] font-medium text-rose-700">{{ item.decisionNote }}</p>
-      </div>
+      </ng-container>
     </article>
   </section>
 
-  <ng-template #emptyPreview>
-    <div class="flex flex-1 flex-col items-center justify-center rounded-[1.25rem] border-2 border-dashed border-slate-200/80 bg-slate-50/20 p-8 text-center min-h-[350px] shadow-inner backdrop-blur-sm">
-      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-white to-slate-50/50 shadow-md shadow-slate-100/60 mb-4 text-slate-350 transition-transform hover:scale-105 duration-300">
-        <span class="material-symbols-outlined text-[30px]">task</span>
+  <ng-template #emptySectionPreview>
+    <div class="flex flex-1 flex-col items-center justify-center rounded-[1.25rem] border-2 border-dashed border-slate-200/80 bg-slate-50/20 p-8 text-center min-h-[350px]">
+      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
+        <span class="material-symbols-outlined text-[30px] text-slate-400">view_module</span>
       </div>
-      <h3 class="text-[15px] font-black text-slate-900 mb-2">{{ isRTL ? 'لا يوجد مستند محدد' : 'No Document Selected' }}</h3>
-      <p class="max-w-xs text-[11px] leading-relaxed font-semibold text-slate-450">{{ isRTL ? 'اختر مستنداً من القائمة الجانبية لمعاينته واتخاذ القرار المناسب.' : 'Select a document from the board to preview it.' }}</p>
+      <h3 class="text-[15px] font-black text-slate-900 mb-2">{{ isRTL ? 'اختر قسمًا للمراجعة' : 'Select a section to review' }}</h3>
+      <p class="max-w-xs text-[11px] font-semibold text-slate-500">{{ isRTL ? 'كل قسم يعرض بياناته ومستنداته معًا، ويمكن اعتماده أو رفضه دفعة واحدة.' : 'Each section shows its data and documents together and can be approved or rejected in one action.' }}</p>
     </div>
   </ng-template>
 
