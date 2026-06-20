@@ -53,7 +53,8 @@ interface AdminOrderListItemResponse {
   paymentStatus: OrderPaymentStatus;
   fulfillmentStatus: OrderFulfillmentStatus;
   dispatchState?: OrderDispatchState;
-  dispatchReason?: string;
+  dispatchReasonAr?: string;
+  dispatchReasonEn?: string;
   paymentMethodLabel: string;
   lastUpdatedAtUtc: string;
   total: number;
@@ -80,7 +81,8 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
   paymentStatusNote: string;
   fulfillmentStatusNote: string;
   dispatchState?: OrderDispatchState;
-  dispatchReason?: string;
+  dispatchReasonAr?: string;
+  dispatchReasonEn?: string;
   supportSummary: string;
   alertLabel: string;
   subtotal: number;
@@ -284,7 +286,8 @@ export class OrdersService {
       paymentStatus: item.paymentStatus,
       fulfillmentStatus: item.fulfillmentStatus,
       dispatchState: item.dispatchState,
-      dispatchReason: this.fixEncoding(item.dispatchReason),
+      dispatchReasonAr: this.fixEncoding(item.dispatchReasonAr),
+      dispatchReasonEn: this.fixEncoding(item.dispatchReasonEn),
       paymentMethodLabel: this.fixEncoding(item.paymentMethodLabel),
       workflowStage: this.deriveWorkflowStage(item.status, item.paymentStatus, item.fulfillmentStatus, item.hasActiveIssue, item.operationalCase),
       nextActionLabel: this.deriveNextAction(item.status, item.paymentStatus, item.fulfillmentStatus, item.operationalCase, item.cancellationReason),
@@ -318,7 +321,8 @@ export class OrdersService {
       paymentStatusNote: this.fixEncoding(item.paymentStatusNote),
       fulfillmentStatusNote: this.fixEncoding(item.fulfillmentStatusNote),
       dispatchState: item.dispatchState,
-      dispatchReason: this.fixEncoding(item.dispatchReason),
+      dispatchReasonAr: this.fixEncoding(item.dispatchReasonAr),
+      dispatchReasonEn: this.fixEncoding(item.dispatchReasonEn),
       supportSummary: this.fixEncoding(item.supportSummary),
       alertLabel: this.fixEncoding(item.alertLabel),
       subtotal: item.subtotal,
@@ -336,7 +340,15 @@ export class OrdersService {
         measurementValue: orderItem.measurementValue ?? undefined,
         measurementUnitName: this.fixEncoding(orderItem.measurementUnitName ?? undefined)
       })),
-      timeline: item.timeline,
+      timeline: item.timeline.map((step) => ({
+        titleAr: this.fixEncoding(step.titleAr),
+        titleEn: this.fixEncoding(step.titleEn),
+        subtitleAr: this.fixEncoding(step.subtitleAr),
+        subtitleEn: this.fixEncoding(step.subtitleEn),
+        time: step.time,
+        status: step.status,
+        current: step.current
+      })),
       activities: item.activities,
       driverCandidates: item.driverCandidates,
       candidateScoreBreakdown: item.candidateScoreBreakdown ?? [],
@@ -366,7 +378,8 @@ export class OrdersService {
       paymentStatusNote: '',
       fulfillmentStatusNote: '',
       dispatchState: item.dispatchState,
-      dispatchReason: item.dispatchReason,
+      dispatchReasonAr: item.dispatchReasonAr,
+      dispatchReasonEn: item.dispatchReasonEn,
       supportSummary: item.hasActiveIssue ? 'الطلب بحاجة إلى مراجعة تشغيلية.' : 'لا توجد حالة دعم نشطة.',
       alertLabel: item.operationalCase?.title || (item.isLate ? 'الطلب متأخر عن وقت التسليم' : 'مسار الطلب سليم'),
       subtotal: item.total,
@@ -388,29 +401,37 @@ export class OrdersService {
 
     return [
       {
-        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.ORDER_CREATED',
-        subtitle: item.customerName,
+        titleAr: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.ORDER_CREATED',
+        titleEn: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.ORDER_CREATED',
+        subtitleAr: item.customerName,
+        subtitleEn: item.customerName,
         time: item.time,
         status: 'COMPLETED',
         current: false
       },
       {
-        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.PAYMENT',
-        subtitle: item.paymentMethodLabel,
+        titleAr: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.PAYMENT',
+        titleEn: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.PAYMENT',
+        subtitleAr: item.paymentMethodLabel,
+        subtitleEn: item.paymentMethodLabel,
         time: item.time,
         status: item.paymentStatus === 'PENDING' ? 'IN_PROGRESS' : 'COMPLETED',
         current: item.paymentStatus === 'PENDING'
       },
       {
-        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.FULFILLMENT',
-        subtitle: `ORDERS.FULFILLMENT_STATUS.${item.fulfillmentStatus}`,
+        titleAr: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.FULFILLMENT',
+        titleEn: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.FULFILLMENT',
+        subtitleAr: `ORDERS.FULFILLMENT_STATUS.${item.fulfillmentStatus}`,
+        subtitleEn: `ORDERS.FULFILLMENT_STATUS.${item.fulfillmentStatus}`,
         time: item.lastUpdatedAt,
         status: item.status === 'CANCELLED' ? 'PENDING' : 'IN_PROGRESS',
         current: item.status !== 'COMPLETED' && item.status !== 'CANCELLED'
       },
       {
-        title: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.CLOSURE',
-        subtitle: closureSubtitleKey,
+        titleAr: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.CLOSURE',
+        titleEn: 'ORDERS.DETAIL.TIMELINE_STEPS.TITLES.CLOSURE',
+        subtitleAr: closureSubtitleKey,
+        subtitleEn: closureSubtitleKey,
         time: item.lastUpdatedAt,
         status: item.status === 'COMPLETED' ? 'COMPLETED' : 'PENDING',
         current: false

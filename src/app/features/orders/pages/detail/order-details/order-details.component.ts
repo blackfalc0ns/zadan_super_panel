@@ -302,36 +302,30 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  getDispatchReasonItem(reason: string | undefined): { value: string; translate: boolean } | null {
-    if (!reason) return null;
-    
-    if (reason.startsWith('ORDERS.DISPATCH_REASON.')) {
-      return { value: reason.replace('ORDERS.DISPATCH_REASON.', 'ORDERS.DETAIL.DISPATCH_REASON.'), translate: true };
+  getDispatchReasonItem(reasonAr: string | undefined, reasonEn: string | undefined): { value: string; translate: boolean } | null {
+    const value = this.resolveLocalizedLabel(reasonAr, reasonEn);
+    if (!value) {
+      return null;
     }
-    
-    const lower = reason.toLowerCase();
-    
-    if (lower.includes('driver accepted')) {
-      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.DRIVER_ACCEPTED', translate: true };
-    }
-    if (lower.includes('driver rejected')) {
-      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.DRIVER_REJECTED', translate: true };
-    }
-    if (lower.includes('delivery offer sent')) {
-      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.OFFER_SENT', translate: true };
-    }
-    if (lower.includes('searching for drivers')) {
-      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.SEARCHING', translate: true };
-    }
-    if (lower.includes('no drivers available')) {
-      return { value: 'ORDERS.DETAIL.DISPATCH_REASON.NO_DRIVERS', translate: true };
-    }
-    
-    if (reason.startsWith('ORDERS.')) {
-      return { value: reason, translate: true };
-    }
-    
-    return { value: reason, translate: false };
+
+    return { value, translate: false };
+  }
+
+  resolveLocalizedLabel(labelAr?: string | null, labelEn?: string | null): string {
+    const lang = (this.translate.currentLang || this.translate.defaultLang || 'ar').toLowerCase();
+    const primary = lang.startsWith('ar') ? labelAr : labelEn;
+    const fallback = lang.startsWith('ar') ? labelEn : labelAr;
+    return (primary || fallback || '').trim();
+  }
+
+  timelineTitle(step: OrderTimelineItem): string {
+    const label = this.resolveLocalizedLabel(step.titleAr, step.titleEn);
+    return this.translateTimelineText(label);
+  }
+
+  timelineSubtitle(step: OrderTimelineItem): string {
+    const label = this.resolveLocalizedLabel(step.subtitleAr, step.subtitleEn);
+    return this.translateTimelineText(label);
   }
 
   get deliveryInfoItems(): KeyValueGridItem[] {
@@ -356,9 +350,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
             translateValue: true
           }]
         : []),
-      ...(currentOrder.dispatchReason
+      ...(currentOrder.dispatchReasonAr || currentOrder.dispatchReasonEn
         ? (() => {
-            const item = this.getDispatchReasonItem(currentOrder.dispatchReason);
+            const item = this.getDispatchReasonItem(currentOrder.dispatchReasonAr, currentOrder.dispatchReasonEn);
             return item ? [{ 
               label: 'ORDERS.DETAIL.DISPATCH_NOTE', 
               value: item.value, 
@@ -434,7 +428,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
   }
 
   timelineStepIcon(step: OrderTimelineItem): string {
-    return resolveOrderTimelineStepIcon(step.title, step.subtitle);
+    return resolveOrderTimelineStepIcon(
+      this.resolveLocalizedLabel(step.titleAr, step.titleEn),
+      this.resolveLocalizedLabel(step.subtitleAr, step.subtitleEn)
+    );
   }
 
   timelineStepIconFilled(step: OrderTimelineItem): boolean {

@@ -53,8 +53,10 @@ export interface OrderItem {
 }
 
 export interface OrderTimelineItem {
-  title: string;
-  subtitle: string;
+  titleAr: string;
+  titleEn: string;
+  subtitleAr: string;
+  subtitleEn: string;
   time: string;
   status: 'COMPLETED' | 'IN_PROGRESS' | 'PENDING';
   current: boolean;
@@ -119,7 +121,8 @@ export interface OrderListItem {
   paymentStatus: OrderPaymentStatus;
   fulfillmentStatus: OrderFulfillmentStatus;
   dispatchState?: OrderDispatchState;
-  dispatchReason?: string;
+  dispatchReasonAr?: string;
+  dispatchReasonEn?: string;
   paymentMethodLabel: string;
   workflowStage: OrderWorkflowStage;
   nextActionLabel: string;

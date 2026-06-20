@@ -483,7 +483,7 @@
                 <div class="min-w-0 flex-1">
                   <div class="flex items-start justify-between gap-1.5">
                     <div class="min-w-0">
-                      <h4 class="text-[11px] font-extrabold leading-snug text-slate-800">{{ translateTimelineText(step.title) }}</h4>
+                      <h4 class="text-[11px] font-extrabold leading-snug text-slate-800">{{ timelineTitle(step) }}</h4>
                       <span
                         class="mt-0.5 inline-flex rounded px-1 py-px text-[8px] font-extrabold uppercase tracking-wide"
                         [ngClass]="{
@@ -496,7 +496,7 @@
                     </div>
                     <time class="shrink-0 text-[10px] font-bold tabular-nums text-slate-400" dir="ltr">{{ step.time }}</time>
                   </div>
-                  <p *ngIf="step.subtitle" class="mt-0.5 line-clamp-2 text-[10px] font-semibold leading-snug text-slate-500">{{ translateTimelineText(step.subtitle) }}</p>
+                  <p *ngIf="step.subtitleAr || step.subtitleEn" class="mt-0.5 line-clamp-2 text-[10px] font-semibold leading-snug text-slate-500">{{ timelineSubtitle(step) }}</p>
                 </div>
               </article>
             </div>
