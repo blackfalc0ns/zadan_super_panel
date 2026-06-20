@@ -18,8 +18,12 @@ function checkAuth(stateUrl: string) {
         return true;
     }
 
-    // Not logged in so redirect to login page with the return url
-    return router.createUrlTree(['/login'], { queryParams: { returnUrl: stateUrl } });
+    const queryParams: Record<string, string> = { returnUrl: stateUrl };
+    if (authService.requiresFreshLogin) {
+        queryParams['reason'] = 'session-expired';
+    }
+
+    return router.createUrlTree(['/login'], { queryParams });
 };
 
 export const authGuard: CanActivateFn = (route, state) => checkAuth(state.url);

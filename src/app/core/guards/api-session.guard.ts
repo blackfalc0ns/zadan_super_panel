@@ -10,9 +10,10 @@ export const apiSessionGuard: CanActivateFn = (_route, state) => {
     return true;
   }
 
-  return router.createUrlTree(['/login'], {
-    queryParams: {
-      returnUrl: state.url
-    }
-  });
+  const queryParams: Record<string, string> = { returnUrl: state.url };
+  if (authService.requiresFreshLogin) {
+    queryParams['reason'] = 'session-expired';
+  }
+
+  return router.createUrlTree(['/login'], { queryParams });
 };
