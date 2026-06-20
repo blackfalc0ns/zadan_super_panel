@@ -61,7 +61,8 @@ export class AdminNotificationRealtimeService {
   ) {}
 
   startMonitoring(): void {
-    if (this.monitoringStarted) {
+    if (this.monitoringStarted || !environment.realtimeEnabled) {
+      this.stateSubject.next('idle');
       return;
     }
 
@@ -88,6 +89,11 @@ export class AdminNotificationRealtimeService {
   }
 
   private async ensureConnection(): Promise<void> {
+    if (!environment.realtimeEnabled) {
+      this.stateSubject.next('idle');
+      return;
+    }
+
     const token = this.authService.getToken();
     if (!token) return;
 
@@ -149,7 +155,7 @@ export class AdminNotificationRealtimeService {
   private static readonly BACKOFF_DELAYS = [3000, 6000, 12000, 30000, 60000];
 
   private async reconnectWithBackoff(): Promise<void> {
-    if (this.reconnecting || !this.authService.hasApiSession) return;
+    if (!environment.realtimeEnabled || this.reconnecting || !this.authService.hasApiSession) return;
     if (this.reconnectAttempt >= AdminNotificationRealtimeService.MAX_RECONNECT_ATTEMPTS) {
       this.stateSubject.next('error');
       return;

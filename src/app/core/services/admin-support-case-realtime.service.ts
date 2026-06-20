@@ -84,7 +84,8 @@ export class AdminSupportCaseRealtimeService {
   ) {}
 
   startMonitoring(): void {
-    if (this.monitoringStarted) {
+    if (this.monitoringStarted || !environment.realtimeEnabled) {
+      this.stateSubject.next('idle');
       return;
     }
 
@@ -111,6 +112,11 @@ export class AdminSupportCaseRealtimeService {
   }
 
   private async ensureConnection(): Promise<void> {
+    if (!environment.realtimeEnabled) {
+      this.stateSubject.next('idle');
+      return;
+    }
+
     const token = this.authService.getToken();
     if (!token) {
       return;
@@ -175,7 +181,7 @@ export class AdminSupportCaseRealtimeService {
   }
 
   private async reconnectWithBackoff(): Promise<void> {
-    if (this.reconnecting || !this.authService.hasApiSession) {
+    if (!environment.realtimeEnabled || this.reconnecting || !this.authService.hasApiSession) {
       return;
     }
 

@@ -798,7 +798,10 @@ export class CustomersService {
   }
 
   private ensurePresenceConnection(): void {
-    if (this.presenceConnected || environment.skipAuthForDevelopment || !this.authService.hasApiSession) {
+    if (!environment.realtimeEnabled ||
+        this.presenceConnected ||
+        environment.skipAuthForDevelopment ||
+        !this.authService.hasApiSession) {
       return;
     }
 

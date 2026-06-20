@@ -13,6 +13,8 @@ import { AdminNotificationRealtimeService } from '../services/admin-notification
 import { AdminNotification, AdminNotificationsService } from '../services/admin-notifications.service';
 import { AdminNotificationSoundService } from '../services/admin-notification-sound.service';
 import { AdminOneSignalService } from '../services/admin-one-signal.service';
+import { interval } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,6 +83,16 @@ export class LayoutComponent {
     this.adminNotificationsService.refreshRecent()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
+
+    if (!environment.realtimeEnabled) {
+      interval(60000)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.adminNotificationsService.refreshRecent()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+        });
+    }
 
     this.adminNotificationsService.getPreferences()
       .pipe(takeUntilDestroyed(this.destroyRef))
