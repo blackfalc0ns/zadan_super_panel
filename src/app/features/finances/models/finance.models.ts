@@ -7,7 +7,17 @@ export type TrendDirection = 'up' | 'down' | 'flat';
 export type FinancePeriod = 'today' | 'week' | 'month' | 'quarter' | 'custom';
 export type EntityType = 'vendor' | 'driver' | 'order' | 'platform' | 'customer';
 export type LedgerDirection = 'credit' | 'debit';
-export type SettlementStatus = 'pending' | 'processing' | 'paid' | 'failed' | 'disputed';
+export type SettlementStatus =
+  | 'pending'
+  | 'pending_review'
+  | 'approved'
+  | 'on_hold'
+  | 'processing'
+  | 'paid'
+  | 'settled'
+  | 'failed'
+  | 'reversed'
+  | 'disputed';
 export type RefundStatus = 'open' | 'under_review' | 'approved' | 'rejected' | 'escalated';
 export type CodStatus = 'collected' | 'pending' | 'overdue' | 'disputed';
 export type AdjustmentDirection = 'credit' | 'debit';

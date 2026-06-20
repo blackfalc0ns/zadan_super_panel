@@ -690,9 +690,14 @@
     },
     "STATUS": {
       "PENDING": "قيد الانتظار",
+      "PENDING_REVIEW": "بانتظار المراجعة",
+      "APPROVED": "معتمد",
+      "ON_HOLD": "معلّق",
       "PROCESSING": "قيد المعالجة",
       "PAID": "تم الدفع",
+      "SETTLED": "تمت التسوية",
       "FAILED": "فشل",
+      "REVERSED": "معكوس",
       "DISPUTED": "متنازع عليه",
       "OPEN": "مفتوح",
       "UNDER_REVIEW": "قيد المراجعة",
@@ -805,7 +810,8 @@
         "WEEKLY": "أسبوعي",
         "BI_WEEKLY": "كل أسبوعين",
         "MONTHLY": "شهري",
-        "DAILY": "يومي"
+        "DAILY": "يومي",
+        "CUSTOM": "فترة مخصصة"
       }
     },
     "COD": {

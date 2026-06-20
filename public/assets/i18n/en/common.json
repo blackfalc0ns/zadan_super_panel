@@ -690,9 +690,14 @@
     },
     "STATUS": {
       "PENDING": "Pending",
+      "PENDING_REVIEW": "Pending Review",
+      "APPROVED": "Approved",
+      "ON_HOLD": "On Hold",
       "PROCESSING": "Processing",
       "PAID": "Paid",
+      "SETTLED": "Settled",
       "FAILED": "Failed",
+      "REVERSED": "Reversed",
       "DISPUTED": "Disputed",
       "OPEN": "Open",
       "UNDER_REVIEW": "Under Review",
@@ -805,7 +810,8 @@
         "WEEKLY": "Weekly",
         "BI_WEEKLY": "Bi-Weekly",
         "MONTHLY": "Monthly",
-        "DAILY": "Daily"
+        "DAILY": "Daily",
+        "CUSTOM": "Custom Period"
       }
     },
     "COD": {

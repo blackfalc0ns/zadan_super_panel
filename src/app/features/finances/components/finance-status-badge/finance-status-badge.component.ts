@@ -34,15 +34,19 @@ export class FinanceStatusBadgeComponent {
   get config(): StatusConfig {
     const map: Record<string, StatusConfig> = {
       // Settlement statuses
-      pending:            { labelKey: FINANCE_STATUS_LABEL_KEYS['pending'],      dotColor: 'bg-amber-400',   badgeClass: 'bg-amber-50 text-amber-700 border-amber-200' },
-      processing:         { labelKey: FINANCE_STATUS_LABEL_KEYS['processing'],   dotColor: 'bg-blue-400',    badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' },
-      paid:               { labelKey: FINANCE_STATUS_LABEL_KEYS['paid'],         dotColor: 'bg-emerald-400', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-      failed:             { labelKey: FINANCE_STATUS_LABEL_KEYS['failed'],       dotColor: 'bg-red-400',     badgeClass: 'bg-red-50 text-red-700 border-red-200' },
-      disputed:           { labelKey: FINANCE_STATUS_LABEL_KEYS['disputed'],     dotColor: 'bg-purple-400',  badgeClass: 'bg-purple-50 text-purple-700 border-purple-200' },
+      pending:            { labelKey: FINANCE_STATUS_LABEL_KEYS['pending'],          dotColor: 'bg-amber-400',   badgeClass: 'bg-amber-50 text-amber-700 border-amber-200' },
+      pending_review:     { labelKey: FINANCE_STATUS_LABEL_KEYS['pending_review'],   dotColor: 'bg-amber-400',   badgeClass: 'bg-amber-50 text-amber-700 border-amber-200' },
+      approved:           { labelKey: FINANCE_STATUS_LABEL_KEYS['approved'],         dotColor: 'bg-blue-400',    badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' },
+      on_hold:            { labelKey: FINANCE_STATUS_LABEL_KEYS['on_hold'],          dotColor: 'bg-slate-400',   badgeClass: 'bg-slate-100 text-slate-700 border-slate-200' },
+      processing:         { labelKey: FINANCE_STATUS_LABEL_KEYS['processing'],       dotColor: 'bg-blue-400',    badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' },
+      paid:               { labelKey: FINANCE_STATUS_LABEL_KEYS['paid'],             dotColor: 'bg-emerald-400', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+      settled:            { labelKey: FINANCE_STATUS_LABEL_KEYS['settled'],          dotColor: 'bg-emerald-400', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+      failed:             { labelKey: FINANCE_STATUS_LABEL_KEYS['failed'],           dotColor: 'bg-red-400',     badgeClass: 'bg-red-50 text-red-700 border-red-200' },
+      reversed:           { labelKey: FINANCE_STATUS_LABEL_KEYS['reversed'],         dotColor: 'bg-orange-400',  badgeClass: 'bg-orange-50 text-orange-700 border-orange-200' },
+      disputed:           { labelKey: FINANCE_STATUS_LABEL_KEYS['disputed'],         dotColor: 'bg-purple-400',  badgeClass: 'bg-purple-50 text-purple-700 border-purple-200' },
       // Refund statuses
       open:               { labelKey: FINANCE_STATUS_LABEL_KEYS['open'],         dotColor: 'bg-slate-400',   badgeClass: 'bg-slate-100 text-slate-700 border-slate-200' },
       under_review:       { labelKey: FINANCE_STATUS_LABEL_KEYS['under_review'], dotColor: 'bg-blue-400',    badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' },
-      approved:           { labelKey: FINANCE_STATUS_LABEL_KEYS['approved'],     dotColor: 'bg-emerald-400', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
       rejected:           { labelKey: FINANCE_STATUS_LABEL_KEYS['rejected'],     dotColor: 'bg-red-400',     badgeClass: 'bg-red-50 text-red-700 border-red-200' },
       escalated:          { labelKey: FINANCE_STATUS_LABEL_KEYS['escalated'],    dotColor: 'bg-orange-400',  badgeClass: 'bg-orange-50 text-orange-700 border-orange-200' },
       // COD statuses

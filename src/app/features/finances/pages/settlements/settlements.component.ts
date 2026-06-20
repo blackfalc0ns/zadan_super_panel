@@ -218,8 +218,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 
                 <td class="px-6 py-4 align-middle">
                   <div class="flex flex-col gap-0.5">
-                    <span class="text-[12px] font-bold text-slate-700">{{ getTranslatedPeriod(s.period) | translate }}</span>
-                    <span class="text-[10px] font-bold text-slate-400" dir="ltr">{{ formatDate(s.periodFrom) }} - {{ formatDate(s.periodTo) }}</span>
+                    <span class="text-[12px] font-bold text-slate-700">{{ resolvePeriodTypeLabel(s) }}</span>
+                    <span class="text-[10px] font-bold text-slate-400" dir="ltr">{{ formatPeriodRange(s) }}</span>
                   </div>
                 </td>
 
@@ -391,7 +391,27 @@ export class SettlementsComponent implements OnInit {
     });
   }
   
-  getTranslatedPeriod(period: string): string {
-    return `FINANCES.SETTLEMENTS.PERIODS.${period.toUpperCase().replace('-', '_')}`;
+  resolvePeriodTypeLabel(s: Settlement): string {
+    const key = this.resolvePeriodTypeKey(s);
+    const translated = this.translate.instant(key);
+    return translated && translated !== key ? translated : this.formatPeriodRange(s);
+  }
+
+  resolvePeriodTypeKey(s: Settlement): string {
+    const from = new Date(s.periodFrom).getTime();
+    const to = new Date(s.periodTo).getTime();
+    if (!Number.isFinite(from) || !Number.isFinite(to) || to < from) {
+      return 'FINANCES.SETTLEMENTS.PERIODS.CUSTOM';
+    }
+
+    const days = Math.max(1, Math.round((to - from) / 86_400_000));
+    if (days <= 1) return 'FINANCES.SETTLEMENTS.PERIODS.DAILY';
+    if (days <= 8) return 'FINANCES.SETTLEMENTS.PERIODS.WEEKLY';
+    if (days <= 16) return 'FINANCES.SETTLEMENTS.PERIODS.BI_WEEKLY';
+    return 'FINANCES.SETTLEMENTS.PERIODS.MONTHLY';
+  }
+
+  formatPeriodRange(s: Settlement): string {
+    return `${this.formatDate(s.periodFrom)} - ${this.formatDate(s.periodTo)}`;
   }
 }

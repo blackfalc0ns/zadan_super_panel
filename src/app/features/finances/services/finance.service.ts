@@ -906,14 +906,23 @@ export class FinanceService {
   private toFrontendSettlementStatus(status: string): SettlementStatus {
     switch (status) {
       case 'PaidOut':
+      case 'Settled':
         return 'paid';
       case 'Processing':
+      case 'Approved':
         return 'processing';
+      case 'OnHold':
+        return 'on_hold';
       case 'PayoutFailed':
+      case 'Failed':
       case 'Rejected':
+      case 'Reversed':
         return 'failed';
       case 'Disputed':
         return 'disputed';
+      case 'PendingReview':
+        return 'pending_review';
+      case 'Pending':
       default:
         return 'pending';
     }
@@ -922,13 +931,20 @@ export class FinanceService {
   private toBackendSettlementStatus(status: SettlementStatus | undefined): string | null {
     switch (status) {
       case 'paid':
+      case 'settled':
         return 'PaidOut';
       case 'processing':
+      case 'approved':
         return 'Processing';
+      case 'on_hold':
+        return 'OnHold';
       case 'failed':
+      case 'reversed':
         return 'PayoutFailed';
       case 'disputed':
         return 'Disputed';
+      case 'pending_review':
+        return 'PendingReview';
       case 'pending':
         return 'PendingReview';
       default:
