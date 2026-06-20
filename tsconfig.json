@@ -57,9 +57,6 @@
       "@notifications/*": [
         "app/features/notifications/*"
       ],
-      "@reviews/*": [
-        "app/features/reviews/*"
-      ],
       "@reports/*": [
         "app/features/reports/*"
       ],
