@@ -387,16 +387,24 @@ export class AdminNotificationsService {
         body: { ar: 'قام تاجر بإرسال تغيير حساس يحتاج إلى مراجعة الأدمن.', en: 'A vendor submitted a critical change that needs admin review.' }
       },
       'vendor.store_updated': {
-        title: { ar: 'تعديل بيانات المتجر', en: 'Vendor store details updated' },
-        body: { ar: 'قام التاجر بتعديل بيانات المتجر.', en: 'A vendor updated store profile details.' }
+        title: { ar: 'بيانات متجر جاهزة للمراجعة', en: 'Vendor store ready for review' },
+        body: { ar: 'قام التاجر بتحديث بيانات المتجر وهي بانتظار مراجعتك.', en: 'A vendor updated store profile details and they are waiting for your review.' }
+      },
+      'vendor.owner_updated': {
+        title: { ar: 'بيانات مالك جاهزة للمراجعة', en: 'Vendor owner details ready for review' },
+        body: { ar: 'قام التاجر بتحديث بيانات المالك وهي بانتظار مراجعتك.', en: 'A vendor updated owner details and they are waiting for your review.' }
+      },
+      'vendor.contact_updated': {
+        title: { ar: 'بيانات تواصل جاهزة للمراجعة', en: 'Vendor contact details ready for review' },
+        body: { ar: 'قام التاجر بتحديث بيانات التواصل وهي بانتظار مراجعتك.', en: 'A vendor updated contact details and they are waiting for your review.' }
       },
       'vendor.legal_updated': {
-        title: { ar: 'تعديل بيانات التراخيص والضرائب', en: 'Vendor legal and tax details updated' },
-        body: { ar: 'قام التاجر بتعديل بيانات التراخيص والضرائب.', en: 'A vendor updated legal and tax details.' }
+        title: { ar: 'بيانات قانونية جاهزة للمراجعة', en: 'Vendor legal details ready for review' },
+        body: { ar: 'قام التاجر بتحديث البيانات القانونية وهي بانتظار مراجعتك.', en: 'A vendor updated legal and tax details and they are waiting for your review.' }
       },
       'vendor.banking_updated': {
-        title: { ar: 'تعديل حساب تسويات تاجر', en: 'Vendor payout account changed' },
-        body: { ar: 'قام التاجر بتعديل حساب التسويات.', en: 'A vendor updated payout banking details.' }
+        title: { ar: 'بيانات بنكية جاهزة للمراجعة', en: 'Vendor banking details ready for review' },
+        body: { ar: 'قام التاجر بتحديث البيانات البنكية وهي بانتظار مراجعتك.', en: 'A vendor updated payout banking details and they are waiting for your review.' }
       },
       'catalog.product_request_submitted': {
         title: { ar: 'طلب منتج جديد', en: 'New product request' },

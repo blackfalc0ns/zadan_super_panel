@@ -219,6 +219,15 @@ function resolveAdminNotificationTypeTargetUrl(
   }
 
   if (type.startsWith('vendor.') && vendorId) {
+    const section = extractString(payload?.['section'], dataObject?.['section'], parsedData?.['section']);
+    if (section && isVendorProfileSection(section)) {
+      return `/vendors/${encodeURIComponent(vendorId)}/compliance`;
+    }
+
+    if (type === 'vendor.documents_submitted' || type === 'vendor.critical_change_submitted') {
+      return `/vendors/${encodeURIComponent(vendorId)}/compliance`;
+    }
+
     return `/vendors/${encodeURIComponent(vendorId)}/overview`;
   }
 
@@ -401,4 +410,13 @@ function extractString(...values: unknown[]): string | null {
   }
 
   return null;
+}
+
+function isVendorProfileSection(section: string): boolean {
+  const normalized = section.trim().toLowerCase();
+  return normalized === 'store'
+    || normalized === 'owner'
+    || normalized === 'contact'
+    || normalized === 'legal'
+    || normalized === 'banking';
 }
