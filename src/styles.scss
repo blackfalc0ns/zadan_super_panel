@@ -51,6 +51,18 @@
     'opsz' 24;
 }
 
+/* Center Material Symbols inside KPI / metric icon containers */
+.zadana-icon-box {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  > .material-symbols-outlined {
+    display: block;
+    line-height: 1;
+  }
+}
+
 /* Hide icon text until font is loaded - CRITICAL FIX */
 body.icons-loading .material-symbols-outlined {
   visibility: hidden !important;

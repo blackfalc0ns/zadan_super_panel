@@ -187,30 +187,38 @@
 
       <!-- Metrics -->
       <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
-          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">credit_card</span>
-          <div class="min-w-0">
+        <article class="flex flex-col items-center gap-2.5 rounded-2xl border border-slate-200/80 bg-white p-4 text-center shadow-sm">
+          <div class="zadana-icon-box h-10 w-10 rounded-xl bg-zadna-primary/10 text-zadna-primary">
+            <span class="material-symbols-outlined text-lg">credit_card</span>
+          </div>
+          <div class="min-w-0 w-full">
             <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.PAYMENT' | translate }}</p>
             <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ paymentStatusLabel | translate }}</p>
           </div>
         </article>
-        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
-          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">local_shipping</span>
-          <div class="min-w-0">
+        <article class="flex flex-col items-center gap-2.5 rounded-2xl border border-slate-200/80 bg-white p-4 text-center shadow-sm">
+          <div class="zadana-icon-box h-10 w-10 rounded-xl bg-zadna-primary/10 text-zadna-primary">
+            <span class="material-symbols-outlined text-lg">local_shipping</span>
+          </div>
+          <div class="min-w-0 w-full">
             <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.FULFILLMENT_STATUS' | translate }}</p>
             <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ fulfillmentStatusLabel | translate }}</p>
           </div>
         </article>
-        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
-          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">alt_route</span>
-          <div class="min-w-0">
+        <article class="flex flex-col items-center gap-2.5 rounded-2xl border border-slate-200/80 bg-white p-4 text-center shadow-sm">
+          <div class="zadana-icon-box h-10 w-10 rounded-xl bg-zadna-primary/10 text-zadna-primary">
+            <span class="material-symbols-outlined text-lg">alt_route</span>
+          </div>
+          <div class="min-w-0 w-full">
             <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.CURRENT_STAGE' | translate }}</p>
             <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ workflowStageLabel | translate }}</p>
           </div>
         </article>
-        <article class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
-          <span class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zadna-primary/10 text-lg text-zadna-primary">gavel</span>
-          <div class="min-w-0">
+        <article class="flex flex-col items-center gap-2.5 rounded-2xl border border-slate-200/80 bg-white p-4 text-center shadow-sm">
+          <div class="zadana-icon-box h-10 w-10 rounded-xl bg-zadna-primary/10 text-zadna-primary">
+            <span class="material-symbols-outlined text-lg">gavel</span>
+          </div>
+          <div class="min-w-0 w-full">
             <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.DETAIL.RESOLUTION_STATUS' | translate }}</p>
             <p class="mt-0.5 truncate text-sm font-extrabold text-slate-800">{{ resolutionStateLabel | translate }}</p>
           </div>

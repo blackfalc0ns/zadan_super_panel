@@ -125,16 +125,16 @@
             <p class="truncate text-xl font-black tabular-nums md:text-2xl"
                [ngClass]="i === 0 ? 'text-primary' : 'text-slate-900'">{{ card.value }}</p>
           </div>
-          <span
-            class="material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[20px] shadow-sm"
+          <div
+            class="zadana-icon-box h-10 w-10 rounded-xl text-[20px] shadow-sm"
             [ngClass]="{
               'bg-primary text-white': i === 0,
               'bg-primary/10 text-primary': card.tone === 'primary' && i !== 0,
               'bg-emerald-50 text-emerald-700': card.tone === 'success',
               'bg-amber-50 text-amber-700': card.tone === 'warning'
             }">
-            {{ card.icon }}
-          </span>
+            <span class="material-symbols-outlined text-[20px]">{{ card.icon }}</span>
+          </div>
         </div>
       </article>
     </section>
@@ -222,7 +222,9 @@
               <h2 class="mt-0.5 text-base font-black text-slate-900">{{ 'VENDOR_ANALYTICS.CHARTS.STATUS_TITLE' | translate }}</h2>
               <p class="mt-0.5 text-[11px] font-medium text-slate-500">{{ 'VENDOR_ANALYTICS.CHARTS.STATUS_SUBTITLE' | translate }}</p>
             </div>
-            <span class="material-symbols-outlined flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-[22px] text-primary">donut_small</span>
+            <div class="zadana-icon-box h-10 w-10 rounded-xl bg-primary/10 text-primary">
+              <span class="material-symbols-outlined text-[22px]">donut_small</span>
+            </div>
           </div>
 
           <div class="relative mx-auto mb-4 h-[168px] w-[168px]">
@@ -297,7 +299,9 @@
 
           <div class="grid gap-2.5">
             <div class="flex gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-3.5 text-start transition-colors hover:border-primary/20 hover:bg-white">
-              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary material-symbols-outlined text-[20px]">local_shipping</span>
+              <div class="zadana-icon-box h-9 w-9 rounded-lg bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-[20px]">local_shipping</span>
+              </div>
               <div class="min-w-0 flex-1">
                 <span class="text-[10px] font-bold text-slate-400">{{ 'VENDOR_ANALYTICS.INSIGHTS.WORKLOAD_TITLE' | translate }}</span>
                 <strong class="mt-0.5 block text-xl font-black tabular-nums text-slate-900">{{ formatNumber(activeWorkloadCount) }}</strong>
@@ -306,7 +310,9 @@
             </div>
 
             <div class="flex gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-3.5 text-start transition-colors hover:border-primary/20 hover:bg-white">
-              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-700 material-symbols-outlined text-[20px]">workspace_premium</span>
+              <div class="zadana-icon-box h-9 w-9 rounded-lg bg-amber-50 text-amber-700">
+                <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
+              </div>
               <div class="min-w-0 flex-1">
                 <span class="text-[10px] font-bold text-slate-400">{{ 'VENDOR_ANALYTICS.INSIGHTS.DOMINANT_TITLE' | translate }}</span>
                 <strong class="mt-0.5 block truncate text-sm font-black text-slate-900">{{ dominantProductName }}</strong>
@@ -318,8 +324,10 @@
 
             <div class="flex gap-3 rounded-xl border p-3.5 text-start transition-colors"
                  [ngClass]="inventoryRiskRatio > 0.3 ? 'border-rose-100 bg-rose-50/40 hover:bg-rose-50/70' : 'border-slate-100 bg-slate-50/60 hover:border-primary/20 hover:bg-white'">
-              <span class="material-symbols-outlined flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[20px]"
-                    [ngClass]="inventoryRiskRatio > 0.3 ? 'bg-rose-100 text-rose-700' : 'bg-primary/10 text-primary'">inventory_2</span>
+              <div class="zadana-icon-box h-9 w-9 rounded-lg text-[20px]"
+                    [ngClass]="inventoryRiskRatio > 0.3 ? 'bg-rose-100 text-rose-700' : 'bg-primary/10 text-primary'">
+                <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+              </div>
               <div class="min-w-0 flex-1">
                 <span class="text-[10px] font-bold" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-700' : 'text-slate-400'">{{ 'VENDOR_ANALYTICS.INSIGHTS.INVENTORY_RISK_TITLE' | translate }}</span>
                 <strong class="mt-0.5 block text-xl font-black tabular-nums" [ngClass]="inventoryRiskRatio > 0.3 ? 'text-rose-800' : 'text-slate-900'">{{ formatPercent(inventoryRiskRatio * 100) }}</strong>
@@ -328,7 +336,9 @@
             </div>
 
             <div class="flex gap-3 rounded-xl border border-primary/15 bg-primary/[0.04] p-3.5 text-start">
-              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary material-symbols-outlined text-[20px]">payments</span>
+              <div class="zadana-icon-box h-9 w-9 rounded-lg bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-[20px]">payments</span>
+              </div>
               <div class="min-w-0 flex-1">
                 <span class="text-[10px] font-bold text-slate-400">{{ 'VENDOR_ANALYTICS.INSIGHTS.REVENUE_RHYTHM_TITLE' | translate }}</span>
                 <strong class="mt-0.5 block text-lg font-black tabular-nums text-primary">{{ formatCurrency(dailyAverageRevenue) }}</strong>

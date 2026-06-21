@@ -59,9 +59,9 @@ const VALID_ICON_NAME = /^[a-z][a-z0-9_]*$/;
             </div>
            </div>
 
-           <div class="w-10 h-10 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500"
+           <div class="zadana-icon-box w-10 h-10 rounded-xl group-hover:rotate-12 transition-transform duration-500"
                 [style.background-color]="card.color + '10'">
-                <span class="material-symbols-outlined text-[20px] flex items-center justify-center"
+                <span class="material-symbols-outlined text-[20px]"
                       [style.color]="card.color">{{ getIconName(card.icon) }}</span>
            </div>
         </div>
