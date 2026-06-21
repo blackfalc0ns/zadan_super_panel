@@ -8,6 +8,7 @@ import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-h
 import { StatusPillComponent, type StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import { AdminNotificationPreferences, AdminNotificationsService } from '@core/services/admin-notifications.service';
 import { ADMIN_NOTIFICATION_SOUND_OPTIONS, AdminNotificationSound, AdminNotificationSoundService } from '@core/services/admin-notification-sound.service';
+import { AdminOneSignalService } from '@core/services/admin-one-signal.service';
 import { describeApiError } from '@shared/utils/api-error.util';
 import { ToastService } from '@shared/services/toast.service';
 import {
@@ -257,7 +258,7 @@ const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
                 {{ (hasPersistentSoundPreference ? 'NOTIFICATIONS_CENTER.SOUND.HINT_DEVICE' : 'NOTIFICATIONS_CENTER.SOUND.HINT_LOCAL') | translate }}
               </p>
 
-              <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+              <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <button
                   type="button"
                   (click)="previewNotificationSound()"
@@ -275,11 +276,34 @@ const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
                   <span *ngIf="!isSavingNotificationSound" class="material-symbols-outlined text-[18px]">music_note</span>
                   {{ 'NOTIFICATIONS_CENTER.SOUND.SAVE' | translate }}
                 </button>
+
+                <button
+                  type="button"
+                  (click)="enableBrowserPush()"
+                  [disabled]="isEnablingBrowserPush"
+                  class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-zadna-primary/20 bg-zadna-primary/5 px-5 text-[12px] font-black text-zadna-primary transition hover:bg-zadna-primary/10 disabled:cursor-not-allowed disabled:opacity-50">
+                  <span class="material-symbols-outlined text-[18px]">notifications_active</span>
+                  {{ (isEnablingBrowserPush ? 'NOTIFICATIONS_CENTER.WEB_PUSH.ENABLING' : 'NOTIFICATIONS_CENTER.WEB_PUSH.ENABLE') | translate }}
+                </button>
+
+                <button
+                  type="button"
+                  (click)="sendPushTest()"
+                  [disabled]="isSendingPushTest"
+                  class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                  <span class="material-symbols-outlined text-[18px]">send</span>
+                  {{ (isSendingPushTest ? 'NOTIFICATIONS_CENTER.WEB_PUSH.TESTING' : 'NOTIFICATIONS_CENTER.WEB_PUSH.TEST') | translate }}
+                </button>
               </div>
 
               <p *ngIf="notificationSoundMessage" class="mt-4 rounded-2xl border px-4 py-3 text-[13px] font-bold"
                 [ngClass]="notificationSoundMessageType === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
                 {{ notificationSoundMessage }}
+              </p>
+
+              <p *ngIf="pushMessage" class="mt-4 rounded-2xl border px-4 py-3 text-[13px] font-bold"
+                [ngClass]="pushMessageType === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
+                {{ pushMessage }}
               </p>
             </ng-container>
           </section>
@@ -361,7 +385,11 @@ export class AdminProfileComponent implements OnInit {
   selectedNotificationSound: AdminNotificationSound = 'classic';
   isLoadingNotificationPreferences = true;
   isSavingNotificationSound = false;
+  isEnablingBrowserPush = false;
+  isSendingPushTest = false;
   notificationSoundMessage = '';
+  pushMessage = '';
+  pushMessageType: 'success' | 'error' = 'success';
   notificationSoundMessageType: 'success' | 'error' = 'success';
   readonly profileForm;
   readonly passwordForm;
@@ -373,6 +401,7 @@ export class AdminProfileComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly notificationsService: AdminNotificationsService,
     private readonly notificationSoundService: AdminNotificationSoundService,
+    private readonly adminOneSignalService: AdminOneSignalService,
     private readonly toastService: ToastService
   ) {
     this.selectedNotificationSound = this.notificationSoundService.getCurrentSound();
@@ -528,6 +557,53 @@ export class AdminProfileComponent implements OnInit {
 
   previewNotificationSound(): void {
     this.notificationSoundService.preview(this.selectedNotificationSound);
+  }
+
+  enableBrowserPush(): void {
+    this.pushMessage = '';
+    this.isEnablingBrowserPush = true;
+    this.adminOneSignalService.requestPermissionAndRegister();
+
+    window.setTimeout(() => {
+      this.isEnablingBrowserPush = false;
+      this.loadNotificationPreferences();
+
+      if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+        this.pushMessageType = 'error';
+        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
+        this.cdr.markForCheck();
+        return;
+      }
+
+      if ((this.notificationPreferences?.webDeviceCount ?? 0) > 0) {
+        this.pushMessageType = 'success';
+        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLED');
+      }
+
+      this.cdr.markForCheck();
+    }, 4000);
+  }
+
+  sendPushTest(): void {
+    this.pushMessage = '';
+    this.isSendingPushTest = true;
+    this.adminOneSignalService.requestPermissionAndRegister();
+
+    this.notificationsService.sendTestNotification().subscribe({
+      next: () => {
+        this.cdr.markForCheck();
+        this.isSendingPushTest = false;
+        this.pushMessageType = 'success';
+        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT');
+        this.loadNotificationPreferences();
+      },
+      error: () => {
+        this.cdr.markForCheck();
+        this.isSendingPushTest = false;
+        this.pushMessageType = 'error';
+        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
+      }
+    });
   }
 
   saveNotificationSoundPreference(): void {

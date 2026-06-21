@@ -224,6 +224,14 @@ export class AdminNotificationsService {
     );
   }
 
+  sendTestNotification(): Observable<{ eventId?: string; status?: string }> {
+    if (this.requiresApiSession) {
+      return of({});
+    }
+
+    return this.http.post<{ eventId?: string; status?: string }>(`${this.apiUrl}/test`, {});
+  }
+
   mergeRealtimeNotification(notification: AdminNotification): void {
     const normalized = this.normalizeNotification(notification);
     const existing = this.recentSubject.value.filter((item) => item.id !== normalized.id);

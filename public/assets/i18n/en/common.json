@@ -1158,6 +1158,16 @@
         "URGENT": "Urgent",
         "OFF": "Muted"
       }
+    },
+    "WEB_PUSH": {
+      "ENABLE": "Enable Windows notifications",
+      "TEST": "Send test notification",
+      "ENABLING": "Registering browser...",
+      "TESTING": "Sending test...",
+      "ENABLED": "Browser notifications are active on this device.",
+      "DENIED": "Notifications are blocked in Windows or the browser. Enable them from site settings.",
+      "TEST_SENT": "Test notification sent. Check the Windows notification center.",
+      "TEST_FAILED": "Could not send the test notification."
     }
   },
   "ADMIN_PROFILE": {
