@@ -315,8 +315,10 @@ export class VendorDisputesComponent {
       priorityLabel: item.priorityLabel?.trim() || this.translate.instant(this.getPriorityLabelKey(item.priority)),
       queue: item.queue,
       queueLabel: item.queueLabel?.trim() || this.humanizeLabel(item.queue),
-      createdDate: createdAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US'),
-      createdTime: createdAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+      createdDate: createdAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+        timeZone: 'Asia/Riyadh'
+      }),
+      createdTime: createdAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
         hour: '2-digit',
         minute: '2-digit'
       }),

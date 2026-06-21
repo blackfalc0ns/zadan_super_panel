@@ -32,13 +32,13 @@ export class DashboardAuditFeedComponent {
       if (hours >= 3 && hours <= 10) return `منذ ${hours} ساعات`;
       if (hours < 24) return `منذ ${hours} ساعة`;
 
-      return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'short' }).format(new Date(value));
+      return new Intl.DateTimeFormat('ar-EG', { timeZone: 'Asia/Riyadh', day: 'numeric', month: 'short' }).format(new Date(value));
     } else {
       if (minutes < 1) return 'Just now';
       if (minutes < 60) return `${minutes} min ago`;
       const hours = Math.floor(minutes / 60);
       if (hours < 24) return `${hours} hr ago`;
-      return new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short' }).format(new Date(value));
+      return new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Riyadh', day: 'numeric', month: 'short' }).format(new Date(value));
     }
   }
 }

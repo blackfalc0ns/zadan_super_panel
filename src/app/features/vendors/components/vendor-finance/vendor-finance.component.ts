@@ -189,7 +189,7 @@ export class VendorFinanceComponent implements OnInit {
         const date = new Date(eventDate);
         if (!Number.isNaN(date.getTime())) {
           datePart = date.toISOString().slice(0, 10);
-          timePart = date.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+          timePart = date.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
             hour: '2-digit',
             minute: '2-digit'
           });
@@ -517,7 +517,7 @@ export class VendorFinanceComponent implements OnInit {
   }
 
   formatDate(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -525,7 +525,7 @@ export class VendorFinanceComponent implements OnInit {
   }
 
   formatDateShort(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
       month: 'short',
       day: 'numeric'
     }).format(new Date(value));

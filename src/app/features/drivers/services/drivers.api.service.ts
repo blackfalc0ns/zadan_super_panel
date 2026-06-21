@@ -1357,7 +1357,7 @@ export class DriverService {
 
   private formatDate(value: string): string {
     const parsed = this.parseDate(value);
-    return new Intl.DateTimeFormat('en-CA', {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -1366,7 +1366,7 @@ export class DriverService {
 
   private formatDateTime(value: string): string {
     const parsed = this.parseDate(value);
-    return new Intl.DateTimeFormat('ar-EG', {
+    return new Intl.DateTimeFormat('ar-EG', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',

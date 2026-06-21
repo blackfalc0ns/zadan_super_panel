@@ -399,7 +399,7 @@ export class VendorActivityLogComponent {
   }
 
   formatDateTime(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -409,7 +409,7 @@ export class VendorActivityLogComponent {
   }
 
   formatDate(value: string): string {
-    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+    return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
       day: '2-digit',
       month: 'short',
       year: 'numeric'

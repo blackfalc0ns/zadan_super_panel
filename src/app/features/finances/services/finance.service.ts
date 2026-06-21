@@ -962,7 +962,7 @@ export class FinanceService {
   }
 
   private shortDate(value: string): string {
-    return new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+    return new Date(value).toLocaleDateString('en-GB', { timeZone: 'Asia/Riyadh', day: '2-digit', month: 'short' });
   }
 
   private buildSettlements(): Settlement[] {

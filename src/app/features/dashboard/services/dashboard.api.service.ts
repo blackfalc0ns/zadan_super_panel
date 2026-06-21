@@ -557,7 +557,7 @@ export class SuperAdminDashboardService {
   };
 
   private formatDateTime(value: string, lang: 'ar' | 'en'): string {
-    return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', { timeZone: 'Asia/Riyadh',
       day: 'numeric',
       month: 'short',
       hour: 'numeric',

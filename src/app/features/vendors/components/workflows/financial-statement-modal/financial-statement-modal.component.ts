@@ -122,7 +122,7 @@ export class FinancialStatementModalComponent {
   }
 
   private formatDate(date: Date): string {
-    return date.toLocaleDateString(this.isRTL ? 'ar-SA' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    return date.toLocaleDateString(this.isRTL ? 'ar-SA' : 'en-GB', { timeZone: 'Asia/Riyadh', day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   // Calendar navigation
@@ -143,7 +143,7 @@ export class FinancialStatementModalComponent {
   }
 
   getMonthName(date: Date): string {
-    return date.toLocaleDateString(this.isRTL ? 'ar-SA' : 'en-US', { month: 'long', year: 'numeric' });
+    return date.toLocaleDateString(this.isRTL ? 'ar-SA' : 'en-US', { timeZone: 'Asia/Riyadh', month: 'long', year: 'numeric' });
   }
 
   selectDateFrom(day: number) {

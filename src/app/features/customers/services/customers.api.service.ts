@@ -711,7 +711,7 @@ export class CustomersService {
   }
 
   private formatDate(value: string): string {
-    return new Intl.DateTimeFormat('en-CA', {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -719,7 +719,7 @@ export class CustomersService {
   }
 
   private formatMonthYear(value: string): string {
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Riyadh',
       month: 'long',
       year: 'numeric'
     }).format(new Date(value));
@@ -731,12 +731,12 @@ export class CustomersService {
 
   private formatAuditDate(value: string): string {
     const date = new Date(value);
-    const datePart = new Intl.DateTimeFormat('en-CA', {
+    const datePart = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     }).format(date);
-    const timePart = new Intl.DateTimeFormat('en-US', {
+    const timePart = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Riyadh',
       hour: '2-digit',
       minute: '2-digit',
       hour12: true

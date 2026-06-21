@@ -350,8 +350,10 @@ export class VendorOrdersComponent {
       id: order.id,
       orderNumber: order.orderNumber,
       customer: order.customerName,
-      date: placedAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US'),
-      time: placedAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+      date: placedAt.toLocaleDateString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', {
+        timeZone: 'Asia/Riyadh'
+      }),
+      time: placedAt.toLocaleTimeString(this.currentLang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
         hour: '2-digit',
         minute: '2-digit'
       }),

@@ -1240,7 +1240,7 @@ export class AdminUsersService {
   }
 
   private createRelativeTimestamp(date: Date): string {
-    const timestamp = new Intl.DateTimeFormat('en-US', {
+    const timestamp = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -1314,12 +1314,12 @@ export class AdminUsersService {
 
   private createTimestamp(): string {
     const now = new Date();
-    const datePart = new Intl.DateTimeFormat('en-CA', {
+    const datePart = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     }).format(now);
-    const timePart = new Intl.DateTimeFormat('en-US', {
+    const timePart = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Riyadh',
       hour: '2-digit',
       minute: '2-digit',
       hour12: true

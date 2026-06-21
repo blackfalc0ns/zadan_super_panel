@@ -258,7 +258,9 @@ export class PayoutsReviewModalComponent implements OnChanges {
     const createdLabel = createdAt ? `${transaction.date} - ${transaction.time}` : transaction.date;
     const processingLabel = transaction.status === 'pending' ? '-' : createdLabel;
     const completedLabel = processedAt
-      ? processedAt.toLocaleString(this.isRTL ? 'ar-SA' : 'en-US')
+      ? processedAt.toLocaleString(this.isRTL ? 'ar-SA' : 'en-US', {
+          timeZone: 'Asia/Riyadh'
+        })
       : '-';
 
     return {

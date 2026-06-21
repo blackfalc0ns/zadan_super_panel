@@ -182,7 +182,9 @@ export class SystemLogsComponent implements OnInit {
       },
       {
         id: 'refresh', title: 'SYSTEM_LOGS.CARDS.LAST_REFRESH',
-        value: this.lastRefreshAt ? this.lastRefreshAt.toLocaleTimeString() : '...',
+        value: this.lastRefreshAt
+          ? this.lastRefreshAt.toLocaleTimeString(undefined, { timeZone: 'Asia/Riyadh' })
+          : '...',
         icon: '<span class="material-symbols-outlined text-[20px]">schedule</span>',
         color: '#f59e0b', clickable: false
       }

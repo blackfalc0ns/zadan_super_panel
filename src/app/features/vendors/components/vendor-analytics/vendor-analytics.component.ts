@@ -657,21 +657,21 @@ export class VendorAnalyticsComponent {
   }
 
   formatShortDate(value: string): string {
-    return new Intl.DateTimeFormat(this.locale, {
+    return new Intl.DateTimeFormat(this.locale, { timeZone: 'Asia/Riyadh',
       day: 'numeric',
       month: 'short'
     }).format(new Date(value));
   }
 
   formatAxisDate(value: string): string {
-    return new Intl.DateTimeFormat(this.locale, {
+    return new Intl.DateTimeFormat(this.locale, { timeZone: 'Asia/Riyadh',
       day: 'numeric',
       month: 'numeric'
     }).format(new Date(value));
   }
 
   formatDateTime(value: string): string {
-    return new Intl.DateTimeFormat(this.locale, {
+    return new Intl.DateTimeFormat(this.locale, { timeZone: 'Asia/Riyadh',
       day: 'numeric',
       month: 'short',
       hour: 'numeric',

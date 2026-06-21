@@ -1950,7 +1950,7 @@ export class AdminSupportCenterComponent implements OnInit {
       return value;
     }
 
-    return new Intl.DateTimeFormat(this.isRtl ? 'ar-EG' : 'en-US', {
+    return new Intl.DateTimeFormat(this.isRtl ? 'ar-EG' : 'en-US', { timeZone: 'Asia/Riyadh',
       year: 'numeric',
       month: 'short',
       day: 'numeric',

@@ -696,7 +696,7 @@ export class FinancialAdjustmentsComponent implements OnInit {
   trackById(_: number, a: FinancialAdjustment): string { return a.id; }
 
   formatDate(d: string): string {
-    return new Date(d).toLocaleDateString(getFinanceLocale(this.translate.currentLang), { calendar: 'gregory' });
+    return new Date(d).toLocaleDateString(getFinanceLocale(this.translate.currentLang), { timeZone: 'Asia/Riyadh', calendar: 'gregory' });
   }
 
   formatNumber(value: number): string {

@@ -10,19 +10,19 @@ export function toDateTimeLocalInput(value?: string | null): string {
     return '';
   }
 
-  const pad = (part: number): string => part.toString().padStart(2, '0');
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Riyadh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes): string =>
+    parts.find((item) => item.type === type)?.value ?? '';
 
-  return [
-    date.getFullYear(),
-    '-',
-    pad(date.getMonth() + 1),
-    '-',
-    pad(date.getDate()),
-    'T',
-    pad(date.getHours()),
-    ':',
-    pad(date.getMinutes())
-  ].join('');
+  return `${part('year')}-${part('month')}-${part('day')}T${part('hour')}:${part('minute')}`;
 }
 
 export function toNullableUtcIso(value?: string | null): string | null {
@@ -30,7 +30,10 @@ export function toNullableUtcIso(value?: string | null): string | null {
     return null;
   }
 
-  const parsed = new Date(value);
+  const normalized = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value)
+    ? value
+    : `${value.length === 16 ? `${value}:00` : value}+03:00`;
+  const parsed = new Date(normalized);
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
 }
 
@@ -44,7 +47,7 @@ export function formatDateTime(value?: string | null): string {
     return '--';
   }
 
-  return date.toLocaleString();
+  return date.toLocaleString(undefined, { timeZone: 'Asia/Riyadh' });
 }
 
 export function formatDateRange(startsAtUtc?: string | null, endsAtUtc?: string | null): string {

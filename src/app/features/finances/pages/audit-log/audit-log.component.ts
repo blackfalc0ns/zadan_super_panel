@@ -159,10 +159,10 @@ export class AuditLogComponent implements OnInit {
   trackById(_: number, e: AuditLogEntry): string { return e.id; }
 
   formatDate(ts: string): string {
-    return new Date(ts).toLocaleDateString(getFinanceLocale(this.translate.currentLang), { calendar: 'gregory' });
+    return new Date(ts).toLocaleDateString(getFinanceLocale(this.translate.currentLang), { timeZone: 'Asia/Riyadh', calendar: 'gregory' });
   }
 
   formatTime(ts: string): string {
-    return new Date(ts).toLocaleTimeString(getFinanceLocale(this.translate.currentLang), { hour: '2-digit', minute: '2-digit' });
+    return new Date(ts).toLocaleTimeString(getFinanceLocale(this.translate.currentLang), { timeZone: 'Asia/Riyadh', hour: '2-digit', minute: '2-digit' });
   }
 }

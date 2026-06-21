@@ -493,6 +493,6 @@ export class FinanceDashboardComponent implements OnInit {
     if (diff < 1) return this.translate.instant('FINANCES.TIME.JUST_NOW');
     if (diff < 60) return this.translate.instant('FINANCES.TIME.MINUTES_AGO', { count: diff });
     if (diff < 1440) return this.translate.instant('FINANCES.TIME.HOURS_AGO', { count: Math.floor(diff / 60) });
-    return d.toLocaleDateString(getFinanceLocale(this.translate.currentLang), { calendar: 'gregory' });
+    return d.toLocaleDateString(getFinanceLocale(this.translate.currentLang), { timeZone: 'Asia/Riyadh', calendar: 'gregory' });
   }
 }
