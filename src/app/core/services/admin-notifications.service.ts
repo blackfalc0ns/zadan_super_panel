@@ -414,6 +414,18 @@ export class AdminNotificationsService {
         title: { ar: 'بيانات بنكية جاهزة للمراجعة', en: 'Vendor banking details ready for review' },
         body: { ar: 'قام التاجر بتحديث البيانات البنكية وهي بانتظار مراجعتك.', en: 'A vendor updated payout banking details and they are waiting for your review.' }
       },
+      'vendor.hours_updated': {
+        title: { ar: 'تم تحديث ساعات عمل تاجر', en: 'Vendor operating hours updated' },
+        body: { ar: 'قام أحد التجار بتحديث ساعات العمل.', en: 'A vendor updated operating hours.' }
+      },
+      'vendor.operations_updated': {
+        title: { ar: 'تم تحديث إعدادات تشغيل تاجر', en: 'Vendor operations updated' },
+        body: { ar: 'قام أحد التجار بتحديث إعدادات التشغيل.', en: 'A vendor updated operations settings.' }
+      },
+      'vendor.notification_settings_updated': {
+        title: { ar: 'تم تحديث تفضيلات إشعارات تاجر', en: 'Vendor notification preferences updated' },
+        body: { ar: 'قام أحد التجار بتحديث تفضيلات الإشعارات.', en: 'A vendor updated notification preferences.' }
+      },
       'catalog.product_request_submitted': {
         title: { ar: 'طلب منتج جديد', en: 'New product request' },
         body: { ar: 'يوجد طلب منتج جديد بانتظار مراجعة الكتالوج.', en: 'A new product request is waiting for catalog review.' }
