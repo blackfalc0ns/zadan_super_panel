@@ -111,10 +111,7 @@ export class AdminNotificationRealtimeService {
 
     if (!this.hubConnection) {
       const connectionOptions = {
-        accessTokenFactory: () => this.authService.getToken() ?? '',
-        ...(environment.production
-          ? { transport: signalR.HttpTransportType.LongPolling }
-          : {})
+        accessTokenFactory: () => this.authService.getToken() ?? ''
       };
 
       this.hubConnection = new signalR.HubConnectionBuilder()

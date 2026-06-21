@@ -335,6 +335,10 @@ export class DeleteConfirmationModalComponent {
   }
 
   onClose() {
+    if (this.isLoading) {
+      return;
+    }
+
     this.close.emit();
   }
 }

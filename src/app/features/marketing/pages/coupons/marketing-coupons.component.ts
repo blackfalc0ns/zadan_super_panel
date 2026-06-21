@@ -45,16 +45,16 @@ interface CouponFormValue {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent, DataTableComponent, SearchableSelectComponent],
   template: `
-    <div class="space-y-6" dir="rtl">
+    <div class="space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex w-full max-w-3xl flex-wrap items-center gap-3">
           <div class="relative min-w-[16rem] flex-1">
-            <span class="material-symbols-outlined pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+            <span class="material-symbols-outlined pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
             <input
               [(ngModel)]="searchTerm"
               type="text"
               [placeholder]="'MARKETING.COUPONS.SEARCH_PLACEHOLDER' | translate"
-              class="h-11 w-full rounded-xl border border-slate-200 bg-white pr-12 pl-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
+              class="h-11 w-full rounded-xl border border-slate-200 bg-white ps-12 pe-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
           </div>
 
           <app-searchable-select
@@ -145,7 +145,7 @@ interface CouponFormValue {
                 type="button"
                 class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-500 transition-colors hover:bg-zadna-primary/10 hover:text-zadna-primary"
                 (click)="openEdit(coupon.id)"
-                [title]="'MARKETING.PERMISSIONS.ACTIONS.EDIT' | translate">
+                [title]="'MARKETING.ACTIONS.EDIT' | translate">
                 <span class="material-symbols-outlined text-[18px]">edit</span>
               </button>
 
@@ -154,8 +154,10 @@ interface CouponFormValue {
                 class="flex h-9 w-9 items-center justify-center rounded-xl transition-colors"
                 [ngClass]="coupon.isActive ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'"
                 (click)="toggleStatus(coupon)"
+                [disabled]="togglingCouponId === coupon.id"
                 [title]="(coupon.isActive ? 'MARKETING.ACTIONS.DEACTIVATE' : 'MARKETING.ACTIONS.ACTIVATE') | translate">
-                <span class="material-symbols-outlined text-[18px]">{{ coupon.isActive ? 'pause' : 'play_arrow' }}</span>
+                <span *ngIf="togglingCouponId === coupon.id" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+                <span *ngIf="togglingCouponId !== coupon.id" class="material-symbols-outlined text-[18px]">{{ coupon.isActive ? 'pause' : 'play_arrow' }}</span>
               </button>
 
               <button
@@ -206,22 +208,24 @@ interface CouponFormValue {
                 type="button"
                 class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-black text-slate-700"
                 (click)="openEdit(coupon.id)">
-                {{ 'MARKETING.PERMISSIONS.ACTIONS.EDIT' | translate }}
+                {{ 'MARKETING.ACTIONS.EDIT' | translate }}
               </button>
 
               <button
                 type="button"
                 class="rounded-xl px-3 py-2 text-xs font-black"
                 [ngClass]="coupon.isActive ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'"
+                [disabled]="togglingCouponId === coupon.id"
                 (click)="toggleStatus(coupon)">
-                {{ (coupon.isActive ? 'MARKETING.ACTIONS.DEACTIVATE' : 'MARKETING.ACTIONS.ACTIVATE') | translate }}
+                <span *ngIf="togglingCouponId === coupon.id" class="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+                <ng-container *ngIf="togglingCouponId !== coupon.id">{{ (coupon.isActive ? 'MARKETING.ACTIONS.DEACTIVATE' : 'MARKETING.ACTIONS.ACTIVATE') | translate }}</ng-container>
               </button>
 
               <button
                 type="button"
                 class="rounded-xl bg-red-100 px-3 py-2 text-xs font-black text-red-700"
                 (click)="promptDelete(coupon)">
-                {{ 'MARKETING.PERMISSIONS.ACTIONS.DELETE' | translate }}
+                {{ 'MARKETING.ACTIONS.DELETE' | translate }}
               </button>
             </div>
           </div>
@@ -230,7 +234,14 @@ interface CouponFormValue {
     </div>
 
     <div *ngIf="isModalOpen" class="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm">
-      <div class="my-6 w-full max-w-5xl rounded-[2rem] bg-white shadow-2xl">
+      <div class="relative my-6 w-full max-w-5xl rounded-[2rem] bg-white shadow-2xl">
+        <div *ngIf="loadingCouponDetails" class="absolute inset-0 z-10 flex items-center justify-center rounded-[2rem] bg-white/80 backdrop-blur-sm">
+          <div class="flex flex-col items-center gap-3">
+            <span class="inline-block h-8 w-8 animate-spin rounded-full border-[3px] border-zadna-primary border-t-transparent"></span>
+            <span class="text-sm font-bold text-slate-600">{{ 'MARKETING.COUPONS.ACTIONS.LOADING' | translate }}</span>
+          </div>
+        </div>
+
         <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
           <div>
             <h3 class="text-xl font-black text-slate-900">{{ (selectedCoupon ? 'MARKETING.COUPONS.MODAL.EDIT_TITLE' : 'MARKETING.COUPONS.MODAL.CREATE_TITLE') | translate }}</h3>
@@ -240,7 +251,8 @@ interface CouponFormValue {
           <button
             type="button"
             (click)="closeModal()"
-            class="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+            [disabled]="saving || loadingCouponDetails"
+            class="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -255,7 +267,7 @@ interface CouponFormValue {
 
             <label class="space-y-2">
               <span class="text-sm font-black text-slate-700">{{ 'MARKETING.COUPONS.FIELDS.TITLE' | translate }}</span>
-              <input [(ngModel)]="form.title" name="title" type="text" placeholder="خصم ترحيبي"
+              <input [(ngModel)]="form.title" name="title" type="text" [placeholder]="'MARKETING.COUPONS.MESSAGES.TITLE_PLACEHOLDER' | translate"
                 class="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
             </label>
 
@@ -389,15 +401,16 @@ interface CouponFormValue {
             <button
               type="button"
               (click)="closeModal()"
-              class="h-11 rounded-xl border border-slate-200 px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-50">
+              [disabled]="saving || loadingCouponDetails"
+              class="h-11 rounded-xl border border-slate-200 px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60">
               {{ 'MARKETING.COUPONS.ACTIONS.CANCEL' | translate }}
             </button>
 
             <button
               type="submit"
-              [disabled]="saving"
-              class="flex h-11 items-center gap-2 rounded-xl bg-zadna-primary px-5 text-sm font-bold text-white transition hover:bg-zadna-primary/90 disabled:cursor-not-allowed disabled:opacity-60">
-              <span *ngIf="saving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
+              [disabled]="saving || loadingCouponDetails"
+              class="flex h-11 min-w-[8.5rem] items-center justify-center gap-2 rounded-xl bg-zadna-primary px-5 text-sm font-bold text-white transition hover:bg-zadna-primary/90 disabled:cursor-not-allowed disabled:opacity-60">
+              <span *ngIf="saving" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
               {{ (saving ? 'MARKETING.ACTIONS.SAVING' : 'MARKETING.COUPONS.ACTIONS.SAVE') | translate }}
             </button>
           </div>
@@ -410,7 +423,7 @@ interface CouponFormValue {
       [isLoading]="deleting"
       [title]="'MARKETING.COUPONS.MESSAGES.DELETE_TITLE' | translate"
       [message]="'MARKETING.COUPONS.MESSAGES.DELETE_MESSAGE' | translate"
-      (close)="deleteTarget = null"
+      (close)="onDeleteModalClose()"
       (confirm)="confirmDelete()">
     </app-delete-confirmation-modal>
   `
@@ -421,7 +434,9 @@ export class MarketingCouponsComponent implements OnInit {
   vendors: Vendor[] = [];
   loading = false;
   saving = false;
+  loadingCouponDetails = false;
   deleting = false;
+  togglingCouponId: string | null = null;
   error = '';
   modalError = '';
   searchTerm = '';
@@ -430,17 +445,6 @@ export class MarketingCouponsComponent implements OnInit {
   isModalOpen = false;
   selectedCoupon: MarketingCoupon | null = null;
   deleteTarget: MarketingCoupon | null = null;
-
-  readonly statusOptions: SearchableSelectOption[] = [
-    { label: 'كل الحالات', value: 'all' },
-    { label: 'النشطة', value: 'active' },
-    { label: 'غير النشطة', value: 'inactive' }
-  ];
-
-  readonly discountTypeOptions: SearchableSelectOption[] = [
-    { label: 'مبلغ ثابت', value: 'Fixed' },
-    { label: 'نسبة مئوية', value: 'Percentage' }
-  ];
 
   readonly tableColumns: TableColumn[] = [
     { key: 'code', title: 'MARKETING.COUPONS.TABLE.COUPON', type: 'custom', width: '18rem', align: 'left' },
@@ -559,8 +563,11 @@ export class MarketingCouponsComponent implements OnInit {
   }
 
   openEdit(id: string): void {
-    this.saving = true;
+    this.loadingCouponDetails = true;
     this.modalError = '';
+    this.isModalOpen = true;
+    this.selectedCoupon = null;
+    this.form = this.createEmptyForm();
 
     this.marketingApi.getCouponById(id).subscribe({
       next: (coupon) => {
@@ -582,23 +589,35 @@ export class MarketingCouponsComponent implements OnInit {
           vendorIds: coupon.applicableVendors.map((vendor) => vendor.vendorId)
         };
         this.vendorSearchTerm = '';
-        this.isModalOpen = true;
-        this.saving = false;
+        this.loadingCouponDetails = false;
       },
       error: (error) => {
         this.cdr.markForCheck();
-        this.saving = false;
-        this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'));
+        this.loadingCouponDetails = false;
+        this.isModalOpen = false;
+        this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.TABS.COUPONS'));
       }
     });
   }
 
   closeModal(): void {
+    if (this.saving || this.loadingCouponDetails) {
+      return;
+    }
+
     this.isModalOpen = false;
     this.selectedCoupon = null;
     this.modalError = '';
     this.vendorSearchTerm = '';
     this.form = this.createEmptyForm();
+  }
+
+  onDeleteModalClose(): void {
+    if (this.deleting) {
+      return;
+    }
+
+    this.deleteTarget = null;
   }
 
   saveCoupon(): void {
@@ -638,6 +657,11 @@ export class MarketingCouponsComponent implements OnInit {
   }
 
   toggleStatus(coupon: MarketingCoupon): void {
+    if (this.togglingCouponId) {
+      return;
+    }
+
+    this.togglingCouponId = coupon.id;
     const request$ = coupon.isActive
       ? this.marketingApi.deactivateCoupon(coupon.id)
       : this.marketingApi.activateCoupon(coupon.id);
@@ -645,6 +669,7 @@ export class MarketingCouponsComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.cdr.markForCheck();
+        this.togglingCouponId = null;
         this.toastService.success(
           coupon.isActive 
             ? this.translateService.instant('MARKETING.COUPONS.MESSAGES.DEACTIVATED') 
@@ -653,7 +678,11 @@ export class MarketingCouponsComponent implements OnInit {
         );
         this.loadCoupons();
       },
-      error: (error) => this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'))
+      error: (error) => {
+        this.cdr.markForCheck();
+        this.togglingCouponId = null;
+        this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.TABS.COUPONS'));
+      }
     });
   }
 
@@ -678,7 +707,7 @@ export class MarketingCouponsComponent implements OnInit {
       error: (error) => {
         this.cdr.markForCheck();
         this.deleting = false;
-        this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.COUPONS.TABS.COUPONS'));
+        this.toastService.error(this.getCouponErrorMessage(error), this.translateService.instant('MARKETING.TABS.COUPONS'));
       }
     });
   }
@@ -703,14 +732,15 @@ export class MarketingCouponsComponent implements OnInit {
   }
 
   formatDiscount(coupon: MarketingCoupon): string {
+    const currency = this.translateService.instant('COMMON.CURRENCY');
     return coupon.discountType === 'Percentage'
       ? `${coupon.discountValue}%`
-      : `${coupon.discountValue.toFixed(2)} ${this.translateService.currentLang === 'ar' ? 'ر.س' : 'SAR'}`;
+      : `${coupon.discountValue.toFixed(2)} ${currency}`;
   }
 
   formatOrderConstraint(coupon: MarketingCoupon): string {
     const parts: string[] = [];
-    const currency = this.translateService.currentLang === 'ar' ? 'ر.س' : 'SAR';
+    const currency = this.translateService.instant('COMMON.CURRENCY');
 
     if (coupon.minOrderAmount) {
       parts.push(`${this.translateService.instant('MARKETING.COUPONS.TABLE.MIN_ORDER')} ${coupon.minOrderAmount.toFixed(2)} ${currency}`);
@@ -802,7 +832,7 @@ export class MarketingCouponsComponent implements OnInit {
       this.form.perUserLimit != null &&
       this.form.perUserLimit > this.form.usageLimit
     ) {
-      return 'عدد مرات الاستخدام لكل عميل لا يمكن أن يكون أكبر من الحد الكلي للكوبون.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.PER_USER_LIMIT_EXCEEDS_USAGE');
     }
 
     if (!this.form.applyToAllVendors && this.form.vendorIds.length === 0) {
@@ -840,11 +870,11 @@ export class MarketingCouponsComponent implements OnInit {
     }
 
     if (normalized.includes('vendor') && normalized.includes('not found')) {
-      return 'أحد المتاجر المحددة غير موجود أو لم يعد متاحًا.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.VENDOR_NOT_FOUND');
     }
 
     if (normalized.includes('coupon') && normalized.includes('not found')) {
-      return 'الكوبون المطلوب غير موجود أو تم حذفه.';
+      return this.translateService.instant('MARKETING.COUPONS.MESSAGES.COUPON_NOT_FOUND');
     }
 
     return message;

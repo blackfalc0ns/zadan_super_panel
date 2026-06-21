@@ -352,6 +352,7 @@
       "ACTIVATE": "Activate",
       "DEACTIVATE": "Deactivate",
       "SAVE_CHANGES": "Save changes",
+      "SAVING": "Saving...",
       "EDIT": "Edit",
       "DELETE": "Delete"
     },
@@ -473,7 +474,7 @@
         "CANCEL": "Cancel",
         "SELECT_VISIBLE": "Select visible results",
         "CLEAR_SELECTION": "Clear selection",
-        "SEARCHING": "Uploading..."
+        "LOADING": "Loading..."
       },
       "STATUS_OPTIONS": {
         "ALL": "All statuses",
@@ -539,7 +540,11 @@
         "INVALID_DATE_RANGE": "The end date must be after the start date.",
         "USAGE_LIMIT_GT_ZERO": "Usage limit must be greater than zero.",
         "VENDORS_REQUIRED": "Please select at least one vendor or enable the 'Apply to all' option.",
-        "DUPLICATE_CODE": "The coupon code already exists. Please choose another one."
+        "DUPLICATE_CODE": "The coupon code already exists. Please choose another one.",
+        "PER_USER_LIMIT_EXCEEDS_USAGE": "Per-user usage limit cannot exceed the total coupon usage limit.",
+        "VENDOR_NOT_FOUND": "One of the selected vendors does not exist or is no longer available.",
+        "COUPON_NOT_FOUND": "The requested coupon was not found or has been deleted.",
+        "TITLE_PLACEHOLDER": "Welcome discount"
       }
     },
     "FEATURED": {
