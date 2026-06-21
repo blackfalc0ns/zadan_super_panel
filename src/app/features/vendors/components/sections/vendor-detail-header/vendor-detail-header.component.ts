@@ -350,7 +350,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
-      timeZone: 'UTC'
+      timeZone: 'Asia/Riyadh'
     }).format(parsed);
   }
 

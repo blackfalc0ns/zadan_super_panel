@@ -992,7 +992,7 @@ export class FinanceService {
     contexts.forEach((context, index) => {
       const settlementDate = new Date(this.sequenceDate(index));
       const monthKey = settlementDate.toISOString().slice(0, 7);
-      const periodLabel = settlementDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+      const periodLabel = settlementDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'Asia/Riyadh' });
       const periodFrom = new Date(Date.UTC(settlementDate.getUTCFullYear(), settlementDate.getUTCMonth(), 1, 0, 0, 0)).toISOString();
       const periodTo = new Date(Date.UTC(settlementDate.getUTCFullYear(), settlementDate.getUTCMonth() + 1, 0, 23, 59, 59)).toISOString();
 
@@ -1495,7 +1495,7 @@ export class FinanceService {
     const buckets = new Map<string, { value: number; secondaryValue: number }>();
 
     contexts.forEach((context, index) => {
-      const label = new Date(this.sequenceDate(index)).toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+      const label = new Date(this.sequenceDate(index)).toLocaleDateString('en-US', { month: 'short', timeZone: 'Asia/Riyadh' });
       const current = buckets.get(label) ?? { value: 0, secondaryValue: 0 };
       current.value += context.order.total;
       current.secondaryValue += context.breakdown.netMargin;
@@ -1513,7 +1513,7 @@ export class FinanceService {
     const buckets = new Map<string, number>();
 
     refunds.forEach((refund) => {
-      const label = new Date(refund.createdAt).toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+      const label = new Date(refund.createdAt).toLocaleDateString('en-US', { month: 'short', timeZone: 'Asia/Riyadh' });
       buckets.set(label, (buckets.get(label) ?? 0) + refund.requestedAmount);
     });
 

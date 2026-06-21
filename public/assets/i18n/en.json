@@ -6732,7 +6732,7 @@
       "CUSTOMER_DRIVER_ARRIVED_AT_DELIVERY": "Sends only when the driver marks arrived at customer.",
       "CUSTOMER_ORDER_IMPORTANT_UPDATE": "Sends only for major order/payment changes.",
       "VENDOR_ORDER_ACTION_REQUIRED": "Sends only for PendingVendorAcceptance orders.",
-      "VENDOR_WEEKLY_SUMMARY": "Sends Mondays at 09:00 Africa/Cairo when the vendor had order activity last week.",
+      "VENDOR_WEEKLY_SUMMARY": "Sends Mondays at 09:00 Asia/Riyadh when the vendor had order activity last week.",
       "VENDOR_APPROVED": "Automatically dispatches when the vendor account is approved.",
       "VENDOR_PASSWORD_RESET": "Automatically dispatches when a vendor password reset is triggered."
     },

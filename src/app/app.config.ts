@@ -1,4 +1,4 @@
-import { IMAGE_CONFIG } from '@angular/common';
+import { DATE_PIPE_DEFAULT_OPTIONS, IMAGE_CONFIG } from '@angular/common';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -77,6 +77,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([jwtInterceptor])),
     provideAuthBootstrap(),
     {
+      provide: DATE_PIPE_DEFAULT_OPTIONS,
+      useValue: { timezone: '+0300' }
+    },
+    {
       provide: IMAGE_CONFIG,
       useValue: {
         disableImageSizeWarning: true
@@ -91,4 +95,3 @@ export const appConfig: ApplicationConfig = {
     })
   ]
 };
-
