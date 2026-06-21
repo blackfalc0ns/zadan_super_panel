@@ -6550,6 +6550,8 @@
       "READ_ONLY": "Backend-owned"
     },
     "PROFILES": {
+      "SYSTEM_NO_REPLY": "Automated sender for OTP, password reset, verification, and system-only messages.",
+      "PUBLIC_CONTACT": "Public contact sender for contact-form responses and general correspondence.",
       "OPS_PRIMARY": "Primary sender for platform-wide operational and access messages.",
       "OPS_PRIMARY_NAME": "Operations Primary",
       "RISK_DESK": "Dedicated sender for risk, compliance, and escalation workflows.",
