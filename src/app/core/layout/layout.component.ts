@@ -127,10 +127,7 @@ export class LayoutComponent {
       .subscribe((notification) => {
         this.cdr.markForCheck();
         this.adminNotificationsService.mergeRealtimeNotification(notification);
-        const title = this.adminNotificationsService.getLocalizedTitle(notification, this.currentLang);
-        const body = this.adminNotificationsService.getLocalizedBody(notification, this.currentLang);
         this.adminNotificationSoundService.playCurrent();
-        this.showDesktopNotification(notification, title, body);
       });
   }
 
@@ -263,46 +260,4 @@ export class LayoutComponent {
     window.addEventListener('keydown', requestPermission, { once: true });
   }
 
-
-
-  private showDesktopNotification(notification: AdminNotification, title: string, body: string): void {
-    if (!('Notification' in window)) {
-      return;
-    }
-
-    const show = () => {
-      if (Notification.permission !== 'granted') {
-        return;
-      }
-
-      try {
-        const desktopNotification = new Notification(title, {
-          body,
-          icon: '/favicon.ico',
-          badge: '/favicon.ico',
-          requireInteraction: false,
-          tag: notification.id,
-          silent: false,
-          dir: this.currentLang === 'ar' ? 'rtl' : 'ltr',
-          lang: this.currentLang
-        });
-
-        desktopNotification.onclick = () => {
-          window.focus();
-          const targetUrl = this.adminNotificationsService.resolveTargetUrl(notification);
-          void this.router.navigateByUrl(targetUrl);
-          desktopNotification.close();
-        };
-      } catch {
-        // Desktop notifications can be blocked by browser or OS settings.
-      }
-    };
-
-    if (Notification.permission === 'default') {
-      void Notification.requestPermission().then(show);
-      return;
-    }
-
-    show();
-  }
 }
