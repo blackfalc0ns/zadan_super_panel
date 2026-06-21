@@ -1,5 +1,7 @@
 :host {
   display: block;
+  width: 100%;
+  min-width: 0;
 }
 
 /* Map child component sizing only — layout handled via Tailwind in template */

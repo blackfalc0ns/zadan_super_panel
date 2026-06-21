@@ -1,9 +1,9 @@
 <div
-  class="flex flex-col bg-[#f6f9fb] font-sans bg-[radial-gradient(circle_at_top_right,rgba(18,124,140,0.04)_0%,transparent_42%),radial-gradient(circle_at_bottom_left,rgba(20,184,166,0.03)_0%,transparent_38%)]"
+  class="flex w-full min-w-0 flex-col bg-[#f6f9fb] font-sans bg-[radial-gradient(circle_at_top_right,rgba(18,124,140,0.04)_0%,transparent_42%),radial-gradient(circle_at_bottom_left,rgba(20,184,166,0.03)_0%,transparent_38%)]"
   [dir]="'SIDEBAR.DIR' | translate">
 
   <!-- Breadcrumb -->
-  <nav class="mx-auto flex w-full max-w-[1400px] flex-wrap items-center gap-2 px-4 pt-6 text-[11px] font-extrabold uppercase tracking-widest text-slate-400 md:px-8 lg:px-10">
+  <nav class="flex w-full flex-wrap items-center gap-2 pt-6 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
     <a routerLink="/" class="transition-colors hover:text-zadna-primary">{{ 'SIDEBAR.HOME' | translate }}</a>
     <span class="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true"></span>
     <a routerLink="/orders" class="transition-colors hover:text-zadna-primary">{{ 'ORDERS.TITLE' | translate }}</a>
@@ -12,21 +12,69 @@
   </nav>
 
   <!-- Error -->
-  <div *ngIf="errorMessage" class="mx-4 mt-4 max-w-[1400px] rounded-2xl border border-red-100 bg-red-50 px-5 py-4 text-sm font-bold text-red-700 md:mx-auto md:px-8 lg:px-10">
+  <div *ngIf="errorMessage" class="mt-4 w-full rounded-2xl border border-red-100 bg-red-50 px-5 py-4 text-sm font-bold text-red-700">
     {{ errorMessage | translate }}
   </div>
 
   <!-- Loader -->
-  <div *ngIf="isLoading" class="mx-4 mt-6 max-w-[1400px] space-y-4 md:mx-auto md:px-8 lg:px-10">
-    <div class="h-36 animate-pulse rounded-3xl border border-slate-200/60 bg-white"></div>
-    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      <div *ngFor="let skeleton of [1,2,3,4]" class="h-24 animate-pulse rounded-2xl border border-slate-200/60 bg-white/80"></div>
+  <div *ngIf="isLoading" class="w-full space-y-5 pt-4 pb-5">
+    <!-- Hero skeleton -->
+    <section class="admin-skeleton-card w-full space-y-5 p-5 md:p-6">
+      <div class="admin-skeleton-detail-hero">
+        <div class="flex min-w-0 flex-1 flex-col gap-3">
+          <span class="admin-skeleton admin-skeleton-line sm w-28"></span>
+          <span class="admin-skeleton admin-skeleton-line lg w-56 max-w-full"></span>
+          <span class="admin-skeleton admin-skeleton-line w-96 max-w-full"></span>
+          <div class="flex flex-wrap gap-2">
+            <span class="admin-skeleton admin-skeleton-chip"></span>
+            <span class="admin-skeleton admin-skeleton-chip"></span>
+            <span class="admin-skeleton admin-skeleton-chip"></span>
+          </div>
+        </div>
+        <div class="hidden w-40 shrink-0 flex-col gap-2 sm:flex">
+          <span class="admin-skeleton admin-skeleton-line sm w-full"></span>
+          <span class="admin-skeleton admin-skeleton-line lg w-full"></span>
+          <span class="admin-skeleton admin-skeleton-line sm w-3/4"></span>
+        </div>
+      </div>
+      <div class="admin-skeleton-detail-grid">
+        <span *ngFor="let item of [1,2,3]" class="admin-skeleton admin-skeleton-line h-16 rounded-2xl"></span>
+      </div>
+      <div class="flex flex-wrap gap-2 border-t border-dashed border-slate-200/80 pt-5">
+        <span *ngFor="let item of [1,2,3,4]" class="admin-skeleton admin-skeleton-line h-10 w-28 rounded-xl"></span>
+      </div>
+    </section>
+
+    <!-- Quick nav skeleton -->
+    <div class="flex w-full gap-2 overflow-hidden">
+      <span *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton admin-skeleton-line h-9 w-28 shrink-0 rounded-full"></span>
     </div>
-    <div *ngFor="let skeleton of [1,2,3]" class="h-52 animate-pulse rounded-3xl border border-slate-200/60 bg-white/70"></div>
+
+    <!-- Metrics skeleton -->
+    <div class="grid w-full grid-cols-2 gap-3 lg:grid-cols-4">
+      <article *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card flex min-h-[5.5rem] items-center gap-3 p-4">
+        <span class="admin-skeleton admin-skeleton-avatar !h-10 !w-10 !rounded-xl"></span>
+        <div class="flex min-w-0 flex-1 flex-col gap-2">
+          <span class="admin-skeleton admin-skeleton-line sm w-16"></span>
+          <span class="admin-skeleton admin-skeleton-line lg w-24"></span>
+        </div>
+      </article>
+    </div>
+
+    <!-- Content sections skeleton -->
+    <div class="grid w-full grid-cols-1 gap-5 xl:grid-cols-3">
+      <article *ngFor="let item of [1,2,3]" class="admin-skeleton-card min-h-[18rem] space-y-4 p-5" [ngClass]="item === 1 ? 'xl:col-span-2' : ''">
+        <span class="admin-skeleton admin-skeleton-line lg w-44"></span>
+        <span class="admin-skeleton admin-skeleton-line w-72 max-w-full"></span>
+        <span class="admin-skeleton admin-skeleton-media h-48 rounded-2xl"></span>
+        <span class="admin-skeleton admin-skeleton-line w-full"></span>
+        <span class="admin-skeleton admin-skeleton-line w-4/5"></span>
+      </article>
+    </div>
   </div>
 
   <ng-container *ngIf="!isLoading && order() as currentOrder">
-    <div class="mx-auto w-full max-w-[1400px] space-y-5 px-4 pt-4 pb-5 md:px-8 lg:px-10">
+    <div class="w-full space-y-5 pt-4 pb-5">
 
       <!-- Hero -->
       <section class="rounded-3xl border border-white/90 bg-white/90 p-5 shadow-lg shadow-slate-200/40 backdrop-blur-md md:p-6">
