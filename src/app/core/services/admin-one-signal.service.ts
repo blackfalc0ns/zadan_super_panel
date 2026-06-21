@@ -57,6 +57,7 @@ export class AdminOneSignalService {
   private sdkInitialized = false;
   private lastExternalId: string | null = null;
   private lastRegisteredSubscriptionState: string | null = null;
+  private subscriptionRecoveryAttempted = false;
   private started = false;
   private sdkUnavailableLogged = false;
 
@@ -84,19 +85,19 @@ export class AdminOneSignalService {
       });
   }
 
-  requestPermissionAndRegister(): void {
+  async requestPermissionAndRegister(): Promise<boolean> {
     if (!this.isEnabled()) {
-      return;
+      return false;
     }
 
     const userId = this.authService.currentUserValue?.id;
     if (!userId || !this.authService.hasApiSession) {
-      return;
+      return false;
     }
 
     localStorage.removeItem(`${AdminOneSignalService.promptPrefix}${userId}`);
     this.lastRegisteredSubscriptionState = null;
-    void this.syncUser(userId, true);
+    return this.syncUser(userId, true);
   }
 
   updateLocaleAndReRegister(): void {
@@ -122,18 +123,19 @@ export class AdminOneSignalService {
     return environment.oneSignal?.appId || environment.oneSignalAdminAppId || '';
   }
 
-  private async syncUser(userId: string, forcePrompt = false): Promise<void> {
+  private async syncUser(userId: string, forcePrompt = false): Promise<boolean> {
     await this.waitForApiSession();
 
     const oneSignal = await this.loadSdk();
     if (!oneSignal) {
-      return;
+      return false;
     }
 
     if (this.lastExternalId !== userId) {
       await oneSignal.login(userId);
       this.lastExternalId = userId;
       this.lastRegisteredSubscriptionState = null;
+      this.subscriptionRecoveryAttempted = false;
       this.logStatus('OneSignal admin user logged in.', oneSignal);
     }
 
@@ -151,7 +153,7 @@ export class AdminOneSignalService {
       }
     }
 
-    await this.waitForActiveSubscription(oneSignal, userId);
+    return this.waitForActiveSubscription(oneSignal, userId);
   }
 
   private async waitForApiSession(): Promise<void> {
@@ -286,10 +288,14 @@ export class AdminOneSignalService {
 
     const subscription = oneSignal.User?.PushSubscription;
     const subscriptionId = subscription?.id?.trim() || null;
+    const pushToken = subscription?.token?.trim() || null;
     const browserPermission = this.resolveBrowserNotificationPermission();
-    const canReceivePush = browserPermission === 'granted' && !!subscriptionId;
+    const canReceivePush = browserPermission === 'granted'
+      && !!subscriptionId
+      && !!pushToken
+      && subscription?.optedIn === true;
 
-    if (!subscriptionId) {
+    if (!subscriptionId || !pushToken || subscription?.optedIn !== true) {
       this.logStatus('OneSignal admin subscription is not ready yet.', oneSignal);
       return false;
     }
@@ -345,11 +351,59 @@ export class AdminOneSignalService {
         return false;
       }
 
+      if (attempt === 4 && !this.subscriptionRecoveryAttempted) {
+        this.subscriptionRecoveryAttempted = true;
+        await this.recoverStalePushSubscription(oneSignal);
+      } else if (attempt > 0 && attempt % 5 === 0) {
+        try {
+          await oneSignal.User?.PushSubscription?.optIn?.();
+        } catch (error) {
+          if (!this.isBenignPushRegistrationError(error)) {
+            this.logPermissionFailure('subscription retry', error, oneSignal);
+          }
+        }
+      }
+
       await this.delay(AdminOneSignalService.subscriptionReadyDelayMs);
     }
 
-    console.warn('[AdminOneSignal] Subscription did not become active after opt-in.');
+    console.warn('[AdminOneSignal] Subscription did not become active after opt-in.', {
+      permission: this.resolveBrowserNotificationPermission(),
+      subscriptionId: oneSignal.User?.PushSubscription?.id ?? null,
+      hasPushToken: !!oneSignal.User?.PushSubscription?.token,
+      optedIn: oneSignal.User?.PushSubscription?.optedIn ?? null
+    });
     return false;
+  }
+
+  private async recoverStalePushSubscription(oneSignal: OneSignalSdk): Promise<void> {
+    const view = this.document.defaultView;
+    if (!view?.navigator.serviceWorker) {
+      return;
+    }
+
+    try {
+      const registrations = await view.navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        const scriptUrl = registration.active?.scriptURL
+          ?? registration.waiting?.scriptURL
+          ?? registration.installing?.scriptURL
+          ?? '';
+
+        if (!scriptUrl.includes('OneSignalSDKWorker.js')) {
+          continue;
+        }
+
+        const staleSubscription = await registration.pushManager.getSubscription();
+        await staleSubscription?.unsubscribe();
+      }
+
+      await oneSignal.User?.PushSubscription?.optIn?.();
+    } catch (error) {
+      if (!this.isBenignPushRegistrationError(error)) {
+        this.logPermissionFailure('stale subscription recovery', error, oneSignal);
+      }
+    }
   }
 
   private getBrowserDeviceId(): string {

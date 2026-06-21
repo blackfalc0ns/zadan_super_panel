@@ -559,35 +559,40 @@ export class AdminProfileComponent implements OnInit {
     this.notificationSoundService.preview(this.selectedNotificationSound);
   }
 
-  enableBrowserPush(): void {
+  async enableBrowserPush(): Promise<void> {
     this.pushMessage = '';
     this.isEnablingBrowserPush = true;
-    this.adminOneSignalService.requestPermissionAndRegister();
+    const registered = await this.adminOneSignalService.requestPermissionAndRegister();
+    this.isEnablingBrowserPush = false;
+    this.loadNotificationPreferences();
 
-    window.setTimeout(() => {
-      this.isEnablingBrowserPush = false;
-      this.loadNotificationPreferences();
+    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+      this.pushMessageType = 'error';
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
+    } else if (registered) {
+      this.pushMessageType = 'success';
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLED');
+    } else {
+      this.pushMessageType = 'error';
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
+    }
 
-      if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
-        this.pushMessageType = 'error';
-        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
-        this.cdr.markForCheck();
-        return;
-      }
-
-      if ((this.notificationPreferences?.webDeviceCount ?? 0) > 0) {
-        this.pushMessageType = 'success';
-        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLED');
-      }
-
-      this.cdr.markForCheck();
-    }, 4000);
+    this.cdr.markForCheck();
   }
 
-  sendPushTest(): void {
+  async sendPushTest(): Promise<void> {
     this.pushMessage = '';
     this.isSendingPushTest = true;
-    this.adminOneSignalService.requestPermissionAndRegister();
+    const registered = await this.adminOneSignalService.requestPermissionAndRegister();
+    if (!registered) {
+      this.isSendingPushTest = false;
+      this.pushMessageType = 'error';
+      this.pushMessage = typeof Notification !== 'undefined' && Notification.permission === 'denied'
+        ? this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED')
+        : this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
+      this.cdr.markForCheck();
+      return;
+    }
 
     this.notificationsService.sendTestNotification().subscribe({
       next: () => {
