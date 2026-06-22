@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 type ApiErrorBody = {
   code?: string;
+  errorCode?: string;
   detail?: string;
   message?: string;
   title?: string;
@@ -33,7 +34,7 @@ export function describeApiError(
     return fallback;
   }
 
-  const codeMessage = translateErrorCode(body?.code, translate, options.codePrefix);
+  const codeMessage = translateErrorCode(body?.errorCode || body?.code, translate, options.codePrefix);
   if (codeMessage) {
     return codeMessage;
   }
@@ -91,7 +92,7 @@ export function buildSafeApiErrorLog(error: unknown): { status?: number; code?: 
 
   return {
     status: candidate.status,
-    code: body?.code,
+    code: body?.errorCode || body?.code,
     message: body?.detail || body?.message || body?.title || candidate.message
   };
 }

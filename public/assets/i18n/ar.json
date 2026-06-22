@@ -3177,6 +3177,18 @@
     "CONFIRM_APPROVE_MSG": "هل تريد اعتماد هذا المنتج وإضافته إلى الكتالوج؟",
     "CONFIRM_REJECT": "تأكيد الرفض",
     "CONFIRM_REJECT_MSG": "هل تريد رفض هذا الطلب؟",
+    "REQUEST_APPROVED_SUCCESS": "تم اعتماد طلب المنتج بنجاح.",
+    "REQUEST_REJECTED_SUCCESS": "تم رفض طلب المنتج بنجاح.",
+    "REVIEW_FAILED_TITLE": "فشلت المراجعة",
+    "REVIEW_FAILED": "تعذر إكمال مراجعة طلب المنتج. راجع التفاصيل ثم حاول مرة أخرى.",
+    "ERROR_CODES": {
+      "REQUEST_ALREADY_REVIEWED": "تمت مراجعة هذا الطلب مسبقًا.",
+      "BRAND_CATEGORY_MISMATCH": "العلامة التجارية لا تنتمي للتصنيف المحدد.",
+      "BRAND_REQUEST_NOT_APPROVED": "طلب العلامة التجارية المرتبط لم تتم الموافقة عليه بعد.",
+      "CATEGORY_REQUEST_NOT_APPROVED": "طلب التصنيف المرتبط لم تتم الموافقة عليه بعد.",
+      "PRODUCT_DISCONTINUED": "يوجد منتج متطابق متوقف ولا يمكن إعادة تفعيله عبر الاعتماد.",
+      "PRODUCT_ALREADY_EXISTS": "يوجد منتج نشط متطابق في الكتالوج بالفعل."
+    },
     "PRODUCT_INFO_HINT": "البيانات الأساسية للمنتج كما قدّمها التاجر.",
     "CLASSIFICATION": "التصنيف والعلامة التجارية",
     "CLASSIFICATION_HINT": "تحديد موضع المنتج داخل هيكل الكتالوج العام.",

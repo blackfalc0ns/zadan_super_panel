@@ -2,6 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject }
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '@shared/services/toast.service';
+import { buildSafeApiErrorLog, describeApiError } from '@shared/utils/api-error.util';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { ProductRequest, ProductRequestStatus } from '@catalog/models/catalog.domain.models';
@@ -330,7 +332,8 @@ export class ProductRequestDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private catalogService: CatalogService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private toastService: ToastService
   ) {
     this.currentLang = this.translate.currentLang || 'ar';
     this.translate.onLangChange.subscribe(e => this.currentLang = e.lang);
@@ -383,9 +386,19 @@ export class ProductRequestDetailComponent implements OnInit {
       next: () => {
         this.cdr.markForCheck();
         this.submitting = false;
+        this.toastService.success(this.translate.instant('CATALOG.REQUEST_APPROVED_SUCCESS'));
         this.loadDetail(this.request!.id);
       },
-      error: () => this.submitting = false
+      error: (err) => {
+        this.cdr.markForCheck();
+        this.submitting = false;
+        console.error('Product request approval failed', buildSafeApiErrorLog(err));
+        const message = describeApiError(err, this.translate, {
+          fallbackKey: 'CATALOG.REVIEW_FAILED',
+          codePrefix: 'CATALOG.ERROR_CODES'
+        });
+        this.toastService.error(message, this.translate.instant('CATALOG.REVIEW_FAILED_TITLE'));
+      }
     });
   }
 
@@ -399,9 +412,19 @@ export class ProductRequestDetailComponent implements OnInit {
         this.submitting = false;
         this.showRejectModal = false;
         this.rejectionNotes = '';
+        this.toastService.success(this.translate.instant('CATALOG.REQUEST_REJECTED_SUCCESS'));
         this.loadDetail(this.request!.id);
       },
-      error: () => this.submitting = false
+      error: (err) => {
+        this.cdr.markForCheck();
+        this.submitting = false;
+        console.error('Product request rejection failed', buildSafeApiErrorLog(err));
+        const message = describeApiError(err, this.translate, {
+          fallbackKey: 'CATALOG.REVIEW_FAILED',
+          codePrefix: 'CATALOG.ERROR_CODES'
+        });
+        this.toastService.error(message, this.translate.instant('CATALOG.REVIEW_FAILED_TITLE'));
+      }
     });
   }
 }

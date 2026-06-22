@@ -3177,6 +3177,18 @@
     "CONFIRM_APPROVE_MSG": "Are you sure you want to approve this product and add it to the catalog?",
     "CONFIRM_REJECT": "Confirm Rejection",
     "CONFIRM_REJECT_MSG": "Are you sure you want to reject this request?",
+    "REQUEST_APPROVED_SUCCESS": "Product request approved successfully.",
+    "REQUEST_REJECTED_SUCCESS": "Product request rejected successfully.",
+    "REVIEW_FAILED_TITLE": "Review failed",
+    "REVIEW_FAILED": "Could not complete the product request review. Please check the details and try again.",
+    "ERROR_CODES": {
+      "REQUEST_ALREADY_REVIEWED": "This request was already reviewed.",
+      "BRAND_CATEGORY_MISMATCH": "The brand does not belong to the selected category.",
+      "BRAND_REQUEST_NOT_APPROVED": "The linked brand request is not approved yet.",
+      "CATEGORY_REQUEST_NOT_APPROVED": "The linked category request is not approved yet.",
+      "PRODUCT_DISCONTINUED": "A matching discontinued product already exists and cannot be reactivated through approval.",
+      "PRODUCT_ALREADY_EXISTS": "A matching active product already exists in the catalog."
+    },
     "PRODUCT_INFO_HINT": "Basic product details as suggested by the vendor.",
     "CLASSIFICATION": "Classification & Brand",
     "CLASSIFICATION_HINT": "Defining where the product fits in the catalog hierarchy.",
