@@ -110,7 +110,10 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
       next: (regs) => {
         this.regions = regs;
         if (this.editForm.region) {
-          this.loadCities(this.editForm.region);
+          this.editForm.region = this.resolveLookupCode(this.editForm.region, this.regions);
+          if (this.editForm.region) {
+            this.loadCities(this.editForm.region);
+          }
         }
         this.cdr.markForCheck();
       },
@@ -147,7 +150,8 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
       city: this.normalizeRegionCode(this.driver.operations?.city || this.driver.city || '')
     };
 
-    if (this.editForm.region) {
+    if (this.editForm.region && this.regions.length > 0) {
+      this.editForm.region = this.resolveLookupCode(this.editForm.region, this.regions);
       this.loadCities(this.editForm.region);
     }
 
@@ -183,10 +187,29 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
     this.geographyService.getCities(regionCode).subscribe({
       next: (cts) => {
         this.cities = cts;
+        this.editForm.city = this.resolveLookupCode(this.editForm.city, this.cities);
         this.cdr.markForCheck();
       },
       error: (err) => console.error('Failed to load cities', err)
     });
+  }
+
+  private resolveLookupCode(
+    value: string,
+    options: Array<{ code: string; nameAr?: string; nameEn?: string }>
+  ): string {
+    const normalizedValue = value.trim().toLocaleLowerCase();
+    if (!normalizedValue) {
+      return '';
+    }
+
+    const match = options.find((option) =>
+      [option.code, option.nameAr, option.nameEn]
+        .filter((candidate): candidate is string => Boolean(candidate))
+        .some((candidate) => candidate.trim().toLocaleLowerCase() === normalizedValue)
+    );
+
+    return match?.code ?? this.normalizeRegionCode(value);
   }
 
   setActiveRailTab(tab: 'checklist' | 'notes' | 'edit-profile'): void {
