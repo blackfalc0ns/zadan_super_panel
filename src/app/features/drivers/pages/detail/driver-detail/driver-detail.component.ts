@@ -412,6 +412,11 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!details?.region?.trim() || !details?.city?.trim()) {
+      this.toastService.error(this.t('DRIVERS.DETAIL.MESSAGES.SERVICE_AREA_REQUIRED'));
+      return;
+    }
+
     this.runMutation(
       () => this.driverService.updateDriverProfile(this.driverId!, details),
       this.t('DRIVERS.DETAIL.MESSAGES.PROFILE_UPDATED')

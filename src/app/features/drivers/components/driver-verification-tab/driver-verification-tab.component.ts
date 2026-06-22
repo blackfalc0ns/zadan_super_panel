@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
@@ -36,6 +36,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
   @Output() approvalReviewRequested = new EventEmitter<AccessApprovalRequestDto>();
 
   private readonly geographyService = inject(GeographyService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   selectedDocumentPreview: DriverDocumentRecord | null = null;
   workspaceWindow: 'operations' | 'review' = 'review';
@@ -108,6 +109,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
         if (this.editForm.region) {
           this.loadCities(this.editForm.region);
         }
+        this.cdr.markForCheck();
       },
       error: (err) => console.error('Failed to load regions', err)
     });
@@ -116,6 +118,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['driver'] && !changes['driver'].firstChange) {
       this.initEditForm();
+      this.cdr.markForCheck();
     }
   }
 
@@ -137,13 +140,19 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
       nationalIdExpiryDate: this.formatDateForInput(this.driver.nationalIdExpiryDate || nationalIdDoc?.expiryDateUtc),
       driverLicenseExpiryDate: this.formatDateForInput(this.driver.driverLicenseExpiryDate || driverLicenseDoc?.expiryDateUtc),
       vehicleLicenseExpiryDate: this.formatDateForInput(this.driver.vehicleLicenseExpiryDate || vehicleLicenseDoc?.expiryDateUtc),
-      region: this.driver.operations?.region || '',
-      city: this.driver.city || ''
+      region: this.normalizeRegionCode(this.driver.operations?.region || ''),
+      city: this.normalizeRegionCode(this.driver.operations?.city || this.driver.city || '')
     };
 
     if (this.editForm.region) {
       this.loadCities(this.editForm.region);
     }
+
+    this.cdr.markForCheck();
+  }
+
+  private normalizeRegionCode(value: string): string {
+    return value.trim().toUpperCase();
   }
 
   formatDateForInput(dateStr: any): string {
@@ -158,20 +167,31 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
   }
 
   onRegionChange(regionCode: string) {
+    this.editForm.region = this.normalizeRegionCode(regionCode);
     this.editForm.city = '';
     this.cities = [];
-    if (regionCode) {
-      this.loadCities(regionCode);
+    if (this.editForm.region) {
+      this.loadCities(this.editForm.region);
     }
+    this.cdr.markForCheck();
   }
 
   loadCities(regionCode: string) {
     this.geographyService.getCities(regionCode).subscribe({
       next: (cts) => {
         this.cities = cts;
+        this.cdr.markForCheck();
       },
       error: (err) => console.error('Failed to load cities', err)
     });
+  }
+
+  setActiveRailTab(tab: 'checklist' | 'notes' | 'edit-profile'): void {
+    this.activeRailTab = tab;
+    if (tab === 'edit-profile') {
+      this.initEditForm();
+    }
+    this.cdr.markForCheck();
   }
 
   saveProfile() {

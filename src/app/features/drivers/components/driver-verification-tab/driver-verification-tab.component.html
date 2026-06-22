@@ -677,7 +677,7 @@
     <div class="flex rounded-xl bg-slate-100/80 p-1 mb-4 border border-slate-200/50">
       <button
         type="button"
-        (click)="activeRailTab = 'checklist'"
+        (click)="setActiveRailTab('checklist')"
         class="flex-1 rounded-lg py-2 text-[11.5px] font-black transition-all flex items-center justify-center gap-1.5"
         [ngClass]="activeRailTab === 'checklist' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'">
         <span>{{ 'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_TAB' | translate }}</span>
@@ -686,7 +686,7 @@
 
       <button
         type="button"
-        (click)="activeRailTab = 'edit-profile'"
+        (click)="setActiveRailTab('edit-profile')"
         class="flex-1 rounded-lg py-2 text-[11.5px] font-black transition-all flex items-center justify-center gap-1.5"
         [ngClass]="activeRailTab === 'edit-profile' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'">
         <span class="material-symbols-outlined text-[16px]">edit_note</span>

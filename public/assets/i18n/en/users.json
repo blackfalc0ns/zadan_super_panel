@@ -607,7 +607,8 @@
         "LOCATION_UPDATES_UNBLOCKED": "Location updates were unblocked for this driver.",
         "LOGIN_LOCKED": "Driver login was locked.",
         "LOGIN_UNLOCKED": "Driver login was unlocked.",
-        "PROFILE_UPDATED": "Driver profile details updated successfully."
+        "PROFILE_UPDATED": "Driver profile details updated successfully.",
+        "SERVICE_AREA_REQUIRED": "Select both region and city before saving profile changes."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "Driver push lab",

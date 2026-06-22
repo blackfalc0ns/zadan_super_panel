@@ -607,7 +607,8 @@
         "LOCATION_UPDATES_UNBLOCKED": "تم فك حظر تحديثات الموقع لهذا المندوب.",
         "LOGIN_LOCKED": "تم قفل تسجيل دخول المندوب.",
         "LOGIN_UNLOCKED": "تم فك قفل تسجيل دخول المندوب.",
-        "PROFILE_UPDATED": "تم تحديث بيانات ملف المندوب بنجاح."
+        "PROFILE_UPDATED": "تم تحديث بيانات ملف المندوب بنجاح.",
+        "SERVICE_AREA_REQUIRED": "يجب اختيار المنطقة والمدينة قبل حفظ التعديلات."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "مختبر إشعارات المندوب",
