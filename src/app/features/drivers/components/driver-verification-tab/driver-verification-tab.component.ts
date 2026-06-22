@@ -212,6 +212,16 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
     return match?.code ?? this.normalizeRegionCode(value);
   }
 
+  hasLookupOption(
+    value: string,
+    options: Array<{ code: string }>
+  ): boolean {
+    const normalizedValue = this.normalizeRegionCode(value || '');
+    return options.some((option) =>
+      this.normalizeRegionCode(option.code) === normalizedValue
+    );
+  }
+
   setActiveRailTab(tab: 'checklist' | 'notes' | 'edit-profile'): void {
     this.activeRailTab = tab;
     if (tab === 'edit-profile') {
