@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ToastService } from '../../../../shared/services/toast.service';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { GeographyService } from '../../../../shared/services/geography.service';
@@ -37,6 +38,8 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
 
   private readonly geographyService = inject(GeographyService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly toastService = inject(ToastService);
+  private readonly translate = inject(TranslateService);
 
   selectedDocumentPreview: DriverDocumentRecord | null = null;
   workspaceWindow: 'operations' | 'review' = 'review';
@@ -195,7 +198,16 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
   }
 
   saveProfile() {
-    this.updateProfileRequested.emit(this.editForm);
+    if (!this.editForm.region?.trim() || !this.editForm.city?.trim()) {
+      this.toastService.error(this.translate.instant('DRIVERS.DETAIL.MESSAGES.SERVICE_AREA_REQUIRED'));
+      return;
+    }
+
+    this.updateProfileRequested.emit({
+      ...this.editForm,
+      region: this.normalizeRegionCode(this.editForm.region),
+      city: this.normalizeRegionCode(this.editForm.city)
+    });
   }
 
   trackByDocumentId(index: number, document: DriverDocumentRecord): string {

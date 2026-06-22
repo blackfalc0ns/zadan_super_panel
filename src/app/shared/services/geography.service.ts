@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable, catchError, shareReplay, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface SaudiRegionDto {
@@ -33,7 +33,13 @@ export class GeographyService {
       this.regionsRequest$ = this.http.get<SaudiRegionDto[]>(
         `${this.apiUrl}/regions`,
         { headers: this.skipAuthHeaders }
-      ).pipe(shareReplay(1));
+      ).pipe(
+        shareReplay(1),
+        catchError((error) => {
+          this.regionsRequest$ = undefined;
+          return throwError(() => error);
+        })
+      );
     }
 
     return this.regionsRequest$;
@@ -48,7 +54,13 @@ export class GeographyService {
         this.http.get<SaudiCityDto[]>(
           `${this.apiUrl}/regions/${encodeURIComponent(normalizedCode)}/cities`,
           { headers: this.skipAuthHeaders }
-        ).pipe(shareReplay(1))
+        ).pipe(
+          shareReplay(1),
+          catchError((error) => {
+            this.citiesRequests.delete(normalizedCode);
+            return throwError(() => error);
+          })
+        )
       );
     }
 

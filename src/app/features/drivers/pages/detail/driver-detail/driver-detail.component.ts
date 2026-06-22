@@ -550,7 +550,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
         console.error('Driver mutation failed', err);
         this.toastService.error(
-          describeApiError(err, this.translate, { fallbackKey: 'DRIVERS.DETAIL.MESSAGES.TEST_NOTIFICATION_FAILED' })
+          describeApiError(err, this.translate, { fallbackKey: 'DRIVERS.DETAIL.MESSAGES.ACTION_FAILED' })
         );
       }
     });

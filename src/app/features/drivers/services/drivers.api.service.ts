@@ -861,8 +861,8 @@ export class DriverService {
           : undefined,
         rules: [],
         taskAssignments,
-        region: response.operations.region,
-        city: response.operations.city
+        region: response.operations.region || response.overview.region || null,
+        city: response.operations.city || response.overview.city || response.city || null
       },
       performanceSnapshot: {
         routeScore: Number(response.performanceDetails.commitmentScore || response.overview.commitmentScore || 0),
