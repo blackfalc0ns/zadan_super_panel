@@ -344,6 +344,11 @@ export interface ProductRequest {
     displayOrder?: number | null;
     unitNameAr?: string;
     unitNameEn?: string;
+    packageTypeId?: string | null;
+    packageTypeNameAr?: string;
+    packageTypeNameEn?: string;
+    measurementValue?: number | null;
+    imageUrls?: string[];
     status: ProductRequestStatus;
     isInVendorStore?: boolean;
     adminNotes?: string;

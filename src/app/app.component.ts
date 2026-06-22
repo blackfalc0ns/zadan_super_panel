@@ -4,6 +4,7 @@ import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs';
 import { AdminSupportCaseRealtimeService } from './core/services/admin-support-case-realtime.service';
+import { AdminPageTitleService } from './core/services/admin-page-title.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,7 +25,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
     private adminSupportCaseRealtime: AdminSupportCaseRealtimeService,
-    private router: Router
+    private router: Router,
+    adminPageTitle: AdminPageTitleService
   ) {
     // Hide Material Symbols text until font loads
     this.loadMaterialSymbolsFont();

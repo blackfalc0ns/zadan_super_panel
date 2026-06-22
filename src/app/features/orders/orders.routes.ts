@@ -8,14 +8,12 @@ export const ORDERS_ROUTES: Routes = [
         path: '',
         component: OrdersListComponent,
         canActivate: [HasPermissionGuard],
-        data: { permission: 'orders.view' },
-        title: 'الطلبات | إدارة العمليات'
+        data: { permission: 'orders.view' }
     },
     {
         path: ':id',
         component: OrderDetailsComponent,
         canActivate: [HasPermissionGuard],
-        data: { permission: 'orders.view' },
-        title: 'تفاصيل الطلب | إدارة العمليات'
+        data: { permission: 'orders.view' }
     }
 ];

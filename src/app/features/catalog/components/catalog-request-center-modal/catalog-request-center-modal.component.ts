@@ -111,7 +111,7 @@ import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/st
                   </div>
                 </div>
 
-                <div *ngIf="request.status === 'Pending'" class="flex flex-wrap items-center gap-2">
+                <div *ngIf="request.status === 'Pending' && !showRejectForm" class="flex flex-wrap items-center gap-2">
                   <app-button variant="outline" size="sm" customClass="!rounded-xl !border-rose-200 !text-rose-600 hover:!bg-rose-50" [disabled]="isSubmitting" (btnClick)="startReject()">
                     {{ 'CATALOG.REJECT' | translate }}
                   </app-button>
@@ -185,10 +185,39 @@ import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/st
                       <p class="text-[11px] font-bold text-slate-400">{{ 'CATALOG.UNIT' | translate }}</p>
                       <p class="text-sm font-black text-slate-800">{{ activeLang === 'ar' ? (request.unitNameAr || '---') : (request.unitNameEn || request.unitNameAr || '---') }}</p>
                     </div>
+                    <div *ngIf="request.packageTypeNameAr || request.packageTypeNameEn">
+                      <p class="text-[11px] font-bold text-slate-400">{{ 'CATALOG.PACKAGE_TYPE' | translate }}</p>
+                      <p class="text-sm font-black text-slate-800">{{ activeLang === 'ar' ? (request.packageTypeNameAr || '---') : (request.packageTypeNameEn || request.packageTypeNameAr || '---') }}</p>
+                    </div>
+                    <div *ngIf="request.measurementValue !== null && request.measurementValue !== undefined">
+                      <p class="text-[11px] font-bold text-slate-400">{{ 'CATALOG.MEASUREMENT_VALUE' | translate }}</p>
+                      <p class="text-sm font-black text-slate-800">{{ request.measurementValue }}</p>
+                    </div>
+                    <div *ngIf="getRequestSizePreview(request)">
+                      <p class="text-[11px] font-bold text-slate-400">{{ 'CATALOG.DISPLAY_SIZE' | translate }}</p>
+                      <p class="text-sm font-black text-slate-800">{{ getRequestSizePreview(request) }}</p>
+                    </div>
                     <div *ngIf="request.displayOrder !== null && request.displayOrder !== undefined">
                       <p class="text-[11px] font-bold text-slate-400">{{ 'CATALOG.DISPLAY_ORDER' | translate }}</p>
                       <p class="text-sm font-black text-slate-800">{{ request.displayOrder }}</p>
                     </div>
+                  </div>
+                </div>
+
+                <div *ngIf="getRequestImages(request).length" class="rounded-[1.25rem] border border-slate-200/70 bg-white p-4 md:col-span-2">
+                  <p class="mb-3 text-[11px] font-black uppercase tracking-widest text-slate-400">{{ 'CATALOG.PRODUCT_IMAGES' | translate }}</p>
+                  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                    <a
+                      *ngFor="let imageUrl of getRequestImages(request); let index = index"
+                      [href]="imageUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="group overflow-hidden rounded-[1rem] border border-slate-200 bg-slate-50">
+                      <img [src]="imageUrl" class="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" alt="">
+                      <div class="border-t border-slate-100 px-2 py-1.5 text-center text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        {{ index === 0 ? ('CATALOG.PRIMARY_IMAGE' | translate) : ('CATALOG.IMAGE' | translate) + ' ' + (index + 1) }}
+                      </div>
+                    </a>
                   </div>
                 </div>
 
@@ -227,16 +256,55 @@ import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/st
                   <p class="text-sm font-bold leading-6 text-rose-700">{{ request.adminNotes }}</p>
                 </div>
 
-                <div *ngIf="showRejectForm" class="rounded-[1.25rem] border border-amber-200 bg-amber-50/70 p-4 md:col-span-2">
-                  <p class="mb-3 text-sm font-black text-slate-900">{{ 'CATALOG.REJECT_REQUEST' | translate }}</p>
-                  <textarea [(ngModel)]="rejectionNotes" [ngModelOptions]="{ standalone: true }" rows="4" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" [placeholder]="'CATALOG.REJECTION_REASON_PLACEHOLDER' | translate"></textarea>
-                  <div class="mt-4 flex flex-wrap items-center justify-end gap-2">
-                    <app-button variant="outline" size="sm" customClass="!rounded-xl" [disabled]="isSubmitting" (btnClick)="cancelReject()">
-                      {{ 'COMMON.CANCEL' | translate }}
-                    </app-button>
-                    <app-button variant="danger" size="sm" customClass="!rounded-xl" [isLoading]="isSubmitting && pendingAction === 'reject'" [disabled]="!rejectionNotes.trim() || isSubmitting" (btnClick)="confirmReject()">
-                      {{ 'CATALOG.CONFIRM_REJECTION' | translate }}
-                    </app-button>
+                <div *ngIf="showRejectForm" class="overflow-hidden rounded-[1.25rem] border border-rose-200 bg-gradient-to-br from-rose-50/70 to-white shadow-[0_8px_30px_-12px_rgba(244,63,94,0.25)] md:col-span-2">
+                  <div class="flex items-start gap-3 border-b border-rose-100 bg-rose-50/80 px-4 py-3.5">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-rose-200 bg-white text-rose-600 shadow-sm">
+                      <span class="material-symbols-outlined text-[20px]">block</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-black text-rose-950">{{ rejectFormTitleKey | translate }}</p>
+                      <p class="mt-0.5 text-xs font-medium leading-5 text-rose-600">{{ 'CATALOG.REJECTION_REASON_HINT' | translate }}</p>
+                    </div>
+                    <button
+                      type="button"
+                      (click)="cancelReject()"
+                      [disabled]="isSubmitting"
+                      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-rose-200 bg-white text-rose-400 transition hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-40">
+                      <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                  </div>
+
+                  <div class="space-y-3 p-4">
+                    <label class="block text-[11px] font-black uppercase tracking-widest text-rose-400">
+                      {{ 'CATALOG.REJECTION_REASON' | translate }}
+                      <span class="text-rose-500">*</span>
+                    </label>
+                    <textarea
+                      [(ngModel)]="rejectionNotes"
+                      [ngModelOptions]="{ standalone: true }"
+                      rows="4"
+                      class="w-full resize-none rounded-xl border border-rose-200 bg-white px-4 py-3 text-sm font-medium leading-6 text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-rose-400 focus:ring-4 focus:ring-rose-400/10"
+                      [placeholder]="'CATALOG.REJECTION_REASON_PLACEHOLDER' | translate">
+                    </textarea>
+
+                    <div class="flex flex-wrap items-center justify-end gap-3 pt-1">
+                      <button
+                        type="button"
+                        (click)="cancelReject()"
+                        [disabled]="isSubmitting"
+                        class="inline-flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-xs font-black uppercase tracking-widest text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-40">
+                        {{ 'COMMON.CANCEL' | translate }}
+                      </button>
+                      <button
+                        type="button"
+                        (click)="confirmReject()"
+                        [disabled]="!rejectionNotes.trim() || isSubmitting"
+                        class="inline-flex h-10 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-rose-600 px-5 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-rose-600/20 transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-rose-200 disabled:text-rose-50 disabled:shadow-none">
+                        <span *ngIf="isSubmitting && pendingAction === 'reject'" class="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></span>
+                        <span *ngIf="!(isSubmitting && pendingAction === 'reject')" class="material-symbols-outlined text-[16px]">block</span>
+                        {{ 'CATALOG.CONFIRM_REJECTION' | translate }}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -340,6 +408,17 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
         return 'CATALOG.CATEGORY_REQUESTS';
       default:
         return 'CATALOG.PRODUCT_REQUESTS';
+    }
+  }
+
+  get rejectFormTitleKey(): string {
+    switch (this.requestType) {
+      case 'brand':
+        return 'CATALOG.REJECT_BRAND_REQUEST';
+      case 'category':
+        return 'CATALOG.REJECT_CATEGORY_REQUEST';
+      default:
+        return 'CATALOG.REJECT_REQUEST';
     }
   }
 
@@ -547,6 +626,36 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
 
   isCategoryRequest(request: ProductRequest | null): boolean {
     return request?.requestType === 'category';
+  }
+
+  getRequestImages(request: ProductRequest | null): string[] {
+    if (!request) {
+      return [];
+    }
+
+    const urls = request.imageUrls?.length
+      ? request.imageUrls
+      : (request.imageUrl ? [request.imageUrl] : []);
+
+    return urls.filter(Boolean);
+  }
+
+  getRequestSizePreview(request: ProductRequest | null): string {
+    if (!request) {
+      return '';
+    }
+
+    const packageLabel = this.activeLang === 'ar'
+      ? (request.packageTypeNameAr || '')
+      : (request.packageTypeNameEn || request.packageTypeNameAr || '');
+    const unitLabel = this.activeLang === 'ar'
+      ? (request.unitNameAr || '')
+      : (request.unitNameEn || request.unitNameAr || '');
+    const valueLabel = request.measurementValue !== null && request.measurementValue !== undefined
+      ? `${request.measurementValue}`
+      : '';
+
+    return [packageLabel, valueLabel, unitLabel].filter(Boolean).join(' ').trim();
   }
 
   private loadRequests(): void {
