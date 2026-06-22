@@ -1400,13 +1400,15 @@
             "LICENSE_DOCUMENT": "Driving license",
             "VEHICLE_DOCUMENT": "Vehicle document",
             "PERSONAL_PHOTO": "Personal photo",
-            "ZONE_SELECTION": "Primary operating zone"
+            "ZONE_SELECTION": "Primary operating zone",
+            "REGION_CITY_SELECTION": "Operating region and city"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
             "MISSING_VEHICLE_INFO_NOTE": "Missing operational vehicle details.",
             "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
             "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required.",
+            "MISSING_REGION_CITY_NOTE": "Region and city still need to be selected.",
             "EXPIRED_DOCUMENT_NOTE": "The uploaded document is expired and must be renewed.",
             "REJECTED_DOCUMENT_NOTE": "This document was rejected and needs a corrected re-upload.",
             "PENDING_DOCUMENT_REVIEW_NOTE": "The document is uploaded and waiting for admin review."

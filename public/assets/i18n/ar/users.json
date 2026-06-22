@@ -1389,13 +1389,15 @@
             "LICENSE_DOCUMENT": "رخصة القيادة",
             "VEHICLE_DOCUMENT": "مستند المركبة",
             "PERSONAL_PHOTO": "صورة التحقق الشخصي",
-            "ZONE_SELECTION": "منطقة التشغيل الأساسية"
+            "ZONE_SELECTION": "منطقة التشغيل الأساسية",
+            "REGION_CITY_SELECTION": "منطقة التشغيل الأساسية"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
             "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية للمركبة ناقصة.",
             "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
             "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية.",
+            "MISSING_REGION_CITY_NOTE": "ما زال يلزم تحديد المنطقة والمدينة.",
             "EXPIRED_DOCUMENT_NOTE": "المستند المرفوع منتهي الصلاحية ويجب تجديده.",
             "REJECTED_DOCUMENT_NOTE": "تم رفض هذا المستند ويجب إعادة رفعه بشكل صحيح.",
             "PENDING_DOCUMENT_REVIEW_NOTE": "تم رفع المستند وبانتظار مراجعة الإدارة."

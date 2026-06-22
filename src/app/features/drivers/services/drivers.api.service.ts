@@ -1122,8 +1122,8 @@ export class DriverService {
     }));
   }
 
-  private mapVerificationChecklist(items: AdminDriverVerificationChecklistItemResponse[]): DriverVerificationChecklistItem[] {
-    return items.map((item) => ({
+  private mapVerificationChecklist(items: AdminDriverVerificationChecklistItemResponse[] | null | undefined): DriverVerificationChecklistItem[] {
+    return (items ?? []).map((item) => ({
       label: this.mapVerificationChecklistCode(item.code),
       completed: item.completed,
       note: item.note ? this.mapVerificationChecklistNote(item.note) : undefined,
@@ -2205,11 +2205,20 @@ export class DriverService {
   }
 
   private mapVerificationChecklistCode(code: string): string {
-    return `DRIVERS.DETAIL.VERIFICATION.BACKEND.CHECKLIST.${code.toUpperCase()}`;
+    const aliases: Record<string, string> = {
+      region_city_selection: 'REGION_CITY_SELECTION',
+      zone_selection: 'REGION_CITY_SELECTION'
+    };
+    const normalized = aliases[code.toLowerCase()] ?? code.toUpperCase();
+    return `DRIVERS.DETAIL.VERIFICATION.BACKEND.CHECKLIST.${normalized}`;
   }
 
   private mapVerificationChecklistNote(note: string): string {
-    return `DRIVERS.DETAIL.VERIFICATION.BACKEND.CHECKLIST_NOTES.${note.toUpperCase()}`;
+    const aliases: Record<string, string> = {
+      missing_region_city_note: 'MISSING_REGION_CITY_NOTE'
+    };
+    const normalized = aliases[note.toLowerCase()] ?? note.toUpperCase();
+    return `DRIVERS.DETAIL.VERIFICATION.BACKEND.CHECKLIST_NOTES.${normalized}`;
   }
 
   private mapRejectionReason(reason: string): string {
