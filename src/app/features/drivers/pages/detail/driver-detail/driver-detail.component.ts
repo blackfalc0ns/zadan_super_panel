@@ -660,6 +660,12 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
       return null;
     }
 
+    const pendingApprovalsSummary = this.driverApprovals.length > 0
+      ? (this.isRTL
+        ? `يوجد ${this.driverApprovals.length} تعديل معلق يجب اعتماده من قسم "تعديلات معلقة" قبل اعتماد الحساب. `
+        : `${this.driverApprovals.length} pending profile change(s) must be approved in the pending changes section before final approval. `)
+      : '';
+
     const documentSummary = invalidDocuments.length
       ? `${this.t('DRIVERS.DETAIL.MESSAGES.APPROVAL_BLOCKED_DOCUMENTS')} ${invalidDocuments.join('، ')}.`
       : '';
@@ -670,6 +676,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
     return [
       this.t('DRIVERS.DETAIL.MESSAGES.APPROVAL_BLOCKED'),
+      pendingApprovalsSummary,
       documentSummary,
       checklistSummary
     ]

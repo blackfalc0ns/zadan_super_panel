@@ -595,8 +595,32 @@ export class DriverService {
     });
   }
 
-  updateDriverProfile(id: string, details: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${this.normalizeDriverId(id)}/profile`, details);
+  updateDriverProfile(id: string, details: Record<string, unknown>): Observable<unknown> {
+    const payload = {
+      fullName: details['fullName'],
+      email: details['email'],
+      phoneNumber: details['phoneNumber'],
+      vehicleType: details['vehicleType'] || null,
+      nationalId: details['nationalId'] || null,
+      licenseNumber: details['licenseNumber'] || null,
+      nationalIdExpiryDate: this.normalizeOptionalDate(details['nationalIdExpiryDate']),
+      driverLicenseExpiryDate: this.normalizeOptionalDate(details['driverLicenseExpiryDate']),
+      vehicleLicenseNumber: details['vehicleLicenseNumber'] || null,
+      vehicleLicenseExpiryDate: this.normalizeOptionalDate(details['vehicleLicenseExpiryDate']),
+      address: details['address'] || null,
+      region: details['region'] || null,
+      city: details['city'] || null
+    };
+
+    return this.http.put<unknown>(`${this.apiUrl}/${this.normalizeDriverId(id)}/profile`, payload);
+  }
+
+  private normalizeOptionalDate(value: unknown): string | null {
+    if (typeof value !== 'string' || !value.trim()) {
+      return null;
+    }
+
+    return value.trim();
   }
 
   suspendDriver(id: string, reason?: string): Observable<DriverActionResponse> {
