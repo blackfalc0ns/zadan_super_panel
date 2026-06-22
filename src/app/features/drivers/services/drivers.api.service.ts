@@ -595,7 +595,7 @@ export class DriverService {
     });
   }
 
-  updateDriverProfile(id: string, details: Record<string, unknown>): Observable<unknown> {
+  updateDriverProfile(id: string, details: Record<string, unknown>): Observable<DriverActionResponse> {
     const payload = {
       fullName: details['fullName'],
       email: details['email'],
@@ -612,7 +612,7 @@ export class DriverService {
       city: details['city'] || null
     };
 
-    return this.http.put<unknown>(`${this.apiUrl}/${this.normalizeDriverId(id)}/profile`, payload);
+    return this.http.put<DriverActionResponse>(`${this.apiUrl}/${this.normalizeDriverId(id)}/profile`, payload);
   }
 
   private normalizeOptionalDate(value: unknown): string | null {
