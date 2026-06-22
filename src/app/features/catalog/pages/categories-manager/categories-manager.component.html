@@ -17,6 +17,7 @@
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-[18px]">assignment</span>
           <span class="text-[10px] font-black uppercase tracking-[0.1em] sm:text-xs">{{ 'CATALOG.CATEGORY_REQUESTS' | translate }}</span>
+          <span *ngIf="pendingCategoryRequestCount > 0" class="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-amber-100 px-1 text-[9.5px] font-black text-amber-700 shadow-sm">{{ pendingCategoryRequestCount }}</span>
         </div>
       </app-button>
 
@@ -265,8 +266,9 @@
 
   <app-catalog-request-center-modal
     [isOpen]="isCategoryRequestsModalOpen"
+    [initialRequestId]="initialCategoryRequestId"
     requestType="category"
-    (close)="isCategoryRequestsModalOpen = false"
-    (refreshed)="loadHierarchy()">
+    (close)="onCategoryRequestsModalClose()"
+    (refreshed)="onCategoryRequestsRefreshed()">
   </app-catalog-request-center-modal>
 </div>

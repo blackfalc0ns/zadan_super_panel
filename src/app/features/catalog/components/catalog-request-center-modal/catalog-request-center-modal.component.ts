@@ -274,6 +274,7 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
 
   @Input() isOpen = false;
   @Input() requestType: CatalogRequestType = 'product';
+  @Input() initialRequestId: string | null = null;
 
   @Output() close = new EventEmitter<void>();
   @Output() refreshed = new EventEmitter<void>();
@@ -313,7 +314,11 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ((changes['isOpen'] && this.isOpen) || (changes['requestType'] && this.isOpen)) {
+    if (
+      (changes['isOpen'] && this.isOpen)
+      || (changes['requestType'] && this.isOpen)
+      || (changes['initialRequestId'] && this.isOpen)
+    ) {
       this.loadRequests();
       this.loadCategoriesIfNeeded();
     }
@@ -558,7 +563,10 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
       next: requests => {
         this.cdr.markForCheck();
         this.requests = requests;
-        this.selectedRequest = requests[0] ?? null;
+        const preferredRequest = this.initialRequestId
+          ? requests.find((request) => request.id === this.initialRequestId) ?? null
+          : null;
+        this.selectedRequest = preferredRequest ?? requests[0] ?? null;
         if (this.selectedRequest) {
           this.selectRequest(this.selectedRequest);
         }

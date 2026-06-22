@@ -129,7 +129,7 @@ export class AdminGlobalSearchService {
     },
     {
       id: 'product-requests',
-      route: '/catalog/product-requests',
+      route: '/catalog/products?requests=1',
       icon: 'assignment',
       titleAr: 'طلبات المنتجات',
       titleEn: 'Product Requests',

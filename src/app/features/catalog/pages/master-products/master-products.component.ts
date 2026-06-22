@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CatalogService } from '@catalog/services/catalog.api.service';
@@ -98,6 +98,8 @@ export class MasterProductsComponent implements OnInit {
   panelFilters: Record<string, string | null | undefined> = {};
   viewMode: 'table' | 'bento' = 'bento';
   isProductRequestsModalOpen = false;
+  pendingProductRequestCount = 0;
+  initialProductRequestId: string | null = null;
   readonly statusOptions: Array<MasterProduct['status']> = ['Draft', 'Active', 'Inactive', 'Discontinued'];
   readonly filterFields: FilterField[] = [
     { key: 'categoryId', label: 'PRODUCTS.SUB_CATEGORY', type: 'select', color: '#127c8c', options: [] },
@@ -120,6 +122,7 @@ export class MasterProductsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private catalogService: CatalogService,
     public translate: TranslateService
   ) {
@@ -143,6 +146,7 @@ export class MasterProductsComponent implements OnInit {
     this.loadCategories();
     this.loadBrands();
     this.loadUnits();
+    this.loadPendingProductRequestCount();
     this.route.queryParams.subscribe(params => {
       this.cdr.markForCheck();
       this.categoryId = params['categoryId'] || null;
@@ -158,7 +162,35 @@ export class MasterProductsComponent implements OnInit {
       this.syncPanelFilters();
       this.page = 1;
       this.loadProducts();
+
+      if (params['requests'] === '1') {
+        this.isProductRequestsModalOpen = true;
+        this.initialProductRequestId = params['requestId'] || null;
+      }
     });
+  }
+
+  loadPendingProductRequestCount(): void {
+    this.catalogService.getPendingCatalogRequestCount('product').subscribe({
+      next: (count) => {
+        this.cdr.markForCheck();
+        this.pendingProductRequestCount = count;
+      }
+    });
+  }
+
+  onProductRequestsModalClose(): void {
+    this.isProductRequestsModalOpen = false;
+    this.initialProductRequestId = null;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { requests: null, requestId: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onProductRequestsRefreshed(): void {
+    this.loadPendingProductRequestCount();
   }
 
   loadCategories() {

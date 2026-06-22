@@ -381,9 +381,20 @@ export class SuperAdminDashboardService {
     if (cleanPath.startsWith('/wallets/')) return `/finances${cleanPath}${suffix}`;
     if (cleanPath === '/notifications') return `/email-center${suffix}`;
     if (cleanPath.startsWith('/notifications/')) return `/email-center${suffix}`;
-    if (cleanPath === '/catalog/product-requests') return `/catalog/requests${suffix}`;
+    if (cleanPath === '/catalog/product-requests' || cleanPath === '/catalog/requests') {
+      return `/catalog/products?requests=1${suffix}`;
+    }
+
+    const catalogRequestViewMatch = cleanPath.match(/^\/catalog\/(?:product-requests|requests)\/view\/([^/]+)$/i);
+    if (catalogRequestViewMatch) {
+      return `/catalog/products?requests=1&requestId=${encodeURIComponent(catalogRequestViewMatch[1])}${suffix}`;
+    }
+
     if (cleanPath.startsWith('/catalog/product-requests/')) {
-      return `/catalog/requests/${cleanPath.split('/').pop()}${suffix}`;
+      const legacyId = cleanPath.split('/').pop();
+      return legacyId
+        ? `/catalog/products?requests=1&requestId=${encodeURIComponent(legacyId)}${suffix}`
+        : `/catalog/products?requests=1${suffix}`;
     }
 
     const knownRoots = [

@@ -57,6 +57,8 @@ export class CategoriesManagerComponent implements OnInit {
   itemToDelete: Category | null = null;
   parentCategoryForModal: { id: string | null, nameAr: string, nameEn: string } | null = null;
   isCategoryRequestsModalOpen = false;
+  pendingCategoryRequestCount = 0;
+  initialCategoryRequestId: string | null = null;
   Math = Math;
 
   readonly filterFields: FilterField[] = [
@@ -94,13 +96,43 @@ export class CategoriesManagerComponent implements OnInit {
 
   ngOnInit() {
     this.initializeFilterOptions();
+    this.loadPendingCategoryRequestCount();
     this.route.queryParams.subscribe((params) => {
       this.cdr.markForCheck();
       this.searchTerm = params['search'] || '';
       this.currentPage = 1;
       this.syncPanelFilters();
       this.loadHierarchy();
+
+      if (params['requests'] === '1') {
+        this.isCategoryRequestsModalOpen = true;
+        this.initialCategoryRequestId = params['requestId'] || null;
+      }
     });
+  }
+
+  loadPendingCategoryRequestCount(): void {
+    this.catalogService.getPendingCatalogRequestCount('category').subscribe({
+      next: (count) => {
+        this.cdr.markForCheck();
+        this.pendingCategoryRequestCount = count;
+      }
+    });
+  }
+
+  onCategoryRequestsModalClose(): void {
+    this.isCategoryRequestsModalOpen = false;
+    this.initialCategoryRequestId = null;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { requests: null, requestId: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onCategoryRequestsRefreshed(): void {
+    this.loadPendingCategoryRequestCount();
+    this.loadHierarchy();
   }
 
   loadHierarchy() {

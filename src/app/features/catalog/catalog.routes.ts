@@ -65,14 +65,14 @@ export const CATALOG_ROUTES: Routes = [
   {
     path: 'requests',
     canActivate: [HasPermissionGuard],
-    data: { permission: 'catalog.approve' },
-    loadComponent: () => import('./pages/product-requests/request-list.component').then(m => m.ProductRequestListComponent)
+    data: { permission: 'catalog.approve', requestType: 'product' },
+    loadComponent: () => import('./pages/catalog-request-redirect/catalog-request-redirect.component').then(m => m.CatalogRequestRedirectComponent)
   },
   {
     path: 'requests/view/:id',
     canActivate: [HasPermissionGuard],
-    data: { permission: 'catalog.approve' },
-    loadComponent: () => import('./pages/product-requests/request-detail.component').then(m => m.ProductRequestDetailComponent)
+    data: { permission: 'catalog.approve', requestType: 'product' },
+    loadComponent: () => import('./pages/catalog-request-redirect/catalog-request-redirect.component').then(m => m.CatalogRequestRedirectComponent)
   },
   {
     path: 'recycle-bin',

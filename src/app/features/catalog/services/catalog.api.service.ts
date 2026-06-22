@@ -515,6 +515,12 @@ export class CatalogService {
     });
   }
 
+  getPendingCatalogRequestCount(type: 'product' | 'brand' | 'category'): Observable<number> {
+    return this.getCatalogRequests({ type, status: 'Pending' }).pipe(
+      map((requests) => requests.length)
+    );
+  }
+
   getCatalogRequests(params?: {
     type?: 'all' | 'product' | 'brand' | 'category';
     status?: 'all' | ProductRequestStatus;

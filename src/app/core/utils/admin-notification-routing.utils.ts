@@ -1,3 +1,7 @@
+import {
+  buildCatalogRequestManagementUrl,
+  resolveCatalogRequestTypeFromNotificationType
+} from '@catalog/utils/catalog-request-navigation.util';
 import { AdminNotification } from '../services/admin-notifications.service';
 
 type NotificationData = Record<string, unknown>;
@@ -175,7 +179,13 @@ function normalizeAdminNotificationTargetUrl(
     return sanitized;
   }
 
-  if (sanitized.startsWith('/catalog/requests') || sanitized.startsWith('/drivers/') || sanitized.startsWith('/vendors/') || sanitized.startsWith('/finances/')) {
+  if (sanitized === '/catalog/requests' || sanitized.startsWith('/catalog/requests/')) {
+    const viewMatch = /^\/catalog\/requests\/view\/([^/?#]+)/i.exec(sanitized);
+    const requestType = resolveCatalogRequestTypeFromNotificationType(notification.type);
+    return buildCatalogRequestManagementUrl(requestType, viewMatch?.[1] ?? null);
+  }
+
+  if (sanitized.startsWith('/drivers/') || sanitized.startsWith('/vendors/') || sanitized.startsWith('/finances/')) {
     return sanitized;
   }
 
@@ -206,8 +216,9 @@ function resolveAdminNotificationTypeTargetUrl(
     referenceId
   );
 
-  if (type.startsWith('catalog.') && requestId) {
-    return `/catalog/requests/view/${encodeURIComponent(requestId)}`;
+  if (type.startsWith('catalog.')) {
+    const requestType = resolveCatalogRequestTypeFromNotificationType(type);
+    return buildCatalogRequestManagementUrl(requestType, requestId);
   }
 
   if (type.startsWith('delivery.') && orderId) {
@@ -288,8 +299,10 @@ function resolveAdminNotificationCategoryTargetUrl(
           : '/drivers';
     case 'vendors':
       return referenceId ? `/vendors/${encodeURIComponent(referenceId)}/overview` : '/vendors';
-    case 'catalog':
-      return referenceId ? `/catalog/requests/view/${encodeURIComponent(referenceId)}` : '/catalog/requests';
+    case 'catalog': {
+      const requestType = resolveCatalogRequestTypeFromNotificationType(notification.type);
+      return buildCatalogRequestManagementUrl(requestType, referenceId);
+    }
     case 'delivery':
       return orderId
         ? `/orders/${encodeURIComponent(orderId)}`

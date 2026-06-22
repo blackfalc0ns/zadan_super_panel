@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import { Brand, BrandSearchFilters, CatalogSearchRequest, Category } from '@catalog/models/catalog.domain.models';
 import { BrandFormModalComponent } from '../../../components/brand-form-modal/brand-form-modal.component';
@@ -51,6 +51,8 @@ export class BrandListComponent implements OnInit {
   searchTerm = '';
   searchSubject = new Subject<string>();
   isBrandRequestsModalOpen = false;
+  pendingBrandRequestCount = 0;
+  initialBrandRequestId: string | null = null;
   leafCategories: Category[] = [];
   selectedCategoryId: string | null = null;
   statusFilter: boolean | null = null;
@@ -85,6 +87,7 @@ export class BrandListComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private catalogService: CatalogService,
     public translate: TranslateService
   ) {
@@ -106,13 +109,43 @@ export class BrandListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLeafCategories();
+    this.loadPendingBrandRequestCount();
     this.route.queryParams.subscribe((params) => {
       this.cdr.markForCheck();
       this.searchTerm = params['search'] || '';
       this.currentPage = 1;
       this.syncPanelFilters();
       this.loadBrands();
+
+      if (params['requests'] === '1') {
+        this.isBrandRequestsModalOpen = true;
+        this.initialBrandRequestId = params['requestId'] || null;
+      }
     });
+  }
+
+  loadPendingBrandRequestCount(): void {
+    this.catalogService.getPendingCatalogRequestCount('brand').subscribe({
+      next: (count) => {
+        this.cdr.markForCheck();
+        this.pendingBrandRequestCount = count;
+      }
+    });
+  }
+
+  onBrandRequestsModalClose(): void {
+    this.isBrandRequestsModalOpen = false;
+    this.initialBrandRequestId = null;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { requests: null, requestId: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onBrandRequestsRefreshed(): void {
+    this.loadPendingBrandRequestCount();
+    this.loadBrands();
   }
 
   loadBrands(): void {

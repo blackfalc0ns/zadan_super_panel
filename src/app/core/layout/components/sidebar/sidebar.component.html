@@ -83,12 +83,6 @@
                 <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.BRANDS' | translate }}</span>
             </button>
 
-            <button *appHasPermission="'catalog.approve'" type="button" (click)="navigateTo('/catalog/product-requests')" [ngClass]="navItemClasses('/catalog/product-requests')" [title]="'SIDEBAR.PRODUCT_REQUESTS' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.PRODUCT_REQUESTS' | translate }}</span>
-            </button>
         </div>
 
         <!-- Group: Ecosystem Operators -->
