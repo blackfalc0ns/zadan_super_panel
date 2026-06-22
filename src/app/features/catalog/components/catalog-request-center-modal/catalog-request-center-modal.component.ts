@@ -7,6 +7,8 @@ import { CatalogService } from '@catalog/services/catalog.api.service';
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
 import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-shell.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
+import { ToastService } from '@shared/services/toast.service';
+import { describeApiError } from '@shared/utils/api-error.util';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -326,6 +328,7 @@ import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/st
 })
 export class CatalogRequestCenterModalComponent implements OnChanges {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly toastService = inject(ToastService);
   private readonly fallbackTranslations: Record<string, { ar: string; en: string }> = {
     'CATALOG.REQUESTS_MODAL_SUBTITLE': {
       ar: 'راجع طلبات الإضافة المرسلة من التجار واعتمدها أو ارفضها من نفس الشاشة.',
@@ -748,15 +751,40 @@ export class CatalogRequestCenterModalComponent implements OnChanges {
         this.pendingAction = null;
         this.showRejectForm = false;
         this.rejectionNotes = '';
+        this.toastService.success(
+          this.translate.instant(this.getReviewSuccessKey(status)),
+          this.translate.instant('CATALOG.REVIEW_SUCCESS_TITLE')
+        );
         this.loadRequests();
         this.refreshed.emit();
       },
-      error: () => {
+      error: (error) => {
         this.cdr.markForCheck();
         this.isSubmitting = false;
         this.pendingAction = null;
+        this.toastService.error(
+          describeApiError(error, this.translate, {
+            fallbackKey: 'CATALOG.REVIEW_FAILED',
+            codePrefix: 'CATALOG.ERROR_CODES'
+          }),
+          this.translate.instant('CATALOG.REVIEW_FAILED_TITLE')
+        );
       }
     });
+  }
+
+  private getReviewSuccessKey(status: 'Approved' | 'Rejected'): string {
+    const approved = status === 'Approved';
+
+    if (this.requestType === 'brand') {
+      return approved ? 'CATALOG.BRAND_REQUEST_APPROVED_SUCCESS' : 'CATALOG.BRAND_REQUEST_REJECTED_SUCCESS';
+    }
+
+    if (this.requestType === 'category') {
+      return approved ? 'CATALOG.CATEGORY_REQUEST_APPROVED_SUCCESS' : 'CATALOG.CATEGORY_REQUEST_REJECTED_SUCCESS';
+    }
+
+    return approved ? 'CATALOG.REQUEST_APPROVED_SUCCESS' : 'CATALOG.REQUEST_REJECTED_SUCCESS';
   }
 
   private resolveApprovedParentCategoryId(): string | null {

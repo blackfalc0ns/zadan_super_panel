@@ -8,6 +8,10 @@ type ApiErrorBody = {
   message?: string;
   title?: string;
   errors?: Record<string, string[] | string>;
+  extensions?: {
+    errorCode?: string;
+    code?: string;
+  };
 };
 
 type ApiErrorLike = {
@@ -34,7 +38,7 @@ export function describeApiError(
     return fallback;
   }
 
-  const codeMessage = translateErrorCode(body?.errorCode || body?.code, translate, options.codePrefix);
+  const codeMessage = translateErrorCode(extractErrorCode(body), translate, options.codePrefix);
   if (codeMessage) {
     return codeMessage;
   }
@@ -92,9 +96,17 @@ export function buildSafeApiErrorLog(error: unknown): { status?: number; code?: 
 
   return {
     status: candidate.status,
-    code: body?.errorCode || body?.code,
+    code: extractErrorCode(body) || body?.code,
     message: body?.detail || body?.message || body?.title || candidate.message
   };
+}
+
+function extractErrorCode(body: ApiErrorBody | null): string | undefined {
+  if (!body) {
+    return undefined;
+  }
+
+  return body.errorCode || body.code || body.extensions?.errorCode || body.extensions?.code;
 }
 
 function translateErrorCode(code: string | undefined, translate: TranslateService, codePrefix?: string): string | null {
