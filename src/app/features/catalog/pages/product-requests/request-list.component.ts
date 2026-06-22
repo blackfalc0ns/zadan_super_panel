@@ -25,7 +25,7 @@ import { AppButtonComponent } from '@shared/components/ui/button/button.componen
     AppButtonComponent
   ],
   template: `
-    <div class="space-y-6 animate-in fade-in duration-500">
+    <div class="mx-auto w-full max-w-[120rem] pb-10 animate-in fade-in duration-500">
       <app-page-header
         [title]="'CATALOG.PRODUCT_REQUESTS' | translate"
         [subtitle]="'CATALOG.PRODUCT_REQUESTS_DESC' | translate"
@@ -57,6 +57,7 @@ import { AppButtonComponent } from '@shared/components/ui/button/button.componen
         </div>
       </app-page-header>
 
+      <div class="px-4 md:px-8 lg:px-10">
       <div class="rounded-[32px] border border-slate-200/60 bg-white/50 p-2 shadow-sm backdrop-blur-xl">
         <app-data-table
           [data]="requests"
@@ -147,6 +148,7 @@ import { AppButtonComponent } from '@shared/components/ui/button/button.componen
             </ng-container>
           </ng-template>
         </app-data-table>
+      </div>
       </div>
     </div>
 

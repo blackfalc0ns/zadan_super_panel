@@ -31,7 +31,7 @@ import { InlineBannerComponent } from '@shared/components/ui/inline-banner/inlin
     InlineBannerComponent
   ],
   template: `
-    <div class="space-y-6 animate-in fade-in duration-500" *ngIf="request; else loadingTpl">
+    <div class="mx-auto w-full max-w-[120rem] animate-in fade-in duration-500 pb-10" *ngIf="request; else loadingTpl">
       <app-page-header
         [title]="(currentLang === 'ar' ? request.suggestedNameAr : request.suggestedNameEn)"
         [subtitle]="request.id + ' • ' + ((currentLang === 'ar' ? request.categoryPathAr : request.categoryPathEn) || '')"
@@ -94,6 +94,7 @@ import { InlineBannerComponent } from '@shared/components/ui/inline-banner/inlin
         </div>
       </app-page-header>
 
+      <div class="space-y-8 px-4 md:px-8 lg:px-10">
       <!-- Rejection Banner -->
       <app-inline-banner
         *ngIf="request.status === 'Rejected'"
@@ -243,6 +244,7 @@ import { InlineBannerComponent } from '@shared/components/ui/inline-banner/inlin
           </div>
         </div>
       </div>
+      </div>
     </div>
 
     <!-- Reject Modal -->
@@ -288,7 +290,7 @@ import { InlineBannerComponent } from '@shared/components/ui/inline-banner/inlin
     </div>
 
     <ng-template #loadingTpl>
-      <div class="admin-skeleton-detail">
+      <div class="admin-skeleton-detail mx-auto w-full max-w-[120rem] px-4 md:px-8 lg:px-10 pb-10">
         <div class="admin-skeleton-detail-hero">
           <div class="space-y-3">
             <span class="admin-skeleton admin-skeleton-line lg w-72"></span>
