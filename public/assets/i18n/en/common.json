@@ -1312,5 +1312,13 @@
       "NOTIFICATION_SOUND_SAVED": "Notification sound saved.",
       "NOTIFICATION_SOUND_SAVE_FAILED": "Unable to save notification sound right now."
     }
+  },
+  "NOT_FOUND": {
+    "TITLE": "Page Not Found",
+    "MESSAGE": "The page you requested does not exist, was moved, or is temporarily unavailable. Check the address or return to the dashboard.",
+    "PATH_LABEL": "Requested path",
+    "GO_DASHBOARD": "Back to Dashboard",
+    "GO_BACK": "Go Back",
+    "GO_LOGIN": "Sign In"
   }
 }
