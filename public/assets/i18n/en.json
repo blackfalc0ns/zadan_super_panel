@@ -119,13 +119,6 @@
     "GO_DASHBOARD": "Back to Dashboard",
     "GO_PROFILE": "My Profile"
   },
-  "NOT_FOUND": {
-    "TITLE": "Page Not Found",
-    "MESSAGE": "The page you requested does not exist, was moved, or is temporarily unavailable. Check the address or return to the dashboard.",
-    "PATH_LABEL": "Requested path",
-    "GO_DASHBOARD": "Back to Dashboard",
-    "GO_BACK": "Go Back"
-  },
   "LOGIN": {
     "WELCOME": "Super Admin Access",
     "EMAIL": "Admin Email",
