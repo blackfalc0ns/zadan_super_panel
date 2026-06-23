@@ -122,22 +122,16 @@ export const routes: Routes = [
         canActivate: [HasPermissionGuard],
         data: { permission: 'email_center.view' },
         loadChildren: () => import('./features/email-center/email-center.routes').then((m) => m.EMAIL_CENTER_ROUTES)
-      },
-      {
-        path: 'not-found',
-        loadComponent: () => import('./core/pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
-        data: { embedded: true }
-      },
-      {
-        path: '**',
-        loadComponent: () => import('./core/pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
-        data: { embedded: true }
       }
     ]
   },
   {
-    path: '**',
+    path: 'not-found',
     loadComponent: () => import('./core/pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
     data: { embedded: false }
+  },
+  {
+    path: '**',
+    redirectTo: 'not-found'
   }
 ];
