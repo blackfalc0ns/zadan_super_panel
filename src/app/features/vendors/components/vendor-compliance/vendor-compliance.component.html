@@ -1,519 +1,519 @@
 <div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="vendor-compliance-page mx-auto max-w-[1520px] space-y-5 px-4 py-5 pb-6 md:px-6 lg:px-8">
 
-  <div *ngIf="mutationError" class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700">
-    <span class="material-symbols-outlined text-[18px]">error</span>
-    {{ mutationError }}
-  </div>
+ <div *ngIf="mutationError" class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700">
+ <span class="material-symbols-outlined text-[18px]">error</span>
+ {{ mutationError }}
+ </div>
 
-  <!-- Hero -->
-  <header class="vendor-compliance-hero relative overflow-hidden rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-white via-white to-primary/[0.06] p-5 shadow-sm md:p-6">
-    <div class="pointer-events-none absolute -end-14 -top-14 h-44 w-44 rounded-full bg-primary/10 blur-2xl"></div>
+ <!-- Hero -->
+ <header class="vendor-compliance-hero relative overflow-hidden rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-white via-white to-primary/[0.06] p-5 shadow-sm md:p-6">
+ <div class="pointer-events-none absolute -end-14 -top-14 h-44 w-44 rounded-full bg-primary/10 blur-2xl"></div>
 
-    <div class="relative flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-      <div class="min-w-0 space-y-2 text-start">
-        <div class="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/10 px-3 py-1 text-[11px] font-extrabold text-primary">
-          <span class="material-symbols-outlined text-[15px]">shield_person</span>
-          {{ 'COMPLIANCE.WORKSPACE.BADGE' | translate }}
-        </div>
-        <h1 class="text-2xl font-black text-slate-900">{{ 'COMPLIANCE.TITLE' | translate }}</h1>
-        <p class="max-w-2xl text-[13px] font-semibold text-slate-500">
-          {{ 'COMPLIANCE.WORKSPACE.SUBTITLE' | translate:{ vendor: vendorDisplayName } }}
-        </p>
-        <div class="flex flex-wrap items-center gap-2">
-          <app-status-pill [label]="reviewStateLabel" [variant]="reviewStateVariant" [showDot]="true" [shouldTranslate]="false" size="sm"></app-status-pill>
-          <app-status-pill [label]="accountStatusLabel" [variant]="accountStatusVariant" [showDot]="true" [shouldTranslate]="false" size="sm"></app-status-pill>
-        </div>
-      </div>
+ <div class="relative flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+ <div class="min-w-0 space-y-2 text-start">
+ <div class="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/10 px-3 py-1 text-[11px] font-extrabold text-primary">
+ <span class="material-symbols-outlined text-[15px]">shield_person</span>
+ {{ 'COMPLIANCE.WORKSPACE.BADGE' | translate }}
+ </div>
+ <h1 class="text-2xl font-black text-slate-900">{{ 'COMPLIANCE.TITLE' | translate }}</h1>
+ <p class="max-w-2xl text-[13px] font-semibold text-slate-500">
+ {{ 'COMPLIANCE.WORKSPACE.SUBTITLE' | translate:{ vendor: vendorDisplayName } }}
+ </p>
+ <div class="flex flex-wrap items-center gap-2">
+ <app-status-pill [label]="reviewStateLabel" [variant]="reviewStateVariant" [showDot]="true" [shouldTranslate]="false" size="sm"></app-status-pill>
+ <app-status-pill [label]="accountStatusLabel" [variant]="accountStatusVariant" [showDot]="true" [shouldTranslate]="false" size="sm"></app-status-pill>
+ </div>
+ </div>
 
-      <div class="vendor-compliance-tabs flex shrink-0 rounded-xl border border-slate-200 bg-slate-50 p-1">
-        <button
-          type="button"
-          (click)="setWorkspaceWindow('review')"
-          class="inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-[11px] font-extrabold transition"
-          [ngClass]="isWorkspaceWindowActive('review') ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'">
-          <span class="material-symbols-outlined text-[16px]">folder_managed</span>
-          {{ 'COMPLIANCE.WORKSPACE.TAB_REVIEW' | translate }}
-        </button>
-        <button
-          type="button"
-          (click)="setWorkspaceWindow('operations')"
-          class="inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-[11px] font-extrabold transition"
-          [ngClass]="isWorkspaceWindowActive('operations') ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'">
-          <span class="material-symbols-outlined text-[16px]">tune</span>
-          {{ 'COMPLIANCE.WORKSPACE.TAB_OPERATIONS' | translate }}
-        </button>
-      </div>
-    </div>
+ <div class="vendor-compliance-tabs flex shrink-0 rounded-xl border border-slate-200 bg-slate-50 p-1">
+ <button
+ type="button"
+ (click)="setWorkspaceWindow('review')"
+ class="inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-[11px] font-extrabold transition"
+ [ngClass]="isWorkspaceWindowActive('review') ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'">
+ <span class="material-symbols-outlined text-[16px]">folder_managed</span>
+ {{ 'COMPLIANCE.WORKSPACE.TAB_REVIEW' | translate }}
+ </button>
+ <button
+ type="button"
+ (click)="setWorkspaceWindow('operations')"
+ class="inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-[11px] font-extrabold transition"
+ [ngClass]="isWorkspaceWindowActive('operations') ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'">
+ <span class="material-symbols-outlined text-[16px]">tune</span>
+ {{ 'COMPLIANCE.WORKSPACE.TAB_OPERATIONS' | translate }}
+ </button>
+ </div>
+ </div>
 
-    <div class="relative mt-5 grid gap-3 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-      <div class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3">
-        <div class="vendor-compliance-ring relative flex h-11 w-11 shrink-0 items-center justify-center">
-          <span class="text-[11px] font-black text-primary">{{ formatNumber(reviewCompletionPercent) }}%</span>
-          <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
-            <path class="text-slate-200" stroke-width="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-primary" stroke-width="2.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          </svg>
-        </div>
-        <div class="min-w-0 text-start">
-          <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.READINESS' | translate }}</p>
-          <p class="text-[12px] font-extrabold text-slate-900">
-            {{ complianceReadyForFinalApproval
+ <div class="relative mt-5 grid gap-3 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+ <div class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3">
+ <div class="vendor-compliance-ring relative flex h-11 w-11 shrink-0 items-center justify-center">
+ <span class="text-[11px] font-black text-primary">{{ formatNumber(reviewCompletionPercent) }}%</span>
+ <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
+ <path class="text-slate-200" stroke-width="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+ <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-primary" stroke-width="2.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+ </svg>
+ </div>
+ <div class="min-w-0 text-start">
+ <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.READINESS' | translate }}</p>
+ <p class="text-[12px] font-extrabold text-slate-900">
+ {{ complianceReadyForFinalApproval
               ? (isRTL ? 'جاهز للاعتماد النهائي' : 'Ready for final approval')
               : (isRTL ? 'بانتظار ' + formatNumber(pendingRequiredDocumentsCount) + ' عناصر' : formatNumber(pendingRequiredDocumentsCount) + ' open items') }}
-          </p>
-        </div>
-      </div>
+ </p>
+ </div>
+ </div>
 
-      <p class="rounded-2xl border border-slate-200/80 bg-white/80 px-4 py-3 text-start text-[12px] font-semibold leading-relaxed text-slate-600">
-        <span class="mb-0.5 block text-[10px] font-extrabold text-slate-400" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.GUIDANCE' | translate }}</span>
-        {{ operationsHint }}
-      </p>
+ <p class="rounded-2xl border border-slate-200/80 bg-white/80 px-4 py-3 text-start text-[12px] font-semibold leading-relaxed text-slate-600">
+ <span class="mb-0.5 block text-[10px] font-extrabold text-slate-400" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.GUIDANCE' | translate }}</span>
+ {{ operationsHint }}
+ </p>
 
-      <button
-        *ngIf="totalPendingItemsCount > 0"
-        type="button"
-        (click)="onApproveAllPending()"
-        [disabled]="isSubmittingDocumentDecision"
-        class="flex h-10 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-emerald-600 px-4 text-[12px] font-extrabold text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-700 disabled:opacity-50 lg:self-center">
-        <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isSubmittingDocumentDecision">{{ isSubmittingDocumentDecision ? 'sync' : 'done_all' }}</span>
-        {{ 'COMPLIANCE.WORKSPACE.APPROVE_ALL' | translate }} ({{ formatNumber(totalPendingItemsCount) }})
-      </button>
-    </div>
+ <button
+ *ngIf="totalPendingItemsCount > 0"
+ type="button"
+ (click)="onApproveAllPending()"
+ [disabled]="isSubmittingDocumentDecision"
+ class="flex h-10 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-emerald-600 px-4 text-[12px] font-extrabold text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-700 disabled:opacity-50 lg:self-center">
+ <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isSubmittingDocumentDecision">{{ isSubmittingDocumentDecision ? 'sync' : 'done_all' }}</span>
+ {{ 'COMPLIANCE.WORKSPACE.APPROVE_ALL' | translate }} ({{ formatNumber(totalPendingItemsCount) }})
+ </button>
+ </div>
 
-    <div class="relative mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="rounded-xl border border-slate-200/80 bg-white/90 p-3">
-        <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.FILES' | translate }}</p>
-        <p class="mt-0.5 text-xl font-black tabular-nums text-slate-900">{{ formatNumber(uploadedFileDocuments.length) }}</p>
-      </div>
-      <div class="rounded-xl border border-emerald-100 bg-emerald-50/50 p-3">
-        <p class="text-[10px] font-bold text-emerald-700" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.CLOSED' | translate }}</p>
-        <p class="mt-0.5 text-xl font-black tabular-nums text-emerald-900">{{ formatNumber(documentsApprovedCount) }}</p>
-      </div>
-      <div class="rounded-xl border border-amber-100 bg-amber-50/50 p-3">
-        <p class="text-[10px] font-bold text-amber-700" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.OPEN' | translate }}</p>
-        <p class="mt-0.5 text-xl font-black tabular-nums text-amber-900">{{ formatNumber(documentsPendingCount) }}</p>
-      </div>
-      <div class="rounded-xl border border-rose-100 bg-rose-50/50 p-3">
-        <p class="text-[10px] font-bold text-rose-700" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.REJECTED' | translate }}</p>
-        <p class="mt-0.5 text-xl font-black tabular-nums text-rose-900">{{ formatNumber(documentsRejectedCount) }}</p>
-      </div>
-    </div>
-  </header>
+ <div class="relative mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+ <div class="rounded-xl border border-slate-200/80 bg-white/90 p-3">
+ <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.FILES' | translate }}</p>
+ <p class="mt-0.5 text-xl font-black tabular-nums text-slate-900">{{ formatNumber(uploadedFileDocuments.length) }}</p>
+ </div>
+ <div class="rounded-xl border border-emerald-100 bg-emerald-50/50 p-3">
+ <p class="text-[10px] font-bold text-emerald-700" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.CLOSED' | translate }}</p>
+ <p class="mt-0.5 text-xl font-black tabular-nums text-emerald-900">{{ formatNumber(documentsApprovedCount) }}</p>
+ </div>
+ <div class="rounded-xl border border-amber-100 bg-amber-50/50 p-3">
+ <p class="text-[10px] font-bold text-amber-700" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.OPEN' | translate }}</p>
+ <p class="mt-0.5 text-xl font-black tabular-nums text-amber-900">{{ formatNumber(documentsPendingCount) }}</p>
+ </div>
+ <div class="rounded-xl border border-rose-100 bg-rose-50/50 p-3">
+ <p class="text-[10px] font-bold text-rose-700" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.REJECTED' | translate }}</p>
+ <p class="mt-0.5 text-xl font-black tabular-nums text-rose-900">{{ formatNumber(documentsRejectedCount) }}</p>
+ </div>
+ </div>
+ </header>
 
-  <!-- Operations Workspace -->
-  <section *ngIf="isWorkspaceWindowActive('operations')" class="grid gap-5">
-    <article class="vendor-compliance-card rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm md:p-5">
-        <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-            <span class="material-symbols-outlined text-[16px]">tune</span>
-          </div>
-          <div>
-            <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'لوحة إدارة الحساب' : 'Account Control Rail' }}</h2>
-            <p class="text-[10px] font-medium text-slate-500">{{ isRTL ? 'إدارة حالة التاجر وقرارات الحساب' : 'Manage vendor status and decisions' }}</p>
-          </div>
-        </div>
+ <!-- Operations Workspace -->
+ <section *ngIf="isWorkspaceWindowActive('operations')" class="grid gap-5">
+ <article class="vendor-compliance-card rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm md:p-5">
+ <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
+ <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+ <span class="material-symbols-outlined text-[16px]">tune</span>
+ </div>
+ <div>
+ <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'لوحة إدارة الحساب' : 'Account Control Rail' }}</h2>
+ <p class="text-[10px] font-medium text-slate-500">{{ isRTL ? 'إدارة حالة التاجر وقرارات الحساب' : 'Manage vendor status and decisions' }}</p>
+ </div>
+ </div>
 
-        <div class="space-y-3">
-          <div class="rounded-xl bg-slate-50 p-3 border border-slate-100">
-            <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'القرار المقترح' : 'Suggested move' }}</p>
-            <p class="mt-1 text-[13px] font-black text-slate-900">{{ operationsHeadline }}</p>
-          </div>
+ <div class="space-y-3">
+ <div class="rounded-xl bg-slate-50 p-3 border border-slate-100">
+ <p class="text-[9px] font-black tracking-[0.1em] text-slate-400">{{ isRTL ? 'القرار المقترح' : 'Suggested move' }}</p>
+ <p class="mt-1 text-[13px] font-black text-slate-900">{{ operationsHeadline }}</p>
+ </div>
 
-          <div *ngIf="!hasActionRailCommands" class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-[11px] font-bold text-amber-700">
-            {{ operationsBlockedMessage }}
-          </div>
+ <div *ngIf="!hasActionRailCommands" class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-[11px] font-bold text-amber-700">
+ {{ operationsBlockedMessage }}
+ </div>
 
-          <div *ngIf="canRejectVendor || canSuspendVendor || canRequestDocuments" class="space-y-1.5">
-            <label class="text-[10px] font-black tracking-[0.1em] text-slate-500">{{ actionReasonLabel }}</label>
-            <textarea
-              [(ngModel)]="actionReason"
-              rows="2"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-              [placeholder]="actionReasonPlaceholder">
-            </textarea>
-          </div>
+ <div *ngIf="canRejectVendor || canSuspendVendor || canRequestDocuments" class="space-y-1.5">
+ <label class="text-[10px] font-black tracking-[0.1em] text-slate-500">{{ actionReasonLabel }}</label>
+ <textarea
+ [(ngModel)]="actionReason"
+ rows="2"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+ [placeholder]="actionReasonPlaceholder">
+ </textarea>
+ </div>
 
-          <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-            <button
-              *ngIf="canStartReview"
-              type="button"
-              (click)="onStartReview()"
-              class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition-all hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">play_circle</span>
-              {{ isRTL ? 'بدء المراجعة' : 'Start review' }}
-            </button>
+ <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+ <button
+ *ngIf="canStartReview"
+ type="button"
+ (click)="onStartReview()"
+ class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition-all hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5">
+ <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">play_circle</span>
+ {{ isRTL ? 'بدء المراجعة' : 'Start review' }}
+ </button>
 
-            <button
-              *ngIf="canApproveVendor"
-              type="button"
-              (click)="onApproveVendor()"
-              class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">verified</span>
-              {{ isRTL ? 'اعتماد نهائي' : 'Final approval' }}
-            </button>
+ <button
+ *ngIf="canApproveVendor"
+ type="button"
+ (click)="onApproveVendor()"
+ class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 hover:-translate-y-0.5">
+ <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">verified</span>
+ {{ isRTL ? 'اعتماد نهائي' : 'Final approval' }}
+ </button>
 
-            <button
-              *ngIf="canRequestDocuments"
-              type="button"
-              (click)="onRequestDocuments()"
-              class="flex h-10 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 text-[12px] font-black text-amber-700 transition-all hover:bg-amber-100 hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[16px]">upload_file</span>
-              {{ isRTL ? 'طلب إعادة رفع' : 'Request re-upload' }}
-            </button>
+ <button
+ *ngIf="canRequestDocuments"
+ type="button"
+ (click)="onRequestDocuments()"
+ class="flex h-10 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 text-[12px] font-black text-amber-700 transition-all hover:bg-amber-100 hover:-translate-y-0.5">
+ <span class="material-symbols-outlined text-[16px]">upload_file</span>
+ {{ isRTL ? 'طلب إعادة رفع' : 'Request re-upload' }}
+ </button>
 
-            <button
-              *ngIf="canRejectVendor"
-              type="button"
-              (click)="onRejectVendor()"
-              class="flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 text-[12px] font-black text-rose-700 transition-all hover:bg-rose-100 hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[16px]">cancel</span>
-              {{ isRTL ? 'رفض التاجر' : 'Reject vendor' }}
-            </button>
+ <button
+ *ngIf="canRejectVendor"
+ type="button"
+ (click)="onRejectVendor()"
+ class="flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 text-[12px] font-black text-rose-700 transition-all hover:bg-rose-100 hover:-translate-y-0.5">
+ <span class="material-symbols-outlined text-[16px]">cancel</span>
+ {{ isRTL ? 'رفض التاجر' : 'Reject vendor' }}
+ </button>
 
-            <button
-              *ngIf="canSuspendVendor"
-              type="button"
-              (click)="onSuspendAccount()"
-              class="flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[16px]">pause_circle</span>
-              {{ isRTL ? 'تعليق الحساب' : 'Suspend account' }}
-            </button>
+ <button
+ *ngIf="canSuspendVendor"
+ type="button"
+ (click)="onSuspendAccount()"
+ class="flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5">
+ <span class="material-symbols-outlined text-[16px]">pause_circle</span>
+ {{ isRTL ? 'تعليق الحساب' : 'Suspend account' }}
+ </button>
 
-            <button
-              *ngIf="canReactivateVendor"
-              type="button"
-              (click)="onReactivateAccount()"
-              class="flex h-10 items-center justify-center gap-2 rounded-xl bg-sky-500 px-4 text-[12px] font-black text-white transition-all hover:bg-sky-600 hover:shadow-md hover:-translate-y-0.5">
-              <span class="material-symbols-outlined text-[16px]">restart_alt</span>
-              {{ isRTL ? 'إعادة تشغيل الحساب' : 'Reactivate account' }}
-            </button>
-          </div>
-        </div>
-    </article>
+ <button
+ *ngIf="canReactivateVendor"
+ type="button"
+ (click)="onReactivateAccount()"
+ class="flex h-10 items-center justify-center gap-2 rounded-xl bg-sky-500 px-4 text-[12px] font-black text-white transition-all hover:bg-sky-600 hover:shadow-md hover:-translate-y-0.5">
+ <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+ {{ isRTL ? 'إعادة تشغيل الحساب' : 'Reactivate account' }}
+ </button>
+ </div>
+ </div>
+ </article>
 
-    <article class="vendor-compliance-card rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm md:p-5">
-      <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-          <span class="material-symbols-outlined text-[16px]">overview</span>
-        </div>
-        <div>
-          <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'السجل والمخاطر' : 'Timeline and Risks' }}</h2>
-          <p class="text-[10px] font-medium text-slate-500">{{ isRTL ? 'الملاحظات وإشارات الخطر' : 'Notes and risk indicators' }}</p>
-        </div>
-      </div>
+ <article class="vendor-compliance-card rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm md:p-5">
+ <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-3">
+ <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+ <span class="material-symbols-outlined text-[16px]">overview</span>
+ </div>
+ <div>
+ <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'السجل والمخاطر' : 'Timeline and Risks' }}</h2>
+ <p class="text-[10px] font-medium text-slate-500">{{ isRTL ? 'الملاحظات وإشارات الخطر' : 'Notes and risk indicators' }}</p>
+ </div>
+ </div>
 
-      <div class="mb-4 rounded-xl bg-slate-50 p-3 border border-slate-100">
-        <label class="text-[9px] font-black tracking-[0.1em] text-slate-500">{{ isRTL ? 'إضافة ملاحظة جديدة' : 'Add new note' }}</label>
-        <div class="mt-1.5 flex gap-2">
-          <input
-            [(ngModel)]="newNote"
-            type="text"
-            class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-            [placeholder]="isRTL ? 'ملاحظة تشغيلية...' : 'Operational note...'" />
-          <button
-            type="button"
-            (click)="onAddNote()"
-            class="flex items-center justify-center rounded-lg bg-slate-900 px-4 text-[12px] font-black text-white transition-all hover:bg-slate-800">
-            {{ isRTL ? 'إضافة' : 'Add' }}
-          </button>
-        </div>
-      </div>
+ <div class="mb-4 rounded-xl bg-slate-50 p-3 border border-slate-100">
+ <label class="text-[9px] font-black tracking-[0.1em] text-slate-500">{{ isRTL ? 'إضافة ملاحظة جديدة' : 'Add new note' }}</label>
+ <div class="mt-1.5 flex gap-2">
+ <input
+ [(ngModel)]="newNote"
+ type="text"
+ class="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+ [placeholder]="isRTL ? 'ملاحظة تشغيلية...' : 'Operational note...'" />
+ <button
+ type="button"
+ (click)="onAddNote()"
+ class="flex items-center justify-center rounded-lg bg-slate-900 px-4 text-[12px] font-black text-white transition-all hover:bg-slate-800">
+ {{ isRTL ? 'إضافة' : 'Add' }}
+ </button>
+ </div>
+ </div>
 
-      <div class="flex rounded-lg bg-slate-100 p-1 mb-3">
-        <button
-          type="button"
-          (click)="activeRailTab = 'timeline'"
-          class="flex-1 rounded-md px-3 py-1.5 text-[11px] font-black transition-all"
-          [ngClass]="activeRailTab === 'timeline' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
-          {{ isRTL ? 'السجل الزمني' : 'Timeline' }}
-        </button>
-        <button
-          type="button"
-          (click)="activeRailTab = 'risks'"
-          class="flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-black transition-all"
-          [ngClass]="activeRailTab === 'risks' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
-          {{ isRTL ? 'المخاطر' : 'Risks' }}
-          <span *ngIf="riskIndicators.length > 0" class="flex h-4 w-4 items-center justify-center rounded-full bg-rose-100 text-[9px] text-rose-600">{{ riskIndicators.length }}</span>
-        </button>
-      </div>
+ <div class="flex rounded-lg bg-slate-100 p-1 mb-3">
+ <button
+ type="button"
+ (click)="activeRailTab = 'timeline'"
+ class="flex-1 rounded-md px-3 py-1.5 text-[11px] font-black transition-all"
+ [ngClass]="activeRailTab === 'timeline' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
+ {{ isRTL ? 'السجل الزمني' : 'Timeline' }}
+ </button>
+ <button
+ type="button"
+ (click)="activeRailTab = 'risks'"
+ class="flex-1 flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-black transition-all"
+ [ngClass]="activeRailTab === 'risks' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'">
+ {{ isRTL ? 'المخاطر' : 'Risks' }}
+ <span *ngIf="riskIndicators.length > 0" class="flex h-4 w-4 items-center justify-center rounded-full bg-rose-100 text-[9px] text-rose-600">{{ riskIndicators.length }}</span>
+ </button>
+ </div>
 
-      <div *ngIf="activeRailTab === 'timeline'" class="vendor-compliance-scroll max-h-[16rem] space-y-2 overflow-y-auto">
-        <div *ngFor="let note of complianceNotes; trackBy: trackByNote" class="rounded-xl border border-slate-100 bg-white p-3 shadow-sm transition-all hover:border-slate-200">
-          <div class="flex items-start justify-between gap-2 mb-1.5">
-            <div class="flex items-center gap-2">
-              <div class="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-600">
-                <span class="material-symbols-outlined text-[13px]">person</span>
-              </div>
-              <div>
-                <p class="text-[11px] font-black text-slate-900">{{ note.authorName }}</p>
-                <p class="text-[9px] font-bold text-slate-400">{{ localizeRoleLabel(note.roleLabel) }}</p>
-              </div>
-            </div>
-            <span class="text-[9px] font-bold text-slate-400">{{ formatNoteTimestamp(note.createdAtUtc) }}</span>
-          </div>
-          <p class="text-[12px] font-medium leading-relaxed text-slate-600">
-            {{ localizeNoteMessage(note.message) || (note.messageKey ? (note.messageKey | translate) : '') }}
-          </p>
-        </div>
+ <div *ngIf="activeRailTab === 'timeline'" class="vendor-compliance-scroll max-h-[16rem] space-y-2 overflow-y-auto">
+ <div *ngFor="let note of complianceNotes; trackBy: trackByNote" class="rounded-xl border border-slate-100 bg-white p-3 shadow-sm transition-all hover:border-slate-200">
+ <div class="flex items-start justify-between gap-2 mb-1.5">
+ <div class="flex items-center gap-2">
+ <div class="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+ <span class="material-symbols-outlined text-[13px]">person</span>
+ </div>
+ <div>
+ <p class="text-[11px] font-black text-slate-900">{{ note.authorName }}</p>
+ <p class="text-[9px] font-bold text-slate-400">{{ localizeRoleLabel(note.roleLabel) }}</p>
+ </div>
+ </div>
+ <span class="text-[9px] font-bold text-slate-400">{{ formatNoteTimestamp(note.createdAtUtc) }}</span>
+ </div>
+ <p class="text-[12px] font-medium leading-relaxed text-slate-600">
+ {{ localizeNoteMessage(note.message) || (note.messageKey ? (note.messageKey | translate) : '') }}
+ </p>
+ </div>
 
-        <div *ngIf="complianceNotes.length === 0" class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-2">
-             <span class="material-symbols-outlined text-[20px]">speaker_notes_off</span>
-          </div>
-          <p class="text-[12px] font-black text-slate-900">{{ isRTL ? 'لا يوجد سجلات بعد' : 'No timeline records' }}</p>
-          <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ isRTL ? 'ابدأ بإضافة ملاحظة لتتبع التحديثات' : 'Add a note to track updates' }}</p>
-        </div>
-      </div>
+ <div *ngIf="complianceNotes.length === 0" class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center">
+ <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-2">
+ <span class="material-symbols-outlined text-[20px]">speaker_notes_off</span>
+ </div>
+ <p class="text-[12px] font-black text-slate-900">{{ isRTL ? 'لا يوجد سجلات بعد' : 'No timeline records' }}</p>
+ <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ isRTL ? 'ابدأ بإضافة ملاحظة لتتبع التحديثات' : 'Add a note to track updates' }}</p>
+ </div>
+ </div>
 
-      <div *ngIf="activeRailTab === 'risks'" class="vendor-compliance-scroll max-h-[16rem] space-y-2 overflow-y-auto">
-        <div *ngFor="let indicator of riskIndicators; trackBy: trackByRisk" 
-             class="rounded-xl border p-3 transition-all hover:shadow-sm" 
-             [ngClass]="indicator.severity === 'high' ? 'border-rose-200 bg-rose-50/50' : indicator.severity === 'medium' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-slate-50/50'">
-          <div class="flex gap-2">
-            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-sm" 
-                 [ngClass]="indicator.severity === 'high' ? 'bg-rose-500' : indicator.severity === 'medium' ? 'bg-amber-500' : 'bg-slate-500'">
-              <span class="material-symbols-outlined text-[16px]">{{ indicator.icon }}</span>
-            </div>
-            <div>
-              <div class="flex items-center gap-1.5 mb-0.5">
-                <p class="text-[12px] font-black text-slate-900">{{ getIndicatorTitle(indicator) }}</p>
-              </div>
-              <p class="text-[11px] font-medium leading-relaxed text-slate-600">{{ getIndicatorDescription(indicator) }}</p>
-            </div>
-          </div>
-        </div>
+ <div *ngIf="activeRailTab === 'risks'" class="vendor-compliance-scroll max-h-[16rem] space-y-2 overflow-y-auto">
+ <div *ngFor="let indicator of riskIndicators; trackBy: trackByRisk" 
+ class="rounded-xl border p-3 transition-all hover:shadow-sm" 
+ [ngClass]="indicator.severity === 'high' ? 'border-rose-200 bg-rose-50/50' : indicator.severity === 'medium' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-slate-50/50'">
+ <div class="flex gap-2">
+ <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-sm" 
+ [ngClass]="indicator.severity === 'high' ? 'bg-rose-500' : indicator.severity === 'medium' ? 'bg-amber-500' : 'bg-slate-500'">
+ <span class="material-symbols-outlined text-[16px]">{{ indicator.icon }}</span>
+ </div>
+ <div>
+ <div class="flex items-center gap-1.5 mb-0.5">
+ <p class="text-[12px] font-black text-slate-900">{{ getIndicatorTitle(indicator) }}</p>
+ </div>
+ <p class="text-[11px] font-medium leading-relaxed text-slate-600">{{ getIndicatorDescription(indicator) }}</p>
+ </div>
+ </div>
+ </div>
 
-        <div *ngIf="riskIndicators.length === 0" class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-500 mb-2">
-             <span class="material-symbols-outlined text-[20px]">health_and_safety</span>
-          </div>
-          <p class="text-[12px] font-black text-slate-900">{{ isRTL ? 'لا توجد إشارات خطر' : 'No active risk signals' }}</p>
-          <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ isRTL ? 'حالة الحساب تبدو طبيعية' : 'Account status looks normal' }}</p>
-        </div>
-      </div>
-    </article>
-  </section>
+ <div *ngIf="riskIndicators.length === 0" class="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 py-8 text-center">
+ <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-500 mb-2">
+ <span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+ </div>
+ <p class="text-[12px] font-black text-slate-900">{{ isRTL ? 'لا توجد إشارات خطر' : 'No active risk signals' }}</p>
+ <p class="mt-0.5 text-[10px] font-medium text-slate-500">{{ isRTL ? 'حالة الحساب تبدو طبيعية' : 'Account status looks normal' }}</p>
+ </div>
+ </div>
+ </article>
+ </section>
 
-  <!-- Review Workspace -->
-  <section *ngIf="isWorkspaceWindowActive('review')" class="grid gap-5 xl:grid-cols-[minmax(300px,360px)_minmax(0,1fr)] xl:items-start">
-    <article class="vendor-compliance-card vendor-compliance-doc-board rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-        <div class="flex items-center gap-2">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-            <span class="material-symbols-outlined text-[16px]">view_module</span>
-          </div>
-          <div>
-            <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'أقسام الامتثال' : 'Compliance sections' }}</h2>
-            <p class="text-[10px] font-medium text-slate-500">{{ formatNumber(reviewSections.length) }} {{ isRTL ? 'قسم للمراجعة' : 'sections to review' }}</p>
-          </div>
-        </div>
-      </div>
+ <!-- Review Workspace -->
+ <section *ngIf="isWorkspaceWindowActive('review')" class="grid gap-5 xl:grid-cols-[minmax(300px,360px)_minmax(0,1fr)] xl:items-start">
+ <article class="vendor-compliance-card vendor-compliance-doc-board rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
+ <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+ <div class="flex items-center gap-2">
+ <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+ <span class="material-symbols-outlined text-[16px]">view_module</span>
+ </div>
+ <div>
+ <h2 class="text-[14px] font-black text-slate-900">{{ isRTL ? 'أقسام الامتثال' : 'Compliance sections' }}</h2>
+ <p class="text-[10px] font-medium text-slate-500">{{ formatNumber(reviewSections.length) }} {{ isRTL ? 'قسم للمراجعة' : 'sections to review' }}</p>
+ </div>
+ </div>
+ </div>
 
-      <div class="vendor-compliance-scroll max-h-[min(32rem,70vh)] space-y-3 overflow-y-auto">
-        <button
-          *ngFor="let section of reviewSections; trackBy: trackBySection"
-          type="button"
-          (click)="selectSection(section)"
-          class="group relative w-full overflow-hidden rounded-2xl border p-4 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
-          [ngClass]="selectedSection?.id === section.id ? 'border-primary/30 bg-primary/5 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'">
-          <div *ngIf="selectedSection?.id === section.id" class="absolute top-0 bottom-0 w-1 bg-primary ltr:left-0 rtl:right-0"></div>
+ <div class="vendor-compliance-scroll max-h-[min(32rem,70vh)] space-y-3 overflow-y-auto">
+ <button
+ *ngFor="let section of reviewSections; trackBy: trackBySection"
+ type="button"
+ (click)="selectSection(section)"
+ class="group relative w-full overflow-hidden rounded-2xl border p-4 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm"
+ [ngClass]="selectedSection?.id === section.id ? 'border-primary/30 bg-primary/5 shadow-sm' : 'border-slate-100 bg-white hover:border-slate-200'">
+ <div *ngIf="selectedSection?.id === section.id" class="absolute top-0 bottom-0 w-1 bg-primary ltr:left-0 rtl:right-0"></div>
 
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <p class="text-[13px] font-black text-slate-900">{{ section.title }}</p>
-              <p class="mt-1 text-[10px] font-medium leading-relaxed text-slate-500">{{ section.hint }}</p>
-            </div>
-            <app-status-pill
-              [label]="getSectionStatusLabel(section)"
-              [variant]="getSectionStatusVariant(section)"
-              [showDot]="true"
-              [shouldTranslate]="false"
-              size="sm">
-            </app-status-pill>
-          </div>
+ <div class="flex items-start justify-between gap-3">
+ <div class="min-w-0">
+ <p class="text-[13px] font-black text-slate-900">{{ section.title }}</p>
+ <p class="mt-1 text-[10px] font-medium leading-relaxed text-slate-500">{{ section.hint }}</p>
+ </div>
+ <app-status-pill
+ [label]="getSectionStatusLabel(section)"
+ [variant]="getSectionStatusVariant(section)"
+ [showDot]="true"
+ [shouldTranslate]="false"
+ size="sm">
+ </app-status-pill>
+ </div>
 
-          <div class="mt-3 flex flex-wrap gap-2">
-            <span class="rounded-full px-2.5 py-1 text-[9px] font-black" [ngClass]="section.accentClass">
-              {{ formatNumber(section.profileFields.length) }} {{ isRTL ? 'حقول' : 'fields' }}
-            </span>
-            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-black text-slate-600">
-              {{ formatNumber(section.documents.length) }} {{ isRTL ? 'مستندات' : 'documents' }}
-            </span>
-            <span *ngIf="getSectionPendingCount(section) > 0" class="rounded-full bg-amber-100 px-2.5 py-1 text-[9px] font-black text-amber-700">
-              {{ formatNumber(getSectionPendingCount(section)) }} {{ isRTL ? 'معلق' : 'pending' }}
-            </span>
-          </div>
-        </button>
-      </div>
-    </article>
+ <div class="mt-3 flex flex-wrap gap-2">
+ <span class="rounded-full px-2.5 py-1 text-[9px] font-black" [ngClass]="section.accentClass">
+ {{ formatNumber(section.profileFields.length) }} {{ isRTL ? 'حقول' : 'fields' }}
+ </span>
+ <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-black text-slate-600">
+ {{ formatNumber(section.documents.length) }} {{ isRTL ? 'مستندات' : 'documents' }}
+ </span>
+ <span *ngIf="getSectionPendingCount(section) > 0" class="rounded-full bg-amber-100 px-2.5 py-1 text-[9px] font-black text-amber-700">
+ {{ formatNumber(getSectionPendingCount(section)) }} {{ isRTL ? 'معلق' : 'pending' }}
+ </span>
+ </div>
+ </button>
+ </div>
+ </article>
 
-    <article class="vendor-compliance-card vendor-compliance-preview rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm flex flex-col xl:sticky xl:top-4">
-      <ng-container *ngIf="selectedSection as section; else emptySectionPreview">
-        <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
-          <div class="min-w-0">
-            <p class="text-[10px] font-black tracking-[0.12em] text-primary">{{ isRTL ? 'تفاصيل القسم' : 'Section details' }}</p>
-            <h2 class="mt-1 text-[16px] font-black text-slate-900">{{ section.title }}</h2>
-            <p class="mt-1 text-[11px] font-medium text-slate-500">{{ section.hint }}</p>
-          </div>
-          <app-status-pill
-            [label]="getSectionStatusLabel(section)"
-            [variant]="getSectionStatusVariant(section)"
-            [showDot]="true"
-            [shouldTranslate]="false"
-            size="sm">
-          </app-status-pill>
-        </div>
+ <article class="vendor-compliance-card vendor-compliance-preview rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm flex flex-col xl:sticky xl:top-4">
+ <ng-container *ngIf="selectedSection as section; else emptySectionPreview">
+ <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
+ <div class="min-w-0">
+ <p class="text-[10px] font-black tracking-[0.12em] text-primary">{{ isRTL ? 'تفاصيل القسم' : 'Section details' }}</p>
+ <h2 class="mt-1 text-[16px] font-black text-slate-900">{{ section.title }}</h2>
+ <p class="mt-1 text-[11px] font-medium text-slate-500">{{ section.hint }}</p>
+ </div>
+ <app-status-pill
+ [label]="getSectionStatusLabel(section)"
+ [variant]="getSectionStatusVariant(section)"
+ [showDot]="true"
+ [shouldTranslate]="false"
+ size="sm">
+ </app-status-pill>
+ </div>
 
-        <div class="vendor-compliance-scroll flex-1 space-y-4 overflow-y-auto pe-1">
-          <section class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
-            <div class="mb-3 flex items-center justify-between gap-2">
-              <h3 class="text-[12px] font-black text-slate-900">{{ isRTL ? 'بيانات القسم' : 'Section data' }}</h3>
-              <span class="text-[10px] font-bold text-slate-400">{{ formatNumber(section.profileFields.length) }} {{ isRTL ? 'حقل' : 'fields' }}</span>
-            </div>
+ <div class="vendor-compliance-scroll flex-1 space-y-4 overflow-y-auto pe-1">
+ <section class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+ <div class="mb-3 flex items-center justify-between gap-2">
+ <h3 class="text-[12px] font-black text-slate-900">{{ isRTL ? 'بيانات القسم' : 'Section data' }}</h3>
+ <span class="text-[10px] font-bold text-slate-400">{{ formatNumber(section.profileFields.length) }} {{ isRTL ? 'حقل' : 'fields' }}</span>
+ </div>
 
-            <div class="grid gap-2 sm:grid-cols-2">
-              <div
-                *ngFor="let field of section.profileFields; trackBy: trackByProfileItem"
-                class="rounded-xl border border-white bg-white p-3 shadow-sm">
-                <div class="flex items-start justify-between gap-2">
-                  <p class="text-[10px] font-black text-slate-400">{{ getProfileItemLabel(field) }}</p>
-                  <app-status-pill
-                    [label]="getProfileItemDecisionLabel(field)"
-                    [variant]="getProfileItemDecisionVariant(field)"
-                    [showDot]="true"
-                    [shouldTranslate]="false"
-                    size="sm">
-                  </app-status-pill>
-                </div>
-                <p class="mt-1 text-[13px] font-black text-slate-900 break-words">{{ getProfileItemValue(field) }}</p>
-                <p *ngIf="field.decisionNote" class="mt-1 text-[10px] font-medium text-rose-600">{{ field.decisionNote }}</p>
-              </div>
-            </div>
-          </section>
+ <div class="grid gap-2 sm:grid-cols-2">
+ <div
+ *ngFor="let field of section.profileFields; trackBy: trackByProfileItem"
+ class="rounded-xl border border-white bg-white p-3 shadow-sm">
+ <div class="flex items-start justify-between gap-2">
+ <p class="text-[10px] font-black text-slate-400">{{ getProfileItemLabel(field) }}</p>
+ <app-status-pill
+ [label]="getProfileItemDecisionLabel(field)"
+ [variant]="getProfileItemDecisionVariant(field)"
+ [showDot]="true"
+ [shouldTranslate]="false"
+ size="sm">
+ </app-status-pill>
+ </div>
+ <p class="mt-1 text-[13px] font-black text-slate-900 break-words">{{ getProfileItemValue(field) }}</p>
+ <p *ngIf="field.decisionNote" class="mt-1 text-[10px] font-medium text-rose-600">{{ field.decisionNote }}</p>
+ </div>
+ </div>
+ </section>
 
-          <section class="rounded-2xl border border-slate-100 bg-white p-4">
-            <div class="mb-3 flex items-center justify-between gap-2">
-              <h3 class="text-[12px] font-black text-slate-900">{{ isRTL ? 'مستندات القسم' : 'Section documents' }}</h3>
-              <span class="text-[10px] font-bold text-slate-400">{{ formatNumber(section.documents.length) }} {{ isRTL ? 'ملف' : 'files' }}</span>
-            </div>
+ <section class="rounded-2xl border border-slate-100 bg-white p-4">
+ <div class="mb-3 flex items-center justify-between gap-2">
+ <h3 class="text-[12px] font-black text-slate-900">{{ isRTL ? 'مستندات القسم' : 'Section documents' }}</h3>
+ <span class="text-[10px] font-bold text-slate-400">{{ formatNumber(section.documents.length) }} {{ isRTL ? 'ملف' : 'files' }}</span>
+ </div>
 
-            <div class="space-y-3">
-              <div
-                *ngFor="let document of section.documents; trackBy: trackByDocument"
-                class="rounded-2xl border p-3 transition-all"
-                [ngClass]="selectedDocument?.id === document.id ? 'border-primary/30 bg-primary/5' : 'border-slate-100 bg-slate-50/60'">
-                <button type="button" (click)="selectDocument(document)" class="w-full text-start">
-                  <div class="flex items-start gap-3">
-                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm">
-                      <span class="material-symbols-outlined text-[18px]">{{ document.icon }}</span>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <div class="flex flex-wrap items-center gap-2">
-                        <p class="text-[12px] font-black text-slate-900">{{ document.titleKey | translate }}</p>
-                        <app-status-pill
-                          [label]="getDecisionLabel(document.reviewDecision)"
-                          [variant]="getDecisionVariant(document.reviewDecision)"
-                          [showDot]="true"
-                          [shouldTranslate]="false"
-                          size="sm">
-                        </app-status-pill>
-                      </div>
-                      <p class="mt-1 text-[10px] font-medium text-slate-500">{{ getDocumentDescription(document) }}</p>
-                    </div>
-                  </div>
-                </button>
+ <div class="space-y-3">
+ <div
+ *ngFor="let document of section.documents; trackBy: trackByDocument"
+ class="rounded-2xl border p-3 transition-all"
+ [ngClass]="selectedDocument?.id === document.id ? 'border-primary/30 bg-primary/5' : 'border-slate-100 bg-slate-50/60'">
+ <button type="button" (click)="selectDocument(document)" class="w-full text-start">
+ <div class="flex items-start gap-3">
+ <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm">
+ <span class="material-symbols-outlined text-[18px]">{{ document.icon }}</span>
+ </div>
+ <div class="min-w-0 flex-1">
+ <div class="flex flex-wrap items-center gap-2">
+ <p class="text-[12px] font-black text-slate-900">{{ document.titleKey | translate }}</p>
+ <app-status-pill
+ [label]="getDecisionLabel(document.reviewDecision)"
+ [variant]="getDecisionVariant(document.reviewDecision)"
+ [showDot]="true"
+ [shouldTranslate]="false"
+ size="sm">
+ </app-status-pill>
+ </div>
+ <p class="mt-1 text-[10px] font-medium text-slate-500">{{ getDocumentDescription(document) }}</p>
+ </div>
+ </div>
+ </button>
 
-                <div *ngIf="selectedDocument?.id === document.id" class="mt-3 space-y-3 border-t border-slate-100 pt-3">
-                  <div *ngIf="document.type === 'commercial' && isCrExpired" class="rounded-xl border border-rose-200 bg-rose-50 p-3 text-[10px] font-bold text-rose-700">
-                    {{ isRTL ? 'السجل التجاري منتهي — لا يمكن اعتماد هذا القسم قبل التحديث.' : 'Commercial registration expired — update before approving this section.' }}
-                  </div>
+ <div *ngIf="selectedDocument?.id === document.id" class="mt-3 space-y-3 border-t border-slate-100 pt-3">
+ <div *ngIf="document.type === 'commercial' && isCrExpired" class="rounded-xl border border-rose-200 bg-rose-50 p-3 text-[10px] font-bold text-rose-700">
+ {{ isRTL ? 'السجل التجاري منتهي — لا يمكن اعتماد هذا القسم قبل التحديث.' : 'Commercial registration expired — update before approving this section.' }}
+ </div>
 
-                  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                    <div *ngIf="document.previewKind === 'image' && document.fileUrl" class="flex items-center justify-center p-3">
-                      <img [src]="document.fileUrl" class="max-h-56 rounded-lg object-contain" alt="" />
-                    </div>
-                    <div *ngIf="document.previewKind === 'pdf' && safePreviewUrl && selectedDocument?.id === document.id" class="h-56">
-                      <iframe [src]="safePreviewUrl" class="h-full w-full"></iframe>
-                    </div>
-                    <div *ngIf="document.previewKind === 'structured' || !document.fileUrl" class="grid gap-2 p-3 sm:grid-cols-2">
-                      <div *ngFor="let row of getStructuredPreviewRows(document)" class="rounded-lg bg-slate-50 p-2.5">
-                        <p class="text-[9px] font-black text-slate-400">{{ row.label }}</p>
-                        <p class="text-[12px] font-black text-slate-900" [attr.dir]="row.direction || (isRTL ? 'rtl' : 'ltr')">{{ row.value }}</p>
-                      </div>
-                    </div>
-                  </div>
+ <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+ <div *ngIf="document.previewKind === 'image' && document.fileUrl" class="flex items-center justify-center p-3">
+ <img [src]="document.fileUrl" class="max-h-56 rounded-lg object-contain" alt="" />
+ </div>
+ <div *ngIf="document.previewKind === 'pdf' && safePreviewUrl && selectedDocument?.id === document.id" class="h-56">
+ <iframe [src]="safePreviewUrl" class="h-full w-full"></iframe>
+ </div>
+ <div *ngIf="document.previewKind === 'structured' ||!document.fileUrl" class="grid gap-2 p-3 sm:grid-cols-2">
+ <div *ngFor="let row of getStructuredPreviewRows(document)" class="rounded-lg bg-slate-50 p-2.5">
+ <p class="text-[9px] font-black text-slate-400">{{ row.label }}</p>
+ <p class="text-[12px] font-black text-slate-900" [attr.dir]="row.direction || (isRTL ? 'rtl' : 'ltr')">{{ row.value }}</p>
+ </div>
+ </div>
+ </div>
 
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      *ngIf="document.fileUrl"
-                      type="button"
-                      (click)="onOpenDocumentFile(document)"
-                      class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700">
-                      <span class="material-symbols-outlined text-[16px]">open_in_new</span>
-                      {{ isRTL ? 'فتح الملف' : 'Open file' }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
+ <div class="flex flex-wrap gap-2">
+ <button
+ *ngIf="document.fileUrl"
+ type="button"
+ (click)="onOpenDocumentFile(document)"
+ class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[11px] font-black text-slate-700">
+ <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+ {{ isRTL ? 'فتح الملف' : 'Open file' }}
+ </button>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+ </div>
 
-        <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <label class="text-[10px] font-black tracking-[0.1em] text-slate-500 block mb-2">
-            {{ isRTL ? 'ملاحظة القرار على القسم (إلزامية للرفض)' : 'Section decision note (required for rejection)' }}
-          </label>
-          <textarea
-            [(ngModel)]="sectionRejectReason"
-            rows="2"
-            class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-            [placeholder]="isRTL ? 'اكتب ملاحظة موحدة للقسم عند الرفض...' : 'Write one note for the whole section when rejecting...'">
-          </textarea>
+ <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+ <label class="text-[10px] font-black tracking-[0.1em] text-slate-500 block mb-2">
+ {{ isRTL ? 'ملاحظة القرار على القسم (إلزامية للرفض)' : 'Section decision note (required for rejection)' }}
+ </label>
+ <textarea
+ [(ngModel)]="sectionRejectReason"
+ rows="2"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+ [placeholder]="isRTL ? 'اكتب ملاحظة موحدة للقسم عند الرفض...' : 'Write one note for the whole section when rejecting...'">
+ </textarea>
 
-          <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
-            <button
-              type="button"
-              [disabled]="isSubmittingDocumentDecision || !canRejectSection(section)"
-              (click)="onRejectSection(section)"
-              class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white px-4 text-[12px] font-black text-rose-700 transition hover:bg-rose-50 disabled:opacity-50">
-              <span class="material-symbols-outlined text-[18px]">block</span>
-              {{ isRTL ? 'رفض القسم' : 'Reject section' }}
-            </button>
-            <button
-              type="button"
-              [disabled]="isSubmittingDocumentDecision || !canApproveSection(section)"
-              (click)="onApproveSection(section)"
-              class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-[12px] font-black text-white shadow-md shadow-emerald-500/20 transition hover:bg-emerald-600 disabled:opacity-50">
-              <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isSubmittingDocumentDecision">
-                {{ isSubmittingDocumentDecision ? 'progress_activity' : 'task_alt' }}
-              </span>
-              {{ isRTL ? 'اعتماد القسم' : 'Approve section' }}
-            </button>
-          </div>
-        </div>
-      </ng-container>
-    </article>
-  </section>
+ <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
+ <button
+ type="button"
+ [disabled]="isSubmittingDocumentDecision ||!canRejectSection(section)"
+ (click)="onRejectSection(section)"
+ class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white px-4 text-[12px] font-black text-rose-700 transition hover:bg-rose-50 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[18px]">block</span>
+ {{ isRTL ? 'رفض القسم' : 'Reject section' }}
+ </button>
+ <button
+ type="button"
+ [disabled]="isSubmittingDocumentDecision ||!canApproveSection(section)"
+ (click)="onApproveSection(section)"
+ class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-[12px] font-black text-white shadow-md shadow-emerald-500/20 transition hover:bg-emerald-600 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isSubmittingDocumentDecision">
+ {{ isSubmittingDocumentDecision ? 'progress_activity' : 'task_alt' }}
+ </span>
+ {{ isRTL ? 'اعتماد القسم' : 'Approve section' }}
+ </button>
+ </div>
+ </div>
+ </ng-container>
+ </article>
+ </section>
 
-  <ng-template #emptySectionPreview>
-    <div class="flex flex-1 flex-col items-center justify-center rounded-[1.25rem] border-2 border-dashed border-slate-200/80 bg-slate-50/20 p-8 text-center min-h-[350px]">
-      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
-        <span class="material-symbols-outlined text-[30px] text-slate-400">view_module</span>
-      </div>
-      <h3 class="text-[15px] font-black text-slate-900 mb-2">{{ isRTL ? 'اختر قسمًا للمراجعة' : 'Select a section to review' }}</h3>
-      <p class="max-w-xs text-[11px] font-semibold text-slate-500">{{ isRTL ? 'كل قسم يعرض بياناته ومستنداته معًا، ويمكن اعتماده أو رفضه دفعة واحدة.' : 'Each section shows its data and documents together and can be approved or rejected in one action.' }}</p>
-    </div>
-  </ng-template>
+ <ng-template #emptySectionPreview>
+ <div class="flex flex-1 flex-col items-center justify-center rounded-[1.25rem] border-2 border-dashed border-slate-200/80 bg-slate-50/20 p-8 text-center min-h-[350px]">
+ <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-md">
+ <span class="material-symbols-outlined text-[30px] text-slate-400">view_module</span>
+ </div>
+ <h3 class="text-[15px] font-black text-slate-900 mb-2">{{ isRTL ? 'اختر قسمًا للمراجعة' : 'Select a section to review' }}</h3>
+ <p class="max-w-xs text-[11px] font-semibold text-slate-500">{{ isRTL ? 'كل قسم يعرض بياناته ومستنداته معًا، ويمكن اعتماده أو رفضه دفعة واحدة.' : 'Each section shows its data and documents together and can be approved or rejected in one action.' }}</p>
+ </div>
+ </ng-template>
 
-  <!-- Compliance Action Confirmation Modal -->
-  <app-delete-confirmation-modal
-      [isOpen]="isConfirmModalOpen"
-      [type]="confirmModalType"
-      [title]="confirmModalTitle"
-      [message]="confirmModalMessage"
-      [confirmText]="confirmModalConfirmText"
-      [cancelText]="confirmModalCancelText"
-      (confirm)="executeConfirmAction()"
-      (close)="cancelConfirmAction()">
-  </app-delete-confirmation-modal>
+ <!-- Compliance Action Confirmation Modal -->
+ <app-delete-confirmation-modal
+ [isOpen]="isConfirmModalOpen"
+ [type]="confirmModalType"
+ [title]="confirmModalTitle"
+ [message]="confirmModalMessage"
+ [confirmText]="confirmModalConfirmText"
+ [cancelText]="confirmModalCancelText"
+ (confirm)="executeConfirmAction()"
+ (close)="cancelConfirmAction()">
+ </app-delete-confirmation-modal>
 </div>

@@ -1,0 +1,59 @@
+
+> superadmin-panel@0.0.0 start
+> ng serve --host 127.0.0.1 --port 4200
+
+> Building...
+√ Building...
+Initial chunk files | Names                               |  Raw size
+styles.css          | styles                              | 384.66 kB | 
+main.js             | main                                | 182.26 kB | 
+polyfills.js        | polyfills                           |  90.20 kB | 
+chunk-WIPH2QXW.js   | -                                   |  75.41 kB | 
+chunk-G3GJCTTD.js   | -                                   |  65.55 kB | 
+chunk-LO4VSO2B.js   | -                                   |  62.90 kB | 
+chunk-DWNGWBI4.js   | -                                   |  46.71 kB | 
+chunk-BKRLDWQC.js   | -                                   |  46.40 kB | 
+chunk-VZHOPJ7X.js   | -                                   |  34.17 kB | 
+chunk-WCHG6TF7.js   | -                                   |  20.05 kB | 
+chunk-5FKIEPWI.js   | -                                   |  19.36 kB | 
+chunk-4BQWQS4J.js   | -                                   |  18.35 kB | 
+chunk-2WMSFRNT.js   | -                                   |  15.80 kB | 
+chunk-NQBVQ2IA.js   | -                                   |   8.72 kB | 
+chunk-FKIUDVLG.js   | -                                   |   7.71 kB | 
+chunk-BZZH6CZ5.js   | -                                   |   3.79 kB | 
+chunk-WDMUDEB6.js   | -                                   |   1.93 kB | 
+chunk-UPCBYPP3.js   | -                                   |   1.91 kB | 
+chunk-FMKMVIXV.js   | -                                   |   1.87 kB | 
+chunk-HPW7LUX3.js   | -                                   |   1.80 kB | 
+chunk-A6AGMF2K.js   | -                                   |   1.59 kB | 
+chunk-TWG6LR5H.js   | -                                   | 978 bytes | 
+chunk-4YSI3MGC.js   | -                                   | 452 bytes | 
+chunk-U6RD3CKK.js   | -                                   |  43 bytes | 
+chunk-MHTAV5VG.js   | -                                   |  43 bytes | 
+
+                    | Initial total                       |   1.09 MB
+
+Lazy chunk files    | Names                               |  Raw size
+chunk-XDZ3IAIK.js   | driver-detail-component             | 530.77 kB | 
+chunk-NODELQFS.js   | orders-routes                       | 409.72 kB | 
+chunk-WUYSYCM4.js   | admin-support-center-component      | 357.29 kB | 
+chunk-5E6N2FHF.js   | disputes-dashboard-component        | 327.70 kB | 
+chunk-CF4WXIV3.js   | dashboard-component                 | 243.98 kB | 
+chunk-JFRKXN4J.js   | vendor-detail-component             | 233.61 kB | 
+chunk-L7U6NPLJ.js   | vendor-finance-component            | 208.07 kB | 
+chunk-WW4WWU5O.js   | vendor-compliance-component         | 165.42 kB | 
+chunk-A2UBAUIL.js   | email-center-component              | 158.95 kB | 
+chunk-O3BGSW6Z.js   | admin-user-detail-component         | 152.06 kB | 
+chunk-PBMPSUDL.js   | master-product-form-component       | 124.72 kB | 
+chunk-E4DAE3DS.js   | customer-detail-component           | 120.28 kB | 
+chunk-WH2ZYBEN.js   | vendors-list-component              | 111.17 kB | 
+chunk-KZEMCQ7A.js   | bulk-master-products-page-component | 105.44 kB | 
+chunk-QCBDFYJQ.js   | bulk-brands-page-component          |  98.20 kB | 
+...and 95 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [59.572 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  ➜  Local:   http://127.0.0.1:4200/
+  ➜  press h + enter to show help

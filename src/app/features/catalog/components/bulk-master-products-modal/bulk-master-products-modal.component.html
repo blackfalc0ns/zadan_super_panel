@@ -1,383 +1,383 @@
 <div
-  class="bulk-workspace"
-  [dir]="currentLang === 'ar' ? 'rtl' : 'ltr'"
-  [ngClass]="embedded
-    ? 'fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm'
-    : 'flex w-full max-w-full flex-col gap-5 overflow-x-hidden pb-24'">
-  <div
-    [ngClass]="embedded
-      ? 'flex h-full max-h-[94vh] w-full max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[26px] bg-white shadow-2xl shadow-slate-900/20 2xl:max-w-[92rem]'
-      : 'flex w-full max-w-full flex-col gap-5'">
+ class="bulk-workspace"
+ [dir]="currentLang === 'ar' ? 'rtl' : 'ltr'"
+ [ngClass]="embedded
+ ? 'fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm'
+ : 'flex w-full max-w-full flex-col gap-5 overflow-x-hidden pb-24'">
+ <div
+ [ngClass]="embedded
+ ? 'flex h-full max-h-[94vh] w-full max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[26px] bg-white shadow-2xl shadow-slate-900/20 2xl:max-w-[92rem]'
+ : 'flex w-full max-w-full flex-col gap-5'">
 
-    @if (embedded) {
-      <div class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 px-5 py-4">
-        <div class="min-w-0">
-          <h2 class="text-lg font-black text-slate-900">
-            {{ currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk create product bank items' }}
-          </h2>
-          <p class="mt-1 text-xs font-semibold leading-5 text-slate-500">
-            {{ currentLang === 'ar' ? 'املأ الصفوف أو طبّق القيم الافتراضية ثم أرسل دفعة واحدة.' : 'Fill rows or apply defaults, then submit in one batch.' }}
-          </p>
-        </div>
-        <button type="button" (click)="onClose()" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-slate-200">
-          <span class="material-symbols-outlined text-[20px]">close</span>
-        </button>
-      </div>
-    } @else {
-      <section class="bulk-hero px-5 py-5 md:px-6">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div class="min-w-0 space-y-2">
-            <p class="text-[0.65rem] font-extrabold uppercase tracking-[0.18em] text-zadna-primary">
-              {{ currentLang === 'ar' ? 'بنك المنتجات' : 'Product bank' }}
-            </p>
-            <h2 class="text-xl font-black text-slate-900 md:text-2xl">
-              {{ currentLang === 'ar' ? 'مساحة الإضافة الجماعية' : 'Bulk create workspace' }}
-            </h2>
-            <p class="max-w-2xl text-sm font-semibold leading-6 text-slate-600">
-              {{ currentLang === 'ar'
+ @if (embedded) {
+ <div class="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 px-5 py-4">
+ <div class="min-w-0">
+ <h2 class="text-lg font-black text-slate-900">
+ {{ currentLang === 'ar' ? 'إضافة جماعية لبنك المنتجات' : 'Bulk create product bank items' }}
+ </h2>
+ <p class="mt-1 text-xs font-semibold leading-5 text-slate-500">
+ {{ currentLang === 'ar' ? 'املأ الصفوف أو طبّق القيم الافتراضية ثم أرسل دفعة واحدة.' : 'Fill rows or apply defaults, then submit in one batch.' }}
+ </p>
+ </div>
+ <button type="button" (click)="onClose()" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-slate-200">
+ <span class="material-symbols-outlined text-[20px]">close</span>
+ </button>
+ </div>
+ } @else {
+ <section class="bulk-hero px-5 py-5 md:px-6">
+ <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+ <div class="min-w-0 space-y-2">
+ <p class="text-[0.65rem] font-extrabold uppercase tracking-[0.18em] text-zadna-primary">
+ {{ currentLang === 'ar' ? 'بنك المنتجات' : 'Product bank' }}
+ </p>
+ <h2 class="text-xl font-black text-slate-900 md:text-2xl">
+ {{ currentLang === 'ar' ? 'مساحة الإضافة الجماعية' : 'Bulk create workspace' }}
+ </h2>
+ <p class="max-w-2xl text-sm font-semibold leading-6 text-slate-600">
+ {{ currentLang === 'ar'
                 ? 'حدّد القيم الافتراضية مرة واحدة، راجع الصفوف، ثم أرسل المنتجات الصالحة فقط. slug والباركود يُولَّدان تلقائياً عند الحاجة.'
                 : 'Set defaults once, review rows, then submit only valid items. Slug and barcode are generated automatically when needed.' }}
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="bulk-step" [class.bulk-step--active]="stage === 'review'">
-              <span class="bulk-step__num">1</span>
-              {{ currentLang === 'ar' ? 'إعداد' : 'Setup' }}
-            </span>
-            <span class="bulk-step" [class.bulk-step--active]="stage === 'review' && submittableRows.length > 0">
-              <span class="bulk-step__num">2</span>
-              {{ currentLang === 'ar' ? 'مراجعة' : 'Review' }}
-            </span>
-            <span class="bulk-step" [class.bulk-step--active]="stage === 'submitting' || stage === 'done'">
-              <span class="bulk-step__num">3</span>
-              {{ currentLang === 'ar' ? 'إرسال' : 'Submit' }}
-            </span>
-          </div>
-        </div>
-      </section>
-    }
+ </p>
+ </div>
+ <div class="flex flex-wrap gap-2">
+ <span class="bulk-step" [class.bulk-step--active]="stage === 'review'">
+ <span class="bulk-step__num">1</span>
+ {{ currentLang === 'ar' ? 'إعداد' : 'Setup' }}
+ </span>
+ <span class="bulk-step" [class.bulk-step--active]="stage === 'review' && submittableRows.length > 0">
+ <span class="bulk-step__num">2</span>
+ {{ currentLang === 'ar' ? 'مراجعة' : 'Review' }}
+ </span>
+ <span class="bulk-step" [class.bulk-step--active]="stage === 'submitting' || stage === 'done'">
+ <span class="bulk-step__num">3</span>
+ {{ currentLang === 'ar' ? 'إرسال' : 'Submit' }}
+ </span>
+ </div>
+ </div>
+ </section>
+ }
 
-    <!-- KPI strip -->
-    <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" [ngClass]="embedded ? 'px-5' : ''">
-      <div class="bulk-kpi">
-        <div class="flex items-center gap-2 text-slate-500">
-          <span class="material-symbols-outlined text-[18px]">table_rows</span>
-          <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'إجمالي الصفوف' : 'Total rows' }}</span>
-        </div>
-        <p class="mt-1 text-2xl font-black text-slate-900">{{ rows.length }}</p>
-      </div>
-      <div class="bulk-kpi">
-        <div class="flex items-center gap-2 text-slate-500">
-          <span class="material-symbols-outlined text-[18px]">check_circle</span>
-          <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'جاهزة للإرسال' : 'Ready to submit' }}</span>
-        </div>
-        <p class="mt-1 text-2xl font-black text-emerald-700">{{ submittableRows.length }}</p>
-      </div>
-      <div class="bulk-kpi">
-        <div class="flex items-center gap-2 text-rose-500">
-          <span class="material-symbols-outlined text-[18px]">error</span>
-          <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'بها أخطاء' : 'With errors' }}</span>
-        </div>
-        <p class="mt-1 text-2xl font-black text-rose-700">{{ invalidRowsCount }}</p>
-      </div>
-      <div class="bulk-kpi">
-        <div class="flex items-center gap-2 text-slate-500">
-          <span class="material-symbols-outlined text-[18px]">done_all</span>
-          <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'المحدد' : 'Selected' }}</span>
-        </div>
-        <p class="mt-1 text-2xl font-black text-slate-900">{{ selectedCount }}</p>
-      </div>
-    </div>
+ <!-- KPI strip -->
+ <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" [ngClass]="embedded ? 'px-5' : ''">
+ <div class="bulk-kpi">
+ <div class="flex items-center gap-2 text-slate-500">
+ <span class="material-symbols-outlined text-[18px]">table_rows</span>
+ <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'إجمالي الصفوف' : 'Total rows' }}</span>
+ </div>
+ <p class="mt-1 text-2xl font-black text-slate-900">{{ rows.length }}</p>
+ </div>
+ <div class="bulk-kpi">
+ <div class="flex items-center gap-2 text-slate-500">
+ <span class="material-symbols-outlined text-[18px]">check_circle</span>
+ <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'جاهزة للإرسال' : 'Ready to submit' }}</span>
+ </div>
+ <p class="mt-1 text-2xl font-black text-emerald-700">{{ submittableRows.length }}</p>
+ </div>
+ <div class="bulk-kpi">
+ <div class="flex items-center gap-2 text-rose-500">
+ <span class="material-symbols-outlined text-[18px]">error</span>
+ <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'بها أخطاء' : 'With errors' }}</span>
+ </div>
+ <p class="mt-1 text-2xl font-black text-rose-700">{{ invalidRowsCount }}</p>
+ </div>
+ <div class="bulk-kpi">
+ <div class="flex items-center gap-2 text-slate-500">
+ <span class="material-symbols-outlined text-[18px]">done_all</span>
+ <span class="text-[0.72rem] font-extrabold">{{ currentLang === 'ar' ? 'المحدد' : 'Selected' }}</span>
+ </div>
+ <p class="mt-1 text-2xl font-black text-slate-900">{{ selectedCount }}</p>
+ </div>
+ </div>
 
-    <!-- Defaults panel (collapsible) -->
-    <section class="bulk-defaults-panel" [ngClass]="embedded ? 'mx-5' : ''">
-      <button
-        type="button"
-        class="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start md:px-5"
-        (click)="defaultsExpanded = !defaultsExpanded">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[22px] text-zadna-primary">tune</span>
-          <div>
-            <h3 class="text-sm font-black text-slate-900">{{ currentLang === 'ar' ? 'القيم الافتراضية' : 'Default values' }}</h3>
-            <p class="text-xs font-semibold text-slate-500">{{ currentLang === 'ar' ? 'تُطبَّق على الصفوف المحددة أو كل الصفوف' : 'Apply to selected or all rows' }}</p>
-          </div>
-        </div>
-        <span class="material-symbols-outlined text-slate-400 transition-transform" [class.rotate-180]="defaultsExpanded">expand_more</span>
-      </button>
+ <!-- Defaults panel (collapsible) -->
+ <section class="bulk-defaults-panel" [ngClass]="embedded ? 'mx-5' : ''">
+ <button
+ type="button"
+ class="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-start md:px-5"
+ (click)="defaultsExpanded =!defaultsExpanded">
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[22px] text-zadna-primary">tune</span>
+ <div>
+ <h3 class="text-sm font-black text-slate-900">{{ currentLang === 'ar' ? 'القيم الافتراضية' : 'Default values' }}</h3>
+ <p class="text-xs font-semibold text-slate-500">{{ currentLang === 'ar' ? 'تُطبَّق على الصفوف المحددة أو كل الصفوف' : 'Apply to selected or all rows' }}</p>
+ </div>
+ </div>
+ <span class="material-symbols-outlined text-slate-400 transition-transform" [class.rotate-180]="defaultsExpanded">expand_more</span>
+ </button>
 
-      @if (defaultsExpanded) {
-        <div class="space-y-4 border-t border-slate-100 px-4 pb-5 pt-4 md:px-5">
-          <div class="flex flex-wrap gap-2">
-            <button type="button" (click)="addRows(25)" class="bulk-btn-ghost">{{ currentLang === 'ar' ? '+ 25 صف' : '+ 25 rows' }}</button>
-            <button type="button" (click)="addRows(100)" class="bulk-btn-ghost">{{ currentLang === 'ar' ? '+ 100 صف' : '+ 100 rows' }}</button>
-            <button type="button" (click)="duplicateSelectedRows()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'نسخ المحدد' : 'Duplicate selected' }}</button>
-            <button type="button" (click)="removeSelectedRows()" class="bulk-btn-ghost text-rose-600">{{ currentLang === 'ar' ? 'حذف المحدد' : 'Remove selected' }}</button>
-            <span class="hidden h-6 w-px bg-slate-200 sm:inline-block" aria-hidden="true"></span>
-            <button type="button" (click)="generateSlugsForSelected()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'Slug للمحدد' : 'Slug for selected' }}</button>
-            <button type="button" (click)="generateBarcodesForSelected()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'باركود للمحدد' : 'Barcode for selected' }}</button>
-          </div>
+ @if (defaultsExpanded) {
+ <div class="space-y-4 border-t border-slate-100 px-4 pb-5 pt-4 md:px-5">
+ <div class="flex flex-wrap gap-2">
+ <button type="button" (click)="addRows(25)" class="bulk-btn-ghost">{{ currentLang === 'ar' ? '+ 25 صف' : '+ 25 rows' }}</button>
+ <button type="button" (click)="addRows(100)" class="bulk-btn-ghost">{{ currentLang === 'ar' ? '+ 100 صف' : '+ 100 rows' }}</button>
+ <button type="button" (click)="duplicateSelectedRows()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'نسخ المحدد' : 'Duplicate selected' }}</button>
+ <button type="button" (click)="removeSelectedRows()" class="bulk-btn-ghost text-rose-600">{{ currentLang === 'ar' ? 'حذف المحدد' : 'Remove selected' }}</button>
+ <span class="hidden h-6 w-px bg-slate-200 sm:inline-block" aria-hidden="true"></span>
+ <button type="button" (click)="generateSlugsForSelected()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'Slug للمحدد' : 'Slug for selected' }}</button>
+ <button type="button" (click)="generateBarcodesForSelected()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'باركود للمحدد' : 'Barcode for selected' }}</button>
+ </div>
 
-          <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-            <label class="space-y-1.5">
-              <span class="text-[0.72rem] font-extrabold text-slate-500">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</span>
-              <app-searchable-select [(ngModel)]="defaults.categoryId" (selectionChange)="onDefaultsCategoryChanged($event)" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
-            </label>
-            <label class="space-y-1.5">
-              <span class="text-[0.72rem] font-extrabold text-slate-500">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</span>
-              <app-searchable-select [(ngModel)]="defaults.brandId" [isDisabled]="!defaults.categoryId" [options]="getBrandOptionsForCategory(defaults.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
-            </label>
-            <label class="space-y-1.5">
-              <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'نوع العبوة' : 'Package type' }}</span>
-              <app-searchable-select [(ngModel)]="defaults.packageTypeId" [options]="packageTypeOptions" [placeholder]="currentLang === 'ar' ? 'اختر العبوة' : 'Select package'"></app-searchable-select>
-            </label>
-            <label class="space-y-1.5">
-              <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</span>
-              <input [(ngModel)]="defaults.measurementValue" type="number" min="0" step="0.01" class="h-10 w-full rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-800" />
-            </label>
-            <label class="space-y-1.5">
-              <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'وحدة القياس' : 'Unit' }}</span>
-              <app-searchable-select [(ngModel)]="defaults.measurementUnitId" [options]="measurementUnitOptions" [placeholder]="currentLang === 'ar' ? 'جرام / مل' : 'g / ml'"></app-searchable-select>
-            </label>
-            <label class="space-y-1.5">
-              <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</span>
-              <app-searchable-select [(ngModel)]="defaults.status" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
-            </label>
-          </div>
+ <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+ <label class="space-y-1.5">
+ <span class="text-[0.72rem] font-extrabold text-slate-500">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</span>
+ <app-searchable-select [(ngModel)]="defaults.categoryId" (selectionChange)="onDefaultsCategoryChanged($event)" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
+ </label>
+ <label class="space-y-1.5">
+ <span class="text-[0.72rem] font-extrabold text-slate-500">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</span>
+ <app-searchable-select [(ngModel)]="defaults.brandId" [isDisabled]="!defaults.categoryId" [options]="getBrandOptionsForCategory(defaults.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
+ </label>
+ <label class="space-y-1.5">
+ <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'نوع العبوة' : 'Package type' }}</span>
+ <app-searchable-select [(ngModel)]="defaults.packageTypeId" [options]="packageTypeOptions" [placeholder]="currentLang === 'ar' ? 'اختر العبوة' : 'Select package'"></app-searchable-select>
+ </label>
+ <label class="space-y-1.5">
+ <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</span>
+ <input [(ngModel)]="defaults.measurementValue" type="number" min="0" step="0.01" class="h-10 w-full rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-800" />
+ </label>
+ <label class="space-y-1.5">
+ <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'وحدة القياس' : 'Unit' }}</span>
+ <app-searchable-select [(ngModel)]="defaults.measurementUnitId" [options]="measurementUnitOptions" [placeholder]="currentLang === 'ar' ? 'جرام / مل' : 'g / ml'"></app-searchable-select>
+ </label>
+ <label class="space-y-1.5">
+ <span class="text-[0.72rem] font-extrabold text-slate-500">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</span>
+ <app-searchable-select [(ngModel)]="defaults.status" [options]="statusSelectOptions" [placeholder]="currentLang === 'ar' ? 'الحالة' : 'Status'"></app-searchable-select>
+ </label>
+ </div>
 
-          <div class="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/80 px-3 py-3">
-            <input #defaultImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onDefaultImagesSelected($event)">
-            <button type="button" (click)="defaultImagesInput.click()" [disabled]="isUploadingDefaultImages" class="bulk-btn-ghost">
-              <span class="material-symbols-outlined text-[18px]">upload</span>
-              {{ currentLang === 'ar' ? 'صور افتراضية' : 'Default images' }}
-            </button>
-            @if (defaults.images?.length) {
-              <span class="text-xs font-bold text-slate-500">{{ defaults.images?.length }} {{ currentLang === 'ar' ? 'صورة' : 'images' }}</span>
-            }
-            <div class="ms-auto flex flex-wrap gap-2">
-              <button type="button" (click)="applyDefaultsToSelected()" class="bulk-btn-primary">{{ currentLang === 'ar' ? 'تطبيق على المحدد' : 'Apply to selected' }}</button>
-              <button type="button" (click)="applyDefaultsToAll()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'تطبيق على الكل' : 'Apply to all' }}</button>
-            </div>
-          </div>
+ <div class="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/80 px-3 py-3">
+ <input #defaultImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onDefaultImagesSelected($event)">
+ <button type="button" (click)="defaultImagesInput.click()" [disabled]="isUploadingDefaultImages" class="bulk-btn-ghost">
+ <span class="material-symbols-outlined text-[18px]">upload</span>
+ {{ currentLang === 'ar' ? 'صور افتراضية' : 'Default images' }}
+ </button>
+ @if (defaults.images?.length) {
+ <span class="text-xs font-bold text-slate-500">{{ defaults.images?.length }} {{ currentLang === 'ar' ? 'صورة' : 'images' }}</span>
+ }
+ <div class="ms-auto flex flex-wrap gap-2">
+ <button type="button" (click)="applyDefaultsToSelected()" class="bulk-btn-primary">{{ currentLang === 'ar' ? 'تطبيق على المحدد' : 'Apply to selected' }}</button>
+ <button type="button" (click)="applyDefaultsToAll()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'تطبيق على الكل' : 'Apply to all' }}</button>
+ </div>
+ </div>
 
-          @if (defaults.images?.length) {
-            <div class="flex flex-wrap gap-2">
-              @for (image of defaults.images; track image.url; let imageIndex = $index) {
-                <div class="relative">
-                  <img [src]="image.url" alt="" class="h-14 w-14 rounded-xl border border-slate-200 object-cover" />
-                  <button type="button" (click)="removeDefaultImage(imageIndex)" class="absolute -start-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-white">
-                    <span class="material-symbols-outlined text-[14px]">close</span>
-                  </button>
-                </div>
-              }
-            </div>
-          }
-        </div>
-      }
-    </section>
+ @if (defaults.images?.length) {
+ <div class="flex flex-wrap gap-2">
+ @for (image of defaults.images; track image.url; let imageIndex = $index) {
+ <div class="relative">
+ <img [src]="image.url" alt="" class="h-14 w-14 rounded-xl border border-slate-200 object-cover" />
+ <button type="button" (click)="removeDefaultImage(imageIndex)" class="absolute -start-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-white">
+ <span class="material-symbols-outlined text-[14px]">close</span>
+ </button>
+ </div>
+ }
+ </div>
+ }
+ </div>
+ }
+ </section>
 
-    @if (submitError) {
-      <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700" [ngClass]="embedded ? 'mx-5' : ''">
-        {{ submitError }}
-      </div>
-    }
+ @if (submitError) {
+ <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700" [ngClass]="embedded ? 'mx-5' : ''">
+ {{ submitError }}
+ </div>
+ }
 
-    @if (stage === 'submitting' && operation) {
-      <div class="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-4" [ngClass]="embedded ? 'mx-5' : ''">
-        <div class="flex items-center justify-between gap-3 text-sm font-black text-sky-900">
-          <span>{{ currentLang === 'ar' ? 'جاري الإرسال...' : 'Submitting...' }}</span>
-          <span>{{ operation.processedRows }} / {{ operation.totalRows }}</span>
-        </div>
-        <div class="bulk-progress-bar mt-3">
-          <div class="bulk-progress-bar__fill" [style.width.%]="submitProgressPercent"></div>
-        </div>
-      </div>
-    }
+ @if (stage === 'submitting' && operation) {
+ <div class="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-4" [ngClass]="embedded ? 'mx-5' : ''">
+ <div class="flex items-center justify-between gap-3 text-sm font-black text-sky-900">
+ <span>{{ currentLang === 'ar' ? 'جاري الإرسال...' : 'Submitting...' }}</span>
+ <span>{{ operation.processedRows }} / {{ operation.totalRows }}</span>
+ </div>
+ <div class="bulk-progress-bar mt-3">
+ <div class="bulk-progress-bar__fill" [style.width.%]="submitProgressPercent"></div>
+ </div>
+ </div>
+ }
 
-    @if (stage === 'done' && operation) {
-      <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4" [ngClass]="embedded ? 'mx-5' : ''">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p class="text-sm font-black text-emerald-900">{{ operation.status }}</p>
-            <p class="mt-1 text-xs font-bold text-emerald-700">
-              {{ currentLang === 'ar' ? 'نجح' : 'Succeeded' }}: {{ operation.succeededRows }} ·
-              {{ currentLang === 'ar' ? 'فشل' : 'Failed' }}: {{ operation.failedRows }}
-            </p>
-          </div>
-          <div class="flex gap-2">
-            <button type="button" (click)="copyErrors()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'نسخ الأخطاء' : 'Copy errors' }}</button>
-            <button type="button" (click)="downloadErrors()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'تنزيل' : 'Download' }}</button>
-          </div>
-        </div>
-      </div>
-    }
+ @if (stage === 'done' && operation) {
+ <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4" [ngClass]="embedded ? 'mx-5' : ''">
+ <div class="flex flex-wrap items-center justify-between gap-3">
+ <div>
+ <p class="text-sm font-black text-emerald-900">{{ operation.status }}</p>
+ <p class="mt-1 text-xs font-bold text-emerald-700">
+ {{ currentLang === 'ar' ? 'نجح' : 'Succeeded' }}: {{ operation.succeededRows }} ·
+ {{ currentLang === 'ar' ? 'فشل' : 'Failed' }}: {{ operation.failedRows }}
+ </p>
+ </div>
+ <div class="flex gap-2">
+ <button type="button" (click)="copyErrors()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'نسخ الأخطاء' : 'Copy errors' }}</button>
+ <button type="button" (click)="downloadErrors()" class="bulk-btn-ghost">{{ currentLang === 'ar' ? 'تنزيل' : 'Download' }}</button>
+ </div>
+ </div>
+ </div>
+ }
 
-    <!-- Table toolbar -->
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" [ngClass]="embedded ? 'px-5' : ''">
-      <div class="flex flex-wrap gap-2">
-        <button type="button" class="bulk-filter-tab" [class.bulk-filter-tab--active]="rowFilter === 'all'" (click)="setRowFilter('all')">
-          {{ currentLang === 'ar' ? 'الكل' : 'All' }} ({{ rows.length }})
-        </button>
-        <button type="button" class="bulk-filter-tab" [class.bulk-filter-tab--active]="rowFilter === 'ready'" (click)="setRowFilter('ready')">
-          {{ currentLang === 'ar' ? 'جاهزة' : 'Ready' }} ({{ submittableRows.length }})
-        </button>
-        <button type="button" class="bulk-filter-tab" [class.bulk-filter-tab--active]="rowFilter === 'errors'" (click)="setRowFilter('errors')">
-          {{ currentLang === 'ar' ? 'أخطاء' : 'Errors' }} ({{ invalidRowsCount }})
-        </button>
-      </div>
-      <label class="relative min-w-[14rem] flex-1 sm:max-w-xs">
-        <span class="material-symbols-outlined pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">search</span>
-        <input
-          type="search"
-          [(ngModel)]="rowSearch"
-          (ngModelChange)="onRowSearchChange()"
-          class="h-10 w-full rounded-xl border border-slate-200 bg-white ps-10 pe-3 text-sm font-semibold text-slate-800 outline-none focus:border-zadna-primary/50"
-          [placeholder]="currentLang === 'ar' ? 'ابحث بالاسم...' : 'Search by name...'" />
-      </label>
-    </div>
+ <!-- Table toolbar -->
+ <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" [ngClass]="embedded ? 'px-5' : ''">
+ <div class="flex flex-wrap gap-2">
+ <button type="button" class="bulk-filter-tab" [class.bulk-filter-tab--active]="rowFilter === 'all'" (click)="setRowFilter('all')">
+ {{ currentLang === 'ar' ? 'الكل' : 'All' }} ({{ rows.length }})
+ </button>
+ <button type="button" class="bulk-filter-tab" [class.bulk-filter-tab--active]="rowFilter === 'ready'" (click)="setRowFilter('ready')">
+ {{ currentLang === 'ar' ? 'جاهزة' : 'Ready' }} ({{ submittableRows.length }})
+ </button>
+ <button type="button" class="bulk-filter-tab" [class.bulk-filter-tab--active]="rowFilter === 'errors'" (click)="setRowFilter('errors')">
+ {{ currentLang === 'ar' ? 'أخطاء' : 'Errors' }} ({{ invalidRowsCount }})
+ </button>
+ </div>
+ <label class="relative min-w-[14rem] flex-1 sm:max-w-xs">
+ <span class="material-symbols-outlined pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">search</span>
+ <input
+ type="search"
+ [(ngModel)]="rowSearch"
+ (ngModelChange)="onRowSearchChange()"
+ class="h-10 w-full rounded-xl border border-slate-200 bg-white ps-10 pe-3 text-sm font-semibold text-slate-800 outline-none focus:border-zadna-primary/50"
+ [placeholder]="currentLang === 'ar' ? 'ابحث بالاسم...' : 'Search by name...'" />
+ </label>
+ </div>
 
-    <!-- Rows (card grid — full width, no horizontal scroll) -->
-    <div class="bulk-rows-shell" [ngClass]="embedded ? 'mx-5 flex-1 min-h-0' : ''">
-      <div class="bulk-rows-select-all" [ngClass]="embedded ? '' : ''">
-        <label class="flex cursor-pointer items-center gap-2 text-xs font-extrabold text-slate-600">
-          <input type="checkbox" [checked]="allFilteredRowsSelected" (change)="toggleAllFilteredRows($any($event.target).checked)">
-          {{ currentLang === 'ar' ? 'تحديد المعروض' : 'Select visible rows' }}
-        </label>
-      </div>
+ <!-- Rows (card grid — full width, no horizontal scroll) -->
+ <div class="bulk-rows-shell" [ngClass]="embedded ? 'mx-5 flex-1 min-h-0' : ''">
+ <div class="bulk-rows-select-all" [ngClass]="embedded ? '' : ''">
+ <label class="flex cursor-pointer items-center gap-2 text-xs font-extrabold text-slate-600">
+ <input type="checkbox" [checked]="allFilteredRowsSelected" (change)="toggleAllFilteredRows($any($event.target).checked)">
+ {{ currentLang === 'ar' ? 'تحديد المعروض' : 'Select visible rows' }}
+ </label>
+ </div>
 
-      @if (pagedRows.length === 0) {
-        <div class="bulk-rows-empty">
-          {{ currentLang === 'ar' ? 'لا توجد صفوف مطابقة للبحث أو الفلتر.' : 'No rows match the current filter or search.' }}
-        </div>
-      }
+ @if (pagedRows.length === 0) {
+ <div class="bulk-rows-empty">
+ {{ currentLang === 'ar' ? 'لا توجد صفوف مطابقة للبحث أو الفلتر.' : 'No rows match the current filter or search.' }}
+ </div>
+ }
 
-      <div class="bulk-rows-list" [ngClass]="embedded ? 'bulk-rows-list--embedded' : ''">
-        @for (row of pagedRows; track row.rowId; let visibleIndex = $index) {
-          <article
-            class="bulk-row-card"
-            [class.bulk-row-card--error]="!!getRowError(row)"
-            [class.bulk-row-card--ready]="!getRowError(row) && row.nameAr.trim() && row.nameEn.trim()">
-            <div class="bulk-row-card__head">
-              <label class="flex items-center gap-2">
-                <input type="checkbox" [(ngModel)]="row.selected" [disabled]="stage !== 'review'">
-                <span class="text-xs font-black text-slate-500">#{{ globalRowIndex(visibleIndex) }}</span>
-              </label>
-              <div class="flex flex-wrap items-center gap-1">
-                @if (stage === 'done' && resultMap[row.rowId]) {
-                  <span class="inline-flex rounded-full px-2.5 py-1 text-[0.65rem] font-black" [ngClass]="resultMap[row.rowId].status === 'Succeeded' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'">
-                    {{ resultMap[row.rowId].status }}
-                  </span>
-                }
-                @if (stage === 'review') {
-                  <button type="button" (click)="duplicateRow(row)" class="bulk-btn-ghost !px-2 !py-1" [attr.title]="currentLang === 'ar' ? 'نسخ' : 'Duplicate'">
-                    <span class="material-symbols-outlined text-[18px]">content_copy</span>
-                  </button>
-                  <button type="button" (click)="removeRow(row.rowId)" class="bulk-btn-ghost !px-2 !py-1 text-rose-600" [attr.title]="currentLang === 'ar' ? 'حذف' : 'Remove'">
-                    <span class="material-symbols-outlined text-[18px]">delete</span>
-                  </button>
-                }
-              </div>
-            </div>
+ <div class="bulk-rows-list" [ngClass]="embedded ? 'bulk-rows-list--embedded' : ''">
+ @for (row of pagedRows; track row.rowId; let visibleIndex = $index) {
+ <article
+ class="bulk-row-card"
+ [class.bulk-row-card--error]="!!getRowError(row)"
+ [class.bulk-row-card--ready]="!getRowError(row) && row.nameAr.trim() && row.nameEn.trim()">
+ <div class="bulk-row-card__head">
+ <label class="flex items-center gap-2">
+ <input type="checkbox" [(ngModel)]="row.selected" [disabled]="stage!== 'review'">
+ <span class="text-xs font-black text-slate-500">#{{ globalRowIndex(visibleIndex) }}</span>
+ </label>
+ <div class="flex flex-wrap items-center gap-1">
+ @if (stage === 'done' && resultMap[row.rowId]) {
+ <span class="inline-flex rounded-full px-2.5 py-1 text-[0.65rem] font-black" [ngClass]="resultMap[row.rowId].status === 'Succeeded' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'">
+ {{ resultMap[row.rowId].status }}
+ </span>
+ }
+ @if (stage === 'review') {
+ <button type="button" (click)="duplicateRow(row)" class="bulk-btn-ghost!px-2!py-1" [attr.title]="currentLang === 'ar' ? 'نسخ' : 'Duplicate'">
+ <span class="material-symbols-outlined text-[18px]">content_copy</span>
+ </button>
+ <button type="button" (click)="removeRow(row.rowId)" class="bulk-btn-ghost!px-2!py-1 text-rose-600" [attr.title]="currentLang === 'ar' ? 'حذف' : 'Remove'">
+ <span class="material-symbols-outlined text-[18px]">delete</span>
+ </button>
+ }
+ </div>
+ </div>
 
-            <div class="bulk-row-card__grid">
-              <div class="bulk-field bulk-field--span-3">
-                <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.NAME_AR_LABEL' | translate }}</span>
-                <input type="text" [(ngModel)]="row.nameAr" [disabled]="stage !== 'review'" class="bulk-input" />
-                @if (stage === 'review' && getRowError(row)) {
-                  <p class="bulk-field__error">{{ getRowError(row) }}</p>
-                }
-              </div>
-              <div class="bulk-field bulk-field--span-3">
-                <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.NAME_EN_LABEL' | translate }}</span>
-                <input type="text" [(ngModel)]="row.nameEn" [disabled]="stage !== 'review'" (blur)="ensureGeneratedValues(row)" class="bulk-input" />
-              </div>
-              <div class="bulk-field bulk-field--span-3">
-                <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</span>
-                <app-searchable-select [(ngModel)]="row.categoryId" (selectionChange)="onRowCategoryChanged(row, $event)" [isDisabled]="stage !== 'review'" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
-              </div>
-              <div class="bulk-field bulk-field--span-3">
-                <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</span>
-                <app-searchable-select [(ngModel)]="row.brandId" [isDisabled]="stage !== 'review' || !row.categoryId" [options]="getBrandOptionsForCategory(row.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
-              </div>
-              <div class="bulk-field bulk-field--span-2">
-                <span class="bulk-field__label">{{ currentLang === 'ar' ? 'العبوة' : 'Package' }}</span>
-                <app-searchable-select [(ngModel)]="row.packageTypeId" [isDisabled]="stage !== 'review'" [options]="packageTypeOptions"></app-searchable-select>
-              </div>
-              <div class="bulk-field bulk-field--span-2">
-                <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</span>
-                <input type="number" [(ngModel)]="row.measurementValue" [disabled]="stage !== 'review'" min="0" step="0.01" class="bulk-input" />
-              </div>
-              <div class="bulk-field bulk-field--span-2">
-                <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الوحدة' : 'Unit' }}</span>
-                <app-searchable-select [(ngModel)]="row.measurementUnitId" [isDisabled]="stage !== 'review'" [options]="measurementUnitOptions"></app-searchable-select>
-              </div>
-              <div class="bulk-field bulk-field--span-2">
-                <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</span>
-                <app-searchable-select [(ngModel)]="row.status" [isDisabled]="stage !== 'review'" [options]="statusSelectOptions"></app-searchable-select>
-              </div>
-              <div class="bulk-field bulk-field--span-4">
-                <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الصور' : 'Images' }}</span>
-                <div class="flex flex-wrap items-center gap-2">
-                  <input #rowImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onRowImagesSelected(row, $event)">
-                  <button type="button" (click)="rowImagesInput.click()" [disabled]="stage !== 'review' || uploadingRowIds.has(row.rowId)" class="bulk-btn-ghost !px-2 !py-1 text-[0.65rem]">
-                    {{ currentLang === 'ar' ? 'رفع' : 'Upload' }}
-                  </button>
-                  @if (row.images?.length) {
-                    @for (image of row.images; track image.url; let imageIndex = $index) {
-                      <div class="relative shrink-0">
-                        <img [src]="image.url" alt="" class="h-9 w-9 rounded-lg border object-cover" />
-                        <button type="button" (click)="removeRowImage(row, imageIndex)" [disabled]="stage !== 'review'" class="absolute -start-0.5 -top-0.5 rounded-full bg-rose-500 p-0.5 text-white">
-                          <span class="material-symbols-outlined text-[12px]">close</span>
-                        </button>
-                      </div>
-                    }
-                  }
-                </div>
-              </div>
-              <div class="bulk-field bulk-field--span-6">
-                <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.DESC_AR_LABEL' | translate }}</span>
-                <textarea [(ngModel)]="row.descriptionAr" [disabled]="stage !== 'review'" rows="2" class="bulk-textarea"></textarea>
-              </div>
-              <div class="bulk-field bulk-field--span-6">
-                <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.DESC_EN_LABEL' | translate }}</span>
-                <textarea [(ngModel)]="row.descriptionEn" [disabled]="stage !== 'review'" rows="2" class="bulk-textarea"></textarea>
-              </div>
-              @if (stage === 'done' && resultMap[row.rowId].errorMessage) {
-                <div class="bulk-field bulk-field--span-12">
-                  <p class="text-[0.72rem] font-bold text-rose-600">{{ resultMap[row.rowId].errorMessage }}</p>
-                </div>
-              }
-            </div>
-          </article>
-        }
-      </div>
-    </div>
+ <div class="bulk-row-card__grid">
+ <div class="bulk-field bulk-field--span-3">
+ <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.NAME_AR_LABEL' | translate }}</span>
+ <input type="text" [(ngModel)]="row.nameAr" [disabled]="stage!== 'review'" class="bulk-input" />
+ @if (stage === 'review' && getRowError(row)) {
+ <p class="bulk-field__error">{{ getRowError(row) }}</p>
+ }
+ </div>
+ <div class="bulk-field bulk-field--span-3">
+ <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.NAME_EN_LABEL' | translate }}</span>
+ <input type="text" [(ngModel)]="row.nameEn" [disabled]="stage!== 'review'" (blur)="ensureGeneratedValues(row)" class="bulk-input" />
+ </div>
+ <div class="bulk-field bulk-field--span-3">
+ <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.MASTER_CATEGORY_LABEL' | translate }}</span>
+ <app-searchable-select [(ngModel)]="row.categoryId" (selectionChange)="onRowCategoryChanged(row, $event)" [isDisabled]="stage!== 'review'" [options]="leafCategoryOptions" [placeholder]="'MASTER_PRODUCTS.SELECT_CATEGORY_PLACEHOLDER' | translate"></app-searchable-select>
+ </div>
+ <div class="bulk-field bulk-field--span-3">
+ <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.ASSIGNED_BRAND_LABEL' | translate }}</span>
+ <app-searchable-select [(ngModel)]="row.brandId" [isDisabled]="stage!== 'review' ||!row.categoryId" [options]="getBrandOptionsForCategory(row.categoryId)" [placeholder]="'MASTER_PRODUCTS.GENERIC_WHITE_LABEL' | translate"></app-searchable-select>
+ </div>
+ <div class="bulk-field bulk-field--span-2">
+ <span class="bulk-field__label">{{ currentLang === 'ar' ? 'العبوة' : 'Package' }}</span>
+ <app-searchable-select [(ngModel)]="row.packageTypeId" [isDisabled]="stage!== 'review'" [options]="packageTypeOptions"></app-searchable-select>
+ </div>
+ <div class="bulk-field bulk-field--span-2">
+ <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الحجم' : 'Size' }}</span>
+ <input type="number" [(ngModel)]="row.measurementValue" [disabled]="stage!== 'review'" min="0" step="0.01" class="bulk-input" />
+ </div>
+ <div class="bulk-field bulk-field--span-2">
+ <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الوحدة' : 'Unit' }}</span>
+ <app-searchable-select [(ngModel)]="row.measurementUnitId" [isDisabled]="stage!== 'review'" [options]="measurementUnitOptions"></app-searchable-select>
+ </div>
+ <div class="bulk-field bulk-field--span-2">
+ <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الحالة' : 'Status' }}</span>
+ <app-searchable-select [(ngModel)]="row.status" [isDisabled]="stage!== 'review'" [options]="statusSelectOptions"></app-searchable-select>
+ </div>
+ <div class="bulk-field bulk-field--span-4">
+ <span class="bulk-field__label">{{ currentLang === 'ar' ? 'الصور' : 'Images' }}</span>
+ <div class="flex flex-wrap items-center gap-2">
+ <input #rowImagesInput type="file" accept=".jpg,.jpeg,.png,.webp" multiple class="hidden" (change)="onRowImagesSelected(row, $event)">
+ <button type="button" (click)="rowImagesInput.click()" [disabled]="stage!== 'review' || uploadingRowIds.has(row.rowId)" class="bulk-btn-ghost!px-2!py-1 text-[0.65rem]">
+ {{ currentLang === 'ar' ? 'رفع' : 'Upload' }}
+ </button>
+ @if (row.images?.length) {
+ @for (image of row.images; track image.url; let imageIndex = $index) {
+ <div class="relative shrink-0">
+ <img [src]="image.url" alt="" class="h-9 w-9 rounded-lg border object-cover" />
+ <button type="button" (click)="removeRowImage(row, imageIndex)" [disabled]="stage!== 'review'" class="absolute -start-0.5 -top-0.5 rounded-full bg-rose-500 p-0.5 text-white">
+ <span class="material-symbols-outlined text-[12px]">close</span>
+ </button>
+ </div>
+ }
+ }
+ </div>
+ </div>
+ <div class="bulk-field bulk-field--span-6">
+ <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.DESC_AR_LABEL' | translate }}</span>
+ <textarea [(ngModel)]="row.descriptionAr" [disabled]="stage!== 'review'" rows="2" class="bulk-textarea"></textarea>
+ </div>
+ <div class="bulk-field bulk-field--span-6">
+ <span class="bulk-field__label">{{ 'MASTER_PRODUCTS.DESC_EN_LABEL' | translate }}</span>
+ <textarea [(ngModel)]="row.descriptionEn" [disabled]="stage!== 'review'" rows="2" class="bulk-textarea"></textarea>
+ </div>
+ @if (stage === 'done' && resultMap[row.rowId].errorMessage) {
+ <div class="bulk-field bulk-field--span-12">
+ <p class="text-[0.72rem] font-bold text-rose-600">{{ resultMap[row.rowId].errorMessage }}</p>
+ </div>
+ }
+ </div>
+ </article>
+ }
+ </div>
+ </div>
 
-    <!-- Sticky footer -->
-    <div class="bulk-sticky-footer px-4 py-3 md:px-5" [ngClass]="embedded ? 'mx-5 mb-5 shrink-0' : ''">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-600">
-          <span>{{ currentLang === 'ar' ? 'معروض' : 'Showing' }}: {{ filteredRows.length }}</span>
-          <span>·</span>
-          <span>{{ currentLang === 'ar' ? 'صفحة' : 'Page' }} {{ currentPage }} / {{ totalPages }}</span>
-        </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button type="button" (click)="previousPage()" [disabled]="currentPage === 1" class="bulk-btn-ghost !min-w-9">‹</button>
-          <button type="button" (click)="nextPage()" [disabled]="currentPage === totalPages" class="bulk-btn-ghost !min-w-9">›</button>
-          <button type="button" (click)="onClose()" class="bulk-btn-ghost">
-            {{ currentLang === 'ar' ? (embedded ? 'إغلاق' : 'رجوع للمنتجات') : (embedded ? 'Close' : 'Back to products') }}
-          </button>
-          @if (stage === 'review') {
-            <button type="button" (click)="submit()" [disabled]="submittableRows.length === 0" class="bulk-btn-primary">
-              <span class="material-symbols-outlined text-[18px] align-middle">send</span>
-              {{ currentLang === 'ar' ? 'إرسال ' + submittableRows.length + ' منتج' : 'Submit ' + submittableRows.length + ' items' }}
-            </button>
-          } @else if (stage === 'done') {
-            <button type="button" (click)="emitCompleted()" class="bulk-btn-primary">
-              {{ currentLang === 'ar' ? 'العودة للقائمة' : 'Back to list' }}
-            </button>
-          }
-        </div>
-      </div>
-    </div>
-  </div>
+ <!-- Sticky footer -->
+ <div class="bulk-sticky-footer px-4 py-3 md:px-5" [ngClass]="embedded ? 'mx-5 mb-5 shrink-0' : ''">
+ <div class="flex flex-wrap items-center justify-between gap-3">
+ <div class="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-600">
+ <span>{{ currentLang === 'ar' ? 'معروض' : 'Showing' }}: {{ filteredRows.length }}</span>
+ <span>·</span>
+ <span>{{ currentLang === 'ar' ? 'صفحة' : 'Page' }} {{ currentPage }} / {{ totalPages }}</span>
+ </div>
+ <div class="flex flex-wrap items-center gap-2">
+ <button type="button" (click)="previousPage()" [disabled]="currentPage === 1" class="bulk-btn-ghost!min-w-9">‹</button>
+ <button type="button" (click)="nextPage()" [disabled]="currentPage === totalPages" class="bulk-btn-ghost!min-w-9">›</button>
+ <button type="button" (click)="onClose()" class="bulk-btn-ghost">
+ {{ currentLang === 'ar' ? (embedded ? 'إغلاق' : 'رجوع للمنتجات') : (embedded ? 'Close' : 'Back to products') }}
+ </button>
+ @if (stage === 'review') {
+ <button type="button" (click)="submit()" [disabled]="submittableRows.length === 0" class="bulk-btn-primary">
+ <span class="material-symbols-outlined text-[18px] align-middle">send</span>
+ {{ currentLang === 'ar' ? 'إرسال ' + submittableRows.length + ' منتج' : 'Submit ' + submittableRows.length + ' items' }}
+ </button>
+ } @else if (stage === 'done') {
+ <button type="button" (click)="emitCompleted()" class="bulk-btn-primary">
+ {{ currentLang === 'ar' ? 'العودة للقائمة' : 'Back to list' }}
+ </button>
+ }
+ </div>
+ </div>
+ </div>
+ </div>
 </div>

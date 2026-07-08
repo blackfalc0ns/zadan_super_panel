@@ -1,312 +1,312 @@
 <div class="mx-auto max-w-[1520px] space-y-5 px-4 py-5 pb-6 md:px-6 lg:px-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
 
-  <div *ngIf="mutationError" class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] font-bold text-rose-700">
-    <span class="material-symbols-outlined text-[20px]">error</span>
-    {{ mutationError }}
-  </div>
+ <div *ngIf="mutationError" class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] font-bold text-rose-700">
+ <span class="material-symbols-outlined text-[20px]">error</span>
+ {{ mutationError }}
+ </div>
 
-  <app-payouts-review-modal
-    [isOpen]="showPayoutsReviewModal"
-    [availableBalance]="availableBalance"
-    [vendorName]="vendorName"
-    [beneficiaryName]="vendorDetail?.primaryBankAccount?.accountHolderName || vendorDetail?.ownerName || vendorName"
-    [iban]="vendorDetail?.primaryBankAccount?.iban || ''"
-    [swiftCode]="vendorDetail?.primaryBankAccount?.swiftCode || ''"
-    [bankName]="vendorDetail?.primaryBankAccount?.bankName || ''"
-    [transactions]="payoutTransactions"
-    (close)="showPayoutsReviewModal = false"
-    (retryPayment)="onRetryPayment($event)"
-    (suspendPayment)="onSuspendPayment($event)"
-    (escalatePayment)="onEscalatePayment($event)">
-  </app-payouts-review-modal>
+ <app-payouts-review-modal
+ [isOpen]="showPayoutsReviewModal"
+ [availableBalance]="availableBalance"
+ [vendorName]="vendorName"
+ [beneficiaryName]="vendorDetail?.primaryBankAccount?.accountHolderName || vendorDetail?.ownerName || vendorName"
+ [iban]="vendorDetail?.primaryBankAccount?.iban || ''"
+ [swiftCode]="vendorDetail?.primaryBankAccount?.swiftCode || ''"
+ [bankName]="vendorDetail?.primaryBankAccount?.bankName || ''"
+ [transactions]="payoutTransactions"
+ (close)="showPayoutsReviewModal = false"
+ (retryPayment)="onRetryPayment($event)"
+ (suspendPayment)="onSuspendPayment($event)"
+ (escalatePayment)="onEscalatePayment($event)">
+ </app-payouts-review-modal>
 
-  <app-create-settlement-modal
-    [isOpen]="showCreateSettlementModal"
-    [vendorId]="vendorId"
-    [vendorName]="vendorName"
-    [currentBalance]="pendingBalance"
-    [availableBalance]="pendingBalance"
-    [totalSales]="pendingGrossAmount"
-    [returns]="0"
-    [additionalFees]="pendingCommissionAmount"
-    [financialAdjustments]="0"
-    [bankName]="vendorDetail?.primaryBankAccount?.bankName || ''"
-    [bankIban]="vendorDetail?.primaryBankAccount?.iban || ''"
-    (close)="showCreateSettlementModal = false"
-    (createSettlement)="onSettlementCreated($event)">
-  </app-create-settlement-modal>
+ <app-create-settlement-modal
+ [isOpen]="showCreateSettlementModal"
+ [vendorId]="vendorId"
+ [vendorName]="vendorName"
+ [currentBalance]="pendingBalance"
+ [availableBalance]="pendingBalance"
+ [totalSales]="pendingGrossAmount"
+ [returns]="0"
+ [additionalFees]="pendingCommissionAmount"
+ [financialAdjustments]="0"
+ [bankName]="vendorDetail?.primaryBankAccount?.bankName || ''"
+ [bankIban]="vendorDetail?.primaryBankAccount?.iban || ''"
+ (close)="showCreateSettlementModal = false"
+ (createSettlement)="onSettlementCreated($event)">
+ </app-create-settlement-modal>
 
-  <!-- Hero -->
-  <header class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-white via-white to-primary/[0.06] p-5 shadow-sm md:p-6">
-    <div class="pointer-events-none absolute -end-14 -top-14 h-44 w-44 rounded-full bg-primary/10 blur-2xl"></div>
+ <!-- Hero -->
+ <header class="relative overflow-hidden rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-white via-white to-primary/[0.06] p-5 shadow-sm md:p-6">
+ <div class="pointer-events-none absolute -end-14 -top-14 h-44 w-44 rounded-full bg-primary/10 blur-2xl"></div>
 
-    <div class="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-      <div class="space-y-2 text-start">
-        <div class="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/10 px-3 py-1 text-[11px] font-extrabold text-primary">
-          <span class="material-symbols-outlined text-[15px]">account_balance_wallet</span>
-          {{ 'VENDOR_FINANCE.WORKSPACE.BADGE' | translate }}
-        </div>
-        <h1 class="text-2xl font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.TITLE' | translate }}</h1>
-        <p class="max-w-2xl text-[13px] font-semibold text-slate-500">
-          {{ 'VENDOR_FINANCE.WORKSPACE.SUBTITLE' | translate:{ vendor: vendorName } }}
-        </p>
-        <span class="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-white px-3 py-1 text-[11px] font-extrabold text-primary shadow-sm">
-          {{ getLifecycleModeLabel(selectedLifecycleMode) }}
-        </span>
-      </div>
-    </div>
+ <div class="relative flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+ <div class="space-y-2 text-start">
+ <div class="inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-primary/10 px-3 py-1 text-[11px] font-extrabold text-primary">
+ <span class="material-symbols-outlined text-[15px]">account_balance_wallet</span>
+ {{ 'VENDOR_FINANCE.WORKSPACE.BADGE' | translate }}
+ </div>
+ <h1 class="text-2xl font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.TITLE' | translate }}</h1>
+ <p class="max-w-2xl text-[13px] font-semibold text-slate-500">
+ {{ 'VENDOR_FINANCE.WORKSPACE.SUBTITLE' | translate:{ vendor: vendorName } }}
+ </p>
+ <span class="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-white px-3 py-1 text-[11px] font-extrabold text-primary shadow-sm">
+ {{ getLifecycleModeLabel(selectedLifecycleMode) }}
+ </span>
+ </div>
+ </div>
 
-    <div *ngIf="financeSummary" class="relative mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="rounded-2xl border border-primary/20 bg-primary/[0.06] p-3.5">
-        <p class="text-[10px] font-bold text-primary" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.AVAILABLE' | translate }}</p>
-        <p class="mt-1 text-xl font-black tabular-nums text-primary">{{ formatCurrency(availableBalance) }}</p>
-      </div>
-      <div class="rounded-2xl border border-amber-100 bg-amber-50/60 p-3.5">
-        <p class="text-[10px] font-bold text-amber-700" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.PENDING' | translate }}</p>
-        <p class="mt-1 text-xl font-black tabular-nums text-amber-800">{{ formatCurrency(financeSummary.pendingSettlement) }}</p>
-      </div>
-      <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3.5">
-        <p class="text-[10px] font-bold text-emerald-700" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.PAID_OUT' | translate }}</p>
-        <p class="mt-1 text-xl font-black tabular-nums text-emerald-800">{{ formatCurrency(totalPaidOut) }}</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200 bg-white p-3.5">
-        <p class="text-[10px] font-bold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.ON_HOLD' | translate }}</p>
-        <p class="mt-1 text-xl font-black tabular-nums text-slate-800">{{ formatCurrency(holdAmount) }}</p>
-      </div>
-    </div>
-  </header>
+ <div *ngIf="financeSummary" class="relative mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+ <div class="rounded-2xl border border-primary/20 bg-primary/[0.06] p-3.5">
+ <p class="text-[10px] font-bold text-primary" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.AVAILABLE' | translate }}</p>
+ <p class="mt-1 text-xl font-black tabular-nums text-primary">{{ formatCurrency(availableBalance) }}</p>
+ </div>
+ <div class="rounded-2xl border border-amber-100 bg-amber-50/60 p-3.5">
+ <p class="text-[10px] font-bold text-amber-700" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.PENDING' | translate }}</p>
+ <p class="mt-1 text-xl font-black tabular-nums text-amber-800">{{ formatCurrency(financeSummary.pendingSettlement) }}</p>
+ </div>
+ <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3.5">
+ <p class="text-[10px] font-bold text-emerald-700" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.PAID_OUT' | translate }}</p>
+ <p class="mt-1 text-xl font-black tabular-nums text-emerald-800">{{ formatCurrency(totalPaidOut) }}</p>
+ </div>
+ <div class="rounded-2xl border border-slate-200 bg-white p-3.5">
+ <p class="text-[10px] font-bold text-slate-500" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.ON_HOLD' | translate }}</p>
+ <p class="mt-1 text-xl font-black tabular-nums text-slate-800">{{ formatCurrency(holdAmount) }}</p>
+ </div>
+ </div>
+ </header>
 
-  <section *ngIf="isLoading" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-    <div *ngFor="let i of [1,2,3,4]" class="admin-skeleton-card h-24 rounded-2xl"></div>
-    <div class="admin-skeleton-card col-span-full h-64 rounded-2xl"></div>
-  </section>
+ <section *ngIf="isLoading" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+ <div *ngFor="let i of [1,2,3,4]" class="admin-skeleton-card h-24 rounded-2xl"></div>
+ <div class="admin-skeleton-card col-span-full h-64 rounded-2xl"></div>
+ </section>
 
-  <section *ngIf="!isLoading && hasError" class="grid min-h-[280px] place-items-center rounded-[1.5rem] border border-rose-200/80 bg-gradient-to-b from-rose-50/80 to-white p-8 text-center">
-    <div class="space-y-3">
-      <span class="material-symbols-outlined text-[48px] text-rose-500">error</span>
-      <h2 class="text-base font-black text-rose-950">{{ 'VENDOR_FINANCE.WORKSPACE.ERROR_TITLE' | translate }}</h2>
-      <p class="text-sm font-semibold text-rose-600">{{ 'VENDOR_FINANCE.WORKSPACE.ERROR_MESSAGE' | translate }}</p>
-      <button type="button" (click)="loadFinanceDataRetry()" class="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-extrabold text-white">
-        <span class="material-symbols-outlined text-[18px]">refresh</span>
-        {{ 'COMMON.RETRY' | translate }}
-      </button>
-    </div>
-  </section>
+ <section *ngIf="!isLoading && hasError" class="grid min-h-[280px] place-items-center rounded-[1.5rem] border border-rose-200/80 bg-gradient-to-b from-rose-50/80 to-white p-8 text-center">
+ <div class="space-y-3">
+ <span class="material-symbols-outlined text-[48px] text-rose-500">error</span>
+ <h2 class="text-base font-black text-rose-950">{{ 'VENDOR_FINANCE.WORKSPACE.ERROR_TITLE' | translate }}</h2>
+ <p class="text-sm font-semibold text-rose-600">{{ 'VENDOR_FINANCE.WORKSPACE.ERROR_MESSAGE' | translate }}</p>
+ <button type="button" (click)="loadFinanceDataRetry()" class="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-extrabold text-white">
+ <span class="material-symbols-outlined text-[18px]">refresh</span>
+ {{ 'COMMON.RETRY' | translate }}
+ </button>
+ </div>
+ </section>
 
-  <ng-container *ngIf="!isLoading && !hasError && financeSummary as summary">
-    <!-- Secondary metrics -->
-    <section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
-        <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.AWAITING_ORDERS' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tabular-nums text-slate-900">{{ formatNumber(pendingOrdersCount) }}</p>
-        <p class="mt-1 text-[11px] font-semibold tabular-nums text-slate-500">{{ formatCurrency(summary.pendingOrdersNet) }}</p>
-      </div>
-      <div class="rounded-2xl border border-rose-100 bg-rose-50/40 p-4 shadow-sm">
-        <p class="text-[10px] font-bold text-rose-600" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.FAILED_PAYOUTS' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tabular-nums text-rose-800">{{ formatNumber(failedPayoutsCount) }}</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
-        <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.DIRECT_SETTLEMENTS' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tabular-nums text-slate-900">{{ formatNumber(summary.directSettlementsCount) }}</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
-        <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.BATCH_SETTLEMENTS' | translate }}</p>
-        <p class="mt-1 text-2xl font-black tabular-nums text-slate-900">{{ formatNumber(summary.batchSettlementsCount) }}</p>
-      </div>
-    </section>
+ <ng-container *ngIf="!isLoading &&!hasError && financeSummary as summary">
+ <!-- Secondary metrics -->
+ <section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+ <div class="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
+ <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.AWAITING_ORDERS' | translate }}</p>
+ <p class="mt-1 text-2xl font-black tabular-nums text-slate-900">{{ formatNumber(pendingOrdersCount) }}</p>
+ <p class="mt-1 text-[11px] font-semibold tabular-nums text-slate-500">{{ formatCurrency(summary.pendingOrdersNet) }}</p>
+ </div>
+ <div class="rounded-2xl border border-rose-100 bg-rose-50/40 p-4 shadow-sm">
+ <p class="text-[10px] font-bold text-rose-600" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.FAILED_PAYOUTS' | translate }}</p>
+ <p class="mt-1 text-2xl font-black tabular-nums text-rose-800">{{ formatNumber(failedPayoutsCount) }}</p>
+ </div>
+ <div class="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
+ <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.DIRECT_SETTLEMENTS' | translate }}</p>
+ <p class="mt-1 text-2xl font-black tabular-nums text-slate-900">{{ formatNumber(summary.directSettlementsCount) }}</p>
+ </div>
+ <div class="rounded-2xl border border-slate-200/70 bg-white p-4 shadow-sm">
+ <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.BATCH_SETTLEMENTS' | translate }}</p>
+ <p class="mt-1 text-2xl font-black tabular-nums text-slate-900">{{ formatNumber(summary.batchSettlementsCount) }}</p>
+ </div>
+ </section>
 
-    <section class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-      <div class="grid gap-5">
-        <!-- Lifecycle -->
-        <article class="rounded-[1.5rem] border border-slate-200/70 bg-white p-5 shadow-sm">
-          <div class="mb-4 text-start">
-            <h2 class="text-base font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.LIFECYCLE_TITLE' | translate }}</h2>
-            <p class="mt-0.5 text-[12px] font-medium text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.LIFECYCLE_DESC' | translate }}</p>
-          </div>
+ <section class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+ <div class="grid gap-5">
+ <!-- Lifecycle -->
+ <article class="rounded-[1.5rem] border border-slate-200/70 bg-white p-5 shadow-sm">
+ <div class="mb-4 text-start">
+ <h2 class="text-base font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.LIFECYCLE_TITLE' | translate }}</h2>
+ <p class="mt-0.5 text-[12px] font-medium text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.LIFECYCLE_DESC' | translate }}</p>
+ </div>
 
-          <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-end">
-            <app-searchable-select
-              [(ngModel)]="selectedLifecycleMode"
-              [options]="lifecycleOptions"
-              [searchable]="false"
-              [allowClear]="false"
-              (selectionChange)="onLifecycleModeChange($event)">
-            </app-searchable-select>
+ <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-end">
+ <app-searchable-select
+ [(ngModel)]="selectedLifecycleMode"
+ [options]="lifecycleOptions"
+ [searchable]="false"
+ [allowClear]="false"
+ (selectionChange)="onLifecycleModeChange($event)">
+ </app-searchable-select>
 
-            <button type="button" (click)="saveLifecycleMode()" [disabled]="isSavingMode"
-              class="flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-[13px] font-extrabold text-white transition hover:bg-slate-800 disabled:opacity-50">
-              <span class="material-symbols-outlined text-[18px]">save</span>
-              {{ isRTL ? 'حفظ' : 'Save' }}
-            </button>
-          </div>
+ <button type="button" (click)="saveLifecycleMode()" [disabled]="isSavingMode"
+ class="flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-[13px] font-extrabold text-white transition hover:bg-slate-800 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[18px]">save</span>
+ {{ isRTL ? 'حفظ' : 'Save' }}
+ </button>
+ </div>
 
-          <div *ngIf="!hasPrimaryBankAccount" class="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-bold text-amber-800">
-            {{ isRTL ? 'لا يمكن تفعيل التحويل المباشر قبل إضافة حساب بنكي أساسي.' : 'Direct payout requires a primary bank account.' }}
-          </div>
-          <div *ngIf="modeSuccess" class="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[12px] font-bold text-emerald-700">{{ modeSuccess }}</div>
-          <div *ngIf="modeError" class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700">{{ modeError }}</div>
-        </article>
+ <div *ngIf="!hasPrimaryBankAccount" class="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-bold text-amber-800">
+ {{ isRTL ? 'لا يمكن تفعيل التحويل المباشر قبل إضافة حساب بنكي أساسي.' : 'Direct payout requires a primary bank account.' }}
+ </div>
+ <div *ngIf="modeSuccess" class="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[12px] font-bold text-emerald-700">{{ modeSuccess }}</div>
+ <div *ngIf="modeError" class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700">{{ modeError }}</div>
+ </article>
 
-        <!-- Settlements + payouts -->
-        <div class="grid gap-4 lg:grid-cols-2">
-          <article class="vendor-finance-ledger-card overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
-            <div class="flex items-center justify-between gap-2 border-b border-slate-100 px-3 py-2">
-              <h2 class="text-[12px] font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.SETTLEMENTS_TITLE' | translate }}</h2>
-              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-extrabold tabular-nums text-slate-600">{{ formatNumber(summary.totalSettlementsCount) }}</span>
-            </div>
+ <!-- Settlements + payouts -->
+ <div class="grid gap-4 lg:grid-cols-2">
+ <article class="vendor-finance-ledger-card overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
+ <div class="flex items-center justify-between gap-2 border-b border-slate-100 px-3 py-2">
+ <h2 class="text-[12px] font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.SETTLEMENTS_TITLE' | translate }}</h2>
+ <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-extrabold tabular-nums text-slate-600">{{ formatNumber(summary.totalSettlementsCount) }}</span>
+ </div>
 
-            <div *ngIf="settlements.length; else emptySettlements" class="vendor-finance-ledger-scroll vendor-finance-scroll">
-              <table class="vendor-finance-ledger-table">
-                <colgroup>
-                  <col class="vendor-finance-col-ref" />
-                  <col class="vendor-finance-col-amount" />
-                  <col class="vendor-finance-col-date" />
-                  <col class="vendor-finance-col-status" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_SETTLEMENT' | translate }}</th>
-                    <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_NET' | translate }}</th>
-                    <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
-                    <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of settlements; trackBy: trackById">
-                    <td>
-                      <p class="vendor-finance-ledger-id" [title]="item.settlementNumber">{{ formatLedgerId(item.settlementNumber) }}</p>
-                      <p class="vendor-finance-ledger-meta">{{ isDirectSettlement(item.origin) ? ('VENDOR_FINANCE.WORKSPACE.DIRECT_MODE' | translate) : ('VENDOR_FINANCE.WORKSPACE.BATCH_MODE' | translate) }}</p>
-                    </td>
-                    <td>
-                      <div class="vendor-finance-ledger-amount text-slate-900" dir="ltr">
-                        <span class="tabular-nums">{{ formatAmount(item.netAmount) }}</span>
-                        <span class="vendor-finance-ledger-currency">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <time class="vendor-finance-ledger-date">{{ formatDateShort(item.createdAtUtc) }}</time>
-                    </td>
-                    <td>
-                      <span
-                        class="vendor-finance-status"
-                        [ngClass]="'vendor-finance-status--' + getSettlementStatusVariant(item.status)"
-                        [attr.title]="formatStatusLabel(item.status)">
-                        {{ formatStatusLabel(item.status) }}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <ng-template #emptySettlements>
-              <p class="px-3 py-8 text-center text-[11px] font-semibold text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.EMPTY_SETTLEMENTS' | translate }}</p>
-            </ng-template>
-          </article>
+ <div *ngIf="settlements.length; else emptySettlements" class="vendor-finance-ledger-scroll vendor-finance-scroll">
+ <table class="vendor-finance-ledger-table">
+ <colgroup>
+ <col class="vendor-finance-col-ref" />
+ <col class="vendor-finance-col-amount" />
+ <col class="vendor-finance-col-date" />
+ <col class="vendor-finance-col-status" />
+ </colgroup>
+ <thead>
+ <tr>
+ <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_SETTLEMENT' | translate }}</th>
+ <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_NET' | translate }}</th>
+ <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
+ <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr *ngFor="let item of settlements; trackBy: trackById">
+ <td>
+ <p class="vendor-finance-ledger-id" [title]="item.settlementNumber">{{ formatLedgerId(item.settlementNumber) }}</p>
+ <p class="vendor-finance-ledger-meta">{{ isDirectSettlement(item.origin) ? ('VENDOR_FINANCE.WORKSPACE.DIRECT_MODE' | translate) : ('VENDOR_FINANCE.WORKSPACE.BATCH_MODE' | translate) }}</p>
+ </td>
+ <td>
+ <div class="vendor-finance-ledger-amount text-slate-900" dir="ltr">
+ <span class="tabular-nums">{{ formatAmount(item.netAmount) }}</span>
+ <span class="vendor-finance-ledger-currency">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+ </div>
+ </td>
+ <td>
+ <time class="vendor-finance-ledger-date">{{ formatDateShort(item.createdAtUtc) }}</time>
+ </td>
+ <td>
+ <span
+ class="vendor-finance-status"
+ [ngClass]="'vendor-finance-status--' + getSettlementStatusVariant(item.status)"
+ [attr.title]="formatStatusLabel(item.status)">
+ {{ formatStatusLabel(item.status) }}
+ </span>
+ </td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ <ng-template #emptySettlements>
+ <p class="px-3 py-8 text-center text-[11px] font-semibold text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.EMPTY_SETTLEMENTS' | translate }}</p>
+ </ng-template>
+ </article>
 
-          <article class="vendor-finance-ledger-card overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
-            <div class="flex items-center justify-between gap-2 border-b border-slate-100 px-3 py-2">
-              <h2 class="text-[12px] font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.PAYOUTS_TITLE' | translate }}</h2>
-              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-extrabold tabular-nums text-slate-600">{{ formatNumber(summary.totalPayoutsCount) }}</span>
-            </div>
+ <article class="vendor-finance-ledger-card overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
+ <div class="flex items-center justify-between gap-2 border-b border-slate-100 px-3 py-2">
+ <h2 class="text-[12px] font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.PAYOUTS_TITLE' | translate }}</h2>
+ <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-extrabold tabular-nums text-slate-600">{{ formatNumber(summary.totalPayoutsCount) }}</span>
+ </div>
 
-            <div *ngIf="payouts.length; else emptyPayouts" class="vendor-finance-ledger-scroll vendor-finance-scroll">
-              <table class="vendor-finance-ledger-table">
-                <colgroup>
-                  <col class="vendor-finance-col-ref" />
-                  <col class="vendor-finance-col-amount" />
-                  <col class="vendor-finance-col-date" />
-                  <col class="vendor-finance-col-status" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_PAYOUT' | translate }}</th>
-                    <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_AMOUNT' | translate }}</th>
-                    <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
-                    <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of payouts; trackBy: trackById">
-                    <td>
-                      <p class="vendor-finance-ledger-id" [title]="item.payoutNumber">{{ formatLedgerId(item.payoutNumber) }}</p>
-                      <p *ngIf="item.transferReference" class="vendor-finance-ledger-meta" dir="ltr" [title]="item.transferReference">{{ item.transferReference }}</p>
-                    </td>
-                    <td>
-                      <div class="vendor-finance-ledger-amount text-primary" dir="ltr">
-                        <span class="tabular-nums">{{ formatAmount(item.amount) }}</span>
-                        <span class="vendor-finance-ledger-currency">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <time class="vendor-finance-ledger-date">{{ formatDateShort(item.processedAtUtc || item.createdAtUtc) }}</time>
-                    </td>
-                    <td>
-                      <span
-                        class="vendor-finance-status"
-                        [ngClass]="'vendor-finance-status--' + getPayoutStatusVariant(item.status)"
-                        [attr.title]="formatStatusLabel(item.status)">
-                        {{ formatStatusLabel(item.status) }}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <ng-template #emptyPayouts>
-              <p class="px-3 py-8 text-center text-[11px] font-semibold text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.EMPTY_PAYOUTS' | translate }}</p>
-            </ng-template>
-          </article>
-        </div>
-      </div>
+ <div *ngIf="payouts.length; else emptyPayouts" class="vendor-finance-ledger-scroll vendor-finance-scroll">
+ <table class="vendor-finance-ledger-table">
+ <colgroup>
+ <col class="vendor-finance-col-ref" />
+ <col class="vendor-finance-col-amount" />
+ <col class="vendor-finance-col-date" />
+ <col class="vendor-finance-col-status" />
+ </colgroup>
+ <thead>
+ <tr>
+ <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_PAYOUT' | translate }}</th>
+ <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_AMOUNT' | translate }}</th>
+ <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
+ <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr *ngFor="let item of payouts; trackBy: trackById">
+ <td>
+ <p class="vendor-finance-ledger-id" [title]="item.payoutNumber">{{ formatLedgerId(item.payoutNumber) }}</p>
+ <p *ngIf="item.transferReference" class="vendor-finance-ledger-meta" dir="ltr" [title]="item.transferReference">{{ item.transferReference }}</p>
+ </td>
+ <td>
+ <div class="vendor-finance-ledger-amount text-primary" dir="ltr">
+ <span class="tabular-nums">{{ formatAmount(item.amount) }}</span>
+ <span class="vendor-finance-ledger-currency">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+ </div>
+ </td>
+ <td>
+ <time class="vendor-finance-ledger-date">{{ formatDateShort(item.processedAtUtc || item.createdAtUtc) }}</time>
+ </td>
+ <td>
+ <span
+ class="vendor-finance-status"
+ [ngClass]="'vendor-finance-status--' + getPayoutStatusVariant(item.status)"
+ [attr.title]="formatStatusLabel(item.status)">
+ {{ formatStatusLabel(item.status) }}
+ </span>
+ </td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ <ng-template #emptyPayouts>
+ <p class="px-3 py-8 text-center text-[11px] font-semibold text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.EMPTY_PAYOUTS' | translate }}</p>
+ </ng-template>
+ </article>
+ </div>
+ </div>
 
-      <!-- Sidebar -->
-      <aside class="grid gap-5 xl:sticky xl:top-4">
-        <article class="rounded-[1.5rem] border border-slate-200/70 bg-white p-5 shadow-sm">
-          <h2 class="mb-4 text-base font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.OPS_TITLE' | translate }}</h2>
-          <div class="grid gap-2.5">
-            <button type="button" (click)="showPayoutsReviewModal = true"
-              class="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-[13px] font-extrabold text-slate-700 hover:bg-slate-50">
-              <span class="material-symbols-outlined text-[18px]">rule</span>
-              {{ 'VENDOR_FINANCE.WORKSPACE.REVIEW_PAYOUTS' | translate }}
-            </button>
-            <button *ngIf="!isDirectMode" type="button" (click)="onCreateSettlement()"
-              class="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary text-[13px] font-extrabold text-white shadow-md shadow-primary/20 hover:bg-primary/90">
-              <span class="material-symbols-outlined text-[18px]">add_circle</span>
-              {{ 'VENDOR_FINANCE.WORKSPACE.CREATE_SETTLEMENT' | translate }}
-            </button>
-          </div>
+ <!-- Sidebar -->
+ <aside class="grid gap-5 xl:sticky xl:top-4">
+ <article class="rounded-[1.5rem] border border-slate-200/70 bg-white p-5 shadow-sm">
+ <h2 class="mb-4 text-base font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.OPS_TITLE' | translate }}</h2>
+ <div class="grid gap-2.5">
+ <button type="button" (click)="showPayoutsReviewModal = true"
+ class="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-[13px] font-extrabold text-slate-700 hover:bg-slate-50">
+ <span class="material-symbols-outlined text-[18px]">rule</span>
+ {{ 'VENDOR_FINANCE.WORKSPACE.REVIEW_PAYOUTS' | translate }}
+ </button>
+ <button *ngIf="!isDirectMode" type="button" (click)="onCreateSettlement()"
+ class="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary text-[13px] font-extrabold text-white shadow-md shadow-primary/20 hover:bg-primary/90">
+ <span class="material-symbols-outlined text-[18px]">add_circle</span>
+ {{ 'VENDOR_FINANCE.WORKSPACE.CREATE_SETTLEMENT' | translate }}
+ </button>
+ </div>
 
-          <div class="mt-4 grid gap-2.5">
-            <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5 text-start">
-              <p class="text-[10px] font-bold text-slate-400">{{ 'VENDOR_FINANCE.WORKSPACE.BANK_ACCOUNT' | translate }}</p>
-              <p class="mt-1 text-[13px] font-extrabold text-slate-900">{{ vendorDetail?.primaryBankAccount?.bankName || '—' }}</p>
-              <p class="text-[11px] font-semibold text-slate-500">{{ vendorDetail?.primaryBankAccount?.accountHolderName || vendorName }}</p>
-            </div>
-            <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5 text-start">
-              <p class="text-[10px] font-bold text-slate-400">{{ 'VENDOR_FINANCE.WORKSPACE.LATEST_PAYOUT' | translate }}</p>
-              <p class="mt-1 text-[13px] font-extrabold text-slate-900">{{ latestPayoutLabel }}</p>
-              <p class="text-[11px] font-semibold text-slate-500">{{ latestPayoutNumber }}</p>
-            </div>
-          </div>
-        </article>
+ <div class="mt-4 grid gap-2.5">
+ <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5 text-start">
+ <p class="text-[10px] font-bold text-slate-400">{{ 'VENDOR_FINANCE.WORKSPACE.BANK_ACCOUNT' | translate }}</p>
+ <p class="mt-1 text-[13px] font-extrabold text-slate-900">{{ vendorDetail?.primaryBankAccount?.bankName || '—' }}</p>
+ <p class="text-[11px] font-semibold text-slate-500">{{ vendorDetail?.primaryBankAccount?.accountHolderName || vendorName }}</p>
+ </div>
+ <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3.5 text-start">
+ <p class="text-[10px] font-bold text-slate-400">{{ 'VENDOR_FINANCE.WORKSPACE.LATEST_PAYOUT' | translate }}</p>
+ <p class="mt-1 text-[13px] font-extrabold text-slate-900">{{ latestPayoutLabel }}</p>
+ <p class="text-[11px] font-semibold text-slate-500">{{ latestPayoutNumber }}</p>
+ </div>
+ </div>
+ </article>
 
-        <article class="rounded-[1.5rem] border border-slate-200/70 bg-white p-5 shadow-sm">
-          <h2 class="mb-3 text-base font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.FLOW_TITLE' | translate }}</h2>
-          <div class="grid gap-2">
-            <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3 text-[12px] font-semibold text-slate-600">
-              {{ isRTL ? '١. تسليم الطلب' : '1. Order delivered' }}
-            </div>
-            <div class="rounded-xl border p-3 text-[12px] font-semibold"
-                 [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/60 text-emerald-800' : 'border-slate-100 bg-slate-50/80 text-slate-600'">
-              {{ isDirectMode ? (isRTL ? '٢. تسوية مباشرة لكل طلب' : '2. Per-order settlement') : (isRTL ? '٢. تجميع في دورة السداد' : '2. Batch accumulation') }}
-            </div>
-            <div class="rounded-xl border p-3 text-[12px] font-semibold"
-                 [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/60 text-emerald-800' : 'border-slate-100 bg-slate-50/80 text-slate-600'">
-              {{ isRTL ? '٣. إصدار التحويل البنكي' : '3. Bank payout' }}
-            </div>
-          </div>
-        </article>
-      </aside>
-    </section>
-  </ng-container>
+ <article class="rounded-[1.5rem] border border-slate-200/70 bg-white p-5 shadow-sm">
+ <h2 class="mb-3 text-base font-black text-slate-900">{{ 'VENDOR_FINANCE.WORKSPACE.FLOW_TITLE' | translate }}</h2>
+ <div class="grid gap-2">
+ <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-3 text-[12px] font-semibold text-slate-600">
+ {{ isRTL ? '١. تسليم الطلب' : '1. Order delivered' }}
+ </div>
+ <div class="rounded-xl border p-3 text-[12px] font-semibold"
+ [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/60 text-emerald-800' : 'border-slate-100 bg-slate-50/80 text-slate-600'">
+ {{ isDirectMode ? (isRTL ? '٢. تسوية مباشرة لكل طلب' : '2. Per-order settlement') : (isRTL ? '٢. تجميع في دورة السداد' : '2. Batch accumulation') }}
+ </div>
+ <div class="rounded-xl border p-3 text-[12px] font-semibold"
+ [ngClass]="isDirectMode ? 'border-emerald-200 bg-emerald-50/60 text-emerald-800' : 'border-slate-100 bg-slate-50/80 text-slate-600'">
+ {{ isRTL ? '٣. إصدار التحويل البنكي' : '3. Bank payout' }}
+ </div>
+ </div>
+ </article>
+ </aside>
+ </section>
+ </ng-container>
 </div>

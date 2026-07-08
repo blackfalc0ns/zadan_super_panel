@@ -5,11 +5,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Category } from '@catalog/models/catalog.domain.models';
 import { CatalogService } from '@catalog/services/catalog.api.service';
 import {
-  HomeSectionThemeOption,
-  MarketingCategoryOption,
-  MarketingHomeSection,
-  MarketingHomeSectionPayload,
-  MarketingHomeSectionUpdatePayload
+ HomeSectionThemeOption,
+ MarketingCategoryOption,
+ MarketingHomeSection,
+ MarketingHomeSectionPayload,
+ MarketingHomeSectionUpdatePayload
 } from '@marketing/models/marketing.models';
 import { MarketingApiService } from '@marketing/services/marketing.api.service';
 import { describeApiError, formatDateRange, formatDateTime } from '@marketing/utils/marketing-date.utils';
@@ -23,394 +23,392 @@ import { ToastService } from '@shared/services/toast.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-marketing-home-sections',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    AppButtonComponent,
-    AppInputComponent,
-    StatusPillComponent,
-    DeleteConfirmationModalComponent,
-    HomeSectionFormModalComponent,
-    DataTableComponent
-  ],
-  template: `
-    <div class="space-y-6">
-      
-      <!-- Action Bar -->
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <div class="max-w-[24rem] w-full">
-          <app-input
-            [(ngModel)]="searchTerm"
-            [placeholder]="'MARKETING.HOME_SECTIONS.SEARCH_PLACEHOLDER' | translate"
-            [hasIcon]="true"
-            [inputClass]="'!bg-transparent !border-0 !ring-0 !text-slate-900 !placeholder-slate-400'"
-            [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-2xl overflow-hidden'">
-            <span icon class="material-symbols-outlined text-slate-400 text-[20px]">search</span>
-          </app-input>
-        </div>
+ changeDetection: ChangeDetectionStrategy.OnPush,
+ selector: 'app-marketing-home-sections',
+ standalone: true,
+ imports: [
+ CommonModule,
+ FormsModule,
+ TranslateModule,
+ AppButtonComponent,
+ AppInputComponent,
+ StatusPillComponent,
+ DeleteConfirmationModalComponent,
+ HomeSectionFormModalComponent,
+ DataTableComponent
+ ],
+ template: `
+ <div class="space-y-6">
+ 
+ <!-- Action Bar -->
+ <div class="flex flex-wrap items-center justify-between gap-4">
+ <div class="max-w-[24rem] w-full">
+ <app-input
+ [(ngModel)]="searchTerm"
+ [placeholder]="'MARKETING.HOME_SECTIONS.SEARCH_PLACEHOLDER' | translate"
+ [hasIcon]="true"
+ [inputClass]="'!bg-transparent!border-0!ring-0!text-slate-900!placeholder-slate-400'"
+ [customClass]="'bg-white/70 backdrop-blur-xl border border-slate-200/60 focus-within:bg-white focus-within:border-zadna-primary/50 focus-within:shadow-[0_8px_30px_-5px_rgba(18,124,140,0.15)] hover:bg-white/80 transition-all shadow-sm rounded-2xl overflow-hidden'">
+ <span icon class="material-symbols-outlined text-slate-400 text-[20px]">search</span>
+ </app-input>
+ </div>
 
-        <div class="flex items-center gap-3">
-          <button
-            type="button"
-            (click)="loadData()"
-            [disabled]="loading"
-            class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
-            <span class="material-symbols-outlined text-[18px]" [class.opacity-40]="loading">refresh</span>
-            {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
-          </button>
+ <div class="flex items-center gap-3">
+ <button
+ type="button"
+ (click)="loadData()"
+ [disabled]="loading"
+ class="h-11 px-4 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
+ <span class="material-symbols-outlined text-[18px]" [class.opacity-40]="loading">refresh</span>
+ {{ 'MARKETING.ACTIONS.REFRESH' | translate }}
+ </button>
 
-          <button
-            type="button"
-            (click)="openCreate()"
-            [disabled]="!categoryOptions.length"
-            class="h-11 px-5 rounded-2xl bg-zadna-primary text-white text-sm font-bold flex items-center gap-2 hover:bg-zadna-primary/90 hover:shadow-lg hover:shadow-zadna-primary/20 disabled:opacity-50 disabled:hover:shadow-none transition-all">
-            <span class="material-symbols-outlined text-[18px]">add</span>
-            {{ 'MARKETING.HOME_SECTIONS.ACTIONS.CREATE' | translate }}
-          </button>
-        </div>
-      </div>
+ <button
+ type="button"
+ (click)="openCreate()"
+ [disabled]="!categoryOptions.length"
+ class="h-11 px-5 rounded-2xl bg-zadna-primary text-white text-sm font-bold flex items-center gap-2 hover:bg-zadna-primary/90 hover:shadow-lg hover:shadow-zadna-primary/20 disabled:opacity-50 disabled:hover:shadow-none transition-all">
+ <span class="material-symbols-outlined text-[18px]">add</span>
+ {{ 'MARKETING.HOME_SECTIONS.ACTIONS.CREATE' | translate }}
+ </button>
+ </div>
+ </div>
 
-      <div *ngIf="error" class="rounded-[1.5rem] border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
-        {{ error }}
-      </div>
+ <div *ngIf="error" class="rounded-[1.5rem] border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+ {{ error }}
+ </div>
 
-      <div *ngIf="!loading && !categoryOptions.length && !sections.length && !error" class="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
-        {{ 'MARKETING.HOME_SECTIONS.MESSAGES.NO_SUBCATEGORIES' | translate }}
-      </div>
+ <div *ngIf="!loading &&!categoryOptions.length &&!sections.length &&!error" class="rounded-[1.5rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
+ {{ 'MARKETING.HOME_SECTIONS.MESSAGES.NO_SUBCATEGORIES' | translate }}
+ </div>
 
-      <!-- Data Table -->
-      <app-data-table
-        [data]="filteredSections"
-        [columns]="tableColumns"
-        [isLoading]="loading"
-        [emptyStateIcon]="'dashboard_customize'"
-        [emptyStateActionLabel]="'إنشاء أول قسم'"
-        [emptyStateTitle]="'لا توجد أقسام للصفحة الرئيسية'"
-        [emptyStateMessage]="'لم تقم بإضافة أي قسم ليظهر في الصفحة الرئيسية للتطبيق.'"
-        [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
-        (emptyStateAction)="openCreate()">
+ <!-- Data Table -->
+ <app-data-table
+ [data]="filteredSections"
+ [columns]="tableColumns"
+ [isLoading]="loading"
+ [emptyStateIcon]="'dashboard_customize'"
+ [emptyStateActionLabel]="'إنشاء أول قسم'"
+ [emptyStateTitle]="'ما فيه أقسام للصفحة الرئيسية'"
+ [emptyStateMessage]="'لم تقم بإضافة أي قسم ليظهر في الرئيسية للتطبيق.'"
+ [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
+ (emptyStateAction)="openCreate()">
 
-          <ng-template #customColumn let-section let-column="column">
-            <ng-container *ngIf="column.key === 'categoryNameEn'">
-              <div class="flex items-center gap-3 text-start">
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.1rem] bg-zadna-primary/10 text-zadna-primary border border-zadna-primary/10 shadow-sm">
-                  <span class="material-symbols-outlined text-[20px]">grid_view</span>
-                </div>
-                <div class="min-w-0">
-                  <div class="truncate text-[13px] font-black text-slate-900">
-                    {{ section.categoryNameAr }}
-                  </div>
-                  <div class="mt-1 truncate text-[11px] font-bold text-slate-400">
-                    {{ section.categoryNameEn }}
-                  </div>
-                </div>
-              </div>
-            </ng-container>
+ <ng-template #customColumn let-section let-column="column">
+ <ng-container *ngIf="column.key === 'categoryNameEn'">
+ <div class="flex items-center gap-3 text-start">
+ <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.1rem] bg-zadna-primary/10 text-zadna-primary border border-zadna-primary/10 shadow-sm">
+ <span class="material-symbols-outlined text-[20px]">grid_view</span>
+ </div>
+ <div class="min-w-0">
+ <div class="truncate text-[13px] font-black text-slate-900">
+ {{ section.categoryNameAr }}
+ </div>
+ <div class="mt-1 truncate text-[11px] font-bold text-slate-400">
+ {{ section.categoryNameEn }}
+ </div>
+ </div>
+ </div>
+ </ng-container>
 
-            <ng-container *ngIf="column.key === 'theme'">
-              <span class="rounded-xl bg-zadna-primary/10 px-3 py-1.5 text-xs font-black text-zadna-primary border border-zadna-primary/20">
-                {{ getThemeLabel(section) }}
-              </span>
-            </ng-container>
+ <ng-container *ngIf="column.key === 'theme'">
+ <span class="rounded-xl bg-zadna-primary/10 px-3 py-1.5 text-xs font-black text-zadna-primary border border-zadna-primary/20">
+ {{ getThemeLabel(section) }}
+ </span>
+ </ng-container>
 
-            <ng-container *ngIf="column.key === 'displayOrder'">
-              <span class="rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-700">
-                {{ section.displayOrder }}
-              </span>
-            </ng-container>
+ <ng-container *ngIf="column.key === 'displayOrder'">
+ <span class="rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-700">
+ {{ section.displayOrder }}
+ </span>
+ </ng-container>
 
-            <ng-container *ngIf="column.key === 'productsTake'">
-              <span class="rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-700">
-                {{ section.productsTake }} منتجات
-              </span>
-            </ng-container>
+ <ng-container *ngIf="column.key === 'productsTake'">
+ <span class="rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-black text-slate-700">
+ {{ section.productsTake }} منتجات
+ </span>
+ </ng-container>
 
-            <ng-container *ngIf="column.key === 'schedule'">
-              <div class="flex items-center gap-2">
-                 <span class="material-symbols-outlined text-[14px] text-slate-400">calendar_month</span>
-                 <span class="text-[11px] font-bold text-slate-600" dir="ltr">
-                   {{ formatDateRangeLabel(section) }}
-                 </span>
-              </div>
-            </ng-container>
+ <ng-container *ngIf="column.key === 'schedule'">
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[14px] text-slate-400">calendar_month</span>
+ <span class="text-[11px] font-bold text-slate-600" dir="ltr">
+ {{ formatDateRangeLabel(section) }}
+ </span>
+ </div>
+ </ng-container>
 
-            <ng-container *ngIf="column.key === 'isActive'">
-              <div class="flex justify-start">
-                <app-status-pill
-                  [label]="(section.isActive ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate"
-                  [variant]="section.isActive ? 'success' : 'neutral'"
-                  size="sm">
-                </app-status-pill>
-              </div>
-            </ng-container>
+ <ng-container *ngIf="column.key === 'isActive'">
+ <div class="flex justify-start">
+ <app-status-pill
+ [label]="(section.isActive ? 'MARKETING.VISIBILITY.ENABLED' : 'MARKETING.VISIBILITY.DISABLED') | translate"
+ [variant]="section.isActive ? 'success' : 'neutral'"
+ size="sm">
+ </app-status-pill>
+ </div>
+ </ng-container>
 
-            <ng-container *ngIf="column.key === 'actions'">
-              <div class="flex justify-end gap-1.5" (click)="$event.stopPropagation()">
-                <button
-                  type="button"
-                  class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-zadna-primary/10 hover:text-zadna-primary transition-colors"
-                  (click)="openEdit(section.id)"
-                  title="تعديل">
-                  <span class="material-symbols-outlined text-[18px]">edit</span>
-                </button>
+ <ng-container *ngIf="column.key === 'actions'">
+ <div class="flex justify-end gap-1.5" (click)="$event.stopPropagation()">
+ <button
+ type="button"
+ class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-zadna-primary/10 hover:text-zadna-primary transition-colors"
+ (click)="openEdit(section.id)"
+ title="تعديل">
+ <span class="material-symbols-outlined text-[18px]">edit</span>
+ </button>
 
-                <button
-                  type="button"
-                  class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-                  [ngClass]="section.isActive ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'"
-                  (click)="toggleStatus(section)"
-                  [title]="section.isActive ? 'إيقاف' : 'تفعيل'">
-                  <span class="material-symbols-outlined text-[18px]">
-                    {{ section.isActive ? 'pause' : 'play_arrow' }}
-                  </span>
-                </button>
+ <button
+ type="button"
+ class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
+ [ngClass]="section.isActive ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'"
+ (click)="toggleStatus(section)"
+ [title]="section.isActive ? 'إيقاف' : 'تفعيل'">
+ <span class="material-symbols-outlined text-[18px]">
+ {{ section.isActive ? 'pause' : 'play_arrow' }}
+ </span>
+ </button>
 
-                <button
-                  type="button"
-                  class="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors"
-                  (click)="promptDelete(section)"
-                  title="حذف">
-                  <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </ng-container>
-          </ng-template>
-      </app-data-table>
-    </div>
+ <button
+ type="button"
+ class="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors"
+ (click)="promptDelete(section)"
+ title="حذف">
+ <span class="material-symbols-outlined text-[18px]">delete</span>
+ </button>
+ </div>
+ </ng-container>
+ </ng-template>
+ </app-data-table>
+ </div>
 
-    <app-home-section-form-modal [isOpen]="isModalOpen" [isSaving]="saving" [section]="selectedSection" [categoryOptions]="categoryOptions" [themeOptions]="themeOptions" (close)="closeModal()" (save)="saveSection($event)"></app-home-section-form-modal>
+ <app-home-section-form-modal [isOpen]="isModalOpen" [isSaving]="saving" [section]="selectedSection" [categoryOptions]="categoryOptions" [themeOptions]="themeOptions" (close)="closeModal()" (save)="saveSection($event)"></app-home-section-form-modal>
 
-    <app-delete-confirmation-modal
-      [isOpen]="deleteTarget !== null"
-      [isLoading]="deleting"
-      [title]="'MARKETING.HOME_SECTIONS.MESSAGES.DELETE_TITLE' | translate"
-      [message]="'MARKETING.HOME_SECTIONS.MESSAGES.DELETE_MESSAGE' | translate"
-      (close)="deleteTarget = null"
-      (confirm)="confirmDelete()">
-    </app-delete-confirmation-modal>
-  `
+ <app-delete-confirmation-modal
+ [isOpen]="deleteTarget!== null"
+ [isLoading]="deleting"
+ [title]="'MARKETING.HOME_SECTIONS.MESSAGES.DELETE_TITLE' | translate"
+ [message]="'MARKETING.HOME_SECTIONS.MESSAGES.DELETE_MESSAGE' | translate"
+ (close)="deleteTarget = null"
+ (confirm)="confirmDelete()">
+ </app-delete-confirmation-modal>
+ `
 })
 export class MarketingHomeSectionsComponent implements OnInit {
-  private readonly cdr = inject(ChangeDetectorRef);
-  sections: MarketingHomeSection[] = [];
-  categoryOptions: MarketingCategoryOption[] = [];
-  themeOptions: HomeSectionThemeOption[] = [];
-  loading = false;
-  saving = false;
-  deleting = false;
-  error = '';
-  searchTerm = '';
-  isModalOpen = false;
-  selectedSection: MarketingHomeSection | null = null;
-  deleteTarget: MarketingHomeSection | null = null;
+ private readonly cdr = inject(ChangeDetectorRef);
+ sections: MarketingHomeSection[] = [];
+ categoryOptions: MarketingCategoryOption[] = [];
+ themeOptions: HomeSectionThemeOption[] = [];
+ loading = false;
+ saving = false;
+ deleting = false;
+ error = '';
+ searchTerm = '';
+ isModalOpen = false;
+ selectedSection: MarketingHomeSection | null = null;
+ deleteTarget: MarketingHomeSection | null = null;
 
-  readonly tableColumns: TableColumn[] = [
-    { key: 'categoryNameEn', title: 'MARKETING.HOME_SECTIONS.TABLE.SUBCATEGORY', type: 'custom', width: '20rem', align: 'left' },
-    { key: 'theme', title: 'MARKETING.HOME_SECTIONS.TABLE.THEME', type: 'custom', width: '10rem', align: 'center' },
-    { key: 'productsTake', title: 'MARKETING.HOME_SECTIONS.TABLE.TAKE', type: 'custom', width: '8rem', align: 'center' },
-    { key: 'displayOrder', title: 'MARKETING.BANNERS.TABLE.ORDER', type: 'custom', width: '6rem', align: 'center' },
-    { key: 'schedule', title: 'MARKETING.BANNERS.TABLE.SCHEDULE', type: 'custom', width: '13rem', align: 'left' },
-    { key: 'isActive', title: 'MARKETING.BANNERS.TABLE.STATUS', type: 'custom', width: '7rem', align: 'left' },
-    { key: 'actions', title: 'MARKETING.BANNERS.TABLE.ACTIONS', type: 'custom', width: '10rem', align: 'right' }
-  ];
+ readonly tableColumns: TableColumn[] = [
+ { key: 'categoryNameEn', title: 'MARKETING.HOME_SECTIONS.TABLE.SUBCATEGORY', type: 'custom', width: '20rem', align: 'left' },
+ { key: 'theme', title: 'MARKETING.HOME_SECTIONS.TABLE.THEME', type: 'custom', width: '10rem', align: 'center' },
+ { key: 'productsTake', title: 'MARKETING.HOME_SECTIONS.TABLE.TAKE', type: 'custom', width: '8rem', align: 'center' },
+ { key: 'displayOrder', title: 'MARKETING.BANNERS.TABLE.ORDER', type: 'custom', width: '6rem', align: 'center' },
+ { key: 'schedule', title: 'MARKETING.BANNERS.TABLE.SCHEDULE', type: 'custom', width: '13rem', align: 'left' },
+ { key: 'isActive', title: 'MARKETING.BANNERS.TABLE.STATUS', type: 'custom', width: '7rem', align: 'left' },
+ { key: 'actions', title: 'MARKETING.BANNERS.TABLE.ACTIONS', type: 'custom', width: '10rem', align: 'right' }
+ ];
 
-  constructor(
-    private readonly marketingApi: MarketingApiService,
-    private readonly catalogService: CatalogService,
-    private readonly toastService: ToastService,
-    readonly translateService: TranslateService
-  ) {}
+ constructor(
+ private readonly marketingApi: MarketingApiService,
+ private readonly catalogService: CatalogService,
+ private readonly toastService: ToastService,
+ readonly translateService: TranslateService
+ ) {}
 
-  get filteredSections(): MarketingHomeSection[] {
-    const query = this.searchTerm.trim().toLocaleLowerCase();
-    if (!query) {
-      return this.sections;
-    }
+ get filteredSections(): MarketingHomeSection[] {
+ const query = this.searchTerm.trim().toLocaleLowerCase();
+ if (!query) {
+ return this.sections;
+ }
 
-    return this.sections.filter((section) =>
-      [section.categoryNameAr, section.categoryNameEn, section.theme]
-        .filter((value): value is string => Boolean(value))
-        .some((value) => value.toLocaleLowerCase().includes(query))
-    );
-  }
+ return this.sections.filter((section) =>
+ [section.categoryNameAr, section.categoryNameEn, section.theme].filter((value): value is string => Boolean(value)).some((value) => value.toLocaleLowerCase().includes(query))
+ );
+ }
 
-  ngOnInit(): void {
-    this.loadData();
-  }
+ ngOnInit(): void {
+ this.loadData();
+ }
 
-  loadData(): void {
-    this.loading = true;
-    this.error = '';
+ loadData(): void {
+ this.loading = true;
+ this.error = '';
 
-    forkJoin({
-      sections: this.marketingApi.getHomeSections(),
-      categories: this.catalogService.getCategories(undefined, true),
-      themes: this.marketingApi.getHomeSectionThemes()
-    }).subscribe({
-      next: ({ sections, categories, themes }) => {
-        this.cdr.markForCheck();
-        this.sections = [...sections].sort(
-          (left, right) => left.displayOrder - right.displayOrder || right.updatedAtUtc.localeCompare(left.updatedAtUtc)
-        );
-        this.themeOptions = themes;
-        this.categoryOptions = buildHierarchicalCategoryOptions(categories);
-        this.loading = false;
-      },
-      error: (error) => {
-        this.cdr.markForCheck();
-        this.loading = false;
-        this.error = describeApiError(error);
-      }
-    });
-  }
+ forkJoin({
+ sections: this.marketingApi.getHomeSections(),
+ categories: this.catalogService.getCategories(undefined, true),
+ themes: this.marketingApi.getHomeSectionThemes()
+ }).subscribe({
+ next: ({ sections, categories, themes }) => {
+ this.cdr.markForCheck();
+ this.sections = [...sections].sort(
+ (left, right) => left.displayOrder - right.displayOrder || right.updatedAtUtc.localeCompare(left.updatedAtUtc)
+ );
+ this.themeOptions = themes;
+ this.categoryOptions = buildHierarchicalCategoryOptions(categories);
+ this.loading = false;
+ },
+ error: (error) => {
+ this.cdr.markForCheck();
+ this.loading = false;
+ this.error = describeApiError(error);
+ }
+ });
+ }
 
-  openCreate(): void {
-    this.selectedSection = null;
-    this.isModalOpen = true;
-  }
+ openCreate(): void {
+ this.selectedSection = null;
+ this.isModalOpen = true;
+ }
 
-  openEdit(id: string): void {
-    this.saving = true;
-    this.marketingApi.getHomeSectionById(id).subscribe({
-      next: (section) => {
-        this.cdr.markForCheck();
-        this.selectedSection = section;
-        this.isModalOpen = true;
-        this.saving = false;
-      },
-      error: (error) => {
-        this.cdr.markForCheck();
-        this.saving = false;
-        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
-      }
-    });
-  }
+ openEdit(id: string): void {
+ this.saving = true;
+ this.marketingApi.getHomeSectionById(id).subscribe({
+ next: (section) => {
+ this.cdr.markForCheck();
+ this.selectedSection = section;
+ this.isModalOpen = true;
+ this.saving = false;
+ },
+ error: (error) => {
+ this.cdr.markForCheck();
+ this.saving = false;
+ this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
+ }
+ });
+ }
 
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.selectedSection = null;
-  }
+ closeModal(): void {
+ this.isModalOpen = false;
+ this.selectedSection = null;
+ }
 
-  saveSection(payload: MarketingHomeSectionUpdatePayload): void {
-    this.saving = true;
+ saveSection(payload: MarketingHomeSectionUpdatePayload): void {
+ this.saving = true;
 
-    const request$ = this.selectedSection
-      ? this.marketingApi.updateHomeSection(this.selectedSection.id, payload)
-      : this.marketingApi.createHomeSection(toCreatePayload(payload));
+ const request$ = this.selectedSection
+ ? this.marketingApi.updateHomeSection(this.selectedSection.id, payload)
+ : this.marketingApi.createHomeSection(toCreatePayload(payload));
 
-    request$.subscribe({
-      next: () => {
-        this.cdr.markForCheck();
-        this.saving = false;
-        this.closeModal();
-        this.loadData();
-        this.toastService.success(
-          this.selectedSection 
-            ? this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.UPDATED') 
-            : this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.CREATED'),
-          this.translateService.instant('MARKETING.SHELL.TITLE')
-        );
-      },
-      error: (error) => {
-        this.cdr.markForCheck();
-        this.saving = false;
-        this.toastService.error(describeApiError(error), 'أقسام الرئيسية');
-      }
-    });
-  }
+ request$.subscribe({
+ next: () => {
+ this.cdr.markForCheck();
+ this.saving = false;
+ this.closeModal();
+ this.loadData();
+ this.toastService.success(
+ this.selectedSection 
+ ? this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.UPDATED') 
+ : this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.CREATED'),
+ this.translateService.instant('MARKETING.SHELL.TITLE')
+ );
+ },
+ error: (error) => {
+ this.cdr.markForCheck();
+ this.saving = false;
+ this.toastService.error(describeApiError(error), 'أقسام الرئيسية');
+ }
+ });
+ }
 
-  toggleStatus(section: MarketingHomeSection): void {
-    const request$ = section.isActive ? this.marketingApi.deactivateHomeSection(section.id) : this.marketingApi.activateHomeSection(section.id);
+ toggleStatus(section: MarketingHomeSection): void {
+ const request$ = section.isActive ? this.marketingApi.deactivateHomeSection(section.id) : this.marketingApi.activateHomeSection(section.id);
 
-    request$.subscribe({
-      next: () => {
-        this.cdr.markForCheck();
-        this.toastService.success(
-          section.isActive 
-            ? this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DEACTIVATED') 
-            : this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.ACTIVATED'),
-          this.translateService.instant('MARKETING.SHELL.TITLE')
-        );
-        this.loadData();
-      },
-      error: (error) => this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'))
-    });
-  }
+ request$.subscribe({
+ next: () => {
+ this.cdr.markForCheck();
+ this.toastService.success(
+ section.isActive 
+ ? this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DEACTIVATED') 
+ : this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.ACTIVATED'),
+ this.translateService.instant('MARKETING.SHELL.TITLE')
+ );
+ this.loadData();
+ },
+ error: (error) => this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'))
+ });
+ }
 
-  promptDelete(section: MarketingHomeSection): void {
-    this.deleteTarget = section;
-  }
+ promptDelete(section: MarketingHomeSection): void {
+ this.deleteTarget = section;
+ }
 
-  confirmDelete(): void {
-    if (!this.deleteTarget) {
-      return;
-    }
+ confirmDelete(): void {
+ if (!this.deleteTarget) {
+ return;
+ }
 
-    this.deleting = true;
-    this.marketingApi.deleteHomeSection(this.deleteTarget.id).subscribe({
-      next: () => {
-        this.cdr.markForCheck();
-        this.deleting = false;
-        this.deleteTarget = null;
-        this.toastService.success(this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
-        this.loadData();
-      },
-      error: (error) => {
-        this.cdr.markForCheck();
-        this.deleting = false;
-        this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
-      }
-    });
-  }
+ this.deleting = true;
+ this.marketingApi.deleteHomeSection(this.deleteTarget.id).subscribe({
+ next: () => {
+ this.cdr.markForCheck();
+ this.deleting = false;
+ this.deleteTarget = null;
+ this.toastService.success(this.translateService.instant('MARKETING.HOME_SECTIONS.MESSAGES.DELETED'), this.translateService.instant('MARKETING.SHELL.TITLE'));
+ this.loadData();
+ },
+ error: (error) => {
+ this.cdr.markForCheck();
+ this.deleting = false;
+ this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.TABS.HOME_SECTIONS'));
+ }
+ });
+ }
 
-  formatDateRangeLabel(section: MarketingHomeSection): string {
-    return formatDateRange(section.startsAtUtc, section.endsAtUtc);
-  }
+ formatDateRangeLabel(section: MarketingHomeSection): string {
+ return formatDateRange(section.startsAtUtc, section.endsAtUtc);
+ }
 
-  getThemeLabel(section: MarketingHomeSection): string {
-    return this.translateService.currentLang === 'ar' ? section.themeLabelAr : section.themeLabelEn;
-  }
+ getThemeLabel(section: MarketingHomeSection): string {
+ return this.translateService.currentLang === 'ar' ? section.themeLabelAr : section.themeLabelEn;
+ }
 
-  formatDateTimeLabel(value: string): string {
-    return formatDateTime(value);
-  }
+ formatDateTimeLabel(value: string): string {
+ return formatDateTime(value);
+ }
 }
 
 function toCreatePayload(payload: MarketingHomeSectionUpdatePayload): MarketingHomeSectionPayload {
-  const { isActive: _, ...createPayload } = payload;
-  return createPayload;
+ const { isActive: _,...createPayload } = payload;
+ return createPayload;
 }
 
 function buildHierarchicalCategoryOptions(categories: Category[]): MarketingCategoryOption[] {
-  const result: MarketingCategoryOption[] = [];
+ const result: MarketingCategoryOption[] = [];
 
-  const traverse = (cats: Category[], level: number, pathAr: string, pathEn: string) => {
-    for (const cat of cats) {
-      const currentPathAr = pathAr ? `${pathAr} » ${cat.nameAr}` : cat.nameAr;
-      const currentPathEn = pathEn ? `${pathEn} » ${cat.nameEn}` : cat.nameEn;
-      const hasChildren = !!(cat.subCategories?.length);
-      const indent = '—'.repeat(level);
-      const prefix = level > 0 ? `${indent} ` : '';
+ const traverse = (cats: Category[], level: number, pathAr: string, pathEn: string) => {
+ for (const cat of cats) {
+ const currentPathAr = pathAr ? `${pathAr} » ${cat.nameAr}` : cat.nameAr;
+ const currentPathEn = pathEn ? `${pathEn} » ${cat.nameEn}` : cat.nameEn;
+ const hasChildren =!!(cat.subCategories?.length);
+ const indent = '—'.repeat(level);
+ const prefix = level > 0 ? `${indent} ` : '';
 
-      result.push({
-        id: cat.id,
-        nameAr: cat.nameAr,
-        nameEn: cat.nameEn,
-        level,
-        pathLabel: `${prefix}${currentPathAr}`,
-        isSelectable: !hasChildren && (cat.level ?? level) >= 3
-      });
+ result.push({
+ id: cat.id,
+ nameAr: cat.nameAr,
+ nameEn: cat.nameEn,
+ level,
+ pathLabel: `${prefix}${currentPathAr}`,
+ isSelectable:!hasChildren && (cat.level ?? level) >= 3
+ });
 
-      if (hasChildren) {
-        traverse(cat.subCategories!, level + 1, currentPathAr, currentPathEn);
-      }
-    }
-  };
+ if (hasChildren) {
+ traverse(cat.subCategories!, level + 1, currentPathAr, currentPathEn);
+ }
+ }
+ };
 
-  traverse(categories, 0, '', '');
-  return result;
+ traverse(categories, 0, '', '');
+ return result;
 }

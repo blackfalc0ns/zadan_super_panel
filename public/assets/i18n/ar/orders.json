@@ -10,10 +10,10 @@
     "KPI": {
       "ACTIVE": "نزاعات نشطة",
       "ACTIVE_TREND": "+6 هذا الأسبوع",
-      "CRITICAL": "حرجة الآن",
+      "CRITICAL": "حرجة الحين",
       "CRITICAL_TREND": "تدخل فوري",
-      "REVIEW": "قيد المراجعة",
-      "REVIEW_TREND": "قيد المعالجة",
+      "REVIEW": "تحت المراجعة",
+      "REVIEW_TREND": "تحت المعالجة",
       "MERCHANT": "بانتظار التاجر",
       "MERCHANT_TREND": "نافذة مفتوحة",
       "RESOLVED": "تم حلها",
@@ -24,13 +24,13 @@
       "ALL": "الكل",
       "ACTIVE": "النشطة",
       "CRITICAL": "حرجة",
-      "REVIEW": "قيد المراجعة",
+      "REVIEW": "تحت المراجعة",
       "MERCHANT": "بانتظار التاجر",
       "RESOLVED": "تم حلها"
     },
     "FILTER_PANEL": {
-      "TITLE": "تصفية النزاعات",
-      "SUBTITLE": "اضبط معايير البحث",
+      "TITLE": "فلترة النزاعات",
+      "SUBTITLE": "عدّل معايير البحث",
       "ACTIVE_FILTERS": "الفلاتر النشطة"
     },
     "FILTER_FIELDS": {
@@ -79,7 +79,7 @@
       "EXPIRES": "ينتهي في",
       "REDEEMED": "تم الاستخدام",
       "NOT_REDEEMED_YET": "لم يتم الاستخدام بعد",
-      "VENDOR_RECOVERY": "استرداد من التاجر",
+      "VENDOR_RECOVERY": "استرجاع من التاجر",
       "RECOVERED": "تم التحصيل",
       "OUTSTANDING": "المتبقي",
       "LOADING_DISPUTES": "جاري تحميل النزاعات...",
@@ -118,7 +118,7 @@
       "PENDING": "بانتظار التحصيل",
       "PARTIAL": "تم التحصيل جزئيًا",
       "RECOVERED": "تم التحصيل بالكامل",
-      "NOT_APPLICABLE": "لا يوجد"
+      "NOT_APPLICABLE": "ما فيه"
     },
     "INFO": {
       "OPERATIONAL_ALERT": "تنبيه تشغيلي",
@@ -127,12 +127,12 @@
       "HIGHEST_RISK_VENDOR_NAME": "إلكترونيات الرياض",
       "HIGHEST_RISK_VENDOR_DESC": "6 نزاعات نشطة هذا الأسبوع",
       "TEAM_CAPACITY": "طاقة الفريق",
-      "TEAM_CAPACITY_DESC": "4 مراجعين متاحين الآن",
+      "TEAM_CAPACITY_DESC": "4 مراجعين متاحين الحين",
       "TEAM_CAPACITY_META": "بمتوسط 5 قضايا لكل مراجع"
     },
     "EMPTY": {
-      "TITLE": "لا توجد نزاعات مطابقة",
-      "MESSAGE": "جرّب تعديل البحث أو إزالة التصفية الحالية"
+      "TITLE": "ما فيه نزاعات مطابقة",
+      "MESSAGE": "جرّب تعديل البحث أو إزالة الفلترة الحالية"
     },
     "TABLE": {
       "ID": "الطلب",
@@ -149,7 +149,7 @@
     },
     "STATUS": {
       "OPEN": "مفتوح",
-      "REVIEW": "قيد المراجعة",
+      "REVIEW": "تحت المراجعة",
       "MERCHANT": "بانتظار التاجر",
       "RESOLVED": "تم الحل"
     },
@@ -178,10 +178,10 @@
     "TIMELINE": {
       "TIME_1024_AM": "10:24 ص",
       "TIME_1115_AM": "11:15 ص",
-      "TIME_22_MIN_AGO": "منذ 22 دقيقة",
+      "TIME_22_MIN_AGO": "قبل 22 دقيقة",
       "TIME_0910_AM": "09:10 ص",
       "TIME_0921_AM": "09:21 ص",
-      "TIME_NOW": "الآن",
+      "TIME_NOW": "الحين",
       "TIME_0842_AM": "08:42 ص",
       "TIME_0905_AM": "09:05 ص",
       "TIME_0916_AM": "09:16 ص",
@@ -264,13 +264,13 @@
       "COST_BEARER_DRIVER": "المندوب (Driver)",
       "FINANCIAL_PREVIEW": "معاينة التأثير المالي",
       "ORIGINAL_TOTAL": "إجمالي المبلغ الأصلي",
-      "REQUESTED_REFUND": "المبلغ المراد استرداده (-)",
+      "REQUESTED_REFUND": "المبلغ المراد استرجاعه (-)",
       "NON_REFUNDABLE_DELIVERY": "رسوم التوصيل (غير مستردة)",
       "APPLIED_DISCOUNTS": "الخصومات المطبقة",
       "NET_DECISION": "صافي قيمة القرار",
       "RISK_ALERTS": "تنبيهات المخاطر",
-      "RISK_TEXT_PARTIAL": "هذا الطلب يتضمن استرجاعًا جزئيًا. يرجى التأكد من أن المبلغ المدخل لا يتجاوز حدود الحماية المالية المخصصة للمنصة.",
-      "RISK_TEXT_FULL": "هذا الطلب يتضمن استرجاعًا كليًا. يرجى التأكد من أن المبلغ المدخل لا يتجاوز حدود الحماية المالية المخصصة للمنصة.",
+      "RISK_TEXT_PARTIAL": "هذا الطلب يتضمن استرجاعًا جزئيًا. فضلاً التأكد من أن المبلغ المدخل لا يتجاوز حدود الحماية المالية المخصصة للمنصة.",
+      "RISK_TEXT_FULL": "هذا الطلب يتضمن استرجاعًا كليًا. فضلاً التأكد من أن المبلغ المدخل لا يتجاوز حدود الحماية المالية المخصصة للمنصة.",
       "RISK_HINT": "تأكد من مراجعة سياسة الاسترجاع الخاصة بالمنصة قبل الاعتماد النهائي.",
       "ADMIN_NOTES": "ملاحظات إدارية",
       "INTERNAL_NOTES": "ملاحظات داخلية (للموظفين فقط)",
@@ -283,9 +283,9 @@
       "APPROVE_REFUND": "اعتماد الاسترجاع",
       "DEFAULT_APPROVAL_REASON": "مطابقة الطلب مع سياسة المنصة واعتماد الاسترجاع بعد مراجعة الأدلة.",
       "DEFAULT_CUSTOMER_MESSAGE": "تمت الموافقة على طلب الاسترجاع وسيتم إشعارك عند بدء المعالجة المالية.",
-      "VALIDATION_AMOUNT_ZERO": "المبلغ يجب أن يكون أكبر من الصفر.",
-      "VALIDATION_AMOUNT_EXCEEDED": "المبلغ يجب ألا يتجاوز إجمالي قيمة الحالة.",
-      "VALIDATION_REASON_REQUIRED": "حقل سبب الاعتماد مطلوب ولا يمكن تركه فارغاً."
+      "VALIDATION_AMOUNT_ZERO": "المبلغ لازم أن يكون أكبر من الصفر.",
+      "VALIDATION_AMOUNT_EXCEEDED": "المبلغ لازم ما يتجاوز إجمالي قيمة الحالة.",
+      "VALIDATION_REASON_REQUIRED": "حقل سبب الاعتماد مطلوب وما تقدر تركه فارغاً."
     },
     "REJECTION_MODAL": {
       "TITLE": "رفض الاسترجاع",
@@ -306,7 +306,7 @@
       "REVIEWER_NOTE": "ملاحظات المراجع الأولي",
       "REASON_SECTION_TITLE": "تحديد سبب الرفض",
       "OPTION_POLICY": "الطلب غير مطابق للسياسة",
-      "OPTION_EVIDENCE": "لا توجد أدلة كافية",
+      "OPTION_EVIDENCE": "ما فيه أدلة كافية",
       "OPTION_DELIVERED": "تم التسليم بنجاح",
       "OPTION_EXPIRED": "خارج فترة الاسترجاع",
       "OPTION_MISUSE": "سوء استخدام من العميل",
@@ -321,7 +321,7 @@
       "INTERNAL_NOTES_PLACEHOLDER": "تفنيد إداري مفصل لاتخاذ القرار...",
       "SAVE_REVIEW": "حفظ كمراجعة",
       "CONFIRM_REJECTION": "تأكيد الرفض",
-      "DEFAULT_CUSTOMER_MESSAGE": "عزيزي العميل، نأسف لإبلاغكم بأنه تم رفض طلب الاسترجاع الخاص بكم رقم {{orderId}} لعدم استيفاء الشروط المطلوبة حسب سياسة المنصة. يمكنكم مراجعة التفاصيل عبر حسابكم.",
+      "DEFAULT_CUSTOMER_MESSAGE": "عزيزي العميل، نأسف لإبلاغكم بأنه تم رفض طلب الاسترجاع الخاص بكم رقم {{orderId}} لعدم استيفاء الشروط المطلوبة حسب سياسة المنصة. تقدرم مراجعة التفاصيل عبر حسابكم.",
       "DEFAULT_INTERNAL_NOTE": "تم توثيق قرار الرفض بعد مراجعة تفاصيل الطلب والمرفقات المتاحة."
     },
     "REQUEST_INFO_MODAL": {
@@ -337,7 +337,7 @@
       "RESPONDER_LABEL": "المستجيب المطلوب",
       "RESPONDER_CUSTOMER": "العميل ({{name}})",
       "RESPONDER_MERCHANT": "المتجر ({{name}})",
-      "RESPONDER_DRIVER": "المندوب المسؤول",
+      "RESPONDER_DRIVER": "المندوب الأدمن",
       "RESPONDER_INTERNAL": "الفريق الداخلي (الخدمات اللوجستية)",
       "RESPONDER_INTERNAL_TEAM": "الفريق الداخلي",
       "INFO_TYPE_LABEL": "نوع المعلومات",
@@ -355,7 +355,7 @@
       "PRIORITY_NORMAL": "عادي",
       "PRIORITY_URGENT": "عاجل جداً",
       "PAUSE_SLA": "إيقاف عداد SLA مؤقتاً",
-      "ALERT_SUPERVISOR": "تنبيه المشرف المسؤول",
+      "ALERT_SUPERVISOR": "تنبيه الأدمن الأدمن",
       "REFERENCES_TITLE": "المرفقات والمراجع (للموظف)",
       "REFERENCE_PRODUCT_IMAGE": "صورة المنتج",
       "REFERENCE_SHIPPING_LOG": "سجل الشحن",
@@ -374,7 +374,7 @@
       "SAVE_DRAFT": "حفظ كمسودة",
       "SEND_VIA": "سيتم الإرسال عبر",
       "SEND_VIA_VALUE": "البريد الإلكتروني وتنبيه التطبيق",
-      "SEND_NOW": "إرسال الطلب الآن",
+      "SEND_NOW": "إرسال الطلب الحين",
       "NO_DUE_DATE": "بدون تاريخ استحقاق"
     },
     "ESCALATION_MODAL": {
@@ -408,9 +408,9 @@
       "DETAILED_EXPLANATION": "شرح تفصيلي",
       "DETAILED_EXPLANATION_PLACEHOLDER": "اكتب تفاصيل النزاع هنا...",
       "REVIEWED_SUMMARY": "ملخص ما تم مراجعته",
-      "REVIEWED_SUMMARY_PLACEHOLDER": "ما هي الخطوات التي اتخذت حتى الآن؟",
+      "REVIEWED_SUMMARY_PLACEHOLDER": "ما هي الخطوات التي اتخذت حتى الحين؟",
       "REQUESTED_ACTION": "الإجراء المطلوب",
-      "REQUESTED_ACTION_PLACEHOLDER": "مثال: استرداد جزئي، إغلاق الحساب...",
+      "REQUESTED_ACTION_PLACEHOLDER": "مثال: استرجاع جزئي، إغلاق الحساب...",
       "RESPONSE_DEADLINE": "موعد الاستجابة المطلوب",
       "EVIDENCE_TITLE": "الأدلة المرفقة والمؤشرات",
       "ATTACHMENTS_TITLE": "الملفات المرفقة",
@@ -440,7 +440,7 @@
     "TITLE": "إدارة الطلبات",
     "SUBTITLE": "متابعة جميع طلبات المنصة وإدارتها",
     "SEARCH_PLACEHOLDER": "ابحث برقم الطلب، العميل...",
-    "ADVANCED_FILTER": "تصفية متقدمة",
+    "ADVANCED_FILTER": "فلترة متقدمة",
     "FILTER_DESC": "حسب الحالة والتاريخ",
     "EXPORT_REPORT": "تصدير التقرير",
     "CREATE_MANUAL": "إنشاء طلب يدوي",
@@ -452,7 +452,7 @@
       "LATE": "الطلبات المتأخرة",
       "CANCELLED": "الطلبات الملغاة",
       "PAYMENT_ISSUES": "مشاكل دفع",
-      "REFUNDS": "استردادات"
+      "REFUNDS": "استرجاعات"
     },
     "TABLE": {
       "ID": "رقم الطلب",
@@ -484,12 +484,12 @@
       "QUANTITY": "الكمية",
       "PAYMENT": "الدفع",
       "PICKUP": "الاستلام",
-      "DRIVER": "السائق",
+      "DRIVER": "المندوب",
       "PHONE": "الجوال",
       "ORDERED_IN": "تم الطلب في",
       "SLA": "الالتزام (SLA)",
       "ALERTS": "التنبيهات",
-      "NO_ALERTS": "لا توجد",
+      "NO_ALERTS": "ما فيه",
       "ORDERED_ITEMS": "المنتجات المطلوبة",
       "ITEMS_COUNT": "عنصر",
       "ITEM": "المنتج",
@@ -509,9 +509,9 @@
         "QUOTE_VERSION": "إصدار عرض السعر",
         "LOCKED_AT": "تاريخ تثبيت السعر",
         "MERCHANT_TO_CUSTOMER": "المسافة من المتجر إلى العميل",
-        "DRIVER_TO_MERCHANT": "مسافة التوصيل (من السائق للمتجر)",
+        "DRIVER_TO_MERCHANT": "مسافة التوصيل (من المندوب للمتجر)",
         "MERCHANT_TO_CUSTOMER_FEE": "تكلفة التوصيل للعميل",
-        "DRIVER_TO_MERCHANT_FEE": "أجرة السائق المقدرة",
+        "DRIVER_TO_MERCHANT_FEE": "أجرة المندوب المقدرة",
         "TOTAL_DELIVERY_FEE": "إجمالي رسوم التوصيل والخدمة",
         "PRICING_SOURCE": "مصدر حساب السعر",
         "ANOMALY_WARNING": "تحذير تشغيلي",
@@ -557,9 +557,9 @@
         "TITLE": "الملخص المالي",
         "SUBTITLE": "تفصيل مالي على مستوى المنصة لهذا الطلب.",
         "OPEN_LEDGER": "فتح الدفتر المالي",
-        "OPEN_REFUNDS": "فتح الاستردادات",
+        "OPEN_REFUNDS": "فتح الاسترجاعات",
         "VENDOR_COMMISSION": "عمولة المورّد",
-        "DRIVER_PAYOUT": "مستحق السائق",
+        "DRIVER_PAYOUT": "مستحق المندوب",
         "SERVICE_FEE": "رسوم الخدمة",
         "VAT": "ضريبة القيمة المضافة",
         "NET_MARGIN": "صافي الهامش",
@@ -582,13 +582,13 @@
       "SUPPORT_SUMMARY": "ملخص الدعم",
       "CUSTOMER_INFO": "بيانات العميل",
       "HIGH_RISK": "مخاطر عالية",
-      "VENDOR_INFO": "التاجر المورد",
+      "VENDOR_INFO": "التاجر التاجر",
       "MERCHANT_BRANCH": "المتجر والفرع",
       "MERCHANT_LOCATION": "موقع المتجر",
       "PREPARATION_STATUS": "حالة التجهيز",
       "VIEW_VENDOR_UI": "عرض واجهة التاجر",
-      "DRIVER_DETAILS": "تفاصيل السائق",
-      "ACTIVE_NOW": "نشط حالياً",
+      "DRIVER_DETAILS": "تفاصيل المندوب",
+      "ACTIVE_NOW": "نشط الحين",
       "VEHICLE": "المركبة",
       "VEHICLE_TYPES": {
         "BICYCLE": "دراجة هوائية",
@@ -600,14 +600,14 @@
         "VAN": "فان",
         "TRUCK": "شاحنة",
         "DELIVERY_VEHICLE": "مركبة توصيل",
-        "DELIVERY_DRIVER": "سائق توصيل"
+        "DELIVERY_DRIVER": "مندوب توصيل"
       },
       "PLATE": "اللوحة",
-      "CHANGE_DRIVER": "تغيير السائق",
-      "NO_DRIVER_ASSIGNED": "لم يتم تعيين سائق بعد",
-      "ASSIGN_DRIVER": "تعيين سائق",
+      "CHANGE_DRIVER": "تغيير المندوب",
+      "NO_DRIVER_ASSIGNED": "لم يتم تعيين مندوب بعد",
+      "ASSIGN_DRIVER": "تعيين مندوب",
       "SUPPORT_DISPUTES": "الدعم والنزاعات",
-      "NO_DISPUTES": "لا توجد نزاعات",
+      "NO_DISPUTES": "ما فيه نزاعات",
       "ADD_NOTE": "إضافة ملاحظة",
       "ESCALATE": "تصعيد الإشكال",
       "ACTIVITY_LOG": "سجل النشاطات",
@@ -672,7 +672,7 @@
           "ORDER_PICKED_UP": "استلم المندوب الطلب",
           "ORDER_DELIVERED": "تم توصيل الطلب بنجاح",
           "SEARCHING_DRIVERS": "جاري البحث عن مندوبين",
-          "NO_DRIVERS": "لا يوجد مندوبون متاحون"
+          "NO_DRIVERS": "ما فيه مناديب متاحين"
         }
       },
       "LOG_STATUS_OUT": "تحديث الحالة: خرج للتوصيل",
@@ -692,7 +692,7 @@
       "SYSTEM_AUTO": "النظام (تلقائي)",
       "VEHICLE_MOCK": "تويوتا كورولا 2022",
       "PLATE_MOCK": "أ ب ج 1234",
-      "CUSTOMER_NOTE_TEXT": "يرجى ترك الطلب عند الباب والدق مرتين.",
+      "CUSTOMER_NOTE_TEXT": "فضلاً ترك الطلب عند الباب والدق مرتين.",
       "MOCK_MERCHANT_PANDA": "بنده التخصصي",
       "MOCK_MERCHANT_OTHIM": "أسواق العثيم",
       "MOCK_MERCHANT_CARREFOUR": "كارفور سيتي",
@@ -703,14 +703,14 @@
       "BRANCH_SAHARA": "صحارى",
       "BRANCH_HITTIN": "حطين",
       "CANCEL_ORDER": "إلغاء الطلب",
-      "LOG_DRIVER_REASSIGNED": "تمت إعادة تعيين السائق يدوياً",
+      "LOG_DRIVER_REASSIGNED": "تمت إعادة ضبط المندوب يدوياً",
       "LOG_ORDER_CANCELLED": "تم إلغاء الطلب يدوياً",
       "ACTIVE_CASE_NOTICE": "يوجد ملف تشغيلي قائم بالفعل. استخدم بطاقة مسار المعالجة لحله أو إغلاقه قبل فتح ملف جديد.",
       "CANCELLATION": {
         "BANNER_TITLE": "الطلب ملغي",
         "BANNER_MESSAGE": "سبب الإلغاء: {{reason}} - {{details}}",
         "REASON": "سبب الإلغاء",
-        "REFUND_TYPE": "نوع الاسترداد",
+        "REFUND_TYPE": "نوع الاسترجاع",
         "COST_BEARER": "متحمل التكلفة",
         "CLOSED_BY": "أغلقها"
       },
@@ -721,40 +721,40 @@
         "REOPEN": "إعادة فتح"
       },
       "DRIVER_MODAL": {
-        "TITLE": "تعيين السائق",
-        "SUBTITLE": "اختيار السائق الأنسب للطلب الحالي أو إعادة التعيين عند الحاجة",
+        "TITLE": "تعيين المندوب",
+        "SUBTITLE": "اختيار المندوب الأنسب للطلب الحالي أو إعادة التعيين عند الحاجة",
         "ORDER_ID": "رقم الطلب",
         "CITY": "المدينة",
         "SLA": "SLA",
         "ROUTE": "المسار",
         "FROM": "من:",
         "TO": "إلى:",
-        "CURRENT_DRIVER": "السائق الحالي",
-        "NO_DRIVER": "لا يوجد سائق",
-        "SEARCH_PLACEHOLDER": "بحث عن سائق بالاسم أو المعرف",
+        "CURRENT_DRIVER": "المندوب الحالي",
+        "NO_DRIVER": "ما فيه مندوب",
+        "SEARCH_PLACEHOLDER": "بحث عن مندوب بالاسم أو المعرف",
         "FILTER_CITY_ALL": "المدينة: الكل",
         "FILTER_AVAILABILITY_ALL": "التوافر: الكل",
-        "FILTER_AVAILABILITY_AVAILABLE": "متاح الآن",
+        "FILTER_AVAILABILITY_AVAILABLE": "متاح الحين",
         "FILTER_AVAILABILITY_BUSY": "قيد التوصيل",
         "FILTER_VERIFICATION_ALL": "الحالة: الكل",
         "FILTER_VERIFICATION_VERIFIED": "موثق فقط",
-        "RESET_FILTERS": "إعادة تعيين",
-        "TABLE_DRIVER": "السائق",
+        "RESET_FILTERS": "إعادة ضبط",
+        "TABLE_DRIVER": "المندوب",
         "TABLE_STATUS": "الحالة",
         "TABLE_DISTANCE": "المسافة",
         "TABLE_ORDERS": "الطلبات",
         "TABLE_RATING": "التقييم",
         "TABLE_REJECTION": "الرفض",
         "TABLE_LAST_ACTIVITY": "آخر نشاط",
-        "STATUS_AVAILABLE": "متاح الآن",
+        "STATUS_AVAILABLE": "متاح الحين",
         "STATUS_DELIVERING": "قيد التوصيل",
         "LOW_PERFORMANCE": "أداء منخفض",
         "UNIT_KM": "كم",
-        "NO_RESULTS": "لا يوجد سائقون مطابقون للتصفية الحالية.",
+        "NO_RESULTS": "ما فيه مناديب مطابقين للفلترة الحالية.",
         "REASON_LABEL": "سبب التعيين / إعادة التعيين",
         "REASONS": {
-          "DRIVER_DELAY": "تأخر السائق السابق",
-          "CUSTOMER_REQUEST": "طلب العميل تغيير السائق",
+          "DRIVER_DELAY": "تأخر المندوب السابق",
+          "CUSTOMER_REQUEST": "طلب العميل تغيير المندوب",
           "VEHICLE_ISSUE": "عطل في وسيلة النقل",
           "MANUAL_OPTIMIZATION": "تحسين تشغيلي يدوي",
           "OTHER": "أخرى"
@@ -762,13 +762,13 @@
         "INTERNAL_NOTES": "ملاحظات داخلية",
         "INTERNAL_NOTES_PLACEHOLDER": "أضف أي تفاصيل إضافية للعمليات...",
         "NOTIFICATIONS_TITLE": "الإشعارات الآلية",
-        "NOTIFY_DRIVER": "إشعار السائق المختار بالطلب فوراً",
+        "NOTIFY_DRIVER": "إشعار المندوب المختار بالطلب فوراً",
         "NOTIFY_MERCHANT": "إرسال تحديث للمتجر",
         "NOTIFY_CUSTOMER": "تحديث العميل برابط تتبع جديد",
         "WARNING_TITLE": "تحذير الأداء",
         "WARNING_BODY": "{{driver}} لديه تقييم منخفض ومعدل رفض مرتفع. يمكن التعيين، لكن قد تتأثر جودة الخدمة.",
-        "BUSY_TITLE": "السائق مرتبط بطلبات حالية",
-        "BUSY_BODY": "{{driver}} يتعامل حالياً مع طلبات نشطة. إعادة التعيين قد تضيف تأخيراً بسيطاً قبل الاستلام.",
+        "BUSY_TITLE": "المندوب مرتبط بطلبات حالية",
+        "BUSY_BODY": "{{driver}} يتعامل الحين مع طلبات نشطة. إعادة التعيين قد تضيف تأخيراً بسيطاً قبل الاستلام.",
         "GOOD_TITLE": "توصية مناسبة",
         "GOOD_BODY": "{{driver}} متاح، موثق، وقريب من نقطة الاستلام. هذا الخيار الأنسب لتسليم أسرع.",
         "AUDIT_TRAIL": "عملية موثقة - سجل العمليات مفعل",
@@ -778,7 +778,7 @@
         "TITLE": "إلغاء الطلب",
         "SUBTITLE": "إلغاء الطلب مع توضيح السبب والتأثير التشغيلي والمالي",
         "WARNING_TITLE": "تنبيه: حالة الطلب الحالية \"{{status}}\"",
-        "WARNING_BODY": "الطلب حالياً بعهدة السائق. إلغاء الطلب في هذه المرحلة قد يسبب خسارة في التوصيل ويؤثر على مؤشرات أداء السائق.",
+        "WARNING_BODY": "الطلب الحين بعهدة المندوب. إلغاء الطلب في هذه المرحلة قد يسبب خسارة في التوصيل ويؤثر على مؤشرات أداء المندوب.",
         "ORDER_SUMMARY": "ملخص الطلب",
         "ORDER_ID": "رقم الطلب",
         "ORDER_TOTAL": "إجمالي الطلب",
@@ -788,17 +788,17 @@
           "MERCHANT_REJECTED": "رفض التاجر",
           "OUT_OF_STOCK": "نفاد المخزون",
           "PAYMENT_ISSUE": "مشكلة دفع",
-          "DELIVERY_FAILED": "تعذر التوصيل",
+          "DELIVERY_FAILED": "ما قدرنا نوصل",
           "OPERATIONAL_ISSUE": "مشكلة تشغيلية",
           "FRAUD_SUSPECTED": "اشتباه احتيال",
           "OTHER": "أخرى"
         },
         "DETAILS_PLACEHOLDER": "تفاصيل إضافية حول سبب الإلغاء...",
-        "REFUND_TITLE": "الاسترداد والتأثير المالي",
-        "REFUND_TYPE": "نوع الاسترداد",
+        "REFUND_TITLE": "الاسترجاع والتأثير المالي",
+        "REFUND_TYPE": "نوع الاسترجاع",
         "REFUND_FULL": "كامل",
         "REFUND_PARTIAL": "جزئي",
-        "REFUND_NONE": "لا يوجد",
+        "REFUND_NONE": "ما فيه",
         "COST_BEARER": "من يتحمل التكلفة؟",
         "COST_PLATFORM": "المنصة",
         "COST_MERCHANT": "التاجر",
@@ -806,10 +806,10 @@
         "NOTIFICATIONS_TITLE": "الإشعارات والرسائل",
         "NOTIFY_CUSTOMER": "إشعار العميل",
         "NOTIFY_MERCHANT": "إشعار التاجر",
-        "NOTIFY_DRIVER": "إشعار السائق",
+        "NOTIFY_DRIVER": "إشعار المندوب",
         "CUSTOMER_MESSAGE_LABEL": "رسالة مخصصة للعميل",
         "CUSTOMER_MESSAGE_PLACEHOLDER": "نعتذر، تم إلغاء طلبك بسبب...",
-        "INTERNAL_NOTE_LABEL": "ملاحظة داخلية للمشرفين فقط",
+        "INTERNAL_NOTE_LABEL": "ملاحظة داخلية للأدمن فقط",
         "INTERNAL_NOTE_PLACEHOLDER": "أضف ملاحظة توثيقية للإلغاء...",
         "CONFIRM": "تأكيد الإلغاء"
       },
@@ -825,7 +825,7 @@
         "TITLE": "فتح استرجاع",
         "SUBTITLE": "إنشاء طلب استرجاع مالي مرتبط بالطلب الحالي",
         "PAID": "مدفوع",
-        "REFUNDABLE_AMOUNT": "المبلغ القابل للاسترداد",
+        "REFUNDABLE_AMOUNT": "المبلغ القابل للاسترجاع",
         "SELECTED_REFUND": "مبلغ الاسترجاع المحدد",
         "PRODUCTS_AMOUNT": "سعر المنتجات",
         "PRODUCTS_ONLY": "المنتجات فقط",
@@ -869,7 +869,7 @@
         "NOTIFY_FINANCE": "إرسال إشعار للمالية",
         "SYSTEM_ALERTS": "تنبيهات النظام",
         "SYSTEM_ALERT_ONE": "إذا كان الطلب دفعاً عند الاستلام، تأكد من تسوية المبلغ يدوياً قبل الاعتماد.",
-        "SYSTEM_ALERT_TWO": "لا توجد طلبات استرجاع مفتوحة لهذا الطلب حالياً.",
+        "SYSTEM_ALERT_TWO": "ما فيه طلبات استرجاع مفتوحة لهذا الطلب الحين.",
         "CANCEL_PROCESS": "إلغاء العملية",
         "CREATE_REQUEST": "إنشاء طلب الاسترجاع"
       },
@@ -905,10 +905,10 @@
           "LEGAL": "القانونية"
         },
         "DESCRIPTION": "وصف المشكلة",
-        "DESCRIPTION_PLACEHOLDER": "يرجى كتابة تفاصيل النزاع هنا...",
+        "DESCRIPTION_PLACEHOLDER": "فضلاً كتابة تفاصيل النزاع هنا...",
         "EVIDENCE": "إرفاق الأدلة (صور/مستندات)",
         "EVIDENCE_HINT": "اسحب الملفات هنا أو اضغط للرفع",
-        "INTERNAL_NOTES": "ملاحظات داخلية (خاصة بالمشرفين)",
+        "INTERNAL_NOTES": "ملاحظات داخلية (خاصة بالأدمن)",
         "INTERNAL_NOTES_PLACEHOLDER": "أضف ملاحظات إضافية لن يراها العميل أو التاجر...",
         "NOTIFY_REVIEWER": "إشعار المراجع",
         "ADD_TO_LOG": "إضافة في السجل",
@@ -930,7 +930,7 @@
           "DELIVERY_DELAY": "تأخير في التوصيل",
           "PAYMENT_ISSUE": "مشكلة دفع",
           "COMMUNICATION_ISSUE": "مشكلة تواصل",
-          "DRIVER_UNAVAILABLE": "سائق غير متاح",
+          "DRIVER_UNAVAILABLE": "مندوب غير متاح",
           "ADDRESS_ISSUE": "مشكلة عنوان",
           "FRAUD_SUSPICION": "اشتباه احتيال",
           "OTHER": "أخرى"
@@ -975,12 +975,12 @@
         "EXPECTED_DELIVERY": "وقت التوصيل المتوقع",
         "IMPACT_PREVIEW": "معاينة تأثير التغيير",
         "IMPACT_PAYMENT": "تأثير الدفع",
-        "IMPACT_DRIVER": "تأثير السائق",
+        "IMPACT_DRIVER": "تأثير المندوب",
         "IMPACT_NOTIFICATION": "إشعار العميل",
-        "IMPACT_PAYMENT_NONE": "لا يوجد",
+        "IMPACT_PAYMENT_NONE": "ما فيه",
         "IMPACT_PAYMENT_REVIEW": "مراجعة مطلوبة",
-        "IMPACT_DRIVER_REASSIGN": "إعادة تعيين",
-        "IMPACT_DRIVER_ASSIGN": "تعيين السائق",
+        "IMPACT_DRIVER_REASSIGN": "إعادة ضبط",
+        "IMPACT_DRIVER_ASSIGN": "تعيين المندوب",
         "IMPACT_DRIVER_UNASSIGN": "إلغاء التعيين",
         "IMPACT_NOTIFY_SMS": "إرسال SMS",
         "IMPACT_NOTIFY_PUSH": "إرسال إشعار",
@@ -988,12 +988,12 @@
         "NOTIFICATION_OPTIONS": "خيارات الإشعار والتوثيق",
         "NOTIFY_CUSTOMER": "إشعار العميل",
         "NOTIFY_MERCHANT": "إشعار التاجر",
-        "NOTIFY_DRIVER": "إشعار السائق",
+        "NOTIFY_DRIVER": "إشعار المندوب",
         "INTERNAL_LOG": "السجل الداخلي",
         "WORKFLOW_GUARDS": {
-          "PAYMENT_BLOCKED": "لا يمكن دفع الطلب إلى مراحل التنفيذ قبل حل حالة الدفع.",
-          "FULFILLMENT_FAILED": "التنفيذ فشل بالفعل، والانتقال التالي يجب أن يكون إعادة المحاولة أو الإلغاء الموثق.",
-          "DELIVERY_IN_PROGRESS": "هذا الطلب حاليًا قيد التوصيل. تغييرات الحالة تتم عبر إجراءات المندوب. استخدم زر إلغاء الطلب إذا لزم الأمر.",
+          "PAYMENT_BLOCKED": "ما تقدر دفع الطلب إلى مراحل التنفيذ قبل حل حالة الدفع.",
+          "FULFILLMENT_FAILED": "التنفيذ فشل بالفعل، والانتقال التالي لازم أن يكون إعادة المحاولة أو الإلغاء الموثق.",
+          "DELIVERY_IN_PROGRESS": "هذا الطلب الحين قيد التوصيل. تغييرات الحالة تتم عبر إجراءات المندوب. استخدم زر إلغاء الطلب إذا لزم الأمر.",
           "DELIVERED_READY_TO_CLOSE": "المرحلة التالية المنطقية هي الإغلاق النهائي بعد التحقق من اكتمال الطلب.",
           "CLOSED_STATE": "هذه الحالة مغلقة، ولا يُفترض استمرار التعديل إلا عبر workflow منفصل.",
           "DEFAULT": "المتاح هنا فقط هو الانتقالات المنطقية للحالة الحالية."
@@ -1013,16 +1013,16 @@
       },
       "DISPATCH_NOTE": "ملاحظات التوجيه",
       "DISPATCH_REASON": {
-        "DRIVER_ACCEPTED": "وافق السائق على عرض التوصيل.",
-        "DRIVER_ACCEPTED_DELIVERY_OFFER_": "قَبِل السائق عرض التوصيل.",
-        "DRIVER_REJECTED": "رفض السائق عرض التوصيل.",
-        "DRIVER_REJECTED_DELIVERY_OFFER_": "رفض السائق عرض التوصيل.",
+        "DRIVER_ACCEPTED": "وافق المندوب على عرض التوصيل.",
+        "DRIVER_ACCEPTED_DELIVERY_OFFER_": "قَبِل المندوب عرض التوصيل.",
+        "DRIVER_REJECTED": "رفض المندوب عرض التوصيل.",
+        "DRIVER_REJECTED_DELIVERY_OFFER_": "رفض المندوب عرض التوصيل.",
         "OFFER_SENT": "تم إرسال عرض التوصيل.",
         "DELIVERY_OFFER_SENT_": "تم إرسال عرض التوصيل.",
-        "SEARCHING": "جاري البحث عن سائقين.",
-        "SEARCHING_FOR_DRIVERS_": "جاري البحث عن سائقين.",
-        "NO_DRIVERS": "لا يوجد سائقين متاحين.",
-        "NO_DRIVERS_AVAILABLE_": "لا يوجد سائقين متاحين."
+        "SEARCHING": "جاري البحث عن مناديب.",
+        "SEARCHING_FOR_DRIVERS_": "جاري البحث عن مناديب.",
+        "NO_DRIVERS": "ما فيه مناديب متاحين.",
+        "NO_DRIVERS_AVAILABLE_": "ما فيه مناديب متاحين."
       }
     },
     "STATUS": {
@@ -1039,7 +1039,7 @@
       "PAID": "مدفوع",
       "FAILED": "فشل الدفع",
       "REFUNDED": "مسترد",
-      "PARTIALLY_REFUNDED": "استرداد جزئي",
+      "PARTIALLY_REFUNDED": "استرجاع جزئي",
       "COD_PENDING": "تحصيل عند التسليم",
       "SETTLED": "تمت التسوية"
     },
@@ -1047,7 +1047,7 @@
       "QUEUED": "بانتظار التنفيذ",
       "PREPARING": "قيد التجهيز",
       "READY_FOR_PICKUP": "جاهز للاستلام",
-      "DRIVER_ASSIGNED": "تم تعيين سائق",
+      "DRIVER_ASSIGNED": "تم تعيين مندوب",
       "PICKED_UP": "تم الاستلام",
       "ON_ROUTE": "في الطريق",
       "DELIVERED": "تم التسليم",
@@ -1055,8 +1055,8 @@
       "CANCELLED": "أوقف التنفيذ"
     },
     "FILTERS": {
-      "TITLE": "تصفية الطلبات",
-      "SUBTITLE": "اضبط معايير البحث",
+      "TITLE": "فلترة الطلبات",
+      "SUBTITLE": "عدّل معايير البحث",
       "ACTIVE_FILTERS": "الفلاتر النشطة",
       "ORDER_STATUS": "حالة الطلب",
       "PAYMENT_STATUS": "حالة الدفع",
@@ -1070,11 +1070,11 @@
       "ACTIVE": "التشغيل المباشر",
       "LATE": "متأخرة",
       "PAYMENT_ISSUES": "مشاكل دفع",
-      "REFUNDS": "استردادات"
+      "REFUNDS": "استرجاعات"
     },
     "CURRENT_VIEW": "المنظور الحالي:",
     "EMPTY": {
-      "TITLE": "لا توجد طلبات مطابقة",
+      "TITLE": "ما فيه طلبات مطابقة",
       "MESSAGE": "جرّب تعديل البحث أو الفلاتر أو ارجع إلى منظور الكل."
     },
     "SLA": {
@@ -1086,28 +1086,28 @@
         "PAYMENT_REVIEW": "مراجعة الدفع",
         "PREPARATION": "تجهيز الطلب",
         "DISPATCH": "التوصيل والتنفيذ",
-        "REFUND_REVIEW": "مراجعة الاسترداد",
+        "REFUND_REVIEW": "مراجعة الاسترجاع",
         "ISSUE_REVIEW": "معالجة مشكلة مفتوحة",
         "READY_TO_CLOSE": "جاهز للإغلاق",
         "CANCELLED": "ملغي",
         "CLOSED": "مغلق"
       },
       "NEXT_ACTIONS": {
-        "REVIEW_REFUND": "مراجعة الاسترداد واعتماد النتيجة ثم حل الملف.",
+        "REVIEW_REFUND": "مراجعة الاسترجاع واعتماد النتيجة ثم حل الملف.",
         "REVIEW_DISPUTE": "مراجعة النزاع وجمع الأدلة ثم حل الملف.",
         "REVIEW_ISSUE": "تنفيذ الإجراء المطلوب ثم حل الملف المفتوح.",
         "CLOSE_OPERATIONAL_CASE": "إغلاق الملف التشغيلي بعد التحقق النهائي.",
-        "NO_OPEN_ACTION": "لا يوجد إجراء مفتوح.",
-        "COMPLETE_REFUND_REVIEW": "استكمال ومراجعة الاسترداد ثم إغلاق الحالة.",
+        "NO_OPEN_ACTION": "ما فيه إجراء مفتوح.",
+        "COMPLETE_REFUND_REVIEW": "استكمال ومراجعة الاسترجاع ثم إغلاق الحالة.",
         "DOCUMENT_CANCELLATION_CLOSURE": "مراجعة الإلغاء وتوثيق الإغلاق النهائي.",
         "REVIEW_PAYMENT": "مراجعة حالة الدفع قبل متابعة التنفيذ.",
         "CONFIRM_COD_COLLECTION": "تأكيد التحصيل عند التسليم قبل الإغلاق.",
         "MONITOR_COD_DELIVERY": "متابعة التنفيذ مع التحصيل عند التسليم.",
-        "REVIEW_REFUND_AND_CLOSE": "مراجعة الاسترداد ثم إغلاق الحالة.",
+        "REVIEW_REFUND_AND_CLOSE": "مراجعة الاسترجاع ثم إغلاق الحالة.",
         "RETRY_OR_CANCEL": "إعادة المحاولة أو إلغاء الطلب مع توثيق السبب.",
         "RESOLVE_OPEN_ISSUE": "معالجة التنبيه المفتوح وإزالة التصعيد.",
         "FOLLOW_PREPARATION": "متابعة تجهيز الطلب مع الفرع.",
-        "ASSIGN_OR_START_PICKUP": "تعيين سائق أو بدء الالتقاط.",
+        "ASSIGN_OR_START_PICKUP": "تعيين مندوب أو بدء الالتقاط.",
         "MONITOR_DELIVERY": "متابعة التسليم حتى الإغلاق.",
         "CLOSE_AFTER_CONFIRMATION": "إغلاق الطلب بعد التحقق من الاكتمال.",
         "REVIEW_CURRENT_STATE": "مراجعة الحالة الحالية."
@@ -1120,7 +1120,7 @@
     },
     "OPERATIONAL_CASE": {
       "TYPE": {
-        "REFUND": "ملف استرداد",
+        "REFUND": "ملف استرجاع",
         "DISPUTE": "نزاع",
         "ISSUE": "تنبيه تشغيلي"
       },
@@ -1131,8 +1131,8 @@
       }
     },
     "ERRORS": {
-      "LOAD_LIST": "تعذر تحميل الطلبات. تأكد من الفلاتر الحالية أو أعد المحاولة.",
-      "LOAD_DETAIL": "تعذر تحميل تفاصيل الطلب.",
+      "LOAD_LIST": "ما قدرنا نحمّل الطلبات. تأكد من الفلاتر الحالية أو أعد المحاولة.",
+      "LOAD_DETAIL": "ما قدرنا نحمّل تفاصيل الطلب.",
       "INVALID_ID": "رقم الطلب غير صالح."
     },
     "STATUS_READY_FOR_PICKUP": "جاهز للاستلام",
@@ -1147,7 +1147,7 @@
       "DISPUTES_QUEUE": "طابور النزاعات",
       "OPEN": "فتح",
       "UPDATE_STATUS": "تحديث الحالة",
-      "ASSIGN_TO_ME": "إسناد لي",
+      "ASSIGN_TO_ME": "تعيين لي",
       "SEND_REPLY": "إرسال الرد"
     },
     "KPIS": {
@@ -1168,7 +1168,7 @@
     },
     "TABS_HINT": {
       "VENDOR": "تذاكر التجار والاستفسارات التشغيلية",
-      "DRIVER": "حسابات السائقين والبلاغات الميدانية",
+      "DRIVER": "حسابات المناديب والبلاغات الميدانية",
       "LEGACY": "شكاوى وطلبات العملاء المرتبطة بالطلبات"
     },
     "FILTERS": {
@@ -1179,7 +1179,7 @@
     },
     "STATUS": {
       "OPEN": "مفتوحة",
-      "IN_PROGRESS": "قيد المعالجة",
+      "IN_PROGRESS": "تحت المعالجة",
       "WAITING_VENDOR": "بانتظار التاجر",
       "RESOLVED": "تم الحل"
     },
@@ -1191,7 +1191,7 @@
       "LOW": "منخفضة"
     },
     "CASE_STATUS": {
-      "REVIEW": "قيد المراجعة",
+      "REVIEW": "تحت المراجعة",
       "WAITING_RESPONSE": "بانتظار رد",
       "APPROVED": "معتمدة",
       "REJECTED": "مرفوضة"
@@ -1217,10 +1217,10 @@
     },
     "DRIVER_TABLE": {
       "TITLE": "حالات دعم السواق",
-      "SUBTITLE": "دعم حساب السائق يظهر هنا بدون تغيير APIs أو إشعارات السواق الحالية.",
+      "SUBTITLE": "دعم حساب المندوب يظهر هنا بدون تغيير APIs أو إشعارات السواق الحالية.",
       "CASE": "الحالة",
-      "DRIVER": "السائق",
-      "UNKNOWN_DRIVER": "حساب السائق"
+      "DRIVER": "المندوب",
+      "UNKNOWN_DRIVER": "حساب المندوب"
     },
     "LEGACY_TABLE": {
       "TITLE": "دعم الطلبات القديم",
@@ -1230,24 +1230,24 @@
       "VENDOR": "التاجر"
     },
     "EMPTY": {
-      "TITLE": "لا توجد تذاكر دعم للتجار",
+      "TITLE": "ما فيه تذاكر دعم للتجار",
       "MESSAGE": "أي تذكرة دعم جديدة من التاجر ستظهر هنا.",
-      "DRIVER_TITLE": "لا توجد حالات دعم للسواق",
-      "DRIVER_MESSAGE": "طلبات دعم حساب السائق ستظهر هنا عند توفرها.",
-      "LEGACY_TITLE": "لا توجد شكاوى قديمة",
+      "DRIVER_TITLE": "ما فيه حالات دعم للسواق",
+      "DRIVER_MESSAGE": "طلبات دعم حساب المندوب ستظهر هنا عند توفرها.",
+      "LEGACY_TITLE": "ما فيه شكاوى قديمة",
       "LEGACY_MESSAGE": "سجلات الشكاوى القديمة ستظهر هنا عند توفرها."
     },
     "DETAIL": {
       "REPLY_PLACEHOLDER": "اكتب رد الدعم للتاجر...",
-      "DRIVER_REPLY_PLACEHOLDER": "اكتب رد الدعم للسائق...",
+      "DRIVER_REPLY_PLACEHOLDER": "اكتب رد الدعم للمندوب...",
       "SUMMARY": "الملخص",
-      "CLOSED_BANNER_WARNING": "تنبيه: هذه التذكرة مغلقة. يجب تغيير الحالة لتتمكن من إرسال ردود أو إسناد التذكرة."
+      "CLOSED_BANNER_WARNING": "تنبيه: هذه التذكرة مغلقة. لازم تغيير الحالة لتتمكن من إرسال ردود أو تعيين التذكرة."
     },
     "FEEDBACK": {
-      "ASSIGNED": "تم إسناد التذكرة لك.",
+      "ASSIGNED": "تم تعيين التذكرة لك.",
       "REPLY_SENT": "تم إرسال الرد بنجاح.",
       "STATUS_UPDATED": "تم تحديث حالة التذكرة.",
-      "ACTION_FAILED": "تعذر تنفيذ الإجراء. حاول مرة أخرى."
+      "ACTION_FAILED": "ما قدرنا تنفيذ الإجراء. جرّب مرة ثانية."
     }
   }
 }

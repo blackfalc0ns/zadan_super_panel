@@ -98,17 +98,7 @@
     "REJECTED": "Rejected",
     "RETRY": "Retry",
     "DOWNLOAD": "Download",
-    "UPLOAD": "Upload",
-    "API_ERRORS": {
-      "NETWORK": "Could not connect to the server. Please check that the API is running and try again.",
-      "UNAUTHORIZED": "You are not authorized to complete this action. Sign in again or request access.",
-      "CONFLICT": "This change conflicts with existing data. Review the values and try again.",
-      "UNKNOWN": "Something went wrong while saving. Please try again."
-    },
-    "API_ERROR_CODES": {
-      "INVALID_CSRF_TOKEN": "Your security session expired. Refresh the page and try again.",
-      "TEMP_PASSWORD_CHANGE_REQUIRED": "You must change your temporary password before continuing."
-    }
+    "UPLOAD": "Upload"
   },
   "VALIDATION": {
     "REQUIRED": "This field is required"
@@ -197,12 +187,76 @@
     "DISPUTES": "Disputes",
     "SUPPORT": "Support",
     "VENDOR_DISPUTES": "Vendor Disputes",
+    "MARKETING": "Marketing",
     "LOGOUT": "Logout",
     "SEARCH": "Search email or order...",
     "MENU": "Main Menu",
     "ADMIN_PORTAL": "Admin Portal",
-    "DIR": "ltr",
-    "MARKETING": "Marketing"
+    "DIR": "ltr"
+  },
+  "PAGE_TITLES": {
+    "BRAND": "Zadna",
+    "DEFAULT": "Super Admin Panel",
+    "LOGIN": "Sign In",
+    "CHANGE_PASSWORD": "Change Password",
+    "UNAUTHORIZED": "Unauthorized",
+    "DASHBOARD": "Home",
+    "NOTIFICATIONS": "Notifications",
+    "CATALOG_CATEGORIES": "Categories & Sectors",
+    "CATALOG_CATEGORY_DETAIL": "Category Details",
+    "CATALOG_PRODUCTS": "Product Bank",
+    "CATALOG_PRODUCT_CREATE": "Add Product",
+    "CATALOG_PRODUCT_EDIT": "Edit Product",
+    "CATALOG_PRODUCT_DETAIL": "Product Details",
+    "CATALOG_PRODUCTS_BULK": "Bulk Product Upload",
+    "CATALOG_BRANDS": "Brands",
+    "CATALOG_BRAND_DETAIL": "Brand Details",
+    "CATALOG_BRANDS_BULK": "Bulk Brand Upload",
+    "CATALOG_RECYCLE_BIN": "Recycle Bin",
+    "CATALOG_REQUESTS": "Catalog Requests",
+    "VENDORS": "Vendors",
+    "VENDOR_OVERVIEW": "Vendor Overview",
+    "VENDOR_DATA": "Vendor Data",
+    "VENDOR_ANALYTICS": "Vendor Analytics",
+    "VENDOR_PRODUCTS": "Vendor Products",
+    "VENDOR_ORDERS": "Vendor Orders",
+    "VENDOR_DISPUTES": "Vendor Disputes",
+    "VENDOR_FINANCE": "Vendor Finance",
+    "VENDOR_COMPLIANCE": "Vendor Compliance",
+    "VENDOR_LOGS": "Vendor Activity Log",
+    "VENDOR_SETTINGS": "Vendor Settings",
+    "CUSTOMERS": "Customers",
+    "CUSTOMER_DETAIL": "Customer Details",
+    "DRIVERS": "Drivers",
+    "DRIVER_DETAIL": "Driver Details",
+    "ORDERS": "Orders",
+    "ORDER_DETAIL": "Order Details",
+    "DISPUTES": "Disputes",
+    "SUPPORT": "Support",
+    "FINANCES_OVERVIEW": "Finance Overview",
+    "FINANCES_PRICING": "Platform Pricing",
+    "FINANCES_LEDGER": "Financial Ledger",
+    "FINANCES_SETTLEMENTS": "Settlements",
+    "FINANCES_REFUNDS": "Refunds & Disputes",
+    "FINANCES_COD": "COD Reconciliation",
+    "FINANCES_ADJUSTMENTS": "Financial Adjustments",
+    "FINANCES_AUDIT": "Audit Log",
+    "FINANCES_WALLETS": "Wallets",
+    "FINANCES_WALLET_DETAIL": "Wallet Details",
+    "FINANCES_WITHDRAWALS": "Withdrawal Requests",
+    "FINANCES_PLATFORM_ACCOUNT": "Platform Account",
+    "MARKETING_COUPONS": "Marketing Coupons",
+    "MARKETING_BANNERS": "Marketing Banners",
+    "MARKETING_FEATURED_PRODUCTS": "Featured Products",
+    "MARKETING_HOME_SECTIONS": "Home Sections",
+    "MARKETING_HOME_VISIBILITY": "Home Visibility",
+    "ADMIN_USERS": "Admin Users",
+    "ADMIN_USER_DETAIL": "Admin User Details",
+    "ADMIN_ROLES": "Role Management",
+    "PROFILE": "Profile",
+    "LIVE_OPS": "Live Ops",
+    "SYSTEM_LOGS": "System Logs",
+    "EMAIL_CENTER": "Email Center"
   },
   "SIDEBAR_EXTRA": {
     "WELCOME_USER": "Welcome",
@@ -220,7 +274,8 @@
     "ADMIN_STATUS": "Main Hub",
     "REALM_LABEL": "Active Realm",
     "REALM_VALUE": "Headquarters - Global Ops",
-    "USER_ROLE_ID": "Engineer - ID: 892",
+    "USER_ID": "ID {{id}}",
+    "SETTINGS": "Settings",
     "LIVE_OPS": "Live Ops"
   },
   "HEADER_SEARCH": {
@@ -700,13 +755,17 @@
     },
     "STATUS": {
       "PENDING": "Pending",
+      "PENDING_REVIEW": "Pending Review",
+      "APPROVED": "Approved",
+      "ON_HOLD": "On Hold",
       "PROCESSING": "Processing",
       "PAID": "Paid",
+      "SETTLED": "Settled",
       "FAILED": "Failed",
+      "REVERSED": "Reversed",
       "DISPUTED": "Disputed",
       "OPEN": "Open",
       "UNDER_REVIEW": "Under Review",
-      "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "ESCALATED": "Escalated",
       "COLLECTED": "Collected",
@@ -815,7 +874,8 @@
         "WEEKLY": "Weekly",
         "BI_WEEKLY": "Bi-Weekly",
         "MONTHLY": "Monthly",
-        "DAILY": "Daily"
+        "DAILY": "Daily",
+        "CUSTOM": "Custom Period"
       }
     },
     "COD": {
@@ -863,7 +923,6 @@
       "CONFIRM_SAVE_TITLE": "Confirm Settings Save",
       "CONFIRM_SAVE_MESSAGE": "Pricing settings, VAT, and COD fees for the selected zone will be saved.",
       "SAVE_SUCCESS": "Zone settings saved and successfully linked to the backend.",
-      "SAVE_FAILED": "Could not save pricing settings at this time.",
       "LOAD_ZONES": "Loading zones...",
       "UPDATE": "Update",
       "DISCARD": "Discard Changes",
@@ -972,7 +1031,35 @@
         "HOLD": "Hold",
         "RELEASE": "Release",
         "CREDIT": "Credit",
-        "DEBIT": "Debit"
+        "DEBIT": "Debit",
+        "CASHCOLLECTED": "Cash Collected",
+        "ORDERREVENUE": "Order Revenue",
+        "UNKNOWN": "Transaction"
+      },
+      "REFERENCE_TYPES": {
+        "JOURNALLINE": "Journal Entry",
+        "DRIVERWITHDRAWALREQUEST": "Driver Withdrawal Request",
+        "DRIVERWITHDRAWAL": "Driver Withdrawal",
+        "SETTLEMENT": "Settlement",
+        "VENDORHOLDRECOVERY": "Vendor Hold Recovery",
+        "ORDER": "Order",
+        "UNKNOWN": "Reference"
+      },
+      "MEMOS": {
+        "PAYOUT_PAID": "Payout paid {{id}}",
+        "PLATFORM_CASH_PAYOUT": "Platform cash payout {{id}}",
+        "COD_RECEIVABLE": "Expected COD receivable for order {{order}}",
+        "CUSTOMER_ADVANCE_CLEARING": "Expected customer advance clearing for order {{order}}",
+        "REVENUE_RECONCILIATION_DELTA": "Revenue reconciliation delta for order {{order}}",
+        "GATEWAY_RECEIVABLE": "Gateway receivable on payment captured for order {{order}}",
+        "CUSTOMER_ADVANCE_RECOGNISED": "Customer advance recognised for order {{order}}",
+        "COD_CASH_COLLECTED": "COD cash collected for order {{order}}",
+        "CUSTOMER_ADVANCE_CLEARED": "Customer advance cleared for order {{order}}",
+        "VENDOR_PAYABLE": "Vendor payable for order {{order}}",
+        "DRIVER_PAYABLE": "Driver payable for order {{order}}",
+        "PLATFORM_REVENUE": "Platform revenue for order {{order}}",
+        "TAX_PAYABLE": "Tax payable for order {{order}}",
+        "DRIVER_WITHDRAWAL_APPROVED": "Driver withdrawal approved for transfer"
       }
     },
     "WITHDRAWALS": {
@@ -1134,6 +1221,16 @@
         "URGENT": "Urgent",
         "OFF": "Muted"
       }
+    },
+    "WEB_PUSH": {
+      "ENABLE": "Enable Windows notifications",
+      "TEST": "Send test notification",
+      "ENABLING": "Registering browser...",
+      "TESTING": "Sending test...",
+      "ENABLED": "Browser notifications are active on this device.",
+      "DENIED": "Notifications are blocked in Windows or the browser. Enable them from site settings.",
+      "TEST_SENT": "Test notification sent. Check the Windows notification center.",
+      "TEST_FAILED": "Could not send the test notification."
     }
   },
   "ADMIN_PROFILE": {
@@ -1143,8 +1240,7 @@
     "LOADING": "Loading your profile...",
     "BADGE": "Admin account",
     "ACTIONS": {
-      "SAVE": "Save changes",
-      "SAVING": "Saving..."
+      "SAVE": "Save changes"
     },
     "STATUS": {
       "ACTIVE": "Account active",
@@ -1214,14 +1310,15 @@
       "NOTIFICATION_SOUND_SAVED_LOCAL": "Notification sound saved locally on this browser.",
       "NOTIFICATION_SOUND_SAVED": "Notification sound saved.",
       "NOTIFICATION_SOUND_SAVE_FAILED": "Unable to save notification sound right now."
-    },
-    "ERROR_CODES": {
-      "INVALID_CSRF_TOKEN": "Your security session expired. Refresh the page and try again.",
-      "TEMP_PASSWORD_CHANGE_REQUIRED": "You must change your temporary password before updating profile details.",
-      "CURRENT_PASSWORD_INVALID": "The current password is not correct.",
-      "PasswordMismatch": "The current password is not correct.",
-      "ValidationFailed": "Review the highlighted fields and try again."
     }
+  },
+  "NOT_FOUND": {
+    "TITLE": "Page Not Found",
+    "MESSAGE": "The page you requested does not exist, was moved, or is temporarily unavailable. Check the address or return to the dashboard.",
+    "PATH_LABEL": "Requested path",
+    "GO_DASHBOARD": "Back to Dashboard",
+    "GO_BACK": "Go Back",
+    "GO_LOGIN": "Sign In"
   },
   "LIVE_OPS_PAGE": {
     "TITLE": "Live Operations",
@@ -1320,6 +1417,8 @@
       "DRIVERS": "Drivers",
       "ORDERS": "Orders",
       "FINANCE": "Finance",
+      "COVERAGE": "Geography coverage",
+      "COVERAGE_HELPER": "Customers, vendors, and drivers per city",
       "DAY": "Day",
       "WEEK": "Week",
       "MONTH": "Month",
@@ -1618,6 +1717,58 @@
       "DRIVER_GAP": "Driver gap",
       "SCORE": "Pressure score"
     },
+    "COVERAGE": {
+      "PAGE_TITLE": "Geographic coverage",
+      "PAGE_DESC": "Track customers, vendors, drivers, and supply gaps for every official city",
+      "LOADING": "Loading geography coverage...",
+      "ERROR": "Could not load geography coverage",
+      "ACTIONS": {
+        "REFRESH": "Refresh"
+      },
+      "FILTERS": {
+        "REGION": "Region",
+        "ALL_REGIONS": "All regions",
+        "SEARCH": "Search city",
+        "SEARCH_PLACEHOLDER": "City name or code",
+        "GAPS_ONLY": "Cities with gaps only",
+        "CLEAR": "Clear filters"
+      },
+      "SUMMARY": {
+        "CITIES_WITH_GAPS": "Cities with coverage gaps",
+        "NO_VENDOR": "Customers without active vendor",
+        "NO_DRIVER": "Customers without ready driver",
+        "UNMAPPED": "Unmapped addresses"
+      },
+      "TABLE": {
+        "TITLE": "Coverage by city",
+        "SUBTITLE": "Active customers, vendors, and ready drivers for each official city",
+        "CITY": "City",
+        "REGION": "Region",
+        "CUSTOMERS": "Customers",
+        "VENDORS": "Active vendors",
+        "DRIVERS": "Ready drivers",
+        "DRIVERS_HINT": "Ready now / verified active (second number)",
+        "DRIVERS_VERIFIED_HINT": "Verified active drivers in this city (including offline)",
+        "GAPS": "Gaps",
+        "ACTIONS": "Drill down",
+        "COUNT_GAPS_HINT": "Shown cities / official cities total",
+        "NO_FILTER_MATCH": "No cities match the current filters"
+      },
+      "LINKS": {
+        "CUSTOMERS": "Customers",
+        "VENDORS": "Vendors",
+        "DRIVERS": "Drivers"
+      },
+      "GAPS": {
+        "NONE": "Covered",
+        "NoVendor": "No vendor",
+        "NoDriver": "No driver",
+        "NoSupply": "Supply gap",
+        "DemandWithoutBoth": "Demand without vendor or driver",
+        "NoActivity": "No activity",
+        "SupplyWithoutDemand": "Supply without demand"
+      }
+    },
     "READINESS": {
       "TITLE": "Supply readiness"
     },
@@ -1794,8 +1945,7 @@
       "RESET": "Reset",
       "REFRESH": "Refresh now",
       "EXPORT_CSV": "Export CSV",
-      "EXPORTING": "Exporting...",
-      "REFRESHING": "Refreshing..."
+      "EXPORTING": "Exporting..."
     },
     "CARDS": {
       "TOTAL": "Total logs",
@@ -1878,10 +2028,6 @@
       "STATUS_ACTIVE": "Live stream active",
       "STATUS_PAUSED": "Auto-refresh paused",
       "NEW_ENTRIES": "{{count}} new"
-    },
-    "MESSAGES": {
-      "EXPORT_SUCCESS": "System logs exported successfully.",
-      "EXPORT_FAILED": "Unable to export system logs right now."
     }
   },
   "VENDORS": {
@@ -2073,8 +2219,9 @@
     "STATUS_ACTIVE": "Active",
     "STATUS_VERIFIED": "Verified",
     "HEADER_TITLE": "Vendor Details - Modern Tech Store",
-    "REGISTERED_SINCE": "Registered since May 2, 2023",
+    "REGISTERED_SINCE": "—",
     "CATEGORY_VALUE": "Electronics & Technology",
+    "CITY_NOT_SET": "City not set",
     "QUICK_CONTACT_FULL": "Quick Contact",
     "QUICK_CONTACT_SHORT": "Contact",
     "OPEN_ACCESS_DIRECTORY": "Access Directory",
@@ -2164,6 +2311,19 @@
     }
   },
   "COMPLIANCE": {
+    "WORKSPACE": {
+      "BADGE": "Compliance review",
+      "SUBTITLE": "Review {{ vendor }} documents and manage the approval decision.",
+      "READINESS": "Approval readiness",
+      "GUIDANCE": "Current guidance",
+      "TAB_REVIEW": "Documents & preview",
+      "TAB_OPERATIONS": "Operations & timeline",
+      "APPROVE_ALL": "Approve all",
+      "FILES": "Previewable files",
+      "CLOSED": "Closed",
+      "OPEN": "Open",
+      "REJECTED": "Rejected"
+    },
     "TITLE": "Review & Compliance",
     "REGISTRATION_DATE": "Registration Date",
     "ACCOUNT_STATUS": "Account Status",
@@ -2360,7 +2520,17 @@
   "VENDOR_PRODUCTS": {
     "SUMMARY_TITLE": "Products Summary",
     "CATALOG_TITLE": "Product Catalog",
-    "CATALOG_SUBTITLE": "Browse this vendor's product catalog, stock availability, and selling prices.",
+    "CATALOG_SUBTITLE": "Browse {{ vendor }} products, stock levels, and selling prices.",
+    "CATALOG_BADGE": "Vendor catalog",
+    "FILTERS_TITLE": "Filter & search",
+    "PAGE_METRICS_HINT": "Current page metrics",
+    "SHOWING_LABEL": "Showing",
+    "VIEW_PRODUCT": "View details",
+    "TABLE_SKU": "SKU",
+    "ALL_BRANCHES": "All branches",
+    "BRANCH_FILTER": "Branch",
+    "GLOBAL_BRANCH_INVENTORY": "Store-wide inventory",
+    "UNIFIED_PRICE_HINT": "Unified across branches",
     "TOTAL_PRODUCTS": "Total Products",
     "ACTIVE_PRODUCTS": "Active Products",
     "LOW_STOCK": "Low Stock",
@@ -2380,6 +2550,7 @@
     "TABLE": {
       "PRODUCT": "Product",
       "CATEGORY": "Category",
+      "BRANCH": "Branch",
       "PRICE": "Price",
       "STOCK": "Stock",
       "STATUS": "Status",
@@ -2484,6 +2655,42 @@
     }
   },
   "VENDOR_FINANCE": {
+    "WORKSPACE": {
+      "TITLE": "Finance & settlements",
+      "SUBTITLE": "Manage {{ vendor }} funds from order delivery to bank payout.",
+      "BADGE": "Finance mode",
+      "AVAILABLE": "Available balance",
+      "PENDING": "Pending settlement",
+      "PAID_OUT": "Total paid out",
+      "ON_HOLD": "On hold",
+      "AWAITING_ORDERS": "Orders awaiting settlement",
+      "FAILED_PAYOUTS": "Failed payouts",
+      "DIRECT_SETTLEMENTS": "Direct settlements",
+      "BATCH_SETTLEMENTS": "Batch settlements",
+      "LIFECYCLE_TITLE": "Financial lifecycle",
+      "LIFECYCLE_DESC": "Controls how settlements and payouts are generated for this vendor.",
+      "FLOW_TITLE": "Money flow",
+      "OPS_TITLE": "Quick actions",
+      "REVIEW_PAYOUTS": "Review payouts",
+      "CREATE_SETTLEMENT": "Create settlement",
+      "BANK_ACCOUNT": "Primary bank account",
+      "LATEST_PAYOUT": "Latest payout",
+      "SETTLEMENTS_TITLE": "Recent settlements",
+      "PAYOUTS_TITLE": "Recent payouts",
+      "TABLE_SETTLEMENT": "Settlement",
+      "TABLE_NET": "Net",
+      "TABLE_ORDERS": "Orders",
+      "TABLE_DATE": "Date",
+      "TABLE_PAYOUT": "Payout",
+      "TABLE_AMOUNT": "Amount",
+      "TABLE_REFERENCE": "Reference",
+      "EMPTY_SETTLEMENTS": "No settlements recorded yet.",
+      "EMPTY_PAYOUTS": "No payouts recorded yet.",
+      "ERROR_TITLE": "Unable to load finance data",
+      "ERROR_MESSAGE": "Check your connection and try again.",
+      "DIRECT_MODE": "Direct payout",
+      "BATCH_MODE": "Batch settlement"
+    },
     "KPI": {
       "TOTAL_SALES": "Total Sales",
       "NET_SALES": "Net Sales",
@@ -2598,6 +2805,16 @@
     }
   },
   "VENDOR_SETTINGS": {
+    "WORKSPACE": {
+      "BADGE": "Operations settings",
+      "TITLE": "Vendor settings",
+      "SUBTITLE": "Manage {{ vendor }} operations and account controls in one place.",
+      "LAST_SYNC": "Last sync",
+      "ACCOUNT": "Account status",
+      "HOURS": "Working hours",
+      "NOTIFICATIONS": "Notification channels",
+      "MODIFIED_BY": "Last modified by"
+    },
     "ACCOUNT_SETTINGS": "Account Settings",
     "ACCOUNT_STATUS": "Account Status",
     "ACTIVE": "Active",
@@ -2653,7 +2870,32 @@
     },
     "META": {
       "PERIOD": "Reporting period",
-      "GENERATED": "Generated at"
+      "GENERATED": "Generated at",
+      "RANGE_LABEL": "Range"
+    },
+    "PERFORMANCE": {
+      "TITLE": "Overall performance index",
+      "ORDERS_CENTER": "orders"
+    },
+    "SECTIONS": {
+      "FINANCIAL_EYEBROW": "Financial & order trends",
+      "TOP_PRODUCTS_EYEBROW": "Revenue drivers",
+      "TOP_PRODUCTS_TITLE": "Top revenue products",
+      "TOP_PRODUCTS_DESC": "Products carrying the largest share of vendor revenue in the selected period.",
+      "ORDER_STATE_EYEBROW": "Order state",
+      "INVENTORY_EYEBROW": "Inventory & availability",
+      "DECISION_EYEBROW": "Decision brief",
+      "ATTENTION_TITLE": "What needs attention?"
+    },
+    "INSIGHTS": {
+      "WORKLOAD_TITLE": "Active workload pressure",
+      "WORKLOAD_DESC": "Orders needing urgent operational follow-up.",
+      "DOMINANT_TITLE": "Dominant product",
+      "DOMINANT_SHARE": "of total revenue.",
+      "INVENTORY_RISK_TITLE": "Inventory risk",
+      "INVENTORY_RISK_DESC": "Ratio of low or out-of-stock products.",
+      "REVENUE_RHYTHM_TITLE": "Daily revenue rhythm",
+      "REVENUE_RHYTHM_DESC": "Daily average revenue for the period."
     },
     "KPIS": {
       "TOTAL_REVENUE": "Total revenue",
@@ -2710,6 +2952,16 @@
     "DESC": "Manage trademarks and track the distribution of registered products in the system",
     "BULK_UPLOAD": "Bulk Upload Brands",
     "BULK_UPLOAD_DESC": "Create many brands and upload logos directly in the same page.",
+    "BULK_ERR_NAME_AR_REQUIRED": "Arabic name is required.",
+    "BULK_ERR_NAME_EN_REQUIRED": "English name is required.",
+    "BULK_ERR_CATEGORY_REQUIRED": "Category is required.",
+    "BULK_ERR_LOGO_URL_LONG": "Logo URL is too long.",
+    "BULK_ERR_COVER_URL_LONG": "Cover image URL is too long.",
+    "BULK_ERR_START_FAILED": "Failed to start bulk upload.",
+    "BULK_SUCCESS_CLEARED": "{{count}} brands were added successfully. The form has been cleared.",
+    "BULK_SELECT_CATEGORIES": "Select categories",
+    "BULK_CATEGORIES_COUNT": "{{count}} categories selected",
+    "BULK_STATUS_INACTIVE": "Inactive",
     "BRAND_UNIT": "brand",
     "LOGO": "Logo",
     "BRAND": "Trademark",
@@ -2727,21 +2979,6 @@
     "CONFIRM_DELETE_MSG": "Are you sure you want to delete this brand? This action cannot be undone.",
     "CONFIRM_BULK_DELETE_TITLE": "Confirm Delete Selected Brands",
     "CONFIRM_BULK_DELETE_MSG": "Are you sure you want to delete the selected brands? This action cannot be undone.",
-    "SAVING": "Saving...",
-    "TOAST_TITLE": "Brands",
-    "SAVE_CREATED": "Brand saved successfully.",
-    "SAVE_UPDATED": "Brand changes saved successfully.",
-    "SAVE_FAILED_TITLE": "Unable to save brand",
-    "SAVE_FAILED": "We could not save the brand right now. Please review the data and try again.",
-    "UPLOAD_FAILED": "We could not upload the brand image right now. Please try again.",
-    "ERROR_NETWORK": "Connection to the server failed. Check your connection and try again.",
-    "ERROR_UNAUTHORIZED": "Your admin session is not authorized to save this brand.",
-    "ERROR_CONFLICT": "A brand with the same name already exists. Please update the duplicated value.",
-    "ERROR_CODES": {
-      "DuplicateBrand": "A brand with the same name already exists.",
-      "DuplicateName": "A brand with the same name already exists.",
-      "CategoryNotFound": "One of the selected categories is no longer available."
-    },
     "DELETE_FAILED": "Failed to delete brand",
     "VAULT_INIT": "Loading brand list...",
     "EMPTY_TITLE": "No brands found",
@@ -2860,21 +3097,6 @@
     "IMAGE": "Item Image",
     "IMAGE_SELECT": "Select Professional Image",
     "IMAGE_DESC": "Prefer using transparent images (PNG) or high-quality images with uniform background.",
-    "SAVING": "Saving...",
-    "TOAST_TITLE": "Categories",
-    "SAVE_CREATED": "Category saved successfully.",
-    "SAVE_UPDATED": "Category changes saved successfully.",
-    "SAVE_FAILED_TITLE": "Unable to save category",
-    "SAVE_FAILED": "We could not save the category right now. Please review the data and try again.",
-    "UPLOAD_FAILED": "We could not upload the category image right now. Please try again.",
-    "ERROR_NETWORK": "Connection to the server failed. Check your connection and try again.",
-    "ERROR_UNAUTHORIZED": "Your admin session is not authorized to save this category.",
-    "ERROR_CONFLICT": "A category with the same name or order already exists at this level.",
-    "ERROR_CODES": {
-      "DuplicateCategory": "A category with the same name already exists at this level.",
-      "DuplicateName": "A category with the same name already exists at this level.",
-      "ParentCategoryNotFound": "The selected parent category is no longer available."
-    },
     "MODAL": {
       "ADD_TITLE": "Add New {{level}}",
       "EDIT_TITLE": "Edit {{level}}",
@@ -3122,22 +3344,6 @@
     "SYSTEM_IDENTIFIER": "Technical System ID",
     "SLUG_LABEL": "Slug *",
     "SLUG_PLACEHOLDER": "Ex: milk-almarai-1l",
-    "SAVING": "Saving...",
-    "TOAST_TITLE": "Master catalog",
-    "SAVE_CREATED": "Product saved successfully in the master catalog.",
-    "SAVE_UPDATED": "Product changes saved successfully.",
-    "SAVE_FAILED_TITLE": "Unable to save product",
-    "SAVE_FAILED": "We could not save the product right now. Please review the data and try again.",
-    "ERROR_NETWORK": "Connection to the server failed. Check your connection and try again.",
-    "ERROR_UNAUTHORIZED": "Your admin session is not authorized to save this product.",
-    "ERROR_CONFLICT": "A product with the same slug or barcode already exists. Please update the duplicated value.",
-    "ERROR_CODES": {
-      "DuplicateSlug": "A product with this slug already exists.",
-      "DuplicateBarcode": "A product with this barcode already exists.",
-      "CategoryNotFound": "The selected category is no longer available.",
-      "BrandNotFound": "The selected brand is no longer available.",
-      "UnitNotFound": "The selected unit is no longer available."
-    },
     "DELETE_FAILED": "Failed to delete product",
     "STATUS_INACTIVE": "Inactive",
     "STATUS_DISCONTINUED": "Discontinued"
@@ -3180,15 +3386,22 @@
     "CONFIRM_REJECT_MSG": "Are you sure you want to reject this request?",
     "REQUEST_APPROVED_SUCCESS": "Product request approved successfully.",
     "REQUEST_REJECTED_SUCCESS": "Product request rejected successfully.",
+    "BRAND_REQUEST_APPROVED_SUCCESS": "Brand request approved successfully.",
+    "BRAND_REQUEST_REJECTED_SUCCESS": "Brand request rejected successfully.",
+    "CATEGORY_REQUEST_APPROVED_SUCCESS": "Category request approved successfully.",
+    "CATEGORY_REQUEST_REJECTED_SUCCESS": "Category request rejected successfully.",
     "REVIEW_FAILED_TITLE": "Review failed",
-    "REVIEW_FAILED": "Could not complete the product request review. Please check the details and try again.",
+    "REVIEW_SUCCESS_TITLE": "Review completed",
+    "REVIEW_FAILED": "Could not complete the request review. Please check the details and try again.",
     "ERROR_CODES": {
       "REQUEST_ALREADY_REVIEWED": "This request was already reviewed.",
       "BRAND_CATEGORY_MISMATCH": "The brand does not belong to the selected category.",
       "BRAND_REQUEST_NOT_APPROVED": "The linked brand request is not approved yet.",
       "CATEGORY_REQUEST_NOT_APPROVED": "The linked category request is not approved yet.",
       "PRODUCT_DISCONTINUED": "A matching discontinued product already exists and cannot be reactivated through approval.",
-      "PRODUCT_ALREADY_EXISTS": "A matching active product already exists in the catalog."
+      "PRODUCT_ALREADY_EXISTS": "A matching active product already exists in the catalog.",
+      "REJECTION_REASON_REQUIRED": "A rejection reason is required.",
+      "CATEGORY_REQUIRED": "A category is required to approve this request."
     },
     "PRODUCT_INFO_HINT": "Basic product details as suggested by the vendor.",
     "CLASSIFICATION": "Classification & Brand",
@@ -3757,6 +3970,58 @@
       "PAYMENT_STATUS_LABEL": "Payment Status",
       "PAYMENT_NOTE": "Payment Note",
       "FULFILLMENT_NOTE": "Fulfillment Note",
+      "DELIVERY_BREAKDOWN": {
+        "TITLE": "Delivery & Pricing Breakdown",
+        "SUBTITLE": "Detailed delivery routing, distances, quotes, and pricing modes for this order.",
+        "PRICING_MODE": "Pricing Mode",
+        "QUOTE_STATUS": "Quote Status",
+        "QUOTE_VERSION": "Quote Version",
+        "LOCKED_AT": "Quote Locked At",
+        "MERCHANT_TO_CUSTOMER": "Merchant to Customer Distance",
+        "DRIVER_TO_MERCHANT": "Driver to Merchant Distance",
+        "MERCHANT_TO_CUSTOMER_FEE": "Merchant to Customer Fee",
+        "DRIVER_TO_MERCHANT_FEE": "Driver to Merchant Fee",
+        "TOTAL_DELIVERY_FEE": "Total Delivery Fee",
+        "PRICING_SOURCE": "Pricing Source",
+        "ANOMALY_WARNING": "Operational Warning",
+        "ANOMALY_WARNING_DESC": "An unusual deviation in routing or pricing parameters was detected.",
+        "ACTUAL_PICKUP_DISTANCE": "Actual Assigned Driver Pickup Distance",
+        "DEVIATION_PERCENT": "Actual Dispatch Deviation",
+        "ESTIMATED_DRIVER_PRICING": "Estimated Driver Pricing Used",
+        "YES": "Yes",
+        "NO": "No"
+      },
+      "PRICING_SOURCES": {
+        "ZONE_DEFAULT": "Zone Default",
+        "DYNAMIC": "Dynamic Routing",
+        "GOOGLE_MAPS": "Google Maps",
+        "STATIC": "Static",
+        "ESTIMATED": "Estimated",
+        "ZONE": "Zone Rule Pricing",
+        "CITY": "City Pricing Settings",
+        "REGION": "Region Pricing Settings",
+        "GLOBAL_FALLBACK": "Global Default Pricing",
+        "FALLBACK": "System Fallback Pricing",
+        "LIVE_DRIVER": "Live Driver Location (GPS)",
+        "VENDOR_ZONE_CENTER": "Vendor Zone Center",
+        "VENDOR_CITY_CENTER": "Vendor City Center",
+        "VENDOR_BRANCH_FALLBACK": "Vendor Branch Fallback",
+        "BRANCH_COORDINATES": "Branch Coordinates",
+        "UNKNOWN": "Unknown Source"
+      },
+      "DELIVERY_BREAKDOWN_VALUES": {
+        "DYNAMIC": "Dynamic",
+        "STATIC": "Static",
+        "LOCKED": "Locked",
+        "PENDING": "Pending",
+        "COMPLETED": "Completed",
+        "FAILED": "Failed",
+        "ACTIVE": "Active",
+        "ESTIMATED": "Estimated",
+        "LIVE": "Live",
+        "ESTIMATED_LOCKED": "Estimated Locked",
+        "LIVE_LOCKED": "Live Locked"
+      },
       "FINANCE_CARD": {
         "TITLE": "Finance Snapshot",
         "SUBTITLE": "Platform-side financial breakdown for this order.",
@@ -3793,8 +4058,22 @@
       "DRIVER_DETAILS": "Driver Details",
       "ACTIVE_NOW": "Active Now",
       "VEHICLE": "Vehicle",
+      "VEHICLE_TYPES": {
+        "BICYCLE": "Bicycle",
+        "BIKE": "Bike",
+        "CAR": "Car",
+        "MOTORCYCLE": "Motorcycle",
+        "MOTORBIKE": "Motorbike",
+        "SCOOTER": "Scooter",
+        "VAN": "Van",
+        "TRUCK": "Truck",
+        "DELIVERY_VEHICLE": "Delivery Vehicle",
+        "DELIVERY_DRIVER": "Delivery Driver"
+      },
       "PLATE": "Plate",
       "CHANGE_DRIVER": "Change Driver",
+      "NO_DRIVER_ASSIGNED": "No driver assigned yet",
+      "ASSIGN_DRIVER": "Assign Driver",
       "SUPPORT_DISPUTES": "Support & Disputes",
       "NO_DISPUTES": "No Disputes",
       "ADD_NOTE": "Add Note",
@@ -3808,6 +4087,62 @@
       "TIMELINE_PREP": "Order Preparation",
       "TIMELINE_DELIVERY": "Out for Delivery",
       "TIMELINE_COMPLETED": "Delivered",
+      "TIMELINE_STEP_STATUS": {
+        "COMPLETED": "Completed",
+        "IN_PROGRESS": "In progress",
+        "PENDING": "Pending"
+      },
+      "TIMELINE_STEPS": {
+        "TITLES": {
+          "ORDER_CREATED": "Order created",
+          "PAYMENT": "Payment",
+          "FULFILLMENT": "Fulfillment",
+          "CLOSURE": "Closure",
+          "PENDING_PAYMENT": "Pending payment",
+          "PLACED": "Order placed",
+          "PENDING_VENDOR_ACCEPTANCE": "Awaiting vendor acceptance",
+          "ACCEPTED": "Accepted by vendor",
+          "PREPARING": "Preparing",
+          "READY_FOR_PICKUP": "Ready for pickup",
+          "DRIVER_ASSIGNMENT_IN_PROGRESS": "Searching for a driver",
+          "DRIVER_ASSIGNED": "Driver assigned",
+          "PICKED_UP": "Picked up",
+          "ON_THE_WAY": "On the way",
+          "DELIVERED": "Delivered",
+          "CANCELLED": "Cancelled",
+          "VENDOR_REJECTED": "Rejected by vendor",
+          "DELIVERY_FAILED": "Delivery failed",
+          "REFUNDED": "Refunded"
+        },
+        "SUBTITLES": {
+          "PAYMENT_CAPTURED": "Payment captured",
+          "WAITING_PAYMENT_CONFIRMATION": "Waiting for payment confirmation",
+          "SYSTEM_AUTO_UPDATE": "System automatic update",
+          "AWAITING_CLOSURE": "Awaiting closure",
+          "FULFILLMENT_QUEUED": "Queued for fulfillment",
+          "FULFILLMENT_CANCELLED": "Fulfillment stopped",
+          "FULFILLMENT_FAILED": "Fulfillment failed",
+          "COD_SELECTED": "Cash on delivery selected",
+          "AWAITING_VENDOR": "Awaiting vendor response",
+          "VENDOR_ACCEPTED": "Vendor accepted the order",
+          "VENDOR_PREPARING": "Vendor started preparing",
+          "READY_FOR_PICKUP": "Order is ready for pickup",
+          "AUTO_DISPATCH_STARTED": "Auto-dispatch started",
+          "DRIVER_ACCEPTED_OFFER": "Driver accepted the delivery offer",
+          "VENDOR_OTP_HANDOFF": "Vendor confirmed pickup handoff via OTP",
+          "DRIVER_ON_THE_WAY": "Driver is on the way",
+          "DELIVERY_OTP_VERIFIED": "Driver verified delivery OTP",
+          "DRIVER_VERIFIED_PICKUP_OTP": "Driver verified pickup OTP",
+          "DRIVER_ASSIGNED_VIA_DISPATCH": "Driver assigned via dispatch",
+          "AWAITING_BANK_CONFIRMATION": "Awaiting automatic bank transfer confirmation",
+          "ORDER_PLACED": "Order placed successfully",
+          "ORDER_CONFIRMED": "Order confirmed",
+          "ORDER_PICKED_UP": "Order picked up by driver",
+          "ORDER_DELIVERED": "Order delivered successfully",
+          "SEARCHING_DRIVERS": "Searching for drivers",
+          "NO_DRIVERS": "No drivers available"
+        }
+      },
       "LOG_STATUS_OUT": "Status Update: Out for Delivery",
       "LOG_STATUS_MANUAL_UPDATE": "Status updated manually",
       "LOG_PREP_COMPLETE": "Preparation Complete",
@@ -3959,6 +4294,14 @@
         "SUBTITLE": "Create a financial refund request linked to the current order",
         "PAID": "Paid",
         "REFUNDABLE_AMOUNT": "Refundable amount",
+        "SELECTED_REFUND": "Selected refund",
+        "PRODUCTS_AMOUNT": "Products subtotal",
+        "PRODUCTS_ONLY": "Products only",
+        "PRODUCTS_ONLY_NOTE": "Only the product subtotal will be refunded (excluding delivery and tax).",
+        "FULL_ORDER": "Full order",
+        "CUSTOM_AMOUNT": "Custom amount",
+        "CUSTOM_HINT": "Up to products subtotal",
+        "CUSTOM_MAX_NOTE": "Maximum {{max}} SAR (products subtotal only).",
         "DISCOUNTS": "Discounts",
         "SETUP_TITLE": "Refund Setup",
         "REFUND_TYPE": "Refund Type",
@@ -4127,7 +4470,28 @@
       },
       "RECOMPUTE_DISPATCH": "Recompute Dispatch",
       "DISPATCH_STATE": "Dispatch State",
-      "DISPATCH_NOTE": "Dispatch Note"
+      "DISPATCH_STATE_VALUES": {
+        "NOT_REQUIRED": "Not Required",
+        "PENDING": "Pending",
+        "SEARCHING": "Searching",
+        "ASSIGNED": "Assigned",
+        "COMPLETED": "Completed",
+        "FAILED": "Failed",
+        "CANCELLED": "Cancelled"
+      },
+      "DISPATCH_NOTE": "Dispatch Note",
+      "DISPATCH_REASON": {
+        "DRIVER_ACCEPTED": "Driver accepted delivery offer.",
+        "DRIVER_ACCEPTED_DELIVERY_OFFER_": "Driver accepted delivery offer.",
+        "DRIVER_REJECTED": "Driver rejected delivery offer.",
+        "DRIVER_REJECTED_DELIVERY_OFFER_": "Driver rejected delivery offer.",
+        "OFFER_SENT": "Delivery offer sent.",
+        "DELIVERY_OFFER_SENT_": "Delivery offer sent.",
+        "SEARCHING": "Searching for drivers.",
+        "SEARCHING_FOR_DRIVERS_": "Searching for drivers.",
+        "NO_DRIVERS": "No drivers available.",
+        "NO_DRIVERS_AVAILABLE_": "No drivers available."
+      }
     },
     "STATUS": {
       "NEW": "New",
@@ -4246,6 +4610,7 @@
     "RESULTS": "results",
     "ACTIONS": {
       "SUPPORT_NOTIFICATIONS": "Support notifications",
+      "DISPUTES_QUEUE": "Disputes queue",
       "OPEN": "Open",
       "UPDATE_STATUS": "Update status",
       "ASSIGN_TO_ME": "Assign to me",
@@ -4261,10 +4626,16 @@
       "AVG_RESOLUTION": "Avg Resolution",
       "HOURS": "hrs"
     },
+    "WORKSPACE_LABEL": "Workspace",
     "TABS": {
       "VENDOR": "Vendor support",
       "DRIVER": "Driver support",
       "LEGACY": "Legacy complaints"
+    },
+    "TABS_HINT": {
+      "VENDOR": "Vendor tickets and operational inquiries",
+      "DRIVER": "Driver accounts and field reports",
+      "LEGACY": "Customer complaints linked to orders"
     },
     "FILTERS": {
       "SEARCH": "Search support tickets...",
@@ -4874,10 +5245,7 @@
       "OFFLINE": "Offline",
       "ONMISSION": "On mission",
       "SUSPENDED": "Suspended",
-      "BANNED": "Banned",
-      "OFFER_RESTRICTED": "Temporarily restricted (offers)",
-      "LOCATION_BLOCKED": "Location blocked",
-      "LOGIN_LOCKED": "Login locked"
+      "BANNED": "Banned"
     },
     "VERIFICATION": {
       "VERIFIED": "Verified",
@@ -4905,10 +5273,7 @@
       "CLEAR": "Clear",
       "WARNING": "Warning",
       "PAYMENT": "Collection",
-      "LEGAL": "Reports",
-      "DISPATCH": "Offer block",
-      "COMPLIANCE": "Compliance",
-      "LOCATION": "Location"
+      "LEGAL": "Reports"
     },
     "ALERTS": {
       "HIGH_RISK": "High Risk",
@@ -4958,7 +5323,9 @@
         "LOCATION_UPDATES_BLOCKED": "Location updates were blocked for this driver.",
         "LOCATION_UPDATES_UNBLOCKED": "Location updates were unblocked for this driver.",
         "LOGIN_LOCKED": "Driver login was locked.",
-        "LOGIN_UNLOCKED": "Driver login was unlocked."
+        "LOGIN_UNLOCKED": "Driver login was unlocked.",
+        "PROFILE_UPDATED": "Driver profile details updated successfully.",
+        "SERVICE_AREA_REQUIRED": "Select both region and city before saving profile changes."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "Driver push lab",
@@ -4985,6 +5352,14 @@
           "BODY": "This is a test push for the driver app.",
           "TARGET_URL": "/notifications"
         }
+      },
+      "VEHICLE_TYPES": {
+        "CAR": "Car",
+        "MOTORCYCLE": "Motorcycle",
+        "SCOOTER": "Scooter",
+        "VAN": "Van",
+        "BICYCLE": "Bicycle",
+        "TRUCK": "Truck"
       },
       "BTN_VERIFY": "Verification",
       "BTN_ACCESS_PROFILE": "Access Profile",
@@ -5626,6 +6001,23 @@
         "REQUIREMENTS_DESC": "Checklist and notes",
         "ADD_INTERNAL_NOTE": "Add internal note",
         "ADD_INTERNAL_NOTE_PLACEHOLDER": "Internal note for reviewers...",
+        "EDIT_PROFILE_TAB": "Edit Profile",
+        "PERSONAL_SECTION": "Personal Info",
+        "FULL_NAME": "Full Name",
+        "EMAIL": "Email Address",
+        "PHONE": "Phone Number",
+        "ADDRESS": "National Address",
+        "IDENTITY_SECTION": "Identity & Driving License",
+        "NATIONAL_ID": "National ID / Iqama Number",
+        "EXPIRY_DATE": "Expiry Date",
+        "LICENSE_NUMBER": "Driver's License Number",
+        "VEHICLE_SECTION": "Vehicle Details",
+        "VEHICLE_TYPE": "Vehicle Type",
+        "PLATE_NUMBER": "License Plate Number",
+        "OPERATING_SECTION": "Operating Area",
+        "REGION": "Region",
+        "CITY": "City",
+        "SAVE_CHANGES": "Save Changes",
         "CHECKLIST_TAB": "Checklist",
         "DOCUMENT_BOARD": "Document Board",
         "FILES_IN_PACKET": "{{count}} files in packet",
@@ -5725,13 +6117,15 @@
             "LICENSE_DOCUMENT": "Driving license",
             "VEHICLE_DOCUMENT": "Vehicle document",
             "PERSONAL_PHOTO": "Personal photo",
-            "ZONE_SELECTION": "Primary operating zone"
+            "ZONE_SELECTION": "Primary operating zone",
+            "REGION_CITY_SELECTION": "Operating region and city"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
             "MISSING_VEHICLE_INFO_NOTE": "Missing operational vehicle details.",
             "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
             "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required.",
+            "MISSING_REGION_CITY_NOTE": "Region and city still need to be selected.",
             "EXPIRED_DOCUMENT_NOTE": "The uploaded document is expired and must be renewed.",
             "REJECTED_DOCUMENT_NOTE": "This document was rejected and needs a corrected re-upload.",
             "PENDING_DOCUMENT_REVIEW_NOTE": "The document is uploaded and waiting for admin review."
@@ -5812,10 +6206,7 @@
           "FINANCE_HOLD": "Financial Hold",
           "ACTIVE_DELIVERY": "Active Delivery",
           "READY_FOR_DISPATCH": "Ready for Dispatch",
-          "READY_TO_ACTIVATE": "Ready to Rejoin",
-          "OFFER_RESTRICTED": "Temporarily Restricted (Offers)",
-          "LOCATION_RESTRICTED": "GPS Location Blocked",
-          "LOGIN_LOCKED": "Login Locked"
+          "READY_TO_ACTIVATE": "Ready to Rejoin"
         },
         "SUMMARIES": {
           "BANNED": "The driver is fully banned from operations. Review the case before lifting the ban or keeping the account blocked.",
@@ -5826,10 +6217,7 @@
           "FINANCE_HOLD": "There is a financial hold or unresolved COD amount that must be cleared before a new payout or full operational trust can be restored.",
           "ACTIVE_DELIVERY": "The driver is inside a live task right now, so the current focus should remain on execution monitoring, SLA, and fast support only.",
           "READY_FOR_DISPATCH": "The driver is active and currently ready, and the supervisor's role here is mainly monitoring and preserving readiness without new blockers.",
-          "READY_TO_ACTIVATE": "The driver is verified but currently outside the schedule, and can be returned to operations after a quick check on operational and financial readiness.",
-          "OFFER_RESTRICTED": "The driver is temporarily blocked from receiving offers after exceeding rejection or cancellation limits. The driver app shows a blocked screen.",
-          "LOCATION_RESTRICTED": "GPS location updates are administratively blocked. The driver cannot receive new offers until unblocked.",
-          "LOGIN_LOCKED": "Driver login is locked. Review the lock reason in Support or unlock from profile actions."
+          "READY_TO_ACTIVATE": "The driver is verified but currently outside the schedule, and can be returned to operations after a quick check on operational and financial readiness."
         },
         "NEXT_STEPS": {
           "BANNED": "Review the ban reason and only unban after compliance and document checks are clear.",
@@ -5840,10 +6228,7 @@
           "FINANCE_HOLD": "Review finance first, then clear the hold if settlement is complete.",
           "ACTIVE_DELIVERY": "Monitor the current task and open support only when there is an actual delay or complaint.",
           "READY_FOR_DISPATCH": "No urgent action is needed now; monitor the zone and assign tasks as needed.",
-          "READY_TO_ACTIVATE": "Return the driver to the assignment queue after a quick review of the zone, balance, and open tickets.",
-          "OFFER_RESTRICTED": "Review the restriction in Operations, then clear all restrictions if appropriate.",
-          "LOCATION_RESTRICTED": "Open Operations and unblock location updates after verifying the reason.",
-          "LOGIN_LOCKED": "Review the lock reason, then unlock login from profile actions."
+          "READY_TO_ACTIVATE": "Return the driver to the assignment queue after a quick review of the zone, balance, and open tickets."
         },
         "QUEUE_LABELS": {
           "BANNED": "Ban Review Queue",
@@ -5854,18 +6239,12 @@
           "FINANCE_HOLD": "COD & Settlements Queue",
           "ACTIVE_DELIVERY": "Live Monitoring Queue",
           "READY_FOR_DISPATCH": "Ready Drivers Queue",
-          "READY_TO_ACTIVATE": "Activation & Preparation Queue",
-          "OFFER_RESTRICTED": "Offer Restriction Queue",
-          "LOCATION_RESTRICTED": "Location Block Queue",
-          "LOGIN_LOCKED": "Login Lock Queue"
+          "READY_TO_ACTIVATE": "Activation & Preparation Queue"
         },
         "READINESS_LABELS": {
           "FULLY_STOPPED": "Fully Stopped",
           "BLOCKED_UNTIL_APPROVAL": "Blocked Until Approval",
           "BLOCKED_BY_COMPLIANCE": "Blocked by Compliance",
-          "BLOCKED_BY_OFFERS": "Temporarily Restricted (Offers)",
-          "BLOCKED_BY_LOCATION": "GPS Location Blocked",
-          "BLOCKED_BY_LOGIN_LOCK": "Login Locked",
           "PARTIALLY_READY": "Partially Ready",
           "WORKING_NOW": "Working Now",
           "FULLY_READY": "Fully Ready",
@@ -5890,17 +6269,7 @@
           "DOCUMENT_UNDER_REVIEW": "There is a document or identity image under manual review.",
           "PERFORMANCE_ALERT": "Driver performance needs follow-up before increasing operational load.",
           "SUPPORT_FOLLOWUPS": "There are {{count}} support follow-ups pending on this driver.",
-          "SUPPORT_FOLLOWUPS_GENERIC": "There are open support follow-ups pending on this driver.",
-          "MISSING_DOCUMENTS": "Required documents are missing or unclear.",
-          "OFFER_RESTRICTED": "The driver is temporarily blocked from receiving offers after exceeding rejection or cancellation limits.",
-          "LOCATION_UPDATES_BLOCKED": "GPS location updates are administratively blocked and new offers cannot be assigned.",
-          "LOGIN_LOCKED": "Driver login is locked until the case is reviewed."
-        },
-        "ALERTS": {
-          "OFFER_RESTRICTION_ACTIVE": "Offer restriction active — driver app shows blocked state.",
-          "READY_FOR_DISPATCH": "Driver is ready to receive new tasks.",
-          "DRIVER_ON_ACTIVE_MISSION": "Driver is on an active mission now.",
-          "DRIVER_OFFLINE_BUT_APPROVED": "Driver is verified but currently offline."
+          "SUPPORT_FOLLOWUPS_GENERIC": "There are open support follow-ups pending on this driver."
         },
         "ACTION_LABELS": {
           "APPROVE_VERIFICATION": "Approve Verification",
@@ -6097,6 +6466,8 @@
     },
     "FILTERS": {
       "ALL": "All",
+      "TITLE": "Filter access directory",
+      "SUBTITLE": "Narrow the list by status, role preset, or panel scope.",
       "STATUS": "Status",
       "ACCESS_LEVEL": "Access level",
       "ROLE": "Role preset",
@@ -6106,7 +6477,14 @@
       "VENDOR": "Vendor",
       "BRANCH": "Branch",
       "ACTIVE_COUNT": "active filters",
+      "ACTIVE_COUNT_VALUE": "{{count}} active",
       "RESET": "Reset filters"
+    },
+    "LIST": {
+      "RESULTS": "Showing {{shown}} of {{total}} identities",
+      "QUICK_ALL": "All",
+      "QUICK_ACTIVE": "Active",
+      "QUICK_SUSPENDED": "Suspended"
     },
     "TABLE": {
       "ADMIN": "Admin",
@@ -6118,7 +6496,8 @@
       "LAST_LOGIN": "Last login",
       "STATUS": "Status",
       "SECURITY": "Security",
-      "CUSTOM_ACCESS": "custom"
+      "CUSTOM_ACCESS": "custom",
+      "ACTIONS": "Actions"
     },
     "STATUS": {
       "ACTIVE": "Active",
@@ -6142,7 +6521,10 @@
       "EMAIL": "Email",
       "PHONE": "Phone",
       "DEPARTMENT": "Department",
+      "DEPARTMENT_HINT": "Optional internal org label (e.g. Operations, Finance, Support). Does not change permissions.",
       "TEAM": "Team",
+      "TEAM_HINT": "Optional team or unit within the department (e.g. Disputes desk).",
+      "OPTIONAL": "Optional",
       "ROLE_PRESET": "Role preset",
       "ACCESS_LEVEL": "Access level",
       "STATUS": "Status",
@@ -6161,6 +6543,31 @@
       "ESCALATION_EMAILS": "Escalation emails",
       "NOTES": "Notes"
     },
+    "ORG": {
+      "DEPARTMENTS": {
+        "EXECUTIVE": "Executive",
+        "OPERATIONS": "Operations",
+        "RISK_COMPLIANCE": "Risk & Compliance",
+        "FINANCE": "Finance",
+        "SUPPORT": "Customer Support",
+        "TECHNOLOGY": "Technology"
+      },
+      "TEAMS": {
+        "PLATFORM_LEADERSHIP": "Platform Leadership",
+        "ADMINISTRATION": "Administration",
+        "OPERATIONS_CORE": "Core Operations",
+        "VENDOR_OPERATIONS": "Vendor Operations",
+        "FLEET_OPERATIONS": "Fleet & Drivers",
+        "RISK_DESK": "Risk Desk",
+        "DISPUTES_REVIEW": "Disputes Review",
+        "FINANCE_OPS": "Finance Operations",
+        "SETTLEMENTS": "Settlements",
+        "SUPPORT_DESK": "Support Desk",
+        "EMAIL_CENTER": "Email Center",
+        "PLATFORM_ENGINEERING": "Platform Engineering",
+        "DATA_ANALYTICS": "Data & Analytics"
+      }
+    },
     "ACTIONS": {
       "RESET_PRESET": "Reset to preset",
       "RESEND_INVITE": "Resend invite",
@@ -6169,9 +6576,62 @@
       "SAVE": "Save changes",
       "BACK_TO_LIST": "Back to directory",
       "DUPLICATE": "Duplicate role",
-      "CREATE_USER_DESC": "Create a login account and attach it to an access role",
-      "ADD_USER": "Add User",
-      "ADDING_USER": "Adding user..."
+      "CREATE_USER_DESC": "Create a super admin panel staff account with global access",
+      "ADD_USER": "Add admin user",
+      "VIEW": "Open profile",
+      "EDIT_USER": "Edit access"
+    },
+    "CREATE": {
+      "MODAL_BADGE": "New admin account",
+      "SECTION_IDENTITY": "Identity",
+      "SECTION_IDENTITY_HINT": "Login credentials and contact details for the new admin staff account.",
+      "SECTION_ACCESS": "Role & access",
+      "SECTION_ACCESS_HINT": "Choose an internal super admin panel role. Vendor, driver, and customer accounts are created from their own modules.",
+      "ADMIN_ONLY_HINT": "Driver, vendor, and customer logins are not created here. Use Drivers, Vendors, or Customers workflows instead.",
+      "ROLE_PREVIEW": "Selected role",
+      "PANEL_SCOPE": "Panel scope",
+      "PERMISSIONS_COUNT": "{{count}} permissions",
+      "GENERATE_PASSWORD": "Generate secure password",
+      "PASSWORD_HINT": "The user must change this password on first login.",
+      "DEPARTMENT_PLACEHOLDER": "Select department",
+      "TEAM_PLACEHOLDER": "Select team",
+      "DEPARTMENT_ROLE_HINT": "Suggested from the selected role. You can change it if the staff sits in another unit.",
+      "TEAM_ROLE_HINT": "Teams are filtered by department. Changing the role updates the suggested team.",
+      "SCOPE_GLOBAL": "Global scope — no entity link required",
+      "SCOPE_VENDOR": "Link this account to an existing vendor company",
+      "SCOPE_DRIVER": "Select the driver, then set a temporary password and role for their existing login",
+      "DRIVER_PROVISION_MODE": "This grants access on the driver's existing account (same UserId as the driver profile). Profile fields below update that account.",
+      "VENDOR_OWNER_PROVISION_MODE": "The email matches the vendor owner. Access will be provisioned on the owner's existing account, not a new duplicate user.",
+      "PROVISION_ACCESS": "Provision access",
+      "PROVISION_EMAIL_LOCKED": "Email is tied to the existing account for this provision flow.",
+      "SCOPE_CUSTOMER": "Customer scope links to the created user automatically",
+      "SCOPE_ENTITY_LABEL": "Scope entity",
+      "SCOPE_ENTITY_LABEL_VENDOR": "Link to vendor account",
+      "SCOPE_ENTITY_LABEL_DRIVER": "Link to driver profile",
+      "SCOPE_ENTITY_DRIVER_HINT": "This does not create a new driver. Pick an existing driver from the drivers list — the login will be tied to that driver app profile.",
+      "SCOPE_ENTITY_VENDOR_HINT": "Pick an existing vendor on the platform. The login will be scoped to that vendor company or branch in the vendor panel.",
+      "SCOPE_ENTITY_PLACEHOLDER": "Select vendor or driver",
+      "SCOPE_ENTITY_PLACEHOLDER_VENDOR": "Select vendor from list",
+      "SCOPE_ENTITY_PLACEHOLDER_DRIVER": "Select driver from list",
+      "SCOPE_ENTITY_MANUAL": "Or paste entity ID (GUID)",
+      "SCOPE_ENTITY_MANUAL_HINT": "Use this when the list is empty or you already know the entity ID.",
+      "LOADING_ENTITIES": "Loading available entities...",
+      "NO_ENTITIES_VENDOR": "No vendors loaded. Enter a vendor ID manually or open the vendors page first.",
+      "NO_ENTITIES_DRIVER": "No drivers loaded. Enter a driver ID manually or open the drivers page first.",
+      "ENTITY_REQUIRED": "Vendor and driver accounts must be linked to an existing entity.",
+      "VALIDATION_REQUIRED": "Complete all required fields before creating the account.",
+      "FAILED": "Could not create the account. Review the role and scope, then try again.",
+      "ERRORS": {
+        "USER_ALREADY_EXISTS": "Email or phone number is already in use.",
+        "INVALID_SCOPE_ENTITY": "The selected scope entity does not exist.",
+        "ROLE_SCOPE_MISMATCH": "The selected role does not match the requested panel scope.",
+        "ROLE_INACTIVE": "The selected role is inactive.",
+        "IDENTITY_CREATE_FAILED": "Identity provider rejected the account creation.",
+        "IDENTITY_UPDATE_FAILED": "Could not update the existing account profile.",
+        "IDENTITY_ROLE_UPDATE_FAILED": "Could not assign the selected role to the account.",
+        "IDENTITY_PASSWORD_RESET_FAILED": "Could not set the temporary password.",
+        "ADMIN_PANEL_CREATE_ONLY": "Only super admin panel accounts can be created from this screen."
+      }
     },
     "SECURITY": {
       "MFA_ON": "MFA enabled",
@@ -6213,30 +6673,14 @@
         "DESCRIPTION": "Description",
         "DESCRIPTION_PLACEHOLDER": "A short role description...",
         "ACCESS_LEVEL": "Access level",
-        "PANEL_SCOPE": "Panel scope",
-        "CREATE_ROLE": "Create role"
+        "PANEL_SCOPE": "Panel scope"
       },
       "ACTIONS": {
         "CREATE_ROLE": "Create role",
         "DELETE_ROLE": "Delete role",
         "SAVE_CHANGES": "Save changes",
         "CLOSE": "Close",
-        "CANCEL": "Cancel",
-        "SAVING": "Saving...",
-        "CREATING_ROLE": "Creating role..."
-      },
-      "MESSAGES": {
-        "LOAD_ROLES_FAILED": "Unable to load roles right now.",
-        "LOAD_PERMISSIONS_FAILED": "Unable to load permissions right now.",
-        "SAVE_SUCCESS": "Role permissions saved successfully.",
-        "SAVE_FAILED": "Unable to save role permissions right now.",
-        "CREATE_SUCCESS": "Role created successfully.",
-        "CREATE_FAILED": "Unable to create the role right now.",
-        "DELETE_FAILED": "Unable to delete the role right now."
-      },
-      "ERROR_CODES": {
-        "ROLE_NAME_ALREADY_EXISTS": "This role name is already in use.",
-        "ROLE_IN_USE": "This role cannot be deleted because it is currently assigned."
+        "CANCEL": "Cancel"
       }
     },
     "DETAIL": {
@@ -6518,18 +6962,6 @@
       "CUSTOMER_ACCOUNT": {
         "NAME": "Customer Account",
         "DESC": "External customer identity focused on communication routing and lifecycle access."
-      }
-    },
-    "MESSAGES": {
-      "LOAD_FAILED": "Unable to load admin users right now.",
-      "LOAD_ROLES_FAILED": "Unable to load available roles right now.",
-      "CREATE_USER_SUCCESS": "Admin user created successfully."
-    },
-    "CREATE": {
-      "ERROR_CODES": {
-        "DUPLICATE_EMAIL": "This email address is already in use.",
-        "EMAIL_ALREADY_EXISTS": "This email address is already in use.",
-        "INVALID_ROLE": "The selected role is invalid."
       }
     }
   },
@@ -6886,6 +7318,7 @@
       "ACTIVATE": "Activate",
       "DEACTIVATE": "Deactivate",
       "SAVE_CHANGES": "Save changes",
+      "SAVING": "Saving...",
       "EDIT": "Edit",
       "DELETE": "Delete"
     },
@@ -7007,7 +7440,7 @@
         "CANCEL": "Cancel",
         "SELECT_VISIBLE": "Select visible results",
         "CLEAR_SELECTION": "Clear selection",
-        "SEARCHING": "Uploading..."
+        "LOADING": "Loading..."
       },
       "STATUS_OPTIONS": {
         "ALL": "All statuses",
@@ -7073,7 +7506,11 @@
         "INVALID_DATE_RANGE": "The end date must be after the start date.",
         "USAGE_LIMIT_GT_ZERO": "Usage limit must be greater than zero.",
         "VENDORS_REQUIRED": "Please select at least one vendor or enable the 'Apply to all' option.",
-        "DUPLICATE_CODE": "The coupon code already exists. Please choose another one."
+        "DUPLICATE_CODE": "The coupon code already exists. Please choose another one.",
+        "PER_USER_LIMIT_EXCEEDS_USAGE": "Per-user usage limit cannot exceed the total coupon usage limit.",
+        "VENDOR_NOT_FOUND": "One of the selected vendors does not exist or is no longer available.",
+        "COUPON_NOT_FOUND": "The requested coupon was not found or has been deleted.",
+        "TITLE_PLACEHOLDER": "Welcome discount"
       }
     },
     "FEATURED": {

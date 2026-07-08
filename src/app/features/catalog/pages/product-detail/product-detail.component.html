@@ -1,324 +1,324 @@
 <div class="min-h-screen bg-slate-50/50 px-3 py-4 text-slate-900 sm:px-5 md:px-7 lg:px-10 font-sans selection:bg-zadna-primary/20 selection:text-zadna-primary">
-    <app-detail-header
-        [breadcrumbs]="breadcrumbs"
-        [actionButtonLabel]="translate.instant('PRODUCTS.DETAIL.EDIT')"
-        [containerClass]="'mx-auto w-full max-w-[112rem] relative z-10'"
-        [headerClass]="'flex justify-between items-center px-0 py-4 md:py-6'"
-        actionButtonIcon="edit"
-        (backClick)="goBack()"
-        (actionClick)="editProduct()">
-    </app-detail-header>
+ <app-detail-header
+ [breadcrumbs]="breadcrumbs"
+ [actionButtonLabel]="translate.instant('PRODUCTS.DETAIL.EDIT')"
+ [containerClass]="'mx-auto w-full max-w-[112rem] relative z-10'"
+ [headerClass]="'flex justify-between items-center px-0 py-4 md:py-6'"
+ actionButtonIcon="edit"
+ (backClick)="goBack()"
+ (actionClick)="editProduct()">
+ </app-detail-header>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="mx-auto w-full max-w-[112rem]">
-        <div class="admin-skeleton-detail">
-            <div class="grid gap-8 lg:grid-cols-[26rem_1fr]">
-                <span class="admin-skeleton admin-skeleton-line rounded-[2rem]" style="height: 22rem"></span>
-                <div class="space-y-5">
-                    <span class="admin-skeleton admin-skeleton-line sm w-1/4"></span>
-                    <span class="admin-skeleton admin-skeleton-line lg w-2/3"></span>
-                    <span class="admin-skeleton admin-skeleton-line w-5/6"></span>
-                    <div class="admin-skeleton-detail-grid">
-                        <span *ngFor="let item of [1,2,3,4]" class="admin-skeleton admin-skeleton-chip"></span>
-                    </div>
-                    <div class="admin-skeleton-card-grid">
-                        <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
-                            <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
-                            <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+ <!-- Loading State -->
+ <div *ngIf="isLoading" class="mx-auto w-full max-w-[112rem]">
+ <div class="admin-skeleton-detail">
+ <div class="grid gap-8 lg:grid-cols-[26rem_1fr]">
+ <span class="admin-skeleton admin-skeleton-line rounded-[2rem]" style="height: 22rem"></span>
+ <div class="space-y-5">
+ <span class="admin-skeleton admin-skeleton-line sm w-1/4"></span>
+ <span class="admin-skeleton admin-skeleton-line lg w-2/3"></span>
+ <span class="admin-skeleton admin-skeleton-line w-5/6"></span>
+ <div class="admin-skeleton-detail-grid">
+ <span *ngFor="let item of [1,2,3,4]" class="admin-skeleton admin-skeleton-chip"></span>
+ </div>
+ <div class="admin-skeleton-card-grid">
+ <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
+ <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+ <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-    <!-- Main Content -->
-    <main *ngIf="!isLoading && product" class="mx-auto w-full max-w-[112rem] space-y-8">
+ <!-- Main Content -->
+ <main *ngIf="!isLoading && product" class="mx-auto w-full max-w-[112rem] space-y-8">
 
-        <!-- Hero Section: Image + Identity -->
-        <section class="grid items-start gap-8 lg:grid-cols-[26rem_1fr] xl:grid-cols-[30rem_1fr]">
-            <!-- Image Gallery -->
-            <div class="lg:sticky lg:top-8 flex flex-col gap-4">
-                <div class="aspect-[4/3] w-full overflow-hidden rounded-[2rem] bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5 transition-transform duration-500 hover:scale-[1.01]">
-                    <img [src]="getMainImage()" [alt]="displayName"
-                        class="h-full w-full object-contain transition-transform duration-500 hover:scale-[1.05]">
-                </div>
-                <div *ngIf="activeGalleryImages.length > 1" class="grid grid-cols-5 gap-3">
-                    <button *ngFor="let image of activeGalleryImages; let i = index" type="button" (click)="selectImage(i)"
-                        class="aspect-square overflow-hidden rounded-[1.25rem] bg-white p-1.5 ring-1 shadow-sm transition-all duration-300 focus:outline-none"
-                        [ngClass]="selectedImageIndex === i ? 'ring-2 ring-zadna-primary shadow-md scale-[1.02]' : 'ring-slate-900/5 hover:-translate-y-1 hover:shadow-md hover:ring-slate-200'">
-                        <div class="h-full w-full overflow-hidden rounded-[0.85rem]">
-                            <img [src]="image" [alt]="('PRODUCTS.DETAIL.IMAGE_ALT' | translate) + ' ' + (i + 1)" class="h-full w-full object-cover">
-                        </div>
-                    </button>
-                </div>
-            </div>
+ <!-- Hero Section: Image + Identity -->
+ <section class="grid items-start gap-8 lg:grid-cols-[26rem_1fr] xl:grid-cols-[30rem_1fr]">
+ <!-- Image Gallery -->
+ <div class="lg:sticky lg:top-8 flex flex-col gap-4">
+ <div class="aspect-[4/3] w-full overflow-hidden rounded-[2rem] bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5 transition-transform duration-500 hover:scale-[1.01]">
+ <img [src]="getMainImage()" [alt]="displayName"
+ class="h-full w-full object-contain transition-transform duration-500 hover:scale-[1.05]">
+ </div>
+ <div *ngIf="activeGalleryImages.length > 1" class="grid grid-cols-5 gap-3">
+ <button *ngFor="let image of activeGalleryImages; let i = index" type="button" (click)="selectImage(i)"
+ class="aspect-square overflow-hidden rounded-[1.25rem] bg-white p-1.5 ring-1 shadow-sm transition-all duration-300 focus:outline-none"
+ [ngClass]="selectedImageIndex === i ? 'ring-2 ring-zadna-primary shadow-md scale-[1.02]' : 'ring-slate-900/5 hover:-translate-y-1 hover:shadow-md hover:ring-slate-200'">
+ <div class="h-full w-full overflow-hidden rounded-[0.85rem]">
+ <img [src]="image" [alt]="('PRODUCTS.DETAIL.IMAGE_ALT' | translate) + ' ' + (i + 1)" class="h-full w-full object-cover">
+ </div>
+ </button>
+ </div>
+ </div>
 
-            <!-- Product Identity -->
-            <section class="overflow-hidden rounded-[2.5rem] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5">
-                <div class="border-b border-slate-100 bg-[radial-gradient(circle_at_top_right,_rgba(6,182,212,0.12),_transparent_34%),linear-gradient(135deg,_#ffffff_0%,_#f8fbfc_100%)] p-6 sm:p-8 lg:p-10">
-                    <!-- Status + ID -->
-                    <div class="mb-5 flex flex-wrap items-center gap-3">
-                        <app-status-pill [label]="getProductStatusLabel(product.status)" [variant]="getProductStatusVariant(product.status)"></app-status-pill>
-                        <span class="inline-flex h-8 max-w-full items-center rounded-full bg-slate-50 px-4 text-[11px] font-bold text-slate-500 ring-1 ring-slate-200/60" dir="ltr">
-                            <span class="truncate">ID: {{ product.id }}</span>
-                        </span>
-                        <span *ngIf="product.variantGroupId" class="inline-flex h-8 items-center rounded-full bg-cyan-50 px-4 text-[11px] font-bold text-cyan-700 ring-1 ring-cyan-200/60" dir="ltr">
-                            <span class="material-symbols-outlined me-1 text-[14px]">link</span>
-                            {{ activeLang === 'ar' ? 'مجموعة أحجام' : 'Size group' }}
-                        </span>
-                    </div>
+ <!-- Product Identity -->
+ <section class="overflow-hidden rounded-[2.5rem] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5">
+ <div class="border-b border-slate-100 bg-[radial-gradient(circle_at_top_right,_rgba(6,182,212,0.12),_transparent_34%),linear-gradient(135deg,_#ffffff_0%,_#f8fbfc_100%)] p-6 sm:p-8 lg:p-10">
+ <!-- Status + ID -->
+ <div class="mb-5 flex flex-wrap items-center gap-3">
+ <app-status-pill [label]="getProductStatusLabel(product.status)" [variant]="getProductStatusVariant(product.status)"></app-status-pill>
+ <span class="inline-flex h-8 max-w-full items-center rounded-full bg-slate-50 px-4 text-[11px] font-bold text-slate-500 ring-1 ring-slate-200/60" dir="ltr">
+ <span class="truncate">ID: {{ product.id }}</span>
+ </span>
+ <span *ngIf="product.variantGroupId" class="inline-flex h-8 items-center rounded-full bg-cyan-50 px-4 text-[11px] font-bold text-cyan-700 ring-1 ring-cyan-200/60" dir="ltr">
+ <span class="material-symbols-outlined me-1 text-[14px]">link</span>
+ {{ activeLang === 'ar' ? 'مجموعة أحجام' : 'Size group' }}
+ </span>
+ </div>
 
-                    <!-- Name -->
-                    <div class="border-b border-slate-100 pb-8">
-                        <p class="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-zadna-primary/80">{{ 'PRODUCTS.DETAIL.PRODUCT_NAME' | translate }}</p>
-                        <h1 class="text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-[2.75rem]">{{ displayName }}</h1>
-                        <p *ngIf="secondaryName && secondaryName !== displayName" class="mt-3 text-base font-medium leading-relaxed text-slate-500">{{ secondaryName }}</p>
-                    </div>
+ <!-- Name -->
+ <div class="border-b border-slate-100 pb-8">
+ <p class="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-zadna-primary/80">{{ 'PRODUCTS.DETAIL.PRODUCT_NAME' | translate }}</p>
+ <h1 class="text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-[2.75rem]">{{ displayName }}</h1>
+ <p *ngIf="secondaryName && secondaryName!== displayName" class="mt-3 text-base font-medium leading-relaxed text-slate-500">{{ secondaryName }}</p>
+ </div>
 
-                    <!-- Size Switcher — click any size to load its full data -->
-                    <div *ngIf="sizeCards.length > 1" class="mt-6 border-b border-slate-100 pb-6">
-                        <p class="mb-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-                            {{ activeLang === 'ar' ? 'اختر الحجم' : 'Select size' }}
-                        </p>
-                        <div class="flex flex-wrap gap-2">
-                            <button *ngFor="let card of sizeCards; trackBy: trackBySizeCard"
-                                type="button"
-                                (click)="openSizeCard(card.id, card.isCurrent)"
-                                class="inline-flex items-center gap-2.5 rounded-[1.2rem] border px-4 py-3 text-start transition-all duration-200"
-                                [ngClass]="card.isCurrent
-                                    ? 'border-cyan-300 bg-cyan-50 ring-2 ring-cyan-200/60 shadow-sm'
-                                    : 'border-slate-200 bg-white hover:border-cyan-200 hover:bg-cyan-50/40 hover:shadow-sm cursor-pointer'">
-                                <!-- Thumbnail -->
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200/60">
-                                    <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.size" class="h-full w-full object-contain p-1">
-                                    <span *ngIf="!card.imageUrl" class="material-symbols-outlined text-[20px] text-slate-300">inventory_2</span>
-                                </div>
-                                <!-- Size Label -->
-                                <div class="min-w-0">
-                                    <span class="block text-sm font-black" [ngClass]="card.isCurrent ? 'text-cyan-900' : 'text-slate-800'">{{ card.size }}</span>
-                                    <span *ngIf="card.barcode" class="block text-[10px] font-bold text-slate-400 font-mono" dir="ltr">{{ card.barcode }}</span>
-                                </div>
-                                <!-- Current indicator -->
-                                <span *ngIf="card.isCurrent" class="material-symbols-outlined ms-auto text-[16px] text-cyan-600">check_circle</span>
-                            </button>
-                        </div>
-                    </div>
+ <!-- Size Switcher — click any size to load its full data -->
+ <div *ngIf="sizeCards.length > 1" class="mt-6 border-b border-slate-100 pb-6">
+ <p class="mb-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+ {{ activeLang === 'ar' ? 'اختر الحجم' : 'Select size' }}
+ </p>
+ <div class="flex flex-wrap gap-2">
+ <button *ngFor="let card of sizeCards; trackBy: trackBySizeCard"
+ type="button"
+ (click)="openSizeCard(card.id, card.isCurrent)"
+ class="inline-flex items-center gap-2.5 rounded-[1.2rem] border px-4 py-3 text-start transition-all duration-200"
+ [ngClass]="card.isCurrent
+ ? 'border-cyan-300 bg-cyan-50 ring-2 ring-cyan-200/60 shadow-sm'
+ : 'border-slate-200 bg-white hover:border-cyan-200 hover:bg-cyan-50/40 hover:shadow-sm cursor-pointer'">
+ <!-- Thumbnail -->
+ <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200/60">
+ <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.size" class="h-full w-full object-contain p-1">
+ <span *ngIf="!card.imageUrl" class="material-symbols-outlined text-[20px] text-slate-300">inventory_2</span>
+ </div>
+ <!-- Size Label -->
+ <div class="min-w-0">
+ <span class="block text-sm font-black" [ngClass]="card.isCurrent ? 'text-cyan-900' : 'text-slate-800'">{{ card.size }}</span>
+ <span *ngIf="card.barcode" class="block text-[10px] font-bold text-slate-400 font-mono" dir="ltr">{{ card.barcode }}</span>
+ </div>
+ <!-- Current indicator -->
+ <span *ngIf="card.isCurrent" class="material-symbols-outlined ms-auto text-[16px] text-cyan-600">check_circle</span>
+ </button>
+ </div>
+ </div>
 
-                    <!-- Quick Stats Grid -->
-                    <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
-                            <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ activeLang === 'ar' ? 'الحجم' : 'Size' }}</span>
-                            <strong class="mt-2 block text-lg font-black text-slate-950">{{ resolvedDisplaySize }}</strong>
-                        </div>
-                        <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
-                            <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ activeLang === 'ar' ? 'العبوة' : 'Package' }}</span>
-                            <strong class="mt-2 block text-lg font-black text-slate-950">{{ resolvedPackageTypeName }}</strong>
-                        </div>
-                        <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
-                            <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'PRODUCTS.DETAIL.CATEGORY' | translate }}</span>
-                            <strong class="mt-2 block text-lg font-black text-slate-950">{{ resolvedCategoryName }}</strong>
-                            <span class="mt-1 block text-xs font-medium text-slate-500">{{ resolvedBrandName }}</span>
-                        </div>
-                        <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
-                            <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ activeLang === 'ar' ? 'باركود' : 'Barcode' }}</span>
-                            <strong class="mt-2 block text-sm font-black text-slate-950 font-mono tracking-wider" dir="ltr">{{ displayBarcode }}</strong>
-                        </div>
-                    </div>
-                </div>
+ <!-- Quick Stats Grid -->
+ <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+ <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
+ <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ activeLang === 'ar' ? 'الحجم' : 'Size' }}</span>
+ <strong class="mt-2 block text-lg font-black text-slate-950">{{ resolvedDisplaySize }}</strong>
+ </div>
+ <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
+ <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ activeLang === 'ar' ? 'العبوة' : 'Package' }}</span>
+ <strong class="mt-2 block text-lg font-black text-slate-950">{{ resolvedPackageTypeName }}</strong>
+ </div>
+ <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
+ <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ 'PRODUCTS.DETAIL.CATEGORY' | translate }}</span>
+ <strong class="mt-2 block text-lg font-black text-slate-950">{{ resolvedCategoryName }}</strong>
+ <span class="mt-1 block text-xs font-medium text-slate-500">{{ resolvedBrandName }}</span>
+ </div>
+ <div class="rounded-[1.6rem] border border-slate-200/70 bg-white/90 p-5 shadow-sm">
+ <span class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">{{ activeLang === 'ar' ? 'باركود' : 'Barcode' }}</span>
+ <strong class="mt-2 block text-sm font-black text-slate-950 font-mono tracking-wider" dir="ltr">{{ displayBarcode }}</strong>
+ </div>
+ </div>
+ </div>
 
-                <!-- Description -->
-                <div class="p-6 sm:p-8 lg:p-10">
-                    <div class="rounded-[2rem] bg-slate-50/60 p-6 ring-1 ring-slate-900/5 sm:p-8">
-                        <div class="mb-4 inline-flex items-center justify-center rounded-full bg-white px-4 py-1.5 ring-1 ring-slate-200/60">
-                            <span class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">{{ 'PRODUCTS.DETAIL.DESCRIPTION' | translate }}</span>
-                        </div>
-                        <p class="max-w-4xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg" [class.text-slate-400]="!productDescription">
-                            {{ productDescription || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}
-                        </p>
-                    </div>
-                </div>
-            </section>
-        </section>
+ <!-- Description -->
+ <div class="p-6 sm:p-8 lg:p-10">
+ <div class="rounded-[2rem] bg-slate-50/60 p-6 ring-1 ring-slate-900/5 sm:p-8">
+ <div class="mb-4 inline-flex items-center justify-center rounded-full bg-white px-4 py-1.5 ring-1 ring-slate-200/60">
+ <span class="text-[11px] font-black uppercase tracking-[0.16em] text-slate-500">{{ 'PRODUCTS.DETAIL.DESCRIPTION' | translate }}</span>
+ </div>
+ <p class="max-w-4xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg" [class.text-slate-400]="!productDescription">
+ {{ productDescription || ('PRODUCTS.DETAIL.NOT_SPECIFIED' | translate) }}
+ </p>
+ </div>
+ </div>
+ </section>
+ </section>
 
-        <!-- ═══════════════════════════════════════════════════════════════
-             VARIANT DETAILS — Full variant identity cards for admin reference
-             ═══════════════════════════════════════════════════════════════ -->
-        <section *ngIf="sizeCards.length > 1" class="rounded-[2.5rem] bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5 sm:p-8 lg:p-10">
-            <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h2 class="text-xl font-black text-slate-900">{{ activeLang === 'ar' ? 'تفاصيل الأحجام' : 'Size Details' }}</h2>
-                    <p class="mt-2 text-sm font-medium text-slate-500">
-                        {{ activeLang === 'ar' ? 'كل حجم كيان مستقل — اضغط على أي حجم لعرض بياناته الكاملة' : 'Each size is independent — click any to view its full data' }}
-                    </p>
-                </div>
-                <div class="flex items-center gap-2 rounded-full bg-cyan-50 p-1.5 ring-1 ring-cyan-200/60">
-                    <span class="flex h-8 items-center rounded-full bg-white px-4 text-xs font-black text-cyan-800 shadow-sm">
-                        {{ sizeCards.length }} {{ activeLang === 'ar' ? 'حجم' : 'sizes' }}
-                    </span>
-                </div>
-            </div>
+ <!-- ═══════════════════════════════════════════════════════════════
+ VARIANT DETAILS — Full variant identity cards for admin reference
+ ═══════════════════════════════════════════════════════════════ -->
+ <section *ngIf="sizeCards.length > 1" class="rounded-[2.5rem] bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5 sm:p-8 lg:p-10">
+ <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+ <div>
+ <h2 class="text-xl font-black text-slate-900">{{ activeLang === 'ar' ? 'تفاصيل الأحجام' : 'Size Details' }}</h2>
+ <p class="mt-2 text-sm font-medium text-slate-500">
+ {{ activeLang === 'ar' ? 'كل حجم كيان مستقل — اضغط على أي حجم لعرض بياناته الكاملة' : 'Each size is independent — click any to view its full data' }}
+ </p>
+ </div>
+ <div class="flex items-center gap-2 rounded-full bg-cyan-50 p-1.5 ring-1 ring-cyan-200/60">
+ <span class="flex h-8 items-center rounded-full bg-white px-4 text-xs font-black text-cyan-800 shadow-sm">
+ {{ sizeCards.length }} {{ activeLang === 'ar' ? 'حجم' : 'sizes' }}
+ </span>
+ </div>
+ </div>
 
-            <!-- Variant Cards Grid -->
-            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                <div *ngFor="let card of sizeCards; trackBy: trackBySizeCard"
-                    class="group relative overflow-hidden rounded-[1.8rem] border bg-white p-5 shadow-sm transition-all duration-300"
-                    [ngClass]="card.isCurrent
-                        ? 'border-cyan-200 ring-2 ring-cyan-100 shadow-cyan-100/50'
-                        : 'border-slate-200/70 hover:-translate-y-1 hover:shadow-lg hover:border-slate-300 cursor-pointer'"
-                    (click)="openSizeCard(card.id, card.isCurrent)">
+ <!-- Variant Cards Grid -->
+ <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+ <div *ngFor="let card of sizeCards; trackBy: trackBySizeCard"
+ class="group relative overflow-hidden rounded-[1.8rem] border bg-white p-5 shadow-sm transition-all duration-300"
+ [ngClass]="card.isCurrent
+ ? 'border-cyan-200 ring-2 ring-cyan-100 shadow-cyan-100/50'
+ : 'border-slate-200/70 hover:-translate-y-1 hover:shadow-lg hover:border-slate-300 cursor-pointer'"
+ (click)="openSizeCard(card.id, card.isCurrent)">
 
-                    <!-- Current Badge -->
-                    <div *ngIf="card.isCurrent" class="absolute end-4 top-4">
-                        <span class="inline-flex items-center gap-1 rounded-full bg-cyan-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-700 ring-1 ring-cyan-200/60">
-                            <span class="material-symbols-outlined text-[12px]">check_circle</span>
-                            {{ activeLang === 'ar' ? 'الحالي' : 'Current' }}
-                        </span>
-                    </div>
+ <!-- Current Badge -->
+ <div *ngIf="card.isCurrent" class="absolute end-4 top-4">
+ <span class="inline-flex items-center gap-1 rounded-full bg-cyan-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-700 ring-1 ring-cyan-200/60">
+ <span class="material-symbols-outlined text-[12px]">check_circle</span>
+ {{ activeLang === 'ar' ? 'الحالي' : 'Current' }}
+ </span>
+ </div>
 
-                    <!-- Navigate hint for non-current -->
-                    <div *ngIf="!card.isCurrent" class="absolute end-4 top-4 opacity-0 transition-opacity group-hover:opacity-100">
-                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-500">
-                            <span class="material-symbols-outlined text-[12px]">open_in_new</span>
-                            {{ activeLang === 'ar' ? 'عرض' : 'View' }}
-                        </span>
-                    </div>
+ <!-- Navigate hint for non-current -->
+ <div *ngIf="!card.isCurrent" class="absolute end-4 top-4 opacity-0 transition-opacity group-hover:opacity-100">
+ <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-500">
+ <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+ {{ activeLang === 'ar' ? 'عرض' : 'View' }}
+ </span>
+ </div>
 
-                    <!-- Card Content -->
-                    <div class="flex items-start gap-4">
-                        <!-- Variant Image Thumbnail -->
-                        <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[1.1rem] bg-slate-50 ring-1 ring-slate-200/60">
-                            <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.label" class="h-full w-full object-contain p-1.5">
-                            <span *ngIf="!card.imageUrl" class="material-symbols-outlined text-[28px] text-slate-300">inventory_2</span>
-                        </div>
+ <!-- Card Content -->
+ <div class="flex items-start gap-4">
+ <!-- Variant Image Thumbnail -->
+ <div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-[1.1rem] bg-slate-50 ring-1 ring-slate-200/60">
+ <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.label" class="h-full w-full object-contain p-1.5">
+ <span *ngIf="!card.imageUrl" class="material-symbols-outlined text-[28px] text-slate-300">inventory_2</span>
+ </div>
 
-                        <!-- Variant Info -->
-                        <div class="min-w-0 flex-1 pt-0.5">
-                            <p class="truncate text-sm font-black text-slate-900">{{ card.size }}</p>
-                            <p class="mt-1 truncate text-xs font-bold text-slate-500">{{ card.subtitle }}</p>
-                        </div>
-                    </div>
+ <!-- Variant Info -->
+ <div class="min-w-0 flex-1 pt-0.5">
+ <p class="truncate text-sm font-black text-slate-900">{{ card.size }}</p>
+ <p class="mt-1 truncate text-xs font-bold text-slate-500">{{ card.subtitle }}</p>
+ </div>
+ </div>
 
-                    <!-- Variant Meta -->
-                    <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
-                        <span *ngIf="card.barcode" class="inline-flex items-center rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-600 ring-1 ring-slate-200/60 font-mono" dir="ltr">
-                            <span class="material-symbols-outlined me-1 text-[12px]">qr_code_2</span>
-                            {{ card.barcode }}
-                        </span>
-                        <span *ngIf="card.slug" class="inline-flex items-center rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-500 ring-1 ring-slate-200/60 font-mono" dir="ltr">
-                            /{{ card.slug }}
-                        </span>
-                        <span class="inline-flex items-center rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200/60 font-mono" dir="ltr">
-                            {{ card.id | slice:0:8 }}…
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </section>
+ <!-- Variant Meta -->
+ <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+ <span *ngIf="card.barcode" class="inline-flex items-center rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-600 ring-1 ring-slate-200/60 font-mono" dir="ltr">
+ <span class="material-symbols-outlined me-1 text-[12px]">qr_code_2</span>
+ {{ card.barcode }}
+ </span>
+ <span *ngIf="card.slug" class="inline-flex items-center rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-500 ring-1 ring-slate-200/60 font-mono" dir="ltr">
+ /{{ card.slug }}
+ </span>
+ <span class="inline-flex items-center rounded-lg bg-slate-50 px-2.5 py-1 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200/60 font-mono" dir="ltr">
+ {{ card.id | slice:0:8 }}…
+ </span>
+ </div>
+ </div>
+ </div>
+ </section>
 
-        <!-- Vendors Table -->
-        <section class="rounded-[2.5rem] bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5 sm:p-8 lg:p-10">
-            <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h2 class="text-xl font-black text-slate-900">{{ 'PRODUCTS.DETAIL.VENDORS_TABLE' | translate }}</h2>
-                    <p class="mt-2 text-sm font-medium text-slate-500">{{ activeLang === 'ar' ? 'التجار المرتبطين وتوفر المخزون' : 'Linked vendors and stock availability' }}</p>
-                </div>
-                <div class="flex items-center gap-2 rounded-full bg-slate-50 p-1.5 ring-1 ring-slate-200/60">
-                    <span class="flex h-8 items-center rounded-full bg-white px-4 text-xs font-black text-slate-700 shadow-sm">
-                        {{ vendorCount }} {{ activeLang === 'ar' ? 'تاجر' : 'vendors' }}
-                    </span>
-                </div>
-            </div>
+ <!-- Vendors Table -->
+ <section class="rounded-[2.5rem] bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5 sm:p-8 lg:p-10">
+ <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+ <div>
+ <h2 class="text-xl font-black text-slate-900">{{ 'PRODUCTS.DETAIL.VENDORS_TABLE' | translate }}</h2>
+ <p class="mt-2 text-sm font-medium text-slate-500">{{ activeLang === 'ar' ? 'التجار المرتبطين وتوفر المخزون' : 'Linked vendors and stock availability' }}</p>
+ </div>
+ <div class="flex items-center gap-2 rounded-full bg-slate-50 p-1.5 ring-1 ring-slate-200/60">
+ <span class="flex h-8 items-center rounded-full bg-white px-4 text-xs font-black text-slate-700 shadow-sm">
+ {{ vendorCount }} {{ activeLang === 'ar' ? 'تاجر' : 'vendors' }}
+ </span>
+ </div>
+ </div>
 
-            <app-data-table
-                [data]="vendorSnapshots"
-                [columns]="vendorTableColumns"
-                [containerClass]="'extraordinary-table-container rounded-[1.5rem] overflow-hidden border border-slate-100'"
-                emptyStateTitle="No vendors yet"
-                emptyStateMessage="This product is not linked to vendor stock yet.">
-                <ng-template #customColumn let-vendor let-column="column">
-                    <ng-container *ngIf="column.key === 'vendor'">
-                        <div class="flex items-center gap-4 text-start">
-                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.15rem] bg-slate-50 ring-1 ring-slate-200/60">
-                                <div class="h-3 w-3 rounded-full shadow-sm" [class]="vendor.colorClass"></div>
-                            </div>
-                            <span class="truncate text-sm font-bold text-slate-900">{{ getVendorName(vendor) }}</span>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngIf="column.key === 'quantity'">
-                        <div class="mx-auto flex max-w-[16rem] items-center gap-4">
-                            <span class="w-12 shrink-0 text-end text-sm font-black text-slate-800">{{ vendor.quantity | number:'1.0-0' }}</span>
-                            <div class="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
-                                <div class="h-full rounded-full bg-zadna-primary transition-all duration-1000 ease-out" [style.width]="getVendorRatioWidth(vendor)"></div>
-                            </div>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngIf="column.key === 'price'">
-                        <div class="flex justify-center">
-                            <span class="inline-flex items-center rounded-lg bg-green-50 px-3 py-1 text-sm font-black text-green-700 ring-1 ring-green-600/20">
-                                {{ vendor.price | number:'1.2-2' }} <span class="ms-1 text-[10px]">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                            </span>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngIf="column.key === 'time'">
-                        <div class="flex justify-center">
-                            <span class="inline-flex items-center rounded-full bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-500 ring-1 ring-slate-200/60">
-                                <span class="material-symbols-outlined me-1.5 text-[14px]">schedule</span>
-                                {{ vendor.timeKey | translate }}
-                            </span>
-                        </div>
-                    </ng-container>
-                </ng-template>
+ <app-data-table
+ [data]="vendorSnapshots"
+ [columns]="vendorTableColumns"
+ [containerClass]="'extraordinary-table-container rounded-[1.5rem] overflow-hidden border border-slate-100'"
+ emptyStateTitle="No vendors yet"
+ emptyStateMessage="This product is not linked to vendor stock yet.">
+ <ng-template #customColumn let-vendor let-column="column">
+ <ng-container *ngIf="column.key === 'vendor'">
+ <div class="flex items-center gap-4 text-start">
+ <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1.15rem] bg-slate-50 ring-1 ring-slate-200/60">
+ <div class="h-3 w-3 rounded-full shadow-sm" [class]="vendor.colorClass"></div>
+ </div>
+ <span class="truncate text-sm font-bold text-slate-900">{{ getVendorName(vendor) }}</span>
+ </div>
+ </ng-container>
+ <ng-container *ngIf="column.key === 'quantity'">
+ <div class="mx-auto flex max-w-[16rem] items-center gap-4">
+ <span class="w-12 shrink-0 text-end text-sm font-black text-slate-800">{{ vendor.quantity | number:'1.0-0' }}</span>
+ <div class="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+ <div class="h-full rounded-full bg-zadna-primary transition-all duration-1000 ease-out" [style.width]="getVendorRatioWidth(vendor)"></div>
+ </div>
+ </div>
+ </ng-container>
+ <ng-container *ngIf="column.key === 'price'">
+ <div class="flex justify-center">
+ <span class="inline-flex items-center rounded-lg bg-green-50 px-3 py-1 text-sm font-black text-green-700 ring-1 ring-green-600/20">
+ {{ vendor.price | number:'1.2-2' }} <span class="ms-1 text-[10px]">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+ </span>
+ </div>
+ </ng-container>
+ <ng-container *ngIf="column.key === 'time'">
+ <div class="flex justify-center">
+ <span class="inline-flex items-center rounded-full bg-slate-50 px-3 py-1.5 text-[11px] font-bold text-slate-500 ring-1 ring-slate-200/60">
+ <span class="material-symbols-outlined me-1.5 text-[14px]">schedule</span>
+ {{ vendor.timeKey | translate }}
+ </span>
+ </div>
+ </ng-container>
+ </ng-template>
 
-                <ng-template #mobileCard let-vendor>
-                    <div class="space-y-4 rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-200/60 transition-transform duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white">
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="flex min-w-0 items-center gap-3">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white ring-1 ring-slate-200/60 shadow-sm">
-                                    <div class="h-2.5 w-2.5 rounded-full" [class]="vendor.colorClass"></div>
-                                </div>
-                                <span class="truncate text-sm font-black text-slate-900">{{ getVendorName(vendor) }}</span>
-                            </div>
-                            <span class="inline-flex items-center shrink-0 rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200/60 shadow-sm">
-                                <span class="material-symbols-outlined me-1 text-[12px]">schedule</span>
-                                {{ vendor.timeKey | translate }}
-                            </span>
-                        </div>
-                        <div class="space-y-4 pt-2">
-                            <div class="flex items-center justify-between gap-3">
-                                <span class="text-xs font-bold text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
-                                <div class="flex min-w-[9rem] items-center gap-3">
-                                    <span class="shrink-0 text-sm font-black text-slate-800">{{ vendor.quantity | number:'1.0-0' }}</span>
-                                    <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-200/60 shadow-inner">
-                                        <div class="h-full rounded-full bg-zadna-primary transition-all duration-1000 ease-out" [style.width]="getVendorRatioWidth(vendor)"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between gap-3 border-t border-slate-200/60 pt-3">
-                                <span class="text-xs font-bold text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
-                                <span class="inline-flex items-center rounded-lg bg-green-50 px-2.5 py-1 text-sm font-black text-green-700 ring-1 ring-green-600/20">
-                                    {{ vendor.price | number:'1.2-2' }} <span class="ms-1 text-[10px]">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </ng-template>
-            </app-data-table>
-        </section>
-    </main>
+ <ng-template #mobileCard let-vendor>
+ <div class="space-y-4 rounded-[1.5rem] bg-slate-50 p-5 ring-1 ring-slate-200/60 transition-transform duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-white">
+ <div class="flex items-center justify-between gap-4">
+ <div class="flex min-w-0 items-center gap-3">
+ <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white ring-1 ring-slate-200/60 shadow-sm">
+ <div class="h-2.5 w-2.5 rounded-full" [class]="vendor.colorClass"></div>
+ </div>
+ <span class="truncate text-sm font-black text-slate-900">{{ getVendorName(vendor) }}</span>
+ </div>
+ <span class="inline-flex items-center shrink-0 rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-slate-400 ring-1 ring-slate-200/60 shadow-sm">
+ <span class="material-symbols-outlined me-1 text-[12px]">schedule</span>
+ {{ vendor.timeKey | translate }}
+ </span>
+ </div>
+ <div class="space-y-4 pt-2">
+ <div class="flex items-center justify-between gap-3">
+ <span class="text-xs font-bold text-slate-500">{{ 'PRODUCTS.DETAIL.AVAILABLE_QTY' | translate }}</span>
+ <div class="flex min-w-[9rem] items-center gap-3">
+ <span class="shrink-0 text-sm font-black text-slate-800">{{ vendor.quantity | number:'1.0-0' }}</span>
+ <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-200/60 shadow-inner">
+ <div class="h-full rounded-full bg-zadna-primary transition-all duration-1000 ease-out" [style.width]="getVendorRatioWidth(vendor)"></div>
+ </div>
+ </div>
+ </div>
+ <div class="flex items-center justify-between gap-3 border-t border-slate-200/60 pt-3">
+ <span class="text-xs font-bold text-slate-500">{{ 'PRODUCTS.DETAIL.UNIT_PRICE' | translate }}</span>
+ <span class="inline-flex items-center rounded-lg bg-green-50 px-2.5 py-1 text-sm font-black text-green-700 ring-1 ring-green-600/20">
+ {{ vendor.price | number:'1.2-2' }} <span class="ms-1 text-[10px]">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
+ </span>
+ </div>
+ </div>
+ </div>
+ </ng-template>
+ </app-data-table>
+ </section>
+ </main>
 
-    <!-- Not Found State -->
-    <div *ngIf="!isLoading && !product" class="mx-auto flex min-h-[32rem] w-full max-w-[112rem] items-center justify-center">
-        <div class="relative overflow-hidden rounded-[2.5rem] bg-white px-10 py-16 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5">
-            <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-slate-50 blur-3xl"></div>
-            <div class="relative z-10 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-slate-50 text-slate-400 ring-1 ring-slate-100 shadow-sm">
-                <span class="material-symbols-outlined text-[40px]">inventory_2</span>
-            </div>
-            <h3 class="relative z-10 mb-3 text-2xl font-black text-slate-900">{{ 'PRODUCTS.DETAIL.NOT_FOUND' | translate }}</h3>
-            <p class="relative z-10 mb-8 text-base font-medium text-slate-500">{{ 'PRODUCTS.DETAIL.NOT_FOUND_DESC' | translate }}</p>
-            <div class="relative z-10">
-                <app-button variant="primary" (btnClick)="goBack()">{{ 'PRODUCTS.DETAIL.BACK_TO_PRODUCTS' | translate }}</app-button>
-            </div>
-        </div>
-    </div>
+ <!-- Not Found State -->
+ <div *ngIf="!isLoading &&!product" class="mx-auto flex min-h-[32rem] w-full max-w-[112rem] items-center justify-center">
+ <div class="relative overflow-hidden rounded-[2.5rem] bg-white px-10 py-16 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-900/5">
+ <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-slate-50 blur-3xl"></div>
+ <div class="relative z-10 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-slate-50 text-slate-400 ring-1 ring-slate-100 shadow-sm">
+ <span class="material-symbols-outlined text-[40px]">inventory_2</span>
+ </div>
+ <h3 class="relative z-10 mb-3 text-2xl font-black text-slate-900">{{ 'PRODUCTS.DETAIL.NOT_FOUND' | translate }}</h3>
+ <p class="relative z-10 mb-8 text-base font-medium text-slate-500">{{ 'PRODUCTS.DETAIL.NOT_FOUND_DESC' | translate }}</p>
+ <div class="relative z-10">
+ <app-button variant="primary" (btnClick)="goBack()">{{ 'PRODUCTS.DETAIL.BACK_TO_PRODUCTS' | translate }}</app-button>
+ </div>
+ </div>
+ </div>
 </div>

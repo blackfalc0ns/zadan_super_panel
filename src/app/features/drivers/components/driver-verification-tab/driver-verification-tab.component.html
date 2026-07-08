@@ -1,203 +1,203 @@
 <div [attr.dir]="isRTL ? 'rtl' : 'ltr'" class="space-y-6 animate-in slide-in-from-bottom-8 duration-700 font-sans">
-  
-  <!-- Premium Executive Header -->
-  <section class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-6 shadow-2xl border border-slate-800/80 sm:p-8">
-    <!-- Animated Glow Backdrops -->
-    <div class="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-primary/25 blur-3xl animate-pulse duration-[8s]"></div>
-    <div class="absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-emerald-500/15 blur-3xl animate-pulse duration-[6s]"></div>
-    <div class="absolute top-1/2 left-1/3 -translate-y-1/2 h-36 w-36 rounded-full bg-zadna-accent/5 blur-2xl"></div>
+ 
+ <!-- Premium Executive Header -->
+ <section class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-6 shadow-2xl border border-slate-800/80 sm:p-8">
+ <!-- Animated Glow Backdrops -->
+ <div class="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-primary/25 blur-3xl animate-pulse duration-[8s]"></div>
+ <div class="absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-emerald-500/15 blur-3xl animate-pulse duration-[6s]"></div>
+ <div class="absolute top-1/2 left-1/3 -translate-y-1/2 h-36 w-36 rounded-full bg-zadna-accent/5 blur-2xl"></div>
 
-    <div class="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-      <div class="flex items-start gap-4">
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-primary shadow-2xl backdrop-blur-md">
-          <span class="material-symbols-outlined text-[28px] text-primary">shield_person</span>
-        </div>
-        
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-black tracking-widest text-primary uppercase">
-              {{ 'DRIVERS.DETAIL.VERIFICATION.COMMAND_CENTER' | translate }}
-            </span>
-          </div>
-          <div class="flex flex-wrap items-center gap-3">
-            <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
-              {{ 'DRIVERS.DETAIL.VERIFICATION.EXECUTIVE_REVIEW' | translate }}
-            </h1>
-            
-            <app-status-pill
-              [label]="driver.verification.recommendation"
-              [variant]="getVerificationRecommendationVariant()"
-              [showDot]="true"
-              [shouldTranslate]="true"
-              size="sm">
-            </app-status-pill>
-          </div>
-          
-          <p class="mt-2.5 max-w-2xl text-[12px] font-semibold leading-relaxed text-slate-400">
-            {{ 'DRIVERS.DETAIL.VERIFICATION.EXECUTIVE_REVIEW_DESC' | translate }}
-          </p>
-        </div>
-      </div>
+ <div class="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
+ <div class="flex items-start gap-4">
+ <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-primary shadow-2xl backdrop-blur-md">
+ <span class="material-symbols-outlined text-[28px] text-primary">shield_person</span>
+ </div>
+ 
+ <div class="min-w-0 flex-1">
+ <div class="flex items-center gap-2 mb-1">
+ <span class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-black tracking-widest text-primary uppercase">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.COMMAND_CENTER' | translate }}
+ </span>
+ </div>
+ <div class="flex flex-wrap items-center gap-3">
+ <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.EXECUTIVE_REVIEW' | translate }}
+ </h1>
+ 
+ <app-status-pill
+ [label]="driver.verification.recommendation"
+ [variant]="getVerificationRecommendationVariant()"
+ [showDot]="true"
+ [shouldTranslate]="true"
+ size="sm">
+ </app-status-pill>
+ </div>
+ 
+ <p class="mt-2.5 max-w-2xl text-[12px] font-semibold leading-relaxed text-slate-400">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.EXECUTIVE_REVIEW_DESC' | translate }}
+ </p>
+ </div>
+ </div>
 
-      <!-- High-tech Segmented Workspace Switcher -->
-      <div class="flex shrink-0 rounded-2xl border border-slate-800/80 bg-slate-950/80 p-1.5 backdrop-blur-md shadow-2xl">
-        <button
-          type="button"
-          (click)="setWorkspaceWindow('review')"
-          class="inline-flex h-10 items-center justify-center rounded-xl px-5 text-[12px] font-black transition-all duration-300 gap-2"
-          [ngClass]="isWorkspaceWindowActive('review') ? 'bg-white text-slate-950 shadow-lg scale-100' : 'text-slate-400 hover:text-white hover:bg-white/5'">
-          <span class="material-symbols-outlined text-[18px]">preview</span>
-          <span>{{ 'DRIVERS.DETAIL.VERIFICATION.WINDOWS.REVIEW' | translate }}</span>
-        </button>
+ <!-- High-tech Segmented Workspace Switcher -->
+ <div class="flex shrink-0 rounded-2xl border border-slate-800/80 bg-slate-950/80 p-1.5 backdrop-blur-md shadow-2xl">
+ <button
+ type="button"
+ (click)="setWorkspaceWindow('review')"
+ class="inline-flex h-10 items-center justify-center rounded-xl px-5 text-[12px] font-black transition-all duration-300 gap-2"
+ [ngClass]="isWorkspaceWindowActive('review') ? 'bg-white text-slate-950 shadow-lg scale-100' : 'text-slate-400 hover:text-white hover:bg-white/5'">
+ <span class="material-symbols-outlined text-[18px]">preview</span>
+ <span>{{ 'DRIVERS.DETAIL.VERIFICATION.WINDOWS.REVIEW' | translate }}</span>
+ </button>
 
-        <button
-          type="button"
-          (click)="setWorkspaceWindow('operations')"
-          class="inline-flex h-10 items-center justify-center rounded-xl px-5 text-[12px] font-black transition-all duration-300 gap-2"
-          [ngClass]="isWorkspaceWindowActive('operations') ? 'bg-white text-slate-950 shadow-lg scale-100' : 'text-slate-400 hover:text-white hover:bg-white/5'">
-          <span class="material-symbols-outlined text-[18px]">tune</span>
-          <span>{{ 'DRIVERS.DETAIL.VERIFICATION.WINDOWS.OPERATIONS' | translate }}</span>
-        </button>
-      </div>
-    </div>
-    
-    <!-- Readiness Banner Dashboard -->
-    <div class="mt-6 rounded-2xl border border-white/5 bg-white/5 p-4.5 backdrop-blur-sm shadow-inner">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-4">
-          <div class="relative flex h-14 w-14 items-center justify-center rounded-full bg-slate-950/60 shadow-lg">
-             <span class="text-[13px] font-black text-white">{{ reviewCompletionPercent }}%</span>
-             <svg class="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
-                <path class="text-slate-800/40" stroke-width="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-primary" stroke-width="2.8" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-             </svg>
-          </div>
-          <div>
-            <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.APPROVAL_READINESS' | translate }}</p>
-            <p class="mt-1 text-[14px] font-black text-white">
-              {{ reviewCompletionPercent === 100
+ <button
+ type="button"
+ (click)="setWorkspaceWindow('operations')"
+ class="inline-flex h-10 items-center justify-center rounded-xl px-5 text-[12px] font-black transition-all duration-300 gap-2"
+ [ngClass]="isWorkspaceWindowActive('operations') ? 'bg-white text-slate-950 shadow-lg scale-100' : 'text-slate-400 hover:text-white hover:bg-white/5'">
+ <span class="material-symbols-outlined text-[18px]">tune</span>
+ <span>{{ 'DRIVERS.DETAIL.VERIFICATION.WINDOWS.OPERATIONS' | translate }}</span>
+ </button>
+ </div>
+ </div>
+ 
+ <!-- Readiness Banner Dashboard -->
+ <div class="mt-6 rounded-2xl border border-white/5 bg-white/5 p-4.5 backdrop-blur-sm shadow-inner">
+ <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+ <div class="flex items-center gap-4">
+ <div class="relative flex h-14 w-14 items-center justify-center rounded-full bg-slate-950/60 shadow-lg">
+ <span class="text-[13px] font-black text-white">{{ reviewCompletionPercent }}%</span>
+ <svg class="absolute inset-0 h-full w-full -rotate-90 transform" viewBox="0 0 36 36">
+ <path class="text-slate-800/40" stroke-width="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+ <path [attr.stroke-dasharray]="reviewCompletionPercent + ', 100'" class="text-primary" stroke-width="2.8" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+ </svg>
+ </div>
+ <div>
+ <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.APPROVAL_READINESS' | translate }}</p>
+ <p class="mt-1 text-[14px] font-black text-white">
+ {{ reviewCompletionPercent === 100
                 ? ('DRIVERS.DETAIL.VERIFICATION.READINESS_READY' | translate)
                 : ('DRIVERS.DETAIL.VERIFICATION.READINESS_WAITING' | translate) }}
-            </p>
-          </div>
-        </div>
-        
-        <div class="h-8 w-px hidden sm:block bg-white/10"></div>
-        
-        <div class="flex items-center gap-3 sm:px-4">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-            <span class="material-symbols-outlined text-[20px] text-primary">analytics</span>
-          </div>
-          <div>
-            <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}</p>
-            <p class="mt-1 text-[14px] font-black text-white">{{ driver.verification.trustScore }}%</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+ </p>
+ </div>
+ </div>
+ 
+ <div class="h-8 w-px hidden sm:block bg-white/10"></div>
+ 
+ <div class="flex items-center gap-3 sm:px-4">
+ <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+ <span class="material-symbols-outlined text-[20px] text-primary">analytics</span>
+ </div>
+ <div>
+ <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.TRUST_SCORE' | translate }}</p>
+ <p class="mt-1 text-[14px] font-black text-white">{{ driver.verification.trustScore }}%</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
 
-  <!-- Metric Overview Cards -->
-  <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
-    <!-- Card 1: Total Documents -->
-    <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-slate-200">
-      <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-slate-400 rounded-full"></div>
-      <div class="relative flex items-center justify-between">
-        <div>
-          <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FILES_AVAILABLE' | translate }}</p>
-          <p class="mt-2 text-3xl font-black tracking-tight text-slate-900">{{ driver.documents.length }}</p>
-          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.TOTAL_DOCUMENTS' | translate }}</p>
-        </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-500 transition-transform duration-300 group-hover:scale-110">
-          <span class="material-symbols-outlined text-[24px]">folder</span>
-        </div>
-      </div>
-    </article>
+ <!-- Metric Overview Cards -->
+ <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
+ <!-- Card 1: Total Documents -->
+ <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-slate-200">
+ <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-slate-400 rounded-full"></div>
+ <div class="relative flex items-center justify-between">
+ <div>
+ <p class="text-[10px] font-black tracking-widest text-slate-400 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.FILES_AVAILABLE' | translate }}</p>
+ <p class="mt-2 text-3xl font-black tracking-tight text-slate-900">{{ driver.documents.length }}</p>
+ <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.TOTAL_DOCUMENTS' | translate }}</p>
+ </div>
+ <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-500 transition-transform duration-300 group-hover:scale-110">
+ <span class="material-symbols-outlined text-[24px]">folder</span>
+ </div>
+ </div>
+ </article>
 
-    <!-- Card 2: Valid Documents -->
-    <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-emerald-200">
-      <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-emerald-500 rounded-full"></div>
-      <div class="relative flex items-center justify-between">
-        <div>
-          <p class="text-[10px] font-black tracking-widest text-emerald-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS' | translate }}</p>
-          <p class="mt-2 text-3xl font-black tracking-tight text-emerald-950">{{ validDocumentsCount }}</p>
-          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS_DESC' | translate }}</p>
-        </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 transition-transform duration-300 group-hover:scale-110">
-          <span class="material-symbols-outlined text-[24px]">task_alt</span>
-        </div>
-      </div>
-    </article>
+ <!-- Card 2: Valid Documents -->
+ <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-emerald-200">
+ <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-emerald-500 rounded-full"></div>
+ <div class="relative flex items-center justify-between">
+ <div>
+ <p class="text-[10px] font-black tracking-widest text-emerald-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS' | translate }}</p>
+ <p class="mt-2 text-3xl font-black tracking-tight text-emerald-950">{{ validDocumentsCount }}</p>
+ <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.VALID_DOCUMENTS_DESC' | translate }}</p>
+ </div>
+ <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 transition-transform duration-300 group-hover:scale-110">
+ <span class="material-symbols-outlined text-[24px]">task_alt</span>
+ </div>
+ </div>
+ </article>
 
-    <!-- Card 3: Under Review -->
-    <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-amber-200">
-      <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-amber-500 rounded-full"></div>
-      <div class="relative flex items-center justify-between">
-        <div>
-          <p class="text-[10px] font-black tracking-widest text-amber-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW' | translate }}</p>
-          <p class="mt-2 text-3xl font-black tracking-tight text-amber-950">{{ pendingDocumentsCount }}</p>
-          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW_DESC' | translate }}</p>
-        </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 transition-transform duration-300 group-hover:scale-110">
-          <span class="material-symbols-outlined text-[24px]">pending</span>
-        </div>
-      </div>
-    </article>
+ <!-- Card 3: Under Review -->
+ <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-amber-200">
+ <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-amber-500 rounded-full"></div>
+ <div class="relative flex items-center justify-between">
+ <div>
+ <p class="text-[10px] font-black tracking-widest text-amber-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW' | translate }}</p>
+ <p class="mt-2 text-3xl font-black tracking-tight text-amber-950">{{ pendingDocumentsCount }}</p>
+ <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.UNDER_REVIEW_DESC' | translate }}</p>
+ </div>
+ <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 transition-transform duration-300 group-hover:scale-110">
+ <span class="material-symbols-outlined text-[24px]">pending</span>
+ </div>
+ </div>
+ </article>
 
-    <!-- Card 4: Rejected Documents -->
-    <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-rose-200">
-      <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-rose-500 rounded-full"></div>
-      <div class="relative flex items-center justify-between">
-        <div>
-          <p class="text-[10px] font-black tracking-widest text-rose-600 uppercase">{{ isRTL ? 'ملفات مرفوضة' : 'Rejected files' }}</p>
-          <p class="mt-2 text-3xl font-black tracking-tight text-rose-950">{{ rejectedDocumentsCount }}</p>
-          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ isRTL ? 'تحتاج سبب رفض ورفع جديد' : 'Need a reason and re-upload' }}</p>
-        </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 transition-transform duration-300 group-hover:scale-110">
-          <span class="material-symbols-outlined text-[24px]">cancel</span>
-        </div>
-      </div>
-    </article>
+ <!-- Card 4: Rejected Documents -->
+ <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-rose-200">
+ <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-rose-500 rounded-full"></div>
+ <div class="relative flex items-center justify-between">
+ <div>
+ <p class="text-[10px] font-black tracking-widest text-rose-600 uppercase">{{ isRTL ? 'ملفات مرفوضة' : 'Rejected files' }}</p>
+ <p class="mt-2 text-3xl font-black tracking-tight text-rose-950">{{ rejectedDocumentsCount }}</p>
+ <p class="mt-1 text-[11px] font-bold text-slate-500">{{ isRTL ? 'تحتاج سبب رفض ورفع جديد' : 'Need a reason and re-upload' }}</p>
+ </div>
+ <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 transition-transform duration-300 group-hover:scale-110">
+ <span class="material-symbols-outlined text-[24px]">cancel</span>
+ </div>
+ </div>
+ </article>
 
-    <!-- Card 5: Expiring Soon -->
-    <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-rose-200">
-      <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-orange-500 rounded-full"></div>
-      <div class="relative flex items-center justify-between">
-        <div>
-          <p class="text-[10px] font-black tracking-widest text-orange-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS' | translate }}</p>
-          <p class="mt-2 text-3xl font-black tracking-tight text-orange-950">{{ expiringDocumentsCount }}</p>
-          <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS_DESC' | translate }}</p>
-        </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 transition-transform duration-300 group-hover:scale-110">
-          <span class="material-symbols-outlined text-[24px]">gpp_maybe</span>
-        </div>
-      </div>
-    </article>
-  </section>
+ <!-- Card 5: Expiring Soon -->
+ <article class="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-rose-200">
+ <div class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1.5 bg-orange-500 rounded-full"></div>
+ <div class="relative flex items-center justify-between">
+ <div>
+ <p class="text-[10px] font-black tracking-widest text-orange-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS' | translate }}</p>
+ <p class="mt-2 text-3xl font-black tracking-tight text-orange-950">{{ expiringDocumentsCount }}</p>
+ <p class="mt-1 text-[11px] font-bold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRING_ITEMS_DESC' | translate }}</p>
+ </div>
+ <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 transition-transform duration-300 group-hover:scale-110">
+ <span class="material-symbols-outlined text-[24px]">gpp_maybe</span>
+ </div>
+ </div>
+ </article>
+ </section>
 
-  <!-- WORKSPACES -->
+ <!-- WORKSPACES -->
 
-  <!-- 2. Review Workspace (2 columns) -->
-  <section *ngIf="isWorkspaceWindowActive('review')" class="animate-in fade-in duration-500 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    <div class="lg:col-span-4 xl:col-span-4">
-      <ng-container *ngTemplateOutlet="documentBoardTemplate"></ng-container>
-    </div>
-    
-    <div class="lg:col-span-8 xl:col-span-8">
-      <ng-container *ngTemplateOutlet="previewPanelTemplate"></ng-container>
-    </div>
-  </section>
+ <!-- 2. Review Workspace (2 columns) -->
+ <section *ngIf="isWorkspaceWindowActive('review')" class="animate-in fade-in duration-500 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+ <div class="lg:col-span-4 xl:col-span-4">
+ <ng-container *ngTemplateOutlet="documentBoardTemplate"></ng-container>
+ </div>
+ 
+ <div class="lg:col-span-8 xl:col-span-8">
+ <ng-container *ngTemplateOutlet="previewPanelTemplate"></ng-container>
+ </div>
+ </section>
 
-  <!-- 3. Operations Workspace (2 columns) -->
-  <section *ngIf="isWorkspaceWindowActive('operations')" class="animate-in fade-in duration-500 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    <div class="lg:col-span-5 xl:col-span-5">
-      <ng-container *ngTemplateOutlet="accountControlRailTemplate"></ng-container>
-    </div>
-    
-    <div class="lg:col-span-7 xl:col-span-7">
-      <ng-container *ngTemplateOutlet="timelineAndChecklistTemplate"></ng-container>
-    </div>
-  </section>
+ <!-- 3. Operations Workspace (2 columns) -->
+ <section *ngIf="isWorkspaceWindowActive('operations')" class="animate-in fade-in duration-500 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+ <div class="lg:col-span-5 xl:col-span-5">
+ <ng-container *ngTemplateOutlet="accountControlRailTemplate"></ng-container>
+ </div>
+ 
+ <div class="lg:col-span-7 xl:col-span-7">
+ <ng-container *ngTemplateOutlet="timelineAndChecklistTemplate"></ng-container>
+ </div>
+ </section>
 </div>
 
 <!-- ============================================ -->
@@ -206,719 +206,719 @@
 
 <!-- Document Board Template -->
 <ng-template #documentBoardTemplate>
-  <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)]">
-    <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
-      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-600 border border-slate-150">
-        <span class="material-symbols-outlined text-[20px]">folder_shared</span>
-      </div>
-      <div class="min-w-0 flex-1">
-        <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_BOARD' | translate }}</h2>
-        <p class="text-[11px] font-semibold text-slate-500">
-          {{ 'DRIVERS.DETAIL.VERIFICATION.FILES_IN_PACKET' | translate:{ count: driver.documents.length } }}
-          <span class="mx-1 text-slate-300">•</span>
-          <span class="text-amber-700">{{ driverApprovals.length }} {{ isRTL ? 'تعديل معلق' : 'pending changes' }}</span>
-        </p>
-      </div>
-      <button
-        type="button"
-        (click)="requestApprovalRefresh()"
-        [disabled]="isApprovalsLoading"
-        class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-700 transition hover:bg-amber-100 disabled:opacity-50"
-        [title]="isRTL ? 'تحديث طلبات الاعتماد' : 'Refresh approval requests'">
-        <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isApprovalsLoading">
-          {{ isApprovalsLoading ? 'progress_activity' : 'refresh' }}
-        </span>
-      </button>
-    </div>
+ <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)]">
+ <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+ <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-600 border border-slate-150">
+ <span class="material-symbols-outlined text-[20px]">folder_shared</span>
+ </div>
+ <div class="min-w-0 flex-1">
+ <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.DOCUMENT_BOARD' | translate }}</h2>
+ <p class="text-[11px] font-semibold text-slate-500">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.FILES_IN_PACKET' | translate:{ count: driver.documents.length } }}
+ <span class="mx-1 text-slate-300">•</span>
+ <span class="text-amber-700">{{ driverApprovals.length }} {{ isRTL ? 'تعديل معلق' : 'pending changes' }}</span>
+ </p>
+ </div>
+ <button
+ type="button"
+ (click)="requestApprovalRefresh()"
+ [disabled]="isApprovalsLoading"
+ class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-700 transition hover:bg-amber-100 disabled:opacity-50"
+ [title]="isRTL ? 'تحديث طلبات الاعتماد' : 'Refresh approval requests'">
+ <span class="material-symbols-outlined text-[18px]" [class.animate-spin]="isApprovalsLoading">
+ {{ isApprovalsLoading ? 'progress_activity' : 'refresh' }}
+ </span>
+ </button>
+ </div>
 
-    <div class="max-h-[35rem] space-y-4 overflow-y-auto pr-1 pl-1 custom-scrollbar xl:max-h-[calc(100vh-22rem)]">
-      <section *ngIf="isApprovalsLoading || driverApprovals.length > 0" class="space-y-2.5">
-        <div class="flex items-center justify-between px-1">
-          <p class="text-[9px] font-black tracking-widest text-amber-600 uppercase">{{ isRTL ? 'تعديلات معلقة' : 'Pending changes' }}</p>
-          <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-[9px] font-black text-amber-700 shadow-sm">{{ driverApprovals.length }}</span>
-        </div>
+ <div class="max-h-[35rem] space-y-4 overflow-y-auto pr-1 pl-1 custom-scrollbar xl:max-h-[calc(100vh-22rem)]">
+ <section *ngIf="isApprovalsLoading || driverApprovals.length > 0" class="space-y-2.5">
+ <div class="flex items-center justify-between px-1">
+ <p class="text-[9px] font-black tracking-widest text-amber-600 uppercase">{{ isRTL ? 'تعديلات معلقة' : 'Pending changes' }}</p>
+ <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-[9px] font-black text-amber-700 shadow-sm">{{ driverApprovals.length }}</span>
+ </div>
 
-        <ng-container *ngIf="isApprovalsLoading; else approvalItems">
-          <div class="h-24 animate-pulse rounded-2xl border border-amber-100 bg-amber-50/70"></div>
-          <div class="h-24 animate-pulse rounded-2xl border border-amber-100 bg-amber-50/70"></div>
-        </ng-container>
+ <ng-container *ngIf="isApprovalsLoading; else approvalItems">
+ <div class="h-24 animate-pulse rounded-2xl border border-amber-100 bg-amber-50/70"></div>
+ <div class="h-24 animate-pulse rounded-2xl border border-amber-100 bg-amber-50/70"></div>
+ </ng-container>
 
-        <ng-template #approvalItems>
-          <button
-            *ngFor="let approval of driverApprovals; trackBy: trackApproval"
-            type="button"
-            (click)="openApprovalReview(approval)"
-            class="group w-full rounded-2xl border border-amber-200 bg-amber-50/45 p-4 text-start transition-all duration-300 hover:border-amber-300 hover:bg-amber-50 hover:shadow-sm">
-            <div class="flex items-start gap-3">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-white text-amber-700 shadow-sm transition-transform group-hover:scale-105">
-                <span class="material-symbols-outlined text-[20px]">approval_delegation</span>
-              </div>
+ <ng-template #approvalItems>
+ <button
+ *ngFor="let approval of driverApprovals; trackBy: trackApproval"
+ type="button"
+ (click)="openApprovalReview(approval)"
+ class="group w-full rounded-2xl border border-amber-200 bg-amber-50/45 p-4 text-start transition-all duration-300 hover:border-amber-300 hover:bg-amber-50 hover:shadow-sm">
+ <div class="flex items-start gap-3">
+ <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-white text-amber-700 shadow-sm transition-transform group-hover:scale-105">
+ <span class="material-symbols-outlined text-[20px]">approval_delegation</span>
+ </div>
 
-              <div class="min-w-0 flex-1">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="min-w-0">
-                    <p class="truncate text-[12.5px] font-black text-slate-900 group-hover:text-amber-800">{{ getApprovalActionLabel(approval.action) }}</p>
-                    <p class="mt-1 line-clamp-2 text-[10.5px] font-semibold leading-relaxed text-slate-500">{{ approval.summary }}</p>
-                  </div>
-                  <span class="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-black text-amber-800">
-                    {{ isRTL ? 'معلق' : 'Pending' }}
-                  </span>
-                </div>
+ <div class="min-w-0 flex-1">
+ <div class="flex items-start justify-between gap-2">
+ <div class="min-w-0">
+ <p class="truncate text-[12.5px] font-black text-slate-900 group-hover:text-amber-800">{{ getApprovalActionLabel(approval.action) }}</p>
+ <p class="mt-1 line-clamp-2 text-[10.5px] font-semibold leading-relaxed text-slate-500">{{ approval.summary }}</p>
+ </div>
+ <span class="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-black text-amber-800">
+ {{ isRTL ? 'معلق' : 'Pending' }}
+ </span>
+ </div>
 
-                <div class="mt-3 flex items-center justify-between gap-2">
-                  <p class="text-[10px] font-bold text-slate-500">
-                    {{ isRTL ? 'حقول متغيرة:' : 'Changed fields:' }}
-                    <strong class="text-slate-900">{{ getApprovalChangedCount(approval) }}</strong>
-                  </p>
-                  <span class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-zadna-primary px-3 text-[10px] font-black text-white shadow-sm transition group-hover:-translate-y-0.5">
-                    <span class="material-symbols-outlined text-[14px]">visibility</span>
-                    {{ isRTL ? 'مراجعة' : 'Review' }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </button>
-        </ng-template>
-      </section>
+ <div class="mt-3 flex items-center justify-between gap-2">
+ <p class="text-[10px] font-bold text-slate-500">
+ {{ isRTL ? 'حقول متغيرة:' : 'Changed fields:' }}
+ <strong class="text-slate-900">{{ getApprovalChangedCount(approval) }}</strong>
+ </p>
+ <span class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-zadna-primary px-3 text-[10px] font-black text-white shadow-sm transition group-hover:-translate-y-0.5">
+ <span class="material-symbols-outlined text-[14px]">visibility</span>
+ {{ isRTL ? 'مراجعة' : 'Review' }}
+ </span>
+ </div>
+ </div>
+ </div>
+ </button>
+ </ng-template>
+ </section>
 
-      <section *ngFor="let group of documentGroups" class="space-y-2.5">
-        <div class="flex items-center justify-between px-1">
-          <p class="text-[9px] font-black tracking-widest text-slate-400 uppercase">{{ group.title | translate }}</p>
-          <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[9px] font-black text-slate-600 shadow-sm">{{ group.documents.length }}</span>
-        </div>
+ <section *ngFor="let group of documentGroups" class="space-y-2.5">
+ <div class="flex items-center justify-between px-1">
+ <p class="text-[9px] font-black tracking-widest text-slate-400 uppercase">{{ group.title | translate }}</p>
+ <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[9px] font-black text-slate-600 shadow-sm">{{ group.documents.length }}</span>
+ </div>
 
-        <button
-          *ngFor="let document of group.documents; trackBy: trackByDocumentId"
-          type="button"
-          (click)="selectDocument(document)"
-          class="group w-full rounded-2xl border p-4 text-start transition-all duration-300 relative overflow-hidden"
-          [ngClass]="getDocumentCardClasses(document)">
-          
-          <!-- Highlight line for selected state -->
-          <div *ngIf="selectedDocumentPreview?.id === document.id" class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1 bg-primary rounded-full"></div>
+ <button
+ *ngFor="let document of group.documents; trackBy: trackByDocumentId"
+ type="button"
+ (click)="selectDocument(document)"
+ class="group w-full rounded-2xl border p-4 text-start transition-all duration-300 relative overflow-hidden"
+ [ngClass]="getDocumentCardClasses(document)">
+ 
+ <!-- Highlight line for selected state -->
+ <div *ngIf="selectedDocumentPreview?.id === document.id" class="absolute top-0 bottom-0 ltr:left-0 rtl:right-0 w-1 bg-primary rounded-full"></div>
 
-          <div class="flex items-start gap-3">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm border border-slate-100 bg-slate-50 text-slate-500 transition-transform group-hover:scale-105"
-                 [ngClass]="selectedDocumentPreview?.id === document.id ? 'bg-primary/10 text-primary border-primary/20' : ''">
-              <span class="material-symbols-outlined text-[20px] transition-colors">{{ getDocumentTypeIcon(document) }}</span>
-            </div>
-            
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-1.5 mb-0.5">
-                <p class="truncate text-[12.5px] font-black text-slate-900 transition-colors"
-                   [ngClass]="selectedDocumentPreview?.id === document.id ? 'text-primary' : 'group-hover:text-primary'">
-                  {{ document.title | translate }}
-                </p>
-              </div>
-              <p class="text-[10px] font-semibold text-slate-400 truncate mb-2">{{ document.subtitle ? (document.subtitle | translate) : '' }}</p>
-              
-              <div class="flex flex-wrap items-center gap-2">
-                <app-status-pill
-                  [label]="getDocumentStatusKey(document.status)"
-                  [variant]="getDocumentStatusVariant(document.status)"
-                  [showDot]="true"
-                  [shouldTranslate]="true"
-                  size="sm">
-                </app-status-pill>
+ <div class="flex items-start gap-3">
+ <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm border border-slate-100 bg-slate-50 text-slate-500 transition-transform group-hover:scale-105"
+ [ngClass]="selectedDocumentPreview?.id === document.id ? 'bg-primary/10 text-primary border-primary/20' : ''">
+ <span class="material-symbols-outlined text-[20px] transition-colors">{{ getDocumentTypeIcon(document) }}</span>
+ </div>
+ 
+ <div class="min-w-0 flex-1">
+ <div class="flex items-center gap-1.5 mb-0.5">
+ <p class="truncate text-[12.5px] font-black text-slate-900 transition-colors"
+ [ngClass]="selectedDocumentPreview?.id === document.id ? 'text-primary' : 'group-hover:text-primary'">
+ {{ document.title | translate }}
+ </p>
+ </div>
+ <p class="text-[10px] font-semibold text-slate-400 truncate mb-2">{{ document.subtitle ? (document.subtitle | translate) : '' }}</p>
+ 
+ <div class="flex flex-wrap items-center gap-2">
+ <app-status-pill
+ [label]="getDocumentStatusKey(document.status)"
+ [variant]="getDocumentStatusVariant(document.status)"
+ [showDot]="true"
+ [shouldTranslate]="true"
+ size="sm">
+ </app-status-pill>
 
-                <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-black"
-                      [ngClass]="getDocumentLifecycleBadgeClasses(document)">
-                  <span class="material-symbols-outlined text-[14px]">{{ getDocumentLifecycleIcon(document) }}</span>
-                  {{ getDocumentLifecycleLabel(document) }}
-                </span>
-              </div>
+ <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-black"
+ [ngClass]="getDocumentLifecycleBadgeClasses(document)">
+ <span class="material-symbols-outlined text-[14px]">{{ getDocumentLifecycleIcon(document) }}</span>
+ {{ getDocumentLifecycleLabel(document) }}
+ </span>
+ </div>
 
-              <p class="mt-2 text-[10.5px] font-semibold leading-relaxed text-slate-500">
-                {{ getDocumentLifecycleHint(document) }}
-              </p>
+ <p class="mt-2 text-[10.5px] font-semibold leading-relaxed text-slate-500">
+ {{ getDocumentLifecycleHint(document) }}
+ </p>
 
-              <div *ngIf="document.rejectionReason" class="mt-2 rounded-xl border border-rose-200 bg-white/70 px-3 py-2 text-[10.5px] font-bold leading-relaxed text-rose-700">
-                <span class="font-black">{{ isRTL ? 'سبب الرفض:' : 'Rejection reason:' }}</span>
-                {{ document.rejectionReason }}
-              </div>
+ <div *ngIf="document.rejectionReason" class="mt-2 rounded-xl border border-rose-200 bg-white/70 px-3 py-2 text-[10.5px] font-bold leading-relaxed text-rose-700">
+ <span class="font-black">{{ isRTL ? 'سبب الرفض:' : 'Rejection reason:' }}</span>
+ {{ document.rejectionReason }}
+ </div>
 
-              <p *ngIf="document.status !== 'review' && getDocumentReviewMeta(document)" class="mt-2 text-[9.5px] font-bold text-slate-400">
-                {{ isRTL ? 'آخر مراجعة:' : 'Last review:' }} {{ getDocumentReviewMeta(document) }}
-              </p>
-            </div>
-          </div>
-        </button>
-      </section>
-    </div>
-  </div>
+ <p *ngIf="document.status!== 'review' && getDocumentReviewMeta(document)" class="mt-2 text-[9.5px] font-bold text-slate-400">
+ {{ isRTL ? 'آخر مراجعة:' : 'Last review:' }} {{ getDocumentReviewMeta(document) }}
+ </p>
+ </div>
+ </div>
+ </button>
+ </section>
+ </div>
+ </div>
 </ng-template>
 
 <!-- Preview Panel Template with Interactive Inspector -->
 <ng-template #previewPanelTemplate>
-  <div id="document-preview-panel" class="rounded-3xl border border-slate-150 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)] flex flex-col min-h-[550px]">
-    
-    <!-- Inspector Header -->
-    <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/10">
-          <span class="material-symbols-outlined text-[20px]">zoom_in_map</span>
-        </div>
-        <div>
-          <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_DECISION' | translate }}</h2>
-          <p class="text-[11px] font-semibold text-slate-500">
-            {{ selectedDocumentPreview ? (selectedDocumentPreview.title | translate) : ('DRIVERS.DETAIL.VERIFICATION.SELECT_DOCUMENT' | translate) }}
-          </p>
-        </div>
-      </div>
-    </div>
+ <div id="document-preview-panel" class="rounded-3xl border border-slate-150 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)] flex flex-col min-h-[550px]">
+ 
+ <!-- Inspector Header -->
+ <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+ <div class="flex items-center gap-3">
+ <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/10">
+ <span class="material-symbols-outlined text-[20px]">zoom_in_map</span>
+ </div>
+ <div>
+ <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_DECISION' | translate }}</h2>
+ <p class="text-[11px] font-semibold text-slate-500">
+ {{ selectedDocumentPreview ? (selectedDocumentPreview.title | translate) : ('DRIVERS.DETAIL.VERIFICATION.SELECT_DOCUMENT' | translate) }}
+ </p>
+ </div>
+ </div>
+ </div>
 
-    <ng-container *ngIf="selectedDocumentPreview as document; else emptyPreview">
-      <div class="mb-4 rounded-2xl border p-4 shadow-sm"
-           [ngClass]="getDocumentLifecycleBadgeClasses(document)">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[20px]">{{ getDocumentLifecycleIcon(document) }}</span>
-            <div>
-              <p class="text-[12.5px] font-black">{{ getDocumentLifecycleLabel(document) }}</p>
-              <p class="mt-0.5 text-[10.5px] font-semibold leading-relaxed opacity-85">{{ getDocumentLifecycleHint(document) }}</p>
-            </div>
-          </div>
-          <span *ngIf="getDocumentReviewMeta(document)" class="rounded-full bg-white/70 px-3 py-1 text-[10px] font-black shadow-sm">
-            {{ getDocumentReviewMeta(document) }}
-          </span>
-        </div>
-        <div *ngIf="document.rejectionReason" class="mt-3 rounded-xl border border-rose-200 bg-white/80 px-3 py-2 text-[11px] font-bold leading-relaxed text-rose-700">
-          <span class="font-black">{{ isRTL ? 'سبب الرفض:' : 'Rejection reason:' }}</span>
-          {{ document.rejectionReason }}
-        </div>
-      </div>
-      
-      <!-- Interactive Visual Inspector Area -->
-      <div class="relative flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-900/5 shadow-inner flex flex-col mb-4 min-h-[350px]">
-        
-        <!-- Controls overlay inside viewer (Zoom, Rotate, Reset, External Open) -->
-        <div class="absolute right-3 top-3 z-10 flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-white/10 backdrop-blur-md shadow-2xl">
-          <button
-            type="button"
-            (click)="zoomIn()"
-            [title]="isRTL ? 'تكبير' : 'Zoom In'"
-            class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
-            <span class="material-symbols-outlined text-[16px]">zoom_in</span>
-          </button>
-          
-          <button
-            type="button"
-            (click)="zoomOut()"
-            [title]="isRTL ? 'تصغير' : 'Zoom Out'"
-            class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
-            <span class="material-symbols-outlined text-[16px]">zoom_out</span>
-          </button>
+ <ng-container *ngIf="selectedDocumentPreview as document; else emptyPreview">
+ <div class="mb-4 rounded-2xl border p-4 shadow-sm"
+ [ngClass]="getDocumentLifecycleBadgeClasses(document)">
+ <div class="flex flex-wrap items-center justify-between gap-3">
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[20px]">{{ getDocumentLifecycleIcon(document) }}</span>
+ <div>
+ <p class="text-[12.5px] font-black">{{ getDocumentLifecycleLabel(document) }}</p>
+ <p class="mt-0.5 text-[10.5px] font-semibold leading-relaxed opacity-85">{{ getDocumentLifecycleHint(document) }}</p>
+ </div>
+ </div>
+ <span *ngIf="getDocumentReviewMeta(document)" class="rounded-full bg-white/70 px-3 py-1 text-[10px] font-black shadow-sm">
+ {{ getDocumentReviewMeta(document) }}
+ </span>
+ </div>
+ <div *ngIf="document.rejectionReason" class="mt-3 rounded-xl border border-rose-200 bg-white/80 px-3 py-2 text-[11px] font-bold leading-relaxed text-rose-700">
+ <span class="font-black">{{ isRTL ? 'سبب الرفض:' : 'Rejection reason:' }}</span>
+ {{ document.rejectionReason }}
+ </div>
+ </div>
+ 
+ <!-- Interactive Visual Inspector Area -->
+ <div class="relative flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-slate-900/5 shadow-inner flex flex-col mb-4 min-h-[350px]">
+ 
+ <!-- Controls overlay inside viewer (Zoom, Rotate, Reset, External Open) -->
+ <div class="absolute right-3 top-3 z-10 flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-white/10 backdrop-blur-md shadow-2xl">
+ <button
+ type="button"
+ (click)="zoomIn()"
+ [title]="isRTL ? 'تكبير' : 'Zoom In'"
+ class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
+ <span class="material-symbols-outlined text-[16px]">zoom_in</span>
+ </button>
+ 
+ <button
+ type="button"
+ (click)="zoomOut()"
+ [title]="isRTL ? 'تصغير' : 'Zoom Out'"
+ class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
+ <span class="material-symbols-outlined text-[16px]">zoom_out</span>
+ </button>
 
-          <button
-            type="button"
-            (click)="rotateRight()"
-            [title]="isRTL ? 'تدوير' : 'Rotate'"
-            class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
-            <span class="material-symbols-outlined text-[16px]">rotate_right</span>
-          </button>
+ <button
+ type="button"
+ (click)="rotateRight()"
+ [title]="isRTL ? 'تدوير' : 'Rotate'"
+ class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
+ <span class="material-symbols-outlined text-[16px]">rotate_right</span>
+ </button>
 
-          <button
-            type="button"
-            (click)="resetTransforms()"
-            [title]="isRTL ? 'إعادة ضبط' : 'Reset View'"
-            class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
-            <span class="material-symbols-outlined text-[16px]">restart_alt</span>
-          </button>
+ <button
+ type="button"
+ (click)="resetTransforms()"
+ [title]="isRTL ? 'إعادة ضبط' : 'Reset View'"
+ class="flex h-7 w-7 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95">
+ <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+ </button>
 
-          <div class="h-4 w-px bg-white/20 mx-1"></div>
+ <div class="h-4 w-px bg-white/20 mx-1"></div>
 
-          <button
-            type="button"
-            (click)="openDocumentInNewTab(document)"
-            [title]="isRTL ? 'فتح في علامة تبويب جديدة' : 'Open in new tab'"
-            class="flex h-7 px-2.5 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95 text-[10px] font-black gap-1">
-            <span class="material-symbols-outlined text-[14px]">open_in_new</span>
-            <span>{{ 'COMMON.OPEN' | translate }}</span>
-          </button>
-        </div>
+ <button
+ type="button"
+ (click)="openDocumentInNewTab(document)"
+ [title]="isRTL ? 'فتح في علامة تبويب جديدة' : 'Open in new tab'"
+ class="flex h-7 px-2.5 items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors active:scale-95 text-[10px] font-black gap-1">
+ <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+ <span>{{ 'COMMON.OPEN' | translate }}</span>
+ </button>
+ </div>
 
-        <!-- Render Image with Transforms -->
-        <div *ngIf="isImageDocument(document)" class="flex-1 overflow-auto flex items-center justify-center p-4 cursor-grab active:cursor-grabbing scrollbar-thin">
-          <div
-            class="grid w-full gap-4"
-            [ngClass]="getDocumentUrls(document).length > 1 ? 'md:grid-cols-2' : 'grid-cols-1'">
-            
-            <figure
-              *ngFor="let imageUrl of getDocumentUrls(document); let imageIndex = index"
-              class="flex min-h-[18rem] flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm relative overflow-hidden">
-              <figcaption class="self-start rounded-md bg-slate-100 px-2.5 py-0.5 text-[10px] font-black text-slate-600 border border-slate-200/50">
-                {{ getDocumentImageLabel(document, imageIndex) | translate }}
-              </figcaption>
-              
-              <!-- Zoomed/Rotated Image Element -->
-              <div class="flex-1 flex items-center justify-center overflow-hidden w-full">
-                <img
-                  [src]="imageUrl"
-                  class="max-h-[50vh] max-w-full rounded-lg object-contain transition-transform duration-300 ease-out origin-center"
-                  [style.transform]="'scale(' + zoomScale + ') rotate(' + rotationAngle + 'deg)'"
-                  alt="" />
-              </div>
-            </figure>
+ <!-- Render Image with Transforms -->
+ <div *ngIf="isImageDocument(document)" class="flex-1 overflow-auto flex items-center justify-center p-4 cursor-grab active:cursor-grabbing scrollbar-thin">
+ <div
+ class="grid w-full gap-4"
+ [ngClass]="getDocumentUrls(document).length > 1 ? 'md:grid-cols-2' : 'grid-cols-1'">
+ 
+ <figure
+ *ngFor="let imageUrl of getDocumentUrls(document); let imageIndex = index"
+ class="flex min-h-[18rem] flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm relative overflow-hidden">
+ <figcaption class="self-start rounded-md bg-slate-100 px-2.5 py-0.5 text-[10px] font-black text-slate-600 border border-slate-200/50">
+ {{ getDocumentImageLabel(document, imageIndex) | translate }}
+ </figcaption>
+ 
+ <!-- Zoomed/Rotated Image Element -->
+ <div class="flex-1 flex items-center justify-center overflow-hidden w-full">
+ <img
+ [src]="imageUrl"
+ class="max-h-[50vh] max-w-full rounded-lg object-contain transition-transform duration-300 ease-out origin-center"
+ [style.transform]="'scale(' + zoomScale + ') rotate(' + rotationAngle + 'deg)'"
+ alt="" />
+ </div>
+ </figure>
 
-          </div>
-        </div>
+ </div>
+ </div>
 
-        <!-- Render PDF or File fallbacks -->
-        <div *ngIf="!isImageDocument(document)" class="flex-1 p-8 flex flex-col items-center justify-center">
-          <div class="flex h-24 w-24 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-md border border-slate-200 mb-4 transition-transform hover:scale-105">
-            <span class="material-symbols-outlined text-[48px] text-primary/80">{{ getDocumentTypeIcon(document) }}</span>
-          </div>
-          <p class="text-[13px] font-black text-slate-700 mb-1">{{ 'DRIVERS.DETAIL.VERIFICATION.FILE_READY' | translate }}</p>
-          <p class="text-[11px] font-medium text-slate-400">{{ document.contentType || 'Application / PDF' }}</p>
-        </div>
-      </div>
+ <!-- Render PDF or File fallbacks -->
+ <div *ngIf="!isImageDocument(document)" class="flex-1 p-8 flex flex-col items-center justify-center">
+ <div class="flex h-24 w-24 items-center justify-center rounded-2xl bg-white text-slate-400 shadow-md border border-slate-200 mb-4 transition-transform hover:scale-105">
+ <span class="material-symbols-outlined text-[48px] text-primary/80">{{ getDocumentTypeIcon(document) }}</span>
+ </div>
+ <p class="text-[13px] font-black text-slate-700 mb-1">{{ 'DRIVERS.DETAIL.VERIFICATION.FILE_READY' | translate }}</p>
+ <p class="text-[11px] font-medium text-slate-400">{{ document.contentType || 'Application / PDF' }}</p>
+ </div>
+ </div>
 
-      <!-- Metadata & Inspector Decision Area -->
-      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 shadow-sm mt-auto">
-        <div class="grid gap-5 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-[1fr_auto]">
-          
-          <div class="space-y-4">
-            <!-- Metadata Cards Stack -->
-            <div class="mb-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] font-semibold text-slate-600">
-              
-              <div *ngIf="document.numberValue" class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-slate-150 shadow-2xs">
-                <span class="material-symbols-outlined text-[16px] text-slate-400">fingerprint</span>
-                <div>
-                  <p class="text-[9px] text-slate-400 font-bold uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_NUMBER' | translate }}</p>
-                  <p class="font-black text-slate-800 text-[12px] mt-0.5">{{ document.numberValue }}</p>
-                </div>
-              </div>
+ <!-- Metadata & Inspector Decision Area -->
+ <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 shadow-sm mt-auto">
+ <div class="grid gap-5 xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-[1fr_auto]">
+ 
+ <div class="space-y-4">
+ <!-- Metadata Cards Stack -->
+ <div class="mb-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] font-semibold text-slate-600">
+ 
+ <div *ngIf="document.numberValue" class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-slate-150 shadow-2xs">
+ <span class="material-symbols-outlined text-[16px] text-slate-400">fingerprint</span>
+ <div>
+ <p class="text-[9px] text-slate-400 font-bold uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_NUMBER' | translate }}</p>
+ <p class="font-black text-slate-800 text-[12px] mt-0.5">{{ document.numberValue }}</p>
+ </div>
+ </div>
 
-              <div *ngIf="document.expiryDate" class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-slate-150 shadow-2xs">
-                <span class="material-symbols-outlined text-[16px] text-slate-400">calendar_today</span>
-                <div>
-                  <p class="text-[9px] text-slate-400 font-bold uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}</p>
-                  <p class="font-black text-slate-800 text-[12px] mt-0.5">{{ document.expiryDate | translate }}</p>
-                </div>
-              </div>
+ <div *ngIf="document.expiryDate" class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-slate-150 shadow-2xs">
+ <span class="material-symbols-outlined text-[16px] text-slate-400">calendar_today</span>
+ <div>
+ <p class="text-[9px] text-slate-400 font-bold uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_EXPIRY' | translate }}</p>
+ <p class="font-black text-slate-800 text-[12px] mt-0.5">{{ document.expiryDate | translate }}</p>
+ </div>
+ </div>
 
-              <div *ngIf="document.reviewedBy" class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-slate-150 shadow-2xs">
-                <span class="material-symbols-outlined text-[16px] text-slate-400">person</span>
-                <div>
-                  <p class="text-[9px] text-slate-400 font-bold uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REVIEWED_BY' | translate }}</p>
-                  <p class="font-black text-slate-800 text-[12px] mt-0.5">{{ document.reviewedBy }}</p>
-                </div>
-              </div>
+ <div *ngIf="document.reviewedBy" class="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-slate-150 shadow-2xs">
+ <span class="material-symbols-outlined text-[16px] text-slate-400">person</span>
+ <div>
+ <p class="text-[9px] text-slate-400 font-bold uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REVIEWED_BY' | translate }}</p>
+ <p class="font-black text-slate-800 text-[12px] mt-0.5">{{ document.reviewedBy }}</p>
+ </div>
+ </div>
 
-              <div *ngIf="document.rejectionReason" class="col-span-full flex items-start gap-2.5 px-3 py-2 bg-rose-50 border border-rose-150 rounded-xl text-rose-700">
-                <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
-                <div>
-                  <p class="text-[9px] font-bold text-rose-500 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REJECTION_REASON' | translate }}</p>
-                  <p class="font-black text-[11.5px] mt-0.5 leading-relaxed">{{ document.rejectionReason }}</p>
-                </div>
-              </div>
+ <div *ngIf="document.rejectionReason" class="col-span-full flex items-start gap-2.5 px-3 py-2 bg-rose-50 border border-rose-150 rounded-xl text-rose-700">
+ <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
+ <div>
+ <p class="text-[9px] font-bold text-rose-500 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.DOC_REJECTION_REASON' | translate }}</p>
+ <p class="font-black text-[11.5px] mt-0.5 leading-relaxed">{{ document.rejectionReason }}</p>
+ </div>
+ </div>
 
-              <div *ngIf="!hasRequiredExpiryDate(document)" class="col-span-full flex items-start gap-2.5 px-3 py-2 bg-amber-50 border border-amber-150 rounded-xl text-amber-800 animate-pulse">
-                <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">warning</span>
-                <div>
-                  <p class="text-[9px] font-bold text-amber-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.MISSING_EXPIRY_TITLE' | translate }}</p>
-                  <p class="font-black text-[11px] mt-0.5 leading-relaxed">{{ 'DRIVERS.DETAIL.VERIFICATION.MISSING_EXPIRY_MESSAGE' | translate }}</p>
-                </div>
-              </div>
-            </div>
+ <div *ngIf="!hasRequiredExpiryDate(document)" class="col-span-full flex items-start gap-2.5 px-3 py-2 bg-amber-50 border border-amber-150 rounded-xl text-amber-800 animate-pulse">
+ <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">warning</span>
+ <div>
+ <p class="text-[9px] font-bold text-amber-600 uppercase">{{ 'DRIVERS.DETAIL.VERIFICATION.MISSING_EXPIRY_TITLE' | translate }}</p>
+ <p class="font-black text-[11px] mt-0.5 leading-relaxed">{{ 'DRIVERS.DETAIL.VERIFICATION.MISSING_EXPIRY_MESSAGE' | translate }}</p>
+ </div>
+ </div>
+ </div>
 
-            <!-- Reviewer Notes Field -->
-            <div class="space-y-1.5">
-              <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES' | translate }}</label>
-              <textarea
-                [(ngModel)]="documentRejectReason"
-                rows="2"
-                class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm"
-                [placeholder]="'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES_PLACEHOLDER' | translate">
-              </textarea>
-            </div>
-          </div>
+ <!-- Reviewer Notes Field -->
+ <div class="space-y-1.5">
+ <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block">{{ 'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES' | translate }}</label>
+ <textarea
+ [(ngModel)]="documentRejectReason"
+ rows="2"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-700 outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm"
+ [placeholder]="'DRIVERS.DETAIL.VERIFICATION.PREVIEW_NOTES_PLACEHOLDER' | translate">
+ </textarea>
+ </div>
+ </div>
 
-          <!-- Bottom Action Buttons for Single Document -->
-          <div *ngIf="hasPendingDocumentChange(selectedDocumentPreview)" class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-bold leading-6 text-amber-800">
-            {{ isRTL
+ <!-- Bottom Action Buttons for Single Document -->
+ <div *ngIf="hasPendingDocumentChange(selectedDocumentPreview)" class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12px] font-bold leading-6 text-amber-800">
+ {{ isRTL
               ? 'يوجد تعديل مستند معلق. استخدم "اعتماد وتطبيق" من قائمة التعديلات المعلقة قبل اعتماد المستند مباشرة.'
               : 'A pending document change exists. Use "Approve and apply" from the pending changes list before approving this document directly.' }}
-          </div>
+ </div>
 
-          <div class="flex sm:flex-col md:flex-row gap-3 justify-end items-end pt-2">
-            <button
-              type="button"
-              (click)="approveSelectedDocument()"
-              [disabled]="!canApproveSelectedDocument()"
-              class="flex-1 md:flex-none flex h-10 min-w-[120px] items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 px-5 text-[12.5px] font-black text-white shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 transition-all duration-300 active:scale-95 gap-1.5">
-              <span class="material-symbols-outlined text-[18px]">verified_user</span>
-              {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE_SHORT' | translate }}
-            </button>
-            <button
-              type="button"
-              (click)="rejectSelectedDocument()"
-              [disabled]="!canRejectSelectedDocument()"
-              class="flex-1 md:flex-none flex h-10 min-w-[120px] items-center justify-center rounded-xl bg-white border border-rose-200 text-rose-600 disabled:opacity-40 px-5 text-[12.5px] font-black shadow-md hover:bg-rose-50 hover:border-rose-300 transition-all duration-300 active:scale-95 gap-1.5">
-              <span class="material-symbols-outlined text-[18px]">cancel</span>
-              {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT_SHORT' | translate }}
-            </button>
-          </div>
+ <div class="flex sm:flex-col md:flex-row gap-3 justify-end items-end pt-2">
+ <button
+ type="button"
+ (click)="approveSelectedDocument()"
+ [disabled]="!canApproveSelectedDocument()"
+ class="flex-1 md:flex-none flex h-10 min-w-[120px] items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 px-5 text-[12.5px] font-black text-white shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 transition-all duration-300 active:scale-95 gap-1.5">
+ <span class="material-symbols-outlined text-[18px]">verified_user</span>
+ {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE_SHORT' | translate }}
+ </button>
+ <button
+ type="button"
+ (click)="rejectSelectedDocument()"
+ [disabled]="!canRejectSelectedDocument()"
+ class="flex-1 md:flex-none flex h-10 min-w-[120px] items-center justify-center rounded-xl bg-white border border-rose-200 text-rose-600 disabled:opacity-40 px-5 text-[12.5px] font-black shadow-md hover:bg-rose-50 hover:border-rose-300 transition-all duration-300 active:scale-95 gap-1.5">
+ <span class="material-symbols-outlined text-[18px]">cancel</span>
+ {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT_SHORT' | translate }}
+ </button>
+ </div>
 
-        </div>
-      </div>
-    </ng-container>
-  </div>
+ </div>
+ </div>
+ </ng-container>
+ </div>
 </ng-template>
 
 <!-- Account Control Rail Template -->
 <ng-template #accountControlRailTemplate>
-  <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)]">
-    <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
-      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 border border-slate-150">
-        <span class="material-symbols-outlined text-[18px]">gavel</span>
-      </div>
-      <div>
-        <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_TITLE' | translate }}</h2>
-        <p class="text-[10px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_DESC' | translate }}</p>
-      </div>
-    </div>
+ <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)]">
+ <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+ <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 border border-slate-150">
+ <span class="material-symbols-outlined text-[18px]">gavel</span>
+ </div>
+ <div>
+ <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_TITLE' | translate }}</h2>
+ <p class="text-[10px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.ACCOUNT_CONTROL_DESC' | translate }}</p>
+ </div>
+ </div>
 
-    <div class="space-y-4">
-      <!-- Dropdown Rejection Reason -->
-      <div class="space-y-1.5">
-        <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block">{{ 'DRIVERS.DETAIL.VERIFICATION.REJECTION_REASON_LABEL' | translate }}</label>
-        <div class="relative">
-          <select
-            [ngModel]="selectedRejectionReason"
-            (ngModelChange)="onSelectedRejectionReasonChange($event)"
-            class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 pr-8 text-[12px] font-semibold text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 appearance-none">
-            <option value="" disabled>{{ 'COMMON.SELECT' | translate }}</option>
-            <option *ngFor="let reason of driver.verification.rejectionReasonOptions" [value]="reason">{{ reason | translate }}</option>
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-            <span class="material-symbols-outlined text-[18px]">expand_more</span>
-          </div>
-        </div>
-      </div>
+ <div class="space-y-4">
+ <!-- Dropdown Rejection Reason -->
+ <div class="space-y-1.5">
+ <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block">{{ 'DRIVERS.DETAIL.VERIFICATION.REJECTION_REASON_LABEL' | translate }}</label>
+ <div class="relative">
+ <select
+ [ngModel]="selectedRejectionReason"
+ (ngModelChange)="onSelectedRejectionReasonChange($event)"
+ class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 pr-8 text-[12px] font-semibold text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 appearance-none">
+ <option value="" disabled>{{ 'COMMON.SELECT' | translate }}</option>
+ <option *ngFor="let reason of driver.verification.rejectionReasonOptions" [value]="reason">{{ reason | translate }}</option>
+ </select>
+ <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+ <span class="material-symbols-outlined text-[18px]">expand_more</span>
+ </div>
+ </div>
+ </div>
 
-      <!-- Decision notes -->
-      <div class="space-y-1.5">
-        <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_LABEL' | translate }}</label>
-        <textarea
-          [ngModel]="reviewerDecisionNote"
-          (ngModelChange)="onReviewerDecisionNoteChange($event)"
-          rows="3"
-          class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-[12px] font-semibold text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
-          [placeholder]="'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_PLACEHOLDER' | translate">
-        </textarea>
-      </div>
+ <!-- Decision notes -->
+ <div class="space-y-1.5">
+ <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block">{{ 'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_LABEL' | translate }}</label>
+ <textarea
+ [ngModel]="reviewerDecisionNote"
+ (ngModelChange)="onReviewerDecisionNoteChange($event)"
+ rows="3"
+ class="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-[12px] font-semibold text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
+ [placeholder]="'DRIVERS.DETAIL.VERIFICATION.REVIEW_SUMMARY_PLACEHOLDER' | translate">
+ </textarea>
+ </div>
 
-      <!-- Action Button Group -->
-      <div class="grid gap-3 pt-2">
-        <button
-          type="button"
-          (click)="requestReviewAction('approve')"
-          [disabled]="!canSubmitAction('approve')"
-          class="group flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 disabled:opacity-40 transition-all duration-300 active:scale-95 text-[12.5px] font-black">
-          <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">verified</span>
-          {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE' | translate }}
-        </button>
+ <!-- Action Button Group -->
+ <div class="grid gap-3 pt-2">
+ <button
+ type="button"
+ (click)="requestReviewAction('approve')"
+ [disabled]="!canSubmitAction('approve')"
+ class="group flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/25 disabled:opacity-40 transition-all duration-300 active:scale-95 text-[12.5px] font-black">
+ <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">verified</span>
+ {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.APPROVE' | translate }}
+ </button>
 
-        <button
-          type="button"
-          [disabled]="!canSubmitAction('request-docs')"
-          (click)="requestReviewAction('request-docs')"
-          class="flex h-11 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50/50 hover:bg-amber-100/70 hover:border-amber-300 text-amber-700 disabled:opacity-40 transition-all duration-300 active:scale-95 text-[12.5px] font-black shadow-sm">
-          <span class="material-symbols-outlined text-[18px]">upload_file</span>
-          {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REQUEST_DOCUMENTS' | translate }}
-        </button>
+ <button
+ type="button"
+ [disabled]="!canSubmitAction('request-docs')"
+ (click)="requestReviewAction('request-docs')"
+ class="flex h-11 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50/50 hover:bg-amber-100/70 hover:border-amber-300 text-amber-700 disabled:opacity-40 transition-all duration-300 active:scale-95 text-[12.5px] font-black shadow-sm">
+ <span class="material-symbols-outlined text-[18px]">upload_file</span>
+ {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REQUEST_DOCUMENTS' | translate }}
+ </button>
 
-        <button
-          type="button"
-          [disabled]="!canSubmitAction('reject')"
-          (click)="requestReviewAction('reject')"
-          class="flex h-11 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100/70 hover:border-rose-300 text-rose-700 disabled:opacity-40 transition-all duration-300 active:scale-95 text-[12.5px] font-black shadow-sm">
-          <span class="material-symbols-outlined text-[18px]">cancel</span>
-          {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
+ <button
+ type="button"
+ [disabled]="!canSubmitAction('reject')"
+ (click)="requestReviewAction('reject')"
+ class="flex h-11 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100/70 hover:border-rose-300 text-rose-700 disabled:opacity-40 transition-all duration-300 active:scale-95 text-[12.5px] font-black shadow-sm">
+ <span class="material-symbols-outlined text-[18px]">cancel</span>
+ {{ 'DRIVERS.DETAIL.VERIFICATION.ACTIONS.REJECT' | translate }}
+ </button>
+ </div>
+ </div>
+ </div>
 </ng-template>
 
 <!-- Timeline and Checklist Template -->
 <ng-template #timelineAndChecklistTemplate>
-  <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)]">
-    <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
-      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 border border-slate-150">
-        <span class="material-symbols-outlined text-[18px]">fact_check</span>
-      </div>
-      <div>
-        <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_TITLE' | translate }}</h2>
-        <p class="text-[10px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_DESC' | translate }}</p>
-      </div>
-    </div>
+ <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-[0_4px_25px_rgba(0,0,0,0.015)]">
+ <div class="flex items-center gap-3 border-b border-slate-100 pb-3 mb-4">
+ <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 border border-slate-150">
+ <span class="material-symbols-outlined text-[18px]">fact_check</span>
+ </div>
+ <div>
+ <h2 class="text-[14px] font-black text-slate-900">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_TITLE' | translate }}</h2>
+ <p class="text-[10px] font-semibold text-slate-500">{{ 'DRIVERS.DETAIL.VERIFICATION.REQUIREMENTS_DESC' | translate }}</p>
+ </div>
+ </div>
 
-    <!-- Notes Addition Form -->
-    <div class="mb-5 rounded-2xl bg-slate-50/55 p-3.5 border border-slate-200/80 shadow-2xs">
-      <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block mb-2">{{ 'DRIVERS.DETAIL.VERIFICATION.ADD_INTERNAL_NOTE' | translate }}</label>
-      <div class="flex gap-2">
-        <input
-          [(ngModel)]="newNote"
-          type="text"
-          class="flex-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-slate-750 shadow-xs outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
-          [placeholder]="'DRIVERS.DETAIL.VERIFICATION.ADD_INTERNAL_NOTE_PLACEHOLDER' | translate" />
-        <button
-          type="button"
-          (click)="onAddNote()"
-          class="flex items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-[12px] font-black text-white shadow-md transition-all active:scale-95 shrink-0">
-          {{ 'COMMON.ADD' | translate }}
-        </button>
-      </div>
-    </div>
+ <!-- Notes Addition Form -->
+ <div class="mb-5 rounded-2xl bg-slate-50/55 p-3.5 border border-slate-200/80 shadow-2xs">
+ <label class="text-[9px] font-black tracking-widest text-slate-400 uppercase block mb-2">{{ 'DRIVERS.DETAIL.VERIFICATION.ADD_INTERNAL_NOTE' | translate }}</label>
+ <div class="flex gap-2">
+ <input
+ [(ngModel)]="newNote"
+ type="text"
+ class="flex-1 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-slate-750 shadow-xs outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
+ [placeholder]="'DRIVERS.DETAIL.VERIFICATION.ADD_INTERNAL_NOTE_PLACEHOLDER' | translate" />
+ <button
+ type="button"
+ (click)="onAddNote()"
+ class="flex items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-[12px] font-black text-white shadow-md transition-all active:scale-95 shrink-0">
+ {{ 'COMMON.ADD' | translate }}
+ </button>
+ </div>
+ </div>
 
-    <!-- Rail Selector Tabs -->
-    <div class="flex rounded-xl bg-slate-100/80 p-1 mb-4 border border-slate-200/50">
-      <button
-        type="button"
-        (click)="setActiveRailTab('checklist')"
-        class="flex-1 rounded-lg py-2 text-[11.5px] font-black transition-all flex items-center justify-center gap-1.5"
-        [ngClass]="activeRailTab === 'checklist' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'">
-        <span>{{ 'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_TAB' | translate }}</span>
-        <span *ngIf="getPendingChecklistCount() > 0" class="inline-flex items-center justify-center h-5 min-w-[20px] rounded-full bg-amber-100 text-amber-700 text-[9.5px] font-black px-1 shadow-sm">{{ getPendingChecklistCount() }}</span>
-      </button>
+ <!-- Rail Selector Tabs -->
+ <div class="flex rounded-xl bg-slate-100/80 p-1 mb-4 border border-slate-200/50">
+ <button
+ type="button"
+ (click)="setActiveRailTab('checklist')"
+ class="flex-1 rounded-lg py-2 text-[11.5px] font-black transition-all flex items-center justify-center gap-1.5"
+ [ngClass]="activeRailTab === 'checklist' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'">
+ <span>{{ 'DRIVERS.DETAIL.VERIFICATION.CHECKLIST_TAB' | translate }}</span>
+ <span *ngIf="getPendingChecklistCount() > 0" class="inline-flex items-center justify-center h-5 min-w-[20px] rounded-full bg-amber-100 text-amber-700 text-[9.5px] font-black px-1 shadow-sm">{{ getPendingChecklistCount() }}</span>
+ </button>
 
-      <button
-        type="button"
-        (click)="setActiveRailTab('edit-profile')"
-        class="flex-1 rounded-lg py-2 text-[11.5px] font-black transition-all flex items-center justify-center gap-1.5"
-        [ngClass]="activeRailTab === 'edit-profile' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'">
-        <span class="material-symbols-outlined text-[16px]">edit_note</span>
-        <span>{{ 'DRIVERS.DETAIL.VERIFICATION.EDIT_PROFILE_TAB' | translate }}</span>
-        <span *ngIf="!driver.profileReadiness.isProfileComplete" class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-rose-100 text-rose-700 text-[9.5px] font-black shadow-sm animate-pulse">!</span>
-      </button>
-    </div>
+ <button
+ type="button"
+ (click)="setActiveRailTab('edit-profile')"
+ class="flex-1 rounded-lg py-2 text-[11.5px] font-black transition-all flex items-center justify-center gap-1.5"
+ [ngClass]="activeRailTab === 'edit-profile' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'">
+ <span class="material-symbols-outlined text-[16px]">edit_note</span>
+ <span>{{ 'DRIVERS.DETAIL.VERIFICATION.EDIT_PROFILE_TAB' | translate }}</span>
+ <span *ngIf="!driver.profileReadiness.isProfileComplete" class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-rose-100 text-rose-700 text-[9.5px] font-black shadow-sm animate-pulse">!</span>
+ </button>
+ </div>
 
-    <!-- Checklist Listing -->
-    <div *ngIf="activeRailTab === 'checklist'" class="max-h-[15rem] space-y-2.5 overflow-y-auto pr-1 pl-1 custom-scrollbar">
-      <div *ngFor="let item of driver.verification.checklist" 
-           class="rounded-2xl border p-3.5 transition-all duration-200 hover:shadow-xs relative overflow-hidden" 
-           [ngClass]="item.completed ? 'border-emerald-100 bg-emerald-50/20' : item.critical ? 'border-rose-100 bg-rose-50/20 animate-pulse-subtle' : 'border-slate-150 bg-slate-50/30'">
-        
-        <div class="flex gap-3">
-          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white shadow-md" 
-               [ngClass]="item.completed ? 'bg-emerald-500' : item.critical ? 'bg-rose-500' : 'bg-slate-400'">
-            <span class="material-symbols-outlined text-[15px] font-black">{{ item.completed ? 'check' : item.critical ? 'priority_high' : 'schedule' }}</span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <p class="text-[12px] font-black text-slate-900 leading-snug">{{ item.label | translate }}</p>
-            <p *ngIf="item.note" class="text-[10px] font-semibold leading-relaxed text-slate-400 mt-0.5">{{ item.note | translate }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+ <!-- Checklist Listing -->
+ <div *ngIf="activeRailTab === 'checklist'" class="max-h-[15rem] space-y-2.5 overflow-y-auto pr-1 pl-1 custom-scrollbar">
+ <div *ngFor="let item of driver.verification.checklist" 
+ class="rounded-2xl border p-3.5 transition-all duration-200 hover:shadow-xs relative overflow-hidden" 
+ [ngClass]="item.completed ? 'border-emerald-100 bg-emerald-50/20' : item.critical ? 'border-rose-100 bg-rose-50/20 animate-pulse-subtle' : 'border-slate-150 bg-slate-50/30'">
+ 
+ <div class="flex gap-3">
+ <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white shadow-md" 
+ [ngClass]="item.completed ? 'bg-emerald-500' : item.critical ? 'bg-rose-500' : 'bg-slate-400'">
+ <span class="material-symbols-outlined text-[15px] font-black">{{ item.completed ? 'check' : item.critical ? 'priority_high' : 'schedule' }}</span>
+ </div>
+ <div class="min-w-0 flex-1">
+ <p class="text-[12px] font-black text-slate-900 leading-snug">{{ item.label | translate }}</p>
+ <p *ngIf="item.note" class="text-[10px] font-semibold leading-relaxed text-slate-400 mt-0.5">{{ item.note | translate }}</p>
+ </div>
+ </div>
+ </div>
+ </div>
 
-    <!-- Edit Profile Form -->
-    <div *ngIf="activeRailTab === 'edit-profile'" class="space-y-4 animate-in fade-in duration-300 pr-1 pl-1 max-h-[25rem] overflow-y-auto custom-scrollbar">
-      
-      <!-- Section 1: Personal Info -->
-      <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
-        <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-          {{ 'DRIVERS.DETAIL.VERIFICATION.PERSONAL_SECTION' | translate }}
-        </legend>
-        
-        <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-500 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.FULL_NAME' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.fullName"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
+ <!-- Edit Profile Form -->
+ <div *ngIf="activeRailTab === 'edit-profile'" class="space-y-4 animate-in fade-in duration-300 pr-1 pl-1 max-h-[25rem] overflow-y-auto custom-scrollbar">
+ 
+ <!-- Section 1: Personal Info -->
+ <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
+ <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.PERSONAL_SECTION' | translate }}
+ </legend>
+ 
+ <div class="grid gap-4 sm:grid-cols-2">
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-500 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.FULL_NAME' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.fullName"
+ type="text"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EMAIL' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.email"
-              type="email"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EMAIL' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.email"
+ type="email"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.PHONE' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.phoneNumber"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.PHONE' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.phoneNumber"
+ type="text"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.ADDRESS' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.address"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
-        </div>
-      </fieldset>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.ADDRESS' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.address"
+ type="text"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
+ </div>
+ </fieldset>
 
-      <!-- Section 2: Identity & License Info -->
-      <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
-        <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-          {{ 'DRIVERS.DETAIL.VERIFICATION.IDENTITY_SECTION' | translate }}
-        </legend>
-        
-        <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.NATIONAL_ID' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.nationalId"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
+ <!-- Section 2: Identity & License Info -->
+ <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
+ <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.IDENTITY_SECTION' | translate }}
+ </legend>
+ 
+ <div class="grid gap-4 sm:grid-cols-2">
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.NATIONAL_ID' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.nationalId"
+ type="text"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRY_DATE' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.nationalIdExpiryDate"
-              type="date"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRY_DATE' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.nationalIdExpiryDate"
+ type="date"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.LICENSE_NUMBER' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.licenseNumber"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.LICENSE_NUMBER' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.licenseNumber"
+ type="text"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRY_DATE' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.driverLicenseExpiryDate"
-              type="date"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
-        </div>
-      </fieldset>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRY_DATE' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.driverLicenseExpiryDate"
+ type="date"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
+ </div>
+ </fieldset>
 
-      <!-- Section 3: Vehicle Info -->
-      <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
-        <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-          {{ 'DRIVERS.DETAIL.VERIFICATION.VEHICLE_SECTION' | translate }}
-        </legend>
-        
-        <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.VEHICLE_TYPE' | translate }}</span>
-            <div class="relative">
-              <select
-                [(ngModel)]="editForm.vehicleType"
-                class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
-                <option value="">{{ 'COMMON.SELECT' | translate }}</option>
-                <option value="Car">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.CAR' | translate }}</option>
-                <option value="Motorcycle">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.MOTORCYCLE' | translate }}</option>
-                <option value="Scooter">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.SCOOTER' | translate }}</option>
-                <option value="Van">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.VAN' | translate }}</option>
-                <option value="Bicycle">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.BICYCLE' | translate }}</option>
-                <option value="Truck">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.TRUCK' | translate }}</option>
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                <span class="material-symbols-outlined text-[18px]">expand_more</span>
-              </div>
-            </div>
-          </label>
+ <!-- Section 3: Vehicle Info -->
+ <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
+ <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.VEHICLE_SECTION' | translate }}
+ </legend>
+ 
+ <div class="grid gap-4 sm:grid-cols-2">
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.VEHICLE_TYPE' | translate }}</span>
+ <div class="relative">
+ <select
+ [(ngModel)]="editForm.vehicleType"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
+ <option value="">{{ 'COMMON.SELECT' | translate }}</option>
+ <option value="Car">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.CAR' | translate }}</option>
+ <option value="Motorcycle">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.MOTORCYCLE' | translate }}</option>
+ <option value="Scooter">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.SCOOTER' | translate }}</option>
+ <option value="Van">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.VAN' | translate }}</option>
+ <option value="Bicycle">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.BICYCLE' | translate }}</option>
+ <option value="Truck">{{ 'DRIVERS.DETAIL.VEHICLE_TYPES.TRUCK' | translate }}</option>
+ </select>
+ <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+ <span class="material-symbols-outlined text-[18px]">expand_more</span>
+ </div>
+ </div>
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.PLATE_NUMBER' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.vehicleLicenseNumber"
-              type="text"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.PLATE_NUMBER' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.vehicleLicenseNumber"
+ type="text"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
 
-          <label class="block sm:col-span-2">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRY_DATE' | translate }}</span>
-            <input
-              [(ngModel)]="editForm.vehicleLicenseExpiryDate"
-              type="date"
-              class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
-          </label>
-        </div>
-      </fieldset>
+ <label class="block sm:col-span-2">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.EXPIRY_DATE' | translate }}</span>
+ <input
+ [(ngModel)]="editForm.vehicleLicenseExpiryDate"
+ type="date"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-semibold text-slate-755 outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm" />
+ </label>
+ </div>
+ </fieldset>
 
-      <!-- Section 4: Operating Zone -->
-      <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
-        <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-          {{ 'DRIVERS.DETAIL.VERIFICATION.OPERATING_SECTION' | translate }}
-        </legend>
-        
-        <div class="grid gap-4 sm:grid-cols-2">
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.REGION' | translate }}</span>
-            <div class="relative">
-              <select
-                [(ngModel)]="editForm.region"
-                (ngModelChange)="onRegionChange($event)"
-                class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
-                <option value="">{{ 'COMMON.SELECT' | translate }}</option>
-                <option
-                  *ngIf="editForm.region && !hasLookupOption(editForm.region, regions)"
-                  [value]="editForm.region">
-                  {{ editForm.region }}
-                </option>
-                <option *ngFor="let region of regions" [value]="region.code">
-                  {{ isRTL ? region.nameAr : region.nameEn }}
-                </option>
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-505">
-                <span class="material-symbols-outlined text-[18px]">expand_more</span>
-              </div>
-            </div>
-          </label>
+ <!-- Section 4: Operating Zone -->
+ <fieldset class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/30 p-4">
+ <legend class="px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+ {{ 'DRIVERS.DETAIL.VERIFICATION.OPERATING_SECTION' | translate }}
+ </legend>
+ 
+ <div class="grid gap-4 sm:grid-cols-2">
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.REGION' | translate }}</span>
+ <div class="relative">
+ <select
+ [(ngModel)]="editForm.region"
+ (ngModelChange)="onRegionChange($event)"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
+ <option value="">{{ 'COMMON.SELECT' | translate }}</option>
+ <option
+ *ngIf="editForm.region &&!hasLookupOption(editForm.region, regions)"
+ [value]="editForm.region">
+ {{ editForm.region }}
+ </option>
+ <option *ngFor="let region of regions" [value]="region.code">
+ {{ isRTL ? region.nameAr : region.nameEn }}
+ </option>
+ </select>
+ <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-505">
+ <span class="material-symbols-outlined text-[18px]">expand_more</span>
+ </div>
+ </div>
+ </label>
 
-          <label class="block">
-            <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.CITY' | translate }}</span>
-            <div class="relative">
-              <select
-                [(ngModel)]="editForm.city"
-                class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
-                <option value="">{{ 'COMMON.SELECT' | translate }}</option>
-                <option
-                  *ngIf="editForm.city && !hasLookupOption(editForm.city, cities)"
-                  [value]="editForm.city">
-                  {{ editForm.city }}
-                </option>
-                <option *ngFor="let city of cities" [value]="city.code">
-                  {{ isRTL ? city.nameAr : city.nameEn }}
-                </option>
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-505">
-                <span class="material-symbols-outlined text-[18px]">expand_more</span>
-              </div>
-            </div>
-          </label>
-        </div>
-      </fieldset>
+ <label class="block">
+ <span class="text-[9px] font-black tracking-widest text-slate-505 uppercase block mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.CITY' | translate }}</span>
+ <div class="relative">
+ <select
+ [(ngModel)]="editForm.city"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
+ <option value="">{{ 'COMMON.SELECT' | translate }}</option>
+ <option
+ *ngIf="editForm.city &&!hasLookupOption(editForm.city, cities)"
+ [value]="editForm.city">
+ {{ editForm.city }}
+ </option>
+ <option *ngFor="let city of cities" [value]="city.code">
+ {{ isRTL ? city.nameAr : city.nameEn }}
+ </option>
+ </select>
+ <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-505">
+ <span class="material-symbols-outlined text-[18px]">expand_more</span>
+ </div>
+ </div>
+ </label>
+ </div>
+ </fieldset>
 
-      <!-- Save Button -->
-      <div class="flex justify-end pt-2 pb-4">
-        <button
-          type="button"
-          (click)="saveProfile()"
-          class="w-full sm:w-auto flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-lg transition-all duration-300 active:scale-95 text-[12.5px] font-black px-6">
-          <span class="material-symbols-outlined text-[18px]">save</span>
-          {{ 'DRIVERS.DETAIL.VERIFICATION.SAVE_CHANGES' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
+ <!-- Save Button -->
+ <div class="flex justify-end pt-2 pb-4">
+ <button
+ type="button"
+ (click)="saveProfile()"
+ class="w-full sm:w-auto flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-lg transition-all duration-300 active:scale-95 text-[12.5px] font-black px-6">
+ <span class="material-symbols-outlined text-[18px]">save</span>
+ {{ 'DRIVERS.DETAIL.VERIFICATION.SAVE_CHANGES' | translate }}
+ </button>
+ </div>
+ </div>
+ </div>
 </ng-template>
 
 <!-- Empty Preview Fallback -->
 <ng-template #emptyPreview>
-  <div class="flex flex-1 flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-slate-50/50 p-12 text-center min-h-[400px] w-full">
-    <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md mb-4 border border-slate-100 text-slate-300">
-      <span class="material-symbols-outlined text-[32px] text-slate-300">task</span>
-    </div>
-    <h3 class="text-lg font-black text-slate-900 mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED' | translate }}</h3>
-    <p class="max-w-xs text-[11px] font-semibold text-slate-400 leading-relaxed">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED_DESC' | translate }}</p>
-  </div>
+ <div class="flex flex-1 flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-slate-50/50 p-12 text-center min-h-[400px] w-full">
+ <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-md mb-4 border border-slate-100 text-slate-300">
+ <span class="material-symbols-outlined text-[32px] text-slate-300">task</span>
+ </div>
+ <h3 class="text-lg font-black text-slate-900 mb-1.5">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED' | translate }}</h3>
+ <p class="max-w-xs text-[11px] font-semibold text-slate-400 leading-relaxed">{{ 'DRIVERS.DETAIL.VERIFICATION.NO_DOCUMENT_SELECTED_DESC' | translate }}</p>
+ </div>
 </ng-template>

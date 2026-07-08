@@ -1,207 +1,207 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-    <app-page-header
-        [title]="'SYSTEM_LOGS.TITLE'"
-        [subtitle]="'SYSTEM_LOGS.SUBTITLE'"
-        [showToolbar]="true"
-        [breadcrumbs]="[
-            { label: 'SIDEBAR.HOME', url: '/dashboard' },
-            { label: 'SIDEBAR.SYSTEM_LOGS' }
-        ]">
-        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">terminal</span>
+ <app-page-header
+ [title]="'SYSTEM_LOGS.TITLE'"
+ [subtitle]="'SYSTEM_LOGS.SUBTITLE'"
+ [showToolbar]="true"
+ [breadcrumbs]="[
+ { label: 'SIDEBAR.HOME', url: '/dashboard' },
+ { label: 'SIDEBAR.SYSTEM_LOGS' }
+ ]">
+ <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">terminal</span>
 
-        <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-            <button
-                type="button"
-                (click)="exportCsv()"
-                [disabled]="isExporting || isLoading"
-                class="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-sm hover:border-slate-300 hover:text-slate-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
-                <span class="material-symbols-outlined text-[20px]">download</span>
-                {{ (isExporting ? 'SYSTEM_LOGS.ACTIONS.EXPORTING' : 'SYSTEM_LOGS.ACTIONS.EXPORT_CSV') | translate }}
-            </button>
-            <button
-                type="button"
-                (click)="loadLogs()"
-                [disabled]="isLoading"
-                class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group disabled:opacity-60">
-                <span class="material-symbols-outlined text-[20px] transition-transform duration-500" [class.animate-spin]="isLoading" [class.opacity-40]="isLoading">{{ isLoading ? 'progress_activity' : 'refresh' }}</span>
-                {{ (isLoading ? 'SYSTEM_LOGS.ACTIONS.REFRESHING' : 'SYSTEM_LOGS.ACTIONS.REFRESH') | translate }}
-            </button>
-        </div>
-    </app-page-header>
+ <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
+ <button
+ type="button"
+ (click)="exportCsv()"
+ [disabled]="isExporting || isLoading"
+ class="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-sm hover:border-slate-300 hover:text-slate-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+ <span class="material-symbols-outlined text-[20px]">download</span>
+ {{ (isExporting ? 'SYSTEM_LOGS.ACTIONS.EXPORTING' : 'SYSTEM_LOGS.ACTIONS.EXPORT_CSV') | translate }}
+ </button>
+ <button
+ type="button"
+ (click)="loadLogs()"
+ [disabled]="isLoading"
+ class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group disabled:opacity-60">
+ <span class="material-symbols-outlined text-[20px] transition-transform duration-500" [class.animate-spin]="isLoading" [class.opacity-40]="isLoading">{{ isLoading ? 'progress_activity' : 'refresh' }}</span>
+ {{ (isLoading ? 'SYSTEM_LOGS.ACTIONS.REFRESHING' : 'SYSTEM_LOGS.ACTIONS.REFRESH') | translate }}
+ </button>
+ </div>
+ </app-page-header>
 
-    <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
+ <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
 
-        <!-- 1. KPI Summary Cards -->
-        <app-kpi-cards
-            [cards]="kpiCards"
-            (cardClick)="onKPICardClick($event)">
-        </app-kpi-cards>
+ <!-- 1. KPI Summary Cards -->
+ <app-kpi-cards
+ [cards]="kpiCards"
+ (cardClick)="onKPICardClick($event)">
+ </app-kpi-cards>
 
-        <!-- 2. Search & Filter Section -->
-        <div class="flex flex-col gap-3">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
+ <!-- 2. Search & Filter Section -->
+ <div class="flex flex-col gap-3">
+ <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
 
-                <!-- Search Input -->
-                <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
-                    <div class="absolute inset-y-0 flex items-center pointer-events-none" [ngClass]="isRTL ? 'right-5' : 'left-5'">
-                        <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
-                    </div>
-                    <input type="text"
-                           [(ngModel)]="searchTerm"
-                           (input)="onSearch()"
-                           [placeholder]="'SYSTEM_LOGS.FILTERS.SEARCH_PLACEHOLDER' | translate"
-                           class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
-                           [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
-                </div>
+ <!-- Search Input -->
+ <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
+ <div class="absolute inset-y-0 flex items-center pointer-events-none" [ngClass]="isRTL ? 'right-5' : 'left-5'">
+ <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+ </div>
+ <input type="text"
+ [(ngModel)]="searchTerm"
+ (input)="onSearch()"
+ [placeholder]="'SYSTEM_LOGS.FILTERS.SEARCH_PLACEHOLDER' | translate"
+ class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
+ [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
+ </div>
 
-                <!-- Filter Toggle -->
-                <div class="flex items-center gap-4 order-2 lg:order-2">
-                    <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
-                        <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
-                             (click)="toggleFilters()"
-                             [class.bg-teal-50]="isFiltersExpanded">
-                            <span class="material-symbols-outlined text-[24px] transition-transform duration-500 text-zadna-primary"
-                                  [class.rotate-180]="isFiltersExpanded">filter_list</span>
-                            <div class="flex flex-col">
-                                <span class="text-[13px] font-black text-slate-800">{{ 'SYSTEM_LOGS.FILTERS.FILTER_TITLE' | translate }}</span>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'SYSTEM_LOGS.FILTERS.FILTER_SUBTITLE' | translate }}</span>
-                            </div>
-                            <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
-                                  [ngClass]="isRTL ? 'mr-2' : 'ml-2'"
-                                  [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
-                        </div>
-                    </div>
+ <!-- Filter Toggle -->
+ <div class="flex items-center gap-4 order-2 lg:order-2">
+ <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+ <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+ (click)="toggleFilters()"
+ [class.bg-teal-50]="isFiltersExpanded">
+ <span class="material-symbols-outlined text-[24px] transition-transform duration-500 text-zadna-primary"
+ [class.rotate-180]="isFiltersExpanded">filter_list</span>
+ <div class="flex flex-col">
+ <span class="text-[13px] font-black text-slate-800">{{ 'SYSTEM_LOGS.FILTERS.FILTER_TITLE' | translate }}</span>
+ <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'SYSTEM_LOGS.FILTERS.FILTER_SUBTITLE' | translate }}</span>
+ </div>
+ <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
+ [ngClass]="isRTL ? 'mr-2' : 'ml-2'"
+ [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+ </div>
+ </div>
 
-                    <button *ngIf="hasActiveFilters" (click)="resetFilters()"
-                            class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
-                        <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
-                        <span class="text-[11px] font-black uppercase tracking-widest">{{ 'SYSTEM_LOGS.ACTIONS.RESET' | translate }}</span>
-                    </button>
-                </div>
-            </div>
+ <button *ngIf="hasActiveFilters" (click)="resetFilters()"
+ class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+ <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+ <span class="text-[11px] font-black uppercase tracking-widest">{{ 'SYSTEM_LOGS.ACTIONS.RESET' | translate }}</span>
+ </button>
+ </div>
+ </div>
 
-            <!-- 3. Filter Panel -->
-            <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6">
-                <app-advanced-filter-panel 
-                    [isExpanded]="true"
-                    [fields]="filterFields"
-                    [filters]="filters"
-                    (filtersChange)="onFiltersChange($event)"
-                    (reset)="onFilterReset()"
-                    (save)="onFilterSave($event)">
-                </app-advanced-filter-panel>
-            </div>
-        </div>
+ <!-- 3. Filter Panel -->
+ <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6">
+ <app-advanced-filter-panel 
+ [isExpanded]="true"
+ [fields]="filterFields"
+ [filters]="filters"
+ (filtersChange)="onFiltersChange($event)"
+ (reset)="onFilterReset()"
+ (save)="onFilterSave($event)">
+ </app-advanced-filter-panel>
+ </div>
+ </div>
 
-        <!-- 4. Data Table -->
-        <app-data-table
-            *ngIf="!errorMessage"
-            [data]="logs"
-            [columns]="tableColumns"
-            [actions]="[]"
-            [selectable]="false"
-            [clickableRows]="false"
-            [isLoading]="isLoading"
-            [emptyStateTitle]="isRTL ? 'لا توجد سجلات مطابقة' : 'No matching logs'"
-            [emptyStateMessage]="isRTL ? 'راجع البحث أو الفلاتر المحددة.' : 'Check search and filter criteria.'"
-            [emptyStateIcon]="'article'">
+ <!-- 4. Data Table -->
+ <app-data-table
+ *ngIf="!errorMessage"
+ [data]="logs"
+ [columns]="tableColumns"
+ [actions]="[]"
+ [selectable]="false"
+ [clickableRows]="false"
+ [isLoading]="isLoading"
+ [emptyStateTitle]="isRTL ? 'ما فيه سجلات مطابقة' : 'No matching logs'"
+ [emptyStateMessage]="isRTL ? 'راجع البحث أو الفلاتر المحددة.' : 'Check search and filter criteria.'"
+ [emptyStateIcon]="'article'">
 
-            <ng-template #customColumn let-log let-column="column">
+ <ng-template #customColumn let-log let-column="column">
 
-                <!-- Timestamp -->
-                <ng-container *ngIf="column.key === 'occurredAtUtc'">
-                    <div class="flex flex-col items-center">
-                        <span class="text-[12px] font-black text-slate-800">{{ log.occurredAtUtc | date:'shortDate' }}</span>
-                        <span class="text-[10px] font-bold text-slate-400 mt-0.5">{{ log.occurredAtUtc | date:'shortTime' }}</span>
-                    </div>
-                </ng-container>
+ <!-- Timestamp -->
+ <ng-container *ngIf="column.key === 'occurredAtUtc'">
+ <div class="flex flex-col items-center">
+ <span class="text-[12px] font-black text-slate-800">{{ log.occurredAtUtc | date:'shortDate' }}</span>
+ <span class="text-[10px] font-bold text-slate-400 mt-0.5">{{ log.occurredAtUtc | date:'shortTime' }}</span>
+ </div>
+ </ng-container>
 
-                <!-- Source Badge -->
-                <ng-container *ngIf="column.key === 'sourceApp'">
-                    <div class="flex justify-center">
-                        <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="sourceBadgeClasses(log.sourceApp)">
-                            {{ sourceLabel(log.sourceApp) }}
-                        </span>
-                    </div>
-                </ng-container>
+ <!-- Source Badge -->
+ <ng-container *ngIf="column.key === 'sourceApp'">
+ <div class="flex justify-center">
+ <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="sourceBadgeClasses(log.sourceApp)">
+ {{ sourceLabel(log.sourceApp) }}
+ </span>
+ </div>
+ </ng-container>
 
-                <!-- Module -->
-                <ng-container *ngIf="column.key === 'module'">
-                    <span class="text-[11px] font-black text-slate-600 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg">
-                        {{ moduleLabel(log.module) }}
-                    </span>
-                </ng-container>
+ <!-- Module -->
+ <ng-container *ngIf="column.key === 'module'">
+ <span class="text-[11px] font-black text-slate-600 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg">
+ {{ moduleLabel(log.module) }}
+ </span>
+ </ng-container>
 
-                <!-- HTTP Method -->
-                <ng-container *ngIf="column.key === 'httpMethod'">
-                    <div class="flex justify-center">
-                        <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="methodBadgeClasses(log.httpMethod)">
-                            {{ log.httpMethod }}
-                        </span>
-                    </div>
-                </ng-container>
+ <!-- HTTP Method -->
+ <ng-container *ngIf="column.key === 'httpMethod'">
+ <div class="flex justify-center">
+ <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black" [ngClass]="methodBadgeClasses(log.httpMethod)">
+ {{ log.httpMethod }}
+ </span>
+ </div>
+ </ng-container>
 
-                <!-- Summary -->
-                <ng-container *ngIf="column.key === 'summary'">
-                    <div class="flex flex-col text-start min-w-0">
-                        <span class="text-[12px] font-black text-slate-900 leading-snug truncate" [title]="translateSummary(log.summary)">{{ translateSummary(log.summary) }}</span>
-                        <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">{{ log.requestPath }}</span>
-                    </div>
-                </ng-container>
+ <!-- Summary -->
+ <ng-container *ngIf="column.key === 'summary'">
+ <div class="flex flex-col text-start min-w-0">
+ <span class="text-[12px] font-black text-slate-900 leading-snug truncate" [title]="translateSummary(log.summary)">{{ translateSummary(log.summary) }}</span>
+ <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">{{ log.requestPath }}</span>
+ </div>
+ </ng-container>
 
-                <!-- Actor -->
-                <ng-container *ngIf="column.key === 'actorFullName'">
-                    <div class="flex flex-col items-center">
-                        <span class="text-[12px] font-black text-slate-800 truncate max-w-[120px]">
-                            {{ log.actorFullName || ('SYSTEM_LOGS.FIELDS.SYSTEM' | translate) }}
-                        </span>
-                        <span *ngIf="log.actorEmail" class="text-[9px] font-bold text-slate-400 mt-0.5 truncate max-w-[120px]">{{ log.actorEmail }}</span>
-                    </div>
-                </ng-container>
+ <!-- Actor -->
+ <ng-container *ngIf="column.key === 'actorFullName'">
+ <div class="flex flex-col items-center">
+ <span class="text-[12px] font-black text-slate-800 truncate max-w-[120px]">
+ {{ log.actorFullName || ('SYSTEM_LOGS.FIELDS.SYSTEM' | translate) }}
+ </span>
+ <span *ngIf="log.actorEmail" class="text-[9px] font-bold text-slate-400 mt-0.5 truncate max-w-[120px]">{{ log.actorEmail }}</span>
+ </div>
+ </ng-container>
 
-                <!-- Success Status -->
-                <ng-container *ngIf="column.key === 'isSuccess'">
-                    <div class="flex justify-center">
-                        <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black"
-                              [ngClass]="log.isSuccess ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'">
-                            <span class="material-symbols-outlined text-[12px]">{{ log.isSuccess ? 'check_circle' : 'cancel' }}</span>
-                            {{ log.isSuccess ? ('SYSTEM_LOGS.STATUS.SUCCESS' | translate) : ('SYSTEM_LOGS.STATUS.FAILED' | translate) }}
-                        </span>
-                    </div>
-                </ng-container>
+ <!-- Success Status -->
+ <ng-container *ngIf="column.key === 'isSuccess'">
+ <div class="flex justify-center">
+ <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black"
+ [ngClass]="log.isSuccess ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'">
+ <span class="material-symbols-outlined text-[12px]">{{ log.isSuccess ? 'check_circle' : 'cancel' }}</span>
+ {{ log.isSuccess ? ('SYSTEM_LOGS.STATUS.SUCCESS' | translate) : ('SYSTEM_LOGS.STATUS.FAILED' | translate) }}
+ </span>
+ </div>
+ </ng-container>
 
-            </ng-template>
-        </app-data-table>
+ </ng-template>
+ </app-data-table>
 
-        <!-- Error State -->
-        <div *ngIf="errorMessage" class="rounded-[1.35rem] border border-red-100 bg-red-50 p-8 text-center">
-            <span class="material-symbols-outlined text-[28px] text-red-400 mb-3">error</span>
-            <p class="text-sm font-black text-red-700">{{ errorMessage }}</p>
-        </div>
+ <!-- Error State -->
+ <div *ngIf="errorMessage" class="rounded-[1.35rem] border border-red-100 bg-red-50 p-8 text-center">
+ <span class="material-symbols-outlined text-[28px] text-red-400 mb-3">error</span>
+ <p class="text-sm font-black text-red-700">{{ errorMessage }}</p>
+ </div>
 
-        <!-- 5. Pagination -->
-        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
-            <app-pagination
-                *ngIf="!isLoading && logs.length > 0"
-                [currentPage]="page.pageNumber"
-                [pageSize]="page.pageSize"
-                [totalItems]="page.totalCount"
-                (pageChange)="changePage($event)">
-            </app-pagination>
-        </div>
+ <!-- 5. Pagination -->
+ <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+ <app-pagination
+ *ngIf="!isLoading && logs.length > 0"
+ [currentPage]="page.pageNumber"
+ [pageSize]="page.pageSize"
+ [totalItems]="page.totalCount"
+ (pageChange)="changePage($event)">
+ </app-pagination>
+ </div>
 
-        <!-- Loading State -->
-        <div *ngIf="isLoading && logs.length === 0" class="admin-skeleton-table" style="--skeleton-columns: 5">
-            <div class="admin-skeleton-table-header">
-                <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line sm"></span>
-            </div>
-            <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
-                <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
-                <span class="admin-skeleton admin-skeleton-chip"></span>
-                <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
-                <span class="admin-skeleton admin-skeleton-chip"></span>
-                <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
-            </div>
-        </div>
-    </div>
+ <!-- Loading State -->
+ <div *ngIf="isLoading && logs.length === 0" class="admin-skeleton-table" style="--skeleton-columns: 5">
+ <div class="admin-skeleton-table-header">
+ <span *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton admin-skeleton-line sm"></span>
+ </div>
+ <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
+ <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+ <span class="admin-skeleton admin-skeleton-chip"></span>
+ <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+ <span class="admin-skeleton admin-skeleton-chip"></span>
+ <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
+ </div>
+ </div>
+ </div>
 </div>

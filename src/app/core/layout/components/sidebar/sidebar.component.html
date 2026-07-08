@@ -1,205 +1,205 @@
 <!-- Ultra-Premium Floating Island Sidebar -->
 <aside
-    class="h-[calc(100vh-2rem)] m-4 bg-zadna-primary border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_40px_rgba(18,124,140,0.2)] flex flex-col z-40 ltr:animate-puzzle-left rtl:animate-puzzle-right group/sidebar relative isolate rounded-[2rem] transition-[width] duration-500 ease-out"
-    [ngClass]="isCollapsed ? 'w-[88px] mini-sidebar' : 'w-[280px]'">
-    
-    <!-- Neon/Glass Ambient Background -->
-    <div class="absolute inset-0 rounded-[2rem] overflow-hidden bg-gradient-to-b from-white/10 via-transparent to-black/20 -z-10 pointer-events-none mix-blend-overlay"></div>
+ class="h-[calc(100vh-2rem)] m-4 bg-zadna-primary border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_40px_rgba(18,124,140,0.2)] flex flex-col z-40 ltr:animate-puzzle-left rtl:animate-puzzle-right group/sidebar relative isolate rounded-[2rem] transition-[width] duration-500 ease-out"
+ [ngClass]="isCollapsed ? 'w-[88px] mini-sidebar' : 'w-[280px]'">
+ 
+ <!-- Neon/Glass Ambient Background -->
+ <div class="absolute inset-0 rounded-[2rem] overflow-hidden bg-gradient-to-b from-white/10 via-transparent to-black/20 -z-10 pointer-events-none mix-blend-overlay"></div>
 
-    <!-- Ultra-Premium Floating Toggle -->
-    <button type="button" (click)="toggleCollapse.emit()"
-        class="absolute top-12 z-50 w-7 h-7 rounded-full bg-zadna-primaryDark border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.3)] flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 hover:border-white/50 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all duration-300 ltr:-right-3.5 rtl:-left-3.5 group/toggle outline-none focus:ring-2 focus:ring-white/50">
-        <span class="material-symbols-outlined text-[16px] transition-transform duration-500 group-hover/toggle:scale-110"
-            [class.ltr:rotate-180]="isCollapsed" 
-            [class.rtl:rotate-180]="!isCollapsed">
-            chevron_left
-        </span>
-    </button>
+ <!-- Ultra-Premium Floating Toggle -->
+ <button type="button" (click)="toggleCollapse.emit()"
+ class="absolute top-12 z-50 w-7 h-7 rounded-full bg-zadna-primaryDark border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.3)] flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 hover:border-white/50 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all duration-300 ltr:-right-3.5 rtl:-left-3.5 group/toggle outline-none focus:ring-2 focus:ring-white/50">
+ <span class="material-symbols-outlined text-[16px] transition-transform duration-500 group-hover/toggle:scale-110"
+ [class.ltr:rotate-180]="isCollapsed" 
+ [class.rtl:rotate-180]="!isCollapsed">
+ chevron_left
+ </span>
+ </button>
 
-    <div class="p-6 flex flex-col items-center justify-center shrink-0 gap-4 relative">
-        <div class="absolute bottom-0 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-        <div class="w-full flex items-center justify-center transition-all duration-500"
-             [ngClass]="isCollapsed ? 'max-w-[48px] h-[48px] rounded-xl p-1.5 bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg' : 'max-w-[140px]'">
-            <img src="assets/images/شعار 2-20260305T104717Z-3-001/شعار 2/شفاف (4).png" alt="Zadna" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-500">
-        </div>
-        <div class="text-center overflow-hidden transition-all duration-500 w-full"
-            [class.max-h-0]="isCollapsed" [class.opacity-0]="isCollapsed"
-            [class.max-h-20]="!isCollapsed" [class.opacity-100]="!isCollapsed">
-            <h1 class="text-[14px] font-black text-white tracking-tight leading-none mb-2 drop-shadow-md">{{ 'SIDEBAR_EXTRA.WELCOME_USER' | translate }}</h1>
-            <div class="flex items-center justify-center gap-1.5" *ngIf="currentUser$ | async as user">
-                <span class="text-[11px] font-bold text-white uppercase tracking-widest truncate max-w-[120px]">{{ user.fullName }}</span>
-                <span class="w-2 h-2 rounded-full bg-zadna-accent animate-pulse shadow-[0_0_10px_rgba(228,130,21,0.8)] shrink-0"></span>
-            </div>
-        </div>
-    </div>
+ <div class="p-6 flex flex-col items-center justify-center shrink-0 gap-4 relative">
+ <div class="absolute bottom-0 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+ <div class="w-full flex items-center justify-center transition-all duration-500"
+ [ngClass]="isCollapsed ? 'max-w-[48px] h-[48px] rounded-xl p-1.5 bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg' : 'max-w-[140px]'">
+ <img src="assets/images/شعار 2-20260305T104717Z-3-001/شعار 2/شفاف (4).png" alt="Zadna" class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all duration-500">
+ </div>
+ <div class="text-center overflow-hidden transition-all duration-500 w-full"
+ [class.max-h-0]="isCollapsed" [class.opacity-0]="isCollapsed"
+ [class.max-h-20]="!isCollapsed" [class.opacity-100]="!isCollapsed">
+ <h1 class="text-[14px] font-black text-white tracking-tight leading-none mb-2 drop-shadow-md">{{ 'SIDEBAR_EXTRA.WELCOME_USER' | translate }}</h1>
+ <div class="flex items-center justify-center gap-1.5" *ngIf="currentUser$ | async as user">
+ <span class="text-[11px] font-bold text-white uppercase tracking-widest truncate max-w-[120px]">{{ user.fullName }}</span>
+ <span class="w-2 h-2 rounded-full bg-zadna-accent animate-pulse shadow-[0_0_10px_rgba(228,130,21,0.8)] shrink-0"></span>
+ </div>
+ </div>
+ </div>
 
-    <!-- Navigation Architecture -->
-    <nav class="flex-1 px-3 py-5 space-y-6 overflow-y-auto custom-scrollbar scroll-smooth">
+ <!-- Navigation Architecture -->
+ <nav class="flex-1 px-3 py-5 space-y-6 overflow-y-auto custom-scrollbar scroll-smooth">
 
-        <!-- Group: HQ Core -->
-        <div *ngIf="hasAnyPermission(['dashboard.view', 'admin_notifications.view'])" class="flex flex-col space-y-1">
-            <div class="px-3 mb-1.5">
-                <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.HQ_CORE' | translate }}</span>
-            </div>
-            
-            <button *appHasPermission="'dashboard.view'" type="button" (click)="navigateTo('/dashboard')" [ngClass]="navItemClasses('/dashboard', true)" [title]="'SIDEBAR.HOME' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.HOME' | translate }}</span>
-            </button>
+ <!-- Group: HQ Core -->
+ <div *ngIf="hasAnyPermission(['dashboard.view', 'admin_notifications.view'])" class="flex flex-col space-y-1">
+ <div class="px-3 mb-1.5">
+ <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.HQ_CORE' | translate }}</span>
+ </div>
+ 
+ <button *appHasPermission="'dashboard.view'" type="button" (click)="navigateTo('/dashboard')" [ngClass]="navItemClasses('/dashboard', true)" [title]="'SIDEBAR.HOME' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.HOME' | translate }}</span>
+ </button>
 
 
-            <button *appHasPermission="'admin_notifications.view'" type="button" (click)="navigateTo('/notifications')" [ngClass]="navItemClasses('/notifications')" [title]="'SIDEBAR.NOTIFICATIONS' | translate">
-                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">notifications</span>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.NOTIFICATIONS' | translate }}</span>
-            </button>
-        </div>
+ <button *appHasPermission="'admin_notifications.view'" type="button" (click)="navigateTo('/notifications')" [ngClass]="navItemClasses('/notifications')" [title]="'SIDEBAR.NOTIFICATIONS' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">notifications</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.NOTIFICATIONS' | translate }}</span>
+ </button>
+ </div>
 
-        <!-- Group: Global Catalog -->
-        <div *ngIf="hasAnyPermission(['catalog.view', 'catalog.approve'])" class="flex flex-col space-y-1">
-            <div class="px-3 mb-1.5">
-                <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.GLOBAL_CATALOG' | translate }}</span>
-            </div>
-            
-            <button *appHasPermission="'catalog.view'" type="button" (click)="navigateTo('/catalog/categories')" [ngClass]="navItemClasses('/catalog/categories')" [title]="'SIDEBAR.CATALOG_HIERARCHY' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.CATALOG_HIERARCHY' | translate }}</span>
-            </button>
+ <!-- Group: Global Catalog -->
+ <div *ngIf="hasAnyPermission(['catalog.view', 'catalog.approve'])" class="flex flex-col space-y-1">
+ <div class="px-3 mb-1.5">
+ <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.GLOBAL_CATALOG' | translate }}</span>
+ </div>
+ 
+ <button *appHasPermission="'catalog.view'" type="button" (click)="navigateTo('/catalog/categories')" [ngClass]="navItemClasses('/catalog/categories')" [title]="'SIDEBAR.CATALOG_HIERARCHY' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.CATALOG_HIERARCHY' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'catalog.view'" type="button" (click)="navigateTo('/catalog/products')" [ngClass]="navItemClasses('/catalog/products')" [title]="'SIDEBAR.CATALOG_PRODUCTS' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}</span>
-            </button>
+ <button *appHasPermission="'catalog.view'" type="button" (click)="navigateTo('/catalog/products')" [ngClass]="navItemClasses('/catalog/products')" [title]="'SIDEBAR.CATALOG_PRODUCTS' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.CATALOG_PRODUCTS' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'catalog.view'" type="button" (click)="navigateTo('/catalog/brands')" [ngClass]="navItemClasses('/catalog/brands')" [title]="'SIDEBAR.BRANDS' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.BRANDS' | translate }}</span>
-            </button>
+ <button *appHasPermission="'catalog.view'" type="button" (click)="navigateTo('/catalog/brands')" [ngClass]="navItemClasses('/catalog/brands')" [title]="'SIDEBAR.BRANDS' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.BRANDS' | translate }}</span>
+ </button>
 
-        </div>
+ </div>
 
-        <!-- Group: Ecosystem Operators -->
-        <div *ngIf="hasAnyPermission(['vendors.view', 'disputes.view', 'customers.view', 'drivers.view'])" class="flex flex-col space-y-1">
-            <div class="px-3 mb-1.5">
-                <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.ECOSYSTEM' | translate }}</span>
-            </div>
+ <!-- Group: Ecosystem Operators -->
+ <div *ngIf="hasAnyPermission(['vendors.view', 'disputes.view', 'customers.view', 'drivers.view'])" class="flex flex-col space-y-1">
+ <div class="px-3 mb-1.5">
+ <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.ECOSYSTEM' | translate }}</span>
+ </div>
 
-            <button *appHasPermission="'vendors.view'" type="button" (click)="navigateTo('/vendors')" [ngClass]="navItemClasses('/vendors', false)" [title]="'SIDEBAR.VENDORS' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.VENDORS' | translate }}</span>
-            </button>
+ <button *appHasPermission="'vendors.view'" type="button" (click)="navigateTo('/vendors')" [ngClass]="navItemClasses('/vendors', false)" [title]="'SIDEBAR.VENDORS' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.VENDORS' | translate }}</span>
+ </button>
 
-            <ng-container *appHasPermission="'disputes.view'">
-                <button *ngIf="isInsideVendorDetail && currentVendorDisputesRoute as vendorDisputesRoute" type="button"
-                    (click)="navigateTo(vendorDisputesRoute)"
-                    [ngClass]="navItemClasses(vendorDisputesRoute, true)" [title]="'SIDEBAR.VENDOR_DISPUTES' | translate">
-                    <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">gavel</span>
-                    <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.VENDOR_DISPUTES' | translate }}</span>
-                </button>
-            </ng-container>
+ <ng-container *appHasPermission="'disputes.view'">
+ <button *ngIf="isInsideVendorDetail && currentVendorDisputesRoute as vendorDisputesRoute" type="button"
+ (click)="navigateTo(vendorDisputesRoute)"
+ [ngClass]="navItemClasses(vendorDisputesRoute, true)" [title]="'SIDEBAR.VENDOR_DISPUTES' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">gavel</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.VENDOR_DISPUTES' | translate }}</span>
+ </button>
+ </ng-container>
 
-            <button *appHasPermission="'customers.view'" type="button" (click)="navigateTo('/customers')" [ngClass]="navItemClasses('/customers')" [title]="'SIDEBAR.CUSTOMERS' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.CUSTOMERS' | translate }}</span>
-            </button>
+ <button *appHasPermission="'customers.view'" type="button" (click)="navigateTo('/customers')" [ngClass]="navItemClasses('/customers')" [title]="'SIDEBAR.CUSTOMERS' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.CUSTOMERS' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'drivers.view'" type="button" (click)="navigateTo('/drivers')" [ngClass]="navItemClasses('/drivers')" [title]="'SIDEBAR.DRIVERS' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14H5a2 2 0 01-2-2V6a2 2 0 012-2h4a2 2 0 012 2v6m0 0v-1h4l2 2v4h-6m-4 0v1a2 2 0 11-4 0v-1m4 0v1a2 2 0 104 0v-1m-4 0H5" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.DRIVERS' | translate }}</span>
-            </button>
-        </div>
+ <button *appHasPermission="'drivers.view'" type="button" (click)="navigateTo('/drivers')" [ngClass]="navItemClasses('/drivers')" [title]="'SIDEBAR.DRIVERS' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14H5a2 2 0 01-2-2V6a2 2 0 012-2h4a2 2 0 012 2v6m0 0v-1h4l2 2v4h-6m-4 0v1a2 2 0 11-4 0v-1m4 0v1a2 2 0 104 0v-1m-4 0H5" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.DRIVERS' | translate }}</span>
+ </button>
+ </div>
 
-        <!-- Group: Operations & Commerce -->
-        <div *ngIf="hasAnyPermission(['orders.view', 'disputes.view', 'finances.view', 'marketing.view', 'vendors.view'])" class="flex flex-col space-y-1">
-            <div class="px-3 mb-1.5">
-                <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.COMMERCE' | translate }}</span>
-            </div>
+ <!-- Group: Operations & Commerce -->
+ <div *ngIf="hasAnyPermission(['orders.view', 'disputes.view', 'finances.view', 'marketing.view', 'vendors.view'])" class="flex flex-col space-y-1">
+ <div class="px-3 mb-1.5">
+ <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.COMMERCE' | translate }}</span>
+ </div>
 
-            <button *appHasPermission="'orders.view'" type="button" (click)="navigateTo('/orders')" [ngClass]="navItemClasses('/orders')" [title]="'SIDEBAR.ORDERS' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.ORDERS' | translate }}</span>
-            </button>
+ <button *appHasPermission="'orders.view'" type="button" (click)="navigateTo('/orders')" [ngClass]="navItemClasses('/orders')" [title]="'SIDEBAR.ORDERS' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.ORDERS' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'disputes.view'" type="button" (click)="navigateTo('/disputes')" [ngClass]="navItemClasses('/disputes')" [title]="'SIDEBAR.DISPUTES' | translate">
-                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">gavel</span>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.DISPUTES' | translate }}</span>
-            </button>
+ <button *appHasPermission="'disputes.view'" type="button" (click)="navigateTo('/disputes')" [ngClass]="navItemClasses('/disputes')" [title]="'SIDEBAR.DISPUTES' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">gavel</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.DISPUTES' | translate }}</span>
+ </button>
 
-            <button *ngIf="hasAnyPermission(['orders.view', 'disputes.view', 'vendors.view'])" type="button"
-                (click)="navigateTo('/support')" [ngClass]="navItemClasses('/support')" [title]="'SIDEBAR.SUPPORT' | translate">
-                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">support_agent</span>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.SUPPORT' | translate }}</span>
-            </button>
+ <button *ngIf="hasAnyPermission(['orders.view', 'disputes.view', 'vendors.view'])" type="button"
+ (click)="navigateTo('/support')" [ngClass]="navItemClasses('/support')" [title]="'SIDEBAR.SUPPORT' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">support_agent</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.SUPPORT' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'finances.view'" type="button" (click)="navigateTo('/finances')" [ngClass]="navItemClasses('/finances')" [title]="'SIDEBAR.FINANCES' | translate">
-                <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.FINANCES' | translate }}</span>
-            </button>
+ <button *appHasPermission="'finances.view'" type="button" (click)="navigateTo('/finances')" [ngClass]="navItemClasses('/finances')" [title]="'SIDEBAR.FINANCES' | translate">
+ <svg class="w-[18px] h-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+ </svg>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.FINANCES' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'marketing.view'" type="button" (click)="navigateTo('/marketing')" [ngClass]="navItemClasses('/marketing')" [title]="'SIDEBAR.MARKETING' | translate">
-                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">campaign</span>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.MARKETING' | translate }}</span>
-            </button>
-        </div>
+ <button *appHasPermission="'marketing.view'" type="button" (click)="navigateTo('/marketing')" [ngClass]="navItemClasses('/marketing')" [title]="'SIDEBAR.MARKETING' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">campaign</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.MARKETING' | translate }}</span>
+ </button>
+ </div>
 
-        <!-- Group: Users & Access -->
-        <div *ngIf="hasAnyPermission(['users_access.view', 'system.view', 'email_center.view'])" class="flex flex-col space-y-1">
-            <div class="px-3 mb-1.5">
-                <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.USERS_NETWORK' | translate }}</span>
-            </div>
+ <!-- Group: Users & Access -->
+ <div *ngIf="hasAnyPermission(['users_access.view', 'system.view', 'email_center.view'])" class="flex flex-col space-y-1">
+ <div class="px-3 mb-1.5">
+ <span class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ 'SIDEBAR_EXTRA.USERS_NETWORK' | translate }}</span>
+ </div>
 
-            <button *appHasPermission="'users_access.view'" type="button" (click)="navigateTo('/admin-users')" [ngClass]="navItemClasses('/admin-users')" [title]="'SIDEBAR.ADMIN_USERS' | translate">
-                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">shield_person</span>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.ADMIN_USERS' | translate }}</span>
-            </button>
+ <button *appHasPermission="'users_access.view'" type="button" (click)="navigateTo('/admin-users')" [ngClass]="navItemClasses('/admin-users')" [title]="'SIDEBAR.ADMIN_USERS' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">shield_person</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.ADMIN_USERS' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'system.view'" type="button" (click)="navigateTo('/system-logs')" [ngClass]="navItemClasses('/system-logs')" [title]="'SIDEBAR.SYSTEM_LOGS' | translate">
-                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">receipt_long</span>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.SYSTEM_LOGS' | translate }}</span>
-            </button>
+ <button *appHasPermission="'system.view'" type="button" (click)="navigateTo('/system-logs')" [ngClass]="navItemClasses('/system-logs')" [title]="'SIDEBAR.SYSTEM_LOGS' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">receipt_long</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.SYSTEM_LOGS' | translate }}</span>
+ </button>
 
-            <button *appHasPermission="'email_center.view'" type="button" (click)="navigateTo('/email-center')" [ngClass]="navItemClasses('/email-center')" [title]="'SIDEBAR.EMAIL_CENTER' | translate">
-                <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">mail</span>
-                <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.EMAIL_CENTER' | translate }}</span>
-            </button>
-        </div>
+ <button *appHasPermission="'email_center.view'" type="button" (click)="navigateTo('/email-center')" [ngClass]="navItemClasses('/email-center')" [title]="'SIDEBAR.EMAIL_CENTER' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">mail</span>
+ <span class="whitespace-nowrap transition-all duration-500 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.EMAIL_CENTER' | translate }}</span>
+ </button>
+ </div>
 
-        <ng-content></ng-content>
+ <ng-content></ng-content>
 
-    </nav>
+ </nav>
 
-    <!-- Sleek System Health Badge (Floating Glass) -->
-    <div class="p-4 shrink-0 transition-all duration-300 relative" [ngClass]="isCollapsed ? 'px-2' : 'px-4'">
-        <div class="absolute top-0 w-3/4 left-1/2 -translate-x-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-        <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-black/20 backdrop-blur-md border border-white/5 transition-all hover:bg-black/40 hover:border-white/10 cursor-default shadow-inner"
-            [ngClass]="isCollapsed ? 'justify-center px-0' : 'px-3'">
-            <div class="flex items-center gap-2.5">
-                <span class="flex h-2.5 w-2.5 relative shrink-0">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-zadna-primaryLight opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-zadna-primaryLight shadow-[0_0_12px_rgba(31,163,181,1)]"></span>
-                </span>
-                <span class="text-[11px] font-bold text-white/60 uppercase tracking-widest truncate transition-all duration-300"
-                    [class.w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.hidden]="isCollapsed">{{ 'SIDEBAR_EXTRA.NETWORK_HEALTH' | translate }}</span>
-            </div>
-            <span class="text-[11px] font-black text-zadna-primaryLight transition-all duration-300 drop-shadow-[0_0_8px_rgba(31,163,181,0.5)]"
-                [class.w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.hidden]="isCollapsed">99.9%</span>
-        </div>
-    </div>
+ <!-- Sleek System Health Badge (Floating Glass) -->
+ <div class="p-4 shrink-0 transition-all duration-300 relative" [ngClass]="isCollapsed ? 'px-2' : 'px-4'">
+ <div class="absolute top-0 w-3/4 left-1/2 -translate-x-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+ <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-black/20 backdrop-blur-md border border-white/5 transition-all hover:bg-black/40 hover:border-white/10 cursor-default shadow-inner"
+ [ngClass]="isCollapsed ? 'justify-center px-0' : 'px-3'">
+ <div class="flex items-center gap-2.5">
+ <span class="flex h-2.5 w-2.5 relative shrink-0">
+ <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-zadna-primaryLight opacity-75"></span>
+ <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-zadna-primaryLight shadow-[0_0_12px_rgba(31,163,181,1)]"></span>
+ </span>
+ <span class="text-[11px] font-bold text-white/60 uppercase tracking-widest truncate transition-all duration-300"
+ [class.w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.hidden]="isCollapsed">{{ 'SIDEBAR_EXTRA.NETWORK_HEALTH' | translate }}</span>
+ </div>
+ <span class="text-[11px] font-black text-zadna-primaryLight transition-all duration-300 drop-shadow-[0_0_8px_rgba(31,163,181,0.5)]"
+ [class.w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.hidden]="isCollapsed">99.9%</span>
+ </div>
+ </div>
 </aside>

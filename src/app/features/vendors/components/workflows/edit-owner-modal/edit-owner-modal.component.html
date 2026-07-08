@@ -1,148 +1,148 @@
 <div
-  *ngIf="isOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300"
-  (click)="onBackdropClick($event)">
-  <div
-    class="relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-[24px] border border-white/40 bg-white/80 shadow-2xl backdrop-blur-2xl transition-all duration-500 transform scale-100 ease-out animate-in zoom-in-95"
-    [attr.dir]="isRTL ? 'rtl' : 'ltr'"
-    (click)="$event.stopPropagation()">
+ *ngIf="isOpen"
+ class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300"
+ (click)="onBackdropClick($event)">
+ <div
+ class="relative z-10 flex w-full max-w-2xl flex-col overflow-hidden rounded-[24px] border border-white/40 bg-white/80 shadow-2xl backdrop-blur-2xl transition-all duration-500 transform scale-100 ease-out animate-in zoom-in-95"
+ [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+ (click)="$event.stopPropagation()">
 
-    <header class="flex items-center justify-between gap-4 border-b border-slate-200/50 bg-white/40 px-8 py-6">
-      <div class="flex items-center gap-4">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-inner border border-primary/10">
-          <span class="material-symbols-outlined text-[22px]">person</span>
-        </div>
-        <div class="space-y-0.5 text-start">
-          <h2 class="text-lg font-black text-slate-900">
-            {{ isRTL ? 'تعديل سجل المالك' : 'Edit owner record' }}
-          </h2>
-          <p class="text-xs font-bold text-slate-500">
-            {{ isRTL ? 'تحديث البيانات الرسمية المستخدمة للتواصل والتحقق.' : 'Update the official owner data used for contact and verification.' }}
-          </p>
-        </div>
-      </div>
-      <button
-        type="button"
-        (click)="onClose()"
-        [disabled]="isSaving"
-        class="p-2 hover:bg-slate-100/80 hover:rotate-90 rounded-xl transition-all duration-300 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-40">
-        <span class="material-symbols-outlined text-slate-400 font-bold">close</span>
-      </button>
-    </header>
+ <header class="flex items-center justify-between gap-4 border-b border-slate-200/50 bg-white/40 px-8 py-6">
+ <div class="flex items-center gap-4">
+ <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-inner border border-primary/10">
+ <span class="material-symbols-outlined text-[22px]">person</span>
+ </div>
+ <div class="space-y-0.5 text-start">
+ <h2 class="text-lg font-black text-slate-900">
+ {{ isRTL ? 'تعديل سجل المالك' : 'Edit owner record' }}
+ </h2>
+ <p class="text-xs font-bold text-slate-500">
+ {{ isRTL ? 'تحديث البيانات الرسمية المستخدمة للتواصل والتحقق.' : 'Update the official owner data used for contact and verification.' }}
+ </p>
+ </div>
+ </div>
+ <button
+ type="button"
+ (click)="onClose()"
+ [disabled]="isSaving"
+ class="p-2 hover:bg-slate-100/80 hover:rotate-90 rounded-xl transition-all duration-300 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-40">
+ <span class="material-symbols-outlined text-slate-400 font-bold">close</span>
+ </button>
+ </header>
 
-    <div class="max-h-[70vh] overflow-y-auto px-8 py-6 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-      <fieldset class="space-y-6" [disabled]="isSaving">
+ <div class="max-h-[70vh] overflow-y-auto px-8 py-6 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+ <fieldset class="space-y-6" [disabled]="isSaving">
 
-        <!-- Personal Identity -->
-        <div class="space-y-3">
-          <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
-            {{ isRTL ? 'البيانات الشخصية' : 'Personal identity' }}
-          </p>
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="space-y-1.5 text-start">
-              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'اسم المالك' : 'Owner name' }} <span class="text-rose-400">*</span></label>
-              <input
-                type="text"
-                dir="auto"
-                name="ownerName"
-                [(ngModel)]="draftOwnerData.ownerName"
-                class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start"
-                [placeholder]="isRTL ? 'الاسم الكامل' : 'Full name'">
-            </div>
+ <!-- Personal Identity -->
+ <div class="space-y-3">
+ <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
+ {{ isRTL ? 'البيانات الشخصية' : 'Personal identity' }}
+ </p>
+ <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+ <div class="space-y-1.5 text-start">
+ <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'اسم المالك' : 'Owner name' }} <span class="text-rose-400">*</span></label>
+ <input
+ type="text"
+ dir="auto"
+ name="ownerName"
+ [(ngModel)]="draftOwnerData.ownerName"
+ class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start"
+ [placeholder]="isRTL ? 'الاسم الكامل' : 'Full name'">
+ </div>
 
-            <div class="space-y-1.5 text-start">
-              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'الجنسية' : 'Nationality' }}</label>
-              <app-searchable-select
-                [(ngModel)]="draftOwnerData.nationality"
-                name="nationality"
-                [options]="nationalityOptions"
-                [placeholder]="isRTL ? 'اختر الجنسية' : 'Select nationality'">
-              </app-searchable-select>
-            </div>
+ <div class="space-y-1.5 text-start">
+ <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'الجنسية' : 'Nationality' }}</label>
+ <app-searchable-select
+ [(ngModel)]="draftOwnerData.nationality"
+ name="nationality"
+ [options]="nationalityOptions"
+ [placeholder]="isRTL ? 'اختر الجنسية' : 'Select nationality'">
+ </app-searchable-select>
+ </div>
 
-            <div class="space-y-1.5 md:col-span-2 text-start">
-              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'رقم الهوية' : 'ID number' }}</label>
-              <input
-                type="text"
-                dir="ltr"
-                name="idNumber"
-                [(ngModel)]="draftOwnerData.idNumber"
-                class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide"
-                placeholder="10xxxxxxxxx">
-            </div>
-          </div>
-        </div>
+ <div class="space-y-1.5 md:col-span-2 text-start">
+ <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'رقم الهوية' : 'ID number' }}</label>
+ <input
+ type="text"
+ dir="ltr"
+ name="idNumber"
+ [(ngModel)]="draftOwnerData.idNumber"
+ class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono tracking-wide"
+ placeholder="10xxxxxxxxx">
+ </div>
+ </div>
+ </div>
 
-        <!-- Contact Information -->
-        <div class="space-y-3">
-          <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
-            {{ isRTL ? 'بيانات التواصل' : 'Contact information' }}
-          </p>
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="space-y-1.5 text-start">
-              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'البريد الإلكتروني' : 'Email' }} <span class="text-rose-400">*</span></label>
-              <input
-                type="email"
-                dir="ltr"
-                name="ownerEmail"
-                [(ngModel)]="draftOwnerData.ownerEmail"
-                class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono"
-                placeholder="owner@example.com">
-            </div>
+ <!-- Contact Information -->
+ <div class="space-y-3">
+ <p class="text-xs font-black uppercase tracking-wider text-slate-400 text-start">
+ {{ isRTL ? 'بيانات التواصل' : 'Contact information' }}
+ </p>
+ <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+ <div class="space-y-1.5 text-start">
+ <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'البريد الإلكتروني' : 'Email' }} <span class="text-rose-400">*</span></label>
+ <input
+ type="email"
+ dir="ltr"
+ name="ownerEmail"
+ [(ngModel)]="draftOwnerData.ownerEmail"
+ class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono"
+ placeholder="owner@example.com">
+ </div>
 
-            <div class="space-y-1.5 text-start">
-              <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'رقم الجوال' : 'Phone' }} <span class="text-rose-400">*</span></label>
-              <input
-                type="text"
-                dir="ltr"
-                name="ownerPhone"
-                [(ngModel)]="draftOwnerData.ownerPhone"
-                class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono"
-                placeholder="+966 5x xxx xxxx">
-            </div>
-          </div>
-        </div>
+ <div class="space-y-1.5 text-start">
+ <label class="block text-[11px] font-bold text-slate-500">{{ isRTL ? 'رقم الجوال' : 'Phone' }} <span class="text-rose-400">*</span></label>
+ <input
+ type="text"
+ dir="ltr"
+ name="ownerPhone"
+ [(ngModel)]="draftOwnerData.ownerPhone"
+ class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 text-start font-mono"
+ placeholder="+966 5x xxx xxxx">
+ </div>
+ </div>
+ </div>
 
-        <!-- Validation & Error Messages -->
-        <div *ngIf="validationMessage" class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">warning</span>
-            {{ validationMessage }}
-          </div>
-        </div>
+ <!-- Validation & Error Messages -->
+ <div *ngIf="validationMessage" class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[18px]">warning</span>
+ {{ validationMessage }}
+ </div>
+ </div>
 
-        <div *ngIf="errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">error</span>
-            {{ errorMessage }}
-          </div>
-        </div>
-      </fieldset>
-    </div>
+ <div *ngIf="errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[18px]">error</span>
+ {{ errorMessage }}
+ </div>
+ </div>
+ </fieldset>
+ </div>
 
-    <footer class="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/90 px-8 py-4 shrink-0">
-      <p class="text-[11px] font-bold text-slate-400">
-        {{ isRTL ? 'الحقول المطلوبة مميزة بـ *' : 'Required fields marked with *' }}
-      </p>
-      <div class="flex items-center gap-3">
-        <button
-          type="button"
-          (click)="onClose()"
-          [disabled]="isSaving"
-          class="px-6 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-sm font-bold transition-all active:scale-98 disabled:cursor-not-allowed disabled:opacity-40">
-          {{ isRTL ? 'إلغاء' : 'Cancel' }}
-        </button>
-        <button
-          type="button"
-          (click)="onSave()"
-          [disabled]="!isFormValid || isSaving"
-          class="px-8 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white text-sm font-bold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-98 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-50">
-          <span class="flex items-center gap-2">
-            <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
-            {{ isSaving ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
-          </span>
-        </button>
-      </div>
-    </footer>
-  </div>
+ <footer class="flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/90 px-8 py-4 shrink-0">
+ <p class="text-[11px] font-bold text-slate-400">
+ {{ isRTL ? 'الحقول المطلوبة مميزة بـ *' : 'Required fields marked with *' }}
+ </p>
+ <div class="flex items-center gap-3">
+ <button
+ type="button"
+ (click)="onClose()"
+ [disabled]="isSaving"
+ class="px-6 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-sm font-bold transition-all active:scale-98 disabled:cursor-not-allowed disabled:opacity-40">
+ {{ isRTL ? 'إلغاء' : 'Cancel' }}
+ </button>
+ <button
+ type="button"
+ (click)="onSave()"
+ [disabled]="!isFormValid || isSaving"
+ class="px-8 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white text-sm font-bold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-98 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-50">
+ <span class="flex items-center gap-2">
+ <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
+ {{ isSaving ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
+ </span>
+ </button>
+ </div>
+ </footer>
+ </div>
 </div>

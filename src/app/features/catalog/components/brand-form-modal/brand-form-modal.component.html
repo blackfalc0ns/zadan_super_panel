@@ -1,181 +1,181 @@
 <div *ngIf="isOpen">
-  <app-modal-shell
-    dir="rtl"
-    [title]="(mode === 'create' ? 'BRANDS.MODAL.ADD_TITLE' : 'BRANDS.MODAL.EDIT_TITLE') | translate"
-    [subtitle]="'BRANDS.MODAL.SUBTITLE' | translate"
-    [shouldTranslate]="false"
-    [maxWidthClass]="'max-w-2xl'"
-    [panelClass]="'rounded-[1.5rem]'"
-    [bodyClass]="'px-8 py-8 bg-slate-50/50'"
-    [footerClass]="'px-8 py-6 bg-white'"
-    [titleClass]="'text-xl font-black text-slate-900 tracking-tight'"
-    [subtitleClass]="'text-[10px] font-bold uppercase tracking-widest text-slate-400'"
-    (close)="onClose()">
-    <div header-prefix class="flex h-12 w-12 items-center justify-center rounded-2xl bg-zadna-primary/10 text-zadna-primary">
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-      </svg>
-    </div>
+ <app-modal-shell
+ dir="rtl"
+ [title]="(mode === 'create' ? 'BRANDS.MODAL.ADD_TITLE' : 'BRANDS.MODAL.EDIT_TITLE') | translate"
+ [subtitle]="'BRANDS.MODAL.SUBTITLE' | translate"
+ [shouldTranslate]="false"
+ [maxWidthClass]="'max-w-2xl'"
+ [panelClass]="'rounded-[1.5rem]'"
+ [bodyClass]="'px-8 py-8 bg-slate-50/50'"
+ [footerClass]="'px-8 py-6 bg-white'"
+ [titleClass]="'text-xl font-black text-slate-900 tracking-tight'"
+ [subtitleClass]="'text-[10px] font-bold uppercase tracking-widest text-slate-400'"
+ (close)="onClose()">
+ <div header-prefix class="flex h-12 w-12 items-center justify-center rounded-2xl bg-zadna-primary/10 text-zadna-primary">
+ <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+ </svg>
+ </div>
 
-    <div modal-body>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
-        <div *ngIf="saveErrorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-700" role="alert">
-          <div class="flex items-start gap-3">
-            <span class="material-symbols-outlined text-[22px] text-rose-600">error</span>
-            <div class="min-w-0">
-              <p class="text-sm font-black text-rose-800">{{ 'BRANDS.SAVE_FAILED_TITLE' | translate }}</p>
-              <p class="mt-1 text-xs font-bold leading-5">{{ saveErrorMessage }}</p>
-            </div>
-          </div>
-        </div>
+ <div modal-body>
+ <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+ <div *ngIf="saveErrorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-700" role="alert">
+ <div class="flex items-start gap-3">
+ <span class="material-symbols-outlined text-[22px] text-rose-600">error</span>
+ <div class="min-w-0">
+ <p class="text-sm font-black text-rose-800">{{ 'BRANDS.SAVE_FAILED_TITLE' | translate }}</p>
+ <p class="mt-1 text-xs font-bold leading-5">{{ saveErrorMessage }}</p>
+ </div>
+ </div>
+ </div>
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-[auto,1fr]">
-          <div class="flex flex-col items-center">
-            <label class="form-label-base mb-4 self-start">{{ 'BRANDS.MODAL.LOGO' | translate }}</label>
-            <div class="group relative">
-              <div class="flex h-32 w-32 items-center justify-center overflow-hidden rounded-[2.5rem] border-2 border-dashed border-slate-200 bg-white shadow-inner transition-all group-hover:border-zadna-primary group-hover:shadow-xl group-hover:shadow-zadna-primary/5">
-                <img *ngIf="getAssetValue('logoUrl')" [src]="getAssetValue('logoUrl')" class="h-full w-full object-contain p-4 transition-transform group-hover:scale-110">
-                <div *ngIf="!getAssetValue('logoUrl')" class="flex flex-col items-center text-slate-300">
-                  <svg class="mb-2 h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span class="text-[8px] font-black uppercase tracking-widest">{{ 'COMMON.UPLOAD' | translate }}</span>
-                </div>
+ <div class="grid grid-cols-1 gap-6 md:grid-cols-[auto,1fr]">
+ <div class="flex flex-col items-center">
+ <label class="form-label-base mb-4 self-start">{{ 'BRANDS.MODAL.LOGO' | translate }}</label>
+ <div class="group relative">
+ <div class="flex h-32 w-32 items-center justify-center overflow-hidden rounded-[2.5rem] border-2 border-dashed border-slate-200 bg-white shadow-inner transition-all group-hover:border-zadna-primary group-hover:shadow-xl group-hover:shadow-zadna-primary/5">
+ <img *ngIf="getAssetValue('logoUrl')" [src]="getAssetValue('logoUrl')" class="h-full w-full object-contain p-4 transition-transform group-hover:scale-110">
+ <div *ngIf="!getAssetValue('logoUrl')" class="flex flex-col items-center text-slate-300">
+ <svg class="mb-2 h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+ </svg>
+ <span class="text-[8px] font-black uppercase tracking-widest">{{ 'COMMON.UPLOAD' | translate }}</span>
+ </div>
 
-                <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-zadna-primary/10 opacity-0 transition-opacity group-hover:opacity-100">
-                  <span class="rounded-full border border-zadna-primary/20 bg-white px-3 py-1.5 text-[8px] font-black text-zadna-primary shadow-sm">{{ 'COMMON.CHANGE' | translate }}</span>
-                  <input type="file" class="hidden" (change)="onFileSelected($event, 'logoUrl')" accept=".jpg,.jpeg,.png,.webp">
-                </label>
-              </div>
+ <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-zadna-primary/10 opacity-0 transition-opacity group-hover:opacity-100">
+ <span class="rounded-full border border-zadna-primary/20 bg-white px-3 py-1.5 text-[8px] font-black text-zadna-primary shadow-sm">{{ 'COMMON.CHANGE' | translate }}</span>
+ <input type="file" class="hidden" (change)="onFileSelected($event, 'logoUrl')" accept=".jpg,.jpeg,.png,.webp">
+ </label>
+ </div>
 
-              <div *ngIf="isUploadingLogo" class="absolute inset-0 z-10 rounded-[2.5rem] bg-white/90 p-4 backdrop-blur-sm">
-                <div class="flex h-full items-center">
-                  <app-upload-progress [progress]="logoUploadProgress" [phase]="logoUploadPhase"></app-upload-progress>
-                </div>
-              </div>
-            </div>
-          </div>
+ <div *ngIf="isUploadingLogo" class="absolute inset-0 z-10 rounded-[2.5rem] bg-white/90 p-4 backdrop-blur-sm">
+ <div class="flex h-full items-center">
+ <app-upload-progress [progress]="logoUploadProgress" [phase]="logoUploadPhase"></app-upload-progress>
+ </div>
+ </div>
+ </div>
+ </div>
 
-          <div class="flex flex-col">
-            <label class="form-label-base mb-4 self-start">{{ 'BRANDS.MODAL.COVER' | translate }}</label>
-            <div class="group relative">
-              <div class="flex h-32 w-full items-center justify-center overflow-hidden rounded-[2rem] border-2 border-dashed border-slate-200 bg-gradient-to-br from-slate-100 via-white to-slate-50 shadow-inner transition-all group-hover:border-zadna-primary group-hover:shadow-xl group-hover:shadow-zadna-primary/5">
-                <img *ngIf="getAssetValue('coverImageUrl')" [src]="getAssetValue('coverImageUrl')" class="h-full w-full object-cover transition-transform group-hover:scale-105">
-                <div *ngIf="!getAssetValue('coverImageUrl')" class="flex flex-col items-center text-slate-300">
-                  <svg class="mb-2 h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span class="text-[8px] font-black uppercase tracking-widest">{{ 'COMMON.UPLOAD' | translate }}</span>
-                </div>
+ <div class="flex flex-col">
+ <label class="form-label-base mb-4 self-start">{{ 'BRANDS.MODAL.COVER' | translate }}</label>
+ <div class="group relative">
+ <div class="flex h-32 w-full items-center justify-center overflow-hidden rounded-[2rem] border-2 border-dashed border-slate-200 bg-gradient-to-br from-slate-100 via-white to-slate-50 shadow-inner transition-all group-hover:border-zadna-primary group-hover:shadow-xl group-hover:shadow-zadna-primary/5">
+ <img *ngIf="getAssetValue('coverImageUrl')" [src]="getAssetValue('coverImageUrl')" class="h-full w-full object-cover transition-transform group-hover:scale-105">
+ <div *ngIf="!getAssetValue('coverImageUrl')" class="flex flex-col items-center text-slate-300">
+ <svg class="mb-2 h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+ </svg>
+ <span class="text-[8px] font-black uppercase tracking-widest">{{ 'COMMON.UPLOAD' | translate }}</span>
+ </div>
 
-                <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-zadna-primary/10 opacity-0 transition-opacity group-hover:opacity-100">
-                  <span class="rounded-full border border-zadna-primary/20 bg-white px-3 py-1.5 text-[8px] font-black text-zadna-primary shadow-sm">{{ 'COMMON.CHANGE' | translate }}</span>
-                  <input type="file" class="hidden" (change)="onFileSelected($event, 'coverImageUrl')" accept=".jpg,.jpeg,.png,.webp">
-                </label>
-              </div>
+ <label class="absolute inset-0 flex cursor-pointer items-center justify-center bg-zadna-primary/10 opacity-0 transition-opacity group-hover:opacity-100">
+ <span class="rounded-full border border-zadna-primary/20 bg-white px-3 py-1.5 text-[8px] font-black text-zadna-primary shadow-sm">{{ 'COMMON.CHANGE' | translate }}</span>
+ <input type="file" class="hidden" (change)="onFileSelected($event, 'coverImageUrl')" accept=".jpg,.jpeg,.png,.webp">
+ </label>
+ </div>
 
-              <div *ngIf="isUploadingCover" class="absolute inset-0 z-10 rounded-[2rem] bg-white/90 p-4 backdrop-blur-sm">
-                <div class="flex h-full items-center">
-                  <app-upload-progress [progress]="coverUploadProgress" [phase]="coverUploadPhase"></app-upload-progress>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+ <div *ngIf="isUploadingCover" class="absolute inset-0 z-10 rounded-[2rem] bg-white/90 p-4 backdrop-blur-sm">
+ <div class="flex h-full items-center">
+ <app-upload-progress [progress]="coverUploadProgress" [phase]="coverUploadPhase"></app-upload-progress>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <app-input formControlName="nameAr" [label]="'CATEGORIES.MODAL.NAME_AR'" [placeholder]="'CATEGORIES.MODAL.NAME_AR_PLACEHOLDER'" dir="rtl" [isRequired]="true" [isTouched]="form.get('nameAr')?.touched || false" [error]="form.get('nameAr')?.invalid && form.get('nameAr')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
-          </app-input>
+ <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+ <app-input formControlName="nameAr" [label]="'CATEGORIES.MODAL.NAME_AR'" [placeholder]="'CATEGORIES.MODAL.NAME_AR_PLACEHOLDER'" dir="rtl" [isRequired]="true" [isTouched]="form.get('nameAr')?.touched || false" [error]="form.get('nameAr')?.invalid && form.get('nameAr')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
+ </app-input>
 
-          <app-input formControlName="nameEn" [label]="'CATEGORIES.MODAL.NAME_EN'" [placeholder]="'CATEGORIES.MODAL.NAME_EN_PLACEHOLDER'" dir="ltr" [isRequired]="true" [isTouched]="form.get('nameEn')?.touched || false" [error]="form.get('nameEn')?.invalid && form.get('nameEn')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
-          </app-input>
-        </div>
+ <app-input formControlName="nameEn" [label]="'CATEGORIES.MODAL.NAME_EN'" [placeholder]="'CATEGORIES.MODAL.NAME_EN_PLACEHOLDER'" dir="ltr" [isRequired]="true" [isTouched]="form.get('nameEn')?.touched || false" [error]="form.get('nameEn')?.invalid && form.get('nameEn')?.touched ? ('VALIDATION.REQUIRED' | translate) : ''">
+ </app-input>
+ </div>
 
-        <div class="space-y-2">
-          <label class="form-label-base">
-            {{ 'BRANDS.MODAL.SELECT_SUB_CATEGORY' | translate }}
-            <span class="text-rose-500">*</span>
-          </label>
-          <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" [class.border-rose-300]="form.get('categoryIds')?.invalid && form.get('categoryIds')?.touched">
-            <div class="mb-3 flex flex-wrap gap-2" *ngIf="selectedCategories.length">
-              <button
-                type="button"
-                *ngFor="let category of selectedCategories"
-                (click)="removeCategory(category.id)"
-                class="inline-flex max-w-full items-center gap-2 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1.5 text-[0.72rem] font-black text-zadna-primary">
-                <span class="truncate">{{ getLocalizedCategoryName(category) }}</span>
-                <span class="material-symbols-outlined text-[14px]">close</span>
-              </button>
-            </div>
+ <div class="space-y-2">
+ <label class="form-label-base">
+ {{ 'BRANDS.MODAL.SELECT_SUB_CATEGORY' | translate }}
+ <span class="text-rose-500">*</span>
+ </label>
+ <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" [class.border-rose-300]="form.get('categoryIds')?.invalid && form.get('categoryIds')?.touched">
+ <div class="mb-3 flex flex-wrap gap-2" *ngIf="selectedCategories.length">
+ <button
+ type="button"
+ *ngFor="let category of selectedCategories"
+ (click)="removeCategory(category.id)"
+ class="inline-flex max-w-full items-center gap-2 rounded-full border border-zadna-primary/15 bg-zadna-primary/10 px-3 py-1.5 text-[0.72rem] font-black text-zadna-primary">
+ <span class="truncate">{{ getLocalizedCategoryName(category) }}</span>
+ <span class="material-symbols-outlined text-[14px]">close</span>
+ </button>
+ </div>
 
-            <label class="mb-3 flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3">
-              <span class="material-symbols-outlined text-[18px] text-slate-400">search</span>
-              <input
-                type="search"
-                class="min-w-0 flex-1 border-0 bg-transparent text-xs font-bold text-slate-700 outline-none placeholder:text-slate-300"
-                [value]="categorySearch"
-                (input)="categorySearch = $any($event.target).value"
-                [placeholder]="translate.currentLang === 'ar' ? 'ابحث عن تصنيف' : 'Search category'">
-            </label>
+ <label class="mb-3 flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3">
+ <span class="material-symbols-outlined text-[18px] text-slate-400">search</span>
+ <input
+ type="search"
+ class="min-w-0 flex-1 border-0 bg-transparent text-xs font-bold text-slate-700 outline-none placeholder:text-slate-300"
+ [value]="categorySearch"
+ (input)="categorySearch = $any($event.target).value"
+ [placeholder]="translate.currentLang === 'ar' ? 'ابحث عن تصنيف' : 'Search category'">
+ </label>
 
-            <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-100">
-              <label
-                *ngFor="let category of filteredLeafCategories"
-                class="flex cursor-pointer items-start gap-3 border-b border-slate-50 px-3 py-2.5 last:border-b-0 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  class="mt-1 h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary"
-                  [checked]="isCategorySelected(category.id)"
-                  (change)="toggleCategory(category.id, $any($event.target).checked)">
-                <span class="min-w-0 flex-1 text-[0.78rem] font-bold leading-5 text-slate-700">
-                  {{ getLocalizedCategoryName(category) }}
-                </span>
-              </label>
-              <div *ngIf="filteredLeafCategories.length === 0" class="px-3 py-5 text-center text-xs font-bold text-slate-400">
-                {{ translate.currentLang === 'ar' ? 'لا توجد نتائج' : 'No results' }}
-              </div>
-            </div>
-            <div class="mt-2 text-[0.72rem] font-black text-slate-400">
-              {{ selectedCategories.length }} {{ translate.currentLang === 'ar' ? 'تصنيف محدد' : 'selected categories' }}
-            </div>
-          </div>
-          <p *ngIf="form.get('categoryIds')?.invalid && form.get('categoryIds')?.touched" class="text-xs font-bold text-rose-500">
-            {{ 'BRANDS.MODAL.SUB_CATEGORY_REQUIRED' | translate }}
-          </p>
-        </div>
+ <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-100">
+ <label
+ *ngFor="let category of filteredLeafCategories"
+ class="flex cursor-pointer items-start gap-3 border-b border-slate-50 px-3 py-2.5 last:border-b-0 hover:bg-slate-50">
+ <input
+ type="checkbox"
+ class="mt-1 h-4 w-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary"
+ [checked]="isCategorySelected(category.id)"
+ (change)="toggleCategory(category.id, $any($event.target).checked)">
+ <span class="min-w-0 flex-1 text-[0.78rem] font-bold leading-5 text-slate-700">
+ {{ getLocalizedCategoryName(category) }}
+ </span>
+ </label>
+ <div *ngIf="filteredLeafCategories.length === 0" class="px-3 py-5 text-center text-xs font-bold text-slate-400">
+ {{ translate.currentLang === 'ar' ? 'لا توجد نتائج' : 'No results' }}
+ </div>
+ </div>
+ <div class="mt-2 text-[0.72rem] font-black text-slate-400">
+ {{ selectedCategories.length }} {{ translate.currentLang === 'ar' ? 'تصنيف محدد' : 'selected categories' }}
+ </div>
+ </div>
+ <p *ngIf="form.get('categoryIds')?.invalid && form.get('categoryIds')?.touched" class="text-xs font-bold text-rose-500">
+ {{ 'BRANDS.MODAL.SUB_CATEGORY_REQUIRED' | translate }}
+ </p>
+ </div>
 
-        <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-zadna-primary/20">
-          <div class="flex items-center gap-4">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-colors" [class.text-emerald-500]="form.get('isActive')?.value" [class.bg-emerald-50]="form.get('isActive')?.value">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <p class="text-xs font-black tracking-tight text-slate-800">{{ 'COMMON.ACTIVE_STATUS' | translate }}</p>
-              <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
-                {{ form.get('isActive')?.value ? ('BRANDS.MODAL.STATUS_VISIBLE' | translate) : ('BRANDS.MODAL.STATUS_HIDDEN' | translate) }}
-              </p>
-            </div>
-          </div>
-          <label class="relative inline-flex cursor-pointer items-center">
-            <input type="checkbox" formControlName="isActive" class="peer sr-only">
-            <div class="h-6 w-12 rounded-full bg-slate-200 peer-focus:outline-none peer-checked:bg-zadna-primary peer-checked:after:border-white peer-checked:after:translate-x-full ltr:peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:absolute after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all ltr:after:left-[2px] rtl:after:right-[2px]"></div>
-          </label>
-        </div>
-      </form>
-    </div>
+ <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-zadna-primary/20">
+ <div class="flex items-center gap-4">
+ <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-colors" [class.text-emerald-500]="form.get('isActive')?.value" [class.bg-emerald-50]="form.get('isActive')?.value">
+ <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+ </svg>
+ </div>
+ <div>
+ <p class="text-xs font-black tracking-tight text-slate-800">{{ 'COMMON.ACTIVE_STATUS' | translate }}</p>
+ <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+ {{ form.get('isActive')?.value ? ('BRANDS.MODAL.STATUS_VISIBLE' | translate) : ('BRANDS.MODAL.STATUS_HIDDEN' | translate) }}
+ </p>
+ </div>
+ </div>
+ <label class="relative inline-flex cursor-pointer items-center">
+ <input type="checkbox" formControlName="isActive" class="peer sr-only">
+ <div class="h-6 w-12 rounded-full bg-slate-200 peer-focus:outline-none peer-checked:bg-zadna-primary peer-checked:after:border-white peer-checked:after:translate-x-full ltr:peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full after:absolute after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all ltr:after:left-[2px] rtl:after:right-[2px]"></div>
+ </label>
+ </div>
+ </form>
+ </div>
 
-    <div modal-footer class="flex items-center justify-end gap-4">
-      <app-button variant="ghost" [disabled]="isSaving" (btnClick)="onClose()">
-        {{ 'COMMON.CANCEL' | translate }}
-      </app-button>
-      <app-button variant="primary" [isLoading]="isSaving" [disabled]="isUploadingLogo || isUploadingCover" (btnClick)="onSubmit()">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-        </svg>
-        {{ isSaving ? ('BRANDS.SAVING' | translate) : ((mode === 'create' ? 'COMMON.CREATE' : 'COMMON.SAVE') | translate) }}
-      </app-button>
-    </div>
-  </app-modal-shell>
+ <div modal-footer class="flex items-center justify-end gap-4">
+ <app-button variant="ghost" [disabled]="isSaving" (btnClick)="onClose()">
+ {{ 'COMMON.CANCEL' | translate }}
+ </app-button>
+ <app-button variant="primary" [isLoading]="isSaving" [disabled]="isUploadingLogo || isUploadingCover" (btnClick)="onSubmit()">
+ <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+ </svg>
+ {{ isSaving ? ('BRANDS.SAVING' | translate) : ((mode === 'create' ? 'COMMON.CREATE' : 'COMMON.SAVE') | translate) }}
+ </app-button>
+ </div>
+ </app-modal-shell>
 </div>

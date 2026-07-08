@@ -1,300 +1,300 @@
 <div class="mx-auto max-w-[1520px] space-y-6 px-4 py-6 md:px-6 lg:px-8" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-  <!-- Error Banner -->
-  <div *ngIf="mutationError" class="animate-in fade-in slide-in-from-top-2 rounded-[1.25rem] border border-rose-200/80 bg-rose-50/80 backdrop-blur-md px-5 py-4 text-[13px] font-bold text-rose-700 shadow-sm flex items-center gap-3">
-    <span class="material-symbols-outlined text-[20px] text-rose-600">error</span>
-    {{ mutationError }}
-  </div>
+ <!-- Error Banner -->
+ <div *ngIf="mutationError" class="animate-in fade-in slide-in-from-top-2 rounded-[1.25rem] border border-rose-200/80 bg-rose-50/80 backdrop-blur-md px-5 py-4 text-[13px] font-bold text-rose-700 shadow-sm flex items-center gap-3">
+ <span class="material-symbols-outlined text-[20px] text-rose-600">error</span>
+ {{ mutationError }}
+ </div>
 
-  <!-- Metric Cards Container -->
-  <div class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 xl:divide-y-0 divide-slate-100">
-      <article
-        *ngFor="let metric of metrics; let idx = index"
-        class="group relative overflow-hidden p-6 transition-all duration-300 hover:bg-slate-50/40"
-        [ngClass]="{
-          'border-t sm:border-t-0 sm:border-s border-slate-100': idx === 1,
-          'border-t xl:border-t-0 xl:border-s border-slate-100': idx === 2,
-          'border-t sm:border-s xl:border-t-0 border-slate-100': idx === 3
-        }">
-        
-        <!-- Decorative background accent circle -->
-        <div class="absolute -right-4 -top-4 h-24 w-24 rounded-full opacity-40 transition-transform duration-500 group-hover:scale-150"
-             [ngClass]="{
-               'bg-emerald-200/50': metric.id === 'docs',
-               'bg-sky-200/50': metric.id === 'branches',
-               'bg-violet-200/50': metric.id === 'bank-accounts',
-               'bg-amber-200/50': metric.id === 'complaints'
-             }"></div>
-        
-        <div class="relative z-10">
-          <div class="flex items-center justify-between gap-3 mb-4">
-            <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400/90">{{ metric.label }}</p>
-            <div class="zadana-icon-box h-10 w-10 rounded-[1rem] bg-white shadow-sm border transition-transform duration-300 group-hover:scale-110"
-                 [ngClass]="{
-                   'border-emerald-100 text-emerald-600': metric.id === 'docs',
-                   'border-sky-100 text-sky-600': metric.id === 'branches',
-                   'border-violet-100 text-violet-600': metric.id === 'bank-accounts',
-                   'border-amber-100 text-amber-600': metric.id === 'complaints'
-                 }">
-              <span class="material-symbols-outlined text-[18px]">{{ metric.icon }}</span>
-            </div>
-          </div>
+ <!-- Metric Cards Container -->
+ <div class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
+ <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 xl:divide-y-0 divide-slate-100">
+ <article
+ *ngFor="let metric of metrics; let idx = index"
+ class="group relative overflow-hidden p-6 transition-all duration-300 hover:bg-slate-50/40"
+ [ngClass]="{
+ 'border-t sm:border-t-0 sm:border-s border-slate-100': idx === 1,
+ 'border-t xl:border-t-0 xl:border-s border-slate-100': idx === 2,
+ 'border-t sm:border-s xl:border-t-0 border-slate-100': idx === 3
+ }">
+ 
+ <!-- Decorative background accent circle -->
+ <div class="absolute -right-4 -top-4 h-24 w-24 rounded-full opacity-40 transition-transform duration-500 group-hover:scale-150"
+ [ngClass]="{
+ 'bg-emerald-200/50': metric.id === 'docs',
+ 'bg-sky-200/50': metric.id === 'branches',
+ 'bg-violet-200/50': metric.id === 'bank-accounts',
+ 'bg-amber-200/50': metric.id === 'complaints'
+ }"></div>
+ 
+ <div class="relative z-10">
+ <div class="flex items-center justify-between gap-3 mb-4">
+ <p class="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400/90">{{ metric.label }}</p>
+ <div class="zadana-icon-box h-10 w-10 rounded-[1rem] bg-white shadow-sm border transition-transform duration-300 group-hover:scale-110"
+ [ngClass]="{
+ 'border-emerald-100 text-emerald-600': metric.id === 'docs',
+ 'border-sky-100 text-sky-600': metric.id === 'branches',
+ 'border-violet-100 text-violet-600': metric.id === 'bank-accounts',
+ 'border-amber-100 text-amber-600': metric.id === 'complaints'
+ }">
+ <span class="material-symbols-outlined text-[18px]">{{ metric.icon }}</span>
+ </div>
+ </div>
 
-          <p class="text-3xl font-black tracking-tight"
-             [ngClass]="{
-               'text-emerald-800': metric.id === 'docs',
-               'text-sky-800': metric.id === 'branches',
-               'text-violet-800': metric.id === 'bank-accounts',
-               'text-amber-800': metric.id === 'complaints'
-             }">{{ metric.value }}</p>
-          <p class="mt-2 text-[12px] font-semibold leading-relaxed text-slate-500">{{ metric.helper }}</p>
-        </div>
-      </article>
-    </div>
-  </div>
+ <p class="text-3xl font-black tracking-tight"
+ [ngClass]="{
+ 'text-emerald-800': metric.id === 'docs',
+ 'text-sky-800': metric.id === 'branches',
+ 'text-violet-800': metric.id === 'bank-accounts',
+ 'text-amber-800': metric.id === 'complaints'
+ }">{{ metric.value }}</p>
+ <p class="mt-2 text-[12px] font-semibold leading-relaxed text-slate-500">{{ metric.helper }}</p>
+ </div>
+ </article>
+ </div>
+ </div>
 
-  <!-- Main Grid Layout -->
-  <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
-    <!-- Left Column: Operations & Orders -->
-    <div class="flex flex-col gap-6 xl:col-span-8">
-      
-      <!-- Quick Summary Command Panel -->
-      <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
-        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
-          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-50 border border-slate-100 text-slate-600 shadow-sm">
-            <span class="material-symbols-outlined text-[20px]">dashboard</span>
-          </div>
-          <div>
-            <h2 class="text-base font-black text-slate-900">{{ localize('ملخص سريع', 'Quick summary') }}</h2>
-            <p class="text-[11px] font-semibold text-slate-400">{{ localize('معلومات القرار السريع', 'High-level information for quick decisions') }}</p>
-          </div>
-        </div>
+ <!-- Main Grid Layout -->
+ <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+ <!-- Left Column: Operations & Orders -->
+ <div class="flex flex-col gap-6 xl:col-span-8">
+ 
+ <!-- Quick Summary Command Panel -->
+ <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
+ <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+ <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-50 border border-slate-100 text-slate-600 shadow-sm">
+ <span class="material-symbols-outlined text-[20px]">dashboard</span>
+ </div>
+ <div>
+ <h2 class="text-base font-black text-slate-900">{{ localize('ملخص سريع', 'Quick summary') }}</h2>
+ <p class="text-[11px] font-semibold text-slate-400">{{ localize('معلومات القرار السريع', 'High-level information for quick decisions') }}</p>
+ </div>
+ </div>
 
-        <div class="grid gap-4 lg:grid-cols-3">
-          <!-- Review State -->
-          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all hover:border-slate-200 hover:bg-slate-50 flex flex-col justify-between">
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('حالة المراجعة', 'Review state') }}</p>
-              <app-status-pill
-                [label]="reviewStateLabelKey"
-                [showDot]="false"
-                [size]="'sm'"
-                [variant]="reviewStateVariant">
-              </app-status-pill>
-            </div>
-            <p class="text-[13px] font-black text-slate-700 leading-relaxed mt-2">{{ reviewSummaryKey | translate }}</p>
-          </div>
+ <div class="grid gap-4 lg:grid-cols-3">
+ <!-- Review State -->
+ <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all hover:border-slate-200 hover:bg-slate-50 flex flex-col justify-between">
+ <div class="flex items-center justify-between gap-2 mb-2">
+ <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{{ localize('حالة المراجعة', 'Review state') }}</p>
+ <app-status-pill
+ [label]="reviewStateLabelKey"
+ [showDot]="false"
+ [size]="'sm'"
+ [variant]="reviewStateVariant">
+ </app-status-pill>
+ </div>
+ <p class="text-[13px] font-black text-slate-700 leading-relaxed mt-2">{{ reviewSummaryKey | translate }}</p>
+ </div>
 
-          <!-- Next Step -->
-          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all hover:border-slate-200 hover:bg-slate-50">
-            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-2">{{ localize('الخطوة التالية', 'Next step') }}</p>
-            <p class="text-[14px] font-black text-slate-900 mb-1 flex items-center gap-1.5">
-              <span class="inline-block h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-              {{ nextStepTitle }}
-            </p>
-            <p class="text-[11px] font-semibold leading-relaxed text-slate-500 mt-1.5">{{ nextStepMessage }}</p>
-          </div>
+ <!-- Next Step -->
+ <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all hover:border-slate-200 hover:bg-slate-50">
+ <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-2">{{ localize('الخطوة التالية', 'Next step') }}</p>
+ <p class="text-[14px] font-black text-slate-900 mb-1 flex items-center gap-1.5">
+ <span class="inline-block h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+ {{ nextStepTitle }}
+ </p>
+ <p class="text-[11px] font-semibold leading-relaxed text-slate-500 mt-1.5">{{ nextStepMessage }}</p>
+ </div>
 
-          <!-- General Signals -->
-          <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all hover:border-slate-200 hover:bg-slate-50">
-            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-3">{{ localize('مؤشرات عامة', 'General signals') }}</p>
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between gap-2 text-[12px]">
-                <span class="font-bold text-slate-400">{{ localize('المراجع', 'Reviewer') }}</span>
-                <span class="truncate font-black text-slate-800">{{ assignedReviewer }}</span>
-              </div>
-              <div class="flex items-center justify-between gap-2 text-[12px]">
-                <span class="font-bold text-slate-400">{{ localize('العناصر المعلّقة', 'Pending items') }}</span>
-                <span class="rounded-md bg-white px-2 py-0.5 font-black text-slate-800 shadow-sm border border-slate-100">{{ reviewBlockers.length }}</span>
-              </div>
-              <div class="flex items-center justify-between gap-2 text-[12px]">
-                <span class="font-bold text-slate-400">{{ localize('جاهزية الحساب', 'Account health') }}</span>
-                <span class="font-black text-emerald-600">{{ accountHealthScore }}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
+ <!-- General Signals -->
+ <div class="rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all hover:border-slate-200 hover:bg-slate-50">
+ <p class="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-3">{{ localize('مؤشرات عامة', 'General signals') }}</p>
+ <div class="space-y-2.5">
+ <div class="flex items-center justify-between gap-2 text-[12px]">
+ <span class="font-bold text-slate-400">{{ localize('المراجع', 'Reviewer') }}</span>
+ <span class="truncate font-black text-slate-800">{{ assignedReviewer }}</span>
+ </div>
+ <div class="flex items-center justify-between gap-2 text-[12px]">
+ <span class="font-bold text-slate-400">{{ localize('العناصر المعلّقة', 'Pending items') }}</span>
+ <span class="rounded-md bg-white px-2 py-0.5 font-black text-slate-800 shadow-sm border border-slate-100">{{ reviewBlockers.length }}</span>
+ </div>
+ <div class="flex items-center justify-between gap-2 text-[12px]">
+ <span class="font-bold text-slate-400">{{ localize('جاهزية الحساب', 'Account health') }}</span>
+ <span class="font-black text-emerald-600">{{ accountHealthScore }}%</span>
+ </div>
+ </div>
+ </div>
+ </div>
 
-        <!-- Action Row -->
-        <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-100/80 pt-5">
-          <button
-            (click)="onApproveVendor()"
-            [disabled]="!canApproveVendor && !canReactivateVendor"
-            [attr.dir]="isRTL ? 'rtl' : 'ltr'"
-            class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] bg-slate-900 px-5 text-[13px] font-black text-white transition-all hover:bg-slate-800 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:transform-none">
-            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">{{ canReactivateVendor ? 'play_circle' : 'check_circle' }}</span>
-            <span>{{ primaryActionLabel }}</span>
-          </button>
+ <!-- Action Row -->
+ <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-100/80 pt-5">
+ <button
+ (click)="onApproveVendor()"
+ [disabled]="!canApproveVendor &&!canReactivateVendor"
+ [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+ class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] bg-slate-900 px-5 text-[13px] font-black text-white transition-all hover:bg-slate-800 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:transform-none">
+ <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">{{ canReactivateVendor ? 'play_circle' : 'check_circle' }}</span>
+ <span>{{ primaryActionLabel }}</span>
+ </button>
 
-          <button
-            (click)="onRequestDocuments()"
-            [attr.dir]="isRTL ? 'rtl' : 'ltr'"
-            class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-5 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-sm">
-            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">upload_file</span>
-            <span>{{ 'VENDOR_OVERVIEW.ACTIONS.REQUEST_DOCS' | translate }}</span>
-          </button>
+ <button
+ (click)="onRequestDocuments()"
+ [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+ class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-5 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-sm">
+ <span class="material-symbols-outlined text-[18px] transition-transform group-hover:scale-110">upload_file</span>
+ <span>{{ 'VENDOR_OVERVIEW.ACTIONS.REQUEST_DOCS' | translate }}</span>
+ </button>
 
-          <button
-            (click)="onOpenCompliance()"
-            [attr.dir]="isRTL ? 'rtl' : 'ltr'"
-            class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-5 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-sm">
-            <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" [class.-scale-x-100]="isRTL">arrow_outward</span>
-            <span>{{ 'VENDOR_DETAIL.TAB_COMPLIANCE' | translate }}</span>
-          </button>
-        </div>
-      </section>
+ <button
+ (click)="onOpenCompliance()"
+ [attr.dir]="isRTL ? 'rtl' : 'ltr'"
+ class="group flex h-11 items-center justify-center gap-2 rounded-[1rem] border border-slate-200 bg-white px-5 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-sm">
+ <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" [class.-scale-x-100]="isRTL">arrow_outward</span>
+ <span>{{ 'VENDOR_DETAIL.TAB_COMPLIANCE' | translate }}</span>
+ </button>
+ </div>
+ </section>
 
-      <!-- Latest Orders Panel -->
-      <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-50 border border-slate-100 text-slate-600 shadow-sm">
-              <span class="material-symbols-outlined text-[20px]">receipt_long</span>
-            </div>
-            <div>
-              <h2 class="text-base font-black text-slate-900">{{ localize('أحدث الطلبات', 'Latest orders') }}</h2>
-              <p class="text-[11px] font-semibold text-slate-400">{{ localize('عرض سريع لآخر النشاطات', 'Quick preview of latest activity') }}</p>
-            </div>
-          </div>
-          <button
-            (click)="onViewAllOrders()"
-            class="rounded-lg bg-slate-100 border border-slate-200 px-3.5 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-200">
-            {{ 'VENDOR_OVERVIEW.VIEW_ALL' | translate }}
-          </button>
-        </div>
+ <!-- Latest Orders Panel -->
+ <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
+ <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+ <div class="flex items-center gap-3">
+ <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-50 border border-slate-100 text-slate-600 shadow-sm">
+ <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+ </div>
+ <div>
+ <h2 class="text-base font-black text-slate-900">{{ localize('أحدث الطلبات', 'Latest orders') }}</h2>
+ <p class="text-[11px] font-semibold text-slate-400">{{ localize('عرض سريع لآخر النشاطات', 'Quick preview of latest activity') }}</p>
+ </div>
+ </div>
+ <button
+ (click)="onViewAllOrders()"
+ class="rounded-lg bg-slate-100 border border-slate-200 px-3.5 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-200">
+ {{ 'VENDOR_OVERVIEW.VIEW_ALL' | translate }}
+ </button>
+ </div>
 
-        <div *ngIf="recentOrders.length === 0" class="flex flex-col items-center justify-center rounded-[1.25rem] border border-dashed border-slate-200 bg-slate-50/50 py-12 text-center">
-          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-3 shadow-sm border border-slate-200/50">
-             <span class="material-symbols-outlined text-[24px]">shopping_basket</span>
-          </div>
-          <p class="text-[14px] font-black text-slate-900">{{ emptyOrdersTitle }}</p>
-          <p class="mt-1.5 text-[12px] font-medium text-slate-400 max-w-[280px] leading-relaxed">{{ emptyOrdersMessage }}</p>
-        </div>
+ <div *ngIf="recentOrders.length === 0" class="flex flex-col items-center justify-center rounded-[1.25rem] border border-dashed border-slate-200 bg-slate-50/50 py-12 text-center">
+ <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-3 shadow-sm border border-slate-200/50">
+ <span class="material-symbols-outlined text-[24px]">shopping_basket</span>
+ </div>
+ <p class="text-[14px] font-black text-slate-900">{{ emptyOrdersTitle }}</p>
+ <p class="mt-1.5 text-[12px] font-medium text-slate-400 max-w-[280px] leading-relaxed">{{ emptyOrdersMessage }}</p>
+ </div>
 
-        <div *ngIf="recentOrders.length > 0" class="overflow-hidden rounded-[1.25rem] border border-slate-100">
-          <div class="overflow-x-auto custom-scrollbar">
-            <table class="w-full min-w-[500px] border-collapse text-start">
-              <thead>
-                <tr class="bg-slate-50/80 border-b border-slate-100">
-                  <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-start">{{ 'VENDOR_OVERVIEW.TABLE.ORDER_NUMBER' | translate }}</th>
-                  <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-start">{{ 'VENDOR_OVERVIEW.TABLE.CUSTOMER' | translate }}</th>
-                  <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-start">{{ 'VENDOR_OVERVIEW.TABLE.AMOUNT' | translate }}</th>
-                  <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-center">{{ 'VENDOR_OVERVIEW.TABLE.STATUS' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-50 bg-white">
-                <tr *ngFor="let order of recentOrders | slice:0:5" class="group transition-colors hover:bg-slate-50/50">
-                  <td class="px-5 py-4">
-                    <div class="flex items-center gap-2">
-                      <span class="material-symbols-outlined text-[16px] text-slate-400 group-hover:text-primary transition-colors">tag</span>
-                      <span class="text-[13px] font-black text-slate-900 group-hover:text-primary transition-colors">{{ order.orderNumber }}</span>
-                    </div>
-                  </td>
-                  <td class="px-5 py-4 text-[13px] font-bold text-slate-600">{{ order.customer }}</td>
-                  <td class="px-5 py-4">
-                    <span class="rounded-md bg-slate-50 border border-slate-100 px-2.5 py-1 text-[13px] font-black text-slate-800 shadow-sm">{{ order.amount }}</span>
-                  </td>
-                  <td class="px-5 py-4 text-center">
-                    <app-status-pill
-                      [label]="order.statusKey"
-                      [showDot]="true"
-                      [size]="'sm'"
-                      [variant]="getOrderStatusVariant(order.status)">
-                    </app-status-pill>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </div>
+ <div *ngIf="recentOrders.length > 0" class="overflow-hidden rounded-[1.25rem] border border-slate-100">
+ <div class="overflow-x-auto custom-scrollbar">
+ <table class="w-full min-w-[500px] border-collapse text-start">
+ <thead>
+ <tr class="bg-slate-50/80 border-b border-slate-100">
+ <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-start">{{ 'VENDOR_OVERVIEW.TABLE.ORDER_NUMBER' | translate }}</th>
+ <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-start">{{ 'VENDOR_OVERVIEW.TABLE.CUSTOMER' | translate }}</th>
+ <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-start">{{ 'VENDOR_OVERVIEW.TABLE.AMOUNT' | translate }}</th>
+ <th class="px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.08em] text-slate-400 text-center">{{ 'VENDOR_OVERVIEW.TABLE.STATUS' | translate }}</th>
+ </tr>
+ </thead>
+ <tbody class="divide-y divide-slate-50 bg-white">
+ <tr *ngFor="let order of recentOrders | slice:0:5" class="group transition-colors hover:bg-slate-50/50">
+ <td class="px-5 py-4">
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[16px] text-slate-400 group-hover:text-primary transition-colors">tag</span>
+ <span class="text-[13px] font-black text-slate-900 group-hover:text-primary transition-colors">{{ order.orderNumber }}</span>
+ </div>
+ </td>
+ <td class="px-5 py-4 text-[13px] font-bold text-slate-600">{{ order.customer }}</td>
+ <td class="px-5 py-4">
+ <span class="rounded-md bg-slate-50 border border-slate-100 px-2.5 py-1 text-[13px] font-black text-slate-800 shadow-sm">{{ order.amount }}</span>
+ </td>
+ <td class="px-5 py-4 text-center">
+ <app-status-pill
+ [label]="order.statusKey"
+ [showDot]="true"
+ [size]="'sm'"
+ [variant]="getOrderStatusVariant(order.status)">
+ </app-status-pill>
+ </td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+ </section>
+ </div>
 
-    <!-- Right Column: Info & Alerts -->
-    <div class="flex flex-col gap-6 xl:col-span-4">
-      
-      <!-- General Info Panel -->
-      <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
-        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
-          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-50 border border-slate-100 text-slate-600 shadow-sm">
-            <span class="material-symbols-outlined text-[20px]">info</span>
-          </div>
-          <div>
-            <h2 class="text-base font-black text-slate-900">{{ localize('بيانات عامة', 'General info') }}</h2>
-            <p class="text-[11px] font-semibold text-slate-400">{{ localize('البيانات المرجعية الأساسية', 'Core reference data') }}</p>
-          </div>
-        </div>
+ <!-- Right Column: Info & Alerts -->
+ <div class="flex flex-col gap-6 xl:col-span-4">
+ 
+ <!-- General Info Panel -->
+ <section class="rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md">
+ <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+ <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-slate-50 border border-slate-100 text-slate-600 shadow-sm">
+ <span class="material-symbols-outlined text-[20px]">info</span>
+ </div>
+ <div>
+ <h2 class="text-base font-black text-slate-900">{{ localize('بيانات عامة', 'General info') }}</h2>
+ <p class="text-[11px] font-semibold text-slate-400">{{ localize('البيانات المرجعية الأساسية', 'Core reference data') }}</p>
+ </div>
+ </div>
 
-        <div class="grid gap-3">
-          <div
-            *ngFor="let item of storeFacts"
-            class="group flex items-center justify-between gap-3 rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all duration-300 hover:border-slate-200/80 hover:bg-slate-50 hover:shadow-sm">
-            
-            <div class="flex items-center gap-3.5 min-w-0">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-slate-400 shadow-sm border transition-all duration-300 group-hover:scale-105 group-hover:text-primary">
-                <span class="material-symbols-outlined text-[18px]">{{ item.icon }}</span>
-              </div>
-              <div class="min-w-0 text-start">
-                <p class="text-[10px] font-black uppercase tracking-[0.05em] text-slate-400">{{ item.label }}</p>
-                <p class="mt-0.5 truncate text-[13px] font-black text-slate-800" [attr.dir]="item.dir || (isRTL ? 'rtl' : 'ltr')">
-                  {{ item.value }}
-                </p>
-              </div>
-            </div>
+ <div class="grid gap-3">
+ <div
+ *ngFor="let item of storeFacts"
+ class="group flex items-center justify-between gap-3 rounded-[1.25rem] border border-slate-100 bg-slate-50/50 p-4 transition-all duration-300 hover:border-slate-200/80 hover:bg-slate-50 hover:shadow-sm">
+ 
+ <div class="flex items-center gap-3.5 min-w-0">
+ <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1rem] bg-white text-slate-400 shadow-sm border transition-all duration-300 group-hover:scale-105 group-hover:text-primary">
+ <span class="material-symbols-outlined text-[18px]">{{ item.icon }}</span>
+ </div>
+ <div class="min-w-0 text-start">
+ <p class="text-[10px] font-black uppercase tracking-[0.05em] text-slate-400">{{ item.label }}</p>
+ <p class="mt-0.5 truncate text-[13px] font-black text-slate-800" [attr.dir]="item.dir || (isRTL ? 'rtl' : 'ltr')">
+ {{ item.value }}
+ </p>
+ </div>
+ </div>
 
-            <!-- Copy button for value fields -->
-            <button
-              *ngIf="item.value && item.value !== '-'"
-              (click)="copyToClipboard(item.id, item.value)"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-transparent bg-white shadow-sm text-slate-400 hover:text-slate-700 hover:border-slate-200 transition-all active:scale-95 shrink-0"
-              [title]="localize('نسخ', 'Copy')">
-              <span class="material-symbols-outlined text-[16px]">
-                {{ copiedFields.get(item.id) ? 'done' : 'content_copy' }}
-              </span>
-            </button>
-          </div>
-        </div>
-      </section>
+ <!-- Copy button for value fields -->
+ <button
+ *ngIf="item.value && item.value!== '-'"
+ (click)="copyToClipboard(item.id, item.value)"
+ class="flex h-8 w-8 items-center justify-center rounded-lg border border-transparent bg-white shadow-sm text-slate-400 hover:text-slate-700 hover:border-slate-200 transition-all active:scale-95 shrink-0"
+ [title]="localize('نسخ', 'Copy')">
+ <span class="material-symbols-outlined text-[16px]">
+ {{ copiedFields.get(item.id) ? 'done' : 'content_copy' }}
+ </span>
+ </button>
+ </div>
+ </div>
+ </section>
 
-      <!-- Quick Alerts Panel -->
-      <section class="flex flex-col rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md min-h-[320px]">
-        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
-          <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-rose-50 border border-rose-100 text-rose-500 shadow-sm">
-            <span class="material-symbols-outlined text-[20px]">warning</span>
-          </div>
-          <div>
-            <h2 class="text-base font-black text-slate-900">{{ localize('تنبيهات مختصرة', 'Quick alerts') }}</h2>
-            <p class="text-[11px] font-semibold text-slate-400">{{ localize('ما يحتاج انتباهك الآن', 'Needs your attention') }}</p>
-          </div>
-        </div>
+ <!-- Quick Alerts Panel -->
+ <section class="flex flex-col rounded-[1.5rem] border border-slate-200/60 bg-white/80 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] backdrop-blur-md min-h-[320px]">
+ <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+ <div class="flex h-10 w-10 items-center justify-center rounded-[1rem] bg-rose-50 border border-rose-100 text-rose-500 shadow-sm">
+ <span class="material-symbols-outlined text-[20px]">warning</span>
+ </div>
+ <div>
+ <h2 class="text-base font-black text-slate-900">{{ localize('تنبيهات مختصرة', 'Quick alerts') }}</h2>
+ <p class="text-[11px] font-semibold text-slate-400">{{ localize('ما يحتاج انتباهك الآن', 'Needs your attention') }}</p>
+ </div>
+ </div>
 
-        <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
-          <ng-container *ngIf="alerts.length > 0; else noAlertsState">
-            <!-- Modern alert cards -->
-            <div *ngFor="let alert of alerts" class="flex gap-3.5 rounded-[1.25rem] border p-4 transition-all hover:shadow-sm"
-                 [ngClass]="alert.variant === 'error' ? 'border-rose-100 bg-rose-50/50 hover:border-rose-200' : 'border-amber-100 bg-amber-50/50 hover:border-amber-200'">
-              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-sm mt-0.5"
-                   [ngClass]="alert.variant === 'error' ? 'bg-rose-500' : 'bg-amber-500'">
-                <span class="material-symbols-outlined text-[16px]">{{ alert.icon }}</span>
-              </div>
-              <div>
-                <p class="text-[13px] font-black text-slate-900 mb-1">{{ alert.titleKey | translate }}</p>
-                <p class="text-[11px] font-semibold leading-relaxed text-slate-500">{{ alert.descriptionKey | translate }}</p>
-              </div>
-            </div>
-          </ng-container>
+ <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
+ <ng-container *ngIf="alerts.length > 0; else noAlertsState">
+ <!-- Modern alert cards -->
+ <div *ngFor="let alert of alerts" class="flex gap-3.5 rounded-[1.25rem] border p-4 transition-all hover:shadow-sm"
+ [ngClass]="alert.variant === 'error' ? 'border-rose-100 bg-rose-50/50 hover:border-rose-200' : 'border-amber-100 bg-amber-50/50 hover:border-amber-200'">
+ <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white shadow-sm mt-0.5"
+ [ngClass]="alert.variant === 'error' ? 'bg-rose-500' : 'bg-amber-500'">
+ <span class="material-symbols-outlined text-[16px]">{{ alert.icon }}</span>
+ </div>
+ <div>
+ <p class="text-[13px] font-black text-slate-900 mb-1">{{ alert.titleKey | translate }}</p>
+ <p class="text-[11px] font-semibold leading-relaxed text-slate-500">{{ alert.descriptionKey | translate }}</p>
+ </div>
+ </div>
+ </ng-container>
 
-          <ng-template #noAlertsState>
-            <div class="flex h-full flex-col items-center justify-center rounded-[1.25rem] border border-dashed border-emerald-200 bg-emerald-50/30 py-10 text-center">
-              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-500 mb-3 shadow-sm border border-emerald-100/50">
-                 <span class="material-symbols-outlined text-[24px]">verified</span>
-              </div>
-              <p class="text-[14px] font-black text-emerald-800">{{ emptyAlertsTitle }}</p>
-              <p class="mt-1 text-[11px] font-semibold text-emerald-600/80 max-w-[220px] leading-relaxed">{{ emptyAlertsMessage }}</p>
-            </div>
-          </ng-template>
-        </div>
-      </section>
-    </div>
-  </div>
+ <ng-template #noAlertsState>
+ <div class="flex h-full flex-col items-center justify-center rounded-[1.25rem] border border-dashed border-emerald-200 bg-emerald-50/30 py-10 text-center">
+ <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-500 mb-3 shadow-sm border border-emerald-100/50">
+ <span class="material-symbols-outlined text-[24px]">verified</span>
+ </div>
+ <p class="text-[14px] font-black text-emerald-800">{{ emptyAlertsTitle }}</p>
+ <p class="mt-1 text-[11px] font-semibold text-emerald-600/80 max-w-[220px] leading-relaxed">{{ emptyAlertsMessage }}</p>
+ </div>
+ </ng-template>
+ </div>
+ </section>
+ </div>
+ </div>
 </div>

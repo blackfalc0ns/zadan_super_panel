@@ -18,407 +18,405 @@ import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-brand-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    RouterModule,
-    BrandFormModalComponent,
-    AppButtonComponent,
-    AppCardComponent,
-    AppInputComponent,
-    AppPaginationComponent,
-    AppPageHeaderComponent,
-    StatusPillComponent,
-    CatalogRequestCenterModalComponent,
-    AdvancedFilterPanelComponent,
-    DeleteConfirmationModalComponent
-  ],
-  templateUrl: './brand-list.component.html',
-  styleUrl: './brand-list.component.scss'
+ changeDetection: ChangeDetectionStrategy.OnPush,
+ selector: 'app-brand-list',
+ standalone: true,
+ imports: [
+ CommonModule,
+ FormsModule,
+ TranslateModule,
+ RouterModule,
+ BrandFormModalComponent,
+ AppButtonComponent,
+ AppCardComponent,
+ AppInputComponent,
+ AppPaginationComponent,
+ AppPageHeaderComponent,
+ StatusPillComponent,
+ CatalogRequestCenterModalComponent,
+ AdvancedFilterPanelComponent,
+ DeleteConfirmationModalComponent
+ ],
+ templateUrl: './brand-list.component.html',
+ styleUrl: './brand-list.component.scss'
 })
 export class BrandListComponent implements OnInit {
-  private readonly cdr = inject(ChangeDetectorRef);
-  isLoading = false;
-  brands: Brand[] = [];
-  selectedBrandIds = new Set<string>();
-  isModalOpen = false;
-  modalMode: 'create' | 'edit' = 'create';
-  selectedBrand: Brand | null = null;
-  searchTerm = '';
-  searchSubject = new Subject<string>();
-  isBrandRequestsModalOpen = false;
-  pendingBrandRequestCount = 0;
-  initialBrandRequestId: string | null = null;
-  leafCategories: Category[] = [];
-  selectedCategoryId: string | null = null;
-  statusFilter: boolean | null = null;
-  productsFilter: boolean | null = null;
-  isFiltersExpanded = false;
-  panelFilters: Record<string, string | null | undefined> = {};
+ private readonly cdr = inject(ChangeDetectorRef);
+ isLoading = false;
+ brands: Brand[] = [];
+ selectedBrandIds = new Set<string>();
+ isModalOpen = false;
+ modalMode: 'create' | 'edit' = 'create';
+ selectedBrand: Brand | null = null;
+ searchTerm = '';
+ searchSubject = new Subject<string>();
+ isBrandRequestsModalOpen = false;
+ pendingBrandRequestCount = 0;
+ initialBrandRequestId: string | null = null;
+ leafCategories: Category[] = [];
+ selectedCategoryId: string | null = null;
+ statusFilter: boolean | null = null;
+ productsFilter: boolean | null = null;
+ isFiltersExpanded = false;
+ panelFilters: Record<string, string | null | undefined> = {};
 
-  // Custom delete modal states
-  isDeleteModalOpen = false;
-  brandToDelete: Brand | null = null;
-  isBulkDelete = false;
-  isDeleting = false;
-  deleteErrorMessage: string | null = null;
+ // Custom delete modal states
+ isDeleteModalOpen = false;
+ brandToDelete: Brand | null = null;
+ isBulkDelete = false;
+ isDeleting = false;
+ deleteErrorMessage: string | null = null;
 
-  currentPage = 1;
-  pageSize = 10;
-  totalItems = 0;
+ currentPage = 1;
+ pageSize = 10;
+ totalItems = 0;
 
-  readonly filterFields: FilterField[] = [
-    { key: 'categoryId', label: 'BRANDS.SUB_CATEGORY', type: 'select', color: '#127c8c', options: [] },
-    { key: 'statusFilter', label: 'COMMON.STATUS', type: 'select', color: '#2563eb', options: [] },
-    { key: 'productsFilter', label: 'BRANDS.DETAIL.RELATED_PRODUCTS', type: 'select', color: '#0f766e', options: [] }
-  ];
+ readonly filterFields: FilterField[] = [
+ { key: 'categoryId', label: 'BRANDS.SUB_CATEGORY', type: 'select', color: '#127c8c', options: [] },
+ { key: 'statusFilter', label: 'COMMON.STATUS', type: 'select', color: '#2563eb', options: [] },
+ { key: 'productsFilter', label: 'BRANDS.DETAIL.RELATED_PRODUCTS', type: 'select', color: '#0f766e', options: [] }
+ ];
 
-  get activeLang(): string {
-    return this.translate.currentLang || 'ar';
-  }
+ get activeLang(): string {
+ return this.translate.currentLang || 'ar';
+ }
 
-  get hasActiveFilters(): boolean {
-    return !!(this.searchTerm || this.selectedCategoryId || this.statusFilter != null || this.productsFilter != null);
-  }
+ get hasActiveFilters(): boolean {
+ return!!(this.searchTerm || this.selectedCategoryId || this.statusFilter!= null || this.productsFilter!= null);
+ }
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private catalogService: CatalogService,
-    public translate: TranslateService
-  ) {
-    this.translate.onLangChange.subscribe(() => {
-      this.cdr.markForCheck();
-      this.initializeFilterOptions();
-    });
+ constructor(
+ private readonly route: ActivatedRoute,
+ private readonly router: Router,
+ private catalogService: CatalogService,
+ public translate: TranslateService
+ ) {
+ this.translate.onLangChange.subscribe(() => {
+ this.cdr.markForCheck();
+ this.initializeFilterOptions();
+ });
 
-    this.searchSubject.pipe(
-      debounceTime(400),
-      distinctUntilChanged()
-    ).subscribe((term: string) => {
-      this.cdr.markForCheck();
-      this.searchTerm = term;
-      this.currentPage = 1;
-      this.loadBrands();
-    });
-  }
+ this.searchSubject.pipe(
+ debounceTime(400),
+ distinctUntilChanged()
+ ).subscribe((term: string) => {
+ this.cdr.markForCheck();
+ this.searchTerm = term;
+ this.currentPage = 1;
+ this.loadBrands();
+ });
+ }
 
-  ngOnInit(): void {
-    this.loadLeafCategories();
-    this.loadPendingBrandRequestCount();
-    this.route.queryParams.subscribe((params) => {
-      this.cdr.markForCheck();
-      this.searchTerm = params['search'] || '';
-      this.currentPage = 1;
-      this.syncPanelFilters();
-      this.loadBrands();
+ ngOnInit(): void {
+ this.loadLeafCategories();
+ this.loadPendingBrandRequestCount();
+ this.route.queryParams.subscribe((params) => {
+ this.cdr.markForCheck();
+ this.searchTerm = params['search'] || '';
+ this.currentPage = 1;
+ this.syncPanelFilters();
+ this.loadBrands();
 
-      if (params['requests'] === '1') {
-        this.isBrandRequestsModalOpen = true;
-        this.initialBrandRequestId = params['requestId'] || null;
-      }
-    });
-  }
+ if (params['requests'] === '1') {
+ this.isBrandRequestsModalOpen = true;
+ this.initialBrandRequestId = params['requestId'] || null;
+ }
+ });
+ }
 
-  loadPendingBrandRequestCount(): void {
-    this.catalogService.getPendingCatalogRequestCount('brand').subscribe({
-      next: (count) => {
-        this.cdr.markForCheck();
-        this.pendingBrandRequestCount = count;
-      }
-    });
-  }
+ loadPendingBrandRequestCount(): void {
+ this.catalogService.getPendingCatalogRequestCount('brand').subscribe({
+ next: (count) => {
+ this.cdr.markForCheck();
+ this.pendingBrandRequestCount = count;
+ }
+ });
+ }
 
-  onBrandRequestsModalClose(): void {
-    this.isBrandRequestsModalOpen = false;
-    this.initialBrandRequestId = null;
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { requests: null, requestId: null },
-      queryParamsHandling: 'merge'
-    });
-  }
+ onBrandRequestsModalClose(): void {
+ this.isBrandRequestsModalOpen = false;
+ this.initialBrandRequestId = null;
+ void this.router.navigate([], {
+ relativeTo: this.route,
+ queryParams: { requests: null, requestId: null },
+ queryParamsHandling: 'merge'
+ });
+ }
 
-  onBrandRequestsRefreshed(): void {
-    this.loadPendingBrandRequestCount();
-    this.loadBrands();
-  }
+ onBrandRequestsRefreshed(): void {
+ this.loadPendingBrandRequestCount();
+ this.loadBrands();
+ }
 
-  loadBrands(): void {
-    this.isLoading = true;
-    this.selectedBrandIds.clear();
-    this.catalogService.searchBrands(this.buildSearchRequest()).subscribe({
-      next: (response) => {
-        this.cdr.markForCheck();
-        this.brands = response.items ?? [];
-        this.totalItems = response.totalCount ?? this.brands.length;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.cdr.markForCheck();
-        console.error('Failed to load brands', err);
-        this.brands = [];
-        this.totalItems = 0;
-        this.isLoading = false;
-      }
-    });
-  }
+ loadBrands(): void {
+ this.isLoading = true;
+ this.selectedBrandIds.clear();
+ this.catalogService.searchBrands(this.buildSearchRequest()).subscribe({
+ next: (response) => {
+ this.cdr.markForCheck();
+ this.brands = response.items ?? [];
+ this.totalItems = response.totalCount ?? this.brands.length;
+ this.isLoading = false;
+ },
+ error: (err) => {
+ this.cdr.markForCheck();
+ console.error('Failed to load brands', err);
+ this.brands = [];
+ this.totalItems = 0;
+ this.isLoading = false;
+ }
+ });
+ }
 
-  loadLeafCategories(): void {
-    this.catalogService.getCategories(undefined, true).subscribe({
-      next: (categories) => {
-        this.cdr.markForCheck();
-        this.leafCategories = this.flattenLeafCategories(categories ?? []);
-        this.initializeFilterOptions();
-      },
-      error: (err) => {
-        this.cdr.markForCheck();
-        console.error('Failed to load brand filter categories', err);
-        this.leafCategories = [];
-        this.initializeFilterOptions();
-      }
-    });
-  }
+ loadLeafCategories(): void {
+ this.catalogService.getCategories(undefined, true).subscribe({
+ next: (categories) => {
+ this.cdr.markForCheck();
+ this.leafCategories = this.flattenLeafCategories(categories ?? []);
+ this.initializeFilterOptions();
+ },
+ error: (err) => {
+ this.cdr.markForCheck();
+ console.error('Failed to load brand filter categories', err);
+ this.leafCategories = [];
+ this.initializeFilterOptions();
+ }
+ });
+ }
 
-  initializeFilterOptions(): void {
-    const categoryField = this.filterFields.find((field) => field.key === 'categoryId');
-    const statusField = this.filterFields.find((field) => field.key === 'statusFilter');
-    const productsField = this.filterFields.find((field) => field.key === 'productsFilter');
+ initializeFilterOptions(): void {
+ const categoryField = this.filterFields.find((field) => field.key === 'categoryId');
+ const statusField = this.filterFields.find((field) => field.key === 'statusFilter');
+ const productsField = this.filterFields.find((field) => field.key === 'productsFilter');
 
-    if (categoryField) {
-      categoryField.options = this.leafCategories.map((category) => ({
-        value: category.id,
-        label: this.getLocalizedFilterCategoryName(category)
-      }));
-      categoryField.placeholder = 'COMMON.ALL';
-    }
+ if (categoryField) {
+ categoryField.options = this.leafCategories.map((category) => ({
+ value: category.id,
+ label: this.getLocalizedFilterCategoryName(category)
+ }));
+ categoryField.placeholder = 'COMMON.ALL';
+ }
 
-    if (statusField) {
-      statusField.options = [
-        { value: 'true', label: 'BRANDS.STATUS_ACTIVE' },
-        { value: 'false', label: 'BRANDS.STATUS_DISABLED' }
-      ];
-      statusField.placeholder = 'COMMON.ALL';
-    }
+ if (statusField) {
+ statusField.options = [
+ { value: 'true', label: 'BRANDS.STATUS_ACTIVE' },
+ { value: 'false', label: 'BRANDS.STATUS_DISABLED' }
+ ];
+ statusField.placeholder = 'COMMON.ALL';
+ }
 
-    if (productsField) {
-      productsField.options = [
-        { value: 'true', label: 'BRANDS.WITH_PRODUCTS' },
-        { value: 'false', label: 'BRANDS.WITHOUT_PRODUCTS' }
-      ];
-      productsField.placeholder = 'COMMON.ALL';
-    }
-  }
+ if (productsField) {
+ productsField.options = [
+ { value: 'true', label: 'BRANDS.WITH_PRODUCTS' },
+ { value: 'false', label: 'BRANDS.WITHOUT_PRODUCTS' }
+ ];
+ productsField.placeholder = 'COMMON.ALL';
+ }
+ }
 
-  changePage(newPage: number): void {
-    this.currentPage = newPage;
-    this.loadBrands();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+ changePage(newPage: number): void {
+ this.currentPage = newPage;
+ this.loadBrands();
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ }
 
-  onSearchTermChange(term: string): void {
-    this.searchSubject.next(term);
-  }
+ onSearchTermChange(term: string): void {
+ this.searchSubject.next(term);
+ }
 
-  toggleFilters(): void {
-    this.isFiltersExpanded = !this.isFiltersExpanded;
-  }
+ toggleFilters(): void {
+ this.isFiltersExpanded =!this.isFiltersExpanded;
+ }
 
-  onFiltersChange(filters: Record<string, unknown>): void {
-    this.selectedCategoryId = this.toNullableString(filters['categoryId']);
-    this.statusFilter = this.toNullableBoolean(filters['statusFilter']);
-    this.productsFilter = this.toNullableBoolean(filters['productsFilter']);
-    this.currentPage = 1;
-    this.syncPanelFilters();
-    this.loadBrands();
-  }
+ onFiltersChange(filters: Record<string, unknown>): void {
+ this.selectedCategoryId = this.toNullableString(filters['categoryId']);
+ this.statusFilter = this.toNullableBoolean(filters['statusFilter']);
+ this.productsFilter = this.toNullableBoolean(filters['productsFilter']);
+ this.currentPage = 1;
+ this.syncPanelFilters();
+ this.loadBrands();
+ }
 
-  resetFilters(): void {
-    this.searchTerm = '';
-    this.selectedCategoryId = null;
-    this.statusFilter = null;
-    this.productsFilter = null;
-    this.currentPage = 1;
-    this.syncPanelFilters();
-    this.loadBrands();
-  }
+ resetFilters(): void {
+ this.searchTerm = '';
+ this.selectedCategoryId = null;
+ this.statusFilter = null;
+ this.productsFilter = null;
+ this.currentPage = 1;
+ this.syncPanelFilters();
+ this.loadBrands();
+ }
 
-  openAddBrand(): void {
-    this.modalMode = 'create';
-    this.selectedBrand = null;
-    this.isModalOpen = true;
-  }
+ openAddBrand(): void {
+ this.modalMode = 'create';
+ this.selectedBrand = null;
+ this.isModalOpen = true;
+ }
 
-  editBrand(brand: Brand): void {
-    this.modalMode = 'edit';
-    this.selectedBrand = brand;
-    this.isModalOpen = true;
-  }
+ editBrand(brand: Brand): void {
+ this.modalMode = 'edit';
+ this.selectedBrand = brand;
+ this.isModalOpen = true;
+ }
 
-  deleteBrand(brand: Brand): void {
-    this.brandToDelete = brand;
-    this.isBulkDelete = false;
-    this.isDeleteModalOpen = true;
-    this.deleteErrorMessage = null;
-    this.isDeleting = false;
-  }
+ deleteBrand(brand: Brand): void {
+ this.brandToDelete = brand;
+ this.isBulkDelete = false;
+ this.isDeleteModalOpen = true;
+ this.deleteErrorMessage = null;
+ this.isDeleting = false;
+ }
 
-  confirmDelete(): void {
-    this.isDeleting = true;
-    this.deleteErrorMessage = null;
+ confirmDelete(): void {
+ this.isDeleting = true;
+ this.deleteErrorMessage = null;
 
-    if (this.isBulkDelete) {
-      const ids = Array.from(this.selectedBrandIds);
-      this.catalogService.bulkDeleteBrands(ids).subscribe({
-        next: () => {
-        this.cdr.markForCheck();
-          this.isDeleting = false;
-          this.isDeleteModalOpen = false;
-          this.selectedBrandIds.clear();
-          this.loadBrands();
-        },
-        error: (err) => {
-        this.cdr.markForCheck();
-          console.error('Failed bulk delete brands', err);
-          this.isDeleting = false;
-          this.deleteErrorMessage = this.translate.instant('BRANDS.DELETE_FAILED') || 'Failed to delete brands';
-        }
-      });
-    } else if (this.brandToDelete) {
-      this.catalogService.deleteBrand(this.brandToDelete.id).subscribe({
-        next: () => {
-        this.cdr.markForCheck();
-          this.isDeleting = false;
-          this.isDeleteModalOpen = false;
-          this.brandToDelete = null;
-          this.loadBrands();
-        },
-        error: (err) => {
-        this.cdr.markForCheck();
-          console.error('Failed to delete brand', err);
-          this.isDeleting = false;
-          this.deleteErrorMessage = this.translate.instant('BRANDS.DELETE_FAILED') || 'Failed to delete brand';
-        }
-      });
-    }
-  }
+ if (this.isBulkDelete) {
+ const ids = Array.from(this.selectedBrandIds);
+ this.catalogService.bulkDeleteBrands(ids).subscribe({
+ next: () => {
+ this.cdr.markForCheck();
+ this.isDeleting = false;
+ this.isDeleteModalOpen = false;
+ this.selectedBrandIds.clear();
+ this.loadBrands();
+ },
+ error: (err) => {
+ this.cdr.markForCheck();
+ console.error('Failed bulk delete brands', err);
+ this.isDeleting = false;
+ this.deleteErrorMessage = this.translate.instant('BRANDS.DELETE_FAILED') || 'Failed to delete brands';
+ }
+ });
+ } else if (this.brandToDelete) {
+ this.catalogService.deleteBrand(this.brandToDelete.id).subscribe({
+ next: () => {
+ this.cdr.markForCheck();
+ this.isDeleting = false;
+ this.isDeleteModalOpen = false;
+ this.brandToDelete = null;
+ this.loadBrands();
+ },
+ error: (err) => {
+ this.cdr.markForCheck();
+ console.error('Failed to delete brand', err);
+ this.isDeleting = false;
+ this.deleteErrorMessage = this.translate.instant('BRANDS.DELETE_FAILED') || 'Failed to delete brand';
+ }
+ });
+ }
+ }
 
-  cancelDelete(): void {
-    this.isDeleteModalOpen = false;
-    this.brandToDelete = null;
-    this.isBulkDelete = false;
-    this.deleteErrorMessage = null;
-    this.isDeleting = false;
-  }
+ cancelDelete(): void {
+ this.isDeleteModalOpen = false;
+ this.brandToDelete = null;
+ this.isBulkDelete = false;
+ this.deleteErrorMessage = null;
+ this.isDeleting = false;
+ }
 
-  toggleBrandSelection(brandId: string, event?: Event): void {
-    if (event) {
-      event.stopPropagation();
-    }
-    if (this.selectedBrandIds.has(brandId)) {
-      this.selectedBrandIds.delete(brandId);
-    } else {
-      this.selectedBrandIds.add(brandId);
-    }
-  }
+ toggleBrandSelection(brandId: string, event?: Event): void {
+ if (event) {
+ event.stopPropagation();
+ }
+ if (this.selectedBrandIds.has(brandId)) {
+ this.selectedBrandIds.delete(brandId);
+ } else {
+ this.selectedBrandIds.add(brandId);
+ }
+ }
 
-  toggleAllSelection(): void {
-    if (this.isAllSelected) {
-      this.brands.forEach(b => this.selectedBrandIds.delete(b.id));
-    } else {
-      this.brands.forEach(b => this.selectedBrandIds.add(b.id));
-    }
-  }
+ toggleAllSelection(): void {
+ if (this.isAllSelected) {
+ this.brands.forEach(b => this.selectedBrandIds.delete(b.id));
+ } else {
+ this.brands.forEach(b => this.selectedBrandIds.add(b.id));
+ }
+ }
 
-  get isAllSelected(): boolean {
-    return this.brands.length > 0 && this.brands.every(b => this.selectedBrandIds.has(b.id));
-  }
+ get isAllSelected(): boolean {
+ return this.brands.length > 0 && this.brands.every(b => this.selectedBrandIds.has(b.id));
+ }
 
-  deleteSelectedBrands(): void {
-    if (this.selectedBrandIds.size === 0) return;
-    this.isBulkDelete = true;
-    this.brandToDelete = null;
-    this.isDeleteModalOpen = true;
-    this.deleteErrorMessage = null;
-    this.isDeleting = false;
-  }
+ deleteSelectedBrands(): void {
+ if (this.selectedBrandIds.size === 0) return;
+ this.isBulkDelete = true;
+ this.brandToDelete = null;
+ this.isDeleteModalOpen = true;
+ this.deleteErrorMessage = null;
+ this.isDeleting = false;
+ }
 
-  getBrandStatusVariant(isActive: boolean): StatusPillVariant {
-    return isActive ? 'success' : 'paused';
-  }
+ getBrandStatusVariant(isActive: boolean): StatusPillVariant {
+ return isActive ? 'success' : 'paused';
+ }
 
-  getLocalizedCategoryName(brand: Brand): string {
-    if (brand.categories?.length) {
-      return brand.categories
-        .map((category) => this.activeLang === 'ar'
-          ? (category.categoryNameAr || category.categoryNameEn || category.categoryId)
-          : (category.categoryNameEn || category.categoryNameAr || category.categoryId))
-        .join('، ');
-    }
+ getLocalizedCategoryName(brand: Brand): string {
+ if (brand.categories?.length) {
+ return brand.categories.map((category) => this.activeLang === 'ar'
+ ? (category.categoryNameAr || category.categoryNameEn || category.categoryId)
+ : (category.categoryNameEn || category.categoryNameAr || category.categoryId)).join('، ');
+ }
 
-    return this.activeLang === 'ar'
-      ? (brand.categoryNameAr || brand.categoryNameEn || '-')
-      : (brand.categoryNameEn || brand.categoryNameAr || '-');
-  }
+ return this.activeLang === 'ar'
+ ? (brand.categoryNameAr || brand.categoryNameEn || '-')
+ : (brand.categoryNameEn || brand.categoryNameAr || '-');
+ }
 
-  getLocalizedFilterCategoryName(category: Category): string {
-    return this.activeLang === 'ar' ? category.nameAr : category.nameEn;
-  }
+ getLocalizedFilterCategoryName(category: Category): string {
+ return this.activeLang === 'ar' ? category.nameAr : category.nameEn;
+ }
 
-  private syncPanelFilters(): void {
-    this.panelFilters = {
-      categoryId: this.selectedCategoryId,
-      statusFilter: this.statusFilter == null ? null : String(this.statusFilter),
-      productsFilter: this.productsFilter == null ? null : String(this.productsFilter)
-    };
-  }
+ private syncPanelFilters(): void {
+ this.panelFilters = {
+ categoryId: this.selectedCategoryId,
+ statusFilter: this.statusFilter == null ? null : String(this.statusFilter),
+ productsFilter: this.productsFilter == null ? null : String(this.productsFilter)
+ };
+ }
 
-  private buildSearchRequest(): CatalogSearchRequest<BrandSearchFilters> {
-    return {
-      pagination: {
-        pageNumber: this.currentPage,
-        pageSize: this.pageSize
-      },
-      search: this.searchTerm.trim() || undefined,
-      filters: {
-        categoryId: this.selectedCategoryId || null,
-        isActive: this.statusFilter,
-        hasProducts: this.productsFilter
-      }
-    };
-  }
+ private buildSearchRequest(): CatalogSearchRequest<BrandSearchFilters> {
+ return {
+ pagination: {
+ pageNumber: this.currentPage,
+ pageSize: this.pageSize
+ },
+ search: this.searchTerm.trim() || undefined,
+ filters: {
+ categoryId: this.selectedCategoryId || null,
+ isActive: this.statusFilter,
+ hasProducts: this.productsFilter
+ }
+ };
+ }
 
-  private toNullableString(value: unknown): string | null {
-    return typeof value === 'string' && value.trim() ? value : null;
-  }
+ private toNullableString(value: unknown): string | null {
+ return typeof value === 'string' && value.trim() ? value : null;
+ }
 
-  private toNullableBoolean(value: unknown): boolean | null {
-    if (value === true || value === 'true') return true;
-    if (value === false || value === 'false') return false;
-    return null;
-  }
+ private toNullableBoolean(value: unknown): boolean | null {
+ if (value === true || value === 'true') return true;
+ if (value === false || value === 'false') return false;
+ return null;
+ }
 
-  private flattenLeafCategories(categories: Category[]): Category[] {
-    const subCategories: Category[] = [];
+ private flattenLeafCategories(categories: Category[]): Category[] {
+ const subCategories: Category[] = [];
 
-    for (const category of categories) {
-      const children = category.subCategories ?? [];
+ for (const category of categories) {
+ const children = category.subCategories ?? [];
 
-      for (const child of children) {
-        if (child.parentCategoryId) {
-          subCategories.push(child);
-        }
-      }
+ for (const child of children) {
+ if (child.parentCategoryId) {
+ subCategories.push(child);
+ }
+ }
 
-      if (children.length > 0) {
-        subCategories.push(...this.flattenLeafCategories(children));
-      }
-    }
+ if (children.length > 0) {
+ subCategories.push(...this.flattenLeafCategories(children));
+ }
+ }
 
-    return subCategories;
-  }
+ return subCategories;
+ }
 }

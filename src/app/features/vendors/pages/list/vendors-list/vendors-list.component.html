@@ -1,375 +1,375 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans pb-10 overflow-y-auto" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
-    <app-page-header
-        [title]="'VENDORS.TITLE'"
-        [subtitle]="'VENDORS.DESC'"
-        [showToolbar]="false"
-        [breadcrumbs]="[
-            { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
-            { label: 'VENDORS.TITLE' }
-        ]">
-        <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">storefront</span>
-    </app-page-header>
+ <app-page-header
+ [title]="'VENDORS.TITLE'"
+ [subtitle]="'VENDORS.DESC'"
+ [showToolbar]="false"
+ [breadcrumbs]="[
+ { label: 'SIDEBAR.CATALOG', url: '/catalog/categories' },
+ { label: 'VENDORS.TITLE' }
+ ]">
+ <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">storefront</span>
+ </app-page-header>
 
-    <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
-        
-        <!-- 1. KPI Summary Cards -->
-        <app-kpi-cards 
-            [cards]="kpiCards" 
-            (cardClick)="onKPICardClick($event)">
-        </app-kpi-cards>
+ <div class="flex-1 min-h-0 px-4 md:px-10 py-4 max-w-[120rem] mx-auto w-full space-y-6">
+ 
+ <!-- 1. KPI Summary Cards -->
+ <app-kpi-cards 
+ [cards]="kpiCards" 
+ (cardClick)="onKPICardClick($event)">
+ </app-kpi-cards>
 
-        <!-- 2. Search & Filter Section (Grouped for smaller spacing) -->
-        <div class="flex flex-col gap-3">
-            <!-- Unified Search & Filter Bar -->
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
-            
-            <!-- RIGHT SIDE: Enhanced Search Input -->
-            <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
-                <div class="absolute inset-y-0 flex items-center pointer-events-none" [ngClass]="isRTL ? 'right-5' : 'left-5'">
-                    <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
-                </div>
-                <input type="text" 
-                       [(ngModel)]="searchTerm" 
-                       (input)="onSearch()"
-                       [placeholder]="'VENDORS.SEARCH_PLACEHOLDER' | translate"
-                       class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
-                       [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
-            </div>
+ <!-- 2. Search & Filter Section (Grouped for smaller spacing) -->
+ <div class="flex flex-col gap-3">
+ <!-- Unified Search & Filter Bar -->
+ <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-4">
+ 
+ <!-- RIGHT SIDE: Enhanced Search Input -->
+ <div class="w-full lg:w-[450px] group relative order-1 lg:order-1">
+ <div class="absolute inset-y-0 flex items-center pointer-events-none" [ngClass]="isRTL ? 'right-5' : 'left-5'">
+ <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+ </div>
+ <input type="text" 
+ [(ngModel)]="searchTerm" 
+ (input)="onSearch()"
+ [placeholder]="'VENDORS.SEARCH_PLACEHOLDER' | translate"
+ class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
+ [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
+ </div>
 
-            <!-- LEFT SIDE: Final Compact Filter Toggle -->
-            <div class="flex items-center gap-4 order-2 lg:order-2">
-                <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
-                    
-                    <!-- Unified Filter Toggle Button -->
-                    <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
-                         (click)="toggleFilters()"
-                         [class.bg-teal-50]="isFiltersExpanded">
-                        <span class="material-symbols-outlined text-[24px] transition-transform duration-500" 
-                              [class.text-zadna-primary]="true"
-                              [class.rotate-180]="isFiltersExpanded">filter_list</span>
-                        <div class="flex flex-col">
-                            <span class="text-[13px] font-black text-slate-800">{{ 'VENDORS.FILTER_VENDORS' | translate }}</span>
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'VENDORS.ADJUST_CRITERIA' | translate }}</span>
-                        </div>
-                        <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
-                              [ngClass]="isRTL ? 'mr-2' : 'ml-2'"
-                              [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
-                    </div>
+ <!-- LEFT SIDE: Final Compact Filter Toggle -->
+ <div class="flex items-center gap-4 order-2 lg:order-2">
+ <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+ 
+ <!-- Unified Filter Toggle Button -->
+ <div class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+ (click)="toggleFilters()"
+ [class.bg-teal-50]="isFiltersExpanded">
+ <span class="material-symbols-outlined text-[24px] transition-transform duration-500" 
+ [class.text-zadna-primary]="true"
+ [class.rotate-180]="isFiltersExpanded">filter_list</span>
+ <div class="flex flex-col">
+ <span class="text-[13px] font-black text-slate-800">{{ 'VENDORS.FILTER_VENDORS' | translate }}</span>
+ <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'VENDORS.ADJUST_CRITERIA' | translate }}</span>
+ </div>
+ <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
+ [ngClass]="isRTL ? 'mr-2' : 'ml-2'"
+ [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+ </div>
 
-                </div>
+ </div>
 
-                <!-- Active Filter Count / Reset Pin -->
-                <button *ngIf="hasActiveFilters" (click)="resetFilters()" 
-                        class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
-                    <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
-                    <span class="text-[11px] font-black uppercase tracking-widest">{{ 'VENDORS.RESET' | translate }}</span>
-                </button>
-            </div>
-        </div>
+ <!-- Active Filter Count / Reset Pin -->
+ <button *ngIf="hasActiveFilters" (click)="resetFilters()" 
+ class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+ <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+ <span class="text-[11px] font-black uppercase tracking-widest">{{ 'VENDORS.RESET' | translate }}</span>
+ </button>
+ </div>
+ </div>
 
-            <!-- 3. Advanced Filter Panel (Dropdown View) -->
-            <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6">
-                <app-advanced-filter-panel 
-                    [isExpanded]="true"
-                    [fields]="filterFields"
-                    [filters]="filters"
-                    (filtersChange)="onFiltersChange($event)"
-                    (reset)="onFilterReset()"
-                    (save)="onFilterSave($event)">
-                </app-advanced-filter-panel>
-            </div>
-        </div>
+ <!-- 3. Advanced Filter Panel (Dropdown View) -->
+ <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl mb-6">
+ <app-advanced-filter-panel 
+ [isExpanded]="true"
+ [fields]="filterFields"
+ [filters]="filters"
+ (filtersChange)="onFiltersChange($event)"
+ (reset)="onFilterReset()"
+ (save)="onFilterSave($event)">
+ </app-advanced-filter-panel>
+ </div>
+ </div>
 
-        <!-- 4. Data Table (Desktop) -->
-        <div class="hidden md:block">
-            <app-data-table
-                *ngIf="!isLoading"
-                [data]="vendors"
-                [columns]="tableColumns"
-                [actions]="tableActions"
-                [bulkActions]="bulkActions"
-                [selectable]="true"
-                [clickableRows]="true"
-                [emptyStateTitle]="isRTL ? 'لا يوجد تجار مطابقون' : 'No matching vendors'"
-                [emptyStateMessage]="isRTL ? 'راجع البحث أو الفلاتر، أو أعد تحميل الصفحة بعد إضافة تاجر جديد.' : 'Check search and filters, or refresh after adding a new vendor.'"
-                [emptyStateIcon]="'storefront'"
-                [containerClass]="'extraordinary-table-container'"
-                (rowClick)="onTableRowClick($event)"
-                (actionClick)="onTableAction($event)"
-                (bulkActionClick)="onBulkAction($event)">
-                
-                <!-- Custom Cell Templates -->
-                <ng-template #customColumn let-vendor let-column="column">
-                    
-                    <!-- Logo Template -->
-                    <ng-container *ngIf="column.key === 'logo'">
-                        <div class="flex justify-center">
-                            <div class="relative w-11 h-11 bg-gradient-to-br from-zadna-primary/10 to-zadna-primary/5 rounded-[1.1rem] border border-zadna-primary/10 flex items-center justify-center transition-all group-hover:scale-105 shadow-sm overflow-hidden">
-                                <span class="text-lg font-black text-zadna-primary">
-                                    {{ ((activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || 'V').charAt(0) | uppercase }}
-                                </span>
-                            </div>
-                        </div>
-                    </ng-container>
+ <!-- 4. Data Table (Desktop) -->
+ <div class="hidden md:block">
+ <app-data-table
+ *ngIf="!isLoading"
+ [data]="vendors"
+ [columns]="tableColumns"
+ [actions]="tableActions"
+ [bulkActions]="bulkActions"
+ [selectable]="true"
+ [clickableRows]="true"
+ [emptyStateTitle]="isRTL ? 'ما فيه تجار مطابقين' : 'No matching vendors'"
+ [emptyStateMessage]="isRTL ? 'راجع البحث أو الفلاتر، أو أعد تحميل الصفحة بعد إضافة تاجر جديد.' : 'Check search and filters, or refresh after adding a new vendor.'"
+ [emptyStateIcon]="'storefront'"
+ [containerClass]="'extraordinary-table-container'"
+ (rowClick)="onTableRowClick($event)"
+ (actionClick)="onTableAction($event)"
+ (bulkActionClick)="onBulkAction($event)">
+ 
+ <!-- Custom Cell Templates -->
+ <ng-template #customColumn let-vendor let-column="column">
+ 
+ <!-- Logo Template -->
+ <ng-container *ngIf="column.key === 'logo'">
+ <div class="flex justify-center">
+ <div class="relative w-11 h-11 bg-gradient-to-br from-zadna-primary/10 to-zadna-primary/5 rounded-[1.1rem] border border-zadna-primary/10 flex items-center justify-center transition-all group-hover:scale-105 shadow-sm overflow-hidden">
+ <span class="text-lg font-black text-zadna-primary">
+ {{ ((activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || 'V').charAt(0) | uppercase }}
+ </span>
+ </div>
+ </div>
+ </ng-container>
 
-                    <!-- Business Name Template -->
-                    <ng-container *ngIf="column.key === 'businessName'">
-                        <div class="flex flex-col text-start">
-                            <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
-                                {{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || vendor.contactEmail }}
-                            </span>
-                            <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
-                                {{ (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.contactEmail || vendor.businessType }}
-                            </span>
-                        </div>
-                    </ng-container>
+ <!-- Business Name Template -->
+ <ng-container *ngIf="column.key === 'businessName'">
+ <div class="flex flex-col text-start">
+ <span class="text-[13px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors leading-snug truncate">
+ {{ (activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || vendor.contactEmail }}
+ </span>
+ <span class="text-[9px] font-bold text-slate-400/80 uppercase tracking-widest mt-0.5 truncate">
+ {{ (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.contactEmail || vendor.businessType }}
+ </span>
+ </div>
+ </ng-container>
 
-                    <!-- Risk Level Template -->
-                    <ng-container *ngIf="column.key === 'riskLevel'">
-                        <span class="text-[10px] font-black uppercase px-2 py-1 rounded-lg bg-slate-50 border border-slate-100"
-                              [class]="getRiskLevelColor(vendor.riskLevel)">
-                            {{ getRiskLevelLabel(vendor.riskLevel) | translate }}
-                        </span>
-                    </ng-container>
+ <!-- Risk Level Template -->
+ <ng-container *ngIf="column.key === 'riskLevel'">
+ <span class="text-[10px] font-black uppercase px-2 py-1 rounded-lg bg-slate-50 border border-slate-100"
+ [class]="getRiskLevelColor(vendor.riskLevel)">
+ {{ getRiskLevelLabel(vendor.riskLevel) | translate }}
+ </span>
+ </ng-container>
 
-                    <!-- Status Template -->
-                    <ng-container *ngIf="column.key === 'status'">
-                        <div class="flex justify-center">
-                            <app-status-pill
-                                [label]="getStatusLabel(vendor.status)"
-                                [variant]="getVendorStatusVariant(vendor.status)"
-                                size="sm">
-                            </app-status-pill>
-                        </div>
-                    </ng-container>
+ <!-- Status Template -->
+ <ng-container *ngIf="column.key === 'status'">
+ <div class="flex justify-center">
+ <app-status-pill
+ [label]="getStatusLabel(vendor.status)"
+ [variant]="getVendorStatusVariant(vendor.status)"
+ size="sm">
+ </app-status-pill>
+ </div>
+ </ng-container>
 
-                    <!-- Commission Template -->
-                    <ng-container *ngIf="column.key === 'commissionRate'">
-                        <code class="text-[10px] font-bold text-zadna-primary bg-zadna-primary/5 px-2.5 py-1 rounded-xl border border-zadna-primary/5 uppercase tracking-wider">
-                            {{ getCommissionLabel(vendor) }}
-                        </code>
-                    </ng-container>
-                </ng-template>
-            </app-data-table>
-        </div>
+ <!-- Commission Template -->
+ <ng-container *ngIf="column.key === 'commissionRate'">
+ <code class="text-[10px] font-bold text-zadna-primary bg-zadna-primary/5 px-2.5 py-1 rounded-xl border border-zadna-primary/5 uppercase tracking-wider">
+ {{ getCommissionLabel(vendor) }}
+ </code>
+ </ng-container>
+ </ng-template>
+ </app-data-table>
+ </div>
 
-        <!-- 5. Mobile Cards View -->
-        <app-mobile-vendor-cards
-            [vendors]="vendorCardsData"
-            [selectedVendorIds]="selectedVendorIdsArray"
-            [isLoading]="isLoading"
-            [activeLang]="activeLang"
-            (cardClick)="onMobileCardClick($event)"
-            (quickApprove)="onMobileQuickApprove($event)"
-            (requestDocuments)="onMobileRequestDocuments($event)"
-            (selectionChange)="onMobileSelectionChange($event)">
-        </app-mobile-vendor-cards>
+ <!-- 5. Mobile Cards View -->
+ <app-mobile-vendor-cards
+ [vendors]="vendorCardsData"
+ [selectedVendorIds]="selectedVendorIdsArray"
+ [isLoading]="isLoading"
+ [activeLang]="activeLang"
+ (cardClick)="onMobileCardClick($event)"
+ (quickApprove)="onMobileQuickApprove($event)"
+ (requestDocuments)="onMobileRequestDocuments($event)"
+ (selectionChange)="onMobileSelectionChange($event)">
+ </app-mobile-vendor-cards>
 
-        <!-- 6. Pagination -->
-        <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
-            <app-pagination
-                *ngIf="!isLoading && vendors.length > 0"
-                [currentPage]="pageNumber"
-                [pageSize]="pageSize"
-                [totalItems]="totalCount"
-                (pageChange)="changePage($event)">
-            </app-pagination>
-        </div>
+ <!-- 6. Pagination -->
+ <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
+ <app-pagination
+ *ngIf="!isLoading && vendors.length > 0"
+ [currentPage]="pageNumber"
+ [pageSize]="pageSize"
+ [totalItems]="totalCount"
+ (pageChange)="changePage($event)">
+ </app-pagination>
+ </div>
 
-        <!-- 7. Loading state -->
-        <div *ngIf="isLoading" class="hidden md:block admin-skeleton-table" style="--skeleton-columns: 6">
-            <div class="admin-skeleton-table-header">
-                <span *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton admin-skeleton-line sm"></span>
-            </div>
-            <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
-                <span class="admin-skeleton admin-skeleton-avatar"></span>
-                <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
-                <span class="admin-skeleton admin-skeleton-chip"></span>
-                <span class="admin-skeleton admin-skeleton-line w-3/5"></span>
-                <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
-                <span class="admin-skeleton admin-skeleton-chip"></span>
-            </div>
-        </div>
-    </div>
+ <!-- 7. Loading state -->
+ <div *ngIf="isLoading" class="hidden md:block admin-skeleton-table" style="--skeleton-columns: 6">
+ <div class="admin-skeleton-table-header">
+ <span *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton admin-skeleton-line sm"></span>
+ </div>
+ <div *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton-table-row">
+ <span class="admin-skeleton admin-skeleton-avatar"></span>
+ <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+ <span class="admin-skeleton admin-skeleton-chip"></span>
+ <span class="admin-skeleton admin-skeleton-line w-3/5"></span>
+ <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
+ <span class="admin-skeleton admin-skeleton-chip"></span>
+ </div>
+ </div>
+ </div>
 </div>
 
 <!-- Quick Preview Drawer -->
 <app-quick-preview-drawer
-    [isOpen]="showPreviewDrawer"
-    [data]="previewVendorDetail"
-    [title]="previewTitle"
-    [subtitle]="previewSubtitle"
-    [actions]="previewActions"
-    headerColor="#127c8c"
-    [headerIcon]="headerIconSvg"
-    (close)="closePreview()"
-    (actionClick)="onPreviewAction($event)">
-    
-    <ng-template #content let-vendor>
-        <div *ngIf="previewLoading" class="space-y-4">
-            <div class="admin-skeleton-card">
-                <div class="flex items-center gap-3">
-                    <span class="admin-skeleton admin-skeleton-avatar"></span>
-                    <div class="flex-1 space-y-2">
-                        <span class="admin-skeleton admin-skeleton-line lg w-3/4"></span>
-                        <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
-                    </div>
-                </div>
-                <div class="mt-6 grid grid-cols-2 gap-3">
-                    <span class="admin-skeleton admin-skeleton-line"></span>
-                    <span class="admin-skeleton admin-skeleton-line"></span>
-                    <span class="admin-skeleton admin-skeleton-line sm"></span>
-                    <span class="admin-skeleton admin-skeleton-line sm"></span>
-                </div>
-            </div>
-            <div class="admin-skeleton-card-grid">
-                <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
-                    <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
-                    <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
-                </div>
-            </div>
-        </div>
+ [isOpen]="showPreviewDrawer"
+ [data]="previewVendorDetail"
+ [title]="previewTitle"
+ [subtitle]="previewSubtitle"
+ [actions]="previewActions"
+ headerColor="#127c8c"
+ [headerIcon]="headerIconSvg"
+ (close)="closePreview()"
+ (actionClick)="onPreviewAction($event)">
+ 
+ <ng-template #content let-vendor>
+ <div *ngIf="previewLoading" class="space-y-4">
+ <div class="admin-skeleton-card">
+ <div class="flex items-center gap-3">
+ <span class="admin-skeleton admin-skeleton-avatar"></span>
+ <div class="flex-1 space-y-2">
+ <span class="admin-skeleton admin-skeleton-line lg w-3/4"></span>
+ <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+ </div>
+ </div>
+ <div class="mt-6 grid grid-cols-2 gap-3">
+ <span class="admin-skeleton admin-skeleton-line"></span>
+ <span class="admin-skeleton admin-skeleton-line"></span>
+ <span class="admin-skeleton admin-skeleton-line sm"></span>
+ <span class="admin-skeleton admin-skeleton-line sm"></span>
+ </div>
+ </div>
+ <div class="admin-skeleton-card-grid">
+ <div *ngFor="let item of [1,2,3,4]" class="admin-skeleton-card space-y-3">
+ <span class="admin-skeleton admin-skeleton-line sm w-1/2"></span>
+ <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+ </div>
+ </div>
+ </div>
 
-        <div *ngIf="!previewLoading && previewError" class="rounded-[2rem] border border-red-100 bg-red-50 p-6 text-center space-y-2">
-            <p class="text-sm font-black text-red-700">{{ previewError }}</p>
-            <p class="text-xs font-medium text-red-500">{{ 'VENDORS.LOAD_ERROR' | translate }}</p>
-        </div>
+ <div *ngIf="!previewLoading && previewError" class="rounded-[2rem] border border-red-100 bg-red-50 p-6 text-center space-y-2">
+ <p class="text-sm font-black text-red-700">{{ previewError }}</p>
+ <p class="text-xs font-medium text-red-500">{{ 'VENDORS.LOAD_ERROR' | translate }}</p>
+ </div>
 
-        <div *ngIf="!previewLoading && !previewError && vendor" class="space-y-8 animate-in fade-in slide-in-from-right-10 duration-500">
-            <div class="relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-8 text-white shadow-2xl">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-zadna-primary/20 blur-3xl rounded-full -mr-16 -mt-16"></div>
-                <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 blur-2xl rounded-full -ml-12 -mb-12"></div>
+ <div *ngIf="!previewLoading &&!previewError && vendor" class="space-y-8 animate-in fade-in slide-in-from-right-10 duration-500">
+ <div class="relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-8 text-white shadow-2xl">
+ <div class="absolute top-0 right-0 w-32 h-32 bg-zadna-primary/20 blur-3xl rounded-full -mr-16 -mt-16"></div>
+ <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 blur-2xl rounded-full -ml-12 -mb-12"></div>
 
-                <div class="relative z-10 space-y-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                                <svg class="w-5 h-5 text-zadna-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                            </div>
-                            <span class="text-sm font-black uppercase tracking-widest text-slate-300">{{ 'VENDORS.PREVIEW.HEALTH_SCORE' | translate }}</span>
-                        </div>
-                        <div class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold text-slate-200">{{ 'VENDORS.PREVIEW.UPDATED_NOW' | translate }}</div>
-                    </div>
+ <div class="relative z-10 space-y-6">
+ <div class="flex items-center justify-between">
+ <div class="flex items-center gap-3">
+ <div class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+ <svg class="w-5 h-5 text-zadna-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+ </div>
+ <span class="text-sm font-black uppercase tracking-widest text-slate-300">{{ 'VENDORS.PREVIEW.HEALTH_SCORE' | translate }}</span>
+ </div>
+ <div class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold text-slate-200">{{ 'VENDORS.PREVIEW.UPDATED_NOW' | translate }}</div>
+ </div>
 
-                    <div class="flex items-end gap-3">
-                        <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{{ previewOperationalScore }}</span>
-                        <span class="text-xl font-bold text-slate-400 mb-1.5">/ 100</span>
-                    </div>
+ <div class="flex items-end gap-3">
+ <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{{ previewOperationalScore }}</span>
+ <span class="text-xl font-bold text-slate-400 mb-1.5">/ 100</span>
+ </div>
 
-                    <div class="space-y-2">
-                        <div class="w-full bg-white/10 rounded-full h-2.5 overflow-hidden backdrop-blur-sm border border-white/5">
-                            <div class="h-full rounded-full bg-gradient-to-r from-zadna-primary to-blue-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(18,124,140,0.5)]" [style.width.%]="previewOperationalScore"></div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3 text-[11px] font-bold text-slate-300">
-                            <div>{{ 'VENDORS.PREVIEW.VERIFICATION_STATUS' | translate }}: {{ getVerificationStatusLabel(vendor.verificationStatus) | translate }}</div>
-                            <div>{{ 'VENDORS.PREVIEW.ONBOARDING_STAGE' | translate }}: {{ getOnboardingStageLabel(vendor.onboardingStage) | translate }}</div>
-                            <div>{{ 'VENDOR_DETAIL.SUBMITTED_DATE' | translate }}: {{ formatPreviewDate(vendor.createdAtUtc) }}</div>
-                            <div>{{ 'VENDOR_DETAIL.DETAILS.LAST_REVIEWER' | translate }}: {{ previewReviewerName }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+ <div class="space-y-2">
+ <div class="w-full bg-white/10 rounded-full h-2.5 overflow-hidden backdrop-blur-sm border border-white/5">
+ <div class="h-full rounded-full bg-gradient-to-r from-zadna-primary to-blue-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(18,124,140,0.5)]" [style.width.%]="previewOperationalScore"></div>
+ </div>
+ <div class="grid grid-cols-2 gap-3 text-[11px] font-bold text-slate-300">
+ <div>{{ 'VENDORS.PREVIEW.VERIFICATION_STATUS' | translate }}: {{ getVerificationStatusLabel(vendor.verificationStatus) | translate }}</div>
+ <div>{{ 'VENDORS.PREVIEW.ONBOARDING_STAGE' | translate }}: {{ getOnboardingStageLabel(vendor.onboardingStage) | translate }}</div>
+ <div>{{ 'VENDOR_DETAIL.SUBMITTED_DATE' | translate }}: {{ formatPreviewDate(vendor.createdAtUtc) }}</div>
+ <div>{{ 'VENDOR_DETAIL.DETAILS.LAST_REVIEWER' | translate }}: {{ previewReviewerName }}</div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-7 h-7 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.VERIFICATION_STATUS' | translate }}</p>
-                    </div>
-                    <p class="text-sm font-bold text-slate-700 pr-1">{{ getVerificationStatusLabel(vendor.verificationStatus) | translate }}</p>
-                </div>
+ <div class="grid grid-cols-2 gap-4">
+ <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+ <div class="flex items-center gap-2 mb-3">
+ <div class="w-7 h-7 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+ <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+ </div>
+ <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.VERIFICATION_STATUS' | translate }}</p>
+ </div>
+ <p class="text-sm font-bold text-slate-700 pr-1">{{ getVerificationStatusLabel(vendor.verificationStatus) | translate }}</p>
+ </div>
 
-                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-7 h-7 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        </div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.ONBOARDING_STAGE' | translate }}</p>
-                    </div>
-                    <p class="text-sm font-bold text-slate-700 pr-1">{{ getOnboardingStageLabel(vendor.onboardingStage) | translate }}</p>
-                </div>
+ <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+ <div class="flex items-center gap-2 mb-3">
+ <div class="w-7 h-7 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+ <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+ </div>
+ <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.ONBOARDING_STAGE' | translate }}</p>
+ </div>
+ <p class="text-sm font-bold text-slate-700 pr-1">{{ getOnboardingStageLabel(vendor.onboardingStage) | translate }}</p>
+ </div>
 
-                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-7 h-7 rounded-xl bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        </div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.RISK_LEVEL' | translate }}</p>
-                    </div>
-                    <p class="text-sm font-bold pr-1" [class]="getRiskLevelColor(vendor.riskLevel)">{{ getRiskLevelLabel(vendor.riskLevel) | translate }}</p>
-                </div>
+ <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+ <div class="flex items-center gap-2 mb-3">
+ <div class="w-7 h-7 rounded-xl bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+ <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+ </div>
+ <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.RISK_LEVEL' | translate }}</p>
+ </div>
+ <p class="text-sm font-bold pr-1" [class]="getRiskLevelColor(vendor.riskLevel)">{{ getRiskLevelLabel(vendor.riskLevel) | translate }}</p>
+ </div>
 
-                <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-7 h-7 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.PAYOUT_STATUS' | translate }}</p>
-                    </div>
-                    <p class="text-sm font-bold text-slate-700 pr-1">{{ getPayoutStatusLabel(vendor.payoutStatus) | translate }}</p>
-                </div>
-            </div>
+ <div class="group p-5 bg-white border border-slate-100 rounded-[2rem] hover:border-zadna-primary/30 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+ <div class="flex items-center gap-2 mb-3">
+ <div class="w-7 h-7 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+ <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3.895-3 2s1.343 2 3 2 3.895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+ </div>
+ <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ 'VENDORS.PREVIEW.PAYOUT_STATUS' | translate }}</p>
+ </div>
+ <p class="text-sm font-bold text-slate-700 pr-1">{{ getPayoutStatusLabel(vendor.payoutStatus) | translate }}</p>
+ </div>
+ </div>
 
-            <div class="space-y-4">
-                <div class="flex items-center gap-2">
-                    <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-amber-500]="true">{{ 'VENDORS.PREVIEW.PENDING_REQUIREMENTS' | translate }}</h4>
-                    <span *ngIf="previewBlockingDocuments.length > 0" class="px-2 py-0.5 rounded-full bg-amber-100 text-[10px] font-bold text-amber-600">{{ 'VENDORS.PREVIEW.IMPORTANT' | translate }}</span>
-                </div>
+ <div class="space-y-4">
+ <div class="flex items-center gap-2">
+ <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-amber-500]="true">{{ 'VENDORS.PREVIEW.PENDING_REQUIREMENTS' | translate }}</h4>
+ <span *ngIf="previewBlockingDocuments.length > 0" class="px-2 py-0.5 rounded-full bg-amber-100 text-[10px] font-bold text-amber-600">{{ 'VENDORS.PREVIEW.IMPORTANT' | translate }}</span>
+ </div>
 
-                <div *ngIf="previewBlockingDocuments.length > 0" class="bg-amber-50/50 border border-amber-100/50 rounded-[2rem] p-6 space-y-3">
-                    <div *ngFor="let document of previewBlockingDocuments" class="flex items-start gap-4 p-3 bg-white/60 rounded-2xl border border-white/80">
-                        <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-slate-800">{{ document.titleKey | translate }}</p>
-                            <p class="text-[10px] text-slate-500 font-medium">{{ document.statusLabelKey | translate }}</p>
-                        </div>
-                    </div>
-                </div>
+ <div *ngIf="previewBlockingDocuments.length > 0" class="bg-amber-50/50 border border-amber-100/50 rounded-[2rem] p-6 space-y-3">
+ <div *ngFor="let document of previewBlockingDocuments" class="flex items-start gap-4 p-3 bg-white/60 rounded-2xl border border-white/80">
+ <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+ <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+ </div>
+ <div>
+ <p class="text-xs font-bold text-slate-800">{{ document.titleKey | translate }}</p>
+ <p class="text-[10px] text-slate-500 font-medium">{{ document.statusLabelKey | translate }}</p>
+ </div>
+ </div>
+ </div>
 
-                <div *ngIf="previewBlockingDocuments.length === 0" class="bg-emerald-50/60 border border-emerald-100 rounded-[2rem] p-6">
-                    <p class="text-sm font-bold text-emerald-700">{{ 'COMPLIANCE.NO_BLOCKERS' | translate }}</p>
-                </div>
-            </div>
+ <div *ngIf="previewBlockingDocuments.length === 0" class="bg-emerald-50/60 border border-emerald-100 rounded-[2rem] p-6">
+ <p class="text-sm font-bold text-emerald-700">{{ 'COMPLIANCE.NO_BLOCKERS' | translate }}</p>
+ </div>
+ </div>
 
-            <div class="space-y-4">
-                <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-zadna-primary]="true">{{ 'VENDORS.PREVIEW.PERFORMANCE_INSIGHTS' | translate }}</h4>
-                <div class="bg-slate-50 rounded-[2rem] p-6">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center space-y-1">
-                            <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'CATALOG.COMMISSION_RATE' | translate }}</p>
-                            <p class="text-sm font-black text-slate-700">{{ vendor.commissionRate == null ? '---' : (vendor.commissionRate + '%') }}</p>
-                        </div>
-                        <div class="text-center space-y-1">
-                            <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDOR_SETTINGS.OPERATIONS.ORDER_RECEPTION' | translate }}</p>
-                            <p class="text-sm font-black text-slate-700">{{ previewAcceptOrdersLabel }}</p>
-                        </div>
-                        <div class="text-center space-y-1">
-                            <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDOR_SETTINGS.OPERATIONS.WORKING_HOURS' | translate }}</p>
-                            <p class="text-sm font-black text-slate-700">{{ previewWorkingHoursSummary }}</p>
-                        </div>
-                        <div class="text-center space-y-1">
-                            <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDORS.PREVIEW.VERIFY_BANK' | translate }}</p>
-                            <p class="text-sm font-black text-slate-700">{{ previewBankStatusLabel }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+ <div class="space-y-4">
+ <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-zadna-primary]="true">{{ 'VENDORS.PREVIEW.PERFORMANCE_INSIGHTS' | translate }}</h4>
+ <div class="bg-slate-50 rounded-[2rem] p-6">
+ <div class="grid grid-cols-2 gap-4">
+ <div class="text-center space-y-1">
+ <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'CATALOG.COMMISSION_RATE' | translate }}</p>
+ <p class="text-sm font-black text-slate-700">{{ vendor.commissionRate == null ? '---' : (vendor.commissionRate + '%') }}</p>
+ </div>
+ <div class="text-center space-y-1">
+ <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDOR_SETTINGS.OPERATIONS.ORDER_RECEPTION' | translate }}</p>
+ <p class="text-sm font-black text-slate-700">{{ previewAcceptOrdersLabel }}</p>
+ </div>
+ <div class="text-center space-y-1">
+ <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDOR_SETTINGS.OPERATIONS.WORKING_HOURS' | translate }}</p>
+ <p class="text-sm font-black text-slate-700">{{ previewWorkingHoursSummary }}</p>
+ </div>
+ <div class="text-center space-y-1">
+ <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDORS.PREVIEW.VERIFY_BANK' | translate }}</p>
+ <p class="text-sm font-black text-slate-700">{{ previewBankStatusLabel }}</p>
+ </div>
+ </div>
+ </div>
+ </div>
 
-            <div *ngIf="previewLatestNote" class="space-y-4">
-                <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-slate-400]="true">{{ 'VENDOR_DETAIL.TAB_LOGS' | translate }}</h4>
-                <div class="bg-white border border-slate-100 rounded-[2rem] p-5 space-y-2">
-                    <div class="flex items-center justify-between gap-3">
-                        <p class="text-sm font-black text-slate-800">{{ previewLatestNote.authorName || previewReviewerName }}</p>
-                        <p class="text-[10px] font-bold text-slate-400">{{ formatPreviewDateTime(previewLatestNote.createdAtUtc) }}</p>
-                    </div>
-                    <p class="text-xs font-medium text-slate-500">{{ previewLatestNote.roleLabel }}</p>
-                    <p *ngIf="previewLatestNoteMessage" class="text-sm leading-6 text-slate-700">{{ previewLatestNoteMessage }}</p>
-                </div>
-            </div>
-        </div>
-    </ng-template>
+ <div *ngIf="previewLatestNote" class="space-y-4">
+ <h4 class="text-sm font-black text-slate-900 pr-3" [ngClass]="isRTL ? 'border-r-4' : 'border-l-4'" [class.border-slate-400]="true">{{ 'VENDOR_DETAIL.TAB_LOGS' | translate }}</h4>
+ <div class="bg-white border border-slate-100 rounded-[2rem] p-5 space-y-2">
+ <div class="flex items-center justify-between gap-3">
+ <p class="text-sm font-black text-slate-800">{{ previewLatestNote.authorName || previewReviewerName }}</p>
+ <p class="text-[10px] font-bold text-slate-400">{{ formatPreviewDateTime(previewLatestNote.createdAtUtc) }}</p>
+ </div>
+ <p class="text-xs font-medium text-slate-500">{{ previewLatestNote.roleLabel }}</p>
+ <p *ngIf="previewLatestNoteMessage" class="text-sm leading-6 text-slate-700">{{ previewLatestNoteMessage }}</p>
+ </div>
+ </div>
+ </div>
+ </ng-template>
 </app-quick-preview-drawer>

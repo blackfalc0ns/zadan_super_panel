@@ -1,305 +1,305 @@
 <div class="h-full flex flex-col bg-slate-50/50 font-sans overflow-hidden" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
 
-  <!-- Header -->
-  <header class="shrink-0 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 px-6 lg:px-8 py-4">
-    <div class="flex items-center justify-between gap-4">
-      <div class="flex items-center gap-4">
-        <button (click)="goBack()" class="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors">
-          <span class="material-symbols-outlined text-[22px]" [class.rotate-180]="isRTL">arrow_back</span>
-        </button>
-        <div>
-          <h1 class="text-xl font-black text-slate-900">إدارة الأدوار والصلاحيات</h1>
-          <p class="text-[11px] font-bold text-slate-400 mt-0.5">{{ roles.length }} دور — {{ systemRolesCount }} نظامي • {{ customRolesCount }} مخصص</p>
-        </div>
-      </div>
-      <button (click)="openCreateModal()" class="h-11 px-6 rounded-2xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all group">
-        <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform duration-500">add</span>
-        إنشاء دور جديد
-      </button>
-    </div>
-  </header>
+ <!-- Header -->
+ <header class="shrink-0 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 px-6 lg:px-8 py-4">
+ <div class="flex items-center justify-between gap-4">
+ <div class="flex items-center gap-4">
+ <button (click)="goBack()" class="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors">
+ <span class="material-symbols-outlined text-[22px]" [class.rotate-180]="isRTL">arrow_back</span>
+ </button>
+ <div>
+ <h1 class="text-xl font-black text-slate-900">إدارة الأدوار والصلاحيات</h1>
+ <p class="text-[11px] font-bold text-slate-400 mt-0.5">{{ roles.length }} دور — {{ systemRolesCount }} نظامي • {{ customRolesCount }} مخصص</p>
+ </div>
+ </div>
+ <button (click)="openCreateModal()" class="h-11 px-6 rounded-2xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-sm font-black flex items-center gap-2 shadow-lg shadow-zadna-primary/20 hover:-translate-y-0.5 transition-all group">
+ <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform duration-500">add</span>
+ إنشاء دور جديد
+ </button>
+ </div>
+ </header>
 
-  <!-- Content -->
-  <div class="flex-1 overflow-y-auto">
-    <div class="max-w-[100rem] mx-auto px-6 lg:px-8 py-6 space-y-5">
+ <!-- Content -->
+ <div class="flex-1 overflow-y-auto">
+ <div class="max-w-[100rem] mx-auto px-6 lg:px-8 py-6 space-y-5">
 
-      <div *ngIf="pageError && !isLoading" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
-        {{ pageError }}
-      </div>
+ <div *ngIf="pageError &&!isLoading" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+ {{ pageError }}
+ </div>
 
-      <!-- Roles List — Each card shows ALL info -->
-      <div *ngFor="let role of roles; trackBy: trackByRoleId"
-           class="rounded-2xl border bg-white/80 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-lg group"
-           [ngClass]="selectedRole?.id === role.id ? 'border-zadna-primary/40 shadow-md ring-2 ring-zadna-primary/10' : 'border-slate-200/60'">
+ <!-- Roles List — Each card shows ALL info -->
+ <div *ngFor="let role of roles; trackBy: trackByRoleId"
+ class="rounded-2xl border bg-white/80 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-lg group"
+ [ngClass]="selectedRole?.id === role.id ? 'border-zadna-primary/40 shadow-md ring-2 ring-zadna-primary/10' : 'border-slate-200/60'">
 
-        <!-- Card Header — click to expand -->
-        <div (click)="selectRole(role)" class="cursor-pointer">
-          <div class="flex items-center gap-5 p-5 pb-0">
-            <!-- Icon -->
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md shrink-0" [style.background]="role.accent">
-              <span class="material-symbols-outlined text-[24px]">{{ role.isSystem ? 'verified_user' : 'shield' }}</span>
-            </div>
-            <!-- Name + Desc -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-3">
-                <h3 class="text-[16px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors">{{ getRoleName(role) | translate }}</h3>
-                <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md shrink-0"
-                      [ngClass]="role.isSystem ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'">
-                  {{ role.isSystem ? 'نظامي' : 'مخصص' }}
-                </span>
-              </div>
-              <p class="text-[12px] text-slate-500 mt-0.5 line-clamp-1">{{ getRoleDescription(role) | translate }}</p>
-            </div>
-            <!-- Expand Arrow -->
-            <span class="material-symbols-outlined text-[20px] text-slate-400 transition-transform duration-300"
-                  [class.rotate-180]="selectedRole?.id === role.id">expand_more</span>
-          </div>
+ <!-- Card Header — click to expand -->
+ <div (click)="selectRole(role)" class="cursor-pointer">
+ <div class="flex items-center gap-5 p-5 pb-0">
+ <!-- Icon -->
+ <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md shrink-0" [style.background]="role.accent">
+ <span class="material-symbols-outlined text-[24px]">{{ role.isSystem ? 'verified_user' : 'shield' }}</span>
+ </div>
+ <!-- Name + Desc -->
+ <div class="flex-1 min-w-0">
+ <div class="flex items-center gap-3">
+ <h3 class="text-[16px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors">{{ getRoleName(role) | translate }}</h3>
+ <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md shrink-0"
+ [ngClass]="role.isSystem ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'">
+ {{ role.isSystem ? 'نظامي' : 'مخصص' }}
+ </span>
+ </div>
+ <p class="text-[12px] text-slate-500 mt-0.5 line-clamp-1">{{ getRoleDescription(role) | translate }}</p>
+ </div>
+ <!-- Expand Arrow -->
+ <span class="material-symbols-outlined text-[20px] text-slate-400 transition-transform duration-300"
+ [class.rotate-180]="selectedRole?.id === role.id">expand_more</span>
+ </div>
 
-          <!-- Info Row — always visible -->
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-3 px-5 py-4">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px] text-zadna-primary">key</span>
-              <span class="text-[12px] font-black text-slate-700">{{ role.permissions.length }} صلاحية</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px] text-emerald-500">group</span>
-              <span class="text-[12px] font-black text-slate-700">{{ role.usersCount }} مستخدم</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px] text-violet-500">dashboard</span>
-              <span class="text-[12px] font-bold text-slate-600">{{ getPanelLabel(role.panelScope) | translate }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px] text-amber-500">tune</span>
-              <span class="text-[12px] font-bold text-slate-600">{{ getAccessLevelLabel(role.accessLevel) | translate }}</span>
-            </div>
-            <div class="flex items-center gap-2" dir="ltr">
-              <span class="material-symbols-outlined text-[16px] text-sky-500">mail</span>
-              <span class="text-[12px] font-bold truncate" [ngClass]="role.email ? 'text-slate-700' : 'text-slate-400'">{{ role.email || 'لم يُحدد' }}</span>
-            </div>
-          </div>
-        </div>
+ <!-- Info Row — always visible -->
+ <div class="grid grid-cols-2 md:grid-cols-5 gap-3 px-5 py-4">
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[16px] text-zadna-primary">key</span>
+ <span class="text-[12px] font-black text-slate-700">{{ role.permissions.length }} صلاحية</span>
+ </div>
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[16px] text-emerald-500">group</span>
+ <span class="text-[12px] font-black text-slate-700">{{ role.usersCount }} مستخدم</span>
+ </div>
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[16px] text-violet-500">dashboard</span>
+ <span class="text-[12px] font-bold text-slate-600">{{ getPanelLabel(role.panelScope) | translate }}</span>
+ </div>
+ <div class="flex items-center gap-2">
+ <span class="material-symbols-outlined text-[16px] text-amber-500">tune</span>
+ <span class="text-[12px] font-bold text-slate-600">{{ getAccessLevelLabel(role.accessLevel) | translate }}</span>
+ </div>
+ <div class="flex items-center gap-2" dir="ltr">
+ <span class="material-symbols-outlined text-[16px] text-sky-500">mail</span>
+ <span class="text-[12px] font-bold truncate" [ngClass]="role.email ? 'text-slate-700' : 'text-slate-400'">{{ role.email || 'لم يُحدد' }}</span>
+ </div>
+ </div>
+ </div>
 
-        <!-- Expanded Detail Panel -->
-        <div *ngIf="selectedRole?.id === role.id" class="border-t border-slate-200/60 animate-in slide-in-from-top-2 duration-300">
+ <!-- Expanded Detail Panel -->
+ <div *ngIf="selectedRole?.id === role.id" class="border-t border-slate-200/60 animate-in slide-in-from-top-2 duration-300">
 
-          <!-- Tabs -->
-          <div class="border-b border-slate-100 px-5 bg-slate-50/30">
-            <div class="flex gap-1">
-              <button *ngFor="let tab of detailTabs" (click)="activeDetailTab = tab.id"
-                class="px-4 py-3 text-[12px] font-black transition-all relative"
-                [ngClass]="activeDetailTab === tab.id ? 'text-zadna-primary' : 'text-slate-400 hover:text-slate-600'">
-                <span class="flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[16px]">{{ tab.icon }}</span>
-                  {{ tab.label }}
-                </span>
-                <div *ngIf="activeDetailTab === tab.id" class="absolute bottom-0 inset-x-1 h-[2px] bg-zadna-primary rounded-full"></div>
-              </button>
-            </div>
-          </div>
+ <!-- Tabs -->
+ <div class="border-b border-slate-100 px-5 bg-slate-50/30">
+ <div class="flex gap-1">
+ <button *ngFor="let tab of detailTabs" (click)="activeDetailTab = tab.id"
+ class="px-4 py-3 text-[12px] font-black transition-all relative"
+ [ngClass]="activeDetailTab === tab.id ? 'text-zadna-primary' : 'text-slate-400 hover:text-slate-600'">
+ <span class="flex items-center gap-1.5">
+ <span class="material-symbols-outlined text-[16px]">{{ tab.icon }}</span>
+ {{ tab.label }}
+ </span>
+ <div *ngIf="activeDetailTab === tab.id" class="absolute bottom-0 inset-x-1 h-[2px] bg-zadna-primary rounded-full"></div>
+ </button>
+ </div>
+ </div>
 
-          <!-- TAB: Permissions -->
-          <div *ngIf="activeDetailTab === 'permissions'" class="p-5">
-            <div class="rounded-xl border border-slate-200/60 overflow-hidden bg-white">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead class="bg-slate-50/80 border-b border-slate-200/60">
-                    <tr>
-                      <th class="text-start px-5 py-3 text-[11px] font-black text-slate-500 uppercase tracking-wider w-[260px]">القسم</th>
-                      <th *ngFor="let action of permissionActions" class="text-center px-2 py-3 w-[80px]">
-                        <div class="flex flex-col items-center gap-1">
-                          <span class="material-symbols-outlined text-[16px] text-slate-400">{{ getActionIcon(action) }}</span>
-                          <span class="text-[9px] font-black text-slate-400">{{ getActionLabel(action) | translate }}</span>
-                        </div>
-                      </th>
-                      <th *ngIf="!role.isSystem" class="text-center px-2 py-3 w-[60px]">
-                        <span class="text-[9px] font-black text-zadna-primary">الكل</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-100/80">
-                    <tr *ngFor="let group of getFilteredGroups()" class="hover:bg-zadna-primary/[0.015] transition-colors">
-                      <td class="px-5 py-3">
-                        <p class="text-[13px] font-black text-slate-800">{{ group.labelKey | translate }}</p>
-                        <p class="text-[10px] text-slate-400 mt-0.5">{{ getGroupEnabledCount(group) }}/{{ getAvailableGroupActionCount(group) }}</p>
-                      </td>
-                      <td *ngFor="let action of permissionActions" class="text-center px-2 py-3">
-                        <ng-container *ngIf="group.actions.includes(action) && isPermissionAvailable(group.id, action); else noAction">
-                          <label class="inline-flex cursor-pointer" [class.pointer-events-none]="role.isSystem">
-                            <input type="checkbox" [checked]="hasPermission(group.id, action)" (change)="togglePermission(group.id, action)" [disabled]="role.isSystem" class="sr-only peer" />
-                            <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
-                                 [ngClass]="hasPermission(group.id, action) ? 'bg-zadna-primary border-zadna-primary shadow-sm shadow-zadna-primary/20' : 'border-slate-300'">
-                              <span *ngIf="hasPermission(group.id, action)" class="material-symbols-outlined text-[13px] text-white">check</span>
-                            </div>
-                          </label>
-                        </ng-container>
-                        <ng-template #noAction><div class="w-1.5 h-1.5 rounded-full bg-slate-200 mx-auto"></div></ng-template>
-                      </td>
-                      <td *ngIf="!role.isSystem" class="text-center px-2 py-3">
-                        <button (click)="toggleAllGroupPermissions(group)" class="w-7 h-7 rounded-md flex items-center justify-center transition-all"
-                          [disabled]="getAvailableGroupActionCount(group) === 0"
-                          [ngClass]="isGroupFullyEnabled(group) ? 'bg-zadna-primary/10 text-zadna-primary' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'">
-                          <span class="material-symbols-outlined text-[15px]">{{ isGroupFullyEnabled(group) ? 'check_box' : 'select_all' }}</span>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <!-- Save button -->
-            <div *ngIf="!role.isSystem" class="flex justify-end mt-4">
-              <button (click)="savePermissions()" [disabled]="isSavingPermissions" class="h-10 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[12px] font-black shadow-lg shadow-zadna-primary/20 flex items-center gap-2 hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
-                <span class="material-symbols-outlined text-[16px]" [class.animate-spin]="isSavingPermissions">{{ isSavingPermissions ? 'progress_activity' : 'save' }}</span>
-                {{ (isSavingPermissions ? 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.SAVING' : 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.SAVE_CHANGES') | translate }}
-              </button>
-            </div>
-          </div>
+ <!-- TAB: Permissions -->
+ <div *ngIf="activeDetailTab === 'permissions'" class="p-5">
+ <div class="rounded-xl border border-slate-200/60 overflow-hidden bg-white">
+ <div class="overflow-x-auto">
+ <table class="w-full text-sm">
+ <thead class="bg-slate-50/80 border-b border-slate-200/60">
+ <tr>
+ <th class="text-start px-5 py-3 text-[11px] font-black text-slate-500 uppercase tracking-wider w-[260px]">القسم</th>
+ <th *ngFor="let action of permissionActions" class="text-center px-2 py-3 w-[80px]">
+ <div class="flex flex-col items-center gap-1">
+ <span class="material-symbols-outlined text-[16px] text-slate-400">{{ getActionIcon(action) }}</span>
+ <span class="text-[9px] font-black text-slate-400">{{ getActionLabel(action) | translate }}</span>
+ </div>
+ </th>
+ <th *ngIf="!role.isSystem" class="text-center px-2 py-3 w-[60px]">
+ <span class="text-[9px] font-black text-zadna-primary">الكل</span>
+ </th>
+ </tr>
+ </thead>
+ <tbody class="divide-y divide-slate-100/80">
+ <tr *ngFor="let group of getFilteredGroups()" class="hover:bg-zadna-primary/[0.015] transition-colors">
+ <td class="px-5 py-3">
+ <p class="text-[13px] font-black text-slate-800">{{ group.labelKey | translate }}</p>
+ <p class="text-[10px] text-slate-400 mt-0.5">{{ getGroupEnabledCount(group) }}/{{ getAvailableGroupActionCount(group) }}</p>
+ </td>
+ <td *ngFor="let action of permissionActions" class="text-center px-2 py-3">
+ <ng-container *ngIf="group.actions.includes(action) && isPermissionAvailable(group.id, action); else noAction">
+ <label class="inline-flex cursor-pointer" [class.pointer-events-none]="role.isSystem">
+ <input type="checkbox" [checked]="hasPermission(group.id, action)" (change)="togglePermission(group.id, action)" [disabled]="role.isSystem" class="sr-only peer" />
+ <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all"
+ [ngClass]="hasPermission(group.id, action) ? 'bg-zadna-primary border-zadna-primary shadow-sm shadow-zadna-primary/20' : 'border-slate-300'">
+ <span *ngIf="hasPermission(group.id, action)" class="material-symbols-outlined text-[13px] text-white">check</span>
+ </div>
+ </label>
+ </ng-container>
+ <ng-template #noAction><div class="w-1.5 h-1.5 rounded-full bg-slate-200 mx-auto"></div></ng-template>
+ </td>
+ <td *ngIf="!role.isSystem" class="text-center px-2 py-3">
+ <button (click)="toggleAllGroupPermissions(group)" class="w-7 h-7 rounded-md flex items-center justify-center transition-all"
+ [disabled]="getAvailableGroupActionCount(group) === 0"
+ [ngClass]="isGroupFullyEnabled(group) ? 'bg-zadna-primary/10 text-zadna-primary' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'">
+ <span class="material-symbols-outlined text-[15px]">{{ isGroupFullyEnabled(group) ? 'check_box' : 'select_all' }}</span>
+ </button>
+ </td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+ <!-- Save button -->
+ <div *ngIf="!role.isSystem" class="flex justify-end mt-4">
+ <button (click)="savePermissions()" [disabled]="isSavingPermissions" class="h-10 px-6 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white text-[12px] font-black shadow-lg shadow-zadna-primary/20 flex items-center gap-2 hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+ <span class="material-symbols-outlined text-[16px]" [class.animate-spin]="isSavingPermissions">{{ isSavingPermissions ? 'progress_activity' : 'save' }}</span>
+ {{ (isSavingPermissions ? 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.SAVING' : 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.SAVE_CHANGES') | translate }}
+ </button>
+ </div>
+ </div>
 
-          <!-- TAB: Email -->
-          <div *ngIf="activeDetailTab === 'email'" class="p-5">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <div class="rounded-xl border border-slate-200/60 bg-white p-5">
-                <div class="flex items-center gap-2 mb-4">
-                  <span class="material-symbols-outlined text-[18px] text-zadna-primary">mail</span>
-                  <h4 class="text-[13px] font-black text-slate-900">البريد الإلكتروني الرئيسي</h4>
-                </div>
-                <input type="email" [(ngModel)]="role.email" dir="ltr" placeholder="finance@zadana.sa"
-                  [disabled]="role.isSystem"
-                  class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all disabled:opacity-50 disabled:bg-slate-50" />
-                <p class="text-[10px] text-slate-400 mt-2">البريد الافتراضي لكل مراسلات هذا الدور</p>
-              </div>
-              <div class="rounded-xl border border-slate-200/60 bg-white p-5">
-                <div class="flex items-center gap-2 mb-4">
-                  <span class="material-symbols-outlined text-[18px] text-violet-600">notifications</span>
-                  <h4 class="text-[13px] font-black text-slate-900">إيميلات الإشعارات</h4>
-                </div>
-                <textarea [(ngModel)]="role.notificationEmails" dir="ltr" rows="2" placeholder="alerts@zadana.sa, ops@zadana.sa"
-                  [disabled]="role.isSystem"
-                  class="w-full rounded-xl border border-slate-300 bg-white p-3 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all resize-none disabled:opacity-50 disabled:bg-slate-50"></textarea>
-                <p class="text-[10px] text-slate-400 mt-2">افصل بين الإيميلات بفاصلة — تستقبل كل التنبيهات</p>
-              </div>
-            </div>
-          </div>
+ <!-- TAB: Email -->
+ <div *ngIf="activeDetailTab === 'email'" class="p-5">
+ <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+ <div class="rounded-xl border border-slate-200/60 bg-white p-5">
+ <div class="flex items-center gap-2 mb-4">
+ <span class="material-symbols-outlined text-[18px] text-zadna-primary">mail</span>
+ <h4 class="text-[13px] font-black text-slate-900">البريد الإلكتروني الرئيسي</h4>
+ </div>
+ <input type="email" [(ngModel)]="role.email" dir="ltr" placeholder="finance@zadana.sa"
+ [disabled]="role.isSystem"
+ class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all disabled:opacity-50 disabled:bg-slate-50" />
+ <p class="text-[10px] text-slate-400 mt-2">البريد الافتراضي لكل مراسلات هذا الدور</p>
+ </div>
+ <div class="rounded-xl border border-slate-200/60 bg-white p-5">
+ <div class="flex items-center gap-2 mb-4">
+ <span class="material-symbols-outlined text-[18px] text-violet-600">notifications</span>
+ <h4 class="text-[13px] font-black text-slate-900">إيميلات الإشعارات</h4>
+ </div>
+ <textarea [(ngModel)]="role.notificationEmails" dir="ltr" rows="2" placeholder="alerts@zadana.sa, ops@zadana.sa"
+ [disabled]="role.isSystem"
+ class="w-full rounded-xl border border-slate-300 bg-white p-3 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all resize-none disabled:opacity-50 disabled:bg-slate-50"></textarea>
+ <p class="text-[10px] text-slate-400 mt-2">افصل بين الإيميلات بفاصلة — تستقبل كل التنبيهات</p>
+ </div>
+ </div>
+ </div>
 
-          <!-- TAB: Users -->
-          <div *ngIf="activeDetailTab === 'users'" class="p-5">
-            <div class="rounded-xl border border-slate-200/60 bg-white p-6 text-center">
-              <span class="material-symbols-outlined text-[32px] text-slate-300">group</span>
-              <p class="text-lg font-black text-slate-900 mt-2">{{ role.usersCount }} مستخدم</p>
-              <p class="text-[12px] text-slate-500">مسندين لهذا الدور حالياً</p>
-            </div>
-          </div>
+ <!-- TAB: Users -->
+ <div *ngIf="activeDetailTab === 'users'" class="p-5">
+ <div class="rounded-xl border border-slate-200/60 bg-white p-6 text-center">
+ <span class="material-symbols-outlined text-[32px] text-slate-300">group</span>
+ <p class="text-lg font-black text-slate-900 mt-2">{{ role.usersCount }} مستخدم</p>
+ <p class="text-[12px] text-slate-500">مسندين لهذا الدور الحين</p>
+ </div>
+ </div>
 
-          <!-- Actions -->
-          <div *ngIf="!role.isSystem" class="flex items-center justify-end gap-3 px-5 pb-5">
-            <button (click)="deleteRole(role)" class="h-9 px-4 rounded-lg bg-white border border-red-200 text-red-600 text-[11px] font-black hover:bg-red-50 transition-colors flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[14px]">delete</span>
-              حذف الدور
-            </button>
-          </div>
-        </div>
-      </div>
+ <!-- Actions -->
+ <div *ngIf="!role.isSystem" class="flex items-center justify-end gap-3 px-5 pb-5">
+ <button (click)="deleteRole(role)" class="h-9 px-4 rounded-lg bg-white border border-red-200 text-red-600 text-[11px] font-black hover:bg-red-50 transition-colors flex items-center gap-1.5">
+ <span class="material-symbols-outlined text-[14px]">delete</span>
+ حذف الدور
+ </button>
+ </div>
+ </div>
+ </div>
 
-    </div>
-  </div>
+ </div>
+ </div>
 
-  <!-- Create Role Modal — ALL essential fields -->
-  <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="showModal = false" style="animation: fadeIn 0.2s ease-out;"></div>
-    <div class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl relative z-10 overflow-hidden" style="animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
-      <!-- Modal Header -->
-      <div class="p-6 border-b border-slate-100 bg-gradient-to-br from-slate-50/80 via-white to-white">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-zadna-primary to-teal-700 flex items-center justify-center text-white shadow-lg">
-            <span class="material-symbols-outlined text-[24px]">shield</span>
-          </div>
-          <div>
-            <h2 class="text-lg font-black text-slate-900">إنشاء دور جديد</h2>
-            <p class="text-[12px] text-slate-500 font-bold">أدخل جميع البيانات الأساسية للدور</p>
-          </div>
-        </div>
-      </div>
+ <!-- Create Role Modal — ALL essential fields -->
+ <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+ <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="showModal = false" style="animation: fadeIn 0.2s ease-out;"></div>
+ <div class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl relative z-10 overflow-hidden" style="animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+ <!-- Modal Header -->
+ <div class="p-6 border-b border-slate-100 bg-gradient-to-br from-slate-50/80 via-white to-white">
+ <div class="flex items-center gap-4">
+ <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-zadna-primary to-teal-700 flex items-center justify-center text-white shadow-lg">
+ <span class="material-symbols-outlined text-[24px]">shield</span>
+ </div>
+ <div>
+ <h2 class="text-lg font-black text-slate-900">إنشاء دور جديد</h2>
+ <p class="text-[12px] text-slate-500 font-bold">أدخل جميع البيانات الأساسية للدور</p>
+ </div>
+ </div>
+ </div>
 
-      <!-- Modal Body -->
-      <div class="p-6 space-y-5 max-h-[65vh] overflow-y-auto">
-        <!-- Row 1: Name + Email -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">اسم الدور <span class="text-red-500">*</span></label>
-            <input type="text" [(ngModel)]="newRoleName" placeholder="مثال: مدير المالية" class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all" />
-          </div>
-          <div>
-            <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">البريد الإلكتروني</label>
-            <input type="email" [(ngModel)]="newRoleEmail" dir="ltr" placeholder="finance@zadana.sa" class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all" />
-          </div>
-        </div>
+ <!-- Modal Body -->
+ <div class="p-6 space-y-5 max-h-[65vh] overflow-y-auto">
+ <!-- Row 1: Name + Email -->
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div>
+ <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">اسم الدور <span class="text-red-500">*</span></label>
+ <input type="text" [(ngModel)]="newRoleName" placeholder="مثال: مدير المالية" class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all" />
+ </div>
+ <div>
+ <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">البريد الإلكتروني</label>
+ <input type="email" [(ngModel)]="newRoleEmail" dir="ltr" placeholder="finance@zadana.sa" class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all" />
+ </div>
+ </div>
 
-        <!-- Description -->
-        <div>
-          <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">الوصف</label>
-          <textarea [(ngModel)]="newRoleDescription" rows="2" placeholder="وصف مختصر لمهام هذا الدور..." class="w-full rounded-xl border border-slate-300 bg-white p-3 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all resize-none"></textarea>
-        </div>
+ <!-- Description -->
+ <div>
+ <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">الوصف</label>
+ <textarea [(ngModel)]="newRoleDescription" rows="2" placeholder="وصف مختصر لمهام هذا الدور..." class="w-full rounded-xl border border-slate-300 bg-white p-3 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all resize-none"></textarea>
+ </div>
 
-        <!-- Row 2: Access Level + Panel Scope -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">مستوى الوصول <span class="text-red-500">*</span></label>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button *ngFor="let lvl of accessLevelOptions" type="button" (click)="newRoleAccessLevel = lvl.value"
-                class="h-10 rounded-lg text-[11px] font-black border transition-all flex items-center justify-center gap-1.5"
-                [ngClass]="newRoleAccessLevel === lvl.value ? 'bg-zadna-primary/10 border-zadna-primary/30 text-zadna-primary' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'">
-                <span class="material-symbols-outlined text-[14px]">{{ lvl.icon }}</span>
-                {{ lvl.label }}
-              </button>
-            </div>
-          </div>
-          <div>
-            <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">نطاق اللوحة <span class="text-red-500">*</span></label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <button *ngFor="let scope of panelScopeOptions" type="button" (click)="newRolePanelScope = scope.value"
-                class="h-10 rounded-lg text-[11px] font-black border transition-all flex items-center justify-center gap-1.5"
-                [ngClass]="newRolePanelScope === scope.value ? 'bg-zadna-primary/10 border-zadna-primary/30 text-zadna-primary' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'">
-                <span class="material-symbols-outlined text-[14px]">{{ scope.icon }}</span>
-                {{ scope.label }}
-              </button>
-            </div>
-          </div>
-        </div>
+ <!-- Row 2: Access Level + Panel Scope -->
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div>
+ <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">مستوى الوصول <span class="text-red-500">*</span></label>
+ <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+ <button *ngFor="let lvl of accessLevelOptions" type="button" (click)="newRoleAccessLevel = lvl.value"
+ class="h-10 rounded-lg text-[11px] font-black border transition-all flex items-center justify-center gap-1.5"
+ [ngClass]="newRoleAccessLevel === lvl.value ? 'bg-zadna-primary/10 border-zadna-primary/30 text-zadna-primary' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'">
+ <span class="material-symbols-outlined text-[14px]">{{ lvl.icon }}</span>
+ {{ lvl.label }}
+ </button>
+ </div>
+ </div>
+ <div>
+ <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">نطاق اللوحة <span class="text-red-500">*</span></label>
+ <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+ <button *ngFor="let scope of panelScopeOptions" type="button" (click)="newRolePanelScope = scope.value"
+ class="h-10 rounded-lg text-[11px] font-black border transition-all flex items-center justify-center gap-1.5"
+ [ngClass]="newRolePanelScope === scope.value ? 'bg-zadna-primary/10 border-zadna-primary/30 text-zadna-primary' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'">
+ <span class="material-symbols-outlined text-[14px]">{{ scope.icon }}</span>
+ {{ scope.label }}
+ </button>
+ </div>
+ </div>
+ </div>
 
-        <!-- Notification Emails -->
-        <div>
-          <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">إيميلات الإشعارات</label>
-          <input type="text" [(ngModel)]="newRoleNotificationEmails" dir="ltr" placeholder="alerts@zadana.sa, ops@zadana.sa" class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all" />
-          <p class="text-[10px] text-slate-400 mt-1.5">افصل بين الإيميلات بفاصلة — ستستقبل كل التنبيهات الخاصة بالدور</p>
-        </div>
+ <!-- Notification Emails -->
+ <div>
+ <label class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-2 block">إيميلات الإشعارات</label>
+ <input type="text" [(ngModel)]="newRoleNotificationEmails" dir="ltr" placeholder="alerts@zadana.sa, ops@zadana.sa" class="w-full h-11 rounded-xl border border-slate-300 bg-white px-4 text-[13px] font-bold placeholder-slate-400 focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10 outline-none transition-all" />
+ <p class="text-[10px] text-slate-400 mt-1.5">افصل بين الإيميلات بفاصلة — ستستقبل كل التنبيهات الخاصة بالدور</p>
+ </div>
 
-        <div *ngIf="createRoleError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
-          {{ createRoleError }}
-        </div>
-      </div>
+ <div *ngIf="createRoleError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+ {{ createRoleError }}
+ </div>
+ </div>
 
-      <!-- Modal Footer -->
-      <div class="p-5 border-t border-slate-100 flex gap-3 bg-slate-50/50">
-        <button (click)="showModal = false" [disabled]="isCreatingRole" class="flex-1 h-11 rounded-xl border border-slate-300 text-slate-700 font-black hover:bg-slate-50 transition-colors text-[13px] disabled:opacity-60 disabled:cursor-not-allowed">{{ 'COMMON.CANCEL' | translate }}</button>
-        <button (click)="createRole()" [disabled]="!newRoleName.trim() || isCreatingRole" class="flex-1 h-11 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white font-black disabled:opacity-50 hover:shadow-lg transition-all text-[13px] flex items-center justify-center gap-2">
-          <span class="material-symbols-outlined text-[16px]" [class.animate-spin]="isCreatingRole">{{ isCreatingRole ? 'progress_activity' : 'add' }}</span>
-          {{ (isCreatingRole ? 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.CREATING_ROLE' : 'ADMIN_USERS.ROLES_MANAGEMENT.CREATE.CREATE_ROLE') | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
+ <!-- Modal Footer -->
+ <div class="p-5 border-t border-slate-100 flex gap-3 bg-slate-50/50">
+ <button (click)="showModal = false" [disabled]="isCreatingRole" class="flex-1 h-11 rounded-xl border border-slate-300 text-slate-700 font-black hover:bg-slate-50 transition-colors text-[13px] disabled:opacity-60 disabled:cursor-not-allowed">{{ 'COMMON.CANCEL' | translate }}</button>
+ <button (click)="createRole()" [disabled]="!newRoleName.trim() || isCreatingRole" class="flex-1 h-11 rounded-xl bg-gradient-to-br from-zadna-primary to-teal-700 text-white font-black disabled:opacity-50 hover:shadow-lg transition-all text-[13px] flex items-center justify-center gap-2">
+ <span class="material-symbols-outlined text-[16px]" [class.animate-spin]="isCreatingRole">{{ isCreatingRole ? 'progress_activity' : 'add' }}</span>
+ {{ (isCreatingRole ? 'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.CREATING_ROLE' : 'ADMIN_USERS.ROLES_MANAGEMENT.CREATE.CREATE_ROLE') | translate }}
+ </button>
+ </div>
+ </div>
+ </div>
 
-  <!-- Delete Confirmation Modal -->
-  <app-delete-confirmation-modal
-      [isOpen]="isDeleteModalOpen"
-      [title]="'COMMON.DELETE_CONFIRM_TITLE'"
-      [message]="'COMMON.DELETE_CONFIRM_MSG'"
-      [confirmText]="'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.DELETE_ROLE'"
-      [cancelText]="'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.CANCEL'"
-      [isLoading]="isDeleting"
-      [errorMessage]="deleteError"
-      (confirm)="confirmDelete()"
-      (close)="cancelDelete()">
-  </app-delete-confirmation-modal>
+ <!-- Delete Confirmation Modal -->
+ <app-delete-confirmation-modal
+ [isOpen]="isDeleteModalOpen"
+ [title]="'COMMON.DELETE_CONFIRM_TITLE'"
+ [message]="'COMMON.DELETE_CONFIRM_MSG'"
+ [confirmText]="'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.DELETE_ROLE'"
+ [cancelText]="'ADMIN_USERS.ROLES_MANAGEMENT.ACTIONS.CANCEL'"
+ [isLoading]="isDeleting"
+ [errorMessage]="deleteError"
+ (confirm)="confirmDelete()"
+ (close)="cancelDelete()">
+ </app-delete-confirmation-modal>
 </div>

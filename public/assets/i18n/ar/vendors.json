@@ -1,28 +1,28 @@
 {
   "VENDORS": {
-    "TITLE": "الموردين",
+    "TITLE": "التجار",
     "RISK_LEVEL_TITLE": "مستوى المخاطر",
-    "DESC": "إدارة الموردين والشركاء التجاريين وتتبع العمولات والحالات",
-    "ADD_VENDOR": "إضافة مورد جديد",
-    "SEARCH_PLACEHOLDER": "البحث برقم المورد، الاسم، أو البريد الإلكتروني...",
-    "FILTER_VENDORS": "تصفية الموردين",
-    "ADJUST_CRITERIA": "اضبط معايير البحث",
-    "RESET": "إعادة تعيين",
+    "DESC": "إدارة التجار والشركاء التجاريين وتتبع العمولات والحالات",
+    "ADD_VENDOR": "إضافة تاجر جديد",
+    "SEARCH_PLACEHOLDER": "ابحث برقم التاجر، الاسم، أو البريد الإلكتروني...",
+    "FILTER_VENDORS": "فلترة التجار",
+    "ADJUST_CRITERIA": "عدّل معايير البحث",
+    "RESET": "إعادة ضبط",
     "LOADING": "جاري التحميل...",
-    "LOAD_ERROR": "فشل تحميل قائمة الموردين",
-    "NO_VENDORS": "لم يتم العثور على موردين",
+    "LOAD_ERROR": "ما قدرنا نحمّل قائمة التجار",
+    "NO_VENDORS": "ما لقينا تجار",
     "KPI": {
-      "PENDING_APPROVAL": "قيد الموافقة",
+      "PENDING_APPROVAL": "بانتظار الموافقة",
       "MISSING_DOCS": "مستندات ناقصة",
       "HIGH_RISK": "مخاطر عالية",
       "PAYOUT_BLOCKED": "دفع محظور",
       "SUSPENDED": "موقوف",
-      "TOTAL_VENDORS": "إجمالي الموردين",
+      "TOTAL_VENDORS": "إجمالي التجار",
       "THIS_WEEK": "هذا الأسبوع"
     },
     "TABLE": {
       "LOGO": "الشعار",
-      "VENDOR": "المورد",
+      "VENDOR": "التاجر",
       "CONTACT": "التواصل",
       "DOCUMENTS": "المستندات",
       "RISK": "المخاطر",
@@ -43,7 +43,7 @@
     },
     "PREVIEW": {
       "HEALTH_SCORE": "نقاط الصحة التشغيلية",
-      "UPDATED_NOW": "محدث الآن",
+      "UPDATED_NOW": "محدث الحين",
       "LOW_QUALITY": "جودة منخفضة",
       "IDEAL_PERFORMANCE": "أداء مثالي",
       "STATUS_MATRIX": "مصفوفة الحالة التفصيلية",
@@ -65,7 +65,7 @@
     },
     "FILTER_ALL": "جميع الحالات",
     "STATUS_ACTIVE": "نشط",
-    "STATUS_PENDING": "قيد المراجعة",
+    "STATUS_PENDING": "تحت المراجعة",
     "STATUS_SUSPENDED": "موقوف",
     "STATUS_REJECTED": "مرفوض",
     "COL_BUSINESS": "معلومات العمل",
@@ -78,7 +78,7 @@
     "PAGE_X_OF_Y": "صفحة {{current}} من {{total}}",
     "STATUS": {
       "ACTIVE": "نشط",
-      "PENDING": "قيد المراجعة",
+      "PENDING": "تحت المراجعة",
       "SUSPENDED": "موقوف",
       "REJECTED": "مرفوض"
     },
@@ -109,8 +109,8 @@
     "APPLICATIONS_DESC": "مراجعة طلبات انضمام التجار وقرارات الاعتماد وما يلزم من متابعات.",
     "APPLICATIONS_TITLE": "طلبات انضمام التجار",
     "BUSINESS_NAME": "الاسم التجاري",
-    "NO_APPLICATIONS": "لا توجد طلبات انضمام للتجار",
-    "NO_APPLICATIONS_DESC": "لا توجد طلبات تطابق عوامل التصفية الحالية. جرّب تعديل حالة المراجعة أو عبارة البحث.",
+    "NO_APPLICATIONS": "ما فيه طلبات انضمام للتجار",
+    "NO_APPLICATIONS_DESC": "ما فيه طلبات تطابق الفلاتر الحالية. جرّب تعديل حالة المراجعة أو عبارة البحث.",
     "NO_REASON": "لم يتم إدخال سبب",
     "OWNER": "المالك",
     "REJECTED_TITLE": "طلب مرفوض",
@@ -118,7 +118,7 @@
       "AWAITING": "بانتظار المراجعة",
       "CHANGES_REQUESTED": "تم طلب تعديلات",
       "SUBMITTED": "تم التقديم",
-      "UNDER_REVIEW": "قيد المراجعة"
+      "UNDER_REVIEW": "تحت المراجعة"
     },
     "REVIEW_STATUS": "حالة المراجعة",
     "SUBMITTED_DATE": "تاريخ التقديم"
@@ -155,14 +155,14 @@
     "TYPE": {
       "COMPLAINT": "شكوى",
       "RETURN_REQUEST": "طلب استرجاع",
-      "DRIVER_REPORT": "تقرير سائق",
-      "DRIVER_DISPUTE": "نزاع سائق",
+      "DRIVER_REPORT": "تقرير مندوب",
+      "DRIVER_DISPUTE": "نزاع مندوب",
       "DRIVER_ACCOUNT": "دعم حساب المندوب",
       "OTHER": "أخرى"
     },
     "STATUS": {
       "OPEN": "مفتوحة",
-      "IN_REVIEW": "قيد المراجعة",
+      "IN_REVIEW": "تحت المراجعة",
       "AWAITING_EVIDENCE": "بانتظار الأدلة",
       "APPROVED": "موافق عليها",
       "REJECTED": "مرفوضة",
@@ -177,10 +177,10 @@
     "STATES": {
       "LOADING_TITLE": "جاري تحميل النزاعات",
       "LOADING_MESSAGE": "نجلب حالات الدعم المرتبطة بهذا التاجر.",
-      "ERROR_TITLE": "تعذر تحميل النزاعات",
-      "ERROR_MESSAGE": "يرجى المحاولة مرة أخرى بعد قليل.",
-      "EMPTY_TITLE": "لا توجد نزاعات",
-      "EMPTY_MESSAGE": "لا توجد حالات دعم لهذا التاجر تطابق الفلاتر الحالية."
+      "ERROR_TITLE": "ما قدرنا نحمّل النزاعات",
+      "ERROR_MESSAGE": "فضلاً المحاولة مرة ثانية بعد قليل.",
+      "EMPTY_TITLE": "ما فيه نزاعات",
+      "EMPTY_MESSAGE": "ما فيه حالات دعم لهذا التاجر تطابق الفلاتر الحالية."
     }
   },
   "VENDOR_DETAIL": {
@@ -193,7 +193,7 @@
     "CITY_NOT_SET": "المدينة غير محددة",
     "QUICK_CONTACT_FULL": "تواصل السريع",
     "QUICK_CONTACT_SHORT": "تواصل",
-    "TAB_OVERVIEW": "نظرة عامة",
+    "TAB_OVERVIEW": "لمحة عامة",
     "TAB_BASIC_DATA": "البيانات الأساسية",
     "TAB_PRODUCTS": "المنتجات",
     "TAB_ORDERS": "الطلبات",
@@ -228,7 +228,7 @@
       "TOAST_PUSH_FAILED": "تم إنشاء الإشعار داخل النظام لكن إرسال الويب بوش لم ينجح.",
       "TOAST_PUSH_SKIPPED": "تم إنشاء الإشعار داخل لوحة التاجر، لكن تم تجاوز الويب بوش في هذه التجربة.",
       "TOAST_CREATED": "تم إنشاء إشعار للتاجر بنجاح.",
-      "ERROR_SEND_FAILED": "تعذر إرسال الإشعار التجريبي الآن."
+      "ERROR_SEND_FAILED": "ما قدرنا نرسل الإشعار التجريبي الحين."
     },
     "DATA_MANAGEMENT_SUMMARY": "ملخص إدارة البيانات",
     "COMPLETION_RATE": "اكتمال الملف",
@@ -259,15 +259,15 @@
     "BANK_NAME": "اسم البنك",
     "PAYMENT_CYCLE": "دورة الدفع",
     "SWIFT_CODE": "SWIFT Code",
-    "VERIFY_ACCOUNT": "تحقق من الحساب الآن",
+    "VERIFY_ACCOUNT": "تحقق من الحساب الحين",
     "VERIFIED": "موثق",
-    "UNDER_REVIEW": "قيد المراجعة",
+    "UNDER_REVIEW": "تحت المراجعة",
     "VIEW": "عرض",
     "SAR": "ر.س",
     "SAMPLE_EDITOR_NAME": "أحمد محمد",
     "ACTIVITY_BANKING_UPDATE": "تحديث البيانات البنكية",
     "ACTIVITY_NAME_UPDATE": "تحديث الاسم التجاري",
-    "TIME_HOUR_AGO": "منذ ساعة",
+    "TIME_HOUR_AGO": "قبل ساعة",
     "ACTIVITY_NAME_UPDATE_DATE": "25 سبتمبر 2023",
     "VIEW_DIGITAL_CR": "عرض السجل التجاري الرقمي",
     "LEGAL_ENTITY_VALUE": "مؤسسة فردية",
@@ -306,13 +306,13 @@
     "REVIEWER_ACTIONS": "إجراءات المراجع",
     "DECISION_SUMMARY": "ملخص القرار",
     "CURRENT_REVIEW_STATUS": "الحالة الحالية للمراجعة",
-    "AWAITING_ACTION": "بانتظار إجراء (قيد المعالجة)",
+    "AWAITING_ACTION": "بانتظار إجراء (تحت المعالجة)",
     "LAST_REVIEWER": "آخر مراجع",
     "INITIAL_REVIEW": "مراجعة أولية",
     "BLOCKING_ITEMS": "عناصر تمنع الاعتماد",
     "STATUS": {
       "COMPLETED": "مكتمل",
-      "UNDER_REVIEW": "قيد المراجعة",
+      "UNDER_REVIEW": "تحت المراجعة",
       "MISSING": "ناقص"
     },
     "VERIFICATION": {
@@ -333,7 +333,7 @@
       "ADDRESS_MISMATCH": "اختلاف في بيانات العنوان",
       "ADDRESS_MISMATCH_DESC": "العنوان الوطني المسجل يختلف جزئياً عن العنوان المدخل يدوياً.",
       "IBAN_CHANGES": "تغيير متكرر للآيبان",
-      "IBAN_CHANGES_DESC": "تم تغيير الحساب البنكي مرتين منذ التسجيل.",
+      "IBAN_CHANGES_DESC": "تم تغيير الحساب البنكي مرتين قبل التسجيل.",
       "MEDIUM": "متوسطة"
     },
     "SEVERITY": {
@@ -375,13 +375,13 @@
       "RISK_TEAM": "فريق المخاطر",
       "REVIEW_TEAM": "فريق المراجعة"
     },
-    "NO_BLOCKERS": "لا توجد عوائق نشطة"
+    "NO_BLOCKERS": "ما فيه عوائق نشطة"
   },
   "VENDOR_REVIEW": {
     "STATE": {
       "AWAITING_SUBMISSION": "بانتظار استكمال الرفع",
       "SUBMITTED": "تم الرفع",
-      "UNDER_REVIEW": "قيد المراجعة",
+      "UNDER_REVIEW": "تحت المراجعة",
       "CHANGES_REQUESTED": "مطلوب استكمال",
       "VERIFIED": "موثق",
       "REJECTED": "مرفوض",
@@ -392,13 +392,13 @@
       "UNVERIFIED": "غير موثق"
     },
     "SUMMARY": {
-      "ASSIGNED_REVIEWER": "المراجع المسؤول",
+      "ASSIGNED_REVIEWER": "المراجع الأدمن",
       "SUBMITTED_AT": "تاريخ الرفع",
       "WAITING_VENDOR": "ما زال التاجر بحاجة إلى استكمال الرفع المطلوب قبل دخول الملف إلى طابور المراجعة.",
       "READY_TO_VERIFY": "الملف المرفوع دخل طابور المراجعة وأصبح جاهزًا للتحقق اليدوي والاعتماد.",
       "CHANGES_REQUIRED": "تم طلب تحديثات من التاجر قبل نقل الحساب إلى حالة التوثيق.",
       "VERIFIED_SUCCESS": "تم توثيق الحساب وأصبح جاهزًا للعمل الطبيعي مع تفعيل الصرف والوصول التشغيلي.",
-      "REJECTED": "تم رفض آخر رفع ويجب على التاجر تصحيح البيانات القانونية والتجارية قبل إعادة المراجعة.",
+      "REJECTED": "تم رفض آخر رفع ولازم على التاجر تصحيح البيانات القانونية والتجارية قبل إعادة المراجعة.",
       "SUSPENDED": "تم تعليق الحساب لحين حسم قرار امتثال ذي مستوى مخاطر أعلى."
     },
     "NOTES": {
@@ -444,7 +444,7 @@
     "DATE_TO": "إلى تاريخ",
     "APPLY_FILTER": "تطبيق الفلترة",
     "LOADING_STREAM": "جاري تحميل سجل الرصد...",
-    "NO_MATCHING_EVENTS": "لا توجد أحداث مطابقة للفلاتر الحالية.",
+    "NO_MATCHING_EVENTS": "ما فيه أحداث مطابقة للفلاتر الحالية.",
     "NOTES_AND_TIMELINE": "الملاحظات والخط الزمني",
     "SIDEBAR_DESC": "سياق داخلي سريع بجانب السجل.",
     "NOTES_TAB": "ملاحظات",
@@ -453,7 +453,7 @@
     "NOTE_PLACEHOLDER": "اكتب ملاحظة تظهر في السجل الداخلي...",
     "ADDING_NOTE": "جاري الإضافة...",
     "ADD_NOTE_BTN": "إضافة الملاحظة",
-    "NO_INTERNAL_NOTES": "لا توجد ملاحظات داخلية حتى الآن.",
+    "NO_INTERNAL_NOTES": "ما فيه ملاحظات داخلية حتى الحين.",
     "ACTION": {
       "FINANCIAL_APPROVAL": "موافقة مالية",
       "BANK_DATA_EDIT": "تعديل بيانات بنكية",
@@ -470,7 +470,7 @@
       "DOCUMENTS_UPLOAD": "رفع الوثائق",
       "DOCUMENTS_UPLOAD_DESC": "تم استلام السجل التجاري والهوية الوطنية والشهادة الضريبية.",
       "ACCOUNT_CREATION": "إنشاء الحساب",
-      "ACCOUNT_CREATION_DESC": "التسجيل الأولي في منصة زدنا للموردين."
+      "ACCOUNT_CREATION_DESC": "التسجيل الأولي في منصة زدنا للتجار."
     },
     "DEFAULT_INITIALS": "ف.ع",
     "AUTHORS": {
@@ -490,21 +490,21 @@
     "SUMMARY_TITLE": "ملخص المنتجات",
     "CATALOG_TITLE": "كتالوج المنتجات",
     "CATALOG_SUBTITLE": "استعرض منتجات {{ vendor }} وحالة المخزون والأسعار.",
-    "CATALOG_BADGE": "كتالوج المورد",
-    "FILTERS_TITLE": "تصفية وبحث",
+    "CATALOG_BADGE": "كتالوج التاجر",
+    "FILTERS_TITLE": "فلترة وبحث",
     "PAGE_METRICS_HINT": "مؤشرات الصفحة الحالية",
     "SHOWING_LABEL": "معروض",
     "VIEW_PRODUCT": "عرض التفاصيل",
     "TABLE_SKU": "رمز SKU",
-    "ALL_BRANCHES": "\u0643\u0644 \u0627\u0644\u0641\u0631\u0648\u0639",
-    "BRANCH_FILTER": "\u0627\u0644\u0641\u0631\u0639",
-    "GLOBAL_BRANCH_INVENTORY": "\u0645\u062e\u0632\u0648\u0646 \u0639\u0627\u0645 \u0644\u0644\u0645\u062a\u062c\u0631",
-    "UNIFIED_PRICE_HINT": "\u0633\u0639\u0631 \u0645\u0648\u062d\u062f \u0639\u0644\u0649 \u0643\u0644 \u0627\u0644\u0641\u0631\u0648\u0639",
+    "ALL_BRANCHES": "كل الفروع",
+    "BRANCH_FILTER": "الفرع",
+    "GLOBAL_BRANCH_INVENTORY": "مخزون عام للمتجر",
+    "UNIFIED_PRICE_HINT": "سعر موحد على كل الفروع",
     "TOTAL_PRODUCTS": "إجمالي المنتجات",
     "ACTIVE_PRODUCTS": "المنتجات النشطة",
     "LOW_STOCK": "مخزون منخفض",
     "OUT_OF_STOCK": "نافذ من المخزون",
-    "UNDER_REVIEW": "قيد المراجعة",
+    "UNDER_REVIEW": "تحت المراجعة",
     "TOTAL_INVENTORY_VALUE": "إجمالي قيمة المخزون",
     "EDIT_DATA": "تعديل البيانات",
     "ADD_PRODUCT": "إضافة منتج",
@@ -519,7 +519,7 @@
     "TABLE": {
       "PRODUCT": "المنتج",
       "CATEGORY": "التصنيف",
-      "BRANCH": "\u0627\u0644\u0641\u0631\u0639",
+      "BRANCH": "الفرع",
       "PRICE": "السعر",
       "STOCK": "المخزون",
       "STATUS": "الحالة",
@@ -531,10 +531,10 @@
       "UNDER_REVIEW": "مراجعة"
     },
     "STATES": {
-      "ERROR_TITLE": "فشل تحميل المنتجات",
-      "ERROR_MESSAGE": "حدث خطأ أثناء محاولة جلب منتجات المورد. يرجى المحاولة مرة أخرى.",
-      "EMPTY_PRODUCTS_TITLE": "لا توجد منتجات",
-      "EMPTY_PRODUCTS_MESSAGE": "لا توجد أي منتجات مدرجة لهذا المورد حتى الآن."
+      "ERROR_TITLE": "ما قدرنا نحمّل المنتجات",
+      "ERROR_MESSAGE": "حدث خطأ أثناء محاولة جلب منتجات التاجر. فضلاً المحاولة مرة ثانية.",
+      "EMPTY_PRODUCTS_TITLE": "ما فيه منتجات",
+      "EMPTY_PRODUCTS_MESSAGE": "ما فيه أي منتجات مدرجة لهذا التاجر حتى الحين."
     }
   },
   "VENDOR_ORDERS": {
@@ -562,7 +562,7 @@
     },
     "GENERAL_STATUS": {
       "NEW": "جديد",
-      "IN_PROGRESS": "قيد المعالجة",
+      "IN_PROGRESS": "تحت المعالجة",
       "COMPLETED": "مكتمل",
       "CANCELLED": "ملغي"
     },
@@ -612,10 +612,10 @@
     "STATES": {
       "LOADING_TITLE": "جاري تحميل طلبات التاجر",
       "LOADING_MESSAGE": "يتم تجهيز أحدث سجلات الطلبات لهذا التاجر.",
-      "ERROR_TITLE": "تعذر تحميل الطلبات",
-      "ERROR_MESSAGE": "تعذر تحميل واجهة طلبات التاجر الآن. حاول تحديث الصفحة.",
-      "EMPTY_ORDERS_TITLE": "لا توجد طلبات",
-      "EMPTY_ORDERS_MESSAGE": "لا توجد طلبات لهذا التاجر تطابق الفلاتر الحالية."
+      "ERROR_TITLE": "ما قدرنا نحمّل الطلبات",
+      "ERROR_MESSAGE": "ما قدرنا نحمّل واجهة طلبات التاجر الحين. حاول تحديث الصفحة.",
+      "EMPTY_ORDERS_TITLE": "ما فيه طلبات",
+      "EMPTY_ORDERS_MESSAGE": "ما فيه طلبات لهذا التاجر تطابق الفلاتر الحالية."
     },
     "ALERTS": {
       "SHIPPING_DELAY": "3 طلبات تجاوزت وقت الشحن المحدد (48 ساعة).",
@@ -653,10 +653,10 @@
       "TABLE_PAYOUT": "التحويل",
       "TABLE_AMOUNT": "المبلغ",
       "TABLE_REFERENCE": "المرجع",
-      "EMPTY_SETTLEMENTS": "لا توجد تسويات مسجلة بعد.",
-      "EMPTY_PAYOUTS": "لا توجد تحويلات مسجلة بعد.",
-      "ERROR_TITLE": "تعذر تحميل البيانات المالية",
-      "ERROR_MESSAGE": "تحقق من الاتصال بالخادم وحاول مرة أخرى.",
+      "EMPTY_SETTLEMENTS": "ما فيه تسويات مسجلة بعد.",
+      "EMPTY_PAYOUTS": "ما فيه تحويلات مسجلة بعد.",
+      "ERROR_TITLE": "ما قدرنا نحمّل البيانات المالية",
+      "ERROR_MESSAGE": "تحقق من الاتصال بالخادم وجرّب مرة ثانية.",
       "DIRECT_MODE": "تحويل مباشر",
       "BATCH_MODE": "تسوية مجمعة"
     },
@@ -722,7 +722,7 @@
     "STATUS": {
       "ACTIVE_VERIFIED": "نشط وموثق",
       "VERIFIED": "موثق",
-      "UNDER_REVIEW": "قيد المراجعة"
+      "UNDER_REVIEW": "تحت المراجعة"
     },
     "KPI": {
       "TOTAL_SALES": "إجمالي المبيعات",
@@ -762,11 +762,11 @@
     "ALERTS_TITLE": "تنبيهات وإجراءات معلقة",
     "ALERTS": {
       "BANK_NOT_VERIFIED": "الحساب البنكي غير موثق",
-      "BANK_NOT_VERIFIED_DESC": "يرجى مراجعة شهادة الآيبان المرفقة مؤخراً لاعتماد الحساب.",
+      "BANK_NOT_VERIFIED_DESC": "فضلاً راجع شهادة الآيبان المرفقة مؤخراً لاعتماد الحساب.",
       "OWNER_ID_UPDATE": "تحديث هوية المالك",
       "OWNER_ID_UPDATE_DESC": "تم رفع هوية جديدة بانتظار المراجعة."
     },
-    "ADMIN_ACTIONS": "إجراءات الإدارة",
+    "ADMIN_ACTIONS": "إجراءات الأدمن",
     "ACTIONS": {
       "APPROVE": "اعتماد التاجر",
       "REQUEST_DOCS": "طلب مستندات إضافية",
@@ -791,7 +791,7 @@
     "ACCOUNT_TYPE_VALUE": "شركة (B2B/B2C)",
     "DEFAULT_LANGUAGE": "اللغة الافتراضية",
     "DEFAULT_LANGUAGE_VALUE": "العربية",
-    "RESET_PASSWORD": "إعادة تعيين كلمة المرور",
+    "RESET_PASSWORD": "إعادة ضبط كلمة المرور",
     "OPERATIONS_SETTINGS": "الإعدادات التشغيلية",
     "ORDER_RECEPTION": "استقبال الطلبات",
     "ORDER_RECEPTION_DESC": "السماح للعملاء بالطلب",
@@ -905,14 +905,14 @@
       "ORDERS": "الطلبات"
     },
     "STATES": {
-      "LOADING_TITLE": "جارٍ تحميل مساحة التحليلات",
+      "LOADING_TITLE": "جاري تحميل مساحة التحليلات",
       "LOADING_MESSAGE": "يتم تجهيز المؤشرات التنفيذية والاتجاهات وإشارات المخزون.",
-      "ERROR_TITLE": "تعذر تحميل التحليلات",
-      "ERROR_MESSAGE": "لم نتمكن من تحميل واجهة التحليلات الآن. حاول تحديث الصفحة.",
-      "EMPTY_TREND_TITLE": "لا يوجد اتجاه طلبات في هذه الفترة",
-      "EMPTY_TREND_MESSAGE": "لا توجد طلبات تشغيلية للتاجر داخل النطاق المحدد حتى الآن.",
-      "EMPTY_PRODUCTS_TITLE": "لا يوجد ترتيب للمنتجات بعد",
-      "EMPTY_PRODUCTS_MESSAGE": "لا توجد حركة مكتملة كافية داخل الفترة المحددة لتكوين ترتيب منتجات."
+      "ERROR_TITLE": "ما قدرنا نحمّل التحليلات",
+      "ERROR_MESSAGE": "ما قدرنا تحميل واجهة التحليلات الحين. حاول تحديث الصفحة.",
+      "EMPTY_TREND_TITLE": "ما فيه اتجاه طلبات في هذه الفترة",
+      "EMPTY_TREND_MESSAGE": "ما فيه طلبات تشغيلية للتاجر داخل النطاق المحدد حتى الحين.",
+      "EMPTY_PRODUCTS_TITLE": "ما فيه ترتيب للمنتجات بعد",
+      "EMPTY_PRODUCTS_MESSAGE": "ما فيه حركة مكتملة كافية داخل الفترة المحددة لتكوين ترتيب منتجات."
     }
   }
 }
