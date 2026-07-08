@@ -422,7 +422,7 @@ export class CustomerDetailComponent implements OnInit {
  this.customer = nextCustomer;
  this.toastService.success(
  this.translate.currentLang === 'ar' ? 'حدّثنا حالة المراجعة بنجاح' : 'Review status updated successfully',
- this.translate.currentLang === 'ar' ? 'إجراءات الأدمن' : 'Admin Actions'
+ this.translate.currentLang === 'ar' ? 'إجراءات المشرف' : 'Admin Actions'
  );
  }
  }
@@ -441,7 +441,7 @@ export class CustomerDetailComponent implements OnInit {
  this.customer = nextCustomer;
  this.toastService.success(
  this.translate.currentLang === 'ar' ? 'حدّثنا حالة الحساب بنجاح' : 'Account status updated successfully',
- this.translate.currentLang === 'ar' ? 'إجراءات الأدمن' : 'Admin Actions'
+ this.translate.currentLang === 'ar' ? 'إجراءات المشرف' : 'Admin Actions'
  );
  }
  }
@@ -487,7 +487,7 @@ export class CustomerDetailComponent implements OnInit {
  this.customer = nextCustomer;
  this.toastService.success(
  this.translate.currentLang === 'ar' ? 'حفظنا الملاحظة الداخلية بنجاح' : 'Internal note saved successfully',
- this.translate.currentLang === 'ar' ? 'إجراءات الأدمن' : 'Admin Actions'
+ this.translate.currentLang === 'ar' ? 'إجراءات المشرف' : 'Admin Actions'
  );
  }
  this.quickNote = '';

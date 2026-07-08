@@ -292,7 +292,7 @@ export class VendorSettingsComponent {
  }
 
  if (this.isAccountSuspended) {
- return this.text('الحساب معلق تشغيليا ويمكن إعادة تشغيله من لوحة الأدمن.', 'The account is operationally suspended and can be reactivated from the control desk.');
+ return this.text('الحساب معلق تشغيليا ويمكن إعادة تشغيله من لوحة المشرف.', 'The account is operationally suspended and can be reactivated from the control desk.');
  }
 
  return this.text('كل إعداد في هذه الصفحة مرتبط مباشرة بالباك إند ويحدث بيانات التاجر بعد الحفظ.', 'Every setting on this page is connected to the backend and refreshes vendor data after saving.');

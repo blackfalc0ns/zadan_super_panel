@@ -66,7 +66,7 @@ export function formatDateRange(startsAtUtc?: string | null, endsAtUtc?: string 
 
 export function describeApiError(error: unknown): string {
  const fallback = text(
- 'حدث خطأ ما. جرّب مرة ثانية.',
+ 'صار خطأ. جرّب مرة ثانية.',
  'Something went wrong. Please try again.'
  );
 
@@ -94,7 +94,7 @@ export function describeApiError(error: unknown): string {
 
  if (candidate.status === 401 || candidate.status === 403) {
  return text(
- 'جلسة الأدمن الحالية ما عندها صلاحية لتنفيذ هذا الإجراء.',
+ 'جلسة المشرف الحالية ما عندها صلاحية لتنفيذ هذا الإجراء.',
  'Your current admin session is not authorized to perform this action.'
  );
  }

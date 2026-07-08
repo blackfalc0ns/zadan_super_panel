@@ -361,7 +361,7 @@ export class AdminNotificationsService {
  const key = (type ?? '').toLowerCase();
  const templates: Record<string, { title: { ar: string; en: string }; body: { ar: string; en: string } }> = {
  'admin.test': {
- title: { ar: 'اختبار إشعارات الأدمن', en: 'Admin notification test' },
+ title: { ar: 'اختبار إشعارات المشرف', en: 'Admin notification test' },
  body: { ar: 'هذا إشعار اختبار للتأكد من عمل صندوق الوارد والتنبيهات الفورية.', en: 'This is a test notification for inbox and real-time delivery.' }
  },
  'driver.approval_requested': {
@@ -386,7 +386,7 @@ export class AdminNotificationsService {
  },
  'vendor.critical_change_submitted': {
  title: { ar: 'تغيير حساس من تاجر', en: 'Critical vendor change submitted' },
- body: { ar: 'أرسل تاجر تغييرًا حساسًا يحتاج مراجعة الأدمن.', en: 'A vendor submitted a critical change that needs admin review.' }
+ body: { ar: 'أرسل تاجر تغييرًا حساسًا يحتاج مراجعة المشرف.', en: 'A vendor submitted a critical change that needs admin review.' }
  },
  'vendor.store_updated': {
  title: { ar: 'بيانات متجر جاهزة للمراجعة', en: 'Vendor store ready for review' },
@@ -474,7 +474,7 @@ export class AdminNotificationsService {
  },
  'system.integration_failure': {
  title: { ar: 'تعطل تكامل النظام', en: 'System integration failure' },
- body: { ar: 'حدث خطأ في تكامل خارجي ويحتاج إلى مراجعة تقنية.', en: 'An external integration failed and needs technical review.' }
+ body: { ar: 'صار خطأ في تكامل خارجي ويحتاج إلى مراجعة تقنية.', en: 'An external integration failed and needs technical review.' }
  },
  'system.onesignal_failure': {
  title: { ar: 'ما قدرنا نرسل إشعارات الدفع', en: 'Push notification failure' },

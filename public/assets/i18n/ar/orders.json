@@ -89,7 +89,7 @@
       "CUSTOMER": "العميل",
       "VENDOR": "التاجر",
       "DRIVER": "المندوب",
-      "ADMIN": "الأدمن"
+      "ADMIN": "المشرف"
     },
     "PAYMENT_METHOD": {
       "CASH": "الدفع عند الاستلام",
@@ -337,7 +337,7 @@
       "RESPONDER_LABEL": "المستجيب المطلوب",
       "RESPONDER_CUSTOMER": "العميل ({{name}})",
       "RESPONDER_MERCHANT": "المتجر ({{name}})",
-      "RESPONDER_DRIVER": "المندوب الأدمن",
+      "RESPONDER_DRIVER": "المندوب",
       "RESPONDER_INTERNAL": "الفريق الداخلي (الخدمات اللوجستية)",
       "RESPONDER_INTERNAL_TEAM": "الفريق الداخلي",
       "INFO_TYPE_LABEL": "نوع المعلومات",
@@ -355,7 +355,7 @@
       "PRIORITY_NORMAL": "عادي",
       "PRIORITY_URGENT": "عاجل جداً",
       "PAUSE_SLA": "إيقاف عداد SLA مؤقتاً",
-      "ALERT_SUPERVISOR": "تنبيه الأدمن الأدمن",
+      "ALERT_SUPERVISOR": "تنبيه المشرف",
       "REFERENCES_TITLE": "المرفقات والمراجع (للموظف)",
       "REFERENCE_PRODUCT_IMAGE": "صورة المنتج",
       "REFERENCE_SHIPPING_LOG": "سجل الشحن",
@@ -544,7 +544,7 @@
         "DYNAMIC": "ديناميكي",
         "STATIC": "ثابت",
         "LOCKED": "مثبّت",
-        "PENDING": "قيد الانتظار",
+        "PENDING": "بانتظار المعالجة",
         "COMPLETED": "مكتمل",
         "FAILED": "فشل",
         "ACTIVE": "نشط",
@@ -622,7 +622,7 @@
       "TIMELINE_STEP_STATUS": {
         "COMPLETED": "مكتمل",
         "IN_PROGRESS": "قيد التنفيذ",
-        "PENDING": "قيد الانتظار"
+        "PENDING": "بانتظار المعالجة"
       },
       "TIMELINE_STEPS": {
         "TITLES": {
@@ -655,7 +655,7 @@
           "FULFILLMENT_CANCELLED": "أوقف التنفيذ",
           "FULFILLMENT_FAILED": "فشل التنفيذ",
           "COD_SELECTED": "اختار العميل الدفع عند الاستلام",
-          "AWAITING_VENDOR": "في انتظار رد المتجر",
+          "AWAITING_VENDOR": "بانتظار رد المتجر",
           "VENDOR_ACCEPTED": "قبل المتجر الطلب",
           "VENDOR_PREPARING": "بدأ المتجر التجهيز",
           "READY_FOR_PICKUP": "الطلب جاهز للاستلام",
@@ -688,7 +688,7 @@
       "MADA_GATEWAY": "بوابة مدى",
       "MOCK_MERCHANT": "لولو هايبر ماركت",
       "MOCK_DRIVER": "أحمد المسئول",
-      "AWAITING_CONFIRM": "في انتظار التأكيد",
+      "AWAITING_CONFIRM": "بانتظار التأكيد",
       "SYSTEM_AUTO": "النظام (تلقائي)",
       "VEHICLE_MOCK": "تويوتا كورولا 2022",
       "PLATE_MOCK": "أ ب ج 1234",
@@ -809,7 +809,7 @@
         "NOTIFY_DRIVER": "إشعار المندوب",
         "CUSTOMER_MESSAGE_LABEL": "رسالة مخصصة للعميل",
         "CUSTOMER_MESSAGE_PLACEHOLDER": "نعتذر، ألغينا طلبك بسبب...",
-        "INTERNAL_NOTE_LABEL": "ملاحظة داخلية للأدمن فقط",
+        "INTERNAL_NOTE_LABEL": "ملاحظة داخلية للمشرف فقط",
         "INTERNAL_NOTE_PLACEHOLDER": "أضف ملاحظة توثيقية للإلغاء...",
         "CONFIRM": "تأكيد الإلغاء"
       },
@@ -908,7 +908,7 @@
         "DESCRIPTION_PLACEHOLDER": "اكتب تفاصيل النزاع هنا...",
         "EVIDENCE": "إرفاق الأدلة (صور/مستندات)",
         "EVIDENCE_HINT": "اسحب الملفات هنا أو اضغط للرفع",
-        "INTERNAL_NOTES": "ملاحظات داخلية (خاصة بالأدمن)",
+        "INTERNAL_NOTES": "ملاحظات داخلية (خاصة بالمشرف)",
         "INTERNAL_NOTES_PLACEHOLDER": "أضف ملاحظات إضافية لن يراها العميل أو التاجر...",
         "NOTIFY_REVIEWER": "إشعار المراجع",
         "ADD_TO_LOG": "إضافة في السجل",
@@ -1004,7 +1004,7 @@
       "DISPATCH_STATE": "حالة التوجيه",
       "DISPATCH_STATE_VALUES": {
         "NOT_REQUIRED": "غير مطلوب",
-        "PENDING": "قيد الانتظار",
+        "PENDING": "بانتظار المعالجة",
         "SEARCHING": "نبحث",
         "ASSIGNED": "مُعيّن",
         "COMPLETED": "مكتمل",

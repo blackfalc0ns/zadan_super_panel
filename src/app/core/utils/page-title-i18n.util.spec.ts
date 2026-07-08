@@ -18,7 +18,7 @@ describe('page-title-i18n.util', () => {
  expect(buildLocalizedPageTitle('PAGE_TITLES.DASHBOARD', {
  'PAGE_TITLES.DASHBOARD': 'الرئيسية',
  'PAGE_TITLES.BRAND': 'زادنا',
- 'PAGE_TITLES.DEFAULT': 'لوحة الأدمن'
+ 'PAGE_TITLES.DEFAULT': 'لوحة المشرف'
  })).toBe('الرئيسية | زادنا');
  });
 });

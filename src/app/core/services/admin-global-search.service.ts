@@ -203,7 +203,7 @@ export class AdminGlobalSearchService {
  icon: 'account_circle',
  titleAr: 'الملف الشخصي',
  titleEn: 'Profile',
- subtitleAr: 'بيانات حساب الأدمن الحالي',
+ subtitleAr: 'بيانات حساب المشرف الحالي',
  subtitleEn: 'Current admin profile',
  keywords: ['profile', 'account', 'my profile', 'الملف الشخصي', 'بروفايل', 'حسابي']
  }

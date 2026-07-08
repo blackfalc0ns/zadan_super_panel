@@ -387,7 +387,7 @@ import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance
  <span class="material-symbols-outlined text-[20px]">person</span>
  </div>
  <div>
- <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">الأدمن المالي (المنشئ)</p>
+ <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">المشرف المالي (المنشئ)</p>
  <p class="font-bold text-slate-800">{{ adj.adminName | translate }} <span class="text-slate-400 font-mono text-xs">(ID: {{ adj.adminId }})</span></p>
  </div>
  </div>

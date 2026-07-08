@@ -1712,7 +1712,7 @@ export class VendorComplianceComponent {
  'Security Review': 'مراجعة أمنية',
  'Security Control': 'التحكم الأمني',
  'Admin Action': 'إجراء إداري',
- 'Admin': 'الأدمن',
+ 'Admin': 'المشرف',
  'Vendor Portal': 'بوابة التاجر',
  'Vendor Review': 'مراجعة التاجر',
  'Operations Console': 'لوحة التشغيل',

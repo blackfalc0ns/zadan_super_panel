@@ -450,7 +450,7 @@ export class VendorOverviewComponent {
  get nextStepMessage(): string {
  if (this.canApproveVendor) {
  return this.localize(
- 'المستندات الأساسية مكتملة ويمكن للأدمن اعتماد التاجر من نفس الصفحة.',
+ 'المستندات الأساسية مكتملة ويمكن للمشرف اعتماد التاجر من نفس الصفحة.',
  'Core documents are complete and the admin can approve the vendor directly from this page.'
  );
  }

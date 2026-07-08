@@ -458,7 +458,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  switch (document.status) {
  case 'review':
  return this.isRTL
- ? 'الملف الجديد محفوظ كمراجعة ولن يعتمد قبل موافقة الأدمن.'
+ ? 'الملف الجديد محفوظ كمراجعة ولن يعتمد قبل موافقة المشرف.'
  : 'The new file is pending admin approval before it becomes active.';
  case 'valid':
  return this.isRTL

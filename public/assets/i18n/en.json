@@ -4031,7 +4031,8 @@
         "DRIVER_PAYOUT": "Driver Payout",
         "SERVICE_FEE": "Service Fee",
         "VAT": "VAT",
-        "NET_MARGIN": "Net Margin"
+        "NET_MARGIN": "Net Margin",
+        "MARGIN_PERCENT": "Margin"
       },
       "PAYMENT_DETAILS": "Payment Details",
       "PAYMENT_METHOD": "Payment Method",

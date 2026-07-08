@@ -492,7 +492,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
  const displayName = `${driver.firstName} ${driver.lastName}`.trim();
 
  this.driverService.sendTestNotification(this.driverId, {
- titleAr: 'إشعار تجريبي من الأدمن',
+ titleAr: 'إشعار تجريبي من المشرف',
  titleEn: this.testNotificationTitle.trim() || 'Admin mobile test notification',
  bodyAr: `هذا إشعار تجريبي للمندوب ${displayName || driver.driverId} للتأكد من وصول إشعارات تطبيق المندوب.`,
  bodyEn: this.testNotificationBody.trim() || `This is a test mobile notification for ${displayName || driver.driverId}.`,

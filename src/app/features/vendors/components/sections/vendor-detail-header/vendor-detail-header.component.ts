@@ -175,7 +175,7 @@ export class VendorDetailHeaderComponent implements OnChanges {
 
  this.isSendingTestNotification = true;
  this.vendorDetailFacade.sendVendorMessageRequest({
- titleAr: 'إشعار اختبار من الأدمن',
+ titleAr: 'إشعار اختبار من المشرف',
  titleEn: 'Admin test notification',
  bodyAr: `هذا إشعار تجريبي للمتجر ${displayName} للتأكد من وصول الإشعارات في لوحة التاجر.`,
  bodyEn: `This is a test notification for ${displayName} to verify delivery in the vendor panel.`,
