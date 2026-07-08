@@ -497,7 +497,7 @@ export class SuperAdminDashboardService {
  'wallet outflow': 'تدفق خارج من المحفظة',
  'tracked outflow for selected window': 'تدفق خارج مرصود خلال الفترة المحددة',
  'refund operations': 'عمليات الاسترجاع',
- 'refund cases created in selected window': 'حالات استرجاع تم إنشاؤها خلال الفترة المحددة',
+ 'refund cases created in selected window': 'حالات استرجاع انفتحت ضمن الفترة المحددة',
  'product requests': 'طلبات المنتجات',
  'pending catalog approvals': 'موافقات كتالوج معلقة',
  'brand requests': 'طلبات العلامات التجارية',

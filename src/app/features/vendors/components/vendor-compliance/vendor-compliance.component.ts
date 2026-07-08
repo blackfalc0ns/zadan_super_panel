@@ -444,7 +444,7 @@ export class VendorComplianceComponent {
  case 'awaiting_submission':
  return this.localize('بانتظار الاستكمال', 'Awaiting submission');
  default:
- return this.localize('تم الاستلام', 'Submitted');
+ return this.localize('استلمناه', 'Submitted');
  }
  }
 
@@ -488,7 +488,7 @@ export class VendorComplianceComponent {
  }
 
  if (this.vendorDetail?.status === VendorStatus.Rejected) {
- return this.localize('تم إغلاق ملف الاعتماد بالرفض', 'The onboarding file was closed as rejected');
+ return this.localize('أغلقنا ملف الاعتماد بالرفض', 'The onboarding file was closed as rejected');
  }
 
  return this.localize('راجع المستندات المطلوبة ثم اتخذ القرار المناسب', 'Review the required documents, then take the appropriate decision');
@@ -496,12 +496,12 @@ export class VendorComplianceComponent {
 
  get operationsHint(): string {
  if (this.isVendorAlreadyApproved &&!this.isCrExpired) {
- return this.localize('الاعتماد تم بالفعل، لذلك هذه الشاشة مخصصة الحين للمتابعة التشغيلية والأرشفة.', 'Approval is already complete, so this workspace now serves operational follow-up and record keeping.');
+ return this.localize('الاعتماد مكتمل بالفعل، لذلك هذه الشاشة مخصصة الحين للمتابعة التشغيلية والأرشفة.', 'Approval is already complete, so this workspace now serves operational follow-up and record keeping.');
  }
 
  if (this.isCrExpired) {
  return this.localize(
- 'الحساب موقوف تلقائيًا بسبب انتهاء صلاحية السجل التجاري. لازم تحديث تاريخ انتهاء السجل التجاري ورفع مستند ساري المفعول أولاً لإعادة تنشيط الحساب.',
+ 'الحساب موقوف تلقائيًا بسبب انتهاء صلاحية السجل التجاري. لازم تحدّث تاريخ انتهاء السجل وترفع مستند ساري أولاً عشان يرجع الحساب نشط.',
  'The account is automatically suspended because the Commercial Registration has expired. The CR expiry date must be updated and a valid document uploaded first to reactivate the account.'
  );
  }
@@ -541,7 +541,7 @@ export class VendorComplianceComponent {
  }
 
  if (this.isVendorAlreadyApproved) {
- return this.localize('التاجر معتمد بالفعل، لذلك تم إخفاء إجراء الاعتماد النهائي.', 'This vendor is already approved, so final approval is hidden.');
+ return this.localize('التاجر معتمد بالفعل، لذلك أخفينا إجراء الاعتماد النهائي.', 'This vendor is already approved, so final approval is hidden.');
  }
 
  if (this.vendorDetail.status === VendorStatus.Suspended) {
@@ -585,7 +585,7 @@ export class VendorComplianceComponent {
  id: 'approved',
  label: this.localize('مستندات مغلقة', 'Closed documents'),
  value: this.formatNumber(this.documentsApprovedCount),
- hint: this.localize('عناصر تم اعتمادها ضمن الملف الحالي', 'Items approved in the current packet'),
+ hint: this.localize('عناصر اعتمدناها ضمن الملف الحالي', 'Items approved in the current packet'),
  variant: 'success'
  },
  {
@@ -1096,7 +1096,7 @@ export class VendorComplianceComponent {
 
  const title = this.localize('اعتماد التاجر', 'Approve Vendor');
  const message = this.localize(
- 'تم إقفال جميع المستندات المطلوبة. هل تريد اعتماد التاجر نهائيًا الحين؟',
+ 'أغلقنا كل المستندات المطلوبة. هل تريد اعتماد التاجر نهائيًا الحين؟',
  'All required documents are closed. Do you want to approve this vendor now?'
  );
  const confirmText = this.localize('موافق', 'Approve');
@@ -1305,7 +1305,7 @@ export class VendorComplianceComponent {
  `ID: ${vendor.idNumber} | ${this.getLocalizedNationality(vendor.nationality)}`
  );
  }
- return this.localize('تم التحقق آلياً عبر نفاذ', 'Verified automatically via Nafath');
+ return this.localize('تحققنا آليًا عبر نفاذ', 'Verified automatically via Nafath');
 
  case 'commercial':
  if (vendor.commercialRegistrationExpiryDate) {
@@ -1586,7 +1586,7 @@ export class VendorComplianceComponent {
  const enToAr: Record<string, string> = {
  'Vendor review started.': 'بدأت مراجعة التاجر.',
  'Vendor account reactivated and returned to active status.': 'أعدنا تفعيل حساب التاجر ورجعناه للحالة النشطة.',
- 'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
+ 'Vendor login was unlocked and account access was restored.': 'فتحنا دخول التاجر ورجعنا الوصول للحساب.',
  'Vendor password was reset by an administrator and all active sessions were revoked.': 'أعادت الإدارة ضبط كلمة مرور التاجر وأنهت كل الجلسات النشطة.',
  'Please re-upload the required legal documents and confirm the latest vendor information.': 'أعد رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
  'Vendor updated banking and payout setup from Vendor Portal.': 'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.',
@@ -1667,7 +1667,7 @@ export class VendorComplianceComponent {
  if (enToAr[cleanMsg]) return enToAr[cleanMsg];
 
  let m = cleanMsg.match(/^Vendor approved with commission rate ([\d.]+)%\.$/);
- if (m) return `تمت الموافقة على التاجر بنسبة عمولة ${m[1]}%.`;
+ if (m) return `اعتمدنا التاجر بنسبة عمولة ${m[1]}%.`;
 
  m = cleanMsg.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
  if (m) return `قبلنا مستند ${docTypes[m[1]] || m[1]}.`;
@@ -1683,6 +1683,9 @@ export class VendorComplianceComponent {
  if (arToEn[cleanMsg]) return arToEn[cleanMsg];
 
  let m = cleanMsg.match(/^تمت الموافقة على التاجر بنسبة عمولة ([\d.]+)%\.$/);
+ if (m) return `Vendor approved with commission rate ${m[1]}%.`;
+
+ m = cleanMsg.match(/^اعتمدنا التاجر بنسبة عمولة ([\d.]+)%\.$/);
  if (m) return `Vendor approved with commission rate ${m[1]}%.`;
 
  m = cleanMsg.match(/^قبلنا مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\.$/);

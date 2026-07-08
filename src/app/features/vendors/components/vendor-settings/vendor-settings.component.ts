@@ -133,7 +133,7 @@ export class VendorSettingsComponent {
  }
 
  if (this.isCrExpired) {
- return this.text('السجل التجاري منتهي الصلاحية. لازم تحديث تاريخ السجل أولاً.', 'The Commercial Registration is expired. The CR date must be updated first.');
+ return this.text('السجل التجاري منتهي الصلاحية. لازم تحدّث تاريخ السجل أولاً.', 'The Commercial Registration is expired. The CR date must be updated first.');
  }
 
  if (this.canReactivateAccount) {
@@ -171,7 +171,7 @@ export class VendorSettingsComponent {
  case 'lock-login':
  return this.text('أدخل سبب قفل الدخول. بنمنع التاجر من الدخول لين ينفتح الحساب.', 'Enter the lock reason. The vendor will be blocked until login is unlocked.');
  case 'archive-account':
- return this.text('أدخل سبب الأرشفة. سيبقى السجل محفوظا لكن الحساب سيتوقف تشغيليا.', 'Enter the archive reason. The record stays preserved, but the account is operationally stopped.');
+ return this.text('أدخل سبب الأرشفة. بيظل السجل محفوظًا لكن الحساب بيتوقف تشغيليًا.', 'Enter the archive reason. The record stays preserved, but the account is operationally stopped.');
  default:
  return '';
  }
@@ -284,7 +284,7 @@ export class VendorSettingsComponent {
  }
 
  if (this.isLoginLocked) {
- return this.text('الحساب مقفل حاليا. إعدادات التشغيل محفوظة لكن الدخول متوقف.', 'The account is locked. Operations settings are preserved, but login is blocked.');
+ return this.text('الحساب مقفل الحين. إعدادات التشغيل محفوظة لكن الدخول متوقف.', 'The account is locked. Operations settings are preserved, but login is blocked.');
  }
 
  if (this.isCrExpired) {
@@ -407,21 +407,21 @@ export class VendorSettingsComponent {
  this.runDialogAction(
  this.vendorDetailFacade.suspendVendorAccountRequest(primaryValue),
  this.text('ما قدرنا تعليق الحساب الحين.', 'Unable to suspend the vendor account right now.'),
- this.text('تم تعليق الحساب وتسجيل السبب بنجاح.', 'Vendor account suspended and logged successfully.')
+ this.text('علّقنا الحساب وسجلنا السبب بنجاح.', 'Vendor account suspended and logged successfully.')
  );
  break;
  case 'lock-login':
  this.runDialogAction(
  this.vendorDetailFacade.lockVendorLoginRequest(primaryValue),
  this.text('ما قدرنا قفل تسجيل الدخول الحين.', 'Unable to lock vendor login right now.'),
- this.text('تم قفل تسجيل الدخول وتسجيل السبب بنجاح.', 'Vendor login locked and logged successfully.')
+ this.text('قفلنا تسجيل الدخول وسجلنا السبب بنجاح.', 'Vendor login locked and logged successfully.')
  );
  break;
  case 'archive-account':
  this.runDialogAction(
  this.vendorDetailFacade.archiveVendorAccountRequest(primaryValue),
  this.text('ما قدرنا أرشفة الحساب الحين.', 'Unable to archive the vendor account right now.'),
- this.text('تمت أرشفة الحساب بنجاح.', 'Vendor account archived successfully.')
+ this.text('أرشفنا الحساب بنجاح.', 'Vendor account archived successfully.')
  );
  break;
  default:
@@ -567,7 +567,7 @@ export class VendorSettingsComponent {
  this.clearFeedback();
  this.dialogSubmitting = true;
  this.vendorDetailFacade.unlockVendorLoginRequest().pipe(take(1)).subscribe({
- next: () => this.setSuccess(this.text('تم فتح تسجيل الدخول بنجاح.', 'Vendor login unlocked successfully.')),
+ next: () => this.setSuccess(this.text('فتحنا تسجيل الدخول بنجاح.', 'Vendor login unlocked successfully.')),
  error: () => {
  this.cdr.markForCheck();
  this.setPageError(this.vendorDetailFacade.mutationError || this.text('ما قدرنا فتح تسجيل الدخول الحين.', 'Unable to unlock vendor login right now.'));
@@ -610,7 +610,7 @@ export class VendorSettingsComponent {
 
  if (!this.canSuspendAccount) {
  this.pageSuccess = '';
- this.pageError = this.text('ما تقدر تعليق الحساب إلا إذا كان نشطا حاليا.', 'The account can only be suspended while it is active.');
+ this.pageError = this.text('ما تقدر تعلّق الحساب إلا إذا كان نشطًا الحين.', 'The account can only be suspended while it is active.');
  this.cdr.markForCheck();
  return;
  }

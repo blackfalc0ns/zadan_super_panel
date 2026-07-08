@@ -235,7 +235,7 @@ export class VendorActivityLogComponent {
  this.noteSubmitting = false;
  this.selectedSidePanel = 'notes';
  this.toastService.success(
- this.isRTL ? 'تمت إضافة الملاحظة الداخلية بنجاح.' : 'Internal note added successfully.',
+ this.isRTL ? 'أضفنا الملاحظة الداخلية بنجاح.' : 'Internal note added successfully.',
  this.isRTL ? 'سجل النشاط' : 'Activity log'
  );
  },
@@ -522,7 +522,7 @@ export class VendorActivityLogComponent {
  const englishToArabicMap: Record<string, string> = {
  'Vendor review started.': 'بدأت مراجعة التاجر.',
  'Vendor account reactivated and returned to active status.': 'أعدنا تفعيل حساب التاجر ورجعناه للحالة النشطة.',
- 'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
+ 'Vendor login was unlocked and account access was restored.': 'فتحنا دخول التاجر ورجعنا الوصول للحساب.',
  'Vendor password was reset by an administrator and all active sessions were revoked.': 'أعادت الإدارة ضبط كلمة مرور التاجر وأنهت كل الجلسات النشطة.',
  'Please re-upload the required legal documents and confirm the latest vendor information.': 'أعد رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
  'Vendor updated banking and payout setup from Vendor Portal.': 'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.',
@@ -542,7 +542,7 @@ export class VendorActivityLogComponent {
 
  // Dynamic English templates -> Arabic
  let match = message.match(/^Vendor approved with commission rate ([\d.]+)%\.$/);
- if (match) return `تمت الموافقة على التاجر بنسبة عمولة ${match[1]}%.`;
+ if (match) return `اعتمدنا التاجر بنسبة عمولة ${match[1]}%.`;
 
  match = message.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
  if (match) return `قبلنا مستند ${docTypeEnToAr[match[1]] || match[1]}.`;
@@ -570,14 +570,14 @@ export class VendorActivityLogComponent {
  if (match) {
  const decision = match[1];
  const fieldLabel = this.getProfileItemLabelByCode(match[2]);
- return `تم ${decision} العنصر ${fieldLabel}. ${match[3]}`;
+ return `${decision === 'قبول' ? 'قبلنا' : 'رفضنا'} العنصر ${fieldLabel}. ${match[3]}`;
  }
 
  match = message.match(/^تم (قبول|رفض) العنصر (.+)\.$/);
  if (match) {
  const decision = match[1];
  const fieldLabel = this.getProfileItemLabelByCode(match[2]);
- return `تم ${decision} العنصر ${fieldLabel}.`;
+ return `${decision === 'قبول' ? 'قبلنا' : 'رفضنا'} العنصر ${fieldLabel}.`;
  }
 
  return message;
@@ -587,6 +587,7 @@ export class VendorActivityLogComponent {
  'بدأت مراجعة التاجر.': 'Vendor review started.',
  'أعدنا تفعيل حساب التاجر ورجعناه للحالة النشطة.': 'Vendor account reactivated and returned to active status.',
  'تم فتح دخول التاجر واستعادة الوصول للحساب.': 'Vendor login was unlocked and account access was restored.',
+ 'فتحنا دخول التاجر ورجعنا الوصول للحساب.': 'Vendor login was unlocked and account access was restored.',
  'أعادت الإدارة ضبط كلمة مرور التاجر وأنهت كل الجلسات النشطة.': 'Vendor password was reset by an administrator and all active sessions were revoked.',
  'أعد رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.': 'Please re-upload the required legal documents and confirm the latest vendor information.',
  'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.': 'Vendor updated banking and payout setup from Vendor Portal.',
@@ -721,7 +722,7 @@ export class VendorActivityLogComponent {
  timeline.unshift({
  id: 'submitted',
  title: this.isRTL ? 'رفع المستندات' : 'Documents submitted',
- description: this.isRTL ? 'تم استلام المستندات الأولية من التاجر.' : 'The initial vendor documents were submitted.',
+ description: this.isRTL ? 'استلمنا المستندات الأولية من التاجر.' : 'The initial vendor documents were submitted.',
  date: this.formatDate(vendor.reviewSubmittedAtUtc),
  icon: 'folder_open',
  toneClass: 'bg-primary'
@@ -743,7 +744,7 @@ export class VendorActivityLogComponent {
  timeline.unshift({
  id: 'changes-requested',
  title: this.isRTL ? 'طلب تعديلات' : 'Changes requested',
- description: this.isRTL ? 'تم طلب إعادة رفع أو تصحيح بعض البيانات.' : 'The vendor was asked to re-upload or correct specific data.',
+ description: this.isRTL ? 'طلبنا إعادة رفع أو تصحيح بعض البيانات.' : 'The vendor was asked to re-upload or correct specific data.',
  date: this.formatDate(vendor.requestedChangesAtUtc),
  icon: 'rule',
  toneClass: 'bg-amber-500'
@@ -754,7 +755,7 @@ export class VendorActivityLogComponent {
  timeline.unshift({
  id: 'approved',
  title: this.isRTL ? 'اعتماد التاجر' : 'Vendor approved',
- description: this.isRTL ? 'تم اعتماد الحساب وتشغيله رسميًا.' : 'The account was approved and officially activated.',
+ description: this.isRTL ? 'اعتمدنا الحساب وشغّلناه رسميًا.' : 'The account was approved and officially activated.',
  date: this.formatDate(vendor.approvedAtUtc),
  icon: 'verified',
  toneClass: 'bg-emerald-500'
@@ -765,7 +766,7 @@ export class VendorActivityLogComponent {
  timeline.unshift({
  id: 'suspended',
  title: this.isRTL ? 'تعليق الحساب' : 'Account suspended',
- description: vendor.suspensionReason || (this.isRTL ? 'تم تعليق التشغيل إداريًا.' : 'Operations were suspended administratively.'),
+ description: vendor.suspensionReason || (this.isRTL ? 'علّقنا التشغيل إداريًا.' : 'Operations were suspended administratively.'),
  date: this.formatDate(vendor.suspendedAtUtc),
  icon: 'pause_circle',
  toneClass: 'bg-rose-500'
@@ -776,7 +777,7 @@ export class VendorActivityLogComponent {
  timeline.unshift({
  id: 'locked',
  title: this.isRTL ? 'قفل الدخول' : 'Login locked',
- description: vendor.lockReason || (this.isRTL ? 'تم قفل تسجيل الدخول لهذا الحساب.' : 'Login access was locked for this account.'),
+ description: vendor.lockReason || (this.isRTL ? 'قفلنا تسجيل الدخول لهذا الحساب.' : 'Login access was locked for this account.'),
  date: this.formatDate(vendor.lockedAtUtc),
  icon: 'lock',
  toneClass: 'bg-amber-600'
@@ -787,7 +788,7 @@ export class VendorActivityLogComponent {
  timeline.unshift({
  id: 'archived',
  title: this.isRTL ? 'أرشفة الحساب' : 'Account archived',
- description: vendor.archiveReason || (this.isRTL ? 'تمت أرشفة الحساب نهائيًا.' : 'The account was archived permanently.'),
+ description: vendor.archiveReason || (this.isRTL ? 'أرشفنا الحساب نهائيًا.' : 'The account was archived permanently.'),
  date: this.formatDate(vendor.archivedAtUtc),
  icon: 'archive',
  toneClass: 'bg-slate-700'

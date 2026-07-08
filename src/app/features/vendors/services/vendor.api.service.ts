@@ -2049,7 +2049,7 @@ export class VendorService {
  return this.updateVendor(id, (vendor) => {
  const normalizedReason = reason.trim();
  if (!normalizedReason) {
- throw new Error('لازم إدخال سبب رفض واضح.|A clear rejection reason is required.');
+ throw new Error('لازم تدخل سبب رفض واضح.|A clear rejection reason is required.');
  }
 
  if (vendor.status === VendorStatus.Active || vendor.status === VendorStatus.Suspended) {
@@ -2083,11 +2083,11 @@ export class VendorService {
  return this.updateVendor(id, (vendor) => {
  const normalizedReason = reason.trim();
  if (!normalizedReason) {
- throw new Error('لازم إدخال سبب تعليق واضح.|A clear suspension reason is required.');
+ throw new Error('لازم تدخل سبب تعليق واضح.|A clear suspension reason is required.');
  }
 
  if (vendor.status!== VendorStatus.Active) {
- throw new Error(`ما تقدر تعليق الحساب بينما حالته الحالية هي ${vendor.status}.|Vendor cannot be suspended while its current status is ${vendor.status}.`);
+ throw new Error(`ما تقدر تعلّق الحساب بينما حالته الحالية هي ${vendor.status}.|Vendor cannot be suspended while its current status is ${vendor.status}.`);
  }
 
  vendor.status = VendorStatus.Suspended;

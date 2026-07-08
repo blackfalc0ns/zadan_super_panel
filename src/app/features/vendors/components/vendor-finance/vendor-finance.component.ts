@@ -307,7 +307,7 @@ export class VendorFinanceComponent implements OnInit {
  this.vendorService.suspendVendorPayout(this.vendorId, payoutId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: () => {
  this.toastService.success(
- this.text('تم تعليق الدفعة بنجاح.', 'Payout suspended successfully.'),
+ this.text('علّقنا الدفعة بنجاح.', 'Payout suspended successfully.'),
  this.text('المالية', 'Finance')
  );
  this.loadFinanceData();
@@ -329,7 +329,7 @@ export class VendorFinanceComponent implements OnInit {
  this.vendorService.escalateVendorPayout(this.vendorId, payoutId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: () => {
  this.toastService.success(
- this.text('تم تصعيد الدفعة بنجاح.', 'Payout escalated successfully.'),
+ this.text('صعّدنا الدفعة بنجاح.', 'Payout escalated successfully.'),
  this.text('المالية', 'Finance')
  );
  this.loadFinanceData();
@@ -516,7 +516,7 @@ export class VendorFinanceComponent implements OnInit {
  const labels: Record<string, { ar: string; en: string }> = {
  paid: { ar: 'مدفوع', en: 'Paid' },
  settled: { ar: 'مسوّى', en: 'Settled' },
- paid_out: { ar: 'تم الصرف', en: 'Paid out' },
+ paid_out: { ar: 'مصروف', en: 'Paid out' },
  processing: { ar: 'تحت المعالجة', en: 'Processing' },
  queued: { ar: 'بالانتظار', en: 'Queued' },
  pending: { ar: 'معلق', en: 'Pending' },

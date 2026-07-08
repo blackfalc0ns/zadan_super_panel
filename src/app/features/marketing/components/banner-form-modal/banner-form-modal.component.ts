@@ -89,7 +89,7 @@ const IMAGE_ONLY_BANNER_DEFAULTS = {
  </p>
  <p class="mt-1 text-xs font-semibold leading-5 text-slate-500">
  {{ translateService.currentLang === 'ar'
-                    ? 'تم إخفاء حقول النص من هذه النافذة. النظام سيحفظ قيماً افتراضية داخليًا، وأنت تحتاج فقط إلى رفع الصورة وترتيب ظهورها.'
+                    ? 'أخفينا حقول النص من هذه النافذة. النظام بيحفظ قيمًا افتراضية داخليًا، وأنت تحتاج بس ترفع الصورة وترتب ظهورها.'
                     : 'Text fields are hidden in this modal. The system saves internal defaults, so you only need to upload the image and choose its order.' }}
  </p>
  </div>

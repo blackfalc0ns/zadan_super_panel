@@ -481,7 +481,7 @@ export class VendorOverviewComponent {
  );
  case 'changes_requested':
  return this.localize(
- 'أرسلنا ملاحظات للتاجر، ولسه المتابعة مطلوبة قبل إعادة التقييم.',
+ 'أرسلنا ملاحظات للتاجر، والمتابعة للحين مطلوبة قبل إعادة التقييم.',
  'Feedback has already been sent to the vendor, and follow-up is needed before reassessment.'
  );
  case 'verified':
@@ -872,7 +872,7 @@ export class VendorOverviewComponent {
  this.reviewChecklist = [
  {
  id: 'submission',
- label: this.localize('تم استلام الملف', 'Submission received'),
+ label: this.localize('وصلنا الملف', 'Submission received'),
  hint: this.vendorDetail?.reviewState === 'awaiting_submission'
  ? this.localize('بانتظار رفع المستندات الأساسية', 'Waiting for the vendor to submit the core documents')
  : this.localize(`آخر إرسال ${this.reviewSubmittedAt}`, `Last submission ${this.reviewSubmittedAt}`),

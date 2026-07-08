@@ -1208,7 +1208,7 @@ export class AdminSupportCenterComponent implements OnInit {
  this.formDrafts.approval = null;
  this.closeApprovalModal();
  this.applySupportCaseUpdate(updated);
- this.showCustomToast(this.isRtl ? 'تم اعتماد الاسترجاع بنجاح.' : 'Return request approved successfully.');
+ this.showCustomToast(this.isRtl ? 'اعتمدنا الاسترجاع بنجاح.' : 'Return request approved successfully.');
  },
  error: (err) => {
  this.cdr.markForCheck();
@@ -1243,7 +1243,7 @@ export class AdminSupportCenterComponent implements OnInit {
  this.formDrafts.escalation = null;
  this.closeEscalationModal();
  this.applySupportCaseUpdate(updated);
- this.showCustomToast(this.isRtl ? 'تم تصعيد الحالة بنجاح.' : 'Support case escalated successfully.');
+ this.showCustomToast(this.isRtl ? 'صعّدنا الحالة بنجاح.' : 'Support case escalated successfully.');
  },
  error: (err) => {
  this.cdr.markForCheck();
@@ -1341,11 +1341,11 @@ export class AdminSupportCenterComponent implements OnInit {
 
  if (actionType === 'approve_complaint') {
  obs$ = this.supportCasesService.approveComplaint(activeCase.id, value.primaryValue, value.secondaryValue);
- successMessage = this.isRtl ? 'تم اعتماد الشكوى بنجاح.' : 'Complaint approved successfully.';
+ successMessage = this.isRtl ? 'اعتمدنا الشكوى بنجاح.' : 'Complaint approved successfully.';
  errorMessage = this.isRtl ? 'فشل اعتماد الشكوى.' : 'Failed to approve complaint.';
  } else if (actionType === 'resolve') {
  obs$ = this.supportCasesService.resolveCase(activeCase.id, value.primaryValue);
- successMessage = this.isRtl ? 'تم حل الحالة بنجاح.' : 'Support case resolved successfully.';
+ successMessage = this.isRtl ? 'حلّينا الحالة بنجاح.' : 'Support case resolved successfully.';
  errorMessage = this.isRtl ? 'فشل حل الحالة.' : 'Failed to resolve support case.';
  } else if (actionType === 'reopen') {
  obs$ = this.supportCasesService.reopenCase(activeCase.id, value.primaryValue);
@@ -1353,7 +1353,7 @@ export class AdminSupportCenterComponent implements OnInit {
  errorMessage = this.isRtl ? 'فشل إعادة فتح الحالة.' : 'Failed to reopen support case.';
  } else if (actionType === 'add_note') {
  obs$ = this.supportCasesService.addNote(activeCase.id, value.primaryValue);
- successMessage = this.isRtl ? 'تمت إضافة الملاحظة بنجاح.' : 'Case note added successfully.';
+ successMessage = this.isRtl ? 'أضفنا الملاحظة بنجاح.' : 'Case note added successfully.';
  errorMessage = this.isRtl ? 'فشل إضافة الملاحظة.' : 'Failed to add case note.';
  } else {
  const role = this.activeTab === 'driver' ? 'driver' : 'customer';
@@ -1389,7 +1389,7 @@ export class AdminSupportCenterComponent implements OnInit {
  this.cdr.markForCheck();
  this.isMutatingTicket = false;
  this.applySupportCaseUpdate(updated);
- this.showCustomToast(this.isRtl ? 'تم تعيين الحالة بنجاح.' : 'Support case assigned successfully.');
+ this.showCustomToast(this.isRtl ? 'عيّنا الحالة بنجاح.' : 'Support case assigned successfully.');
  },
  error: (err) => {
  this.cdr.markForCheck();

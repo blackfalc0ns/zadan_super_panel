@@ -146,7 +146,7 @@ import {
  <h3 class="text-[14px] font-black">{{ text('مهم', 'Important') }}</h3>
  </div>
  <p class="text-[12px] font-medium leading-relaxed text-slate-300">
- {{ text('IBAN هنا هو حساب المنصة الذي يحول عليه العميل. أما SourceId فهو ليس رقم حساب، بل مصدر Payouts تحصل عليه من Moyasar.', 'The IBAN here is the platform account customers pay into. SourceId is not a bank account number; it is the Payouts source issued by Moyasar.') }}
+ {{ text('IBAN هنا هو حساب المنصة اللي يحوّل عليه العميل. أما SourceId فهو مو رقم حساب، بل مصدر Payouts تحصل عليه من Moyasar.', 'The IBAN here is the platform account customers pay into. SourceId is not a bank account number; it is the Payouts source issued by Moyasar.') }}
  </p>
  </div>
  </aside>

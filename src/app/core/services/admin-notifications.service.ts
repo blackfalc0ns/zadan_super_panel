@@ -370,7 +370,7 @@ export class AdminNotificationsService {
  },
  'driver.documents_submitted': {
  title: { ar: 'مستندات مندوب جاهزة للمراجعة', en: 'Driver documents ready for review' },
- body: { ar: 'قام المندوب بإرسال مستندات تحتاج إلى مراجعة الامتثال.', en: 'The driver submitted documents that need compliance review.' }
+ body: { ar: 'أرسل المندوب مستندات تحتاج مراجعة الامتثال.', en: 'The driver submitted documents that need compliance review.' }
  },
  'driver.approval_blocked': {
  title: { ar: 'ما قدرنا اعتماد مندوب', en: 'Driver approval blocked' },
@@ -386,7 +386,7 @@ export class AdminNotificationsService {
  },
  'vendor.critical_change_submitted': {
  title: { ar: 'تغيير حساس من تاجر', en: 'Critical vendor change submitted' },
- body: { ar: 'قام تاجر بإرسال تغيير حساس يحتاج إلى مراجعة الأدمن.', en: 'A vendor submitted a critical change that needs admin review.' }
+ body: { ar: 'أرسل تاجر تغييرًا حساسًا يحتاج مراجعة الأدمن.', en: 'A vendor submitted a critical change that needs admin review.' }
  },
  'vendor.store_updated': {
  title: { ar: 'بيانات متجر جاهزة للمراجعة', en: 'Vendor store ready for review' },
@@ -410,15 +410,15 @@ export class AdminNotificationsService {
  },
  'vendor.hours_updated': {
  title: { ar: 'تحدّثت ساعات عمل تاجر', en: 'Vendor operating hours updated' },
- body: { ar: 'قام أحد التجار بتحديث ساعات العمل.', en: 'A vendor updated operating hours.' }
+ body: { ar: 'حدّث أحد التجار ساعات العمل.', en: 'A vendor updated operating hours.' }
  },
  'vendor.operations_updated': {
  title: { ar: 'تحدّثت إعدادات تشغيل تاجر', en: 'Vendor operations updated' },
- body: { ar: 'قام أحد التجار بتحديث إعدادات التشغيل.', en: 'A vendor updated operations settings.' }
+ body: { ar: 'حدّث أحد التجار إعدادات التشغيل.', en: 'A vendor updated operations settings.' }
  },
  'vendor.notification_settings_updated': {
  title: { ar: 'حدّثنا تفضيلات إشعارات تاجر', en: 'Vendor notification preferences updated' },
- body: { ar: 'قام أحد التجار بتحديث تفضيلات الإشعارات.', en: 'A vendor updated notification preferences.' }
+ body: { ar: 'حدّث أحد التجار تفضيلات الإشعارات.', en: 'A vendor updated notification preferences.' }
  },
  'catalog.product_request_submitted': {
  title: { ar: 'طلب منتج جديد', en: 'New product request' },
@@ -437,8 +437,8 @@ export class AdminNotificationsService {
  body: { ar: 'يوجد نزاع جديد يحتاج إلى متابعة فريق الدعم.', en: 'A new dispute needs support team attention.' }
  },
  'dispute.escalated': {
- title: { ar: 'تم تصعيد نزاع', en: 'Dispute escalated' },
- body: { ar: 'تم تصعيد نزاع ويحتاج إلى إجراء عاجل.', en: 'A dispute was escalated and needs urgent action.' }
+ title: { ar: 'تصعّد نزاع', en: 'Dispute escalated' },
+ body: { ar: 'تصعّد نزاع ويحتاج إلى إجراء عاجل.', en: 'A dispute was escalated and needs urgent action.' }
  },
  'refund.requested': {
  title: { ar: 'طلب استرجاع جديد', en: 'New refund request' },
@@ -473,7 +473,7 @@ export class AdminNotificationsService {
  body: { ar: 'أضاف تاجر ردا جديدا على تذكرة دعم.', en: 'A vendor added a new reply to a support ticket.' }
  },
  'system.integration_failure': {
- title: { ar: 'فشل في تكامل النظام', en: 'System integration failure' },
+ title: { ar: 'تعطل تكامل النظام', en: 'System integration failure' },
  body: { ar: 'حدث خطأ في تكامل خارجي ويحتاج إلى مراجعة تقنية.', en: 'An external integration failed and needs technical review.' }
  },
  'system.onesignal_failure': {

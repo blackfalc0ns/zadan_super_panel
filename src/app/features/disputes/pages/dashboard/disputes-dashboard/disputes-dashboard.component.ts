@@ -455,7 +455,7 @@ export class DisputesDashboardComponent implements OnInit {
  next: (dispute) => {
  this.formDrafts.approval = null;
  this.closeApprovalModal();
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم اعتماد الاسترجاع بنجاح.' : 'Return request approved successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'اعتمدنا الاسترجاع بنجاح.' : 'Return request approved successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to approve support case.')
  });
@@ -483,7 +483,7 @@ export class DisputesDashboardComponent implements OnInit {
  next: (dispute) => {
  this.formDrafts.escalation = null;
  this.closeEscalationModal();
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم تصعيد النزاع بنجاح.' : 'Support case escalated successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'صعّدنا النزاع بنجاح.' : 'Support case escalated successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to escalate support case.')
  });
@@ -1563,7 +1563,7 @@ export class DisputesDashboardComponent implements OnInit {
 
  this.disputesService.approveComplaint(this.selectedDispute.id, internalNotes, customerMessage).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: (dispute) => {
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم اعتماد الشكوى بنجاح.' : 'Complaint approved successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'اعتمدنا الشكوى بنجاح.' : 'Complaint approved successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to approve complaint.')
  });
@@ -1580,7 +1580,7 @@ export class DisputesDashboardComponent implements OnInit {
  private submitResolveCase(note?: string): void {
  this.disputesService.resolveCase(this.selectedDispute.id, note).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: (dispute) => {
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم حل الحالة بنجاح.' : 'Support case resolved successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'حلّينا الحالة بنجاح.' : 'Support case resolved successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to resolve case.')
  });
@@ -1590,7 +1590,7 @@ export class DisputesDashboardComponent implements OnInit {
  if (!this.canAssignSelectedDispute) return;
  this.disputesService.assignCase(this.selectedDispute.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: (dispute) => {
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم تعيين الحالة بنجاح.' : 'Support case assigned successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'عيّنا الحالة بنجاح.' : 'Support case assigned successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to assign case.')
  });
@@ -1607,7 +1607,7 @@ export class DisputesDashboardComponent implements OnInit {
  private submitAddNote(note: string): void {
  this.disputesService.addNote(this.selectedDispute.id, note).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: (dispute) => {
- this.handleMutationSuccess(dispute, this.isRtl ? 'تمت إضافة الملاحظة بنجاح.' : 'Case note added successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'أضفنا الملاحظة بنجاح.' : 'Case note added successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to add note.')
  });

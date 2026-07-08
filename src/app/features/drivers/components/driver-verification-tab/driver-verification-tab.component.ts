@@ -466,11 +466,11 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  : 'This file is approved and can be used for driver approval.';
  case 'expiring':
  return this.isRTL
- ? 'الملف معتمد حاليا لكنه يحتاج متابعة لقرب تاريخ الانتهاء.'
+ ? 'الملف معتمد الحين لكنه يحتاج متابعة لقرب تاريخ الانتهاء.'
  : 'This file is approved but needs follow-up because it expires soon.';
  case 'rejected':
  return this.isRTL
- ? 'الملف مرفوض ولازم رفع نسخة جديدة بعد معالجة سبب الرفض.'
+ ? 'الملف مرفوض ولازم ترفع نسخة جديدة بعد معالجة سبب الرفض.'
  : 'This file was rejected; a corrected copy is required.';
  default:
  return this.isRTL ? 'حالة الملف غير واضحة.' : 'The document state is not clear.';

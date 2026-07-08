@@ -16,7 +16,7 @@
       "REVIEW_TREND": "تحت المعالجة",
       "MERCHANT": "بانتظار التاجر",
       "MERCHANT_TREND": "نافذة مفتوحة",
-      "RESOLVED": "تم حلها",
+      "RESOLVED": "محلولة",
       "RESOLVED_TREND": "91% خلال SLA",
       "VALUE": "إجمالي القيمة"
     },
@@ -26,7 +26,7 @@
       "CRITICAL": "حرجة",
       "REVIEW": "تحت المراجعة",
       "MERCHANT": "بانتظار التاجر",
-      "RESOLVED": "تم حلها"
+      "RESOLVED": "محلولة"
     },
     "FILTER_PANEL": {
       "TITLE": "فلترة النزاعات",
@@ -62,7 +62,7 @@
       "CLOSED_AFTER_REFUND_COMPLETION": "أُغلقت بعد رد المبلغ للعميل",
       "CLOSED_AFTER_COUPON_COMPENSATION": "أُغلقت بعد إصدار تعويض بكوبون",
       "CLOSED_AFTER_COMPENSATION_APPROVAL": "أُغلقت بعد اعتماد التعويض",
-      "CASE_CLOSED": "تم إغلاق الحالة"
+      "CASE_CLOSED": "الحالة مقفلة"
     },
     "UI_LABELS": {
       "TYPE": "النوع",
@@ -77,10 +77,10 @@
       "COMPENSATION_OUTCOME": "نتيجة التعويض",
       "COUPON": "الكوبون",
       "EXPIRES": "ينتهي في",
-      "REDEEMED": "تم الاستخدام",
-      "NOT_REDEEMED_YET": "لسه ما استخدمه العميل",
+      "REDEEMED": "مستخدم",
+      "NOT_REDEEMED_YET": "للحين ما استخدمه العميل",
       "VENDOR_RECOVERY": "استرجاع من التاجر",
-      "RECOVERED": "تم التحصيل",
+      "RECOVERED": "محصّل",
       "OUTSTANDING": "المتبقي",
       "LOADING_DISPUTES": "نحمّل النزاعات...",
       "REOPEN": "إعادة فتح"
@@ -107,17 +107,17 @@
     },
     "SETTLEMENT": {
       "PENDING_REVIEW": "بانتظار المراجعة",
-      "CASH_REFUNDED": "تم الاسترجاع النقدي",
-      "COUPON_ISSUED": "تم إصدار الكوبون",
-      "COUPON_REDEEMED": "تم استخدام الكوبون",
+      "CASH_REFUNDED": "استرجاع نقدي",
+      "COUPON_ISSUED": "أصدرنا الكوبون",
+      "COUPON_REDEEMED": "الكوبون مستخدم",
       "REJECTED": "مرفوض",
       "APPROVED": "انقبل",
       "NOT_SET": "غير محدد"
     },
     "VENDOR_RECOVERY": {
       "PENDING": "بانتظار التحصيل",
-      "PARTIAL": "تم التحصيل جزئيًا",
-      "RECOVERED": "تم التحصيل بالكامل",
+      "PARTIAL": "تحصيل جزئي",
+      "RECOVERED": "تحصيل كامل",
       "NOT_APPLICABLE": "ما فيه"
     },
     "INFO": {
@@ -151,7 +151,7 @@
       "OPEN": "مفتوح",
       "REVIEW": "تحت المراجعة",
       "MERCHANT": "بانتظار التاجر",
-      "RESOLVED": "تم الحل"
+      "RESOLVED": "محلولة"
     },
     "WAITING_ON": {
       "CUSTOMER": "بانتظار رد العميل",
@@ -189,24 +189,24 @@
       "TIME_YESTERDAY_0802_PM": "أمس 08:02 م",
       "TIME_YESTERDAY_0807_PM": "أمس 08:07 م",
       "DIS9902": {
-        "OPENED_BY_CUSTOMER": "تم فتح النزاع بواسطة العميل",
-        "ASSIGNED_TO_SARAH": "تم تعيين سارة فهد للمراجعة",
-        "ESCALATED_CRITICAL": "تم تصعيد الحالة لأولوية حرجة"
+        "OPENED_BY_CUSTOMER": "فتح العميل النزاع",
+        "ASSIGNED_TO_SARAH": "عيّنا سارة فهد للمراجعة",
+        "ESCALATED_CRITICAL": "صعّدنا الحالة لأولوية حرجة"
       },
       "REF8812": {
-        "REFUND_REQUEST_RECEIVED": "تم استلام طلب الاسترجاع",
+        "REFUND_REQUEST_RECEIVED": "وصلنا طلب الاسترجاع",
         "EVIDENCE_SENT_TO_MERCHANT": "أُرسلت الأدلة إلى التاجر",
         "WAITING_FOR_MERCHANT": "بانتظار رد التاجر خلال النافذة المحددة"
       },
       "DIS7721": {
-        "DISPUTE_REGISTERED": "تم تسجيل النزاع",
-        "INVOICE_REVIEWED": "تمت مراجعة الفاتورة الأولية",
+        "DISPUTE_REGISTERED": "سجلنا النزاع",
+        "INVOICE_REVIEWED": "راجعنا الفاتورة الأولية",
         "COUPON_MATCH_REQUIRED": "مطلوب مطابقة الكوبون مع الحملة"
       },
       "REF6404": {
-        "REFUND_OPENED": "تم فتح الاسترجاع",
-        "PARTIAL_REFUND_APPROVED": "تم اعتماد الاسترجاع الجزئي",
-        "CASE_SETTLED_AND_CLOSED": "تمت تسوية الحالة وإغلاقها"
+        "REFUND_OPENED": "فتحنا الاسترجاع",
+        "PARTIAL_REFUND_APPROVED": "اعتمدنا الاسترجاع الجزئي",
+        "CASE_SETTLED_AND_CLOSED": "سوّينا الحالة وقفلناها"
       }
     },
     "DRAWER": {
@@ -307,10 +307,10 @@
       "REASON_SECTION_TITLE": "تحديد سبب الرفض",
       "OPTION_POLICY": "الطلب غير مطابق للسياسة",
       "OPTION_EVIDENCE": "ما فيه أدلة كافية",
-      "OPTION_DELIVERED": "تم التسليم بنجاح",
+      "OPTION_DELIVERED": "التسليم ناجح",
       "OPTION_EXPIRED": "خارج فترة الاسترجاع",
       "OPTION_MISUSE": "سوء استخدام من العميل",
-      "OPTION_OTHER": "أخرى (يتم التوضيح أدناه)",
+      "OPTION_OTHER": "أخرى (وضّحها أدناه)",
       "ADDITIONAL_EXPLANATION": "شرح إضافي لسبب الرفض",
       "ADDITIONAL_EXPLANATION_PLACEHOLDER": "اكتب تفاصيل إضافية حول سبب الرفض هنا...",
       "CUSTOMER_MESSAGE_TITLE": "الرسالة الموجهة للعميل",
@@ -322,7 +322,7 @@
       "SAVE_REVIEW": "حفظ كمراجعة",
       "CONFIRM_REJECTION": "تأكيد الرفض",
       "DEFAULT_CUSTOMER_MESSAGE": "عميلنا العزيز، رفضنا طلب الاسترجاع رقم {{orderId}} لأنه ما استوفى الشروط المطلوبة حسب سياسة المنصة. تقدر تراجع التفاصيل عبر حسابك.",
-      "DEFAULT_INTERNAL_NOTE": "تم توثيق قرار الرفض بعد مراجعة تفاصيل الطلب والمرفقات المتاحة."
+      "DEFAULT_INTERNAL_NOTE": "وثقنا قرار الرفض بعد مراجعة تفاصيل الطلب والمرفقات المتاحة."
     },
     "REQUEST_INFO_MODAL": {
       "TITLE": "طلب معلومات إضافية",
@@ -486,7 +486,7 @@
       "PICKUP": "الاستلام",
       "DRIVER": "المندوب",
       "PHONE": "الجوال",
-      "ORDERED_IN": "تم الطلب في",
+      "ORDERED_IN": "انطلب في",
       "SLA": "الالتزام (SLA)",
       "ALERTS": "التنبيهات",
       "NO_ALERTS": "ما فيه",
@@ -515,7 +515,7 @@
         "TOTAL_DELIVERY_FEE": "إجمالي رسوم التوصيل والخدمة",
         "PRICING_SOURCE": "مصدر حساب السعر",
         "ANOMALY_WARNING": "تحذير تشغيلي",
-        "ANOMALY_WARNING_DESC": "تم رصد تباين غير طبيعي في معلمات التوجيه أو التسعير.",
+        "ANOMALY_WARNING_DESC": "رصدنا تباين غير طبيعي في معلمات التوجيه أو التسعير.",
         "ACTUAL_PICKUP_DISTANCE": "مسافة الاستلام الفعلية للمندوب",
         "DEVIATION_PERCENT": "نسبة الانحراف عن المسار المقدر",
         "ESTIMATED_DRIVER_PRICING": "التسعير التقديري للمندوب",
@@ -604,7 +604,7 @@
       },
       "PLATE": "اللوحة",
       "CHANGE_DRIVER": "تغيير المندوب",
-      "NO_DRIVER_ASSIGNED": "لسه ما تعيّن مندوب",
+      "NO_DRIVER_ASSIGNED": "للحين ما تعيّن مندوب",
       "ASSIGN_DRIVER": "تعيين مندوب",
       "SUPPORT_DISPUTES": "الدعم والنزاعات",
       "NO_DISPUTES": "ما فيه نزاعات",
@@ -618,7 +618,7 @@
       "TIMELINE_PAYMENT": "تأكيد الدفع",
       "TIMELINE_PREP": "تجهيز الطلب",
       "TIMELINE_DELIVERY": "خرج للتوصيل",
-      "TIMELINE_COMPLETED": "تم التوصيل",
+      "TIMELINE_COMPLETED": "مكتمل",
       "TIMELINE_STEP_STATUS": {
         "COMPLETED": "مكتمل",
         "IN_PROGRESS": "قيد التنفيذ",
@@ -637,40 +637,40 @@
           "PREPARING": "قيد التجهيز",
           "READY_FOR_PICKUP": "جاهز للاستلام",
           "DRIVER_ASSIGNMENT_IN_PROGRESS": "نبحث عن مندوب",
-          "DRIVER_ASSIGNED": "تم تعيين المندوب",
-          "PICKED_UP": "تم الاستلام",
+          "DRIVER_ASSIGNED": "عيّنا المندوب",
+          "PICKED_UP": "استلمنا",
           "ON_THE_WAY": "في الطريق",
-          "DELIVERED": "تم التوصيل",
+          "DELIVERED": "مسلّم",
           "CANCELLED": "ملغي",
           "VENDOR_REJECTED": "مرفوض من المتجر",
           "DELIVERY_FAILED": "فشل التوصيل",
           "REFUNDED": "مسترجع"
         },
         "SUBTITLES": {
-          "PAYMENT_CAPTURED": "تم تأكيد الدفع والتحصيل",
+          "PAYMENT_CAPTURED": "أكدنا الدفع والتحصيل",
           "WAITING_PAYMENT_CONFIRMATION": "بانتظار تأكيد الدفع",
           "SYSTEM_AUTO_UPDATE": "تحديث تلقائي للنظام",
           "AWAITING_CLOSURE": "بانتظار الإغلاق",
           "FULFILLMENT_QUEUED": "في طابور التنفيذ",
           "FULFILLMENT_CANCELLED": "أوقف التنفيذ",
           "FULFILLMENT_FAILED": "فشل التنفيذ",
-          "COD_SELECTED": "تم اختيار الدفع عند الاستلام",
+          "COD_SELECTED": "اختار العميل الدفع عند الاستلام",
           "AWAITING_VENDOR": "في انتظار رد المتجر",
           "VENDOR_ACCEPTED": "قبل المتجر الطلب",
           "VENDOR_PREPARING": "بدأ المتجر التجهيز",
           "READY_FOR_PICKUP": "الطلب جاهز للاستلام",
           "AUTO_DISPATCH_STARTED": "بدأ البحث التلقائي عن مندوب",
           "DRIVER_ACCEPTED_OFFER": "قبل المندوب عرض التوصيل",
-          "VENDOR_OTP_HANDOFF": "تم تأكيد التسليم للمندوب عبر الرمز",
+          "VENDOR_OTP_HANDOFF": "أكدنا تسليم الطلب للمندوب عبر الرمز",
           "DRIVER_ON_THE_WAY": "المندوب في الطريق",
-          "DELIVERY_OTP_VERIFIED": "تم التحقق من رمز التوصيل",
+          "DELIVERY_OTP_VERIFIED": "تحققنا من رمز التوصيل",
           "DRIVER_VERIFIED_PICKUP_OTP": "تحقق المندوب من رمز استلام الطلب",
-          "DRIVER_ASSIGNED_VIA_DISPATCH": "تم تعيين المندوب عبر التوجيه",
+          "DRIVER_ASSIGNED_VIA_DISPATCH": "عيّنا المندوب عبر التوجيه",
           "AWAITING_BANK_CONFIRMATION": "بانتظار تأكيد التحويل البنكي التلقائي",
           "ORDER_PLACED": "أنشأنا الطلب بنجاح",
-          "ORDER_CONFIRMED": "تم تأكيد الطلب",
+          "ORDER_CONFIRMED": "أكدنا الطلب",
           "ORDER_PICKED_UP": "استلم المندوب الطلب",
-          "ORDER_DELIVERED": "تم توصيل الطلب بنجاح",
+          "ORDER_DELIVERED": "سلّمنا الطلب بنجاح",
           "SEARCHING_DRIVERS": "نبحث عن مندوبين",
           "NO_DRIVERS": "ما فيه مناديب متاحين"
         }
@@ -704,7 +704,7 @@
       "BRANCH_HITTIN": "حطين",
       "CANCEL_ORDER": "إلغاء الطلب",
       "LOG_DRIVER_REASSIGNED": "رجّعنا ضبط المندوب يدوياً",
-      "LOG_ORDER_CANCELLED": "تم إلغاء الطلب يدوياً",
+      "LOG_ORDER_CANCELLED": "ألغينا الطلب يدويًا",
       "ACTIVE_CASE_NOTICE": "يوجد ملف تشغيلي قائم بالفعل. استخدم بطاقة مسار المعالجة لحله أو إغلاقه قبل فتح ملف جديد.",
       "CANCELLATION": {
         "BANNER_TITLE": "الطلب ملغي",
@@ -808,7 +808,7 @@
         "NOTIFY_MERCHANT": "إشعار التاجر",
         "NOTIFY_DRIVER": "إشعار المندوب",
         "CUSTOMER_MESSAGE_LABEL": "رسالة مخصصة للعميل",
-        "CUSTOMER_MESSAGE_PLACEHOLDER": "نعتذر، تم إلغاء طلبك بسبب...",
+        "CUSTOMER_MESSAGE_PLACEHOLDER": "نعتذر، ألغينا طلبك بسبب...",
         "INTERNAL_NOTE_LABEL": "ملاحظة داخلية للأدمن فقط",
         "INTERNAL_NOTE_PLACEHOLDER": "أضف ملاحظة توثيقية للإلغاء...",
         "CONFIRM": "تأكيد الإلغاء"
@@ -817,9 +817,9 @@
       "FLAG_ISSUE": "تعليم كمشكلة",
       "LOG_REFUND_OPENED": "أنشأنا طلب استرجاع",
       "LOG_REFUND_DRAFT": "حفظنا طلب الاسترجاع كمسودة",
-      "LOG_DISPUTE_OPENED": "تم فتح نزاع من تفاصيل الطلب",
+      "LOG_DISPUTE_OPENED": "فتحنا نزاع من تفاصيل الطلب",
       "LOG_DISPUTE_DRAFT": "حفظنا النزاع كمسودة",
-      "LOG_ISSUE_FLAGGED": "تم تعليم الطلب كمشكلة",
+      "LOG_ISSUE_FLAGGED": "علّمنا الطلب كمشكلة",
       "LOG_ISSUE_NOTE_SAVED": "حفظنا ملاحظة المشكلة",
       "REFUND_MODAL": {
         "TITLE": "فتح استرجاع",
@@ -966,7 +966,7 @@
         "ORDER_ID": "رقم الطلب",
         "MERCHANT": "التاجر",
         "PAYMENT_STATUS": "حالة الدفع",
-        "PAYMENT_STATUS_VALUE": "تم الدفع (ظاهر)",
+        "PAYMENT_STATUS_VALUE": "مدفوع (ظاهر)",
         "DELIVERY_STATUS": "حالة التوصيل",
         "CURRENT_STATUS": "الحالة الحالية",
         "NEW_STATUS": "الحالة الجديدة",
@@ -1006,7 +1006,7 @@
         "NOT_REQUIRED": "غير مطلوب",
         "PENDING": "قيد الانتظار",
         "SEARCHING": "نبحث",
-        "ASSIGNED": "تم التعيين",
+        "ASSIGNED": "مُعيّن",
         "COMPLETED": "مكتمل",
         "FAILED": "فشل",
         "CANCELLED": "ملغي"
@@ -1029,7 +1029,7 @@
       "NEW": "جديد",
       "IN_PROGRESS": "قيد التنفيذ",
       "OUT_FOR_DELIVERY": "خرج للتوصيل",
-      "DELIVERED": "تم التوصيل",
+      "DELIVERED": "مسلّم",
       "COMPLETED": "مكتمل",
       "CANCELLED": "ملغي",
       "PENDING": "معلق"
@@ -1041,16 +1041,16 @@
       "REFUNDED": "مسترجع",
       "PARTIALLY_REFUNDED": "استرجاع جزئي",
       "COD_PENDING": "تحصيل عند التسليم",
-      "SETTLED": "تمت التسوية"
+      "SETTLED": "مسوّى"
     },
     "FULFILLMENT_STATUS": {
       "QUEUED": "بانتظار التنفيذ",
       "PREPARING": "قيد التجهيز",
       "READY_FOR_PICKUP": "جاهز للاستلام",
-      "DRIVER_ASSIGNED": "تم تعيين مندوب",
-      "PICKED_UP": "تم الاستلام",
+      "DRIVER_ASSIGNED": "مُعيّن له مندوب",
+      "PICKED_UP": "مستلم",
       "ON_ROUTE": "في الطريق",
-      "DELIVERED": "تم التسليم",
+      "DELIVERED": "مسلّم",
       "FAILED": "فشل التنفيذ",
       "CANCELLED": "أوقف التنفيذ"
     },
@@ -1136,7 +1136,7 @@
       "INVALID_ID": "رقم الطلب غير صالح."
     },
     "STATUS_READY_FOR_PICKUP": "جاهز للاستلام",
-    "STATUS_DELIVERED": "تم التسليم"
+    "STATUS_DELIVERED": "مسلّم"
   },
   "SUPPORT_ADMIN": {
     "TITLE": "مركز الدعم",
@@ -1155,8 +1155,8 @@
       "WAITING_VENDOR": "بانتظار التاجر",
       "DRIVER": "دعم السواق",
       "LEGACY": "دعم قديم",
-      "RESOLVED": "تم الحل",
-      "SLA_BREACHED": "تم تجاوز SLA",
+      "RESOLVED": "محلولة",
+      "SLA_BREACHED": "SLA متجاوز",
       "AVG_RESOLUTION": "متوسط زمن الحل",
       "HOURS": "ساعة"
     },
@@ -1181,7 +1181,7 @@
       "OPEN": "مفتوحة",
       "IN_PROGRESS": "تحت المعالجة",
       "WAITING_VENDOR": "بانتظار التاجر",
-      "RESOLVED": "تم الحل"
+      "RESOLVED": "محلولة"
     },
     "PRIORITY": {
       "CRITICAL": "حرجة",
@@ -1224,7 +1224,7 @@
     },
     "LEGACY_TABLE": {
       "TITLE": "دعم الطلبات القديم",
-      "SUBTITLE": "الشكاوى القديمة تظهر هنا كسجل دعم وليست نزاعات نشطة.",
+      "SUBTITLE": "الشكاوى القديمة تظهر هنا كسجل دعم، مو كنزاعات نشطة.",
       "ORDER": "الطلب",
       "CUSTOMER": "العميل",
       "VENDOR": "التاجر"
@@ -1244,7 +1244,7 @@
       "CLOSED_BANNER_WARNING": "تنبيه: هذه التذكرة مغلقة. لازم تغيير الحالة لتتمكن من إرسال ردود أو تعيين التذكرة."
     },
     "FEEDBACK": {
-      "ASSIGNED": "تم تعيين التذكرة لك.",
+      "ASSIGNED": "عيّنا التذكرة لك.",
       "REPLY_SENT": "أرسلنا الرد بنجاح.",
       "STATUS_UPDATED": "حدّثنا حالة التذكرة.",
       "ACTION_FAILED": "ما قدرنا تنفيذ الإجراء. جرّب مرة ثانية."

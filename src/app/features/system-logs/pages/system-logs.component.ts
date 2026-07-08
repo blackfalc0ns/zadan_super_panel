@@ -364,9 +364,9 @@ export class SystemLogsComponent implements OnInit {
 
  const opMap: Record<string, string> = {
  'created or triggered': 'أنشأنا أو شغّلنا',
- 'updated': 'تم التحديث في',
- 'deleted': 'تم الحذف من',
- 'processed': 'تمت المعالجة في'
+ 'updated': 'تحدّث في',
+ 'deleted': 'انحذف من',
+ 'processed': 'تعالج في'
  };
 
  const opAr = opMap[operation.toLowerCase()] || operation;

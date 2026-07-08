@@ -304,7 +304,7 @@ export class EmailCenterComponent implements OnInit {
  );
  } else if (result.status === 'skipped') {
  this.toastService.warning(
- result.failureReason ?? 'تم تسجيل العملية بدون إرسال فعلي.',
+ result.failureReason ?? 'سجلنا العملية بدون إرسال فعلي.',
  title
  );
  } else {

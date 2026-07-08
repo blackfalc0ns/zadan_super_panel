@@ -807,7 +807,7 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
  this.isDeletingVariant = false;
  this.deletingVariantIndexes.delete(index);
  this.deleteVariantErrorMessage = this.activeLang === 'ar'
- ? 'ما قدرنا حذف هذا الحجم حاليا.'
+ ? 'ما قدرنا نحذف هذا الحجم الحين.'
  : 'Unable to delete this size right now.';
  }
  });

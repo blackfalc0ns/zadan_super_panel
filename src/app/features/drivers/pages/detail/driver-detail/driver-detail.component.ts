@@ -229,7 +229,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
  this.decideSelectedApproval(
  () => this.adminAccessApiService.approveApproval(this.selectedApproval!.id, this.approvalDecisionNote),
- this.isRTL ? 'تم اعتماد تعديل المندوب وتطبيقه' : 'Driver change approved and applied'
+ this.isRTL ? 'اعتمدنا تعديل المندوب وطبقناه' : 'Driver change approved and applied'
  );
  }
 
@@ -661,7 +661,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
  const pendingApprovalsSummary = this.driverApprovals.length > 0
  ? (this.isRTL
- ? `يوجد ${this.driverApprovals.length} تعديل معلق لازم اعتماده من قسم "تعديلات معلقة" قبل اعتماد الحساب. `
+ ? `فيه ${this.driverApprovals.length} تعديل معلق لازم تعتمده من قسم "تعديلات معلقة" قبل اعتماد الحساب. `
  : `${this.driverApprovals.length} pending profile change(s) must be approved in the pending changes section before final approval. `)
  : '';
 
