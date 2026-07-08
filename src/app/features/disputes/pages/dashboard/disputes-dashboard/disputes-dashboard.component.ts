@@ -511,7 +511,7 @@ export class DisputesDashboardComponent implements OnInit {
  next: (dispute) => {
  this.formDrafts.rejection = null;
  this.closeRejectionModal();
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم رفض الحالة بنجاح.' : 'Support case rejected successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'رفضنا الحالة بنجاح.' : 'Support case rejected successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to reject support case.')
  });
@@ -539,7 +539,7 @@ export class DisputesDashboardComponent implements OnInit {
  next: (dispute) => {
  this.formDrafts.requestInfo = null;
  this.closeRequestInfoModal();
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم إرسال طلب المعلومات الإضافية بنجاح.' : 'Additional information request sent successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'أرسلنا طلب المعلومات الإضافية بنجاح.' : 'Additional information request sent successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to request additional evidence.')
  });
@@ -1429,7 +1429,7 @@ export class DisputesDashboardComponent implements OnInit {
  return {
  type,
  title: this.isRtl ? 'إضافة ملاحظة' : 'Add note',
- subtitle: this.isRtl ? 'هذه الملاحظة داخلية ويتم حفظها داخل مسار الحالة.' : 'This note is internal and saved to the case timeline.',
+ subtitle: this.isRtl ? 'هذه الملاحظة داخلية ونحفظها داخل مسار الحالة.' : 'This note is internal and saved to the case timeline.',
  icon: 'note_add',
  confirmLabel: this.isRtl ? 'حفظ الملاحظة' : 'Save note',
  confirmClass: 'bg-slate-900 hover:bg-slate-800',
@@ -1625,7 +1625,7 @@ export class DisputesDashboardComponent implements OnInit {
  const audience = this.resolveAudienceForSelectedDispute();
  this.disputesService.addPublicMessage(this.selectedDispute.id, message, audience).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: (dispute) => {
- this.handleMutationSuccess(dispute, this.isRtl ? 'تم إرسال الرسالة بنجاح.' : 'Message sent successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'أرسلنا الرسالة بنجاح.' : 'Message sent successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to send public message.')
  });
@@ -1663,7 +1663,7 @@ export class DisputesDashboardComponent implements OnInit {
  private submitReopenCase(note?: string): void {
  this.disputesService.reopenCase(this.selectedDispute.id, note).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: (dispute) => {
- this.handleMutationSuccess(dispute, this.isRtl ? 'تمت إعادة فتح الحالة بنجاح.' : 'Support case reopened successfully.');
+ this.handleMutationSuccess(dispute, this.isRtl ? 'أعدنا فتح الحالة بنجاح.' : 'Support case reopened successfully.');
  },
  error: (error) => this.handleMutationError(error, 'Failed to reopen case.')
  });

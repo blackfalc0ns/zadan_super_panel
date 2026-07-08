@@ -439,7 +439,7 @@ export class VendorOverviewComponent {
  case 'verified':
  return this.localize('الحساب معتمد', 'Account verified');
  case 'rejected':
- return this.localize('تم رفض الملف', 'The file was rejected');
+ return this.localize('رفضنا الملف', 'The file was rejected');
  case 'suspended':
  return this.localize('الحساب موقوف', 'Account is suspended');
  default:
@@ -481,7 +481,7 @@ export class VendorOverviewComponent {
  );
  case 'changes_requested':
  return this.localize(
- 'تم إرسال ملاحظات للتاجر، وما زالت المتابعة مطلوبة قبل إعادة التقييم.',
+ 'أرسلنا ملاحظات للتاجر، ولسه المتابعة مطلوبة قبل إعادة التقييم.',
  'Feedback has already been sent to the vendor, and follow-up is needed before reassessment.'
  );
  case 'verified':
@@ -491,7 +491,7 @@ export class VendorOverviewComponent {
  );
  case 'rejected':
  return this.localize(
- 'تم رفض الملف، ويُفضّل مراجعة سبب القرار قبل أي خطوة لاحقة.',
+ 'رفضنا الملف، ويُفضّل مراجعة سبب القرار قبل أي خطوة لاحقة.',
  'The file was rejected, so the decision reason should be reviewed before taking any next step.'
  );
  case 'suspended':
@@ -535,7 +535,7 @@ export class VendorOverviewComponent {
 
  get emptyOrdersMessage(): string {
  return this.localize(
- 'عند وصول طلبات جديدة لهذا التاجر ستظهر هنا مع الحالة والقيمة.',
+ 'عند وصول طلبات جديدة لهذا التاجر بتظهر هنا مع الحالة والقيمة.',
  'Once new orders arrive for this vendor, they will appear here with status and amount.'
  );
  }

@@ -421,7 +421,7 @@ export class CustomerDetailComponent implements OnInit {
  if (nextCustomer) {
  this.customer = nextCustomer;
  this.toastService.success(
- this.translate.currentLang === 'ar' ? 'تم تحديث حالة المراجعة بنجاح' : 'Review status updated successfully',
+ this.translate.currentLang === 'ar' ? 'حدّثنا حالة المراجعة بنجاح' : 'Review status updated successfully',
  this.translate.currentLang === 'ar' ? 'إجراءات الأدمن' : 'Admin Actions'
  );
  }
@@ -440,7 +440,7 @@ export class CustomerDetailComponent implements OnInit {
  if (nextCustomer) {
  this.customer = nextCustomer;
  this.toastService.success(
- this.translate.currentLang === 'ar' ? 'تم تحديث حالة الحساب بنجاح' : 'Account status updated successfully',
+ this.translate.currentLang === 'ar' ? 'حدّثنا حالة الحساب بنجاح' : 'Account status updated successfully',
  this.translate.currentLang === 'ar' ? 'إجراءات الأدمن' : 'Admin Actions'
  );
  }
@@ -486,7 +486,7 @@ export class CustomerDetailComponent implements OnInit {
  if (nextCustomer) {
  this.customer = nextCustomer;
  this.toastService.success(
- this.translate.currentLang === 'ar' ? 'تم حفظ الملاحظة الداخلية بنجاح' : 'Internal note saved successfully',
+ this.translate.currentLang === 'ar' ? 'حفظنا الملاحظة الداخلية بنجاح' : 'Internal note saved successfully',
  this.translate.currentLang === 'ar' ? 'إجراءات الأدمن' : 'Admin Actions'
  );
  }
@@ -633,7 +633,7 @@ export class CustomerDetailComponent implements OnInit {
  private showNotificationResult(response: AdminCustomerNotificationResponse): void {
  if (response.pushSent) {
  this.toastService.success(
- 'تم إرسال إشعار الموبايل التجريبي بنجاح.',
+ 'أرسلنا إشعار الموبايل التجريبي بنجاح.',
  'إشعارات العميل'
  );
  return;
@@ -641,14 +641,14 @@ export class CustomerDetailComponent implements OnInit {
 
  if (response.pushSkipped) {
  this.toastService.warning(
- response.pushReason ?? 'تم إنشاء إشعار داخلي فقط بدون Push.',
+ response.pushReason ?? 'أنشأنا إشعار داخلي فقط بدون Push.',
  'إشعارات العميل'
  );
  return;
  }
 
  this.toastService.warning(
- response.pushReason ?? 'تم تنفيذ الطلب لكن لم يتم تأكيد إرسال Push.',
+ response.pushReason ?? 'نفّذنا الطلب، لكن ما تأكد إرسال Push.',
  'إشعارات العميل'
  );
  }

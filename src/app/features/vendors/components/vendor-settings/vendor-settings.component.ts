@@ -165,11 +165,11 @@ export class VendorSettingsComponent {
  get dialogDescription(): string {
  switch (this.activeDialog) {
  case 'reset-password':
- return this.text('أدخل كلمة مرور جديدة للتاجر. سيتم تسجيل العملية في سجل النشاط.', 'Enter a new vendor password. The action will be written to the activity log.');
+ return this.text('أدخل كلمة مرور جديدة للتاجر. بنسجّل العملية في سجل النشاط.', 'Enter a new vendor password. The action will be written to the activity log.');
  case 'suspend-account':
  return this.text('أضف سبب واضح لتعليق الحساب حتى يظهر في السجل التشغيلي.', 'Add a clear suspension reason so it appears in the activity log.');
  case 'lock-login':
- return this.text('أدخل سبب قفل الدخول. سيتم منع التاجر من الدخول حتى يتم فتحه.', 'Enter the lock reason. The vendor will be blocked until login is unlocked.');
+ return this.text('أدخل سبب قفل الدخول. بنمنع التاجر من الدخول لين ينفتح الحساب.', 'Enter the lock reason. The vendor will be blocked until login is unlocked.');
  case 'archive-account':
  return this.text('أدخل سبب الأرشفة. سيبقى السجل محفوظا لكن الحساب سيتوقف تشغيليا.', 'Enter the archive reason. The record stays preserved, but the account is operationally stopped.');
  default:
@@ -288,7 +288,7 @@ export class VendorSettingsComponent {
  }
 
  if (this.isCrExpired) {
- return this.text('الحساب موقوف تلقائيًا بسبب انتهاء السجل التجاري. فضلاً راجع وتحديث تاريخ انتهاء السجل أولاً.', 'The account is automatically suspended because the Commercial Registration has expired. Please review and update the CR expiry date first.');
+ return this.text('الحساب موقوف تلقائيًا بسبب انتهاء السجل التجاري. راجع وحدّث تاريخ انتهاء السجل أولاً.', 'The account is automatically suspended because the Commercial Registration has expired. Please review and update the CR expiry date first.');
  }
 
  if (this.isAccountSuspended) {
@@ -300,8 +300,8 @@ export class VendorSettingsComponent {
 
  get storeAvailabilityBadgeLabel(): string {
  return this.isStoreOffline
- ? this.text('أوفلاين في التطبيق', 'Offline in app')
- : this.text('أونلاين في التطبيق', 'Online in app');
+ ? this.text('مخفي مؤقتًا في التطبيق', 'Offline in app')
+ : this.text('ظاهر في التطبيق', 'Online in app');
  }
 
  get isStoreOffline(): boolean {
@@ -375,7 +375,7 @@ export class VendorSettingsComponent {
  this.vendorDetailFacade.resetVendorPasswordRequest(primaryValue).pipe(take(1)).subscribe({
  next: () => {
  this.cdr.markForCheck();
- this.setSuccess(this.text('تمت إعادة ضبط كلمة المرور بنجاح.', 'Password reset succeeded.'));
+ this.setSuccess(this.text('رجّعنا ضبط كلمة المرور بنجاح.', 'Password reset succeeded.'));
  this.dialogSubmitting = false;
  this.closeDialog();
  },
@@ -458,7 +458,7 @@ export class VendorSettingsComponent {
  };
 
  this.vendorDetailFacade.updateVendorStoreAvailabilityStateRequest(payload).pipe(take(1)).subscribe({
- next: () => this.setSuccess(this.text('تم حفظ حالة ظهور المتجر في التطبيق بنجاح.', 'Store app visibility was saved successfully.')),
+ next: () => this.setSuccess(this.text('حفظنا حالة ظهور المتجر في التطبيق بنجاح.', 'Store app visibility was saved successfully.')),
  error: () => {
  this.cdr.markForCheck();
  this.setPageError(this.vendorDetailFacade.mutationError || this.text('ما قدرنا حفظ حالة ظهور المتجر الحين.', 'Unable to save store visibility right now.'));
@@ -490,7 +490,7 @@ export class VendorSettingsComponent {
  smsNotificationsEnabled: this.smsNotificationsEnabled,
  newOrdersNotificationsEnabled: this.newOrdersNotificationsEnabled
  }).pipe(take(1)).subscribe({
- next: () => this.setSuccess(this.text('تم حفظ إعدادات الإشعارات بنجاح.', 'Notification settings were saved successfully.')),
+ next: () => this.setSuccess(this.text('حفظنا إعدادات الإشعارات بنجاح.', 'Notification settings were saved successfully.')),
  error: () => {
  this.cdr.markForCheck();
  this.setPageError(this.vendorDetailFacade.mutationError || this.text('ما قدرنا حفظ إعدادات الإشعارات الحين.', 'Unable to save vendor notification settings right now.'));
@@ -515,7 +515,7 @@ export class VendorSettingsComponent {
  minimumOrderAmount: this.minimumOrderAmount,
  preparationTimeMinutes: this.preparationTimeMinutes
  }).pipe(take(1)).subscribe({
- next: () => this.setSuccess(this.text('تم حفظ إعدادات التشغيل بنجاح.', 'Operations settings were saved successfully.')),
+ next: () => this.setSuccess(this.text('حفظنا إعدادات التشغيل بنجاح.', 'Operations settings were saved successfully.')),
  error: () => {
  this.cdr.markForCheck();
  this.setPageError(this.vendorDetailFacade.mutationError || this.text('ما قدرنا حفظ إعدادات التشغيل الحين.', 'Unable to save vendor operations settings right now.'));
@@ -535,7 +535,7 @@ export class VendorSettingsComponent {
 
  if (this.commissionRate === null || this.commissionRate === undefined || this.commissionRate < 0 || this.commissionRate > 100) {
  this.pageError = this.text(
- 'فضلاً إدخال نسبة عمولة صالحة بين 0 و 100.',
+ 'أدخل نسبة عمولة صالحة بين 0 و 100.',
  'Please enter a valid commission rate between 0 and 100.'
  );
  this.cdr.markForCheck();
@@ -545,7 +545,7 @@ export class VendorSettingsComponent {
  this.clearFeedback();
  this.commissionSubmitting = true;
  this.vendorDetailFacade.updateVendorCommissionRateRequest(this.commissionRate).pipe(take(1)).subscribe({
- next: () => this.setSuccess(this.text('تم حفظ نسبة العمولة بنجاح.', 'Commission rate was saved successfully.')),
+ next: () => this.setSuccess(this.text('حفظنا نسبة العمولة بنجاح.', 'Commission rate was saved successfully.')),
  error: () => {
  this.cdr.markForCheck();
  this.setPageError(this.vendorDetailFacade.mutationError || this.text('ما قدرنا حفظ نسبة العمولة الحين.', 'Unable to save commission rate right now.'));
@@ -594,7 +594,7 @@ export class VendorSettingsComponent {
  this.clearFeedback();
  this.dialogSubmitting = true;
  this.vendorDetailFacade.reactivateVendorAccountRequest().pipe(take(1)).subscribe({
- next: () => this.setSuccess(this.text('تمت إعادة تشغيل الحساب بنجاح.', 'Vendor account reactivated successfully.')),
+ next: () => this.setSuccess(this.text('رجّعنا تشغيل الحساب بنجاح.', 'Vendor account reactivated successfully.')),
  error: () => {
  this.cdr.markForCheck();
  this.setPageError(this.vendorDetailFacade.mutationError || this.text('ما قدرنا نعيد تشغيل الحساب الحين.', 'Unable to reactivate the vendor account right now.'));

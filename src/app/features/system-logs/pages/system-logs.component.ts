@@ -363,7 +363,7 @@ export class SystemLogsComponent implements OnInit {
  const [_, operation, module, sourceApp, target, statusCode] = match;
 
  const opMap: Record<string, string> = {
- 'created or triggered': 'تم إنشاء أو تشغيل',
+ 'created or triggered': 'أنشأنا أو شغّلنا',
  'updated': 'تم التحديث في',
  'deleted': 'تم الحذف من',
  'processed': 'تمت المعالجة في'

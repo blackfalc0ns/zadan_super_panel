@@ -1278,7 +1278,7 @@ export class AdminSupportCenterComponent implements OnInit {
  this.formDrafts.rejection = null;
  this.closeRejectionModal();
  this.applySupportCaseUpdate(updated);
- this.showCustomToast(this.isRtl ? 'تم رفض الحالة بنجاح.' : 'Support case rejected successfully.');
+ this.showCustomToast(this.isRtl ? 'رفضنا الحالة بنجاح.' : 'Support case rejected successfully.');
  },
  error: (err) => {
  this.cdr.markForCheck();
@@ -1313,7 +1313,7 @@ export class AdminSupportCenterComponent implements OnInit {
  this.formDrafts.requestInfo = null;
  this.closeRequestInfoModal();
  this.applySupportCaseUpdate(updated);
- this.showCustomToast(this.isRtl ? 'تم إرسال طلب المعلومات الإضافية بنجاح.' : 'Additional information request sent successfully.');
+ this.showCustomToast(this.isRtl ? 'أرسلنا طلب المعلومات الإضافية بنجاح.' : 'Additional information request sent successfully.');
  },
  error: (err) => {
  this.cdr.markForCheck();
@@ -1349,7 +1349,7 @@ export class AdminSupportCenterComponent implements OnInit {
  errorMessage = this.isRtl ? 'فشل حل الحالة.' : 'Failed to resolve support case.';
  } else if (actionType === 'reopen') {
  obs$ = this.supportCasesService.reopenCase(activeCase.id, value.primaryValue);
- successMessage = this.isRtl ? 'تمت إعادة فتح الحالة بنجاح.' : 'Support case reopened successfully.';
+ successMessage = this.isRtl ? 'أعدنا فتح الحالة بنجاح.' : 'Support case reopened successfully.';
  errorMessage = this.isRtl ? 'فشل إعادة فتح الحالة.' : 'Failed to reopen support case.';
  } else if (actionType === 'add_note') {
  obs$ = this.supportCasesService.addNote(activeCase.id, value.primaryValue);
@@ -1358,7 +1358,7 @@ export class AdminSupportCenterComponent implements OnInit {
  } else {
  const role = this.activeTab === 'driver' ? 'driver' : 'customer';
  obs$ = this.supportCasesService.addPublicMessage(activeCase.id, value.primaryValue, role);
- successMessage = this.isRtl ? 'تم إرسال الرسالة بنجاح.' : 'Message sent successfully.';
+ successMessage = this.isRtl ? 'أرسلنا الرسالة بنجاح.' : 'Message sent successfully.';
  errorMessage = this.isRtl ? 'ما قدرنا نرسل الرسالة.' : 'Failed to send message.';
  }
 
@@ -1471,7 +1471,7 @@ export class AdminSupportCenterComponent implements OnInit {
  return {
  type,
  title: this.isRtl ? 'إضافة ملاحظة' : 'Add note',
- subtitle: this.isRtl ? 'هذه الملاحظة داخلية ويتم حفظها داخل مسار الحالة.' : 'This note is internal and saved to the case timeline.',
+ subtitle: this.isRtl ? 'هذه الملاحظة داخلية ونحفظها داخل مسار الحالة.' : 'This note is internal and saved to the case timeline.',
  icon: 'note_add',
  confirmLabel: this.isRtl ? 'حفظ الملاحظة' : 'Save note',
  confirmClass: 'bg-slate-900 hover:bg-slate-800',

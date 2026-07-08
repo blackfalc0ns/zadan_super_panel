@@ -81,7 +81,7 @@
  <p class="text-[13px] font-extrabold text-slate-900">{{ isRTL ? 'ظهور المتجر في تطبيق العميل' : 'Store visibility in customer app' }}</p>
  <p class="text-[11px] font-medium leading-relaxed text-slate-500 max-w-xl">
  {{ isRTL
-                    ? 'عند تحويل المتجر إلى أوفلاين ستختفي كل منتجاته من التطبيق حتى يعود أونلاين مرة أخرى.'
+                    ? 'عند إخفاء المتجر مؤقتًا، بتختفي كل منتجاته من التطبيق لين ترجع ظهوره.'
                     : 'When the store is switched offline, all of its products are hidden from the customer app until it is turned online again.' }}
  </p>
  </div>
@@ -103,7 +103,7 @@
  type="button">
  <span class="inline-flex items-center gap-1.5 text-[13px] font-extrabold">
  <span class="material-symbols-outlined text-[18px] text-emerald-600">check_circle</span>
- {{ isRTL ? 'أونلاين (نشط)' : 'Online (Active)' }}
+ {{ isRTL ? 'ظاهر (نشط)' : 'Online (Active)' }}
  </span>
  <span class="text-[11px] font-medium text-slate-500 leading-relaxed text-start">{{ isRTL ? 'إظهار المنتجات واستقبال الطلبات.' : 'Show products and keep orders flowing.' }}</span>
  </button>
@@ -115,7 +115,7 @@
  type="button">
  <span class="inline-flex items-center gap-1.5 text-[13px] font-extrabold">
  <span class="material-symbols-outlined text-[18px] text-rose-600">cancel</span>
- {{ isRTL ? 'أوفلاين (مخفي)' : 'Offline (Hidden)' }}
+ {{ isRTL ? 'مخفي مؤقتًا (مخفي)' : 'Offline (Hidden)' }}
  </span>
  <span class="text-[11px] font-medium text-slate-500 leading-relaxed text-start">{{ isRTL ? 'إخفاء كل المنتجات من التطبيق مؤقتًا.' : 'Temporarily hide all products from the app.' }}</span>
  </button>
@@ -141,7 +141,7 @@
  class="vendor-settings-save-btn shrink-0"
  type="button">
  <span class="material-symbols-outlined text-[18px]">publish</span>
- {{ storeAvailabilitySubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ حالة الظهور' : 'Save visibility') }}
+ {{ storeAvailabilitySubmitting ? (isRTL ? 'نحفظ...' : 'Saving...') : (isRTL ? 'حفظ حالة الظهور' : 'Save visibility') }}
  </button>
  </div>
  </div>
@@ -182,7 +182,7 @@
  class="vendor-settings-save-btn w-full sm:w-auto"
  type="button">
  <span class="material-symbols-outlined text-[18px]">save</span>
- {{ operationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ الضبط' : 'Save controls') }}
+ {{ operationsSubmitting ? (isRTL ? 'نحفظ...' : 'Saving...') : (isRTL ? 'حفظ الضبط' : 'Save controls') }}
  </button>
  </div>
  </article>
@@ -221,7 +221,7 @@
  class="vendor-settings-save-btn w-full sm:w-auto"
  type="button">
  <span class="material-symbols-outlined text-[18px]">percent</span>
- {{ commissionSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ نسبة العمولة' : 'Save commission rate') }}
+ {{ commissionSubmitting ? (isRTL ? 'نحفظ...' : 'Saving...') : (isRTL ? 'حفظ نسبة العمولة' : 'Save commission rate') }}
  </button>
  </div>
  </article>
@@ -282,7 +282,7 @@
  class="vendor-settings-save-btn w-full"
  type="button">
  <span class="material-symbols-outlined text-[18px]">notifications</span>
- {{ notificationsSubmitting ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ قنوات التنبيه' : 'Save notification settings') }}
+ {{ notificationsSubmitting ? (isRTL ? 'نحفظ...' : 'Saving...') : (isRTL ? 'حفظ قنوات التنبيه' : 'Save notification settings') }}
  </button>
  </div>
  </article>

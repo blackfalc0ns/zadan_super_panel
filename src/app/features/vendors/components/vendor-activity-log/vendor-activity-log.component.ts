@@ -521,19 +521,19 @@ export class VendorActivityLogComponent {
  // ENGLISH to ARABIC translations
  const englishToArabicMap: Record<string, string> = {
  'Vendor review started.': 'بدأت مراجعة التاجر.',
- 'Vendor account reactivated and returned to active status.': 'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.',
+ 'Vendor account reactivated and returned to active status.': 'أعدنا تفعيل حساب التاجر ورجعناه للحالة النشطة.',
  'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
- 'Vendor password was reset by an administrator and all active sessions were revoked.': 'تمت إعادة ضبط كلمة مرور التاجر بواسطة الأدمن وتم إلغاء جميع الجلسات النشطة.',
- 'Please re-upload the required legal documents and confirm the latest vendor information.': 'فضلاً إعادة رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
- 'Vendor updated banking and payout setup from Vendor Portal.': 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.',
- 'Vendor updated store profile details from Vendor Portal.': 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.',
- 'Vendor updated address and contact location details from Vendor Portal.': 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.',
- 'Vendor updated operating hours from Vendor Portal.': 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.',
- 'Vendor updated owner information from Vendor Portal.': 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.',
- 'Vendor updated notification preferences from Vendor Portal.': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
- 'Vendor updated operational settings from Vendor Portal.': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
- 'Vendor updated legal and compliance information from Vendor Portal.': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
- 'Vendor submitted the profile and required documents for compliance review.': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
+ 'Vendor password was reset by an administrator and all active sessions were revoked.': 'أعادت الإدارة ضبط كلمة مرور التاجر وأنهت كل الجلسات النشطة.',
+ 'Please re-upload the required legal documents and confirm the latest vendor information.': 'أعد رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
+ 'Vendor updated banking and payout setup from Vendor Portal.': 'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.',
+ 'Vendor updated store profile details from Vendor Portal.': 'حدّث التاجر بيانات المتجر من بوابة التاجر.',
+ 'Vendor updated address and contact location details from Vendor Portal.': 'حدّث التاجر بيانات العنوان والموقع من بوابة التاجر.',
+ 'Vendor updated operating hours from Vendor Portal.': 'حدّث التاجر ساعات العمل من بوابة التاجر.',
+ 'Vendor updated owner information from Vendor Portal.': 'حدّث التاجر بيانات المالك من بوابة التاجر.',
+ 'Vendor updated notification preferences from Vendor Portal.': 'حدّث التاجر تفضيلات الإشعارات من بوابة التاجر.',
+ 'Vendor updated operational settings from Vendor Portal.': 'حدّث التاجر إعدادات التشغيل من بوابة التاجر.',
+ 'Vendor updated legal and compliance information from Vendor Portal.': 'حدّث التاجر البيانات القانونية والامتثال من بوابة التاجر.',
+ 'Vendor submitted the profile and required documents for compliance review.': 'أرسل التاجر الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
  };
 
  if (englishToArabicMap[message]) {
@@ -545,24 +545,24 @@ export class VendorActivityLogComponent {
  if (match) return `تمت الموافقة على التاجر بنسبة عمولة ${match[1]}%.`;
 
  match = message.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
- if (match) return `تم قبول مستند ${docTypeEnToAr[match[1]] || match[1]}.`;
+ if (match) return `قبلنا مستند ${docTypeEnToAr[match[1]] || match[1]}.`;
 
  match = message.match(/^(Commercial|Tax|License|Identity|Bank) document rejected\. (.+)$/);
- if (match) return `تم رفض مستند ${docTypeEnToAr[match[1]] || match[1]}. ${match[2]}`;
+ if (match) return `رفضنا مستند ${docTypeEnToAr[match[1]] || match[1]}. ${match[2]}`;
 
  match = message.match(/^Vendor re-uploaded document\(s\): (.+)\. They are back in the review queue\.$/);
  if (match) {
- return `قام التاجر بإعادة رفع مستند(ات): ${translateDocTypesList(match[1], true)}. تم إرجاعها لقائمة المراجعة.`;
+ return `أعاد التاجر رفع مستند(ات): ${translateDocTypesList(match[1], true)}. رجّعناها لقائمة المراجعة.`;
  }
 
  match = message.match(/^Operations settings updated\. Accept orders: (enabled|disabled), minimum order: (.+), preparation time: (.+) minutes\.$/);
  if (match) {
- return `تم تحديث إعدادات التشغيل. قبول الطلبات: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الحد الأدنى للطلب: ${match[2] === 'not set' ? 'غير محدد' : match[2]}، وقت التحضير: ${match[3] === 'not set' ? 'غير حدد' : match[3]} دقيقة.`;
+ return `حدّثنا إعدادات التشغيل. قبول الطلبات: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الحد الأدنى للطلب: ${match[2] === 'not set' ? 'غير محدد' : match[2]}، وقت التحضير: ${match[3] === 'not set' ? 'غير حدد' : match[3]} دقيقة.`;
  }
 
  match = message.match(/^Notification settings updated\. Email: (enabled|disabled), SMS: (enabled|disabled), new orders: (enabled|disabled), sound: (.+)\.$/);
  if (match) {
- return `تم تحديث إعدادات الإشعارات. البريد: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الرسائل: ${match[2] === 'enabled' ? 'مفعّل' : 'معطّل'}، طلبات جديدة: ${match[3] === 'enabled' ? 'مفعّل' : 'معطّل'}، الصوت: ${match[4]}.`;
+ return `حدّثنا إعدادات الإشعارات. البريد: ${match[1] === 'enabled' ? 'مفعّل' : 'معطّل'}، الرسائل: ${match[2] === 'enabled' ? 'مفعّل' : 'معطّل'}، طلبات جديدة: ${match[3] === 'enabled' ? 'مفعّل' : 'معطّل'}، الصوت: ${match[4]}.`;
  }
 
  // Dynamic field logs -> Arabic
@@ -585,19 +585,19 @@ export class VendorActivityLogComponent {
  // ARABIC to ENGLISH translations
  const arabicToEnglishMap: Record<string, string> = {
  'بدأت مراجعة التاجر.': 'Vendor review started.',
- 'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.': 'Vendor account reactivated and returned to active status.',
+ 'أعدنا تفعيل حساب التاجر ورجعناه للحالة النشطة.': 'Vendor account reactivated and returned to active status.',
  'تم فتح دخول التاجر واستعادة الوصول للحساب.': 'Vendor login was unlocked and account access was restored.',
- 'تمت إعادة ضبط كلمة مرور التاجر بواسطة الأدمن وتم إلغاء جميع الجلسات النشطة.': 'Vendor password was reset by an administrator and all active sessions were revoked.',
- 'فضلاً إعادة رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.': 'Please re-upload the required legal documents and confirm the latest vendor information.',
- 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.': 'Vendor updated banking and payout setup from Vendor Portal.',
- 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.': 'Vendor updated store profile details from Vendor Portal.',
- 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.': 'Vendor updated address and contact location details from Vendor Portal.',
- 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.': 'Vendor updated operating hours from Vendor Portal.',
- 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.': 'Vendor updated owner information from Vendor Portal.',
- 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.': 'Vendor updated notification preferences from Vendor Portal.',
- 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.': 'Vendor updated operational settings from Vendor Portal.',
- 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.': 'Vendor updated legal and compliance information from Vendor Portal.',
- 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.': 'Vendor submitted the profile and required documents for compliance review.'
+ 'أعادت الإدارة ضبط كلمة مرور التاجر وأنهت كل الجلسات النشطة.': 'Vendor password was reset by an administrator and all active sessions were revoked.',
+ 'أعد رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.': 'Please re-upload the required legal documents and confirm the latest vendor information.',
+ 'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.': 'Vendor updated banking and payout setup from Vendor Portal.',
+ 'حدّث التاجر بيانات المتجر من بوابة التاجر.': 'Vendor updated store profile details from Vendor Portal.',
+ 'حدّث التاجر بيانات العنوان والموقع من بوابة التاجر.': 'Vendor updated address and contact location details from Vendor Portal.',
+ 'حدّث التاجر ساعات العمل من بوابة التاجر.': 'Vendor updated operating hours from Vendor Portal.',
+ 'حدّث التاجر بيانات المالك من بوابة التاجر.': 'Vendor updated owner information from Vendor Portal.',
+ 'حدّث التاجر تفضيلات الإشعارات من بوابة التاجر.': 'Vendor updated notification preferences from Vendor Portal.',
+ 'حدّث التاجر إعدادات التشغيل من بوابة التاجر.': 'Vendor updated operational settings from Vendor Portal.',
+ 'حدّث التاجر البيانات القانونية والامتثال من بوابة التاجر.': 'Vendor updated legal and compliance information from Vendor Portal.',
+ 'أرسل التاجر الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.': 'Vendor submitted the profile and required documents for compliance review.'
  };
 
  if (arabicToEnglishMap[message]) {
@@ -608,18 +608,18 @@ export class VendorActivityLogComponent {
  let match = message.match(/^تمت الموافقة على التاجر بنسبة عمولة ([\d.]+)%\.$/);
  if (match) return `Vendor approved with commission rate ${match[1]}%.`;
 
- match = message.match(/^تم قبول مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\.$/);
+ match = message.match(/^قبلنا مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\.$/);
  if (match) return `${docTypeArToEn[match[1]] || match[1]} document approved.`;
 
- match = message.match(/^تم رفض مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\. (.+)$/);
+ match = message.match(/^رفضنا مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\. (.+)$/);
  if (match) return `${docTypeArToEn[match[1]] || match[1]} document rejected. ${match[2]}`;
 
- match = message.match(/^قام التاجر بإعادة رفع مستند\(ات\): (.+)\. تم إرجاعها لقائمة المراجعة\.$/);
+ match = message.match(/^أعاد التاجر رفع مستند\(ات\): (.+)\. رجّعناها لقائمة المراجعة\.$/);
  if (match) {
  return `Vendor re-uploaded document(s): ${translateDocTypesList(match[1], false)}. They are back in the review queue.`;
  }
 
- match = message.match(/^تم تحديث إعدادات التشغيل\. قبول الطلبات: (مفعّل|معطّل)، (الحد الأدنى للطلب|الحد الأدنى): (.+)، وقت التجهيز: (.+) دقيقة\.$/);
+ match = message.match(/^حدّثنا إعدادات التشغيل\. قبول الطلبات: (مفعّل|معطّل)، (الحد الأدنى للطلب|الحد الأدنى): (.+)، وقت التجهيز: (.+) دقيقة\.$/);
  if (match) {
  const acceptOrders = match[1] === 'مفعّل' ? 'enabled' : 'disabled';
  const minOrder = match[3] === 'غير محدد' ? 'not set' : match[3];
@@ -627,7 +627,7 @@ export class VendorActivityLogComponent {
  return `Operations settings updated. Accept orders: ${acceptOrders}, minimum order: ${minOrder}, preparation time: ${prepTime} minutes.`;
  }
 
- match = message.match(/^تم تحديث إعدادات الإشعارات\. البريد: (مفعّل|معطّل)، الرسائل: (مفعّل|معطّل)، طلبات جديدة: (مفعّل|معطّل)، الصوت: (.+)\.$/);
+ match = message.match(/^حدّثنا إعدادات الإشعارات\. البريد: (مفعّل|معطّل)، الرسائل: (مفعّل|معطّل)، طلبات جديدة: (مفعّل|معطّل)، الصوت: (.+)\.$/);
  if (match) {
  const email = match[1] === 'مفعّل' ? 'enabled' : 'disabled';
  const sms = match[2] === 'مفعّل' ? 'enabled' : 'disabled';
@@ -710,7 +710,7 @@ export class VendorActivityLogComponent {
  {
  id: 'created',
  title: this.isRTL ? 'إنشاء الحساب' : 'Account created',
- description: this.isRTL ? 'تم إنشاء سجل التاجر في النظام.' : 'The vendor account record was created in the system.',
+ description: this.isRTL ? 'أنشأنا سجل التاجر في النظام.' : 'The vendor account record was created in the system.',
  date: this.formatDate(vendor.createdAtUtc),
  icon: 'person_add',
  toneClass: 'bg-slate-400'

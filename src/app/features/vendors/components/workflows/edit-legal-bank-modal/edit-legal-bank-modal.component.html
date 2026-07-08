@@ -207,7 +207,7 @@
  <button type="button" (click)="onSave()" [disabled]="!isFormValid || isSaving" class="px-8 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white text-sm font-bold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-98 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-50">
  <span class="flex items-center gap-2">
  <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
- {{ isSaving ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
+ {{ isSaving ? (isRTL ? 'نحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
  </span>
  </button>
  </div>

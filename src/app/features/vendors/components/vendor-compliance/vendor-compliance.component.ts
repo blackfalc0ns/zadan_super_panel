@@ -535,7 +535,7 @@ export class VendorComplianceComponent {
 
  if (this.isCrExpired) {
  return this.localize(
- 'ما تقدر تعيد تفعيل الحساب لأن السجل التجاري منتهي الصلاحية. فضلاً راجع وتعديل بيانات السجل أولاً.',
+ 'ما تقدر تعيد تفعيل الحساب لأن السجل التجاري منتهي الصلاحية. راجع وعدّل بيانات السجل أولاً.',
  'Cannot reactivate the account because the Commercial Registration is expired. Please review and update the CR details first.'
  );
  }
@@ -553,10 +553,10 @@ export class VendorComplianceComponent {
  }
 
  if (!this.complianceReadyForFinalApproval) {
- return this.localize('الاعتماد النهائي سيظهر بعد اعتماد كل المستندات المطلوبة فقط.', 'Final approval becomes available only after all required documents are approved.');
+ return this.localize('الاعتماد النهائي بيظهر بعد اعتماد كل المستندات المطلوبة فقط.', 'Final approval becomes available only after all required documents are approved.');
  }
 
- return this.localize('الإجراء غير متاح في الحالة الحالية.', 'This action is not available in the current state.');
+ return this.localize('الإجراء مو متاح في الحالة الحالية.', 'This action is not available in the current state.');
  }
 
  get actionReasonLabel(): string {
@@ -829,7 +829,7 @@ export class VendorComplianceComponent {
 
  const title = this.localize('رفض القسم', 'Reject section');
  const message = this.localize(
- `سيتم رفض كل العناصر المفتوحة في "${section.title}" وإرجاعها للتاجر للتصحيح. هل تريد المتابعة؟`,
+ `بنرفض كل العناصر المفتوحة في "${section.title}" وإرجاعها للتاجر للتصحيح. هل تريد المتابعة؟`,
  `All open items in "${section.title}" will be rejected and sent back to the vendor. Continue?`
  );
 
@@ -1169,7 +1169,7 @@ export class VendorComplianceComponent {
 
  const title = this.localize('رفض التاجر', 'Reject Vendor');
  const message = this.localize(
- 'سيتم رفض ملف التاجر قبل التشغيل ولن يستخدم هذا الإجراء كبديل للتعليق. هل تريد المتابعة؟',
+ 'بنرفض ملف التاجر قبل التشغيل ولن يستخدم هذا الإجراء كبديل للتعليق. هل تريد المتابعة؟',
  'The vendor onboarding file will be rejected before activation. Do you want to continue?'
  );
  const confirmText = this.localize('رفض التاجر', 'Reject');
@@ -1350,7 +1350,7 @@ export class VendorComplianceComponent {
  ? `${bankName} | SA ${maskedIban.replace(/^SA/i, '').trim()}`
  : iban;
  }
- return this.localize('لم يتم تحديد الحساب البنكي', 'No bank account specified');
+ return this.localize('ما تحدد الحساب البنكي', 'No bank account specified');
 
  case 'license':
  if (vendor.licenseNumber) {
@@ -1518,7 +1518,7 @@ export class VendorComplianceComponent {
  case 'structured':
  return this.localize('بيانات تشغيلية', 'Structured data');
  default:
- return this.localize('غير متاح', 'Unavailable');
+ return this.localize('مو متاح', 'Unavailable');
  }
  }
 
@@ -1585,39 +1585,39 @@ export class VendorComplianceComponent {
 
  const enToAr: Record<string, string> = {
  'Vendor review started.': 'بدأت مراجعة التاجر.',
- 'Vendor account reactivated and returned to active status.': 'تم إعادة تفعيل حساب التاجر وإرجاعه للحالة النشطة.',
+ 'Vendor account reactivated and returned to active status.': 'أعدنا تفعيل حساب التاجر ورجعناه للحالة النشطة.',
  'Vendor login was unlocked and account access was restored.': 'تم فتح دخول التاجر واستعادة الوصول للحساب.',
- 'Vendor password was reset by an administrator and all active sessions were revoked.': 'تمت إعادة ضبط كلمة مرور التاجر بواسطة الأدمن وتم إلغاء جميع الجلسات النشطة.',
- 'Please re-upload the required legal documents and confirm the latest vendor information.': 'فضلاً إعادة رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
- 'Vendor updated banking and payout setup from Vendor Portal.': 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.',
- 'Vendor updated store profile details from Vendor Portal.': 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.',
- 'Vendor updated address and contact location details from Vendor Portal.': 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.',
- 'Vendor updated operating hours from Vendor Portal.': 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.',
- 'Vendor updated owner information from Vendor Portal.': 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.',
- 'Vendor updated notification preferences from Vendor Portal.': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
- 'Vendor updated operational settings from Vendor Portal.': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
- 'Vendor updated legal and compliance information from Vendor Portal.': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
- 'Vendor submitted the profile and required documents for compliance review.': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.',
- 'Vendor updated banking and payout setup from Vendor Portal. ': 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.',
- 'Vendor updated store profile details from Vendor Portal. ': 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.',
- 'Vendor updated address and contact location details from Vendor Portal. ': 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.',
- 'Vendor updated operating hours from Vendor Portal. ': 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.',
- 'Vendor updated owner information from Vendor Portal. ': 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.',
- 'Vendor updated notification preferences from Vendor Portal. ': 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.',
- 'Vendor updated operational settings from Vendor Portal. ': 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.',
- 'Vendor updated legal and compliance information from Vendor Portal. ': 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.',
- 'Vendor submitted the profile and required documents for compliance review. ': 'قام التاجر بإرسال الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
+ 'Vendor password was reset by an administrator and all active sessions were revoked.': 'أعادت الإدارة ضبط كلمة مرور التاجر وأنهت كل الجلسات النشطة.',
+ 'Please re-upload the required legal documents and confirm the latest vendor information.': 'أعد رفع المستندات القانونية المطلوبة وتأكيد أحدث بيانات التاجر.',
+ 'Vendor updated banking and payout setup from Vendor Portal.': 'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.',
+ 'Vendor updated store profile details from Vendor Portal.': 'حدّث التاجر بيانات المتجر من بوابة التاجر.',
+ 'Vendor updated address and contact location details from Vendor Portal.': 'حدّث التاجر بيانات العنوان والموقع من بوابة التاجر.',
+ 'Vendor updated operating hours from Vendor Portal.': 'حدّث التاجر ساعات العمل من بوابة التاجر.',
+ 'Vendor updated owner information from Vendor Portal.': 'حدّث التاجر بيانات المالك من بوابة التاجر.',
+ 'Vendor updated notification preferences from Vendor Portal.': 'حدّث التاجر تفضيلات الإشعارات من بوابة التاجر.',
+ 'Vendor updated operational settings from Vendor Portal.': 'حدّث التاجر إعدادات التشغيل من بوابة التاجر.',
+ 'Vendor updated legal and compliance information from Vendor Portal.': 'حدّث التاجر البيانات القانونية والامتثال من بوابة التاجر.',
+ 'Vendor submitted the profile and required documents for compliance review.': 'أرسل التاجر الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.',
+ 'Vendor updated banking and payout setup from Vendor Portal. ': 'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.',
+ 'Vendor updated store profile details from Vendor Portal. ': 'حدّث التاجر بيانات المتجر من بوابة التاجر.',
+ 'Vendor updated address and contact location details from Vendor Portal. ': 'حدّث التاجر بيانات العنوان والموقع من بوابة التاجر.',
+ 'Vendor updated operating hours from Vendor Portal. ': 'حدّث التاجر ساعات العمل من بوابة التاجر.',
+ 'Vendor updated owner information from Vendor Portal. ': 'حدّث التاجر بيانات المالك من بوابة التاجر.',
+ 'Vendor updated notification preferences from Vendor Portal. ': 'حدّث التاجر تفضيلات الإشعارات من بوابة التاجر.',
+ 'Vendor updated operational settings from Vendor Portal. ': 'حدّث التاجر إعدادات التشغيل من بوابة التاجر.',
+ 'Vendor updated legal and compliance information from Vendor Portal. ': 'حدّث التاجر البيانات القانونية والامتثال من بوابة التاجر.',
+ 'Vendor submitted the profile and required documents for compliance review. ': 'أرسل التاجر الملف الشخصي والمستندات المطلوبة لمراجعة الامتثال.'
  };
 
  const arToEnSpecial: Record<string, string> = {
- 'قام التاجر بتحديث بيانات الحساب البنكي والتسويات من بوابة التاجر.': 'Vendor updated banking and payout setup from Vendor Portal.',
- 'قام التاجر بتحديث بيانات المتجر من بوابة التاجر.': 'Vendor updated store profile details from Vendor Portal.',
- 'قام التاجر بتحديث ساعات العمل من بوابة التاجر.': 'Vendor updated operating hours from Vendor Portal.',
- 'قام التاجر بتحديث البيانات القانونية والامتثال من بوابة التاجر.': 'Vendor updated legal and compliance information from Vendor Portal.',
- 'قام التاجر بتحديث تفضيلات الإشعارات من بوابة التاجر.': 'Vendor updated notification preferences from Vendor Portal.',
- 'قام التاجر بتحديث إعدادات التشغيل من بوابة التاجر.': 'Vendor updated operational settings from Vendor Portal.',
- 'قام التاجر بتحديث بيانات العنوان والموقع من بوابة التاجر.': 'Vendor updated address and contact location details from Vendor Portal.',
- 'قام التاجر بتحديث بيانات المالك من بوابة التاجر.': 'Vendor updated owner information from Vendor Portal.'
+ 'حدّث التاجر بيانات الحساب البنكي والتسويات من بوابة التاجر.': 'Vendor updated banking and payout setup from Vendor Portal.',
+ 'حدّث التاجر بيانات المتجر من بوابة التاجر.': 'Vendor updated store profile details from Vendor Portal.',
+ 'حدّث التاجر ساعات العمل من بوابة التاجر.': 'Vendor updated operating hours from Vendor Portal.',
+ 'حدّث التاجر البيانات القانونية والامتثال من بوابة التاجر.': 'Vendor updated legal and compliance information from Vendor Portal.',
+ 'حدّث التاجر تفضيلات الإشعارات من بوابة التاجر.': 'Vendor updated notification preferences from Vendor Portal.',
+ 'حدّث التاجر إعدادات التشغيل من بوابة التاجر.': 'Vendor updated operational settings from Vendor Portal.',
+ 'حدّث التاجر بيانات العنوان والموقع من بوابة التاجر.': 'Vendor updated address and contact location details from Vendor Portal.',
+ 'حدّث التاجر بيانات المالك من بوابة التاجر.': 'Vendor updated owner information from Vendor Portal.'
  };
 
  const arToEn: Record<string, string> = {...arToEnSpecial };
@@ -1638,8 +1638,8 @@ export class VendorComplianceComponent {
  docTypesReverse[docTypes[key]] = key;
  }
 
- // Check for dynamic profile field reviews (e.g. "تم قبول العنصر step1.businessNameAr.", "Accepted field step1.businessNameAr.")
- const fieldMatch = cleanMsg.match(/^(Accepted field|Rejected field|تم قبول العنصر|تم رفض العنصر)\s+([a-zA-Z0-9_.]+)(?:\.|\b)(.*)$/);
+ // Check for dynamic profile field reviews (e.g. "قبلنا العنصر step1.businessNameAr.", "Accepted field step1.businessNameAr.")
+ const fieldMatch = cleanMsg.match(/^(Accepted field|Rejected field|قبلنا العنصر|رفضنا العنصر)\s+([a-zA-Z0-9_.]+)(?:\.|\b)(.*)$/);
  if (fieldMatch) {
  const actionRaw = fieldMatch[1];
  const fieldCode = fieldMatch[2];
@@ -1650,9 +1650,9 @@ export class VendorComplianceComponent {
 
  if (this.isRTL) {
  if (isApproved) {
- return `تم قبول العنصر ${fieldLabel}.`;
+ return `قبلنا العنصر ${fieldLabel}.`;
  } else {
- return `تم رفض العنصر ${fieldLabel}.${reasonRaw ? ' ' + reasonRaw : ''}`;
+ return `رفضنا العنصر ${fieldLabel}.${reasonRaw ? ' ' + reasonRaw : ''}`;
  }
  } else {
  if (isApproved) {
@@ -1670,13 +1670,13 @@ export class VendorComplianceComponent {
  if (m) return `تمت الموافقة على التاجر بنسبة عمولة ${m[1]}%.`;
 
  m = cleanMsg.match(/^(Commercial|Tax|License|Identity|Bank) document approved\.$/);
- if (m) return `تم قبول مستند ${docTypes[m[1]] || m[1]}.`;
+ if (m) return `قبلنا مستند ${docTypes[m[1]] || m[1]}.`;
 
  m = cleanMsg.match(/^(Commercial|Tax|License|Identity|Bank) document rejected\. (.+)$/);
- if (m) return `تم رفض مستند ${docTypes[m[1]] || m[1]}. ${m[2]}`;
+ if (m) return `رفضنا مستند ${docTypes[m[1]] || m[1]}. ${m[2]}`;
 
  m = cleanMsg.match(/^Vendor re-uploaded document\(s\): (.+)\. They are back in the review queue\.$/);
- if (m) return `قام التاجر بإعادة رفع مستند(ات): ${m[1]}. تم إرجاعها لقائمة المراجعة.`;
+ if (m) return `أعاد التاجر رفع مستند(ات): ${m[1]}. رجّعناها لقائمة المراجعة.`;
 
  return cleanMsg;
  } else {
@@ -1685,13 +1685,13 @@ export class VendorComplianceComponent {
  let m = cleanMsg.match(/^تمت الموافقة على التاجر بنسبة عمولة ([\d.]+)%\.$/);
  if (m) return `Vendor approved with commission rate ${m[1]}%.`;
 
- m = cleanMsg.match(/^تم قبول مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\.$/);
+ m = cleanMsg.match(/^قبلنا مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\.$/);
  if (m) return `${docTypesReverse[m[1]] || m[1]} document approved.`;
 
- m = cleanMsg.match(/^تم رفض مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\. (.+)$/);
+ m = cleanMsg.match(/^رفضنا مستند (السجل التجاري|الضريبة|الرخصة|الهوية|البنك)\. (.+)$/);
  if (m) return `${docTypesReverse[m[1]] || m[1]} document rejected. ${m[2]}`;
 
- m = cleanMsg.match(/^قام التاجر بإعادة رفع مستند\(ات\): (.+)\. تم إرجاعها لقائمة المراجعة\.$/);
+ m = cleanMsg.match(/^أعاد التاجر رفع مستند\(ات\): (.+)\. رجّعناها لقائمة المراجعة\.$/);
  if (m) return `Vendor re-uploaded document(s): ${m[1]}. They are back in the review queue.`;
 
  return cleanMsg;
@@ -1748,13 +1748,13 @@ export class VendorComplianceComponent {
 
  if (reason) {
  return this.localize(
- `فضلاً إعادة رفع ${selectedDocumentLabel} بعد معالجة الملاحظة التالية: ${reason}`,
+ `أعد رفع ${selectedDocumentLabel} بعد معالجة الملاحظة التالية: ${reason}`,
  `Please re-upload ${selectedDocumentLabel} after addressing this note: ${reason}`
  );
  }
 
  return this.localize(
- `فضلاً استكمال أو إعادة رفع ${selectedDocumentLabel} مع التأكد من مطابقة البيانات الحالية.`,
+ `استكمل أو إعادة رفع ${selectedDocumentLabel} مع التأكد من مطابقة البيانات الحالية.`,
  `Please complete or re-upload ${selectedDocumentLabel} and make sure it matches the latest submitted data.`
  );
  }

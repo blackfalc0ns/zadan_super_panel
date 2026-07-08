@@ -186,7 +186,7 @@ export class VendorDetailComponent implements OnInit {
  this.cdr.markForCheck();
  this.showEditOwnerModal = false;
  this.modalError = '';
- const message = this.text('تم تحديث بيانات المالك بنجاح.', 'Owner record updated successfully.');
+ const message = this.text('حدّثنا بيانات المالك بنجاح.', 'Owner record updated successfully.');
  this.setFeedback(message, 'success');
  this.toastService.success(message, this.text('بيانات التاجر', 'Vendor profile'));
  },
@@ -208,7 +208,7 @@ export class VendorDetailComponent implements OnInit {
  this.cdr.markForCheck();
  this.showEditLegalBankModal = false;
  this.modalError = '';
- const message = this.text('تم تحديث البيانات القانونية والبنكية بنجاح.', 'Legal and banking data updated successfully.');
+ const message = this.text('حدّثنا البيانات القانونية والبنكية بنجاح.', 'Legal and banking data updated successfully.');
  this.setFeedback(message, 'success');
  this.toastService.success(message, this.text('بيانات التاجر', 'Vendor profile'));
  },
@@ -230,7 +230,7 @@ export class VendorDetailComponent implements OnInit {
  this.cdr.markForCheck();
  this.showEditStoreModal = false;
  this.modalError = '';
- const message = this.text('تم تحديث هوية المتجر بنجاح.', 'Store identity updated successfully.');
+ const message = this.text('حدّثنا هوية المتجر بنجاح.', 'Store identity updated successfully.');
  this.setFeedback(message, 'success');
  this.toastService.success(message, this.text('بيانات التاجر', 'Vendor profile'));
  },

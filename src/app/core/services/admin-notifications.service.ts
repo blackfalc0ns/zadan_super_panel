@@ -382,7 +382,7 @@ export class AdminNotificationsService {
  },
  'vendor.documents_submitted': {
  title: { ar: 'مستندات تاجر جاهزة للمراجعة', en: 'Vendor documents ready for review' },
- body: { ar: 'قام التاجر بإرسال مستندات تحتاج إلى مراجعة.', en: 'The vendor submitted documents that need review.' }
+ body: { ar: 'أرسل التاجر مستندات تحتاج إلى مراجعة.', en: 'The vendor submitted documents that need review.' }
  },
  'vendor.critical_change_submitted': {
  title: { ar: 'تغيير حساس من تاجر', en: 'Critical vendor change submitted' },
@@ -390,34 +390,34 @@ export class AdminNotificationsService {
  },
  'vendor.store_updated': {
  title: { ar: 'بيانات متجر جاهزة للمراجعة', en: 'Vendor store ready for review' },
- body: { ar: 'قام التاجر بتحديث بيانات المتجر وهي بانتظار مراجعتك.', en: 'A vendor updated store profile details and they are waiting for your review.' }
+ body: { ar: 'حدّث التاجر بيانات المتجر وهي بانتظار مراجعتك.', en: 'A vendor updated store profile details and they are waiting for your review.' }
  },
  'vendor.owner_updated': {
  title: { ar: 'بيانات مالك جاهزة للمراجعة', en: 'Vendor owner details ready for review' },
- body: { ar: 'قام التاجر بتحديث بيانات المالك وهي بانتظار مراجعتك.', en: 'A vendor updated owner details and they are waiting for your review.' }
+ body: { ar: 'حدّث التاجر بيانات المالك وهي بانتظار مراجعتك.', en: 'A vendor updated owner details and they are waiting for your review.' }
  },
  'vendor.contact_updated': {
  title: { ar: 'بيانات تواصل جاهزة للمراجعة', en: 'Vendor contact details ready for review' },
- body: { ar: 'قام التاجر بتحديث بيانات التواصل وهي بانتظار مراجعتك.', en: 'A vendor updated contact details and they are waiting for your review.' }
+ body: { ar: 'حدّث التاجر بيانات التواصل وهي بانتظار مراجعتك.', en: 'A vendor updated contact details and they are waiting for your review.' }
  },
  'vendor.legal_updated': {
  title: { ar: 'بيانات قانونية جاهزة للمراجعة', en: 'Vendor legal details ready for review' },
- body: { ar: 'قام التاجر بتحديث البيانات القانونية وهي بانتظار مراجعتك.', en: 'A vendor updated legal and tax details and they are waiting for your review.' }
+ body: { ar: 'حدّث التاجر البيانات القانونية وهي بانتظار مراجعتك.', en: 'A vendor updated legal and tax details and they are waiting for your review.' }
  },
  'vendor.banking_updated': {
  title: { ar: 'بيانات بنكية جاهزة للمراجعة', en: 'Vendor banking details ready for review' },
- body: { ar: 'قام التاجر بتحديث البيانات البنكية وهي بانتظار مراجعتك.', en: 'A vendor updated payout banking details and they are waiting for your review.' }
+ body: { ar: 'حدّث التاجر البيانات البنكية وهي بانتظار مراجعتك.', en: 'A vendor updated payout banking details and they are waiting for your review.' }
  },
  'vendor.hours_updated': {
- title: { ar: 'تم تحديث ساعات عمل تاجر', en: 'Vendor operating hours updated' },
+ title: { ar: 'تحدّثت ساعات عمل تاجر', en: 'Vendor operating hours updated' },
  body: { ar: 'قام أحد التجار بتحديث ساعات العمل.', en: 'A vendor updated operating hours.' }
  },
  'vendor.operations_updated': {
- title: { ar: 'تم تحديث إعدادات تشغيل تاجر', en: 'Vendor operations updated' },
+ title: { ar: 'تحدّثت إعدادات تشغيل تاجر', en: 'Vendor operations updated' },
  body: { ar: 'قام أحد التجار بتحديث إعدادات التشغيل.', en: 'A vendor updated operations settings.' }
  },
  'vendor.notification_settings_updated': {
- title: { ar: 'تم تحديث تفضيلات إشعارات تاجر', en: 'Vendor notification preferences updated' },
+ title: { ar: 'حدّثنا تفضيلات إشعارات تاجر', en: 'Vendor notification preferences updated' },
  body: { ar: 'قام أحد التجار بتحديث تفضيلات الإشعارات.', en: 'A vendor updated notification preferences.' }
  },
  'catalog.product_request_submitted': {
@@ -462,7 +462,7 @@ export class AdminNotificationsService {
  },
  'support.updated': {
  title: { ar: 'تحديث على حالة دعم', en: 'Support case updated' },
- body: { ar: 'تم تحديث حالة دعم وتحتاج إلى متابعة.', en: 'A support case was updated and may need follow-up.' }
+ body: { ar: 'تحدّثت حالة دعم وتحتاج إلى متابعة.', en: 'A support case was updated and may need follow-up.' }
  },
  'support.ticket_created': {
  title: { ar: 'تذكرة دعم تاجر جديدة', en: 'New vendor support ticket' },

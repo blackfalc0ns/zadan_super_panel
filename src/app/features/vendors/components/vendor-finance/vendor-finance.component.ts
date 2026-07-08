@@ -229,7 +229,7 @@ export class VendorFinanceComponent implements OnInit {
  this.cdr.markForCheck();
  this.vendorDetail = vendor;
  this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
- this.modeSuccess = this.text('تم تحديث دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.');
+ this.modeSuccess = this.text('حدّثنا دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.');
  this.toastService.success(this.modeSuccess, this.text('المالية', 'Finance'));
  this.isSavingMode = false;
  },
@@ -261,7 +261,7 @@ export class VendorFinanceComponent implements OnInit {
  this.cdr.markForCheck();
  this.showCreateSettlementModal = false;
  this.toastService.success(
- this.text('تم إنشاء التسوية بنجاح.', 'Settlement created successfully.'),
+ this.text('أنشأنا التسوية بنجاح.', 'Settlement created successfully.'),
  this.text('المالية', 'Finance')
  );
  this.loadFinanceData();
@@ -285,7 +285,7 @@ export class VendorFinanceComponent implements OnInit {
  this.vendorService.retryVendorPayout(this.vendorId, payoutId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: () => {
  this.toastService.success(
- this.text('تمت إعادة محاولة الدفعة بنجاح.', 'Payout retry triggered successfully.'),
+ this.text('رجّعنا محاولة الدفعة بنجاح.', 'Payout retry triggered successfully.'),
  this.text('المالية', 'Finance')
  );
  this.loadFinanceData();

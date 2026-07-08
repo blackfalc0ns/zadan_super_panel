@@ -90,7 +90,7 @@ import { forkJoin } from 'rxjs';
  [emptyStateIcon]="'dashboard_customize'"
  [emptyStateActionLabel]="'إنشاء أول قسم'"
  [emptyStateTitle]="'ما فيه أقسام للصفحة الرئيسية'"
- [emptyStateMessage]="'لم تقم بإضافة أي قسم ليظهر في الرئيسية للتطبيق.'"
+ [emptyStateMessage]="'ما أضفت أي قسم يظهر في رئيسية التطبيق.'"
  [containerClass]="'bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/70 shadow-sm'"
  (emptyStateAction)="openCreate()">
 

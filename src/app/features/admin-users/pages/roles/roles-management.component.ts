@@ -102,7 +102,7 @@ export class RolesManagementComponent implements OnInit {
 
  panelScopeOptions = [
  { value: 'super_admin_panel' as DirectoryPanelScope, label: 'لوحة الأدمن', icon: 'dashboard' },
- { value: 'vendor_panel' as DirectoryPanelScope, label: 'لوحة البائع', icon: 'storefront' }
+ { value: 'vendor_panel' as DirectoryPanelScope, label: 'لوحة التاجر', icon: 'storefront' }
  ];
 
  permissionActions: PermissionActionId[] = ['view', 'create', 'edit', 'approve', 'export', 'manage_settings'];

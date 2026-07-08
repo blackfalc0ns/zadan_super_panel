@@ -1,0 +1,6 @@
+X [ERROR] The expression evaluated to a falsy value:
+
+  (0, node_assert_1.default)(compilation)
+ [plugin angular-compiler]
+
+

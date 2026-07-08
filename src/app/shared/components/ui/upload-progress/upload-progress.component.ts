@@ -38,8 +38,8 @@ export class UploadProgressComponent {
  get phaseLabel(): string {
  const isArabic = (this.translate.currentLang || 'ar').startsWith('ar');
  if (this.phase === 'preparing') {
- return isArabic ? 'جاري تجهيز الصورة' : 'Preparing image';
+ return isArabic ? 'نجهّز الصورة' : 'Preparing image';
  }
- return isArabic ? 'جاري رفع الصورة' : 'Uploading image';
+ return isArabic ? 'نرفع الصورة' : 'Uploading image';
  }
 }

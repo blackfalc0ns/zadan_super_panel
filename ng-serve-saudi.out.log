@@ -57,3 +57,59 @@ Watch mode enabled. Watching for file changes...
 NOTE: Raw file sizes do not reflect development server per-request transformations.
   ➜  Local:   http://127.0.0.1:4200/
   ➜  press h + enter to show help
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Application bundle generation failed. [47.831 seconds]
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Initial chunk files | Names                               |  Raw size
+styles.css          | styles                              | 384.66 kB | 
+main.js             | main                                | 182.26 kB | 
+polyfills.js        | polyfills                           |  90.20 kB | 
+chunk-WIPH2QXW.js   | -                                   |  75.41 kB | 
+chunk-G3GJCTTD.js   | -                                   |  65.55 kB | 
+chunk-LO4VSO2B.js   | -                                   |  62.90 kB | 
+chunk-DWNGWBI4.js   | -                                   |  46.71 kB | 
+chunk-XMPUQWMO.js   | -                                   |  46.19 kB | 
+chunk-VZHOPJ7X.js   | -                                   |  34.17 kB | 
+chunk-WCHG6TF7.js   | -                                   |  20.05 kB | 
+chunk-5FKIEPWI.js   | -                                   |  19.36 kB | 
+chunk-4BQWQS4J.js   | -                                   |  18.35 kB | 
+chunk-EKYTIY5G.js   | -                                   |  15.80 kB | 
+chunk-NQBVQ2IA.js   | -                                   |   8.72 kB | 
+chunk-FKIUDVLG.js   | -                                   |   7.71 kB | 
+chunk-BZZH6CZ5.js   | -                                   |   3.79 kB | 
+chunk-WDMUDEB6.js   | -                                   |   1.93 kB | 
+chunk-UPCBYPP3.js   | -                                   |   1.91 kB | 
+chunk-FMKMVIXV.js   | -                                   |   1.87 kB | 
+chunk-HPW7LUX3.js   | -                                   |   1.80 kB | 
+chunk-A6AGMF2K.js   | -                                   |   1.59 kB | 
+chunk-TWG6LR5H.js   | -                                   | 978 bytes | 
+chunk-4YSI3MGC.js   | -                                   | 452 bytes | 
+chunk-U6RD3CKK.js   | -                                   |  43 bytes | 
+chunk-MHTAV5VG.js   | -                                   |  43 bytes | 
+
+                    | Initial total                       |   1.09 MB
+
+Lazy chunk files    | Names                               |  Raw size
+chunk-PL4HZONT.js   | driver-detail-component             | 530.77 kB | 
+chunk-X3LNMYL7.js   | orders-routes                       | 409.67 kB | 
+chunk-S5CSDUFT.js   | admin-support-center-component      | 357.24 kB | 
+chunk-QAXMMIEL.js   | disputes-dashboard-component        | 327.66 kB | 
+chunk-E4DVAJR6.js   | dashboard-component                 | 243.98 kB | 
+chunk-VLQCOFHO.js   | vendor-detail-component             | 233.44 kB | 
+chunk-CXURQ4OV.js   | vendor-finance-component            | 208.04 kB | 
+chunk-4TGNJEQ3.js   | vendor-compliance-component         | 164.25 kB | 
+chunk-A2UBAUIL.js   | email-center-component              | 158.95 kB | 
+chunk-O3BGSW6Z.js   | admin-user-detail-component         | 152.06 kB | 
+chunk-HLCAS4JG.js   | master-product-form-component       | 124.72 kB | 
+chunk-3563F4NK.js   | customer-detail-component           | 120.22 kB | 
+chunk-WH2ZYBEN.js   | vendors-list-component              | 111.17 kB | 
+chunk-5HTRYVHW.js   | bulk-master-products-page-component | 105.39 kB | 
+chunk-5YEWFBXQ.js   | bulk-brands-page-component          |  98.16 kB | 
+...and 95 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [45.986 seconds]
+
+Page reload sent to client(s).

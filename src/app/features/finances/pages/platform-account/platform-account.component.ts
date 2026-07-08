@@ -29,7 +29,7 @@ import {
  </button>
  <button type="button" (click)="save()" [disabled]="isLoading || isSaving ||!canSave" class="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60">
  <span class="material-symbols-outlined text-[18px]">{{ isSaving ? 'hourglass_empty' : 'save' }}</span>
- {{ isSaving ? text('جاري الحفظ...', 'Saving...') : text('حفظ الحساب', 'Save account') }}
+ {{ isSaving ? text('نحفظ...', 'Saving...') : text('حفظ الحساب', 'Save account') }}
  </button>
  </div>
  </app-page-header>
@@ -235,7 +235,7 @@ export class PlatformAccountComponent implements OnInit {
  this.cdr.markForCheck();
  this.account = account;
  this.isSaving = false;
- this.toast.success(this.text('تم حفظ حساب المنصة.', 'Platform account saved.'));
+ this.toast.success(this.text('حفظنا حساب المنصة.', 'Platform account saved.'));
  this.load();
  },
  error: (error) => {

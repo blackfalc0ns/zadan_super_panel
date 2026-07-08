@@ -240,7 +240,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
  this.decideSelectedApproval(
  () => this.adminAccessApiService.rejectApproval(this.selectedApproval!.id, this.approvalDecisionNote),
- this.isRTL ? 'تم رفض تعديل المندوب' : 'Driver change rejected'
+ this.isRTL ? 'رفضنا تعديل المندوب' : 'Driver change rejected'
  );
  }
 

@@ -50,7 +50,7 @@
  <div class="flex-1 flex flex-col gap-2 min-w-0">
  <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-black text-primary transition-all hover:bg-primary/10 w-fit select-none">
  <span class="material-symbols-outlined text-[16px]">upload</span>
- {{ isUploading === 'logo' ? (isRTL ? 'جاري الرفع...' : 'Uploading...') : (isRTL ? 'رفع شعار' : 'Upload logo') }}
+ {{ isUploading === 'logo' ? (isRTL ? 'نرفع...' : 'Uploading...') : (isRTL ? 'رفع شعار' : 'Upload logo') }}
  <input type="file" class="hidden" accept="image/*" (change)="onLogoFileSelected($event)" [disabled]="isUploading === 'logo'">
  </label>
  <input type="text" dir="ltr" name="logoUrl" [(ngModel)]="draftStoreData.logoUrl" placeholder="https://..." class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-600 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
@@ -75,7 +75,7 @@
  <div class="flex-1 flex flex-col gap-2 min-w-0">
  <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-black text-primary transition-all hover:bg-primary/10 w-fit select-none">
  <span class="material-symbols-outlined text-[16px]">upload</span>
- {{ isUploading === 'document' ? (isRTL ? 'جاري الرفع...' : 'Uploading...') : (isRTL ? 'رفع ملف' : 'Upload file') }}
+ {{ isUploading === 'document' ? (isRTL ? 'نرفع...' : 'Uploading...') : (isRTL ? 'رفع ملف' : 'Upload file') }}
  <input type="file" class="hidden" accept=".pdf,image/*" (change)="onDocumentFileSelected($event)" [disabled]="isUploading === 'document'">
  </label>
  <input type="text" dir="ltr" name="commercialRegisterDocumentUrl" [(ngModel)]="draftStoreData.commercialRegisterDocumentUrl" placeholder="https://..." class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-600 shadow-sm transition-all outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10">
@@ -207,7 +207,7 @@
  <button type="button" (click)="onSave()" [disabled]="!isFormValid || isSaving" class="px-8 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white text-sm font-bold shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-98 cursor-pointer select-none disabled:cursor-not-allowed disabled:opacity-50">
  <span class="flex items-center gap-2">
  <span *ngIf="isSaving" class="admin-skeleton admin-skeleton-line sm w-16"></span>
- {{ isSaving ? (isRTL ? 'جاري الحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
+ {{ isSaving ? (isRTL ? 'نحفظ...' : 'Saving...') : (isRTL ? 'حفظ التعديلات' : 'Save changes') }}
  </span>
  </button>
  </div>
