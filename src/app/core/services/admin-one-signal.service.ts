@@ -443,7 +443,12 @@ export class AdminOneSignalService {
     }
 
     this.sdkUnavailableLogged = true;
-    console.warn(`[AdminOneSignal] ${message}`, error);
+
+    if (environment.production) {
+      return;
+    }
+
+    console.debug(`[AdminOneSignal] ${message}`, error);
   }
 
   private logStatus(message: string, oneSignal: OneSignalSdk): void {

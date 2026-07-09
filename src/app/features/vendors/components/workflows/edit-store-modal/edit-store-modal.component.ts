@@ -65,6 +65,8 @@ export class EditStoreModalComponent implements OnChanges {
 
  regionOptions: SearchableSelectOption[] = [];
  cityOptions: SearchableSelectOption[] = [];
+ private regionsRequested = false;
+ private citiesLoadedForRegion = '';
 
  draftStoreData: StoreData = {
  businessNameAr: '',
@@ -86,11 +88,13 @@ export class EditStoreModalComponent implements OnChanges {
  private translate: TranslateService,
  private catalogService: CatalogService,
  private geographyService: GeographyService
- ) {
- this.loadRegions();
- }
+ ) {}
 
  ngOnChanges(changes: SimpleChanges): void {
+ if (changes['isOpen']?.currentValue === true) {
+ this.ensureRegionsLoaded();
+ }
+
  if (changes['storeData']) {
  this.draftStoreData = {
  businessNameAr: this.storeData.businessNameAr || '',
@@ -108,7 +112,7 @@ export class EditStoreModalComponent implements OnChanges {
  commercialRegistrationNumber: this.storeData.commercialRegistrationNumber || ''
  };
 
- if (this.draftStoreData.region) {
+ if (this.isOpen && this.draftStoreData.region) {
  this.loadCities(this.draftStoreData.region);
  }
  }
@@ -118,6 +122,7 @@ export class EditStoreModalComponent implements OnChanges {
  this.draftStoreData.region = value;
  this.draftStoreData.city = '';
  this.cityOptions = [];
+ this.citiesLoadedForRegion = '';
  if (value) {
  this.loadCities(value);
  }
@@ -278,6 +283,15 @@ export class EditStoreModalComponent implements OnChanges {
  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
  }
 
+ private ensureRegionsLoaded(): void {
+ if (this.regionsRequested) {
+ return;
+ }
+
+ this.regionsRequested = true;
+ this.loadRegions();
+ }
+
  private loadRegions(): void {
  this.geographyService.getOperationalRegions().subscribe({
  next: (regions) => {
@@ -286,18 +300,33 @@ export class EditStoreModalComponent implements OnChanges {
  value: r.code,
  label: `${r.nameAr} - ${r.nameEn}`
  }));
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.regionOptions = [];
  }
  });
  }
 
  private loadCities(regionCode: string): void {
- this.geographyService.getOperationalCities(regionCode).subscribe({
+ const normalizedRegion = regionCode.trim().toUpperCase();
+ if (!normalizedRegion || normalizedRegion === this.citiesLoadedForRegion) {
+ return;
+ }
+
+ this.citiesLoadedForRegion = normalizedRegion;
+ this.geographyService.getOperationalCities(normalizedRegion).subscribe({
  next: (cities) => {
  this.cdr.markForCheck();
  this.cityOptions = cities.map((c) => ({
  value: c.code,
  label: `${c.nameAr} - ${c.nameEn}`
  }));
+ },
+ error: () => {
+ this.citiesLoadedForRegion = '';
+ this.cdr.markForCheck();
+ this.cityOptions = [];
  }
  });
  }

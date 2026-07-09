@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, shareReplay, throwError } from 'rxjs';
+import { Observable, catchError, map, of, shareReplay } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface SaudiRegionDto {
@@ -26,6 +26,7 @@ export class GeographyService {
   private readonly skipAuthHeaders = new HttpHeaders({ 'X-Skip-Auth': 'true' });
   private regionsRequest$?: Observable<SaudiRegionDto[]>;
   private readonly citiesRequests = new Map<string, Observable<SaudiCityDto[]>>();
+  private loadFailureLogged = false;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -35,11 +36,12 @@ export class GeographyService {
         `${this.apiUrl}/regions`,
         { headers: this.skipAuthHeaders }
       ).pipe(
-        shareReplay(1),
         catchError((error) => {
           this.regionsRequest$ = undefined;
-          return throwError(() => error);
-        })
+          this.logLoadFailure('regions', error);
+          return of([] as SaudiRegionDto[]);
+        }),
+        shareReplay({ bufferSize: 1, refCount: true })
       );
     }
 
@@ -62,11 +64,12 @@ export class GeographyService {
           `${this.apiUrl}/regions/${encodeURIComponent(normalizedCode)}/cities`,
           { headers: this.skipAuthHeaders }
         ).pipe(
-          shareReplay(1),
           catchError((error) => {
             this.citiesRequests.delete(normalizedCode);
-            return throwError(() => error);
-          })
+            this.logLoadFailure(`cities (${normalizedCode})`, error);
+            return of([] as SaudiCityDto[]);
+          }),
+          shareReplay({ bufferSize: 1, refCount: true })
         )
       );
     }
@@ -88,5 +91,14 @@ export class GeographyService {
 
   private isOperationalRegionCode(regionCode?: string | null): boolean {
     return GeographyService.operationalRegionCodes.has((regionCode || '').trim().toUpperCase());
+  }
+
+  private logLoadFailure(scope: string, error: unknown): void {
+    if (this.loadFailureLogged || environment.production) {
+      return;
+    }
+
+    this.loadFailureLogged = true;
+    console.debug(`[GeographyService] Failed to load ${scope}.`, error);
   }
 }

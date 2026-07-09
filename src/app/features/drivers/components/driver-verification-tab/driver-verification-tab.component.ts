@@ -117,7 +117,10 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  }
  this.cdr.markForCheck();
  },
- error: (err) => console.error('Failed to load regions', err)
+ error: () => {
+ this.regions = [];
+ this.cdr.markForCheck();
+ }
  });
  }
 
@@ -190,7 +193,10 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  this.editForm.city = this.resolveLookupCode(this.editForm.city, this.cities);
  this.cdr.markForCheck();
  },
- error: (err) => console.error('Failed to load cities', err)
+ error: () => {
+ this.cities = [];
+ this.cdr.markForCheck();
+ }
  });
  }
 

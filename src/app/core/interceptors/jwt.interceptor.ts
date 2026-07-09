@@ -56,39 +56,45 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         return next(req);
     }
 
+    const skipAuth = req.headers.has('X-Skip-Auth');
     const token = authService.getToken();
     const isStateChanging = STATE_CHANGING_METHODS.has(req.method);
     const isAdminAuthRefresh = req.url.includes(ADMIN_AUTH_REFRESH_PATH);
     const isAdminAuthLogin = req.url.includes(ADMIN_AUTH_LOGIN_PATH);
     const isAdminAuthCsrf = req.url.includes(ADMIN_AUTH_CSRF_PATH);
+    const isPublicGeographyRead = skipAuth && req.method === 'GET' && req.url.includes('/geography/');
 
     const headers: Record<string, string> = {
         'Accept-Language': lang
     };
-    if (token) {
+    if (token && !skipAuth) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
     // Attach CSRF token to every state-changing request to our API. This
     // protects all admin POST/PUT/PATCH/DELETE endpoints regardless of
     // whether the cookie auth was used (defence in depth).
-    if (isStateChanging && !isAdminAuthCsrf) {
+    if (isStateChanging && !isAdminAuthCsrf && !skipAuth) {
         const csrf = authService.getCsrfToken();
         if (csrf) {
             headers['X-XSRF-TOKEN'] = csrf;
         }
     }
 
+    if (skipAuth) {
+        req = req.clone({ headers: req.headers.delete('X-Skip-Auth') });
+    }
+
     // We must always send credentials (cookies) for our API so the refresh
     // cookie travels and antiforgery cookies stay in sync.
     req = req.clone({
         setHeaders: headers,
-        withCredentials: true
+        withCredentials: !skipAuth
     });
 
     return next(req).pipe(
         retry({
-            count: req.method === 'GET' ? 2 : 0,
+            count: shouldRetryReadRequest(req, isPublicGeographyRead) ? 2 : 0,
             delay: (error: unknown, retryCount: number) => {
                 if (!isTransientReadError(error)) {
                     return throwError(() => error);
@@ -153,6 +159,10 @@ function tryRefreshAndRetry(
             return throwError(() => err);
         })
     );
+}
+
+function shouldRetryReadRequest(req: HttpRequest<unknown>, isPublicGeographyRead: boolean): boolean {
+    return req.method === 'GET' && !isPublicGeographyRead;
 }
 
 function isTransientReadError(error: unknown): boolean {
