@@ -104,17 +104,34 @@
           <label class="text-xs font-black text-slate-800 tracking-widest uppercase">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.DESCRIPTION' | translate }}</label>
           <textarea
             class="premium-input h-[140px] w-full resize-none rounded-[1.2rem] border border-slate-200 bg-white p-4 text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400"
+            [class.border-red-300]="submitted && !hasDescription"
+            [class.ring-4]="submitted && !hasDescription"
+            [class.ring-red-50]="submitted && !hasDescription"
             [placeholder]="'ORDERS.DETAIL.DISPUTE_MODAL.DESCRIPTION_PLACEHOLDER' | translate"
             [(ngModel)]="form.description"></textarea>
         </div>
 
         <div class="space-y-3">
           <label class="text-xs font-black text-slate-800 tracking-widest uppercase">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE' | translate }}</label>
-          <div class="evidence-box flex h-[140px] cursor-pointer flex-col items-center justify-center gap-3 rounded-[1.2rem] border-2 border-dashed border-slate-300">
+          <input #evidenceInput class="hidden" type="file" multiple accept="image/*,.pdf" (change)="onEvidenceSelected($event)" />
+          <div
+            class="evidence-box flex h-[140px] cursor-pointer flex-col items-center justify-center gap-3 rounded-[1.2rem] border-2 border-dashed border-slate-300"
+            [class.evidence-box-active]="isUploadingEvidence"
+            (click)="evidenceInput.click()"
+            (dragover)="onEvidenceDragOver($event)"
+            (drop)="onEvidenceDrop($event)">
             <div class="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
-              <span class="cloud-icon material-symbols-outlined text-[24px] text-slate-400">cloud_upload</span>
+              <span class="cloud-icon material-symbols-outlined text-[24px] text-slate-400" [class.animate-spin]="isUploadingEvidence">{{ isUploadingEvidence ? 'progress_activity' : 'cloud_upload' }}</span>
             </div>
-            <span class="text-xs font-bold text-slate-500">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE_HINT' | translate }}</span>
+            <span class="text-xs font-bold text-slate-500">{{ (isUploadingEvidence ? 'COMMON.LOADING' : 'ORDERS.DETAIL.DISPUTE_MODAL.EVIDENCE_HINT') | translate }}</span>
+          </div>
+          <p *ngIf="uploadError" class="text-[11px] font-bold text-red-600">{{ uploadError | translate }}</p>
+          <div *ngIf="form.attachments.length" class="flex flex-wrap gap-2">
+            <span *ngFor="let evidence of form.attachments; let i = index; trackBy: trackEvidence" class="inline-flex max-w-full items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-600 shadow-sm">
+              <span class="material-symbols-outlined text-[15px] text-zadna-primary">attach_file</span>
+              <span class="max-w-[10rem] truncate" dir="auto">{{ evidence.fileName }}</span>
+              <button type="button" class="material-symbols-outlined text-[15px] text-slate-400 hover:text-red-500" (click)="removeEvidence(i)">close</button>
+            </span>
           </div>
         </div>
       </section>
@@ -140,7 +157,7 @@
               <span class="text-[11px] font-extrabold text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.ADD_TO_LOG' | translate }}</span>
             </label>
             <label class="group flex cursor-pointer items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm transition-all hover:border-red-300 hover:shadow-md">
-              <input class="h-4 w-4 rounded border-slate-300 text-red-500 focus:ring-red-500/20 transition-all" type="checkbox" [(ngModel)]="form.markHighRisk" />
+              <input class="h-4 w-4 rounded border-slate-300 text-red-500 focus:ring-red-500/20 transition-all" type="checkbox" [ngModel]="form.markHighRisk" (ngModelChange)="onMarkHighRiskChange($event)" />
               <span class="text-[11px] font-extrabold text-slate-700 transition-colors group-hover:text-red-600">{{ 'ORDERS.DETAIL.DISPUTE_MODAL.MARK_HIGH_RISK' | translate }}</span>
             </label>
             <label class="group flex cursor-pointer items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm transition-all hover:border-zadna-primary/30 hover:shadow-md">
@@ -152,17 +169,17 @@
       </section>
     </div>
 
-    <div modal-footer class="flex items-center justify-between w-full">
+    <div modal-footer class="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <button class="px-6 py-3 text-[13px] font-black text-slate-500 transition-all hover:text-slate-800 hover:bg-slate-200/50 rounded-xl" type="button" (click)="onCloseRequest()" [disabled]="isSubmitting">
         {{ 'COMMON.CANCEL' | translate }}
       </button>
 
-      <div class="flex flex-row-reverse gap-3">
-        <button class="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-zadna-primary to-teal-600 px-8 py-3 text-[13px] font-black text-white transition-all hover:shadow-lg hover:shadow-zadna-primary/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none" type="button" (click)="onSubmit()" [disabled]="isSubmitting" [ngClass]="{'btn-loading': isSubmitting}">
+      <div class="flex w-full flex-col-reverse gap-3 sm:w-auto sm:flex-row-reverse">
+        <button class="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-zadna-primary to-teal-600 px-8 py-3 text-[13px] font-black text-white transition-all hover:shadow-lg hover:shadow-zadna-primary/30 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none" type="button" (click)="onSubmit()" [disabled]="isSubmitting || isUploadingEvidence" [ngClass]="{'btn-loading': isSubmitting}">
           <span>{{ isSubmitting ? ('COMMON.LOADING' | translate) : ('ORDERS.DETAIL.DISPUTE_MODAL.CREATE' | translate) }}</span>
           <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;" [class.animate-spin]="isSubmitting">{{ isSubmitting ? 'progress_activity' : 'send' }}</span>
         </button>
-        <button class="rounded-xl border border-slate-200 bg-white px-6 py-3 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:shadow-sm" type="button" (click)="onSaveDraft()" [disabled]="isSubmitting">
+        <button class="rounded-xl border border-slate-200 bg-white px-6 py-3 text-[13px] font-black text-slate-700 transition-all hover:bg-slate-50 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60" type="button" (click)="onSaveDraft()" [disabled]="isSubmitting || isUploadingEvidence">
           {{ 'COMMON.SAVE_DRAFT' | translate }}
         </button>
       </div>

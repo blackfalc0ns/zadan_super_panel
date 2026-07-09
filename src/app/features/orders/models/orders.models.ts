@@ -234,12 +234,18 @@ export interface OrderRefundForm {
   notifyFinance: boolean;
 }
 
+export interface OrderDisputeAttachment {
+  fileName: string;
+  fileUrl: string;
+}
+
 export interface OrderDisputeForm {
   disputeType: 'payment_issue' | 'quality_issue' | 'not_received' | 'missing_item' | 'customer_rejected' | 'delivery_failure' | 'fraud' | 'other';
   priority: 'low' | 'medium' | 'high' | 'critical';
   routeTo: 'operations' | 'finance' | 'risk' | 'support' | 'legal';
   description: string;
   internalNotes: string;
+  attachments: OrderDisputeAttachment[];
   notifyReviewer: boolean;
   addToLog: boolean;
   markHighRisk: boolean;

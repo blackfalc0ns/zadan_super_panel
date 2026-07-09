@@ -10,6 +10,7 @@ import {
  OrderCancellationSummary,
  OrderDetail,
  OrderDispatchState,
+ OrderDisputeAttachment,
  OrderDisputeForm,
  OrderFilterOptions,
  OrderFulfillmentStatus,
@@ -120,6 +121,7 @@ interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
 })
 export class OrdersService {
  private readonly apiUrl = `${environment.apiUrl}/admin/orders`;
+ private readonly filesUrl = `${environment.apiUrl}/files`;
  private ordersCache = new Map<string, OrderDetail>();
 
  constructor(private readonly http: HttpClient) {}
@@ -239,6 +241,26 @@ export class OrdersService {
  return this.http.post<AdminOrderDetailResponse>(`${this.apiUrl}/${this.normalizeOrderId(id)}/dispute`, form).pipe(
  map((response) => this.mapDetail(response)),
  tap((order) => this.upsertCache(order))
+ );
+ }
+
+ uploadDisputeEvidence(file: File): Observable<OrderDisputeAttachment> {
+ const formData = new FormData();
+ formData.append('file', file);
+ formData.append('directory', 'uploads/orders/disputes/evidence');
+
+ return this.http.post<{ url?: string; Url?: string }>(`${this.filesUrl}/upload`, formData).pipe(
+ map((response) => {
+ const fileUrl = (response.url ?? response.Url ?? '').trim();
+ if (!fileUrl || fileUrl.startsWith('blob:')) {
+ throw new Error('Dispute evidence upload did not return a valid URL.');
+ }
+
+ return {
+ fileName: file.name,
+ fileUrl
+ };
+ })
  );
  }
 

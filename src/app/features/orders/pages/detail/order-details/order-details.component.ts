@@ -102,6 +102,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  isSubmittingIssueFlag = false;
  isSubmittingOperationalCase = false;
  isRecomputingDispatch = false;
+ disputeDraft: OrderDisputeForm | null = null;
 
  constructor(
  private readonly route: ActivatedRoute,
@@ -235,7 +236,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  }
 
  get canOpenDisputeCase(): boolean {
- return this.canOpenIssueTools && this.canEditDisputes;
+ return this.canEditDisputes && (!this.operationalCase || this.operationalCase.status === 'OPEN');
  }
 
  get canResolveOperationalCaseAction(): boolean {
@@ -538,6 +539,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  return;
  }
 
+ const currentOrder = this.order();
+ this.disputeDraft = currentOrder ? this.loadDisputeDraft(currentOrder.id) : null;
  this.isDisputeModalOpen = true;
  }
 
@@ -808,7 +811,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  }
 
  saveDisputeDraft(form: OrderDisputeForm): void {
- void form;
+ const id = this.orderId();
+ if (id) {
+ localStorage.setItem(this.disputeDraftStorageKey(id), JSON.stringify(form));
+ this.disputeDraft = form;
+ }
+
  this.closeDisputeModal();
  }
 
@@ -826,6 +834,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  next: (order) => {
  this.isSubmittingDispute = false;
  this.cdr.markForCheck();
+ localStorage.removeItem(this.disputeDraftStorageKey(id));
+ this.disputeDraft = null;
  this.setOrder(order);
  this.loadFinancialBreakdown(id);
  this.closeDisputeModal();
@@ -1091,6 +1101,24 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.cdr.markForCheck();
  this.financialBreakdown.set(breakdown);
  });
+ }
+
+ private loadDisputeDraft(orderId: string): OrderDisputeForm | null {
+ const raw = localStorage.getItem(this.disputeDraftStorageKey(orderId));
+ if (!raw) {
+ return null;
+ }
+
+ try {
+ return JSON.parse(raw) as OrderDisputeForm;
+ } catch {
+ localStorage.removeItem(this.disputeDraftStorageKey(orderId));
+ return null;
+ }
+ }
+
+ private disputeDraftStorageKey(orderId: string): string {
+ return `zadana:orders:${orderId}:dispute-draft`;
  }
 }
 

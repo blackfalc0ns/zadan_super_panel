@@ -908,6 +908,7 @@
         "DESCRIPTION_PLACEHOLDER": "اكتب تفاصيل النزاع هنا...",
         "EVIDENCE": "إرفاق الأدلة (صور/مستندات)",
         "EVIDENCE_HINT": "اسحب الملفات هنا أو اضغط للرفع",
+        "EVIDENCE_UPLOAD_ERROR": "فشل رفع الأدلة. حاول مرة أخرى.",
         "INTERNAL_NOTES": "ملاحظات داخلية (خاصة بالمشرف)",
         "INTERNAL_NOTES_PLACEHOLDER": "أضف ملاحظات إضافية لن يراها العميل أو التاجر...",
         "NOTIFY_REVIEWER": "إشعار المراجع",
