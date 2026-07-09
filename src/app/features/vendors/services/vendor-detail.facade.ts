@@ -502,6 +502,12 @@ export class VendorDetailFacade implements OnDestroy {
     );
   }
 
+  verifyPrimaryBankAccountRequest(accountId: string): Observable<VendorDetail> {
+    return this.trackVendorMutation((vendorId) =>
+      this.vendorService.verifyVendorBankAccount(vendorId, accountId)
+    );
+  }
+
   addVendorReviewNote(
     message: string,
     authorName?: string,

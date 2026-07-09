@@ -764,7 +764,8 @@ export class VendorService {
 
  return this.executeVendorMutation(
  request$,
- () => this.applyApproval(id, commissionRate)
+ () => this.applyApproval(id, commissionRate),
+ id
  );
  }
 
@@ -832,6 +833,29 @@ export class VendorService {
  return this.executeVendorMutation(
  request$,
  () => this.applyRejection(id, reason)
+ );
+ }
+
+ verifyVendorBankAccount(id: string, accountId: string): Observable<VendorDetail> {
+ const request$ = this.canUseApiMutations()
+ ? this.http.post(`${this.apiUrl}/${id}/bank-accounts/${accountId}/verify`, {})
+ : null;
+
+ return this.executeVendorMutation(
+ request$,
+ () => this.updateVendor(id, (vendor) => {
+ if (!vendor.primaryBankAccount || vendor.primaryBankAccount.id !== accountId) {
+ return;
+ }
+
+ vendor.primaryBankAccount = {
+ ...vendor.primaryBankAccount,
+ status: 'Verified',
+ rejectionReason: null,
+ verifiedAtUtc: this.timestamp()
+ };
+ }),
+ id
  );
  }
 

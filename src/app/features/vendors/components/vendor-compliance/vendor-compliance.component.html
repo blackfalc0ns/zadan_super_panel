@@ -114,14 +114,14 @@
  {{ isRTL ? 'بدء المراجعة' : 'Start review' }}
  </button>
 
- <button
- type="button"
- (click)="onApproveVendor()"
- [disabled]="!canApproveVendor"
- class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-[12px] font-black text-white shadow-md shadow-emerald-600/20 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none">
- <span class="material-symbols-outlined text-[17px]">verified</span>
- {{ isRTL ? 'اعتماد نهائي' : 'Final approval' }}
- </button>
+<button
+type="button"
+(click)="onApproveVendor()"
+[disabled]="isSubmittingFinalDecision || !canApproveVendor"
+class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-[12px] font-black text-white shadow-md shadow-emerald-600/20 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none">
+<span class="material-symbols-outlined text-[17px]" [class.animate-spin]="isSubmittingFinalDecision">{{ isSubmittingFinalDecision ? 'progress_activity' : 'verified' }}</span>
+{{ isRTL ? 'اعتماد نهائي' : 'Final approval' }}
+</button>
 
  <button
  *ngIf="canRequestDocuments"
@@ -208,14 +208,15 @@
  {{ isRTL ? 'بدء المراجعة' : 'Start review' }}
  </button>
 
- <button
- *ngIf="canApproveVendor"
- type="button"
- (click)="onApproveVendor()"
- class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 hover:-translate-y-0.5">
- <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">verified</span>
- {{ isRTL ? 'اعتماد نهائي' : 'Final approval' }}
- </button>
+<button
+*ngIf="canApproveVendor"
+type="button"
+(click)="onApproveVendor()"
+[disabled]="isSubmittingFinalDecision"
+class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 text-[12px] font-black text-white transition-all hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/20 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none disabled:hover:translate-y-0">
+<span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110" [class.animate-spin]="isSubmittingFinalDecision">{{ isSubmittingFinalDecision ? 'progress_activity' : 'verified' }}</span>
+{{ isRTL ? 'اعتماد نهائي' : 'Final approval' }}
+</button>
 
  <button
  *ngIf="canRequestDocuments"

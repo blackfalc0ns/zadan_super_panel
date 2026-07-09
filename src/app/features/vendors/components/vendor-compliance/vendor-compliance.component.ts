@@ -72,6 +72,7 @@ export class VendorComplianceComponent {
  activeRailTab: ComplianceRailTab = 'timeline';
  activeWorkspaceWindow: ComplianceWorkspaceWindow = 'review';
  isSubmittingDocumentDecision = false;
+ isSubmittingFinalDecision = false;
  selectedProfileReviewCode: string | null = null;
  profileRejectReason = '';
  sectionRejectReason = '';
@@ -293,12 +294,47 @@ export class VendorComplianceComponent {
  }
 
  get complianceReadyForFinalApproval(): boolean {
- if (typeof this.vendorDetail?.readyForFinalApproval === 'boolean') {
+ if (this.vendorDetail?.readyForFinalApproval === true) {
  return this.vendorDetail.readyForFinalApproval;
  }
 
- return this.requiredDocuments.length > 0
+ return this.reviewPacketReadyForFinalApproval && this.isPrimaryBankAccountVerified;
+ }
+
+ get reviewPacketReadyForFinalApproval(): boolean {
+ const requiredDocumentsReady = this.requiredDocuments.length > 0
  && this.requiredDocuments.every((document) => document.isUploaded && document.reviewDecision === 'approved');
+
+ const profileItemsReady = this.profileReviewItems.length > 0
+ && this.profileReviewItems.every((item) => item.status === 'approved');
+
+ return requiredDocumentsReady && profileItemsReady;
+ }
+
+ get hasPrimaryBankAccount(): boolean {
+ return!!this.vendorDetail?.primaryBankAccount?.id;
+ }
+
+ get isPrimaryBankAccountVerified(): boolean {
+ const account = this.vendorDetail?.primaryBankAccount;
+ const status = (account?.status || '').trim().toLowerCase();
+ return status === 'verified' ||!!account?.verifiedAtUtc;
+ }
+
+ get canVerifyPrimaryBankAccount(): boolean {
+ if (!this.hasPrimaryBankAccount || this.isPrimaryBankAccountVerified) {
+ return false;
+ }
+
+ const status = (this.vendorDetail?.primaryBankAccount?.status || '').trim().toLowerCase();
+ return status === 'pendingverification'
+ || status === 'pending_verification'
+ || status === 'pending'
+ || status === '';
+ }
+
+ get shouldVerifyBankBeforeApproval(): boolean {
+ return this.reviewPacketReadyForFinalApproval && this.canVerifyPrimaryBankAccount;
  }
 
  get isVendorAlreadyApproved(): boolean {
@@ -318,17 +354,21 @@ export class VendorComplianceComponent {
  || this.vendorDetail.reviewState === 'changes_requested');
  }
 
- get canApproveVendor(): boolean {
- if (!this.vendorDetail) {
- return false;
- }
+get canApproveVendor(): boolean {
+if (!this.vendorDetail) {
+return false;
+}
 
- return this.vendorDetail.status === VendorStatus.Pending
- && this.complianceReadyForFinalApproval
- &&!this.vendorDetail.approvedAtUtc
- &&!this.vendorDetail.archivedAtUtc
- &&!this.vendorDetail.isLoginLocked
- && this.vendorDetail.reviewState!== 'rejected'
+const readinessAllowsApproval = this.complianceReadyForFinalApproval
+|| (this.reviewPacketReadyForFinalApproval && (this.isPrimaryBankAccountVerified || this.canVerifyPrimaryBankAccount));
+
+return this.vendorDetail.status === VendorStatus.Pending
+&& readinessAllowsApproval
+&&!this.vendorDetail.approvedAtUtc
+&&!this.vendorDetail.archivedAtUtc
+&&!this.vendorDetail.isLoginLocked
+&&!this.isSubmittingFinalDecision
+&& this.vendorDetail.reviewState!== 'rejected'
  && this.vendorDetail.reviewState!== 'suspended';
  }
 
@@ -565,8 +605,16 @@ export class VendorComplianceComponent {
  return this.localize('ملف التاجر مرفوض بالفعل، وما فيه إجراءات تشغيل إضافية من هذه الشاشة.', 'The vendor file is already rejected, and no further account actions are available here.');
  }
 
- if (!this.complianceReadyForFinalApproval) {
- return this.localize('الاعتماد النهائي بيظهر بعد اعتماد كل المستندات المطلوبة فقط.', 'Final approval becomes available only after all required documents are approved.');
+ if (!this.reviewPacketReadyForFinalApproval) {
+ return this.localize('الاعتماد النهائي يظهر بعد اعتماد كل الحقول والمستندات المطلوبة.', 'Final approval becomes available after all required fields and documents are approved.');
+ }
+
+ if (!this.hasPrimaryBankAccount) {
+ return this.localize('لازم يكون فيه حساب بنكي أساسي قبل الاعتماد النهائي.', 'A primary bank account is required before final approval.');
+ }
+
+ if (!this.isPrimaryBankAccountVerified) {
+ return this.localize('الحساب البنكي الأساسي غير موثق. زر الاعتماد النهائي يوثقه تلقائيًا لو حالته بانتظار التحقق.', 'The primary bank account is not verified. Final approval verifies it automatically when it is pending verification.');
  }
 
  return this.localize('الإجراء مو متاح في الحالة الحالية.', 'This action is not available in the current state.');
@@ -1107,19 +1155,44 @@ export class VendorComplianceComponent {
  return;
  }
 
- const title = this.localize('اعتماد التاجر', 'Approve Vendor');
- const message = this.localize(
- 'أغلقنا كل المستندات المطلوبة. هل تريد اعتماد التاجر نهائيًا الحين؟',
- 'All required documents are closed. Do you want to approve this vendor now?'
- );
- const confirmText = this.localize('موافق', 'Approve');
- const cancelText = this.localize('إلغاء', 'Cancel');
+const title = this.localize('اعتماد التاجر', 'Approve Vendor');
+const message = this.shouldVerifyBankBeforeApproval
+? this.localize(
+'هنوثق الحساب البنكي الأساسي ثم نعتمد التاجر نهائيًا. هل تريد المتابعة؟',
+'The primary bank account will be verified, then the vendor will be approved. Do you want to continue?'
+)
+: this.localize(
+'أغلقنا كل المستندات المطلوبة. هل تريد اعتماد التاجر نهائيًا الحين؟',
+'All required documents are closed. Do you want to approve this vendor now?'
+);
+const confirmText = this.localize('موافق', 'Approve');
+const cancelText = this.localize('إلغاء', 'Cancel');
 
- this.openConfirmModal(title, message, confirmText, cancelText, 'success', () => {
- this.vendorDetailFacade.clearMutationError();
- this.vendorDetailFacade.approveVendorReview(this.vendorDetail!.commissionRate ?? 13);
- });
- }
+this.openConfirmModal(title, message, confirmText, cancelText, 'success', () => {
+const commissionRate = this.vendorDetail!.commissionRate ?? 13;
+const primaryBankAccountId = this.vendorDetail!.primaryBankAccount?.id ?? null;
+const request$ = this.shouldVerifyBankBeforeApproval && primaryBankAccountId
+? this.vendorDetailFacade.verifyPrimaryBankAccountRequest(primaryBankAccountId).pipe(
+switchMap(() => this.vendorDetailFacade.approveVendorReviewRequest(commissionRate))
+)
+: this.vendorDetailFacade.approveVendorReviewRequest(commissionRate);
+
+this.vendorDetailFacade.clearMutationError();
+this.isSubmittingFinalDecision = true;
+this.cdr.markForCheck();
+
+request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+next: () => {
+this.isSubmittingFinalDecision = false;
+this.cdr.markForCheck();
+},
+error: () => {
+this.isSubmittingFinalDecision = false;
+this.cdr.markForCheck();
+}
+});
+});
+}
 
  onRequestDocuments(): void {
  if (!this.canRequestDocuments) {
