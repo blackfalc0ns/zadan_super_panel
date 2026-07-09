@@ -859,11 +859,6 @@
  (ngModelChange)="onRegionChange($event)"
  class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
  <option value="">{{ 'COMMON.SELECT' | translate }}</option>
- <option
- *ngIf="editForm.region &&!hasLookupOption(editForm.region, regions)"
- [value]="editForm.region">
- {{ editForm.region }}
- </option>
  <option *ngFor="let region of regions" [value]="region.code">
  {{ isRTL ? region.nameAr : region.nameEn }}
  </option>
@@ -881,11 +876,6 @@
  [(ngModel)]="editForm.city"
  class="w-full rounded-xl border border-slate-200 bg-white p-3 pr-8 text-[12px] font-semibold text-slate-755 shadow-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none">
  <option value="">{{ 'COMMON.SELECT' | translate }}</option>
- <option
- *ngIf="editForm.city &&!hasLookupOption(editForm.city, cities)"
- [value]="editForm.city">
- {{ editForm.city }}
- </option>
  <option *ngFor="let city of cities" [value]="city.code">
  {{ isRTL ? city.nameAr : city.nameEn }}
  </option>

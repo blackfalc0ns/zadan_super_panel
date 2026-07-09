@@ -85,6 +85,8 @@
       [columns]="tableColumns"
       [selectable]="true"
       [clickableRows]="true"
+      [isLoading]="isLoading"
+      [skeletonRows]="pageSize"
       [emptyStateTitle]="'CUSTOMERS.EMPTY_TITLE'"
       [emptyStateMessage]="'CUSTOMERS.EMPTY_MESSAGE'"
       [containerClass]="'customers-table extraordinary-table-container bg-white/70 backdrop-blur-3xl'"
@@ -210,6 +212,7 @@
 
     <div class="pt-6 animate-in fade-in duration-1000 slide-in-from-bottom-5">
       <app-pagination
+        *ngIf="!isLoading && totalItems > 0"
         [currentPage]="page"
         [pageSize]="pageSize"
         [totalItems]="totalItems"

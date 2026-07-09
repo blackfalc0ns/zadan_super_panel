@@ -1,0 +1,78 @@
+
+> superadmin-panel@0.0.0 start
+> ng serve --host 127.0.0.1 --port 4200
+
+> Building...
+√ Building...
+Initial chunk files | Names                               |  Raw size
+styles.css          | styles                              | 384.66 kB | 
+main.js             | main                                | 182.26 kB | 
+polyfills.js        | polyfills                           |  90.20 kB | 
+chunk-Q3AC4C3Z.js   | -                                   |  75.39 kB | 
+chunk-G3GJCTTD.js   | -                                   |  65.55 kB | 
+chunk-LO4VSO2B.js   | -                                   |  62.90 kB | 
+chunk-T54FIDM2.js   | -                                   |  46.71 kB | 
+chunk-DQ72BMYB.js   | -                                   |  45.98 kB | 
+chunk-EP34MUPR.js   | -                                   |  34.82 kB | 
+chunk-WCHG6TF7.js   | -                                   |  20.05 kB | 
+chunk-5FKIEPWI.js   | -                                   |  19.36 kB | 
+chunk-4BQWQS4J.js   | -                                   |  18.35 kB | 
+chunk-GOMGD2LR.js   | -                                   |  15.80 kB | 
+chunk-NQBVQ2IA.js   | -                                   |   8.72 kB | 
+chunk-FKIUDVLG.js   | -                                   |   7.71 kB | 
+chunk-BZZH6CZ5.js   | -                                   |   3.79 kB | 
+chunk-WDMUDEB6.js   | -                                   |   1.93 kB | 
+chunk-UPCBYPP3.js   | -                                   |   1.91 kB | 
+chunk-FMKMVIXV.js   | -                                   |   1.87 kB | 
+chunk-HPW7LUX3.js   | -                                   |   1.80 kB | 
+chunk-A6AGMF2K.js   | -                                   |   1.59 kB | 
+chunk-TWG6LR5H.js   | -                                   | 978 bytes | 
+chunk-4YSI3MGC.js   | -                                   | 452 bytes | 
+chunk-U6RD3CKK.js   | -                                   |  43 bytes | 
+chunk-MHTAV5VG.js   | -                                   |  43 bytes | 
+
+                    | Initial total                       |   1.09 MB
+
+Lazy chunk files    | Names                               |  Raw size
+chunk-VE3CHKRV.js   | driver-detail-component             | 529.27 kB | 
+chunk-RSW53K4J.js   | orders-routes                       | 411.51 kB | 
+chunk-GX24W53J.js   | admin-support-center-component      | 357.20 kB | 
+chunk-WHTI7QOZ.js   | disputes-dashboard-component        | 327.62 kB | 
+chunk-GAFKHWDP.js   | dashboard-component                 | 243.98 kB | 
+chunk-TBGEUFIK.js   | vendor-detail-component             | 233.46 kB | 
+chunk-IEHX4CGO.js   | vendor-finance-component            | 208.01 kB | 
+chunk-T2ADMTMC.js   | vendor-compliance-component         | 164.20 kB | 
+chunk-37WLAA3O.js   | email-center-component              | 158.94 kB | 
+chunk-LYT375MX.js   | admin-user-detail-component         | 152.06 kB | 
+chunk-SICBPBF6.js   | master-product-form-component       | 124.73 kB | 
+chunk-OO44UOW7.js   | customer-detail-component           | 120.19 kB | 
+chunk-JMP33N33.js   | vendors-list-component              | 111.17 kB | 
+chunk-5HTRYVHW.js   | bulk-master-products-page-component | 105.39 kB | 
+chunk-5YEWFBXQ.js   | bulk-brands-page-component          |  98.16 kB | 
+...and 95 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [36.880 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  ➜  Local:   http://127.0.0.1:4200/
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Initial chunk files | Names                       |  Raw size
+main.js             | main                        | 182.26 kB | 
+chunk-UWK7F7UI.js   | -                           |  46.71 kB | 
+chunk-IKAEYUDB.js   | -                           |  34.89 kB | 
+
+Lazy chunk files    | Names                       |  Raw size
+chunk-ATKFVC4O.js   | email-center-component      | 158.94 kB | 
+chunk-3XWSBPVT.js   | admin-user-detail-component | 152.06 kB | 
+chunk-4ASVSNU5.js   | customer-detail-component   | 120.19 kB | 
+chunk-7TO6D36Y.js   | admin-profile-component     |  69.60 kB | 
+chunk-3DWW36O6.js   | customers-list-component    |  44.13 kB | 
+chunk-YTLRIKEX.js   | email-center-routes         |   1.14 kB | 
+chunk-33FEJBBH.js   | admin-users-routes          | 970 bytes | 
+chunk-2FJJO7LF.js   | customers-routes            | 734 bytes | 
+
+Application bundle generation complete. [45.147 seconds]
+
+Page reload sent to client(s).

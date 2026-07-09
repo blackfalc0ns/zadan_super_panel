@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CustomersService, CustomerFilterOptionItem, CustomerFilterOptions, CustomerFilters } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
@@ -32,10 +33,12 @@ import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../
 })
 export class CustomersListComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   page = 1;
   pageSize = 15;
   searchTerm = '';
   isFiltersExpanded = false;
+  isLoading = true;
   filters: CustomerFilters = {};
 
   customers: CustomerDetailRecord[] = [];
@@ -74,6 +77,13 @@ export class CustomersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.customersService.customersLoading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isLoading) => {
+        this.isLoading = isLoading;
+        this.cdr.markForCheck();
+      });
+
     this.loadFilterOptions();
     const city = this.route.snapshot.queryParamMap.get('city');
     if (city) {

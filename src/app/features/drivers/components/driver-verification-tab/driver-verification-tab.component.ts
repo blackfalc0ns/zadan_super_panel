@@ -106,7 +106,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  this.selectedDocumentPreview = this.driver.documents[0];
  }
  this.initEditForm();
- this.geographyService.getRegions().subscribe({
+ this.geographyService.getOperationalRegions().subscribe({
  next: (regs) => {
  this.regions = regs;
  if (this.editForm.region) {
@@ -184,7 +184,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  }
 
  loadCities(regionCode: string) {
- this.geographyService.getCities(regionCode).subscribe({
+ this.geographyService.getOperationalCities(regionCode).subscribe({
  next: (cts) => {
  this.cities = cts;
  this.editForm.city = this.resolveLookupCode(this.editForm.city, this.cities);
@@ -207,7 +207,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  [option.code, option.nameAr, option.nameEn].filter((candidate): candidate is string => Boolean(candidate)).some((candidate) => candidate.trim().toLocaleLowerCase() === normalizedValue)
  );
 
- return match?.code ?? this.normalizeRegionCode(value);
+ return match?.code ?? '';
  }
 
  hasLookupOption(

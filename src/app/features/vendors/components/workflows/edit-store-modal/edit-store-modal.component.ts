@@ -279,7 +279,7 @@ export class EditStoreModalComponent implements OnChanges {
  }
 
  private loadRegions(): void {
- this.geographyService.getRegions().subscribe({
+ this.geographyService.getOperationalRegions().subscribe({
  next: (regions) => {
  this.cdr.markForCheck();
  this.regionOptions = regions.map((r) => ({
@@ -291,7 +291,7 @@ export class EditStoreModalComponent implements OnChanges {
  }
 
  private loadCities(regionCode: string): void {
- this.geographyService.getCities(regionCode).subscribe({
+ this.geographyService.getOperationalCities(regionCode).subscribe({
  next: (cities) => {
  this.cdr.markForCheck();
  this.cityOptions = cities.map((c) => ({

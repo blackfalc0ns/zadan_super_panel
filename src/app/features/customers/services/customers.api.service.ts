@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, defer, map, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, defer, finalize, map, of, tap } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/services/auth.service';
@@ -123,9 +123,12 @@ export class CustomersService {
  private readonly apiUrl = `${environment.apiUrl}/admin/customers`;
  private readonly customerStore = new Map<string, CustomerDetailRecord>();
  private readonly customersSubject = new BehaviorSubject<CustomerDetailRecord[]>([]);
+ private readonly customersLoadingSubject = new BehaviorSubject(false);
+ readonly customersLoading$ = this.customersLoadingSubject.asObservable();
  private readonly hubUrl = `${environment.apiUrl.replace(/\/api$/, '')}/hubs/customer-presence`;
  private presenceConnection?: signalR.HubConnection;
  private customersLoaded = false;
+ private customersLoadingRequestCount = 0;
  private presenceConnected = false;
 
  constructor(
@@ -172,8 +175,12 @@ export class CustomersService {
  if (filters['sortBy']) params = params.set('sortBy', String(filters['sortBy']));
  }
 
+ this.customersLoaded = true;
+ this.beginCustomersLoading();
+
  this.http.get<ApiPaginatedResponse<AdminCustomerListItemDto>>(this.apiUrl, { params }).pipe(
- map((response) => response.items.map((item) => this.mapListItemToCustomer(item)))
+ map((response) => response.items.map((item) => this.mapListItemToCustomer(item))),
+ finalize(() => this.endCustomersLoading())
  ).subscribe({
  next: (customers) => {
  this.customerStore.clear();
@@ -182,6 +189,7 @@ export class CustomersService {
  },
  error: (error) => {
  console.error('Failed to load admin customers with filters.', error);
+ this.customersLoaded = false;
  this.customersSubject.next([]);
  }
  });
@@ -780,11 +788,13 @@ export class CustomersService {
  }
 
  this.customersLoaded = true;
+ this.beginCustomersLoading();
 
  const params = new HttpParams().set('page', '1').set('pageSize', '250');
 
  this.http.get<ApiPaginatedResponse<AdminCustomerListItemDto>>(this.apiUrl, { params }).pipe(
- map((response) => response.items.map((item) => this.mapListItemToCustomer(item)))
+ map((response) => response.items.map((item) => this.mapListItemToCustomer(item))),
+ finalize(() => this.endCustomersLoading())
  ).subscribe({
  next: (customers) => {
  this.customerStore.clear();
@@ -797,6 +807,16 @@ export class CustomersService {
  this.customersSubject.next([]);
  }
  });
+ }
+
+ private beginCustomersLoading(): void {
+ this.customersLoadingRequestCount += 1;
+ this.customersLoadingSubject.next(true);
+ }
+
+ private endCustomersLoading(): void {
+ this.customersLoadingRequestCount = Math.max(0, this.customersLoadingRequestCount - 1);
+ this.customersLoadingSubject.next(this.customersLoadingRequestCount > 0);
  }
 
  private setCustomer(customer: CustomerDetailRecord): void {
