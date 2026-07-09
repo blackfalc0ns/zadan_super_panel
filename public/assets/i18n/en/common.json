@@ -256,7 +256,9 @@
     "PROFILE": "Profile",
     "LIVE_OPS": "Live Ops",
     "SYSTEM_LOGS": "System Logs",
-    "EMAIL_CENTER": "Email Center"
+    "EMAIL_CENTER": "Email Center",
+    "EMAIL_CENTER_HISTORY": "Email dispatch history",
+    "EMAIL_CENTER_RULE": "Email rule details"
   },
   "SIDEBAR_EXTRA": {
     "WELCOME_USER": "Welcome",

@@ -43,7 +43,8 @@ export class MultiTranslateHttpLoader implements TranslateLoader {
     'catalog',
     'orders',
     'users',
-    'marketing'
+    'marketing',
+    'email-center'
   ];
 
   constructor(private readonly http: HttpClient) {}

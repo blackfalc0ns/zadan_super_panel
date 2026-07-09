@@ -1,0 +1,380 @@
+{
+  "EMAIL_CENTER": {
+    "TITLE": "Email Center",
+    "DESC": "Configure sender profiles, persona-based routing, recipient builders, and bilingual workflow previews.",
+    "OPEN_ADMIN_USERS": "Access Directory",
+    "KPI": {
+      "TOTAL_RULES": "Workflow rules",
+      "ENABLED": "Enabled rules",
+      "SENDER_PROFILES": "Sender profiles",
+      "ROUTED_RULES": "Routed rules",
+      "DIRECTORY_DRIVEN": "Directory-driven rules",
+      "AUDIENCE_COVERAGE": "Audience coverage"
+    },
+    "AUDIENCE": {
+      "BADGE": "Audience routing",
+      "TITLE": "Persona-aware workflow coverage",
+      "DESC": "Switch between super admin, vendor, driver, and customer routing scenarios.",
+      "ALL": "All audiences"
+    },
+    "STATUS": {
+      "PRIMARY": "Primary",
+      "SECONDARY": "Secondary",
+      "BACKUP": "Backup"
+    },
+    "LOCALE": {
+      "BILINGUAL": "Bilingual",
+      "ARABIC": "Arabic",
+      "ENGLISH": "English"
+    },
+    "SENDER_PROFILES": {
+      "BADGE": "Sender profiles",
+      "TITLE": "Operational sender stack",
+      "DESC": "Reusable from-address identities for admin notifications and operational workflows.",
+      "REPLY_TO": "Reply-to",
+      "LOCALE": "Locale mode",
+      "DEFAULT": "Default sender",
+      "READ_ONLY": "Backend-owned"
+    },
+    "PROFILES": {
+      "SYSTEM_NO_REPLY": "Automated sender for OTP, password reset, verification, and system-only messages.",
+      "PUBLIC_CONTACT": "Public contact sender for contact-form responses and general correspondence.",
+      "OPS_PRIMARY": "Primary sender for platform-wide operational and access messages.",
+      "OPS_PRIMARY_NAME": "Operations Primary",
+      "RISK_DESK": "Dedicated sender for risk, compliance, and escalation workflows.",
+      "RISK_DESK_NAME": "Risk Desk",
+      "VENDOR_NETWORK": "Dedicated sender for vendor network onboarding, branch access, and routing updates.",
+      "VENDOR_NETWORK_NAME": "Vendor Network",
+      "FINANCE_DIGEST": "Finance-safe sender for settlement summaries and reconciliation digests.",
+      "FINANCE_DIGEST_NAME": "Finance Digest"
+    },
+    "WORKFLOWS": {
+      "BADGE": "Workflow rules",
+      "TITLE": "Persona-based email workflows",
+      "DESC": "Review enabled rules, audience scope, sender profile, and routing strategy from one place.",
+      "ENABLED": "Enabled",
+      "DISABLED": "Disabled",
+      "SEARCH": "Search rules or templates...",
+      "NO_MATCH": "No matching rules",
+      "NO_MATCH_DESC": "Try a different search term or change the audience filter.",
+      "HAS_TEMPLATE": "Linked template"
+    },
+    "TABS": {
+      "ROUTING": "Routing",
+      "TEMPLATE": "Template",
+      "DELIVERY": "Recipients",
+      "HISTORY": "History"
+    },
+    "NAV": {
+      "HISTORY": "Dispatch history",
+      "SENDER_PROFILES": "Sender profiles",
+      "BACK_TO_RULES": "Back to rules",
+      "OPEN_RULE": "Open rule"
+    },
+    "RULE_DETAIL": {
+      "TITLE": "Rule details",
+      "SUBTITLE": "Configure routing, template, and recipients for this workflow rule."
+    },
+    "RULE_NOT_FOUND": "The requested email rule could not be found.",
+    "PLACEHOLDERS": {
+      "SENDER_PROFILE": "Select sender profile",
+      "BRANCH_SCOPE": "Select branch scope"
+    },
+    "TEMPLATE": {
+      "BADGE": "Template editor",
+      "TITLE": "Bind the email template to this rule",
+      "DESC": "Edit subject, body, hero image, and CTA with a live preview that matches backend rendering.",
+      "HERO_IMAGE": "Hero image",
+      "HERO_PLACEHOLDER": "https://...",
+      "FALLBACK_HERO": "Fallback hero image",
+      "CTA_LABEL": "CTA button label",
+      "VARIABLES_HINT": "Click any variable to append it to the template body.",
+      "PREVIEW_BADGE": "Live preview",
+      "PREVIEW_TITLE": "Actual email appearance",
+      "PREVIEW_LOCALE": "Preview locale",
+      "SAMPLE_DATA": "Sample data",
+      "RAW_TOKENS": "Raw tokens",
+      "SOURCE": "Preview source",
+      "BACKEND_SOURCE": "Backend template",
+      "PREVIEW_LOADING": "Rendering preview from backend...",
+      "PREVIEW_ERROR": "Could not load the template preview from backend.",
+      "EMPTY_SUBJECT": "No subject",
+      "OPEN_PREVIEW": "Preview template"
+    },
+    "DELIVERY": {
+      "BADGE": "Email delivery",
+      "TITLE": "Recipients and pre-send verification",
+      "DESC": "Review subject, variables, and resolved recipients before test send or live dispatch."
+    },
+    "CONFIG": {
+      "BADGE": "Rule configuration"
+    },
+    "PERSONAS": {
+      "BADGE": "Persona scope",
+      "TITLE": "Persona targeting",
+      "DESC": "Limit each rule to the personas that should receive or influence the workflow."
+    },
+    "RECIPIENTS": {
+      "BADGE": "Recipient builder",
+      "TITLE": "Directory recipient targets",
+      "DESC": "Build To, CC, and BCC groups from access-directory identities instead of hardcoded emails."
+    },
+    "STATIC_RECIPIENTS": {
+      "BADGE": "Static recipients",
+      "TITLE": "Manual recipients",
+      "DESC": "Always include these fixed recipients in addition to directory-driven routing."
+    },
+    "FALLBACK": {
+      "BADGE": "Fallback routing",
+      "TITLE": "Fallback recipients",
+      "DESC": "Use fallback contacts when no directory target is resolved for the selected scope."
+    },
+    "RESOLVED": {
+      "BADGE": "Resolved preview",
+      "EMPTY": "No recipients resolved",
+      "REFRESHING": "Refreshing preview",
+      "WARNINGS": "Warnings"
+    },
+    "BRANCH_SCOPE": {
+      "ALL_BRANCHES": "All branches",
+      "ASSIGNED_BRANCH": "Assigned branch",
+      "SPECIFIC_BRANCH": "Specific branch"
+    },
+    "FILTERS": {
+      "ALL_VENDORS": "All vendors",
+      "ALL_BRANCHES": "All branches"
+    },
+    "FIELDS": {
+      "ENABLED": "Rule state",
+      "SENDER_PROFILE": "Sender profile",
+      "TO": "Static To",
+      "CC": "Static CC",
+      "BCC": "Static BCC",
+      "OWNER": "Workflow owner",
+      "ESCALATION": "Escalation owner",
+      "AUDIENCE": "Audience",
+      "PANEL_SCOPE": "Panel scope",
+      "ENTITY_ID": "Entity ID",
+      "VENDOR": "Vendor",
+      "BRANCH": "Branch",
+      "BRANCH_SCOPE": "Branch scope mode",
+      "FALLBACK_TO": "Fallback To",
+      "FALLBACK_CC": "Fallback CC",
+      "FALLBACK_BCC": "Fallback BCC",
+      "DIRECTORY_TO": "Directory To",
+      "DIRECTORY_CC": "Directory CC",
+      "DIRECTORY_BCC": "Directory BCC"
+    },
+    "ACTIONS": {
+      "SAVE": "Save rule",
+      "SAVING": "Saving...",
+      "TEST_SEND": "Test send",
+      "SENDING_TEST": "Sending test...",
+      "EXPAND": "Expand",
+      "COLLAPSE": "Collapse"
+    },
+    "MESSAGES": {
+      "SAVE_SUCCESS": "Rule settings saved successfully and synced with the backend.",
+      "TEST_SEND_SUCCESS": "Test Send executed successfully and logged."
+    },
+    "AUTOMATION": {
+      "LIVE": "Live automation",
+      "MANUAL_ONLY": "Manual only"
+    },
+    "LOADING": {
+      "TITLE": "Loading email center",
+      "DESC": "Fetching workflow rules, sender profiles, and dispatch history from the backend."
+    },
+    "TEST_SEND": {
+      "BADGE": "Test send",
+      "LAST_RESULT": "Last test result"
+    },
+    "DISPATCH_STATUS": {
+      "SENT": "Sent",
+      "FAILED": "Failed",
+      "SKIPPED": "Skipped"
+    },
+    "SOURCES": {
+      "TEST_SEND": "Test send",
+      "SYSTEM_EVENT": "System events",
+      "VENDOR_AUTOMATION_LIVE": "Vendor automation live",
+      "VENDOR_AUTOMATION_LEGACY": "Vendor automation legacy"
+    },
+    "HISTORY": {
+      "BADGE": "Dispatch history",
+      "TITLE": "Recent email dispatches",
+      "DESC": "Track test sends and live automation deliveries with backend-backed audit history.",
+      "RULE": "Rule",
+      "SOURCE": "Source",
+      "STATUS": "Status",
+      "DATE_FROM": "Date from",
+      "DATE_TO": "Date to",
+      "ALL_RULES": "All rules",
+      "ALL_SOURCES": "All sources",
+      "ALL_STATUSES": "All statuses",
+      "CLEAR_FILTERS": "Clear filters",
+      "LOADING": "Loading dispatch history...",
+      "EMPTY_TITLE": "No dispatches found",
+      "EMPTY_DESC": "No email dispatches match the current filters yet.",
+      "RECIPIENTS": "recipients",
+      "NO_DISPATCH": "No dispatch yet"
+    },
+    "PREVIEW": {
+      "BADGE": "Template preview",
+      "TITLE": "Live bilingual preview",
+      "DESC": "Review subjects, body copy, and dynamic variables without opening a template builder.",
+      "ENGLISH": "English",
+      "ARABIC": "Arabic",
+      "SUBJECT": "Subject",
+      "BODY": "Body",
+      "VARIABLES": "Available variables",
+      "SENDER": "Current sender",
+      "NO_VARIABLES": "No variables used in this template."
+    },
+    "CATEGORIES": {
+      "ACCESS": "Access control",
+      "OPERATIONS": "Operations",
+      "RISK": "Risk & trust",
+      "FINANCE": "Finance",
+      "VENDOR_NETWORK": "Vendor network",
+      "DRIVER_NETWORK": "Driver operations",
+      "DRIVERS": "Driver operations",
+      "CUSTOMER_CARE": "Customer care",
+      "CUSTOMER_ORDERS": "Customer Orders",
+      "VENDOR_ORDERS": "Vendor Orders",
+      "VENDOR_LIFECYCLE": "Vendor Lifecycle",
+      "SUPPORT": "Support & cases"
+    },
+    "CADENCE": {
+      "INSTANT": "Instant",
+      "BATCH_15": "15-minute batch",
+      "DAILY": "Daily digest",
+      "WEEKLY": "Weekly"
+    },
+    "NOTES": {
+      "ADMIN_INVITE": "Send immediately when a new admin user is invited into the control center.",
+      "ACCESS_RESET": "Used when administrative access is reset or reissued.",
+      "VENDOR_REVIEW": "Routes new vendor review cases to the governance queue.",
+      "DISPUTE_ESCALATION": "Escalates SLA breaches and sensitive disputes to risk leadership.",
+      "SETTLEMENT_DIGEST": "Daily finance digest for payout, reconciliation, and blocked exposure review.",
+      "SUPER_ADMIN_ACCESS_INVITE": "Notify invited super admin identities and their owning managers when access is provisioned.",
+      "VENDOR_BRANCH_INVITE": "Trigger when a branch operator or branch manager receives a new vendor-panel invitation.",
+      "BRANCH_PASSWORD_RESET": "Used for secure reset and re-activation of vendor branch credentials.",
+      "VENDOR_FINANCE_DIGEST": "Delivers vendor payout, settlement, and balance summaries to finance stakeholders.",
+      "DRIVER_VERIFICATION_UPDATE": "Routes verification state updates for driver identities and compliance teams.",
+      "DRIVER_PAYOUT_ALERT": "Summarizes payout readiness, COD exposure, and balance movement for driver accounts.",
+      "CUSTOMER_SUPPORT_ESCALATION": "Alerts customer, support, and oversight teams when a high-touch support case escalates.",
+      "CUSTOMER_ACCOUNT_RECOVERY": "Secure recovery workflow for customer account access and follow-up support.",
+      "CUSTOMER_ORDER_CONFIRMED": "Sends only when an order is confirmed after payment/COD placement.",
+      "CUSTOMER_ORDER_OUT_FOR_DELIVERY": "Sends only when an order reaches OnTheWay status.",
+      "CUSTOMER_DRIVER_ARRIVED_AT_DELIVERY": "Sends only when the driver marks arrived at customer.",
+      "CUSTOMER_ORDER_IMPORTANT_UPDATE": "Sends only for major order/payment changes.",
+      "VENDOR_ORDER_ACTION_REQUIRED": "Sends only for PendingVendorAcceptance orders.",
+      "VENDOR_WEEKLY_SUMMARY": "Sends Mondays at 09:00 Asia/Riyadh when the vendor had order activity last week.",
+      "VENDOR_APPROVED": "Automatically dispatches when the vendor account is approved.",
+      "VENDOR_PASSWORD_RESET": "Automatically dispatches when a vendor password reset is triggered."
+    },
+    "EVENTS": {
+      "ADMIN_INVITE": {
+        "TITLE": "Admin invite",
+        "SUBTITLE": "Onboarding invitation for new control-center admins."
+      },
+      "ACCESS_RESET": {
+        "TITLE": "Access reset",
+        "SUBTITLE": "Secure reset and re-issue workflow for admin credentials."
+      },
+      "VENDOR_REVIEW": {
+        "TITLE": "Vendor onboarding review",
+        "SUBTITLE": "Triggered when vendor approval needs operational follow-up."
+      },
+      "DISPUTE_ESCALATION": {
+        "TITLE": "Dispute escalation",
+        "SUBTITLE": "Escalation workflow for high-risk or SLA-breached disputes."
+      },
+      "SETTLEMENT_DIGEST": {
+        "TITLE": "Settlement digest",
+        "SUBTITLE": "Finance digest for payout and reconciliation oversight."
+      },
+      "SUPER_ADMIN_ACCESS_INVITE": {
+        "TITLE": "Super admin access invite",
+        "SUBTITLE": "Provision and route new super admin access invitations."
+      },
+      "VENDOR_BRANCH_INVITE": {
+        "TITLE": "Vendor branch invite",
+        "SUBTITLE": "Onboarding workflow for vendor branch teams and managers."
+      },
+      "BRANCH_PASSWORD_RESET": {
+        "TITLE": "Branch password reset",
+        "SUBTITLE": "Secure reset flow for vendor panel branch credentials."
+      },
+      "VENDOR_FINANCE_DIGEST": {
+        "TITLE": "Vendor finance digest",
+        "SUBTITLE": "Daily finance digest for vendor owners and finance roles."
+      },
+      "DRIVER_VERIFICATION_UPDATE": {
+        "TITLE": "Driver verification update",
+        "SUBTITLE": "Verification state, document follow-up, and readiness communication."
+      },
+      "DRIVER_PAYOUT_ALERT": {
+        "TITLE": "Driver payout alert",
+        "SUBTITLE": "Driver payout and COD readiness digest."
+      },
+      "CUSTOMER_SUPPORT_ESCALATION": {
+        "TITLE": "Customer support escalation",
+        "SUBTITLE": "Escalated support workflow for sensitive customer cases."
+      },
+      "CUSTOMER_ACCOUNT_RECOVERY": {
+        "TITLE": "Customer account recovery",
+        "SUBTITLE": "Recovery flow for customer access and secure re-entry."
+      },
+      "CUSTOMER_ORDER_CONFIRMED": {
+        "TITLE": "Order confirmed",
+        "SUBTITLE": "Receipt and order confirmation for customers."
+      },
+      "CUSTOMER_ORDER_OUT_FOR_DELIVERY": {
+        "TITLE": "Order out for delivery",
+        "SUBTITLE": "Customer update when an order is on the way."
+      },
+      "CUSTOMER_DRIVER_ARRIVED_AT_DELIVERY": {
+        "TITLE": "Driver arrived at delivery location",
+        "SUBTITLE": "Customer email when the driver arrives at the delivery address."
+      },
+      "CUSTOMER_ORDER_IMPORTANT_UPDATE": {
+        "TITLE": "Important order update",
+        "SUBTITLE": "Customer email for cancellation, refund, delivery failure, or payment failure."
+      },
+      "VENDOR_ORDER_ACTION_REQUIRED": {
+        "TITLE": "New order needs action",
+        "SUBTITLE": "Vendor email only when an order is waiting for acceptance/preparation."
+      },
+      "VENDOR_WEEKLY_SUMMARY": {
+        "TITLE": "Weekly vendor summary",
+        "SUBTITLE": "Weekly digest of vendor sales, orders, cancellations, and top products."
+      },
+      "VENDOR_APPROVED": {
+        "TITLE": "Vendor approved",
+        "SUBTITLE": "Live automation for vendor approval."
+      },
+      "VENDOR_PASSWORD_RESET": {
+        "TITLE": "Vendor password reset",
+        "SUBTITLE": "Live automation for vendor password reset."
+      }
+    },
+    "RECIPIENT_TARGETS": {
+      "PRIMARY_ACCOUNT_EMAIL": "Primary account email",
+      "VENDOR_OWNER": "Vendor owner",
+      "VENDOR_COMPANY_MANAGER": "Vendor company manager",
+      "BRANCH_MANAGER": "Branch manager",
+      "BRANCH_STAFF": "Branch staff",
+      "VENDOR_FINANCE": "Vendor finance",
+      "VENDOR_SUPPORT": "Vendor support",
+      "ASSIGNED_SUPER_ADMIN_MANAGER": "Assigned super admin manager",
+      "DRIVER_ACCOUNT": "Driver account",
+      "CUSTOMER_ACCOUNT": "Customer account"
+    },
+    "EMPTY": {
+      "TITLE": "No routing rules found",
+      "MESSAGE": "No email rules match the current filters."
+    }
+  }
+}

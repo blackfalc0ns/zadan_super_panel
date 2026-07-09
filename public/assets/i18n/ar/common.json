@@ -256,7 +256,9 @@
     "PROFILE": "الملف الشخصي",
     "LIVE_OPS": "العمليات المباشرة",
     "SYSTEM_LOGS": "سجلات النظام",
-    "EMAIL_CENTER": "مركز البريد"
+    "EMAIL_CENTER": "مركز البريد",
+    "EMAIL_CENTER_HISTORY": "سجل إرسالات البريد",
+    "EMAIL_CENTER_RULE": "تفاصيل قاعدة البريد"
   },
   "SIDEBAR_EXTRA": {
     "WELCOME_USER": "مرحبا بك",
