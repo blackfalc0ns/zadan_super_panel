@@ -368,18 +368,19 @@ export class AuthService {
             return of(void 0);
         }
 
-        return this.http
-            .post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true })
-            .pipe(
-                catchError((err) => {
+        return from(this.acquireCsrfToken()).pipe(
+            switchMap(() => this.http.post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true })),
+            catchError((err: HttpErrorResponse) => {
+                if (err.status !== 401) {
                     console.warn('[Zadana Admin] logout request failed; clearing local session anyway.', err);
-                    return of(void 0);
-                }),
-                tap(() => {
-                    this.clearLoginRequired();
-                    this.clearSession();
-                })
-            );
+                }
+                return of(void 0);
+            }),
+            tap(() => {
+                this.clearLoginRequired();
+                this.clearSession();
+            })
+        );
     }
 
     public forceLogout(): void {

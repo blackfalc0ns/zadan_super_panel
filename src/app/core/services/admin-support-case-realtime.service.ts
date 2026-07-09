@@ -136,7 +136,8 @@ export class AdminSupportCaseRealtimeService {
 
     if (!this.hubConnection) {
       const connectionOptions = {
-        accessTokenFactory: () => this.authService.getToken() ?? ''
+        accessTokenFactory: () => this.authService.getToken() ?? '',
+        transport: signalR.HttpTransportType.LongPolling
       };
 
       this.hubConnection = new signalR.HubConnectionBuilder()

@@ -1,0 +1,58 @@
+<div class="rule-page" [dir]="'SIDEBAR.DIR' | translate">
+  <app-page-header
+    [title]="ruleTitle || ('EMAIL_CENTER.RULE_DETAIL.TITLE' | translate)"
+    [subtitle]="rule ? (rule.subtitleKey | translate) : ('EMAIL_CENTER.RULE_DETAIL.SUBTITLE' | translate)"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'SIDEBAR.EMAIL_CENTER', url: '/email-center' },
+      { label: ruleTitle || ('EMAIL_CENTER.RULE_DETAIL.TITLE' | translate) }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">drafts</span>
+
+    <div actions class="rule-actions">
+      <button type="button" class="rule-action-btn" (click)="backToHub()">
+        <span class="material-symbols-outlined">arrow_back</span>
+        {{ 'EMAIL_CENTER.NAV.BACK_TO_RULES' | translate }}
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="rule-content">
+    <section *ngIf="pageError && !isLoading" class="rule-error">
+      {{ pageError }}
+      <button type="button" class="rule-error__btn" (click)="backToHub()">
+        {{ 'EMAIL_CENTER.NAV.BACK_TO_RULES' | translate }}
+      </button>
+    </section>
+
+    <div *ngIf="isLoading" class="admin-skeleton-detail">
+      <div class="admin-skeleton-detail-hero">
+        <div class="space-y-3">
+          <span class="admin-skeleton admin-skeleton-line sm w-1/4"></span>
+          <span class="admin-skeleton admin-skeleton-line lg w-1/2"></span>
+          <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+        </div>
+      </div>
+    </div>
+
+    <app-email-rule-config
+      *ngIf="!isLoading && rule"
+      [rule]="rule"
+      [senderProfiles]="senderProfiles"
+      [vendorOptions]="vendorOptions"
+      [branchDirectory]="branchDirectory"
+      [resolvedRecipients]="resolvedRecipients"
+      [lastTestSendResult]="lastTestSendResult"
+      [canEdit]="canEdit"
+      [isSaving]="isSaving"
+      [isTestingSend]="isTestingSend"
+      [isResolvingRecipients]="isResolvingRecipients"
+      (save)="saveRule()"
+      (testSend)="testSendRule()"
+      (draftChange)="onRuleDraftChanged()"
+      (vendorChange)="onVendorChange($event)"
+      (branchScopeModeChange)="onBranchScopeModeChange($event)">
+    </app-email-rule-config>
+  </div>
+</div>

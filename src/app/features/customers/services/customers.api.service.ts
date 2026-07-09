@@ -842,7 +842,8 @@ export class CustomersService {
  this.presenceConnected = true;
 
  this.presenceConnection = new signalR.HubConnectionBuilder().withUrl(this.hubUrl, {
- accessTokenFactory: () => this.authService.hasApiSession ? this.authService.getToken() ?? '' : ''
+ accessTokenFactory: () => this.authService.hasApiSession ? this.authService.getToken() ?? '' : '',
+ transport: signalR.HttpTransportType.LongPolling
  }).withAutomaticReconnect().build();
 
  this.presenceConnection.on('customerPresenceUpdated', (update: { customerId: string; isOnlineNow: boolean; lastSeenAtUtc?: string | null }) => {

@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+.hub-page {
+  min-height: 100%;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.75) 100%);
+}
+
+.hub-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem 2.5rem;
+  max-width: 120rem;
+  margin: 0 auto;
+}
+
+.hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.hub-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: white;
+  padding: 0.8rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: rgb(71 85 105);
+  transition: all 0.2s ease;
+}
+
+.hub-action-btn:hover {
+  border-color: rgba(18, 124, 140, 0.25);
+  color: rgb(18 124 140);
+}
+
+.hub-error {
+  border-radius: 1.2rem;
+  border: 1px solid rgba(252, 165, 165, 0.9);
+  background: rgba(254, 242, 242, 0.95);
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgb(220 38 38);
+}
+
+.hub-panel {
+  border-radius: 1.6rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 12px 30px -24px rgba(15, 23, 42, 0.35);
+}
+
+.hub-panel__header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hub-eyebrow {
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(18 124 140);
+}
+
+.hub-panel h2 {
+  margin-top: 0.4rem;
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: rgb(15 23 42);
+}
+
+.hub-panel p {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgb(148 163 184);
+}
+
+.audience-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.audience-tab {
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(241, 245, 249, 0.95);
+  padding: 0.65rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: rgb(100 116 139);
+  transition: all 0.2s ease;
+}
+
+.audience-tab.is-active {
+  background: rgb(18 124 140);
+  color: white;
+  box-shadow: 0 10px 24px -16px rgba(18, 124, 140, 0.8);
+}
+
+@media (min-width: 1024px) {
+  .hub-panel__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

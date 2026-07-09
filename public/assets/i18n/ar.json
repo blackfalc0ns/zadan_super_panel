@@ -776,7 +776,9 @@
     "PROFILE": "الملف الشخصي",
     "LIVE_OPS": "العمليات المباشرة",
     "SYSTEM_LOGS": "سجلات النظام",
-    "EMAIL_CENTER": "مركز البريد"
+    "EMAIL_CENTER": "مركز البريد",
+    "EMAIL_CENTER_HISTORY": "سجل إرسالات البريد",
+    "EMAIL_CENTER_RULE": "تفاصيل قاعدة البريد"
   },
   "SIDEBAR_EXTRA": {
     "WELCOME_USER": "مرحبا بك",
@@ -2712,6 +2714,21 @@
       "DELIVERY": "المستلمون",
       "HISTORY": "السجل"
     },
+    "NAV": {
+      "HISTORY": "سجل الإرسالات",
+      "SENDER_PROFILES": "ملفات الإرسال",
+      "BACK_TO_RULES": "العودة للقواعد",
+      "OPEN_RULE": "فتح القاعدة"
+    },
+    "RULE_DETAIL": {
+      "TITLE": "تفاصيل القاعدة",
+      "SUBTITLE": "تهيئة التوجيه والقالب والمستلمين لهذه القاعدة."
+    },
+    "RULE_NOT_FOUND": "لم نعثر على قاعدة البريد المطلوبة.",
+    "PLACEHOLDERS": {
+      "SENDER_PROFILE": "اختر ملف الإرسال",
+      "BRANCH_SCOPE": "اختر نطاق الفرع"
+    },
     "TEMPLATE": {
       "BADGE": "محرر القالب",
       "TITLE": "ربط قالب الإيميل بالقاعدة",
@@ -2730,7 +2747,8 @@
       "BACKEND_SOURCE": "قالب الباك اند",
       "PREVIEW_LOADING": "نجهّز المعاينة من الباك اند...",
       "PREVIEW_ERROR": "تعذّر تحميل معاينة القالب من الباك اند.",
-      "EMPTY_SUBJECT": "بدون عنوان"
+      "EMPTY_SUBJECT": "بدون عنوان",
+      "OPEN_PREVIEW": "معاينة القالب"
     },
     "DELIVERY": {
       "BADGE": "تسليم الإيميل",

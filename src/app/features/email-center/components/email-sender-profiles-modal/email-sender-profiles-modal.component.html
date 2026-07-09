@@ -1,0 +1,11 @@
+<div *ngIf="open" class="fixed inset-0 z-[120]">
+  <app-modal-shell
+    [title]="'EMAIL_CENTER.SENDER_PROFILES.TITLE'"
+    [subtitle]="'EMAIL_CENTER.SENDER_PROFILES.DESC'"
+    icon="alternate_email"
+    maxWidthClass="max-w-5xl"
+    [showFooter]="false"
+    (close)="closed.emit()">
+    <app-email-sender-profiles [senderProfiles]="senderProfiles"></app-email-sender-profiles>
+  </app-modal-shell>
+</div>

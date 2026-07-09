@@ -1,0 +1,43 @@
+<div class="history-page" [dir]="'SIDEBAR.DIR' | translate">
+  <app-page-header
+    [title]="'EMAIL_CENTER.HISTORY.TITLE'"
+    [subtitle]="'EMAIL_CENTER.HISTORY.DESC'"
+    [showToolbar]="true"
+    [breadcrumbs]="[
+      { label: 'SIDEBAR.HOME', url: '/dashboard' },
+      { label: 'SIDEBAR.EMAIL_CENTER', url: '/email-center' },
+      { label: 'EMAIL_CENTER.HISTORY.BADGE' }
+    ]">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">history</span>
+
+    <div actions>
+      <button type="button" class="history-back-btn" (click)="backToHub()">
+        <span class="material-symbols-outlined">arrow_back</span>
+        {{ 'EMAIL_CENTER.NAV.BACK_TO_RULES' | translate }}
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="history-content">
+    <section *ngIf="pageError && !isLoading" class="history-error">{{ pageError }}</section>
+
+    <div *ngIf="isLoading" class="admin-skeleton-detail">
+      <div class="admin-skeleton-card space-y-3">
+        <span class="admin-skeleton admin-skeleton-line lg w-1/2"></span>
+        <span class="admin-skeleton admin-skeleton-line w-full"></span>
+        <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+      </div>
+    </div>
+
+    <section *ngIf="!isLoading" class="history-panel">
+      <app-email-dispatch-history
+        [dispatches]="dispatches"
+        [rules]="rules"
+        [isHistoryLoading]="isHistoryLoading"
+        [filters]="historyFilters"
+        (filtersChange)="onHistoryFiltersChange($event)"
+        (clearFilters)="clearHistoryFilters()">
+      </app-email-dispatch-history>
+    </section>
+  </div>
+</div>

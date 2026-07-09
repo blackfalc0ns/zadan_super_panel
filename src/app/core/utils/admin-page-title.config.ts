@@ -80,6 +80,8 @@ export const ADMIN_PAGE_TITLE_RULES: readonly AdminPageTitleRule[] = [
   { pattern: /^\/profile$/, titleKey: 'PAGE_TITLES.PROFILE' },
   { pattern: /^\/live-ops$/, titleKey: 'PAGE_TITLES.LIVE_OPS' },
   { pattern: /^\/system-logs$/, titleKey: 'PAGE_TITLES.SYSTEM_LOGS' },
+  { pattern: /^\/email-center\/history$/, titleKey: 'PAGE_TITLES.EMAIL_CENTER_HISTORY' },
+  { pattern: /^\/email-center\/rules\/[^/]+$/, titleKey: 'PAGE_TITLES.EMAIL_CENTER_RULE' },
   { pattern: /^\/email-center$/, titleKey: 'PAGE_TITLES.EMAIL_CENTER' },
 
   { pattern: /^\/$/, titleKey: 'PAGE_TITLES.DASHBOARD' }

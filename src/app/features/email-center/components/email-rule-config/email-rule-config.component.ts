@@ -15,8 +15,6 @@ import {
   EmailAutomationState,
   EmailBranchOption,
   EmailBranchScopeMode,
-  EmailDispatchFilters,
-  EmailDispatchLog,
   EmailRecipientTargetId,
   EmailResolvedRecipients,
   EmailScopeOption,
@@ -25,7 +23,6 @@ import {
   EmailTestSendResult,
   EmailWorkflowRule
 } from '../../models/email-center.models';
-import { EmailDispatchHistoryComponent } from '../email-dispatch-history/email-dispatch-history.component';
 import { EmailTemplatePanelComponent } from '../email-template-panel/email-template-panel.component';
 
 type RecipientChannel = 'to' | 'cc' | 'bcc';
@@ -65,7 +62,6 @@ const RECIPIENT_OPTIONS: Record<DirectoryAudienceType, Array<{ id: EmailRecipien
     TranslateModule,
     SearchableSelectComponent,
     StatusPillComponent,
-    EmailDispatchHistoryComponent,
     EmailTemplatePanelComponent
   ],
   templateUrl: './email-rule-config.component.html',
@@ -85,23 +81,13 @@ export class EmailRuleConfigComponent implements OnChanges {
   @Input() isTestingSend = false;
   @Input() isResolvingRecipients = false;
 
-  // History proxy inputs
-  @Input() dispatches: EmailDispatchLog[] = [];
-  @Input() rules: EmailWorkflowRule[] = [];
-  @Input() isHistoryLoading = false;
-  @Input() historyFilters!: EmailDispatchFilters;
-
   @Output() save = new EventEmitter<void>();
   @Output() testSend = new EventEmitter<void>();
   @Output() draftChange = new EventEmitter<void>();
   @Output() vendorChange = new EventEmitter<string | null>();
   @Output() branchScopeModeChange = new EventEmitter<EmailBranchScopeMode>();
 
-  // History proxy outputs
-  @Output() historyFiltersChange = new EventEmitter<EmailDispatchFilters>();
-  @Output() clearHistoryFilters = new EventEmitter<void>();
-
-  activeTab: 'routing' | 'template' | 'delivery' | 'history' = 'routing';
+  activeTab: 'routing' | 'template' | 'delivery' = 'routing';
   recipientEditor = {
     staticTo: '',
     staticCc: '',
@@ -183,7 +169,7 @@ export class EmailRuleConfigComponent implements OnChanges {
     }
   }
 
-  setTab(tab: 'routing' | 'template' | 'delivery' | 'history'): void {
+  setTab(tab: 'routing' | 'template' | 'delivery'): void {
     this.activeTab = tab;
   }
 

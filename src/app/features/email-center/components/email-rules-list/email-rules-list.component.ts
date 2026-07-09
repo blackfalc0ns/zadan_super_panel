@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import {
@@ -17,13 +18,14 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-email-rules-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent],
-  templateUrl: './email-rules-list.component.html'
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule, StatusPillComponent],
+  templateUrl: './email-rules-list.component.html',
+  styleUrl: './email-rules-list.component.scss'
 })
 export class EmailRulesListComponent {
   @Input() rules: EmailWorkflowRule[] = [];
   @Input() selectedRuleId = '';
-  @Output() ruleSelected = new EventEmitter<string>();
+  @Input() mode: 'sidebar' | 'grid' = 'grid';
 
   searchTerm = '';
 
@@ -39,10 +41,6 @@ export class EmailRulesListComponent {
       rule.subtitleKey.toLowerCase().includes(query) ||
       rule.categoryKey.toLowerCase().includes(query)
     );
-  }
-
-  selectRule(id: string): void {
-    this.ruleSelected.emit(id);
   }
 
   getPanelLabelKey(panelScope: DirectoryPanelScope): string {

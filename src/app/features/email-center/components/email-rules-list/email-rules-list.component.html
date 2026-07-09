@@ -1,57 +1,50 @@
-<section class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm h-fit flex flex-col">
-  <div class="mb-5 space-y-4">
+<section class="rules-shell" [class.rules-shell--grid]="mode === 'grid'">
+  <div class="rules-header">
     <div>
-      <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.WORKFLOWS.BADGE' | translate }}</p>
-      <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.WORKFLOWS.TITLE' | translate }}</h2>
-      <p class="text-xs font-bold text-slate-400 mt-1">{{ 'EMAIL_CENTER.WORKFLOWS.DESC' | translate }}</p>
+      <p class="rules-eyebrow">{{ 'EMAIL_CENTER.WORKFLOWS.BADGE' | translate }}</p>
+      <h2>{{ 'EMAIL_CENTER.WORKFLOWS.TITLE' | translate }}</h2>
+      <p>{{ 'EMAIL_CENTER.WORKFLOWS.DESC' | translate }}</p>
     </div>
 
-    <label class="flex items-center gap-2 rounded-[1.2rem] border border-slate-200 bg-slate-50/80 px-4 py-3">
-      <span class="material-symbols-outlined text-[20px] text-slate-400">search</span>
+    <label class="rules-search">
+      <span class="material-symbols-outlined">search</span>
       <input
-        class="w-full border-0 bg-transparent text-sm font-bold text-slate-700 outline-none placeholder:text-slate-400"
         [(ngModel)]="searchTerm"
         type="search"
         [placeholder]="'EMAIL_CENTER.WORKFLOWS.SEARCH' | translate" />
     </label>
   </div>
 
-  <div *ngIf="rules.length === 0" class="rounded-[1.6rem] border border-dashed border-slate-300 bg-slate-50/70 px-5 py-10 text-center flex-1 flex flex-col justify-center items-center">
-    <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-white text-slate-400 shadow-sm">
-      <span class="material-symbols-outlined text-[26px]">mail_off</span>
-    </div>
-    <h3 class="mt-4 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.EMPTY.TITLE' | translate }}</h3>
-    <p class="mt-2 text-xs font-bold text-slate-400 max-w-xs">{{ 'EMAIL_CENTER.EMPTY.MESSAGE' | translate }}</p>
+  <div *ngIf="rules.length === 0" class="rules-empty">
+    <span class="material-symbols-outlined">mail_off</span>
+    <h3>{{ 'EMAIL_CENTER.EMPTY.TITLE' | translate }}</h3>
+    <p>{{ 'EMAIL_CENTER.EMPTY.MESSAGE' | translate }}</p>
   </div>
 
-  <div *ngIf="rules.length > 0 && visibleRules.length === 0" class="rounded-[1.6rem] border border-dashed border-slate-300 bg-slate-50/70 px-5 py-8 text-center">
-    <p class="text-sm font-black text-slate-700">{{ 'EMAIL_CENTER.WORKFLOWS.NO_MATCH' | translate }}</p>
-    <p class="mt-2 text-xs font-bold text-slate-400">{{ 'EMAIL_CENTER.WORKFLOWS.NO_MATCH_DESC' | translate }}</p>
+  <div *ngIf="rules.length > 0 && visibleRules.length === 0" class="rules-empty">
+    <p>{{ 'EMAIL_CENTER.WORKFLOWS.NO_MATCH' | translate }}</p>
+    <span>{{ 'EMAIL_CENTER.WORKFLOWS.NO_MATCH_DESC' | translate }}</span>
   </div>
 
-  <div *ngIf="visibleRules.length > 0" class="space-y-3 overflow-y-auto max-h-[50rem] pr-1">
-    <button
+  <div *ngIf="visibleRules.length > 0" class="rules-collection" [class.rules-collection--grid]="mode === 'grid'">
+    <a
       *ngFor="let rule of visibleRules"
-      type="button"
-      class="w-full rounded-[1.6rem] border px-4 py-4 text-start transition-all outline-none focus:outline-none"
-      [ngClass]="rule.id === selectedRuleId
-        ? 'border-zadna-primary/25 bg-zadna-primary/[0.05] shadow-sm'
-        : 'border-slate-200 bg-slate-50/70 hover:border-zadna-primary/20 hover:bg-white'"
-      (click)="selectRule(rule.id)">
-      <div class="flex items-start justify-between gap-3">
-        <div class="min-w-0 flex-1">
-          <p class="text-sm font-black text-slate-900 truncate">{{ rule.titleKey | translate }}</p>
-          <p class="mt-1 text-[11px] font-bold text-slate-400 truncate">{{ rule.subtitleKey | translate }}</p>
+      class="rule-card"
+      [class.rule-card--active]="rule.id === selectedRuleId"
+      [routerLink]="['/email-center/rules', rule.id]">
+      <div class="rule-card__top">
+        <div class="rule-card__titles">
+          <h3>{{ rule.titleKey | translate }}</h3>
+          <p>{{ rule.subtitleKey | translate }}</p>
         </div>
         <app-status-pill
           [label]="rule.enabled ? 'EMAIL_CENTER.WORKFLOWS.ENABLED' : 'EMAIL_CENTER.WORKFLOWS.DISABLED'"
           [variant]="rule.enabled ? 'success' : 'neutral'"
-          size="sm"
-          class="flex-shrink-0">
+          size="sm">
         </app-status-pill>
       </div>
 
-      <div class="mt-4 flex flex-wrap items-center gap-2">
+      <div class="rule-card__meta">
         <app-status-pill [label]="rule.categoryKey" variant="info" size="sm"></app-status-pill>
         <app-status-pill [label]="rule.cadenceLabelKey" variant="warning" size="sm"></app-status-pill>
         <app-status-pill [label]="getPanelLabelKey(rule.panelScope)" variant="neutral" size="sm"></app-status-pill>
@@ -62,20 +55,21 @@
         </app-status-pill>
       </div>
 
-      <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+      <div class="rule-card__footer">
         <app-status-pill
           [label]="getLastDispatchLabelKey(rule)"
           [variant]="rule.lastDispatch ? getDispatchStatusVariant(rule.lastDispatch.status) : 'neutral'"
           size="sm">
         </app-status-pill>
-        <span *ngIf="rule.template.heroImageUrl || rule.template.heroImageUrlEn || rule.template.heroImageUrlAr" class="inline-flex items-center gap-1 rounded-full bg-zadna-primary/10 px-2.5 py-1 text-[10px] font-black text-zadna-primary">
-          <span class="material-symbols-outlined text-[14px]">image</span>
+        <span *ngIf="rule.template.heroImageUrl || rule.template.heroImageUrlEn || rule.template.heroImageUrlAr" class="rule-card__template">
+          <span class="material-symbols-outlined">image</span>
           {{ 'EMAIL_CENTER.WORKFLOWS.HAS_TEMPLATE' | translate }}
         </span>
-        <span *ngIf="rule.lastDispatch" class="text-[10px] font-black text-slate-400">
-          {{ rule.lastDispatch.createdAtUtc | date:'medium' }}
+        <span class="rule-card__cta">
+          {{ 'EMAIL_CENTER.NAV.OPEN_RULE' | translate }}
+          <span class="material-symbols-outlined">arrow_forward</span>
         </span>
       </div>
-    </button>
+    </a>
   </div>
 </section>

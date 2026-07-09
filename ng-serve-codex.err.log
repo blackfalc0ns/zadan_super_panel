@@ -194,3 +194,521 @@ X [ERROR] TS2551: Property 'previewLocale' does not exist on type 'EmailRuleConf
           ╵   ~~~~~~~~~~~~~~~~
 
 
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] Could not resolve "./pages/email-center-history.component"
+
+    src/app/features/email-center/email-center.routes.ts:14:36:
+      14 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] Could not resolve "./pages/email-center-rule-detail.component"
+
+    src/app/features/email-center/email-center.routes.ts:20:36:
+      20 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

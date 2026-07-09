@@ -86,15 +86,6 @@
         <span class="material-symbols-outlined">group</span>
         {{ 'EMAIL_CENTER.TABS.DELIVERY' | translate }}
       </button>
-
-      <button
-        type="button"
-        class="workspace-tab"
-        [class.is-active]="activeTab === 'history'"
-        (click)="setTab('history')">
-        <span class="material-symbols-outlined">history</span>
-        {{ 'EMAIL_CENTER.TABS.HISTORY' | translate }}
-      </button>
     </div>
   </div>
 
@@ -121,7 +112,7 @@
             [searchable]="false"
             [isDisabled]="!canEdit"
             [options]="senderProfileOptions"
-            [placeholder]="'EMAIL_CENTER.SENDER_PROFILE' | translate"
+            [placeholder]="'EMAIL_CENTER.PLACEHOLDERS.SENDER_PROFILE' | translate"
             (ngModelChange)="onRuleDraftChanged()">
           </app-searchable-select>
         </label>
@@ -159,7 +150,7 @@
             [isDisabled]="!canEdit"
             (ngModelChange)="onBranchScopeModeChange($event)"
             [options]="branchScopeOptions"
-            [placeholder]="'EMAIL_CENTER.BRANCH_SCOPE' | translate">
+            [placeholder]="'EMAIL_CENTER.PLACEHOLDERS.BRANCH_SCOPE' | translate">
           </app-searchable-select>
         </label>
 
@@ -406,17 +397,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Tab 4: Dispatch Logs -->
-  <div *ngIf="activeTab === 'history'" class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-    <app-email-dispatch-history
-      [dispatches]="dispatches"
-      [rules]="rules"
-      [isHistoryLoading]="isHistoryLoading"
-      [filters]="historyFilters"
-      (filtersChange)="historyFiltersChange.emit($event)"
-      (clearFilters)="clearHistoryFilters.emit()">
-    </app-email-dispatch-history>
   </div>
 </div>

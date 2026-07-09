@@ -48,7 +48,7 @@ interface SignalRHubConnection {
 }
 
 interface SignalRHubConnectionBuilder {
-  withUrl(url: string, options: { accessTokenFactory: () => string }): SignalRHubConnectionBuilder;
+  withUrl(url: string, options: { accessTokenFactory: () => string; transport?: number }): SignalRHubConnectionBuilder;
   withAutomaticReconnect(): SignalRHubConnectionBuilder;
   configureLogging(level: number): SignalRHubConnectionBuilder;
   build(): SignalRHubConnection;
@@ -64,6 +64,9 @@ interface SignalRBrowserSdk {
   LogLevel: {
     Information: number;
     Warning: number;
+  };
+  HttpTransportType: {
+    LongPolling: number;
   };
 }
 
@@ -137,7 +140,6 @@ export class OrderTrackingRealtimeService {
     try {
       await this.hubConnection.invoke('SubscribeToOrder', orderId);
       this.subscribedOrders.add(orderId);
-      console.log('[OrderTracking] subscribed to order', orderId);
     } catch (error) {
       console.error('Failed to subscribe to order tracking group', orderId, error);
       throw error;
@@ -204,24 +206,22 @@ export class OrderTrackingRealtimeService {
       if (!this.hubConnection) {
         this.hubConnection = new signalR.HubConnectionBuilder()
           .withUrl(this.hubUrl, {
-            accessTokenFactory: () => this.authService.getToken() ?? ''
+            accessTokenFactory: () => this.authService.getToken() ?? '',
+            transport: signalR.HttpTransportType.LongPolling
           })
           .withAutomaticReconnect()
           .configureLogging(environment.production ? signalR.LogLevel.Warning : signalR.LogLevel.Information)
           .build();
 
         this.hubConnection.on('ReceiveDriverLocation', (payload: OrderTrackingDriverLocation) => {
-          console.log('[OrderTracking] ReceiveDriverLocation', payload);
           this.driverLocation$.next(payload);
         });
 
         this.hubConnection.on('ReceiveOrderTrackingStatusChanged', (payload: OrderTrackingStatusChangedPayload) => {
-          console.log('[OrderTracking] ReceiveOrderTrackingStatusChanged', payload);
           this.statusChanged$.next(payload);
         });
 
         this.hubConnection.on('ReceiveOrderTrackingArrivalState', (payload: OrderTrackingArrivalStatePayload) => {
-          console.log('[OrderTracking] ReceiveOrderTrackingArrivalState', payload);
           this.arrivalState$.next(payload);
         });
 

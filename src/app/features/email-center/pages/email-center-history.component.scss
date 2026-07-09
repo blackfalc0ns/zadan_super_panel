@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.history-page {
+  min-height: 100%;
+  background: #f8fafc;
+}
+
+.history-content {
+  max-width: 112rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 2.5rem;
+}
+
+.history-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: white;
+  padding: 0.8rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: rgb(71 85 105);
+}
+
+.history-panel,
+.history-error {
+  border-radius: 1.6rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: white;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 12px 30px -24px rgba(15, 23, 42, 0.35);
+}
+
+.history-error {
+  color: rgb(220 38 38);
+  font-weight: 700;
+}

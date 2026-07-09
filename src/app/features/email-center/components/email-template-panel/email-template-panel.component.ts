@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  DestroyRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -11,28 +10,25 @@ import {
   SimpleChanges,
   inject
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, catchError, debounceTime, finalize, of, switchMap } from 'rxjs';
-import { EmailPreviewLocale, EmailTemplatePreview, EmailWorkflowRule } from '../../models/email-center.models';
+import { ModalShellComponent } from '@shared/components/ui/modal-shell/modal-shell.component';
+import { EmailPreviewLocale, EmailWorkflowRule } from '../../models/email-center.models';
 import { EmailCenterApiService } from '../../services/email-center.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-email-template-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, ModalShellComponent],
   templateUrl: './email-template-panel.component.html',
   styleUrl: './email-template-panel.component.scss'
 })
 export class EmailTemplatePanelComponent implements OnChanges {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly emailCenterApi = inject(EmailCenterApiService);
-  private readonly previewRequest$ = new Subject<void>();
 
   @Input() rule!: EmailWorkflowRule;
   @Input() canEdit = false;
@@ -48,57 +44,16 @@ export class EmailTemplatePanelComponent implements OnChanges {
   previewSubjectAr = '';
   isPreviewLoading = false;
   previewError = '';
-
-  constructor() {
-    this.previewRequest$.pipe(
-      debounceTime(350),
-      switchMap(() => {
-        if (!this.rule) {
-          return of(null);
-        }
-
-        this.isPreviewLoading = true;
-        this.previewError = '';
-        this.cdr.markForCheck();
-
-        return this.emailCenterApi.previewTemplate(this.rule, {
-          useSampleValues: this.previewMode === 'sample',
-          targetUrl: 'https://admin.zadna0.com/email-center'
-        }).pipe(
-          catchError(() => of(null)),
-          finalize(() => {
-            this.isPreviewLoading = false;
-            this.cdr.markForCheck();
-          })
-        );
-      }),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe((result) => {
-      if (!result) {
-        this.previewError = 'EMAIL_CENTER.TEMPLATE.PREVIEW_ERROR';
-        this.previewHtml = '';
-        this.previewSubjectEn = '';
-        this.previewSubjectAr = '';
-        this.cdr.markForCheck();
-        return;
-      }
-
-      this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(result.html);
-      this.previewSubjectEn = result.subjectEn;
-      this.previewSubjectAr = result.subjectAr;
-      this.previewError = '';
-      this.cdr.markForCheck();
-    });
-  }
-
-  get template(): EmailTemplatePreview {
-    return this.rule.template;
-  }
+  showPreviewModal = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['rule']) {
-      this.schedulePreviewRefresh();
+      this.refreshPreview();
     }
+  }
+
+  get template() {
+    return this.rule.template;
   }
 
   setPreviewLocale(locale: EmailPreviewLocale): void {
@@ -107,12 +62,21 @@ export class EmailTemplatePanelComponent implements OnChanges {
 
   setPreviewMode(mode: 'sample' | 'raw'): void {
     this.previewMode = mode;
-    this.schedulePreviewRefresh();
+    this.refreshPreview();
   }
 
   onFieldChanged(): void {
-    this.schedulePreviewRefresh();
+    this.refreshPreview();
     this.templateChange.emit();
+  }
+
+  openPreviewModal(): void {
+    this.showPreviewModal = true;
+    this.refreshPreview();
+  }
+
+  closePreviewModal(): void {
+    this.showPreviewModal = false;
   }
 
   insertVariable(variable: string, field: 'subject' | 'body'): void {
@@ -163,7 +127,33 @@ export class EmailTemplatePanelComponent implements OnChanges {
       : this.previewSubjectEn || this.previewSubjectAr;
   }
 
-  private schedulePreviewRefresh(): void {
-    this.previewRequest$.next();
+  private refreshPreview(): void {
+    if (!this.rule) {
+      return;
+    }
+
+    this.isPreviewLoading = true;
+    this.previewError = '';
+    this.cdr.markForCheck();
+
+    this.emailCenterApi.previewTemplate(this.rule, {
+      useSampleValues: this.previewMode === 'sample',
+      targetUrl: 'https://admin.zadna0.com/email-center'
+    }).subscribe({
+      next: (result) => {
+        this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(result.html);
+        this.previewSubjectEn = result.subjectEn;
+        this.previewSubjectAr = result.subjectAr;
+        this.previewError = '';
+        this.isPreviewLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.previewError = 'EMAIL_CENTER.TEMPLATE.PREVIEW_ERROR';
+        this.previewHtml = '';
+        this.isPreviewLoading = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }
