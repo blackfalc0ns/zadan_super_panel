@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminAccessApiService, RoleDefinitionDto } from '../../../../core/services/admin-access-api.service';
 import {
@@ -149,10 +149,13 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   private readonly subscriptions = new Subscription();
 
+  private pendingCreateRoleId: string | null = null;
+
   constructor(
     private adminAccessApi: AdminAccessApiService,
     private translate: TranslateService,
     private router: Router,
+    private route: ActivatedRoute,
     private toastService: ToastService
   ) {
     this.subscriptions.add(
@@ -174,6 +177,12 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const create = this.route.snapshot.queryParamMap.get('create');
+    const roleId = this.route.snapshot.queryParamMap.get('roleId');
+    if (create === '1') {
+      this.pendingCreateRoleId = roleId;
+    }
+
     this.initializeFilterFields();
     this.updateKPICards();
     this.loadUsers();
@@ -355,6 +364,12 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
         if (!this.createUserForm.roleDefinitionId && adminRoles.length > 0) {
           this.createUserForm.roleDefinitionId = adminRoles[0].id;
         }
+
+        if (this.pendingCreateRoleId) {
+          const pendingRole = adminRoles.find((role) => role.id === this.pendingCreateRoleId);
+          this.pendingCreateRoleId = null;
+          this.openCreateUserModal(pendingRole?.id);
+        }
       },
       error: (err) => {
         this.cdr.markForCheck();
@@ -444,8 +459,11 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin-users/roles']);
   }
 
-  openCreateUserModal(): void {
-    const firstRole = this.adminCreateRoles[0];
+  openCreateUserModal(preferredRoleId?: string): void {
+    const preferredRole = preferredRoleId
+      ? this.adminCreateRoles.find((role) => role.id === preferredRoleId)
+      : undefined;
+    const firstRole = preferredRole ?? this.adminCreateRoles[0];
     this.createUserForm = {
       fullName: '',
       email: '',

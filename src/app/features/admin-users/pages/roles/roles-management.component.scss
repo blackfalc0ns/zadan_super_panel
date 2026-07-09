@@ -1,0 +1,88 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.admin-users-modal-section {
+  border-radius: 1.35rem;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  background: rgba(248, 250, 252, 0.65);
+  padding: 1.1rem;
+}
+
+.admin-users-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.admin-users-field > span {
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(100 116 139);
+}
+
+.admin-users-field input,
+.admin-users-field textarea {
+  width: 100%;
+  border-radius: 1rem;
+  border: 2px solid rgba(226, 232, 240, 0.95);
+  background: #fff;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-users-field input {
+  height: 3rem;
+}
+
+.admin-users-field textarea {
+  resize: none;
+}
+
+.admin-users-field input:focus,
+.admin-users-field textarea:focus {
+  border-color: rgba(18, 124, 140, 0.45);
+  box-shadow: 0 0 0 4px rgba(18, 124, 140, 0.08);
+}
+
+.admin-users-modal-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: #fff;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: rgb(71 85 105);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-users-modal-secondary-btn:hover {
+  border-color: rgba(18, 124, 140, 0.25);
+  background: rgb(248 250 252);
+}
+
+.roles-modal-panel {
+  animation: roles-modal-in 0.28s ease-out;
+}
+
+@keyframes roles-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

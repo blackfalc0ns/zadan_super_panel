@@ -712,3 +712,340 @@ X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component
          ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG4: Expected 0 arguments, but got 1. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:70:69:
+      70 │ ...slate-600">{{ getPanelLabel(role.panelScope) | translate }}</span>
+         ╵                                ~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'getAccessLevelLabel' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:74:55:
+      74 │ ...ld text-slate-600">{{ getAccessLevelLabel(role.accessLevel) | t...
+         ╵                          ~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'accessLevel' does not exist on type 'CustomRole'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:74:80:
+      74 │ ...00">{{ getAccessLevelLabel(role.accessLevel) | translate }}</span>
+         ╵                                    ~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'email' does not exist on type 'CustomRole'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:78:62:
+      78 │ ...ld truncate" [ngClass]="role.email ? 'text-slate-700' : 'text-s...
+         ╵                                 ~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'email' does not exist on type 'CustomRole'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:78:115:
+      78 │ ...' : 'text-slate-400'">{{ role.email || 'لم يُحدد' }}</span>
+         ╵                                  ~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'label' does not exist on type '{ id: "permissions"; labelKey: string; icon: string; } | { id: "users"; labelKey: string; icon: string; }'.
+  Property 'label' does not exist on type '{ id: "permissions"; labelKey: string; icon: string; }'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:94:8:
+      94 │  {{ tab.label }}
+         ╵         ~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"permissions" | "users"' and '"email"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:160:13:
+      160 │  <div *ngIf="activeDetailTab === 'email'" class="p-5">
+          ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'email' does not exist on type 'CustomRole'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:167:39:
+      167 │ ...pe="email" [(ngModel)]="role.email" dir="ltr" placeholder="fin...
+          ╵                                 ~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'email' does not exist on type 'CustomRole'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:167:39:
+      167 │ ...pe="email" [(ngModel)]="role.email" dir="ltr" placeholder="fin...
+          ╵                                 ~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'notificationEmails' does not exist on type 'CustomRole'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:177:29:
+      177 │ ...rea [(ngModel)]="role.notificationEmails" dir="ltr" rows="2" p...
+          ╵                          ~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'notificationEmails' does not exist on type 'CustomRole'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:177:29:
+      177 │ ...rea [(ngModel)]="role.notificationEmails" dir="ltr" rows="2" p...
+          ╵                          ~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRoleEmail' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:234:34:
+      234 │ ...ype="email" [(ngModel)]="newRoleEmail" dir="ltr" placeholder="...
+          ╵                             ~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRoleEmail' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:234:34:
+      234 │ ...ype="email" [(ngModel)]="newRoleEmail" dir="ltr" placeholder="...
+          ╵                             ~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'accessLevelOptions' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:249:28:
+      249 │ ...on *ngFor="let lvl of accessLevelOptions" type="button" (click...
+          ╵                          ~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRoleAccessLevel' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:249:71:
+      249 │ ...elOptions" type="button" (click)="newRoleAccessLevel = lvl.value"
+          ╵                                      ~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRoleAccessLevel' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:251:12:
+      251 │  [ngClass]="newRoleAccessLevel === lvl.value ? 'bg-zadna-primary/...
+          ╵             ~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'panelScopeOptions' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:260:30:
+      260 │ ...n *ngFor="let scope of panelScopeOptions" type="button" (click...
+          ╵                           ~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRolePanelScope' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:260:72:
+      260 │ ...eOptions" type="button" (click)="newRolePanelScope = scope.value"
+          ╵                                     ~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRolePanelScope' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:262:12:
+      262 │  [ngClass]="newRolePanelScope === scope.value ? 'bg-zadna-primary...
+          ╵             ~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRoleNotificationEmails' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:273:33:
+      273 │ ...text" [(ngModel)]="newRoleNotificationEmails" dir="ltr" placeh...
+          ╵                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG9: Property 'newRoleNotificationEmails' does not exist on type 'RolesManagementComponent'. [plugin angular-compiler]
+
+    src/app/features/admin-users/pages/roles/roles-management.component.html:273:33:
+      273 │ ...text" [(ngModel)]="newRoleNotificationEmails" dir="ltr" placeh...
+          ╵                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component RolesManagementComponent.
+
+    src/app/features/admin-users/pages/roles/roles-management.component.ts:40:15:
+      40 │   templateUrl: './roles-management.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-hub.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:10:32:
+      10 │ ... () => import('./pages/email-center-hub.component').then((m) =>...
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-history.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:16:32:
+      16 │ ...) => import('./pages/email-center-history.component').then((m) ...
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2307: Cannot find module './pages/email-center-rule-detail.component' or its corresponding type declarations. [plugin angular-compiler]
+
+    src/app/features/email-center/email-center.routes.ts:22:32:
+      22 │ ...=> import('./pages/email-center-rule-detail.component').then((m...
+         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
