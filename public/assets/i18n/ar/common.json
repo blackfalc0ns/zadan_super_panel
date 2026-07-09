@@ -964,15 +964,83 @@
       "CURRENT_PERCENT": "النسبة الحالية المطبقة على المنطقة المحددة"
     },
     "CURRENCY": "ر.س",
+    "ADMINS": {
+      "SUPER_ADMIN": "الإدارة العليا",
+      "FINANCE_SYSTEM": "النظام المالي"
+    },
+    "ROLES": {
+      "SUPER_ADMIN": "مشرف أعلى",
+      "SYSTEM": "النظام",
+      "FINANCE_ADMIN": "مشرف مالي"
+    },
     "AUDIT": {
       "TITLE": "سجل المراجعة المالية (Audit Log)",
       "ENTRIES": "عملية مسجلة",
       "BANNER_TITLE": "نظام تتبع العمليات المالية",
       "BANNER_DESC": "هذا السجل يعرض كل الحركات اللي نفذها فريق الإدارة على النظام المالي لضمان الشفافية.",
+      "LAST_EVENT": "آخر عملية",
+      "FILTERS": {
+        "SEARCH": "بحث في السجل",
+        "SEARCH_PLACEHOLDER": "ابحث بالمشرف أو الكيان أو الطلب أو الإجراء...",
+        "CATEGORY": "التصنيف",
+        "ENTITY": "الكيان",
+        "ALL_CATEGORIES": "كل التصنيفات",
+        "ALL_ENTITIES": "كل الكيانات",
+        "REFRESH": "تحديث",
+        "FILTER_TITLE": "فلاتر السجل",
+        "FILTER_SUBTITLE": "تصفية حسب التصنيف والكيان"
+      },
+      "STATS": {
+        "TOTAL": "إجمالي الأحداث",
+        "FINANCE_ENGINE": "سجلات النظام",
+        "MANUAL_ACTIONS": "إجراءات يدوية",
+        "AFFECTED_ENTITIES": "كيانات متأثرة"
+      },
+      "CATEGORIES": {
+        "ALL": "الكل",
+        "SETTLEMENT": "تسويات",
+        "REFUND": "استرجاع",
+        "ADJUSTMENT": "تعديل",
+        "PRICING": "تسعير",
+        "OVERRIDE": "تجاوز",
+        "AUTH": "صلاحيات"
+      },
+      "ACTIONS": {
+        "REFUND_APPROVED": "تم اعتماد الاسترجاع",
+        "REFUND_REJECTED": "تم رفض الاسترجاع",
+        "REFUND_ESCALATED": "تم تصعيد الاسترجاع",
+        "REFUND_REVIEWED": "تمت مراجعة الاسترجاع",
+        "ADJUSTMENT_CREATED": "تم إنشاء تعديل مالي",
+        "PRICING_UPDATED": "تم تحديث التسعير",
+        "LEDGER_POSTED": "تم تسجيل قيد محاسبي",
+        "SETTLEMENT_CREATED": "تم إنشاء تسوية",
+        "SETTLEMENT_APPROVED": "تم اعتماد التسوية",
+        "SETTLEMENT_PAID": "تم دفع التسوية",
+        "COD_RECONCILED": "تمت مطابقة الدفع عند الاستلام",
+        "COD_OVERDUE": "تحصيل نقدي متأخر",
+        "COD_DISPUTED": "نزاع على تحصيل نقدي"
+      },
+      "ADMINS": {
+        "FINANCE_SYSTEM": "النظام المالي"
+      },
+      "ROLES": {
+        "SYSTEM": "النظام",
+        "FINANCE_ADMIN": "مشرف مالي"
+      },
+      "STATES": {
+        "LOADING": "نحمّل سجل العمليات المالية...",
+        "EMPTY_TITLE": "ما فيه عمليات مطابقة للفلاتر الحالية",
+        "EMPTY_DESC": "غيّر الفلاتر أو حدّث الصفحة لعرض آخر نشاط مالي.",
+        "ERROR_TITLE": "تعذر تحميل سجل المراجعة",
+        "ERROR_DESC": "ما قدرنا نكوّن سجل العمليات المالية الآن."
+      },
       "TABLE": {
         "ADMIN": "المشرف",
         "ACTION": "الإجراء",
-        "CHANGES": "التفاصيل"
+        "CATEGORY": "التصنيف",
+        "CHANGES": "التفاصيل",
+        "DETAILS": "التفاصيل",
+        "ENTITY_ID": "معرّف الكيان"
       }
     },
     "WALLETS": {

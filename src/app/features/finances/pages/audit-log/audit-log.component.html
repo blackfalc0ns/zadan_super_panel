@@ -1,0 +1,244 @@
+<div class="flex flex-col gap-6 animate-in fade-in duration-500" [attr.dir]="isRTL ? 'rtl' : 'ltr'">
+
+  <app-page-header
+    [title]="'FINANCES.AUDIT.TITLE'"
+    [subtitle]="'FINANCES.AUDIT.BANNER_DESC'">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">fact_check</span>
+    <div actions>
+      <app-button
+        variant="primary"
+        size="sm"
+        customClass="!rounded-xl shadow-sm"
+        [isLoading]="isLoading"
+        [disabled]="isLoading"
+        (btnClick)="loadAuditLog()">
+        <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">refresh</span>
+        {{ 'FINANCES.AUDIT.FILTERS.REFRESH' | translate }}
+      </app-button>
+    </div>
+  </app-page-header>
+
+  <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
+
+  <div class="flex flex-col gap-3">
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+      <div class="w-full lg:w-[450px] group relative">
+        <div class="absolute inset-y-0 flex items-center pointer-events-none" [ngClass]="isRTL ? 'right-5' : 'left-5'">
+          <span class="material-symbols-outlined text-[22px] text-zadna-primary group-focus-within:scale-110 transition-transform duration-500">search</span>
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
+          [placeholder]="'FINANCES.AUDIT.FILTERS.SEARCH_PLACEHOLDER' | translate"
+          class="w-full py-4 bg-white border border-slate-200/60 rounded-[1.5rem] text-[13px] font-bold text-slate-700 placeholder:text-slate-300 focus:bg-white focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 transition-all shadow-sm"
+          [ngClass]="isRTL ? 'pr-14 pl-6' : 'pl-14 pr-6'">
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="flex items-center bg-white border border-slate-200/60 rounded-full h-[60px] shadow-sm px-2 transition-all hover:shadow-md overflow-hidden">
+          <div
+            class="flex items-center gap-3 px-6 h-full cursor-pointer select-none hover:bg-slate-50 transition-colors group"
+            (click)="toggleFilters()"
+            [class.bg-teal-50]="isFiltersExpanded">
+            <span class="material-symbols-outlined text-[24px] text-zadna-primary transition-transform duration-500"
+                  [class.rotate-180]="isFiltersExpanded">filter_list</span>
+            <div class="flex flex-col">
+              <span class="text-[13px] font-black text-slate-800">{{ 'FINANCES.AUDIT.FILTERS.FILTER_TITLE' | translate }}</span>
+              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{{ 'FINANCES.AUDIT.FILTERS.FILTER_SUBTITLE' | translate }}</span>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-slate-300 group-hover:translate-y-0.5 transition-transform"
+                  [ngClass]="isRTL ? 'mr-2' : 'ml-2'"
+                  [class.rotate-180]="isFiltersExpanded">keyboard_arrow_down</span>
+          </div>
+        </div>
+
+        <button
+          *ngIf="hasActiveFilters"
+          type="button"
+          (click)="resetFilters()"
+          class="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-500 rounded-full hover:bg-red-100 transition-all group">
+          <span class="material-symbols-outlined text-[18px] group-hover:rotate-90 transition-transform">close</span>
+          <span class="text-[11px] font-black uppercase tracking-widest">{{ 'COMMON.CLEAR_FILTERS' | translate }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isFiltersExpanded" class="relative z-30 animate-in slide-in-from-top-3 duration-500 overflow-visible rounded-[1.5rem] border border-slate-200/60 shadow-xl">
+      <app-advanced-filter-panel
+        [isExpanded]="true"
+        [title]="'FINANCES.AUDIT.FILTERS.FILTER_TITLE'"
+        [subtitle]="'FINANCES.AUDIT.FILTERS.FILTER_SUBTITLE'"
+        [fields]="filterFields"
+        [filters]="panelFilters"
+        (filtersChange)="onPanelFiltersChange($event)"
+        (reset)="resetFilters()">
+      </app-advanced-filter-panel>
+    </div>
+  </div>
+
+  <app-inline-banner
+    *ngIf="!hasLoadError && filteredEntries.length"
+    [title]="'FINANCES.AUDIT.BANNER_TITLE'"
+    [message]="entriesSummary"
+    [shouldTranslate]="false"
+    icon="history"
+    variant="info">
+  </app-inline-banner>
+
+  <app-inline-banner
+    *ngIf="hasLoadError"
+    [title]="'FINANCES.AUDIT.STATES.ERROR_TITLE'"
+    [message]="'FINANCES.AUDIT.STATES.ERROR_DESC'"
+    icon="error"
+    variant="error">
+    <div actions>
+      <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadAuditLog()">
+        {{ 'COMMON.RETRY' | translate }}
+      </app-button>
+    </div>
+  </app-inline-banner>
+
+  <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200 shadow-sm overflow-hidden bg-white">
+    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center shrink-0 border border-sky-200">
+          <span class="material-symbols-outlined text-[18px]">manage_search</span>
+        </div>
+        <div>
+          <h3 class="text-[15px] font-black text-slate-900 tracking-tight">{{ 'FINANCES.AUDIT.BANNER_TITLE' | translate }}</h3>
+          <p class="text-[11px] font-bold text-slate-500 mt-0.5">{{ filteredEntries.length }} {{ 'FINANCES.AUDIT.ENTRIES' | translate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="p-6 space-y-3">
+      <div class="admin-skeleton-table" style="--skeleton-columns: 6">
+        <div class="admin-skeleton-table-header">
+          <span *ngFor="let item of [1,2,3,4,5,6]" class="admin-skeleton admin-skeleton-line sm"></span>
+        </div>
+        <div *ngFor="let item of [1,2,3,4,5]" class="admin-skeleton-table-row">
+          <span class="admin-skeleton admin-skeleton-line lg w-4/5"></span>
+          <span class="admin-skeleton admin-skeleton-chip"></span>
+          <span class="admin-skeleton admin-skeleton-line w-2/3"></span>
+          <span class="admin-skeleton admin-skeleton-chip"></span>
+          <span class="admin-skeleton admin-skeleton-line w-1/2"></span>
+          <span class="admin-skeleton admin-skeleton-line sm"></span>
+        </div>
+      </div>
+      <p class="text-xs font-bold text-slate-400">{{ 'FINANCES.AUDIT.STATES.LOADING' | translate }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && !hasLoadError && !filteredEntries.length" class="px-6 py-12 text-center">
+      <span class="material-symbols-outlined text-slate-300 text-4xl">manage_search</span>
+      <p class="text-sm font-black text-slate-900 mt-2">{{ 'FINANCES.AUDIT.STATES.EMPTY_TITLE' | translate }}</p>
+      <p class="text-xs font-semibold text-slate-500 mt-1">{{ 'FINANCES.AUDIT.STATES.EMPTY_DESC' | translate }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && !hasLoadError && filteredEntries.length" class="overflow-x-auto">
+      <table class="w-full min-w-[980px] whitespace-nowrap text-[13px]">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COMMON.TIMESTAMP' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.AUDIT.TABLE.ADMIN' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.AUDIT.TABLE.ACTION' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.AUDIT.TABLE.CATEGORY' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COMMON.ENTITY' | translate }}</th>
+            <th class="px-6 py-4 text-center">{{ 'FINANCES.AUDIT.TABLE.CHANGES' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <ng-container *ngFor="let entry of filteredEntries; trackBy: trackById">
+            <tr class="group hover:bg-slate-50/80 transition-colors cursor-pointer" (click)="toggleExpand(entry.id)">
+              <td class="px-6 py-4 align-middle">
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-bold text-slate-900 tabular-nums">{{ formatDate(entry.timestamp) }}</span>
+                  <span class="text-[10px] font-bold text-slate-400 tabular-nums">{{ formatTime(entry.timestamp) }}</span>
+                </div>
+              </td>
+
+              <td class="px-6 py-4 align-middle">
+                <div class="flex items-center gap-3">
+                  <span class="h-9 w-9 rounded-xl bg-slate-900 text-white flex items-center justify-center text-[11px] font-black shrink-0">
+                    {{ getInitials(entry.adminName) }}
+                  </span>
+                  <span class="min-w-0">
+                    <span class="block text-xs font-black text-slate-800 truncate">{{ entry.adminName | translate }}</span>
+                    <span class="block text-[10px] font-bold text-slate-400 truncate">{{ entry.adminRole | translate }}</span>
+                  </span>
+                </div>
+              </td>
+
+              <td class="px-6 py-4 align-middle">
+                <p class="text-xs font-black text-slate-800">{{ entry.action | translate }}</p>
+                <p *ngIf="entry.orderId" class="text-[10px] font-bold text-slate-400 mt-1">#{{ entry.orderId }}</p>
+              </td>
+
+              <td class="px-6 py-4 align-middle">
+                <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-black"
+                      [ngClass]="getCategoryClass(entry.actionCategory)">
+                  {{ getCategoryLabelKey(entry.actionCategory) | translate }}
+                </span>
+              </td>
+
+              <td class="px-6 py-4 align-middle">
+                <p class="text-xs font-black text-slate-800 truncate max-w-[220px]">{{ entry.entityName || '-' }}</p>
+                <p class="text-[10px] font-bold text-slate-400 mt-1">
+                  {{ getEntityLabelKey(entry.entityType) | translate }}
+                  <span *ngIf="entry.entityId" class="font-mono">/ {{ entry.entityId }}</span>
+                </p>
+              </td>
+
+              <td class="px-6 py-4 align-middle">
+                <div class="flex justify-center">
+                  <app-button
+                    variant="outline"
+                    size="xs"
+                    customClass="!rounded-xl !min-w-24"
+                    (btnClick)="$event.stopPropagation(); toggleExpand(entry.id)">
+                    <span class="material-symbols-outlined text-[16px]">{{ expandedId === entry.id ? 'expand_less' : 'expand_more' }}</span>
+                    {{ expandedId === entry.id ? ('FINANCES.COMMON.HIDE' | translate) : ('FINANCES.COMMON.VIEW' | translate) }}
+                  </app-button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="expandedId === entry.id">
+              <td colspan="6" class="px-6 py-5 bg-slate-50">
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-3">
+                  <div class="rounded-xl border border-slate-200 bg-white p-4">
+                    <p class="text-[10px] font-black text-slate-400">{{ 'FINANCES.AUDIT.TABLE.DETAILS' | translate }}</p>
+                    <dl class="mt-3 space-y-2 text-xs">
+                      <div class="flex items-center justify-between gap-3">
+                        <dt class="font-bold text-slate-400">{{ 'FINANCES.AUDIT.TABLE.ENTITY_ID' | translate }}</dt>
+                        <dd class="font-mono font-bold text-slate-700 truncate">{{ entry.entityId || '-' }}</dd>
+                      </div>
+                      <div class="flex items-center justify-between gap-3">
+                        <dt class="font-bold text-slate-400">{{ 'FINANCES.COMMON.ENTITY' | translate }}</dt>
+                        <dd class="font-bold text-slate-700">{{ getEntityLabelKey(entry.entityType) | translate }}</dd>
+                      </div>
+                      <div class="flex items-center justify-between gap-3">
+                        <dt class="font-bold text-slate-400">{{ 'FINANCES.AUDIT.TABLE.CATEGORY' | translate }}</dt>
+                        <dd class="font-bold text-slate-700">{{ getCategoryLabelKey(entry.actionCategory) | translate }}</dd>
+                      </div>
+                    </dl>
+                  </div>
+
+                  <div class="rounded-xl border border-rose-100 bg-rose-50 p-4 min-w-0">
+                    <p class="text-[10px] font-black text-rose-500">{{ 'FINANCES.COMMON.BEFORE' | translate }}</p>
+                    <pre class="mt-3 text-[11px] leading-5 font-mono text-rose-800 whitespace-pre-wrap break-words">{{ formatJson(entry.before) }}</pre>
+                  </div>
+
+                  <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-4 min-w-0">
+                    <p class="text-[10px] font-black text-emerald-600">{{ 'FINANCES.COMMON.AFTER' | translate }}</p>
+                    <pre class="mt-3 text-[11px] leading-5 font-mono text-emerald-800 whitespace-pre-wrap break-words">{{ formatJson(entry.after) }}</pre>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
+</div>

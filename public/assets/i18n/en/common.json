@@ -965,15 +965,83 @@
       "CURRENT_PERCENT": "Current percentage applied to the selected zone"
     },
     "CURRENCY": "SAR",
+    "ADMINS": {
+      "SUPER_ADMIN": "Super Admin",
+      "FINANCE_SYSTEM": "Finance System"
+    },
+    "ROLES": {
+      "SUPER_ADMIN": "Super Admin",
+      "SYSTEM": "System",
+      "FINANCE_ADMIN": "Finance Admin"
+    },
     "AUDIT": {
       "TITLE": "Financial Audit Log",
       "ENTRIES": "Registered Entries",
       "BANNER_TITLE": "Financial Operations Tracking System",
       "BANNER_DESC": "This log displays all actions performed by the administration team on the financial system to ensure transparency.",
+      "LAST_EVENT": "Last event",
+      "FILTERS": {
+        "SEARCH": "Search audit log",
+        "SEARCH_PLACEHOLDER": "Search admin, entity, order, or action...",
+        "CATEGORY": "Category",
+        "ENTITY": "Entity",
+        "ALL_CATEGORIES": "All categories",
+        "ALL_ENTITIES": "All entities",
+        "REFRESH": "Refresh",
+        "FILTER_TITLE": "Audit filters",
+        "FILTER_SUBTITLE": "Filter by category and entity"
+      },
+      "STATS": {
+        "TOTAL": "Total events",
+        "FINANCE_ENGINE": "System entries",
+        "MANUAL_ACTIONS": "Manual actions",
+        "AFFECTED_ENTITIES": "Affected entities"
+      },
+      "CATEGORIES": {
+        "ALL": "All",
+        "SETTLEMENT": "Settlement",
+        "REFUND": "Refund",
+        "ADJUSTMENT": "Adjustment",
+        "PRICING": "Pricing",
+        "OVERRIDE": "Override",
+        "AUTH": "Access"
+      },
+      "ACTIONS": {
+        "REFUND_APPROVED": "Refund approved",
+        "REFUND_REJECTED": "Refund rejected",
+        "REFUND_ESCALATED": "Refund escalated",
+        "REFUND_REVIEWED": "Refund reviewed",
+        "ADJUSTMENT_CREATED": "Adjustment created",
+        "PRICING_UPDATED": "Pricing updated",
+        "LEDGER_POSTED": "Ledger posting recorded",
+        "SETTLEMENT_CREATED": "Settlement created",
+        "SETTLEMENT_APPROVED": "Settlement approved",
+        "SETTLEMENT_PAID": "Settlement paid",
+        "COD_RECONCILED": "COD reconciled",
+        "COD_OVERDUE": "COD overdue",
+        "COD_DISPUTED": "COD disputed"
+      },
+      "ADMINS": {
+        "FINANCE_SYSTEM": "Finance system"
+      },
+      "ROLES": {
+        "SYSTEM": "System",
+        "FINANCE_ADMIN": "Finance admin"
+      },
+      "STATES": {
+        "LOADING": "Loading financial audit trail...",
+        "EMPTY_TITLE": "No audit events match the current filters",
+        "EMPTY_DESC": "Change the filters or refresh the page to load the latest finance activity.",
+        "ERROR_TITLE": "Unable to load audit log",
+        "ERROR_DESC": "The page could not compose the financial audit stream right now."
+      },
       "TABLE": {
         "ADMIN": "Administrator",
         "ACTION": "Action",
-        "CHANGES": "Changes"
+        "CATEGORY": "Category",
+        "CHANGES": "Changes",
+        "DETAILS": "Details",
+        "ENTITY_ID": "Entity ID"
       }
     },
     "WALLETS": {
