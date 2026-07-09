@@ -44,27 +44,17 @@
         </app-status-pill>
       </div>
 
-      <div class="rule-card__meta">
-        <app-status-pill [label]="rule.categoryKey" variant="info" size="sm"></app-status-pill>
-        <app-status-pill [label]="rule.cadenceLabelKey" variant="warning" size="sm"></app-status-pill>
-        <app-status-pill [label]="getPanelLabelKey(rule.panelScope)" variant="neutral" size="sm"></app-status-pill>
+      <div class="rule-card__footer">
         <app-status-pill
-          [label]="rule.automationState === 'live' ? 'EMAIL_CENTER.AUTOMATION.LIVE' : 'EMAIL_CENTER.AUTOMATION.MANUAL_ONLY'"
-          [variant]="getAutomationVariant(rule.automationState)"
+          [label]="'EMAIL_CENTER.AUTOMATION.LIVE'"
+          variant="success"
           size="sm">
         </app-status-pill>
-      </div>
-
-      <div class="rule-card__footer">
         <app-status-pill
           [label]="getLastDispatchLabelKey(rule)"
           [variant]="rule.lastDispatch ? getDispatchStatusVariant(rule.lastDispatch.status) : 'neutral'"
           size="sm">
         </app-status-pill>
-        <span *ngIf="rule.template.heroImageUrl || rule.template.heroImageUrlEn || rule.template.heroImageUrlAr" class="rule-card__template">
-          <span class="material-symbols-outlined">image</span>
-          {{ 'EMAIL_CENTER.WORKFLOWS.HAS_TEMPLATE' | translate }}
-        </span>
         <span class="rule-card__cta">
           {{ 'EMAIL_CENTER.NAV.OPEN_RULE' | translate }}
           <span class="material-symbols-outlined">arrow_forward</span>

@@ -1,5 +1,4 @@
 <div class="space-y-6">
-  <!-- Selected Rule Header and Actions -->
   <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
     <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
       <div class="space-y-2">
@@ -9,8 +8,8 @@
 
         <div class="flex flex-wrap items-center gap-2 mt-3">
           <app-status-pill
-            [label]="rule.automationState === 'live' ? 'EMAIL_CENTER.AUTOMATION.LIVE' : 'EMAIL_CENTER.AUTOMATION.MANUAL_ONLY'"
-            [variant]="getAutomationVariant(rule.automationState)"
+            [label]="'EMAIL_CENTER.AUTOMATION.LIVE'"
+            variant="success"
             size="sm">
           </app-status-pill>
           <app-status-pill
@@ -24,7 +23,6 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
       <div class="flex items-center gap-3 self-end lg:self-start">
         <button
           type="button"
@@ -57,345 +55,28 @@
         </button>
       </div>
     </div>
-
-    <!-- Tabs Navigation -->
-    <div class="workspace-tabs">
-      <button
-        type="button"
-        class="workspace-tab"
-        [class.is-active]="activeTab === 'routing'"
-        (click)="setTab('routing')">
-        <span class="material-symbols-outlined">route</span>
-        {{ 'EMAIL_CENTER.TABS.ROUTING' | translate }}
-      </button>
-
-      <button
-        type="button"
-        class="workspace-tab"
-        [class.is-active]="activeTab === 'template'"
-        (click)="setTab('template')">
-        <span class="material-symbols-outlined">mail</span>
-        {{ 'EMAIL_CENTER.TABS.TEMPLATE' | translate }}
-      </button>
-
-      <button
-        type="button"
-        class="workspace-tab"
-        [class.is-active]="activeTab === 'delivery'"
-        (click)="setTab('delivery')">
-        <span class="material-symbols-outlined">group</span>
-        {{ 'EMAIL_CENTER.TABS.DELIVERY' | translate }}
-      </button>
-    </div>
   </div>
 
-  <!-- Tab 1: Routing & Targets -->
-  <div *ngIf="activeTab === 'routing'" class="space-y-6 animate-in fade-in duration-300">
-    <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.ENABLED' | translate }}</span>
-          <app-searchable-select
-            [(ngModel)]="rule.enabled"
-            [searchable]="false"
-            [isDisabled]="!canEdit"
-            [options]="enabledOptions"
-            [placeholder]="'EMAIL_CENTER.WORKFLOWS.ENABLED' | translate"
-            (ngModelChange)="onRuleDraftChanged()">
-          </app-searchable-select>
-        </label>
+  <app-email-template-panel
+    [rule]="rule"
+    [canEdit]="canEdit"
+    [senderName]="getSenderProfileName(rule.senderProfileId)"
+    [triggerNotesKey]="rule.triggerNotesKey"
+    (templateChange)="onRuleDraftChanged()">
+  </app-email-template-panel>
 
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.SENDER_PROFILE' | translate }}</span>
-          <app-searchable-select
-            [(ngModel)]="rule.senderProfileId"
-            [searchable]="false"
-            [isDisabled]="!canEdit"
-            [options]="senderProfileOptions"
-            [placeholder]="'EMAIL_CENTER.PLACEHOLDERS.SENDER_PROFILE' | translate"
-            (ngModelChange)="onRuleDraftChanged()">
-          </app-searchable-select>
-        </label>
-
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.AUDIENCE' | translate }}</span>
-          <div class="readonly-card bg-slate-50">{{ ('ADMIN_USERS.AUDIENCE.' + rule.audienceType.toUpperCase()) | translate }}</div>
-        </label>
-
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.PANEL_SCOPE' | translate }}</span>
-          <div class="readonly-card bg-slate-50">{{ getPanelLabelKey(rule.panelScope) | translate }}</div>
-        </label>
-
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.OWNER' | translate }}</span>
-          <input [(ngModel)]="rule.route.owner" type="text" [disabled]="!canEdit" (ngModelChange)="onRuleDraftChanged()" />
-        </label>
-
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.ESCALATION' | translate }}</span>
-          <input [(ngModel)]="rule.route.escalation" type="text" [disabled]="!canEdit" (ngModelChange)="onRuleDraftChanged()" />
-        </label>
-
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.ENTITY_ID' | translate }}</span>
-          <input [(ngModel)]="rule.entityScope.entityId" type="text" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRuleDraftChanged()" />
-        </label>
-
-        <label class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH_SCOPE' | translate }}</span>
-          <app-searchable-select
-            [(ngModel)]="rule.branchScopeMode"
-            [searchable]="false"
-            [isDisabled]="!canEdit"
-            (ngModelChange)="onBranchScopeModeChange($event)"
-            [options]="branchScopeOptions"
-            [placeholder]="'EMAIL_CENTER.PLACEHOLDERS.BRANCH_SCOPE' | translate">
-          </app-searchable-select>
-        </label>
-
-        <label *ngIf="rule.audienceType === 'vendor_network'" class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.VENDOR' | translate }}</span>
-          <app-searchable-select
-            [(ngModel)]="rule.entityScope.vendorId"
-            [isDisabled]="!canEdit"
-            (ngModelChange)="onVendorChange($event)"
-            [options]="mappedVendorOptions"
-            [placeholder]="'EMAIL_CENTER.FILTERS.ALL_VENDORS' | translate">
-          </app-searchable-select>
-        </label>
-
-        <label *ngIf="rule.audienceType === 'vendor_network' && rule.branchScopeMode === 'specific_branch'" class="field-card">
-          <span>{{ 'EMAIL_CENTER.FIELDS.BRANCH' | translate }}</span>
-          <app-searchable-select
-            [(ngModel)]="rule.entityScope.branchId"
-            [isDisabled]="!canEdit"
-            [options]="mappedBranchOptions"
-            [placeholder]="'EMAIL_CENTER.FILTERS.ALL_BRANCHES' | translate"
-            (ngModelChange)="onRuleDraftChanged()">
-          </app-searchable-select>
-        </label>
-      </div>
-
-      <div class="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <!-- Persona Targeting -->
-        <div class="rounded-[1.6rem] border border-slate-200 bg-slate-50/80 p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.PERSONAS.BADGE' | translate }}</p>
-          <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.PERSONAS.TITLE' | translate }}</h3>
-          <p class="mt-1 text-[11px] font-bold text-slate-400 leading-normal">{{ 'EMAIL_CENTER.PERSONAS.DESC' | translate }}</p>
-
-          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[14rem] overflow-y-auto pr-1">
-            <label *ngFor="let persona of availablePersonaOptions" class="target-option-card hover:border-zadna-primary/20 transition-all cursor-pointer">
-              <div>
-                <p class="text-sm font-black text-slate-800">{{ persona.labelKey | translate }}</p>
-                <p class="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ getPanelLabelKey(rule.panelScope) | translate }}</p>
-              </div>
-              <input
-                type="checkbox"
-                class="h-4.5 w-4.5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20 cursor-pointer"
-                [checked]="hasPersonaTarget(persona.value)"
-                [disabled]="!canEdit"
-                (change)="togglePersonaTarget(persona.value, $any($event.target).checked)" />
-            </label>
-          </div>
-        </div>
-
-        <!-- Directory Targets -->
-        <div class="rounded-[1.6rem] border border-slate-200 bg-slate-50/80 p-5">
-          <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.RECIPIENTS.BADGE' | translate }}</p>
-          <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.RECIPIENTS.TITLE' | translate }}</h3>
-          <p class="mt-1 text-[11px] font-bold text-slate-400 leading-normal">{{ 'EMAIL_CENTER.RECIPIENTS.DESC' | translate }}</p>
-
-          <div class="mt-4 space-y-4 max-h-[14rem] overflow-y-auto pr-1">
-            <div *ngFor="let channel of recipientChannels" class="space-y-3">
-              <div class="flex items-center justify-between gap-3 border-b border-slate-200 pb-1">
-                <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ channel.labelKey | translate }}</p>
-                <span class="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-black text-slate-600">{{ rule.recipientTargets[channel.value].length }}</span>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label *ngFor="let option of availableRecipientTargets" class="target-option-card hover:border-zadna-primary/20 transition-all cursor-pointer">
-                  <div>
-                    <p class="text-sm font-black text-slate-800">{{ option.labelKey | translate }}</p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    class="h-4.5 w-4.5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20 cursor-pointer"
-                    [checked]="hasRecipientTarget(channel.value, option.id)"
-                    [disabled]="!canEdit"
-                    (change)="toggleRecipientTarget(channel.value, option.id, $any($event.target).checked)" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <!-- Static Recipients -->
-        <div class="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.STATIC_RECIPIENTS.BADGE' | translate }}</p>
-          <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.STATIC_RECIPIENTS.TITLE' | translate }}</h3>
-          <p class="mt-1 text-[11px] font-bold text-slate-400 leading-normal">{{ 'EMAIL_CENTER.STATIC_RECIPIENTS.DESC' | translate }}</p>
-
-          <div class="mt-4 grid grid-cols-1 gap-4">
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.TO' | translate }}</span>
-              <textarea [(ngModel)]="recipientEditor.staticTo" rows="2" dir="ltr" [placeholder]="'example1@domain.com, example2@domain.com'" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-            </label>
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.CC' | translate }}</span>
-              <textarea [(ngModel)]="recipientEditor.staticCc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-            </label>
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.BCC' | translate }}</span>
-              <textarea [(ngModel)]="recipientEditor.staticBcc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-            </label>
-          </div>
-        </div>
-
-        <!-- Fallback Recipients -->
-        <div class="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-sm">
-          <p class="text-[10px] font-black uppercase tracking-[0.16em] text-zadna-primary">{{ 'EMAIL_CENTER.FALLBACK.BADGE' | translate }}</p>
-          <h3 class="mt-2 text-sm font-black text-slate-900">{{ 'EMAIL_CENTER.FALLBACK.TITLE' | translate }}</h3>
-          <p class="mt-1 text-[11px] font-bold text-slate-400 leading-normal">{{ 'EMAIL_CENTER.FALLBACK.DESC' | translate }}</p>
-
-          <div class="mt-4 grid grid-cols-1 gap-4">
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_TO' | translate }}</span>
-              <textarea [(ngModel)]="recipientEditor.fallbackTo" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-            </label>
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_CC' | translate }}</span>
-              <textarea [(ngModel)]="recipientEditor.fallbackCc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-            </label>
-            <label class="field-card">
-              <span>{{ 'EMAIL_CENTER.FIELDS.FALLBACK_BCC' | translate }}</span>
-              <textarea [(ngModel)]="recipientEditor.fallbackBcc" rows="2" dir="ltr" [disabled]="!canEdit" (ngModelChange)="onRecipientEditorChanged()"></textarea>
-            </label>
-          </div>
-        </div>
-      </div>
+  <div *ngIf="lastTestSendResult" class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+    <div class="flex items-center justify-between gap-3">
+      <p class="text-[11px] font-black text-slate-700">{{ 'EMAIL_CENTER.TEST_SEND.LAST_RESULT' | translate }}</p>
+      <app-status-pill
+        [label]="getDispatchStatusLabelKey(lastTestSendResult.status)"
+        [variant]="getDispatchStatusVariant(lastTestSendResult.status)"
+        size="sm">
+      </app-status-pill>
     </div>
-  </div>
-
-  <!-- Tab 2: Template Editor & Live Preview -->
-  <div *ngIf="activeTab === 'template'" class="animate-in fade-in duration-300">
-    <app-email-template-panel
-      [rule]="rule"
-      [canEdit]="canEdit"
-      [senderName]="getSenderProfileName(rule.senderProfileId)"
-      [triggerNotesKey]="rule.triggerNotesKey"
-      (templateChange)="onRuleDraftChanged()">
-    </app-email-template-panel>
-  </div>
-
-  <!-- Tab 3: Delivery Preview & Resolution -->
-  <div *ngIf="activeTab === 'delivery'" class="space-y-6 animate-in fade-in duration-300">
-    <div class="rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-sm">
-      <div class="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-6">
-        <div class="space-y-5">
-          <div>
-            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'EMAIL_CENTER.DELIVERY.BADGE' | translate }}</p>
-            <h2 class="mt-2 text-lg font-black text-slate-900">{{ 'EMAIL_CENTER.DELIVERY.TITLE' | translate }}</h2>
-            <p class="text-xs font-bold text-slate-400 mt-1">{{ 'EMAIL_CENTER.DELIVERY.DESC' | translate }}</p>
-          </div>
-
-          <div class="rounded-[1.7rem] border border-slate-200 bg-slate-50/80 p-5">
-            <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'EMAIL_CENTER.PREVIEW.SUBJECT' | translate }}</p>
-            <p class="mt-3 text-sm font-black text-slate-900" dir="ltr">{{ rule.template.subject.en || rule.template.subject.ar }}</p>
-            <p *ngIf="rule.template.subject.ar" class="mt-2 text-sm font-bold text-slate-600" dir="rtl">{{ rule.template.subject.ar }}</p>
-          </div>
-
-          <div class="rounded-[1.7rem] border border-dashed border-zadna-primary/20 bg-zadna-primary/[0.03] p-5">
-            <p class="text-[10px] font-black uppercase tracking-[0.14em] text-zadna-primary">{{ 'EMAIL_CENTER.PREVIEW.VARIABLES' | translate }}</p>
-            <div class="mt-3 flex flex-wrap gap-2">
-              <span *ngFor="let variable of rule.template.variables" class="rounded-full bg-white px-3.5 py-1.5 text-[11px] font-black text-slate-600 shadow-sm border border-slate-100" dir="ltr">
-                {{ variable }}
-              </span>
-              <span *ngIf="rule.template.variables.length === 0" class="text-xs font-bold text-slate-400 italic">
-                {{ 'EMAIL_CENTER.PREVIEW.NO_VARIABLES' | translate }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-5">
-          <div class="rounded-[1.7rem] border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-            <div>
-              <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'EMAIL_CENTER.PREVIEW.SENDER' | translate }}</p>
-              <p class="mt-3 text-sm font-black text-slate-900">{{ getSenderProfileName(rule.senderProfileId) }}</p>
-              <p class="mt-1 text-[11px] font-bold text-slate-400 leading-normal">{{ rule.triggerNotesKey | translate }}</p>
-            </div>
-
-            <div *ngIf="lastTestSendResult" class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 border-l-4" [ngClass]="{'border-l-success-600': lastTestSendResult.status === 'sent', 'border-l-warning-600': lastTestSendResult.status === 'skipped', 'border-l-danger-600': lastTestSendResult.status === 'failed'}">
-              <div class="flex items-center justify-between gap-3">
-                <p class="text-[11px] font-black text-slate-700">{{ 'EMAIL_CENTER.TEST_SEND.LAST_RESULT' | translate }}</p>
-                <app-status-pill
-                  [label]="getDispatchStatusLabelKey(lastTestSendResult.status)"
-                  [variant]="getDispatchStatusVariant(lastTestSendResult.status)"
-                  size="sm">
-                </app-status-pill>
-              </div>
-              <p class="mt-2 text-[10px] font-bold text-slate-400">{{ lastTestSendResult.createdAtUtc | date:'medium' }}</p>
-              <p *ngIf="lastTestSendResult.failureReason" class="mt-2 text-[11px] font-bold text-amber-700 bg-amber-50 p-2 rounded border border-amber-200 leading-normal">
-                {{ lastTestSendResult.failureReason }}
-              </p>
-            </div>
-          </div>
-
-          <div class="rounded-[1.7rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-              <p class="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{{ 'EMAIL_CENTER.RESOLVED.BADGE' | translate }}</p>
-              <div class="flex items-center gap-3">
-                <span *ngIf="isResolvingRecipients" class="text-[10px] font-black text-zadna-primary flex items-center gap-1">
-                  <span class="h-2 w-2 rounded-full bg-zadna-primary animate-ping"></span>
-                  {{ 'EMAIL_CENTER.RESOLVED.REFRESHING' | translate }}
-                </span>
-                <span class="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-black text-slate-500 border border-slate-150">
-                  {{ resolvedRecipients.to.length + resolvedRecipients.cc.length + resolvedRecipients.bcc.length }}
-                </span>
-              </div>
-            </div>
-
-            <div *ngIf="resolvedRecipients.warnings.length > 0" class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 border-l-4 border-l-amber-600 animate-in fade-in duration-300">
-              <p class="text-[10px] font-black uppercase tracking-[0.14em] text-amber-700">{{ 'EMAIL_CENTER.RESOLVED.WARNINGS' | translate }}</p>
-              <div class="mt-2 space-y-1.5">
-                <p *ngFor="let warning of resolvedRecipients.warnings" class="text-[11px] font-bold text-amber-800 flex items-start gap-1.5">
-                  <span class="material-symbols-outlined text-[14px] mt-0.5 text-amber-600">warning</span>
-                  <span class="flex-1 leading-normal">{{ warning }}</span>
-                </p>
-              </div>
-            </div>
-
-            <div class="mt-5 space-y-4">
-              <div class="resolved-group">
-                <p>{{ 'EMAIL_CENTER.FIELDS.TO' | translate }}</p>
-                <div class="resolved-list mt-2">
-                  <span *ngFor="let email of resolvedRecipients.to" dir="ltr" class="hover:bg-slate-100 transition-colors">{{ email }}</span>
-                  <span *ngIf="resolvedRecipients.to.length === 0" class="empty-chip text-slate-400 italic text-[11px] font-bold">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                </div>
-              </div>
-
-              <div class="resolved-group">
-                <p>{{ 'EMAIL_CENTER.FIELDS.CC' | translate }}</p>
-                <div class="resolved-list mt-2">
-                  <span *ngFor="let email of resolvedRecipients.cc" dir="ltr" class="hover:bg-slate-100 transition-colors">{{ email }}</span>
-                  <span *ngIf="resolvedRecipients.cc.length === 0" class="empty-chip text-slate-400 italic text-[11px] font-bold">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                </div>
-              </div>
-
-              <div class="resolved-group">
-                <p>{{ 'EMAIL_CENTER.FIELDS.BCC' | translate }}</p>
-                <div class="resolved-list mt-2">
-                  <span *ngFor="let email of resolvedRecipients.bcc" dir="ltr" class="hover:bg-slate-100 transition-colors">{{ email }}</span>
-                  <span *ngIf="resolvedRecipients.bcc.length === 0" class="empty-chip text-slate-400 italic text-[11px] font-bold">{{ 'EMAIL_CENTER.RESOLVED.EMPTY' | translate }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <p class="mt-2 text-[10px] font-bold text-slate-400">{{ lastTestSendResult.createdAtUtc | date:'medium' }}</p>
+    <p *ngIf="lastTestSendResult.failureReason" class="mt-2 text-[11px] font-bold text-amber-700">
+      {{ lastTestSendResult.failureReason }}
+    </p>
   </div>
 </div>

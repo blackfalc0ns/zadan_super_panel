@@ -1,7 +1,7 @@
 {
   "EMAIL_CENTER": {
     "TITLE": "Email Center",
-    "DESC": "Configure sender profiles, persona-based routing, recipient builders, and bilingual workflow previews.",
+    "DESC": "Email templates that are sent automatically by the system.",
     "OPEN_ADMIN_USERS": "Access Directory",
     "KPI": {
       "TOTAL_RULES": "Workflow rules",
@@ -49,9 +49,9 @@
       "FINANCE_DIGEST_NAME": "Finance Digest"
     },
     "WORKFLOWS": {
-      "BADGE": "Workflow rules",
-      "TITLE": "Persona-based email workflows",
-      "DESC": "Review enabled rules, audience scope, sender profile, and routing strategy from one place.",
+      "BADGE": "Live emails",
+      "TITLE": "Automatically sent emails",
+      "DESC": "Live sending rules only — customer orders, vendors, and drivers.",
       "ENABLED": "Enabled",
       "DISABLED": "Disabled",
       "SEARCH": "Search rules or templates...",
@@ -373,8 +373,8 @@
       "CUSTOMER_ACCOUNT": "Customer account"
     },
     "EMPTY": {
-      "TITLE": "No routing rules found",
-      "MESSAGE": "No email rules match the current filters."
+      "TITLE": "No live emails",
+      "MESSAGE": "There are no active live sending rules right now."
     }
   }
 }

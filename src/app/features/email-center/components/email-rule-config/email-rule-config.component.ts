@@ -60,7 +60,6 @@ const RECIPIENT_OPTIONS: Record<DirectoryAudienceType, Array<{ id: EmailRecipien
     CommonModule,
     FormsModule,
     TranslateModule,
-    SearchableSelectComponent,
     StatusPillComponent,
     EmailTemplatePanelComponent
   ],

@@ -10,47 +10,16 @@
     <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">mail</span>
 
     <div actions class="hub-actions">
-      <button type="button" class="hub-action-btn" (click)="openSenderProfiles()">
-        <span class="material-symbols-outlined">alternate_email</span>
-        {{ 'EMAIL_CENTER.NAV.SENDER_PROFILES' | translate }}
-      </button>
       <button type="button" class="hub-action-btn" (click)="openHistory()">
         <span class="material-symbols-outlined">history</span>
         {{ 'EMAIL_CENTER.NAV.HISTORY' | translate }}
-      </button>
-      <button type="button" class="hub-action-btn" (click)="openAccessDirectory()">
-        <span class="material-symbols-outlined">shield_person</span>
-        {{ 'EMAIL_CENTER.OPEN_ADMIN_USERS' | translate }}
       </button>
     </div>
   </app-page-header>
 
   <div class="hub-content">
-    <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
-
     <section *ngIf="pageError && !isLoading" class="hub-error">
       {{ pageError }}
-    </section>
-
-    <section *ngIf="!isLoading" class="hub-panel">
-      <div class="hub-panel__header">
-        <div>
-          <p class="hub-eyebrow">{{ 'EMAIL_CENTER.AUDIENCE.BADGE' | translate }}</p>
-          <h2>{{ 'EMAIL_CENTER.AUDIENCE.TITLE' | translate }}</h2>
-          <p>{{ 'EMAIL_CENTER.AUDIENCE.DESC' | translate }}</p>
-        </div>
-
-        <div class="audience-tabs">
-          <button
-            *ngFor="let audience of audienceTabs"
-            type="button"
-            class="audience-tab"
-            [class.is-active]="selectedAudience === audience.value"
-            (click)="setAudience(audience.value)">
-            {{ audience.labelKey | translate }}
-          </button>
-        </div>
-      </div>
     </section>
 
     <div *ngIf="isLoading" class="admin-skeleton-detail">
@@ -65,14 +34,8 @@
 
     <app-email-rules-list
       *ngIf="!isLoading"
-      [rules]="filteredRules"
+      [rules]="liveRules"
       [mode]="'grid'">
     </app-email-rules-list>
   </div>
-
-  <app-email-sender-profiles-modal
-    [open]="showSenderProfilesModal"
-    [senderProfiles]="senderProfiles"
-    (closed)="closeSenderProfiles()">
-  </app-email-sender-profiles-modal>
 </div>
