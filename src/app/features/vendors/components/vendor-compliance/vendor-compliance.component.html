@@ -89,11 +89,11 @@
  <span class="material-symbols-outlined text-[14px]">verified_user</span>
  {{ isRTL ? 'قرار الاعتماد النهائي' : 'Final approval decision' }}
  </div>
- <h2 class="mt-2 text-[15px] font-black text-slate-900">{{ operationsHeadline }}</h2>
- <p class="mt-1 max-w-3xl text-[12px] font-semibold leading-relaxed text-slate-500">
- {{ canApproveVendor ? operationsHint : operationsBlockedMessage }}
- </p>
- </div>
+<h2 class="mt-2 text-[15px] font-black text-slate-900">{{ operationsHeadline }}</h2>
+<p class="mt-1 max-w-3xl text-[12px] font-semibold leading-relaxed text-slate-500">
+ {{ canApproveVendor || canReopenRejectedVendor ? operationsHint : operationsBlockedMessage }}
+</p>
+</div>
 
  <div class="grid w-full gap-2 xl:max-w-[34rem]">
  <textarea
@@ -105,16 +105,27 @@
  </textarea>
 
  <div class="grid gap-2 sm:grid-cols-2">
- <button
- *ngIf="canStartReview"
- type="button"
- (click)="onStartReview()"
- class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition hover:bg-slate-800">
+<button
+*ngIf="canStartReview"
+type="button"
+(click)="onStartReview()"
+class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition hover:bg-slate-800">
  <span class="material-symbols-outlined text-[17px]">play_circle</span>
- {{ isRTL ? 'بدء المراجعة' : 'Start review' }}
- </button>
+{{ isRTL ? 'بدء المراجعة' : 'Start review' }}
+</button>
 
 <button
+*ngIf="canReopenRejectedVendor"
+type="button"
+(click)="onReopenVendorReview()"
+[disabled]="isSubmittingReviewReopen"
+class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500">
+<span class="material-symbols-outlined text-[17px]" [class.animate-spin]="isSubmittingReviewReopen">{{ isSubmittingReviewReopen ? 'progress_activity' : 'lock_open' }}</span>
+{{ isRTL ? 'فتح الملف' : 'Reopen file' }}
+</button>
+
+<button
+*ngIf="!isRejectedVendor"
 type="button"
 (click)="onApproveVendor()"
 [disabled]="isSubmittingFinalDecision || !canApproveVendor"
@@ -198,15 +209,25 @@ class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-
  </textarea>
  </div>
 
- <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
- <button
- *ngIf="canStartReview"
- type="button"
- (click)="onStartReview()"
+<div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+<button
+*ngIf="canStartReview"
+type="button"
+(click)="onStartReview()"
  class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition-all hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5">
  <span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110">play_circle</span>
- {{ isRTL ? 'بدء المراجعة' : 'Start review' }}
- </button>
+{{ isRTL ? 'بدء المراجعة' : 'Start review' }}
+</button>
+
+<button
+*ngIf="canReopenRejectedVendor"
+type="button"
+(click)="onReopenVendorReview()"
+[disabled]="isSubmittingReviewReopen"
+class="group flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition-all hover:bg-slate-800 hover:shadow-md hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none disabled:hover:translate-y-0">
+<span class="material-symbols-outlined text-[16px] transition-transform group-hover:scale-110" [class.animate-spin]="isSubmittingReviewReopen">{{ isSubmittingReviewReopen ? 'progress_activity' : 'lock_open' }}</span>
+{{ isRTL ? 'فتح الملف' : 'Reopen file' }}
+</button>
 
 <button
 *ngIf="canApproveVendor"

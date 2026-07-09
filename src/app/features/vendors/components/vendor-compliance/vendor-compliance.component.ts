@@ -69,13 +69,14 @@ export class VendorComplianceComponent {
  vendorDetail: VendorDetail | null = null;
  selectedDocumentId: string | null = null;
  selectedSectionId: string | null = null;
- activeRailTab: ComplianceRailTab = 'timeline';
- activeWorkspaceWindow: ComplianceWorkspaceWindow = 'review';
- isSubmittingDocumentDecision = false;
- isSubmittingFinalDecision = false;
- selectedProfileReviewCode: string | null = null;
- profileRejectReason = '';
- sectionRejectReason = '';
+activeRailTab: ComplianceRailTab = 'timeline';
+activeWorkspaceWindow: ComplianceWorkspaceWindow = 'review';
+isSubmittingDocumentDecision = false;
+isSubmittingFinalDecision = false;
+isSubmittingReviewReopen = false;
+selectedProfileReviewCode: string | null = null;
+profileRejectReason = '';
+sectionRejectReason = '';
 
  // Custom confirm modal states
  isConfirmModalOpen = false;
@@ -337,14 +338,18 @@ export class VendorComplianceComponent {
  return this.reviewPacketReadyForFinalApproval && this.canVerifyPrimaryBankAccount;
  }
 
- get isVendorAlreadyApproved(): boolean {
- return this.vendorDetail?.status === VendorStatus.Active &&!!this.vendorDetail?.approvedAtUtc;
- }
+get isVendorAlreadyApproved(): boolean {
+return this.vendorDetail?.status === VendorStatus.Active &&!!this.vendorDetail?.approvedAtUtc;
+}
 
- get canStartReview(): boolean {
- if (!this.vendorDetail) {
- return false;
- }
+get isRejectedVendor(): boolean {
+return this.vendorDetail?.status === VendorStatus.Rejected;
+}
+
+get canStartReview(): boolean {
+if (!this.vendorDetail) {
+return false;
+}
 
  return this.vendorDetail.status === VendorStatus.Pending
  &&!this.vendorDetail.archivedAtUtc
@@ -361,21 +366,32 @@ return false;
 
 const readinessAllowsApproval = this.complianceReadyForFinalApproval
 || (this.reviewPacketReadyForFinalApproval && (this.isPrimaryBankAccountVerified || this.canVerifyPrimaryBankAccount));
+const statusAllowsApproval = this.vendorDetail.status === VendorStatus.Pending
+|| this.vendorDetail.status === VendorStatus.Suspended;
 
-return this.vendorDetail.status === VendorStatus.Pending
+return statusAllowsApproval
 && readinessAllowsApproval
-&&!this.vendorDetail.approvedAtUtc
+&&!this.isCrExpired
 &&!this.vendorDetail.archivedAtUtc
 &&!this.vendorDetail.isLoginLocked
-&&!this.isSubmittingFinalDecision
-&& this.vendorDetail.reviewState!== 'rejected'
- && this.vendorDetail.reviewState!== 'suspended';
- }
+&&!this.isSubmittingFinalDecision;
+}
 
- get canRejectVendor(): boolean {
- if (!this.vendorDetail) {
- return false;
- }
+get canReopenRejectedVendor(): boolean {
+if (!this.vendorDetail) {
+return false;
+}
+
+return this.vendorDetail.status === VendorStatus.Rejected
+&&!this.vendorDetail.archivedAtUtc
+&&!this.vendorDetail.isLoginLocked
+&&!this.isSubmittingReviewReopen;
+}
+
+get canRejectVendor(): boolean {
+if (!this.vendorDetail) {
+return false;
+}
 
  return this.vendorDetail.status === VendorStatus.Pending
  &&!this.vendorDetail.approvedAtUtc
@@ -427,25 +443,25 @@ return this.vendorDetail.status === VendorStatus.Pending
  && this.vendorDetail.reviewState!== 'rejected';
  }
 
- get shouldShowFinalDecisionPanel(): boolean {
- if (!this.vendorDetail) {
- return false;
- }
+get shouldShowFinalDecisionPanel(): boolean {
+if (!this.vendorDetail) {
+return false;
+}
 
- return this.vendorDetail.status === VendorStatus.Pending
- &&!this.vendorDetail.approvedAtUtc
- &&!this.vendorDetail.archivedAtUtc
- &&!this.vendorDetail.isLoginLocked
- && this.vendorDetail.reviewState!== 'rejected'
- && this.vendorDetail.reviewState!== 'suspended';
- }
+return (this.vendorDetail.status === VendorStatus.Pending
+|| this.vendorDetail.status === VendorStatus.Rejected
+|| this.vendorDetail.status === VendorStatus.Suspended)
+&&!this.vendorDetail.archivedAtUtc
+&&!this.vendorDetail.isLoginLocked;
+}
 
- get hasActionRailCommands(): boolean {
- return this.canStartReview
- || this.canApproveVendor
- || this.canRejectVendor
- || this.canSuspendVendor
- || this.canReactivateVendor
+get hasActionRailCommands(): boolean {
+return this.canStartReview
+|| this.canReopenRejectedVendor
+|| this.canApproveVendor
+|| this.canRejectVendor
+|| this.canSuspendVendor
+|| this.canReactivateVendor
  || this.canRequestDocuments;
  }
 
@@ -528,13 +544,17 @@ return this.vendorDetail.status === VendorStatus.Pending
  return this.localize('السجل التجاري منتهي الصلاحية', 'Commercial Registration is expired');
  }
 
- if (this.canApproveVendor) {
- return this.localize('الملف جاهز للاعتماد النهائي', 'The file is ready for final approval');
- }
+if (this.canApproveVendor) {
+return this.localize('الملف جاهز للاعتماد النهائي', 'The file is ready for final approval');
+}
 
- if (this.canReactivateVendor) {
- return this.localize('الحساب جاهز لإعادة التشغيل', 'The account is ready for reactivation');
- }
+if (this.canReopenRejectedVendor) {
+return this.localize('أغلقنا ملف الاعتماد بالرفض', 'The approval file was closed as rejected');
+}
+
+if (this.canReactivateVendor) {
+return this.localize('الحساب جاهز لإعادة التشغيل', 'The account is ready for reactivation');
+}
 
  if (this.canSuspendVendor) {
  return this.localize('الحساب يعمل الحين ويمكن تعليقه إذا لزم الأمر', 'The account is live and can be suspended if needed');
@@ -559,13 +579,17 @@ return this.vendorDetail.status === VendorStatus.Pending
  );
  }
 
- if (this.canApproveVendor) {
- return this.localize('كل المستندات الرسمية المطلوبة أغلقت بنجاح ويمكن اعتماد التاجر من هذه الشاشة.', 'All required official documents are closed, and the vendor can be approved from this workspace.');
- }
+if (this.canApproveVendor) {
+return this.localize('كل المستندات الرسمية المطلوبة أغلقت بنجاح ويمكن اعتماد التاجر من هذه الشاشة.', 'All required official documents are closed, and the vendor can be approved from this workspace.');
+}
 
- if (this.pendingRequiredDocumentsCount > 0) {
- return this.localize(
- `${this.formatNumber(this.pendingRequiredDocumentsCount)} مستندات مطلوبة ما زالت مفتوحة قبل الاعتماد.`,
+if (this.canReopenRejectedVendor) {
+return this.localize('افتح الملف أولاً ليرجع لمسار المراجعة، وبعدها يمكن اعتماد التاجر إذا كانت المتطلبات مكتملة.', 'Reopen the file first to return it to review, then approve the vendor once requirements are complete.');
+}
+
+if (this.pendingRequiredDocumentsCount > 0) {
+return this.localize(
+`${this.formatNumber(this.pendingRequiredDocumentsCount)} مستندات مطلوبة ما زالت مفتوحة قبل الاعتماد.`,
  `${this.formatNumber(this.pendingRequiredDocumentsCount)} required documents are still open before approval.`
  );
  }
@@ -605,12 +629,16 @@ return this.vendorDetail.status === VendorStatus.Pending
  return this.localize('ملف التاجر مرفوض بالفعل، وما فيه إجراءات تشغيل إضافية من هذه الشاشة.', 'The vendor file is already rejected, and no further account actions are available here.');
  }
 
- if (!this.reviewPacketReadyForFinalApproval) {
- return this.localize('الاعتماد النهائي يظهر بعد اعتماد كل الحقول والمستندات المطلوبة.', 'Final approval becomes available after all required fields and documents are approved.');
- }
+if (!this.reviewPacketReadyForFinalApproval) {
+return this.localize('الاعتماد النهائي يظهر بعد اعتماد كل الحقول والمستندات المطلوبة.', 'Final approval becomes available after all required fields and documents are approved.');
+}
 
- if (!this.hasPrimaryBankAccount) {
- return this.localize('لازم يكون فيه حساب بنكي أساسي قبل الاعتماد النهائي.', 'A primary bank account is required before final approval.');
+if (this.vendorDetail.status === VendorStatus.Rejected) {
+return this.localize('افتح ملف الاعتماد أولاً قبل اتخاذ قرار نهائي جديد.', 'Reopen the approval file before taking a new final decision.');
+}
+
+if (!this.hasPrimaryBankAccount) {
+return this.localize('لازم يكون فيه حساب بنكي أساسي قبل الاعتماد النهائي.', 'A primary bank account is required before final approval.');
  }
 
  if (!this.isPrimaryBankAccountVerified) {
@@ -1139,27 +1167,68 @@ return this.vendorDetail.status === VendorStatus.Pending
  window.open(document.fileUrl, '_blank', 'noopener,noreferrer');
  }
 
- onStartReview(): void {
- if (!this.canStartReview) {
- this.mutationError = this.operationsBlockedMessage;
+onStartReview(): void {
+if (!this.canStartReview) {
+this.mutationError = this.operationsBlockedMessage;
+return;
+ }
+
+this.vendorDetailFacade.clearMutationError();
+this.vendorDetailFacade.startVendorReview();
+}
+
+onReopenVendorReview(): void {
+if (!this.canReopenRejectedVendor) {
+this.mutationError = this.operationsBlockedMessage;
+return;
+}
+
+const title = this.localize('فتح ملف الاعتماد', 'Reopen approval file');
+const message = this.localize(
+'سيعود ملف التاجر إلى مسار المراجعة، وبعدها يمكن اعتماد التاجر عند اكتمال المتطلبات. هل تريد المتابعة؟',
+'The vendor file will return to the review flow, then the vendor can be approved once requirements are complete. Do you want to continue?'
+);
+const confirmText = this.localize('فتح الملف', 'Reopen file');
+const cancelText = this.localize('إلغاء', 'Cancel');
+
+this.openConfirmModal(title, message, confirmText, cancelText, 'info', () => {
+this.vendorDetailFacade.clearMutationError();
+this.isSubmittingReviewReopen = true;
+this.cdr.markForCheck();
+
+this.vendorDetailFacade.reopenVendorReviewRequest().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+next: () => {
+this.isSubmittingReviewReopen = false;
+this.cdr.markForCheck();
+},
+error: () => {
+this.isSubmittingReviewReopen = false;
+this.cdr.markForCheck();
+}
+});
+});
+}
+
+onApproveVendor(): void {
+if (!this.vendorDetail ||!this.canApproveVendor) {
+this.mutationError = this.operationsBlockedMessage;
  return;
  }
 
- this.vendorDetailFacade.clearMutationError();
- this.vendorDetailFacade.startVendorReview();
- }
-
- onApproveVendor(): void {
- if (!this.vendorDetail ||!this.canApproveVendor) {
- this.mutationError = this.operationsBlockedMessage;
- return;
- }
-
-const title = this.localize('اعتماد التاجر', 'Approve Vendor');
+const isReturningVendor = this.vendorDetail.status === VendorStatus.Rejected
+|| this.vendorDetail.status === VendorStatus.Suspended;
+const title = isReturningVendor
+? this.localize('إعادة اعتماد التاجر', 'Re-approve Vendor')
+: this.localize('اعتماد التاجر', 'Approve Vendor');
 const message = this.shouldVerifyBankBeforeApproval
 ? this.localize(
 'هنوثق الحساب البنكي الأساسي ثم نعتمد التاجر نهائيًا. هل تريد المتابعة؟',
 'The primary bank account will be verified, then the vendor will be approved. Do you want to continue?'
+)
+: isReturningVendor
+? this.localize(
+'سيعود الحساب إلى حالة نشطة بعد الاعتماد النهائي. هل تريد المتابعة؟',
+'The account will return to active status after final approval. Do you want to continue?'
 )
 : this.localize(
 'أغلقنا كل المستندات المطلوبة. هل تريد اعتماد التاجر نهائيًا الحين؟',

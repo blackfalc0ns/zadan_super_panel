@@ -797,10 +797,10 @@ export class VendorService {
  );
  }
 
- startVendorReview(id: string): Observable<VendorDetail> {
- const request$ = this.canUseApiMutations()
- ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/start-review`, {})
- : null;
+startVendorReview(id: string): Observable<VendorDetail> {
+const request$ = this.canUseApiMutations()
+? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/start-review`, {})
+: null;
 
  return this.executeVendorMutation(
  request$,
@@ -818,13 +818,25 @@ export class VendorService {
  tone: 'info'
  });
  }),
- id
- );
- }
+id
+);
+}
 
- rejectVendorReview(
- id: string,
- reason: string = 'Submitted data did not pass compliance review.'
+reopenVendorReview(id: string): Observable<VendorDetail> {
+const request$ = this.canUseApiMutations()
+? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/reopen-review`, {})
+: null;
+
+return this.executeVendorMutation(
+request$,
+() => this.applyReopenReview(id),
+id
+);
+}
+
+rejectVendorReview(
+id: string,
+reason: string = 'Submitted data did not pass compliance review.'
  ): Observable<VendorDetail> {
  const request$ = this.canUseApiMutations()
  ? this.http.post(`${this.apiUrl}/${id}/reject`, { reason })
@@ -2035,27 +2047,39 @@ export class VendorService {
  return status === VendorStatus.Pending ? RiskLevel.Medium : RiskLevel.Low;
  }
 
- private applyApproval(id: string, commissionRate: number): VendorDetail {
- return this.updateVendor(id, (vendor) => {
- if (vendor.status === VendorStatus.Active) {
- throw new Error('التاجر معتمد بالفعل.|Vendor is already approved.');
- }
+private applyApproval(id: string, commissionRate: number): VendorDetail {
+return this.updateVendor(id, (vendor) => {
+if (vendor.status === VendorStatus.Active) {
+throw new Error('التاجر معتمد بالفعل.|Vendor is already approved.');
+}
 
- if (vendor.status!== VendorStatus.Pending ||!vendor.readyForFinalApproval) {
- throw new Error('ما تقدر تعتمد التاجر قبل إقفال المستندات المطلوبة.|Vendor cannot be approved before the required documents are closed.');
- }
+const statusAllowsApproval = vendor.status === VendorStatus.Pending
+|| vendor.status === VendorStatus.Suspended;
 
- vendor.status = VendorStatus.Active;
- vendor.reviewState = 'verified';
- vendor.commissionRate = commissionRate;
- vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
- vendor.approvedAtUtc = this.timestamp();
- vendor.approvedBy = vendor.assignedReviewer;
+if (!statusAllowsApproval ||!vendor.readyForFinalApproval) {
+throw new Error('ما تقدر تعتمد التاجر قبل إقفال المستندات المطلوبة.|Vendor cannot be approved before the required documents are closed.');
+}
+
+vendor.status = VendorStatus.Active;
+vendor.accountStatus = 'Active';
+vendor.reviewState = 'verified';
+vendor.commissionRate = commissionRate;
+vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
+vendor.approvedAtUtc = this.timestamp();
+vendor.approvedBy = vendor.assignedReviewer;
  vendor.reviewCompletedAtUtc = this.timestamp();
- vendor.reviewDecisionReason = null;
- vendor.rejectionReason = null;
- vendor.requestedChangesAtUtc = null;
- vendor.reviewDocuments = vendor.reviewDocuments.map((document) => ({...document,
+vendor.reviewDecisionReason = null;
+vendor.rejectionReason = null;
+vendor.suspensionReason = null;
+vendor.suspendedAtUtc = null;
+vendor.lockReason = null;
+vendor.lockedAtUtc = null;
+vendor.isLoginLocked = false;
+vendor.archivedAtUtc = null;
+vendor.archiveReason = null;
+vendor.payoutStatus = PayoutStatus.Active;
+vendor.requestedChangesAtUtc = null;
+vendor.reviewDocuments = vendor.reviewDocuments.map((document) => ({...document,
  status: 'completed',
  statusLabelKey: 'COMPLIANCE.STATUS.COMPLETED',
  iconBgClass: 'bg-teal-50 text-teal-500'
@@ -2066,11 +2090,38 @@ export class VendorService {
  messageKey: 'VENDOR_REVIEW.NOTES.APPROVED',
  tone: 'success'
  });
- });
- }
+});
+}
 
- private applyRejection(id: string, reason: string): VendorDetail {
- return this.updateVendor(id, (vendor) => {
+private applyReopenReview(id: string): VendorDetail {
+return this.updateVendor(id, (vendor) => {
+if (vendor.status !== VendorStatus.Rejected) {
+throw new Error('لازم يكون التاجر مرفوض قبل فتح ملف الاعتماد مرة أخرى.|Vendor must be rejected before reopening the approval file.');
+}
+
+vendor.status = VendorStatus.Pending;
+vendor.accountStatus = 'Pending';
+vendor.reviewState = 'submitted';
+vendor.rejectionReason = null;
+vendor.reviewDecisionReason = null;
+vendor.reviewCompletedAtUtc = null;
+vendor.requestedChangesAtUtc = null;
+vendor.reviewSubmittedAtUtc = vendor.reviewSubmittedAtUtc || this.timestamp();
+vendor.reviewUpdatedAtUtc = this.timestamp();
+vendor.onboardingStage = OnboardingStage.UnderReview;
+vendor.verificationStatus = VerificationStatus.Pending;
+vendor.hasPendingCompliance = true;
+this.pushSystemNote(vendor, {
+authorName: 'Vendor Compliance Desk',
+roleLabel: 'Compliance Review',
+messageKey: 'VENDOR_REVIEW.NOTES.REOPENED',
+tone: 'info'
+});
+});
+}
+
+private applyRejection(id: string, reason: string): VendorDetail {
+return this.updateVendor(id, (vendor) => {
  const normalizedReason = reason.trim();
  if (!normalizedReason) {
  throw new Error('لازم تدخل سبب رفض واضح.|A clear rejection reason is required.');

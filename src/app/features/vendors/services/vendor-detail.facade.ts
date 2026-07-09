@@ -422,6 +422,16 @@ export class VendorDetailFacade implements OnDestroy {
     );
   }
 
+  reopenVendorReview(): void {
+    this.subscribeSilently(this.reopenVendorReviewRequest());
+  }
+
+  reopenVendorReviewRequest(): Observable<VendorDetail> {
+    return this.trackVendorMutation((vendorId) =>
+      this.vendorService.reopenVendorReview(vendorId)
+    );
+  }
+
   suspendVendorAccount(reason?: string): void {
     this.subscribeSilently(this.suspendVendorAccountRequest(reason));
   }
