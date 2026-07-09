@@ -625,21 +625,17 @@ return this.localize(
  return this.localize('الحساب معلق الحين. استخدم إعادة التشغيل بدل الاعتماد أو الرفض.', 'The account is currently suspended. Use reactivation instead of approval or rejection.');
  }
 
- if (this.vendorDetail.status === VendorStatus.Rejected) {
- return this.localize('ملف التاجر مرفوض بالفعل، وما فيه إجراءات تشغيل إضافية من هذه الشاشة.', 'The vendor file is already rejected, and no further account actions are available here.');
- }
+if (this.vendorDetail.status === VendorStatus.Rejected) {
+return this.localize('افتح ملف الاعتماد أولاً قبل اتخاذ قرار نهائي جديد.', 'Reopen the approval file before taking a new final decision.');
+}
 
 if (!this.reviewPacketReadyForFinalApproval) {
 return this.localize('الاعتماد النهائي يظهر بعد اعتماد كل الحقول والمستندات المطلوبة.', 'Final approval becomes available after all required fields and documents are approved.');
 }
 
-if (this.vendorDetail.status === VendorStatus.Rejected) {
-return this.localize('افتح ملف الاعتماد أولاً قبل اتخاذ قرار نهائي جديد.', 'Reopen the approval file before taking a new final decision.');
-}
-
 if (!this.hasPrimaryBankAccount) {
 return this.localize('لازم يكون فيه حساب بنكي أساسي قبل الاعتماد النهائي.', 'A primary bank account is required before final approval.');
- }
+}
 
  if (!this.isPrimaryBankAccountVerified) {
  return this.localize('الحساب البنكي الأساسي غير موثق. زر الاعتماد النهائي يوثقه تلقائيًا لو حالته بانتظار التحقق.', 'The primary bank account is not verified. Final approval verifies it automatically when it is pending verification.');
@@ -1215,8 +1211,7 @@ this.mutationError = this.operationsBlockedMessage;
  return;
  }
 
-const isReturningVendor = this.vendorDetail.status === VendorStatus.Rejected
-|| this.vendorDetail.status === VendorStatus.Suspended;
+const isReturningVendor = this.vendorDetail.status === VendorStatus.Suspended;
 const title = isReturningVendor
 ? this.localize('إعادة اعتماد التاجر', 'Re-approve Vendor')
 : this.localize('اعتماد التاجر', 'Approve Vendor');
