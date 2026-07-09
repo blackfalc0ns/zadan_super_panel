@@ -387,6 +387,19 @@ export class VendorComplianceComponent {
  && this.vendorDetail.reviewState!== 'rejected';
  }
 
+ get shouldShowFinalDecisionPanel(): boolean {
+ if (!this.vendorDetail) {
+ return false;
+ }
+
+ return this.vendorDetail.status === VendorStatus.Pending
+ &&!this.vendorDetail.approvedAtUtc
+ &&!this.vendorDetail.archivedAtUtc
+ &&!this.vendorDetail.isLoginLocked
+ && this.vendorDetail.reviewState!== 'rejected'
+ && this.vendorDetail.reviewState!== 'suspended';
+ }
+
  get hasActionRailCommands(): boolean {
  return this.canStartReview
  || this.canApproveVendor

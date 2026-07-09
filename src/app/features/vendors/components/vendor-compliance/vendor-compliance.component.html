@@ -80,6 +80,71 @@
  </button>
  </div>
 
+ <div
+ *ngIf="shouldShowFinalDecisionPanel"
+ class="relative mt-4 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm">
+ <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+ <div class="min-w-0 text-start">
+ <div class="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 text-[10px] font-black text-emerald-700">
+ <span class="material-symbols-outlined text-[14px]">verified_user</span>
+ {{ isRTL ? 'قرار الاعتماد النهائي' : 'Final approval decision' }}
+ </div>
+ <h2 class="mt-2 text-[15px] font-black text-slate-900">{{ operationsHeadline }}</h2>
+ <p class="mt-1 max-w-3xl text-[12px] font-semibold leading-relaxed text-slate-500">
+ {{ canApproveVendor ? operationsHint : operationsBlockedMessage }}
+ </p>
+ </div>
+
+ <div class="grid w-full gap-2 xl:max-w-[34rem]">
+ <textarea
+ *ngIf="canRejectVendor || canRequestDocuments"
+ [(ngModel)]="actionReason"
+ rows="2"
+ class="w-full rounded-xl border border-slate-200 bg-white p-3 text-[12px] font-medium text-slate-700 shadow-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+ [placeholder]="actionReasonPlaceholder">
+ </textarea>
+
+ <div class="grid gap-2 sm:grid-cols-2">
+ <button
+ *ngIf="canStartReview"
+ type="button"
+ (click)="onStartReview()"
+ class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[12px] font-black text-white transition hover:bg-slate-800">
+ <span class="material-symbols-outlined text-[17px]">play_circle</span>
+ {{ isRTL ? 'بدء المراجعة' : 'Start review' }}
+ </button>
+
+ <button
+ type="button"
+ (click)="onApproveVendor()"
+ [disabled]="!canApproveVendor"
+ class="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-[12px] font-black text-white shadow-md shadow-emerald-600/20 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none">
+ <span class="material-symbols-outlined text-[17px]">verified</span>
+ {{ isRTL ? 'اعتماد نهائي' : 'Final approval' }}
+ </button>
+
+ <button
+ *ngIf="canRequestDocuments"
+ type="button"
+ (click)="onRequestDocuments()"
+ class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 text-[12px] font-black text-amber-700 transition hover:bg-amber-100">
+ <span class="material-symbols-outlined text-[17px]">upload_file</span>
+ {{ isRTL ? 'طلب إعادة رفع' : 'Request re-upload' }}
+ </button>
+
+ <button
+ *ngIf="canRejectVendor"
+ type="button"
+ (click)="onRejectVendor()"
+ class="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 text-[12px] font-black text-rose-700 transition hover:bg-rose-100">
+ <span class="material-symbols-outlined text-[17px]">cancel</span>
+ {{ isRTL ? 'رفض التاجر' : 'Reject vendor' }}
+ </button>
+ </div>
+ </div>
+ </div>
+ </div>
+
  <div class="relative mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
  <div class="rounded-xl border border-slate-200/80 bg-white/90 p-3">
  <p class="text-[10px] font-bold text-slate-400" [class.uppercase]="!isRTL">{{ 'COMPLIANCE.WORKSPACE.FILES' | translate }}</p>
