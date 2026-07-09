@@ -172,6 +172,29 @@ interface AdminCodReconciliationApiModel {
  totalCodOwed: number;
 }
 
+interface AdminFinanceAuditLogApiModel {
+ items: AdminFinanceAuditLogEntryApiModel[];
+ totalCount: number;
+}
+
+interface AdminFinanceAuditLogEntryApiModel {
+ id: string;
+ timestampUtc: string;
+ adminId: string;
+ adminName: string;
+ adminRole: string;
+ action: string;
+ actionCategory: string;
+ entityType: string;
+ entityId?: string | null;
+ orderId?: string | null;
+ entityName?: string | null;
+ before?: Record<string, unknown> | null;
+ after?: Record<string, unknown> | null;
+ ipAddress?: string | null;
+ sessionId?: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FinanceService {
  private readonly injector = inject(Injector);
@@ -381,7 +404,52 @@ export class FinanceService {
  }
 
  getAuditLog(filter?: AuditLogFilter): Observable<AuditLogEntry[]> {
+ let params = new HttpParams().set('page', '1').set('pageSize', '200');
+ if (filter?.entityType) {
+ params = params.set('entityType', filter.entityType);
+ }
+ if (filter?.entityId) {
+ params = params.set('entityId', filter.entityId);
+ }
+ if (filter?.orderId) {
+ params = params.set('orderId', filter.orderId);
+ }
+ if (filter?.actionCategory) {
+ params = params.set('actionCategory', filter.actionCategory);
+ }
+
+ return this.http.get<AdminFinanceAuditLogApiModel>(`${this.apiUrl}/audit-log`, { params }).pipe(
+ map((response) => this.filterAuditEntries(response.items.map((item) => this.mapAuditLogEntry(item)), filter)),
+ catchError((error) => {
+ console.error('Failed to load finance audit log from backend.', error);
+ return this.composeFinanceAuditLog(filter);
+ })
+ );
+ }
+
+ private composeFinanceAuditLog(filter?: AuditLogFilter): Observable<AuditLogEntry[]> {
+ return forkJoin({
+ ledgerEntries: this.getLedgerEntries(),
+ settlements: this.getSettlements(),
+ codReconciliation: this.getCodRecords(),
+ refundCases: this.getRefundCases(),
+ adjustments: this.getAdjustments()
+ }).pipe(
+ map(({ ledgerEntries, settlements, codReconciliation, refundCases, adjustments }) => {
+ const entries = this.buildFinanceAuditEntries(
+ ledgerEntries,
+ settlements,
+ codReconciliation.records,
+ refundCases,
+ adjustments
+ );
+ return this.filterAuditEntries(entries, filter);
+ }),
+ catchError((error) => {
+ console.error('Failed to compose finance audit log.', error);
  return of(this.filterAuditEntries(this.auditStore, filter));
+ })
+ );
  }
 
  getPricingRules(): Observable<PricingRuleSet> {
@@ -870,6 +938,44 @@ export class FinanceService {
  status: item.codOwedBalance > 0 ? 'pending' : 'collected',
  notes: `Last journal sequence: ${item.lastJournalSequence}`
  }));
+ }
+
+ private mapAuditLogEntry(item: AdminFinanceAuditLogEntryApiModel): AuditLogEntry {
+ return {
+ id: item.id,
+ timestamp: item.timestampUtc,
+ adminId: item.adminId,
+ adminName: item.adminName,
+ adminRole: item.adminRole,
+ action: item.action,
+ actionCategory: this.toFrontendAuditCategory(item.actionCategory),
+ entityType: this.toFrontendEntityType(item.entityType),
+ entityId: item.entityId ?? undefined,
+ orderId: item.orderId ?? undefined,
+ entityName: item.entityName ?? undefined,
+ before: item.before ?? undefined,
+ after: item.after ?? undefined,
+ ipAddress: item.ipAddress ?? undefined,
+ sessionId: item.sessionId ?? undefined
+ };
+ }
+
+ private toFrontendAuditCategory(category: string | null | undefined): AuditLogEntry['actionCategory'] {
+ switch (category?.toLowerCase()) {
+ case 'settlement':
+ return 'settlement';
+ case 'refund':
+ return 'refund';
+ case 'adjustment':
+ return 'adjustment';
+ case 'pricing':
+ return 'pricing';
+ case 'auth':
+ return 'auth';
+ case 'override':
+ default:
+ return 'override';
+ }
  }
 
  private toLedgerEntryType(eventType: string, accountCode: string): LedgerEntryType {
@@ -1610,15 +1716,194 @@ export class FinanceService {
  }
 
  private filterAuditEntries(entries: AuditLogEntry[], filter?: AuditLogFilter): AuditLogEntry[] {
+ const sortedEntries = [...entries].sort((left, right) => right.timestamp.localeCompare(left.timestamp));
+
  if (!filter) {
- return this.clone(entries);
+ return this.clone(sortedEntries);
  }
 
- return entries.filter((entry) => {
+ return sortedEntries.filter((entry) => {
  if (filter.entityType && entry.entityType!== filter.entityType) return false;
  if (filter.entityId && entry.entityId!== filter.entityId) return false;
  if (filter.orderId && entry.orderId!== filter.orderId) return false;
  if (filter.actionCategory && entry.actionCategory!== filter.actionCategory) return false;
+ return true;
+ });
+ }
+
+ private buildFinanceAuditEntries(
+ ledgerEntries: LedgerEntry[],
+ settlements: Settlement[],
+ codRecords: CodRecord[],
+ refundCases: RefundCase[],
+ adjustments: FinancialAdjustment[]
+ ): AuditLogEntry[] {
+ const entries: AuditLogEntry[] = [
+ ...this.clone(this.auditStore),
+ ...ledgerEntries.map((entry) => this.ledgerEntryToAuditEntry(entry)),
+ ...settlements.map((settlement) => this.settlementToAuditEntry(settlement)),
+ ...codRecords.map((record) => this.codRecordToAuditEntry(record)),
+ ...refundCases.map((refund) => this.refundCaseToAuditEntry(refund)),
+ ...adjustments.map((adjustment) => this.adjustmentToAuditEntry(adjustment))
+ ];
+
+ return this.dedupeAuditEntries(entries);
+ }
+
+ private ledgerEntryToAuditEntry(entry: LedgerEntry): AuditLogEntry {
+ return {
+ id: `audit-ledger-${entry.id}`,
+ timestamp: entry.timestamp,
+ adminId: entry.adminId ?? 'finance-system',
+ adminName: entry.adminId ? entry.adminId : 'FINANCES.AUDIT.ADMINS.FINANCE_SYSTEM',
+ adminRole: 'FINANCES.AUDIT.ROLES.SYSTEM',
+ action: 'FINANCES.AUDIT.ACTIONS.LEDGER_POSTED',
+ actionCategory: entry.type === 'settlement' ? 'settlement' : entry.type === 'refund' ? 'refund' : entry.type === 'adjustment' ? 'adjustment' : 'override',
+ entityType: entry.entityType,
+ entityId: entry.entityId,
+ entityName: entry.entityName,
+ orderId: entry.orderId,
+ after: {
+ type: entry.type,
+ direction: entry.direction,
+ amount: entry.amount,
+ currency: entry.currency,
+ referenceId: entry.referenceId,
+ balanceAfter: entry.balanceAfter
+ }
+ };
+ }
+
+ private settlementToAuditEntry(settlement: Settlement): AuditLogEntry {
+ return {
+ id: `audit-settlement-${settlement.id}`,
+ timestamp: settlement.paidAt ?? settlement.createdAt,
+ adminId: 'finance-system',
+ adminName: 'FINANCES.AUDIT.ADMINS.FINANCE_SYSTEM',
+ adminRole: 'FINANCES.AUDIT.ROLES.SYSTEM',
+ action: settlement.status === 'paid' || settlement.status === 'settled'
+ ? 'FINANCES.AUDIT.ACTIONS.SETTLEMENT_PAID'
+ : settlement.status === 'approved'
+ ? 'FINANCES.AUDIT.ACTIONS.SETTLEMENT_APPROVED'
+ : 'FINANCES.AUDIT.ACTIONS.SETTLEMENT_CREATED',
+ actionCategory: 'settlement',
+ entityType: settlement.entityType,
+ entityId: settlement.entityId,
+ entityName: settlement.entityName,
+ after: {
+ settlementCode: settlement.settlementCode,
+ period: settlement.period,
+ status: settlement.status,
+ ordersCount: settlement.ordersCount,
+ grossAmount: settlement.grossAmount,
+ deductions: settlement.deductions,
+ netAmount: settlement.netAmount
+ }
+ };
+ }
+
+ private codRecordToAuditEntry(record: CodRecord): AuditLogEntry {
+ return {
+ id: `audit-cod-${record.id}`,
+ timestamp: record.reconciledAt ?? record.collectionDate ?? new Date().toISOString(),
+ adminId: 'finance-system',
+ adminName: 'FINANCES.AUDIT.ADMINS.FINANCE_SYSTEM',
+ adminRole: 'FINANCES.AUDIT.ROLES.SYSTEM',
+ action: record.status === 'disputed'
+ ? 'FINANCES.AUDIT.ACTIONS.COD_DISPUTED'
+ : record.status === 'overdue'
+ ? 'FINANCES.AUDIT.ACTIONS.COD_OVERDUE'
+ : 'FINANCES.AUDIT.ACTIONS.COD_RECONCILED',
+ actionCategory: record.status === 'disputed' ? 'refund' : 'override',
+ entityType: 'driver',
+ entityId: record.driverId,
+ entityName: record.driverName,
+ orderId: record.orderId,
+ after: {
+ orderRef: record.orderRef,
+ vendorId: record.vendorId,
+ vendorName: record.vendorName,
+ expectedAmount: record.expectedAmount,
+ collectedAmount: record.collectedAmount,
+ delta: record.delta,
+ status: record.status
+ }
+ };
+ }
+
+ private refundCaseToAuditEntry(refund: RefundCase): AuditLogEntry {
+ return {
+ id: `audit-refund-case-${refund.id}`,
+ timestamp: refund.resolvedAt ?? refund.updatedAt ?? refund.createdAt,
+ adminId: 'finance-system',
+ adminName: 'FINANCES.AUDIT.ADMINS.FINANCE_SYSTEM',
+ adminRole: 'FINANCES.AUDIT.ROLES.SYSTEM',
+ action: refund.status === 'approved'
+ ? 'FINANCES.AUDIT.ACTIONS.REFUND_APPROVED'
+ : refund.status === 'rejected'
+ ? 'FINANCES.AUDIT.ACTIONS.REFUND_REJECTED'
+ : refund.status === 'escalated'
+ ? 'FINANCES.AUDIT.ACTIONS.REFUND_ESCALATED'
+ : 'FINANCES.AUDIT.ACTIONS.REFUND_REVIEWED',
+ actionCategory: 'refund',
+ entityType: refund.responsibleParty,
+ entityId: refund.responsibleParty === 'driver' ? refund.driverId : refund.responsibleParty === 'vendor' ? refund.vendorId : refund.customerId,
+ entityName: refund.responsibleParty === 'driver' ? refund.driverName : refund.responsibleParty === 'vendor' ? refund.vendorName : refund.customerName,
+ orderId: refund.orderId,
+ after: {
+ caseRef: refund.caseRef,
+ orderRef: refund.orderRef,
+ status: refund.status,
+ requestedAmount: refund.requestedAmount,
+ approvedAmount: refund.approvedAmount,
+ financialImpact: refund.financialImpact,
+ reason: refund.reason
+ }
+ };
+ }
+
+ private adjustmentToAuditEntry(adjustment: FinancialAdjustment): AuditLogEntry {
+ return {
+ id: `audit-adjustment-entry-${adjustment.id}`,
+ timestamp: adjustment.approvedAt ?? adjustment.createdAt,
+ adminId: adjustment.adminId,
+ adminName: adjustment.adminName,
+ adminRole: adjustment.approvedBy ?? 'FINANCES.AUDIT.ROLES.FINANCE_ADMIN',
+ action: 'FINANCES.AUDIT.ACTIONS.ADJUSTMENT_CREATED',
+ actionCategory: 'adjustment',
+ entityType: adjustment.entityType,
+ entityId: adjustment.entityId,
+ entityName: adjustment.entityName,
+ after: {
+ adjustmentRef: adjustment.adjustmentRef,
+ direction: adjustment.direction,
+ amount: adjustment.amount,
+ currency: adjustment.currency,
+ category: adjustment.category,
+ reason: adjustment.reason,
+ status: adjustment.status
+ }
+ };
+ }
+
+ private dedupeAuditEntries(entries: AuditLogEntry[]): AuditLogEntry[] {
+ const seen = new Set<string>();
+
+ return entries.filter((entry) => {
+ const key = [
+ entry.actionCategory,
+ entry.action,
+ entry.entityType,
+ entry.entityId ?? '',
+ entry.orderId ?? '',
+ entry.timestamp
+ ].join('|');
+
+ if (seen.has(key)) {
+ return false;
+ }
+
+ seen.add(key);
  return true;
  });
  }

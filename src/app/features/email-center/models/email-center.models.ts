@@ -62,6 +62,10 @@ export interface EmailTemplatePreview {
   subject: Record<EmailPreviewLocale, string>;
   body: Record<EmailPreviewLocale, string>;
   variables: string[];
+  heroImageUrl?: string | null;
+  ctaLabel?: string | null;
+  heroImageUrlAr?: string | null;
+  heroImageUrlEn?: string | null;
 }
 
 export interface EmailDispatchSummary {

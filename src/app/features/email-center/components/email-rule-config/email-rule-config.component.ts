@@ -17,7 +17,6 @@ import {
   EmailBranchScopeMode,
   EmailDispatchFilters,
   EmailDispatchLog,
-  EmailPreviewLocale,
   EmailRecipientTargetId,
   EmailResolvedRecipients,
   EmailScopeOption,
@@ -27,6 +26,7 @@ import {
   EmailWorkflowRule
 } from '../../models/email-center.models';
 import { EmailDispatchHistoryComponent } from '../email-dispatch-history/email-dispatch-history.component';
+import { EmailTemplatePanelComponent } from '../email-template-panel/email-template-panel.component';
 
 type RecipientChannel = 'to' | 'cc' | 'bcc';
 
@@ -65,7 +65,8 @@ const RECIPIENT_OPTIONS: Record<DirectoryAudienceType, Array<{ id: EmailRecipien
     TranslateModule,
     SearchableSelectComponent,
     StatusPillComponent,
-    EmailDispatchHistoryComponent
+    EmailDispatchHistoryComponent,
+    EmailTemplatePanelComponent
   ],
   templateUrl: './email-rule-config.component.html',
   styleUrl: './email-rule-config.component.scss'
@@ -100,9 +101,7 @@ export class EmailRuleConfigComponent implements OnChanges {
   @Output() historyFiltersChange = new EventEmitter<EmailDispatchFilters>();
   @Output() clearHistoryFilters = new EventEmitter<void>();
 
-  activeTab: 'config' | 'preview' | 'history' = 'config';
-  previewLocale: EmailPreviewLocale = 'en';
-
+  activeTab: 'routing' | 'template' | 'delivery' | 'history' = 'routing';
   recipientEditor = {
     staticTo: '',
     staticCc: '',
@@ -184,12 +183,8 @@ export class EmailRuleConfigComponent implements OnChanges {
     }
   }
 
-  setTab(tab: 'config' | 'preview' | 'history'): void {
+  setTab(tab: 'routing' | 'template' | 'delivery' | 'history'): void {
     this.activeTab = tab;
-  }
-
-  setPreviewLocale(locale: EmailPreviewLocale): void {
-    this.previewLocale = locale;
   }
 
   onRuleDraftChanged(): void {

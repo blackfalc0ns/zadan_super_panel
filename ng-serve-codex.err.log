@@ -1,0 +1,196 @@
+X [ERROR] TS2741: Property 'attachments' is missing in type '{ disputeType: "quality_issue"; priority: "high"; routeTo: "operations"; description: string; internalNotes: string; notifyReviewer: true; addToLog: true; markHighRisk: false; notifyStakeholders: true; }' but required in type 'OrderDisputeForm'. [plugin angular-compiler]
+
+    src/app/features/orders/components/order-dispute-modal/order-dispute-modal.component.ts:122:4:
+      122 │     return {
+          ╵     ~~~~~~
+
+  'attachments' is declared here.
+
+    src/app/features/orders/models/orders.models.ts:248:2:
+      248 │   attachments: OrderDisputeAttachment[];
+          ╵   ~~~~~~~~~~~
+
+
+X [ERROR] TS2741: Property 'attachments' is missing in type '{ disputeType: "payment_issue"; priority: "medium"; routeTo: "operations"; description: string; internalNotes: string; notifyReviewer: true; addToLog: true; markHighRisk: false; notifyStakeholders: true; }' but required in type 'OrderDisputeForm'. [plugin angular-compiler]
+
+    src/app/features/orders/components/order-dispute-modal/order-dispute-modal.component.ts:136:4:
+      136 │     return {
+          ╵     ~~~~~~
+
+  'attachments' is declared here.
+
+    src/app/features/orders/models/orders.models.ts:248:2:
+      248 │   attachments: OrderDisputeAttachment[];
+          ╵   ~~~~~~~~~~~
+
+
+X [ERROR] TS2741: Property 'attachments' is missing in type '{ disputeType: "quality_issue"; priority: "high"; routeTo: "operations"; description: string; internalNotes: string; notifyReviewer: true; addToLog: true; markHighRisk: false; notifyStakeholders: true; }' but required in type 'OrderDisputeForm'. [plugin angular-compiler]
+
+    src/app/features/orders/components/order-dispute-modal/order-dispute-modal.component.ts:122:4:
+      122 │     return {
+          ╵     ~~~~~~
+
+  'attachments' is declared here.
+
+    src/app/features/orders/models/orders.models.ts:248:2:
+      248 │   attachments: OrderDisputeAttachment[];
+          ╵   ~~~~~~~~~~~
+
+
+X [ERROR] TS2741: Property 'attachments' is missing in type '{ disputeType: "payment_issue"; priority: "medium"; routeTo: "operations"; description: string; internalNotes: string; notifyReviewer: true; addToLog: true; markHighRisk: false; notifyStakeholders: true; }' but required in type 'OrderDisputeForm'. [plugin angular-compiler]
+
+    src/app/features/orders/components/order-dispute-modal/order-dispute-modal.component.ts:136:4:
+      136 │     return {
+          ╵     ~~~~~~
+
+  'attachments' is declared here.
+
+    src/app/features/orders/models/orders.models.ts:248:2:
+      248 │   attachments: OrderDisputeAttachment[];
+          ╵   ~~~~~~~~~~~
+
+
+X [ERROR] TS7006: Parameter 'part' implicitly has an 'any' type. [plugin angular-compiler]
+
+    src/app/features/finances/pages/audit-log/audit-log.component.ts:336:7:
+      336 │  .map((part) => part[0]?.toUpperCase())
+          ╵        ~~~~
+
+
+X [ERROR] TS2339: Property 'mapAuditLogEntry' does not exist on type 'FinanceService'. [plugin angular-compiler]
+
+    src/app/features/finances/services/finance.service.ts:422:77:
+      422 │ ...ponse.items.map((item) => this.mapAuditLogEntry(item)), filter)),
+          ╵                                   ~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"template" | "routing" | "delivery" | "history"' and '"config"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:66:19:
+      66 │         [ngClass]="activeTab === 'config'
+         ╵                    ~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG5: Argument of type '"config"' is not assignable to parameter of type '"template" | "routing" | "delivery" | "history"'. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:69:24:
+      69 │         (click)="setTab('config')">
+         ╵                         ~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"template" | "routing" | "delivery" | "history"' and '"preview"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:77:19:
+      77 │         [ngClass]="activeTab === 'preview'
+         ╵                    ~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG5: Argument of type '"preview"' is not assignable to parameter of type '"template" | "routing" | "delivery" | "history"'. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:80:24:
+      80 │         (click)="setTab('preview')">
+         ╵                         ~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"template" | "routing" | "delivery" | "history"' and '"config"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:99:14:
+      99 │   <div *ngIf="activeTab === 'config'" class="space-y-6 animate-in ...
+         ╵               ~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"template" | "routing" | "delivery" | "history"' and '"preview"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:289:14:
+      289 │   <div *ngIf="activeTab === 'preview'" class="space-y-6 animate-i...
+          ╵               ~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"template" | "routing" | "delivery" | "history"' and '"config"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:102:14:
+      102 │   <div *ngIf="activeTab === 'config'" class="space-y-6 animate-in...
+          ╵               ~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"template" | "routing" | "delivery" | "history"' and '"preview"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:292:14:
+      292 │   <div *ngIf="activeTab === 'preview'" class="space-y-6 animate-i...
+          ╵               ~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] NG7: This comparison appears to be unintentional because the types '"template" | "routing" | "delivery" | "history"' and '"preview"' have no overlap. [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.html:292:14:
+      292 │   <div *ngIf="activeTab === 'preview'" class="space-y-6 animate-i...
+          ╵               ~~~~~~~~~~~~~~~~~~~~~~~
+
+  Error occurs in the template of component EmailRuleConfigComponent.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:72:15:
+      72 │   templateUrl: './email-rule-config.component.html',
+         ╵                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+X [ERROR] TS2551: Property 'previewLocale' does not exist on type 'EmailRuleConfigComponent'. Did you mean 'setPreviewLocale'? [plugin angular-compiler]
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:192:9:
+      192 │     this.previewLocale = locale;
+          ╵          ~~~~~~~~~~~~~
+
+  'setPreviewLocale' is declared here.
+
+    src/app/features/email-center/components/email-rule-config/email-rule-config.component.ts:191:2:
+      191 │   setPreviewLocale(locale: EmailPreviewLocale): void {
+          ╵   ~~~~~~~~~~~~~~~~
+
+

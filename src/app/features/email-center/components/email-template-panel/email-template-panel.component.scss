@@ -1,0 +1,236 @@
+.template-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.25rem;
+}
+
+.template-editor,
+.template-preview {
+  border-radius: 1.6rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 1.25rem;
+  box-shadow: 0 10px 30px -24px rgba(15, 23, 42, 0.45);
+}
+
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.badge {
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(18 124 140);
+}
+
+.title {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-weight: 900;
+  color: rgb(15 23 42);
+}
+
+.desc {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgb(148 163 184);
+}
+
+.locale-switch,
+.preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: rgba(248, 250, 252, 0.95);
+  padding: 0.25rem;
+}
+
+.locale-btn,
+.mode-btn {
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: rgb(100 116 139);
+  transition: all 0.2s ease;
+}
+
+.locale-btn.is-active,
+.mode-btn.is-active {
+  background: white;
+  color: rgb(18 124 140);
+  box-shadow: 0 4px 14px -10px rgba(15, 23, 42, 0.45);
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.field-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.field-card--wide {
+  grid-column: 1 / -1;
+}
+
+.field-card span {
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(148 163 184);
+}
+
+.field-card input,
+.field-card textarea {
+  border-radius: 1rem;
+  border: 1px solid rgba(203, 213, 225, 0.95);
+  background: white;
+  padding: 0.85rem 0.95rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgb(51 65 85);
+  outline: none;
+}
+
+.field-card textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.field-card input:focus,
+.field-card textarea:focus {
+  border-color: rgba(18, 124, 140, 0.4);
+  box-shadow: 0 0 0 4px rgba(18, 124, 140, 0.08);
+}
+
+.variables-panel {
+  margin-top: 1rem;
+  border-radius: 1.2rem;
+  border: 1px dashed rgba(18, 124, 140, 0.25);
+  background: rgba(18, 124, 140, 0.03);
+  padding: 1rem;
+}
+
+.variables-title {
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(18 124 140);
+}
+
+.variables-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.variable-chip {
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 9999px;
+  background: white;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: rgb(71 85 105);
+  transition: all 0.2s ease;
+}
+
+.variable-chip:hover:not(:disabled) {
+  border-color: rgba(18, 124, 140, 0.35);
+  color: rgb(18 124 140);
+}
+
+.variable-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.variables-empty,
+.variables-hint {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgb(148 163 184);
+}
+
+.variables-hint {
+  margin-top: 0.65rem;
+}
+
+.preview-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.meta-item {
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(248, 250, 252, 0.9);
+  padding: 0.75rem 0.9rem;
+}
+
+.meta-item span {
+  display: block;
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(148 163 184);
+}
+
+.meta-item strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: rgb(51 65 85);
+}
+
+.preview-frame {
+  border-radius: 1.2rem;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: #edf7f8;
+  padding: 0.75rem;
+  max-height: 34rem;
+  overflow: auto;
+}
+
+@media (max-width: 1279px) {
+  .template-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .panel-header,
+  .editor-grid,
+  .preview-meta {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .editor-grid {
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -159,9 +159,9 @@ export class FinancesShellComponent {
  label: 'FINANCES.SHELL.GROUPS.SETTINGS',
  icon: 'admin_panel_settings',
  routes: [
- { id: 'platform-account', label: 'Platform Account', route: '/finances/platform-account', summary: 'Configure the platform bank account and Moyasar payout source.', dataMode: 'مفعل' },
+ { id: 'platform-account', label: 'FINANCES.PLATFORM_ACCOUNT.NAV_LABEL', route: '/finances/platform-account', summary: 'FINANCES.PLATFORM_ACCOUNT.NAV_SUMMARY', dataMode: 'مفعل' },
  { id: 'pricing', label: 'FINANCES.SHELL.ROUTES.PRICING.LABEL', route: '/finances/pricing', summary: 'FINANCES.SHELL.ROUTES.PRICING.SUMMARY', dataMode: 'مفعل' },
- { id: 'audit', label: 'FINANCES.SHELL.ROUTES.AUDIT.LABEL', route: '/finances/audit', summary: 'FINANCES.SHELL.ROUTES.AUDIT.SUMMARY', dataMode: 'قيد التطوير' }
+ { id: 'audit', label: 'FINANCES.SHELL.ROUTES.AUDIT.LABEL', route: '/finances/audit', summary: 'FINANCES.SHELL.ROUTES.AUDIT.SUMMARY', dataMode: 'مفعل' }
  ]
  }
  ];

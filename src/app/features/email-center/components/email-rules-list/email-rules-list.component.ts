@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
 import {
@@ -16,13 +17,29 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-email-rules-list',
   standalone: true,
-  imports: [CommonModule, TranslateModule, StatusPillComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent],
   templateUrl: './email-rules-list.component.html'
 })
 export class EmailRulesListComponent {
   @Input() rules: EmailWorkflowRule[] = [];
   @Input() selectedRuleId = '';
   @Output() ruleSelected = new EventEmitter<string>();
+
+  searchTerm = '';
+
+  get visibleRules(): EmailWorkflowRule[] {
+    const query = this.searchTerm.trim().toLowerCase();
+    if (!query) {
+      return this.rules;
+    }
+
+    return this.rules.filter((rule) =>
+      rule.id.toLowerCase().includes(query) ||
+      rule.titleKey.toLowerCase().includes(query) ||
+      rule.subtitleKey.toLowerCase().includes(query) ||
+      rule.categoryKey.toLowerCase().includes(query)
+    );
+  }
 
   selectRule(id: string): void {
     this.ruleSelected.emit(id);

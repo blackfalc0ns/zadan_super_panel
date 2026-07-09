@@ -78,39 +78,47 @@
     </div>
 
     <!-- Main Workspace -->
-    <div *ngIf="!isLoading" class="grid grid-cols-1 xl:grid-cols-[0.92fr_1.4fr] gap-6 items-start">
-      <!-- Rules Sidebar -->
-      <app-email-rules-list
-        [rules]="filteredRules"
-        [selectedRuleId]="selectedRuleId"
-        (ruleSelected)="selectRule($event)">
-      </app-email-rules-list>
+    <div *ngIf="!isLoading" class="workspace-shell">
+      <aside class="workspace-sidebar">
+        <app-email-rules-list
+          [rules]="filteredRules"
+          [selectedRuleId]="selectedRuleId"
+          (ruleSelected)="selectRule($event)">
+        </app-email-rules-list>
+      </aside>
 
-      <!-- Rule Configurations & Tabs -->
-      <app-email-rule-config
-        *ngIf="selectedRule"
-        [rule]="selectedRule"
-        [senderProfiles]="senderProfiles"
-        [vendorOptions]="vendorOptions"
-        [branchDirectory]="branchDirectory"
-        [resolvedRecipients]="resolvedRecipients"
-        [lastTestSendResult]="lastTestSendResult"
-        [canEdit]="canEdit"
-        [isSaving]="isSaving"
-        [isTestingSend]="isTestingSend"
-        [isResolvingRecipients]="isResolvingRecipients"
-        [dispatches]="dispatches"
-        [rules]="rules"
-        [isHistoryLoading]="isHistoryLoading"
-        [historyFilters]="historyFilters"
-        (save)="saveSelectedRule()"
-        (testSend)="testSendSelectedRule()"
-        (draftChange)="onRuleDraftChanged()"
-        (vendorChange)="onVendorChange($event)"
-        (branchScopeModeChange)="onBranchScopeModeChange($event)"
-        (historyFiltersChange)="onHistoryFiltersChange($event)"
-        (clearHistoryFilters)="clearHistoryFilters()">
-      </app-email-rule-config>
+      <section class="workspace-main">
+        <app-email-rule-config
+          *ngIf="selectedRule"
+          [rule]="selectedRule"
+          [senderProfiles]="senderProfiles"
+          [vendorOptions]="vendorOptions"
+          [branchDirectory]="branchDirectory"
+          [resolvedRecipients]="resolvedRecipients"
+          [lastTestSendResult]="lastTestSendResult"
+          [canEdit]="canEdit"
+          [isSaving]="isSaving"
+          [isTestingSend]="isTestingSend"
+          [isResolvingRecipients]="isResolvingRecipients"
+          [dispatches]="dispatches"
+          [rules]="rules"
+          [isHistoryLoading]="isHistoryLoading"
+          [historyFilters]="historyFilters"
+          (save)="saveSelectedRule()"
+          (testSend)="testSendSelectedRule()"
+          (draftChange)="onRuleDraftChanged()"
+          (vendorChange)="onVendorChange($event)"
+          (branchScopeModeChange)="onBranchScopeModeChange($event)"
+          (historyFiltersChange)="onHistoryFiltersChange($event)"
+          (clearHistoryFilters)="clearHistoryFilters()">
+        </app-email-rule-config>
+
+        <div *ngIf="!selectedRule" class="workspace-empty">
+          <span class="material-symbols-outlined text-[42px] text-slate-300">drafts</span>
+          <h3>{{ 'EMAIL_CENTER.EMPTY.TITLE' | translate }}</h3>
+          <p>{{ 'EMAIL_CENTER.EMPTY.MESSAGE' | translate }}</p>
+        </div>
+      </section>
     </div>
   </div>
 </div>

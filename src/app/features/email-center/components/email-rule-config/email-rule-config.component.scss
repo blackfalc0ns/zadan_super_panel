@@ -92,3 +92,43 @@
 .resolved-list .empty-chip {
   color: rgb(148 163 184);
 }
+
+.workspace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding: 0.35rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(248, 250, 252, 0.85);
+}
+
+.workspace-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  border-radius: 0.95rem;
+  background: transparent;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: rgb(100 116 139);
+  transition: all 0.2s ease;
+}
+
+.workspace-tab .material-symbols-outlined {
+  font-size: 1.15rem;
+}
+
+.workspace-tab.is-active {
+  background: white;
+  color: rgb(18 124 140);
+  box-shadow: 0 8px 20px -16px rgba(15, 23, 42, 0.45);
+}
+
+.workspace-tab:not(.is-active):hover {
+  background: rgba(255, 255, 255, 0.7);
+  color: rgb(51 65 85);
+}

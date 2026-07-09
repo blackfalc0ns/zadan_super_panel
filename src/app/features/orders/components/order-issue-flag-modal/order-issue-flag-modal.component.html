@@ -97,6 +97,9 @@
             <label class="pr-1 text-xs font-black text-slate-500">{{ 'ORDERS.DETAIL.ISSUE_MODAL.REQUIRED_ACTION' | translate }}</label>
             <textarea
               class="min-h-[112px] w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition-all focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/5"
+              [class.border-red-300]="submitted && !hasRequiredAction"
+              [class.ring-4]="submitted && !hasRequiredAction"
+              [class.ring-red-50]="submitted && !hasRequiredAction"
               [placeholder]="'ORDERS.DETAIL.ISSUE_MODAL.REQUIRED_ACTION_PLACEHOLDER' | translate"
               [(ngModel)]="form.requiredAction"></textarea>
           </div>
@@ -133,7 +136,7 @@
             <span class="text-sm text-slate-700 transition-colors group-hover:text-zadna-primary">{{ 'ORDERS.DETAIL.ISSUE_MODAL.NOTIFY_TEAM' | translate }}</span>
           </label>
           <label class="group flex cursor-pointer items-center gap-3">
-            <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [(ngModel)]="form.highRiskAlert" />
+            <input class="h-5 w-5 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20" type="checkbox" [ngModel]="form.highRiskAlert" (ngModelChange)="onHighRiskAlertChange($event)" />
             <span class="text-sm font-medium text-red-600 transition-opacity group-hover:opacity-80">{{ 'ORDERS.DETAIL.ISSUE_MODAL.HIGH_RISK_ALERT' | translate }}</span>
           </label>
         </div>

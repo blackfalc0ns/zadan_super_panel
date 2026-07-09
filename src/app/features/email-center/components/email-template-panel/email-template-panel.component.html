@@ -1,0 +1,139 @@
+<div class="template-workspace">
+  <div class="template-editor">
+    <div class="panel-header">
+      <div>
+        <p class="badge">{{ 'EMAIL_CENTER.TEMPLATE.BADGE' | translate }}</p>
+        <h3 class="title">{{ 'EMAIL_CENTER.TEMPLATE.TITLE' | translate }}</h3>
+        <p class="desc">{{ 'EMAIL_CENTER.TEMPLATE.DESC' | translate }}</p>
+      </div>
+
+      <div class="locale-switch">
+        <button
+          type="button"
+          class="locale-btn"
+          [class.is-active]="previewLocale === 'en'"
+          (click)="setPreviewLocale('en')">
+          {{ 'EMAIL_CENTER.PREVIEW.ENGLISH' | translate }}
+        </button>
+        <button
+          type="button"
+          class="locale-btn"
+          [class.is-active]="previewLocale === 'ar'"
+          (click)="setPreviewLocale('ar')">
+          {{ 'EMAIL_CENTER.PREVIEW.ARABIC' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="editor-grid">
+      <label class="field-card">
+        <span>{{ 'EMAIL_CENTER.PREVIEW.SUBJECT' | translate }}</span>
+        <input
+          [(ngModel)]="activeSubject"
+          type="text"
+          [dir]="previewLocale === 'ar' ? 'rtl' : 'ltr'"
+          [disabled]="!canEdit"
+          (ngModelChange)="onFieldChanged()" />
+      </label>
+
+      <label class="field-card">
+        <span>{{ 'EMAIL_CENTER.TEMPLATE.HERO_IMAGE' | translate }}</span>
+        <input
+          [(ngModel)]="activeHeroUrl"
+          type="url"
+          dir="ltr"
+          [placeholder]="'EMAIL_CENTER.TEMPLATE.HERO_PLACEHOLDER' | translate"
+          [disabled]="!canEdit"
+          (ngModelChange)="onFieldChanged()" />
+      </label>
+
+      <label class="field-card field-card--wide">
+        <span>{{ 'EMAIL_CENTER.PREVIEW.BODY' | translate }}</span>
+        <textarea
+          [(ngModel)]="activeBody"
+          rows="6"
+          [dir]="previewLocale === 'ar' ? 'rtl' : 'ltr'"
+          [disabled]="!canEdit"
+          (ngModelChange)="onFieldChanged()"></textarea>
+      </label>
+
+      <label class="field-card">
+        <span>{{ 'EMAIL_CENTER.TEMPLATE.CTA_LABEL' | translate }}</span>
+        <input
+          [(ngModel)]="template.ctaLabel"
+          type="text"
+          [disabled]="!canEdit"
+          (ngModelChange)="onFieldChanged()" />
+      </label>
+
+      <label class="field-card">
+        <span>{{ 'EMAIL_CENTER.TEMPLATE.FALLBACK_HERO' | translate }}</span>
+        <input
+          [(ngModel)]="template.heroImageUrl"
+          type="url"
+          dir="ltr"
+          [placeholder]="'EMAIL_CENTER.TEMPLATE.HERO_PLACEHOLDER' | translate"
+          [disabled]="!canEdit"
+          (ngModelChange)="onFieldChanged()" />
+      </label>
+    </div>
+
+    <div class="variables-panel">
+      <p class="variables-title">{{ 'EMAIL_CENTER.PREVIEW.VARIABLES' | translate }}</p>
+      <div class="variables-list">
+        <button
+          *ngFor="let variable of template.variables"
+          type="button"
+          class="variable-chip"
+          [disabled]="!canEdit"
+          (click)="insertVariable(variable, 'body')">
+          {{ variable }}
+        </button>
+        <span *ngIf="template.variables.length === 0" class="variables-empty">
+          {{ 'EMAIL_CENTER.PREVIEW.NO_VARIABLES' | translate }}
+        </span>
+      </div>
+      <p class="variables-hint">{{ 'EMAIL_CENTER.TEMPLATE.VARIABLES_HINT' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="template-preview">
+    <div class="panel-header">
+      <div>
+        <p class="badge">{{ 'EMAIL_CENTER.TEMPLATE.PREVIEW_BADGE' | translate }}</p>
+        <h3 class="title">{{ 'EMAIL_CENTER.TEMPLATE.PREVIEW_TITLE' | translate }}</h3>
+        <p class="desc">{{ triggerNotesKey | translate }}</p>
+      </div>
+
+      <div class="preview-controls">
+        <button
+          type="button"
+          class="mode-btn"
+          [class.is-active]="previewMode === 'sample'"
+          (click)="setPreviewMode('sample')">
+          {{ 'EMAIL_CENTER.TEMPLATE.SAMPLE_DATA' | translate }}
+        </button>
+        <button
+          type="button"
+          class="mode-btn"
+          [class.is-active]="previewMode === 'raw'"
+          (click)="setPreviewMode('raw')">
+          {{ 'EMAIL_CENTER.TEMPLATE.RAW_TOKENS' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="preview-meta">
+      <div class="meta-item">
+        <span>{{ 'EMAIL_CENTER.PREVIEW.SENDER' | translate }}</span>
+        <strong>{{ senderName }}</strong>
+      </div>
+      <div class="meta-item">
+        <span>{{ 'EMAIL_CENTER.TEMPLATE.PREVIEW_LOCALE' | translate }}</span>
+        <strong>{{ (previewLocale === 'ar' ? 'EMAIL_CENTER.PREVIEW.ARABIC' : 'EMAIL_CENTER.PREVIEW.ENGLISH') | translate }}</strong>
+      </div>
+    </div>
+
+    <div class="preview-frame" [innerHTML]="previewHtml"></div>
+  </div>
+</div>

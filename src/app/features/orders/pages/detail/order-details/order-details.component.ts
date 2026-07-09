@@ -849,8 +849,32 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  }
 
  saveIssueNote(form: OrderIssueFlagForm): void {
- void form;
+ const id = this.orderId();
+
+ if (!id || this.isSubmittingIssueFlag) {
+ return;
+ }
+
+ this.isSubmittingIssueFlag = true;
+ this.cdr.markForCheck();
+
+ this.ordersService.flagIssue(id, {
+ ...form,
+ showInOperationsCenter: false,
+ notifyAssignedTeam: false
+ }).subscribe({
+ next: (order) => {
+ this.isSubmittingIssueFlag = false;
+ this.cdr.markForCheck();
+ this.setOrder(order);
+ this.loadFinancialBreakdown(id);
  this.closeIssueFlagModal();
+ },
+ error: () => {
+ this.isSubmittingIssueFlag = false;
+ this.cdr.markForCheck();
+ }
+ });
  }
 
  submitIssueFlag(form: OrderIssueFlagForm): void {

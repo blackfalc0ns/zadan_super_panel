@@ -962,15 +962,111 @@
       "CURRENT_PERCENT": "Current percentage applied to the selected zone"
     },
     "CURRENCY": "SAR",
+    "PLATFORM_ACCOUNT": {
+      "NAV_LABEL": "Platform Account",
+      "NAV_SUMMARY": "Configure the platform bank account and Moyasar payout source.",
+      "HEADER_TITLE": "Platform Bank Account",
+      "HEADER_SUBTITLE": "Configure the bank account customers transfer into and the Moyasar source for outbound payouts.",
+      "TOAST_TITLE": "Platform account",
+      "REFRESH": "Refresh",
+      "SAVING": "Saving...",
+      "SAVE_ACCOUNT": "Save account",
+      "SAVE_SUCCESS": "Platform account saved.",
+      "DETAILS_TITLE": "Platform Account Details",
+      "DETAILS_DESC": "These details appear to customers choosing bank transfer. SourceId is used to pay merchants and drivers through Moyasar.",
+      "BANK_NAME": "Bank name",
+      "BANK_NAME_PLACEHOLDER": "Test Bank",
+      "ACCOUNT_HOLDER": "Account holder",
+      "ACCOUNT_HOLDER_PLACEHOLDER": "Zadana Platform",
+      "IBAN": "IBAN",
+      "IBAN_PLACEHOLDER": "SA0000000000000000000000",
+      "ACCOUNT_NUMBER": "Account number",
+      "COUNTRY": "Country",
+      "CITY": "City",
+      "MOYASAR_SOURCE_ID": "Moyasar payout source ID",
+      "NOTES": "Notes",
+      "ENABLE_BANK_TRANSFER": "Enable bank transfer payments",
+      "ENABLE_BANK_TRANSFER_DESC": "Customers will see this account in transfer instructions.",
+      "ENABLE_MOYASAR_PAYOUTS": "Enable Moyasar payouts",
+      "ENABLE_MOYASAR_PAYOUTS_DESC": "Used for merchant and driver payouts.",
+      "STATUS_TITLE": "Operational status",
+      "BADGE_DATABASE": "Database",
+      "BADGE_SETTINGS_FALLBACK": "Settings fallback",
+      "RECEIVE_CUSTOMER_TRANSFERS": "Receive customer transfers",
+      "MERCHANT_DRIVER_PAYOUTS": "Merchant and driver payouts",
+      "READY": "Ready",
+      "INCOMPLETE": "Incomplete",
+      "READY_MOYASAR": "Ready through Moyasar",
+      "NEEDS_SOURCE_ID": "Needs Moyasar SourceId",
+      "IMPORTANT_TITLE": "Important",
+      "IMPORTANT_DESC": "The IBAN here is the platform account customers pay into. SourceId is not a bank account number; it is the Payouts source issued by Moyasar."
+    },
     "AUDIT": {
       "TITLE": "Financial Audit Log",
       "ENTRIES": "Registered Entries",
       "BANNER_TITLE": "Financial Operations Tracking System",
       "BANNER_DESC": "This log displays all actions performed by the administration team on the financial system to ensure transparency.",
+      "LAST_EVENT": "Last event",
+      "FILTERS": {
+        "SEARCH": "Search audit log",
+        "SEARCH_PLACEHOLDER": "Search admin, entity, order, or action...",
+        "CATEGORY": "Category",
+        "ENTITY": "Entity",
+        "ALL_CATEGORIES": "All categories",
+        "ALL_ENTITIES": "All entities",
+        "REFRESH": "Refresh"
+      },
+      "STATS": {
+        "TOTAL": "Total events",
+        "FINANCE_ENGINE": "System entries",
+        "MANUAL_ACTIONS": "Manual actions",
+        "AFFECTED_ENTITIES": "Affected entities"
+      },
+      "CATEGORIES": {
+        "ALL": "All",
+        "SETTLEMENT": "Settlement",
+        "REFUND": "Refund",
+        "ADJUSTMENT": "Adjustment",
+        "PRICING": "Pricing",
+        "OVERRIDE": "Override",
+        "AUTH": "Access"
+      },
+      "ACTIONS": {
+        "REFUND_APPROVED": "Refund approved",
+        "REFUND_REJECTED": "Refund rejected",
+        "REFUND_ESCALATED": "Refund escalated",
+        "REFUND_REVIEWED": "Refund reviewed",
+        "ADJUSTMENT_CREATED": "Adjustment created",
+        "PRICING_UPDATED": "Pricing updated",
+        "LEDGER_POSTED": "Ledger posting recorded",
+        "SETTLEMENT_CREATED": "Settlement created",
+        "SETTLEMENT_APPROVED": "Settlement approved",
+        "SETTLEMENT_PAID": "Settlement paid",
+        "COD_RECONCILED": "COD reconciled",
+        "COD_OVERDUE": "COD overdue",
+        "COD_DISPUTED": "COD disputed"
+      },
+      "ADMINS": {
+        "FINANCE_SYSTEM": "Finance system"
+      },
+      "ROLES": {
+        "SYSTEM": "System",
+        "FINANCE_ADMIN": "Finance admin"
+      },
+      "STATES": {
+        "LOADING": "Loading financial audit trail...",
+        "EMPTY_TITLE": "No audit events match the current filters",
+        "EMPTY_DESC": "Change the filters or refresh the page to load the latest finance activity.",
+        "ERROR_TITLE": "Unable to load audit log",
+        "ERROR_DESC": "The page could not compose the financial audit stream right now."
+      },
       "TABLE": {
         "ADMIN": "Administrator",
         "ACTION": "Action",
-        "CHANGES": "Changes"
+        "CATEGORY": "Category",
+        "CHANGES": "Changes",
+        "DETAILS": "Details",
+        "ENTITY_ID": "Entity ID"
       }
     },
     "WALLETS": {
@@ -7020,7 +7116,37 @@
       "TITLE": "Persona-based email workflows",
       "DESC": "Review enabled rules, audience scope, sender profile, and routing strategy from one place.",
       "ENABLED": "Enabled",
-      "DISABLED": "Disabled"
+      "DISABLED": "Disabled",
+      "SEARCH": "Search rules or templates...",
+      "NO_MATCH": "No matching rules",
+      "NO_MATCH_DESC": "Try a different search term or change the audience filter.",
+      "HAS_TEMPLATE": "Linked template"
+    },
+    "TABS": {
+      "ROUTING": "Routing",
+      "TEMPLATE": "Template",
+      "DELIVERY": "Recipients",
+      "HISTORY": "History"
+    },
+    "TEMPLATE": {
+      "BADGE": "Template editor",
+      "TITLE": "Bind the email template to this rule",
+      "DESC": "Edit subject, body, hero image, and CTA with a live preview that matches backend rendering.",
+      "HERO_IMAGE": "Hero image",
+      "HERO_PLACEHOLDER": "https://...",
+      "FALLBACK_HERO": "Fallback hero image",
+      "CTA_LABEL": "CTA button label",
+      "VARIABLES_HINT": "Click any variable to append it to the template body.",
+      "PREVIEW_BADGE": "Live preview",
+      "PREVIEW_TITLE": "Actual email appearance",
+      "PREVIEW_LOCALE": "Preview locale",
+      "SAMPLE_DATA": "Sample data",
+      "RAW_TOKENS": "Raw tokens"
+    },
+    "DELIVERY": {
+      "BADGE": "Email delivery",
+      "TITLE": "Recipients and pre-send verification",
+      "DESC": "Review subject, variables, and resolved recipients before test send or live dispatch."
     },
     "CONFIG": {
       "BADGE": "Rule configuration"

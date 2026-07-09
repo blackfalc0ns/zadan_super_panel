@@ -40,10 +40,12 @@ export class OrderIssueFlagModalComponent implements OnChanges {
   readonly teamOptions: OrderIssueFlagForm['assignedTeam'][] = ['operations', 'finance', 'compliance'];
 
   form: OrderIssueFlagForm = this.createEmptyForm();
+  submitted = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['isOpen']?.currentValue || changes['order']) && this.isOpen) {
       this.form = this.createDefaultForm();
+      this.submitted = false;
     }
   }
 
@@ -60,6 +62,14 @@ export class OrderIssueFlagModalComponent implements OnChanges {
       value: team,
       labelKey: 'ORDERS.DETAIL.ISSUE_MODAL.TEAMS.' + team.toUpperCase()
     }));
+  }
+
+  get hasRequiredAction(): boolean {
+    return !!this.form.requiredAction.trim();
+  }
+
+  get isActionDisabled(): boolean {
+    return this.isSubmitting || !this.hasRequiredAction;
   }
 
   onBackdropClick(event: MouseEvent): void {
@@ -102,19 +112,40 @@ export class OrderIssueFlagModalComponent implements OnChanges {
   }
 
   onSaveNote(): void {
-    if (this.isSubmitting) {
+    this.submitted = true;
+
+    if (this.isActionDisabled) {
       return;
     }
 
-    this.saveNote.emit({ ...this.form });
+    this.saveNote.emit(this.cloneForm());
   }
 
   onSubmit(): void {
-    if (this.isSubmitting) {
+    this.submitted = true;
+
+    if (this.isActionDisabled) {
       return;
     }
 
-    this.submitIssue.emit({ ...this.form });
+    this.submitIssue.emit(this.cloneForm());
+  }
+
+  onHighRiskAlertChange(enabled: boolean): void {
+    this.form.highRiskAlert = enabled;
+    if (enabled) {
+      this.form.priority = 'critical';
+      this.form.assignedTeam = 'compliance';
+      this.form.showInOperationsCenter = true;
+      this.form.notifyAssignedTeam = true;
+    }
+  }
+
+  private cloneForm(): OrderIssueFlagForm {
+    return {
+      ...this.form,
+      requiredAction: this.form.requiredAction.trim()
+    };
   }
 
   private createDefaultForm(): OrderIssueFlagForm {
