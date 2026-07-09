@@ -135,6 +135,27 @@ describe('EmailCenterApiService', () => {
  });
  });
 
+ it('requests template preview from backend', () => {
+ const rule = overview.rules[0];
+
+ service.previewTemplate(rule, { useSampleValues: true, targetUrl: 'https://admin.zadna0.com/email-center' }).subscribe();
+
+ const request = httpMock.expectOne((req) =>
+ req.url.endsWith(`/api/admin/email-center/rules/${rule.id}/preview-template`)
+ );
+ expect(request.request.method).toBe('POST');
+ expect(request.request.body.id).toBe(rule.id);
+ expect(request.request.params.get('targetUrl')).toBe('https://admin.zadna0.com/email-center');
+ request.flush({
+ html: '<div>preview</div>',
+ subjectEn: 'Subject',
+ subjectAr: 'عنوان',
+ bodyEn: 'Body',
+ bodyAr: 'محتوى',
+ ctaLabel: 'Open'
+ });
+ });
+
  it('applies history filters as query params', () => {
  const filters: EmailDispatchFilters = {
  ruleId: 'super-admin-access-invite',

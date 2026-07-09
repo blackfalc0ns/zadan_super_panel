@@ -7141,7 +7141,12 @@
       "PREVIEW_TITLE": "Actual email appearance",
       "PREVIEW_LOCALE": "Preview locale",
       "SAMPLE_DATA": "Sample data",
-      "RAW_TOKENS": "Raw tokens"
+      "RAW_TOKENS": "Raw tokens",
+      "SOURCE": "Preview source",
+      "BACKEND_SOURCE": "Backend template",
+      "PREVIEW_LOADING": "Rendering preview from backend...",
+      "PREVIEW_ERROR": "Could not load the template preview from backend.",
+      "EMPTY_SUBJECT": "No subject"
     },
     "DELIVERY": {
       "BADGE": "Email delivery",

@@ -2725,7 +2725,12 @@
       "PREVIEW_TITLE": "شكل الإيميل الفعلي",
       "PREVIEW_LOCALE": "لغة المعاينة",
       "SAMPLE_DATA": "بيانات تجريبية",
-      "RAW_TOKENS": "المتغيرات كما هي"
+      "RAW_TOKENS": "المتغيرات كما هي",
+      "SOURCE": "مصدر المعاينة",
+      "BACKEND_SOURCE": "قالب الباك اند",
+      "PREVIEW_LOADING": "نجهّز المعاينة من الباك اند...",
+      "PREVIEW_ERROR": "تعذّر تحميل معاينة القالب من الباك اند.",
+      "EMPTY_SUBJECT": "بدون عنوان"
     },
     "DELIVERY": {
       "BADGE": "تسليم الإيميل",

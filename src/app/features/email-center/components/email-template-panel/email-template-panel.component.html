@@ -129,11 +129,24 @@
         <strong>{{ senderName }}</strong>
       </div>
       <div class="meta-item">
-        <span>{{ 'EMAIL_CENTER.TEMPLATE.PREVIEW_LOCALE' | translate }}</span>
-        <strong>{{ (previewLocale === 'ar' ? 'EMAIL_CENTER.PREVIEW.ARABIC' : 'EMAIL_CENTER.PREVIEW.ENGLISH') | translate }}</strong>
+        <span>{{ 'EMAIL_CENTER.TEMPLATE.SOURCE' | translate }}</span>
+        <strong>{{ 'EMAIL_CENTER.TEMPLATE.BACKEND_SOURCE' | translate }}</strong>
+      </div>
+      <div class="meta-item meta-item--wide">
+        <span>{{ 'EMAIL_CENTER.PREVIEW.SUBJECT' | translate }}</span>
+        <strong [dir]="previewLocale === 'ar' ? 'rtl' : 'ltr'">{{ activePreviewSubject || ('EMAIL_CENTER.TEMPLATE.EMPTY_SUBJECT' | translate) }}</strong>
       </div>
     </div>
 
-    <div class="preview-frame" [innerHTML]="previewHtml"></div>
+    <div *ngIf="isPreviewLoading" class="preview-state">
+      <span class="material-symbols-outlined animate-spin">sync</span>
+      {{ 'EMAIL_CENTER.TEMPLATE.PREVIEW_LOADING' | translate }}
+    </div>
+
+    <div *ngIf="previewError && !isPreviewLoading" class="preview-state preview-state--error">
+      {{ previewError | translate }}
+    </div>
+
+    <div *ngIf="!isPreviewLoading && !previewError" class="preview-frame" [innerHTML]="previewHtml"></div>
   </div>
 </div>

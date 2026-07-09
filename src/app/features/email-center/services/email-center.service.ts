@@ -7,6 +7,7 @@ import {
   EmailDispatchFilters,
   EmailDispatchLog,
   EmailResolvedRecipients,
+  EmailTemplateRenderResult,
   EmailTestSendResult,
   EmailWorkflowRule
 } from '../models/email-center.models';
@@ -48,6 +49,30 @@ export class EmailCenterApiService {
       `${this.apiUrl}/rules/${encodeURIComponent(rule.id)}/test-send`,
       rule,
       { headers: this.getHeaders() }
+    );
+  }
+
+  previewTemplate(
+    rule: EmailWorkflowRule,
+    options?: { useSampleValues?: boolean; targetUrl?: string | null }
+  ): Observable<EmailTemplateRenderResult> {
+    let params = new HttpParams();
+
+    if (options?.useSampleValues === false) {
+      params = params.set('useSampleValues', 'false');
+    }
+
+    if (options?.targetUrl) {
+      params = params.set('targetUrl', options.targetUrl);
+    }
+
+    return this.http.post<EmailTemplateRenderResult>(
+      `${this.apiUrl}/rules/${encodeURIComponent(rule.id)}/preview-template`,
+      rule,
+      {
+        headers: this.getHeaders(),
+        params
+      }
     );
   }
 

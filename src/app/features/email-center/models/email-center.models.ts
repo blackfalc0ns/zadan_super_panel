@@ -68,6 +68,15 @@ export interface EmailTemplatePreview {
   heroImageUrlEn?: string | null;
 }
 
+export interface EmailTemplateRenderResult {
+  html: string;
+  subjectEn: string;
+  subjectAr: string;
+  bodyEn: string;
+  bodyAr: string;
+  ctaLabel: string | null;
+}
+
 export interface EmailDispatchSummary {
   status: EmailDispatchStatus;
   source: EmailDispatchSource;

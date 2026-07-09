@@ -580,3 +580,72 @@ chunk-2VEKDKW3.js   | email-center-routes    |   1.14 kB |
 Application bundle generation complete. [2.658 seconds]
 
 Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+
+No output file changes.
+
+Application bundle generation complete. [1.971 seconds]
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 182.26 kB | 
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-JACZAH3B.js   | email-center-component | 194.98 kB | 
+chunk-TIRGADWC.js   | email-center-routes    |   1.14 kB | 
+
+Application bundle generation complete. [1.919 seconds]
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 182.26 kB | 
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-ET52S535.js   | email-center-component | 195.41 kB | 
+chunk-JPJUNLJN.js   | email-center-routes    |   1.14 kB | 
+
+Application bundle generation complete. [2.221 seconds]
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 182.26 kB | 
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-FZ3BKV7J.js   | email-center-component | 191.28 kB | 
+chunk-66D3CYJX.js   | email-center-routes    |   1.14 kB | 
+
+Application bundle generation complete. [8.326 seconds]
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+Initial chunk files | Names                  |  Raw size
+main.js             | main                   | 182.26 kB | 
+
+Lazy chunk files    | Names                  |  Raw size
+chunk-UIYKZRXM.js   | email-center-component | 194.52 kB | 
+chunk-PZVTP6WW.js   | email-center-routes    |   1.14 kB | 
+
+Application bundle generation complete. [4.560 seconds]
+
+Page reload sent to client(s).
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+
+No output file changes.
+
+Application bundle generation complete. [1.725 seconds]
+
+> Changes detected. Rebuilding...
+√ Changes detected. Rebuilding...
+
+No output file changes.
+
+Application bundle generation complete. [1.419 seconds]
+

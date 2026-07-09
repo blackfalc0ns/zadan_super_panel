@@ -291,7 +291,7 @@
   <!-- Tab 2: Template Editor & Live Preview -->
   <div *ngIf="activeTab === 'template'" class="animate-in fade-in duration-300">
     <app-email-template-panel
-      [template]="rule.template"
+      [rule]="rule"
       [canEdit]="canEdit"
       [senderName]="getSenderProfileName(rule.senderProfileId)"
       [triggerNotesKey]="rule.triggerNotesKey"
