@@ -39,6 +39,7 @@ import {
  AdminVendorSupportTicket
 } from '../../models/admin-support.models';
 import { AdminVendorSupportService } from '../../services/admin-vendor-support.service';
+import { AccessService } from '../../../../core/services/access.service';
 
 
 type AdminSupportTab = 'vendor' | 'driver' | 'legacy';
@@ -602,6 +603,9 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
  <div *ngIf="selectedTicket.status === 'resolved'" class="mb-3 rounded-[1rem] border border-amber-200 bg-amber-50 px-4 py-3 text-[11px] font-black text-amber-700">
  {{ 'SUPPORT_ADMIN.DETAIL.CLOSED_BANNER_WARNING' | translate }}
  </div>
+ <div *ngIf="!canManageVendorTickets" class="mb-3 rounded-[1rem] border border-rose-200 bg-rose-50 px-4 py-3 text-[11px] font-black text-rose-700">
+ {{ isRtl ? 'ما عندك صلاحية الرد أو إدارة تذاكر دعم التجار.' : 'You do not have permission to reply to or manage vendor support tickets.' }}
+ </div>
 
  <div class="grid gap-3 md:grid-cols-[1fr_auto]">
  <select [(ngModel)]="statusDraft" class="h-11 rounded-[1rem] border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-700 outline-none">
@@ -610,21 +614,21 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
  <option value="waiting_vendor">{{ 'SUPPORT_ADMIN.STATUS.WAITING_VENDOR' | translate }}</option>
  <option value="resolved">{{ 'SUPPORT_ADMIN.STATUS.RESOLVED' | translate }}</option>
  </select>
- <button type="button" (click)="updateSelectedTicketStatus()" class="h-11 rounded-[1rem] border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary">
+ <button type="button" (click)="updateSelectedTicketStatus()" [disabled]="isMutatingTicket || !canManageVendorTickets" class="h-11 rounded-[1rem] border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary disabled:cursor-not-allowed disabled:opacity-50">
  {{ 'SUPPORT_ADMIN.ACTIONS.UPDATE_STATUS' | translate }}
  </button>
  </div>
 
  <textarea [(ngModel)]="replyDraft" rows="3" [placeholder]="'SUPPORT_ADMIN.DETAIL.REPLY_PLACEHOLDER' | translate"
- [disabled]="selectedTicket.status === 'resolved' || isMutatingTicket"
+ [disabled]="selectedTicket.status === 'resolved' || isMutatingTicket || !canManageVendorTickets"
  class="mt-3 w-full resize-none rounded-[1rem] border border-slate-200 bg-white px-4 py-3 text-[12px] font-bold text-slate-800 outline-none focus:border-zadna-primary/30 focus:ring-4 focus:ring-zadna-primary/5 disabled:cursor-not-allowed disabled:opacity-50"></textarea>
 
  <div class="mt-3 flex flex-wrap justify-between gap-3">
- <button type="button" (click)="assignSelectedTicket()" [disabled]="selectedTicket.status === 'resolved' || isMutatingTicket"
+ <button type="button" (click)="assignSelectedTicket()" [disabled]="selectedTicket.status === 'resolved' || isMutatingTicket || !canManageVendorTickets"
  class="rounded-[1rem] border border-slate-200 bg-white px-4 py-2.5 text-[12px] font-black text-slate-700 transition hover:border-zadna-primary/20 hover:text-zadna-primary disabled:cursor-not-allowed disabled:opacity-50">
  {{ 'SUPPORT_ADMIN.ACTIONS.ASSIGN_TO_ME' | translate }}
  </button>
- <button type="button" (click)="sendSelectedTicketReply()" [disabled]="!replyDraft.trim() || isMutatingTicket || selectedTicket.status === 'resolved'"
+ <button type="button" (click)="sendSelectedTicketReply()" [disabled]="!replyDraft.trim() || isMutatingTicket || selectedTicket.status === 'resolved' || !canManageVendorTickets"
  class="rounded-[1rem] bg-zadna-primary px-5 py-2.5 text-[12px] font-black text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50">
  {{ 'SUPPORT_ADMIN.ACTIONS.SEND_REPLY' | translate }}
  </button>
@@ -1111,8 +1115,13 @@ export class AdminSupportCenterComponent implements OnInit {
  private readonly router: Router,
  private readonly supportService: AdminVendorSupportService,
  private readonly supportCasesService: SupportCasesService,
+ private readonly accessService: AccessService,
  public readonly translate: TranslateService
  ) {}
+
+ get canManageVendorTickets(): boolean {
+ return this.accessService.hasAnyPermission(['disputes.edit', 'vendors.edit']);
+ }
 
  get activeSupportCase(): SupportCaseRow | null {
  return this.selectedDriverCase || this.selectedLegacyCase || null;
@@ -1742,7 +1751,7 @@ export class AdminSupportCenterComponent implements OnInit {
  }
 
  assignSelectedTicket(): void {
- if (!this.selectedTicket || this.isMutatingTicket) {
+ if (!this.selectedTicket || this.isMutatingTicket || !this.canManageVendorTickets) {
  return;
  }
 
@@ -1756,17 +1765,20 @@ export class AdminSupportCenterComponent implements OnInit {
  this.loadStats();
  this.showToast('SUPPORT_ADMIN.FEEDBACK.ASSIGNED', 'success');
  },
- error: () => {
+ error: (err) => {
  this.cdr.markForCheck();
  this.isMutatingTicket = false;
- this.showToast('SUPPORT_ADMIN.FEEDBACK.ACTION_FAILED', 'error');
+ this.showCustomToast(
+ this.describeSupportError(err, this.isRtl ? 'ما قدرنا نعيّن التذكرة.' : 'Unable to assign the ticket.'),
+ 'error'
+ );
  }
  });
  }
 
  sendSelectedTicketReply(): void {
  const message = this.replyDraft.trim();
- if (!this.selectedTicket ||!message || this.isMutatingTicket) {
+ if (!this.selectedTicket || !message || this.isMutatingTicket || !this.canManageVendorTickets) {
  return;
  }
 
@@ -1781,10 +1793,13 @@ export class AdminSupportCenterComponent implements OnInit {
  this.loadStats();
  this.showToast('SUPPORT_ADMIN.FEEDBACK.REPLY_SENT', 'success');
  },
- error: () => {
+ error: (err) => {
  this.cdr.markForCheck();
  this.isMutatingTicket = false;
- this.showToast('SUPPORT_ADMIN.FEEDBACK.ACTION_FAILED', 'error');
+ this.showCustomToast(
+ this.describeSupportError(err, this.isRtl ? 'ما قدرنا نرسل الرد.' : 'Unable to send the reply.'),
+ 'error'
+ );
  }
  });
  }
@@ -1806,16 +1821,19 @@ export class AdminSupportCenterComponent implements OnInit {
  this.loadStats();
  this.showToast('SUPPORT_ADMIN.FEEDBACK.REPLY_SENT', 'success');
  },
- error: () => {
+ error: (err) => {
  this.cdr.markForCheck();
  this.isMutatingTicket = false;
- this.showToast('SUPPORT_ADMIN.FEEDBACK.ACTION_FAILED', 'error');
+ this.showCustomToast(
+ this.describeSupportError(err, this.isRtl ? 'ما قدرنا نرسل الرد.' : 'Unable to send the reply.'),
+ 'error'
+ );
  }
  });
  }
 
  updateSelectedTicketStatus(): void {
- if (!this.selectedTicket || this.isMutatingTicket) {
+ if (!this.selectedTicket || this.isMutatingTicket || !this.canManageVendorTickets) {
  return;
  }
 
@@ -1829,10 +1847,13 @@ export class AdminSupportCenterComponent implements OnInit {
  this.loadStats();
  this.showToast('SUPPORT_ADMIN.FEEDBACK.STATUS_UPDATED', 'success');
  },
- error: () => {
+ error: (err) => {
  this.cdr.markForCheck();
  this.isMutatingTicket = false;
- this.showToast('SUPPORT_ADMIN.FEEDBACK.ACTION_FAILED', 'error');
+ this.showCustomToast(
+ this.describeSupportError(err, this.isRtl ? 'ما قدرنا نحدّث حالة التذكرة.' : 'Unable to update the ticket status.'),
+ 'error'
+ );
  }
  });
  }
