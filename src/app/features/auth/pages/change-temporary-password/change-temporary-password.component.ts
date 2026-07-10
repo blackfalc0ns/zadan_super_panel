@@ -70,10 +70,10 @@ const SAFE_RETURN_URL = /^\/(?!\/)([\w\-./?=&%#]+)?$/;
 
  <h1
  class="text-[2rem] md:text-[2.5rem] lg:text-[2.75rem] xl:text-[3rem] font-black text-zadna-bgDark leading-[1.2] tracking-tight mb-6 animate-puzzle-up stagger-4">
- <div class="mb-2 md:mb-3">Security First</div>
+ <div class="mb-2 md:mb-3">{{ 'LOGIN.CHANGE_TEMP_PASSWORD.HERO_TITLE' | translate }}</div>
  <span class="relative inline-block mt-2 md:mt-3">
  <span
- class="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-zadna-primary to-zadna-primaryLight">Protect Your Account</span>
+ class="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-zadna-primary to-zadna-primaryLight">{{ 'LOGIN.CHANGE_TEMP_PASSWORD.HERO_HIGHLIGHT' | translate }}</span>
  <svg class="absolute w-full h-3 md:h-4 -bottom-1 left-0 z-0 text-zadna-accent/20"
  viewBox="0 0 100 20" preserveAspectRatio="none">
  <path d="M0 10 Q 50 20 100 10" stroke="currentColor" stroke-width="8" fill="none"
@@ -84,7 +84,7 @@ const SAFE_RETURN_URL = /^\/(?!\/)([\w\-./?=&%#]+)?$/;
 
  <p
  class="text-base text-gray-500 font-medium leading-relaxed max-w-2xl mb-8 opacity-90 tracking-wide animate-puzzle-up stagger-5">
- For your security, you must set a new, permanent password for this account before you can continue to the administration dashboard.
+ {{ 'LOGIN.CHANGE_TEMP_PASSWORD.HERO_DESC' | translate }}
  </p>
 
  </div>
@@ -114,7 +114,7 @@ const SAFE_RETURN_URL = /^\/(?!\/)([\w\-./?=&%#]+)?$/;
  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
  </div>
  <h2 class="text-2xl font-black text-gray-900 tracking-tight mt-4 animate-puzzle-up stagger-5">
- Change Temporary Password
+ {{ 'LOGIN.CHANGE_TEMP_PASSWORD.FORM_TITLE' | translate }}
  </h2>
  </div>
 
@@ -137,7 +137,7 @@ const SAFE_RETURN_URL = /^\/(?!\/)([\w\-./?=&%#]+)?$/;
  <div class="space-y-2 animate-puzzle-up stagger-6">
  <div class="flex items-center justify-between mx-1">
  <label class="text-xs font-black text-gray-400 uppercase tracking-widest">
- Current Temporary Password
+ {{ 'LOGIN.CHANGE_TEMP_PASSWORD.CURRENT_PASSWORD' | translate }}
  </label>
  </div>
  <div class="relative group">
@@ -161,7 +161,7 @@ const SAFE_RETURN_URL = /^\/(?!\/)([\w\-./?=&%#]+)?$/;
  <div class="space-y-2 animate-puzzle-up stagger-7">
  <div class="flex items-center justify-between mx-1">
  <label class="text-xs font-black text-gray-400 uppercase tracking-widest">
- New Password
+ {{ 'LOGIN.CHANGE_TEMP_PASSWORD.NEW_PASSWORD' | translate }}
  </label>
  </div>
  <div class="relative group">
@@ -185,7 +185,7 @@ const SAFE_RETURN_URL = /^\/(?!\/)([\w\-./?=&%#]+)?$/;
  <div class="space-y-2 animate-puzzle-up stagger-8">
  <div class="flex items-center justify-between mx-1">
  <label class="text-xs font-black text-gray-400 uppercase tracking-widest">
- Confirm Password
+ {{ 'LOGIN.CHANGE_TEMP_PASSWORD.CONFIRM_PASSWORD' | translate }}
  </label>
  </div>
  <div class="relative group">
@@ -230,7 +230,7 @@ const SAFE_RETURN_URL = /^\/(?!\/)([\w\-./?=&%#]+)?$/;
  </span>
 
  <span *ngIf="!isLoading" class="flex items-center relative z-10 tracking-widest uppercase">
- Save New Password
+ {{ 'LOGIN.CHANGE_TEMP_PASSWORD.SAVE' | translate }}
  <svg [ngClass]="translate.currentLang === 'ar' ? 'mr-3 group-hover:-translate-x-2' : 'ml-3 group-hover:translate-x-2'"
  class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path *ngIf="translate.currentLang!== 'ar'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
@@ -282,7 +282,7 @@ export class ChangeTemporaryPasswordComponent {
 
  const value = this.form.getRawValue();
  if (value.newPassword!== value.confirmPassword) {
- this.errorMessage = 'New password and confirmation do not match.';
+ this.errorMessage = this.translate.instant('LOGIN.CHANGE_TEMP_PASSWORD.ERR_MISMATCH');
  return;
  }
 
@@ -293,7 +293,7 @@ export class ChangeTemporaryPasswordComponent {
  error: (err) => {
  this.cdr.markForCheck();
  this.isLoading = false;
- this.errorMessage = err.error?.message || 'Could not change password. Check the current password and try again.';
+ this.errorMessage = err.error?.message || this.translate.instant('LOGIN.CHANGE_TEMP_PASSWORD.ERR_FAILED');
  }
  });
  }
@@ -304,6 +304,7 @@ export class ChangeTemporaryPasswordComponent {
 
  switchLanguage(lang: string) {
  this.translate.use(lang);
+ this.cdr.markForCheck();
  }
 
  private sanitizeReturnUrl(value: unknown): string | null {

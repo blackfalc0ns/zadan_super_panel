@@ -132,7 +132,20 @@
     "ERR_PASSWORD_REQUIRED": "Secret access key is required to login",
     "ERR_LOGIN_FAILED": "Authentication failed. Please check your access key and admin email and try again.",
     "ERR_SESSION_EXPIRED": "Your session has expired. Please sign in again.",
-    "FORGOT_PASSWORD_DISABLED_HINT": "Contact your system administrator to reset access credentials."
+    "FORGOT_PASSWORD_DISABLED_HINT": "Contact your system administrator to reset access credentials.",
+    "CHANGE_TEMP_PASSWORD": {
+      "HERO_TITLE": "Security First",
+      "HERO_HIGHLIGHT": "Protect Your Account",
+      "HERO_DESC": "For your security, you must set a new, permanent password for this account before you can continue to the administration dashboard.",
+      "FORM_TITLE": "Change Temporary Password",
+      "CURRENT_PASSWORD": "Current Temporary Password",
+      "NEW_PASSWORD": "New Password",
+      "CONFIRM_PASSWORD": "Confirm Password",
+      "SAVE": "Save New Password",
+      "SAVING": "Saving...",
+      "ERR_MISMATCH": "New password and confirmation do not match.",
+      "ERR_FAILED": "Could not change password. Check the current password and try again."
+    }
   },
   "WORKFLOW_LINKS": {
     "TITLE": "Related Workflow",
