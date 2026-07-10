@@ -38,6 +38,7 @@ export class LayoutComponent {
   isSidebarOpen = false;
   isSidebarCollapsed = false;
   isNotificationsPanelOpen = false;
+  private isLoggingOut = false;
   recentNotifications: AdminNotification[] = [];
   unreadNotificationCount = 0;
   private readonly destroyRef = inject(DestroyRef);
@@ -209,10 +210,16 @@ export class LayoutComponent {
   }
 
   logout() {
+    this.isLoggingOut = true;
+    this.isSidebarOpen = false;
+    this.isNotificationsPanelOpen = false;
+
     // Always clear local session and navigate immediately.
     // The server-side logout (revoke refresh token) runs in the background.
     this.authService.forceLogout();
-    this.router.navigate(['/login']);
+    void this.router.navigate(['/login'], { replaceUrl: true }).finally(() => {
+      this.isLoggingOut = false;
+    });
 
     // Fire-and-forget: tell the server to revoke the refresh token cookie.
     if (!this.authService.isDevelopmentBypassActive) {
@@ -221,7 +228,7 @@ export class LayoutComponent {
   }
 
   private redirectToLoginIfSessionEnded(): void {
-    if (this.authService.isAuthenticated) {
+    if (this.isLoggingOut || this.authService.isAuthenticated) {
       return;
     }
 
