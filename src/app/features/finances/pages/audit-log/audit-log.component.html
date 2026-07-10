@@ -168,7 +168,7 @@
 
   <app-inline-banner
     *ngIf="!hasLoadError && filteredEntries.length"
-    [title]="'FINANCES.AUDIT.BANNER_TITLE'"
+    [title]="'FINANCES.AUDIT.BANNER_TITLE' | translate"
     [message]="entriesSummary"
     [shouldTranslate]="false"
     icon="history"
