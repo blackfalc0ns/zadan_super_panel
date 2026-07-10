@@ -609,30 +609,47 @@ export class AdminProfileComponent implements OnInit {
   async sendPushTest(): Promise<void> {
     this.pushMessage = '';
     this.isSendingPushTest = true;
-    const registered = await this.adminOneSignalService.requestPermissionAndRegister();
-    if (!registered) {
-      this.isSendingPushTest = false;
-      this.pushMessageType = 'error';
-      this.pushMessage = typeof Notification !== 'undefined' && Notification.permission === 'denied'
-        ? this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED')
-        : this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
-      this.cdr.markForCheck();
-      return;
+
+    if (this.adminOneSignalService.isBrowserPushSupported()) {
+      const permission = await this.adminOneSignalService.requestBrowserPermission();
+      if (permission === 'denied') {
+        this.isSendingPushTest = false;
+        this.pushMessageType = 'error';
+        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
+        this.cdr.markForCheck();
+        return;
+      }
     }
+
+    const registrationPromise = this.adminOneSignalService.isConfigured()
+      ? this.adminOneSignalService.requestPermissionAndRegister()
+      : Promise.resolve(false);
 
     this.notificationsService.sendTestNotification().subscribe({
       next: () => {
-        this.cdr.markForCheck();
-        this.isSendingPushTest = false;
-        this.pushMessageType = 'success';
-        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT');
-        this.loadNotificationPreferences();
+        void registrationPromise.then((registered) => {
+          this.adminOneSignalService.showLocalTestNotification(
+            this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_TITLE'),
+            this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_BODY')
+          );
+
+          this.isSendingPushTest = false;
+          this.pushMessageType = 'success';
+          this.pushMessage = registered
+            ? this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT')
+            : this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT_PARTIAL');
+          this.notificationsService.refreshRecent().subscribe();
+          this.loadNotificationPreferences();
+          this.cdr.markForCheck();
+        });
       },
       error: () => {
-        this.cdr.markForCheck();
-        this.isSendingPushTest = false;
-        this.pushMessageType = 'error';
-        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
+        void registrationPromise.finally(() => {
+          this.isSendingPushTest = false;
+          this.pushMessageType = 'error';
+          this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
+          this.cdr.markForCheck();
+        });
       }
     });
   }

@@ -114,6 +114,24 @@ export class AdminOneSignalService {
     }
   }
 
+  showLocalTestNotification(title: string, body: string): boolean {
+    const view = this.document.defaultView;
+    if (!view || !('Notification' in view) || view.Notification.permission !== 'granted') {
+      return false;
+    }
+
+    try {
+      new view.Notification(title, {
+        body,
+        icon: '/favicon.ico',
+        tag: 'admin-push-test'
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async requestPermissionAndRegister(): Promise<boolean> {
     if (!this.isEnabled()) {
       return false;
@@ -141,6 +159,10 @@ export class AdminOneSignalService {
 
     this.lastRegisteredSubscriptionState = null;
     void this.syncUser(userId);
+  }
+
+  isConfigured(): boolean {
+    return this.isEnabled();
   }
 
   private isEnabled(): boolean {
@@ -321,21 +343,17 @@ export class AdminOneSignalService {
 
     const subscription = oneSignal.User?.PushSubscription;
     const subscriptionId = subscription?.id?.trim() || null;
-    const pushToken = subscription?.token?.trim() || null;
     const browserPermission = this.resolveBrowserNotificationPermission();
-    const canReceivePush = browserPermission === 'granted'
-      && !!subscriptionId
-      && !!pushToken
-      && subscription?.optedIn === true;
+    const notificationsEnabled = browserPermission === 'granted';
 
-    if (!subscriptionId || !pushToken || subscription?.optedIn !== true) {
+    if (!subscriptionId || !this.isValidOneSignalSubscriptionId(subscriptionId)) {
       this.logStatus('OneSignal admin subscription is not ready yet.', oneSignal);
       return false;
     }
 
-    const registrationState = `${subscriptionId}:${canReceivePush}`;
+    const registrationState = `${subscriptionId}:${notificationsEnabled}`;
     if (this.lastRegisteredSubscriptionState === registrationState) {
-      return canReceivePush;
+      return notificationsEnabled;
     }
 
     try {
@@ -347,7 +365,7 @@ export class AdminOneSignalService {
         deviceName: this.document.defaultView?.navigator.userAgent?.slice(0, 120) ?? 'Admin browser',
         appVersion: 'superadmin-panel',
         locale: this.document.documentElement.lang || localStorage.getItem('lang') || 'ar',
-        notificationsEnabled: canReceivePush,
+        notificationsEnabled,
         dispatchPushEnabled: true,
         assignmentPushEnabled: true,
         supportPushEnabled: true,
@@ -366,7 +384,7 @@ export class AdminOneSignalService {
 
       this.lastRegisteredSubscriptionState = registrationState;
       this.logStatus('OneSignal admin device registered with API.', oneSignal);
-      return canReceivePush;
+      return notificationsEnabled;
     } catch (error) {
       this.lastRegisteredSubscriptionState = null;
       console.warn('[AdminOneSignal] Device registration failed.', error);
@@ -450,6 +468,10 @@ export class AdminOneSignalService {
     const deviceId = `admin-web-${generated}`;
     localStorage.setItem(AdminOneSignalService.browserDeviceIdKey, deviceId);
     return deviceId;
+  }
+
+  private isValidOneSignalSubscriptionId(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
   }
 
   private resolveBrowserNotificationPermission(): NotificationPermission | null {

@@ -1503,6 +1503,9 @@
       "UNSUPPORTED": "This browser does not support desktop notifications.",
       "ENABLE_FAILED": "Could not enable browser notifications on this device.",
       "TEST_SENT": "Test notification sent. Check your browser or OS notification center.",
+      "TEST_SENT_PARTIAL": "The test was added to your inbox. If no browser alert appeared, enable notifications and try again.",
+      "TEST_TITLE": "Admin notification test",
+      "TEST_BODY": "This is a test notification to verify alerts are working.",
       "TEST_FAILED": "Could not send the test notification."
     }
   },
