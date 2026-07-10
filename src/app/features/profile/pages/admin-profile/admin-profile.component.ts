@@ -562,19 +562,45 @@ export class AdminProfileComponent implements OnInit {
   async enableBrowserPush(): Promise<void> {
     this.pushMessage = '';
     this.isEnablingBrowserPush = true;
+
+    if (!this.adminOneSignalService.isBrowserPushSupported()) {
+      this.isEnablingBrowserPush = false;
+      this.pushMessageType = 'error';
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.UNSUPPORTED');
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const permission = await this.adminOneSignalService.requestBrowserPermission();
+    if (permission === 'unsupported') {
+      this.isEnablingBrowserPush = false;
+      this.pushMessageType = 'error';
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.UNSUPPORTED');
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (permission === 'denied') {
+      this.isEnablingBrowserPush = false;
+      this.pushMessageType = 'error';
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
+      this.cdr.markForCheck();
+      return;
+    }
+
     const registered = await this.adminOneSignalService.requestPermissionAndRegister();
     this.isEnablingBrowserPush = false;
     this.loadNotificationPreferences();
 
-    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
-      this.pushMessageType = 'error';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
-    } else if (registered) {
+    if (registered) {
       this.pushMessageType = 'success';
       this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLED');
+    } else if (permission === 'granted' || this.adminOneSignalService.getBrowserPermission() === 'granted') {
+      this.pushMessageType = 'success';
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.PERMISSION_GRANTED');
     } else {
       this.pushMessageType = 'error';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
+      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLE_FAILED');
     }
 
     this.cdr.markForCheck();

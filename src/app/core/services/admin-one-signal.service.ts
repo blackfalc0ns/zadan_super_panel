@@ -85,6 +85,35 @@ export class AdminOneSignalService {
       });
   }
 
+  isBrowserPushSupported(): boolean {
+    const view = this.document.defaultView;
+    return !!view
+      && 'Notification' in view
+      && !!view.navigator?.serviceWorker;
+  }
+
+  getBrowserPermission(): NotificationPermission | 'unsupported' {
+    const permission = this.resolveBrowserNotificationPermission();
+    return permission ?? 'unsupported';
+  }
+
+  async requestBrowserPermission(): Promise<NotificationPermission | 'unsupported'> {
+    const view = this.document.defaultView;
+    if (!view || !('Notification' in view)) {
+      return 'unsupported';
+    }
+
+    if (view.Notification.permission !== 'default') {
+      return view.Notification.permission;
+    }
+
+    try {
+      return await view.Notification.requestPermission();
+    } catch {
+      return view.Notification.permission;
+    }
+  }
+
   async requestPermissionAndRegister(): Promise<boolean> {
     if (!this.isEnabled()) {
       return false;
@@ -204,6 +233,10 @@ export class AdminOneSignalService {
       if (!this.isBenignPushRegistrationError(error)) {
         this.logPermissionFailure('permission request', error, oneSignal);
       }
+    }
+
+    if (this.resolveBrowserNotificationPermission() === 'default') {
+      await this.requestBrowserPermission();
     }
 
     const browserPermission = this.resolveBrowserNotificationPermission();

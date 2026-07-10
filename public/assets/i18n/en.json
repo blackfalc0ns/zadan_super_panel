@@ -1493,13 +1493,16 @@
       }
     },
     "WEB_PUSH": {
-      "ENABLE": "Enable Windows notifications",
+      "ENABLE": "Enable browser notifications",
       "TEST": "Send test notification",
       "ENABLING": "Registering browser...",
       "TESTING": "Sending test...",
       "ENABLED": "Browser notifications are active on this device.",
-      "DENIED": "Notifications are blocked in Windows or the browser. Enable them from site settings.",
-      "TEST_SENT": "Test notification sent. Check the Windows notification center.",
+      "PERMISSION_GRANTED": "Notifications are allowed. Wait a moment, then try the test notification.",
+      "DENIED": "Notifications are blocked in this browser. Enable them from the site settings in the address bar.",
+      "UNSUPPORTED": "This browser does not support desktop notifications.",
+      "ENABLE_FAILED": "Could not enable browser notifications on this device.",
+      "TEST_SENT": "Test notification sent. Check your browser or OS notification center.",
       "TEST_FAILED": "Could not send the test notification."
     }
   },
