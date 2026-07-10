@@ -1808,6 +1808,7 @@
       "TEAM": "Team",
       "TEAM_HINT": "Optional team or unit within the department (e.g. Disputes desk).",
       "OPTIONAL": "Optional",
+      "ROLE": "Role",
       "ROLE_PRESET": "Role preset",
       "ACCESS_LEVEL": "Access level",
       "STATUS": "Status",
@@ -1822,6 +1823,7 @@
       "CITY": "City",
       "REPLY_TO": "Reply-to",
       "PREFERRED_LOCALE": "Preferred locale",
+      "LOCALE": "Locale",
       "NOTIFICATION_EMAILS": "Notification emails",
       "ESCALATION_EMAILS": "Escalation emails",
       "NOTES": "Notes"
@@ -1861,8 +1863,14 @@
       "DUPLICATE": "Duplicate role",
       "CREATE_USER_DESC": "Create a super admin panel staff account with global access",
       "ADD_USER": "Add admin user",
+      "ADDING_USER": "Adding...",
       "VIEW": "Open profile",
       "EDIT_USER": "Edit access"
+    },
+    "MESSAGES": {
+      "LOAD_FAILED": "Could not load the admin user directory.",
+      "LOAD_ROLES_FAILED": "Could not load roles.",
+      "CREATE_USER_SUCCESS": "Admin user account created successfully."
     },
     "CREATE": {
       "MODAL_BADGE": "New admin account",
@@ -1905,6 +1913,17 @@
       "VALIDATION_REQUIRED": "Complete all required fields before creating the account.",
       "FAILED": "Could not create the account. Review the role and scope, then try again.",
       "ERRORS": {
+        "USER_ALREADY_EXISTS": "Email or phone number is already in use.",
+        "INVALID_SCOPE_ENTITY": "The selected scope entity does not exist.",
+        "ROLE_SCOPE_MISMATCH": "The selected role does not match the requested panel scope.",
+        "ROLE_INACTIVE": "The selected role is inactive.",
+        "IDENTITY_CREATE_FAILED": "Identity provider rejected the account creation.",
+        "IDENTITY_UPDATE_FAILED": "Could not update the existing account profile.",
+        "IDENTITY_ROLE_UPDATE_FAILED": "Could not assign the selected role to the account.",
+        "IDENTITY_PASSWORD_RESET_FAILED": "Could not set the temporary password.",
+        "ADMIN_PANEL_CREATE_ONLY": "Only super admin panel accounts can be created from this screen."
+      },
+      "ERROR_CODES": {
         "USER_ALREADY_EXISTS": "Email or phone number is already in use.",
         "INVALID_SCOPE_ENTITY": "The selected scope entity does not exist.",
         "ROLE_SCOPE_MISMATCH": "The selected role does not match the requested panel scope.",
@@ -1990,7 +2009,18 @@
         "CREATE_FAILED": "Could not create the role.",
         "DELETE_FAILED": "Could not delete the role."
       },
-      "ERROR_CODES": {}
+      "ERROR_CODES": {
+        "ROLE_CODE_EXISTS": "A role with this name already exists.",
+        "ROLE_NAME_REQUIRED": "Role name is required.",
+        "ROLE_NAME_TOO_LONG": "Role name must be 200 characters or fewer.",
+        "ROLE_DESCRIPTION_TOO_LONG": "Role description must be 500 characters or fewer.",
+        "ROLE_CODE_INVALID": "Role name must contain at least one letter or digit.",
+        "ROLE_IN_USE": "Cannot delete a role that is assigned to users.",
+        "ROLE_ASSIGNMENT_SCOPE_LOCKED": "This role scope cannot be changed while users are assigned.",
+        "ROLE_SCOPE_MISMATCH": "The selected role does not match the super admin panel scope.",
+        "ROLE_INACTIVE": "The selected role is inactive.",
+        "SENSITIVE_ROLE_CHANGE_REQUIRES_MANAGE_SETTINGS": "Changing this role requires manage settings permission."
+      }
     },
     "DETAIL": {
       "TITLE": "Identity Access Profile",
@@ -2039,7 +2069,13 @@
       "AUDIT_DESC": "Recent role, scope, status, and permission changes.",
       "AUDIT_EMPTY": "No access audit entries yet.",
       "AUDIT_BY": "By {{name}}",
-      "AUDIT_SYSTEM": "System"
+      "AUDIT_SYSTEM": "System",
+      "SUBTAB_ROLE": "Role",
+      "SUBTAB_PERMISSIONS": "Permissions",
+      "SUBTAB_FEATURES": "Features",
+      "EXPAND_ALL": "Expand all",
+      "COLLAPSE_ALL": "Collapse all",
+      "PERMISSIONS_SEARCH_PLACEHOLDER": "Search permissions..."
     },
     "SCOPE": {
       "GLOBAL": "Global panel",
@@ -2188,6 +2224,10 @@
         "SYSTEM": {
           "TITLE": "System",
           "DESC": "Platform-wide configuration and sensitive control surfaces."
+        },
+        "MARKETING": {
+          "TITLE": "Marketing",
+          "DESC": "Coupons, banners, featured products, and homepage visibility settings."
         },
         "VENDOR_DASHBOARD": {
           "TITLE": "Vendor dashboard",

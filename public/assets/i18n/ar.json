@@ -6523,6 +6523,7 @@
       "TEAM": "الفريق",
       "TEAM_HINT": "اسم الفريق أو الوحدة داخل القسم (مثل: متابعة النزاعات). اختياري.",
       "OPTIONAL": "اختياري",
+      "ROLE": "الدور",
       "ROLE_PRESET": "القالب الوظيفي",
       "ACCESS_LEVEL": "مستوى الصلاحية",
       "STATUS": "الحالة",
@@ -6537,6 +6538,7 @@
       "CITY": "المدينة",
       "REPLY_TO": "عنوان الرد",
       "PREFERRED_LOCALE": "اللغة المفضلة",
+      "LOCALE": "اللغة",
       "NOTIFICATION_EMAILS": "بريد الإشعارات",
       "ESCALATION_EMAILS": "بريد التصعيد",
       "NOTES": "ملاحظات"
@@ -6576,8 +6578,14 @@
       "DUPLICATE": "نسخ الدور",
       "CREATE_USER_DESC": "إنشاء حساب موظف في لوحة السوبر أدمن بنطاق عام",
       "ADD_USER": "إضافة مستخدم إداري",
+      "ADDING_USER": "جاري الإضافة...",
       "VIEW": "فتح الملف",
       "EDIT_USER": "تعديل الوصول"
+    },
+    "MESSAGES": {
+      "LOAD_FAILED": "تعذر تحميل دليل المستخدمين.",
+      "LOAD_ROLES_FAILED": "تعذر تحميل الأدوار.",
+      "CREATE_USER_SUCCESS": "أنشأنا حساب المستخدم الإداري بنجاح."
     },
     "CREATE": {
       "MODAL_BADGE": "حساب إداري جديد",
@@ -6620,6 +6628,17 @@
       "VALIDATION_REQUIRED": "أكمل جميع الحقول المطلوبة قبل إنشاء الحساب.",
       "FAILED": "ما قدرنا ننشئ الحساب. راجع الدور والنطاق ثم أعد المحاولة.",
       "ERRORS": {
+        "USER_ALREADY_EXISTS": "البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل.",
+        "INVALID_SCOPE_ENTITY": "كيان النطاق المحدد غير موجود.",
+        "ROLE_SCOPE_MISMATCH": "الدور المحدد لا يطابق نطاق اللوحة المطلوب.",
+        "ROLE_INACTIVE": "الدور المحدد غير نشط.",
+        "IDENTITY_CREATE_FAILED": "رفض مزود الهوية إنشاء الحساب.",
+        "IDENTITY_UPDATE_FAILED": "ما قدرنا نحدّث ملف الحساب الحالي.",
+        "IDENTITY_ROLE_UPDATE_FAILED": "ما قدرنا نعيّن الدور المحدد للحساب.",
+        "IDENTITY_PASSWORD_RESET_FAILED": "ما قدرنا نعيّن كلمة المرور المؤقتة.",
+        "ADMIN_PANEL_CREATE_ONLY": "يمكن إنشاء حسابات لوحة السوبر أدمن فقط من هذه الشاشة."
+      },
+      "ERROR_CODES": {
         "USER_ALREADY_EXISTS": "البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل.",
         "INVALID_SCOPE_ENTITY": "كيان النطاق المحدد غير موجود.",
         "ROLE_SCOPE_MISMATCH": "الدور المحدد لا يطابق نطاق اللوحة المطلوب.",
@@ -6705,7 +6724,18 @@
         "CREATE_FAILED": "تعذر إنشاء الدور.",
         "DELETE_FAILED": "تعذر حذف الدور."
       },
-      "ERROR_CODES": {}
+      "ERROR_CODES": {
+        "ROLE_CODE_EXISTS": "يوجد دور بهذا الاسم بالفعل.",
+        "ROLE_NAME_REQUIRED": "اسم الدور مطلوب.",
+        "ROLE_NAME_TOO_LONG": "اسم الدور يجب ألا يتجاوز 200 حرفًا.",
+        "ROLE_DESCRIPTION_TOO_LONG": "وصف الدور يجب ألا يتجاوز 500 حرفًا.",
+        "ROLE_CODE_INVALID": "اسم الدور يجب أن يحتوي على حرف أو رقم واحد على الأقل.",
+        "ROLE_IN_USE": "لا يمكن حذف دور مُسند لمستخدمين.",
+        "ROLE_ASSIGNMENT_SCOPE_LOCKED": "لا يمكن تغيير نطاق هذا الدور لأنه مُسند لمستخدمين.",
+        "ROLE_SCOPE_MISMATCH": "الدور المحدد لا يطابق نطاق لوحة السوبر أدمن.",
+        "ROLE_INACTIVE": "الدور المحدد غير نشط.",
+        "SENSITIVE_ROLE_CHANGE_REQUIRES_MANAGE_SETTINGS": "تغيير صلاحيات هذا الدور يتطلب صلاحية إدارة الإعدادات."
+      }
     },
     "DETAIL": {
       "TITLE": "ملف الهوية والصلاحية",
@@ -6754,7 +6784,13 @@
       "AUDIT_DESC": "آخر التعديلات على الأدوار والنطاقات والحالات والصلاحيات.",
       "AUDIT_EMPTY": "ما فيه أي سجلات تدقيق للوصول بعد.",
       "AUDIT_BY": "عن طريق {{name}}",
-      "AUDIT_SYSTEM": "النظام"
+      "AUDIT_SYSTEM": "النظام",
+      "SUBTAB_ROLE": "الدور",
+      "SUBTAB_PERMISSIONS": "الصلاحيات",
+      "SUBTAB_FEATURES": "المزايا",
+      "EXPAND_ALL": "توسيع الكل",
+      "COLLAPSE_ALL": "طي الكل",
+      "PERMISSIONS_SEARCH_PLACEHOLDER": "ابحث في الصلاحيات..."
     },
     "SCOPE": {
       "GLOBAL": "لوحة عامة",
@@ -6903,6 +6939,10 @@
         "SYSTEM": {
           "TITLE": "النظام",
           "DESC": "إعدادات المنصة العامة ونقاط التحكم الحساسة."
+        },
+        "MARKETING": {
+          "TITLE": "التسويق",
+          "DESC": "الكوبونات والبانرات والمنتجات المميزة وإعدادات الظهور في الصفحة الرئيسية."
         },
         "VENDOR_DASHBOARD": {
           "TITLE": "لوحة التاجر",

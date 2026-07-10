@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   DIRECTORY_PANEL_LABELS,
   DirectoryPanelScope,
@@ -42,6 +43,7 @@ interface CustomRole {
 })
 export class RolesManagementComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   roles: CustomRole[] = [];
   selectedRole: CustomRole | null = null;
@@ -84,7 +86,13 @@ export class RolesManagementComponent implements OnInit {
     private readonly accessApi: AdminAccessApiService,
     private readonly translate: TranslateService,
     private readonly toastService: ToastService
-  ) {}
+  ) {
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((_event: LangChangeEvent) => {
+        this.cdr.markForCheck();
+      });
+  }
 
   get isRTL(): boolean {
     return this.translate.currentLang === 'ar';
