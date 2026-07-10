@@ -20,6 +20,7 @@ import { VendorService } from '@vendors/services/vendor.api.service';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { DataTableComponent, TableColumn } from '@shared/components/ui/data-table/data-table.component';
 import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pill.component';
+import { AppPaginationComponent } from '@shared/components/ui/pagination/pagination.component';
 import { ToastService } from '@shared/services/toast.service';
 import { SearchableSelectComponent, SearchableSelectOption } from '@shared/components/ui/form-controls/select/searchable-select.component';
 
@@ -43,7 +44,7 @@ interface CouponFormValue {
  changeDetection: ChangeDetectionStrategy.OnPush,
  selector: 'app-marketing-coupons',
  standalone: true,
- imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent, DataTableComponent, SearchableSelectComponent, MarketingScheduleCellComponent],
+ imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent, DataTableComponent, SearchableSelectComponent, MarketingScheduleCellComponent, AppPaginationComponent],
  template: `
  <div class="space-y-6">
  <div class="flex flex-wrap items-center justify-between gap-4">
@@ -52,6 +53,7 @@ interface CouponFormValue {
  <span class="material-symbols-outlined pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
  <input
  [(ngModel)]="searchTerm"
+ (ngModelChange)="onSearchChange()"
  type="text"
  [placeholder]="'MARKETING.COUPONS.SEARCH_PLACEHOLDER' | translate"
  class="h-11 w-full rounded-xl border border-slate-200 bg-white ps-12 pe-4 text-sm font-bold text-slate-700 outline-none transition focus:border-zadna-primary focus:ring-4 focus:ring-zadna-primary/10" />
@@ -59,6 +61,7 @@ interface CouponFormValue {
 
  <app-searchable-select
  [(ngModel)]="statusFilter"
+ (ngModelChange)="onSearchChange()"
  [options]="translatedStatusOptions"
  [searchable]="false"
  [allowClear]="false"
@@ -91,7 +94,7 @@ interface CouponFormValue {
  </div>
 
  <app-data-table
- [data]="filteredCoupons"
+ [data]="paginatedCoupons"
  [columns]="tableColumns"
  [isLoading]="loading"
  [emptyStateIcon]="'sell'"
@@ -239,6 +242,16 @@ interface CouponFormValue {
  </div>
  </ng-template>
  </app-data-table>
+
+ <div class="pt-6 animate-in fade-in duration-700 slide-in-from-bottom-5">
+ <app-pagination
+ *ngIf="!loading && totalItems > 0"
+ [currentPage]="page"
+ [pageSize]="pageSize"
+ [totalItems]="totalItems"
+ (pageChange)="changePage($event)">
+ </app-pagination>
+ </div>
  </div>
 
  <div *ngIf="isModalOpen" class="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm">
@@ -450,6 +463,8 @@ export class MarketingCouponsComponent implements OnInit {
  searchTerm = '';
  vendorSearchTerm = '';
  statusFilter: 'all' | 'active' | 'inactive' = 'all';
+ page = 1;
+ pageSize = 10;
  isModalOpen = false;
  selectedCoupon: MarketingCoupon | null = null;
  deleteTarget: MarketingCoupon | null = null;
@@ -507,6 +522,23 @@ export class MarketingCouponsComponent implements OnInit {
  const vendorNames = coupon.applicableVendors.flatMap((vendor) => [vendor.vendorNameAr, vendor.vendorNameEn]);
  return [coupon.code, coupon.title,...vendorNames].filter((value): value is string => Boolean(value)).some((value) => value.toLocaleLowerCase().includes(query));
  });
+ }
+
+ get totalItems(): number {
+ return this.filteredCoupons.length;
+ }
+
+ get paginatedCoupons(): MarketingCoupon[] {
+ const start = (this.page - 1) * this.pageSize;
+ return this.filteredCoupons.slice(start, start + this.pageSize);
+ }
+
+ onSearchChange(): void {
+ this.page = 1;
+ }
+
+ changePage(newPage: number): void {
+ this.page = newPage;
  }
 
  get filteredVendors(): Vendor[] {

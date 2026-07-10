@@ -19,6 +19,7 @@ import { DeleteConfirmationModalComponent } from '@shared/components/delete-conf
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
 import { DataTableComponent, TableColumn } from '@shared/components/ui/data-table/data-table.component';
 import { AppInputComponent } from '@shared/components/ui/form-controls/input/input.component';
+import { AppPaginationComponent } from '@shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pill.component';
 import { ToastService } from '@shared/services/toast.service';
 import { forkJoin } from 'rxjs';
@@ -37,6 +38,7 @@ import { forkJoin } from 'rxjs';
  DeleteConfirmationModalComponent,
  HomeSectionFormModalComponent,
  DataTableComponent,
+ AppPaginationComponent,
  MarketingScheduleCellComponent
  ],
  template: `
@@ -47,6 +49,7 @@ import { forkJoin } from 'rxjs';
  <div class="max-w-[24rem] w-full">
  <app-input
  [(ngModel)]="searchTerm"
+ (ngModelChange)="onSearchChange()"
  [placeholder]="'MARKETING.HOME_SECTIONS.SEARCH_PLACEHOLDER' | translate"
  [hasIcon]="true"
  [inputClass]="'!bg-transparent!border-0!ring-0!text-slate-900!placeholder-slate-400'"
@@ -86,7 +89,7 @@ import { forkJoin } from 'rxjs';
 
  <!-- Data Table -->
  <app-data-table
- [data]="filteredSections"
+ [data]="paginatedSections"
  [columns]="tableColumns"
  [isLoading]="loading"
  [emptyStateIcon]="'dashboard_customize'"
@@ -180,6 +183,16 @@ import { forkJoin } from 'rxjs';
  </ng-container>
  </ng-template>
  </app-data-table>
+
+ <div class="pt-6 animate-in fade-in duration-700 slide-in-from-bottom-5">
+ <app-pagination
+ *ngIf="!loading && totalItems > 0"
+ [currentPage]="page"
+ [pageSize]="pageSize"
+ [totalItems]="totalItems"
+ (pageChange)="changePage($event)">
+ </app-pagination>
+ </div>
  </div>
 
  <app-home-section-form-modal [isOpen]="isModalOpen" [isSaving]="saving" [section]="selectedSection" [categoryOptions]="categoryOptions" [themeOptions]="themeOptions" (close)="closeModal()" (save)="saveSection($event)"></app-home-section-form-modal>
@@ -204,6 +217,8 @@ export class MarketingHomeSectionsComponent implements OnInit {
  deleting = false;
  error = '';
  searchTerm = '';
+ page = 1;
+ pageSize = 10;
  isModalOpen = false;
  selectedSection: MarketingHomeSection | null = null;
  deleteTarget: MarketingHomeSection | null = null;
@@ -234,6 +249,23 @@ export class MarketingHomeSectionsComponent implements OnInit {
  return this.sections.filter((section) =>
  [section.categoryNameAr, section.categoryNameEn, section.theme].filter((value): value is string => Boolean(value)).some((value) => value.toLocaleLowerCase().includes(query))
  );
+ }
+
+ get totalItems(): number {
+ return this.filteredSections.length;
+ }
+
+ get paginatedSections(): MarketingHomeSection[] {
+ const start = (this.page - 1) * this.pageSize;
+ return this.filteredSections.slice(start, start + this.pageSize);
+ }
+
+ onSearchChange(): void {
+ this.page = 1;
+ }
+
+ changePage(newPage: number): void {
+ this.page = newPage;
  }
 
  ngOnInit(): void {

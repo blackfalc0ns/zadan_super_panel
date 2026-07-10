@@ -15,6 +15,7 @@ import { DeleteConfirmationModalComponent } from '@shared/components/delete-conf
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
 import { DataTableComponent, TableColumn } from '@shared/components/ui/data-table/data-table.component';
 import { AppInputComponent } from '@shared/components/ui/form-controls/input/input.component';
+import { AppPaginationComponent } from '@shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pill.component';
 import { ToastService } from '@shared/services/toast.service';
 
@@ -32,6 +33,7 @@ import { ToastService } from '@shared/services/toast.service';
  DeleteConfirmationModalComponent,
  BannerFormModalComponent,
  DataTableComponent,
+ AppPaginationComponent,
  MarketingScheduleCellComponent
  ],
  template: `
@@ -42,6 +44,7 @@ import { ToastService } from '@shared/services/toast.service';
  <div class="max-w-[24rem] w-full">
  <app-input
  [(ngModel)]="searchTerm"
+ (ngModelChange)="onSearchChange()"
  [placeholder]="'MARKETING.BANNERS.SEARCH_PLACEHOLDER' | translate"
  [hasIcon]="true"
  [inputClass]="'!bg-transparent!border-0!ring-0!text-slate-900!placeholder-slate-400'"
@@ -76,7 +79,7 @@ import { ToastService } from '@shared/services/toast.service';
 
  <!-- Data Table -->
  <app-data-table
- [data]="filteredBanners"
+ [data]="paginatedBanners"
  [columns]="tableColumns"
  [isLoading]="loading"
  [emptyStateIcon]="'ad_group'"
@@ -169,6 +172,16 @@ import { ToastService } from '@shared/services/toast.service';
  </ng-container>
  </ng-template>
  </app-data-table>
+
+ <div class="pt-6 animate-in fade-in duration-700 slide-in-from-bottom-5">
+ <app-pagination
+ *ngIf="!loading && totalItems > 0"
+ [currentPage]="page"
+ [pageSize]="pageSize"
+ [totalItems]="totalItems"
+ (pageChange)="changePage($event)">
+ </app-pagination>
+ </div>
  </div>
 
  <app-banner-form-modal [isOpen]="isModalOpen" [isSaving]="saving" [banner]="selectedBanner" (close)="closeModal()" (save)="saveBanner($event)"></app-banner-form-modal>
@@ -191,6 +204,8 @@ export class MarketingBannersComponent implements OnInit {
  deleting = false;
  error = '';
  searchTerm = '';
+ page = 1;
+ pageSize = 10;
  isModalOpen = false;
  selectedBanner: MarketingBanner | null = null;
  deleteTarget: MarketingBanner | null = null;
@@ -219,6 +234,23 @@ export class MarketingBannersComponent implements OnInit {
  return this.banners.filter((banner) =>
  [banner.tagAr, banner.tagEn, banner.titleAr, banner.titleEn, banner.subtitleAr, banner.subtitleEn].filter((value): value is string => Boolean(value)).some((value) => value.toLocaleLowerCase().includes(query))
  );
+ }
+
+ get totalItems(): number {
+ return this.filteredBanners.length;
+ }
+
+ get paginatedBanners(): MarketingBanner[] {
+ const start = (this.page - 1) * this.pageSize;
+ return this.filteredBanners.slice(start, start + this.pageSize);
+ }
+
+ onSearchChange(): void {
+ this.page = 1;
+ }
+
+ changePage(newPage: number): void {
+ this.page = newPage;
  }
  
  ngOnInit(): void {
@@ -342,6 +374,7 @@ export class MarketingBannersComponent implements OnInit {
  this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.BANNERS.TABS.BANNERS'));
  }
  });
+ }
 }
 
 function toCreatePayload(payload: MarketingBannerUpdatePayload): MarketingBannerPayload {
