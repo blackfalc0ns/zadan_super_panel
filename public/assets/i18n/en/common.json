@@ -99,7 +99,50 @@
     "REJECTED": "Rejected",
     "RETRY": "Retry",
     "DOWNLOAD": "Download",
-    "UPLOAD": "Upload"
+    "UPLOAD": "Upload",
+    "API_ERRORS": {
+      "UNKNOWN": "An unexpected error occurred. Please try again.",
+      "NETWORK": "Could not reach the server. Check your connection and try again.",
+      "UNAUTHORIZED": "Your session expired or you do not have permission for this action.",
+      "CONFLICT": "A data conflict occurred. Refresh the page and try again."
+    },
+    "API_ERROR_CODES": {
+      "USER_ALREADY_EXISTS": "Email or phone number is already in use.",
+      "USER_NOT_FOUND": "User not found.",
+      "USER_NOT_AUTHENTICATED": "You must be signed in first.",
+      "ROLE_INACTIVE": "The selected role is inactive.",
+      "ROLE_SCOPE_MISMATCH": "The selected role does not match the requested panel scope.",
+      "ROLE_IN_USE": "Cannot delete a role that is assigned to users.",
+      "ROLE_CODE_EXISTS": "A role with this name already exists.",
+      "ROLE_NAME_REQUIRED": "Role name is required.",
+      "ROLE_NAME_TOO_LONG": "Role name is too long.",
+      "ROLE_DESCRIPTION_TOO_LONG": "Role description is too long.",
+      "ROLE_CODE_INVALID": "Role name is invalid.",
+      "ROLE_ASSIGNMENT_SCOPE_LOCKED": "This role scope cannot be changed while users are assigned.",
+      "ROLE_REQUIRED": "The user does not have an active role.",
+      "INVALID_SCOPE_ENTITY": "The selected scope entity does not exist.",
+      "INVALID_PERMISSION": "Some selected permissions are unknown.",
+      "IDENTITY_CREATE_FAILED": "Identity provider rejected the account creation.",
+      "IDENTITY_UPDATE_FAILED": "Could not update the account profile.",
+      "IDENTITY_ROLE_UPDATE_FAILED": "Could not assign the role to the account.",
+      "IDENTITY_PASSWORD_RESET_FAILED": "Could not set the temporary password.",
+      "IDENTITY_OPERATION_FAILED": "Identity operation failed.",
+      "PASSWORD_REQUIRED": "Temporary password is required.",
+      "LAST_SUPER_ADMIN_PROTECTED": "The last active super admin cannot be disabled or downgraded.",
+      "SELF_ACCESS_CHANGE_BLOCKED": "You cannot remove your own administrative access.",
+      "CANNOT_UPDATE_SYSTEM_ROLE": "System roles cannot be modified.",
+      "CANNOT_DELETE_SYSTEM_ROLE": "System roles cannot be deleted.",
+      "SENSITIVE_ROLE_CHANGE_REQUIRES_MANAGE_SETTINGS": "Changing this role requires manage settings permission.",
+      "ADMIN_PANEL_CREATE_ONLY": "Only super admin panel accounts can be created from this screen.",
+      "EMAIL_CENTER_NO_RECIPIENTS": "No recipients were resolved for this rule.",
+      "EMAIL_CENTER_SUBJECT_REQUIRED": "Email subject is required for test send.",
+      "EMAIL_CENTER_SCOPE_REQUIRED": "A scope identifier is required for this rule.",
+      "EMAIL_CENTER_INVALID_AUDIENCE": "The selected audience is not supported.",
+      "EMAIL_CENTER_INVALID_SENDER_PROFILE": "The selected sender profile does not exist.",
+      "EMAIL_CENTER_RULE_ID_MISMATCH": "The rule id does not match the request.",
+      "REQUEST_ALREADY_REVIEWED": "This request was already reviewed.",
+      "REJECTION_REASON_REQUIRED": "A rejection reason is required."
+    }
   },
   "VALIDATION": {
     "REQUIRED": "This field is required"
@@ -717,8 +760,24 @@
       "TODAY": "Today",
       "WEEK": "This Week",
       "MONTH": "This Month",
-      "QUARTER": "Current Quarter"
+      "QUARTER": "Current Quarter",
+      "THIS_WEEK": "This Week",
+      "THIS_MONTH": "This Month",
+      "THIS_QUARTER": "Current Quarter"
     },
+    "FILTERS": {
+      "TITLE": "Filter records",
+      "SUBTITLE": "Adjust display criteria",
+      "SEARCH_PLACEHOLDER": "Search by reference, entity, or description...",
+      "CLEAR": "Clear filters",
+      "ACTIVE": "Active filters",
+      "PERIOD": "Period",
+      "ALL_PERIODS": "All periods",
+      "ALL_ENTITIES": "All entities",
+      "ALL_TYPES": "All types",
+      "ALL": "All"
+    },
+    "EXPORT": "Export",
     "CHART": {
       "GMV_VS_REVENUE": "Gross Value vs Net Revenue",
       "LAST_7_MONTHS": "Performance comparison over the last 7 months",
@@ -759,6 +818,9 @@
     "COMMON": {
       "VIEW": "View",
       "HIDE": "Hide",
+      "CANCEL": "Cancel",
+      "TYPE": "Type",
+      "DIRECTION": "Direction",
       "TIMESTAMP": "Timestamp",
       "ENTITY": "Entity",
       "BEFORE": "Before",
@@ -1026,6 +1088,8 @@
       "FILTERS": {
         "SEARCH": "Search audit log",
         "SEARCH_PLACEHOLDER": "Search admin, entity, order, or action...",
+        "FILTER_TITLE": "Filter audit log",
+        "FILTER_SUBTITLE": "Adjust display criteria",
         "CATEGORY": "Category",
         "ENTITY": "Entity",
         "ALL_CATEGORIES": "All categories",
@@ -1083,6 +1147,16 @@
         "CHANGES": "Changes",
         "DETAILS": "Details",
         "ENTITY_ID": "Entity ID"
+      },
+      "DETAIL": {
+        "TITLE": "Event details",
+        "ORDER_ID": "Order ID",
+        "ADMIN": "Administrator",
+        "ROLE": "Role",
+        "ACTION": "Action"
+      },
+      "PAGINATION": {
+        "SUMMARY": "Page {{current}} of {{total}}"
       }
     },
     "WALLETS": {
@@ -1239,6 +1313,7 @@
         "REASON": "Adjustment Reason",
         "REASON_PLACEHOLDER": "Explain in detail the reason for this manual adjustment...",
         "REASON_HELPER": "This description will appear in the wallet statement for the other party.",
+        "REQUIRED": "Required",
         "PREVIEW": "Operation Preview",
         "FOR": "For {{entity}}",
         "SUBMIT": "Execute Adjustment"
@@ -1247,8 +1322,45 @@
         "TITLE": "Administrative Adjustments Log",
         "SUBTITLE": "List of all manual financial operations performed through the admin panel"
       },
+      "KPI": {
+        "TOTAL_CREDITS": "Total Credits",
+        "TOTAL_DEBITS": "Total Debits",
+        "NET_IMPACT": "Net Adjustment Impact",
+        "PENDING": "Pending Requests"
+      },
+      "FILTERS": {
+        "ALL_DIRECTIONS": "Show all",
+        "CREDITS_ONLY": "Credits only",
+        "DEBITS_ONLY": "Debits only",
+        "ALL_CATEGORIES": "All categories",
+        "SEARCH_PLACEHOLDER": "Search by reference, name, or reason..."
+      },
+      "DETAIL": {
+        "TITLE": "Adjustment Details",
+        "AUDIT_TITLE": "Audit Trail",
+        "CREATED_BY": "Created by",
+        "REASON": "Administrative reason",
+        "APPROVAL_STATUS": "Approval status",
+        "APPROVE": "Approve transaction",
+        "REJECT": "Reject and cancel",
+        "OPERATION_TYPE": "Operation type",
+        "REFERENCE": "Reference",
+        "DATE": "Date",
+        "DOWNLOAD_PDF": "Download PDF"
+      },
+      "STATES": {
+        "EMPTY_TITLE": "No matching records",
+        "EMPTY_DESC": "No adjustments matched the current filters and search criteria."
+      },
       "TABLE": {
+        "TITLE": "Adjustments log",
+        "DESC": "All manual financial operations and their approval status",
         "REF": "Ref",
+        "ENTITY": "Entity",
+        "CATEGORY": "Category",
+        "DATE": "Date",
+        "AMOUNT": "Amount",
+        "STATUS": "Status",
         "REASON": "Reason",
         "BY": "By"
       },
@@ -1352,7 +1464,8 @@
     "LOADING": "Loading your profile...",
     "BADGE": "Admin account",
     "ACTIONS": {
-      "SAVE": "Save changes"
+      "SAVE": "Save changes",
+      "SAVING": "Saving..."
     },
     "STATUS": {
       "ACTIVE": "Account active",
@@ -1422,6 +1535,16 @@
       "NOTIFICATION_SOUND_SAVED_LOCAL": "Notification sound saved locally on this browser.",
       "NOTIFICATION_SOUND_SAVED": "Notification sound saved.",
       "NOTIFICATION_SOUND_SAVE_FAILED": "Unable to save notification sound right now."
+    },
+    "ERROR_CODES": {
+      "IDENTITY_UPDATE_FAILED": "Could not update the account profile.",
+      "IDENTITY_OPERATION_FAILED": "Identity operation failed.",
+      "USER_NOT_AUTHENTICATED": "You must be signed in first.",
+      "USER_NOT_FOUND": "User not found.",
+      "PASSWORD_MISMATCH": "New password and confirmation do not match.",
+      "INVALID_PASSWORD": "Current password is incorrect.",
+      "PASSWORD_TOO_WEAK": "Password is too weak. Use at least 8 characters.",
+      "MUST_CHANGE_TEMPORARY_PASSWORD": "You must change your temporary password first."
     }
   },
   "NOT_FOUND": {

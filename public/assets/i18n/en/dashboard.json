@@ -623,6 +623,7 @@
       "APPLY": "Apply",
       "RESET": "Reset",
       "REFRESH": "Refresh now",
+      "REFRESHING": "Refreshing...",
       "EXPORT_CSV": "Export CSV",
       "EXPORTING": "Exporting..."
     },
@@ -647,6 +648,10 @@
       "LOADING": "Loading system logs...",
       "EMPTY": "No system logs matched the current filters.",
       "ERROR": "Unable to load system logs right now."
+    },
+    "MESSAGES": {
+      "EXPORT_SUCCESS": "System logs exported successfully.",
+      "EXPORT_FAILED": "Could not export system logs."
     },
     "FIELDS": {
       "ACTOR": "Actor",

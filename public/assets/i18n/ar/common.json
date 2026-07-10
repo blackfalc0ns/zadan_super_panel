@@ -99,7 +99,50 @@
     "REJECTED": "مرفوض",
     "RETRY": "إعادة المحاولة",
     "DOWNLOAD": "تحميل",
-    "UPLOAD": "رفع"
+    "UPLOAD": "رفع",
+    "API_ERRORS": {
+      "UNKNOWN": "حدث خطأ غير متوقع. جرّب مرة ثانية.",
+      "NETWORK": "تعذر الاتصال بالخادم. تحقق من الشبكة ثم أعد المحاولة.",
+      "UNAUTHORIZED": "انتهت الجلسة أو لا تملك صلاحية لهذا الإجراء.",
+      "CONFLICT": "تعارض في البيانات. حدّث الصفحة ثم أعد المحاولة."
+    },
+    "API_ERROR_CODES": {
+      "USER_ALREADY_EXISTS": "البريد الإلكتروني أو رقم الهاتف مستخدم بالفعل.",
+      "USER_NOT_FOUND": "المستخدم غير موجود.",
+      "USER_NOT_AUTHENTICATED": "يجب تسجيل الدخول أولاً.",
+      "ROLE_INACTIVE": "الدور المحدد غير نشط.",
+      "ROLE_SCOPE_MISMATCH": "الدور المحدد لا يطابق نطاق اللوحة المطلوب.",
+      "ROLE_IN_USE": "لا يمكن حذف دور مُسند لمستخدمين.",
+      "ROLE_CODE_EXISTS": "يوجد دور بهذا الاسم بالفعل.",
+      "ROLE_NAME_REQUIRED": "اسم الدور مطلوب.",
+      "ROLE_NAME_TOO_LONG": "اسم الدور طويل جداً.",
+      "ROLE_DESCRIPTION_TOO_LONG": "وصف الدور طويل جداً.",
+      "ROLE_CODE_INVALID": "اسم الدور غير صالح.",
+      "ROLE_ASSIGNMENT_SCOPE_LOCKED": "لا يمكن تغيير نطاق الدور لأنه مُسند لمستخدمين.",
+      "ROLE_REQUIRED": "المستخدم لا يملك دوراً نشطاً.",
+      "INVALID_SCOPE_ENTITY": "كيان النطاق المحدد غير موجود.",
+      "INVALID_PERMISSION": "بعض الصلاحيات المحددة غير معروفة.",
+      "IDENTITY_CREATE_FAILED": "رفض مزود الهوية إنشاء الحساب.",
+      "IDENTITY_UPDATE_FAILED": "تعذر تحديث ملف الحساب.",
+      "IDENTITY_ROLE_UPDATE_FAILED": "تعذر تعيين الدور للحساب.",
+      "IDENTITY_PASSWORD_RESET_FAILED": "تعذر تعيين كلمة المرور المؤقتة.",
+      "IDENTITY_OPERATION_FAILED": "فشلت عملية الهوية.",
+      "PASSWORD_REQUIRED": "كلمة المرور المؤقتة مطلوبة.",
+      "LAST_SUPER_ADMIN_PROTECTED": "لا يمكن تعطيل أو تخفيض آخر مشرف أعلى نشط.",
+      "SELF_ACCESS_CHANGE_BLOCKED": "لا يمكنك إزالة صلاحياتك الإدارية بنفسك.",
+      "CANNOT_UPDATE_SYSTEM_ROLE": "لا يمكن تعديل الأدوار النظامية.",
+      "CANNOT_DELETE_SYSTEM_ROLE": "لا يمكن حذف الأدوار النظامية.",
+      "SENSITIVE_ROLE_CHANGE_REQUIRES_MANAGE_SETTINGS": "تغيير هذا الدور يتطلب صلاحية إدارة الإعدادات.",
+      "ADMIN_PANEL_CREATE_ONLY": "يمكن إنشاء حسابات لوحة السوبر أدمن فقط من هذه الشاشة.",
+      "EMAIL_CENTER_NO_RECIPIENTS": "لم يتم العثور على مستلمين لهذه القاعدة.",
+      "EMAIL_CENTER_SUBJECT_REQUIRED": "عنوان البريد مطلوب للإرسال التجريبي.",
+      "EMAIL_CENTER_SCOPE_REQUIRED": "معرّف النطاق مطلوب لهذه القاعدة.",
+      "EMAIL_CENTER_INVALID_AUDIENCE": "الشريحة المحددة غير مدعومة.",
+      "EMAIL_CENTER_INVALID_SENDER_PROFILE": "ملف الإرسال المحدد غير موجود.",
+      "EMAIL_CENTER_RULE_ID_MISMATCH": "معرّف القاعدة لا يطابق الطلب.",
+      "REQUEST_ALREADY_REVIEWED": "تمت مراجعة هذا الطلب مسبقاً.",
+      "REJECTION_REASON_REQUIRED": "سبب الرفض مطلوب."
+    }
   },
   "VALIDATION": {
     "REQUIRED": "هذا الحقل مطلوب"
@@ -717,8 +760,24 @@
       "TODAY": "اليوم",
       "WEEK": "هذا الأسبوع",
       "MONTH": "هذا الشهر",
-      "QUARTER": "الربع الحالي"
+      "QUARTER": "الربع الحالي",
+      "THIS_WEEK": "هذا الأسبوع",
+      "THIS_MONTH": "هذا الشهر",
+      "THIS_QUARTER": "الربع الحالي"
     },
+    "FILTERS": {
+      "TITLE": "فلترة السجلات",
+      "SUBTITLE": "ضبط معايير العرض",
+      "SEARCH_PLACEHOLDER": "ابحث بالمرجع أو الكيان أو الوصف...",
+      "CLEAR": "مسح الفلاتر",
+      "ACTIVE": "فلاتر نشطة",
+      "PERIOD": "الفترة",
+      "ALL_PERIODS": "كل الفترات",
+      "ALL_ENTITIES": "كل الكيانات",
+      "ALL_TYPES": "كل الأنواع",
+      "ALL": "الكل"
+    },
+    "EXPORT": "تصدير",
     "CHART": {
       "GMV_VS_REVENUE": "إجمالي القيمة مقابل صافي الإيرادات",
       "LAST_7_MONTHS": "مقارنة الأداء خلال آخر 7 أشهر",
@@ -759,6 +818,9 @@
     "COMMON": {
       "VIEW": "عرض",
       "HIDE": "إخفاء",
+      "CANCEL": "إلغاء",
+      "TYPE": "النوع",
+      "DIRECTION": "الاتجاه",
       "TIMESTAMP": "وقت العملية",
       "ENTITY": "الكيان",
       "BEFORE": "قبل التعديل",
@@ -1026,6 +1088,8 @@
       "FILTERS": {
         "SEARCH": "بحث في السجل",
         "SEARCH_PLACEHOLDER": "ابحث بالمشرف أو الكيان أو الطلب أو الإجراء...",
+        "FILTER_TITLE": "فلترة السجل",
+        "FILTER_SUBTITLE": "ضبط معايير العرض",
         "CATEGORY": "التصنيف",
         "ENTITY": "الكيان",
         "ALL_CATEGORIES": "كل التصنيفات",
@@ -1083,6 +1147,16 @@
         "CHANGES": "التفاصيل",
         "DETAILS": "التفاصيل",
         "ENTITY_ID": "معرّف الكيان"
+      },
+      "DETAIL": {
+        "TITLE": "تفاصيل العملية",
+        "ORDER_ID": "رقم الطلب",
+        "ADMIN": "المشرف",
+        "ROLE": "الدور",
+        "ACTION": "الإجراء"
+      },
+      "PAGINATION": {
+        "SUMMARY": "الصفحة {{current}} من {{total}}"
       }
     },
     "WALLETS": {
@@ -1239,6 +1313,7 @@
         "REASON": "سبب التسوية",
         "REASON_PLACEHOLDER": "اشرح بالتفصيل سبب إجراء هذه التسوية المدوية...",
         "REASON_HELPER": "بيظهر هذا الوصف في كشف حساب المحفظة للطرف الآخر.",
+        "REQUIRED": "مطلوب",
         "PREVIEW": "معاينة العملية",
         "FOR": "لـ {{entity}}",
         "SUBMIT": "تنفيذ التسوية"
@@ -1247,8 +1322,45 @@
         "TITLE": "سجل التسويات الإدارية",
         "SUBTITLE": "قائمة بكل العمليات المالية اليدوية اللي نفذناها من لوحة المشرف"
       },
+      "KPI": {
+        "TOTAL_CREDITS": "إجمالي الإضافات",
+        "TOTAL_DEBITS": "إجمالي الخصومات",
+        "NET_IMPACT": "صافي أثر التسويات",
+        "PENDING": "طلبات معلقة"
+      },
+      "FILTERS": {
+        "ALL_DIRECTIONS": "عرض الكل",
+        "CREDITS_ONLY": "الإضافات فقط",
+        "DEBITS_ONLY": "الخصومات فقط",
+        "ALL_CATEGORIES": "كل التصنيفات",
+        "SEARCH_PLACEHOLDER": "ابحث بالمرجع أو الاسم أو السبب..."
+      },
+      "DETAIL": {
+        "TITLE": "تفاصيل التسوية",
+        "AUDIT_TITLE": "السجل التدقيقي",
+        "CREATED_BY": "المشرف المنشئ",
+        "REASON": "السبب الإداري",
+        "APPROVAL_STATUS": "حالة الاعتماد",
+        "APPROVE": "اعتماد المعاملة",
+        "REJECT": "رفض وإلغاء",
+        "OPERATION_TYPE": "نوع العملية",
+        "REFERENCE": "رقم المرجع",
+        "DATE": "التاريخ",
+        "DOWNLOAD_PDF": "تحميل نسخة PDF"
+      },
+      "STATES": {
+        "EMPTY_TITLE": "ما فيه سجلات مطابقة",
+        "EMPTY_DESC": "ما لقينا أي تسويات تطابق معايير الفلترة والبحث الحالية."
+      },
       "TABLE": {
+        "TITLE": "سجل التسويات",
+        "DESC": "كل العمليات المالية اليدوية وحالة اعتمادها",
         "REF": "المرجع",
+        "ENTITY": "الكيان",
+        "CATEGORY": "التصنيف",
+        "DATE": "التاريخ",
+        "AMOUNT": "المبلغ",
+        "STATUS": "الحالة",
         "REASON": "السبب",
         "BY": "عن طريق"
       },
@@ -1352,7 +1464,8 @@
     "LOADING": "نحمّل بيانات الحساب...",
     "BADGE": "حساب أدمن",
     "ACTIONS": {
-      "SAVE": "حفظ التعديلات"
+      "SAVE": "حفظ التعديلات",
+      "SAVING": "جاري الحفظ..."
     },
     "STATUS": {
       "ACTIVE": "الحساب نشط",
@@ -1422,6 +1535,16 @@
       "NOTIFICATION_SOUND_SAVED_LOCAL": "حفظنا نغمة الإشعار محليًا على هذا المتصفح.",
       "NOTIFICATION_SOUND_SAVED": "حفظنا نغمة الإشعار.",
       "NOTIFICATION_SOUND_SAVE_FAILED": "ما قدرنا حفظ نغمة الإشعار الحين."
+    },
+    "ERROR_CODES": {
+      "IDENTITY_UPDATE_FAILED": "تعذر تحديث ملف الحساب.",
+      "IDENTITY_OPERATION_FAILED": "فشلت عملية الهوية.",
+      "USER_NOT_AUTHENTICATED": "يجب تسجيل الدخول أولاً.",
+      "USER_NOT_FOUND": "المستخدم غير موجود.",
+      "PASSWORD_MISMATCH": "كلمة المرور الجديدة والتأكيد غير متطابقين.",
+      "INVALID_PASSWORD": "كلمة المرور الحالية غير صحيحة.",
+      "PASSWORD_TOO_WEAK": "كلمة المرور ضعيفة. استخدم 8 أحرف على الأقل.",
+      "MUST_CHANGE_TEMPORARY_PASSWORD": "لازم تغيّر كلمة المرور المؤقتة أولاً."
     }
   },
   "NOT_FOUND": {

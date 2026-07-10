@@ -1870,7 +1870,11 @@
     "MESSAGES": {
       "LOAD_FAILED": "تعذر تحميل دليل المستخدمين.",
       "LOAD_ROLES_FAILED": "تعذر تحميل الأدوار.",
-      "CREATE_USER_SUCCESS": "أنشأنا حساب المستخدم الإداري بنجاح."
+      "CREATE_USER_SUCCESS": "أنشأنا حساب المستخدم الإداري بنجاح.",
+      "SAVE_SUCCESS": "حفظنا تعديلات الوصول بنجاح.",
+      "SAVE_FAILED": "تعذر حفظ تعديلات الوصول.",
+      "RESET_PASSWORD_SUCCESS": "أنشأنا كلمة مرور مؤقتة جديدة.",
+      "RESET_PASSWORD_FAILED": "تعذر إعادة تعيين كلمة المرور المؤقتة."
     },
     "CREATE": {
       "MODAL_BADGE": "حساب إداري جديد",
@@ -2019,6 +2023,9 @@
         "ROLE_ASSIGNMENT_SCOPE_LOCKED": "لا يمكن تغيير نطاق هذا الدور لأنه مُسند لمستخدمين.",
         "ROLE_SCOPE_MISMATCH": "الدور المحدد لا يطابق نطاق لوحة السوبر أدمن.",
         "ROLE_INACTIVE": "الدور المحدد غير نشط.",
+        "INVALID_PERMISSION": "بعض الصلاحيات المحددة غير معروفة.",
+        "CANNOT_UPDATE_SYSTEM_ROLE": "لا يمكن تعديل الأدوار النظامية.",
+        "CANNOT_DELETE_SYSTEM_ROLE": "لا يمكن حذف الأدوار النظامية.",
         "SENSITIVE_ROLE_CHANGE_REQUIRES_MANAGE_SETTINGS": "تغيير صلاحيات هذا الدور يتطلب صلاحية إدارة الإعدادات."
       }
     },

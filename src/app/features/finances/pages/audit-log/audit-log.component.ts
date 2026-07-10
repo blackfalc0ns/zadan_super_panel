@@ -12,6 +12,7 @@ import { AppCardComponent } from '../../../../shared/components/ui/card/card.com
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
+import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 
 type AuditCategoryFilter = AuditLogEntry['actionCategory'] | 'all';
 type AuditEntityFilter = EntityType | 'all';
@@ -34,7 +35,8 @@ interface AuditFilterOption<T extends string> {
     AppCardComponent,
     AppButtonComponent,
     InlineBannerComponent,
-    AdvancedFilterPanelComponent
+    AdvancedFilterPanelComponent,
+    AppPaginationComponent
   ],
   templateUrl: './audit-log.component.html'
 })
@@ -64,7 +66,7 @@ export class AuditLogComponent implements OnInit {
 
   entries: AuditLogEntry[] = [];
   filteredEntries: AuditLogEntry[] = [];
-  expandedId: string | null = null;
+  selectedEntry: AuditLogEntry | null = null;
   searchTerm = '';
   categoryFilter: AuditCategoryFilter = 'all';
   entityFilter: AuditEntityFilter = 'all';
@@ -73,6 +75,8 @@ export class AuditLogComponent implements OnInit {
   isFiltersExpanded = false;
   kpiCards: KPICard[] = [];
   panelFilters: Record<string, string> = { category: 'all', entity: 'all' };
+  currentPage = 1;
+  readonly pageSize = 15;
 
   filterFields: FilterField[] = [
     {
@@ -98,6 +102,15 @@ export class AuditLogComponent implements OnInit {
 
   get isRTL(): boolean {
     return this.translate.currentLang === 'ar';
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredEntries.length / this.pageSize));
+  }
+
+  get pagedEntries(): AuditLogEntry[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredEntries.slice(startIndex, startIndex + this.pageSize);
   }
 
   get hasActiveFilters(): boolean {
@@ -155,7 +168,30 @@ export class AuditLogComponent implements OnInit {
   }
 
   onSearchChange(): void {
+    this.currentPage = 1;
     this.applyFilters();
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
+    this.cdr.markForCheck();
+  }
+
+  openDetail(entry: AuditLogEntry): void {
+    this.selectedEntry = entry;
+  }
+
+  closeDetail(): void {
+    this.selectedEntry = null;
+  }
+
+  resolveLabel(keyOrText: string): string {
+    const translated = this.translate.instant(keyOrText);
+    return translated && translated !== keyOrText ? translated : keyOrText;
   }
 
   toggleFilters(): void {
@@ -169,6 +205,7 @@ export class AuditLogComponent implements OnInit {
     };
     this.categoryFilter = this.panelFilters['category'] as AuditCategoryFilter;
     this.entityFilter = this.panelFilters['entity'] as AuditEntityFilter;
+    this.currentPage = 1;
     this.applyFilters();
   }
 
@@ -177,15 +214,12 @@ export class AuditLogComponent implements OnInit {
     this.categoryFilter = 'all';
     this.entityFilter = 'all';
     this.panelFilters = { category: 'all', entity: 'all' };
+    this.currentPage = 1;
     this.applyFilters();
   }
 
-  toggleExpand(id: string): void {
-    this.expandedId = this.expandedId === id ? null : id;
-  }
-
   getInitials(name: string): string {
-    const translated = String(this.translate.instant(name) ?? name);
+    const translated = this.resolveLabel(name);
     return translated
       .split(/\s+/)
       .filter(Boolean)
@@ -303,9 +337,9 @@ export class AuditLogComponent implements OnInit {
       }
 
       const haystack = [
-        this.translate.instant(entry.action),
-        this.translate.instant(entry.adminName),
-        this.translate.instant(entry.adminRole),
+        this.resolveLabel(entry.action),
+        this.resolveLabel(entry.adminName),
+        this.resolveLabel(entry.adminRole),
         entry.entityName,
         entry.entityId,
         entry.orderId,
@@ -318,8 +352,8 @@ export class AuditLogComponent implements OnInit {
       return this.normalize(haystack).includes(normalizedSearch);
     });
 
-    if (this.expandedId && !this.filteredEntries.some((entry) => entry.id === this.expandedId)) {
-      this.expandedId = null;
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
     }
 
     this.cdr.markForCheck();

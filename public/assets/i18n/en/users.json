@@ -1870,7 +1870,11 @@
     "MESSAGES": {
       "LOAD_FAILED": "Could not load the admin user directory.",
       "LOAD_ROLES_FAILED": "Could not load roles.",
-      "CREATE_USER_SUCCESS": "Admin user account created successfully."
+      "CREATE_USER_SUCCESS": "Admin user account created successfully.",
+      "SAVE_SUCCESS": "Access changes saved successfully.",
+      "SAVE_FAILED": "Could not save access changes.",
+      "RESET_PASSWORD_SUCCESS": "A new temporary password was generated.",
+      "RESET_PASSWORD_FAILED": "Could not reset the temporary password."
     },
     "CREATE": {
       "MODAL_BADGE": "New admin account",
@@ -2019,6 +2023,9 @@
         "ROLE_ASSIGNMENT_SCOPE_LOCKED": "This role scope cannot be changed while users are assigned.",
         "ROLE_SCOPE_MISMATCH": "The selected role does not match the super admin panel scope.",
         "ROLE_INACTIVE": "The selected role is inactive.",
+        "INVALID_PERMISSION": "Some selected permissions are unknown.",
+        "CANNOT_UPDATE_SYSTEM_ROLE": "System roles cannot be modified.",
+        "CANNOT_DELETE_SYSTEM_ROLE": "System roles cannot be deleted.",
         "SENSITIVE_ROLE_CHANGE_REQUIRES_MANAGE_SETTINGS": "Changing this role requires manage settings permission."
       }
     },

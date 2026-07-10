@@ -7,6 +7,8 @@ import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-transla
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
+import { ToastService } from '@shared/services/toast.service';
+import { describeApiError } from '@shared/utils/api-error.util';
 import { AdminAccessApiService, AccessAuditLogDto, PermissionDefinitionDto, RoleDefinitionDto } from '../../../../core/services/admin-access-api.service';
 import {
  ADMIN_ROLE_PRESETS,
@@ -54,6 +56,7 @@ export class AdminUserDetailComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
  private readonly destroyRef = inject(DestroyRef);
  private readonly translate = inject(TranslateService);
+ private readonly toastService = inject(ToastService);
  user: AdminUserRecord | null = null;
  isLoading = false;
  isSaving = false;
@@ -413,12 +416,23 @@ export class AdminUserDetailComponent implements OnInit {
  this.isSaving = false;
  this.refreshSupportingData();
  this.loadAudit(updatedUser.id);
+ this.toastService.success(
+ this.translate.instant('ADMIN_USERS.MESSAGES.SAVE_SUCCESS'),
+ this.translate.instant('ADMIN_USERS.DETAIL.TITLE')
+ );
  },
  error: (err) => {
  this.cdr.markForCheck();
  console.error('Failed to save access user', err);
- this.saveError = err.error?.message || err.error?.title || 'Failed to save access changes.';
+ this.saveError = describeApiError(err, this.translate, {
+ fallbackKey: 'ADMIN_USERS.MESSAGES.SAVE_FAILED',
+ codePrefix: 'ADMIN_USERS.CREATE.ERROR_CODES'
+ });
  this.isSaving = false;
+ this.toastService.error(
+ this.saveError,
+ this.translate.instant('ADMIN_USERS.DETAIL.TITLE')
+ );
  }
  });
  }
@@ -470,12 +484,23 @@ export class AdminUserDetailComponent implements OnInit {
  this.isResettingPassword = false;
  this.refreshSupportingData();
  this.loadAudit(updatedUser.id);
+ this.toastService.success(
+ this.translate.instant('ADMIN_USERS.MESSAGES.RESET_PASSWORD_SUCCESS'),
+ this.translate.instant('ADMIN_USERS.DETAIL.TITLE')
+ );
  },
  error: (err) => {
  this.cdr.markForCheck();
  console.error('Failed to reset temporary password', err);
- this.resetPasswordError = err.error?.message || err.error?.title || 'Failed to reset temporary password.';
+ this.resetPasswordError = describeApiError(err, this.translate, {
+ fallbackKey: 'ADMIN_USERS.MESSAGES.RESET_PASSWORD_FAILED',
+ codePrefix: 'ADMIN_USERS.CREATE.ERROR_CODES'
+ });
  this.isResettingPassword = false;
+ this.toastService.error(
+ this.resetPasswordError,
+ this.translate.instant('ADMIN_USERS.DETAIL.TITLE')
+ );
  }
  });
  }
