@@ -93,6 +93,7 @@ const BOOTSTRAP_REQUEST_TIMEOUT_MS = 10_000;
 })
 export class AuthService {
     private readonly apiUrl = `${environment.apiUrl}/admin/auth`;
+    private readonly skipAuthHeaders = new HttpHeaders({ 'X-Skip-Auth': 'true' });
 
     /**
      * Access token lives in memory only. We never persist it to localStorage —
@@ -331,6 +332,30 @@ export class AuthService {
         );
     }
 
+    public forgotPassword(identifier: string): Observable<string> {
+        return this.http.post<{ message?: string }>(
+            `${this.apiUrl}/forgot-password`,
+            { identifier },
+            { headers: this.skipAuthHeaders, withCredentials: true }
+        ).pipe(map((response) => response.message || 'Password reset OTP sent.'));
+    }
+
+    public verifyPasswordResetOtp(identifier: string, otpCode: string): Observable<{ resetToken: string; expiresInSeconds: number; message?: string }> {
+        return this.http.post<{ resetToken: string; expiresInSeconds: number; message?: string }>(
+            `${this.apiUrl}/verify-reset-otp`,
+            { identifier, otpCode },
+            { headers: this.skipAuthHeaders, withCredentials: true }
+        );
+    }
+
+    public resetPassword(identifier: string, resetToken: string, newPassword: string): Observable<string> {
+        return this.http.post<{ message?: string }>(
+            `${this.apiUrl}/reset-password`,
+            { identifier, resetToken, newPassword },
+            { headers: this.skipAuthHeaders, withCredentials: true }
+        ).pipe(map((response) => response.message || 'Password reset successful.'));
+    }
+
     public changePassword(payload: ChangeCurrentPasswordRequest): Observable<void> {
         if (this.shouldUseDevelopmentBypass()) {
             const currentUser = this.currentUserValue;
@@ -521,7 +546,9 @@ export class AuthService {
             }
 
             const currentUrl = this.router.url || '/';
-            if (currentUrl.startsWith('/login')) {
+            if (currentUrl.startsWith('/login')
+                || currentUrl.startsWith('/forgot-password')
+                || currentUrl.startsWith('/reset-password')) {
                 return;
             }
 

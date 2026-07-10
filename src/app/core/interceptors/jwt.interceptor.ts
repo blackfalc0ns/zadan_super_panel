@@ -15,6 +15,12 @@ const ADMIN_AUTH_LOGIN_PATH = '/admin/auth/login';
 const ADMIN_AUTH_LOGOUT_PATH = '/admin/auth/logout';
 const ADMIN_AUTH_REFRESH_PATH = '/admin/auth/refresh-token';
 const ADMIN_AUTH_CSRF_PATH = '/admin/auth/csrf';
+const ADMIN_AUTH_PASSWORD_RESET_PATHS = [
+    '/admin/auth/forgot-password',
+    '/admin/auth/verify-reset-otp',
+    '/admin/auth/resend-reset-otp',
+    '/admin/auth/reset-password'
+] as const;
 
 function getApiOrigin(): string | null {
     try {
@@ -119,7 +125,8 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
                 const isAdminAuthRequest = isAdminAuthLogin
                     || req.url.includes(ADMIN_AUTH_LOGOUT_PATH)
                     || isAdminAuthRefresh
-                    || isAdminAuthCsrf;
+                    || isAdminAuthCsrf
+                    || ADMIN_AUTH_PASSWORD_RESET_PATHS.some((path) => req.url.includes(path));
 
                 if (!isAdminAuthRequest) {
                     return tryRefreshAndRetry(req, next, authService);
