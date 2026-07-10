@@ -81,73 +81,15 @@ type NumericZoneField =
  <app-page-header
  [title]="'FINANCES.PRICING.TITLE' | translate"
  [subtitle]="'FINANCES.PRICING.SUBTITLE' | translate">
- <div actions class="flex flex-wrap items-center gap-3">
- <div class="inline-flex rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
- <button type="button" (click)="changeScope('zone')" [ngClass]="scopeButtonClass('zone')" class="rounded-xl px-3 py-2 text-xs font-black">Zones</button>
- <button type="button" (click)="changeScope('city')" [ngClass]="scopeButtonClass('city')" class="rounded-xl px-3 py-2 text-xs font-black">Cities</button>
- <button type="button" (click)="changeScope('region')" [ngClass]="scopeButtonClass('region')" class="rounded-xl px-3 py-2 text-xs font-black">Regions</button>
- <button type="button" (click)="changeScope('global')" [ngClass]="scopeButtonClass('global')" class="rounded-xl px-3 py-2 text-xs font-black">Global</button>
- </div>
-
- <div class="relative w-52" *ngIf="selectedScope!== 'global' && regionOptions.length">
- <select
- [(ngModel)]="selectedRegionFilter"
- (ngModelChange)="applyFilters()"
- class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
- <option value="all">All regions</option>
- <option *ngFor="let region of regionOptions" [value]="region.id">{{ region.label }}</option>
- </select>
- <span class="material-symbols-outlined pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
- expand_more
- </span>
- </div>
-
- <div class="relative w-64">
- <select
- *ngIf="zones.length"
- [(ngModel)]="selectedZoneId"
- (ngModelChange)="onZoneChange()"
- class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
- <option *ngFor="let zone of zones" [value]="itemId(zone)">
- {{ itemDisplayLabel(zone) }}
- </option>
- </select>
- <span class="material-symbols-outlined pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
- expand_more
- </span>
- </div>
-
- <div *ngIf="isLoading" class="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2">
- <span class="admin-skeleton admin-skeleton-line sm w-36"></span>
- </div>
-
+ <div actions class="flex items-center gap-3">
  <app-button
  variant="outline"
  size="sm"
- customClass="!rounded-xl!bg-white hover:!bg-slate-50"
+ customClass="!rounded-xl !bg-white hover:!bg-slate-50"
  [disabled]="isLoading || isSaving"
  (btnClick)="loadData()">
+ <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">refresh</span>
  {{ 'FINANCES.PRICING.UPDATE' | translate }}
- </app-button>
-
- <app-button
- variant="outline"
- size="sm"
- customClass="!rounded-xl!bg-white hover:!bg-slate-50"
- [disabled]="!isDirty || isSaving"
- (btnClick)="resetChanges()">
- {{ 'FINANCES.PRICING.DISCARD' | translate }}
- </app-button>
-
- <app-button
- variant="primary"
- size="sm"
- customClass="!rounded-xl shadow-sm"
- [disabled]="!canSave"
- [isLoading]="isSaving"
- (btnClick)="confirmSave()">
- <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">save</span>
- {{ 'FINANCES.PRICING.SAVE_SETTINGS' | translate }}
  </app-button>
  </div>
  </app-page-header>
@@ -156,128 +98,105 @@ type NumericZoneField =
  {{ errorMessage }}
  </div>
 
- <div *ngIf="zones.length" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
- <div class="mb-4 flex items-center justify-between gap-3">
- <div>
- <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.PRICING.AVAILABLE_ZONES' | translate }}</h3>
- <p class="mt-1 text-[12px] font-medium text-slate-500">
- {{ 'FINANCES.PRICING.SELECT_ZONE_DESC' | translate }}
- </p>
- </div>
- <div class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-black text-slate-600">
- {{ 'FINANCES.PRICING.ZONES_COUNT' | translate:{ count: zones.length } }}
- </div>
+ <div *ngIf="!isLoading && zones.length" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+ <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+ <div class="inline-flex w-full max-w-full flex-wrap rounded-2xl border border-slate-200 bg-slate-50 p-1 sm:w-auto">
+ <button type="button" (click)="changeScope('zone')" [ngClass]="scopeButtonClass('zone')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ {{ 'FINANCES.PRICING.SCOPE.ZONE' | translate }}
+ </button>
+ <button type="button" (click)="changeScope('city')" [ngClass]="scopeButtonClass('city')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ {{ 'FINANCES.PRICING.SCOPE.CITY' | translate }}
+ </button>
+ <button type="button" (click)="changeScope('region')" [ngClass]="scopeButtonClass('region')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ {{ 'FINANCES.PRICING.SCOPE.REGION' | translate }}
+ </button>
+ <button type="button" (click)="changeScope('global')" [ngClass]="scopeButtonClass('global')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ {{ 'FINANCES.PRICING.SCOPE.GLOBAL' | translate }}
+ </button>
  </div>
 
- <div class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-end">
- <div class="space-y-2">
- <label class="block text-[11px] font-bold text-slate-400">{{ 'FINANCES.PRICING.ZONE_LIST_LABEL' | translate }}</label>
- <div class="relative">
+ <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-end xl:w-auto">
+ <div class="relative min-w-[12rem] flex-1" *ngIf="selectedScope !== 'global' && regionOptions.length">
+ <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.PRICING.SCOPE.REGION' | translate }}</label>
+ <select
+ [(ngModel)]="selectedRegionFilter"
+ (ngModelChange)="applyFilters()"
+ class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
+ <option value="all">{{ 'FINANCES.PRICING.ALL_REGIONS' | translate }}</option>
+ <option *ngFor="let region of regionOptions" [value]="region.id">{{ region.label }}</option>
+ </select>
+ <span class="material-symbols-outlined pointer-events-none absolute end-3 bottom-2.5 text-[20px] text-slate-400">expand_more</span>
+ </div>
+
+ <div class="relative min-w-[16rem] flex-1">
+ <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.PRICING.ZONE_LIST_LABEL' | translate }}</label>
  <select
  [(ngModel)]="selectedZoneId"
  (ngModelChange)="onZoneChange()"
- class="w-full appearance-none rounded-2xl border border-slate-200 bg-white px-4 py-3 pe-11 text-[14px] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
- <option *ngFor="let zone of zones" [value]="itemId(zone)">
- {{ itemDisplayLabel(zone) }}
- </option>
+ class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
+ <option *ngFor="let zone of zones" [value]="itemId(zone)">{{ itemDisplayLabel(zone) }}</option>
  </select>
- <span class="material-symbols-outlined pointer-events-none absolute end-4 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
- expand_more
+ <span class="material-symbols-outlined pointer-events-none absolute end-3 bottom-2.5 text-[20px] text-slate-400">expand_more</span>
+ </div>
+
+ <span class="inline-flex h-10 items-center rounded-full bg-slate-100 px-3 text-[11px] font-black text-slate-600 whitespace-nowrap">
+ {{ 'FINANCES.PRICING.ZONES_COUNT' | translate:{ count: zones.length } }}
  </span>
  </div>
  </div>
 
- <div *ngIf="selectedZone" class="flex flex-wrap items-center gap-2 lg:justify-end">
- <span
- class="rounded-full px-3 py-1.5 text-[11px] font-black"
- [ngClass]="selectedZone.isPricingActive
- ? 'bg-emerald-100 text-emerald-700'
- : 'bg-slate-100 text-slate-500'">
+ <div *ngIf="selectedZone" class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+ <span class="rounded-full px-3 py-1.5 text-[11px] font-black" [ngClass]="selectedZone.isPricingActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
  {{ (selectedZone.isPricingActive ? 'FINANCES.PRICING.ACTIVE' : 'FINANCES.PRICING.INACTIVE') | translate }}
  </span>
  <span class="rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600">
  {{ 'FINANCES.PRICING.VAT_LABEL' | translate:{ percent: selectedZone.vatPercent } }}
  </span>
  <span class="rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600">
- <ng-container *ngIf="selectedZone.codFeeType === 'percent'">
- {{ 'FINANCES.PRICING.COD_LABEL_PERCENT' | translate:{ percent: selectedZone.codPercent } }}
- </ng-container>
- <ng-container *ngIf="selectedZone.codFeeType!== 'percent'">
- {{ 'FINANCES.PRICING.COD_LABEL_FLAT' | translate:{ amount: selectedZone.codFlatFee } }}
- </ng-container>
+ <ng-container *ngIf="selectedZone.codFeeType === 'percent'">{{ 'FINANCES.PRICING.COD_LABEL_PERCENT' | translate:{ percent: selectedZone.codPercent } }}</ng-container>
+ <ng-container *ngIf="selectedZone.codFeeType !== 'percent'">{{ 'FINANCES.PRICING.COD_LABEL_FLAT' | translate:{ amount: selectedZone.codFlatFee } }}</ng-container>
  </span>
  </div>
  </div>
+
+ <div *ngIf="isLoading" class="rounded-3xl border border-slate-200 bg-white p-10 shadow-sm">
+ <div class="flex items-center justify-center gap-3 text-sm font-bold text-slate-500">
+ <span class="admin-skeleton admin-skeleton-line sm w-40"></span>
+ </div>
  </div>
 
- <div *ngIf="!isLoading &&!zones.length" class="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+ <div *ngIf="!isLoading && !zones.length" class="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
  <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-300">
  <span class="material-symbols-outlined text-[30px]">location_off</span>
  </div>
  <h3 class="text-lg font-black text-slate-900">{{ 'FINANCES.PRICING.NO_ZONES_TITLE' | translate }}</h3>
- <p class="mt-2 text-sm font-medium text-slate-500">
- {{ emptyStateMessage || ('FINANCES.PRICING.NO_ZONES_DESC' | translate) }}
- </p>
- <div class="mt-5 flex justify-center gap-3" *ngIf="selectedScope!== 'global'">
- <app-button
- *ngIf="selectedScope!== 'city'"
- variant="outline"
- size="sm"
- customClass="!rounded-xl!bg-white hover:!bg-slate-50"
- (btnClick)="changeScope('city')">
- Cities
- </app-button>
- <app-button
- *ngIf="selectedScope!== 'region'"
- variant="outline"
- size="sm"
- customClass="!rounded-xl!bg-white hover:!bg-slate-50"
- (btnClick)="changeScope('region')">
- Regions
- </app-button>
- <app-button
- variant="primary"
- size="sm"
- customClass="!rounded-xl"
- (btnClick)="changeScope('global')">
- Global
- </app-button>
+ <p class="mt-2 text-sm font-medium text-slate-500">{{ emptyStateMessage || ('FINANCES.PRICING.NO_ZONES_DESC' | translate) }}</p>
+ <div class="mt-5 flex flex-wrap justify-center gap-3" *ngIf="selectedScope !== 'global'">
+ <app-button *ngIf="selectedScope !== 'city'" variant="outline" size="sm" customClass="!rounded-xl" (btnClick)="changeScope('city')">{{ 'FINANCES.PRICING.SCOPE.CITY' | translate }}</app-button>
+ <app-button *ngIf="selectedScope !== 'region'" variant="outline" size="sm" customClass="!rounded-xl" (btnClick)="changeScope('region')">{{ 'FINANCES.PRICING.SCOPE.REGION' | translate }}</app-button>
+ <app-button variant="primary" size="sm" customClass="!rounded-xl" (btnClick)="changeScope('global')">{{ 'FINANCES.PRICING.SCOPE.GLOBAL' | translate }}</app-button>
  </div>
  </div>
 
- <div *ngIf="selectedZone" class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:flex-row lg:items-center lg:justify-between">
- <div>
- <p class="text-[11px] font-bold text-slate-400">{{ 'FINANCES.PRICING.SELECTED_ZONE' | translate }}</p>
- <h3 class="mt-1 text-lg font-black text-slate-900">{{ itemDisplayLabel(selectedZone) }}</h3>
- <p class="mt-1 text-[12px] font-medium" [ngClass]="isDirty ? 'text-amber-600' : 'text-slate-500'">
+ <div *ngIf="selectedZone" class="sticky top-3 z-20 flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/95 p-5 shadow-md backdrop-blur-sm lg:flex-row lg:items-center lg:justify-between">
+ <div class="min-w-0">
+ <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.PRICING.SELECTED_ZONE' | translate }}</p>
+ <h3 class="mt-1 truncate text-lg font-black text-slate-900">{{ itemDisplayLabel(selectedZone) }}</h3>
+ <p class="mt-1 flex items-center gap-2 text-[12px] font-bold" [ngClass]="isDirty ? 'text-amber-600' : 'text-slate-500'">
+ <span *ngIf="isDirty" class="material-symbols-outlined text-[16px]">warning</span>
  {{ (isDirty ? 'FINANCES.PRICING.UNSAVED_CHANGES' : 'FINANCES.PRICING.ALL_SAVED') | translate }}
  </p>
  </div>
-
- <div class="flex flex-wrap items-center gap-3">
- <app-button
- variant="outline"
- size="sm"
- customClass="!rounded-xl!bg-white hover:!bg-slate-50"
- [disabled]="!isDirty || isSaving"
- (btnClick)="resetChanges()">
- {{ 'FINANCES.PRICING.DISCARD' | translate }}
- </app-button>
-
- <app-button
- variant="primary"
- size="sm"
- customClass="!rounded-xl shadow-sm"
- [disabled]="!canSave"
- [isLoading]="isSaving"
- (btnClick)="confirmSave()">
+ <div class="flex flex-wrap items-center gap-3 shrink-0">
+ <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" [disabled]="!isDirty || isSaving" (btnClick)="resetChanges()">{{ 'FINANCES.PRICING.DISCARD' | translate }}</app-button>
+ <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" [disabled]="!canSave" [isLoading]="isSaving" (btnClick)="confirmSave()">
  <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">save</span>
  {{ 'FINANCES.PRICING.SAVE_CHANGES' | translate }}
  </app-button>
  </div>
  </div>
 
- <div *ngIf="selectedZone" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+ <div *ngIf="selectedZone" class="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3">
  <app-card variant="default" rounded="2xl" padding="none" customClass="flex h-full flex-col overflow-visible border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
  <div class="flex items-center justify-between rounded-t-2xl border-b border-slate-100 bg-slate-50/60 px-5 py-4">
  <div class="flex items-center gap-3">
@@ -296,7 +215,7 @@ type NumericZoneField =
  [ngClass]="selectedZone.isPricingActive ? 'bg-zadna-primary' : 'bg-slate-200'">
  <span
  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
- [ngClass]="selectedZone.isPricingActive ? 'translate-x-5' : 'translate-x-0'"></span>
+ [ngClass]="selectedZone.isPricingActive ? 'ltr:translate-x-5 rtl:-translate-x-5' : 'translate-x-0'"></span>
  </button>
  </div>
 
@@ -313,8 +232,8 @@ type NumericZoneField =
  [ngModel]="selectedZone.baseDeliveryFee"
  (ngModelChange)="updateNumberField('baseDeliveryFee', $event)"
  min="0"
- class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
- <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
+ class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-14 text-end text-[14px] font-black tabular-nums text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
  </div>
  </div>
  <div class="space-y-1.5">
@@ -326,8 +245,8 @@ type NumericZoneField =
  (ngModelChange)="updateNumberField('includedKm', $event)"
  min="0"
  step="0.5"
- class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
- <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">KM</span>
+ class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-14 text-end text-[14px] font-black tabular-nums text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">KM</span>
  </div>
  </div>
  </div>
@@ -341,8 +260,8 @@ type NumericZoneField =
  (ngModelChange)="updateNumberField('extraKmFee', $event)"
  min="0"
  step="0.5"
- class="w-full rounded-xl border border-slate-200 bg-white pl-16 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
- <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}/KM</span>
+ class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-20 text-end text-[14px] font-black tabular-nums text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}/KM</span>
  </div>
  </div>
 
@@ -355,8 +274,8 @@ type NumericZoneField =
  [ngModel]="selectedZone.minDeliveryFee"
  (ngModelChange)="updateNumberField('minDeliveryFee', $event)"
  min="0"
- class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
- <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
+ class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-14 text-end text-[14px] font-black tabular-nums text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
  </div>
  </div>
  <div class="space-y-1.5">
@@ -367,8 +286,8 @@ type NumericZoneField =
  [ngModel]="selectedZone.maxDeliveryFee"
  (ngModelChange)="updateNumberField('maxDeliveryFee', $event)"
  min="0"
- class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
- <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
+ class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-14 text-end text-[14px] font-black tabular-nums text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
  </div>
  </div>
  </div>
@@ -378,8 +297,8 @@ type NumericZoneField =
  <app-card variant="default" rounded="2xl" padding="none" customClass="flex h-full flex-col overflow-visible border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
  <div class="flex items-center justify-between rounded-t-2xl border-b border-slate-100 bg-slate-50/60 px-5 py-4">
  <div class="flex items-center gap-3">
- <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-100 bg-indigo-50">
- <span class="material-symbols-outlined text-[20px] text-indigo-500">local_atm</span>
+ <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-100 bg-sky-50">
+ <span class="material-symbols-outlined text-[20px] text-sky-600">local_atm</span>
  </div>
  <div>
  <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.PRICING.COD_FEE' | translate }}</h3>
@@ -389,11 +308,11 @@ type NumericZoneField =
  <button
  type="button"
  (click)="toggleCodActive()"
- class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
- [ngClass]="selectedZone.isCodFeeActive ? 'bg-indigo-500' : 'bg-slate-200'">
+ class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-zadna-primary focus:ring-offset-2"
+ [ngClass]="selectedZone.isCodFeeActive ? 'bg-zadna-primary' : 'bg-slate-200'">
  <span
  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
- [ngClass]="selectedZone.isCodFeeActive ? 'translate-x-5' : 'translate-x-0'"></span>
+ [ngClass]="selectedZone.isCodFeeActive ? 'ltr:translate-x-5 rtl:-translate-x-5' : 'translate-x-0'"></span>
  </button>
  </div>
 
@@ -407,11 +326,11 @@ type NumericZoneField =
  <select
  [(ngModel)]="selectedZone.codFeeType"
  (ngModelChange)="markDirty()"
- class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+ class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-10 text-[13px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary">
  <option value="flat">{{ 'FINANCES.PRICING.FLAT_FEE' | translate }}</option>
  <option value="percent">{{ 'FINANCES.PRICING.PERCENTAGE' | translate }}</option>
  </select>
- <span class="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">unfold_more</span>
+ <span class="material-symbols-outlined pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400">expand_more</span>
  </div>
  <p class="text-[11px] font-medium text-slate-400">
  {{ 'FINANCES.PRICING.BACKEND_HINT' | translate }}
@@ -430,8 +349,8 @@ type NumericZoneField =
  max="100"
  step="0.1"
  [disabled]="selectedZone.codFeeType === 'flat'"
- class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-50" />
- <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">%</span>
+ class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-12 text-end text-[14px] font-black tabular-nums text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary disabled:bg-slate-50" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">%</span>
  </div>
  </div>
  <div class="space-y-1.5" [class.opacity-30]="selectedZone.codFeeType === 'percent'">
@@ -443,8 +362,8 @@ type NumericZoneField =
  (ngModelChange)="updateNumberField('codFlatFee', $event)"
  min="0"
  [disabled]="selectedZone.codFeeType === 'percent'"
- class="w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-left text-[14px] font-black text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-50" />
- <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
+ class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-14 text-end text-[14px] font-black tabular-nums text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary disabled:bg-slate-50" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[11px] font-bold text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
  </div>
  </div>
  </div>
@@ -454,8 +373,8 @@ type NumericZoneField =
  <app-card variant="default" rounded="2xl" padding="none" customClass="flex h-full flex-col overflow-visible border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
  <div class="flex items-center justify-between rounded-t-2xl border-b border-slate-100 bg-slate-50/60 px-5 py-4">
  <div class="flex items-center gap-3">
- <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-purple-100 bg-purple-50">
- <span class="material-symbols-outlined text-[20px] text-purple-500">account_balance</span>
+ <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-100 bg-violet-50">
+ <span class="material-symbols-outlined text-[20px] text-violet-600">account_balance</span>
  </div>
  <div>
  <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.PRICING.VAT_TITLE' | translate }}</h3>
@@ -465,26 +384,26 @@ type NumericZoneField =
  <button
  type="button"
  (click)="toggleVatActive()"
- class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
- [ngClass]="selectedZone.isVatActive ? 'bg-purple-500' : 'bg-slate-200'">
+ class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-zadna-primary focus:ring-offset-2"
+ [ngClass]="selectedZone.isVatActive ? 'bg-zadna-primary' : 'bg-slate-200'">
  <span
  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
- [ngClass]="selectedZone.isVatActive ? 'translate-x-5' : 'translate-x-0'"></span>
+ [ngClass]="selectedZone.isVatActive ? 'ltr:translate-x-5 rtl:-translate-x-5' : 'translate-x-0'"></span>
  </button>
  </div>
 
  <div
- class="flex flex-1 flex-col items-center justify-center space-y-6 p-5 transition-opacity duration-200"
+ class="flex flex-1 flex-col space-y-6 p-5 transition-opacity duration-200"
  [class.pointer-events-none]="!selectedZone.isVatActive"
  [class.opacity-40]="!selectedZone.isVatActive">
- <div class="text-center">
- <div class="mb-2 text-4xl font-black text-purple-600 tabular-nums">
- {{ selectedZone.vatPercent }}<span class="text-2xl text-purple-400">%</span>
+ <div>
+ <div class="mb-1 text-3xl font-black text-zadna-primary tabular-nums">
+ {{ selectedZone.vatPercent }}<span class="text-xl text-zadna-primary/70">%</span>
  </div>
  <p class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.PRICING.CURRENT_PERCENT' | translate }}</p>
  </div>
 
- <div class="w-full">
+ <div class="mt-auto w-full">
  <input
  type="range"
  [ngModel]="selectedZone.vatPercent"
@@ -492,8 +411,8 @@ type NumericZoneField =
  min="0"
  max="25"
  step="1"
- class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-purple-600" />
- <div class="mt-2 flex justify-between text-[10px] font-bold text-slate-400">
+ class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-zadna-primary" />
+ <div class="mt-2 flex justify-between text-[10px] font-bold text-slate-400 tabular-nums">
  <span>0%</span>
  <span>25%</span>
  </div>

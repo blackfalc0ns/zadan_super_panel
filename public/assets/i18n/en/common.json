@@ -1076,7 +1076,14 @@
       "FLAT_AMOUNT": "Flat Amount",
       "VAT_TITLE": "VAT",
       "VAT_DESC": "Used directly in checkout calculations.",
-      "CURRENT_PERCENT": "Current percentage applied to the selected zone"
+      "CURRENT_PERCENT": "Current percentage applied to the selected zone",
+      "SCOPE": {
+        "ZONE": "Zones",
+        "CITY": "Cities",
+        "REGION": "Regions",
+        "GLOBAL": "Global"
+      },
+      "ALL_REGIONS": "All regions"
     },
     "CURRENCY": "SAR",
     "PLATFORM_ACCOUNT": {

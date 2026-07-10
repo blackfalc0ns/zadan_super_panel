@@ -672,7 +672,8 @@
       "DESCRIPTION": "Choose a level-3 subcategory, select one of the approved section themes, and optionally schedule when the section appears.",
       "API_HINT": "Backed by",
       "ACTIONS": {
-        "CREATE": "Create section"
+        "CREATE": "Create section",
+        "ADD_SECTION": "Add section"
       },
       "KPI": {
         "TOTAL": "Dynamic sections",
@@ -680,9 +681,19 @@
       },
       "FIELDS": {
         "SUBCATEGORY": "Subcategory",
+        "TARGET_CATEGORY": "Target category",
+        "TARGET_CATEGORY_PLACEHOLDER": "Select a level-3 category",
+        "CATEGORY_SEARCH": "Search categories...",
         "THEME": "Theme",
+        "THEME_PLACEHOLDER": "Select theme",
         "PRODUCTS_TAKE": "Products to show",
+        "TAKE": "Products count",
+        "TAKE_DESC": "This controls how many products the home feed will render in this section.",
+        "ACTIVATE": "Activate section",
+        "SCHEDULE": "Visibility schedule",
         "ALWAYS_VISIBLE": "Always visible",
+        "ALWAYS_VISIBLE_DESC": "This section will stay visible all the time until you disable it.",
+        "SCHEDULED_DESC": "You can set a start date, an end date, or leave one side open.",
         "IS_ACTIVE": "Section is active"
       },
       "PLACEHOLDERS": {
@@ -715,6 +726,7 @@
         "EMPTY_TITLE": "No dynamic home sections yet.",
         "EMPTY_SUBTITLE": "Create one and bind it to a level-3 subcategory like Bakery or Meat.",
         "NO_SUBCATEGORIES": "No level-3 catalog categories are available yet. Add subcategories first.",
+        "NO_CATEGORIES": "No categories are available to link right now. Add level-3 categories first.",
         "REQUIRED_FIELDS": "Please choose a subcategory and complete the required section fields.",
         "DELETE_TITLE": "Delete home section",
         "DELETE_MESSAGE": "This dynamic section will disappear from the admin marketing inventory and the home feed.",
@@ -723,7 +735,8 @@
         "ACTIVATED": "Home section activated.",
         "DEACTIVATED": "Home section deactivated.",
         "DELETED": "Home section deleted."
-      }
+      },
+      "SEARCH_PLACEHOLDER": "Search home sections..."
     },
     "VISIBILITY": {
       "DESCRIPTION": "Toggle fixed home sections without redeploying the customer app or touching hardcoded flags.",
@@ -740,6 +753,7 @@
       },
       "MESSAGES": {
         "LOADING": "Loading home visibility settings...",
+        "EMPTY_TITLE": "No results found",
         "ACTIVATED": "Section enabled.",
         "DEACTIVATED": "Section disabled.",
         "SAVED": "Section state saved."

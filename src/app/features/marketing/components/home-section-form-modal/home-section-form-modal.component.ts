@@ -84,7 +84,7 @@ import { SearchableSelectComponent, SearchableSelectOption } from '@shared/compo
  type="number"
  min="1"
  class="min-h-[3.75rem] w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-bold text-slate-800 outline-none transition-all hover:bg-white focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10"
- placeholder="مثال: 8" />
+ placeholder="{{ 'MARKETING.HOME_SECTIONS.PLACEHOLDERS.PRODUCTS_TAKE' | translate }}" />
  <p class="text-[11px] font-bold text-slate-400">
  {{ 'MARKETING.HOME_SECTIONS.FIELDS.TAKE_DESC' | translate }}
  </p>
