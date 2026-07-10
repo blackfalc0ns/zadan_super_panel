@@ -219,6 +219,8 @@
     "SUBMIT": "Update Password",
     "SENDING": "Updating...",
     "BTN_BACK": "Back to Sign In",
+    "SHOW_PASSWORD": "Show",
+    "HIDE_PASSWORD": "Hide",
     "ERRORS": {
       "INVALID_FORM": "Please complete the form correctly.",
       "INVALID_OTP": "Enter the 4-digit verification code.",
