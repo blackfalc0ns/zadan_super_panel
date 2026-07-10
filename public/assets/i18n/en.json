@@ -7782,6 +7782,11 @@
       "TABLE": {
         "SCHEDULE": "Schedule",
         "UPDATED": "Updated"
+      },
+      "SCHEDULE_DISPLAY": {
+        "ALWAYS_ACTIVE": "Always active",
+        "FROM": "From",
+        "UNTIL": "Until"
       }
     },
     "SECTION_TYPES": {

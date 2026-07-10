@@ -12,8 +12,9 @@ import {
  MarketingHomeSectionUpdatePayload
 } from '@marketing/models/marketing.models';
 import { MarketingApiService } from '@marketing/services/marketing.api.service';
-import { describeApiError, formatDateRange, formatDateTime } from '@marketing/utils/marketing-date.utils';
+import { describeApiError } from '@marketing/utils/marketing-date.utils';
 import { HomeSectionFormModalComponent } from '@marketing/components/home-section-form-modal/home-section-form-modal.component';
+import { MarketingScheduleCellComponent } from '@marketing/components/marketing-schedule-cell/marketing-schedule-cell.component';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
 import { DataTableComponent, TableColumn } from '@shared/components/ui/data-table/data-table.component';
@@ -35,7 +36,8 @@ import { forkJoin } from 'rxjs';
  StatusPillComponent,
  DeleteConfirmationModalComponent,
  HomeSectionFormModalComponent,
- DataTableComponent
+ DataTableComponent,
+ MarketingScheduleCellComponent
  ],
  template: `
  <div class="space-y-6">
@@ -130,12 +132,10 @@ import { forkJoin } from 'rxjs';
  </ng-container>
 
  <ng-container *ngIf="column.key === 'schedule'">
- <div class="flex items-center gap-2">
- <span class="material-symbols-outlined text-[14px] text-slate-400">calendar_month</span>
- <span class="text-[11px] font-bold text-slate-600" dir="ltr">
- {{ formatDateRangeLabel(section) }}
- </span>
- </div>
+ <app-marketing-schedule-cell
+ [startsAtUtc]="section.startsAtUtc"
+ [endsAtUtc]="section.endsAtUtc">
+ </app-marketing-schedule-cell>
  </ng-container>
 
  <ng-container *ngIf="column.key === 'isActive'">
@@ -365,16 +365,8 @@ export class MarketingHomeSectionsComponent implements OnInit {
  });
  }
 
- formatDateRangeLabel(section: MarketingHomeSection): string {
- return formatDateRange(section.startsAtUtc, section.endsAtUtc);
- }
-
  getThemeLabel(section: MarketingHomeSection): string {
  return this.translateService.currentLang === 'ar' ? section.themeLabelAr : section.themeLabelEn;
- }
-
- formatDateTimeLabel(value: string): string {
- return formatDateTime(value);
  }
 }
 

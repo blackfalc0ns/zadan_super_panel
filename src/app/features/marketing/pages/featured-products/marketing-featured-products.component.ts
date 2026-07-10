@@ -10,8 +10,9 @@ import {
   VendorProductLookupOption
 } from '@marketing/models/marketing.models';
 import { MarketingApiService } from '@marketing/services/marketing.api.service';
-import { describeApiError, formatDateRange, formatDateTime } from '@marketing/utils/marketing-date.utils';
+import { describeApiError } from '@marketing/utils/marketing-date.utils';
 import { FeaturedPlacementFormModalComponent } from '@marketing/components/featured-placement-form-modal/featured-placement-form-modal.component';
+import { MarketingScheduleCellComponent } from '@marketing/components/marketing-schedule-cell/marketing-schedule-cell.component';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { AppButtonComponent } from '@shared/components/ui/button/button.component';
 import { DataTableComponent, TableColumn } from '@shared/components/ui/data-table/data-table.component';
@@ -32,7 +33,8 @@ import { ToastService } from '@shared/services/toast.service';
     StatusPillComponent,
     DeleteConfirmationModalComponent,
     FeaturedPlacementFormModalComponent,
-    DataTableComponent
+    DataTableComponent,
+    MarketingScheduleCellComponent
   ],
   template: `
     <div class="space-y-6">
@@ -121,12 +123,10 @@ import { ToastService } from '@shared/services/toast.service';
             </ng-container>
 
             <ng-container *ngIf="column.key === 'schedule'">
-              <div class="flex items-center gap-2">
-                 <span class="material-symbols-outlined text-[14px] text-slate-400">calendar_month</span>
-                 <span class="text-[11px] font-bold text-slate-600" dir="ltr">
-                   {{ formatDateRangeLabel(placement) }}
-                 </span>
-              </div>
+              <app-marketing-schedule-cell
+                [startsAtUtc]="placement.startsAtUtc"
+                [endsAtUtc]="placement.endsAtUtc">
+              </app-marketing-schedule-cell>
             </ng-container>
 
             <ng-container *ngIf="column.key === 'isActive'">
@@ -388,14 +388,6 @@ export class MarketingFeaturedProductsComponent implements OnInit {
         this.toastService.error(describeApiError(error), this.translateService.instant('MARKETING.FEATURED.TOAST_TITLE'));
       }
     });
-  }
-
-  formatDateRangeLabel(placement: FeaturedPlacement): string {
-    return formatDateRange(placement.startsAtUtc, placement.endsAtUtc);
-  }
-
-  formatDateTimeLabel(value: string): string {
-    return formatDateTime(value);
   }
 
   loadMasterProductLookup(search?: string): void {

@@ -10,11 +10,11 @@ import {
 import { MarketingApiService } from '@marketing/services/marketing.api.service';
 import {
  describeApiError,
- formatDateRange,
  formatDateTime,
  toDateTimeLocalInput,
  toNullableUtcIso
 } from '@marketing/utils/marketing-date.utils';
+import { MarketingScheduleCellComponent } from '@marketing/components/marketing-schedule-cell/marketing-schedule-cell.component';
 import { Vendor } from '@vendors/models/vendors.domain.models';
 import { VendorService } from '@vendors/services/vendor.api.service';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
@@ -43,7 +43,7 @@ interface CouponFormValue {
  changeDetection: ChangeDetectionStrategy.OnPush,
  selector: 'app-marketing-coupons',
  standalone: true,
- imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent, DataTableComponent, SearchableSelectComponent],
+ imports: [CommonModule, FormsModule, TranslateModule, StatusPillComponent, DeleteConfirmationModalComponent, DataTableComponent, SearchableSelectComponent, MarketingScheduleCellComponent],
  template: `
  <div class="space-y-6">
  <div class="flex flex-wrap items-center justify-between gap-4">
@@ -123,9 +123,14 @@ interface CouponFormValue {
  </ng-container>
 
  <ng-container *ngIf="column.key === 'schedule'">
- <div class="flex flex-col text-start">
- <span class="text-[12px] font-bold text-slate-700">{{ formatSchedule(coupon) }}</span>
- <span class="mt-1 text-[11px] font-bold text-slate-400">{{ 'MARKETING.COUPONS.TABLE.LAST_UPDATE' | translate }} {{ formatDateTimeLabel(coupon.updatedAtUtc) }}</span>
+ <div class="flex flex-col gap-1 text-start">
+ <app-marketing-schedule-cell
+ [startsAtUtc]="coupon.startsAtUtc"
+ [endsAtUtc]="coupon.endsAtUtc">
+ </app-marketing-schedule-cell>
+ <span class="text-[10px] font-bold text-slate-400">
+ {{ 'MARKETING.COUPONS.TABLE.LAST_UPDATE' | translate }} {{ formatDateTimeLabel(coupon.updatedAtUtc) }}
+ </span>
  </div>
  </ng-container>
 
@@ -198,9 +203,12 @@ interface CouponFormValue {
  </div>
  </div>
 
- <div class="space-y-1 text-xs font-bold text-slate-500">
+ <div class="space-y-2 text-xs font-bold text-slate-500">
  <div>{{ formatOrderConstraint(coupon) }}</div>
- <div>{{ formatSchedule(coupon) }}</div>
+ <app-marketing-schedule-cell
+ [startsAtUtc]="coupon.startsAtUtc"
+ [endsAtUtc]="coupon.endsAtUtc">
+ </app-marketing-schedule-cell>
  </div>
 
  <div class="flex flex-wrap justify-end gap-2">
@@ -757,10 +765,6 @@ export class MarketingCouponsComponent implements OnInit {
  const names = coupon.applicableVendors.slice(0, 2).map((vendor) => vendor.vendorNameAr || vendor.vendorNameEn).join('، ');
 
  return coupon.applicableVendors.length > 2 ? `${names} +${coupon.applicableVendors.length - 2}` : names;
- }
-
- formatSchedule(coupon: MarketingCoupon): string {
- return formatDateRange(coupon.startsAtUtc, coupon.endsAtUtc);
  }
 
  formatDateTimeLabel(value: string): string {

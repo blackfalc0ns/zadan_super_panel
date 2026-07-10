@@ -422,6 +422,11 @@
       "TABLE": {
         "SCHEDULE": "الجدولة",
         "UPDATED": "آخر تحديث"
+      },
+      "SCHEDULE_DISPLAY": {
+        "ALWAYS_ACTIVE": "نشط دائمًا",
+        "FROM": "من",
+        "UNTIL": "إلى"
       }
     },
     "SECTION_TYPES": {

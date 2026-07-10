@@ -38,6 +38,14 @@ export function toNullableUtcIso(value?: string | null): string | null {
 }
 
 export function formatDateTime(value?: string | null): string {
+ return formatMarketingScheduleDate(value);
+}
+
+export function isAlwaysActiveSchedule(startsAtUtc?: string | null, endsAtUtc?: string | null): boolean {
+ return !startsAtUtc && !endsAtUtc;
+}
+
+export function formatMarketingScheduleDate(value?: string | null): string {
  if (!value) {
  return '--';
  }
@@ -47,21 +55,29 @@ export function formatDateTime(value?: string | null): string {
  return '--';
  }
 
- return date.toLocaleString(undefined, { timeZone: 'Asia/Riyadh' });
+ return new Intl.DateTimeFormat(getMarketingLocale(), {
+ timeZone: 'Asia/Riyadh',
+ day: 'numeric',
+ month: 'short',
+ year: 'numeric',
+ hour: '2-digit',
+ minute: '2-digit',
+ hourCycle: 'h23'
+ }).format(date);
 }
 
 export function formatDateRange(startsAtUtc?: string | null, endsAtUtc?: string | null): string {
- if (!startsAtUtc &&!endsAtUtc) {
- return isArabic() ? 'نشط دائمًا' : 'Always active';
+ if (isAlwaysActiveSchedule(startsAtUtc, endsAtUtc)) {
+ return text('نشط دائمًا', 'Always active');
  }
 
  if (startsAtUtc && endsAtUtc) {
- return `${formatDateTime(startsAtUtc)} - ${formatDateTime(endsAtUtc)}`;
+ return `${formatMarketingScheduleDate(startsAtUtc)} → ${formatMarketingScheduleDate(endsAtUtc)}`;
  }
 
  return startsAtUtc
- ? `${isArabic() ? 'من' : 'From'} ${formatDateTime(startsAtUtc)}`
- : `${isArabic() ? 'حتى' : 'Until'} ${formatDateTime(endsAtUtc)}`;
+ ? `${text('من', 'From')} ${formatMarketingScheduleDate(startsAtUtc)}`
+ : `${text('إلى', 'Until')} ${formatMarketingScheduleDate(endsAtUtc)}`;
 }
 
 export function describeApiError(error: unknown): string {
@@ -128,4 +144,8 @@ function text(ar: string, en: string): string {
 
 function isArabic(): boolean {
  return (localStorage.getItem('lang') || localStorage.getItem('vendor_lang') || 'ar').toLowerCase().startsWith('ar');
+}
+
+function getMarketingLocale(): string {
+ return isArabic() ? 'ar-SA' : 'en-GB';
 }
