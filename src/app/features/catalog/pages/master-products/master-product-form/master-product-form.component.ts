@@ -16,7 +16,7 @@ import { DetailHeaderComponent } from '../../../../../shared/components/ui/detai
 import { SectionHeaderComponent } from '../../../../../shared/components/ui/section-header/section-header.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { VariantCardComponent } from './components/variant-card/variant-card.component';
-import { Brand, CatalogUnit, Category, MasterProduct } from '@catalog/models/catalog.domain.models';
+import { Brand, CatalogUnit, Category, MasterProduct, MasterProductVariantOption } from '@catalog/models/catalog.domain.models';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { UploadProgressComponent } from '../../../../../shared/components/ui/upload-progress/upload-progress.component';
 import { ImageUploadPhase } from '../../../../../shared/utils/image-upload-optimizer';
@@ -326,7 +326,6 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
  }
 
  loadCategories(): void {
- this.beginInitialFormLoad();
  this.catalogService.getCategories(undefined, true).subscribe({
  next: (cats) => {
  this.cdr.markForCheck();
@@ -338,14 +337,12 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
  if (catId && this.availableCategories.some(c => c.id === catId)) {
  this.productForm.patchValue({ categoryId: catId });
  }
- this.completeInitialFormLoad();
  },
  error: (err) => {
  this.cdr.markForCheck();
  console.error('Failed to load categories', err);
  this.availableCategories = [];
  this.allFlatCategories = [];
- this.completeInitialFormLoad();
  }
  });
  }
@@ -378,20 +375,17 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
  }
 
  loadBrands(): void {
- this.beginInitialFormLoad();
  this.catalogService.getBrands(true, false).subscribe({
  next: (brands) => {
  this.cdr.markForCheck();
  this.allBrands = brands ?? [];
  this.filterBrandsByCategory(this.productForm.get('categoryId')?.value || null);
- this.completeInitialFormLoad();
  },
  error: (err) => {
  this.cdr.markForCheck();
  console.error('Failed to load brands', err);
  this.allBrands = [];
  this.availableBrands = [];
- this.completeInitialFormLoad();
  }
  });
  }
@@ -465,17 +459,14 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
  }
 
  loadUnits(): void {
- this.beginInitialFormLoad();
  this.catalogService.getUnits().subscribe({
  next: (units) => {
  this.cdr.markForCheck();
  this.availableUnits = units;
- this.completeInitialFormLoad();
  },
  error: () => {
  this.cdr.markForCheck();
  this.availableUnits = []; // Ignore if endpoint not yet deployed
- this.completeInitialFormLoad();
  }
  });
  }
@@ -1106,35 +1097,27 @@ export class MasterProductFormComponent implements OnInit, OnDestroy {
  private async loadExistingVariants(product: MasterProduct): Promise<void> {
  this.additionalVariants.clear();
 
- const variantsToLoad = (product.variants ?? []).filter((variant) => variant.id && variant.id!== product.id);
+ const variantsToLoad = (product.variants ?? []).filter((variant) => variant.id && variant.id !== product.id);
  if (variantsToLoad.length === 0) {
  return;
  }
 
- try {
- const variantProducts = await Promise.all(
- variantsToLoad.map((variant) => firstValueFrom(this.catalogService.getProductById(variant.id)))
- );
-
- for (const variantProduct of variantProducts) {
- this.additionalVariants.push(this.createAdditionalVariantGroupFromProduct(variantProduct));
- }
- } catch (err) {
- console.error('Failed to load existing variants', err);
+ for (const variant of variantsToLoad) {
+ this.additionalVariants.push(this.createAdditionalVariantGroupFromVariantOption(variant));
  }
  }
 
- private createAdditionalVariantGroupFromProduct(product: MasterProduct): FormGroup {
+ private createAdditionalVariantGroupFromVariantOption(variant: MasterProductVariantOption): FormGroup {
  return this.fb.group({
- id: [product.id],
- packageTypeId: [product.packageTypeId || null],
- measurementValue: [product.measurementValue ?? null],
- measurementUnitId: [product.measurementUnitId || product.unitOfMeasureId || null],
- barcode: [product.barcode || ''],
- slug: [product.slug || ''],
- imageUrl: [product.images?.find((img: any) => img.isPrimary)?.url || null]
+ id: [variant.id],
+ packageTypeId: [variant.packageTypeId || null],
+ measurementValue: [variant.measurementValue ?? null],
+ measurementUnitId: [variant.measurementUnitId || null],
+ barcode: [variant.barcode || ''],
+ slug: [variant.slug || ''],
+ imageUrl: [variant.imageUrl || variant.images?.[0] || null]
  });
- }
+}
 }
 
 

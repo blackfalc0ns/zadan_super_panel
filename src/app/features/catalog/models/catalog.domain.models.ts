@@ -66,9 +66,11 @@ export interface MasterProductVariantOption {
     images?: string[];
     barcode?: string;
     slug?: string;
+    packageTypeId?: string | null;
     packageTypeNameAr?: string;
     packageTypeNameEn?: string;
     measurementValue?: number | null;
+    measurementUnitId?: string | null;
     measurementUnitNameAr?: string;
     measurementUnitNameEn?: string;
     unit?: string;
