@@ -165,11 +165,6 @@ const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
                   <p *ngIf="fieldInvalid('phone')" class="text-[12px] font-bold text-red-600">{{ 'ADMIN_PROFILE.ERRORS.PHONE' | translate }}</p>
                 </label>
               </form>
-
-              <p *ngIf="profileMessage" class="mt-6 rounded-2xl border px-4 py-3 text-[13px] font-bold"
-                [ngClass]="profileMessageType === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
-                {{ profileMessage }}
-              </p>
             </section>
 
             <section class="rounded-3xl border border-slate-200/60 bg-white/70 backdrop-blur-xl p-6 shadow-[0_4px_24px_-6px_rgba(0,0,0,0.04)] space-y-4">
@@ -295,16 +290,6 @@ const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
                   {{ (isSendingPushTest ? 'NOTIFICATIONS_CENTER.WEB_PUSH.TESTING' : 'NOTIFICATIONS_CENTER.WEB_PUSH.TEST') | translate }}
                 </button>
               </div>
-
-              <p *ngIf="notificationSoundMessage" class="mt-4 rounded-2xl border px-4 py-3 text-[13px] font-bold"
-                [ngClass]="notificationSoundMessageType === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
-                {{ notificationSoundMessage }}
-              </p>
-
-              <p *ngIf="pushMessage" class="mt-4 rounded-2xl border px-4 py-3 text-[13px] font-bold"
-                [ngClass]="pushMessageType === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
-                {{ pushMessage }}
-              </p>
             </ng-container>
           </section>
 
@@ -359,11 +344,6 @@ const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
                 </div>
               </div>
             </div>
-
-            <p *ngIf="passwordMessage" class="mt-6 rounded-2xl border px-4 py-3 text-[13px] font-bold"
-              [ngClass]="passwordMessageType === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'">
-              {{ passwordMessage }}
-            </p>
           </section>
         </ng-container>
       </div>
@@ -377,20 +357,12 @@ export class AdminProfileComponent implements OnInit {
   isLoading = true;
   isSavingProfile = false;
   isChangingPassword = false;
-  profileMessage = '';
-  profileMessageType: 'success' | 'error' = 'success';
-  passwordMessage = '';
-  passwordMessageType: 'success' | 'error' = 'success';
   readonly notificationSoundOptions = [...ADMIN_NOTIFICATION_SOUND_OPTIONS];
   selectedNotificationSound: AdminNotificationSound = 'classic';
   isLoadingNotificationPreferences = true;
   isSavingNotificationSound = false;
   isEnablingBrowserPush = false;
   isSendingPushTest = false;
-  notificationSoundMessage = '';
-  pushMessage = '';
-  pushMessageType: 'success' | 'error' = 'success';
-  notificationSoundMessageType: 'success' | 'error' = 'success';
   readonly profileForm;
   readonly passwordForm;
   private notificationPreferences: AdminNotificationPreferences | null = null;
@@ -483,7 +455,6 @@ export class AdminProfileComponent implements OnInit {
   }
 
   saveProfile(): void {
-    this.profileMessage = '';
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
       return;
@@ -500,22 +471,17 @@ export class AdminProfileComponent implements OnInit {
           phone: user.phone ?? ''
         });
         this.isSavingProfile = false;
-        this.profileMessageType = 'success';
-        this.profileMessage = this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATED');
-        this.toastService.success(this.profileMessage, this.text('ADMIN_PROFILE.TITLE'));
+        this.notify(this.text('ADMIN_PROFILE.MESSAGES.PROFILE_UPDATED'), 'success');
       },
       error: (err) => {
         this.cdr.markForCheck();
         this.isSavingProfile = false;
-        this.profileMessageType = 'error';
-        this.profileMessage = this.resolveProfileErrorMessage(err);
-        this.toastService.error(this.profileMessage, this.text('ADMIN_PROFILE.TITLE'));
+        this.notify(this.resolveProfileErrorMessage(err), 'error');
       }
     });
   }
 
   changePassword(): void {
-    this.passwordMessage = '';
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
       return;
@@ -523,8 +489,7 @@ export class AdminProfileComponent implements OnInit {
 
     const value = this.passwordForm.getRawValue();
     if (value.newPassword !== value.confirmPassword) {
-      this.passwordMessageType = 'error';
-      this.passwordMessage = this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_MISMATCH');
+      this.notify(this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_MISMATCH'), 'error');
       return;
     }
 
@@ -536,9 +501,7 @@ export class AdminProfileComponent implements OnInit {
       next: () => {
         this.cdr.markForCheck();
         this.isChangingPassword = false;
-        this.passwordMessageType = 'success';
-        this.passwordMessage = this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATED');
-        this.toastService.success(this.passwordMessage, this.text('ADMIN_PROFILE.TITLE'));
+        this.notify(this.text('ADMIN_PROFILE.MESSAGES.PASSWORD_UPDATED'), 'success');
         this.passwordForm.reset({
           currentPassword: '',
           newPassword: '',
@@ -548,9 +511,7 @@ export class AdminProfileComponent implements OnInit {
       error: (err) => {
         this.cdr.markForCheck();
         this.isChangingPassword = false;
-        this.passwordMessageType = 'error';
-        this.passwordMessage = this.resolvePasswordErrorMessage(err);
-        this.toastService.error(this.passwordMessage, this.text('ADMIN_PROFILE.TITLE'));
+        this.notify(this.resolvePasswordErrorMessage(err), 'error');
       }
     });
   }
@@ -560,13 +521,12 @@ export class AdminProfileComponent implements OnInit {
   }
 
   async enableBrowserPush(): Promise<void> {
-    this.pushMessage = '';
     this.isEnablingBrowserPush = true;
+    const toastTitle = this.text('NOTIFICATIONS_CENTER.SOUND.TITLE');
 
     if (!this.adminOneSignalService.isBrowserPushSupported()) {
       this.isEnablingBrowserPush = false;
-      this.pushMessageType = 'error';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.UNSUPPORTED');
+      this.toastService.error(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.UNSUPPORTED'), toastTitle);
       this.cdr.markForCheck();
       return;
     }
@@ -574,16 +534,14 @@ export class AdminProfileComponent implements OnInit {
     const permission = await this.adminOneSignalService.requestBrowserPermission();
     if (permission === 'unsupported') {
       this.isEnablingBrowserPush = false;
-      this.pushMessageType = 'error';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.UNSUPPORTED');
+      this.toastService.error(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.UNSUPPORTED'), toastTitle);
       this.cdr.markForCheck();
       return;
     }
 
     if (permission === 'denied') {
       this.isEnablingBrowserPush = false;
-      this.pushMessageType = 'error';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
+      this.toastService.error(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED'), toastTitle);
       this.cdr.markForCheck();
       return;
     }
@@ -593,29 +551,25 @@ export class AdminProfileComponent implements OnInit {
     this.loadNotificationPreferences();
 
     if (registered) {
-      this.pushMessageType = 'success';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLED');
+      this.toastService.success(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLED'), toastTitle);
     } else if (permission === 'granted' || this.adminOneSignalService.getBrowserPermission() === 'granted') {
-      this.pushMessageType = 'success';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.PERMISSION_GRANTED');
+      this.toastService.success(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.PERMISSION_GRANTED'), toastTitle);
     } else {
-      this.pushMessageType = 'error';
-      this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLE_FAILED');
+      this.toastService.error(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.ENABLE_FAILED'), toastTitle);
     }
 
     this.cdr.markForCheck();
   }
 
   async sendPushTest(): Promise<void> {
-    this.pushMessage = '';
     this.isSendingPushTest = true;
+    const toastTitle = this.text('NOTIFICATIONS_CENTER.SOUND.TITLE');
 
     if (this.adminOneSignalService.isBrowserPushSupported()) {
       const permission = await this.adminOneSignalService.requestBrowserPermission();
       if (permission === 'denied') {
         this.isSendingPushTest = false;
-        this.pushMessageType = 'error';
-        this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED');
+        this.toastService.error(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.DENIED'), toastTitle);
         this.cdr.markForCheck();
         return;
       }
@@ -634,10 +588,12 @@ export class AdminProfileComponent implements OnInit {
           );
 
           this.isSendingPushTest = false;
-          this.pushMessageType = 'success';
-          this.pushMessage = registered
-            ? this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT')
-            : this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT_PARTIAL');
+          this.toastService.success(
+            registered
+              ? this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT')
+              : this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_SENT_PARTIAL'),
+            toastTitle
+          );
           this.notificationsService.refreshRecent().subscribe();
           this.loadNotificationPreferences();
           this.cdr.markForCheck();
@@ -646,8 +602,7 @@ export class AdminProfileComponent implements OnInit {
       error: () => {
         void registrationPromise.finally(() => {
           this.isSendingPushTest = false;
-          this.pushMessageType = 'error';
-          this.pushMessage = this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED');
+          this.toastService.error(this.text('NOTIFICATIONS_CENTER.WEB_PUSH.TEST_FAILED'), toastTitle);
           this.cdr.markForCheck();
         });
       }
@@ -655,12 +610,11 @@ export class AdminProfileComponent implements OnInit {
   }
 
   saveNotificationSoundPreference(): void {
-    this.notificationSoundMessage = '';
     this.notificationSoundService.setSound(this.selectedNotificationSound);
+    const toastTitle = this.text('NOTIFICATIONS_CENTER.SOUND.TITLE');
 
     if (!this.notificationPreferences || this.notificationsService.requiresApiSession) {
-      this.notificationSoundMessageType = 'success';
-      this.notificationSoundMessage = this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVED_LOCAL');
+      this.toastService.success(this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVED_LOCAL'), toastTitle);
       return;
     }
 
@@ -678,14 +632,12 @@ export class AdminProfileComponent implements OnInit {
         }
 
         this.isSavingNotificationSound = false;
-        this.notificationSoundMessageType = 'success';
-        this.notificationSoundMessage = this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVED');
+        this.toastService.success(this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVED'), toastTitle);
       },
       error: () => {
         this.cdr.markForCheck();
         this.isSavingNotificationSound = false;
-        this.notificationSoundMessageType = 'error';
-        this.notificationSoundMessage = this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVE_FAILED');
+        this.toastService.error(this.text('ADMIN_PROFILE.MESSAGES.NOTIFICATION_SOUND_SAVE_FAILED'), toastTitle);
       }
     });
   }
@@ -743,6 +695,16 @@ export class AdminProfileComponent implements OnInit {
 
   private text(key: string, params?: Record<string, unknown>): string {
     return this.translate.instant(key, params);
+  }
+
+  private notify(message: string, type: 'success' | 'error', titleKey = 'ADMIN_PROFILE.TITLE'): void {
+    const title = this.text(titleKey);
+    if (type === 'success') {
+      this.toastService.success(message, title);
+      return;
+    }
+
+    this.toastService.error(message, title);
   }
 
   private resolveProfileErrorMessage(err: unknown): string {

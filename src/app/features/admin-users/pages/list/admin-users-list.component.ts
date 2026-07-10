@@ -54,8 +54,6 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   isLoading = false;
   isCreatingUser = false;
   showCreateUserModal = false;
-  createUserError = '';
-  pageError = '';
   searchTerm = '';
   isFiltersExpanded = false;
   filters: Record<string, any> = {
@@ -318,7 +316,6 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
 
   loadUsers() {
     this.isLoading = true;
-    this.pageError = '';
     const usersSub = this.adminAccessApi.getUsersPage({
       pageNumber: this.pageNumber,
       pageSize: this.pageSize,
@@ -340,9 +337,12 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
         console.error('Failed to load admin users', buildSafeApiErrorLog(err));
         this.isLoading = false;
         this.users = [];
-        this.pageError = describeApiError(err, this.translate, {
-          fallbackKey: 'ADMIN_USERS.MESSAGES.LOAD_FAILED'
-        });
+        this.toastService.error(
+          describeApiError(err, this.translate, {
+            fallbackKey: 'ADMIN_USERS.MESSAGES.LOAD_FAILED'
+          }),
+          this.translate.instant('ADMIN_USERS.LIST.TITLE')
+        );
       }
     });
     this.subscriptions.add(usersSub);
@@ -474,7 +474,6 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       team: '',
       notes: ''
     };
-    this.createUserError = '';
     this.showCreateUserModal = true;
     this.applyRoleOrgDefaults();
     this.cdr.markForCheck();
@@ -487,7 +486,6 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   }
 
   onCreateRoleChange(): void {
-    this.createUserError = '';
     this.applyRoleOrgDefaults();
     this.cdr.markForCheck();
   }
@@ -525,12 +523,14 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
   createUser(): void {
     const role = this.selectedCreateRole;
     if (!role || !this.canSubmitCreateUser || !this.isSuperAdminPanelRole(role)) {
-      this.createUserError = this.translate.instant('ADMIN_USERS.CREATE.VALIDATION_REQUIRED');
+      this.toastService.error(
+        this.translate.instant('ADMIN_USERS.CREATE.VALIDATION_REQUIRED'),
+        this.translate.instant('ADMIN_USERS.ACTIONS.ADD_USER')
+      );
       return;
     }
 
     this.isCreatingUser = true;
-    this.createUserError = '';
     const createSub = this.adminAccessApi.createUser({
       fullName: this.createUserForm.fullName.trim(),
       email: this.createUserForm.email.trim(),
@@ -562,12 +562,11 @@ export class AdminUsersListComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.cdr.markForCheck();
         console.error('Failed to create admin user', buildSafeApiErrorLog(err));
-        this.createUserError = describeApiError(err, this.translate, {
-          fallbackKey: 'ADMIN_USERS.CREATE.FAILED',
-          codePrefix: 'ADMIN_USERS.CREATE.ERROR_CODES'
-        });
         this.toastService.error(
-          this.createUserError,
+          describeApiError(err, this.translate, {
+            fallbackKey: 'ADMIN_USERS.CREATE.FAILED',
+            codePrefix: 'ADMIN_USERS.CREATE.ERROR_CODES'
+          }),
           this.translate.instant('ADMIN_USERS.ACTIONS.ADD_USER')
         );
         this.isCreatingUser = false;

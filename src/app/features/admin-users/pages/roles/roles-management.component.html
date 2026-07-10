@@ -24,10 +24,6 @@
   <div class="flex-1 overflow-y-auto">
     <div class="max-w-[100rem] mx-auto px-6 lg:px-8 py-6 space-y-5">
 
-      <div *ngIf="pageError && !isLoading" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
-        {{ pageError }}
-      </div>
-
       <div *ngFor="let role of roles; trackBy: trackByRoleId"
         class="rounded-2xl border bg-white/80 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-lg group"
         [ngClass]="selectedRole?.id === role.id ? 'border-zadna-primary/40 shadow-md ring-2 ring-zadna-primary/10' : 'border-slate-200/60'">
@@ -217,10 +213,6 @@
             <p class="mt-2 text-[11px] font-semibold leading-5 text-emerald-900/80">{{ 'ADMIN_USERS.CREATE.ADMIN_ONLY_HINT' | translate }}</p>
           </div>
         </section>
-
-        <p *ngIf="createRoleError" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
-          {{ createRoleError }}
-        </p>
       </div>
 
       <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/80 p-5 sm:flex-row sm:items-center sm:justify-end">

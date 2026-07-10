@@ -50,7 +50,6 @@ export class VendorActivityLogComponent {
  page = 1;
  pageSize = 12;
  selectedSidePanel: SidePanel = 'notes';
- activityError = '';
  vendorDetail: VendorDetail | null = null;
  timeline: TimelineEvent[] = [];
  totalActivityPages = 1;
@@ -104,8 +103,9 @@ export class VendorActivityLogComponent {
  });
 
  this.vendorDetailFacade.activityLogError$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((error) => {
- this.cdr.markForCheck();
- this.activityError = error || '';
+ if (error) {
+ this.toastService.error(error, this.isRTL ? 'سجل النشاط' : 'Activity log');
+ }
  });
  }
 

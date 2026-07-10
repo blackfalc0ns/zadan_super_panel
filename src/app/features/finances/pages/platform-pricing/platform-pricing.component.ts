@@ -96,10 +96,6 @@ type NumericZoneField =
  </div>
  </app-page-header>
 
- <div *ngIf="errorMessage" class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
- {{ errorMessage }}
- </div>
-
  <div *ngIf="!isLoading && zones.length" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
  <div class="inline-flex w-full max-w-full flex-wrap rounded-2xl border border-slate-200 bg-slate-50 p-1 sm:w-auto">
@@ -478,7 +474,6 @@ export class PlatformPricingComponent implements OnInit {
  isSaving = false;
  isDirty = false;
  showConfirm = false;
- errorMessage = '';
 
  ngOnInit(): void {
  this.loadData();
@@ -509,7 +504,6 @@ export class PlatformPricingComponent implements OnInit {
 
  loadData(): void {
  this.isLoading = true;
- this.errorMessage = '';
  this.emptyStateMessage = '';
 
  this.loadScopeData();
@@ -549,7 +543,6 @@ export class PlatformPricingComponent implements OnInit {
 
  const payload = this.buildSavePayload(this.selectedZone);
  this.isSaving = true;
- this.errorMessage = '';
 
  this.saveScopePayload(payload);
  }
@@ -739,7 +732,8 @@ export class PlatformPricingComponent implements OnInit {
  },
  error: (error: unknown) => {
  this.cdr.markForCheck();
- this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.SAVE_FAILED' });
+ const message = describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.SAVE_FAILED' });
+ this.toastService.error(message, this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL'));
  this.allItems = [];
  this.zones = [];
  this.selectedZone = null;
@@ -826,8 +820,10 @@ export class PlatformPricingComponent implements OnInit {
  error: (error: unknown) => {
  this.cdr.markForCheck();
  this.isSaving = false;
- this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.SAVE_FAILED' });
- this.toastService.error(this.errorMessage, this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL'));
+ this.toastService.error(
+ describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.SAVE_FAILED' }),
+ this.translate.instant('FINANCES.SHELL.ROUTES.PRICING.LABEL')
+ );
  }
  });
  }

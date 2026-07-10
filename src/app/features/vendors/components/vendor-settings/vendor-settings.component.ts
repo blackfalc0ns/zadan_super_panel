@@ -36,8 +36,6 @@ export class VendorSettingsComponent {
  notificationsSubmitting = false;
  operationsSubmitting = false;
  storeAvailabilitySubmitting = false;
- pageError = '';
- pageSuccess = '';
  preparationTimeMinutes: number | null = null;
  resetPasswordQueued = false;
  smsNotificationsEnabled = false;
@@ -534,11 +532,10 @@ export class VendorSettingsComponent {
  }
 
  if (this.commissionRate === null || this.commissionRate === undefined || this.commissionRate < 0 || this.commissionRate > 100) {
- this.pageError = this.text(
+ this.setPageError(this.text(
  'أدخل نسبة عمولة صالحة بين 0 و 100.',
  'Please enter a valid commission rate between 0 and 100.'
- );
- this.cdr.markForCheck();
+ ));
  return;
  }
 
@@ -609,9 +606,7 @@ export class VendorSettingsComponent {
  }
 
  if (!this.canSuspendAccount) {
- this.pageSuccess = '';
- this.pageError = this.text('ما تقدر تعلّق الحساب إلا إذا كان نشطًا الحين.', 'The account can only be suspended while it is active.');
- this.cdr.markForCheck();
+ this.setPageError(this.text('ما تقدر تعلّق الحساب إلا إذا كان نشطًا الحين.', 'The account can only be suspended while it is active.'));
  return;
  }
 
@@ -619,11 +614,7 @@ export class VendorSettingsComponent {
  this.openDialog('suspend-account');
  }
 
- private clearFeedback(): void {
- this.pageError = '';
- this.pageSuccess = '';
- this.cdr.markForCheck();
- }
+ private clearFeedback(): void {}
 
  private formatDateTime(value: string): string {
  return new Intl.DateTimeFormat(this.currentLang === 'ar' ? 'ar-SA-u-nu-latn' : 'en-US', { timeZone: 'Asia/Riyadh',
@@ -664,17 +655,11 @@ export class VendorSettingsComponent {
  }
 
  private setSuccess(message: string): void {
- this.pageError = '';
- this.pageSuccess = message;
  this.toastService.success(message, this.text('إعدادات التاجر', 'Vendor settings'));
- this.cdr.markForCheck();
  }
 
  private setPageError(message: string): void {
- this.pageSuccess = '';
- this.pageError = message;
  this.toastService.error(message, this.text('إعدادات التاجر', 'Vendor settings'));
- this.cdr.markForCheck();
  }
 
  private setDialogError(message: string): void {

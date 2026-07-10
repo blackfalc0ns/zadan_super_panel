@@ -61,7 +61,6 @@ export class AdminUserDetailComponent implements OnInit {
  isLoading = false;
  isSaving = false;
  isAuditLoading = false;
- saveError = '';
  activeTab: 'general' | 'access' | 'communication' | 'audit' = 'general';
  accessSubTab: 'role' | 'permissions' | 'features' = 'role';
  expandedGroups = new Set<string>();
@@ -376,7 +375,6 @@ export class AdminUserDetailComponent implements OnInit {
 
  this.applyCommunicationEditors();
  const panelScope = this.mapPanelScopeToNumber(this.user.panelScope);
- this.saveError = '';
  this.isSaving = true;
 
  const visibleKeys = this.visibleCommunicationFlags.map(f => f.id);
@@ -424,13 +422,12 @@ export class AdminUserDetailComponent implements OnInit {
  error: (err) => {
  this.cdr.markForCheck();
  console.error('Failed to save access user', err);
- this.saveError = describeApiError(err, this.translate, {
- fallbackKey: 'ADMIN_USERS.MESSAGES.SAVE_FAILED',
- codePrefix: 'ADMIN_USERS.CREATE.ERROR_CODES'
- });
  this.isSaving = false;
  this.toastService.error(
- this.saveError,
+ describeApiError(err, this.translate, {
+ fallbackKey: 'ADMIN_USERS.MESSAGES.SAVE_FAILED',
+ codePrefix: 'ADMIN_USERS.CREATE.ERROR_CODES'
+ }),
  this.translate.instant('ADMIN_USERS.DETAIL.TITLE')
  );
  }

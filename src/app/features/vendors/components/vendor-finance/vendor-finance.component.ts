@@ -46,8 +46,6 @@ export class VendorFinanceComponent implements OnInit {
  hasError = false;
  isSavingMode = false;
  mutationError = '';
- modeError = '';
- modeSuccess = '';
 
  financeSummary: AdminVendorFinanceSummary | null = null;
  settlements: AdminVendorSettlementItem[] = [];
@@ -206,8 +204,6 @@ export class VendorFinanceComponent implements OnInit {
 
  onLifecycleModeChange(value: VendorFinancialLifecycleMode): void {
  this.selectedLifecycleMode = value;
- this.modeError = '';
- this.modeSuccess = '';
  }
 
  saveLifecycleMode(): void {
@@ -221,22 +217,24 @@ export class VendorFinanceComponent implements OnInit {
  };
 
  this.isSavingMode = true;
- this.modeError = '';
- this.modeSuccess = '';
 
  this.vendorDetailFacade.updateVendorFinanceSettingsRequest(payload).pipe(take(1)).subscribe({
  next: (vendor) => {
  this.cdr.markForCheck();
  this.vendorDetail = vendor;
  this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
- this.modeSuccess = this.text('حدّثنا دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.');
- this.toastService.success(this.modeSuccess, this.text('المالية', 'Finance'));
+ this.toastService.success(
+ this.text('حدّثنا دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.'),
+ this.text('المالية', 'Finance')
+ );
  this.isSavingMode = false;
  },
  error: () => {
  this.cdr.markForCheck();
- this.modeError = this.vendorDetailFacade.mutationError || this.text('ما قدرنا نحدّث دورة الحياة المالية الحين.', 'Unable to update the lifecycle right now.');
- this.toastService.error(this.modeError, this.text('المالية', 'Finance'));
+ this.toastService.error(
+ this.vendorDetailFacade.mutationError || this.text('ما قدرنا نحدّث دورة الحياة المالية الحين.', 'Unable to update the lifecycle right now.'),
+ this.text('المالية', 'Finance')
+ );
  this.isSavingMode = false;
  }
  });

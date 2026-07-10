@@ -54,10 +54,8 @@ export class RolesManagementComponent implements OnInit {
   isDeleting = false;
   isSavingPermissions = false;
   isCreatingRole = false;
-  deleteError = '';
-  pageError = '';
-  createRoleError = '';
-  activeDetailTab: 'permissions' | 'users' = 'permissions';
+ deleteError = '';
+ activeDetailTab: 'permissions' | 'users' = 'permissions';
 
   readonly detailTabs = [
     { id: 'permissions' as const, labelKey: 'ADMIN_USERS.ROLES_MANAGEMENT.TABS.PERMISSIONS', icon: 'key' },
@@ -141,7 +139,6 @@ export class RolesManagementComponent implements OnInit {
 
   loadRoles(): void {
     this.isLoading = true;
-    this.pageError = '';
 
     this.accessApi.getRoles().subscribe({
       next: (dtoRoles) => {
@@ -155,10 +152,13 @@ export class RolesManagementComponent implements OnInit {
       error: (err) => {
         this.cdr.markForCheck();
         console.error('Error loading roles', buildSafeApiErrorLog(err));
-        this.pageError = describeApiError(err, this.translate, {
-          fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.LOAD_ROLES_FAILED'
-        });
         this.isLoading = false;
+        this.toastService.error(
+          describeApiError(err, this.translate, {
+            fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.LOAD_ROLES_FAILED'
+          }),
+          this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.TITLE')
+        );
       }
     });
   }
@@ -344,14 +344,12 @@ export class RolesManagementComponent implements OnInit {
   openCreateModal(): void {
     this.newRoleName = '';
     this.newRoleDescription = '';
-    this.createRoleError = '';
     this.showModal = true;
   }
 
   createRole(): void {
     if (!this.newRoleName.trim()) return;
     this.isCreatingRole = true;
-    this.createRoleError = '';
     const payload = {
       name: this.newRoleName.trim(),
       description: this.newRoleDescription.trim() || undefined,
@@ -378,13 +376,12 @@ export class RolesManagementComponent implements OnInit {
       error: (err) => {
         this.cdr.markForCheck();
         console.error('Error creating role', buildSafeApiErrorLog(err));
-        this.createRoleError = describeApiError(err, this.translate, {
-          fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.CREATE_FAILED',
-          codePrefix: 'ADMIN_USERS.ROLES_MANAGEMENT.ERROR_CODES'
-        });
         this.isCreatingRole = false;
         this.toastService.error(
-          this.createRoleError,
+          describeApiError(err, this.translate, {
+            fallbackKey: 'ADMIN_USERS.ROLES_MANAGEMENT.MESSAGES.CREATE_FAILED',
+            codePrefix: 'ADMIN_USERS.ROLES_MANAGEMENT.ERROR_CODES'
+          }),
           this.translate.instant('ADMIN_USERS.ROLES_MANAGEMENT.CREATE.CREATE_ROLE')
         );
       }

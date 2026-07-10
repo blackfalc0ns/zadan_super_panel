@@ -40,6 +40,7 @@ import {
 } from '../../models/admin-support.models';
 import { AdminVendorSupportService } from '../../services/admin-vendor-support.service';
 import { AccessService } from '../../../../core/services/access.service';
+import { ToastService } from '@shared/services/toast.service';
 
 
 type AdminSupportTab = 'vendor' | 'driver' | 'legacy';
@@ -98,16 +99,6 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
  </app-page-header>
 
  <main class="mx-auto flex w-full max-w-[120rem] flex-1 flex-col gap-5 px-4 pt-3 md:gap-6 md:px-10 animate-in slide-in-from-bottom-10 duration-700">
- <div *ngIf="toastMessage"
- class="rounded-[1.25rem] border px-4 py-3 text-[12px] font-black shadow-sm"
- [ngClass]="toastTone === 'success'
- ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
- : toastTone === 'error'
- ? 'border-rose-200 bg-rose-50 text-rose-700'
- : 'border-amber-200 bg-amber-50 text-amber-700'">
- {{ toastMessage }}
- </div>
-
  <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
 
  <section class="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.35)]">
@@ -902,6 +893,7 @@ type DriverSupportCaseType = 'driver_account' | 'driver_report';
 })
 export class AdminSupportCenterComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
+ private readonly toastService = inject(ToastService);
  private readonly driverSupportCaseTypes: DriverSupportCaseType[] = ['driver_account', 'driver_report'];
 
  private readonly destroyRef = inject(DestroyRef);
@@ -1062,8 +1054,6 @@ export class AdminSupportCenterComponent implements OnInit {
  isLoadingDriver = false;
  isLoadingLegacy = false;
  isMutatingTicket = false;
- toastMessage = '';
- toastTone: ToastTone = 'success';
 
  searchTerm = '';
  statusFilter = 'all';
@@ -1505,13 +1495,18 @@ export class AdminSupportCenterComponent implements OnInit {
  }
 
  showCustomToast(message: string, tone: ToastTone = 'success'): void {
- this.toastTone = tone;
- this.toastMessage = message;
- setTimeout(() => {
- if (this.toastMessage === message) {
- this.toastMessage = '';
+ const title = this.translate.instant('SUPPORT_ADMIN.TITLE');
+ if (tone === 'error') {
+ this.toastService.error(message, title);
+ return;
  }
- }, 2800);
+
+ if (tone === 'info') {
+ this.toastService.info(message, title);
+ return;
+ }
+
+ this.toastService.success(message, title);
  }
 
  private describeSupportError(error: unknown, fallbackMessage: string): string {
@@ -2161,12 +2156,6 @@ export class AdminSupportCenterComponent implements OnInit {
  }
 
  private showToast(key: string, tone: ToastTone): void {
- this.toastTone = tone;
- this.toastMessage = this.translate.instant(key);
- setTimeout(() => {
- if (this.toastMessage === this.translate.instant(key)) {
- this.toastMessage = '';
- }
- }, 2800);
+ this.showCustomToast(this.translate.instant(key), tone);
  }
 }
