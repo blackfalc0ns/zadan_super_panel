@@ -48,6 +48,7 @@
     "HIDE_INACTIVE": "Hide Inactive",
     "SHOW_INACTIVE": "Show All",
     "RESET_FILTERS": "Reset Search",
+    "DELETE_SELECTED": "Delete selected",
     "RESET": "Reset",
     "APPLY_FILTERS": "Apply filters",
     "CLEAR_FILTERS": "Clear filters",
@@ -768,7 +769,6 @@
       "DISPUTED": "Disputed",
       "OPEN": "Open",
       "UNDER_REVIEW": "Under Review",
-      "APPROVED": "Approved",
       "REJECTED": "Rejected",
       "ESCALATED": "Escalated",
       "COLLECTED": "Collected",
@@ -965,15 +965,6 @@
       "CURRENT_PERCENT": "Current percentage applied to the selected zone"
     },
     "CURRENCY": "SAR",
-    "ADMINS": {
-      "SUPER_ADMIN": "Super Admin",
-      "FINANCE_SYSTEM": "Finance System"
-    },
-    "ROLES": {
-      "SUPER_ADMIN": "Super Admin",
-      "SYSTEM": "System",
-      "FINANCE_ADMIN": "Finance Admin"
-    },
     "PLATFORM_ACCOUNT": {
       "NAV_LABEL": "Platform Account",
       "NAV_SUMMARY": "Configure the platform bank account and Moyasar payout source.",
@@ -1026,9 +1017,7 @@
         "ENTITY": "Entity",
         "ALL_CATEGORIES": "All categories",
         "ALL_ENTITIES": "All entities",
-        "REFRESH": "Refresh",
-        "FILTER_TITLE": "Audit filters",
-        "FILTER_SUBTITLE": "Filter by category and entity"
+        "REFRESH": "Refresh"
       },
       "STATS": {
         "TOTAL": "Total events",

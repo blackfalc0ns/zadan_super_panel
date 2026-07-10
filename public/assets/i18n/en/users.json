@@ -1934,7 +1934,9 @@
     },
     "ROLES_MANAGEMENT": {
       "TITLE": "Roles & Permissions Management",
-      "SUBTITLE": "Create and update access roles and define each role's permissions across the system.",
+      "SUBTITLE": "Create and update super admin panel access roles and define each role's permissions.",
+      "ROLES_COUNT": "{{total}} roles — {{system}} system · {{custom}} custom",
+      "ADMIN_ONLY_SCOPE": "This page manages super admin panel roles only.",
       "BADGES": {
         "SYSTEM": "System",
         "CUSTOM": "Custom"
@@ -1946,25 +1948,49 @@
         "SCOPE": "Scope:"
       },
       "MATRIX": {
-        "SECTION": "Section"
+        "SECTION": "Section",
+        "SELECT_ALL": "All"
+      },
+      "TABS": {
+        "PERMISSIONS": "Permissions",
+        "USERS": "Users"
+      },
+      "USERS_TAB": {
+        "ASSIGNED": "{{count}} users",
+        "HINT": "Currently assigned to this role in the super admin panel."
       },
       "CREATE": {
-        "TITLE": "Create a new custom role",
-        "SUBTITLE": "Choose the role name and access level, then refine permissions from the permission matrix.",
+        "MODAL_BADGE": "New access role",
+        "TITLE": "Create role",
+        "SUBTITLE": "Same pattern as Add Admin User — roles here are for super admin panel staff only.",
+        "SECTION_ROLE": "Role details",
+        "SECTION_ROLE_HINT": "Role name and description appear when assigning users and in the permission matrix.",
         "NAME": "Role name",
         "NAME_PLACEHOLDER": "Example: Content Manager",
         "DESCRIPTION": "Description",
         "DESCRIPTION_PLACEHOLDER": "A short role description...",
-        "ACCESS_LEVEL": "Access level",
-        "PANEL_SCOPE": "Panel scope"
+        "CREATE_ROLE": "Create role"
       },
       "ACTIONS": {
         "CREATE_ROLE": "Create role",
         "DELETE_ROLE": "Delete role",
         "SAVE_CHANGES": "Save changes",
+        "SAVING": "Saving...",
+        "CREATING_ROLE": "Creating...",
+        "ADD_USER_FOR_ROLE": "Add admin user with this role",
         "CLOSE": "Close",
         "CANCEL": "Cancel"
-      }
+      },
+      "MESSAGES": {
+        "LOAD_PERMISSIONS_FAILED": "Could not load permissions.",
+        "LOAD_ROLES_FAILED": "Could not load roles.",
+        "SAVE_SUCCESS": "Role permissions saved.",
+        "SAVE_FAILED": "Could not save role permissions.",
+        "CREATE_SUCCESS": "Role created successfully.",
+        "CREATE_FAILED": "Could not create the role.",
+        "DELETE_FAILED": "Could not delete the role."
+      },
+      "ERROR_CODES": {}
     },
     "DETAIL": {
       "TITLE": "Identity Access Profile",

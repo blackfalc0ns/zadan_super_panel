@@ -81,7 +81,15 @@
       "SUB_CATEGORY_REQUIRED": "اختيار التصنيف الفرعي مطلوب.",
       "STATUS_VISIBLE": "مرئي للعملاء في المتجر",
       "STATUS_HIDDEN": "مخفي عن العملاء الحين"
-    }
+    },
+    "SAVING": "نحفظ...",
+    "SAVE_FAILED_TITLE": "ما قدرنا نحفظ العلامة التجارية",
+    "SAVE_FAILED": "ما قدرنا نحفظ العلامة التجارية. جرّب مرة ثانية.",
+    "SAVE_UPDATED": "حدّثنا العلامة التجارية بنجاح.",
+    "SAVE_CREATED": "أضفنا العلامة التجارية بنجاح.",
+    "TOAST_TITLE": "العلامات التجارية",
+    "UPLOAD_FAILED": "فشل رفع الصورة.",
+    "ERROR_CODES": {}
   },
   "BRAND": {
     "LOGO": "الشعار",
@@ -165,6 +173,15 @@
       "DESC_EN_PLACEHOLDER": "Enter a detailed product description in English",
       "ORDER": "ترتيب العرض"
     },
+    "SAVING": "نحفظ...",
+    "SAVE_FAILED_TITLE": "ما قدرنا نحفظ التصنيف",
+    "SAVE_FAILED": "ما قدرنا نحفظ التصنيف. جرّب مرة ثانية.",
+    "SAVE_UPDATED": "حدّثنا التصنيف بنجاح.",
+    "SAVE_CREATED": "أضفنا التصنيف بنجاح.",
+    "TOAST_TITLE": "التصنيفات",
+    "UPLOAD_FAILED": "فشل رفع الصورة.",
+    "DELETE_ERROR_GENERIC": "ما قدرنا نحذف التصنيف. جرّب مرة ثانية.",
+    "ERROR_CODES": {},
     "DETAILS": {
       "TITLE": "معلومات التصنيف",
       "BACK": "العودة إلى التسلسل الهرمي",
@@ -287,6 +304,10 @@
       "AVAILABLE_QTY": "الكمية المتوفرة",
       "UNIT_PRICE": "سعر الوحدة",
       "LAST_UPDATE": "آخر تحديث",
+      "VENDORS_SUBTITLE": "التجار المرتبطين وتوفر المخزون",
+      "VENDOR_COUNT_UNIT": "تاجر",
+      "NO_VENDORS_TITLE": "ما فيه تجار مرتبطين",
+      "NO_VENDORS_MESSAGE": "هذا المنتج غير مرتبط بمخزون أي تاجر حتى الحين.",
       "IMAGE_ALT": "صورة",
       "TIME_TWO_HOURS_AGO": "قبل ساعتين",
       "TIME_YESTERDAY": "أمس",
@@ -399,7 +420,19 @@
     "SLUG_PLACEHOLDER": "مثال: milk-almarai-1l",
     "DELETE_FAILED": "فشل حذف المنتج",
     "STATUS_INACTIVE": "غير نشط",
-    "STATUS_DISCONTINUED": "متوقف"
+    "STATUS_DISCONTINUED": "متوقف",
+    "SAVING": "نحفظ...",
+    "SAVE_FAILED_TITLE": "ما قدرنا نحفظ المنتج",
+    "SAVE_FAILED": "ما قدرنا نحفظ المنتج. جرّب مرة ثانية.",
+    "SAVE_UPDATED": "حدّثنا بيانات المنتج بنجاح.",
+    "SAVE_CREATED": "أضفنا المنتج بنجاح.",
+    "TOAST_TITLE": "بنك المنتجات",
+    "COMPLETE_STATUS": "مكتمل",
+    "REQUIRED_STATUS": "مطلوب",
+    "SYSTEM_IDENTIFIER_DESC": "معرّف فريد يستخدمه النظام في الروابط والبحث.",
+    "ERROR_CODES": {
+      "DUPLICATE_VARIANT": "يوجد حجم بنفس القياس في هذه المجموعة بالفعل."
+    }
   },
   "CATALOG": {
     "PRODUCT_REQUESTS": "طلبات إضافة المنتجات",
@@ -568,6 +601,7 @@
     "HIDE_INACTIVE": "إخفاء غير النشط",
     "SHOW_INACTIVE": "إظهار الكل",
     "RESET_FILTERS": "إعادة ضبط البحث",
+    "DELETE_SELECTED": "حذف المحدد",
     "RESET": "إعادة ضبط",
     "APPLY_FILTERS": "تطبيق الفلاتر",
     "CLEAR_FILTERS": "مسح الفلاتر",

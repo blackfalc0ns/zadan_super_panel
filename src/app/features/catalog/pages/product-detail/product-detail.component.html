@@ -221,11 +221,11 @@
  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
  <div>
  <h2 class="text-xl font-black text-slate-900">{{ 'PRODUCTS.DETAIL.VENDORS_TABLE' | translate }}</h2>
- <p class="mt-2 text-sm font-medium text-slate-500">{{ activeLang === 'ar' ? 'التجار المرتبطين وتوفر المخزون' : 'Linked vendors and stock availability' }}</p>
+ <p class="mt-2 text-sm font-medium text-slate-500">{{ 'PRODUCTS.DETAIL.VENDORS_SUBTITLE' | translate }}</p>
  </div>
  <div class="flex items-center gap-2 rounded-full bg-slate-50 p-1.5 ring-1 ring-slate-200/60">
  <span class="flex h-8 items-center rounded-full bg-white px-4 text-xs font-black text-slate-700 shadow-sm">
- {{ vendorCount }} {{ activeLang === 'ar' ? 'تاجر' : 'vendors' }}
+ {{ vendorCount }} {{ 'PRODUCTS.DETAIL.VENDOR_COUNT_UNIT' | translate }}
  </span>
  </div>
  </div>
@@ -234,8 +234,8 @@
  [data]="vendorSnapshots"
  [columns]="vendorTableColumns"
  [containerClass]="'extraordinary-table-container rounded-[1.5rem] overflow-hidden border border-slate-100'"
- emptyStateTitle="No vendors yet"
- emptyStateMessage="This product is not linked to vendor stock yet.">
+ emptyStateTitle="PRODUCTS.DETAIL.NO_VENDORS_TITLE"
+ emptyStateMessage="PRODUCTS.DETAIL.NO_VENDORS_MESSAGE">
  <ng-template #customColumn let-vendor let-column="column">
  <ng-container *ngIf="column.key === 'vendor'">
  <div class="flex items-center gap-4 text-start">

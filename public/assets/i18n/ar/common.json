@@ -48,6 +48,7 @@
     "HIDE_INACTIVE": "إخفاء غير النشط",
     "SHOW_INACTIVE": "إظهار الكل",
     "RESET_FILTERS": "إعادة ضبط البحث",
+    "DELETE_SELECTED": "حذف المحدد",
     "RESET": "إعادة ضبط",
     "APPLY_FILTERS": "تطبيق الفلاتر",
     "CLEAR_FILTERS": "مسح الفلاتر",
@@ -964,15 +965,6 @@
       "CURRENT_PERCENT": "النسبة الحالية المطبقة على المنطقة المحددة"
     },
     "CURRENCY": "ر.س",
-    "ADMINS": {
-      "SUPER_ADMIN": "الإدارة العليا",
-      "FINANCE_SYSTEM": "النظام المالي"
-    },
-    "ROLES": {
-      "SUPER_ADMIN": "مشرف أعلى",
-      "SYSTEM": "النظام",
-      "FINANCE_ADMIN": "مشرف مالي"
-    },
     "PLATFORM_ACCOUNT": {
       "NAV_LABEL": "حساب المنصة",
       "NAV_SUMMARY": "إعداد حساب المنصة البنكي ومصدر تحويلات Moyasar.",
@@ -1025,9 +1017,7 @@
         "ENTITY": "الكيان",
         "ALL_CATEGORIES": "كل التصنيفات",
         "ALL_ENTITIES": "كل الكيانات",
-        "REFRESH": "تحديث",
-        "FILTER_TITLE": "فلاتر السجل",
-        "FILTER_SUBTITLE": "تصفية حسب التصنيف والكيان"
+        "REFRESH": "تحديث"
       },
       "STATS": {
         "TOTAL": "إجمالي الأحداث",

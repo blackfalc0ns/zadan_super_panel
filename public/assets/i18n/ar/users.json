@@ -1934,7 +1934,9 @@
     },
     "ROLES_MANAGEMENT": {
       "TITLE": "إدارة الأدوار والصلاحيات",
-      "SUBTITLE": "أنشئ أدوار الوصول وعدّلها وحدد صلاحيات كل دور داخل النظام.",
+      "SUBTITLE": "أنشئ أدوار الوصول وعدّلها وحدد صلاحيات كل دور داخل لوحة السوبر أدمن.",
+      "ROLES_COUNT": "{{total}} دور — {{system}} نظامي • {{custom}} مخصص",
+      "ADMIN_ONLY_SCOPE": "هذه الصفحة لأدوار لوحة السوبر أدمن فقط.",
       "BADGES": {
         "SYSTEM": "نظامي",
         "CUSTOM": "مخصص"
@@ -1946,25 +1948,49 @@
         "SCOPE": "النطاق:"
       },
       "MATRIX": {
-        "SECTION": "القسم"
+        "SECTION": "القسم",
+        "SELECT_ALL": "الكل"
+      },
+      "TABS": {
+        "PERMISSIONS": "الصلاحيات",
+        "USERS": "المستخدمين"
+      },
+      "USERS_TAB": {
+        "ASSIGNED": "{{count}} مستخدم",
+        "HINT": "مسندين لهذا الدور حاليًا داخل لوحة السوبر أدمن."
       },
       "CREATE": {
-        "TITLE": "إنشاء دور مخصص جديد",
-        "SUBTITLE": "حدد اسم الدور ومستوى الوصول ثم عدّل الصلاحيات من مصفوفة الصلاحيات.",
+        "MODAL_BADGE": "دور وصول جديد",
+        "TITLE": "إنشاء دور جديد",
+        "SUBTITLE": "نفس نمط إضافة المستخدم الإداري — الأدوار هنا مخصصة لموظفي لوحة السوبر أدمن فقط.",
+        "SECTION_ROLE": "بيانات الدور",
+        "SECTION_ROLE_HINT": "اسم الدور ووصفه يظهران عند إسناد المستخدمين وفي مصفوفة الصلاحيات.",
         "NAME": "اسم الدور",
         "NAME_PLACEHOLDER": "مثال: مدير المحتوى",
         "DESCRIPTION": "الوصف",
-        "DESCRIPTION_PLACEHOLDER": "وصف مختصر للدور...",
-        "ACCESS_LEVEL": "مستوى الوصول",
-        "PANEL_SCOPE": "نطاق اللوحة"
+        "DESCRIPTION_PLACEHOLDER": "وصف مختصر لمهام هذا الدور...",
+        "CREATE_ROLE": "إنشاء الدور"
       },
       "ACTIONS": {
         "CREATE_ROLE": "إنشاء دور جديد",
         "DELETE_ROLE": "حذف الدور",
         "SAVE_CHANGES": "حفظ التغييرات",
+        "SAVING": "جاري الحفظ...",
+        "CREATING_ROLE": "جاري الإنشاء...",
+        "ADD_USER_FOR_ROLE": "إضافة مستخدم إداري بهذا الدور",
         "CLOSE": "إغلاق",
         "CANCEL": "إلغاء"
-      }
+      },
+      "MESSAGES": {
+        "LOAD_PERMISSIONS_FAILED": "تعذر تحميل الصلاحيات.",
+        "LOAD_ROLES_FAILED": "تعذر تحميل الأدوار.",
+        "SAVE_SUCCESS": "تم حفظ صلاحيات الدور.",
+        "SAVE_FAILED": "تعذر حفظ صلاحيات الدور.",
+        "CREATE_SUCCESS": "تم إنشاء الدور بنجاح.",
+        "CREATE_FAILED": "تعذر إنشاء الدور.",
+        "DELETE_FAILED": "تعذر حذف الدور."
+      },
+      "ERROR_CODES": {}
     },
     "DETAIL": {
       "TITLE": "ملف الهوية والصلاحية",

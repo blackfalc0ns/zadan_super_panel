@@ -48,6 +48,7 @@
     "HIDE_INACTIVE": "Hide Inactive",
     "SHOW_INACTIVE": "Show All",
     "RESET_FILTERS": "Reset Search",
+    "DELETE_SELECTED": "Delete selected",
     "RESET": "Reset",
     "APPLY_FILTERS": "Apply filters",
     "CLEAR_FILTERS": "Clear filters",
@@ -3126,7 +3127,15 @@
       "SUB_CATEGORY_REQUIRED": "Sub-category selection is required.",
       "STATUS_VISIBLE": "Visible to customers in store",
       "STATUS_HIDDEN": "Currently hidden from customers"
-    }
+    },
+    "SAVING": "Saving...",
+    "SAVE_FAILED_TITLE": "Could not save brand",
+    "SAVE_FAILED": "Could not save the brand. Please try again.",
+    "SAVE_UPDATED": "Brand updated successfully.",
+    "SAVE_CREATED": "Brand created successfully.",
+    "TOAST_TITLE": "Brands",
+    "UPLOAD_FAILED": "Failed to upload image.",
+    "ERROR_CODES": {}
   },
   "BRAND": {
     "LOGO": "Logo",
@@ -3210,6 +3219,15 @@
       "DESC_EN_PLACEHOLDER": "Enter a detailed product description in English",
       "ORDER": "Display Order"
     },
+    "SAVING": "Saving...",
+    "SAVE_FAILED_TITLE": "Could not save category",
+    "SAVE_FAILED": "Could not save the category. Please try again.",
+    "SAVE_UPDATED": "Category updated successfully.",
+    "SAVE_CREATED": "Category created successfully.",
+    "TOAST_TITLE": "Categories",
+    "UPLOAD_FAILED": "Failed to upload image.",
+    "DELETE_ERROR_GENERIC": "Could not delete the category. Please try again.",
+    "ERROR_CODES": {},
     "DETAILS": {
       "TITLE": "Category Info",
       "BACK": "Back to Hierarchy",
@@ -3332,6 +3350,10 @@
       "AVAILABLE_QTY": "Available Qty",
       "UNIT_PRICE": "Unit Price",
       "LAST_UPDATE": "Last Update",
+      "VENDORS_SUBTITLE": "Linked vendors and stock availability",
+      "VENDOR_COUNT_UNIT": "vendors",
+      "NO_VENDORS_TITLE": "No vendors yet",
+      "NO_VENDORS_MESSAGE": "This product is not linked to vendor stock yet.",
       "IMAGE_ALT": "Image",
       "TIME_TWO_HOURS_AGO": "2 hours ago",
       "TIME_YESTERDAY": "Yesterday",
@@ -3444,7 +3466,19 @@
     "SLUG_PLACEHOLDER": "Ex: milk-almarai-1l",
     "DELETE_FAILED": "Failed to delete product",
     "STATUS_INACTIVE": "Inactive",
-    "STATUS_DISCONTINUED": "Discontinued"
+    "STATUS_DISCONTINUED": "Discontinued",
+    "SAVING": "Saving...",
+    "SAVE_FAILED_TITLE": "Could not save product",
+    "SAVE_FAILED": "Could not save the product. Please try again.",
+    "SAVE_UPDATED": "Product updated successfully.",
+    "SAVE_CREATED": "Product created successfully.",
+    "TOAST_TITLE": "Product Bank",
+    "COMPLETE_STATUS": "Complete",
+    "REQUIRED_STATUS": "Required",
+    "SYSTEM_IDENTIFIER_DESC": "Unique identifier used by the system for links and search.",
+    "ERROR_CODES": {
+      "DUPLICATE_VARIANT": "A variant with the same size already exists in this group."
+    }
   },
   "CATALOG": {
     "PRODUCT_REQUESTS": "Product Addition Requests",

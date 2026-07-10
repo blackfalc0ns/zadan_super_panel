@@ -53,7 +53,58 @@
       "TITLE": "Persona-based email workflows",
       "DESC": "Review enabled rules, audience scope, sender profile, and routing strategy from one place.",
       "ENABLED": "Enabled",
-      "DISABLED": "Disabled"
+      "DISABLED": "Disabled",
+      "SEARCH": "Search rules or templates...",
+      "NO_MATCH": "No matching rules",
+      "NO_MATCH_DESC": "Try a different search term or change the audience filter.",
+      "HAS_TEMPLATE": "Linked template"
+    },
+    "TABS": {
+      "ROUTING": "Routing",
+      "TEMPLATE": "Template",
+      "DELIVERY": "Recipients",
+      "HISTORY": "History"
+    },
+    "NAV": {
+      "HISTORY": "Dispatch history",
+      "SENDER_PROFILES": "Sender profiles",
+      "BACK_TO_RULES": "Back to rules",
+      "OPEN_RULE": "Open rule"
+    },
+    "RULE_DETAIL": {
+      "TITLE": "Rule details",
+      "SUBTITLE": "Configure routing, template, and recipients for this workflow rule."
+    },
+    "RULE_NOT_FOUND": "The requested email rule could not be found.",
+    "PLACEHOLDERS": {
+      "SENDER_PROFILE": "Select sender profile",
+      "BRANCH_SCOPE": "Select branch scope"
+    },
+    "TEMPLATE": {
+      "BADGE": "Template editor",
+      "TITLE": "Bind the email template to this rule",
+      "DESC": "Edit subject, body, hero image, and CTA with a live preview that matches backend rendering.",
+      "HERO_IMAGE": "Hero image",
+      "HERO_PLACEHOLDER": "https://...",
+      "FALLBACK_HERO": "Fallback hero image",
+      "CTA_LABEL": "CTA button label",
+      "VARIABLES_HINT": "Click any variable to append it to the template body.",
+      "PREVIEW_BADGE": "Live preview",
+      "PREVIEW_TITLE": "Actual email appearance",
+      "PREVIEW_LOCALE": "Preview locale",
+      "SAMPLE_DATA": "Sample data",
+      "RAW_TOKENS": "Raw tokens",
+      "SOURCE": "Preview source",
+      "BACKEND_SOURCE": "Backend template",
+      "PREVIEW_LOADING": "Rendering preview from backend...",
+      "PREVIEW_ERROR": "Could not load the template preview from backend.",
+      "EMPTY_SUBJECT": "No subject",
+      "OPEN_PREVIEW": "Preview template"
+    },
+    "DELIVERY": {
+      "BADGE": "Email delivery",
+      "TITLE": "Recipients and pre-send verification",
+      "DESC": "Review subject, variables, and resolved recipients before test send or live dispatch."
     },
     "CONFIG": {
       "BADGE": "Rule configuration"

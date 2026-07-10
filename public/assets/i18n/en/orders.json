@@ -910,7 +910,6 @@
         "DESCRIPTION_PLACEHOLDER": "Please write the dispute details here...",
         "EVIDENCE": "Evidence (images / documents)",
         "EVIDENCE_HINT": "Drop files here or click to upload",
-        "EVIDENCE_UPLOAD_ERROR": "Evidence upload failed. Please try again.",
         "INTERNAL_NOTES": "Internal notes (supervisors only)",
         "INTERNAL_NOTES_PLACEHOLDER": "Add notes that will not be visible to the customer or merchant...",
         "NOTIFY_REVIEWER": "Notify reviewer",
