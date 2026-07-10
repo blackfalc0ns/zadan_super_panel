@@ -15,6 +15,7 @@ import { FinanceService } from '../../services/finance.service';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { describeApiError } from '../../../../shared/utils/api-error.util';
 
@@ -42,7 +43,8 @@ type NumericZoneField =
  TranslateModule,
  AppCardComponent,
  AppButtonComponent,
- AppPageHeaderComponent
+ AppPageHeaderComponent,
+ SearchableSelectComponent
  ],
  template: `
  <div *ngIf="showConfirm" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -116,30 +118,28 @@ type NumericZoneField =
  </div>
 
  <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-end xl:w-auto">
- <div class="relative min-w-[12rem] flex-1" *ngIf="selectedScope !== 'global' && regionOptions.length">
- <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.PRICING.SCOPE.REGION' | translate }}</label>
- <select
+ <app-searchable-select
+ *ngIf="selectedScope !== 'global' && regionOptions.length"
+ class="min-w-[12rem] flex-1"
+ [label]="'FINANCES.PRICING.SCOPE.REGION'"
  [(ngModel)]="selectedRegionFilter"
- (ngModelChange)="applyFilters()"
- class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
- <option value="all">{{ 'FINANCES.PRICING.ALL_REGIONS' | translate }}</option>
- <option *ngFor="let region of regionOptions" [value]="region.id">{{ region.label }}</option>
- </select>
- <span class="material-symbols-outlined pointer-events-none absolute end-3 bottom-2.5 text-[20px] text-slate-400">expand_more</span>
- </div>
+ [options]="mappedRegionFilterOptions"
+ [searchable]="true"
+ [allowClear]="false"
+ (selectionChange)="applyFilters()">
+ </app-searchable-select>
 
- <div class="relative min-w-[16rem] flex-1">
- <label class="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.PRICING.ZONE_LIST_LABEL' | translate }}</label>
- <select
+ <app-searchable-select
+ class="min-w-[16rem] flex-1"
+ [label]="'FINANCES.PRICING.ZONE_LIST_LABEL'"
  [(ngModel)]="selectedZoneId"
- (ngModelChange)="onZoneChange()"
- class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-10 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-2 focus:ring-zadna-primary/20">
- <option *ngFor="let zone of zones" [value]="itemId(zone)">{{ itemDisplayLabel(zone) }}</option>
- </select>
- <span class="material-symbols-outlined pointer-events-none absolute end-3 bottom-2.5 text-[20px] text-slate-400">expand_more</span>
- </div>
+ [options]="mappedZoneOptions"
+ [searchable]="true"
+ [allowClear]="false"
+ (selectionChange)="onZoneChange()">
+ </app-searchable-select>
 
- <span class="inline-flex h-10 items-center rounded-full bg-slate-100 px-3 text-[11px] font-black text-slate-600 whitespace-nowrap">
+ <span class="inline-flex h-11 items-center rounded-full bg-slate-100 px-3 text-[11px] font-black text-slate-600 whitespace-nowrap">
  {{ 'FINANCES.PRICING.ZONES_COUNT' | translate:{ count: zones.length } }}
  </span>
  </div>
@@ -321,17 +321,14 @@ type NumericZoneField =
  [class.pointer-events-none]="!selectedZone.isCodFeeActive"
  [class.opacity-40]="!selectedZone.isCodFeeActive">
  <div class="space-y-1.5">
- <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.PRICING.FEE_TYPE' | translate }}</label>
- <div class="relative">
- <select
+ <app-searchable-select
+ [label]="'FINANCES.PRICING.FEE_TYPE'"
  [(ngModel)]="selectedZone.codFeeType"
- (ngModelChange)="markDirty()"
- class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 pe-10 text-[13px] font-black text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary">
- <option value="flat">{{ 'FINANCES.PRICING.FLAT_FEE' | translate }}</option>
- <option value="percent">{{ 'FINANCES.PRICING.PERCENTAGE' | translate }}</option>
- </select>
- <span class="material-symbols-outlined pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-slate-400">expand_more</span>
- </div>
+ [options]="codFeeTypeOptions"
+ [searchable]="false"
+ [allowClear]="false"
+ (selectionChange)="markDirty()">
+ </app-searchable-select>
  <p class="text-[11px] font-medium text-slate-400">
  {{ 'FINANCES.PRICING.BACKEND_HINT' | translate }}
  </p>
@@ -491,6 +488,25 @@ export class PlatformPricingComponent implements OnInit {
  return Boolean(this.selectedZone) && this.isDirty &&!this.isSaving;
  }
 
+ get mappedRegionFilterOptions(): SearchableSelectOption[] {
+ return [
+ { labelKey: 'FINANCES.PRICING.ALL_REGIONS', value: 'all' },
+ ...this.regionOptions.map((region) => ({ label: region.label, value: region.id }))
+ ];
+ }
+
+ get mappedZoneOptions(): SearchableSelectOption[] {
+ return this.zones.map((zone) => ({
+ label: this.itemDisplayLabel(zone),
+ value: this.itemId(zone)
+ }));
+ }
+
+ readonly codFeeTypeOptions: SearchableSelectOption[] = [
+ { labelKey: 'FINANCES.PRICING.FLAT_FEE', value: 'flat' },
+ { labelKey: 'FINANCES.PRICING.PERCENTAGE', value: 'percent' }
+ ];
+
  loadData(): void {
  this.isLoading = true;
  this.errorMessage = '';
@@ -639,6 +655,7 @@ export class PlatformPricingComponent implements OnInit {
  this.selectedZoneId = this.zones[0] ? this.itemId(this.zones[0]) : null;
  }
  this.onZoneChange();
+ this.cdr.markForCheck();
  }
 
  itemId(item: PricingSettingsItem): string {

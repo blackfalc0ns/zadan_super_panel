@@ -12,12 +12,6 @@
         <span class="material-symbols-outlined text-[20px]">download</span>
         {{ 'DISPUTES_DASHBOARD.EXPORT_REPORT' | translate }}
       </button>
-      <a *ngIf="canCreateDisputes" [routerLink]="['/orders']"
-        class="px-6 py-3 bg-zadna-primary text-white rounded-[1.2rem] text-sm font-black flex items-center gap-2 shadow-xl shadow-zadna-primary/20 hover:bg-teal-700 transition-all transform hover:scale-105 active:scale-95 group">
-        <span
-          class="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform duration-500">add</span>
-        {{ 'DISPUTES_DASHBOARD.CREATE_DISPUTE' | translate }}
-      </a>
     </div>
   </app-page-header>
 

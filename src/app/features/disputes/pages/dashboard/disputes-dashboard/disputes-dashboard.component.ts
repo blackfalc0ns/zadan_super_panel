@@ -217,10 +217,6 @@ export class DisputesDashboardComponent implements OnInit {
  return this.accessService.hasPermission('disputes.approve');
  }
 
- get canCreateDisputes(): boolean {
- return this.canEditDisputes;
- }
-
  get typeOptions(): Array<{ value: string; label: string }> {
  return [
  { value: 'all', label: this.isRtl ? 'كل الأنواع' : 'All types' },
