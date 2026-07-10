@@ -2075,7 +2075,8 @@
       "SUBTAB_FEATURES": "Features",
       "EXPAND_ALL": "Expand all",
       "COLLAPSE_ALL": "Collapse all",
-      "PERMISSIONS_SEARCH_PLACEHOLDER": "Search permissions..."
+      "PERMISSIONS_SEARCH_PLACEHOLDER": "Search permissions...",
+      "SENSITIVE_PERMISSION_SHORT": "Sensitive"
     },
     "SCOPE": {
       "GLOBAL": "Global panel",

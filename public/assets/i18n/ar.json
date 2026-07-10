@@ -6790,7 +6790,8 @@
       "SUBTAB_FEATURES": "المزايا",
       "EXPAND_ALL": "توسيع الكل",
       "COLLAPSE_ALL": "طي الكل",
-      "PERMISSIONS_SEARCH_PLACEHOLDER": "ابحث في الصلاحيات..."
+      "PERMISSIONS_SEARCH_PLACEHOLDER": "ابحث في الصلاحيات...",
+      "SENSITIVE_PERMISSION_SHORT": "حساس"
     },
     "SCOPE": {
       "GLOBAL": "لوحة عامة",

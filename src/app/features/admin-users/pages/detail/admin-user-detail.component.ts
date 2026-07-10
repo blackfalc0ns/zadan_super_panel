@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent } from '@shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillComponent, StatusPillVariant } from '@shared/components/ui/status-pill/status-pill.component';
@@ -51,6 +52,7 @@ type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn']
 })
 export class AdminUserDetailComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
+ private readonly destroyRef = inject(DestroyRef);
  private readonly translate = inject(TranslateService);
  user: AdminUserRecord | null = null;
  isLoading = false;
@@ -151,13 +153,28 @@ export class AdminUserDetailComponent implements OnInit {
  }
  ];
 
+ private readonly systemRoleTranslationMap: Record<string, AdminRolePresetId> = {
+  super_admin_all: 'super_admin',
+  admin_operations: 'operations_lead',
+  risk_admin: 'risk_admin',
+  finance_admin: 'finance_admin',
+  support_admin: 'support_admin',
+  vendor_branch_staff: 'vendor_branch_employee'
+ };
+
  constructor(
  private readonly route: ActivatedRoute,
  private readonly router: Router,
  private readonly adminAccessApiService: AdminAccessApiService,
  private readonly adminUsersService: AdminUsersService,
  private readonly vendorService: VendorService
- ) {}
+ ) {
+  this.translate.onLangChange
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe((_event: LangChangeEvent) => {
+      this.cdr.markForCheck();
+    });
+ }
 
  ngOnInit(): void {
  this.route.queryParams.subscribe(params => {
@@ -928,8 +945,17 @@ export class AdminUserDetailComponent implements OnInit {
  get roleDefinitionOptions(): Array<{ value: string; label: string }> {
  return this.roleDefinitions.filter((role) => role.isActive && this.mapPanelScopeToString(role.panelScope) === this.user?.panelScope).map((role) => ({
  value: role.id,
- label: role.name
+ label: this.getRoleDefinitionLabel(role)
  }));
+ }
+
+ private getRoleDefinitionLabel(role: RoleDefinitionDto): string {
+  const presetId = this.systemRoleTranslationMap[role.code];
+  if (role.isSystem && presetId) {
+    const preset = getRolePresetById(presetId);
+    return this.translate.instant(preset.nameKey);
+  }
+  return role.name;
  }
 
  private mapPanelScopeToNumber(scope: AdminUserRecord['panelScope']): number {
