@@ -10,6 +10,7 @@
           [driver]="driver" 
           [isRTL]="isRTL"
           [isMutating]="isMutating"
+          [currentTab]="currentTab"
           (editDriverRequested)="editDriverRequested.emit()"
           (openTasksRequested)="onTabChange('operations')"
           (toggleSuspensionRequested)="toggleSuspensionRequested.emit()"

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject
 import { TranslateModule } from '@ngx-translate/core';
 import { DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { DriverDetailRecord, DriverWorkflowActionId } from '../../models/drivers.models';
+import { DriverDetailRecord, DriverWorkflowAction, DriverWorkflowActionId } from '../../models/drivers.models';
 import {
   getDriverStatusKey,
   getDriverRestrictionLabelKey,
@@ -27,6 +27,7 @@ export class DriverHeroComponent {
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() isRTL = true;
   @Input() isMutating = false;
+  @Input() currentTab = 'overview';
 
   copyToClipboard(field: string, text: string) {
     if (!text) return;
@@ -94,8 +95,23 @@ export class DriverHeroComponent {
     return this.driver.workflow;
   }
 
-  get primaryAction() {
-    return this.driver.workflow?.actions?.[0];
+  get primaryAction(): DriverWorkflowAction | undefined {
+    return this.driver.workflow?.actions?.find((action) => !this.isRedundantNavigationAction(action));
+  }
+
+  private isRedundantNavigationAction(action: DriverWorkflowAction): boolean {
+    if (!this.isNavigationOnlyAction(action.id)) {
+      return false;
+    }
+
+    return action.targetTab === this.currentTab;
+  }
+
+  private isNavigationOnlyAction(actionId: DriverWorkflowActionId): boolean {
+    return actionId === 'OPEN_OPERATIONS'
+      || actionId === 'OPEN_SUPPORT'
+      || actionId === 'OPEN_FINANCE'
+      || actionId === 'REVIEW_COMPLIANCE';
   }
 
   get suspensionActionLabel(): string {
