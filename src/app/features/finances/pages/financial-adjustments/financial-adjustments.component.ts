@@ -149,7 +149,7 @@ export class FinancialAdjustmentsComponent implements OnInit {
 
   closeDetail(): void {
     this.selectedAdjustment = null;
-  }
+ }
 
  submitAdjustment(): void {
     if (!this.form.reason || !this.form.amount || !this.form.entityName) {
@@ -215,7 +215,7 @@ export class FinancialAdjustmentsComponent implements OnInit {
     return type === 'vendor'
       ? 'bg-cyan-50 text-cyan-700 border-cyan-100'
       : 'bg-amber-50 text-amber-700 border-amber-100';
-  }
+ }
 
  getCategoryLabelKey(cat: string): string {
  const map: Record<string, string> = {
@@ -304,7 +304,7 @@ export class FinancialAdjustmentsComponent implements OnInit {
           : undefined
       }
     ];
-  }
+ }
 
  private resetForm(): void {
     this.form = {
