@@ -49,25 +49,50 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  </button>
  </div>
  </header>
- <div class="space-y-5 p-6">
- <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
- <p class="text-[10px] font-black uppercase tracking-wider text-emerald-700">{{ 'FINANCES.SETTLEMENTS.NET_DUE' | translate }}</p>
- <p class="mt-1 text-xl font-black text-emerald-800">{{ formatNumber(manualPayout.amount) }} {{ 'FINANCES.CURRENCY' | translate }}</p>
- </div>
- <label class="block">
- <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.REFERENCE' | translate }}</span>
- <input [(ngModel)]="manualTransferReference" name="manualTransferReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100" [placeholder]="'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.REFERENCE_PLACEHOLDER' | translate" />
- </label>
- <label class="block">
+  <div class="space-y-5 p-6">
+  <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+  <p class="text-[10px] font-black uppercase tracking-wider text-emerald-700">{{ 'FINANCES.SETTLEMENTS.NET_DUE' | translate }}</p>
+  <p class="mt-1 text-xl font-black text-emerald-800">{{ formatNumber(manualPayout.amount) }} {{ 'FINANCES.CURRENCY' | translate }}</p>
+  <p *ngIf="manualPayout.destinationMaskedLabel" class="mt-1 text-[11px] font-bold text-emerald-700">{{ manualPayout.destinationMaskedLabel }}</p>
+  </div>
+  <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-black">
+  <span [class.text-violet-700]="manualWorkflowStage === 'claim'" [class.text-slate-400]="manualWorkflowStage !== 'claim'">1. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_TITLE' | translate }}</span>
+  <span [class.text-violet-700]="manualWorkflowStage === 'submission'" [class.text-slate-400]="manualWorkflowStage !== 'submission'">2. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_TITLE' | translate }}</span>
+  <span [class.text-violet-700]="manualWorkflowStage === 'confirmation'" [class.text-slate-400]="manualWorkflowStage !== 'confirmation'">3. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_TITLE' | translate }}</span>
+  </div>
+  <ng-container *ngIf="manualWorkflowStage === 'claim'">
+  <p class="rounded-xl border border-violet-100 bg-violet-50 px-3 py-3 text-[12px] font-medium leading-5 text-violet-900">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_DESC' | translate }}</p>
+  </ng-container>
+  <ng-container *ngIf="manualWorkflowStage === 'submission'">
+  <label class="block">
+  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE' | translate }}</span>
+  <input [(ngModel)]="manualBankSubmissionReference" name="manualBankSubmissionReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100" [placeholder]="'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE_PLACEHOLDER' | translate" />
+  </label>
+  </ng-container>
+  <ng-container *ngIf="manualWorkflowStage === 'confirmation'">
+  <label class="block">
+  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.REFERENCE' | translate }}</span>
+  <input [(ngModel)]="manualTransferReference" name="manualTransferReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100" [placeholder]="'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.REFERENCE_PLACEHOLDER' | translate" />
+  </label>
+  <label class="block">
  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.PROOF' | translate }}</span>
  <input type="file" accept="image/png,image/jpeg,application/pdf" (change)="onProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-100 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-violet-800" />
- <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
- </label>
- <p *ngIf="manualConfirmationError" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">{{ manualConfirmationError }}</p>
+  <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
+  </label>
+  </ng-container>
+  <p *ngIf="manualConfirmationError" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">{{ manualConfirmationError }}</p>
  </div>
  <footer class="flex gap-3 border-t border-slate-100 px-6 py-4">
  <button type="button" (click)="closeManualConfirmation()" [disabled]="isConfirmingManualPayout" class="h-10 flex-1 rounded-xl border border-slate-200 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50">{{ 'COMMON.CANCEL' | translate }}</button>
- <button type="button" (click)="confirmManualPayout()" [disabled]="isConfirmingManualPayout || !manualProofFile || !manualTransferReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
+  <button *ngIf="manualWorkflowStage === 'claim'" type="button" (click)="claimManualPayout()" [disabled]="isConfirmingManualPayout" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
+  <span class="material-symbols-outlined text-[17px]">lock</span>
+  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_ACTION' | translate }}
+  </button>
+  <button *ngIf="manualWorkflowStage === 'submission'" type="button" (click)="recordManualBankSubmission()" [disabled]="isConfirmingManualPayout || !manualBankSubmissionReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
+  <span class="material-symbols-outlined text-[17px]">account_balance</span>
+  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_ACTION' | translate }}
+  </button>
+  <button *ngIf="manualWorkflowStage === 'confirmation'" type="button" (click)="confirmManualPayout()" [disabled]="isConfirmingManualPayout || !manualProofFile || !manualTransferReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
  <span class="material-symbols-outlined text-[17px]">{{ isConfirmingManualPayout ? 'hourglass_empty' : 'verified' }}</span>
  {{ (isConfirmingManualPayout ? 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRMING' : 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM') | translate }}
  </button>
@@ -336,7 +361,9 @@ export class SettlementsComponent implements OnInit {
  scopedEntityId: string | null = null;
  manualPayout: SettlementPayout | null = null;
  manualProofFile: File | null = null;
- manualTransferReference = '';
+  manualTransferReference = '';
+  manualBankSubmissionReference = '';
+  manualWorkflowStage: 'claim' | 'submission' | 'confirmation' = 'claim';
  manualConfirmationError = '';
  isConfirmingManualPayout = false;
 
@@ -397,17 +424,13 @@ export class SettlementsComponent implements OnInit {
  openDetail(s: Settlement): void { this.selectedSettlement = s; }
  
  processSettlement(s: Settlement): void {
- this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe({
+  this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe({
  next: (settlement) => {
  this.cdr.markForCheck();
  if (settlement.settlementProcessingMode === 'Manual') {
  const payout = settlement.payouts?.find((item) => !item.manualConfirmation) ?? null;
  if (payout) {
- this.selectedSettlement = settlement;
- this.manualPayout = payout;
- this.manualProofFile = null;
- this.manualTransferReference = payout.transferReference || '';
- this.manualConfirmationError = '';
+  this.openManualWorkflow(settlement, payout);
  return;
  }
  }
@@ -434,10 +457,84 @@ export class SettlementsComponent implements OnInit {
  }
 
  this.manualPayout = null;
- this.manualProofFile = null;
- this.manualTransferReference = '';
- this.manualConfirmationError = '';
- }
+  this.manualProofFile = null;
+  this.manualTransferReference = '';
+  this.manualBankSubmissionReference = '';
+  this.manualWorkflowStage = 'claim';
+  this.manualConfirmationError = '';
+  }
+
+  private openManualWorkflow(settlement: Settlement, payout: SettlementPayout): void {
+  this.selectedSettlement = settlement;
+  this.manualPayout = payout;
+  this.manualProofFile = null;
+  this.manualTransferReference = payout.transferReference || '';
+  this.manualBankSubmissionReference = payout.executionReservation?.submissionReference || '';
+  this.manualConfirmationError = '';
+
+  const status = payout.executionReservation?.status;
+  if (status === 'Submitted') {
+  this.manualWorkflowStage = 'confirmation';
+  this.manualTransferReference ||= this.manualBankSubmissionReference;
+  return;
+  }
+
+  if (status === 'Claimed') {
+  this.manualWorkflowStage = 'submission';
+  return;
+  }
+
+  this.manualWorkflowStage = 'claim';
+  this.claimManualPayout();
+  }
+
+  claimManualPayout(): void {
+  if (!this.manualPayout || this.isConfirmingManualPayout) return;
+
+  this.isConfirmingManualPayout = true;
+  this.manualConfirmationError = '';
+  this.financeService.claimManualPayout(this.manualPayout.id).pipe(
+  finalize(() => {
+  this.isConfirmingManualPayout = false;
+  this.cdr.markForCheck();
+  }),
+  take(1)
+  ).subscribe({
+  next: (payout) => {
+  this.updateManualPayoutWorkflow(payout.status, payout.executionReservation);
+  this.manualWorkflowStage = 'submission';
+  },
+  error: () => {
+  this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.PREPARE_ERROR');
+  }
+  });
+  }
+
+  recordManualBankSubmission(): void {
+  if (!this.manualPayout || !this.manualBankSubmissionReference.trim() || this.isConfirmingManualPayout) return;
+
+  this.isConfirmingManualPayout = true;
+  this.manualConfirmationError = '';
+  this.financeService.recordManualBankSubmission(
+  this.manualPayout.id,
+  this.manualBankSubmissionReference.trim()
+  ).pipe(
+  finalize(() => {
+  this.isConfirmingManualPayout = false;
+  this.cdr.markForCheck();
+  }),
+  take(1)
+  ).subscribe({
+  next: (payout) => {
+  this.updateManualPayoutWorkflow(payout.status, payout.executionReservation);
+  this.manualWorkflowStage = 'confirmation';
+  this.manualTransferReference ||= this.manualBankSubmissionReference.trim();
+  },
+  error: () => {
+  this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
+  }
+  });
+  }
 
  confirmManualPayout(): void {
  if (!this.manualPayout || !this.manualProofFile || !this.manualTransferReference.trim() || this.isConfirmingManualPayout) {
@@ -449,8 +546,8 @@ export class SettlementsComponent implements OnInit {
  const payoutId = this.manualPayout.id;
  const transferReference = this.manualTransferReference.trim();
 
- this.financeService.uploadSettlementProof(this.manualProofFile).pipe(
- switchMap((proofUrl) => this.financeService.confirmManualPayout(payoutId, { transferReference, proofUrl })),
+  this.financeService.uploadManualPayoutProof(payoutId, this.manualProofFile).pipe(
+  switchMap((proof) => this.financeService.confirmManualPayout(payoutId, { transferReference, proofAttachmentId: proof.id })),
  finalize(() => {
  this.cdr.markForCheck();
  this.isConfirmingManualPayout = false;
@@ -462,11 +559,21 @@ export class SettlementsComponent implements OnInit {
  this.selectedSettlement = null;
  this.loadSettlements();
  },
- error: () => {
- this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
- }
- });
- }
+  error: () => {
+  this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
+  }
+  });
+  }
+
+  private updateManualPayoutWorkflow(status: string, executionReservation: SettlementPayout['executionReservation']): void {
+  if (!this.manualPayout) return;
+
+  this.manualPayout = {
+  ...this.manualPayout,
+  status,
+  executionReservation
+  };
+  }
  
  trackById(_: number, s: Settlement): string { return s.id; }
 

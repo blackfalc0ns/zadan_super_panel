@@ -365,13 +365,14 @@ export interface AdminVendorPayoutItem {
  swiftCode?: string | null;
  providerName?: string | null;
  providerTransferId?: string | null;
- manualConfirmation?: {
-  id: string;
-  transferReference: string;
-  proofUrl: string;
-  confirmedByUserId: string;
-  confirmedAtUtc: string;
- } | null;
+  manualConfirmation?: {
+   id: string;
+   transferReference: string;
+   proofAttachmentId: string | null;
+   hasLegacyProof: boolean;
+   confirmedByUserId: string;
+   confirmedAtUtc: string;
+  } | null;
 }
 
 export interface AdminSendVendorNotificationRequest {
@@ -2320,7 +2321,17 @@ return this.updateVendor(id, (vendor) => {
 
  private normalizePayoutDay(value?: string | null): VendorPayoutDay {
  const normalized = (value || '').trim().toLowerCase();
- return normalized === 'thursday' ? 'Thursday' : 'Monday';
+ const payoutDays: Record<string, VendorPayoutDay> = {
+ sunday: 'Sunday',
+ monday: 'Monday',
+ tuesday: 'Tuesday',
+ wednesday: 'Wednesday',
+ thursday: 'Thursday',
+ friday: 'Friday',
+ saturday: 'Saturday'
+ };
+
+ return payoutDays[normalized] ?? 'Monday';
  }
 
   private normalizeProfileReviewStatus(status?: string | null): VendorProfileReviewItem['status'] {

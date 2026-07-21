@@ -24,33 +24,57 @@
  </header>
 
  <div class="space-y-4 p-5">
- <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+  <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
  <div class="flex items-end justify-between gap-4">
  <div>
  <p class="text-[10px] font-black uppercase tracking-wider text-emerald-700">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.NET_DUE' | translate }}</p>
  <p class="mt-1 text-xl font-black text-emerald-800">{{ formatCurrency(manualPayout.amount) }}</p>
  </div>
  <p class="text-end text-[10px] font-bold text-emerald-700">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.SETTLEMENT' | translate }}<br><span class="font-mono text-slate-700">{{ manualSettlementNumber }}</span></p>
- </div>
- </div>
+  </div>
+  </div>
+  <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-black">
+  <span [class.text-primary]="manualWorkflowStage === 'claim'" [class.text-slate-400]="manualWorkflowStage !== 'claim'">1. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_TITLE' | translate }}</span>
+  <span [class.text-primary]="manualWorkflowStage === 'submission'" [class.text-slate-400]="manualWorkflowStage !== 'submission'">2. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_TITLE' | translate }}</span>
+  <span [class.text-primary]="manualWorkflowStage === 'confirmation'" [class.text-slate-400]="manualWorkflowStage !== 'confirmation'">3. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_TITLE' | translate }}</span>
+  </div>
 
- <label class="block">
- <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.REFERENCE' | translate }}</span>
- <input [(ngModel)]="manualTransferReference" name="vendorManualTransferReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" [placeholder]="'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.REFERENCE_PLACEHOLDER' | translate" />
- </label>
+  <ng-container *ngIf="manualWorkflowStage === 'claim'">
+  <p class="rounded-xl border border-primary/15 bg-primary/5 px-3 py-3 text-[12px] font-medium leading-5 text-slate-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_DESC' | translate }}</p>
+  </ng-container>
+  <ng-container *ngIf="manualWorkflowStage === 'submission'">
+  <label class="block">
+  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE' | translate }}</span>
+  <input [(ngModel)]="manualBankSubmissionReference" name="vendorManualBankSubmissionReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" [placeholder]="'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE_PLACEHOLDER' | translate" />
+  </label>
+  </ng-container>
 
- <label class="block">
+  <ng-container *ngIf="manualWorkflowStage === 'confirmation'">
+  <label class="block">
+  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.REFERENCE' | translate }}</span>
+  <input [(ngModel)]="manualTransferReference" name="vendorManualTransferReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" [placeholder]="'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.REFERENCE_PLACEHOLDER' | translate" />
+  </label>
+  <label class="block">
  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PROOF' | translate }}</span>
  <input type="file" accept="image/png,image/jpeg,application/pdf" (change)="onManualProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-primary" />
- <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
- </label>
+  <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
+  </label>
+  </ng-container>
 
  <p *ngIf="manualConfirmationError" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">{{ manualConfirmationError }}</p>
  </div>
 
  <footer class="flex gap-3 border-t border-slate-100 px-5 py-4">
  <button type="button" (click)="closeManualConfirmation()" [disabled]="isConfirmingManualPayout" class="h-10 flex-1 rounded-xl border border-slate-200 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50">{{ 'COMMON.CANCEL' | translate }}</button>
- <button type="button" (click)="confirmManualPayout()" [disabled]="isConfirmingManualPayout || !manualProofFile || !manualTransferReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-[12px] font-black text-white transition hover:bg-primary/90 disabled:opacity-50">
+  <button *ngIf="manualWorkflowStage === 'claim'" type="button" (click)="claimManualPayout()" [disabled]="isConfirmingManualPayout" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-[12px] font-black text-white transition hover:bg-primary/90 disabled:opacity-50">
+  <span class="material-symbols-outlined text-[17px]">lock</span>
+  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_ACTION' | translate }}
+  </button>
+  <button *ngIf="manualWorkflowStage === 'submission'" type="button" (click)="recordManualBankSubmission()" [disabled]="isConfirmingManualPayout || !manualBankSubmissionReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-[12px] font-black text-white transition hover:bg-primary/90 disabled:opacity-50">
+  <span class="material-symbols-outlined text-[17px]">account_balance</span>
+  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_ACTION' | translate }}
+  </button>
+  <button *ngIf="manualWorkflowStage === 'confirmation'" type="button" (click)="confirmManualPayout()" [disabled]="isConfirmingManualPayout || !manualProofFile || !manualTransferReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-[12px] font-black text-white transition hover:bg-primary/90 disabled:opacity-50">
  <span class="material-symbols-outlined text-[17px]">{{ isConfirmingManualPayout ? 'hourglass_empty' : 'verified' }}</span>
  {{ (isConfirmingManualPayout ? 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRMING' : 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRM') | translate }}
  </button>
@@ -110,9 +134,7 @@
   <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-extrabold text-slate-600 shadow-sm">
   <span class="material-symbols-outlined text-[14px] text-primary">event</span>
   {{ 'VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_LABEL' | translate }}:
- {{ selectedPayoutDay === 'Thursday'
-  ? ('VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_THURSDAY' | translate)
-  : ('VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_MONDAY' | translate) }}
+ {{ payoutDayLabel }}
   </span>
   <span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-extrabold shadow-sm"
   [ngClass]="isManualSettlementProcessing ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-slate-200 bg-white text-slate-600'">
@@ -344,10 +366,10 @@
  <td>
   <p class="vendor-finance-ledger-id" [title]="item.payoutNumber">{{ formatLedgerId(item.payoutNumber) }}</p>
   <p *ngIf="item.transferReference" class="vendor-finance-ledger-meta" dir="ltr" [title]="item.transferReference">{{ item.transferReference }}</p>
-  <a *ngIf="item.manualConfirmation?.proofUrl" [href]="item.manualConfirmation?.proofUrl" target="_blank" rel="noopener noreferrer" class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-primary hover:underline">
+  <button *ngIf="item.manualConfirmation?.proofAttachmentId" type="button" (click)="viewManualProof(item)" class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-primary hover:underline">
   <span class="material-symbols-outlined text-[13px]">attach_file</span>
   {{ 'VENDOR_FINANCE.WORKSPACE.VIEW_PROOF' | translate }}
-  </a>
+  </button>
  </td>
  <td>
  <div class="vendor-finance-ledger-amount text-primary" dir="ltr">

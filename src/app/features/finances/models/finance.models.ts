@@ -154,9 +154,23 @@ export interface Settlement {
 export interface SettlementManualConfirmation {
   id: string;
   transferReference: string;
-  proofUrl: string;
+  proofAttachmentId: string | null;
+  hasLegacyProof: boolean;
   confirmedByUserId: string;
   confirmedAtUtc: string;
+}
+
+export interface SettlementPayoutExecutionReservation {
+  mode: string;
+  status: string;
+  claimedByUserId: string | null;
+  claimedAtUtc: string;
+  submittedByUserId: string | null;
+  submittedAtUtc: string | null;
+  submissionReference: string | null;
+  releasedByUserId: string | null;
+  releasedAtUtc: string | null;
+  releaseReason: string | null;
 }
 
 export interface SettlementPayout {
@@ -166,6 +180,9 @@ export interface SettlementPayout {
   providerTransferId?: string | null;
   transferReference?: string | null;
   manualConfirmation?: SettlementManualConfirmation | null;
+  executionReservation?: SettlementPayoutExecutionReservation | null;
+  destinationMaskedLabel?: string | null;
+  scheduledPayoutDay?: string | null;
 }
 
 export interface SettlementItem {

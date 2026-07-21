@@ -243,7 +243,14 @@ export type VendorFinancialLifecycleMode =
   | 'biweekly'
   | 'monthly';
 
-export type VendorPayoutDay = 'Monday' | 'Thursday';
+export type VendorPayoutDay =
+  | 'Sunday'
+  | 'Monday'
+  | 'Tuesday'
+  | 'Wednesday'
+  | 'Thursday'
+  | 'Friday'
+  | 'Saturday';
 
 export interface VendorBankAccount {
   id: string;

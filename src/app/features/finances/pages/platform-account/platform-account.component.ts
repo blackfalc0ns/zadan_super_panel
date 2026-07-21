@@ -2,12 +2,15 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { forkJoin, take } from 'rxjs';
+import { forkJoin, map, switchMap, take } from 'rxjs';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { describeApiError } from '../../../../shared/utils/api-error.util';
 import {
   AdminPlatformBankAccountDto,
+  DEFAULT_SETTLEMENT_PAYOUT_DAYS,
+  SETTLEMENT_PAYOUT_DAYS,
+  SettlementPayoutDay,
   SettlementProcessingMode,
   AdminUpsertPlatformBankAccountRequest,
  WalletsService
@@ -28,7 +31,7 @@ import {
  <span class="material-symbols-outlined text-[18px]">refresh</span>
  {{ 'FINANCES.PLATFORM_ACCOUNT.REFRESH' | translate }}
  </button>
- <button type="button" (click)="save()" [disabled]="isLoading || isSaving || isSavingSettlementMode || !canSave" class="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60">
+ <button type="button" (click)="save()" [disabled]="isLoading || isSaving || isSavingSettlementMode || !canSave || !canSaveSettlementSettings" class="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60">
  <span class="material-symbols-outlined text-[18px]">{{ isSaving ? 'hourglass_empty' : 'save' }}</span>
  {{ (isSaving ? 'FINANCES.PLATFORM_ACCOUNT.SAVING' : 'FINANCES.PLATFORM_ACCOUNT.SAVE_ACCOUNT') | translate }}
  </button>
@@ -125,13 +128,47 @@ import {
  <input type="radio" name="settlementProcessingMode" value="Manual" [(ngModel)]="settlementProcessingMode" class="mt-1 h-4 w-4 text-violet-600 focus:ring-violet-300" />
  <span><span class="block text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_MANUAL' | translate }}</span><span class="mt-1 block text-[12px] font-medium text-slate-500">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_MANUAL_DESC' | translate }}</span></span>
  </label>
- <label class="flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition" [ngClass]="settlementProcessingMode === 'Automatic' ? 'border-violet-400 bg-white shadow-sm' : 'border-slate-200 bg-white/60'">
- <input type="radio" name="settlementProcessingMode" value="Automatic" [(ngModel)]="settlementProcessingMode" class="mt-1 h-4 w-4 text-violet-600 focus:ring-violet-300" />
- <span><span class="block text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC' | translate }}</span><span class="mt-1 block text-[12px] font-medium text-slate-500">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC_DESC' | translate }}</span></span>
+  <label class="flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition" [ngClass]="settlementProcessingMode === 'Automatic' ? 'border-violet-400 bg-white shadow-sm' : 'border-slate-200 bg-white/60'">
+  <input type="radio" name="settlementProcessingMode" value="Automatic" [(ngModel)]="settlementProcessingMode" class="mt-1 h-4 w-4 text-violet-600 focus:ring-violet-300" />
+  <span><span class="block text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC' | translate }}</span><span class="mt-1 block text-[12px] font-medium text-slate-500">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC_DESC' | translate }}</span></span>
+  </label>
+  </div>
+
+  <label class="mt-4 flex cursor-pointer items-start justify-between gap-4 rounded-xl border border-violet-200 bg-white px-4 py-3.5">
+  <span>
+  <span class="block text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.MANUAL_DUAL_CONTROL' | translate }}</span>
+  <span class="mt-1 block max-w-2xl text-[12px] font-medium leading-relaxed text-slate-600">{{ 'FINANCES.PLATFORM_ACCOUNT.MANUAL_DUAL_CONTROL_DESC' | translate }}</span>
+  </span>
+  <input type="checkbox" [(ngModel)]="requireManualPayoutDualControl" name="requireManualPayoutDualControl" class="mt-0.5 h-5 w-5 shrink-0 rounded border-slate-300 text-violet-600 focus:ring-violet-300" />
+  </label>
+
+ <div class="mt-5 border-t border-violet-200 pt-4">
+ <div class="flex flex-wrap items-start justify-between gap-2">
+ <div>
+ <h3 class="text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAYS_TITLE' | translate }}</h3>
+ <p class="mt-1 max-w-2xl text-[12px] font-medium leading-relaxed text-slate-600">{{ 'FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAYS_DESC' | translate }}</p>
+ </div>
+ <span class="rounded-full bg-violet-100 px-3 py-1 text-[10px] font-black text-violet-800">
+ {{ 'FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAYS_SELECTED' | translate:{ count: payoutDays.length } }}
+ </span>
+ </div>
+
+ <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+ <label *ngFor="let day of payoutDayOptions" class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2.5 transition" [ngClass]="isPayoutDayEnabled(day) ? 'border-violet-300 bg-white shadow-sm' : 'border-slate-200 bg-white/60'">
+ <span class="text-[12px] font-black text-slate-800">{{ payoutDayTranslationKey(day) | translate }}</span>
+ <input type="checkbox" [checked]="isPayoutDayEnabled(day)" [disabled]="isPayoutDayEnabled(day) && payoutDays.length === 1" (change)="togglePayoutDay(day, $any($event.target).checked)" class="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-300 disabled:cursor-not-allowed disabled:opacity-50" />
  </label>
  </div>
+
+ <div class="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-[11px] font-bold leading-relaxed text-amber-800">
+ <span class="material-symbols-outlined me-1 align-middle text-[16px]">info</span>
+ {{ 'FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAYS_REASSIGNMENT_HINT' | translate }}
+ </div>
+ <p *ngIf="payoutDays.length === 1" class="mt-2 text-[11px] font-bold text-rose-700">{{ 'FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAYS_MINIMUM_HINT' | translate }}</p>
+ </div>
+
  <div class="mt-4 flex justify-end border-t border-violet-200 pt-4">
- <button type="button" (click)="saveSettlementProcessingMode()" [disabled]="isLoading || isSaving || isSavingSettlementMode" class="inline-flex h-10 items-center gap-2 rounded-xl bg-violet-700 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-60">
+ <button type="button" (click)="saveSettlementProcessingMode()" [disabled]="isLoading || isSaving || isSavingSettlementMode || !canSaveSettlementSettings" class="inline-flex h-10 items-center gap-2 rounded-xl bg-violet-700 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-60">
  <span class="material-symbols-outlined text-[18px]">{{ isSavingSettlementMode ? 'hourglass_empty' : 'save' }}</span>
  {{ (isSavingSettlementMode ? 'FINANCES.PLATFORM_ACCOUNT.SAVING_SETTLEMENT_SETTINGS' : 'FINANCES.PLATFORM_ACCOUNT.SAVE_SETTLEMENT_SETTINGS') | translate }}
  </button>
@@ -163,6 +200,7 @@ import {
  <div class="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3">
  <p class="text-[12px] font-black text-violet-800">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE' | translate }}</p>
  <p class="mt-1 text-[12px] font-medium text-slate-600">{{ (settlementProcessingMode === 'Manual' ? 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_MANUAL' : 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC') | translate }}</p>
+ <p class="mt-2 text-[11px] font-bold text-violet-700">{{ 'FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAYS_STATUS' | translate:{ days: payoutDaysSummary } }}</p>
  </div>
  </div>
  </div>
@@ -192,7 +230,10 @@ export class PlatformAccountComponent implements OnInit {
  isSaving = false;
  isSavingSettlementMode = false;
  errorMessage = '';
- settlementProcessingMode: SettlementProcessingMode = 'Manual';
+  settlementProcessingMode: SettlementProcessingMode = 'Manual';
+   payoutDays: SettlementPayoutDay[] = [...DEFAULT_SETTLEMENT_PAYOUT_DAYS];
+   requireManualPayoutDualControl = true;
+   settlementSettingsRowVersion = '';
 
  form: AdminUpsertPlatformBankAccountRequest = this.emptyForm();
 
@@ -203,6 +244,18 @@ export class PlatformAccountComponent implements OnInit {
  this.form.iban?.trim() &&
  (!this.form.isMoyasarPayoutsEnabled || this.form.moyasarPayoutSourceId?.trim())
  );
+ }
+
+ get canSaveSettlementSettings(): boolean {
+ return this.payoutDays.length > 0;
+ }
+
+ get payoutDayOptions(): readonly SettlementPayoutDay[] {
+ return SETTLEMENT_PAYOUT_DAYS;
+ }
+
+ get payoutDaysSummary(): string {
+ return this.payoutDays.map((day) => this.translate.instant(this.payoutDayTranslationKey(day))).join(', ');
  }
 
  ngOnInit(): void {
@@ -219,8 +272,11 @@ export class PlatformAccountComponent implements OnInit {
  }).pipe(take(1)).subscribe({
  next: ({ account, processingSettings }) => {
  this.cdr.markForCheck();
- this.account = account;
- this.settlementProcessingMode = processingSettings.settlementProcessingMode;
+  this.account = account;
+  this.settlementProcessingMode = processingSettings.settlementProcessingMode;
+   this.payoutDays = this.normalizePayoutDays(processingSettings.payoutDays);
+   this.requireManualPayoutDualControl = processingSettings.requireManualPayoutDualControl ?? true;
+   this.settlementSettingsRowVersion = processingSettings.rowVersion ?? '';
  this.form = {
  bankName: account.bankName || '',
  accountHolderName: account.accountHolderName || '',
@@ -245,7 +301,7 @@ export class PlatformAccountComponent implements OnInit {
  }
 
  save(): void {
- if (!this.canSave || this.isSaving || this.isSavingSettlementMode) {
+ if (!this.canSave || !this.canSaveSettlementSettings || this.isSaving || this.isSavingSettlementMode) {
  return;
  }
 
@@ -263,14 +319,22 @@ export class PlatformAccountComponent implements OnInit {
  notes: this.nullIfBlank(this.form.notes)
  };
 
- forkJoin({
- account: this.walletsService.updatePlatformAccount(payload),
- processingSettings: this.walletsService.updateSettlementProcessingMode(this.settlementProcessingMode)
- }).pipe(take(1)).subscribe({
+ this.walletsService.updateSettlementProcessingSettings(
+ this.settlementProcessingSettingsPayload(),
+ this.settlementSettingsRowVersion
+ ).pipe(
+ take(1),
+ switchMap((processingSettings) => this.walletsService.updatePlatformAccount(payload).pipe(
+ map((account) => ({ account, processingSettings }))
+ ))
+ ).subscribe({
  next: ({ account, processingSettings }) => {
  this.cdr.markForCheck();
- this.account = account;
- this.settlementProcessingMode = processingSettings.settlementProcessingMode;
+  this.account = account;
+  this.settlementProcessingMode = processingSettings.settlementProcessingMode;
+   this.payoutDays = this.normalizePayoutDays(processingSettings.payoutDays);
+   this.requireManualPayoutDualControl = processingSettings.requireManualPayoutDualControl ?? true;
+   this.settlementSettingsRowVersion = processingSettings.rowVersion ?? '';
  this.isSaving = false;
  this.toast.success(this.translate.instant('FINANCES.PLATFORM_ACCOUNT.SAVE_SUCCESS'));
  this.load();
@@ -285,16 +349,22 @@ export class PlatformAccountComponent implements OnInit {
  }
 
  saveSettlementProcessingMode(): void {
- if (this.isLoading || this.isSaving || this.isSavingSettlementMode) {
+ if (this.isLoading || this.isSaving || this.isSavingSettlementMode || !this.canSaveSettlementSettings) {
  return;
  }
 
  this.isSavingSettlementMode = true;
  this.errorMessage = '';
 
- this.walletsService.updateSettlementProcessingMode(this.settlementProcessingMode).pipe(take(1)).subscribe({
+ this.walletsService.updateSettlementProcessingSettings(
+ this.settlementProcessingSettingsPayload(),
+ this.settlementSettingsRowVersion
+ ).pipe(take(1)).subscribe({
  next: (processingSettings) => {
- this.settlementProcessingMode = processingSettings.settlementProcessingMode;
+  this.settlementProcessingMode = processingSettings.settlementProcessingMode;
+   this.payoutDays = this.normalizePayoutDays(processingSettings.payoutDays);
+   this.requireManualPayoutDualControl = processingSettings.requireManualPayoutDualControl ?? true;
+   this.settlementSettingsRowVersion = processingSettings.rowVersion ?? '';
  this.isSavingSettlementMode = false;
  this.cdr.markForCheck();
  this.toast.success(this.translate.instant('FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_SAVE_SUCCESS'));
@@ -306,6 +376,27 @@ export class PlatformAccountComponent implements OnInit {
  this.toast.error(this.errorMessage, this.translate.instant('FINANCES.PLATFORM_ACCOUNT.TOAST_TITLE'));
  }
  });
+ }
+
+ isPayoutDayEnabled(day: SettlementPayoutDay): boolean {
+ return this.payoutDays.includes(day);
+ }
+
+ togglePayoutDay(day: SettlementPayoutDay, enabled: boolean): void {
+ if (enabled) {
+ this.payoutDays = this.sortPayoutDays([...this.payoutDays, day]);
+ return;
+ }
+
+ if (this.payoutDays.length === 1) {
+ return;
+ }
+
+ this.payoutDays = this.payoutDays.filter((selectedDay) => selectedDay !== day);
+ }
+
+ payoutDayTranslationKey(day: SettlementPayoutDay): string {
+ return `FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAY_${day.toUpperCase()}`;
  }
 
  private emptyForm(): AdminUpsertPlatformBankAccountRequest {
@@ -325,5 +416,28 @@ export class PlatformAccountComponent implements OnInit {
 
  private nullIfBlank(value: string | null | undefined): string | null {
  return value && value.trim() ? value.trim() : null;
+ }
+
+  private settlementProcessingSettingsPayload(): { settlementProcessingMode: SettlementProcessingMode; payoutDays: SettlementPayoutDay[]; requireManualPayoutDualControl: boolean } {
+  return {
+  settlementProcessingMode: this.settlementProcessingMode,
+  payoutDays: this.sortPayoutDays(this.payoutDays),
+  requireManualPayoutDualControl: this.requireManualPayoutDualControl
+  };
+  }
+
+ private normalizePayoutDays(value?: readonly string[] | null): SettlementPayoutDay[] {
+ const selectedDays = new Set(
+ (value ?? [])
+ .map((day) => day?.trim().toLowerCase())
+ .filter((day): day is string => Boolean(day))
+ );
+ const normalized = SETTLEMENT_PAYOUT_DAYS.filter((day) => selectedDays.has(day.toLowerCase()));
+ return normalized.length ? [...normalized] : [...DEFAULT_SETTLEMENT_PAYOUT_DAYS];
+ }
+
+ private sortPayoutDays(days: readonly SettlementPayoutDay[]): SettlementPayoutDay[] {
+ const selectedDays = new Set(days);
+ return SETTLEMENT_PAYOUT_DAYS.filter((day) => selectedDays.has(day));
  }
 }

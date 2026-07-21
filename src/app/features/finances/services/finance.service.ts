@@ -157,9 +157,45 @@ interface AdminSettlementApiModel {
 interface AdminManualPayoutConfirmationApiModel {
   id: string;
   transferReference: string;
-  proofUrl: string;
+  proofAttachmentId: string | null;
+  hasLegacyProof: boolean;
   confirmedByUserId: string;
   confirmedAtUtc: string;
+}
+
+interface AdminPayoutExecutionReservationApiModel {
+  id: string;
+  mode: string;
+  status: string;
+  claimedByUserId: string | null;
+  claimedAtUtc: string;
+  submittedByUserId: string | null;
+  submittedAtUtc: string | null;
+  submissionReference: string | null;
+  releasedByUserId: string | null;
+  releasedAtUtc: string | null;
+  releaseReason: string | null;
+}
+
+interface AdminPayoutProofAttachmentApiModel {
+  id: string;
+  payoutId: string;
+  kind: string;
+  fileName: string;
+  contentType: string;
+  contentLength: number;
+  sha256: string;
+  uploadedByUserId: string;
+  uploadedAtUtc: string;
+  isFinalized: boolean;
+  finalizedByUserId: string | null;
+  finalizedAtUtc: string | null;
+}
+
+interface AdminPayoutWorkflowApiModel {
+  id: string;
+  status: string;
+  executionReservation: AdminPayoutExecutionReservationApiModel | null;
 }
 
 interface AdminSettlementPayoutApiModel {
@@ -169,6 +205,9 @@ interface AdminSettlementPayoutApiModel {
   providerTransferId?: string | null;
   transferReference?: string | null;
   manualConfirmation?: AdminManualPayoutConfirmationApiModel | null;
+  executionReservation?: AdminPayoutExecutionReservationApiModel | null;
+  destinationMaskedLabel?: string | null;
+  scheduledPayoutDay?: string | null;
 }
 
 interface AdminSettlementDetailApiModel {
@@ -179,7 +218,7 @@ interface AdminSettlementDetailApiModel {
 
 interface AdminConfirmManualPayoutRequest {
   transferReference: string;
-  proofUrl: string;
+  proofAttachmentId: string;
 }
 
 interface AdminSettlementListApiModel {
@@ -354,24 +393,35 @@ export class FinanceService {
  }
 
  confirmManualPayout(payoutId: string, payload: AdminConfirmManualPayoutRequest): Observable<void> {
- return this.http.post<void>(`${environment.apiUrl}/admin/payouts/${payoutId}/confirm-manual`, payload);
+  return this.http.post<void>(`${environment.apiUrl}/admin/payouts/${payoutId}/confirm-manual`, payload);
  }
 
- uploadSettlementProof(file: File): Observable<string> {
- const formData = new FormData();
- formData.append('file', file);
- formData.append('directory', 'uploads/settlements/proofs');
-
- return this.http.post<{ url?: string; Url?: string }>(`${environment.apiUrl}/files/upload`, formData).pipe(
- map((response) => {
- const proofUrl = (response.url ?? response.Url ?? '').trim();
- if (!proofUrl || proofUrl.startsWith('blob:')) {
- throw new Error('Settlement proof upload did not return a valid URL.');
+ claimManualPayout(payoutId: string): Observable<AdminPayoutWorkflowApiModel> {
+  return this.http.post<AdminPayoutWorkflowApiModel>(`${environment.apiUrl}/admin/payouts/${payoutId}/manual-claim`, {});
  }
 
- return proofUrl;
- })
- );
+ recordManualBankSubmission(payoutId: string, bankSubmissionReference: string): Observable<AdminPayoutWorkflowApiModel> {
+  return this.http.post<AdminPayoutWorkflowApiModel>(
+  `${environment.apiUrl}/admin/payouts/${payoutId}/manual-bank-submission`,
+  { bankSubmissionReference }
+  );
+ }
+
+ uploadManualPayoutProof(payoutId: string, file: File): Observable<AdminPayoutProofAttachmentApiModel> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('kind', 'ManualTransfer');
+
+  return this.http.post<AdminPayoutProofAttachmentApiModel>(
+  `${environment.apiUrl}/admin/payouts/${payoutId}/proofs`,
+  formData
+  );
+ }
+
+ downloadManualPayoutProof(payoutId: string, attachmentId: string): Observable<Blob> {
+  return this.http.get(`${environment.apiUrl}/admin/payouts/${payoutId}/proofs/${attachmentId}`, {
+  responseType: 'blob'
+  });
  }
 
  getRefundCases(filter?: RefundFilter): Observable<RefundCase[]> {
@@ -986,16 +1036,33 @@ export class FinanceService {
  status: payout.status,
  providerTransferId: payout.providerTransferId ?? null,
  transferReference: payout.transferReference ?? null,
- manualConfirmation: payout.manualConfirmation
- ? {
- id: payout.manualConfirmation.id,
- transferReference: payout.manualConfirmation.transferReference,
- proofUrl: payout.manualConfirmation.proofUrl,
- confirmedByUserId: payout.manualConfirmation.confirmedByUserId,
- confirmedAtUtc: payout.manualConfirmation.confirmedAtUtc
- }
- : null
- }))
+  manualConfirmation: payout.manualConfirmation
+  ? {
+  id: payout.manualConfirmation.id,
+  transferReference: payout.manualConfirmation.transferReference,
+  proofAttachmentId: payout.manualConfirmation.proofAttachmentId,
+  hasLegacyProof: payout.manualConfirmation.hasLegacyProof,
+  confirmedByUserId: payout.manualConfirmation.confirmedByUserId,
+  confirmedAtUtc: payout.manualConfirmation.confirmedAtUtc
+  }
+  : null,
+  executionReservation: payout.executionReservation
+  ? {
+  mode: payout.executionReservation.mode,
+  status: payout.executionReservation.status,
+  claimedByUserId: payout.executionReservation.claimedByUserId,
+  claimedAtUtc: payout.executionReservation.claimedAtUtc,
+  submittedByUserId: payout.executionReservation.submittedByUserId,
+  submittedAtUtc: payout.executionReservation.submittedAtUtc,
+  submissionReference: payout.executionReservation.submissionReference,
+  releasedByUserId: payout.executionReservation.releasedByUserId,
+  releasedAtUtc: payout.executionReservation.releasedAtUtc,
+  releaseReason: payout.executionReservation.releaseReason
+  }
+  : null,
+  destinationMaskedLabel: payout.destinationMaskedLabel ?? null,
+  scheduledPayoutDay: payout.scheduledPayoutDay ?? null
+  }))
  };
  }
 
