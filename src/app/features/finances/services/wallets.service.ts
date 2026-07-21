@@ -354,7 +354,7 @@ export class WalletsService {
       {
         // The API rejects blind writes. Keep the quotes required by the HTTP
         // ETag grammar while the backend decodes the base64 row version.
-        headers: new HttpHeaders({ IfMatch: `"${rowVersion}"` })
+        headers: new HttpHeaders({ 'If-Match': `"${rowVersion}"` })
       }
     );
   }
