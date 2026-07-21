@@ -35,6 +35,12 @@ export const FINANCES_ROUTES: Routes = [
         loadComponent: () => import('./pages/settlements/settlements.component').then(m => m.SettlementsComponent)
       },
       {
+        path: 'payout-reconciliation',
+        canActivate: [HasPermissionGuard],
+        data: { permission: 'finances.view' },
+        loadComponent: () => import('./pages/payout-reconciliation/payout-reconciliation.component').then(m => m.PayoutReconciliationComponent)
+      },
+      {
         path: 'refunds',
         canActivate: [HasPermissionGuard],
         data: { permission: 'finances.view' },

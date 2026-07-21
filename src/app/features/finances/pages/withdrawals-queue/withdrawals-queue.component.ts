@@ -309,7 +309,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-dashed border-emerald-300 bg-white px-3 py-3 hover:bg-emerald-50">
  <span class="flex items-center gap-2 text-[12px] font-bold text-slate-700"><span class="material-symbols-outlined text-emerald-600">upload_file</span>{{ manualProofFile ? manualProofFile.name : ('FINANCES.WITHDRAWALS.WORKFLOW.PROOF_FILE' | translate) }}</span>
  <span class="text-[11px] font-black text-emerald-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CHOOSE_FILE' | translate }}</span>
- <input type="file" class="hidden" accept="image/*,.pdf" (change)="onManualProofFileSelected($event)">
+ <input type="file" class="hidden" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf" (change)="onManualProofFileSelected($event)">
  </label>
  <app-button variant="primary" size="sm" customClass="!rounded-xl !bg-emerald-600 hover:!bg-emerald-700" (btnClick)="confirmManualPayout()" [disabled]="isManualWorkflowSubmitting || !manualTransferReference.trim() || !manualProofFile">
  {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_ACTION' | translate) }}

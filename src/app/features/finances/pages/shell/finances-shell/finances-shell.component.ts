@@ -142,7 +142,8 @@ export class FinancesShellComponent {
  icon: 'sync_alt',
  routes: [
  { id: 'settlements', label: 'FINANCES.SHELL.ROUTES.SETTLEMENTS.LABEL', route: '/finances/settlements', summary: 'FINANCES.SHELL.ROUTES.SETTLEMENTS.SUMMARY', dataMode: 'مفعل' },
- { id: 'withdrawals', label: 'FINANCES.SHELL.ROUTES.WITHDRAWALS.LABEL', route: '/finances/withdrawals', summary: 'FINANCES.SHELL.ROUTES.WITHDRAWALS.SUMMARY', dataMode: 'مفعل', emphasis: 'warning' },
+  { id: 'payout-reconciliation', label: 'FINANCES.SHELL.ROUTES.PAYOUT_RECONCILIATION.LABEL', route: '/finances/payout-reconciliation', summary: 'FINANCES.SHELL.ROUTES.PAYOUT_RECONCILIATION.SUMMARY', dataMode: 'مفعل' },
+  { id: 'withdrawals', label: 'FINANCES.SHELL.ROUTES.WITHDRAWALS.LABEL', route: '/finances/withdrawals', summary: 'FINANCES.SHELL.ROUTES.WITHDRAWALS.SUMMARY', dataMode: 'مفعل', emphasis: 'warning' },
  { id: 'cod', label: 'FINANCES.SHELL.ROUTES.COD.LABEL', route: '/finances/cod', summary: 'FINANCES.SHELL.ROUTES.COD.SUMMARY', dataMode: 'مفعل', emphasis: 'warning' }
  ]
  },

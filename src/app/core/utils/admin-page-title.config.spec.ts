@@ -11,6 +11,7 @@ describe('admin-page-title.config', () => {
     expect(resolveAdminPageTitleKey('/catalog/products/create')).toBe('PAGE_TITLES.CATALOG_PRODUCT_CREATE');
     expect(resolveAdminPageTitleKey('/vendors/abc/overview')).toBe('PAGE_TITLES.VENDOR_OVERVIEW');
     expect(resolveAdminPageTitleKey('/finances/wallets/wallet-1')).toBe('PAGE_TITLES.FINANCES_WALLET_DETAIL');
+    expect(resolveAdminPageTitleKey('/finances/payout-reconciliation')).toBe('PAGE_TITLES.FINANCES_PAYOUT_RECONCILIATION');
     expect(resolveAdminPageTitleKey('/orders/order-1')).toBe('PAGE_TITLES.ORDER_DETAIL');
   });
 

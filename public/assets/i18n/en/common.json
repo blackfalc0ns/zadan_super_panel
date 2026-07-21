@@ -340,6 +340,7 @@
     "FINANCES_WALLETS": "Wallets",
     "FINANCES_WALLET_DETAIL": "Wallet Details",
     "FINANCES_WITHDRAWALS": "Withdrawal Requests",
+    "FINANCES_PAYOUT_RECONCILIATION": "Bank Payout Reconciliation",
     "FINANCES_PLATFORM_ACCOUNT": "Platform Account",
     "MARKETING_COUPONS": "Marketing Coupons",
     "MARKETING_BANNERS": "Marketing Banners",
@@ -765,6 +766,10 @@
         "SETTLEMENTS": {
           "LABEL": "Periodic Settlements",
           "SUMMARY": "Pay periodic financial dues to vendors and drivers."
+        },
+        "PAYOUT_RECONCILIATION": {
+          "LABEL": "Bank Payout Reconciliation",
+          "SUMMARY": "Import bank statements and reconcile outbound transfer references."
         },
         "WITHDRAWALS": {
           "LABEL": "Withdrawal Requests",

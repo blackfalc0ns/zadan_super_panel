@@ -53,6 +53,7 @@ export const ADMIN_PAGE_TITLE_RULES: readonly AdminPageTitleRule[] = [
   { pattern: /^\/finances\/wallets\/[^/]+$/, titleKey: 'PAGE_TITLES.FINANCES_WALLET_DETAIL' },
   { pattern: /^\/finances\/wallets$/, titleKey: 'PAGE_TITLES.FINANCES_WALLETS' },
   { pattern: /^\/finances\/withdrawals$/, titleKey: 'PAGE_TITLES.FINANCES_WITHDRAWALS' },
+  { pattern: /^\/finances\/payout-reconciliation$/, titleKey: 'PAGE_TITLES.FINANCES_PAYOUT_RECONCILIATION' },
   { pattern: /^\/finances\/platform-account$/, titleKey: 'PAGE_TITLES.FINANCES_PLATFORM_ACCOUNT' },
   { pattern: /^\/finances\/audit$/, titleKey: 'PAGE_TITLES.FINANCES_AUDIT' },
   { pattern: /^\/finances\/adjustments$/, titleKey: 'PAGE_TITLES.FINANCES_ADJUSTMENTS' },

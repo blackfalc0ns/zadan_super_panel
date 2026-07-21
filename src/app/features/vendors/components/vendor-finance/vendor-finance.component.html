@@ -56,7 +56,7 @@
   </label>
   <label class="block">
  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PROOF' | translate }}</span>
- <input type="file" accept="image/png,image/jpeg,application/pdf" (change)="onManualProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-primary" />
+ <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf" (change)="onManualProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-primary" />
   <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
   </label>
   </ng-container>

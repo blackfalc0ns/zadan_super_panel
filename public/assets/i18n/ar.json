@@ -893,6 +893,7 @@
     "FINANCES_WALLETS": "المحافظ",
     "FINANCES_WALLET_DETAIL": "تفاصيل المحفظة",
     "FINANCES_WITHDRAWALS": "طلبات السحب",
+    "FINANCES_PAYOUT_RECONCILIATION": "مطابقة التحويلات البنكية",
     "FINANCES_PLATFORM_ACCOUNT": "حساب المنصة",
     "MARKETING_COUPONS": "كوبونات التسويق",
     "MARKETING_BANNERS": "بانرات التسويق",
@@ -1318,6 +1319,10 @@
         "SETTLEMENTS": {
           "LABEL": "التسويات الدورية",
           "SUMMARY": "دفع المستحقات المالية الدورية للمتاجر والمناديب."
+        },
+        "PAYOUT_RECONCILIATION": {
+          "LABEL": "مطابقة التحويلات البنكية",
+          "SUMMARY": "رفع كشوف البنك ومطابقة مراجع التحويلات الصادرة بأمان."
         },
         "WITHDRAWALS": {
           "LABEL": "طلبات السحب",

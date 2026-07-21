@@ -76,7 +76,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
   </label>
   <label class="block">
  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.PROOF' | translate }}</span>
- <input type="file" accept="image/png,image/jpeg,application/pdf" (change)="onProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-100 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-violet-800" />
+ <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf" (change)="onProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-100 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-violet-800" />
   <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
   </label>
   </ng-container>
