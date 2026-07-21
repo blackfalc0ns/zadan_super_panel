@@ -962,6 +962,7 @@
       "ORDERS_COUNT_VAL": "{{count}} طلب",
       "FINANCIAL_PERIOD": "الفترة المالية",
       "PROCESS_PAYMENT": "تنفيذ التحويل (دفع)",
+      "MANAGE_MANUAL_PAYOUT": "إدارة التحويل اليدوي",
       "ACCOUNT_STATEMENT": "كشف حساب",
       "TABS": {
         "VENDORS": "تسويات المتاجر",
@@ -1148,6 +1149,8 @@
       "SETTLEMENT_MODE_MANUAL_DESC": "يحوّل الأدمن خارج المنصة ثم يؤكد كل مستحق بإثبات بنكي.",
       "SETTLEMENT_MODE_AUTOMATIC": "تحويل تلقائي عبر البوابة",
       "SETTLEMENT_MODE_AUTOMATIC_DESC": "تُرسل المستحقات المؤهلة عبر بوابة الدفع المهيأة.",
+      "MANUAL_DUAL_CONTROL": "مراجعة شخصين للتحويل اليدوي",
+      "MANUAL_DUAL_CONTROL_DESC": "الموظف الذي يسجل التحويل من البنك لا يقدر يعتمد نفس العملية. خلها مفعّلة للإنتاج عشان يكون فيه فصل واضح بين التنفيذ والاعتماد.",
       "SAVE_SETTLEMENT_SETTINGS": "حفظ إعدادات التسوية",
       "SAVING_SETTLEMENT_SETTINGS": "جاري حفظ إعدادات التسوية...",
       "SETTLEMENT_MODE_SAVE_SUCCESS": "تم حفظ إعدادات التسويات.",

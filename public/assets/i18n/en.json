@@ -962,6 +962,7 @@
       "ORDERS_COUNT_VAL": "{{count}} Orders",
       "FINANCIAL_PERIOD": "Financial Period",
       "PROCESS_PAYMENT": "Process Payment",
+      "MANAGE_MANUAL_PAYOUT": "Manage manual payout",
       "ACCOUNT_STATEMENT": "Account Statement",
       "TABS": {
         "VENDORS": "Vendor Settlements",
@@ -3067,7 +3068,8 @@
       "SETTLEMENT_PROCESSING_MANUAL": "Manual",
       "SETTLEMENT_PROCESSING_AUTOMATIC": "Automatic",
       "SETTLEMENT_PROCESSING_GLOBAL_HINT": "This is a global finance setting and cannot be changed for one vendor.",
-      "MANUAL_MODE_READY": "Manual bank transfers are enabled. Approve the settlement, then confirm it after the bank transfer is sent.",
+      "MANUAL_MODE_READY": "Manual bank transfers are managed from the Finance settlements page.",
+      "OPEN_FINANCIAL_SETTLEMENTS": "Open financial settlements",
       "MANUAL_SCHEDULE_BLOCKED": "Manual confirmation is available on {{ day }}. Next eligible date: {{ date }}.",
       "AUTOMATIC_MODE_INFO": "Payouts are handled automatically according to the global finance setting.",
       "TABLE_ACTIONS": "Actions",

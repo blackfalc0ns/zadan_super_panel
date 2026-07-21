@@ -962,6 +962,7 @@
       "ORDERS_COUNT_VAL": "{{count}} Orders",
       "FINANCIAL_PERIOD": "Financial Period",
       "PROCESS_PAYMENT": "Process Payment",
+      "MANAGE_MANUAL_PAYOUT": "Manage manual payout",
       "ACCOUNT_STATEMENT": "Account Statement",
       "TABS": {
         "VENDORS": "Vendor Settlements",
@@ -1148,6 +1149,8 @@
       "SETTLEMENT_MODE_MANUAL_DESC": "Admin transfers outside the platform, then confirms each payout with a bank proof.",
       "SETTLEMENT_MODE_AUTOMATIC": "Automatic gateway payout",
       "SETTLEMENT_MODE_AUTOMATIC_DESC": "Eligible payouts are sent through the configured payment gateway.",
+      "MANUAL_DUAL_CONTROL": "Manual payout dual control",
+      "MANUAL_DUAL_CONTROL_DESC": "The administrator who records the bank transfer cannot confirm the same payout. Keep this enabled in production to separate execution from approval.",
       "SAVE_SETTLEMENT_SETTINGS": "Save settlement settings",
       "SAVING_SETTLEMENT_SETTINGS": "Saving settlement settings...",
       "SETTLEMENT_MODE_SAVE_SUCCESS": "Settlement settings saved.",

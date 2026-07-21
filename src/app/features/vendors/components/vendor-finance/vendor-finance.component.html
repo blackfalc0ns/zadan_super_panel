@@ -5,83 +5,6 @@
  {{ mutationError }}
  </div>
 
- <div *ngIf="manualPayout" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
- <div class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" (click)="closeManualConfirmation()"></div>
- <section class="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl">
- <header class="border-b border-primary/15 bg-primary/5 px-5 py-4">
- <div class="flex items-start justify-between gap-4">
- <div class="flex gap-3">
- <span class="material-symbols-outlined mt-0.5 text-[23px] text-primary">receipt_long</span>
- <div>
- <h2 class="text-[16px] font-black text-slate-950">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.TITLE' | translate }}</h2>
- <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-600">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.DESCRIPTION' | translate }}</p>
- </div>
- </div>
- <button type="button" (click)="closeManualConfirmation()" [disabled]="isConfirmingManualPayout" class="grid h-8 w-8 place-items-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-900 disabled:opacity-50">
- <span class="material-symbols-outlined text-[18px]">close</span>
- </button>
- </div>
- </header>
-
- <div class="space-y-4 p-5">
-  <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
- <div class="flex items-end justify-between gap-4">
- <div>
- <p class="text-[10px] font-black uppercase tracking-wider text-emerald-700">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.NET_DUE' | translate }}</p>
- <p class="mt-1 text-xl font-black text-emerald-800">{{ formatCurrency(manualPayout.amount) }}</p>
- </div>
- <p class="text-end text-[10px] font-bold text-emerald-700">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.SETTLEMENT' | translate }}<br><span class="font-mono text-slate-700">{{ manualSettlementNumber }}</span></p>
-  </div>
-  </div>
-  <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-black">
-  <span [class.text-primary]="manualWorkflowStage === 'claim'" [class.text-slate-400]="manualWorkflowStage !== 'claim'">1. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_TITLE' | translate }}</span>
-  <span [class.text-primary]="manualWorkflowStage === 'submission'" [class.text-slate-400]="manualWorkflowStage !== 'submission'">2. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_TITLE' | translate }}</span>
-  <span [class.text-primary]="manualWorkflowStage === 'confirmation'" [class.text-slate-400]="manualWorkflowStage !== 'confirmation'">3. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_TITLE' | translate }}</span>
-  </div>
-
-  <ng-container *ngIf="manualWorkflowStage === 'claim'">
-  <p class="rounded-xl border border-primary/15 bg-primary/5 px-3 py-3 text-[12px] font-medium leading-5 text-slate-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_DESC' | translate }}</p>
-  </ng-container>
-  <ng-container *ngIf="manualWorkflowStage === 'submission'">
-  <label class="block">
-  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE' | translate }}</span>
-  <input [(ngModel)]="manualBankSubmissionReference" name="vendorManualBankSubmissionReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" [placeholder]="'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE_PLACEHOLDER' | translate" />
-  </label>
-  </ng-container>
-
-  <ng-container *ngIf="manualWorkflowStage === 'confirmation'">
-  <label class="block">
-  <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.REFERENCE' | translate }}</span>
-  <input [(ngModel)]="manualTransferReference" name="vendorManualTransferReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" [placeholder]="'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.REFERENCE_PLACEHOLDER' | translate" />
-  </label>
-  <label class="block">
- <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PROOF' | translate }}</span>
- <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf" (change)="onManualProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-primary" />
-  <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
-  </label>
-  </ng-container>
-
- <p *ngIf="manualConfirmationError" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">{{ manualConfirmationError }}</p>
- </div>
-
- <footer class="flex gap-3 border-t border-slate-100 px-5 py-4">
- <button type="button" (click)="closeManualConfirmation()" [disabled]="isConfirmingManualPayout" class="h-10 flex-1 rounded-xl border border-slate-200 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50">{{ 'COMMON.CANCEL' | translate }}</button>
-  <button *ngIf="manualWorkflowStage === 'claim'" type="button" (click)="claimManualPayout()" [disabled]="isConfirmingManualPayout" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-[12px] font-black text-white transition hover:bg-primary/90 disabled:opacity-50">
-  <span class="material-symbols-outlined text-[17px]">lock</span>
-  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_ACTION' | translate }}
-  </button>
-  <button *ngIf="manualWorkflowStage === 'submission'" type="button" (click)="recordManualBankSubmission()" [disabled]="isConfirmingManualPayout || !manualBankSubmissionReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-[12px] font-black text-white transition hover:bg-primary/90 disabled:opacity-50">
-  <span class="material-symbols-outlined text-[17px]">account_balance</span>
-  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_ACTION' | translate }}
-  </button>
-  <button *ngIf="manualWorkflowStage === 'confirmation'" type="button" (click)="confirmManualPayout()" [disabled]="isConfirmingManualPayout || !manualProofFile || !manualTransferReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-[12px] font-black text-white transition hover:bg-primary/90 disabled:opacity-50">
- <span class="material-symbols-outlined text-[17px]">{{ isConfirmingManualPayout ? 'hourglass_empty' : 'verified' }}</span>
- {{ (isConfirmingManualPayout ? 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRMING' : 'VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRM') | translate }}
- </button>
- </footer>
- </section>
- </div>
-
  <app-payouts-review-modal
  [isOpen]="showPayoutsReviewModal"
  [availableBalance]="availableBalance"
@@ -256,9 +179,10 @@
   <span class="material-symbols-outlined mt-0.5 text-[20px] text-amber-700">account_balance</span>
   <div class="min-w-0">
   <p class="text-[12px] font-black text-amber-900">{{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_MODE_READY' | translate }}</p>
-  <p *ngIf="!isPayoutDayToday" class="mt-1 text-[11px] font-bold leading-relaxed text-amber-800">
-  {{ 'VENDOR_FINANCE.WORKSPACE.MANUAL_SCHEDULE_BLOCKED' | translate:{ day: payoutDayLabel, date: nextEligiblePayoutDateLabel } }}
-  </p>
+  <button type="button" (click)="openFinancialSettlements()" class="mt-2 inline-flex h-8 items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-3 text-[11px] font-black text-amber-800 transition hover:bg-amber-100">
+  <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+  {{ 'VENDOR_FINANCE.WORKSPACE.OPEN_FINANCIAL_SETTLEMENTS' | translate }}
+  </button>
   </div>
   </div>
   </article>
@@ -283,17 +207,15 @@
  <colgroup>
  <col class="vendor-finance-col-ref" />
  <col class="vendor-finance-col-amount" />
-  <col class="vendor-finance-col-date" />
-  <col class="vendor-finance-col-status" />
-  <col class="vendor-finance-col-status" />
+   <col class="vendor-finance-col-date" />
+   <col class="vendor-finance-col-status" />
  </colgroup>
  <thead>
  <tr>
  <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_SETTLEMENT' | translate }}</th>
  <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_NET' | translate }}</th>
-  <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
-  <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
-  <th *ngIf="isManualSettlementProcessing" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_ACTIONS' | translate }}</th>
+   <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
+   <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
  </tr>
  </thead>
  <tbody>
@@ -316,19 +238,10 @@
  class="vendor-finance-status"
  [ngClass]="'vendor-finance-status--' + getSettlementStatusVariant(item.status)"
  [attr.title]="formatStatusLabel(item.status)">
-  {{ formatStatusLabel(item.status) }}
-  </span>
-  </td>
-  <td *ngIf="isManualSettlementProcessing">
-  <button *ngIf="isEligibleManualSettlementStatus(item.status)" type="button" (click)="prepareManualSettlement(item)"
-  [disabled]="!canPrepareManualSettlement(item) || isPreparingManualPayout(item.id)"
-  [attr.title]="!isPayoutDayToday ? ('VENDOR_FINANCE.WORKSPACE.MANUAL_SCHEDULE_BLOCKED' | translate:{ day: payoutDayLabel, date: nextEligiblePayoutDateLabel }) : null"
-  class="inline-flex h-8 items-center justify-center gap-1 rounded-lg bg-primary px-2 text-[10px] font-black text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-45">
-  <span class="material-symbols-outlined text-[14px]">{{ isPreparingManualPayout(item.id) ? 'hourglass_empty' : 'account_balance' }}</span>
-  {{ (isPreparingManualPayout(item.id) ? 'VENDOR_FINANCE.WORKSPACE.MANUAL_ACTION_PREPARING' : 'VENDOR_FINANCE.WORKSPACE.MANUAL_ACTION') | translate }}
-  </button>
-  </td>
-  </tr>
+   {{ formatStatusLabel(item.status) }}
+   </span>
+   </td>
+   </tr>
  </tbody>
  </table>
  </div>
@@ -348,17 +261,15 @@
  <colgroup>
  <col class="vendor-finance-col-ref" />
  <col class="vendor-finance-col-amount" />
-  <col class="vendor-finance-col-date" />
-  <col class="vendor-finance-col-status" />
-  <col class="vendor-finance-col-status" />
+   <col class="vendor-finance-col-date" />
+   <col class="vendor-finance-col-status" />
  </colgroup>
  <thead>
  <tr>
  <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_PAYOUT' | translate }}</th>
  <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_AMOUNT' | translate }}</th>
-  <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
-  <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
-  <th *ngIf="isManualSettlementProcessing" [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_ACTIONS' | translate }}</th>
+   <th [class.uppercase]="!isRTL">{{ 'VENDOR_FINANCE.WORKSPACE.TABLE_DATE' | translate }}</th>
+   <th [class.uppercase]="!isRTL">{{ 'COMMON.STATUS' | translate }}</th>
  </tr>
  </thead>
  <tbody>
@@ -385,18 +296,9 @@
  class="vendor-finance-status"
  [ngClass]="'vendor-finance-status--' + getPayoutStatusVariant(item.status)"
  [attr.title]="formatStatusLabel(item.status)">
-  {{ formatStatusLabel(item.status) }}
-  </span>
-  </td>
-  <td *ngIf="isManualSettlementProcessing">
-  <button *ngIf="canPrepareManualPayout(item)" type="button" (click)="prepareManualPayoutFromPayout(item)"
-  [disabled]="isPreparingManualPayout(item.settlementId)"
-  [attr.title]="!isPayoutDayToday ? ('VENDOR_FINANCE.WORKSPACE.MANUAL_SCHEDULE_BLOCKED' | translate:{ day: payoutDayLabel, date: nextEligiblePayoutDateLabel }) : null"
-  class="inline-flex h-8 items-center justify-center gap-1 rounded-lg border border-primary/25 bg-primary/5 px-2 text-[10px] font-black text-primary transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-45">
-  <span class="material-symbols-outlined text-[14px]">{{ isPreparingManualPayout(item.settlementId) ? 'hourglass_empty' : 'verified' }}</span>
-  {{ (isPreparingManualPayout(item.settlementId) ? 'VENDOR_FINANCE.WORKSPACE.MANUAL_ACTION_PREPARING' : 'VENDOR_FINANCE.WORKSPACE.MANUAL_ACTION_RESUME') | translate }}
-  </button>
-  </td>
+   {{ formatStatusLabel(item.status) }}
+   </span>
+   </td>
  </tr>
  </tbody>
  </table>

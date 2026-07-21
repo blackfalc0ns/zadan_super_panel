@@ -361,6 +361,12 @@ export class FinanceService {
  );
  }
 
+ getSettlement(settlementId: string): Observable<Settlement> {
+ return this.http.get<AdminSettlementDetailApiModel>(`${this.settlementsApiUrl}/${settlementId}`).pipe(
+ map((detail) => this.mapSettlementDetail(detail))
+ );
+ }
+
  getCodRecords(filter?: CodFilter): Observable<{ summary: CodReconciliationSummary; records: CodRecord[] }> {
  return this.http.get<AdminCodReconciliationApiModel>(`${this.apiUrl}/cod-reconciliation`).pipe(
  map((response) => {

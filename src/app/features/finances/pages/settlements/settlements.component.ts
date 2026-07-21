@@ -169,6 +169,14 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">payments</span>
  {{ 'FINANCES.SETTLEMENTS.PROCESS_PAYMENT' | translate }}
  </app-button>
+ <app-button *ngIf="canResumeManualPayout(selectedSettlement)"
+ variant="primary"
+ size="md"
+ customClass="!flex-1!rounded-xl shadow-md shadow-violet-500/20 !bg-violet-700 hover:!bg-violet-800"
+ (btnClick)="resumeManualPayout(selectedSettlement)">
+ <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">account_balance</span>
+ {{ 'FINANCES.SETTLEMENTS.MANAGE_MANUAL_PAYOUT' | translate }}
+ </app-button>
  <app-button variant="outline" size="md" customClass="!flex-1 !rounded-xl">
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">download</span>
  {{ 'FINANCES.SETTLEMENTS.ACCOUNT_STATEMENT' | translate }}
@@ -421,7 +429,22 @@ export class SettlementsComponent implements OnInit {
  this.loadSettlements();
  }
 
- openDetail(s: Settlement): void { this.selectedSettlement = s; }
+ openDetail(s: Settlement): void {
+ this.selectedSettlement = s;
+ this.financeService.getSettlement(s.id).pipe(take(1)).subscribe({
+ next: (settlement) => {
+ if (this.selectedSettlement?.id === s.id) {
+ this.selectedSettlement = settlement;
+ this.cdr.markForCheck();
+ }
+ },
+ error: () => {
+ // The list item is still sufficient for read-only details. Manual execution stays unavailable
+ // until the current payout reservation has been loaded from the authoritative detail endpoint.
+ this.cdr.markForCheck();
+ }
+ });
+ }
  
  processSettlement(s: Settlement): void {
   this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe({
@@ -443,6 +466,19 @@ export class SettlementsComponent implements OnInit {
  this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.PREPARE_ERROR');
  }
  });
+ }
+
+ canResumeManualPayout(settlement: Settlement): boolean {
+ return this.getResumableManualPayout(settlement)!== null;
+ }
+
+ resumeManualPayout(settlement: Settlement): void {
+ const payout = this.getResumableManualPayout(settlement);
+ if (!payout) {
+ return;
+ }
+
+ this.openManualWorkflow(settlement, payout);
  }
 
  onProofSelected(event: Event): void {
@@ -574,6 +610,19 @@ export class SettlementsComponent implements OnInit {
   executionReservation
   };
   }
+
+ private getResumableManualPayout(settlement: Settlement): SettlementPayout | null {
+ return settlement.payouts?.find((payout) => {
+ const reservation = payout.executionReservation;
+ const reservationStatus = reservation?.status?.toLowerCase();
+ const payoutStatus = payout.status.toLowerCase();
+
+ return reservation?.mode?.toLowerCase() === 'manual' &&
+ !payout.manualConfirmation &&
+ (reservationStatus === 'claimed' || reservationStatus === 'submitted') &&
+ !['paid', 'reversed', 'cancelled'].includes(payoutStatus);
+ }) ?? null;
+ }
  
  trackById(_: number, s: Settlement): string { return s.id; }
 

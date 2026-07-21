@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { finalize, switchMap, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
@@ -19,7 +20,6 @@ import {
 } from '@vendors/services/vendor.api.service';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { FinanceService } from '@finances/services/finance.service';
-import { SettlementPayout } from '@finances/models/finance.models';
 import {
  DEFAULT_SETTLEMENT_PAYOUT_DAYS,
  SETTLEMENT_PAYOUT_DAYS,
@@ -44,6 +44,7 @@ import {
 })
 export class VendorFinanceComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
+ private readonly router = inject(Router);
  vendorId = '';
  vendorName = '';
  vendorDetail: VendorDetail | null = null;
@@ -68,15 +69,6 @@ export class VendorFinanceComponent implements OnInit {
  isLoadingSettlementProcessingMode = true;
  settlementProcessingModeUnavailable = false;
  allowedPayoutDays: VendorPayoutDay[] = [...DEFAULT_SETTLEMENT_PAYOUT_DAYS];
- preparingManualSettlementId: string | null = null;
- manualPayout: SettlementPayout | null = null;
- manualSettlementNumber = '';
-  manualProofFile: File | null = null;
-  manualTransferReference = '';
-  manualBankSubmissionReference = '';
-  manualWorkflowStage: 'claim' | 'submission' | 'confirmation' = 'claim';
-  manualConfirmationError = '';
- isConfirmingManualPayout = false;
 
  private readonly destroyRef = inject(DestroyRef);
 
@@ -169,21 +161,8 @@ export class VendorFinanceComponent implements OnInit {
  return this.settlementProcessingMode === 'Manual' && !this.settlementProcessingModeUnavailable;
  }
 
- get isPayoutDayToday(): boolean {
- return this.allowedPayoutDays.includes(this.selectedPayoutDay) &&
- this.getRiyadhWeekday() === this.payoutWeekdayNumber(this.selectedPayoutDay);
- }
-
  get payoutDayLabel(): string {
  return this.translate.instant(this.payoutDayTranslationKey(this.selectedPayoutDay));
- }
-
- get nextEligiblePayoutDateLabel(): string {
- const calendar = this.getRiyadhCalendar();
- const expectedWeekday = this.payoutWeekdayNumber(this.selectedPayoutDay);
- const daysUntilEligible = (expectedWeekday - calendar.weekday + 7) % 7;
- const nextDate = new Date(Date.UTC(calendar.year, calendar.month - 1, calendar.day + daysUntilEligible));
- return this.formatDate(nextDate.toISOString());
  }
 
  get availableBalance(): number {
@@ -268,111 +247,13 @@ export class VendorFinanceComponent implements OnInit {
  this.selectedPayoutDay = this.coercePayoutDay(value);
  }
 
- prepareManualSettlement(item: AdminVendorSettlementItem): void {
- this.prepareManualPayout(item.id, item.settlementNumber);
- }
-
- prepareManualPayoutFromPayout(item: AdminVendorPayoutItem): void {
- this.prepareManualPayout(item.settlementId, item.payoutNumber);
- }
-
- onManualProofSelected(event: Event): void {
- const input = event.target as HTMLInputElement;
- this.manualProofFile = input.files?.item(0) ?? null;
- this.manualConfirmationError = '';
- }
-
- closeManualConfirmation(force = false): void {
- if (this.isConfirmingManualPayout && !force) {
- return;
- }
-
- this.manualPayout = null;
- this.manualSettlementNumber = '';
-  this.manualProofFile = null;
-  this.manualTransferReference = '';
-  this.manualBankSubmissionReference = '';
-  this.manualWorkflowStage = 'claim';
-  this.manualConfirmationError = '';
- }
-
- confirmManualPayout(): void {
- if (!this.manualPayout || !this.manualProofFile || !this.manualTransferReference.trim() || this.isConfirmingManualPayout) {
- return;
- }
-
- this.isConfirmingManualPayout = true;
- this.manualConfirmationError = '';
- const payoutId = this.manualPayout.id;
- const transferReference = this.manualTransferReference.trim();
-
-  this.financeService.uploadManualPayoutProof(payoutId, this.manualProofFile).pipe(
-  switchMap((proof) => this.financeService.confirmManualPayout(payoutId, { transferReference, proofAttachmentId: proof.id })),
- finalize(() => {
- this.cdr.markForCheck();
- this.isConfirmingManualPayout = false;
- }),
- take(1)
- ).subscribe({
- next: () => {
- this.closeManualConfirmation(true);
- this.toastService.success(
- this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.SUCCESS'),
- this.text('المالية', 'Finance')
- );
- this.loadFinanceData();
- },
- error: () => {
- this.manualConfirmationError = this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRM_ERROR');
- }
-  });
+  openFinancialSettlements(): void {
+  if (!this.vendorId) {
+  return;
   }
 
-  claimManualPayout(): void {
-  if (!this.manualPayout || this.isConfirmingManualPayout) return;
-
-  this.isConfirmingManualPayout = true;
-  this.manualConfirmationError = '';
-  this.financeService.claimManualPayout(this.manualPayout.id).pipe(
-  finalize(() => {
-  this.cdr.markForCheck();
-  this.isConfirmingManualPayout = false;
-  }),
-  take(1)
-  ).subscribe({
-  next: (payout) => {
-  this.updateManualPayoutWorkflow(payout.status, payout.executionReservation);
-  this.manualWorkflowStage = 'submission';
-  },
-  error: () => {
-  this.manualConfirmationError = this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PREPARE_ERROR');
-  }
-  });
-  }
-
-  recordManualBankSubmission(): void {
-  if (!this.manualPayout || !this.manualBankSubmissionReference.trim() || this.isConfirmingManualPayout) return;
-
-  this.isConfirmingManualPayout = true;
-  this.manualConfirmationError = '';
-  this.financeService.recordManualBankSubmission(
-  this.manualPayout.id,
-  this.manualBankSubmissionReference.trim()
-  ).pipe(
-  finalize(() => {
-  this.cdr.markForCheck();
-  this.isConfirmingManualPayout = false;
-  }),
-  take(1)
-  ).subscribe({
-  next: (payout) => {
-  this.updateManualPayoutWorkflow(payout.status, payout.executionReservation);
-  this.manualWorkflowStage = 'confirmation';
-  this.manualTransferReference ||= this.manualBankSubmissionReference.trim();
-  },
-  error: () => {
-  this.manualConfirmationError = this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRM_ERROR');
-  }
+  void this.router.navigate(['/finances/settlements'], {
+  queryParams: { entityType: 'vendor', entityId: this.vendorId }
   });
   }
 
@@ -582,26 +463,6 @@ export class VendorFinanceComponent implements OnInit {
  return origin.toLowerCase().includes('direct');
  }
 
- canPrepareManualSettlement(item: AdminVendorSettlementItem): boolean {
- return this.isManualSettlementProcessing &&
- this.isPayoutDayToday &&
- this.isEligibleManualSettlementStatus(item.status);
- }
-
- canPrepareManualPayout(item: AdminVendorPayoutItem): boolean {
- if (!this.isManualSettlementProcessing || !this.isPayoutDayToday || item.manualConfirmation || item.providerTransferId) {
- return false;
- }
-
- const status = this.normalizeStatusKey(item.status);
- return status === 'pending' || status === 'failed' ||
- ((status === 'queued' || status === 'processing') && (item.providerName || '').toLowerCase() === 'manual');
- }
-
- isPreparingManualPayout(id: string): boolean {
- return this.preparingManualSettlementId === id;
- }
-
  trackById(_: number, item: { id: string }): string {
  return item.id;
  }
@@ -638,89 +499,6 @@ export class VendorFinanceComponent implements OnInit {
  });
  }
 
- private prepareManualPayout(settlementId: string, reference: string): void {
- if (!this.isManualSettlementProcessing || !this.isPayoutDayToday || this.preparingManualSettlementId) {
- return;
- }
-
- this.preparingManualSettlementId = settlementId;
- this.manualConfirmationError = '';
-
- this.financeService.approveSettlement(settlementId).pipe(
- finalize(() => {
- this.cdr.markForCheck();
- this.preparingManualSettlementId = null;
- }),
- take(1)
- ).subscribe({
- next: (settlement) => {
- if (settlement.settlementProcessingMode === 'Automatic') {
- this.settlementProcessingMode = 'Automatic';
- this.toastService.error(
- this.translate.instant('VENDOR_FINANCE.WORKSPACE.AUTOMATIC_MODE_INFO'),
- this.text('المالية', 'Finance')
- );
- this.loadFinanceData();
- return;
- }
-
- const payout = settlement.payouts?.find((item) =>
- !item.manualConfirmation && this.isReturnedPayoutEligibleForManualConfirmation(item)) ?? null;
-
- if (!payout) {
- this.toastService.error(
- this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PREPARE_ERROR'),
- this.text('المالية', 'Finance')
- );
- this.loadFinanceData();
- return;
- }
-
-  this.openManualWorkflow(payout, reference || settlement.settlementCode);
- },
- error: () => {
- this.toastService.error(
- this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PREPARE_ERROR'),
- this.text('المالية', 'Finance')
- );
- }
-  });
-  }
-
-  private openManualWorkflow(payout: SettlementPayout, settlementNumber: string): void {
-  this.manualPayout = payout;
-  this.manualSettlementNumber = settlementNumber;
-  this.manualProofFile = null;
-  this.manualTransferReference = payout.transferReference || '';
-  this.manualBankSubmissionReference = payout.executionReservation?.submissionReference || '';
-  this.manualConfirmationError = '';
-
-  const status = payout.executionReservation?.status;
-  if (status === 'Submitted') {
-  this.manualWorkflowStage = 'confirmation';
-  this.manualTransferReference ||= this.manualBankSubmissionReference;
-  return;
-  }
-
-  if (status === 'Claimed') {
-  this.manualWorkflowStage = 'submission';
-  return;
-  }
-
-  this.manualWorkflowStage = 'claim';
-  this.claimManualPayout();
-  }
-
-  private updateManualPayoutWorkflow(status: string, executionReservation: SettlementPayout['executionReservation']): void {
-  if (!this.manualPayout) return;
-
-  this.manualPayout = {
-  ...this.manualPayout,
-  status,
-  executionReservation
-  };
-  }
-
  private loadSettlementProcessingMode(): void {
  this.isLoadingSettlementProcessingMode = true;
  this.settlementProcessingModeUnavailable = false;
@@ -741,46 +519,6 @@ export class VendorFinanceComponent implements OnInit {
  this.settlementProcessingModeUnavailable = true;
  }
  });
- }
-
- isEligibleManualSettlementStatus(status: string): boolean {
- return ['pending', 'pending_review', 'approved', 'payout_failed'].includes(this.normalizeStatusKey(status));
- }
-
- private isReturnedPayoutEligibleForManualConfirmation(payout: SettlementPayout): boolean {
- const status = this.normalizeStatusKey(payout.status);
- return status === 'pending' || status === 'failed' || status === 'queued' || status === 'processing';
- }
-
- private getRiyadhWeekday(): number {
- return this.getRiyadhCalendar().weekday;
- }
-
- private getRiyadhCalendar(): { year: number; month: number; day: number; weekday: number } {
- const parts = new Intl.DateTimeFormat('en-US', {
- timeZone: 'Asia/Riyadh',
- year: 'numeric',
- month: 'numeric',
- day: 'numeric',
- weekday: 'short'
- }).formatToParts(new Date());
- const part = (type: Intl.DateTimeFormatPartTypes): string => parts.find((item) => item.type === type)?.value ?? '';
- const weekdays: Record<string, number> = {
- Sun: 0,
- Mon: 1,
- Tue: 2,
- Wed: 3,
- Thu: 4,
- Fri: 5,
- Sat: 6
- };
-
- return {
- year: Number(part('year')),
- month: Number(part('month')),
- day: Number(part('day')),
- weekday: weekdays[part('weekday')] ?? 0
- };
  }
 
  private resolveLifecycleMode(vendor: VendorDetail): VendorFinancialLifecycleMode {
@@ -838,20 +576,6 @@ export class VendorFinanceComponent implements OnInit {
 
  payoutDayTranslationKey(day: VendorPayoutDay): string {
  return `VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_${day.toUpperCase()}`;
- }
-
- private payoutWeekdayNumber(day: VendorPayoutDay): number {
- const weekdays: Record<VendorPayoutDay, number> = {
- Sunday: 0,
- Monday: 1,
- Tuesday: 2,
- Wednesday: 3,
- Thursday: 4,
- Friday: 5,
- Saturday: 6
- };
-
- return weekdays[day];
  }
 
  private mapPayoutStatus(status: string): 'success' | 'failed' | 'pending' | 'reviewing' {
