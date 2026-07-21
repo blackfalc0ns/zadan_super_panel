@@ -1066,7 +1066,26 @@
         "MATCHED": "Matched"
       },
       "NO_DATA_TITLE": "No matching data",
-      "NO_DATA_DESC": "All collected amounts are fully settled or no records match your request."
+      "NO_DATA_DESC": "All collected amounts are fully settled or no records match your request.",
+      "MODAL": {
+        "TITLE": "Manual COD settlement",
+        "SETTLE_ALL_TITLE": "Settle all pending amounts",
+        "DRIVER": "Driver",
+        "AMOUNT": "Remitted amount",
+        "REFERENCE": "Settlement reference (optional)",
+        "REFERENCE_PLACEHOLDER": "e.g. bank deposit / receipt number",
+        "CANCEL": "Cancel",
+        "CONFIRM": "Confirm settlement",
+        "SUBMITTING": "Settling..."
+      },
+      "TOAST": {
+        "SUCCESS_TITLE": "Settlement recorded",
+        "SUCCESS_MESSAGE": "COD remittance recorded for {{driver}}.",
+        "SETTLE_ALL_SUCCESS": "{{count}} COD remittances recorded.",
+        "ERROR_TITLE": "Settlement failed",
+        "ERROR_MESSAGE": "We could not complete the manual settlement. Please try again.",
+        "INVALID_AMOUNT": "Enter an amount greater than zero."
+      }
     },
     "DIRECTIONS": {
       "CREDIT": "Credit (+)",
@@ -1293,6 +1312,7 @@
       "NO_PHONE_REGISTERED": "No phone registered",
       "PENDING_BALANCE_LABEL": "Pending Balance (On Hold)",
       "AVAILABLE_BALANCE_LABEL": "Available Balance",
+      "LEDGER_BALANCE_LABEL": "Ledger Balance",
       "TABLE": {
         "TITLE": "Wallet Transactions Log",
         "DESC": "Details of operations, settlements, and refunds",

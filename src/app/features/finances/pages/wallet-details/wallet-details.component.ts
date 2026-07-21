@@ -71,7 +71,11 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  </div>
  <div class="px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm">
  <p class="text-[11px] font-bold text-slate-500 mb-1">{{ 'FINANCES.WALLET_DETAILS.AVAILABLE_BALANCE_LABEL' | translate }}</p>
- <p class="text-xl font-black tabular-nums tracking-tight text-emerald-600">{{ formatNumber(wallet.currentBalance) }} <span class="text-sm font-bold text-emerald-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
+ <p class="text-xl font-black tabular-nums tracking-tight text-emerald-600">{{ formatNumber(getAvailableBalance(wallet)) }} <span class="text-sm font-bold text-emerald-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
+ </div>
+ <div *ngIf="hasLedgerBalanceMismatch(wallet)" class="px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+ <p class="text-[11px] font-bold text-slate-500 mb-1">{{ 'FINANCES.WALLET_DETAILS.LEDGER_BALANCE_LABEL' | translate }}</p>
+ <p class="text-xl font-black tabular-nums tracking-tight text-slate-700">{{ formatNumber(wallet.currentBalance) }} <span class="text-sm font-bold text-slate-500">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
  </div>
  </div>
  </div>
@@ -369,5 +373,19 @@ export class WalletDetailsComponent implements OnInit {
  OrderRevenue: 'bg-teal-50 text-teal-700 border-teal-200',
  };
  return map[type] ?? 'bg-slate-100 text-slate-600 border-slate-200';
+ }
+
+ getAvailableBalance(wallet: AdminWalletSummaryDto): number {
+ if (typeof wallet.availableBalance === 'number') {
+ return wallet.availableBalance;
+ }
+
+ const reserved = wallet.pendingBalance ?? 0;
+ const codOwed = wallet.codOwedBalance ?? 0;
+ return Math.max(0, wallet.currentBalance - codOwed - reserved);
+ }
+
+ hasLedgerBalanceMismatch(wallet: AdminWalletSummaryDto): boolean {
+ return Math.abs(wallet.currentBalance - this.getAvailableBalance(wallet)) > 0.009;
  }
 }

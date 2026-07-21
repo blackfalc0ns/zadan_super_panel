@@ -11,6 +11,8 @@ export interface AdminWalletSummaryDto {
   ownerPhone: string;
   currentBalance: number;
   pendingBalance: number;
+  availableBalance: number;
+  codOwedBalance: number;
   createdAtUtc: string;
 }
 

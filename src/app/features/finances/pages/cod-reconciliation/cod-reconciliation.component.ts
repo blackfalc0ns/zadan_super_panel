@@ -1,8 +1,9 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { catchError, finalize, from, of, switchMap, take, toArray } from 'rxjs';
 import { FinanceService } from '../../services/finance.service';
 import { CodFilter, CodRecord, CodReconciliationSummary } from '../../models/finance.models';
 import { FinanceStatusBadgeComponent } from '../../components/finance-status-badge/finance-status-badge.component';
@@ -12,6 +13,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,6 +21,7 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
  standalone: true,
  imports: [
  CommonModule,
+ FormsModule,
  TranslateModule,
  FinanceStatusBadgeComponent,
  AppPageHeaderComponent,
@@ -32,9 +35,9 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
  <!-- شريط الصفحة العلوي (Header) -->
  <app-page-header [title]="'FINANCES.COD.TITLE' | translate" [subtitle]="'FINANCES.COD.SUBTITLE' | translate">
  <div actions>
- <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" *ngIf="summary && summary.pendingCases > 0">
+ <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" *ngIf="summary && summary.pendingCases > 0" (btnClick)="openSettleAllPending()">
  <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">done_all</span>
- تسوية المبالغ المعلقة
+ {{ 'FINANCES.COD.SETTLE_PENDING' | translate }}
  </app-button>
  </div>
  </app-page-header>
@@ -176,11 +179,15 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
 
  <td class="px-6 py-4 align-middle">
  <div class="flex justify-center">
- <button *ngIf="rec.status === 'overdue' || rec.status === 'pending'"
- class="h-8 px-3 text-[10px] font-black text-white bg-slate-900 rounded-lg hover:bg-slate-800 shadow-sm transition-all flex items-center gap-1">
- <span class="material-symbols-outlined text-[14px]">done_all</span>
+ <app-button *ngIf="rec.status === 'overdue' || rec.status === 'pending'"
+ variant="primary"
+ size="xs"
+ customClass="!rounded-lg !px-3"
+ [disabled]="isSubmitting"
+ (btnClick)="openManualSettle(rec)">
+ <span class="material-symbols-outlined text-[14px] rtl:ml-1 ltr:mr-1">done_all</span>
  {{ 'FINANCES.COD.TABLE.MANUAL_SETTLE' | translate }}
- </button>
+ </app-button>
  <span *ngIf="rec.status === 'collected'" class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">{{ 'FINANCES.COD.TABLE.SETTLED' | translate }}</span>
  </div>
  </td>
@@ -198,6 +205,57 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
  <p class="text-[12px] font-medium text-slate-500 mt-1 max-w-sm">{{ 'FINANCES.COD.NO_DATA_DESC' | translate }}</p>
  </div>
  </app-card>
+
+ <!-- نافذة التسوية اليدوية -->
+ <div *ngIf="isSettleModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+ <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="closeSettleModal()"></div>
+ <div class="relative w-full max-w-md rounded-[2rem] bg-white p-7 shadow-2xl animate-in zoom-in-95 duration-200">
+ <div class="mb-6 flex items-center justify-between">
+ <h3 class="text-xl font-black tracking-tight text-slate-900">
+ {{ (settleAllMode ? 'FINANCES.COD.MODAL.SETTLE_ALL_TITLE' : 'FINANCES.COD.MODAL.TITLE') | translate }}
+ </h3>
+ <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-800" (click)="closeSettleModal()">
+ <span class="material-symbols-outlined text-[20px]">close</span>
+ </button>
+ </div>
+
+ <div *ngIf="!settleAllMode && selectedRecord" class="mb-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+ <p class="text-[11px] font-bold uppercase tracking-widest text-slate-500">{{ 'FINANCES.COD.MODAL.DRIVER' | translate }}</p>
+ <p class="mt-1 text-[15px] font-black text-slate-900">{{ selectedRecord.driverName }}</p>
+ </div>
+
+ <div *ngIf="settleAllMode" class="mb-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800">
+ {{ summary?.pendingCases }} {{ 'FINANCES.COD.STATS.ORDER_UNIT' | translate }}
+ </div>
+
+ <div class="space-y-5">
+ <div *ngIf="!settleAllMode" class="space-y-1.5">
+ <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.COD.MODAL.AMOUNT' | translate }}</label>
+ <div class="relative">
+ <input [(ngModel)]="settleForm.amount" type="number" min="0" step="0.01"
+ class="w-full rounded-xl border border-slate-200 px-4 py-3 text-[14px] font-black text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+ <span class="absolute end-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">{{ 'FINANCES.CURRENCY' | translate }}</span>
+ </div>
+ </div>
+
+ <div class="space-y-1.5">
+ <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.COD.MODAL.REFERENCE' | translate }}</label>
+ <input [(ngModel)]="settleForm.reference" type="text"
+ [placeholder]="'FINANCES.COD.MODAL.REFERENCE_PLACEHOLDER' | translate"
+ class="w-full rounded-xl border border-slate-200 px-4 py-3 text-[13px] font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary" />
+ </div>
+ </div>
+
+ <div class="mt-7 flex items-center justify-end gap-3">
+ <app-button variant="ghost" size="sm" customClass="!rounded-xl" [disabled]="isSubmitting" (btnClick)="closeSettleModal()">
+ {{ 'FINANCES.COD.MODAL.CANCEL' | translate }}
+ </app-button>
+ <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" [disabled]="isSubmitting" (btnClick)="submitManualSettle()">
+ {{ (isSubmitting ? 'FINANCES.COD.MODAL.SUBMITTING' : 'FINANCES.COD.MODAL.CONFIRM') | translate }}
+ </app-button>
+ </div>
+ </div>
+ </div>
  </div>
  `
 })
@@ -205,6 +263,7 @@ export class CodReconciliationComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
  private financeService = inject(FinanceService);
  private translate = inject(TranslateService);
+ private toast = inject(ToastService);
  private route = inject(ActivatedRoute);
  private router = inject(Router);
 
@@ -213,6 +272,11 @@ export class CodReconciliationComponent implements OnInit {
  scopedEntityType: 'vendor' | 'driver' | null = null;
  scopedEntityId: string | null = null;
  scopedOrderId: string | null = null;
+ isSettleModalOpen = false;
+ isSubmitting = false;
+ settleAllMode = false;
+ selectedRecord: CodRecord | null = null;
+ settleForm = { amount: 0, reference: '' };
 
  get hasScope(): boolean {
  return!!this.scopedEntityId ||!!this.scopedOrderId;
@@ -283,5 +347,107 @@ export class CodReconciliationComponent implements OnInit {
  minimumFractionDigits: 0,
  maximumFractionDigits: 2
  });
+ }
+
+ openManualSettle(record: CodRecord): void {
+ this.settleAllMode = false;
+ this.selectedRecord = record;
+ this.settleForm = {
+ amount: record.expectedAmount,
+ reference: ''
+ };
+ this.isSettleModalOpen = true;
+ }
+
+ openSettleAllPending(): void {
+ const pendingRecords = this.getPendingRecords();
+ if (!pendingRecords.length) {
+ return;
+ }
+
+ this.settleAllMode = true;
+ this.selectedRecord = null;
+ this.settleForm = { amount: 0, reference: '' };
+ this.isSettleModalOpen = true;
+ }
+
+ closeSettleModal(): void {
+ if (this.isSubmitting) {
+ return;
+ }
+
+ this.isSettleModalOpen = false;
+ this.settleAllMode = false;
+ this.selectedRecord = null;
+ this.settleForm = { amount: 0, reference: '' };
+ }
+
+ submitManualSettle(): void {
+ const targets = this.settleAllMode ? this.getPendingRecords() : (this.selectedRecord ? [this.selectedRecord] : []);
+ if (!targets.length) {
+ return;
+ }
+
+ if (!this.settleAllMode) {
+ const amount = Number(this.settleForm.amount);
+ if (!Number.isFinite(amount) || amount <= 0) {
+ this.toast.error(this.translate.instant('FINANCES.COD.TOAST.INVALID_AMOUNT'), this.translate.instant('FINANCES.COD.TOAST.ERROR_TITLE'));
+ return;
+ }
+ }
+
+ this.isSubmitting = true;
+ this.cdr.markForCheck();
+
+ from(targets).pipe(
+ switchMap((record) => {
+ const amount = this.settleAllMode ? record.expectedAmount : Number(this.settleForm.amount);
+ const reference = this.settleForm.reference?.trim() || undefined;
+ return this.financeService.createCodRemittance({
+ driverId: record.driverId,
+ amount,
+ reference,
+ idempotencyKey: `cod-remittance:${record.driverId}:${Date.now()}`
+ }).pipe(
+ catchError(() => of(null))
+ );
+ }),
+ toArray(),
+ finalize(() => {
+ this.isSubmitting = false;
+ this.cdr.markForCheck();
+ })
+ ).subscribe((results) => {
+ this.isSubmitting = false;
+ const successCount = results.filter((result) => result !== null).length;
+ if (successCount === 0) {
+ this.toast.error(
+ this.translate.instant('FINANCES.COD.TOAST.ERROR_MESSAGE'),
+ this.translate.instant('FINANCES.COD.TOAST.ERROR_TITLE')
+ );
+ return;
+ }
+
+ if (this.settleAllMode) {
+ this.toast.success(
+ this.translate.instant('FINANCES.COD.TOAST.SETTLE_ALL_SUCCESS', { count: successCount }),
+ this.translate.instant('FINANCES.COD.TOAST.SUCCESS_TITLE')
+ );
+ } else {
+ this.toast.success(
+ this.translate.instant('FINANCES.COD.TOAST.SUCCESS_MESSAGE', { driver: this.selectedRecord?.driverName ?? '' }),
+ this.translate.instant('FINANCES.COD.TOAST.SUCCESS_TITLE')
+ );
+ }
+
+ this.closeSettleModal();
+ this.loadData();
+ });
+ }
+
+ private getPendingRecords(): CodRecord[] {
+ return this.records.filter((record) =>
+ (record.status === 'pending' || record.status === 'overdue') && record.expectedAmount > 0
+ );
  }
 }

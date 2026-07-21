@@ -1066,7 +1066,26 @@
         "MATCHED": "متطابق"
       },
       "NO_DATA_TITLE": "ما فيه بيانات مطابقة",
-      "NO_DATA_DESC": "جميع المبالغ المحصلة مسواة بالكامل أو ما لقينا سجلات تطابق طلبك."
+      "NO_DATA_DESC": "جميع المبالغ المحصلة مسواة بالكامل أو ما لقينا سجلات تطابق طلبك.",
+      "MODAL": {
+        "TITLE": "تسوية COD يدوية",
+        "SETTLE_ALL_TITLE": "تسوية كل المبالغ المعلقة",
+        "DRIVER": "المندوب",
+        "AMOUNT": "المبلغ المُسلّم",
+        "REFERENCE": "مرجع التسوية (اختياري)",
+        "REFERENCE_PLACEHOLDER": "مثال: إيداع بنكي / رقم سند قبض",
+        "CANCEL": "إلغاء",
+        "CONFIRM": "تأكيد التسوية",
+        "SUBMITTING": "جاري التسوية..."
+      },
+      "TOAST": {
+        "SUCCESS_TITLE": "تمت التسوية",
+        "SUCCESS_MESSAGE": "سجّلنا تسوية COD للمندوب {{driver}}.",
+        "SETTLE_ALL_SUCCESS": "سجّلنا {{count}} تسوية COD.",
+        "ERROR_TITLE": "فشلت التسوية",
+        "ERROR_MESSAGE": "ما قدرنا نكمل التسوية اليدوية. جرّب مرة ثانية.",
+        "INVALID_AMOUNT": "أدخل مبلغًا أكبر من صفر."
+      }
     },
     "DIRECTIONS": {
       "CREDIT": "دائن (+)",
@@ -1293,6 +1312,7 @@
       "NO_PHONE_REGISTERED": "ما فيه هاتف مسجل",
       "PENDING_BALANCE_LABEL": "الرصيد المعلق (بانتظار المعالجة)",
       "AVAILABLE_BALANCE_LABEL": "الرصيد المتاح",
+      "LEDGER_BALANCE_LABEL": "الرصيد المحاسبي",
       "TABLE": {
         "TITLE": "سجل حركات المحفظة",
         "DESC": "تفاصيل العمليات، التسويات والمبالغ المسترجعة",

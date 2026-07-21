@@ -117,7 +117,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  <div class="mt-auto grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
  <div>
  <p class="text-[10px] font-bold text-slate-400 mb-1">{{ 'FINANCES.WALLETS.AVAILABLE_BALANCE' | translate }}</p>
- <p class="text-lg font-black text-emerald-600 tabular-nums leading-none tracking-tight">{{ formatNumber(wallet.currentBalance) }} <span class="text-[10px] text-emerald-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
+ <p class="text-lg font-black text-emerald-600 tabular-nums leading-none tracking-tight">{{ formatNumber(getAvailableBalance(wallet)) }} <span class="text-[10px] text-emerald-600/70">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
  </div>
  <div>
  <p class="text-[10px] font-bold text-slate-400 mb-1">{{ 'FINANCES.WALLETS.PENDING_BALANCE' | translate }}</p>
@@ -209,5 +209,15 @@ export class WalletsListComponent implements OnInit {
  minimumFractionDigits: 0,
  maximumFractionDigits: 2
  });
+ }
+
+ getAvailableBalance(wallet: AdminWalletSummaryDto): number {
+ if (typeof wallet.availableBalance === 'number') {
+ return wallet.availableBalance;
+ }
+
+ const reserved = wallet.pendingBalance ?? 0;
+ const codOwed = wallet.codOwedBalance ?? 0;
+ return Math.max(0, wallet.currentBalance - codOwed - reserved);
  }
 }

@@ -261,6 +261,13 @@ interface AdminCodReconciliationApiModel {
  totalCodOwed: number;
 }
 
+interface AdminCodRemittanceResultApiModel {
+ financialEventId: string;
+ journalEntryId: string;
+ sequenceNumber: number;
+ wasAlreadyPosted: boolean;
+}
+
 interface AdminFinanceAuditLogApiModel {
  items: AdminFinanceAuditLogEntryApiModel[];
  totalCount: number;
@@ -392,6 +399,21 @@ export class FinanceService {
  return { summary, records };
  })
  );
+ }
+
+ createCodRemittance(payload: {
+ driverId: string;
+ amount: number;
+ reference?: string;
+ idempotencyKey?: string;
+ }): Observable<AdminCodRemittanceResultApiModel> {
+ return this.http.post<AdminCodRemittanceResultApiModel>(`${this.apiUrl}/cod-remittances`, {
+ driverId: payload.driverId,
+ amount: payload.amount,
+ reference: payload.reference ?? null,
+ idempotencyKey: payload.idempotencyKey ?? null,
+ platformOwnerId: null
+ });
  }
 
  approveSettlement(settlementId: string): Observable<Settlement> {
