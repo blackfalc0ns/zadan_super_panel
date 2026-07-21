@@ -987,6 +987,17 @@
       },
       "NO_DATA_TITLE": "No Financial Settlements",
       "NO_DATA_DESC": "There are currently no registered dues in this category.",
+      "MANUAL_CONFIRM": {
+        "TITLE": "Confirm manual bank transfer",
+        "DESCRIPTION": "Complete this only after transferring the funds outside Zadana. A bank reference and proof are required.",
+        "REFERENCE": "Bank transfer reference",
+        "REFERENCE_PLACEHOLDER": "Enter the bank reference",
+        "PROOF": "Transfer proof (image or PDF)",
+        "CONFIRM": "Mark as transferred",
+        "CONFIRMING": "Confirming...",
+        "PREPARE_ERROR": "Unable to prepare this settlement for manual transfer.",
+        "CONFIRM_ERROR": "Unable to confirm the manual transfer. Check the reference, proof, and scheduled transfer day."
+      },
       "PERIODS": {
         "WEEKLY": "Weekly",
         "BI_WEEKLY": "Bi-Weekly",
@@ -1123,7 +1134,13 @@
       "READY_MOYASAR": "Ready through Moyasar",
       "NEEDS_SOURCE_ID": "Needs Moyasar SourceId",
       "IMPORTANT_TITLE": "Important",
-      "IMPORTANT_DESC": "The IBAN here is the platform account customers pay into. SourceId is not a bank account number; it is the Payouts source issued by Moyasar."
+      "IMPORTANT_DESC": "The IBAN here is the platform account customers pay into. SourceId is not a bank account number; it is the Payouts source issued by Moyasar.",
+      "SETTLEMENT_MODE": "Settlement processing mode",
+      "SETTLEMENT_MODE_DESC": "Manual mode prevents new gateway payouts. Automatic mode resumes eligible pending payouts on their scheduled transfer day.",
+      "SETTLEMENT_MODE_MANUAL": "Manual bank transfer",
+      "SETTLEMENT_MODE_MANUAL_DESC": "Admin transfers outside the platform, then confirms each payout with a bank proof.",
+      "SETTLEMENT_MODE_AUTOMATIC": "Automatic gateway payout",
+      "SETTLEMENT_MODE_AUTOMATIC_DESC": "Eligible payouts are sent through the configured payment gateway."
     },
     "AUDIT": {
       "TITLE": "Financial Audit Log",

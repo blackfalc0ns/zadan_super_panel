@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { forkJoin, take } from 'rxjs';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { describeApiError } from '../../../../shared/utils/api-error.util';
 import {
- AdminPlatformBankAccountDto,
- AdminUpsertPlatformBankAccountRequest,
+  AdminPlatformBankAccountDto,
+  SettlementProcessingMode,
+  AdminUpsertPlatformBankAccountRequest,
  WalletsService
 } from '../../services/wallets.service';
 
@@ -115,6 +116,21 @@ import {
  <input type="checkbox" [(ngModel)]="form.isMoyasarPayoutsEnabled" name="isMoyasarPayoutsEnabled" class="h-5 w-5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-200" />
  </label>
  </div>
+
+ <fieldset class="md:col-span-2 rounded-2xl border border-violet-200 bg-violet-50/50 p-4">
+ <legend class="px-2 text-[11px] font-black uppercase tracking-wide text-violet-700">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE' | translate }}</legend>
+ <p class="mb-3 text-[12px] font-medium text-slate-600">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_DESC' | translate }}</p>
+ <div class="grid gap-3 md:grid-cols-2">
+ <label class="flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition" [ngClass]="settlementProcessingMode === 'Manual' ? 'border-violet-400 bg-white shadow-sm' : 'border-slate-200 bg-white/60'">
+ <input type="radio" name="settlementProcessingMode" value="Manual" [(ngModel)]="settlementProcessingMode" class="mt-1 h-4 w-4 text-violet-600 focus:ring-violet-300" />
+ <span><span class="block text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_MANUAL' | translate }}</span><span class="mt-1 block text-[12px] font-medium text-slate-500">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_MANUAL_DESC' | translate }}</span></span>
+ </label>
+ <label class="flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition" [ngClass]="settlementProcessingMode === 'Automatic' ? 'border-violet-400 bg-white shadow-sm' : 'border-slate-200 bg-white/60'">
+ <input type="radio" name="settlementProcessingMode" value="Automatic" [(ngModel)]="settlementProcessingMode" class="mt-1 h-4 w-4 text-violet-600 focus:ring-violet-300" />
+ <span><span class="block text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC' | translate }}</span><span class="mt-1 block text-[12px] font-medium text-slate-500">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC_DESC' | translate }}</span></span>
+ </label>
+ </div>
+ </fieldset>
  </form>
  </section>
 
@@ -136,6 +152,11 @@ import {
  <div class="rounded-2xl border px-4 py-3" [ngClass]="account?.canSendMoyasarPayouts ? 'border-emerald-100 bg-emerald-50' : 'border-amber-100 bg-amber-50'">
  <p class="text-[12px] font-black" [ngClass]="account?.canSendMoyasarPayouts ? 'text-emerald-700' : 'text-amber-700'">{{ 'FINANCES.PLATFORM_ACCOUNT.MERCHANT_DRIVER_PAYOUTS' | translate }}</p>
  <p class="mt-1 text-[12px] font-medium text-slate-600">{{ (account?.canSendMoyasarPayouts ? 'FINANCES.PLATFORM_ACCOUNT.READY_MOYASAR' : 'FINANCES.PLATFORM_ACCOUNT.NEEDS_SOURCE_ID') | translate }}</p>
+ </div>
+
+ <div class="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3">
+ <p class="text-[12px] font-black text-violet-800">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE' | translate }}</p>
+ <p class="mt-1 text-[12px] font-medium text-slate-600">{{ (settlementProcessingMode === 'Manual' ? 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_MANUAL' : 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC') | translate }}</p>
  </div>
  </div>
  </div>
@@ -164,6 +185,7 @@ export class PlatformAccountComponent implements OnInit {
  isLoading = false;
  isSaving = false;
  errorMessage = '';
+ settlementProcessingMode: SettlementProcessingMode = 'Manual';
 
  form: AdminUpsertPlatformBankAccountRequest = this.emptyForm();
 
@@ -184,10 +206,14 @@ export class PlatformAccountComponent implements OnInit {
  this.isLoading = true;
  this.errorMessage = '';
 
- this.walletsService.getPlatformAccount().pipe(take(1)).subscribe({
- next: (account) => {
+ forkJoin({
+ account: this.walletsService.getPlatformAccount(),
+ processingSettings: this.walletsService.getSettlementProcessingSettings()
+ }).pipe(take(1)).subscribe({
+ next: ({ account, processingSettings }) => {
  this.cdr.markForCheck();
  this.account = account;
+ this.settlementProcessingMode = processingSettings.settlementProcessingMode;
  this.form = {
  bankName: account.bankName || '',
  accountHolderName: account.accountHolderName || '',
@@ -230,10 +256,14 @@ export class PlatformAccountComponent implements OnInit {
  notes: this.nullIfBlank(this.form.notes)
  };
 
- this.walletsService.updatePlatformAccount(payload).pipe(take(1)).subscribe({
- next: (account) => {
+ forkJoin({
+ account: this.walletsService.updatePlatformAccount(payload),
+ processingSettings: this.walletsService.updateSettlementProcessingMode(this.settlementProcessingMode)
+ }).pipe(take(1)).subscribe({
+ next: ({ account, processingSettings }) => {
  this.cdr.markForCheck();
  this.account = account;
+ this.settlementProcessingMode = processingSettings.settlementProcessingMode;
  this.isSaving = false;
  this.toast.success(this.translate.instant('FINANCES.PLATFORM_ACCOUNT.SAVE_SUCCESS'));
  this.load();

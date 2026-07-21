@@ -113,6 +113,14 @@ export interface AdminUpsertPlatformBankAccountRequest {
   notes?: string | null;
 }
 
+export type SettlementProcessingMode = 'Manual' | 'Automatic';
+
+export interface AdminSettlementProcessingSettingsDto {
+  settlementProcessingMode: SettlementProcessingMode;
+  updatedByUserId: string | null;
+  updatedAtUtc: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -170,5 +178,18 @@ export class WalletsService {
 
   updatePlatformAccount(payload: AdminUpsertPlatformBankAccountRequest): Observable<AdminPlatformBankAccountDto> {
     return this.http.put<AdminPlatformBankAccountDto>(`${this.apiUrl}/platform-account`, payload);
+  }
+
+  getSettlementProcessingSettings(): Observable<AdminSettlementProcessingSettingsDto> {
+    return this.http.get<AdminSettlementProcessingSettingsDto>(`${environment.apiUrl}/admin/payouts/processing-settings`);
+  }
+
+  updateSettlementProcessingMode(
+    settlementProcessingMode: SettlementProcessingMode
+  ): Observable<AdminSettlementProcessingSettingsDto> {
+    return this.http.put<AdminSettlementProcessingSettingsDto>(
+      `${environment.apiUrl}/admin/payouts/processing-settings`,
+      { settlementProcessingMode }
+    );
   }
 }

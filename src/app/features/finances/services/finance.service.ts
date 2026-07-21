@@ -151,7 +151,35 @@ interface AdminSettlementApiModel {
  refundAmount: number;
  adjustmentAmount: number;
  recoveryAmount: number;
- netAmount: number;
+  netAmount: number;
+}
+
+interface AdminManualPayoutConfirmationApiModel {
+  id: string;
+  transferReference: string;
+  proofUrl: string;
+  confirmedByUserId: string;
+  confirmedAtUtc: string;
+}
+
+interface AdminSettlementPayoutApiModel {
+  id: string;
+  amount: number;
+  status: string;
+  providerTransferId?: string | null;
+  transferReference?: string | null;
+  manualConfirmation?: AdminManualPayoutConfirmationApiModel | null;
+}
+
+interface AdminSettlementDetailApiModel {
+  settlement: AdminSettlementApiModel;
+  payouts: AdminSettlementPayoutApiModel[];
+  settlementProcessingMode: 'Manual' | 'Automatic';
+}
+
+interface AdminConfirmManualPayoutRequest {
+  transferReference: string;
+  proofUrl: string;
 }
 
 interface AdminSettlementListApiModel {
@@ -318,8 +346,32 @@ export class FinanceService {
  );
  }
 
- approveSettlement(settlementId: string): Observable<void> {
- return this.http.post<void>(`${this.settlementsApiUrl}/${settlementId}/approve`, { resolutionType: 'BankPayout' });
+ approveSettlement(settlementId: string): Observable<Settlement> {
+ return this.http.post<AdminSettlementDetailApiModel>(
+ `${this.settlementsApiUrl}/${settlementId}/approve`,
+ { resolutionType: 'BankPayout', triggerPayout: true }
+ ).pipe(map((detail) => this.mapSettlementDetail(detail)));
+ }
+
+ confirmManualPayout(payoutId: string, payload: AdminConfirmManualPayoutRequest): Observable<void> {
+ return this.http.post<void>(`${environment.apiUrl}/admin/payouts/${payoutId}/confirm-manual`, payload);
+ }
+
+ uploadSettlementProof(file: File): Observable<string> {
+ const formData = new FormData();
+ formData.append('file', file);
+ formData.append('directory', 'uploads/settlements/proofs');
+
+ return this.http.post<{ url?: string; Url?: string }>(`${environment.apiUrl}/files/upload`, formData).pipe(
+ map((response) => {
+ const proofUrl = (response.url ?? response.Url ?? '').trim();
+ if (!proofUrl || proofUrl.startsWith('blob:')) {
+ throw new Error('Settlement proof upload did not return a valid URL.');
+ }
+
+ return proofUrl;
+ })
+ );
  }
 
  getRefundCases(filter?: RefundFilter): Observable<RefundCase[]> {
@@ -920,6 +972,30 @@ export class FinanceService {
  createdAt: item.periodTo,
  paidAt: item.status === 'PaidOut' ? item.periodTo : undefined,
  failureReason: item.status === 'PayoutFailed' ? 'Payout failed' : undefined
+ };
+ }
+
+ private mapSettlementDetail(detail: AdminSettlementDetailApiModel): Settlement {
+ const settlement = this.mapSettlement(detail.settlement);
+ return {
+ ...settlement,
+ settlementProcessingMode: detail.settlementProcessingMode,
+ payouts: detail.payouts.map((payout) => ({
+ id: payout.id,
+ amount: this.round(payout.amount),
+ status: payout.status,
+ providerTransferId: payout.providerTransferId ?? null,
+ transferReference: payout.transferReference ?? null,
+ manualConfirmation: payout.manualConfirmation
+ ? {
+ id: payout.manualConfirmation.id,
+ transferReference: payout.manualConfirmation.transferReference,
+ proofUrl: payout.manualConfirmation.proofUrl,
+ confirmedByUserId: payout.manualConfirmation.confirmedByUserId,
+ confirmedAtUtc: payout.manualConfirmation.confirmedAtUtc
+ }
+ : null
+ }))
  };
  }
 

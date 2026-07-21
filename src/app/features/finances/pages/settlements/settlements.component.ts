@@ -1,11 +1,12 @@
 import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { finalize, switchMap, take } from 'rxjs';
 import { FinanceService } from '../../services/finance.service';
-import { Settlement, EntityType } from '../../models/finance.models';
+import { Settlement, EntityType, SettlementPayout } from '../../models/finance.models';
 import { FinanceStatusBadgeComponent } from '../../components/finance-status-badge/finance-status-badge.component';
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
@@ -20,7 +21,8 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  selector: 'app-settlements',
  standalone: true,
  imports: [
- CommonModule, 
+ CommonModule,
+ FormsModule,
  TranslateModule, 
  FinanceStatusBadgeComponent, 
  AppCardComponent, 
@@ -30,6 +32,49 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  AppPageHeaderComponent
  ],
  template: `
+ <div *ngIf="manualPayout" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+ <div class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" (click)="closeManualConfirmation()"></div>
+ <section class="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
+ <header class="border-b border-violet-100 bg-violet-50 px-6 py-5">
+ <div class="flex items-start justify-between gap-4">
+ <div class="flex gap-3">
+ <span class="material-symbols-outlined mt-0.5 text-[24px] text-violet-700">receipt_long</span>
+ <div>
+ <h2 class="text-[16px] font-black text-slate-950">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.TITLE' | translate }}</h2>
+ <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-600">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.DESCRIPTION' | translate }}</p>
+ </div>
+ </div>
+ <button type="button" (click)="closeManualConfirmation()" [disabled]="isConfirmingManualPayout" class="grid h-8 w-8 place-items-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-900 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[18px]">close</span>
+ </button>
+ </div>
+ </header>
+ <div class="space-y-5 p-6">
+ <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+ <p class="text-[10px] font-black uppercase tracking-wider text-emerald-700">{{ 'FINANCES.SETTLEMENTS.NET_DUE' | translate }}</p>
+ <p class="mt-1 text-xl font-black text-emerald-800">{{ formatNumber(manualPayout.amount) }} {{ 'FINANCES.CURRENCY' | translate }}</p>
+ </div>
+ <label class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.REFERENCE' | translate }}</span>
+ <input [(ngModel)]="manualTransferReference" name="manualTransferReference" type="text" dir="ltr" class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100" [placeholder]="'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.REFERENCE_PLACEHOLDER' | translate" />
+ </label>
+ <label class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.PROOF' | translate }}</span>
+ <input type="file" accept="image/png,image/jpeg,application/pdf" (change)="onProofSelected($event)" class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-100 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-violet-800" />
+ <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
+ </label>
+ <p *ngIf="manualConfirmationError" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">{{ manualConfirmationError }}</p>
+ </div>
+ <footer class="flex gap-3 border-t border-slate-100 px-6 py-4">
+ <button type="button" (click)="closeManualConfirmation()" [disabled]="isConfirmingManualPayout" class="h-10 flex-1 rounded-xl border border-slate-200 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50">{{ 'COMMON.CANCEL' | translate }}</button>
+ <button type="button" (click)="confirmManualPayout()" [disabled]="isConfirmingManualPayout || !manualProofFile || !manualTransferReference.trim()" class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[17px]">{{ isConfirmingManualPayout ? 'hourglass_empty' : 'verified' }}</span>
+ {{ (isConfirmingManualPayout ? 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRMING' : 'FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM') | translate }}
+ </button>
+ </footer>
+ </section>
+ </div>
+
  <!-- نافذة تفاصيل التسوية (Settlement Detail Modal) -->
  <div *ngIf="selectedSettlement" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="selectedSettlement = null"></div>
@@ -289,6 +334,11 @@ export class SettlementsComponent implements OnInit {
  selectedSettlement: Settlement | null = null;
  activeTab: EntityType = 'vendor';
  scopedEntityId: string | null = null;
+ manualPayout: SettlementPayout | null = null;
+ manualProofFile: File | null = null;
+ manualTransferReference = '';
+ manualConfirmationError = '';
+ isConfirmingManualPayout = false;
 
  get vendorSettlements(): Settlement[] { return this.allSettlements.filter(s => s.entityType === 'vendor'); }
  get driverSettlements(): Settlement[] { return this.allSettlements.filter(s => s.entityType === 'driver'); }
@@ -347,10 +397,74 @@ export class SettlementsComponent implements OnInit {
  openDetail(s: Settlement): void { this.selectedSettlement = s; }
  
  processSettlement(s: Settlement): void {
- this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe(() => {
+ this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe({
+ next: (settlement) => {
  this.cdr.markForCheck();
+ if (settlement.settlementProcessingMode === 'Manual') {
+ const payout = settlement.payouts?.find((item) => !item.manualConfirmation) ?? null;
+ if (payout) {
+ this.selectedSettlement = settlement;
+ this.manualPayout = payout;
+ this.manualProofFile = null;
+ this.manualTransferReference = payout.transferReference || '';
+ this.manualConfirmationError = '';
+ return;
+ }
+ }
+
  this.selectedSettlement = null;
  this.loadSettlements();
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.PREPARE_ERROR');
+ }
+ });
+ }
+
+ onProofSelected(event: Event): void {
+ const input = event.target as HTMLInputElement;
+ this.manualProofFile = input.files?.item(0) ?? null;
+ this.manualConfirmationError = '';
+ }
+
+ closeManualConfirmation(force = false): void {
+ if (this.isConfirmingManualPayout && !force) {
+ return;
+ }
+
+ this.manualPayout = null;
+ this.manualProofFile = null;
+ this.manualTransferReference = '';
+ this.manualConfirmationError = '';
+ }
+
+ confirmManualPayout(): void {
+ if (!this.manualPayout || !this.manualProofFile || !this.manualTransferReference.trim() || this.isConfirmingManualPayout) {
+ return;
+ }
+
+ this.isConfirmingManualPayout = true;
+ this.manualConfirmationError = '';
+ const payoutId = this.manualPayout.id;
+ const transferReference = this.manualTransferReference.trim();
+
+ this.financeService.uploadSettlementProof(this.manualProofFile).pipe(
+ switchMap((proofUrl) => this.financeService.confirmManualPayout(payoutId, { transferReference, proofUrl })),
+ finalize(() => {
+ this.cdr.markForCheck();
+ this.isConfirmingManualPayout = false;
+ }),
+ take(1)
+ ).subscribe({
+ next: () => {
+ this.closeManualConfirmation(true);
+ this.selectedSettlement = null;
+ this.loadSettlements();
+ },
+ error: () => {
+ this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
+ }
  });
  }
  

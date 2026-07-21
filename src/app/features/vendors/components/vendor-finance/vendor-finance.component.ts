@@ -111,8 +111,8 @@ export class VendorFinanceComponent implements OnInit {
  return [
  {
  value: 'per_order_direct_payout',
- label: this.text('لكل طلب - تحويل مباشر بعد التسليم', 'Per order direct payout after delivery'),
- disabled:!this.hasPrimaryBankAccount
+ label: this.text('طلب بطلب — قريبًا', 'Per order direct payout — coming soon'),
+ disabled: true
  },
  { value: 'weekly', label: this.text('تسوية مجمعة أسبوعية', 'Weekly batch settlement') },
  { value: 'biweekly', label: this.text('تسوية مجمعة نصف شهرية', 'Biweekly batch settlement') },

@@ -147,6 +147,25 @@ export interface Settlement {
   failureReason?: string;
   bankAccount?: string;
   items?: SettlementItem[];
+  settlementProcessingMode?: 'Manual' | 'Automatic';
+  payouts?: SettlementPayout[];
+}
+
+export interface SettlementManualConfirmation {
+  id: string;
+  transferReference: string;
+  proofUrl: string;
+  confirmedByUserId: string;
+  confirmedAtUtc: string;
+}
+
+export interface SettlementPayout {
+  id: string;
+  amount: number;
+  status: string;
+  providerTransferId?: string | null;
+  transferReference?: string | null;
+  manualConfirmation?: SettlementManualConfirmation | null;
 }
 
 export interface SettlementItem {
@@ -528,4 +547,3 @@ export interface DeliveryPricingDefaults {
 
 export type PricingScope = 'zone' | 'city' | 'region' | 'global';
 export type PricingSettingsItem = ZoneFinanceSettings | CityDeliveryPricingSettings | RegionDeliveryPricingSettings | DeliveryPricingDefaults;
-
