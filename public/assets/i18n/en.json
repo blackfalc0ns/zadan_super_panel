@@ -835,7 +835,13 @@
       "SERIES_NET_REVENUE": "Net Platform Revenue"
     },
     "ALERTS": {
-      "TITLE": "Financial Alerts"
+      "TITLE": "Financial Alerts",
+      "COD_OVERDUE_TITLE": "Outstanding COD balance",
+      "COD_OVERDUE_DESC": "Some drivers still owe COD amounts that have not been remitted.",
+      "SETTLEMENT_PENDING_TITLE": "Settlement awaiting processing",
+      "SETTLEMENT_PENDING_DESC": "A settlement is still waiting for review or bank transfer.",
+      "SETTLEMENT_FAILED_TITLE": "Settlement payout failed",
+      "SETTLEMENT_FAILED_DESC": "A settlement needs review after a failed bank transfer."
     },
     "ACTIONS": {
       "VIEW_ALL": "View All",
@@ -1029,16 +1035,19 @@
         "TOTAL_DELTA": "Financial Delta (Shortage / Surplus)",
         "OVERDUE_CASES": "Overdue Collections",
         "PENDING_CASES": "Awaiting Settlement (Pending)",
-        "ORDER_UNIT": "Orders"
+        "ORDER_UNIT": "drivers"
       },
       "TABLE": {
         "TITLE": "Reconciliation Log",
-        "DESC": "Details of amounts per order and field settlement status",
+        "DESC": "Driver-level outstanding COD balances",
         "ORDER_REF": "Order (Ref)",
+        "DRIVER_REF": "Driver Ref",
         "COLLECTOR_DRIVER": "Collecting Driver",
         "VENDOR": "Vendor",
+        "OUTSTANDING_BALANCE": "Outstanding Balance",
         "EXPECTED_AMOUNT": "Expected Collection",
         "ACTUAL_COLLECTED": "Actually Received",
+        "REMITTED_AMOUNT": "Remitted to Platform",
         "FINANCIAL_DELTA": "Financial Delta",
         "STATUS": "Status",
         "ACTION": "Action",
@@ -1419,6 +1428,10 @@
       }
     },
     "ADJUSTMENTS": {
+      "DEVELOPMENT": {
+        "TITLE": "Under development",
+        "MESSAGE": "Manual adjustments here are not connected to the backend yet. Use vendor/driver wallets or the financial ledger for real operations."
+      },
       "FORM": {
         "TITLE": "Create Manual Financial Adjustment",
         "SUBTITLE": "Add or deduct amounts from vendor and driver wallets for administrative reasons.",
@@ -1502,7 +1515,8 @@
       "REFUND_EXPOSURE": "Refund Exposure",
       "NET_REVENUE": "Net Revenue",
       "COD_FEES": "COD Fees",
-      "VS_LAST_MONTH": "vs last month"
+      "VS_LAST_MONTH": "vs last month",
+      "VS_PREVIOUS_PERIOD": "vs previous period"
     }
   },
   "NOTIFICATIONS_CENTER": {

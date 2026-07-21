@@ -68,7 +68,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
  <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.LEDGER.ENTITY_LINKED' | translate }}</span>
  <div class="flex items-center gap-2">
- <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase" [ngClass]="getEntityBadgeClass(selectedEntry.entityType)">{{ getTranslatedEntityType(selectedEntry.entityType) }}</span>
+ <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase" [ngClass]="getEntityBadgeClass(selectedEntry.entityType)">{{ getTranslatedEntityType(selectedEntry.entityType) | translate }}</span>
  <span class="text-[13px] font-black text-slate-900">{{ selectedEntry.entityName }}</span>
  </div>
  </div>

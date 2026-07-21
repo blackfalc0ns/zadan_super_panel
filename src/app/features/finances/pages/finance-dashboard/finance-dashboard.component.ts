@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, finalize, of, switchMap, timer } from 'rxjs';
+import { catchError, finalize, interval, merge, of, switchMap, timer } from 'rxjs';
 import { FinanceService } from '../../services/finance.service';
 import { FinanceDashboardSnapshot, FinanceDashboardAlert, FinancePeriod, ChartDataPoint, RevenueCompositionSegment } from '../../models/finance.models';
 import { FinanceKpiCardComponent } from '../../components/finance-kpi-card/finance-kpi-card.component';
@@ -12,7 +13,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { FINANCE_ENTITY_LABEL_KEYS, FINANCE_MONTH_LABEL_KEYS, getFinanceLocale } from '../../utils/finance-i18n.utils';
+import { FINANCE_ENTITY_LABEL_KEYS, resolveFinanceMonthLabelKey, getFinanceLocale } from '../../utils/finance-i18n.utils';
 
 // ECharts imports
 import * as echarts from 'echarts/core';
@@ -176,7 +177,7 @@ echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, Leg
                 </span>
                 <span *ngIf="alert.amount" class="flex items-center gap-1">
                   <span class="w-1 h-1 rounded-full bg-current opacity-50"></span>
-                  {{ formatNumber(alert.amount) }} SAR
+                  {{ formatNumber(alert.amount) }} {{ 'FINANCES.CURRENCY' | translate }}
                 </span>
               </div>
               <app-button
@@ -203,6 +204,7 @@ echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, Leg
   `
 })
 export class FinanceDashboardComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
   private financeService = inject(FinanceService);
   private router = inject(Router);
@@ -226,34 +228,42 @@ export class FinanceDashboardComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.loadData();
-    this.translate.onLangChange.subscribe(() => {
+    this.loadData(true);
+    this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.cdr.markForCheck();
       if (this.snapshot) {
         this.buildCharts();
       }
     });
+
+    merge(timer(60_000), interval(60_000))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadData(false));
   }
 
-  loadData(): void {
-    this.isLoading = true;
-    this.loadError = false;
-    this.snapshot = null;
+  loadData(showLoading = true): void {
+    if (showLoading) {
+      this.isLoading = true;
+      this.loadError = false;
+      this.snapshot = null;
+    }
 
-    timer(0).pipe(
-      switchMap(() => this.financeService.getDashboardSnapshot(this.currentPeriod)),
+    this.financeService.getDashboardSnapshot(this.currentPeriod).pipe(
       catchError((error) => {
         console.error('Finance dashboard failed to load.', error);
         this.loadError = true;
         return of(null);
       }),
       finalize(() => {
-        this.isLoading = false;
+        if (showLoading) {
+          this.isLoading = false;
+        }
       })
     ).subscribe((data) => {
       this.cdr.markForCheck();
       this.snapshot = data;
       if (data) {
+        this.loadError = false;
         this.buildCharts();
       }
     });
@@ -261,7 +271,7 @@ export class FinanceDashboardComponent implements OnInit {
 
   setPeriod(period: FinancePeriod): void {
     this.currentPeriod = period;
-    this.loadData();
+    this.loadData(true);
   }
 
   onKpiClick(kpi: FinanceKPI): void {
@@ -360,7 +370,8 @@ export class FinanceDashboardComponent implements OnInit {
 
   private buildRevenueCompositionChart(): void {
     const data = this.snapshot!.revenueComposition;
-    const isRtl = this.translate.currentLang === 'ar';
+    const currency = this.translate.instant('FINANCES.CURRENCY');
+    const seriesName = this.translate.instant('FINANCES.CHART.COMPOSITION');
     
     const chartData = data.map(d => ({
       name: this.translate.instant(d.labelKey),
@@ -371,7 +382,10 @@ export class FinanceDashboardComponent implements OnInit {
     this.revenueCompositionOptions = {
       tooltip: {
         trigger: 'item',
-        formatter: '{b}: {c} SAR ({d}%)',
+        formatter: (params: unknown) => {
+          const item = params as { name?: string; value?: number; percent?: number };
+          return `${item.name ?? ''}: ${item.value ?? 0} ${currency} (${item.percent ?? 0}%)`;
+        },
         className: '!rounded-xl !shadow-lg !border-none !bg-white/95 !backdrop-blur-md',
         textStyle: { fontFamily: 'inherit', color: '#1e293b', fontWeight: 'bold' }
       },
@@ -385,7 +399,7 @@ export class FinanceDashboardComponent implements OnInit {
       },
       series: [
         {
-          name: 'Revenue',
+          name: seriesName,
           type: 'pie',
           radius: ['55%', '80%'],
           center: ['50%', '45%'],
@@ -408,6 +422,7 @@ export class FinanceDashboardComponent implements OnInit {
     const isRtl = this.translate.currentLang === 'ar';
     const xAxisLabels = data.map(d => this.translate.instant(this.getMonthLabelKey(d.label)));
     const trendData = data.map(d => d.value);
+    const seriesName = this.translate.instant('FINANCES.CHART.REFUND_TREND');
 
     this.refundTrendOptions = {
       tooltip: {
@@ -439,7 +454,7 @@ export class FinanceDashboardComponent implements OnInit {
       },
       series: [
         {
-          name: 'Refunds',
+          name: seriesName,
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -476,7 +491,7 @@ export class FinanceDashboardComponent implements OnInit {
   }
 
   getMonthLabelKey(label: string): string {
-    return FINANCE_MONTH_LABEL_KEYS[label] ?? label;
+    return resolveFinanceMonthLabelKey(label);
   }
 
   formatNumber(value: number, maximumFractionDigits = 0): string {

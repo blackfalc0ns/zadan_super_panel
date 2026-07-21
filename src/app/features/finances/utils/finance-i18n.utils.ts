@@ -97,6 +97,34 @@ export const FINANCE_MONTH_LABEL_KEYS: Record<string, string> = {
   Dec: 'FINANCES.MONTHS.DEC'
 };
 
+const ISO_MONTH_INDEX_TO_KEY = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+] as const;
+
+export function resolveFinanceMonthLabelKey(label: string): string {
+  const isoMatch = /^(\d{4})-(\d{2})$/.exec(label);
+  if (isoMatch) {
+    const monthIndex = Number(isoMatch[2]) - 1;
+    const monthKey = ISO_MONTH_INDEX_TO_KEY[monthIndex];
+    if (monthKey) {
+      return FINANCE_MONTH_LABEL_KEYS[monthKey];
+    }
+  }
+
+  return FINANCE_MONTH_LABEL_KEYS[label] ?? label;
+}
+
 export function getFinanceLocale(lang?: string): string {
   return lang === 'ar' ? 'ar-SA-u-ca-gregory' : 'en-SA';
 }

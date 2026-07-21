@@ -152,6 +152,28 @@ interface AdminSettlementApiModel {
  adjustmentAmount: number;
  recoveryAmount: number;
   netAmount: number;
+ createdAtUtc: string;
+ processedAtUtc?: string | null;
+ itemCount: number;
+}
+
+interface AdminOrderFinancialBreakdownApiModel {
+ orderId: string;
+ orderRef: string;
+ subtotal: number;
+ discounts: number;
+ couponDiscount: number;
+ deliveryFee: number;
+ serviceFee: number;
+ codFee: number;
+ vat: number;
+ total: number;
+ vendorEarnings: number;
+ vendorCommission: number;
+ driverPayout: number;
+ platformRevenue: number;
+ netMargin: number;
+ marginPercent: number;
 }
 
 interface AdminManualPayoutConfirmationApiModel {
@@ -313,12 +335,7 @@ export class FinanceService {
  getDashboardSnapshot(period: FinancePeriod = 'month'): Observable<FinanceDashboardSnapshot> {
  return this.http.get<FinanceDashboardSnapshot>(`${this.apiUrl}/dashboard/snapshot`, {
  params: { period }
- }).pipe(
- catchError((error) => {
- console.error('Failed to build finance dashboard snapshot.', error);
- return of(this.buildEmptyDashboardSnapshot(period));
- })
- );
+ });
  }
 
  getLedgerEntries(filter?: LedgerFilter): Observable<LedgerEntry[]> {
@@ -329,11 +346,7 @@ export class FinanceService {
  }
 
  return this.http.get<AdminLedgerEntryListApiModel>(`${this.apiUrl}/ledger`, { params }).pipe(
- map((response) => this.filterLedgerEntries(this.mapLedgerEntries(response.items), filter)),
- catchError((error) => {
- console.error('Failed to load ledger entries from backend.', error);
- return of<LedgerEntry[]>([]);
- })
+ map((response) => this.filterLedgerEntries(this.mapLedgerEntries(response.items), filter))
  );
  }
 
@@ -353,11 +366,7 @@ export class FinanceService {
  }
 
  return this.http.get<AdminSettlementListApiModel>(this.settlementsApiUrl, { params }).pipe(
- map((response) => this.filterSettlements(response.items.map((item) => this.mapSettlement(item)), filter)),
- catchError((error) => {
- console.error('Failed to load settlements from backend.', error);
- return of<Settlement[]>([]);
- })
+ map((response) => this.filterSettlements(response.items.map((item) => this.mapSettlement(item)), filter))
  );
  }
 
@@ -371,22 +380,16 @@ export class FinanceService {
  return this.http.get<AdminCodReconciliationApiModel>(`${this.apiUrl}/cod-reconciliation`).pipe(
  map((response) => {
  const records = this.filterCodRecords(this.mapCodRecords(response), filter);
+ const totalOutstanding = this.round(response.totalCodOwed);
  const summary: CodReconciliationSummary = {
- totalExpected: this.sum(records.map((record) => record.expectedAmount)),
- totalCollected: this.sum(records.map((record) => record.collectedAmount)),
- totalDelta: this.sum(records.map((record) => record.delta)),
+ totalExpected: totalOutstanding,
+ totalCollected: 0,
+ totalDelta: this.round(-totalOutstanding),
  overdueCases: records.filter((record) => record.status === 'overdue').length,
  pendingCases: records.filter((record) => record.status === 'pending').length
  };
 
  return { summary, records };
- }),
- catchError((error) => {
- console.error('Failed to load COD reconciliation from backend.', error);
- return of({
- summary: { totalExpected: 0, totalCollected: 0, totalDelta: 0, overdueCases: 0, pendingCases: 0 },
- records: []
- });
  })
  );
  }
@@ -431,7 +434,7 @@ export class FinanceService {
  }
 
  getRefundCases(filter?: RefundFilter): Observable<RefundCase[]> {
- return of(this.filterRefundCases(this.buildRefundCases(), filter));
+ return of(this.filterRefundCases([], filter));
  }
 
  updateRefundStatus(caseId: string, status: RefundStatus, note: string): Observable<void> {
@@ -881,8 +884,30 @@ export class FinanceService {
  }
 
  getOrderFinancialBreakdown(orderId: string): Observable<OrderFinancialBreakdown | null> {
- const context = this.getOrderContexts().find((item) => item.order.id === orderId);
- return of(context ? this.clone(context.breakdown) : null);
+ return this.http.get<AdminOrderFinancialBreakdownApiModel>(`${this.apiUrl}/orders/${orderId}/breakdown`).pipe(
+ map((item) => ({
+ orderId: item.orderId,
+ orderRef: item.orderRef,
+ subtotal: this.round(item.subtotal),
+ discounts: this.round(item.discounts),
+ couponDiscount: this.round(item.couponDiscount),
+ deliveryFee: this.round(item.deliveryFee),
+ serviceFee: this.round(item.serviceFee),
+ codFee: this.round(item.codFee),
+ vat: this.round(item.vat),
+ total: this.round(item.total),
+ vendorEarnings: this.round(item.vendorEarnings),
+ vendorCommission: this.round(item.vendorCommission),
+ driverPayout: this.round(item.driverPayout),
+ platformRevenue: this.round(item.platformRevenue),
+ netMargin: this.round(item.netMargin),
+ marginPercent: this.round(item.marginPercent)
+ })),
+ catchError((error) => {
+ console.error(`Failed to load order financial breakdown for ${orderId}.`, error);
+ return of(null);
+ })
+ );
  }
 
  private getOrderContexts(): FinanceOrderContext[] {
@@ -1020,13 +1045,13 @@ export class FinanceService {
  period,
  periodFrom: item.periodFrom,
  periodTo: item.periodTo,
- ordersCount: 0,
+ ordersCount: item.itemCount ?? 0,
  grossAmount: this.round(item.grossAmount),
  deductions: this.round(item.commissionAmount + item.refundAmount + item.adjustmentAmount + item.recoveryAmount),
  netAmount: this.round(item.netAmount),
  status: this.toFrontendSettlementStatus(item.status),
- createdAt: item.periodTo,
- paidAt: item.status === 'PaidOut' ? item.periodTo : undefined,
+ createdAt: item.createdAtUtc,
+ paidAt: item.processedAtUtc ?? undefined,
  failureReason: item.status === 'PayoutFailed' ? 'Payout failed' : undefined
  };
  }
@@ -1076,11 +1101,11 @@ export class FinanceService {
  return response.items.map((item) => ({
  id: `cod-${item.driverId}`,
  orderId: item.driverId,
- orderRef: `COD-${item.driverId.slice(0, 8).toUpperCase()}`,
+ orderRef: item.driverPhone?.trim() || `DRV-${item.driverId.slice(0, 8).toUpperCase()}`,
  driverId: item.driverId,
  driverName: item.driverName,
  vendorId: 'platform',
- vendorName: 'Platform',
+ vendorName: '—',
  expectedAmount: this.round(item.codOwedBalance),
  collectedAmount: 0,
  delta: this.round(-item.codOwedBalance),

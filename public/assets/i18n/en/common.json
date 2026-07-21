@@ -835,7 +835,26 @@
       "SERIES_NET_REVENUE": "Net Platform Revenue"
     },
     "ALERTS": {
-      "TITLE": "Financial Alerts"
+      "TITLE": "Financial Alerts",
+      "COD_OVERDUE_TITLE": "Outstanding COD balance",
+      "COD_OVERDUE_DESC": "Some drivers still owe COD amounts that have not been remitted.",
+      "SETTLEMENT_PENDING_TITLE": "Settlement awaiting processing",
+      "SETTLEMENT_PENDING_DESC": "A settlement is still waiting for review or bank transfer.",
+      "SETTLEMENT_FAILED_TITLE": "Settlement payout failed",
+      "SETTLEMENT_FAILED_DESC": "A settlement needs review after a failed bank transfer."
+    },
+    "COMPOSITION": {
+      "COMMISSIONS": "Platform commissions",
+      "DELIVERY_FEES": "Delivery fees",
+      "COD_FEES": "COD fees",
+      "VAT": "VAT",
+      "SERVICE_FEES": "Service fees"
+    },
+    "SEVERITY": {
+      "SUCCESS": "Good",
+      "WARNING": "Warning",
+      "DANGER": "Critical",
+      "NEUTRAL": "Neutral"
     },
     "ACTIONS": {
       "VIEW_ALL": "View All",
@@ -1502,7 +1521,8 @@
       "REFUND_EXPOSURE": "Refund Exposure",
       "NET_REVENUE": "Net Revenue",
       "COD_FEES": "COD Fees",
-      "VS_LAST_MONTH": "vs last month"
+      "VS_LAST_MONTH": "vs last month",
+      "VS_PREVIOUS_PERIOD": "vs previous period"
     }
   },
   "NOTIFICATIONS_CENTER": {

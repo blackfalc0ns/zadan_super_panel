@@ -835,7 +835,26 @@
       "SERIES_NET_REVENUE": "صافي إيرادات المنصة"
     },
     "ALERTS": {
-      "TITLE": "تنبيهات مالية"
+      "TITLE": "تنبيهات مالية",
+      "COD_OVERDUE_TITLE": "رصيد COD مستحق",
+      "COD_OVERDUE_DESC": "يوجد سائقون لم يسلّموا مبالغ COD المستحقة بعد.",
+      "SETTLEMENT_PENDING_TITLE": "تسوية بانتظار المعالجة",
+      "SETTLEMENT_PENDING_DESC": "تسوية مالية ما زالت في انتظار المراجعة أو التحويل.",
+      "SETTLEMENT_FAILED_TITLE": "فشل تحويل تسوية",
+      "SETTLEMENT_FAILED_DESC": "تسوية مالية تحتاج مراجعة بعد فشل التحويل البنكي."
+    },
+    "COMPOSITION": {
+      "COMMISSIONS": "عمولات المنصة",
+      "DELIVERY_FEES": "رسوم التوصيل",
+      "COD_FEES": "رسوم COD",
+      "VAT": "ضريبة القيمة المضافة",
+      "SERVICE_FEES": "رسوم الخدمة"
+    },
+    "SEVERITY": {
+      "SUCCESS": "جيد",
+      "WARNING": "تحذير",
+      "DANGER": "خطر",
+      "NEUTRAL": "محايد"
     },
     "ACTIONS": {
       "VIEW_ALL": "عرض الكل",
@@ -1502,7 +1521,8 @@
       "REFUND_EXPOSURE": "التعرض للاسترجاع",
       "NET_REVENUE": "صافي الإيرادات",
       "COD_FEES": "رسوم الدفع عند الاستلام",
-      "VS_LAST_MONTH": "مقارنة بالشهر الماضي"
+      "VS_LAST_MONTH": "مقارنة بالشهر الماضي",
+      "VS_PREVIOUS_PERIOD": "مقارنة بالفترة السابقة"
     }
   },
   "NOTIFICATIONS_CENTER": {

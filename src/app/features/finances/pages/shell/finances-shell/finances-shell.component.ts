@@ -152,7 +152,7 @@ export class FinancesShellComponent {
  label: 'FINANCES.SHELL.GROUPS.DISPUTES',
  icon: 'gavel',
  routes: [
- { id: 'refunds', label: 'FINANCES.SHELL.ROUTES.REFUNDS.LABEL', route: '/finances/refunds', summary: 'FINANCES.SHELL.ROUTES.REFUNDS.SUMMARY', dataMode: 'مفعل', emphasis: 'danger' }
+ { id: 'refunds', label: 'FINANCES.SHELL.ROUTES.REFUNDS.LABEL', route: '/finances/refunds', summary: 'FINANCES.SHELL.ROUTES.REFUNDS.SUMMARY', dataMode: 'قيد التطوير', emphasis: 'danger' }
  ]
  },
  {

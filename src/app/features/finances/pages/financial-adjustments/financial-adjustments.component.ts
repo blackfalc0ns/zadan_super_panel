@@ -11,6 +11,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
 import { AppCardComponent } from '../../../../shared/components/ui/card/card.component';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
+import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
 import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance-i18n.utils';
 
 @Component({
@@ -26,7 +27,8 @@ import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance
  AppButtonComponent,
  AppCardComponent,
     AppPageHeaderComponent,
-    KpiCardsComponent
+    KpiCardsComponent,
+    InlineBannerComponent
   ],
   templateUrl: './financial-adjustments.component.html'
 })

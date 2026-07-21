@@ -62,7 +62,7 @@ import { getFinanceLocale } from '../../utils/finance-i18n.utils';
                 </span>
 
                 <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
-                  {{ kpi.severity ?? 'neutral' }}
+                  {{ getSeverityLabelKey() | translate }}
                 </span>
               </div>
             </div>
@@ -186,6 +186,11 @@ export class FinanceKpiCardComponent {
     }
 
     return 'FINANCES.NARRATIVES.STEADY';
+  }
+
+  getSeverityLabelKey(): string {
+    const severity = (this.kpi.severity ?? 'neutral').toUpperCase();
+    return `FINANCES.SEVERITY.${severity}`;
   }
 
   getSparklineColor(): string {

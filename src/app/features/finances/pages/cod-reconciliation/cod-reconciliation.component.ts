@@ -122,11 +122,10 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
  <table class="w-full whitespace-nowrap text-right text-[13px]">
  <thead>
  <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
- <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COD.TABLE.ORDER_REF' | translate }}</th>
+ <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COD.TABLE.DRIVER_REF' | translate }}</th>
  <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COD.TABLE.COLLECTOR_DRIVER' | translate }}</th>
- <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.COD.TABLE.VENDOR' | translate }}</th>
- <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.EXPECTED_AMOUNT' | translate }}</th>
- <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.ACTUAL_COLLECTED' | translate }}</th>
+ <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.OUTSTANDING_BALANCE' | translate }}</th>
+ <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.REMITTED_AMOUNT' | translate }}</th>
  <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.COD.TABLE.FINANCIAL_DELTA' | translate }}</th>
  <th class="px-6 py-4 text-center">{{ 'FINANCES.COD.TABLE.STATUS' | translate }}</th>
  <th class="px-6 py-4 text-center">{{ 'FINANCES.COD.TABLE.ACTION' | translate }}</th>
@@ -149,17 +148,12 @@ import { InlineBannerComponent } from '../../../../shared/components/ui/inline-b
  </div>
  </td>
 
- <td class="px-6 py-4 align-middle">
- <span class="text-[12px] font-bold text-slate-600">{{ rec.vendorName }}</span>
+ <td class="px-6 py-4 align-middle text-left" dir="ltr">
+ <span class="text-[13px] font-black text-red-700 tabular-nums">{{ formatNumber(rec.expectedAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
  </td>
 
  <td class="px-6 py-4 align-middle text-left" dir="ltr">
- <span class="text-[13px] font-black text-slate-700 tabular-nums">{{ formatNumber(rec.expectedAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
- </td>
-
- <td class="px-6 py-4 align-middle text-left" dir="ltr">
- <span class="text-[13px] font-black tabular-nums"
- [ngClass]="rec.collectedAmount > 0 ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100' : 'text-slate-400'">
+ <span class="text-[13px] font-black tabular-nums text-slate-400">
  {{ formatNumber(rec.collectedAmount) }} {{ 'FINANCES.CURRENCY' | translate }}
  </span>
  </td>
