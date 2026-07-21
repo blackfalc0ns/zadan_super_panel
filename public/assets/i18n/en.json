@@ -757,7 +757,7 @@
           "SUMMARY": "Audit log showing all incoming and outgoing financial movements."
         },
         "ADJUSTMENTS": {
-          "LABEL": "Manual Adjustments",
+          "LABEL": "Financial Adjustments",
           "SUMMARY": "Perform manual financial entries and correct balances."
         },
         "SETTLEMENTS": {
@@ -1140,7 +1140,10 @@
       "SETTLEMENT_MODE_MANUAL": "Manual bank transfer",
       "SETTLEMENT_MODE_MANUAL_DESC": "Admin transfers outside the platform, then confirms each payout with a bank proof.",
       "SETTLEMENT_MODE_AUTOMATIC": "Automatic gateway payout",
-      "SETTLEMENT_MODE_AUTOMATIC_DESC": "Eligible payouts are sent through the configured payment gateway."
+      "SETTLEMENT_MODE_AUTOMATIC_DESC": "Eligible payouts are sent through the configured payment gateway.",
+      "SAVE_SETTLEMENT_SETTINGS": "Save settlement settings",
+      "SAVING_SETTLEMENT_SETTINGS": "Saving settlement settings...",
+      "SETTLEMENT_MODE_SAVE_SUCCESS": "Settlement processing mode saved."
     },
     "AUDIT": {
       "TITLE": "Financial Audit Log",

@@ -24,11 +24,11 @@ import {
  [title]="'FINANCES.PLATFORM_ACCOUNT.HEADER_TITLE' | translate"
  [subtitle]="'FINANCES.PLATFORM_ACCOUNT.HEADER_SUBTITLE' | translate">
  <div actions class="flex flex-wrap items-center gap-3">
- <button type="button" (click)="load()" [disabled]="isLoading || isSaving" class="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60">
+ <button type="button" (click)="load()" [disabled]="isLoading || isSaving || isSavingSettlementMode" class="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[12px] font-black text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60">
  <span class="material-symbols-outlined text-[18px]">refresh</span>
  {{ 'FINANCES.PLATFORM_ACCOUNT.REFRESH' | translate }}
  </button>
- <button type="button" (click)="save()" [disabled]="isLoading || isSaving || !canSave" class="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60">
+ <button type="button" (click)="save()" [disabled]="isLoading || isSaving || isSavingSettlementMode || !canSave" class="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60">
  <span class="material-symbols-outlined text-[18px]">{{ isSaving ? 'hourglass_empty' : 'save' }}</span>
  {{ (isSaving ? 'FINANCES.PLATFORM_ACCOUNT.SAVING' : 'FINANCES.PLATFORM_ACCOUNT.SAVE_ACCOUNT') | translate }}
  </button>
@@ -130,6 +130,12 @@ import {
  <span><span class="block text-[13px] font-black text-slate-900">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC' | translate }}</span><span class="mt-1 block text-[12px] font-medium text-slate-500">{{ 'FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_AUTOMATIC_DESC' | translate }}</span></span>
  </label>
  </div>
+ <div class="mt-4 flex justify-end border-t border-violet-200 pt-4">
+ <button type="button" (click)="saveSettlementProcessingMode()" [disabled]="isLoading || isSaving || isSavingSettlementMode" class="inline-flex h-10 items-center gap-2 rounded-xl bg-violet-700 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-60">
+ <span class="material-symbols-outlined text-[18px]">{{ isSavingSettlementMode ? 'hourglass_empty' : 'save' }}</span>
+ {{ (isSavingSettlementMode ? 'FINANCES.PLATFORM_ACCOUNT.SAVING_SETTLEMENT_SETTINGS' : 'FINANCES.PLATFORM_ACCOUNT.SAVE_SETTLEMENT_SETTINGS') | translate }}
+ </button>
+ </div>
  </fieldset>
  </form>
  </section>
@@ -184,6 +190,7 @@ export class PlatformAccountComponent implements OnInit {
  account: AdminPlatformBankAccountDto | null = null;
  isLoading = false;
  isSaving = false;
+ isSavingSettlementMode = false;
  errorMessage = '';
  settlementProcessingMode: SettlementProcessingMode = 'Manual';
 
@@ -238,7 +245,7 @@ export class PlatformAccountComponent implements OnInit {
  }
 
  save(): void {
- if (!this.canSave || this.isSaving) {
+ if (!this.canSave || this.isSaving || this.isSavingSettlementMode) {
  return;
  }
 
@@ -273,6 +280,30 @@ export class PlatformAccountComponent implements OnInit {
  this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' });
  this.toast.error(this.errorMessage, this.translate.instant('FINANCES.PLATFORM_ACCOUNT.TOAST_TITLE'));
  this.isSaving = false;
+ }
+ });
+ }
+
+ saveSettlementProcessingMode(): void {
+ if (this.isLoading || this.isSaving || this.isSavingSettlementMode) {
+ return;
+ }
+
+ this.isSavingSettlementMode = true;
+ this.errorMessage = '';
+
+ this.walletsService.updateSettlementProcessingMode(this.settlementProcessingMode).pipe(take(1)).subscribe({
+ next: (processingSettings) => {
+ this.settlementProcessingMode = processingSettings.settlementProcessingMode;
+ this.isSavingSettlementMode = false;
+ this.cdr.markForCheck();
+ this.toast.success(this.translate.instant('FINANCES.PLATFORM_ACCOUNT.SETTLEMENT_MODE_SAVE_SUCCESS'));
+ },
+ error: (error) => {
+ this.errorMessage = describeApiError(error, this.translate, { fallbackKey: 'COMMON.API_ERRORS.UNKNOWN' });
+ this.isSavingSettlementMode = false;
+ this.cdr.markForCheck();
+ this.toast.error(this.errorMessage, this.translate.instant('FINANCES.PLATFORM_ACCOUNT.TOAST_TITLE'));
  }
  });
  }

@@ -217,7 +217,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  <p class="text-[11px] font-bold text-slate-500 mt-0.5">{{ 'FINANCES.SETTLEMENTS.TABLE.DESC' | translate }}</p>
  </div>
  </div>
- <app-button variant="outline" size="sm" customClass="!rounded-xl bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
+ <app-button variant="outline" size="sm" customClass="!rounded-xl">
  <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">add</span>
  {{ 'FINANCES.SETTLEMENTS.TABLE.CREATE_EXTRA' | translate }}
  </app-button>

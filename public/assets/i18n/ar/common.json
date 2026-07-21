@@ -757,7 +757,7 @@
           "SUMMARY": "سجل تدقيق يوضح جميع الحركات المالية الداخلة والخارجة."
         },
         "ADJUSTMENTS": {
-          "LABEL": "تسويات يدوية",
+          "LABEL": "تعديلات مالية",
           "SUMMARY": "القيام بإدخالات مالية يدوية وتصحيح الأرصدة."
         },
         "SETTLEMENTS": {
@@ -987,6 +987,17 @@
       },
       "NO_DATA_TITLE": "ما فيه تسويات مالية",
       "NO_DATA_DESC": "ما فيه أي مستحقات مسجلة الحين ضمن هذا التصنيف.",
+      "MANUAL_CONFIRM": {
+        "TITLE": "تأكيد التحويل البنكي اليدوي",
+        "DESCRIPTION": "أكمل التأكيد بعد تحويل المبلغ خارج زدانة. رقم المرجع وإثبات التحويل مطلوبان.",
+        "REFERENCE": "رقم مرجع التحويل البنكي",
+        "REFERENCE_PLACEHOLDER": "أدخل رقم المرجع البنكي",
+        "PROOF": "إثبات التحويل (صورة أو PDF)",
+        "CONFIRM": "تم التحويل",
+        "CONFIRMING": "جارٍ التأكيد...",
+        "PREPARE_ERROR": "تعذر تجهيز التسوية للتحويل اليدوي.",
+        "CONFIRM_ERROR": "تعذر تأكيد التحويل اليدوي. راجع المرجع والإثبات ويوم التحويل المجدول."
+      },
       "PERIODS": {
         "WEEKLY": "أسبوعي",
         "BI_WEEKLY": "كل أسبوعين",
@@ -1123,7 +1134,16 @@
       "READY_MOYASAR": "جاهز عبر Moyasar",
       "NEEDS_SOURCE_ID": "يحتاج SourceId من Moyasar",
       "IMPORTANT_TITLE": "مهم",
-      "IMPORTANT_DESC": "IBAN هنا هو حساب المنصة الذي يحوّل عليه العميل. أما SourceId فهو ليس رقم حساب، بل مصدر Payouts تحصل عليه من Moyasar."
+      "IMPORTANT_DESC": "IBAN هنا هو حساب المنصة الذي يحوّل عليه العميل. أما SourceId فهو ليس رقم حساب، بل مصدر Payouts تحصل عليه من Moyasar.",
+      "SETTLEMENT_MODE": "وضع تنفيذ التسويات",
+      "SETTLEMENT_MODE_DESC": "الوضع اليدوي يمنع إرسال تحويلات جديدة عبر البوابة، بينما يستأنف التلقائي المستحقات المؤهلة في يوم تحويلها المجدول.",
+      "SETTLEMENT_MODE_MANUAL": "تحويل بنكي يدوي",
+      "SETTLEMENT_MODE_MANUAL_DESC": "يحوّل الأدمن خارج المنصة ثم يؤكد كل مستحق بإثبات بنكي.",
+      "SETTLEMENT_MODE_AUTOMATIC": "تحويل تلقائي عبر البوابة",
+      "SETTLEMENT_MODE_AUTOMATIC_DESC": "تُرسل المستحقات المؤهلة عبر بوابة الدفع المهيأة.",
+      "SAVE_SETTLEMENT_SETTINGS": "حفظ إعدادات التسوية",
+      "SAVING_SETTLEMENT_SETTINGS": "جاري حفظ إعدادات التسوية...",
+      "SETTLEMENT_MODE_SAVE_SUCCESS": "حفظنا وضع تنفيذ التسويات."
     },
     "AUDIT": {
       "TITLE": "سجل المراجعة المالية (Audit Log)",

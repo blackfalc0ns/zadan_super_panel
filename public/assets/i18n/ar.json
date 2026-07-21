@@ -1310,7 +1310,7 @@
           "SUMMARY": "سجل تدقيق يوضح جميع الحركات المالية الداخلة والخارجة."
         },
         "ADJUSTMENTS": {
-          "LABEL": "تسويات يدوية",
+          "LABEL": "تعديلات مالية",
           "SUMMARY": "القيام بإدخالات مالية يدوية وتصحيح الأرصدة."
         },
         "SETTLEMENTS": {
@@ -1693,7 +1693,10 @@
       "SETTLEMENT_MODE_MANUAL": "تحويل بنكي يدوي",
       "SETTLEMENT_MODE_MANUAL_DESC": "يحوّل الأدمن خارج المنصة ثم يؤكد كل مستحق بإثبات بنكي.",
       "SETTLEMENT_MODE_AUTOMATIC": "تحويل تلقائي عبر البوابة",
-      "SETTLEMENT_MODE_AUTOMATIC_DESC": "تُرسل المستحقات المؤهلة عبر بوابة الدفع المهيأة."
+      "SETTLEMENT_MODE_AUTOMATIC_DESC": "تُرسل المستحقات المؤهلة عبر بوابة الدفع المهيأة.",
+      "SAVE_SETTLEMENT_SETTINGS": "حفظ إعدادات التسوية",
+      "SAVING_SETTLEMENT_SETTINGS": "جاري حفظ إعدادات التسوية...",
+      "SETTLEMENT_MODE_SAVE_SUCCESS": "حفظنا وضع تنفيذ التسويات."
     },
     "AUDIT": {
       "TITLE": "سجل المراجعة المالية (Audit Log)",
