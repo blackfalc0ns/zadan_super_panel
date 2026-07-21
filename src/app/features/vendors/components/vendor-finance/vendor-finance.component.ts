@@ -3,14 +3,14 @@ import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeD
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { finalize, switchMap, take } from 'rxjs/operators';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { ToastService } from '@shared/services/toast.service';
 import { CreateSettlementModalComponent, SettlementConfig } from '@vendors/components/workflows/create-settlement-modal/create-settlement-modal.component';
 import { PayoutsReviewModalComponent, PayoutTransaction } from '@vendors/components/workflows/payouts-review-modal/payouts-review-modal.component';
-import { VendorDetail, VendorFinancialLifecycleMode } from '@vendors/models/vendors.domain.models';
+import { VendorDetail, VendorFinancialLifecycleMode, VendorPayoutDay } from '@vendors/models/vendors.domain.models';
 import {
  AdminVendorFinanceSummary,
  AdminVendorPayoutItem,
@@ -18,6 +18,9 @@ import {
  VendorService
 } from '@vendors/services/vendor.api.service';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
+import { FinanceService } from '@finances/services/finance.service';
+import { SettlementPayout } from '@finances/models/finance.models';
+import { SettlementProcessingMode, WalletsService } from '@finances/services/wallets.service';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,8 +55,20 @@ export class VendorFinanceComponent implements OnInit {
  payouts: AdminVendorPayoutItem[] = [];
 
  selectedLifecycleMode: VendorFinancialLifecycleMode = 'weekly';
+ selectedPayoutDay: VendorPayoutDay = 'Monday';
  showCreateSettlementModal = false;
  showPayoutsReviewModal = false;
+
+ settlementProcessingMode: SettlementProcessingMode | null = null;
+ isLoadingSettlementProcessingMode = true;
+ settlementProcessingModeUnavailable = false;
+ preparingManualSettlementId: string | null = null;
+ manualPayout: SettlementPayout | null = null;
+ manualSettlementNumber = '';
+ manualProofFile: File | null = null;
+ manualTransferReference = '';
+ manualConfirmationError = '';
+ isConfirmingManualPayout = false;
 
  private readonly destroyRef = inject(DestroyRef);
 
@@ -61,7 +76,9 @@ export class VendorFinanceComponent implements OnInit {
  private readonly translate: TranslateService,
  private readonly vendorService: VendorService,
  private readonly vendorDetailFacade: VendorDetailFacade,
- private readonly toastService: ToastService
+ private readonly toastService: ToastService,
+ private readonly financeService: FinanceService,
+ private readonly walletsService: WalletsService
  ) {
  this.currentLang = this.translate.currentLang || 'ar';
  this.isRTL = this.currentLang.startsWith('ar');
@@ -84,6 +101,7 @@ export class VendorFinanceComponent implements OnInit {
  this.vendorDetail = vendor;
  this.vendorName = vendor.businessNameAr || vendor.businessNameEn || vendor.ownerName || 'Vendor';
  this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
+ this.selectedPayoutDay = this.resolvePayoutDay(vendor.payoutDay);
 
  if (vendorChanged) {
  this.vendorId = vendor.id;
@@ -120,12 +138,43 @@ export class VendorFinanceComponent implements OnInit {
  ];
  }
 
+ get payoutDayOptions(): SearchableSelectOption<VendorPayoutDay>[] {
+ return [
+ { value: 'Monday', label: this.translate.instant('VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_MONDAY') },
+ { value: 'Thursday', label: this.translate.instant('VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_THURSDAY') }
+ ];
+ }
+
  get hasPrimaryBankAccount(): boolean {
  return!!this.vendorDetail?.primaryBankAccount?.id;
  }
 
  get isDirectMode(): boolean {
  return this.selectedLifecycleMode === 'per_order_direct_payout';
+ }
+
+ get isManualSettlementProcessing(): boolean {
+ return this.settlementProcessingMode === 'Manual' && !this.settlementProcessingModeUnavailable;
+ }
+
+ get isPayoutDayToday(): boolean {
+ return this.getRiyadhWeekday() === (this.selectedPayoutDay === 'Thursday' ? 4 : 1);
+ }
+
+ get payoutDayLabel(): string {
+ return this.translate.instant(
+ this.selectedPayoutDay === 'Thursday'
+ ? 'VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_THURSDAY'
+ : 'VENDOR_FINANCE.WORKSPACE.PAYOUT_DAY_MONDAY'
+ );
+ }
+
+ get nextEligiblePayoutDateLabel(): string {
+ const calendar = this.getRiyadhCalendar();
+ const expectedWeekday = this.selectedPayoutDay === 'Thursday' ? 4 : 1;
+ const daysUntilEligible = (expectedWeekday - calendar.weekday + 7) % 7;
+ const nextDate = new Date(Date.UTC(calendar.year, calendar.month - 1, calendar.day + daysUntilEligible));
+ return this.formatDate(nextDate.toISOString());
  }
 
  get availableBalance(): number {
@@ -206,6 +255,68 @@ export class VendorFinanceComponent implements OnInit {
  this.selectedLifecycleMode = value;
  }
 
+ onPayoutDayChange(value: VendorPayoutDay): void {
+ this.selectedPayoutDay = value;
+ }
+
+ prepareManualSettlement(item: AdminVendorSettlementItem): void {
+ this.prepareManualPayout(item.id, item.settlementNumber);
+ }
+
+ prepareManualPayoutFromPayout(item: AdminVendorPayoutItem): void {
+ this.prepareManualPayout(item.settlementId, item.payoutNumber);
+ }
+
+ onManualProofSelected(event: Event): void {
+ const input = event.target as HTMLInputElement;
+ this.manualProofFile = input.files?.item(0) ?? null;
+ this.manualConfirmationError = '';
+ }
+
+ closeManualConfirmation(force = false): void {
+ if (this.isConfirmingManualPayout && !force) {
+ return;
+ }
+
+ this.manualPayout = null;
+ this.manualSettlementNumber = '';
+ this.manualProofFile = null;
+ this.manualTransferReference = '';
+ this.manualConfirmationError = '';
+ }
+
+ confirmManualPayout(): void {
+ if (!this.manualPayout || !this.manualProofFile || !this.manualTransferReference.trim() || this.isConfirmingManualPayout) {
+ return;
+ }
+
+ this.isConfirmingManualPayout = true;
+ this.manualConfirmationError = '';
+ const payoutId = this.manualPayout.id;
+ const transferReference = this.manualTransferReference.trim();
+
+ this.financeService.uploadSettlementProof(this.manualProofFile).pipe(
+ switchMap((proofUrl) => this.financeService.confirmManualPayout(payoutId, { transferReference, proofUrl })),
+ finalize(() => {
+ this.cdr.markForCheck();
+ this.isConfirmingManualPayout = false;
+ }),
+ take(1)
+ ).subscribe({
+ next: () => {
+ this.closeManualConfirmation(true);
+ this.toastService.success(
+ this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.SUCCESS'),
+ this.text('المالية', 'Finance')
+ );
+ this.loadFinanceData();
+ },
+ error: () => {
+ this.manualConfirmationError = this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRM_ERROR');
+ }
+ });
+ }
+
  saveLifecycleMode(): void {
  if (!this.vendorId || this.isSavingMode) {
  return;
@@ -213,7 +324,8 @@ export class VendorFinanceComponent implements OnInit {
 
  const payload = {
  financialLifecycleMode: this.selectedLifecycleMode,
- payoutCycle: this.isDirectMode ? null : this.selectedLifecycleMode
+ payoutCycle: this.isDirectMode ? null : this.selectedLifecycleMode,
+ payoutDay: this.selectedPayoutDay
  };
 
  this.isSavingMode = true;
@@ -223,6 +335,7 @@ export class VendorFinanceComponent implements OnInit {
  this.cdr.markForCheck();
  this.vendorDetail = vendor;
  this.selectedLifecycleMode = this.resolveLifecycleMode(vendor);
+ this.selectedPayoutDay = this.resolvePayoutDay(vendor.payoutDay);
  this.toastService.success(
  this.text('حدّثنا دورة الحياة المالية بنجاح.', 'Financial lifecycle updated successfully.'),
  this.text('المالية', 'Finance')
@@ -391,6 +504,26 @@ export class VendorFinanceComponent implements OnInit {
  return origin.toLowerCase().includes('direct');
  }
 
+ canPrepareManualSettlement(item: AdminVendorSettlementItem): boolean {
+ return this.isManualSettlementProcessing &&
+ this.isPayoutDayToday &&
+ this.isEligibleManualSettlementStatus(item.status);
+ }
+
+ canPrepareManualPayout(item: AdminVendorPayoutItem): boolean {
+ if (!this.isManualSettlementProcessing || !this.isPayoutDayToday || item.manualConfirmation || item.providerTransferId) {
+ return false;
+ }
+
+ const status = this.normalizeStatusKey(item.status);
+ return status === 'pending' || status === 'failed' ||
+ ((status === 'queued' || status === 'processing') && (item.providerName || '').toLowerCase() === 'manual');
+ }
+
+ isPreparingManualPayout(id: string): boolean {
+ return this.preparingManualSettlementId === id;
+ }
+
  trackById(_: number, item: { id: string }): string {
  return item.id;
  }
@@ -402,6 +535,7 @@ export class VendorFinanceComponent implements OnInit {
 
  this.isLoading = true;
  this.hasError = false;
+ this.loadSettlementProcessingMode();
 
  forkJoin({
  summary: this.vendorService.getVendorFinanceSummary(this.vendorId),
@@ -426,6 +560,118 @@ export class VendorFinanceComponent implements OnInit {
  });
  }
 
+ private prepareManualPayout(settlementId: string, reference: string): void {
+ if (!this.isManualSettlementProcessing || !this.isPayoutDayToday || this.preparingManualSettlementId) {
+ return;
+ }
+
+ this.preparingManualSettlementId = settlementId;
+ this.manualConfirmationError = '';
+
+ this.financeService.approveSettlement(settlementId).pipe(
+ finalize(() => {
+ this.cdr.markForCheck();
+ this.preparingManualSettlementId = null;
+ }),
+ take(1)
+ ).subscribe({
+ next: (settlement) => {
+ if (settlement.settlementProcessingMode === 'Automatic') {
+ this.settlementProcessingMode = 'Automatic';
+ this.toastService.error(
+ this.translate.instant('VENDOR_FINANCE.WORKSPACE.AUTOMATIC_MODE_INFO'),
+ this.text('المالية', 'Finance')
+ );
+ this.loadFinanceData();
+ return;
+ }
+
+ const payout = settlement.payouts?.find((item) =>
+ !item.manualConfirmation && this.isReturnedPayoutEligibleForManualConfirmation(item)) ?? null;
+
+ if (!payout) {
+ this.toastService.error(
+ this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PREPARE_ERROR'),
+ this.text('المالية', 'Finance')
+ );
+ this.loadFinanceData();
+ return;
+ }
+
+ this.manualPayout = payout;
+ this.manualSettlementNumber = reference || settlement.settlementCode;
+ this.manualProofFile = null;
+ this.manualTransferReference = payout.transferReference || '';
+ this.manualConfirmationError = '';
+ },
+ error: () => {
+ this.toastService.error(
+ this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.PREPARE_ERROR'),
+ this.text('المالية', 'Finance')
+ );
+ }
+ });
+ }
+
+ private loadSettlementProcessingMode(): void {
+ this.isLoadingSettlementProcessingMode = true;
+ this.settlementProcessingModeUnavailable = false;
+
+ this.walletsService.getSettlementProcessingSettings().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+ next: (settings) => {
+ this.cdr.markForCheck();
+ this.settlementProcessingMode = settings.settlementProcessingMode;
+ this.isLoadingSettlementProcessingMode = false;
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.settlementProcessingMode = null;
+ this.isLoadingSettlementProcessingMode = false;
+ this.settlementProcessingModeUnavailable = true;
+ }
+ });
+ }
+
+ isEligibleManualSettlementStatus(status: string): boolean {
+ return ['pending', 'pending_review', 'approved', 'payout_failed'].includes(this.normalizeStatusKey(status));
+ }
+
+ private isReturnedPayoutEligibleForManualConfirmation(payout: SettlementPayout): boolean {
+ const status = this.normalizeStatusKey(payout.status);
+ return status === 'pending' || status === 'failed' || status === 'queued' || status === 'processing';
+ }
+
+ private getRiyadhWeekday(): number {
+ return this.getRiyadhCalendar().weekday;
+ }
+
+ private getRiyadhCalendar(): { year: number; month: number; day: number; weekday: number } {
+ const parts = new Intl.DateTimeFormat('en-US', {
+ timeZone: 'Asia/Riyadh',
+ year: 'numeric',
+ month: 'numeric',
+ day: 'numeric',
+ weekday: 'short'
+ }).formatToParts(new Date());
+ const part = (type: Intl.DateTimeFormatPartTypes): string => parts.find((item) => item.type === type)?.value ?? '';
+ const weekdays: Record<string, number> = {
+ Sun: 0,
+ Mon: 1,
+ Tue: 2,
+ Wed: 3,
+ Thu: 4,
+ Fri: 5,
+ Sat: 6
+ };
+
+ return {
+ year: Number(part('year')),
+ month: Number(part('month')),
+ day: Number(part('day')),
+ weekday: weekdays[part('weekday')] ?? 0
+ };
+ }
+
  private resolveLifecycleMode(vendor: VendorDetail): VendorFinancialLifecycleMode {
  const explicitMode = (vendor.financialLifecycleMode || '').trim().toLowerCase();
  if (explicitMode === 'perorderdirectpayout' || explicitMode === 'per_order_direct_payout') {
@@ -447,6 +693,10 @@ export class VendorFinanceComponent implements OnInit {
  }
 
  return 'weekly';
+ }
+
+ private resolvePayoutDay(value?: string | null): VendorPayoutDay {
+ return (value || '').trim().toLowerCase() === 'thursday' ? 'Thursday' : 'Monday';
  }
 
  private mapPayoutStatus(status: string): 'success' | 'failed' | 'pending' | 'reviewing' {

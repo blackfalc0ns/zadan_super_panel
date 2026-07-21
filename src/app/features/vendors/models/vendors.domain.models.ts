@@ -205,6 +205,7 @@ export interface VendorDetail extends Vendor {
   idNumber?: string | null;
   nationality?: string | null;
   payoutCycle?: string | null;
+  payoutDay?: VendorPayoutDay | null;
   financialLifecycleMode?: string | null;
   rejectionReason: string | null;
   logoUrl: string | null;
@@ -241,6 +242,8 @@ export type VendorFinancialLifecycleMode =
   | 'weekly'
   | 'biweekly'
   | 'monthly';
+
+export type VendorPayoutDay = 'Monday' | 'Thursday';
 
 export interface VendorBankAccount {
   id: string;

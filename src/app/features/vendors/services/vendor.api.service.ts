@@ -21,6 +21,7 @@ import {
  VendorReviewState,
  VendorRiskIndicator,
  VendorRequiredAction,
+ VendorPayoutDay,
  VendorStatus,
  VerificationStatus
 } from '@vendors/models/vendors.domain.models';
@@ -88,9 +89,10 @@ interface AdminVendorDetailDto extends AdminVendorListItemDto {
  ownerEmail?: string | null;
  ownerPhone?: string | null;
  idNumber?: string | null;
- nationality?: string | null;
- payoutCycle?: string | null;
- financialLifecycleMode?: string | null;
+  nationality?: string | null;
+  payoutCycle?: string | null;
+  payoutDay?: string | null;
+  financialLifecycleMode?: string | null;
  primaryBranchLatitude?: number | null;
  primaryBranchLongitude?: number | null;
  operationsSettings?: {
@@ -350,6 +352,7 @@ export interface AdminVendorPayoutItem {
  amount: number;
  origin: string;
  status: string;
+ settlementStatus?: string;
  transferReference?: string | null;
  createdAtUtc: string;
  processedAtUtc?: string | null;
@@ -360,6 +363,15 @@ export interface AdminVendorPayoutItem {
  accountHolderName?: string | null;
  iban?: string | null;
  swiftCode?: string | null;
+ providerName?: string | null;
+ providerTransferId?: string | null;
+ manualConfirmation?: {
+  id: string;
+  transferReference: string;
+  proofUrl: string;
+  confirmedByUserId: string;
+  confirmedAtUtc: string;
+ } | null;
 }
 
 export interface AdminSendVendorNotificationRequest {
@@ -614,10 +626,11 @@ export class VendorService {
 
  updateVendorFinanceSettings(
  id: string,
- payload: {
- financialLifecycleMode: string;
- payoutCycle?: string | null;
- }
+  payload: {
+  financialLifecycleMode: string;
+  payoutCycle?: string | null;
+  payoutDay?: string | null;
+  }
  ): Observable<VendorDetail> {
  const request$ = this.canUseApiMutations()
  ? this.http.put<VendorDetail>(`${this.apiUrl}/${id}/finance-settings`, payload)
@@ -627,10 +640,11 @@ export class VendorService {
  request$,
  () => this.updateVendor(id, (vendor) => {
  vendor.financialLifecycleMode = payload.financialLifecycleMode;
- vendor.payoutCycle = payload.financialLifecycleMode === 'per_order_direct_payout'
- ? null
- : payload.payoutCycle ?? vendor.payoutCycle ?? null;
- }),
+  vendor.payoutCycle = payload.financialLifecycleMode === 'per_order_direct_payout'
+  ? null
+  : payload.payoutCycle ?? vendor.payoutCycle ?? null;
+  vendor.payoutDay = this.normalizePayoutDay(payload.payoutDay ?? vendor.payoutDay);
+  }),
  id
  );
  }
@@ -1661,8 +1675,9 @@ reason: string = 'Submitted data did not pass compliance review.'
  ownerPhone: apiVendor.ownerPhone ?? base.ownerPhone ?? apiVendor.contactPhone,
  idNumber: apiVendor.idNumber ?? base.idNumber ?? null,
  nationality: apiVendor.nationality ?? base.nationality ?? null,
- payoutCycle: apiVendor.payoutCycle ?? base.payoutCycle ?? null,
- financialLifecycleMode: apiVendor.financialLifecycleMode ?? base.financialLifecycleMode ?? null,
+  payoutCycle: apiVendor.payoutCycle ?? base.payoutCycle ?? null,
+  payoutDay: this.normalizePayoutDay(apiVendor.payoutDay ?? base.payoutDay),
+  financialLifecycleMode: apiVendor.financialLifecycleMode ?? base.financialLifecycleMode ?? null,
  primaryBranchLatitude: apiVendor.primaryBranchLatitude ?? base.primaryBranchLatitude ?? null,
  primaryBranchLongitude: apiVendor.primaryBranchLongitude ?? base.primaryBranchLongitude ?? null,
  operationsSettings: apiVendor.operationsSettings
@@ -1772,8 +1787,9 @@ reason: string = 'Submitted data did not pass compliance review.'
  ownerPhone: localVendor?.ownerPhone ?? summary.contactPhone,
  idNumber: localVendor?.idNumber ?? null,
  nationality: localVendor?.nationality ?? null,
- payoutCycle: localVendor?.payoutCycle ?? null,
- financialLifecycleMode: localVendor?.financialLifecycleMode ?? null,
+  payoutCycle: localVendor?.payoutCycle ?? null,
+  payoutDay: this.normalizePayoutDay(localVendor?.payoutDay),
+  financialLifecycleMode: localVendor?.financialLifecycleMode ?? null,
  operationsSettings: localVendor?.operationsSettings ?? {
  acceptOrders: true,
  minimumOrderAmount: null,
@@ -2302,7 +2318,12 @@ return this.updateVendor(id, (vendor) => {
  vendor.riskIndicators = vendor.riskIndicators ?? [];
  }
 
- private normalizeProfileReviewStatus(status?: string | null): VendorProfileReviewItem['status'] {
+ private normalizePayoutDay(value?: string | null): VendorPayoutDay {
+ const normalized = (value || '').trim().toLowerCase();
+ return normalized === 'thursday' ? 'Thursday' : 'Monday';
+ }
+
+  private normalizeProfileReviewStatus(status?: string | null): VendorProfileReviewItem['status'] {
  switch ((status || '').toLowerCase()) {
  case 'approved':
  return 'approved';

@@ -629,7 +629,9 @@
       "CANCEL": "Cancel",
       "SAVE_DRAFT": "Save as Draft",
       "CREATE_APPROVE": "Create and Approve Settlement",
-      "SAR": "SAR"
+      "SAR": "SAR",
+      "EXCEPTIONAL_SETTLEMENT": "Exceptional settlement",
+      "EXCEPTIONAL_SETTLEMENT_NOTE": "This creates an exceptional settlement. Manual or automatic bank processing is controlled by the global finance setting."
     },
     "LEGAL_BANK_EDIT": {
       "TITLE": "Edit Legal & Banking Info",

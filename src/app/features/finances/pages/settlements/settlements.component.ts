@@ -144,7 +144,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">payments</span>
  {{ 'FINANCES.SETTLEMENTS.PROCESS_PAYMENT' | translate }}
  </app-button>
- <app-button variant="outline" size="md" customClass="!flex-1!rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50">
+ <app-button variant="outline" size="md" customClass="!flex-1 !rounded-xl">
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">download</span>
  {{ 'FINANCES.SETTLEMENTS.ACCOUNT_STATEMENT' | translate }}
  </app-button>

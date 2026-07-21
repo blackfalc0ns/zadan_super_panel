@@ -305,6 +305,7 @@ export class VendorDetailFacade implements OnDestroy {
   updateVendorFinanceSettingsRequest(payload: {
     financialLifecycleMode: string;
     payoutCycle?: string | null;
+    payoutDay?: string | null;
   }): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) => this.vendorService.updateVendorFinanceSettings(vendorId, payload));
   }

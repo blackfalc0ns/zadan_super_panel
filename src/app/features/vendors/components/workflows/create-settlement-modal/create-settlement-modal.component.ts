@@ -10,7 +10,6 @@ export interface SettlementConfig {
   availableBalance: number;
   periodFrom: string;
   periodTo: string;
-  settlementType: 'manual' | 'auto';
   priority: 'normal' | 'high' | 'low';
   applyExceptionalFee: boolean;
   exceptionalFeeAmount: string;
@@ -53,7 +52,6 @@ export class CreateSettlementModalComponent implements OnChanges {
     availableBalance: 0,
     periodFrom: '2023-10-01',
     periodTo: '2023-10-31',
-    settlementType: 'manual',
     priority: 'normal',
     applyExceptionalFee: false,
     exceptionalFeeAmount: '',

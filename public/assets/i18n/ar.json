@@ -1182,7 +1182,9 @@
       "CANCEL": "إلغاء",
       "SAVE_DRAFT": "حفظ كمسودة",
       "CREATE_APPROVE": "إنشاء واعتماد التسوية",
-      "SAR": "ر.س"
+      "SAR": "ر.س",
+      "EXCEPTIONAL_SETTLEMENT": "تسوية استثنائية",
+      "EXCEPTIONAL_SETTLEMENT_NOTE": "هذه تسوية استثنائية. طريقة التحويل اليدوية أو التلقائية تتحكم فيها إعدادات المالية العامة."
     },
     "LEGAL_BANK_EDIT": {
       "TITLE": "تعديل البيانات القانونية والبنكية",
@@ -7895,6 +7897,9 @@
       "BATCH_SETTLEMENTS": "تسويات مجمعة",
       "LIFECYCLE_TITLE": "دورة الحياة المالية",
       "LIFECYCLE_DESC": "يحدد هذا الإعداد آلية التسوية والتحويل للتاجر.",
+      "PAYOUT_DAY_LABEL": "يوم التحويل",
+      "PAYOUT_DAY_MONDAY": "الاثنين",
+      "PAYOUT_DAY_THURSDAY": "الخميس",
       "FLOW_TITLE": "مسار الأموال",
       "OPS_TITLE": "إجراءات سريعة",
       "REVIEW_PAYOUTS": "مراجعة التحويلات",
@@ -7915,7 +7920,35 @@
       "ERROR_TITLE": "ما قدرنا نحمّل البيانات المالية",
       "ERROR_MESSAGE": "تحقق من الاتصال بالخادم وجرّب مرة ثانية.",
       "DIRECT_MODE": "تحويل مباشر",
-      "BATCH_MODE": "تسوية مجمعة"
+      "BATCH_MODE": "تسوية مجمعة",
+      "SETTLEMENT_PROCESSING_MODE": "طريقة التنفيذ",
+      "SETTLEMENT_PROCESSING_LOADING": "جاري التحميل…",
+      "SETTLEMENT_PROCESSING_UNAVAILABLE": "غير متاح",
+      "SETTLEMENT_PROCESSING_MANUAL": "يدوي",
+      "SETTLEMENT_PROCESSING_AUTOMATIC": "تلقائي",
+      "SETTLEMENT_PROCESSING_GLOBAL_HINT": "هذا إعداد مالي عام وما يتغير لتاجر واحد من هنا.",
+      "MANUAL_MODE_READY": "التحويل البنكي اليدوي مفعّل. اعتمد التسوية، وبعد التحويل من البنك أكّدها بالمرجع والإثبات.",
+      "MANUAL_SCHEDULE_BLOCKED": "التأكيد اليدوي متاح يوم {{ day }}. أقرب موعد مناسب: {{ date }}.",
+      "AUTOMATIC_MODE_INFO": "التحويلات تتعالج تلقائيًا حسب إعداد المالية العام.",
+      "TABLE_ACTIONS": "الإجراءات",
+      "MANUAL_ACTION": "تجهيز التحويل",
+      "MANUAL_ACTION_PREPARING": "جاري التجهيز…",
+      "MANUAL_ACTION_RESUME": "إتمام التحويل",
+      "VIEW_PROOF": "عرض الإثبات",
+      "MANUAL_CONFIRM": {
+        "TITLE": "تأكيد التحويل البنكي اليدوي",
+        "DESCRIPTION": "أكّد العملية بعد تحويل المبلغ خارج زدانة. رقم المرجع وإثبات التحويل مطلوبان.",
+        "NET_DUE": "صافي المستحق",
+        "SETTLEMENT": "التسوية",
+        "REFERENCE": "رقم مرجع التحويل البنكي",
+        "REFERENCE_PLACEHOLDER": "أدخل رقم المرجع البنكي",
+        "PROOF": "إثبات التحويل",
+        "CONFIRM": "تم التحويل",
+        "CONFIRMING": "جاري التأكيد…",
+        "SUCCESS": "تم تأكيد التحويل اليدوي وتسجيله.",
+        "PREPARE_ERROR": "ما قدرنا نجهز التسوية للتحويل اليدوي.",
+        "CONFIRM_ERROR": "ما قدرنا نؤكد التحويل اليدوي. تأكد من المرجع والإثبات وجرب مرة ثانية."
+      }
     },
     "KPI": {
       "TOTAL_SALES": "إجمالي المبيعات",
