@@ -174,7 +174,8 @@
  (locationAccessActionRequested)="updateLocationAccess($event)"
  (taskPreviewRequested)="openTaskPreview($event)"
  (incidentPreviewRequested)="openIncidentPreview($event)"
- (previewClosed)="closePreview()">
+ (previewClosed)="closePreview()"
+ (financeUpdated)="loadDriver(driverId!, false)">
  </app-driver-detail-view>
 
  <div

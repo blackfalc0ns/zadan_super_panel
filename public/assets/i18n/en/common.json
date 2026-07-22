@@ -1054,10 +1054,13 @@
         "TITLE": "Reconciliation Log",
         "DESC": "Details of amounts per order and field settlement status",
         "ORDER_REF": "Order (Ref)",
+        "DRIVER_REF": "Order Ref",
         "COLLECTOR_DRIVER": "Collecting Driver",
         "VENDOR": "Vendor",
         "EXPECTED_AMOUNT": "Expected Collection",
+        "OUTSTANDING_BALANCE": "Outstanding Balance",
         "ACTUAL_COLLECTED": "Actually Received",
+        "REMITTED_AMOUNT": "Remitted / Settled",
         "FINANCIAL_DELTA": "Financial Delta",
         "STATUS": "Status",
         "ACTION": "Action",
@@ -1086,6 +1089,46 @@
         "ERROR_MESSAGE": "We could not complete the manual settlement. Please try again.",
         "INVALID_AMOUNT": "Enter an amount greater than zero."
       }
+    },
+    "REFUNDS": {
+      "TITLE": "Refunds & Compensation",
+      "SUBTITLE": "Track finance return_request cases linked to the disputes workflow",
+      "OPEN_DISPUTES": "Open disputes center",
+      "MANAGE": "Manage",
+      "SEARCH_PLACEHOLDER": "Search by reference, vendor, or reason...",
+      "LOAD_ERROR_TITLE": "Unable to load refund cases",
+      "LOAD_ERROR_MESSAGE": "An error occurred while fetching data from the server. Please try again.",
+      "EMPTY_TITLE": "No refund cases",
+      "EMPTY_DESC": "No return_request cases matched the current filters.",
+      "WORKFLOW": {
+        "TITLE": "Approval happens in disputes",
+        "MESSAGE": "This page is for finance monitoring. Approve or reject cases from /disputes."
+      },
+      "STATUS": {
+        "OPEN": "New",
+        "UNDER_REVIEW": "Under review",
+        "APPROVED": "Approved"
+      },
+      "TABLE": {
+        "CASE": "Reference",
+        "ORDER": "Order",
+        "VENDOR": "Vendor / Driver",
+        "REQUESTED": "Requested",
+        "APPROVED": "Approved",
+        "STATUS": "Status"
+      },
+      "ERRORS": {
+        "USE_DISPUTES_WORKFLOW": "Use the disputes center to approve or reject refund cases."
+      }
+    },
+    "STATEMENTS": {
+      "TITLE": "Financial statement summary",
+      "SUBTITLE": "From the ledger for the current period",
+      "REVENUE": "Platform revenue",
+      "EXPENSES": "Expenses",
+      "VAT_PAYABLE": "VAT payable",
+      "NET_INCOME": "Net income",
+      "PERIOD": "Period"
     },
     "DIRECTIONS": {
       "CREDIT": "Credit (+)",
@@ -1265,7 +1308,7 @@
         "EMPTY_TITLE": "No audit events match the current filters",
         "EMPTY_DESC": "Change the filters or refresh the page to load the latest finance activity.",
         "ERROR_TITLE": "Unable to load audit log",
-        "ERROR_DESC": "The page could not compose the financial audit stream right now."
+        "ERROR_DESC": "Unable to load the audit log from the server. Please try again."
       },
       "TABLE": {
         "ADMIN": "Administrator",
@@ -1303,7 +1346,9 @@
         "DRIVERS": "Drivers"
       },
       "NO_DATA_TITLE": "No matching wallets found",
-      "NO_DATA_DESC": "Try changing the search filters to view all wallets instead of a specific type."
+      "NO_DATA_DESC": "Try changing the search filters to view all wallets instead of a specific type.",
+      "LOAD_ERROR_TITLE": "Unable to load wallets",
+      "LOAD_ERROR_MESSAGE": "An error occurred while fetching wallet data from the server. Please try again."
     },
     "WALLET_DETAILS": {
       "TITLE": "Wallet Details",
@@ -1463,6 +1508,9 @@
         "SUBTITLE": "Add or deduct amounts from vendor and driver wallets for administrative reasons.",
         "ENTITY_TYPE": "Account Type",
         "ENTITY_NAME": "Vendor or Driver Name",
+        "ENTITY_ID": "Vendor or Driver ID",
+        "ENTITY_ID_PLACEHOLDER": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "ENTITY_ID_HELPER": "Enter the GUID from the vendor or driver profile in the admin panel.",
         "ENTITY_PLACEHOLDER": "Enter name to search or select...",
         "DIRECTION": "Operation Type",
         "AMOUNT": "Amount",
@@ -1508,6 +1556,12 @@
       "STATES": {
         "EMPTY_TITLE": "No matching records",
         "EMPTY_DESC": "No adjustments matched the current filters and search criteria."
+      },
+      "LOAD_ERROR_TITLE": "Unable to load adjustments",
+      "LOAD_ERROR_MESSAGE": "An error occurred while fetching adjustments from the server. Please try again.",
+      "ERRORS": {
+        "OWNER_ID_REQUIRED": "Vendor or driver ID is required.",
+        "SUBMIT_FAILED": "Failed to post the adjustment. Verify the ID and that an active wallet exists."
       },
       "TABLE": {
         "TITLE": "Adjustments log",

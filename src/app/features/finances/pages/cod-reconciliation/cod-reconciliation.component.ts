@@ -42,6 +42,19 @@ import { ToastService } from '../../../../shared/services/toast.service';
  </div>
  </app-page-header>
 
+ <app-inline-banner
+ *ngIf="loadError"
+ title="FINANCES.DASHBOARD.LOAD_ERROR_TITLE"
+ message="FINANCES.DASHBOARD.LOAD_ERROR_MESSAGE"
+ icon="error"
+ variant="error">
+ <div actions>
+ <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadData()">
+ {{ 'FINANCES.DASHBOARD.RETRY' | translate }}
+ </app-button>
+ </div>
+ </app-inline-banner>
+
  <!-- بانر الإشعار للفلترة -->
  <app-inline-banner
  *ngIf="hasScope && scopeTitle"
@@ -274,6 +287,7 @@ export class CodReconciliationComponent implements OnInit {
  scopedOrderId: string | null = null;
  isSettleModalOpen = false;
  isSubmitting = false;
+ loadError = false;
  settleAllMode = false;
  selectedRecord: CodRecord | null = null;
  settleForm = { amount: 0, reference: '' };
@@ -306,14 +320,21 @@ export class CodReconciliationComponent implements OnInit {
  }
 
  loadData(filter: CodFilter = {}): void {
+ this.loadError = false;
  this.financeService.getCodRecords({...filter,
  entityType: this.scopedEntityType ?? filter.entityType,
  entityId: this.scopedEntityId ?? filter.entityId,
  orderId: this.scopedOrderId ?? filter.orderId
- }).pipe(take(1)).subscribe(({ summary, records }) => {
+ }).pipe(take(1)).subscribe({
+ next: ({ summary, records }) => {
  this.cdr.markForCheck();
  this.summary = summary;
  this.records = records;
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.loadError = true;
+ }
  });
  }
 

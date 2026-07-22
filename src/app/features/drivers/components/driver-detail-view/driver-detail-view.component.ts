@@ -102,6 +102,7 @@ export class DriverDetailViewComponent {
   @Output() incidentPreviewRequested = new EventEmitter<DriverIncidentRecord>();
   @Output() previewClosed = new EventEmitter<void>();
   @Output() previewActionClick = new EventEmitter<PreviewAction>();
+  @Output() financeUpdated = new EventEmitter<void>();
 
   previewTitle = '';
   previewSubtitle = '';

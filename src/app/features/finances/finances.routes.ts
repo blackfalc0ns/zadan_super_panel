@@ -44,7 +44,7 @@ export const FINANCES_ROUTES: Routes = [
         path: 'refunds',
         canActivate: [HasPermissionGuard],
         data: { permission: 'finances.view' },
-        loadComponent: () => import('./pages/refunds-disputes/refunds-disputes.component').then(m => m.RefundsDisputesComponent)
+        loadComponent: () => import('./pages/financial-refunds/financial-refunds.component').then(m => m.FinancialRefundsComponent)
       },
       {
         path: 'cod',

@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, finalize, interval, merge, of, switchMap, timer } from 'rxjs';
+import { catchError, finalize, forkJoin, interval, merge, of, switchMap, timer } from 'rxjs';
 import { FinanceService } from '../../services/finance.service';
 import { FinanceDashboardSnapshot, FinanceDashboardAlert, FinancePeriod, ChartDataPoint, RevenueCompositionSegment } from '../../models/finance.models';
 import { FinanceKpiCardComponent } from '../../components/finance-kpi-card/finance-kpi-card.component';
@@ -89,6 +89,37 @@ echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, Leg
         <app-finance-kpi-card [kpi]="snapshot.driverPayouts"      (cardClick)="onKpiClick($event)" class="stagger-7"></app-finance-kpi-card>
         <app-finance-kpi-card [kpi]="snapshot.refundExposure"     (cardClick)="onKpiClick($event)" class="stagger-8"></app-finance-kpi-card>
       </div>
+
+      <app-card *ngIf="!isLoading && statementSummary" variant="default" rounded="2xl" padding="md" customClass="bg-white border-slate-200 shadow-sm">
+        <app-section-header
+          [compact]="true"
+          icon="summarize"
+          title="FINANCES.STATEMENTS.TITLE"
+          description="FINANCES.STATEMENTS.SUBTITLE">
+        </app-section-header>
+        <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-5">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.STATEMENTS.PERIOD' | translate }}</p>
+            <p class="mt-1 text-sm font-black text-slate-800" dir="ltr">{{ statementSummary.periodLabel }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.STATEMENTS.REVENUE' | translate }}</p>
+            <p class="mt-1 text-lg font-black text-emerald-700 tabular-nums">{{ formatNumber(statementSummary.revenue) }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.STATEMENTS.EXPENSES' | translate }}</p>
+            <p class="mt-1 text-lg font-black text-rose-600 tabular-nums">{{ formatNumber(statementSummary.expenses) }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.STATEMENTS.VAT_PAYABLE' | translate }}</p>
+            <p class="mt-1 text-lg font-black text-slate-700 tabular-nums">{{ formatNumber(statementSummary.vatPayable) }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'FINANCES.STATEMENTS.NET_INCOME' | translate }}</p>
+            <p class="mt-1 text-lg font-black tabular-nums" [ngClass]="statementSummary.netIncome >= 0 ? 'text-emerald-700' : 'text-rose-600'">{{ formatNumber(statementSummary.netIncome) }}</p>
+          </div>
+        </div>
+      </app-card>
 
       <!-- Main Charts Grid -->
       <div *ngIf="!isLoading && snapshot" class="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -211,6 +242,7 @@ export class FinanceDashboardComponent implements OnInit {
   private translate = inject(TranslateService);
 
   snapshot: FinanceDashboardSnapshot | null = null;
+  statementSummary: { revenue: number; expenses: number; vatPayable: number; netIncome: number; periodLabel: string } | null = null;
   isLoading = true;
   loadError = false;
   currentPeriod: FinancePeriod = 'month';
@@ -246,23 +278,31 @@ export class FinanceDashboardComponent implements OnInit {
       this.isLoading = true;
       this.loadError = false;
       this.snapshot = null;
+      this.statementSummary = null;
     }
 
-    this.financeService.getDashboardSnapshot(this.currentPeriod).pipe(
-      catchError((error) => {
-        console.error('Finance dashboard failed to load.', error);
-        this.loadError = true;
-        return of(null);
-      }),
+    forkJoin({
+      snapshot: this.financeService.getDashboardSnapshot(this.currentPeriod).pipe(
+        catchError((error) => {
+          console.error('Finance dashboard failed to load.', error);
+          this.loadError = true;
+          return of(null);
+        })
+      ),
+      statement: this.financeService.getStatementSummary(this.currentPeriod).pipe(
+        catchError(() => of(null))
+      )
+    }).pipe(
       finalize(() => {
         if (showLoading) {
           this.isLoading = false;
         }
       })
-    ).subscribe((data) => {
+    ).subscribe(({ snapshot, statement }) => {
       this.cdr.markForCheck();
-      this.snapshot = data;
-      if (data) {
+      this.snapshot = snapshot;
+      this.statementSummary = statement;
+      if (snapshot) {
         this.loadError = false;
         this.buildCharts();
       }

@@ -133,7 +133,7 @@ export class FinancesShellComponent {
  routes: [
  { id: 'wallets', label: 'FINANCES.SHELL.ROUTES.WALLETS.LABEL', route: '/finances/wallets', summary: 'FINANCES.SHELL.ROUTES.WALLETS.SUMMARY', dataMode: 'مفعل' },
  { id: 'ledger', label: 'FINANCES.SHELL.ROUTES.LEDGER.LABEL', route: '/finances/ledger', summary: 'FINANCES.SHELL.ROUTES.LEDGER.SUMMARY', dataMode: 'مفعل' },
- { id: 'adjustments', label: 'FINANCES.SHELL.ROUTES.ADJUSTMENTS.LABEL', route: '/finances/adjustments', summary: 'FINANCES.SHELL.ROUTES.ADJUSTMENTS.SUMMARY', dataMode: 'قيد التطوير' }
+ { id: 'adjustments', label: 'FINANCES.SHELL.ROUTES.ADJUSTMENTS.LABEL', route: '/finances/adjustments', summary: 'FINANCES.SHELL.ROUTES.ADJUSTMENTS.SUMMARY', dataMode: 'مفعل' }
  ]
  },
  {
@@ -152,7 +152,7 @@ export class FinancesShellComponent {
  label: 'FINANCES.SHELL.GROUPS.DISPUTES',
  icon: 'gavel',
  routes: [
- { id: 'refunds', label: 'FINANCES.SHELL.ROUTES.REFUNDS.LABEL', route: '/finances/refunds', summary: 'FINANCES.SHELL.ROUTES.REFUNDS.SUMMARY', dataMode: 'قيد التطوير', emphasis: 'danger' }
+ { id: 'refunds', label: 'FINANCES.SHELL.ROUTES.REFUNDS.LABEL', route: '/finances/refunds', summary: 'FINANCES.SHELL.ROUTES.REFUNDS.SUMMARY', dataMode: 'مفعل', emphasis: 'danger' }
  ]
  },
  {

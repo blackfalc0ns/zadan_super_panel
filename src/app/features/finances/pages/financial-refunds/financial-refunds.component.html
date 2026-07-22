@@ -1,0 +1,105 @@
+<div class="flex flex-col gap-6 animate-in fade-in duration-500">
+  <app-page-header
+    [title]="'FINANCES.REFUNDS.TITLE' | translate"
+    [subtitle]="'FINANCES.REFUNDS.SUBTITLE' | translate">
+    <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">undo</span>
+    <div actions>
+      <app-button variant="outline" size="sm" customClass="!rounded-xl" routerLink="/disputes" [queryParams]="{ type: 'return_request' }">
+        {{ 'FINANCES.REFUNDS.OPEN_DISPUTES' | translate }}
+      </app-button>
+    </div>
+  </app-page-header>
+
+  <app-inline-banner
+    *ngIf="loadError"
+    title="FINANCES.REFUNDS.LOAD_ERROR_TITLE"
+    message="FINANCES.REFUNDS.LOAD_ERROR_MESSAGE"
+    icon="error"
+    variant="error">
+    <div actions>
+      <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadRefunds()">
+        {{ 'FINANCES.DASHBOARD.RETRY' | translate }}
+      </app-button>
+    </div>
+  </app-inline-banner>
+
+  <app-inline-banner
+    title="FINANCES.REFUNDS.WORKFLOW.TITLE"
+    message="FINANCES.REFUNDS.WORKFLOW.MESSAGE"
+    icon="info"
+    variant="info">
+  </app-inline-banner>
+
+  <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <div class="flex flex-wrap gap-2">
+      <button type="button" (click)="selectedStatus = 'all'" class="rounded-full px-4 py-2 text-xs font-black"
+        [ngClass]="selectedStatus === 'all' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
+        {{ 'FINANCES.FILTERS.ALL' | translate }}
+      </button>
+      <button type="button" (click)="selectedStatus = 'open'" class="rounded-full px-4 py-2 text-xs font-black"
+        [ngClass]="selectedStatus === 'open' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
+        {{ 'FINANCES.REFUNDS.STATUS.OPEN' | translate }}
+      </button>
+      <button type="button" (click)="selectedStatus = 'under_review'" class="rounded-full px-4 py-2 text-xs font-black"
+        [ngClass]="selectedStatus === 'under_review' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
+        {{ 'FINANCES.REFUNDS.STATUS.UNDER_REVIEW' | translate }}
+      </button>
+      <button type="button" (click)="selectedStatus = 'approved'" class="rounded-full px-4 py-2 text-xs font-black"
+        [ngClass]="selectedStatus === 'approved' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
+        {{ 'FINANCES.REFUNDS.STATUS.APPROVED' | translate }}
+      </button>
+    </div>
+    <input type="text" [(ngModel)]="searchQuery" [placeholder]="'FINANCES.REFUNDS.SEARCH_PLACEHOLDER' | translate"
+      class="h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 outline-none lg:max-w-sm" />
+  </div>
+
+  <app-card variant="default" rounded="2xl" padding="none" customClass="border-slate-200 shadow-sm overflow-hidden bg-white">
+    <div *ngIf="!filteredRefunds.length" class="px-6 py-16 text-center">
+      <span class="material-symbols-outlined text-4xl text-slate-300">undo</span>
+      <p class="mt-2 text-sm font-black text-slate-900">{{ 'FINANCES.REFUNDS.EMPTY_TITLE' | translate }}</p>
+      <p class="mt-1 text-xs font-semibold text-slate-500">{{ 'FINANCES.REFUNDS.EMPTY_DESC' | translate }}</p>
+    </div>
+
+    <div *ngIf="filteredRefunds.length" class="overflow-x-auto">
+      <table class="w-full min-w-[980px] whitespace-nowrap text-[13px]">
+        <thead>
+          <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-widest text-slate-500">
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.REFUNDS.TABLE.CASE' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.REFUNDS.TABLE.ORDER' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-right ltr:text-left">{{ 'FINANCES.REFUNDS.TABLE.VENDOR' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.REFUNDS.TABLE.REQUESTED' | translate }}</th>
+            <th class="px-6 py-4 rtl:text-left ltr:text-right">{{ 'FINANCES.REFUNDS.TABLE.APPROVED' | translate }}</th>
+            <th class="px-6 py-4 text-center">{{ 'FINANCES.REFUNDS.TABLE.STATUS' | translate }}</th>
+            <th class="px-6 py-4 text-center">{{ 'FINANCES.COMMON.VIEW' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let refund of filteredRefunds; trackBy: trackById" class="hover:bg-slate-50/80">
+            <td class="px-6 py-4 font-mono text-[12px] font-black text-slate-600" dir="ltr">{{ refund.caseRef }}</td>
+            <td class="px-6 py-4 font-mono text-[12px] font-black text-zadna-primary" dir="ltr">{{ refund.orderRef }}</td>
+            <td class="px-6 py-4">
+              <p class="font-black text-slate-800">{{ refund.vendorName }}</p>
+              <p *ngIf="refund.driverName" class="text-[10px] font-bold text-slate-400">{{ refund.driverName }}</p>
+            </td>
+            <td class="px-6 py-4 text-left font-black tabular-nums" dir="ltr">{{ formatNumber(refund.requestedAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</td>
+            <td class="px-6 py-4 text-left font-black tabular-nums text-emerald-700" dir="ltr">
+              {{ refund.approvedAmount ? formatNumber(refund.approvedAmount) + ' ' + ('FINANCES.CURRENCY' | translate) : '—' }}
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex justify-center">
+                <app-finance-status-badge [status]="refund.status"></app-finance-status-badge>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex justify-center">
+                <app-button variant="outline" size="xs" customClass="!rounded-xl" (btnClick)="openInDisputes(refund)">
+                  {{ 'FINANCES.REFUNDS.MANAGE' | translate }}
+                </app-button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
+</div>

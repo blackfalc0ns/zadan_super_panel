@@ -10,6 +10,7 @@ import { VendorDetail, VendorService } from '@vendors/public-api';
 import {
  AuditLogEntry,
  AuditLogFilter,
+ AdjustmentDirection,
  ChartDataPoint,
  CodFilter,
  CodRecord,
@@ -103,6 +104,7 @@ interface AdminLedgerLineApiModel {
  accountCode: string;
  ownerType: string | null;
  ownerId: string | null;
+ ownerName?: string | null;
  debitAmount: number;
  creditAmount: number;
  currencyCode: string;
@@ -110,6 +112,74 @@ interface AdminLedgerLineApiModel {
  settlementId: string | null;
  payoutId: string | null;
  memo: string | null;
+}
+
+interface AdminFinancialAdjustmentApiModel {
+ id: string;
+ ownerType: string;
+ ownerId: string;
+ ownerName: string | null;
+ amount: number;
+ direction: string;
+ description: string | null;
+ createdAtUtc: string;
+}
+
+interface AdminFinancialAdjustmentListApiModel {
+ items: AdminFinancialAdjustmentApiModel[];
+ page: number;
+ pageSize: number;
+ totalCount: number;
+}
+
+interface AdminFinanceRefundCaseApiModel {
+ id: string;
+ orderId: string | null;
+ orderRef: string | null;
+ vendorId: string | null;
+ vendorName: string;
+ driverId: string | null;
+ driverName: string | null;
+ requestedAmount: number;
+ approvedAmount: number;
+ status: string;
+ createdAt: string;
+ reason: string | null;
+}
+
+interface AdminFinanceRefundCaseListApiModel {
+ items: AdminFinanceRefundCaseApiModel[];
+ page: number;
+ pageSize: number;
+ totalCount: number;
+}
+
+interface AdminFinanceStatementSummaryApiModel {
+ revenue: number;
+ expenses: number;
+ vatPayable: number;
+ netIncome: number;
+ periodLabel: string;
+}
+
+interface AdminVendorFinanceSummaryApiModel {
+ availableBalance: number;
+ pendingSettlement: number;
+ holdAmount: number;
+ totalPaidOut: number;
+ pendingOrdersNet: number;
+ pendingOrdersGross: number;
+ pendingOrdersCommission: number;
+ pendingOrdersCount: number;
+ failedPayoutsCount: number;
+ totalSettlementsCount: number;
+ directSettlementsCount: number;
+ batchSettlementsCount: number;
+ totalPayoutsCount: number;
+ latestPayoutAtUtc: string | null;
+ latestPayoutNumber: string | null;
+ latestPayoutAmount: number | null;
+ latestPayoutStatus: string | null;
 }
 
 interface AdminLedgerEntryApiModel {
@@ -456,84 +526,133 @@ export class FinanceService {
  }
 
  getRefundCases(filter?: RefundFilter): Observable<RefundCase[]> {
- return of(this.filterRefundCases([], filter));
+ let params = new HttpParams().set('page', '1').set('pageSize', '200');
+ if (filter?.status) {
+ params = params.set('status', this.toBackendRefundStatus(filter.status));
+ }
+ if (filter?.vendorId) {
+ params = params.set('vendorId', filter.vendorId);
+ }
+ if (filter?.entityType === 'driver' && filter.entityId) {
+ params = params.set('driverId', filter.entityId);
  }
 
- updateRefundStatus(caseId: string, status: RefundStatus, note: string): Observable<void> {
- const updatedAt = new Date().toISOString();
- this.refundOverrides.set(caseId, { status, note, updatedAt });
+ return this.http.get<AdminFinanceRefundCaseListApiModel>(`${this.apiUrl}/refunds`, { params }).pipe(
+ map((response) => this.filterRefundCases(response.items.map((item) => this.mapRefundCase(item)), filter))
+ );
+ }
 
- const currentCase = this.buildRefundCases().find((item) => item.id === caseId);
- if (currentCase) {
- this.auditStore.unshift({
- id: `audit-refund-${Date.now()}`,
- timestamp: updatedAt,
- adminId: 'adm-001',
- adminName: 'FINANCES.ADMINS.SUPER_ADMIN',
- adminRole: 'FINANCES.ROLES.SUPER_ADMIN',
- action: status === 'approved'
- ? 'FINANCES.AUDIT.ACTIONS.REFUND_APPROVED'
- : status === 'rejected'
- ? 'FINANCES.AUDIT.ACTIONS.REFUND_REJECTED'
- : 'FINANCES.AUDIT.ACTIONS.REFUND_ESCALATED',
- actionCategory: 'refund',
- entityType: currentCase.responsibleParty,
- entityId: currentCase.responsibleParty === 'driver' ? currentCase.driverId : currentCase.vendorId,
- orderId: currentCase.orderId,
- entityName: currentCase.responsibleParty === 'driver' ? currentCase.driverName : currentCase.vendorName,
- before: { status: currentCase.status },
- after: { status, note }
+ getStatementSummary(period: FinancePeriod = 'month'): Observable<AdminFinanceStatementSummaryApiModel> {
+ return this.http.get<AdminFinanceStatementSummaryApiModel>(`${this.apiUrl}/statements/summary`, {
+ params: { period }
  });
  }
 
- return of(undefined);
+ updateRefundStatus(_caseId: string, _status: RefundStatus, _note: string): Observable<void> {
+ return throwError(() => new Error('FINANCES.REFUNDS.ERRORS.USE_DISPUTES_WORKFLOW'));
+ }
+
+ private mapRefundCase(item: AdminFinanceRefundCaseApiModel): RefundCase {
+ const status = this.toFrontendRefundStatus(item.status);
+ const requestedAmount = this.round(item.requestedAmount);
+ const approvedAmount = item.approvedAmount > 0 ? this.round(item.approvedAmount) : undefined;
+ const createdAt = item.createdAt;
+ const responsibleParty: EntityType = item.driverId ? 'driver' : 'vendor';
+
+ return {
+ id: item.id,
+ caseRef: item.orderRef ? `RFD-${item.orderRef}` : `RFD-${item.id.slice(0, 8).toUpperCase()}`,
+ orderId: item.orderId ?? '',
+ orderRef: item.orderRef ?? '',
+ customerId: '',
+ customerName: '',
+ driverId: item.driverId ?? undefined,
+ driverName: item.driverName ?? undefined,
+ vendorId: item.vendorId ?? '',
+ vendorName: item.vendorName,
+ requestedAmount,
+ approvedAmount,
+ reason: item.reason ?? '',
+ status,
+ financialImpact: this.getRefundImpact(requestedAmount, approvedAmount, status),
+ responsibleParty,
+ createdAt,
+ updatedAt: createdAt,
+ resolvedAt: status === 'approved' || status === 'rejected' ? createdAt : undefined,
+ timeline: []
+ };
+ }
+
+ private toBackendRefundStatus(status: RefundStatus): string {
+ switch (status) {
+ case 'open': return 'Submitted';
+ case 'under_review': return 'InReview';
+ case 'approved': return 'Approved';
+ case 'rejected': return 'Rejected';
+ case 'escalated': return 'InReview';
+ default: return status;
+ }
+ }
+
+ private toFrontendRefundStatus(status: string): RefundStatus {
+ switch (status.toLowerCase()) {
+ case 'submitted': return 'open';
+ case 'inreview':
+ case 'awaitingcustomerevidence': return 'under_review';
+ case 'approved':
+ case 'resolved': return 'approved';
+ case 'rejected': return 'rejected';
+ default: return 'under_review';
+ }
  }
 
  getAdjustments(): Observable<FinancialAdjustment[]> {
- return of(this.clone(this.adjustmentsStore));
+ return this.http.get<AdminFinancialAdjustmentListApiModel>(`${this.apiUrl}/adjustments`, {
+ params: new HttpParams().set('page', '1').set('pageSize', '200')
+ }).pipe(
+ map((response) => response.items.map((item) => this.mapFinancialAdjustment(item)))
+ );
  }
 
  createAdjustment(adj: Partial<FinancialAdjustment>): Observable<FinancialAdjustment> {
- const createdAt = new Date().toISOString();
- const newAdjustment: FinancialAdjustment = {
- id: `adj-${Date.now()}`,
- adjustmentRef: `ADJ-${Date.now()}`,
- entityType: adj.entityType ?? 'platform',
- entityId: adj.entityId ?? 'platform',
- entityName: adj.entityName ?? 'Platform',
- direction: adj.direction ?? 'credit',
- amount: this.round(adj.amount ?? 0),
- currency: 'SAR',
- reason: adj.reason ?? 'FINANCES.ADJUSTMENTS.REASONS.SYSTEM_DOWNTIME',
- category: adj.category ?? 'other',
- adminId: 'adm-001',
- adminName: 'FINANCES.ADMINS.SUPER_ADMIN',
- createdAt,
- status: 'approved',
- approvedAt: createdAt,
- approvedBy: 'FINANCES.ADMINS.SUPER_ADMIN'
- };
-
- this.adjustmentsStore.unshift(newAdjustment);
- this.auditStore.unshift({
- id: `audit-adjustment-${Date.now()}`,
- timestamp: createdAt,
- adminId: 'adm-001',
- adminName: 'FINANCES.ADMINS.SUPER_ADMIN',
- adminRole: 'FINANCES.ROLES.SUPER_ADMIN',
- action: 'FINANCES.AUDIT.ACTIONS.ADJUSTMENT_CREATED',
- actionCategory: 'adjustment',
- entityType: newAdjustment.entityType,
- entityId: newAdjustment.entityId,
- entityName: newAdjustment.entityName,
- after: {
- amount: newAdjustment.amount,
- direction: newAdjustment.direction,
- reason: newAdjustment.reason
+ const ownerType = adj.entityType === 'driver' ? 'driver' : 'vendor';
+ const ownerId = adj.entityId?.trim();
+ if (!ownerId) {
+ return throwError(() => new Error('FINANCES.ADJUSTMENTS.ERRORS.OWNER_ID_REQUIRED'));
  }
- });
 
- return of(this.clone(newAdjustment));
+ return this.http.post<AdminFinancialAdjustmentApiModel>(`${this.apiUrl}/adjustments`, {
+ ownerType,
+ ownerId,
+ amount: adj.amount ?? 0,
+ direction: adj.direction ?? 'credit',
+ reason: adj.reason ?? '',
+ category: adj.category ?? 'other'
+ }).pipe(map((item) => this.mapFinancialAdjustment(item)));
+ }
+
+ private mapFinancialAdjustment(item: AdminFinancialAdjustmentApiModel): FinancialAdjustment {
+ const direction: AdjustmentDirection = item.direction?.toUpperCase() === 'OUT' ? 'debit' : 'credit';
+ const entityType: EntityType = item.ownerType?.toLowerCase() === 'driver' ? 'driver' : 'vendor';
+
+ return {
+ id: item.id,
+ adjustmentRef: `ADJ-${item.id.slice(0, 8).toUpperCase()}`,
+ entityType,
+ entityId: item.ownerId,
+ entityName: item.ownerName ?? this.formatOwnerName(item.ownerType, item.ownerId),
+ direction,
+ amount: this.round(item.amount),
+ currency: 'SAR',
+ reason: item.description ?? '',
+ category: 'other',
+ adminId: 'finance-system',
+ adminName: 'FINANCES.AUDIT.ADMINS.FINANCE_SYSTEM',
+ createdAt: item.createdAtUtc,
+ status: 'approved',
+ approvedAt: item.createdAtUtc,
+ approvedBy: 'FINANCES.AUDIT.ADMINS.FINANCE_SYSTEM'
+ };
  }
 
  getAuditLog(filter?: AuditLogFilter): Observable<AuditLogEntry[]> {
@@ -552,36 +671,7 @@ export class FinanceService {
  }
 
  return this.http.get<AdminFinanceAuditLogApiModel>(`${this.apiUrl}/audit-log`, { params }).pipe(
- map((response) => this.filterAuditEntries(response.items.map((item) => this.mapAuditLogEntry(item)), filter)),
- catchError((error) => {
- console.error('Failed to load finance audit log from backend.', error);
- return this.composeFinanceAuditLog(filter);
- })
- );
- }
-
- private composeFinanceAuditLog(filter?: AuditLogFilter): Observable<AuditLogEntry[]> {
- return forkJoin({
- ledgerEntries: this.getLedgerEntries(),
- settlements: this.getSettlements(),
- codReconciliation: this.getCodRecords(),
- refundCases: this.getRefundCases(),
- adjustments: this.getAdjustments()
- }).pipe(
- map(({ ledgerEntries, settlements, codReconciliation, refundCases, adjustments }) => {
- const entries = this.buildFinanceAuditEntries(
- ledgerEntries,
- settlements,
- codReconciliation.records,
- refundCases,
- adjustments
- );
- return this.filterAuditEntries(entries, filter);
- }),
- catchError((error) => {
- console.error('Failed to compose finance audit log.', error);
- return of(this.filterAuditEntries(this.auditStore, filter));
- })
+ map((response) => this.filterAuditEntries(response.items.map((item) => this.mapAuditLogEntry(item)), filter))
  );
  }
 
@@ -801,78 +891,82 @@ export class FinanceService {
 
  getVendorFinanceProfile(vendorId: string): Observable<VendorFinanceProfile> {
  const vendor = this.vendorService.getVendorSnapshotById(vendorId);
- const contexts = this.getOrderContexts().filter((context) => context.vendor?.id === vendorId);
- const settlements = this.buildSettlements().filter((settlement) => settlement.entityType === 'vendor' && settlement.entityId === vendorId);
- const refunds = this.buildRefundCases().filter((refund) => refund.vendorId === vendorId);
- const paidSettlements = settlements.filter((settlement) => settlement.status === 'paid');
- const pendingSettlements = settlements.filter((settlement) => settlement.status!== 'paid');
- const totalSales = this.sum(contexts.map((context) => context.order.total));
- const totalCommissions = this.sum(contexts.map((context) => context.breakdown.vendorCommission));
+ return forkJoin({
+ summary: this.http.get<AdminVendorFinanceSummaryApiModel>(`${environment.apiUrl}/admin/vendors/${vendorId}/finance-summary`),
+ settlements: this.getSettlements({ entityType: 'vendor', entityId: vendorId }),
+ refunds: this.getRefundCases({ vendorId })
+ }).pipe(
+ map(({ summary, settlements, refunds }) => {
+ const paidSettlements = settlements.filter((settlement) => settlement.status === 'paid' || settlement.status === 'settled');
+ const pendingSettlements = settlements.filter((settlement) => settlement.status !== 'paid' && settlement.status !== 'settled');
  const totalRefunds = this.sum(refunds.filter((refund) => refund.status === 'approved').map((refund) => refund.approvedAmount ?? refund.requestedAmount));
- const availableBalance = this.sum(paidSettlements.map((settlement) => settlement.netAmount));
- const pendingBalance = this.sum(pendingSettlements.map((settlement) => settlement.netAmount));
+ const totalSales = this.round(summary.pendingOrdersGross + summary.totalPaidOut);
+ const totalCommissions = this.round(summary.pendingOrdersCommission);
  const lastSettlement = [...paidSettlements].sort((left, right) => (right.paidAt ?? '').localeCompare(left.paidAt ?? ''))[0];
 
- return of({
+ return {
  vendorId,
  vendorName: vendor?.businessNameAr ?? vendor?.businessNameEn ?? 'Vendor',
  commissionRate: vendor?.commissionRate ?? this.pricingRulesStore.vendorCommission.defaultPercent,
  commissionOverride: vendor?.commissionRate ?? undefined,
- totalSales: this.round(totalSales),
- netSales: this.round(totalSales - totalCommissions - totalRefunds),
- totalCommissions: this.round(totalCommissions),
- availableBalance: this.round(availableBalance),
- pendingBalance: this.round(pendingBalance),
- lastPaymentAmount: this.round(lastSettlement?.netAmount ?? 0),
- lastPaymentDate: lastSettlement?.paidAt ?? '2026-03-12T10:00:00Z',
+ totalSales,
+ netSales: this.round(summary.availableBalance + summary.pendingSettlement),
+ totalCommissions,
+ availableBalance: this.round(summary.availableBalance),
+ pendingBalance: this.round(summary.pendingSettlement + summary.holdAmount),
+ lastPaymentAmount: this.round(summary.latestPayoutAmount ?? lastSettlement?.netAmount ?? 0),
+ lastPaymentDate: summary.latestPayoutAtUtc ?? lastSettlement?.paidAt ?? new Date().toISOString(),
  financialSummary: {
- sales: this.round(totalSales),
+ sales: totalSales,
  returns: this.round(-totalRefunds),
  discounts: 0,
  commissions: this.round(-totalCommissions),
- netTotal: this.round(totalSales - totalRefunds - totalCommissions)
+ netTotal: this.round(summary.availableBalance)
  },
  bankInfo: {
- bankName: 'Al Rajhi Bank',
+ bankName: '—',
  iban: this.maskIban(vendorId),
  paymentCycle: 'VENDOR_FINANCE.WEEKLY_CYCLE'
  },
  settlements,
- refundExposure: this.round(this.sum(refunds.filter((refund) => refund.status!== 'approved' && refund.status!== 'rejected').map((refund) => refund.requestedAmount))),
+ refundExposure: this.round(this.sum(refunds.filter((refund) => refund.status !== 'approved' && refund.status !== 'rejected').map((refund) => refund.requestedAmount))),
  disputeCount: refunds.filter((refund) => refund.status === 'under_review' || refund.status === 'escalated').length,
  sparklineSales: this.buildSparkline(Math.max(totalSales, 1000), 8, 140)
- });
+ };
+ })
+ );
  }
 
  getDriverFinanceProfile(driverId: string): Observable<DriverFinanceProfile> {
  const driver = this.driverService.getDriverSnapshotById(driverId);
- const contexts = this.getOrderContexts().filter((context) => context.driver?.id === driverId);
- const settlements = this.buildSettlements().filter((settlement) => settlement.entityType === 'driver' && settlement.entityId === driverId);
- const codRecords = this.buildCodData().records.filter((record) => record.driverId === driverId);
  const compensationRule = driver?.compensationOverride ?? this.pricingRulesStore.driverCompensation;
- const paidSettlements = settlements.filter((settlement) => settlement.status === 'paid');
- const pendingSettlements = settlements.filter((settlement) => settlement.status!== 'paid');
+
+ return forkJoin({
+ settlements: this.getSettlements({ entityType: 'driver', entityId: driverId }),
+ cod: this.getCodRecords({ entityType: 'driver', entityId: driverId }),
+ wallet: this.http.get<{ items: Array<{ ownerId: string; currentBalance: number; availableBalance?: number; pendingBalance?: number; codOwedBalance?: number }> }>(
+ `${environment.apiUrl}/admin/wallets`,
+ { params: new HttpParams().set('ownerType', 'driver').set('ownerId', driverId).set('page', '1').set('pageSize', '1') }
+ )
+ }).pipe(
+ map(({ settlements, cod, wallet }) => {
+ const walletRow = wallet.items.find((item) => item.ownerId === driverId) ?? wallet.items[0];
+ const paidSettlements = settlements.filter((settlement) => settlement.status === 'paid' || settlement.status === 'settled');
+ const pendingSettlements = settlements.filter((settlement) => settlement.status !== 'paid' && settlement.status !== 'settled');
  const lastPayout = [...paidSettlements].sort((left, right) => (right.paidAt ?? '').localeCompare(left.paidAt ?? ''))[0];
+ const codBalance = this.round(walletRow?.codOwedBalance ?? cod.summary.totalExpected);
+ const totalEarnings = this.round(paidSettlements.reduce((sum, settlement) => sum + settlement.netAmount, 0));
 
  const earningsBreakdown = {
- baseAmount: this.round(this.sum(contexts.map((context) => context.driver ? compensationRule.basePayout : 0))),
- distanceAmount: this.round(this.sum(contexts.map((context) => context.driver ? compensationRule.distanceRatePerKm * this.getEstimatedDistanceKm(context.order) : 0))),
- peakBonusAmount: this.round(this.sum(contexts.map((context) => this.isPeakOrder(context.order) ? compensationRule.peakBonus : 0))),
- zoneBonusAmount: this.round(this.sum(contexts.map((context) => this.getZoneBonusAmount(context.order, compensationRule)))),
- deductions: this.round(-Math.max(0, this.sum(codRecords.map((record) => Math.max(0, record.expectedAmount - record.collectedAmount))))),
- netTotal: 0
+ baseAmount: totalEarnings,
+ distanceAmount: 0,
+ peakBonusAmount: 0,
+ zoneBonusAmount: 0,
+ deductions: this.round(-Math.max(0, codBalance)),
+ netTotal: this.round(totalEarnings - Math.max(0, codBalance))
  };
- earningsBreakdown.netTotal = this.round(
- earningsBreakdown.baseAmount
- + earningsBreakdown.distanceAmount
- + earningsBreakdown.peakBonusAmount
- + earningsBreakdown.zoneBonusAmount
- + earningsBreakdown.deductions
- );
 
- const codBalance = this.round(this.sum(codRecords.map((record) => record.expectedAmount - record.collectedAmount)));
-
- return of({
+ return {
  driverId,
  driverName: driver ? `${driver.firstName} ${driver.lastName}` : 'Driver',
  compensationRule,
@@ -881,11 +975,11 @@ export class FinanceService {
  distanceRatePerKm: compensationRule.distanceRatePerKm,
  peakBonus: compensationRule.peakBonus,
  zoneBonus: compensationRule.zoneBonus,
- totalEarnings: this.round(this.sum(contexts.map((context) => context.breakdown.driverPayout))),
- availableBalance: this.round(Math.max(0, driver?.walletBalance ?? 0)),
- pendingBalance: this.round(this.sum(pendingSettlements.map((settlement) => settlement.netAmount))),
+ totalEarnings,
+ availableBalance: this.round(walletRow?.availableBalance ?? Math.max(0, (walletRow?.currentBalance ?? 0) - codBalance)),
+ pendingBalance: this.round(walletRow?.pendingBalance ?? pendingSettlements.reduce((sum, settlement) => sum + settlement.netAmount, 0)),
  lastPayoutAmount: this.round(lastPayout?.netAmount ?? 0),
- lastPayoutDate: lastPayout?.paidAt ?? '2026-03-22T14:00:00Z',
+ lastPayoutDate: lastPayout?.paidAt ?? new Date().toISOString(),
  earningsBreakdown,
  paymentHistory: paidSettlements.map((settlement) => ({
  id: settlement.id,
@@ -897,12 +991,14 @@ export class FinanceService {
  })),
  sparklineEarnings: this.buildSparkline(Math.max(earningsBreakdown.netTotal, 500), 8, 110),
  codBalance,
- codStatus: codRecords.some((record) => record.status === 'overdue')
+ codStatus: cod.records.some((record) => record.status === 'overdue')
  ? 'overdue'
- : codRecords.some((record) => record.status === 'pending')
+ : cod.records.some((record) => record.status === 'pending')
  ? 'pending'
  : 'collected'
- });
+ } as DriverFinanceProfile;
+ })
+ );
  }
 
  getOrderFinancialBreakdown(orderId: string): Observable<OrderFinancialBreakdown | null> {
@@ -1029,7 +1125,7 @@ export class FinanceService {
  entry.lines.filter((line) => Math.max(line.debitAmount, line.creditAmount) > 0).map((line) => this.mapLedgerLine(entry, line))
  );
 
- return this.withBalances(rows);
+ return rows.sort((left, right) => right.timestamp.localeCompare(left.timestamp));
  }
 
  private mapLedgerLine(entry: AdminLedgerEntryApiModel, line: AdminLedgerLineApiModel): LedgerEntry {
@@ -1042,7 +1138,7 @@ export class FinanceService {
  timestamp: entry.postedAtUtc,
  entityType: ownerType,
  entityId,
- entityName: this.formatOwnerName(line.ownerType, line.ownerId, line.accountCode),
+ entityName: line.ownerName?.trim() || this.formatOwnerName(line.ownerType, line.ownerId, line.accountCode),
  type: this.toLedgerEntryType(entry.eventType, line.accountCode),
  direction,
  amount: this.round(Math.max(line.debitAmount, line.creditAmount)),

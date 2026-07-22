@@ -73,6 +73,8 @@ export interface AdminDriverWithdrawalRequestDto {
   providerName: string | null;
   providerTransferId: string | null;
   payoutDay: string | null;
+  reviewedByUserId: string | null;
+  reviewedAtUtc: string | null;
 }
 
 export interface AdminWithdrawalRequestListDto {
@@ -326,6 +328,30 @@ export class WalletsService {
       `${environment.apiUrl}/admin/payouts/${payoutId}/proofs`,
       formData
     );
+  }
+
+  uploadReturnedPayoutProof(payoutId: string, file: File): Observable<AdminPayoutProofAttachmentDto> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('kind', 'ReturnedFunds');
+
+    return this.http.post<AdminPayoutProofAttachmentDto>(
+      `${environment.apiUrl}/admin/payouts/${payoutId}/proofs`,
+      formData
+    );
+  }
+
+  recordPayoutReturn(
+    payoutId: string,
+    returnReference: string,
+    proofAttachmentId: string,
+    reason?: string | null
+  ): Observable<AdminPayoutDto> {
+    return this.http.post<AdminPayoutDto>(`${environment.apiUrl}/admin/payouts/${payoutId}/record-return`, {
+      returnReference,
+      proofAttachmentId,
+      reason: reason?.trim() || null
+    });
   }
 
   downloadManualPayoutProof(payoutId: string, attachmentId: string): Observable<Blob> {

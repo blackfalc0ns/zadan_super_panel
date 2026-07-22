@@ -4,19 +4,23 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { FinanceService } from '../../../finances/services/finance.service';
 import { DriverDetailRecord, DriverFinanceEntry } from '../../models/drivers.models';
 import { DriverService } from '../../services/drivers.api.service';
 import { getFinanceStatusVariant, getFinanceStatusKey } from '../../utils/driver-ui.utils';
@@ -38,8 +42,12 @@ import { getFinanceStatusVariant, getFinanceStatusKey } from '../../utils/driver
 export class DriverFinanceTabComponent implements OnInit, OnChanges {
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() isRTL = true;
+  @Output() financeUpdated = new EventEmitter<void>();
 
   private readonly driversApi = inject(DriverService);
+  private readonly financeService = inject(FinanceService);
+  private readonly toastService = inject(ToastService);
+  private readonly translate = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchChanges$ = new Subject<string>();
@@ -61,6 +69,7 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   settleNotes = '';
   isSettling = false;
   settleSuccess = false;
+  settleError = false;
 
   financeColumns: TableColumn[] = [
     { key: 'id', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.ID' },
@@ -176,6 +185,7 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
 
     this.showSettleModal = true;
     this.settleSuccess = false;
+    this.settleError = false;
     this.isSettling = false;
   }
 
@@ -184,25 +194,43 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   }
 
   submitSettlement() {
-    if (this.settleAmount <= 0) {
+    if (this.settleAmount <= 0 || !this.driver?.id) {
       return;
     }
 
     this.isSettling = true;
+    this.settleError = false;
+    this.cdr.markForCheck();
 
-    setTimeout(() => {
-      this.isSettling = false;
-      this.settleSuccess = true;
-
-      const amountPaid = this.settleAmount;
-
-      this.driver.finance.dueAmount = Math.max(0, this.driver.finance.dueAmount - amountPaid);
-      this.driver.finance.availableBalance = Math.max(0, this.driver.finance.availableBalance - amountPaid);
-
-      this.currentPage = 1;
-      this.loadLedgerEntries();
-      this.cdr.markForCheck();
-    }, 1500);
+    const reference = this.settleReference?.trim() || undefined;
+    this.financeService.createCodRemittance({
+      driverId: this.driver.id,
+      amount: this.settleAmount,
+      reference,
+      idempotencyKey: `driver-finance-tab:${this.driver.id}:${Date.now()}`
+    }).pipe(take(1)).subscribe({
+      next: () => {
+        this.isSettling = false;
+        this.settleSuccess = true;
+        this.currentPage = 1;
+        this.loadLedgerEntries();
+        this.financeUpdated.emit();
+        this.toastService.success(
+          this.translate.instant('FINANCES.COD.TOAST.SUCCESS_MESSAGE', { driver: this.driver.displayName ?? this.driver.id }),
+          this.translate.instant('FINANCES.COD.TOAST.SUCCESS_TITLE')
+        );
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.isSettling = false;
+        this.settleError = true;
+        this.toastService.error(
+          this.translate.instant('FINANCES.COD.TOAST.ERROR_MESSAGE'),
+          this.translate.instant('FINANCES.COD.TOAST.ERROR_TITLE')
+        );
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   private loadLedgerEntries(): void {

@@ -48,19 +48,23 @@ export class FinancialAdjustmentsComponent implements OnInit {
 
  form: {
  entityType: EntityType;
- entityName: string;
+ entityId: string;
  direction: AdjustmentDirection;
  amount: number;
  reason: string;
  category: string;
  } = {
  entityType: 'vendor',
- entityName: '',
+ entityId: '',
  direction: 'credit',
  amount: 0,
  reason: '',
  category: 'compensation'
  };
+
+ loadError = false;
+ submitError = '';
+ isSubmitting = false;
 
  entityTypes = [
  { value: 'vendor' as EntityType, labelKey: FINANCE_ENTITY_LABEL_KEYS['vendor'], icon: 'store' },
@@ -77,10 +81,21 @@ export class FinancialAdjustmentsComponent implements OnInit {
  ];
 
  ngOnInit(): void {
- this.financeService.getAdjustments().pipe(take(1)).subscribe(data => {
-      this.adjustments = data;
-      this.refreshKpiCards();
+ this.loadAdjustments();
+ }
+
+ loadAdjustments(): void {
+ this.loadError = false;
+ this.financeService.getAdjustments().pipe(take(1)).subscribe({
+ next: (data) => {
+ this.adjustments = data;
+ this.refreshKpiCards();
  this.cdr.markForCheck();
+ },
+ error: () => {
+ this.loadError = true;
+ this.cdr.markForCheck();
+ }
  });
  }
 
@@ -154,59 +169,43 @@ export class FinancialAdjustmentsComponent implements OnInit {
  }
 
  submitAdjustment(): void {
-    if (!this.form.reason || !this.form.amount || !this.form.entityName) {
-      return;
-    }
+ const ownerId = this.form.entityId.trim();
+ if (!this.form.reason || !this.form.amount || !ownerId) {
+ return;
+ }
+
+ this.isSubmitting = true;
+ this.submitError = '';
 
  const newAdj: Partial<FinancialAdjustment> = {
  entityType: this.form.entityType,
- entityName: this.form.entityName,
- entityId: 'manual',
+ entityId: ownerId,
  direction: this.form.direction,
  amount: this.form.amount,
  currency: 'SAR',
  reason: this.form.reason,
- category: this.form.category,
- adminId: 'adm-001',
- adminName: 'FINANCES.ADMINS.SUPER_ADMIN',
-      status: 'pending_approval'
+ category: this.form.category
  };
 
- this.financeService.createAdjustment(newAdj).pipe(take(1)).subscribe(adj => {
-      this.adjustments = [adj, ...this.adjustments];
-      this.refreshKpiCards();
+ this.financeService.createAdjustment(newAdj).pipe(take(1)).subscribe({
+ next: (adj) => {
+ this.adjustments = [adj, ...this.adjustments];
+ this.refreshKpiCards();
  this.resetForm();
  this.showCreateModal = false;
-      this.cdr.markForCheck();
+ this.isSubmitting = false;
+ this.cdr.markForCheck();
+ },
+ error: () => {
+ this.submitError = 'FINANCES.ADJUSTMENTS.ERRORS.SUBMIT_FAILED';
+ this.isSubmitting = false;
+ this.cdr.markForCheck();
+ }
  });
  }
 
- approveAdjustment(id: string, event: Event): void {
- event.stopPropagation();
- const adj = this.adjustments.find(a => a.id === id);
-    if (!adj) {
-      return;
-    }
-
- adj.status = 'approved';
- adj.approvedAt = new Date().toISOString();
- adj.approvedBy = 'FINANCES.ADMINS.SUPER_ADMIN';
-    this.refreshKpiCards();
-    this.cdr.markForCheck();
- }
-
- rejectAdjustment(id: string, event: Event): void {
- event.stopPropagation();
- const adj = this.adjustments.find(a => a.id === id);
-    if (!adj) {
-      return;
-    }
-
- adj.status = 'rejected';
- adj.approvedAt = new Date().toISOString();
- adj.approvedBy = 'FINANCES.ADMINS.SUPER_ADMIN';
-    this.refreshKpiCards();
-    this.cdr.markForCheck();
+ displayLabel(value: string): string {
+ return value.startsWith('FINANCES.') ? this.translate.instant(value) : value;
  }
 
  getEntityLabelKey(type: string): string {
@@ -311,11 +310,12 @@ export class FinancialAdjustmentsComponent implements OnInit {
  private resetForm(): void {
     this.form = {
       entityType: 'vendor',
-      entityName: '',
+      entityId: '',
       direction: 'credit',
       amount: 0,
       reason: '',
       category: 'compensation'
     };
+    this.submitError = '';
  }
 }

@@ -10,6 +10,8 @@ import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/comp
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { AdminWalletSummaryDto, WalletsService } from '../../services/wallets.service';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { InlineBannerComponent } from '../../../../shared/components/ui/inline-banner/inline-banner.component';
+import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,7 +25,9 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  AppCardComponent,
  KeyValueGridComponent,
  RouterLink,
- AppPageHeaderComponent
+ AppPageHeaderComponent,
+ InlineBannerComponent,
+ AppButtonComponent
  ],
  template: `
  <div class="flex flex-col gap-6 animate-in fade-in duration-700">
@@ -48,6 +52,19 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  </div>
  </div>
  </app-page-header>
+
+ <app-inline-banner
+ *ngIf="loadError"
+ title="FINANCES.WALLETS.LOAD_ERROR_TITLE"
+ message="FINANCES.WALLETS.LOAD_ERROR_MESSAGE"
+ icon="error"
+ variant="error">
+ <div actions>
+ <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadData()">
+ {{ 'FINANCES.DASHBOARD.RETRY' | translate }}
+ </app-button>
+ </div>
+ </app-inline-banner>
 
  <!-- ملخص الأرصدة (Summary Cards) -->
  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -128,7 +145,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  </div>
 
  <!-- حالة ما فيه بيانات -->
- <div *ngIf="!isLoading &&!wallets.length" class="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-slate-200 border-dashed text-center">
+ <div *ngIf="!isLoading && !loadError && !wallets.length" class="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-slate-200 border-dashed text-center">
  <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
  <span class="material-symbols-outlined text-[40px] text-slate-300">account_balance_wallet</span>
  </div>
@@ -157,6 +174,7 @@ export class WalletsListComponent implements OnInit {
 
  wallets: AdminWalletSummaryDto[] = [];
  isLoading = false;
+ loadError = false;
  page = 1;
  pageSize = 24; // Show more per page to fit grid nicely
  totalCount = 0;
@@ -176,6 +194,7 @@ export class WalletsListComponent implements OnInit {
 
  loadData(): void {
  this.isLoading = true;
+ this.loadError = false;
  this.walletsService.getWallets(this.ownerType ?? undefined, this.page, this.pageSize).pipe(take(1)).subscribe({
  next: (data) => {
  this.cdr.markForCheck();
@@ -184,11 +203,16 @@ export class WalletsListComponent implements OnInit {
  this.totalPlatformBalance = data.totalPlatformBalance;
  this.totalPendingWithdrawals = data.totalPendingWithdrawals;
  this.isLoading = false;
+ this.loadError = false;
  },
  error: () => {
  this.cdr.markForCheck();
  this.wallets = [];
+ this.totalCount = 0;
+ this.totalPlatformBalance = 0;
+ this.totalPendingWithdrawals = 0;
  this.isLoading = false;
+ this.loadError = true;
  }
  });
  }

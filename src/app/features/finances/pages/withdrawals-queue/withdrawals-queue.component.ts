@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
@@ -141,6 +142,11 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  {{ 'FINANCES.WITHDRAWALS.TABLE.REJECT' | translate }}
  </app-button>
  </div>
+ <div class="flex gap-2 w-full xl:w-auto" *ngIf="req.status === 'Paid' && req.payoutId">
+ <app-button variant="outline" size="sm" customClass="!rounded-xl flex-1 xl:flex-none border-violet-200 text-violet-700 hover:bg-violet-50" (btnClick)="openReturnWorkflow(req)">
+ {{ 'FINANCES.WITHDRAWALS.TABLE.RECORD_BANK_RETURN' | translate }}
+ </app-button>
+ </div>
  </div>
 
  </div>
@@ -206,6 +212,9 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  class="w-full bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-900 py-3 px-4 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-all placeholder:font-medium resize-none"
  [placeholder]="'FINANCES.WITHDRAWALS.MODAL.REJECT_REASON_PLACEHOLDER' | translate"></textarea>
  </div>
+ <div *ngIf="processError" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[12px] font-bold text-red-700">
+ {{ processError | translate }}
+ </div>
  </div>
 
  <div class="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50/50">
@@ -232,7 +241,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  <span class="material-symbols-outlined">account_balance</span>
  </div>
  <div>
- <h3 class="text-lg font-black text-slate-900">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.TITLE' | translate }}</h3>
+ <h3 class="text-lg font-black text-slate-900">{{ (isReturnWorkflow ? 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.TITLE' : 'FINANCES.WITHDRAWALS.WORKFLOW.TITLE') | translate }}</h3>
  <p class="mt-1 text-[12px] font-bold text-slate-500">{{ manualWorkflowRequest.driverName }} · {{ formatNumber(manualWorkflowRequest.amount) }} {{ 'FINANCES.CURRENCY' | translate }}</p>
  </div>
  </div>
@@ -262,7 +271,38 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  </div>
  </div>
 
- <div class="space-y-3">
+ <section *ngIf="isReturnWorkflow" class="rounded-2xl border border-violet-200 bg-violet-50/40 p-4">
+ <div class="flex items-start gap-3">
+ <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-600 text-white">
+ <span class="material-symbols-outlined text-[19px]">keyboard_return</span>
+ </div>
+ <div class="min-w-0 flex-1 space-y-3">
+ <div>
+ <h4 class="text-[13px] font-black text-slate-900">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.SECTION_TITLE' | translate }}</h4>
+ <p class="mt-1 text-[12px] leading-5 font-medium text-slate-600">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.DESC' | translate }}</p>
+ </div>
+ <div class="space-y-2">
+ <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REFERENCE' | translate }}</label>
+ <input type="text" [(ngModel)]="returnReference" class="w-full rounded-xl border border-violet-200 bg-white px-3 py-2.5 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500" [placeholder]="'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REFERENCE_PLACEHOLDER' | translate">
+ </div>
+ <div class="space-y-2">
+ <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REASON' | translate }}</label>
+ <textarea [(ngModel)]="returnReason" rows="2" class="w-full resize-none rounded-xl border border-violet-200 bg-white px-3 py-2.5 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500" [placeholder]="'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REASON_PLACEHOLDER' | translate"></textarea>
+ </div>
+ <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-dashed border-violet-300 bg-white px-3 py-3 hover:bg-violet-50">
+ <span class="flex items-center gap-2 text-[12px] font-bold text-slate-700"><span class="material-symbols-outlined text-violet-600">upload_file</span>{{ returnProofFile ? returnProofFile.name : ('FINANCES.WITHDRAWALS.RETURN_WORKFLOW.PROOF_FILE' | translate) }}</span>
+ <span class="text-[11px] font-black text-violet-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CHOOSE_FILE' | translate }}</span>
+ <input type="file" class="hidden" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf" (change)="onReturnProofFileSelected($event)">
+ </label>
+ <app-button variant="primary" size="sm" customClass="!rounded-xl !bg-violet-600 hover:!bg-violet-700" (btnClick)="confirmPayoutReturn()" [disabled]="isManualWorkflowSubmitting || !returnReference.trim() || !returnProofFile">
+ {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.RETURN_WORKFLOW.CONFIRM_ACTION' | translate) }}
+ </app-button>
+ <p *ngIf="manualPayout.status === 'Reversed'" class="text-[11px] font-black text-violet-700">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.COMPLETED' | translate }}</p>
+ </div>
+ </div>
+ </section>
+
+ <div *ngIf="!isReturnWorkflow" class="space-y-3">
  <section class="rounded-2xl border p-4" [ngClass]="canClaimManualPayout() ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-200 bg-white'">
  <div class="flex items-start gap-3">
  <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[12px] font-black text-white">1</div>
@@ -353,11 +393,16 @@ export class WithdrawalsQueueComponent implements OnInit {
  isManualWorkflowLoading = false;
  isManualWorkflowSubmitting = false;
  manualWorkflowError: string | null = null;
+ processError: string | null = null;
  manualWorkflowRequest: AdminDriverWithdrawalRequestDto | null = null;
  manualPayout: AdminPayoutDto | null = null;
  manualBankSubmissionReference = '';
  manualTransferReference = '';
  manualProofFile: File | null = null;
+ isReturnWorkflow = false;
+ returnReference = '';
+ returnReason = '';
+ returnProofFile: File | null = null;
 
  readonly statusOptions: Array<{ labelKey: string; value: string | null }> = [
  { labelKey: 'FINANCES.WITHDRAWALS.TABS.ALL', value: null },
@@ -365,6 +410,7 @@ export class WithdrawalsQueueComponent implements OnInit {
  { labelKey: 'FINANCES.WITHDRAWALS.TABS.PROCESSING', value: 'Processing' },
  { labelKey: 'FINANCES.WITHDRAWALS.TABS.PAID', value: 'Paid' },
  { labelKey: 'FINANCES.WITHDRAWALS.TABS.FAILED', value: 'Failed' },
+ { labelKey: 'FINANCES.WITHDRAWALS.TABS.RETURNED', value: 'Returned' },
  { labelKey: 'FINANCES.WITHDRAWALS.TABS.CANCELLED', value: 'Cancelled' }
  ];
 
@@ -421,6 +467,7 @@ export class WithdrawalsQueueComponent implements OnInit {
  this.selectedRequest = req;
  this.isApproving = isApproving;
  this.processForm = { failureReason: '' };
+ this.processError = null;
  this.isProcessModalOpen = true;
  }
 
@@ -438,6 +485,7 @@ export class WithdrawalsQueueComponent implements OnInit {
  if (!this.isApproving &&!failureReason) return;
 
  this.isSubmitting = true;
+ this.processError = null;
  this.walletsService.processWithdrawal(selectedRequest.id, {
  isApproved: this.isApproving,
  failureReason:!this.isApproving ? failureReason : undefined
@@ -459,9 +507,10 @@ export class WithdrawalsQueueComponent implements OnInit {
 
  this.loadData();
  },
- error: () => {
+ error: (error) => {
  this.cdr.markForCheck();
  this.isSubmitting = false;
+ this.processError = this.describeWorkflowError(error);
  }
  });
  }
@@ -469,12 +518,27 @@ export class WithdrawalsQueueComponent implements OnInit {
  openManualWorkflow(req: AdminDriverWithdrawalRequestDto): void {
  if (!req.payoutId) return;
 
+ this.isReturnWorkflow = false;
  this.manualWorkflowRequest = req;
  this.manualPayout = null;
  this.manualWorkflowError = null;
  this.manualBankSubmissionReference = '';
  this.manualTransferReference = '';
  this.manualProofFile = null;
+ this.isManualWorkflowModalOpen = true;
+ this.loadManualPayout(req.payoutId);
+ }
+
+ openReturnWorkflow(req: AdminDriverWithdrawalRequestDto): void {
+ if (!req.payoutId || req.status !== 'Paid') return;
+
+ this.isReturnWorkflow = true;
+ this.manualWorkflowRequest = req;
+ this.manualPayout = null;
+ this.manualWorkflowError = null;
+ this.returnReference = '';
+ this.returnReason = '';
+ this.returnProofFile = null;
  this.isManualWorkflowModalOpen = true;
  this.loadManualPayout(req.payoutId);
  }
@@ -486,6 +550,10 @@ export class WithdrawalsQueueComponent implements OnInit {
  this.manualWorkflowError = null;
  this.manualWorkflowRequest = null;
  this.manualPayout = null;
+ this.isReturnWorkflow = false;
+ this.returnReference = '';
+ this.returnReason = '';
+ this.returnProofFile = null;
  }
 
  private loadManualPayout(payoutId: string): void {
@@ -512,7 +580,7 @@ export class WithdrawalsQueueComponent implements OnInit {
  this.manualWorkflowError = null;
  this.walletsService.claimManualPayout(this.manualPayout.id).pipe(take(1)).subscribe({
  next: (payout) => this.completeManualWorkflowOperation(payout),
- error: () => this.failManualWorkflowOperation()
+ error: (error) => this.failManualWorkflowOperation(error)
  });
  }
 
@@ -526,13 +594,19 @@ export class WithdrawalsQueueComponent implements OnInit {
  this.manualBankSubmissionReference.trim()
  ).pipe(take(1)).subscribe({
  next: (payout) => this.completeManualWorkflowOperation(payout),
- error: () => this.failManualWorkflowOperation()
+ error: (error) => this.failManualWorkflowOperation(error)
  });
  }
 
  onManualProofFileSelected(event: Event): void {
  const input = event.target as HTMLInputElement;
  this.manualProofFile = input.files?.item(0) ?? null;
+ this.cdr.markForCheck();
+ }
+
+ onReturnProofFileSelected(event: Event): void {
+ const input = event.target as HTMLInputElement;
+ this.returnProofFile = input.files?.item(0) ?? null;
  this.cdr.markForCheck();
  }
 
@@ -553,7 +627,29 @@ export class WithdrawalsQueueComponent implements OnInit {
  this.manualProofFile = null;
  this.completeManualWorkflowOperation(payout);
  },
- error: () => this.failManualWorkflowOperation()
+ error: (error) => this.failManualWorkflowOperation(error)
+ });
+ }
+
+ confirmPayoutReturn(): void {
+ if (!this.manualPayout || !this.returnProofFile || !this.returnReference.trim()) return;
+
+ this.isManualWorkflowSubmitting = true;
+ this.manualWorkflowError = null;
+ this.walletsService.uploadReturnedPayoutProof(this.manualPayout.id, this.returnProofFile).pipe(
+ take(1),
+ switchMap((proof) => this.walletsService.recordPayoutReturn(
+ this.manualPayout!.id,
+ this.returnReference.trim(),
+ proof.id,
+ this.returnReason
+ ))
+ ).subscribe({
+ next: (payout) => {
+ this.returnProofFile = null;
+ this.completeManualWorkflowOperation(payout);
+ },
+ error: (error) => this.failManualWorkflowOperation(error)
  });
  }
 
@@ -591,10 +687,50 @@ export class WithdrawalsQueueComponent implements OnInit {
  this.cdr.markForCheck();
  }
 
- private failManualWorkflowOperation(): void {
+ private failManualWorkflowOperation(error: unknown): void {
  this.isManualWorkflowSubmitting = false;
- this.manualWorkflowError = 'FINANCES.WITHDRAWALS.WORKFLOW.ACTION_ERROR';
+ this.manualWorkflowError = this.describeWorkflowError(error);
  this.cdr.markForCheck();
+ }
+
+ private describeWorkflowError(error: unknown): string {
+ const payload = error instanceof HttpErrorResponse ? error.error : null;
+ const rawCode = typeof payload === 'string'
+ ? payload
+ : payload?.errorCode ?? payload?.error ?? payload?.code ?? payload?.title;
+ const code = typeof rawCode === 'string' ? rawCode.trim().toUpperCase() : '';
+ const translatedCodes = new Set([
+ 'DRIVER_WITHDRAWAL_NOT_DUE',
+ 'PAYOUT_DAY_DISABLED',
+ 'DRIVER_BANK_ACCOUNT_REQUIRED',
+ 'DRIVER_BANK_IBAN_INVALID',
+ 'INSUFFICIENT_WITHDRAWABLE_BALANCE',
+ 'WITHDRAWAL_PROCESSING_CONFLICT',
+ 'PAYOUT_ALREADY_RESERVED',
+ 'PAYOUT_CLAIM_OWNERSHIP_REQUIRED',
+ 'PAYOUT_ALREADY_SUBMITTED',
+ 'PAYOUT_DUAL_CONTROL_REQUIRED',
+ 'PAYOUT_NOT_DUE_TODAY',
+ 'PAYOUT_CONFIRMATION_DAY_INVALID',
+ 'PAYOUT_PROOF_MANUAL_SUBMISSION_REQUIRED',
+ 'PAYOUT_PROOF_ALREADY_FINALIZED',
+ 'PAYOUT_PROOF_RETURN_INVALID_STATUS',
+ 'PAYOUT_INVALID_STATUS',
+ 'PAYOUT_REVERSAL_INVALID_STATUS',
+ 'PAYOUT_REVERSAL_RECONCILIATION_REQUIRED',
+ 'PAYOUT_CONCURRENTLY_UPDATED',
+ 'FILE_TOO_LARGE',
+ 'INVALID_FILE_CONTENT_TYPE',
+ 'INVALID_FILE_EXTENSION',
+ 'INVALID_FILE_SIGNATURE',
+ 'SETTLEMENT_PROCESSING_NOT_MANUAL',
+ 'BANK_SUBMISSION_REFERENCE_REQUIRED',
+ 'RETURN_REFERENCE_REQUIRED'
+ ]);
+
+ return translatedCodes.has(code)
+ ? `FINANCES.WITHDRAWALS.ERRORS.${code}`
+ : 'FINANCES.WITHDRAWALS.WORKFLOW.ACTION_ERROR';
  }
 
  formatDate(ts: string): string {
@@ -622,6 +758,7 @@ export class WithdrawalsQueueComponent implements OnInit {
  Processing: 'bg-blue-50 text-blue-700 border-blue-200',
  Paid: 'bg-emerald-50 text-emerald-700 border-emerald-200',
  Failed: 'bg-red-50 text-red-700 border-red-200',
+ Returned: 'bg-violet-50 text-violet-700 border-violet-200',
  Cancelled: 'bg-slate-100 text-slate-600 border-slate-200'
  };
  return map[status] ?? 'bg-slate-100 text-slate-600 border-slate-200';

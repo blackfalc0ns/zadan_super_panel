@@ -1356,6 +1356,7 @@
         "PROCESSING": "Processing",
         "PAID": "Paid (Completed)",
         "FAILED": "Failed",
+        "RETURNED": "Returned by bank",
         "CANCELLED": "Cancelled"
       },
       "TABLE": {
@@ -1371,7 +1372,8 @@
         "FAILURE_REASON": "Reason",
         "APPROVE": "Approve",
         "REJECT": "Reject",
-        "MANAGE_MANUAL_TRANSFER": "Manage bank transfer"
+        "MANAGE_MANUAL_TRANSFER": "Manage bank transfer",
+        "RECORD_BANK_RETURN": "Record bank return"
       },
       "NO_DATA_TITLE": "No withdrawal requests",
       "NO_DATA_DESC": "No withdrawal requests found matching the current filter state.",
@@ -1419,12 +1421,53 @@
         "COMPLETED": "The transfer was confirmed successfully.",
         "WORKING": "Saving..."
       },
+      "RETURN_WORKFLOW": {
+        "TITLE": "Record returned bank transfer",
+        "SECTION_TITLE": "Return the payout to the driver wallet",
+        "DESC": "Use this only after the bank confirms that a previously paid transfer was returned. The original proof remains immutable and a separate return record restores the amount to the wallet.",
+        "REFERENCE": "Bank return reference",
+        "REFERENCE_PLACEHOLDER": "Enter the return reference from the bank...",
+        "REASON": "Return reason (optional)",
+        "REASON_PLACEHOLDER": "For example: beneficiary account closed or rejected...",
+        "PROOF_FILE": "Choose bank return proof",
+        "CONFIRM_ACTION": "Confirm return and restore balance",
+        "COMPLETED": "The return was recorded and the amount was restored to the driver wallet."
+      },
       "STATUS_LABELS": {
         "PENDING": "Pending",
         "PROCESSING": "Processing",
         "PAID": "Paid (Completed)",
         "FAILED": "Transfer Failed",
+        "RETURNED": "Returned by bank",
         "CANCELLED": "Cancelled"
+      },
+      "ERRORS": {
+        "DRIVER_WITHDRAWAL_NOT_DUE": "This withdrawal is not due on the driver's selected payout day.",
+        "PAYOUT_DAY_DISABLED": "The selected payout day is currently disabled in platform settings.",
+        "DRIVER_BANK_ACCOUNT_REQUIRED": "The driver must have an approved bank account before this withdrawal can be processed.",
+        "DRIVER_BANK_IBAN_INVALID": "The driver's registered IBAN is invalid.",
+        "INSUFFICIENT_WITHDRAWABLE_BALANCE": "The driver's withdrawable balance is no longer sufficient.",
+        "WITHDRAWAL_PROCESSING_CONFLICT": "This withdrawal was updated by another operation. Refresh the list and try again.",
+        "PAYOUT_ALREADY_RESERVED": "This payout is already claimed by another administrator.",
+        "PAYOUT_CLAIM_OWNERSHIP_REQUIRED": "Only the administrator who claimed this payout can continue its bank workflow.",
+        "PAYOUT_ALREADY_SUBMITTED": "The bank submission was already recorded and cannot be submitted again.",
+        "PAYOUT_DUAL_CONTROL_REQUIRED": "A different authorized administrator must confirm this transfer.",
+        "PAYOUT_NOT_DUE_TODAY": "This payout cannot be executed outside its configured payout day.",
+        "PAYOUT_CONFIRMATION_DAY_INVALID": "Manual confirmation is allowed only on an enabled payout day.",
+        "PAYOUT_PROOF_MANUAL_SUBMISSION_REQUIRED": "Record the bank submission before uploading the transfer proof.",
+        "PAYOUT_PROOF_ALREADY_FINALIZED": "The proof for this payout has already been finalized.",
+        "PAYOUT_PROOF_RETURN_INVALID_STATUS": "Return proof can only be uploaded for a paid payout.",
+        "PAYOUT_INVALID_STATUS": "This payout is no longer in a state that allows this action.",
+        "PAYOUT_REVERSAL_INVALID_STATUS": "Only a paid payout can be recorded as returned.",
+        "PAYOUT_REVERSAL_RECONCILIATION_REQUIRED": "This payout has an incomplete return record and requires reconciliation.",
+        "PAYOUT_CONCURRENTLY_UPDATED": "Another administrator updated this payout. Refresh and try again.",
+        "FILE_TOO_LARGE": "The transfer proof file is larger than the allowed limit.",
+        "INVALID_FILE_CONTENT_TYPE": "The transfer proof file type is not allowed.",
+        "INVALID_FILE_EXTENSION": "The transfer proof file extension is not allowed.",
+        "INVALID_FILE_SIGNATURE": "The transfer proof contents do not match its declared file type.",
+        "SETTLEMENT_PROCESSING_NOT_MANUAL": "Manual transfer processing is not enabled in platform settings.",
+        "BANK_SUBMISSION_REFERENCE_REQUIRED": "Enter the bank submission reference before continuing.",
+        "RETURN_REFERENCE_REQUIRED": "Enter the bank return reference before continuing."
       }
     },
     "ADJUSTMENTS": {

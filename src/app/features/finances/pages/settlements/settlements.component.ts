@@ -209,6 +209,19 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  </div>
  </app-page-header>
 
+ <app-inline-banner
+ *ngIf="loadError"
+ title="FINANCES.DASHBOARD.LOAD_ERROR_TITLE"
+ message="FINANCES.DASHBOARD.LOAD_ERROR_MESSAGE"
+ icon="error"
+ variant="error">
+ <div actions>
+ <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadSettlements()">
+ {{ 'FINANCES.DASHBOARD.RETRY' | translate }}
+ </app-button>
+ </div>
+ </app-inline-banner>
+
  <!-- بانر الإشعار للفلترة -->
  <app-inline-banner
  *ngIf="hasScope && scopedSettlement"
@@ -367,6 +380,7 @@ export class SettlementsComponent implements OnInit {
  selectedSettlement: Settlement | null = null;
  activeTab: EntityType = 'vendor';
  scopedEntityId: string | null = null;
+ loadError = false;
  manualPayout: SettlementPayout | null = null;
  manualProofFile: File | null = null;
   manualTransferReference = '';
@@ -415,12 +429,19 @@ export class SettlementsComponent implements OnInit {
  }
 
  loadSettlements(): void {
+ this.loadError = false;
  this.financeService.getSettlements({
  entityType: this.activeTab,
  entityId: this.scopedEntityId ?? undefined
- }).pipe(take(1)).subscribe(data => {
+ }).pipe(take(1)).subscribe({
+ next: (data) => {
  this.cdr.markForCheck();
  this.allSettlements = data;
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.loadError = true;
+ }
  });
  }
 

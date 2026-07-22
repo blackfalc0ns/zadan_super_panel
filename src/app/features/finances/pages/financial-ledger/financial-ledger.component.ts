@@ -119,6 +119,19 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  </div>
  </app-page-header>
 
+ <app-inline-banner
+ *ngIf="loadError"
+ title="FINANCES.DASHBOARD.LOAD_ERROR_TITLE"
+ message="FINANCES.DASHBOARD.LOAD_ERROR_MESSAGE"
+ icon="error"
+ variant="error">
+ <div actions>
+ <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadData()">
+ {{ 'FINANCES.DASHBOARD.RETRY' | translate }}
+ </app-button>
+ </div>
+ </app-inline-banner>
+
  <!-- شريط الفلاتر والإشعارات -->
  <div class="flex flex-col gap-4">
  <app-finance-filter-bar
@@ -279,6 +292,7 @@ export class FinancialLedgerComponent implements OnInit {
  filteredEntries: LedgerEntry[] = [];
  selectedEntry: LedgerEntry | null = null;
  isLoading = false;
+ loadError = false;
  page = 1;
  pageSize = 15;
  currentFilter: LedgerFilter = {};
@@ -335,17 +349,25 @@ export class FinancialLedgerComponent implements OnInit {
 
  loadData(filter: LedgerFilter = this.currentFilter): void {
  this.isLoading = true;
+ this.loadError = false;
  this.currentFilter = filter;
  this.financeService.getLedgerEntries({...filter,
  entityType: this.scopedEntityType ?? filter.entityType,
  entityId: this.scopedEntityId ?? filter.entityId,
  orderId: this.scopedOrderId ?? filter.orderId
- }).pipe(take(1)).subscribe(entries => {
+ }).pipe(take(1)).subscribe({
+ next: (entries) => {
  this.cdr.markForCheck();
  this.allEntries = entries;
  this.filteredEntries = entries;
  this.page = 1;
  this.isLoading = false;
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.isLoading = false;
+ this.loadError = true;
+ }
  });
  }
 

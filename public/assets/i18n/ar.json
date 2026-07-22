@@ -1909,6 +1909,7 @@
         "PROCESSING": "قيد المعالجة",
         "PAID": "مكتملة (مدفوعة)",
         "FAILED": "فشلت",
+        "RETURNED": "مرتجعة من البنك",
         "CANCELLED": "ملغاة"
       },
       "TABLE": {
@@ -1924,7 +1925,8 @@
         "FAILURE_REASON": "السبب",
         "APPROVE": "قبول",
         "REJECT": "رفض",
-        "MANAGE_MANUAL_TRANSFER": "إدارة التحويل البنكي"
+        "MANAGE_MANUAL_TRANSFER": "إدارة التحويل البنكي",
+        "RECORD_BANK_RETURN": "تسجيل مرتجع بنكي"
       },
       "NO_DATA_TITLE": "ما فيه طلبات سحب",
       "NO_DATA_DESC": "ما لقينا أي طلبات سحب تطابق حالة الفلتر المحدد الحين.",
@@ -1972,12 +1974,53 @@
         "COMPLETED": "تم تأكيد التحويل بنجاح.",
         "WORKING": "جاري الحفظ..."
       },
+      "RETURN_WORKFLOW": {
+        "TITLE": "تسجيل حوالة مرتجعة من البنك",
+        "SECTION_TITLE": "إعادة مبلغ التحويل إلى محفظة المندوب",
+        "DESC": "استخدم الإجراء فقط بعد تأكيد البنك رجوع حوالة سبق تسجيلها كمدفوعة. يظل إثبات التحويل الأصلي محفوظًا ويُنشأ سجل مرتجع منفصل يعيد المبلغ للمحفظة.",
+        "REFERENCE": "مرجع المرتجع من البنك",
+        "REFERENCE_PLACEHOLDER": "أدخل رقم مرجع المرتجع الموجود في البنك...",
+        "REASON": "سبب رجوع الحوالة (اختياري)",
+        "REASON_PLACEHOLDER": "مثال: الحساب مغلق أو رفض استقبال الحوالة...",
+        "PROOF_FILE": "اختر إثبات رجوع الحوالة",
+        "CONFIRM_ACTION": "تأكيد المرتجع وإعادة الرصيد",
+        "COMPLETED": "تم تسجيل المرتجع وإعادة المبلغ إلى محفظة المندوب."
+      },
       "STATUS_LABELS": {
         "PENDING": "بانتظار المعالجة",
         "PROCESSING": "معالجة",
         "PAID": "مكتمل (دُفع)",
         "FAILED": "فشل التحويل",
+        "RETURNED": "مرتجع من البنك",
         "CANCELLED": "ملغى"
+      },
+      "ERRORS": {
+        "DRIVER_WITHDRAWAL_NOT_DUE": "طلب السحب غير مستحق في يوم التحويل الذي اختاره المندوب.",
+        "PAYOUT_DAY_DISABLED": "يوم التحويل المحدد معطّل حاليًا من إعدادات المنصة.",
+        "DRIVER_BANK_ACCOUNT_REQUIRED": "لازم يكون لدى المندوب حساب بنكي معتمد قبل معالجة طلب السحب.",
+        "DRIVER_BANK_IBAN_INVALID": "رقم الآيبان المسجل للمندوب غير صحيح.",
+        "INSUFFICIENT_WITHDRAWABLE_BALANCE": "الرصيد المتاح للسحب لم يعد كافيًا لإتمام الطلب.",
+        "WITHDRAWAL_PROCESSING_CONFLICT": "تم تحديث الطلب بواسطة عملية أخرى. حدّث القائمة وحاول مرة ثانية.",
+        "PAYOUT_ALREADY_RESERVED": "التحويل محجوز بالفعل بواسطة أدمن آخر.",
+        "PAYOUT_CLAIM_OWNERSHIP_REQUIRED": "فقط الأدمن الذي حجز التحويل يقدر يكمل إجراءات البنك.",
+        "PAYOUT_ALREADY_SUBMITTED": "تم تسجيل إرسال التحويل للبنك من قبل ولا يمكن إرساله مرة ثانية.",
+        "PAYOUT_DUAL_CONTROL_REQUIRED": "لازم أدمن مخوّل آخر يؤكد هذا التحويل.",
+        "PAYOUT_NOT_DUE_TODAY": "لا يمكن تنفيذ التحويل خارج يوم التحويل المحدد له.",
+        "PAYOUT_CONFIRMATION_DAY_INVALID": "تأكيد التحويل اليدوي مسموح فقط في يوم تحويل مفعّل.",
+        "PAYOUT_PROOF_MANUAL_SUBMISSION_REQUIRED": "سجّل إرسال التحويل للبنك قبل رفع إثبات التحويل.",
+        "PAYOUT_PROOF_ALREADY_FINALIZED": "تم اعتماد إثبات هذا التحويل بالفعل.",
+        "PAYOUT_PROOF_RETURN_INVALID_STATUS": "لا يمكن رفع إثبات مرتجع إلا لتحويل حالته مدفوع.",
+        "PAYOUT_INVALID_STATUS": "حالة التحويل الحالية لا تسمح بتنفيذ هذا الإجراء.",
+        "PAYOUT_REVERSAL_INVALID_STATUS": "فقط التحويل المدفوع يمكن تسجيله كمرتجع.",
+        "PAYOUT_REVERSAL_RECONCILIATION_REQUIRED": "سجل المرتجع لهذا التحويل غير مكتمل ويحتاج إلى مراجعة مالية.",
+        "PAYOUT_CONCURRENTLY_UPDATED": "أدمن آخر حدّث التحويل. حدّث البيانات وحاول مرة ثانية.",
+        "FILE_TOO_LARGE": "حجم ملف إثبات التحويل أكبر من الحد المسموح.",
+        "INVALID_FILE_CONTENT_TYPE": "نوع ملف إثبات التحويل غير مسموح.",
+        "INVALID_FILE_EXTENSION": "امتداد ملف إثبات التحويل غير مسموح.",
+        "INVALID_FILE_SIGNATURE": "محتوى ملف الإثبات لا يطابق نوع الملف المعلن.",
+        "SETTLEMENT_PROCESSING_NOT_MANUAL": "نظام التحويل اليدوي غير مفعّل حاليًا في إعدادات المنصة.",
+        "BANK_SUBMISSION_REFERENCE_REQUIRED": "أدخل مرجع إرسال التحويل للبنك قبل المتابعة.",
+        "RETURN_REFERENCE_REQUIRED": "أدخل مرجع المرتجع من البنك قبل المتابعة."
       }
     },
     "ADJUSTMENTS": {

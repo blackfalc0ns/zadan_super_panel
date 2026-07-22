@@ -31,15 +31,17 @@
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div class="space-y-2">
         <label class="text-[11px] font-black uppercase tracking-widest text-slate-500">
-          {{ 'FINANCES.ADJUSTMENTS.FORM.ENTITY_NAME' | translate }}
+          {{ 'FINANCES.ADJUSTMENTS.FORM.ENTITY_ID' | translate }}
         </label>
         <input
           type="text"
-          [(ngModel)]="form.entityName"
-          name="entityName"
+          [(ngModel)]="form.entityId"
+          name="entityId"
           required
-          [placeholder]="'FINANCES.ADJUSTMENTS.FORM.ENTITY_PLACEHOLDER' | translate"
-          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5" />
+          dir="ltr"
+          [placeholder]="'FINANCES.ADJUSTMENTS.FORM.ENTITY_ID_PLACEHOLDER' | translate"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-800 outline-none transition-all focus:border-zadna-primary/50 focus:ring-4 focus:ring-zadna-primary/5 font-mono" />
+        <p class="text-[11px] font-semibold text-slate-400">{{ 'FINANCES.ADJUSTMENTS.FORM.ENTITY_ID_HELPER' | translate }}</p>
       </div>
 
       <div class="space-y-2">
@@ -127,12 +129,16 @@
         <span class="text-sm">{{ 'FINANCES.CURRENCY' | translate }}</span>
       </p>
       <p class="mt-1 text-xs font-bold text-slate-500">
-        {{ 'FINANCES.ADJUSTMENTS.FORM.FOR' | translate:{ entity: form.entityName || ('FINANCES.COMMON.ENTITY' | translate) } }}
+        {{ 'FINANCES.ADJUSTMENTS.FORM.FOR' | translate:{ entity: form.entityId || ('FINANCES.COMMON.ENTITY' | translate) } }}
       </p>
     </div>
   </form>
 
-  <div modal-footer class="flex items-center justify-end gap-3">
+    <p *ngIf="submitError" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700">
+      {{ submitError | translate }}
+    </p>
+
+    <div modal-footer class="flex items-center justify-end gap-3">
     <app-button variant="ghost" size="md" customClass="!rounded-xl" (btnClick)="closeCreateModal()">
       {{ 'FINANCES.COMMON.CANCEL' | translate }}
     </app-button>
@@ -140,7 +146,7 @@
       variant="primary"
       size="md"
       customClass="!rounded-xl shadow-md shadow-zadna-primary/20"
-      [disabled]="!form.reason || !form.amount || !form.entityName"
+      [disabled]="!form.reason || !form.amount || !form.entityId.trim() || isSubmitting"
       (btnClick)="submitAdjustment()">
       <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">task_alt</span>
       {{ 'FINANCES.ADJUSTMENTS.FORM.SUBMIT' | translate }}
@@ -175,7 +181,7 @@
           </span>
         </div>
         <div>
-          <p class="text-[15px] font-black leading-tight text-slate-900">{{ selectedAdjustment.entityName | translate }}</p>
+          <p class="text-[15px] font-black leading-tight text-slate-900">{{ displayLabel(selectedAdjustment.entityName) }}</p>
           <span class="mt-1 inline-flex rounded border px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
                 [ngClass]="getEntityBadgeClass(selectedAdjustment.entityType)">
             {{ getEntityLabelKey(selectedAdjustment.entityType) | translate }}
@@ -211,31 +217,12 @@
         </div>
         <div class="flex items-center justify-between border-b border-dashed border-slate-100 py-2">
           <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.ADJUSTMENTS.DETAIL.CREATED_BY' | translate }}</span>
-          <span class="text-[13px] font-black text-slate-900">{{ selectedAdjustment.adminName | translate }}</span>
+          <span class="text-[13px] font-black text-slate-900">{{ displayLabel(selectedAdjustment.adminName) }}</span>
         </div>
         <div class="py-2">
           <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.ADJUSTMENTS.DETAIL.REASON' | translate }}</span>
-          <p class="mt-2 text-sm font-medium leading-relaxed text-slate-700">{{ selectedAdjustment.reason | translate }}</p>
+          <p class="mt-2 text-sm font-medium leading-relaxed text-slate-700">{{ displayLabel(selectedAdjustment.reason) }}</p>
         </div>
-      </div>
-
-      <div *ngIf="selectedAdjustment.status === 'pending_approval'" class="flex gap-3 pt-2">
-        <app-button
-          variant="primary"
-          size="md"
-          customClass="!flex-1 !rounded-xl !bg-emerald-600 hover:!bg-emerald-700"
-          (btnClick)="approveAdjustment(selectedAdjustment.id, $event)">
-          <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">check_circle</span>
-          {{ 'FINANCES.ADJUSTMENTS.DETAIL.APPROVE' | translate }}
-        </app-button>
-        <app-button
-          variant="outline"
-          size="md"
-          customClass="!flex-1 !rounded-xl !border-rose-200 !text-rose-600 hover:!bg-rose-50"
-          (btnClick)="rejectAdjustment(selectedAdjustment.id, $event)">
-          <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">cancel</span>
-          {{ 'FINANCES.ADJUSTMENTS.DETAIL.REJECT' | translate }}
-        </app-button>
       </div>
     </div>
   </div>
@@ -259,10 +246,16 @@
   </app-page-header>
 
   <app-inline-banner
-    title="FINANCES.ADJUSTMENTS.DEVELOPMENT.TITLE"
-    message="FINANCES.ADJUSTMENTS.DEVELOPMENT.MESSAGE"
-    icon="construction"
-    variant="warning">
+    *ngIf="loadError"
+    title="FINANCES.ADJUSTMENTS.LOAD_ERROR_TITLE"
+    message="FINANCES.ADJUSTMENTS.LOAD_ERROR_MESSAGE"
+    icon="error"
+    variant="error">
+    <div actions>
+      <app-button variant="outline" size="sm" customClass="!rounded-xl !bg-white" (btnClick)="loadAdjustments()">
+        {{ 'FINANCES.DASHBOARD.RETRY' | translate }}
+      </app-button>
+    </div>
   </app-inline-banner>
 
   <app-kpi-cards [cards]="kpiCards"></app-kpi-cards>
@@ -364,7 +357,7 @@
                   </span>
                 </div>
                 <div>
-                  <p class="text-[13px] font-black text-slate-800">{{ adj.entityName | translate }}</p>
+                  <p class="text-[13px] font-black text-slate-800">{{ displayLabel(adj.entityName) }}</p>
                   <p class="text-[10px] font-bold text-slate-400">{{ getEntityLabelKey(adj.entityType) | translate }}</p>
                 </div>
               </div>
