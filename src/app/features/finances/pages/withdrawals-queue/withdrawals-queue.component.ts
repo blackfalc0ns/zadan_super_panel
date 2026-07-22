@@ -116,10 +116,10 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  <div>
  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.WITHDRAWALS.TABLE.STATUS' | translate }}</p>
  <span class="inline-flex px-2 py-1 rounded-md text-[10px] font-black tracking-widest border" [ngClass]="getStatusBadgeClass(req.status)">
- {{ getTranslatedStatus(req.status) }}
+ {{ getTranslatedStatus(req.status) | translate }}
  </span>
  <p *ngIf="req.transferReference" class="mt-1.5 text-[11px] font-bold text-slate-500 font-mono bg-slate-100 px-1.5 py-0.5 rounded w-fit">
- Ref: {{ req.transferReference }}
+ {{ 'FINANCES.WITHDRAWALS.TABLE.REF' | translate }}: {{ req.transferReference }}
  </p>
  <p *ngIf="req.failureReason" class="mt-1.5 text-[11px] font-bold text-red-500 line-clamp-2" [title]="req.failureReason">
  {{ 'FINANCES.WITHDRAWALS.TABLE.FAILURE_REASON' | translate }}: {{ req.failureReason }}
@@ -130,7 +130,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  <div class="flex flex-col items-start xl:items-end gap-4 shrink-0 min-w-[200px] border-t xl:border-t-0 border-slate-100 pt-4 xl:pt-0 w-full xl:w-auto">
  <div class="text-right w-full xl:w-auto rtl:text-left text-left">
  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{{ 'FINANCES.WITHDRAWALS.TABLE.AMOUNT_REQUESTED' | translate }}</p>
- <p class="text-xl font-black text-amber-700 tabular-nums leading-none tracking-tight">{{ formatNumber(req.amount) }} <span class="text-[12px] font-bold">SAR</span></p>
+ <p class="text-xl font-black text-amber-700 tabular-nums leading-none tracking-tight">{{ formatNumber(req.amount) }} <span class="text-[12px] font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
  </div>
 
  <div class="flex gap-2 w-full xl:w-auto" *ngIf="req.status === 'Pending' || req.status === 'Processing'">
@@ -199,7 +199,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  <div>
  <p class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.WITHDRAWALS.MODAL.PAYOUT_METHOD' | translate }}</p>
  <p class="text-[13px] font-black text-slate-800 mt-0.5">{{ selectedRequest.payoutMethod?.providerName || selectedRequest.payoutMethod?.methodType || ('FINANCES.WITHDRAWALS.MODAL.NOT_AVAILABLE' | translate) }}</p>
- <p class="text-[12px] font-bold text-slate-600 font-mono mt-0.5" dir="ltr">{{ selectedRequest.payoutMethod?.maskedLabel || 'N/A' }}</p>
+ <p class="text-[12px] font-bold text-slate-600 font-mono mt-0.5" dir="ltr">{{ selectedRequest.payoutMethod?.maskedLabel || ('FINANCES.WITHDRAWALS.MODAL.NOT_AVAILABLE' | translate) }}</p>
  </div>
  </div>
 
@@ -269,7 +269,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.PAYOUT_ID' | translate }}</p>
  <p class="mt-1 break-all font-mono text-[11px] font-bold text-slate-700">{{ payout.id }}</p>
  </div>
- <span class="rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[10px] font-black text-indigo-700">{{ payout.status }}</span>
+ <span class="rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[10px] font-black text-indigo-700">{{ getTranslatedPayoutStatus(payout.status) | translate }}</span>
  </div>
  </div>
 
@@ -810,7 +810,11 @@ export class WithdrawalsQueueComponent implements OnInit {
  }
 
  getTranslatedStatus(status: string): string {
- return `FINANCES.WITHDRAWALS.STATUS_LABELS.${status.toUpperCase()}`;
+ return `FINANCES.WITHDRAWALS.STATUS_LABELS.${(status || '').toUpperCase()}`;
+ }
+
+ getTranslatedPayoutStatus(status: string): string {
+ return `FINANCES.WITHDRAWALS.PAYOUT_STATUS.${(status || '').toUpperCase()}`;
  }
 
  getStatusBadgeClass(status: string): string {
