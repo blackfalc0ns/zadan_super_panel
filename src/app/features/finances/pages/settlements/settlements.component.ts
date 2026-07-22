@@ -389,6 +389,8 @@ export class SettlementsComponent implements OnInit {
   manualWorkflowStage: 'claim' | 'submission' | 'confirmation' = 'claim';
  manualConfirmationError = '';
  isConfirmingManualPayout = false;
+ private pendingFocusSettlementId: string | null = null;
+ private pendingFocusPayoutId: string | null = null;
 
  get vendorSettlements(): Settlement[] { return this.allSettlements.filter(s => s.entityType === 'vendor'); }
  get driverSettlements(): Settlement[] { return this.allSettlements.filter(s => s.entityType === 'driver'); }
@@ -424,20 +426,27 @@ export class SettlementsComponent implements OnInit {
  if (entityType === 'vendor' || entityType === 'driver') {
  this.activeTab = entityType;
  }
+
+ this.pendingFocusSettlementId = params.get('focus');
+ this.pendingFocusPayoutId = params.get('payoutId');
+ if (this.pendingFocusSettlementId) {
+ this.loadSettlements(true);
+ }
  });
 
  this.loadSettlements();
  }
 
- loadSettlements(): void {
+ loadSettlements(forFocus = false): void {
  this.loadError = false;
  this.financeService.getSettlements({
- entityType: this.activeTab,
- entityId: this.scopedEntityId ?? undefined
+ entityType: forFocus || this.pendingFocusSettlementId ? undefined : this.activeTab,
+ entityId: forFocus || this.pendingFocusSettlementId ? undefined : (this.scopedEntityId ?? undefined)
  }).pipe(take(1)).subscribe({
  next: (data) => {
  this.cdr.markForCheck();
  this.allSettlements = data;
+ this.tryOpenFocusedSettlement();
  },
  error: () => {
  this.cdr.markForCheck();
@@ -628,7 +637,7 @@ export class SettlementsComponent implements OnInit {
   });
   }
 
-  private describeManualWorkflowError(error: unknown): string {
+ private describeManualWorkflowError(error: unknown): string {
   const payload = error instanceof HttpErrorResponse ? error.error : null;
   const rawCode = typeof payload === 'string'
   ? payload
@@ -655,6 +664,65 @@ export class SettlementsComponent implements OnInit {
   return translatedCodes.has(code)
   ? this.translate.instant(`FINANCES.WITHDRAWALS.ERRORS.${code}`)
   : this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
+  }
+
+  private tryOpenFocusedSettlement(): void {
+  const settlementId = this.pendingFocusSettlementId;
+  if (!settlementId) {
+  return;
+  }
+
+  const payoutId = this.pendingFocusPayoutId;
+  const settlement = this.allSettlements.find((item) => item.id === settlementId);
+  if (!settlement) {
+  this.financeService.getSettlement(settlementId).pipe(take(1)).subscribe({
+  next: (loaded) => this.openSettlementFromNotification(loaded, payoutId),
+  error: () => {
+  this.pendingFocusSettlementId = null;
+  this.pendingFocusPayoutId = null;
+  this.clearFinanceFocusQueryParams();
+  }
+  });
+  return;
+  }
+
+  this.openSettlementFromNotification(settlement, payoutId);
+  }
+
+  private openSettlementFromNotification(settlement: Settlement, payoutId: string | null): void {
+  this.pendingFocusSettlementId = null;
+  this.pendingFocusPayoutId = null;
+  this.clearFinanceFocusQueryParams();
+
+  if (settlement.entityType === 'vendor' || settlement.entityType === 'driver') {
+  this.activeTab = settlement.entityType;
+  }
+
+  this.financeService.getSettlement(settlement.id).pipe(take(1)).subscribe({
+  next: (loaded) => {
+  this.cdr.markForCheck();
+  const payout = payoutId
+  ? loaded.payouts?.find((item) => item.id === payoutId) ?? null
+  : this.getResumableManualPayout(loaded);
+  if (payout) {
+  this.openManualWorkflow(loaded, payout);
+  return;
+  }
+  this.openDetail(loaded);
+  },
+  error: () => {
+  this.openDetail(settlement);
+  }
+  });
+  }
+
+  private clearFinanceFocusQueryParams(): void {
+  void this.router.navigate([], {
+  relativeTo: this.route,
+  queryParams: { focus: null, payoutId: null },
+  queryParamsHandling: 'merge',
+  replaceUrl: true
+  });
   }
 
   private updateManualPayoutWorkflow(status: string, executionReservation: SettlementPayout['executionReservation']): void {

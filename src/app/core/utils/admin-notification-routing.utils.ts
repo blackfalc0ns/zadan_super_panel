@@ -141,7 +141,15 @@ function normalizeAdminNotificationTargetUrl(
   }
 
   if (sanitized === '/finances/payouts') {
-    return '/finances/withdrawals';
+    return buildFinanceWithdrawalsTargetUrl(notification, dataObject, parsedData, payload);
+  }
+
+  if (sanitized.startsWith('/finances/withdrawals')) {
+    return buildFinanceWithdrawalsTargetUrl(notification, dataObject, parsedData, payload, sanitized);
+  }
+
+  if (sanitized.startsWith('/finances/settlements')) {
+    return buildFinanceSettlementsTargetUrl(notification, dataObject, parsedData, payload, sanitized);
   }
 
   const disputeCaseMatch = /^\/disputes\?(?:.*&)?caseId=([^&#]+)/i.exec(sanitized)
@@ -243,11 +251,23 @@ function resolveAdminNotificationTypeTargetUrl(
   }
 
   if (type === 'payout.requires_review') {
-    return '/finances/withdrawals';
+    return buildFinanceWithdrawalsTargetUrl(notification, dataObject, parsedData, payload);
+  }
+
+  if (type === 'settlement.requested') {
+    return buildFinanceSettlementsTargetUrl(notification, dataObject, parsedData, payload)
+      ?? buildFinanceWithdrawalsTargetUrl(notification, dataObject, parsedData, payload)
+      ?? '/finances/settlements';
+  }
+
+  if (type === 'settlement.failed') {
+    return buildFinanceSettlementsTargetUrl(notification, dataObject, parsedData, payload)
+      ?? '/finances/settlements';
   }
 
   if (type.startsWith('settlement.')) {
-    return '/finances/settlements';
+    return buildFinanceSettlementsTargetUrl(notification, dataObject, parsedData, payload)
+      ?? '/finances/settlements';
   }
 
   if (type.startsWith('refund.')) {
@@ -312,7 +332,9 @@ function resolveAdminNotificationCategoryTargetUrl(
     case 'refunds':
       return caseId ? `/finances/refunds?focus=${encodeURIComponent(caseId)}` : '/finances/refunds';
     case 'settlements':
-      return '/finances/settlements';
+      return buildFinanceSettlementsTargetUrl(notification, dataObject, parsedData, payload)
+        ?? buildFinanceWithdrawalsTargetUrl(notification, dataObject, parsedData, payload)
+        ?? '/finances/settlements';
     case 'disputes':
       return caseId ? `/disputes?focus=${encodeURIComponent(caseId)}` : '/disputes';
     case 'support':
@@ -432,4 +454,91 @@ function isVendorProfileSection(section: string): boolean {
     || normalized === 'contact'
     || normalized === 'legal'
     || normalized === 'banking';
+}
+
+function buildFinanceWithdrawalsTargetUrl(
+  notification: AdminNotification,
+  dataObject: NotificationData | null,
+  parsedData: NotificationData | null,
+  payload: NotificationData | null,
+  fallback = '/finances/withdrawals'
+): string {
+  const sanitizedFallback = sanitizeAdminNotificationInternalPath(fallback) ?? '/finances/withdrawals';
+  if (/focus=|payoutid=/i.test(sanitizedFallback)) {
+    return sanitizedFallback;
+  }
+
+  const withdrawalId = extractString(
+    payload?.['withdrawalId'],
+    dataObject?.['withdrawalId'],
+    parsedData?.['withdrawalId'],
+    notification.referenceId
+  );
+  if (withdrawalId) {
+    return `/finances/withdrawals?focus=${encodeURIComponent(withdrawalId)}`;
+  }
+
+  const payoutId = extractString(
+    payload?.['payoutId'],
+    payload?.['Id'],
+    dataObject?.['payoutId'],
+    parsedData?.['payoutId'],
+    notification.referenceId
+  );
+  if (payoutId) {
+    return `/finances/withdrawals?payoutId=${encodeURIComponent(payoutId)}`;
+  }
+
+  return sanitizedFallback;
+}
+
+function buildFinanceSettlementsTargetUrl(
+  notification: AdminNotification,
+  dataObject: NotificationData | null,
+  parsedData: NotificationData | null,
+  payload: NotificationData | null,
+  fallback = '/finances/settlements'
+): string | null {
+  const sanitizedFallback = sanitizeAdminNotificationInternalPath(fallback) ?? '/finances/settlements';
+  if (sanitizedFallback.includes('focus=')) {
+    return appendFinanceQueryParam(sanitizedFallback, 'payoutId', extractString(
+      payload?.['payoutId'],
+      payload?.['Id'],
+      dataObject?.['payoutId'],
+      parsedData?.['payoutId']
+    ));
+  }
+
+  const settlementId = extractString(
+    payload?.['settlementId'],
+    dataObject?.['settlementId'],
+    parsedData?.['settlementId'],
+    notification.referenceId
+  );
+  if (!settlementId) {
+    return sanitizedFallback === '/finances/settlements' ? null : sanitizedFallback;
+  }
+
+  const payoutId = extractString(
+    payload?.['payoutId'],
+    payload?.['Id'],
+    dataObject?.['payoutId'],
+    parsedData?.['payoutId']
+  );
+
+  let url = `/finances/settlements?focus=${encodeURIComponent(settlementId)}`;
+  if (payoutId) {
+    url = appendFinanceQueryParam(url, 'payoutId', payoutId);
+  }
+
+  return url;
+}
+
+function appendFinanceQueryParam(url: string, key: string, value: string | null): string {
+  if (!value || url.toLowerCase().includes(`${key.toLowerCase()}=`)) {
+    return url;
+  }
+
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}${key}=${encodeURIComponent(value)}`;
 }

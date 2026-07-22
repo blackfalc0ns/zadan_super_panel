@@ -58,17 +58,53 @@ describe('resolveAdminNotificationTargetUrl', () => {
  expect(url).toBe('/drivers/driver-1');
  });
 
- it('routes payout review alerts to withdrawals queue', () => {
+ it('routes payout review alerts to withdrawals queue with payoutId focus', () => {
  const url = resolveAdminNotificationTargetUrl(buildNotification({
  type: 'payout.requires_review',
  category: 'settlements',
  referenceId: 'payout-1',
  dataObject: {
- targetUrl: '/finances/payouts'
+ targetUrl: '/finances/payouts',
+ payload: {
+ payoutId: 'payout-1'
+ }
  }
  }));
 
- expect(url).toBe('/finances/withdrawals');
+ expect(url).toBe('/finances/withdrawals?payoutId=payout-1');
+ });
+
+ it('routes driver withdrawal alerts to withdrawals queue with focus', () => {
+ const url = resolveAdminNotificationTargetUrl(buildNotification({
+ type: 'settlement.requested',
+ category: 'settlements',
+ referenceId: 'withdrawal-1',
+ dataObject: {
+ targetUrl: '/finances/withdrawals',
+ payload: {
+ withdrawalId: 'withdrawal-1'
+ }
+ }
+ }));
+
+ expect(url).toBe('/finances/withdrawals?focus=withdrawal-1');
+ });
+
+ it('routes settlement failure alerts to settlement detail focus', () => {
+ const url = resolveAdminNotificationTargetUrl(buildNotification({
+ type: 'settlement.failed',
+ category: 'settlements',
+ referenceId: 'payout-1',
+ dataObject: {
+ targetUrl: '/finances/settlements',
+ payload: {
+ settlementId: 'settlement-1',
+ payoutId: 'payout-1'
+ }
+ }
+ }));
+
+ expect(url).toBe('/finances/settlements?focus=settlement-1&payoutId=payout-1');
  });
 
  it('maps dispute caseId query params to focus', () => {

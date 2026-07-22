@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
@@ -376,6 +378,9 @@ export class WithdrawalsQueueComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
  private readonly walletsService = inject(WalletsService);
  private readonly translate = inject(TranslateService);
+ private readonly route = inject(ActivatedRoute);
+ private readonly router = inject(Router);
+ private readonly destroyRef = inject(DestroyRef);
 
  withdrawals: AdminDriverWithdrawalRequestDto[] = [];
  isLoading = false;
@@ -415,8 +420,18 @@ export class WithdrawalsQueueComponent implements OnInit {
  ];
 
  processForm = { failureReason: '' };
+ private pendingFocusWithdrawalId: string | null = null;
+ private pendingFocusPayoutId: string | null = null;
 
  ngOnInit(): void {
+ this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+ this.pendingFocusWithdrawalId = params.get('focus');
+ this.pendingFocusPayoutId = params.get('payoutId');
+ if (this.pendingFocusWithdrawalId || this.pendingFocusPayoutId) {
+ this.loadData(true);
+ }
+ });
+
  this.loadData();
  this.loadProcessingMode();
  }
@@ -434,14 +449,20 @@ export class WithdrawalsQueueComponent implements OnInit {
  });
  }
 
- loadData(): void {
+ loadData(forFocus = false): void {
  this.isLoading = true;
- this.walletsService.getWithdrawals(this.status ?? undefined, this.page, this.pageSize).pipe(take(1)).subscribe({
+ const shouldLoadAllForFocus = forFocus || !!this.pendingFocusWithdrawalId || !!this.pendingFocusPayoutId;
+ this.walletsService.getWithdrawals(
+ shouldLoadAllForFocus ? undefined : (this.status ?? undefined),
+ shouldLoadAllForFocus ? 1 : this.page,
+ shouldLoadAllForFocus ? 100 : this.pageSize
+ ).pipe(take(1)).subscribe({
  next: (data) => {
  this.cdr.markForCheck();
  this.withdrawals = data.items;
  this.totalCount = data.totalCount;
  this.isLoading = false;
+ this.tryOpenFocusedRequest();
  },
  error: () => {
  this.cdr.markForCheck();
@@ -731,6 +752,46 @@ export class WithdrawalsQueueComponent implements OnInit {
  return translatedCodes.has(code)
  ? `FINANCES.WITHDRAWALS.ERRORS.${code}`
  : 'FINANCES.WITHDRAWALS.WORKFLOW.ACTION_ERROR';
+ }
+
+ private tryOpenFocusedRequest(): void {
+ const withdrawalId = this.pendingFocusWithdrawalId;
+ const payoutId = this.pendingFocusPayoutId;
+ if (!withdrawalId && !payoutId) {
+ return;
+ }
+
+ const request = withdrawalId
+ ? this.withdrawals.find((item) => item.id === withdrawalId)
+ : this.withdrawals.find((item) => item.payoutId === payoutId);
+ if (!request) {
+ return;
+ }
+
+ this.pendingFocusWithdrawalId = null;
+ this.pendingFocusPayoutId = null;
+ this.clearFinanceFocusQueryParams();
+ this.openNotificationTarget(request);
+ }
+
+ private openNotificationTarget(request: AdminDriverWithdrawalRequestDto): void {
+ if (request.payoutId && ['Processing', 'Paid', 'Failed', 'Returned'].includes(request.status)) {
+ this.openManualWorkflow(request);
+ return;
+ }
+
+ if (request.status === 'Pending') {
+ this.openProcessModal(request, true);
+ }
+ }
+
+ private clearFinanceFocusQueryParams(): void {
+ void this.router.navigate([], {
+ relativeTo: this.route,
+ queryParams: { focus: null, payoutId: null },
+ queryParamsHandling: 'merge',
+ replaceUrl: true
+ });
  }
 
  formatDate(ts: string): string {
