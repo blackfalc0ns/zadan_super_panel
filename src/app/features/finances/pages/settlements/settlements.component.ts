@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { finalize, switchMap, take } from 'rxjs';
 import { FinanceService } from '../../services/finance.service';
 import { Settlement, EntityType, SettlementPayout } from '../../models/finance.models';
@@ -530,9 +531,14 @@ export class SettlementsComponent implements OnInit {
   this.manualConfirmationError = '';
 
   const status = payout.executionReservation?.status;
+  const isLegacyBackfill = this.manualBankSubmissionReference.trim() === 'Legacy manual payout awaiting confirmation';
   if (status === 'Submitted') {
   this.manualWorkflowStage = 'confirmation';
+  if (!isLegacyBackfill) {
   this.manualTransferReference ||= this.manualBankSubmissionReference;
+  } else {
+  this.manualTransferReference = payout.transferReference || '';
+  }
   return;
   }
 
@@ -587,8 +593,8 @@ export class SettlementsComponent implements OnInit {
   this.manualWorkflowStage = 'confirmation';
   this.manualTransferReference ||= this.manualBankSubmissionReference.trim();
   },
-  error: () => {
-  this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
+  error: (error) => {
+  this.manualConfirmationError = this.describeManualWorkflowError(error);
   }
   });
   }
@@ -616,10 +622,39 @@ export class SettlementsComponent implements OnInit {
  this.selectedSettlement = null;
  this.loadSettlements();
  },
-  error: () => {
-  this.manualConfirmationError = this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
+  error: (error) => {
+  this.manualConfirmationError = this.describeManualWorkflowError(error);
   }
   });
+  }
+
+  private describeManualWorkflowError(error: unknown): string {
+  const payload = error instanceof HttpErrorResponse ? error.error : null;
+  const rawCode = typeof payload === 'string'
+  ? payload
+  : payload?.errorCode ?? payload?.error ?? payload?.code ?? payload?.title;
+  const code = typeof rawCode === 'string' ? rawCode.trim().toUpperCase() : '';
+  const translatedCodes = new Set([
+  'PAYOUT_NOT_DUE_TODAY',
+  'PAYOUT_CONFIRMATION_DAY_INVALID',
+  'PAYOUT_DAY_DISABLED',
+  'PAYOUT_DUAL_CONTROL_REQUIRED',
+  'PAYOUT_MANUAL_CLAIM_REQUIRED',
+  'PAYOUT_RESERVATION_NOT_SUBMITTED',
+  'PAYOUT_PROOF_NOT_FOUND',
+  'PAYOUT_PROOF_PAYOUT_MISMATCH',
+  'PAYOUT_PROOF_KIND_MISMATCH',
+  'PAYOUT_PROOF_ALREADY_FINALIZED',
+  'PAYOUT_INVALID_STATUS',
+  'PAYOUT_ALREADY_PAID',
+  'SETTLEMENT_APPROVAL_REQUIRED',
+  'TRANSFER_REFERENCE_REQUIRED',
+  'PAYOUT_PROOF_REQUIRED'
+  ]);
+
+  return translatedCodes.has(code)
+  ? this.translate.instant(`FINANCES.WITHDRAWALS.ERRORS.${code}`)
+  : this.translate.instant('FINANCES.SETTLEMENTS.MANUAL_CONFIRM.CONFIRM_ERROR');
   }
 
   private updateManualPayoutWorkflow(status: string, executionReservation: SettlementPayout['executionReservation']): void {
