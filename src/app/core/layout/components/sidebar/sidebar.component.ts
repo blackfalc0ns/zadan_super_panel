@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Input, Output, EventEmitter, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { IsActiveMatchOptions, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
@@ -26,38 +26,36 @@ export class SidebarComponent {
     private readonly destroyRef = inject(DestroyRef);
     private readonly authService = inject(AuthService);
     private readonly accessService = inject(AccessService);
-    
+    private activePath = this.normalizePath(this.router.url);
+
     readonly currentUser$ = this.authService.currentUser$;
+
+    private readonly baseNavClasses =
+        'flex w-full items-center rounded-xl py-2.5 text-start text-[13px] font-bold transition-colors duration-150 group relative overflow-hidden';
+    private readonly activeNavClasses =
+        'bg-gradient-to-r from-white/15 to-transparent border-s-2 border-zadna-accent text-white shadow-[inset_10px_0_20px_-10px_rgba(255,255,255,0.15)]';
+    private readonly idleNavClasses =
+        'text-white/60 hover:bg-white/10 hover:text-white border-s-2 border-transparent';
 
     constructor() {
         this.router.events
             .pipe(
-                filter((event) => event instanceof NavigationEnd),
+                filter((event): event is NavigationEnd => event instanceof NavigationEnd),
                 takeUntilDestroyed(this.destroyRef)
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe((event) => {
+                this.activePath = this.normalizePath(event.urlAfterRedirects);
+                this.cdr.markForCheck();
+            });
     }
-
-    private readonly exactMatchOptions: IsActiveMatchOptions = {
-        paths: 'exact',
-        queryParams: 'ignored',
-        matrixParams: 'ignored',
-        fragment: 'ignored'
-    };
-
-    private readonly subsetMatchOptions: IsActiveMatchOptions = {
-        paths: 'subset',
-        queryParams: 'ignored',
-        matrixParams: 'ignored',
-        fragment: 'ignored'
-    };
 
     hasAnyPermission(permissions: string[]): boolean {
         return this.accessService.hasAnyPermission(permissions);
     }
 
     navigateTo(route: string): void {
-        if (this.router.url === route) {
+        const target = this.normalizePath(route);
+        if (this.activePath === target) {
             return;
         }
 
@@ -65,7 +63,7 @@ export class SidebarComponent {
     }
 
     get currentVendorId(): string | null {
-        const match = this.router.url.match(/^\/vendors\/([^/?#]+)/);
+        const match = this.activePath.match(/^\/vendors\/([^/]+)/);
         const candidate = match?.[1]?.trim();
         return candidate && candidate !== 'view' ? candidate : null;
     }
@@ -83,19 +81,23 @@ export class SidebarComponent {
         return route ? this.isActive(route, true) : false;
     }
 
-    navItemClasses(route: string, exact = false): string[] {
-        return [
-            'flex w-full items-center rounded-xl py-2.5 text-start text-[13px] font-bold transition-all duration-500 group relative overflow-hidden',
-            this.isCollapsed ? 'justify-center px-0' : 'gap-3 px-3',
-            this.isActive(route, exact)
-                ? 'bg-gradient-to-r from-white/15 to-transparent border-s-2 border-zadna-accent text-white shadow-[inset_10px_0_20px_-10px_rgba(255,255,255,0.15)]'
-                : 'text-white/60 hover:bg-white/10 hover:text-white hover:translate-x-1 border-s-2 border-transparent'
-        ];
+    navItemClasses(route: string, exact = false): string {
+        const layout = this.isCollapsed ? 'justify-center px-0' : 'gap-3 px-3';
+        const state = this.isActive(route, exact) ? this.activeNavClasses : this.idleNavClasses;
+        return `${this.baseNavClasses} ${layout} ${state}`;
     }
 
     private isActive(route: string, exact: boolean): boolean {
-        return this.router.isActive(
-            route,
-            exact ? this.exactMatchOptions : this.subsetMatchOptions);
+        const target = this.normalizePath(route);
+        if (exact) {
+            return this.activePath === target;
+        }
+
+        return this.activePath === target || this.activePath.startsWith(`${target}/`);
+    }
+
+    private normalizePath(url: string): string {
+        const path = (url || '/').split('?')[0].split('#')[0] || '/';
+        return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
     }
 }
