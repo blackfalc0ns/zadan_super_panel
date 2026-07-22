@@ -3,7 +3,7 @@ import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorR
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as echarts from 'echarts/core';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';

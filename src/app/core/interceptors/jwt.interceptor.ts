@@ -100,13 +100,13 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(req).pipe(
         retry({
-            count: shouldRetryReadRequest(req, isPublicGeographyRead) ? 2 : 0,
+            count: shouldRetryReadRequest(req, isPublicGeographyRead) ? 1 : 0,
             delay: (error: unknown, retryCount: number) => {
                 if (!isTransientReadError(error)) {
                     return throwError(() => error);
                 }
 
-                return timer(250 * (2 ** (retryCount - 1)));
+                return timer(200 * retryCount);
             }
         }),
         catchError((error: HttpErrorResponse) => {
@@ -175,7 +175,6 @@ function shouldRetryReadRequest(req: HttpRequest<unknown>, isPublicGeographyRead
 function isTransientReadError(error: unknown): boolean {
     return error instanceof HttpErrorResponse &&
         (error.status === 0 ||
-            error.status === 429 ||
             error.status === 502 ||
             error.status === 503 ||
             error.status === 504);

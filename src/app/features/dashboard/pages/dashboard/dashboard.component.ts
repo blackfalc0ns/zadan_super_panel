@@ -17,7 +17,7 @@ import {
  DashboardChartPoint
 } from '../../models/dashboard.models';
 import * as echarts from 'echarts/core';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';

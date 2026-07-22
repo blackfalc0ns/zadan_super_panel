@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, Observable, catchError, filter, firstValueFrom, from, map, of, switchMap, take, tap, throwError, timeout } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, filter, finalize, firstValueFrom, from, map, of, shareReplay, switchMap, take, tap, throwError, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface AccessScope {
@@ -75,6 +75,7 @@ const DEV_ADMIN_USER: AdminUser = {
 const DEV_BYPASS_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
 
 const IDLE_TIMEOUT_MS = 10 * 60 * 60 * 1000; // 10 hours
+const IDLE_ACTIVITY_PERSIST_INTERVAL_MS = 30_000;
 const IDLE_ACTIVITY_EVENTS: ReadonlyArray<keyof WindowEventMap> = [
     'mousemove',
     'mousedown',
@@ -113,6 +114,9 @@ export class AuthService {
     private idleListenersBound = false;
     private sessionExpiryRedirectPending = false;
     private readonly devBypassEnabled: boolean;
+    private lastActivityAtMs = 0;
+    private lastActivityPersistAtMs = 0;
+    private refreshInFlight$: Observable<RefreshResponse | null> | null = null;
 
     /**
      * Cached CSRF token. Refreshed when the server invalidates it (we receive
@@ -254,7 +258,7 @@ export class AuthService {
                     this.clearLoginRequired();
                     this.sessionExpiryRedirectPending = false;
                     this.accessToken = response.tokens?.accessToken ?? null;
-                    this.touchActivity();
+                    this.touchActivity(true);
                     this.startIdleWatchdog();
                     this.safeLocalSet(USER_PROFILE_STORAGE_KEY, JSON.stringify(response.user));
                     this.currentUserSubject.next(response.user);
@@ -267,25 +271,33 @@ export class AuthService {
     }
 
     public refreshAccessToken(): Observable<RefreshResponse | null> {
-        return this.http
-            .post<RefreshResponse>(`${this.apiUrl}/refresh-token`, {}, { withCredentials: true })
-            .pipe(
-                tap(response => {
-                    if (response?.accessToken) {
-                        this.accessToken = response.accessToken;
-                        this.touchActivity();
-                        // Proactively fetch a fresh CSRF token since the old one was deleted upon token refresh.
-                        void this.acquireCsrfToken().catch(() => undefined);
-                    }
-                }),
-                catchError((err: HttpErrorResponse) => {
-                    if (err.status === 401 || err.status === 403) {
-                        this.forceLogoutForExpiredSession();
-                        return of(null);
-                    }
-                    return throwError(() => err);
-                })
-            );
+        if (!this.refreshInFlight$) {
+            this.refreshInFlight$ = this.http
+                .post<RefreshResponse>(`${this.apiUrl}/refresh-token`, {}, { withCredentials: true })
+                .pipe(
+                    tap(response => {
+                        if (response?.accessToken) {
+                            this.accessToken = response.accessToken;
+                            this.touchActivity(true);
+                            // Proactively fetch a fresh CSRF token since the old one was deleted upon token refresh.
+                            void this.acquireCsrfToken().catch(() => undefined);
+                        }
+                    }),
+                    catchError((err: HttpErrorResponse) => {
+                        if (err.status === 401 || err.status === 403) {
+                            this.forceLogoutForExpiredSession();
+                            return of(null);
+                        }
+                        return throwError(() => err);
+                    }),
+                    finalize(() => {
+                        this.refreshInFlight$ = null;
+                    }),
+                    shareReplay({ bufferSize: 1, refCount: false })
+                );
+        }
+
+        return this.refreshInFlight$;
     }
 
     public changeTemporaryPassword(currentPassword: string, newPassword: string): Observable<void> {
@@ -419,8 +431,20 @@ export class AuthService {
         this.redirectToLoginForExpiredSession();
     }
 
-    public touchActivity(): void {
-        this.safeLocalSet(LAST_ACTIVITY_STORAGE_KEY, Date.now().toString());
+    public touchActivity(forcePersist = false): void {
+        const now = Date.now();
+        this.lastActivityAtMs = now;
+
+        if (
+            !forcePersist &&
+            this.lastActivityPersistAtMs > 0 &&
+            now - this.lastActivityPersistAtMs < IDLE_ACTIVITY_PERSIST_INTERVAL_MS
+        ) {
+            return;
+        }
+
+        this.lastActivityPersistAtMs = now;
+        this.safeLocalSet(LAST_ACTIVITY_STORAGE_KEY, now.toString());
     }
 
     /**
@@ -656,17 +680,16 @@ export class AuthService {
     // --------------------------------------------------------------------
 
     private isIdleTimedOut(): boolean {
-        const raw = this.safeLocalGet(LAST_ACTIVITY_STORAGE_KEY);
-        if (!raw) {
-            this.touchActivity();
+        const lastKnown = this.lastActivityAtMs > 0
+            ? this.lastActivityAtMs
+            : Number(this.safeLocalGet(LAST_ACTIVITY_STORAGE_KEY));
+
+        if (!Number.isFinite(lastKnown) || lastKnown <= 0) {
+            this.touchActivity(true);
             return false;
         }
-        const last = Number(raw);
-        if (!Number.isFinite(last)) {
-            this.touchActivity();
-            return false;
-        }
-        return Date.now() - last > IDLE_TIMEOUT_MS;
+
+        return Date.now() - lastKnown > IDLE_TIMEOUT_MS;
     }
 
     private startIdleWatchdog(): void {
@@ -674,7 +697,7 @@ export class AuthService {
             return;
         }
         this.idleListenersBound = true;
-        this.touchActivity();
+        this.touchActivity(true);
 
         const handleActivity = () => this.touchActivity();
 

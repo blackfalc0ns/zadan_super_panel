@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LangChangeEvent, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../services/auth.service';
@@ -13,7 +13,7 @@ import { AdminNotificationRealtimeService } from '../services/admin-notification
 import { AdminNotification, AdminNotificationsService } from '../services/admin-notifications.service';
 import { AdminNotificationSoundService } from '../services/admin-notification-sound.service';
 import { AdminOneSignalService } from '../services/admin-one-signal.service';
-import { interval } from 'rxjs';
+import { filter, interval } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -76,10 +76,13 @@ export class LayoutComponent {
       });
 
     this.router.events
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe(() => {
-      this.cdr.markForCheck();
         this.isSidebarOpen = false;
+        this.cdr.markForCheck();
       });
 
     this.adminNotificationsService.refreshRecent()

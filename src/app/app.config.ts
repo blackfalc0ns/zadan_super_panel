@@ -51,7 +51,7 @@ export class MultiTranslateHttpLoader implements TranslateLoader {
 
   getTranslation(lang: string): Observable<any> {
     const requests = this.files.map((file) =>
-      this.http.get(`assets/i18n/${lang}/${file}.json?v=${new Date().getTime()}`).pipe(
+      this.http.get(`assets/i18n/${lang}/${file}.json`).pipe(
         catchError((err) => {
           console.error(`Failed to load translation file: ${lang}/${file}.json`, err);
           return of({});

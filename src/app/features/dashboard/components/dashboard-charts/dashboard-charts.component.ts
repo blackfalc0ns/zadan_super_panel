@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxEchartsDirective } from 'ngx-echarts';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { DashboardSeriesChart } from '../../models/dashboard.models';
 
 @Component({
