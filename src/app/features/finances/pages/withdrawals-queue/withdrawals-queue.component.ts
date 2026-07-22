@@ -16,7 +16,6 @@ import {
 } from '../../services/wallets.service';
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
-import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,8 +28,7 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  AppPaginationComponent,
  AppCardComponent,
  MoneyBadgeComponent,
- AppPageHeaderComponent,
- AppButtonComponent
+ AppPageHeaderComponent
  ],
  template: `
  <div class="flex flex-col gap-6 animate-in fade-in duration-700">
@@ -133,21 +131,39 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  <p class="text-xl font-black text-amber-700 tabular-nums leading-none tracking-tight">{{ formatNumber(req.amount) }} <span class="text-[12px] font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span></p>
  </div>
 
- <div class="flex gap-2 w-full xl:w-auto" *ngIf="req.status === 'Pending' || req.status === 'Processing'">
- <app-button *ngIf="req.status === 'Pending' || !req.payoutId" variant="primary" size="sm" customClass="!rounded-xl flex-1 xl:flex-none shadow-sm !bg-emerald-600 hover:!bg-emerald-700" (btnClick)="openProcessModal(req, true)">
+ <div class="flex flex-wrap gap-2 w-full xl:w-auto xl:justify-end" *ngIf="req.status === 'Pending' || req.status === 'Processing'">
+ <button
+ *ngIf="req.status === 'Pending' || !req.payoutId"
+ type="button"
+ (click)="openProcessModal(req, true)"
+ class="inline-flex h-9 flex-1 xl:flex-none items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-4 text-[12px] font-black text-white transition hover:bg-emerald-700">
+ <span class="material-symbols-outlined text-[16px]">check_circle</span>
  {{ 'FINANCES.WITHDRAWALS.TABLE.APPROVE' | translate }}
- </app-button>
- <app-button *ngIf="canManageManualTransfer(req)" variant="primary" size="sm" customClass="!rounded-xl flex-1 xl:flex-none shadow-sm !bg-indigo-600 hover:!bg-indigo-700" (btnClick)="openManualWorkflow(req)">
+ </button>
+ <button
+ *ngIf="canManageManualTransfer(req)"
+ type="button"
+ (click)="openManualWorkflow(req)"
+ class="inline-flex h-9 flex-1 xl:flex-none items-center justify-center gap-1.5 rounded-xl bg-violet-700 px-4 text-[12px] font-black text-white transition hover:bg-violet-800">
+ <span class="material-symbols-outlined text-[16px]">account_balance</span>
  {{ 'FINANCES.WITHDRAWALS.TABLE.MANAGE_MANUAL_TRANSFER' | translate }}
- </app-button>
- <app-button variant="outline" size="sm" customClass="!rounded-xl flex-1 xl:flex-none border-red-200 text-red-600 hover:bg-red-50" (btnClick)="openProcessModal(req, false)">
+ </button>
+ <button
+ type="button"
+ (click)="openProcessModal(req, false)"
+ class="inline-flex h-9 flex-1 xl:flex-none items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-white px-4 text-[12px] font-black text-rose-600 transition hover:bg-rose-50">
+ <span class="material-symbols-outlined text-[16px]">cancel</span>
  {{ 'FINANCES.WITHDRAWALS.TABLE.REJECT' | translate }}
- </app-button>
+ </button>
  </div>
- <div class="flex gap-2 w-full xl:w-auto" *ngIf="req.status === 'Paid' && req.payoutId">
- <app-button variant="outline" size="sm" customClass="!rounded-xl flex-1 xl:flex-none border-violet-200 text-violet-700 hover:bg-violet-50" (btnClick)="openReturnWorkflow(req)">
+ <div class="flex gap-2 w-full xl:w-auto xl:justify-end" *ngIf="req.status === 'Paid' && req.payoutId">
+ <button
+ type="button"
+ (click)="openReturnWorkflow(req)"
+ class="inline-flex h-9 w-full xl:w-auto items-center justify-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-4 text-[12px] font-black text-amber-800 transition hover:bg-amber-100">
+ <span class="material-symbols-outlined text-[16px]">keyboard_return</span>
  {{ 'FINANCES.WITHDRAWALS.TABLE.RECORD_BANK_RETURN' | translate }}
- </app-button>
+ </button>
  </div>
  </div>
 
@@ -174,203 +190,302 @@ import { AppButtonComponent } from '../../../../shared/components/ui/button/butt
  </div>
  </div>
 
- <!-- نافذة معالجة الطلب (Process Modal) -->
+ <!-- نافذة معالجة الطلب (Process Modal) — نفس نمط مودالات المالية -->
  <div *ngIf="isProcessModalOpen && selectedRequest" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
- <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="closeProcessModal()"></div>
- <div class="relative bg-white rounded-3xl shadow-xl w-full max-w-md animate-in zoom-in-95 duration-200 overflow-hidden">
- 
- <div class="px-6 py-6 text-white text-center"
- [ngClass]="isApproving ? 'bg-emerald-600' : 'bg-red-600'">
- <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3 backdrop-blur-md">
- <span class="material-symbols-outlined text-[28px]">{{ isApproving ? 'check_circle' : 'cancel' }}</span>
- </div>
- <h3 class="text-xl font-black mb-1">
+ <div class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" (click)="closeProcessModal()"></div>
+ <section class="relative flex w-full max-w-lg max-h-[90vh] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+ <header
+ class="border-b px-6 py-5"
+ [ngClass]="isApproving ? 'border-emerald-100 bg-emerald-50' : 'border-rose-100 bg-rose-50'">
+ <div class="flex items-start justify-between gap-4">
+ <div class="flex gap-3">
+ <span
+ class="material-symbols-outlined mt-0.5 text-[24px]"
+ [ngClass]="isApproving ? 'text-emerald-700' : 'text-rose-700'">
+ {{ isApproving ? 'check_circle' : 'cancel' }}
+ </span>
+ <div>
+ <h2 class="text-[16px] font-black text-slate-950">
  {{ (isApproving ? 'FINANCES.WITHDRAWALS.MODAL.TITLE_APPROVE' : 'FINANCES.WITHDRAWALS.MODAL.TITLE_REJECT') | translate }}
- </h3>
- <p class="text-sm font-medium text-white/90">
- {{ 'FINANCES.WITHDRAWALS.MODAL.DRIVER' | translate }}: {{ selectedRequest.driverName }} • {{ 'FINANCES.WITHDRAWALS.MODAL.AMOUNT' | translate }}: {{ formatNumber(selectedRequest.amount) }} {{ 'FINANCES.CURRENCY' | translate }}
+ </h2>
+ <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-600">
+ {{ selectedRequest.driverName }} · {{ formatNumber(selectedRequest.amount) }} {{ 'FINANCES.CURRENCY' | translate }}
+ </p>
+ </div>
+ </div>
+ <button
+ type="button"
+ (click)="closeProcessModal()"
+ [disabled]="isSubmitting"
+ class="grid h-8 w-8 place-items-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-900 disabled:opacity-50"
+ [attr.aria-label]="'FINANCES.WITHDRAWALS.MODAL.CANCEL' | translate">
+ <span class="material-symbols-outlined text-[18px]">close</span>
+ </button>
+ </div>
+ </header>
+
+ <div class="space-y-5 overflow-y-auto p-6">
+ <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 flex items-start gap-3">
+ <span class="material-symbols-outlined text-slate-400 mt-0.5 text-[20px]">account_balance</span>
+ <div class="min-w-0">
+ <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'FINANCES.WITHDRAWALS.MODAL.PAYOUT_METHOD' | translate }}</p>
+ <p class="mt-1 text-[13px] font-black text-slate-900">{{ selectedRequest.payoutMethod?.providerName || selectedRequest.payoutMethod?.methodType || ('FINANCES.WITHDRAWALS.MODAL.NOT_AVAILABLE' | translate) }}</p>
+ <p class="mt-0.5 font-mono text-[12px] font-bold text-slate-600" dir="ltr">{{ selectedRequest.payoutMethod?.maskedLabel || ('FINANCES.WITHDRAWALS.MODAL.NOT_AVAILABLE' | translate) }}</p>
+ </div>
+ </div>
+
+ <p *ngIf="isApproving" class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-3 text-[12px] font-medium leading-5 text-emerald-900">
+ {{ 'FINANCES.WITHDRAWALS.MODAL.PREPARE_HINT' | translate }}
+ </p>
+
+ <label *ngIf="!isApproving" class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.MODAL.REJECT_REASON' | translate }}</span>
+ <textarea
+ [(ngModel)]="processForm.failureReason"
+ rows="3"
+ class="h-auto w-full resize-none rounded-xl border border-slate-200 px-3 py-3 text-[13px] font-bold text-slate-900 outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
+ [placeholder]="'FINANCES.WITHDRAWALS.MODAL.REJECT_REASON_PLACEHOLDER' | translate"></textarea>
+ </label>
+
+ <p *ngIf="processError" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">
+ {{ processError | translate }}
  </p>
  </div>
 
- <div class="p-6 space-y-5">
- <!-- Payout Method Hint -->
- <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start gap-3">
- <span class="material-symbols-outlined text-slate-400 mt-0.5 text-[20px]">account_balance</span>
- <div>
- <p class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.WITHDRAWALS.MODAL.PAYOUT_METHOD' | translate }}</p>
- <p class="text-[13px] font-black text-slate-800 mt-0.5">{{ selectedRequest.payoutMethod?.providerName || selectedRequest.payoutMethod?.methodType || ('FINANCES.WITHDRAWALS.MODAL.NOT_AVAILABLE' | translate) }}</p>
- <p class="text-[12px] font-bold text-slate-600 font-mono mt-0.5" dir="ltr">{{ selectedRequest.payoutMethod?.maskedLabel || ('FINANCES.WITHDRAWALS.MODAL.NOT_AVAILABLE' | translate) }}</p>
- </div>
- </div>
-
- <div *ngIf="isApproving" class="rounded-xl border border-emerald-100 bg-emerald-50 p-4 flex items-start gap-3">
- <span class="material-symbols-outlined text-emerald-600 text-[20px]">info</span>
- <p class="text-[12px] leading-6 font-bold text-emerald-800">{{ 'FINANCES.WITHDRAWALS.MODAL.PREPARE_HINT' | translate }}</p>
- </div>
-
- <div *ngIf="!isApproving" class="space-y-2">
- <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.MODAL.REJECT_REASON' | translate }}</label>
- <textarea [(ngModel)]="processForm.failureReason" rows="3"
- class="w-full bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-900 py-3 px-4 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition-all placeholder:font-medium resize-none"
- [placeholder]="'FINANCES.WITHDRAWALS.MODAL.REJECT_REASON_PLACEHOLDER' | translate"></textarea>
- </div>
- <div *ngIf="processError" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[12px] font-bold text-red-700">
- {{ processError | translate }}
- </div>
- </div>
-
- <div class="flex gap-3 px-6 py-5 border-t border-slate-100 bg-slate-50/50">
- <app-button variant="ghost" size="md" customClass="!rounded-xl flex-1 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50" (btnClick)="closeProcessModal()">
+ <footer class="flex gap-3 border-t border-slate-100 px-6 py-4">
+ <button
+ type="button"
+ (click)="closeProcessModal()"
+ [disabled]="isSubmitting"
+ class="h-10 flex-1 rounded-xl border border-slate-200 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50">
  {{ 'FINANCES.WITHDRAWALS.MODAL.CANCEL' | translate }}
- </app-button>
- <app-button variant="primary" size="md" customClass="!rounded-xl flex-1 shadow-md"
- [ngClass]="isApproving ? '!bg-emerald-600 hover:!bg-emerald-700 shadow-emerald-600/20' : '!bg-red-600 hover:!bg-red-700 shadow-red-600/20'"
- (btnClick)="submitProcess()"
- [disabled]="isSubmitting || (!isApproving &&!processForm.failureReason.trim())">
+ </button>
+ <button
+ type="button"
+ (click)="submitProcess()"
+ [disabled]="isSubmitting || (!isApproving && !processForm.failureReason.trim())"
+ class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl text-[12px] font-black text-white transition disabled:opacity-50"
+ [ngClass]="isApproving ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'">
+ <span class="material-symbols-outlined text-[17px]">{{ isSubmitting ? 'hourglass_empty' : (isApproving ? 'verified' : 'block') }}</span>
  {{ isSubmitting ? ('FINANCES.WITHDRAWALS.MODAL.PROCESSING' | translate) : ('FINANCES.WITHDRAWALS.MODAL.CONFIRM' | translate) }}
- </app-button>
- </div>
- </div>
+ </button>
+ </footer>
+ </section>
  </div>
 
- <!-- Manual bank workflow: prepare -> claim -> bank submission -> proof/confirm -->
+ <!-- Manual / return bank workflow — نفس نمط مودال التسوية اليدوية -->
  <div *ngIf="isManualWorkflowModalOpen && manualWorkflowRequest" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
  <div class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" (click)="closeManualWorkflow()"></div>
- <div class="relative w-full max-w-2xl max-h-[calc(100vh-2rem)] overflow-y-auto rounded-3xl bg-white shadow-2xl animate-in zoom-in-95 duration-200">
- <div class="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-100 bg-white/95 px-6 py-5 backdrop-blur">
- <div class="flex items-start gap-3">
- <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
- <span class="material-symbols-outlined">account_balance</span>
- </div>
+ <section class="relative flex w-full max-w-lg max-h-[90vh] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+ <header
+ class="border-b px-6 py-5"
+ [ngClass]="isReturnWorkflow ? 'border-amber-100 bg-amber-50' : 'border-violet-100 bg-violet-50'">
+ <div class="flex items-start justify-between gap-4">
+ <div class="flex gap-3">
+ <span
+ class="material-symbols-outlined mt-0.5 text-[24px]"
+ [ngClass]="isReturnWorkflow ? 'text-amber-700' : 'text-violet-700'">
+ {{ isReturnWorkflow ? 'keyboard_return' : 'receipt_long' }}
+ </span>
  <div>
- <h3 class="text-lg font-black text-slate-900">{{ (isReturnWorkflow ? 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.TITLE' : 'FINANCES.WITHDRAWALS.WORKFLOW.TITLE') | translate }}</h3>
- <p class="mt-1 text-[12px] font-bold text-slate-500">{{ manualWorkflowRequest.driverName }} · {{ formatNumber(manualWorkflowRequest.amount) }} {{ 'FINANCES.CURRENCY' | translate }}</p>
+ <h2 class="text-[16px] font-black text-slate-950">
+ {{ (isReturnWorkflow ? 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.TITLE' : 'FINANCES.WITHDRAWALS.WORKFLOW.TITLE') | translate }}
+ </h2>
+ <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-600">
+ {{ manualWorkflowRequest.driverName }} · {{ formatNumber(manualWorkflowRequest.amount) }} {{ 'FINANCES.CURRENCY' | translate }}
+ </p>
  </div>
  </div>
- <button type="button" class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700" (click)="closeManualWorkflow()" [attr.aria-label]="'FINANCES.WITHDRAWALS.WORKFLOW.CLOSE' | translate">
- <span class="material-symbols-outlined">close</span>
+ <button
+ type="button"
+ (click)="closeManualWorkflow()"
+ [disabled]="isManualWorkflowSubmitting"
+ class="grid h-8 w-8 place-items-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-900 disabled:opacity-50"
+ [attr.aria-label]="'FINANCES.WITHDRAWALS.WORKFLOW.CLOSE' | translate">
+ <span class="material-symbols-outlined text-[18px]">close</span>
  </button>
  </div>
+ </header>
 
- <div class="space-y-4 p-6">
+ <div class="flex-1 space-y-5 overflow-y-auto p-6">
  <div *ngIf="isManualWorkflowLoading" class="flex items-center justify-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-5 py-12 text-sm font-bold text-slate-500">
- <span class="h-5 w-5 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-600"></span>
+ <span class="h-5 w-5 animate-spin rounded-full border-2 border-violet-200 border-t-violet-600"></span>
  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.LOADING' | translate }}
  </div>
 
- <div *ngIf="manualWorkflowError" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[12px] font-bold text-red-700">
+ <p *ngIf="manualWorkflowError" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">
  {{ manualWorkflowError | translate }}
- </div>
+ </p>
 
  <ng-container *ngIf="!isManualWorkflowLoading && manualPayout as payout">
  <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
  <div class="flex flex-wrap items-center justify-between gap-2">
- <div>
- <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.PAYOUT_ID' | translate }}</p>
- <p class="mt-1 break-all font-mono text-[11px] font-bold text-slate-700">{{ payout.id }}</p>
+ <div class="min-w-0">
+ <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.PAYOUT_ID' | translate }}</p>
+ <p class="mt-1 break-all font-mono text-[11px] font-bold text-slate-700" dir="ltr">{{ payout.id }}</p>
  </div>
- <span class="rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-[10px] font-black text-indigo-700">{{ getTranslatedPayoutStatus(payout.status) | translate }}</span>
+ <span
+ class="rounded-full border px-2.5 py-1 text-[10px] font-black"
+ [ngClass]="isReturnWorkflow ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-violet-200 bg-violet-50 text-violet-700'">
+ {{ getTranslatedPayoutStatus(payout.status) | translate }}
+ </span>
  </div>
  </div>
 
- <section *ngIf="isReturnWorkflow" class="rounded-2xl border border-violet-200 bg-violet-50/40 p-4">
- <div class="flex items-start gap-3">
- <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-600 text-white">
- <span class="material-symbols-outlined text-[19px]">keyboard_return</span>
- </div>
- <div class="min-w-0 flex-1 space-y-3">
+ <ng-container *ngIf="isReturnWorkflow">
  <div>
  <h4 class="text-[13px] font-black text-slate-900">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.SECTION_TITLE' | translate }}</h4>
- <p class="mt-1 text-[12px] leading-5 font-medium text-slate-600">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.DESC' | translate }}</p>
+ <p class="mt-1 text-[12px] font-medium leading-5 text-slate-600">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.DESC' | translate }}</p>
  </div>
- <div class="space-y-2">
- <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REFERENCE' | translate }}</label>
- <input type="text" [(ngModel)]="returnReference" class="w-full rounded-xl border border-violet-200 bg-white px-3 py-2.5 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500" [placeholder]="'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REFERENCE_PLACEHOLDER' | translate">
- </div>
- <div class="space-y-2">
- <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REASON' | translate }}</label>
- <textarea [(ngModel)]="returnReason" rows="2" class="w-full resize-none rounded-xl border border-violet-200 bg-white px-3 py-2.5 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500" [placeholder]="'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REASON_PLACEHOLDER' | translate"></textarea>
- </div>
- <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-dashed border-violet-300 bg-white px-3 py-3 hover:bg-violet-50">
- <span class="flex items-center gap-2 text-[12px] font-bold text-slate-700"><span class="material-symbols-outlined text-violet-600">upload_file</span>{{ returnProofFile ? returnProofFile.name : ('FINANCES.WITHDRAWALS.RETURN_WORKFLOW.PROOF_FILE' | translate) }}</span>
- <span class="text-[11px] font-black text-violet-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CHOOSE_FILE' | translate }}</span>
- <input type="file" class="hidden" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf" (change)="onReturnProofFileSelected($event)">
+
+ <label class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REFERENCE' | translate }}</span>
+ <input
+ type="text"
+ [(ngModel)]="returnReference"
+ dir="ltr"
+ class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+ [placeholder]="'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REFERENCE_PLACEHOLDER' | translate">
  </label>
- <app-button variant="primary" size="sm" customClass="!rounded-xl !bg-violet-600 hover:!bg-violet-700" (btnClick)="confirmPayoutReturn()" [disabled]="isManualWorkflowSubmitting || !returnReference.trim() || !returnProofFile">
- {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.RETURN_WORKFLOW.CONFIRM_ACTION' | translate) }}
- </app-button>
- <p *ngIf="manualPayout.status === 'Reversed'" class="text-[11px] font-black text-violet-700">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.COMPLETED' | translate }}</p>
- </div>
- </div>
- </section>
 
- <div *ngIf="!isReturnWorkflow" class="space-y-3">
- <section class="rounded-2xl border p-4" [ngClass]="canClaimManualPayout() ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-200 bg-white'">
- <div class="flex items-start gap-3">
- <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[12px] font-black text-white">1</div>
- <div class="min-w-0 flex-1">
- <h4 class="text-[13px] font-black text-slate-900">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_TITLE' | translate }}</h4>
- <p class="mt-1 text-[12px] leading-5 font-medium text-slate-600">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_DESC' | translate }}</p>
- <p *ngIf="manualPayout.executionReservation?.status === 'Claimed'" class="mt-2 text-[11px] font-black text-indigo-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIMED' | translate }}</p>
- <app-button *ngIf="canClaimManualPayout()" variant="primary" size="sm" customClass="mt-3 !rounded-xl !bg-indigo-600 hover:!bg-indigo-700" (btnClick)="claimManualPayout()" [disabled]="isManualWorkflowSubmitting">
- {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_ACTION' | translate) }}
- </app-button>
- </div>
- </div>
- </section>
-
- <section class="rounded-2xl border p-4" [ngClass]="canRecordManualBankSubmission() ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-slate-50/50'">
- <div class="flex items-start gap-3">
- <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500 text-[12px] font-black text-white">2</div>
- <div class="min-w-0 flex-1">
- <h4 class="text-[13px] font-black text-slate-900">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_TITLE' | translate }}</h4>
- <p class="mt-1 text-[12px] leading-5 font-medium text-slate-600">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_DESC' | translate }}</p>
- <p *ngIf="manualPayout.executionReservation?.status === 'Submitted'" class="mt-2 break-all text-[11px] font-black text-amber-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMITTED' | translate }}: {{ manualPayout.executionReservation?.submissionReference }}</p>
- <div *ngIf="canRecordManualBankSubmission()" class="mt-3 space-y-2">
- <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE' | translate }}</label>
- <input type="text" [(ngModel)]="manualBankSubmissionReference" class="w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-[13px] font-bold text-slate-900 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500" [placeholder]="'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE_PLACEHOLDER' | translate">
- <app-button variant="primary" size="sm" customClass="!rounded-xl !bg-amber-500 hover:!bg-amber-600" (btnClick)="recordManualBankSubmission()" [disabled]="isManualWorkflowSubmitting || !manualBankSubmissionReference.trim()">
- {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_ACTION' | translate }}
- </app-button>
- </div>
- </div>
- </div>
- </section>
-
- <section class="rounded-2xl border p-4" [ngClass]="canConfirmManualPayout() ? 'border-emerald-200 bg-emerald-50/50' : 'border-slate-200 bg-slate-50/50'">
- <div class="flex items-start gap-3">
- <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[12px] font-black text-white">3</div>
- <div class="min-w-0 flex-1">
- <h4 class="text-[13px] font-black text-slate-900">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_TITLE' | translate }}</h4>
- <p class="mt-1 text-[12px] leading-5 font-medium text-slate-600">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_DESC' | translate }}</p>
- <div *ngIf="canConfirmManualPayout()" class="mt-3 space-y-3">
- <div class="space-y-2">
- <label class="block text-[11px] font-bold text-slate-600">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.TRANSFER_REFERENCE' | translate }}</label>
- <input type="text" [(ngModel)]="manualTransferReference" class="w-full rounded-xl border border-emerald-200 bg-white px-3 py-2.5 text-[13px] font-bold text-slate-900 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" [placeholder]="'FINANCES.WITHDRAWALS.WORKFLOW.TRANSFER_REFERENCE_PLACEHOLDER' | translate">
- </div>
- <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-dashed border-emerald-300 bg-white px-3 py-3 hover:bg-emerald-50">
- <span class="flex items-center gap-2 text-[12px] font-bold text-slate-700"><span class="material-symbols-outlined text-emerald-600">upload_file</span>{{ manualProofFile ? manualProofFile.name : ('FINANCES.WITHDRAWALS.WORKFLOW.PROOF_FILE' | translate) }}</span>
- <span class="text-[11px] font-black text-emerald-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.CHOOSE_FILE' | translate }}</span>
- <input type="file" class="hidden" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf" (change)="onManualProofFileSelected($event)">
+ <label class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REASON' | translate }}</span>
+ <textarea
+ [(ngModel)]="returnReason"
+ rows="2"
+ class="h-auto w-full resize-none rounded-xl border border-slate-200 px-3 py-3 text-[13px] font-bold text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+ [placeholder]="'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.REASON_PLACEHOLDER' | translate"></textarea>
  </label>
- <app-button variant="primary" size="sm" customClass="!rounded-xl !bg-emerald-600 hover:!bg-emerald-700" (btnClick)="confirmManualPayout()" [disabled]="isManualWorkflowSubmitting || !manualTransferReference.trim() || !manualProofFile">
- {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_ACTION' | translate) }}
- </app-button>
+
+ <label class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.PROOF_FILE' | translate }}</span>
+ <input
+ type="file"
+ accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
+ (change)="onReturnProofFileSelected($event)"
+ class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-amber-100 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-amber-900 rtl:file:ml-3 rtl:file:mr-0">
+ <p *ngIf="returnProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ returnProofFile.name }}</p>
+ </label>
+
+ <p *ngIf="manualPayout.status === 'Reversed'" class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[12px] font-black text-emerald-700">
+ {{ 'FINANCES.WITHDRAWALS.RETURN_WORKFLOW.COMPLETED' | translate }}
+ </p>
+ </ng-container>
+
+ <ng-container *ngIf="!isReturnWorkflow">
+ <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-black">
+ <span [class.text-violet-700]="canClaimManualPayout() || manualPayout.executionReservation?.status === 'Claimed' || manualPayout.executionReservation?.status === 'Submitted' || isManualPayoutCompleted()" [class.text-slate-400]="!(canClaimManualPayout() || manualPayout.executionReservation?.status === 'Claimed' || manualPayout.executionReservation?.status === 'Submitted' || isManualPayoutCompleted())">1. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_TITLE' | translate }}</span>
+ <span [class.text-violet-700]="canRecordManualBankSubmission() || manualPayout.executionReservation?.status === 'Submitted' || isManualPayoutCompleted()" [class.text-slate-400]="!(canRecordManualBankSubmission() || manualPayout.executionReservation?.status === 'Submitted' || isManualPayoutCompleted())">2. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_TITLE' | translate }}</span>
+ <span [class.text-violet-700]="canConfirmManualPayout() || isManualPayoutCompleted()" [class.text-slate-400]="!(canConfirmManualPayout() || isManualPayoutCompleted())">3. {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_TITLE' | translate }}</span>
  </div>
- <p *ngIf="isManualPayoutCompleted()" class="mt-2 text-[11px] font-black text-emerald-700">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.COMPLETED' | translate }}</p>
- </div>
- </div>
- </section>
- </div>
+
+ <ng-container *ngIf="canClaimManualPayout() || manualPayout.executionReservation?.status === 'Claimed' || (!manualPayout.executionReservation && !isManualPayoutCompleted())">
+ <p class="rounded-xl border border-violet-100 bg-violet-50 px-3 py-3 text-[12px] font-medium leading-5 text-violet-900">
+ {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_DESC' | translate }}
+ </p>
+ <p *ngIf="manualPayout.executionReservation?.status === 'Claimed'" class="text-[11px] font-black text-violet-700">
+ {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLAIMED' | translate }}
+ </p>
+ </ng-container>
+
+ <ng-container *ngIf="canRecordManualBankSubmission() || manualPayout.executionReservation?.status === 'Submitted'">
+ <p class="rounded-xl border border-amber-100 bg-amber-50 px-3 py-3 text-[12px] font-medium leading-5 text-amber-900">
+ {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_DESC' | translate }}
+ </p>
+ <p *ngIf="manualPayout.executionReservation?.status === 'Submitted'" class="break-all text-[11px] font-black text-amber-700">
+ {{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMITTED' | translate }}: {{ manualPayout.executionReservation?.submissionReference }}
+ </p>
+ <label *ngIf="canRecordManualBankSubmission()" class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE' | translate }}</span>
+ <input
+ type="text"
+ [(ngModel)]="manualBankSubmissionReference"
+ dir="ltr"
+ class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
+ [placeholder]="'FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_REFERENCE_PLACEHOLDER' | translate">
+ </label>
+ </ng-container>
+
+ <ng-container *ngIf="canConfirmManualPayout() || isManualPayoutCompleted()">
+ <p class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-3 text-[12px] font-medium leading-5 text-emerald-900">
+ {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_DESC' | translate }}
+ </p>
+ <label *ngIf="canConfirmManualPayout()" class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.TRANSFER_REFERENCE' | translate }}</span>
+ <input
+ type="text"
+ [(ngModel)]="manualTransferReference"
+ dir="ltr"
+ class="h-11 w-full rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-100"
+ [placeholder]="'FINANCES.WITHDRAWALS.WORKFLOW.TRANSFER_REFERENCE_PLACEHOLDER' | translate">
+ </label>
+ <label *ngIf="canConfirmManualPayout()" class="block">
+ <span class="mb-2 block text-[11px] font-black uppercase tracking-wide text-slate-500">{{ 'FINANCES.WITHDRAWALS.WORKFLOW.PROOF_FILE' | translate }}</span>
+ <input
+ type="file"
+ accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
+ (change)="onManualProofFileSelected($event)"
+ class="block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[12px] font-bold text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-violet-100 file:px-3 file:py-2 file:text-[11px] file:font-black file:text-violet-800 rtl:file:ml-3 rtl:file:mr-0">
+ <p *ngIf="manualProofFile" class="mt-2 text-[11px] font-bold text-emerald-700">{{ manualProofFile.name }}</p>
+ </label>
+ <p *ngIf="isManualPayoutCompleted()" class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[12px] font-black text-emerald-700">
+ {{ 'FINANCES.WITHDRAWALS.WORKFLOW.COMPLETED' | translate }}
+ </p>
+ </ng-container>
+ </ng-container>
  </ng-container>
  </div>
 
- <div class="sticky bottom-0 border-t border-slate-100 bg-white px-6 py-4">
- <app-button variant="outline" size="sm" customClass="!rounded-xl" (btnClick)="closeManualWorkflow()" [disabled]="isManualWorkflowSubmitting">
+ <footer class="flex gap-3 border-t border-slate-100 px-6 py-4">
+ <button
+ type="button"
+ (click)="closeManualWorkflow()"
+ [disabled]="isManualWorkflowSubmitting"
+ class="h-10 flex-1 rounded-xl border border-slate-200 text-[12px] font-black text-slate-700 transition hover:bg-slate-50 disabled:opacity-50">
  {{ 'FINANCES.WITHDRAWALS.WORKFLOW.CLOSE' | translate }}
- </app-button>
- </div>
- </div>
+ </button>
+
+ <button
+ *ngIf="isReturnWorkflow && manualPayout?.status !== 'Reversed'"
+ type="button"
+ (click)="confirmPayoutReturn()"
+ [disabled]="isManualWorkflowSubmitting || isManualWorkflowLoading || !returnReference.trim() || !returnProofFile"
+ class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-amber-600 text-[12px] font-black text-white transition hover:bg-amber-700 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[17px]">{{ isManualWorkflowSubmitting ? 'hourglass_empty' : 'keyboard_return' }}</span>
+ {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.RETURN_WORKFLOW.CONFIRM_ACTION' | translate) }}
+ </button>
+
+ <button
+ *ngIf="!isReturnWorkflow && canClaimManualPayout()"
+ type="button"
+ (click)="claimManualPayout()"
+ [disabled]="isManualWorkflowSubmitting"
+ class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[17px]">lock</span>
+ {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.WORKFLOW.CLAIM_ACTION' | translate) }}
+ </button>
+
+ <button
+ *ngIf="!isReturnWorkflow && canRecordManualBankSubmission()"
+ type="button"
+ (click)="recordManualBankSubmission()"
+ [disabled]="isManualWorkflowSubmitting || !manualBankSubmissionReference.trim()"
+ class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[17px]">account_balance</span>
+ {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.WORKFLOW.SUBMISSION_ACTION' | translate) }}
+ </button>
+
+ <button
+ *ngIf="!isReturnWorkflow && canConfirmManualPayout()"
+ type="button"
+ (click)="confirmManualPayout()"
+ [disabled]="isManualWorkflowSubmitting || !manualTransferReference.trim() || !manualProofFile"
+ class="flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-700 text-[12px] font-black text-white transition hover:bg-violet-800 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[17px]">{{ isManualWorkflowSubmitting ? 'hourglass_empty' : 'verified' }}</span>
+ {{ isManualWorkflowSubmitting ? ('FINANCES.WITHDRAWALS.WORKFLOW.WORKING' | translate) : ('FINANCES.WITHDRAWALS.WORKFLOW.CONFIRM_ACTION' | translate) }}
+ </button>
+ </footer>
+ </section>
  </div>
  `
 })
