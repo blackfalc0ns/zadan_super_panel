@@ -1546,7 +1546,9 @@ export class AdminSupportCenterComponent implements OnInit {
  const match = this.driverCases.find((item) => item.id === driverCaseId);
  if (match) {
  this.openDriverCase(match, false);
+ return;
  }
+ this.focusSupportCase(driverCaseId, 'driver');
  }
  });
  this.loadLegacyCases(() => {
@@ -1554,7 +1556,9 @@ export class AdminSupportCenterComponent implements OnInit {
  const match = this.legacyCases.find((item) => item.id === legacyCaseId);
  if (match) {
  this.openLegacyCase(match, false);
+ return;
  }
+ this.focusSupportCase(legacyCaseId, 'legacy');
  }
  });
 
@@ -1727,10 +1731,36 @@ export class AdminSupportCenterComponent implements OnInit {
  if (updateQuery) {
  void this.router.navigate([], {
  relativeTo: this.route,
- queryParams: { tab: 'driver', driverCaseId: driverCase.id, legacyCaseId: null, ticketId: null },
+ queryParams: { tab: 'driver', driverCaseId: driverCase.id, legacyCaseId: null, ticketId: null, focus: null },
  queryParamsHandling: 'merge'
  });
  }
+ }
+
+ private focusSupportCase(caseId: string, tab: 'driver' | 'legacy'): void {
+ this.supportCasesService.fetchCase(caseId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((supportCase) => {
+ this.cdr.markForCheck();
+ if (!supportCase) {
+ this.clearSupportFocusQueryParams();
+ return;
+ }
+
+ if (tab === 'driver') {
+ this.openDriverCase(supportCase, false);
+ } else {
+ this.openLegacyCase(supportCase, false);
+ }
+ this.clearSupportFocusQueryParams();
+ });
+ }
+
+ private clearSupportFocusQueryParams(): void {
+ void this.router.navigate([], {
+ relativeTo: this.route,
+ queryParams: { focus: null },
+ queryParamsHandling: 'merge',
+ replaceUrl: true
+ });
  }
 
  closeDetails(): void {

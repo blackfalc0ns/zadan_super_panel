@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -88,6 +89,10 @@ sectionRejectReason = '';
  confirmAction: (() => void) | null = null;
 
  private readonly destroyRef = inject(DestroyRef);
+ private readonly route = inject(ActivatedRoute);
+ private readonly router = inject(Router);
+ private pendingFocusReview = false;
+ private pendingFocusSection: string | null = null;
 
  constructor(
  private readonly translate: TranslateService,
@@ -96,6 +101,12 @@ sectionRejectReason = '';
  ) {
  this.currentLang = this.translate.currentLang || 'ar';
  this.isRTL = this.currentLang === 'ar';
+
+ this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+ this.pendingFocusReview = params.get('focus') === 'review';
+ this.pendingFocusSection = params.get('section')?.trim().toLowerCase() ?? null;
+ this.applyComplianceFocus();
+ });
 
  this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
  this.cdr.markForCheck();
@@ -132,6 +143,7 @@ sectionRejectReason = '';
  ? (this.selectedDocument.rejectionReason ?? '')
  : '';
  this.profileRejectReason = this.selectedProfileReviewItem?.decisionNote ?? '';
+ this.applyComplianceFocus();
  });
 
  this.vendorDetailFacade.mutationError$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((message) => {
@@ -870,6 +882,36 @@ return this.localize('لازم يكون فيه حساب بنكي أساسي قب
  this.selectedDocumentId = section.documents[0]?.id ?? null;
  this.documentRejectReason = section.documents[0]?.rejectionReason ?? '';
  this.cdr.markForCheck();
+ }
+
+ private applyComplianceFocus(): void {
+ if (!this.reviewSections.length) {
+ return;
+ }
+
+ if (this.pendingFocusSection) {
+ const section = this.reviewSections.find((item) => item.id === this.pendingFocusSection);
+ if (section) {
+ this.selectSection(section);
+ }
+ }
+
+ if (this.pendingFocusReview || this.pendingFocusSection) {
+ this.activeWorkspaceWindow = 'review';
+ }
+
+ if (!this.pendingFocusReview && !this.pendingFocusSection) {
+ return;
+ }
+
+ this.pendingFocusReview = false;
+ this.pendingFocusSection = null;
+ void this.router.navigate([], {
+ relativeTo: this.route,
+ queryParams: { focus: null, section: null },
+ queryParamsHandling: 'merge',
+ replaceUrl: true
+ });
  }
 
  selectDocument(document: VendorReviewDocument): void {

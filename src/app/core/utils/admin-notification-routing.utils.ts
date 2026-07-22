@@ -140,6 +140,39 @@ function normalizeAdminNotificationTargetUrl(
     return `/orders/${encodeURIComponent(adminOrderMatch[1])}`;
   }
 
+  if (sanitized === '/admin/access/approvals' || sanitized.startsWith('/admin/access/approvals')) {
+    return buildAccessApprovalTargetUrl(notification, dataObject, parsedData, payload);
+  }
+
+  const orderCaseMatch = /^\/orders\/([^/?#]+)\/cases\/([^/?#]+)/i.exec(sanitized);
+  if (orderCaseMatch) {
+    return buildOrderSupportCaseTargetUrl(
+      orderCaseMatch[2],
+      orderCaseMatch[1],
+      notification,
+      dataObject,
+      parsedData,
+      payload
+    );
+  }
+
+  const supportCaseMatch = /^\/support\/cases\/([^/?#]+)/i.exec(sanitized);
+  if (supportCaseMatch) {
+    return buildOrderSupportCaseTargetUrl(
+      supportCaseMatch[1],
+      null,
+      notification,
+      dataObject,
+      parsedData,
+      payload
+    );
+  }
+
+  const supportTicketMatch = /^\/support\/tickets\/([^/?#]+)/i.exec(sanitized);
+  if (supportTicketMatch) {
+    return `/support?tab=vendor&ticketId=${encodeURIComponent(supportTicketMatch[1])}`;
+  }
+
   if (sanitized === '/finances/payouts') {
     return buildFinanceWithdrawalsTargetUrl(notification, dataObject, parsedData, payload);
   }
@@ -175,7 +208,26 @@ function normalizeAdminNotificationTargetUrl(
   }
 
   if (/^\/vendors\/[^/?#]+$/i.test(sanitized)) {
-    return `${sanitized}/overview`;
+    return buildVendorNotificationTargetUrl(
+      sanitized.slice('/vendors/'.length),
+      notification,
+      dataObject,
+      parsedData,
+      payload,
+      `${sanitized}/overview`
+    );
+  }
+
+  const vendorChildMatch = /^\/vendors\/([^/?#]+)\/(overview|compliance|finance|disputes|orders|products|data|analytics|logs|settings)/i.exec(sanitized);
+  if (vendorChildMatch) {
+    return buildVendorNotificationTargetUrl(
+      vendorChildMatch[1],
+      notification,
+      dataObject,
+      parsedData,
+      payload,
+      sanitized
+    );
   }
 
   if (sanitized === '/notifications?category=support') {
@@ -193,7 +245,22 @@ function normalizeAdminNotificationTargetUrl(
     return buildCatalogRequestManagementUrl(requestType, viewMatch?.[1] ?? null);
   }
 
-  if (sanitized.startsWith('/drivers/') || sanitized.startsWith('/vendors/') || sanitized.startsWith('/finances/')) {
+  if (sanitized.startsWith('/drivers/')) {
+    const driverMatch = /^\/drivers\/([^/?#]+)/i.exec(sanitized);
+    if (driverMatch) {
+      return buildDriverNotificationTargetUrl(
+        driverMatch[1],
+        notification,
+        dataObject,
+        parsedData,
+        payload,
+        sanitized
+      );
+    }
+    return sanitized;
+  }
+
+  if (sanitized.startsWith('/vendors/') || sanitized.startsWith('/finances/')) {
     return sanitized;
   }
 
@@ -234,20 +301,11 @@ function resolveAdminNotificationTypeTargetUrl(
   }
 
   if (type.startsWith('driver.') && driverId) {
-    return `/drivers/${encodeURIComponent(driverId)}`;
+    return buildDriverNotificationTargetUrl(driverId, notification, dataObject, parsedData, payload);
   }
 
   if (type.startsWith('vendor.') && vendorId) {
-    const section = extractString(payload?.['section'], dataObject?.['section'], parsedData?.['section']);
-    if (section && isVendorProfileSection(section)) {
-      return `/vendors/${encodeURIComponent(vendorId)}/compliance`;
-    }
-
-    if (type === 'vendor.documents_submitted' || type === 'vendor.critical_change_submitted') {
-      return `/vendors/${encodeURIComponent(vendorId)}/compliance`;
-    }
-
-    return `/vendors/${encodeURIComponent(vendorId)}/overview`;
+    return buildVendorNotificationTargetUrl(vendorId, notification, dataObject, parsedData, payload);
   }
 
   if (type === 'payout.requires_review') {
@@ -309,16 +367,27 @@ function resolveAdminNotificationCategoryTargetUrl(
 
   switch (category) {
     case 'drivers':
-      if (caseId && `${notification.type ?? ''}`.toLowerCase().includes('dispute')) {
-        return `/disputes?focus=${encodeURIComponent(caseId)}`;
+      if (caseId) {
+        const driverCaseType = `${payload?.['type'] ?? ''} ${notification.type ?? ''}`.toLowerCase();
+        if (driverCaseType.includes('driver_account') || driverCaseType.includes('driver_report') || driverCaseType.includes('driver_dispute')) {
+          return `/support?tab=driver&driverCaseId=${encodeURIComponent(caseId)}`;
+        }
+        if (`${notification.type ?? ''}`.toLowerCase().includes('dispute')) {
+          return `/disputes?focus=${encodeURIComponent(caseId)}`;
+        }
       }
-      return driverId
-        ? `/drivers/${encodeURIComponent(driverId)}`
-        : referenceId
-          ? `/drivers/${encodeURIComponent(referenceId)}`
-          : '/drivers';
+      if (driverId) {
+        return buildDriverNotificationTargetUrl(driverId, notification, dataObject, parsedData, payload);
+      }
+      if (referenceId) {
+        return buildDriverNotificationTargetUrl(referenceId, notification, dataObject, parsedData, payload);
+      }
+      return '/drivers';
     case 'vendors':
-      return referenceId ? `/vendors/${encodeURIComponent(referenceId)}/overview` : '/vendors';
+      if (referenceId) {
+        return buildVendorNotificationTargetUrl(referenceId, notification, dataObject, parsedData, payload);
+      }
+      return '/vendors';
     case 'catalog': {
       const requestType = resolveCatalogRequestTypeFromNotificationType(notification.type);
       return buildCatalogRequestManagementUrl(requestType, referenceId);
@@ -541,4 +610,146 @@ function appendFinanceQueryParam(url: string, key: string, value: string | null)
 
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}${key}=${encodeURIComponent(value)}`;
+}
+
+function buildAccessApprovalTargetUrl(
+  notification: AdminNotification,
+  dataObject: NotificationData | null,
+  parsedData: NotificationData | null,
+  payload: NotificationData | null
+): string {
+  const driverId = extractString(payload?.['driverId'], dataObject?.['driverId'], parsedData?.['driverId']);
+  if (driverId) {
+    return buildDriverNotificationTargetUrl(driverId, notification, dataObject, parsedData, payload, undefined, true);
+  }
+
+  const vendorId = extractString(payload?.['vendorId'], dataObject?.['vendorId'], parsedData?.['vendorId']);
+  if (vendorId) {
+    return buildVendorNotificationTargetUrl(vendorId, notification, dataObject, parsedData, payload, undefined, true);
+  }
+
+  return '/drivers';
+}
+
+function buildDriverNotificationTargetUrl(
+  driverId: string,
+  notification: AdminNotification,
+  dataObject: NotificationData | null,
+  parsedData: NotificationData | null,
+  payload: NotificationData | null,
+  fallback?: string,
+  openApprovalFocus = false
+): string {
+  const type = (notification.type ?? '').toLowerCase();
+  const basePath = fallback && fallback.startsWith(`/drivers/${driverId}`)
+    ? fallback.split('?')[0]
+    : `/drivers/${encodeURIComponent(driverId)}`;
+  const params = new URLSearchParams(fallback?.includes('?') ? fallback.split('?')[1] : '');
+
+  if (shouldOpenDriverVerificationTab(type) && !params.has('tab')) {
+    params.set('tab', 'verification');
+  }
+
+  if (openApprovalFocus || shouldOpenDriverVerificationTab(type)) {
+    params.set('focus', 'approval');
+  }
+
+  const query = params.toString();
+  return query ? `${basePath}?${query}` : basePath;
+}
+
+function buildVendorNotificationTargetUrl(
+  vendorId: string,
+  notification: AdminNotification,
+  dataObject: NotificationData | null,
+  parsedData: NotificationData | null,
+  payload: NotificationData | null,
+  fallback?: string,
+  openApprovalFocus = false
+): string {
+  const type = (notification.type ?? '').toLowerCase();
+  const section = extractString(
+    payload?.['section'],
+    payload?.['complianceSection'],
+    dataObject?.['section'],
+    dataObject?.['complianceSection'],
+    parsedData?.['section'],
+    parsedData?.['complianceSection']
+  );
+  const fallbackPath = sanitizeAdminNotificationInternalPath(fallback);
+  const basePath = fallbackPath && fallbackPath.startsWith(`/vendors/${vendorId}`)
+    ? fallbackPath.split('?')[0]
+    : shouldOpenVendorComplianceTab(type, section)
+      ? `/vendors/${encodeURIComponent(vendorId)}/compliance`
+      : `/vendors/${encodeURIComponent(vendorId)}/overview`;
+  const params = new URLSearchParams(fallbackPath?.includes('?') ? fallbackPath.split('?')[1] : '');
+
+  if (section && isVendorProfileSection(section)) {
+    params.set('section', section.trim().toLowerCase());
+  }
+
+  if (openApprovalFocus || shouldOpenVendorComplianceTab(type, section)) {
+    params.set('focus', 'review');
+  }
+
+  const query = params.toString();
+  return query ? `${basePath}?${query}` : basePath;
+}
+
+function buildOrderSupportCaseTargetUrl(
+  caseId: string,
+  orderId: string | null,
+  notification: AdminNotification,
+  dataObject: NotificationData | null,
+  parsedData: NotificationData | null,
+  payload: NotificationData | null
+): string {
+  const caseType = extractString(
+    payload?.['type'],
+    dataObject?.['type'],
+    parsedData?.['type']
+  )?.toLowerCase() ?? '';
+
+  if (caseType.includes('return_request')) {
+    return `/disputes?focus=${encodeURIComponent(caseId)}&type=return_request`;
+  }
+
+  if (caseType.includes('complaint')) {
+    return `/support?tab=legacy&legacyCaseId=${encodeURIComponent(caseId)}`;
+  }
+
+  if (caseType.includes('driver_account') || caseType.includes('driver_report') || caseType.includes('driver_dispute')) {
+    return `/support?tab=driver&driverCaseId=${encodeURIComponent(caseId)}`;
+  }
+
+  if (orderId) {
+    return `/orders/${encodeURIComponent(orderId)}?caseId=${encodeURIComponent(caseId)}`;
+  }
+
+  return `/disputes?focus=${encodeURIComponent(caseId)}`;
+}
+
+function shouldOpenDriverVerificationTab(type: string): boolean {
+  return type === 'driver.approval_requested'
+    || type === 'driver.documents_submitted'
+    || type === 'driver.approval_blocked'
+    || type === 'driver.critical_change_submitted';
+}
+
+function shouldOpenVendorComplianceTab(type: string, section: string | null): boolean {
+  if (type === 'vendor.approval_requested'
+    || type === 'vendor.documents_submitted'
+    || type === 'vendor.critical_change_submitted') {
+    return true;
+  }
+
+  if (type.startsWith('vendor.') && section && isVendorProfileSection(section)) {
+    return true;
+  }
+
+  return type === 'vendor.store_updated'
+    || type === 'vendor.owner_updated'
+    || type === 'vendor.contact_updated'
+    || type === 'vendor.legal_updated'
+    || type === 'vendor.banking_updated';
 }

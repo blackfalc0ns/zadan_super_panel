@@ -60,6 +60,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
  previewType: DriverPreviewType | null = null;
  selectedTask: DriverTaskAssignment | null = null;
  selectedIncident: DriverIncidentRecord | null = null;
+ private pendingFocusApproval = false;
 
  private destroy$ = new Subject<void>();
 
@@ -107,6 +108,10 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
  const tab = params.get('tab') as DriverLifecycleTabId;
  if (tab) {
  this.activeTab = tab;
+ }
+ this.pendingFocusApproval = params.get('focus') === 'approval';
+ if (this.pendingFocusApproval && this.driverId) {
+ this.tryOpenFocusedApproval();
  }
  });
  }
@@ -199,6 +204,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
  next: (approvals) => {
  this.cdr.markForCheck();
  this.driverApprovals = approvals.filter((approval) => this.isApprovalForDriver(approval, driverId));
+ this.tryOpenFocusedApproval();
  },
  error: (err) => {
  this.cdr.markForCheck();
@@ -211,6 +217,23 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
  openApprovalReview(approval: AccessApprovalRequestDto): void {
  this.selectedApproval = approval;
  this.approvalDecisionNote = '';
+ this.activeTab = 'verification';
+ }
+
+ private tryOpenFocusedApproval(): void {
+ if (!this.pendingFocusApproval || !this.driverApprovals.length) {
+ return;
+ }
+
+ this.pendingFocusApproval = false;
+ this.activeTab = 'verification';
+ this.openApprovalReview(this.driverApprovals[0]);
+ void this.router.navigate([], {
+ relativeTo: this.route,
+ queryParams: { focus: null },
+ queryParamsHandling: 'merge',
+ replaceUrl: true
+ });
  }
 
  closeApprovalReview(): void {

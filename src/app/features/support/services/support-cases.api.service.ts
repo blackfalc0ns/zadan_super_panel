@@ -157,6 +157,18 @@ export class SupportCasesService {
     );
   }
 
+  fetchCase(id: string): Observable<SupportCaseRow | null> {
+    if (this.shouldUseLocalReadFallback()) {
+      return of(this.getCaseById(id) ?? null);
+    }
+
+    return this.http.get<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}`).pipe(
+      map((response) => this.mapSupportCase(response)),
+      tap((item) => this.upsertCache(item)),
+      catchError(() => of(null))
+    );
+  }
+
   assignCase(id: string): Observable<SupportCaseRow> {
     return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/assign`, {}).pipe(
       map((response) => this.mapSupportCase(response)),

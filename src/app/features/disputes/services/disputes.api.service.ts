@@ -172,6 +172,13 @@ export class DisputesService {
     );
   }
 
+  fetchCase(id: string): Observable<SupportCaseRow> {
+    return this.http.get<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}`).pipe(
+      map((response) => this.mapDispute(response)),
+      tap((item) => this.upsertCache(item))
+    );
+  }
+
   assignCase(id: string): Observable<SupportCaseRow> {
     return this.http.post<AdminOrderSupportCaseResponse>(`${this.apiUrl}/${this.normalizeId(id)}/assign`, {}).pipe(
       map((response) => this.mapDispute(response)),

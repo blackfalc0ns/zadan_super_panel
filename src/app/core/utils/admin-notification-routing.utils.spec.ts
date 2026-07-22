@@ -55,7 +55,7 @@ describe('resolveAdminNotificationTargetUrl', () => {
  })
  }));
 
- expect(url).toBe('/drivers/driver-1');
+ expect(url).toBe('/drivers/driver-1?tab=verification&focus=approval');
  });
 
  it('routes payout review alerts to withdrawals queue with payoutId focus', () => {
@@ -119,5 +119,61 @@ describe('resolveAdminNotificationTargetUrl', () => {
  }));
 
  expect(url).toBe('/disputes?focus=case-1');
+ });
+
+ it('routes legacy access approval inbox links to driver verification focus', () => {
+ const url = resolveAdminNotificationTargetUrl(buildNotification({
+ type: 'driver.critical_change_submitted',
+ category: 'drivers',
+ referenceId: 'driver-1',
+ dataObject: {
+ targetUrl: '/admin/access/approvals',
+ payload: { driverId: 'driver-1', section: 'personal' }
+ }
+ }));
+
+ expect(url).toBe('/drivers/driver-1?tab=verification&focus=approval');
+ });
+
+ it('routes vendor section review alerts to compliance review focus', () => {
+ const url = resolveAdminNotificationTargetUrl(buildNotification({
+ type: 'vendor.banking_updated',
+ category: 'vendors',
+ referenceId: 'vendor-1',
+ dataObject: {
+ targetUrl: '/vendors/vendor-1/compliance',
+ payload: { vendorId: 'vendor-1', section: 'banking' }
+ }
+ }));
+
+ expect(url).toBe('/vendors/vendor-1/compliance?section=banking&focus=review');
+ });
+
+ it('routes support ticket paths to vendor support tab', () => {
+ const url = resolveAdminNotificationTargetUrl(buildNotification({
+ type: 'support.ticket_created',
+ category: 'support',
+ referenceId: 'ticket-1',
+ dataObject: {
+ targetUrl: '/support/tickets/ticket-1'
+ }
+ }));
+
+ expect(url).toBe('/support?tab=vendor&ticketId=ticket-1');
+ });
+
+ it('routes order case paths to the correct admin queue', () => {
+ const url = resolveAdminNotificationTargetUrl(buildNotification({
+ type: 'support.created',
+ category: 'support',
+ referenceId: 'case-1',
+ dataObject: {
+ targetUrl: '/orders/order-1/cases/case-1',
+ type: 'driver_account',
+ caseId: 'case-1'
+ }
+ }));
+
+ expect(url).toBe('/support?tab=driver&driverCaseId=case-1');
  });
 });

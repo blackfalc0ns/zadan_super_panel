@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostListener, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, forkJoin, of, take } from 'rxjs';
 import { AccessService } from '../../../../../core/services/access.service';
 import { AdminSupportCaseRealtimeService } from '../../../../../core/services/admin-support-case-realtime.service';
 import { DisputesService } from '@disputes/services/disputes.api.service';
@@ -94,6 +94,7 @@ export class DisputesDashboardComponent implements OnInit {
  loadError = '';
  private readonly destroyRef = inject(DestroyRef);
  private readonly toastService = inject(ToastService);
+ private readonly router = inject(Router);
  private focusedDisputeId: string | null = null;
 
  kpiCards: KPICard[] = [];
@@ -1469,6 +1470,11 @@ export class DisputesDashboardComponent implements OnInit {
  ? this.disputes.find((item) => item.id === this.selectedDispute.id)
  : undefined;
 
+ if (hadFocusedSelection && !selectedFromFocus && this.focusedDisputeId) {
+ this.loadFocusedDispute(this.focusedDisputeId);
+ return;
+ }
+
  this.selectedDispute = selectedFromFocus
  ?? selectedFromCurrent
  ?? this.disputes[0]
@@ -1481,6 +1487,7 @@ export class DisputesDashboardComponent implements OnInit {
 
  if (selectedFromFocus) {
  this.modalState.isDetailsDrawerOpen = true;
+ this.clearDisputeFocusQueryParams();
  return;
  }
 
@@ -1488,6 +1495,35 @@ export class DisputesDashboardComponent implements OnInit {
  this.focusedDisputeId = null;
  this.modalState.isDetailsDrawerOpen = false;
  }
+ }
+
+ private loadFocusedDispute(caseId: string): void {
+ this.disputesService.fetchCase(caseId).pipe(take(1)).subscribe({
+ next: (dispute) => {
+ this.disputes = [dispute, ...this.disputes.filter((item) => item.id !== dispute.id)];
+ this.selectedDispute = dispute;
+ this.modalState.isDetailsDrawerOpen = true;
+ this.focusedDisputeId = null;
+ this.clearDisputeFocusQueryParams();
+ this.buildUiConfig();
+ this.cdr.markForCheck();
+ },
+ error: () => {
+ this.focusedDisputeId = null;
+ this.clearDisputeFocusQueryParams();
+ this.modalState.isDetailsDrawerOpen = false;
+ this.cdr.markForCheck();
+ }
+ });
+ }
+
+ private clearDisputeFocusQueryParams(): void {
+ void this.router.navigate([], {
+ relativeTo: this.route,
+ queryParams: { focus: null },
+ queryParamsHandling: 'merge',
+ replaceUrl: true
+ });
  }
 
  private applyDisputeUpdate(updated: SupportCaseRow): void {
