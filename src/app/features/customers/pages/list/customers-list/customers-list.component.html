@@ -10,7 +10,7 @@
     <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">groups</span>
 
     <div actions class="flex items-center gap-4 animate-in slide-in-from-left-10 duration-700">
-      <button class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary">
+      <button type="button" (click)="onExport()" class="px-6 py-3 bg-white text-slate-500 border border-slate-200 rounded-[1.2rem] text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all hover:text-zadna-primary">
         <span class="material-symbols-outlined text-[20px]">download</span>
         {{ 'CUSTOMERS.EXPORT' | translate }}
       </button>

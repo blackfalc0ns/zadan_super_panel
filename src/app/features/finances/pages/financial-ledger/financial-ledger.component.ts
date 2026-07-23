@@ -17,6 +17,8 @@ import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/comp
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { ExportService } from '../../../../shared/utils/export';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -287,6 +289,8 @@ export class FinancialLedgerComponent implements OnInit {
  private route = inject(ActivatedRoute);
  private router = inject(Router);
  private destroyRef = inject(DestroyRef);
+ private readonly exportService = inject(ExportService);
+ private readonly toastService = inject(ToastService);
 
  allEntries: LedgerEntry[] = [];
  filteredEntries: LedgerEntry[] = [];
@@ -376,30 +380,23 @@ export class FinancialLedgerComponent implements OnInit {
  }
 
  onExport(): void {
- const rows = this.filteredEntries.map((entry) => [
- entry.timestamp,
- entry.entityType,
- entry.entityName,
- entry.type,
- entry.referenceId,
- entry.direction,
- entry.amount.toString(),
- entry.currency
- ].join(','));
+ if (!this.filteredEntries.length) {
+ this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+ return;
+ }
 
- const blob = new Blob([[
- 'Timestamp,Entity Type,Entity Name,Type,Reference,Direction,Amount,Currency',...rows
- ].join('\n')], {
- type: 'text/csv;charset=utf-8'
+ const orderId = this.scopedOrderId ?? this.currentFilter.orderId;
+ this.financeService.exportLedger({
+ orderId: orderId || undefined
+ }).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(blob, this.exportService.fileName('financial-ledger', 'xlsx'));
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ }
  });
- const url = URL.createObjectURL(blob);
- const link = document.createElement('a');
-
- link.href = url;
- link.download = 'financial-ledger.csv';
- link.click();
-
- URL.revokeObjectURL(url);
  }
 
  changePage(page: number): void { this.page = page; }

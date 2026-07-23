@@ -12,6 +12,8 @@ import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { CustomerDetailRecord, CustomerSpendRange, CustomerStatus } from '../../../models/customers.models';
+import { ExportService } from '@shared/utils/export';
+import { ToastService } from '@shared/services/toast.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +65,9 @@ export class CustomersListComponent implements OnInit {
     { key: 'status', title: 'CUSTOMERS.TABLE.STATUS', width: '12%', align: 'center', type: 'custom' },
     { key: 'value', title: 'CUSTOMERS.TABLE.VALUE', width: '8%', align: 'center', type: 'custom' }
   ];
+
+  private readonly exportService = inject(ExportService);
+  private readonly toastService = inject(ToastService);
 
   constructor(
     private readonly router: Router,
@@ -236,6 +241,23 @@ export class CustomersListComponent implements OnInit {
   onSearch(): void {
     this.page = 1;
     this.loadCustomers();
+  }
+
+  onExport(): void {
+    if (!this.filteredCustomers.length) {
+      this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+      return;
+    }
+
+    this.customersService.exportCustomers(this.searchTerm, this.filters).subscribe({
+      next: (blob) => {
+        this.exportService.downloadServerFile(blob, this.exportService.fileName('customers', 'xlsx'));
+        this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+      },
+      error: () => {
+        this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+      }
+    });
   }
 
   onFiltersChange(newFilters: CustomerFilters): void {

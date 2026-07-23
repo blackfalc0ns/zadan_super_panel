@@ -7,6 +7,7 @@
 
  <app-payouts-review-modal
  [isOpen]="showPayoutsReviewModal"
+ [vendorId]="vendorId"
  [availableBalance]="availableBalance"
  [vendorName]="vendorName"
  [beneficiaryName]="vendorDetail?.primaryBankAccount?.accountHolderName || vendorDetail?.ownerName || vendorName"

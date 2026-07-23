@@ -16,6 +16,8 @@ import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/comp
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { ExportService } from '../../../../shared/utils/export';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -178,7 +180,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">account_balance</span>
  {{ 'FINANCES.SETTLEMENTS.MANAGE_MANUAL_PAYOUT' | translate }}
  </app-button>
- <app-button variant="outline" size="md" customClass="!flex-1 !rounded-xl">
+ <app-button variant="outline" size="md" customClass="!flex-1 !rounded-xl" (btnClick)="exportAccountStatement()">
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">download</span>
  {{ 'FINANCES.SETTLEMENTS.ACCOUNT_STATEMENT' | translate }}
  </app-button>
@@ -376,6 +378,8 @@ export class SettlementsComponent implements OnInit {
  private route = inject(ActivatedRoute);
  private router = inject(Router);
  private destroyRef = inject(DestroyRef);
+ private readonly exportService = inject(ExportService);
+ private readonly toastService = inject(ToastService);
 
  allSettlements: Settlement[] = [];
  selectedSettlement: Settlement | null = null;
@@ -473,6 +477,24 @@ export class SettlementsComponent implements OnInit {
  // The list item is still sufficient for read-only details. Manual execution stays unavailable
  // until the current payout reservation has been loaded from the authoritative detail endpoint.
  this.cdr.markForCheck();
+ }
+ });
+ }
+
+ exportAccountStatement(): void {
+ const settlement = this.selectedSettlement;
+ if (!settlement) {
+ this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+ return;
+ }
+
+ this.financeService.exportSettlementStatement(settlement.id).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(blob, this.exportService.fileName('settlement-statement', 'pdf'));
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
  }
  });
  }

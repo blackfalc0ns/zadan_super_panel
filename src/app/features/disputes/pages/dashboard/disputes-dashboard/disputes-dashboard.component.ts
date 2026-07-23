@@ -15,6 +15,7 @@ import { AppPageHeaderComponent } from '../../../../../shared/components/ui/page
 import { StatusPillComponent, StatusPillVariant } from '../../../../../shared/components/ui/status-pill/status-pill.component';
 import { AdvancedFilterPanelComponent, FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { ToastService } from '../../../../../shared/services/toast.service';
+import { ExportService } from '../../../../../shared/utils/export';
 import { DisputeApprovalModalComponent } from '../../../components/dispute-approval-modal/dispute-approval-modal.component';
 import { DisputeEscalationModalComponent } from '../../../components/dispute-escalation-modal/dispute-escalation-modal.component';
 import { DisputeQuickActionModalComponent } from '../../../components/dispute-quick-action-modal/dispute-quick-action-modal.component';
@@ -94,6 +95,7 @@ export class DisputesDashboardComponent implements OnInit {
  loadError = '';
  private readonly destroyRef = inject(DestroyRef);
  private readonly toastService = inject(ToastService);
+ private readonly exportService = inject(ExportService);
  private readonly router = inject(Router);
  private focusedDisputeId: string | null = null;
 
@@ -342,6 +344,35 @@ export class DisputesDashboardComponent implements OnInit {
  this.openEscalationModal();
  }
  }
+ }
+
+ onExport(): void {
+ if (!this.disputes.length) {
+ this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+ return;
+ }
+
+ const filters = this.resolveServerFilters();
+ const type = filters.type ?? this.disputeListTypesQuery;
+
+ this.disputesService.exportCases({
+ search: this.searchTerm || undefined,
+ type,
+ status: filters.status,
+ priority: filters.priority,
+ queue: filters.queue,
+ initiatorRole: filters.initiatorRole,
+ vendorId: filters.vendorId,
+ driverId: filters.driverId
+ }).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(blob, this.exportService.fileName('disputes', 'xlsx'));
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ }
+ });
  }
 
  onKpiCardClick(card: KPICard): void {

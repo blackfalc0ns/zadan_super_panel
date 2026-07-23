@@ -20,6 +20,7 @@ import { DataTableComponent, TableColumn } from '../../../../shared/components/u
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { ExportService } from '../../../../shared/utils/export';
 import { FinanceService } from '../../../finances/services/finance.service';
 import { DriverDetailRecord, DriverFinanceEntry } from '../../models/drivers.models';
 import { DriverService } from '../../services/drivers.api.service';
@@ -47,6 +48,7 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   private readonly driversApi = inject(DriverService);
   private readonly financeService = inject(FinanceService);
   private readonly toastService = inject(ToastService);
+  private readonly exportService = inject(ExportService);
   private readonly translate = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
@@ -174,6 +176,45 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
     }
     const methodUpper = method?.toUpperCase() || '';
     return `DRIVERS.DETAIL.FINANCE.BACKEND.METHODS.${methodUpper}`;
+  }
+
+  downloadReceipt(entry: DriverFinanceEntry): void {
+    this.driversApi.exportFinanceEntryReceipt(this.driver.id, entry.id).subscribe({
+      next: (blob) => {
+        this.exportService.downloadServerFile(
+          blob,
+          this.exportService.fileName(`driver-receipt-${entry.reference || entry.id}`, 'pdf')
+        );
+        this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+      },
+      error: () => {
+        this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+      }
+    });
+  }
+
+  downloadStatement(): void {
+    if (!this.ledgerEntries.length) {
+      this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+      return;
+    }
+
+    this.driversApi.exportFinanceStatement(
+      this.driver.id,
+      this.activeFilter,
+      this.searchQuery
+    ).subscribe({
+      next: (blob) => {
+        this.exportService.downloadServerFile(
+          blob,
+          this.exportService.fileName(`driver-statement-${this.driver.id}`, 'pdf')
+        );
+        this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+      },
+      error: () => {
+        this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+      }
+    });
   }
 
   openSettleModal() {

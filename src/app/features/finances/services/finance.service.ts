@@ -427,6 +427,46 @@ export class FinanceService {
  );
  }
 
+ exportLedger(filter?: {
+ orderId?: string;
+ settlementId?: string;
+ payoutId?: string;
+ }): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (filter?.orderId) {
+ params = params.set('orderId', filter.orderId);
+ }
+ if (filter?.settlementId) {
+ params = params.set('settlementId', filter.settlementId);
+ }
+ if (filter?.payoutId) {
+ params = params.set('payoutId', filter.payoutId);
+ }
+
+ return this.http.get(`${this.apiUrl}/ledger/export`, { params, responseType: 'blob' });
+ }
+
+ exportSettlementStatement(id: string): Observable<Blob> {
+ return this.http.get(`${this.settlementsApiUrl}/${id}/statement`, { responseType: 'blob' });
+ }
+
+ exportFinanceReport(title?: string, route?: string, summary?: string): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (title?.trim()) {
+ params = params.set('title', title.trim());
+ }
+ if (route?.trim()) {
+ params = params.set('route', route.trim());
+ }
+ if (summary?.trim()) {
+ params = params.set('summary', summary.trim());
+ }
+
+ return this.http.get(`${this.apiUrl}/report`, { params, responseType: 'blob' });
+ }
+
  getSettlements(filter?: SettlementFilter): Observable<Settlement[]> {
  let params = new HttpParams().set('page', '1').set('pageSize', '200');
 

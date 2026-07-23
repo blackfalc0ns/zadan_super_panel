@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ToastService } from '@shared/services/toast.service';
+import { ExportService } from '@shared/utils/export';
 import {
  VendorActivityLogEntry,
  VendorActivitySeverity,
@@ -12,6 +13,7 @@ import {
  VendorReviewNote
 } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
+import { VendorService } from '@vendors/services/vendor.api.service';
 
 interface TimelineEvent {
  id: string;
@@ -57,6 +59,8 @@ export class VendorActivityLogComponent {
  hasNextActivityPage = false;
 
  private readonly destroyRef = inject(DestroyRef);
+ private readonly exportService = inject(ExportService);
+ private readonly vendorService = inject(VendorService);
  private lastVendorId: string | null = null;
  private activityEntries: VendorActivityLogEntry[] = [];
  private totalActivityCount = 0;
@@ -252,34 +256,34 @@ export class VendorActivityLogComponent {
  }
 
  onExportLog(): void {
- const rows = this.auditEntries.map((entry) => [
- this.resolveTypeLabel(entry.type),
- this.resolveSeverityLabel(entry.severity),
- entry.actorName,
- this.localizeRoleLabel(entry.roleLabel),
- this.formatDateTime(entry.createdAtUtc),
- this.localizeMessage(entry.message).replace(/,/g, ' ')
- ].join(','));
+ if (!this.auditEntries.length) {
+ this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+ return;
+ }
 
- const headers = [
- this.isRTL ? 'النوع' : 'Type',
- this.isRTL ? 'الشدة' : 'Severity',
- this.isRTL ? 'المنفذ' : 'Actor',
- this.isRTL ? 'الدور' : 'Role',
- this.isRTL ? 'التاريخ' : 'Timestamp',
- this.isRTL ? 'الوصف' : 'Description'
- ].join(',');
+ const vendorId = this.vendorDetail?.id;
+ if (!vendorId) {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ return;
+ }
 
- const blob = new Blob([[headers,...rows].join('\n')], {
- type: 'text/csv;charset=utf-8'
+ this.vendorService.exportVendorActivity(vendorId, {
+ type: this.filterType !== 'all' ? this.filterType : undefined,
+ severity: this.filterSeverity !== 'all' ? this.filterSeverity : undefined,
+ dateFrom: this.filterDateFrom || undefined,
+ dateTo: this.filterDateTo || undefined
+ }).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(
+ blob,
+ this.exportService.fileName(`vendor-activity-${vendorId}`, 'xlsx')
+ );
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ }
  });
- const url = URL.createObjectURL(blob);
- const link = document.createElement('a');
-
- link.href = url;
- link.download = `vendor-activity-${this.vendorDetail?.id || 'unknown'}.csv`;
- link.click();
- URL.revokeObjectURL(url);
  }
 
  resolveSeverityBadge(severity: VendorActivitySeverity): string {

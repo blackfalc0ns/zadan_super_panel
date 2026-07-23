@@ -11,6 +11,8 @@ import { AppPaginationComponent } from '../../../../shared/components/ui/paginat
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { AdminVendorOrderItem, VendorService } from '@vendors/services/vendor.api.service';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
+import { ExportService } from '../../../../shared/utils/export';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 interface KPI {
  id: string;
@@ -72,6 +74,8 @@ export class VendorOrdersComponent {
 
  private readonly destroyRef = inject(DestroyRef);
  private readonly searchSubject = new Subject<string>();
+ private readonly exportService = inject(ExportService);
+ private readonly toastService = inject(ToastService);
 
  constructor(
  private readonly translate: TranslateService,
@@ -187,36 +191,32 @@ export class VendorOrdersComponent {
  }
 
  onExport(): void {
- const rows = this.rows.map((order) => [
- order.orderNumber,
- order.customer,
- order.date,
- order.time,
- order.amount,
- order.orderStatus,
- order.paymentStatus
- ].join(','));
+ if (!this.rows.length) {
+ this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+ return;
+ }
 
- const content = [
- [
- 'VENDOR_ORDERS.EXPORT_HEADERS.ORDER_NUMBER',
- 'VENDOR_ORDERS.EXPORT_HEADERS.CUSTOMER',
- 'VENDOR_ORDERS.EXPORT_HEADERS.DATE',
- 'VENDOR_ORDERS.EXPORT_HEADERS.TIME',
- 'VENDOR_ORDERS.EXPORT_HEADERS.AMOUNT',
- 'VENDOR_ORDERS.EXPORT_HEADERS.STATUS',
- 'VENDOR_ORDERS.EXPORT_HEADERS.PAYMENT_STATUS'
- ].map((key) => this.translate.instant(key)).join(','),...rows
- ].join('\n');
- const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
- const url = URL.createObjectURL(blob);
- const link = document.createElement('a');
+ if (!this.vendorId) {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ return;
+ }
 
- link.href = url;
- link.download = `vendor-orders-${this.vendorId}.csv`;
- link.click();
-
- URL.revokeObjectURL(url);
+ this.vendorService.exportVendorOrders(this.vendorId, {
+ search: this.searchQuery || undefined,
+ status: this.selectedStatus || undefined,
+ paymentStatus: this.selectedPaymentStatus || undefined
+ }).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(
+ blob,
+ this.exportService.fileName(`vendor-orders-${this.vendorId}`, 'xlsx')
+ );
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ }
+ });
  }
 
  getPaymentStatusVariant(status: string): StatusPillVariant {

@@ -429,6 +429,80 @@ export class VendorService {
  private authService: AuthService
  ) {}
 
+ exportVendors(status?: VendorStatus | string, search?: string, ids?: string[]): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (status) {
+ params = params.set('status', String(status));
+ }
+
+ if (search?.trim()) {
+ params = params.set('search', search.trim());
+ }
+
+ if (ids?.length) {
+ ids.forEach((id) => {
+ if (id?.trim()) {
+ params = params.append('ids', id.trim());
+ }
+ });
+ }
+
+ return this.http.get(`${this.apiUrl}/export`, { params, responseType: 'blob' });
+ }
+
+ exportVendorOrders(
+ vendorId: string,
+ filters?: { search?: string; status?: string; paymentStatus?: string }
+ ): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (filters?.search?.trim()) {
+ params = params.set('search', filters.search.trim());
+ }
+
+ if (filters?.status?.trim()) {
+ params = params.set('status', filters.status.trim());
+ }
+
+ if (filters?.paymentStatus?.trim()) {
+ params = params.set('paymentStatus', filters.paymentStatus.trim());
+ }
+
+ return this.http.get(`${this.apiUrl}/${vendorId}/orders/export`, { params, responseType: 'blob' });
+ }
+
+ exportVendorActivity(
+ vendorId: string,
+ filters: VendorActivityLogFilters = {}
+ ): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (filters.type?.trim()) {
+ params = params.set('type', filters.type.trim());
+ }
+
+ if (filters.severity?.trim()) {
+ params = params.set('severity', filters.severity.trim());
+ }
+
+ if (filters.dateFrom?.trim()) {
+ params = params.set('dateFrom', filters.dateFrom.trim());
+ }
+
+ if (filters.dateTo?.trim()) {
+ params = params.set('dateTo', filters.dateTo.trim());
+ }
+
+ return this.http.get(`${this.apiUrl}/${vendorId}/activity-log/export`, { params, responseType: 'blob' });
+ }
+
+ exportVendorPayoutReceipt(vendorId: string, paymentId: string): Observable<Blob> {
+ return this.http.get(`${this.apiUrl}/${vendorId}/payouts/${paymentId}/receipt`, {
+ responseType: 'blob'
+ });
+ }
+
  getVendors(
  pageNumber: number = 1,
  pageSize: number = 10,

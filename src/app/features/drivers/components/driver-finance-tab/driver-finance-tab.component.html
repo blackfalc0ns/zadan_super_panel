@@ -375,7 +375,7 @@
                     
                     <div class="border-t border-dashed border-slate-200 my-4"></div>
                     
-                    <button class="w-full flex items-center justify-center gap-1.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-[10px] font-black text-slate-700 rounded-xl transition-all border border-slate-200/50 active:scale-98">
+                    <button type="button" (click)="downloadReceipt(entry)" class="w-full flex items-center justify-center gap-1.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-[10px] font-black text-slate-700 rounded-xl transition-all border border-slate-200/50 active:scale-98">
                       <span class="material-symbols-outlined text-[14px]">download</span>
                       <span>{{ 'DRIVERS.DETAIL.FINANCE.DOWNLOAD_RECEIPT' | translate }}</span>
                     </button>
@@ -429,7 +429,7 @@
           </button>
           
           <!-- Download Statement -->
-          <button class="group/btn flex items-center justify-between rounded-2xl border border-slate-200/60 bg-slate-50/50 p-5 px-6 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-md active:scale-95">
+          <button type="button" (click)="downloadStatement()" class="group/btn flex items-center justify-between rounded-2xl border border-slate-200/60 bg-slate-50/50 p-5 px-6 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:shadow-md active:scale-95">
             <div class="flex items-center gap-4">
               <span class="material-symbols-outlined text-slate-400 text-[22px] group-hover/btn:text-slate-600 transition-colors">download</span>
               <span class="text-[14px] font-black text-slate-800 group-hover/btn:text-slate-900 transition-colors">{{ 'DRIVERS.DETAIL.FINANCE.ACTIONS.DOWNLOAD_STATEMENT' | translate }}</span>

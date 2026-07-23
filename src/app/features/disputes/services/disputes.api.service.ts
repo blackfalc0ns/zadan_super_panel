@@ -157,6 +157,32 @@ export class DisputesService {
     );
   }
 
+  exportCases(filters?: {
+    search?: string;
+    type?: string;
+    status?: string;
+    priority?: string;
+    queue?: string;
+    initiatorRole?: string;
+    vendorId?: string;
+    driverId?: string;
+  }): Observable<Blob> {
+    let params = new HttpParams();
+
+    if (filters?.search?.trim()) params = params.set('search', filters.search.trim());
+    if (filters?.type && filters.type !== 'all') params = params.set('type', filters.type);
+    if (filters?.status && filters.status !== 'all') params = params.set('status', filters.status);
+    if (filters?.priority && filters.priority !== 'all') params = params.set('priority', filters.priority);
+    if (filters?.queue) params = params.set('queue', filters.queue);
+    if (filters?.initiatorRole && filters.initiatorRole !== 'all') {
+      params = params.set('initiatorRole', filters.initiatorRole);
+    }
+    if (filters?.vendorId) params = params.set('vendorId', filters.vendorId);
+    if (filters?.driverId) params = params.set('driverId', filters.driverId);
+
+    return this.http.get(`${this.apiUrl}/export`, { params, responseType: 'blob' });
+  }
+
   getStats(): Observable<AdminOrderCaseStats> {
     return this.http.get<AdminOrderCaseStatsResponse>(`${this.apiUrl}/stats`).pipe(
       map((response) => ({

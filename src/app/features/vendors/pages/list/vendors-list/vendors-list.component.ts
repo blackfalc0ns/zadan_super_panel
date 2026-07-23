@@ -30,6 +30,8 @@ import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/
 import { DataTableComponent, TableColumn, TableAction, BulkAction } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { QuickPreviewDrawerComponent, PreviewAction } from '../../../../../shared/components/ui/quick-preview-drawer/quick-preview-drawer.component';
 import { MobileVendorCardsComponent, VendorCardData } from '@vendors/components/cards/mobile-vendor-cards/mobile-vendor-cards.component';
+import { ExportService } from '@shared/utils/export';
+import { ToastService } from '@shared/services/toast.service';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -87,6 +89,8 @@ import { MobileVendorCardsComponent, VendorCardData } from '@vendors/components/
 })
 export class VendorsListComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
+ private readonly exportService = inject(ExportService);
+ private readonly toastService = inject(ToastService);
  Math = Math;
 
  vendors: Vendor[] = [];
@@ -542,7 +546,31 @@ export class VendorsListComponent implements OnInit {
  case 'block':
  event.items.filter((vendor) => vendor.status === VendorStatus.Active).forEach((vendor) => this.handleVendorMutation(this.vendorService.suspendVendorAccount(vendor.id)));
  break;
+ case 'export':
+ void this.exportVendors(event.items.length ? event.items : this.vendors);
+ break;
  }
+ }
+
+ private exportVendors(items: Vendor[]): void {
+ if (!items.length) {
+ this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+ return;
+ }
+
+ this.vendorService.exportVendors(
+ this.filters.status,
+ this.searchTerm,
+ items.map((vendor) => vendor.id)
+ ).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(blob, this.exportService.fileName('vendors', 'xlsx'));
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ }
+ });
  }
 
  onPreviewAction(action: PreviewAction) {

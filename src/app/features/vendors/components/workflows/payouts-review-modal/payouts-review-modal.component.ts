@@ -14,6 +14,9 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaymentDetail, PaymentDetailModalComponent } from '../payment-detail-modal/payment-detail-modal.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
+import { ExportService } from '../../../../../shared/utils/export';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { VendorService } from '@vendors/services/vendor.api.service';
 
 type PayoutBankCode = 'alrajhi' | 'alahli' | 'alinma' | 'wallet' | 'bank';
 
@@ -42,8 +45,12 @@ export interface PayoutTransaction {
 })
 export class PayoutsReviewModalComponent implements OnChanges {
  private readonly cdr = inject(ChangeDetectorRef);
+ private readonly exportService = inject(ExportService);
+ private readonly toastService = inject(ToastService);
+ private readonly vendorService = inject(VendorService);
 
  @Input() isOpen = false;
+ @Input() vendorId = '';
  @Input() availableBalance = 0;
  @Input() vendorName = '';
  @Input() beneficiaryName = '';
@@ -170,9 +177,30 @@ export class PayoutsReviewModalComponent implements OnChanges {
  }
 
  onDownloadReceipt(): void {
- if (this.selectedTransaction) {
- this.downloadReceipt.emit(this.selectedTransaction.id);
+ if (!this.selectedTransaction) {
+ return;
  }
+
+ const tx = this.selectedTransaction;
+ this.downloadReceipt.emit(tx.id);
+
+ if (!this.vendorId) {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ return;
+ }
+
+ this.vendorService.exportVendorPayoutReceipt(this.vendorId, tx.id).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(
+ blob,
+ this.exportService.fileName(`payout-receipt-${tx.paymentNumber || tx.id}`, 'pdf')
+ );
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ }
+ });
  }
 
  onViewActivityLog(): void {

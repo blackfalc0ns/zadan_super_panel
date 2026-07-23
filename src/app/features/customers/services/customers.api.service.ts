@@ -146,6 +146,26 @@ export class CustomersService {
  return this.http.get<CustomerFilterOptions>(`${this.apiUrl}/filter-options`);
  }
 
+ exportCustomers(search?: string, filters?: CustomerFilters): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (search?.trim()) {
+ params = params.set('search', search.trim());
+ }
+
+ if (filters) {
+ if (filters['status']) params = params.set('status', String(filters['status']));
+ if (filters['city']) params = params.set('city', String(filters['city']));
+ if (filters['isLocked'] != null) params = params.set('isLocked', String(filters['isLocked']));
+ if (filters['hasOrders'] != null) params = params.set('hasOrders', String(filters['hasOrders']));
+ if (filters['minSpent'] != null) params = params.set('minSpent', String(filters['minSpent']));
+ if (filters['maxSpent'] != null) params = params.set('maxSpent', String(filters['maxSpent']));
+ if (filters['sortBy']) params = params.set('sortBy', String(filters['sortBy']));
+ }
+
+ return this.http.get(`${this.apiUrl}/export`, { params, responseType: 'blob' });
+ }
+
  searchCustomers(search: string, pageSize: number = 5): Observable<CustomerDetailRecord[]> {
  let params = new HttpParams().set('page', '1').set('pageSize', String(pageSize));
 

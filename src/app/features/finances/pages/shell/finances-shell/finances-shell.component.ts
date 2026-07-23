@@ -2,9 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { DetailTabNavItem, DetailTabsNavComponent } from '@shared/components/ui/detail-tabs-nav/detail-tabs-nav.component';
+import { ExportService } from '@shared/utils/export';
+import { ToastService } from '@shared/services/toast.service';
+import { FinanceService } from '../../../services/finance.service';
 
 interface FinanceRouteItem {
  id: string;
@@ -54,7 +57,7 @@ interface FinanceGroup {
  </div>
  
  <div class="flex items-center gap-3">
- <button class="h-10 px-4 rounded-xl bg-slate-100 text-[13px] font-bold text-slate-700 hover:bg-slate-200 transition-all border border-slate-200/50 flex items-center gap-2">
+ <button type="button" (click)="onExportReports()" class="h-10 px-4 rounded-xl bg-slate-100 text-[13px] font-bold text-slate-700 hover:bg-slate-200 transition-all border border-slate-200/50 flex items-center gap-2">
  <span class="material-symbols-outlined text-[18px]">download</span>
  {{ 'FINANCES.SHELL.EXPORT_REPORTS' | translate }}
  </button>
@@ -115,6 +118,10 @@ export class FinancesShellComponent {
  private readonly cdr = inject(ChangeDetectorRef);
  private readonly router = inject(Router);
  private readonly destroyRef = inject(DestroyRef);
+ private readonly translate = inject(TranslateService);
+ private readonly exportService = inject(ExportService);
+ private readonly toastService = inject(ToastService);
+ private readonly financeService = inject(FinanceService);
  private readonly currentUrl = signal(this.router.url);
 
  readonly groups: FinanceGroup[] = [
@@ -221,5 +228,22 @@ export class FinancesShellComponent {
 
  navigate(route: string): void {
  void this.router.navigateByUrl(route);
+ }
+
+ onExportReports(): void {
+ const route = this.activeRoute();
+ this.financeService.exportFinanceReport(
+ this.translate.instant(route.label),
+ route.route,
+ this.translate.instant(route.summary)
+ ).subscribe({
+ next: (blob) => {
+ this.exportService.downloadServerFile(blob, this.exportService.fileName('finance-report', 'pdf'));
+ this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ }
+ });
  }
 }

@@ -487,6 +487,49 @@ export class DriverService {
  );
  }
 
+ exportFinanceEntries(driverId: string, status?: string, search?: string): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (status && status !== 'ALL') {
+ params = params.set('status', status);
+ }
+
+ const normalizedSearch = search?.trim();
+ if (normalizedSearch) {
+ params = params.set('search', normalizedSearch);
+ }
+
+ return this.http.get(
+ `${this.apiUrl}/${this.normalizeDriverId(driverId)}/finance/entries/export`,
+ { params, responseType: 'blob' }
+ );
+ }
+
+ exportFinanceEntryReceipt(driverId: string, entryId: string): Observable<Blob> {
+ return this.http.get(
+ `${this.apiUrl}/${this.normalizeDriverId(driverId)}/finance/entries/${entryId}/receipt`,
+ { responseType: 'blob' }
+ );
+ }
+
+ exportFinanceStatement(driverId: string, status?: string, search?: string): Observable<Blob> {
+ let params = new HttpParams();
+
+ if (status && status !== 'ALL') {
+ params = params.set('status', status);
+ }
+
+ const normalizedSearch = search?.trim();
+ if (normalizedSearch) {
+ params = params.set('search', normalizedSearch);
+ }
+
+ return this.http.get(
+ `${this.apiUrl}/${this.normalizeDriverId(driverId)}/finance/statement`,
+ { params, responseType: 'blob' }
+ );
+ }
+
  getDriverSnapshotById(id: string): Driver | undefined {
  const normalizedId = id.trim();
  const driver = [...this.driversCache.values()].find((item) =>
