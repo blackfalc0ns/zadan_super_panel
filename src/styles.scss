@@ -84,6 +84,65 @@ body {
   }
 }
 
+/*
+ * Arabic (RTL) text alignment:
+ * Keep LTR character order for emails/phones/codes when dir="ltr",
+ * but always hug the right edge so fields don't look left-aligned.
+ */
+html[dir='rtl'] {
+  :where(
+    input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']):not([type='color']):not([type='hidden']):not([type='button']):not([type='submit']):not([type='reset']):not([type='image']),
+    textarea,
+    select,
+    .form-input-base
+  ) {
+    text-align: right !important;
+  }
+
+  :where(
+    input[dir='ltr'],
+    textarea[dir='ltr'],
+    select[dir='ltr'],
+    p[dir='ltr'],
+    span[dir='ltr'],
+    strong[dir='ltr'],
+    a[dir='ltr'],
+    label[dir='ltr'],
+    td[dir='ltr'],
+    th[dir='ltr'],
+    div[dir='ltr'],
+    li[dir='ltr'],
+    code[dir='ltr'],
+    pre[dir='ltr']
+  ) {
+    text-align: right;
+    unicode-bidi: isolate;
+  }
+
+  :where(.text-left):not(:where([class*='ltr:text-left'])):not(:where([class*='rtl:text-left'])) {
+    text-align: right;
+  }
+
+  :where(.placeholder\:text-left)::placeholder {
+    text-align: right;
+  }
+
+  ::placeholder {
+    text-align: inherit;
+  }
+}
+
+html[dir='ltr'] {
+  :where(
+    input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']):not([type='color']):not([type='hidden']):not([type='button']):not([type='submit']):not([type='reset']):not([type='image']),
+    textarea,
+    select,
+    .form-input-base
+  ) {
+    text-align: left;
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Cairo', ui-sans-serif, system-ui, sans-serif;
@@ -273,10 +332,12 @@ body {
 /* Input Base Styles */
 .form-input-base {
   @apply w-full h-12 px-4 rounded-xl bg-slate-50 border-none ring-0 focus:ring-2 focus:ring-zadna-primary text-sm font-bold transition-all placeholder:text-slate-300;
+  text-align: start;
 }
 
 .form-label-base {
   @apply block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2;
+  text-align: start;
 }
 
 .admin-skeleton {

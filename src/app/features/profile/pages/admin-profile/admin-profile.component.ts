@@ -149,20 +149,20 @@ const API_PANEL_SCOPE_MAP: Record<string, DirectoryPanelScope> = {
               <form [formGroup]="profileForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <label class="flex flex-col gap-2 md:col-span-2">
                   <span class="text-[11px] font-black tracking-widest uppercase text-slate-500">{{ 'ADMIN_PROFILE.FIELDS.FULL_NAME' | translate }}</span>
-                  <input formControlName="fullName" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                  <p *ngIf="fieldInvalid('fullName')" class="text-[12px] font-bold text-red-600">{{ 'ADMIN_PROFILE.ERRORS.FULL_NAME' | translate }}</p>
+                  <input formControlName="fullName" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 text-start focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
+                  <p *ngIf="fieldInvalid('fullName')" class="text-[12px] font-bold text-red-600 text-start">{{ 'ADMIN_PROFILE.ERRORS.FULL_NAME' | translate }}</p>
                 </label>
 
                 <label class="flex flex-col gap-2">
                   <span class="text-[11px] font-black tracking-widest uppercase text-slate-500">{{ 'ADMIN_PROFILE.FIELDS.EMAIL' | translate }}</span>
-                  <input formControlName="email" type="email" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                  <p *ngIf="fieldInvalid('email')" class="text-[12px] font-bold text-red-600">{{ 'ADMIN_PROFILE.ERRORS.EMAIL' | translate }}</p>
+                  <input formControlName="email" type="email" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 text-start focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
+                  <p *ngIf="fieldInvalid('email')" class="text-[12px] font-bold text-red-600 text-start">{{ 'ADMIN_PROFILE.ERRORS.EMAIL' | translate }}</p>
                 </label>
 
                 <label class="flex flex-col gap-2">
                   <span class="text-[11px] font-black tracking-widest uppercase text-slate-500">{{ 'ADMIN_PROFILE.FIELDS.PHONE' | translate }}</span>
-                  <input formControlName="phone" type="text" dir="ltr" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
-                  <p *ngIf="fieldInvalid('phone')" class="text-[12px] font-bold text-red-600">{{ 'ADMIN_PROFILE.ERRORS.PHONE' | translate }}</p>
+                  <input formControlName="phone" type="text" class="h-12 w-full rounded-2xl border-2 border-slate-200 bg-slate-50/50 px-4 text-[14px] font-bold text-slate-900 text-start focus:border-zadna-primary focus:bg-white focus:ring-4 focus:ring-zadna-primary/10 transition-all outline-none" />
+                  <p *ngIf="fieldInvalid('phone')" class="text-[12px] font-bold text-red-600 text-start">{{ 'ADMIN_PROFILE.ERRORS.PHONE' | translate }}</p>
                 </label>
               </form>
             </section>

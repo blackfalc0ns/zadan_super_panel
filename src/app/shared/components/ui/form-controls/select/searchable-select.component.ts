@@ -33,12 +33,12 @@ export interface SearchableSelectOption<T = any> {
           type="button"
           [disabled]="disabled || isDisabled"
           (click)="toggle()"
-          class="searchable-select-trigger flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 text-[0.85rem] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+          class="searchable-select-trigger flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 text-[0.85rem] font-bold text-slate-900 outline-none transition-all focus:border-zadna-primary focus:ring-1 focus:ring-zadna-primary disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 text-start"
           [class.border-rose-500]="isTouched && error"
           [class.ring-1]="isTouched && error"
           [class.ring-rose-500]="isTouched && error"
         >
-          <span class="truncate" [class.text-slate-400]="!selectedLabel">{{ selectedLabel || (placeholder | translate) }}</span>
+          <span class="truncate text-start" [class.text-slate-400]="!selectedLabel">{{ selectedLabel || (placeholder | translate) }}</span>
           <svg class="h-4 w-4 text-slate-400 transition-transform duration-200" [class.rotate-180]="isOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
@@ -56,7 +56,7 @@ export interface SearchableSelectOption<T = any> {
                 <input
                   type="text"
                   [(ngModel)]="searchTerm"
-                  class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[0.8rem] font-bold text-slate-900 outline-none transition-colors focus:border-zadna-primary rtl:pl-4 rtl:pr-10"
+                  class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 ps-10 pe-4 text-start text-[0.8rem] font-bold text-slate-900 outline-none transition-colors focus:border-zadna-primary"
                   [placeholder]="searchPlaceholder | translate"
                   (click)="$event.stopPropagation()"
                   #searchInput

@@ -34,6 +34,14 @@ export class AppTextareaComponent implements ControlValueAccessor {
   onChange: (value: string) => void = () => {};
   onTouched: () => void = () => {};
 
+  get resolvedDir(): 'rtl' | 'ltr' | null {
+    if (this.dir === 'auto') {
+      return null;
+    }
+
+    return this.dir;
+  }
+
   writeValue(value: string | null): void {
     this.value = value ?? '';
   }
