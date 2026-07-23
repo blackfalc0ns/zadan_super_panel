@@ -451,7 +451,12 @@ export class FinanceService {
  return this.http.get(`${this.settlementsApiUrl}/${id}/statement`, { responseType: 'blob' });
  }
 
- exportFinanceReport(title?: string, route?: string, summary?: string): Observable<Blob> {
+ exportFinanceReport(
+ title?: string,
+ route?: string,
+ summary?: string,
+ period: FinancePeriod = 'month'
+ ): Observable<Blob> {
  let params = new HttpParams();
 
  if (title?.trim()) {
@@ -462,6 +467,9 @@ export class FinanceService {
  }
  if (summary?.trim()) {
  params = params.set('summary', summary.trim());
+ }
+ if (period) {
+ params = params.set('period', period);
  }
 
  return this.http.get(`${this.apiUrl}/report`, { params, responseType: 'blob' });
