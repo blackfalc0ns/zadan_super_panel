@@ -128,14 +128,8 @@ export class VendorDetailHeaderComponent implements OnChanges {
  }
 
  onQuickContact(): void {
- if (typeof window === 'undefined' ||!this.vendor) {
- return;
- }
-
- const email = this.vendor.ownerEmail || this.vendor.contactEmail;
- if (email) {
- window.location.href = `mailto:${email}`;
- }
+ // Send via Email Center on the API — never open a local mail client (e.g. Brave mailto).
+ this.openEmailRouting();
  }
 
  openAccessDirectory(): void {
