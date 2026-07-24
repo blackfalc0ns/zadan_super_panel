@@ -38,7 +38,6 @@ export class VendorSettingsComponent {
  storeAvailabilitySubmitting = false;
  preparationTimeMinutes: number | null = null;
  resetPasswordQueued = false;
- smsNotificationsEnabled = false;
  storeManualMode: 'online' | 'offline' = 'online';
  storeManualReason = '';
  vendor: VendorDetail | null = null;
@@ -68,7 +67,6 @@ export class VendorSettingsComponent {
  this.minimumOrderAmount = vendor?.operationsSettings?.minimumOrderAmount ?? null;
  this.preparationTimeMinutes = vendor?.operationsSettings?.preparationTimeMinutes ?? null;
  this.emailNotificationsEnabled = vendor?.notificationSettings?.emailNotificationsEnabled ?? true;
- this.smsNotificationsEnabled = vendor?.notificationSettings?.smsNotificationsEnabled ?? false;
  this.newOrdersNotificationsEnabled = vendor?.notificationSettings?.newOrdersNotificationsEnabled ?? true;
  this.commissionRate = vendor?.commissionRate ?? null;
  });
@@ -90,7 +88,6 @@ export class VendorSettingsComponent {
  get activeNotificationChannelsCount(): number {
  return [
  this.emailNotificationsEnabled,
- this.smsNotificationsEnabled,
  this.newOrdersNotificationsEnabled
  ].filter(Boolean).length;
  }
@@ -485,7 +482,7 @@ export class VendorSettingsComponent {
  this.notificationsSubmitting = true;
  this.vendorDetailFacade.updateVendorNotificationSettingsRequest({
  emailNotificationsEnabled: this.emailNotificationsEnabled,
- smsNotificationsEnabled: this.smsNotificationsEnabled,
+ smsNotificationsEnabled: false,
  newOrdersNotificationsEnabled: this.newOrdersNotificationsEnabled
  }).pipe(take(1)).subscribe({
  next: () => this.setSuccess(this.text('حفظنا إعدادات الإشعارات بنجاح.', 'Notification settings were saved successfully.')),

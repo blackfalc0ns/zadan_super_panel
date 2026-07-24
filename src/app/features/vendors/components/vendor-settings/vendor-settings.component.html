@@ -226,11 +226,11 @@
  </div>
 
  <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold bg-violet-50 border border-violet-200 text-violet-700">
- {{ activeNotificationChannelsCount }}/3
+ {{ activeNotificationChannelsCount }}/2
  </span>
  </div>
 
- <div class="grid gap-4 p-5 sm:grid-cols-3">
+ <div class="grid gap-4 p-5 sm:grid-cols-2">
  <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/40 p-4 text-start">
  <div class="space-y-0.5">
  <p class="text-[12px] font-extrabold text-slate-900">{{ isRTL ? 'البريد الإلكتروني' : 'Email alerts' }}</p>
@@ -238,17 +238,6 @@
  </div>
  <label class="relative inline-flex cursor-pointer items-center shrink-0">
  <input [(ngModel)]="emailNotificationsEnabled" type="checkbox" class="peer sr-only">
- <span class="h-5 w-9 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white"></span>
- </label>
- </div>
-
- <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/40 p-4 text-start">
- <div class="space-y-0.5">
- <p class="text-[12px] font-extrabold text-slate-900">{{ isRTL ? 'الرسائل النصية' : 'SMS alerts' }}</p>
- <p class="text-[10px] font-medium text-slate-500 leading-tight">{{ isRTL ? 'إشعارات التسوية الهامة.' : 'High-priority billing SMS.' }}</p>
- </div>
- <label class="relative inline-flex cursor-pointer items-center shrink-0">
- <input [(ngModel)]="smsNotificationsEnabled" type="checkbox" class="peer sr-only">
  <span class="h-5 w-9 rounded-full bg-slate-200 after:absolute after:start-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white"></span>
  </label>
  </div>
