@@ -389,14 +389,18 @@
       "BANNERS": "اللافتات",
       "FEATURED_PRODUCTS": "المنتجات المميزة",
       "HOME_SECTIONS": "أقسام الرئيسية",
-      "HOME_VISIBILITY": "إظهار أقسام الرئيسية"
+      "HOME_VISIBILITY": "إظهار أقسام الرئيسية",
+      "CONTACT_SOCIAL": "الدعم والتواصل",
+      "LEGAL_DOCUMENTS": "الشروط والخصوصية"
     },
     "SUMMARIES": {
       "COUPONS": "إدارة أكواد الخصم وتحديد المتاجر المستفيدة وفترات التفعيل.",
       "BANNERS": "إدارة العروض الترويجية واللافتات الإعلانية النشطة.",
       "FEATURED_PRODUCTS": "ترويج منتجات محددة على واجهة التطبيق.",
       "HOME_SECTIONS": "التحكم في ترتيب وأقسام الواجهة الرئيسية.",
-      "HOME_VISIBILITY": "تفعيل أو إخفاء عناصر الرئيسية."
+      "HOME_VISIBILITY": "تفعيل أو إخفاء عناصر الرئيسية.",
+      "CONTACT_SOCIAL": "بريد ورقم الدعم وروابط صفحات التواصل الاجتماعي.",
+      "LEGAL_DOCUMENTS": "تعديل شروط وأحكام وسياسات الخصوصية للعميل والمندوب والتاجر."
     },
     "ACTIONS": {
       "REFRESH": "تحديث",
@@ -406,6 +410,49 @@
       "SAVING": "نحفظ...",
       "EDIT": "تعديل",
       "DELETE": "حذف"
+    },
+    "CONTACT_SOCIAL": {
+      "TITLE": "بيانات التواصل والدعم",
+      "DESCRIPTION": "حدّد إيميل ورقم الدعم وروابط صفحات التواصل الاجتماعي الظاهرة للعملاء.",
+      "SUPPORT_TITLE": "قنوات الدعم",
+      "SUPPORT_DESC": "تظهر للعملاء في صفحات المساعدة والتواصل داخل التطبيق.",
+      "SUPPORT_EMAIL": "إيميل الدعم",
+      "SUPPORT_EMAIL_PLACEHOLDER": "support@zadana.com",
+      "SUPPORT_PHONE": "رقم الدعم",
+      "SUPPORT_PHONE_PLACEHOLDER": "+9665xxxxxxxx",
+      "SOCIAL_TITLE": "صفحات التواصل الاجتماعي",
+      "SOCIAL_DESC": "ضع روابط كاملة تبدأ بـ https:// لكل منصة.",
+      "WHATSAPP": "واتساب",
+      "INSTAGRAM": "إنستغرام",
+      "TWITTER": "إكس (تويتر)",
+      "TIKTOK": "تيك توك",
+      "SNAPCHAT": "سناب شات",
+      "FACEBOOK": "فيسبوك",
+      "YOUTUBE": "يوتيوب",
+      "LINKEDIN": "لينكدإن",
+      "LAST_UPDATED": "آخر تحديث",
+      "SAVE_SUCCESS": "تم حفظ بيانات التواصل بنجاح"
+    },
+    "LEGAL_DOCUMENTS": {
+      "TITLE": "الشروط وسياسات الخصوصية",
+      "DESCRIPTION": "حرّر نصوص الشروط والخصوصية لكل جمهور (عميل، مندوب، تاجر) بالعربية والإنجليزية.",
+      "META_TITLE": "بيانات المستند",
+      "META_DESC": "حدّث رقم الإصدار وتاريخ السريان عند أي تعديل جوهري.",
+      "VERSION": "الإصدار",
+      "EFFECTIVE_AT": "تاريخ السريان",
+      "CONTENT_AR": "المحتوى بالعربية (Markdown)",
+      "CONTENT_EN": "المحتوى بالإنجليزية (Markdown)",
+      "MARKDOWN_HINT": "يدعم العناوين والقوائم والجداول بنفس صيغة Markdown المستخدمة حالياً.",
+      "LAST_UPDATED": "آخر تحديث",
+      "SAVE_SUCCESS": "تم حفظ المستند القانوني بنجاح",
+      "TYPES": {
+        "CustomerTerms": "شروط العميل",
+        "CustomerPrivacy": "خصوصية العميل",
+        "DriverTerms": "شروط المندوب",
+        "DriverPrivacy": "خصوصية المندوب",
+        "VendorTerms": "شروط التاجر",
+        "VendorPrivacy": "خصوصية التاجر"
+      }
     },
     "COMMON": {
       "WORKFLOW": "مسار العمل",

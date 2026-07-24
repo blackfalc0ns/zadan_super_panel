@@ -70,6 +70,8 @@ export const ADMIN_PAGE_TITLE_RULES: readonly AdminPageTitleRule[] = [
   { pattern: /^\/marketing\/featured-products$/, titleKey: 'PAGE_TITLES.MARKETING_FEATURED_PRODUCTS' },
   { pattern: /^\/marketing\/home-sections$/, titleKey: 'PAGE_TITLES.MARKETING_HOME_SECTIONS' },
   { pattern: /^\/marketing\/home-visibility$/, titleKey: 'PAGE_TITLES.MARKETING_HOME_VISIBILITY' },
+  { pattern: /^\/marketing\/contact-social$/, titleKey: 'PAGE_TITLES.MARKETING_CONTACT_SOCIAL' },
+  { pattern: /^\/marketing\/legal-documents$/, titleKey: 'PAGE_TITLES.MARKETING_LEGAL_DOCUMENTS' },
   { pattern: /^\/marketing$/, titleKey: 'PAGE_TITLES.MARKETING_BANNERS' },
 
   { pattern: /^\/notifications$/, titleKey: 'PAGE_TITLES.NOTIFICATIONS' },

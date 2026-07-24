@@ -22,6 +22,11 @@ import {
   MarketingHomeSectionPayload,
   MarketingHomeSectionUpdatePayload,
   MasterProductLookupOption,
+  PlatformContactSettings,
+  PlatformContactSettingsPayload,
+  PlatformLegalDocument,
+  PlatformLegalDocumentPayload,
+  PlatformLegalDocumentType,
   ProductCardPriceVisibilitySetting,
   VendorProductLookupOption
 } from '@marketing/models/marketing.models';
@@ -213,6 +218,39 @@ export class MarketingApiService {
 
   deactivateSectionVisibility(sectionType: HomeContentSectionType): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/home-content-sections/${sectionType}/deactivate`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getPlatformContact(): Observable<PlatformContactSettings> {
+    return this.http.get<PlatformContactSettings>(`${this.apiUrl}/platform-contact`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  upsertPlatformContact(payload: PlatformContactSettingsPayload): Observable<PlatformContactSettings> {
+    return this.http.put<PlatformContactSettings>(`${this.apiUrl}/platform-contact`, payload, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getLegalDocuments(): Observable<PlatformLegalDocument[]> {
+    return this.http.get<PlatformLegalDocument[]>(`${this.apiUrl}/legal-documents`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getLegalDocument(documentType: PlatformLegalDocumentType): Observable<PlatformLegalDocument> {
+    return this.http.get<PlatformLegalDocument>(`${this.apiUrl}/legal-documents/${documentType}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  upsertLegalDocument(
+    documentType: PlatformLegalDocumentType,
+    payload: PlatformLegalDocumentPayload
+  ): Observable<PlatformLegalDocument> {
+    return this.http.put<PlatformLegalDocument>(`${this.apiUrl}/legal-documents/${documentType}`, payload, {
       headers: this.getHeaders()
     });
   }

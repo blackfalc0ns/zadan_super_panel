@@ -389,23 +389,70 @@
       "BANNERS": "Banners",
       "FEATURED_PRODUCTS": "Featured Products",
       "HOME_SECTIONS": "Home Sections",
-      "HOME_VISIBILITY": "Home Visibility"
+      "HOME_VISIBILITY": "Home Visibility",
+      "CONTACT_SOCIAL": "Support & Social",
+      "LEGAL_DOCUMENTS": "Terms & Privacy"
     },
     "SUMMARIES": {
       "COUPONS": "Manage discount codes, target stores, and activation periods.",
       "BANNERS": "Manage active promotional banners and advertisements.",
       "FEATURED_PRODUCTS": "Promote specific products on the application interface.",
       "HOME_SECTIONS": "Control the order and sections of the home interface.",
-      "HOME_VISIBILITY": "Enable or hide home page elements."
+      "HOME_VISIBILITY": "Enable or hide home page elements.",
+      "CONTACT_SOCIAL": "Support email, phone, and social media profile links.",
+      "LEGAL_DOCUMENTS": "Edit terms and privacy policies for customers, drivers, and vendors."
     },
     "ACTIONS": {
       "REFRESH": "Refresh",
       "ACTIVATE": "Activate",
       "DEACTIVATE": "Deactivate",
-      "SAVE_CHANGES": "Save changes",
+      "SAVE_CHANGES": "Save Changes",
       "SAVING": "Saving...",
       "EDIT": "Edit",
       "DELETE": "Delete"
+    },
+    "CONTACT_SOCIAL": {
+      "TITLE": "Support & social contact",
+      "DESCRIPTION": "Set the support email, phone number, and social profile links shown to customers.",
+      "SUPPORT_TITLE": "Support channels",
+      "SUPPORT_DESC": "Shown to customers in help and contact surfaces inside the app.",
+      "SUPPORT_EMAIL": "Support email",
+      "SUPPORT_EMAIL_PLACEHOLDER": "support@zadana.com",
+      "SUPPORT_PHONE": "Support phone",
+      "SUPPORT_PHONE_PLACEHOLDER": "+9665xxxxxxxx",
+      "SOCIAL_TITLE": "Social media pages",
+      "SOCIAL_DESC": "Use full https:// links for each platform.",
+      "WHATSAPP": "WhatsApp",
+      "INSTAGRAM": "Instagram",
+      "TWITTER": "X (Twitter)",
+      "TIKTOK": "TikTok",
+      "SNAPCHAT": "Snapchat",
+      "FACEBOOK": "Facebook",
+      "YOUTUBE": "YouTube",
+      "LINKEDIN": "LinkedIn",
+      "LAST_UPDATED": "Last updated",
+      "SAVE_SUCCESS": "Contact settings saved successfully"
+    },
+    "LEGAL_DOCUMENTS": {
+      "TITLE": "Terms & privacy policies",
+      "DESCRIPTION": "Edit terms and privacy content for each audience (customer, driver, vendor) in Arabic and English.",
+      "META_TITLE": "Document metadata",
+      "META_DESC": "Bump the version and effective date when you make material changes.",
+      "VERSION": "Version",
+      "EFFECTIVE_AT": "Effective date",
+      "CONTENT_AR": "Arabic content (Markdown)",
+      "CONTENT_EN": "English content (Markdown)",
+      "MARKDOWN_HINT": "Supports headings, lists, and tables in the same Markdown format already used.",
+      "LAST_UPDATED": "Last updated",
+      "SAVE_SUCCESS": "Legal document saved successfully",
+      "TYPES": {
+        "CustomerTerms": "Customer terms",
+        "CustomerPrivacy": "Customer privacy",
+        "DriverTerms": "Driver terms",
+        "DriverPrivacy": "Driver privacy",
+        "VendorTerms": "Vendor terms",
+        "VendorPrivacy": "Vendor privacy"
+      }
     },
     "COMMON": {
       "WORKFLOW": "Workflow",

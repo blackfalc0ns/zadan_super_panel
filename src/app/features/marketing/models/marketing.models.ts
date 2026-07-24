@@ -199,3 +199,54 @@ export interface MarketingCouponPayload {
 export interface MarketingCouponUpdatePayload extends MarketingCouponPayload {
   isActive: boolean;
 }
+
+export interface PlatformContactSettings {
+  supportEmail?: string | null;
+  supportPhone?: string | null;
+  whatsAppUrl?: string | null;
+  instagramUrl?: string | null;
+  twitterUrl?: string | null;
+  tikTokUrl?: string | null;
+  snapchatUrl?: string | null;
+  facebookUrl?: string | null;
+  youTubeUrl?: string | null;
+  linkedInUrl?: string | null;
+  updatedAtUtc?: string | null;
+}
+
+export interface PlatformContactSettingsPayload {
+  supportEmail?: string | null;
+  supportPhone?: string | null;
+  whatsAppUrl?: string | null;
+  instagramUrl?: string | null;
+  twitterUrl?: string | null;
+  tikTokUrl?: string | null;
+  snapchatUrl?: string | null;
+  facebookUrl?: string | null;
+  youTubeUrl?: string | null;
+  linkedInUrl?: string | null;
+}
+
+export type PlatformLegalDocumentType =
+  | 'CustomerTerms'
+  | 'CustomerPrivacy'
+  | 'DriverTerms'
+  | 'DriverPrivacy'
+  | 'VendorTerms'
+  | 'VendorPrivacy';
+
+export interface PlatformLegalDocument {
+  documentType: PlatformLegalDocumentType | string;
+  contentAr: string;
+  contentEn: string;
+  version: string;
+  effectiveAtUtc: string;
+  updatedAtUtc: string;
+}
+
+export interface PlatformLegalDocumentPayload {
+  contentAr?: string | null;
+  contentEn?: string | null;
+  version?: string | null;
+  effectiveAtUtc?: string | null;
+}

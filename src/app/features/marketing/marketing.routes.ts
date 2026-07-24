@@ -46,6 +46,24 @@ export const MARKETING_ROUTES: Routes = [
           import('./pages/home-visibility/marketing-home-visibility.component').then(
             (m) => m.MarketingHomeVisibilityComponent
           )
+      },
+      {
+        path: 'contact-social',
+        canActivate: [HasPermissionGuard],
+        data: { permission: 'marketing.manage_settings' },
+        loadComponent: () =>
+          import('./pages/contact-social/marketing-contact-social.component').then(
+            (m) => m.MarketingContactSocialComponent
+          )
+      },
+      {
+        path: 'legal-documents',
+        canActivate: [HasPermissionGuard],
+        data: { permission: 'marketing.manage_settings' },
+        loadComponent: () =>
+          import('./pages/legal-documents/marketing-legal-documents.component').then(
+            (m) => m.MarketingLegalDocumentsComponent
+          )
       }
     ]
   }

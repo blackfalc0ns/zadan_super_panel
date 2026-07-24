@@ -86,7 +86,9 @@ export class MarketingShellComponent {
     { id: 'banners', label: 'MARKETING.TABS.BANNERS', route: '/marketing/banners', icon: 'ad', summary: 'MARKETING.SUMMARIES.BANNERS' },
     { id: 'featured-products', label: 'MARKETING.TABS.FEATURED_PRODUCTS', route: '/marketing/featured-products', icon: 'star', summary: 'MARKETING.SUMMARIES.FEATURED_PRODUCTS' },
     { id: 'home-sections', label: 'MARKETING.TABS.HOME_SECTIONS', route: '/marketing/home-sections', icon: 'grid_view', summary: 'MARKETING.SUMMARIES.HOME_SECTIONS' },
-    { id: 'home-visibility', label: 'MARKETING.TABS.HOME_VISIBILITY', route: '/marketing/home-visibility', icon: 'visibility', summary: 'MARKETING.SUMMARIES.HOME_VISIBILITY' }
+    { id: 'home-visibility', label: 'MARKETING.TABS.HOME_VISIBILITY', route: '/marketing/home-visibility', icon: 'visibility', summary: 'MARKETING.SUMMARIES.HOME_VISIBILITY' },
+    { id: 'contact-social', label: 'MARKETING.TABS.CONTACT_SOCIAL', route: '/marketing/contact-social', icon: 'contact_support', summary: 'MARKETING.SUMMARIES.CONTACT_SOCIAL' },
+    { id: 'legal-documents', label: 'MARKETING.TABS.LEGAL_DOCUMENTS', route: '/marketing/legal-documents', icon: 'gavel', summary: 'MARKETING.SUMMARIES.LEGAL_DOCUMENTS' }
   ];
 
   readonly activeRoute = computed(() =>
