@@ -5630,7 +5630,9 @@
         "DATE": "Date",
         "AMOUNT": "Amount",
         "STATUS": "Status",
-        "VIEW_ALL": "View All Orders"
+        "VIEW_ALL": "View All Orders",
+        "EMPTY_TITLE": "No recent orders",
+        "EMPTY_MESSAGE": "This customer has no orders to show right now."
       },
       "ORDER_STATUS": {
         "DELIVERED": "Delivered",
@@ -6453,8 +6455,8 @@
         "POLICY_2": "The preventive COD debt limit is managed in platform settings. If exceeded, the driver stops receiving orders until the balance is remitted.",
         "POLICY_3": "Fees charged on transactions depend entirely on the banking gateway and the type of settlement method used.",
         "POLICY_WITHDRAWAL": "Driver earnings are paid through an approved withdrawal request, then a settlement linked to a bank transfer or manual confirmation with transfer proof.",
-        "POLICY_COD_LIMIT": "If owed COD exceeds {{limit}} SAR, the driver stops receiving orders until the amount is remitted via admin COD settlement.",
-        "POLICY_SETTLEMENT_FLOW": "Driver settlements are not created from scratch; they must be linked to an approved withdrawal and an immutable payout destination.",
+        "POLICY_COD_LIMIT": "If owed COD exceeds {{limit}} SAR, the driver stops receiving orders until the amount is collected via Finance COD reconciliation.",
+        "POLICY_SETTLEMENT_FLOW": "Driver payout settlements are not created from scratch; they require an approved withdrawal. COD collection is done from Finance COD reconciliation.",
         "MODAL_TITLE": "Settle Financial Dues",
         "MODAL_SUBTITLE": "Record a manual settlement for the current balance",
         "COD_MODAL_TITLE": "Settle Owed COD",
@@ -6485,7 +6487,7 @@
         "BACK_TO_STATEMENT": "Back to Statement",
         "ACTIONS": {
           "SETTLE": "Settle balance",
-          "SETTLE_COD": "Settle COD",
+          "SETTLE_COD": "Open COD reconciliation",
           "VIEW_SETTLEMENTS": "View settlements",
           "VIEW_WITHDRAWALS": "View withdrawals",
           "DOWNLOAD_STATEMENT": "Download statement"

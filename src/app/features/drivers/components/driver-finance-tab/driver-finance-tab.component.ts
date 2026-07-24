@@ -16,11 +16,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ExportService } from '../../../../shared/utils/export';
-import { FinanceService } from '../../../finances/services/finance.service';
 import {
   DriverDetailRecord,
   DriverFinanceEntry,
@@ -48,7 +47,6 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   @Output() financeUpdated = new EventEmitter<void>();
 
   private readonly driversApi = inject(DriverService);
-  private readonly financeService = inject(FinanceService);
   private readonly toastService = inject(ToastService);
   private readonly exportService = inject(ExportService);
   private readonly translate = inject(TranslateService);
@@ -66,14 +64,6 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   pageSize = 10;
   totalItems = 0;
   isLedgerLoading = false;
-
-  showSettleModal = false;
-  settleAmount = 0;
-  settleReference = '';
-  settleNotes = '';
-  isSettling = false;
-  settleSuccess = false;
-  settleError = false;
 
   ngOnInit(): void {
     this.searchChanges$
@@ -94,7 +84,8 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   }
 
   get codOwedBalance(): number {
-    return this.driver?.finance?.codOwedBalance ?? this.driver?.finance?.dueAmount ?? 0;
+    const raw = this.driver?.finance?.codOwedBalance ?? this.driver?.finance?.dueAmount ?? 0;
+    return Math.max(0, Number(raw) || 0);
   }
 
   get codBlockThreshold(): number {
@@ -232,16 +223,68 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
     return `DRIVERS.DETAIL.FINANCE.BACKEND.TYPES.${typeUpper}`;
   }
 
-  getMethodLabel(method: string): string {
-    if (method?.startsWith('DRIVERS.DETAIL.FINANCE.') || method?.startsWith('COMMON.')) {
+  getMethodLabel(method: string | null | undefined): string {
+    if (!method?.trim() || method.includes('NOT_AVAILABLE')) {
+      return 'COMMON.NOT_AVAILABLE';
+    }
+    if (
+      method.startsWith('DRIVERS.DETAIL.FINANCE.BACKEND.PAYOUT_METHODS.') ||
+      method.startsWith('DRIVERS.DETAIL.FINANCE.BACKEND.METHODS.') ||
+      method.startsWith('COMMON.')
+    ) {
       return method;
     }
-    const methodUpper = method?.toUpperCase() || '';
-    return `DRIVERS.DETAIL.FINANCE.BACKEND.METHODS.${methodUpper}`;
+    if (method.startsWith('DRIVERS.DETAIL.FINANCE.')) {
+      return method;
+    }
+    return `DRIVERS.DETAIL.FINANCE.BACKEND.PAYOUT_METHODS.${method.toUpperCase()}`;
+  }
+
+  formatStatementPeriod(period: string | null | undefined): string {
+    if (!period?.trim()) {
+      return this.translate.instant('COMMON.NOT_AVAILABLE');
+    }
+
+    const normalized = period
+      .trim()
+      .replace(/^COMMON\./i, '')
+      .replace(/\s*(→|->|—|–)\s*/g, ' – ');
+
+    if (/\d{4}-\d{2}-\d{2}/.test(normalized)) {
+      return normalized;
+    }
+
+    if (this.isTranslationKey(normalized)) {
+      return this.translate.instant(normalized);
+    }
+
+    return normalized;
+  }
+
+  formatNextPayoutDate(value: string | null | undefined): string {
+    if (!value?.trim() || value.includes('NOT_AVAILABLE')) {
+      return this.translate.instant('COMMON.NOT_AVAILABLE');
+    }
+    if (this.isTranslationKey(value)) {
+      return this.translate.instant(value);
+    }
+    return value;
   }
 
   isTranslationKey(value: string | undefined | null): boolean {
-    return !!value && (value.startsWith('DRIVERS.') || value.startsWith('COMMON.') || value.startsWith('FINANCES.') || value.startsWith('VENDOR_FINANCE.'));
+    if (!value?.trim()) {
+      return false;
+    }
+    // Never treat date ranges (even with a legacy COMMON. prefix) as i18n keys.
+    if (/\d{4}-\d{2}-\d{2}/.test(value)) {
+      return false;
+    }
+    return (
+      value.startsWith('DRIVERS.') ||
+      value.startsWith('COMMON.') ||
+      value.startsWith('FINANCES.') ||
+      value.startsWith('VENDOR_FINANCE.')
+    );
   }
 
   downloadReceipt(entry: DriverFinanceEntry): void {
@@ -301,60 +344,9 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
     });
   }
 
-  openSettleModal() {
-    this.settleAmount = this.codOwedBalance;
-    this.settleNotes = '';
-    this.settleReference = '';
-    this.showSettleModal = true;
-    this.settleSuccess = false;
-    this.settleError = false;
-    this.isSettling = false;
-  }
-
-  closeSettleModal() {
-    this.showSettleModal = false;
-  }
-
-  submitSettlement() {
-    if (this.settleAmount <= 0 || !this.driver?.id) {
-      return;
-    }
-
-    this.isSettling = true;
-    this.settleError = false;
-    this.cdr.markForCheck();
-
-    const reference = this.settleReference?.trim()
-      || this.settleNotes?.trim()
-      || undefined;
-
-    this.financeService.createCodRemittance({
-      driverId: this.driver.id,
-      amount: this.settleAmount,
-      reference,
-      idempotencyKey: `driver-finance-tab:${this.driver.id}:${Date.now()}`
-    }).pipe(take(1)).subscribe({
-      next: () => {
-        this.isSettling = false;
-        this.settleSuccess = true;
-        this.currentPage = 1;
-        this.loadLedgerEntries();
-        this.financeUpdated.emit();
-        this.toastService.success(
-          this.translate.instant('FINANCES.COD.TOAST.SUCCESS_MESSAGE', { driver: this.driver.displayName ?? this.driver.id }),
-          this.translate.instant('FINANCES.COD.TOAST.SUCCESS_TITLE')
-        );
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.isSettling = false;
-        this.settleError = true;
-        this.toastService.error(
-          this.translate.instant('FINANCES.COD.TOAST.ERROR_MESSAGE'),
-          this.translate.instant('FINANCES.COD.TOAST.ERROR_TITLE')
-        );
-        this.cdr.markForCheck();
-      }
+  openCodReconciliation(): void {
+    void this.router.navigate(['/finances/cod'], {
+      queryParams: { entityType: 'driver', entityId: this.driver.id }
     });
   }
 

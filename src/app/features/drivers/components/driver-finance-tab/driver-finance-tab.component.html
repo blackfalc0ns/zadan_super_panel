@@ -50,10 +50,7 @@
       <div>
         <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ 'DRIVERS.DETAIL.FINANCE.SETTLEMENTS_SECTION' | translate }}</p>
         <p class="text-[14px] font-black text-slate-800 mt-0.5" dir="ltr">
-          <ng-container *ngIf="isTranslationKey(driver.finance.statementPeriod); else rawPeriod">
-            {{ driver.finance.statementPeriod | translate }}
-          </ng-container>
-          <ng-template #rawPeriod>{{ driver.finance.statementPeriod }}</ng-template>
+          {{ formatStatementPeriod(driver.finance.statementPeriod) }}
         </p>
       </div>
     </div>
@@ -74,12 +71,7 @@
       <div class="flex items-center gap-2.5">
         <span class="material-symbols-outlined text-slate-400 text-[18px]">schedule</span>
         <span>{{ 'DRIVERS.DETAIL.FINANCE.NEXT_PAYOUT' | translate }}:</span>
-        <span class="text-slate-900 font-black" dir="ltr">
-          <ng-container *ngIf="isTranslationKey(driver.finance.nextPayoutDate); else rawNextPayout">
-            {{ driver.finance.nextPayoutDate | translate }}
-          </ng-container>
-          <ng-template #rawNextPayout>{{ driver.finance.nextPayoutDate }}</ng-template>
-        </span>
+        <span class="text-slate-900 font-black" dir="ltr">{{ formatNextPayoutDate(driver.finance.nextPayoutDate) }}</span>
       </div>
     </div>
   </div>
@@ -494,7 +486,7 @@
         </div>
 
         <div class="flex flex-col gap-3.5 relative z-10">
-          <button type="button" (click)="openSettleModal()" [disabled]="codOwedBalance <= 0"
+          <button type="button" (click)="openCodReconciliation()" [disabled]="codOwedBalance <= 0"
                   class="group/btn flex items-center justify-between rounded-2xl border border-teal-200/60 bg-gradient-to-r from-teal-50/10 to-emerald-50/10 p-5 px-6 transition-all duration-300 hover:from-teal-50/20 hover:to-emerald-50/20 hover:-translate-y-0.5 hover:shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
             <div class="flex items-center gap-4">
               <span class="material-symbols-outlined text-teal-600 text-[22px] group-hover/btn:scale-110 transition-transform duration-300">account_balance</span>
@@ -557,103 +549,6 @@
           </div>
         </div>
       </section>
-    </div>
-  </div>
-</div>
-
-<!-- COD Remittance Modal -->
-<div *ngIf="showSettleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-  <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" (click)="closeSettleModal()"></div>
-
-  <div class="bg-white/95 backdrop-blur-xl rounded-3xl border border-slate-200/60 shadow-2xl w-full max-w-lg p-6 sm:p-8 relative z-10 animate-in zoom-in-95 slide-in-from-bottom-8 duration-300 overflow-hidden flex flex-col" [dir]="isRTL ? 'rtl' : 'ltr'">
-    <div class="absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-teal-500 via-emerald-500 to-indigo-500"></div>
-
-    <div class="flex justify-between items-start pb-5 border-b border-slate-100/60 mb-6">
-      <div class="flex items-center gap-3">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
-          <span class="material-symbols-outlined text-[22px]">payments</span>
-        </div>
-        <div>
-          <h3 class="text-[17px] font-black text-slate-900 leading-tight">{{ 'DRIVERS.DETAIL.FINANCE.COD_MODAL_TITLE' | translate }}</h3>
-          <p class="text-[11.5px] font-bold text-slate-400 mt-0.5">{{ 'DRIVERS.DETAIL.FINANCE.COD_MODAL_SUBTITLE' | translate }}</p>
-        </div>
-      </div>
-
-      <button type="button" (click)="closeSettleModal()" class="w-8 h-8 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition-colors">
-        <span class="material-symbols-outlined text-[20px]">close</span>
-      </button>
-    </div>
-
-    <div class="flex-1" *ngIf="!settleSuccess">
-      <form (submit)="submitSettlement(); $event.preventDefault()" class="space-y-5">
-        <div class="flex flex-col gap-2">
-          <label class="text-[13px] font-black text-slate-700">{{ 'DRIVERS.DETAIL.FINANCE.SETTLE_AMOUNT_LABEL' | translate }}</label>
-          <div class="relative group">
-            <input type="number"
-                   name="settleAmount"
-                   [(ngModel)]="settleAmount"
-                   required
-                   min="0.01"
-                   [max]="codOwedBalance"
-                   class="w-full py-4 px-5 bg-slate-50 border border-slate-200/80 rounded-2xl text-[20px] font-black text-slate-900 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all font-mono" dir="ltr">
-            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-[12px] font-bold text-slate-400">{{ 'COMMON.CURRENCY_SAR' | translate }}</span>
-          </div>
-          <p class="text-[11px] font-semibold text-slate-400 mt-0.5">{{ 'DRIVERS.DETAIL.FINANCE.TOTAL_COD_OWED' | translate:{ amount: (codOwedBalance | number:'1.2-2') } }}</p>
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label class="text-[13px] font-black text-slate-700">{{ 'DRIVERS.DETAIL.FINANCE.REFERENCE_OPTIONAL_LABEL' | translate }}</label>
-          <input type="text"
-                 name="settleReference"
-                 [(ngModel)]="settleReference"
-                 [placeholder]="'DRIVERS.DETAIL.FINANCE.REFERENCE_OPTIONAL_PLACEHOLDER' | translate"
-                 class="w-full p-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-[12.5px] font-bold text-slate-800 placeholder:text-slate-300 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all" dir="ltr">
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label class="text-[13px] font-black text-slate-700">{{ 'DRIVERS.DETAIL.FINANCE.NOTES_LABEL' | translate }}</label>
-          <textarea name="settleNotes"
-                    [(ngModel)]="settleNotes"
-                    rows="2"
-                    [placeholder]="'DRIVERS.DETAIL.FINANCE.NOTES_PLACEHOLDER' | translate"
-                    class="w-full p-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-[12.5px] font-bold text-slate-800 placeholder:text-slate-300 focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all"></textarea>
-        </div>
-
-        <div class="pt-4">
-          <button type="submit"
-                  [disabled]="isSettling || settleAmount <= 0 || settleAmount > codOwedBalance"
-                  class="w-full flex items-center justify-center gap-3 py-4 bg-teal-600 hover:bg-teal-700 text-white font-black rounded-2xl shadow-xl shadow-teal-600/25 transition-all active:scale-95 disabled:bg-slate-300 disabled:shadow-none">
-            <span *ngIf="isSettling" class="w-5 h-5 rounded-full border-[3px] border-white border-t-transparent animate-spin"></span>
-            <span class="material-symbols-outlined text-[20px]" *ngIf="!isSettling">done_all</span>
-            <span>{{ isSettling ? ('DRIVERS.DETAIL.FINANCE.RECORDING_SETTLEMENT' | translate) : ('DRIVERS.DETAIL.FINANCE.SAVE_COD_REMITTANCE' | translate) }}</span>
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <div class="flex flex-col items-center justify-center text-center py-10" *ngIf="settleSuccess">
-      <div class="mb-6 flex justify-center w-full">
-        <svg class="checkmark animate-in zoom-in duration-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-        </svg>
-      </div>
-
-      <h3 class="text-lg font-black text-slate-900 mt-4">{{ 'DRIVERS.DETAIL.FINANCE.SETTLEMENT_SUCCESS' | translate }}</h3>
-      <p class="text-[12.5px] font-bold text-slate-400 mt-2 max-w-sm">{{ 'DRIVERS.DETAIL.FINANCE.COD_SUCCESS_DESC' | translate }}</p>
-
-      <div class="w-full bg-slate-50 border border-slate-200/50 rounded-2xl p-5 mt-6 grid grid-cols-2 gap-y-2.5 gap-x-4 text-[13px] font-bold text-slate-600">
-        <div class="text-start">{{ 'DRIVERS.DETAIL.FINANCE.SETTLED_AMOUNT' | translate }}</div>
-        <div class="text-end font-mono text-emerald-600" dir="ltr">{{ settleAmount | number:'1.2-2' }} {{ 'COMMON.CURRENCY_SAR' | translate }}</div>
-
-        <div class="text-start" *ngIf="settleReference">{{ 'DRIVERS.DETAIL.FINANCE.TRANSACTION_REFERENCE' | translate }}</div>
-        <div class="text-end font-mono text-slate-800" dir="ltr" *ngIf="settleReference">{{ settleReference }}</div>
-      </div>
-
-      <button type="button" (click)="closeSettleModal()"
-              class="w-full py-4 bg-slate-900 hover:bg-slate-850 text-white font-black rounded-2xl mt-8 shadow-lg shadow-slate-900/10 transition-all active:scale-95">
-        {{ 'DRIVERS.DETAIL.FINANCE.BACK_TO_STATEMENT' | translate }}
-      </button>
     </div>
   </div>
 </div>

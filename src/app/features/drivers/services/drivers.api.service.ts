@@ -1016,9 +1016,9 @@ export class DriverService {
  },
  finance: {
  availableBalance: Number(response.financeDetails.availableBalance ?? response.financeDetails.netWithdrawable ?? 0),
- dueAmount: Number(response.financeDetails.dueAmount ?? response.financeDetails.codOwedBalance ?? 0),
+ dueAmount: Math.max(0, Number(response.financeDetails.dueAmount ?? response.financeDetails.codOwedBalance ?? 0)),
  codCollected: Number(response.financeDetails.codCollected ?? 0),
- pendingDeductions: Number(response.financeDetails.pendingDeductions ?? response.financeDetails.pendingBalance ?? 0),
+ pendingDeductions: Math.max(0, Number(response.financeDetails.pendingDeductions ?? response.financeDetails.pendingBalance ?? 0)),
  nextPayoutDate: response.financeDetails.nextPayoutDateUtc
  ? this.formatDate(response.financeDetails.nextPayoutDateUtc)
  : 'COMMON.NOT_AVAILABLE',
@@ -1029,9 +1029,9 @@ export class DriverService {
  entries: this.mapFinanceEntries(response.financeDetails.entries),
  currentBalance: Number(response.financeDetails.currentBalance ?? response.finance.currentBalance ?? 0),
  pendingBalance: Number(response.financeDetails.pendingBalance ?? response.finance.pendingBalance ?? 0),
- codOwedBalance: Number(response.financeDetails.codOwedBalance ?? response.financeDetails.dueAmount ?? 0),
+ codOwedBalance: Math.max(0, Number(response.financeDetails.codOwedBalance ?? response.financeDetails.dueAmount ?? 0)),
  codBlockThresholdAmount: Number(response.financeDetails.codBlockThresholdAmount ?? 0),
- netWithdrawable: Number(response.financeDetails.netWithdrawable ?? response.financeDetails.availableBalance ?? 0),
+ netWithdrawable: Math.max(0, Number(response.financeDetails.netWithdrawable ?? response.financeDetails.availableBalance ?? 0)),
  payoutDay: response.financeDetails.payoutDay ?? undefined,
  payoutDayLabel: response.financeDetails.payoutDay
  ? this.mapPayoutDayLabel(response.financeDetails.payoutDay)
@@ -2236,10 +2236,25 @@ export class DriverService {
  }
 
  private mapFinanceMethod(method: string): string {
+ if (!method?.trim() || method === 'COMMON.NOT_AVAILABLE' || method.includes('NOT_AVAILABLE')) {
+ return 'COMMON.NOT_AVAILABLE';
+ }
+ if (method.startsWith('DRIVERS.DETAIL.FINANCE.BACKEND.METHODS.')) {
+ return method;
+ }
  return `DRIVERS.DETAIL.FINANCE.BACKEND.METHODS.${method.toUpperCase()}`;
  }
 
  private mapPayoutMethod(method: string): string {
+ if (!method?.trim() || method === 'COMMON.NOT_AVAILABLE' || method.includes('NOT_AVAILABLE')) {
+ return 'COMMON.NOT_AVAILABLE';
+ }
+ if (
+ method.startsWith('DRIVERS.DETAIL.FINANCE.BACKEND.PAYOUT_METHODS.') ||
+ method.startsWith('DRIVERS.DETAIL.FINANCE.BACKEND.METHODS.')
+ ) {
+ return method;
+ }
  return `DRIVERS.DETAIL.FINANCE.BACKEND.PAYOUT_METHODS.${method.toUpperCase()}`;
  }
 
@@ -2248,12 +2263,17 @@ export class DriverService {
  return 'COMMON.NOT_AVAILABLE';
  }
 
- // Backend now returns a live date range (e.g. "2026-07-01 → 2026-07-31").
- if (period.includes('→') || /\d{4}-\d{2}-\d{2}/.test(period)) {
- return period;
+ // Strip accidental COMMON. prefix from live date ranges (legacy mapper bug).
+ const normalized = period
+ .trim()
+ .replace(/^COMMON\./i, '')
+ .replace(/\s*(→|->|—|–)\s*/g, ' – ');
+
+ if (/\d{4}-\d{2}-\d{2}/.test(normalized)) {
+ return normalized;
  }
 
- return `COMMON.${period.toUpperCase()}`;
+ return normalized;
  }
 
  private mapPayoutDayLabel(day: string): string {
