@@ -490,7 +490,7 @@
  </div>
  </section>
 
- <section *ngIf="currentTab === 'overview'" class="detail-card relative overflow-hidden bg-white/80 border border-white/40 backdrop-blur-md">
+ <section *ngIf="currentTab === 'overview'" class="detail-card detail-card--compact relative overflow-hidden bg-white/80 border border-white/40 backdrop-blur-md">
  <app-section-header
  [title]="'CUSTOMERS.DETAIL.SECTIONS.PROFILE'"
  icon="person"
@@ -503,77 +503,77 @@
  </app-status-pill>
  </app-section-header>
 
- <!-- Custom high-fidelity profile field grid with Copy Buttons -->
- <div class="mt-6">
- <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+ <!-- Compact profile field grid with copy actions -->
+ <div class="mt-4">
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-2.5">
  <!-- Full Name -->
- <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
- <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-center min-h-[3.25rem]">
+ <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.FULL_NAME' | translate }}
  </span>
- <span class="text-lg font-extrabold text-slate-800 mt-1.5">{{ currentCustomer.name }}</span>
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate">{{ currentCustomer.name }}</span>
  </div>
 
  <!-- Phone -->
- <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex items-center justify-between min-h-[6rem]">
- <div class="flex flex-col">
- <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[3.25rem] gap-2">
+ <div class="flex flex-col min-w-0">
+ <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.PHONE' | translate }}
  </span>
- <span class="text-lg font-extrabold text-slate-800 mt-1.5" dir="ltr">{{ currentCustomer.phone }}</span>
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate" dir="ltr">{{ currentCustomer.phone }}</span>
  </div>
  <button type="button" 
  (click)="copyToClipboard('phone', currentCustomer.phone)" 
- class="p-2.5 rounded-xl border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center"
+ class="p-1.5 rounded-lg border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 transition-all flex items-center justify-center shrink-0"
  [title]="'CUSTOMERS.DETAIL.ACTION_COPY' | translate">
- <span class="material-symbols-outlined text-[20px]">
+ <span class="material-symbols-outlined text-[16px]">
  {{ copiedFields.get('phone') ? 'check' : 'content_copy' }}
  </span>
  </button>
  </div>
 
  <!-- Email -->
- <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex items-center justify-between min-h-[6rem]">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[3.25rem] gap-2">
  <div class="flex flex-col min-w-0">
- <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+ <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.EMAIL' | translate }}
  </span>
- <span class="text-lg font-extrabold text-slate-800 mt-1.5 truncate" dir="ltr">{{ currentCustomer.email }}</span>
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate" dir="ltr">{{ currentCustomer.email }}</span>
  </div>
  <button type="button" 
  (click)="copyToClipboard('email', currentCustomer.email)" 
- class="p-2.5 rounded-xl border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center shrink-0"
+ class="p-1.5 rounded-lg border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 transition-all flex items-center justify-center shrink-0"
  [title]="'CUSTOMERS.DETAIL.ACTION_COPY' | translate">
- <span class="material-symbols-outlined text-[20px]">
+ <span class="material-symbols-outlined text-[16px]">
  {{ copiedFields.get('email') ? 'check' : 'content_copy' }}
  </span>
  </button>
  </div>
 
  <!-- City -->
- <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
- <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-center min-h-[3.25rem]">
+ <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.CITY' | translate }}
  </span>
- <span class="text-lg font-extrabold text-slate-800 mt-1.5">{{ resolveCityLabel(currentCustomer) }}</span>
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate">{{ resolveCityLabel(currentCustomer) }}</span>
  </div>
 
  <!-- Language -->
- <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
- <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-center min-h-[3.25rem]">
+ <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE' | translate }}
  </span>
- <span class="text-lg font-extrabold text-slate-800 mt-1.5">
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate">
  {{ (currentCustomer.preferredLanguageLabel || 'COMMON.NOT_AVAILABLE') | translate }}
  </span>
  </div>
 
  <!-- Last Seen -->
- <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
- <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-center min-h-[3.25rem]">
+ <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN' | translate }}
  </span>
- <span class="text-lg font-extrabold text-slate-800 mt-1.5">
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate">
  <ng-container *ngIf="currentCustomer.isOnlineNow; else offlineText">
  {{ 'CUSTOMERS.PRESENCE.ONLINE_NOW' | translate }}
  </ng-container>
@@ -586,7 +586,7 @@
  </div>
  </section>
 
- <section *ngIf="currentTab === 'overview'" class="detail-card relative overflow-hidden bg-white/80 border border-white/40 backdrop-blur-md">
+ <section *ngIf="currentTab === 'overview'" class="detail-card detail-card--compact relative overflow-hidden bg-white/80 border border-white/40 backdrop-blur-md">
  <app-section-header
  [title]="'CUSTOMERS.DETAIL.SECTIONS.BEHAVIOR_RISK'"
  icon="analytics"
@@ -599,46 +599,46 @@
  </app-status-pill>
  </app-section-header>
 
- <!-- Custom high-fidelity behavior field grid -->
- <div class="mt-5">
- <div class="grid grid-cols-1 gap-4">
+ <!-- Compact behavior field grid -->
+ <div class="mt-4">
+ <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
  <!-- Refund Risk -->
- <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[4.5rem]">
- <div class="flex flex-col">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[3.25rem] gap-2">
+ <div class="flex flex-col min-w-0">
  <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.REFUND_RISK' | translate }}
  </span>
- <span class="text-sm font-extrabold mt-1" [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'text-red-600' : 'text-teal-600'">
+ <span class="text-sm font-extrabold mt-0.5 truncate" [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'text-red-600' : 'text-teal-600'">
  {{ currentCustomer.riskSummary | translate }}
  </span>
  </div>
- <span class="inline-flex h-2.5 w-2.5 rounded-full" [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'bg-red-500 animate-pulse' : 'bg-teal-500'"></span>
+ <span class="inline-flex h-2 w-2 rounded-full shrink-0" [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'bg-red-500 animate-pulse' : 'bg-teal-500'"></span>
  </div>
 
  <!-- Suspicious Logins -->
- <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[4.5rem]">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-center min-h-[3.25rem]">
  <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGINS' | translate }}
  </span>
- <span class="text-sm font-extrabold text-slate-800 mt-1">
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate">
  {{ 'COMMON.NOT_AVAILABLE' | translate }}
  </span>
  </div>
 
  <!-- Payment Failures -->
- <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[4.5rem]">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-center min-h-[3.25rem]">
  <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.PAYMENT_FAILURES' | translate }}
  </span>
- <span class="text-sm font-extrabold text-slate-800 mt-1">{{ currentCustomer.repeatedPaymentFailureRate | translate }}</span>
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate">{{ currentCustomer.repeatedPaymentFailureRate | translate }}</span>
  </div>
 
  <!-- Complaint Frequency -->
- <div class="p-3.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[4.5rem]">
+ <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-center min-h-[3.25rem]">
  <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY' | translate }}
  </span>
- <span class="text-sm font-extrabold text-slate-800 mt-1">
+ <span class="text-sm font-extrabold text-slate-800 mt-0.5 truncate">
  <ng-container *ngIf="currentCustomer.refundsCount >= 4">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.HIGH' | translate }}
  </ng-container>
@@ -654,7 +654,7 @@
  </div>
 
  <app-inline-banner
- class="mt-5 block"
+ class="mt-3 block"
  variant="info"
  icon="insights"
  [title]="'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.ANALYSIS_SUMMARY'"
@@ -747,54 +747,54 @@
  </div>
  </section>
 
- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
- <section class="detail-card">
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <section class="detail-card detail-card--compact">
  <app-section-header
  [title]="'CUSTOMERS.DETAIL.SECTIONS.REFUNDS_DISPUTES'"
  icon="keyboard_return"
  [compact]="true">
  </app-section-header>
 
- <div class="mt-5 space-y-4">
- <div class="rounded-2xl border border-red-100 bg-gradient-to-br from-red-50/80 to-white p-5 flex items-center justify-between gap-3 shadow-sm relative overflow-hidden">
+ <div class="mt-3 space-y-2.5">
+ <div class="rounded-xl border border-red-100 bg-gradient-to-br from-red-50/80 to-white px-3.5 py-3 flex items-center justify-between gap-3 relative overflow-hidden">
  <div class="relative z-10">
- <p class="text-[11px] font-extrabold text-red-400 uppercase tracking-wide">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_CASES' | translate }}</p>
- <p class="mt-1 text-[15px] font-extrabold text-slate-900">
+ <p class="text-[10px] font-extrabold text-red-400 uppercase tracking-wide">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_CASES' | translate }}</p>
+ <p class="mt-0.5 text-sm font-extrabold text-slate-900">
  {{ currentCustomer.refundsCount }} {{ 'CUSTOMERS.DETAIL.REFUNDS.CASES_TOTAL' | translate }}
  </p>
  </div>
  </div>
 
- <div class="flex items-center justify-between text-sm font-bold bg-white rounded-xl p-4 border border-slate-100 shadow-sm hover:border-red-100 transition-colors">
+ <div class="flex items-center justify-between text-[12px] font-bold bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-red-100 transition-colors">
  <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_AMOUNT' | translate }}</span>
- <span class="text-base font-extrabold text-slate-500">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
+ <span class="font-extrabold text-slate-500">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
  </div>
 
- <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary/10 text-zadna-primary text-[11px] font-extrabold hover:bg-zadna-primary/15 transition-all" (click)="openCasesList()">
+ <button type="button" class="w-full h-9 rounded-xl bg-zadna-primary/10 text-zadna-primary text-[11px] font-extrabold hover:bg-zadna-primary/15 transition-all" (click)="openCasesList()">
  {{ 'CUSTOMERS.DETAIL.REFUNDS.VIEW_ALL' | translate }}
  </button>
  </div>
  </section>
 
- <section class="detail-card">
+ <section class="detail-card detail-card--compact">
  <app-section-header
  [title]="'CUSTOMERS.DETAIL.SECTIONS.SUPPORT_CASES'"
  icon="support_agent"
  [compact]="true">
  </app-section-header>
 
- <div class="mt-5 space-y-4">
- <div class="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50/80 to-white p-5 flex items-center justify-between gap-3 shadow-sm">
- <span class="text-[12px] font-extrabold text-slate-700">{{ 'CUSTOMERS.DETAIL.SUPPORT.COMPLAINTS_RECORDED' | translate }}</span>
- <span class="text-[12px] font-extrabold text-slate-500">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
+ <div class="mt-3 space-y-2.5">
+ <div class="rounded-xl border border-amber-100 bg-gradient-to-br from-amber-50/80 to-white px-3.5 py-3 flex items-center justify-between gap-3">
+ <span class="text-[11px] font-extrabold text-slate-700">{{ 'CUSTOMERS.DETAIL.SUPPORT.COMPLAINTS_RECORDED' | translate }}</span>
+ <span class="text-[11px] font-extrabold text-slate-500">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
  </div>
 
- <div class="flex items-center justify-between text-sm font-bold bg-white rounded-xl p-4 border border-slate-100 shadow-sm hover:border-amber-100 transition-colors">
+ <div class="flex items-center justify-between text-[12px] font-bold bg-white rounded-xl px-3.5 py-2.5 border border-slate-100 hover:border-amber-100 transition-colors">
  <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT' | translate }}</span>
- <span class="text-[12px] font-extrabold text-slate-900">{{ currentCustomer.lastSupportContact | translate }}</span>
+ <span class="text-[11px] font-extrabold text-slate-900">{{ currentCustomer.lastSupportContact | translate }}</span>
  </div>
 
- <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary text-white text-[11px] font-extrabold shadow-sm hover:bg-teal-700 transition-all" (click)="openCasesList()">
+ <button type="button" class="w-full h-9 rounded-xl bg-zadna-primary text-white text-[11px] font-extrabold shadow-sm hover:bg-teal-700 transition-all" (click)="openCasesList()">
  {{ 'CUSTOMERS.DETAIL.SUPPORT.OPEN_TICKET' | translate }}
  </button>
  </div>
