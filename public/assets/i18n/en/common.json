@@ -1017,7 +1017,12 @@
         "VIEW": "View proof",
         "VIEW_ERROR": "Unable to open the proof file. Please try again.",
         "LEGACY": "A legacy proof is recorded but no downloadable file is available in the panel.",
-        "EMPTY": "No transfer proof has been uploaded for this settlement yet."
+        "EMPTY": "No transfer proof has been uploaded for this settlement yet.",
+        "ERRORS": {
+          "PAYOUT_PROOF_UNAVAILABLE": "This proof was encrypted with a Data Protection key that is no longer available on the server. Re-upload the proof or restore the previous key ring.",
+          "PAYOUT_PROOF_INTEGRITY_FAILED": "The stored proof failed integrity verification and cannot be displayed safely.",
+          "PAYOUT_PROOF_NOT_FOUND": "No proof file was found for this settlement."
+        }
       },
       "TABS": {
         "VENDORS": "Vendor Settlements",

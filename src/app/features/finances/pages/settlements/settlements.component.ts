@@ -874,10 +874,50 @@ export class SettlementsComponent implements OnInit {
  window.open(url, '_blank', 'noopener');
  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
  },
- error: () => {
- this.toastService.error(this.translate.instant('FINANCES.SETTLEMENTS.PROOF_SECTION.VIEW_ERROR'));
+ error: (error) => {
+ void this.handleProofDownloadError(error);
  }
  });
+ }
+
+ private async handleProofDownloadError(error: unknown): Promise<void> {
+ const code = await this.extractBlobErrorCode(error);
+ const specificKey = code ? `FINANCES.SETTLEMENTS.PROOF_SECTION.ERRORS.${code}` : '';
+ const specific = specificKey ? this.translate.instant(specificKey) : '';
+ this.toastService.error(
+ specific && specific !== specificKey
+ ? specific
+ : this.translate.instant('FINANCES.SETTLEMENTS.PROOF_SECTION.VIEW_ERROR')
+ );
+ this.cdr.markForCheck();
+ }
+
+ private async extractBlobErrorCode(error: unknown): Promise<string | null> {
+ if (!(error instanceof HttpErrorResponse)) {
+ return null;
+ }
+
+ let payload: unknown = error.error;
+ if (payload instanceof Blob) {
+ try {
+ payload = JSON.parse(await payload.text());
+ } catch {
+ return null;
+ }
+ }
+
+ const body = payload as {
+ errorCode?: string;
+ error?: string;
+ code?: string;
+ extensions?: { errorCode?: string; code?: string };
+ } | string | null;
+
+ const raw = typeof body === 'string'
+ ? body
+ : body?.errorCode ?? body?.extensions?.errorCode ?? body?.error ?? body?.code ?? body?.extensions?.code;
+
+ return typeof raw === 'string' && raw.trim() ? raw.trim().toUpperCase() : null;
  }
 
  processSettlement(s: Settlement): void {

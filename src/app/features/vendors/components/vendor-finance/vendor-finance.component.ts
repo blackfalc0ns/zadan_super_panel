@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -267,13 +268,38 @@ export class VendorFinanceComponent implements OnInit {
   window.open(url, '_blank', 'noopener');
   window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
   },
-  error: () => {
-  this.toastService.error(
-  this.translate.instant('VENDOR_FINANCE.WORKSPACE.MANUAL_CONFIRM.CONFIRM_ERROR'),
-  this.text('Ø§Ù„Ù…Ø§Ù„ÙŠØ©', 'Finance')
-  );
+  error: (error) => {
+  void this.handleProofDownloadError(error);
   }
   });
+  }
+
+  private async handleProofDownloadError(error: unknown): Promise<void> {
+  let code: string | null = null;
+  if (error instanceof HttpErrorResponse) {
+  let payload: unknown = error.error;
+  if (payload instanceof Blob) {
+  try {
+  payload = JSON.parse(await payload.text());
+  } catch {
+  payload = null;
+  }
+  }
+  const body = payload as { errorCode?: string; extensions?: { errorCode?: string }; error?: string; code?: string } | string | null;
+  const raw = typeof body === 'string'
+  ? body
+  : body?.errorCode ?? body?.extensions?.errorCode ?? body?.error ?? body?.code;
+  code = typeof raw === 'string' && raw.trim() ? raw.trim().toUpperCase() : null;
+  }
+
+  const specificKey = code ? `FINANCES.SETTLEMENTS.PROOF_SECTION.ERRORS.${code}` : '';
+  const specific = specificKey ? this.translate.instant(specificKey) : '';
+  this.toastService.error(
+  specific && specific !== specificKey
+  ? specific
+  : this.translate.instant('FINANCES.SETTLEMENTS.PROOF_SECTION.VIEW_ERROR'),
+  this.text('المالية', 'Finance')
+  );
   }
 
  saveLifecycleMode(): void {
