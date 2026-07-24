@@ -54,23 +54,23 @@
             <div class="grid grid-cols-2 gap-y-4 gap-x-6">
               <div class="flex flex-col gap-0.5">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.CR_NUMBER' | translate }}</span>
-                <span class="text-slate-900 font-semibold text-base font-mono">{{ crData?.crNumber || '1010123456' }}</span>
+                <span class="text-slate-900 font-semibold text-base font-mono">{{ crData?.crNumber || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
               </div>
               
               <div class="flex flex-col gap-0.5">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.ESTABLISHMENT_NAME' | translate }}</span>
-                <span class="text-slate-900 font-semibold text-base">{{ crData?.establishmentName || ('MODALS.CR_VIEWER.DEFAULT_ESTABLISHMENT_NAME' | translate) }}</span>
+                <span class="text-slate-900 font-semibold text-base">{{ crData?.establishmentName || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
               </div>
               
               <div class="flex flex-col gap-0.5">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.ENTITY_TYPE' | translate }}</span>
-                <span class="text-slate-900 font-semibold text-sm">{{ crData?.entityType || ('MODALS.CR_VIEWER.DEFAULT_ENTITY_TYPE' | translate) }}</span>
+                <span class="text-slate-900 font-semibold text-sm">{{ crData?.entityType || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
               </div>
               
               <div class="flex flex-col gap-0.5">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.EXPIRY_DATE' | translate }}</span>
                 <div class="flex items-center gap-1.5">
-                  <span class="text-slate-900 font-semibold text-sm font-mono">{{ crData?.expiryDate || '2024-12-31' }}</span>
+                  <span class="text-slate-900 font-semibold text-sm font-mono">{{ crData?.expiryDate || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
                   <span *ngIf="crData?.isExpiringSoon" 
                         class="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded font-medium border border-red-200">
                     {{ 'MODALS.CR_VIEWER.EXPIRING_SOON' | translate }}
@@ -80,7 +80,7 @@
               
               <div class="flex flex-col gap-0.5 col-span-2">
                 <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.MAIN_ACTIVITY' | translate }}</span>
-                <span class="text-slate-900 font-semibold text-sm">{{ crData?.mainActivity || ('MODALS.CR_VIEWER.DEFAULT_MAIN_ACTIVITY' | translate) }}</span>
+                <span class="text-slate-900 font-semibold text-sm">{{ crData?.mainActivity || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
               </div>
             </div>
           </div>
@@ -102,28 +102,29 @@
                     <img alt="Wathq Logo" 
                          class="w-5 h-5 rounded" 
                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ3u-JZJxdC4AEGzNAWBnMW4HlCQ1pb-DhLg2rxl6Aasl2u9w7hHhnS-MHjlBYMzfsfEkafByIHlWbPF_p8JJS3WYS5dap-_2D-kchlUt1tj3L1-upwsQnt_4anff5AIt4NeZmAc9GIqJJYgY_HxxCGSkH-ywdQYPvQUL4_EJdq38gjsk57d8AVjWTcvNlQsdPd_Ca-s6OGDzwTkJDLJ0LAiC1q5qw-Z38IreH9JJN2zbbDhjQJbCReBSbPdJ7Pe4kukCNamJltzM"/>
-                    {{ crData?.dataSource || ('MODALS.CR_VIEWER.DEFAULT_DATA_SOURCE' | translate) }}
+                    {{ crData?.dataSource || ('COMMON.NOT_AVAILABLE' | translate) }}
                   </span>
                 </div>
                 
                 <div class="flex flex-col gap-0.5">
                   <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.VERIFIED_BY' | translate }}</span>
-                  <span class="text-slate-900 font-semibold text-sm">{{ crData?.verifiedBy || ('MODALS.CR_VIEWER.DEFAULT_VERIFIED_BY' | translate) }}</span>
+                  <span class="text-slate-900 font-semibold text-sm">{{ crData?.verifiedBy || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
                 </div>
                 
                 <div class="flex flex-col gap-0.5">
                   <span class="text-slate-500 text-xs font-medium">{{ 'MODALS.CR_VIEWER.INTERNAL_REF' | translate }}</span>
-                  <span class="text-slate-900 font-semibold font-mono text-xs">{{ crData?.internalReference || 'ZAD-CR-99823-2023' }}</span>
+                  <span class="text-slate-900 font-semibold font-mono text-xs">{{ crData?.internalReference || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
                 </div>
               </div>
 
               <!-- QR Code area -->
               <div class="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <div class="p-1.5 bg-white rounded-lg shadow-sm mb-2">
+                <div *ngIf="crData?.qrCodeUrl" class="p-1.5 bg-white rounded-lg shadow-sm mb-2">
                   <img alt="QR Code" 
                        class="w-20 h-20" 
-                       [src]="crData?.qrCodeUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5b5D2O2Ot1MZ276wE1ksfc39BOxbSm3hUROT6QiAQiJU7Ts0eZouhFQ8J6HhRvzMfpbW-VbOFHKDHBVsNzUGV1hC5yLHso42gRttEMbWufTR1H1hc7b1Vzy-_a_GxpOGvxugGwC3uWoUp0LCx7s7IRoTiY0R2AWZGRrboomV9CVIk1IWps9pa5tRY1vZjOfDQHb_BgIQJBovfoKqbcMnGbX8pC823nNFI3VjtRdxzHe78D3jiCTE7rq40-UJXe_63e9_gBQYP1_Y'"/>
+                       [src]="crData.qrCodeUrl"/>
                 </div>
+                <p *ngIf="!crData?.qrCodeUrl" class="text-[10px] text-slate-500 text-center leading-tight mb-2">{{ 'COMMON.NOT_AVAILABLE' | translate }}</p>
                 <p class="text-[10px] text-slate-500 text-center leading-tight">{{ 'MODALS.CR_VIEWER.QR_HINT' | translate }}</p>
               </div>
             </div>
@@ -219,7 +220,7 @@
                         <span class="material-symbols-outlined text-sm">tag</span>
                         <span>{{ 'MODALS.CR_VIEWER.CR_NUMBER' | translate }}</span>
                       </p>
-                      <p class="text-3xl font-black text-slate-900 font-mono tracking-widest">{{ crData?.crNumber || '1010123456' }}</p>
+                      <p class="text-3xl font-black text-slate-900 font-mono tracking-widest">{{ crData?.crNumber || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
                     </div>
                   </div>
 
@@ -233,7 +234,7 @@
                         </div>
                         <div class="flex-1">
                           <p class="text-xs text-slate-600 font-bold mb-1">{{ 'MODALS.CR_VIEWER.ESTABLISHMENT_NAME' | translate }}</p>
-                          <p class="text-base font-black text-slate-900 leading-snug">{{ crData?.establishmentName || ('MODALS.CR_VIEWER.DEFAULT_ESTABLISHMENT_NAME' | translate) }}</p>
+                          <p class="text-base font-black text-slate-900 leading-snug">{{ crData?.establishmentName || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
                         </div>
                       </div>
                     </div>
@@ -244,7 +245,7 @@
                         <span class="material-symbols-outlined text-slate-400 text-sm">corporate_fare</span>
                         <p class="text-xs text-slate-500 font-bold">{{ 'MODALS.CR_VIEWER.ENTITY_TYPE' | translate }}</p>
                       </div>
-                      <p class="text-sm font-bold text-slate-800 mr-6">{{ crData?.entityType || ('MODALS.CR_VIEWER.DEFAULT_ENTITY_TYPE' | translate) }}</p>
+                      <p class="text-sm font-bold text-slate-800 mr-6">{{ crData?.entityType || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
                     </div>
                     
                     <!-- Main Activity -->
@@ -253,7 +254,7 @@
                         <span class="material-symbols-outlined text-slate-400 text-sm">work</span>
                         <p class="text-xs text-slate-500 font-bold">{{ 'MODALS.CR_VIEWER.MAIN_ACTIVITY' | translate }}</p>
                       </div>
-                      <p class="text-sm font-bold text-slate-800 leading-relaxed mr-6">{{ crData?.mainActivity || ('MODALS.CR_VIEWER.DEFAULT_MAIN_ACTIVITY' | translate) }}</p>
+                      <p class="text-sm font-bold text-slate-800 leading-relaxed mr-6">{{ crData?.mainActivity || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
                     </div>
                     
                     <!-- Dates Grid -->
@@ -263,7 +264,7 @@
                           <span class="material-symbols-outlined text-green-600 text-sm">event_available</span>
                           <p class="text-xs text-slate-600 font-bold">{{ 'MODALS.CR_VIEWER.ISSUE_DATE' | translate }}</p>
                         </div>
-                        <p class="text-sm font-black text-slate-900 font-mono">2020-01-15</p>
+                        <p class="text-sm font-black text-slate-900 font-mono">{{ crData?.issueDate || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
                       </div>
                       <div class="p-3 rounded-lg border-2" 
                            [class]="crData?.isExpiringSoon ? 'bg-red-50 border-red-300' : 'bg-slate-50 border-slate-200'">
@@ -275,7 +276,7 @@
                         </div>
                         <p class="text-sm font-black font-mono" 
                            [class]="crData?.isExpiringSoon ? 'text-red-700' : 'text-slate-900'">
-                          {{ crData?.expiryDate || '2024-12-31' }}
+                          {{ crData?.expiryDate || ('COMMON.NOT_AVAILABLE' | translate) }}
                         </p>
                       </div>
                     </div>
@@ -284,12 +285,12 @@
                     <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
                       <div class="flex justify-between items-center text-xs">
                         <span class="text-slate-500 font-semibold">{{ 'MODALS.CR_VIEWER.CITY' | translate }}</span>
-                        <span class="text-slate-900 font-bold">{{ crData?.headquarters || ('MODALS.CR_VIEWER.DEFAULT_CITY' | translate) }}</span>
+                        <span class="text-slate-900 font-bold">{{ crData?.headquarters || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
                       </div>
                       <div class="h-px bg-slate-200"></div>
                       <div class="flex justify-between items-center text-xs">
                         <span class="text-slate-500 font-semibold">{{ 'MODALS.CR_VIEWER.CAPITAL' | translate }}</span>
-                        <span class="text-slate-900 font-bold">{{ crData?.capital || ('MODALS.CR_VIEWER.DEFAULT_CAPITAL' | translate) }}</span>
+                        <span class="text-slate-900 font-bold">{{ crData?.capital || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
                       </div>
                     </div>
                   </div>
@@ -310,10 +311,13 @@
                           <span class="font-mono">{{ 'MODALS.CR_VIEWER.WATHQ_URL' | translate }}</span>
                         </div>
                       </div>
-                      <div class="w-24 h-24 bg-white rounded-lg border-2 border-green-300 flex items-center justify-center shrink-0 shadow-md">
-                        <img [src]="crData?.qrCodeUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5b5D2O2Ot1MZ276wE1ksfc39BOxbSm3hUROT6QiAQiJU7Ts0eZouhFQ8J6HhRvzMfpbW-VbOFHKDHBVsNzUGV1hC5yLHso42gRttEMbWufTR1H1hc7b1Vzy-_a_GxpOGvxugGwC3uWoUp0LCx7s7IRoTiY0R2AWZGRrboomV9CVIk1IWps9pa5tRY1vZjOfDQHb_BgIQJBovfoKqbcMnGbX8pC823nNFI3VjtRdxzHe78D3jiCTE7rq40-UJXe_63e9_gBQYP1_Y'"
+                      <div *ngIf="crData?.qrCodeUrl" class="w-24 h-24 bg-white rounded-lg border-2 border-green-300 flex items-center justify-center shrink-0 shadow-md">
+                        <img [src]="crData.qrCodeUrl"
                              alt="QR Code" 
                              class="w-full h-full object-contain p-1"/>
+                      </div>
+                      <div *ngIf="!crData?.qrCodeUrl" class="w-24 h-24 bg-white rounded-lg border-2 border-green-300 flex items-center justify-center shrink-0 shadow-md text-[10px] text-slate-400 font-bold text-center px-2">
+                        {{ 'COMMON.NOT_AVAILABLE' | translate }}
                       </div>
                     </div>
                   </div>
@@ -321,7 +325,7 @@
                   <!-- Reference Number -->
                   <div class="text-center pt-2 pb-1">
                     <p class="text-[9px] text-slate-400 font-mono tracking-wider">
-                      {{ 'MODALS.CR_VIEWER.REF_LABEL' | translate }}: {{ crData?.internalReference || 'ZAD-CR-99823-2023' }}
+                      {{ 'MODALS.CR_VIEWER.REF_LABEL' | translate }}: {{ crData?.internalReference || ('COMMON.NOT_AVAILABLE' | translate) }}
                     </p>
                   </div>
 

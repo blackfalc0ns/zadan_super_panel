@@ -270,7 +270,15 @@
           <div class="flex items-center justify-between rounded-2xl border border-slate-200/40 bg-white/40 backdrop-blur-sm p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:bg-white hover:border-zadna-primary/30 group">
             <div>
               <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.AVG_DELIVERY' | translate }}</p>
-              <p class="mt-1 text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors">{{ driver.operations.avgDeliveryTimeLabel | translate }}</p>
+              <p class="mt-1 text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors">
+                <ng-container *ngIf="driver.operations.avgDeliveryTimeLabel === 'COMMON.NOT_AVAILABLE'; else avgDeliveryMinutes">
+                  {{ 'COMMON.NOT_AVAILABLE' | translate }}
+                </ng-container>
+                <ng-template #avgDeliveryMinutes>
+                  <span dir="ltr">{{ driver.operations.avgDeliveryTimeLabel }}</span>
+                  {{ 'DRIVERS.DETAIL.OPERATIONS.MINUTES_UNIT' | translate }}
+                </ng-template>
+              </p>
             </div>
             <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-slate-500 shadow-sm border border-slate-100 group-hover:border-zadna-primary/20 group-hover:text-zadna-primary transition-all">
               <span class="material-symbols-outlined text-[18px]">timer</span>

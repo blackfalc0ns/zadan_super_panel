@@ -368,7 +368,6 @@ export class VendorsListComponent implements OnInit {
  value: this.kpis.highRisk,
  icon: '<span class="material-symbols-outlined text-[20px]">warning</span>',
  color: '#ef4444',
- trend: { value: 1, isPositive: false, label: '+1 ' + this.translate.instant('VENDORS.KPI.THIS_WEEK') },
  clickable: true
  },
  {
@@ -377,7 +376,6 @@ export class VendorsListComponent implements OnInit {
  value: this.kpis.payoutBlocked,
  icon: '<span class="material-symbols-outlined text-[20px]">block</span>',
  color: '#8b5cf6',
- trend: { value: 0, isPositive: true, label: '- ' + this.translate.instant('VENDORS.KPI.THIS_WEEK') },
  clickable: true
  },
  {
@@ -482,7 +480,7 @@ export class VendorsListComponent implements OnInit {
  }
 
  getPayoutStatusLabel(status?: string): string {
- if (!status) return '-';
+ if (!status) return 'COMMON.NOT_AVAILABLE';
  const map: any = { 'Active': 'VENDORS.STATUS.ACTIVE', 'Blocked': 'VENDORS.KPI.PAYOUT_BLOCKED', 'Pending': 'VENDORS.STATUS.PENDING' };
  return map[status] || status;
  }
@@ -677,14 +675,13 @@ export class VendorsListComponent implements OnInit {
 
  getAlertsList(vendor: Vendor): string[] {
  const alerts: string[] = [];
- if (vendor.riskLevel === 'High' || vendor.riskLevel === 'Critical') alerts.push(this.translate.instant('VENDORS.KPI.HIGH_RISK'));
- if (vendor.documentsCompleteness && vendor.documentsCompleteness < 100) alerts.push(this.translate.instant('VENDORS.KPI.MISSING_DOCS'));
- return alerts;
+ if (vendor.status === VendorStatus.Suspended || vendor.isLoginLocked) {
+ alerts.push(this.translate.instant('VENDORS.KPI.HIGH_RISK'));
  }
-
- // Mock data generator
- addMockDataToVendors() {
- this.vendors = this.vendors.map((vendor) => ({...vendor }));
+ if (vendor.status === VendorStatus.Pending || vendor.hasPendingCompliance) {
+ alerts.push(this.translate.instant('VENDORS.KPI.MISSING_DOCS'));
+ }
+ return alerts;
  }
 
  private handleVendorMutation(request$: Observable<unknown>) {

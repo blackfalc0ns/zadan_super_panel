@@ -337,27 +337,11 @@ export class CustomersListComponent implements OnInit {
   }
 
   get complaintCustomersCount(): number {
-    return this.customers.filter((customer) => customer.refundsCount > 0 || customer.disputesCount > 0).length;
+    return this.customers.filter((customer) => customer.refundsCount > 0).length;
   }
 
   get repeatRefundsCount(): number {
     return this.customers.filter((customer) => customer.refundsCount >= 3).length;
-  }
-
-  get activeCustomerRate(): number {
-    if (this.customers.length === 0) {
-      return 0;
-    }
-
-    return Math.round((this.activeCustomersCount / this.customers.length) * 100);
-  }
-
-  get complaintRate(): number {
-    if (this.customers.length === 0) {
-      return 0;
-    }
-
-    return Math.round((this.complaintCustomersCount / this.customers.length) * 100);
   }
 
   get kpiCards(): KPICard[] {
@@ -367,56 +351,42 @@ export class CustomersListComponent implements OnInit {
         title: 'CUSTOMERS.KPI.TOTAL_CUSTOMERS',
         value: this.customers.length,
         icon: '<span class="material-symbols-outlined text-[20px]">group</span>',
-        color: '#127c8c',
-        trend: { value: '+12%', label: '+12%', isPositive: true }
+        color: '#127c8c'
       },
       {
         id: 'active',
         title: 'CUSTOMERS.KPI.ACTIVE_CUSTOMERS',
         value: this.activeCustomersCount,
         icon: '<span class="material-symbols-outlined text-[20px]">verified</span>',
-        color: '#10b981',
-        trend: { value: `${this.activeCustomerRate}%`, label: `${this.activeCustomerRate}%`, isPositive: true }
+        color: '#10b981'
       },
       {
         id: 'new',
         title: 'CUSTOMERS.KPI.NEW_CUSTOMERS',
         value: this.newCustomersCount,
         icon: '<span class="material-symbols-outlined text-[20px]">person_add</span>',
-        color: '#f59e0b',
-        trend: { value: `+${this.newCustomersCount}`, label: `+${this.newCustomersCount}`, isPositive: true }
+        color: '#f59e0b'
       },
       {
         id: 'high-risk',
         title: 'CUSTOMERS.KPI.HIGH_RISK',
         value: this.highRiskCount,
         icon: '<span class="material-symbols-outlined text-[20px]">error</span>',
-        color: '#ef4444',
-        trend: {
-          value: this.translate.instant('CUSTOMERS.RISK_LEVEL.HIGH'),
-          label: this.translate.instant('CUSTOMERS.RISK_LEVEL.HIGH'),
-          isPositive: false
-        }
+        color: '#ef4444'
       },
       {
         id: 'complaints',
         title: 'CUSTOMERS.KPI.COMPLAINT_CUSTOMERS',
         value: this.complaintCustomersCount,
         icon: '<span class="material-symbols-outlined text-[20px]">maps_ugc</span>',
-        color: '#64748b',
-        trend: {
-          value: `-${Math.max(1, this.complaintRate)}%`,
-          label: `-${Math.max(1, this.complaintRate)}%`,
-          isPositive: false
-        }
+        color: '#64748b'
       },
       {
         id: 'refunds',
         title: 'CUSTOMERS.KPI.REPEAT_REFUNDS',
         value: this.repeatRefundsCount,
         icon: '<span class="material-symbols-outlined text-[20px]">history_edu</span>',
-        color: '#f97316',
-        trend: { value: `+${this.repeatRefundsCount}`, label: `+${this.repeatRefundsCount}`, isPositive: true }
+        color: '#f97316'
       }
     ];
   }

@@ -351,16 +351,15 @@ export class VendorOverviewComponent {
  }
 
  get documentsProgressValue(): number {
- if (typeof this.vendorDetail?.documentsCompleteness === 'number') {
- return this.clamp(this.vendorDetail.documentsCompleteness, 0, 100);
- }
-
- if (!this.vendorDetail?.reviewDocuments.length) {
+ const documents = this.vendorDetail?.reviewDocuments ?? [];
+ if (!documents.length) {
  return 0;
  }
 
- const completedCount = this.vendorDetail.reviewDocuments.filter((item) => item.status === 'completed').length;
- return Math.round((completedCount / this.vendorDetail.reviewDocuments.length) * 100);
+ const requiredDocuments = documents.filter((document) => document.isRequired);
+ const pool = requiredDocuments.length ? requiredDocuments : documents;
+ const uploadedCount = pool.filter((document) => document.isUploaded).length;
+ return this.clamp(Math.round((uploadedCount / pool.length) * 100), 0, 100);
  }
 
  get completedDocumentsCount(): number {
@@ -372,18 +371,17 @@ export class VendorOverviewComponent {
  return 0;
  }
 
+ // Complaints are not sourced from an API yet — omit them so zeros do not inflate health.
  const docsScore = this.documentsProgressValue;
  const blockersScore = Math.max(0, 100 - (this.reviewBlockers.length * 24));
  const bankScore = this.resolveBankScore(this.vendorDetail.primaryBankAccount?.status || null, this.vendorDetail.bankAccountsCount);
  const riskScore = this.resolveRiskScore();
- const complaintsScore = Math.max(20, 100 - ((this.vendorDetail.complaintsCount ?? 0) * 10));
 
  return Math.round(
- (docsScore * 0.35)
- + (blockersScore * 0.2)
+ (docsScore * 0.4)
+ + (blockersScore * 0.25)
  + (bankScore * 0.2)
  + (riskScore * 0.15)
- + (complaintsScore * 0.1)
  );
  }
 
@@ -739,7 +737,9 @@ export class VendorOverviewComponent {
  {
  id: 'last-active',
  label: this.localize('آخر نشاط', 'Last active'),
- value: this.formatDate(vendor.lastActiveAtUtc || vendor.updatedAtUtc || vendor.createdAtUtc),
+ value: vendor.lastActiveAtUtc
+ ? this.formatDate(vendor.lastActiveAtUtc)
+ : this.translate.instant('COMMON.NOT_AVAILABLE'),
  icon: 'schedule'
  }
  ];
@@ -820,13 +820,8 @@ export class VendorOverviewComponent {
  {
  id: 'complaints',
  label: this.localize('الشكاوى المسجلة', 'Reported complaints'),
- value: this.formatNumber(vendor.complaintsCount ?? 0),
- helper: vendor.performanceRating
- ? this.localize(
- `تقييم الأداء ${this.formatNumber(vendor.performanceRating)} / 5`,
- `Performance rating ${this.formatNumber(vendor.performanceRating)} / 5`
- )
- : this.localize('ما فيه تقييم أداء واضح بعد', 'No performance rating recorded yet'),
+ value: this.translate.instant('COMMON.NOT_AVAILABLE'),
+ helper: this.localize('لا تتوفر بيانات شكاوى من الواجهة بعد', 'Complaints data is not available from the API yet'),
  icon: 'sentiment_dissatisfied',
  cardClass: 'border-amber-200 bg-amber-50/80',
  iconClass: 'bg-white text-amber-700',
@@ -862,8 +857,8 @@ export class VendorOverviewComponent {
  {
  id: 'complaints',
  label: this.localize('الشكاوى', 'Complaints'),
- value: this.formatNumber(vendor.complaintsCount ?? 0),
- progress: Math.max(20, 100 - ((vendor.complaintsCount ?? 0) * 10)),
+ value: this.translate.instant('COMMON.NOT_AVAILABLE'),
+ progress: 0,
  barClass: 'bg-sky-500',
  valueClass: 'text-sky-700'
  }

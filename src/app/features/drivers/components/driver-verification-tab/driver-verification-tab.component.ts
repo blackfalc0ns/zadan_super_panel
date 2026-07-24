@@ -448,38 +448,30 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  getDocumentLifecycleLabel(document: DriverDocumentRecord): string {
  switch (document.status) {
  case 'review':
- return this.isRTL ? 'محدث وتحت المراجعة' : 'Updated, under review';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.REVIEW');
  case 'valid':
- return this.isRTL ? 'مقبول' : 'Accepted';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.VALID');
  case 'expiring':
- return this.isRTL ? 'مقبول وقرب الانتهاء' : 'Accepted, expiring soon';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.EXPIRING');
  case 'rejected':
- return this.isRTL ? 'مرفوض' : 'Rejected';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.REJECTED');
  default:
- return this.isRTL ? 'غير محدد' : 'Unknown';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.UNKNOWN');
  }
  }
 
  getDocumentLifecycleHint(document: DriverDocumentRecord): string {
  switch (document.status) {
  case 'review':
- return this.isRTL
- ? 'الملف الجديد محفوظ كمراجعة ولن يعتمد قبل موافقة المشرف.'
- : 'The new file is pending admin approval before it becomes active.';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.HINT_REVIEW');
  case 'valid':
- return this.isRTL
- ? 'الملف معتمد ويمكن الاعتماد عليه في قبول المندوب.'
- : 'This file is approved and can be used for driver approval.';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.HINT_VALID');
  case 'expiring':
- return this.isRTL
- ? 'الملف معتمد الحين لكنه يحتاج متابعة لقرب تاريخ الانتهاء.'
- : 'This file is approved but needs follow-up because it expires soon.';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.HINT_EXPIRING');
  case 'rejected':
- return this.isRTL
- ? 'الملف مرفوض ولازم ترفع نسخة جديدة بعد معالجة سبب الرفض.'
- : 'This file was rejected; a corrected copy is required.';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.HINT_REJECTED');
  default:
- return this.isRTL ? 'حالة الملف غير واضحة.' : 'The document state is not clear.';
+ return this.translate.instant('DRIVERS.DETAIL.VERIFICATION.DOCUMENT_LIFECYCLE.HINT_UNKNOWN');
  }
  }
 

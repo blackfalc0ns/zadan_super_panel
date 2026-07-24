@@ -228,11 +228,7 @@ export class VendorActivityLogComponent {
 
  this.noteSubmitting = true;
  this.noteError = '';
- this.vendorDetailFacade.addVendorReviewNoteRequest(
- message,
- this.isRTL ? 'فريق التشغيل' : 'Operations Desk',
- 'Operations Console'
- ).pipe(take(1)).subscribe({
+ this.vendorDetailFacade.addVendorReviewNoteRequest(message).pipe(take(1)).subscribe({
  next: () => {
  this.cdr.markForCheck();
  this.noteDraft = '';

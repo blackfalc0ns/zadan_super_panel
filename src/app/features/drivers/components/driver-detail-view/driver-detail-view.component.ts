@@ -124,7 +124,11 @@ export class DriverDetailViewComponent {
       { id: 'performance', labelKey: 'DRIVERS.DETAIL.TABS.PERFORMANCE', icon: 'trending_up' },
       { id: 'support', labelKey: 'DRIVERS.DETAIL.TABS.SUPPORT', icon: 'support_agent', count: this.driverDetail.support.openNotesCount + this.driverDetail.support.unresolvedCount, attention: this.driverDetail.support.unresolvedCount > 0 },
       { id: 'compliance', labelKey: 'DRIVERS.DETAIL.TABS.COMPLIANCE', icon: 'gavel', count: this.driverDetail.compliance.openCases, attention: this.driverDetail.compliance.criticalCases > 0 },
-      { id: 'finance', labelKey: 'DRIVERS.DETAIL.TABS.FINANCE', icon: 'account_balance_wallet', attention: this.driverDetail.finance.dueAmount > 1000 },
+      { id: 'finance', labelKey: 'DRIVERS.DETAIL.TABS.FINANCE', icon: 'account_balance_wallet', attention: (() => {
+        const owed = this.driverDetail.finance.codOwedBalance ?? this.driverDetail.finance.dueAmount ?? 0;
+        const threshold = this.driverDetail.finance.codBlockThresholdAmount ?? 0;
+        return threshold > 0 && owed >= threshold;
+      })() },
       { id: 'verification', labelKey: 'DRIVERS.DETAIL.TABS.VERIFICATION', icon: 'verified_user', attention: this.driverDetail.verificationStatus !== 'Verified' }
     ];
   }

@@ -6,6 +6,8 @@ import {
  DriverDetailRecord,
  DriverDocumentRecord,
  DriverFinanceEntry,
+ DriverFinanceSettlementSummary,
+ DriverFinanceWithdrawalSummary,
  DriverIncidentRecord,
  DriverInternalNote,
  DriverLifecycleStage,
@@ -360,6 +362,28 @@ interface AdminDriverFinanceEntriesListResponse {
  pageSize: number;
 }
 
+interface AdminDriverFinanceSettlementSummaryResponse {
+ id: string;
+ status: string;
+ grossAmount: number;
+ netAmount: number;
+ periodFrom: string;
+ periodTo: string;
+ createdAtUtc: string;
+ processedAtUtc?: string | null;
+}
+
+interface AdminDriverFinanceWithdrawalSummaryResponse {
+ id: string;
+ status: string;
+ amount: number;
+ payoutDay?: string | null;
+ transferReference?: string | null;
+ createdAtUtc: string;
+ processedAtUtc?: string | null;
+ payoutId?: string | null;
+}
+
 interface AdminDriverFinanceDetailsResponse {
  availableBalance: number;
  dueAmount: number;
@@ -369,6 +393,18 @@ interface AdminDriverFinanceDetailsResponse {
  payoutMethod?: string | null;
  statementPeriod: string;
  entries: AdminDriverFinanceEntryResponse[];
+ currentBalance?: number;
+ pendingBalance?: number;
+ codOwedBalance?: number;
+ codBlockThresholdAmount?: number;
+ netWithdrawable?: number;
+ payoutDay?: string | null;
+ activeWithdrawalsCount?: number;
+ activeWithdrawalsAmount?: number;
+ settlementsCount?: number;
+ payoutsCount?: number;
+ recentSettlements?: AdminDriverFinanceSettlementSummaryResponse[] | null;
+ recentWithdrawals?: AdminDriverFinanceWithdrawalSummaryResponse[] | null;
 }
 
 interface AdminDriverVerificationChecklistItemResponse {
@@ -754,7 +790,7 @@ export class DriverService {
  acceptanceRate: Number(item.acceptanceRate ?? 0),
  walletBalance: Number(item.walletBalance ?? 0),
  issues: this.normalizeIssues(item.issues),
- collectionPaymentStatus: item.collectionPaymentStatus || this.mapCollectionPaymentStatus(Number(item.walletBalance ?? 0)),
+ collectionPaymentStatus: this.mapCollectionPaymentStatus(item.collectionPaymentStatus),
  lastSeenAt: this.parseDate(item.lastSeenAt),
  performance: this.mapPerformance(item.performance),
  vehicleType: this.mapVehicleType(item.vehicleType),
@@ -824,6 +860,7 @@ export class DriverService {
  incidents,
  this.mapWorkflow(response.workflow)
  );
+ const complianceRiskPoints = this.mapComplianceRiskPoints(response.compliance);
 
  return {...driver,
  displayName: `${response.firstName} ${response.lastName}`.trim(),
@@ -847,13 +884,13 @@ export class DriverService {
  liveSpeedKmh: null,
  liveMissionId: this.getActiveMissionId(taskAssignments),
  todayTrips: response.activeTasks,
- todayTripsDelta: this.buildTodayTripsDelta(response.activeTasks, response.completedTasks),
+ todayTripsDelta: 'COMMON.NOT_AVAILABLE',
  completionRate: response.performanceDetails.completionRate || response.overview.completionRate || response.acceptanceRate,
  averageDelayMinutes: response.operations.avgDeliveryMinutes ? Math.round(response.operations.avgDeliveryMinutes) : 0,
- codPendingAmount: Math.max(0, response.financeDetails.pendingDeductions ?? response.finance.pendingBalance),
+ codPendingAmount: Math.max(0, Number(response.financeDetails.codOwedBalance ?? response.financeDetails.dueAmount ?? 0)),
  totalEarnings: response.finance.totalEarnings,
- currentDueAmount: response.financeDetails.dueAmount ?? response.finance.pendingBalance,
- codCollectedAmount: response.financeDetails.codCollected ?? response.finance.codCollected,
+ currentDueAmount: Number(response.financeDetails.dueAmount ?? response.financeDetails.codOwedBalance ?? 0),
+ codCollectedAmount: Number(response.financeDetails.codCollected ?? response.finance.codCollected ?? 0),
  commitmentScore: Number(response.commitmentScore ?? response.performanceDetails.commitmentScore ?? 0),
  dailyRejections: Number(response.dailyRejections ?? 0),
  weeklyRejections: Number(response.weeklyRejections ?? 0),
@@ -862,10 +899,10 @@ export class DriverService {
  locationUpdatesBlocked: response.operations.locationUpdatesBlocked ?? false,
  complianceStatusLabel: this.mapComplianceStatusLabel(response.compliance.riskLevel),
  complianceStatusVariant: this.mapComplianceStatusVariant(response.compliance.riskLevel),
- complianceRiskPoints: this.mapComplianceRiskPoints(response.compliance),
- complianceRiskThreshold: 10,
- complianceAlertThreshold: 7,
- routeEfficiencyDelta: this.buildRouteEfficiencyDelta(response.performanceDetails.commitmentScore),
+ complianceRiskPoints,
+ complianceRiskThreshold: Math.max(complianceRiskPoints, 1),
+ complianceAlertThreshold: Math.max(complianceRiskPoints, 1),
+ routeEfficiencyDelta: 'COMMON.NOT_AVAILABLE',
  lifetimeTrips: response.completedTasks,
  weeklyEfficiency: [],
  profileReadiness: {
@@ -978,10 +1015,10 @@ export class DriverService {
  incidents
  },
  finance: {
- availableBalance: response.financeDetails.availableBalance,
- dueAmount: response.financeDetails.dueAmount,
- codCollected: response.financeDetails.codCollected,
- pendingDeductions: response.financeDetails.pendingDeductions,
+ availableBalance: Number(response.financeDetails.availableBalance ?? response.financeDetails.netWithdrawable ?? 0),
+ dueAmount: Number(response.financeDetails.dueAmount ?? response.financeDetails.codOwedBalance ?? 0),
+ codCollected: Number(response.financeDetails.codCollected ?? 0),
+ pendingDeductions: Number(response.financeDetails.pendingDeductions ?? response.financeDetails.pendingBalance ?? 0),
  nextPayoutDate: response.financeDetails.nextPayoutDateUtc
  ? this.formatDate(response.financeDetails.nextPayoutDateUtc)
  : 'COMMON.NOT_AVAILABLE',
@@ -989,7 +1026,22 @@ export class DriverService {
  ? this.mapPayoutMethod(response.financeDetails.payoutMethod)
  : 'COMMON.NOT_AVAILABLE',
  statementPeriod: this.mapStatementPeriod(response.financeDetails.statementPeriod),
- entries: this.mapFinanceEntries(response.financeDetails.entries)
+ entries: this.mapFinanceEntries(response.financeDetails.entries),
+ currentBalance: Number(response.financeDetails.currentBalance ?? response.finance.currentBalance ?? 0),
+ pendingBalance: Number(response.financeDetails.pendingBalance ?? response.finance.pendingBalance ?? 0),
+ codOwedBalance: Number(response.financeDetails.codOwedBalance ?? response.financeDetails.dueAmount ?? 0),
+ codBlockThresholdAmount: Number(response.financeDetails.codBlockThresholdAmount ?? 0),
+ netWithdrawable: Number(response.financeDetails.netWithdrawable ?? response.financeDetails.availableBalance ?? 0),
+ payoutDay: response.financeDetails.payoutDay ?? undefined,
+ payoutDayLabel: response.financeDetails.payoutDay
+ ? this.mapPayoutDayLabel(response.financeDetails.payoutDay)
+ : 'COMMON.NOT_AVAILABLE',
+ activeWithdrawalsCount: Number(response.financeDetails.activeWithdrawalsCount ?? 0),
+ activeWithdrawalsAmount: Number(response.financeDetails.activeWithdrawalsAmount ?? 0),
+ settlementsCount: Number(response.financeDetails.settlementsCount ?? response.finance.totalSettlements ?? 0),
+ payoutsCount: Number(response.financeDetails.payoutsCount ?? response.finance.totalPayouts ?? 0),
+ recentSettlements: this.mapFinanceSettlements(response.financeDetails.recentSettlements ?? []),
+ recentWithdrawals: this.mapFinanceWithdrawals(response.financeDetails.recentWithdrawals ?? [])
  },
  verification: {
  applicationId: response.verification.applicationId,
@@ -1013,7 +1065,7 @@ export class DriverService {
  private mapDriverNotes(notes: AdminDriverNoteResponse[]): DriverInternalNote[] {
  return notes.map((note) => ({
  author: note.authorName,
- role: 'DRIVERS.DETAIL.SUPPORT.REVIEWER_OPERATIONS',
+ role: '',
  createdAt: this.formatDateTime(note.createdAtUtc),
  message: note.message
  }));
@@ -1058,7 +1110,7 @@ export class DriverService {
  statusLabel: this.mapIncidentStatusLabel(incident.status),
  reviewer: incident.reviewerName || 'DRIVERS.DETAIL.SUPPORT.REVIEWER_OPERATIONS',
  createdAt: this.formatDateTime(incident.createdAtUtc),
- linkedOrder: incident.linkedOrderId || 'N/A',
+ linkedOrder: incident.linkedOrderId || 'COMMON.NOT_AVAILABLE',
  summary: incident.summary,
  evidenceImages: []
  }));
@@ -1353,26 +1405,33 @@ export class DriverService {
  }
  }
 
- private mapCollectionPaymentStatus(balance: number): 'good' | 'warning' | 'critical' {
- if (balance < 0) {
+ private mapCollectionPaymentStatus(status?: string | null): 'good' | 'warning' | 'critical' {
+ switch ((status || '').toLowerCase()) {
+ case 'critical':
  return 'critical';
+ case 'warning':
+ return 'warning';
+ default:
+ return 'good';
  }
-
- return balance < 200 ? 'warning' : 'good';
  }
 
  private buildTaskSubtitle(status: DriverStatus, activeTasks: number, completedTasks: number): string {
  switch (status) {
  case 'OnMission':
- return `${activeTasks} active deliveries`;
+ return 'DRIVERS.TASK_SUBTITLES.ON_MISSION';
  case 'Online':
- return activeTasks > 0 ? `${activeTasks} tasks in dispatch queue` : `Ready for dispatch · ${completedTasks} completed`;
+ return activeTasks > 0
+ ? 'DRIVERS.TASK_SUBTITLES.IN_DISPATCH_QUEUE'
+ : 'DRIVERS.TASK_SUBTITLES.READY_FOR_DISPATCH';
  case 'Suspended':
- return 'Suspended pending operational review';
+ return 'DRIVERS.TASK_SUBTITLES.SUSPENDED_PENDING_REVIEW';
  case 'Banned':
- return 'Banned from receiving delivery offers';
+ return 'DRIVERS.TASK_SUBTITLES.BANNED_FROM_OFFERS';
  default:
- return completedTasks > 0 ? `${completedTasks} completed deliveries` : 'No recent activity';
+ return completedTasks > 0
+ ? 'DRIVERS.TASK_SUBTITLES.HAS_COMPLETED_DELIVERIES'
+ : 'DRIVERS.TABLE.NO_ACTIVITY';
  }
  }
 
@@ -1606,18 +1665,6 @@ export class DriverService {
  }
  }
 
- private buildTodayTripsDelta(activeTasks: number, completedTasks: number): string {
- if (activeTasks > 0) {
- return `+${activeTasks}`;
- }
-
- if (completedTasks > 0) {
- return `${completedTasks}`;
- }
-
- return '0';
- }
-
  private mapComplianceStatusLabel(riskLevel: string): string {
  switch (riskLevel.toUpperCase()) {
  case 'HIGH':
@@ -1646,22 +1693,6 @@ export class DriverService {
  + compliance.safetyAlerts
  + (compliance.expiredDocuments * 2)
  + (compliance.suspensions * 3);
- }
-
- private buildRouteEfficiencyDelta(commitmentScore: number): string {
- if (commitmentScore >= 85) {
- return '+12';
- }
-
- if (commitmentScore >= 70) {
- return '+4';
- }
-
- if (commitmentScore >= 55) {
- return '-3';
- }
-
- return '-10';
  }
 
  private mapLifecycleStages(stages: AdminDriverLifecycleStageResponse[]): DriverLifecycleStage[] {
@@ -1992,14 +2023,14 @@ export class DriverService {
 
  private buildAvgDeliveryTimeLabel(avgDeliveryMinutes?: number | null): string {
  if (!avgDeliveryMinutes || avgDeliveryMinutes <= 0) {
- return '--';
+ return 'COMMON.NOT_AVAILABLE';
  }
 
- return `${Math.round(avgDeliveryMinutes)} min`;
+ return String(Math.round(avgDeliveryMinutes));
  }
 
  private buildActiveDriversLabel(activeDrivers?: number | null): string {
- return activeDrivers == null ? '--' : String(activeDrivers);
+ return activeDrivers == null ? 'COMMON.NOT_AVAILABLE' : String(activeDrivers);
  }
 
  private buildOperationsStabilityLabel(avgDeliveryMinutes?: number | null, activeTasks?: number | null): string {
@@ -2178,11 +2209,16 @@ export class DriverService {
  case 'COMPLETED':
  case 'PAID':
  return 'SETTLED';
+ case 'POSTED':
+ return 'POSTED';
+ case 'PENDING':
+ case 'HOLD':
+ return 'PENDING';
  case 'FAILED':
  case 'REJECTED':
  return 'FAILED';
  default:
- return 'PENDING';
+ return 'POSTED';
  }
  }
 
@@ -2190,6 +2226,8 @@ export class DriverService {
  switch (this.mapFinanceStatus(status)) {
  case 'SETTLED':
  return 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.SETTLED';
+ case 'POSTED':
+ return 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.POSTED';
  case 'FAILED':
  return 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.FAILED';
  default:
@@ -2206,7 +2244,99 @@ export class DriverService {
  }
 
  private mapStatementPeriod(period: string): string {
+ if (!period?.trim()) {
+ return 'COMMON.NOT_AVAILABLE';
+ }
+
+ // Backend now returns a live date range (e.g. "2026-07-01 → 2026-07-31").
+ if (period.includes('→') || /\d{4}-\d{2}-\d{2}/.test(period)) {
+ return period;
+ }
+
  return `COMMON.${period.toUpperCase()}`;
+ }
+
+ private mapPayoutDayLabel(day: string): string {
+ return `FINANCES.PLATFORM_ACCOUNT.PAYOUT_DAY_${day.toUpperCase()}`;
+ }
+
+ private mapFinanceSettlements(
+ settlements: AdminDriverFinanceSettlementSummaryResponse[]
+ ): DriverFinanceSettlementSummary[] {
+ return settlements.map((item) => ({
+ id: item.id,
+ status: item.status,
+ statusLabel: this.mapSettlementStatusKey(item.status),
+ grossAmount: Number(item.grossAmount ?? 0),
+ netAmount: Number(item.netAmount ?? 0),
+ periodFrom: this.formatDate(item.periodFrom),
+ periodTo: this.formatDate(item.periodTo),
+ createdAt: this.formatDateTime(item.createdAtUtc),
+ processedAt: item.processedAtUtc ? this.formatDateTime(item.processedAtUtc) : undefined
+ }));
+ }
+
+ private mapFinanceWithdrawals(
+ withdrawals: AdminDriverFinanceWithdrawalSummaryResponse[]
+ ): DriverFinanceWithdrawalSummary[] {
+ return withdrawals.map((item) => ({
+ id: item.id,
+ status: item.status,
+ statusLabel: this.mapWithdrawalStatusKey(item.status),
+ amount: Number(item.amount ?? 0),
+ payoutDay: item.payoutDay
+ ? this.mapPayoutDayLabel(item.payoutDay)
+ : undefined,
+ transferReference: item.transferReference ?? undefined,
+ createdAt: this.formatDateTime(item.createdAtUtc),
+ processedAt: item.processedAtUtc ? this.formatDateTime(item.processedAtUtc) : undefined,
+ payoutId: item.payoutId ?? undefined
+ }));
+ }
+
+ private mapSettlementStatusKey(status: string): string {
+ switch ((status || '').toLowerCase()) {
+ case 'paid':
+ case 'settled':
+ case 'completed':
+ case 'processed':
+ return 'DRIVERS.DETAIL.FINANCE.SETTLEMENT_STATUS.PAID';
+ case 'pending':
+ case 'draft':
+ return 'DRIVERS.DETAIL.FINANCE.SETTLEMENT_STATUS.PENDING';
+ case 'processing':
+ case 'approved':
+ return 'DRIVERS.DETAIL.FINANCE.SETTLEMENT_STATUS.PROCESSING';
+ case 'failed':
+ case 'cancelled':
+ case 'canceled':
+ case 'rejected':
+ return 'DRIVERS.DETAIL.FINANCE.SETTLEMENT_STATUS.FAILED';
+ default:
+ return 'DRIVERS.DETAIL.FINANCE.SETTLEMENT_STATUS.PENDING';
+ }
+ }
+
+ private mapWithdrawalStatusKey(status: string): string {
+ switch ((status || '').toLowerCase()) {
+ case 'paid':
+ case 'completed':
+ return 'DRIVERS.DETAIL.FINANCE.WITHDRAWAL_STATUS.PAID';
+ case 'pending':
+ return 'DRIVERS.DETAIL.FINANCE.WITHDRAWAL_STATUS.PENDING';
+ case 'processing':
+ case 'approved':
+ return 'DRIVERS.DETAIL.FINANCE.WITHDRAWAL_STATUS.PROCESSING';
+ case 'returned':
+ return 'DRIVERS.DETAIL.FINANCE.WITHDRAWAL_STATUS.RETURNED';
+ case 'rejected':
+ case 'cancelled':
+ case 'canceled':
+ case 'failed':
+ return 'DRIVERS.DETAIL.FINANCE.WITHDRAWAL_STATUS.FAILED';
+ default:
+ return 'DRIVERS.DETAIL.FINANCE.WITHDRAWAL_STATUS.PENDING';
+ }
  }
 
  private mapVerificationReviewer(reviewer: string): string {

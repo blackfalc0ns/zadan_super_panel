@@ -362,6 +362,7 @@ export function getIncidentTypeKey(type: string): string {
 export function getFinanceStatusVariant(status: DriverFinanceEntry['status']): StatusPillVariant {
   const variants: Record<DriverFinanceEntry['status'], StatusPillVariant> = {
     SETTLED: 'success',
+    POSTED: 'success',
     PENDING: 'warning',
     FAILED: 'danger'
   };
@@ -372,6 +373,7 @@ export function getFinanceStatusVariant(status: DriverFinanceEntry['status']): S
 export function getFinanceStatusKey(status: DriverFinanceEntry['status']): string {
   const keys: Record<DriverFinanceEntry['status'], string> = {
     SETTLED: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.SETTLED',
+    POSTED: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.POSTED',
     PENDING: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.PENDING',
     FAILED: 'DRIVERS.DETAIL.FINANCE.DYNAMIC.STATUS.FAILED'
   };

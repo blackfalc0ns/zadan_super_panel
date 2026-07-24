@@ -68,6 +68,7 @@ interface AdminCustomerListItemDto {
  lastOrderValue: number;
  refundedOrdersCount: number;
  favoritesCount: number;
+ preferredLocale?: string | null;
 }
 
 interface AdminCustomerRecentOrderDto {
@@ -403,7 +404,7 @@ export class CustomersService {
  private mapListItemToCustomer(item: AdminCustomerListItemDto): CustomerDetailRecord {
  const base = this.createBaseRecord(item);
  const customer = this.createDetailRecord(base);
- customer.internalNotes = this.buildInternalNotes(item, customer.accountState);
+ customer.internalNotes = this.buildInternalNotes();
  customer.isVerified = item.emailConfirmed || item.phoneConfirmed;
  customer.isOnlineNow = item.isOnlineNow;
  customer.lastSeenAtUtc = item.lastSeenAtUtc ?? item.lastLoginAtUtc ?? item.lastOrderAtUtc;
@@ -423,8 +424,8 @@ export class CustomersService {
  customer.lastSeenAtUtc = item.lastSeenAtUtc ?? item.lastLoginAtUtc ?? item.lastOrderAtUtc;
  customer.lastSeenAt = this.formatPresenceLabel(customer.isOnlineNow, customer.lastSeenAtUtc);
  customer.isVerified = item.emailConfirmed || item.phoneConfirmed;
- customer.preferredLanguage = 'ar';
- customer.preferredLanguageLabel = 'العربية';
+ customer.preferredLanguage = this.mapPreferredLanguage(item.preferredLocale);
+ customer.preferredLanguageLabel = this.mapPreferredLanguageLabel(customer.preferredLanguage);
  customer.recentOrders = item.recentOrders.map((order) => ({
  id: order.id,
  displayId: order.orderNumber,
@@ -432,7 +433,7 @@ export class CustomersService {
  total: order.totalAmount,
  status: this.mapRecentOrderStatus(order)
  }));
- customer.internalNotes = this.buildInternalNotes(item, customer.accountState);
+ customer.internalNotes = this.buildInternalNotes();
 
  if (item.addressLine) {
  customer.notes = `${item.addressLine}${item.city ? ` - ${item.city}` : ''}`;
@@ -472,18 +473,18 @@ export class CustomersService {
  totalOrders: item.totalOrders,
  totalSpent: this.roundNumber(item.totalSpent),
  averageBasket: this.roundNumber(item.averageBasket),
- lifetimeValue: this.roundNumber(Math.max(item.totalSpent, item.totalSpent + item.favoritesCount * 25)),
+ lifetimeValue: this.roundNumber(item.totalSpent),
  refundsCount: item.refundedOrdersCount,
  disputesCount: 0,
  activeDays30: this.computeActiveDays30(item.lastLoginAtUtc ?? item.lastOrderAtUtc),
  lastOrderAt: this.formatLastSeen(item.lastOrderAtUtc),
  lastOrderValue: this.roundNumber(item.lastOrderValue),
  joinedAt: this.formatMonthYear(item.createdAtUtc),
- loyaltyScore: this.computeLoyaltyScore(item),
+ loyaltyScore: 0,
  preferredChannel: 'CUSTOMERS.PROFILE.PREFERRED_CHANNEL_APP',
  watchFlags: this.deriveWatchFlags(item),
- notes: 'Connected from customer app account.',
- preferredLanguage: 'ar'
+ notes: '',
+ preferredLanguage: this.mapPreferredLanguage(item.preferredLocale)
  };
  }
 
@@ -495,23 +496,29 @@ export class CustomersService {
  riskSummary: this.getRiskSummaryKey(base.risk),
  lastSeenAt: base.lastOrderAt,
  lastSeenAtUtc: null,
- preferredLanguageLabel: 'العربية',
+ preferredLanguageLabel: this.mapPreferredLanguageLabel(base.preferredLanguage),
  isVerified: true,
- suspiciousLoginAttempts: '0',
- repeatedPaymentFailureRate: '0%',
+ suspiciousLoginAttempts: 'COMMON.NOT_AVAILABLE',
+ repeatedPaymentFailureRate: 'COMMON.NOT_AVAILABLE',
  complaintRateLabel: '',
  analysisSummary: '',
  refundsClosedCount: 0,
  refundsInProgressCount: 0,
  refundsTotalAmount: 0,
  complaintsSolvedCount: 0,
- lastSupportContact: 'ما فيه تواصل حديث',
- accountTeam: 'Customer Success Team',
- accountManager: this.getAccountManager(base.segment),
+ lastSupportContact: 'COMMON.NOT_AVAILABLE',
+ accountTeam: 'COMMON.NOT_AVAILABLE',
+ accountManager: 'COMMON.NOT_AVAILABLE',
  accountState,
  trustState: base.risk === 'critical' ? 'blocked' : base.risk === 'high' ? 'watch' : 'clear',
  paymentState: base.refundsCount >= 3 ? 'monitoring' : 'healthy',
- engagementState: base.status === 'dormant' ? 'dormant' : base.segment === 'new' ? 'new' : base.status === 'low_activity' ? 'at_risk' : base.loyaltyScore >= 90 ? 'loyal' : 'growing',
+ engagementState: base.status === 'dormant'
+ ? 'dormant'
+ : base.segment === 'new'
+ ? 'new'
+ : base.status === 'low_activity'
+ ? 'at_risk'
+ : 'growing',
  reviewState: base.risk === 'critical' ? 'escalated' : base.risk === 'high' ? 'flagged' : 'none',
  workflow: {
  state: 'healthy',
@@ -644,59 +651,28 @@ export class CustomersService {
  }
  }
 
- private getAccountManager(segment: CustomerRecord['segment']): string {
- switch (segment) {
- case 'vip':
- return 'سارة أحمد';
- case 'business':
- return 'محمد جابر';
- case 'watchlist':
- return 'مكتب الثقة والمخاطر';
- case 'dormant':
- return 'فريق الاستبقاء';
- default:
- return 'فريق النمو';
- }
+ private buildInternalNotes(): CustomerInternalNote[] {
+ return [];
  }
 
- private buildInternalNotes(
- item: Pick<AdminCustomerListItemDto, 'createdAtUtc' | 'accountStatus' | 'isLoginLocked' | 'refundedOrdersCount'>,
- accountState: CustomerAccountState
- ): CustomerInternalNote[] {
- const notes: CustomerInternalNote[] = [
- {
- authorKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.IDENTITY_SERVICE',
- roleKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.CUSTOMER_APP',
- createdAt: this.formatAuditDate(item.createdAtUtc),
- messageKey: 'CUSTOMERS.DETAIL.ADMIN.NOTES.SYNCED_FROM_APP',
- tone: 'info',
- isSystem: true
- }
- ];
-
- if (item.refundedOrdersCount >= 3 || accountState === 'under_review') {
- notes.unshift({
- authorKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.RISK_TRUST_OPS',
- roleKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.MONITORING',
- createdAt: this.formatAuditDate(new Date().toISOString()),
- messageKey: 'CUSTOMERS.DETAIL.ADMIN.NOTES.MANUAL_MONITORING_REQUIRED',
- tone: 'warning',
- isSystem: true
- });
+ private mapPreferredLanguage(preferredLocale?: string | null): 'ar' | 'en' | undefined {
+ if (!preferredLocale?.trim()) {
+ return undefined;
  }
 
- if (item.accountStatus === 'Suspended' || item.isLoginLocked) {
- notes.unshift({
- authorKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.ADMIN_POLICY',
- roleKey: 'CUSTOMERS.DETAIL.ADMIN.AUTHORS.RISK_COMMITTEE',
- createdAt: this.formatAuditDate(new Date().toISOString()),
- messageKey: 'CUSTOMERS.DETAIL.ADMIN.NOTES.LOGIN_RESTRICTED',
- tone: 'danger',
- isSystem: true
- });
+ return preferredLocale.trim().toLowerCase().startsWith('en') ? 'en' : 'ar';
  }
 
- return notes;
+ private mapPreferredLanguageLabel(preferredLanguage?: 'ar' | 'en'): string {
+ if (preferredLanguage === 'en') {
+ return 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ENGLISH';
+ }
+
+ if (preferredLanguage === 'ar') {
+ return 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ARABIC';
+ }
+
+ return 'COMMON.NOT_AVAILABLE';
  }
 
  private mapRecentOrderStatus(order: AdminCustomerRecentOrderDto): 'DELIVERED' | 'REFUNDED' | 'PROCESSING' {
@@ -774,12 +750,6 @@ export class CustomersService {
 
  private getAgeInDays(value: string): number {
  return Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / (1000 * 60 * 60 * 24)));
- }
-
- private computeLoyaltyScore(item: AdminCustomerListItemDto): number {
- const base = Math.min(100, item.totalOrders * 2 + item.favoritesCount * 3);
- const penalty = item.refundedOrdersCount * 8 + (item.isLoginLocked ? 20 : 0);
- return Math.max(25, Math.min(99, base - penalty));
  }
 
  private roundNumber(value: number): number {

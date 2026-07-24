@@ -154,7 +154,7 @@ export class CustomerDetailComponent implements OnInit {
  {
  id: 'complaints',
  title: 'CUSTOMERS.DETAIL.METRICS.COMPLAINTS',
- value: this.customer.disputesCount,
+ value: this.translate.instant('COMMON.NOT_AVAILABLE'),
  icon: '<span class="material-symbols-outlined text-[20px]">support_agent</span>',
  color: '#f59e0b'
  },
@@ -168,14 +168,9 @@ export class CustomerDetailComponent implements OnInit {
  {
  id: 'risk-score',
  title: 'CUSTOMERS.DETAIL.METRICS.RISK_SCORE',
- value: `${this.customer.riskScore}%`,
+ value: this.translate.instant('COMMON.NOT_AVAILABLE'),
  icon: '<span class="material-symbols-outlined text-[20px]">verified_user</span>',
- color: '#127c8c',
- trend: {
- value: this.translate.instant(this.customer.riskSummary),
- label: this.translate.instant(this.customer.riskSummary),
- isPositive: this.customer.risk === 'low' || this.customer.risk === 'medium'
- }
+ color: '#127c8c'
  }
  ];
  }
@@ -235,14 +230,13 @@ export class CustomerDetailComponent implements OnInit {
  },
  {
  label: 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGINS',
- value: this.getSuspiciousLoginsKey(),
+ value: 'COMMON.NOT_AVAILABLE',
  translateValue: true
  },
  {
  label: 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.PAYMENT_FAILURES',
  value: this.customer.repeatedPaymentFailureRate,
- translateValue: false,
- valueDir: 'ltr'
+ translateValue: true
  },
  {
  label: 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY',
@@ -658,9 +652,15 @@ export class CustomerDetailComponent implements OnInit {
  }
 
  private getPreferredLanguageKey(): string {
- return this.customer?.preferredLanguage === 'en'
- ? 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ENGLISH'
- : 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ARABIC';
+ if (this.customer?.preferredLanguage === 'en') {
+ return 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ENGLISH';
+ }
+
+ if (this.customer?.preferredLanguage === 'ar') {
+ return 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ARABIC';
+ }
+
+ return 'COMMON.NOT_AVAILABLE';
  }
 
  private getLastSeenValue(): string {
@@ -684,52 +684,20 @@ export class CustomerDetailComponent implements OnInit {
  return (primary || fallback || customer.city || '—').trim();
  }
 
- private getSuspiciousLoginsKey(): string {
- if (!this.customer) {
- return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.NONE';
- }
-
- if (this.customer.trustState === 'blocked') {
- return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.FIVE_RECENT';
- }
-
- if (this.customer.trustState === 'watch') {
- return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.TWO_RECENT';
- }
-
- return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.NONE';
- }
-
  private getComplaintFrequencyKey(): string {
  if (!this.customer) {
  return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW';
  }
 
- if (this.customer.disputesCount >= 3 || this.customer.refundsCount >= 4) {
+ if (this.customer.refundsCount >= 4) {
  return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.HIGH';
  }
 
- if (this.customer.disputesCount > 0 || this.customer.refundsCount > 1) {
+ if (this.customer.refundsCount > 1) {
  return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.MEDIUM';
  }
 
  return 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW';
- }
-
- getLastSupportContactKey(): string {
- if (!this.customer) {
- return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.NONE';
- }
-
- if (this.customer.disputesCount >= 3) {
- return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.RECENT';
- }
-
- if (this.customer.disputesCount > 0 || this.customer.refundsCount > 1) {
- return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.STALE';
- }
-
- return 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT_VALUES.NONE';
  }
 }
 

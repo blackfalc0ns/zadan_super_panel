@@ -252,7 +252,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
  this.decideSelectedApproval(
  () => this.adminAccessApiService.approveApproval(this.selectedApproval!.id, this.approvalDecisionNote),
- this.isRTL ? 'اعتمدنا تعديل المندوب وطبقناه' : 'Driver change approved and applied'
+ this.translate.instant('DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.APPROVED_TOAST')
  );
  }
 
@@ -263,23 +263,23 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
 
  this.decideSelectedApproval(
  () => this.adminAccessApiService.rejectApproval(this.selectedApproval!.id, this.approvalDecisionNote),
- this.isRTL ? 'رفضنا تعديل المندوب' : 'Driver change rejected'
+ this.translate.instant('DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.REJECTED_TOAST')
  );
  }
 
  getApprovalActionLabel(action: string): string {
- const labels: Record<string, { ar: string; en: string }> = {
- 'driver.profile.personal': { ar: 'تعديل البيانات الشخصية', en: 'Personal data change' },
- 'driver.profile.vehicle': { ar: 'تعديل الهوية والمركبة', en: 'Identity and vehicle change' },
- 'driver.profile.documents': { ar: 'تعديل المستندات', en: 'Documents change' },
- 'driver.payout_method.create': { ar: 'إضافة طريقة سحب', en: 'Create payout method' },
- 'driver.payout_method.update': { ar: 'تعديل طريقة سحب', en: 'Update payout method' },
- 'driver.payout_method.make_primary': { ar: 'تعيين طريقة السحب الأساسية', en: 'Set primary payout method' },
- 'driver.payout_method.delete': { ar: 'حذف طريقة سحب', en: 'Delete payout method' }
+ const labels: Record<string, string> = {
+ 'driver.profile.personal': 'DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.ACTIONS.PROFILE_PERSONAL',
+ 'driver.profile.vehicle': 'DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.ACTIONS.PROFILE_VEHICLE',
+ 'driver.profile.documents': 'DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.ACTIONS.PROFILE_DOCUMENTS',
+ 'driver.payout_method.create': 'DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.ACTIONS.PAYOUT_CREATE',
+ 'driver.payout_method.update': 'DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.ACTIONS.PAYOUT_UPDATE',
+ 'driver.payout_method.make_primary': 'DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.ACTIONS.PAYOUT_PRIMARY',
+ 'driver.payout_method.delete': 'DRIVERS.DETAIL.VERIFICATION.CHANGE_APPROVAL.ACTIONS.PAYOUT_DELETE'
  };
 
- const label = labels[action];
- return label ? (this.isRTL ? label.ar : label.en) : action;
+ const key = labels[action];
+ return key ? this.translate.instant(key) : action;
  }
 
  getApprovalFieldLabel(field: AccessApprovalReviewFieldDto): string {
@@ -296,7 +296,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
  }
 
  if (typeof value === 'boolean') {
- return value ? (this.isRTL ? 'نعم' : 'Yes') : (this.isRTL ? 'لا' : 'No');
+ return this.translate.instant(value ? 'COMMON.YES' : 'COMMON.NO');
  }
 
  if (typeof value === 'object') {

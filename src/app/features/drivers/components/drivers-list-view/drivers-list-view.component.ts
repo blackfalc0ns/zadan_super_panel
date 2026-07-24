@@ -185,54 +185,12 @@ export class DriversListViewComponent {
  }
 
  getTaskSubtitle(subtitle?: string): string {
- if (!subtitle) {
+ const trimmed = subtitle?.trim();
+ if (!trimmed) {
  return 'DRIVERS.TABLE.NO_ACTIVITY';
  }
 
- const subtitleKeys: Record<string, string> = {
- // Arabic keys
- 'آخر تسليم قبل 10 دقائق': 'DRIVERS.TASK_SUBTITLES.LAST_DELIVERY_10_MIN',
- 'توصيل قيد التنفيذ': 'DRIVERS.TASK_SUBTITLES.DELIVERY_IN_PROGRESS',
- 'ما فيه نشاط': 'DRIVERS.TABLE.NO_ACTIVITY',
- 'متاح في المنطقة الشرقية': 'DRIVERS.TASK_SUBTITLES.EASTERN_REGION_AVAILABLE',
- 'آخر ظهور قبل 6 ساعات': 'DRIVERS.TASK_SUBTITLES.LAST_SEEN_6_HOURS',
- 'يشحن 3 طلبات الحين': 'DRIVERS.TASK_SUBTITLES.CARRYING_3_ORDERS',
- 'مستوى خدمة ممتاز': 'DRIVERS.TASK_SUBTITLES.EXCELLENT_SERVICE_LEVEL',
- 'مستندات تحت المراجعة': 'DRIVERS.TASK_SUBTITLES.DOCUMENTS_UNDER_REVIEW',
- 'منطقة التسليم الجنوبية': 'DRIVERS.TASK_SUBTITLES.SOUTH_DELIVERY_ZONE',
- 'جاهز للاستلام القادم': 'DRIVERS.TASK_SUBTITLES.READY_FOR_NEXT_PICKUP',
- 'إيقاف لحين التسوية': 'DRIVERS.TASK_SUBTITLES.SUSPENDED_PENDING_SETTLEMENT',
- 'أفضل معدل قبول في المنطقة': 'DRIVERS.TASK_SUBTITLES.BEST_ACCEPTANCE_RATE',
- 
- // English keys
- 'Last delivery was 10 minutes ago': 'DRIVERS.TASK_SUBTITLES.LAST_DELIVERY_10_MIN',
- 'Last delivery 10 minutes ago': 'DRIVERS.TASK_SUBTITLES.LAST_DELIVERY_10_MIN',
- 'Delivery in progress': 'DRIVERS.TASK_SUBTITLES.DELIVERY_IN_PROGRESS',
- 'No activity': 'DRIVERS.TABLE.NO_ACTIVITY',
- 'Available in the Eastern region': 'DRIVERS.TASK_SUBTITLES.EASTERN_REGION_AVAILABLE',
- 'Last seen 6 hours ago': 'DRIVERS.TASK_SUBTITLES.LAST_SEEN_6_HOURS',
- 'Carrying 3 orders now': 'DRIVERS.TASK_SUBTITLES.CARRYING_3_ORDERS',
- 'Excellent service level': 'DRIVERS.TASK_SUBTITLES.EXCELLENT_SERVICE_LEVEL',
- 'Documents under review': 'DRIVERS.TASK_SUBTITLES.DOCUMENTS_UNDER_REVIEW',
- 'Southern delivery zone': 'DRIVERS.TASK_SUBTITLES.SOUTH_DELIVERY_ZONE',
- 'Ready for the next pickup': 'DRIVERS.TASK_SUBTITLES.READY_FOR_NEXT_PICKUP',
- 'Suspended pending settlement': 'DRIVERS.TASK_SUBTITLES.SUSPENDED_PENDING_SETTLEMENT',
- 'Best acceptance rate in the region': 'DRIVERS.TASK_SUBTITLES.BEST_ACCEPTANCE_RATE'
- };
-
- const trimmed = subtitle.trim();
- if (subtitleKeys[trimmed]) {
- return subtitleKeys[trimmed];
- }
- 
- const lower = trimmed.toLowerCase();
- for (const [key, value] of Object.entries(subtitleKeys)) {
- if (key.toLowerCase() === lower) {
- return value;
- }
- }
-
- return subtitle;
+ return trimmed.startsWith('DRIVERS.') ? trimmed : 'DRIVERS.TABLE.NO_ACTIVITY';
  }
 
  getIssueIcon(issue: string): string {

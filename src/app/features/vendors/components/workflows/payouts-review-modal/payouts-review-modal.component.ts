@@ -291,6 +291,11 @@ export class PayoutsReviewModalComponent implements OnChanges {
  })
  : '-';
 
+ const logs: PaymentDetail['logs'] = [];
+ if (transaction.failureReason?.trim()) {
+ logs.push({ type: 'error', message: transaction.failureReason.trim() });
+ }
+
  return {
  transactionId: transaction.paymentNumber,
  bankReference: transaction.reference,
@@ -299,7 +304,6 @@ export class PayoutsReviewModalComponent implements OnChanges {
  amount: transaction.amount,
  status: transaction.status,
  statusLabel: this.getStatusLabel(transaction.status),
- statusCode: transaction.status === 'success' ? '200 OK' : undefined,
  lastUpdated: `${transaction.date} - ${transaction.time}`,
  vendorName: this.vendorName || '-',
  bankName: this.getBankLabel(transaction.bankCode),
@@ -312,13 +316,7 @@ export class PayoutsReviewModalComponent implements OnChanges {
  transferred: transaction.status === 'success' ? completedLabel : '-',
  confirmed: transaction.status === 'success' ? completedLabel : '-'
  },
- logs: [
- { type: 'debug', message: this.translate.instant('MODALS.PAYMENT_DETAIL.LOG_MESSAGES.API_INITIATED') },
- {
- type: transaction.status === 'failed' ? 'error' : transaction.status === 'success' ? 'success' : 'debug',
- message: `${this.translate.instant('MODALS.PAYOUTS_REVIEW.STATUS')}: ${this.getStatusLabel(transaction.status)}`
- }
- ],
+ logs,
  failureReason: transaction.failureReason
  };
  }

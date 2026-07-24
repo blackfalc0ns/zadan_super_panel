@@ -8,7 +8,7 @@ export type DriverSupportTicketStatus = 'WAITING' | 'IN_PROGRESS' | 'RESOLVED';
 export type DriverSupportTicketPriority = 'NORMAL' | 'HIGH' | 'CRITICAL';
 export type DriverIncidentSeverity = 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type DriverIncidentStatus = 'NEW' | 'REVIEW' | 'WAITING_DOCS' | 'RESOLVED';
-export type DriverFinanceEntryStatus = 'SETTLED' | 'PENDING' | 'FAILED';
+export type DriverFinanceEntryStatus = 'SETTLED' | 'POSTED' | 'PENDING' | 'FAILED';
 export type DriverWorkflowState =
   | 'PENDING_DOCUMENTS'
   | 'VERIFICATION_REVIEW'
@@ -280,6 +280,30 @@ export interface DriverFinanceEntry {
   date: string;
 }
 
+export interface DriverFinanceSettlementSummary {
+  id: string;
+  status: string;
+  statusLabel: string;
+  grossAmount: number;
+  netAmount: number;
+  periodFrom: string;
+  periodTo: string;
+  createdAt: string;
+  processedAt?: string;
+}
+
+export interface DriverFinanceWithdrawalSummary {
+  id: string;
+  status: string;
+  statusLabel: string;
+  amount: number;
+  payoutDay?: string;
+  transferReference?: string;
+  createdAt: string;
+  processedAt?: string;
+  payoutId?: string;
+}
+
 export interface DriverFinanceSnapshot {
   availableBalance: number;
   dueAmount: number;
@@ -289,6 +313,19 @@ export interface DriverFinanceSnapshot {
   payoutMethod: string;
   statementPeriod: string;
   entries: DriverFinanceEntry[];
+  currentBalance: number;
+  pendingBalance: number;
+  codOwedBalance: number;
+  codBlockThresholdAmount: number;
+  netWithdrawable: number;
+  payoutDay?: string;
+  payoutDayLabel: string;
+  activeWithdrawalsCount: number;
+  activeWithdrawalsAmount: number;
+  settlementsCount: number;
+  payoutsCount: number;
+  recentSettlements: DriverFinanceSettlementSummary[];
+  recentWithdrawals: DriverFinanceWithdrawalSummary[];
 }
 
 export interface DriverVerificationChecklistItem {

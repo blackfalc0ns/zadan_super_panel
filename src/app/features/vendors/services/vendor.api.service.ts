@@ -881,14 +881,15 @@ export class VendorService {
  return this.executeVendorMutation(
  request$,
  () => this.updateVendor(id, (vendor) => {
+ const actorName = this.resolveCurrentActorName();
  vendor.reviewState = 'changes_requested';
- vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
+ vendor.assignedReviewer = vendor.assignedReviewer || actorName || null;
  vendor.requestedChangesAtUtc = this.timestamp();
  vendor.reviewDecisionReason = note;
  vendor.reviewCompletedAtUtc = null;
  this.markDocumentForReupload(vendor.reviewDocuments);
  this.pushSystemNote(vendor, {
- authorName: 'Vendor Compliance Desk',
+ authorName: actorName,
  roleLabel: 'Compliance Review',
  messageKey: 'VENDOR_REVIEW.NOTES.CHANGES_REQUESTED',
  tone: 'warning'
@@ -906,14 +907,15 @@ const request$ = this.canUseApiMutations()
  return this.executeVendorMutation(
  request$,
  () => this.updateVendor(id, (vendor) => {
+ const actorName = this.resolveCurrentActorName();
  vendor.reviewState = 'under_review';
- vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
+ vendor.assignedReviewer = vendor.assignedReviewer || actorName || null;
  vendor.reviewStartedAtUtc = vendor.reviewStartedAtUtc || this.timestamp();
  vendor.reviewSubmittedAtUtc = vendor.reviewSubmittedAtUtc || this.timestamp();
  vendor.reviewCompletedAtUtc = null;
  this.markPendingDocuments(vendor.reviewDocuments);
  this.pushSystemNote(vendor, {
- authorName: 'Vendor Compliance Desk',
+ authorName: actorName,
  roleLabel: 'Compliance Review',
  messageKey: 'VENDOR_REVIEW.NOTES.UNDER_REVIEW',
  tone: 'info'
@@ -1191,7 +1193,7 @@ reason: string = 'Submitted data did not pass compliance review.'
  vendor.licenseDocumentUrl = payload.licenseDocumentUrl ?? vendor.licenseDocumentUrl;
  vendor.payoutCycle = payload.payoutCycle ?? vendor.payoutCycle;
  vendor.primaryBankAccount = {
- id: vendor.primaryBankAccount?.id || 'draft-primary-bank-account',
+ id: vendor.primaryBankAccount?.id || '',
  bankName: payload.bankName,
  accountHolderName: payload.accountHolderName,
  iban: payload.iban,
@@ -1236,7 +1238,7 @@ reason: string = 'Submitted data did not pass compliance review.'
  target.reviewDecision = 'approved';
  target.rejectionReason = null;
  target.reviewedAtUtc = this.timestamp();
- target.reviewedBy = 'Vendor Compliance Desk';
+ target.reviewedBy = this.resolveCurrentActorName() || null;
  }),
  id
  );
@@ -1258,12 +1260,12 @@ reason: string = 'Submitted data did not pass compliance review.'
  target.reviewDecision = 'rejected';
  target.rejectionReason = reason;
  target.reviewedAtUtc = this.timestamp();
- target.reviewedBy = 'Vendor Compliance Desk';
+ target.reviewedBy = this.resolveCurrentActorName() || null;
  vendor.requestedChangesAtUtc = this.timestamp();
  vendor.reviewDecisionReason = reason;
 
  this.pushSystemNote(vendor, {
- authorName: 'Vendor Compliance Desk',
+ authorName: this.resolveCurrentActorName(),
  roleLabel: 'Document Review',
  message: reason,
  tone: 'warning'
@@ -1294,7 +1296,7 @@ reason: string = 'Submitted data did not pass compliance review.'
  targetType: existing?.targetType ?? (item.code.startsWith('step5.') ? 'document' : 'field'),
  step: existing?.step ?? (Number(item.code.slice(4, 5)) || 1),
  reviewerId: existing?.reviewerId ?? null,
- reviewerName: 'Vendor Compliance Desk',
+ reviewerName: this.resolveCurrentActorName() || null,
  decisionNote: item.decision === 'rejected' ? (item.reason ?? null) : null,
  lastSubmittedAtUtc: existing?.lastSubmittedAtUtc ?? this.timestamp(),
  reviewedAtUtc: this.timestamp()
@@ -1429,13 +1431,14 @@ reason: string = 'Submitted data did not pass compliance review.'
  addVendorReviewNote(
  id: string,
  message: string,
- authorName: string = 'Operations Reviewer',
+ authorName?: string,
  roleLabel: string = 'Vendor Review'
  ): Observable<VendorDetail> {
+ const resolvedAuthorName = authorName?.trim() || this.resolveCurrentActorName();
  const request$ = this.canUseApiMutations()
  ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/review-notes`, {
  message,
- authorName,
+ authorName: resolvedAuthorName,
  roleLabel
  })
  : null;
@@ -1446,7 +1449,7 @@ reason: string = 'Submitted data did not pass compliance review.'
  vendor.reviewNotes = [
  {
  id: this.nextNoteId(vendor.reviewNotes),
- authorName,
+ authorName: resolvedAuthorName,
  roleLabel,
  createdAtUtc: this.timestamp(),
  message,
@@ -1666,8 +1669,12 @@ reason: string = 'Submitted data did not pass compliance review.'
  private buildVendorKPIs(vendors: VendorDetail[]): VendorKPIs {
  return {
  pendingApproval: vendors.filter((vendor) => vendor.reviewState === 'submitted' || vendor.reviewState === 'under_review').length,
- missingDocuments: vendors.filter((vendor) => vendor.reviewState === 'awaiting_submission' || vendor.reviewState === 'changes_requested').length,
- highRisk: vendors.filter((vendor) => vendor.riskLevel === RiskLevel.High || vendor.riskLevel === RiskLevel.Critical).length,
+ missingDocuments: vendors.filter((vendor) =>
+ vendor.status === VendorStatus.Pending || vendor.hasPendingCompliance === true
+ ).length,
+ highRisk: vendors.filter((vendor) =>
+ vendor.status === VendorStatus.Suspended || vendor.isLoginLocked === true
+ ).length,
  payoutBlocked: vendors.filter((vendor) => vendor.payoutStatus === PayoutStatus.Blocked).length,
  suspended: vendors.filter((vendor) => vendor.status === VendorStatus.Suspended).length
  };
@@ -1676,8 +1683,12 @@ reason: string = 'Submitted data did not pass compliance review.'
  private buildVendorKPIsFromSummaries(vendors: Vendor[]): VendorKPIs {
  return {
  pendingApproval: vendors.filter((vendor) => vendor.status === VendorStatus.Pending).length,
- missingDocuments: vendors.filter((vendor) => (vendor.documentsCompleteness ?? 0) < 100).length,
- highRisk: vendors.filter((vendor) => vendor.riskLevel === RiskLevel.High || vendor.riskLevel === RiskLevel.Critical).length,
+ missingDocuments: vendors.filter((vendor) =>
+ vendor.status === VendorStatus.Pending || vendor.hasPendingCompliance === true
+ ).length,
+ highRisk: vendors.filter((vendor) =>
+ vendor.status === VendorStatus.Suspended || vendor.isLoginLocked === true
+ ).length,
  payoutBlocked: vendors.filter((vendor) => vendor.payoutStatus === PayoutStatus.Blocked).length,
  suspended: vendors.filter((vendor) => vendor.status === VendorStatus.Suspended).length
  };
@@ -1714,10 +1725,11 @@ reason: string = 'Submitted data did not pass compliance review.'
  onboardingStage: this.resolveOnboardingStage(status),
  verificationStatus: this.resolveVerificationStatus(status),
  documentsStatus: this.resolveDocumentsStatusFromStatus(status),
- riskLevel: this.resolveRiskLevel(status, accountStatus, isLocked),
- payoutStatus: status === VendorStatus.Active ? PayoutStatus.Active : PayoutStatus.Pending,
- documentsCompleteness: this.resolveDocumentsCompleteness(status),
- hasKYC: status === VendorStatus.Active,
+ riskLevel: isLocked || status === VendorStatus.Suspended ? RiskLevel.High : RiskLevel.Low,
+ // No payout API field — leave unset rather than invent Active/Pending/Blocked from status.
+ payoutStatus: undefined,
+ documentsCompleteness: 0,
+ hasKYC: false,
  hasPendingCompliance: status === VendorStatus.Pending,
  hasFraudFlag: false,
  complaintsCount: 0,
@@ -1734,7 +1746,7 @@ reason: string = 'Submitted data did not pass compliance review.'
  const base = fallback ?? this.createVendorDetailFromSummary(summary);
  const primaryBankAccount = apiVendor.primaryBankAccount
  ? {...apiVendor.primaryBankAccount,
- id: apiVendor.primaryBankAccount.id || 'primary-bank'
+ id: apiVendor.primaryBankAccount.id || ''
  }
  : base.primaryBankAccount ?? null;
 
@@ -1756,7 +1768,7 @@ reason: string = 'Submitted data did not pass compliance review.'
  taxDocumentUrl: apiVendor.taxDocumentUrl ?? base.taxDocumentUrl ?? null,
  licenseDocumentUrl: apiVendor.licenseDocumentUrl ?? base.licenseDocumentUrl ?? null,
  approvedAtUtc: apiVendor.approvedAtUtc ?? base.approvedAtUtc ?? null,
- approvedBy: apiVendor.approvedByName ?? base.approvedBy ?? null,
+ approvedBy: apiVendor.approvedByName ?? null,
  updatedAtUtc: apiVendor.updatedAtUtc ?? base.updatedAtUtc ?? summary.reviewUpdatedAtUtc ?? null,
  ownerEmail: apiVendor.ownerEmail ?? base.ownerEmail ?? '',
  ownerPhone: apiVendor.ownerPhone ?? base.ownerPhone ?? apiVendor.contactPhone,
@@ -1832,6 +1844,7 @@ reason: string = 'Submitted data did not pass compliance review.'
  ?? vendor.reviewStartedAtUtc
  ?? summary.reviewUpdatedAtUtc
  ?? vendor.createdAtUtc;
+ this.applyDocumentsCompletenessFromReview(vendor);
  return vendor;
  }
 
@@ -2123,31 +2136,19 @@ reason: string = 'Submitted data did not pass compliance review.'
  return DocumentsStatus.Missing;
  }
 
- private resolveDocumentsCompleteness(status: VendorStatus): number {
- switch (status) {
- case VendorStatus.Active:
- return 100;
- case VendorStatus.Pending:
- return 70;
- case VendorStatus.Rejected:
- return 45;
- case VendorStatus.Suspended:
- return 100;
- default:
- return 0;
- }
+ private resolveCurrentActorName(): string {
+ return this.authService.currentUserValue?.fullName?.trim() || '';
  }
 
- private resolveRiskLevel(status: VendorStatus, accountStatus?: string | null, isLoginLocked?: boolean): RiskLevel {
- if (isLoginLocked || status === VendorStatus.Suspended) {
- return RiskLevel.High;
- }
+ private applyDocumentsCompletenessFromReview(vendor: VendorDetail): void {
+ const requiredDocuments = this.getRequiredReviewDocuments(vendor.reviewDocuments ?? []);
+ const uploadedDocuments = requiredDocuments.filter((document) => document.isUploaded).length;
+ const requiredCount = requiredDocuments.length;
 
- if ((accountStatus || '').toLowerCase() === 'inactive') {
- return RiskLevel.Medium;
- }
-
- return status === VendorStatus.Pending ? RiskLevel.Medium : RiskLevel.Low;
+ vendor.documentsCompleteness = requiredCount === 0 ? 100 : Math.round((uploadedDocuments / requiredCount) * 100);
+ vendor.hasKYC = (vendor.reviewDocuments ?? []).some(
+ (document) => document.type === 'identity' && document.status !== 'missing'
+ );
  }
 
 private applyApproval(id: string, commissionRate: number): VendorDetail {
@@ -2163,13 +2164,14 @@ if (!statusAllowsApproval ||!vendor.readyForFinalApproval) {
 throw new Error('ما تقدر تعتمد التاجر قبل إقفال المستندات المطلوبة.|Vendor cannot be approved before the required documents are closed.');
 }
 
+const actorName = this.resolveCurrentActorName();
 vendor.status = VendorStatus.Active;
 vendor.accountStatus = 'Active';
 vendor.reviewState = 'verified';
 vendor.commissionRate = commissionRate;
-vendor.assignedReviewer = vendor.assignedReviewer || 'Vendor Compliance Desk';
+vendor.assignedReviewer = vendor.assignedReviewer || actorName || null;
 vendor.approvedAtUtc = this.timestamp();
-vendor.approvedBy = vendor.assignedReviewer;
+vendor.approvedBy = actorName || vendor.assignedReviewer || null;
  vendor.reviewCompletedAtUtc = this.timestamp();
 vendor.reviewDecisionReason = null;
 vendor.rejectionReason = null;
@@ -2180,7 +2182,7 @@ vendor.lockedAtUtc = null;
 vendor.isLoginLocked = false;
 vendor.archivedAtUtc = null;
 vendor.archiveReason = null;
-vendor.payoutStatus = PayoutStatus.Active;
+vendor.payoutStatus = undefined;
 vendor.requestedChangesAtUtc = null;
 vendor.reviewDocuments = vendor.reviewDocuments.map((document) => ({...document,
  status: 'completed',
@@ -2188,7 +2190,7 @@ vendor.reviewDocuments = vendor.reviewDocuments.map((document) => ({...document,
  iconBgClass: 'bg-teal-50 text-teal-500'
  }));
  this.pushSystemNote(vendor, {
- authorName: vendor.assignedReviewer,
+ authorName: actorName || vendor.assignedReviewer || '',
  roleLabel: 'Compliance Review',
  messageKey: 'VENDOR_REVIEW.NOTES.APPROVED',
  tone: 'success'
@@ -2215,7 +2217,7 @@ vendor.onboardingStage = OnboardingStage.UnderReview;
 vendor.verificationStatus = VerificationStatus.Pending;
 vendor.hasPendingCompliance = true;
 this.pushSystemNote(vendor, {
-authorName: 'Vendor Compliance Desk',
+authorName: this.resolveCurrentActorName(),
 roleLabel: 'Compliance Review',
 messageKey: 'VENDOR_REVIEW.NOTES.REOPENED',
 tone: 'info'
@@ -2249,7 +2251,7 @@ return this.updateVendor(id, (vendor) => {
  vendor.suspendedAtUtc = null;
  this.markDocumentForReupload(vendor.reviewDocuments);
  this.pushSystemNote(vendor, {
- authorName: 'Vendor Compliance Desk',
+ authorName: this.resolveCurrentActorName(),
  roleLabel: 'Compliance Review',
  messageKey: 'VENDOR_REVIEW.NOTES.REJECTED',
  tone: 'danger'
@@ -2268,6 +2270,7 @@ return this.updateVendor(id, (vendor) => {
  throw new Error(`ما تقدر تعلّق الحساب بينما حالته الحالية هي ${vendor.status}.|Vendor cannot be suspended while its current status is ${vendor.status}.`);
  }
 
+ const actorName = this.resolveCurrentActorName();
  vendor.status = VendorStatus.Suspended;
  vendor.reviewState = 'suspended';
  vendor.accountStatus = 'Inactive';
@@ -2275,11 +2278,12 @@ return this.updateVendor(id, (vendor) => {
  vendor.suspensionReason = normalizedReason;
  vendor.rejectionReason = null;
  vendor.suspendedAtUtc = this.timestamp();
+ // Local suspension marks payout blocked as an operational consequence of Suspended status.
  vendor.payoutStatus = PayoutStatus.Blocked;
- vendor.assignedReviewer = vendor.assignedReviewer || 'Risk & Compliance Desk';
+ vendor.assignedReviewer = vendor.assignedReviewer || actorName || null;
  vendor.reviewCompletedAtUtc = this.timestamp();
  this.pushSystemNote(vendor, {
- authorName: vendor.assignedReviewer,
+ authorName: actorName || vendor.assignedReviewer || '',
  roleLabel: 'Risk & Compliance',
  messageKey: 'VENDOR_REVIEW.NOTES.SUSPENDED',
  tone: 'danger'
@@ -2293,6 +2297,7 @@ return this.updateVendor(id, (vendor) => {
  throw new Error(`ما تقدر تشغيل الحساب إلا إذا كان معلقًا. الحالة الحالية هي ${vendor.status}.|Vendor can only be reactivated when it is suspended. Current status is ${vendor.status}.`);
  }
 
+ const actorName = this.resolveCurrentActorName();
  vendor.status = VendorStatus.Active;
  vendor.accountStatus = 'Active';
  vendor.reviewState = 'verified';
@@ -2304,10 +2309,10 @@ return this.updateVendor(id, (vendor) => {
  vendor.isLoginLocked = false;
  vendor.archiveReason = null;
  vendor.archivedAtUtc = null;
- vendor.payoutStatus = PayoutStatus.Active;
+ vendor.payoutStatus = undefined;
  vendor.reviewCompletedAtUtc = this.timestamp();
  this.pushSystemNote(vendor, {
- authorName: vendor.assignedReviewer || 'Risk & Compliance Desk',
+ authorName: actorName || vendor.assignedReviewer || '',
  roleLabel: 'Risk & Compliance',
  message: 'Vendor account reactivated and restored to active status.',
  messageKey: undefined,
@@ -2373,7 +2378,7 @@ return this.updateVendor(id, (vendor) => {
  vendor.documentsStatus = DocumentsStatus.Complete;
  vendor.documentsCompleteness = 100;
  vendor.approvedAtUtc = vendor.approvedAtUtc || this.timestamp();
- vendor.approvedBy = vendor.approvedBy || vendor.assignedReviewer || 'Vendor Compliance Desk';
+ vendor.approvedBy = vendor.approvedBy || vendor.assignedReviewer || this.resolveCurrentActorName() || null;
  vendor.hasPendingCompliance = false;
  break;
  case 'rejected':

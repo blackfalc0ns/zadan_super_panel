@@ -14,15 +14,19 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, Subject, take } from 'rxjs';
-import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
-import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { ExportService } from '../../../../shared/utils/export';
 import { FinanceService } from '../../../finances/services/finance.service';
-import { DriverDetailRecord, DriverFinanceEntry } from '../../models/drivers.models';
+import {
+  DriverDetailRecord,
+  DriverFinanceEntry,
+  DriverFinanceSettlementSummary,
+  DriverFinanceWithdrawalSummary
+} from '../../models/drivers.models';
 import { DriverService } from '../../services/drivers.api.service';
 import { getFinanceStatusVariant, getFinanceStatusKey } from '../../utils/driver-ui.utils';
 
@@ -33,8 +37,6 @@ import { getFinanceStatusVariant, getFinanceStatusKey } from '../../utils/driver
   imports: [
     CommonModule,
     TranslateModule,
-    DataTableComponent,
-    SectionHeaderComponent,
     FormsModule,
     AppPaginationComponent
   ],
@@ -50,6 +52,7 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   private readonly toastService = inject(ToastService);
   private readonly exportService = inject(ExportService);
   private readonly translate = inject(TranslateService);
+  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchChanges$ = new Subject<string>();
@@ -66,21 +69,11 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
 
   showSettleModal = false;
   settleAmount = 0;
-  settleMethod = 'BANKACCOUNT';
   settleReference = '';
   settleNotes = '';
   isSettling = false;
   settleSuccess = false;
   settleError = false;
-
-  financeColumns: TableColumn[] = [
-    { key: 'id', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.ID' },
-    { key: 'type', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.TYPE' },
-    { key: 'amount', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.AMOUNT' },
-    { key: 'fee', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.FEE' },
-    { key: 'status', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.STATUS', type: 'custom' },
-    { key: 'date', title: 'DRIVERS.DETAIL.FINANCE.COLUMNS.DATE' }
-  ];
 
   ngOnInit(): void {
     this.searchChanges$
@@ -100,12 +93,81 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
     }
   }
 
+  get codOwedBalance(): number {
+    return this.driver?.finance?.codOwedBalance ?? this.driver?.finance?.dueAmount ?? 0;
+  }
+
+  get codBlockThreshold(): number {
+    return this.driver?.finance?.codBlockThresholdAmount ?? 0;
+  }
+
+  get codLimitProgress(): number {
+    if (this.codBlockThreshold <= 0) {
+      return 0;
+    }
+    return Math.min(100, (this.codOwedBalance / this.codBlockThreshold) * 100);
+  }
+
+  get isCodLimitExceeded(): boolean {
+    return this.codBlockThreshold > 0 && this.codOwedBalance >= this.codBlockThreshold;
+  }
+
+  get recentSettlements(): DriverFinanceSettlementSummary[] {
+    return this.driver?.finance?.recentSettlements ?? [];
+  }
+
+  get recentWithdrawals(): DriverFinanceWithdrawalSummary[] {
+    return this.driver?.finance?.recentWithdrawals ?? [];
+  }
+
   getFinanceStatusVariant(status: string) {
     return getFinanceStatusVariant(status as any);
   }
 
   getFinanceStatusKey(status: string) {
     return getFinanceStatusKey(status as any);
+  }
+
+  getSettlementStatusVariant(status: string): 'success' | 'warning' | 'danger' | 'neutral' {
+    switch ((status || '').toLowerCase()) {
+      case 'paid':
+      case 'settled':
+      case 'completed':
+      case 'processed':
+        return 'success';
+      case 'processing':
+      case 'approved':
+      case 'pending':
+      case 'draft':
+        return 'warning';
+      case 'failed':
+      case 'cancelled':
+      case 'canceled':
+      case 'rejected':
+        return 'danger';
+      default:
+        return 'neutral';
+    }
+  }
+
+  getWithdrawalStatusVariant(status: string): 'success' | 'warning' | 'danger' | 'neutral' {
+    switch ((status || '').toLowerCase()) {
+      case 'paid':
+      case 'completed':
+        return 'success';
+      case 'pending':
+      case 'processing':
+      case 'approved':
+        return 'warning';
+      case 'returned':
+      case 'rejected':
+      case 'cancelled':
+      case 'canceled':
+      case 'failed':
+        return 'danger';
+      default:
+        return 'neutral';
+    }
   }
 
   setFilter(filter: string) {
@@ -171,11 +233,15 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
   }
 
   getMethodLabel(method: string): string {
-    if (method?.startsWith('DRIVERS.DETAIL.FINANCE.')) {
+    if (method?.startsWith('DRIVERS.DETAIL.FINANCE.') || method?.startsWith('COMMON.')) {
       return method;
     }
     const methodUpper = method?.toUpperCase() || '';
     return `DRIVERS.DETAIL.FINANCE.BACKEND.METHODS.${methodUpper}`;
+  }
+
+  isTranslationKey(value: string | undefined | null): boolean {
+    return !!value && (value.startsWith('DRIVERS.') || value.startsWith('COMMON.') || value.startsWith('FINANCES.') || value.startsWith('VENDOR_FINANCE.'));
   }
 
   downloadReceipt(entry: DriverFinanceEntry): void {
@@ -217,13 +283,28 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
     });
   }
 
-  openSettleModal() {
-    this.settleAmount = this.driver.finance.dueAmount;
-    this.settleMethod = 'BANKACCOUNT';
-    this.settleNotes = '';
-    const randomNum = Math.floor(100000 + Math.random() * 900000);
-    this.settleReference = `TXN-${randomNum}`;
+  openFinancialSettlements(): void {
+    void this.router.navigate(['/finances/settlements'], {
+      queryParams: { entityType: 'driver', entityId: this.driver.id }
+    });
+  }
 
+  openWithdrawalsQueue(): void {
+    void this.router.navigate(['/finances/withdrawals'], {
+      queryParams: { driverId: this.driver.id }
+    });
+  }
+
+  openSettlementDetail(settlementId: string): void {
+    void this.router.navigate(['/finances/settlements'], {
+      queryParams: { entityType: 'driver', entityId: this.driver.id, focus: settlementId }
+    });
+  }
+
+  openSettleModal() {
+    this.settleAmount = this.codOwedBalance;
+    this.settleNotes = '';
+    this.settleReference = '';
     this.showSettleModal = true;
     this.settleSuccess = false;
     this.settleError = false;
@@ -243,7 +324,10 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
     this.settleError = false;
     this.cdr.markForCheck();
 
-    const reference = this.settleReference?.trim() || undefined;
+    const reference = this.settleReference?.trim()
+      || this.settleNotes?.trim()
+      || undefined;
+
     this.financeService.createCodRemittance({
       driverId: this.driver.id,
       amount: this.settleAmount,
@@ -272,6 +356,10 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  trackById(_: number, item: { id: string }): string {
+    return item.id;
   }
 
   private loadLedgerEntries(): void {

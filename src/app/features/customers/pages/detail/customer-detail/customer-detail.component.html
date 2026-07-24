@@ -228,8 +228,8 @@
  </div>
  </div>
  <div class="mt-4">
- <span class="kpi-glass-card-value font-sans" [ngClass]="currentCustomer.disputesCount > 0 ? 'text-amber-600' : 'text-slate-800'">
- {{ currentCustomer.disputesCount }}
+ <span class="kpi-glass-card-value text-slate-500 text-base font-extrabold">
+ {{ 'COMMON.NOT_AVAILABLE' | translate }}
  </span>
  </div>
  </div>
@@ -260,7 +260,7 @@
  </div>
  </div>
  <div class="mt-4 flex items-center justify-between">
- <span class="kpi-glass-card-value font-sans">{{ currentCustomer.riskScore }}%</span>
+ <span class="kpi-glass-card-value text-slate-500 text-base font-extrabold">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full" 
  [ngClass]="currentCustomer.risk === 'critical' || currentCustomer.risk === 'high' ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'">
  {{ currentCustomer.riskSummary | translate }}
@@ -560,7 +560,7 @@
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE' | translate }}
  </span>
  <span class="text-base font-extrabold text-slate-800 mt-1">
- {{ (currentCustomer.preferredLanguage === 'en' ? 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ENGLISH' : 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE_VALUES.ARABIC') | translate }}
+ {{ (currentCustomer.preferredLanguageLabel || 'COMMON.NOT_AVAILABLE') | translate }}
  </span>
  </div>
 
@@ -617,15 +617,7 @@
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGINS' | translate }}
  </span>
  <span class="text-sm font-extrabold text-slate-800 mt-1">
- <ng-container *ngIf="currentCustomer.trustState === 'blocked'">
- {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.FIVE_RECENT' | translate }}
- </ng-container>
- <ng-container *ngIf="currentCustomer.trustState === 'watch'">
- {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.TWO_RECENT' | translate }}
- </ng-container>
- <ng-container *ngIf="currentCustomer.trustState!== 'blocked' && currentCustomer.trustState!== 'watch'">
- {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.SUSPICIOUS_LOGIN_VALUES.NONE' | translate }}
- </ng-container>
+ {{ 'COMMON.NOT_AVAILABLE' | translate }}
  </span>
  </div>
 
@@ -634,7 +626,7 @@
  <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.PAYMENT_FAILURES' | translate }}
  </span>
- <span class="text-sm font-extrabold text-slate-800 mt-1" dir="ltr">{{ currentCustomer.repeatedPaymentFailureRate }}</span>
+ <span class="text-sm font-extrabold text-slate-800 mt-1">{{ currentCustomer.repeatedPaymentFailureRate | translate }}</span>
  </div>
 
  <!-- Complaint Frequency -->
@@ -643,13 +635,13 @@
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY' | translate }}
  </span>
  <span class="text-sm font-extrabold text-slate-800 mt-1">
- <ng-container *ngIf="currentCustomer.disputesCount >= 3 || currentCustomer.refundsCount >= 4">
+ <ng-container *ngIf="currentCustomer.refundsCount >= 4">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.HIGH' | translate }}
  </ng-container>
- <ng-container *ngIf="(currentCustomer.disputesCount > 0 || currentCustomer.refundsCount > 1) &&!(currentCustomer.disputesCount >= 3 || currentCustomer.refundsCount >= 4)">
+ <ng-container *ngIf="currentCustomer.refundsCount > 1 && currentCustomer.refundsCount < 4">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.MEDIUM' | translate }}
  </ng-container>
- <ng-container *ngIf="!(currentCustomer.disputesCount >= 3 || currentCustomer.refundsCount >= 4) &&!(currentCustomer.disputesCount > 0 || currentCustomer.refundsCount > 1)">
+ <ng-container *ngIf="currentCustomer.refundsCount <= 1">
  {{ 'CUSTOMERS.DETAIL.BEHAVIOR_FIELDS.COMPLAINT_FREQUENCY_VALUES.LOW' | translate }}
  </ng-container>
  </span>
@@ -765,15 +757,11 @@
  {{ currentCustomer.refundsCount }} {{ 'CUSTOMERS.DETAIL.REFUNDS.CASES_TOTAL' | translate }}
  </p>
  </div>
- <div class="relative z-10 flex flex-wrap items-center gap-2 justify-end">
- <app-status-pill [label]="currentCustomer.refundsClosedCount + ' ' + ('CUSTOMERS.DETAIL.REFUNDS.CLOSED' | translate)" variant="success" [shouldTranslate]="false" size="sm"></app-status-pill>
- <app-status-pill [label]="currentCustomer.refundsInProgressCount + ' ' + ('CUSTOMERS.DETAIL.REFUNDS.IN_PROGRESS' | translate)" variant="warning" [shouldTranslate]="false" size="sm"></app-status-pill>
- </div>
  </div>
 
  <div class="flex items-center justify-between text-sm font-bold bg-white rounded-xl p-4 border border-slate-100 shadow-sm hover:border-red-100 transition-colors">
  <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.REFUNDS.TOTAL_AMOUNT' | translate }}</span>
- <span class="font-sans text-red-600 text-base">{{ currentCustomer.refundsTotalAmount | number:'1.0-0' }} <span class="text-xs text-slate-400 font-bold">{{ 'COMMON.CURRENCY_SAR' | translate }}</span></span>
+ <span class="text-base font-extrabold text-slate-500">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
  </div>
 
  <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary/10 text-zadna-primary text-[11px] font-extrabold hover:bg-zadna-primary/15 transition-all" (click)="openCasesList()">
@@ -792,16 +780,12 @@
  <div class="mt-5 space-y-4">
  <div class="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50/80 to-white p-5 flex items-center justify-between gap-3 shadow-sm">
  <span class="text-[12px] font-extrabold text-slate-700">{{ 'CUSTOMERS.DETAIL.SUPPORT.COMPLAINTS_RECORDED' | translate }}</span>
- <app-status-pill
- [label]="currentCustomer.complaintsSolvedCount > 0 ? 'CUSTOMERS.DETAIL.SUPPORT.RESOLVED' : 'CUSTOMERS.DETAIL.SUPPORT.NO_CASES'"
- [variant]="currentCustomer.complaintsSolvedCount > 0 ? 'success' : 'neutral'"
- size="sm">
- </app-status-pill>
+ <span class="text-[12px] font-extrabold text-slate-500">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
  </div>
 
  <div class="flex items-center justify-between text-sm font-bold bg-white rounded-xl p-4 border border-slate-100 shadow-sm hover:border-amber-100 transition-colors">
  <span class="text-slate-500">{{ 'CUSTOMERS.DETAIL.SUPPORT.LAST_CONTACT' | translate }}</span>
- <span class="text-[12px] font-extrabold text-slate-900">{{ getLastSupportContactKey() | translate }}</span>
+ <span class="text-[12px] font-extrabold text-slate-900">{{ currentCustomer.lastSupportContact | translate }}</span>
  </div>
 
  <button type="button" class="w-full h-11 rounded-xl bg-zadna-primary text-white text-[11px] font-extrabold shadow-sm hover:bg-teal-700 transition-all" (click)="openCasesList()">

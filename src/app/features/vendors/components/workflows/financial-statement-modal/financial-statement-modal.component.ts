@@ -23,6 +23,17 @@ export interface StatementPreview {
   estimatedRecords: number;
   estimatedFileSize: string;
   totalAmount: number;
+  hasEstimates: boolean;
+}
+
+function startOfCurrentMonth(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
+function endOfCurrentMonth(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() + 1, 0);
 }
 
 @Component({
@@ -50,8 +61,8 @@ export class FinancialStatementModalComponent {
 
   config: FinancialStatementConfig = {
     statementType: 'comprehensive',
-    dateFrom: new Date(2023, 11, 1), // Dec 1, 2023
-    dateTo: new Date(2024, 0, 6), // Jan 6, 2024
+    dateFrom: startOfCurrentMonth(),
+    dateTo: endOfCurrentMonth(),
     includedData: {
       sales: true,
       returns: true,
@@ -71,17 +82,18 @@ export class FinancialStatementModalComponent {
   selectedQuickRange = 'MODALS.FINANCIAL_STATEMENT.THIS_MONTH';
 
   // Calendar state
-  currentMonthFrom = new Date(2023, 11, 1);
-  currentMonthTo = new Date(2024, 0, 1);
+  currentMonthFrom = startOfCurrentMonth();
+  currentMonthTo = startOfCurrentMonth();
 
   get previewData(): StatementPreview {
-    const daysDiff = Math.ceil((this.config.dateTo.getTime() - this.config.dateFrom.getTime()) / (1000 * 60 * 60 * 24));
+    const hasEstimates = this.estimatedRecords > 0;
     return {
-      vendorName: this.vendorName || this.translate.instant('MODALS.FINANCIAL_STATEMENT.DEFAULT_VENDOR_NAME'),
+      vendorName: this.vendorName || this.translate.instant('COMMON.NOT_AVAILABLE'),
       dateRange: `${this.formatDate(this.config.dateFrom)} - ${this.formatDate(this.config.dateTo)}`,
-      estimatedRecords: this.estimatedRecords || Math.floor(daysDiff * 35),
-      estimatedFileSize: `${(daysDiff * 0.065).toFixed(1)} MB`,
-      totalAmount: this.totalAmount || 0
+      estimatedRecords: this.estimatedRecords,
+      estimatedFileSize: hasEstimates ? '' : this.translate.instant('COMMON.NOT_AVAILABLE'),
+      totalAmount: this.totalAmount || 0,
+      hasEstimates
     };
   }
 
