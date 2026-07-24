@@ -56,6 +56,7 @@ import {
  [financialAdjustments]="0"
  [bankName]="createBankName"
  [bankIban]="createBankIban"
+ [bankVerified]="createBankVerified"
  (close)="closeCreateSettlementModal()"
  (createSettlement)="onSettlementCreated($event)">
  </app-create-settlement-modal>
@@ -68,8 +69,8 @@ import {
  <div class="flex gap-3">
  <span class="material-symbols-outlined mt-0.5 text-[24px] text-cyan-700">storefront</span>
  <div>
- <h2 class="text-[16px] font-black text-slate-950">{{ 'FINANCES.SETTLEMENTS.CREATE.PICK_VENDOR_TITLE' | translate }}</h2>
- <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-600">{{ 'FINANCES.SETTLEMENTS.CREATE.PICK_VENDOR_DESC' | translate }}</p>
+ <h2 class="text-[16px] font-black text-slate-950">{{ 'FINANCES.SETTLEMENTS.VENDOR_PICKER.TITLE' | translate }}</h2>
+ <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-600">{{ 'FINANCES.SETTLEMENTS.VENDOR_PICKER.DESC' | translate }}</p>
  </div>
  </div>
  <button type="button" (click)="closeVendorPicker()" class="grid h-8 w-8 place-items-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-900">
@@ -77,24 +78,33 @@ import {
  </button>
  </div>
  </header>
- <div class="space-y-4 overflow-y-auto p-6">
+ <div class="flex min-h-0 flex-1 flex-col">
+ <div class="space-y-3 border-b border-slate-100 px-6 py-4">
  <div class="flex gap-2">
  <input
  [(ngModel)]="vendorSearch"
  name="vendorSearch"
  type="search"
- (keydown.enter)="searchVendors()"
- class="h-11 flex-1 rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
- [placeholder]="'FINANCES.SETTLEMENTS.CREATE.VENDOR_SEARCH' | translate" />
- <app-button variant="primary" size="md" customClass="!rounded-xl !px-4" (btnClick)="searchVendors()">
- {{ 'FINANCES.SETTLEMENTS.CREATE.SEARCH' | translate }}
- </app-button>
+ (keydown.enter)="$event.preventDefault(); searchVendors(true)"
+ class="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+ [placeholder]="'FINANCES.SETTLEMENTS.VENDOR_PICKER.SEARCH_PLACEHOLDER' | translate" />
+ <button
+ type="button"
+ (click)="searchVendors(true)"
+ [disabled]="isSearchingVendors"
+ class="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-zadna-primary px-4 text-[12px] font-black text-white transition hover:opacity-90 disabled:opacity-50">
+ <span class="material-symbols-outlined text-[18px]">{{ isSearchingVendors ? 'hourglass_empty' : 'search' }}</span>
+ {{ 'FINANCES.SETTLEMENTS.VENDOR_PICKER.SEARCH' | translate }}
+ </button>
  </div>
+ </div>
+ <div class="min-h-0 flex-1 space-y-2 overflow-y-auto px-6 py-4">
  <div *ngIf="isSearchingVendors" class="space-y-2">
  <div *ngFor="let _ of [1,2,3]" class="h-12 animate-pulse rounded-xl bg-slate-100"></div>
  </div>
- <div *ngIf="!isSearchingVendors && vendorPickerOptions.length === 0" class="rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center text-[12px] font-bold text-slate-500">
- {{ 'FINANCES.SETTLEMENTS.CREATE.NO_VENDORS' | translate }}
+ <ng-container *ngIf="!isSearchingVendors">
+ <div *ngIf="vendorPickerOptions.length === 0" class="rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center text-[12px] font-bold text-slate-500">
+ {{ 'FINANCES.SETTLEMENTS.VENDOR_PICKER.NO_VENDORS' | translate }}
  </div>
  <button
  *ngFor="let vendor of vendorPickerOptions"
@@ -109,6 +119,16 @@ import {
  <span class="mt-0.5 block truncate font-mono text-[10px] font-bold text-slate-400" dir="ltr">{{ vendor.id }}</span>
  </span>
  </button>
+ </ng-container>
+ </div>
+ <div *ngIf="!isSearchingVendors && vendorPickerTotalCount > vendorPickerPageSize" class="border-t border-slate-100 px-4 py-3">
+ <app-pagination
+ [currentPage]="vendorPickerPage"
+ [pageSize]="vendorPickerPageSize"
+ [totalItems]="vendorPickerTotalCount"
+ (pageChange)="changeVendorPickerPage($event)">
+ </app-pagination>
+ </div>
  </div>
  </section>
  </div>
@@ -482,6 +502,9 @@ export class SettlementsComponent implements OnInit {
  isSearchingVendors = false;
  isCreatingSettlement = false;
  vendorSearch = '';
+ vendorPickerPage = 1;
+ vendorPickerPageSize = 8;
+ vendorPickerTotalCount = 0;
  vendorPickerOptions: Array<{ id: string; name: string }> = [];
  createVendorId = '';
  createVendorName = '';
@@ -491,6 +514,7 @@ export class SettlementsComponent implements OnInit {
  createAdditionalFees = 0;
  createBankName = '';
  createBankIban = '';
+ createBankVerified = false;
  manualPayout: SettlementPayout | null = null;
  manualProofFile: File | null = null;
   manualTransferReference = '';
@@ -596,7 +620,7 @@ export class SettlementsComponent implements OnInit {
 
  onCreateExtra(): void {
  if (this.activeTab !== 'vendor') {
- this.toastService.warning(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.DRIVER_NOT_SUPPORTED'));
+ this.toastService.warning(this.translate.instant('FINANCES.SETTLEMENTS.VENDOR_PICKER.DRIVER_NOT_SUPPORTED'));
  return;
  }
 
@@ -608,33 +632,56 @@ export class SettlementsComponent implements OnInit {
 
  this.showVendorPicker = true;
  this.vendorSearch = '';
- this.searchVendors();
+ this.vendorPickerPage = 1;
+ this.vendorPickerTotalCount = 0;
+ this.vendorPickerOptions = [];
+ this.searchVendors(true);
  }
 
  closeVendorPicker(): void {
  this.showVendorPicker = false;
  this.vendorPickerOptions = [];
  this.vendorSearch = '';
+ this.vendorPickerPage = 1;
+ this.vendorPickerTotalCount = 0;
  this.isSearchingVendors = false;
  }
 
- searchVendors(): void {
+ searchVendors(resetPage = true): void {
+ if (resetPage) {
+ this.vendorPickerPage = 1;
+ }
+
  this.isSearchingVendors = true;
- this.vendorService.getVendors(1, 12, this.vendorSearch.trim() || undefined).pipe(take(1)).subscribe({
+ this.cdr.markForCheck();
+
+ const term = this.vendorSearch.trim();
+ this.vendorService.getVendors(this.vendorPickerPage, this.vendorPickerPageSize, term || undefined).pipe(take(1)).subscribe({
  next: (page) => {
  this.cdr.markForCheck();
  this.vendorPickerOptions = page.items.map((vendor) => ({
  id: vendor.id,
  name: vendor.businessNameAr || vendor.businessNameEn || vendor.ownerName || vendor.id
  }));
+ this.vendorPickerTotalCount = page.totalCount;
+ this.vendorPickerPage = page.pageNumber || this.vendorPickerPage;
  this.isSearchingVendors = false;
  },
  error: () => {
  this.cdr.markForCheck();
  this.vendorPickerOptions = [];
+ this.vendorPickerTotalCount = 0;
  this.isSearchingVendors = false;
  }
  });
+ }
+
+ changeVendorPickerPage(nextPage: number): void {
+ if (nextPage === this.vendorPickerPage || this.isSearchingVendors) {
+ return;
+ }
+ this.vendorPickerPage = nextPage;
+ this.searchVendors(false);
  }
 
  selectVendorForSettlement(vendorId: string, vendorName: string): void {
@@ -651,6 +698,7 @@ export class SettlementsComponent implements OnInit {
  this.createAdditionalFees = 0;
  this.createBankName = '';
  this.createBankIban = '';
+ this.createBankVerified = false;
 
  forkJoin({
  vendor: this.vendorService.getVendorById(vendorId),
@@ -665,11 +713,14 @@ export class SettlementsComponent implements OnInit {
  this.createAdditionalFees = profile.totalCommissions;
  this.createBankName = vendor.primaryBankAccount?.bankName || '';
  this.createBankIban = vendor.primaryBankAccount?.iban || '';
+ const bankStatus = (vendor.primaryBankAccount?.status || '').toLowerCase();
+ this.createBankVerified = !!vendor.primaryBankAccount?.isPrimary &&
+ (bankStatus === 'verified' || !!vendor.primaryBankAccount?.verifiedAtUtc);
  this.showCreateSettlementModal = true;
  },
  error: () => {
  this.cdr.markForCheck();
- this.toastService.error(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.LOAD_ERROR'));
+ this.toastService.error(this.translate.instant('FINANCES.SETTLEMENTS.VENDOR_PICKER.LOAD_ERROR'));
  }
  });
  }
@@ -690,7 +741,11 @@ export class SettlementsComponent implements OnInit {
  this.vendorService.createVendorSettlement(config.vendorId, {
  grossAmount: config.totalSales,
  commissionAmount: config.additionalFees,
- netAmount: config.netAmount
+ refundAmount: config.returns,
+ adjustmentAmount: config.financialAdjustments,
+ netAmount: config.netAmount,
+ periodFrom: config.periodFrom ? new Date(`${config.periodFrom}T00:00:00`).toISOString() : undefined,
+ periodTo: config.periodTo ? new Date(`${config.periodTo}T23:59:59`).toISOString() : undefined
  }).pipe(
  finalize(() => {
  this.isCreatingSettlement = false;
@@ -700,15 +755,46 @@ export class SettlementsComponent implements OnInit {
  ).subscribe({
  next: () => {
  this.showCreateSettlementModal = false;
- this.toastService.success(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.SUCCESS'));
+ this.toastService.success(this.translate.instant('FINANCES.SETTLEMENTS.VENDOR_PICKER.SUCCESS'));
  this.page = 1;
  this.activeTab = 'vendor';
  this.loadSettlements();
  },
- error: () => {
- this.toastService.error(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.ERROR'));
+ error: (error) => {
+ this.toastService.error(this.describeSettlementCreateError(error));
  }
  });
+ }
+
+ private describeSettlementCreateError(error: unknown): string {
+ const payload = error instanceof HttpErrorResponse ? error.error : null;
+ const rawCode = typeof payload === 'string'
+ ? payload
+ : payload?.errorCode ?? payload?.error ?? payload?.code ?? payload?.title ?? payload?.errors?.[0];
+ const code = typeof rawCode === 'string' ? rawCode.trim().toUpperCase() : '';
+ const known = new Set([
+ 'SETTLEMENT_GROSS_REQUIRED',
+ 'SETTLEMENT_NET_REQUIRED',
+ 'SETTLEMENT_NET_MISMATCH',
+ 'SETTLEMENT_DEDUCTIONS_EXCEED_GROSS',
+ 'SETTLEMENT_PERIOD_INVALID',
+ 'SETTLEMENT_PERIOD_TOO_LONG',
+ 'SETTLEMENT_PERIOD_IN_FUTURE',
+ 'SETTLEMENT_PERIOD_TOO_OLD',
+ 'SETTLEMENT_PERIOD_OVERLAP',
+ 'SETTLEMENT_AMOUNT_TOO_LARGE',
+ 'VENDOR_VERIFIED_BANK_ACCOUNT_REQUIRED',
+ 'VENDOR_BANK_IBAN_INVALID',
+ 'VENDOR_WALLET_REQUIRED',
+ 'INSUFFICIENT_VENDOR_BALANCE',
+ 'DRIVER_WITHDRAWAL_WORKFLOW_REQUIRED'
+ ]);
+
+ if (known.has(code) && this.translate.instant(`FINANCES.SETTLEMENTS.VENDOR_PICKER.ERRORS.${code}`) !== `FINANCES.SETTLEMENTS.VENDOR_PICKER.ERRORS.${code}`) {
+ return this.translate.instant(`FINANCES.SETTLEMENTS.VENDOR_PICKER.ERRORS.${code}`);
+ }
+
+ return this.translate.instant('FINANCES.SETTLEMENTS.VENDOR_PICKER.ERROR');
  }
 
  openDetail(s: Settlement): void {

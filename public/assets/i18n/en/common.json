@@ -630,12 +630,34 @@
       "WARNING_1": "There are (2) pending financial disputes that have not been resolved.",
       "WARNING_2": "The store has exceeded the maximum weekly returns limit.",
       "FINANCE_APPROVAL": "Send for Finance Approval Required",
+      "FINANCE_APPROVAL_REQUIRED": "Finance review is mandatory for exceptional settlements",
+      "FIX_RULES_FIRST": "Fix the settlement rules before creating.",
       "CANCEL": "Cancel",
       "SAVE_DRAFT": "Save as Draft",
-      "CREATE_APPROVE": "Create and Approve Settlement",
+      "CREATE_APPROVE": "Create and send for review",
       "SAR": "SAR",
       "EXCEPTIONAL_SETTLEMENT": "Exceptional settlement",
-      "EXCEPTIONAL_SETTLEMENT_NOTE": "This creates an exceptional settlement. Manual or automatic bank processing is controlled by the global finance setting."
+      "EXCEPTIONAL_SETTLEMENT_NOTE": "This is an exceptional settlement. It requires a verified bank account, a net amount greater than zero, sufficient available balance, and a valid period. It always goes to finance review.",
+      "UNVERIFIED": "Unverified",
+      "RULES_TITLE": "Exceptional settlement rules (must be fixed)",
+      "RULES_OK": "Rules satisfied",
+      "RULES_OK_HINT": "You can create the settlement and send it for finance review.",
+      "RULES": {
+        "GROSS_REQUIRED": "Total sales must be greater than zero.",
+        "NET_REQUIRED": "Net due must be greater than zero.",
+        "NET_MISMATCH": "Net amount does not match the entered figures.",
+        "DEDUCTIONS_EXCEED_GROSS": "Returns and fees cannot exceed total sales.",
+        "NEGATIVE_DEDUCTION": "Returns and fees cannot be negative.",
+        "PERIOD_REQUIRED": "Select a settlement period (from / to).",
+        "PERIOD_INVALID": "Start date must be on or before the end date.",
+        "PERIOD_IN_FUTURE": "Settlement period cannot end in the future.",
+        "PERIOD_TOO_OLD": "Settlement period cannot be older than one year.",
+        "PERIOD_TOO_LONG": "Exceptional settlement period cannot exceed 93 days.",
+        "BANK_REQUIRED": "A verified primary bank account (Saudi IBAN) is required.",
+        "BALANCE_INSUFFICIENT": "Available balance is less than the net due.",
+        "APPROVAL_REQUIRED": "Finance review is mandatory for exceptional settlements.",
+        "AMOUNT_TOO_LARGE": "Amount exceeds the allowed maximum."
+      }
     },
     "LEGAL_BANK_EDIT": {
       "TITLE": "Edit Legal & Banking Info",
@@ -1000,16 +1022,33 @@
         "PENDING": "Pending (Awaiting Payment)",
         "TOTAL_AMOUNT": "Total Amount"
       },
-      "CREATE": {
-        "PICK_VENDOR_TITLE": "Select a vendor",
-        "PICK_VENDOR_DESC": "Choose the vendor to create an exceptional settlement for.",
-        "VENDOR_SEARCH": "Search vendors…",
+      "VENDOR_PICKER": {
+        "TITLE": "Select a vendor",
+        "DESC": "Choose the vendor to create an exceptional settlement for.",
+        "SEARCH_PLACEHOLDER": "Search vendors…",
         "SEARCH": "Search",
         "NO_VENDORS": "No vendors found.",
         "DRIVER_NOT_SUPPORTED": "Exceptional settlements are for vendors only. Use the withdrawals queue for drivers.",
-        "SUCCESS": "Settlement created successfully.",
+        "SUCCESS": "Settlement created and sent for finance review.",
         "ERROR": "Unable to create the settlement right now.",
-        "LOAD_ERROR": "Unable to load vendor finance data."
+        "LOAD_ERROR": "Unable to load vendor finance data.",
+        "ERRORS": {
+          "SETTLEMENT_GROSS_REQUIRED": "Total sales must be greater than zero.",
+          "SETTLEMENT_NET_REQUIRED": "Net due must be greater than zero.",
+          "SETTLEMENT_NET_MISMATCH": "Net amount does not match the entered figures.",
+          "SETTLEMENT_DEDUCTIONS_EXCEED_GROSS": "Deductions exceed total sales.",
+          "SETTLEMENT_PERIOD_INVALID": "Settlement period is invalid.",
+          "SETTLEMENT_PERIOD_TOO_LONG": "Settlement period cannot exceed 93 days.",
+          "SETTLEMENT_PERIOD_IN_FUTURE": "Settlement period cannot end in the future.",
+          "SETTLEMENT_PERIOD_TOO_OLD": "Settlement period cannot be older than one year.",
+          "SETTLEMENT_PERIOD_OVERLAP": "Another settlement already covers this period for the vendor.",
+          "SETTLEMENT_AMOUNT_TOO_LARGE": "Amount exceeds the allowed maximum.",
+          "VENDOR_VERIFIED_BANK_ACCOUNT_REQUIRED": "A verified primary bank account is required.",
+          "VENDOR_BANK_IBAN_INVALID": "Bank IBAN must be a valid Saudi IBAN.",
+          "VENDOR_WALLET_REQUIRED": "Vendor wallet is required before creating a settlement.",
+          "INSUFFICIENT_VENDOR_BALANCE": "Vendor available balance is less than the net amount.",
+          "DRIVER_WITHDRAWAL_WORKFLOW_REQUIRED": "Exceptional settlements are for vendors only."
+        }
       },
       "TABLE": {
         "TITLE": "Required Dues List",

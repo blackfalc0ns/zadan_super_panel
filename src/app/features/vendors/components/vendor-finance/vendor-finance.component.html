@@ -33,6 +33,7 @@
  [financialAdjustments]="0"
  [bankName]="vendorDetail?.primaryBankAccount?.bankName || ''"
  [bankIban]="vendorDetail?.primaryBankAccount?.iban || ''"
+ [bankVerified]="!!vendorDetail?.primaryBankAccount?.isPrimary && ((vendorDetail?.primaryBankAccount?.status || '').toLowerCase() === 'verified' || !!vendorDetail?.primaryBankAccount?.verifiedAtUtc)"
  (close)="showCreateSettlementModal = false"
  (createSettlement)="onSettlementCreated($event)">
  </app-create-settlement-modal>

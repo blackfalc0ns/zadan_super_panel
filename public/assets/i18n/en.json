@@ -987,10 +987,10 @@
         "PENDING": "Pending (Awaiting Payment)",
         "TOTAL_AMOUNT": "Total Amount"
       },
-      "CREATE": {
-        "PICK_VENDOR_TITLE": "Select a vendor",
-        "PICK_VENDOR_DESC": "Choose the vendor to create an exceptional settlement for.",
-        "VENDOR_SEARCH": "Search vendors…",
+      "VENDOR_PICKER": {
+        "TITLE": "Select a vendor",
+        "DESC": "Choose the vendor to create an exceptional settlement for.",
+        "SEARCH_PLACEHOLDER": "Search vendors…",
         "SEARCH": "Search",
         "NO_VENDORS": "No vendors found.",
         "DRIVER_NOT_SUPPORTED": "Exceptional settlements are for vendors only. Use the withdrawals queue for drivers.",

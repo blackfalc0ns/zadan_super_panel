@@ -67,11 +67,11 @@
           <div class="grid grid-cols-2 gap-3">
             <div class="relative">
               <span class="absolute top-[13px] text-slate-400 text-[10px] font-black uppercase tracking-wider" [ngClass]="isRTL ? 'right-4.5' : 'left-4.5'">{{ 'MODALS.CREATE_SETTLEMENT.FROM' | translate }}</span>
-              <input [(ngModel)]="config.periodFrom" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all duration-200 outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 disabled:bg-slate-100/70 disabled:text-slate-500 disabled:border-slate-900/5 disabled:cursor-not-allowed" [ngClass]="isRTL ? 'pr-12 pl-3' : 'pl-12 pr-3'" type="date"/>
+              <input [(ngModel)]="config.periodFrom" (ngModelChange)="onPeriodChange()" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all duration-200 outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 disabled:bg-slate-100/70 disabled:text-slate-500 disabled:border-slate-900/5 disabled:cursor-not-allowed" [ngClass]="isRTL ? 'pr-12 pl-3' : 'pl-12 pr-3'" type="date"/>
             </div>
             <div class="relative">
               <span class="absolute top-[13px] text-slate-400 text-[10px] font-black uppercase tracking-wider" [ngClass]="isRTL ? 'right-4.5' : 'left-4.5'">{{ 'MODALS.CREATE_SETTLEMENT.TO' | translate }}</span>
-              <input [(ngModel)]="config.periodTo" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all duration-200 outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 disabled:bg-slate-100/70 disabled:text-slate-500 disabled:border-slate-900/5 disabled:cursor-not-allowed" [ngClass]="isRTL ? 'pr-12 pl-3' : 'pl-12 pr-3'" type="date"/>
+              <input [(ngModel)]="config.periodTo" (ngModelChange)="onPeriodChange()" class="w-full border border-slate-900/12 bg-white/60 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all duration-200 outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 disabled:bg-slate-100/70 disabled:text-slate-500 disabled:border-slate-900/5 disabled:cursor-not-allowed" [ngClass]="isRTL ? 'pr-12 pl-3' : 'pl-12 pr-3'" type="date"/>
             </div>
           </div>
           
@@ -124,7 +124,7 @@
           <div class="space-y-2">
             <label class="text-[10px] text-slate-400 uppercase font-black tracking-wider block text-center">{{ 'MODALS.CREATE_SETTLEMENT.TOTAL_SALES' | translate }}</label>
             <div class="bg-white rounded-xl p-3 border border-slate-900/10 hover:border-slate-900/15 focus-within:border-primary focus-within:shadow-md focus-within:-translate-y-0.5 transition-all duration-300 text-center relative focus-within:ring-4 focus-within:ring-primary/10">
-              <input [(ngModel)]="config.totalSales" (ngModelChange)="calculateNetAmount()" class="w-full text-center text-[16px] font-black text-slate-900 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" type="number"/>
+              <input [(ngModel)]="config.totalSales" (ngModelChange)="onAmountChange()" min="0" step="0.01" class="w-full text-center text-[16px] font-black text-slate-900 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" type="number"/>
               <span class="text-[10px] font-bold text-slate-400 block mt-1 uppercase tracking-wide">{{ 'MODALS.CREATE_SETTLEMENT.SAR' | translate }}</span>
             </div>
           </div>
@@ -133,7 +133,7 @@
           <div class="space-y-2">
             <label class="text-[10px] text-slate-400 uppercase font-black tracking-wider block text-center">{{ 'MODALS.CREATE_SETTLEMENT.RETURNS' | translate }}</label>
             <div class="bg-white rounded-xl p-3 border border-slate-900/10 hover:border-slate-900/15 focus-within:border-rose-500 focus-within:shadow-md focus-within:-translate-y-0.5 transition-all duration-300 text-center relative focus-within:ring-4 focus-within:ring-rose-500/10">
-              <input [(ngModel)]="config.returns" (ngModelChange)="calculateNetAmount()" class="w-full text-center text-[16px] font-black text-rose-600 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" type="number"/>
+              <input [(ngModel)]="config.returns" (ngModelChange)="onAmountChange()" min="0" step="0.01" class="w-full text-center text-[16px] font-black text-rose-600 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" type="number"/>
               <span class="text-[10px] font-bold text-slate-400 block mt-1 uppercase tracking-wide">{{ 'MODALS.CREATE_SETTLEMENT.SAR' | translate }}</span>
             </div>
           </div>
@@ -142,7 +142,7 @@
           <div class="space-y-2">
             <label class="text-[10px] text-slate-400 uppercase font-black tracking-wider block text-center">{{ 'MODALS.CREATE_SETTLEMENT.ADDITIONAL_FEES' | translate }}</label>
             <div class="bg-white rounded-xl p-3 border border-slate-900/10 hover:border-slate-900/15 focus-within:border-rose-500 focus-within:shadow-md focus-within:-translate-y-0.5 transition-all duration-300 text-center relative focus-within:ring-4 focus-within:ring-rose-500/10">
-              <input [(ngModel)]="config.additionalFees" (ngModelChange)="calculateNetAmount()" class="w-full text-center text-[16px] font-black text-rose-600 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" type="number"/>
+              <input [(ngModel)]="config.additionalFees" (ngModelChange)="onAmountChange()" min="0" step="0.01" class="w-full text-center text-[16px] font-black text-rose-600 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" type="number"/>
               <span class="text-[10px] font-bold text-slate-400 block mt-1 uppercase tracking-wide">{{ 'MODALS.CREATE_SETTLEMENT.SAR' | translate }}</span>
             </div>
           </div>
@@ -151,7 +151,7 @@
           <div class="space-y-2">
             <label class="text-[10px] text-slate-400 uppercase font-black tracking-wider block text-center">{{ 'MODALS.CREATE_SETTLEMENT.FINANCIAL_ADJUSTMENTS' | translate }}</label>
             <div class="bg-white rounded-xl p-3 border border-slate-900/10 hover:border-slate-900/15 focus-within:border-slate-500 focus-within:shadow-md focus-within:-translate-y-0.5 transition-all duration-300 text-center relative focus-within:ring-4 focus-within:ring-slate-500/10">
-              <input [(ngModel)]="config.financialAdjustments" (ngModelChange)="calculateNetAmount()" class="w-full text-center text-[16px] font-black text-slate-700 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" placeholder="0.00" type="number"/>
+              <input [(ngModel)]="config.financialAdjustments" (ngModelChange)="onAmountChange()" step="0.01" class="w-full text-center text-[16px] font-black text-slate-700 bg-transparent border-0 focus:ring-0 p-0 focus:outline-none" placeholder="0.00" type="number"/>
               <span class="text-[10px] font-bold text-slate-400 block mt-1 uppercase tracking-wide">{{ 'MODALS.CREATE_SETTLEMENT.SAR' | translate }}</span>
             </div>
           </div>
@@ -170,17 +170,25 @@
       <!-- Bank & Validation Panel -->
       <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Risk & Validation Panel -->
-        <div class="bg-amber-50/70 border border-amber-200/60 rounded-2xl p-5 backdrop-blur-sm">
+        <div
+          class="rounded-2xl p-5 backdrop-blur-sm border"
+          [ngClass]="ruleCodes.length ? 'bg-rose-50/80 border-rose-200' : 'bg-emerald-50/70 border-emerald-200/60'">
           <div class="flex gap-3">
-            <div class="text-amber-500 mt-0.5 shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-amber-100/80 border border-amber-200/50">
-              <span class="material-symbols-outlined text-lg">warning</span>
+            <div
+              class="mt-0.5 shrink-0 flex items-center justify-center w-8 h-8 rounded-lg border"
+              [ngClass]="ruleCodes.length ? 'text-rose-600 bg-rose-100 border-rose-200' : 'text-emerald-600 bg-emerald-100 border-emerald-200'">
+              <span class="material-symbols-outlined text-lg">{{ ruleCodes.length ? 'gpp_maybe' : 'verified_user' }}</span>
             </div>
-            <div class="space-y-2">
-              <h4 class="text-[13px] font-black text-amber-900 tracking-tight">{{ 'MODALS.CREATE_SETTLEMENT.RISK_WARNINGS' | translate }}</h4>
-              <ul class="text-[11px] font-bold text-amber-800 list-disc list-inside space-y-1 opacity-95 leading-relaxed">
-                <li>{{ 'MODALS.CREATE_SETTLEMENT.WARNING_1' | translate }}</li>
-                <li>{{ 'MODALS.CREATE_SETTLEMENT.WARNING_2' | translate }}</li>
+            <div class="space-y-2 min-w-0">
+              <h4 class="text-[13px] font-black tracking-tight" [ngClass]="ruleCodes.length ? 'text-rose-900' : 'text-emerald-900'">
+                {{ (ruleCodes.length ? 'MODALS.CREATE_SETTLEMENT.RULES_TITLE' : 'MODALS.CREATE_SETTLEMENT.RULES_OK') | translate }}
+              </h4>
+              <ul *ngIf="ruleCodes.length" class="text-[11px] font-bold text-rose-800 list-disc list-inside space-y-1 leading-relaxed">
+                <li *ngFor="let code of ruleCodes">{{ ruleLabel(code) }}</li>
               </ul>
+              <p *ngIf="!ruleCodes.length" class="text-[11px] font-bold text-emerald-800 leading-relaxed">
+                {{ 'MODALS.CREATE_SETTLEMENT.RULES_OK_HINT' | translate }}
+              </p>
             </div>
           </div>
         </div>
@@ -192,7 +200,11 @@
               <span class="material-symbols-outlined text-slate-500 text-lg">account_balance</span>
               {{ 'MODALS.CREATE_SETTLEMENT.LINKED_BANK' | translate }}
             </h4>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200/50 uppercase">{{ 'MODALS.CREATE_SETTLEMENT.VERIFIED' | translate }}</span>
+            <span
+              class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold border uppercase"
+              [ngClass]="hasVerifiedBank ? 'bg-emerald-100 text-emerald-700 border-emerald-200/50' : 'bg-rose-100 text-rose-700 border-rose-200/50'">
+              {{ (hasVerifiedBank ? 'MODALS.CREATE_SETTLEMENT.VERIFIED' : 'MODALS.CREATE_SETTLEMENT.UNVERIFIED') | translate }}
+            </span>
           </div>
           
           <div class="flex items-center gap-3 bg-white/70 p-3 rounded-xl border border-slate-100 shadow-inner">
@@ -211,21 +223,27 @@
     <!-- Footer -->
     <footer class="px-8 py-6 border-t border-slate-200/50 bg-slate-50/90 shrink-0">
       <div class="flex flex-col gap-4">
-        <label class="flex items-center gap-3 cursor-pointer select-none">
-          <input [(ngModel)]="config.requiresApproval" class="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary/20 focus:ring-2 accent-primary" type="checkbox"/>
-          <span class="text-xs font-bold text-slate-700">{{ 'MODALS.CREATE_SETTLEMENT.FINANCE_APPROVAL' | translate }}</span>
+        <label class="flex items-center gap-3 select-none opacity-90">
+          <input [ngModel]="true" [disabled]="true" class="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary/20 focus:ring-2 accent-primary" type="checkbox"/>
+          <span class="text-xs font-bold text-slate-700">{{ 'MODALS.CREATE_SETTLEMENT.FINANCE_APPROVAL_REQUIRED' | translate }}</span>
         </label>
+
+        <p *ngIf="validationAttempted && !canSubmit" class="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] font-bold text-rose-700">
+          {{ 'MODALS.CREATE_SETTLEMENT.FIX_RULES_FIRST' | translate }}
+        </p>
         
         <div class="flex flex-col sm:flex-row sm:justify-between items-stretch sm:items-center gap-3">
-          <div class="flex gap-2.5">
-            <button (click)="onClose()" class="flex-1 sm:flex-none px-6 py-3 text-xs font-bold text-slate-600 hover:bg-slate-200/60 rounded-xl transition-all duration-200 active:scale-98">
-              {{ 'MODALS.CREATE_SETTLEMENT.CANCEL' | translate }}
-            </button>
-            <button (click)="onSaveDraft()" class="flex-1 sm:flex-none px-6 py-3 text-xs font-bold text-slate-600 border border-slate-200 bg-white hover:bg-slate-50 rounded-xl transition-all duration-200 hover:border-slate-300 hover:shadow-sm active:scale-98">
-              {{ 'MODALS.CREATE_SETTLEMENT.SAVE_DRAFT' | translate }}
-            </button>
-          </div>
-          <button (click)="onCreateSettlement()" class="relative overflow-hidden px-8 py-3 text-xs font-black text-white bg-primary hover:bg-primary/95 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-98 cursor-pointer select-none">
+          <button type="button" (click)="onClose()" class="px-6 py-3 text-xs font-bold text-slate-600 hover:bg-slate-200/60 rounded-xl transition-all duration-200 active:scale-98">
+            {{ 'MODALS.CREATE_SETTLEMENT.CANCEL' | translate }}
+          </button>
+          <button
+            type="button"
+            (click)="onCreateSettlement()"
+            [disabled]="!canSubmit"
+            class="relative overflow-hidden px-8 py-3 text-xs font-black text-white rounded-xl shadow-lg transition-all duration-300"
+            [ngClass]="canSubmit
+              ? 'bg-primary hover:bg-primary/95 shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 cursor-pointer'
+              : 'bg-slate-300 shadow-none cursor-not-allowed'">
             {{ 'MODALS.CREATE_SETTLEMENT.CREATE_APPROVE' | translate }}
           </button>
         </div>

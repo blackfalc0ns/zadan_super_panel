@@ -694,9 +694,21 @@ export class VendorService {
  grossAmount: number;
  commissionAmount: number;
  netAmount: number;
+ refundAmount?: number;
+ adjustmentAmount?: number;
+ periodFrom?: string;
+ periodTo?: string;
  }
  ): Observable<{ settlementId: string }> {
- return this.http.post<{ settlementId: string }>(`${this.apiUrl}/${vendorId}/settlements`, payload);
+ return this.http.post<{ settlementId: string }>(`${this.apiUrl}/${vendorId}/settlements`, {
+ grossAmount: payload.grossAmount,
+ commissionAmount: payload.commissionAmount,
+ netAmount: payload.netAmount,
+ refundAmount: payload.refundAmount ?? 0,
+ adjustmentAmount: payload.adjustmentAmount ?? 0,
+ periodFrom: payload.periodFrom ?? null,
+ periodTo: payload.periodTo ?? null
+ });
  }
 
  updateVendorFinanceSettings(

@@ -325,7 +325,11 @@ export class VendorFinanceComponent implements OnInit {
  this.vendorService.createVendorSettlement(this.vendorId, {
  grossAmount: config.totalSales,
  commissionAmount: config.additionalFees,
- netAmount: config.netAmount
+ refundAmount: config.returns,
+ adjustmentAmount: config.financialAdjustments,
+ netAmount: config.netAmount,
+ periodFrom: config.periodFrom ? new Date(`${config.periodFrom}T00:00:00`).toISOString() : undefined,
+ periodTo: config.periodTo ? new Date(`${config.periodTo}T23:59:59`).toISOString() : undefined
  }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
  next: () => {
  this.cdr.markForCheck();
