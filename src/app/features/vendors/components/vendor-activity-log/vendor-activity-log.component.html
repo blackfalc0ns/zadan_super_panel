@@ -241,7 +241,7 @@
 
                 <!-- Actor details -->
                 <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-400 pt-1">
-                  <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-600">{{ entry.actorName?.trim() || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
+                  <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-600">{{ entry.actorName.trim() || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
                   <span class="inline-flex items-center gap-1">
                     <span class="material-symbols-outlined text-[13px]">shield</span>
                     {{ localizeRoleLabel(entry.roleLabel) }}

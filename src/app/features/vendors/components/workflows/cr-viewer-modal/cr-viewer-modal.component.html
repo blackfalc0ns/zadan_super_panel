@@ -119,10 +119,10 @@
 
               <!-- QR Code area -->
               <div class="flex flex-col items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100">
-                <div *ngIf="crData?.qrCodeUrl" class="p-1.5 bg-white rounded-lg shadow-sm mb-2">
+                <div *ngIf="crData?.qrCodeUrl as qrCodeUrl" class="p-1.5 bg-white rounded-lg shadow-sm mb-2">
                   <img alt="QR Code" 
                        class="w-20 h-20" 
-                       [src]="crData.qrCodeUrl"/>
+                       [src]="qrCodeUrl"/>
                 </div>
                 <p *ngIf="!crData?.qrCodeUrl" class="text-[10px] text-slate-500 text-center leading-tight mb-2">{{ 'COMMON.NOT_AVAILABLE' | translate }}</p>
                 <p class="text-[10px] text-slate-500 text-center leading-tight">{{ 'MODALS.CR_VIEWER.QR_HINT' | translate }}</p>
@@ -311,8 +311,8 @@
                           <span class="font-mono">{{ 'MODALS.CR_VIEWER.WATHQ_URL' | translate }}</span>
                         </div>
                       </div>
-                      <div *ngIf="crData?.qrCodeUrl" class="w-24 h-24 bg-white rounded-lg border-2 border-green-300 flex items-center justify-center shrink-0 shadow-md">
-                        <img [src]="crData.qrCodeUrl"
+                      <div *ngIf="crData?.qrCodeUrl as qrCodeUrl" class="w-24 h-24 bg-white rounded-lg border-2 border-green-300 flex items-center justify-center shrink-0 shadow-md">
+                        <img [src]="qrCodeUrl"
                              alt="QR Code" 
                              class="w-full h-full object-contain p-1"/>
                       </div>

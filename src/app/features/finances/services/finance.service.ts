@@ -16,6 +16,7 @@ import {
  DeliveryPricingDefaults,
  DriverFinanceProfile,
  EntityType,
+ FinanceCurrency,
  FinanceDashboardSnapshot,
  FinancePeriod,
  FinancialAdjustment,
@@ -1098,6 +1099,250 @@ export class FinanceService {
  : '--------';
  const idPart = settlementId.replace(/-/g, '').slice(0, 8).toUpperCase();
  return `SET-${datePart}-${idPart}`;
+ }
+
+ private mapLedgerEntries(entries: AdminLedgerEntryApiModel[]): LedgerEntry[] {
+ const rows = entries.flatMap((entry) =>
+ entry.lines.filter((line) => Math.max(line.debitAmount, line.creditAmount) > 0).map((line) => this.mapLedgerLine(entry, line))
+ );
+
+ return rows.sort((left, right) => right.timestamp.localeCompare(left.timestamp));
+ }
+
+ private mapLedgerLine(entry: AdminLedgerEntryApiModel, line: AdminLedgerLineApiModel): LedgerEntry {
+ const direction: LedgerDirection = line.creditAmount >= line.debitAmount ? 'credit' : 'debit';
+ const ownerType = this.toFrontendEntityType(line.ownerType);
+ const entityId = line.ownerId ?? entry.correlationId;
+
+ return {
+ id: line.id,
+ timestamp: entry.postedAtUtc,
+ entityType: ownerType,
+ entityId,
+ entityName: line.ownerName?.trim() || this.formatOwnerName(line.ownerType, line.ownerId, line.accountCode),
+ type: this.toLedgerEntryType(entry.eventType, line.accountCode),
+ direction,
+ amount: this.round(Math.max(line.debitAmount, line.creditAmount)),
+ currency: this.normalizeCurrency(line.currencyCode),
+ referenceId: entry.id,
+ description: line.memo ?? entry.memo ?? entry.eventType,
+ orderId: line.orderId ?? entry.orderId ?? undefined,
+ settlementId: line.settlementId ?? entry.settlementId ?? undefined
+ };
+ }
+
+ private mapSettlement(item: AdminSettlementApiModel): Settlement {
+ const entityType = this.toFrontendEntityType(item.ownerType);
+ const period = `${this.shortDate(item.periodFrom)} - ${this.shortDate(item.periodTo)}`;
+
+ return {
+ id: item.id,
+ settlementCode: this.formatSettlementCode(item.id, item.createdAtUtc),
+ entityType,
+ entityId: item.ownerId,
+ entityName: this.formatOwnerName(item.ownerType, item.ownerId),
+ period,
+ periodFrom: item.periodFrom,
+ periodTo: item.periodTo,
+ ordersCount: item.itemCount ?? 0,
+ grossAmount: this.round(item.grossAmount),
+ deductions: this.round(item.commissionAmount + item.refundAmount + item.adjustmentAmount + item.recoveryAmount),
+ netAmount: this.round(item.netAmount),
+ status: this.toFrontendSettlementStatus(item.status),
+ createdAt: item.createdAtUtc,
+ paidAt: item.processedAtUtc ?? undefined,
+ failureReason: item.status === 'PayoutFailed' ? 'Payout failed' : undefined
+ };
+ }
+
+ private mapSettlementDetail(detail: AdminSettlementDetailApiModel): Settlement {
+ const settlement = this.mapSettlement(detail.settlement);
+ return {
+ ...settlement,
+ settlementProcessingMode: detail.settlementProcessingMode,
+ payouts: detail.payouts.map((payout) => ({
+ id: payout.id,
+ amount: this.round(payout.amount),
+ status: payout.status,
+ providerTransferId: payout.providerTransferId ?? null,
+ transferReference: payout.transferReference ?? null,
+ manualConfirmation: payout.manualConfirmation
+ ? {
+ id: payout.manualConfirmation.id,
+ transferReference: payout.manualConfirmation.transferReference,
+ proofAttachmentId: payout.manualConfirmation.proofAttachmentId,
+ hasLegacyProof: payout.manualConfirmation.hasLegacyProof,
+ confirmedByUserId: payout.manualConfirmation.confirmedByUserId,
+ confirmedAtUtc: payout.manualConfirmation.confirmedAtUtc
+ }
+ : null,
+ executionReservation: payout.executionReservation
+ ? {
+ mode: payout.executionReservation.mode,
+ status: payout.executionReservation.status,
+ claimedByUserId: payout.executionReservation.claimedByUserId,
+ claimedAtUtc: payout.executionReservation.claimedAtUtc,
+ submittedByUserId: payout.executionReservation.submittedByUserId,
+ submittedAtUtc: payout.executionReservation.submittedAtUtc,
+ submissionReference: payout.executionReservation.submissionReference,
+ releasedByUserId: payout.executionReservation.releasedByUserId,
+ releasedAtUtc: payout.executionReservation.releasedAtUtc,
+ releaseReason: payout.executionReservation.releaseReason
+ }
+ : null,
+ destinationMaskedLabel: payout.destinationMaskedLabel ?? null,
+ scheduledPayoutDay: payout.scheduledPayoutDay ?? null
+ }))
+ };
+ }
+
+ private mapCodRecords(response: AdminCodReconciliationApiModel): CodRecord[] {
+ return response.items.map((item) => ({
+ id: `cod-${item.driverId}`,
+ orderId: item.driverId,
+ orderRef: item.driverPhone?.trim() || `DRV-${item.driverId.slice(0, 8).toUpperCase()}`,
+ driverId: item.driverId,
+ driverName: item.driverName,
+ vendorId: 'platform',
+ vendorName: '—',
+ expectedAmount: this.round(item.codOwedBalance),
+ collectedAmount: 0,
+ delta: this.round(-item.codOwedBalance),
+ status: item.codOwedBalance > 0 ? 'pending' : 'collected',
+ notes: `Last journal sequence: ${item.lastJournalSequence}`
+ }));
+ }
+
+ private mapAuditLogEntry(item: AdminFinanceAuditLogEntryApiModel): AuditLogEntry {
+ return {
+ id: item.id,
+ timestamp: item.timestampUtc,
+ adminId: item.adminId,
+ adminName: item.adminName,
+ adminRole: item.adminRole,
+ action: item.action,
+ actionCategory: this.toFrontendAuditCategory(item.actionCategory),
+ entityType: this.toFrontendEntityType(item.entityType),
+ entityId: item.entityId ?? undefined,
+ orderId: item.orderId ?? undefined,
+ entityName: item.entityName ?? undefined,
+ before: item.before ?? undefined,
+ after: item.after ?? undefined,
+ ipAddress: item.ipAddress ?? undefined,
+ sessionId: item.sessionId ?? undefined
+ };
+ }
+
+ private toFrontendAuditCategory(category: string | null | undefined): AuditLogEntry['actionCategory'] {
+ switch (category?.toLowerCase()) {
+ case 'settlement':
+ return 'settlement';
+ case 'refund':
+ return 'refund';
+ case 'adjustment':
+ return 'adjustment';
+ case 'pricing':
+ return 'pricing';
+ case 'auth':
+ return 'auth';
+ case 'override':
+ default:
+ return 'override';
+ }
+ }
+
+ private toLedgerEntryType(eventType: string, accountCode: string): LedgerEntryType {
+ if (eventType.includes('Payout')) return 'payout';
+ if (eventType.includes('Refund')) return 'refund';
+ if (eventType.includes('Cod') || accountCode === 'DriverCodReceivable') return 'cod_collection';
+ if (eventType.includes('Adjustment') || accountCode === 'ManualAdjustment') return 'adjustment';
+ if (accountCode === 'PlatformRevenue') return 'service_fee';
+ if (accountCode === 'VendorPayable' || accountCode === 'DriverPayable') return 'settlement';
+ return 'adjustment';
+ }
+
+ private toFrontendEntityType(ownerType: string | null | undefined): EntityType {
+ const normalized = ownerType?.toLowerCase();
+ if (normalized === 'vendor') return 'vendor';
+ if (normalized === 'driver') return 'driver';
+ if (normalized === 'customer') return 'customer';
+ return 'platform';
+ }
+
+ private toBackendOwnerType(entityType: EntityType | undefined): string | null {
+ if (entityType === 'vendor') return 'Vendor';
+ if (entityType === 'driver') return 'Driver';
+ return null;
+ }
+
+ private toFrontendSettlementStatus(status: string): SettlementStatus {
+ switch (status) {
+ case 'PaidOut':
+ case 'Settled':
+ return 'paid';
+ case 'Processing':
+ case 'Approved':
+ return 'processing';
+ case 'OnHold':
+ return 'on_hold';
+ case 'PayoutFailed':
+ case 'Failed':
+ case 'Rejected':
+ case 'Reversed':
+ return 'failed';
+ case 'Disputed':
+ return 'disputed';
+ case 'PendingReview':
+ return 'pending_review';
+ case 'Pending':
+ default:
+ return 'pending';
+ }
+ }
+
+ private toBackendSettlementStatus(status: SettlementStatus | undefined): string | null {
+ switch (status) {
+ case 'paid':
+ case 'settled':
+ return 'PaidOut';
+ case 'processing':
+ case 'approved':
+ return 'Processing';
+ case 'on_hold':
+ return 'OnHold';
+ case 'failed':
+ case 'reversed':
+ return 'PayoutFailed';
+ case 'disputed':
+ return 'Disputed';
+ case 'pending_review':
+ return 'PendingReview';
+ case 'pending':
+ return 'PendingReview';
+ default:
+ return null;
+ }
+ }
+
+ private normalizeCurrency(value: string): FinanceCurrency {
+ return value === 'SAR' ? 'SAR' : 'EGP';
+ }
+
+ private formatOwnerName(ownerType: string | null | undefined, ownerId?: string | null, fallback?: string): string {
+ const prefix = ownerType && ownerType.trim().length > 0 ? ownerType : fallback ?? 'Platform';
+ return ownerId ? `${prefix} ${ownerId.slice(0, 8)}` : prefix;
+ }
+
+ private shortDate(value: string): string {
+ return new Date(value).toLocaleDateString('en-GB', { timeZone: 'Asia/Riyadh', day: '2-digit', month: 'short' });
+ }
+
+ private getRefundImpact(requestedAmount: number, approvedAmount: number | undefined, status: RefundStatus): number {
+ if (status === 'approved') {
+ return this.round(-(approvedAmount ?? requestedAmount));
+ }
+
+ return this.round(-requestedAmount);
  }
 
  private filterLedgerEntries(entries: LedgerEntry[], filter?: LedgerFilter): LedgerEntry[] {
