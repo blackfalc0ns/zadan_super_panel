@@ -200,6 +200,15 @@ export interface SettlementFilter {
   entityId?: string;
   status?: SettlementStatus;
   search?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface SettlementsPage {
+  items: Settlement[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
 }
 
 export interface CodRecord {

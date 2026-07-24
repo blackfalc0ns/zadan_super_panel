@@ -36,6 +36,7 @@ import {
  RefundStatus,
  Settlement,
  SettlementFilter,
+ SettlementsPage,
  SettlementStatus,
  VendorFinanceProfile,
  ZoneFinanceSettings
@@ -475,8 +476,10 @@ export class FinanceService {
  return this.http.get(`${this.apiUrl}/report`, { params, responseType: 'blob' });
  }
 
- getSettlements(filter?: SettlementFilter): Observable<Settlement[]> {
- let params = new HttpParams().set('page', '1').set('pageSize', '200');
+ getSettlements(filter?: SettlementFilter): Observable<SettlementsPage> {
+ const page = Math.max(1, filter?.page ?? 1);
+ const pageSize = Math.min(200, Math.max(1, filter?.pageSize ?? 200));
+ let params = new HttpParams().set('page', String(page)).set('pageSize', String(pageSize));
 
  const ownerType = this.toBackendOwnerType(filter?.entityType);
  if (ownerType) {
@@ -491,7 +494,12 @@ export class FinanceService {
  }
 
  return this.http.get<AdminSettlementListApiModel>(this.settlementsApiUrl, { params }).pipe(
- map((response) => this.filterSettlements(response.items.map((item) => this.mapSettlement(item)), filter))
+ map((response) => ({
+ items: this.filterSettlements(response.items.map((item) => this.mapSettlement(item)), filter),
+ totalCount: response.totalCount,
+ page: response.page,
+ pageSize: response.pageSize
+ }))
  );
  }
 
@@ -944,7 +952,8 @@ export class FinanceService {
  settlements: this.getSettlements({ entityType: 'vendor', entityId: vendorId }),
  refunds: this.getRefundCases({ vendorId })
  }).pipe(
- map(({ summary, settlements, refunds }) => {
+ map(({ summary, settlements: settlementsPage, refunds }) => {
+ const settlements = settlementsPage.items;
  const paidSettlements = settlements.filter((settlement) => settlement.status === 'paid' || settlement.status === 'settled');
  const pendingSettlements = settlements.filter((settlement) => settlement.status !== 'paid' && settlement.status !== 'settled');
  const totalRefunds = this.sum(refunds.filter((refund) => refund.status === 'approved').map((refund) => refund.approvedAmount ?? refund.requestedAmount));
@@ -997,7 +1006,8 @@ export class FinanceService {
  { params: new HttpParams().set('ownerType', 'driver').set('ownerId', driverId).set('page', '1').set('pageSize', '1') }
  )
  }).pipe(
- map(({ settlements, cod, wallet }) => {
+ map(({ settlements: settlementsPage, cod, wallet }) => {
+ const settlements = settlementsPage.items;
  const walletRow = wallet.items.find((item) => item.ownerId === driverId) ?? wallet.items[0];
  const paidSettlements = settlements.filter((settlement) => settlement.status === 'paid' || settlement.status === 'settled');
  const pendingSettlements = settlements.filter((settlement) => settlement.status !== 'paid' && settlement.status !== 'settled');

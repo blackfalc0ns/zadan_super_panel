@@ -5,7 +5,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { finalize, switchMap, take } from 'rxjs';
+import { finalize, forkJoin, take } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { FinanceService } from '../../services/finance.service';
 import { Settlement, EntityType, SettlementPayout } from '../../models/finance.models';
 import { FinanceStatusBadgeComponent } from '../../components/finance-status-badge/finance-status-badge.component';
@@ -16,8 +17,14 @@ import { KeyValueGridComponent, KeyValueGridItem } from '../../../../shared/comp
 import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { ExportService } from '../../../../shared/utils/export';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { VendorService } from '@vendors/public-api';
+import {
+ CreateSettlementModalComponent,
+ SettlementConfig
+} from '../../../vendors/components/workflows/create-settlement-modal/create-settlement-modal.component';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,9 +39,80 @@ import { ToastService } from '../../../../shared/services/toast.service';
  AppButtonComponent, 
  InlineBannerComponent, 
  KeyValueGridComponent,
- AppPageHeaderComponent
+ AppPageHeaderComponent,
+ AppPaginationComponent,
+ CreateSettlementModalComponent
  ],
  template: `
+ <app-create-settlement-modal
+ [isOpen]="showCreateSettlementModal"
+ [vendorId]="createVendorId"
+ [vendorName]="createVendorName"
+ [currentBalance]="createPendingBalance"
+ [availableBalance]="createAvailableBalance"
+ [totalSales]="createTotalSales"
+ [returns]="0"
+ [additionalFees]="createAdditionalFees"
+ [financialAdjustments]="0"
+ [bankName]="createBankName"
+ [bankIban]="createBankIban"
+ (close)="closeCreateSettlementModal()"
+ (createSettlement)="onSettlementCreated($event)">
+ </app-create-settlement-modal>
+
+ <div *ngIf="showVendorPicker" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+ <div class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" (click)="closeVendorPicker()"></div>
+ <section class="relative flex w-full max-w-lg max-h-[90vh] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+ <header class="border-b border-cyan-100 bg-cyan-50 px-6 py-5">
+ <div class="flex items-start justify-between gap-4">
+ <div class="flex gap-3">
+ <span class="material-symbols-outlined mt-0.5 text-[24px] text-cyan-700">storefront</span>
+ <div>
+ <h2 class="text-[16px] font-black text-slate-950">{{ 'FINANCES.SETTLEMENTS.CREATE.PICK_VENDOR_TITLE' | translate }}</h2>
+ <p class="mt-1 text-[12px] font-medium leading-relaxed text-slate-600">{{ 'FINANCES.SETTLEMENTS.CREATE.PICK_VENDOR_DESC' | translate }}</p>
+ </div>
+ </div>
+ <button type="button" (click)="closeVendorPicker()" class="grid h-8 w-8 place-items-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-900">
+ <span class="material-symbols-outlined text-[18px]">close</span>
+ </button>
+ </div>
+ </header>
+ <div class="space-y-4 overflow-y-auto p-6">
+ <div class="flex gap-2">
+ <input
+ [(ngModel)]="vendorSearch"
+ name="vendorSearch"
+ type="search"
+ (keydown.enter)="searchVendors()"
+ class="h-11 flex-1 rounded-xl border border-slate-200 px-3 text-[13px] font-bold text-slate-900 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+ [placeholder]="'FINANCES.SETTLEMENTS.CREATE.VENDOR_SEARCH' | translate" />
+ <app-button variant="primary" size="md" customClass="!rounded-xl !px-4" (btnClick)="searchVendors()">
+ {{ 'FINANCES.SETTLEMENTS.CREATE.SEARCH' | translate }}
+ </app-button>
+ </div>
+ <div *ngIf="isSearchingVendors" class="space-y-2">
+ <div *ngFor="let _ of [1,2,3]" class="h-12 animate-pulse rounded-xl bg-slate-100"></div>
+ </div>
+ <div *ngIf="!isSearchingVendors && vendorPickerOptions.length === 0" class="rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center text-[12px] font-bold text-slate-500">
+ {{ 'FINANCES.SETTLEMENTS.CREATE.NO_VENDORS' | translate }}
+ </div>
+ <button
+ *ngFor="let vendor of vendorPickerOptions"
+ type="button"
+ (click)="selectVendorForSettlement(vendor.id, vendor.name)"
+ class="flex w-full items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-start transition hover:border-cyan-200 hover:bg-cyan-50">
+ <span class="grid h-9 w-9 place-items-center rounded-lg bg-cyan-100 text-cyan-700">
+ <span class="material-symbols-outlined text-[18px]">storefront</span>
+ </span>
+ <span class="min-w-0 flex-1">
+ <span class="block truncate text-[13px] font-black text-slate-900">{{ vendor.name }}</span>
+ <span class="mt-0.5 block truncate font-mono text-[10px] font-bold text-slate-400" dir="ltr">{{ vendor.id }}</span>
+ </span>
+ </button>
+ </div>
+ </section>
+ </div>
+
  <div *ngIf="manualPayout" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
  <div class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" (click)="closeManualConfirmation()"></div>
  <section class="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
@@ -266,7 +344,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
  <p class="text-[11px] font-bold text-slate-500 mt-0.5">{{ 'FINANCES.SETTLEMENTS.TABLE.DESC' | translate }}</p>
  </div>
  </div>
- <app-button variant="outline" size="sm" customClass="!rounded-xl">
+ <app-button *ngIf="activeTab === 'vendor'" variant="outline" size="sm" customClass="!rounded-xl" (btnClick)="onCreateExtra()">
  <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">add</span>
  {{ 'FINANCES.SETTLEMENTS.TABLE.CREATE_EXTRA' | translate }}
  </app-button>
@@ -368,12 +446,22 @@ import { ToastService } from '../../../../shared/services/toast.service';
  </div>
  </app-card>
 
+ <div *ngIf="totalCount > 0" class="flex justify-center pt-2 pb-8">
+ <app-pagination
+ [currentPage]="page"
+ [pageSize]="pageSize"
+ [totalItems]="totalCount"
+ (pageChange)="changePage($event)">
+ </app-pagination>
+ </div>
+
  </div>
  `
 })
 export class SettlementsComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
  private financeService = inject(FinanceService);
+ private vendorService = inject(VendorService);
  private translate = inject(TranslateService);
  private route = inject(ActivatedRoute);
  private router = inject(Router);
@@ -386,6 +474,23 @@ export class SettlementsComponent implements OnInit {
  activeTab: EntityType = 'vendor';
  scopedEntityId: string | null = null;
  loadError = false;
+ page = 1;
+ pageSize = 20;
+ totalCount = 0;
+ showCreateSettlementModal = false;
+ showVendorPicker = false;
+ isSearchingVendors = false;
+ isCreatingSettlement = false;
+ vendorSearch = '';
+ vendorPickerOptions: Array<{ id: string; name: string }> = [];
+ createVendorId = '';
+ createVendorName = '';
+ createPendingBalance = 0;
+ createAvailableBalance = 0;
+ createTotalSales = 0;
+ createAdditionalFees = 0;
+ createBankName = '';
+ createBankIban = '';
  manualPayout: SettlementPayout | null = null;
  manualProofFile: File | null = null;
   manualTransferReference = '';
@@ -396,11 +501,8 @@ export class SettlementsComponent implements OnInit {
  private pendingFocusSettlementId: string | null = null;
  private pendingFocusPayoutId: string | null = null;
 
- get vendorSettlements(): Settlement[] { return this.allSettlements.filter(s => s.entityType === 'vendor'); }
- get driverSettlements(): Settlement[] { return this.allSettlements.filter(s => s.entityType === 'driver'); }
  get activeSettlements(): Settlement[] {
- const base = this.activeTab === 'vendor' ? this.vendorSettlements : this.driverSettlements;
- return this.scopedEntityId ? base.filter(s => s.entityId === this.scopedEntityId) : base;
+ return this.allSettlements;
  }
  get scopedSettlement(): Settlement | null {
  return this.scopedEntityId ? (this.allSettlements.find(s => s.entityId === this.scopedEntityId) ?? null) : null;
@@ -415,7 +517,7 @@ export class SettlementsComponent implements OnInit {
  const paidNet = paid.reduce((sum, item) => sum + item.netAmount, 0);
 
  return [
- { labelKey: 'FINANCES.SETTLEMENTS.STATS.TOTAL', value: this.formatNumber(data.length), color: 'text-slate-900' },
+ { labelKey: 'FINANCES.SETTLEMENTS.STATS.TOTAL', value: this.formatNumber(this.totalCount), color: 'text-slate-900' },
  { labelKey: 'FINANCES.SETTLEMENTS.STATS.PAID', value: `${this.formatNumber(paid.length)} / ${this.formatNumber(paidNet)} ${this.translate.instant('FINANCES.CURRENCY')}`, color: 'text-emerald-600' },
  { labelKey: 'FINANCES.SETTLEMENTS.STATS.PENDING', value: this.formatNumber(pending.length), color: 'text-amber-600' },
  { labelKey: 'FINANCES.SETTLEMENTS.STATS.TOTAL_AMOUNT', value: `${this.formatNumber(totalNet)} ${this.translate.instant('FINANCES.CURRENCY')}`, color: 'text-zadna-primary' }
@@ -426,15 +528,23 @@ export class SettlementsComponent implements OnInit {
  this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
  this.cdr.markForCheck();
  const entityType = params.get('entityType');
- this.scopedEntityId = params.get('entityId');
+ const nextScopedId = params.get('entityId');
+ const scopeChanged = nextScopedId !== this.scopedEntityId;
+ this.scopedEntityId = nextScopedId;
  if (entityType === 'vendor' || entityType === 'driver') {
+ if (this.activeTab !== entityType) {
  this.activeTab = entityType;
+ this.page = 1;
+ }
  }
 
  this.pendingFocusSettlementId = params.get('focus');
  this.pendingFocusPayoutId = params.get('payoutId');
  if (this.pendingFocusSettlementId) {
  this.loadSettlements(true);
+ } else if (scopeChanged) {
+ this.page = 1;
+ this.loadSettlements();
  }
  });
 
@@ -445,23 +555,160 @@ export class SettlementsComponent implements OnInit {
  this.loadError = false;
  this.financeService.getSettlements({
  entityType: forFocus || this.pendingFocusSettlementId ? undefined : this.activeTab,
- entityId: forFocus || this.pendingFocusSettlementId ? undefined : (this.scopedEntityId ?? undefined)
+ entityId: forFocus || this.pendingFocusSettlementId ? undefined : (this.scopedEntityId ?? undefined),
+ page: forFocus || this.pendingFocusSettlementId ? 1 : this.page,
+ pageSize: forFocus || this.pendingFocusSettlementId ? 200 : this.pageSize
  }).pipe(take(1)).subscribe({
  next: (data) => {
  this.cdr.markForCheck();
- this.allSettlements = data;
+ this.allSettlements = data.items;
+ this.totalCount = data.totalCount;
+ if (!forFocus && !this.pendingFocusSettlementId) {
+ this.page = data.page;
+ }
  this.tryOpenFocusedSettlement();
  },
  error: () => {
  this.cdr.markForCheck();
  this.loadError = true;
+ this.allSettlements = [];
+ this.totalCount = 0;
  }
  });
  }
 
- setActiveTab(tab: EntityType): void {
- this.activeTab = tab;
+ changePage(nextPage: number): void {
+ if (nextPage === this.page) {
+ return;
+ }
+ this.page = nextPage;
  this.loadSettlements();
+ }
+
+ setActiveTab(tab: EntityType): void {
+ if (this.activeTab === tab) {
+ return;
+ }
+ this.activeTab = tab;
+ this.page = 1;
+ this.loadSettlements();
+ }
+
+ onCreateExtra(): void {
+ if (this.activeTab !== 'vendor') {
+ this.toastService.warning(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.DRIVER_NOT_SUPPORTED'));
+ return;
+ }
+
+ if (this.scopedEntityId) {
+ const scopedName = this.scopedSettlement?.entityName || this.scopedEntityId;
+ this.openCreateSettlementForVendor(this.scopedEntityId, scopedName);
+ return;
+ }
+
+ this.showVendorPicker = true;
+ this.vendorSearch = '';
+ this.searchVendors();
+ }
+
+ closeVendorPicker(): void {
+ this.showVendorPicker = false;
+ this.vendorPickerOptions = [];
+ this.vendorSearch = '';
+ this.isSearchingVendors = false;
+ }
+
+ searchVendors(): void {
+ this.isSearchingVendors = true;
+ this.vendorService.getVendors(1, 12, this.vendorSearch.trim() || undefined).pipe(take(1)).subscribe({
+ next: (page) => {
+ this.cdr.markForCheck();
+ this.vendorPickerOptions = page.items.map((vendor) => ({
+ id: vendor.id,
+ name: vendor.businessNameAr || vendor.businessNameEn || vendor.ownerName || vendor.id
+ }));
+ this.isSearchingVendors = false;
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.vendorPickerOptions = [];
+ this.isSearchingVendors = false;
+ }
+ });
+ }
+
+ selectVendorForSettlement(vendorId: string, vendorName: string): void {
+ this.closeVendorPicker();
+ this.openCreateSettlementForVendor(vendorId, vendorName);
+ }
+
+ openCreateSettlementForVendor(vendorId: string, vendorName: string): void {
+ this.createVendorId = vendorId;
+ this.createVendorName = vendorName;
+ this.createPendingBalance = 0;
+ this.createAvailableBalance = 0;
+ this.createTotalSales = 0;
+ this.createAdditionalFees = 0;
+ this.createBankName = '';
+ this.createBankIban = '';
+
+ forkJoin({
+ vendor: this.vendorService.getVendorById(vendorId),
+ profile: this.financeService.getVendorFinanceProfile(vendorId)
+ }).pipe(take(1)).subscribe({
+ next: ({ vendor, profile }) => {
+ this.cdr.markForCheck();
+ this.createVendorName = vendor.businessNameAr || vendor.businessNameEn || vendor.ownerName || vendorName;
+ this.createPendingBalance = profile.pendingBalance;
+ this.createAvailableBalance = profile.availableBalance;
+ this.createTotalSales = profile.totalSales;
+ this.createAdditionalFees = profile.totalCommissions;
+ this.createBankName = vendor.primaryBankAccount?.bankName || '';
+ this.createBankIban = vendor.primaryBankAccount?.iban || '';
+ this.showCreateSettlementModal = true;
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.toastService.error(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.LOAD_ERROR'));
+ }
+ });
+ }
+
+ closeCreateSettlementModal(): void {
+ if (this.isCreatingSettlement) {
+ return;
+ }
+ this.showCreateSettlementModal = false;
+ }
+
+ onSettlementCreated(config: SettlementConfig): void {
+ if (!config.vendorId || this.isCreatingSettlement) {
+ return;
+ }
+
+ this.isCreatingSettlement = true;
+ this.vendorService.createVendorSettlement(config.vendorId, {
+ grossAmount: config.totalSales,
+ commissionAmount: config.additionalFees,
+ netAmount: config.netAmount
+ }).pipe(
+ finalize(() => {
+ this.isCreatingSettlement = false;
+ this.cdr.markForCheck();
+ }),
+ take(1)
+ ).subscribe({
+ next: () => {
+ this.showCreateSettlementModal = false;
+ this.toastService.success(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.SUCCESS'));
+ this.page = 1;
+ this.activeTab = 'vendor';
+ this.loadSettlements();
+ },
+ error: () => {
+ this.toastService.error(this.translate.instant('FINANCES.SETTLEMENTS.CREATE.ERROR'));
+ }
+ });
  }
 
  openDetail(s: Settlement): void {
@@ -773,6 +1020,7 @@ export class SettlementsComponent implements OnInit {
  trackById(_: number, s: Settlement): string { return s.id; }
 
  clearScope(): void {
+ this.page = 1;
  this.router.navigate([], {
  relativeTo: this.route,
  queryParams: { entityType: null, entityId: null },

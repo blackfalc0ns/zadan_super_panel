@@ -1000,6 +1000,17 @@
         "PENDING": "Pending (Awaiting Payment)",
         "TOTAL_AMOUNT": "Total Amount"
       },
+      "CREATE": {
+        "PICK_VENDOR_TITLE": "Select a vendor",
+        "PICK_VENDOR_DESC": "Choose the vendor to create an exceptional settlement for.",
+        "VENDOR_SEARCH": "Search vendors…",
+        "SEARCH": "Search",
+        "NO_VENDORS": "No vendors found.",
+        "DRIVER_NOT_SUPPORTED": "Exceptional settlements are for vendors only. Use the withdrawals queue for drivers.",
+        "SUCCESS": "Settlement created successfully.",
+        "ERROR": "Unable to create the settlement right now.",
+        "LOAD_ERROR": "Unable to load vendor finance data."
+      },
       "TABLE": {
         "TITLE": "Required Dues List",
         "DESC": "Details of pending and completed payments",
