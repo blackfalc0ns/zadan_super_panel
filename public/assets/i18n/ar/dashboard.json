@@ -96,8 +96,12 @@
       "DRIVERS": "المناديب",
       "ORDERS": "الطلبات",
       "FINANCE": "المالية",
+      "PLATFORM": "المنصة والنظام",
+      "PLATFORM_HELPER": "صحة النظام والكتالوج والتسويق والأمان",
+      "PLATFORM_SECTIONS": "أقسام",
       "COVERAGE": "التغطية الجغرافية",
       "COVERAGE_HELPER": "عملاء وتجار ومناديب بكل مدينة",
+      "COVERAGE_GAPS_HELPER": "{{customers}} عميل بدون تغطية تاجر",
       "DAY": "يوم",
       "WEEK": "أسبوع",
       "MONTH": "شهر",
@@ -387,7 +391,9 @@
       "FULFILLMENT_TITLE": "جودة التسليم",
       "FULFILLMENT_DESC": "نسبة الطلبات اللي وصلت ضمن الوقت المستهدف.",
       "SUPPLY_TITLE": "قدرة العرض",
-      "SUPPLY_DESC": "نسبة التجار والمناديب الجاهزين للتشغيل الكامل الحين."
+      "SUPPLY_DESC": "نسبة التجار والمناديب الجاهزين للتشغيل الكامل الحين.",
+      "ORDERS_AT_RISK": "{{count}} طلبات عليها مخاطرة",
+      "SUPPLY_VALUE": "{{vendors}} تجار | {{drivers}} مناديب"
     },
     "REGION_PRESSURE": {
       "TITLE": "ضغط المناطق التشغيلي",

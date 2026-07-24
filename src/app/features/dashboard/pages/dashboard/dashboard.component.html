@@ -75,6 +75,22 @@
             </div>
           }
 
+          <section *ngIf="platformSections.length" class="space-y-4">
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 class="text-base font-black text-slate-900">{{ 'DASHBOARD.DEEP_DIVE_TITLE' | translate }}</h2>
+                <p class="text-[12px] font-medium text-slate-500">{{ 'DASHBOARD.DEEP_DIVE_DESC' | translate }}</p>
+              </div>
+              <button type="button" class="text-[12px] font-black text-zadna-primary hover:underline" (click)="setActiveTab('platform')">
+                {{ 'DASHBOARD.TABS.PLATFORM' | translate }}
+              </button>
+            </div>
+            <app-dashboard-sections
+              [primarySections]="platformPrimarySections"
+              [secondarySections]="platformSecondarySections"
+              [isRTL]="isRTL">
+            </app-dashboard-sections>
+          </section>
         </div>
 
         <!-- VENDORS TAB -->
@@ -215,10 +231,33 @@
           </div>
         </div>
 
+        <!-- PLATFORM TAB -->
+        <div *ngSwitchCase="'platform'" class="space-y-8 animate-fade-in">
+          <section class="rounded-[1.35rem] border border-slate-200/80 bg-white p-5 shadow-sm">
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 class="text-base font-black text-slate-900">{{ 'DASHBOARD.TABS.PLATFORM' | translate }}</h2>
+                <p class="text-[12px] font-medium text-slate-500">{{ 'DASHBOARD.DEEP_DIVE_DESC' | translate }}</p>
+              </div>
+              <span class="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                {{ platformSections.length }} {{ 'DASHBOARD.TABS.PLATFORM_SECTIONS' | translate }}
+              </span>
+            </div>
+          </section>
+          <app-dashboard-sections
+            [primarySections]="platformPrimarySections"
+            [secondarySections]="platformSecondarySections"
+            [isRTL]="isRTL">
+          </app-dashboard-sections>
+        </div>
+
         <!-- GEOGRAPHY COVERAGE TAB -->
         <div *ngSwitchCase="'coverage'" class="space-y-8 animate-fade-in">
           @defer (on immediate) {
-            <app-dashboard-geography-coverage [isRTL]="isRTL"></app-dashboard-geography-coverage>
+            <app-dashboard-geography-coverage
+              [isRTL]="isRTL"
+              (summaryLoaded)="onCoverageSummaryLoaded($event)">
+            </app-dashboard-geography-coverage>
           } @placeholder {
             <div class="h-96 bg-slate-50 border border-slate-100 rounded-[24px] animate-pulse flex items-center justify-center text-slate-400 text-sm">
               {{ 'DASHBOARD.COVERAGE.LOADING' | translate }}

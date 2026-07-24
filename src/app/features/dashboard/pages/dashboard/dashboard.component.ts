@@ -14,7 +14,8 @@ import {
  DashboardSection,
  DashboardSnapshot,
  DashboardSupplyBucket,
- DashboardChartPoint
+ DashboardChartPoint,
+ GeographyCoverageSummary
 } from '../../models/dashboard.models';
 import * as echarts from 'echarts/core';
 import type { EChartsOption } from 'echarts';
@@ -37,7 +38,7 @@ import {
 
 echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
-type DashboardTabId = 'overview' | 'vendors' | 'drivers' | 'orders' | 'finance' | 'coverage';
+type DashboardTabId = 'overview' | 'vendors' | 'drivers' | 'orders' | 'finance' | 'platform' | 'coverage';
 
 interface DashboardWindowTab {
  id: DashboardTabId;
@@ -88,8 +89,9 @@ export class DashboardComponent implements OnInit {
  };
 
  dashboard: DashboardSnapshot | null = null;
+ coverageSummary: GeographyCoverageSummary | null = null;
  activeTab: DashboardTabId = 'overview';
- private readonly dashboardTabIds: DashboardTabId[] = ['overview', 'vendors', 'drivers', 'orders', 'finance', 'coverage'];
+ private readonly dashboardTabIds: DashboardTabId[] = ['overview', 'vendors', 'drivers', 'orders', 'finance', 'platform', 'coverage'];
 
  setActiveTab(tab: DashboardTabId): void {
  this.activeTab = tab;
@@ -148,14 +150,6 @@ export class DashboardComponent implements OnInit {
  return `${label} (${count})`;
  }
 
- get primarySections(): DashboardSection[] {
- return this.dashboard?.sections.slice(0, 4) ?? [];
- }
-
- get secondarySections(): DashboardSection[] {
- return this.dashboard?.sections.slice(4) ?? [];
- }
-
  get vendorSections(): DashboardSection[] {
  return this.dashboard?.sections.filter(s => s.id.includes('vendor')) ?? [];
  }
@@ -169,7 +163,26 @@ export class DashboardComponent implements OnInit {
  }
 
  get financeSections(): DashboardSection[] {
- return this.dashboard?.sections.filter(s => ['finance-ops', 'access-security'].includes(s.id)) ?? [];
+ return this.dashboard?.sections.filter(s => s.id === 'finance-ops') ?? [];
+ }
+
+ get platformSections(): DashboardSection[] {
+ return this.dashboard?.sections.filter(s =>
+ ['system-health', 'catalog-health', 'marketing-pulse', 'access-security'].includes(s.id)
+ ) ?? [];
+ }
+
+ get platformPrimarySections(): DashboardSection[] {
+ return this.platformSections.slice(0, 2);
+ }
+
+ get platformSecondarySections(): DashboardSection[] {
+ return this.platformSections.slice(2);
+ }
+
+ onCoverageSummaryLoaded(summary: GeographyCoverageSummary): void {
+ this.coverageSummary = summary;
+ this.cdr.markForCheck();
  }
 
  get dashboardTabs(): DashboardWindowTab[] {
@@ -183,6 +196,10 @@ export class DashboardComponent implements OnInit {
  const vendorRiskSignals = this.countNonReadyBuckets(this.dashboard?.charts.vendorReadiness ?? []);
  const driverRiskSignals = this.countNonReadyBuckets(this.dashboard?.charts.driverReadiness ?? []);
  const operationsSignals = (this.dashboard?.alerts.length ?? 0) + (this.dashboard?.attentionItems.length ?? 0) + riskQueueTotal;
+ const platformSignals = this.platformSections.reduce((sum, section) => sum + section.exceptions.length, 0);
+ const platformSeverity = this.resolveHighestSeverity(this.platformSections.map((section) => section.status.severity));
+ const citiesWithGaps = this.coverageSummary?.citiesWithGaps ?? 0;
+ const customersWithoutVendor = this.coverageSummary?.customersWithoutVendor ?? 0;
 
  return [
  {
@@ -232,13 +249,24 @@ export class DashboardComponent implements OnInit {
  signalCount: this.dashboard?.queues.risk.filter(queue => queue.count > 0).length ?? 0
  },
  {
+ id: 'platform',
+ labelKey: 'DASHBOARD.TABS.PLATFORM',
+ icon: 'dns',
+ metric: `${this.platformSections.length}`,
+ helper: this.translate.instant('DASHBOARD.TABS.PLATFORM_HELPER'),
+ severity: platformSeverity,
+ signalCount: platformSignals
+ },
+ {
  id: 'coverage',
  labelKey: 'DASHBOARD.TABS.COVERAGE',
  icon: 'public',
- metric: '—',
- helper: this.translate.instant('DASHBOARD.TABS.COVERAGE_HELPER'),
- severity: 'info',
- signalCount: 0
+ metric: this.coverageSummary ? citiesWithGaps.toLocaleString() : '—',
+ helper: this.coverageSummary
+ ? this.translate.instant('DASHBOARD.TABS.COVERAGE_GAPS_HELPER', { customers: customersWithoutVendor })
+ : this.translate.instant('DASHBOARD.TABS.COVERAGE_HELPER'),
+ severity: citiesWithGaps > 0 ? 'warning' : this.coverageSummary ? 'success' : 'info',
+ signalCount: citiesWithGaps
  }
  ];
  }
@@ -299,6 +327,16 @@ export class DashboardComponent implements OnInit {
  this.loadError = true;
  this.isLoading = false;
  this.cdr.markForCheck();
+ }
+ });
+
+ this.dashboardService.getGeographyCoverage(this.filterState.region || 'all', false).pipe(take(1)).subscribe({
+ next: (coverage) => {
+ this.coverageSummary = coverage.summary;
+ this.cdr.markForCheck();
+ },
+ error: () => {
+ // Coverage badge stays at placeholder until the Coverage tab loads successfully.
  }
  });
  }
@@ -372,6 +410,9 @@ export class DashboardComponent implements OnInit {
  const onTimeKpi = this.dashboard.kpis.find(k => k.id === 'on-time-rate');
  const riskOrders = this.dashboard.kpis.find(k => k.id === 'orders-at-risk');
 
+ const vendorCount = this.dashboard.charts.vendorReadiness.reduce((a, b) => a + b.count, 0);
+ const driverCount = this.dashboard.charts.driverReadiness.reduce((a, b) => a + b.count, 0);
+
  this.insightPanels = [
  {
  id: 'revenue-insight',
@@ -389,7 +430,9 @@ export class DashboardComponent implements OnInit {
  iconClass: 'text-blue-500 bg-blue-50',
  description: 'DASHBOARD.INSIGHTS.FULFILLMENT_DESC',
  value: onTimeKpi?.value ?? '0%',
-  trendLabel: riskOrders?.value ? `${riskOrders.value} طلبات عليها مخاطرة` : undefined
+ trendLabel: riskOrders?.value
+ ? this.translate.instant('DASHBOARD.INSIGHTS.ORDERS_AT_RISK', { count: riskOrders.value })
+ : undefined
  },
  {
  id: 'supply-insight',
@@ -397,7 +440,10 @@ export class DashboardComponent implements OnInit {
  icon: 'groups',
  iconClass: 'text-purple-500 bg-purple-50',
  description: 'DASHBOARD.INSIGHTS.SUPPLY_DESC',
- value: `${this.dashboard.charts.vendorReadiness.reduce((a, b) => a + b.count, 0)} تجار | ${this.dashboard.charts.driverReadiness.reduce((a, b) => a + b.count, 0)} مناديب`
+ value: this.translate.instant('DASHBOARD.INSIGHTS.SUPPLY_VALUE', {
+ vendors: vendorCount,
+ drivers: driverCount
+ })
  }
  ];
  }

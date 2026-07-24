@@ -3,8 +3,10 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -23,7 +25,8 @@ import { SuperAdminDashboardService } from '../../services/dashboard.api.service
 import {
   GeographyCoverageCityRow,
   GeographyCoverageGapFlag,
-  GeographyCoverageSnapshot
+  GeographyCoverageSnapshot,
+  GeographyCoverageSummary
 } from '../../models/dashboard.models';
 
 @Component({
@@ -49,6 +52,7 @@ export class DashboardGeographyCoverageComponent implements OnInit {
   private readonly reloadCoverage$ = new Subject<{ region: string; gapsOnly: boolean }>();
 
   @Input() isRTL = true;
+  @Output() summaryLoaded = new EventEmitter<GeographyCoverageSummary>();
 
   isLoading = true;
   isRefreshing = false;
@@ -99,6 +103,7 @@ export class DashboardGeographyCoverageComponent implements OnInit {
           this.coverage = coverage;
           this.loadError = false;
           this.resetTablePage();
+          this.summaryLoaded.emit(coverage.summary);
           this.cdr.markForCheck();
         }
       });

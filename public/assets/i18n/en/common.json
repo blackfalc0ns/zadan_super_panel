@@ -999,6 +999,7 @@
       "TITLE": "Financial Settlements",
       "SUBTITLE": "Manage payments, transfers to vendors and drivers, and track their status.",
       "DETAIL_TITLE": "Settlement Details",
+      "DETAIL_BADGE": "Settlement",
       "NET_DUE": "Net Amount Due",
       "GROSS_REVENUE": "Gross Revenue",
       "DEDUCTIONS": "Deductions & Commissions",
@@ -1007,7 +1008,17 @@
       "FINANCIAL_PERIOD": "Financial Period",
       "PROCESS_PAYMENT": "Process Payment",
       "MANAGE_MANUAL_PAYOUT": "Manage manual payout",
-      "ACCOUNT_STATEMENT": "Account Statement",
+      "PROOF_SECTION": {
+        "TITLE": "Bank transfer proof",
+        "SUBTITLE": "Transfer reference and proof file linked to this settlement",
+        "TRANSFER_REF": "Transfer reference",
+        "BANK": "Bank account",
+        "CONFIRMED_AT": "Confirmed at",
+        "VIEW": "View proof",
+        "VIEW_ERROR": "Unable to open the proof file. Please try again.",
+        "LEGACY": "A legacy proof is recorded but no downloadable file is available in the panel.",
+        "EMPTY": "No transfer proof has been uploaded for this settlement yet."
+      },
       "TABS": {
         "VENDORS": "Vendor Settlements",
         "DRIVERS": "Driver Settlements"

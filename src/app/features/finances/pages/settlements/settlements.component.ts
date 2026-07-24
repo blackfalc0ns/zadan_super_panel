@@ -18,7 +18,6 @@ import { getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { buildFinanceScopedProfileNavigation } from '../../utils/finance-profile-navigation.utils';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
-import { ExportService } from '../../../../shared/utils/export';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { VendorService } from '@vendors/public-api';
 import {
@@ -204,68 +203,119 @@ import {
  <!-- نافذة تفاصيل التسوية (Settlement Detail Modal) -->
  <div *ngIf="selectedSettlement" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
  <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" (click)="selectedSettlement = null"></div>
- <div class="relative bg-white rounded-3xl shadow-xl w-full max-w-md animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[90vh]">
- <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
- <div>
- <h3 class="text-[15px] font-black text-slate-900">{{ 'FINANCES.SETTLEMENTS.DETAIL_TITLE' | translate }}</h3>
- <p class="text-[11px] font-bold text-slate-500 font-mono mt-0.5">{{ selectedSettlement.settlementCode }}</p>
+ <div class="relative flex w-full max-w-lg max-h-[90vh] flex-col overflow-hidden rounded-[1.75rem] bg-white shadow-2xl animate-in zoom-in-95 duration-200">
+ <header class="flex items-start justify-between gap-3 border-b border-slate-100 bg-gradient-to-b from-slate-50 to-white px-6 py-5">
+ <div class="min-w-0">
+ <p class="text-[10px] font-black uppercase tracking-[0.18em] text-zadna-primary">{{ 'FINANCES.SETTLEMENTS.DETAIL_BADGE' | translate }}</p>
+ <h3 class="mt-1 text-[16px] font-black text-slate-900">{{ 'FINANCES.SETTLEMENTS.DETAIL_TITLE' | translate }}</h3>
+ <p class="mt-1 font-mono text-[11px] font-bold text-slate-500">{{ selectedSettlement.settlementCode }}</p>
  </div>
- <button class="w-8 h-8 rounded-full bg-slate-200/50 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors" (click)="selectedSettlement = null">
+ <button type="button" class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-slate-800" (click)="selectedSettlement = null">
  <span class="material-symbols-outlined text-[20px]">close</span>
  </button>
- </div>
+ </header>
 
- <div class="flex-1 overflow-y-auto p-6 space-y-6">
+ <div class="flex-1 space-y-5 overflow-y-auto p-6">
  <div class="flex items-center gap-3">
- <div class="w-12 h-12 rounded-xl flex items-center justify-center border shrink-0"
+ <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border"
  [ngClass]="selectedSettlement.entityType === 'vendor' ? 'bg-cyan-50 border-cyan-100 text-cyan-600' : 'bg-amber-50 border-amber-100 text-amber-600'">
  <span class="material-symbols-outlined text-[24px]">
  {{ selectedSettlement.entityType === 'vendor' ? 'storefront' : 'local_shipping' }}
  </span>
  </div>
- <div>
- <p class="text-[15px] font-black text-slate-900 leading-tight">{{ selectedSettlement.entityName }}</p>
- <span class="inline-flex mt-1 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border"
+ <div class="min-w-0">
+ <p class="truncate text-[15px] font-black leading-tight text-slate-900">{{ selectedSettlement.entityName }}</p>
+ <span class="mt-1 inline-flex rounded-md border px-2 py-0.5 text-[9px] font-black uppercase tracking-widest"
  [ngClass]="selectedSettlement.entityType === 'vendor' ? 'bg-cyan-50 text-cyan-700 border-cyan-100' : 'bg-amber-50 text-amber-700 border-amber-100'">
  {{ (selectedSettlement.entityType === 'vendor' ? 'FINANCES.ENTITIES.VENDOR' : 'FINANCES.ENTITIES.DRIVER') | translate }}
  </span>
  </div>
  </div>
 
- <div class="p-6 rounded-2xl text-center border bg-emerald-50 border-emerald-100">
- <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest mb-2">{{ 'FINANCES.SETTLEMENTS.NET_DUE' | translate }}</p>
- <p class="text-4xl font-black tabular-nums tracking-tight text-emerald-700">
- {{ formatNumber(selectedSettlement.netAmount) }} <span class="text-[15px] font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span>
+ <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 text-center">
+ <p class="mb-2 text-[11px] font-black uppercase tracking-widest text-emerald-600">{{ 'FINANCES.SETTLEMENTS.NET_DUE' | translate }}</p>
+ <p class="text-3xl font-black tracking-tight text-emerald-700 tabular-nums sm:text-4xl">
+ {{ formatNumber(selectedSettlement.netAmount) }}
+ <span class="text-[14px] font-bold">{{ 'FINANCES.CURRENCY' | translate }}</span>
  </p>
- <div class="mt-4 flex justify-center">
+ <div class="mt-3 flex justify-center">
  <app-finance-status-badge [status]="selectedSettlement.status"></app-finance-status-badge>
  </div>
  </div>
 
- <div class="space-y-4">
- <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+ <div class="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/60">
+ <div class="flex items-center justify-between gap-3 border-b border-slate-200/80 px-4 py-3">
  <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.GROSS_REVENUE' | translate }}</span>
- <span class="text-[13px] font-black text-slate-900 tabular-nums">{{ formatNumber(selectedSettlement.grossAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
+ <span class="text-[13px] font-black text-slate-900 tabular-nums" dir="ltr">{{ formatNumber(selectedSettlement.grossAmount) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
  </div>
- <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+ <div class="flex items-center justify-between gap-3 border-b border-slate-200/80 px-4 py-3">
  <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.DEDUCTIONS' | translate }}</span>
- <span class="text-[13px] font-black text-red-600 tabular-nums">-{{ formatNumber(selectedSettlement.deductions) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
+ <span class="text-[13px] font-black text-red-600 tabular-nums" dir="ltr">-{{ formatNumber(selectedSettlement.deductions) }} {{ 'FINANCES.CURRENCY' | translate }}</span>
  </div>
- <div class="flex justify-between items-center py-2 border-b border-slate-100 border-dashed">
+ <div class="flex items-center justify-between gap-3 border-b border-slate-200/80 px-4 py-3">
  <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.ORDERS_COUNT' | translate }}</span>
  <span class="text-[13px] font-black text-slate-800 tabular-nums">{{ 'FINANCES.SETTLEMENTS.ORDERS_COUNT_VAL' | translate: { count: selectedSettlement.ordersCount } }}</span>
  </div>
- <div class="flex justify-between items-center py-2">
+ <div class="flex items-center justify-between gap-3 px-4 py-3">
  <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.FINANCIAL_PERIOD' | translate }}</span>
  <span class="text-[12px] font-bold text-slate-700" dir="ltr">{{ formatDate(selectedSettlement.periodFrom) }} - {{ formatDate(selectedSettlement.periodTo) }}</span>
  </div>
  </div>
 
- <div class="pt-4 flex gap-3">
+ <section class="rounded-2xl border border-violet-100 bg-violet-50/40 p-4">
+ <div class="mb-3 flex items-center gap-2">
+ <span class="grid h-8 w-8 place-items-center rounded-xl bg-violet-100 text-violet-700">
+ <span class="material-symbols-outlined text-[18px]">verified</span>
+ </span>
+ <div>
+ <h4 class="text-[13px] font-black text-slate-900">{{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.TITLE' | translate }}</h4>
+ <p class="text-[10px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.SUBTITLE' | translate }}</p>
+ </div>
+ </div>
+
+ <ng-container *ngIf="getConfirmedManualPayout(selectedSettlement) as confirmedPayout; else noProofYet">
+ <div class="space-y-3 rounded-xl border border-white bg-white p-3 shadow-sm">
+ <div *ngIf="confirmedPayout.manualConfirmation?.transferReference || confirmedPayout.transferReference" class="flex items-start justify-between gap-3">
+ <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.TRANSFER_REF' | translate }}</span>
+ <span class="max-w-[60%] break-all text-end font-mono text-[12px] font-black text-slate-800" dir="ltr">
+ {{ confirmedPayout.manualConfirmation?.transferReference || confirmedPayout.transferReference }}
+ </span>
+ </div>
+ <div *ngIf="confirmedPayout.destinationMaskedLabel" class="flex items-start justify-between gap-3">
+ <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.BANK' | translate }}</span>
+ <span class="max-w-[60%] text-end text-[12px] font-bold text-slate-700">{{ confirmedPayout.destinationMaskedLabel }}</span>
+ </div>
+ <div *ngIf="confirmedPayout.manualConfirmation?.confirmedAtUtc as confirmedAt" class="flex items-start justify-between gap-3">
+ <span class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.CONFIRMED_AT' | translate }}</span>
+ <span class="text-[12px] font-bold text-slate-700" dir="ltr">{{ formatDateTime(confirmedAt) }}</span>
+ </div>
+ <button
+ *ngIf="confirmedPayout.manualConfirmation?.proofAttachmentId"
+ type="button"
+ (click)="viewSettlementProof(confirmedPayout)"
+ class="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-violet-700 px-3 py-2.5 text-[12px] font-black text-white transition hover:bg-violet-800">
+ <span class="material-symbols-outlined text-[18px]">attach_file</span>
+ {{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.VIEW' | translate }}
+ </button>
+ <p *ngIf="!confirmedPayout.manualConfirmation?.proofAttachmentId && confirmedPayout.manualConfirmation?.hasLegacyProof" class="rounded-lg bg-amber-50 px-3 py-2 text-[11px] font-bold text-amber-800">
+ {{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.LEGACY' | translate }}
+ </p>
+ </div>
+ </ng-container>
+ <ng-template #noProofYet>
+ <div class="rounded-xl border border-dashed border-violet-200 bg-white/70 px-4 py-5 text-center">
+ <span class="material-symbols-outlined mb-2 text-[28px] text-violet-300">image_not_supported</span>
+ <p class="text-[12px] font-bold text-slate-600">{{ 'FINANCES.SETTLEMENTS.PROOF_SECTION.EMPTY' | translate }}</p>
+ </div>
+ </ng-template>
+ </section>
+ </div>
+
+ <footer *ngIf="selectedSettlement.status === 'pending' || canResumeManualPayout(selectedSettlement)" class="flex gap-3 border-t border-slate-100 bg-white px-6 py-4">
  <app-button *ngIf="selectedSettlement.status === 'pending'"
  variant="primary"
  size="md"
- customClass="!flex-1!rounded-xl shadow-md shadow-zadna-primary/20"
+ customClass="!flex-1 !rounded-xl shadow-md shadow-zadna-primary/20"
  (btnClick)="processSettlement(selectedSettlement)">
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">payments</span>
  {{ 'FINANCES.SETTLEMENTS.PROCESS_PAYMENT' | translate }}
@@ -273,17 +323,12 @@ import {
  <app-button *ngIf="canResumeManualPayout(selectedSettlement)"
  variant="primary"
  size="md"
- customClass="!flex-1!rounded-xl shadow-md shadow-violet-500/20 !bg-violet-700 hover:!bg-violet-800"
+ customClass="!flex-1 !rounded-xl shadow-md shadow-violet-500/20 !bg-violet-700 hover:!bg-violet-800"
  (btnClick)="resumeManualPayout(selectedSettlement)">
  <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">account_balance</span>
  {{ 'FINANCES.SETTLEMENTS.MANAGE_MANUAL_PAYOUT' | translate }}
  </app-button>
- <app-button variant="outline" size="md" customClass="!flex-1 !rounded-xl" (btnClick)="exportAccountStatement()">
- <span class="material-symbols-outlined text-[18px] rtl:ml-1 ltr:mr-1">download</span>
- {{ 'FINANCES.SETTLEMENTS.ACCOUNT_STATEMENT' | translate }}
- </app-button>
- </div>
- </div>
+ </footer>
  </div>
  </div>
 
@@ -486,7 +531,6 @@ export class SettlementsComponent implements OnInit {
  private route = inject(ActivatedRoute);
  private router = inject(Router);
  private destroyRef = inject(DestroyRef);
- private readonly exportService = inject(ExportService);
  private readonly toastService = inject(ToastService);
 
  allSettlements: Settlement[] = [];
@@ -814,24 +858,28 @@ export class SettlementsComponent implements OnInit {
  });
  }
 
- exportAccountStatement(): void {
- const settlement = this.selectedSettlement;
- if (!settlement) {
- this.toastService.warning(this.translate.instant('COMMON.EXPORT_EMPTY'));
+ getConfirmedManualPayout(settlement: Settlement): SettlementPayout | null {
+ return settlement.payouts?.find((payout) => !!payout.manualConfirmation) ?? null;
+ }
+
+ viewSettlementProof(payout: SettlementPayout): void {
+ const attachmentId = payout.manualConfirmation?.proofAttachmentId;
+ if (!attachmentId) {
  return;
  }
 
- this.financeService.exportSettlementStatement(settlement.id).subscribe({
- next: (blob) => {
- this.exportService.downloadServerFile(blob, this.exportService.fileName('settlement-statement', 'pdf'));
- this.toastService.success(this.translate.instant('COMMON.EXPORT_SUCCESS'));
+ this.financeService.downloadManualPayoutProof(payout.id, attachmentId).pipe(take(1)).subscribe({
+ next: (file) => {
+ const url = URL.createObjectURL(file);
+ window.open(url, '_blank', 'noopener');
+ window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
  },
  error: () => {
- this.toastService.error(this.translate.instant('COMMON.EXPORT_FAILED'));
+ this.toastService.error(this.translate.instant('FINANCES.SETTLEMENTS.PROOF_SECTION.VIEW_ERROR'));
  }
  });
  }
- 
+
  processSettlement(s: Settlement): void {
   this.financeService.approveSettlement(s.id).pipe(take(1)).subscribe({
  next: (settlement) => {
@@ -1130,6 +1178,15 @@ export class SettlementsComponent implements OnInit {
 
  formatDate(d: string): string {
  return new Date(d).toLocaleDateString(getFinanceLocale(this.translate.currentLang), { timeZone: 'Asia/Riyadh', calendar: 'gregory' });
+ }
+
+ formatDateTime(d: string): string {
+ return new Date(d).toLocaleString(getFinanceLocale(this.translate.currentLang), {
+ timeZone: 'Asia/Riyadh',
+ calendar: 'gregory',
+ dateStyle: 'medium',
+ timeStyle: 'short'
+ });
  }
 
  formatNumber(value: number): string {

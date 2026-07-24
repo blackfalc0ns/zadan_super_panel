@@ -96,8 +96,12 @@
       "DRIVERS": "Drivers",
       "ORDERS": "Orders",
       "FINANCE": "Finance",
+      "PLATFORM": "Platform & system",
+      "PLATFORM_HELPER": "System, catalog, marketing, and security health",
+      "PLATFORM_SECTIONS": "sections",
       "COVERAGE": "Geography coverage",
       "COVERAGE_HELPER": "Customers, vendors, and drivers per city",
+      "COVERAGE_GAPS_HELPER": "{{customers}} customers without vendor coverage",
       "DAY": "Day",
       "WEEK": "Week",
       "MONTH": "Month",
@@ -387,7 +391,9 @@
       "FULFILLMENT_TITLE": "Fulfillment quality",
       "FULFILLMENT_DESC": "Share of orders delivered inside the target service window.",
       "SUPPLY_TITLE": "Supply capacity",
-      "SUPPLY_DESC": "Percentage of vendors and drivers fully ready to scale right now."
+      "SUPPLY_DESC": "Percentage of vendors and drivers fully ready to scale right now.",
+      "ORDERS_AT_RISK": "{{count}} orders at risk",
+      "SUPPLY_VALUE": "{{vendors}} vendors | {{drivers}} drivers"
     },
     "REGION_PRESSURE": {
       "TITLE": "Region operational pressure",
