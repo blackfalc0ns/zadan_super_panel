@@ -116,17 +116,22 @@
   border-color: rgba(16, 185, 129, 0.14);
 }
 
+:host ::ng-deep .customer-recent-orders-card {
+  align-self: start;
+}
+
 :host ::ng-deep .customer-orders-table table th,
 :host ::ng-deep .customer-orders-table table td {
-  padding-inline: 0.9rem !important;
+  padding-inline: 0.65rem !important;
 }
 
 :host ::ng-deep .customer-orders-table table th {
-  padding-block: 1rem !important;
+  padding-block: 0.55rem !important;
+  font-size: 0.68rem !important;
 }
 
 :host ::ng-deep .customer-orders-table table td {
-  padding-block: 0.95rem !important;
+  padding-block: 0.5rem !important;
 }
 
 /* Glassmorphic KPI Card styles */

@@ -59,7 +59,7 @@
       <div class="flex items-center gap-2.5">
         <span class="material-symbols-outlined text-slate-400 text-[18px]">account_balance_wallet</span>
         <span>{{ 'DRIVERS.DETAIL.FINANCE.PAYOUT_METHOD' | translate }}:</span>
-        <span class="text-slate-900 font-black">{{ getMethodLabel(driver.finance.payoutMethod) | translate }}</span>
+        <span class="text-slate-900 font-black">{{ formatPayoutMethod() }}</span>
       </div>
       <div class="h-4 w-px bg-slate-200/60 hidden md:block"></div>
       <div class="flex items-center gap-2.5">

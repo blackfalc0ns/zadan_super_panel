@@ -311,6 +311,7 @@ export interface DriverFinanceSnapshot {
   pendingDeductions: number;
   nextPayoutDate: string;
   payoutMethod: string;
+  payoutMethodLabel?: string;
   statementPeriod: string;
   entries: DriverFinanceEntry[];
   currentBalance: number;

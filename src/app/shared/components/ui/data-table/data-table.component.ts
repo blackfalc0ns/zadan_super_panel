@@ -286,13 +286,26 @@ export interface BulkAction {
 
  <!-- Empty State -->
  <div *ngIf="data.length === 0 &&!isLoading"
- class="p-4 animate-in zoom-in duration-500">
- <div class="min-h-[320px] rounded-[1.35rem] border border-dashed border-slate-200 bg-slate-50/35 px-6 py-16 text-center flex flex-col items-center justify-center">
- <span class="material-symbols-outlined mb-5 text-[28px] leading-none text-[#8bbfca]">{{ emptyStateIcon }}</span>
- <h3 class="text-[1.35rem] font-black text-slate-900 tracking-normal leading-tight">{{ emptyStateTitle | translate }}</h3>
- <p class="mt-3 max-w-md text-[0.86rem] font-extrabold text-slate-500 leading-6">{{ emptyStateMessage | translate }}</p>
+ class="animate-in zoom-in duration-500"
+ [ngClass]="emptyStateCompact ? 'p-1.5' : 'p-4'">
+ <div
+ class="rounded-[1.35rem] border border-dashed border-slate-200 bg-slate-50/35 text-center flex flex-col items-center justify-center"
+ [ngClass]="emptyStateCompact
+ ? 'min-h-[96px] px-3 py-4'
+ : 'min-h-[320px] px-6 py-16'">
+ <span
+ class="material-symbols-outlined leading-none text-[#8bbfca]"
+ [ngClass]="emptyStateCompact ? 'mb-2 text-[20px]' : 'mb-5 text-[28px]'">{{ emptyStateIcon }}</span>
+ <h3
+ class="font-black text-slate-900 tracking-normal leading-tight"
+ [ngClass]="emptyStateCompact ? 'text-[0.92rem]' : 'text-[1.35rem]'">{{ emptyStateTitle | translate }}</h3>
+ <p
+ class="max-w-md font-extrabold text-slate-500"
+ [ngClass]="emptyStateCompact ? 'mt-1 text-[0.72rem] leading-5' : 'mt-3 text-[0.86rem] leading-6'">{{ emptyStateMessage | translate }}</p>
 
- <div *ngIf="emptyStateActionsTemplate || emptyStateActionLabel" class="mt-7 flex flex-wrap items-center justify-center gap-3">
+ <div *ngIf="emptyStateActionsTemplate || emptyStateActionLabel"
+ class="flex flex-wrap items-center justify-center gap-3"
+ [ngClass]="emptyStateCompact ? 'mt-3' : 'mt-7'">
  <ng-container *ngIf="emptyStateActionsTemplate; else defaultEmptyStateAction"
  [ngTemplateOutlet]="emptyStateActionsTemplate"></ng-container>
  <ng-template #defaultEmptyStateAction>
@@ -324,6 +337,7 @@ export class DataTableComponent<T extends object = Record<string, unknown>> {
  @Input() emptyStateIcon = 'category';
  @Input() emptyStateActionLabel = '';
  @Input() emptyStateActionIcon = 'add';
+ @Input() emptyStateCompact = false;
  @Input() idField = 'id';
  @Input() isLoading = false;
  @Input() skeletonRows = 6;

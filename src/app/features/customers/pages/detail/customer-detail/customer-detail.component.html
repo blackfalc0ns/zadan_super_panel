@@ -271,7 +271,11 @@
  </div>
 
  <div class="grid grid-cols-12 gap-6">
- <div [ngClass]="currentTab === 'workflow' ? 'col-span-12 space-y-6' : 'col-span-12 lg:col-span-4 space-y-6'">
+ <div [ngClass]="currentTab === 'workflow'
+ ? 'col-span-12 space-y-6'
+ : currentTab === 'overview'
+ ? 'col-span-12 lg:col-span-5 space-y-6'
+ : 'col-span-12 lg:col-span-4 space-y-6'">
  <section *ngIf="currentTab === 'workflow'" class="detail-card relative overflow-hidden bg-white">
  <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-cyan-50/50 to-transparent"></div>
  <div class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-zadna-primary/10 blur-[50px]"></div>
@@ -500,76 +504,76 @@
  </app-section-header>
 
  <!-- Custom high-fidelity profile field grid with Copy Buttons -->
- <div class="mt-5">
- <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+ <div class="mt-6">
+ <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
  <!-- Full Name -->
- <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
- <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
+ <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.FULL_NAME' | translate }}
  </span>
- <span class="text-base font-extrabold text-slate-800 mt-1">{{ currentCustomer.name }}</span>
+ <span class="text-lg font-extrabold text-slate-800 mt-1.5">{{ currentCustomer.name }}</span>
  </div>
 
  <!-- Phone -->
- <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[5rem]">
+ <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex items-center justify-between min-h-[6rem]">
  <div class="flex flex-col">
- <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+ <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.PHONE' | translate }}
  </span>
- <span class="text-base font-extrabold text-slate-800 mt-1" dir="ltr">{{ currentCustomer.phone }}</span>
+ <span class="text-lg font-extrabold text-slate-800 mt-1.5" dir="ltr">{{ currentCustomer.phone }}</span>
  </div>
  <button type="button" 
  (click)="copyToClipboard('phone', currentCustomer.phone)" 
- class="p-2 rounded-lg border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center"
+ class="p-2.5 rounded-xl border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center"
  [title]="'CUSTOMERS.DETAIL.ACTION_COPY' | translate">
- <span class="material-symbols-outlined text-[18px]">
+ <span class="material-symbols-outlined text-[20px]">
  {{ copiedFields.get('phone') ? 'check' : 'content_copy' }}
  </span>
  </button>
  </div>
 
  <!-- Email -->
- <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex items-center justify-between min-h-[5rem]">
+ <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex items-center justify-between min-h-[6rem]">
  <div class="flex flex-col min-w-0">
- <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+ <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.EMAIL' | translate }}
  </span>
- <span class="text-base font-extrabold text-slate-800 mt-1 truncate" dir="ltr">{{ currentCustomer.email }}</span>
+ <span class="text-lg font-extrabold text-slate-800 mt-1.5 truncate" dir="ltr">{{ currentCustomer.email }}</span>
  </div>
  <button type="button" 
  (click)="copyToClipboard('email', currentCustomer.email)" 
- class="p-2 rounded-lg border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center shrink-0"
+ class="p-2.5 rounded-xl border border-slate-200/60 bg-white text-slate-400 hover:text-zadna-primary hover:border-zadna-primary/20 hover:shadow-sm transition-all flex items-center justify-center shrink-0"
  [title]="'CUSTOMERS.DETAIL.ACTION_COPY' | translate">
- <span class="material-symbols-outlined text-[18px]">
+ <span class="material-symbols-outlined text-[20px]">
  {{ copiedFields.get('email') ? 'check' : 'content_copy' }}
  </span>
  </button>
  </div>
 
  <!-- City -->
- <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
- <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
+ <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.CITY' | translate }}
  </span>
- <span class="text-base font-extrabold text-slate-800 mt-1">{{ resolveCityLabel(currentCustomer) }}</span>
+ <span class="text-lg font-extrabold text-slate-800 mt-1.5">{{ resolveCityLabel(currentCustomer) }}</span>
  </div>
 
  <!-- Language -->
- <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
- <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
+ <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LANGUAGE' | translate }}
  </span>
- <span class="text-base font-extrabold text-slate-800 mt-1">
+ <span class="text-lg font-extrabold text-slate-800 mt-1.5">
  {{ (currentCustomer.preferredLanguageLabel || 'COMMON.NOT_AVAILABLE') | translate }}
  </span>
  </div>
 
  <!-- Last Seen -->
- <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/30 flex flex-col justify-between min-h-[5rem]">
- <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+ <div class="p-5 rounded-2xl border border-slate-100 bg-slate-50/40 flex flex-col justify-between min-h-[6rem]">
+ <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
  {{ 'CUSTOMERS.DETAIL.PROFILE_FIELDS.LAST_SEEN' | translate }}
  </span>
- <span class="text-base font-extrabold text-slate-800 mt-1">
+ <span class="text-lg font-extrabold text-slate-800 mt-1.5">
  <ng-container *ngIf="currentCustomer.isOnlineNow; else offlineText">
  {{ 'CUSTOMERS.PRESENCE.ONLINE_NOW' | translate }}
  </ng-container>
@@ -660,9 +664,9 @@
  </section>
  </div>
 
- <div *ngIf="currentTab === 'overview'" class="col-span-12 lg:col-span-8 space-y-6">
- <section class="detail-card detail-card--p0">
- <div class="p-6 border-b border-slate-200/70">
+ <div *ngIf="currentTab === 'overview'" class="col-span-12 lg:col-span-7 space-y-6">
+ <section class="detail-card detail-card--p0 customer-recent-orders-card">
+ <div class="px-3.5 pt-3.5 pb-2.5 border-b border-slate-200/70">
  <app-section-header
  [title]="'CUSTOMERS.DETAIL.SECTIONS.RECENT_ORDERS'"
  icon="local_mall"
@@ -673,13 +677,15 @@
  </app-section-header>
  </div>
 
- <div class="px-3 pb-3">
+ <div class="px-2 pb-2">
  <app-data-table
  [data]="recentOrders"
  [columns]="recentOrdersColumns"
  [clickableRows]="true"
- [emptyStateTitle]="'CUSTOMERS.EMPTY_TITLE'"
- [emptyStateMessage]="'CUSTOMERS.EMPTY_MESSAGE'"
+ [emptyStateCompact]="true"
+ [emptyStateIcon]="'receipt_long'"
+ [emptyStateTitle]="'CUSTOMERS.DETAIL.ORDERS_TABLE.EMPTY_TITLE'"
+ [emptyStateMessage]="'CUSTOMERS.DETAIL.ORDERS_TABLE.EMPTY_MESSAGE'"
  [containerClass]="'customer-orders-table bg-transparent'"
  (rowClick)="openOrder($event)">
 

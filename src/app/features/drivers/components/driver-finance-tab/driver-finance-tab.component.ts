@@ -240,6 +240,20 @@ export class DriverFinanceTabComponent implements OnInit, OnChanges {
     return `DRIVERS.DETAIL.FINANCE.BACKEND.PAYOUT_METHODS.${method.toUpperCase()}`;
   }
 
+  formatPayoutMethod(): string {
+    const methodKey = this.getMethodLabel(this.driver?.finance?.payoutMethod);
+    const methodText = this.translate.instant(methodKey);
+    const label = this.driver?.finance?.payoutMethodLabel?.trim();
+
+    if (label && methodKey !== 'COMMON.NOT_AVAILABLE') {
+      return `${methodText} · ${label}`;
+    }
+    if (label) {
+      return label;
+    }
+    return methodText;
+  }
+
   formatStatementPeriod(period: string | null | undefined): string {
     if (!period?.trim()) {
       return this.translate.instant('COMMON.NOT_AVAILABLE');

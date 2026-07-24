@@ -391,6 +391,7 @@ interface AdminDriverFinanceDetailsResponse {
  pendingDeductions: number;
  nextPayoutDateUtc?: string | null;
  payoutMethod?: string | null;
+ payoutMethodLabel?: string | null;
  statementPeriod: string;
  entries: AdminDriverFinanceEntryResponse[];
  currentBalance?: number;
@@ -1025,6 +1026,7 @@ export class DriverService {
  payoutMethod: response.financeDetails.payoutMethod
  ? this.mapPayoutMethod(response.financeDetails.payoutMethod)
  : 'COMMON.NOT_AVAILABLE',
+ payoutMethodLabel: response.financeDetails.payoutMethodLabel?.trim() || undefined,
  statementPeriod: this.mapStatementPeriod(response.financeDetails.statementPeriod),
  entries: this.mapFinanceEntries(response.financeDetails.entries),
  currentBalance: Number(response.financeDetails.currentBalance ?? response.finance.currentBalance ?? 0),
