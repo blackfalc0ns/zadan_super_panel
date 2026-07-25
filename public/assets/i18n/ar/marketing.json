@@ -441,8 +441,10 @@
       "VERSION": "الإصدار",
       "EFFECTIVE_AT": "تاريخ السريان",
       "CONTENT_AR": "المحتوى بالعربية (Markdown)",
-      "CONTENT_EN": "المحتوى بالإنجليزية (Markdown)",
+      "CONTENT_EN": "English content (Markdown)",
       "MARKDOWN_HINT": "يدعم العناوين والقوائم والجداول بنفس صيغة Markdown المستخدمة حالياً.",
+      "MARKDOWN_HINT_AR": "اكتب من اليمين لليسار. يدعم العناوين والقوائم والجداول بصيغة Markdown.",
+      "MARKDOWN_HINT_EN": "Type left-to-right. Supports headings, lists, and tables in Markdown.",
       "LAST_UPDATED": "آخر تحديث",
       "SAVE_SUCCESS": "تم حفظ المستند القانوني بنجاح",
       "TYPES": {

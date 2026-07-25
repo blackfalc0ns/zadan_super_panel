@@ -443,6 +443,8 @@
       "CONTENT_AR": "Arabic content (Markdown)",
       "CONTENT_EN": "English content (Markdown)",
       "MARKDOWN_HINT": "Supports headings, lists, and tables in the same Markdown format already used.",
+      "MARKDOWN_HINT_AR": "Type right-to-left. Supports headings, lists, and tables in Markdown.",
+      "MARKDOWN_HINT_EN": "Type left-to-right. Supports headings, lists, and tables in Markdown.",
       "LAST_UPDATED": "Last updated",
       "SAVE_SUCCESS": "Legal document saved successfully",
       "TYPES": {

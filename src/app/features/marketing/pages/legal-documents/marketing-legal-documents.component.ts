@@ -107,30 +107,34 @@ import { ToastService } from '@shared/services/toast.service';
           </p>
         </section>
 
-        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div class="mb-4">
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" dir="rtl">
+          <div class="mb-4 text-right">
             <h4 class="text-[15px] font-black text-slate-950">{{ 'MARKETING.LEGAL_DOCUMENTS.CONTENT_AR' | translate }}</h4>
-            <p class="mt-1 text-[12px] font-medium text-slate-500">{{ 'MARKETING.LEGAL_DOCUMENTS.MARKDOWN_HINT' | translate }}</p>
+            <p class="mt-1 text-[12px] font-medium text-slate-500">{{ 'MARKETING.LEGAL_DOCUMENTS.MARKDOWN_HINT_AR' | translate }}</p>
           </div>
           <textarea
             [(ngModel)]="form.contentAr"
             name="contentAr"
             rows="16"
             dir="rtl"
-            class="w-full resize-y rounded-2xl border border-slate-200 px-4 py-3 font-mono text-[13px] font-medium leading-relaxed text-slate-900 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"></textarea>
+            lang="ar"
+            class="w-full resize-y rounded-2xl border border-slate-200 px-4 py-3 font-mono text-[13px] font-medium leading-relaxed text-slate-900 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+            style="direction: rtl; text-align: right; unicode-bidi: plaintext;"></textarea>
         </section>
 
-        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div class="mb-4">
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" dir="ltr">
+          <div class="mb-4 text-left">
             <h4 class="text-[15px] font-black text-slate-950">{{ 'MARKETING.LEGAL_DOCUMENTS.CONTENT_EN' | translate }}</h4>
-            <p class="mt-1 text-[12px] font-medium text-slate-500">{{ 'MARKETING.LEGAL_DOCUMENTS.MARKDOWN_HINT' | translate }}</p>
+            <p class="mt-1 text-[12px] font-medium text-slate-500">{{ 'MARKETING.LEGAL_DOCUMENTS.MARKDOWN_HINT_EN' | translate }}</p>
           </div>
           <textarea
             [(ngModel)]="form.contentEn"
             name="contentEn"
             rows="16"
             dir="ltr"
-            class="w-full resize-y rounded-2xl border border-slate-200 px-4 py-3 font-mono text-[13px] font-medium leading-relaxed text-slate-900 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"></textarea>
+            lang="en"
+            class="w-full resize-y rounded-2xl border border-slate-200 px-4 py-3 font-mono text-[13px] font-medium leading-relaxed text-slate-900 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+            style="direction: ltr; text-align: left; unicode-bidi: plaintext;"></textarea>
         </section>
       </form>
     </div>
