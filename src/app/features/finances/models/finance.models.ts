@@ -404,6 +404,7 @@ export interface OrderFinancialBreakdown {
   platformRevenue: number;
   netMargin: number;
   marginPercent: number;
+  fulfillmentType?: string | null;
 }
 
 export interface VendorFinanceProfile {

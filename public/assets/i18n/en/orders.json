@@ -456,6 +456,49 @@
       "PAYMENT_ISSUES": "Payment Issues",
       "REFUNDS": "Refunds"
     },
+    "FULFILLMENT_TYPE": {
+      "DELIVERY": "Delivery",
+      "PICKUP": "Store pickup"
+    },
+    "PICKUP_SETTINGS": {
+      "TITLE": "Pickup settings",
+      "SUBTITLE": "Configure platform pickup and delivery checkout options.",
+      "BACK_TO_ORDERS": "Back to orders",
+      "DELIVERY_ENABLED": "Delivery option enabled",
+      "PICKUP_ENABLED": "Pickup option enabled",
+      "CASH_ON_PICKUP_ENABLED": "Allow cash payment on pickup",
+      "COMMISSION_PERCENT": "Pickup commission (%)",
+      "NO_SHOW_HOURS": "No-show timeout (hours)",
+      "OTP_MAX_ATTEMPTS": "OTP max attempts",
+      "OTP_LOCKOUT_MINUTES": "OTP lockout (minutes)",
+      "LAST_UPDATED": "Last updated",
+      "SAVE": "Save settings",
+      "LOAD_ERROR": "Could not load pickup settings.",
+      "SAVE_SUCCESS": "Pickup settings saved.",
+      "SAVE_ERROR": "Could not save pickup settings."
+    },
+    "PICKUP": {
+      "ADMIN_PANEL_TITLE": "Pickup fulfillment",
+      "BRANCH_TITLE": "Pickup branch",
+      "NO_SHOW_TITLE": "No-show countdown",
+      "NO_SHOW_EXPIRED": "Expired",
+      "OTP_STATUS_LABEL": "Pickup OTP status",
+      "OTP_ATTEMPTS_LABEL": "Failed OTP attempts",
+      "CONVERT_TO_DELIVERY": "Convert to delivery",
+      "CONVERT_MODAL_TITLE": "Convert pickup order to delivery",
+      "CONVERT_MODAL_DESC": "Provide the customer delivery address ID. Reason defaults to admin override.",
+      "CONVERT_ADDRESS_ID": "Customer delivery address",
+      "CONVERT_ADDRESS_PLACEHOLDER": "Select customer address",
+      "CONVERT_SUBMIT": "Convert order",
+      "OTP_STATUS": {
+        "UNKNOWN": "Unknown",
+        "NOT_APPLICABLE": "Not applicable",
+        "NOT_AVAILABLE": "Not available",
+        "PENDING": "Pending verification",
+        "VERIFIED": "Verified",
+        "LOCKED": "Locked"
+      }
+    },
     "TABLE": {
       "ID": "Order ID",
       "CUSTOMER": "Customer",

@@ -225,6 +225,8 @@ interface AdminOrderFinancialBreakdownApiModel {
  platformRevenue: number;
  netMargin: number;
  marginPercent: number;
+ fulfillmentType?: string | null;
+ FulfillmentType?: string | null;
 }
 
 interface AdminManualPayoutConfirmationApiModel {
@@ -1053,7 +1055,8 @@ export class FinanceService {
  driverPayout: this.round(item.driverPayout),
  platformRevenue: this.round(item.platformRevenue),
  netMargin: this.round(item.netMargin),
- marginPercent: this.round(item.marginPercent)
+ marginPercent: this.round(item.marginPercent),
+ fulfillmentType: item.fulfillmentType ?? item.FulfillmentType ?? null
  })),
  catchError((error) => {
  console.error(`Failed to load order financial breakdown for ${orderId}.`, error);

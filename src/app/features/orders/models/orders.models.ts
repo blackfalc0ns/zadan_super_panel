@@ -9,6 +9,18 @@ export type OrderPaymentStatus =
   | 'COD_PENDING'
   | 'SETTLED';
 
+export type OrderFulfillmentType = 'Delivery' | 'Pickup';
+
+export type PickupOtpStatus = 'not_applicable' | 'not_available' | 'pending' | 'verified' | 'locked';
+
+export interface PickupBranchInfo {
+  name: string;
+  address: string;
+  hoursToday?: string;
+}
+
+export type ConvertToDeliveryReason = 'CustomerRequest' | 'VendorUnablePickup' | 'AdminOverride' | 'Other';
+
 export type OrderFulfillmentStatus =
   | 'QUEUED'
   | 'PREPARING'
@@ -120,6 +132,7 @@ export interface OrderListItem {
   status: OrderStatus;
   paymentStatus: OrderPaymentStatus;
   fulfillmentStatus: OrderFulfillmentStatus;
+  fulfillmentType?: OrderFulfillmentType;
   dispatchState?: OrderDispatchState;
   dispatchReasonAr?: string;
   dispatchReasonEn?: string;
@@ -185,6 +198,18 @@ export interface OrderDetail extends OrderListItem {
   merchantGeo?: { latitude: number; longitude: number } | null;
   driverLiveLocation?: { latitude: number; longitude: number; accuracyMeters?: number; recordedAtUtc?: string } | null;
   deliveryBreakdown?: OrderDeliveryBreakdown;
+  pickupOtpStatus?: PickupOtpStatus;
+  pickupOtpFailedAttempts?: number;
+  pickupOtpLockedUntilUtc?: string;
+  pickupNoShowDeadlineUtc?: string;
+  pickupBranch?: PickupBranchInfo;
+  customerAddresses?: CustomerAddressOption[];
+}
+
+export interface CustomerAddressOption {
+  id: string;
+  label: string;
+  addressText: string;
 }
 
 export interface OrderStatusUpdateForm {

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { catchError, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
+ CustomerAddressOption,
  DriverAssignmentForm,
  DriverCandidate,
  OrderActivity,
@@ -27,7 +28,11 @@ import {
  OrderWorkflowStage,
  OrderResolutionState,
  PaginatedOrdersResponse,
- OrderDeliveryBreakdown
+ OrderDeliveryBreakdown,
+ OrderFulfillmentType,
+ PickupBranchInfo,
+ PickupOtpStatus,
+ ConvertToDeliveryReason
 } from '../models/orders.models';
 
 interface AdminOrdersListResponse {
@@ -66,6 +71,12 @@ interface AdminOrderListItemResponse {
 }
 
 interface AdminOrderDetailResponse extends AdminOrderListItemResponse {
+ fulfillmentType?: string;
+ pickupOtpStatus?: string;
+ pickupOtpFailedAttempts?: number;
+ pickupOtpLockedUntilUtc?: string | null;
+ pickupNoShowDeadlineUtc?: string | null;
+ pickupBranch?: { name?: string; address?: string; hoursToday?: string } | null;
  customerEmail: string;
  customerAddress: string;
  merchantLocation: string;
@@ -292,6 +303,20 @@ export class OrdersService {
  );
  }
 
+ convertToDelivery(
+ id: string,
+ customerAddressId: string,
+ reason: ConvertToDeliveryReason = 'AdminOverride'
+ ): Observable<{ orderId: string; converted: boolean; status: string; message: string; paymentSessionUrl?: string | null }> {
+ return this.http.post<{
+ orderId: string;
+ converted: boolean;
+ status: string;
+ message: string;
+ paymentSessionUrl?: string | null;
+ }>(`${this.apiUrl}/${this.normalizeOrderId(id)}/convert-to-delivery`, { customerAddressId, reason });
+ }
+
  private mapListItem(item: AdminOrderListItemResponse): OrderListItem {
  return {
  id: item.id,
@@ -305,6 +330,7 @@ export class OrdersService {
  status: item.status,
  paymentStatus: item.paymentStatus,
  fulfillmentStatus: item.fulfillmentStatus,
+ fulfillmentType: this.mapFulfillmentType((item as AdminOrderDetailResponse).fulfillmentType),
  dispatchState: item.dispatchState,
  dispatchReasonAr: this.fixEncoding(item.dispatchReasonAr),
  dispatchReasonEn: this.fixEncoding(item.dispatchReasonEn),
@@ -323,8 +349,19 @@ export class OrdersService {
 
  private mapDetail(item: AdminOrderDetailResponse): OrderDetail {
  const listItem = this.mapListItem(item);
+ const raw = item as AdminOrderDetailResponse & Record<string, unknown>;
 
  return {...listItem,
+ fulfillmentType: this.mapFulfillmentType(item.fulfillmentType ?? raw['fulfillmentType'] ?? raw['FulfillmentType']),
+ pickupOtpStatus: this.mapPickupOtpStatus(
+ item.pickupOtpStatus ?? raw['pickupOtpStatus'] ?? raw['PickupOtpStatus'] ?? raw['customerPickupOtpStatus'] ?? raw['CustomerPickupOtpStatus'],
+ item.pickupOtpLockedUntilUtc ?? raw['pickupOtpLockedUntilUtc'] ?? raw['PickupOtpLockedUntilUtc']
+ ),
+ pickupOtpFailedAttempts: Number(item.pickupOtpFailedAttempts ?? raw['pickupOtpFailedAttempts'] ?? raw['PickupOtpFailedAttempts'] ?? 0) || undefined,
+ pickupOtpLockedUntilUtc: this.toOptionalUtcString(item.pickupOtpLockedUntilUtc ?? raw['pickupOtpLockedUntilUtc'] ?? raw['PickupOtpLockedUntilUtc']),
+ pickupNoShowDeadlineUtc: this.toOptionalUtcString(item.pickupNoShowDeadlineUtc ?? raw['pickupNoShowDeadlineUtc'] ?? raw['PickupNoShowDeadlineUtc']),
+ pickupBranch: this.mapPickupBranch(item.pickupBranch ?? raw['pickupBranch'] ?? raw['PickupBranch']),
+ customerAddresses: this.mapCustomerAddresses(raw['customerAddresses'] ?? raw['CustomerAddresses']),
  customerEmail: item.customerEmail,
  customerAddress: this.fixEncoding(item.customerAddress),
  merchantLocation: this.fixEncoding(item.merchantLocation),
@@ -565,6 +602,90 @@ export class OrdersService {
 
  private upsertCache(order: OrderDetail): void {
  this.ordersCache.set(this.normalizeOrderId(order.id), this.clone(order));
+ }
+
+ private mapFulfillmentType(value: unknown): OrderFulfillmentType | undefined {
+ if (value === null || value === undefined || value === '') {
+ return undefined;
+ }
+
+ return String(value).trim().toLowerCase() === 'pickup' ? 'Pickup' : 'Delivery';
+ }
+
+ private mapPickupOtpStatus(value: unknown, lockedUntil: unknown): PickupOtpStatus | undefined {
+ if (lockedUntil) {
+ const lockMs = new Date(String(lockedUntil)).getTime();
+ if (!Number.isNaN(lockMs) && lockMs > Date.now()) {
+ return 'locked';
+ }
+ }
+
+ if (value === null || value === undefined || value === '') {
+ return undefined;
+ }
+
+ const normalized = String(value).trim().toLowerCase();
+ if (normalized === 'verified' || normalized === 'pending' || normalized === 'not_available' || normalized === 'not_applicable') {
+ return normalized as PickupOtpStatus;
+ }
+
+ return undefined;
+ }
+
+ private mapPickupBranch(value: unknown): PickupBranchInfo | undefined {
+ const raw = value as { name?: string; address?: string; hoursToday?: string; Name?: string; Address?: string; HoursToday?: string } | null | undefined;
+ if (!raw) {
+ return undefined;
+ }
+
+ const name = String(raw.name ?? raw.Name ?? '').trim();
+ const address = String(raw.address ?? raw.Address ?? '').trim();
+ if (!name && !address) {
+ return undefined;
+ }
+
+ return {
+ name,
+ address,
+ hoursToday: (raw.hoursToday ?? raw.HoursToday) ? String(raw.hoursToday ?? raw.HoursToday) : undefined
+ };
+ }
+
+ private mapCustomerAddresses(value: unknown): CustomerAddressOption[] {
+ if (!Array.isArray(value)) {
+ return [];
+ }
+
+ return value
+ .map((entry) => {
+ const item = entry as {
+ id?: string;
+ Id?: string;
+ label?: string;
+ Label?: string;
+ addressText?: string;
+ AddressText?: string;
+ };
+ const id = String(item.id ?? item.Id ?? '').trim();
+ if (!id) {
+ return null;
+ }
+
+ return {
+ id,
+ label: String(item.label ?? item.Label ?? 'Address'),
+ addressText: String(item.addressText ?? item.AddressText ?? '')
+ };
+ })
+ .filter((item): item is CustomerAddressOption => item !== null);
+ }
+
+ private toOptionalUtcString(value: unknown): string | undefined {
+ if (value === null || value === undefined || value === '') {
+ return undefined;
+ }
+
+ return String(value);
  }
 
  private normalizeOrderId(id: string): string {

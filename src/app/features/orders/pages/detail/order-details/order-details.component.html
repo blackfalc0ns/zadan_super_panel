@@ -92,6 +92,7 @@
               <app-status-pill [label]="orderStatusLabel" [variant]="getOrderStatusVariant(currentOrder.status)" [shouldTranslate]="true"></app-status-pill>
               <app-status-pill [label]="paymentStatusLabel" [variant]="getPaymentStatusVariant(currentOrder.paymentStatus)" [shouldTranslate]="true"></app-status-pill>
               <app-status-pill [label]="fulfillmentStatusLabel" [variant]="getFulfillmentStatusVariant(currentOrder.fulfillmentStatus)" [shouldTranslate]="true"></app-status-pill>
+              <app-status-pill *ngIf="fulfillmentTypeLabel" [label]="fulfillmentTypeLabel" [variant]="isPickupOrder() ? 'info' : 'processing'" [shouldTranslate]="true"></app-status-pill>
             </div>
           </div>
 
@@ -136,9 +137,13 @@
 
         <!-- Actions -->
         <div class="mt-5 flex flex-wrap gap-2 border-t border-dashed border-slate-200 pt-5">
-          <button type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('tracking')">
+          <button *ngIf="!isPickupOrder()" type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-extrabold text-slate-600 transition hover:border-zadna-primary/30 hover:bg-zadna-primary/5 hover:text-zadna-primary" (click)="scrollToSection('tracking')">
             <span class="material-symbols-outlined text-base">share_location</span>
             {{ 'ORDERS.DETAIL.TRACK_DRIVER' | translate }}
+          </button>
+          <button *ngIf="canConvertToDelivery()" type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-xs font-extrabold text-violet-700 transition hover:bg-violet-100" (click)="openConvertModal()">
+            <span class="material-symbols-outlined text-base">local_shipping</span>
+            {{ 'ORDERS.PICKUP.CONVERT_TO_DELIVERY' | translate }}
           </button>
           <button *ngIf="!isOrderTerminal" type="button" class="btn-premium inline-flex items-center gap-1.5 px-4 py-2.5 text-xs" (click)="openStatusModal()">
             <span class="material-symbols-outlined text-base">edit</span>
@@ -224,6 +229,29 @@
           </div>
         </article>
       </div>
+
+      <section *ngIf="isPickupOrder()" class="rounded-3xl border border-violet-100 bg-violet-50/50 p-5 shadow-sm">
+        <h3 class="text-sm font-black text-slate-900">{{ 'ORDERS.PICKUP.ADMIN_PANEL_TITLE' | translate }}</h3>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-xl border border-white/80 bg-white p-3.5">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.PICKUP.OTP_STATUS_LABEL' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-slate-800">{{ pickupOtpStatusLabel | translate }}</p>
+          </div>
+          <div class="rounded-xl border border-white/80 bg-white p-3.5">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.PICKUP.OTP_ATTEMPTS_LABEL' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-slate-800">{{ currentOrder.pickupOtpFailedAttempts || 0 }}</p>
+          </div>
+          <div *ngIf="currentOrder.pickupNoShowDeadlineUtc" class="rounded-xl border border-white/80 bg-white p-3.5">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.PICKUP.NO_SHOW_TITLE' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-amber-700">{{ formatCountdown(noShowRemainingMs) }}</p>
+          </div>
+          <div *ngIf="currentOrder.pickupBranch as branch" class="rounded-xl border border-white/80 bg-white p-3.5 sm:col-span-2 lg:col-span-4">
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{{ 'ORDERS.PICKUP.BRANCH_TITLE' | translate }}</p>
+            <p class="mt-1 text-sm font-extrabold text-slate-800">{{ branch.name }}</p>
+            <p class="mt-0.5 text-xs font-semibold text-slate-500">{{ branch.address }}</p>
+          </div>
+        </div>
+      </section>
 
       <!-- Cancellation -->
       <div *ngIf="currentOrder.cancellationSummary as cancellation" class="space-y-4">
@@ -647,5 +675,27 @@
     <app-order-refund-modal [isOpen]="isRefundModalOpen" [order]="order()" [isSubmitting]="isSubmittingRefund" (close)="closeRefundModal()" (saveDraft)="saveRefundDraft($event)" (submitRefund)="submitRefund($event)"></app-order-refund-modal>
     <app-order-dispute-modal [isOpen]="isDisputeModalOpen" [isSubmitting]="isSubmittingDispute" [order]="order()" [draft]="disputeDraft" (close)="closeDisputeModal()" (saveDraft)="saveDisputeDraft($event)" (submitDispute)="submitDispute($event)"></app-order-dispute-modal>
     <app-order-issue-flag-modal [isOpen]="isIssueFlagModalOpen" [order]="order()" [isSubmitting]="isSubmittingIssueFlag" (close)="closeIssueFlagModal()" (saveNote)="saveIssueNote($event)" (submitIssue)="submitIssueFlag($event)"></app-order-issue-flag-modal>
+
+    <div *ngIf="showConvertModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-900/45 backdrop-blur-sm" (click)="closeConvertModal()"></div>
+      <div class="relative w-full max-w-lg rounded-3xl border border-white/70 bg-white p-6 shadow-2xl" (click)="$event.stopPropagation()">
+        <h3 class="text-lg font-black text-slate-900">{{ 'ORDERS.PICKUP.CONVERT_MODAL_TITLE' | translate }}</h3>
+        <p class="mt-2 text-sm font-medium text-slate-500">{{ 'ORDERS.PICKUP.CONVERT_MODAL_DESC' | translate }}</p>
+        <label class="mt-5 block">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">{{ 'ORDERS.PICKUP.CONVERT_ADDRESS_ID' | translate }}</span>
+          <select *ngIf="(order()?.customerAddresses?.length || 0) > 0; else adminConvertAddressManual" [(ngModel)]="convertAddressId" class="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm font-bold">
+            <option value="">{{ 'ORDERS.PICKUP.CONVERT_ADDRESS_PLACEHOLDER' | translate }}</option>
+            <option *ngFor="let address of order()?.customerAddresses" [value]="address.id">{{ address.label }} — {{ address.addressText }}</option>
+          </select>
+          <ng-template #adminConvertAddressManual>
+            <input [(ngModel)]="convertAddressId" type="text" class="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm font-bold" />
+          </ng-template>
+        </label>
+        <div class="mt-6 flex gap-3">
+          <button type="button" class="flex-1 rounded-xl border border-slate-200 py-3 text-sm font-extrabold text-slate-600" (click)="closeConvertModal()" [disabled]="isConvertingToDelivery">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button type="button" class="flex-1 rounded-xl bg-zadna-primary py-3 text-sm font-extrabold text-white" (click)="submitConvertToDelivery()" [disabled]="isConvertingToDelivery || !convertAddressId.trim()">{{ 'ORDERS.PICKUP.CONVERT_SUBMIT' | translate }}</button>
+        </div>
+      </div>
+    </div>
   </ng-container>
 </div>

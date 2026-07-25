@@ -454,6 +454,49 @@
       "PAYMENT_ISSUES": "مشاكل دفع",
       "REFUNDS": "استرجاعات"
     },
+    "FULFILLMENT_TYPE": {
+      "DELIVERY": "توصيل",
+      "PICKUP": "استلام من التاجر"
+    },
+    "PICKUP_SETTINGS": {
+      "TITLE": "إعدادات الاستلام",
+      "SUBTITLE": "اضبط خيارات الاستلام والتوصيل على مستوى المنصة.",
+      "BACK_TO_ORDERS": "العودة للطلبات",
+      "DELIVERY_ENABLED": "تفعيل خيار التوصيل",
+      "PICKUP_ENABLED": "تفعيل خيار الاستلام",
+      "CASH_ON_PICKUP_ENABLED": "تفعيل الدفع نقدًا عند الاستلام",
+      "COMMISSION_PERCENT": "عمولة الاستلام (%)",
+      "NO_SHOW_HOURS": "مهلة عدم الحضور (ساعات)",
+      "OTP_MAX_ATTEMPTS": "الحد الأقصى لمحاولات الرمز",
+      "OTP_LOCKOUT_MINUTES": "مدة قفل الرمز (دقائق)",
+      "LAST_UPDATED": "آخر تحديث",
+      "SAVE": "حفظ الإعدادات",
+      "LOAD_ERROR": "تعذّر تحميل إعدادات الاستلام.",
+      "SAVE_SUCCESS": "تم حفظ إعدادات الاستلام.",
+      "SAVE_ERROR": "تعذّر حفظ إعدادات الاستلام."
+    },
+    "PICKUP": {
+      "ADMIN_PANEL_TITLE": "تنفيذ الاستلام",
+      "BRANCH_TITLE": "فرع الاستلام",
+      "NO_SHOW_TITLE": "العد التنازلي لعدم الحضور",
+      "NO_SHOW_EXPIRED": "انتهى الوقت",
+      "OTP_STATUS_LABEL": "حالة رمز الاستلام",
+      "OTP_ATTEMPTS_LABEL": "محاولات الرمز الفاشلة",
+      "CONVERT_TO_DELIVERY": "تحويل إلى توصيل",
+      "CONVERT_MODAL_TITLE": "تحويل طلب الاستلام إلى توصيل",
+      "CONVERT_MODAL_DESC": "أدخل معرّف عنوان التوصيل للعميل. السبب الافتراضي: تدخل إداري.",
+      "CONVERT_ADDRESS_ID": "عنوان توصيل العميل",
+      "CONVERT_ADDRESS_PLACEHOLDER": "اختر عنوان العميل",
+      "CONVERT_SUBMIT": "تحويل الطلب",
+      "OTP_STATUS": {
+        "UNKNOWN": "غير معروف",
+        "NOT_APPLICABLE": "غير منطبق",
+        "NOT_AVAILABLE": "غير متاح",
+        "PENDING": "بانتظار التحقق",
+        "VERIFIED": "تم التحقق",
+        "LOCKED": "مقفل"
+      }
+    },
     "TABLE": {
       "ID": "رقم الطلب",
       "CUSTOMER": "العميل",

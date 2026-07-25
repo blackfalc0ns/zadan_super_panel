@@ -11,6 +11,12 @@ export const ORDERS_ROUTES: Routes = [
         data: { permission: 'orders.view' }
     },
     {
+        path: 'settings/pickup',
+        canActivate: [HasPermissionGuard],
+        data: { permission: 'orders.view' },
+        loadComponent: () => import('./pages/pickup-settings/pickup-settings.component').then(m => m.PickupSettingsComponent)
+    },
+    {
         path: ':id',
         component: OrderDetailsComponent,
         canActivate: [HasPermissionGuard],

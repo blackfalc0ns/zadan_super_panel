@@ -1,5 +1,6 @@
 import { Component, HostListener, NgZone, OnDestroy, OnInit, signal, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription, interval, switchMap } from 'rxjs';
@@ -36,7 +37,8 @@ import {
  OrderRefundForm,
  OrderStatus,
  OrderStatusUpdateForm,
- OrderTimelineItem
+ OrderTimelineItem,
+ ConvertToDeliveryReason
 } from '../../../models/orders.models';
 import {
  getFulfillmentStatusKey,
@@ -55,6 +57,7 @@ import { resolveOrderTimelineStepIcon, resolveOrderTimelineTextKey } from '../..
  standalone: true,
  imports: [
  CommonModule,
+ FormsModule,
  TranslateModule,
  RouterModule,
  OrderStatusUpdateModalComponent,
@@ -83,10 +86,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  private fragmentSub: Subscription | null = null;
  private driverLocationSub: Subscription | null = null;
  private statusChangeSub: Subscription | null = null;
+ private countdownSub: Subscription | null = null;
  private trackedOrderId: string | null = null;
 
  isLoading = false;
  errorMessage = '';
+ showConvertModal = false;
+ convertAddressId = '';
+ isConvertingToDelivery = false;
+ noShowRemainingMs = 0;
 
  isStatusModalOpen = false;
  isDriverAssignmentModalOpen = false;
@@ -134,7 +142,93 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  ngOnDestroy(): void {
  this.stopPolling();
  this.stopRealtimeTracking();
+ this.stopCountdown();
  this.fragmentSub?.unsubscribe();
+ }
+
+ get fulfillmentTypeLabel(): string {
+ const currentOrder = this.order();
+ const type = currentOrder?.fulfillmentType ?? this.normalizeFulfillmentType(this.financialBreakdown()?.fulfillmentType);
+ if (!type) {
+ return '';
+ }
+
+ return type === 'Pickup' ? 'ORDERS.FULFILLMENT_TYPE.PICKUP' : 'ORDERS.FULFILLMENT_TYPE.DELIVERY';
+ }
+
+ get pickupOtpStatusLabel(): string {
+ const status = this.order()?.pickupOtpStatus;
+ if (!status) {
+ return 'ORDERS.PICKUP.OTP_STATUS.UNKNOWN';
+ }
+
+ return `ORDERS.PICKUP.OTP_STATUS.${status.toUpperCase()}`;
+ }
+
+ isPickupOrder(): boolean {
+ const currentOrder = this.order();
+ const type = currentOrder?.fulfillmentType ?? this.normalizeFulfillmentType(this.financialBreakdown()?.fulfillmentType);
+ return type === 'Pickup';
+ }
+
+ canConvertToDelivery(): boolean {
+ const currentOrder = this.order();
+ if (!currentOrder || !this.isPickupOrder() || this.isOrderTerminal) {
+ return false;
+ }
+
+ return currentOrder.paymentStatus === 'PAID';
+ }
+
+ openConvertModal(): void {
+ const addresses = this.order()?.customerAddresses ?? [];
+ this.convertAddressId = addresses[0]?.id ?? '';
+ this.showConvertModal = true;
+ }
+
+ closeConvertModal(): void {
+ if (this.isConvertingToDelivery) {
+ return;
+ }
+
+ this.showConvertModal = false;
+ }
+
+ submitConvertToDelivery(): void {
+ const id = this.orderId();
+ if (!id || !this.convertAddressId.trim() || this.isConvertingToDelivery) {
+ return;
+ }
+
+ this.isConvertingToDelivery = true;
+ this.ordersService.convertToDelivery(id, this.convertAddressId.trim(), 'AdminOverride').subscribe({
+ next: () => {
+ this.isConvertingToDelivery = false;
+ this.showConvertModal = false;
+ this.loadOrderDetails();
+ },
+ error: () => {
+ this.isConvertingToDelivery = false;
+ this.cdr.markForCheck();
+ }
+ });
+ }
+
+ formatCountdown(remainingMs: number): string {
+ if (remainingMs <= 0) {
+ return this.translate.instant('ORDERS.PICKUP.NO_SHOW_EXPIRED');
+ }
+
+ const totalSeconds = Math.ceil(remainingMs / 1000);
+ const hours = Math.floor(totalSeconds / 3600);
+ const minutes = Math.floor((totalSeconds % 3600) / 60);
+ const seconds = totalSeconds % 60;
+
+ if (hours > 0) {
+ return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+ }
+
+ return `${minutes}:${String(seconds).padStart(2, '0')}`;
  }
 
  get orderStatusLabel(): string {
@@ -1011,8 +1105,14 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
  private setOrder(order: OrderDetail): void {
  this.order.set(order);
+ this.refreshCountdowns();
+ this.startCountdownIfNeeded();
  this.startPollingIfNeeded();
+ if (order.fulfillmentType !== 'Pickup') {
  this.startRealtimeTracking(order.id);
+ } else {
+ this.stopRealtimeTracking();
+ }
  }
 
  private startRealtimeTracking(orderId: string): void {
@@ -1124,7 +1224,54 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.financeService.getOrderFinancialBreakdown(orderId).subscribe((breakdown) => {
  this.cdr.markForCheck();
  this.financialBreakdown.set(breakdown);
+
+ const current = this.order();
+ if (current && !current.fulfillmentType && breakdown?.fulfillmentType) {
+ const normalized = this.normalizeFulfillmentType(breakdown.fulfillmentType);
+ if (normalized) {
+ this.order.set({ ...current, fulfillmentType: normalized });
+ }
+ }
  });
+ }
+
+ private normalizeFulfillmentType(value: string | null | undefined): 'Delivery' | 'Pickup' | undefined {
+ if (!value?.trim()) {
+ return undefined;
+ }
+
+ return value.trim().toLowerCase() === 'pickup' ? 'Pickup' : 'Delivery';
+ }
+
+ private refreshCountdowns(): void {
+ const currentOrder = this.order();
+ const now = Date.now();
+ this.noShowRemainingMs = currentOrder?.pickupNoShowDeadlineUtc
+ ? Math.max(0, new Date(currentOrder.pickupNoShowDeadlineUtc).getTime() - now)
+ : 0;
+ }
+
+ private startCountdownIfNeeded(): void {
+ this.stopCountdown();
+ if (!this.order()?.pickupNoShowDeadlineUtc) {
+ return;
+ }
+
+ this.refreshCountdowns();
+ this.countdownSub = interval(1000).subscribe(() => {
+ this.zone.run(() => {
+ this.refreshCountdowns();
+ this.cdr.markForCheck();
+ if (this.noShowRemainingMs <= 0) {
+ this.stopCountdown();
+ }
+ });
+ });
+ }
+
+ private stopCountdown(): void {
+ this.countdownSub?.unsubscribe();
+ this.countdownSub = null;
  }
 
  private loadDisputeDraft(orderId: string): OrderDisputeForm | null {

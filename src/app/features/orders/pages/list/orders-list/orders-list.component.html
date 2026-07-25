@@ -8,6 +8,10 @@
       { label: 'ORDERS.OPERATIONS_MANAGEMENT' }
     ]">
     <span title-prefix class="material-symbols-outlined text-[28px] text-zadna-primary">shopping_cart</span>
+    <a actions routerLink="/orders/settings/pickup" class="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-xs font-extrabold text-slate-700 hover:border-zadna-primary/30 hover:text-zadna-primary">
+      <span class="material-symbols-outlined text-base">storefront</span>
+      {{ 'ORDERS.PICKUP_SETTINGS.TITLE' | translate }}
+    </a>
   </app-page-header>
 
   <div class="flex-1 min-h-0 px-4 md:px-10 py-5 max-w-[120rem] mx-auto w-full space-y-5 animate-in slide-in-from-bottom-10 duration-700">
