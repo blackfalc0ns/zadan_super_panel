@@ -23,6 +23,12 @@ export const FINANCES_ROUTES: Routes = [
         loadComponent: () => import('./pages/platform-pricing/platform-pricing.component').then(m => m.PlatformPricingComponent)
       },
       {
+        path: 'fulfillment',
+        canActivate: [HasPermissionGuard],
+        data: { permission: 'orders.view' },
+        loadComponent: () => import('../orders/pages/pickup-settings/pickup-settings.component').then(m => m.PickupSettingsComponent)
+      },
+      {
         path: 'ledger',
         canActivate: [HasPermissionGuard],
         data: { permission: 'finances.view' },

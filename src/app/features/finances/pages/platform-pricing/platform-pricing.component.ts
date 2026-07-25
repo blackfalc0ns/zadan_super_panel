@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, take } from 'rxjs';
 import {
@@ -40,6 +41,7 @@ type NumericZoneField =
  imports: [
  CommonModule,
  FormsModule,
+ RouterModule,
  TranslateModule,
  AppCardComponent,
  AppButtonComponent,
@@ -84,6 +86,12 @@ type NumericZoneField =
  [title]="'FINANCES.PRICING.TITLE' | translate"
  [subtitle]="'FINANCES.PRICING.SUBTITLE' | translate">
  <div actions class="flex items-center gap-3">
+ <a
+ routerLink="/finances/fulfillment"
+ class="inline-flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-extrabold text-slate-700 hover:border-zadna-primary/30 hover:text-zadna-primary">
+ <span class="material-symbols-outlined text-[16px]">tune</span>
+ {{ 'FINANCES.SHELL.ROUTES.FULFILLMENT.LABEL' | translate }}
+ </a>
  <app-button
  variant="outline"
  size="sm"

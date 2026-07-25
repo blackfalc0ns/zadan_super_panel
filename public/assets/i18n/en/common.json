@@ -272,6 +272,7 @@
     "DRIVERS": "Drivers",
     "DELIVERIES": "Deliveries",
     "ORDERS": "Orders",
+    "FULFILLMENT_SETTINGS": "Delivery & Pickup Settings",
     "ANALYTICS": "Analytics",
     "REPORTS": "Reports",
     "NOTIFICATIONS": "Notifications",
@@ -813,6 +814,10 @@
         "PRICING": {
           "LABEL": "Pricing Structure",
           "SUMMARY": "Configure platform commissions, delivery fees, and VAT percentages."
+        },
+        "FULFILLMENT": {
+          "LABEL": "Delivery & Pickup Settings",
+          "SUMMARY": "Toggle delivery/pickup, cash on pickup, pickup commission, and no-show timeout."
         },
         "AUDIT": {
           "LABEL": "Audit Log",

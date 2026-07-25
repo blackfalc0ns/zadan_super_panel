@@ -461,9 +461,10 @@
       "PICKUP": "Store pickup"
     },
     "PICKUP_SETTINGS": {
-      "TITLE": "Pickup settings",
-      "SUBTITLE": "Configure platform pickup and delivery checkout options.",
+      "TITLE": "Delivery & pickup settings",
+      "SUBTITLE": "Configure platform delivery/pickup options and cash on pickup.",
       "BACK_TO_ORDERS": "Back to orders",
+      "BACK_TO_FINANCE": "Back to delivery pricing",
       "DELIVERY_ENABLED": "Delivery option enabled",
       "PICKUP_ENABLED": "Pickup option enabled",
       "CASH_ON_PICKUP_ENABLED": "Allow cash payment on pickup",

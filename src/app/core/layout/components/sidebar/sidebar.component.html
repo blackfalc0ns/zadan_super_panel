@@ -135,6 +135,11 @@
  <span class="whitespace-nowrap transition-[max-width,opacity] duration-150 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.ORDERS' | translate }}</span>
  </button>
 
+ <button *appHasPermission="'orders.view'" type="button" (click)="navigateTo('/finances/fulfillment')" [ngClass]="navItemClasses('/finances/fulfillment', true)" [title]="'SIDEBAR.FULFILLMENT_SETTINGS' | translate">
+ <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">local_shipping</span>
+ <span class="whitespace-nowrap transition-[max-width,opacity] duration-150 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.FULFILLMENT_SETTINGS' | translate }}</span>
+ </button>
+
  <button *appHasPermission="'disputes.view'" type="button" (click)="navigateTo('/disputes')" [ngClass]="navItemClasses('/disputes')" [title]="'SIDEBAR.DISPUTES' | translate">
  <span class="material-symbols-outlined text-[18px] opacity-70 group-[.bg-white\/15]:opacity-100 shrink-0">gavel</span>
  <span class="whitespace-nowrap transition-[max-width,opacity] duration-150 overflow-hidden" [class.max-w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.max-w-[200px]]="!isCollapsed">{{ 'SIDEBAR.DISPUTES' | translate }}</span>

@@ -19,7 +19,10 @@ import { PickupSettingsService } from '../../services/pickup-settings.service';
       <app-page-header
         [title]="'ORDERS.PICKUP_SETTINGS.TITLE' | translate"
         [subtitle]="'ORDERS.PICKUP_SETTINGS.SUBTITLE' | translate">
-        <div actions>
+        <div actions class="flex flex-wrap gap-2">
+          <a routerLink="/finances/pricing" class="inline-flex h-10 items-center rounded-xl border border-slate-200 px-4 text-xs font-extrabold text-slate-600 hover:border-zadna-primary/30 hover:text-zadna-primary">
+            {{ 'ORDERS.PICKUP_SETTINGS.BACK_TO_FINANCE' | translate }}
+          </a>
           <a routerLink="/orders" class="inline-flex h-10 items-center rounded-xl border border-slate-200 px-4 text-xs font-extrabold text-slate-600 hover:border-zadna-primary/30 hover:text-zadna-primary">
             {{ 'ORDERS.PICKUP_SETTINGS.BACK_TO_ORDERS' | translate }}
           </a>

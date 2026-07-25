@@ -169,6 +169,7 @@ export class FinancesShellComponent {
  routes: [
  { id: 'platform-account', label: 'FINANCES.PLATFORM_ACCOUNT.NAV_LABEL', route: '/finances/platform-account', summary: 'FINANCES.PLATFORM_ACCOUNT.NAV_SUMMARY', dataMode: 'مفعل' },
  { id: 'pricing', label: 'FINANCES.SHELL.ROUTES.PRICING.LABEL', route: '/finances/pricing', summary: 'FINANCES.SHELL.ROUTES.PRICING.SUMMARY', dataMode: 'مفعل' },
+ { id: 'fulfillment', label: 'FINANCES.SHELL.ROUTES.FULFILLMENT.LABEL', route: '/finances/fulfillment', summary: 'FINANCES.SHELL.ROUTES.FULFILLMENT.SUMMARY', dataMode: 'مفعل' },
  { id: 'audit', label: 'FINANCES.SHELL.ROUTES.AUDIT.LABEL', route: '/finances/audit', summary: 'FINANCES.SHELL.ROUTES.AUDIT.SUMMARY', dataMode: 'مفعل' }
  ]
  }
