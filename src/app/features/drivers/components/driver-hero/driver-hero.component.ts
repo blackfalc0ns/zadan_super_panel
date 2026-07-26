@@ -28,7 +28,7 @@ export class DriverHeroComponent {
 
   get zoneLabel(): string {
     return (
-      localizeSaudiRegion(this.translate, this.driver.operations?.region || this.driver.region) ||
+      localizeSaudiRegion(this.translate, this.driver.operations?.region) ||
       localizeSaudiCity(this.translate, this.driver.zoneName || this.driver.liveZone || this.driver.city) ||
       ''
     );

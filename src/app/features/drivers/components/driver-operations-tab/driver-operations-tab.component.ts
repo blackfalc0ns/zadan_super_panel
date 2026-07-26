@@ -25,7 +25,7 @@ export class DriverOperationsTabComponent {
 
   get zoneLabel(): string {
     return (
-      localizeSaudiRegion(this.translate, this.driver.region) ||
+      localizeSaudiRegion(this.translate, this.driver.operations?.region) ||
       localizeSaudiCity(this.translate, this.driver.operations?.zoneName || this.driver.zoneName || this.driver.city) ||
       ''
     );

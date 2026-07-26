@@ -68,7 +68,7 @@ export class DriverOverviewTabComponent {
  private resolveZoneLabel(): string {
  const regionLabel = localizeSaudiRegion(
  this.translate,
- this.driver.operations?.region || this.driver.region
+ this.driver.operations?.region
  );
  if (regionLabel) {
  return regionLabel;
