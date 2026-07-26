@@ -12,7 +12,8 @@ app-order-tracking-map {
   min-height: 300px;
 }
 
-.order-timeline-scroll {
+.order-timeline-scroll,
+.order-sidebar-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(18, 124, 140, 0.35) transparent;
 
