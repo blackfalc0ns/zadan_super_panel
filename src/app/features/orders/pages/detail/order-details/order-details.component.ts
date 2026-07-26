@@ -382,6 +382,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  return [];
  }
 
+ const feeLabel = this.isPickupOrder()
+ ? 'ORDERS.DETAIL.PICKUP_FEE'
+ : 'ORDERS.DETAIL.DELIVERY_FEE';
+
  return [
  { label: 'ORDERS.DETAIL.PAYMENT_METHOD', value: currentOrder.paymentMethodLabel },
  { label: 'ORDERS.DETAIL.TRANSACTION_REF', value: currentOrder.transactionRef, valueDir: 'ltr' },
@@ -392,9 +396,19 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  translateValue: true
  },
  { label: 'ORDERS.DETAIL.ORDER_SUBTOTAL', value: this.formatCurrency(currentOrder.subtotal), valueDir: 'ltr' },
- { label: 'ORDERS.DETAIL.DELIVERY_FEE', value: this.formatCurrency(currentOrder.deliveryFee), valueDir: 'ltr' },
+ { label: feeLabel, value: this.formatCurrency(currentOrder.deliveryFee), valueDir: 'ltr' },
  { label: 'ORDERS.DETAIL.TAX', value: this.formatCurrency(currentOrder.tax), valueDir: 'ltr' }
  ];
+ }
+
+ pricingModeLabel(mode: string | null | undefined): string {
+ const normalized = (mode || 'UNKNOWN')
+ .trim()
+ .toUpperCase()
+ .replace(/[-\s]+/g, '_');
+ const key = `ORDERS.DETAIL.DELIVERY_BREAKDOWN_VALUES.${normalized}`;
+ const translated = this.translate.instant(key);
+ return translated === key ? 'ORDERS.DETAIL.DELIVERY_BREAKDOWN_VALUES.UNKNOWN' : key;
  }
 
  getDispatchReasonItem(reasonAr: string | undefined, reasonEn: string | undefined): { value: string; translate: boolean } | null {
@@ -1062,10 +1076,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  }
 
  private formatCurrency(value: number): string {
- return `${new Intl.NumberFormat('en-US', {
+ const amount = new Intl.NumberFormat('en-US', {
  minimumFractionDigits: 2,
  maximumFractionDigits: 2
- }).format(value)} SAR`;
+ }).format(value);
+ const currency = this.translate.instant('COMMON.CURRENCY_SAR');
+ return `${amount} ${currency}`;
  }
 
  formatDistance(value: number | undefined | null): string {

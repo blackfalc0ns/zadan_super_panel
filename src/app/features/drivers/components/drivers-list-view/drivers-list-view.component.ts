@@ -16,6 +16,7 @@ import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { localizeSaudiCity } from '../../../../shared/utils/saudi-geography-display';
 import {
  getDriverStatusKey,
  getDriverStatusVariant as getDriverStatusPillVariant,
@@ -53,38 +54,7 @@ export class DriversListViewComponent {
  @Input() isRTL = true;
 
  getTranslatedCity(city?: string): string {
- if (!city) return '';
- 
- const normalized = city.trim().toUpperCase();
- const cityMap: Record<string, string> = {
- 'RIYADH': 'RIYADH',
- 'الرياض': 'RIYADH',
- 'JEDDAH': 'JEDDAH',
- 'جدة': 'JEDDAH',
- 'DAMMAM': 'DAMMAM',
- 'الدمام': 'DAMMAM',
- 'MAKKAH': 'MAKKAH',
- 'MECCA': 'MAKKAH',
- 'مكة': 'MAKKAH',
- 'MADINAH': 'MADINAH',
- 'MEDINA': 'MADINAH',
- 'المدينة': 'MADINAH',
- 'TAIF': 'TAIF',
- 'الطائف': 'TAIF',
- 'TABUK': 'TABUK',
- 'تبوك': 'TABUK',
- 'ABHA': 'ABHA',
- 'أبها': 'ABHA',
- 'KHOBAR': 'KHOBAR',
- 'الخبر': 'KHOBAR',
- 'QATIF': 'QATIF',
- 'القطيف': 'QATIF'
- };
-
- const keyToken = cityMap[normalized] || normalized;
- const key = `COMMON.CITIES.${keyToken}`;
- const translated = this.translate.instant(key);
- return translated === key ? city : translated;
+ return localizeSaudiCity(this.translate, city);
  }
  @Input() searchTerm = '';
  @Input() drivers: Driver[] = [];

@@ -13,6 +13,7 @@ import {
 import { DriverService } from '@drivers/services/drivers.api.service';
 import { FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
+import { saudiCityTranslationKey } from '../../../../../shared/utils/saudi-geography-display';
 import { DriversListViewComponent } from '../../../components/drivers-list-view/drivers-list-view.component';
 
 type SelectOption<T> = {
@@ -295,33 +296,7 @@ export class DriversListComponent implements OnInit {
 
  getCityTranslationKey(city: string): string {
  if (!city) return 'COMMON.CITIES.ALL';
- const normalized = city.trim().toUpperCase();
- const cityMap: Record<string, string> = {
- 'RIYADH': 'RIYADH',
- 'الرياض': 'RIYADH',
- 'JEDDAH': 'JEDDAH',
- 'جدة': 'JEDDAH',
- 'DAMMAM': 'DAMMAM',
- 'الدمام': 'DAMMAM',
- 'MAKKAH': 'MAKKAH',
- 'MECCA': 'MAKKAH',
- 'مكة': 'MAKKAH',
- 'MADINAH': 'MADINAH',
- 'MEDINA': 'MADINAH',
- 'المدينة': 'MADINAH',
- 'TAIF': 'TAIF',
- 'الطائف': 'TAIF',
- 'TABUK': 'TABUK',
- 'تبوك': 'TABUK',
- 'ABHA': 'ABHA',
- 'أبها': 'ABHA',
- 'KHOBAR': 'KHOBAR',
- 'الخبر': 'KHOBAR',
- 'QATIF': 'QATIF',
- 'القطيف': 'QATIF'
- };
- const keyToken = cityMap[normalized] || normalized;
- return `COMMON.CITIES.${keyToken}`;
+ return saudiCityTranslationKey(city) || `COMMON.CITIES.${city.trim().toUpperCase()}`;
  }
 }
 

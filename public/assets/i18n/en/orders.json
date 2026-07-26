@@ -605,7 +605,12 @@
         "ESTIMATED": "Estimated",
         "LIVE": "Live",
         "ESTIMATED_LOCKED": "Estimated Locked",
-        "LIVE_LOCKED": "Live Locked"
+        "LIVE_LOCKED": "Live Locked",
+        "ZONE_FALLBACK": "Zone fallback",
+        "ZONE_DEFAULT": "Zone default",
+        "GLOBAL_FALLBACK": "Global fallback",
+        "FALLBACK": "System fallback",
+        "UNKNOWN": "Unknown"
       },
       "FINANCE_CARD": {
         "TITLE": "Finance Snapshot",
@@ -624,6 +629,7 @@
       "TRANSACTION_REF": "Transaction Ref",
       "ORDER_SUBTOTAL": "Order Subtotal",
       "DELIVERY_FEE": "Delivery & Service Fee",
+      "PICKUP_FEE": "Pickup fee",
       "TAX": "VAT (15%)",
       "FINAL_TOTAL": "Final Total",
       "VIEW_TRANSACTION": "View Bank Transaction Details",

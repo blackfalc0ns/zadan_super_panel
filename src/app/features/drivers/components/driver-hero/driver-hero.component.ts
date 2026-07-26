@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject, ChangeDetectorRef } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DriverStatus, VerificationStatus } from '@drivers/models/drivers.domain.models';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
+import { localizeSaudiCity, localizeSaudiRegion } from '../../../../shared/utils/saudi-geography-display';
 import { DriverDetailRecord, DriverWorkflowAction, DriverWorkflowActionId } from '../../models/drivers.models';
 import {
   getDriverStatusKey,
@@ -22,7 +23,16 @@ import {
 })
 export class DriverHeroComponent {
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
   copiedFields: Record<string, boolean> = {};
+
+  get zoneLabel(): string {
+    return (
+      localizeSaudiRegion(this.translate, this.driver.operations?.region || this.driver.region) ||
+      localizeSaudiCity(this.translate, this.driver.zoneName || this.driver.liveZone || this.driver.city) ||
+      ''
+    );
+  }
 
   @Input({ required: true }) driver!: DriverDetailRecord;
   @Input() isRTL = true;

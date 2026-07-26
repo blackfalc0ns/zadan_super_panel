@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { KeyValueGridComponent } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
+import { localizeSaudiCity, localizeSaudiRegion } from '../../../../shared/utils/saudi-geography-display';
 import { DriverDetailRecord } from '../../models/drivers.models';
 import { getVehicleTypeKey } from '../../utils/driver-ui.utils';
 
@@ -23,11 +24,20 @@ export class DriverOverviewTabComponent {
  @Output() tabChange = new EventEmitter<string>();
 
  get personalInfoItems() {
+ const cityLabel =
+ localizeSaudiCity(this.translate, this.driver.operations?.city || this.driver.city) ||
+ this.driver.city ||
+ 'COMMON.NOT_AVAILABLE';
+
  return [
  { label: 'DRIVERS.DETAIL.OVERVIEW.FULL_NAME', value: `${this.driver.firstName} ${this.driver.lastName}` },
  { label: 'DRIVERS.DETAIL.OVERVIEW.PHONE_NUMBER', value: this.driver.phoneNumber, direction: 'ltr' as const, copyable: true, key: 'phone' },
  { label: 'DRIVERS.DETAIL.OVERVIEW.EMAIL', value: this.driver.email, direction: 'ltr' as const, copyable: true, key: 'email' },
- { label: 'DRIVERS.DETAIL.OVERVIEW.CITY', value: this.driver.city, isCity: true },
+ {
+ label: 'DRIVERS.DETAIL.OVERVIEW.CITY',
+ value: cityLabel,
+ translateValue: cityLabel === 'COMMON.NOT_AVAILABLE'
+ },
  { label: 'DRIVERS.DETAIL.OVERVIEW.JOINED_AT', value: this.driver.joinedAt }
  ];
  }
@@ -49,10 +59,26 @@ export class DriverOverviewTabComponent {
  },
  {
  label: 'DRIVERS.DETAIL.OVERVIEW.ZONE',
- value: this.driver.zoneName || this.driver.liveZone || 'COMMON.NOT_AVAILABLE',
- translateValue:!this.driver.zoneName &&!this.driver.liveZone
+ value: this.resolveZoneLabel(),
+ translateValue: this.resolveZoneLabel() === 'COMMON.NOT_AVAILABLE'
  }
  ];
+ }
+
+ private resolveZoneLabel(): string {
+ const regionLabel = localizeSaudiRegion(
+ this.translate,
+ this.driver.operations?.region || this.driver.region
+ );
+ if (regionLabel) {
+ return regionLabel;
+ }
+
+ const cityAsZone = localizeSaudiCity(
+ this.translate,
+ this.driver.zoneName || this.driver.liveZone || this.driver.city
+ );
+ return cityAsZone || 'COMMON.NOT_AVAILABLE';
  }
 
  copyToClipboard(field: string, text: string) {
@@ -65,39 +91,6 @@ export class DriverOverviewTabComponent {
  this.cdr.markForCheck();
  }, 2000);
  });
- }
-
- getTranslatedCity(city?: string): string {
- if (!city) return '';
- const normalized = city.trim().toUpperCase();
- const cityMap: Record<string, string> = {
- 'RIYADH': 'RIYADH',
- 'الرياض': 'RIYADH',
- 'JEDDAH': 'JEDDAH',
- 'جدة': 'JEDDAH',
- 'DAMMAM': 'DAMMAM',
- 'الدمام': 'DAMMAM',
- 'MAKKAH': 'MAKKAH',
- 'MECCA': 'MAKKAH',
- 'مكة': 'MAKKAH',
- 'MADINAH': 'MADINAH',
- 'MEDINA': 'MADINAH',
- 'المدينة': 'MADINAH',
- 'TAIF': 'TAIF',
- 'الطائف': 'TAIF',
- 'TABUK': 'TABUK',
- 'تبوك': 'TABUK',
- 'ABHA': 'ABHA',
- 'أبها': 'ABHA',
- 'KHOBAR': 'KHOBAR',
- 'الخبر': 'KHOBAR',
- 'QATIF': 'QATIF',
- 'القطيف': 'QATIF'
- };
- const keyToken = cityMap[normalized] || normalized;
- const key = `COMMON.CITIES.${keyToken}`;
- const translated = this.translate.instant(key);
- return translated === key ? city : translated;
  }
 
  get hasSupportUpdateTimestamp(): boolean {

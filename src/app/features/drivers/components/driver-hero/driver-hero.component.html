@@ -57,7 +57,7 @@
         <span class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
           <span class="material-symbols-outlined text-[16px]">map</span>
           <span class="text-slate-400">{{ ('DRIVERS.DETAIL.HERO.ZONE' | translate) || 'Zone' }}:</span>
-          <span class="text-slate-800 font-bold">{{ driver.zoneName || driver.liveZone || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
+          <span class="text-slate-800 font-bold">{{ zoneLabel || ('COMMON.NOT_AVAILABLE' | translate) }}</span>
         </span>
       </div>
       

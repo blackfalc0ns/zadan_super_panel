@@ -119,12 +119,7 @@
                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500" [class.text-right]="isRTL" [class.text-left]="!isRTL">{{ item.label | translate }}</p>
                 <p class="mt-1 truncate text-[14px] font-black text-slate-900"
                    [class.text-right]="isRTL" [class.text-left]="!isRTL" [attr.dir]="item.direction || (isRTL ? 'rtl' : 'ltr')">
-                  <ng-container *ngIf="item.isCity; else regularVal">
-                    {{ getTranslatedCity(item.value) }}
-                  </ng-container>
-                  <ng-template #regularVal>
-                    {{ item.value }}
-                  </ng-template>
+                  {{ item.translateValue ? (item.value | translate) : item.value }}
                 </p>
               </div>
               <span *ngIf="item.copyable" class="material-symbols-outlined text-[18px] transition-colors"

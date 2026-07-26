@@ -145,7 +145,7 @@
                   <span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-zadna-primary transition-colors">map</span>
                   <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ 'DRIVERS.DETAIL.OPERATIONS.STATIC.ZONE_TITLE' | translate }}</p>
                 </div>
-                <p class="text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors truncate">{{ driver.operations.zoneName || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
+                <p class="text-[14px] font-black text-slate-900 group-hover:text-zadna-primary transition-colors truncate">{{ zoneLabel || ('COMMON.NOT_AVAILABLE' | translate) }}</p>
               </div>
               
               <div class="flex-1 flex flex-col justify-center rounded-2xl border border-slate-200/40 bg-white/40 backdrop-blur-sm p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:bg-white hover:border-zadna-primary/30 group">

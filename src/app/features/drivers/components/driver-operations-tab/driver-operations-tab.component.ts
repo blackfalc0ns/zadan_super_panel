@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/ui/data-table/data-table.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
+import { localizeSaudiCity, localizeSaudiRegion } from '../../../../shared/utils/saudi-geography-display';
 import { OrderTrackingMapComponent } from '../../../orders/components/order-tracking-map/order-tracking-map.component';
 import { DriverDetailRecord, DriverTaskAssignment } from '../../models/drivers.models';
 import { getTaskStatusKey, getTaskStatusVariant } from '../../utils/driver-ui.utils';
@@ -18,7 +19,17 @@ import { SafeResourceUrl } from '@angular/platform-browser';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DriverOperationsTabComponent {
+  private readonly translate = inject(TranslateService);
+
   @Input({ required: true }) driver!: DriverDetailRecord;
+
+  get zoneLabel(): string {
+    return (
+      localizeSaudiRegion(this.translate, this.driver.region) ||
+      localizeSaudiCity(this.translate, this.driver.operations?.zoneName || this.driver.zoneName || this.driver.city) ||
+      ''
+    );
+  }
   @Input() mapPreviewUrl: SafeResourceUrl | null = null;
   @Input() isRTL = true;
   @Input() isActionPending = false;

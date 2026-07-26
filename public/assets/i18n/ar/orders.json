@@ -603,7 +603,12 @@
         "ESTIMATED": "تقديري",
         "LIVE": "مباشر / حي",
         "ESTIMATED_LOCKED": "تقديري مثبّت",
-        "LIVE_LOCKED": "مباشر مثبّت"
+        "LIVE_LOCKED": "مباشر مثبّت",
+        "ZONE_FALLBACK": "افتراضي المنطقة",
+        "ZONE_DEFAULT": "افتراضي المنطقة",
+        "GLOBAL_FALLBACK": "الافتراضي العام",
+        "FALLBACK": "احتياطي النظام",
+        "UNKNOWN": "غير معروف"
       },
       "FINANCE_CARD": {
         "TITLE": "الملخص المالي",
@@ -622,6 +627,7 @@
       "TRANSACTION_REF": "مرجع المعاملة",
       "ORDER_SUBTOTAL": "المجموع الفرعي",
       "DELIVERY_FEE": "رسوم التوصيل والخدمة",
+      "PICKUP_FEE": "رسوم الاستلام",
       "TAX": "الضريبة المضافة (15%)",
       "FINAL_TOTAL": "الإجمالي",
       "VIEW_TRANSACTION": "عرض تفاصيل المعاملة البنكية",
