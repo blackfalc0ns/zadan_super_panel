@@ -1220,7 +1220,8 @@
         "REGION": "{{count}} regions",
         "GLOBAL": "{{count}} global profile"
       },
-      "ALL_REGIONS": "All regions"
+      "ALL_REGIONS": "All regions",
+      "SAVE_FAILED": "We could not save pricing settings. Please try again."
     },
     "CURRENCY": "SAR",
     "PLATFORM_ACCOUNT": {

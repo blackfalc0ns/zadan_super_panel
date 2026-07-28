@@ -1773,7 +1773,8 @@
         "REGION": "{{count}} منطقة إدارية",
         "GLOBAL": "{{count}} إعداد عام"
       },
-      "ALL_REGIONS": "كل المناطق"
+      "ALL_REGIONS": "كل المناطق",
+      "SAVE_FAILED": "ما قدرنا نحفظ إعدادات التسعير. جرّب مرة ثانية."
     },
     "CURRENCY": "ر.س",
     "PLATFORM_ACCOUNT": {
