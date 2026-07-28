@@ -1203,6 +1203,23 @@
         "REGION": "Regions",
         "GLOBAL": "Global"
       },
+      "SCOPE_LIST": {
+        "ZONE": "Delivery zones list",
+        "CITY": "Cities list",
+        "REGION": "Administrative regions list",
+        "GLOBAL": "Global defaults"
+      },
+      "SCOPE_HINT": {
+        "ZONE": "Pick a delivery zone, edit delivery/VAT/COD fees, then save.",
+        "CITY": "Pick a city in the Eastern Region, edit its pricing, then save.",
+        "REGION": "Pick the administrative region (Eastern Region), edit its default pricing, then save.",
+        "GLOBAL": "Global defaults apply platform-wide when no more specific city or region pricing exists."
+      },
+      "SCOPE_COUNT": {
+        "CITY": "{{count}} cities",
+        "REGION": "{{count}} regions",
+        "GLOBAL": "{{count}} global profile"
+      },
       "ALL_REGIONS": "All regions"
     },
     "CURRENCY": "SAR",

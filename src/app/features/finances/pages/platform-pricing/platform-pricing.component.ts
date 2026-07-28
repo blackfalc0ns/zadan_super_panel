@@ -105,24 +105,24 @@ type NumericZoneField =
  </div>
  </app-page-header>
 
- <div *ngIf="!isLoading && zones.length" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+ <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
  <div class="inline-flex w-full max-w-full flex-wrap rounded-2xl border border-slate-200 bg-slate-50 p-1 sm:w-auto">
- <button type="button" (click)="changeScope('zone')" [ngClass]="scopeButtonClass('zone')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ <button type="button" (click)="changeScope('zone')" [disabled]="isLoading || isSaving" [ngClass]="scopeButtonClass('zone')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all disabled:cursor-not-allowed disabled:opacity-60">
  {{ 'FINANCES.PRICING.SCOPE.ZONE' | translate }}
  </button>
- <button type="button" (click)="changeScope('city')" [ngClass]="scopeButtonClass('city')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ <button type="button" (click)="changeScope('city')" [disabled]="isLoading || isSaving" [ngClass]="scopeButtonClass('city')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all disabled:cursor-not-allowed disabled:opacity-60">
  {{ 'FINANCES.PRICING.SCOPE.CITY' | translate }}
  </button>
- <button type="button" (click)="changeScope('region')" [ngClass]="scopeButtonClass('region')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ <button type="button" (click)="changeScope('region')" [disabled]="isLoading || isSaving" [ngClass]="scopeButtonClass('region')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all disabled:cursor-not-allowed disabled:opacity-60">
  {{ 'FINANCES.PRICING.SCOPE.REGION' | translate }}
  </button>
- <button type="button" (click)="changeScope('global')" [ngClass]="scopeButtonClass('global')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all">
+ <button type="button" (click)="changeScope('global')" [disabled]="isLoading || isSaving" [ngClass]="scopeButtonClass('global')" class="rounded-xl px-4 py-2.5 text-xs font-black transition-all disabled:cursor-not-allowed disabled:opacity-60">
  {{ 'FINANCES.PRICING.SCOPE.GLOBAL' | translate }}
  </button>
  </div>
 
- <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-end xl:w-auto">
+ <div *ngIf="!isLoading && zones.length" class="flex w-full flex-col gap-3 sm:flex-row sm:items-end xl:w-auto">
  <app-searchable-select
  *ngIf="selectedScope !== 'global' && regionOptions.length > 1"
  class="min-w-[12rem] flex-1"
@@ -135,20 +135,25 @@ type NumericZoneField =
  </app-searchable-select>
 
  <app-searchable-select
+ *ngIf="selectedScope !== 'global' || zones.length > 1"
  class="min-w-[16rem] flex-1"
- [label]="'FINANCES.PRICING.ZONE_LIST_LABEL'"
+ [label]="scopeListLabelKey"
  [(ngModel)]="selectedZoneId"
  [options]="mappedZoneOptions"
- [searchable]="true"
+ [searchable]="selectedScope !== 'global'"
  [allowClear]="false"
  (selectionChange)="onZoneChange()">
  </app-searchable-select>
 
  <span class="inline-flex h-11 items-center rounded-full bg-slate-100 px-3 text-[11px] font-black text-slate-600 whitespace-nowrap">
- {{ 'FINANCES.PRICING.ZONES_COUNT' | translate:{ count: zones.length } }}
+ {{ scopeCountLabel }}
  </span>
  </div>
  </div>
+
+ <p *ngIf="!isLoading" class="text-[12px] font-semibold text-slate-500">
+ {{ scopeHintKey | translate }}
+ </p>
 
  <div *ngIf="selectedZone" class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
  <span class="rounded-full px-3 py-1.5 text-[11px] font-black" [ngClass]="selectedZone.isPricingActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
@@ -176,11 +181,6 @@ type NumericZoneField =
  </div>
  <h3 class="text-lg font-black text-slate-900">{{ 'FINANCES.PRICING.NO_ZONES_TITLE' | translate }}</h3>
  <p class="mt-2 text-sm font-medium text-slate-500">{{ emptyStateMessage || ('FINANCES.PRICING.NO_ZONES_DESC' | translate) }}</p>
- <div class="mt-5 flex flex-wrap justify-center gap-3" *ngIf="selectedScope !== 'global'">
- <app-button *ngIf="selectedScope !== 'city'" variant="outline" size="sm" customClass="!rounded-xl" (btnClick)="changeScope('city')">{{ 'FINANCES.PRICING.SCOPE.CITY' | translate }}</app-button>
- <app-button *ngIf="selectedScope !== 'region'" variant="outline" size="sm" customClass="!rounded-xl" (btnClick)="changeScope('region')">{{ 'FINANCES.PRICING.SCOPE.REGION' | translate }}</app-button>
- <app-button variant="primary" size="sm" customClass="!rounded-xl" (btnClick)="changeScope('global')">{{ 'FINANCES.PRICING.SCOPE.GLOBAL' | translate }}</app-button>
- </div>
  </div>
 
  <div *ngIf="selectedZone" class="sticky top-3 z-20 flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/95 p-5 shadow-md backdrop-blur-sm lg:flex-row lg:items-center lg:justify-between">
@@ -431,7 +431,7 @@ export class PlatformPricingComponent implements OnInit {
  private readonly geographyService = inject(GeographyService);
  private readonly toastService = inject(ToastService);
  private readonly translate = inject(TranslateService);
- private readonly scopeFallbackOrder: PricingScope[] = ['zone', 'city', 'region', 'global'];
+ private allowScopeFallback = true;
  private readonly cityArabicMap: Record<string, string> = {
  riyadh: 'الرياض',
  jeddah: 'جدة',
@@ -471,7 +471,7 @@ export class PlatformPricingComponent implements OnInit {
  zone: 'المنطقة'
  };
 
- selectedScope: PricingScope = 'zone';
+ selectedScope: PricingScope = 'city';
  allItems: PricingSettingsItem[] = [];
  zones: PricingSettingsItem[] = [];
  regionOptions: Array<{ id: string; label: string }> = [];
@@ -491,6 +491,49 @@ export class PlatformPricingComponent implements OnInit {
 
  get canSave(): boolean {
  return Boolean(this.selectedZone) && this.isDirty &&!this.isSaving;
+ }
+
+ get scopeListLabelKey(): string {
+ switch (this.selectedScope) {
+ case 'city':
+ return 'FINANCES.PRICING.SCOPE_LIST.CITY';
+ case 'region':
+ return 'FINANCES.PRICING.SCOPE_LIST.REGION';
+ case 'global':
+ return 'FINANCES.PRICING.SCOPE_LIST.GLOBAL';
+ default:
+ return 'FINANCES.PRICING.SCOPE_LIST.ZONE';
+ }
+ }
+
+ get scopeHintKey(): string {
+ switch (this.selectedScope) {
+ case 'city':
+ return 'FINANCES.PRICING.SCOPE_HINT.CITY';
+ case 'region':
+ return 'FINANCES.PRICING.SCOPE_HINT.REGION';
+ case 'global':
+ return 'FINANCES.PRICING.SCOPE_HINT.GLOBAL';
+ default:
+ return 'FINANCES.PRICING.SCOPE_HINT.ZONE';
+ }
+ }
+
+ get scopeCountLabel(): string {
+ return this.translate.instant(this.scopeCountKey, { count: this.zones.length });
+ }
+
+ get scopeCountKey(): string {
+ switch (this.selectedScope) {
+ case 'city':
+ return 'FINANCES.PRICING.SCOPE_COUNT.CITY';
+ case 'region':
+ return 'FINANCES.PRICING.SCOPE_COUNT.REGION';
+ case 'global':
+ return 'FINANCES.PRICING.SCOPE_COUNT.GLOBAL';
+ default:
+ return 'FINANCES.PRICING.ZONES_COUNT';
+ }
  }
 
  get mappedRegionFilterOptions(): SearchableSelectOption[] {
@@ -638,10 +681,11 @@ export class PlatformPricingComponent implements OnInit {
  }
 
  changeScope(scope: PricingScope): void {
- if (this.selectedScope === scope) {
+ if (this.selectedScope === scope || this.isLoading || this.isSaving) {
  return;
  }
 
+ this.allowScopeFallback = false;
  this.selectedScope = scope;
  this.selectedRegionFilter = 'all';
  this.selectedZoneId = null;
@@ -669,8 +713,14 @@ export class PlatformPricingComponent implements OnInit {
  itemId(item: PricingSettingsItem): string {
  if ('zoneId' in item) return item.zoneId;
  if ('cityId' in item) return item.cityId;
- if ('regionId' in item && item.pricingScope === 'region') return item.regionId;
+ if ('pricingScope' in item && item.pricingScope === 'region' && 'regionId' in item && item.regionId) {
+ return item.regionId;
+ }
+ if ('pricingScope' in item && item.pricingScope === 'global' && 'id' in item) {
  return item.id;
+ }
+ if ('regionId' in item && item.regionId) return item.regionId;
+ return 'id' in item ? item.id : '';
  }
 
  itemPrimaryLabel(item: PricingSettingsItem): string {
@@ -735,10 +785,22 @@ export class PlatformPricingComponent implements OnInit {
  this.cdr.markForCheck();
  this.allItems = this.filterOperationalItems(Array.isArray(result) ? result : [result]);
  if (!this.allItems.length) {
+ if (this.allowScopeFallback) {
  this.tryFallbackScope();
  return;
  }
 
+ this.regionOptions = [];
+ this.zones = [];
+ this.selectedZoneId = null;
+ this.selectedZone = null;
+ this.emptyStateMessage = this.buildEmptyStateMessage();
+ this.isDirty = false;
+ this.isLoading = false;
+ return;
+ }
+
+ this.allowScopeFallback = false;
  this.regionOptions = this.buildRegionOptions(this.allItems);
  this.selectedRegionFilter = this.resolveDefaultRegionFilter(this.regionOptions);
  this.applyFilters();
@@ -759,8 +821,10 @@ export class PlatformPricingComponent implements OnInit {
  }
 
  private tryFallbackScope(): void {
- const currentIndex = this.scopeFallbackOrder.indexOf(this.selectedScope);
- const nextScope = this.scopeFallbackOrder[currentIndex + 1];
+ const fallbackOrder: PricingScope[] = ['city', 'region', 'global', 'zone'];
+ const currentIndex = fallbackOrder.indexOf(this.selectedScope);
+ const nextScope = fallbackOrder.slice(currentIndex + 1).find((scope) => scope !== this.selectedScope)
+ ?? fallbackOrder.find((scope) => scope !== this.selectedScope);
 
  if (nextScope) {
  this.selectedScope = nextScope;
