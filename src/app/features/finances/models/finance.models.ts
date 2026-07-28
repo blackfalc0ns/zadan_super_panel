@@ -344,6 +344,21 @@ export interface AuditLogFilter {
   actionCategory?: AuditLogEntry['actionCategory'];
 }
 
+export interface AuditLogStats {
+  totalEntries: number;
+  systemEntries: number;
+  manualActions: number;
+  affectedEntities: number;
+}
+
+export interface FinancialAdjustmentStats {
+  totalCount: number;
+  totalCredits: number;
+  totalDebits: number;
+  netImpact: number;
+  pendingCount: number;
+}
+
 export interface PricingRuleSet {
   id: string;
   name: string;

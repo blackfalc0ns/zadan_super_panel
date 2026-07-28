@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { take, forkJoin } from 'rxjs';
 import { FinanceService } from '../../services/finance.service';
-import { AuditLogEntry, EntityType } from '../../models/finance.models';
+import { AuditLogEntry, AuditLogStats, EntityType } from '../../models/finance.models';
 import { FINANCE_ENTITY_LABEL_KEYS, getFinanceLocale } from '../../utils/finance-i18n.utils';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi-cards/kpi-cards.component';
@@ -74,6 +74,7 @@ export class AuditLogComponent implements OnInit {
  hasLoadError = false;
   isFiltersExpanded = false;
   kpiCards: KPICard[] = [];
+  auditStats: AuditLogStats | null = null;
   panelFilters: Record<string, string> = { category: 'all', entity: 'all' };
   currentPage = 1;
   readonly pageSize = 15;
@@ -148,12 +149,18 @@ export class AuditLogComponent implements OnInit {
  this.hasLoadError = false;
  this.cdr.markForCheck();
 
- this.financeService.getAuditLog({
+ const filter = {
  actionCategory: this.categoryFilter !== 'all' ? this.categoryFilter : undefined,
  entityType: this.entityFilter !== 'all' ? this.entityFilter : undefined
+ };
+
+ forkJoin({
+ entries: this.financeService.getAuditLog(filter),
+ stats: this.financeService.getAuditLogStats(filter)
  }).pipe(take(1)).subscribe({
- next: (entries) => {
+ next: ({ entries, stats }) => {
  this.entries = entries;
+ this.auditStats = stats;
  this.applyFilters();
  this.isLoading = false;
         this.updateKpiCards();
@@ -162,6 +169,7 @@ export class AuditLogComponent implements OnInit {
  error: () => {
  this.entries = [];
  this.filteredEntries = [];
+ this.auditStats = null;
  this.isLoading = false;
  this.hasLoadError = true;
         this.updateKpiCards();
@@ -291,32 +299,33 @@ export class AuditLogComponent implements OnInit {
   }
 
   private updateKpiCards(): void {
+    const stats = this.auditStats;
     this.kpiCards = [
       {
         id: 'total',
         title: 'FINANCES.AUDIT.STATS.TOTAL',
-        value: this.entries.length,
+        value: stats?.totalEntries ?? this.entries.length,
         icon: 'history',
         color: '#0f172a'
       },
       {
         id: 'system',
         title: 'FINANCES.AUDIT.STATS.FINANCE_ENGINE',
-        value: this.systemEntriesCount,
+        value: stats?.systemEntries ?? this.systemEntriesCount,
         icon: 'settings_suggest',
         color: '#059669'
       },
       {
         id: 'manual',
         title: 'FINANCES.AUDIT.STATS.MANUAL_ACTIONS',
-        value: this.manualActionsCount,
+        value: stats?.manualActions ?? this.manualActionsCount,
         icon: 'person_edit',
         color: '#d97706'
       },
       {
         id: 'entities',
         title: 'FINANCES.AUDIT.STATS.AFFECTED_ENTITIES',
-        value: this.affectedEntitiesCount,
+        value: stats?.affectedEntities ?? this.affectedEntitiesCount,
         icon: 'hub',
         color: '#4f46e5'
       }

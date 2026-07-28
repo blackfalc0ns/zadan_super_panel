@@ -8,6 +8,7 @@ import { VendorService } from '@vendors/public-api';
 import {
  AuditLogEntry,
  AuditLogFilter,
+ AuditLogStats,
  AdjustmentDirection,
  CodFilter,
  CodRecord,
@@ -21,6 +22,7 @@ import {
  FinanceDashboardSnapshot,
  FinancePeriod,
  FinancialAdjustment,
+ FinancialAdjustmentStats,
  LedgerEntry,
  LedgerDirection,
  LedgerEntryType,
@@ -112,6 +114,21 @@ interface AdminFinancialAdjustmentListApiModel {
  page: number;
  pageSize: number;
  totalCount: number;
+}
+
+interface AdminFinancialAdjustmentStatsApiModel {
+ totalCount: number;
+ totalCredits: number;
+ totalDebits: number;
+ netImpact: number;
+ pendingCount: number;
+}
+
+interface AdminFinanceAuditLogStatsApiModel {
+ totalEntries: number;
+ systemEntries: number;
+ manualActions: number;
+ affectedEntities: number;
 }
 
 interface AdminFinanceRefundCaseApiModel {
@@ -728,6 +745,28 @@ export class FinanceService {
  );
  }
 
+ getAdjustmentStats(filter?: { ownerType?: EntityType; ownerId?: string }): Observable<FinancialAdjustmentStats> {
+ let params = new HttpParams();
+ if (filter?.ownerType === 'vendor') {
+ params = params.set('ownerType', 'Vendor');
+ } else if (filter?.ownerType === 'driver') {
+ params = params.set('ownerType', 'Driver');
+ }
+ if (filter?.ownerId?.trim()) {
+ params = params.set('ownerId', filter.ownerId.trim());
+ }
+
+ return this.http.get<AdminFinancialAdjustmentStatsApiModel>(`${this.apiUrl}/adjustments/stats`, { params }).pipe(
+ map((response) => ({
+ totalCount: response.totalCount ?? 0,
+ totalCredits: response.totalCredits ?? 0,
+ totalDebits: response.totalDebits ?? 0,
+ netImpact: response.netImpact ?? 0,
+ pendingCount: response.pendingCount ?? 0
+ }))
+ );
+ }
+
  createAdjustment(adj: Partial<FinancialAdjustment>): Observable<FinancialAdjustment> {
  const ownerType = adj.entityType === 'driver' ? 'driver' : 'vendor';
  const ownerId = adj.entityId?.trim();
@@ -786,6 +825,31 @@ export class FinanceService {
 
  return this.http.get<AdminFinanceAuditLogApiModel>(`${this.apiUrl}/audit-log`, { params }).pipe(
  map((response) => this.filterAuditEntries(response.items.map((item) => this.mapAuditLogEntry(item)), filter))
+ );
+ }
+
+ getAuditLogStats(filter?: AuditLogFilter): Observable<AuditLogStats> {
+ let params = new HttpParams();
+ if (filter?.entityType) {
+ params = params.set('entityType', filter.entityType);
+ }
+ if (filter?.entityId) {
+ params = params.set('entityId', filter.entityId);
+ }
+ if (filter?.orderId) {
+ params = params.set('orderId', filter.orderId);
+ }
+ if (filter?.actionCategory) {
+ params = params.set('actionCategory', filter.actionCategory);
+ }
+
+ return this.http.get<AdminFinanceAuditLogStatsApiModel>(`${this.apiUrl}/audit-log/stats`, { params }).pipe(
+ map((response) => ({
+ totalEntries: response.totalEntries ?? 0,
+ systemEntries: response.systemEntries ?? 0,
+ manualActions: response.manualActions ?? 0,
+ affectedEntities: response.affectedEntities ?? 0
+ }))
  );
  }
 

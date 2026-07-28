@@ -2,9 +2,9 @@ import { Component, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { take, forkJoin } from 'rxjs';
 import { FinanceService } from '../../services/finance.service';
-import { FinancialAdjustment, EntityType, AdjustmentDirection } from '../../models/finance.models';
+import { FinancialAdjustment, FinancialAdjustmentStats, EntityType, AdjustmentDirection } from '../../models/finance.models';
 import { FinanceStatusBadgeComponent } from '../../components/finance-status-badge/finance-status-badge.component';
 import { ModalShellComponent } from '../../../../shared/components/ui/modal-shell/modal-shell.component';
 import { AppButtonComponent } from '../../../../shared/components/ui/button/button.component';
@@ -41,6 +41,7 @@ export class FinancialAdjustmentsComponent implements OnInit {
  showCreateModal = false;
   selectedAdjustment: FinancialAdjustment | null = null;
   kpiCards: KPICard[] = [];
+  adjustmentStats: FinancialAdjustmentStats | null = null;
 
   searchQuery = '';
  selectedDirection: 'all' | 'credit' | 'debit' = 'all';
@@ -87,16 +88,23 @@ export class FinancialAdjustmentsComponent implements OnInit {
 
  loadAdjustments(): void {
  this.loadError = false;
- this.financeService.getAdjustments({
+ const filter = {
  ownerType: this.selectedEntityType === 'all' ? undefined : this.selectedEntityType
+ };
+
+ forkJoin({
+ adjustments: this.financeService.getAdjustments(filter),
+ stats: this.financeService.getAdjustmentStats(filter)
  }).pipe(take(1)).subscribe({
- next: (data) => {
- this.adjustments = data;
+ next: ({ adjustments, stats }) => {
+ this.adjustments = adjustments;
+ this.adjustmentStats = stats;
  this.refreshKpiCards();
  this.cdr.markForCheck();
  },
  error: () => {
  this.loadError = true;
+ this.adjustmentStats = null;
  this.cdr.markForCheck();
  }
  });
@@ -279,37 +287,42 @@ export class FinancialAdjustmentsComponent implements OnInit {
  }
 
   private refreshKpiCards(): void {
+    const stats = this.adjustmentStats;
+    const totalCredits = stats?.totalCredits ?? this.totalCredits;
+    const totalDebits = stats?.totalDebits ?? this.totalDebits;
+    const netAdjustments = stats?.netImpact ?? this.netAdjustments;
+    const pendingCount = stats?.pendingCount ?? this.pendingCount;
     const currency = this.translate.instant('FINANCES.CURRENCY');
     this.kpiCards = [
       {
         id: 'credits',
         title: 'FINANCES.ADJUSTMENTS.KPI.TOTAL_CREDITS',
-        value: `${this.formatNumber(this.totalCredits)} ${currency}`,
+        value: `${this.formatNumber(totalCredits)} ${currency}`,
         icon: 'arrow_downward',
         color: '#10b981'
       },
       {
         id: 'debits',
         title: 'FINANCES.ADJUSTMENTS.KPI.TOTAL_DEBITS',
-        value: `${this.formatNumber(this.totalDebits)} ${currency}`,
+        value: `${this.formatNumber(totalDebits)} ${currency}`,
         icon: 'arrow_upward',
         color: '#f43f5e'
       },
       {
         id: 'net',
         title: 'FINANCES.ADJUSTMENTS.KPI.NET_IMPACT',
-        value: `${this.netAdjustments >= 0 ? '+' : ''}${this.formatNumber(this.netAdjustments)} ${currency}`,
+        value: `${netAdjustments >= 0 ? '+' : ''}${this.formatNumber(netAdjustments)} ${currency}`,
         icon: 'account_balance',
         color: '#6366f1'
       },
       {
         id: 'pending',
         title: 'FINANCES.ADJUSTMENTS.KPI.PENDING',
-        value: this.pendingCount,
+        value: pendingCount,
         icon: 'pending_actions',
         color: '#f59e0b',
-        trend: this.pendingCount > 0
-          ? { value: this.pendingCount, isPositive: false, label: String(this.pendingCount) }
+        trend: pendingCount > 0
+          ? { value: pendingCount, isPositive: false, label: String(pendingCount) }
           : undefined
       }
     ];
