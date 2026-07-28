@@ -711,16 +711,23 @@ export class PlatformPricingComponent implements OnInit {
  }
 
  itemId(item: PricingSettingsItem): string {
- if ('zoneId' in item) return item.zoneId;
- if ('cityId' in item) return item.cityId;
- if ('pricingScope' in item && item.pricingScope === 'region' && 'regionId' in item && item.regionId) {
- return item.regionId;
+ if ('zoneId' in item) {
+ return item.zoneId;
  }
- if ('pricingScope' in item && item.pricingScope === 'global' && 'id' in item) {
+
+ if ('cityId' in item) {
+ return item.cityId;
+ }
+
+ if ('pricingScope' in item && item.pricingScope === 'global') {
  return item.id;
  }
- if ('regionId' in item && item.regionId) return item.regionId;
- return 'id' in item ? item.id : '';
+
+ if ('regionId' in item && typeof item.regionId === 'string' && item.regionId) {
+ return item.regionId;
+ }
+
+ return '';
  }
 
  itemPrimaryLabel(item: PricingSettingsItem): string {
