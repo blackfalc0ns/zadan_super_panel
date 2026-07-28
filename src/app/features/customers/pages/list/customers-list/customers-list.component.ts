@@ -50,13 +50,13 @@ export class CustomersListComponent implements OnInit {
 
   // Filter fields configuration (same pattern as vendors)
   filterFields: FilterField[] = [
-    { key: 'status', label: 'CUSTOMERS.FILTERS.STATUS', type: 'select', color: '#10b981', options: [] },
-    { key: 'city', label: 'CUSTOMERS.FILTERS.CITY', type: 'select', color: '#0ea5e9', options: [], localizeOptions: false },
-    { key: 'hasOrders', label: 'CUSTOMERS.FILTERS.HAS_ORDERS', type: 'select', color: '#8b5cf6', options: [] },
-    { key: 'isLocked', label: 'CUSTOMERS.FILTERS.ACCOUNT_LOCKED', type: 'select', color: '#ef4444', options: [] },
-    { key: 'minSpent', label: 'CUSTOMERS.FILTERS.MIN_SPENT', type: 'select', color: '#f59e0b', options: [] },
-    { key: 'maxSpent', label: 'CUSTOMERS.FILTERS.MAX_SPENT', type: 'select', color: '#6366f1', options: [] },
-    { key: 'sortBy', label: 'CUSTOMERS.FILTERS.SORT_BY', type: 'select', color: '#64748b', options: [] }
+    { key: 'status', label: 'CUSTOMERS.FILTERS.STATUS', type: 'select', color: '#10b981', options: [], placeholder: 'COMMON.ALL' },
+    { key: 'city', label: 'CUSTOMERS.FILTERS.CITY', type: 'select', color: '#0ea5e9', options: [], localizeOptions: false, placeholder: 'COMMON.ALL' },
+    { key: 'hasOrders', label: 'CUSTOMERS.FILTERS.HAS_ORDERS', type: 'select', color: '#8b5cf6', options: [], placeholder: 'COMMON.ALL' },
+    { key: 'isLocked', label: 'CUSTOMERS.FILTERS.ACCOUNT_LOCKED', type: 'select', color: '#ef4444', options: [], placeholder: 'COMMON.ALL' },
+    { key: 'minSpent', label: 'CUSTOMERS.FILTERS.MIN_SPENT', type: 'select', color: '#f59e0b', options: [], placeholder: 'COMMON.ALL' },
+    { key: 'maxSpent', label: 'CUSTOMERS.FILTERS.MAX_SPENT', type: 'select', color: '#6366f1', options: [], placeholder: 'COMMON.ALL' },
+    { key: 'sortBy', label: 'CUSTOMERS.FILTERS.SORT_BY', type: 'select', color: '#64748b', options: [], placeholder: 'COMMON.ALL' }
   ];
 
   readonly tableColumns: TableColumn[] = [
@@ -154,7 +154,9 @@ export class CustomersListComponent implements OnInit {
       }
 
       if (cityField) {
-        cityField.options = this.mapFilterOptions(this.filterOptionsRaw.cities);
+        const lang = (this.translate.currentLang || this.translate.defaultLang || 'ar').toLowerCase();
+        cityField.options = this.mapFilterOptions(this.filterOptionsRaw.cities)
+          .sort((left, right) => left.label.localeCompare(right.label, lang.startsWith('ar') ? 'ar' : 'en'));
       }
     }
 

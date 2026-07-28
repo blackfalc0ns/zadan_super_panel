@@ -32,6 +32,7 @@ import { QuickPreviewDrawerComponent, PreviewAction } from '../../../../../share
 import { MobileVendorCardsComponent, VendorCardData } from '@vendors/components/cards/mobile-vendor-cards/mobile-vendor-cards.component';
 import { ExportService } from '@shared/utils/export';
 import { ToastService } from '@shared/services/toast.service';
+import { GeographyService } from '@shared/services/geography.service';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,6 +92,7 @@ export class VendorsListComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
  private readonly exportService = inject(ExportService);
  private readonly toastService = inject(ToastService);
+ private readonly geographyService = inject(GeographyService);
  Math = Math;
 
  vendors: Vendor[] = [];
@@ -118,25 +120,9 @@ export class VendorsListComponent implements OnInit {
  documentsStatusOptions = Object.values(DocumentsStatus);
  riskLevelOptions = Object.values(RiskLevel);
  payoutStatusOptions = Object.values(PayoutStatus);
- cityOptions = [
- 'RIYADH',
- 'JEDDAH',
- 'DAMMAM',
- 'MAKKAH',
- 'MADINAH',
- 'TAIF',
- 'TABUK',
- 'ABHA',
- 'KHOBAR',
- 'QATIF'
- ];
- regionOptions = [
- 'CENTRAL',
- 'WESTERN',
- 'EASTERN',
- 'NORTHERN',
- 'SOUTHERN'
- ];
+ cityOptions: string[] = [];
+ regionOptions: string[] = [];
+ private operationalGeographyLoaded = false;
  
  // KPIs
  kpis: VendorKPIs = {
@@ -151,14 +137,14 @@ export class VendorsListComponent implements OnInit {
  
  // Configuration for components
  filterFields: FilterField[] = [
- { key: 'city', label: 'VENDOR_DETAIL.LOCATION_CITY', type: 'select', color: '#0ea5e9', options: [] },
- { key: 'status', label: 'COMMON.STATUS', type: 'select', color: '#10b981', options: [] },
- { key: 'riskLevel', label: 'VENDORS.RISK_LEVEL_TITLE', type: 'select', color: '#ef4444', options: [] },
- { key: 'onboardingStage', label: 'VENDORS.PREVIEW.ONBOARDING_STAGE', type: 'select', color: '#8b5cf6', options: [] },
- { key: 'documentsStatus', label: 'VENDORS.PREVIEW.VERIFICATION_STATUS', type: 'select', color: '#3b82f6', options: [] },
- { key: 'payoutStatus', label: 'VENDORS.PREVIEW.PAYOUT_STATUS', type: 'select', color: '#f59e0b', options: [] },
- { key: 'verificationStatus', label: 'VENDORS.PREVIEW.VERIFICATION_STATUS', type: 'select', color: '#6366f1', options: [] },
- { key: 'region', label: 'VENDOR_DETAIL.LOCATION_CITY', type: 'select', color: '#f97316', options: [] }
+ { key: 'city', label: 'VENDOR_DETAIL.LOCATION_CITY', type: 'select', color: '#0ea5e9', options: [], placeholder: 'COMMON.ALL' },
+ { key: 'status', label: 'COMMON.STATUS', type: 'select', color: '#10b981', options: [], placeholder: 'COMMON.ALL' },
+ { key: 'riskLevel', label: 'VENDORS.RISK_LEVEL_TITLE', type: 'select', color: '#ef4444', options: [], placeholder: 'COMMON.ALL' },
+ { key: 'onboardingStage', label: 'VENDORS.PREVIEW.ONBOARDING_STAGE', type: 'select', color: '#8b5cf6', options: [], placeholder: 'COMMON.ALL' },
+ { key: 'documentsStatus', label: 'VENDORS.TABLE.DOCUMENTS', type: 'select', color: '#3b82f6', options: [], placeholder: 'COMMON.ALL' },
+ { key: 'payoutStatus', label: 'VENDORS.PREVIEW.PAYOUT_STATUS', type: 'select', color: '#f59e0b', options: [], placeholder: 'COMMON.ALL' },
+ { key: 'verificationStatus', label: 'VENDORS.PREVIEW.VERIFICATION_STATUS', type: 'select', color: '#6366f1', options: [], placeholder: 'COMMON.ALL' },
+ { key: 'region', label: 'VENDOR_DETAIL.LOCATION_REGION', type: 'select', color: '#f97316', options: [], placeholder: 'COMMON.ALL' }
  ];
 
  tableColumns: TableColumn[] = [
@@ -220,7 +206,7 @@ export class VendorsListComponent implements OnInit {
  }
 
  ngOnInit(): void {
- this.initializeFilterOptions();
+ this.loadOperationalGeography();
  const cityCode = this.route.snapshot.queryParamMap.get('cityCode');
  if (cityCode) {
  this.filters = { ...this.filters, city: cityCode.trim().toUpperCase() };
@@ -231,6 +217,41 @@ export class VendorsListComponent implements OnInit {
  }
 
  // Lifecycle/Initialization
+ private loadOperationalGeography(): void {
+ if (this.operationalGeographyLoaded) {
+ this.initializeFilterOptions();
+ return;
+ }
+
+ this.operationalGeographyLoaded = true;
+
+ this.geographyService.getOperationalRegions().subscribe({
+ next: (regions) => {
+ this.cdr.markForCheck();
+ this.regionOptions = regions.map((region) => region.code);
+ this.initializeFilterOptions();
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.regionOptions = ['EASTERN'];
+ this.initializeFilterOptions();
+ }
+ });
+
+ this.geographyService.getOperationalCities('EASTERN').subscribe({
+ next: (cities) => {
+ this.cdr.markForCheck();
+ this.cityOptions = cities.map((city) => city.code);
+ this.initializeFilterOptions();
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.cityOptions = [];
+ this.initializeFilterOptions();
+ }
+ });
+ }
+
  initializeFilterOptions() {
  this.filterFields.forEach(field => {
  switch (field.key) {

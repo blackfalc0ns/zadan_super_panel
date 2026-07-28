@@ -14,6 +14,7 @@ import { DriverService } from '@drivers/services/drivers.api.service';
 import { FilterField } from '../../../../../shared/components/ui/advanced-filter-panel/advanced-filter-panel.component';
 import { KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { saudiCityTranslationKey } from '../../../../../shared/utils/saudi-geography-display';
+import { GeographyService } from '../../../../../shared/services/geography.service';
 import { DriversListViewComponent } from '../../../components/drivers-list-view/drivers-list-view.component';
 
 type SelectOption<T> = {
@@ -30,6 +31,7 @@ type SelectOption<T> = {
 })
 export class DriversListComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
+ private readonly geographyService = inject(GeographyService);
  readonly statusOptions: SelectOption<DriverStatus>[] = [
  { value: 'Online', label: 'DRIVERS.STATUS.ONLINE' },
  { value: 'OnMission', label: 'DRIVERS.STATUS.ONMISSION' },
@@ -61,9 +63,8 @@ export class DriversListComponent implements OnInit {
  { value: DriverVehicleType.Truck, label: 'DRIVERS.VEHICLES.TRUCK' }
  ];
 
- private readonly cityCodes = [
- 'RIYADH', 'JEDDAH', 'DAMMAM', 'MAKKAH', 'MADINAH', 'TAIF', 'TABUK', 'ABHA', 'KHOBAR', 'QATIF'
- ];
+ private cityCodes: string[] = [];
+ private operationalCitiesLoaded = false;
 
  drivers: Driver[] = [];
  searchTerm = '';
@@ -107,7 +108,7 @@ export class DriversListComponent implements OnInit {
  }
 
  ngOnInit(): void {
- this.initializeFilterOptions();
+ this.loadOperationalCities();
  const city = this.route.snapshot.queryParamMap.get('city');
  if (city) {
  this.filters = { ...this.filters, city: city.trim().toUpperCase() };
@@ -117,6 +118,27 @@ export class DriversListComponent implements OnInit {
  this.loadKPIs();
  }
 
+ private loadOperationalCities(): void {
+ if (this.operationalCitiesLoaded) {
+ this.initializeFilterOptions();
+ return;
+ }
+
+ this.operationalCitiesLoaded = true;
+ this.geographyService.getOperationalCities('EASTERN').subscribe({
+ next: (cities) => {
+ this.cdr.markForCheck();
+ this.cityCodes = cities.map((city) => city.code);
+ this.initializeFilterOptions();
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.cityCodes = [];
+ this.initializeFilterOptions();
+ }
+ });
+ }
+
  initializeFilterOptions(): void {
  this.filterFields = [
  {
@@ -124,6 +146,7 @@ export class DriversListComponent implements OnInit {
  label: 'DRIVERS.FILTERS.CITY',
  type: 'select',
  color: '#0ea5e9',
+ placeholder: 'COMMON.ALL',
  options: this.cityCodes.map((cityCode) => ({
  value: cityCode,
  label: `COMMON.CITIES.${cityCode}`
@@ -134,6 +157,7 @@ export class DriversListComponent implements OnInit {
  label: 'DRIVERS.FILTERS.STATUS',
  type: 'select',
  color: '#10b981',
+ placeholder: 'COMMON.ALL',
  options: this.statusOptions.map((option) => ({ value: option.value, label: option.label }))
  },
  {
@@ -141,6 +165,7 @@ export class DriversListComponent implements OnInit {
  label: 'DRIVERS.FILTERS.VERIFICATION_STATUS',
  type: 'select',
  color: '#f59e0b',
+ placeholder: 'COMMON.ALL',
  options: this.verificationOptions.map((option) => ({ value: option.value, label: option.label }))
  },
  {
@@ -148,6 +173,7 @@ export class DriversListComponent implements OnInit {
  label: 'DRIVERS.FILTERS.VEHICLE_TYPE',
  type: 'select',
  color: '#8b5cf6',
+ placeholder: 'COMMON.ALL',
  options: this.vehicleTypeOptions.map((option) => ({ value: option.value, label: option.label }))
  },
  {
@@ -155,6 +181,7 @@ export class DriversListComponent implements OnInit {
  label: 'DRIVERS.FILTERS.PERFORMANCE',
  type: 'select',
  color: '#f97316',
+ placeholder: 'COMMON.ALL',
  options: this.performanceOptions.map((option) => ({ value: option.value, label: option.label }))
  }
  ];

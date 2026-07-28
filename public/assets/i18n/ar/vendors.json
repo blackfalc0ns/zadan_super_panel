@@ -239,6 +239,7 @@
     "CATEGORY": "نوع النشاط",
     "STATUS": "الحالة",
     "LOCATION_CITY": "المدينة",
+    "LOCATION_REGION": "المنطقة",
     "ADDRESS": "العنوان الوطني",
     "JOIN_DATE": "تاريخ التسجيل",
     "PROFILE_DATA": "بيانات المالك",

@@ -241,6 +241,7 @@
     "CATEGORY": "Activity Type",
     "STATUS": "Status",
     "LOCATION_CITY": "City",
+    "LOCATION_REGION": "Region",
     "SUBMITTED_DATE": "Submission Date",
     "ADDRESS": "National Address",
     "JOIN_DATE": "Registration Date",
