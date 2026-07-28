@@ -316,6 +316,8 @@ export interface AdminOrderCaseStatsResponse {
   totalOpen: number;
   slaBreachedCount: number;
   avgResolutionHours: number;
+  totalExposureAmount?: number;
+  driverInitiatedCount?: number;
   byStatus: AdminCaseCountByLabel[];
   byPriority: AdminCaseCountByLabel[];
   byQueue: AdminCaseCountByLabel[];

@@ -116,7 +116,7 @@ export class VendorsApplicationsComponent implements OnInit {
   loadApplications(): void {
     this.loading = true;
     // status=Pending will give us the ones needing review
-    this.vendorService.getVendors(1, 50, undefined, VendorStatus.Pending).subscribe({
+    this.vendorService.getVendors(1, 50, undefined, { status: VendorStatus.Pending }).subscribe({
       next: (data) => {
         this.cdr.markForCheck();
         this.applications = data.items;

@@ -407,14 +407,35 @@ export class FinanceService {
  }
 
  getLedgerEntries(filter?: LedgerFilter): Observable<LedgerEntry[]> {
- let params = new HttpParams().set('page', '1').set('pageSize', '200');
+ const resolved = this.resolveLedgerFilter(filter);
+ let params = new HttpParams().set('page', '1').set('pageSize', '500');
 
- if (filter?.orderId) {
- params = params.set('orderId', filter.orderId);
+ if (resolved?.orderId) {
+ params = params.set('orderId', resolved.orderId);
+ }
+ if (resolved?.entityId && resolved.entityType === 'vendor') {
+ params = params.set('ownerType', 'Vendor').set('ownerId', resolved.entityId);
+ } else if (resolved?.entityId && resolved.entityType === 'driver') {
+ params = params.set('ownerType', 'Driver').set('ownerId', resolved.entityId);
+ } else if (resolved?.entityType === 'vendor') {
+ params = params.set('ownerType', 'Vendor');
+ } else if (resolved?.entityType === 'driver') {
+ params = params.set('ownerType', 'Driver');
+ } else if (resolved?.entityType === 'platform') {
+ params = params.set('ownerType', 'Platform');
+ }
+ if (resolved?.search?.trim()) {
+ params = params.set('search', resolved.search.trim());
+ }
+ if (resolved?.dateFrom) {
+ params = params.set('dateFrom', resolved.dateFrom);
+ }
+ if (resolved?.dateTo) {
+ params = params.set('dateTo', resolved.dateTo);
  }
 
  return this.http.get<AdminLedgerEntryListApiModel>(`${this.apiUrl}/ledger`, { params }).pipe(
- map((response) => this.filterLedgerEntries(this.mapLedgerEntries(response.items), filter))
+ map((response) => this.filterLedgerEntries(this.mapLedgerEntries(response.items), resolved))
  );
  }
 
@@ -691,10 +712,18 @@ export class FinanceService {
  }
  }
 
- getAdjustments(): Observable<FinancialAdjustment[]> {
- return this.http.get<AdminFinancialAdjustmentListApiModel>(`${this.apiUrl}/adjustments`, {
- params: new HttpParams().set('page', '1').set('pageSize', '200')
- }).pipe(
+ getAdjustments(filter?: { ownerType?: EntityType; ownerId?: string }): Observable<FinancialAdjustment[]> {
+ let params = new HttpParams().set('page', '1').set('pageSize', '200');
+ if (filter?.ownerType === 'vendor') {
+ params = params.set('ownerType', 'Vendor');
+ } else if (filter?.ownerType === 'driver') {
+ params = params.set('ownerType', 'Driver');
+ }
+ if (filter?.ownerId?.trim()) {
+ params = params.set('ownerId', filter.ownerId.trim());
+ }
+
+ return this.http.get<AdminFinancialAdjustmentListApiModel>(`${this.apiUrl}/adjustments`, { params }).pipe(
  map((response) => response.items.map((item) => this.mapFinancialAdjustment(item)))
  );
  }
@@ -1432,13 +1461,60 @@ export class FinanceService {
  if (filter.minAmount!== undefined && entry.amount < filter.minAmount) return false;
  if (filter.maxAmount!== undefined && entry.amount > filter.maxAmount) return false;
  if (filter.search) {
- const haystack = `${entry.entityName} ${entry.referenceId} ${entry.orderId ?? ''}`;
+ const haystack = `${entry.entityName} ${entry.referenceId} ${entry.orderId ?? ''} ${entry.description ?? ''}`;
  if (!this.normalizeText(haystack).includes(this.normalizeText(filter.search))) return false;
  }
  if (filter.dateFrom && entry.timestamp < filter.dateFrom) return false;
  if (filter.dateTo && entry.timestamp > filter.dateTo) return false;
  return true;
  });
+ }
+
+ private resolveLedgerFilter(filter?: LedgerFilter): LedgerFilter | undefined {
+ if (!filter) {
+ return undefined;
+ }
+
+ const resolved = { ...filter };
+ if (filter.period && !filter.dateFrom && !filter.dateTo) {
+ const bounds = this.resolveFinancePeriodBounds(filter.period);
+ resolved.dateFrom = bounds.dateFrom;
+ resolved.dateTo = bounds.dateTo;
+ }
+
+ return resolved;
+ }
+
+ private resolveFinancePeriodBounds(period: FinancePeriod): { dateFrom: string; dateTo: string } {
+ const now = new Date();
+ const end = now.toISOString();
+ const start = new Date(now);
+
+ switch (period) {
+ case 'today':
+ start.setHours(0, 0, 0, 0);
+ break;
+ case 'week': {
+ const day = start.getDay();
+ const diff = day === 0 ? 6 : day - 1;
+ start.setDate(start.getDate() - diff);
+ start.setHours(0, 0, 0, 0);
+ break;
+ }
+ case 'quarter': {
+ const quarterStartMonth = Math.floor(start.getMonth() / 3) * 3;
+ start.setMonth(quarterStartMonth, 1);
+ start.setHours(0, 0, 0, 0);
+ break;
+ }
+ case 'month':
+ default:
+ start.setDate(1);
+ start.setHours(0, 0, 0, 0);
+ break;
+ }
+
+ return { dateFrom: start.toISOString(), dateTo: end };
  }
 
  private filterSettlements(settlements: Settlement[], filter?: SettlementFilter): Settlement[] {

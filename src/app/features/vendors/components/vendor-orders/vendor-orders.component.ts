@@ -10,6 +10,7 @@ import { SearchableSelectComponent, SearchableSelectOption } from '../../../../s
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { AdminVendorOrderItem, VendorService } from '@vendors/services/vendor.api.service';
+import { AdminVendorOrderStats } from '@vendors/models/vendors.domain.models';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 import { ExportService } from '../../../../shared/utils/export';
 import { ToastService } from '../../../../shared/services/toast.service';
@@ -67,6 +68,7 @@ export class VendorOrdersComponent {
  readonly pageSize = 12;
  totalItems = 0;
  ordersData: AdminVendorOrderItem[] = [];
+ orderStats: AdminVendorOrderStats | null = null;
  kpis: KPI[] = [];
 
  readonly statusOptions: SearchableSelectOption<string>[] = this.buildStatusOptions();
@@ -113,6 +115,7 @@ export class VendorOrdersComponent {
 
  this.vendorId = vendorId;
  this.currentPage = 1;
+ this.loadOrderStats();
  this.loadOrders();
  });
  }
@@ -250,6 +253,25 @@ export class VendorOrdersComponent {
  }
  }
 
+ private loadOrderStats(): void {
+ if (!this.vendorId) {
+ return;
+ }
+
+ this.vendorService.getVendorOrderStats(this.vendorId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+ next: (stats) => {
+ this.cdr.markForCheck();
+ this.orderStats = stats;
+ this.rebuildViewModel();
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.orderStats = null;
+ this.rebuildViewModel();
+ }
+ });
+ }
+
  private loadOrders(): void {
  this.isLoading = true;
  this.hasError = false;
@@ -280,13 +302,14 @@ export class VendorOrdersComponent {
  }
 
  private rebuildViewModel(): void {
- const totalOrders = this.ordersData.length;
- const completedOrders = this.ordersData.filter((order) => order.status.toLowerCase() === 'delivered').length;
- const cancelledOrders = this.ordersData.filter((order) => ['cancelled', 'vendorrejected', 'deliveryfailed'].includes(order.status.toLowerCase())).length;
- const openOrders = this.ordersData.filter((order) =>!['delivered', 'cancelled', 'vendorrejected', 'deliveryfailed'].includes(order.status.toLowerCase())).length;
- const paidOrders = this.ordersData.filter((order) => order.paymentStatus.toLowerCase() === 'paid').length;
- const totalSalesValue = this.ordersData.reduce((sum, order) => sum + order.totalAmount, 0);
- const averageOrder = totalOrders > 0 ? totalSalesValue / totalOrders : 0;
+ const stats = this.orderStats;
+ const totalOrders = stats?.totalOrders ?? this.ordersData.length;
+ const completedOrders = stats?.completedOrders ?? this.ordersData.filter((order) => order.status.toLowerCase() === 'delivered').length;
+ const cancelledOrders = stats?.cancelledOrders ?? this.ordersData.filter((order) => ['cancelled', 'vendorrejected', 'deliveryfailed'].includes(order.status.toLowerCase())).length;
+ const openOrders = stats?.openOrders ?? this.ordersData.filter((order) =>!['delivered', 'cancelled', 'vendorrejected', 'deliveryfailed'].includes(order.status.toLowerCase())).length;
+ const paidOrders = stats?.paidOrders ?? this.ordersData.filter((order) => order.paymentStatus.toLowerCase() === 'paid').length;
+ const totalSalesValue = stats?.totalSalesValue ?? this.ordersData.reduce((sum, order) => sum + order.totalAmount, 0);
+ const averageOrder = stats?.averageOrderValue ?? (totalOrders > 0 ? totalSalesValue / totalOrders : 0);
 
  this.kpis = [
  {

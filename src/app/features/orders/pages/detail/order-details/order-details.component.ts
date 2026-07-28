@@ -87,6 +87,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  private driverLocationSub: Subscription | null = null;
  private statusChangeSub: Subscription | null = null;
  private countdownSub: Subscription | null = null;
+ private langChangeSub: Subscription | null = null;
  private trackedOrderId: string | null = null;
 
  isLoading = false;
@@ -131,6 +132,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.orderId.set(id);
  this.loadOrderDetails();
 
+ this.langChangeSub = this.translate.onLangChange.subscribe(() => {
+ this.cdr.markForCheck();
+ });
+
  this.fragmentSub = this.route.fragment.subscribe((fragment) => {
  this.cdr.markForCheck();
  if (fragment === 'tracking') {
@@ -144,6 +149,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.stopRealtimeTracking();
  this.stopCountdown();
  this.fragmentSub?.unsubscribe();
+ this.langChangeSub?.unsubscribe();
  }
 
  get fulfillmentTypeLabel(): string {
@@ -428,13 +434,23 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  }
 
  timelineTitle(step: OrderTimelineItem): string {
- const label = this.resolveLocalizedLabel(step.titleAr, step.titleEn);
- return this.translateTimelineText(label);
+ return this.translateTimelinePart(step.titleAr, step.titleEn);
  }
 
  timelineSubtitle(step: OrderTimelineItem): string {
- const label = this.resolveLocalizedLabel(step.subtitleAr, step.subtitleEn);
- return this.translateTimelineText(label);
+ return this.translateTimelinePart(step.subtitleAr, step.subtitleEn);
+ }
+
+ private translateTimelinePart(labelAr?: string | null, labelEn?: string | null): string {
+ const key = resolveOrderTimelineTextKey(labelAr) ?? resolveOrderTimelineTextKey(labelEn);
+ if (key) {
+ const translated = this.translate.instant(key);
+ if (translated && translated !== key) {
+ return translated;
+ }
+ }
+
+ return this.resolveLocalizedLabel(labelAr, labelEn);
  }
 
  get deliveryInfoItems(): KeyValueGridItem[] {
@@ -514,31 +530,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.scrollToSection('tracking');
  }
 
- translateTimelineText(text: string | null | undefined): string {
- if (!text?.trim()) {
- return '';
- }
-
- const key = resolveOrderTimelineTextKey(text);
- if (key) {
- const translated = this.translate.instant(key);
- if (translated && translated!== key) {
- return translated;
- }
- }
-
- return text;
- }
-
- translateTimelineStepStatus(status: OrderTimelineItem['status']): string {
- return this.translate.instant(`ORDERS.DETAIL.TIMELINE_STEP_STATUS.${status}`);
- }
-
  timelineStepIcon(step: OrderTimelineItem): string {
- return resolveOrderTimelineStepIcon(
- this.resolveLocalizedLabel(step.titleAr, step.titleEn),
- this.resolveLocalizedLabel(step.subtitleAr, step.subtitleEn)
- );
+ return resolveOrderTimelineStepIcon(step.titleAr, step.titleEn, step.subtitleAr, step.subtitleEn);
  }
 
  timelineStepIconFilled(step: OrderTimelineItem): boolean {

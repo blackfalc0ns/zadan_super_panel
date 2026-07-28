@@ -43,6 +43,12 @@ export interface AdminVendorSupportTicket {
   linkedRoute?: string | null;
 }
 
+export interface AdminVendorSupportTicketStats {
+  totalOpen: number;
+  waitingVendor: number;
+  resolved: number;
+}
+
 export interface AdminVendorSupportTicketsResponse {
   items: AdminVendorSupportTicket[];
   page: number;

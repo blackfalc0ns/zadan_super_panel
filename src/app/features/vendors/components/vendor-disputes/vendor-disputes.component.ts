@@ -9,7 +9,7 @@ import { SearchableSelectComponent, SearchableSelectOption } from '../../../../s
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { SupportCaseRow } from '@disputes/models/disputes.models';
+import { SupportCaseRow, AdminOrderCaseStats, createEmptyAdminOrderCaseStats } from '@disputes/models/disputes.models';
 import { DisputesService } from '@disputes/services/disputes.api.service';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
@@ -67,6 +67,7 @@ export class VendorDisputesComponent {
  readonly pageSize = 12;
  totalItems = 0;
  disputesData: SupportCaseRow[] = [];
+ disputeStats: AdminOrderCaseStats = createEmptyAdminOrderCaseStats();
  kpis: KPI[] = [];
 
  readonly statusOptions: SearchableSelectOption<string>[] = this.buildStatusOptions();
@@ -111,6 +112,7 @@ export class VendorDisputesComponent {
 
  this.vendorId = vendorId;
  this.currentPage = 1;
+ this.loadDisputeStats();
  this.loadDisputes();
  });
  }
@@ -217,6 +219,25 @@ export class VendorDisputesComponent {
  }
  }
 
+ private loadDisputeStats(): void {
+ if (!this.vendorId) {
+ return;
+ }
+
+ this.disputesService.getStats(this.vendorId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+ next: (stats) => {
+ this.cdr.markForCheck();
+ this.disputeStats = stats;
+ this.rebuildViewModel();
+ },
+ error: () => {
+ this.cdr.markForCheck();
+ this.disputeStats = createEmptyAdminOrderCaseStats();
+ this.rebuildViewModel();
+ }
+ });
+ }
+
  private loadDisputes(): void {
  if (!this.vendorId) {
  return;
@@ -255,10 +276,11 @@ export class VendorDisputesComponent {
  }
 
  private rebuildViewModel(): void {
- const total = this.disputesData.length;
- const open = this.disputesData.filter((item) =>!['resolved', 'rejected'].includes(item.caseStatus.toLowerCase())).length;
- const resolved = this.disputesData.filter((item) => item.caseStatus.toLowerCase() === 'resolved').length;
- const rejected = this.disputesData.filter((item) => item.caseStatus.toLowerCase() === 'rejected').length;
+ const stats = this.disputeStats;
+ const total = stats.byStatus.reduce((sum, group) => sum + group.count, 0) || this.totalItems;
+ const open = stats.totalOpen;
+ const resolved = this.countStatsByLabels(stats.byStatus, 'Resolved', 'resolved');
+ const rejected = this.countStatsByLabels(stats.byStatus, 'Rejected', 'rejected');
 
  this.kpis = [
  {
@@ -395,6 +417,16 @@ export class VendorDisputesComponent {
  { value: 'medium', labelKey: 'VENDOR_DISPUTES.PRIORITY.MEDIUM' },
  { value: 'low', labelKey: 'VENDOR_DISPUTES.PRIORITY.LOW' }
  ];
+ }
+
+ private countStatsByLabels(
+ groups: Array<{ label: string; count: number }>,
+ ...labels: string[]
+ ): number {
+ const normalized = new Set(labels.map((label) => label.trim().toLowerCase()));
+ return groups
+ .filter((group) => normalized.has(group.label.trim().toLowerCase()))
+ .reduce((sum, group) => sum + group.count, 0);
  }
 
  private formatCaseIdentifier(value: string): string {

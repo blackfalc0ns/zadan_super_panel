@@ -45,6 +45,7 @@ export class FinancialAdjustmentsComponent implements OnInit {
   searchQuery = '';
  selectedDirection: 'all' | 'credit' | 'debit' = 'all';
   selectedCategory = 'all';
+  selectedEntityType: 'all' | EntityType = 'all';
 
  form: {
  entityType: EntityType;
@@ -86,7 +87,9 @@ export class FinancialAdjustmentsComponent implements OnInit {
 
  loadAdjustments(): void {
  this.loadError = false;
- this.financeService.getAdjustments().pipe(take(1)).subscribe({
+ this.financeService.getAdjustments({
+ ownerType: this.selectedEntityType === 'all' ? undefined : this.selectedEntityType
+ }).pipe(take(1)).subscribe({
  next: (data) => {
  this.adjustments = data;
  this.refreshKpiCards();
@@ -97,6 +100,11 @@ export class FinancialAdjustmentsComponent implements OnInit {
  this.cdr.markForCheck();
  }
  });
+ }
+
+ onEntityTypeChange(entityType: 'all' | EntityType): void {
+ this.selectedEntityType = entityType;
+ this.loadAdjustments();
  }
 
   get isRTL(): boolean {

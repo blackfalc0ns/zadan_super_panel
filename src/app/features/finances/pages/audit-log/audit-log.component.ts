@@ -148,7 +148,10 @@ export class AuditLogComponent implements OnInit {
  this.hasLoadError = false;
  this.cdr.markForCheck();
 
- this.financeService.getAuditLog().pipe(take(1)).subscribe({
+ this.financeService.getAuditLog({
+ actionCategory: this.categoryFilter !== 'all' ? this.categoryFilter : undefined,
+ entityType: this.entityFilter !== 'all' ? this.entityFilter : undefined
+ }).pipe(take(1)).subscribe({
  next: (entries) => {
  this.entries = entries;
  this.applyFilters();
@@ -206,7 +209,7 @@ export class AuditLogComponent implements OnInit {
     this.categoryFilter = this.panelFilters['category'] as AuditCategoryFilter;
     this.entityFilter = this.panelFilters['entity'] as AuditEntityFilter;
     this.currentPage = 1;
- this.applyFilters();
+ this.loadAuditLog();
  }
 
   resetFilters(): void {
@@ -215,7 +218,7 @@ export class AuditLogComponent implements OnInit {
     this.entityFilter = 'all';
     this.panelFilters = { category: 'all', entity: 'all' };
     this.currentPage = 1;
- this.applyFilters();
+ this.loadAuditLog();
  }
 
  getInitials(name: string): string {

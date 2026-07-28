@@ -41,27 +41,30 @@ export class FinancialRefundsComponent implements OnInit {
   loadError = false;
   selectedStatus: 'all' | RefundStatus = 'all';
   searchQuery = '';
+  private scopeFilter: { entityType?: 'vendor' | 'driver'; entityId?: string; orderId?: string } = {};
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
       const entityType = params.get('entityType');
       const entityId = params.get('entityId');
       const orderId = params.get('orderId');
-      this.loadRefunds({
+      this.scopeFilter = {
         entityType: entityType === 'vendor' || entityType === 'driver' ? entityType : undefined,
         entityId: entityId ?? undefined,
         orderId: orderId ?? undefined
-      });
+      };
+      this.loadRefunds();
     });
   }
 
-  loadRefunds(filter: { entityType?: 'vendor' | 'driver'; entityId?: string; orderId?: string } = {}): void {
+  loadRefunds(): void {
     this.loadError = false;
     this.financeService.getRefundCases({
-      vendorId: filter.entityType === 'vendor' ? filter.entityId : undefined,
-      entityType: filter.entityType,
-      entityId: filter.entityType === 'driver' ? filter.entityId : undefined,
-      orderId: filter.orderId
+      status: this.selectedStatus === 'all' ? undefined : this.selectedStatus,
+      vendorId: this.scopeFilter.entityType === 'vendor' ? this.scopeFilter.entityId : undefined,
+      entityType: this.scopeFilter.entityType,
+      entityId: this.scopeFilter.entityType === 'driver' ? this.scopeFilter.entityId : undefined,
+      orderId: this.scopeFilter.orderId
     }).pipe(take(1)).subscribe({
       next: (items) => {
         this.refunds = items;
@@ -74,15 +77,18 @@ export class FinancialRefundsComponent implements OnInit {
     });
   }
 
+  onStatusChange(status: 'all' | RefundStatus): void {
+    this.selectedStatus = status;
+    this.loadRefunds();
+  }
+
   get filteredRefunds(): RefundCase[] {
+    if (!this.searchQuery.trim()) {
+      return this.refunds;
+    }
+
+    const query = this.searchQuery.toLowerCase();
     return this.refunds.filter((item) => {
-      if (this.selectedStatus !== 'all' && item.status !== this.selectedStatus) {
-        return false;
-      }
-      if (!this.searchQuery.trim()) {
-        return true;
-      }
-      const query = this.searchQuery.toLowerCase();
       return [item.caseRef, item.orderRef, item.vendorName, item.driverName, item.reason]
         .some((value) => (value ?? '').toLowerCase().includes(query));
     });

@@ -621,9 +621,11 @@ export class DriverService {
 
  if (filters.status) {
  params = params.set('status', filters.status);
+ } else if (filters.verificationStatus === VerificationStatus.Suspended) {
+ params = params.set('status', 'Suspended');
  }
 
- if (filters.verificationStatus) {
+ if (filters.verificationStatus && filters.verificationStatus !== VerificationStatus.Suspended) {
  params = params.set('verificationStatus', this.mapVerificationFilter(filters.verificationStatus));
  }
 
@@ -1367,8 +1369,6 @@ export class DriverService {
  return 'UnderReview';
  case VerificationStatus.Unverified:
  return 'NeedsDocuments';
- case VerificationStatus.Suspended:
- return 'Rejected';
  default:
  return status;
  }

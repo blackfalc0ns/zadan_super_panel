@@ -129,6 +129,8 @@ export interface AdminOrderCaseStats {
   totalOpen: number;
   slaBreachedCount: number;
   avgResolutionHours: number;
+  totalExposureAmount?: number;
+  driverInitiatedCount?: number;
   byStatus: Array<{ label: string; count: number }>;
   byPriority: Array<{ label: string; count: number }>;
   byQueue: Array<{ label: string; count: number }>;
@@ -242,6 +244,8 @@ export function createEmptyAdminOrderCaseStats(): AdminOrderCaseStats {
     totalOpen: 0,
     slaBreachedCount: 0,
     avgResolutionHours: 0,
+    totalExposureAmount: 0,
+    driverInitiatedCount: 0,
     byStatus: [],
     byPriority: [],
     byQueue: [],

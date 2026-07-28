@@ -110,7 +110,6 @@ export class VendorsListComponent implements OnInit {
  searchTerm = '';
  filters: VendorFilters = {};
  isFiltersExpanded = false;
- private pendingCityCodeFilter: string | null = null;
  
  // Options
  statusOptions = Object.values(VendorStatus);
@@ -120,23 +119,23 @@ export class VendorsListComponent implements OnInit {
  riskLevelOptions = Object.values(RiskLevel);
  payoutStatusOptions = Object.values(PayoutStatus);
  cityOptions = [
- 'COMMON.CITIES.RIYADH',
- 'COMMON.CITIES.JEDDAH',
- 'COMMON.CITIES.DAMMAM',
- 'COMMON.CITIES.MAKKAH',
- 'COMMON.CITIES.MADINAH',
- 'COMMON.CITIES.TAIF',
- 'COMMON.CITIES.TABUK',
- 'COMMON.CITIES.ABHA',
- 'COMMON.CITIES.KHOBAR',
- 'COMMON.CITIES.QATIF'
+ 'RIYADH',
+ 'JEDDAH',
+ 'DAMMAM',
+ 'MAKKAH',
+ 'MADINAH',
+ 'TAIF',
+ 'TABUK',
+ 'ABHA',
+ 'KHOBAR',
+ 'QATIF'
  ];
  regionOptions = [
- 'COMMON.REGIONS.CENTRAL',
- 'COMMON.REGIONS.WESTERN',
- 'COMMON.REGIONS.EASTERN',
- 'COMMON.REGIONS.NORTHERN',
- 'COMMON.REGIONS.SOUTHERN'
+ 'CENTRAL',
+ 'WESTERN',
+ 'EASTERN',
+ 'NORTHERN',
+ 'SOUTHERN'
  ];
  
  // KPIs
@@ -224,12 +223,8 @@ export class VendorsListComponent implements OnInit {
  this.initializeFilterOptions();
  const cityCode = this.route.snapshot.queryParamMap.get('cityCode');
  if (cityCode) {
- this.pendingCityCodeFilter = cityCode.trim().toUpperCase();
+ this.filters = { ...this.filters, city: cityCode.trim().toUpperCase() };
  this.isFiltersExpanded = true;
- const cityLabel = this.resolveCityLabelForCode(this.pendingCityCodeFilter);
- if (cityLabel) {
- this.filters = {...this.filters, city: cityLabel };
- }
  }
  this.loadVendors();
  this.loadKPIs();
@@ -240,10 +235,10 @@ export class VendorsListComponent implements OnInit {
  this.filterFields.forEach(field => {
  switch (field.key) {
  case 'city':
- field.options = this.cityOptions.map(cityKey => {
- const city = this.translate.instant(cityKey);
- return { value: city, label: city };
- });
+ field.options = this.cityOptions.map(cityCode => ({
+ value: cityCode,
+ label: `COMMON.CITIES.${cityCode}`
+ }));
  break;
  case 'status':
  field.options = this.statusOptions.map(status => ({ value: status, label: this.getStatusLabel(status) }));
@@ -264,10 +259,10 @@ export class VendorsListComponent implements OnInit {
  field.options = this.verificationStatusOptions.map(status => ({ value: status, label: this.getVerificationStatusLabel(status) }));
  break;
  case 'region':
- field.options = this.regionOptions.map(regionKey => {
- const region = this.translate.instant(regionKey);
- return { value: region, label: region };
- });
+ field.options = this.regionOptions.map(regionCode => ({
+ value: regionCode,
+ label: `COMMON.REGIONS.${regionCode}`
+ }));
  break;
  }
  });
@@ -298,15 +293,11 @@ export class VendorsListComponent implements OnInit {
  this.isLoading = true;
  this.showError = false;
 
- this.vendorService.getVendors(this.pageNumber, this.pageSize, this.searchTerm, this.filters.status).subscribe({
+ this.vendorService.getVendors(this.pageNumber, this.pageSize, this.searchTerm, this.filters).subscribe({
  next: (response) => {
  this.cdr.markForCheck();
- let vendors = (response.items ?? []).map(vendor => ({...vendor }));
- if (this.pendingCityCodeFilter) {
- vendors = vendors.filter((vendor) => this.matchesVendorCityCode(vendor, this.pendingCityCodeFilter!));
- }
- this.vendors = vendors;
- this.totalCount = this.pendingCityCodeFilter ? vendors.length : (response.totalCount ?? 0);
+ this.vendors = (response.items ?? []).map(vendor => ({ ...vendor }));
+ this.totalCount = response.totalCount ?? 0;
  this.totalPages = response.totalPages ?? Math.ceil(this.totalCount / this.pageSize);
  this.pageNumber = response.pageNumber ?? this.pageNumber;
  this.hasPreviousPage = response.hasPreviousPage ?? this.pageNumber > 1;
@@ -389,7 +380,7 @@ export class VendorsListComponent implements OnInit {
  {
  id: 'total',
  title: 'VENDORS.KPI.TOTAL_VENDORS',
- value: this.totalCount.toLocaleString(),
+ value: (this.kpis.totalVendors ?? this.totalCount).toLocaleString(),
  icon: '<span class="material-symbols-outlined text-[20px]">group</span>',
  color: '#10b981',
  clickable: false
@@ -517,10 +508,11 @@ export class VendorsListComponent implements OnInit {
 
  onKPICardClick(card: KPICard) {
  switch (card.id) {
- case 'pending': this.filters.status = VendorStatus.Pending; break;
- case 'high-risk': this.filters.riskLevel = RiskLevel.High; break;
- case 'payout-blocked': this.filters.payoutStatus = PayoutStatus.Blocked; break;
- case 'suspended': this.filters.status = VendorStatus.Suspended; break;
+ case 'pending': this.filters = { ...this.filters, status: VendorStatus.Pending }; break;
+ case 'high-risk': this.filters = { ...this.filters, riskLevel: RiskLevel.High }; break;
+ case 'payout-blocked': this.filters = { ...this.filters, payoutStatus: PayoutStatus.Blocked }; break;
+ case 'suspended': this.filters = { ...this.filters, status: VendorStatus.Suspended }; break;
+ default: this.filters = {}; break;
  }
  this.onFilterChange();
  }

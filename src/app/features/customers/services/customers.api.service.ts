@@ -25,6 +25,15 @@ export interface CustomerFilterOptions {
  cities: CustomerFilterOptionItem[];
 }
 
+export interface CustomerStats {
+ totalCustomers: number;
+ activeCustomers: number;
+ newCustomers: number;
+ highRiskCustomers: number;
+ complaintCustomers: number;
+ repeatRefundCustomers: number;
+}
+
 export interface CustomerFilters {
  status?: string;
  city?: string;
@@ -124,6 +133,8 @@ export class CustomersService {
  private readonly apiUrl = `${environment.apiUrl}/admin/customers`;
  private readonly customerStore = new Map<string, CustomerDetailRecord>();
  private readonly customersSubject = new BehaviorSubject<CustomerDetailRecord[]>([]);
+ private readonly customersTotalSubject = new BehaviorSubject(0);
+ readonly customersTotal$ = this.customersTotalSubject.asObservable();
  private readonly customersLoadingSubject = new BehaviorSubject(false);
  readonly customersLoading$ = this.customersLoadingSubject.asObservable();
  private readonly hubUrl = `${environment.apiUrl.replace(/\/api$/, '')}/hubs/customer-presence`;
@@ -145,6 +156,19 @@ export class CustomersService {
 
  getFilterOptions(): Observable<CustomerFilterOptions> {
  return this.http.get<CustomerFilterOptions>(`${this.apiUrl}/filter-options`);
+ }
+
+ getStats(): Observable<CustomerStats> {
+ return this.http.get<CustomerStats>(`${this.apiUrl}/stats`).pipe(
+ map((response) => ({
+ totalCustomers: response.totalCustomers ?? 0,
+ activeCustomers: response.activeCustomers ?? 0,
+ newCustomers: response.newCustomers ?? 0,
+ highRiskCustomers: response.highRiskCustomers ?? 0,
+ complaintCustomers: response.complaintCustomers ?? 0,
+ repeatRefundCustomers: response.repeatRefundCustomers ?? 0
+ }))
+ );
  }
 
  exportCustomers(search?: string, filters?: CustomerFilters): Observable<Blob> {
@@ -179,8 +203,8 @@ export class CustomersService {
  );
  }
 
- loadWithFilters(search?: string, filters?: CustomerFilters): void {
- let params = new HttpParams().set('page', '1').set('pageSize', '250');
+ loadWithFilters(search?: string, filters?: CustomerFilters, page = 1, pageSize = 15): void {
+ let params = new HttpParams().set('page', String(Math.max(1, page))).set('pageSize', String(Math.max(1, pageSize)));
 
  if (search?.trim()) {
  params = params.set('search', search.trim());
@@ -200,18 +224,19 @@ export class CustomersService {
  this.beginCustomersLoading();
 
  this.http.get<ApiPaginatedResponse<AdminCustomerListItemDto>>(this.apiUrl, { params }).pipe(
- map((response) => response.items.map((item) => this.mapListItemToCustomer(item))),
  finalize(() => this.endCustomersLoading())
  ).subscribe({
- next: (customers) => {
+ next: (response) => {
  this.customerStore.clear();
- customers.forEach((customer) => this.customerStore.set(customer.id, customer));
+ response.items.map((item) => this.mapListItemToCustomer(item)).forEach((customer) => this.customerStore.set(customer.id, customer));
+ this.customersTotalSubject.next(response.totalCount ?? response.items.length);
  this.syncCustomersSubject();
  },
  error: (error) => {
  console.error('Failed to load admin customers with filters.', error);
  this.customersLoaded = false;
  this.customersSubject.next([]);
+ this.customersTotalSubject.next(0);
  }
  });
  }

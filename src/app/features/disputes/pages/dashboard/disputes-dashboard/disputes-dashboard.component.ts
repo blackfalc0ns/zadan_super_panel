@@ -392,6 +392,7 @@ export class DisputesDashboardComponent implements OnInit {
  }
 
  this.resetToFirstPage();
+ this.loadDisputes();
  }
 
  onSearchChange(): void {
@@ -1017,7 +1018,9 @@ export class DisputesDashboardComponent implements OnInit {
  }
 
  private getTotalDisputeValue(): string {
- return this.disputes.reduce((sum, dispute) => sum + dispute.amount, 0).toLocaleString('en-US');
+ const amount = this.caseStats.totalExposureAmount
+ ?? this.disputes.reduce((sum, dispute) => sum + dispute.amount, 0);
+ return amount.toLocaleString('en-US');
  }
 
  private countStatsByLabels(
@@ -1258,11 +1261,11 @@ export class DisputesDashboardComponent implements OnInit {
  }
  ];
 
- const driverInitiated = this.disputes.filter((item) => item.initiatorRole === 'driver').length;
+ const driverInitiated = this.caseStats.driverInitiatedCount ?? 0;
  if (driverInitiated > 0) {
  this.kpiCards.splice(4, 0, {
  id: 'driver',
- title: this.isRtl ? 'قضايا المندوب (الصفحة)' : 'Driver cases (page)',
+ title: this.t('DISPUTES_DASHBOARD.KPI.DRIVER'),
  value: driverInitiated,
  color: '#6366f1',
  icon: '<span class="material-symbols-outlined text-[20px]">local_shipping</span>',

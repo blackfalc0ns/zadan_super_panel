@@ -61,11 +61,14 @@ export class DriversListComponent implements OnInit {
  { value: DriverVehicleType.Truck, label: 'DRIVERS.VEHICLES.TRUCK' }
  ];
 
+ private readonly cityCodes = [
+ 'RIYADH', 'JEDDAH', 'DAMMAM', 'MAKKAH', 'MADINAH', 'TAIF', 'TABUK', 'ABHA', 'KHOBAR', 'QATIF'
+ ];
+
  drivers: Driver[] = [];
  searchTerm = '';
  filters: DriverFilters = {};
  isFiltersExpanded = false;
- cityOptions: string[] = [];
  filterFields: FilterField[] = [];
 
  kpis: DriverKPIs = {
@@ -104,11 +107,10 @@ export class DriversListComponent implements OnInit {
  }
 
  ngOnInit(): void {
- this.cityOptions = this.buildCityOptions([]);
  this.initializeFilterOptions();
  const city = this.route.snapshot.queryParamMap.get('city');
  if (city) {
- this.filters = {...this.filters, city };
+ this.filters = { ...this.filters, city: city.trim().toUpperCase() };
  this.isFiltersExpanded = true;
  }
  this.loadDrivers();
@@ -122,9 +124,9 @@ export class DriversListComponent implements OnInit {
  label: 'DRIVERS.FILTERS.CITY',
  type: 'select',
  color: '#0ea5e9',
- options: this.cityOptions.map((city) => ({
- value: city,
- label: this.getCityTranslationKey(city)
+ options: this.cityCodes.map((cityCode) => ({
+ value: cityCode,
+ label: `COMMON.CITIES.${cityCode}`
  }))
  },
  {
@@ -147,6 +149,13 @@ export class DriversListComponent implements OnInit {
  type: 'select',
  color: '#8b5cf6',
  options: this.vehicleTypeOptions.map((option) => ({ value: option.value, label: option.label }))
+ },
+ {
+ key: 'performance',
+ label: 'DRIVERS.FILTERS.PERFORMANCE',
+ type: 'select',
+ color: '#f97316',
+ options: this.performanceOptions.map((option) => ({ value: option.value, label: option.label }))
  }
  ];
  }
@@ -160,8 +169,6 @@ export class DriversListComponent implements OnInit {
  this.cdr.markForCheck();
  this.drivers = response.items;
  this.totalCount = response.totalCount;
- this.cityOptions = this.buildCityOptions(response.items);
- this.initializeFilterOptions();
  this.isLoading = false;
  },
  error: () => {
@@ -287,11 +294,6 @@ export class DriversListComponent implements OnInit {
 
  onTableRowClick(driver: Driver): void {
  this.router.navigate(['/drivers', driver.id]);
- }
-
- private buildCityOptions(drivers: Driver[]): string[] {
- const cities = drivers.map((driver) => driver.city).filter((c) =>!!c);
- return Array.from(new Set(cities));
  }
 
  getCityTranslationKey(city: string): string {

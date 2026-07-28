@@ -657,13 +657,13 @@
                     <div class="min-w-0">
                       <h4 class="text-[11px] font-extrabold leading-snug text-slate-800">{{ timelineTitle(step) }}</h4>
                       <span
-                        class="mt-0.5 inline-flex rounded px-1 py-px text-[8px] font-extrabold uppercase tracking-wide"
+                        class="mt-0.5 inline-flex rounded px-1 py-px text-[8px] font-extrabold tracking-wide"
                         [ngClass]="{
                           'bg-emerald-50 text-emerald-700': step.status === 'COMPLETED',
                           'bg-amber-50 text-amber-700': step.status === 'IN_PROGRESS',
                           'bg-slate-100 text-slate-500': step.status === 'PENDING'
                         }">
-                        {{ translateTimelineStepStatus(step.status) }}
+                        {{ ('ORDERS.DETAIL.TIMELINE_STEP_STATUS.' + step.status) | translate }}
                       </span>
                     </div>
                     <time class="shrink-0 text-[10px] font-bold tabular-nums text-slate-400" dir="ltr">{{ step.time }}</time>

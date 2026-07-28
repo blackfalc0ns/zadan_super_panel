@@ -265,6 +265,27 @@
       <div class="flex w-full flex-wrap items-center gap-2 lg:w-auto">
         <button
           type="button"
+          (click)="onEntityTypeChange('all')"
+          class="rounded-full px-5 py-2.5 text-xs font-black transition-all"
+          [ngClass]="selectedEntityType === 'all' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'">
+          {{ 'FINANCES.FILTERS.ALL_ENTITIES' | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="onEntityTypeChange('vendor')"
+          class="rounded-full px-5 py-2.5 text-xs font-black transition-all"
+          [ngClass]="selectedEntityType === 'vendor' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'">
+          {{ 'FINANCES.ENTITIES.VENDOR' | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="onEntityTypeChange('driver')"
+          class="rounded-full px-5 py-2.5 text-xs font-black transition-all"
+          [ngClass]="selectedEntityType === 'driver' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'">
+          {{ 'FINANCES.ENTITIES.DRIVER' | translate }}
+        </button>
+        <button
+          type="button"
           (click)="selectedDirection = 'all'"
           class="rounded-full px-5 py-2.5 text-xs font-black transition-all"
           [ngClass]="selectedDirection === 'all' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'">

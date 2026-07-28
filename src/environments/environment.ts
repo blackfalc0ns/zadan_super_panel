@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     /** Bump when i18n JSON changes so clients skip stale browser/CDN caches. */
-    i18nVersion: '20260728a',
+    i18nVersion: '20260728b',
     apiUrl: 'http://localhost:5298/api',
     realtimeEnabled: true,
     skipAuthForDevelopment: false,

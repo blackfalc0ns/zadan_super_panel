@@ -284,11 +284,22 @@ export interface VendorNotificationSettings {
 }
 
 export interface VendorKPIs {
+  totalVendors?: number;
   pendingApproval: number;
   missingDocuments: number;
   highRisk: number;
   payoutBlocked: number;
   suspended: number;
+}
+
+export interface AdminVendorOrderStats {
+  totalOrders: number;
+  openOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
+  paidOrders: number;
+  totalSalesValue: number;
+  averageOrderValue: number;
 }
 
 export interface VendorFilters {

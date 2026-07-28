@@ -32,19 +32,19 @@
 
   <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
     <div class="flex flex-wrap gap-2">
-      <button type="button" (click)="selectedStatus = 'all'" class="rounded-full px-4 py-2 text-xs font-black"
+      <button type="button" (click)="onStatusChange('all')" class="rounded-full px-4 py-2 text-xs font-black"
         [ngClass]="selectedStatus === 'all' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
         {{ 'FINANCES.FILTERS.ALL' | translate }}
       </button>
-      <button type="button" (click)="selectedStatus = 'open'" class="rounded-full px-4 py-2 text-xs font-black"
+      <button type="button" (click)="onStatusChange('open')" class="rounded-full px-4 py-2 text-xs font-black"
         [ngClass]="selectedStatus === 'open' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
         {{ 'FINANCES.REFUNDS.STATUS.OPEN' | translate }}
       </button>
-      <button type="button" (click)="selectedStatus = 'under_review'" class="rounded-full px-4 py-2 text-xs font-black"
+      <button type="button" (click)="onStatusChange('under_review')" class="rounded-full px-4 py-2 text-xs font-black"
         [ngClass]="selectedStatus === 'under_review' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
         {{ 'FINANCES.REFUNDS.STATUS.UNDER_REVIEW' | translate }}
       </button>
-      <button type="button" (click)="selectedStatus = 'approved'" class="rounded-full px-4 py-2 text-xs font-black"
+      <button type="button" (click)="onStatusChange('approved')" class="rounded-full px-4 py-2 text-xs font-black"
         [ngClass]="selectedStatus === 'approved' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-500'">
         {{ 'FINANCES.REFUNDS.STATUS.APPROVED' | translate }}
       </button>

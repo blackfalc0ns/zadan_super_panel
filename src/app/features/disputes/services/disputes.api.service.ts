@@ -17,6 +17,8 @@ interface AdminOrderCaseStatsResponse {
   totalOpen: number;
   slaBreachedCount: number;
   avgResolutionHours: number;
+  totalExposureAmount?: number;
+  driverInitiatedCount?: number;
   byStatus: Array<{ label: string; count: number }>;
   byPriority: Array<{ label: string; count: number }>;
   byQueue: Array<{ label: string; count: number }>;
@@ -183,12 +185,19 @@ export class DisputesService {
     return this.http.get(`${this.apiUrl}/export`, { params, responseType: 'blob' });
   }
 
-  getStats(): Observable<AdminOrderCaseStats> {
-    return this.http.get<AdminOrderCaseStatsResponse>(`${this.apiUrl}/stats`).pipe(
+  getStats(vendorId?: string): Observable<AdminOrderCaseStats> {
+    let params = new HttpParams();
+    if (vendorId?.trim()) {
+      params = params.set('vendorId', vendorId.trim());
+    }
+
+    return this.http.get<AdminOrderCaseStatsResponse>(`${this.apiUrl}/stats`, { params }).pipe(
       map((response) => ({
         totalOpen: response.totalOpen ?? 0,
         slaBreachedCount: response.slaBreachedCount ?? 0,
         avgResolutionHours: response.avgResolutionHours ?? 0,
+        totalExposureAmount: response.totalExposureAmount ?? 0,
+        driverInitiatedCount: response.driverInitiatedCount ?? 0,
         byStatus: response.byStatus ?? [],
         byPriority: response.byPriority ?? [],
         byQueue: response.byQueue ?? [],

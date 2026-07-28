@@ -8,6 +8,7 @@ import {
   AdminSupportStatus,
   AdminVendorSupportFilters,
   AdminVendorSupportTicket,
+  AdminVendorSupportTicketStats,
   AdminVendorSupportTicketsResponse
 } from '../models/admin-support.models';
 
@@ -22,6 +23,16 @@ export class AdminVendorSupportService {
     private readonly http: HttpClient,
     private readonly authService: AuthService
   ) {}
+
+  getStats(): Observable<AdminVendorSupportTicketStats> {
+    if (this.shouldUseLocalFallback()) {
+      return of({ totalOpen: 0, waitingVendor: 0, resolved: 0 });
+    }
+
+    return this.http.get<AdminVendorSupportTicketStats>(`${this.apiUrl}/stats`).pipe(
+      catchError(() => of({ totalOpen: 0, waitingVendor: 0, resolved: 0 }))
+    );
+  }
 
   getTickets(filters: AdminVendorSupportFilters = {}): Observable<AdminVendorSupportTicketsResponse> {
     const page = Math.max(1, filters.page ?? 1);

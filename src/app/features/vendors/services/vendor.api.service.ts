@@ -14,7 +14,9 @@ import {
  VendorActivityLogPage,
  Vendor,
  VendorDetail,
+ VendorFilters,
  VendorKPIs,
+ AdminVendorOrderStats,
  VendorProfileReviewItem,
  VendorReviewDocument,
  VendorReviewNote,
@@ -64,6 +66,15 @@ interface AdminVendorListItemDto {
  isLoginLocked?: boolean;
  lockedAtUtc?: string | null;
  archivedAtUtc?: string | null;
+}
+
+interface AdminVendorStatsDto {
+ totalVendors: number;
+ pendingApproval: number;
+ missingDocuments: number;
+ highRisk: number;
+ payoutBlocked: number;
+ suspended: number;
 }
 
 interface AdminVendorDetailDto extends AdminVendorListItemDto {
@@ -507,9 +518,9 @@ export class VendorService {
  pageNumber: number = 1,
  pageSize: number = 10,
  search?: string,
- status?: VendorStatus
+ filters: VendorFilters = {}
  ): Observable<PaginatedVendors> {
- const fallback = this.buildLocalPaginatedVendors(pageNumber, pageSize, search, status);
+ const fallback = this.buildLocalPaginatedVendors(pageNumber, pageSize, search, filters.status);
 
  let params = new HttpParams().set('page', pageNumber.toString()).set('pageSize', pageSize.toString());
 
@@ -517,14 +528,54 @@ export class VendorService {
  params = params.set('search', search.trim());
  }
 
+ const status = this.resolveVendorStatusQuery(filters);
  if (status) {
  params = params.set('status', status);
  }
 
+ if (filters.city?.trim()) {
+ params = params.set('city', filters.city.trim());
+ }
+
+ if (filters.region?.trim()) {
+ params = params.set('region', filters.region.trim());
+ }
+
+ if (filters.riskLevel) {
+ params = params.set('riskLevel', filters.riskLevel);
+ if (filters.riskLevel === RiskLevel.High) {
+ params = params.set('isLoginLocked', 'true');
+ }
+ }
+
+ if (filters.verificationStatus) {
+ params = params.set('verificationStatus', filters.verificationStatus);
+ }
+
+ if (filters.documentsStatus) {
+ params = params.set('documentsStatus', filters.documentsStatus);
+ }
+
+ if (filters.payoutStatus) {
+ params = params.set('payoutStatus', filters.payoutStatus);
+ }
+
+ if (filters.onboardingStage) {
+ params = params.set('onboardingStage', filters.onboardingStage);
+ }
+
  return this.http.get<PaginatedVendors | AdminVendorListItemDto[]>(this.apiUrl, { params }).pipe(
- map((response) => this.normalizeVendorResponse(response, pageNumber, pageSize, search, status)),
+ map((response) => this.normalizeVendorResponse(response, pageNumber, pageSize, search, filters.status)),
  catchError((error) => this.handleReadFallback('Vendor list', fallback, error))
  );
+ }
+
+ private resolveVendorStatusQuery(filters: VendorFilters): string | undefined {
+ if (!filters.status) {
+ return undefined;
+ }
+
+ return filters.status === VendorStatus.Pending ? 'PendingReview' : filters.status;
  }
 
  getVendorById(id: string): Observable<VendorDetail> {
@@ -588,12 +639,30 @@ export class VendorService {
  return of(this.buildVendorKPIs(this.vendorStore));
  }
 
- return this.http.get<PaginatedVendors | AdminVendorListItemDto[]>(this.apiUrl, {
- params: new HttpParams().set('page', '1').set('pageSize', '250')
- }).pipe(
- map((response) => this.normalizeVendorResponse(response, 1, 250)),
- map((response) => this.buildVendorKPIsFromSummaries(response.items ?? [])),
+ return this.http.get<AdminVendorStatsDto>(`${this.apiUrl}/stats`).pipe(
+ map((response) => ({
+ pendingApproval: response.pendingApproval ?? 0,
+ missingDocuments: response.missingDocuments ?? 0,
+ highRisk: response.highRisk ?? 0,
+ payoutBlocked: response.payoutBlocked ?? 0,
+ suspended: response.suspended ?? 0,
+ totalVendors: response.totalVendors ?? 0
+ })),
  catchError((error) => this.handleReadFallback('Vendor KPIs', this.buildVendorKPIs(this.vendorStore), error))
+ );
+ }
+
+ getVendorOrderStats(vendorId: string): Observable<AdminVendorOrderStats> {
+ return this.http.get<AdminVendorOrderStats>(`${this.apiUrl}/${vendorId}/orders/stats`).pipe(
+ catchError(() => of({
+ totalOrders: 0,
+ openOrders: 0,
+ completedOrders: 0,
+ cancelledOrders: 0,
+ paidOrders: 0,
+ totalSalesValue: 0,
+ averageOrderValue: 0
+ }))
  );
  }
 

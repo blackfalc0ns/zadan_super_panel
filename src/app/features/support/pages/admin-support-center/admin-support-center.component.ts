@@ -36,7 +36,8 @@ import { SupportCaseRequestInfoModalComponent } from '../../components/support-c
 import { SupportCaseQuickActionModalComponent } from '../../components/support-case-quick-action-modal/support-case-quick-action-modal.component';
 import {
  AdminSupportStatus,
- AdminVendorSupportTicket
+ AdminVendorSupportTicket,
+ AdminVendorSupportTicketStats
 } from '../../models/admin-support.models';
 import { AdminVendorSupportService } from '../../services/admin-vendor-support.service';
 import { AccessService } from '../../../../core/services/access.service';
@@ -1049,6 +1050,7 @@ export class AdminSupportCenterComponent implements OnInit {
  selectedDriverCase: SupportCaseRow | null = null;
  selectedLegacyCase: SupportCaseRow | null = null;
  stats: AdminOrderCaseStatsResponse | null = null;
+ vendorTicketStats: AdminVendorSupportTicketStats | null = null;
 
  isLoadingVendor = false;
  isLoadingDriver = false;
@@ -1602,11 +1604,16 @@ export class AdminSupportCenterComponent implements OnInit {
  }
 
  get totalOpenCount(): number {
+ if (this.activeTab === 'vendor') {
+ return this.vendorTicketStats?.totalOpen ?? this.openTicketCount;
+ }
+
  return this.stats ? this.stats.totalOpen : this.openTicketCount;
  }
 
  get waitingVendorCount(): number {
- return this.vendorTickets.filter((ticket) => ticket.status === 'waiting_vendor').length;
+ return this.vendorTicketStats?.waitingVendor
+ ?? this.vendorTickets.filter((ticket) => ticket.status === 'waiting_vendor').length;
  }
 
  get resolvedTicketCount(): number {
@@ -1614,6 +1621,10 @@ export class AdminSupportCenterComponent implements OnInit {
  }
 
  get resolvedCount(): number {
+ if (this.activeTab === 'vendor') {
+ return this.vendorTicketStats?.resolved ?? this.resolvedTicketCount;
+ }
+
  if (this.stats) {
  const match = this.stats.byStatus.find((s) => s.label.toLowerCase() === 'resolved');
  return match ? match.count : 0;
@@ -1649,14 +1660,18 @@ export class AdminSupportCenterComponent implements OnInit {
  }
 
  loadStats(): void {
- this.supportCasesService.getStats().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
- next: (stats) => {
+ forkJoin({
+ caseStats: this.supportCasesService.getStats(),
+ vendorTicketStats: this.supportService.getStats()
+ }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+ next: ({ caseStats, vendorTicketStats }) => {
  this.cdr.markForCheck();
- this.stats = stats;
+ this.stats = caseStats;
+ this.vendorTicketStats = vendorTicketStats;
  },
  error: (err) => {
  this.cdr.markForCheck();
- console.error('Failed to load support case stats', err);
+ console.error('Failed to load support stats', err);
  }
  });
  }

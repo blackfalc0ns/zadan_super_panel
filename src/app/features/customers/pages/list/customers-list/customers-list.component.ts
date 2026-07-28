@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CustomersService, CustomerFilterOptionItem, CustomerFilterOptions, CustomerFilters } from '@customers/services/customers.api.service';
+import { CustomersService, CustomerFilterOptionItem, CustomerFilterOptions, CustomerFilters, CustomerStats } from '@customers/services/customers.api.service';
 import { DataTableComponent, TableColumn } from '../../../../../shared/components/ui/data-table/data-table.component';
 import { KpiCardsComponent, KPICard } from '../../../../../shared/components/ui/kpi-cards/kpi-cards.component';
 import { AppPaginationComponent } from '../../../../../shared/components/ui/pagination/pagination.component';
@@ -42,6 +42,8 @@ export class CustomersListComponent implements OnInit {
   isFiltersExpanded = false;
   isLoading = true;
   filters: CustomerFilters = {};
+  serverTotalCount = 0;
+  customerStats: CustomerStats | null = null;
 
   customers: CustomerDetailRecord[] = [];
   private filterOptionsRaw: CustomerFilterOptions | null = null;
@@ -90,22 +92,38 @@ export class CustomersListComponent implements OnInit {
       });
 
     this.loadFilterOptions();
+    this.loadCustomerStats();
     const city = this.route.snapshot.queryParamMap.get('city');
     if (city) {
       this.filters = { ...this.filters, city };
       this.isFiltersExpanded = true;
-      this.loadCustomers();
     }
 
-    this.customersService.getCustomers().subscribe({
-      next: (customers) => {
+    this.customersService.customersTotal$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((total) => {
+        this.serverTotalCount = total;
+        this.cdr.markForCheck();
+      });
+
+    this.loadCustomers();
+
+    this.customersService.getCustomers()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((customers) => {
         this.cdr.markForCheck();
         this.customers = customers;
+      });
+  }
+
+  private loadCustomerStats(): void {
+    this.customersService.getStats().subscribe({
+      next: (stats) => {
+        this.customerStats = stats;
+        this.cdr.markForCheck();
       },
       error: (error) => {
-        this.cdr.markForCheck();
-        console.error('Failed to load admin customers.', error);
-        this.customers = [];
+        console.error('Failed to load customer stats.', error);
       }
     });
   }
@@ -296,7 +314,7 @@ export class CustomersListComponent implements OnInit {
     if (this.filters['maxSpent'] != null) backendFilters.maxSpent = Number(this.filters['maxSpent']);
     if (this.filters['sortBy']) backendFilters.sortBy = String(this.filters['sortBy']);
 
-    this.customersService.loadWithFilters(this.searchTerm, backendFilters);
+    this.customersService.loadWithFilters(this.searchTerm, backendFilters, this.page, this.pageSize);
   }
 
   // ── Pagination ──
@@ -306,16 +324,16 @@ export class CustomersListComponent implements OnInit {
   }
 
   get paginatedCustomers(): CustomerDetailRecord[] {
-    const start = (this.page - 1) * this.pageSize;
-    return this.filteredCustomers.slice(start, start + this.pageSize);
+    return this.filteredCustomers;
   }
 
   get totalItems(): number {
-    return this.filteredCustomers.length;
+    return this.serverTotalCount;
   }
 
   changePage(newPage: number): void {
     this.page = newPage;
+    this.loadCustomers();
   }
 
   openCustomerDetail(customer: CustomerDetailRecord): void {
@@ -324,67 +342,69 @@ export class CustomersListComponent implements OnInit {
 
   // ── KPI Cards ──
 
-  get activeCustomersCount(): number {
+  private get activeCustomersCount(): number {
     return this.customers.filter((customer) => customer.status === 'active').length;
   }
 
-  get newCustomersCount(): number {
+  private get newCustomersCount(): number {
     return this.customers.filter((customer) => customer.segment === 'new').length;
   }
 
-  get highRiskCount(): number {
+  private get highRiskCount(): number {
     return this.customers.filter((customer) => customer.risk === 'high' || customer.risk === 'critical').length;
   }
 
-  get complaintCustomersCount(): number {
+  private get complaintCustomersCount(): number {
     return this.customers.filter((customer) => customer.refundsCount > 0).length;
   }
 
-  get repeatRefundsCount(): number {
+  private get repeatRefundsCount(): number {
     return this.customers.filter((customer) => customer.refundsCount >= 3).length;
   }
 
   get kpiCards(): KPICard[] {
+    const stats = this.customerStats;
+
     return [
       {
         id: 'total',
         title: 'CUSTOMERS.KPI.TOTAL_CUSTOMERS',
-        value: this.customers.length,
+        value: stats?.totalCustomers ?? this.serverTotalCount,
         icon: '<span class="material-symbols-outlined text-[20px]">group</span>',
         color: '#127c8c'
       },
       {
         id: 'active',
         title: 'CUSTOMERS.KPI.ACTIVE_CUSTOMERS',
-        value: this.activeCustomersCount,
+        value: stats?.activeCustomers ?? this.activeCustomersCount,
         icon: '<span class="material-symbols-outlined text-[20px]">verified</span>',
         color: '#10b981'
       },
       {
         id: 'new',
         title: 'CUSTOMERS.KPI.NEW_CUSTOMERS',
-        value: this.newCustomersCount,
+        value: stats?.newCustomers ?? this.newCustomersCount,
         icon: '<span class="material-symbols-outlined text-[20px]">person_add</span>',
         color: '#f59e0b'
       },
       {
         id: 'high-risk',
         title: 'CUSTOMERS.KPI.HIGH_RISK',
-        value: this.highRiskCount,
+        value: stats?.highRiskCustomers ?? this.highRiskCount,
         icon: '<span class="material-symbols-outlined text-[20px]">error</span>',
         color: '#ef4444'
       },
       {
         id: 'complaints',
         title: 'CUSTOMERS.KPI.COMPLAINT_CUSTOMERS',
-        value: this.complaintCustomersCount,
+        value: stats?.complaintCustomers ?? this.complaintCustomersCount,
         icon: '<span class="material-symbols-outlined text-[20px]">maps_ugc</span>',
         color: '#64748b'
       },
       {
         id: 'refunds',
         title: 'CUSTOMERS.KPI.REPEAT_REFUNDS',
-        value: this.repeatRefundsCount,
+        value: stats?.repeatRefundCustomers ?? this.repeatRefundsCount,
         icon: '<span class="material-symbols-outlined text-[20px]">history_edu</span>',
         color: '#f97316'
       }
