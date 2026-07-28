@@ -806,6 +806,10 @@
           "LABEL": "COD Reconciliation",
           "SUMMARY": "Track and collect Cash on Delivery amounts from drivers."
         },
+        "VENDOR_COD": {
+          "LABEL": "Vendor COD",
+          "SUMMARY": "Track and collect cash-on-pickup amounts owed by vendors."
+        },
         "REFUNDS": {
           "LABEL": "Refunds & Claims",
           "SUMMARY": "Manage claim requests and determine the party responsible for the loss."
@@ -1095,6 +1099,56 @@
       },
       "NO_DATA_TITLE": "No matching data",
       "NO_DATA_DESC": "All collected amounts are fully settled or no records match your request."
+    },
+    "VENDOR_COD": {
+      "TITLE": "Vendor COD Reconciliation",
+      "SUBTITLE": "Monitor vendor cash-on-pickup balances and remit them to the platform.",
+      "SETTLE_PENDING": "Settle Pending Amounts",
+      "SCOPED": {
+        "VENDOR": "Specific Vendor Reconciliation"
+      },
+      "STATS": {
+        "TOTAL_EXPECTED": "Total Outstanding from Vendors",
+        "TOTAL_COLLECTED": "Actually Collected & Settled",
+        "TOTAL_DELTA": "Financial Delta (Shortage / Surplus)",
+        "PENDING_CASES": "Awaiting Settlement (Pending)",
+        "VENDOR_UNIT": "vendors"
+      },
+      "TABLE": {
+        "TITLE": "Vendor Reconciliation Log",
+        "DESC": "Vendor-level outstanding COD balances",
+        "VENDOR_REF": "Vendor Ref",
+        "VENDOR": "Vendor",
+        "OUTSTANDING_BALANCE": "Outstanding Balance",
+        "REMITTED_AMOUNT": "Remitted to Platform",
+        "FINANCIAL_DELTA": "Financial Delta",
+        "STATUS": "Status",
+        "ACTION": "Action",
+        "MANUAL_SETTLE": "Manual Settlement",
+        "SETTLED": "Settled",
+        "MATCHED": "Matched"
+      },
+      "NO_DATA_TITLE": "No vendor balances",
+      "NO_DATA_DESC": "There are currently no vendors with outstanding COD balances.",
+      "MODAL": {
+        "TITLE": "Settle Vendor COD",
+        "SETTLE_ALL_TITLE": "Settle All Pending Balances",
+        "VENDOR": "Vendor",
+        "AMOUNT": "Amount",
+        "REFERENCE": "Reference",
+        "REFERENCE_PLACEHOLDER": "Receipt number or settlement note",
+        "CANCEL": "Cancel",
+        "CONFIRM": "Confirm Settlement",
+        "SUBMITTING": "Settling..."
+      },
+      "TOAST": {
+        "ERROR_TITLE": "Settlement failed",
+        "SUCCESS_TITLE": "Settlement completed",
+        "INVALID_AMOUNT": "Enter an amount greater than zero.",
+        "ERROR_MESSAGE": "We could not complete the vendor COD settlement. Please try again.",
+        "SUCCESS_MESSAGE": "Settled COD balance for {{vendor}}.",
+        "SETTLE_ALL_SUCCESS": "Settled {{count}} vendor balances successfully."
+      }
     },
     "DIRECTIONS": {
       "CREDIT": "Credit (+)",

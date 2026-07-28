@@ -36,10 +36,15 @@
  
  <div class="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
  <div class="flex flex-col sm:flex-row items-center gap-6">
- <!-- Circular initials avatar with primary gradient & shadow glow -->
- <div class="w-24 h-24 shrink-0 rounded-full bg-gradient-to-br from-zadna-primary to-teal-500 text-white flex items-center justify-center text-3xl font-black shadow-[0_8px_24px_-4px_rgba(18,124,140,0.35)] border-2 border-white/40 tracking-wider">
- {{ getCustomerInitials(currentCustomer.name) }}
- </div>
+            <div class="w-24 h-24 shrink-0 rounded-full bg-gradient-to-br from-zadna-primary to-teal-500 text-white flex items-center justify-center text-3xl font-black shadow-[0_8px_24px_-4px_rgba(18,124,140,0.35)] border-2 border-white/40 tracking-wider overflow-hidden">
+              <img *ngIf="currentCustomer.profilePhotoUrl; else customerInitials"
+                   [src]="currentCustomer.profilePhotoUrl"
+                   [alt]="currentCustomer.name"
+                   class="h-full w-full object-cover" />
+              <ng-template #customerInitials>
+                {{ getCustomerInitials(currentCustomer.name) }}
+              </ng-template>
+            </div>
 
  <div class="space-y-3 text-center sm:text-start">
  <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">

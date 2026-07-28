@@ -24,6 +24,7 @@ export interface CustomerRecord {
   name: string;
   email: string;
   phone: string;
+  profilePhotoUrl?: string;
   city: string;
   cityCode?: string;
   cityAr?: string;

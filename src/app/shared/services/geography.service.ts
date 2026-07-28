@@ -54,6 +54,10 @@ export class GeographyService {
     );
   }
 
+  isOperationalRegionCode(regionCode?: string | null): boolean {
+    return GeographyService.operationalRegionCodes.has((regionCode || '').trim().toUpperCase());
+  }
+
   getCities(regionCode: string): Observable<SaudiCityDto[]> {
     const normalizedCode = regionCode.trim().toUpperCase();
 
@@ -87,10 +91,6 @@ export class GeographyService {
     return this.getCities(normalizedCode).pipe(
       map((cities) => cities.filter((city) => this.isOperationalRegionCode(city.regionCode)))
     );
-  }
-
-  private isOperationalRegionCode(regionCode?: string | null): boolean {
-    return GeographyService.operationalRegionCodes.has((regionCode || '').trim().toUpperCase());
   }
 
   private logLoadFailure(scope: string, error: unknown): void {

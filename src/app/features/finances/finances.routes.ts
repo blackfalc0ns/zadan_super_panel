@@ -59,6 +59,12 @@ export const FINANCES_ROUTES: Routes = [
         loadComponent: () => import('./pages/cod-reconciliation/cod-reconciliation.component').then(m => m.CodReconciliationComponent)
       },
       {
+        path: 'vendor-cod',
+        canActivate: [HasPermissionGuard],
+        data: { permission: 'finances.view' },
+        loadComponent: () => import('./pages/vendor-cod-reconciliation/vendor-cod-reconciliation.component').then(m => m.VendorCodReconciliationComponent)
+      },
+      {
         path: 'adjustments',
         canActivate: [HasPermissionGuard],
         data: { permission: 'finances.edit' },

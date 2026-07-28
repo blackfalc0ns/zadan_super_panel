@@ -18,6 +18,7 @@ import { AppCardComponent } from '../../../../shared/components/ui/card/card.com
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { GeographyService } from '../../../../shared/services/geography.service';
 import { describeApiError } from '../../../../shared/utils/api-error.util';
 
 type NumericZoneField =
@@ -123,7 +124,7 @@ type NumericZoneField =
 
  <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-end xl:w-auto">
  <app-searchable-select
- *ngIf="selectedScope !== 'global' && regionOptions.length"
+ *ngIf="selectedScope !== 'global' && regionOptions.length > 1"
  class="min-w-[12rem] flex-1"
  [label]="'FINANCES.PRICING.SCOPE.REGION'"
  [(ngModel)]="selectedRegionFilter"
@@ -427,6 +428,7 @@ type NumericZoneField =
 export class PlatformPricingComponent implements OnInit {
  private readonly cdr = inject(ChangeDetectorRef);
  private readonly financeService = inject(FinanceService);
+ private readonly geographyService = inject(GeographyService);
  private readonly toastService = inject(ToastService);
  private readonly translate = inject(TranslateService);
  private readonly scopeFallbackOrder: PricingScope[] = ['zone', 'city', 'region', 'global'];
@@ -492,9 +494,14 @@ export class PlatformPricingComponent implements OnInit {
  }
 
  get mappedRegionFilterOptions(): SearchableSelectOption[] {
+ const regionOptions = this.regionOptions.map((region) => ({ label: region.label, value: region.id }));
+ if (regionOptions.length <= 1) {
+ return regionOptions;
+ }
+
  return [
  { labelKey: 'FINANCES.PRICING.ALL_REGIONS', value: 'all' },
- ...this.regionOptions.map((region) => ({ label: region.label, value: region.id }))
+ ...regionOptions
  ];
  }
 
@@ -726,13 +733,14 @@ export class PlatformPricingComponent implements OnInit {
  source$.subscribe({
  next: (result: PricingSettingsItem[] | PricingSettingsItem) => {
  this.cdr.markForCheck();
- this.allItems = Array.isArray(result) ? result : [result];
+ this.allItems = this.filterOperationalItems(Array.isArray(result) ? result : [result]);
  if (!this.allItems.length) {
  this.tryFallbackScope();
  return;
  }
 
  this.regionOptions = this.buildRegionOptions(this.allItems);
+ this.selectedRegionFilter = this.resolveDefaultRegionFilter(this.regionOptions);
  this.applyFilters();
  this.emptyStateMessage = this.buildEmptyStateMessage();
  this.isDirty = false;
@@ -846,6 +854,40 @@ export class PlatformPricingComponent implements OnInit {
  }
 
  return false;
+ }
+
+ private filterOperationalItems(items: PricingSettingsItem[]): PricingSettingsItem[] {
+ if (this.selectedScope === 'global') {
+ return items;
+ }
+
+ return items.filter((item) => {
+ if (!('regionCode' in item) || !item.regionCode) {
+ return this.selectedScope === 'zone' ? false : true;
+ }
+
+ return this.geographyService.isOperationalRegionCode(item.regionCode);
+ });
+ }
+
+ private resolveDefaultRegionFilter(regions: Array<{ id: string; label: string }>): string {
+ if (!regions.length) {
+ return 'all';
+ }
+
+ if (regions.length === 1) {
+ return regions[0].id;
+ }
+
+ const easternFromItems = this.allItems.find((item) =>
+ 'regionCode' in item && this.geographyService.isOperationalRegionCode(item.regionCode) && 'regionId' in item && !!item.regionId
+ );
+
+ if (easternFromItems && 'regionId' in easternFromItems && easternFromItems.regionId) {
+ return easternFromItems.regionId;
+ }
+
+ return regions[0].id;
  }
 
  private buildRegionOptions(items: PricingSettingsItem[]): Array<{ id: string; label: string }> {

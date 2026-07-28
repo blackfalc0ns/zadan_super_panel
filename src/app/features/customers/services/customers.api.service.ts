@@ -69,6 +69,7 @@ interface AdminCustomerListItemDto {
  refundedOrdersCount: number;
  favoritesCount: number;
  preferredLocale?: string | null;
+ profilePhotoUrl?: string | null;
 }
 
 interface AdminCustomerRecentOrderDto {
@@ -81,7 +82,6 @@ interface AdminCustomerRecentOrderDto {
 }
 
 interface AdminCustomerDetailDto extends AdminCustomerListItemDto {
- profilePhotoUrl?: string | null;
  addressLine?: string | null;
  buildingNo?: string | null;
  floorNo?: string | null;
@@ -462,6 +462,7 @@ export class CustomersService {
  name: item.fullName,
  email: item.email ?? '-',
  phone: item.phone ?? '-',
+ profilePhotoUrl: item.profilePhotoUrl?.trim() || undefined,
  city: cityAr ?? cityEn ?? item.area ?? '—',
  cityCode: item.cityCode ?? undefined,
  cityAr,

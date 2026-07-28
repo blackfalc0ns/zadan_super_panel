@@ -12,6 +12,7 @@ import {
  CodFilter,
  CodRecord,
  CodReconciliationSummary,
+ VendorCodRecord,
  CityDeliveryPricingSettings,
  DeliveryPricingDefaults,
  DriverFinanceProfile,
@@ -314,6 +315,16 @@ interface AdminCodReconciliationApiModel {
  totalCodOwed: number;
 }
 
+interface AdminVendorCodReconciliationApiModel {
+ items: Array<{
+ vendorId: string;
+ vendorName: string;
+ codOwedBalance: number;
+ lastJournalSequence: number;
+ }>;
+ totalCodOwedBalance: number;
+}
+
 interface AdminCodRemittanceResultApiModel {
  financialEventId: string;
  journalEntryId: string;
@@ -514,6 +525,45 @@ export class FinanceService {
  }): Observable<AdminCodRemittanceResultApiModel> {
  return this.http.post<AdminCodRemittanceResultApiModel>(`${this.apiUrl}/cod-remittances`, {
  driverId: payload.driverId,
+ amount: payload.amount,
+ reference: payload.reference ?? null,
+ idempotencyKey: payload.idempotencyKey ?? null,
+ platformOwnerId: null
+ });
+ }
+
+ getVendorCodRecords(vendorId?: string): Observable<{ summary: CodReconciliationSummary; records: VendorCodRecord[] }> {
+ return this.http.get<AdminVendorCodReconciliationApiModel>(`${this.apiUrl}/vendor-cod-reconciliation`).pipe(
+ map((response) => {
+ const records = this.mapVendorCodRecords(response).filter((record) =>
+ !vendorId || record.vendorId === vendorId
+ );
+ const totalOutstanding = this.round(
+ vendorId
+ ? records.reduce((sum, record) => sum + record.expectedAmount, 0)
+ : response.totalCodOwedBalance
+ );
+ const summary: CodReconciliationSummary = {
+ totalExpected: totalOutstanding,
+ totalCollected: 0,
+ totalDelta: this.round(-totalOutstanding),
+ overdueCases: records.filter((record) => record.status === 'overdue').length,
+ pendingCases: records.filter((record) => record.status === 'pending').length
+ };
+
+ return { summary, records };
+ })
+ );
+ }
+
+ createVendorCodRemittance(payload: {
+ vendorId: string;
+ amount: number;
+ reference?: string;
+ idempotencyKey?: string;
+ }): Observable<AdminCodRemittanceResultApiModel> {
+ return this.http.post<AdminCodRemittanceResultApiModel>(`${this.apiUrl}/vendor-cod-remittances`, {
+ vendorId: payload.vendorId,
  amount: payload.amount,
  reference: payload.reference ?? null,
  idempotencyKey: payload.idempotencyKey ?? null,
@@ -781,6 +831,9 @@ export class FinanceService {
  zonesById.set(zone.zoneId, this.mergeZoneWithPricingRule(zone, rulesByZoneId.get(zone.zoneId)));
  });
 
+ // Backend pricing-settings already includes operational delivery zones.
+ // Only fall back to the raw delivery-zones list when that endpoint fails.
+ if (!financeSettings) {
  deliveryZones.forEach((zone) => {
  if (!zonesById.has(zone.id)) {
  zonesById.set(
@@ -792,8 +845,11 @@ export class FinanceService {
  );
  }
  });
+ }
 
- return Array.from(zonesById.values()).sort((left, right) =>
+ return Array.from(zonesById.values())
+ .filter((zone) => !zone.regionCode || zone.regionCode.toUpperCase() === 'EASTERN')
+ .sort((left, right) =>
  left.city.localeCompare(right.city) || left.zoneName.localeCompare(right.zoneName)
  );
  }),
@@ -1208,6 +1264,20 @@ export class FinanceService {
  driverName: item.driverName,
  vendorId: 'platform',
  vendorName: '—',
+ expectedAmount: this.round(item.codOwedBalance),
+ collectedAmount: 0,
+ delta: this.round(-item.codOwedBalance),
+ status: item.codOwedBalance > 0 ? 'pending' : 'collected',
+ notes: `Last journal sequence: ${item.lastJournalSequence}`
+ }));
+ }
+
+ private mapVendorCodRecords(response: AdminVendorCodReconciliationApiModel): VendorCodRecord[] {
+ return response.items.map((item) => ({
+ id: `vendor-cod-${item.vendorId}`,
+ vendorId: item.vendorId,
+ vendorName: item.vendorName,
+ vendorRef: `VND-${item.vendorId.slice(0, 8).toUpperCase()}`,
  expectedAmount: this.round(item.codOwedBalance),
  collectedAmount: 0,
  delta: this.round(-item.codOwedBalance),

@@ -228,6 +228,18 @@ export interface CodRecord {
   notes?: string;
 }
 
+export interface VendorCodRecord {
+  id: string;
+  vendorId: string;
+  vendorName: string;
+  vendorRef: string;
+  expectedAmount: number;
+  collectedAmount: number;
+  delta: number;
+  status: CodStatus;
+  notes?: string;
+}
+
 export interface CodReconciliationSummary {
   totalExpected: number;
   totalCollected: number;
