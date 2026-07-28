@@ -9,6 +9,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { routes } from './app.routes';
+import { environment } from './environments/environment';
 
 export function deepMerge(target: any, source: any): any {
   if (!source) return target;
@@ -50,8 +51,9 @@ export class MultiTranslateHttpLoader implements TranslateLoader {
   constructor(private readonly http: HttpClient) {}
 
   getTranslation(lang: string): Observable<any> {
+    const version = encodeURIComponent(environment.i18nVersion || '1');
     const requests = this.files.map((file) =>
-      this.http.get(`assets/i18n/${lang}/${file}.json`).pipe(
+      this.http.get(`assets/i18n/${lang}/${file}.json?v=${version}`).pipe(
         catchError((err) => {
           console.error(`Failed to load translation file: ${lang}/${file}.json`, err);
           return of({});

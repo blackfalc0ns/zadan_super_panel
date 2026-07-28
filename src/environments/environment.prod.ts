@@ -1,5 +1,7 @@
 export const environment = {
     production: true,
+    /** Bump when i18n JSON changes so clients skip stale browser/CDN caches. */
+    i18nVersion: '20260728a',
     apiUrl: 'https://api.zadna0.com/api',
     realtimeEnabled: true,
     skipAuthForDevelopment: false,

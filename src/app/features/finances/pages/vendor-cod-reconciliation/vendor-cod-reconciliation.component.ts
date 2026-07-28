@@ -32,7 +32,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
   template: `
  <div class="flex flex-col gap-6 animate-in fade-in duration-700">
 
- <app-page-header [title]="'FINANCES.VENDOR_COD.TITLE' | translate" [subtitle]="'FINANCES.VENDOR_COD.SUBTITLE' | translate">
+ <app-page-header title="FINANCES.VENDOR_COD.TITLE" subtitle="FINANCES.VENDOR_COD.SUBTITLE">
  <div actions>
  <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" *ngIf="summary && summary.pendingCases > 0" (btnClick)="openSettleAllPending()">
  <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">done_all</span>
