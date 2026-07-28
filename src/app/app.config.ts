@@ -9,7 +9,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { routes } from './app.routes';
-import { environment } from './environments/environment';
+import { environment } from '../environments/environment';
 
 export function deepMerge(target: any, source: any): any {
   if (!source) return target;
