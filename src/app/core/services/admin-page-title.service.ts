@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, filter, of, switchMap, take } from 'rxjs';
+import { catchError, filter, of, take } from 'rxjs';
 import {
   buildLocalizedPageTitle,
   resolveSplashFallbackTitle
@@ -44,26 +44,15 @@ export class AdminPageTitleService {
       this.resolveRouteTitleKey() ??
       resolveAdminPageTitleKey(this.router.url);
 
-    const lang = this.translate.currentLang || this.translate.defaultLang || 'ar';
-
-    // Wait until the language pack is actually loaded, then resolve title keys.
-    // Avoids flashing PAGE_TITLES.* in the browser tab on slow networks.
     this.translate
-      .getTranslation(lang)
+      .get([titleKey, 'PAGE_TITLES.BRAND', 'PAGE_TITLES.DEFAULT'])
       .pipe(
         take(1),
-        catchError(() => of(null)),
-        switchMap((bundle) => {
-          if (!bundle || typeof bundle !== 'object') {
-            this.ensureFallbackTitle();
-            return of(null);
-          }
-
-          return this.translate.get([titleKey, 'PAGE_TITLES.BRAND', 'PAGE_TITLES.DEFAULT']).pipe(take(1));
-        })
+        catchError(() => of(null))
       )
-      .subscribe((translations) => {
+      .subscribe((translations: Record<string, string> | null) => {
         if (!translations) {
+          this.ensureFallbackTitle();
           return;
         }
 
