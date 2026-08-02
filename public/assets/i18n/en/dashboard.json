@@ -375,7 +375,7 @@
       },
       "SUPPLY_BACKLOG": {
         "TITLE": "Supply readiness backlog",
-        "SUMMARY": "{{count}} vendor or driver entities remain blocked or limited inside {{vendor}}."
+        "SUMMARY": "{{count}} vendor or driver entities remain blocked or limited."
       },
       "SNAPSHOT_MODE": {
         "TITLE": "Running on synchronized snapshot",

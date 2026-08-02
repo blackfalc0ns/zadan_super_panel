@@ -146,7 +146,7 @@ import { ToastService } from '@shared/services/toast.service';
  type="button"
  class="w-9 h-9 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-zadna-primary/10 hover:text-zadna-primary transition-colors"
  (click)="openEdit(banner.id)"
- [title]="'MARKETING.PERMISSIONS.ACTIONS.EDIT' | translate">
+ [title]="'MARKETING.ACTIONS.EDIT' | translate">
  <span class="material-symbols-outlined text-[18px]">edit</span>
  </button>
 
