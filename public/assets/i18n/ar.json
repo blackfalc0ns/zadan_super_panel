@@ -7615,13 +7615,7 @@
     "ACTIONS": {
       "VIEW": "عرض",
       "APPROVE": "موافقة",
-      "SUSPEND": "إيقاف",
-      "HARD_DELETE": "حذف نهائي",
-      "HARD_DELETE_CONFIRM": "حذف نهائي لـ {{count}} تاجر/متجر محدد؟ لا يمكن التراجع عن الإجراء.",
-      "HARD_DELETE_SUCCESS": "تم حذف {{deleted}} تاجر/متجر نهائيًا.",
-      "HARD_DELETE_PARTIAL": "تم حذف {{deleted}} تاجر/متجر. تم تخطي {{skipped}} لأن لديهم طلبات أو سجلات مالية محفوظة.",
-      "HARD_DELETE_BLOCKED": "تعذر الحذف النهائي لـ {{skipped}} تاجر/متجر لأن لديهم طلبات أو سجلات مالية محفوظة.",
-      "HARD_DELETE_FAILED": "فشل الحذف النهائي للتجار المحددين."
+      "SUSPEND": "إيقاف"
     },
     "RISK_LEVEL": {
       "LOW": "منخفض",

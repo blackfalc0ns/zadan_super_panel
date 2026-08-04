@@ -2604,13 +2604,7 @@
     "ACTIONS": {
       "VIEW": "View",
       "APPROVE": "Approve",
-      "SUSPEND": "Suspend",
-      "HARD_DELETE": "Hard delete",
-      "HARD_DELETE_CONFIRM": "Permanently delete {{count}} selected vendor(s)? This cannot be undone.",
-      "HARD_DELETE_SUCCESS": "{{deleted}} vendor(s) permanently deleted.",
-      "HARD_DELETE_PARTIAL": "{{deleted}} vendor(s) deleted. {{skipped}} vendor(s) were skipped because they have protected operational or financial records.",
-      "HARD_DELETE_BLOCKED": "{{skipped}} vendor(s) could not be hard deleted because they have protected operational or financial records.",
-      "HARD_DELETE_FAILED": "Failed to hard delete selected vendors."
+      "SUSPEND": "Suspend"
     },
     "RISK_LEVEL": {
       "LOW": "Low",
