@@ -16,6 +16,7 @@ export interface Vendor {
   contactPhone: string;
   createdAtUtc: string;
   contactEmail: string;
+  logoUrl?: string | null;
   commissionRate: number | null;
   city?: string;
   region?: string;

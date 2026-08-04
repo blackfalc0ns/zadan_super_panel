@@ -66,6 +66,7 @@ interface AdminVendorListItemDto {
  isLoginLocked?: boolean;
  lockedAtUtc?: string | null;
  archivedAtUtc?: string | null;
+ logoUrl?: string | null;
 }
 
 interface AdminVendorStatsDto {
@@ -1806,7 +1807,8 @@ reason: string = 'Submitted data did not pass compliance review.'
  reviewState: this.resolveReviewState(status, isLocked, apiVendor.archivedAtUtc),
  assignedReviewer: null,
  reviewSubmittedAtUtc: status === VendorStatus.Pending ? apiVendor.createdAtUtc : null,
- reviewUpdatedAtUtc: apiVendor.lockedAtUtc ?? apiVendor.archivedAtUtc ?? apiVendor.createdAtUtc
+ reviewUpdatedAtUtc: apiVendor.lockedAtUtc ?? apiVendor.archivedAtUtc ?? apiVendor.createdAtUtc,
+ logoUrl: apiVendor.logoUrl ?? null
  });
  }
 

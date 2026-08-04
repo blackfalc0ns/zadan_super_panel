@@ -105,9 +105,12 @@
  <ng-container *ngIf="column.key === 'logo'">
  <div class="flex justify-center">
  <div class="relative w-11 h-11 bg-gradient-to-br from-zadna-primary/10 to-zadna-primary/5 rounded-[1.1rem] border border-zadna-primary/10 flex items-center justify-center transition-all group-hover:scale-105 shadow-sm overflow-hidden">
+ <img *ngIf="vendor.logoUrl; else vendorInitial" [src]="vendor.logoUrl" alt="" class="h-full w-full object-contain p-1">
+ <ng-template #vendorInitial>
  <span class="text-lg font-black text-zadna-primary">
  {{ ((activeLang === 'ar' ? vendor.businessNameAr : vendor.businessNameEn) || (activeLang === 'ar' ? vendor.businessNameEn : vendor.businessNameAr) || vendor.ownerName || 'V').charAt(0) | uppercase }}
  </span>
+ </ng-template>
  </div>
  </div>
  </ng-container>

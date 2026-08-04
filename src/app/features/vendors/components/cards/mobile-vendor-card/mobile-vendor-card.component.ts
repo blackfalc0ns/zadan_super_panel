@@ -7,6 +7,7 @@ export interface VendorCardData {
  id: string;
  businessNameAr: string;
  businessNameEn: string;
+ logoUrl?: string | null;
  contactEmail: string;
  status: 'Active' | 'Pending' | 'PendingReview' | 'Rejected' | 'Suspended';
  documentsCompleteness?: number;
@@ -34,10 +35,11 @@ export interface VendorCardData {
  (click)="$event.stopPropagation()"
  class="w-4 h-4 rounded border-slate-300 text-zadna-primary focus:ring-zadna-primary/20 flex-shrink-0">
  
- <div class="relative w-12 h-12 bg-[#f0f9fa]/80 rounded-xl border border-[#e0f2f4] flex items-center justify-center flex-shrink-0">
- <span class="text-xl font-black text-zadna-primary">
- {{ getVendorInitial() }}
- </span>
+ <div class="relative w-12 h-12 overflow-hidden bg-[#f0f9fa]/80 rounded-xl border border-[#e0f2f4] flex items-center justify-center flex-shrink-0">
+ <img *ngIf="vendor.logoUrl; else mobileVendorInitial" [src]="vendor.logoUrl" alt="" class="h-full w-full object-contain p-1">
+ <ng-template #mobileVendorInitial>
+ <span class="text-xl font-black text-zadna-primary">{{ getVendorInitial() }}</span>
+ </ng-template>
  </div>
  
  <div class="flex-1 min-w-0">
