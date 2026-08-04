@@ -425,6 +425,19 @@ export interface AdminVendorStoreAvailabilityState {
  manualReason?: string | null;
 }
 
+export interface AdminHardDeleteVendorSkippedItem {
+ id: string;
+ code: string;
+ reason: string;
+}
+
+export interface AdminHardDeleteVendorsResponse {
+ deletedCount: number;
+ skippedCount: number;
+ deletedIds: string[];
+ skipped: AdminHardDeleteVendorSkippedItem[];
+}
+
 @Injectable({
  providedIn: 'root'
 })
@@ -1124,6 +1137,32 @@ reason: string = 'Submitted data did not pass compliance review.'
  vendor.status = VendorStatus.Suspended;
  }),
  id
+ );
+ }
+
+ hardDeleteVendors(ids: string[]): Observable<AdminHardDeleteVendorsResponse> {
+ const normalizedIds = Array.from(new Set(ids.filter(Boolean)));
+ const request$ = this.canUseApiMutations()
+ ? this.http.post<AdminHardDeleteVendorsResponse>(`${this.apiUrl}/hard-delete`, { ids: normalizedIds })
+ : null;
+
+ if (!request$) {
+ this.removeLocalVendors(normalizedIds);
+ return of({
+ deletedCount: normalizedIds.length,
+ skippedCount: 0,
+ deletedIds: normalizedIds,
+ skipped: []
+ });
+ }
+
+ return request$.pipe(
+ map((response) => ({
+ deletedCount: response?.deletedCount ?? 0,
+ skippedCount: response?.skippedCount ?? 0,
+ deletedIds: response?.deletedIds ?? [],
+ skipped: response?.skipped ?? []
+ }))
  );
  }
 
@@ -2624,6 +2663,21 @@ return this.updateVendor(id, (vendor) => {
  }
 
  return vendor;
+ }
+
+ private removeLocalVendors(ids: string[]): void {
+ const idSet = new Set(ids);
+
+ for (let index = this.vendorStore.length - 1; index >= 0; index -= 1) {
+ if (idSet.has(this.vendorStore[index].id)) {
+ this.vendorStore.splice(index, 1);
+ }
+ }
+
+ ids.forEach((id) => {
+ this.apiVendorStore.delete(id);
+ this.vendorStoreAvailability.delete(id);
+ });
  }
 
  private buildMockVendorStore(): VendorDetail[] {
