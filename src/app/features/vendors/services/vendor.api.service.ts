@@ -1489,11 +1489,11 @@ reason: string = 'Submitted data did not pass compliance review.'
  manualMode?: string | null;
  manual_reason?: string | null;
  manualReason?: string | null;
- }>(`${this.apiUrl}/${id}/workspace-state/store-availability`, {
+ } | null>(`${this.apiUrl}/${id}/workspace-state/store-availability`, {
  manual_mode: normalized.manualMode,
  manual_reason: normalized.manualMode === 'offline' ? (normalized.manualReason ?? null) : null
  }).pipe(
- map((response) => this.normalizeVendorStoreAvailabilityState(response)),
+ map((response) => response ? this.normalizeVendorStoreAvailabilityState(response) : normalized),
  map((state) => this.rememberVendorAvailabilityState(id, state))
  );
  }
