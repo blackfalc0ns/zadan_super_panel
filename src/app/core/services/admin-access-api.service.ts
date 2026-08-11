@@ -36,6 +36,17 @@ export interface PermissionDefinitionDto {
   isSensitive: boolean;
 }
 
+export interface RoleUpsertRequest {
+  id?: string;
+  code?: string;
+  name: string;
+  description?: string | null;
+  identityRole: number | string;
+  panelScope: number | string;
+  permissions: string[];
+  isActive?: boolean;
+}
+
 export interface UserEffectiveAccessDto {
   userId: string;
   roleCode: string;
@@ -227,11 +238,11 @@ export class AdminAccessApiService {
       .pipe(map((user) => this.mapUserRecord(user)));
   }
 
-  createRole(data: any): Observable<RoleDefinitionDto> {
+  createRole(data: RoleUpsertRequest): Observable<RoleDefinitionDto> {
     return this.http.post<RoleDefinitionDto>(`${this.baseUrl}/roles`, data);
   }
 
-  updateRole(id: string, data: any): Observable<RoleDefinitionDto> {
+  updateRole(id: string, data: RoleUpsertRequest): Observable<RoleDefinitionDto> {
     return this.http.put<RoleDefinitionDto>(`${this.baseUrl}/roles/${id}`, data);
   }
 

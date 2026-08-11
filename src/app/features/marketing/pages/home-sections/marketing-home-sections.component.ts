@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Category } from '@catalog/models/catalog.domain.models';
-import { CatalogService } from '@catalog/services/catalog.api.service';
+import { CatalogService, Category } from '@catalog/public-api';
 import {
  HomeSectionThemeOption,
  MarketingCategoryOption,

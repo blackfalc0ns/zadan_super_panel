@@ -71,7 +71,7 @@
             </app-dashboard-charts>
           } @placeholder {
             <div class="h-96 bg-slate-50 border border-slate-100 rounded-[24px] animate-pulse flex items-center justify-center text-slate-400 text-sm">
-              Loading charts...
+              {{ 'COMMON.LOADING' | translate }}
             </div>
           }
 
@@ -112,7 +112,7 @@
                 <div echarts [options]="vendorReadinessBarOptions" class="dashboard-readiness-bars"></div>
               } @placeholder {
                 <div class="h-64 bg-slate-50 rounded-2xl animate-pulse flex items-center justify-center text-slate-400 text-xs">
-                  Loading readiness charts...
+                  {{ 'COMMON.LOADING' | translate }}
                 </div>
               }
               <div class="dashboard-readiness-buckets">
@@ -150,7 +150,7 @@
                 <div echarts [options]="driverReadinessBarOptions" class="dashboard-readiness-bars"></div>
               } @placeholder {
                 <div class="h-64 bg-slate-50 rounded-2xl animate-pulse flex items-center justify-center text-slate-400 text-xs">
-                  Loading readiness charts...
+                  {{ 'COMMON.LOADING' | translate }}
                 </div>
               }
               <div class="dashboard-readiness-buckets">

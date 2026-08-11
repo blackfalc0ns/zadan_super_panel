@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-export interface SearchableSelectOption<T = any> {
+export interface SearchableSelectOption<T = string> {
   labelKey?: string; // For translation key
   label?: string; // For direct string
   value: T;
@@ -68,7 +68,7 @@ export interface SearchableSelectOption<T = any> {
               @if (allowClear && hasValue) {
                 <button
                   type="button"
-                  (click)="select('', $event)"
+                  (click)="clearSelection($event)"
                   class="flex w-full items-center justify-between border-b border-slate-100 px-3 py-2.5 text-start text-[0.8rem] font-bold text-rose-500 hover:bg-slate-50 transition-colors">
                   <span>{{ clearText | translate }}</span>
                   <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -113,7 +113,7 @@ export interface SearchableSelectOption<T = any> {
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   `]
 })
-export class SearchableSelectComponent implements ControlValueAccessor {
+export class SearchableSelectComponent<T = string> implements ControlValueAccessor {
   @HostBinding('class.relative') readonly hostRelativeClass = true;
   @HostBinding('class.z-[10000]') get hostOpenClass(): boolean {
     return this.isOpen;
@@ -124,7 +124,7 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   @Input() searchPlaceholder = 'COMMON.SEARCH';
   @Input() noResultsText = 'COMMON.NO_RESULTS';
   @Input() clearText = 'COMMON.CLEAR_SELECTION';
-  @Input() options: SearchableSelectOption[] = [];
+  @Input() options: SearchableSelectOption<T>[] = [];
   @Input() error = '';
   @Input() isTouched = false;
   @Input() isRequired = false;
@@ -134,22 +134,22 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   @Input() searchable = true;
   @Input() isDisabled = false;
 
-  @Output() selectionChange = new EventEmitter<any>();
+  @Output() selectionChange = new EventEmitter<T>();
 
-  value: any = '';
+  value: T | '' = '';
   disabled = false;
   isOpen = false;
   searchTerm = '';
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: (value: unknown) => void = () => {};
+  onTouched: () => void = () => {};
 
   constructor(
     private readonly elementRef: ElementRef,
     private readonly translate: TranslateService
   ) {}
 
-  get filteredOptions(): SearchableSelectOption[] {
+  get filteredOptions(): SearchableSelectOption<T>[] {
     const term = this.searchTerm.trim().toLowerCase();
     if (!term) return this.options;
     return this.options.filter(opt => this.getOptionLabel(opt).toLowerCase().includes(term));
@@ -164,7 +164,7 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     return this.value !== undefined && this.value !== null && this.value !== '';
   }
 
-  getOptionLabel(option: SearchableSelectOption): string {
+  getOptionLabel(option: SearchableSelectOption<T>): string {
     if (option.labelKey) {
       const translated = this.translate.instant(option.labelKey);
       if (translated !== option.labelKey) {
@@ -190,7 +190,7 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     }
   }
 
-  select(val: any, event: Event): void {
+  select(val: T, event: Event): void {
     event.stopPropagation();
     this.value = val;
     this.onChange(val);
@@ -199,6 +199,10 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     this.searchTerm = '';
     this.onTouched();
     this.isTouched = true;
+  }
+
+  clearSelection(event: Event): void {
+    this.select('' as T, event);
   }
 
   @HostListener('document:click', ['$event'])
@@ -212,15 +216,15 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     }
   }
 
-  writeValue(value: any): void {
-    this.value = value !== undefined && value !== null ? value : '';
+  writeValue(value: unknown): void {
+    this.value = value !== undefined && value !== null ? value as T : '';
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: unknown) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 

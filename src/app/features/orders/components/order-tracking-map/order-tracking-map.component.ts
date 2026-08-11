@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, AfterViewInit, OnChanges, SimpleChanges, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
+import { ensureLeafletStylesheet } from '../../../../shared/utils/leaflet-assets.util';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -101,6 +102,8 @@ export class OrderTrackingMapComponent implements AfterViewInit, OnChanges, OnDe
 
  private initMap(): void {
  if (!this.mapContainer?.nativeElement) return;
+
+ ensureLeafletStylesheet();
 
  // Fix Leaflet default icon path issue
  delete (L.Icon.Default.prototype as any)._getIconUrl;

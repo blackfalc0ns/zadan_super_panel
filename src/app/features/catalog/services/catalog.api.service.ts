@@ -93,6 +93,65 @@ interface CatalogBrandPayload {
  isActive?: boolean;
 }
 
+interface DeletedCatalogPage<T> {
+ items: T[];
+ total: number;
+ pageNumber: number;
+ pageSize: number;
+ hasMore: boolean;
+}
+
+interface CatalogRestoreResponse {
+ message_ar: string;
+ message_en: string;
+ id: string;
+}
+
+interface CatalogBulkDeleteResponse {
+ succeededCount: number;
+ failedCount: number;
+ failures: unknown[];
+}
+
+interface CatalogRequestApiRecord {
+ id: string;
+ requestType: ProductRequest['requestType'];
+ nameAr: string;
+ nameEn: string;
+ categoryId?: string | null;
+ brandId?: string | null;
+ brandNameAr?: string | null;
+ brandNameEn?: string | null;
+ descriptionAr?: string | null;
+ descriptionEn?: string | null;
+ imageUrl?: string | null;
+ imageUrls?: string[] | null;
+ parentCategoryNameAr?: string | null;
+ parentCategoryNameEn?: string | null;
+ requestKind?: ProductRequest['requestKind'];
+ requestedLevelKey?: string | null;
+ requestedPathAr?: string | null;
+ requestedPathEn?: string | null;
+ approvedPathAr?: string | null;
+ approvedPathEn?: string | null;
+ displayOrder?: number | null;
+ unitNameAr?: string | null;
+ unitNameEn?: string | null;
+ packageTypeId?: string | null;
+ packageTypeNameAr?: string | null;
+ packageTypeNameEn?: string | null;
+ measurementValue?: number | null;
+ status: ProductRequestStatus;
+ rejectionReason?: string | null;
+ reviewedBy?: string | null;
+ reviewedAtUtc?: string | null;
+ vendorId: string;
+ vendorName?: string | null;
+ createdAtUtc: string;
+ categoryNameAr?: string | null;
+ categoryNameEn?: string | null;
+}
+
 export interface CatalogPaginatedProducts {
  items: MasterProduct[];
  data?: MasterProduct[];
@@ -180,13 +239,13 @@ export class CatalogService {
  return this.http.delete<void>(`${this.apiUrl}/categories/${id}`, { headers: this.getHeaders() });
  }
 
- getDeletedCategories(page: number = 1, pageSize: number = 20): Observable<{ items: any[], total: number, pageNumber: number, pageSize: number, hasMore: boolean }> {
+ getDeletedCategories(page: number = 1, pageSize: number = 20): Observable<DeletedCatalogPage<Category>> {
  const params = new HttpParams().set('pageNumber', page.toString()).set('pageSize', pageSize.toString());
- return this.http.get<any>(`${this.apiUrl}/categories/deleted`, { headers: this.getHeaders(), params });
+ return this.http.get<DeletedCatalogPage<Category>>(`${this.apiUrl}/categories/deleted`, { headers: this.getHeaders(), params });
  }
 
- restoreCategory(id: string): Observable<{ message_ar: string, message_en: string, id: string }> {
- return this.http.patch<any>(`${this.apiUrl}/categories/${id}/restore`, {}, { headers: this.getHeaders() });
+ restoreCategory(id: string): Observable<CatalogRestoreResponse> {
+ return this.http.patch<CatalogRestoreResponse>(`${this.apiUrl}/categories/${id}/restore`, {}, { headers: this.getHeaders() });
  }
 
  getProducts(
@@ -324,17 +383,17 @@ export class CatalogService {
  return this.http.delete<void>(`${this.apiUrl}/products/${id}`, { headers: this.getHeaders() });
  }
 
- getDeletedProducts(page: number = 1, pageSize: number = 20): Observable<{ items: any[], total: number, pageNumber: number, pageSize: number, hasMore: boolean }> {
+ getDeletedProducts(page: number = 1, pageSize: number = 20): Observable<DeletedCatalogPage<MasterProduct>> {
  const params = new HttpParams().set('pageNumber', page.toString()).set('pageSize', pageSize.toString());
- return this.http.get<any>(`${this.apiUrl}/products/deleted`, { headers: this.getHeaders(), params });
+ return this.http.get<DeletedCatalogPage<MasterProduct>>(`${this.apiUrl}/products/deleted`, { headers: this.getHeaders(), params });
  }
 
- restoreProduct(id: string): Observable<{ message_ar: string, message_en: string, id: string }> {
- return this.http.patch<any>(`${this.apiUrl}/products/${id}/restore`, {}, { headers: this.getHeaders() });
+ restoreProduct(id: string): Observable<CatalogRestoreResponse> {
+ return this.http.patch<CatalogRestoreResponse>(`${this.apiUrl}/products/${id}/restore`, {}, { headers: this.getHeaders() });
  }
 
- bulkDeleteProducts(ids: string[]): Observable<{ succeededCount: number, failedCount: number, failures: any[] }> {
- return this.http.post<any>(`${this.apiUrl}/products/bulk-delete`, { ids }, { headers: this.getHeaders() });
+ bulkDeleteProducts(ids: string[]): Observable<CatalogBulkDeleteResponse> {
+ return this.http.post<CatalogBulkDeleteResponse>(`${this.apiUrl}/products/bulk-delete`, { ids }, { headers: this.getHeaders() });
  }
 
  getBrands(includeInactive: boolean = false, allowFallback: boolean = true): Observable<Brand[]> {
@@ -439,17 +498,17 @@ export class CatalogService {
  return this.http.delete<void>(`${this.apiUrl}/brands/${id}`, { headers: this.getHeaders() });
  }
 
- getDeletedBrands(page: number = 1, pageSize: number = 20): Observable<{ items: any[], total: number, pageNumber: number, pageSize: number, hasMore: boolean }> {
+ getDeletedBrands(page: number = 1, pageSize: number = 20): Observable<DeletedCatalogPage<Brand>> {
  const params = new HttpParams().set('pageNumber', page.toString()).set('pageSize', pageSize.toString());
- return this.http.get<any>(`${this.apiUrl}/brands/deleted`, { headers: this.getHeaders(), params });
+ return this.http.get<DeletedCatalogPage<Brand>>(`${this.apiUrl}/brands/deleted`, { headers: this.getHeaders(), params });
  }
 
- restoreBrand(id: string): Observable<{ message_ar: string, message_en: string, id: string }> {
- return this.http.patch<any>(`${this.apiUrl}/brands/${id}/restore`, {}, { headers: this.getHeaders() });
+ restoreBrand(id: string): Observable<CatalogRestoreResponse> {
+ return this.http.patch<CatalogRestoreResponse>(`${this.apiUrl}/brands/${id}/restore`, {}, { headers: this.getHeaders() });
  }
 
- bulkDeleteBrands(ids: string[]): Observable<{ succeededCount: number, failedCount: number, failures: any[] }> {
- return this.http.post<any>(`${this.apiUrl}/brands/bulk-delete`, { ids }, { headers: this.getHeaders() });
+ bulkDeleteBrands(ids: string[]): Observable<CatalogBulkDeleteResponse> {
+ return this.http.post<CatalogBulkDeleteResponse>(`${this.apiUrl}/brands/bulk-delete`, { ids }, { headers: this.getHeaders() });
  }
 
  getUnits(): Observable<CatalogUnit[]> {
@@ -479,20 +538,26 @@ export class CatalogService {
  params = params.set('status', status);
  }
 
- return this.http.get<any>(`${this.apiUrl}/request-center`, {
+ return this.http.get<unknown>(`${this.apiUrl}/request-center`, {
  headers: this.getHeaders(),
  params: params.set('type', 'product')
  }).pipe(
- map((response) => this.extractArray<any>(response).map((item) => this.mapCatalogRequest(item)))
+ map((response) => this.extractArray<CatalogRequestApiRecord>(response).map((item) => this.mapCatalogRequest(item)))
  );
  }
 
  getProductRequestById(id: string): Observable<ProductRequest> {
- return this.http.get<any>(`${this.apiUrl}/request-center/${id}`, {
+ return this.http.get<unknown>(`${this.apiUrl}/request-center/${id}`, {
  headers: this.getHeaders(),
  params: new HttpParams().set('type', 'product')
  }).pipe(
- map((response) => this.mapCatalogRequest(this.extractEntity<any>(response) ?? response))
+ map((response) => {
+ const item = this.extractEntity<CatalogRequestApiRecord>(response);
+ if (!item) {
+ throw new Error(`Catalog request ${id} was not found.`);
+ }
+ return this.mapCatalogRequest(item);
+ })
  );
  }
 
@@ -521,20 +586,26 @@ export class CatalogService {
  if (params?.status && params.status!== 'all') httpParams = httpParams.set('status', params.status);
  if (params?.vendorId) httpParams = httpParams.set('vendorId', params.vendorId);
 
- return this.http.get<any>(`${this.apiUrl}/request-center`, {
+ return this.http.get<unknown>(`${this.apiUrl}/request-center`, {
  headers: this.getHeaders(),
  params: httpParams
  }).pipe(
- map((response) => this.extractArray<any>(response).map((item) => this.mapCatalogRequest(item)))
+ map((response) => this.extractArray<CatalogRequestApiRecord>(response).map((item) => this.mapCatalogRequest(item)))
  );
  }
 
  getCatalogRequestById(id: string, type: 'product' | 'brand' | 'category'): Observable<ProductRequest> {
- return this.http.get<any>(`${this.apiUrl}/request-center/${id}`, {
+ return this.http.get<unknown>(`${this.apiUrl}/request-center/${id}`, {
  headers: this.getHeaders(),
  params: new HttpParams().set('type', type)
  }).pipe(
- map((response) => this.mapCatalogRequest(this.extractEntity<any>(response) ?? response))
+ map((response) => {
+ const item = this.extractEntity<CatalogRequestApiRecord>(response);
+ if (!item) {
+ throw new Error(`Catalog request ${id} was not found.`);
+ }
+ return this.mapCatalogRequest(item);
+ })
  );
  }
 
@@ -588,7 +659,7 @@ export class CatalogService {
  return [];
  }
 
- private mapCatalogRequest(item: any): ProductRequest {
+ private mapCatalogRequest(item: CatalogRequestApiRecord): ProductRequest {
  return {
  id: item.id,
  requestType: item.requestType,
@@ -622,7 +693,7 @@ export class CatalogService {
  reviewedBy: item.reviewedBy || undefined,
  reviewedAtUtc: item.reviewedAtUtc || undefined,
  vendorId: item.vendorId,
- vendorName: item.vendorName,
+ vendorName: item.vendorName || undefined,
  createdAtUtc: item.createdAtUtc,
  categoryPathAr: item.requestedPathAr || item.approvedPathAr || item.categoryNameAr || item.parentCategoryNameAr || undefined,
  categoryPathEn: item.requestedPathEn || item.approvedPathEn || item.categoryNameEn || item.parentCategoryNameEn || undefined

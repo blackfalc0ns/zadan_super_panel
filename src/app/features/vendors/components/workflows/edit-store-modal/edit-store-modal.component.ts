@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CatalogService } from '../../../../catalog/services/catalog.api.service';
+import { CatalogService } from '@catalog/public-api';
 import { GeographyService, SaudiRegionDto, SaudiCityDto } from '../../../../../shared/services/geography.service';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 

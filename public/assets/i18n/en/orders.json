@@ -27,6 +27,9 @@
       "CRITICAL": "Critical",
       "REVIEW": "Under Review",
       "MERCHANT": "Waiting on Merchant",
+      "AWAITING_CUSTOMER": "Awaiting Customer",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
       "RESOLVED": "Resolved"
     },
     "FILTER_PANEL": {
@@ -152,6 +155,9 @@
       "OPEN": "Open",
       "REVIEW": "Under Review",
       "MERCHANT": "Waiting on Merchant",
+      "AWAITING_CUSTOMER": "Awaiting Customer",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
       "RESOLVED": "Resolved"
     },
     "WAITING_ON": {
@@ -236,6 +242,7 @@
       "REJECT": "Reject Request",
       "REQUEST_INFO": "Request More Information",
       "ESCALATE": "Escalate Case",
+      "REOPEN": "Reopen Case",
       "RESOLVE": "Resolve Case"
     },
     "MODAL": {
@@ -998,6 +1005,7 @@
         "DESCRIPTION_PLACEHOLDER": "Please write the dispute details here...",
         "EVIDENCE": "Evidence (images / documents)",
         "EVIDENCE_HINT": "Drop files here or click to upload",
+        "EVIDENCE_UPLOAD_ERROR": "Could not upload the evidence file. Please try again.",
         "INTERNAL_NOTES": "Internal notes (supervisors only)",
         "INTERNAL_NOTES_PLACEHOLDER": "Add notes that will not be visible to the customer or merchant...",
         "NOTIFY_REVIEWER": "Notify reviewer",

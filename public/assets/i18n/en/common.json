@@ -69,6 +69,7 @@
     "THIS_WEEK": "This week",
     "VIEW_ALL": "View all",
     "CITIES": {
+      "ALL": "All Cities",
       "RIYADH": "Riyadh",
       "JEDDAH": "Jeddah",
       "DAMMAM": "Dammam",
@@ -470,6 +471,15 @@
     "FINANCIAL_STATEMENT": {
       "TITLE": "Export Financial Statement",
       "SUBTITLE": "Customize and download the vendor's financial report",
+      "WEEKDAYS": {
+        "SUN": "Sunday",
+        "MON": "Monday",
+        "TUE": "Tuesday",
+        "WED": "Wednesday",
+        "THU": "Thursday",
+        "FRI": "Friday",
+        "SAT": "Saturday"
+      },
       "STATEMENT_TYPE": "Statement Type",
       "COMPREHENSIVE": "Comprehensive (All Operations)",
       "PAYMENTS_ONLY": "Payments Only",
@@ -783,6 +793,12 @@
     }
   },
   "FINANCES": {
+    "ADMINS": {
+      "SUPER_ADMIN": "Super Admin"
+    },
+    "ROLES": {
+      "SUPER_ADMIN": "Super Admin"
+    },
     "SHELL": {
       "TITLE": "Finance & Accounts",
       "SUBTITLE": "Centralized management of cash flows, settlements, and wallets",
@@ -1288,6 +1304,7 @@
     },
     "PRICING": {
       "TITLE": "Pricing & Fees Settings",
+      "RULESET_NAME": "Ruleset Name",
       "SUBTITLE": "Manage delivery fees, taxes, and COD fees for each zone using live data from the backend.",
       "CONFIRM_SAVE_TITLE": "Confirm Settings Save",
       "CONFIRM_SAVE_MESSAGE": "Pricing settings, VAT, and COD fees for the selected zone will be saved.",

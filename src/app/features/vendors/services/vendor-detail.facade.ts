@@ -381,13 +381,13 @@ export class VendorDetailFacade implements OnDestroy {
     );
   }
 
-  requestVendorDocuments(note?: string): void {
-    this.subscribeSilently(this.requestVendorDocumentsRequest(note));
+  requestVendorDocuments(documentId: string, note?: string): void {
+    this.subscribeSilently(this.requestVendorDocumentsRequest(documentId, note));
   }
 
-  requestVendorDocumentsRequest(note?: string): Observable<VendorDetail> {
+  requestVendorDocumentsRequest(documentId: string, note?: string): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) =>
-      this.vendorService.requestVendorDocuments(vendorId, note)
+      this.vendorService.requestVendorDocuments(vendorId, documentId, note)
     );
   }
 
@@ -503,13 +503,13 @@ export class VendorDetailFacade implements OnDestroy {
     );
   }
 
-  rejectVendorReview(reason?: string): void {
-    this.subscribeSilently(this.rejectVendorReviewRequest(reason));
+  rejectVendorReview(reason?: string, documentId?: string | null): void {
+    this.subscribeSilently(this.rejectVendorReviewRequest(reason, documentId));
   }
 
-  rejectVendorReviewRequest(reason?: string): Observable<VendorDetail> {
+  rejectVendorReviewRequest(reason?: string, documentId?: string | null): Observable<VendorDetail> {
     return this.trackVendorMutation((vendorId) =>
-      this.vendorService.rejectVendorReview(vendorId, reason)
+      this.vendorService.rejectVendorReview(vendorId, reason, documentId)
     );
   }
 

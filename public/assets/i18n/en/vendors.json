@@ -408,7 +408,8 @@
       "CHANGES_REQUESTED": "Changes were requested from the vendor before approval can be completed.",
       "APPROVED": "All required documents passed review and the vendor account was verified successfully.",
       "REJECTED": "The current submission was rejected because the required legal and business evidence was not sufficient.",
-      "SUSPENDED": "The vendor account was suspended while the compliance team reviews the flagged risks."
+      "SUSPENDED": "The vendor account was suspended while the compliance team reviews the flagged risks.",
+      "REOPENED": "The vendor review was reopened for additional verification."
     }
   },
   "ACTIVITY_LOG": {

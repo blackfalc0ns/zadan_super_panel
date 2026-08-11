@@ -490,6 +490,9 @@
       "DynamicSections": "Dynamic Sections"
     },
     "BANNERS": {
+      "TABS": {
+        "BANNERS": "Banners"
+      },
       "DESCRIPTION": "Create, reorder, schedule, and toggle home banners from one place.",
       "SEARCH_PLACEHOLDER": "Search banners...",
       "API_HINT": "Driven directly by",
@@ -793,6 +796,12 @@
       "SEARCH_PLACEHOLDER": "Search home sections..."
     },
     "VISIBILITY": {
+      "SEARCH_PLACEHOLDER": "Search home sections...",
+      "TABLE": {
+        "SECTION": "Section",
+        "API_KEY": "API Key",
+        "STATUS": "Status"
+      },
       "DESCRIPTION": "Toggle fixed home sections without redeploying the customer app or touching hardcoded flags.",
       "API_HINT": "These flags come from",
       "CARD_DESCRIPTION": "Controls whether the customer home endpoint should expose this fixed section.",

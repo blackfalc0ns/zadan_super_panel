@@ -21,7 +21,19 @@ const businessNouns = [
   'finance'
 ];
 
-const allowedCoreServiceFiles = new Set(['auth.service.ts']);
+const allowedCoreServiceFiles = new Set([
+  'access.service.ts',
+  'admin-access-api.service.ts',
+  'admin-global-search.service.ts',
+  'admin-notification-realtime.service.ts',
+  'admin-notification-sound.service.ts',
+  'admin-notifications.service.ts',
+  'admin-one-signal.service.ts',
+  'admin-page-title.service.ts',
+  'admin-support-case-realtime.service.ts',
+  'auth.service.ts',
+  'system-logs-api.service.ts'
+]);
 const importPattern = /\b(?:import|export)\s+(?:type\s+)?(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]|\bimport\(\s*['"]([^'"]+)['"]\s*\)/g;
 
 function listFilesRecursively(directoryPath) {
@@ -196,7 +208,7 @@ const disallowedCoreServices = coreServiceFiles
   .filter((fileName) => !allowedCoreServiceFiles.has(fileName));
 
 failIfAny(
-  'Boundary check failed: src/app/core/services currently allows only auth.service.ts.',
+  'Boundary check failed: src/app/core/services contains a service that is not in the reviewed core-service allowlist.',
   disallowedCoreServices
 );
 

@@ -1,13 +1,18 @@
+import { ChangeDetectorRef } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { BrandDetailComponent } from './brand-detail.component';
 
 describe('BrandDetailComponent', () => {
  function createComponent() {
- return new BrandDetailComponent(
+ TestBed.configureTestingModule({
+ providers: [{ provide: ChangeDetectorRef, useValue: { markForCheck: () => undefined } }]
+ });
+ return TestBed.runInInjectionContext(() => new BrandDetailComponent(
  { snapshot: { paramMap: { get: () => null } } } as any,
  {} as any,
  {} as any,
  { currentLang: 'ar', instant: () => '' } as any
- );
+ ));
  }
 
  it('prefers coverImageUrl when available', () => {

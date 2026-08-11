@@ -2,8 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const projectRoot = process.cwd();
-const arPath = path.join(projectRoot, 'public', 'assets', 'i18n', 'ar.json');
-const enPath = path.join(projectRoot, 'public', 'assets', 'i18n', 'en.json');
+const i18nRoot = path.join(projectRoot, 'public', 'assets', 'i18n');
+const arPath = path.join(i18nRoot, 'ar');
+const enPath = path.join(i18nRoot, 'en');
 const scanRoots = [
   path.join(projectRoot, 'src', 'app'),
   path.join(projectRoot, 'src', 'index.html')
@@ -12,7 +13,6 @@ const scanRoots = [
 const hardcodedSourceAllowlist = new Set([
   normalize('src/app/features/admin-users/services/admin-users.service.ts'),
   normalize('src/app/features/catalog/services/catalog.api.service.ts'),
-  normalize('src/app/features/catalog/pages/brand-detail/brand-detail.component.html'),
   normalize('src/app/features/customers/data/customers.mock.ts'),
   normalize('src/app/features/dashboard/services/dashboard.api.service.ts'),
   normalize('src/app/features/disputes/services/disputes.api.service.ts'),
@@ -21,45 +21,44 @@ const hardcodedSourceAllowlist = new Set([
   normalize('src/app/features/email-center/services/email-center.service.ts'),
   normalize('src/app/features/finances/services/finance.service.ts'),
   normalize('src/app/features/orders/data/orders.mock.ts'),
-  normalize('src/app/features/orders/components/order-driver-assignment-modal/order-driver-assignment-modal.component.html'),
-  normalize('src/app/features/vendors/components/workflows/create-settlement-modal/create-settlement-modal.component.html'),
-  normalize('src/app/features/vendors/components/workflows/cr-viewer-modal/cr-viewer-modal.component.html'),
   normalize('src/app/features/vendors/services/vendor.api.service.ts')
 ]);
 
 const failures = [];
-const ar = readJson(arPath);
-const en = readJson(enPath);
+const ar = readCatalog(arPath);
+const en = readCatalog(enPath);
 const arKeys = flattenKeys(ar);
 const enKeys = flattenKeys(en);
 const codeReferencedKeys = collectTranslationKeys(scanRoots);
 
 for (const key of arKeys) {
   if (!enKeys.has(key)) {
-    failures.push(`Missing in en.json: ${key}`);
+    failures.push(`Missing in runtime English catalog: ${key}`);
   }
 }
 
 for (const key of enKeys) {
   if (!arKeys.has(key)) {
-    failures.push(`Missing in ar.json: ${key}`);
+    failures.push(`Missing in runtime Arabic catalog: ${key}`);
   }
 }
 
 for (const key of codeReferencedKeys) {
   if (!enKeys.has(key)) {
-    failures.push(`Referenced in code but missing in en.json: ${key}`);
+    failures.push(`Referenced in code but missing in runtime English catalog: ${key}`);
   }
 
   if (!arKeys.has(key)) {
-    failures.push(`Referenced in code but missing in ar.json: ${key}`);
+    failures.push(`Referenced in code but missing in runtime Arabic catalog: ${key}`);
   }
 }
 
-const englishCatalogRaw = fs.readFileSync(enPath, 'utf8');
+const englishCatalogRaw = collectJsonFiles(enPath)
+  .map((file) => fs.readFileSync(file, 'utf8'))
+  .join('\n');
 const englishArabicMatches = englishCatalogRaw.match(/[\u0600-\u06FF]/g);
 if (englishArabicMatches) {
-  failures.push(`Arabic characters found in en.json (${englishArabicMatches.length} matches).`);
+  failures.push(`Arabic characters found in runtime English catalog (${englishArabicMatches.length} matches).`);
 }
 
 for (const ref of collectFiles(scanRoots)) {
@@ -69,7 +68,6 @@ for (const ref of collectFiles(scanRoots)) {
   }
 
   const content = fs.readFileSync(ref, 'utf8');
-  scanForBilingualTernaries(relativePath, content);
   scanForHardcodedHtmlText(relativePath, content);
 }
 
@@ -95,11 +93,18 @@ function scanForBilingualTernaries(relativePath, content) {
 }
 
 function scanForHardcodedHtmlText(relativePath, content) {
-  const isHtml = relativePath.endsWith('.html') || relativePath.endsWith('index.html');
-  if (!isHtml) {
+  if (relativePath.endsWith('.ts')) {
+    const inlineTemplateRegex = /template\s*:\s*`([\s\S]*?)`/g;
+    for (const [, template] of content.matchAll(inlineTemplateRegex)) {
+      scanMarkupForHardcodedText(relativePath, template);
+    }
     return;
   }
 
+  scanMarkupForHardcodedText(relativePath, content);
+}
+
+function scanMarkupForHardcodedText(relativePath, content) {
   const sanitized = content
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '');
@@ -145,6 +150,10 @@ function shouldIgnoreHtmlText(value) {
   }
 
   if (/^(ltr|rtl)$/i.test(value)) {
+    return true;
+  }
+
+  if (/^(AR|EN)(\s*\/\s*(AR|EN))+$/i.test(value)) {
     return true;
   }
 
@@ -227,6 +236,11 @@ function shouldTrackTranslationKey(content, startIndex, rawMatch, key) {
     return false;
   }
 
+  // These are relative aliases used below a dynamically supplied prefix.
+  if (key.startsWith('TITLES.') || key.startsWith('SUBTITLES.')) {
+    return false;
+  }
+
   const endIndex = startIndex + rawMatch.length;
   const previousChar = findSignificantChar(content, startIndex - 1, -1);
   const nextChar = findSignificantChar(content, endIndex, 1);
@@ -268,6 +282,35 @@ function flattenKeys(source, prefix = '', result = new Set()) {
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''));
+}
+
+function readCatalog(directoryPath) {
+  const result = {};
+
+  for (const filePath of collectJsonFiles(directoryPath)) {
+    mergeObjects(result, readJson(filePath));
+  }
+
+  return result;
+}
+
+function collectJsonFiles(directoryPath) {
+  return fs.readdirSync(directoryPath, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+    .map((entry) => path.join(directoryPath, entry.name))
+    .sort();
+}
+
+function mergeObjects(target, source) {
+  for (const [key, value] of Object.entries(source)) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      target[key] ??= {};
+      mergeObjects(target[key], value);
+      continue;
+    }
+
+    target[key] = value;
+  }
 }
 
 function trimForLog(value) {

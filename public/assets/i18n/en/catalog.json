@@ -435,6 +435,18 @@
     }
   },
   "CATALOG": {
+    "MOBILE_PRODUCT_CARD": {
+      "PRICE": "Price",
+      "CATEGORY": "Category",
+      "STOCK": "Stock",
+      "RATING": "Rating",
+      "VIEW": "View",
+      "APPROVE": "Approve",
+      "EDIT": "Edit",
+      "NOT_SPECIFIED": "Not specified",
+      "OUT_OF_STOCK": "Out of stock",
+      "LOW_STOCK": "{{count}} (Low)"
+    },
     "PRODUCT_REQUESTS": "Product Addition Requests",
     "BRAND_REQUESTS": "Brand Addition Requests",
     "CATEGORY_REQUESTS": "Category Addition Requests",

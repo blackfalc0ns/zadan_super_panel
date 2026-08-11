@@ -99,6 +99,6 @@ export class GeographyService {
     }
 
     this.loadFailureLogged = true;
-    console.debug(`[GeographyService] Failed to load ${scope}.`, error);
+    console.warn(`[GeographyService] Failed to load ${scope}.`, error);
   }
 }

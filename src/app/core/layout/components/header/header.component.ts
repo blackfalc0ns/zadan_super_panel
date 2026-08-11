@@ -1,12 +1,12 @@
-import { Component, DestroyRef, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, DestroyRef, ElementRef, EnvironmentInjector, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime, distinctUntilChanged, of, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, from, of, Subject, switchMap, tap } from 'rxjs';
 import { AdminNotification, AdminNotificationsService } from '../../../services/admin-notifications.service';
-import { AdminGlobalSearchGroup, AdminGlobalSearchResult, AdminGlobalSearchService } from '../../../services/admin-global-search.service';
+import type { AdminGlobalSearchGroup, AdminGlobalSearchResult } from '../../../services/admin-global-search.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,10 +36,10 @@ export class HeaderComponent implements OnInit {
     readonly minSearchLength = 2;
     private readonly searchInput$ = new Subject<string>();
     private readonly destroyRef = inject(DestroyRef);
+    private readonly environmentInjector = inject(EnvironmentInjector);
 
     constructor(
         private readonly adminNotificationsService: AdminNotificationsService,
-        private readonly adminGlobalSearchService: AdminGlobalSearchService,
         private readonly router: Router
     ) {}
 
@@ -83,7 +83,13 @@ export class HeaderComponent implements OnInit {
                         return of([] as AdminGlobalSearchGroup[]);
                     }
 
-                    return this.adminGlobalSearchService.search(query, this.currentLang === 'en' ? 'en' : 'ar');
+                    return from(import('../../../services/admin-global-search.service')).pipe(
+                        switchMap(({ AdminGlobalSearchService }) =>
+                            this.environmentInjector
+                                .get(AdminGlobalSearchService)
+                                .search(query, this.currentLang === 'en' ? 'en' : 'ar')
+                        )
+                    );
                 }),
                 takeUntilDestroyed(this.destroyRef)
             )

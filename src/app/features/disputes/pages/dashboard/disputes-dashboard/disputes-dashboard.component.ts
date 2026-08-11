@@ -21,7 +21,7 @@ import { DisputeEscalationModalComponent } from '../../../components/dispute-esc
 import { DisputeQuickActionModalComponent } from '../../../components/dispute-quick-action-modal/dispute-quick-action-modal.component';
 import { DisputeRejectionModalComponent } from '../../../components/dispute-rejection-modal/dispute-rejection-modal.component';
 import { DisputeRequestInfoModalComponent } from '../../../components/dispute-request-info-modal/dispute-request-info-modal.component';
-import { describeApiError } from '../../../../marketing/utils/marketing-date.utils';
+import { describeApiError } from '../../../../../shared/utils/api-error.util';
 import {
  AdminOrderCaseStats,
  createEmptyAdminOrderCaseStats,
@@ -1746,7 +1746,7 @@ export class DisputesDashboardComponent implements OnInit {
  private handleMutationError(error: unknown, logMessage: string): void {
  console.error(logMessage, error);
  this.toastService.error(
- describeApiError(error),
+ describeApiError(error, this.translate),
  this.isRtl ? 'النزاعات والاسترجاعات' : 'Disputes'
  );
  }

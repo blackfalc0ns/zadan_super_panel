@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface ProductCardData {
  id: string;
@@ -22,7 +23,7 @@ export interface ProductCardData {
  changeDetection: ChangeDetectionStrategy.OnPush,
  selector: 'app-mobile-product-card',
  standalone: true,
- imports: [CommonModule, RouterModule],
+ imports: [CommonModule, RouterModule, TranslateModule],
  template: `
  <div (click)="onCardClick()"
  class="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 p-4 shadow-sm hover:shadow-md transition-all cursor-pointer">
@@ -66,21 +67,21 @@ export interface ProductCardData {
  <!-- Details Grid -->
  <div class="space-y-2 mb-4">
  <div class="flex items-center justify-between">
- <span class="text-xs text-slate-500">السعر</span>
+ <span class="text-xs text-slate-500">{{ 'CATALOG.MOBILE_PRODUCT_CARD.PRICE' | translate }}</span>
  <span class="text-xs font-bold text-zadna-primary">
  {{ getPriceLabel() }}
  </span>
  </div>
  
  <div class="flex items-center justify-between">
- <span class="text-xs text-slate-500">الفئة</span>
+ <span class="text-xs text-slate-500">{{ 'CATALOG.MOBILE_PRODUCT_CARD.CATEGORY' | translate }}</span>
  <span class="text-xs font-medium text-slate-700 truncate max-w-[150px]">
  {{ product.category || '-' }}
  </span>
  </div>
  
  <div class="flex items-center justify-between">
- <span class="text-xs text-slate-500">المخزون</span>
+ <span class="text-xs text-slate-500">{{ 'CATALOG.MOBILE_PRODUCT_CARD.STOCK' | translate }}</span>
  <div class="flex items-center gap-2">
  <span class="text-xs font-bold" [ngClass]="getStockClasses()">
  {{ getStockLabel() }}
@@ -89,7 +90,7 @@ export interface ProductCardData {
  </div>
  
  <div class="flex items-center justify-between" *ngIf="product.rating">
- <span class="text-xs text-slate-500">التقييم</span>
+ <span class="text-xs text-slate-500">{{ 'CATALOG.MOBILE_PRODUCT_CARD.RATING' | translate }}</span>
  <div class="flex items-center gap-1">
  <span class="text-xs font-bold text-amber-600">{{ product.rating }}/5</span>
  <span class="text-[9px] text-slate-400">({{ product.reviewsCount || 0 }})</span>
@@ -105,7 +106,7 @@ export interface ProductCardData {
  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
  </svg>
- عرض
+ {{ 'CATALOG.MOBILE_PRODUCT_CARD.VIEW' | translate }}
  </button>
  
  <button *ngIf="product.status === 'Pending'" 
@@ -114,7 +115,7 @@ export interface ProductCardData {
  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
  </svg>
- موافقة
+ {{ 'CATALOG.MOBILE_PRODUCT_CARD.APPROVE' | translate }}
  </button>
  
  <button (click)="onEdit($event)"
@@ -122,7 +123,7 @@ export interface ProductCardData {
  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
  </svg>
- تعديل
+ {{ 'CATALOG.MOBILE_PRODUCT_CARD.EDIT' | translate }}
  </button>
  </div>
  </div>
@@ -137,6 +138,8 @@ export class MobileProductCardComponent {
  @Output() selectionChange = new EventEmitter<{ productId: string; selected: boolean }>();
  @Output() quickApprove = new EventEmitter<{ product: ProductCardData; event: Event }>();
  @Output() edit = new EventEmitter<{ product: ProductCardData; event: Event }>();
+
+ constructor(private readonly translate: TranslateService) {}
 
  onCardClick(): void {
  this.cardClick.emit(this.product);
@@ -168,13 +171,7 @@ export class MobileProductCardComponent {
  }
 
  getStatusLabel(): string {
- const statusLabels = {
- 'Active': 'نشط',
- 'Inactive': 'غير نشط',
- 'Pending': 'في الانتظار',
- 'Rejected': 'مرفوض'
- };
- return statusLabels[this.product.status] || this.product.status;
+ return this.translate.instant(`COMMON.${this.product.status.toUpperCase()}`);
  }
 
  getStatusClasses(): string {
@@ -208,17 +205,21 @@ export class MobileProductCardComponent {
  }
 
  getPriceLabel(): string {
- if (!this.product.price) return 'غير محدد';
+ if (!this.product.price) return this.translate.instant('CATALOG.MOBILE_PRODUCT_CARD.NOT_SPECIFIED');
  
- const currency = this.product.currency || 'ر.س';
+ const currency = this.product.currency || this.translate.instant('COMMON.CURRENCY_SAR');
  return `${this.product.price} ${currency}`;
  }
 
  getStockLabel(): string {
- if (this.product.stock === undefined || this.product.stock === null) return 'غير محدد';
+ if (this.product.stock === undefined || this.product.stock === null) {
+ return this.translate.instant('CATALOG.MOBILE_PRODUCT_CARD.NOT_SPECIFIED');
+ }
  
- if (this.product.stock === 0) return 'نفد المخزون';
- if (this.product.stock < 10) return `${this.product.stock} (منخفض)`;
+ if (this.product.stock === 0) return this.translate.instant('CATALOG.MOBILE_PRODUCT_CARD.OUT_OF_STOCK');
+ if (this.product.stock < 10) {
+ return this.translate.instant('CATALOG.MOBILE_PRODUCT_CARD.LOW_STOCK', { count: this.product.stock });
+ }
  return `${this.product.stock}`;
  }
 

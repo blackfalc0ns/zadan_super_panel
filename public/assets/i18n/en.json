@@ -5853,7 +5853,10 @@
       "OFFLINE": "Offline",
       "ONMISSION": "On mission",
       "SUSPENDED": "Suspended",
-      "BANNED": "Banned"
+      "BANNED": "Banned",
+      "LOGIN_LOCKED": "Login Locked",
+      "LOCATION_BLOCKED": "Location Updates Blocked",
+      "OFFER_RESTRICTED": "Offers Restricted"
     },
     "VERIFICATION": {
       "VERIFIED": "Verified",
@@ -5881,7 +5884,10 @@
       "CLEAR": "Clear",
       "WARNING": "Warning",
       "PAYMENT": "Collection",
-      "LEGAL": "Reports"
+      "LEGAL": "Reports",
+      "COMPLIANCE": "Compliance",
+      "DISPATCH": "Dispatch",
+      "LOCATION": "Location"
     },
     "ALERTS": {
       "HIGH_RISK": "High Risk",
@@ -6387,6 +6393,7 @@
         },
         "DOC_HEALTH": {
           "TITLE": "Document Health",
+          "DESC": "Real-time status overview",
           "VALID": "Valid",
           "VALID_DESC": "Files currently pass review.",
           "EXPIRING": "Expiring Soon",
@@ -6953,6 +6960,9 @@
           "FULLY_STOPPED": "Fully Stopped",
           "BLOCKED_UNTIL_APPROVAL": "Blocked Until Approval",
           "BLOCKED_BY_COMPLIANCE": "Blocked by Compliance",
+          "BLOCKED_BY_LOCATION": "Blocked by Location",
+          "BLOCKED_BY_LOGIN_LOCK": "Blocked by Login Lock",
+          "BLOCKED_BY_OFFERS": "Blocked from Offers",
           "PARTIALLY_READY": "Partially Ready",
           "WORKING_NOW": "Working Now",
           "FULLY_READY": "Fully Ready",
@@ -6971,6 +6981,10 @@
           "VERIFICATION_PENDING": "The profile is not verified yet and should not be opened for assignment.",
           "ACCOUNT_SUSPENDED": "The account is currently suspended, so no new tasks or payouts should be assigned.",
           "ACCOUNT_BANNED": "The account is banned and fully blocked from receiving new operational access.",
+          "LOGIN_LOCKED": "The driver cannot sign in until the login lock is removed.",
+          "LOCATION_UPDATES_BLOCKED": "Location updates are blocked and must be restored before normal operations can resume.",
+          "OFFER_RESTRICTED": "The driver is restricted from receiving new offers until the operational restriction is cleared.",
+          "MISSING_DOCUMENTS": "Required driver documents are missing and must be completed before activation.",
           "FINANCE_HOLD": "There is a financial hold or unresolved COD amount that must be cleared before any new payout.",
           "COMPLIANCE_CASE": "There is an open compliance case or report that requires a decision before normal operation can resume.",
           "DOCUMENTS_EXPIRING": "Some documents are close to expiry and should be followed up before they turn into a hard stop.",
@@ -6978,6 +6992,12 @@
           "PERFORMANCE_ALERT": "Driver performance needs follow-up before increasing operational load.",
           "SUPPORT_FOLLOWUPS": "There are {{count}} support follow-ups pending on this driver.",
           "SUPPORT_FOLLOWUPS_GENERIC": "There are open support follow-ups pending on this driver."
+        },
+        "ALERTS": {
+          "DRIVER_OFFLINE_BUT_APPROVED": "The driver is approved but currently offline.",
+          "DRIVER_ON_ACTIVE_MISSION": "The driver is currently assigned to an active mission.",
+          "OFFER_RESTRICTION_ACTIVE": "An offer restriction is currently active for this driver.",
+          "READY_FOR_DISPATCH": "The driver is ready to receive new assignments."
         },
         "ACTION_LABELS": {
           "APPROVE_VERIFICATION": "Approve Verification",

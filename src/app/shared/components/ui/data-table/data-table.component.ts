@@ -447,13 +447,18 @@ export class DataTableComponent<T extends object = Record<string, unknown>> {
  }
 
  private getResolvedColumnValue(item: T, key: string): unknown {
- return key.split('.').reduce<any>((obj, prop) => {
- return obj && typeof obj === 'object' ? obj[prop] : undefined;
- }, item);
+ let current: unknown = item;
+ for (const property of key.split('.')) {
+ if (!current || typeof current !== 'object') {
+ return undefined;
+ }
+ current = (current as Record<string, unknown>)[property];
+ }
+ return current;
  }
 
- private getFieldValue(item: T, field: string): any {
- return (item as any)[field];
+ private getFieldValue(item: T, field: string): unknown {
+ return (item as Record<string, unknown>)[field];
  }
 
  private emitSelectionChange() {

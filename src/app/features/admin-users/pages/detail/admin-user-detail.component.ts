@@ -40,7 +40,7 @@ import {
  resolveAdminOrgDefaultsForRoleCode
 } from '../../models/admin-org-structure';
 import { AdminUsersService } from '../../services/admin-users.service';
-import { VendorService } from '../../../vendors/services/vendor.api.service';
+import { VendorService } from '@vendors/public-api';
 
 type CommunicationFlagKey = keyof AdminUserRecord['communication']['emailOptIn'];
 

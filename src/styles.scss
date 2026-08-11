@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Leaflet Map */
-@import 'leaflet/dist/leaflet.css';
-
 /* Import Cairo font locally */
 @import '@fontsource/cairo/200.css';
 @import '@fontsource/cairo/300.css';

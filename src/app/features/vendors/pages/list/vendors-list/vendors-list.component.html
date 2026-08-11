@@ -344,7 +344,7 @@
  <div class="grid grid-cols-2 gap-4">
  <div class="text-center space-y-1">
  <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'CATALOG.COMMISSION_RATE' | translate }}</p>
- <p class="text-sm font-black text-slate-700">{{ vendor.commissionRate == null ? '---' : (vendor.commissionRate + '%') }}</p>
+ <p class="text-sm font-black text-slate-700">{{ vendor.commissionRate === null || vendor.commissionRate === undefined ? '---' : (vendor.commissionRate + '%') }}</p>
  </div>
  <div class="text-center space-y-1">
  <p class="text-[10px] font-black text-slate-400 uppercase">{{ 'VENDOR_SETTINGS.OPERATIONS.ORDER_RECEPTION' | translate }}</p>

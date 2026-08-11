@@ -9,8 +9,7 @@ import { SearchableSelectComponent, SearchableSelectOption } from '../../../../s
 import { AppInputComponent } from '../../../../shared/components/ui/form-controls/input/input.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent, StatusPillVariant } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { SupportCaseRow, AdminOrderCaseStats, createEmptyAdminOrderCaseStats } from '@disputes/models/disputes.models';
-import { DisputesService } from '@disputes/services/disputes.api.service';
+import { SupportCaseRow, AdminOrderCaseStats, createEmptyAdminOrderCaseStats, DisputesService } from '@disputes/public-api';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
 
 interface KPI {

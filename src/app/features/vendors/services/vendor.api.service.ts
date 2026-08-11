@@ -942,22 +942,31 @@ export class VendorService {
 
  requestVendorDocuments(
  id: string,
+ documentId: string,
  note: string = 'Please re-upload the missing documents and confirm the latest business details.'
  ): Observable<VendorDetail> {
  const request$ = this.canUseApiMutations()
- ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/request-documents`, { note })
+ ? this.http.post<VendorDetail>(`${this.apiUrl}/${id}/request-documents`, { note, documentId })
  : null;
 
  return this.executeVendorMutation(
  request$,
  () => this.updateVendor(id, (vendor) => {
  const actorName = this.resolveCurrentActorName();
+ const target = vendor.reviewDocuments.find((document) => document.id === documentId);
+ if (!target) {
+ return;
+ }
+
  vendor.reviewState = 'changes_requested';
  vendor.assignedReviewer = vendor.assignedReviewer || actorName || null;
  vendor.requestedChangesAtUtc = this.timestamp();
  vendor.reviewDecisionReason = note;
  vendor.reviewCompletedAtUtc = null;
- this.markDocumentForReupload(vendor.reviewDocuments);
+ target.reviewDecision = 'rejected';
+ target.rejectionReason = note;
+ target.reviewedAtUtc = this.timestamp();
+ target.reviewedBy = actorName || null;
  this.pushSystemNote(vendor, {
  authorName: actorName,
  roleLabel: 'Compliance Review',
@@ -1009,15 +1018,16 @@ id
 
 rejectVendorReview(
 id: string,
-reason: string = 'Submitted data did not pass compliance review.'
+reason: string = 'Submitted data did not pass compliance review.',
+documentId?: string | null
  ): Observable<VendorDetail> {
  const request$ = this.canUseApiMutations()
- ? this.http.post(`${this.apiUrl}/${id}/reject`, { reason })
+ ? this.http.post(`${this.apiUrl}/${id}/reject`, { reason, documentId: documentId || null })
  : null;
 
  return this.executeVendorMutation(
  request$,
- () => this.applyRejection(id, reason)
+ () => this.applyRejection(id, reason, documentId)
  );
  }
 
@@ -2296,7 +2306,7 @@ tone: 'info'
 });
 }
 
-private applyRejection(id: string, reason: string): VendorDetail {
+private applyRejection(id: string, reason: string, documentId?: string | null): VendorDetail {
 return this.updateVendor(id, (vendor) => {
  const normalizedReason = reason.trim();
  if (!normalizedReason) {
@@ -2311,6 +2321,23 @@ return this.updateVendor(id, (vendor) => {
  throw new Error(`ما تقدر رفض التاجر بينما حالته الحالية هي ${vendor.status}.|Vendor cannot be rejected while its current status is ${vendor.status}.`);
  }
 
+ const target = documentId
+ ? vendor.reviewDocuments.find((document) => document.id === documentId && document.isRequired && document.isUploaded)
+ : null;
+ const hasExistingCorrectionTarget = vendor.reviewDocuments.some((document) => document.isRequired && document.reviewDecision === 'rejected')
+ || vendor.reviewItems.some((item) => item.status === 'changes_requested');
+
+ if (!target && !hasExistingCorrectionTarget) {
+ throw new Error('لازم تحدد مستندًا أو حقلًا يحتاج تصحيح قبل رفض التاجر.|Select a document or profile field that requires correction before rejecting the vendor.');
+ }
+
+ if (target) {
+ target.reviewDecision = 'rejected';
+ target.rejectionReason = normalizedReason;
+ target.reviewedAtUtc = this.timestamp();
+ target.reviewedBy = this.resolveCurrentActorName() || null;
+ }
+
  vendor.status = VendorStatus.Rejected;
  vendor.reviewState = 'rejected';
  vendor.rejectionReason = normalizedReason;
@@ -2320,7 +2347,6 @@ return this.updateVendor(id, (vendor) => {
  vendor.approvedBy = null;
  vendor.suspensionReason = null;
  vendor.suspendedAtUtc = null;
- this.markDocumentForReupload(vendor.reviewDocuments);
  this.pushSystemNote(vendor, {
  authorName: this.resolveCurrentActorName(),
  roleLabel: 'Compliance Review',
@@ -2529,21 +2555,6 @@ return this.updateVendor(id, (vendor) => {
  document.iconBgClass = 'bg-orange-50 text-orange-500';
  }
  });
- }
-
- private markDocumentForReupload(documents: VendorReviewDocument[]): void {
- const target = documents.find((document) => document.type === 'license')
- || documents.find((document) => document.type === 'tax')
- || documents.find((document) => document.status === 'pending')
- || documents[documents.length - 1];
-
- if (!target) {
- return;
- }
-
- target.status = 'missing';
- target.statusLabelKey = 'COMPLIANCE.STATUS.MISSING';
- target.iconBgClass = 'bg-slate-100 text-slate-500';
  }
 
  private pushSystemNote(

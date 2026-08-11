@@ -166,7 +166,6 @@ export class VendorsListComponent implements OnInit {
 
  bulkActions: BulkAction[] = [
  { id: 'approve', label: 'VENDORS.ACTIONS.APPROVE', icon: 'check_circle', color: 'bg-zadna-primary text-white shadow-zadna-primary/20' },
- { id: 'documents', label: 'VENDORS.PREVIEW.PENDING_REQUIREMENTS', icon: 'mail', color: 'bg-blue-500 text-white shadow-blue-500/20' },
  { id: 'block', label: 'VENDORS.ACTIONS.SUSPEND', icon: 'block', color: 'bg-red-500 text-white shadow-red-500/20' },
  { id: 'export', label: 'DASHBOARD.EXPORT', icon: 'download', color: 'bg-slate-600 text-white shadow-slate-600/20' }
  ];
@@ -551,9 +550,6 @@ export class VendorsListComponent implements OnInit {
  case 'approve':
  event.items.forEach((vendor) => this.quickApprove(vendor, new Event('click')));
  break;
- case 'documents':
- event.items.forEach((vendor) => this.handleVendorMutation(this.vendorService.requestVendorDocuments(vendor.id)));
- break;
  case 'block':
  event.items.filter((vendor) => vendor.status === VendorStatus.Active).forEach((vendor) => this.handleVendorMutation(this.vendorService.suspendVendorAccount(vendor.id)));
  break;
@@ -653,7 +649,9 @@ export class VendorsListComponent implements OnInit {
 
  quickRequestDocuments(vendor: Vendor, event: Event) {
  event.stopPropagation();
- this.handleVendorMutation(this.vendorService.requestVendorDocuments(vendor.id));
+ void this.router.navigate(['/vendors', vendor.id, 'compliance'], {
+ queryParams: { focus: 'review' }
+ });
  }
 
  updateBulkActionsVisibility() {

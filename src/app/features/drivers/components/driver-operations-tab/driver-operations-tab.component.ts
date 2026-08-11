@@ -5,7 +5,7 @@ import { DataTableComponent, TableColumn } from '../../../../shared/components/u
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { localizeSaudiCity, localizeSaudiRegion } from '../../../../shared/utils/saudi-geography-display';
-import { OrderTrackingMapComponent } from '../../../orders/components/order-tracking-map/order-tracking-map.component';
+import { OrderTrackingMapComponent } from '@orders/public-api';
 import { DriverDetailRecord, DriverTaskAssignment } from '../../models/drivers.models';
 import { getTaskStatusKey, getTaskStatusVariant } from '../../utils/driver-ui.utils';
 import { SafeResourceUrl } from '@angular/platform-browser';

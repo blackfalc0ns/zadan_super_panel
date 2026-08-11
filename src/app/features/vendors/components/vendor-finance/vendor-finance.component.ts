@@ -20,13 +20,13 @@ import {
  VendorService
 } from '@vendors/services/vendor.api.service';
 import { VendorDetailFacade } from '@vendors/services/vendor-detail.facade';
-import { FinanceService } from '@finances/services/finance.service';
 import {
  DEFAULT_SETTLEMENT_PAYOUT_DAYS,
+ FinanceService,
  SETTLEMENT_PAYOUT_DAYS,
  SettlementProcessingMode,
  WalletsService
-} from '@finances/services/wallets.service';
+} from '@finances/public-api';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,

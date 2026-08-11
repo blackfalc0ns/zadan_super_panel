@@ -15,8 +15,7 @@ import {
  toNullableUtcIso
 } from '@marketing/utils/marketing-date.utils';
 import { MarketingScheduleCellComponent } from '@marketing/components/marketing-schedule-cell/marketing-schedule-cell.component';
-import { Vendor } from '@vendors/models/vendors.domain.models';
-import { VendorService } from '@vendors/services/vendor.api.service';
+import { Vendor, VendorService } from '@vendors/public-api';
 import { DeleteConfirmationModalComponent } from '@shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { DataTableComponent, TableColumn } from '@shared/components/ui/data-table/data-table.component';
 import { StatusPillComponent } from '@shared/components/ui/status-pill/status-pill.component';

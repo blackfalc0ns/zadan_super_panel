@@ -12,7 +12,7 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
   private hasView = false;
 
   constructor(
-    private templateRef: TemplateRef<any>,
+    private templateRef: TemplateRef<unknown>,
     private viewContainer: ViewContainerRef,
     private accessService: AccessService
   ) {}

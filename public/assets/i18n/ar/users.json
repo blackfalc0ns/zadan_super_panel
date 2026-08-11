@@ -163,6 +163,7 @@
       "ACTION_SUSPEND_ACCOUNT": "تعليق الحساب",
       "ACTION_REACTIVATE_ACCOUNT": "إعادة التفعيل",
       "ACTION_ADD_NOTE": "إضافة ملاحظة",
+      "ACTION_COPY": "نسخ",
       "REVIEW_FLAG_TITLE": "العميل معلّم للمراجعة",
       "REVIEW_FLAG_MESSAGE": "هذا الملف تحت متابعة تشغيلية الحين ويحتاج مراجعة داخلية في الطلبات القادمة.",
       "REVIEW_FLAG_ESCALATED_TITLE": "العميل مصعّد إلى مراجعة ثقة",
@@ -531,7 +532,10 @@
       "OFFLINE": "غير متصل",
       "ONMISSION": "في مهمة",
       "SUSPENDED": "موقوف",
-      "BANNED": "موقوف"
+      "BANNED": "موقوف",
+      "LOGIN_LOCKED": "تسجيل الدخول مقفل",
+      "LOCATION_BLOCKED": "تحديثات الموقع موقوفة",
+      "OFFER_RESTRICTED": "العروض مقيّدة"
     },
     "PERFORMANCE": {
       "LOW": "ضعيف",
@@ -553,7 +557,10 @@
       "CLEAR": "سليم",
       "WARNING": "تنبيه",
       "PAYMENT": "تحصيل",
-      "LEGAL": "بلاغات"
+      "LEGAL": "بلاغات",
+      "COMPLIANCE": "امتثال",
+      "DISPATCH": "تعيين",
+      "LOCATION": "موقع"
     },
     "ALERTS": {
       "HIGH_RISK": "مخاطر عالية",
@@ -627,9 +634,9 @@
           "SEND_PUSH": "أرسل push أيضًا لتطبيق المندوب"
         },
         "PLACEHOLDERS": {
-          "TITLE": "Driver test notification",
+          "TITLE": "إشعار تجريبي للمندوب",
           "TYPE": "driver_test",
-          "BODY": "This is a test push for the driver app.",
+          "BODY": "هذا إشعار تجريبي لتطبيق المندوب.",
           "TARGET_URL": "/notifications"
         }
       },
@@ -661,7 +668,7 @@
         "COMPLIANCE_CASES": "حالات الامتثال",
         "DUE_AMOUNT": "مستحقات حالية",
         "VERIFICATION_PROGRESS": "تقدم التوثيق",
-        "ROUTE_SCORE": "Route Score",
+        "ROUTE_SCORE": "كفاءة المسار",
         "BALANCE": "الرصيد المتاح",
         "ACCEPTANCE_RATE": "معدل القبول",
         "CITY": "المدينة",
@@ -1052,6 +1059,7 @@
         "NO_CASES_MSG": "ما فيه حالات امتثال مرتبطة بهذا المندوب.",
         "DOC_HEALTH": {
           "TITLE": "صحة المستندات",
+          "DESC": "نظرة مباشرة على حالة المستندات",
           "VALID": "صالحة",
           "VALID_DESC": "المستندات التي اجتازت المراجعة.",
           "EXPIRING": "تنتهي قريبًا",
@@ -1615,6 +1623,9 @@
           "FULLY_STOPPED": "متوقف بالكامل",
           "BLOCKED_UNTIL_APPROVAL": "موقوف حتى الاعتماد",
           "BLOCKED_BY_COMPLIANCE": "موقوف بالامتثال",
+          "BLOCKED_BY_LOCATION": "موقوف بسبب الموقع",
+          "BLOCKED_BY_LOGIN_LOCK": "موقوف بسبب قفل الدخول",
+          "BLOCKED_BY_OFFERS": "موقوف عن استقبال العروض",
           "PARTIALLY_READY": "جاهز جزئيًا",
           "WORKING_NOW": "يعمل الحين",
           "FULLY_READY": "جاهز بالكامل",
@@ -1633,6 +1644,10 @@
           "VERIFICATION_PENDING": "الملف لم يحصل على اعتماد التوثيق بعد، ولا لازم فتح المندوب للتعيين.",
           "ACCOUNT_SUSPENDED": "الحساب موقوف الحين وما تقدر تعيين مهام أو صرف مستحقات جديدة.",
           "ACCOUNT_BANNED": "الحساب موقوف وممنوع بالكامل من أي وصول تشغيلي جديد.",
+          "LOGIN_LOCKED": "لا يمكن للمندوب تسجيل الدخول حتى يتم فك القفل.",
+          "LOCATION_UPDATES_BLOCKED": "تحديثات الموقع موقوفة، ولازم إعادتها قبل استئناف التشغيل الطبيعي.",
+          "OFFER_RESTRICTED": "المندوب مقيّد عن استقبال عروض جديدة حتى إزالة القيد التشغيلي.",
+          "MISSING_DOCUMENTS": "مستندات المندوب المطلوبة ناقصة ولازم استكمالها قبل التفعيل.",
           "FINANCE_HOLD": "يوجد تعليق مالي أو COD غير مسوى ويحتاج حسم قبل أي صرف جديد.",
           "COMPLIANCE_CASE": "هناك حالة امتثال أو بلاغ مفتوح يحتاج قرار قبل العودة للتشغيل الطبيعي.",
           "DOCUMENTS_EXPIRING": "بعض المستندات تقترب من الانتهاء وتحتاج متابعة قبل أن تتحول إلى إيقاف.",
@@ -1640,6 +1655,12 @@
           "PERFORMANCE_ALERT": "أداء المندوب يحتاج متابعة قبل زيادة الحمل التشغيلي عليه.",
           "SUPPORT_FOLLOWUPS": "هناك {{count}} متابعات دعم معلقة على هذا المندوب.",
           "SUPPORT_FOLLOWUPS_GENERIC": "هناك متابعات دعم مفتوحة على هذا المندوب."
+        },
+        "ALERTS": {
+          "DRIVER_OFFLINE_BUT_APPROVED": "المندوب معتمد لكنه غير متصل حاليًا.",
+          "DRIVER_ON_ACTIVE_MISSION": "المندوب مكلّف حاليًا بمهمة نشطة.",
+          "OFFER_RESTRICTION_ACTIVE": "يوجد قيد نشط على استقبال العروض لهذا المندوب.",
+          "READY_FOR_DISPATCH": "المندوب جاهز لاستقبال مهام جديدة."
         },
         "ACTION_LABELS": {
           "APPROVE_VERIFICATION": "اعتماد التوثيق",
@@ -1861,6 +1882,7 @@
       "RESET": "إعادة ضبط الفلاتر"
     },
     "LIST": {
+      "TITLE": "المستخدمون الإداريون",
       "RESULTS": "عرض {{shown}} من {{total}} هوية",
       "QUICK_ALL": "الكل",
       "QUICK_ACTIVE": "نشط",

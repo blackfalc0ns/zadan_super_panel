@@ -26,7 +26,7 @@ export const FINANCES_ROUTES: Routes = [
         path: 'fulfillment',
         canActivate: [HasPermissionGuard],
         data: { permission: 'orders.view' },
-        loadComponent: () => import('../orders/pages/pickup-settings/pickup-settings.component').then(m => m.PickupSettingsComponent)
+        loadComponent: () => import('./pages/fulfillment-settings/fulfillment-settings.component').then(m => m.FulfillmentSettingsComponent)
       },
       {
         path: 'ledger',

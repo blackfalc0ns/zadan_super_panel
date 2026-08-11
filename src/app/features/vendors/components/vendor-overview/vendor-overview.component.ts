@@ -610,8 +610,9 @@ export class VendorOverviewComponent {
  return;
  }
 
- this.vendorDetailFacade.clearMutationError();
- this.vendorDetailFacade.requestVendorDocuments();
+ void this.router.navigate(['/vendors', this.vendorId, 'compliance'], {
+ queryParams: { focus: 'review' }
+ });
  }
 
  onSuspendVendor(): void {

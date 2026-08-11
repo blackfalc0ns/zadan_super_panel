@@ -503,7 +503,7 @@ export class AdminOneSignalService {
       return;
     }
 
-    console.debug(`[AdminOneSignal] ${message}`, error);
+    console.warn(`[AdminOneSignal] ${message}`, error);
   }
 
   private logStatus(message: string, oneSignal: OneSignalSdk): void {
@@ -512,7 +512,7 @@ export class AdminOneSignalService {
     }
 
     const subscription = oneSignal.User?.PushSubscription;
-    console.info('[AdminOneSignal]', message, {
+    console.warn('[AdminOneSignal]', message, {
       permission: oneSignal.Notifications?.permission,
       subscriptionId: subscription?.id ?? null,
       optedIn: subscription?.optedIn ?? null

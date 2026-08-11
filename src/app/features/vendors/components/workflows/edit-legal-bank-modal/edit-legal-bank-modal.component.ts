@@ -3,7 +3,7 @@ import { Component, DestroyRef, EventEmitter, Input, OnChanges, OnInit, Output, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CatalogService } from '../../../../catalog/services/catalog.api.service';
+import { CatalogService } from '@catalog/public-api';
 import { SearchableSelectComponent } from '../../../../../shared/components/ui/form-controls/select/searchable-select.component';
 
 export interface LegalBankData {

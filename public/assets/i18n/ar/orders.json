@@ -27,6 +27,9 @@
       "CRITICAL": "حرجة",
       "REVIEW": "تحت المراجعة",
       "MERCHANT": "بانتظار التاجر",
+      "AWAITING_CUSTOMER": "بانتظار العميل",
+      "APPROVED": "معتمدة",
+      "REJECTED": "مرفوضة",
       "RESOLVED": "محلولة"
     },
     "FILTER_PANEL": {
@@ -152,6 +155,9 @@
       "OPEN": "مفتوح",
       "REVIEW": "تحت المراجعة",
       "MERCHANT": "بانتظار التاجر",
+      "AWAITING_CUSTOMER": "بانتظار العميل",
+      "APPROVED": "معتمدة",
+      "REJECTED": "مرفوضة",
       "RESOLVED": "محلولة"
     },
     "WAITING_ON": {
@@ -236,6 +242,7 @@
       "REJECT": "رفض الطلب",
       "REQUEST_INFO": "طلب معلومات إضافية",
       "ESCALATE": "تصعيد الحالة",
+      "REOPEN": "إعادة فتح الحالة",
       "RESOLVE": "إغلاق الحالة"
     },
     "MODAL": {
@@ -364,7 +371,7 @@
       "SECRET_NOTES_PLACEHOLDER": "هذه الملاحظات لن تظهر للمستلم...",
       "COMMUNICATION_PREVIEW_TITLE": "معاينة الرسالة الصادرة",
       "SYSTEM_NOTICE": "إشعار نظام",
-      "TEMPLATE_VERSION": "v2.4.0 Template",
+      "TEMPLATE_VERSION": "قالب الإصدار v2.4.0",
       "PREVIEW_GREETING_CUSTOMER": "عزيزي العميل،",
       "PREVIEW_GREETING_MERCHANT": "عزيزي المتجر،",
       "PREVIEW_GREETING_DRIVER": "مرحبًا بشريك التوصيل،",
@@ -996,6 +1003,7 @@
         "DESCRIPTION_PLACEHOLDER": "اكتب تفاصيل النزاع هنا...",
         "EVIDENCE": "إرفاق الأدلة (صور/مستندات)",
         "EVIDENCE_HINT": "اسحب الملفات هنا أو اضغط للرفع",
+        "EVIDENCE_UPLOAD_ERROR": "تعذر رفع ملف الدليل. حاول مرة أخرى.",
         "INTERNAL_NOTES": "ملاحظات داخلية (خاصة بالمشرف)",
         "INTERNAL_NOTES_PLACEHOLDER": "أضف ملاحظات إضافية لن يراها العميل أو التاجر...",
         "NOTIFY_REVIEWER": "إشعار المراجع",

@@ -540,8 +540,7 @@ function buildFinanceWithdrawalsTargetUrl(
   const withdrawalId = extractString(
     payload?.['withdrawalId'],
     dataObject?.['withdrawalId'],
-    parsedData?.['withdrawalId'],
-    notification.referenceId
+    parsedData?.['withdrawalId']
   );
   if (withdrawalId) {
     return `/finances/withdrawals?focus=${encodeURIComponent(withdrawalId)}`;
@@ -551,11 +550,17 @@ function buildFinanceWithdrawalsTargetUrl(
     payload?.['payoutId'],
     payload?.['Id'],
     dataObject?.['payoutId'],
-    parsedData?.['payoutId'],
-    notification.referenceId
+    parsedData?.['payoutId']
   );
   if (payoutId) {
     return `/finances/withdrawals?payoutId=${encodeURIComponent(payoutId)}`;
+  }
+
+  const referenceId = extractString(notification.referenceId);
+  if (referenceId) {
+    return (notification.type ?? '').toLowerCase().startsWith('payout.')
+      ? `/finances/withdrawals?payoutId=${encodeURIComponent(referenceId)}`
+      : `/finances/withdrawals?focus=${encodeURIComponent(referenceId)}`;
   }
 
   return sanitizedFallback;

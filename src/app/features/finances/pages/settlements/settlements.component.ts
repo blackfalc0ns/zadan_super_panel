@@ -23,7 +23,7 @@ import { VendorService } from '@vendors/public-api';
 import {
  CreateSettlementModalComponent,
  SettlementConfig
-} from '../../../vendors/components/workflows/create-settlement-modal/create-settlement-modal.component';
+} from '@vendors/public-api';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,

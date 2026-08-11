@@ -6,15 +6,15 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { merge, of, timer } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { AppPageHeaderComponent } from '@shared/components/ui/page-header/page-header.component';
-import { SuperAdminDashboardService } from '@dashboard/services/dashboard.api.service';
 import {
   DashboardAlert,
   DashboardAttentionItem,
   DashboardFilterState,
   DashboardQueue,
   DashboardSection,
-  DashboardSnapshot
-} from '../../dashboard/models/dashboard.models';
+  DashboardSnapshot,
+  SuperAdminDashboardService
+} from '@dashboard/public-api';
 
 type LiveOpsRefreshReason = 'initial' | 'auto' | 'manual' | 'external' | 'language';
 type LiveOpsRefreshState = 'idle' | 'refreshing' | 'error';

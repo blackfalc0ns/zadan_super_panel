@@ -409,7 +409,13 @@ return false;
  &&!this.vendorDetail.approvedAtUtc
  &&!this.vendorDetail.archivedAtUtc
  &&!this.vendorDetail.isLoginLocked
- && this.vendorDetail.reviewState!== 'rejected';
+ && this.vendorDetail.reviewState!== 'rejected'
+ && (!!this.selectedRequiredDocumentForCorrection || this.hasExistingCorrectionTarget);
+ }
+
+ private get hasExistingCorrectionTarget(): boolean {
+ return this.requiredDocuments.some((document) => document.reviewDecision === 'rejected')
+ || this.profileReviewItems.some((item) => item.status === 'changes_requested');
  }
 
  get canSuspendVendor(): boolean {
@@ -452,7 +458,14 @@ return false;
  return this.vendorDetail.status === VendorStatus.Pending
  &&!this.vendorDetail.archivedAtUtc
  &&!this.vendorDetail.isLoginLocked
- && this.vendorDetail.reviewState!== 'rejected';
+ && this.vendorDetail.reviewState!== 'rejected'
+ &&!!this.selectedRequiredDocumentForCorrection
+ && this.selectedRequiredDocumentForCorrection.reviewDecision!== 'rejected';
+ }
+
+ private get selectedRequiredDocumentForCorrection(): VendorReviewDocument | null {
+ const selected = this.selectedDocument;
+ return selected?.isRequired && selected.isUploaded ? selected : null;
  }
 
 get shouldShowFinalDecisionPanel(): boolean {
@@ -1307,8 +1320,13 @@ this.cdr.markForCheck();
  }
 
  const note = this.buildRequestDocumentsNote();
+ const document = this.selectedRequiredDocumentForCorrection;
+ if (!document) {
+ this.mutationError = this.localize('اختر مستندًا مطلوبًا ومرفوعًا قبل طلب إعادة رفعه.', 'Select an uploaded required document before requesting a re-upload.');
+ return;
+ }
  this.vendorDetailFacade.clearMutationError();
- this.vendorDetailFacade.requestVendorDocuments(note);
+ this.vendorDetailFacade.requestVendorDocuments(document.id, note);
  }
 
  onSuspendAccount(): void {
@@ -1369,7 +1387,7 @@ this.cdr.markForCheck();
 
  this.openConfirmModal(title, message, confirmText, cancelText, 'danger', () => {
  this.vendorDetailFacade.clearMutationError();
- this.vendorDetailFacade.rejectVendorReview(reason);
+ this.vendorDetailFacade.rejectVendorReview(reason, this.selectedRequiredDocumentForCorrection?.id ?? null);
  });
  }
 

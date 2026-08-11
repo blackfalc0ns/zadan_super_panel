@@ -1,5 +1,6 @@
 import { FormBuilder } from '@angular/forms';
-import { SimpleChange } from '@angular/core';
+import { ChangeDetectorRef, SimpleChange } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { BrandFormModalComponent } from './brand-form-modal.component';
 
@@ -13,7 +14,13 @@ describe('BrandFormModalComponent', () => {
  };
 
  const translate = { currentLang: 'ar' } as any;
- const component = new BrandFormModalComponent(new FormBuilder(), catalogService as any, translate);
+ const toastService = jasmine.createSpyObj('ToastService', ['success', 'error']);
+ TestBed.configureTestingModule({
+ providers: [{ provide: ChangeDetectorRef, useValue: { markForCheck: () => undefined } }]
+ });
+ const component = TestBed.runInInjectionContext(() =>
+ new BrandFormModalComponent(new FormBuilder(), catalogService as any, translate, toastService)
+ );
  return { component, catalogService };
  }
 
@@ -24,7 +31,7 @@ describe('BrandFormModalComponent', () => {
 
  component.onFileSelected(event, 'coverImageUrl');
 
- expect(catalogService.uploadFile).toHaveBeenCalledWith(file, 'brands');
+ expect(catalogService.uploadFile).toHaveBeenCalledWith(file, 'brands', jasmine.any(Function));
  expect(component.form.get('coverImageUrl')?.value).toBe('https://cdn.test/cover.png');
  expect(component.isUploadingCover).toBeFalse();
  });
