@@ -387,29 +387,52 @@
  <p class="mt-2 text-[12px] font-medium leading-relaxed text-slate-500">{{ dialogDescription }}</p>
  </div>
 
- <!-- Modal Inputs Panel -->
- <div class="mt-4 space-y-4 text-start">
- <label class="block space-y-1.5">
- <span class="block text-[12px] font-bold text-slate-700 px-1">{{ dialogPrimaryLabel }}</span>
- <div class="flex h-11 items-center rounded-2xl border border-slate-200 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
- <input
- [(ngModel)]="dialogPrimaryValue"
- class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none"
- [type]="dialogPrimaryInputType"
- [placeholder]="dialogPrimaryPlaceholder" />
- </div>
- </label>
+    <!-- Modal Inputs Panel -->
+    <div class="mt-4 space-y-4 text-start">
+      <p *ngIf="activeDialog === 'reset-password'" class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-[11px] font-medium leading-relaxed text-slate-600">
+        {{ isRTL
+          ? 'كلمة المرور لازم 8 أحرف على الأقل، وفيها حرف إنجليزي صغير ورقم. مثال: NewPass123'
+          : 'Password must be at least 8 characters and include a lowercase letter and a number. Example: NewPass123' }}
+      </p>
 
- <label *ngIf="showDialogSecondaryInput" class="block space-y-1.5">
- <span class="block text-[12px] font-bold text-slate-700 px-1">{{ dialogSecondaryLabel }}</span>
- <div class="flex h-11 items-center rounded-2xl border border-slate-200 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
- <input
- [(ngModel)]="dialogSecondaryValue"
- class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none"
- type="password"
- [placeholder]="dialogSecondaryPlaceholder" />
- </div>
- </label>
+      <label class="block space-y-1.5">
+        <span class="block text-[12px] font-bold text-slate-700 px-1">{{ dialogPrimaryLabel }}</span>
+        <div class="flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+          <input
+            [(ngModel)]="dialogPrimaryValue"
+            class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none"
+            [type]="dialogPrimaryInputType"
+            [attr.autocomplete]="activeDialog === 'reset-password' ? 'new-password' : 'off'"
+            [placeholder]="dialogPrimaryPlaceholder" />
+          <button
+            *ngIf="activeDialog === 'reset-password'"
+            type="button"
+            class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-primary"
+            [attr.aria-label]="showNewPassword ? (isRTL ? 'إخفاء كلمة المرور' : 'Hide password') : (isRTL ? 'إظهار كلمة المرور' : 'Show password')"
+            (click)="showNewPassword = !showNewPassword">
+            <span class="material-symbols-outlined text-[20px]">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+      </label>
+
+      <label *ngIf="showDialogSecondaryInput" class="block space-y-1.5">
+        <span class="block text-[12px] font-bold text-slate-700 px-1">{{ dialogSecondaryLabel }}</span>
+        <div class="flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 focus-within:border-primary focus-within:bg-white focus-within:ring-4 focus-within:ring-primary/10 transition">
+          <input
+            [(ngModel)]="dialogSecondaryValue"
+            class="w-full bg-transparent text-[13px] font-bold text-slate-900 outline-none"
+            [type]="dialogSecondaryInputType"
+            autocomplete="new-password"
+            [placeholder]="dialogSecondaryPlaceholder" />
+          <button
+            type="button"
+            class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-primary"
+            [attr.aria-label]="showConfirmPassword ? (isRTL ? 'إخفاء كلمة المرور' : 'Hide password') : (isRTL ? 'إظهار كلمة المرور' : 'Show password')"
+            (click)="showConfirmPassword = !showConfirmPassword">
+            <span class="material-symbols-outlined text-[20px]">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+      </label>
 
  <!-- Modal Localized Error Banner -->
  <div *ngIf="dialogError" class="flex items-center gap-2 rounded-2xl bg-red-50 p-3 text-[12px] font-bold text-red-700 border border-red-100">

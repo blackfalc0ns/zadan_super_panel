@@ -29,6 +29,8 @@ export class VendorSettingsComponent {
  dialogPrimaryValue = '';
  dialogSecondaryValue = '';
  dialogSubmitting = false;
+ showNewPassword = false;
+ showConfirmPassword = false;
  emailNotificationsEnabled = true;
  isRTL = true;
  minimumOrderAmount: number | null = null;
@@ -160,7 +162,7 @@ export class VendorSettingsComponent {
  get dialogDescription(): string {
  switch (this.activeDialog) {
  case 'reset-password':
- return this.text('أدخل كلمة مرور جديدة للتاجر. بنسجّل العملية في سجل النشاط.', 'Enter a new vendor password. The action will be written to the activity log.');
+ return this.text('أدخل كلمة مرور جديدة للتاجر: 8 أحرف على الأقل، وفيها حرف إنجليزي صغير ورقم. بنسجّل العملية في سجل النشاط.', 'Enter a new vendor password: at least 8 characters, including a lowercase letter and a number. The action will be written to the activity log.');
  case 'suspend-account':
  return this.text('أضف سبب واضح لتعليق الحساب حتى يظهر في السجل التشغيلي.', 'Add a clear suspension reason so it appears in the activity log.');
  case 'lock-login':
@@ -173,7 +175,15 @@ export class VendorSettingsComponent {
  }
 
  get dialogPrimaryInputType(): 'text' | 'password' {
- return this.activeDialog === 'reset-password' ? 'password' : 'text';
+ if (this.activeDialog === 'reset-password') {
+ return this.showNewPassword ? 'text' : 'password';
+ }
+
+ return 'text';
+ }
+
+ get dialogSecondaryInputType(): 'text' | 'password' {
+ return this.showConfirmPassword ? 'text' : 'password';
  }
 
  get dialogPrimaryLabel(): string {
@@ -340,6 +350,8 @@ export class VendorSettingsComponent {
  this.dialogPrimaryValue = '';
  this.dialogSecondaryValue = '';
  this.dialogSubmitting = false;
+ this.showNewPassword = false;
+ this.showConfirmPassword = false;
  }
 
  confirmDialog(): void {
@@ -353,8 +365,11 @@ export class VendorSettingsComponent {
  return;
  }
 
- if (primaryValue.length < 8) {
- this.dialogError = this.text('كلمة المرور لازم ما تقل عن 8 أحرف.', 'Password must be at least 8 characters.');
+ if (primaryValue.length < 8 || !/[a-z]/.test(primaryValue) || !/\d/.test(primaryValue)) {
+ this.dialogError = this.text(
+ 'كلمة المرور لازم 8 أحرف على الأقل وفيها حرف إنجليزي صغير ورقم. مثال: NewPass123',
+ 'Password must be at least 8 characters and include a lowercase letter and a number. Example: NewPass123'
+ );
  this.cdr.markForCheck();
  return;
  }
@@ -629,6 +644,8 @@ export class VendorSettingsComponent {
  this.dialogPrimaryValue = '';
  this.dialogSecondaryValue = '';
  this.dialogSubmitting = false;
+ this.showNewPassword = false;
+ this.showConfirmPassword = false;
  }
 
  private runDialogAction(request$: Observable<VendorDetail>, fallbackMessage: string, successMessage: string): void {
