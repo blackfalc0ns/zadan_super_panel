@@ -54,6 +54,18 @@ export class GeographyService {
     );
   }
 
+  getDriverRegions(): Observable<SaudiRegionDto[]> {
+    return this.http.get<SaudiRegionDto[]>(
+      `${this.apiUrl}/driver/regions`,
+      { headers: this.skipAuthHeaders }
+    ).pipe(
+      catchError((error) => {
+        this.logLoadFailure('driver regions', error);
+        return of([] as SaudiRegionDto[]);
+      })
+    );
+  }
+
   isOperationalRegionCode(regionCode?: string | null): boolean {
     return GeographyService.operationalRegionCodes.has((regionCode || '').trim().toUpperCase());
   }

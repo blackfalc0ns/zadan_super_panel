@@ -143,7 +143,7 @@ export class DriversListComponent implements OnInit {
  this.filterFields = [
  {
  key: 'city',
- label: 'DRIVERS.FILTERS.CITY',
+ label: 'DRIVERS.FILTERS.CITY_LEGACY',
  type: 'select',
  color: '#0ea5e9',
  placeholder: 'COMMON.ALL',

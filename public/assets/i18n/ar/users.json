@@ -484,6 +484,7 @@
       "RESET": "إعادة ضبط",
       "ALL": "الكل",
       "CITY": "المدينة",
+      "CITY_LEGACY": "المدينة (قديم)",
       "VERIFICATION_STATUS": "حالة التوثيق",
       "VEHICLE_TYPE": "نوع المركبة",
       "PERFORMANCE": "الأداء"
@@ -612,7 +613,7 @@
         "LOGIN_LOCKED": "قفلنا تسجيل دخول المندوب.",
         "LOGIN_UNLOCKED": "فكّينا قفل تسجيل دخول المندوب.",
         "PROFILE_UPDATED": "حدّثنا بيانات ملف المندوب بنجاح.",
-        "SERVICE_AREA_REQUIRED": "لازم تختار المنطقة والمدينة قبل حفظ التعديلات."
+        "SERVICE_AREA_REQUIRED": "لازم تختار المنطقة قبل حفظ التعديلات."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "مختبر إشعارات المندوب",
@@ -1340,6 +1341,7 @@
         "OPERATING_SECTION": "منطقة التشغيل",
         "REGION": "المنطقة",
         "CITY": "المدينة",
+        "EASTERN_REGION_HELPER": "المنطقة الشرقية (الدمام - الظهران - الخبر)",
         "SAVE_CHANGES": "حفظ التعديلات",
         "CHECKLIST_TAB": "قائمة التحقق",
         "DOCUMENT_BOARD": "لوحة المستندات",

@@ -49,8 +49,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  zoomScale = 1;
  rotationAngle = 0;
 
- regions: any[] = [];
- cities: any[] = [];
+ regions: Array<{ code: string; nameAr?: string; nameEn?: string }> = [];
  editForm = {
  fullName: '',
  email: '',
@@ -63,8 +62,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  nationalIdExpiryDate: '',
  driverLicenseExpiryDate: '',
  vehicleLicenseExpiryDate: '',
- region: '',
- city: ''
+ region: ''
  };
 
  get documentGroups() {
@@ -106,14 +104,13 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  this.selectedDocumentPreview = this.driver.documents[0];
  }
  this.initEditForm();
- this.geographyService.getOperationalRegions().subscribe({
+ this.geographyService.getDriverRegions().subscribe({
  next: (regs) => {
  this.regions = regs;
  if (this.editForm.region) {
  this.editForm.region = this.resolveLookupCode(this.editForm.region, this.regions);
- if (this.editForm.region) {
- this.loadCities(this.editForm.region);
- }
+ } else if (regs.length > 0) {
+ this.editForm.region = regs[0].code;
  }
  this.cdr.markForCheck();
  },
@@ -149,13 +146,11 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  nationalIdExpiryDate: this.formatDateForInput(this.driver.nationalIdExpiryDate || nationalIdDoc?.expiryDateUtc),
  driverLicenseExpiryDate: this.formatDateForInput(this.driver.driverLicenseExpiryDate || driverLicenseDoc?.expiryDateUtc),
  vehicleLicenseExpiryDate: this.formatDateForInput(this.driver.vehicleLicenseExpiryDate || vehicleLicenseDoc?.expiryDateUtc),
- region: this.normalizeRegionCode(this.driver.operations?.region || ''),
- city: this.normalizeRegionCode(this.driver.operations?.city || this.driver.city || '')
+ region: this.normalizeRegionCode(this.driver.operations?.region || 'EASTERN')
  };
 
  if (this.editForm.region && this.regions.length > 0) {
  this.editForm.region = this.resolveLookupCode(this.editForm.region, this.regions);
- this.loadCities(this.editForm.region);
  }
 
  this.cdr.markForCheck();
@@ -178,26 +173,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
 
  onRegionChange(regionCode: string) {
  this.editForm.region = this.normalizeRegionCode(regionCode);
- this.editForm.city = '';
- this.cities = [];
- if (this.editForm.region) {
- this.loadCities(this.editForm.region);
- }
  this.cdr.markForCheck();
- }
-
- loadCities(regionCode: string) {
- this.geographyService.getOperationalCities(regionCode).subscribe({
- next: (cts) => {
- this.cities = cts;
- this.editForm.city = this.resolveLookupCode(this.editForm.city, this.cities);
- this.cdr.markForCheck();
- },
- error: () => {
- this.cities = [];
- this.cdr.markForCheck();
- }
- });
  }
 
  private resolveLookupCode(
@@ -235,14 +211,16 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  }
 
  saveProfile() {
- if (!this.editForm.region?.trim() ||!this.editForm.city?.trim()) {
+ const region = this.normalizeRegionCode(this.editForm.region || 'EASTERN');
+ if (!region) {
  this.toastService.error(this.translate.instant('DRIVERS.DETAIL.MESSAGES.SERVICE_AREA_REQUIRED'));
  return;
  }
 
- this.updateProfileRequested.emit({...this.editForm,
- region: this.normalizeRegionCode(this.editForm.region),
- city: this.normalizeRegionCode(this.editForm.city)
+ this.updateProfileRequested.emit({
+ ...this.editForm,
+ region,
+ city: null
  });
  }
 

@@ -481,6 +481,7 @@
       "ACTIVE": "Active filters",
       "ALL": "All",
       "CITY": "City",
+      "CITY_LEGACY": "City (legacy)",
       "STATUS": "Connection Status",
       "VERIFICATION_STATUS": "Verification",
       "VEHICLE_TYPE": "Vehicle Type",
@@ -612,7 +613,7 @@
         "LOGIN_LOCKED": "Driver login was locked.",
         "LOGIN_UNLOCKED": "Driver login was unlocked.",
         "PROFILE_UPDATED": "Driver profile details updated successfully.",
-        "SERVICE_AREA_REQUIRED": "Select both region and city before saving profile changes."
+        "SERVICE_AREA_REQUIRED": "Select a region before saving profile changes."
       },
       "TEST_NOTIFICATION": {
         "EYEBROW": "Driver push lab",
@@ -1350,6 +1351,7 @@
         "OPERATING_SECTION": "Operating Area",
         "REGION": "Region",
         "CITY": "City",
+        "EASTERN_REGION_HELPER": "Eastern Region (Dammam, Dhahran, Khobar)",
         "SAVE_CHANGES": "Save Changes",
         "CHECKLIST_TAB": "Checklist",
         "DOCUMENT_BOARD": "Document Board",

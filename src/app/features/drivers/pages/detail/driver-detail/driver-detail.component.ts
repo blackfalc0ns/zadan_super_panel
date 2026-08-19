@@ -435,7 +435,7 @@ export class DriverDetailComponent implements OnInit, OnDestroy {
  return;
  }
 
- if (!details?.region?.trim() ||!details?.city?.trim()) {
+ if (!details?.region?.trim()) {
  this.toastService.error(this.t('DRIVERS.DETAIL.MESSAGES.SERVICE_AREA_REQUIRED'));
  return;
  }
