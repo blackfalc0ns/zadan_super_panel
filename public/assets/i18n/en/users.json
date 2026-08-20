@@ -2349,6 +2349,14 @@
           "TITLE": "Finances",
           "DESC": "Reconciliation, settlements, finance controls, and policy changes."
         },
+        "WALLETS": {
+          "TITLE": "Wallets",
+          "DESC": "Vendor and driver wallet visibility, adjustments, and withdrawal approvals."
+        },
+        "DELIVERY_SETTINGS": {
+          "TITLE": "Delivery settings",
+          "DESC": "Delivery pricing, zones, and platform fulfillment configuration."
+        },
         "USERS_ACCESS": {
           "TITLE": "Users & Access",
           "DESC": "Admin user lifecycle, role presets, and access controls."

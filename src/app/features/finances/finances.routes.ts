@@ -19,7 +19,7 @@ export const FINANCES_ROUTES: Routes = [
       {
         path: 'pricing',
         canActivate: [HasPermissionGuard],
-        data: { permission: 'finances.manage_settings' },
+        data: { permission: 'delivery_settings.view' },
         loadComponent: () => import('./pages/platform-pricing/platform-pricing.component').then(m => m.PlatformPricingComponent)
       },
       {

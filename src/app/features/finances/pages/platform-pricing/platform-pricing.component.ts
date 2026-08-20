@@ -20,6 +20,7 @@ import { SearchableSelectComponent, SearchableSelectOption } from '../../../../s
 import { ToastService } from '../../../../shared/services/toast.service';
 import { GeographyService } from '../../../../shared/services/geography.service';
 import { describeApiError } from '../../../../shared/utils/api-error.util';
+import { AccessService } from '../../../../core/services/access.service';
 
 type NumericZoneField =
  | 'baseDeliveryFee'
@@ -431,6 +432,7 @@ export class PlatformPricingComponent implements OnInit {
  private readonly geographyService = inject(GeographyService);
  private readonly toastService = inject(ToastService);
  private readonly translate = inject(TranslateService);
+ private readonly accessService = inject(AccessService);
  private allowScopeFallback = true;
  private readonly cityArabicMap: Record<string, string> = {
  riyadh: 'الرياض',
@@ -489,8 +491,12 @@ export class PlatformPricingComponent implements OnInit {
  this.loadData();
  }
 
+ get canEditSettings(): boolean {
+ return this.accessService.hasPermission('delivery_settings.edit');
+ }
+
  get canSave(): boolean {
- return Boolean(this.selectedZone) && this.isDirty &&!this.isSaving;
+ return this.canEditSettings && Boolean(this.selectedZone) && this.isDirty && !this.isSaving;
  }
 
  get scopeListLabelKey(): string {

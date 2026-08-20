@@ -13,6 +13,8 @@ export type PermissionDomainId =
   | 'drivers'
   | 'disputes'
   | 'finances'
+  | 'wallets'
+  | 'delivery_settings'
   | 'users_access'
   | 'email_center'
   | 'system'
@@ -291,6 +293,22 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     identityKinds: ['operational']
   },
   {
+    id: 'wallets',
+    labelKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.WALLETS.TITLE',
+    descriptionKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.WALLETS.DESC',
+    actions: ['view', 'edit', 'approve'],
+    panelScopes: ['super_admin_panel'],
+    identityKinds: ['operational']
+  },
+  {
+    id: 'delivery_settings',
+    labelKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.DELIVERY_SETTINGS.TITLE',
+    descriptionKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.DELIVERY_SETTINGS.DESC',
+    actions: ['view', 'edit'],
+    panelScopes: ['super_admin_panel'],
+    identityKinds: ['operational']
+  },
+  {
     id: 'users_access',
     labelKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.USERS_ACCESS.TITLE',
     descriptionKey: 'ADMIN_USERS.PERMISSIONS.GROUPS.USERS_ACCESS.DESC',
@@ -452,6 +470,8 @@ export const DIRECTORY_ROLE_PRESETS: DirectoryRolePreset[] = [
       drivers: ['view', 'edit', 'approve', 'export'],
       disputes: ['view', 'edit', 'approve', 'export'],
       finances: ['view', 'edit', 'approve', 'export', 'manage_settings'],
+      wallets: ['view', 'edit', 'approve'],
+      delivery_settings: ['view', 'edit'],
       users_access: ['view', 'create', 'edit', 'approve', 'manage_settings'],
       email_center: ['view', 'edit', 'approve', 'manage_settings'],
       system: ['view', 'edit', 'manage_settings'],
@@ -476,6 +496,8 @@ export const DIRECTORY_ROLE_PRESETS: DirectoryRolePreset[] = [
       customers: ['view', 'edit', 'export'],
       drivers: ['view', 'edit', 'approve', 'export'],
       disputes: ['view', 'edit', 'export'],
+      wallets: ['view', 'edit'],
+      delivery_settings: ['view', 'edit'],
       email_center: ['view']
     })
   },
@@ -515,6 +537,8 @@ export const DIRECTORY_ROLE_PRESETS: DirectoryRolePreset[] = [
       vendors: ['view', 'export'],
       disputes: ['view', 'export'],
       finances: ['view', 'edit', 'approve', 'export', 'manage_settings'],
+      wallets: ['view', 'edit', 'approve'],
+      delivery_settings: ['view', 'edit'],
       email_center: ['view', 'edit']
     })
   },
