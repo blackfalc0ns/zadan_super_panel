@@ -190,21 +190,4 @@
 
  </nav>
 
- <!-- Sleek System Health Badge (Floating Glass) -->
- <div class="p-4 shrink-0 transition-all duration-300 relative" [ngClass]="isCollapsed ? 'px-2' : 'px-4'">
- <div class="absolute top-0 w-3/4 left-1/2 -translate-x-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
- <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-black/20 backdrop-blur-md border border-white/5 transition-all hover:bg-black/40 hover:border-white/10 cursor-default shadow-inner"
- [ngClass]="isCollapsed ? 'justify-center px-0' : 'px-3'">
- <div class="flex items-center gap-2.5">
- <span class="flex h-2.5 w-2.5 relative shrink-0">
- <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-zadna-primaryLight opacity-75"></span>
- <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-zadna-primaryLight shadow-[0_0_12px_rgba(31,163,181,1)]"></span>
- </span>
- <span class="text-[11px] font-bold text-white/60 uppercase tracking-widest truncate transition-all duration-300"
- [class.w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.hidden]="isCollapsed">{{ 'SIDEBAR_EXTRA.NETWORK_HEALTH' | translate }}</span>
- </div>
- <span class="text-[11px] font-black text-zadna-primaryLight transition-all duration-300 drop-shadow-[0_0_8px_rgba(31,163,181,0.5)]"
- [class.w-0]="isCollapsed" [class.opacity-0]="isCollapsed" [class.hidden]="isCollapsed">99.9%</span>
- </div>
- </div>
 </aside>

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FeaturePlaceholderPageComponent } from '@shared/components/ui/feature-placeholder-page/feature-placeholder-page.component';
 
+// TODO(super-panel): Wire BankAccountVerification to a real IBAN verification queue or remove this route from the screen map.
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-bank-account-verification',

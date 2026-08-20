@@ -13,6 +13,7 @@ import { MoneyBadgeComponent } from '../../components/money-badge/money-badge.co
 import { getFinanceLocale, resolveWalletOwnerEntityLabel, resolveWalletReferenceTypeLabel, resolveWalletTxnTypeLabel } from '../../utils/finance-i18n.utils';
 import { resolveWalletMemo } from '../../utils/wallet-memo-i18n';
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
+import { AccessService } from '../../../../core/services/access.service';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +36,7 @@ import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-he
  <!-- شريط الصفحة العلوي (Header) -->
  <app-page-header [title]="'FINANCES.WALLET_DETAILS.TITLE' | translate" [subtitle]="'FINANCES.WALLET_DETAILS.SUBTITLE' | translate" [showBack]="true" backUrl="/finances/wallets">
  <div actions class="flex items-center gap-3">
- <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" (btnClick)="isAdjustModalOpen = true" *ngIf="wallet">
+ <app-button variant="primary" size="sm" customClass="!rounded-xl shadow-sm" (btnClick)="isAdjustModalOpen = true" *ngIf="wallet && canEditWallet">
  <span class="material-symbols-outlined text-[16px] rtl:ml-1 ltr:mr-1">edit_square</span>
  {{ 'FINANCES.WALLET_DETAILS.MANUAL_ADJUST' | translate }}
  </app-button>
@@ -231,7 +232,12 @@ export class WalletDetailsComponent implements OnInit {
  private walletsService = inject(WalletsService);
  private translate = inject(TranslateService);
  private route = inject(ActivatedRoute);
+ private readonly accessService = inject(AccessService);
  public router = inject(Router);
+
+ get canEditWallet(): boolean {
+ return this.accessService.hasPermission('wallets.edit');
+ }
 
  walletId!: string;
  wallet: AdminWalletSummaryDto | null = null;

@@ -782,7 +782,7 @@ export class DriverService {
  lastName: item.lastName,
  phoneNumber: item.phoneNumber,
  imageUrl: this.withImageCacheBust(item.imageUrl),
- city: item.city || 'Unknown',
+ city: item.city?.trim() || '',
  status,
  verificationStatus,
  tasks: {
@@ -2387,7 +2387,8 @@ export class DriverService {
  private mapVerificationChecklistCode(code: string): string {
  const aliases: Record<string, string> = {
  region_city_selection: 'REGION_CITY_SELECTION',
- zone_selection: 'REGION_CITY_SELECTION'
+ zone_selection: 'REGION_CITY_SELECTION',
+ missing_region: 'MISSING_REGION'
  };
  const normalized = aliases[code.toLowerCase()] ?? code.toUpperCase();
  return `DRIVERS.DETAIL.VERIFICATION.BACKEND.CHECKLIST.${normalized}`;
@@ -2395,7 +2396,9 @@ export class DriverService {
 
  private mapVerificationChecklistNote(note: string): string {
  const aliases: Record<string, string> = {
- missing_region_city_note: 'MISSING_REGION_CITY_NOTE'
+ missing_region_city_note: 'MISSING_REGION_CITY_NOTE',
+ missing_region: 'MISSING_REGION_NOTE',
+ missing_region_note: 'MISSING_REGION_NOTE'
  };
  const normalized = aliases[note.toLowerCase()] ?? note.toUpperCase();
  return `DRIVERS.DETAIL.VERIFICATION.BACKEND.CHECKLIST_NOTES.${normalized}`;

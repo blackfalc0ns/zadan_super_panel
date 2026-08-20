@@ -1231,7 +1231,12 @@
     "ERRORS": {
       "LOAD_LIST": "Failed to load orders. Check the current filters or try again.",
       "LOAD_DETAIL": "Failed to load order details.",
-      "INVALID_ID": "Invalid order ID."
+      "INVALID_ID": "Invalid order ID.",
+      "ASSIGN_DRIVER": "Could not assign the driver to this order.",
+      "RECOMPUTE_DISPATCH": "Could not recompute dispatch for this order.",
+      "CANCEL_ORDER": "Could not cancel this order.",
+      "UPDATE_STATUS": "Could not update the order status.",
+      "CONVERT_TO_DELIVERY": "Could not convert this pickup order to delivery."
     }
   },
   "SUPPORT_ADMIN": {

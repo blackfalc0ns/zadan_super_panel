@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { KeyValueGridComponent } from '../../../../shared/components/ui/key-value-grid/key-value-grid.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
-import { localizeSaudiCity, localizeSaudiRegion } from '../../../../shared/utils/saudi-geography-display';
+import { isLegacyDriverCity, localizeSaudiCity, localizeSaudiRegion, resolveDriverCityDisplay } from '../../../../shared/utils/saudi-geography-display';
 import { DriverDetailRecord } from '../../models/drivers.models';
 import { getVehicleTypeKey } from '../../utils/driver-ui.utils';
 
@@ -24,10 +24,10 @@ export class DriverOverviewTabComponent {
  @Output() tabChange = new EventEmitter<string>();
 
  get personalInfoItems() {
- const cityLabel =
- localizeSaudiCity(this.translate, this.driver.operations?.city || this.driver.city) ||
- this.driver.city ||
- 'COMMON.NOT_AVAILABLE';
+ const cityLabel = resolveDriverCityDisplay(
+ this.translate,
+ this.driver.operations?.city || this.driver.city
+ );
 
  return [
  { label: 'DRIVERS.DETAIL.OVERVIEW.FULL_NAME', value: `${this.driver.firstName} ${this.driver.lastName}` },
@@ -36,7 +36,7 @@ export class DriverOverviewTabComponent {
  {
  label: 'DRIVERS.DETAIL.OVERVIEW.CITY',
  value: cityLabel,
- translateValue: cityLabel === 'COMMON.NOT_AVAILABLE'
+ translateValue: false
  },
  { label: 'DRIVERS.DETAIL.OVERVIEW.JOINED_AT', value: this.driver.joinedAt }
  ];
@@ -74,11 +74,15 @@ export class DriverOverviewTabComponent {
  return regionLabel;
  }
 
+ if (isLegacyDriverCity(this.driver.operations?.city || this.driver.city)) {
+ return this.translate.instant('COMMON.REGIONS.EASTERN');
+ }
+
  const cityAsZone = localizeSaudiCity(
  this.translate,
  this.driver.zoneName || this.driver.liveZone || this.driver.city
  );
- return cityAsZone || 'COMMON.NOT_AVAILABLE';
+ return cityAsZone || this.translate.instant('COMMON.REGIONS.EASTERN');
  }
 
  copyToClipboard(field: string, text: string) {
@@ -104,7 +108,19 @@ export class DriverOverviewTabComponent {
  }
 
  get missingRequirementLabels(): string[] {
- return this.driver.profileReadiness.missingRequirements.map((requirement) =>
+ const legacyCity = isLegacyDriverCity(this.driver.operations?.city || this.driver.city);
+ const legacyRegionRequirements = new Set([
+ 'zone_missing',
+ 'missing_zone_selection',
+ 'missing_region',
+ 'region_city',
+ 'missing_region_city',
+ 'region_city_selection'
+ ]);
+
+ return this.driver.profileReadiness.missingRequirements
+ .filter((requirement) => !(legacyCity && legacyRegionRequirements.has(requirement.toLowerCase())))
+ .map((requirement) =>
  `DRIVERS.DETAIL.VERIFICATION.BACKEND.REJECTION_REASONS.${requirement.toUpperCase()}`);
  }
 

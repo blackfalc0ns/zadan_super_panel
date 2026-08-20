@@ -16,7 +16,7 @@ import { KpiCardsComponent, KPICard } from '../../../../shared/components/ui/kpi
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { AppPaginationComponent } from '../../../../shared/components/ui/pagination/pagination.component';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
-import { localizeSaudiCity } from '../../../../shared/utils/saudi-geography-display';
+import { resolveDriverCityDisplay } from '../../../../shared/utils/saudi-geography-display';
 import {
  getDriverStatusKey,
  getDriverStatusVariant as getDriverStatusPillVariant,
@@ -54,7 +54,7 @@ export class DriversListViewComponent {
  @Input() isRTL = true;
 
  getTranslatedCity(city?: string): string {
- return localizeSaudiCity(this.translate, city);
+ return resolveDriverCityDisplay(this.translate, city);
  }
  @Input() searchTerm = '';
  @Input() drivers: Driver[] = [];

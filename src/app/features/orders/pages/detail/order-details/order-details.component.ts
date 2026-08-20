@@ -50,6 +50,8 @@ import {
  getWorkflowStageKey
 } from '../../../data/orders.mock';
 import { resolveOrderTimelineStepIcon, resolveOrderTimelineTextKey } from '../../../utils/order-timeline-i18n';
+import { ToastService } from '../../../../../shared/services/toast.service';
+import { describeApiError } from '../../../../../shared/utils/api-error.util';
 
 @Component({
  changeDetection: ChangeDetectionStrategy.OnPush,
@@ -120,7 +122,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  private readonly accessService: AccessService,
  private readonly orderTrackingRealtime: OrderTrackingRealtimeService,
  private readonly zone: NgZone,
- private readonly translate: TranslateService
+ private readonly translate: TranslateService,
+ private readonly toastService: ToastService
  ) {}
 
  get currentLang(): string {
@@ -213,8 +216,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.showConvertModal = false;
  this.loadOrderDetails();
  },
- error: () => {
+ error: (error) => {
  this.isConvertingToDelivery = false;
+ this.showApiError(error, 'ORDERS.ERRORS.CONVERT_TO_DELIVERY');
  this.cdr.markForCheck();
  }
  });
@@ -306,6 +310,10 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
  get canOpenIssueTools(): boolean {
  return!this.operationalCase || this.operationalCase.status === 'CLOSED';
+ }
+
+ get canEditOrders(): boolean {
+ return this.accessService.hasPermission('orders.edit');
  }
 
  get canViewDisputesCenter(): boolean {
@@ -800,8 +808,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.loadFinancialBreakdown(id);
  this.closeStatusModal();
  },
- error: () => {
+ error: (error) => {
  this.isSubmittingStatusUpdate = false;
+ this.showApiError(error, 'ORDERS.ERRORS.UPDATE_STATUS');
  this.cdr.markForCheck();
  }
  });
@@ -825,8 +834,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.loadFinancialBreakdown(id);
  this.closeDriverAssignmentModal();
  },
- error: () => {
+ error: (error) => {
  this.isSubmittingDriverAssignment = false;
+ this.showApiError(error, 'ORDERS.ERRORS.ASSIGN_DRIVER');
  this.cdr.markForCheck();
  }
  });
@@ -849,8 +859,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.setOrder(order);
  this.loadFinancialBreakdown(id);
  },
- error: () => {
+ error: (error) => {
  this.isRecomputingDispatch = false;
+ this.showApiError(error, 'ORDERS.ERRORS.RECOMPUTE_DISPATCH');
  this.cdr.markForCheck();
  }
  });
@@ -874,8 +885,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
  this.loadFinancialBreakdown(id);
  this.closeCancellationModal();
  },
- error: () => {
+ error: (error) => {
  this.isSubmittingCancellation = false;
+ this.showApiError(error, 'ORDERS.ERRORS.CANCEL_ORDER');
  this.cdr.markForCheck();
  }
  });
@@ -1299,6 +1311,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
  private disputeDraftStorageKey(orderId: string): string {
  return `zadana:orders:${orderId}:dispute-draft`;
+ }
+
+ private showApiError(error: unknown, fallbackKey: string): void {
+ this.toastService.error(
+ describeApiError(error, this.translate, { fallbackKey, codePrefix: 'ORDERS.API_ERROR_CODES' })
+ );
  }
 }
 

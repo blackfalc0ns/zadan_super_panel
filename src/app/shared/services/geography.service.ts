@@ -1,7 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, catchError, map, of, shareReplay } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ToastService } from './toast.service';
+import { describeApiError } from '../utils/api-error.util';
 
 export interface SaudiRegionDto {
   code: string;
@@ -24,11 +27,13 @@ export class GeographyService {
   private static readonly operationalRegionCodes = new Set<string>(['EASTERN']);
   private readonly apiUrl = `${environment.apiUrl}/geography`;
   private readonly skipAuthHeaders = new HttpHeaders({ 'X-Skip-Auth': 'true' });
+  private readonly http = inject(HttpClient);
+  private readonly toastService = inject(ToastService);
+  private readonly translate = inject(TranslateService);
   private regionsRequest$?: Observable<SaudiRegionDto[]>;
   private readonly citiesRequests = new Map<string, Observable<SaudiCityDto[]>>();
   private loadFailureLogged = false;
-
-  constructor(private readonly http: HttpClient) {}
+  private driverRegionsFailureToasted = false;
 
   getRegions(): Observable<SaudiRegionDto[]> {
     if (!this.regionsRequest$) {
@@ -61,6 +66,7 @@ export class GeographyService {
     ).pipe(
       catchError((error) => {
         this.logLoadFailure('driver regions', error);
+        this.toastDriverRegionsFailure(error);
         return of([] as SaudiRegionDto[]);
       })
     );
@@ -102,6 +108,17 @@ export class GeographyService {
 
     return this.getCities(normalizedCode).pipe(
       map((cities) => cities.filter((city) => this.isOperationalRegionCode(city.regionCode)))
+    );
+  }
+
+  private toastDriverRegionsFailure(error: unknown): void {
+    if (this.driverRegionsFailureToasted) {
+      return;
+    }
+
+    this.driverRegionsFailureToasted = true;
+    this.toastService.error(
+      describeApiError(error, this.translate, { fallbackKey: 'COMMON.FAILED_TO_LOAD' })
     );
   }
 

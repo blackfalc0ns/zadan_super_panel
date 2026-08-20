@@ -10,6 +10,7 @@ import {
   UpsertPlatformPickupSettingsRequest,
 } from '../../models/pickup-settings.models';
 import { PickupSettingsService } from '../../services/pickup-settings.service';
+import { AccessService } from '../../../../core/services/access.service';
 
 @Component({
   selector: 'app-pickup-settings',
@@ -40,6 +41,7 @@ import { PickupSettingsService } from '../../services/pickup-settings.service';
             {{ 'COMMON.REFRESH' | translate }}
           </button>
           <button
+            *ngIf="canManageSettings"
             type="button"
             class="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-5 text-[12px] font-black text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60"
             [disabled]="loading() || saving() || !settings()"
@@ -206,10 +208,15 @@ export class PickupSettingsComponent implements OnInit {
   private readonly pickupSettingsService = inject(PickupSettingsService);
   private readonly toastService = inject(ToastService);
   private readonly translate = inject(TranslateService);
+  private readonly accessService = inject(AccessService);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly settings = signal<PlatformPickupSettings | null>(null);
+
+  get canManageSettings(): boolean {
+    return this.accessService.hasPermission('system.manage_settings');
+  }
 
   ngOnInit(): void {
     this.load();

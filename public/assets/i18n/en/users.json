@@ -808,13 +808,17 @@
             "LICENSE_DOCUMENT": "Driving license",
             "VEHICLE_DOCUMENT": "Vehicle document",
             "PERSONAL_PHOTO": "Personal photo",
-            "ZONE_SELECTION": "Primary operating zone"
+            "ZONE_SELECTION": "Primary operating zone",
+            "REGION_CITY_SELECTION": "Operating region and city",
+            "MISSING_REGION": "Operating region"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
             "MISSING_VEHICLE_INFO_NOTE": "Missing operational vehicle details.",
             "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
-            "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required."
+            "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required.",
+            "MISSING_REGION": "Operating region is still required.",
+            "MISSING_REGION_NOTE": "The driver must select an operating region before activation."
           },
           "REJECTION_REASONS": {
             "MISSING_PERSONAL_INFO": "Missing personal information",
@@ -1508,7 +1512,8 @@
             "VEHICLE_DOCUMENT": "Vehicle document",
             "PERSONAL_PHOTO": "Personal photo",
             "ZONE_SELECTION": "Primary operating zone",
-            "REGION_CITY_SELECTION": "Operating region and city"
+            "REGION_CITY_SELECTION": "Operating region and city",
+            "MISSING_REGION": "Operating region"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "Missing core personal information.",
@@ -1516,6 +1521,8 @@
             "MISSING_DOCUMENT_NOTE": "Required document is missing or still under review.",
             "MISSING_ZONE_SELECTION_NOTE": "A primary operating zone is still required.",
             "MISSING_REGION_CITY_NOTE": "Region and city still need to be selected.",
+            "MISSING_REGION": "Operating region is still required.",
+            "MISSING_REGION_NOTE": "The driver must select an operating region before activation.",
             "EXPIRED_DOCUMENT_NOTE": "The uploaded document is expired and must be renewed.",
             "REJECTED_DOCUMENT_NOTE": "This document was rejected and needs a corrected re-upload.",
             "PENDING_DOCUMENT_REVIEW_NOTE": "The document is uploaded and waiting for admin review."

@@ -137,6 +137,23 @@ export function localizeSaudiCity(
   return translateOrFallback(translate, key, trimmed);
 }
 
+export function isLegacyDriverCity(city?: string | null): boolean {
+  const trimmed = (city || '').trim();
+  return !trimmed || trimmed.toLowerCase() === 'unknown';
+}
+
+export function resolveDriverCityDisplay(
+  translate: TranslateService,
+  city?: string | null
+): string {
+  if (isLegacyDriverCity(city)) {
+    return translate.instant('COMMON.REGIONS.EASTERN');
+  }
+
+  const localized = localizeSaudiCity(translate, city);
+  return localized || translate.instant('COMMON.REGIONS.EASTERN');
+}
+
 export function localizeSaudiRegion(
   translate: TranslateService,
   region?: string | null

@@ -763,13 +763,17 @@
             "LICENSE_DOCUMENT": "رخصة القيادة",
             "VEHICLE_DOCUMENT": "مستند المركبة",
             "PERSONAL_PHOTO": "صورة التحقق الشخصي",
-            "ZONE_SELECTION": "منطقة التشغيل الأساسية"
+            "ZONE_SELECTION": "منطقة التشغيل الأساسية",
+            "REGION_CITY_SELECTION": "منطقة التشغيل الأساسية",
+            "MISSING_REGION": "منطقة التشغيل"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
             "MISSING_VEHICLE_INFO_NOTE": "توجد بيانات تشغيلية ناقصة خاصة بالمركبة.",
             "MISSING_DOCUMENT_NOTE": "يوجد مستند مطلوب مفقود أو ما زال تحت المراجعة.",
-            "MISSING_ZONE_SELECTION_NOTE": "ما زال اختيار منطقة التشغيل الأساسية مطلوبًا."
+            "MISSING_ZONE_SELECTION_NOTE": "ما زال اختيار منطقة التشغيل الأساسية مطلوبًا.",
+            "MISSING_REGION": "ما زالت منطقة التشغيل مطلوبة.",
+            "MISSING_REGION_NOTE": "يجب على المندوب تحديد منطقة التشغيل قبل التفعيل."
           },
           "REJECTION_REASONS": {
             "MISSING_PERSONAL_INFO": "البيانات الشخصية ناقصة",
@@ -1497,7 +1501,8 @@
             "VEHICLE_DOCUMENT": "مستند المركبة",
             "PERSONAL_PHOTO": "صورة التحقق الشخصي",
             "ZONE_SELECTION": "منطقة التشغيل الأساسية",
-            "REGION_CITY_SELECTION": "منطقة التشغيل الأساسية"
+            "REGION_CITY_SELECTION": "منطقة التشغيل الأساسية",
+            "MISSING_REGION": "منطقة التشغيل"
           },
           "CHECKLIST_NOTES": {
             "MISSING_PERSONAL_INFO_NOTE": "توجد بيانات شخصية أساسية ناقصة.",
@@ -1505,6 +1510,8 @@
             "MISSING_DOCUMENT_NOTE": "المستند المطلوب مفقود أو ما زال تحت المراجعة.",
             "MISSING_ZONE_SELECTION_NOTE": "ما زال يلزم تحديد منطقة تشغيل أساسية.",
             "MISSING_REGION_CITY_NOTE": "ما زال يلزم تحديد المنطقة والمدينة.",
+            "MISSING_REGION": "ما زالت منطقة التشغيل مطلوبة.",
+            "MISSING_REGION_NOTE": "يجب على المندوب تحديد منطقة التشغيل قبل التفعيل.",
             "EXPIRED_DOCUMENT_NOTE": "المستند المرفوع منتهي الصلاحية ولازم تجديده.",
             "REJECTED_DOCUMENT_NOTE": "رفضنا هذا المستند ولازم ترفعه من جديد بشكل صحيح.",
             "PENDING_DOCUMENT_REVIEW_NOTE": "انرفع المستند وبانتظار مراجعة الإدارة."
