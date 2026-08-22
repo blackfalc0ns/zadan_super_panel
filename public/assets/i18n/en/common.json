@@ -108,12 +108,14 @@
       "SOUTHERN": "Southern Region",
       "RIYADH": "Riyadh Region",
       "MAKKAH": "Makkah Region",
-      "MADINAH": "Madinah Region"
+      "MADINAH": "Madinah Region",
+      "COMING_SOON_ONLY": "This region is not active yet. Eastern Region is available now."
     },
     "LOADING": "Loading...",
     "ALL": "All",
     "BRAND_GENERAL": "General brand",
     "COPY": "Copy",
+    "COMING_SOON": "Coming soon",
     "ERROR": "Error",
     "EXPORT": "Export",
     "EXPORT_SUCCESS": "Export completed successfully.",

@@ -1756,6 +1756,18 @@
         "REGION": "المناطق الإدارية",
         "GLOBAL": "عام"
       },
+      "OPERATIONAL_GEOGRAPHY": {
+        "TITLE": "مناطق ومدن التشغيل",
+        "SUBTITLE": "فعّل المناطق والمدن اللي تبي تشغّل فيها المتاجر والسائقين وإعدادات التوصيل.",
+        "ACTIVE_REGIONS": "{{count}} مناطق مفعّلة",
+        "ACTIVE_CITIES": "{{count}} مدن مفعّلة",
+        "CITIES_HINT": "وسّع المنطقة عشان تدير مدنها. المدن تظل موقوفة لين تفعّل المنطقة.",
+        "ENABLED_REGION_SUCCESS": "صارت {{name}} مفعّلة للتشغيل.",
+        "DISABLED_REGION_SUCCESS": "تم إيقاف تشغيل {{name}}.",
+        "ENABLED_CITY_SUCCESS": "صارت {{name}} مفعّلة للتشغيل.",
+        "DISABLED_CITY_SUCCESS": "تم إيقاف تشغيل {{name}}.",
+        "UPDATE_FAILED": "ما قدرنا نحدّث مناطق ومدن التشغيل."
+      },
       "SCOPE_LIST": {
         "ZONE": "قائمة مناطق التوصيل",
         "CITY": "قائمة المدن",

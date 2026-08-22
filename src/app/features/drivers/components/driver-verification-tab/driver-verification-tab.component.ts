@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { StatusPillComponent } from '../../../../shared/components/ui/status-pill/status-pill.component';
 import { SectionHeaderComponent } from '../../../../shared/components/ui/section-header/section-header.component';
-import { GeographyService } from '../../../../shared/services/geography.service';
+import { GeographyService, SaudiDriverRegionDto } from '../../../../shared/services/geography.service';
 import { AccessApprovalRequestDto } from '../../../../core/services/admin-access-api.service';
 import { DriverDetailRecord, DriverDocumentRecord, DriverVerificationChecklistItem } from '../../models/drivers.models';
 import { getDocumentStatusKey, getDocumentStatusVariant } from '../../utils/driver-ui.utils';
@@ -49,7 +49,7 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  zoomScale = 1;
  rotationAngle = 0;
 
- regions: Array<{ code: string; nameAr?: string; nameEn?: string }> = [];
+ regions: SaudiDriverRegionDto[] = [];
  editForm = {
  fullName: '',
  email: '',
@@ -109,8 +109,11 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  this.regions = regs;
  if (this.editForm.region) {
  this.editForm.region = this.resolveLookupCode(this.editForm.region, this.regions);
- } else if (regs.length > 0) {
- this.editForm.region = regs[0].code;
+ } else {
+ const firstOperational = regs.find((region) => this.isRegionOperational(region));
+ if (firstOperational) {
+ this.editForm.region = firstOperational.code;
+ }
  }
  this.cdr.markForCheck();
  },
@@ -172,8 +175,26 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  }
 
  onRegionChange(regionCode: string) {
- this.editForm.region = this.normalizeRegionCode(regionCode);
+ const code = this.normalizeRegionCode(regionCode);
+ const region = this.regions.find((item) => this.normalizeRegionCode(item.code) === code);
+ if (region && !this.isRegionOperational(region)) {
+ this.toastService.warning(this.translate.instant('COMMON.REGIONS.COMING_SOON_ONLY'));
+ return;
+ }
+ this.editForm.region = code;
  this.cdr.markForCheck();
+ }
+
+ isRegionOperational(region: Pick<SaudiDriverRegionDto, 'code' | 'isOperational'>): boolean {
+ return region.isOperational ?? this.geographyService.isOperationalRegionCode(region.code);
+ }
+
+ regionDisplayLabel(region: SaudiDriverRegionDto): string {
+ const name = this.isRTL ? region.nameAr : region.nameEn;
+ if (this.isRegionOperational(region)) {
+ return name;
+ }
+ return `${name} — ${this.translate.instant('COMMON.COMING_SOON')}`;
  }
 
  private resolveLookupCode(
@@ -214,6 +235,11 @@ export class DriverVerificationTabComponent implements OnInit, OnChanges {
  const region = this.normalizeRegionCode(this.editForm.region || 'EASTERN');
  if (!region) {
  this.toastService.error(this.translate.instant('DRIVERS.DETAIL.MESSAGES.SERVICE_AREA_REQUIRED'));
+ return;
+ }
+
+ if (!this.geographyService.isOperationalRegionCode(region)) {
+ this.toastService.warning(this.translate.instant('COMMON.REGIONS.COMING_SOON_ONLY'));
  return;
  }
 

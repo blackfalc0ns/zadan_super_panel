@@ -18,7 +18,7 @@ import { AppCardComponent } from '../../../../shared/components/ui/card/card.com
 import { AppPageHeaderComponent } from '../../../../shared/components/ui/page-header/page-header.component';
 import { SearchableSelectComponent, SearchableSelectOption } from '../../../../shared/components/ui/form-controls/select/searchable-select.component';
 import { ToastService } from '../../../../shared/services/toast.service';
-import { GeographyService } from '../../../../shared/services/geography.service';
+import { GeographyService, OperationalCityDto, OperationalRegionDto } from '../../../../shared/services/geography.service';
 import { describeApiError } from '../../../../shared/utils/api-error.util';
 import { AccessService } from '../../../../core/services/access.service';
 
@@ -105,6 +105,80 @@ type NumericZoneField =
  </app-button>
  </div>
  </app-page-header>
+
+ <div *ngIf="operationalRegions.length" class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+ <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+ <div class="max-w-2xl">
+ <h2 class="text-base font-black text-slate-900">{{ 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.TITLE' | translate }}</h2>
+ <p class="mt-1 text-[13px] font-medium leading-relaxed text-slate-500">{{ 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.SUBTITLE' | translate }}</p>
+ </div>
+ <div class="flex flex-wrap items-center gap-2">
+ <span class="inline-flex h-9 items-center rounded-full bg-emerald-50 px-3 text-[11px] font-black text-emerald-700">
+ {{ 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.ACTIVE_REGIONS' | translate:{ count: activeOperationalRegionCount } }}
+ </span>
+ <span class="inline-flex h-9 items-center rounded-full bg-sky-50 px-3 text-[11px] font-black text-sky-700">
+ {{ 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.ACTIVE_CITIES' | translate:{ count: activeOperationalCityCount } }}
+ </span>
+ </div>
+ </div>
+
+ <div *ngIf="operationalRegionsLoading" class="mt-4 flex items-center gap-3 text-sm font-bold text-slate-500">
+ <span class="admin-skeleton admin-skeleton-line sm w-40"></span>
+ </div>
+
+ <div *ngIf="!operationalRegionsLoading" class="mt-4 space-y-3">
+ <div
+ *ngFor="let region of operationalRegions"
+ class="overflow-hidden rounded-2xl border border-slate-100 bg-slate-50/70">
+ <div class="flex items-center justify-between gap-3 px-4 py-3">
+ <button
+ type="button"
+ class="flex min-w-0 flex-1 items-center gap-2 text-start"
+ (click)="toggleOperationalRegionExpanded(region.code)">
+ <span class="material-symbols-outlined text-[18px] text-slate-400">
+ {{ isOperationalRegionExpanded(region.code) ? 'expand_less' : 'expand_more' }}
+ </span>
+ <div class="min-w-0">
+ <p class="truncate text-sm font-black text-slate-900">{{ operationalRegionLabel(region) }}</p>
+ <p class="mt-0.5 text-[11px] font-bold uppercase tracking-wide text-slate-400">{{ region.code }}</p>
+ </div>
+ </button>
+ <button
+ type="button"
+ (click)="toggleOperationalRegion(region)"
+ [disabled]="!canEditSettings || updatingOperationalRegionCode === region.code"
+ class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-zadna-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+ [ngClass]="region.isOperational ? 'bg-zadna-primary' : 'bg-slate-200'">
+ <span
+ class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+ [ngClass]="region.isOperational ? 'ltr:translate-x-5 rtl:-translate-x-5' : 'translate-x-0'"></span>
+ </button>
+ </div>
+
+ <div *ngIf="isOperationalRegionExpanded(region.code) && region.cities.length" class="space-y-2 border-t border-slate-100 px-4 py-3">
+ <p class="text-[11px] font-bold text-slate-500">{{ 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.CITIES_HINT' | translate }}</p>
+ <div
+ *ngFor="let city of region.cities"
+ class="flex items-center justify-between gap-3 rounded-xl border border-white bg-white px-3 py-2.5">
+ <div class="min-w-0">
+ <p class="truncate text-[13px] font-black text-slate-800">{{ operationalCityLabel(city) }}</p>
+ <p class="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-400">{{ city.code }}</p>
+ </div>
+ <button
+ type="button"
+ (click)="toggleOperationalCity(region, city)"
+ [disabled]="!canEditSettings || !region.isOperational || updatingOperationalCityCode === city.code"
+ class="relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-zadna-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+ [ngClass]="city.isOperational && region.isOperational ? 'bg-zadna-primary' : 'bg-slate-200'">
+ <span
+ class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+ [ngClass]="city.isOperational && region.isOperational ? 'ltr:translate-x-5 rtl:-translate-x-5' : 'translate-x-0'"></span>
+ </button>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
  <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
  <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
@@ -486,9 +560,26 @@ export class PlatformPricingComponent implements OnInit {
  isSaving = false;
  isDirty = false;
  showConfirm = false;
+ operationalRegions: OperationalRegionDto[] = [];
+ operationalRegionsLoading = false;
+ updatingOperationalRegionCode: string | null = null;
+ updatingOperationalCityCode: string | null = null;
+ expandedOperationalRegionCodes = new Set<string>(['EASTERN']);
 
  ngOnInit(): void {
  this.loadData();
+ this.loadOperationalRegions();
+ }
+
+ get activeOperationalRegionCount(): number {
+ return this.operationalRegions.filter((region) => region.isOperational).length;
+ }
+
+ get activeOperationalCityCount(): number {
+ return this.operationalRegions.reduce(
+ (count, region) => count + region.cities.filter((city) => region.isOperational && city.isOperational).length,
+ 0
+ );
  }
 
  get canEditSettings(): boolean {
@@ -571,6 +662,125 @@ export class PlatformPricingComponent implements OnInit {
  this.emptyStateMessage = '';
 
  this.loadScopeData();
+ }
+
+ loadOperationalRegions(): void {
+ if (!this.accessService.hasAnyPermission(['delivery_settings.view', 'delivery_settings.edit'])) {
+ return;
+ }
+
+ this.operationalRegionsLoading = true;
+ this.geographyService.getAdminOperationalRegions().subscribe({
+ next: (regions) => {
+ this.operationalRegions = regions;
+ this.operationalRegionsLoading = false;
+ this.cdr.markForCheck();
+ },
+ error: () => {
+ this.operationalRegionsLoading = false;
+ this.cdr.markForCheck();
+ }
+ });
+ }
+
+ toggleOperationalRegion(region: OperationalRegionDto): void {
+ if (!this.canEditSettings || this.updatingOperationalRegionCode) {
+ return;
+ }
+
+ const nextValue = !region.isOperational;
+ this.updatingOperationalRegionCode = region.code;
+
+ this.geographyService.updateOperationalRegion(region.code, nextValue).subscribe({
+ next: (updatedRegion) => {
+ this.operationalRegions = this.operationalRegions.map((item) =>
+ item.code === updatedRegion.code ? updatedRegion : item
+ );
+ this.updatingOperationalRegionCode = null;
+ if (nextValue) {
+ this.expandedOperationalRegionCodes.add(updatedRegion.code);
+ }
+ this.loadData();
+ this.toastService.success(
+ this.translate.instant(
+ nextValue
+ ? 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.ENABLED_REGION_SUCCESS'
+ : 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.DISABLED_REGION_SUCCESS',
+ { name: this.operationalRegionLabel(updatedRegion) }
+ )
+ );
+ this.cdr.markForCheck();
+ },
+ error: (error: unknown) => {
+ this.updatingOperationalRegionCode = null;
+ this.toastService.error(
+ describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.UPDATE_FAILED' })
+ );
+ this.cdr.markForCheck();
+ }
+ });
+ }
+
+ toggleOperationalCity(region: OperationalRegionDto, city: OperationalCityDto): void {
+ if (!this.canEditSettings || !region.isOperational || this.updatingOperationalCityCode) {
+ return;
+ }
+
+ const nextValue = !city.isOperational;
+ this.updatingOperationalCityCode = city.code;
+
+ this.geographyService.updateOperationalCity(city.code, nextValue).subscribe({
+ next: (updatedCity) => {
+ this.operationalRegions = this.operationalRegions.map((item) =>
+ item.code === region.code
+ ? {
+ ...item,
+ cities: item.cities.map((entry) => (entry.code === updatedCity.code ? updatedCity : entry))
+ }
+ : item
+ );
+ this.updatingOperationalCityCode = null;
+ this.loadData();
+ this.toastService.success(
+ this.translate.instant(
+ nextValue
+ ? 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.ENABLED_CITY_SUCCESS'
+ : 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.DISABLED_CITY_SUCCESS',
+ { name: this.operationalCityLabel(updatedCity) }
+ )
+ );
+ this.cdr.markForCheck();
+ },
+ error: (error: unknown) => {
+ this.updatingOperationalCityCode = null;
+ this.toastService.error(
+ describeApiError(error, this.translate, { fallbackKey: 'FINANCES.PRICING.OPERATIONAL_GEOGRAPHY.UPDATE_FAILED' })
+ );
+ this.cdr.markForCheck();
+ }
+ });
+ }
+
+ toggleOperationalRegionExpanded(regionCode: string): void {
+ const normalizedCode = regionCode.trim().toUpperCase();
+ if (this.expandedOperationalRegionCodes.has(normalizedCode)) {
+ this.expandedOperationalRegionCodes.delete(normalizedCode);
+ return;
+ }
+
+ this.expandedOperationalRegionCodes.add(normalizedCode);
+ }
+
+ isOperationalRegionExpanded(regionCode: string): boolean {
+ return this.expandedOperationalRegionCodes.has(regionCode.trim().toUpperCase());
+ }
+
+ operationalRegionLabel(region: Pick<OperationalRegionDto, 'nameAr' | 'nameEn'>): string {
+ return this.translate.currentLang === 'ar' ? region.nameAr : region.nameEn;
+ }
+
+ operationalCityLabel(city: Pick<OperationalCityDto, 'nameAr' | 'nameEn'>): string {
+ return this.translate.currentLang === 'ar' ? city.nameAr : city.nameEn;
  }
 
  onZoneChange(): void {
@@ -941,6 +1151,10 @@ export class PlatformPricingComponent implements OnInit {
  return items.filter((item) => {
  if (!('regionCode' in item) || !item.regionCode) {
  return this.selectedScope === 'zone' ? false : true;
+ }
+
+ if (this.selectedScope === 'city' && 'cityCode' in item && item.cityCode) {
+ return this.geographyService.isOperationalCityCode(item.cityCode, item.regionCode);
  }
 
  return this.geographyService.isOperationalRegionCode(item.regionCode);

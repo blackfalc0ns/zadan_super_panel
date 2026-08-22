@@ -1203,6 +1203,18 @@
         "REGION": "Regions",
         "GLOBAL": "Global"
       },
+      "OPERATIONAL_GEOGRAPHY": {
+        "TITLE": "Operational Regions & Cities",
+        "SUBTITLE": "Enable the Saudi regions and cities where vendors, drivers, and delivery pricing can operate.",
+        "ACTIVE_REGIONS": "{{count}} active regions",
+        "ACTIVE_CITIES": "{{count}} active cities",
+        "CITIES_HINT": "Expand a region to manage its cities. Cities stay disabled until their region is active.",
+        "ENABLED_REGION_SUCCESS": "{{name}} is now operational.",
+        "DISABLED_REGION_SUCCESS": "{{name}} is no longer operational.",
+        "ENABLED_CITY_SUCCESS": "{{name}} is now operational.",
+        "DISABLED_CITY_SUCCESS": "{{name}} is no longer operational.",
+        "UPDATE_FAILED": "Could not update operational geography."
+      },
       "SCOPE_LIST": {
         "ZONE": "Delivery zones list",
         "CITY": "Cities list",
